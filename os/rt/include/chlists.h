@@ -45,24 +45,31 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a generic single link list, it works like a stack.
- * @note    Link fields are void pointers in order to avoid aliasing issues.
+ * @brief   Type of a generic single link list header and element.
  */
-typedef struct ch_rt_list {
-  void                  *next;      /**< @brief Next in the list/queue.     */
-} rt_list_t;
+typedef struct ch_list ch_list_t;
 
 /**
- * @extends rt_list_t
- *
- * @brief   Type of a generic bidirectional linked list header and
- *          element.
- * @note    Link fields are void pointers in order to avoid aliasing issues.
+ * @brief   Structure representing a generic single link list header
+ *          and element.
  */
-typedef struct ch_rt_queue {
-  void                  *next;      /**< @brief Next in the list/queue.     */
-  void                  *prev;      /**< @brief Previous in the queue.      */
-} rt_queue_t;
+struct ch_list {
+  ch_list_t             *next;      /**< @brief Next in the list/queue.     */
+};
+
+/**
+ * @brief   Type of a generic bidirectional linked list header and element.
+ */
+typedef struct ch_queue ch_queue_t;
+
+/**
+ * @brief   Structure representing a generic bidirectional linked list header
+ *          and element.
+ */
+typedef struct ch_queue {
+  ch_queue_t            *next;      /**< @brief Next in the list/queue.     */
+  ch_queue_t            *prev;      /**< @brief Previous in the queue.      */
+} ch_queue_t;
 
 /**
  * @extends rt_queue_t
@@ -71,7 +78,7 @@ typedef struct ch_rt_queue {
  *          element.
  * @note    Link fields are void pointers in order to avoid aliasing issues.
  */
-typedef struct ch_rt_priority_queue {
+typedef struct ch_priority_queue {
   void                  *next;      /**< @brief Next in the list/queue.     */
   void                  *prev;      /**< @brief Previous in the queue.      */
   tprio_t               prio;
@@ -124,64 +131,64 @@ extern "C" {
  *
  * @notapi
  */
-static inline void list_init(rt_list_t *tlp) {
+static inline void ch_list_init(ch_list_t *lp) {
 
-  tlp->next = (void *)tlp;
+  lp->next = lp;
 }
 
 /**
  * @brief   Evaluates to @p true if the specified list is empty.
  *
- * @param[in] lp        pointer to the list object
+ * @param[in] lp        pointer to the list header
  * @return              The status of the list.
  *
  * @notapi
  */
-static inline bool list_isempty(rt_list_t *tlp) {
+static inline bool ch_list_isempty(ch_list_t *lp) {
 
-  return (bool)(tlp->next == (void *)tlp);
+  return (bool)(lp->next == lp);
 }
 
 /**
  * @brief   Evaluates to @p true if the specified list is not empty.
  *
- * @param[in] lp        pointer to the list object
+ * @param[in] lp        pointer to the list header
  * @return              The status of the list.
  *
  * @notapi
  */
-static inline bool list_notempty(rt_list_t *tlp) {
+static inline bool ch_list_notempty(ch_list_t *lp) {
 
-  return (bool)(tlp->next != (void *)tlp);
+  return (bool)(lp->next != lp);
 }
 
 /**
  * @brief   Pushes an object on top of a stack list.
  *
- * @param[in] p     the pointer to the object to be inserted in the list
+ * @param[in] p     the pointer to the element to be inserted in the list
  * @param[in] lp    the pointer to the list header
  *
  * @notapi
  */
-static inline void list_push(void *p, rt_list_t *lp) {
+static inline void ch_list_push(ch_list_t *p, ch_list_t *lp) {
 
-  ((rt_list_t *)p)->next = lp->next;
+  p->next = lp->next;
   lp->next = p;
 }
 
 /**
- * @brief   Pops an object from the top of a stack list and returns it.
+ * @brief   Pops an element from the top of a stack list and returns it.
  * @pre     The list must be non-empty before calling this function.
  *
  * @param[in] lp        the pointer to the list header
- * @return              The removed object pointer.
+ * @return              The removed element pointer.
  *
  * @notapi
  */
-static inline void *list_pop(rt_list_t *lp) {
+static inline ch_list_t *ch_list_pop(ch_list_t *lp) {
 
-  void *p = lp->next;
-  lp->next = ((rt_list_t *)p)->next;
+  ch_list_t *p = lp->next;
+  lp->next = p->next;
 
   return p;
 }
@@ -189,27 +196,27 @@ static inline void *list_pop(rt_list_t *lp) {
 /**
  * @brief   Queue initialization.
  *
- * @param[in] qp        pointer to the queue object
+ * @param[in] qp        pointer to the queue header
  *
  * @notapi
  */
-static inline void queue_init(rt_queue_t *qp) {
+static inline void ch_queue_init(ch_queue_t *qp) {
 
-  qp->next = (void *)qp;
-  qp->prev = (void *)qp;
+  qp->next = qp;
+  qp->prev = qp;
 }
 
 /**
  * @brief   Evaluates to @p true if the specified queue is empty.
  *
- * @param[in] qp        pointer to the queue object
+ * @param[in] qp        pointer to the queue header
  * @return              The status of the queue.
  *
  * @notapi
  */
-static inline bool queue_isempty(const rt_queue_t *qp) {
+static inline bool ch_queue_isempty(const ch_queue_t *qp) {
 
-  return (bool)(qp->next == (void *)qp);
+  return (bool)(qp->next == qp);
 }
 
 /**
@@ -220,79 +227,79 @@ static inline bool queue_isempty(const rt_queue_t *qp) {
  *
  * @notapi
  */
-static inline bool queue_notempty(const rt_queue_t *qp) {
+static inline bool ch_queue_notempty(const ch_queue_t *qp) {
 
-  return (bool)(qp->next != (void *)qp);
+  return (bool)(qp->next != qp);
 }
 
 /**
  * @brief   Inserts an object into a queue.
  *
- * @param[in] p         the pointer to the object to be inserted in the list
+ * @param[in] p         the pointer to the element to be inserted in the list
  * @param[in] qp        the pointer to the queue header
  *
  * @notapi
  */
-static inline void queue_insert(void *p, rt_queue_t *qp) {
+static inline void ch_queue_insert(ch_queue_t *p, ch_queue_t *qp) {
 
-  ((rt_queue_t *)p)->next                       = (void *)qp;
-  ((rt_queue_t *)p)->prev                       = qp->prev;
-  ((rt_queue_t *)((rt_queue_t *)p)->prev)->next = p;
-  qp->prev                                      = p;
+  p->next       = qp;
+  p->prev       = qp->prev;
+  p->prev->next = p;
+  qp->prev      = p;
 }
 
 /**
- * @brief   Removes the first-out thread from a queue and returns it.
+ * @brief   Removes the first-out element from a queue and returns it.
  * @note    If the queue is priority ordered then this function returns the
- *          thread with the highest priority.
+ *          element with the highest priority.
  *
- * @param[in] tqp       the pointer to the threads list header
- * @return              The removed thread pointer.
+ * @param[in] tqp       the pointer to the queue list header
+ * @return              The removed element pointer.
  *
  * @notapi
  */
-static inline void *queue_fifo_remove(rt_queue_t *qp) {
-  void *p = qp->next;
+static inline ch_queue_t *ch_queue_fifo_remove(ch_queue_t *qp) {
+  ch_queue_t *p = qp->next;
 
-  ((rt_queue_t *)p)->next        = ((rt_queue_t *)p)->next;
-  ((rt_queue_t *)qp->next)->prev = (void *)qp;
+  qp->next        = p->next;
+  qp->next->prev = qp;
 
   return p;
 }
 
 /**
- * @brief   Removes the last-out thread from a queue and returns it.
+ * @brief   Removes the last-out element from a queue and returns it.
  * @note    If the queue is priority ordered then this function returns the
- *          thread with the lowest priority.
+ *          element with the lowest priority.
  *
- * @param[in] tqp   the pointer to the threads list header
- * @return          The removed thread pointer.
+ * @param[in] tqp   the pointer to the queue list header
+ * @return          The removed element pointer.
  *
  * @notapi
  */
-static inline void *queue_lifo_remove(rt_queue_t *qp) {
-  void *p = qp->prev;
+static inline ch_queue_t *ch_queue_lifo_remove(ch_queue_t *qp) {
+  ch_queue_t *p = qp->prev;
 
-  qp->prev                        = ((rt_queue_t *)p)->prev;
-  ((rt_queue_t *)qp->prev)->next = (void *)qp;
+  qp->prev       = p->prev;
+  qp->prev->next = qp;
 
   return p;
 }
 
 /**
- * @brief   Removes an object from a queue and returns it.
- * @details The object is removed from the queue regardless of its relative
+ * @brief   Removes an element from a queue and returns it.
+ * @details The element is removed from the queue regardless of its relative
  *          position and regardless the used insertion method.
  *
- * @param[in] tp        the pointer to the object to be removed from the queue
- * @return              The removed object pointer.
+ * @param[in] tp        the pointer to the element to be removed from the queue
+ * @return              The removed element pointer.
  *
  * @notapi
  */
-static inline void *queue_dequeue(void *p) {
+static inline void *ch_queue_dequeue(ch_queue_t *p) {
 
-  ((rt_queue_t *)((rt_queue_t *)p)->prev)->next = ((rt_queue_t *)p)->next;
-  ((rt_queue_t *)((rt_queue_t *)p)->next)->prev = ((rt_queue_t *)p)->prev;
+  p->prev->next = p->next;
+  p->next->prev = p->prev;
 
   return p;
 }
