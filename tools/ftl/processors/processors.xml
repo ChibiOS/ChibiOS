@@ -65,4 +65,9 @@
     <default>resources/gencfg/xml/stm32l5board.xml</default>
     <basefilename>board</basefilename>
   </processor>
+  <processor class="board" target="STM32WBxx">
+  	<name>STM32WBxx Board Configuration</name>
+  	<path>resources/gencfg/processors/boards/stm32wbxx/templates</path>
+  	<default>resources/gencfg/xml/stm32wbboard.xml</default>
+  	<basefilename>board</basefilename></processor>
 </processors>
