@@ -88,8 +88,8 @@ typedef struct ch_binary_semaphore {
  * @param[in] name      the name of the semaphore variable
  * @param[in] taken     the semaphore initial state
  */
-#define _BSEMAPHORE_DATA(name, taken)                                       \
-  {_SEMAPHORE_DATA(name.sem, ((taken) ? 0 : 1))}
+#define __BSEMAPHORE_DATA(name, taken)                                      \
+  {__SEMAPHORE_DATA(name.sem, ((taken) ? 0 : 1))}
 
 /**
  * @brief   Static semaphore initializer.
@@ -100,7 +100,7 @@ typedef struct ch_binary_semaphore {
  * @param[in] taken     the semaphore initial state
  */
 #define BSEMAPHORE_DECL(name, taken)                                        \
-    binary_semaphore_t name = _BSEMAPHORE_DATA(name, taken)
+  binary_semaphore_t name = __BSEMAPHORE_DATA(name, taken)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

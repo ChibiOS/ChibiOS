@@ -380,10 +380,10 @@ void chVTDoTickI(void) {
       virtual_timer_t *vtp;
       vtfunc_t fn;
 
-      vtp = vtlp->dlist.next;
+      vtp = (virtual_timer_t *)vtlp->dlist.next;
       fn = vtp->func;
       vtp->func = NULL;
-      vtp->dlist.next->prev = (virtual_timer_t *)vtlp;
+      vtp->dlist.next->prev = &vtlp->dlist;
       vtlp->dlist.next = vtp->dlist.next;
       chSysUnlockFromISR();
       fn(vtp->par);
