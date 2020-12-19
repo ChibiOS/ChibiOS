@@ -451,7 +451,7 @@ void cry_lld_start(CRYDriver *cryp) {
 #endif
   }
 
-  /* Resetting trasient key data.*/
+  /* Resetting transient key data.*/
   cryp->cryp_ktype = cryp_key_none;
   cryp->cryp_ksize = 0U;
   cryp->cryp_k[0]  = 0U;
