@@ -83,6 +83,17 @@ objects_factory_t ch_factory;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static void copy_name(const char *sp, char *dp) {
+  unsigned i;
+
+  i = 0U;
+  while ((*sp != (char)0) && (i < CH_CFG_FACTORY_MAX_NAMES_LENGTH)) {
+    *dp = *sp;
+    sp++;
+    dp++;
+  }
+}
+
 static inline void dyn_list_init(dyn_list_t *dlp) {
 
   dlp->next = (dyn_element_t *)dlp;
@@ -135,16 +146,13 @@ static dyn_element_t *dyn_create_object_heap(const char *name,
   }
 
   /* Allocating space for the new buffer object.*/
-  /*lint -save -e668 [] Lint is confused by the above chDbgCheck() and
-    incorrectly assumes that strncpy() could receive a NULL pointer.*/
   dep = (dyn_element_t *)chHeapAlloc(NULL, size);
   if (dep == NULL) {
     return NULL;
   }
 
   /* Initializing object list element.*/
-  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH);
-  /*lint -restore*/
+  copy_name(name, dep->name);
   dep->refs = (ucnt_t)1;
   dep->next = dlp->next;
 
@@ -189,10 +197,7 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
   }
 
   /* Initializing object list element.*/
-  /*lint -save -e668 [] Lint is confused by the above chDbgCheck() and
-    incorrectly assumes that strncpy() could receive a NULL pointer.*/
-  strncpy(dep->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH);
-  /*lint -restore*/
+  copy_name(name, dep->name);
   dep->refs = (ucnt_t)1;
   dep->next = dlp->next;
 
