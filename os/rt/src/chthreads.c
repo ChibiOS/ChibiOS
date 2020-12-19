@@ -91,28 +91,28 @@ thread_t *__thd_object_init(os_instance_t *oip,
                             const char *name,
                             tprio_t prio) {
 
-  tp->prio      = prio;
-  tp->state     = CH_STATE_WTSTART;
-  tp->flags     = CH_FLAG_MODE_STATIC;
+  tp->hdr.pqueue.prio   = prio;
+  tp->state             = CH_STATE_WTSTART;
+  tp->flags             = CH_FLAG_MODE_STATIC;
 
   (void)oip;
 
 #if CH_CFG_TIME_QUANTUM > 0
-  tp->ticks     = (tslices_t)CH_CFG_TIME_QUANTUM;
+  tp->ticks             = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
 #if CH_CFG_USE_MUTEXES == TRUE
-  tp->realprio  = prio;
-  tp->mtxlist   = NULL;
+  tp->realprio          = prio;
+  tp->mtxlist           = NULL;
 #endif
 #if CH_CFG_USE_EVENTS == TRUE
-  tp->epending  = (eventmask_t)0;
+  tp->epending          = (eventmask_t)0;
 #endif
 #if CH_DBG_THREADS_PROFILING == TRUE
-  tp->time      = (systime_t)0;
+  tp->time              = (systime_t)0;
 #endif
 #if CH_CFG_USE_REGISTRY == TRUE
-  tp->refs      = (trefs_t)1;
-  tp->name      = name;
+  tp->refs              = (trefs_t)1;
+  tp->name              = name;
   REG_INSERT(oip, tp);
 #else
   (void)name;
@@ -611,8 +611,9 @@ tprio_t chThdSetPriority(tprio_t newprio) {
   chSysLock();
 #if CH_CFG_USE_MUTEXES == TRUE
   oldprio = currtp->realprio;
-  if ((currtp->prio == currtp->realprio) || (newprio > currtp->prio)) {
-    currtp->prio = newprio;
+  if ((currtp->hdr.pqueue.prio == currtp->realprio) ||
+      (newprio > currtp->hdr.pqueue.prio)) {
+    currtp->hdr.pqueue.prio = newprio;
   }
   currtp->realprio = newprio;
 #else

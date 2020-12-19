@@ -117,10 +117,11 @@ typedef struct ch_threads_queue {
  */
 struct ch_thread {
   union {
-    ch_list_t           list;       /**< @brief Threads list header.        */
-    ch_queue_t          queue;      /**< @brief Threads queue header.       */
+    ch_list_t           list;       /**< @brief Threads lists element.      */
+    ch_queue_t          queue;      /**< @brief Threads queues element.     */
+    ch_priority_queue_t pqueue;     /**< @brief Threads ordered queues
+                                         element.                           */
   } hdr;
-  tprio_t               prio;       /**< @brief Thread priority.            */
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   thread_t              *newer;     /**< @brief Newer registry element.     */
   thread_t              *older;     /**< @brief Older registry element.     */
@@ -293,16 +294,26 @@ struct ch_thread {
  * @brief   Type of a ready list header.
  */
 typedef struct ch_ready_list {
-  ch_queue_t            queue;      /**< @brief Threads queue.              */
-  tprio_t               prio;       /**< @brief This field must be
-                                                initialized to zero.        */
+  /**
+   * @brief     Threads ordered queues header.
+   * @note      The priority field must be initialized to zero.
+   */
+  ch_priority_queue_t   pqueue;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  thread_t              *newer;     /**< @brief Newer registry element.     */
-  thread_t              *older;     /**< @brief Older registry element.     */
+  /**
+   * @brief     Newer registry element.
+   */
+  thread_t              *newer;
+  /**
+   *  @brief    Older registry element.
+   */
+  thread_t              *older;
 #endif
   /* End of the fields shared with the thread_t structure.*/
-  thread_t              *current;   /**< @brief The currently running
-                                                thread.                     */
+  /**
+   * @brief     The currently running thread.
+   */
+  thread_t              *current;
 } ready_list_t;
 
 /**

@@ -287,7 +287,7 @@ static inline thread_t *chThdGetSelfX(void) {
  */
 static inline tprio_t chThdGetPriorityX(void) {
 
-  return chThdGetSelfX()->prio;
+  return chThdGetSelfX()->hdr.pqueue.prio;
 }
 
 /**

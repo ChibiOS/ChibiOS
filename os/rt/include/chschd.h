@@ -127,7 +127,7 @@
  *
  * @notapi
  */
-#define firstprio(rlp)                  (((thread_t *)(rlp)->next)->prio)
+#define firstprio(rlp)                  ((rlp)->next->prio)
 
 /**
  * @brief   Current thread pointer get macro.
@@ -164,13 +164,7 @@ extern "C" {
   void chSchDoYieldS(void);
   thread_t *chSchSelectFirstI(void);
 #if CH_CFG_OPTIMIZE_SPEED == FALSE
-  void queue_prio_insert(thread_t *tp, threads_queue_t *tqp);
-  void queue_insert(thread_t *tp, threads_queue_t *tqp);
-  thread_t *queue_fifo_remove(threads_queue_t *tqp);
-  thread_t *queue_lifo_remove(threads_queue_t *tqp);
-  thread_t *queue_dequeue(thread_t *tp);
-  void list_insert(thread_t *tp, threads_list_t *tlp);
-  thread_t *list_remove(threads_list_t *tlp);
+  void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp);
 #endif /* CH_CFG_OPTIMIZE_SPEED == FALSE */
 #ifdef __cplusplus
 }
@@ -183,16 +177,17 @@ extern "C" {
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
 #if CH_CFG_OPTIMIZE_SPEED == TRUE
-static inline void queue_prio_insert(thread_t *tp, ch_queue_t *tqp) {
+static inline void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
 
-  thread_t *cp = (thread_t *)tqp;
+  ch_queue_t *cp = qp;
   do {
-    cp = (thread_t *)cp->hdr.queue.next;
-  } while ((cp != (thread_t *)tqp) && (cp->prio >= tp->prio));
-  tp->hdr.queue.next                 = (ch_queue_t *)cp;
-  tp->hdr.queue.prev                 = cp->hdr.queue.prev;
-  tp->hdr.queue.prev->next           = (ch_queue_t *)tp;
-  cp->hdr.queue.prev                 = (ch_queue_t *)tp;
+    cp = cp->next;
+  } while ((cp != qp) &&
+           (((thread_t *)cp)->hdr.pqueue.prio >= ((thread_t *)tp)->hdr.pqueue.prio));
+  tp->next       = cp;
+  tp->prev       = cp->prev;
+  tp->prev->next = tp;
+  cp->prev       = tp;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED == TRUE */
 

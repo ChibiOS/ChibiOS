@@ -162,16 +162,16 @@ void chMtxLockS(mutex_t *mp) {
 
       /* Does the running thread have higher priority than the mutex
          owning thread? */
-      while (tp->prio < currtp->prio) {
+      while (tp->hdr.pqueue.prio < currtp->hdr.pqueue.prio) {
         /* Make priority of thread tp match the running thread's priority.*/
-        tp->prio = currtp->prio;
+        tp->hdr.pqueue.prio = currtp->hdr.pqueue.prio;
 
         /* The following states need priority queues reordering.*/
         switch (tp->state) {
         case CH_STATE_WTMTX:
           /* Re-enqueues the mutex owner with its new priority.*/
-          queue_prio_insert((thread_t *)ch_queue_dequeue(&tp->hdr.queue),
-                            &tp->u.wtmtxp->queue);
+          ch_sch_prio_insert(ch_queue_dequeue(&tp->hdr.queue),
+                             &tp->u.wtmtxp->queue);
           tp = tp->u.wtmtxp->owner;
           /*lint -e{9042} [16.1] Continues the while.*/
           continue;
@@ -191,8 +191,8 @@ void chMtxLockS(mutex_t *mp) {
         case CH_STATE_SNDMSGQ:
 #endif
           /* Re-enqueues tp with its new priority on the queue.*/
-          queue_prio_insert((thread_t *)ch_queue_dequeue(&tp->hdr.queue),
-                            &tp->u.wtmtxp->queue);
+          ch_sch_prio_insert(ch_queue_dequeue(&tp->hdr.queue),
+                             &tp->u.wtmtxp->queue);
           break;
 #endif
         case CH_STATE_READY:
@@ -211,7 +211,7 @@ void chMtxLockS(mutex_t *mp) {
       }
 
       /* Sleep on the mutex.*/
-      queue_prio_insert(currtp, &mp->queue);
+      ch_sch_prio_insert(&currtp->hdr.queue, &mp->queue);
       currtp->u.wtmtxp = mp;
       chSchGoSleepS(CH_STATE_WTMTX);
 
@@ -359,15 +359,15 @@ void chMtxUnlock(mutex_t *mp) {
            greater priority than the current thread base priority then the
            final priority will have at least that priority.*/
         if (chMtxQueueNotEmptyS(lmp) &&
-            (((thread_t *)lmp->queue.next)->prio > newprio)) {
-          newprio = ((thread_t *)lmp->queue.next)->prio;
+            (((thread_t *)lmp->queue.next)->hdr.pqueue.prio > newprio)) {
+          newprio = ((thread_t *)lmp->queue.next)->hdr.pqueue.prio;
         }
         lmp = lmp->next;
       }
 
       /* Assigns to the current thread the highest priority among all the
          waiting threads.*/
-      currtp->prio = newprio;
+      currtp->hdr.pqueue.prio = newprio;
 
       /* Awakens the highest priority thread waiting for the unlocked mutex and
          assigns the mutex to it.*/
@@ -445,15 +445,15 @@ void chMtxUnlockS(mutex_t *mp) {
            greater priority than the current thread base priority then the
            final priority will have at least that priority.*/
         if (chMtxQueueNotEmptyS(lmp) &&
-            (((thread_t *)lmp->queue.next)->prio > newprio)) {
-          newprio = ((thread_t *)lmp->queue.next)->prio;
+            (((thread_t *)lmp->queue.next)->hdr.pqueue.prio > newprio)) {
+          newprio = ((thread_t *)lmp->queue.next)->hdr.pqueue.prio;
         }
         lmp = lmp->next;
       }
 
       /* Assigns to the current thread the highest priority among all the
          waiting threads.*/
-      currtp->prio = newprio;
+      currtp->hdr.pqueue.prio = newprio;
 
       /* Awakens the highest priority thread waiting for the unlocked mutex and
          assigns the mutex to it.*/
@@ -512,7 +512,7 @@ void chMtxUnlockAllS(void) {
         mp->owner = NULL;
       }
     } while (currtp->mtxlist != NULL);
-    currtp->prio = currtp->realprio;
+    currtp->hdr.pqueue.prio = currtp->realprio;
     chSchRescheduleS();
   }
 }

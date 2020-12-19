@@ -384,8 +384,8 @@ static inline void chSysUnlock(void) {
      in a critical section not followed by a chSchRescheduleS(), this means
      that the current thread has a lower priority than the next thread in
      the ready list.*/
-  chDbgAssert((currcore->rlist.queue.next == &currcore->rlist.queue) ||
-              (currcore->rlist.current->prio >= ((thread_t *)currcore->rlist.queue.next)->prio),
+  chDbgAssert((currcore->rlist.pqueue.next == &currcore->rlist.pqueue) ||
+              (currcore->rlist.current->hdr.pqueue.prio >= currcore->rlist.pqueue.next->prio),
               "priority order violation");
 
   port_unlock();
@@ -477,7 +477,7 @@ static inline void chSysUnconditionalUnlock(void) {
  */
 static inline thread_t *chSysGetIdleThreadX(void) {
 
-  return (thread_t *)currcore->rlist.queue.prev;
+  return (thread_t *)currcore->rlist.pqueue.prev;
 }
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 

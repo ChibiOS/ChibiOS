@@ -172,21 +172,21 @@ bool chSysIntegrityCheckI(unsigned testmask) {
 
   /* Ready List integrity check.*/
   if ((testmask & CH_INTEGRITY_RLIST) != 0U) {
-    ch_queue_t *qp;
+    ch_priority_queue_t *pqp;
 
     /* Scanning the ready list forward.*/
     n = (cnt_t)0;
-    qp = oip->rlist.queue.next;
-    while (qp != &oip->rlist.queue) {
+    pqp = oip->rlist.pqueue.next;
+    while (pqp != &oip->rlist.pqueue) {
       n++;
-      qp = qp->next;
+      pqp = pqp->next;
     }
 
     /* Scanning the ready list backward.*/
-    qp = oip->rlist.queue.prev;
-    while (qp != &oip->rlist.queue) {
+    pqp = oip->rlist.pqueue.prev;
+    while (pqp != &oip->rlist.pqueue) {
       n--;
-      qp = qp->prev;
+      pqp = pqp->prev;
     }
 
     /* The number of elements must match.*/

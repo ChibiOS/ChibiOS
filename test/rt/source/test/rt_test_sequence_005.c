@@ -294,7 +294,7 @@ static void rt_test_005_004_execute(void) {
   test_set_step(1);
   {
     prio = chThdGetPriorityX();
-    chThdGetSelfX()->prio += 2;
+    chThdGetSelfX()->hdr.pqueue.prio += 2;
     test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");
   }
   test_end_step(1);
@@ -305,7 +305,7 @@ static void rt_test_005_004_execute(void) {
   {
     p1 = chThdSetPriority(prio + 1);
     test_assert(p1 == prio, "unexpected returned priority level");
-    test_assert(chThdGetSelfX()->prio == prio + 2, "unexpected priority level");
+    test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 2, "unexpected priority level");
     test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real priority level");
   }
   test_end_step(2);
@@ -315,7 +315,7 @@ static void rt_test_005_004_execute(void) {
   {
     p1 = chThdSetPriority(prio + 3);
     test_assert(p1 == prio + 1, "unexpected returned priority level");
-    test_assert(chThdGetSelfX()->prio == prio + 3, "unexpected priority level");
+    test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 3, "unexpected priority level");
     test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority level");
   }
   test_end_step(3);
@@ -324,7 +324,7 @@ static void rt_test_005_004_execute(void) {
   test_set_step(4);
   {
     chSysLock();
-    chThdGetSelfX()->prio = prio;
+    chThdGetSelfX()->hdr.pqueue.prio = prio;
     chThdGetSelfX()->realprio = prio;
     chSysUnlock();
   }

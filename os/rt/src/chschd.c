@@ -90,8 +90,8 @@ static void __idle_thread(void *p) {
  *
  * @notapi
  */
+__attribute__((noinline))
 static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
-  ch_queue_t *cqp, *tqp;
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
@@ -100,21 +100,12 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
   /* Tracing the event.*/
   __trace_ready(tp, tp->u.rdymsg);
 
-  /* Scanning ready list.*/
+  /* The thread is marked ready.*/
   tp->state = CH_STATE_READY;
-  tqp = &tp->hdr.queue;
-  cqp = &oip->rlist.queue;
-  do {
-    cqp = cqp->next;
-  } while (((thread_t *)cqp)->prio >= tp->prio);
 
-  /* Insertion on prev.*/
-  tqp->next       = cqp;
-  tqp->prev       = cqp->prev;
-  tqp->prev->next = &tp->hdr.queue;
-  cqp->prev       = tqp;
-
-  return tp;
+  /* Insertion in the priority queue.*/
+  return (thread_t *)ch_pqueue_insert_behind(&oip->rlist.pqueue,
+                                             &tp->hdr.pqueue);
 }
 
 /**
@@ -134,8 +125,8 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
  *
  * @notapi
  */
+__attribute__((noinline))
 static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
-  ch_queue_t *cqp, *tqp;
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
@@ -144,21 +135,12 @@ static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
   /* Tracing the event.*/
   __trace_ready(tp, tp->u.rdymsg);
 
-  /* Scanning ready list.*/
+  /* The thread is marked ready.*/
   tp->state = CH_STATE_READY;
-  tqp = &tp->hdr.queue;
-  cqp = &oip->rlist.queue;
-  do {
-    cqp = cqp->next;
-  } while (((thread_t *)cqp)->prio > tp->prio);
 
-  /* Insertion on prev.*/
-  tqp->next       = cqp;
-  tqp->prev       = cqp->prev;
-  tqp->prev->next = tqp;
-  cqp->prev       = tqp;
-
-  return tp;
+  /* Insertion in the priority queue.*/
+  return (thread_t *)ch_pqueue_insert_ahead(&oip->rlist.pqueue,
+                                            &tp->hdr.pqueue);
 }
 
 /**
@@ -178,12 +160,12 @@ static void __sch_reschedule_behind(os_instance_t *oip) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
-  if (otp->prio == IDLEPRIO) {
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
 
@@ -215,12 +197,12 @@ static void __sch_reschedule_ahead(os_instance_t *oip) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
-  if (otp->prio == IDLEPRIO) {
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
 
@@ -288,16 +270,17 @@ static void __sch_wakeup(void *p) {
  *
  * @notapi
  */
-void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
+void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
 
-  thread_t *cp = (thread_t *)tqp;
+  ch_queue_t *cp = qp;
   do {
-    cp = cp->queue.next;
-  } while ((cp != (thread_t *)tqp) && (cp->prio >= tp->prio));
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
+    cp = cp->next;
+  } while ((cp != qp) &&
+           (((thread_t *)cp)->hdr.pqueue.prio >= ((thread_t *)tp)->hdr.pqueue.prio));
+  tp->next       = cp;
+  tp->prev       = cp->prev;
+  tp->prev->next = tp;
+  cp->prev       = tp;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED */
 
@@ -317,8 +300,7 @@ void chSchObjectInit(os_instance_t *oip,
   port_init(oip);
 
   /* Ready list initialization.*/
-  ch_queue_init(&oip->rlist.queue);
-  oip->rlist.prio = NOPRIO;
+  ch_pqueue_init(&oip->rlist.pqueue);
 
   /* Registry initialization.*/
 #if CH_CFG_USE_REGISTRY == TRUE
@@ -443,12 +425,12 @@ void chSchGoSleepS(tstate_t newstate) {
 #endif
 
   /* Next thread in ready list becomes current.*/
-  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
   /* Handling idle-enter hook.*/
-  if (ntp->prio == IDLEPRIO) {
+  if (ntp->hdr.pqueue.prio == IDLEPRIO) {
     CH_CFG_IDLE_ENTER_HOOK();
   }
 
@@ -521,8 +503,8 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
 
   chDbgCheckClassS();
 
-  chDbgAssert((oip->rlist.queue.next == &oip->rlist.queue) ||
-              (oip->rlist.current->prio >= ((thread_t *)oip->rlist.queue.next)->prio),
+  chDbgAssert((oip->rlist.pqueue.next == &oip->rlist.pqueue) ||
+              (oip->rlist.current->hdr.pqueue.prio >= oip->rlist.pqueue.next->prio),
               "priority order violation");
 
   /* Storing the message to be retrieved by the target thread when it will
@@ -533,7 +515,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
      one then it is just inserted in the ready list else it made
      running immediately and the invoking thread goes in the ready
      list instead.*/
-  if (ntp->prio <= otp->prio) {
+  if (ntp->hdr.pqueue.prio <= otp->hdr.pqueue.prio) {
     (void) __sch_ready_behind(oip, ntp);
   }
   else {
@@ -542,7 +524,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
     otp = __sch_ready_ahead(oip, otp);
 
     /* Handling idle-leave hook.*/
-    if (otp->prio == IDLEPRIO) {
+    if (otp->hdr.pqueue.prio == IDLEPRIO) {
       CH_CFG_IDLE_LEAVE_HOOK();
     }
 
@@ -570,7 +552,7 @@ void chSchRescheduleS(void) {
 
   chDbgCheckClassS();
 
-  if (firstprio(&oip->rlist.queue) > tp->prio) {
+  if (firstprio(&oip->rlist.pqueue) > tp->hdr.pqueue.prio) {
     __sch_reschedule_ahead(oip);
   }
 }
@@ -593,8 +575,8 @@ bool chSchIsPreemptionRequired(void) {
   os_instance_t *oip = currcore;
   thread_t *tp = __sch_get_currthread(oip);
 
-  tprio_t p1 = firstprio(&oip->rlist.queue);
-  tprio_t p2 = tp->prio;
+  tprio_t p1 = firstprio(&oip->rlist.pqueue);
+  tprio_t p2 = tp->hdr.pqueue.prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
   /* If the running thread has not reached its time quantum, reschedule only
@@ -627,12 +609,12 @@ void chSchDoPreemption(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
-  if (otp->prio == IDLEPRIO) {
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
 
@@ -675,8 +657,8 @@ void chSchDoPreemption(void) {
 void chSchPreemption(void) {
   os_instance_t *oip = currcore;
   thread_t *tp = __sch_get_currthread(oip);
-  tprio_t p1 = firstprio(&oip->rlist.queue);
-  tprio_t p2 = tp->prio;
+  tprio_t p1 = firstprio(&oip->rlist.pqueue);
+  tprio_t p2 = tp->hdr.pqueue.prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
   if (tp->ticks > (tslices_t)0) {
@@ -710,7 +692,7 @@ void chSchDoYieldS(void) {
 
   chDbgCheckClassS();
 
-  if (firstprio(&oip->rlist.queue) >= tp->prio) {
+  if (firstprio(&oip->rlist.pqueue) >= tp->hdr.pqueue.prio) {
     __sch_reschedule_behind(oip);
   }
 }
@@ -733,12 +715,12 @@ thread_t *chSchSelectFirstI(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_queue_fifo_remove(&oip->rlist.queue);
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
   __sch_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
-  if (otp->prio == IDLEPRIO) {
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
 
