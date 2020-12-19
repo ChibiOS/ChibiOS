@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed GCC 10 causes warning in factory module (bug #1139).
 - FIX: Fixed OTG_FS error on STM32H7 (bug #1135).
 - FIX: Fixed wrong check on LSI on all STM32 platforms (bug #1131).
 - FIX: Fixed OSAL does not allow 64 bits resolution values (bug #1128).
