@@ -770,7 +770,7 @@ static void rt_test_008_006_execute(void) {
   {
     chMtxUnlock(&m1);
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
   }
   test_end_step(5);
 
@@ -796,7 +796,7 @@ static void rt_test_008_006_execute(void) {
     chMtxUnlockAllS();
     chSysUnlock();
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
     test_assert(m1.cnt == 0, "invalid recursion counter");
   }
   test_end_step(7);
@@ -814,7 +814,7 @@ static void rt_test_008_006_execute(void) {
     test_assert(m1.cnt == 2, "invalid recursion counter");
     chMtxUnlockAll();
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
     test_assert(m1.cnt == 0, "invalid recursion counter");
   }
   test_end_step(8);
