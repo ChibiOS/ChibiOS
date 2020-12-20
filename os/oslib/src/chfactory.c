@@ -87,7 +87,7 @@ static void copy_name(const char *sp, char *dp) {
   unsigned i;
 
   i = 0U;
-  while ((*sp != (char)0) && (i < CH_CFG_FACTORY_MAX_NAMES_LENGTH)) {
+  while ((*sp != (char)0) && (i++ < CH_CFG_FACTORY_MAX_NAMES_LENGTH)) {
     *dp = *sp;
     sp++;
     dp++;
