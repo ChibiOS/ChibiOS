@@ -120,11 +120,11 @@
 #define STM32_MSIRANGE_48M      (11 << 4)   /**< 48MHz nominal.             */
 
 /**
- * @brief   HSE SYSCLK and PLL M devider prescaler.
+ * @brief   HSE SYSCLK and PLL M divider prescaler.
  */
 #define STM32_HSEPRE_MASK       (1 << 20)   /**< HSEPRE mask.               */
-#define STM32_HSEPRE_DIV1       (0 << 20)   /**< HSE devided by 1.          */
-#define STM32_HSEPRE_DIV2       (1 << 20)   /**< HSE devided by 2.          */
+#define STM32_HSEPRE_DIV1       (0 << 20)   /**< HSE divided by 1.          */
+#define STM32_HSEPRE_DIV2       (1 << 20)   /**< HSE divided by 2.          */
 /** @} */
 
 /**
@@ -189,7 +189,45 @@
  * @name    RCC_EXTCFGR register bits definitions
  * @{
  */
-/* TODO(ilya): RFCSS, C2HPREF, SHDHPREF, C2HPRE and SHDHPRE.                */
+#define STM32_SHDHPRE_MASK      (15 << 0)  /**< SHDHPRE field mask.         */
+#define STM32_SHDHPRE_DIV2      (8 << 0)   /**< SYSCLK divided by 2.        */
+#define STM32_SHDHPRE_DIV3      (1 << 0)   /**< SYSCLK divided by 3.        */
+#define STM32_SHDHPRE_DIV4      (9 << 0)   /**< SYSCLK divided by 4.        */
+#define STM32_SHDHPRE_DIV5      (2 << 0)   /**< SYSCLK divided by 5.        */
+#define STM32_SHDHPRE_DIV6      (5 << 0)   /**< SYSCLK divided by 6.        */
+#define STM32_SHDHPRE_DIV8      (10 << 0)  /**< SYSCLK divided by 8.        */
+#define STM32_SHDHPRE_DIV10	    (6 << 0)   /**< SYSCLK divided by 10.       */
+#define STM32_SHDHPRE_DIV16     (11 << 0)  /**< SYSCLK divided by 16.       */
+#define STM32_SHDHPRE_DIV32     (7 << 0)   /**< SYSCLK divided by 32.       */
+#define STM32_SHDHPRE_DIV64     (12 << 0)  /**< SYSCLK divided by 64.       */
+#define STM32_SHDHPRE_DIV128    (13 << 0)  /**< SYSCLK divided by 128.      */
+#define STM32_SHDHPRE_DIV256    (14 << 0)  /**< SYSCLK divided by 256.      */
+#define STM32_SHDHPRE_DIV512    (15 << 0)  /**< SYSCLK divided by 512.      */
+
+#define STM32_C2HPRE_MASK       (15 << 4)  /**< C2HPRE field mask.          */
+#define STM32_C2HPRE_DIV2       (8 << 4)   /**< SYSCLK divided by 2.        */
+#define STM32_C2HPRE_DIV3       (1 << 4)   /**< SYSCLK divided by 3.        */
+#define STM32_C2HPRE_DIV4       (9 << 4)   /**< SYSCLK divided by 4.        */
+#define STM32_C2HPRE_DIV5       (2 << 4)   /**< SYSCLK divided by 5.        */
+#define STM32_C2HPRE_DIV6       (5 << 4)   /**< SYSCLK divided by 6.        */
+#define STM32_C2HPRE_DIV8       (10 << 4)  /**< SYSCLK divided by 8.        */
+#define STM32_C2HPRE_DIV10      (6 << 4)   /**< SYSCLK divided by 10.       */
+#define STM32_C2HPRE_DIV16      (11 << 4)  /**< SYSCLK divided by 16.       */
+#define STM32_C2HPRE_DIV32      (7 << 4)   /**< SYSCLK divided by 32.       */
+#define STM32_C2HPRE_DIV64      (12 << 4)  /**< SYSCLK divided by 64.       */
+#define STM32_C2HPRE_DIV128     (13 << 4)  /**< SYSCLK divided by 128.      */
+#define STM32_C2HPRE_DIV256     (14 << 4)  /**< SYSCLK divided by 256.      */
+#define STM32_C2HPRE_DIV512     (15 << 4)  /**< SYSCLK divided by 512.      */
+
+#define STM32_SHDHPREF_MASK     (1 << 16)  /**< SHDHPREF field mask.        */
+#define STM32_SHDHPREF_HCLK4RDY (1 << 16)  /**< SHDHPREF HCLK4 ready.       */
+
+#define STM32_C2HPREF_MASK      (1 << 17)  /**< C2HPREF field mask.         */
+#define STM32_C2HPREF_HCLK2RDY  (1 << 16)  /**< C2HPREF HCLK2 ready.        */
+
+#define STM32_RFCSS_MASK        (1 << 20)  /**< RFCSS field mask.           */
+#define STM32_RFCSS_HSI16       (0 << 20)  /**< HSI16 on HCLK5 and APB3.    */
+#define STM32_RFCSS_HSEDIV2	    (1 << 20)  /**< HSE/2 on HCLK5 and APB3.    */
 /** @} */
 
 /**
@@ -197,6 +235,7 @@
  * @{
  */
 /* TODO(ilya): TSCEN, CRCEN, SRAM1EN, DMAMUX1, DMA2EN and DMA1EN            */
+#define STM32_DMA1EN_MASK       (1 << 0)  /**< DMA1EN field mask.           */
 /** @} */
 
 /**
@@ -686,7 +725,7 @@
 #define STM32_LSECLK_MAX            32768
 
 /**
- * @brief   Maximum LSE clock frequency.
+ * @brief   Maximum LSE clock frequency using an external source.
  */
 #define STM32_LSECLK_BYP_MAX        1000000
 
@@ -696,7 +735,7 @@
 #define STM32_LSECLK_MIN            32768
 
 /**
- * @brief   Minimum LSE clock frequency.
+ * @brief   Minimum LSE clock frequency using an external source.
  */
 #define STM32_LSECLK_BYP_MIN        32768
 
@@ -708,7 +747,7 @@
 /**
  * @brief   Minimum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MIN             4000000
+#define STM32_PLLIN_MIN             2660000
 
 /**
  * @brief   Maximum VCO clock frequency at current voltage setting.
@@ -718,7 +757,17 @@
 /**
  * @brief   Minimum VCO clock frequency at current voltage setting.
  */
-#define STM32_PLLVCO_MIN            64000000
+#define STM32_PLLVCO_MIN            96000000
+
+/**
+ * @brief   Maximum VCO clock frequency at current voltage setting.
+ */
+#define STM32_PLLSAI1VCO_MAX        344000000
+
+/**
+ * @brief   Minimum VCO clock frequency at current voltage setting.
+ */
+#define STM32_PLLSAI1VCO_MIN        64000000
 
 /**
  * @brief   Maximum PLL-P output clock frequency.
@@ -728,7 +777,7 @@
 /**
  * @brief   Minimum PLL-P output clock frequency.
  */
-#define STM32_PLLP_MIN              2064500
+#define STM32_PLLP_MIN              3000000
 
 /**
  * @brief   Maximum PLL-Q output clock frequency.
@@ -738,7 +787,7 @@
 /**
  * @brief   Minimum PLL-Q output clock frequency.
  */
-#define STM32_PLLQ_MIN              8000000
+#define STM32_PLLQ_MIN              12000000
 
 /**
  * @brief   Maximum PLL-R output clock frequency.
@@ -748,7 +797,7 @@
 /**
  * @brief   Minimum PLL-R output clock frequency.
  */
-#define STM32_PLLR_MIN              8000000
+#define STM32_PLLR_MIN              12000000
 
 /**
  * @brief   Maximum APB1 clock frequency.
@@ -789,7 +838,9 @@
 #define STM32_PLLIN_MAX             16000000
 #define STM32_PLLIN_MIN             4000000
 #define STM32_PLLVCO_MAX            128000000
-#define STM32_PLLVCO_MIN            64000000
+#define STM32_PLLVCO_MIN            96000000
+#define STM32_PLLSAI1VCO_MAX        128000000
+#define STM32_PLLSAI1VCO_MIN        64000000
 #define STM32_PLLP_MAX              26000000
 #define STM32_PLLP_MIN              2064500
 #define STM32_PLLQ_MAX              26000000
@@ -841,7 +892,7 @@
 #endif
 
 /**
- * @brief HSE prescale devider.
+ * @brief HSE prescale divider.
  */
 #if STM32_HSEPRE_VALUE == 1
 #define STM32_HSEPRE                STM32_HSEPRE_DIV1
@@ -1432,7 +1483,8 @@
  * PLLSAI1 VCO frequency range check.
  */
 #if STM32_ACTIVATE_PLLSAI1 &&                                               \
-    ((STM32_PLLSAI1VCO < STM32_PLLVCO_MIN) || (STM32_PLLSAI1VCO > STM32_PLLVCO_MAX))
+    ((STM32_PLLSAI1VCO < STM32_PLLSAI1VCO_MIN) ||                           \
+     (STM32_PLLSAI1VCO > STM32_PLLSAI1VCO_MAX))
 #error "STM32_PLLSAI1VCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
 #endif
 

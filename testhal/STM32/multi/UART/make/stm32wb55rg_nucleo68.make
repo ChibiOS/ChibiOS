@@ -90,9 +90,9 @@ MCU  = cortex-m4
 
 # Imported source files and paths.
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg/stm32wb55rg_nucleo64
-BUILDDIR := ./build/stm32wb55rg_nucleo64
-DEPDIR   := ./.dep/stm32wb55rg_nucleo64
+CONFDIR  := ./cfg/stm32wb55rg_nucleo68
+BUILDDIR := ./build/stm32wb55rg_nucleo68
+DEPDIR   := ./.dep/stm32wb55rg_nucleo68
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -101,7 +101,7 @@ include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32wbxx.m
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32WBxx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO_WB55RG/board.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO68_WB55RG/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
