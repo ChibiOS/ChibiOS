@@ -85,13 +85,14 @@ objects_factory_t ch_factory;
 
 static void copy_name(const char *sp, char *dp) {
   unsigned i;
+  char c;
 
-  i = 0U;
-  while ((*sp != (char)0) && (i++ < CH_CFG_FACTORY_MAX_NAMES_LENGTH)) {
-    *dp = *sp;
-    sp++;
-    dp++;
-  }
+  i = CH_CFG_FACTORY_MAX_NAMES_LENGTH;
+  do {
+    c = *sp++;
+    *dp++ = c;
+    i--;
+  } while ((c != (char)0) && (i > 0U));
 }
 
 static inline void dyn_list_init(dyn_list_t *dlp) {

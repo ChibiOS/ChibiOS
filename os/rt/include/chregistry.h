@@ -83,7 +83,7 @@ typedef struct {
 #define REG_REMOVE(tp) do {                                                 \
   (tp)->older->newer = (tp)->newer;                                         \
   (tp)->newer->older = (tp)->older;                                         \
-} while (0)
+} while (false)
 
 /**
  * @brief   Adds a thread to the registry list.
@@ -97,7 +97,7 @@ typedef struct {
   (tp)->older = (oip)->rlist.older;                                         \
   (tp)->older->newer = (tp);                                                \
   (oip)->rlist.older = (tp);                                                \
-} while (0)
+} while (false)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

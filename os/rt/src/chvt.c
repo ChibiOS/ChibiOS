@@ -60,6 +60,7 @@ static inline bool is_vtlist_empty(delta_list_t *dlhp) {
   return (bool)(dlhp == dlhp->next);
 }
 
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
 /**
  * @brief   Last timer in the list check.
  *
@@ -99,7 +100,6 @@ static inline bool is_timer(delta_list_t *dlhp, delta_list_t *dlp) {
   return (bool)(dlp != dlhp);
 }
 
-#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
 /**
  * @brief   Delta list compression.
  *
@@ -504,7 +504,7 @@ systimestamp_t chVTGetTimeStampI(void) {
   /* Interval between the last time stamp and current time used for a new
      time stamp. Note that this fails if the interval is larger than a
      systime_t type.*/
-  stamp = last + (systimestamp_t)chTimeDiffX((sysinterval_t)last, now);
+  stamp = last + (systimestamp_t)chTimeDiffX((systime_t)last, now);
 
   chDbgAssert(ch.vtlist.laststamp <= stamp, "wrapped");
 

@@ -90,7 +90,6 @@ static void __idle_thread(void *p) {
  *
  * @notapi
  */
-__attribute__((noinline))
 static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
@@ -125,7 +124,6 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
  *
  * @notapi
  */
-__attribute__((noinline))
 static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
@@ -725,7 +723,7 @@ thread_t *chSchSelectFirstI(void) {
   }
 
   /* Placing in ready list ahead of peers.*/
-  __sch_ready_ahead(oip, otp);
+  (void) __sch_ready_ahead(oip, otp);
 
   return ntp;
 }
