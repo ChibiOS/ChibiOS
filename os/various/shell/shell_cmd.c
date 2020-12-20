@@ -164,7 +164,7 @@ static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
 #endif
     chprintf(chp, "%08lx %08lx %08lx %4lu %4lu %9s %12s" SHELL_NEWLINE_STR,
              stklimit, (uint32_t)tp->ctx.sp, (uint32_t)tp,
-             (uint32_t)tp->refs - 1, (uint32_t)tp->prio, states[tp->state],
+             (uint32_t)tp->refs - 1, (uint32_t)tp->hdr.pqueue.prio, states[tp->state],
              tp->name == NULL ? "" : tp->name);
     tp = chRegNextThread(tp);
   } while (tp != NULL);
