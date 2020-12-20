@@ -244,6 +244,16 @@ struct port_context {
   stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
 
 /**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_PRIORITY(n) false
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n) false
+
+/**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
@@ -321,7 +331,9 @@ extern "C" {
 /**
  * @brief   Port-related initialization code.
  */
-static inline void port_init(void) {
+static inline void port_init(os_instance_t *oip) {
+
+  (void)oip;
 
   port_irq_sts = (syssts_t)0;
   port_isr_context_flag = false;
