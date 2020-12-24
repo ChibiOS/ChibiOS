@@ -119,11 +119,11 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a threads queue.
+ * @brief   Structure representing a threads queue.
  */
-typedef struct ch_threads_queue {
+struct ch_threads_queue {
   ch_queue_t            queue;      /**< @brief Threads queue header.       */
-} threads_queue_t;
+};
 
 /**
  * @brief   Structure representing a thread.
@@ -302,11 +302,6 @@ struct ch_thread {
 };
 
 /**
- * @brief   Type of a Virtual Timer callback function.
- */
-typedef void (*vtfunc_t)(void *p);
-
-/**
  * @brief   Type of a Virtual Timer structure.
  */
 typedef struct ch_delta_list delta_list_t;
@@ -321,23 +316,23 @@ struct ch_delta_list {
 };
 
 /**
- * @brief   Type of a Virtual Timer.
+ * @brief   Structure representing a Virtual Timer.
  */
-typedef struct ch_virtual_timer {
+struct ch_virtual_timer {
   delta_list_t          dlist;      /**< @brief Delta list element.         */
   vtfunc_t              func;       /**< @brief Timer callback function
                                                 pointer.                    */
   void                  *par;       /**< @brief Timer callback function
                                                 parameter.                  */
-} virtual_timer_t;
+};
 
 /**
- * @brief   Type of virtual timers list header.
+ * @brief   Structure representing a virtual timers list header.
  * @note    The timers list is implemented as a double link bidirectional list
  *          in order to make the unlink time constant, the reset of a virtual
  *          timer is often used in the code.
  */
-typedef struct ch_virtual_timers_list {
+struct ch_virtual_timers_list {
   delta_list_t          dlist;      /**< @brief Delta list header.          */
 #if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
   volatile systime_t    systime;    /**< @brief System Time counter.        */
@@ -349,7 +344,7 @@ typedef struct ch_virtual_timers_list {
   systime_t             lasttime;   /**< @brief System time of the last
                                                 tick event.                 */
 #endif
-} virtual_timers_list_t;
+};
 
 /**
  * @extends threads_queue_t
