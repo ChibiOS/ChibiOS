@@ -208,19 +208,21 @@ static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
  * @iclass
  */
 static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
+  virtual_timers_list_t *vtlp = &ch.vtlist;
+  delta_list_t *dlp = &vtlp->dlist;
 
   chDbgCheckClassI();
 
-  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.next) {
+  if (dlp == dlp->next) {
     return false;
   }
 
   if (timep != NULL) {
 #if CH_CFG_ST_TIMEDELTA == 0
-    *timep = ch.vtlist.next->delta;
+    *timep = dlp->next->delta;
 #else
-    *timep = (ch.vtlist.next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
-             chTimeDiffX(ch.vtlist.lasttime, chVTGetSystemTimeX());
+    *timep = (dlp->next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
+             chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX());
 #endif
   }
 

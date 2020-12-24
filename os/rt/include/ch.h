@@ -104,6 +104,7 @@ extern "C" {
 /* Base kernel headers.*/
 #include "chtypes.h" /* CHTODO: Rename and rework.*/
 #include "chsystypes.h"
+#include "chlists.h"
 #include "chdebug.h"
 #include "chtime.h"
 #include "chalign.h"

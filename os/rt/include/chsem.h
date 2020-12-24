@@ -50,7 +50,7 @@
  * @brief   Semaphore structure.
  */
 typedef struct ch_semaphore {
-  threads_queue_t       queue;      /**< @brief Queue of the threads sleeping
+  ch_queue_t            queue;      /**< @brief Queue of the threads sleeping
                                                 on this semaphore.          */
   cnt_t                 cnt;        /**< @brief The semaphore counter.      */
 } semaphore_t;
@@ -68,7 +68,7 @@ typedef struct ch_semaphore {
  * @param[in] n         the counter initial value, this value must be
  *                      non-negative
  */
-#define _SEMAPHORE_DATA(name, n) {_THREADS_QUEUE_DATA(name.queue), n}
+#define _SEMAPHORE_DATA(name, n) {_CH_QUEUE_DATA(name.queue), n}
 
 /**
  * @brief   Static semaphore initializer.

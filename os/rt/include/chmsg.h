@@ -168,7 +168,7 @@ static inline bool chMsgIsPendingI(thread_t *tp) {
 
   chDbgCheckClassI();
 
-  return (bool)(tp->msgqueue.next != (thread_t *)&tp->msgqueue);
+  return (bool)(tp->msgqueue.next != &tp->msgqueue);
 }
 
 /**
