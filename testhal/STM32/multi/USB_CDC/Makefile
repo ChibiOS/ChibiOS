@@ -29,7 +29,7 @@ all:
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32WB55RG_Nucleo64 =============================
-	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo64.make all
+	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo.make all
 	@echo ====================================================================
 	@echo
 
@@ -47,7 +47,7 @@ clean:
 	@echo
 	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make clean
 	@echo
-	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo64.make clean
+	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo.make clean
 	@echo
 
 #
