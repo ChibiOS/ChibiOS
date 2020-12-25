@@ -929,50 +929,27 @@
  * @{
  */
 /**
- * @brief   Enables the USB1_OTG_FS peripheral clock.
+ * @brief   Enables the USB1_OTG_HS peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableUSB1_OTG_FS(lp) rccEnableAHB1(RCC_AHB1ENR_USB2OTGFSEN, lp)
+#define rccEnableUSB1_OTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_USB1OTGHSEN, lp)
 
 /**
- * @brief   Disables the USB1_OTG_FS peripheral clock.
+ * @brief   Disables the USB1_OTG_HS peripheral clock.
  *
  * @api
  */
-#define rccDisableUSB1_OTG_FS() rccDisableAHB1(RCC_AHB1ENR_USB2OTGFSEN)
+#define rccDisableUSB1_OTG_HS() rccDisableAHB1(RCC_AHB1ENR_USB1OTGHSEN)
 
 /**
- * @brief   Resets the USB1_OTG_FS peripheral.
+ * @brief   Resets the USB1_OTG_HS peripheral.
  *
  * @api
  */
-#define rccResetUSB1_OTG_FS() rccResetAHB1(RCC_AHB1RSTR_USB2OTGFSRST)
-
-/**
- * @brief   Enables the USB2_OTG_HS peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccEnableUSB2_OTG_HS(lp) rccEnableAHB1(RCC_AHB1ENR_USB2OTGHSEN, lp)
-
-/**
- * @brief   Disables the USB2_OTG_HS peripheral clock.
- *
- * @api
- */
-#define rccDisableUSB2_OTG_HS() rccDisableAHB1(RCC_AHB1ENR_USB2OTGHSEN)
-
-/**
- * @brief   Resets the USB2_OTG_HS peripheral.
- *
- * @api
- */
-#define rccResetUSB2_OTG_HS() rccResetAHB1(RCC_AHB1RSTR_USB2OTGHSRST)
+#define rccResetUSB1_OTG_HS() rccResetAHB1(RCC_AHB1RSTR_USB1OTGHSRST)
 
 /**
  * @brief   Enables the USB1_OTG_HS ULPI peripheral clock.
@@ -989,6 +966,29 @@
  * @api
  */
 #define rccDisableUSB1_HSULPI() rccDisableAHB1(RCC_AHB1ENR_USB1OTGHSULPIEN)
+
+/**
+ * @brief   Enables the USB2_OTG_FS peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSB2_OTG_FS(lp) rccEnableAHB1(RCC_AHB1ENR_USB2OTGFSEN, lp)
+
+/**
+ * @brief   Disables the USB2_OTG_FS peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUSB2_OTG_FS() rccDisableAHB1(RCC_AHB1ENR_USB2OTGFSEN)
+
+/**
+ * @brief   Resets the USB2_OTG_FS peripheral.
+ *
+ * @api
+ */
+#define rccResetUSB2_OTG_FS() rccResetAHB1(RCC_AHB1RSTR_USB2OTGFSRST)
 
 /**
  * @brief   Enables the USB2_OTG_HS ULPI peripheral clock.
