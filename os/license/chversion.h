@@ -51,7 +51,7 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "20.3.2"
+#define CH_VERSION              "20.3.3"
 
 /**
  * @brief   ChibiOS version release year.
@@ -66,12 +66,12 @@
 /**
  * @brief   ChibiOS version patch number.
  */
-#define CH_VERSION_PATCH        2
+#define CH_VERSION_PATCH        3
 
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Praiano"
+#define CH_VERSION_NICKNAME     "Dragonea"
 /** @} */
 
 /*===========================================================================*/

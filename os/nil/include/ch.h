@@ -53,7 +53,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "4.0.0"
+#define CH_KERNEL_VERSION       "4.0.1"
 
 /**
  * @brief   Kernel version major number.
@@ -68,7 +68,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         0
+#define CH_KERNEL_PATCH         1
 /** @} */
 
 /**
@@ -914,7 +914,7 @@ struct nil_system {
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define _THREADS_QUEUE_DECL(name)                                           \
+#define THREADS_QUEUE_DECL(name)                                            \
   threads_queue_t name = _THREADS_QUEUE_DATA(name)
 /** @} */
 
