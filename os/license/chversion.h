@@ -71,7 +71,7 @@
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Scala"
+#define CH_VERSION_NICKNAME     "Albori"
 /** @} */
 
 /*===========================================================================*/
