@@ -87,6 +87,7 @@ static void rt_test_003_001_execute(void) {
                             chTimeAddX(time, 100 + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
+  test_end_step(1);
 
   /* [3.1.2] The current system time is read then a sleep is performed
      for 100000 microseconds and on exit the system time is verified
@@ -99,6 +100,7 @@ static void rt_test_003_001_execute(void) {
                             chTimeAddX(time, TIME_US2I(100000) + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
+  test_end_step(2);
 
   /* [3.1.3] The current system time is read then a sleep is performed
      for 100 milliseconds and on exit the system time is verified
@@ -111,6 +113,7 @@ static void rt_test_003_001_execute(void) {
                             chTimeAddX(time, TIME_MS2I(100) + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
+  test_end_step(3);
 
   /* [3.1.4] The current system time is read then a sleep is performed
      for 1 second and on exit the system time is verified again.*/
@@ -122,6 +125,7 @@ static void rt_test_003_001_execute(void) {
                             chTimeAddX(time, TIME_S2I(1) + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
+  test_end_step(4);
 
   /* [3.1.5] Function chThdSleepUntil() is tested with a timeline of
      "now" + 100 ticks.*/
@@ -133,6 +137,7 @@ static void rt_test_003_001_execute(void) {
                             chTimeAddX(time, 100 + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
   }
+  test_end_step(5);
 }
 
 static const testcase_t rt_test_003_001 = {
@@ -174,6 +179,7 @@ static void rt_test_003_002_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(1);
 
   /* [3.2.2] Creating 5 threads with decreasing priority, execution
      sequence is tested.*/
@@ -187,6 +193,7 @@ static void rt_test_003_002_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(2);
 
   /* [3.2.3] Creating 5 threads with pseudo-random priority, execution
      sequence is tested.*/
@@ -200,6 +207,7 @@ static void rt_test_003_002_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_003_002 = {
@@ -236,6 +244,7 @@ static void rt_test_003_003_execute(void) {
     test_assert(p1 == prio, "unexpected returned priority level");
     test_assert(chThdGetPriorityX() == prio + 1, "unexpected priority level");
   }
+  test_end_step(1);
 
   /* [3.3.2] Thread priority is returned to the previous value then a
      check is performed.*/
@@ -245,6 +254,7 @@ static void rt_test_003_003_execute(void) {
     test_assert(p1 == prio + 1, "unexpected returned priority level");
     test_assert(chThdGetPriorityX() == prio, "unexpected priority level");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_003_003 = {
@@ -284,9 +294,10 @@ static void rt_test_003_004_execute(void) {
   test_set_step(1);
   {
     prio = chThdGetPriorityX();
-    chThdGetSelfX()->prio += 2;
+    chThdGetSelfX()->hdr.pqueue.prio += 2;
     test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");
   }
+  test_end_step(1);
 
   /* [3.4.2] Raising thread priority above original priority but below
      the boosted level.*/
@@ -294,27 +305,30 @@ static void rt_test_003_004_execute(void) {
   {
     p1 = chThdSetPriority(prio + 1);
     test_assert(p1 == prio, "unexpected returned priority level");
-    test_assert(chThdGetSelfX()->prio == prio + 2, "unexpected priority level");
+    test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 2, "unexpected priority level");
     test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real priority level");
   }
+  test_end_step(2);
 
   /* [3.4.3] Raising thread priority above the boosted level.*/
   test_set_step(3);
   {
     p1 = chThdSetPriority(prio + 3);
     test_assert(p1 == prio + 1, "unexpected returned priority level");
-    test_assert(chThdGetSelfX()->prio == prio + 3, "unexpected priority level");
+    test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 3, "unexpected priority level");
     test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority level");
   }
+  test_end_step(3);
 
   /* [3.4.4] Restoring original conditions.*/
   test_set_step(4);
   {
     chSysLock();
-    chThdGetSelfX()->prio = prio;
+    chThdGetSelfX()->hdr.pqueue.prio = prio;
     chThdGetSelfX()->realprio = prio;
     chSysUnlock();
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_003_004 = {

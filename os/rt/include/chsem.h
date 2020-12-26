@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsem.h
+ * @file    rt/include/chsem.h
  * @brief   Semaphores macros and structures.
  *
  * @addtogroup semaphores
@@ -50,7 +50,7 @@
  * @brief   Semaphore structure.
  */
 typedef struct ch_semaphore {
-  threads_queue_t       queue;      /**< @brief Queue of the threads sleeping
+  ch_queue_t            queue;      /**< @brief Queue of the threads sleeping
                                                 on this semaphore.          */
   cnt_t                 cnt;        /**< @brief The semaphore counter.      */
 } semaphore_t;
@@ -68,7 +68,7 @@ typedef struct ch_semaphore {
  * @param[in] n         the counter initial value, this value must be
  *                      non-negative
  */
-#define _SEMAPHORE_DATA(name, n) {_THREADS_QUEUE_DATA(name.queue), n}
+#define _SEMAPHORE_DATA(name, n) {_CH_QUEUE_DATA(name.queue), n}
 
 /**
  * @brief   Static semaphore initializer.
@@ -89,8 +89,8 @@ typedef struct ch_semaphore {
 extern "C" {
 #endif
   void chSemObjectInit(semaphore_t *sp, cnt_t n);
-  void chSemReset(semaphore_t *sp, cnt_t n);
-  void chSemResetI(semaphore_t *sp, cnt_t n);
+  void chSemResetWithMessage(semaphore_t *sp, cnt_t n, msg_t msg);
+  void chSemResetWithMessageI(semaphore_t *sp, cnt_t n, msg_t msg);
   msg_t chSemWait(semaphore_t *sp);
   msg_t chSemWaitS(semaphore_t *sp);
   msg_t chSemWaitTimeout(semaphore_t *sp, sysinterval_t timeout);
@@ -106,6 +106,46 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
+ * @note    This function implicitly sends @p MSG_RESET as message.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ * @param[in] n         the new value of the semaphore counter. The value must
+ *                      be non-negative.
+ *
+ * @api
+ */
+static inline void chSemReset(semaphore_t *sp, cnt_t n) {
+
+  chSemResetWithMessage(sp, n, MSG_RESET);
+}
+
+/**
+ * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ * @note    This function implicitly sends @p MSG_RESET as message.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ * @param[in] n         the new value of the semaphore counter. The value must
+ *                      be non-negative.
+ *
+ * @iclass
+ */
+static inline void chSemResetI(semaphore_t *sp, cnt_t n) {
+
+  chSemResetWithMessageI(sp, n, MSG_RESET);
+}
 
 /**
  * @brief   Decreases the semaphore counter.

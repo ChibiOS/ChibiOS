@@ -90,7 +90,7 @@ ROMCONST chdebug_t ch_debug = {
   (uint8_t)sizeof (void *),
   (uint8_t)sizeof (systime_t),
   (uint8_t)sizeof (thread_t),
-  (uint8_t)_offsetof(thread_t, prio),
+  (uint8_t)_offsetof(thread_t, hdr.pqueue.prio),
   (uint8_t)_offsetof(thread_t, ctx),
   (uint8_t)_offsetof(thread_t, newer),
   (uint8_t)_offsetof(thread_t, older),

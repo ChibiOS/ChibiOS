@@ -82,6 +82,7 @@ static void rt_test_007_001_execute(void) {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() + 1,
                                    msg_thread1, chThdGetSelfX());
   }
+  test_end_step(1);
 
   /* [7.1.2] Waiting for four messages then testing the receive
      order.*/
@@ -98,6 +99,7 @@ static void rt_test_007_001_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCD", "invalid sequence");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_007_001 = {

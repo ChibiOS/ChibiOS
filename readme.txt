@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed C strict aliasing rules violation causes test cases to fail
+       (bug #1138).
 - FIX: Fixed GCC 10 causes warning in factory module (bug #1139).
 - FIX: Fixed OTG_FS error on STM32H7 (bug #1135).
 - FIX: Fixed wrong check on LSI on all STM32 platforms (bug #1131).

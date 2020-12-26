@@ -91,6 +91,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "ready list check failed");
   }
+  test_end_step(1);
 
   /* [2.1.2] Testing Virtual Timers List integrity.*/
   test_set_step(2);
@@ -100,6 +101,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "virtual timers list check failed");
   }
+  test_end_step(2);
 
   /* [2.1.3] Testing Registry List integrity.*/
   test_set_step(3);
@@ -109,6 +111,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "registry list check failed");
   }
+  test_end_step(3);
 
   /* [2.1.4] Testing Port-defined integrity.*/
   test_set_step(4);
@@ -118,6 +121,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "port layer check failed");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_002_001 = {
@@ -155,6 +159,7 @@ static void rt_test_002_002_execute(void) {
     sts = chSysGetStatusAndLockX();
     chSysRestoreStatusX(sts);
   }
+  test_end_step(1);
 
   /* [2.2.2] Testing chSysGetStatusAndLockX() and
      chSysRestoreStatusX(), reentrant case.*/
@@ -165,6 +170,7 @@ static void rt_test_002_002_execute(void) {
     chSysRestoreStatusX(sts);
     chSysUnlock();
   }
+  test_end_step(2);
 
   /* [2.2.3] Testing chSysUnconditionalLock().*/
   test_set_step(3);
@@ -173,6 +179,7 @@ static void rt_test_002_002_execute(void) {
     chSysUnconditionalLock();
     chSysUnlock();
   }
+  test_end_step(3);
 
   /* [2.2.4] Testing chSysUnconditionalUnlock().*/
   test_set_step(4);
@@ -181,6 +188,7 @@ static void rt_test_002_002_execute(void) {
     chSysUnconditionalUnlock();
     chSysUnconditionalUnlock();
   }
+  test_end_step(4);
 
   /* [2.2.5] Testing from ISR context using a virtual timer.*/
   test_set_step(5);
@@ -191,6 +199,7 @@ static void rt_test_002_002_execute(void) {
 
     test_assert(chVTIsArmed(&vt) == false, "timer still armed");
   }
+  test_end_step(5);
 }
 
 static const testcase_t rt_test_002_002 = {
@@ -222,6 +231,7 @@ static void rt_test_002_003_execute(void) {
     chSysSuspend();
     chSysEnable();
   }
+  test_end_step(1);
 }
 
 static const testcase_t rt_test_002_003 = {
@@ -256,6 +266,7 @@ static void rt_test_002_004_execute(void) {
 #endif
     }
   }
+  test_end_step(1);
 }
 
 static const testcase_t rt_test_002_004 = {

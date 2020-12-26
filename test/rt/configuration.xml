@@ -991,7 +991,7 @@ test_assert(chThdGetPriorityX() == prio, "unexpected priority level");]]></value
                     </tags>
                     <code>
                       <value><![CDATA[prio = chThdGetPriorityX();
-chThdGetSelfX()->prio += 2;
+chThdGetSelfX()->hdr.pqueue.prio += 2;
 test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");]]></value>
                     </code>
                   </step>
@@ -1005,7 +1005,7 @@ test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");]]></v
                     <code>
                       <value><![CDATA[p1 = chThdSetPriority(prio + 1);
 test_assert(p1 == prio, "unexpected returned priority level");
-test_assert(chThdGetSelfX()->prio == prio + 2, "unexpected priority level");
+test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 2, "unexpected priority level");
 test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real priority level");]]></value>
                     </code>
                   </step>
@@ -1019,7 +1019,7 @@ test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real pri
                     <code>
                       <value><![CDATA[p1 = chThdSetPriority(prio + 3);
 test_assert(p1 == prio + 1, "unexpected returned priority level");
-test_assert(chThdGetSelfX()->prio == prio + 3, "unexpected priority level");
+test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 3, "unexpected priority level");
 test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority level");]]></value>
                     </code>
                   </step>
@@ -1032,7 +1032,7 @@ test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority lev
                     </tags>
                     <code>
                       <value><![CDATA[chSysLock();
-chThdGetSelfX()->prio = prio;
+chThdGetSelfX()->hdr.pqueue.prio = prio;
 chThdGetSelfX()->realprio = prio;
 chSysUnlock();]]></value>
                     </code>
@@ -1334,7 +1334,7 @@ msg_t msg;]]></value>
                     <code>
                       <value><![CDATA[msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
 test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -1351,7 +1351,7 @@ test_assert(sem1.cnt == 0, "counter not zero");]]></value>
 msg = chSemWaitTimeout(&sem1, TIME_MS2I(500));
 test_wait_threads();
 test_assert(msg == MSG_OK, "wrong wake-up message");
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -1368,7 +1368,7 @@ for (i = 0; i < 5; i++) {
   test_emit_token('A' + i);
   msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
   test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-  test_assert(queue_isempty(&sem1.queue), "queue not empty");
+  test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
   test_assert(sem1.cnt == 0, "counter not zero");
 }
 test_assert_sequence("ABCDE", "invalid sequence");
@@ -1473,7 +1473,7 @@ test_assert_sequence("A", "invalid sequence");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[chSemSignalWait(&sem1, &sem1);
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -1486,7 +1486,7 @@ test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[chSemSignalWait(&sem1, &sem1);
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -2178,7 +2178,7 @@ test_assert(!b, "not locked");]]></value>
                     <code>
                       <value><![CDATA[chMtxUnlock(&m1);
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");]]></value>
                     </code>
                   </step>
                   <step>
@@ -2207,7 +2207,7 @@ test_assert(!b, "not locked");
 
 chMtxUnlockAll();
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");]]></value>
                     </code>
                   </step>
                   <step>
@@ -2303,7 +2303,7 @@ test_assert(m1.owner != NULL, "not owned");]]></value>
                     <code>
                       <value><![CDATA[chMtxUnlock(&m1);
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");]]></value>
                     </code>
                   </step>
                   <step>
@@ -2336,7 +2336,7 @@ chSysLock();
 chMtxUnlockAllS();
 chSysUnlock();
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
 test_assert(m1.cnt == 0, "invalid recursion counter");]]></value>
                     </code>
                   </step>
@@ -2357,7 +2357,7 @@ test_assert(m1.owner != NULL, "not owned");
 test_assert(m1.cnt == 2, "invalid recursion counter");
 chMtxUnlockAll();
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
 test_assert(m1.cnt == 0, "invalid recursion counter");]]></value>
                     </code>
                   </step>

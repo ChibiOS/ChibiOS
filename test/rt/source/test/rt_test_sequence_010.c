@@ -171,6 +171,7 @@ static void rt_test_010_001_execute(void) {
   {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, bmk_thread1, NULL);
   }
+  test_end_step(1);
 
   /* [10.1.2] The number of messages exchanged is counted in a one
      second time window.*/
@@ -179,6 +180,7 @@ static void rt_test_010_001_execute(void) {
     n = msg_loop_test(threads[0]);
     test_wait_threads();
   }
+  test_end_step(2);
 
   /* [10.1.3] Score is printed.*/
   test_set_step(3);
@@ -189,6 +191,7 @@ static void rt_test_010_001_execute(void) {
     test_printn(n << 1);
     test_println(" ctxswc/S");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_010_001 = {
@@ -232,6 +235,7 @@ static void rt_test_010_002_execute(void) {
   {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, bmk_thread1, NULL);
   }
+  test_end_step(1);
 
   /* [10.2.2] The number of messages exchanged is counted in a one
      second time window.*/
@@ -240,6 +244,7 @@ static void rt_test_010_002_execute(void) {
     n = msg_loop_test(threads[0]);
     test_wait_threads();
   }
+  test_end_step(2);
 
   /* [10.2.3] Score is printed.*/
   test_set_step(3);
@@ -250,6 +255,7 @@ static void rt_test_010_002_execute(void) {
     test_printn(n << 1);
     test_println(" ctxswc/S");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_010_002 = {
@@ -296,6 +302,7 @@ static void rt_test_010_003_execute(void) {
   {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, bmk_thread1, NULL);
   }
+  test_end_step(1);
 
   /* [10.3.2] Four threads are started at a lower priority than the
      current thread.*/
@@ -306,6 +313,7 @@ static void rt_test_010_003_execute(void) {
     threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-4, bmk_thread3, NULL);
     threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-5, bmk_thread3, NULL);
   }
+  test_end_step(2);
 
   /* [10.3.3] The number of messages exchanged is counted in a one
      second time window.*/
@@ -314,6 +322,7 @@ static void rt_test_010_003_execute(void) {
     n = msg_loop_test(threads[0]);
     test_wait_threads();
   }
+  test_end_step(3);
 
   /* [10.3.4] Score is printed.*/
   test_set_step(4);
@@ -324,6 +333,7 @@ static void rt_test_010_003_execute(void) {
     test_printn(n << 1);
     test_println(" ctxswc/S");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_010_003 = {
@@ -363,6 +373,7 @@ static void rt_test_010_004_execute(void) {
     tp = threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1,
                                         bmk_thread4, NULL);
   }
+  test_end_step(1);
 
   /* [10.4.2] Waking up the thread as fast as possible in a one second
      time window.*/
@@ -386,6 +397,7 @@ static void rt_test_010_004_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(2);
 
   /* [10.4.3] Stopping the target thread.*/
   test_set_step(3);
@@ -395,6 +407,7 @@ static void rt_test_010_004_execute(void) {
     chSysUnlock();
     test_wait_threads();
   }
+  test_end_step(3);
 
   /* [10.4.4] Score is printed.*/
   test_set_step(4);
@@ -403,6 +416,7 @@ static void rt_test_010_004_execute(void) {
     test_printn(n * 2);
     test_println(" ctxswc/S");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_010_004 = {
@@ -451,6 +465,7 @@ static void rt_test_010_005_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [10.5.2] Score is printed.*/
   test_set_step(2);
@@ -459,6 +474,7 @@ static void rt_test_010_005_execute(void) {
     test_printn(n);
     test_println(" threads/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_010_005 = {
@@ -512,6 +528,7 @@ static void rt_test_010_006_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [10.6.2] Score is printed.*/
   test_set_step(2);
@@ -520,6 +537,7 @@ static void rt_test_010_006_execute(void) {
     test_printn(n);
     test_println(" threads/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_010_006 = {
@@ -572,6 +590,7 @@ static void rt_test_010_007_execute(void) {
     threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+2, bmk_thread7, NULL);
     threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+1, bmk_thread7, NULL);
   }
+  test_end_step(1);
 
   /* [10.7.2] The semaphore is reset waking up the five threads. The
      operation is repeated continuously in a one-second time window.*/
@@ -590,6 +609,7 @@ static void rt_test_010_007_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(2);
 
   /* [10.7.3] The five threads are terminated.*/
   test_set_step(3);
@@ -598,6 +618,7 @@ static void rt_test_010_007_execute(void) {
     chSemReset(&sem1, 0);
     test_wait_threads();
   }
+  test_end_step(3);
 
   /* [10.7.4] The score is printed.*/
   test_set_step(4);
@@ -608,6 +629,7 @@ static void rt_test_010_007_execute(void) {
     test_printn(n * 6);
     test_println(" ctxswc/S");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_010_007 = {
@@ -652,6 +674,7 @@ static void rt_test_010_008_execute(void) {
     threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
     threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, bmk_thread8, (void *)&n);
   }
+  test_end_step(1);
 
   /* [10.8.2] Waiting one second then terminating the 5 threads.*/
   test_set_step(2);
@@ -660,6 +683,7 @@ static void rt_test_010_008_execute(void) {
     test_terminate_threads();
     test_wait_threads();
   }
+  test_end_step(2);
 
   /* [10.8.3] The score is printed.*/
   test_set_step(3);
@@ -668,6 +692,7 @@ static void rt_test_010_008_execute(void) {
     test_printn(n);
     test_println(" ctxswc/S");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_010_008 = {
@@ -720,6 +745,7 @@ static void rt_test_010_009_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [10.9.2] The score is printed.*/
   test_set_step(2);
@@ -728,6 +754,7 @@ static void rt_test_010_009_execute(void) {
     test_printn(n * 2);
     test_println(" timers/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_010_009 = {
@@ -791,6 +818,7 @@ static void rt_test_010_010_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [10.10.2] The score is printed.*/
   test_set_step(2);
@@ -799,6 +827,7 @@ static void rt_test_010_010_execute(void) {
     test_printn(n * 4);
     test_println(" wait+signal/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_010_010 = {
@@ -863,6 +892,7 @@ static void rt_test_010_011_execute(void) {
 #endif
     } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 
   /* [10.11.2] The score is printed.*/
   test_set_step(2);
@@ -871,6 +901,7 @@ static void rt_test_010_011_execute(void) {
     test_printn(n * 4);
     test_println(" lock+unlock/S");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_010_011 = {
@@ -909,6 +940,7 @@ static void rt_test_010_012_execute(void) {
     test_printn(sizeof(ch_system_t));
     test_println(" bytes");
   }
+  test_end_step(1);
 
   /* [10.12.2] The size of a thread structure is printed.*/
   test_set_step(2);
@@ -917,6 +949,7 @@ static void rt_test_010_012_execute(void) {
     test_printn(sizeof(thread_t));
     test_println(" bytes");
   }
+  test_end_step(2);
 
   /* [10.12.3] The size of a virtual timer structure is printed.*/
   test_set_step(3);
@@ -925,6 +958,7 @@ static void rt_test_010_012_execute(void) {
     test_printn(sizeof(virtual_timer_t));
     test_println(" bytes");
   }
+  test_end_step(3);
 
   /* [10.12.4] The size of a semaphore structure is printed.*/
   test_set_step(4);
@@ -935,6 +969,7 @@ static void rt_test_010_012_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(4);
 
   /* [10.12.5] The size of a mutex is printed.*/
   test_set_step(5);
@@ -945,6 +980,7 @@ static void rt_test_010_012_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(5);
 
   /* [10.12.6] The size of a condition variable is printed.*/
   test_set_step(6);
@@ -955,6 +991,7 @@ static void rt_test_010_012_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(6);
 
   /* [10.12.7] The size of an event source is printed.*/
   test_set_step(7);
@@ -965,6 +1002,7 @@ static void rt_test_010_012_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(7);
 
   /* [10.12.8] The size of an event listener is printed.*/
   test_set_step(8);
@@ -975,6 +1013,7 @@ static void rt_test_010_012_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(8);
 
   /* [10.12.9] The size of a mailbox is printed.*/
   test_set_step(9);
@@ -985,6 +1024,7 @@ static void rt_test_010_012_execute(void) {
     test_println(" bytes");
 #endif
   }
+  test_end_step(9);
 }
 
 static const testcase_t rt_test_010_012 = {

@@ -264,12 +264,14 @@ static void rt_test_006_001_execute(void) {
   {
     prio = chThdGetPriorityX();
   }
+  test_end_step(1);
 
   /* [6.1.2] Locking the mutex.*/
   test_set_step(2);
   {
     chMtxLock(&m1);
   }
+  test_end_step(2);
 
   /* [6.1.3] Five threads are created that try to lock and unlock the
      mutex then terminate. The threads are created in ascending
@@ -282,6 +284,7 @@ static void rt_test_006_001_execute(void) {
     threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread1, "B");
     threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread1, "A");
   }
+  test_end_step(3);
 
   /* [6.1.4] Unlocking the mutex, the threads will wakeup in priority
      order because the mutext queue is an ordered one.*/
@@ -292,6 +295,7 @@ static void rt_test_006_001_execute(void) {
     test_assert(prio == chThdGetPriorityX(), "wrong priority level");
     test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_006_001 = {
@@ -341,6 +345,7 @@ static void rt_test_006_002_execute(void) {
   {
     time = test_wait_tick();
   }
+  test_end_step(1);
 
   /* [6.2.2] The three contenders threads are created and let run
      atomically, the goals sequence is tested, the threads must
@@ -353,6 +358,7 @@ static void rt_test_006_002_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABC", "invalid sequence");
   }
+  test_end_step(2);
 
   /* [6.2.3] Testing that all threads completed within the specified
      time windows (100mS...100mS+ALLOWED_DELAY).*/
@@ -362,6 +368,7 @@ static void rt_test_006_002_execute(void) {
                             chTimeAddX(time, TIME_MS2I(100) + ALLOWED_DELAY),
                             "out of time window");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_006_002 = {
@@ -412,6 +419,7 @@ static void rt_test_006_003_execute(void) {
   {
     time = test_wait_tick();
   }
+  test_end_step(1);
 
   /* [6.3.2] The five contenders threads are created and let run
      atomically, the goals sequence is tested, the threads must
@@ -426,6 +434,7 @@ static void rt_test_006_003_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(2);
 
   /* [6.3.3] Testing that all threads completed within the specified
      time windows (110mS...110mS+ALLOWED_DELAY).*/
@@ -435,6 +444,7 @@ static void rt_test_006_003_execute(void) {
                             chTimeAddX(time, TIME_MS2I(110) + ALLOWED_DELAY),
                             "out of time window");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_006_003 = {
@@ -497,6 +507,7 @@ static void rt_test_006_004_execute(void) {
     pa = p + 1;
     pb = p + 2;
   }
+  test_end_step(1);
 
   /* [6.4.2] Spawning threads A and B at priorities P(A) and P(B).*/
   test_set_step(2);
@@ -504,6 +515,7 @@ static void rt_test_006_004_execute(void) {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, pa, thread4A, "A");
     threads[1] = chThdCreateStatic(wa[1], WA_SIZE, pb, thread4B, "B");
   }
+  test_end_step(2);
 
   /* [6.4.3] Locking the mutex M1 before thread A has a chance to lock
      it. The priority must not change because A has not yet reached
@@ -513,6 +525,7 @@ static void rt_test_006_004_execute(void) {
     chMtxLock(&m1);
     test_assert(chThdGetPriorityX() == p, "wrong priority level");
   }
+  test_end_step(3);
 
   /* [6.4.4] Waiting 100mS, this makes thread A reach chMtxLock(M1) and
      get the mutex. This must boost the priority of the current thread
@@ -522,6 +535,7 @@ static void rt_test_006_004_execute(void) {
     chThdSleepMilliseconds(100);
     test_assert(chThdGetPriorityX() == pa, "wrong priority level");
   }
+  test_end_step(4);
 
   /* [6.4.5] Locking the mutex M2 before thread B has a chance to lock
      it. The priority must not change because B has not yet reached
@@ -531,6 +545,7 @@ static void rt_test_006_004_execute(void) {
     chMtxLock(&m2);
     test_assert(chThdGetPriorityX() == pa, "wrong priority level");
   }
+  test_end_step(5);
 
   /* [6.4.6] Waiting 100mS, this makes thread B reach chMtxLock(M2) and
      get the mutex. This must boost the priority of the current thread
@@ -540,6 +555,7 @@ static void rt_test_006_004_execute(void) {
     chThdSleepMilliseconds(100);
     test_assert(chThdGetPriorityX() == pb, "wrong priority level");
   }
+  test_end_step(6);
 
   /* [6.4.7] Unlocking M2, the priority should fall back to P(A).*/
   test_set_step(7);
@@ -547,6 +563,7 @@ static void rt_test_006_004_execute(void) {
     chMtxUnlock(&m2);
     test_assert(chThdGetPriorityX() == pa, "wrong priority level");
   }
+  test_end_step(7);
 
   /* [6.4.8] Unlocking M1, the priority should fall back to P(0).*/
   test_set_step(8);
@@ -554,6 +571,7 @@ static void rt_test_006_004_execute(void) {
     chMtxUnlock(&m1);
     test_assert(chThdGetPriorityX() == p, "wrong priority level");
   }
+  test_end_step(8);
 }
 
 static const testcase_t rt_test_006_004 = {
@@ -604,6 +622,7 @@ static void rt_test_006_005_execute(void) {
   {
     prio = chThdGetPriorityX();
   }
+  test_end_step(1);
 
   /* [6.5.2] Locking the mutex first time, it must be possible because
      it is not owned.*/
@@ -612,6 +631,7 @@ static void rt_test_006_005_execute(void) {
     b = chMtxTryLock(&m1);
     test_assert(b, "already locked");
   }
+  test_end_step(2);
 
   /* [6.5.3] Locking the mutex second time, it must fail because it is
      already owned.*/
@@ -620,6 +640,7 @@ static void rt_test_006_005_execute(void) {
     b = chMtxTryLock(&m1);
     test_assert(!b, "not locked");
   }
+  test_end_step(3);
 
   /* [6.5.4] Unlocking the mutex then it must not be owned anymore and
      the queue must be empty.*/
@@ -627,14 +648,16 @@ static void rt_test_006_005_execute(void) {
   {
     chMtxUnlock(&m1);
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
   }
+  test_end_step(4);
 
   /* [6.5.5] Testing that priority has not changed after operations.*/
   test_set_step(5);
   {
     test_assert(chThdGetPriorityX() == prio, "wrong priority level");
   }
+  test_end_step(5);
 
   /* [6.5.6] Testing chMtxUnlockAll() behavior.*/
   test_set_step(6);
@@ -646,14 +669,16 @@ static void rt_test_006_005_execute(void) {
 
     chMtxUnlockAll();
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
   }
+  test_end_step(6);
 
   /* [6.5.7] Testing that priority has not changed after operations.*/
   test_set_step(7);
   {
     test_assert(chThdGetPriorityX() == prio, "wrong priority level");
   }
+  test_end_step(7);
 }
 
 static const testcase_t rt_test_006_005 = {
@@ -710,6 +735,7 @@ static void rt_test_006_006_execute(void) {
   {
     prio = chThdGetPriorityX();
   }
+  test_end_step(1);
 
   /* [6.6.2] Locking the mutex first time, it must be possible because
      it is not owned.*/
@@ -718,6 +744,7 @@ static void rt_test_006_006_execute(void) {
     b = chMtxTryLock(&m1);
     test_assert(b, "already locked");
   }
+  test_end_step(2);
 
   /* [6.6.3] Locking the mutex second time, it must be possible because
      it is recursive.*/
@@ -726,6 +753,7 @@ static void rt_test_006_006_execute(void) {
     b = chMtxTryLock(&m1);
     test_assert(b, "already locked");
   }
+  test_end_step(3);
 
   /* [6.6.4] Unlocking the mutex then it must be still owned because
      recursivity.*/
@@ -734,6 +762,7 @@ static void rt_test_006_006_execute(void) {
     chMtxUnlock(&m1);
     test_assert(m1.owner != NULL, "not owned");
   }
+  test_end_step(4);
 
   /* [6.6.5] Unlocking the mutex then it must not be owned anymore and
      the queue must be empty.*/
@@ -741,14 +770,16 @@ static void rt_test_006_006_execute(void) {
   {
     chMtxUnlock(&m1);
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
   }
+  test_end_step(5);
 
   /* [6.6.6] Testing that priority has not changed after operations.*/
   test_set_step(6);
   {
     test_assert(chThdGetPriorityX() == prio, "wrong priority level");
   }
+  test_end_step(6);
 
   /* [6.6.7] Testing consecutive chMtxTryLock()/chMtxTryLockS() calls
      and a final chMtxUnlockAllS().*/
@@ -765,9 +796,10 @@ static void rt_test_006_006_execute(void) {
     chMtxUnlockAllS();
     chSysUnlock();
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
     test_assert(m1.cnt == 0, "invalid recursion counter");
   }
+  test_end_step(7);
 
   /* [6.6.8] Testing consecutive chMtxLock()/chMtxLockS() calls and a
      final chMtxUnlockAll().*/
@@ -782,15 +814,17 @@ static void rt_test_006_006_execute(void) {
     test_assert(m1.cnt == 2, "invalid recursion counter");
     chMtxUnlockAll();
     test_assert(m1.owner == NULL, "still owned");
-    test_assert(queue_isempty(&m1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
     test_assert(m1.cnt == 0, "invalid recursion counter");
   }
+  test_end_step(8);
 
   /* [6.6.9] Testing that priority has not changed after operations.*/
   test_set_step(9);
   {
     test_assert(chThdGetPriorityX() == prio, "wrong priority level");
   }
+  test_end_step(9);
 }
 
 static const testcase_t rt_test_006_006 = {
@@ -845,6 +879,7 @@ static void rt_test_006_007_execute(void) {
     threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread6, "B");
     threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread6, "A");
   }
+  test_end_step(1);
 
   /* [6.7.2] Atomically signaling the condition variable five times
      then waiting for the threads to terminate in priority order, the
@@ -862,6 +897,7 @@ static void rt_test_006_007_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_006_007 = {
@@ -914,6 +950,7 @@ static void rt_test_006_008_execute(void) {
     threads[3] = chThdCreateStatic(wa[3], WA_SIZE, prio+4, thread6, "B");
     threads[4] = chThdCreateStatic(wa[4], WA_SIZE, prio+5, thread6, "A");
   }
+  test_end_step(1);
 
   /* [6.8.2] Broarcasting on the condition variable then waiting for
      the threads to terminate in priority order, the order is tested.*/
@@ -923,6 +960,7 @@ static void rt_test_006_008_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_006_008 = {
@@ -981,6 +1019,7 @@ static void rt_test_006_009_execute(void) {
   {
     prio = chThdGetPriorityX();
   }
+  test_end_step(1);
 
   /* [6.9.2] Thread A is created at priority P(+1), it locks M2, locks
      M1 and goes to wait on C1.*/
@@ -988,6 +1027,7 @@ static void rt_test_006_009_execute(void) {
   {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, prio+1, thread8, "A");
   }
+  test_end_step(2);
 
   /* [6.9.3] Thread C is created at priority P(+2), it enqueues on M1
      and boosts TA priority at P(+2).*/
@@ -995,6 +1035,7 @@ static void rt_test_006_009_execute(void) {
   {
     threads[1] = chThdCreateStatic(wa[1], WA_SIZE, prio+2, thread6, "C");
   }
+  test_end_step(3);
 
   /* [6.9.4] Thread B is created at priority P(+3), it enqueues on M2
      and boosts TA priority at P(+3).*/
@@ -1002,6 +1043,7 @@ static void rt_test_006_009_execute(void) {
   {
     threads[2] = chThdCreateStatic(wa[2], WA_SIZE, prio+3, thread9, "B");
   }
+  test_end_step(4);
 
   /* [6.9.5] Signaling C1: TA wakes up, unlocks M1 and priority goes to
      P(+2). TB locks M1, unlocks M1 and completes. TA unlocks M2 and
@@ -1010,12 +1052,14 @@ static void rt_test_006_009_execute(void) {
   {
     chCondSignal(&c1);
   }
+  test_end_step(5);
 
   /* [6.9.6] Signaling C1: TC wakes up, unlocks M1 and completes.*/
   test_set_step(6);
   {
     chCondSignal(&c1);
   }
+  test_end_step(6);
 
   /* [6.9.7] Checking the order of operations.*/
   test_set_step(7);
@@ -1023,6 +1067,7 @@ static void rt_test_006_009_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABC", "invalid sequence");
   }
+  test_end_step(7);
 }
 
 static const testcase_t rt_test_006_009 = {

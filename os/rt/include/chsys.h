@@ -368,11 +368,11 @@ static inline void chSysUnlock(void) {
   _stats_stop_measure_crit_thd();
 
   /* The following condition can be triggered by the use of i-class functions
-     in a critical section not followed by a chSchResceduleS(), this means
+     in a critical section not followed by a chSchRescheduleS(), this means
      that the current thread has a lower priority than the next thread in
      the ready list.*/
-  chDbgAssert((ch.rlist.queue.next == (thread_t *)&ch.rlist.queue) ||
-              (ch.rlist.current->prio >= ch.rlist.queue.next->prio),
+  chDbgAssert((ch.rlist.pqueue.next == &ch.rlist.pqueue) ||
+              (ch.rlist.current->hdr.pqueue.prio >= ch.rlist.pqueue.next->prio),
               "priority order violation");
 
   port_unlock();
@@ -460,7 +460,7 @@ static inline void chSysUnconditionalUnlock(void) {
  */
 static inline thread_t *chSysGetIdleThreadX(void) {
 
-  return ch.rlist.queue.prev;
+  return (thread_t *)ch.rlist.pqueue.prev;
 }
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 

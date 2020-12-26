@@ -64,9 +64,9 @@
 /*===========================================================================*/
 
 #if CH_CFG_USE_MESSAGES_PRIORITY == TRUE
-#define msg_insert(tp, qp) queue_prio_insert(tp, qp)
+#define msg_insert(tp, qp) ch_sch_prio_insert(&tp->hdr.queue, qp)
 #else
-#define msg_insert(tp, qp) queue_insert(tp, qp)
+#define msg_insert(tp, qp) ch_queue_insert(&tp->hdr.queue, qp)
 #endif
 
 /*===========================================================================*/
@@ -125,7 +125,7 @@ thread_t *chMsgWait(void) {
   if (!chMsgIsPendingI(currp)) {
     chSchGoSleepS(CH_STATE_WTMSG);
   }
-  tp = queue_fifo_remove(&currp->msgqueue);
+  tp = (thread_t *)ch_queue_fifo_remove(&currp->msgqueue);
   tp->state = CH_STATE_SNDMSG;
   chSysUnlock();
 

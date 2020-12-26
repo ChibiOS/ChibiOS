@@ -124,6 +124,7 @@ static void rt_test_005_001_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
     test_assert(MSG_OK == msg, "wrong returned message");
   }
+  test_end_step(1);
 
   /* [5.1.2] The function chSemSignal() is invoked, after return the
      counter is tested.*/
@@ -132,6 +133,7 @@ static void rt_test_005_001_execute(void) {
     chSemSignal(&sem1);
     test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");
   }
+  test_end_step(2);
 
   /* [5.1.3] The function chSemReset() is invoked, after return the
      counter is tested.*/
@@ -140,6 +142,7 @@ static void rt_test_005_001_execute(void) {
     chSemReset(&sem1, 2);
     test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_005_001 = {
@@ -184,6 +187,7 @@ static void rt_test_005_002_execute(void) {
     threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+4, thread1, "D");
     threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+2, thread1, "E");
   }
+  test_end_step(1);
 
   /* [5.2.2] The semaphore is signaled 5 times. The thread activation
      sequence is tested.*/
@@ -201,6 +205,7 @@ static void rt_test_005_002_execute(void) {
     test_assert_sequence("ABCDE", "invalid sequence");
 #endif
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_005_002 = {
@@ -241,9 +246,10 @@ static void rt_test_005_003_execute(void) {
   {
     msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
     test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
+  test_end_step(1);
 
   /* [5.3.2] Testing non-timeout condition.*/
   test_set_step(2);
@@ -253,9 +259,10 @@ static void rt_test_005_003_execute(void) {
     msg = chSemWaitTimeout(&sem1, TIME_MS2I(500));
     test_wait_threads();
     test_assert(msg == MSG_OK, "wrong wake-up message");
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
+  test_end_step(2);
 
   /* [5.3.3] Testing timeout condition.*/
   test_set_step(3);
@@ -265,7 +272,7 @@ static void rt_test_005_003_execute(void) {
       test_emit_token('A' + i);
       msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
       test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-      test_assert(queue_isempty(&sem1.queue), "queue not empty");
+      test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
       test_assert(sem1.cnt == 0, "counter not zero");
     }
     test_assert_sequence("ABCDE", "invalid sequence");
@@ -273,6 +280,7 @@ static void rt_test_005_003_execute(void) {
                             chTimeAddX(target_time, ALLOWED_DELAY),
                             "out of time window");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_005_003 = {
@@ -307,6 +315,7 @@ static void rt_test_005_004_execute(void) {
   {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, "A");
   }
+  test_end_step(1);
 
   /* [5.4.2] The semaphore counter is increased by two, it is then
      tested to be one, the thread must have completed.*/
@@ -320,6 +329,7 @@ static void rt_test_005_004_execute(void) {
     test_assert_lock(chSemGetCounterI(&sem1) == 1, "invalid counter");
     test_assert_sequence("A", "invalid sequence");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_005_004 = {
@@ -368,6 +378,7 @@ static void rt_test_005_005_execute(void) {
   {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread3, 0);
   }
+  test_end_step(1);
 
   /* [5.5.2] The function chSemSignalWait() is invoked by specifying
      the same semaphore for the wait and signal phases. The counter
@@ -375,9 +386,10 @@ static void rt_test_005_005_execute(void) {
   test_set_step(2);
   {
     chSemSignalWait(&sem1, &sem1);
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
+  test_end_step(2);
 
   /* [5.5.3] The function chSemSignalWait() is invoked again by
      specifying the same semaphore for the wait and signal phases. The
@@ -385,9 +397,10 @@ static void rt_test_005_005_execute(void) {
   test_set_step(3);
   {
     chSemSignalWait(&sem1, &sem1);
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
+    test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
     test_assert(sem1.cnt == 0, "counter not zero");
   }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_005_005 = {
@@ -436,6 +449,7 @@ static void rt_test_005_006_execute(void) {
     chBSemObjectInit(&bsem, true);
     test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");
   }
+  test_end_step(1);
 
   /* [5.6.2] Resetting the binary semaphore in "taken" state, the state
      must not change.*/
@@ -444,6 +458,7 @@ static void rt_test_005_006_execute(void) {
     chBSemReset(&bsem, true);
     test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");
   }
+  test_end_step(2);
 
   /* [5.6.3] Starting a signaler thread at a lower priority.*/
   test_set_step(3);
@@ -451,6 +466,7 @@ static void rt_test_005_006_execute(void) {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE,
                                    chThdGetPriorityX()-1, thread4, &bsem);
   }
+  test_end_step(3);
 
   /* [5.6.4] Waiting for the binary semaphore to be signaled, the
      semaphore is expected to be taken.*/
@@ -460,6 +476,7 @@ static void rt_test_005_006_execute(void) {
     test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");
     test_assert(msg == MSG_OK, "unexpected message");
   }
+  test_end_step(4);
 
   /* [5.6.5] Signaling the binary semaphore, checking the binary
      semaphore state to be "not taken" and the underlying counter
@@ -470,6 +487,7 @@ static void rt_test_005_006_execute(void) {
     test_assert_lock(chBSemGetStateI(&bsem) ==false, "still taken");
     test_assert_lock(chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");
   }
+  test_end_step(5);
 
   /* [5.6.6] Signaling the binary semaphore again, the internal state
      must not change from "not taken".*/
@@ -479,6 +497,7 @@ static void rt_test_005_006_execute(void) {
     test_assert_lock(chBSemGetStateI(&bsem) == false, "taken");
     test_assert_lock(chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");
   }
+  test_end_step(6);
 }
 
 static const testcase_t rt_test_005_006 = {

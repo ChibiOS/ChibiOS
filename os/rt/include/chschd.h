@@ -119,18 +119,10 @@
 /*===========================================================================*/
 
 /**
- * @brief   Generic threads single link list, it works like a stack.
- */
-struct ch_threads_list {
-  thread_t              *next;      /**< @brief Next in the list/queue.     */
-};
-
-/**
- * @brief   Generic threads bidirectional linked list header and element.
+ * @brief   Structure representing a threads queue.
  */
 struct ch_threads_queue {
-  thread_t              *next;      /**< @brief Next in the list/queue.     */
-  thread_t              *prev;      /**< @brief Previous in the queue.      */
+  ch_queue_t            queue;      /**< @brief Threads queue header.       */
 };
 
 /**
@@ -140,8 +132,12 @@ struct ch_threads_queue {
  *          by shrinking this structure.
  */
 struct ch_thread {
-  threads_queue_t       queue;      /**< @brief Threads queue header.       */
-  tprio_t               prio;       /**< @brief Thread priority.            */
+  union {
+    ch_list_t           list;       /**< @brief Threads lists element.      */
+    ch_queue_t          queue;      /**< @brief Threads queues element.     */
+    ch_priority_queue_t pqueue;     /**< @brief Threads ordered queues
+                                         element.                           */
+  } hdr;
   struct port_context   ctx;        /**< @brief Processor context.          */
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   thread_t              *newer;     /**< @brief Newer registry element.     */
@@ -261,13 +257,13 @@ struct ch_thread {
   /**
    * @brief   Termination waiting list.
    */
-  threads_list_t        waiting;
+  ch_list_t             waiting;
 #endif
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Messages queue.
    */
-  threads_queue_t       msgqueue;
+  ch_queue_t            msgqueue;
 #endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /**
@@ -306,14 +302,24 @@ struct ch_thread {
 };
 
 /**
- * @extends virtual_timers_list_t
- *
- * @brief   Virtual Timer descriptor structure.
+ * @brief   Type of a Virtual Timer structure.
+ */
+typedef struct ch_delta_list delta_list_t;
+
+/**
+ * @brief   Virtual Timer delta list element and header structure.
+ */
+struct ch_delta_list {
+  delta_list_t          *next;      /**< @brief Next timer in the list.     */
+  delta_list_t          *prev;      /**< @brief Previous timer in the list. */
+  sysinterval_t         delta;      /**< @brief Time delta before timeout.  */
+};
+
+/**
+ * @brief   Structure representing a Virtual Timer.
  */
 struct ch_virtual_timer {
-  virtual_timer_t       *next;      /**< @brief Next timer in the list.     */
-  virtual_timer_t       *prev;      /**< @brief Previous timer in the list. */
-  sysinterval_t         delta;      /**< @brief Time delta before timeout.  */
+  delta_list_t          dlist;      /**< @brief Delta list element.         */
   vtfunc_t              func;       /**< @brief Timer callback function
                                                 pointer.                    */
   void                  *par;       /**< @brief Timer callback function
@@ -321,17 +327,13 @@ struct ch_virtual_timer {
 };
 
 /**
- * @brief   Virtual timers list header.
+ * @brief   Structure representing a virtual timers list header.
  * @note    The timers list is implemented as a double link bidirectional list
  *          in order to make the unlink time constant, the reset of a virtual
  *          timer is often used in the code.
  */
 struct ch_virtual_timers_list {
-  virtual_timer_t       *next;      /**< @brief Next timer in the delta
-                                                list.                       */
-  virtual_timer_t       *prev;      /**< @brief Last timer in the delta
-                                                list.                       */
-  sysinterval_t         delta;      /**< @brief Must be initialized to -1.  */
+  delta_list_t          dlist;      /**< @brief Delta list header.          */
 #if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
   volatile systime_t    systime;    /**< @brief System Time counter.        */
 #endif
@@ -348,18 +350,30 @@ struct ch_virtual_timers_list {
  * @extends threads_queue_t
  */
 struct ch_ready_list {
-  threads_queue_t       queue;      /**< @brief Threads queue.              */
-  tprio_t               prio;       /**< @brief This field must be
-                                                initialized to zero.        */
-  struct port_context   ctx;        /**< @brief Not used, present because
-                                                offsets.                    */
+  /**
+   * @brief     Threads ordered queues header.
+   * @note      The priority field must be initialized to zero.
+   */
+  ch_priority_queue_t   pqueue;
+  /**
+   * @brief Not used, present because offsets.
+   */
+  struct port_context   ctx;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  thread_t              *newer;     /**< @brief Newer registry element.     */
-  thread_t              *older;     /**< @brief Older registry element.     */
+  /**
+   * @brief     Newer registry element.
+   */
+  thread_t              *newer;
+  /**
+   *  @brief    Older registry element.
+   */
+  thread_t              *older;
 #endif
   /* End of the fields shared with the thread_t structure.*/
-  thread_t              *current;   /**< @brief The currently running
-                                                thread.                     */
+  /**
+   * @brief     The currently running thread.
+   */
+  thread_t              *current;
 };
 
 /**
@@ -473,13 +487,7 @@ extern "C" {
   void chSchDoRescheduleAhead(void);
   void chSchDoReschedule(void);
 #if CH_CFG_OPTIMIZE_SPEED == FALSE
-  void queue_prio_insert(thread_t *tp, threads_queue_t *tqp);
-  void queue_insert(thread_t *tp, threads_queue_t *tqp);
-  thread_t *queue_fifo_remove(threads_queue_t *tqp);
-  thread_t *queue_lifo_remove(threads_queue_t *tqp);
-  thread_t *queue_dequeue(thread_t *tp);
-  void list_insert(thread_t *tp, threads_list_t *tlp);
-  thread_t *list_remove(threads_list_t *tlp);
+  void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp);
 #endif /* CH_CFG_OPTIMIZE_SPEED == FALSE */
 #ifdef __cplusplus
 }
@@ -489,144 +497,20 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-/**
- * @brief   Threads list initialization.
- *
- * @param[in] tlp       pointer to the threads list object
- *
- * @notapi
- */
-static inline void list_init(threads_list_t *tlp) {
-
-  tlp->next = (thread_t *)tlp;
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads list is empty.
- *
- * @param[in] tlp       pointer to the threads list object
- * @return              The status of the list.
- *
- * @notapi
- */
-static inline bool list_isempty(threads_list_t *tlp) {
-
-  return (bool)(tlp->next == (thread_t *)tlp);
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads list is not empty.
- *
- * @param[in] tlp       pointer to the threads list object
- * @return              The status of the list.
- *
- * @notapi
- */
-static inline bool list_notempty(threads_list_t *tlp) {
-
-  return (bool)(tlp->next != (thread_t *)tlp);
-}
-
-/**
- * @brief   Threads queue initialization.
- *
- * @param[in] tqp       pointer to the threads queue object
- *
- * @notapi
- */
-static inline void queue_init(threads_queue_t *tqp) {
-
-  tqp->next = (thread_t *)tqp;
-  tqp->prev = (thread_t *)tqp;
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads queue is empty.
- *
- * @param[in] tqp       pointer to the threads queue object
- * @return              The status of the queue.
- *
- * @notapi
- */
-static inline bool queue_isempty(const threads_queue_t *tqp) {
-
-  return (bool)(tqp->next == (const thread_t *)tqp);
-}
-
-/**
- * @brief   Evaluates to @p true if the specified threads queue is not empty.
- *
- * @param[in] tqp       pointer to the threads queue object
- * @return              The status of the queue.
- *
- * @notapi
- */
-static inline bool queue_notempty(const threads_queue_t *tqp) {
-
-  return (bool)(tqp->next != (const thread_t *)tqp);
-}
-
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
 #if CH_CFG_OPTIMIZE_SPEED == TRUE
-static inline void list_insert(thread_t *tp, threads_list_t *tlp) {
+static inline void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
 
-  tp->queue.next = tlp->next;
-  tlp->next = tp;
-}
-
-static inline thread_t *list_remove(threads_list_t *tlp) {
-
-  thread_t *tp = tlp->next;
-  tlp->next = tp->queue.next;
-
-  return tp;
-}
-
-static inline void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
-
-  thread_t *cp = (thread_t *)tqp;
+  ch_queue_t *cp = qp;
   do {
-    cp = cp->queue.next;
-  } while ((cp != (thread_t *)tqp) && (cp->prio >= tp->prio));
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
-}
-
-static inline void queue_insert(thread_t *tp, threads_queue_t *tqp) {
-
-  tp->queue.next             = (thread_t *)tqp;
-  tp->queue.prev             = tqp->prev;
-  tp->queue.prev->queue.next = tp;
-  tqp->prev                  = tp;
-}
-
-static inline thread_t *queue_fifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->next;
-
-  tqp->next             = tp->queue.next;
-  tqp->next->queue.prev = (thread_t *)tqp;
-
-  return tp;
-}
-
-static inline thread_t *queue_lifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->prev;
-
-  tqp->prev             = tp->queue.prev;
-  tqp->prev->queue.next = (thread_t *)tqp;
-
-  return tp;
-}
-
-static inline thread_t *queue_dequeue(thread_t *tp) {
-
-  tp->queue.prev->queue.next = tp->queue.next;
-  tp->queue.next->queue.prev = tp->queue.prev;
-
-  return tp;
+    cp = cp->next;
+  } while ((cp != qp) &&
+           (((thread_t *)cp)->hdr.pqueue.prio >= ((thread_t *)tp)->hdr.pqueue.prio));
+  tp->next       = cp;
+  tp->prev       = cp->prev;
+  tp->prev->next = tp;
+  cp->prev       = tp;
 }
 #endif /* CH_CFG_OPTIMIZE_SPEED == TRUE */
 
@@ -645,7 +529,7 @@ static inline bool chSchIsRescRequiredI(void) {
 
   chDbgCheckClassI();
 
-  return firstprio(&ch.rlist.queue) > currp->prio;
+  return firstprio(&ch.rlist.pqueue) > currp->hdr.pqueue.prio;
 }
 
 /**
@@ -663,7 +547,7 @@ static inline bool chSchCanYieldS(void) {
 
   chDbgCheckClassS();
 
-  return firstprio(&ch.rlist.queue) >= currp->prio;
+  return firstprio(&ch.rlist.pqueue) >= currp->hdr.pqueue.prio;
 }
 
 /**
@@ -690,8 +574,8 @@ static inline void chSchDoYieldS(void) {
  * @special
  */
 static inline void chSchPreemption(void) {
-  tprio_t p1 = firstprio(&ch.rlist.queue);
-  tprio_t p2 = currp->prio;
+  tprio_t p1 = firstprio(&ch.rlist.pqueue);
+  tprio_t p2 = currp->hdr.pqueue.prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
   if (currp->ticks > (tslices_t)0) {

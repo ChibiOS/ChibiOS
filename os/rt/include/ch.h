@@ -48,7 +48,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "6.0.4"
+#define CH_KERNEL_VERSION       "6.0.5"
 
 /**
  * @brief   Kernel version major number.
@@ -63,7 +63,7 @@
 /**
  * @brief   Kernel version patch number.
  */
-#define CH_KERNEL_PATCH         4
+#define CH_KERNEL_PATCH         5
 /** @} */
 
 /**
@@ -102,8 +102,9 @@ extern "C" {
 #endif
 
 /* Base kernel headers.*/
-#include "chtypes.h" /* TODO: Rename and rework.*/
+#include "chtypes.h" /* CHTODO: Rename and rework.*/
 #include "chsystypes.h"
+#include "chlists.h"
 #include "chdebug.h"
 #include "chtime.h"
 #include "chalign.h"

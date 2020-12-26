@@ -106,6 +106,7 @@ static void rt_test_008_001_execute(void) {
   {
     chEvtObjectInit(&es1);
   }
+  test_end_step(1);
 
   /* [8.1.2] Two Event Listeners are registered on the Event Source,
      the Event Source is tested to have listeners.*/
@@ -115,6 +116,7 @@ static void rt_test_008_001_execute(void) {
     chEvtRegisterMask(&es1, &el2, 2);
     test_assert_lock(chEvtIsListeningI(&es1), "no listener");
   }
+  test_end_step(2);
 
   /* [8.1.3] An Event Listener is unregistered, the Event Source must
      still have listeners.*/
@@ -123,6 +125,7 @@ static void rt_test_008_001_execute(void) {
     chEvtUnregister(&es1, &el1);
     test_assert_lock(chEvtIsListeningI(&es1), "no listener");
   }
+  test_end_step(3);
 
   /* [8.1.4] An Event Listener is unregistered, the Event Source must
      not have listeners.*/
@@ -131,6 +134,7 @@ static void rt_test_008_001_execute(void) {
     chEvtUnregister(&es1, &el2);
     test_assert_lock(!chEvtIsListeningI(&es1), "stuck listener");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_008_001 = {
@@ -166,6 +170,7 @@ static void rt_test_008_002_execute(void) {
     chEvtDispatch(evhndl, 7);
     test_assert_sequence("ABC", "invalid sequence");
   }
+  test_end_step(1);
 }
 
 static const testcase_t rt_test_008_002 = {
@@ -206,6 +211,7 @@ static void rt_test_008_003_execute(void) {
   {
     chEvtAddEvents(7);
   }
+  test_end_step(1);
 
   /* [8.3.2] Calling chEvtWaitOne() three times, each time a single
      flag must be returned in order of priority.*/
@@ -220,6 +226,7 @@ static void rt_test_008_003_execute(void) {
     m = chEvtGetAndClearEvents(ALL_EVENTS);
     test_assert(m == 0, "stuck event");
   }
+  test_end_step(2);
 
   /* [8.3.3] Getting current time and starting a signaler thread, the
      thread will set an event flag after 50mS.*/
@@ -229,6 +236,7 @@ static void rt_test_008_003_execute(void) {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
+  test_end_step(3);
 
   /* [8.3.4] Calling chEvtWaitOne() then verifying that the event has
      been received after 50mS and that the event flags mask has been
@@ -244,6 +252,7 @@ static void rt_test_008_003_execute(void) {
     test_assert(m == 0, "stuck event");
     test_wait_threads();
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_008_003 = {
@@ -284,6 +293,7 @@ static void rt_test_008_004_execute(void) {
   {
     chEvtAddEvents(5);
   }
+  test_end_step(1);
 
   /* [8.4.2] Calling chEvtWaitAny() one time, the two flags must be
      returned.*/
@@ -294,6 +304,7 @@ static void rt_test_008_004_execute(void) {
     m = chEvtGetAndClearEvents(ALL_EVENTS);
     test_assert(m == 0, "stuck event");
   }
+  test_end_step(2);
 
   /* [8.4.3] Getting current time and starting a signaler thread, the
      thread will set an event flag after 50mS.*/
@@ -303,6 +314,7 @@ static void rt_test_008_004_execute(void) {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
+  test_end_step(3);
 
   /* [8.4.4] Calling chEvtWaitAny() then verifying that the event has
      been received after 50mS and that the event flags mask has been
@@ -318,6 +330,7 @@ static void rt_test_008_004_execute(void) {
     test_assert(m == 0, "stuck event");
     test_wait_threads();
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_008_004 = {
@@ -359,6 +372,7 @@ static void rt_test_008_005_execute(void) {
   {
     chEvtAddEvents(5);
   }
+  test_end_step(1);
 
   /* [8.5.2] Calling chEvtWaitAll() one time, the two flags must be
      returned.*/
@@ -369,12 +383,14 @@ static void rt_test_008_005_execute(void) {
     m = chEvtGetAndClearEvents(ALL_EVENTS);
     test_assert(m == 0, "stuck event");
   }
+  test_end_step(2);
 
   /* [8.5.3] Setting one event flag.*/
   test_set_step(3);
   {
     chEvtAddEvents(4);
   }
+  test_end_step(3);
 
   /* [8.5.4] Getting current time and starting a signaler thread, the
      thread will set another event flag after 50mS.*/
@@ -384,6 +400,7 @@ static void rt_test_008_005_execute(void) {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread3, chThdGetSelfX());
   }
+  test_end_step(4);
 
   /* [8.5.5] Calling chEvtWaitAll() then verifying that both event
      flags have been received after 50mS and that the event flags mask
@@ -399,6 +416,7 @@ static void rt_test_008_005_execute(void) {
     test_assert(m == 0, "stuck event");
     test_wait_threads();
   }
+  test_end_step(5);
 }
 
 static const testcase_t rt_test_008_005 = {
@@ -448,6 +466,7 @@ static void rt_test_008_006_execute(void) {
     m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_IMMEDIATE);
     test_assert(m == 0, "spurious event");
   }
+  test_end_step(1);
 
   /* [8.6.2] The functions are invoked first with a 50mS timeout, the
      timeout condition is tested.*/
@@ -460,6 +479,7 @@ static void rt_test_008_006_execute(void) {
     m = chEvtWaitAllTimeout(ALL_EVENTS, TIME_MS2I(50));
     test_assert(m == 0, "spurious event");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_008_006 = {
@@ -507,6 +527,7 @@ static void rt_test_008_007_execute(void) {
     chEvtRegisterMask(&es1, &el1, 1);
     chEvtRegisterMask(&es2, &el2, 4);
   }
+  test_end_step(1);
 
   /* [8.7.2] Getting current time and starting a broadcaster thread,
      the thread broadcast the first Event Source immediately and the
@@ -517,6 +538,7 @@ static void rt_test_008_007_execute(void) {
     threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
                                    evt_thread7, "A");
   }
+  test_end_step(2);
 
   /* [8.7.3] Calling chEvtWaitAll() then verifying that both event
      flags have been received after 50mS and that the event flags mask
@@ -531,6 +553,7 @@ static void rt_test_008_007_execute(void) {
     test_assert(m == 0, "stuck event");
     test_wait_threads();
   }
+  test_end_step(3);
 
   /* [8.7.4] Unregistering from the Event Sources.*/
   test_set_step(4);
@@ -540,6 +563,7 @@ static void rt_test_008_007_execute(void) {
     test_assert(!chEvtIsListeningI(&es1), "stuck listener");
     test_assert(!chEvtIsListeningI(&es2), "stuck listener");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_008_007 = {

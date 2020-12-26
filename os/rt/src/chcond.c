@@ -76,7 +76,7 @@ void chCondObjectInit(condition_variable_t *cp) {
 
   chDbgCheck(cp != NULL);
 
-  queue_init(&cp->queue);
+  ch_queue_init(&cp->queue);
 }
 
 /**
@@ -91,8 +91,8 @@ void chCondSignal(condition_variable_t *cp) {
   chDbgCheck(cp != NULL);
 
   chSysLock();
-  if (queue_notempty(&cp->queue)) {
-    chSchWakeupS(queue_fifo_remove(&cp->queue), MSG_OK);
+  if (ch_queue_notempty(&cp->queue)) {
+    chSchWakeupS((thread_t *)ch_queue_fifo_remove(&cp->queue), MSG_OK);
   }
   chSysUnlock();
 }
@@ -113,8 +113,8 @@ void chCondSignalI(condition_variable_t *cp) {
   chDbgCheckClassI();
   chDbgCheck(cp != NULL);
 
-  if (queue_notempty(&cp->queue)) {
-    thread_t *tp = queue_fifo_remove(&cp->queue);
+  if (ch_queue_notempty(&cp->queue)) {
+    thread_t *tp = (thread_t *)ch_queue_fifo_remove(&cp->queue);
     tp->u.rdymsg = MSG_OK;
     (void) chSchReadyI(tp);
   }
@@ -154,8 +154,8 @@ void chCondBroadcastI(condition_variable_t *cp) {
   /* Empties the condition variable queue and inserts all the threads into the
      ready list in FIFO order. The wakeup message is set to @p MSG_RESET in
      order to make a chCondBroadcast() detectable from a chCondSignal().*/
-  while (queue_notempty(&cp->queue)) {
-    chSchReadyI(queue_fifo_remove(&cp->queue))->u.rdymsg = MSG_RESET;
+  while (ch_queue_notempty(&cp->queue)) {
+    chSchReadyI((thread_t *)ch_queue_fifo_remove(&cp->queue))->u.rdymsg = MSG_RESET;
   }
 }
 
@@ -217,7 +217,7 @@ msg_t chCondWaitS(condition_variable_t *cp) {
   /* Start waiting on the condition variable, on exit the mutex is taken
      again.*/
   ctp->u.wtobjp = cp;
-  queue_prio_insert(ctp, &cp->queue);
+  ch_sch_prio_insert(&ctp->hdr.queue, &cp->queue);
   chSchGoSleepS(CH_STATE_WTCOND);
   msg = ctp->u.rdymsg;
   chMtxLockS(mp);
@@ -306,7 +306,7 @@ msg_t chCondWaitTimeoutS(condition_variable_t *cp, sysinterval_t timeout) {
   /* Start waiting on the condition variable, on exit the mutex is taken
      again.*/
   currp->u.wtobjp = cp;
-  queue_prio_insert(currp, &cp->queue);
+  ch_sch_prio_insert(&currp->hdr.queue, &cp->queue);
   msg = chSchGoSleepTimeoutS(CH_STATE_WTCOND, timeout);
   if (msg != MSG_TIMEOUT) {
     chMtxLockS(mp);

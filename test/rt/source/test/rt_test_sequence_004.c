@@ -91,6 +91,7 @@ static void rt_test_004_001_execute(void) {
     test_assert(MSG_OK == msg,"wrong returned message");
     test_wait_threads();
   }
+  test_end_step(1);
 
   /* [4.1.2] The function chThdSuspendTimeoutS() is invoked, the thread
      is not resumed so a timeout must occur. On return the message and
@@ -107,6 +108,7 @@ static void rt_test_004_001_execute(void) {
     test_assert(NULL == tr1, "not NULL");
     test_assert(MSG_TIMEOUT == msg, "wrong returned message");
   }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_004_001 = {

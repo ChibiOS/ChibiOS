@@ -105,6 +105,7 @@ static void rt_test_009_001_execute(void) {
   {
     prio = chThdGetPriorityX();
   }
+  test_end_step(1);
 
   /* [9.1.2] Getting heap info before the test.*/
   test_set_step(2);
@@ -112,6 +113,7 @@ static void rt_test_009_001_execute(void) {
     n1 = chHeapStatus(&heap1, &total1, &largest1);
     test_assert(n1 == 1, "heap fragmented");
   }
+  test_end_step(2);
 
   /* [9.1.3] Creating thread 1, it is expected to succeed.*/
   test_set_step(3);
@@ -122,6 +124,7 @@ static void rt_test_009_001_execute(void) {
                                      prio-1, dyn_thread1, "A");
     test_assert(threads[0] != NULL, "thread creation failed");
   }
+  test_end_step(3);
 
   /* [9.1.4] Creating thread 2, it is expected to succeed.*/
   test_set_step(4);
@@ -132,6 +135,7 @@ static void rt_test_009_001_execute(void) {
                                      prio-2, dyn_thread1, "B");
     test_assert(threads[1] != NULL, "thread creation failed");
   }
+  test_end_step(4);
 
   /* [9.1.5] Creating thread 3, it is expected to fail.*/
   test_set_step(5);
@@ -142,6 +146,7 @@ static void rt_test_009_001_execute(void) {
                                      prio-3, dyn_thread1, "C");
     test_assert(threads[2] == NULL, "thread creation not failed");
   }
+  test_end_step(5);
 
   /* [9.1.6] Letting threads execute then checking the start order and
      freeing memory.*/
@@ -150,6 +155,7 @@ static void rt_test_009_001_execute(void) {
     test_wait_threads();
     test_assert_sequence("AB", "invalid sequence");
   }
+  test_end_step(6);
 
   /* [9.1.7] Getting heap info again for verification.*/
   test_set_step(7);
@@ -159,6 +165,7 @@ static void rt_test_009_001_execute(void) {
     test_assert(total1 == total2, "total free space changed");
     test_assert(largest1 == largest2, "largest fragment size changed");
   }
+  test_end_step(7);
 }
 
 static const testcase_t rt_test_009_001 = {
@@ -209,12 +216,14 @@ static void rt_test_009_002_execute(void) {
     for (i = 0; i < 4; i++)
       chPoolFree(&mp1, wa[i]);
   }
+  test_end_step(1);
 
   /* [9.2.2] Getting base priority for threads.*/
   test_set_step(2);
   {
     prio = chThdGetPriorityX();
   }
+  test_end_step(2);
 
   /* [9.2.3] Creating the five threads.*/
   test_set_step(3);
@@ -225,6 +234,7 @@ static void rt_test_009_002_execute(void) {
     threads[3] = chThdCreateFromMemoryPool(&mp1, "dyn4", prio-4, dyn_thread1, "D");
     threads[4] = chThdCreateFromMemoryPool(&mp1, "dyn5", prio-5, dyn_thread1, "E");
   }
+  test_end_step(3);
 
   /* [9.2.4] Testing that only the fifth thread creation failed.*/
   test_set_step(4);
@@ -237,6 +247,7 @@ static void rt_test_009_002_execute(void) {
     test_assert(threads[4] == NULL,
                 "thread creation not failed");
   }
+  test_end_step(4);
 
   /* [9.2.5] Letting them run, free the memory then checking the
      execution sequence.*/
@@ -245,6 +256,7 @@ static void rt_test_009_002_execute(void) {
     test_wait_threads();
     test_assert_sequence("ABCD", "invalid sequence");
   }
+  test_end_step(5);
 
   /* [9.2.6] Testing that the pool contains four elements again.*/
   test_set_step(6);
@@ -253,6 +265,7 @@ static void rt_test_009_002_execute(void) {
       test_assert(chPoolAlloc(&mp1) != NULL, "pool list empty");
     test_assert(chPoolAlloc(&mp1) == NULL, "pool list not empty");
   }
+  test_end_step(6);
 }
 
 static const testcase_t rt_test_009_002 = {
