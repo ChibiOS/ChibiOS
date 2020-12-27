@@ -76,7 +76,7 @@
 /*===========================================================================*/
 
 #if CH_CFG_USE_SEMAPHORES_PRIORITY == TRUE
-#define sem_insert(tp, qp) ch_sch_prio_insert(&tp->hdr.pqueue, qp)
+#define sem_insert(tp, qp) ch_sch_prio_insert(&tp->hdr.queue, qp)
 #else
 #define sem_insert(tp, qp) ch_queue_insert(&tp->hdr.queue, qp)
 #endif
