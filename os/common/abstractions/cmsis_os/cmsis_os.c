@@ -186,7 +186,7 @@ osStatus osThreadSetPriority(osThreadId thread_id, osPriority newprio) {
     tp->hdr.pqueue.prio = (tprio_t)newprio;
   tp->realprio = (tprio_t)newprio;
 #else
-  tp->prio = (tprio_t)newprio;
+  tp->hdr.pqueue.prio = (tprio_t)newprio;
 #endif
 
   /* The following states need priority queues reordering.*/
