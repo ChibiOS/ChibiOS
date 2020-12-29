@@ -37,7 +37,7 @@ all:
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32WB55-Nucleo64 ===============================
-	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo64.make all
+	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo68.make all
 	@echo ====================================================================
 	@echo
 
@@ -59,7 +59,7 @@ clean:
 	@echo
 	+@make --no-print-directory -f ./make/stm32g071_nucleo64.make clean
 	@echo
-	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo64.make clean
+	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo68.make clean
 	@echo
 
 #

@@ -172,8 +172,6 @@
 #define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2U))
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2U))
 #define PIN_AFIO_AF(n, v)           ((v) << (((n) % 8U) * 4U))
-#define PIN_ASCR_DISABLED(n)        (0U << (n))
-#define PIN_ASCR_ENABLED(n)         (1U << (n))
 #define PIN_LOCKR_DISABLED(n)       (0U << (n))
 #define PIN_LOCKR_ENABLED(n)        (1U << (n))
 
@@ -374,33 +372,6 @@ ${line + ")"}
 ${line + ")"}
     [#else]
 ${(line + " |")?right_pad(76, " ") + "\\"}
-    [/#if]
-  [/#list]
-  [#--
-    -- Generating ASCR register value.
-    --]
-  [#list port.* as pin]
-    [#assign names = pin.@ID[0]?string?word_list /]
-    [#if names?size == 0]
-      [#assign name = pin?node_name?upper_case /]
-    [#else]
-      [#assign name = names[0] /]
-    [/#if]
-    [#assign switch = pin.@AnalogSwitch[0] /]
-    [#if switch == "Disabled"]
-      [#assign out = "PIN_ASCR_DISABLED(" + port_name + "_" + name + ")" /]
-    [#else]
-      [#assign out = "PIN_ASCR_ENABLED(" + port_name + "_" + name + ")" /]
-    [/#if]
-    [#if pin_index == 0]
-      [#assign line = "#define VAL_" + port_name + "_ASCR              (" + out /]
-    [#else]
-      [#assign line = "                                     " + out /]
-    [/#if]
-    [#if pin_index < 15]
-${(line + " |")?right_pad(76, " ") + "\\"}
-    [#else]
-${line + ")"}
     [/#if]
   [/#list]
   [#--

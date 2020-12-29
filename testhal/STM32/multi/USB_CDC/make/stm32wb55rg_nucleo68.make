@@ -91,8 +91,8 @@ MCU  = cortex-m4
 # Imported source files and paths.
 CHIBIOS  := ../../../..
 CONFDIR  := ./cfg/stm32wb55rg_nucleo68
-BUILDDIR := ./build/st32wb55rg_nucleo68
-DEPDIR   := ./.dep/st32wb55rg_nucleo68
+BUILDDIR := ./build/stm32wb55rg_nucleo68
+DEPDIR   := ./.dep/stm32wb55rg_nucleo68
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -109,9 +109,11 @@ include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-#include $(CHIBIOS)/test/lib/test.mk
-#include $(CHIBIOS)/test/rt/rt_test.mk
-#include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/test/lib/test.mk
+include $(CHIBIOS)/test/rt/rt_test.mk
+include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32WB55xG.ld

@@ -74,9 +74,6 @@
 
 #if defined(STM32WB55xx) || defined(__DOXYGEN__)
 
-/* Clock attributes.*/
-#define STM32_CLOCK_HAS_HSI48               TRUE
-
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      FALSE
