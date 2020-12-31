@@ -379,6 +379,34 @@ void chEvtDispatch(const evhandler_t *handlers, eventmask_t events) {
   }
 }
 
+/**
+ * @brief   Invokes event handlers associated with event flags mask with
+ *          optional user data.
+ *
+ * @param[in] handlers  an array of @p evtdispatch_t. The array must have size
+ *                      equal to the number of bits in @p eventmask_t.
+ * @param[in] events    mask of events to be dispatched
+ * @param[in] user      user defined field (normally pointer to data)
+ *                      .
+ * @api
+ */
+void chEvtUserDispatch(const evtdispatch_t *handlers,
+                       eventmask_t events, void* user) {
+  eventid_t eid;
+
+  chDbgCheck(handlers != NULL);
+
+  eid = (eventid_t)0;
+  while (events != (eventmask_t)0) {
+    if ((events & EVENT_MASK(eid)) != (eventmask_t)0) {
+      chDbgAssert(handlers[eid] != NULL, "null handler");
+      events &= ~EVENT_MASK(eid);
+      handlers[eid](eid, user);
+    }
+    eid++;
+  }
+}
+
 #if (CH_CFG_OPTIMIZE_SPEED == TRUE) ||                                      \
     (CH_CFG_USE_EVENTS_TIMEOUT == FALSE) ||                                 \
     defined(__DOXYGEN__)

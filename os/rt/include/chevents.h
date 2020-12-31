@@ -82,9 +82,24 @@ typedef struct event_source {
  */
 typedef void (*evhandler_t)(eventid_t id);
 
+/**
+ * @brief   Event Handler extended dispatch function.
+ */
+typedef void (*evtdispatch_t)(eventid_t id, void* user);
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief  Get listener mask.
+ */
+#define chEvtGetListenerMaskX(elp) ((elp)->wflags)
+
+/**
+ * @brief  Set listener mask.
+ */
+#define chEvtSetListenerMaskX(elp, flags) ((elp)->wflags = (flags))
 
 /**
  * @brief   All events allowed mask.
@@ -135,6 +150,9 @@ extern "C" {
   void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags);
   void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags);
   void chEvtDispatch(const evhandler_t *handlers, eventmask_t events);
+  void chEvtUserDispatch(const evtdispatch_t *handlers,
+                         eventmask_t events,
+                         void* user);
 #if (CH_CFG_OPTIMIZE_SPEED == TRUE) || (CH_CFG_USE_EVENTS_TIMEOUT == FALSE)
   eventmask_t chEvtWaitOne(eventmask_t events);
   eventmask_t chEvtWaitAny(eventmask_t events);
