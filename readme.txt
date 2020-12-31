@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added event listener flags get/set and dispatch() with user data
 - NEW: Added chscanf() and buffered streams, contributed by Alex Lewontin.
 - NEW: Added option to LWIP bindings to use memory pools instead of heap
        allocator.
