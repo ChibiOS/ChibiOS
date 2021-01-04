@@ -223,10 +223,10 @@ struct port_context {
   /*lint -restore*/                                                         \
 }
 
- /**
+/**
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
-  */
+ */
 #define PORT_WA_SIZE(n) ((sizeof (void *) * 4U) +                           \
                          sizeof (struct port_intctx) +                      \
                          ((size_t)(n)) +                                    \
