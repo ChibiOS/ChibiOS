@@ -15,7 +15,6 @@
 	<subtype>STM32WB55xx</subtype>
 	<clocks
 		HSEFrequency="32000000"
-		HSEBypass="false"
 		LSEFrequency="32768"
 		LSEBypass="false"
 		LSEDrive="3 High Drive (default)"

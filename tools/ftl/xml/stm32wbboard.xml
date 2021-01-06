@@ -16,7 +16,7 @@
     <bus_type>RMII</bus_type>
   </ethernet_phy>
   <subtype>STM32WB55xx</subtype>
-  <clocks HSEFrequency="32000000" HSEBypass="false" LSEFrequency="32768"
+  <clocks HSEFrequency="32000000" LSEFrequency="32768"
   	LSEBypass="false" VDD="300" LSEDrive="3 High Drive (default)" />
   <ports>
     <GPIOA>

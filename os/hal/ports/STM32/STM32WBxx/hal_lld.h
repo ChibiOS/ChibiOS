@@ -26,7 +26,6 @@
  *          - STM32_LSEDRV.
  *          - STM32_LSE_BYPASS (optionally).
  *          - STM32_HSECLK.
- *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
  *          - STM32WB55xx.
@@ -140,9 +139,14 @@
 #define STM32_HPRE_MASK         (15 << 4)   /**< HPRE field mask.           */
 #define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
 #define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
+#define STM32_HPRE_DIV3         (1 << 4)    /**< SYSCLK divided by 3.       */
 #define STM32_HPRE_DIV4         (9 << 4)    /**< SYSCLK divided by 4.       */
+#define STM32_HPRE_DIV5         (2 << 4)    /**< SYSCLK divided by 5.       */
+#define STM32_HPRE_DIV6         (5 << 4)    /**< SYSCLK divided by 6.       */
 #define STM32_HPRE_DIV8         (10 << 4)   /**< SYSCLK divided by 8.       */
+#define STM32_HPRE_DIV10        (6 << 4)    /**< SYSCLK divided by 10.      */
 #define STM32_HPRE_DIV16        (11 << 4)   /**< SYSCLK divided by 16.      */
+#define STM32_HPRE_DIV32        (7 << 4)    /**< SYSCLK divided by 32.      */
 #define STM32_HPRE_DIV64        (12 << 4)   /**< SYSCLK divided by 64.      */
 #define STM32_HPRE_DIV128       (13 << 4)   /**< SYSCLK divided by 128.     */
 #define STM32_HPRE_DIV256       (14 << 4)   /**< SYSCLK divided by 256.     */
@@ -189,7 +193,18 @@
  * @name    RCC_EXTCFGR register bits definitions
  * @{
  */
+/**
+ * @brief   HCLK5 clock source (RFC and APB3).
+ */
+#define STM32_RFCSSSEL_MASK     (1 << 20)  /**< RFCSS field mask.           */
+#define STM32_RFCSSSEL_HSI16    (0 << 20)  /**< RFCSS source is HSI16.      */
+#define STM32_RFCSSSEL_HSE      (1 << 20)  /**< RFCSS source is HSE/2.      */
+
+/**
+ * @brief   HCLK4 shared prescaler (AHB3, Flash memory and SRAM2).
+ */
 #define STM32_SHDHPRE_MASK      (15 << 0)  /**< SHDHPRE field mask.         */
+#define STM32_SHDHPRE_DIV1      (0 << 0)   /**< SYSCLK divided by 1.        */
 #define STM32_SHDHPRE_DIV2      (8 << 0)   /**< SYSCLK divided by 2.        */
 #define STM32_SHDHPRE_DIV3      (1 << 0)   /**< SYSCLK divided by 3.        */
 #define STM32_SHDHPRE_DIV4      (9 << 0)   /**< SYSCLK divided by 4.        */
@@ -204,7 +219,11 @@
 #define STM32_SHDHPRE_DIV256    (14 << 0)  /**< SYSCLK divided by 256.      */
 #define STM32_SHDHPRE_DIV512    (15 << 0)  /**< SYSCLK divided by 512.      */
 
+/**
+ * @brief   HCLK2 prescaler (CPU2).
+ */
 #define STM32_C2HPRE_MASK       (15 << 4)  /**< C2HPRE field mask.          */
+#define STM32_C2HPRE_DIV1       (0 << 4)   /**< SYSCLK divided by 1.        */
 #define STM32_C2HPRE_DIV2       (8 << 4)   /**< SYSCLK divided by 2.        */
 #define STM32_C2HPRE_DIV3       (1 << 4)   /**< SYSCLK divided by 3.        */
 #define STM32_C2HPRE_DIV4       (9 << 4)   /**< SYSCLK divided by 4.        */
@@ -219,31 +238,12 @@
 #define STM32_C2HPRE_DIV256     (14 << 4)  /**< SYSCLK divided by 256.      */
 #define STM32_C2HPRE_DIV512     (15 << 4)  /**< SYSCLK divided by 512.      */
 
-#define STM32_SHDHPREF_MASK     (1 << 16)  /**< SHDHPREF field mask.        */
-#define STM32_SHDHPREF_HCLK4RDY (1 << 16)  /**< SHDHPREF HCLK4 ready.       */
-
-#define STM32_C2HPREF_MASK      (1 << 17)  /**< C2HPREF field mask.         */
-#define STM32_C2HPREF_HCLK2RDY  (1 << 16)  /**< C2HPREF HCLK2 ready.        */
-
+/**
+ * @brief   HCLK5 and APB3 clock source.
+ */
 #define STM32_RFCSS_MASK        (1 << 20)  /**< RFCSS field mask.           */
 #define STM32_RFCSS_HSI16       (0 << 20)  /**< HSI16 on HCLK5 and APB3.    */
 #define STM32_RFCSS_HSEDIV2	    (1 << 20)  /**< HSE/2 on HCLK5 and APB3.    */
-/** @} */
-
-/**
- * @name    RCC_C2AHB1ENR register bits definitions
- * @{
- */
-/* TODO(ilya): TSCEN, CRCEN, SRAM1EN, DMAMUX1, DMA2EN and DMA1EN            */
-#define STM32_DMA1EN_MASK       (1 << 0)  /**< DMA1EN field mask.           */
-/** @} */
-
-/**
- * @name    RCC_C2AHB2ENR register bits definitions
- * @{
- */
-/* TODO(ilya): AES1EN, ADCEN, GPIOHEN, GPIOEEN, GPIODEN, GPIOCEN and
- *             GPIOBEN, GPIOAEN                                             */
 /** @} */
 
 /**
@@ -377,7 +377,7 @@
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI16_ENABLED                 FALSE
+#define STM32_HSI16_ENABLED                 TRUE
 #endif
 
 /**
@@ -423,7 +423,7 @@
 #endif
 
 /**
- * @brief   HSE prescaler setting.
+ * @brief   HSE and PLL M devider prescaler setting.
  */
 #if !defined(STM32_HSEPRE_VALUE) || defined(__DOXYGEN__)
 #define STM32_HSEPRE_VALUE                  1
@@ -498,7 +498,7 @@
 #endif
 
 /**
- * @brief   AHB prescaler value.
+ * @brief   HCLK1 (CPU1, AHB1, AHB2, AHB3 and SRAM1) prescaler value.
  * @note    The default value is calculated for a 32MHz system clock from
  *          the internal 4MHz MSI clock.
  */
@@ -518,6 +518,29 @@
  */
 #if !defined(STM32_PPRE2) || defined(__DOXYGEN__)
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
+#endif
+
+/**
+ * @brief   HCLK2 (CPU2) prescaler value.
+ * @note    The default value is calculated for a 32MHz system clock from
+ *          the internal 4MHz MSI clock.
+ */
+#if !defined(STM32_C2HPRE) || defined(__DOXYGEN__)
+#define STM32_C2HPRE                        STM32_C2HPRE_DIV2
+#endif
+
+/**
+ * @brief   HCLK4 (AHB4, Flash memory and SRAM2) prescaler value.
+ */
+#if !defined(STM32_SHDHPRE) || defined(__DOXYGEN__)
+#define STM32_SHDHPRE                       STM32_SHDHPRE_DIV1
+#endif
+
+/**
+ * @brief   HCLK5 (APB3, AHB5 and Radio system) clock source.
+ */
+#if !defined(STM32_RFCSSSEL) || defined(__DOXYGEN__)
+#define STM32_RFCSSSEL                      STM32_RFCSSSEL_HSI16
 #endif
 
 /**
@@ -696,24 +719,19 @@
 #define STM32_SYSCLK_MAX            64000000
 
 /**
- * @brief   Maximum HSE clock frequency at current voltage setting.
+ * @brief   Maximum C2HPRE clock frequency at current voltage setting.
  */
-#define STM32_HSECLK_MAX            48000000
+#define STM32_C2HPRE_MAX            32000000
 
 /**
- * @brief   Maximum HSE clock frequency using an external source.
+ * @brief   Maximum HSE clock frequency at current voltage setting.
  */
-#define STM32_HSECLK_BYP_MAX        48000000
+#define STM32_HSECLK_MAX            32000000
 
 /**
  * @brief   Minimum HSE clock frequency.
  */
-#define STM32_HSECLK_MIN            4000000
-
-/**
- * @brief   Minimum HSE clock frequency using an external source.
- */
-#define STM32_HSECLK_BYP_MIN        8000000
+#define STM32_HSECLK_MIN            32000000
 
 /**
  * @brief   Maximum LSE clock frequency.
@@ -773,7 +791,7 @@
 /**
  * @brief   Minimum PLL-P output clock frequency.
  */
-#define STM32_PLLP_MIN              3000000
+#define STM32_PLLP_MIN              2000000
 
 /**
  * @brief   Maximum PLL-Q output clock frequency.
@@ -783,7 +801,7 @@
 /**
  * @brief   Minimum PLL-Q output clock frequency.
  */
-#define STM32_PLLQ_MIN              12000000
+#define STM32_PLLQ_MIN              8000000
 
 /**
  * @brief   Maximum PLL-R output clock frequency.
@@ -793,7 +811,7 @@
 /**
  * @brief   Minimum PLL-R output clock frequency.
  */
-#define STM32_PLLR_MIN              12000000
+#define STM32_PLLR_MIN              8000000
 
 /**
  * @brief   Maximum APB1 clock frequency.
@@ -815,33 +833,31 @@
  * @name    Flash Wait states
  * @{
  */
-#define STM32_0WS_THRESHOLD         16000000
-#define STM32_1WS_THRESHOLD         32000000
-#define STM32_2WS_THRESHOLD         48000000
-#define STM32_3WS_THRESHOLD         64000000
+#define STM32_0WS_THRESHOLD         18000000
+#define STM32_1WS_THRESHOLD         36000000
+#define STM32_2WS_THRESHOLD         54000000
 /** @} */
 
 #elif STM32_VOS == STM32_VOS_RANGE2
-#define STM32_SYSCLK_MAX            26000000
-#define STM32_HSECLK_MAX            26000000
-#define STM32_HSECLK_BYP_MAX        26000000
-#define STM32_HSECLK_MIN            8000000
-#define STM32_HSECLK_BYP_MIN        8000000
+#define STM32_SYSCLK_MAX            16000000
+#define STM32_C2HPRE_MAX            16000000
+#define STM32_HSECLK_MAX            32000000
+#define STM32_HSECLK_MIN            32000000
 #define STM32_LSECLK_MAX            32768
 #define STM32_LSECLK_BYP_MAX        1000000
 #define STM32_LSECLK_MIN            32768
 #define STM32_LSECLK_BYP_MIN        32768
 #define STM32_PLLIN_MAX             16000000
-#define STM32_PLLIN_MIN             4000000
+#define STM32_PLLIN_MIN             2660000
 #define STM32_PLLVCO_MAX            128000000
-#define STM32_PLLVCO_MIN            96000000
+#define STM32_PLLVCO_MIN            64000000
 #define STM32_PLLSAI1VCO_MAX        128000000
 #define STM32_PLLSAI1VCO_MIN        64000000
-#define STM32_PLLP_MAX              26000000
-#define STM32_PLLP_MIN              2064500
-#define STM32_PLLQ_MAX              26000000
+#define STM32_PLLP_MAX              16000000
+#define STM32_PLLP_MIN              2000000
+#define STM32_PLLQ_MAX              16000000
 #define STM32_PLLQ_MIN              8000000
-#define STM32_PLLR_MAX              26000000
+#define STM32_PLLR_MAX              16000000
 #define STM32_PLLR_MIN              8000000
 #define STM32_PCLK1_MAX             26000000
 #define STM32_PCLK2_MAX             26000000
@@ -849,8 +865,7 @@
 
 #define STM32_0WS_THRESHOLD         6000000
 #define STM32_1WS_THRESHOLD         12000000
-#define STM32_2WS_THRESHOLD         18000000
-#define STM32_3WS_THRESHOLD         26000000
+#define STM32_2WS_THRESHOLD         16000000
 
 #else
 #error "invalid STM32_VOS value specified"
@@ -944,6 +959,10 @@
 #error "HSI16 not enabled, required by LPTIM2SEL"
 #endif
 
+#if (STM32_RFCSSSEL == STM32_RFCSSSEL_HSI16)
+#error "HSI16 not enabled, required by RFCSS"
+#endif
+
 #endif /* !STM32_HSI16_ENABLED */
 
 #if STM32_HSI48_ENABLED
@@ -966,15 +985,9 @@
   #if STM32_HSECLK == 0
     #error "HSE frequency not defined"
   #else /* STM32_HSECLK != 0 */
-    #if defined(STM32_HSE_BYPASS)
-      #if (STM32_HSECLK < STM32_HSECLK_BYP_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
-        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_BYP_MIN...STM32_HSECLK_BYP_MAX)"
-      #endif
-    #else /* !defined(STM32_HSE_BYPASS) */
-      #if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
-        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_MAX)"
-      #endif
-    #endif /* !defined(STM32_HSE_BYPASS) */
+    #if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
+      #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_MAX)"
+    #endif
   #endif /* STM32_HSECLK != 0 */
 
   #else /* !STM32_HSE_ENABLED */
@@ -1000,6 +1013,10 @@
 
     #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
       #error "HSE not enabled, required by STM32_RTCSEL"
+    #endif
+
+    #if (STM32_RFCSSSEL == STM32_RFCSSSEL_HSE)
+      #error "HSE not enabled, required by RFCSS"
     #endif
 
 #endif /* !STM32_HSE_ENABLED */
@@ -1282,7 +1299,7 @@
 #endif
 
 /**
- * @brief   AHB frequency.
+ * @brief   HCLK1 frequency.
  */
 #if (STM32_HPRE == STM32_HPRE_DIV1) || defined(__DOXYGEN__)
 #define STM32_HCLK                  (STM32_SYSCLK / 1)
@@ -1290,14 +1307,29 @@
 #elif STM32_HPRE == STM32_HPRE_DIV2
 #define STM32_HCLK                  (STM32_SYSCLK / 2)
 
+#elif STM32_HPRE == STM32_HPRE_DIV3
+#define STM32_HCLK                  (STM32_SYSCLK / 3)
+
 #elif STM32_HPRE == STM32_HPRE_DIV4
 #define STM32_HCLK                  (STM32_SYSCLK / 4)
+
+#elif STM32_HPRE == STM32_HPRE_DIV5
+#define STM32_HCLK                  (STM32_SYSCLK / 5)
+
+#elif STM32_HPRE == STM32_HPRE_DIV6
+#define STM32_HCLK                  (STM32_SYSCLK / 6)
 
 #elif STM32_HPRE == STM32_HPRE_DIV8
 #define STM32_HCLK                  (STM32_SYSCLK / 8)
 
+#elif STM32_HPRE == STM32_HPRE_DIV10
+#define STM32_HCLK                  (STM32_SYSCLK / 10)
+
 #elif STM32_HPRE == STM32_HPRE_DIV16
 #define STM32_HCLK                  (STM32_SYSCLK / 16)
+
+#elif STM32_HPRE == STM32_HPRE_DIV32
+#define STM32_HCLK                  (STM32_SYSCLK / 32)
 
 #elif STM32_HPRE == STM32_HPRE_DIV64
 #define STM32_HCLK                  (STM32_SYSCLK / 64)
@@ -1316,7 +1348,7 @@
 #endif
 
 /*
- * AHB frequency check.
+ * HCLK1 frequency check.
  */
 #if STM32_HCLK > STM32_SYSCLK_MAX
 #error "STM32_HCLK exceeding maximum frequency (STM32_SYSCLK_MAX)"
@@ -1378,6 +1410,111 @@
  */
 #if STM32_PCLK2 > STM32_PCLK2_MAX
 #error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
+#endif
+
+/**
+ * @brief   HCLK2 (CPU2) frequency.
+ */
+#if (STM32_C2HPRE == STM32_C2HPRE_DIV1) || defined(__DOXYGEN__)
+#define STM32_HCLK2                 (STM32_SYSCLK / 1)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV2
+#define STM32_HCLK2                 (STM32_SYSCLK / 2)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV3
+#define STM32_HCLK2                 (STM32_SYSCLK / 3)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV4
+#define STM32_HCLK2                 (STM32_SYSCLK / 4)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV5
+#define STM32_HCLK2                 (STM32_SYSCLK / 5)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV6
+#define STM32_HCLK2                 (STM32_SYSCLK / 6)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV8
+#define STM32_HCLK2                 (STM32_SYSCLK / 8)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV10
+#define STM32_HCLK2                 (STM32_SYSCLK / 10)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV16
+#define STM32_HCLK2                 (STM32_SYSCLK / 16)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV32
+#define STM32_HCLK2                 (STM32_SYSCLK / 32)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV64
+#define STM32_HCLK2                 (STM32_SYSCLK / 64)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV128
+#define STM32_HCLK2                 (STM32_SYSCLK / 128)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV256
+#define STM32_HCLK2                 (STM32_SYSCLK / 256)
+
+#elif STM32_C2HPRE == STM32_C2HPRE_DIV512
+#define STM32_HCLK2                 (STM32_SYSCLK / 512)
+
+#else
+#error "invalid STM32_C2HPRE value specified"
+#endif
+
+/*
+ * HCLK2 (CPU2) frequency check.
+ */
+#if STM32_HCLK2 > STM32_C2HPRE_MAX
+#error "STM32_HCLK2 exceeding maximum frequency (STM32_C2HPRE_MAX)"
+#endif
+
+/**
+ * @brief   AHB4 frequency.
+ */
+#if (STM32_SHDHPRE == STM32_SHDHPRE_DIV1) || defined(__DOXYGEN__)
+#define STM32_HCLK4                 (STM32_SYSCLK / 1)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV2
+#define STM32_HCLK4                 (STM32_SYSCLK / 2)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV3
+#define STM32_HCLK4                 (STM32_SYSCLK / 3)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV4
+#define STM32_HCLK4                 (STM32_SYSCLK / 4)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV5
+#define STM32_HCLK4                 (STM32_SYSCLK / 5)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV6
+#define STM32_HCLK4                 (STM32_SYSCLK / 6)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV8
+#define STM32_HCLK4                 (STM32_SYSCLK / 8)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV10
+#define STM32_HCLK4                 (STM32_SYSCLK / 10)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV16
+#define STM32_HCLK4                 (STM32_SYSCLK / 16)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV32
+#define STM32_HCLK4                 (STM32_SYSCLK / 32)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV64
+#define STM32_HCLK4                 (STM32_SYSCLK / 64)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV128
+#define STM32_HCLK4                 (STM32_SYSCLK / 128)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV256
+#define STM32_HCLK4                 (STM32_SYSCLK / 256)
+
+#elif STM32_SHDHPRE == STM32_SHDHPRE_DIV512
+#define STM32_HCLK4                 (STM32_SYSCLK / 512)
+
+#else
+#error "invalid STM32_SHDHPRE value specified"
 #endif
 
 /*
@@ -1727,7 +1864,7 @@
 #elif STM32_RNGSEL == STM32_RNGSEL_LSE
 #define STM32_RNGCLK                STM32_LSECLK
 #else
-#error "Invalid source selected for RNG clock"
+#error "invalid source selected for RNG clock"
 #endif
 
 /**
@@ -1778,11 +1915,8 @@
 #elif STM32_HCLK <= STM32_2WS_THRESHOLD
 #define STM32_FLASHBITS             FLASH_ACR_LATENCY_2WS
 
-#elif STM32_HCLK <= STM32_3WS_THRESHOLD
-#define STM32_FLASHBITS             FLASH_ACR_LATENCY_3WS
-
 #else
-#define STM32_FLASHBITS             FLASH_ACR_LATENCY_4WS
+#define STM32_FLASHBITS             FLASH_ACR_LATENCY_3WS
 #endif
 
 /**
@@ -1797,11 +1931,8 @@
 #elif STM32_MSICLK <= STM32_2WS_THRESHOLD
 #define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_2WS
 
-#elif STM32_MSICLK <= STM32_3WS_THRESHOLD
-#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_3WS
-
 #else
-#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_4WS
+#define STM32_MSI_FLASHBITS         FLASH_ACR_LATENCY_3WS
 #endif
 
 /*===========================================================================*/

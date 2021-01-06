@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support for STM32WB55.
 - NEW: Added chscanf() and buffered streams, contributed by Alex Lewontin.
 - NEW: Added option to LWIP bindings to use memory pools instead of heap
        allocator.

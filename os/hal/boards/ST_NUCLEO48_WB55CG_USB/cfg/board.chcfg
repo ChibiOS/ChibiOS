@@ -13,7 +13,7 @@
   <board_functions></board_functions>
   <headers></headers>
   <subtype>STM32WB55xx</subtype>
-  <clocks HSEFrequency="32000000" HSEBypass="false" LSEFrequency="32768"
+  <clocks HSEFrequency="32000000" LSEFrequency="32768"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" VDD="300" ></clocks>
   <ports>
   	<GPIOA>

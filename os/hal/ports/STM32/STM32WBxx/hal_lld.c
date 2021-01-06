@@ -197,14 +197,11 @@ void stm32_clock_init(void) {
 #endif
 
 #if STM32_HSE_ENABLED
-#if defined(STM32_HSE_BYPASS)
-  /* HSE Bypass.*/
-  RCC->CR |= RCC_CR_HSEON | RCC_CR_HSEBYP;
-#endif
   /* HSE activation.*/
   RCC->CR |= RCC_CR_HSEON;
   while ((RCC->CR & RCC_CR_HSERDY) == 0)
     ;                                       /* Wait until HSE is stable.    */
+
   /* HSE PRE setting.*/
   RCC->CR |= STM32_HSEPRE;
 #endif
@@ -263,7 +260,7 @@ void stm32_clock_init(void) {
   /* PLL activation.*/
   RCC->CR |= RCC_CR_PLLON;
 
-  /* Waiting for PLL lock.*/
+  /* Waiting for PLL clock.*/
   while ((RCC->CR & RCC_CR_PLLRDY) == 0)
     ;
 #endif
@@ -276,7 +273,7 @@ void stm32_clock_init(void) {
                      STM32_PLLSAI1N;
   RCC->CR |= RCC_CR_PLLSAI1ON;
 
-  /* Waiting for PLL lock.*/
+  /* Waiting for PLL clock.*/
   while ((RCC->CR & RCC_CR_PLLSAI1RDY) == 0)
     ;
 #endif
@@ -284,6 +281,21 @@ void stm32_clock_init(void) {
   /* Other clock-related settings (dividers, MCO etc).*/
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
               STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
+
+  /* Waiting for PPRE2, PPRE1 and HPRE applied. */
+  while ((RCC->CFGR & (RCC_CFGR_PPRE2F_Msk | RCC_CFGR_PPRE1F_Msk |
+                       RCC_CFGR_HPREF_Msk)) !=
+         (RCC_CFGR_PPRE2F | RCC_CFGR_PPRE1F | RCC_CFGR_HPREF))
+    ;
+
+  /* Extended clock recovery register (HCLK2, HCLK4, HCLK5). */
+  RCC->EXTCFGR = STM32_RFCSSSEL | STM32_C2HPRE | STM32_SHDHPRE;
+
+  /* Waiting for C2HPRE and SHDHPRE. */
+  while ((RCC->EXTCFGR & (RCC_EXTCFGR_C2HPREF_Msk |
+                          RCC_EXTCFGR_SHDHPREF_Msk)) !=
+         (RCC_EXTCFGR_C2HPREF | RCC_EXTCFGR_SHDHPREF))
+    ;
 
   /* CCIPR register initialization, note, must take care of the _OFF
      pseudo settings.*/
