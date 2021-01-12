@@ -211,7 +211,7 @@
 #define STM32_SHDHPRE_DIV5      (2 << 0)   /**< SYSCLK divided by 5.        */
 #define STM32_SHDHPRE_DIV6      (5 << 0)   /**< SYSCLK divided by 6.        */
 #define STM32_SHDHPRE_DIV8      (10 << 0)  /**< SYSCLK divided by 8.        */
-#define STM32_SHDHPRE_DIV10	    (6 << 0)   /**< SYSCLK divided by 10.       */
+#define STM32_SHDHPRE_DIV10     (6 << 0)   /**< SYSCLK divided by 10.       */
 #define STM32_SHDHPRE_DIV16     (11 << 0)  /**< SYSCLK divided by 16.       */
 #define STM32_SHDHPRE_DIV32     (7 << 0)   /**< SYSCLK divided by 32.       */
 #define STM32_SHDHPRE_DIV64     (12 << 0)  /**< SYSCLK divided by 64.       */
@@ -243,7 +243,7 @@
  */
 #define STM32_RFCSS_MASK        (1 << 20)  /**< RFCSS field mask.           */
 #define STM32_RFCSS_HSI16       (0 << 20)  /**< HSI16 on HCLK5 and APB3.    */
-#define STM32_RFCSS_HSEDIV2	    (1 << 20)  /**< HSE/2 on HCLK5 and APB3.    */
+#define STM32_RFCSS_HSEDIV2     (1 << 20)  /**< HSE/2 on HCLK5 and APB3.    */
 /** @} */
 
 /**
@@ -663,7 +663,7 @@
  * @brief   ADCSEL value (ADCs clock source).
  */
 #if !defined(STM32_ADCSEL) || defined(__DOXYGEN__)
-#define STM32_ADCSEL                        STM32_CLK48SEL_PLLSAI1
+#define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
 #endif
 
 /**

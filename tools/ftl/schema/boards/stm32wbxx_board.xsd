@@ -20,15 +20,6 @@
 					</xs:element>
 					<xs:element name="clocks" maxOccurs="1" minOccurs="1">
 						<xs:complexType>
-							<xs:attribute name="HSEBypass" use="required">
-								<xs:simpleType>
-									<xs:restriction base="xs:string">
-										<xs:whiteSpace value="collapse"></xs:whiteSpace>
-										<xs:enumeration value="false"></xs:enumeration>
-										<xs:enumeration value="true"></xs:enumeration>
-									</xs:restriction>
-								</xs:simpleType>
-							</xs:attribute>
 							<xs:attribute name="HSEFrequency" use="required">
 								<xs:simpleType>
 									<xs:restriction base="xs:int">
@@ -36,7 +27,17 @@
 										<xs:minInclusive value="0"></xs:minInclusive>
 									</xs:restriction>
 								</xs:simpleType>
-							</xs:attribute>
+							</xs:attribute>
+							<xs:attribute name="LSEBypass" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:whiteSpace value="collapse">
+										</xs:whiteSpace>
+										<xs:enumeration value="false"></xs:enumeration>
+										<xs:enumeration value="true"></xs:enumeration>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
 							<xs:attribute name="LSEDrive" use="required">
 								<xs:simpleType>
 									<xs:restriction base="xs:string">

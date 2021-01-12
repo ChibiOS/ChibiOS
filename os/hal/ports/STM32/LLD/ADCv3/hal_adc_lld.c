@@ -602,7 +602,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC1
   rccEnableADC1(true);
   rccResetADC1();
-  ADC1_COMMON->CCR = STM32_ADC_ADC1_CLOCK_MODE | ADC_DMA_MDMA;
+  ADC1_COMMON->CCR = STM32_ADC_ADC1_PRESC | STM32_ADC_ADC1_CLOCK_MODE;
   rccDisableADC1();
 #endif
 #endif

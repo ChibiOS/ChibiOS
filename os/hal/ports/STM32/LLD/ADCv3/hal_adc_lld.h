@@ -392,7 +392,14 @@
  * @brief   ADC1 clock source and mode.
  */
 #if !defined(STM32_ADC_ADC1_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC_ADC1_CLOCK_MODE           ADC_CCR_CKMODE_AHB_DIV1
+#endif
+
+/**
+ * @brief   ADC1 clock prescaler.
+ */
+#if !defined(STM32_ADC_ADC1_PRESC) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_PRESC                ADC_CCR_PRESC_DIV2
 #endif
 #endif /* defined(STM32WBXX) */
 

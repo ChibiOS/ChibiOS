@@ -179,8 +179,10 @@ void stm32_clock_init(void) {
 
   /* Core voltage setup.*/
   PWR->CR1 = STM32_VOS;
-  while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */
-    ;                                       /* stable.                      */
+
+  /* Wait until regulator is stable. */
+  while ((PWR->SR2 & PWR_SR2_VOSF) != 0)
+    ;
 
 #if STM32_HSI16_ENABLED
   /* HSI activation.*/

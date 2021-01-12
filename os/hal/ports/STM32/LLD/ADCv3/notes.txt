@@ -2,7 +2,7 @@ STM32 ADCv3 driver.
 
 Driver capability:
 
-- Supports the STM32 "fast" ADC found on F3, L4, L4+ and G4 sub-families.
+- Supports the STM32 "fast" ADC found on F3, L4, L4+, G4 and WB sub-families.
 
 The file registry must export:
 

@@ -28,7 +28,7 @@ all:
 	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32WB55RG_Nucleo64 =============================
+	@echo === Building for STM32WB55RG_Nucleo68 =============================
 	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo68.make all
 	@echo ====================================================================
 	@echo

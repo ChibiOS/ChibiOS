@@ -121,19 +121,23 @@ typedef struct {
 /**
  * @brief USB registers block numeric address.
  */
-#if defined(USB_BASE) || defined(__DOXYGEN__)
-#define STM32_USB_BASE          USB_BASE
+#if defined(USB1_BASE) || defined(__DOXYGEN__)
+  #define STM32_USB_BASE        USB1_BASE
+#elif defined(USB_BASE)
+  #define STM32_USB_BASE        USB_BASE
 #else
-#define STM32_USB_BASE          (APB1PERIPH_BASE + 0x5C00)
+  #define STM32_USB_BASE        (APB1PERIPH_BASE + 0x5C00)
 #endif
 
 /**
  * @brief USB RAM numeric address.
  */
-#if defined(USB_PMAADDR) || defined(__DOXYGEN__)
-#define STM32_USBRAM_BASE       USB_PMAADDR
+#if defined(USB1_PMAADDR) || defined(__DOXYGEN__)
+  #define STM32_USBRAM_BASE     USB1_PMAADDR
+#elif defined(USB_PMAADDR)
+  #define STM32_USBRAM_BASE     USB_PMAADDR
 #else
-#define STM32_USBRAM_BASE       (APB1PERIPH_BASE + 0x6000)
+  #define STM32_USBRAM_BASE     (APB1PERIPH_BASE + 0x6000)
 #endif
 
 /**
