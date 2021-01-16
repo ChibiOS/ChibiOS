@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.3 ***
+- FIX: Fixed chsnprintf() sign mode/filler mode conflict (bug #1140)
 - NEW: RT, NIL: Renamed _THREADS_QUEUE_DECL to THREADS_QUEUE_DECL for
        consistency.
 - FIX: Fixed GCC 10 causes warning in factory module (bug #1139).
