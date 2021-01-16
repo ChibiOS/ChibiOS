@@ -315,7 +315,7 @@ unsigned_common:
       width = -width;
     }
     if (width < 0) {
-      if (*s == '-' && filler == '0') {
+      if ((*s == '-' || *s == '+') && filler == '0') {
         streamPut(chp, (uint8_t)*s++);
         n++;
         i--;
