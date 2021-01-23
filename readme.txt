@@ -74,7 +74,6 @@
 *****************************************************************************
 
 *** Next ***
-- FIX: Fixed chsnprintf() sign mode/filler mode conflict (bug #1140)
 - NEW: Added time conversion macros and functions for monotonic time stamps
 - NEW: Added support for STM32WB55.
 - NEW: Added chscanf() and buffered streams, contributed by Alex Lewontin.
@@ -129,6 +128,10 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed Heap allocation of aligned FIFO objects in chFactory (bug #1141)
+       (backported to 20.3.3)(backported to 19.1.5).
+- FIX: Fixed chsnprintf() sign mode/filler mode conflict (bug #1140)
+       (backported to 20.3.3).
 - FIX: Fixed GCC 10 causes warning in factory module (bug #1139)
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed STM32H7xx Missing CRC RCC macros (bug #1137)
