@@ -45,7 +45,6 @@ typedef struct {
   uint32_t              odr;
   uint32_t              afrl;
   uint32_t              afrh;
-  uint32_t              ascr;
   uint32_t              lockr;
 } gpio_setup_t;
 
@@ -94,58 +93,47 @@ typedef struct {
 static const gpio_config_t gpio_default_config = {
 #if STM32_HAS_GPIOA
   {VAL_GPIOA_MODER, VAL_GPIOA_OTYPER, VAL_GPIOA_OSPEEDR, VAL_GPIOA_PUPDR,
-   VAL_GPIOA_ODR,   VAL_GPIOA_AFRL,   VAL_GPIOA_AFRH,    VAL_GPIOA_ASCR,
-   VAL_GPIOA_LOCKR},
+   VAL_GPIOA_ODR,   VAL_GPIOA_AFRL,   VAL_GPIOA_AFRH,    VAL_GPIOA_LOCKR},
 #endif
 #if STM32_HAS_GPIOB
   {VAL_GPIOB_MODER, VAL_GPIOB_OTYPER, VAL_GPIOB_OSPEEDR, VAL_GPIOB_PUPDR,
-   VAL_GPIOB_ODR,   VAL_GPIOB_AFRL,   VAL_GPIOB_AFRH,    VAL_GPIOB_ASCR,
-   VAL_GPIOB_LOCKR},
+   VAL_GPIOB_ODR,   VAL_GPIOB_AFRL,   VAL_GPIOB_AFRH,    VAL_GPIOB_LOCKR},
 #endif
 #if STM32_HAS_GPIOC
   {VAL_GPIOC_MODER, VAL_GPIOC_OTYPER, VAL_GPIOC_OSPEEDR, VAL_GPIOC_PUPDR,
-   VAL_GPIOC_ODR,   VAL_GPIOC_AFRL,   VAL_GPIOC_AFRH,    VAL_GPIOC_ASCR,
-   VAL_GPIOC_LOCKR},
+   VAL_GPIOC_ODR,   VAL_GPIOC_AFRL,   VAL_GPIOC_AFRH,    VAL_GPIOC_LOCKR},
 #endif
 #if STM32_HAS_GPIOD
   {VAL_GPIOD_MODER, VAL_GPIOD_OTYPER, VAL_GPIOD_OSPEEDR, VAL_GPIOD_PUPDR,
-   VAL_GPIOD_ODR,   VAL_GPIOD_AFRL,   VAL_GPIOD_AFRH,    VAL_GPIOD_ASCR,
-   VAL_GPIOD_LOCKR},
+   VAL_GPIOD_ODR,   VAL_GPIOD_AFRL,   VAL_GPIOD_AFRH,    VAL_GPIOD_LOCKR},
 #endif
 #if STM32_HAS_GPIOE
   {VAL_GPIOE_MODER, VAL_GPIOE_OTYPER, VAL_GPIOE_OSPEEDR, VAL_GPIOE_PUPDR,
-   VAL_GPIOE_ODR,   VAL_GPIOE_AFRL,   VAL_GPIOE_AFRH,    VAL_GPIOE_ASCR,
-   VAL_GPIOE_LOCKR},
+   VAL_GPIOE_ODR,   VAL_GPIOE_AFRL,   VAL_GPIOE_AFRH,    VAL_GPIOE_LOCKR},
 #endif
 #if STM32_HAS_GPIOF
   {VAL_GPIOF_MODER, VAL_GPIOF_OTYPER, VAL_GPIOF_OSPEEDR, VAL_GPIOF_PUPDR,
-   VAL_GPIOF_ODR,   VAL_GPIOF_AFRL,   VAL_GPIOF_AFRH,    VAL_GPIOF_ASCR,
-   VAL_GPIOF_LOCKR},
+   VAL_GPIOF_ODR,   VAL_GPIOF_AFRL,   VAL_GPIOF_AFRH,    VAL_GPIOF_LOCKR},
 #endif
 #if STM32_HAS_GPIOG
   {VAL_GPIOG_MODER, VAL_GPIOG_OTYPER, VAL_GPIOG_OSPEEDR, VAL_GPIOG_PUPDR,
-   VAL_GPIOG_ODR,   VAL_GPIOG_AFRL,   VAL_GPIOG_AFRH,    VAL_GPIOG_ASCR,
-   VAL_GPIOG_LOCKR},
+   VAL_GPIOG_ODR,   VAL_GPIOG_AFRL,   VAL_GPIOG_AFRH,    VAL_GPIOG_LOCKR},
 #endif
 #if STM32_HAS_GPIOH
   {VAL_GPIOH_MODER, VAL_GPIOH_OTYPER, VAL_GPIOH_OSPEEDR, VAL_GPIOH_PUPDR,
-   VAL_GPIOH_ODR,   VAL_GPIOH_AFRL,   VAL_GPIOH_AFRH,    VAL_GPIOH_ASCR,
-   VAL_GPIOH_LOCKR},
+   VAL_GPIOH_ODR,   VAL_GPIOH_AFRL,   VAL_GPIOH_AFRH,    VAL_GPIOH_LOCKR},
 #endif
 #if STM32_HAS_GPIOI
   {VAL_GPIOI_MODER, VAL_GPIOI_OTYPER, VAL_GPIOI_OSPEEDR, VAL_GPIOI_PUPDR,
-   VAL_GPIOI_ODR,   VAL_GPIOI_AFRL,   VAL_GPIOI_AFRH,    VAL_GPIOI_ASCR,
-   VAL_GPIOI_LOCKR},
+   VAL_GPIOI_ODR,   VAL_GPIOI_AFRL,   VAL_GPIOI_AFRH,    VAL_GPIOI_LOCKR},
 #endif
 #if STM32_HAS_GPIOJ
   {VAL_GPIOJ_MODER, VAL_GPIOJ_OTYPER, VAL_GPIOJ_OSPEEDR, VAL_GPIOJ_PUPDR,
-   VAL_GPIOJ_ODR,   VAL_GPIOJ_AFRL,   VAL_GPIOJ_AFRH,    VAL_GPIOJ_ASCR,
-   VAL_GPIOJ_LOCKR},
+   VAL_GPIOJ_ODR,   VAL_GPIOJ_AFRL,   VAL_GPIOJ_AFRH,    VAL_GPIOJ_LOCKR},
 #endif
 #if STM32_HAS_GPIOK
   {VAL_GPIOK_MODER, VAL_GPIOK_OTYPER, VAL_GPIOK_OSPEEDR, VAL_GPIOK_PUPDR,
-   VAL_GPIOK_ODR,   VAL_GPIOK_AFRL,   VAL_GPIOK_AFRH,    VAL_GPIOK_ASCR,
-   VAL_GPIOK_LOCKR}
+   VAL_GPIOK_ODR,   VAL_GPIOK_AFRL,   VAL_GPIOK_AFRH,    VAL_GPIOK_LOCKR}
 #endif
 };
 
@@ -156,7 +144,6 @@ static const gpio_config_t gpio_default_config = {
 static void gpio_init(stm32_gpio_t *gpiop, const gpio_setup_t *config) {
 
   gpiop->OTYPER  = config->otyper;
-  gpiop->ASCR    = config->ascr;
   gpiop->OSPEEDR = config->ospeedr;
   gpiop->PUPDR   = config->pupdr;
   gpiop->ODR     = config->odr;
@@ -210,6 +197,10 @@ static void stm32_gpio_init(void) {
 }
 
 /*===========================================================================*/
+/* Driver interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
@@ -223,6 +214,50 @@ void __early_init(void) {
   stm32_gpio_init();
   stm32_clock_init();
 }
+
+#if HAL_USE_SDC || defined(__DOXYGEN__)
+/**
+ * @brief   SDC card detection.
+ */
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  /* CHTODO: Fill the implementation.*/
+  return true;
+}
+
+/**
+ * @brief   SDC card write protection detection.
+ */
+bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  /* CHTODO: Fill the implementation.*/
+  return false;
+}
+#endif /* HAL_USE_SDC */
+
+#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
+/**
+ * @brief   MMC_SPI card detection.
+ */
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  /* CHTODO: Fill the implementation.*/
+  return true;
+}
+
+/**
+ * @brief   MMC_SPI card write protection detection.
+ */
+bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  /* CHTODO: Fill the implementation.*/
+  return false;
+}
+#endif
 
 /**
  * @brief   Board-specific initialization code.

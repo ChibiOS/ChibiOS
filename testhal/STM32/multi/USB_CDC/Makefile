@@ -28,6 +28,10 @@ all:
 	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32WB55CG_Nucleo48_USB ==========================
+	+@make --no-print-directory -f ./make/stm32wb55cg_nucleo48.make all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32WB55RG_Nucleo68 =============================
 	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo68.make all
 	@echo ====================================================================
@@ -46,6 +50,9 @@ clean:
 	+@make --no-print-directory -f ./make/stm32f746_discovery.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make clean
+	@echo
+	+@make --no-print-directory -f ./make/stm32wb55cg_nucleo48.make clean
+	@echo
 	@echo
 	+@make --no-print-directory -f ./make/stm32wb55rg_nucleo68.make clean
 	@echo

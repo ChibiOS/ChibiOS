@@ -4,20 +4,21 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32wbxx_board.xsd">
   <configuration_settings>
-  	<templates_path>resources/gencfg/processors/boards/stm32wbxx/templates</templates_path>
-  	<output_path>.</output_path>
+    <templates_path>resources/gencfg/processors/boards/stm32wbxx/templates</templates_path>
+    <output_path>.</output_path>
     <hal_version>5.0.x</hal_version>
   </configuration_settings>
   <board_name>-----human readable board name-----</board_name>
   <board_id>BOARD_IDENTIFIER</board_id>
   <board_functions></board_functions>
-  <ethernet_phy>
-    <identifier>MII_KS8721_ID</identifier>
-    <bus_type>RMII</bus_type>
-  </ethernet_phy>
+  <headers></headers>
   <subtype>STM32WB55xx</subtype>
-  <clocks HSEFrequency="32000000" LSEFrequency="32768"
-  	LSEBypass="false" VDD="300" LSEDrive="3 High Drive (default)" />
+  <clocks
+    HSEFrequency="32000000"
+    LSEFrequency="32768"
+    LSEBypass="false"
+    LSEDrive="3 High Drive (default)"
+    VDD="300" />
   <ports>
     <GPIOA>
       <pin0
@@ -28,7 +29,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -38,7 +38,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""
@@ -48,7 +47,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID=""
@@ -58,7 +56,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID=""
@@ -68,7 +65,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -78,7 +74,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -88,7 +83,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -98,7 +92,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -108,7 +101,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -118,7 +110,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -128,7 +119,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -138,7 +128,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -148,7 +137,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID="JTAG_TMS"
@@ -158,7 +146,6 @@
         Level="High"
         Mode="Alternate"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID="JTAG_TCK"
@@ -168,7 +155,6 @@
         Level="High"
         Mode="Alternate"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID="JTAG_TDI"
@@ -178,7 +164,6 @@
         Level="High"
         Mode="Alternate"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOA>
     <GPIOB>
@@ -190,7 +175,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -200,7 +184,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID="BOOT1"
@@ -210,7 +193,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID="JTAG_TDO"
@@ -220,7 +202,6 @@
         Level="High"
         Mode="Alternate"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID="JTAG_TRST"
@@ -230,7 +211,6 @@
         Level="High"
         Mode="Alternate"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -240,7 +220,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -250,7 +229,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -260,7 +238,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -270,7 +247,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -280,7 +256,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -290,7 +265,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -300,7 +274,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -310,7 +283,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID=""
@@ -320,7 +292,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID=""
@@ -330,7 +301,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID=""
@@ -340,7 +310,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOB>
     <GPIOC>
@@ -352,7 +321,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -362,7 +330,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""
@@ -372,7 +339,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID=""
@@ -382,7 +348,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID=""
@@ -392,7 +357,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -402,7 +366,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -412,7 +375,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -422,7 +384,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -432,7 +393,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -442,7 +402,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -452,7 +411,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -462,7 +420,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -472,7 +429,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID=""
@@ -482,7 +438,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID="OSC32_IN"
@@ -492,7 +447,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID="OSC32_OUT"
@@ -502,7 +456,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOC>
     <GPIOD>
@@ -514,7 +467,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -524,7 +476,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""
@@ -534,7 +485,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID=""
@@ -544,7 +494,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID=""
@@ -554,7 +503,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -564,7 +512,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -574,7 +521,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -584,7 +530,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -594,7 +539,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -604,7 +548,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -614,7 +557,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -624,7 +566,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -634,7 +575,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID=""
@@ -644,7 +584,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID=""
@@ -654,7 +593,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID=""
@@ -664,7 +602,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOD>
     <GPIOE>
@@ -676,7 +613,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -686,7 +622,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""
@@ -696,7 +631,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID=""
@@ -706,7 +640,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID=""
@@ -716,7 +649,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -726,7 +658,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -736,7 +667,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -746,7 +676,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -756,7 +685,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -766,7 +694,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -776,7 +703,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -786,7 +712,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -796,7 +721,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID=""
@@ -806,7 +730,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID=""
@@ -816,7 +739,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID=""
@@ -826,7 +748,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOE>
     <GPIOF>
@@ -838,7 +759,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -848,7 +768,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""
@@ -858,7 +777,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID=""
@@ -868,7 +786,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID=""
@@ -878,7 +795,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -888,7 +804,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -898,7 +813,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -908,7 +822,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -918,7 +831,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -928,7 +840,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -938,7 +849,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -948,7 +858,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -958,7 +867,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID=""
@@ -968,7 +876,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID=""
@@ -978,7 +885,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID=""
@@ -988,7 +894,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOF>
     <GPIOG>
@@ -1000,7 +905,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID=""
@@ -1010,7 +914,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""
@@ -1020,7 +923,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID=""
@@ -1030,7 +932,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID=""
@@ -1040,7 +941,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -1050,7 +950,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -1060,7 +959,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -1070,7 +968,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -1080,7 +977,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -1090,7 +986,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -1100,7 +995,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -1110,7 +1004,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -1120,7 +1013,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID=""
@@ -1130,7 +1022,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID=""
@@ -1140,7 +1031,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID=""
@@ -1150,7 +1040,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOG>
     <GPIOH>
@@ -1162,7 +1051,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin1
         ID="OSC_OUT"
@@ -1172,7 +1060,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin2
         ID=""
@@ -1182,7 +1069,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin3
         ID=""
@@ -1192,7 +1078,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin4
         ID=""
@@ -1202,7 +1087,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin5
         ID=""
@@ -1212,7 +1096,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin6
         ID=""
@@ -1222,7 +1105,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin7
         ID=""
@@ -1232,7 +1114,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin8
         ID=""
@@ -1242,7 +1123,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin9
         ID=""
@@ -1252,7 +1132,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin10
         ID=""
@@ -1262,7 +1141,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin11
         ID=""
@@ -1272,7 +1150,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin12
         ID=""
@@ -1282,7 +1159,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin13
         ID=""
@@ -1292,7 +1168,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin14
         ID=""
@@ -1302,7 +1177,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
       <pin15
         ID=""
@@ -1312,7 +1186,6 @@
         Level="High"
         Mode="Analog"
         Alternate="0"
-        AnalogSwitch="Disabled"
         PinLock="Disabled" />
     </GPIOH>
   </ports>
