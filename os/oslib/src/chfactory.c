@@ -426,7 +426,7 @@ dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size) {
                                                CH_HEAP_ALIGNMENT);
   if (dbp != NULL) {
     /* Initializing buffer object data.*/
-    memset((void *)(dbp + 1), 0, size);
+    memset((void *)(dbp + 1), 0, size - sizeof (dyn_buffer_t));
   }
 
   F_UNLOCK();
