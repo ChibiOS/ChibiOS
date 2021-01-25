@@ -30,6 +30,7 @@
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
+#include "mpu.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -364,21 +365,6 @@
 #endif
 
 /**
- * @brief   MPU guard page size.
- */
-#if (PORT_ENABLE_GUARD_PAGES == TRUE) || defined(__DOXYGEN__)
-  #if CH_DBG_ENABLE_STACK_CHECK == FALSE
-    #error "PORT_ENABLE_GUARD_PAGES requires CH_DBG_ENABLE_STACK_CHECK"
-  #endif
-  #if __MPU_PRESENT == 0
-    #error "MPU not present in current device"
-  #endif
-  #define PORT_GUARD_PAGE_SIZE          32U
-#else
-  #define PORT_GUARD_PAGE_SIZE          0U
-#endif
-
-/**
  * @brief   Port-specific information string.
  */
 #if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
@@ -404,13 +390,28 @@
   #define CORTEX_MAX_KERNEL_PRIORITY    0U
 #endif
 
-/*===========================================================================*/
-/* Module data structures and types.                                         */
-/*===========================================================================*/
-
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
+
+/**
+ * @brief   MPU guard page size.
+ */
+#if (PORT_ENABLE_GUARD_PAGES == TRUE) || defined(__DOXYGEN__)
+  #if CH_DBG_ENABLE_STACK_CHECK == FALSE
+    #error "PORT_ENABLE_GUARD_PAGES requires CH_DBG_ENABLE_STACK_CHECK"
+  #endif
+  #if __MPU_PRESENT == 0
+    #error "MPU not present in current device"
+  #endif
+  #define PORT_GUARD_PAGE_SIZE          32U
+#else
+  #define PORT_GUARD_PAGE_SIZE          0U
+#endif
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
 
 /**
  * @brief   Type of stack and memory alignment enforcement.
@@ -699,7 +700,7 @@ struct port_context {
 
   #else
     #define port_switch(ntp, otp) do {                                      \
-      _port_switch(ntp, otp);                                               \
+      __port_switch(ntp, otp);                                              \
                                                                             \
       /* Setting up the guard page for the switched-in thread.*/            \
       mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,                        \
