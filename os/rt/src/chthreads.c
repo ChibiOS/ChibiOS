@@ -617,8 +617,8 @@ tprio_t chThdSetPriority(tprio_t newprio) {
   }
   currtp->realprio = newprio;
 #else
-  oldprio = currtp->prio;
-  currtp->prio = newprio;
+  oldprio = currtp->hdr.pqueue.prio;
+  currtp->hdr.pqueue.prio = newprio;
 #endif
   chSchRescheduleS();
   chSysUnlock();
