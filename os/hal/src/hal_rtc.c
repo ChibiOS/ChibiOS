@@ -46,7 +46,11 @@
  * Lookup table with months' length
  */
 static const uint8_t month_len[12] = {
-  31, 30, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+  31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+};
+
+static const uint16_t accu_month_len[12] = {
+  0, 31, 59,  90, 120, 151, 181, 212, 243, 273, 304, 334
 };
 
 /*===========================================================================*/
@@ -220,9 +224,10 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
                                   struct tm *timp,
                                   uint32_t *tv_msec) {
-  int sec;
+  int sec, year;
+  bool is_leap_year;
 
-  timp->tm_year  = (int)timespec->year + (1980 - 1900);
+  timp->tm_year  = (int)timespec->year + (int)(RTC_BASE_YEAR - 1900U);
   timp->tm_mon   = (int)timespec->month - 1;
   timp->tm_mday  = (int)timespec->day;
   timp->tm_isdst = (int)timespec->dstflag;
@@ -236,6 +241,15 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
 
   if (NULL != tv_msec) {
     *tv_msec = (uint32_t)timespec->millisecond % 1000U;
+  }
+
+  /* Day of the year calculation.*/
+  year = timp->tm_year + 1900;
+  timp->tm_yday = timp->tm_mday - 1;
+  timp->tm_yday += accu_month_len[timp->tm_mon];
+  is_leap_year = ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+  if (is_leap_year && (timp->tm_mon > 1)) {
+    timp->tm_yday++;
   }
 }
 
@@ -253,12 +267,12 @@ void rtcConvertStructTmToDateTime(const struct tm *timp,
                                   RTCDateTime *timespec) {
 
   /*lint -save -e9034 [10.4] Verified assignments to bit fields.*/
-  timespec->year      = (uint32_t)timp->tm_year - (1980U - 1900U);
+  timespec->year      = (uint32_t)timp->tm_year - (RTC_BASE_YEAR - 1900U);
   timespec->month     = (uint32_t)timp->tm_mon + 1U;
   timespec->day       = (uint32_t)timp->tm_mday;
   timespec->dayofweek = (uint32_t)timp->tm_wday + 1U;
   if (-1 == timp->tm_isdst) {
-    timespec->dstflag = 0U;  /* set zero if dst is unknown */
+    timespec->dstflag = 0U;  /* Set zero if dst is unknown.*/
   }
   else {
     timespec->dstflag = (uint32_t)timp->tm_isdst;
@@ -293,7 +307,7 @@ uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
   day   = timespec->day;
   month = timespec->month;
 
-  /* handle DST flag */
+  /* Handle DST flag.*/
   if (1U == timespec->dstflag) {
     hour += 1U;
     if (hour == 24U) {

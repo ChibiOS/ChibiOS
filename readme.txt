@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed FAT time problem in RTC driver (bug #1142).
 - FIX: Fixed Heap allocation of aligned FIFO objects in chFactory (bug #1141).
 - FIX: Fixed GCC 10 causes warning in factory module (bug #1139).
 - FIX: Fixed C strict aliasing rules violation causes test cases to fail
