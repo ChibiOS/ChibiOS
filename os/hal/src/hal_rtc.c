@@ -46,7 +46,11 @@
  * Lookup table with months' length
  */
 static const uint8_t month_len[12] = {
-  31, 30, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+  31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+};
+
+static const uint16_t accu_month_len[12] = {
+  0, 31, 59,  90, 120, 151, 181, 212, 243, 273, 304, 334
 };
 
 /*===========================================================================*/
@@ -220,7 +224,8 @@ void rtcSetCallback(RTCDriver *rtcp, rtccb_t callback) {
 void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
                                   struct tm *timp,
                                   uint32_t *tv_msec) {
-  int sec;
+  int sec, year;
+  bool is_leap_year;
 
   timp->tm_year  = (int)timespec->year + (int)(RTC_BASE_YEAR - 1900U);
   timp->tm_mon   = (int)timespec->month - 1;
@@ -236,6 +241,15 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
 
   if (NULL != tv_msec) {
     *tv_msec = (uint32_t)timespec->millisecond % 1000U;
+  }
+
+  /* Day of the year calculation.*/
+  year = timp->tm_year + 1900;
+  timp->tm_yday = timp->tm_mday - 1;
+  timp->tm_yday += accu_month_len[timp->tm_mon];
+  is_leap_year = ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+  if (is_leap_year && (timp->tm_mon > 1)) {
+    timp->tm_yday++;
   }
 }
 
