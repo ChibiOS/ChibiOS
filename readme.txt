@@ -128,6 +128,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed FAT time problem in RTC driver (bug #1142)
+       (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed Heap allocation of aligned FIFO objects in chFactory (bug #1141)
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed chsnprintf() sign mode/filler mode conflict (bug #1140)
