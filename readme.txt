@@ -154,7 +154,7 @@
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed wrong SDMMC RCC macros for STM32H7xx (bug #1127)
        (backported to 20.3.3)(backported to 19.1.5).
-- FIX: Fixed STM32 ADCv3 hangin on initialization (bug #1126)
+- FIX: Fixed STM32 ADCv3 hanging on initialization (bug #1126)
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed I2S-related problems in STM32F4xx registry (bug #1124)
        (backported to 20.3.3)(backported to 19.1.5).

@@ -283,7 +283,7 @@ typedef uint32_t time_conv_t;
  *          integer overflows. Make sure your value can be correctly
  *          converted.
  *
- * @param[in] interval  time stamp in ticks
+ * @param[in] timestamp time stamp in ticks
  *
  * @return              The number of seconds.
  *

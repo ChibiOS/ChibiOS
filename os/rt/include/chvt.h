@@ -411,7 +411,7 @@ static inline void chVTResetTimeStamp(void) {
  * @brief   Virtual Timers instance initialization.
  * @note    Internal use only.
  *
- * @param[out] sdp      pointer to the @p system_debug_t structure
+ * @param[out] vtlp     pointer to the @p virtual_timers_list_t structure
  *
  * @notapi
  */

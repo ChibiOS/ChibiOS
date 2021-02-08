@@ -81,7 +81,7 @@ NOINLINE static void trace_next(os_instance_t *oip) {
  * @brief   Circular trace buffer initialization.
  * @note    Internal use only.
  *
- * @param[out] tbp      pointer to the @p ch__trace_buffer_t structure
+ * @param[out] oip      pointer to the @p os_instance_t structure
  *
  * @notapi
  */

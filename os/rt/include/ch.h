@@ -68,6 +68,7 @@
 
 /**
  * @name    Constants for configuration options
+ * @{
  */
 /**
  * @brief   Generic 'false' preprocessor boolean constant.

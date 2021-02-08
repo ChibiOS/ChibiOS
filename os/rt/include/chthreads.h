@@ -87,6 +87,7 @@ typedef struct {
 
 /**
  * @name    Threads queues
+ * @{
  */
 /**
  * @brief   Data part of a static threads queue object initializer.
@@ -110,6 +111,7 @@ typedef struct {
 
 /**
  * @name    Working Areas
+ * @{
  */
 /**
  * @brief   Calculates the total Working Area size.
@@ -152,6 +154,7 @@ typedef struct {
 
 /**
  * @name    Threads abstraction macros
+ * @{
  */
 /**
  * @brief   Thread declaration macro.
@@ -265,13 +268,13 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
- /**
-  * @brief   Returns a pointer to the current @p thread_t.
-  *
-  * @return             A pointer to the current thread.
-  *
-  * @xclass
-  */
+/**
+ * @brief   Returns a pointer to the current @p thread_t.
+ *
+ * @return             A pointer to the current thread.
+ *
+ * @xclass
+ */
 static inline thread_t *chThdGetSelfX(void) {
 
   return __sch_get_currthread(currcore);
