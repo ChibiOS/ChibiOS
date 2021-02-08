@@ -411,6 +411,7 @@ struct hal_sio_operation {
  * @brief   Wakes up the RX-waiting thread.
  *
  * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] msg       the wake up message
  *
  * @notapi
  */
@@ -424,6 +425,7 @@ struct hal_sio_operation {
  * @brief   Wakes up the TX-waiting thread.
  *
  * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] msg       the wake up message
  *
  * @notapi
  */
@@ -437,6 +439,7 @@ struct hal_sio_operation {
  * @brief   Wakes up the TXend-waiting thread.
  *
  * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] msg       the wake up message
  *
  * @notapi
  */
@@ -450,6 +453,7 @@ struct hal_sio_operation {
 #define __sio_wakeup_tx(siop, msg)
 #define __sio_wakeup_txend(siop, msg)
 #endif /* !SIO_USE_SYNCHRONIZATION */
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

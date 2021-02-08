@@ -73,6 +73,7 @@
 
 /**
  * @name    Constants for configuration options
+ * @{
  */
 /**
  * @brief   Generic 'false' preprocessor boolean constant.
@@ -607,6 +608,7 @@ struct nil_os_instance {
 
 /**
  * @name    Memory alignment support macros
+ * @{
  */
 /**
  * @brief   Alignment mask constant.
@@ -652,6 +654,7 @@ struct nil_os_instance {
 
 /**
  * @name    Working Areas
+ * @{
  */
 /**
  * @brief   Calculates the total Working Area size.
@@ -691,6 +694,7 @@ struct nil_os_instance {
 
 /**
  * @name    Threads abstraction macros
+ * @{
  */
 /**
  * @brief   Thread declaration macro.
@@ -702,6 +706,7 @@ struct nil_os_instance {
 
 /**
  * @name    ISRs abstraction macros
+ * @{
  */
 /**
  * @brief   Priority level validation macro.
@@ -772,6 +777,7 @@ struct nil_os_instance {
 
 /**
  * @name    Fast ISRs abstraction macros
+ * @{
  */
 /**
  * @brief   Standard fast IRQ handler declaration.
@@ -897,6 +903,7 @@ struct nil_os_instance {
 
 /**
  * @name    Threads queues
+ * @{
  */
 /**
  * @brief   Data part of a static threads queue object initializer.
