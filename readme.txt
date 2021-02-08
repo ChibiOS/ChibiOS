@@ -94,7 +94,7 @@
 - FIX: Fixed wrong check in STM32 ST driver (bug #1129).
 - FIX: Fixed OSAL does not allow 64 bits resolution values (bug #1128).
 - FIX: Fixed wrong SDMMC RCC macros for STM32H7xx (bug #1127).
-- FIX: Fixed STM32 ADCv3 hangin on initialization (bug #1126).
+- FIX: Fixed STM32 ADCv3 hanging on initialization (bug #1126).
 - FIX: Fixed I2S-related problems in STM32F4xx registry (bug #1124).
 - FIX: Fixed STM32 EXTIv1 driver unable to enable/disable fixed lines
        (bug #1123).

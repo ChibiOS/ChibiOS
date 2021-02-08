@@ -102,7 +102,7 @@ static void wakeup(void *p) {
  *          priority toward the lowest.
  *
  * @param[in] tp        the pointer to the thread to be inserted in the list
- * @param[in] tqp       the pointer to the threads list header
+ * @param[in] qp        the pointer to the threads list header
  *
  * @notapi
  */

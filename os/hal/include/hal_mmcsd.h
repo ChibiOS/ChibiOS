@@ -97,9 +97,7 @@
 
 /**
  * @name   CSD record offsets
- */
-/**
- * @brief  Slice position of values in CSD register.
+ * @{
  */
 /* CSD for MMC */
 #define MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE       127U, 126U
@@ -196,9 +194,7 @@
 
 /**
  * @name   CID record offsets
- */
-/**
- * @brief  Slice position of values in CID register.
+ * @{
  */
 /* CID for SDC */
 #define MMCSD_CID_SDC_CRC_SLICE                 7U, 1U

@@ -221,7 +221,13 @@
  * @name    Return codes
  * @{
  */
+/**
+ * @brief HAL operation success.
+ */
 #define HAL_SUCCESS             false
+/**
+ * @brief HAL operation failed.
+ */
 #define HAL_FAILED              true
 /** @} */
 

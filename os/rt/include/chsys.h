@@ -62,6 +62,7 @@
 
 /**
  * @name    ISRs abstraction macros
+ * @{
  */
 /**
  * @brief   Priority level validation macro.
@@ -139,6 +140,7 @@
 
 /**
  * @name    Fast ISRs abstraction macros
+ * @{
  */
 /**
  * @brief   Standard fast IRQ handler declaration.

@@ -40,9 +40,9 @@
  * @name    Default control operation codes.
  * @{
  */
-#define CHN_CTL_INVALID         0   /** @brief Invalid operation code.      */
-#define CHN_CTL_NOP             1   /** @brief Does nothing.                */
-#define CHN_CTL_TX_WAIT         2   /** @brief Wait for TX completion.      */
+#define CHN_CTL_INVALID         0   /**< @brief Invalid operation code.     */
+#define CHN_CTL_NOP             1   /**< @brief Does nothing.               */
+#define CHN_CTL_TX_WAIT         2   /**< @brief Wait for TX completion.     */
 /** @} */
 
 /**
