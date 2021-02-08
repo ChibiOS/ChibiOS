@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    USARTv3/hal_sio_lld.h
+ * @file    USARTv2/hal_sio_lld.h
  * @brief   STM32 SIO subsystem low level driver header.
  *
  * @addtogroup SIO

@@ -30,7 +30,8 @@
 /*===========================================================================*/
 
 /**
- * @brief   CR2 register additional macros
+ * @name    CR2 register additional macros
+ * @{
  */
 #define USART_CR1_DATA7                     (USART_CR1_M1)
 #define USART_CR1_DATA8                     (0U)
@@ -39,7 +40,8 @@
 /** @} */
 
 /**
- * @brief   CR2 register additional macros
+ * @name    CR2 register additional macros
+ * @{
  */
 #define USART_CR2_STOP1_BITS                (0U << 12)
 #define USART_CR2_STOP0P5_BITS              (1U << 12)
@@ -48,7 +50,8 @@
 /** @} */
 
 /**
- * @brief   CR3 register additional macros
+ * @name    CR3 register additional macros
+ * @{
  */
 #define USART_CR3_TXFTCFG_NONFULL           (0U)
 #define USART_CR3_TXFTCFG_1Q                (USART_CR3_TXFTCFG_0)
@@ -66,7 +69,8 @@
 /** @} */
 
 /**
- * @brief   PRESC register additional macros
+ * @name   PRESC register additional macros
+ * @{
  */
 #define USART_PRESC_N(n)                    ((n) << USART_PRESC_PRESCALER_Pos)
 #define USART_PRESC1                        USART_PRESC_N(0U)
