@@ -188,7 +188,7 @@ static inline void tim1_tim9_tim10_tim11_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM19_IS_USED)  ||         \
+#if defined(STM32_TIM1_IS_USED) || defined(STM32_TIM9_IS_USED)  ||          \
     defined(__DOXYGEN__)
 /**
  * @brief   TIM1-BRK, TIM9 interrupt handler.
