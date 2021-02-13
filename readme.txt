@@ -76,6 +76,7 @@
 *** 20.3.3 ***
 - NEW: RT, NIL: Renamed _THREADS_QUEUE_DECL to THREADS_QUEUE_DECL for
        consistency.
+- FIX: Fixed wrong macro check on STM32 SPIv3 (bug #1144).
 - FIX: Fixed wrong check on STM32 TIM9 timer (bug #1143).
 - FIX: Fixed FAT time problem in RTC driver (bug #1142).
 - FIX: Fixed Heap allocation of aligned FIFO objects in chFactory (bug #1141).
