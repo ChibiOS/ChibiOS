@@ -413,6 +413,8 @@ void chSchGoSleepS(tstate_t newstate) {
 
   chDbgCheckClassS();
 
+  chDbgAssert(otp != chSysGetIdleThreadX(), "sleeping in idle thread");
+
   /* New state.*/
   otp->state = newstate;
 
