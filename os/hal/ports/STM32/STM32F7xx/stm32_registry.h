@@ -750,9 +750,9 @@
 #endif /* defined(STM32F745xx) || defined(STM32F746xx) || defined(STM32F756xx) */
 
 /*===========================================================================*/
-/* STM32F767xx, STM32F769xx, STM32F777xx, STM32F779xx.                       */
+/* STM32F765xx, STM32F767xx, STM32F769xx, STM32F777xx, STM32F779xx.          */
 /*===========================================================================*/
-#if defined(STM32F767xx) || defined(STM32F769xx) ||                         \
+#if defined(STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx) || \
     defined(STM32F777xx) || defined(STM32F779xx) ||                         \
     defined(__DOXYGEN__)
 /* ADC attributes.*/
@@ -1098,7 +1098,7 @@
 #define STM32_HAS_CRC                       TRUE
 #define STM32_CRC_PROGRAMMABLE              FALSE
 
-#endif /* defined(STM32F767xx) || defined(STM32F769xx) ||
+#endif /* defined(STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx) ||
           defined(STM32F777xx) || defined(STM32F779xx) */
 /** @} */
 
