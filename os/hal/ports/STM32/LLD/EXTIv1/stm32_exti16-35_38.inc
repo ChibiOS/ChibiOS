@@ -80,7 +80,7 @@ static inline void exti16_exti35_38_irq_deinit(void) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_EXTI163538_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_EXTI1635_38_HANDLER) {
   uint32_t pr;
 
   OSAL_IRQ_PROLOGUE();
