@@ -76,6 +76,7 @@
 *** 20.3.3 ***
 - NEW: RT, NIL: Renamed _THREADS_QUEUE_DECL to THREADS_QUEUE_DECL for
        consistency.
+- FIX: Fixed incorrect IRQ vector for PVM (bug #1146)
 - FIX: Fixed missing STM32F765 from registry (bug #1145).
 - FIX: Fixed wrong macro check on STM32 SPIv3 (bug #1144).
 - FIX: Fixed wrong check on STM32 TIM9 timer (bug #1143).
