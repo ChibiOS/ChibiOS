@@ -128,6 +128,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed incorrect IRQ vector for PVM (bug #1146)
+       (backported to 20.3.3)
 - FIX: Fixed missing STM32F765 from registry (bug #1145)
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed wrong macro check on STM32 SPIv3 (bug #1144)

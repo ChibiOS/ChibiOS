@@ -86,10 +86,10 @@ OSAL_IRQ_HANDLER(STM32_EXTI1921_HANDLER) {
   (void)pr;
 
 #if defined(STM32_EXTI19_ISR)
-  STM32_EXTI16_ISR(pr, 19);
+  STM32_EXTI19_ISR(pr, 19);
 #endif
 #if defined(STM32_EXTI21_ISR)
-  STM32_EXTI16_ISR(pr, 21);
+  STM32_EXTI19_ISR(pr, 21);
 #endif
 
   OSAL_IRQ_EPILOGUE();
