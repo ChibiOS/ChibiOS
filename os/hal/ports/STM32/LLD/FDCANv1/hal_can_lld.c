@@ -134,7 +134,7 @@ static bool fdcan_clock_stop(CANDriver *canp) {
   canp->fdcan->CCCR |= FDCAN_CCCR_CSR;
   start = osalOsGetSystemTimeX();
   end = osalTimeAddX(start, TIME_MS2I(TIMEOUT_INIT_MS));
-  while ((canp->fdcan->CCCR & FDCAN_CCCR_CSA) != 0U) {
+  while ((canp->fdcan->CCCR & FDCAN_CCCR_CSA) == 0U) {
     if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
       return true;
     }
@@ -276,7 +276,7 @@ bool can_lld_start(CANDriver *canp) {
   }
 
   /* Configuration can be performed now.*/
-  canp->fdcan->CCCR   = FDCAN_CCCR_CCE;
+  canp->fdcan->CCCR  |= FDCAN_CCCR_CCE;
 
   /* Setting up operation mode except driver-controlled bits.*/
   canp->fdcan->NBTP   = canp->config->NBTP;
