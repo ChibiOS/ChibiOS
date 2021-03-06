@@ -284,7 +284,16 @@ bool can_lld_start(CANDriver *canp) {
   canp->fdcan->CCCR  |= canp->config->CCCR & ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA |
                                                FDCAN_CCCR_CCE | FDCAN_CCCR_INIT);
   canp->fdcan->TEST   = canp->config->TEST;
+#ifdef STM32G4XX
   canp->fdcan->RXGFC  = canp->config->RXGFC;
+#elif defined(STM32H7XX)
+  canp->fdcan->GFC    = canp->config->RXGFC;
+#else
+#error "Unsupported STM32 for FDCAN LLD driver"
+#endif
+
+  /* Clear config mode bits */
+  canp->fdcan->CCCR &= ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA);
 
   /* Enabling interrupts, only using interrupt zero.*/
   canp->fdcan->IR     = (uint32_t)-1;
