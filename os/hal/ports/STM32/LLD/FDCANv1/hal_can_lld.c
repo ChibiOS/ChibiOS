@@ -277,6 +277,7 @@ bool can_lld_start(CANDriver *canp) {
 
   /* Configuration can be performed now.*/
   canp->fdcan->CCCR  |= FDCAN_CCCR_CCE;
+  canp->fdcan->CCCR &= ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA);
 
   /* Setting up operation mode except driver-controlled bits.*/
   canp->fdcan->NBTP   = canp->config->NBTP;
@@ -291,9 +292,6 @@ bool can_lld_start(CANDriver *canp) {
 #else
 #error "Unsupported STM32 for FDCAN LLD driver"
 #endif
-
-  /* Clear config mode bits */
-  canp->fdcan->CCCR &= ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA);
 
   /* Enabling interrupts, only using interrupt zero.*/
   canp->fdcan->IR     = (uint32_t)-1;
