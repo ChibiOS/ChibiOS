@@ -128,6 +128,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed STM32 QUADSPI driver problem when used with DMAv2 (bug #1147)
+       (backported to 20.3.4)
 - FIX: Fixed incorrect IRQ vector for PVM (bug #1146)
        (backported to 20.3.4)
 - FIX: Fixed missing STM32F765 from registry (bug #1145)
