@@ -202,9 +202,19 @@
 
 /**
  * @brief   Simplified priority handling flag.
- * @details Activating this option makes the Kernel work in compact mode.
- *          In compact mode interrupts are disabled globally instead of
- *          raising the priority mask to some intermediate level.
+ * @details When this option is disabled:
+ *          - Interrupts are not disabled globally, the priority mask BASEPRI
+ *            is raised up to CORTEX_BASEPRI_KERNEL instead.
+ *          - An extra structure @p port_extctx is allocated for each thread
+ *            in order to allow safe processing of fast interrupts.
+ *          .
+ *          When this option is enabled:
+ *          - Interrupts are disabled globally instead of
+ *            raising the priority mask, this makes code generally more
+ *            compact and faster. There is no extra @p port_extctx structure
+ *            so less RAM is used.
+ *          - There is no support for fast interrupts.
+ *          .
  */
 #if !defined(CORTEX_SIMPLIFIED_PRIORITY)
 #define CORTEX_SIMPLIFIED_PRIORITY      FALSE
@@ -611,12 +621,23 @@ struct port_context {
 } while (0)
 
 /**
+ * @brief   Context switch area size.
+ */
+#if (CORTEX_SIMPLIFIED_PRIORITY == TRUE) || defined(__DOXYGEN__)
+#define PORT_WA_CTX_SIZE (sizeof (struct port_intctx) +                     \
+                          sizeof (struct port_extctx))
+#else
+#define PORT_WA_CTX_SIZE (sizeof (struct port_intctx) +                     \
+                          sizeof (struct port_extctx) +                     \
+                          sizeof (struct port_extctx))
+#endif
+
+/**
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
  */
 #define PORT_WA_SIZE(n) ((size_t)PORT_GUARD_PAGE_SIZE +                     \
-                         sizeof (struct port_intctx) +                      \
-                         sizeof (struct port_extctx) +                      \
+                         (size_t)PORT_WA_CTX_SIZE +                         \
                          (size_t)(n) +                                      \
                          (size_t)PORT_INT_REQUIRED_STACK)
 
