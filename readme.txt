@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.4 ***
+- FIX: Fixed STM32 QUADSPI driver problem when used with DMAv2 (bug #1147).
 - FIX: Fixed incorrect IRQ vector for PVM (bug #1146)
 
 *** 20.3.3 ***
