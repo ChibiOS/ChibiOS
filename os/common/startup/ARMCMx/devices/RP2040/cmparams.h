@@ -61,7 +61,6 @@
    asm module.*/
 #if !defined(_FROM_ASM_)
 
-#if 0
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
@@ -77,7 +76,6 @@
 #error "CMSIS __NVIC_PRIO_BITS mismatch"
 #endif
 /*lint -restore*/
-#endif
 
 #endif /* !defined(_FROM_ASM_) */
 
