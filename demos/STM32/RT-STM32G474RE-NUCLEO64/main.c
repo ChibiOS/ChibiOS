@@ -72,6 +72,6 @@ int main(void) {
       test_execute((BaseSequentialStream *)&LPSIOD1, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
- }
+  }
 }
 

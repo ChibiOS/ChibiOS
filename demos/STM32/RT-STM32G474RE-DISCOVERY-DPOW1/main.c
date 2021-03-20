@@ -80,6 +80,6 @@ int main(void) {
       test_execute((BaseSequentialStream *)&SIOD3, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
- }
+  }
 }
 
