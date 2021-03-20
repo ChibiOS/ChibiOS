@@ -14,12 +14,9 @@
     limitations under the License.
 */
 
-/**
- * @file    RP2040/hal_lld.c
- * @brief   RP2040 HAL subsystem low level driver source.
- *
- * @addtogroup HAL
- * @{
+/*
+ * This file has been automatically generated using ChibiStudio board
+ * generator plugin. Do not edit manually.
  */
 
 #include "hal.h"
@@ -31,12 +28,6 @@
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
-
-/**
- * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_rp2040.h.
- */
-uint32_t SystemCoreClock = RP_CORE_CK;
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -55,28 +46,64 @@ uint32_t SystemCoreClock = RP_CORE_CK;
 /*===========================================================================*/
 
 /**
- * @brief   Low level HAL driver initialization.
- *
- * @notapi
+ * @brief   Early initialization code.
+ * @details GPIO ports and system clocks are initialized before everything
+ *          else.
  */
-void hal_lld_init(void) {
+void __early_init(void) {
+
+//  rp_gpio_init();
+  rp_clock_init();
+}
+
+#if HAL_USE_SDC || defined(__DOXYGEN__)
+/**
+ * @brief   SDC card detection.
+ */
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  /* CHTODO: Fill the implementation.*/
+  return true;
 }
 
 /**
- * @brief   RP2040 voltage, clocks and PLL initialization.
- * @note    All the involved constants come from the file @p board.h.
- * @note    This function should be invoked just after the system reset.
- *
- * @special
+ * @brief   SDC card write protection detection.
  */
+bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  /* CHTODO: Fill the implementation.*/
+  return false;
+}
+#endif /* HAL_USE_SDC */
+
+#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
 /**
- * @brief   Clocks and internal voltage initialization.
+ * @brief   MMC_SPI card detection.
  */
-void rp_clock_init(void) {
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
 
-#if !RP_NO_INIT
-
-#endif /* RP_NO_INIT */
+  (void)mmcp;
+  /* CHTODO: Fill the implementation.*/
+  return true;
 }
 
-/** @} */
+/**
+ * @brief   MMC_SPI card write protection detection.
+ */
+bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  /* CHTODO: Fill the implementation.*/
+  return false;
+}
+#endif
+
+/**
+ * @brief   Board-specific initialization code.
+ * @note    You can add your board-specific code here.
+ */
+void boardInit(void) {
+
+}

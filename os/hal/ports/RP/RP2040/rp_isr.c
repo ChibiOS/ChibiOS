@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RP2040/hal_lld.c
- * @brief   RP2040 HAL subsystem low level driver source.
+ * @file    RP2040/rp_isr.c
+ * @brief   RP2040 ISR handler code.
  *
- * @addtogroup HAL
+ * @addtogroup RP2040_ISR
  * @{
  */
 
@@ -32,14 +32,8 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_rp2040.h.
- */
-uint32_t SystemCoreClock = RP_CORE_CK;
-
 /*===========================================================================*/
-/* Driver local variables and types.                                         */
+/* Driver local variables.                                                   */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -55,28 +49,21 @@ uint32_t SystemCoreClock = RP_CORE_CK;
 /*===========================================================================*/
 
 /**
- * @brief   Low level HAL driver initialization.
+ * @brief   Enables IRQ sources.
  *
  * @notapi
  */
-void hal_lld_init(void) {
+void irqInit(void) {
+
 }
 
 /**
- * @brief   RP2040 voltage, clocks and PLL initialization.
- * @note    All the involved constants come from the file @p board.h.
- * @note    This function should be invoked just after the system reset.
+ * @brief   Disables IRQ sources.
  *
- * @special
+ * @notapi
  */
-/**
- * @brief   Clocks and internal voltage initialization.
- */
-void rp_clock_init(void) {
+void irqDeinit(void) {
 
-#if !RP_NO_INIT
-
-#endif /* RP_NO_INIT */
 }
 
 /** @} */

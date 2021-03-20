@@ -15,79 +15,34 @@
 */
 
 /**
- * @file    RP2040/hal_lld.h
- * @brief   RP2040 HAL subsystem low level driver header.
+ * @file    RP2040/rp_isr.h
+ * @brief   RP2040 ISR handler header.
  *
- * @addtogroup HAL
+ * @addtogroup RP2040_ISR
  * @{
  */
 
-#ifndef HAL_LLD_H
-#define HAL_LLD_H
-
-/*
- * Registry definitions.
- */
-#include "rp_registry.h"
+#ifndef RP2040_ISR_H
+#define RP2040_ISR_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @name    Platform identification macros
+ * @name    ISR names and numbers
  * @{
  */
-#if defined(RP2040) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "RP2040"
 
-#else
-#error "RP2040 device not specified"
-#endif
 /** @} */
-
-/**
- * @name    Internal clock sources
- * @{
- */
-#define RP_ROSCCLK              6500000     /**< 6.5MHz internal clock.     */
-/** @} */
-
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   Disables the clocks initialization in the HAL.
- */
-#if !defined(RP_NO_INIT) || defined(__DOXYGEN__)
-#define RP_NO_INIT                          FALSE
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/*
- * Configuration-related checks.
- */
-#if !defined(RP2040_MCUCONF)
-#error "Using a wrong mcuconf.h file, RP2040_MCUCONF not defined"
-#endif
-
-/*
- * Board files sanity checks.
- */
-#if !defined(RP_XOSCCLK)
-#error "RP_XOSCCLK not defined in board.h"
-#endif
-
-#define RP_CORE_CK  RP_ROSCCLK
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -101,19 +56,15 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* Various helpers.*/
-#include "nvic.h"
-#include "cache.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void hal_lld_init(void);
-  void rp_clock_init(void);
+  void irqInit(void);
+  void irqDeinit(void);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_LLD_H */
+#endif /* RP2040_ISR_H */
 
 /** @} */

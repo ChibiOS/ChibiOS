@@ -25,6 +25,7 @@ else
 endif
 
 # Drivers compatible with the platform.
+include $(CHIBIOS)/os/hal/ports/RP/LLD/TIMERv1/driver.mk
 
 # Shared variables
 ALLCSRC += $(PLATFORMSRC)

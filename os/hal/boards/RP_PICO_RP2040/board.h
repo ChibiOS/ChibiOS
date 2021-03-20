@@ -14,80 +14,55 @@
     limitations under the License.
 */
 
-/**
- * @file    RP2040/hal_lld.h
- * @brief   RP2040 HAL subsystem low level driver header.
- *
- * @addtogroup HAL
- * @{
- */
-
-#ifndef HAL_LLD_H
-#define HAL_LLD_H
-
 /*
- * Registry definitions.
+ * This file has been automatically generated using ChibiStudio board
+ * generator plugin. Do not edit manually.
  */
-#include "rp_registry.h"
+
+#ifndef BOARD_H
+#define BOARD_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Platform identification macros
- * @{
+/*
+ * Setup for STMicroelectronics STM32 Nucleo64-G474RE board.
  */
-#if defined(RP2040) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "RP2040"
 
-#else
-#error "RP2040 device not specified"
+/*
+ * Board identifier.
+ */
+#define BOARD_RP_PICO_RP2040
+#define BOARD_NAME                  "Raspberry Pi Pico"
+
+/*
+ * Board oscillators-related settings.
+ */
+#if !defined(RP_XOSCCLK)
+#define RP_XOSCCLK                  12000000U
 #endif
-/** @} */
 
-/**
- * @name    Internal clock sources
- * @{
+/*
+ * MCU type.
  */
-#define RP_ROSCCLK              6500000     /**< 6.5MHz internal clock.     */
-/** @} */
+#define RP2040
 
+/*
+ * IO pins assignments.
+ */
+
+/*
+ * IO lines assignments.
+ */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   Disables the clocks initialization in the HAL.
- */
-#if !defined(RP_NO_INIT) || defined(__DOXYGEN__)
-#define RP_NO_INIT                          FALSE
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/*
- * Configuration-related checks.
- */
-#if !defined(RP2040_MCUCONF)
-#error "Using a wrong mcuconf.h file, RP2040_MCUCONF not defined"
-#endif
-
-/*
- * Board files sanity checks.
- */
-#if !defined(RP_XOSCCLK)
-#error "RP_XOSCCLK not defined in board.h"
-#endif
-
-#define RP_CORE_CK  RP_ROSCCLK
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -101,19 +76,14 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/* Various helpers.*/
-#include "nvic.h"
-#include "cache.h"
-
+#if !defined(_FROM_ASM_)
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void hal_lld_init(void);
-  void rp_clock_init(void);
+  void boardInit(void);
 #ifdef __cplusplus
 }
 #endif
+#endif /* _FROM_ASM_ */
 
-#endif /* HAL_LLD_H */
-
-/** @} */
+#endif /* BOARD_H */
