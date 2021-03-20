@@ -80,8 +80,7 @@ typedef enum {
 #include "core_cm0plus.h"
 #include "system_rp2040.h"
 
-typedef struct
-{
+typedef struct {
   __IO uint32_t xxx;
 } XXX_TypeDef;
 
