@@ -515,11 +515,25 @@ typedef struct {
   volatile uint32_t     RCR;
   volatile uint32_t     CCR[4];
   volatile uint32_t     BDTR;
+#if defined(STM32G4)
+  volatile uint32_t     CCXR[2];
+  volatile uint32_t     CCMR3;
+  volatile uint32_t     DTR2;
+  volatile uint32_t     ECR;
+  volatile uint32_t     TISEL;
+  volatile uint32_t     AF1;
+  volatile uint32_t     AF2;
+  volatile uint32_t     OR;
+  volatile uint32_t     RESERVED0[220];
+  volatile uint32_t     DCR;
+  volatile uint32_t     DMAR;
+#else
   volatile uint32_t     DCR;
   volatile uint32_t     DMAR;
   volatile uint32_t     OR;
   volatile uint32_t     CCMR3;
   volatile uint32_t     CCXR[2];
+#endif
 } stm32_tim_t;
 
 /**
