@@ -86,7 +86,7 @@ endif
 PROJECT = ch
 
 # Target settings.
-MCU  = cortex-m0
+MCU  = cortex-m0plus
 
 # Imported source files and paths.
 CHIBIOS  := ../../..
@@ -112,6 +112,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/test/lib/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/various/pico_bindings/pico-sdk.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/RP2040_RAM.ld
@@ -120,6 +121,7 @@ LDSCRIPT= $(STARTUPLD)/RP2040_RAM.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
+       $(PICOSDKROOT)/src/rp2_common/hardware_clocks/clocks.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
