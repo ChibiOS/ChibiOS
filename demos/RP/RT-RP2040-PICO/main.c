@@ -14,7 +14,6 @@
     limitations under the License.
 */
 
-#if 0
 #include "ch.h"
 #include "hal.h"
 #include "rt_test_root.h"
@@ -29,20 +28,18 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palClearLine(LINE_LED_GREEN);
+//    palClearLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
-    palSetLine(LINE_LED_GREEN);
+//    palSetLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
   }
 }
-#endif
 
 /*
  * Application entry point.
  */
 int main(void) {
 
-#if 0
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -57,14 +54,13 @@ int main(void) {
    * Activates the Serial or SIO driver using the default configuration.
    */
 //  sdStart(&LPSD1, NULL);
-  sioStart(&LPSIOD1, NULL);
-  sioStartOperation(&LPSIOD1, NULL);
+//  sioStart(&LPSIOD1, NULL);
+//  sioStartOperation(&LPSIOD1, NULL);
 
   /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-#endif
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -76,8 +72,8 @@ int main(void) {
       test_execute((BaseSequentialStream *)&LPSIOD1, &rt_test_suite);
       test_execute((BaseSequentialStream *)&LPSIOD1, &oslib_test_suite);
     }
-    chThdSleepMilliseconds(500);
 #endif
+    chThdSleepMilliseconds(500);
   }
 }
 
