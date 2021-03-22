@@ -1,6 +1,10 @@
 # Pico-SDK files.
 PICOSDKROOT   := $(CHIBIOS)/ext/pico-sdk
-PICOSDKSRC     =
+
+PICOSDKSRC     = $(PICOSDKROOT)/src/rp2_common/hardware_clocks/clocks.c \
+                 $(PICOSDKROOT)/src/rp2_common/hardware_pll/pll.c \
+                 $(PICOSDKROOT)/src/rp2_common/hardware_watchdog/watchdog.c \
+                 $(PICOSDKROOT)/src/rp2_common/hardware_xosc/xosc.c \
 
 PICOSDKINC     = $(CHIBIOS)//os/various/pico_bindings/dumb/include \
                  $(PICOSDKROOT)/src/common/pico_base/include \

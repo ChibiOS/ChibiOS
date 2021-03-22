@@ -87,7 +87,7 @@
 #error "RP_XOSCCLK not defined in board.h"
 #endif
 
-#define RP_CORE_CK  RP_ROSCCLK
+#define RP_CORE_CK              125000000
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

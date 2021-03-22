@@ -24,6 +24,9 @@
 
 #include "hal.h"
 
+/* From Pico-SDK */
+#include "hardware/clocks.h"
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -75,7 +78,7 @@ void hal_lld_init(void) {
 void rp_clock_init(void) {
 
 #if !RP_NO_INIT
-
+  clocks_init();
 #endif /* RP_NO_INIT */
 }
 

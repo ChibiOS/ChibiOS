@@ -121,7 +121,7 @@ LDSCRIPT= $(STARTUPLD)/RP2040_RAM.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(PICOSDKROOT)/src/rp2_common/hardware_clocks/clocks.c \
+       $(CHIBIOS)/os/various/syscalls.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -152,7 +152,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCRT0_VTOR_INIT=1
+UDEFS = -DCRT0_VTOR_INIT=1 -DPICO_NO_FPGA_CHECK
 
 # Define ASM defines here
 UADEFS = -DCRT0_VTOR_INIT=1

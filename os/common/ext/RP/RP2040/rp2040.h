@@ -84,8 +84,6 @@ typedef struct {
   __IO uint32_t xxx;
 } XXX_TypeDef;
 
-#define XIP_BASE                        0x10000000U
-
 #define PERIPH_BASE                     0x40000000U
 
 /**
