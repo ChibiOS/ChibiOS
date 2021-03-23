@@ -145,8 +145,8 @@
 #define STM32_DMAMUX1_TIM16_UP      110
 #define STM32_DMAMUX1_TIM17_CH1     111
 #define STM32_DMAMUX1_TIM17_UP      112
-#define STM32_DMAMUX1_SAI3A         113
-#define STM32_DMAMUX1_SAI3B         114
+#define STM32_DMAMUX1_SAI3_A        113
+#define STM32_DMAMUX1_SAI3_B        114
 #define STM32_DMAMUX1_ADC3          115
 /** @} */
 
@@ -168,8 +168,8 @@
 #define STM32_DMAMUX2_SPI6_TX       12
 #define STM32_DMAMUX2_I2C4_RX       13
 #define STM32_DMAMUX2_I2C4_TX       14
-#define STM32_DMAMUX2_SAI4A         15
-#define STM32_DMAMUX2_SAI4B         16
+#define STM32_DMAMUX2_SAI4_A        15
+#define STM32_DMAMUX2_SAI4_B        16
 #define STM32_DMAMUX2_ADC3_REQ      17
 /** @} */
 
