@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.4 ***
+- FIX: Fixed inconsistent naming of SAI DMAMUX defines for STM32H7 (bug #1149).
 - FIX: Fixed TIM register layout difference for STM32G4 series (bug #1148).
 - FIX: Fixed STM32 QUADSPI driver problem when used with DMAv2 (bug #1147).
 - FIX: Fixed incorrect IRQ vector for PVM (bug #1146).
