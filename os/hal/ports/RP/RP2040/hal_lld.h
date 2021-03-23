@@ -30,6 +30,9 @@
  */
 #include "rp_registry.h"
 
+/* From Pico-SDK */
+#include "hardware/clocks.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -87,11 +90,18 @@
 #error "RP_XOSCCLK not defined in board.h"
 #endif
 
-#define RP_CORE_CK              125000000
+/**
+ * @name    Various clock points.
+ * @{
+ */
+#define RP_CORE_CLK             hal_lld_get_clock(clk_sys)
+/** @} */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+typedef enum clock_index clock_index_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -108,11 +118,20 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void hal_lld_init(void);
   void rp_clock_init(void);
+  void hal_lld_init(void);
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Driver inline functions.                                                  */
+/*===========================================================================*/
+
+__STATIC_INLINE uint32_t hal_lld_get_clock(clock_index_t clk_index) {
+
+  return clock_get_hz(clk_index);
+}
 
 #endif /* HAL_LLD_H */
 

@@ -42,8 +42,8 @@
 /**
  * @brief   SysTick timer IRQ priority.
  */
-#if !defined(RP_TIMER_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define RP_TIMER_IRQ_PRIORITY               1
+#if !defined(RP_SYSTICK_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define RP_SYSTICK_IRQ_PRIORITY             1
 #endif
 /** @} */
 

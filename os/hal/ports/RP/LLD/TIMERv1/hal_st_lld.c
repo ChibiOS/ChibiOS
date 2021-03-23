@@ -31,23 +31,10 @@
 /*===========================================================================*/
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
-
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
-
 #define ST_HANDLER                          SysTick_Handler
-
-#define SYSTICK_CK                          RP_CORE_CK
-
-#if SYSTICK_CK % OSAL_ST_FREQUENCY != 0
-#error "the selected ST frequency is not obtainable because integer rounding"
-#endif
-
-#if (SYSTICK_CK / OSAL_ST_FREQUENCY) - 1 > 0xFFFFFF
-#error "the selected ST frequency is not obtainable because SysTick timer counter limits"
-#endif
-
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 
 /*===========================================================================*/
@@ -96,22 +83,30 @@ OSAL_IRQ_HANDLER(ST_HANDLER) {
  * @notapi
  */
 void st_lld_init(void) {
+  uint32_t  timer_clk;
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
+  timer_clk = RP_CORE_CLK;
+
+  osalDbgAssert(timer_clk % OSAL_ST_FREQUENCY != 0U,
+                "division remainder");
+  osalDbgAssert((timer_clk / OSAL_ST_FREQUENCY) - 1U > 0x00FFFFFFU,
+                "prescaler range");
+
   /* Periodic systick mode, the Cortex-Mx internal systick timer is used
      in this mode.*/
-  SysTick->LOAD = (SYSTICK_CK / OSAL_ST_FREQUENCY) - 1;
+  SysTick->LOAD = (timer_clk / OSAL_ST_FREQUENCY) - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
 
   /* IRQ enabled.*/
-  nvicSetSystemHandlerPriority(HANDLER_SYSTICK, RP_ST_IRQ_PRIORITY);
+  nvicSetSystemHandlerPriority(HANDLER_SYSTICK, RP_SYSTICK_IRQ_PRIORITY);
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 }
 

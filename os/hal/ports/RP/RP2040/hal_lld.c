@@ -24,9 +24,6 @@
 
 #include "hal.h"
 
-/* From Pico-SDK */
-#include "hardware/clocks.h"
-
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -39,7 +36,7 @@
  * @brief   CMSIS system core clock variable.
  * @note    It is declared in system_rp2040.h.
  */
-uint32_t SystemCoreClock = RP_CORE_CK;
+uint32_t SystemCoreClock;
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -79,6 +76,8 @@ void rp_clock_init(void) {
 
 #if !RP_NO_INIT
   clocks_init();
+
+  SystemCoreClock = RP_CORE_CLK;
 #endif /* RP_NO_INIT */
 }
 
