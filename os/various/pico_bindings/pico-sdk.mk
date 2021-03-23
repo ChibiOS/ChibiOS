@@ -15,8 +15,8 @@ PICOSDKINC     = $(CHIBIOS)//os/various/pico_bindings/dumb/include \
                  $(PICOSDKROOT)/src/rp2_common/hardware_irq/include \
                  $(PICOSDKROOT)/src/rp2_common/hardware_pll/include \
                  $(PICOSDKROOT)/src/rp2_common/hardware_resets/include \
-                 $(PICOSDKROOT)/src/rp2_common/hardware_xosc/include \
                  $(PICOSDKROOT)/src/rp2_common/hardware_watchdog/include \
+                 $(PICOSDKROOT)/src/rp2_common/hardware_xosc/include \
                  $(PICOSDKROOT)/src/rp2040/hardware_regs/include \
                  $(PICOSDKROOT)/src/rp2040/hardware_structs/include \
                  $(PICOSDKROOT)/src/boards/include

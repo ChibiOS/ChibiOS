@@ -94,7 +94,16 @@
  * @name    Various clock points.
  * @{
  */
+#define RP_GPOUT0_CLK           hal_lld_get_clock(clk_gpout0)
+#define RP_GPOUT1_CLK           hal_lld_get_clock(clk_gpout1)
+#define RP_GPOUT2_CLK           hal_lld_get_clock(clk_gpout2)
+#define RP_GPOUT3_CLK           hal_lld_get_clock(clk_gpout3)
+#define RP_REF_CLK              hal_lld_get_clock(clk_ref)
 #define RP_CORE_CLK             hal_lld_get_clock(clk_sys)
+#define RP_PERI_CLK             hal_lld_get_clock(clk_peri)
+#define RP_USB_CLK              hal_lld_get_clock(clk_usb)
+#define RP_ADC_CLK              hal_lld_get_clock(clk_adc)
+#define RP_RTC_CLK              hal_lld_get_clock(clk_rtc)
 /** @} */
 
 /*===========================================================================*/
