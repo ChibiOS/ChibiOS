@@ -128,6 +128,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed inconsistent naming of SAI DMAMUX defines for STM32H7 (bug #1149)
+       (backported to 20.3.4).
 - FIX: Fixed TIM register layout difference for STM32G4 series (bug #1148)
        (backported to 20.3.4).
 - FIX: Fixed STM32 QUADSPI driver problem when used with DMAv2 (bug #1147)
