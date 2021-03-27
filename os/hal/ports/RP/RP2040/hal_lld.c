@@ -60,19 +60,6 @@ uint32_t SystemCoreClock;
  * @notapi
  */
 void hal_lld_init(void) {
-}
-
-/**
- * @brief   RP2040 voltage, clocks and PLL initialization.
- * @note    All the involved constants come from the file @p board.h.
- * @note    This function should be invoked just after the system reset.
- *
- * @special
- */
-/**
- * @brief   Clocks and internal voltage initialization.
- */
-void rp_clock_init(void) {
 
 #if !RP_NO_INIT
   clocks_init();

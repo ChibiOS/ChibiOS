@@ -128,7 +128,6 @@ typedef enum clock_index clock_index_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void rp_clock_init(void);
   void hal_lld_init(void);
 #ifdef __cplusplus
 }
@@ -151,7 +150,7 @@ __STATIC_INLINE void hal_lld_peripheral_reset(uint32_t mask) {
 __STATIC_INLINE void hal_lld_peripheral_unreset(uint32_t mask) {
 
   RESETS->RESET &= ~mask;
-  while ((RESETS->RESET_DONE & mask) != 0U) {
+  while ((RESETS->RESET_DONE & mask) == 0U) {
     /* Waiting for reset.*/
   }
 }

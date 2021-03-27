@@ -53,7 +53,6 @@
 void __early_init(void) {
 
 //  rp_gpio_init();
-  rp_clock_init();
 }
 
 #if HAL_USE_SDC || defined(__DOXYGEN__)
