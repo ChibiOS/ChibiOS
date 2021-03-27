@@ -85,6 +85,12 @@ typedef enum {
  * @{
  */
 typedef struct {
+  __IO uint32_t     RESET;
+  __IO uint32_t     WDSEL;
+  __I  uint32_t     RESET_DONE;
+} RESETS_TypeDef;
+
+typedef struct {
   __IO uint32_t     TIMEHW;
   __IO uint32_t     TIMELW;
   __I  uint32_t     TIMEHR;
@@ -143,18 +149,50 @@ typedef struct {
 #define APBPERIPH_BASE                  0x40000000U
 #define AHBPERIPH_BASE                  0x50000000U
 #define __IOPORT_BASE                   0xA0000000U
-#define __TIMER_BASE                    (APBPERIPH_BASE + 0x00054000)
-#define __UART0_BASE                    (APBPERIPH_BASE + 0x00034000)
-#define __UART1_BASE                    (APBPERIPH_BASE + 0x00038000)
+#define __RESETS_BASE                   (APBPERIPH_BASE + 0x0000C000U)
+#define __TIMER_BASE                    (APBPERIPH_BASE + 0x00054000U)
+#define __UART0_BASE                    (APBPERIPH_BASE + 0x00034000U)
+#define __UART1_BASE                    (APBPERIPH_BASE + 0x00038000U)
 /** @} */
 
 /**
  * @name    Peripherals
  * @{
  */
+#define RESETS                          ((RESETS_TypeDef *)__RESETS_BASE)
 #define TIMER                           ((TIMER_TypeDef *)__TIMER_BASE)
 #define UART0                           ((UART_TypeDef *)__UART0_BASE)
 #define UART1                           ((UART_TypeDef *)__UART1_BASE)
+/** @} */
+
+/**
+ * @name    RESETS bits definitions
+ */
+#define RESETS_ALLREG_USBCTRL           (1U << 24)
+#define RESETS_ALLREG_UART1             (1U << 23)
+#define RESETS_ALLREG_UART0             (1U << 22)
+#define RESETS_ALLREG_TIMER             (1U << 21)
+#define RESETS_ALLREG_TBMAN             (1U << 20)
+#define RESETS_ALLREG_SYSINFO           (1U << 19)
+#define RESETS_ALLREG_SYSCFG            (1U << 18)
+#define RESETS_ALLREG_SPI1              (1U << 17)
+#define RESETS_ALLREG_SPI0              (1U << 16)
+#define RESETS_ALLREG_RTC               (1U << 15)
+#define RESETS_ALLREG_PWM               (1U << 14)
+#define RESETS_ALLREG_PLL_USB           (1U << 13)
+#define RESETS_ALLREG_PLL_SYS           (1U << 12)
+#define RESETS_ALLREG_PIO1              (1U << 11)
+#define RESETS_ALLREG_PIO0              (1U << 10)
+#define RESETS_ALLREG_PADS_QSPI         (1U << 9)
+#define RESETS_ALLREG_PADS_BANK0        (1U << 8)
+#define RESETS_ALLREG_JTAG              (1U << 7)
+#define RESETS_ALLREG_IO_QSPI           (1U << 6)
+#define RESETS_ALLREG_IO_BANK0          (1U << 5)
+#define RESETS_ALLREG_I2C1              (1U << 4)
+#define RESETS_ALLREG_I2C0              (1U << 3)
+#define RESETS_ALLREG_DMA               (1U << 2)
+#define RESETS_ALLREG_BUSCTRL           (1U << 1)
+#define RESETS_ALLREG_ADC               (1U << 0)
 /** @} */
 
 /**
@@ -455,39 +493,73 @@ typedef struct {
 #define UART_UARTRIS_RIRMIS_Msk         (1U << UART_UARTRIS_RIRMIS_Pos)
 #define UART_UARTRIS_RIRMIS             UART_UARTIMSC_RIRMIS_Msk
 
+#define UART_UARTMIS_OEMIS_Pos          10U
+#define UART_UARTMIS_OEMIS_Msk          (1U << UART_UARTMIS_OEMIS_Pos)
+#define UART_UARTMIS_OEMIS              UART_UARTMIS_OEMIS_Msk
+#define UART_UARTMIS_BEMIS_Pos          9U
+#define UART_UARTMIS_BEMIS_Msk          (1U << UART_UARTMIS_BEMIS_Pos)
+#define UART_UARTMIS_BEMIS              UART_UARTMIS_BEMIS_Msk
+#define UART_UARTMIS_PEMIS_Pos          8U
+#define UART_UARTMIS_PEMIS_Msk          (1U << UART_UARTMIS_PEMIS_Pos)
+#define UART_UARTMIS_PEMIS              UART_UARTMIS_PEMIS_Msk
+#define UART_UARTMIS_FEMIS_Pos          7U
+#define UART_UARTMIS_FEMIS_Msk          (1U << UART_UARTMIS_FEMIS_Pos)
+#define UART_UARTMIS_FEMIS              UART_UARTMIS_FEMIS_Msk
+#define UART_UARTMIS_RTMIS_Pos          6U
+#define UART_UARTMIS_RTMIS_Msk          (1U << UART_UARTMIS_RTMIS_Pos)
+#define UART_UARTMIS_RTMIS              UART_UARTMIS_RTMIS_Msk
+#define UART_UARTMIS_TXMIS_Pos          5U
+#define UART_UARTMIS_TXMIS_Msk          (1U << UART_UARTMIS_TXMIS_Pos)
+#define UART_UARTMIS_TXMIS              UART_UARTMIS_TXMIS_Msk
+#define UART_UARTMIS_RXMIS_Pos          4U
+#define UART_UARTMIS_RXMIS_Msk          (1U << UART_UARTMIS_RXMIS_Pos)
+#define UART_UARTMIS_RXMIS              UART_UARTMIS_RXMIS_Msk
+#define UART_UARTMIS_DSRMMIS_Pos        3U
+#define UART_UARTMIS_DSRMMIS_Msk        (1U << UART_UARTMIS_DSRMMIS_Pos)
+#define UART_UARTMIS_DSRRMIS            UART_UARTMIS_DSRMMIS_Msk
+#define UART_UARTMIS_DCDMMIS_Pos        2U
+#define UART_UARTMIS_DCDMMIS_Msk        (1U << UART_UARTMIS_DCDMMIS_Pos)
+#define UART_UARTMIS_DCDMMIS            UART_UARTMIS_DCDMMIS_Msk
+#define UART_UARTMIS_CTSMMIS_Pos        1U
+#define UART_UARTMIS_CTSMMIS_Msk        (1U << UART_UARTMIS_CTSMMIS_Pos)
+#define UART_UARTMIS_CTSMMIS            UART_UARTMIS_CTSMMIS_Msk
+#define UART_UARTMIS_RIMMIS_Pos         0U
+#define UART_UARTMIS_RIMMIS_Msk         (1U << UART_UARTMIS_RIMMIS_Pos)
+#define UART_UARTMIS_RIMMIS             UART_UARTIMSC_RIMMIS_Msk
+
 #define UART_UARTICR_OEIC_Pos           10U
 #define UART_UARTICR_OEIC_Msk           (1U << UART_UARTICR_OEIC_Pos)
-#define UART_UARTICR_OEIM               UART_UARTICR_OEIC_Msk
+#define UART_UARTICR_OEIC               UART_UARTICR_OEIC_Msk
 #define UART_UARTICR_BEIC_Pos           9U
 #define UART_UARTICR_BEIC_Msk           (1U << UART_UARTICR_BEIC_Pos)
-#define UART_UARTICR_BEIM               UART_UARTICR_BEIC_Msk
+#define UART_UARTICR_BEIC               UART_UARTICR_BEIC_Msk
 #define UART_UARTICR_PEIC_Pos           8U
 #define UART_UARTICR_PEIC_Msk           (1U << UART_UARTICR_PEIC_Pos)
-#define UART_UARTICR_PEIM               UART_UARTICR_PEIC_Msk
+#define UART_UARTICR_PEIC               UART_UARTICR_PEIC_Msk
 #define UART_UARTICR_FEIC_Pos           7U
 #define UART_UARTICR_FEIC_Msk           (1U << UART_UARTICR_FEIC_Pos)
-#define UART_UARTICR_FEIM               UART_UARTICR_FEIC_Msk
+#define UART_UARTICR_FEIC               UART_UARTICR_FEIC_Msk
 #define UART_UARTICR_RTIC_Pos           6U
 #define UART_UARTICR_RTIC_Msk           (1U << UART_UARTICR_RTIC_Pos)
-#define UART_UARTICR_RTIM               UART_UARTICR_RTIC_Msk
+#define UART_UARTICR_RTIC               UART_UARTICR_RTIC_Msk
 #define UART_UARTICR_TXIC_Pos           5U
 #define UART_UARTICR_TXIC_Msk           (1U << UART_UARTICR_TXIC_Pos)
-#define UART_UARTICR_TXIM               UART_UARTICR_TXIC_Msk
+#define UART_UARTICR_TXIC               UART_UARTICR_TXIC_Msk
 #define UART_UARTICR_RXIC_Pos           4U
 #define UART_UARTICR_RXIC_Msk           (1U << UART_UARTICR_RXIC_Pos)
-#define UART_UARTICR_RXIM               UART_UARTICR_RXIC_Msk
+#define UART_UARTICR_RXIC               UART_UARTICR_RXIC_Msk
 #define UART_UARTICR_DSRMIC_Pos         3U
 #define UART_UARTICR_DSRMIC_Msk         (1U << UART_UARTICR_DSRMIC_Pos)
-#define UART_UARTICR_DSRMIM             UART_UARTICR_DSRMIC_Msk
+#define UART_UARTICR_DSRMIC             UART_UARTICR_DSRMIC_Msk
 #define UART_UARTICR_DCDMIC_Pos         2U
 #define UART_UARTICR_DCDMIC_Msk         (1U << UART_UARTICR_DCDMIC_Pos)
-#define UART_UARTICR_DCDMIM             UART_UARTICR_DCDMIC_Msk
+#define UART_UARTICR_DCDMIC             UART_UARTICR_DCDMIC_Msk
 #define UART_UARTICR_CTSMIC_Pos         1U
 #define UART_UARTICR_CTSMIC_Msk         (1U << UART_UARTICR_CTSMIC_Pos)
-#define UART_UARTICR_CTSMIM             UART_UARTICR_CTSMIC_Msk
+#define UART_UARTICR_CTSMIC             UART_UARTICR_CTSMIC_Msk
 #define UART_UARTICR_RIMIC_Pos          0U
 #define UART_UARTICR_RIMIC_Msk          (1U << UART_UARTICR_RIMIC_Pos)
-#define UART_UARTICR_RIMIM              UART_UARTICR_RIMIC_Msk
+#define UART_UARTICR_RIMIC              UART_UARTICR_RIMIC_Msk
 
 #define UART_UARTDMACR_DMAONERR_Pos     2U
 #define UART_UARTDMACR_DMAONERR_Msk     (1U << UART_UARTDMACR_DMAONERR_Pos)

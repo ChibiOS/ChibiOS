@@ -101,16 +101,19 @@ typedef uint32_t sio_events_mask_t;
  */
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
-  UART_TypeDef             *uart;                                           \
-  /* USART clock frequency.*/                                               \
-  uint32_t                  clock
+  UART_TypeDef             *uart
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
  */
 #define sio_lld_config_fields                                               \
   /* Desired baud rate.*/                                                   \
-  uint32_t                  baud;
+  uint32_t                  baud;                                           \
+  /* Low level registers settings.*/                                        \
+  uint32_t                  UARTLCR_H;                                      \
+  uint32_t                  UARTCR;                                         \
+  uint32_t                  UARTIFLS;                                       \
+  uint32_t                  UARTDMACR
 
 /**
  * @brief   Determines the state of the RX FIFO.

@@ -142,6 +142,19 @@ __STATIC_INLINE uint32_t hal_lld_get_clock(clock_index_t clk_index) {
   return clock_get_hz(clk_index);
 }
 
+__STATIC_INLINE void hal_lld_peripheral_reset(uint32_t mask) {
+
+  RESETS->RESET |=  mask;
+}
+
+__STATIC_INLINE void hal_lld_peripheral_unreset(uint32_t mask) {
+
+  RESETS->RESET &= ~mask;
+  while ((RESETS->RESET_DONE & mask) != 0U) {
+    /* Waiting for reset.*/
+  }
+}
+
 #endif /* HAL_LLD_H */
 
 /** @} */

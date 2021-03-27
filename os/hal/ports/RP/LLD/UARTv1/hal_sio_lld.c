@@ -30,6 +30,13 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define UART_LCRH_CFG_FORBIDDEN     (UART_UARTLCR_H_BRK)
+#define UART_CR_CFG_FORBIDDEN       (UART_UARTCR_RXE    |                   \
+                                     UART_UARTCR_TXE    |                   \
+                                     UART_UARTCR_SIRLP  |                   \
+                                     UART_UARTCR_SIREN  |                   \
+                                     UART_UARTCR_UARTEN)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -57,68 +64,79 @@ SIODriver SIOD2;
  * @note    In this implementation it is: 38400-8-N-1.
  */
 static const SIOConfig default_config = {
-  .baud  = SIO_DEFAULT_BITRATE
+  .baud         = SIO_DEFAULT_BITRATE,
+  .UARTLCR_H    = UART_UARTLCR_H_WLEN_8BITS | UART_UARTLCR_H_FEN,
+  .UARTCR       = 0U,
+  .UARTIFLS     = UART_UARTIFLS_RXIFLSEL_1_2F | UART_UARTIFLS_TXIFLSEL_1_2E,
+  .UARTDMACR    = 0U
 };
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
+__STATIC_INLINE void uart_enable_rx_irq(SIODriver *siop) {
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_RXNEIE;
+  siop->uart->UARTIMSC |= UART_UARTIMSC_RXIM;
 #else
   if (siop->operation->rx_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_RXNEIE;
+    siop->uart->UARTIMSC |= UART_UARTIMSC_RXIM;
   }
 #endif
 }
 
-__STATIC_INLINE void usart_enable_rx_evt_irq(SIODriver *siop) {
+__STATIC_INLINE void uart_enable_rx_evt_irq(SIODriver *siop) {
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_PEIE;
-  siop->usart->CR2 |= USART_CR2_LBDIE;
-  siop->usart->CR3 |= USART_CR3_EIE;
+  siop->uart->UARTIMSC |= UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+                          UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
 #else
   if (siop->operation->rx_evt_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_PEIE;
-    siop->usart->CR2 |= USART_CR2_LBDIE;
-    siop->usart->CR3 |= USART_CR3_EIE;
+    siop->uart->UARTIMSC |= UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+                            UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
   }
 #endif
 }
 
-__STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
+__STATIC_INLINE void uart_enable_tx_irq(SIODriver *siop) {
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_TXEIE;
+  siop->uart->UARTIMSC |= UART_UARTIMSC_TXIM;
 #else
   if (siop->operation->tx_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_TXEIE;
-  }
-#endif
-}
-
-__STATIC_INLINE void usart_enable_tx_end_irq(SIODriver *siop) {
-
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_TCIE;
-#else
-  if (siop->operation->tx_end_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_TCIE;
+    siop->uart->UARTIMSC |= UART_UARTIMSC_TXIM;
   }
 #endif
 }
 
 /**
- * @brief   USART initialization.
+ * @brief   UART initialization.
  * @details This function must be invoked with interrupts disabled.
  *
  * @param[in] siop       pointer to a @p SIODriver object
  */
-__STATIC_INLINE void usart_init(SIODriver *siop) {
+__STATIC_INLINE void uart_init(SIODriver *siop) {
+  uint32_t clock, div, idiv, fdiv;
+
+  clock = hal_lld_get_clock(clk_peri);
+
+  osalDbgAssert(clock > 0U, "no clock");
+
+  div = (8U * clock) / siop->config->baud;
+  idiv = div >> 7;
+  fdiv = ((div & 0x7FU) + 1U) / 2U;
+
+  osalDbgAssert((idiv > 0U) && (idiv <= 0xFFFFU), "invalid baud rate");
+
+  siop->uart->UARTIBRD = idiv;
+  siop->uart->UARTFBRD = fdiv;
+
+  /* Registers settings, the LCR_H write also latches dividers values.*/
+  siop->uart->UARTLCR_H = siop->config->UARTLCR_H & ~UART_LCRH_CFG_FORBIDDEN;
+  siop->uart->UARTCR    = siop->config->UARTCR    & ~UART_CR_CFG_FORBIDDEN;
+
+#if 0
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr;
 
@@ -157,6 +175,7 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   u->CR1   = siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN;
   u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
   u->CR3   = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
+#endif
 }
 
 /*===========================================================================*/
@@ -175,52 +194,14 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
 void sio_lld_init(void) {
 
   /* Driver instances initialization.*/
-#if RP_SIO_USE_USART1 == TRUE
+#if RP_SIO_USE_UART0 == TRUE
   sioObjectInit(&SIOD1);
-  SIOD1.usart = USART1;
-  SIOD1.clock = RP_USART1CLK;
+  SIOD1.uart = UART0;
 #endif
-#if RP_SIO_USE_USART2 == TRUE
+#if RP_SIO_USE_UART1 == TRUE
   sioObjectInit(&SIOD2);
-  SIOD2.usart = USART2;
-  SIOD2.clock = RP_USART2CLK;
+  SIOD2.uart = UART1;
 #endif
-#if RP_SIO_USE_USART3 == TRUE
-  sioObjectInit(&SIOD3);
-  SIOD3.usart = USART3;
-  SIOD3.clock = RP_USART3CLK;
-#endif
-#if RP_SIO_USE_UART4 == TRUE
-  sioObjectInit(&SIOD4);
-  SIOD4.usart = UART4;
-  SIOD4.clock = RP_UART4CLK;
-#endif
-#if RP_SIO_USE_UART5 == TRUE
-  sioObjectInit(&SIOD5);
-  SIOD5.usart = UART5;
-  SIOD5.clock = RP_UART5CLK;
-#endif
-#if RP_SIO_USE_USART6 == TRUE
-  sioObjectInit(&SIOD6);
-  SIOD6.usart = USART6;
-  SIOD6.clock = RP_USART6CLK;
-#endif
-#if RP_SIO_USE_UART7 == TRUE
-  sioObjectInit(&SIOD7);
-  SIOD7.usart = UART7;
-  SIOD7.clock = RP_UART7CLK;
-#endif
-#if RP_SIO_USE_UART8 == TRUE
-  sioObjectInit(&SIOD8);
-  SIOD8.usart = UART8;
-  SIOD8.clock = RP_UART8CLK;
-#endif
-#if RP_SIO_USE_LPUART1 == TRUE
-  sioObjectInit(&LPSIOD1);
-  LPSIOD1.usart = LPUART1;
-  LPSIOD1.clock = RP_LPUART1CLK;
-#endif
-
 }
 
 /**
@@ -246,62 +227,18 @@ bool sio_lld_start(SIODriver *siop) {
   /* Enables the peripheral.*/
     if (false) {
     }
-#if RP_SIO_USE_USART1 == TRUE
+#if RP_SIO_USE_UART0 == TRUE
     else if (&SIOD1 == siop) {
-      rccResetUSART1();
-      rccEnableUSART1(true);
+      hal_lld_peripheral_unreset(RESETS_ALLREG_UART0);
     }
 #endif
-#if RP_SIO_USE_USART2 == TRUE
+#if RP_SIO_USE_UART1 == TRUE
     else if (&SIOD2 == siop) {
-      rccResetUSART2();
-      rccEnableUSART2(true);
-    }
-#endif
-#if RP_SIO_USE_USART3 == TRUE
-    else if (&SIOD3 == siop) {
-      rccResetUSART3();
-      rccEnableUSART3(true);
-    }
-#endif
-#if RP_SIO_USE_UART4 == TRUE
-    else if (&SIOD4 == siop) {
-      rccResetUART4();
-      rccEnableUART4(true);
-    }
-#endif
-#if RP_SIO_USE_UART5 == TRUE
-    else if (&SIOD5 == siop) {
-      rccResetUART5();
-      rccEnableUART5(true);
-    }
-#endif
-#if RP_SIO_USE_USART6 == TRUE
-    else if (&SIOD6 == siop) {
-      rccResetUSART6();
-      rccEnableUSART6(true);
-    }
-#endif
-#if RP_SIO_USE_UART7 == TRUE
-    else if (&SIOD7 == siop) {
-      rccResetUART7();
-      rccEnableUART7(true);
-    }
-#endif
-#if RP_SIO_USE_UART8 == TRUE
-    else if (&SIOD8 == siop) {
-      rccResetUART8();
-      rccEnableUART8(true);
-    }
-#endif
-#if RP_SIO_USE_LPUART1 == TRUE
-    else if (&LPSIOD1 == siop) {
-      rccResetLPUART1();
-      rccEnableLPUART1(true);
+      hal_lld_peripheral_unreset(RESETS_ALLREG_UART1);
     }
 #endif
     else {
-      osalDbgAssert(false, "invalid USART instance");
+      osalDbgAssert(false, "invalid SIO instance");
     }
 
     /* Driver object low level initializations.*/
@@ -314,7 +251,7 @@ bool sio_lld_start(SIODriver *siop) {
   }
 
   /* Configures the peripheral.*/
-  usart_init(siop);
+  uart_init(siop);
 
   return false;
 }
@@ -335,62 +272,20 @@ void sio_lld_stop(SIODriver *siop) {
     /* Disables the peripheral.*/
     if (false) {
     }
-#if RP_SIO_USE_USART1 == TRUE
+#if RP_SIO_USE_UART0 == TRUE
     else if (&SIOD1 == siop) {
-     rccResetUSART1();
-     rccDisableUSART1();
+      hal_lld_peripheral_reset(RESETS_ALLREG_UART0);
+//     rccDisableUSART1();
     }
 #endif
-#if RP_SIO_USE_USART2 == TRUE
+#if RP_SIO_USE_UART1 == TRUE
     else if (&SIOD2 == siop) {
-      rccResetUSART2();
-      rccDisableUSART2();
-    }
-#endif
-#if RP_SIO_USE_USART3 == TRUE
-    else if (&SIOD3 == siop) {
-      rccResetUSART3();
-      rccDisableUSART3();
-    }
-#endif
-#if RP_SIO_USE_UART4 == TRUE
-    else if (&SIOD4 == siop) {
-      rccResetUART4();
-      rccDisableUART4();
-    }
-#endif
-#if RP_SIO_USE_UART5 == TRUE
-    else if (&SIOD5 == siop) {
-      rccResetUART5();
-      rccDisableUART5();
-    }
-#endif
-#if RP_SIO_USE_USART6 == TRUE
-    else if (&SIOD6 == siop) {
-      rccResetUSART6();
-      rccDisableUSART6();
-    }
-#endif
-#if RP_SIO_USE_UART7 == TRUE
-    else if (&SIOD7 == siop) {
-      rccResetUART7();
-      rccDisableUART7();
-    }
-#endif
-#if RP_SIO_USE_UART8 == TRUE
-    else if (&SIOD8 == siop) {
-      rccResetUART8();
-      rccDisableUART8();
-    }
-#endif
-#if RP_SIO_USE_LPUART1 == TRUE
-    else if (&LPSIOD1 == siop) {
-      rccResetLPUART1();
-      rccDisableLPUART1();
+      hal_lld_peripheral_reset(RESETS_ALLREG_UART1);
+//      rccDisableUSART2();
     }
 #endif
     else {
-      osalDbgAssert(false, "invalid USART instance");
+      osalDbgAssert(false, "invalid SIO instance");
     }
   }
 }
@@ -403,43 +298,40 @@ void sio_lld_stop(SIODriver *siop) {
  * @api
  */
 void sio_lld_start_operation(SIODriver *siop) {
-  uint32_t cr1irq, cr2irq, cr3irq;
+  uint32_t imsc;
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
   /* With synchronization all interrupts are required.*/
-  cr1irq  = USART_CR1_RXNEIE | USART_CR1_TXEIE | USART_CR1_PEIE   |
-            USART_CR1_TCIE   | USART_CR1_IDLEIE;
-  cr2irq  = USART_CR2_LBDIE;
-  cr3irq  = USART_CR3_EIE;
+  imsc = UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+         UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM |
+         UART_UARTIMSC_RXIM | UART_UARTIMSC_RTIM |
+         UART_UARTIMSC_TXIM;
 #else
   /* When using just callbacks we can select only those really required.*/
-  cr1irq  = 0U;
-  cr2irq  = 0U;
-  cr3irq  = 0U;
+  imsc = 0U;
   if (siop->operation->rx_cb != NULL) {
-    cr1irq |= USART_CR1_RXNEIE;
+    imsc |= UART_UARTIMSC_RXIM;
   }
   if (siop->operation->rx_idle_cb != NULL) {
-    cr1irq |= USART_CR1_IDLEIE;
+    imsc |= UART_UARTIMSC_RTIM;
   }
   if (siop->operation->tx_cb != NULL) {
-    cr1irq |= USART_CR1_TXEIE;
+    imsc |= UART_UARTIMSC_TXIM;
   }
   if (siop->operation->tx_end_cb != NULL) {
-    cr1irq |= USART_CR1_TCIE;
+    osalDbgAssert(false, "unsupported callback");
   }
   if (siop->operation->rx_evt_cb != NULL) {
-    cr1irq |= USART_CR1_PEIE;
-    cr2irq |= USART_CR2_LBDIE;
-    cr3irq |= USART_CR3_EIE;
+    imsc |= UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+            UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
   }
 #endif
 
   /* Setting up the operation.*/
-  siop->usart->ICR  = siop->usart->ISR;
-  siop->usart->CR2 |= cr2irq;
-  siop->usart->CR3 |= cr3irq;
-  siop->usart->CR1 |= cr1irq | USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
+  siop->uart->UARTICR   = siop->uart->UARTRIS;
+  siop->uart->UARTIMSC |= imsc;
+  siop->uart->UARTCR    = siop->config->UARTCR |
+                          UART_UARTCR_RXE | UART_UARTCR_TXE | UART_UARTCR_UARTEN;
 }
 
 /**
@@ -452,9 +344,8 @@ void sio_lld_start_operation(SIODriver *siop) {
 void sio_lld_stop_operation(SIODriver *siop) {
 
   /* Stop operation.*/
-  siop->usart->CR1 &= USART_CR1_CFG_FORBIDDEN;
-  siop->usart->CR2 &= USART_CR2_CFG_FORBIDDEN;
-  siop->usart->CR3 &= USART_CR3_CFG_FORBIDDEN;
+  siop->uart->UARTIMSC = 0U;
+  siop->uart->UARTCR   = siop->config->UARTCR & ~UART_CR_CFG_FORBIDDEN;
 }
 
 /**
@@ -467,31 +358,28 @@ void sio_lld_stop_operation(SIODriver *siop) {
  */
 sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop) {
   sio_events_mask_t evtmask;
-  uint32_t isr;
+  uint32_t ris;
 
   /* Getting and clearing all relevant ISR flags (and only those).*/
-  isr = siop->usart->ISR & (USART_ISR_PE  | USART_ISR_LBDF | USART_ISR_FE    |
-                            USART_ISR_ORE | USART_ISR_NE);
-  siop->usart->ICR = isr;
+  ris = siop->uart->UARTRIS & (UART_UARTRIS_OERIS | UART_UARTRIS_BERIS |
+                               UART_UARTRIS_PERIS | UART_UARTRIS_FERIS);
+  siop->uart->UARTICR = ris;
 
   /* Status flags cleared, now the related interrupts can be enabled again.*/
-  usart_enable_rx_evt_irq(siop);
+  uart_enable_rx_evt_irq(siop);
 
   /* Translating the status flags in SIO events.*/
   evtmask = 0U;
-  if ((isr & USART_ISR_LBDF) != 0U) {
+  if ((ris & UART_UARTRIS_BERIS) != 0U) {
     evtmask |= SIO_BREAK_DETECTED;
   }
-  if ((isr & USART_ISR_ORE) != 0U) {
+  if ((ris & UART_UARTRIS_OERIS) != 0U) {
     evtmask |= SIO_OVERRUN_ERROR;
   }
-  if ((isr & USART_ISR_NE) != 0U) {
-    evtmask |= SIO_NOISE_ERROR;
-  }
-  if ((isr & USART_ISR_FE) != 0U) {
+  if ((ris & UART_UARTRIS_FERIS) != 0U) {
     evtmask |= SIO_FRAMING_ERROR;
   }
-  if ((isr & USART_ISR_PE) != 0U) {
+  if ((ris & UART_UARTRIS_PERIS) != 0U) {
     evtmask |= SIO_PARITY_ERROR;
   }
 
@@ -517,7 +405,7 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
 
     /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
     if (sio_lld_is_rx_empty(siop)) {
-      usart_enable_rx_irq(siop);
+      uart_enable_rx_irq(siop);
       break;
     }
 
@@ -526,7 +414,7 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
       break;
     }
 
-    *buffer++ = (uint8_t)siop->usart->RDR;
+    *buffer++ = (uint8_t)siop->uart->UARTDR;
     rd++;
   }
 
@@ -552,7 +440,7 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
 
     /* If the TX FIFO has been filled then the interrupt is enabled again.*/
     if (sio_lld_is_tx_full(siop)) {
-      usart_enable_tx_irq(siop);
+      uart_enable_tx_irq(siop);
       break;
     }
 
@@ -561,12 +449,12 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
       break;
     }
 
-    siop->usart->TDR = (uint32_t)*buffer++;
+    siop->uart->UARTDR = (uint32_t)*buffer++;
     wr++;
   }
 
   /* The transmit complete interrupt is always re-enabled on write.*/
-  usart_enable_tx_end_irq(siop);
+  /* none */
 
   return wr;
 }
@@ -583,11 +471,11 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
 msg_t sio_lld_get(SIODriver *siop) {
   msg_t msg;
 
-  msg = (msg_t)siop->usart->RDR;
+  msg = (msg_t)(siop->uart->UARTDR & 0xFFU);
 
   /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
   if (sio_lld_is_rx_empty(siop)) {
-    usart_enable_rx_irq(siop);
+    uart_enable_rx_irq(siop);
   }
 
   return msg;
@@ -604,15 +492,15 @@ msg_t sio_lld_get(SIODriver *siop) {
  */
 void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
 
-  siop->usart->TDR = data;
+  siop->uart->UARTDR = data;
 
   /* If the TX FIFO has been filled then the interrupt is enabled again.*/
   if (sio_lld_is_tx_full(siop)) {
-    usart_enable_tx_irq(siop);
+    uart_enable_tx_irq(siop);
   }
 
   /* The transmit complete interrupt is always re-enabled on write.*/
-  usart_enable_tx_end_irq(siop);
+  /* none */
 }
 
 /**
@@ -646,61 +534,49 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  * @notapi
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
-  USART_TypeDef *u = siop->usart;
-  uint32_t isr, cr1, cr3, evtmask;
+  UART_TypeDef *u = siop->uart;
+  uint32_t mis, msc, evtmask;
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
   /* Note, ISR flags are just read but not cleared, ISR sources are
      disabled instead.*/
-  isr = u->ISR;
+  mis = u->UARTMIS;
 
   /* One read on control registers.*/
-  cr1 = u->CR1;
-  cr3 = u->CR3;
+  msc = u->UARTIMSC;
 
   /* Enabled errors/events handling.*/
-  evtmask = isr & (USART_ISR_PE  | USART_ISR_LBDF | USART_ISR_FE    |
-                   USART_ISR_ORE | USART_ISR_NE);
+  evtmask = mis & (UART_UARTMIS_OEMIS | UART_UARTMIS_BEMIS |
+                   UART_UARTMIS_PEMIS | UART_UARTMIS_FEMIS);
   if (evtmask != 0U) {
-    uint32_t cr2;
 
-    /* One read on control registers.*/
-    cr2 = u->CR2;
+    /* Disabling event sources.*/
+    msc &= ~(UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+             UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM);
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx_evt(siop);
 
     /* Waiting thread woken, if any.*/
     __sio_wakeup_rx(siop, SIO_MSG_ERRORS);
-
-    /* Disabling event sources until errors are recognized by the
-       application.*/
-    cr1 &= ~USART_CR1_PEIE;
-    cr2 &= ~USART_CR2_LBDIE;
-    cr3 &= ~USART_CR3_EIE;
-
-    /* One write on control registers.*/
-    u->CR2 = cr2;
   }
 
   /* RX FIFO is non-empty.*/
-  if (((cr1 & USART_CR1_RXNEIE) != 0U) &&
-      (isr & USART_ISR_RXNE) != 0U) {
+  if ((mis & UART_UARTMIS_RXMIS) != 0U) {
+
+    /* Disabling event sources.*/
+    msc &= ~UART_UARTIMSC_RXIM;
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx(siop);
 
     /* Waiting thread woken, if any.*/
     __sio_wakeup_rx(siop, MSG_OK);
-
-    /* Called once then the interrupt source is disabled.*/
-    cr1 &= ~USART_CR1_RXNEIE;
   }
 
   /* RX idle condition.*/
-  if (((cr1 & USART_CR1_IDLEIE) != 0U) &&
-      (isr & USART_ISR_IDLE) != 0U) {
+  if ((mis & UART_UARTMIS_RTMIS) != 0U) {
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx_idle(siop);
@@ -709,40 +585,24 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     __sio_wakeup_rx(siop, SIO_MSG_IDLE);
 
     /* The idle flag requires clearing, it stays enabled.*/
-    u->ICR = USART_ISR_IDLE;
+    u->UARTICR = UART_UARTICR_RTIC;
   }
 
   /* TX FIFO is non-full.*/
-  if (((cr1 & USART_CR1_TXEIE) != 0U) &&
-      (isr & USART_ISR_TXE) != 0U) {
+  if ((mis & UART_UARTMIS_TXMIS) != 0U) {
+
+    /* Disabling event sources.*/
+    msc &= ~UART_UARTIMSC_TXIM;
 
     /* The callback is invoked if defined.*/
     __sio_callback_tx(siop);
 
     /* Waiting thread woken, if any.*/
     __sio_wakeup_tx(siop, MSG_OK);
-
-    /* Called once then the interrupt is disabled.*/
-    cr1 &= ~USART_CR1_TXEIE;
-  }
-
-  /* Physical transmission end.*/
-  if (((cr1 & USART_CR1_TCIE) != 0U) &&
-      (isr & USART_ISR_TC) != 0U) {
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_tx_end(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_txend(siop, MSG_OK);
-
-    /* Called once then the interrupt is disabled.*/
-    cr1 &= ~USART_CR1_TCIE;
   }
 
   /* One write on control registers.*/
-  u->CR1 = cr1;
-  u->CR3 = cr3;
+  u->UARTIMSC = msc;
 }
 
 #endif /* HAL_USE_SIO == TRUE */
