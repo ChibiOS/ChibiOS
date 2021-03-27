@@ -85,60 +85,99 @@ typedef enum {
  * @{
  */
 typedef struct {
-  __IO uint32_t     RESET;
-  __IO uint32_t     WDSEL;
-  __I  uint32_t     RESET_DONE;
+  struct {
+    __I  uint32_t       STATUS;
+    __IO uint32_t       CTRL;
+  } GPIO[30];
+  __IO uint32_t         INTR[4];
+  struct {
+    __IO uint32_t       INTE[4];
+    __IO uint32_t       INTF[4];
+    __I  uint32_t       INTS[4];
+  } PROC[2];
+  __IO uint32_t         DW_INTE[4];
+  __IO uint32_t         DW_INTF[4];
+  __I  uint32_t         DW_INTS[4];
+} IOUSER_TypeDef;
+
+typedef struct {
+  struct {
+    __I  uint32_t       STATUS;
+    __IO uint32_t       CTRL;
+  } GPIO[6];
+  __IO uint32_t         INTR[1];
+  struct {
+    __IO uint32_t       INTE[1];
+    __IO uint32_t       INTF[1];
+    __I  uint32_t       INTS[1];
+  } PROC[2];
+  __IO uint32_t         DW_INTE[1];
+  __IO uint32_t         DW_INTF[1];
+  __I  uint32_t         DW_INTS[1];
+} IOQSPI_TypeDef;
+
+typedef struct {
+  __IO uint32_t         VOLTAGE_SELECT;
+  __IO uint32_t         GPIO[30];
+  __IO uint32_t         SWCLK;
+  __IO uint32_t         SWD;
+} PADS_TypeDef;
+
+typedef struct {
+  __IO uint32_t         RESET;
+  __IO uint32_t         WDSEL;
+  __I  uint32_t         RESET_DONE;
 } RESETS_TypeDef;
 
 typedef struct {
-  __IO uint32_t     TIMEHW;
-  __IO uint32_t     TIMELW;
-  __I  uint32_t     TIMEHR;
-  __I  uint32_t     TIMELR;
-  __IO uint32_t     ALARM0;
-  __IO uint32_t     ALARM1;
-  __IO uint32_t     ALARM2;
-  __IO uint32_t     ALARM3;
-  __IO uint32_t     ARMED;
-  __I  uint32_t     TIMERAWH;
-  __I  uint32_t     TIMERAWL;
-  __IO uint32_t     DBGPAUSE;
-  __IO uint32_t     PAUSE;
-  __IO uint32_t     INTR;
-  __IO uint32_t     INTE;
-  __IO uint32_t     INTF;
-  __I  uint32_t     INTS;
+  __IO uint32_t         TIMEHW;
+  __IO uint32_t         TIMELW;
+  __I  uint32_t         TIMEHR;
+  __I  uint32_t         TIMELR;
+  __IO uint32_t         ALARM0;
+  __IO uint32_t         ALARM1;
+  __IO uint32_t         ALARM2;
+  __IO uint32_t         ALARM3;
+  __IO uint32_t         ARMED;
+  __I  uint32_t         TIMERAWH;
+  __I  uint32_t         TIMERAWL;
+  __IO uint32_t         DBGPAUSE;
+  __IO uint32_t         PAUSE;
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE;
+  __IO uint32_t         INTF;
+  __I  uint32_t         INTS;
 } TIMER_TypeDef;
 
 typedef struct {
-  __IO uint32_t     UARTDR;
-  __IO uint32_t     UARTRSR;
-  __I  uint32_t     resvd8;
-  __I  uint32_t     resvdC;
-  __I  uint32_t     resvd10;
-  __I  uint32_t     resvd14;
-  __I  uint32_t     UARTFR;
-  __I  uint32_t     resvd1C;
-  __IO uint32_t     UARTILPR;
-  __IO uint32_t     UARTIBRD;
-  __IO uint32_t     UARTFBRD;
-  __IO uint32_t     UARTLCR_H;
-  __IO uint32_t     UARTCR;
-  __IO uint32_t     UARTIFLS;
-  __IO uint32_t     UARTIMSC;
-  __I  uint32_t     UARTRIS;
-  __I  uint32_t     UARTMIS;
-  __IO uint32_t     UARTICR;
-  __IO uint32_t     UARTDMACR;
-  __I  uint32_t     resvd4C[997];
-  __I  uint32_t     UARTPERIPHID0;
-  __I  uint32_t     UARTPERIPHID1;
-  __I  uint32_t     UARTPERIPHID2;
-  __I  uint32_t     UARTPERIPHID3;
-  __I  uint32_t     UARTPCELLID0;
-  __I  uint32_t     UARTPCELLID1;
-  __I  uint32_t     UARTPCELLID2;
-  __I  uint32_t     UARTPCELLID3;
+  __IO uint32_t         UARTDR;
+  __IO uint32_t         UARTRSR;
+  __I  uint32_t         resvd8;
+  __I  uint32_t         resvdC;
+  __I  uint32_t         resvd10;
+  __I  uint32_t         resvd14;
+  __I  uint32_t         UARTFR;
+  __I  uint32_t         resvd1C;
+  __IO uint32_t         UARTILPR;
+  __IO uint32_t         UARTIBRD;
+  __IO uint32_t         UARTFBRD;
+  __IO uint32_t         UARTLCR_H;
+  __IO uint32_t         UARTCR;
+  __IO uint32_t         UARTIFLS;
+  __IO uint32_t         UARTIMSC;
+  __I  uint32_t         UARTRIS;
+  __I  uint32_t         UARTMIS;
+  __IO uint32_t         UARTICR;
+  __IO uint32_t         UARTDMACR;
+  __I  uint32_t         resvd4C[997];
+  __I  uint32_t         UARTPERIPHID0;
+  __I  uint32_t         UARTPERIPHID1;
+  __I  uint32_t         UARTPERIPHID2;
+  __I  uint32_t         UARTPERIPHID3;
+  __I  uint32_t         UARTPCELLID0;
+  __I  uint32_t         UARTPCELLID1;
+  __I  uint32_t         UARTPCELLID2;
+  __I  uint32_t         UARTPCELLID3;
 } UART_TypeDef;
 /** @} */
 
@@ -148,7 +187,11 @@ typedef struct {
  */
 #define APBPERIPH_BASE                  0x40000000U
 #define AHBPERIPH_BASE                  0x50000000U
-#define __IOPORT_BASE                   0xA0000000U
+#define __IOPORT_BASE                   0xD0000000U
+#define __IOUSER0_BASE                  (APBPERIPH_BASE + 0x00014000U)
+#define __IOQSPI_BASE                   (APBPERIPH_BASE + 0x00018000U)
+#define __PADSUSER0_BASE                (APBPERIPH_BASE + 0x0001C000U)
+#define __PADSQSPI_BASE                 (APBPERIPH_BASE + 0x00020000U)
 #define __RESETS_BASE                   (APBPERIPH_BASE + 0x0000C000U)
 #define __TIMER_BASE                    (APBPERIPH_BASE + 0x00054000U)
 #define __UART0_BASE                    (APBPERIPH_BASE + 0x00034000U)
@@ -159,6 +202,10 @@ typedef struct {
  * @name    Peripherals
  * @{
  */
+#define IO_BANK0                        ((IOUSER_TypeDef *)__IOUSER0_BASE)
+#define IO_QSPI                         ((IOUSER_TypeDef *)__IOQSPI_BASE)
+#define PADS_BANK0                      ((PADS_TypeDef *)__PADSUSER0_BASE)
+#define PADS_QSPI                       ((PADS_TypeDef *)__PADSQSPI_BASE)
 #define RESETS                          ((RESETS_TypeDef *)__RESETS_BASE)
 #define TIMER                           ((TIMER_TypeDef *)__TIMER_BASE)
 #define UART0                           ((UART_TypeDef *)__UART0_BASE)
