@@ -44,6 +44,9 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#include "rp_uart0.inc"
+#include "rp_uart1.inc"
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -55,6 +58,8 @@
  */
 void irqInit(void) {
 
+  uart0_irq_init();
+  uart1_irq_init();
 }
 
 /**
@@ -64,6 +69,8 @@ void irqInit(void) {
  */
 void irqDeinit(void) {
 
+  uart0_irq_deinit();
+  uart1_irq_deinit();
 }
 
 /** @} */

@@ -123,6 +123,7 @@ typedef enum clock_index clock_index_t;
 /* Various helpers.*/
 #include "nvic.h"
 #include "cache.h"
+#include "rp_isr.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -62,6 +62,14 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if RP_SIO_USE_UART0 && !RP_HAS_UART0
+#error "UART0 not present in the selected device"
+#endif
+
+#if RP_SIO_USE_UART1 && !RP_HAS_UART1
+#error "UART1 not present in the selected device"
+#endif
+
 #if !RP_SIO_USE_UART0 && !RP_SIO_USE_UART1
 #error "SIO driver activated but no UART peripheral assigned"
 #endif
