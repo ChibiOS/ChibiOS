@@ -57,6 +57,11 @@
  */
 void __pal_lld_init(void) {
 
+  hal_lld_peripheral_unreset(RESETS_ALLREG_IO_BANK0);
+}
+
+void __pal_lld_pad_set_mode(ioportid_t port, iopadid_t pad, iomode_t mode) {
+
 }
 
 #endif /* HAL_USE_PAL */
