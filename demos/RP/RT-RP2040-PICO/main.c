@@ -19,6 +19,20 @@
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 
+#include "shell.h"
+#include "chprintf.h"
+
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+static const ShellCommand commands[] = {
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SIOD1,
+  commands
+};
+
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
@@ -28,9 +42,9 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-//    palClearLine(LINE_LED_GREEN);
+    palClearLine(25U);
     chThdSleepMilliseconds(500);
-//    palSetLine(LINE_LED_GREEN);
+    palSetLine(25U);
     chThdSleepMilliseconds(500);
   }
 }
@@ -51,11 +65,16 @@ int main(void) {
   chSysInit();
 
   /*
+   * Setting up GPIOs.
+   */
+  palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
+
+  /*
    * Activates the Serial or SIO driver using the default configuration.
    */
 //  sdStart(&LPSD1, NULL);
-//  sioStart(&LPSIOD1, NULL);
-//  sioStartOperation(&LPSIOD1, NULL);
+//  sioStart(&SIOD1, NULL);
+//  sioStartOperation(&SIOD1, NULL);
 
   /*
    * Creates the blinker thread.
@@ -66,13 +85,11 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
-  while (1 /*true*/) {
-#if 0
-    if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&LPSIOD1, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&LPSIOD1, &oslib_test_suite);
-    }
-#endif
+  while (true) {
+//    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+//                                            "shell", NORMALPRIO + 1,
+//                                            shellThread, (void *)&shell_cfg1);
+//    chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(500);
   }
 }

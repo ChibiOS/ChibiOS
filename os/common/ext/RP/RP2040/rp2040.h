@@ -130,6 +130,58 @@ typedef struct {
 } RESETS_TypeDef;
 
 typedef struct {
+  __I  uint32_t         CPUID;
+  __I  uint32_t         GPIO_IN;
+  __I  uint32_t         GPIO_HI_IN;
+  __I  uint32_t         resvdC;
+  __IO uint32_t         GPIO_OUT;
+  __IO uint32_t         GPIO_OUT_SET;
+  __IO uint32_t         GPIO_OUT_CLR;
+  __IO uint32_t         GPIO_OUT_XOR;
+  __IO uint32_t         GPIO_OE;
+  __IO uint32_t         GPIO_OE_SET;
+  __IO uint32_t         GPIO_OE_CLR;
+  __IO uint32_t         GPIO_OE_XOR;
+  __IO uint32_t         GPIO_HI_OUT;
+  __IO uint32_t         GPIO_HI_OUT_SET;
+  __IO uint32_t         GPIO_HI_OUT_CLR;
+  __IO uint32_t         GPIO_HI_OUT_XOR;
+  __IO uint32_t         GPIO_HI_OE;
+  __IO uint32_t         GPIO_HI_OE_SET;
+  __IO uint32_t         GPIO_HI_OE_CLR;
+  __IO uint32_t         GPIO_HI_OE_XOR;
+  __IO uint32_t         FIFO_ST;
+  __IO uint32_t         FIFO_WR;
+  __I  uint32_t         FIFO_RD;
+  __IO uint32_t         SPINLOCK_ST;
+  __IO uint32_t         DIV_UDIVIDEND;
+  __IO uint32_t         DIV_UDIVISOR;
+  __IO uint32_t         DIV_SDIVIDEND;
+  __IO uint32_t         DIV_SDIVISOR;
+  __IO uint32_t         DIV_QUOTIENT;
+  __IO uint32_t         DIV_REMAINDER;
+  __I  uint32_t         DIV_CSR;
+  __I  uint32_t         resvd7C;
+  struct {
+  __IO uint32_t         ACCUM0;
+  __IO uint32_t         ACCUM1;
+  __IO uint32_t         BASE0;
+  __IO uint32_t         BASE1;
+  __IO uint32_t         BASE2;
+  __I  uint32_t         POP_LANE0;
+  __I  uint32_t         POP_LANE1;
+  __I  uint32_t         POP_FULL;
+  __I  uint32_t         PEEK_LANE0;
+  __I  uint32_t         PEEK_LANE1;
+  __I  uint32_t         PEEK_FULL;
+  __IO uint32_t         CTRL_LANE0;
+  __IO uint32_t         CTRL_LANE1;
+  __IO uint32_t         ACCUM0_ADD;
+  __IO uint32_t         BASE_1AND0;
+  } INTERP[2];
+} SIO_TypeDef;
+
+typedef struct {
   __IO uint32_t         TIMEHW;
   __IO uint32_t         TIMELW;
   __I  uint32_t         TIMEHR;
@@ -185,31 +237,33 @@ typedef struct {
  * @name    Base addresses
  * @{
  */
-#define APBPERIPH_BASE                  0x40000000U
-#define AHBPERIPH_BASE                  0x50000000U
+#define __APBPERIPH_BASE                0x40000000U
+#define __AHBPERIPH_BASE                0x50000000U
 #define __IOPORT_BASE                   0xD0000000U
-#define __IOUSER0_BASE                  (APBPERIPH_BASE + 0x00014000U)
-#define __IOQSPI_BASE                   (APBPERIPH_BASE + 0x00018000U)
-#define __PADSUSER0_BASE                (APBPERIPH_BASE + 0x0001C000U)
-#define __PADSQSPI_BASE                 (APBPERIPH_BASE + 0x00020000U)
-#define __RESETS_BASE                   (APBPERIPH_BASE + 0x0000C000U)
-#define __TIMER_BASE                    (APBPERIPH_BASE + 0x00054000U)
-#define __UART0_BASE                    (APBPERIPH_BASE + 0x00034000U)
-#define __UART1_BASE                    (APBPERIPH_BASE + 0x00038000U)
+#define __IOUSER0_BASE                  (__APBPERIPH_BASE + 0x00014000U)
+#define __IOQSPI_BASE                   (__APBPERIPH_BASE + 0x00018000U)
+#define __PADSUSER0_BASE                (__APBPERIPH_BASE + 0x0001C000U)
+#define __PADSQSPI_BASE                 (__APBPERIPH_BASE + 0x00020000U)
+#define __RESETS_BASE                   (__APBPERIPH_BASE + 0x0000C000U)
+#define __TIMER_BASE                    (__APBPERIPH_BASE + 0x00054000U)
+#define __UART0_BASE                    (__APBPERIPH_BASE + 0x00034000U)
+#define __UART1_BASE                    (__APBPERIPH_BASE + 0x00038000U)
+#define __SIO_BASE                      (__IOPORT_BASE    + 0x00000000U)
 /** @} */
 
 /**
  * @name    Peripherals
  * @{
  */
-#define IO_BANK0                        ((IOUSER_TypeDef *)__IOUSER0_BASE)
-#define IO_QSPI                         ((IOUSER_TypeDef *)__IOQSPI_BASE)
-#define PADS_BANK0                      ((PADS_TypeDef *)__PADSUSER0_BASE)
-#define PADS_QSPI                       ((PADS_TypeDef *)__PADSQSPI_BASE)
-#define RESETS                          ((RESETS_TypeDef *)__RESETS_BASE)
-#define TIMER                           ((TIMER_TypeDef *)__TIMER_BASE)
-#define UART0                           ((UART_TypeDef *)__UART0_BASE)
-#define UART1                           ((UART_TypeDef *)__UART1_BASE)
+#define IO_BANK0                        ((IOUSER_TypeDef *) __IOUSER0_BASE)
+#define IO_QSPI                         ((IOUSER_TypeDef *) __IOQSPI_BASE)
+#define PADS_BANK0                      ((PADS_TypeDef *)   __PADSUSER0_BASE)
+#define PADS_QSPI                       ((PADS_TypeDef *)   __PADSQSPI_BASE)
+#define RESETS                          ((RESETS_TypeDef *) __RESETS_BASE)
+#define SIO                             ((SIO_TypeDef *)    __SIO_BASE)
+#define TIMER                           ((TIMER_TypeDef *)  __TIMER_BASE)
+#define UART0                           ((UART_TypeDef *)   __UART0_BASE)
+#define UART1                           ((UART_TypeDef *)   __UART1_BASE)
 /** @} */
 
 /**

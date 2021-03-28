@@ -48,48 +48,66 @@
  * @name    RP-specific I/O mode flags
  * @{
  */
-#define PAL_RP_MODE_INOVER_NOTINV           (0U << 16)
-#define PAL_RP_MODE_INOVER_INV              (1U << 16)
-#define PAL_RP_MODE_INOVER_DRVLOW           (2U << 16)
-#define PAL_RP_MODE_INOVER_DRVHIGH          (3U << 16)
+#define PAL_RP_IOCTRL_INOVER_NOTINV         (0U << 16)
+#define PAL_RP_IOCTRL_INOVER_INV            (1U << 16)
+#define PAL_RP_IOCTRL_INOVER_DRVLOW         (2U << 16)
+#define PAL_RP_IOCTRL_INOVER_DRVHIGH        (3U << 16)
 
-#define PAL_RP_MODE_OEOVER_DRVPERI          (0U << 12)
-#define PAL_RP_MODE_OEOVER_DRVINVPERI       (1U << 12)
-#define PAL_RP_MODE_OEOVER_DISABLE          (2U << 12)
-#define PAL_RP_MODE_OEOVER_ENABLE           (3U << 12)
+#define PAL_RP_IOCTRL_OEOVER_DRVPERI        (0U << 12)
+#define PAL_RP_IOCTRL_OEOVER_DRVINVPERI     (1U << 12)
+#define PAL_RP_IOCTRL_OEOVER_DISABLE        (2U << 12)
+#define PAL_RP_IOCTRL_OEOVER_ENABLE         (3U << 12)
 
-#define PAL_RP_MODE_OUTOVER_DRVPERI         (0U << 8)
-#define PAL_RP_MODE_OUTOVER_DRVINVPERI      (1U << 8)
-#define PAL_RP_MODE_OUTOVER_DRVLOW          (2U << 8)
-#define PAL_RP_MODE_OUTOVER_DRVHIGH         (3U << 8)
+#define PAL_RP_IOCTRL_OUTOVER_DRVPERI       (0U << 8)
+#define PAL_RP_IOCTRL_OUTOVER_DRVINVPERI    (1U << 8)
+#define PAL_RP_IOCTRL_OUTOVER_DRVLOW        (2U << 8)
+#define PAL_RP_IOCTRL_OUTOVER_DRVHIGH       (3U << 8)
 
-#define PAL_RP_MODE_FUNCSEL(n)              ((n) << 0)
+#define PAL_RP_IOCTRL_FUNCSEL(n)            ((n) << 0)
+#define PAL_RP_IOCTRL_FUNCSEL_SPI           PAL_RP_IOCTRL_FUNCSEL(1U)
+#define PAL_RP_IOCTRL_FUNCSEL_UART          PAL_RP_IOCTRL_FUNCSEL(2U)
+#define PAL_RP_IOCTRL_FUNCSEL_I2C           PAL_RP_IOCTRL_FUNCSEL(3U)
+#define PAL_RP_IOCTRL_FUNCSEL_PWM           PAL_RP_IOCTRL_FUNCSEL(4U)
+#define PAL_RP_IOCTRL_FUNCSEL_SIO           PAL_RP_IOCTRL_FUNCSEL(5U)
+#define PAL_RP_IOCTRL_FUNCSEL_PIO0          PAL_RP_IOCTRL_FUNCSEL(6U)
+#define PAL_RP_IOCTRL_FUNCSEL_PIO1          PAL_RP_IOCTRL_FUNCSEL(7U)
+#define PAL_RP_IOCTRL_FUNCSEL_USB           PAL_RP_IOCTRL_FUNCSEL(9U)
+#define PAL_RP_IOCTRL_FUNCSEL_NULL          PAL_RP_IOCTRL_FUNCSEL(31U)
 
-#define PAL_RP_MODE_OD                      (1U << (24 + 7))
+#define PAL_RP_GPIO_OE                      (1U << (23 + 0))
 
-#define PAL_RP_MODE_IE                      (1U << (24 + 6))
+#define PAL_RP_PAD_OD                       (1U << (24 + 7))
 
-#define PAL_RP_MODE_DRIVE2                  (0U << (24 + 4))
-#define PAL_RP_MODE_DRIVE4                  (1U << (24 + 4))
-#define PAL_RP_MODE_DRIVE8                  (2U << (24 + 4))
-#define PAL_RP_MODE_DRIVE12                 (3U << (24 + 4))
+#define PAL_RP_PAD_IE                       (1U << (24 + 6))
 
-#define PAL_RP_MODE_PUE                     (1U << (24 + 3))
+#define PAL_RP_PAD_DRIVE2                   (0U << (24 + 4))
+#define PAL_RP_PAD_DRIVE4                   (1U << (24 + 4))
+#define PAL_RP_PAD_DRIVE8                   (2U << (24 + 4))
+#define PAL_RP_PAD_DRIVE12                  (3U << (24 + 4))
 
-#define PAL_RP_MODE_PDE                     (1U << (24 + 2))
+#define PAL_RP_PAD_PUE                      (1U << (24 + 3))
 
-#define PAL_RP_MODE_SCHMITT                 (1U << (24 + 1))
+#define PAL_RP_PAD_PDE                      (1U << (24 + 2))
 
-#define PAL_RP_MODE_SLEWFAST                (1U << (24 + 0))
+#define PAL_RP_PAD_SCHMITT                  (1U << (24 + 1))
+
+#define PAL_RP_PAD_SLEWFAST                 (1U << (24 + 0))
+/** @} */
 
 /**
- * @brief   Alternate function.
- *
+ * @name    Alternate functions
+ * @{
  * @param[in] n         alternate function selector
  */
-#define PAL_MODE_ALTERNATE(n)           (PAL_RP_MODE_IE                 |   \
-                                         PAL_RP_MODE_OUTOVER_DRVPERI    |   \
-                                         PAL_RP_MODE_FUNCSEL(n))
+#define PAL_MODE_ALTERNATE(n)               (PAL_RP_IOCTRL_FUNCSEL(n))
+#define PAL_MODE_ALTERNATE_SPI              (PAL_RP_IOCTRL_FUNCSEL_SPI)
+#define PAL_MODE_ALTERNATE_UART             (PAL_RP_IOCTRL_FUNCSEL_UART)
+#define PAL_MODE_ALTERNATE_I2C              (PAL_RP_IOCTRL_FUNCSEL_I2C)
+#define PAL_MODE_ALTERNATE_PWM              (PAL_RP_IOCTRL_FUNCSEL_PWM)
+#define PAL_MODE_ALTERNATE_SIO              (PAL_RP_IOCTRL_FUNCSEL_SIO)
+#define PAL_MODE_ALTERNATE_PIO0             (PAL_RP_IOCTRL_FUNCSEL_PIO0)
+#define PAL_MODE_ALTERNATE_PIO1             (PAL_RP_IOCTRL_FUNCSEL_PIO1)
+#define PAL_MODE_ALTERNATE_USB              (PAL_RP_IOCTRL_FUNCSEL_USB)
 /** @} */
 
 /**
@@ -97,48 +115,55 @@
  * @{
  */
 /**
- * @brief   Implemented as input.
+ * @brief   Implemented as post-reset state.
  */
-#define PAL_MODE_RESET                  PAL_STM32_MODE_INPUT
+#define PAL_MODE_RESET                  (PAL_RP_IOCTRL_FUNCSEL_NULL     |   \
+                                         PAL_RP_PAD_DRIVE4              |   \
+                                         PAL_RP_PAD_IE                  |   \
+                                         PAL_RP_PAD_SCHMITT)
 
 /**
  * @brief   Implemented as input with pull-up.
  */
-#define PAL_MODE_UNCONNECTED            PAL_MODE_INPUT_PULLUP
+#define PAL_MODE_UNCONNECTED            (PAL_RP_IOCTRL_FUNCSEL_SIO      |   \
+                                         PAL_RP_PAD_IE                  |   \
+                                         PAL_RP_PAD_SCHMITT             |   \
+                                         PAL_RP_PAD_PUE)
 
 /**
  * @brief   Regular input high-Z pad.
  */
-#define PAL_MODE_INPUT                  PAL_STM32_MODE_INPUT
+#define PAL_MODE_INPUT                  (PAL_RP_IOCTRL_FUNCSEL_SIO      |   \
+                                         PAL_RP_PAD_IE                  |   \
+                                         PAL_RP_PAD_SCHMITT)
 
 /**
  * @brief   Input pad with weak pull up resistor.
  */
-#define PAL_MODE_INPUT_PULLUP           (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUPDR_PULLUP)
+#define PAL_MODE_INPUT_PULLUP           (PAL_RP_IOCTRL_FUNCSEL_SIO      |   \
+                                         PAL_RP_PAD_IE                  |   \
+                                         PAL_RP_PAD_SCHMITT             |   \
+                                         PAL_RP_PAD_PUE)
 
 /**
  * @brief   Input pad with weak pull down resistor.
  */
-#define PAL_MODE_INPUT_PULLDOWN         (PAL_STM32_MODE_INPUT |             \
-                                         PAL_STM32_PUPDR_PULLDOWN)
+#define PAL_MODE_INPUT_PULLDOWN         (PAL_RP_IOCTRL_FUNCSEL_SIO      |   \
+                                         PAL_RP_PAD_IE                  |   \
+                                         PAL_RP_PAD_SCHMITT             |   \
+                                         PAL_RP_PAD_PDE)
 
 /**
  * @brief   Analog input mode.
  */
-#define PAL_MODE_INPUT_ANALOG           PAL_STM32_MODE_ANALOG
+#define PAL_MODE_INPUT_ANALOG           (PAL_RP_IOCTRL_FUNCSEL_NULL)
 
 /**
  * @brief   Push-pull output pad.
  */
-#define PAL_MODE_OUTPUT_PUSHPULL        (PAL_STM32_MODE_OUTPUT |            \
-                                         PAL_STM32_OTYPE_PUSHPULL)
-
-/**
- * @brief   Open-drain output pad.
- */
-#define PAL_MODE_OUTPUT_OPENDRAIN       (PAL_STM32_MODE_OUTPUT |            \
-                                         PAL_STM32_OTYPE_OPENDRAIN)
+#define PAL_MODE_OUTPUT_PUSHPULL        (PAL_RP_IOCTRL_FUNCSEL_SIO      |   \
+                                         PAL_RP_GPIO_OE                 |   \
+                                         PAL_RP_PAD_IE)
 /** @} */
 
 /*===========================================================================*/
@@ -254,7 +279,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_readport(port) 0U
+#define pal_lld_readport(port)          (SIO->GPIO_IN)
 
 /**
  * @brief   Reads the output latch.
@@ -266,7 +291,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_readlatch(port) 0U
+#define pal_lld_readlatch(port)         (SIO->GPIO_OUT)
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -279,7 +304,7 @@ typedef uint32_t iopadid_t;
 #define pal_lld_writeport(port, bits)                                       \
   do {                                                                      \
     (void)port;                                                             \
-    (void)bits;                                                             \
+    SIO->GPIO_OUT = (bits);                                                 \
   } while (false)
 
 /**
@@ -296,7 +321,7 @@ typedef uint32_t iopadid_t;
 #define pal_lld_setport(port, bits)                                         \
   do {                                                                      \
     (void)port;                                                             \
-    (void)bits;                                                             \
+    SIO->GPIO_OUT_SET = (bits);                                             \
   } while (false)
 
 /**
@@ -313,7 +338,7 @@ typedef uint32_t iopadid_t;
 #define pal_lld_clearport(port, bits)                                       \
   do {                                                                      \
     (void)port;                                                             \
-    (void)bits;                                                             \
+    SIO->GPIO_OUT_CLR = (bits);                                             \
   } while (false)
 
 /**
@@ -330,132 +355,8 @@ typedef uint32_t iopadid_t;
 #define pal_lld_toggleport(port, bits)                                      \
   do {                                                                      \
     (void)port;                                                             \
-    (void)bits;                                                             \
+    SIO->GPIO_OUT_XOR = (bits);                                             \
   } while (false)
-
-/**
- * @brief   Reads a group of bits.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] mask      group mask
- * @param[in] offset    group bit offset within the port
- * @return              The group logical states.
- *
- * @notapi
- */
-#define pal_lld_readgroup(port, mask, offset) 0U
-
-/**
- * @brief   Writes a group of bits.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] mask      group mask
- * @param[in] offset    group bit offset within the port
- * @param[in] bits      bits to be written. Values exceeding the group width
- *                      are masked.
- *
- * @notapi
- */
-#define pal_lld_writegroup(port, mask, offset, bits)                        \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)mask;                                                             \
-    (void)offset;                                                           \
-    (void)bits;                                                             \
-  } while (false)
-
-/**
- * @brief   Pads group mode setup.
- * @details This function programs a pads group belonging to the same port
- *          with the specified mode.
- * @note    Programming an unknown or unsupported mode is silently ignored.
- *
- * @param[in] port      port identifier
- * @param[in] mask      group mask
- * @param[in] offset    group bit offset within the port
- * @param[in] mode      group mode
- *
- * @notapi
- */
-#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
-  _pal_lld_setgroupmode(port, mask << offset, mode)
-
-/**
- * @brief   Reads an input pad logic state.
- * @note    The function can be called from any context.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @return              The logic state.
- * @retval PAL_LOW      low logic state.
- * @retval PAL_HIGH     high logic state.
- *
- * @notapi
- */
-#define pal_lld_readpad(port, pad)
-
-/**
- * @brief   Writes a logical state on an output pad.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @param[in] bit       logical value, the value must be @p PAL_LOW or
- *                      @p PAL_HIGH
- *
- * @notapi
- */
-#define pal_lld_writepad(port, pad, bit)
-
-/**
- * @brief   Sets a pad logic state to @p PAL_HIGH.
- * @note    The operation is not guaranteed to be atomic on all the
- *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p osalSysLock() and
- *          @p osalSysUnlock().
- * @note    The function can be called from any context.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_setpad(port, pad)
-
-/**
- * @brief   Clears a pad logic state to @p PAL_LOW.
- * @note    The operation is not guaranteed to be atomic on all the
- *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p osalSysLock() and
- *          @p osalSysUnlock().
- * @note    The function can be called from any context.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_clearpad(port, pad)
-
-/**
- * @brief   Toggles a pad logic state.
- * @note    The operation is not guaranteed to be atomic on all the
- *          architectures, for atomicity and/or portability reasons you may
- *          need to enclose port I/O operations between @p osalSysLock() and
- *          @p osalSysUnlock().
- * @note    The function can be called from any context.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_togglepad(port, pad)
 
 /**
  * @brief   Pad mode setup.
@@ -476,11 +377,34 @@ typedef uint32_t iopadid_t;
 #define pal_lld_setpadmode(port, pad, mode)                                 \
   __pal_lld_pad_set_mode(port, pad, mode)
 
+__STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
+                                            iopadid_t pad,
+                                            iomode_t mode) {
+  uint32_t ctrlbits, padbits, oebits;
+
+  (void)port;
+
+  ctrlbits = (mode & 0x007FFFFFU) >> 0U;
+  oebits   = (mode & 0x00800000U) >> 23U;
+  padbits  = (mode & 0xF0000000U) >> 24;
+
+  /* Setting up GPIO direction first.*/
+  if (oebits != 0U) {
+    SIO->GPIO_OE_SET = 1U << pad;
+  }
+  else {
+    SIO->GPIO_OE_CLR = 1U << pad;
+  }
+
+  /* Then IO and PAD settings.*/
+  IO_BANK0->GPIO[pad].CTRL = ctrlbits;
+  PADS_BANK0->GPIO[pad] = padbits;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void __pal_lld_init(void);
-  void __pal_lld_pad_set_mode(ioportid_t port, iopadid_t pad, iomode_t mode);
 #ifdef __cplusplus
 }
 #endif

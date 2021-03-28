@@ -65,6 +65,10 @@ void hal_lld_init(void) {
   clocks_init();
 
   SystemCoreClock = RP_CORE_CLK;
+
+  hal_lld_peripheral_unreset(RESETS_ALLREG_BUSCTRL);
+  hal_lld_peripheral_unreset(RESETS_ALLREG_SYSINFO);
+  hal_lld_peripheral_unreset(RESETS_ALLREG_SYSCFG);
 #endif /* RP_NO_INIT */
 }
 
