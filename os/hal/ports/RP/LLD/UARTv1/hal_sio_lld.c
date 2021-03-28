@@ -197,10 +197,12 @@ void sio_lld_init(void) {
 #if RP_SIO_USE_UART0 == TRUE
   sioObjectInit(&SIOD1);
   SIOD1.uart = UART0;
+  hal_lld_peripheral_reset(RESETS_ALLREG_UART0);
 #endif
 #if RP_SIO_USE_UART1 == TRUE
   sioObjectInit(&SIOD2);
   SIOD2.uart = UART1;
+  hal_lld_peripheral_reset(RESETS_ALLREG_UART1);
 #endif
 }
 
@@ -246,7 +248,6 @@ bool sio_lld_start(SIODriver *siop) {
     siop->sync_rx      = NULL;
     siop->sync_tx      = NULL;
     siop->sync_txend   = NULL;
-//    siop->events       = 0U;
 #endif
   }
 
@@ -535,7 +536,7 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
   UART_TypeDef *u = siop->uart;
-  uint32_t mis, msc, evtmask;
+  uint32_t mis, imsc, evtmask;
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
@@ -544,7 +545,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   mis = u->UARTMIS;
 
   /* One read on control registers.*/
-  msc = u->UARTIMSC;
+  imsc = u->UARTIMSC;
 
   /* Enabled errors/events handling.*/
   evtmask = mis & (UART_UARTMIS_OEMIS | UART_UARTMIS_BEMIS |
@@ -552,7 +553,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   if (evtmask != 0U) {
 
     /* Disabling event sources.*/
-    msc &= ~(UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+    imsc &= ~(UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
              UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM);
 
     /* The callback is invoked if defined.*/
@@ -565,8 +566,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   /* RX FIFO is non-empty.*/
   if ((mis & UART_UARTMIS_RXMIS) != 0U) {
 
-    /* Disabling event sources.*/
-    msc &= ~UART_UARTIMSC_RXIM;
+    /* Called once then the interrupt source is disabled.*/
+    imsc &= ~UART_UARTIMSC_RXIM;
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx(siop);
@@ -591,8 +592,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   /* TX FIFO is non-full.*/
   if ((mis & UART_UARTMIS_TXMIS) != 0U) {
 
-    /* Disabling event sources.*/
-    msc &= ~UART_UARTIMSC_TXIM;
+    /* Called once then the interrupt source is disabled.*/
+    imsc &= ~UART_UARTIMSC_TXIM;
 
     /* The callback is invoked if defined.*/
     __sio_callback_tx(siop);
@@ -602,7 +603,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   }
 
   /* One write on control registers.*/
-  u->UARTIMSC = msc;
+  u->UARTIMSC = imsc;
 }
 
 #endif /* HAL_USE_SIO == TRUE */

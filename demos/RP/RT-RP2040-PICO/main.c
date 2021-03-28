@@ -67,14 +67,15 @@ int main(void) {
   /*
    * Setting up GPIOs.
    */
+  palSetLineMode(0U, PAL_MODE_ALTERNATE_UART);
+  palSetLineMode(1U, PAL_MODE_ALTERNATE_UART);
   palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
 
   /*
    * Activates the Serial or SIO driver using the default configuration.
    */
-//  sdStart(&LPSD1, NULL);
-//  sioStart(&SIOD1, NULL);
-//  sioStartOperation(&SIOD1, NULL);
+  sioStart(&SIOD1, NULL);
+  sioStartOperation(&SIOD1, NULL);
 
   /*
    * Creates the blinker thread.
@@ -86,10 +87,10 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-//    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-//                                            "shell", NORMALPRIO + 1,
-//                                            shellThread, (void *)&shell_cfg1);
-//    chThdWait(shelltp);               /* Waiting termination.             */
+    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                            "shell", NORMALPRIO + 1,
+                                            shellThread, (void *)&shell_cfg1);
+    chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(500);
   }
 }

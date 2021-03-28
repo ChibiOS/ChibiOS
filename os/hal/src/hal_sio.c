@@ -62,7 +62,7 @@ static size_t sync_write(void *ip, const uint8_t *bp, size_t n,
     msg_t msg;
 
     msg = sioSynchronizeTX(siop, timeout);
-    if (msg != MSG_OK) {
+    if (msg < MSG_OK) {
       break;
     }
 
@@ -83,8 +83,8 @@ static size_t sync_read(void *ip, uint8_t *bp, size_t n,
     size_t read;
     msg_t msg;
 
-    msg = sioSynchronizeTX(siop, timeout);
-    if (msg != MSG_OK) {
+    msg = sioSynchronizeRX(siop, timeout);
+    if (msg < MSG_OK) {
       break;
     }
 
@@ -445,7 +445,7 @@ size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n) {
  * @retval SIO_MSG_ERRORS   if RX errors occurred during wait.
  */
 msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
-  msg_t msg;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(siop != NULL);
 
@@ -453,11 +453,8 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
-  if (sio_lld_is_rx_empty(siop)) {
+  while (sio_lld_is_rx_empty(siop)) {
     msg = osalThreadSuspendTimeoutS(&siop->sync_rx, timeout);
-  }
-  else {
-    msg = MSG_OK;
   }
 
   osalSysUnlock();
@@ -479,7 +476,7 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
  * @retval MSG_RESET        operation has been stopped while waiting.
  */
 msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
-  msg_t msg;
+  msg_t msg = MSG_OK;
 
   osalDbgCheck(siop != NULL);
 
@@ -487,11 +484,8 @@ msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
-  if (sio_lld_is_tx_full(siop)) {
+  while (sio_lld_is_tx_full(siop)) {
     msg = osalThreadSuspendTimeoutS(&siop->sync_tx, timeout);
-  }
-  else {
-    msg = MSG_OK;
   }
 
   osalSysUnlock();

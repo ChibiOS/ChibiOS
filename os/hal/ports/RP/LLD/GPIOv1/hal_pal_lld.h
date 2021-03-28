@@ -99,15 +99,17 @@
  * @{
  * @param[in] n         alternate function selector
  */
-#define PAL_MODE_ALTERNATE(n)               (PAL_RP_IOCTRL_FUNCSEL(n))
-#define PAL_MODE_ALTERNATE_SPI              (PAL_RP_IOCTRL_FUNCSEL_SPI)
-#define PAL_MODE_ALTERNATE_UART             (PAL_RP_IOCTRL_FUNCSEL_UART)
-#define PAL_MODE_ALTERNATE_I2C              (PAL_RP_IOCTRL_FUNCSEL_I2C)
-#define PAL_MODE_ALTERNATE_PWM              (PAL_RP_IOCTRL_FUNCSEL_PWM)
-#define PAL_MODE_ALTERNATE_SIO              (PAL_RP_IOCTRL_FUNCSEL_SIO)
-#define PAL_MODE_ALTERNATE_PIO0             (PAL_RP_IOCTRL_FUNCSEL_PIO0)
-#define PAL_MODE_ALTERNATE_PIO1             (PAL_RP_IOCTRL_FUNCSEL_PIO1)
-#define PAL_MODE_ALTERNATE_USB              (PAL_RP_IOCTRL_FUNCSEL_USB)
+#define PAL_MODE_ALTERNATE(n)               (PAL_RP_IOCTRL_FUNCSEL(n)   |   \
+                                             PAL_RP_PAD_IE              |   \
+                                             PAL_RP_PAD_SCHMITT)
+#define PAL_MODE_ALTERNATE_SPI              (PAL_MODE_ALTERNATE(1U))
+#define PAL_MODE_ALTERNATE_UART             (PAL_MODE_ALTERNATE(2U))
+#define PAL_MODE_ALTERNATE_I2C              (PAL_MODE_ALTERNATE(3U))
+#define PAL_MODE_ALTERNATE_PWM              (PAL_MODE_ALTERNATE(4U))
+#define PAL_MODE_ALTERNATE_SIO              (PAL_MODE_ALTERNATE(5U))
+#define PAL_MODE_ALTERNATE_PIO0             (PAL_MODE_ALTERNATE(6U))
+#define PAL_MODE_ALTERNATE_PIO1             (PAL_MODE_ALTERNATE(7U))
+#define PAL_MODE_ALTERNATE_USB              (PAL_MODE_ALTERNATE(9U))
 /** @} */
 
 /**
