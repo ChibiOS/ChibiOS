@@ -31,6 +31,7 @@
 /*===========================================================================*/
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+#define ST_HANDLER                          SysTick_Handler
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
@@ -57,13 +58,34 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) || defined(__DOXYGEN__)
 #if !defined(ST_SYSTICK_SUPPRESS_ISR)
 /**
- * @brief   Interrupt handler.
+ * @brief   SysTick interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(ST_HANDLER) {
+OSAL_IRQ_HANDLER(SysTick_Handler) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  osalSysLockFromISR();
+  osalOsTimerHandlerI();
+  osalSysUnlockFromISR();
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
+
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
+#if !defined(ST_TIMER_ALARM0_SUPPRESS_ISR)
+/**
+ * @brief   TIMER alarm 0 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(RP_TIMER_IRQ0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -72,6 +94,56 @@ OSAL_IRQ_HANDLER(ST_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 #endif
+
+#if !defined(ST_TIMER_ALARM1_SUPPRESS_ISR)
+/**
+ * @brief   TIMER alarm 1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(RP_TIMER_IRQ1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  st_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if !defined(ST_TIMER_ALARM2_SUPPRESS_ISR)
+/**
+ * @brief   TIMER alarm 2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(RP_TIMER_IRQ2_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  st_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if !defined(ST_TIMER_ALARM3_SUPPRESS_ISR)
+/**
+ * @brief   TIMER alarm 3 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(RP_TIMER_IRQ3_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  st_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -83,14 +155,40 @@ OSAL_IRQ_HANDLER(ST_HANDLER) {
  * @notapi
  */
 void st_lld_init(void) {
-  uint32_t  timer_clk;
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+  /* The timer need to stop during debug or the virtual timers list would
+     go out of sync.*/
+  TIMER->DBGPAUSE   = TIMER_DBGPAUSE_DBG0 | TIMER_DBGPAUSE_DBG1;
+
+  /* Comparators and counter initially at zero.*/
+  TIMER->TIMELW     = 0U;
+  TIMER->TIMEHW     = 0U;
+  TIMER->ALARM[0]   = 0U;
+  TIMER->ALARM[1]   = 0U;
+  TIMER->ALARM[2]   = 0U;
+  TIMER->ALARM[3]   = 0U;
+  TIMER->INTR       = TIMER_INTR_ALARM3 | TIMER_INTR_ALARM2 |
+                      TIMER_INTR_ALARM1 | TIMER_INTR_ALARM0;
+
+  /* IRQs enabled.*/
+#if !defined(ST_TIMER_ALARM0_SUPPRESS_ISR)
+  nvicEnableVector(RP_TIMER_IRQ0_NUMBER, RP_IRQ_TIMER_ALARM0_PRIORITY);
+#endif
+#if !defined(ST_TIMER_ALARM1_SUPPRESS_ISR)
+  nvicEnableVector(RP_TIMER_IRQ1_NUMBER, RP_IRQ_TIMER_ALARM1_PRIORITY);
+#endif
+#if !defined(ST_TIMER_ALARM2_SUPPRESS_ISR)
+  nvicEnableVector(RP_TIMER_IRQ2_NUMBER, RP_IRQ_TIMER_ALARM2_PRIORITY);
+#endif
+#if !defined(ST_TIMER_ALARM3_SUPPRESS_ISR)
+  nvicEnableVector(RP_TIMER_IRQ3_NUMBER, RP_IRQ_TIMER_ALARM3_PRIORITY);
+#endif
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
-  timer_clk = RP_CORE_CLK;
+  uint32_t  timer_clk = RP_CORE_CLK;
 
   osalDbgAssert(timer_clk % OSAL_ST_FREQUENCY != 0U,
                 "division remainder");
@@ -114,18 +212,29 @@ void st_lld_init(void) {
  * @brief   IRQ handling code.
  */
 void st_lld_serve_interrupt(void) {
+  uint32_t ints;
 
-#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+  ints = TIMER->INTS;
+  TIMER->INTR = ints;
 
-#endif
-  {
+  /* Alarms 0 and 1 are used for system ticks for core 0 and core 1.*/
+  if ((ints & (TIMER_INTS_ALARM1 | TIMER_INTS_ALARM0)) != 0U) {
     osalSysLockFromISR();
     osalOsTimerHandlerI();
     osalSysUnlockFromISR();
   }
-#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 
-#endif
+  if ((ints & TIMER_INTS_ALARM2) != 0U) {
+    if (st_callbacks[0] != NULL) {
+      st_callbacks[0](2U);
+    }
+  }
+
+  if ((ints & TIMER_INTS_ALARM3) != 0U) {
+    if (st_callbacks[1] != NULL) {
+      st_callbacks[1](3U);
+    }
+  }
 }
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */

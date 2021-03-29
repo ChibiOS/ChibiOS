@@ -186,10 +186,7 @@ typedef struct {
   __IO uint32_t         TIMELW;
   __I  uint32_t         TIMEHR;
   __I  uint32_t         TIMELR;
-  __IO uint32_t         ALARM0;
-  __IO uint32_t         ALARM1;
-  __IO uint32_t         ALARM2;
-  __IO uint32_t         ALARM3;
+  __IO uint32_t         ALARM[4];
   __IO uint32_t         ARMED;
   __I  uint32_t         TIMERAWH;
   __I  uint32_t         TIMERAWL;

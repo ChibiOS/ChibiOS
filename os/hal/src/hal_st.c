@@ -176,7 +176,7 @@ bool stIsAlarmActive(void) {
  */
 bool stIsAlarmActiveN(unsigned alarm) {
 
-  return st_lld_is_alarm_active_n(n);
+  return st_lld_is_alarm_active_n(alarm);
 }
 
 /**

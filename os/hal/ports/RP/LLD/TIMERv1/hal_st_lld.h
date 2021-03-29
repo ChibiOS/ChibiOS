@@ -31,6 +31,16 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of supported alarms.
+ */
+#define ST_LLD_NUM_ALARMS                   4U
+
+/**
+ * @brief   Number of supported callbacks.
+ */
+#define ST_LLD_NUM_CALLBACKS                (ST_LLD_NUM_ALARMS - 2U)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -43,7 +53,35 @@
  * @brief   SysTick timer IRQ priority.
  */
 #if !defined(RP_IRQ_SYSTICK_PRIORITY) || defined(__DOXYGEN__)
-#define RP_IRQ_SYSTICK_PRIORITY             1
+#define RP_IRQ_SYSTICK_PRIORITY             2
+#endif
+
+/**
+ * @brief   TIMER alarm 0 IRQ priority.
+ */
+#if !defined(RP_IRQ_TIMER_ALARM0_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER_ALARM0_PRIORITY        2
+#endif
+
+/**
+ * @brief   TIMER alarm 1 IRQ priority.
+ */
+#if !defined(RP_IRQ_TIMER_ALARM1_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER_ALARM1_PRIORITY        2
+#endif
+
+/**
+ * @brief   TIMER alarm 2 IRQ priority.
+ */
+#if !defined(RP_IRQ_TIMER_ALARM2_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER_ALARM2_PRIORITY        2
+#endif
+
+/**
+ * @brief   TIMER alarm 3 IRQ priority.
+ */
+#if !defined(RP_IRQ_TIMER_ALARM3_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_TIMER_ALARM3_PRIORITY        2
 #endif
 /** @} */
 
@@ -51,19 +89,26 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) &&                           \
+    (OSAL_ST_RESOLUTION != 32)
+#error "OSAL_ST_RESOLUTION must be 32 in OSAL_ST_MODE_FREERUNNING mode"
+#endif
+
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 
 #define RP_ST_USE_SYSTICK                   FALSE
-
-#error "OSAL_ST_MODE_FREERUNNING not yet supported"
+#define RP_ST_USE_TIMER                     TRUE
 
 #elif OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
 
 #define RP_ST_USE_SYSTICK                   TRUE
+#define RP_ST_USE_TIMER                     FALSE
 
 #else
 
 #define RP_ST_USE_SYSTICK                   FALSE
+#define RP_ST_USE_TIMER                     FALSE
 
 #endif
 
@@ -83,7 +128,9 @@
 extern "C" {
 #endif
   void st_lld_init(void);
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   void st_lld_serve_interrupt(void);
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -91,7 +138,6 @@ extern "C" {
 /*===========================================================================*/
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
-
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 
@@ -102,8 +148,9 @@ extern "C" {
  *
  * @notapi
  */
-static inline systime_t st_lld_get_counter(void) {
+__STATIC_INLINE systime_t st_lld_get_counter(void) {
 
+  return (systime_t)TIMER->TIMERAWL;
 }
 
 /**
@@ -115,8 +162,11 @@ static inline systime_t st_lld_get_counter(void) {
  *
  * @notapi
  */
-static inline void st_lld_start_alarm(systime_t abstime) {
+__STATIC_INLINE void st_lld_start_alarm(systime_t abstime) {
 
+  TIMER->ALARM[0]       = (uint32_t)abstime;
+  TIMER->INTR           = (1U << 0);
+  TIMER->INTE          |= (1U << 0);
 }
 
 /**
@@ -124,8 +174,9 @@ static inline void st_lld_start_alarm(systime_t abstime) {
  *
  * @notapi
  */
-static inline void st_lld_stop_alarm(void) {
+__STATIC_INLINE void st_lld_stop_alarm(void) {
 
+  TIMER->INTE          &= ~(1U << 0);
 }
 
 /**
@@ -135,8 +186,9 @@ static inline void st_lld_stop_alarm(void) {
  *
  * @notapi
  */
-static inline void st_lld_set_alarm(systime_t abstime) {
+__STATIC_INLINE void st_lld_set_alarm(systime_t abstime) {
 
+  TIMER->ALARM[0]       = (uint32_t)abstime;
 }
 
 /**
@@ -146,8 +198,9 @@ static inline void st_lld_set_alarm(systime_t abstime) {
  *
  * @notapi
  */
-static inline systime_t st_lld_get_alarm(void) {
+__STATIC_INLINE systime_t st_lld_get_alarm(void) {
 
+  return (systime_t)TIMER->ALARM[0];
 }
 
 /**
@@ -159,9 +212,91 @@ static inline systime_t st_lld_get_alarm(void) {
  *
  * @notapi
  */
-static inline bool st_lld_is_alarm_active(void) {
+__STATIC_INLINE bool st_lld_is_alarm_active(void) {
 
+  return (bool)((TIMER->INTE & (1U << 0)) != 0U);
 }
+
+#if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
+/**
+ * @brief   Starts an alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] abstime   the time to be set for the first alarm
+ * @param[in] alarm     alarm channel number
+ *
+ * @notapi
+ */
+__STATIC_INLINE void st_lld_start_alarm_n(unsigned alarm, systime_t abstime) {
+
+
+  TIMER->ALARM[alarm]   = (uint32_t)abstime;
+  TIMER->INTR           = (1U << alarm);
+  TIMER->INTE          |= (1U << alarm);
+}
+
+/**
+ * @brief   Stops an alarm interrupt.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number
+ *
+ * @notapi
+ */
+__STATIC_INLINE void st_lld_stop_alarm_n(unsigned alarm) {
+
+  TIMER->INTE          &= ~(1U << alarm);
+}
+
+/**
+ * @brief   Sets an alarm time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number
+ * @param[in] abstime   the time to be set for the next alarm
+ *
+ * @notapi
+ */
+__STATIC_INLINE void st_lld_set_alarm_n(unsigned alarm, systime_t abstime) {
+
+  TIMER->ALARM[alarm]   = (uint32_t)abstime;
+}
+
+/**
+ * @brief   Returns an alarm current time.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
+ *
+ * @param[in] alarm     alarm channel number
+ * @return              The currently set alarm time.
+ *
+ * @notapi
+ */
+__STATIC_INLINE systime_t st_lld_get_alarm_n(unsigned alarm) {
+
+  return (systime_t)TIMER->ALARM[alarm];
+}
+
+/**
+ * @brief   Determines if an alarm is active.
+ *
+ * @param[in] alarm     alarm channel number
+ * @return              The alarm status.
+ * @retval false        if the alarm is not active.
+ * @retval true         is the alarm is active
+ *
+ * @notapi
+ */
+static inline bool st_lld_is_alarm_active_n(unsigned alarm) {
+
+  return (bool)((TIMER->INTE & (1U << alarm)) != 0U);
+}
+#endif /* ST_LLD_NUM_ALARMS > 1 */
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
