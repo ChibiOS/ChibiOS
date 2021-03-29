@@ -135,6 +135,38 @@
 #error "USART1 not present in the selected device"
 #endif
 
+#if STM32_SIO_USE_USART2 && !STM32_HAS_USART2
+#error "USART2 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_USART3 && !STM32_HAS_USART3
+#error "USART3 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_UART4 && !STM32_HAS_UART4
+#error "UART4 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_UART5 && !STM32_HAS_UART5
+#error "UART5 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_USART6 && !STM32_HAS_USART6
+#error "USART6 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_UART7 && !STM32_HAS_UART7
+#error "UART7 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_UART8 && !STM32_HAS_UART8
+#error "UART8 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_LPUART1 && !STM32_HAS_LPUART1
+#error "LPUART1 not present in the selected device"
+#endif
+
 #if !STM32_SIO_USE_USART1 && !STM32_SIO_USE_USART2 &&                       \
     !STM32_SIO_USE_USART3 && !STM32_SIO_USE_UART4  &&                       \
     !STM32_SIO_USE_UART5  && !STM32_SIO_USE_USART6 &&                       \
