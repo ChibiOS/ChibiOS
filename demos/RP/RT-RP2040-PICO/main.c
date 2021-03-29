@@ -49,10 +49,76 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
+static inline bool multicore_fifo_rvalid(void) {
+
+  return (bool)((SIO->FIFO_ST & SIO_FIFO_ST_VLD) != 0U);
+}
+static inline bool multicore_fifo_wready(void) {
+
+  return (bool)((SIO->FIFO_ST & SIO_FIFO_ST_RDY) != 0U);
+}
+
+static inline void multicore_fifo_drain(void) {
+
+  while (multicore_fifo_rvalid())
+    (void)SIO->FIFO_RD;
+}
+
+static inline void multicore_fifo_push_blocking(uint32_t data) {
+
+    // We wait for the fifo to have some space
+    while (!multicore_fifo_wready()) {
+    }
+
+    SIO->FIFO_WR = data;
+
+    // Fire off an event to the other core
+    __SEV();
+}
+
+static inline uint32_t multicore_fifo_pop_blocking(void) {
+
+  // If nothing there yet, we wait for an event first,
+  // to try and avoid too much busy waiting
+  while (!multicore_fifo_rvalid()) {
+    __WFE();
+  }
+
+  return SIO->FIFO_RD;
+}
+
+static void start_core1(void) {
+  extern uint32_t __c1_main_stack_end__, _vectors;
+  extern void _crt0_c1_entry(void);
+  uint32_t cmd_sequence[] = {0, 0, 1,
+                             (uint32_t)&_vectors,
+                             (uint32_t)&__c1_main_stack_end__,
+                             (uint32_t)_crt0_c1_entry};
+  unsigned seq;
+
+  seq = 0;
+  do {
+    uint32_t response;
+    uint32_t cmd = cmd_sequence[seq];
+
+    // we drain before sending a 0
+    if (!cmd) {
+      multicore_fifo_drain();
+      __SEV(); // core 1 may be waiting for fifo space
+    }
+    multicore_fifo_push_blocking(cmd);
+    response = multicore_fifo_pop_blocking();
+    // move to next state on correct response otherwise start over
+    seq = cmd == response ? seq + 1 : 0;
+  } while (seq < count_of(cmd_sequence));
+}
+
 /*
  * Application entry point.
  */
 int main(void) {
+
+  start_core1();
 
   /*
    * System initializations.
@@ -95,3 +161,12 @@ int main(void) {
   }
 }
 
+/**
+ * Core 1 entry point.
+ */
+void c1_main(void) {
+
+  while (true) {
+
+  }
+}

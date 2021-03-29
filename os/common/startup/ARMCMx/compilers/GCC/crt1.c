@@ -31,12 +31,16 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-#if !defined(CRT1_AREAS_NUMBER) || defined(__DOXYGEN__)
-#define CRT1_AREAS_NUMBER                   8
+#if !defined(CRT0_EXTRA_CORES_NUMBER) || defined(__DOXYGEN__)
+#define CRT0_EXTRA_CORES_NUMBER             0
 #endif
 
-#if (CRT1_AREAS_NUMBER < 0) || (CRT1_AREAS_NUMBER > 8)
-#error "CRT1_AREAS_NUMBER must be within 0 and 8"
+#if !defined(CRT0_AREAS_NUMBER) || defined(__DOXYGEN__)
+#define CRT0_AREAS_NUMBER                   8
+#endif
+
+#if (CRT0_AREAS_NUMBER < 0) || (CRT0_AREAS_NUMBER > 8)
+#error "CRT0_AREAS_NUMBER must be within 0 and 8"
 #endif
 
 /*===========================================================================*/
@@ -61,56 +65,56 @@ typedef struct {
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-#if (CRT1_AREAS_NUMBER > 0) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 0) || defined(__DOXYGEN__)
 extern uint32_t __ram0_init_text__, __ram0_init__, __ram0_clear__, __ram0_noinit__;
 #endif
-#if (CRT1_AREAS_NUMBER > 1) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 1) || defined(__DOXYGEN__)
 extern uint32_t __ram1_init_text__, __ram1_init__, __ram1_clear__, __ram1_noinit__;
 #endif
-#if (CRT1_AREAS_NUMBER > 2) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 2) || defined(__DOXYGEN__)
 extern uint32_t __ram2_init_text__, __ram2_init__, __ram2_clear__, __ram2_noinit__;
 #endif
-#if (CRT1_AREAS_NUMBER > 3) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 3) || defined(__DOXYGEN__)
 extern uint32_t __ram3_init_text__, __ram3_init__, __ram3_clear__, __ram3_noinit__;
 #endif
-#if (CRT1_AREAS_NUMBER > 4) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 4) || defined(__DOXYGEN__)
 extern uint32_t __ram4_init_text__, __ram4_init__, __ram4_clear__, __ram4_noinit__;
 #endif
-#if (CRT1_AREAS_NUMBER > 5) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 5) || defined(__DOXYGEN__)
 extern uint32_t __ram5_init_text__, __ram5_init__, __ram5_clear__, __ram5_noinit__;
 #endif
-#if (CRT1_AREAS_NUMBER > 6) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 6) || defined(__DOXYGEN__)
 extern uint32_t __ram6_init_text__, __ram6_init__, __ram6_clear__, __ram6_noinit__;
 #endif
-#if (CRT1_AREAS_NUMBER > 7) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 7) || defined(__DOXYGEN__)
 extern uint32_t __ram7_init_text__, __ram7_init__, __ram7_clear__, __ram7_noinit__;
 #endif
 
 /**
  * @brief   Static table of areas to be initialized.
  */
-#if (CRT1_AREAS_NUMBER > 0) || defined(__DOXYGEN__)
-static const ram_init_area_t ram_areas[CRT1_AREAS_NUMBER] = {
+#if (CRT0_AREAS_NUMBER > 0) || defined(__DOXYGEN__)
+static const ram_init_area_t ram_areas[CRT0_AREAS_NUMBER] = {
   {&__ram0_init_text__, &__ram0_init__, &__ram0_clear__, &__ram0_noinit__},
-#if (CRT1_AREAS_NUMBER > 1) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 1) || defined(__DOXYGEN__)
   {&__ram1_init_text__, &__ram1_init__, &__ram1_clear__, &__ram1_noinit__},
 #endif
-#if (CRT1_AREAS_NUMBER > 2) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 2) || defined(__DOXYGEN__)
   {&__ram2_init_text__, &__ram2_init__, &__ram2_clear__, &__ram2_noinit__},
 #endif
-#if (CRT1_AREAS_NUMBER > 3) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 3) || defined(__DOXYGEN__)
   {&__ram3_init_text__, &__ram3_init__, &__ram3_clear__, &__ram3_noinit__},
 #endif
-#if (CRT1_AREAS_NUMBER > 4) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 4) || defined(__DOXYGEN__)
   {&__ram4_init_text__, &__ram4_init__, &__ram4_clear__, &__ram4_noinit__},
 #endif
-#if (CRT1_AREAS_NUMBER > 5) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 5) || defined(__DOXYGEN__)
   {&__ram5_init_text__, &__ram5_init__, &__ram5_clear__, &__ram5_noinit__},
 #endif
-#if (CRT1_AREAS_NUMBER > 6) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 6) || defined(__DOXYGEN__)
   {&__ram6_init_text__, &__ram6_init__, &__ram6_clear__, &__ram6_noinit__},
 #endif
-#if (CRT1_AREAS_NUMBER > 7) || defined(__DOXYGEN__)
+#if (CRT0_AREAS_NUMBER > 7) || defined(__DOXYGEN__)
   {&__ram7_init_text__, &__ram7_init__, &__ram7_clear__, &__ram7_noinit__},
 #endif
 };
@@ -187,11 +191,50 @@ void __default_exit(void) {
   }
 }
 
+#if (CRT0_EXTRA_CORES_NUMBER > 0) || defined(__DOXYGEN__)
+#if !defined(__DOXYGEN__)
+__attribute__((weak))
+#endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
+void __c1_cpu_init(void) {
+
+#if CORTEX_MODEL == 7
+  SCB_EnableICache();
+  SCB_EnableDCache();
+#endif
+}
+
+#if !defined(__DOXYGEN__)
+__attribute__((weak))
+#endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
+void __c1_early_init(void) {}
+/*lint -restore*/
+
+#if !defined(__DOXYGEN__)
+__attribute__((weak))
+#endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
+void __c1_late_init(void) {}
+/*lint -restore*/
+
+#if !defined(__DOXYGEN__)
+__attribute__((noreturn, weak))
+#endif
+/*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
+void __c1_default_exit(void) {
+/*lint -restore*/
+
+  while (true) {
+  }
+}
+#endif
+
 /**
  * @brief   Performs the initialization of the various RAM areas.
  */
 void __init_ram_areas(void) {
-#if CRT1_AREAS_NUMBER > 0
+#if CRT0_AREAS_NUMBER > 0
   const ram_init_area_t *rap = ram_areas;
 
   do {
@@ -212,7 +255,7 @@ void __init_ram_areas(void) {
     }
     rap++;
   }
-  while (rap < &ram_areas[CRT1_AREAS_NUMBER]);
+  while (rap < &ram_areas[CRT0_AREAS_NUMBER]);
 #endif
 }
 

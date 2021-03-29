@@ -294,6 +294,23 @@ typedef struct {
 /** @} */
 
 /**
+ * @name    SIO bits definitions
+ */
+#define SIO_FIFO_ST_VLD_Pos             0U
+#define SIO_FIFO_ST_VLD_Msk             (1U << SIO_FIFO_ST_VLD_Pos)
+#define SIO_FIFO_ST_VLD                 SIO_FIFO_ST_VLD_Msk
+#define SIO_FIFO_ST_RDY_Pos             1U
+#define SIO_FIFO_ST_RDY_Msk             (1U << SIO_FIFO_ST_RDY_Pos)
+#define SIO_FIFO_ST_RDY                 SIO_FIFO_ST_RDY_Msk
+#define SIO_FIFO_ST_WOF_Pos             2U
+#define SIO_FIFO_ST_WOF_Msk             (1U << SIO_FIFO_ST_WOF_Pos)
+#define SIO_FIFO_ST_WOF                 SIO_FIFO_ST_WOF_Msk
+#define SIO_FIFO_ST_ROE_Pos             3U
+#define SIO_FIFO_ST_ROE_Msk             (1U << SIO_FIFO_ST_ROE_Pos)
+#define SIO_FIFO_ST_ROE                 SIO_FIFO_ST_ROE_Msk
+/** @} */
+
+/**
  * @name    TIMER bits definitions
  */
 #define TIMER_ARMED_ALARM0_Pos          0U

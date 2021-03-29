@@ -71,6 +71,14 @@ REGION_ALIAS("MAIN_STACK_RAM", ram4);
    the main() function.*/
 REGION_ALIAS("PROCESS_STACK_RAM", ram4);
 
+/* RAM region to be used for Main stack. This stack accommodates the processing
+   of all exceptions and interrupts.*/
+REGION_ALIAS("C1_MAIN_STACK_RAM", ram5);
+
+/* RAM region to be used for the process stack. This is the stack used by
+   the main() function.*/
+REGION_ALIAS("C1_PROCESS_STACK_RAM", ram5);
+
 /* RAM region to be used for data segment.*/
 REGION_ALIAS("DATA_RAM", ram0);
 REGION_ALIAS("DATA_RAM_LMA", ram0);
@@ -82,5 +90,9 @@ REGION_ALIAS("BSS_RAM", ram0);
 REGION_ALIAS("HEAP_RAM", ram0);
 
 /* Generic rules inclusion.*/
-INCLUDE rules.ld
+INCLUDE rules_stacks.ld
+INCLUDE rules_stacks_c1.ld
+INCLUDE rules_code.ld
+INCLUDE rules_data.ld
+INCLUDE rules_memory.ld
 

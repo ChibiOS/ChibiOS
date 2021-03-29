@@ -154,10 +154,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCRT0_VTOR_INIT=1 -DPICO_NO_FPGA_CHECK
+UDEFS = -DCRT0_VTOR_INIT=1 -DCRT0_EXTRA_CORES_NUMBER=1 -DPICO_NO_FPGA_CHECK
 
 # Define ASM defines here
-UADEFS = -DCRT0_VTOR_INIT=1
+UADEFS = -DCRT0_VTOR_INIT=1 -DCRT0_EXTRA_CORES_NUMBER=1
 
 # List all user directories here
 UINCDIR =
