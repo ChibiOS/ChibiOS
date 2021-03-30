@@ -49,44 +49,7 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
-static inline bool multicore_fifo_rvalid(void) {
-
-  return (bool)((SIO->FIFO_ST & SIO_FIFO_ST_VLD) != 0U);
-}
-static inline bool multicore_fifo_wready(void) {
-
-  return (bool)((SIO->FIFO_ST & SIO_FIFO_ST_RDY) != 0U);
-}
-
-static inline void multicore_fifo_drain(void) {
-
-  while (multicore_fifo_rvalid())
-    (void)SIO->FIFO_RD;
-}
-
-static inline void multicore_fifo_push_blocking(uint32_t data) {
-
-    // We wait for the fifo to have some space
-    while (!multicore_fifo_wready()) {
-    }
-
-    SIO->FIFO_WR = data;
-
-    // Fire off an event to the other core
-    __SEV();
-}
-
-static inline uint32_t multicore_fifo_pop_blocking(void) {
-
-  // If nothing there yet, we wait for an event first,
-  // to try and avoid too much busy waiting
-  while (!multicore_fifo_rvalid()) {
-    __WFE();
-  }
-
-  return SIO->FIFO_RD;
-}
-
+/* Courtesy of Pico-SDK.*/
 static void start_core1(void) {
   extern uint32_t __c1_main_stack_end__, _vectors;
   extern void _crt0_c1_entry(void);
@@ -101,15 +64,14 @@ static void start_core1(void) {
     uint32_t response;
     uint32_t cmd = cmd_sequence[seq];
 
-    // we drain before sending a 0
+    /* Flushing the FIFO state before sending a zero.*/
     if (!cmd) {
-      multicore_fifo_drain();
-      __SEV(); // core 1 may be waiting for fifo space
+      fifoFlushRead();
     }
-    multicore_fifo_push_blocking(cmd);
-    response = multicore_fifo_pop_blocking();
-    // move to next state on correct response otherwise start over
-    seq = cmd == response ? seq + 1 : 0;
+    fifoBlockingWrite(cmd);
+    response = fifoBlockingRead();
+    /* Checking response, going forward or back to first step.*/
+    seq = cmd == response ? seq + 1U : 0U;
   } while (seq < count_of(cmd_sequence));
 }
 
@@ -117,8 +79,6 @@ static void start_core1(void) {
  * Application entry point.
  */
 int main(void) {
-
-  start_core1();
 
   /*
    * System initializations.
@@ -129,6 +89,11 @@ int main(void) {
    */
   halInit();
   chSysInit();
+
+  /*
+   * Starting core 1 after performing all OS-related initializations.
+   */
+  start_core1();
 
   /*
    * Setting up GPIOs.

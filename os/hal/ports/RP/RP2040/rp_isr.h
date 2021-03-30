@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef RP2040_ISR_H
-#define RP2040_ISR_H
+#ifndef RP_ISR_H
+#define RP_ISR_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -117,6 +117,6 @@ extern "C" {
 }
 #endif
 
-#endif /* RP2040_ISR_H */
+#endif /* RP_ISR_H */
 
 /** @} */

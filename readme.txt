@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added initial support for RP2040.
 - NEW: Added time conversion macros and functions for monotonic time stamps
 - NEW: Added support for STM32WB55.
 - NEW: Added chscanf() and buffered streams, contributed by Alex Lewontin.
