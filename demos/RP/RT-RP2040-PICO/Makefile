@@ -124,7 +124,7 @@ LDSCRIPT= $(STARTUPLD)/RP2040_RAM.ld
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/various/syscalls.c \
-       main.c
+       main.c c1_main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

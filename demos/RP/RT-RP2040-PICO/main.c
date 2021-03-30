@@ -125,13 +125,3 @@ int main(void) {
     chThdSleepMilliseconds(500);
   }
 }
-
-/**
- * Core 1 entry point.
- */
-void c1_main(void) {
-
-  while (true) {
-
-  }
-}
