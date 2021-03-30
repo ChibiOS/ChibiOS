@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed wrong behavior in Serial-USB driver (bug #1151).
 - FIX: Fixed L0x2 series DAC not allocated in registry (bug #1150).
 - FIX: Fixed missing STM32F765 from registry (bug #1145).
 - FIX: Fixed wrong macro check on STM32 SPIv3 (bug #1144).

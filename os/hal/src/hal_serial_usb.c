@@ -61,7 +61,7 @@ static bool sdu_start_receive(SerialUSBDriver *sdup) {
   }
 
   /* Checking if there is already a transaction ongoing on the endpoint.*/
-  if (usbGetReceiveStatusI(sdup->config->usbp, sdup->config->bulk_in)) {
+  if (usbGetReceiveStatusI(sdup->config->usbp, sdup->config->bulk_out)) {
     return true;
   }
 
