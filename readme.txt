@@ -74,8 +74,8 @@
 *****************************************************************************
 
 *** 20.3.4 ***
-- FIX: Fixed L0x2 series DAC not allocated in registry (bug #1150)
-       (backported to 19.1.5).
+- FIX: Fixed wrong behavior in Serial-USB driver (bug #1151).
+- FIX: Fixed L0x2 series DAC not allocated in registry (bug #1150).
 - FIX: Fixed inconsistent naming of SAI DMAMUX defines for STM32H7 (bug #1149).
 - FIX: Fixed TIM register layout difference for STM32G4 series (bug #1148).
 - FIX: Fixed STM32 QUADSPI driver problem when used with DMAv2 (bug #1147).
