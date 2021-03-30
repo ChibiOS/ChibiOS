@@ -129,6 +129,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong behavior in Serial-USB driver (bug #1151)
+       (backported to 20.3.4)(backported to 19.1.5).
 - FIX: Fixed L0x2 series DAC not allocated in registry (bug #1150)
        (backported to 20.3.4)(backported to 19.1.5).
 - FIX: Fixed inconsistent naming of SAI DMAMUX defines for STM32H7 (bug #1149)
