@@ -37,9 +37,29 @@
 #define ST_LLD_NUM_ALARMS                   4U
 
 /**
- * @brief   Number of supported callbacks.
+ * @brief   Static callback for alarm 0.
  */
-#define ST_LLD_NUM_CALLBACKS                (ST_LLD_NUM_ALARMS - 2U)
+#define ST_LLD_ALARM0_STATIC_CB()                                           \
+  do {                                                                      \
+    osalSysLockFromISR();                                                   \
+    osalOsTimerHandlerI();                                                  \
+    osalSysUnlockFromISR();                                                 \
+  } while (false)
+
+/**
+ * @brief   Static callback for alarm 1.
+ */
+#define ST_LLD_ALARM1_STATIC_CB()                                           \
+  do {                                                                      \
+    osalSysLockFromISR();                                                   \
+    osalOsTimerHandlerI();                                                  \
+    osalSysUnlockFromISR();                                                 \
+  } while (false)
+
+/**
+ * @brief   Defined for inclusion of the IRQ-binding API.
+ */
+#define ST_LLD_MULTICORE_SUPPORT
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -129,7 +149,10 @@ extern "C" {
 #endif
   void st_lld_init(void);
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
-  void st_lld_serve_interrupt(void);
+#if defined(ST_LLD_MULTICORE_SUPPORT)
+  void st_lld_bind_alarm(void);
+  void st_lld_bind_alarm_n(unsigned alarm);
+#endif
 #endif
 #ifdef __cplusplus
 }
@@ -140,7 +163,6 @@ extern "C" {
 /*===========================================================================*/
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
-
 /**
  * @brief   Returns the time counter value.
  *
@@ -297,7 +319,6 @@ static inline bool st_lld_is_alarm_active_n(unsigned alarm) {
   return (bool)((TIMER->INTE & (1U << alarm)) != 0U);
 }
 #endif /* ST_LLD_NUM_ALARMS > 1 */
-
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* HAL_ST_LLD_H */

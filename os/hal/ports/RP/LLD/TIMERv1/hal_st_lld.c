@@ -46,9 +46,21 @@
 /* Driver local types.                                                       */
 /*===========================================================================*/
 
+typedef struct {
+  uint32_t n;
+  uint32_t prio;
+} alarm_irq_t;
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
+
+static const alarm_irq_t alarm_irqs[ST_LLD_NUM_ALARMS] = {
+  {RP_TIMER_IRQ0_NUMBER, RP_IRQ_TIMER_ALARM0_PRIORITY},
+  {RP_TIMER_IRQ1_NUMBER, RP_IRQ_TIMER_ALARM1_PRIORITY},
+  {RP_TIMER_IRQ2_NUMBER, RP_IRQ_TIMER_ALARM2_PRIORITY},
+  {RP_TIMER_IRQ3_NUMBER, RP_IRQ_TIMER_ALARM3_PRIORITY}
+};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -89,7 +101,17 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  st_lld_serve_interrupt();
+  osalDbgAssert((TIMER->INTS & TIMER_INTS_ALARM0) != 0U, "not pending");
+
+  TIMER->INTR = TIMER_INTR_ALARM0;
+
+#if defined(ST_LLD_ALARM0_STATIC_CB)
+  ST_LLD_ALARM0_STATIC_CB();
+#else
+  if (st_callbacks[0] != NULL) {
+    st_callbacks[0](0U);
+  }
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -105,7 +127,17 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  st_lld_serve_interrupt();
+  osalDbgAssert((TIMER->INTS & TIMER_INTS_ALARM1) != 0U, "not pending");
+
+  TIMER->INTR = TIMER_INTR_ALARM1;
+
+#if defined(ST_LLD_ALARM1_STATIC_CB)
+  ST_LLD_ALARM1_STATIC_CB();
+#else
+  if (st_callbacks[1] != NULL) {
+    st_callbacks[1](1U);
+  }
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -121,7 +153,17 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  st_lld_serve_interrupt();
+  osalDbgAssert((TIMER->INTS & TIMER_INTS_ALARM2) != 0U, "not pending");
+
+  TIMER->INTR = TIMER_INTR_ALARM2;
+
+#if defined(ST_LLD_ALARM2_STATIC_CB)
+  ST_LLD_ALARM2_STATIC_CB();
+#else
+  if (st_callbacks[2] != NULL) {
+    st_callbacks[2](2U);
+  }
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -137,7 +179,17 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  st_lld_serve_interrupt();
+  osalDbgAssert((TIMER->INTS & TIMER_INTS_ALARM3) != 0U, "not pending");
+
+  TIMER->INTR = TIMER_INTR_ALARM3;
+
+#if defined(ST_LLD_ALARM3_STATIC_CB)
+  ST_LLD_ALARM3_STATIC_CB();
+#else
+  if (st_callbacks[3] != NULL) {
+    st_callbacks[3](3U);
+  }
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -171,6 +223,7 @@ void st_lld_init(void) {
   TIMER->INTR       = TIMER_INTR_ALARM3 | TIMER_INTR_ALARM2 |
                       TIMER_INTR_ALARM1 | TIMER_INTR_ALARM0;
 
+#if 0
   /* IRQs enabled.*/
 #if !defined(ST_TIMER_ALARM0_SUPPRESS_ISR)
   nvicEnableVector(RP_TIMER_IRQ0_NUMBER, RP_IRQ_TIMER_ALARM0_PRIORITY);
@@ -183,6 +236,7 @@ void st_lld_init(void) {
 #endif
 #if !defined(ST_TIMER_ALARM3_SUPPRESS_ISR)
   nvicEnableVector(RP_TIMER_IRQ3_NUMBER, RP_IRQ_TIMER_ALARM3_PRIORITY);
+#endif
 #endif
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
@@ -208,34 +262,37 @@ void st_lld_init(void) {
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
 }
 
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
+#if defined(ST_LLD_MULTICORE_SUPPORT) || defined(__DOXYGEN__)
 /**
- * @brief   IRQ handling code.
+ * @brief   Enables an alarm interrupt on the invoking core.
+ * @note    Must be called before any other alarm-related function.
+ *
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
+ *
+ * @notapi
  */
-void st_lld_serve_interrupt(void) {
-  uint32_t ints;
+void st_lld_bind_alarm(void) {
 
-  ints = TIMER->INTS;
-  TIMER->INTR = ints;
-
-  /* Alarms 0 and 1 are used for system ticks for core 0 and core 1.*/
-  if ((ints & (TIMER_INTS_ALARM1 | TIMER_INTS_ALARM0)) != 0U) {
-    osalSysLockFromISR();
-    osalOsTimerHandlerI();
-    osalSysUnlockFromISR();
-  }
-
-  if ((ints & TIMER_INTS_ALARM2) != 0U) {
-    if (st_callbacks[0] != NULL) {
-      st_callbacks[0](2U);
-    }
-  }
-
-  if ((ints & TIMER_INTS_ALARM3) != 0U) {
-    if (st_callbacks[1] != NULL) {
-      st_callbacks[1](3U);
-    }
-  }
+  nvicEnableVector(alarm_irqs[0].n, alarm_irqs[0].prio);
 }
+
+#if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
+/**
+ * @brief   Enables an alarm interrupt on the invoking core.
+ * @note    Must be called before any other alarm-related function.
+ *
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
+ *
+ * @notapi
+ */
+void st_lld_bind_alarm_n(unsigned alarm) {
+
+  nvicEnableVector(alarm_irqs[alarm].n, alarm_irqs[alarm].prio);
+}
+#endif /* ST_LLD_NUM_ALARMS > 1 */
+#endif /* defined(ST_LLD_MULTICORE_SUPPORT) */
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
 

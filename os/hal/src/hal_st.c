@@ -42,8 +42,13 @@
 /* Driver local variables.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Callback pointers for each alarm.
+ * @note    If some alarms have static callbacks defined in the LLD then
+ *          some of the pointers might be unused (never called through).
+ */
 #if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
-st_callback_t st_callbacks[ST_LLD_NUM_ALARMS - 1];
+st_callback_t st_callbacks[ST_LLD_NUM_ALARMS];
 #endif
 
 /*===========================================================================*/
@@ -65,7 +70,7 @@ void stInit(void) {
 #if ST_LLD_NUM_ALARMS > 1
   unsigned i;
 
-  for (i = 0U; i < (unsigned)ST_LLD_NUM_ALARMS - 1U; i++) {
+  for (i = 0U; i < (unsigned)ST_LLD_NUM_ALARMS; i++) {
     st_callbacks[i] = NULL;
   }
 #endif
@@ -73,6 +78,35 @@ void stInit(void) {
 }
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
+/**
+ * @brief   Returns the time counter value.
+ * @note    This functionality is only available in free running mode, the
+ *          behaviour in periodic mode is undefined.
+ *
+ * @return              The counter value.
+ *
+ * @api
+ */
+systime_t stGetCounter(void) {
+
+  return st_lld_get_counter();
+}
+
+#if defined(ST_LLD_MULTICORE_SUPPORT) || defined(__DOXYGEN__)
+/**
+ * @brief   Enables an alarm interrupt on the invoking core.
+ * @note    Must be called before any other alarm-related function.
+ *
+ * @api
+ */
+void stBindAlarm(void) {
+
+  osalDbgAssert(stIsAlarmActive() == false, "already active");
+
+  st_lld_bind_alarm();
+}
+#endif /* defined(ST_LLD_MULTICORE_SUPPORT) */
+
 /**
  * @brief   Starts the alarm zero.
  * @note    Makes sure that no spurious alarms are triggered after
@@ -136,20 +170,6 @@ systime_t stGetAlarm(void) {
 }
 
 /**
- * @brief   Returns the time counter value.
- * @note    This functionality is only available in free running mode, the
- *          behaviour in periodic mode is undefined.
- *
- * @return              The counter value.
- *
- * @api
- */
-systime_t stGetCounter(void) {
-
-  return st_lld_get_counter();
-}
-
-/**
  * @brief   Determines if the alarm zero is active.
  *
  * @return              The alarm status.
@@ -165,19 +185,41 @@ bool stIsAlarmActive(void) {
 
 #if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
 /**
- * @brief   Determines if the specified alarm is active.
+ * @brief   Associates a callback to an alarm.
+ * @note    Makes sure that no spurious alarms are triggered after
+ *          this call.
+ * @note    This functionality is only available in free running mode, the
+ *          behavior in periodic mode is undefined.
  *
- * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
- * @return              The alarm status.
- * @retval false        if the alarm is not active.
- * @retval true         is the alarm is active
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
+ * @param[in] cb        alarm callback or @p NULL
  *
  * @api
  */
-bool stIsAlarmActiveN(unsigned alarm) {
+void stSetCallback(unsigned alarm, st_callback_t cb) {
 
-  return st_lld_is_alarm_active_n(alarm);
+  osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
+
+  st_callbacks[alarm] = cb;
 }
+
+#if defined(ST_LLD_MULTICORE_SUPPORT) || defined(__DOXYGEN__)
+/**
+ * @brief   Enables an alarm interrupt on the invoking core.
+ * @note    Must be called before any other alarm-related function.
+ *
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
+ *
+ * @api
+ */
+void stBindAlarmN(unsigned alarm) {
+
+  osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
+  osalDbgAssert(stIsAlarmActive() == false, "already active");
+
+  st_lld_bind_alarm_n(alarm);
+}
+#endif /* defined(ST_LLD_MULTICORE_SUPPORT) */
 
 /**
  * @brief   Starts an additional alarm.
@@ -186,18 +228,16 @@ bool stIsAlarmActiveN(unsigned alarm) {
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
  * @param[in] abstime   the time to be set for the first alarm
- * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
- * @param[in] cb        alarm callback
  *
  * @api
  */
-void stStartAlarmN(unsigned alarm, systime_t abstime, st_callback_t cb) {
+void stStartAlarmN(unsigned alarm, systime_t abstime) {
 
-  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+  osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
   osalDbgAssert(stIsAlarmActiveN(alarm) == false, "already active");
 
-  st_callbacks[alarm - 1U] = cb;
   st_lld_start_alarm_n(alarm, abstime);
 }
 
@@ -206,15 +246,14 @@ void stStartAlarmN(unsigned alarm, systime_t abstime, st_callback_t cb) {
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
- * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
  *
  * @api
  */
 void stStopAlarmN(unsigned alarm) {
 
-  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+  osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
 
-  st_callbacks[alarm - 1U] = NULL;
   st_lld_stop_alarm_n(alarm);
 }
 
@@ -223,14 +262,14 @@ void stStopAlarmN(unsigned alarm) {
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
- * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
  * @param[in] abstime   the time to be set for the next alarm
  *
  * @api
  */
 void stSetAlarmN(unsigned alarm, systime_t abstime) {
 
-  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+  osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
   osalDbgAssert(stIsAlarmActiveN(alarm) != false, "not active");
 
   st_lld_set_alarm_n(alarm, abstime);
@@ -241,20 +280,36 @@ void stSetAlarmN(unsigned alarm, systime_t abstime) {
  * @note    This functionality is only available in free running mode, the
  *          behavior in periodic mode is undefined.
  *
- * @param[in] alarm     alarm channel number (1..ST_LLD_NUM_ALARMS)
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
  * @return              The currently set alarm time.
  *
  * @api
  */
 systime_t stGetAlarmN(unsigned alarm) {
 
-  osalDbgCheck((alarm > 0U) && (alarm < (unsigned)ST_LLD_NUM_ALARMS));
+  osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
   osalDbgAssert(stIsAlarmActiveN(alarm) != false, "not active");
 
   return st_lld_get_alarm_n(alarm);
 }
-#endif /* ST_LLD_NUM_ALARMS > 1 */
 
+/**
+ * @brief   Determines if the specified alarm is active.
+ *
+ * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
+ * @return              The alarm status.
+ * @retval false        if the alarm is not active.
+ * @retval true         is the alarm is active
+ *
+ * @api
+ */
+bool stIsAlarmActiveN(unsigned alarm) {
+
+  osalDbgCheck(alarm < (unsigned)ST_LLD_NUM_ALARMS);
+
+  return st_lld_is_alarm_active_n(alarm);
+}
+#endif /* ST_LLD_NUM_ALARMS > 1 */
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */

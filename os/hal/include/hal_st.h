@@ -61,29 +61,39 @@ typedef void (*st_callback_t)(unsigned alarm);
 /*===========================================================================*/
 
 #if (ST_LLD_NUM_ALARMS > 1) && !defined(__DOXYGEN__)
-extern st_callback_t st_callbacks[ST_LLD_NUM_ALARMS - 1];
+extern st_callback_t st_callbacks[ST_LLD_NUM_ALARMS];
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void stInit(void);
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+  systime_t stGetCounter(void);
+#if defined(ST_LLD_MULTICORE_SUPPORT)
+  void stBindAlarm(void);
+#endif
   void stStartAlarm(systime_t abstime);
   void stStopAlarm(void);
   void stSetAlarm(systime_t abstime);
   systime_t stGetAlarm(void);
-  systime_t stGetCounter(void);
   bool stIsAlarmActive(void);
 #if ST_LLD_NUM_ALARMS > 1
-  bool stIsAlarmActiveN(unsigned alarm);
-  void stStartAlarmN(unsigned alarm, systime_t abstime, st_callback_t cb);
+  void stSetCallback(unsigned alarm, st_callback_t cb);
+#if defined(ST_LLD_MULTICORE_SUPPORT)
+  void stBindAlarmN(unsigned alarm);
+#endif
+  void stStartAlarmN(unsigned alarm, systime_t abstime);
   void stStopAlarmN(unsigned alarm);
   void stSetAlarmN(unsigned alarm, systime_t abstime);
   systime_t stGetAlarmN(unsigned alarm);
-#endif
+  bool stIsAlarmActiveN(unsigned alarm);
+#endif /* ST_LLD_NUM_ALARMS > 1 */
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif /* HAL_ST_H */
 
