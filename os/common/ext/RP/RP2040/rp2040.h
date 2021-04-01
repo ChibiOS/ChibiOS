@@ -177,8 +177,10 @@ typedef struct {
   __IO uint32_t         CTRL_LANE0;
   __IO uint32_t         CTRL_LANE1;
   __IO uint32_t         ACCUM0_ADD;
+  __IO uint32_t         ACCUM1_ADD;
   __IO uint32_t         BASE_1AND0;
   } INTERP[2];
+  __IO uint32_t         SPINLOCK[32];
 } SIO_TypeDef;
 
 typedef struct {
