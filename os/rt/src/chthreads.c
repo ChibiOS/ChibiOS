@@ -95,8 +95,11 @@ thread_t *__thd_object_init(os_instance_t *oip,
   tp->state             = CH_STATE_WTSTART;
   tp->flags             = CH_FLAG_MODE_STATIC;
 
+#if CH_CFG_SMP_MODE != FALSE
+  tp->owner             = oip;
+#else
   (void)oip;
-
+#endif
 #if CH_CFG_TIME_QUANTUM > 0
   tp->ticks             = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif

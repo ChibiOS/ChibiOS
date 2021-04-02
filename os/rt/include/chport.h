@@ -128,9 +128,9 @@
 #endif
 
 #if PORT_CORES_NUMBER == 1
-//#if CH_CFG_SMP_MODE != FALSE
-//#error "this port does not support SMP"
-//#endif
+#if CH_CFG_SMP_MODE != FALSE
+#error "this port does not support SMP"
+#endif
 #endif
 
 #if !defined(PORT_INSTANCE_ACCESS)

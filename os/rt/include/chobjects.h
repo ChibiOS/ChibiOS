@@ -131,6 +131,12 @@ struct ch_thread {
    * @brief   Processor context.
    */
   struct port_context   ctx;
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+  /**
+   * @brief   OS instance owner of this thread.
+   */
+  os_instance_t         *owner;
+#endif
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Thread name or @p NULL.
