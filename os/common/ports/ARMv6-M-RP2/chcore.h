@@ -92,6 +92,13 @@
  * @brief   Access to the OS instance for the current core.
  */
 #define PORT_INSTANCE_ACCESS            ch_port_data.oip[port_get_core_id()]
+
+/**
+ * @brief   Port-related fields added to the OS instance structure.
+ */
+#define PORT_INSTANCE_EXTRA_FIELDS                                          \
+  /* Core associated to this OS instance.*/                                 \
+  uint32_t              core_id;
 /** @} */
 
 /**
@@ -338,7 +345,7 @@ struct port_data {
    * @brief   Pointer to the OS instances indexed by core number.
    */
   os_instance_t         *oip[PORT_CORES_NUMBER];
-} ;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -474,13 +481,11 @@ extern "C" {
 }
 #endif
 
-#if CH_CFG_ST_TIMEDELTA > 0
 #if PORT_USE_ALT_TIMER == FALSE
-#include "../ARMv6-M-RP2/chcore_timer.h"
+#include "chcore_timer.h"
 #else /* PORT_USE_ALT_TIMER != FALSE */
 #include "chcore_timer_alt.h"
 #endif /* PORT_USE_ALT_TIMER != FALSE */
-#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 /*===========================================================================*/
 /* Module inline functions.                                                  */

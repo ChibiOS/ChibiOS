@@ -48,25 +48,16 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-/*===========================================================================*/
-/* External declarations.                                                    */
-/*===========================================================================*/
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Enables the system timer for the specified OS instance.
+ */
+#define port_timer_enable(oip) stBindAlarmN((unsigned)(oip)->core_id)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void stStartAlarm(systime_t time);
-  void stStopAlarm(void);
-  void stSetAlarm(systime_t time);
-  systime_t stGetCounter(void);
-  systime_t stGetAlarm(void);
-#ifdef __cplusplus
-}
-#endif
-
-/*===========================================================================*/
-/* Module inline functions.                                                  */
-/*===========================================================================*/
+/**
+ * @brief   Disables the system timer for the specified OS instance.
+ */
+#define port_timer_disable(oip)
 
 /**
  * @brief   Starts the alarm.
@@ -77,20 +68,14 @@ extern "C" {
  *
  * @notapi
  */
-static inline void port_timer_start_alarm(systime_t time) {
-
-  stStartAlarm(time);
-}
+#define port_timer_start_alarm(time) stStartAlarmN((unsigned)currcore->core_id, time)
 
 /**
  * @brief   Stops the alarm interrupt.
  *
  * @notapi
  */
-static inline void port_timer_stop_alarm(void) {
-
-  stStopAlarm();
-}
+#define port_timer_stop_alarm() stStopAlarmN((unsigned)currcore->core_id)
 
 /**
  * @brief   Sets the alarm time.
@@ -99,22 +84,7 @@ static inline void port_timer_stop_alarm(void) {
  *
  * @notapi
  */
-static inline void port_timer_set_alarm(systime_t time) {
-
-  stSetAlarm(time);
-}
-
-/**
- * @brief   Returns the system time.
- *
- * @return              The system time.
- *
- * @notapi
- */
-static inline systime_t port_timer_get_time(void) {
-
-  return stGetCounter();
-}
+#define port_timer_set_alarm(time) stSetAlarmN((unsigned)currcore->core_id, time)
 
 /**
  * @brief   Returns the current alarm time.
@@ -123,10 +93,40 @@ static inline systime_t port_timer_get_time(void) {
  *
  * @notapi
  */
-static inline systime_t port_timer_get_alarm(void) {
+#define port_timer_get_alarm() stGetAlarmN((unsigned)currcore->core_id)
 
-  return stGetAlarm();
+/**
+ * @brief   Returns the system time.
+ *
+ * @return              The system time.
+ *
+ * @notapi
+ */
+#define port_timer_get_time() stGetCounter()
+
+#else
+#endif
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void stBindAlarmN(unsigned alarm);
+  void stStartAlarmN(unsigned alarm, systime_t time);
+  void stStopAlarmN(unsigned alarm);
+  void stSetAlarmN(unsigned alarm, systime_t time);
+  systime_t stGetAlarmN(unsigned alarm);
+  systime_t stGetCounter(void);
+#ifdef __cplusplus
 }
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
 
 #endif /* CHCORE_TIMER_H */
 

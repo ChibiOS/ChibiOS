@@ -33,6 +33,7 @@ static const ShellConfig shell_cfg1 = {
   commands
 };
 
+#if 0
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
@@ -48,6 +49,7 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(500);
   }
 }
+#endif
 
 /* Courtesy of Pico-SDK.*/
 static void start_core1(void) {
@@ -111,11 +113,11 @@ int main(void) {
   /*
    * Creates the blinker thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+//  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * sleeping in a loop (re)spawning a shell.
    */
   while (true) {
     thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,

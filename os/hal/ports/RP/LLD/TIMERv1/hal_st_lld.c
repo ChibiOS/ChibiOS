@@ -209,7 +209,7 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ3_HANDLER) {
 void st_lld_init(void) {
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
-  /* The timer need to stop during debug or the virtual timers list would
+  /* The timer needs to stop during debug or the virtual timers list would
      go out of sync.*/
   TIMER->DBGPAUSE   = TIMER_DBGPAUSE_DBG0 | TIMER_DBGPAUSE_DBG1;
 

@@ -115,9 +115,16 @@ void PendSV_Handler(void) {
  * @notapi
  */
 void port_init(os_instance_t *oip) {
+  uint32_t core_id = port_get_core_id();
 
   /* Associating the OS instance to the current core.*/
-  ch_port_data.oip[port_get_core_id()] = oip;
+  ch_port_data.oip[core_id] = oip;
+
+  /* Port-related info for each OS instance.*/
+  oip->core_id = core_id;
+
+  /* Activating timer for this instance.*/
+  port_timer_enable(oip);
 
 #if CORTEX_ALTERNATE_SWITCH == TRUE
   /* Initializing PendSV for the current core, it is only required in

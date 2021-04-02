@@ -17,7 +17,6 @@
 #include "ch.h"
 #include "hal.h"
 
-#if 0
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
@@ -33,7 +32,6 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(500);
   }
 }
-#endif
 
 /**
  * @brief   Core 1 OS instance.
@@ -70,9 +68,24 @@ static const os_instance_config_t core1_cfg = {
  */
 void c1_main(void) {
 
-  (void)core1_cfg;
+  /*
+   * Starting a new OS instance running on this core.
+   */
+  chSchObjectInit(&ch1, &core1_cfg);
 
+  /* It is alive now.*/
+  chSysUnlock();
+
+  /*
+   * Creates the blinker thread.
+   */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  /*
+   * Normal main() thread activity, in this demo it does nothing except
+   * sleeping in a loop.
+   */
   while (true) {
-
+    chThdSleepMilliseconds(500);
   }
 }
