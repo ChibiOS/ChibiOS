@@ -55,12 +55,16 @@ typedef struct {
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+#if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
+#if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
 static const alarm_irq_t alarm_irqs[ST_LLD_NUM_ALARMS] = {
   {RP_TIMER_IRQ0_NUMBER, RP_IRQ_TIMER_ALARM0_PRIORITY},
   {RP_TIMER_IRQ1_NUMBER, RP_IRQ_TIMER_ALARM1_PRIORITY},
   {RP_TIMER_IRQ2_NUMBER, RP_IRQ_TIMER_ALARM2_PRIORITY},
   {RP_TIMER_IRQ3_NUMBER, RP_IRQ_TIMER_ALARM3_PRIORITY}
 };
+#endif
+#endif
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -223,24 +227,20 @@ void st_lld_init(void) {
   TIMER->INTR       = TIMER_INTR_ALARM3 | TIMER_INTR_ALARM2 |
                       TIMER_INTR_ALARM1 | TIMER_INTR_ALARM0;
 
-#if 0
-  /* IRQs enabled.*/
-#if !defined(ST_TIMER_ALARM0_SUPPRESS_ISR)
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
+}
+
+/**
+ * @brief   Enables an alarm interrupt on the invoking core.
+ * @note    Must be called before any other alarm-related function.
+ *
+ * @notapi
+ */
+void st_lld_bind(void) {
+
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   nvicEnableVector(RP_TIMER_IRQ0_NUMBER, RP_IRQ_TIMER_ALARM0_PRIORITY);
 #endif
-#if !defined(ST_TIMER_ALARM1_SUPPRESS_ISR)
-  nvicEnableVector(RP_TIMER_IRQ1_NUMBER, RP_IRQ_TIMER_ALARM1_PRIORITY);
-#endif
-#if !defined(ST_TIMER_ALARM2_SUPPRESS_ISR)
-  nvicEnableVector(RP_TIMER_IRQ2_NUMBER, RP_IRQ_TIMER_ALARM2_PRIORITY);
-#endif
-#if !defined(ST_TIMER_ALARM3_SUPPRESS_ISR)
-  nvicEnableVector(RP_TIMER_IRQ3_NUMBER, RP_IRQ_TIMER_ALARM3_PRIORITY);
-#endif
-#endif
-
-#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
-
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
   uint32_t  timer_clk = RP_CORE_CLK;
 
@@ -263,20 +263,6 @@ void st_lld_init(void) {
 }
 
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
-#if defined(ST_LLD_MULTICORE_SUPPORT) || defined(__DOXYGEN__)
-/**
- * @brief   Enables an alarm interrupt on the invoking core.
- * @note    Must be called before any other alarm-related function.
- *
- * @param[in] alarm     alarm channel number (0..ST_LLD_NUM_ALARMS-1)
- *
- * @notapi
- */
-void st_lld_bind_alarm(void) {
-
-  nvicEnableVector(alarm_irqs[0].n, alarm_irqs[0].prio);
-}
-
 #if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
 /**
  * @brief   Enables an alarm interrupt on the invoking core.
@@ -291,7 +277,6 @@ void st_lld_bind_alarm_n(unsigned alarm) {
   nvicEnableVector(alarm_irqs[alarm].n, alarm_irqs[alarm].prio);
 }
 #endif /* ST_LLD_NUM_ALARMS > 1 */
-#endif /* defined(ST_LLD_MULTICORE_SUPPORT) */
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 
 #endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */

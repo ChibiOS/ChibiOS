@@ -148,11 +148,9 @@
 extern "C" {
 #endif
   void st_lld_init(void);
+  void st_lld_bind(void);
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
-#if defined(ST_LLD_MULTICORE_SUPPORT)
-  void st_lld_bind_alarm(void);
   void st_lld_bind_alarm_n(unsigned alarm);
-#endif
 #endif
 #ifdef __cplusplus
 }

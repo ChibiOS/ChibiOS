@@ -68,11 +68,11 @@ extern st_callback_t st_callbacks[ST_LLD_NUM_ALARMS];
 extern "C" {
 #endif
   void stInit(void);
+#if defined(ST_LLD_MULTICORE_SUPPORT)
+  void stBind(void);
+#endif
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   systime_t stGetCounter(void);
-#if defined(ST_LLD_MULTICORE_SUPPORT)
-  void stBindAlarm(void);
-#endif
   void stStartAlarm(systime_t abstime);
   void stStopAlarm(void);
   void stSetAlarm(systime_t abstime);
@@ -93,7 +93,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* HAL_ST_H */
 

@@ -105,6 +105,8 @@
 #define port_timer_get_time() stGetCounter()
 
 #else
+#define port_timer_enable(oip) stBind()
+#define port_timer_disable(oip)
 #endif
 
 /*===========================================================================*/
@@ -114,12 +116,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void stBind(void);
+#if CH_CFG_ST_TIMEDELTA > 0
   void stBindAlarmN(unsigned alarm);
   void stStartAlarmN(unsigned alarm, systime_t time);
   void stStopAlarmN(unsigned alarm);
   void stSetAlarmN(unsigned alarm, systime_t time);
   systime_t stGetAlarmN(unsigned alarm);
   systime_t stGetCounter(void);
+#endif
 #ifdef __cplusplus
 }
 #endif

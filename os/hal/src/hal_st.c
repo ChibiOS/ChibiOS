@@ -77,6 +77,19 @@ void stInit(void) {
   st_lld_init();
 }
 
+#if defined(ST_LLD_MULTICORE_SUPPORT) || defined(__DOXYGEN__)
+/**
+ * @brief   Enables an alarm interrupt on the invoking core.
+ * @note    Must be called before any other alarm-related function.
+ *
+ * @api
+ */
+void stBind(void) {
+
+  st_lld_bind();
+}
+#endif /* defined(ST_LLD_MULTICORE_SUPPORT) */
+
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 /**
  * @brief   Returns the time counter value.
@@ -91,21 +104,6 @@ systime_t stGetCounter(void) {
 
   return st_lld_get_counter();
 }
-
-#if defined(ST_LLD_MULTICORE_SUPPORT) || defined(__DOXYGEN__)
-/**
- * @brief   Enables an alarm interrupt on the invoking core.
- * @note    Must be called before any other alarm-related function.
- *
- * @api
- */
-void stBindAlarm(void) {
-
-  osalDbgAssert(stIsAlarmActive() == false, "already active");
-
-  st_lld_bind_alarm();
-}
-#endif /* defined(ST_LLD_MULTICORE_SUPPORT) */
 
 /**
  * @brief   Starts the alarm zero.
