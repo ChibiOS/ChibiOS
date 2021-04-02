@@ -17,21 +17,19 @@
 #include "ch.h"
 #include "hal.h"
 
-/*
- * Green LED blinker thread, times are in milliseconds.
- */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
+#include "shell.h"
+#include "chprintf.h"
 
-  (void)arg;
-  chRegSetThreadName("blinker");
-  while (true) {
-    palClearLine(25U);
-    chThdSleepMilliseconds(500);
-    palSetLine(25U);
-    chThdSleepMilliseconds(500);
-  }
-}
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+static const ShellCommand commands[] = {
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SIOD1,
+  commands
+};
 
 /**
  * @brief   Core 1 OS instance.
@@ -81,18 +79,22 @@ void c1_main(void) {
    */
   palSetLineMode(0U, PAL_MODE_ALTERNATE_UART);
   palSetLineMode(1U, PAL_MODE_ALTERNATE_UART);
-  palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
 
   /*
-   * Creates the blinker thread.
+   * Activates the Serial or SIO driver using the default configuration.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  sioStart(&SIOD1, NULL);
+  sioStartOperation(&SIOD1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop.
+   * sleeping in a loop (re)spawning a shell.
    */
   while (true) {
+    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                            "shell", NORMALPRIO + 1,
+                                            shellThread, (void *)&shell_cfg1);
+    chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(500);
   }
 }

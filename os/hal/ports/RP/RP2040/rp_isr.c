@@ -58,8 +58,8 @@
  */
 void irqInit(void) {
 
-  uart0_irq_init();
-  uart1_irq_init();
+//  uart0_irq_init();
+//  uart1_irq_init();
 }
 
 /**
@@ -69,8 +69,8 @@ void irqInit(void) {
  */
 void irqDeinit(void) {
 
-  uart0_irq_deinit();
-  uart1_irq_deinit();
+//  uart0_irq_deinit();
+//  uart1_irq_deinit();
 }
 
 /** @} */

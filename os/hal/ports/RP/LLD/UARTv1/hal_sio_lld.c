@@ -232,11 +232,13 @@ bool sio_lld_start(SIODriver *siop) {
 #if RP_SIO_USE_UART0 == TRUE
     else if (&SIOD1 == siop) {
       hal_lld_peripheral_unreset(RESETS_ALLREG_UART0);
+      nvicEnableVector(RP_UART0_IRQ_NUMBER, RP_IRQ_UART0_PRIORITY);
     }
 #endif
 #if RP_SIO_USE_UART1 == TRUE
     else if (&SIOD2 == siop) {
       hal_lld_peripheral_unreset(RESETS_ALLREG_UART1);
+      nvicEnableVector(RP_UART1_IRQ_NUMBER, RP_IRQ_UART1_PRIORITY);
     }
 #endif
     else {
@@ -275,14 +277,14 @@ void sio_lld_stop(SIODriver *siop) {
     }
 #if RP_SIO_USE_UART0 == TRUE
     else if (&SIOD1 == siop) {
+      nvicDisableVector(RP_UART0_IRQ_NUMBER);
       hal_lld_peripheral_reset(RESETS_ALLREG_UART0);
-//     rccDisableUSART1();
     }
 #endif
 #if RP_SIO_USE_UART1 == TRUE
     else if (&SIOD2 == siop) {
+      nvicDisableVector(RP_UART1_IRQ_NUMBER);
       hal_lld_peripheral_reset(RESETS_ALLREG_UART1);
-//      rccDisableUSART2();
     }
 #endif
     else {
