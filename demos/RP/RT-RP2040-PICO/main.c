@@ -100,9 +100,9 @@ int main(void) {
   /*
    * Setting up GPIOs.
    */
-  palSetLineMode(0U, PAL_MODE_ALTERNATE_UART);
-  palSetLineMode(1U, PAL_MODE_ALTERNATE_UART);
-  palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
+//  palSetLineMode(0U, PAL_MODE_ALTERNATE_UART);
+//  palSetLineMode(1U, PAL_MODE_ALTERNATE_UART);
+//  palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
 
   /*
    * Activates the Serial or SIO driver using the default configuration.

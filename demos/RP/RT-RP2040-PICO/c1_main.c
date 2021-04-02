@@ -77,6 +77,13 @@ void c1_main(void) {
   chSysUnlock();
 
   /*
+   * Setting up GPIOs.
+   */
+  palSetLineMode(0U, PAL_MODE_ALTERNATE_UART);
+  palSetLineMode(1U, PAL_MODE_ALTERNATE_UART);
+  palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
+
+  /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
