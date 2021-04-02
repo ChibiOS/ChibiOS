@@ -33,6 +33,26 @@
 
 /*===========================================================================*/
 /**
+ * @name System settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Handling of instances.
+ * @note    If enabled then threads assigned to various instances can
+ *          interact each other using the same synchronization objects.
+ *          If disabled then each OS instance is a separate world, no
+ *          direct interactions are handled by the OS.
+ */
+#if !defined(CH_CFG_SMP_MODE)
+#define CH_CFG_SMP_MODE                     FALSE
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
  * @name System timers settings
  * @{
  */
@@ -660,8 +680,7 @@
  * @details User fields added to the end of the @p thread_t structure.
  */
 #define CH_CFG_THREAD_EXTRA_FIELDS                                          \
-  /* Add threads custom fields here.*/                                      \
-  void *osal_delete_handler;
+  /* Add threads custom fields here.*/
 
 /**
  * @brief   Threads initialization hook.

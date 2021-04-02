@@ -44,6 +44,26 @@
 
 /*===========================================================================*/
 /**
+ * @name System settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Handling of instances.
+ * @note    If enabled then threads assigned to various instances can
+ *          interact each other using the same synchronization objects.
+ *          If disabled then each OS instance is a separate world, no
+ *          direct interactions are handled by the OS.
+ */
+#if !defined(CH_CFG_SMP_MODE)
+#define CH_CFG_SMP_MODE                     ${doc.CH_CFG_SMP_MODE!"FALSE"}
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
  * @name System timers settings
  * @{
  */
