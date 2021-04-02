@@ -195,8 +195,15 @@
  * @details Activating this option will make the Kernel use the PendSV
  *          handler for preemption instead of the NMI handler.
  */
-#ifndef CORTEX_ALTERNATE_SWITCH
+#if !defined(CORTEX_ALTERNATE_SWITCH)
 #define CORTEX_ALTERNATE_SWITCH         FALSE
+#endif
+
+/**
+ * @brief   Spinlock to be used by the port layer.
+ */
+#if !defined(PORT_SPINLOCK_NUMBER)
+#define PORT_SPINLOCK_NUMBER            31
 #endif
 
 /*===========================================================================*/
@@ -209,6 +216,10 @@
 
 #if CH_CUSTOMER_LIC_PORT_CM0 == FALSE
   #error "ChibiOS Cortex-M0 port not licensed"
+#endif
+
+#if (PORT_SPINLOCK_NUMBER < 0) || (PORT_SPINLOCK_NUMBER > 31)
+  #error "invalid PORT_SPINLOCK_NUMBER value"
 #endif
 
 /* Handling a GCC problem impacting ARMv6-M.*/
@@ -534,6 +545,11 @@ __STATIC_INLINE bool port_is_isr_context(void) {
 __STATIC_INLINE void port_lock(void) {
 
   __disable_irq();
+#if CH_CFG_SMP_MODE == TRUE
+  while (SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] == 0U) {
+  }
+  __DMB();
+#endif
 }
 
 /**
@@ -542,6 +558,10 @@ __STATIC_INLINE void port_lock(void) {
  */
 __STATIC_INLINE void port_unlock(void) {
 
+#if CH_CFG_SMP_MODE == TRUE
+  __DMB();
+  SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] = (uint32_t)SIO;
+#endif
   __enable_irq();
 }
 
