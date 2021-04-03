@@ -643,7 +643,7 @@ __STATIC_INLINE uint32_t port_get_core_id(void) {
 __STATIC_INLINE void port_notify_instance(os_instance_t *oip) {
 
   (void)oip;
-
+#if 0
   /* Waiting for space into the FIFO.*/
   while ((SIO->FIFO_ST & SIO_FIFO_ST_RDY) == 0U) {
     __WFE();
@@ -653,6 +653,7 @@ __STATIC_INLINE void port_notify_instance(os_instance_t *oip) {
      just discarded by the ISR, it is meant to just trigger a reschedule
      check.*/
   SIO->FIFO_WR = 0xFFFFFFFFU;
+#endif
 }
 
 #endif /* !defined(_FROM_ASM_) */

@@ -21,7 +21,7 @@
  * @file    ARMCMx/compilers/GCC/chtypes.h
  * @brief   ARM Cortex-Mx port system types.
  *
- * @addtogroup ARMCMx_GCC_CORE
+ * @addtogroup ARMv7_M_GCC_CORE
  * @{
  */
 
