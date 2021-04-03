@@ -87,6 +87,11 @@ void c1_main(void) {
   sioStartOperation(&SIOD1, NULL);
 
   /*
+   * Shell manager initialization.
+   */
+  shellInit();
+
+  /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop (re)spawning a shell.
    */
