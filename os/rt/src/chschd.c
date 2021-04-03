@@ -130,6 +130,10 @@ static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
               (tp->state != CH_STATE_FINAL),
               "invalid state");
 
+#if CH_CFG_SMP_MODE != FALSE
+  chDbgAssert(tp->owner == oip, "invalid core");
+#endif
+
   /* Tracing the event.*/
   __trace_ready(tp, tp->u.rdymsg);
 
@@ -361,6 +365,9 @@ void chSchObjectInit(os_instance_t *oip,
       .prio     = IDLEPRIO,
       .funcp    = __idle_thread,
       .arg      = NULL,
+#if CH_CFG_SMP_MODE != FALSE
+      .instance = oip
+#endif
     };
 
     /* This thread has the lowest priority in the system, its role is just to
@@ -510,6 +517,16 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
   /* Storing the message to be retrieved by the target thread when it will
      restart execution.*/
   ntp->u.rdymsg = msg;
+
+#if CH_CFG_SMP_MODE != FALSE
+  if (ntp->owner != oip) {
+    /* Readying up the remote thread and triggering a reschedule on
+       the other core.*/
+    chSysNotifyInstance(ntp->owner);
+    (void) __sch_ready_behind(ntp->owner, tp);
+    return;
+  }
+#endif
 
   /* If the waken thread has a not-greater priority than the current
      one then it is just inserted in the ready list else it made

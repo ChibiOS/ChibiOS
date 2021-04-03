@@ -464,6 +464,20 @@ static inline void chSysUnconditionalUnlock(void) {
   }
 }
 
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Notifies an OS instance to check for reschedule.
+ * @details An OS instance is notified to check if a reschedule is required,
+ *          the implementation is port-dependent.
+ *
+ * @param[in] oip       pointer to the instance to be notified
+ */
+static inline chSysNotifyInstance(os_instance_t *oip) {
+
+  port_notify_instance(oip);
+}
+#endif
+
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Returns a pointer to the idle thread.

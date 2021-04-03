@@ -199,6 +199,13 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
   /* Setting up the port-dependent part of the working area.*/
   PORT_SETUP_CONTEXT(tp, tdp->wbase, tp, tdp->funcp, tdp->arg);
 
+  /* The thread object is initialized but not started.*/
+#if CH_CFG_SMP_MODE != FALSE
+  if (tdp->instance != NULL) {
+    return __thd_object_init(tdp->instance, tp, tdp->name, tdp->prio);
+  }
+#endif
+
   return __thd_object_init(currcore, tp, tdp->name, tdp->prio);
 }
 
