@@ -99,6 +99,11 @@
 #define PORT_INSTANCE_EXTRA_FIELDS                                          \
   /* Core associated to this OS instance.*/                                 \
   uint32_t              core_id;
+
+/**
+ * @brief   Reschedule message sent through IPC FIFOs.
+ */
+#define PORT_FIFO_RESCHEDULE_MESSAGE    0xFFFFFFFFU
 /** @} */
 
 /**
@@ -120,7 +125,7 @@
  * @details This minimum priority level is calculated from the number of
  *          priority bits supported by the specific Cortex-Mx implementation.
  */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1U)
 
 /**
  * @brief   Maximum priority level.
@@ -134,7 +139,7 @@
  *          this handler always has the highest priority that cannot preempt
  *          the kernel.
  */
-#define CORTEX_PRIORITY_PENDSV          0
+#define CORTEX_PRIORITY_PENDSV          0U
 
 /**
  * @brief   Priority level to priority mask conversion macro.
@@ -488,6 +493,10 @@ extern "C" {
   void __port_thread_start(void);
   void __port_switch_from_isr(void);
   void __port_exit_from_isr(void);
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+  void __port_spinlock_take(void);
+  void __port_spinlock_release_inline(void);
+#endif /* CH_CFG_SMP_MODE != FALSE */
 #ifdef __cplusplus
 }
 #endif
@@ -501,6 +510,45 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Triggers an inter-core notification.
+ *
+ * @param[in] oip       pointer to the @p os_instance_t structure
+ */
+__STATIC_INLINE void port_notify_instance(os_instance_t *oip) {
+
+  (void)oip;
+
+  /* Waiting for space into the FIFO.*/
+  while ((SIO->FIFO_ST & SIO_FIFO_ST_RDY) == 0U) {
+    __WFE();
+  }
+
+  /* Sending a reschedule order to the other core.*/
+  SIO->FIFO_WR = PORT_FIFO_RESCHEDULE_MESSAGE;
+}
+
+/**
+ * @brief   Takes the kernel spinlock.
+ */
+__STATIC_INLINE void port_spinlock_take(void) {
+
+  while (SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] == 0U) {
+  }
+  __DMB();
+}
+
+/**
+ * @brief   Releases the kernel spinlock.
+ */
+__STATIC_INLINE void port_spinlock_release(void) {
+
+  __DMB();
+  SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] = (uint32_t)SIO;
+}
+#endif /* CH_CFG_SMP_MODE != FALSE */
 
 /**
  * @brief   Returns a word encoding the current interrupts status.
@@ -538,6 +586,7 @@ __STATIC_INLINE bool port_is_isr_context(void) {
   return (bool)((__get_IPSR() & 0x1FFU) != 0U);
 }
 
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Kernel-lock action.
  * @details In this port this function disables interrupts globally.
@@ -545,11 +594,7 @@ __STATIC_INLINE bool port_is_isr_context(void) {
 __STATIC_INLINE void port_lock(void) {
 
   __disable_irq();
-#if CH_CFG_SMP_MODE == TRUE
-  while (SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] == 0U) {
-  }
-  __DMB();
-#endif
+  port_spinlock_take();
 }
 
 /**
@@ -558,12 +603,20 @@ __STATIC_INLINE void port_lock(void) {
  */
 __STATIC_INLINE void port_unlock(void) {
 
-#if CH_CFG_SMP_MODE == TRUE
-  __DMB();
-  SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] = (uint32_t)SIO;
-#endif
+  port_spinlock_release();
   __enable_irq();
 }
+#else /* CH_CFG_SMP_MODE == FALSE */
+__STATIC_INLINE void port_lock(void) {
+
+  __disable_irq();
+}
+
+__STATIC_INLINE void port_unlock(void) {
+
+  __enable_irq();
+}
+#endif /* CH_CFG_SMP_MODE == FALSE */
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
@@ -633,27 +686,6 @@ __STATIC_INLINE void port_wait_for_interrupt(void) {
 __STATIC_INLINE uint32_t port_get_core_id(void) {
 
   return SIO->CPUID;
-}
-
-/**
- * @brief   Triggers an inter-core notification.
- *
- * @param[in] oip       pointer to the @p os_instance_t structure
- */
-__STATIC_INLINE void port_notify_instance(os_instance_t *oip) {
-
-  (void)oip;
-#if 0
-  /* Waiting for space into the FIFO.*/
-  while ((SIO->FIFO_ST & SIO_FIFO_ST_RDY) == 0U) {
-    __WFE();
-  }
-
-  /* Note, the constant 0xFFFFFFFFU must not be handled as a message but
-     just discarded by the ISR, it is meant to just trigger a reschedule
-     check.*/
-  SIO->FIFO_WR = 0xFFFFFFFFU;
-#endif
 }
 
 #endif /* !defined(_FROM_ASM_) */

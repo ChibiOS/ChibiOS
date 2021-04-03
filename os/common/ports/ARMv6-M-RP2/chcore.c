@@ -76,7 +76,7 @@ void NMI_Handler(void) {
   /* Writing back the modified PSP value.*/
   __set_PSP((uint32_t)ctxp);
 
-  /* Restoring the normal interrupts status.*/
+  /* Restoring the normal interrupts status, releasing the spinlock.*/
   port_unlock_from_isr();
 }
 #endif /* !CORTEX_ALTERNATE_SWITCH */
@@ -100,8 +100,68 @@ void PendSV_Handler(void) {
 
   /* Writing back the modified PSP value.*/
   __set_PSP((uint32_t)ctxp);
+
+#if CH_CFG_SMP_MODE != FALSE
+   /* Interrupts have been re-enabled in the ASM part but the spinlock is
+      still taken, releasing it.*/
+   port_spinlock_release();
+#endif
 }
 #endif /* CORTEX_ALTERNATE_SWITCH */
+
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   FIFO interrupt handler for core 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(RP_SIO_IRQ_PROC0_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  while ((SIO->FIFO_ST & SIO_FIFO_ST_VLD) != 0U) {
+    uint32_t message = SIO->FIFO_RD;
+#if defined(PORT_HANDLE_FIFO_MESSAGE)
+    if (message != PORT_FIFO_RESCHEDULE_MESSAGE) {
+      PORT_FIFO_RESCHEDULE_MESSAGE(1U, message);
+    }
+#else
+    (void)message;
+#endif
+  }
+
+  /* In case the other core is in WFE.*/
+  __SEV();
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   FIFO interrupt handler for core 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(RP_SIO_IRQ_PROC1_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  while ((SIO->FIFO_ST & SIO_FIFO_ST_VLD) != 0U) {
+    uint32_t message = SIO->FIFO_RD;
+#if defined(PORT_HANDLE_FIFO_MESSAGE)
+    if (message != PORT_FIFO_RESCHEDULE_MESSAGE) {
+      PORT_FIFO_RESCHEDULE_MESSAGE(0U, message);
+    }
+#else
+    (void)message;
+#endif
+  }
+
+  /* In case the other core is in WFE.*/
+  __SEV();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* CH_CFG_SMP_MODE != FALSE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -126,6 +186,19 @@ void port_init(os_instance_t *oip) {
   /* Activating timer for this instance.*/
   port_timer_enable(oip);
 
+#if CH_CFG_SMP_MODE != FALSE
+  /* FIFO handlers for each core.*/
+  if (core_id == 0U) {
+    NVIC_SetPriority(15, CORTEX_MAX_KERNEL_PRIORITY);
+  }
+  else if (core_id == 1U) {
+    NVIC_SetPriority(16, CORTEX_MAX_KERNEL_PRIORITY);
+  }
+  else {
+    chDbgAssert(false, "unexpected core id");
+  }
+#endif
+
 #if CORTEX_ALTERNATE_SWITCH == TRUE
   /* Initializing PendSV for the current core, it is only required in
      the alternate switch mode.*/
@@ -143,6 +216,7 @@ void __port_irq_epilogue(uint32_t lr) {
   if (lr != 0xFFFFFFF1U) {
     struct port_extctx *ectxp;
 
+    /* Entering system critical zone.*/
     port_lock_from_isr();
 
     /* The extctx structure is pointed by the PSP register.*/
@@ -174,5 +248,23 @@ void __port_irq_epilogue(uint32_t lr) {
        order to keep the rest of the context switch atomic.*/
   }
 }
+
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Takes the kernel spinlock.
+ */
+void __port_spinlock_take(void) {
+
+  port_spinlock_take();
+}
+
+/**
+ * @brief   Releases the kernel spinlock.
+ */
+void __port_spinlock_release(void) {
+
+  port_spinlock_release();
+}
+#endif /* CH_CFG_SMP_MODE != FALSE */
 
 /** @} */
