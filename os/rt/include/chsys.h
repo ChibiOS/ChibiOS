@@ -472,7 +472,7 @@ static inline void chSysUnconditionalUnlock(void) {
  *
  * @param[in] oip       pointer to the instance to be notified
  */
-static inline chSysNotifyInstance(os_instance_t *oip) {
+static inline void chSysNotifyInstance(os_instance_t *oip) {
 
   port_notify_instance(oip);
 }

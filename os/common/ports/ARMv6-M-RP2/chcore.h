@@ -635,6 +635,26 @@ __STATIC_INLINE uint32_t port_get_core_id(void) {
   return SIO->CPUID;
 }
 
+/**
+ * @brief   Triggers an inter-core notification.
+ *
+ * @param[in] oip       pointer to the @p os_instance_t structure
+ */
+__STATIC_INLINE void port_notify_instance(os_instance_t *oip) {
+
+  (void)oip;
+
+  /* Waiting for space into the FIFO.*/
+  while ((SIO->FIFO_ST & SIO_FIFO_ST_RDY) == 0U) {
+    __WFE();
+  }
+
+  /* Note, the constant 0xFFFFFFFFU must not be handled as a message but
+     just discarded by the ISR, it is meant to just trigger a reschedule
+     check.*/
+  SIO->FIFO_WR = 0xFFFFFFFFU;
+}
+
 #endif /* !defined(_FROM_ASM_) */
 
 #endif /* CHCORE_H */

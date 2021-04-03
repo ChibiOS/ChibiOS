@@ -364,10 +364,7 @@ void chSchObjectInit(os_instance_t *oip,
       .wend     = oicp->idlethread_end,
       .prio     = IDLEPRIO,
       .funcp    = __idle_thread,
-      .arg      = NULL,
-#if CH_CFG_SMP_MODE != FALSE
-      .instance = oip
-#endif
+      .arg      = NULL
     };
 
     /* This thread has the lowest priority in the system, its role is just to
@@ -523,7 +520,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
     /* Readying up the remote thread and triggering a reschedule on
        the other core.*/
     chSysNotifyInstance(ntp->owner);
-    (void) __sch_ready_behind(ntp->owner, tp);
+    (void) __sch_ready_behind(ntp->owner, ntp);
     return;
   }
 #endif
