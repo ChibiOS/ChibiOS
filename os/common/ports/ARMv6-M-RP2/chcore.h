@@ -63,7 +63,7 @@
  * @name    Port Capabilities and Constants
  * @{
  */
-#define PORT_SUPPORTS_RT                FALSE
+#define PORT_SUPPORTS_RT                TRUE
 
 /**
  * @brief   Natural alignment constant.
@@ -675,6 +675,18 @@ __STATIC_INLINE void port_wait_for_interrupt(void) {
 #if CORTEX_ENABLE_WFI_IDLE == TRUE
   __WFI();
 #endif
+}
+
+/**
+ * @brief   Returns the current value of the realtime counter.
+ * @note    In this port the RT counter is the same counter used for
+ *          system time in tick-less mode, resolution is always 1uS.
+ *
+ * @return              The realtime counter value.
+ */
+__STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
+
+  return TIMER->TIMERAWL;
 }
 
 /**
