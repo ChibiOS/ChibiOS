@@ -394,7 +394,11 @@ void chSchObjectInit(os_instance_t *oip,
  * @iclass
  */
 thread_t *chSchReadyI(thread_t *tp) {
+#if CH_CFG_SMP_MODE == FALSE
   os_instance_t *oip = currcore;
+#else
+  os_instance_t *oip = tp->owner;
+#endif
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL);
