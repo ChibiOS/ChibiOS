@@ -16,12 +16,16 @@
 
 SECTIONS
 {
+    /* TODO */
+    __c1_main_stack_size__ = __main_stack_size__;
+    __c1_process_stack_size__ = __process_stack_size__;
+
     /* Special section for exceptions stack.*/
     .c1_mstack (NOLOAD) :
     {
         . = ALIGN(8);
         __c1_main_stack_base__ = .;
-        . += __main_stack_size__;
+        . += __c1_main_stack_size__;
         . = ALIGN(8);
         __c1_main_stack_end__ = .;
     } > C1_MAIN_STACK_RAM
@@ -32,7 +36,7 @@ SECTIONS
         . = ALIGN(8);
         __c1_process_stack_base__ = .;
         __c1_main_thread_stack_base__ = .;
-        . += __process_stack_size__;
+        . += __c1_process_stack_size__;
         . = ALIGN(8);
         __c1_process_stack_end__ = .;
         __c1_main_thread_stack_end__ = .;

@@ -43,6 +43,10 @@ os_instance_t ch1;
 THD_WORKING_AREA(ch_c1_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+extern stkalign_t __c1_main_thread_stack_base__, __c1_main_thread_stack_end__;
+#endif
+
 /**
  * @brief   Core 1 OS instance configuration.
  */
