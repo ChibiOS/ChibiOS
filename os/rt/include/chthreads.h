@@ -64,7 +64,7 @@ typedef struct {
    */
   stkalign_t        *wbase;
   /**
-   * @brief   End of the working area.
+   * @brief   Pointer to the working area end.
    */
   stkalign_t        *wend;
   /**
@@ -79,6 +79,12 @@ typedef struct {
    * @brief   Thread argument.
    */
   void              *arg;
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+  /**
+   * @brief         OS instance affinity or @p NULL for current one.
+   */
+  os_instance_t     *instance;
+#endif
 } thread_descriptor_t;
 
 /*===========================================================================*/
@@ -162,6 +168,62 @@ typedef struct {
  *          the port layer could define optimizations for thread functions.
  */
 #define THD_FUNCTION(tname, arg) PORT_THD_FUNCTION(tname, arg)
+/** @} */
+
+/**
+ * @name    Threads initializers
+ * @{
+ */
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Thread descriptor initializer with no affinity.
+ *
+ * @param[in] name      thread name
+ * @param[in] wbase     pointer to the working area base
+ * @param[in] wend      pointer to the working area end
+ * @param[in] prio      thread priority
+ * @param[in] funcp     thread function pointer
+ * @param[in] arg       thread argument
+ */
+#define THD_DESCRIPTOR(name, wbase, wend, prio, funcp, arg) {               \
+  (name),                                                                   \
+  (wbase),                                                                  \
+  (wend),                                                                   \
+  (prio),                                                                   \
+  (funcp),                                                                  \
+  (arg),                                                                    \
+  NULL                                                                      \
+}
+#else
+#define THD_DESCRIPTOR(wbase, wend, prio, funcp, arg) {                     \
+  (name),                                                                   \
+  (wbase),                                                                  \
+  (wend),                                                                   \
+  (prio),                                                                   \
+  (funcp),                                                                  \
+  (arg)                                                                     \
+}
+#endif
+
+/**
+ * @brief   Thread descriptor initializer with no affinity.
+ *
+ * @param[in] name      thread name
+ * @param[in] wbase     pointer to the working area base
+ * @param[in] wend      pointer to the working area end
+ * @param[in] prio      thread priority
+ * @param[in] funcp     thread function pointer
+ * @param[in] arg       thread argument
+ */
+#define THD_DESCRIPTOR_AFFINITY(name, wbase, wend, prio, funcp, arg, oip) { \
+  (name),                                                                   \
+  (wbase),                                                                  \
+  (wend),                                                                   \
+  (prio),                                                                   \
+  (funcp),                                                                  \
+  (arg),                                                                    \
+  (oip)                                                                     \
+}
 /** @} */
 
 /**
