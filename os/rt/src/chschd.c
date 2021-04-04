@@ -95,6 +95,9 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
               "invalid state");
+#if CH_CFG_SMP_MODE != FALSE
+  chDbgAssert(tp->owner == oip, "invalid core");
+#endif
 
   /* Tracing the event.*/
   __trace_ready(tp, tp->u.rdymsg);
@@ -129,7 +132,6 @@ static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
               "invalid state");
-
 #if CH_CFG_SMP_MODE != FALSE
   chDbgAssert(tp->owner == oip, "invalid core");
 #endif
@@ -418,6 +420,9 @@ void chSchGoSleepS(tstate_t newstate) {
   chDbgCheckClassS();
 
   chDbgAssert(otp != chSysGetIdleThreadX(), "sleeping in idle thread");
+#if CH_CFG_SMP_MODE != FALSE
+  chDbgAssert(otp->owner == oip, "invalid core");
+#endif
 
   /* New state.*/
   otp->state = newstate;
