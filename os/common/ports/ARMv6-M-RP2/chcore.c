@@ -35,11 +35,6 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   Port data global variable.
- */
-struct port_data ch_port_data;
-
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -176,9 +171,6 @@ CH_IRQ_HANDLER(RP_SIO_IRQ_PROC1_HANDLER) {
  */
 void port_init(os_instance_t *oip) {
   uint32_t core_id = port_get_core_id();
-
-  /* Associating the OS instance to the current core.*/
-  ch_port_data.oip[core_id] = oip;
 
   /* Port-related info for each OS instance.*/
   oip->core_id = core_id;

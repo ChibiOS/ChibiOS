@@ -658,21 +658,35 @@
 /*===========================================================================*/
 
 /**
- * @brief   OS instance structure extension.
+ * @brief   System structure extension.
  * @details User fields added to the end of the @p ch_system_t structure.
+ */
+#define CH_CFG_SYSTEM_EXTRA_FIELDS                                          \
+  /* Add system custom fields here.*/
+
+/**
+ * @brief   System initialization hook.
+ * @details User initialization code added to the @p chSysInit() function
+ *          just before interrupts are enabled globally.
+ */
+#define CH_CFG_SYSTEM_INIT_HOOK() {                                         \
+  /* Add system initialization code here.*/                                 \
+}
+
+/**
+ * @brief   OS instance structure extension.
+ * @details User fields added to the end of the @p os_instance_t structure.
  */
 #define CH_CFG_OS_INSTANCE_EXTRA_FIELDS                                     \
   /* Add OS instance custom fields here.*/
 
 /**
  * @brief   OS instance initialization hook.
- * @details User initialization code added to the @p chSysInit() function
- *          just before interrupts are enabled globally.
  *
  * @param[in] oip       pointer to the @p os_instance_t structure
  */
 #define CH_CFG_OS_INSTANCE_INIT_HOOK(oip) {                                 \
-  /* Add system instance initialization code here.*/                        \
+  /* Add OS instance initialization code here.*/                            \
 }
 
 /**

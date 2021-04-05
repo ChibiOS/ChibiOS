@@ -399,6 +399,22 @@ struct ch_os_instance {
   CH_CFG_OS_INSTANCE_EXTRA_FIELDS
 };
 
+/**
+ * @brief   Type of system data structure.
+ */
+typedef struct ch_system {
+  /**
+   * @brief   Initialized OS instances or @p NULL.
+   */
+  os_instance_t         *instances[PORT_CORES_NUMBER];
+#if defined(PORT_SYSTEM_EXTRA_FIELDS) || defined(__DOXYGEN__)
+  /* Extra fields from port layer.*/
+  PORT_SYSTEM_EXTRA_FIELDS
+#endif
+  /* Extra fields from configuration.*/
+  CH_CFG_SYSTEM_EXTRA_FIELDS
+} ch_system_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/

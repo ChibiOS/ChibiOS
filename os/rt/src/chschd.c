@@ -300,6 +300,17 @@ void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
 void chSchObjectInit(os_instance_t *oip,
                      const os_instance_config_t *oicp) {
 
+#if CH_CFG_SMP_MODE != FALSE
+  /* Registering into the global system structure.*/
+  {
+    code_id_t core_id = port_get_core_id();
+
+    chDbgAssert(ch_system.instances[core_id] == NULL, "instance already registered");
+
+    ch_system.instances[core_id] = oip;
+  }
+#endif
+
   /* Port initialization for the current instance.*/
   port_init(oip);
 

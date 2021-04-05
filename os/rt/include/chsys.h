@@ -59,7 +59,15 @@
 /**
  * @brief   Access to current core's instance structure.
  */
+#if defined(PORT_INSTANCE_ACCESS)
 #define currcore                            PORT_INSTANCE_ACCESS
+#else
+#if (CH_CFG_SMP_MODE == FALSE) || defined(__DOXYGEN__)
+#define currcore                            (&ch)
+#else
+#define currcore                            ch_system.instances[port_get_core_id()]
+#endif
+#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -283,8 +291,10 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
+#if CH_CFG_SMP_MODE != FALSE
+extern ch_system_t ch_system;
+#endif
 extern os_instance_t ch;
-/*extern os_instance_t * volatile chp;*/
 extern stkalign_t ch_idle_thread_wa[];
 #endif
 

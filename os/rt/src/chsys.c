@@ -39,12 +39,17 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   System root object.
+ */
+ch_system_t ch_system;
+#endif
+
 /**
  * @brief   Default OS instance.
  */
 os_instance_t ch;
-
-/*os_instance_t * volatile chp = &ch;*/
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
@@ -80,6 +85,20 @@ THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
  * @special
  */
 void chSysInit(void) {
+
+#if CH_CFG_SMP_MODE != FALSE
+  {
+    unsigned i;
+
+    /* System object initialization.*/
+    for (i = 0U; i < PORT_CORES_NUMBER; i++) {
+      ch_system.instances[i] = NULL;
+    }
+
+    /* User system initialization hook.*/
+    CH_CFG_SYSTEM_INIT_HOOK();
+  }
+#endif
 
   /* OS library modules.*/
   __oslib_init();

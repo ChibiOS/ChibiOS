@@ -89,11 +89,6 @@
 #define PORT_CORES_NUMBER               2
 
 /**
- * @brief   Access to the OS instance for the current core.
- */
-#define PORT_INSTANCE_ACCESS            ch_port_data.oip[port_get_core_id()]
-
-/**
  * @brief   Port-related fields added to the OS instance structure.
  */
 #define PORT_INSTANCE_EXTRA_FIELDS                                          \
@@ -302,6 +297,12 @@
 #if !defined(_FROM_ASM_)
 
 /**
+ * @brief   Type of a core identifier.
+ * @note    Core identifiers have ranges from 0 to @p PORT_CORES_NUMBER - 1.
+ */
+typedef uint32_t code_id_t;
+
+/**
  * @brief   Type of stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 64 bits,
  *          32 bits alignment is supported by hardware but deprecated by ARM,
@@ -481,8 +482,6 @@ struct port_data {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-extern struct port_data ch_port_data;
 
 #ifdef __cplusplus
 extern "C" {
@@ -691,11 +690,9 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 
 /**
  * @brief   Returns a core index.
- * @return              The core index.
- * @retval 0            if the current core is core zero.
- * @retval 1            if the current core is core one.
+ * @return              The core identifier from 0 to @p PORT_CORES_NUMBER - 1.
  */
-__STATIC_INLINE uint32_t port_get_core_id(void) {
+__STATIC_INLINE code_id_t port_get_core_id(void) {
 
   return SIO->CPUID;
 }

@@ -133,10 +133,6 @@
 #endif
 #endif
 
-#if !defined(PORT_INSTANCE_ACCESS)
-#define PORT_INSTANCE_ACCESS                (&ch)
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/

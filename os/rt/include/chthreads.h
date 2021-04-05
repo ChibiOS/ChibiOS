@@ -195,7 +195,7 @@ typedef struct {
   NULL                                                                      \
 }
 #else
-#define THD_DESCRIPTOR(wbase, wend, prio, funcp, arg) {                     \
+#define THD_DESCRIPTOR(name, wbase, wend, prio, funcp, arg) {               \
   (name),                                                                   \
   (wbase),                                                                  \
   (wend),                                                                   \
