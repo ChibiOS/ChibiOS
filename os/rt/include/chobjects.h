@@ -295,8 +295,6 @@ struct ch_thread {
 };
 
 /**
- * @extends threads_queue_t
- *
  * @brief   Type of a ready list header.
  */
 typedef struct ch_ready_list {
