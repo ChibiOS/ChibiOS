@@ -244,9 +244,9 @@ void st_lld_bind(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
   uint32_t  timer_clk = RP_CORE_CLK;
 
-  osalDbgAssert(timer_clk % OSAL_ST_FREQUENCY != 0U,
+  osalDbgAssert(timer_clk % OSAL_ST_FREQUENCY == 0U,
                 "division remainder");
-  osalDbgAssert((timer_clk / OSAL_ST_FREQUENCY) - 1U > 0x00FFFFFFU,
+  osalDbgAssert((timer_clk / OSAL_ST_FREQUENCY) - 1U <= 0x00FFFFFFU,
                 "prescaler range");
 
   /* Periodic systick mode, the Cortex-Mx internal systick timer is used
