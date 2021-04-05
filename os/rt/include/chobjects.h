@@ -397,6 +397,7 @@ struct ch_os_instance {
   CH_CFG_OS_INSTANCE_EXTRA_FIELDS
 };
 
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of system data structure.
  */
@@ -412,6 +413,7 @@ typedef struct ch_system {
   /* Extra fields from configuration.*/
   CH_CFG_SYSTEM_EXTRA_FIELDS
 } ch_system_t;
+#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */
