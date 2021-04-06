@@ -81,7 +81,8 @@
  * @brief   Working Areas alignment constant.
  * @note    It is the alignment to be enforced for thread working areas.
  */
-#define PORT_WORKING_AREA_ALIGN         PORT_STACK_ALIGN
+#define PORT_WORKING_AREA_ALIGN         ((PORT_ENABLE_GUARD_PAGES == TRUE) ?\
+                                         32U : PORT_STACK_ALIGN)
 
 /**
  * @brief   Number of cores supported.
@@ -146,6 +147,26 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables stack overflow guard pages using MPU.
+ * @note    This option can only be enabled if also option
+ *          @p CH_DBG_ENABLE_STACK_CHECK is enabled.
+ * @note    The use of this option has an overhead of 32 bytes for each
+ *          thread.
+ */
+#if !defined(PORT_ENABLE_GUARD_PAGES) || defined(__DOXYGEN__)
+#define PORT_ENABLE_GUARD_PAGES         FALSE
+#endif
+
+/**
+ * @brief   MPU region to be used to stack guards.
+ * @note    Make sure this region is not included in the
+ *          @p PORT_SWITCHED_REGIONS_NUMBER regions range.
+ */
+#if !defined(PORT_USE_GUARD_MPU_REGION) || defined(__DOXYGEN__)
+#define PORT_USE_GUARD_MPU_REGION       MPU_REGION_7
+#endif
 
 /**
  * @brief   Stack size for the system idle thread.
@@ -263,7 +284,11 @@
   #define PORT_CORE_VARIANT_NAME        "Cortex-M0"
 
 #elif (CORTEX_MODEL == 0) && defined(__CORE_CM0PLUS_H_DEPENDANT)
-  #define PORT_CORE_VARIANT_NAME        "Cortex-M0+"
+  #if (PORT_ENABLE_GUARD_PAGES == FALSE) || defined(__DOXYGEN__)
+    #define PORT_CORE_VARIANT_NAME      "Cortex-M0+"
+  #else
+    #define PORT_CORE_VARIANT_NAME      "Cortex-M0+ (MPU)"
+  #endif
 
 #else
   #error "unknown ARMv6-M variant"
@@ -288,13 +313,28 @@
   #define CORTEX_MAX_KERNEL_PRIORITY    0
 #endif
 
-/*===========================================================================*/
-/* Module data structures and types.                                         */
-/*===========================================================================*/
-
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
+
+/**
+ * @brief   MPU guard page size.
+ */
+#if (PORT_ENABLE_GUARD_PAGES == TRUE) || defined(__DOXYGEN__)
+  #if CH_DBG_ENABLE_STACK_CHECK == FALSE
+    #error "PORT_ENABLE_GUARD_PAGES requires CH_DBG_ENABLE_STACK_CHECK"
+  #endif
+  #if __MPU_PRESENT == 0
+    #error "MPU not present in current device"
+  #endif
+  #define PORT_GUARD_PAGE_SIZE          32U
+#else
+  #define PORT_GUARD_PAGE_SIZE          0U
+#endif
+
+/*===========================================================================*/
+/* Module data structures and types.                                         */
+/*===========================================================================*/
 
 /**
  * @brief   Type of a core identifier.
@@ -397,9 +437,11 @@ struct port_data {
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
  */
-#define PORT_WA_SIZE(n) (sizeof (struct port_intctx) +                      \
+#define PORT_WA_SIZE(n) ((size_t)PORT_GUARD_PAGE_SIZE +                     \
+                         sizeof (struct port_intctx) +                      \
                          sizeof (struct port_extctx) +                      \
-                         ((size_t)(n)) + ((size_t)(PORT_INT_REQUIRED_STACK)))
+                         (size_t)(n) +                                      \
+                         (size_t)PORT_INT_REQUIRED_STACK)
 
 /**
  * @brief   Static working area allocation.
@@ -409,8 +451,14 @@ struct port_data {
  * @param[in] s         the name to be assigned to the stack array
  * @param[in] n         the stack size to be assigned to the thread
  */
-#define PORT_WORKING_AREA(s, n)                                             \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+#if (PORT_ENABLE_GUARD_PAGES == FALSE) || defined(__DOXYGEN__)
+  #define PORT_WORKING_AREA(s, n)                                           \
+    stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+
+#else
+  #define PORT_WORKING_AREA(s, n)                                           \
+    ALIGNED_VAR(32) stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+#endif
 
 /**
  * @brief   IRQ prologue code.
@@ -469,14 +517,26 @@ struct port_data {
  */
 #if (CH_DBG_ENABLE_STACK_CHECK == FALSE) || defined(__DOXYGEN__)
   #define port_switch(ntp, otp) __port_switch(ntp, otp)
+
 #else
-  #define port_switch(ntp, otp) do {                                        \
-    struct port_intctx *r13 = (struct port_intctx *)__get_PSP();            \
-    if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                          \
-      chSysHalt("stack overflow");                                          \
-    }                                                                       \
-    __port_switch(ntp, otp);                                                \
-  } while (0)
+  #if PORT_ENABLE_GUARD_PAGES == FALSE
+    #define port_switch(ntp, otp) do {                                      \
+      struct port_intctx *r13 = (struct port_intctx *)__get_PSP();          \
+      if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                        \
+        chSysHalt("stack overflow");                                        \
+      }                                                                     \
+      __port_switch(ntp, otp);                                              \
+    } while (0)
+
+  #else
+    #define port_switch(ntp, otp) do {                                      \
+      __port_switch(ntp, otp);                                              \
+                                                                            \
+      /* Setting up the guard page for the switched-in thread.*/            \
+      mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,                        \
+                          chThdGetSelfX()->wabase);                         \
+    } while (0)
+  #endif
 #endif
 
 /*===========================================================================*/
