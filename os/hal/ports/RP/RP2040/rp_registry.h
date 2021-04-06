@@ -49,6 +49,9 @@
 /* TIMER attributes.*/
 #define RP_HAS_TIMER                        TRUE
 
+/* RTC attributes.*/
+#define RP_HAS_RTC                          TRUE
+
 /** @} */
 
 #endif /* RP_REGISTRY_H */

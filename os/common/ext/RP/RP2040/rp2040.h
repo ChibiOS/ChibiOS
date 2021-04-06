@@ -230,6 +230,21 @@ typedef struct {
   __I  uint32_t         UARTPCELLID2;
   __I  uint32_t         UARTPCELLID3;
 } UART_TypeDef;
+
+typedef struct {
+  __IO uint32_t         CLKDIVM1;
+  __IO uint32_t         SETUP0;
+  __IO uint32_t         SETUP1;
+  __IO uint32_t         CTRL;
+  __IO uint32_t         IRQSETUP0;
+  __IO uint32_t         IRQSETUP1;
+  __IO uint32_t         RTC1;
+  __IO uint32_t         RTC0;
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE;
+  __IO uint32_t         INTF;
+  __IO uint32_t         INTS;
+} RTC_TypeDef;
 /** @} */
 
 /**
@@ -248,6 +263,7 @@ typedef struct {
 #define __UART0_BASE                    (__APBPERIPH_BASE + 0x00034000U)
 #define __UART1_BASE                    (__APBPERIPH_BASE + 0x00038000U)
 #define __SIO_BASE                      (__IOPORT_BASE    + 0x00000000U)
+#define __RTC_BASE                      (__APBPERIPH_BASE + 0x0005c000U)
 /** @} */
 
 /**
@@ -263,6 +279,7 @@ typedef struct {
 #define TIMER                           ((TIMER_TypeDef *)  __TIMER_BASE)
 #define UART0                           ((UART_TypeDef *)   __UART0_BASE)
 #define UART1                           ((UART_TypeDef *)   __UART1_BASE)
+#define RTC                             ((RTC_TypeDef *)    __RTC_BASE)
 /** @} */
 
 /**
