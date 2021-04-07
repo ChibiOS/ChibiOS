@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -66,32 +66,28 @@ void rtc_lld_init(void) {
   /* RTC object initialization.*/
   rtcObjectInit(&RTCD1);
 
+  /* Callback initially disabled.*/
+  RTCD1.callback = NULL;
+
   /* RTC pointer initialization.*/
   RTCD1.rtc = RTC;
 
+  /* Get clock parameters. */
   clock = hal_lld_get_clock(clk_rtc);
-
-  osalDbgAssert(clock > 0U, "no clock");
+  osalDbgAssert((clock > 0U) || (clock - 1 <= RTC_CLKDIV_M1_BITS), "bad clock");
 
   /* Take RTC out of reset. */
   hal_lld_peripheral_unreset(RESETS_ALLREG_RTC);
 
-  clock -= 1;
-  osalDbgAssert(clock <= RTC_CLKDIV_M1_BITS, "invalid divide");
-
-  RTCD1.rtc.CLKDIVM1 = clock;
-
-  /* Callback initially disabled.*/
-  RTCD1.callback = NULL;
-
-  /* IRQ vector permanently assigned to this driver.*/
-  //nvicEnableVector(STM32_RTC1_NUMBER, STM32_RTC_IRQ_PRIORITY);
+  /* Set divider. */
+  RTCD1.rtc.CLKDIVM1 = clock - 1;
 }
 
 /**
  * @brief   Set current time.
- * @note    Fractional part will be silently ignored. There is no possibility
- *          to set it on RP2040 platform.
+ * @note    Fractional seconds part will be silently ignored. There is no
+ *          possibility to set it on RP2040 platform. The RP2040 handles
+ *          leap year for years evenly divisible by 4.
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure
@@ -110,25 +106,25 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   /* Disable RTC. */
   rtcp->rtc->CTRL = 0;
 
-  /* Wait for RTC to become inactive. */
+  /* Wait for RTC to go inactive. */
   while (rtccp->rtc->CTRL & RTC_CTRL_RTC_ACTIVE_BITS != 0)
     ;
 
-  /* Write to setup registers. */
+  /* Write setup to pre-load registers. */
   rtcp->rtc->SETUP0 =
-    (timespec->year)      << RTC_SETUP_0_YEAR_LSB ) |
-    (timespec->month)     << RTC_SETUP_0_MONTH_LSB) |
-    (timespec->day)       << RTC_SETUP_0_DAY_LSB);
+    ((timespec->year + 1980)   << RTC_SETUP_0_YEAR_LSB)   |
+    (timespec->month           << RTC_SETUP_0_MONTH_LSB)  |
+    (timespec->day             << RTC_SETUP_0_DAY_LSB);
   rtcp->rtc->SETUP1 =
-    (timespec->dayofweek) << RTC_SETUP_1_DOTW_LSB)  |
-    (hour)                << RTC_SETUP_1_HOUR_LSB)  |
-    (min)                 << RTC_SETUP_1_MIN_LSB)   |
-    (sec)                 << RTC_SETUP_1_SEC_LSB);
+    ((timespec->dayofweek - 1) << RTC_SETUP_1_DOTW_LSB)   |
+    (hour                      << RTC_SETUP_1_HOUR_LSB)   |
+    (min                       << RTC_SETUP_1_MIN_LSB)    |
+    (sec                       << RTC_SETUP_1_SEC_LSB);
 
-  /* Load setup values into RTC clock domain. */
+  /* Move setup values into RTC clock domain. */
   rtcp->rtc->CTRL = RTC_CTRL_LOAD_BITS;
 
-  /* Enable RTC and wait for it to be active. */
+  /* Enable RTC and wait for active. */
   rtcp->rtc->CTRL = RTC_CTRL_RTC_ENABLE_BITS;
   while (rtccp->rtc->CTRL & RTC_CTRL_RTC_ACTIVE_BITS == 0)
     ;
@@ -138,15 +134,32 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
  * @brief   Get current time.
  * @note    The function can be called from any context.
  *
- * @param[in] rtcp      pointer to RTC driver structure
+ * @param[in]  rtcp      pointer to RTC driver structure
  * @param[out] timespec pointer to a @p RTCDateTime structure
  *
  * @notapi
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
 
-  (void)rtcp;
-  (void)timespec;
+  /* Read RTC0 first then RTC1. */
+  uint32_t rtc_0 = rtcp->rtc->RTC0;
+  uint32_t rtc_1 = rtcp->rtc->RTC1;
+
+  /* Calculate and set milliseconds since midnight field. */
+  timespec->millisecond =
+      ((((rtc_0 & RTC_RTC_0_HOUR_BITS) >> RTC_RTC_0_HOUR_LSB) * 3600)
+    + (((rtc_0 & RTC_RTC_0_MIN_BITS)   >> RTC_RTC_0_MIN_LSB) * 60)
+    + (((rtc_0 & RTC_RTC_0_SEC_BITS)   >> RTC_RTC_0_SEC_LSB))) * 1000;
+
+  /* Set fields with adjustments. */
+  timespec->dayofweek =
+      ((rtc_0 & RTC_RTC_0_DOTW_BITS)  >> RTC_RTC_0_DOTW_LSB) + 1;
+  timespec->year      =
+      ((rtc_1 & RTC_RTC_1_YEAR_BITS)  >> RTC_RTC_1_YEAR_LSB) - 1980;
+  timespec->month     =
+      ((rtc_1 & RTC_RTC_1_MONTH_BITS) >> RTC_RTC_1_MONTH_LSB);
+  timespec->day       =
+      ((rtc_1 & RTC_RTC_1_DAY_BITS)   >> RTC_RTC_1_DAY_LSB);
 }
 
 #if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
