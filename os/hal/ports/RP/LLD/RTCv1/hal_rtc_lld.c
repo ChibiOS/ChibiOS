@@ -73,14 +73,14 @@ void rtc_lld_init(void) {
   RTCD1.rtc = RTC;
 
   /* Get clock parameters. */
-  clock = hal_lld_get_clock(clk_rtc);
+  uint32_t clock = hal_lld_get_clock(clk_rtc);
   osalDbgAssert((clock > 0U) || (clock - 1 <= RTC_CLKDIV_M1_BITS), "bad clock");
 
   /* Take RTC out of reset. */
   hal_lld_peripheral_unreset(RESETS_ALLREG_RTC);
 
   /* Set divider. */
-  RTCD1.rtc.CLKDIVM1 = clock - 1;
+  RTCD1.rtc->CLKDIVM1 = clock - 1;
 }
 
 /**
@@ -107,7 +107,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
   rtcp->rtc->CTRL = 0;
 
   /* Wait for RTC to go inactive. */
-  while (rtccp->rtc->CTRL & RTC_CTRL_RTC_ACTIVE_BITS != 0)
+  while ((rtcp->rtc->CTRL & RTC_CTRL_RTC_ACTIVE_BITS) != 0)
     ;
 
   /* Write setup to pre-load registers. */
@@ -126,7 +126,7 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
 
   /* Enable RTC and wait for active. */
   rtcp->rtc->CTRL = RTC_CTRL_RTC_ENABLE_BITS;
-  while (rtccp->rtc->CTRL & RTC_CTRL_RTC_ACTIVE_BITS == 0)
+  while ((rtcp->rtc->CTRL & RTC_CTRL_RTC_ACTIVE_BITS) == 0)
     ;
 }
 

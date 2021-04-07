@@ -77,7 +77,6 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-#if (RTC_SUPPORTS_CALLBACKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of an RTC event.
  */
@@ -89,7 +88,7 @@ typedef enum {
  * @brief   Type of a generic RTC callback.
  */
 typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
-#endif
+
 
 /**
  * @brief   Type of a structure representing an RTC alarm time stamp.
