@@ -86,6 +86,36 @@ typedef enum {
  */
 typedef struct {
   struct {
+    __IO uint32_t       READ_ADDR;
+    __IO uint32_t       WRITE_ADDR;
+    __IO uint32_t       TRANS_COUNT;
+    __IO uint32_t       CTRL_TRIG;
+    __I  uint32_t       resvd10[12];
+  } CH[12];
+  __I  uint32_t         resvd300[64];
+  __IO uint32_t         INTR;
+  struct {
+  __IO uint32_t         INTE;
+  __IO uint32_t         INTF;
+  __IO uint32_t         INTS;
+  } C[2];
+  __IO uint32_t         TIMER[4];
+  __IO uint32_t         MULTI_CHAN_TRIGGER;
+  __IO uint32_t         SNIFF_CTRL;
+  __IO uint32_t         SNIFF_DATA;
+  __I  uint32_t         FIFO_LEVELS;
+  __IO uint32_t         CHAN_ABORT;
+  __I  uint32_t         N_CHANNELS;
+  __I  uint32_t         resvd44C[237];
+  struct {
+    __I  uint32_t       CTDREQ;
+    __I  uint32_t       TCR;
+    __I  uint32_t       resvd8[56];
+  } CH_DBG[12];
+} DMA_TypeDef;
+
+typedef struct {
+  struct {
     __I  uint32_t       STATUS;
     __IO uint32_t       CTRL;
   } GPIO[30];
@@ -254,6 +284,7 @@ typedef struct {
 #define __APBPERIPH_BASE                0x40000000U
 #define __AHBPERIPH_BASE                0x50000000U
 #define __IOPORT_BASE                   0xD0000000U
+#define __DMA_BASE                      (__APBPERIPH_BASE + 0x00000000U)
 #define __IOUSER0_BASE                  (__APBPERIPH_BASE + 0x00014000U)
 #define __IOQSPI_BASE                   (__APBPERIPH_BASE + 0x00018000U)
 #define __PADSUSER0_BASE                (__APBPERIPH_BASE + 0x0001C000U)
@@ -270,6 +301,7 @@ typedef struct {
  * @name    Peripherals
  * @{
  */
+#define DMA                             ((DMA_TypeDef *)    __DMA_BASE)
 #define IO_BANK0                        ((IOUSER_TypeDef *) __IOUSER0_BASE)
 #define IO_QSPI                         ((IOUSER_TypeDef *) __IOQSPI_BASE)
 #define PADS_BANK0                      ((PADS_TypeDef *)   __PADSUSER0_BASE)
@@ -283,7 +315,46 @@ typedef struct {
 /** @} */
 
 /**
+ * @name    DMA bits definitions
+ * @{
+ */
+#define DMA_CTRL_TRIG_AHB_ERROR         (1U << 31)
+#define DMA_CTRL_TRIG_READ_ERROR        (1U << 30)
+#define DMA_CTRL_TRIG_WRITE_ERROR       (1U << 29)
+#define DMA_CTRL_TRIG_BUSY              (1U << 24)
+#define DMA_CTRL_TRIG_SNIFF_EN          (1U << 23)
+#define DMA_CTRL_TRIG_BSWAP             (1U << 22)
+#define DMA_CTRL_TRIG_IRQ_QUIET         (1U << 21)
+#define DMA_CTRL_TRIG_TREQ_SEL_Pos      15U
+#define DMA_CTRL_TRIG_TREQ_SEL_Msk      (0x3FU << DMA_CTRL_TRIG_TREQ_SEL_Pos)
+#define DMA_CTRL_TRIG_TREQ_SEL(n)       ((n) << DMA_CTRL_TRIG_TREQ_SEL_Pos)
+#define DMA_CTRL_TRIG_TREQ_TIMER0       DMA_CTRL_TRIG_TREQ_SEL(0x3BU)
+#define DMA_CTRL_TRIG_TREQ_TIMER1       DMA_CTRL_TRIG_TREQ_SEL(0x3CU)
+#define DMA_CTRL_TRIG_TREQ_TIMER2       DMA_CTRL_TRIG_TREQ_SEL(0x3DU)
+#define DMA_CTRL_TRIG_TREQ_TIMER3       DMA_CTRL_TRIG_TREQ_SEL(0x3EU)
+#define DMA_CTRL_TRIG_TREQ_PERMANENT    DMA_CTRL_TRIG_TREQ_SEL(0x3FU)
+#define DMA_CTRL_TRIG_CHAIN_TO_Pos      11U
+#define DMA_CTRL_TRIG_CHAIN_TO_Msk      (15U << DMA_CTRL_TRIG_CHAIN_TO_Pos)
+#define DMA_CTRL_TRIG_CHAIN_TO(n)       ((n) << DMA_CTRL_TRIG_CHAIN_TO_Pos)
+#define DMA_CTRL_TRIG_RING_SEL          (1U << 10)
+#define DMA_CTRL_TRIG_RING_SIZE_Pos     6U
+#define DMA_CTRL_TRIG_RING_SIZE_Msk     (15U << DMA_CTRL_TRIG_RING_SIZE_Pos)
+#define DMA_CTRL_TRIG_RING_SIZE(n)      ((n) << DMA_CTRL_TRIG_RING_SIZE_Pos)
+#define DMA_CTRL_TRIG_INCR_WRITE        (1U << 5)
+#define DMA_CTRL_TRIG_INCR_READ         (1U << 4)
+#define DMA_CTRL_TRIG_DATA_SIZE_Pos     2U
+#define DMA_CTRL_TRIG_DATA_SIZE_Msk     (3U << DMA_CTRL_TRIG_DATA_SIZE_Pos)
+#define DMA_CTRL_TRIG_DATA_SIZE(n)      ((n) << DMA_CTRL_TRIG_DATA_SIZE_Pos)
+#define DMA_CTRL_TRIG_DATA_SIZE_BYTE    DMA_CTRL_TRIG_DATA_SIZE(0U)
+#define DMA_CTRL_TRIG_DATA_SIZE_HWORD   DMA_CTRL_TRIG_DATA_SIZE(1U)
+#define DMA_CTRL_TRIG_DATA_SIZE_WORD    DMA_CTRL_TRIG_DATA_SIZE(2U)
+#define DMA_CTRL_TRIG_HIGH_PRIORITY     (1U << 1)
+#define DMA_CTRL_TRIG_EN                (1U << 0)
+/** @} */
+
+/**
  * @name    RESETS bits definitions
+ * @{
  */
 #define RESETS_ALLREG_USBCTRL           (1U << 24)
 #define RESETS_ALLREG_UART1             (1U << 23)
@@ -314,6 +385,7 @@ typedef struct {
 
 /**
  * @name    SIO bits definitions
+ * @{
  */
 #define SIO_FIFO_ST_VLD_Pos             0U
 #define SIO_FIFO_ST_VLD_Msk             (1U << SIO_FIFO_ST_VLD_Pos)
@@ -331,6 +403,7 @@ typedef struct {
 
 /**
  * @name    TIMER bits definitions
+ * @{
  */
 #define TIMER_ARMED_ALARM0_Pos          0U
 #define TIMER_ARMED_ALARM0_Msk          (1U << TIMER_ARMED_ALARM0_Pos)
@@ -411,6 +484,7 @@ typedef struct {
 
 /**
  * @name    UART bits definitions
+ * @{
  */
 #define UART_UARTDR_OE_Pos              11U
 #define UART_UARTDR_OE_Msk              (1U << UART_UARTDR_OE_Pos)
