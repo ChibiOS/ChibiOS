@@ -95,7 +95,7 @@ typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
  */
 typedef struct {
   /* End of the mandatory fields.*/
-  uint32_t                  dummy;
+  RTCDateTime       alarm;
 } RTCAlarm;
 
 /**
