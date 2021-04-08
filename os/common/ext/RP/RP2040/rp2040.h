@@ -794,7 +794,7 @@ typedef struct {
 #define RTC_SETUP_0_MONTH_Pos             8U
 #define RTC_SETUP_0_MONTH_Msk             (0xFU << RTC_SETUP_0_MONTH_Pos)
 #define RTC_SETUP_0_MONTH(n)              ((n) << RTC_SETUP_0_MONTH_Pos)
-#define RTC_SETUP_0_DAY_Pos               4U
+#define RTC_SETUP_0_DAY_Pos               0U
 #define RTC_SETUP_0_DAY_Msk               (0x1FU << RTC_SETUP_0_DAY_Pos)
 #define RTC_SETUP_0_DAY(n)                ((n) << RTC_SETUP_0_DAY_Pos)
 
@@ -903,7 +903,7 @@ typedef struct {
 #define RTC_RTC_1_MONTH_Pos               8U
 #define RTC_RTC_1_MONTH_Msk               (0xFU << RTC_RTC_1_MONTH_Pos)
 #define RTC_RTC_1_MONTH(n)                ((n & RTC_RTC_1_MONTH_Msk) >>      \
-                                            RTC_RTC_1_DAY_Pos)
+                                            RTC_RTC_1_MONTH_Pos)
 #define RTC_RTC_1_DAY_Pos                 0U
 #define RTC_RTC_1_DAY_Msk                 (0x1FU << RTC_RTC_1_DAY_Pos)
 #define RTC_RTC_1_DAY(n)                  ((n & RTC_RTC_1_DAY_Msk) >>        \

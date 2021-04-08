@@ -43,7 +43,7 @@
 /**
  * @brief   Number of alarms available.
  */
-#define RTC_ALARMS                  0
+#define RTC_ALARMS                  1
 
 /**
  * @brief   Presence of a local persistent storage.
@@ -59,14 +59,10 @@
  * @name    PLATFORM configuration options
  * @{
  */
-/**
- * @brief   RTCD1 driver enable switch.
- * @details If set to @p TRUE the support for RTC1 is included.
- * @note    The default is @p FALSE.
- */
-//#if !defined(PLATFORM_RTC_USE_RTC1) || defined(__DOXYGEN__)
-//#define PLATFORM_RTC_USE_RTC1                  FALSE
-//#endif
+/* Priority settings checks.*/
+#if !defined(RP_IRQ_RTC_PRIORITY)
+#error "RP_IRQ_RTC_PRIORITY not defined in mcuconf.h"
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -104,7 +100,8 @@ typedef struct {
   /* Pointer to the RTC registers block.*/                                  \
   RTC_TypeDef       *rtc;                                                   \
   /* Callback pointer.*/                                                    \
-  rtccb_t           callback
+  rtccb_t           callback;                                               \
+  RTCDateTime       alarm;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -114,9 +111,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-//#if (PLATFORM_RTC_USE_RTC1 == TRUE) && !defined(__DOXYGEN__)
 extern RTCDriver RTCD1;
-//#endif
 
 #ifdef __cplusplus
 extern "C" {
