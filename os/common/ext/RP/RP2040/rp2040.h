@@ -849,7 +849,7 @@ typedef struct {
 #define RTC_IRQ_SETUP_0_MONTH_Pos         8U
 #define RTC_IRQ_SETUP_0_MONTH_Msk         (0xFU << RTC_IRQ_SETUP_0_MONTH_Pos)
 #define RTC_IRQ_SETUP_0_MONTH(n)          ((n) << RTC_IRQ_SETUP_0_MONTH_Pos)
-#define RTC_IRQ_SETUP_0_DAY_Pos           4U
+#define RTC_IRQ_SETUP_0_DAY_Pos           0U
 #define RTC_IRQ_SETUP_0_DAY_Msk           (0x1FU << RTC_IRQ_SETUP_0_DAY_Pos)
 #define RTC_IRQ_SETUP_0_DAY(n)            ((n) << RTC_IRQ_SETUP_0_DAY_Pos)
 
