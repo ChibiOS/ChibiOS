@@ -89,7 +89,6 @@ typedef enum {
  */
 typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
 
-
 /**
  * @brief   Type of a structure representing an RTC alarm time stamp.
  */
