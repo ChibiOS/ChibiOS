@@ -154,6 +154,13 @@ typedef struct {
 } PADS_TypeDef;
 
 typedef struct {
+  __IO uint32_t         FRCE_ON;
+  __IO uint32_t         FRCE_OFF;
+  __IO uint32_t         WDSEL;
+  __IO uint32_t         DONE;
+} PSM_TypeDef;
+
+typedef struct {
   __IO uint32_t         RESET;
   __IO uint32_t         WDSEL;
   __I  uint32_t         RESET_DONE;
@@ -193,22 +200,22 @@ typedef struct {
   __I  uint32_t         DIV_CSR;
   __I  uint32_t         resvd7C;
   struct {
-  __IO uint32_t         ACCUM0;
-  __IO uint32_t         ACCUM1;
-  __IO uint32_t         BASE0;
-  __IO uint32_t         BASE1;
-  __IO uint32_t         BASE2;
-  __I  uint32_t         POP_LANE0;
-  __I  uint32_t         POP_LANE1;
-  __I  uint32_t         POP_FULL;
-  __I  uint32_t         PEEK_LANE0;
-  __I  uint32_t         PEEK_LANE1;
-  __I  uint32_t         PEEK_FULL;
-  __IO uint32_t         CTRL_LANE0;
-  __IO uint32_t         CTRL_LANE1;
-  __IO uint32_t         ACCUM0_ADD;
-  __IO uint32_t         ACCUM1_ADD;
-  __IO uint32_t         BASE_1AND0;
+    __IO uint32_t       ACCUM0;
+    __IO uint32_t       ACCUM1;
+    __IO uint32_t       BASE0;
+    __IO uint32_t       BASE1;
+    __IO uint32_t       BASE2;
+    __I  uint32_t       POP_LANE0;
+    __I  uint32_t       POP_LANE1;
+    __I  uint32_t       POP_FULL;
+    __I  uint32_t       PEEK_LANE0;
+    __I  uint32_t       PEEK_LANE1;
+    __I  uint32_t       PEEK_FULL;
+    __IO uint32_t       CTRL_LANE0;
+    __IO uint32_t       CTRL_LANE1;
+    __IO uint32_t       ACCUM0_ADD;
+    __IO uint32_t       ACCUM1_ADD;
+    __IO uint32_t       BASE_1AND0;
   } INTERP[2];
   __IO uint32_t         SPINLOCK[32];
 } SIO_TypeDef;
@@ -289,6 +296,7 @@ typedef struct {
 #define __IOQSPI_BASE                     (__APBPERIPH_BASE + 0x00018000U)
 #define __PADSUSER0_BASE                  (__APBPERIPH_BASE + 0x0001C000U)
 #define __PADSQSPI_BASE                   (__APBPERIPH_BASE + 0x00020000U)
+#define __PSM_BASE                        (__APBPERIPH_BASE + 0x00010000U)
 #define __RESETS_BASE                     (__APBPERIPH_BASE + 0x0000C000U)
 #define __TIMER_BASE                      (__APBPERIPH_BASE + 0x00054000U)
 #define __UART0_BASE                      (__APBPERIPH_BASE + 0x00034000U)
@@ -306,6 +314,7 @@ typedef struct {
 #define IO_QSPI                           ((IOUSER_TypeDef *) __IOQSPI_BASE)
 #define PADS_BANK0                        ((PADS_TypeDef *)   __PADSUSER0_BASE)
 #define PADS_QSPI                         ((PADS_TypeDef *)   __PADSQSPI_BASE)
+#define PSM                               ((PSM_TypeDef *)    __PSM_BASE)
 #define RESETS                            ((RESETS_TypeDef *) __RESETS_BASE)
 #define SIO                               ((SIO_TypeDef *)    __SIO_BASE)
 #define TIMER                             ((TIMER_TypeDef *)  __TIMER_BASE)
@@ -350,6 +359,29 @@ typedef struct {
 #define DMA_CTRL_TRIG_DATA_SIZE_WORD      DMA_CTRL_TRIG_DATA_SIZE(2U)
 #define DMA_CTRL_TRIG_HIGH_PRIORITY       (1U << 1)
 #define DMA_CTRL_TRIG_EN                  (1U << 0)
+/** @} */
+
+/**
+ * @name    PSM bits definitions (dangerous)
+ * @{
+ */
+#define PSM_ANY_PROC1                     (1U << 16)
+#define PSM_ANY_PROC0                     (1U << 15)
+#define PSM_ANY_SIO                       (1U << 14)
+#define PSM_ANY_VREG_AND_CHIP_RESET       (1U << 13)
+#define PSM_ANY_XIP                       (1U << 12)
+#define PSM_ANY_SRAM5                     (1U << 11)
+#define PSM_ANY_SRAM4                     (1U << 10)
+#define PSM_ANY_SRAM3                     (1U << 9)
+#define PSM_ANY_SRAM2                     (1U << 8)
+#define PSM_ANY_SRAM1                     (1U << 7)
+#define PSM_ANY_SRAM0                     (1U << 6)
+#define PSM_ANY_ROM                       (1U << 5)
+#define PSM_ANY_BUSFABRIC                 (1U << 4)
+#define PSM_ANY_RESETS                    (1U << 3)
+#define PSM_ANY_CLOCKS                    (1U << 2)
+#define PSM_ANY_XOSC                      (1U << 1)
+#define PSM_ANY_ROSC                      (1U << 0)
 /** @} */
 
 /**
