@@ -36,9 +36,9 @@
  * @{
  */
 /**
- * @brief   Callback support int the driver.
+ * @brief   Callback support in the driver.
  */
-#define RTC_SUPPORTS_CALLBACKS      FALSE
+#define RTC_SUPPORTS_CALLBACKS      TRUE
 
 /**
  * @brief   Number of alarms available.
@@ -87,6 +87,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of an RTC event.
+ */
+typedef enum {
+  RTC_EVENT_ALARM     = 0,            /** Alarm.                        */
+ } rtcevent_t;
+
+/**
  * @brief   Type of a generic RTC callback.
  */
 typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
@@ -122,6 +129,8 @@ typedef struct {
 
 #define RTC_ENABLE_DT_ALARM(n)        (1U << n)
 #define RTC_TEST_DT_ALARM(a, n)       ((a & (1U << n)) != 0)
+#define RTC_DISABLE_ALL_DT_ALARMS     0U
+#define RTC_ENABLE_ALL_DT_ALARMS      ((rtcdtmask_t)-1)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

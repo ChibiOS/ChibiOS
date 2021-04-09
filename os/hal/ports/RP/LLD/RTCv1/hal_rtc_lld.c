@@ -66,6 +66,7 @@ static void rtc_disable_alarm(RTCDriver *rtcp) {
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
 #if (RTC_ALARMS > 0) || defined(__DOXYGEN__)
 /**
  * @brief   RTC alarm interrupt handler.
@@ -77,7 +78,7 @@ OSAL_IRQ_HANDLER(RP_RTC_IRQ_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   if (RTCD1.callback != NULL) {
-    RTCD1.callback(&RTCD1, 1);
+    RTCD1.callback(&RTCD1, RTC_EVENT_ALARM);
   }
 
   OSAL_IRQ_EPILOGUE();
@@ -308,6 +309,7 @@ void rtc_lld_get_alarm(RTCDriver *rtcp,
 }
 #endif /* RTC_ALARMS > 0 */
 
+#if RTC_SUPPORTS_CALLBACKS == TRUE
 /**
  * @brief   Enables or disables RTC callbacks.
  * @details This function enables or disables callbacks. Use a @p NULL pointer
@@ -323,6 +325,7 @@ void rtc_lld_set_callback(RTCDriver *rtcp, rtccb_t callback) {
 
   rtcp->callback = callback;
 }
+#endif /* RTC_SUPPORTS_CALLBACKS == TRUE */
 
 #endif /* HAL_USE_RTC */
 
