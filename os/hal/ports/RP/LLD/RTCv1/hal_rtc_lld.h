@@ -69,16 +69,22 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/**
+ * @name    Date/time alarm setting values
+ * @{
+ */
+#define RTC_DT_ALARM_SECOND   0U
+#define RTC_DT_ALARM_MINUTE   1U
+#define RTC_DT_ALARM_HOUR     2U
+#define RTC_DT_ALARM_DAY      3U
+#define RTC_DT_ALARM_MONTH    4U
+#define RTC_DT_ALARM_YEAR     5U
+#define RTC_DT_ALARM_DOTW     6U
+/** @} */
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Type of an RTC event.
- */
-typedef enum {
-  RTC_EVENT_SECOND = 0                  /** Triggered every second.         */
-} rtcevent_t;
 
 /**
  * @brief   Type of a generic RTC callback.
@@ -86,11 +92,17 @@ typedef enum {
 typedef void (*rtccb_t)(RTCDriver *rtcp, rtcevent_t event);
 
 /**
+ * @brief   Type of a date/time mask.
+ */
+typedef uint8_t rtcdtmask_t;
+
+/**
  * @brief   Type of a structure representing an RTC alarm time stamp.
  */
 typedef struct {
   /* End of the mandatory fields.*/
   RTCDateTime       alarm;
+  rtcdtmask_t       mask;
 } RTCAlarm;
 
 /**
@@ -101,11 +113,15 @@ typedef struct {
   RTC_TypeDef       *rtc;                                                   \
   /* Callback pointer.*/                                                    \
   rtccb_t           callback;                                               \
-  RTCDateTime       alarm;
+  RTCDateTime       alarm;                                                  \
+  rtcdtmask_t       mask
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+#define RTC_ENABLE_DT_ALARM(n)        (1U << n)
+#define RTC_TEST_DT_ALARM(a, n)       ((a & (1U << n)) != 0)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
