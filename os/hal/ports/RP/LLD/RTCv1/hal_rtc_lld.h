@@ -130,7 +130,7 @@ typedef struct {
 #define RTC_ENABLE_DT_ALARM(n)        (1U << n)
 #define RTC_TEST_DT_ALARM(a, n)       ((a & (1U << n)) != 0)
 #define RTC_DISABLE_ALL_DT_ALARMS     0U
-#define RTC_ENABLE_ALL_DT_ALARMS      ((rtcdtmask_t)-1)
+#define RTC_ENABLE_ALL_DT_ALARMS      0x7FU
 
 /*===========================================================================*/
 /* External declarations.                                                    */

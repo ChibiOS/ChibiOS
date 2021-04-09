@@ -77,6 +77,13 @@ OSAL_IRQ_HANDLER(RP_RTC_IRQ_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
+  /* Disable the alarm to clear the interrupt. */
+  rtc_disable_alarm(&RTCD1);
+
+  /* If it is a repeatable alarm, re-enable the alarm. */
+  if (RTCD1.mask != RTC_DISABLE_ALL_DT_ALARMS) {
+      rtc_enable_alarm(&RTCD1);
+  }
 #if RTC_SUPPORTS_CALLBACKS == TRUE
   if (RTCD1.callback != NULL) {
     RTCD1.callback(&RTCD1, RTC_EVENT_ALARM);
@@ -122,6 +129,7 @@ void rtc_lld_init(void) {
   RTCD1.rtc->CLKDIVM1 = clock - 1;
 
   /* Enable RTC vector. */
+  rtc_disable_alarm(&RTCD1);
   nvicEnableVector(RP_RTC_IRQ_NUMBER, RP_IRQ_RTC_PRIORITY);
 }
 
@@ -283,7 +291,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   rtcp->rtc->IRQSETUP1 = setup1;
 
   /* Enable the interrupt and re-enable the RTC. */
-  rtcp->rtc->INTE = RTC_INTE_RTC;
+  rtcp->rtc->INTE |= RTC_INTE_RTC;
   rtc_enable_alarm(rtcp);
 
   /* Save the alarm settings. */
