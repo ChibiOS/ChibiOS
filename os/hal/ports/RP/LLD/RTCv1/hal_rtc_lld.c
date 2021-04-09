@@ -106,7 +106,7 @@ void rtc_lld_init(void) {
 
 #if (RTC_ALARMS > 0)
   RTCD1.mask = RTC_DISABLE_ALL_DT_ALARMS;
-##endif
+#endif
 
   /* RTC register bank pointer initialization.*/
   RTCD1.rtc = RTC;
