@@ -110,10 +110,14 @@ void PendSV_Handler(void) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(RP_SIO_IRQ_PROC0_HANDLER) {
+CH_IRQ_HANDLER(Vector7C) {
 
   CH_IRQ_PROLOGUE();
 
+  /* Error flags cleared and ignored.*/
+  SIO->FIFO_ST = SIO_FIFO_ST_ROE | SIO_FIFO_ST_WOF;
+
+  /* Read FIFO is fully emptied.*/
   while ((SIO->FIFO_ST & SIO_FIFO_ST_VLD) != 0U) {
     uint32_t message = SIO->FIFO_RD;
 #if defined(PORT_HANDLE_FIFO_MESSAGE)
@@ -136,10 +140,14 @@ CH_IRQ_HANDLER(RP_SIO_IRQ_PROC0_HANDLER) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(RP_SIO_IRQ_PROC1_HANDLER) {
+CH_IRQ_HANDLER(Vector80) {
 
   CH_IRQ_PROLOGUE();
 
+  /* Error flags cleared and ignored.*/
+  SIO->FIFO_ST = SIO_FIFO_ST_ROE | SIO_FIFO_ST_WOF;
+
+  /* Read FIFO is fully emptied.*/
   while ((SIO->FIFO_ST & SIO_FIFO_ST_VLD) != 0U) {
     uint32_t message = SIO->FIFO_RD;
 #if defined(PORT_HANDLE_FIFO_MESSAGE)
@@ -180,11 +188,14 @@ void port_init(os_instance_t *oip) {
 
 #if CH_CFG_SMP_MODE != FALSE
   /* FIFO handlers for each core.*/
+  SIO->FIFO_ST = SIO_FIFO_ST_ROE | SIO_FIFO_ST_WOF;
   if (core_id == 0U) {
-    NVIC_SetPriority(15, CORTEX_MAX_KERNEL_PRIORITY);
+    NVIC_SetPriority(15, CORTEX_MINIMUM_PRIORITY);
+    NVIC_EnableIRQ(15);
   }
   else if (core_id == 1U) {
-    NVIC_SetPriority(16, CORTEX_MAX_KERNEL_PRIORITY);
+    NVIC_SetPriority(16, CORTEX_MINIMUM_PRIORITY);
+    NVIC_EnableIRQ(16);
   }
   else {
     chDbgAssert(false, "unexpected core id");

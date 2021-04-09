@@ -17,6 +17,8 @@
 #include "ch.h"
 #include "hal.h"
 
+semaphore_t blinker_sem;
+
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
@@ -26,10 +28,8 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palClearLine(25U);
-    chThdSleepMilliseconds(500);
-    palSetLine(25U);
-    chThdSleepMilliseconds(500);
+    chSemWait(&blinker_sem);
+    palToggleLine(25U);
   }
 }
 
@@ -43,6 +43,15 @@ static void start_core1(void) {
                              (uint32_t)_crt0_c1_entry};
   unsigned seq;
 
+#if 0
+  /* Resetting core1.*/
+  PSM_SET->FRCE_OFF = PSM_ANY_PROC1;
+  while ((PSM->FRCE_OFF & PSM_ANY_PROC1) == 0U) {
+  }
+  PSM_CLR->FRCE_OFF = PSM_ANY_PROC1;
+#endif
+
+  /* Starting core 1.*/
   seq = 0;
   do {
     uint32_t response;
@@ -77,7 +86,9 @@ int main(void) {
   /*
    * Starting core 1 after performing all OS-related initializations.
    */
+  chSysSuspend();
   start_core1();
+  chSysEnable();
 
   /*
    * Setting up GPIOs.
@@ -87,6 +98,7 @@ int main(void) {
   /*
    * Creates the blinker thread.
    */
+  chSemObjectInit(&blinker_sem, 0);
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*

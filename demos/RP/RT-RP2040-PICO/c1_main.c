@@ -65,6 +65,22 @@ static const os_instance_config_t core1_cfg = {
 #endif
 };
 
+
+/*
+ * Green LED blinker thread, times are in milliseconds.
+ */
+static THD_WORKING_AREA(waThreadTimer, 128);
+static THD_FUNCTION(ThreadTimer, arg) {
+  extern semaphore_t blinker_sem;
+
+  (void)arg;
+  chRegSetThreadName("timer");
+  while (true) {
+    chThdSleepMilliseconds(500);
+    chSemSignal(&blinker_sem);
+  }
+}
+
 /**
  * Core 1 entry point.
  */
@@ -89,6 +105,11 @@ void c1_main(void) {
    */
   sioStart(&SIOD1, NULL);
   sioStartOperation(&SIOD1, NULL);
+
+  /*
+   * Creates the timer thread.
+   */
+  chThdCreateStatic(waThreadTimer, sizeof(waThreadTimer), NORMALPRIO, ThreadTimer, NULL);
 
   /*
    * Shell manager initialization.

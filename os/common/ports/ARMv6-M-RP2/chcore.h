@@ -520,13 +520,11 @@ __STATIC_INLINE void port_notify_instance(os_instance_t *oip) {
 
   (void)oip;
 
-  /* Waiting for space into the FIFO.*/
-  while ((SIO->FIFO_ST & SIO_FIFO_ST_RDY) == 0U) {
-    __WFE();
+  /* Sending a reschedule order to the other core if there is space in
+     the FIFO.*/
+  if ((SIO->FIFO_ST & SIO_FIFO_ST_RDY) != 0U) {
+    SIO->FIFO_WR = PORT_FIFO_RESCHEDULE_MESSAGE;
   }
-
-  /* Sending a reschedule order to the other core.*/
-  SIO->FIFO_WR = PORT_FIFO_RESCHEDULE_MESSAGE;
 }
 
 /**
