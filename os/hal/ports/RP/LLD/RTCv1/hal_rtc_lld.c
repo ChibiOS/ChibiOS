@@ -77,9 +77,11 @@ OSAL_IRQ_HANDLER(RP_RTC_IRQ_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
+#if RTC_SUPPORTS_CALLBACKS == TRUE
   if (RTCD1.callback != NULL) {
     RTCD1.callback(&RTCD1, RTC_EVENT_ALARM);
   }
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -102,7 +104,11 @@ void rtc_lld_init(void) {
   /* Callback initially disabled.*/
   RTCD1.callback = NULL;
 
-  /* RTC pointer initialization.*/
+#if (RTC_ALARMS > 0)
+  RTCD1.mask = RTC_DISABLE_ALL_DT_ALARMS;
+##endif
+
+  /* RTC register bank pointer initialization.*/
   RTCD1.rtc = RTC;
 
   /* Get clock parameters. */
