@@ -82,7 +82,12 @@ extern bool __avr_in_isr;
 /**
  * @brief   Name of the implemented architecture.
  */
-#define PORT_ARCHITECTURE_NAME          "MegaAVR"
+#define PORT_ARCHITECTURE_NAME          "AVR"
+
+/**
+ * @brief   Name of the architecture variant.
+ */
+#define PORT_CORE_VARIANT_NAME          "MegaAVR"
 
 /**
  * @brief   Compiler name and version.
@@ -318,10 +323,10 @@ struct port_context {
  */
 #define PORT_IRQ_EPILOGUE() {                                               \
   __avr_in_isr = false;                                                     \
-  _dbg_check_lock();                                                        \
+  __dbg_check_lock();                                                       \
   if (chSchIsPreemptionRequired())                                          \
-    chSchDoReschedule();                                                    \
-  _dbg_check_unlock();                                                      \
+    chSchDoPreemption();                                                    \
+  __dbg_check_unlock();                                                     \
 }
 
 /**
@@ -358,7 +363,7 @@ struct port_context {
  * @brief   Port-related initialization code.
  * @note    This function is empty in this port.
  */
-#define port_init() {                                                       \
+#define port_init(oip) {                                                    \
   __avr_in_isr = true;                                                      \
 }
 
