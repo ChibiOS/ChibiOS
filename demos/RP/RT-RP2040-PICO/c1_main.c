@@ -109,7 +109,8 @@ void c1_main(void) {
   /*
    * Creates the timer thread.
    */
-  chThdCreateStatic(waThreadTimer, sizeof(waThreadTimer), NORMALPRIO, ThreadTimer, NULL);
+  chThdCreateStatic(waThreadTimer, sizeof(waThreadTimer),
+                    NORMALPRIO + 10, ThreadTimer, NULL);
 
   /*
    * Shell manager initialization.
