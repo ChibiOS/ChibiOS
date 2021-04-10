@@ -254,20 +254,10 @@
  */
 #define PORT_ARCHITECTURE_NAME          "ARMv6-M"
 
-#if ((CORTEX_MODEL == 0) && !defined(__CORE_CM0PLUS_H_DEPENDANT)) ||        \
-    defined(__DOXYGEN__)
-
-  /**
-   * @brief   Name of the architecture variant.
-   */
-  #define PORT_CORE_VARIANT_NAME        "Cortex-M0"
-
-#elif (CORTEX_MODEL == 0) && defined(__CORE_CM0PLUS_H_DEPENDANT)
-  #define PORT_CORE_VARIANT_NAME        "Cortex-M0+"
-
-#else
-  #error "unknown ARMv6-M variant"
-#endif
+/**
+ * @brief   Name of the architecture variant.
+ */
+#define PORT_CORE_VARIANT_NAME          "Cortex-M0+"
 
 /**
  * @brief   Port-specific information string.
@@ -352,16 +342,6 @@ struct port_intctx {
  */
 struct port_context {
   struct port_intctx    *sp;
-};
-
-/**
- * @brief   Structure encapsulating all the port-related static data.
- */
-struct port_data {
-  /**
-   * @brief   Pointer to the OS instances indexed by core number.
-   */
-  os_instance_t         *oip[PORT_CORES_NUMBER];
 };
 
 /*===========================================================================*/
