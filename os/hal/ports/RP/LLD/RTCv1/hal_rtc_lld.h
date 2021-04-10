@@ -127,10 +127,13 @@ typedef struct {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-#define RTC_ENABLE_DT_ALARM(n)        (1U << n)
-#define RTC_TEST_DT_ALARM(a, n)       ((a & (1U << n)) != 0)
-#define RTC_DISABLE_ALL_DT_ALARMS     0U
-#define RTC_ENABLE_ALL_DT_ALARMS      0x7FU
+#define RTC_ALARM_ENABLE_MATCH(n)         (1U << n)
+#define RTC_ALARM_TEST_MATCH(a, n)        ((a & (1U << n)) != 0)
+#define RTC_ALARM_DISABLE_ALL_MATCHING    0U
+#define RTC_ALARM_ENABLE_ALL_MATCHING     0x7FU
+/* DOTW is not taken into consideration in a non-repeating alarm. */
+#define RTC_ALARM_NON_REPEATING           (RTC_ALARM_ENABLE_ALL_MATCHING     \
+              & ~(RTC_ALARM_ENABLE_MATCH(RTC_DT_ALARM_DOTW)))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

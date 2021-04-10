@@ -81,7 +81,7 @@ OSAL_IRQ_HANDLER(RP_RTC_IRQ_HANDLER) {
   rtc_disable_alarm(&RTCD1);
 
   /* If it is a repeatable alarm, re-enable the alarm. */
-  if (RTCD1.mask != RTC_DISABLE_ALL_DT_ALARMS) {
+  if (RTCD1.mask != RTC_ALARM_NON_REPEATING) {
       rtc_enable_alarm(&RTCD1);
   }
 #if RTC_SUPPORTS_CALLBACKS == TRUE
@@ -112,7 +112,7 @@ void rtc_lld_init(void) {
   RTCD1.callback = NULL;
 
 #if (RTC_ALARMS > 0)
-  RTCD1.mask = RTC_DISABLE_ALL_DT_ALARMS;
+  RTCD1.mask = RTC_ALARM_DISABLE_ALL_MATCHING;
 #endif
 
   /* RTC register bank pointer initialization.*/
@@ -267,19 +267,19 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
            (RTC_IRQ_SETUP_1_SEC(sec));
 
   /* Check and set match enable bits. */
-  if (RTC_TEST_DT_ALARM(dtmask, RTC_DT_ALARM_YEAR))
+  if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_YEAR))
         setup0 |= RTC_IRQ_SETUP_0_YEAR_ENA;
-  if (RTC_TEST_DT_ALARM(dtmask, RTC_DT_ALARM_MONTH))
+  if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_MONTH))
         setup0 |= RTC_IRQ_SETUP_0_MONTH_ENA;
-  if (RTC_TEST_DT_ALARM(dtmask, RTC_DT_ALARM_DAY))
+  if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_DAY))
         setup0 |= RTC_IRQ_SETUP_0_DAY_ENA;
-  if (RTC_TEST_DT_ALARM(dtmask, RTC_DT_ALARM_DOTW))
+  if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_DOTW))
         setup1 |= RTC_IRQ_SETUP_1_DOTW_ENA;
-  if (RTC_TEST_DT_ALARM(dtmask, RTC_DT_ALARM_HOUR))
+  if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_HOUR))
         setup1 |= RTC_IRQ_SETUP_1_HOUR_ENA;
-  if (RTC_TEST_DT_ALARM(dtmask, RTC_DT_ALARM_MINUTE))
+  if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_MINUTE))
         setup1 |= RTC_IRQ_SETUP_1_MIN_ENA;
-  if (RTC_TEST_DT_ALARM(dtmask, RTC_DT_ALARM_SECOND))
+  if (RTC_ALARM_TEST_MATCH(dtmask, RTC_DT_ALARM_SECOND))
         setup1 |= RTC_IRQ_SETUP_1_SEC_ENA;
 
   /* Entering a reentrant critical zone.*/

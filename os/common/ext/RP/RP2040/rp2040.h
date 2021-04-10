@@ -217,7 +217,7 @@ typedef struct {
     __IO uint32_t       ACCUM1_ADD;
     __IO uint32_t       BASE_1AND0;
   } INTERP[2];
-  __IO uint32_t         SPINLOCK[32];
+  __IO uint32_t         SPINLOCK[32];       /* NUM_SPIN_LOCKS */
 } SIO_TypeDef;
 
 typedef struct {
@@ -225,7 +225,7 @@ typedef struct {
   __IO uint32_t         TIMELW;
   __I  uint32_t         TIMEHR;
   __I  uint32_t         TIMELR;
-  __IO uint32_t         ALARM[4];
+  __IO uint32_t         ALARM[4];           /* NUM_TIMERS */
   __IO uint32_t         ARMED;
   __I  uint32_t         TIMERAWH;
   __I  uint32_t         TIMERAWL;
@@ -282,6 +282,143 @@ typedef struct {
   __IO uint32_t         INTF;
   __IO uint32_t         INTS;
 } RTC_TypeDef;
+
+typedef struct {
+  __IO uint32_t         CR0;
+  __IO uint32_t         CR1;
+  __IO uint32_t         DR;
+  __IO uint32_t         SR;
+  __IO uint32_t         CPSR;
+  __IO uint32_t         IMSC;
+  __IO uint32_t         RIS;
+  __IO uint32_t         MIS;
+  __IO uint32_t         ICR;
+  __IO uint32_t         DMACR;
+} SPI_TypeDef;
+
+typedef struct {
+  __IO uint32_t         CON;
+  __IO uint32_t         TAR;
+  __IO uint32_t         SAR;
+  __I  uint32_t         resvdC;
+  __IO uint32_t         DATACMD;
+  __IO uint32_t         SSSCLHCNT;
+  __IO uint32_t         SSSCLLCNT;
+  __IO uint32_t         FSSCLHCNT;
+  __IO uint32_t         FSSCLLCNT;
+  __I  uint32_t         resvd24[2];
+  __IO uint32_t         INTRSTAT;
+  __IO uint32_t         INTRMASK;
+  __IO uint32_t         RAWINTRSTAT;
+  __IO uint32_t         RXTL;
+  __IO uint32_t         TXTL;
+  __IO uint32_t         CLRINTR;
+  __IO uint32_t         CLRRXUNDER;
+  __IO uint32_t         CLRRXOVER;
+  __IO uint32_t         CLRTXOVER;
+  __IO uint32_t         CLRRDREQ;
+  __IO uint32_t         CLRTXABRT;
+  __IO uint32_t         CLRRXDONE;
+  __IO uint32_t         CLRACTIVITY;
+  __IO uint32_t         CLRSTOPDET;
+  __IO uint32_t         CLRSTARTDET;
+  __IO uint32_t         CLRGENCALL;
+  __IO uint32_t         ENABLE;
+  __IO uint32_t         STATUS;
+  __IO uint32_t         TXFLR;
+  __IO uint32_t         RXFLR;
+  __IO uint32_t         SDAHOLD;
+  __IO uint32_t         TXABRTSOURCE;
+  __IO uint32_t         SLVDATANACKONLY;
+  __IO uint32_t         DMACR;
+  __IO uint32_t         DMATDLR;
+  __IO uint32_t         DMARDLR;
+  __IO uint32_t         SDASETUP;
+  __IO uint32_t         ACKGENERALCALL;
+  __IO uint32_t         ENABLESTATUS;
+  __IO uint32_t         FSSPKLEN;
+  __I  uint32_t         resvdA4;
+  __IO uint32_t         CLRRESTARTDET;
+} I2C_TypeDef;
+
+typedef struct {
+  __IO uint32_t         CS;
+  __IO uint32_t         RESULT;
+  __IO uint32_t         FCS;
+  __IO uint32_t         FIFO;
+  __IO uint32_t         DIV;
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE;
+  __IO uint32_t         INTF;
+  __IO uint32_t         INTS;
+} ADC_TypeDef;
+
+typedef struct {
+  __IO uint32_t         DEVADDRCTRL;
+  __IO uint32_t         INTEPADDRCTRL[15]; /* USB_HOST_INTERRUPT_ENDPOINTS */
+  __IO uint32_t         MAINCTRL;
+  __IO uint32_t         SOFRW;
+  __I  uint32_t         SOFRD;
+  __IO uint32_t         SIECTRL;
+  __IO uint32_t         SIESTATUS;
+  __IO uint32_t         INTEPCTRL;
+  __IO uint32_t         BUFSTATUS;
+  __IO uint32_t         BUFCPUSHOULDHANDLE;
+  __IO uint32_t         ABORT;
+  __IO uint32_t         ABORTDONE;
+  __IO uint32_t         EPSTALLARM;
+  __IO uint32_t         NAKPOLL;
+  __IO uint32_t         EPNAKSTALLSTATUS;
+  __IO uint32_t         MUXING;
+  __IO uint32_t         PWR;
+  __IO uint32_t         PHYDIRECT;
+  __IO uint32_t         PHYDIRECTOVERRIDE;
+  __IO uint32_t         PHYTRIM;
+  __IO uint32_t         LINESTATE_TUNING;
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE;
+  __IO uint32_t         INTF;
+  __IO uint32_t         INTS;
+} USB_TypeDef;
+
+typedef struct {
+  __IO uint32_t         CTRL;
+  __O  uint32_t         LOAD;
+  __I  uint32_t         REASON;
+  __IO uint32_t         SCRATCH[8];
+  __IO uint32_t         TICK;
+} WATCHDOG_TypeDef;
+
+typedef struct {
+  __IO uint32_t         CTRL;
+  __I  uint32_t         FSTAT;
+  __IO uint32_t         FDEBUG;
+  __I  uint32_t         FLEVEL;
+  __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         IRQ;
+  __O  uint32_t         IRQFORCE;
+  __IO uint32_t         INPUTSYNCBYPASS;
+  __IO uint32_t         DBGPADOUT;
+  __IO uint32_t         DBGPADOE;
+  __IO uint32_t         DBGCFGINFO;
+  __O  uint32_t         INSTRMEM[32];
+  struct {
+    __IO uint32_t       CLKDIV;
+    __IO uint32_t       EXECCTRL;
+    __IO uint32_t       SHIFTCTRL;
+    __I  uint32_t       ADDR;
+    __IO uint32_t       INSTR;
+    __IO uint32_t       PINCTRL;
+  } SM[4];                                /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE0;
+  __IO uint32_t         INTF0;
+  __I  uint32_t         INTS0;
+  __IO uint32_t         INTE1;
+  __IO uint32_t         INTF1;
+  __I  uint32_t         INTS1;
+} PIO_TypeDef;
 /** @} */
 
 /**
@@ -291,7 +428,9 @@ typedef struct {
 #define __APBPERIPH_BASE                  0x40000000U
 #define __AHBPERIPH_BASE                  0x50000000U
 #define __IOPORT_BASE                     0xD0000000U
+
 #define __DMA_BASE                        (__APBPERIPH_BASE + 0x00000000U)
+#define __RESETS_BASE                     (__APBPERIPH_BASE + 0x0000C000U)
 #define __IOUSER0_BASE                    (__APBPERIPH_BASE + 0x00014000U)
 #define __IOQSPI_BASE                     (__APBPERIPH_BASE + 0x00018000U)
 #define __PADSUSER0_BASE                  (__APBPERIPH_BASE + 0x0001C000U)
@@ -300,12 +439,23 @@ typedef struct {
 #define __PSM_XOR_BASE                    (__APBPERIPH_BASE + 0x00011000U)
 #define __PSM_SET_BASE                    (__APBPERIPH_BASE + 0x00012000U)
 #define __PSM_CLR_BASE                    (__APBPERIPH_BASE + 0x00013000U)
-#define __RESETS_BASE                     (__APBPERIPH_BASE + 0x0000C000U)
 #define __TIMER_BASE                      (__APBPERIPH_BASE + 0x00054000U)
 #define __UART0_BASE                      (__APBPERIPH_BASE + 0x00034000U)
 #define __UART1_BASE                      (__APBPERIPH_BASE + 0x00038000U)
-#define __SIO_BASE                        (__IOPORT_BASE    + 0x00000000U)
+#define __SPI0_BASE                       (__APBPERIPH_BASE + 0x0003C000U)
+#define __SPI1_BASE                       (__APBPERIPH_BASE + 0x00040000U)
+#define __I2C0_BASE                       (__APBPERIPH_BASE + 0x00044000U)
+#define __I2C1_BASE                       (__APBPERIPH_BASE + 0x00048000U)
+#define __ADC_BASE                        (__APBPERIPH_BASE + 0x0004C000U)
+#define __PWM_BASE                        (__APBPERIPH_BASE + 0x00050000U)
+#define __WATCHDOG_BASE                   (__APBPERIPH_BASE + 0x00058000U)
 #define __RTC_BASE                        (__APBPERIPH_BASE + 0x0005C000U)
+
+#define __USB_BASE                        (__AHBPERIPH_BASE + 0x01100000U)
+#define __PIO0_BASE                       (__AHBPERIPH_BASE + 0x02000000U)
+#define __PIO1_BASE                       (__AHBPERIPH_BASE + 0x03000000U)
+
+#define __SIO_BASE                        (__IOPORT_BASE    + 0x00000000U)
 /** @} */
 
 /**
@@ -962,6 +1112,54 @@ typedef struct {
 #define RTC_RTC_0_SEC_Msk                 (0x3FU << RTC_RTC_0_SEC_Pos)
 #define RTC_RTC_0_SEC(n)                  ((n & RTC_RTC_0_SEC_Msk) >>        \
                                             RTC_RTC_0_SEC_Pos)
+/** @} */
+
+/**
+ * @name    WATCHDOG bits definitions
+ * @{
+ */
+#define WATCHDOG_CTRL_TRIGGER_Pos         31U
+#define WATCHDOG_CTRL_TRIGGER_Msk         (1U << WATCHDOG_CTRL_TRIGGER_Pos)
+#define WATCHDOG_CTRL_TRIGGER             WATCHDOG_CTRL_TRIGGER_Msk
+#define WATCHDOG_CTRL_ENABLE_Pos          30U
+#define WATCHDOG_CTRL_ENABLE_Msk          (1U << WATCHDOG_CTRL_ENABLE_Pos)
+#define WATCHDOG_CTRL_ENABLE              WATCHDOG_CTRL_ENABLE_Msk
+#define WATCHDOG_CTRL_PAUSE_DBG1_Pos      26U
+#define WATCHDOG_CTRL_PAUSE_DBG1_Msk      (1U << WATCHDOG_CTRL_PAUSE_DBG1_Pos)
+#define WATCHDOG_CTRL_PAUSE_DBG1          WATCHDOG_CTRL_PAUSE_DBG1_Msk
+#define WATCHDOG_CTRL_PAUSE_DBG0_Pos      25U
+#define WATCHDOG_CTRL_PAUSE_DBG0_Msk      (1U << WATCHDOG_CTRL_PAUSE_DBG0_Pos)
+#define WATCHDOG_CTRL_PAUSE_DBG0          WATCHDOG_CTRL_PAUSE_JTAG_Msk
+#define WATCHDOG_CTRL_PAUSE_JTAG_Pos      24U
+#define WATCHDOG_CTRL_PAUSE_JTAG_Msk      (1U << WATCHDOG_CTRL_PAUSE_JTAG_Pos)
+#define WATCHDOG_CTRL_PAUSE_JTAG          WATCHDOG_CTRL_PAUSE_JTAG_Msk
+#define WATCHDOG_CTRL_TIME_Pos            23U
+#define WATCHDOG_CTRL_TIME_Msk            (1U << WATCHDOG_CTRL_TIME_Pos)
+#define WATCHDOG_CTRL_TIME                WATCHDOG_CTRL_TIME_Msk
+
+#define WATCHDOG_LOAD_Pos                 0U
+#define WATCHDOG_LOAD_Msk                 (0xFFFFFFU << WATCHDOG_LOAD_Pos)
+#define WATCHDOG_LOAD                     WATCHDOG_LOAD_Msk
+
+#define WATCHDOG_REASON_FORCE_Pos         1U
+#define WATCHDOG_REASON_FORCE_Msk         (1U << WATCHDOG_REASON_FORCE_Pos)
+#define WATCHDOG_REASON_FORCE             WATCHDOG_REASON_FORCE_Msk
+#define WATCHDOG_REASON_TIMER_Pos         0U
+#define WATCHDOG_REASON_TIMER_Msk         (1U << WATCHDOG_REASON_TIMER_Pos)
+#define WATCHDOG_REASON_TIMER             WATCHDOG_REASON_TIMER_Msk
+
+#define WATCHDOG_TICK_COUNT_Pos           11U
+#define WATCHDOG_TICK_COUNT_Msk           (0xFF800U << WATCHDOG_TICK_COUNT_Pos)
+#define WATCHDOG_TICK_COUNT               WATCHDOG_TICK_COUNT_Msk
+#define WATCHDOG_TICK_RUNNING_Pos         10U
+#define WATCHDOG_TICK_RUNNING_Msk         (1U << WATCHDOG_TICK_RUNNING_Pos)
+#define WATCHDOG_TICK_RUNNING             WATCHDOG_TICK_RUNNING_Msk
+#define WATCHDOG_TICK_ENABLE_Pos          9U
+#define WATCHDOG_TICK_ENABLE_Msk          (1U << WATCHDOG_TICK_ENABLE_Pos)
+#define WATCHDOG_TICK_ENABLE              WATCHDOG_TICK_ENABLE_Msk
+#define WATCHDOG_TICK_CYCLES_Pos          0U
+#define WATCHDOG_TICK_CYCLES_Msk          (0x1FFU << WATCHDOG_TICK_CYCLES_Pos)
+#define WATCHDOG_TICK_CYCLES
 /** @} */
 
 #ifdef __cplusplus
