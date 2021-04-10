@@ -81,7 +81,7 @@ OSAL_IRQ_HANDLER(RP_RTC_IRQ_HANDLER) {
   rtc_disable_alarm(&RTCD1);
 
   /* If it is a repeatable alarm, re-enable the alarm. */
-  if (RTCD1.mask != RTC_ALARM_NON_REPEATING) {
+  if ((RTCD1.mask & RTC_ALARM_NON_REPEATING) != RTC_ALARM_NON_REPEATING) {
       rtc_enable_alarm(&RTCD1);
   }
 #if RTC_SUPPORTS_CALLBACKS == TRUE
@@ -240,7 +240,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   const RTCDateTime *timespec = &alarmspec->alarm;
   const rtcdtmask_t dtmask = alarmspec->mask;
 
-  if (dtmask == 0) {
+  if (dtmask == RTC_ALARM_DISABLE_ALL_MATCHING) {
     /* Disable RTC when no fields are enabled. */
     rtc_disable_alarm(rtcp);
     return;

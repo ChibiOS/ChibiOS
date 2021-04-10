@@ -477,6 +477,16 @@ typedef struct {
 #define UART0                             ((UART_TypeDef *)   __UART0_BASE)
 #define UART1                             ((UART_TypeDef *)   __UART1_BASE)
 #define RTC                               ((RTC_TypeDef *)    __RTC_BASE)
+#define SPI0                              ((SPI_TypeDef *)    __SPI0_BASE)
+#define SPI1                              ((SPI_TypeDef *)    __SPI1_BASE)
+#define I2C0                              ((I2C_TypeDef *)    __I2C0_BASE)
+#define I2C1                              ((I2C_TypeDef *)    __I2C1_BASE)
+#define ADC                               ((ADC_TypeDef *)    __ADC_BASE)
+#define PWM                               ((PWM_TypeDef *)    __PWM_BASE)
+#define PIO0                              ((PIO_TypeDef *)    __PIO0_BASE)
+#define PIO1                              ((PIO_TypeDef *)    __PIO1_BASE)
+#define USB                               ((USB_TypeDef *)    __USB_BASE)
+#define WATCHDOG                          ((WATCHDOG_TypeDef *) __WATCHDOG_BASE))
 /** @} */
 
 /**
@@ -1159,7 +1169,7 @@ typedef struct {
 #define WATCHDOG_TICK_ENABLE              WATCHDOG_TICK_ENABLE_Msk
 #define WATCHDOG_TICK_CYCLES_Pos          0U
 #define WATCHDOG_TICK_CYCLES_Msk          (0x1FFU << WATCHDOG_TICK_CYCLES_Pos)
-#define WATCHDOG_TICK_CYCLES
+#define WATCHDOG_TICK_CYCLES              WATCHDOG_TICK_CYCLES_Msk
 /** @} */
 
 #ifdef __cplusplus
