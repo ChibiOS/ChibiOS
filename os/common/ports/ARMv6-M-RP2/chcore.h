@@ -262,9 +262,14 @@
 /**
  * @brief   Port-specific information string.
  */
-#if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
-  #define PORT_INFO                     "Preemption through NMI"
+#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+  #if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
+    #define PORT_INFO                   "Preemption through NMI (SMP)"
+  #else
+    #define PORT_INFO                   "Preemption through PendSV (SMP)"
+  #endif
 #else
+  #define PORT_INFO                     "Preemption through NMI"
   #define PORT_INFO                     "Preemption through PendSV"
 #endif
 /** @} */
