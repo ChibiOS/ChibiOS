@@ -374,7 +374,7 @@ typedef struct {
   __IO uint32_t         PHYDIRECT;
   __IO uint32_t         PHYDIRECTOVERRIDE;
   __IO uint32_t         PHYTRIM;
-  __IO uint32_t         LINESTATE_TUNING;
+  __IO uint32_t         LINESTATETUNING;
   __IO uint32_t         INTR;
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
@@ -1172,6 +1172,300 @@ typedef struct {
 #define WATCHDOG_TICK_CYCLES              WATCHDOG_TICK_CYCLES_Msk
 /** @} */
 
+/**
+ * @name    SPI bits definitions
+ * @{
+ */
+#define SPI_SSPCR0_SCR_Pos                8U
+#define SPI_SSPCR0_SCR_Msk                (0xFFU << SPI_SSPCR0_SCR_Pos)
+#define SPI_SSPCR0_SCR                    SPI_SSPCR0_SCR_Msk
+#define SPI_SSPCR0_SPH_Pos                7U
+#define SPI_SSPCR0_SPH_Msk                (1U << SPI_SSPCR0_SPH_Pos)
+#define SPI_SSPCR0_SPH                    SPI_SSPCR0_SPH_Msk
+#define SPI_SSPCR0_SPO_Pos                6U
+#define SPI_SSPCR0_SPO_Msk                (1U << SPI_SSPCR0_SPO_Pos)
+#define SPI_SSPCR0_SPO                    SPI_SSPCR0_SPO_Msk
+#define SPI_SSPCR0_FRF_Pos                4U
+#define SPI_SSPCR0_FRF_Msk                (3U << SPI_SSPCR0_FRF_Pos)
+#define SPI_SSPCR0_FRF                    SPI_SSPCR0_FRF_Msk
+#define SPI_SSPCR0_DSS_Pos                0U
+#define SPI_SSPCR0_DSS_Msk                (0xFU << SPI_SSPCR0_DSS_Pos)
+#define SPI_SSPCR0_DSS                    SPI_SSPCR0_DSS_Msk
+
+#define SPI_SSPCR1_SOD_Pos                3U
+#define SPI_SSPCR1_SOD_Msk                (1U << SPI_SSPCR1_SOD_Pos)
+#define SPI_SSPCR1_SOD                    SPI_SSPCR1_SOD_Msk
+#define SPI_SSPCR1_MS_Pos                 2U
+#define SPI_SSPCR1_MS_Msk                 (1U << SPI_SSPCR1_MS_Pos)
+#define SPI_SSPCR1_MS                     SPI_SSPCR1_MS_Msk
+#define SPI_SSPCR1_SSE_Pos                1U
+#define SPI_SSPCR1_SSE_Msk                (1U << SPI_SSPCR1_SSE_Pos)
+#define SPI_SSPCR1_SSE                    SPI_SSPCR1_SSE_Msk
+#define SPI_SSPCR1_LBM_Pos                0U
+#define SPI_SSPCR1_LBM_Msk                (1U << SPI_SSPCR1_LBM_Pos)
+#define SPI_SSPCR1_LBM                    SPI_SSPCR1_LBM_Msk
+
+#define SPI_SSPDR_LBM_Pos                 0U
+#define SPI_SSPDR_LBM_Msk                 (0xFFFFU << SPI_SSPDR_LBM_Pos)
+#define SPI_SSPDR_LBM                     SPI_SSPDR_LBM_Msk
+
+#define SPI_SSPSR_BSY_Pos                 4U
+#define SPI_SSPSR_BSY_Msk                 (1U << SPI_SSPSR_BSY_Pos)
+#define SPI_SSPSR_BSY                     SPI_SSPSR_BSY_Msk
+#define SPI_SSPSR_RFF_Pos                 3U
+#define SPI_SSPSR_RFF_Msk                 (1U << SPI_SSPSR_RFF_Pos)
+#define SPI_SSPSR_RFF                     SPI_SSPSR_RFF_Msk
+#define SPI_SSPSR_RNE_Pos                 2U
+#define SPI_SSPSR_RNE_Msk                 (1U << SPI_SSPSR_RNE_Pos)
+#define SPI_SSPSR_RNE                     SPI_SSPSR_RNE_Msk
+#define SPI_SSPSR_TNF_Pos                 1U
+#define SPI_SSPSR_TNF_Msk                 (1U << SPI_SSPSR_TNF_Pos)
+#define SPI_SSPSR_TNF                     SPI_SSPSR_TNF_Msk
+#define SPI_SSPSR_TFE_Pos                 0U
+#define SPI_SSPSR_TFE_Msk                 (1U << SPI_SSPSR_TFE_Pos)
+#define SPI_SSPSR_TFE                     SPI_SSPSR_TFE_Msk
+
+#define SPI_SSPCPSR_CPSDVSR_Pos           0U
+#define SPI_SSPCPSR_CPSDVSR_Msk           (0xFF << SPI_SSPCPSR_CPSDVSR_Pos)
+#define SPI_SSPCPSR_CPSDVSR               SPI_SSPCPSR_CPSDVSR_Msk
+
+#define SPI_SSPIMSC_TXIM_Pos              3U
+#define SPI_SSPIMSC_TXIM_Msk              (1U << SPI_SSPIMSC_TXIM_Pos)
+#define SPI_SSPIMSC_TXIM                  SPI_SSPIMSC_TXIM_Msk
+#define SPI_SSPIMSC_RXIM_Pos              2U
+#define SPI_SSPIMSC_RXIM_Msk              (1U << SPI_SSPIMSC_RXIM_Pos)
+#define SPI_SSPIMSC_RXIM                  SPI_SSPIMSC_RXIM_Msk
+#define SPI_SSPIMSC_RTIM_Pos              1U
+#define SPI_SSPIMSC_RTIM_Msk              (1U << SPI_SSPIMSC_RTIM_Pos)
+#define SPI_SSPIMSC_RTIM                  SPI_SSPIMSC_RTIM_Msk
+#define SPI_SSPIMSC_RORIM_Pos             0U
+#define SPI_SSPIMSC_RORIM_Msk             (1U << SPI_SSPIMSC_RORIM_Pos)
+#define SPI_SSPIMSC_RORIM                 SPI_SSPIMSC_RORIM_Msk
+
+#define SPI_SSPRIS_TXRIS_Pos              3U
+#define SPI_SSPRIS_TXRIS_Msk              (1U << SPI_SSPRIS_TXRIS_Pos)
+#define SPI_SSPRIS_TXRIS                  SPI_SSPRIS_TXRIS_Msk
+#define SPI_SSPRIS_RXRIS_Pos              2U
+#define SPI_SSPRIS_RXRIS_Msk              (1U << SPI_SSPRIS_RXRIS_Pos)
+#define SPI_SSPRIS_RXRIS                  SPI_SSPRIS_RXRIS_Msk
+#define SPI_SSPRIS_RTRIS_Pos              1U
+#define SPI_SSPRIS_RTRIS_Msk              (1U << SPI_SSPRIS_RTRIS_Pos)
+#define SPI_SSPRIS_RTRIS                  SPI_SSPRIS_RTRIS_Msk
+#define SPI_SSPRIS_RORRIS_Pos             0U
+#define SPI_SSPRIS_RORRIS_Msk             (1U << SPI_SSPRIS_RORRIS_Pos)
+#define SPI_SSPRIS_RORRIS                 SPI_SSPRIS_RORRIS_Msk
+
+#define SPI_SSPMIS_TXMIS_Pos              3U
+#define SPI_SSPMIS_TXMIS_Msk              (1U << SPI_SSPMIS_TXMIS_Pos)
+#define SPI_SSPMIS_TXMIS                  SPI_SSPMIS_TXMIS_Msk
+#define SPI_SSPMIS_RXMIS_Pos              2U
+#define SPI_SSPMIS_RXMIS_Msk              (1U << SPI_SSPMIS_RXMIS_Pos)
+#define SPI_SSPMIS_RXMIS                  SPI_SSPMIS_RXMIS_Msk
+#define SPI_SSPMIS_RTMIS_Pos              1U
+#define SPI_SSPMIS_RTMIS_Msk              (1U << SPI_SSPMIS_RTMIS_Pos)
+#define SPI_SSPMIS_RTMIS                  SPI_SSPMIS_RTMIS_Msk
+#define SPI_SSPMIS_RORMIS_Pos             0U
+#define SPI_SSPMIS_RORMIS_Msk             (1U << SPI_SSPMIS_RORMIS_Pos)
+#define SPI_SSPMIS_RORMIS                 SPI_SSPMIS_RORMIS_Msk
+
+#define SPI_SSPICR_RTIC_Pos               1U
+#define SPI_SSPICR_RTIC_Msk               (1U << SPI_SSPICR_RTIC_Pos)
+#define SPI_SSPICR_RTIC                   SPI_SSPICR_RTIC_Msk
+#define SPI_SSPICR_RORIC_Pos              0U
+#define SPI_SSPICR_RORIC_Msk              (1U << SPI_SSPICR_RORIC_Pos)
+#define SPI_SSPICR_RORIC                  SPI_SSPICR_RORIC_Msk
+
+#define SPI_SSPDMACR_TXDMAE_Pos           1U
+#define SPI_SSPDMACR_TXDMAE_Msk           (1U << SPI_SSPDMACR_TXDMAE_Pos)
+#define SPI_SSPDMACR_TXDMAE               SPI_SSPDMACR_TXDMAE_Msk
+#define SPI_SSPDMACR_RXDMAE_Pos           0U
+#define SPI_SSPDMACR_RXDMAE_Msk           (1U << SPI_SSPDMACR_RXDMAE_Pos)
+#define SPI_SSPDMACR_RXDMAE               SPI_SSPDMACR_RXDMAE_Msk
+/** @} */
+
+/**
+ * @name    I2C bits definitions
+ * @{
+ */
+#define I2C_IC_CON_STOP_DET_IF_MASTER_ACTIVE_Pos  10U
+#define I2C_IC_CON_STOP_DET_IF_MASTER_ACTIVE_Msk  (1U << I2C_IC_CON_STOP_DET_IF_MASTER_ACTIVE_Pos)
+#define I2C_IC_CON_STOP_DET_IF_MASTER_ACTIVE      I2C_IC_CON_STOP_DET_IF_MASTER_ACTIVE_Msk
+#define I2C_IC_CON_RX_FIFO_FULL_HLD_CTRL_Pos      9U
+#define I2C_IC_CON_RX_FIFO_FULL_HLD_CTRL_Msk      (1U << I2C_IC_CON_RX_FIFO_FULL_HLD_CTRL_Pos)
+#define I2C_IC_CON_RX_FIFO_FULL_HLD_CTRL          I2C_IC_CON_RX_FIFO_FULL_HLD_CTRL_Msk
+#define I2C_IC_CON_TX_EMPTY_CTRL_Pos              8U
+#define I2C_IC_CON_TX_EMPTY_CTRL_Msk              (1U << I2C_IC_CON_TX_EMPTY_CTRL_Pos)
+#define I2C_IC_CON_TX_EMPTY_CTRL                  I2C_IC_CON_TX_EMPTY_CTRL_Msk
+#define I2C_IC_CON_STOP_DET_IFADDRESSED_Pos       7U
+#define I2C_IC_CON_STOP_DET_IFADDRESSED_Msk       (1U << I2C_IC_CON_STOP_DET_IFADDRESSED_Pos)
+#define I2C_IC_CON_STOP_DET_IFADDRESSED           I2C_IC_CON_STOP_DET_IFADDRESSED_Msk
+#define I2C_IC_CON_IC_SLAVE_DISABLE_Pos           6U
+#define I2C_IC_CON_IC_SLAVE_DISABLE_Msk           (1U << I2C_IC_CON_IC_SLAVE_DISABLE_Pos)
+#define I2C_IC_CON_IC_SLAVE_DISABLE               I2C_IC_CON_IC_SLAVE_DISABLE_Msk
+#define I2C_IC_CON_IC_RESTART_EN_Pos              5U
+#define I2C_IC_CON_IC_RESTART_EN_Msk              (1U << I2C_IC_CON_IC_RESTART_EN_Pos)
+#define I2C_IC_CON_IC_RESTART_EN                  I2C_IC_CON_IC_RESTART_EN_Msk
+#define I2C_IC_CON_IC_10BITADDR_MASTER_Pos        4U
+#define I2C_IC_CON_IC_10BITADDR_MASTER_Msk        (1U << I2C_IC_CON_IC_10BITADDR_MASTER_Pos)
+#define I2C_IC_CON_IC_10BITADDR_MASTER            I2C_IC_CON_IC_10BITADDR_MASTER_Msk
+#define I2C_IC_CON_IC_10BITADDR_SLAVE_Pos         3U
+#define I2C_IC_CON_IC_10BITADDR_SLAVE_Msk         (1U << I2C_IC_CON_IC_10BITADDR_SLAVE_Pos)
+#define I2C_IC_CON_IC_10BITADDR_SLAVE             I2C_IC_CON_IC_10BITADDR_SLAVE_Msk
+#define I2C_IC_CON_SPEED_Pos                      1U
+#define I2C_IC_CON_SPEED_Msk                      (3U << I2C_IC_CON_SPEED_Pos)
+#define I2C_IC_CON_SPEED                          I2C_IC_CON_SPEED_Msk
+#define I2C_IC_CON_MASTER_MODE_Pos                0U
+#define I2C_IC_CON_MASTER_MODE_Msk                (1U << I2C_IC_CON_MASTER_MODE_Pos)
+#define I2C_IC_CON_MASTER_MODE                    I2C_IC_CON_MASTER_MODE_Msk
+
+#define I2C_IC_TAR_SPECIAL_Pos                    11U
+#define I2C_IC_TAR_SPECIAL_Msk                    (1U << I2C_IC_TAR_SPECIAL_Pos)
+#define I2C_IC_TAR_SPECIAL                        I2C_IC_TAR_SPECIAL_Msk
+#define I2C_IC_TAR_GC_OR_START_Pos                10U
+#define I2C_IC_TAR_GC_OR_START_Msk                (1U << I2C_IC_TAR_GC_OR_START_Pos)
+#define I2C_IC_TAR_GC_OR_START                    I2C_IC_TAR_GC_OR_START_Msk
+#define I2C_IC_TAR_IC_TAR_Pos                     0U
+#define I2C_IC_TAR_IC_TAR_Msk                     (0x3FFU << I2C_IC_TAR_IC_TAR_Pos)
+#define I2C_IC_TAR_IC_TAR                         I2C_IC_TAR_IC_TAR_Msk
+
+#define I2C_IC_SAR_IC_SAR_Pos                     0U
+#define I2C_IC_SAR_IC_SAR_Msk                     (0x3FFU << I2C_IC_SAR_IC_SAR_Pos)
+#define I2C_IC_SAR_IC_SAR                         I2C_IC_SAR_IC_SAR_Msk
+
+#define I2C_IC_DATA_CMD_FIRST_DATA_BYTE_Pos       11U
+#define I2C_IC_DATA_CMD_FIRST_DATA_BYTE_Msk       (1U << I2C_IC_DATA_CMD_FIRST_DATA_BYTE_Pos)
+#define I2C_IC_DATA_CMD_FIRST_DATA_BYTE           I2C_IC_DATA_CMD_FIRST_DATA_BYTE_Msk
+#define I2C_IC_DATA_CMD_RESTART_Pos               10U
+#define I2C_IC_DATA_CMD_RESTART_Msk               (1U << I2C_IC_DATA_CMD_RESTART_Pos)
+#define I2C_IC_DATA_CMD_RESTART                   I2C_IC_DATA_CMD_RESTART_Msk
+#define I2C_IC_DATA_CMD_STOP_Pos                  9U
+#define I2C_IC_DATA_CMD_STOP_Msk                  (1U << I2C_IC_DATA_CMD_STOP_Pos)
+#define I2C_IC_DATA_CMD_STOP                      I2C_IC_DATA_CMD_STOP_Msk
+#define I2C_IC_DATA_CMD_CMD_Pos                   8U
+#define I2C_IC_DATA_CMD_CMD_Msk                   (1U << I2C_IC_DATA_CMD_CMD_Pos)
+#define I2C_IC_DATA_CMD_CMD                       I2C_IC_DATA_CMD_CMD_Msk
+#define I2C_IC_DATA_CMD_DAT_Pos                   0U
+#define I2C_IC_DATA_CMD_DAT_Msk                   (0xFFU << I2C_IC_DATA_CMD_DAT_Pos)
+#define I2C_IC_DATA_CMD_DAT                       I2C_IC_DATA_CMD_DAT_Msk
+
+#define I2C_IC_SS_SCL_HCNT_Pos                    0U
+#define I2C_IC_SS_SCL_HCNT_Msk                    (0xFFFFU << I2C_IC_SS_SCL_HCNT_Pos)
+#define I2C_IC_SS_SCL_HCNT                        I2C_IC_SS_SCL_HCNT_Msk
+
+#define I2C_IC_SS_SCL_LCNT_Pos                    0U
+#define I2C_IC_SS_SCL_LCNT_Msk                    (0xFFFFU << I2C_IC_SS_SCL_LCNT_Pos)
+#define I2C_IC_SS_SCL_LCNT                        I2C_IC_SS_SCL_LCNT_Msk
+
+#define I2C_IC_SS_SCL_HCNT_IC_SS_SCL_HCNT_Pos     0U
+#define I2C_IC_SS_SCL_HCNT_IC_SS_SCL_HCNT_Msk     (0xFFFFU << I2C_IC_SS_SCL_HCNT_IC_SS_SCL_HCNT_Pos)
+#define I2C_IC_SS_SCL_HCNT_IC_SS_SCL_HCNT         I2C_IC_SS_SCL_HCNT_IC_SS_SCL_HCNT_Msk
+
+#define I2C_IC_SS_SCL_LCNT_IC_SS_SCL_LCNT_Pos     0U
+#define I2C_IC_SS_SCL_LCNT_IC_SS_SCL_LCNT_Msk     (0xFFFFU << I2C_IC_SS_SCL_LCNT_IC_SS_SCL_LCNT_Pos)
+#define I2C_IC_SS_SCL_LCNT_IC_SS_SCL_LCNT         I2C_IC_SS_SCL_LCNT_IC_SS_SCL_LCNT_Msk
+
+#define I2C_IC_FS_SCL_HCNT_Pos                    0U
+#define I2C_IC_FS_SCL_HCNT_Msk                    (0xFFFFU << I2C_IC_FS_SCL_HCNT_Pos)
+#define I2C_IC_FS_SCL_HCNT                        I2C_IC_FS_SCL_HCNT_Msk
+
+#define I2C_IC_FS_SCL_LCNT_Pos                    0U
+#define I2C_IC_FS_SCL_LCNT_Msk                    (0xFFFFU << I2C_IC_FS_SCL_LCNT_Pos)
+#define I2C_IC_FS_SCL_LCNT                        I2C_IC_FS_SCL_LCNT_Msk
+
+#define I2C_IC_FS_SCL_HCNT_IC_FS_SCL_HCNT_Pos     0U
+#define I2C_IC_FS_SCL_HCNT_IC_FS_SCL_HCNT_Msk     (0xFFFFU << I2C_IC_FS_SCL_HCNT_IC_FS_SCL_HCNT_Pos)
+#define I2C_IC_FS_SCL_HCNT_IC_FS_SCL_HCNT         I2C_IC_FS_SCL_HCNT_IC_FS_SCL_HCNT_Msk
+
+#define I2C_IC_FS_SCL_LCNT_IC_FS_SCL_LCNT_Pos     0U
+#define I2C_IC_FS_SCL_LCNT_IC_FS_SCL_LCNT_Msk     (0xFFFFU << I2C_IC_FS_SCL_LCNT_IC_FS_SCL_LCNT_Pos)
+#define I2C_IC_FS_SCL_LCNT_IC_FS_SCL_LCNT         I2C_IC_FS_SCL_LCNT_IC_FS_SCL_LCNT_Msk
+
+#define I2C_IC_INTR_STAT_R_MASTER_ON_HOLD_Pos     13U
+#define I2C_IC_INTR_STAT_R_MASTER_ON_HOLD_Msk     (1U << I2C_IC_INTR_STAT_R_MASTER_ON_HOLD_Pos)
+#define I2C_IC_INTR_STAT_R_MASTER_ON_HOLD         I2C_IC_INTR_STAT_R_MASTER_ON_HOLD_Msk
+#define I2C_IC_INTR_STAT_R_RESTART_DET_Pos        12U
+#define I2C_IC_INTR_STAT_R_RESTART_DET_Msk        (1U << I2C_IC_INTR_STAT_R_RESTART_DET_Pos)
+#define I2C_IC_INTR_STAT_R_RESTART_DET            I2C_IC_INTR_STAT_R_RESTART_DET_Msk
+#define I2C_IC_INTR_STAT_R_GEN_CALL_Pos           11U
+#define I2C_IC_INTR_STAT_R_GEN_CALL_Msk           (1U << I2C_IC_INTR_STAT_R_GEN_CALL_Pos)
+#define I2C_IC_INTR_STAT_R_GEN_CALL               I2C_IC_INTR_STAT_R_GEN_CALL_Msk
+#define I2C_IC_INTR_STAT_R_START_DET_Pos          10U
+#define I2C_IC_INTR_STAT_R_START_DET_Msk          (1U << I2C_IC_INTR_STAT_R_START_DET_Pos)
+#define I2C_IC_INTR_STAT_R_START_DET              I2C_IC_INTR_STAT_R_START_DET_Msk
+#define I2C_IC_INTR_STAT_R_STOP_DET_Pos           9U
+#define I2C_IC_INTR_STAT_R_STOP_DET_Msk           (1U << I2C_IC_INTR_STAT_R_STOP_DET_Pos)
+#define I2C_IC_INTR_STAT_R_STOP_DET               I2C_IC_INTR_STAT_R_STOP_DET_Msk
+#define I2C_IC_INTR_STAT_R_ACTIVITY_Pos           8U
+#define I2C_IC_INTR_STAT_R_ACTIVITY_Msk           (1U << I2C_IC_INTR_STAT_R_ACTIVITY_Pos)
+#define I2C_IC_INTR_STAT_R_ACTIVITY               I2C_IC_INTR_STAT_R_ACTIVITY_Msk
+#define I2C_IC_INTR_STAT_R_RX_DONE_Pos            7U
+#define I2C_IC_INTR_STAT_R_RX_DONE_Msk            (1U << I2C_IC_INTR_STAT_R_RX_DONE_Pos)
+#define I2C_IC_INTR_STAT_R_RX_DONE                I2C_IC_INTR_STAT_R_RX_DONE_Msk
+#define I2C_IC_INTR_STAT_R_TX_ABRT_Pos            6U
+#define I2C_IC_INTR_STAT_R_TX_ABRT_Msk            (1U << I2C_IC_INTR_STAT_R_TX_ABRT_Pos)
+#define I2C_IC_INTR_STAT_R_TX_ABRT                I2C_IC_INTR_STAT_R_TX_ABRT_Msk
+#define I2C_IC_INTR_STAT_R_RD_REQ_Pos             5U
+#define I2C_IC_INTR_STAT_R_RD_REQ_Msk             (1U << I2C_IC_INTR_STAT_R_RD_REQ_Pos)
+#define I2C_IC_INTR_STAT_R_RD_REQ                 I2C_IC_INTR_STAT_R_RD_REQ_Msk
+#define I2C_IC_INTR_STAT_R_TX_EMPTY_Pos           4U
+#define I2C_IC_INTR_STAT_R_TX_EMPTY_Msk           (1U << I2C_IC_INTR_STAT_R_TX_EMPTY_Pos)
+#define I2C_IC_INTR_STAT_R_TX_EMPTY               I2C_IC_INTR_STAT_R_TX_EMPTY_Msk
+#define I2C_IC_INTR_STAT_R_TX_OVER_Pos            3U
+#define I2C_IC_INTR_STAT_R_TX_OVER_Msk            (1U << I2C_IC_INTR_STAT_R_TX_OVER_Pos)
+#define I2C_IC_INTR_STAT_R_TX_OVER                I2C_IC_INTR_STAT_R_TX_OVER_Msk
+#define I2C_IC_INTR_STAT_R_RX_FULL_Pos            2U
+#define I2C_IC_INTR_STAT_R_RX_FULL_Msk            (1U << I2C_IC_INTR_STAT_R_RX_FULL_Pos)
+#define I2C_IC_INTR_STAT_R_RX_FULL                I2C_IC_INTR_STAT_R_RX_FULL_Msk
+#define I2C_IC_INTR_STAT_R_RX_OVER_Pos            1U
+#define I2C_IC_INTR_STAT_R_RX_OVER_Msk            (1U << I2C_IC_INTR_STAT_R_RX_OVER_Pos)
+#define I2C_IC_INTR_STAT_R_RX_OVER                I2C_IC_INTR_STAT_R_RX_OVER_Msk
+#define I2C_IC_INTR_STAT_R_RX_UNDER_Pos           0U
+#define I2C_IC_INTR_STAT_R_RX_UNDER_Msk           (1U << I2C_IC_INTR_STAT_R_RX_UNDER_Pos)
+#define I2C_IC_INTR_STAT_R_RX_UNDER               I2C_IC_INTR_STAT_R_RX_UNDER_Msk
+
+#define I2C_IC_INTR_MASK_M_MASTER_ON_HOLD_READ_ONLY_Pos 13U
+#define I2C_IC_INTR_MASK_M_MASTER_ON_HOLD_READ_ONLY_Msk (1U << I2C_IC_INTR_MASK_M_MASTER_ON_HOLD_READ_ONLY_Pos)
+#define I2C_IC_INTR_MASK_M_MASTER_ON_HOLD_READ_ONLY     I2C_IC_INTR_MASK_M_MASTER_ON_HOLD_READ_ONLY_Msk
+#define I2C_IC_INTR_MASK_M_RESTART_DET_Pos              12U
+#define I2C_IC_INTR_MASK_M_RESTART_DET_Msk              (1U << I2C_IC_INTR_MASK_M_RESTART_DET_Pos)
+#define I2C_IC_INTR_MASK_M_RESTART_DET                  I2C_IC_INTR_MASK_M_RESTART_DET_Msk
+#define I2C_IC_INTR_MASK_M_GEN_CALL_Pos                 11U
+#define I2C_IC_INTR_MASK_M_GEN_CALL_Msk                 (1U << I2C_IC_INTR_MASK_M_GEN_CALL_Pos)
+#define I2C_IC_INTR_MASK_M_GEN_CALL                     I2C_IC_INTR_MASK_M_GEN_CALL_Msk
+#define I2C_IC_INTR_MASK_M_START_DET_Pos                10U
+#define I2C_IC_INTR_MASK_M_START_DET_Msk                (1U << I2C_IC_INTR_MASK_M_START_DET_Pos)
+#define I2C_IC_INTR_MASK_M_START_DET                    I2C_IC_INTR_MASK_M_START_DET_Msk
+#define I2C_IC_INTR_MASK_M_STOP_DET_Pos                 9U
+#define I2C_IC_INTR_MASK_M_STOP_DET_Msk                 (1U << I2C_IC_INTR_MASK_M_STOP_DET_Pos)
+#define I2C_IC_INTR_MASK_M_STOP_DET                     I2C_IC_INTR_MASK_M_STOP_DET_Msk
+#define I2C_IC_INTR_MASK_M_ACTIVITY_Pos                 8U
+#define I2C_IC_INTR_MASK_M_ACTIVITY_Msk                 (1U << I2C_IC_INTR_MASK_M_ACTIVITY_Pos)
+#define I2C_IC_INTR_MASK_M_ACTIVITY                     I2C_IC_INTR_MASK_M_ACTIVITY_Msk
+#define I2C_IC_INTR_MASK_M_RX_DONE_Pos                  7U
+#define I2C_IC_INTR_MASK_M_RX_DONE_Msk                  (1U << I2C_IC_INTR_MASK_M_RX_DONE_Pos)
+#define I2C_IC_INTR_MASK_M_RX_DONE                      I2C_IC_INTR_MASK_M_RX_DONE_Msk
+#define I2C_IC_INTR_MASK_M_TX_ABRT_Pos                  6U
+#define I2C_IC_INTR_MASK_M_TX_ABRT_Msk                  (1U << I2C_IC_INTR_MASK_M_TX_ABRT_Pos)
+#define I2C_IC_INTR_MASK_M_TX_ABRT                      I2C_IC_INTR_MASK_M_TX_ABRT_Msk
+#define I2C_IC_INTR_MASK_M_RD_REQ_Pos                   5U
+#define I2C_IC_INTR_MASK_M_RD_REQ_Msk                   (1U << I2C_IC_INTR_MASK_M_RD_REQ_Pos)
+#define I2C_IC_INTR_MASK_M_RD_REQ                       I2C_IC_INTR_MASK_M_RD_REQ_Msk
+#define I2C_IC_INTR_MASK_M_TX_EMPTY_Pos                 4U
+#define I2C_IC_INTR_MASK_M_TX_EMPTY_Msk                 (1U << I2C_IC_INTR_MASK_M_TX_EMPTY_Pos)
+#define I2C_IC_INTR_MASK_M_TX_EMPTY                     I2C_IC_INTR_MASK_M_TX_EMPTY_Msk
+#define I2C_IC_INTR_MASK_M_TX_OVER_Pos                  3U
+#define I2C_IC_INTR_MASK_M_TX_OVER_Msk                  (1U << I2C_IC_INTR_MASK_M_TX_OVER_Pos)
+#define I2C_IC_INTR_MASK_M_TX_OVER                      I2C_IC_INTR_MASK_M_TX_OVER_Msk
+#define I2C_IC_INTR_MASK_M_RX_FULL_Pos                  2U
+#define I2C_IC_INTR_MASK_M_RX_FULL_Msk                  (1U << I2C_IC_INTR_MASK_M_RX_FULL_Pos)
+#define I2C_IC_INTR_MASK_M_RX_FULL                      I2C_IC_INTR_MASK_M_RX_FULL_Msk
+#define I2C_IC_INTR_MASK_M_RX_OVER_Pos                  1U
+#define I2C_IC_INTR_MASK_M_RX_OVER_Msk                  (1U << I2C_IC_INTR_MASK_M_RX_OVER_Pos)
+#define I2C_IC_INTR_MASK_M_RX_OVER                      I2C_IC_INTR_MASK_M_RX_OVER_Msk
+#define I2C_IC_INTR_MASK_M_RX_UNDER_Pos                 0U
+#define I2C_IC_INTR_MASK_M_RX_UNDER_Msk                 (1U << I2C_IC_INTR_MASK_M_RX_UNDER_Pos)
+#define I2C_IC_INTR_MASK_M_RX_UNDER                     I2C_IC_INTR_MASK_M_RX_UNDER_Msk
+/** @} */
 #ifdef __cplusplus
 extern "C" {
 #endif
