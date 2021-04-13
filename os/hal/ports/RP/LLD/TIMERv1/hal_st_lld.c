@@ -224,6 +224,7 @@ void st_lld_init(void) {
   TIMER->ALARM[1]   = 0U;
   TIMER->ALARM[2]   = 0U;
   TIMER->ALARM[3]   = 0U;
+  TIMER->INTE       = 0U;
   TIMER->INTR       = TIMER_INTR_ALARM3 | TIMER_INTR_ALARM2 |
                       TIMER_INTR_ALARM1 | TIMER_INTR_ALARM0;
 
