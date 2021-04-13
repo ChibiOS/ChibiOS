@@ -41,11 +41,7 @@
  * RTOS-specific context offset.
  */
 #if defined(_CHIBIOS_RT_CONF_)
-#if CH_CFG_USE_REGISTRY
-#define CONTEXT_OFFSET  "20"
-#else
 #define CONTEXT_OFFSET  "12"
-#endif
 
 #elif defined(_CHIBIOS_NIL_CONF_)
 #define CONTEXT_OFFSET  "0"

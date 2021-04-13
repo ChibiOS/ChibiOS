@@ -122,14 +122,13 @@ struct ch_thread {
     ch_priority_queue_t pqueue;     /**< @brief Threads ordered queues
                                          element.                           */
   } hdr;
-#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  ch_queue_t            rqueue;     /**< @brief Registry queue element.     */
-#endif
-  /* End of the fields shared with the ReadyList structure. */
   /**
    * @brief   Processor context.
    */
   struct port_context   ctx;
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
+  ch_queue_t            rqueue;     /**< @brief Registry queue element.     */
+#endif
 #if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
   /**
    * @brief   OS instance owner of this thread.
@@ -302,13 +301,6 @@ typedef struct ch_ready_list {
    * @note      The priority field must be initialized to zero.
    */
   ch_priority_queue_t   pqueue;
-#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief     Registry header.
-   */
-  ch_queue_t            registry;
-#endif
-  /* End of the fields shared with the thread_t structure.*/
   /**
    * @brief     The currently running thread.
    */
@@ -358,6 +350,12 @@ struct ch_os_instance {
    * @brief   Virtual timers delta list header.
    */
   virtual_timers_list_t vtlist;
+#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief     Registry header.
+   */
+  ch_queue_t            reglist;
+#endif
   /**
    * @brief   Main thread descriptor.
    */

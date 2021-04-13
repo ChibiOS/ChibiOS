@@ -248,15 +248,15 @@ bool chSysIntegrityCheckI(unsigned testmask) {
 
     /* Scanning the ready list forward.*/
     n = (cnt_t)0;
-    qp = oip->rlist.registry.next;
-    while (qp != &oip->rlist.registry) {
+    qp = oip->reglist.next;
+    while (qp != &oip->reglist) {
       n++;
       qp = qp->next;
     }
 
     /* Scanning the ready list backward.*/
-    qp = oip->rlist.registry.prev;
-    while (qp != &oip->rlist.registry) {
+    qp = oip->reglist.prev;
+    while (qp != &oip->reglist) {
       n--;
       qp = qp->prev;
     }

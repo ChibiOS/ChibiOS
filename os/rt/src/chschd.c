@@ -319,7 +319,7 @@ void chSchObjectInit(os_instance_t *oip,
 
   /* Registry initialization.*/
 #if CH_CFG_USE_REGISTRY == TRUE
-  ch_queue_init(&oip->rlist.registry);
+  ch_queue_init(&oip->reglist);
 #endif
 
   /* Virtual timers list initialization.*/
