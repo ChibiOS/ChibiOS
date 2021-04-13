@@ -244,21 +244,21 @@ bool chSysIntegrityCheckI(unsigned testmask) {
 
 #if CH_CFG_USE_REGISTRY == TRUE
   if ((testmask & CH_INTEGRITY_REGISTRY) != 0U) {
-    thread_t *tp;
+    ch_queue_t *qp;
 
     /* Scanning the ready list forward.*/
     n = (cnt_t)0;
-    tp = oip->rlist.newer;
-    while (tp != (thread_t *)&oip->rlist) {
+    qp = oip->rlist.registry.next;
+    while (qp != &oip->rlist.registry) {
       n++;
-      tp = tp->newer;
+      qp = qp->next;
     }
 
     /* Scanning the ready list backward.*/
-    tp = oip->rlist.older;
-    while (tp != (thread_t *)&oip->rlist) {
+    qp = oip->rlist.registry.prev;
+    while (qp != &oip->rlist.registry) {
       n--;
-      tp = tp->older;
+      qp = qp->prev;
     }
 
     /* The number of elements must match.*/

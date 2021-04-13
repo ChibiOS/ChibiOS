@@ -92,8 +92,8 @@ ROMCONST chdebug_t ch_debug = {
   (uint8_t)sizeof (thread_t),
   (uint8_t)_offsetof(thread_t, hdr.pqueue.prio),
   (uint8_t)_offsetof(thread_t, ctx),
-  (uint8_t)_offsetof(thread_t, newer),
-  (uint8_t)_offsetof(thread_t, older),
+  (uint8_t)_offsetof(thread_t, rqueue.next),
+  (uint8_t)_offsetof(thread_t, rqueue.prev),
   (uint8_t)_offsetof(thread_t, name),
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   (uint8_t)_offsetof(thread_t, wabase),
@@ -133,9 +133,11 @@ ROMCONST chdebug_t ch_debug = {
  */
 thread_t *chRegFirstThread(void) {
   thread_t *tp;
+  uint8_t *p;
 
   chSysLock();
-  tp = currcore->rlist.newer;
+  p = (uint8_t *)currcore->rlist.registry.next;
+  tp = (thread_t *)(p - offsetof(thread_t, rqueue));
 #if CH_CFG_USE_DYNAMIC == TRUE
   tp->refs++;
 #endif
@@ -157,17 +159,22 @@ thread_t *chRegFirstThread(void) {
  */
 thread_t *chRegNextThread(thread_t *tp) {
   thread_t *ntp;
+  ch_queue_t *nqp;
 
   chSysLock();
-  ntp = tp->newer;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
-  if (ntp == (thread_t *)&currcore->rlist) {
-  /*lint -restore*/
+
+  /* Next element in the registry queue.*/
+  nqp = tp->rqueue.next;
+  if (nqp == &currcore->rlist.registry) {
     ntp = NULL;
   }
 #if CH_CFG_USE_DYNAMIC == TRUE
   else {
+    uint8_t *p = (uint8_t *)nqp;
+    ntp = (thread_t *)(p - offsetof(thread_t, rqueue));
+
     chDbgAssert(ntp->refs < (trefs_t)255, "too many references");
+
     ntp->refs++;
   }
 #endif

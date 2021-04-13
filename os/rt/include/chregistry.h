@@ -80,10 +80,7 @@ typedef struct {
  *
  * @param[in] tp        thread to remove from the registry
  */
-#define REG_REMOVE(tp) do {                                                 \
-  (tp)->older->newer = (tp)->newer;                                         \
-  (tp)->newer->older = (tp)->older;                                         \
-} while (false)
+#define REG_REMOVE(tp) ch_queue_dequeue(&(tp)->rqueue)
 
 /**
  * @brief   Adds a thread to the registry list.
@@ -92,12 +89,7 @@ typedef struct {
  * @param[in] oip       pointer to the OS instance
  * @param[in] tp        thread to add to the registry
  */
-#define REG_INSERT(oip, tp) do {                                            \
-  (tp)->newer = (thread_t *)&(oip)->rlist;                                  \
-  (tp)->older = (oip)->rlist.older;                                         \
-  (tp)->older->newer = (tp);                                                \
-  (oip)->rlist.older = (tp);                                                \
-} while (false)
+#define REG_INSERT(oip, tp) ch_queue_insert(&(tp)->rqueue, &(oip)->rlist.registry)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

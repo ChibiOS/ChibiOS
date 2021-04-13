@@ -123,8 +123,7 @@ struct ch_thread {
                                          element.                           */
   } hdr;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  thread_t              *newer;     /**< @brief Newer registry element.     */
-  thread_t              *older;     /**< @brief Older registry element.     */
+  ch_queue_t            rqueue;     /**< @brief Registry queue element.     */
 #endif
   /* End of the fields shared with the ReadyList structure. */
   /**
@@ -305,13 +304,9 @@ typedef struct ch_ready_list {
   ch_priority_queue_t   pqueue;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief     Newer registry element.
+   * @brief     Registry header.
    */
-  thread_t              *newer;
-  /**
-   *  @brief    Older registry element.
-   */
-  thread_t              *older;
+  ch_queue_t            registry;
 #endif
   /* End of the fields shared with the thread_t structure.*/
   /**

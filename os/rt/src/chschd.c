@@ -319,8 +319,7 @@ void chSchObjectInit(os_instance_t *oip,
 
   /* Registry initialization.*/
 #if CH_CFG_USE_REGISTRY == TRUE
-  oip->rlist.newer = (thread_t *)&oip->rlist;
-  oip->rlist.older = (thread_t *)&oip->rlist;
+  ch_queue_init(&oip->rlist.registry);
 #endif
 
   /* Virtual timers list initialization.*/
