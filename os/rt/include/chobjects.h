@@ -48,10 +48,10 @@
  * @brief   Global state of the operating system.
  */
 typedef enum {
-  ch_state_uninit       = 0,
-  ch_state_initializing = 1,
-  ch_state_running      = 2,
-  ch_state_halted       = 3
+  ch_sys_uninit         = 0,
+  ch_sys_initializing   = 1,
+  ch_sys_running        = 2,
+  ch_sys_halted         = 3
 } system_state_t;
 
 /**

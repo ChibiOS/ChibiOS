@@ -43,8 +43,6 @@ static void start_core1(void) {
                              (uint32_t)_crt0_c1_entry};
   unsigned seq;
 
-  chSysSuspend();
-
 #if 0
   /* Resetting core1.*/
   PSM_SET->FRCE_OFF = PSM_ANY_PROC1;
@@ -68,14 +66,17 @@ static void start_core1(void) {
     /* Checking response, going forward or back to first step.*/
     seq = cmd == response ? seq + 1U : 0U;
   } while (seq < count_of(cmd_sequence));
-
-  chSysEnable();
 }
 
 /*
  * Application entry point.
  */
 int main(void) {
+
+  /*
+   * Starting core 1.
+   */
+  start_core1();
 
   /*
    * Shared objects initialization.
@@ -91,11 +92,6 @@ int main(void) {
    */
   halInit();
   chSysInit();
-
-  /*
-   * Starting core 1 after performing all OS-related initializations.
-   */
-  start_core1();
 
   /*
    * Setting up GPIOs.

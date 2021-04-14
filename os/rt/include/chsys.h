@@ -299,6 +299,7 @@ extern stkalign_t ch_idle_thread_wa[];
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void chSysWaitSystemState(system_state_t state);
   void chSysInit(void);
   bool chSysIntegrityCheckI(unsigned testmask);
   void chSysTimerHandlerI(void);
@@ -472,7 +473,7 @@ static inline void chSysUnconditionalUnlock(void) {
   }
 }
 
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Notifies an OS instance to check for reschedule.
  * @details An OS instance is notified to check if a reschedule is required,

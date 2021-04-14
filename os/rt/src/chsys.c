@@ -73,12 +73,26 @@ THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 /*===========================================================================*/
 
 /**
- * @brief   ChibiOS/RT initialization.
+ * @brief   Waits for the system state to be equal to the specified one.
+ * @note    Can be called before @p chSchObjectInit() in order to wait
+ *          for system initialization by another core.
+ *
+ * @special
+ */
+void chSysWaitSystemState(system_state_t state) {
+
+  while (ch_system.state != state) {
+  }
+}
+
+/**
+ * @brief   System initialization.
  * @details After executing this function the current instructions stream
  *          becomes the main thread.
  * @pre     Interrupts must disabled before invoking this function.
  * @post    The main thread is created with priority @p NORMALPRIO and
  *          interrupts are enabled.
+ * @post    the system is in @p ch_sys_running state.
  *
  * @special
  */
@@ -86,7 +100,7 @@ void chSysInit(void) {
   unsigned i;
 
   /* System object initialization.*/
-  ch_system.state = ch_state_initializing;
+  ch_system.state = ch_sys_initializing;
   for (i = 0U; i < PORT_CORES_NUMBER; i++) {
     ch_system.instances[i] = NULL;
   }
@@ -133,7 +147,7 @@ void chSysInit(void) {
   }
 
   /* It is alive now.*/
-  ch_system.state = ch_state_running;
+  ch_system.state = ch_sys_running;
   chSysUnlock();
 }
 
@@ -169,7 +183,7 @@ void chSysHalt(const char *reason) {
 #endif
 
   /* Entering the halted state.*/
-  ch_system.state = ch_state_halted;
+  ch_system.state = ch_sys_halted;
 
   /* Harmless infinite loop.*/
   while (true) {

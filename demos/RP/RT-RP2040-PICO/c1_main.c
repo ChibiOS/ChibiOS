@@ -87,8 +87,10 @@ static THD_FUNCTION(ThreadTimer, arg) {
 void c1_main(void) {
 
   /*
-   * Starting a new OS instance running on this core.
+   * Starting a new OS instance running on this core, we need to wait for
+   * system initialization on the other side.
    */
+  chSysWaitSystemState(ch_sys_running);
   chSchObjectInit(&ch1, &core1_cfg);
 
   /* It is alive now.*/
