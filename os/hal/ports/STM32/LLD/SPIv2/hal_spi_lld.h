@@ -99,6 +99,15 @@
 #endif
 
 /**
+ * @brief   SPIR driver enable switch.
+ * @details If set to @p TRUE the support for SPIR is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SPI_USE_SPIR) || defined(__DOXYGEN__)
+#define STM32_SPI_USE_SPIR                  FALSE
+#endif
+
+/**
  * @brief   SPI1 interrupt priority level setting.
  */
 #if !defined(STM32_SPI_SPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -138,6 +147,13 @@
  */
 #if !defined(STM32_SPI_SPI6_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SPI_SPI6_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   SPIR interrupt priority level setting.
+ */
+#if !defined(STM32_SPI_SPIR_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPIR_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -201,11 +217,22 @@
 #endif
 
 /**
+ * @brief   SPIR DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
+#if !defined(STM32_SPI_SPIR_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SPI_SPIR_DMA_PRIORITY         1
+#endif
+
+/**
  * @brief   SPI DMA error hook.
  */
 #if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 #endif
+
 /** @} */
 
 /*===========================================================================*/
@@ -236,8 +263,13 @@
 #error "SPI6 not present in the selected device"
 #endif
 
+#if STM32_SPI_USE_SPIR && !STM32_HAS_SPIR
+#error "SPIR not present in the selected device"
+#endif
+
 #if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3 &&    \
-    !STM32_SPI_USE_SPI4 && !STM32_SPI_USE_SPI5 && !STM32_SPI_USE_SPI6
+    !STM32_SPI_USE_SPI4 && !STM32_SPI_USE_SPI5 && !STM32_SPI_USE_SPI6 &&    \
+    !STM32_SPI_USE_SPIR
 #error "SPI driver activated but no SPI peripheral assigned"
 #endif
 
@@ -264,6 +296,11 @@
 #if STM32_SPI_USE_SPI5 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI5_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SPI5"
+#endif
+
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPIR_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SPIR"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
@@ -296,6 +333,11 @@
 #error "Invalid DMA priority assigned to SPI5"
 #endif
 
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPIR_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPIR"
+#endif
+
 #if STM32_SPI_USE_SPI6 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI6_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI6"
@@ -325,6 +367,11 @@
 #if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_STREAM) ||        \
                            !defined(STM32_SPI_SPI5_TX_DMA_STREAM))
 #error "SPI5 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPIR && (!defined(STM32_SPI_SPIR_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPIR_TX_DMA_STREAM))
+#error "SPIR DMA streams not defined"
 #endif
 
 #if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA_STREAM) ||        \
@@ -381,6 +428,16 @@
 #if STM32_SPI_USE_SPI6 &&                                                   \
     !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI6_RX_DMA_STREAM)
 #error "Invalid DMA channel assigned to SPI6 RX"
+#endif
+
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPIR_RX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPIR RX"
+#endif
+
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPIR_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPIR TX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
@@ -445,6 +502,16 @@
 #if STM32_SPI_USE_SPI6 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_RX_DMA_STREAM, STM32_SPI6_RX_DMA_MSK)
 #error "invalid DMA stream associated to SPI6 RX"
+#endif
+
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPIR_RX_DMA_STREAM, STM32_SPIR_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPIR RX"
+#endif
+
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPIR_TX_DMA_STREAM, STM32_SPIR_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPIR TX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
@@ -520,6 +587,10 @@ extern SPIDriver SPID5;
 
 #if STM32_SPI_USE_SPI6 && !defined(__DOXYGEN__)
 extern SPIDriver SPID6;
+#endif
+
+#if STM32_SPI_USE_SPIR && !defined(__DOXYGEN__)
+extern SPIDriver SPIDR;
 #endif
 
 #ifdef __cplusplus
