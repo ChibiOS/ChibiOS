@@ -122,7 +122,7 @@ CH_IRQ_HANDLER(Vector7C) {
     uint32_t message = SIO->FIFO_RD;
 #if defined(PORT_HANDLE_FIFO_MESSAGE)
     if (message != PORT_FIFO_RESCHEDULE_MESSAGE) {
-      PORT_FIFO_RESCHEDULE_MESSAGE(1U, message);
+      PORT_HANDLE_FIFO_MESSAGE(1U, message);
     }
 #else
     (void)message;
@@ -152,7 +152,7 @@ CH_IRQ_HANDLER(Vector80) {
     uint32_t message = SIO->FIFO_RD;
 #if defined(PORT_HANDLE_FIFO_MESSAGE)
     if (message != PORT_FIFO_RESCHEDULE_MESSAGE) {
-      PORT_FIFO_RESCHEDULE_MESSAGE(0U, message);
+      PORT_HANDLE_FIFO_MESSAGE(0U, message);
     }
 #else
     (void)message;
