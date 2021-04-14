@@ -88,7 +88,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void __tm_calibration_init(tm_calibration_t *tcp);
+  void __tm_calibration_init(void);
   void chTMObjectInit(time_measurement_t *tmp);
   NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp);
   NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp);

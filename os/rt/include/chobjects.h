@@ -384,12 +384,6 @@ struct ch_os_instance {
    */
   trace_buffer_t        trace_buffer;
 #endif
-#if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Time measurement calibration data.
-   */
-  tm_calibration_t      tmc;
-#endif
 #if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Global kernel statistics.
@@ -416,6 +410,12 @@ typedef struct ch_system {
    * @brief   Initialized OS instances or @p NULL.
    */
   os_instance_t         *instances[PORT_CORES_NUMBER];
+#if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Time measurement calibration data.
+   */
+  tm_calibration_t      tmc;
+#endif
 #if ((CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)) ||         \
     defined(__DOXYGEN__)
   /**

@@ -96,6 +96,11 @@ void chSysInit(void) {
   ch_queue_init(&ch_system.reglist);
 #endif
 
+#if CH_CFG_USE_TM == TRUE
+  /* Time Measurement initialization.*/
+  __tm_calibration_init();
+#endif
+
   /* User system initialization hook.*/
   CH_CFG_SYSTEM_INIT_HOOK();
 

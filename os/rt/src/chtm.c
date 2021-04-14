@@ -84,14 +84,14 @@ static inline void tm_stop(time_measurement_t *tmp,
  *
  * @notapi
  */
-void __tm_calibration_init(tm_calibration_t *tcp) {
+void __tm_calibration_init(void) {
   time_measurement_t tm;
   unsigned i;
 
   /* Time Measurement subsystem calibration, it does a null measurement
      and calculates the call overhead which is subtracted to real
      measurements.*/
-  tcp->offset = (rtcnt_t)0;
+  ch_system.tmc.offset = (rtcnt_t)0;
   chTMObjectInit(&tm);
   i = TM_CALIBRATION_LOOP;
   do {
@@ -99,7 +99,7 @@ void __tm_calibration_init(tm_calibration_t *tcp) {
     chTMStopMeasurementX(&tm);
     i--;
   } while (i > 0U);
-  tcp->offset = tm.best;
+  ch_system.tmc.offset = tm.best;
 }
 
 /**
@@ -141,7 +141,7 @@ NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp) {
  */
 NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp) {
 
-  tm_stop(tmp, chSysGetRealtimeCounterX(), currcore->tmc.offset);
+  tm_stop(tmp, chSysGetRealtimeCounterX(), ch_system.tmc.offset);
 }
 
 /**

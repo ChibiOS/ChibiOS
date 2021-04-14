@@ -329,11 +329,6 @@ void chSchObjectInit(os_instance_t *oip,
   __trace_init(oip);
 #endif
 
-  /* Time Measurement initialization.*/
-#if CH_CFG_USE_TM == TRUE
-  __tm_calibration_init(&oip->tmc);
-#endif
-
   /* Statistics initialization.*/
 #if CH_DBG_STATISTICS == TRUE
   __stats_object_init(&oip->kernel_stats);
