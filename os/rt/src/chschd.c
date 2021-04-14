@@ -313,8 +313,8 @@ void chSchObjectInit(os_instance_t *oip,
   /* Ready list initialization.*/
   ch_pqueue_init(&oip->rlist.pqueue);
 
-  /* Registry initialization.*/
-#if CH_CFG_USE_REGISTRY == TRUE
+#if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == FALSE)
+  /* Registry initialization when SMP mode is disabled.*/
   ch_queue_init(&oip->reglist);
 #endif
 

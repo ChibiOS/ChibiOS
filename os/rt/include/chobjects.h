@@ -358,9 +358,11 @@ struct ch_os_instance {
    * @brief   Virtual timers delta list header.
    */
   virtual_timers_list_t vtlist;
-#if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
+#if ((CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == FALSE)) ||        \
+    defined(__DOXYGEN__)
   /**
    * @brief   Registry header.
+   * @note    This field is present only if the SMP mode is disabled.
    */
   ch_queue_t            reglist;
 #endif
@@ -414,6 +416,14 @@ typedef struct ch_system {
    * @brief   Initialized OS instances or @p NULL.
    */
   os_instance_t         *instances[PORT_CORES_NUMBER];
+#if ((CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)) ||         \
+    defined(__DOXYGEN__)
+  /**
+   * @brief   Registry header.
+   * @note    This field is present only if the SMP mode is enabled.
+   */
+  ch_queue_t            reglist;
+#endif
 #if defined(PORT_SYSTEM_EXTRA_FIELDS) || defined(__DOXYGEN__)
   /* Extra fields from port layer.*/
   PORT_SYSTEM_EXTRA_FIELDS

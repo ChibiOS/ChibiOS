@@ -136,7 +136,7 @@ thread_t *chRegFirstThread(void) {
   uint8_t *p;
 
   chSysLock();
-  p = (uint8_t *)currcore->reglist.next;
+  p = (uint8_t *)REG_HEADER(currcore)->next;
   tp = (thread_t *)(p - offsetof(thread_t, rqueue));
 #if CH_CFG_USE_DYNAMIC == TRUE
   tp->refs++;
@@ -165,7 +165,7 @@ thread_t *chRegNextThread(thread_t *tp) {
 
   /* Next element in the registry queue.*/
   nqp = tp->rqueue.next;
-  if (nqp == &currcore->reglist) {
+  if (nqp == REG_HEADER(currcore)) {
     ntp = NULL;
   }
 #if CH_CFG_USE_DYNAMIC == TRUE

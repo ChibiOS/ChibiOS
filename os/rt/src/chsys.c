@@ -91,6 +91,11 @@ void chSysInit(void) {
     ch_system.instances[i] = NULL;
   }
 
+#if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)
+  /* Registry initialization when SMP mode is enabled.*/
+  ch_queue_init(&ch_system.reglist);
+#endif
+
   /* User system initialization hook.*/
   CH_CFG_SYSTEM_INIT_HOOK();
 
@@ -151,6 +156,15 @@ void chSysHalt(const char *reason) {
 
   /* Halt hook code, usually empty.*/
   CH_CFG_SYSTEM_HALT_HOOK(reason);
+
+#if defined(PORT_SYSTEM_HALT_HOOK)
+  /* Port-related actions, this could include halting other instances
+     via some inter-core messaging or other means.*/
+  PORT_SYSTEM_HALT_HOOK();
+#endif
+
+  /* Entering the halted state.*/
+  ch_system.state = ch_state_halted;
 
   /* Harmless infinite loop.*/
   while (true) {
@@ -239,19 +253,23 @@ bool chSysIntegrityCheckI(unsigned testmask) {
 
 #if CH_CFG_USE_REGISTRY == TRUE
   if ((testmask & CH_INTEGRITY_REGISTRY) != 0U) {
-    ch_queue_t *qp;
+    ch_queue_t *qp, *rqp;
+
+    /* Registry header, access to this list depends on the current
+       kernel configuration.*/
+    rqp = REG_HEADER(oip);
 
     /* Scanning the ready list forward.*/
     n = (cnt_t)0;
-    qp = oip->reglist.next;
-    while (qp != &oip->reglist) {
+    qp = rqp->next;
+    while (qp != rqp) {
       n++;
       qp = qp->next;
     }
 
     /* Scanning the ready list backward.*/
-    qp = oip->reglist.prev;
-    while (qp != &oip->reglist) {
+    qp = rqp->prev;
+    while (qp != rqp) {
       n--;
       qp = qp->prev;
     }

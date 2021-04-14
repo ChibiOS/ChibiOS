@@ -75,6 +75,15 @@ typedef struct {
 /*===========================================================================*/
 
 /**
+ * @brief   Access to the registry list header.
+ */
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+#define REG_HEADER(oip) (&ch_system.reglist)
+#else
+#define REG_HEADER(oip) (&(oip)->reglist)
+#endif
+
+/**
  * @brief   Removes a thread from the registry list.
  * @note    This macro is not meant for use in application code.
  *
@@ -89,7 +98,7 @@ typedef struct {
  * @param[in] oip       pointer to the OS instance
  * @param[in] tp        thread to add to the registry
  */
-#define REG_INSERT(oip, tp) ch_queue_insert(&(tp)->rqueue, &(oip)->reglist)
+#define REG_INSERT(oip, tp) ch_queue_insert(&(tp)->rqueue, REG_HEADER(oip))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
