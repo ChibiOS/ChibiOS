@@ -45,8 +45,12 @@
 /*===========================================================================*/
 
 /**
- * @extends threads_queue_t
- *
+ * @brief   Type of a core identifier.
+ * @note    Core identifiers have ranges from 0 to @p PORT_CORES_NUMBER - 1.
+ */
+typedef unsigned core_id_t;
+
+/**
  * @brief   Type of a thread structure.
  */
 typedef struct ch_thread thread_t;

@@ -91,9 +91,7 @@
 /**
  * @brief   Port-related fields added to the OS instance structure.
  */
-#define PORT_INSTANCE_EXTRA_FIELDS                                          \
-  /* Core associated to this OS instance.*/                                 \
-  uint32_t              core_id;
+#define PORT_INSTANCE_EXTRA_FIELDS
 
 /**
  * @brief   Reschedule message sent through IPC FIFOs.
@@ -290,12 +288,6 @@
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
-
-/**
- * @brief   Type of a core identifier.
- * @note    Core identifiers have ranges from 0 to @p PORT_CORES_NUMBER - 1.
- */
-typedef uint32_t code_id_t;
 
 /**
  * @brief   Type of stack and memory alignment enforcement.
@@ -675,7 +667,7 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
  * @brief   Returns a core index.
  * @return              The core identifier from 0 to @p PORT_CORES_NUMBER - 1.
  */
-__STATIC_INLINE code_id_t port_get_core_id(void) {
+__STATIC_INLINE core_id_t port_get_core_id(void) {
 
   return SIO->CPUID;
 }

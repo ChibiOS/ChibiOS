@@ -39,12 +39,10 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   System root object.
  */
 ch_system_t ch_system;
-#endif
 
 /**
  * @brief   Default OS instance.
@@ -85,20 +83,16 @@ THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
  * @special
  */
 void chSysInit(void) {
+  unsigned i;
 
-#if CH_CFG_SMP_MODE != FALSE
-  {
-    unsigned i;
-
-    /* System object initialization.*/
-    for (i = 0U; i < PORT_CORES_NUMBER; i++) {
-      ch_system.instances[i] = NULL;
-    }
-
-    /* User system initialization hook.*/
-    CH_CFG_SYSTEM_INIT_HOOK();
+  /* System object initialization.*/
+  ch_system.state = ch_state_initializing;
+  for (i = 0U; i < PORT_CORES_NUMBER; i++) {
+    ch_system.instances[i] = NULL;
   }
-#endif
+
+  /* User system initialization hook.*/
+  CH_CFG_SYSTEM_INIT_HOOK();
 
   /* OS library modules.*/
   __oslib_init();
@@ -129,6 +123,7 @@ void chSysInit(void) {
   }
 
   /* It is alive now.*/
+  ch_system.state = ch_state_running;
   chSysUnlock();
 }
 

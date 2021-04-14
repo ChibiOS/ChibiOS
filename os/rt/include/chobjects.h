@@ -45,6 +45,16 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Global state of the operating system.
+ */
+typedef enum {
+  ch_state_uninit       = 0,
+  ch_state_initializing = 1,
+  ch_state_running      = 2,
+  ch_state_halted       = 3
+} system_state_t;
+
+/**
  * @brief   Type of a Virtual Timer callback function.
  */
 typedef void (*vtfunc_t)(void *p);
@@ -129,12 +139,10 @@ struct ch_thread {
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   ch_queue_t            rqueue;     /**< @brief Registry queue element.     */
 #endif
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
   /**
    * @brief   OS instance owner of this thread.
    */
   os_instance_t         *owner;
-#endif
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Thread name or @p NULL.
@@ -352,10 +360,14 @@ struct ch_os_instance {
   virtual_timers_list_t vtlist;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief     Registry header.
+   * @brief   Registry header.
    */
   ch_queue_t            reglist;
 #endif
+  /**
+   * @brief   Core associated to this instance.
+   */
+  core_id_t             core_id;
   /**
    * @brief   Main thread descriptor.
    */
@@ -390,11 +402,14 @@ struct ch_os_instance {
   CH_CFG_OS_INSTANCE_EXTRA_FIELDS
 };
 
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Type of system data structure.
  */
 typedef struct ch_system {
+  /**
+   * @brief   Operating system state.
+   */
+  system_state_t        state;
   /**
    * @brief   Initialized OS instances or @p NULL.
    */
@@ -406,7 +421,6 @@ typedef struct ch_system {
   /* Extra fields from configuration.*/
   CH_CFG_SYSTEM_EXTRA_FIELDS
 } ch_system_t;
-#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */

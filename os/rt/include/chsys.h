@@ -291,9 +291,7 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-#if CH_CFG_SMP_MODE != FALSE
 extern ch_system_t ch_system;
-#endif
 extern os_instance_t ch;
 extern stkalign_t ch_idle_thread_wa[];
 #endif
