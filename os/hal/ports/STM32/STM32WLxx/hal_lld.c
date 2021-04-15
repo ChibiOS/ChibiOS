@@ -194,7 +194,7 @@ void stm32_clock_init(void) {
 #endif /* STM32_HSESRC == STM32_HSE_TCXO */
 
   /* Set HSE SYSCLK prescaler.*/
-  RCC-CR |= STM32_HSEPRE;
+  RCC->CR |= STM32_HSEPRE;
 
   /* HSE activation.*/
   RCC->CR |= RCC_CR_HSEON;
