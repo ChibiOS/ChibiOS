@@ -45,16 +45,74 @@
 ch_system_t ch_system;
 
 /**
- * @brief   Default OS instance.
+ * @brief   Core 0 OS instance.
  */
 os_instance_t ch0;
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
- * @brief   Default instance idle thread working area.
+ * @brief   Working area for core 0 idle thread.
  */
-THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+THD_WORKING_AREA(ch_c0_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 #endif
+
+/**
+ * @brief   Core 0 OS instance configuration.
+ */
+const os_instance_config_t ch_core0_cfg = {
+  .name             = "c0",
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  .mainthread_base  = &__main_thread_stack_base__,
+  .mainthread_end   = &__main_thread_stack_end__,
+#elif CH_CFG_USE_DYNAMIC == TRUE
+  .mainthread_base  = NULL,
+  .mainthread_end   = NULL,
+#endif
+#if CH_CFG_NO_IDLE_THREAD == FALSE
+  .idlethread_base  = THD_WORKING_AREA_BASE(ch_c0_idle_thread_wa),
+  .idlethread_end   = THD_WORKING_AREA_END(ch_c0_idle_thread_wa)
+#endif
+};
+#endif
+
+#if (PORT_CORES_NUMBER > 1) || defined(__DOXYGEN__)
+/**
+ * @brief   Core 1 OS instance.
+ */
+os_instance_t ch1;
+
+#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Working area for core 1 idle thread.
+ */
+THD_WORKING_AREA(ch_c1_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+#endif
+
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+extern stkalign_t __c1_main_thread_stack_base__, __c1_main_thread_stack_end__;
+#endif
+
+/**
+ * @brief   Core 1 OS instance configuration.
+ */
+const os_instance_config_t ch_core1_cfg = {
+  .name             = "c1",
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  .mainthread_base  = &__c1_main_thread_stack_base__,
+  .mainthread_end   = &__c1_main_thread_stack_end__,
+#elif CH_CFG_USE_DYNAMIC == TRUE
+  .mainthread_base  = NULL,
+  .mainthread_end   = NULL,
+#endif
+#if CH_CFG_NO_IDLE_THREAD == FALSE
+  .idlethread_base  = THD_WORKING_AREA_BASE(ch_c1_idle_thread_wa),
+  .idlethread_end   = THD_WORKING_AREA_END(ch_c1_idle_thread_wa)
+#endif
+};
+#endif /* PORT_CORES_NUMBER > 1 */
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -122,29 +180,7 @@ void chSysInit(void) {
   __oslib_init();
 
   /* Initializing default OS instance.*/
-  {
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-    extern stkalign_t __main_thread_stack_base__,
-                      __main_thread_stack_end__;
-#endif
-
-    static const os_instance_config_t default_cfg = {
-      .name             = "c0",
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-      .mainthread_base  = &__main_thread_stack_base__,
-      .mainthread_end   = &__main_thread_stack_end__,
-#elif CH_CFG_USE_DYNAMIC == TRUE
-      .mainthread_base  = NULL,
-      .mainthread_end   = NULL,
-#endif
-#if CH_CFG_NO_IDLE_THREAD == FALSE
-      .idlethread_base  = THD_WORKING_AREA_BASE(ch_idle_thread_wa),
-      .idlethread_end   = THD_WORKING_AREA_END(ch_idle_thread_wa)
-#endif
-    };
-
-    chSchObjectInit(&ch0, &default_cfg);
-  }
+  chSchObjectInit(&ch0, &ch_core0_cfg);
 
   /* It is alive now.*/
   ch_system.state = ch_sys_running;

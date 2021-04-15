@@ -292,9 +292,16 @@
 
 #if !defined(__DOXYGEN__)
 extern ch_system_t ch_system;
+
+extern const os_instance_config_t ch_core0_cfg;
 extern os_instance_t ch0;
-extern stkalign_t ch_idle_thread_wa[];
+
+#if PORT_CORES_NUMBER > 1
+extern const os_instance_config_t ch_core1_cfg;
+extern os_instance_t ch1;
 #endif
+
+#endif /* !defined(__DOXYGEN__) */
 
 #ifdef __cplusplus
 extern "C" {

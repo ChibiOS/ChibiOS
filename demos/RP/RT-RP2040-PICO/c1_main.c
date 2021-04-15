@@ -31,41 +31,6 @@ static const ShellConfig shell_cfg1 = {
   commands
 };
 
-/**
- * @brief   Core 1 OS instance.
- */
-os_instance_t ch1;
-
-#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
-/**
- * @brief   Default instance idle thread working area.
- */
-THD_WORKING_AREA(ch_c1_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
-#endif
-
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-extern stkalign_t __c1_main_thread_stack_base__, __c1_main_thread_stack_end__;
-#endif
-
-/**
- * @brief   Core 1 OS instance configuration.
- */
-static const os_instance_config_t core1_cfg = {
-  .name             = "c1",
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-  .mainthread_base  = &__c1_main_thread_stack_base__,
-  .mainthread_end   = &__c1_main_thread_stack_end__,
-#elif CH_CFG_USE_DYNAMIC == TRUE
-  .mainthread_base  = NULL,
-  .mainthread_end   = NULL,
-#endif
-#if CH_CFG_NO_IDLE_THREAD == FALSE
-  .idlethread_base  = THD_WORKING_AREA_BASE(ch_c1_idle_thread_wa),
-  .idlethread_end   = THD_WORKING_AREA_END(ch_c1_idle_thread_wa)
-#endif
-};
-
-
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
@@ -91,7 +56,7 @@ void c1_main(void) {
    * system initialization on the other side.
    */
   chSysWaitSystemState(ch_sys_running);
-  chSchObjectInit(&ch1, &core1_cfg);
+  chSchObjectInit(&ch1, &ch_core1_cfg);
 
   /* It is alive now.*/
   chSysUnlock();
