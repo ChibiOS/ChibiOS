@@ -94,7 +94,13 @@ struct WDGDriver {
   /**
    * @brief   Pointer to the WATCHDOG registers block.
    */
-  WATCHDOG_TypeDef              *wdg;
+  WATCHDOG_TypeDef          *wdg;
+  /**
+   * @brief   Pointer to the WATCHDOG scratch storage.
+   */
+#if WDG_HAS_STORAGE
+  uint8_t                   *scratch;
+#endif
 };
 
 /*===========================================================================*/

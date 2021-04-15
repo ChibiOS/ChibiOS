@@ -52,6 +52,10 @@
 /* RTC attributes.*/
 #define RP_HAS_RTC                          TRUE
 
+/* WDG attributes.*/
+#define RP_HAS_WDG                          TRUE
+#define RP_WDG_STORAGE_SIZE                 32U
+
 /** @} */
 
 #endif /* RP_REGISTRY_H */
