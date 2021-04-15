@@ -78,7 +78,7 @@ void dmaInit(void) {
  *
  * @iclass
  */
-const rp_dma_channel_t *dmaStreamAllocI(uint32_t id,
+const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
                                         rp_dmaisr_t func,
                                         void *param) {
 }
@@ -100,7 +100,7 @@ const rp_dma_channel_t *dmaStreamAllocI(uint32_t id,
  *
  * @api
  */
-const rp_dma_channel_t *dmaStreamAlloc(uint32_t id,
+const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
                                          uint32_t priority,
                                          rp_dmaisr_t func,
                                          void *param) {
@@ -113,7 +113,7 @@ const rp_dma_channel_t *dmaStreamAlloc(uint32_t id,
  *
  * @iclass
  */
-void dmaStreamFreeI(const rp_dma_channel_t *dmachp) {
+void dmaChannelFreeI(const rp_dma_channel_t *dmachp) {
 }
 
 /**
@@ -123,7 +123,7 @@ void dmaStreamFreeI(const rp_dma_channel_t *dmachp) {
  *
  * @api
  */
-void dmaStreamFree(const rp_dma_channel_t *dmachp) {
+void dmaChannelFree(const rp_dma_channel_t *dmachp) {
 }
 
 /**

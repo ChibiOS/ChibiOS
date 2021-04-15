@@ -46,7 +46,7 @@
                                          ((id) <= (RP_DMA_CHANNELS + 1U)))
 
 /**
- * @name    Special stream identifiers
+ * @name    Special channel identifiers
  * @{
  */
 #define RP_DMA_STREAM_ID_ANY            RP_DMA_CHANNELS
@@ -74,7 +74,7 @@
 typedef void (*rp_dmaisr_t)(void *p, uint32_t flags);
 
 /**
- * @brief   RP DMA stream descriptor structure.
+ * @brief   RP DMA channel descriptor structure.
  */
 typedef struct {
   DMA_TypeDef           *dma;           /**< @brief Associated DMA.         */
@@ -95,21 +95,21 @@ typedef struct {
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-extern const stm32_dma_stream_t _stm32_dma_streams[STM32_DMA_STREAMS];
+extern const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS];
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void dmaInit(void);
-  const rp_dma_channel_t *dmaStreamAllocI(uint32_t id,
+  const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
                                           rp_dmaisr_t func,
                                           void *param);
-  const rp_dma_channel_t *dmaStreamAlloc(uint32_t id,
+  const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
                                          rp_dmaisr_t func,
                                          void *param);
-  void dmaStreamFreeI(const rp_dma_channel_t *dmachp);
-  void dmaStreamFree(const rp_dma_channel_t *dmachp);
+  void dmaChannelFreeI(const rp_dma_channel_t *dmachp);
+  void dmaChannelFree(const rp_dma_channel_t *dmachp);
   void dmaServeInterrupt(const rp_dma_channel_t *dmachp);
 #ifdef __cplusplus
 }
