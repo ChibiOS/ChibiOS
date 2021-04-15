@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_wdg_lld.c
- * @brief   WDG Driver subsystem low level driver source template.
+ * @brief   RP2040 watchdog low level driver source.
  *
  * @addtogroup WDG
  * @{
@@ -34,9 +34,7 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-#if (PLATFORM_WDG_USE_WDG1 == TRUE) || defined(__DOXYGEN__)
 WDGDriver WDGD1;
-#endif
 
 /*===========================================================================*/
 /* Driver local variables.                                                   */
@@ -56,11 +54,16 @@ WDGDriver WDGD1;
 
 /**
  * @brief   Low level WDG driver initialization.
+ * @note    The watchdog tick provides clocking to the TIMER block.
+ *          The tick is initialised and started in system clock setup.
  *
  * @notapi
  */
 void wdg_lld_init(void) {
 
+  WDGD1.state = WDG_STOP;
+  WDGD1.wdg   = WATCHDOG;
+  WDGD1.wdg->CRTL &= ~WATCHDOG_CTRL_ENABLE;
 }
 
 /**
@@ -72,7 +75,30 @@ void wdg_lld_init(void) {
  */
 void wdg_lld_start(WDGDriver *wdgp) {
 
-  (void)wdgp;
+  /* Set the time. */
+  uint32_t time = wdgp->wdg->config.rlr;
+  if (time == 0U) {
+    time = 50;
+  }
+
+  /* Due to a silicon bug (see errata RP2040-E1) WDG counts down on each edge. */
+  time = (time == 0U) ? (50 * 2 * 1000) : (time * 2 * 1000);
+
+  /* Set ceiling if greater than count capability. */
+  if (time > WATCHDOG_CTRL_TIME) {
+      time = WATCHDOG_CTRL_TIME;
+  }
+
+  /* Save the reload count. */
+  wdgp->wdg->rlr = time;
+
+  /* Set the initial interval, state, control bits and enable WDG. */
+  wdgp->wdg->LOAD = time;
+  wdgp->state = WDG_READY;
+  wdgp->wdg->CTRL = WATCHDOG_CTRL_PAUSE_DBG0_BITS |
+                    WATCHDOG_CTRL_PAUSE_DBG1_BITS |
+                    WATCHDOG_CTRL_PAUSE_JTAG_BITS |
+                    WATCHDOG_CTRL_ENABLE;
 }
 
 /**
@@ -84,7 +110,7 @@ void wdg_lld_start(WDGDriver *wdgp) {
  */
 void wdg_lld_stop(WDGDriver *wdgp) {
 
-  (void)wdgp;
+  wdgp->wdg->CRTL &= ~WATCHDOG_CTRL_ENABLE;
 }
 
 /**
@@ -96,7 +122,7 @@ void wdg_lld_stop(WDGDriver *wdgp) {
  */
 void wdg_lld_reset(WDGDriver * wdgp) {
 
-  (void)wdgp;
+  wdgp->wdg->LOAD = wdgp->rlr;
 }
 
 #endif /* HAL_USE_WDG */

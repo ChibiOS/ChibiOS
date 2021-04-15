@@ -1143,8 +1143,8 @@ typedef struct {
 #define WATCHDOG_CTRL_PAUSE_JTAG_Pos      24U
 #define WATCHDOG_CTRL_PAUSE_JTAG_Msk      (1U << WATCHDOG_CTRL_PAUSE_JTAG_Pos)
 #define WATCHDOG_CTRL_PAUSE_JTAG          WATCHDOG_CTRL_PAUSE_JTAG_Msk
-#define WATCHDOG_CTRL_TIME_Pos            23U
-#define WATCHDOG_CTRL_TIME_Msk            (1U << WATCHDOG_CTRL_TIME_Pos)
+#define WATCHDOG_CTRL_TIME_Pos            0U
+#define WATCHDOG_CTRL_TIME_Msk            (0xFFFFFFU << WATCHDOG_CTRL_TIME_Pos)
 #define WATCHDOG_CTRL_TIME                WATCHDOG_CTRL_TIME_Msk
 
 #define WATCHDOG_LOAD_Pos                 0U

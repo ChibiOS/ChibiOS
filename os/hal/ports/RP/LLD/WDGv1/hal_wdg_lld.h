@@ -31,6 +31,11 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Presence of a local persistent storage.
+ */
+#define WDG_HAS_STORAGE             (RP_WDG_STORAGE_SIZE > 0)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -66,6 +71,11 @@ typedef struct WDGDriver WDGDriver;
  * @note    It could be empty on some architectures.
  */
 typedef struct {
+  /**
+   * @brief   Configuration of the WATCHDOG LOAD register.
+   * @details See the RP2040 data sheet for details.
+   */
+  uint32_t    rlr;
 } WDGConfig;
 
 /**
@@ -81,6 +91,10 @@ struct WDGDriver {
    */
   const WDGConfig           *config;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Pointer to the WATCHDOG registers block.
+   */
+  WATCHDOG_TypeDef              *wdg;
 };
 
 /*===========================================================================*/
