@@ -47,7 +47,7 @@ ch_system_t ch_system;
 /**
  * @brief   Default OS instance.
  */
-os_instance_t ch;
+os_instance_t ch0;
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
@@ -143,7 +143,7 @@ void chSysInit(void) {
 #endif
     };
 
-    chSchObjectInit(&ch, &default_cfg);
+    chSchObjectInit(&ch0, &default_cfg);
   }
 
   /* It is alive now.*/

@@ -490,6 +490,7 @@ void chVTDoTickI(void) {
  * @iclass
  */
 systimestamp_t chVTGetTimeStampI(void) {
+  os_instance_t * oip = currcore;
   systimestamp_t last, stamp;
   systime_t now;
 
@@ -499,17 +500,17 @@ systimestamp_t chVTGetTimeStampI(void) {
   now = chVTGetSystemTimeX();
 
   /* Last time stamp generated.*/
-  last = ch.vtlist.laststamp;
+  last = oip->vtlist.laststamp;
 
   /* Interval between the last time stamp and current time used for a new
      time stamp. Note that this fails if the interval is larger than a
      systime_t type.*/
   stamp = last + (systimestamp_t)chTimeDiffX((systime_t)last, now);
 
-  chDbgAssert(ch.vtlist.laststamp <= stamp, "wrapped");
+  chDbgAssert(oip->vtlist.laststamp <= stamp, "wrapped");
 
   /* Storing the new stamp.*/
-  ch.vtlist.laststamp = stamp;
+  oip->vtlist.laststamp = stamp;
 
   return stamp;
 }
@@ -523,7 +524,7 @@ void chVTResetTimeStampI(void) {
 
   chDbgCheckClassI();
 
-  ch.vtlist.laststamp = (systimestamp_t)chVTGetSystemTimeX();
+  currcore->vtlist.laststamp = (systimestamp_t)chVTGetSystemTimeX();
 }
 
 #endif /* CH_CFG_USE_TIMESTAMP == TRUE */

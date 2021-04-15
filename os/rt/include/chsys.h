@@ -62,8 +62,8 @@
 #if defined(PORT_INSTANCE_ACCESS)
 #define currcore                            PORT_INSTANCE_ACCESS
 #else
-#if (CH_CFG_SMP_MODE == FALSE) || defined(__DOXYGEN__)
-#define currcore                            (&ch)
+#if (PORT_CORES_NUMBER == 0) || defined(__DOXYGEN__)
+#define currcore                            (&ch0)
 #else
 #define currcore                            ch_system.instances[port_get_core_id()]
 #endif
@@ -292,7 +292,7 @@
 
 #if !defined(__DOXYGEN__)
 extern ch_system_t ch_system;
-extern os_instance_t ch;
+extern os_instance_t ch0;
 extern stkalign_t ch_idle_thread_wa[];
 #endif
 
