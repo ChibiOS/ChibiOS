@@ -33,50 +33,10 @@ static THD_FUNCTION(Thread1, arg) {
   }
 }
 
-/* Courtesy of Pico-SDK.*/
-static void start_core1(void) {
-  extern uint32_t __c1_main_stack_end__, _vectors;
-  extern void _crt0_c1_entry(void);
-  uint32_t cmd_sequence[] = {0, 0, 1,
-                             (uint32_t)&_vectors,
-                             (uint32_t)&__c1_main_stack_end__,
-                             (uint32_t)_crt0_c1_entry};
-  unsigned seq;
-
-#if 0
-  /* Resetting core1.*/
-  PSM_SET->FRCE_OFF = PSM_ANY_PROC1;
-  while ((PSM->FRCE_OFF & PSM_ANY_PROC1) == 0U) {
-  }
-  PSM_CLR->FRCE_OFF = PSM_ANY_PROC1;
-#endif
-
-  /* Starting core 1.*/
-  seq = 0;
-  do {
-    uint32_t response;
-    uint32_t cmd = cmd_sequence[seq];
-
-    /* Flushing the FIFO state before sending a zero.*/
-    if (!cmd) {
-      fifoFlushRead();
-    }
-    fifoBlockingWrite(cmd);
-    response = fifoBlockingRead();
-    /* Checking response, going forward or back to first step.*/
-    seq = cmd == response ? seq + 1U : 0U;
-  } while (seq < count_of(cmd_sequence));
-}
-
 /*
  * Application entry point.
  */
 int main(void) {
-
-  /*
-   * Starting core 1.
-   */
-  start_core1();
 
   /*
    * Shared objects initialization.

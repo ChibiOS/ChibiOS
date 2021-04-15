@@ -72,6 +72,34 @@
 #define RP_NO_INIT                          FALSE
 #endif
 
+/**
+ * @brief   Starts core 1 after initialization.
+ */
+#if !defined(RP_CORE1_START) || defined(__DOXYGEN__)
+#define RP_CORE1_START                      FALSE
+#endif
+
+/**
+ * @brief   Symbol for core 1 vectors table.
+ */
+#if !defined(RP_CORE1_VECTORS_TABLE) || defined(__DOXYGEN__)
+#define RP_CORE1_VECTORS_TABLE              _vectors
+#endif
+
+/**
+ * @brief   Symbol for core 1 entry point.
+ */
+#if !defined(RP_CORE1_ENTRY_POINT) || defined(__DOXYGEN__)
+#define RP_CORE1_ENTRY_POINT                _crt0_c1_entry
+#endif
+
+/**
+ * @brief   Symbol for core 1 initial MSP position.
+ */
+#if !defined(RP_CORE1_STACK_END) || defined(__DOXYGEN__)
+#define RP_CORE1_STACK_END                  __c1_main_stack_end__
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

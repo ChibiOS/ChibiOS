@@ -46,6 +46,42 @@ uint32_t SystemCoreClock;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/* Courtesy of Pico-SDK.*/
+static void start_core1(void) {
+  extern uint32_t RP_CORE1_STACK_END;
+  extern uint32_t RP_CORE1_VECTORS_TABLE;
+  extern void RP_CORE1_ENTRY_POINT(void);
+  static const uint32_t cmd_sequence[] = {0, 0, 1,
+                             (uint32_t)&RP_CORE1_VECTORS_TABLE,
+                             (uint32_t)&RP_CORE1_STACK_END,
+                             (uint32_t)RP_CORE1_ENTRY_POINT};
+  unsigned seq;
+
+#if 0
+  /* Resetting core1.*/
+  PSM_SET->FRCE_OFF = PSM_ANY_PROC1;
+  while ((PSM->FRCE_OFF & PSM_ANY_PROC1) == 0U) {
+  }
+  PSM_CLR->FRCE_OFF = PSM_ANY_PROC1;
+#endif
+
+  /* Starting core 1.*/
+  seq = 0;
+  do {
+    uint32_t response;
+    uint32_t cmd = cmd_sequence[seq];
+
+    /* Flushing the FIFO state before sending a zero.*/
+    if (!cmd) {
+      fifoFlushRead();
+    }
+    fifoBlockingWrite(cmd);
+    response = fifoBlockingRead();
+    /* Checking response, going forward or back to first step.*/
+    seq = cmd == response ? seq + 1U : 0U;
+  } while (seq < count_of(cmd_sequence));
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -61,7 +97,7 @@ uint32_t SystemCoreClock;
  */
 void hal_lld_init(void) {
 
-#if !RP_NO_INIT
+#if RP_NO_INIT == FALSE
   clocks_init();
 
   SystemCoreClock = RP_CORE_CLK;
@@ -70,6 +106,10 @@ void hal_lld_init(void) {
   hal_lld_peripheral_unreset(RESETS_ALLREG_SYSINFO);
   hal_lld_peripheral_unreset(RESETS_ALLREG_SYSCFG);
 #endif /* RP_NO_INIT */
+
+#if RP_CORE1_START == TRUE
+  start_core1();
+#endif
 
   /* IRQ subsystem initialization.*/
   irqInit();
