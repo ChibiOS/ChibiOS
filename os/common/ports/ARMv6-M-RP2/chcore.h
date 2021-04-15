@@ -267,11 +267,11 @@
     #define PORT_INFO                   "Preemption through PendSV (SMP)"
   #endif
 #else
-#if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
-  #define PORT_INFO                     "Preemption through NMI"
-#else
-  #define PORT_INFO                     "Preemption through PendSV"
-#endif
+  #if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
+    #define PORT_INFO                     "Preemption through NMI"
+  #else
+    #define PORT_INFO                     "Preemption through PendSV"
+  #endif
 #endif
 /** @} */
 
