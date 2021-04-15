@@ -101,7 +101,7 @@ include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32wlxx.m
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32WLxx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO_WL5JC/board.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO_WL55JC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
