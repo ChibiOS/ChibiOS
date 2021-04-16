@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -81,13 +81,11 @@ void wdg_lld_start(WDGDriver *wdgp) {
   /* Set the time. */
   uint32_t time = wdgp->wdg->config.rlr;
 
-  /* Due to a silicon bug (see errata RP2040-E1) WDG counts down at each edge. */
+  /* Due to a silicon bug (see errata RP2040-E1) WDG decrements at each edge. */
   time = ((time == 0U) ? 50 : time) * 2 * 1000;
 
   /* Set ceiling if greater than count capability. */
-  if (time > WATCHDOG_CTRL_TIME) {
-      time = WATCHDOG_CTRL_TIME;
-  }
+  time = (time > WATCHDOG_CTRL_TIME) ? WATCHDOG_CTRL_TIME : time;
 
   /* Set the initial interval, state, control bits and enable WDG. */
   wdgp->wdg->LOAD = time;

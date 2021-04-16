@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_wdg_lld.h
- * @brief   WDG Driver subsystem low level driver header template.
+ * @brief   WDG driver subsystem low level driver header.
  *
  * @addtogroup WDG
  * @{
@@ -40,19 +40,6 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   WDG1 driver enable switch.
- * @note    The default is @p FALSE.
- */
-#if !defined(PLATFORM_WDG_USE_WDG1) || defined(__DOXYGEN__)
-#define PLATFORM_WDG_USE_WDG1                  FALSE
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -75,7 +62,7 @@ typedef struct {
    * @brief   Configuration of the WATCHDOG LOAD register.
    * @details See the RP2040 data sheet for details.
    */
-  uint32_t    rlr;
+  uint32_t    				rlr;
 } WDGConfig;
 
 /**
