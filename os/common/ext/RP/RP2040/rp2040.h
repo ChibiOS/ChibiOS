@@ -784,6 +784,79 @@ typedef struct {
 #define SPI_SSPCR1_LBM_Pos                0U
 #define SPI_SSPCR1_LBM_Msk                (1U << SPI_SSPCR1_LBM_Pos)
 #define SPI_SSPCR1_LBM                    SPI_SSPCR1_LBM_Msk
+
+#define SPI_SSPSR_BSY_Pos                 4U
+#define SPI_SSPSR_BSY_Msk                 (1U << SPI_SSPSR_BSY_Pos)
+#define SPI_SSPSR_BSY                     SPI_SSPSR_BSY_Msk
+#define SPI_SSPSR_RFF_Pos                 3U
+#define SPI_SSPSR_RFF_Msk                 (1U << SPI_SSPSR_RFF_Pos)
+#define SPI_SSPSR_RFF                     SPI_SSPSR_RFF_Msk
+#define SPI_SSPSR_RNE_Pos                 2U
+#define SPI_SSPSR_RNE_Msk                 (1U << SPI_SSPSR_RNE_Pos)
+#define SPI_SSPSR_RNE                     SPI_SSPSR_RNE_Msk
+#define SPI_SSPSR_TNF_Pos                 1U
+#define SPI_SSPSR_TNF_Msk                 (1U << SPI_SSPSR_TNF_Pos)
+#define SPI_SSPSR_TNF                     SPI_SSPSR_TNF_Msk
+#define SPI_SSPSR_TFE_Pos                 0U
+#define SPI_SSPSR_TFE_Msk                 (1U << SPI_SSPSR_TFE_Pos)
+#define SPI_SSPSR_TFE                     SPI_SSPSR_TFE_Msk
+
+#define SPI_SSPCPSR_CPSDVSR_Pos           0U
+#define SPI_SSPCPSR_CPSDVSR_Msk           (255U << SPI_SSPCPSR_CPSDVSR_Pos)
+#define SPI_SSPCPSR_CPSDVSR(n)            ((n) << SPI_SSPCPSR_CPSDVSR_Msk)
+
+#define SPI_SSPIMSC_TXIM_Pos              3U
+#define SPI_SSPIMSC_TXIM_Msk              (1U << SPI_SSPIMSC_TXIM_Pos)
+#define SPI_SSPIMSC_TXIM                  SPI_SSPIMSC_TXIM_Msk
+#define SPI_SSPIMSC_RXIM_Pos              2U
+#define SPI_SSPIMSC_RXIM_Msk              (1U << SPI_SSPIMSC_RXIM_Pos)
+#define SPI_SSPIMSC_RXIM                  SPI_SSPIMSC_RXIM_Msk
+#define SPI_SSPIMSC_RTIM_Pos              1U
+#define SPI_SSPIMSC_RTIM_Msk              (1U << SPI_SSPIMSC_RTIM_Pos)
+#define SPI_SSPIMSC_RTIM                  SPI_SSPIMSC_RTIM_Msk
+#define SPI_SSPIMSC_RORIM_Pos             0U
+#define SPI_SSPIMSC_RORIM_Msk             (1U << SPI_SSPIMSC_RORIM_Pos)
+#define SPI_SSPIMSC_RORIM                 SPI_SSPIMSC_RORIM_Msk
+
+#define SPI_SSPRIS_TXRIS_Pos              3U
+#define SPI_SSPRIS_TXRIS_Msk              (1U << SPI_SSPRIS_TXRIS_Pos)
+#define SPI_SSPRIS_TXRIS                  SPI_SSPRIS_TXRIS_Msk
+#define SPI_SSPRIS_RXRIS_Pos              2U
+#define SPI_SSPRIS_RXRIS_Msk              (1U << SPI_SSPRIS_RXRIS_Pos)
+#define SPI_SSPRIS_RXRIS                  SPI_SSPRIS_RXRIS_Msk
+#define SPI_SSPRIS_RTRIS_Pos              1U
+#define SPI_SSPRIS_RTRIS_Msk              (1U << SPI_SSPRIS_RTRIS_Pos)
+#define SPI_SSPRIS_RTRIS                  SPI_SSPRIS_RTRIS_Msk
+#define SPI_SSPRIS_RORRIS_Pos             0U
+#define SPI_SSPRIS_RORRIS_Msk             (1U << SPI_SSPRIS_RORRIS_Pos)
+#define SPI_SSPRIS_RORRIS                 SPI_SSPRIS_RORRIS_Msk
+
+#define SPI_SSPMIS_TXMIS_Pos              3U
+#define SPI_SSPMIS_TXMIS_Msk              (1U << SPI_SSPMIS_TXMIS_Pos)
+#define SPI_SSPMIS_TXMIS                  SPI_SSPMIS_TXMIS_Msk
+#define SPI_SSPMIS_RXMIS_Pos              2U
+#define SPI_SSPMIS_RXMIS_Msk              (1U << SPI_SSPMIS_RXMIS_Pos)
+#define SPI_SSPMIS_RXMIS                  SPI_SSPMIS_RXMIS_Msk
+#define SPI_SSPMIS_RTMIS_Pos              1U
+#define SPI_SSPMIS_RTMIS_Msk              (1U << SPI_SSPMIS_RTMIS_Pos)
+#define SPI_SSPMIS_RTMIS                  SPI_SSPMIS_RTMIS_Msk
+#define SPI_SSPMIS_RORMIS_Pos             0U
+#define SPI_SSPMIS_RORMIS_Msk             (1U << SPI_SSPMIS_RORMIS_Pos)
+#define SPI_SSPMIS_RORMIS                 SPI_SSPMIS_RORMIS_Msk
+
+#define SPI_SSPICR_RTIC_Pos               1U
+#define SPI_SSPICR_RTIC_Msk               (1U << SPI_SSPICR_RTIC_Pos)
+#define SPI_SSPICR_RTIC                   SPI_SSPICR_RTIC_Msk
+#define SPI_SSPICR_RORIC_Pos              0U
+#define SPI_SSPICR_RORIC_Msk              (1U << SPI_SSPICR_RORIC_Pos)
+#define SPI_SSPICR_RORIC                  SPI_SSPICR_RORIC_Msk
+
+#define SPI_SSPDMACR_TXDMAE_Pos           1U
+#define SPI_SSPDMACR_TXDMAE_Msk           (1U << SPI_SSPDMACR_TXDMAE_Pos)
+#define SPI_SSPDMACR_TXDMAE               SPI_SSPDMACR_TXDMAE_Msk
+#define SPI_SSPDMACR_RXDMAE_Pos           0U
+#define SPI_SSPDMACR_RXDMAE_Msk           (1U << SPI_SSPDMACR_RXDMAE_Pos)
+#define SPI_SSPDMACR_RXDMAE               SPI_SSPDMACR_RXDMAE_Msk
 /** @} */
 
 /**
@@ -1357,117 +1430,6 @@ typedef struct {
 #define WATCHDOG_TICK_CYCLES_Pos          0U
 #define WATCHDOG_TICK_CYCLES_Msk          (0x1FFU << WATCHDOG_TICK_CYCLES_Pos)
 #define WATCHDOG_TICK_CYCLES              WATCHDOG_TICK_CYCLES_Msk
-/** @} */
-
-/**
- * @name    SPI bits definitions
- * @{
- */
-#define SPI_SSPCR0_SCR_Pos                8U
-#define SPI_SSPCR0_SCR_Msk                (0xFFU << SPI_SSPCR0_SCR_Pos)
-#define SPI_SSPCR0_SCR                    SPI_SSPCR0_SCR_Msk
-#define SPI_SSPCR0_SPH_Pos                7U
-#define SPI_SSPCR0_SPH_Msk                (1U << SPI_SSPCR0_SPH_Pos)
-#define SPI_SSPCR0_SPH                    SPI_SSPCR0_SPH_Msk
-#define SPI_SSPCR0_SPO_Pos                6U
-#define SPI_SSPCR0_SPO_Msk                (1U << SPI_SSPCR0_SPO_Pos)
-#define SPI_SSPCR0_SPO                    SPI_SSPCR0_SPO_Msk
-#define SPI_SSPCR0_FRF_Pos                4U
-#define SPI_SSPCR0_FRF_Msk                (3U << SPI_SSPCR0_FRF_Pos)
-#define SPI_SSPCR0_FRF                    SPI_SSPCR0_FRF_Msk
-#define SPI_SSPCR0_DSS_Pos                0U
-#define SPI_SSPCR0_DSS_Msk                (0xFU << SPI_SSPCR0_DSS_Pos)
-#define SPI_SSPCR0_DSS                    SPI_SSPCR0_DSS_Msk
-
-#define SPI_SSPCR1_SOD_Pos                3U
-#define SPI_SSPCR1_SOD_Msk                (1U << SPI_SSPCR1_SOD_Pos)
-#define SPI_SSPCR1_SOD                    SPI_SSPCR1_SOD_Msk
-#define SPI_SSPCR1_MS_Pos                 2U
-#define SPI_SSPCR1_MS_Msk                 (1U << SPI_SSPCR1_MS_Pos)
-#define SPI_SSPCR1_MS                     SPI_SSPCR1_MS_Msk
-#define SPI_SSPCR1_SSE_Pos                1U
-#define SPI_SSPCR1_SSE_Msk                (1U << SPI_SSPCR1_SSE_Pos)
-#define SPI_SSPCR1_SSE                    SPI_SSPCR1_SSE_Msk
-#define SPI_SSPCR1_LBM_Pos                0U
-#define SPI_SSPCR1_LBM_Msk                (1U << SPI_SSPCR1_LBM_Pos)
-#define SPI_SSPCR1_LBM                    SPI_SSPCR1_LBM_Msk
-
-#define SPI_SSPDR_LBM_Pos                 0U
-#define SPI_SSPDR_LBM_Msk                 (0xFFFFU << SPI_SSPDR_LBM_Pos)
-#define SPI_SSPDR_LBM                     SPI_SSPDR_LBM_Msk
-
-#define SPI_SSPSR_BSY_Pos                 4U
-#define SPI_SSPSR_BSY_Msk                 (1U << SPI_SSPSR_BSY_Pos)
-#define SPI_SSPSR_BSY                     SPI_SSPSR_BSY_Msk
-#define SPI_SSPSR_RFF_Pos                 3U
-#define SPI_SSPSR_RFF_Msk                 (1U << SPI_SSPSR_RFF_Pos)
-#define SPI_SSPSR_RFF                     SPI_SSPSR_RFF_Msk
-#define SPI_SSPSR_RNE_Pos                 2U
-#define SPI_SSPSR_RNE_Msk                 (1U << SPI_SSPSR_RNE_Pos)
-#define SPI_SSPSR_RNE                     SPI_SSPSR_RNE_Msk
-#define SPI_SSPSR_TNF_Pos                 1U
-#define SPI_SSPSR_TNF_Msk                 (1U << SPI_SSPSR_TNF_Pos)
-#define SPI_SSPSR_TNF                     SPI_SSPSR_TNF_Msk
-#define SPI_SSPSR_TFE_Pos                 0U
-#define SPI_SSPSR_TFE_Msk                 (1U << SPI_SSPSR_TFE_Pos)
-#define SPI_SSPSR_TFE                     SPI_SSPSR_TFE_Msk
-
-#define SPI_SSPCPSR_CPSDVSR_Pos           0U
-#define SPI_SSPCPSR_CPSDVSR_Msk           (0xFF << SPI_SSPCPSR_CPSDVSR_Pos)
-#define SPI_SSPCPSR_CPSDVSR               SPI_SSPCPSR_CPSDVSR_Msk
-
-#define SPI_SSPIMSC_TXIM_Pos              3U
-#define SPI_SSPIMSC_TXIM_Msk              (1U << SPI_SSPIMSC_TXIM_Pos)
-#define SPI_SSPIMSC_TXIM                  SPI_SSPIMSC_TXIM_Msk
-#define SPI_SSPIMSC_RXIM_Pos              2U
-#define SPI_SSPIMSC_RXIM_Msk              (1U << SPI_SSPIMSC_RXIM_Pos)
-#define SPI_SSPIMSC_RXIM                  SPI_SSPIMSC_RXIM_Msk
-#define SPI_SSPIMSC_RTIM_Pos              1U
-#define SPI_SSPIMSC_RTIM_Msk              (1U << SPI_SSPIMSC_RTIM_Pos)
-#define SPI_SSPIMSC_RTIM                  SPI_SSPIMSC_RTIM_Msk
-#define SPI_SSPIMSC_RORIM_Pos             0U
-#define SPI_SSPIMSC_RORIM_Msk             (1U << SPI_SSPIMSC_RORIM_Pos)
-#define SPI_SSPIMSC_RORIM                 SPI_SSPIMSC_RORIM_Msk
-
-#define SPI_SSPRIS_TXRIS_Pos              3U
-#define SPI_SSPRIS_TXRIS_Msk              (1U << SPI_SSPRIS_TXRIS_Pos)
-#define SPI_SSPRIS_TXRIS                  SPI_SSPRIS_TXRIS_Msk
-#define SPI_SSPRIS_RXRIS_Pos              2U
-#define SPI_SSPRIS_RXRIS_Msk              (1U << SPI_SSPRIS_RXRIS_Pos)
-#define SPI_SSPRIS_RXRIS                  SPI_SSPRIS_RXRIS_Msk
-#define SPI_SSPRIS_RTRIS_Pos              1U
-#define SPI_SSPRIS_RTRIS_Msk              (1U << SPI_SSPRIS_RTRIS_Pos)
-#define SPI_SSPRIS_RTRIS                  SPI_SSPRIS_RTRIS_Msk
-#define SPI_SSPRIS_RORRIS_Pos             0U
-#define SPI_SSPRIS_RORRIS_Msk             (1U << SPI_SSPRIS_RORRIS_Pos)
-#define SPI_SSPRIS_RORRIS                 SPI_SSPRIS_RORRIS_Msk
-
-#define SPI_SSPMIS_TXMIS_Pos              3U
-#define SPI_SSPMIS_TXMIS_Msk              (1U << SPI_SSPMIS_TXMIS_Pos)
-#define SPI_SSPMIS_TXMIS                  SPI_SSPMIS_TXMIS_Msk
-#define SPI_SSPMIS_RXMIS_Pos              2U
-#define SPI_SSPMIS_RXMIS_Msk              (1U << SPI_SSPMIS_RXMIS_Pos)
-#define SPI_SSPMIS_RXMIS                  SPI_SSPMIS_RXMIS_Msk
-#define SPI_SSPMIS_RTMIS_Pos              1U
-#define SPI_SSPMIS_RTMIS_Msk              (1U << SPI_SSPMIS_RTMIS_Pos)
-#define SPI_SSPMIS_RTMIS                  SPI_SSPMIS_RTMIS_Msk
-#define SPI_SSPMIS_RORMIS_Pos             0U
-#define SPI_SSPMIS_RORMIS_Msk             (1U << SPI_SSPMIS_RORMIS_Pos)
-#define SPI_SSPMIS_RORMIS                 SPI_SSPMIS_RORMIS_Msk
-
-#define SPI_SSPICR_RTIC_Pos               1U
-#define SPI_SSPICR_RTIC_Msk               (1U << SPI_SSPICR_RTIC_Pos)
-#define SPI_SSPICR_RTIC                   SPI_SSPICR_RTIC_Msk
-#define SPI_SSPICR_RORIC_Pos              0U
-#define SPI_SSPICR_RORIC_Msk              (1U << SPI_SSPICR_RORIC_Pos)
-#define SPI_SSPICR_RORIC                  SPI_SSPICR_RORIC_Msk
-
-#define SPI_SSPDMACR_TXDMAE_Pos           1U
-#define SPI_SSPDMACR_TXDMAE_Msk           (1U << SPI_SSPDMACR_TXDMAE_Pos)
-#define SPI_SSPDMACR_TXDMAE               SPI_SSPDMACR_TXDMAE_Msk
-#define SPI_SSPDMACR_RXDMAE_Pos           0U
-#define SPI_SSPDMACR_RXDMAE_Msk           (1U << SPI_SSPDMACR_RXDMAE_Pos)
-#define SPI_SSPDMACR_RXDMAE               SPI_SSPDMACR_RXDMAE_Msk
 /** @} */
 
 /**
