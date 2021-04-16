@@ -147,6 +147,26 @@ __STATIC_INLINE bool dmaChannelIsBusyX(const rp_dma_channel_t *dmachp) {
 }
 
 /**
+ * @brief   Get and clears channel interrupts state.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ * @return              The content of @p CTRL_TRIG register before clearing
+ *                      interrupts.
+ *
+ * @special
+ */
+__STATIC_INLINE uint32_t dmaChannelGetAndClearInterrupts(const rp_dma_channel_t *dmachp) {
+  uint32_t ctrl_trig;
+
+  ctrl_trig= dmachp->channel->CTRL_TRIG;
+  dmachp->channel->CTRL_TRIG = ctrl_trig |
+                               DMA_CTRL_TRIG_READ_ERROR |
+                               DMA_CTRL_TRIG_WRITE_ERROR;
+
+  return ctrl_trig;
+}
+
+/**
  * @brief   Setup of the source DMA pointer.
  *
  * @param[in] dmachp    pointer to a rp_dma_channel_t structure
@@ -239,8 +259,7 @@ __STATIC_INLINE void dmaChannelDisableX(const rp_dma_channel_t *dmachp) {
   dmachp->dma->CHAN_ABORT |= dmachp->chnmask;
   while ((dmachp->dma->CHAN_ABORT & dmachp->chnmask) != 0U) {
   }
-  dmachp->channel->CTRL_TRIG |= DMA_CTRL_TRIG_READ_ERROR |
-                                DMA_CTRL_TRIG_WRITE_ERROR;
+  (void) dmaChannelGetAndClearInterrupts(dmachp);
 }
 
 #endif /* RP_DMA_H */

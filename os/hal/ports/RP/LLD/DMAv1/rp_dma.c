@@ -157,39 +157,34 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
   }
 
   for (i = startid; i <= endid; i++) {
-    uint32_t mask = (1U << i);
     uint32_t prevmask = dma.c0_allocated_mask | dma.c1_allocated_mask;
-    if ((prevmask & mask) == 0U) {
-      const rp_dma_channel_t *dmachp = RP_DMA_CHANNEL(i);
+    const rp_dma_channel_t *dmachp = RP_DMA_CHANNEL(i);
+
+    if ((prevmask & dmachp->chnmask) == 0U) {
 
       /* Installs the DMA handler.*/
       dma.channels[i].func  = func;
       dma.channels[i].param = param;
 
-      if (0) {
+      if (SIO->CPUID == 0U) {
         /* Channel taken by core 0.*/
         if (dma.c0_allocated_mask == 0U) {
           nvicEnableVector(RP_DMA_IRQ_0_NUMBER, priority);
         }
-        dma.c0_allocated_mask |= mask;
+        dma.c0_allocated_mask |= dmachp->chnmask;
       }
       else {
         /* Channel taken by core 1.*/
         if (dma.c1_allocated_mask == 0U) {
           nvicEnableVector(RP_DMA_IRQ_1_NUMBER, priority);
         }
-        dma.c1_allocated_mask |= mask;
+        dma.c1_allocated_mask |= dmachp->chnmask;
       }
 
       /* Releasing DMA reset if it is the 1st channel taken.*/
       if (prevmask == 0U) {
-//        rccEnableDMA1(true);
+        hal_lld_peripheral_unreset(RESETS_ALLREG_DMA);
       }
-
-      /* Putting the stream in a known state.*/
-      dmaChannelDisableX(dmachp);
-      dmachp->channel->CTRL_TRIG = DMA_CTRL_TRIG_READ_ERROR |
-                                   DMA_CTRL_TRIG_WRITE_ERROR;
 
       return dmachp;
     }
@@ -220,6 +215,13 @@ const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
                                         uint32_t priority,
                                         rp_dmaisr_t func,
                                         void *param) {
+  const rp_dma_channel_t *dmachp;
+
+  osalSysLock();
+  dmachp = dmaChannelAllocI(id, priority, func, param);
+  osalSysUnlock();
+
+  return dmachp;
 }
 
 /**
@@ -230,6 +232,40 @@ const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
  * @iclass
  */
 void dmaChannelFreeI(const rp_dma_channel_t *dmachp) {
+
+  osalDbgCheck(dmachp != NULL);
+
+  /* Check if the streams is not taken.*/
+  osalDbgAssert(((dma.c0_allocated_mask | dma.c1_allocated_mask) & dmachp->chnmask) != 0U,
+                "not allocated");
+
+  /* Putting the stream in a known state.*/
+  dmaChannelDisableX(dmachp);
+  dmaChannelSetModeX(dmachp, 0U);
+
+  if (SIO->CPUID == 0U) {
+    /* Channel released by core 0.*/
+    dma.c0_allocated_mask &= ~dmachp->chnmask;
+    if (dma.c0_allocated_mask == 0U) {
+      nvicDisableVector(RP_DMA_IRQ_0_NUMBER);
+    }
+  }
+  else {
+    /* Channel released by core 1.*/
+    dma.c1_allocated_mask &= ~dmachp->chnmask;
+    if (dma.c1_allocated_mask == 0U) {
+      nvicDisableVector(RP_DMA_IRQ_1_NUMBER);
+    }
+  }
+
+  /* Removes the DMA handler.*/
+  dma.channels[dmachp->chnidx].func  = NULL;
+  dma.channels[dmachp->chnidx].param = NULL;
+
+  /* Shutting down clocks that are no more required, if any.*/
+  if ((dma.c0_allocated_mask | dma.c1_allocated_mask) == 0U) {
+    hal_lld_peripheral_reset(RESETS_ALLREG_DMA);
+  }
 }
 
 /**
@@ -240,6 +276,10 @@ void dmaChannelFreeI(const rp_dma_channel_t *dmachp) {
  * @api
  */
 void dmaChannelFree(const rp_dma_channel_t *dmachp) {
+
+  osalSysLock();
+  dmaChannelFreeI(dmachp);
+  osalSysUnlock();
 }
 
 /**
