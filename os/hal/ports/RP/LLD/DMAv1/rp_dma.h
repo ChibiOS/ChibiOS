@@ -78,6 +78,9 @@ typedef void (*rp_dmaisr_t)(void *p, uint32_t flags);
  */
 typedef struct {
   DMA_TypeDef           *dma;           /**< @brief Associated DMA.         */
+  DMA_Channel_Typedef   *channel;       /**< @brief Associated DMA channel. */
+  uint32_t              chnidx;         /**< @brief Index to self in array. */
+  uint32_t              chnmask;        /**< @brief Channel bit mask.       */
 } rp_dma_channel_t;
 
 /*===========================================================================*/
@@ -114,6 +117,112 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Driver inline functions.                                                  */
+/*===========================================================================*/
+
+/**
+ * @brief   Setup of the source DMA pointer.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ * @param[in] addr      value to be written in the @p READ_ADDR register
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelSetSource(const rp_dma_channel_t *dmachp,
+                                         uint32_t addr) {
+
+  dmachp->channel->READ_ADDR = addr;
+}
+
+/**
+ * @brief   Setup of the destination DMA pointer.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ * @param[in] addr      value to be written in the @p WRITE_ADDR register
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelSetDestination(const rp_dma_channel_t *dmachp,
+                                              uint32_t addr) {
+
+  dmachp->channel->WRITE_ADDR = addr;
+}
+
+/**
+ * @brief   Setup of the DMA transfer counter.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ * @param[in] n         value to be written in the @p TRANS_COUNT register
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelSetCounter(const rp_dma_channel_t *dmachp,
+                                          uint32_t n) {
+
+  dmachp->channel->TRANS_COUNT = n;
+}
+
+/**
+ * @brief   Setup of the DMA transfer mode without linking.
+ * @note    The link field is enforced to "self" meaning no linking.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ * @param[in] mode      value to be written in the @p CTRL_TRIG register
+ *                      except link field
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelSetMode(const rp_dma_channel_t *dmachp,
+                                       uint32_t mode) {
+
+  dmachp->channel->CTRL_TRIG = (mode & ~DMA_CTRL_TRIG_CHAIN_TO_Msk) |
+                               DMA_CTRL_TRIG_CHAIN_TO(dmachp->chnidx);
+}
+
+/**
+ * @brief   Enables a DMA channel.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelEnable(const rp_dma_channel_t *dmachp) {
+
+  dmachp->channel->CTRL_TRIG |= DMA_CTRL_TRIG_EN;
+}
+
+/**
+ * @brief   Disables a DMA channel aborting the current transfer.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelDisable(const rp_dma_channel_t *dmachp) {
+
+  dmachp->dma->CHAN_ABORT |= dmachp->chnmask;
+  while ((dmachp->dma->CHAN_ABORT & dmachp->chnmask) != 0U) {
+  }
+}
+
+/**
+ * @brief   Returns the channel busy state.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ * @return              The channel busy state.
+ * @retval false        if the channel is not busy.
+ * @retval true         if the channel is busy.
+ *
+ * @special
+ */
+__STATIC_INLINE bool dmaChannelIsBusy(const rp_dma_channel_t *dmachp) {
+
+  return (bool)((dmachp->channel->CTRL_TRIG & DMA_CTRL_TRIG_BUSY) != 0U);
+}
 
 #endif /* RP_DMA_H */
 

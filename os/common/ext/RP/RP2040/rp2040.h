@@ -85,13 +85,21 @@ typedef enum {
  * @{
  */
 typedef struct {
-  struct {
-    __IO uint32_t       READ_ADDR;
-    __IO uint32_t       WRITE_ADDR;
-    __IO uint32_t       TRANS_COUNT;
-    __IO uint32_t       CTRL_TRIG;
-    __I  uint32_t       resvd10[12];
-  } CH[12];
+  __IO uint32_t         READ_ADDR;
+  __IO uint32_t         WRITE_ADDR;
+  __IO uint32_t         TRANS_COUNT;
+  __IO uint32_t         CTRL_TRIG;
+  __I  uint32_t         resvd10[12];
+} DMA_Channel_Typedef;
+
+typedef struct {
+  __I  uint32_t         CTDREQ;
+  __I  uint32_t         TCR;
+  __I  uint32_t         resvd8[56];
+} DMA_Debug_Typedef;
+
+typedef struct {
+  DMA_Channel_Typedef   CH[12];
   __I  uint32_t         resvd300[64];
   __IO uint32_t         INTR;
   struct {
@@ -107,11 +115,7 @@ typedef struct {
   __IO uint32_t         CHAN_ABORT;
   __I  uint32_t         N_CHANNELS;
   __I  uint32_t         resvd44C[237];
-  struct {
-    __I  uint32_t       CTDREQ;
-    __I  uint32_t       TCR;
-    __I  uint32_t       resvd8[56];
-  } CH_DBG[12];
+  DMA_Debug_Typedef     CH_DBG[12];
 } DMA_TypeDef;
 
 typedef struct {
@@ -430,6 +434,9 @@ typedef struct {
 #define __IOPORT_BASE                     0xD0000000U
 
 #define __DMA_BASE                        (__APBPERIPH_BASE + 0x00000000U)
+#define __DMA_XOR_BASE                    (__APBPERIPH_BASE + 0x00001000U)
+#define __DMA_SET_BASE                    (__APBPERIPH_BASE + 0x00002000U)
+#define __DMA_CLR_BASE                    (__APBPERIPH_BASE + 0x00003000U)
 #define __RESETS_BASE                     (__APBPERIPH_BASE + 0x0000C000U)
 #define __IOUSER0_BASE                    (__APBPERIPH_BASE + 0x00014000U)
 #define __IOQSPI_BASE                     (__APBPERIPH_BASE + 0x00018000U)
@@ -463,6 +470,9 @@ typedef struct {
  * @{
  */
 #define DMA                               ((DMA_TypeDef *)    __DMA_BASE)
+#define DMA_XOR                           ((DMA_TypeDef *)    __DMA_XOR_BASE)
+#define DMA_SET                           ((DMA_TypeDef *)    __DMA_SET_BASE)
+#define DMA_CLR                           ((DMA_TypeDef *)    __DMA_CLR_BASE)
 #define IO_BANK0                          ((IOUSER_TypeDef *) __IOUSER0_BASE)
 #define IO_QSPI                           ((IOUSER_TypeDef *) __IOQSPI_BASE)
 #define PADS_BANK0                        ((PADS_TypeDef *)   __PADSUSER0_BASE)

@@ -101,9 +101,8 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
  * @api
  */
 const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
-                                         uint32_t priority,
-                                         rp_dmaisr_t func,
-                                         void *param) {
+                                        rp_dmaisr_t func,
+                                        void *param) {
 }
 
 /**

@@ -25,6 +25,7 @@ else
 endif
 
 # Drivers compatible with the platform.
+include $(CHIBIOS)/os/hal/ports/RP/LLD/DMAv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/RP/LLD/GPIOv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/RP/LLD/TIMERv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/RP/LLD/UARTv1/driver.mk

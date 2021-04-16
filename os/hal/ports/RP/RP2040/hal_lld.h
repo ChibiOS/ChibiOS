@@ -153,6 +153,7 @@ typedef enum clock_index clock_index_t;
 #include "cache.h"
 #include "rp_isr.h"
 #include "rp_fifo.h"
+#include "rp_dma.h"
 
 #ifdef __cplusplus
 extern "C" {
