@@ -46,11 +46,18 @@
                                          ((id) <= (RP_DMA_CHANNELS + 1U)))
 
 /**
- * @name    Special channel identifiers
- * @{
+ * @brief   Any channel selector.
  */
 #define RP_DMA_STREAM_ID_ANY            RP_DMA_CHANNELS
-/** @} */
+
+/**
+ * @brief   Returns a pointer to a @p rp_dma_channel_t structure.
+ *
+ * @param[in] id        the stream numeric identifier
+ * @return              A pointer to the @p rp_dma_channel_t constant structure
+ *                      associated to the DMA channel.
+ */
+#define RP_DMA_CHANNEL(id)          (&__rp_dma_channels[id])
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -106,11 +113,13 @@ extern "C" {
 #endif
   void dmaInit(void);
   const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
+                                           uint32_t priority,
+                                           rp_dmaisr_t func,
+                                           void *param);
+  const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
+                                          uint32_t priority,
                                           rp_dmaisr_t func,
                                           void *param);
-  const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
-                                         rp_dmaisr_t func,
-                                         void *param);
   void dmaChannelFreeI(const rp_dma_channel_t *dmachp);
   void dmaChannelFree(const rp_dma_channel_t *dmachp);
   void dmaServeInterrupt(const rp_dma_channel_t *dmachp);
@@ -148,7 +157,7 @@ __STATIC_INLINE bool dmaChannelIsBusyX(const rp_dma_channel_t *dmachp) {
 __STATIC_INLINE void dmaChannelSetSourceX(const rp_dma_channel_t *dmachp,
                                           uint32_t addr) {
 
-  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
+  osalDbgAssert(dmaChannelIsBusyX(dmachp) == false, "channel is busy");
 
   dmachp->channel->READ_ADDR = addr;
 }
@@ -164,7 +173,7 @@ __STATIC_INLINE void dmaChannelSetSourceX(const rp_dma_channel_t *dmachp,
 __STATIC_INLINE void dmaChannelSetDestinationX(const rp_dma_channel_t *dmachp,
                                                uint32_t addr) {
 
-  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
+  osalDbgAssert(dmaChannelIsBusyX(dmachp) == false, "channel is busy");
 
   dmachp->channel->WRITE_ADDR = addr;
 }
@@ -180,7 +189,7 @@ __STATIC_INLINE void dmaChannelSetDestinationX(const rp_dma_channel_t *dmachp,
 __STATIC_INLINE void dmaChannelSetCounterX(const rp_dma_channel_t *dmachp,
                                            uint32_t n) {
 
-  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
+  osalDbgAssert(dmaChannelIsBusyX(dmachp) == false, "channel is busy");
 
   dmachp->channel->TRANS_COUNT = n;
 }
@@ -198,7 +207,7 @@ __STATIC_INLINE void dmaChannelSetCounterX(const rp_dma_channel_t *dmachp,
 __STATIC_INLINE void dmaChannelSetModeX(const rp_dma_channel_t *dmachp,
                                         uint32_t mode) {
 
-  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
+  osalDbgAssert(dmaChannelIsBusyX(dmachp) == false, "channel is busy");
 
   dmachp->channel->CTRL_TRIG = (mode & ~DMA_CTRL_TRIG_CHAIN_TO_Msk) |
                                DMA_CTRL_TRIG_CHAIN_TO(dmachp->chnidx);
@@ -230,6 +239,8 @@ __STATIC_INLINE void dmaChannelDisableX(const rp_dma_channel_t *dmachp) {
   dmachp->dma->CHAN_ABORT |= dmachp->chnmask;
   while ((dmachp->dma->CHAN_ABORT & dmachp->chnmask) != 0U) {
   }
+  dmachp->channel->CTRL_TRIG |= DMA_CTRL_TRIG_READ_ERROR |
+                                DMA_CTRL_TRIG_WRITE_ERROR;
 }
 
 #endif /* RP_DMA_H */

@@ -28,6 +28,8 @@
 
 #include "hal.h"
 
+#define RP_DMA_REQUIRED
+
 /* The following macro is only defined if some driver requiring DMA services
    has been enabled.*/
 #if defined(RP_DMA_REQUIRED) || defined(__DOXYGEN__)
@@ -43,6 +45,51 @@
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Global DMA-related data structures.
+ */
+static struct {
+  /**
+   * @brief   Mask of the allocated channels for core 0.
+   */
+  uint32_t          c0_allocated_mask;
+  /**
+   * @brief   Mask of the allocated channels for core 1.
+   */
+  uint32_t          c1_allocated_mask;
+  /**
+   * @brief   DMA IRQ redirectors.
+   */
+  struct {
+    /**
+     * @brief   DMA callback function.
+     */
+    rp_dmaisr_t     func;
+    /**
+     * @brief   DMA callback parameter.
+     */
+    void            *param;
+  } channels[RP_DMA_CHANNELS];
+} dma;
+
+/**
+ * @brief   DMA channel descriptors.
+ */
+const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS] = {
+  {DMA, &DMA->CH[0],  0U,  1U << 0},
+  {DMA, &DMA->CH[1],  1U,  1U << 1},
+  {DMA, &DMA->CH[2],  2U,  1U << 2},
+  {DMA, &DMA->CH[3],  3U,  1U << 3},
+  {DMA, &DMA->CH[4],  4U,  1U << 4},
+  {DMA, &DMA->CH[5],  5U,  1U << 5},
+  {DMA, &DMA->CH[6],  6U,  1U << 6},
+  {DMA, &DMA->CH[7],  7U,  1U << 7},
+  {DMA, &DMA->CH[8],  8U,  1U << 8},
+  {DMA, &DMA->CH[9],  9U,  1U << 9},
+  {DMA, &DMA->CH[10], 10U, 1U << 10},
+  {DMA, &DMA->CH[11], 11U, 1U << 11}
+};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -62,6 +109,15 @@
  * @init
  */
 void dmaInit(void) {
+  unsigned i;
+
+  dma.c0_allocated_mask = 0U;
+  dma.c1_allocated_mask = 0U;
+  for (i = 0U; i < RP_DMA_CHANNELS; i++) {
+    __rp_dma_channels[i].channel->CTRL_TRIG = DMA_CTRL_TRIG_READ_ERROR |
+                                              DMA_CTRL_TRIG_WRITE_ERROR;
+    dma.channels[i].func = NULL;
+  }
 }
 
 /**
@@ -70,6 +126,7 @@ void dmaInit(void) {
  * @param[in] id        numeric identifiers of a specific channel or:
  *                      - @p RP_DMA_CHANNEL_ID_ANY for any channel.
  *                      .
+ * @param[in] priority  IRQ priority for the DMA stream
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              Pointer to the allocated @p rp_dma_channel_t
@@ -79,8 +136,66 @@ void dmaInit(void) {
  * @iclass
  */
 const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
-                                        rp_dmaisr_t func,
-                                        void *param) {
+                                         uint32_t priority,
+                                         rp_dmaisr_t func,
+                                         void *param) {
+  uint32_t i, startid, endid;
+
+  osalDbgCheckClassI();
+
+  if (id < RP_DMA_STREAM_ID_ANY) {
+    startid = id;
+    endid   = id;
+  }
+  else if (id == RP_DMA_STREAM_ID_ANY) {
+    startid = 0U;
+    endid   = RP_DMA_STREAM_ID_ANY - 1U;
+  }
+  else {
+    osalDbgCheck(false);
+    return NULL;
+  }
+
+  for (i = startid; i <= endid; i++) {
+    uint32_t mask = (1U << i);
+    uint32_t prevmask = dma.c0_allocated_mask | dma.c1_allocated_mask;
+    if ((prevmask & mask) == 0U) {
+      const rp_dma_channel_t *dmachp = RP_DMA_CHANNEL(i);
+
+      /* Installs the DMA handler.*/
+      dma.channels[i].func  = func;
+      dma.channels[i].param = param;
+
+      if (0) {
+        /* Channel taken by core 0.*/
+        if (dma.c0_allocated_mask == 0U) {
+          nvicEnableVector(RP_DMA_IRQ_0_NUMBER, priority);
+        }
+        dma.c0_allocated_mask |= mask;
+      }
+      else {
+        /* Channel taken by core 1.*/
+        if (dma.c1_allocated_mask == 0U) {
+          nvicEnableVector(RP_DMA_IRQ_1_NUMBER, priority);
+        }
+        dma.c1_allocated_mask |= mask;
+      }
+
+      /* Releasing DMA reset if it is the 1st channel taken.*/
+      if (prevmask == 0U) {
+//        rccEnableDMA1(true);
+      }
+
+      /* Putting the stream in a known state.*/
+      dmaChannelDisableX(dmachp);
+      dmachp->channel->CTRL_TRIG = DMA_CTRL_TRIG_READ_ERROR |
+                                   DMA_CTRL_TRIG_WRITE_ERROR;
+
+      return dmachp;
+    }
+  }
+
+  return NULL;
 }
 
 /**
@@ -92,6 +207,7 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
  * @param[in] id        numeric identifiers of a specific channel or:
  *                      - @p RP_DMA_CHANNEL_ID_ANY for any channel.
  *                      .
+ * @param[in] priority  IRQ priority for the DMA stream
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              Pointer to the allocated @p rp_dma_channel_t
@@ -101,6 +217,7 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
  * @api
  */
 const rp_dma_channel_t *dmaChannelAlloc(uint32_t id,
+                                        uint32_t priority,
                                         rp_dmaisr_t func,
                                         void *param) {
 }
