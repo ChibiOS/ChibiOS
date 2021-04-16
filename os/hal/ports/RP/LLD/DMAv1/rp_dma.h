@@ -123,6 +123,21 @@ extern "C" {
 /*===========================================================================*/
 
 /**
+ * @brief   Returns the channel busy state.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ * @return              The channel busy state.
+ * @retval false        if the channel is not busy.
+ * @retval true         if the channel is busy.
+ *
+ * @special
+ */
+__STATIC_INLINE bool dmaChannelIsBusyX(const rp_dma_channel_t *dmachp) {
+
+  return (bool)((dmachp->channel->CTRL_TRIG & DMA_CTRL_TRIG_BUSY) != 0U);
+}
+
+/**
  * @brief   Setup of the source DMA pointer.
  *
  * @param[in] dmachp    pointer to a rp_dma_channel_t structure
@@ -130,8 +145,10 @@ extern "C" {
  *
  * @special
  */
-__STATIC_INLINE void dmaChannelSetSource(const rp_dma_channel_t *dmachp,
-                                         uint32_t addr) {
+__STATIC_INLINE void dmaChannelSetSourceX(const rp_dma_channel_t *dmachp,
+                                          uint32_t addr) {
+
+  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
 
   dmachp->channel->READ_ADDR = addr;
 }
@@ -144,8 +161,10 @@ __STATIC_INLINE void dmaChannelSetSource(const rp_dma_channel_t *dmachp,
  *
  * @special
  */
-__STATIC_INLINE void dmaChannelSetDestination(const rp_dma_channel_t *dmachp,
-                                              uint32_t addr) {
+__STATIC_INLINE void dmaChannelSetDestinationX(const rp_dma_channel_t *dmachp,
+                                               uint32_t addr) {
+
+  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
 
   dmachp->channel->WRITE_ADDR = addr;
 }
@@ -158,8 +177,10 @@ __STATIC_INLINE void dmaChannelSetDestination(const rp_dma_channel_t *dmachp,
  *
  * @special
  */
-__STATIC_INLINE void dmaChannelSetCounter(const rp_dma_channel_t *dmachp,
-                                          uint32_t n) {
+__STATIC_INLINE void dmaChannelSetCounterX(const rp_dma_channel_t *dmachp,
+                                           uint32_t n) {
+
+  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
 
   dmachp->channel->TRANS_COUNT = n;
 }
@@ -174,8 +195,10 @@ __STATIC_INLINE void dmaChannelSetCounter(const rp_dma_channel_t *dmachp,
  *
  * @special
  */
-__STATIC_INLINE void dmaChannelSetMode(const rp_dma_channel_t *dmachp,
-                                       uint32_t mode) {
+__STATIC_INLINE void dmaChannelSetModeX(const rp_dma_channel_t *dmachp,
+                                        uint32_t mode) {
+
+  osalDbgAssert(dmaChannelIsBusy(dmachp) == false, "channel is busy");
 
   dmachp->channel->CTRL_TRIG = (mode & ~DMA_CTRL_TRIG_CHAIN_TO_Msk) |
                                DMA_CTRL_TRIG_CHAIN_TO(dmachp->chnidx);
@@ -189,7 +212,7 @@ __STATIC_INLINE void dmaChannelSetMode(const rp_dma_channel_t *dmachp,
  *
  * @special
  */
-__STATIC_INLINE void dmaChannelEnable(const rp_dma_channel_t *dmachp) {
+__STATIC_INLINE void dmaChannelEnableX(const rp_dma_channel_t *dmachp) {
 
   dmachp->channel->CTRL_TRIG |= DMA_CTRL_TRIG_EN;
 }
@@ -202,26 +225,11 @@ __STATIC_INLINE void dmaChannelEnable(const rp_dma_channel_t *dmachp) {
  *
  * @special
  */
-__STATIC_INLINE void dmaChannelDisable(const rp_dma_channel_t *dmachp) {
+__STATIC_INLINE void dmaChannelDisableX(const rp_dma_channel_t *dmachp) {
 
   dmachp->dma->CHAN_ABORT |= dmachp->chnmask;
   while ((dmachp->dma->CHAN_ABORT & dmachp->chnmask) != 0U) {
   }
-}
-
-/**
- * @brief   Returns the channel busy state.
- *
- * @param[in] dmachp    pointer to a rp_dma_channel_t structure
- * @return              The channel busy state.
- * @retval false        if the channel is not busy.
- * @retval true         if the channel is busy.
- *
- * @special
- */
-__STATIC_INLINE bool dmaChannelIsBusy(const rp_dma_channel_t *dmachp) {
-
-  return (bool)((dmachp->channel->CTRL_TRIG & DMA_CTRL_TRIG_BUSY) != 0U);
 }
 
 #endif /* RP_DMA_H */
