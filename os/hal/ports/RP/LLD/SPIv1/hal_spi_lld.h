@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_spi_lld.h
- * @brief   RP2040 SPI subsystem low level driver header.
+ * @file    SPIv1/hal_spi_lld.h
+ * @brief   RP SPI subsystem low level driver header.
  *
  * @addtogroup SPI
  * @{
@@ -34,14 +34,14 @@
 /**
  * @brief   Circular mode support flag.
  */
-#define SPI_SUPPORTS_CIRCULAR           TRUE
+#define SPI_SUPPORTS_CIRCULAR               FALSE
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /**
- * @name    PLATFORM configuration options
+ * @name    RP configuration options
  * @{
  */
 /**
@@ -49,8 +49,8 @@
  * @details If set to @p TRUE the support for SPI1 is included.
  * @note    The default is @p FALSE.
  */
-#if !defined(PLATFORM_SPI_USE_SPI1) || defined(__DOXYGEN__)
-#define PLATFORM_SPI_USE_SPI1                  FALSE
+#if !defined(RP_SPI_USE_SPI1) || defined(__DOXYGEN__)
+#define RP_SPI_USE_SPI1                     FALSE
 #endif
 /** @} */
 
@@ -84,7 +84,7 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (PLATFORM_SPI_USE_SPI1 == TRUE) && !defined(__DOXYGEN__)
+#if (RP_SPI_USE_SPI1 == TRUE) && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;
 #endif
 

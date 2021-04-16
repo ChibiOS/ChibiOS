@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    hal_spi_lld.c
- * @brief   RP2040 SPI subsystem low level driver source.
+ * @file    SPIv1/hal_spi_lld.c
+ * @brief   RP SPI subsystem low level driver source.
  *
  * @addtogroup SPI
  * @{
@@ -37,7 +37,7 @@
 /**
  * @brief   SPI1 driver identifier.
  */
-#if (PLATFORM_SPI_USE_SPI1 == TRUE) || defined(__DOXYGEN__)
+#if (RP_SPI_USE_SPI1 == TRUE) || defined(__DOXYGEN__)
 SPIDriver SPID1;
 #endif
 
@@ -64,7 +64,7 @@ SPIDriver SPID1;
  */
 void spi_lld_init(void) {
 
-#if PLATFORM_SPI_USE_SPI1 == TRUE
+#if RP_SPI_USE_SPI1 == TRUE
   /* Driver initialization.*/
   spiObjectInit(&SPID1);
 #endif
@@ -81,7 +81,7 @@ void spi_lld_start(SPIDriver *spip) {
 
   if (spip->state == SPI_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_SPI_USE_SPI1 == TRUE
+#if RP_SPI_USE_SPI1 == TRUE
     if (&SPID1 == spip) {
 
     }
@@ -102,7 +102,7 @@ void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->state == SPI_READY) {
     /* Disables the peripheral.*/
-#if PLATFORM_SPI_USE_SPI1 == TRUE
+#if RP_SPI_USE_SPI1 == TRUE
     if (&SPID1 == spip) {
 
     }

@@ -36,7 +36,7 @@
 /*===========================================================================*/
 
 /**
- * @name    STM32 configuration options
+ * @name    RP configuration options
  * @{
  */
 /**
