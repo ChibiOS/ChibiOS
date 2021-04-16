@@ -116,6 +116,67 @@ typedef struct {
   __I  uint32_t         N_CHANNELS;
   __I  uint32_t         resvd44C[237];
   DMA_Debug_Typedef     CH_DBG[12];
+  __I  uint32_t         resvdAC8[334];
+  struct {
+    DMA_Channel_Typedef CH[12];
+    __I  uint32_t       resvd300[64];
+    __IO uint32_t       INTR;
+    struct {
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __IO uint32_t       INTS;
+    } C[2];
+    __IO uint32_t       TIMER[4];
+    __IO uint32_t       MULTI_CHAN_TRIGGER;
+    __IO uint32_t       SNIFF_CTRL;
+    __IO uint32_t       SNIFF_DATA;
+    __I  uint32_t       FIFO_LEVELS;
+    __IO uint32_t       CHAN_ABORT;
+    __I  uint32_t       N_CHANNELS;
+    __I  uint32_t       resvd44C[237];
+    DMA_Debug_Typedef   CH_DBG[12];
+    __I  uint32_t       resvdAC8[334];
+  } XOR;
+  struct {
+    DMA_Channel_Typedef CH[12];
+    __I  uint32_t       resvd300[64];
+    __IO uint32_t       INTR;
+    struct {
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __IO uint32_t       INTS;
+    } C[2];
+    __IO uint32_t       TIMER[4];
+    __IO uint32_t       MULTI_CHAN_TRIGGER;
+    __IO uint32_t       SNIFF_CTRL;
+    __IO uint32_t       SNIFF_DATA;
+    __I  uint32_t       FIFO_LEVELS;
+    __IO uint32_t       CHAN_ABORT;
+    __I  uint32_t       N_CHANNELS;
+    __I  uint32_t       resvd44C[237];
+    DMA_Debug_Typedef   CH_DBG[12];
+    __I  uint32_t       resvdAC8[334];
+  } SET;
+  struct {
+    DMA_Channel_Typedef CH[12];
+    __I  uint32_t       resvd300[64];
+    __IO uint32_t       INTR;
+    struct {
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __IO uint32_t       INTS;
+    } C[2];
+    __IO uint32_t       TIMER[4];
+    __IO uint32_t       MULTI_CHAN_TRIGGER;
+    __IO uint32_t       SNIFF_CTRL;
+    __IO uint32_t       SNIFF_DATA;
+    __I  uint32_t       FIFO_LEVELS;
+    __IO uint32_t       CHAN_ABORT;
+    __I  uint32_t       N_CHANNELS;
+    __I  uint32_t       resvd44C[237];
+    DMA_Debug_Typedef   CH_DBG[12];
+    __I  uint32_t       resvdAC8[334];
+  } CLR;
 } DMA_TypeDef;
 
 typedef struct {
@@ -225,6 +286,91 @@ typedef struct {
 } SIO_TypeDef;
 
 typedef struct {
+  __IO uint32_t         SSPCR0;
+  __IO uint32_t         SSPCR1;
+  __IO uint32_t         SSPDR;
+  __I  uint32_t         SSPSR;
+  __IO uint32_t         SSPCPSR;
+  __IO uint32_t         SSPIMSC;
+  __I  uint32_t         SSPRIS;
+  __I  uint32_t         SSPMIS;
+  __IO uint32_t         SSPICR;
+  __IO uint32_t         SSPDMACR;
+  __I  uint32_t         resvd28[1006];
+  __I  uint32_t         SSPPERIPHID0;
+  __I  uint32_t         SSPPERIPHID1;
+  __I  uint32_t         SSPPERIPHID2;
+  __I  uint32_t         SSPPERIPHID3;
+  __I  uint32_t         SSPPCELLID0;
+  __I  uint32_t         SSPPCELLID1;
+  __I  uint32_t         SSPPCELLID2;
+  __I  uint32_t         SSPPCELLID3;
+  struct {
+    __IO uint32_t       SSPCR0;
+    __IO uint32_t       SSPCR1;
+    __IO uint32_t       SSPDR;
+    __I  uint32_t       SSPSR;
+    __IO uint32_t       SSPCPSR;
+    __IO uint32_t       SSPIMSC;
+    __I  uint32_t       SSPRIS;
+    __I  uint32_t       SSPMIS;
+    __IO uint32_t       SSPICR;
+    __IO uint32_t       SSPDMACR;
+    __I  uint32_t       resvd28[1006];
+    __I  uint32_t       SSPPERIPHID0;
+    __I  uint32_t       SSPPERIPHID1;
+    __I  uint32_t       SSPPERIPHID2;
+    __I  uint32_t       SSPPERIPHID3;
+    __I  uint32_t       SSPPCELLID0;
+    __I  uint32_t       SSPPCELLID1;
+    __I  uint32_t       SSPPCELLID2;
+    __I  uint32_t       SSPPCELLID3;
+  } XOR;
+  struct {
+    __IO uint32_t       SSPCR0;
+    __IO uint32_t       SSPCR1;
+    __IO uint32_t       SSPDR;
+    __I  uint32_t       SSPSR;
+    __IO uint32_t       SSPCPSR;
+    __IO uint32_t       SSPIMSC;
+    __I  uint32_t       SSPRIS;
+    __I  uint32_t       SSPMIS;
+    __IO uint32_t       SSPICR;
+    __IO uint32_t       SSPDMACR;
+    __I  uint32_t       resvd28[1006];
+    __I  uint32_t       SSPPERIPHID0;
+    __I  uint32_t       SSPPERIPHID1;
+    __I  uint32_t       SSPPERIPHID2;
+    __I  uint32_t       SSPPERIPHID3;
+    __I  uint32_t       SSPPCELLID0;
+    __I  uint32_t       SSPPCELLID1;
+    __I  uint32_t       SSPPCELLID2;
+    __I  uint32_t       SSPPCELLID3;
+  } SET;
+  struct {
+    __IO uint32_t       SSPCR0;
+    __IO uint32_t       SSPCR1;
+    __IO uint32_t       SSPDR;
+    __I  uint32_t       SSPSR;
+    __IO uint32_t       SSPCPSR;
+    __IO uint32_t       SSPIMSC;
+    __I  uint32_t       SSPRIS;
+    __I  uint32_t       SSPMIS;
+    __IO uint32_t       SSPICR;
+    __IO uint32_t       SSPDMACR;
+    __I  uint32_t       resvd28[1006];
+    __I  uint32_t       SSPPERIPHID0;
+    __I  uint32_t       SSPPERIPHID1;
+    __I  uint32_t       SSPPERIPHID2;
+    __I  uint32_t       SSPPERIPHID3;
+    __I  uint32_t       SSPPCELLID0;
+    __I  uint32_t       SSPPCELLID1;
+    __I  uint32_t       SSPPCELLID2;
+    __I  uint32_t       SSPPCELLID3;
+  } CLR;
+} SPI_TypeDef;
+
+typedef struct {
   __IO uint32_t         TIMEHW;
   __IO uint32_t         TIMELW;
   __I  uint32_t         TIMEHR;
@@ -286,19 +432,6 @@ typedef struct {
   __IO uint32_t         INTF;
   __IO uint32_t         INTS;
 } RTC_TypeDef;
-
-typedef struct {
-  __IO uint32_t         CR0;
-  __IO uint32_t         CR1;
-  __IO uint32_t         DR;
-  __IO uint32_t         SR;
-  __IO uint32_t         CPSR;
-  __IO uint32_t         IMSC;
-  __IO uint32_t         RIS;
-  __IO uint32_t         MIS;
-  __IO uint32_t         ICR;
-  __IO uint32_t         DMACR;
-} SPI_TypeDef;
 
 typedef struct {
   __IO uint32_t         CON;
@@ -434,9 +567,6 @@ typedef struct {
 #define __IOPORT_BASE                     0xD0000000U
 
 #define __DMA_BASE                        (__APBPERIPH_BASE + 0x00000000U)
-#define __DMA_XOR_BASE                    (__APBPERIPH_BASE + 0x00001000U)
-#define __DMA_SET_BASE                    (__APBPERIPH_BASE + 0x00002000U)
-#define __DMA_CLR_BASE                    (__APBPERIPH_BASE + 0x00003000U)
 #define __RESETS_BASE                     (__APBPERIPH_BASE + 0x0000C000U)
 #define __IOUSER0_BASE                    (__APBPERIPH_BASE + 0x00014000U)
 #define __IOQSPI_BASE                     (__APBPERIPH_BASE + 0x00018000U)
@@ -470,9 +600,6 @@ typedef struct {
  * @{
  */
 #define DMA                               ((DMA_TypeDef *)    __DMA_BASE)
-#define DMA_XOR                           ((DMA_TypeDef *)    __DMA_XOR_BASE)
-#define DMA_SET                           ((DMA_TypeDef *)    __DMA_SET_BASE)
-#define DMA_CLR                           ((DMA_TypeDef *)    __DMA_CLR_BASE)
 #define IO_BANK0                          ((IOUSER_TypeDef *) __IOUSER0_BASE)
 #define IO_QSPI                           ((IOUSER_TypeDef *) __IOQSPI_BASE)
 #define PADS_BANK0                        ((PADS_TypeDef *)   __PADSUSER0_BASE)
@@ -607,6 +734,56 @@ typedef struct {
 #define SIO_FIFO_ST_ROE_Pos               3U
 #define SIO_FIFO_ST_ROE_Msk               (1U << SIO_FIFO_ST_ROE_Pos)
 #define SIO_FIFO_ST_ROE                   SIO_FIFO_ST_ROE_Msk
+/** @} */
+
+/**
+ * @name    SPI bits definitions
+ * @{
+ */
+#define SPI_SSPCR0_SCR_Pos                8U
+#define SPI_SSPCR0_SCR_Msk                (255U << SPI_SSPCR0_SCR_Pos)
+#define SPI_SSPCR0_SCR(n)                 ((n) << SPI_SSPCR0_SCR_Pos)
+#define SPI_SSPCR0_SPH_Pos                7U
+#define SPI_SSPCR0_SPH_Msk                (1U << SPI_SSPCR0_SPH_Pos)
+#define SPI_SSPCR0_SPH                    SPI_SSPCR0_SPH_Msk
+#define SPI_SSPCR0_SPO_Pos                6U
+#define SPI_SSPCR0_SPO_Msk                (1U << SPI_SSPCR0_SPO_Pos)
+#define SPI_SSPCR0_SPO                    SPI_SSPCR0_SPO_Msk
+#define SPI_SSPCR0_FRF_Pos                4U
+#define SPI_SSPCR0_FRF_Msk                (3U << SPI_SSPCR0_FRF_Pos)
+#define SPI_SSPCR0_FRF(n)                 ((n) << SPI_SSPCR0_FRF_Pos)
+#define SPI_SSPCR0_FRF_MOTOROLA           SPI_SSPCR0_FRF(0U)
+#define SPI_SSPCR0_FRF_TI                 SPI_SSPCR0_FRF(1U)
+#define SPI_SSPCR0_FRF_NATIONAL           SPI_SSPCR0_FRF(2U)
+#define SPI_SSPCR0_DSS_Pos                0U
+#define SPI_SSPCR0_DSS_Msk                (15U << SPI_SSPCR0_DSS_Pos)
+#define SPI_SSPCR0_DSS(n)                 ((n) << SPI_SSPCR0_DSS_Pos)
+#define SPI_SSPCR0_DSS_4BIT               SPI_SSPCR0_DSS(3U)
+#define SPI_SSPCR0_DSS_5BIT               SPI_SSPCR0_DSS(4U)
+#define SPI_SSPCR0_DSS_6BIT               SPI_SSPCR0_DSS(5U)
+#define SPI_SSPCR0_DSS_7BIT               SPI_SSPCR0_DSS(6U)
+#define SPI_SSPCR0_DSS_8BIT               SPI_SSPCR0_DSS(7U)
+#define SPI_SSPCR0_DSS_9BIT               SPI_SSPCR0_DSS(8U)
+#define SPI_SSPCR0_DSS_10BIT              SPI_SSPCR0_DSS(9U)
+#define SPI_SSPCR0_DSS_11BIT              SPI_SSPCR0_DSS(10U)
+#define SPI_SSPCR0_DSS_12BIT              SPI_SSPCR0_DSS(11U)
+#define SPI_SSPCR0_DSS_13BIT              SPI_SSPCR0_DSS(12U)
+#define SPI_SSPCR0_DSS_14BIT              SPI_SSPCR0_DSS(13U)
+#define SPI_SSPCR0_DSS_15BIT              SPI_SSPCR0_DSS(14U)
+#define SPI_SSPCR0_DSS_16BIT              SPI_SSPCR0_DSS(15U)
+
+#define SPI_SSPCR1_SOD_Pos                3U
+#define SPI_SSPCR1_SOD_Msk                (1U << SPI_SSPCR1_SOD_Pos)
+#define SPI_SSPCR1_SOD                    SPI_SSPCR1_SOD_Msk
+#define SPI_SSPCR1_MS_Pos                 2U
+#define SPI_SSPCR1_MS_Msk                 (1U << SPI_SSPCR1_MS_Pos)
+#define SPI_SSPCR1_MS                     SPI_SSPCR1_MS_Msk
+#define SPI_SSPCR1_SSE_Pos                1U
+#define SPI_SSPCR1_SSE_Msk                (1U << SPI_SSPCR1_SSE_Pos)
+#define SPI_SSPCR1_SSE                    SPI_SSPCR1_SSE_Msk
+#define SPI_SSPCR1_LBM_Pos                0U
+#define SPI_SSPCR1_LBM_Msk                (1U << SPI_SSPCR1_LBM_Pos)
+#define SPI_SSPCR1_LBM                    SPI_SSPCR1_LBM_Msk
 /** @} */
 
 /**
