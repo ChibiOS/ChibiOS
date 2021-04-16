@@ -75,10 +75,9 @@
  * @brief   Type of a DMA callback.
  *
  * @param[in] p         parameter for the registered function
- * @param[in] flags     pre-shifted content of the ISR register, the bits
- *                      are aligned to bit zero
+ * @param[in] ct        content of the CTRL_TRIG register
  */
-typedef void (*rp_dmaisr_t)(void *p, uint32_t flags);
+typedef void (*rp_dmaisr_t)(void *p, uint32_t ct);
 
 /**
  * @brief   RP DMA channel descriptor structure.
@@ -93,12 +92,6 @@ typedef struct {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @name    Macro Functions
- * @{
- */
-/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

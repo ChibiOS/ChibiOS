@@ -28,8 +28,6 @@
 
 #include "hal.h"
 
-#define RP_DMA_REQUIRED
-
 /* The following macro is only defined if some driver requiring DMA services
    has been enabled.*/
 #if defined(RP_DMA_REQUIRED) || defined(__DOXYGEN__)
@@ -95,9 +93,125 @@ const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS] = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+void serve_interrupt(const rp_dma_channel_t *dmachp) {
+
+  if (dma.channels[dmachp->chnidx].func != NULL) {
+    dma.channels[dmachp->chnidx].func(dma.channels[dmachp->chnidx].param,
+                                      dmachp->channel->CTRL_TRIG);
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   DMA shared ISR for core 0.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(RP_DMA_IRQ_0_HANDLER) {
+  uint32_t ints;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Getting and clearing pending interrupts for core 0.*/
+  ints = DMA->C[0].INTS;
+  DMA->C[0].INTS = ints;
+
+  if ((ints & (1U << 0)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(0U));
+  }
+  if ((ints & (1U << 1)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(1U));
+  }
+  if ((ints & (1U << 2)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(2U));
+  }
+  if ((ints & (1U << 3)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(3U));
+  }
+  if ((ints & (1U << 4)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(4U));
+  }
+  if ((ints & (1U << 5)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(5U));
+  }
+  if ((ints & (1U << 6)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(6U));
+  }
+  if ((ints & (1U << 7)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(7U));
+  }
+  if ((ints & (1U << 8)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(8U));
+  }
+  if ((ints & (1U << 9)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(9U));
+  }
+  if ((ints & (1U << 10)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(10U));
+  }
+  if ((ints & (1U << 11)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(11U));
+  }
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   DMA shared ISR for core 1.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(RP_DMA_IRQ_1_HANDLER) {
+  uint32_t ints;
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Getting and clearing pending interrupts for core 0.*/
+  ints = DMA->C[1].INTS;
+  DMA->C[1].INTS = ints;
+
+  if ((ints & (1U << 0)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(0U));
+  }
+  if ((ints & (1U << 1)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(1U));
+  }
+  if ((ints & (1U << 2)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(2U));
+  }
+  if ((ints & (1U << 3)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(3U));
+  }
+  if ((ints & (1U << 4)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(4U));
+  }
+  if ((ints & (1U << 5)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(5U));
+  }
+  if ((ints & (1U << 6)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(6U));
+  }
+  if ((ints & (1U << 7)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(7U));
+  }
+  if ((ints & (1U << 8)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(8U));
+  }
+  if ((ints & (1U << 9)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(9U));
+  }
+  if ((ints & (1U << 10)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(10U));
+  }
+  if ((ints & (1U << 11)) != 0U) {
+    serve_interrupt(RP_DMA_CHANNEL(11U));
+  }
+
+  OSAL_IRQ_EPILOGUE();
+}
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -238,6 +352,7 @@ void dmaChannelFreeI(const rp_dma_channel_t *dmachp) {
   /* Check if the streams is not taken.*/
   osalDbgAssert(((dma.c0_allocated_mask | dma.c1_allocated_mask) & dmachp->chnmask) != 0U,
                 "not allocated");
+  osalDbgAssert(dmaChannelIsBusyX(dmachp) == false, "channel is busy");
 
   /* Putting the stream in a known state.*/
   dmaChannelDisableX(dmachp);
@@ -280,16 +395,6 @@ void dmaChannelFree(const rp_dma_channel_t *dmachp) {
   osalSysLock();
   dmaChannelFreeI(dmachp);
   osalSysUnlock();
-}
-
-/**
- * @brief   Serves a DMA IRQ.
- *
- * @param[in] dmachp    pointer to a rp_dma_channel_t structure
- *
- * @special
- */
-void dmaServeInterrupt(const rp_dma_channel_t *dmachp) {
 }
 
 #endif /* RP_DMA_REQUIRED */
