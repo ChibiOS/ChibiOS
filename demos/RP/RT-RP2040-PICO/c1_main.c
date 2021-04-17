@@ -27,7 +27,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SIOD1,
+  (BaseSequentialStream *)&SIOD0,
   commands
 };
 
@@ -68,10 +68,10 @@ void c1_main(void) {
   palSetLineMode(1U, PAL_MODE_ALTERNATE_UART);
 
   /*
-   * Activates the Serial or SIO driver using the default configuration.
+   * Activates the UART0 SIO driver using the default configuration.
    */
-  sioStart(&SIOD1, NULL);
-  sioStartOperation(&SIOD1, NULL);
+  sioStart(&SIOD0, NULL);
+  sioStartOperation(&SIOD0, NULL);
 
   /*
    * Creates the timer thread.

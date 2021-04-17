@@ -77,7 +77,7 @@
 /* Checks on allocation of USARTx units.*/
 #if RP_SIO_USE_UART0
 #if defined(RP_UART0_IS_USED)
-#error "SIOD1 requires UART0 but it is already used"
+#error "SIOD0 requires UART0 but it is already used"
 #else
 #define RP_UART0_IS_USED
 #endif
@@ -85,7 +85,7 @@
 
 #if RP_SIO_USE_UART1
 #if defined(RP_UART1_IS_USED)
-#error "SIOD2 requires UART1 but it is already used"
+#error "SIOD1 requires UART1 but it is already used"
 #else
 #define RP_UART1_IS_USED
 #endif
@@ -167,11 +167,11 @@ typedef uint32_t sio_events_mask_t;
 /*===========================================================================*/
 
 #if (RP_SIO_USE_UART0 == TRUE) && !defined(__DOXYGEN__)
-extern SIODriver SIOD1;
+extern SIODriver SIOD0;
 #endif
 
 #if (RP_SIO_USE_UART1 == TRUE) && !defined(__DOXYGEN__)
-extern SIODriver SIOD2;
+extern SIODriver SIOD1;
 #endif
 
 #ifdef __cplusplus

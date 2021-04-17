@@ -45,14 +45,14 @@
  * @brief   UART0 SIO driver identifier.
  */
 #if (RP_SIO_USE_UART0 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD1;
+SIODriver SIOD0;
 #endif
 
 /**
  * @brief   UART1 SIO driver identifier.
  */
 #if (RP_SIO_USE_UART1 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD2;
+SIODriver SIOD1;
 #endif
 
 /*===========================================================================*/
@@ -195,13 +195,13 @@ void sio_lld_init(void) {
 
   /* Driver instances initialization.*/
 #if RP_SIO_USE_UART0 == TRUE
-  sioObjectInit(&SIOD1);
-  SIOD1.uart = UART0;
+  sioObjectInit(&SIOD0);
+  SIOD0.uart = UART0;
   hal_lld_peripheral_reset(RESETS_ALLREG_UART0);
 #endif
 #if RP_SIO_USE_UART1 == TRUE
-  sioObjectInit(&SIOD2);
-  SIOD2.uart = UART1;
+  sioObjectInit(&SIOD1);
+  SIOD1.uart = UART1;
   hal_lld_peripheral_reset(RESETS_ALLREG_UART1);
 #endif
 }
@@ -230,13 +230,13 @@ bool sio_lld_start(SIODriver *siop) {
     if (false) {
     }
 #if RP_SIO_USE_UART0 == TRUE
-    else if (&SIOD1 == siop) {
+    else if (&SIOD0 == siop) {
       hal_lld_peripheral_unreset(RESETS_ALLREG_UART0);
       nvicEnableVector(RP_UART0_IRQ_NUMBER, RP_IRQ_UART0_PRIORITY);
     }
 #endif
 #if RP_SIO_USE_UART1 == TRUE
-    else if (&SIOD2 == siop) {
+    else if (&SIOD1 == siop) {
       hal_lld_peripheral_unreset(RESETS_ALLREG_UART1);
       nvicEnableVector(RP_UART1_IRQ_NUMBER, RP_IRQ_UART1_PRIORITY);
     }
@@ -276,13 +276,13 @@ void sio_lld_stop(SIODriver *siop) {
     if (false) {
     }
 #if RP_SIO_USE_UART0 == TRUE
-    else if (&SIOD1 == siop) {
+    else if (&SIOD0 == siop) {
       nvicDisableVector(RP_UART0_IRQ_NUMBER);
       hal_lld_peripheral_reset(RESETS_ALLREG_UART0);
     }
 #endif
 #if RP_SIO_USE_UART1 == TRUE
-    else if (&SIOD2 == siop) {
+    else if (&SIOD1 == siop) {
       nvicDisableVector(RP_UART1_IRQ_NUMBER);
       hal_lld_peripheral_reset(RESETS_ALLREG_UART1);
     }

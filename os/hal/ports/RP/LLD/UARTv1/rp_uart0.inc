@@ -88,19 +88,19 @@ OSAL_IRQ_HANDLER(RP_UART0_IRQ_HANDLER) {
 
 #if HAL_USE_SERIAL
 #if RP_SERIAL_USE_UART0
-  sd_lld_serve_interrupt(&SD1);
+  sd_lld_serve_interrupt(&SD0);
 #endif
 #endif
 
 #if HAL_USE_SIO
 #if RP_SIO_USE_UART0
-  sio_lld_serve_interrupt(&SIOD1);
+  sio_lld_serve_interrupt(&SIOD0);
 #endif
 #endif
 
 #if HAL_USE_UART
 #if RP_UART_USE_UART0
-  uart_lld_serve_interrupt(&UARTD1);
+  uart_lld_serve_interrupt(&UARTD0);
 #endif
 #endif
 
