@@ -98,9 +98,7 @@ struct WDGDriver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (PLATFORM_WDG_USE_WDG1 == TRUE) && !defined(__DOXYGEN__)
 extern WDGDriver WDGD1;
-#endif
 
 #ifdef __cplusplus
 extern "C" {

@@ -623,7 +623,7 @@ typedef struct {
 #define PIO0                              ((PIO_TypeDef *)    __PIO0_BASE)
 #define PIO1                              ((PIO_TypeDef *)    __PIO1_BASE)
 #define USB                               ((USB_TypeDef *)    __USB_BASE)
-#define WATCHDOG                          ((WATCHDOG_TypeDef *) __WATCHDOG_BASE))
+#define WATCHDOG                          ((WATCHDOG_TypeDef *) __WATCHDOG_BASE)
 /** @} */
 
 /**
@@ -1440,7 +1440,7 @@ typedef struct {
 #define WATCHDOG_CTRL_PAUSE_DBG1          WATCHDOG_CTRL_PAUSE_DBG1_Msk
 #define WATCHDOG_CTRL_PAUSE_DBG0_Pos      25U
 #define WATCHDOG_CTRL_PAUSE_DBG0_Msk      (1U << WATCHDOG_CTRL_PAUSE_DBG0_Pos)
-#define WATCHDOG_CTRL_PAUSE_DBG0          WATCHDOG_CTRL_PAUSE_JTAG_Msk
+#define WATCHDOG_CTRL_PAUSE_DBG0          WATCHDOG_CTRL_PAUSE_DBG0_Msk
 #define WATCHDOG_CTRL_PAUSE_JTAG_Pos      24U
 #define WATCHDOG_CTRL_PAUSE_JTAG_Msk      (1U << WATCHDOG_CTRL_PAUSE_JTAG_Pos)
 #define WATCHDOG_CTRL_PAUSE_JTAG          WATCHDOG_CTRL_PAUSE_JTAG_Msk
