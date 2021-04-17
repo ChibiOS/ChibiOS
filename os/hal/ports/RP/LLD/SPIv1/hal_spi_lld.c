@@ -52,6 +52,9 @@ SPIDriver SPID1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static const uint16_t dummytx = 0xFFFFU;
+static uint16_t dummyrx;
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -127,9 +130,10 @@ void spi_lld_init(void) {
  * @notapi
  */
 void spi_lld_start(SPIDriver *spip) {
+  uint32_t dss;
 
   if (spip->state == SPI_STOP) {
-    /* Enables the peripheral.*/
+
     if (false) {
     }
 #if RP_SPI_USE_SPI0 == TRUE
@@ -169,9 +173,35 @@ void spi_lld_start(SPIDriver *spip) {
     else {
       osalDbgAssert(false, "invalid SPI instance");
     }
-  }
-  /* Configures the peripheral.*/
 
+    /* DMA setup.*/
+    dmaChannelSetSourceX(spip->dmarx, (uint32_t)&spip->spi->SSPDR);
+    dmaChannelSetDestinationX(spip->dmatx, (uint32_t)&spip->spi->SSPDR);
+  }
+
+  /* Configuration-dependent DMA settings.*/
+  dss = (spip->config->SSPCR0 & SPI_SSPCR0_DSS_Msk) >> SPI_SSPCR0_DSS_Pos;
+  if (dss <= SPI_SSPCR0_DSS_8BIT) {
+    /* Frame width is 8 bits or smaller.*/
+    spip->rxdmamode = (spip->rxdmamode & ~DMA_CTRL_TRIG_DATA_SIZE_Msk) |
+                      DMA_CTRL_TRIG_DATA_SIZE_BYTE;
+    spip->txdmamode = (spip->txdmamode & ~DMA_CTRL_TRIG_DATA_SIZE_Msk) |
+                      DMA_CTRL_TRIG_DATA_SIZE_BYTE;
+  }
+  else {
+    /* Frame width is larger than 8 bits.*/
+    spip->rxdmamode = (spip->rxdmamode & ~DMA_CTRL_TRIG_DATA_SIZE_Msk) |
+                      DMA_CTRL_TRIG_DATA_SIZE_HWORD;
+    spip->txdmamode = (spip->txdmamode & ~DMA_CTRL_TRIG_DATA_SIZE_Msk) |
+                      DMA_CTRL_TRIG_DATA_SIZE_HWORD;
+  }
+
+  /* SPI setup and enable.*/
+  spip->spi->SSPCR1   = 0U;
+  spip->spi->SSPCR0   = spip->config->SSPCR0;
+  spip->spi->SSPCPSR  = spip->config->SSPCPSR;
+  spip->spi->SSPDMACR = SPI_SSPDMACR_RXDMAE | SPI_SSPDMACR_TXDMAE;
+  spip->spi->SSPCR1   = SPI_SSPCR1_SSE;
 }
 
 /**
@@ -184,15 +214,33 @@ void spi_lld_start(SPIDriver *spip) {
 void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->state == SPI_READY) {
-    /* Disables the peripheral.*/
-#if RP_SPI_USE_SPI1 == TRUE
-    if (&SPID1 == spip) {
 
+    /* SPI disables.*/
+    spip->spi->SSPCR1  = 0U;
+    dmaChannelFreeI(spip->dmarx);
+    dmaChannelFreeI(spip->dmatx);
+    spip->dmarx = NULL;
+    spip->dmatx = NULL;
+
+    if (false) {
+    }
+#if RP_SPI_USE_SPI0 == TRUE
+    if (&SPID0 == spip) {
+      hal_lld_peripheral_reset(RESETS_ALLREG_SPI0);
     }
 #endif
+#if RP_SPI_USE_SPI1 == TRUE
+    if (&SPID1 == spip) {
+      hal_lld_peripheral_reset(RESETS_ALLREG_SPI1);
+    }
+#endif
+    else {
+      osalDbgAssert(false, "invalid SPI instance");
+    }
   }
 }
 
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
@@ -202,8 +250,7 @@ void spi_lld_stop(SPIDriver *spip) {
  */
 void spi_lld_select(SPIDriver *spip) {
 
-  (void)spip;
-
+  /* No implementation on RP.*/
 }
 
 /**
@@ -216,9 +263,9 @@ void spi_lld_select(SPIDriver *spip) {
  */
 void spi_lld_unselect(SPIDriver *spip) {
 
-  (void)spip;
-
+  /* No implementation on RP.*/
 }
+#endif
 
 /**
  * @brief   Ignores data on the SPI bus.
@@ -233,9 +280,16 @@ void spi_lld_unselect(SPIDriver *spip) {
  */
 void spi_lld_ignore(SPIDriver *spip, size_t n) {
 
-  (void)spip;
-  (void)n;
+  dmaChannelSetDestinationX(spip->dmarx, (uint32_t)&dummyrx);
+  dmaChannelSetCounterX(spip->dmarx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmarx, spip->rxdmamode);
 
+  dmaChannelSetSourceX(spip->dmatx, (uint32_t)&dummytx);
+  dmaChannelSetCounterX(spip->dmatx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmatx, spip->txdmamode);
+
+  dmaChannelEnableX(spip->dmarx);
+  dmaChannelEnableX(spip->dmatx);
 }
 
 /**
@@ -256,11 +310,16 @@ void spi_lld_ignore(SPIDriver *spip, size_t n) {
 void spi_lld_exchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
 
-  (void)spip;
-  (void)n;
-  (void)txbuf;
-  (void)rxbuf;
+  dmaChannelSetDestinationX(spip->dmarx, (uint32_t)rxbuf);
+  dmaChannelSetCounterX(spip->dmarx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmarx, spip->rxdmamode | DMA_CTRL_TRIG_INCR_WRITE);
 
+  dmaChannelSetSourceX(spip->dmatx, (uint32_t)txbuf);
+  dmaChannelSetCounterX(spip->dmatx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmatx, spip->txdmamode | DMA_CTRL_TRIG_INCR_READ);
+
+  dmaChannelEnableX(spip->dmarx);
+  dmaChannelEnableX(spip->dmatx);
 }
 
 /**
@@ -278,10 +337,16 @@ void spi_lld_exchange(SPIDriver *spip, size_t n,
  */
 void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  (void)spip;
-  (void)n;
-  (void)txbuf;
+  dmaChannelSetDestinationX(spip->dmarx, (uint32_t)&dummyrx);
+  dmaChannelSetCounterX(spip->dmarx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmarx, spip->rxdmamode);
 
+  dmaChannelSetSourceX(spip->dmatx, (uint32_t)txbuf);
+  dmaChannelSetCounterX(spip->dmatx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmatx, spip->txdmamode | DMA_CTRL_TRIG_INCR_READ);
+
+  dmaChannelEnableX(spip->dmarx);
+  dmaChannelEnableX(spip->dmatx);
 }
 
 /**
@@ -299,10 +364,16 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  (void)spip;
-  (void)n;
-  (void)rxbuf;
+  dmaChannelSetDestinationX(spip->dmarx, (uint32_t)rxbuf);
+  dmaChannelSetCounterX(spip->dmarx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmarx, spip->rxdmamode | DMA_CTRL_TRIG_INCR_WRITE);
 
+  dmaChannelSetSourceX(spip->dmatx, (uint32_t)&dummytx);
+  dmaChannelSetCounterX(spip->dmatx, (uint32_t)n);
+  dmaChannelSetModeX(spip->dmatx, spip->txdmamode);
+
+  dmaChannelEnableX(spip->dmarx);
+  dmaChannelEnableX(spip->dmatx);
 }
 
 #if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)

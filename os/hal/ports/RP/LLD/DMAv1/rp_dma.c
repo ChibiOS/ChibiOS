@@ -355,6 +355,7 @@ void dmaChannelFreeI(const rp_dma_channel_t *dmachp) {
   osalDbgAssert(dmaChannelIsBusyX(dmachp) == false, "channel is busy");
 
   /* Putting the stream in a known state.*/
+  dmaChannelDisableInterruptX(dmachp);
   dmaChannelDisableX(dmachp);
   dmaChannelSetModeX(dmachp, 0U);
 

@@ -160,8 +160,10 @@
  * @brief   Low level fields of the SPI configuration structure.
  */
 #define spi_lld_config_fields                                               \
-  /* SSPCR1 register initialization data.*/                                 \
-  uint32_t                  SSPCR1
+  /* SSPCR0 register initialization data.*/                                 \
+  uint32_t                  SSPCR0;                                         \
+  /* SSPCPSR register initialization data.*/                                \
+  uint32_t                  SSPCPSR
 
 /*===========================================================================*/
 /* External declarations.                                                    */
