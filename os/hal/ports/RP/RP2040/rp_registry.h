@@ -52,6 +52,10 @@
 /* RTC attributes.*/
 #define RP_HAS_RTC                          TRUE
 
+/* SPI attributes.*/
+#define RP_HAS_SPI0                         TRUE
+#define RP_HAS_SPI1                         TRUE
+
 /* WDG attributes.*/
 #define RP_HAS_WDG                          TRUE
 #define RP_WDG_STORAGE_SIZE                 32U

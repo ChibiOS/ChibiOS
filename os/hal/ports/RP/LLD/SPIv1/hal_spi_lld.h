@@ -45,6 +45,15 @@
  * @{
  */
 /**
+ * @brief   SPI0 driver enable switch.
+ * @details If set to @p TRUE the support for SPI1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(RP_SPI_USE_SPI0) || defined(__DOXYGEN__)
+#define RP_SPI_USE_SPI0                     FALSE
+#endif
+
+/**
  * @brief   SPI1 driver enable switch.
  * @details If set to @p TRUE the support for SPI1 is included.
  * @note    The default is @p FALSE.
@@ -52,11 +61,89 @@
 #if !defined(RP_SPI_USE_SPI1) || defined(__DOXYGEN__)
 #define RP_SPI_USE_SPI1                     FALSE
 #endif
+
+/**
+ * @brief   SPI0 interrupt priority level setting.
+ */
+#if !defined(RP_IRQ_SPI0_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_SPI0_PRIORITY                2
+#endif
+
+/**
+ * @brief   SPI1 interrupt priority level setting.
+ */
+#if !defined(RP_IRQ_SPI1_PRIORITY) || defined(__DOXYGEN__)
+#define RP_IRQ_SPI1_PRIORITY                2
+#endif
+
+/**
+ * @brief   SPI0 DMA priority (0..1|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams.
+ */
+#if !defined(RP_SPI_SPI0_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define RP_SPI_SPI0_DMA_PRIORITY            1
+#endif
+
+/**
+ * @brief   SPI1 DMA priority (0..1|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams.
+ */
+#if !defined(RP_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define RP_SPI_SPI1_DMA_PRIORITY            1
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Registry checks for robustness.*/
+#if !defined(RP_HAS_SPI0)
+#error "RP_HAS_SPI0 not defined in registry"
+#endif
+
+#if !defined(RP_HAS_SPI1)
+#error "RP_HAS_SPI1 not defined in registry"
+#endif
+
+/* Device selection checks.*/
+#if RP_SPI_USE_SPI0 && !RP_HAS_SPI0
+#error "SPI0 not present in the selected device"
+#endif
+
+#if RP_SPI_USE_SPI1 && !RP_HAS_SPI1
+#error "SPI1 not present in the selected device"
+#endif
+
+#if !RP_SPI_USE_SPI0 && !RP_SPI_USE_SPI1
+#error "SPI driver activated but no SPI peripheral assigned"
+#endif
+
+/* IRQ and DMA settings checks.*/
+#if RP_SPI_USE_SPI0 &&                                                      \
+    !OSAL_IRQ_IS_VALID_PRIORITY(RP_IRQ_SPI0_PRIORITY)
+#error "Invalid IRQ priority assigned to SPI0"
+#endif
+
+#if RP_SPI_USE_SPI1 &&                                                      \
+    !OSAL_IRQ_IS_VALID_PRIORITY(RP_IRQ_SPI1_PRIORITY)
+#error "Invalid IRQ priority assigned to SPI1"
+#endif
+
+#if RP_SPI_USE_SPI0 &&                                                      \
+    !RP_DMA_IS_VALID_PRIORITY(RP_SPI_SPI0_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPI0"
+#endif
+
+#if RP_SPI_USE_SPI1 &&                                                      \
+    !RP_DMA_IS_VALID_PRIORITY(RP_SPI_SPI1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPI1"
+#endif
+
+/* Forcing inclusion of the DMA support driver.*/
+#if !defined(RP_DMA_REQUIRED)
+#define RP_DMA_REQUIRED
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -70,19 +157,31 @@
  * @brief   Low level fields of the SPI driver structure.
  */
 #define spi_lld_driver_fields                                               \
-  /* Dummy field, it is not needed.*/                                       \
-  uint32_t                  dummy
+  /* Pointer to the SPIx registers block.*/                                 \
+  SPI_TypeDef               *spi;                                           \
+  /* Receive DMA stream.*/                                                  \
+  const rp_dma_channel_t    *dmarx;                                         \
+  /* Transmit DMA stream.*/                                                 \
+  const rp_dma_channel_t    *dmatx;                                         \
+  /* RX DMA mode bit mask.*/                                                \
+  uint32_t                  rxdmamode;                                      \
+  /* TX DMA mode bit mask.*/                                                \
+  uint32_t                  txdmamode
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
  */
 #define spi_lld_config_fields                                               \
-  /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  /* SSPCR1 register initialization data.*/                                 \
+  uint32_t                  SSPCR1
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if (RP_SPI_USE_SPI0 == TRUE) && !defined(__DOXYGEN__)
+extern SPIDriver SPID0;
+#endif
 
 #if (RP_SPI_USE_SPI1 == TRUE) && !defined(__DOXYGEN__)
 extern SPIDriver SPID1;

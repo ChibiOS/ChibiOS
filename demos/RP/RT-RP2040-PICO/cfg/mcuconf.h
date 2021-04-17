@@ -19,6 +19,12 @@
 
 /*
  * RP2040_MCUCONF drivers configuration.
+ *
+ * IRQ priorities:
+ * 3...0        Lowest...Highest.
+ *
+ * DMA priorities:
+ * 0...1        Lowest...Highest.
  */
 
 #define RP2040_MCUCONF
@@ -42,11 +48,21 @@
 #define RP_IRQ_TIMER_ALARM3_PRIORITY        2
 #define RP_IRQ_UART0_PRIORITY               3
 #define RP_IRQ_UART1_PRIORITY               3
+#define RP_IRQ_SPI0_PRIORITY                2
+#define RP_IRQ_SPI1_PRIORITY                2
 
 /*
  * SIO driver system settings.
  */
 #define RP_SIO_USE_UART0                    TRUE
 #define RP_SIO_USE_UART1                    TRUE
+
+/*
+ * SPI driver system settings.
+ */
+#define RP_SPI_USE_SPI0                     TRUE
+#define RP_SPI_USE_SPI1                     TRUE
+#define RP_SPI_SPI0_DMA_PRIORITY            1
+#define RP_SPI_SPI1_DMA_PRIORITY            1
 
 #endif /* MCUCONF_H */

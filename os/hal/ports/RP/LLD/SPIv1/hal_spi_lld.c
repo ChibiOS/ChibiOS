@@ -35,6 +35,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   SPI0 driver identifier.
+ */
+#if (RP_SPI_USE_SPI0 == TRUE) || defined(__DOXYGEN__)
+SPIDriver SPID0;
+#endif
+
+/**
  * @brief   SPI1 driver identifier.
  */
 #if (RP_SPI_USE_SPI1 == TRUE) || defined(__DOXYGEN__)
@@ -64,9 +71,27 @@ SPIDriver SPID1;
  */
 void spi_lld_init(void) {
 
+#if RP_SPI_USE_SPI0 == TRUE
+  /* Driver initialization.*/
+  spiObjectInit(&SPID0);
+  SPID0.spi       = SPI0;
+  SPID0.dmarx     = NULL;
+  SPID0.dmatx     = NULL;
+  SPID0.rxdmamode = DMA_CTRL_TRIG_TREQ_SPI0_RX |
+                    DMA_CTRL_TRIG_PRIORITY(RP_SPI_SPI0_DMA_PRIORITY);
+  SPID0.txdmamode = DMA_CTRL_TRIG_TREQ_SPI0_TX |
+                    DMA_CTRL_TRIG_PRIORITY(RP_SPI_SPI0_DMA_PRIORITY);
+#endif
 #if RP_SPI_USE_SPI1 == TRUE
   /* Driver initialization.*/
   spiObjectInit(&SPID1);
+  SPID1.spi       = SPI1;
+  SPID1.dmarx     = NULL;
+  SPID1.dmatx     = NULL;
+  SPID1.rxdmamode = DMA_CTRL_TRIG_TREQ_SPI1_RX |
+                    DMA_CTRL_TRIG_PRIORITY(RP_SPI_SPI1_DMA_PRIORITY);
+  SPID1.txdmamode = DMA_CTRL_TRIG_TREQ_SPI1_TX |
+                    DMA_CTRL_TRIG_PRIORITY(RP_SPI_SPI1_DMA_PRIORITY);
 #endif
 }
 

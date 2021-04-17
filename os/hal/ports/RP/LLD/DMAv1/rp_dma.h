@@ -46,6 +46,16 @@
                                          ((id) <= (RP_DMA_CHANNELS + 1U)))
 
 /**
+ * @brief   Checks if a DMA priority is within the valid range.
+ * @param[in] prio      DMA priority
+ *
+ * @retval              The check result.
+ * @retval false        invalid DMA priority.
+ * @retval true         correct DMA priority.
+ */
+#define RP_DMA_IS_VALID_PRIORITY(prio) (((prio) >= 0U) && ((prio) <= 1U))
+
+/**
  * @brief   Any channel selector.
  */
 #define RP_DMA_STREAM_ID_ANY            RP_DMA_CHANNELS
@@ -157,6 +167,37 @@ __STATIC_INLINE uint32_t dmaChannelGetAndClearInterrupts(const rp_dma_channel_t 
                                DMA_CTRL_TRIG_WRITE_ERROR;
 
   return ctrl_trig;
+}
+
+/**
+ * @brief   Enables a channel interrupt.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelEnableInterruptX(const rp_dma_channel_t *dmachp) {
+
+  if (SIO->CPUID == 0U) {
+    dmachp->dma->SET.C[0].INTE = dmachp->chnmask;
+  }
+  else {
+    dmachp->dma->SET.C[1].INTE = dmachp->chnmask;
+  }
+}
+
+/**
+ * @brief   Disables a channel interrupt.
+ * @note    The interrupt is disabled for both cores to save a check.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelDisableInterruptX(const rp_dma_channel_t *dmachp) {
+
+  dmachp->dma->CLR.C[0].INTE = dmachp->chnmask;
+  dmachp->dma->CLR.C[1].INTE = dmachp->chnmask;
 }
 
 /**
