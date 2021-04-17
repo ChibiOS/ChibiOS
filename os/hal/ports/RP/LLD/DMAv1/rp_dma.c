@@ -93,7 +93,7 @@ const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS] = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-void serve_interrupt(const rp_dma_channel_t *dmachp) {
+static void serve_interrupt(const rp_dma_channel_t *dmachp) {
   uint32_t ct;
 
   /* Getting and clearing error flags.*/
@@ -117,6 +117,7 @@ void serve_interrupt(const rp_dma_channel_t *dmachp) {
  */
 OSAL_IRQ_HANDLER(RP_DMA_IRQ_0_HANDLER) {
   uint32_t ints;
+  const rp_dma_channel_t *dmachp;
 
   OSAL_IRQ_PROLOGUE();
 
@@ -124,42 +125,15 @@ OSAL_IRQ_HANDLER(RP_DMA_IRQ_0_HANDLER) {
   ints = DMA->C[0].INTS;
   DMA->C[0].INTS = ints;
 
-  if ((ints & (1U << 0)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(0U));
-  }
-  if ((ints & (1U << 1)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(1U));
-  }
-  if ((ints & (1U << 2)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(2U));
-  }
-  if ((ints & (1U << 3)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(3U));
-  }
-  if ((ints & (1U << 4)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(4U));
-  }
-  if ((ints & (1U << 5)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(5U));
-  }
-  if ((ints & (1U << 6)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(6U));
-  }
-  if ((ints & (1U << 7)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(7U));
-  }
-  if ((ints & (1U << 8)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(8U));
-  }
-  if ((ints & (1U << 9)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(9U));
-  }
-  if ((ints & (1U << 10)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(10U));
-  }
-  if ((ints & (1U << 11)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(11U));
-  }
+  /* Scanning sources.*/
+  dmachp = __rp_dma_channels;
+  do {
+    if ((ints & dmachp->chnmask) > 0U) {
+      ints &= ~dmachp->chnmask;
+      serve_interrupt(dmachp);
+    }
+    dmachp++;
+  } while (ints > 0U);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -171,6 +145,7 @@ OSAL_IRQ_HANDLER(RP_DMA_IRQ_0_HANDLER) {
  */
 OSAL_IRQ_HANDLER(RP_DMA_IRQ_1_HANDLER) {
   uint32_t ints;
+  const rp_dma_channel_t *dmachp;
 
   OSAL_IRQ_PROLOGUE();
 
@@ -178,42 +153,15 @@ OSAL_IRQ_HANDLER(RP_DMA_IRQ_1_HANDLER) {
   ints = DMA->C[1].INTS;
   DMA->C[1].INTS = ints;
 
-  if ((ints & (1U << 0)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(0U));
-  }
-  if ((ints & (1U << 1)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(1U));
-  }
-  if ((ints & (1U << 2)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(2U));
-  }
-  if ((ints & (1U << 3)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(3U));
-  }
-  if ((ints & (1U << 4)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(4U));
-  }
-  if ((ints & (1U << 5)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(5U));
-  }
-  if ((ints & (1U << 6)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(6U));
-  }
-  if ((ints & (1U << 7)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(7U));
-  }
-  if ((ints & (1U << 8)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(8U));
-  }
-  if ((ints & (1U << 9)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(9U));
-  }
-  if ((ints & (1U << 10)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(10U));
-  }
-  if ((ints & (1U << 11)) != 0U) {
-    serve_interrupt(RP_DMA_CHANNEL(11U));
-  }
+  /* Scanning sources.*/
+  dmachp = __rp_dma_channels;
+  do {
+    if ((ints & dmachp->chnmask) > 0U) {
+      ints &= ~dmachp->chnmask;
+      serve_interrupt(dmachp);
+    }
+    dmachp++;
+  } while (ints > 0U);
 
   OSAL_IRQ_EPILOGUE();
 }
