@@ -40,6 +40,24 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   DMA channel descriptors.
+ */
+const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS] = {
+  {DMA, &DMA->CH[0],  0U,  1U << 0},
+  {DMA, &DMA->CH[1],  1U,  1U << 1},
+  {DMA, &DMA->CH[2],  2U,  1U << 2},
+  {DMA, &DMA->CH[3],  3U,  1U << 3},
+  {DMA, &DMA->CH[4],  4U,  1U << 4},
+  {DMA, &DMA->CH[5],  5U,  1U << 5},
+  {DMA, &DMA->CH[6],  6U,  1U << 6},
+  {DMA, &DMA->CH[7],  7U,  1U << 7},
+  {DMA, &DMA->CH[8],  8U,  1U << 8},
+  {DMA, &DMA->CH[9],  9U,  1U << 9},
+  {DMA, &DMA->CH[10], 10U, 1U << 10},
+  {DMA, &DMA->CH[11], 11U, 1U << 11}
+};
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -70,24 +88,6 @@ static struct {
     void            *param;
   } channels[RP_DMA_CHANNELS];
 } dma;
-
-/**
- * @brief   DMA channel descriptors.
- */
-const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS] = {
-  {DMA, &DMA->CH[0],  0U,  1U << 0},
-  {DMA, &DMA->CH[1],  1U,  1U << 1},
-  {DMA, &DMA->CH[2],  2U,  1U << 2},
-  {DMA, &DMA->CH[3],  3U,  1U << 3},
-  {DMA, &DMA->CH[4],  4U,  1U << 4},
-  {DMA, &DMA->CH[5],  5U,  1U << 5},
-  {DMA, &DMA->CH[6],  6U,  1U << 6},
-  {DMA, &DMA->CH[7],  7U,  1U << 7},
-  {DMA, &DMA->CH[8],  8U,  1U << 8},
-  {DMA, &DMA->CH[9],  9U,  1U << 9},
-  {DMA, &DMA->CH[10], 10U, 1U << 10},
-  {DMA, &DMA->CH[11], 11U, 1U << 11}
-};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
