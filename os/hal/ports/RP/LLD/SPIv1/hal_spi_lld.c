@@ -67,8 +67,23 @@ static uint16_t dummyrx;
  */
 static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t ct) {
 
-  (void)spip;
+  /* DMA errors handling.*/
+#if defined(RP_SPI_DMA_ERROR_HOOK)
+  if ((ct & DMA_CTRL_TRIG_AHB_ERROR) != 0U) {
+
+    /* Stopping DMAs.*/
+    dmaChannelDisableX(spip->dmatx);
+    dmaChannelDisableX(spip->dmarx);
+
+    RP_SPI_DMA_ERROR_HOOK(spip);
+  }
+#else
   (void)ct;
+#endif
+
+  /* Portable SPI ISR code defined in the high level driver, note, it is
+     a macro.*/
+  _spi_isr_code(spip);
 }
 
 /**
@@ -79,8 +94,20 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t ct) {
  */
 static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t ct) {
 
+  /* DMA errors handling.*/
+#if defined(RP_SPI_DMA_ERROR_HOOK)
+  if ((ct & DMA_CTRL_TRIG_AHB_ERROR) != 0U) {
+
+    /* Stopping DMAs.*/
+    dmaChannelDisableX(spip->dmatx);
+    dmaChannelDisableX(spip->dmarx);
+
+    RP_SPI_DMA_ERROR_HOOK(spip);
+  }
+#else
   (void)spip;
   (void)ct;
+#endif
 }
 
 /*===========================================================================*/

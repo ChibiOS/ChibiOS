@@ -94,10 +94,15 @@ const rp_dma_channel_t __rp_dma_channels[RP_DMA_CHANNELS] = {
 /*===========================================================================*/
 
 void serve_interrupt(const rp_dma_channel_t *dmachp) {
+  uint32_t ct;
 
+  /* Getting and clearing error flags.*/
+  ct = dmachp->channel->CTRL_TRIG;
+  dmachp->channel->CTRL_TRIG = DMA_CTRL_TRIG_READ_ERROR | DMA_CTRL_TRIG_WRITE_ERROR;
+
+  /* Calling the associated function, if defined.*/
   if (dma.channels[dmachp->chnidx].func != NULL) {
-    dma.channels[dmachp->chnidx].func(dma.channels[dmachp->chnidx].param,
-                                      dmachp->channel->CTRL_TRIG);
+    dma.channels[dmachp->chnidx].func(dma.channels[dmachp->chnidx].param, ct);
   }
 }
 
