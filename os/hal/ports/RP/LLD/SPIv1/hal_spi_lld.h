@@ -40,59 +40,6 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    RP configuration options
- * @{
- */
-/**
- * @brief   SPI0 driver enable switch.
- * @details If set to @p TRUE the support for SPI1 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(RP_SPI_USE_SPI0) || defined(__DOXYGEN__)
-#define RP_SPI_USE_SPI0                     FALSE
-#endif
-
-/**
- * @brief   SPI1 driver enable switch.
- * @details If set to @p TRUE the support for SPI1 is included.
- * @note    The default is @p FALSE.
- */
-#if !defined(RP_SPI_USE_SPI1) || defined(__DOXYGEN__)
-#define RP_SPI_USE_SPI1                     FALSE
-#endif
-
-/**
- * @brief   SPI0 interrupt priority level setting.
- */
-#if !defined(RP_IRQ_SPI0_PRIORITY) || defined(__DOXYGEN__)
-#define RP_IRQ_SPI0_PRIORITY                2
-#endif
-
-/**
- * @brief   SPI1 interrupt priority level setting.
- */
-#if !defined(RP_IRQ_SPI1_PRIORITY) || defined(__DOXYGEN__)
-#define RP_IRQ_SPI1_PRIORITY                2
-#endif
-
-/**
- * @brief   SPI0 DMA priority (0..1|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams.
- */
-#if !defined(RP_SPI_SPI0_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define RP_SPI_SPI0_DMA_PRIORITY            1
-#endif
-
-/**
- * @brief   SPI1 DMA priority (0..1|lowest..highest).
- * @note    The priority level is used for both the TX and RX DMA streams.
- */
-#if !defined(RP_SPI_SPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define RP_SPI_SPI1_DMA_PRIORITY            1
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -104,6 +51,47 @@
 
 #if !defined(RP_HAS_SPI1)
 #error "RP_HAS_SPI1 not defined in registry"
+#endif
+
+/* Mcuconf.h checks.*/
+#if !defined(RP_SPI_USE_SPI0)
+#error "RP_SPI_USE_SPI0 not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_SPI_USE_SPI1)
+#error "RP_SPI_USE_SPI1 not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_IRQ_SPI0_PRIORITY)
+#error "RP_IRQ_SPI0_PRIORITY not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_IRQ_SPI1_PRIORITY)
+#error "RP_IRQ_SPI1_PRIORITY not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_SPI_SPI0_RX_DMA_CHANNEL)
+#error "RP_SPI_SPI0_RX_DMA_CHANNEL not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_SPI_SPI0_TX_DMA_CHANNEL)
+#error "RP_SPI_SPI0_TX_DMA_CHANNEL not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_SPI_SPI1_RX_DMA_CHANNEL)
+#error "RP_SPI_SPI0_RX_DMA_CHANNEL not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_SPI_SPI1_TX_DMA_CHANNEL)
+#error "RP_SPI_SPI0_TX_DMA_CHANNEL not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_SPI_SPI0_DMA_PRIORITY)
+#error "RP_SPI_SPI0_DMA_PRIORITY not defined in mcuconf.h"
+#endif
+
+#if !defined(RP_SPI_SPI1_DMA_PRIORITY)
+#error "RP_SPI_SPI1_DMA_PRIORITY not defined in mcuconf.h"
 #endif
 
 /* Device selection checks.*/

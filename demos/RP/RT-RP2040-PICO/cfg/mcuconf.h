@@ -62,6 +62,10 @@
  */
 #define RP_SPI_USE_SPI0                     TRUE
 #define RP_SPI_USE_SPI1                     TRUE
+#define RP_SPI_SPI0_RX_DMA_CHANNEL          RP_DMA_CHANNEL_ID_ANY
+#define RP_SPI_SPI0_TX_DMA_CHANNEL          RP_DMA_CHANNEL_ID_ANY
+#define RP_SPI_SPI1_RX_DMA_CHANNEL          RP_DMA_CHANNEL_ID_ANY
+#define RP_SPI_SPI1_TX_DMA_CHANNEL          RP_DMA_CHANNEL_ID_ANY
 #define RP_SPI_SPI0_DMA_PRIORITY            1
 #define RP_SPI_SPI1_DMA_PRIORITY            1
 

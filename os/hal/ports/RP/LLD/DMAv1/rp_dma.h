@@ -58,7 +58,7 @@
 /**
  * @brief   Any channel selector.
  */
-#define RP_DMA_STREAM_ID_ANY            RP_DMA_CHANNELS
+#define RP_DMA_CHANNEL_ID_ANY           RP_DMA_CHANNELS
 
 /**
  * @brief   Returns a pointer to a @p rp_dma_channel_t structure.
@@ -67,7 +67,7 @@
  * @return              A pointer to the @p rp_dma_channel_t constant structure
  *                      associated to the DMA channel.
  */
-#define RP_DMA_CHANNEL(id)          (&__rp_dma_channels[id])
+#define RP_DMA_CHANNEL(id)              (&__rp_dma_channels[id])
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

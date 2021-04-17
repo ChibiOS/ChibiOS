@@ -56,6 +56,30 @@ SPIDriver SPID1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Shared end-of-rx service routine.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] ct        content of the CTRL_TRIG register
+ */
+static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t ct) {
+
+  (void)spip;
+  (void)ct;
+}
+
+/**
+ * @brief   Shared end-of-tx service routine.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] ct        content of the CTRL_TRIG register
+ */
+static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t ct) {
+
+  (void)spip;
+  (void)ct;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -106,11 +130,45 @@ void spi_lld_start(SPIDriver *spip) {
 
   if (spip->state == SPI_STOP) {
     /* Enables the peripheral.*/
-#if RP_SPI_USE_SPI1 == TRUE
-    if (&SPID1 == spip) {
-
+    if (false) {
+    }
+#if RP_SPI_USE_SPI0 == TRUE
+    if (&SPID0 == spip) {
+      spip->dmarx = dmaChannelAllocI(RP_SPI_SPI0_RX_DMA_CHANNEL,
+                                     RP_IRQ_SPI0_PRIORITY,
+                                    (rp_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                    (void *)spip);
+      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
+      spip->dmatx = dmaChannelAllocI(RP_SPI_SPI0_TX_DMA_CHANNEL,
+                                     RP_IRQ_SPI0_PRIORITY,
+                                     (rp_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                     (void *)spip);
+      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+      dmaChannelEnableInterruptX(spip->dmarx);
+      dmaChannelEnableInterruptX(spip->dmatx);
+      hal_lld_peripheral_unreset(RESETS_ALLREG_SPI0);
     }
 #endif
+#if RP_SPI_USE_SPI1 == TRUE
+    if (&SPID1 == spip) {
+      spip->dmarx = dmaChannelAllocI(RP_SPI_SPI1_RX_DMA_CHANNEL,
+                                     RP_IRQ_SPI1_PRIORITY,
+                                    (rp_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                    (void *)spip);
+      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
+      spip->dmatx = dmaChannelAllocI(RP_SPI_SPI1_TX_DMA_CHANNEL,
+                                     RP_IRQ_SPI1_PRIORITY,
+                                     (rp_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                     (void *)spip);
+      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+      dmaChannelEnableInterruptX(spip->dmarx);
+      dmaChannelEnableInterruptX(spip->dmatx);
+      hal_lld_peripheral_unreset(RESETS_ALLREG_SPI1);
+    }
+#endif
+    else {
+      osalDbgAssert(false, "invalid SPI instance");
+    }
   }
   /* Configures the peripheral.*/
 

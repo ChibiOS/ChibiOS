@@ -257,13 +257,13 @@ const rp_dma_channel_t *dmaChannelAllocI(uint32_t id,
 
   osalDbgCheckClassI();
 
-  if (id < RP_DMA_STREAM_ID_ANY) {
+  if (id < RP_DMA_CHANNEL_ID_ANY) {
     startid = id;
     endid   = id;
   }
-  else if (id == RP_DMA_STREAM_ID_ANY) {
+  else if (id == RP_DMA_CHANNEL_ID_ANY) {
     startid = 0U;
-    endid   = RP_DMA_STREAM_ID_ANY - 1U;
+    endid   = RP_DMA_CHANNEL_ID_ANY - 1U;
   }
   else {
     osalDbgCheck(false);
