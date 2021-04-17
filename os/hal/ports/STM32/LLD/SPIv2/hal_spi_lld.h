@@ -298,14 +298,14 @@
 #error "Invalid IRQ priority assigned to SPI5"
 #endif
 
-#if STM32_SPI_USE_SPIR &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPIR_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to SPIR"
-#endif
-
 #if STM32_SPI_USE_SPI6 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPI6_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SPI6"
+#endif
+
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SPI_SPIR_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to SPIR"
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \
@@ -333,14 +333,14 @@
 #error "Invalid DMA priority assigned to SPI5"
 #endif
 
-#if STM32_SPI_USE_SPIR &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPIR_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to SPIR"
-#endif
-
 #if STM32_SPI_USE_SPI6 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI6_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI6"
+#endif
+
+#if STM32_SPI_USE_SPIR &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPIR_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to SPIR"
 #endif
 
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
@@ -369,14 +369,14 @@
 #error "SPI5 DMA streams not defined"
 #endif
 
-#if STM32_SPI_USE_SPIR && (!defined(STM32_SPI_SPIR_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPIR_TX_DMA_STREAM))
-#error "SPIR DMA streams not defined"
-#endif
-
 #if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA_STREAM) ||        \
                            !defined(STM32_SPI_SPI6_TX_DMA_STREAM))
 #error "SPI6 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPIR && (!defined(STM32_SPI_SPIR_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPIR_TX_DMA_STREAM))
+#error "SPIR DMA streams not defined"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
@@ -430,6 +430,11 @@
 #error "Invalid DMA channel assigned to SPI6 RX"
 #endif
 
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI6_TX_DMA_STREAM)
+#error "Invalid DMA channel assigned to SPI6 TX"
+#endif
+
 #if STM32_SPI_USE_SPIR &&                                                   \
     !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPIR_RX_DMA_STREAM)
 #error "Invalid DMA channel assigned to SPIR RX"
@@ -438,11 +443,6 @@
 #if STM32_SPI_USE_SPIR &&                                                   \
     !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPIR_TX_DMA_STREAM)
 #error "Invalid DMA channel assigned to SPIR TX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI6_TX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI6 TX"
 #endif
 
 /* Devices without DMAMUX require an additional check.*/
@@ -504,6 +504,11 @@
 #error "invalid DMA stream associated to SPI6 RX"
 #endif
 
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_TX_DMA_STREAM, STM32_SPI6_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI6 TX"
+#endif
+
 #if STM32_SPI_USE_SPIR &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPIR_RX_DMA_STREAM, STM32_SPIR_RX_DMA_MSK)
 #error "invalid DMA stream associated to SPIR RX"
@@ -512,11 +517,6 @@
 #if STM32_SPI_USE_SPIR &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_SPI_SPIR_TX_DMA_STREAM, STM32_SPIR_TX_DMA_MSK)
 #error "invalid DMA stream associated to SPIR TX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_TX_DMA_STREAM, STM32_SPI6_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI6 TX"
 #endif
 
 #endif /* STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX */
