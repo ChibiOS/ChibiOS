@@ -161,7 +161,7 @@ __STATIC_INLINE bool dmaChannelIsBusyX(const rp_dma_channel_t *dmachp) {
 __STATIC_INLINE uint32_t dmaChannelGetAndClearInterrupts(const rp_dma_channel_t *dmachp) {
   uint32_t ctrl_trig;
 
-  ctrl_trig= dmachp->channel->CTRL_TRIG;
+  ctrl_trig = dmachp->channel->CTRL_TRIG;
   dmachp->channel->CTRL_TRIG = ctrl_trig |
                                DMA_CTRL_TRIG_READ_ERROR |
                                DMA_CTRL_TRIG_WRITE_ERROR;
@@ -268,10 +268,23 @@ __STATIC_INLINE void dmaChannelSetModeX(const rp_dma_channel_t *dmachp,
 }
 
 /**
+ * @brief   Aborts the current transfer on a DMA channel.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChannelAbortX(const rp_dma_channel_t *dmachp) {
+
+  dmachp->dma->SET.CHAN_ABORT = dmachp->chnmask;
+  while ((dmachp->dma->CHAN_ABORT & dmachp->chnmask) != 0U) {
+  }
+}
+
+/**
  * @brief   Enables a DMA channel.
  *
  * @param[in] dmachp    pointer to a rp_dma_channel_t structure
-
  *
  * @special
  */
@@ -281,18 +294,28 @@ __STATIC_INLINE void dmaChannelEnableX(const rp_dma_channel_t *dmachp) {
 }
 
 /**
+ * @brief   Suspends a DMA channel.
+ *
+ * @param[in] dmachp    pointer to a rp_dma_channel_t structure
+ *
+ * @special
+ */
+__STATIC_INLINE void dmaChanneSuspendX(const rp_dma_channel_t *dmachp) {
+
+  dmachp->channel->CTRL_TRIG &= ~DMA_CTRL_TRIG_EN;
+}
+
+/**
  * @brief   Disables a DMA channel aborting the current transfer.
  *
  * @param[in] dmachp    pointer to a rp_dma_channel_t structure
-
  *
  * @special
  */
 __STATIC_INLINE void dmaChannelDisableX(const rp_dma_channel_t *dmachp) {
 
-  dmachp->dma->CHAN_ABORT |= dmachp->chnmask;
-  while ((dmachp->dma->CHAN_ABORT & dmachp->chnmask) != 0U) {
-  }
+  dmaChanneSuspendX(dmachp);
+  dmaChannelAbortX(dmachp);
   (void) dmaChannelGetAndClearInterrupts(dmachp);
 }
 
