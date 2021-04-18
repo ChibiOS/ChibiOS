@@ -96,7 +96,7 @@ void PendSV_Handler(void) {
   /* Writing back the modified PSP value.*/
   __set_PSP((uint32_t)ctxp);
 
-#if CH_CFG_SMP_MODE != FALSE
+#if CH_CFG_SMP_MODE== TRUE
    /* Interrupts have been re-enabled in the ASM part but the spinlock is
       still taken, releasing it.*/
    port_spinlock_release();
@@ -104,7 +104,7 @@ void PendSV_Handler(void) {
 }
 #endif /* CORTEX_ALTERNATE_SWITCH */
 
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+#if (CH_CFG_SMP_MODE== TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   FIFO interrupt handler for core 0.
  *
@@ -164,7 +164,7 @@ CH_IRQ_HANDLER(Vector80) {
 
   CH_IRQ_EPILOGUE();
 }
-#endif /* CH_CFG_SMP_MODE != FALSE */
+#endif /* CH_CFG_SMP_MODE== TRUE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -186,7 +186,7 @@ void port_init(os_instance_t *oip) {
   /* Activating timer for this instance.*/
   port_timer_enable(oip);
 
-#if CH_CFG_SMP_MODE != FALSE
+#if CH_CFG_SMP_MODE== TRUE
   /* FIFO handlers for each core.*/
   SIO->FIFO_ST = SIO_FIFO_ST_ROE | SIO_FIFO_ST_WOF;
   if (core_id == 0U) {
@@ -252,7 +252,7 @@ void __port_irq_epilogue(uint32_t lr) {
   }
 }
 
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+#if (CH_CFG_SMP_MODE== TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Takes the kernel spinlock.
  */
@@ -268,6 +268,6 @@ void __port_spinlock_release(void) {
 
   port_spinlock_release();
 }
-#endif /* CH_CFG_SMP_MODE != FALSE */
+#endif /* CH_CFG_SMP_MODE== TRUE */
 
 /** @} */
