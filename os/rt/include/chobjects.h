@@ -48,10 +48,10 @@
  * @brief   Global state of the operating system.
  */
 typedef enum {
-  ch_sys_uninit         = 0,
-  ch_sys_initializing   = 1,
-  ch_sys_running        = 2,
-  ch_sys_halted         = 3
+  ch_sys_uninit                 = 0,
+  ch_sys_initializing           = 1,
+  ch_sys_running                = 2,
+  ch_sys_halted                 = 3
 } system_state_t;
 
 /**
@@ -68,20 +68,36 @@ typedef struct ch_delta_list delta_list_t;
  * @brief   Virtual Timer delta list element and header structure.
  */
 struct ch_delta_list {
-  delta_list_t          *next;      /**< @brief Next timer in the list.     */
-  delta_list_t          *prev;      /**< @brief Previous timer in the list. */
-  sysinterval_t         delta;      /**< @brief Time delta before timeout.  */
+  /**
+   * @brief   Next timer in the list.
+   */
+  delta_list_t                  *next;
+  /**
+   * @brief   Previous timer in the list.
+   */
+  delta_list_t                  *prev;
+  /**
+   * @brief   Time delta before timeout.
+   */
+  sysinterval_t                 delta;
 };
 
 /**
  * @brief   Type of a Virtual Timer.
  */
 typedef struct ch_virtual_timer {
-  delta_list_t          dlist;      /**< @brief Delta list element.         */
-  vtfunc_t              func;       /**< @brief Timer callback function
-                                                pointer.                    */
-  void                  *par;       /**< @brief Timer callback function
-                                                parameter.                  */
+  /**
+   * @brief   Delta list element.
+   */
+  delta_list_t                  dlist;
+  /**
+   * @brief   Timer callback function pointer.
+   */
+  vtfunc_t                      func;
+  /**
+   * @brief   Timer callback function parameter.
+   */
+  void                          *par;
 } virtual_timer_t;
 
 /**
@@ -91,19 +107,27 @@ typedef struct ch_virtual_timer {
  *          timer is often used in the code.
  */
 typedef struct ch_virtual_timers_list {
-  delta_list_t          dlist;      /**< @brief Delta list header.          */
+  /**
+   * @brief   Delta list header.
+   */
+  delta_list_t                  dlist;
 #if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
-  volatile systime_t    systime;    /**< @brief System Time counter.        */
+  /**
+   * @brief   System Time counter.
+   */
+  volatile systime_t            systime;
 #endif
 #if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
   /**
    * @brief   System time of the last tick event.
    */
-  systime_t             lasttime;   /**< @brief System time of the last
-                                                tick event.                 */
+  systime_t                     lasttime;
 #endif
 #if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
-  volatile uint64_t     laststamp;  /**< @brief Last generated time stamp.  */
+  /**
+   * @brief   Last generated time stamp.
+   */
+  volatile uint64_t             laststamp;
 #endif
 } virtual_timers_list_t;
 
@@ -116,7 +140,10 @@ typedef thread_t * thread_reference_t;
  * @brief   Type of a threads queue.
  */
 typedef struct ch_threads_queue {
-  ch_queue_t            queue;      /**< @brief Threads queue header.       */
+  /**
+   * @brief   Threads queue header.
+   */
+  ch_queue_t                    queue;
 } threads_queue_t;
 
 /**
@@ -126,28 +153,42 @@ typedef struct ch_threads_queue {
  *          by shrinking this structure.
  */
 struct ch_thread {
+  /**
+   * @brief   Shared list headers.
+   */
   union {
-    ch_list_t           list;       /**< @brief Threads lists element.      */
-    ch_queue_t          queue;      /**< @brief Threads queues element.     */
-    ch_priority_queue_t pqueue;     /**< @brief Threads ordered queues
-                                         element.                           */
+    /**
+     * @brief   Threads lists element.
+     */
+    ch_list_t                   list;
+    /**
+     * @brief   Threads queues element.
+     */
+    ch_queue_t                  queue;
+    /**
+     * @brief   Threads ordered queues element.
+     */
+    ch_priority_queue_t         pqueue;
   } hdr;
   /**
    * @brief   Processor context.
    */
-  struct port_context   ctx;
+  struct port_context           ctx;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
-  ch_queue_t            rqueue;     /**< @brief Registry queue element.     */
+  /**
+   * @brief   Registry queue element.
+   */
+  ch_queue_t                    rqueue;
 #endif
   /**
    * @brief   OS instance owner of this thread.
    */
-  os_instance_t         *owner;
+  os_instance_t                 *owner;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Thread name or @p NULL.
    */
-  const char            *name;
+  const char                    *name;
 #endif
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE) ||  \
     defined(__DOXYGEN__)
@@ -156,34 +197,34 @@ struct ch_thread {
    * @note    This pointer is used for stack overflow checks and for
    *          dynamic threading.
    */
-  stkalign_t            *wabase;
+  stkalign_t                    *wabase;
 #endif
   /**
    * @brief   Current thread state.
    */
-  tstate_t              state;
+  tstate_t                      state;
   /**
    * @brief   Various thread flags.
    */
-  tmode_t               flags;
+  tmode_t                       flags;
 #if (CH_CFG_USE_REGISTRY == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   References to this thread.
    */
-  trefs_t               refs;
+  trefs_t                       refs;
 #endif
   /**
    * @brief   Number of ticks remaining to this thread.
    */
 #if (CH_CFG_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
-  tslices_t             ticks;
+  tslices_t                     ticks;
 #endif
 #if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Thread consumed time in ticks.
    * @note    This field can overflow.
    */
-  volatile systime_t    time;
+  volatile systime_t            time;
 #endif
   /**
    * @brief   State-specific fields.
@@ -197,33 +238,33 @@ struct ch_thread {
      *          by the waking thread or interrupt handler. The value is valid
      *          after exiting the @p chSchWakeupS() function.
      */
-    msg_t               rdymsg;
+    msg_t                       rdymsg;
     /**
      * @brief   Thread exit code.
      * @note    The thread termination code is stored in this field in order
      *          to be retrieved by the thread performing a @p chThdWait() on
      *          this thread.
      */
-    msg_t               exitcode;
+    msg_t                       exitcode;
     /**
      * @brief   Pointer to a generic "wait" object.
      * @note    This field is used to get a generic pointer to a synchronization
      *          object and is valid when the thread is in one of the wait
      *          states.
      */
-    void                *wtobjp;
+    void                        *wtobjp;
     /**
      * @brief   Pointer to a generic thread reference object.
      * @note    This field is used to get a pointer to a synchronization
      *          object and is valid when the thread is in @p CH_STATE_SUSPENDED
      *          state.
      */
-    thread_reference_t  *wttrp;
+    thread_reference_t          *wttrp;
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
     /**
      * @brief   Thread sent message.
      */
-    msg_t               sentmsg;
+    msg_t                       sentmsg;
 #endif
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
     /**
@@ -232,7 +273,7 @@ struct ch_thread {
      *          object and is valid when the thread is in @p CH_STATE_WTSEM
      *          state.
      */
-    struct ch_semaphore *wtsemp;
+    struct ch_semaphore         *wtsemp;
 #endif
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
     /**
@@ -241,7 +282,7 @@ struct ch_thread {
      *          object and is valid when the thread is in @p CH_STATE_WTMTX
      *          state.
      */
-    struct ch_mutex     *wtmtxp;
+    struct ch_mutex             *wtmtxp;
 #endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
     /**
@@ -249,50 +290,50 @@ struct ch_thread {
      * @note    This field is only valid while the thread is in the
      *          @p CH_STATE_WTOREVT or @p CH_STATE_WTANDEVT states.
      */
-    eventmask_t         ewmask;
+    eventmask_t                 ewmask;
 #endif
-  }                     u;
+  }                             u;
 #if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Termination waiting list.
    */
-  ch_list_t             waiting;
+  ch_list_t                     waiting;
 #endif
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Messages queue.
    */
-  ch_queue_t            msgqueue;
+  ch_queue_t                    msgqueue;
 #endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Pending events mask.
    */
-  eventmask_t           epending;
+  eventmask_t                   epending;
 #endif
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   List of the mutexes owned by this thread.
    * @note    The list is terminated by a @p NULL in this field.
    */
-  struct ch_mutex       *mtxlist;
+  struct ch_mutex               *mtxlist;
   /**
    * @brief   Thread's own, non-inherited, priority.
    */
-  tprio_t               realprio;
+  tprio_t                       realprio;
 #endif
 #if ((CH_CFG_USE_DYNAMIC == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE)) ||      \
     defined(__DOXYGEN__)
   /**
    * @brief   Memory Pool where the thread workspace is returned.
    */
-  void                  *mpool;
+  void                          *mpool;
 #endif
 #if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Thread statistics.
    */
-  time_measurement_t    stats;
+  time_measurement_t            stats;
 #endif
 #if defined(CH_CFG_THREAD_EXTRA_FIELDS)
   /* Extra fields defined in chconf.h.*/
@@ -308,11 +349,11 @@ typedef struct ch_ready_list {
    * @brief     Threads ordered queues header.
    * @note      The priority field must be initialized to zero.
    */
-  ch_priority_queue_t   pqueue;
+  ch_priority_queue_t           pqueue;
   /**
    * @brief     The currently running thread.
    */
-  thread_t              *current;
+  thread_t                      *current;
 } ready_list_t;
 
 /**
@@ -322,27 +363,27 @@ typedef struct ch_os_instance_config {
   /**
    * @brief   Instance name.
    */
-  const char            *name;
+  const char                    *name;
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE) ||  \
     defined(__DOXYGEN__)
   /**
    * @brief   Lower limit of the main function thread stack.
    */
-  stkalign_t            *mainthread_base;
+  stkalign_t                    *mainthread_base;
   /**
    * @brief   Upper limit of the main function thread stack.
    */
-  stkalign_t            *mainthread_end;
+  stkalign_t                    *mainthread_end;
 #endif
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
   /**
    * @brief   Lower limit of the dedicated idle thread stack.
    */
-  stkalign_t            *idlethread_base;
+  stkalign_t                    *idlethread_base;
   /**
    * @brief   Upper limit of the dedicated idle thread stack.
    */
-  stkalign_t            *idlethread_end;
+  stkalign_t                    *idlethread_end;
 #endif
 } os_instance_config_t;
 
@@ -353,42 +394,46 @@ struct ch_os_instance {
   /**
    * @brief   Ready list header.
    */
-  ready_list_t          rlist;
+  ready_list_t                  rlist;
   /**
    * @brief   Virtual timers delta list header.
    */
-  virtual_timers_list_t vtlist;
+  virtual_timers_list_t         vtlist;
 #if ((CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == FALSE)) ||        \
     defined(__DOXYGEN__)
   /**
    * @brief   Registry header.
    * @note    This field is present only if the SMP mode is disabled.
    */
-  ch_queue_t            reglist;
+  ch_queue_t                    reglist;
 #endif
   /**
    * @brief   Core associated to this instance.
    */
-  core_id_t             core_id;
+  core_id_t                     core_id;
+  /**
+   * @brief   Pointer to the instance configuration data.
+   */
+  const os_instance_config_t    *config;
   /**
    * @brief   Main thread descriptor.
    */
-  thread_t              mainthread;
+  thread_t                      mainthread;
   /**
    * @brief   System debug.
    */
-  system_debug_t        dbg;
+  system_debug_t                dbg;
 #if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED) || defined(__DOXYGEN__)
   /**
    * @brief   Trace buffer.
    */
-  trace_buffer_t        trace_buffer;
+  trace_buffer_t                trace_buffer;
 #endif
 #if (CH_DBG_STATISTICS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Global kernel statistics.
    */
-  kernel_stats_t        kernel_stats;
+  kernel_stats_t                kernel_stats;
 #endif
 #if defined(PORT_INSTANCE_EXTRA_FIELDS) || defined(__DOXYGEN__)
   /* Extra fields from port layer.*/
@@ -405,16 +450,16 @@ typedef struct ch_system {
   /**
    * @brief   Operating system state.
    */
-  system_state_t        state;
+  system_state_t                state;
   /**
    * @brief   Initialized OS instances or @p NULL.
    */
-  os_instance_t         *instances[PORT_CORES_NUMBER];
+  os_instance_t                 *instances[PORT_CORES_NUMBER];
 #if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Time measurement calibration data.
    */
-  tm_calibration_t      tmc;
+  tm_calibration_t              tmc;
 #endif
 #if ((CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)) ||         \
     defined(__DOXYGEN__)
@@ -422,7 +467,7 @@ typedef struct ch_system {
    * @brief   Registry header.
    * @note    This field is present only if the SMP mode is enabled.
    */
-  ch_queue_t            reglist;
+  ch_queue_t                    reglist;
 #endif
 #if defined(PORT_SYSTEM_EXTRA_FIELDS) || defined(__DOXYGEN__)
   /* Extra fields from port layer.*/

@@ -178,10 +178,6 @@ CH_IRQ_HANDLER(Vector80) {
  * @notapi
  */
 void port_init(os_instance_t *oip) {
-  uint32_t core_id = port_get_core_id();
-
-  /* Port-related info for each OS instance.*/
-  oip->core_id = core_id;
 
   /* Activating timer for this instance.*/
   port_timer_enable(oip);
@@ -189,11 +185,11 @@ void port_init(os_instance_t *oip) {
 #if CH_CFG_SMP_MODE== TRUE
   /* FIFO handlers for each core.*/
   SIO->FIFO_ST = SIO_FIFO_ST_ROE | SIO_FIFO_ST_WOF;
-  if (core_id == 0U) {
+  if (oip->core_id == 0U) {
     NVIC_SetPriority(15, CORTEX_MINIMUM_PRIORITY);
     NVIC_EnableIRQ(15);
   }
-  else if (core_id == 1U) {
+  else if (oip->core_id == 1U) {
     NVIC_SetPriority(16, CORTEX_MINIMUM_PRIORITY);
     NVIC_EnableIRQ(16);
   }

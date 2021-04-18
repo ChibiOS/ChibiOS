@@ -305,7 +305,12 @@ void chSchObjectInit(os_instance_t *oip,
 #endif
   chDbgAssert(ch_system.instances[core_id] == NULL, "instance already registered");
   ch_system.instances[core_id] = oip;
+
+  /* Core associated to this instance.*/
   oip->core_id = core_id;
+
+  /* Keeping a reference to the configuration data.*/
+  oip->config = oicp;
 
   /* Port initialization for the current instance.*/
   port_init(oip);
