@@ -260,7 +260,7 @@
 /**
  * @brief   Port-specific information string.
  */
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
   #if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
     #define PORT_INFO                   "Preemption through NMI (SMP)"
   #else
@@ -472,25 +472,25 @@ extern "C" {
   void __port_thread_start(void);
   void __port_switch_from_isr(void);
   void __port_exit_from_isr(void);
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
   void __port_spinlock_take(void);
   void __port_spinlock_release_inline(void);
-#endif /* CH_CFG_SMP_MODE != FALSE */
+#endif /* CH_CFG_SMP_MODE == TRUE */
 #ifdef __cplusplus
 }
 #endif
 
 #if PORT_USE_ALT_TIMER == FALSE
 #include "chcore_timer.h"
-#else /* PORT_USE_ALT_TIMER != FALSE */
+#else /* PORT_USE_ALT_TIMER == TRUE */
 #include "chcore_timer_alt.h"
-#endif /* PORT_USE_ALT_TIMER != FALSE */
+#endif /* PORT_USE_ALT_TIMER == TRUE */
 
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Triggers an inter-core notification.
  *
@@ -525,7 +525,7 @@ __STATIC_INLINE void port_spinlock_release(void) {
   __DMB();
   SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] = (uint32_t)SIO;
 }
-#endif /* CH_CFG_SMP_MODE != FALSE */
+#endif /* CH_CFG_SMP_MODE == TRUE */
 
 /**
  * @brief   Returns a word encoding the current interrupts status.
@@ -563,7 +563,7 @@ __STATIC_INLINE bool port_is_isr_context(void) {
   return (bool)((__get_IPSR() & 0x1FFU) != 0U);
 }
 
-#if (CH_CFG_SMP_MODE != FALSE) || defined(__DOXYGEN__)
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Kernel-lock action.
  * @details In this port this function disables interrupts globally.
