@@ -298,7 +298,7 @@ void chSchObjectInit(os_instance_t *oip,
   core_id_t core_id;
 
   /* Registering into the global system structure.*/
-#if CH_CFG_SMP_MODE != FALSE
+#if CH_CFG_SMP_MODE== TRUE
   core_id = port_get_core_id();
 #else
   core_id = 0U;
@@ -395,14 +395,20 @@ void chSchObjectInit(os_instance_t *oip,
  * @iclass
  */
 thread_t *chSchReadyI(thread_t *tp) {
-#if CH_CFG_SMP_MODE == FALSE
   os_instance_t *oip = currcore;
-#else
-  os_instance_t *oip = tp->owner;
-#endif
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL);
+
+#if CH_CFG_SMP_MODE== TRUE
+  if (tp->owner != oip) {
+    /* Readying up the remote thread and triggering a reschedule on
+       the other core.*/
+    chSysNotifyInstance(tp->owner);
+    (void) __sch_ready_behind(tp->owner, tp);
+    return;
+  }
+#endif
 
   /* The thread is handled by the local core.*/
   return __sch_ready_behind(oip, tp);
@@ -523,7 +529,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
      restart execution.*/
   ntp->u.rdymsg = msg;
 
-#if CH_CFG_SMP_MODE != FALSE
+#if CH_CFG_SMP_MODE== TRUE
   if (ntp->owner != oip) {
     /* Readying up the remote thread and triggering a reschedule on
        the other core.*/
