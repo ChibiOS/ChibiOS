@@ -223,6 +223,28 @@ typedef struct {
   __IO uint32_t         FRCE_OFF;
   __IO uint32_t         WDSEL;
   __IO uint32_t         DONE;
+  __I  uint32_t         resvd10[1020];
+  struct {
+    __IO uint32_t       FRCE_ON;
+    __IO uint32_t       FRCE_OFF;
+    __IO uint32_t       WDSEL;
+    __IO uint32_t       DONE;
+    __I  uint32_t       resvd10[1020];
+  } XOR;
+  struct {
+    __IO uint32_t       FRCE_ON;
+    __IO uint32_t       FRCE_OFF;
+    __IO uint32_t       WDSEL;
+    __IO uint32_t       DONE;
+    __I  uint32_t       resvd10[1020];
+  } SET;
+  struct {
+    __IO uint32_t       FRCE_ON;
+    __IO uint32_t       FRCE_OFF;
+    __IO uint32_t       WDSEL;
+    __IO uint32_t       DONE;
+    __I  uint32_t       resvd10[1020];
+  } CLR;
 } PSM_TypeDef;
 
 typedef struct {
@@ -416,6 +438,96 @@ typedef struct {
   __I  uint32_t         UARTPCELLID1;
   __I  uint32_t         UARTPCELLID2;
   __I  uint32_t         UARTPCELLID3;
+  struct {
+    __IO uint32_t       UARTDR;
+    __IO uint32_t       UARTRSR;
+    __I  uint32_t       resvd8;
+    __I  uint32_t       resvdC;
+    __I  uint32_t       resvd10;
+    __I  uint32_t       resvd14;
+    __I  uint32_t       UARTFR;
+    __I  uint32_t       resvd1C;
+    __IO uint32_t       UARTILPR;
+    __IO uint32_t       UARTIBRD;
+    __IO uint32_t       UARTFBRD;
+    __IO uint32_t       UARTLCR_H;
+    __IO uint32_t       UARTCR;
+    __IO uint32_t       UARTIFLS;
+    __IO uint32_t       UARTIMSC;
+    __I  uint32_t       UARTRIS;
+    __I  uint32_t       UARTMIS;
+    __IO uint32_t       UARTICR;
+    __IO uint32_t       UARTDMACR;
+    __I  uint32_t       resvd4C[997];
+    __I  uint32_t       UARTPERIPHID0;
+    __I  uint32_t       UARTPERIPHID1;
+    __I  uint32_t       UARTPERIPHID2;
+    __I  uint32_t       UARTPERIPHID3;
+    __I  uint32_t       UARTPCELLID0;
+    __I  uint32_t       UARTPCELLID1;
+    __I  uint32_t       UARTPCELLID2;
+    __I  uint32_t       UARTPCELLID3;
+  } XOR;
+  struct {
+    __IO uint32_t       UARTDR;
+    __IO uint32_t       UARTRSR;
+    __I  uint32_t       resvd8;
+    __I  uint32_t       resvdC;
+    __I  uint32_t       resvd10;
+    __I  uint32_t       resvd14;
+    __I  uint32_t       UARTFR;
+    __I  uint32_t       resvd1C;
+    __IO uint32_t       UARTILPR;
+    __IO uint32_t       UARTIBRD;
+    __IO uint32_t       UARTFBRD;
+    __IO uint32_t       UARTLCR_H;
+    __IO uint32_t       UARTCR;
+    __IO uint32_t       UARTIFLS;
+    __IO uint32_t       UARTIMSC;
+    __I  uint32_t       UARTRIS;
+    __I  uint32_t       UARTMIS;
+    __IO uint32_t       UARTICR;
+    __IO uint32_t       UARTDMACR;
+    __I  uint32_t       resvd4C[997];
+    __I  uint32_t       UARTPERIPHID0;
+    __I  uint32_t       UARTPERIPHID1;
+    __I  uint32_t       UARTPERIPHID2;
+    __I  uint32_t       UARTPERIPHID3;
+    __I  uint32_t       UARTPCELLID0;
+    __I  uint32_t       UARTPCELLID1;
+    __I  uint32_t       UARTPCELLID2;
+    __I  uint32_t       UARTPCELLID3;
+  } SET;
+  struct {
+    __IO uint32_t       UARTDR;
+    __IO uint32_t       UARTRSR;
+    __I  uint32_t       resvd8;
+    __I  uint32_t       resvdC;
+    __I  uint32_t       resvd10;
+    __I  uint32_t       resvd14;
+    __I  uint32_t       UARTFR;
+    __I  uint32_t       resvd1C;
+    __IO uint32_t       UARTILPR;
+    __IO uint32_t       UARTIBRD;
+    __IO uint32_t       UARTFBRD;
+    __IO uint32_t       UARTLCR_H;
+    __IO uint32_t       UARTCR;
+    __IO uint32_t       UARTIFLS;
+    __IO uint32_t       UARTIMSC;
+    __I  uint32_t       UARTRIS;
+    __I  uint32_t       UARTMIS;
+    __IO uint32_t       UARTICR;
+    __IO uint32_t       UARTDMACR;
+    __I  uint32_t       resvd4C[997];
+    __I  uint32_t       UARTPERIPHID0;
+    __I  uint32_t       UARTPERIPHID1;
+    __I  uint32_t       UARTPERIPHID2;
+    __I  uint32_t       UARTPERIPHID3;
+    __I  uint32_t       UARTPCELLID0;
+    __I  uint32_t       UARTPCELLID1;
+    __I  uint32_t       UARTPCELLID2;
+    __I  uint32_t       UARTPCELLID3;
+  } CLR;
 } UART_TypeDef;
 
 typedef struct {
@@ -573,9 +685,6 @@ typedef struct {
 #define __PADSUSER0_BASE                  (__APBPERIPH_BASE + 0x0001C000U)
 #define __PADSQSPI_BASE                   (__APBPERIPH_BASE + 0x00020000U)
 #define __PSM_BASE                        (__APBPERIPH_BASE + 0x00010000U)
-#define __PSM_XOR_BASE                    (__APBPERIPH_BASE + 0x00011000U)
-#define __PSM_SET_BASE                    (__APBPERIPH_BASE + 0x00012000U)
-#define __PSM_CLR_BASE                    (__APBPERIPH_BASE + 0x00013000U)
 #define __TIMER_BASE                      (__APBPERIPH_BASE + 0x00054000U)
 #define __UART0_BASE                      (__APBPERIPH_BASE + 0x00034000U)
 #define __UART1_BASE                      (__APBPERIPH_BASE + 0x00038000U)
@@ -605,9 +714,6 @@ typedef struct {
 #define PADS_BANK0                        ((PADS_TypeDef *)   __PADSUSER0_BASE)
 #define PADS_QSPI                         ((PADS_TypeDef *)   __PADSQSPI_BASE)
 #define PSM                               ((PSM_TypeDef *)    __PSM_BASE)
-#define PSM_XOR                           ((PSM_TypeDef *)    __PSM_XOR_BASE)
-#define PSM_SET                           ((PSM_TypeDef *)    __PSM_SET_BASE)
-#define PSM_CLR                           ((PSM_TypeDef *)    __PSM_CLR_BASE)
 #define RESETS                            ((RESETS_TypeDef *) __RESETS_BASE)
 #define SIO                               ((SIO_TypeDef *)    __SIO_BASE)
 #define TIMER                             ((TIMER_TypeDef *)  __TIMER_BASE)
