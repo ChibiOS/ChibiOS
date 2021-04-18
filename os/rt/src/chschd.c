@@ -405,8 +405,7 @@ thread_t *chSchReadyI(thread_t *tp) {
     /* Readying up the remote thread and triggering a reschedule on
        the other core.*/
     chSysNotifyInstance(tp->owner);
-    (void) __sch_ready_behind(tp->owner, tp);
-    return;
+    return __sch_ready_behind(tp->owner, tp);
   }
 #endif
 
