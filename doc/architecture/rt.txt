@@ -50,14 +50,18 @@
  *   }
  * }
  * 
- * package Core {
- *   class scheduler <<(S,#FF7700) Singleton>> {
- *     + {static} chSchReadyI()
- *     + {static} chSchWakeupS()
- *     + {static} chSchGoSleepS()
- *     + {static} chSchGoSleepTimeoutS()
+ * package OS {
+ *   class "Port Layer" <<(S,#FF7700) Singleton>> {
+ *     + {static} port_lock()
+ *     + {static} port_unlock()
+ *     + {static} port_suspend()
+ *     + {static} port_enable()
+ *     + {static} port_disable()
+ *     + {static} port_switch()
+ *     + {static} port_timer_get_time()
  *   }
- *   class system <<(S,#FF7700) Singleton>> {
+ *   class System <<(S,#FF7700) Singleton>> {
+ *     - {static} ch_system : ch_system_t
  *     - {static} ch0 : os_instance_t
  *     - {static} ch1 : os_instance_t
  *     + {static} chSysInit()
@@ -67,22 +71,12 @@
  *     + {static} chSysUnlockFromISR()
  *     + {static} chSysSwitch()
  *   }
- *   class port <<(S,#FF7700) Singleton>> {
- *     + {static} port_lock()
- *     + {static} port_unlock()
- *     + {static} port_suspend()
- *     + {static} port_enable()
- *     + {static} port_disable()
- *     + {static} port_switch()
- *     + {static} port_timer_get_time()
+ *   class Scheduler <<(S,#FF7700) Singleton>> {
+ *     + {static} chSchReadyI()
+ *     + {static} chSchWakeupS()
+ *     + {static} chSchGoSleepS()
+ *     + {static} chSchGoSleepTimeoutS()
  *   }
- * }
- * 
- * Core ..> "Lists and Queues" : use
- * scheduler ..> system : use
- * system .r.> port : use
- * 
- * package OS {
  *   class system_debug_t {
  *   }
  *   class trace_buffer_t {
@@ -93,6 +87,7 @@
  *   }
  *   class ch_system_t <<(S,#FF7700) Singleton>> {
  *     + state : ch_system_state_t
+ *     # tmc : tm_calibration_t
  *     # instances[] : os_instance_t *
  *   }
  *   class os_instance_t {
@@ -101,7 +96,6 @@
  *     # mainthread : thread_t
  *     # dbg : system_debug_t
  *     # trace_buffer : trace_buffer_t
- *     # tmc : tm_calibration_t
  *     # kernel_stats : kernel_stats_t
  *     + chInstanceObjectInit()
  *   }
@@ -113,20 +107,6 @@
  *     + chRegFindThreadByPointer()
  *     + chRegFindThreadByWorkingArea()
  *   }
- * }
- * 
- * OS ..> Core : use
- * ch_system_t *-- "1" registry : SMP mode only
- * ch_system_t *-r- "1" tm_calibration_t
- * ch_system_t *-- "1..*" os_instance_t : cores
- * os_instance_t *-- "1" registry : Non-SMP mode only
- * os_instance_t *-- "1" system_debug_t
- * os_instance_t *-- "1" trace_buffer_t
- * os_instance_t *-- "1" kernel_stats_t
- * os_instance_t <.. system : use
- * registry *-- "1" ch_queue_t
- * 
- * package Threads {
  *   class thread_t {
  *     .. union ..
  *     - list : ch_list_t
@@ -145,14 +125,24 @@
  *   }
  *   class ready_list_t {
  *     - pqueue : ch_pqueue_t
- *     # current : thread_t *
+ *     - current : thread_t *
  *   }
  * }
  * 
- * Threads ..> Core : use
- * thread_t *-- "1" ch_list_t
- * thread_t *-- "1" ch_queue_t
- * thread_t *-- "1" ch_pqueue_t
+ * OS ..> "Lists and Queues" : use
+ * System ..> "Port Layer" : use
+ * System *-- "1" ch_system_t : system\nroot object
+ * System *-- "1..2" os_instance_t
+ * ch_system_t *-- "1" registry : SMP mode\nonly
+ * ch_system_t *-- "1" tm_calibration_t
+ * ch_system_t o-- "1..*" os_instance_t : registered\ninstances
+ * os_instance_t *-- "1" thread_t : Main\nThread
+ * os_instance_t *-- "1" registry : Non-SMP mode\nonly
+ * os_instance_t *-- "1" system_debug_t
+ * os_instance_t *-- "1" trace_buffer_t
+ * os_instance_t *-- "1" kernel_stats_t
+ * 
+ * Scheduler ..> ready_list_t : use
  * thread_t o-- "0..*" thread_t : waiting\ntermination
  * thread_t o-- "1" os_instance_t : owner\ninstance
  * thread_t "1..*" --o registry : alive\nthreads
@@ -160,7 +150,7 @@
  * ready_list_t o-- "1" thread_t : current\nthread
  * ready_list_t "1" --* os_instance_t : instance\nready list
  * 
- * package VirtualTimers {
+ * package "Virtual Timers" {
  *   class virtual_timer_header_t {
  *     # next : virtual_timer_header_t *
  *     # prev : virtual_timer_header_t *
@@ -179,11 +169,11 @@
  *   }
  * }
  * 
- * VirtualTimers ..> Core : use
+ * "Virtual Timers" <..> OS : use
+ * "Virtual Timers" ..> "Lists and Queues" : use
  * virtual_timer_header_t <|-- virtual_timer_t
  * virtual_timer_header_t <|-- virtual_timers_list_t
  * virtual_timers_list_t o-- "0..*" virtual_timer_t : active timers
- * virtual_timers_list_t  "1" --* os_instance_t
  * 
  * @enduml
  *
