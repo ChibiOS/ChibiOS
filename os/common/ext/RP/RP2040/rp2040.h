@@ -678,7 +678,6 @@ typedef struct {
 #define __AHBPERIPH_BASE                  0x50000000U
 #define __IOPORT_BASE                     0xD0000000U
 
-#define __DMA_BASE                        (__APBPERIPH_BASE + 0x00000000U)
 #define __RESETS_BASE                     (__APBPERIPH_BASE + 0x0000C000U)
 #define __IOUSER0_BASE                    (__APBPERIPH_BASE + 0x00014000U)
 #define __IOQSPI_BASE                     (__APBPERIPH_BASE + 0x00018000U)
@@ -697,6 +696,7 @@ typedef struct {
 #define __WATCHDOG_BASE                   (__APBPERIPH_BASE + 0x00058000U)
 #define __RTC_BASE                        (__APBPERIPH_BASE + 0x0005C000U)
 
+#define __DMA_BASE                        (__AHBPERIPH_BASE + 0x00000000U)
 #define __USB_BASE                        (__AHBPERIPH_BASE + 0x01100000U)
 #define __PIO0_BASE                       (__AHBPERIPH_BASE + 0x02000000U)
 #define __PIO1_BASE                       (__AHBPERIPH_BASE + 0x03000000U)

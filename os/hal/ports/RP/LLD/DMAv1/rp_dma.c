@@ -149,7 +149,7 @@ OSAL_IRQ_HANDLER(RP_DMA_IRQ_1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  /* Getting and clearing pending interrupts for core 0.*/
+  /* Getting and clearing pending interrupts for core 1.*/
   ints = DMA->C[1].INTS;
   DMA->C[1].INTS = ints;
 
