@@ -170,7 +170,6 @@
  * }
  * 
  * "Virtual Timers" <..> OS : use
- * "Virtual Timers" ..> "Lists and Queues" : use
  * virtual_timer_header_t <|-- virtual_timer_t
  * virtual_timer_header_t <|-- virtual_timers_list_t
  * virtual_timers_list_t o-- "0..*" virtual_timer_t : active timers
