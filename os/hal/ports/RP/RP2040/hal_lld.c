@@ -109,7 +109,9 @@ void hal_lld_init(void) {
 
   /* Common subsystems initialization.*/
   irqInit();
+#if defined(RP_DMA_REQUIRED)
   dmaInit();
+#endif
 
 #if RP_CORE1_START == TRUE
   start_core1();
