@@ -56,7 +56,7 @@ void c1_main(void) {
    * system initialization on the other side.
    */
   chSysWaitSystemState(ch_sys_running);
-  chSchObjectInit(&ch1, &ch_core1_cfg);
+  chInstanceObjectInit(&ch1, &ch_core1_cfg);
 
   /* It is alive now.*/
   chSysUnlock();

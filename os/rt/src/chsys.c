@@ -180,7 +180,7 @@ void chSysInit(void) {
   __oslib_init();
 
   /* Initializing default OS instance.*/
-  chSchObjectInit(&ch0, &ch_core0_cfg);
+  chInstanceObjectInit(&ch0, &ch_core0_cfg);
 
   /* It is alive now.*/
   ch_system.state = ch_sys_running;

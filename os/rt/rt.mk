@@ -18,6 +18,7 @@ KERNSRC := $(CHIBIOS)/os/rt/src/chsys.c \
            $(CHIBIOS)/os/rt/src/chtrace.c \
            $(CHIBIOS)/os/rt/src/chvt.c \
            $(CHIBIOS)/os/rt/src/chschd.c \
+           $(CHIBIOS)/os/rt/src/chinstances.c \
            $(CHIBIOS)/os/rt/src/chthreads.c
 ifneq ($(findstring CH_CFG_USE_TM TRUE,$(CHCONF)),)
 KERNSRC += $(CHIBIOS)/os/rt/src/chtm.c

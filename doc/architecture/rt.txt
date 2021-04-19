@@ -52,6 +52,7 @@
  * 
  * package OS {
  *   class "Port Layer" <<(S,#FF7700) Singleton>> {
+ *     + {static} port_init()
  *     + {static} port_lock()
  *     + {static} port_unlock()
  *     + {static} port_suspend()
@@ -151,28 +152,32 @@
  * ready_list_t "1" --* os_instance_t : instance\nready list
  * 
  * package "Virtual Timers" {
- *   class virtual_timer_header_t {
- *     # next : virtual_timer_header_t *
- *     # prev : virtual_timer_header_t *
- *     # delta: sysinterval_t
+ *   class delta_list_t {
+ *     - next : delta_list_t *
+ *     - prev : delta_list_t *
+ *     - delta : sysinterval_t
  *   }
  *   class virtual_timer_t {
- *     # func : vtfunc_t
- *     # par : void *
+ *     - dlist : delta_list_t
+ *     - func : vtfunc_t
+ *     - par : void *
  *     + chVTObjectInit()
  *     + chVTSet()
  *     + chVTReset()
  *   }
  *   class virtual_timers_list_t {
- *     # systime : systime_t
- *     # lasttime : systime_t
+ *     - dlist : delta_list_t
+ *     - systime : systime_t
+ *     - lasttime : systime_t
+ *     - laststamp : uint64_t
+ *     # __vt_init()
  *   }
  * }
  * 
  * "Virtual Timers" <..> OS : use
- * virtual_timer_header_t <|-- virtual_timer_t
- * virtual_timer_header_t <|-- virtual_timers_list_t
+ * virtual_timer_t *-- "1" delta_list_t
  * virtual_timers_list_t o-- "0..*" virtual_timer_t : active timers
+ * virtual_timers_list_t *-- "1" delta_list_t
  * 
  * @enduml
  *
