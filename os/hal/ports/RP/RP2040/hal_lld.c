@@ -107,12 +107,13 @@ void hal_lld_init(void) {
   hal_lld_peripheral_unreset(RESETS_ALLREG_SYSCFG);
 #endif /* RP_NO_INIT */
 
+  /* Common subsystems initialization.*/
+  irqInit();
+  dmaInit();
+
 #if RP_CORE1_START == TRUE
   start_core1();
 #endif
-
-  /* IRQ subsystem initialization.*/
-  irqInit();
 }
 
 /** @} */

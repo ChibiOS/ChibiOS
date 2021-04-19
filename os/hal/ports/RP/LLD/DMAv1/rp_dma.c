@@ -181,8 +181,6 @@ void dmaInit(void) {
   dma.c0_allocated_mask = 0U;
   dma.c1_allocated_mask = 0U;
   for (i = 0U; i < RP_DMA_CHANNELS; i++) {
-    __rp_dma_channels[i].channel->CTRL_TRIG = DMA_CTRL_TRIG_READ_ERROR |
-                                              DMA_CTRL_TRIG_WRITE_ERROR;
     dma.channels[i].func = NULL;
   }
 }
