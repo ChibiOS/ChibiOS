@@ -78,9 +78,9 @@ typedef struct {
  * @brief   Access to the registry list header.
  */
 #if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
-#define REG_HEADER(oip) (&ch_system.reglist)
+#define REG_HEADER(oip) (&ch_system.reglist.queue)
 #else
-#define REG_HEADER(oip) (&(oip)->reglist)
+#define REG_HEADER(oip) (&(oip)->reglist.queue)
 #endif
 
 /**
@@ -122,6 +122,18 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Initializes a registry.
+ *
+ * @param[out] rp       pointer to a @p registry_t structure
+ *
+ * @init
+ */
+static inline void chRegObjectInit(registry_t *rp) {
+
+  ch_queue_init(&rp->queue);
+}
 
 /**
  * @brief   Sets the current thread name.

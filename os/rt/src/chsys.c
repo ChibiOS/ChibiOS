@@ -165,7 +165,7 @@ void chSysInit(void) {
 
 #if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)
   /* Registry initialization when SMP mode is enabled.*/
-  ch_queue_init(&ch_system.reglist);
+  chRegObjectInit(&ch_system.reglist);
 #endif
 
 #if CH_CFG_USE_TM == TRUE

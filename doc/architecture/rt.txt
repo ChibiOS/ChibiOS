@@ -78,35 +78,42 @@
  *     + {static} chSchGoSleepS()
  *     + {static} chSchGoSleepTimeoutS()
  *   }
+ *   class tm_calibration_t {
+ *     # __tm_calibration_init()
+ *   }
  *   class system_debug_t {
+ *     # __dbg_object_init()
  *   }
  *   class trace_buffer_t {
- *   }
- *   class tm_calibration_t {
+ *     # __trace_init()
  *   }
  *   class kernel_stats_t {
+ *     # __stats_object_init()
  *   }
- *   class ch_system_t <<(S,#FF7700) Singleton>> {
+ *   class registry_t {
+ *     - queue : ch_queue_t
+ *     + chRegObjectInit()
+ *     + {static} chRegFirstThread()
+ *     + {static} chRegNextThread()
+ *     + {static} chRegFindThreadByName()
+ *     + {static} chRegFindThreadByPointer()
+ *     + {static} chRegFindThreadByWorkingArea()
+ *   }
+ *   class ch_system_t {
  *     + state : ch_system_state_t
+ *     # reglist : registry_t
  *     # tmc : tm_calibration_t
  *     # instances[] : os_instance_t *
  *   }
  *   class os_instance_t {
  *     # rlist : ready_list_t
  *     # vtlist : virtual_timers_list_t
+ *     # reglist : registry_t
  *     # mainthread : thread_t
  *     # dbg : system_debug_t
  *     # trace_buffer : trace_buffer_t
  *     # kernel_stats : kernel_stats_t
  *     + chInstanceObjectInit()
- *   }
- *   class registry {
- *     # reglist : ch_queue_t
- *     + chRegFirstThread()
- *     + chRegNextThread()
- *     + chRegFindThreadByName()
- *     + chRegFindThreadByPointer()
- *     + chRegFindThreadByWorkingArea()
  *   }
  *   class thread_t {
  *     .. union ..
@@ -114,6 +121,7 @@
  *     - queue : ch_queue_t
  *     - pqueue : ch_pqueue_t
  *     .. end union ..
+ *     - owner : os_instance_t
  *     - rqueue : ch_queue_t
  *     - ctx : port_context
  *     + {static} chThdCreate()
@@ -134,11 +142,11 @@
  * System ..> "Port Layer" : use
  * System *-- "1" ch_system_t : system\nroot object
  * System *-- "1..2" os_instance_t
- * ch_system_t *-- "1" registry : SMP mode\nonly
+ * ch_system_t *-- "1" registry_t : SMP mode\nonly
  * ch_system_t *-- "1" tm_calibration_t
  * ch_system_t o-- "1..*" os_instance_t : registered\ninstances
  * os_instance_t *-- "1" thread_t : Main\nThread
- * os_instance_t *-- "1" registry : Non-SMP mode\nonly
+ * os_instance_t *-- "1" registry_t : Non-SMP mode\nonly
  * os_instance_t *-- "1" system_debug_t
  * os_instance_t *-- "1" trace_buffer_t
  * os_instance_t *-- "1" kernel_stats_t
@@ -146,7 +154,7 @@
  * Scheduler ..> ready_list_t : use
  * thread_t o-- "0..*" thread_t : waiting\ntermination
  * thread_t o-- "1" os_instance_t : owner\ninstance
- * thread_t "1..*" --o registry : alive\nthreads
+ * thread_t "1..*" --o registry_t : alive\nthreads
  * ready_list_t o-- "1..*" thread_t : ready\nthreads
  * ready_list_t o-- "1" thread_t : current\nthread
  * ready_list_t "1" --* os_instance_t : instance\nready list
@@ -170,7 +178,7 @@
  *     - systime : systime_t
  *     - lasttime : systime_t
  *     - laststamp : uint64_t
- *     # __vt_init()
+ *     # __vt_object_init()
  *   }
  * }
  * 

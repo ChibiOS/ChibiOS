@@ -132,6 +132,16 @@ typedef struct ch_virtual_timers_list {
 } virtual_timers_list_t;
 
 /**
+ * @brief   Type of a registry structure.
+ */
+typedef struct ch_registry {
+  /**
+   * @brief   Registry queue header.
+   */
+  ch_queue_t                  queue;
+} registry_t;
+
+/**
  * @brief   Type of a thread reference.
  */
 typedef thread_t * thread_reference_t;
@@ -405,7 +415,7 @@ struct ch_os_instance {
    * @brief   Registry header.
    * @note    This field is present only if the SMP mode is disabled.
    */
-  ch_queue_t                    reglist;
+  registry_t                    reglist;
 #endif
   /**
    * @brief   Core associated to this instance.
@@ -467,7 +477,7 @@ typedef struct ch_system {
    * @brief   Registry header.
    * @note    This field is present only if the SMP mode is enabled.
    */
-  ch_queue_t                    reglist;
+  registry_t                    reglist;
 #endif
 #if defined(PORT_SYSTEM_EXTRA_FIELDS) || defined(__DOXYGEN__)
   /* Extra fields from port layer.*/
