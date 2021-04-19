@@ -105,13 +105,9 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t ct) {
     RP_SPI_DMA_ERROR_HOOK(spip);
   }
 #else
-  //(void)spip;
+  (void)spip;
   (void)ct;
 #endif
-
-  /* Portable SPI ISR code defined in the high level driver, note, it is
-     a macro.*/
-  _spi_isr_code(spip);
 }
 
 /*===========================================================================*/
