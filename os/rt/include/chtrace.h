@@ -248,7 +248,7 @@ typedef struct {
 extern "C" {
 #endif
 #if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED) || defined(__DOXYGEN__)
-  void __trace_init(os_instance_t *oip);
+  void __trace_object_init(trace_buffer_t *tbp);
   void __trace_ready(thread_t *tp, msg_t msg);
   void __trace_switch(thread_t *ntp, thread_t *otp);
   void __trace_isr_enter(const char *isr);

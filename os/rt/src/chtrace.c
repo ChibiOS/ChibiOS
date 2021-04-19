@@ -81,18 +81,18 @@ NOINLINE static void trace_next(os_instance_t *oip) {
  * @brief   Circular trace buffer initialization.
  * @note    Internal use only.
  *
- * @param[out] oip      pointer to the @p os_instance_t structure
+ * @param[out] tbp      pointer to the @p trace_buffer_t structure
  *
  * @notapi
  */
-void __trace_init(os_instance_t *oip) {
+void __trace_object_init(trace_buffer_t *tbp) {
   unsigned i;
 
-  oip->trace_buffer.suspended = (uint16_t)~CH_DBG_TRACE_MASK;
-  oip->trace_buffer.size      = CH_DBG_TRACE_BUFFER_SIZE;
-  oip->trace_buffer.ptr       = &oip->trace_buffer.buffer[0];
+  tbp->suspended = (uint16_t)~CH_DBG_TRACE_MASK;
+  tbp->size      = CH_DBG_TRACE_BUFFER_SIZE;
+  tbp->ptr       = &tbp->buffer[0];
   for (i = 0U; i < (unsigned)CH_DBG_TRACE_BUFFER_SIZE; i++) {
-    oip->trace_buffer.buffer[i].type = CH_TRACE_TYPE_UNUSED;
+    tbp->buffer[i].type = CH_TRACE_TYPE_UNUSED;
   }
 }
 

@@ -34,13 +34,6 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   Number of iterations in the calibration loop.
- * @note    This is required in order to assess the best result in
- *          architectures with instruction cache.
- */
-#define TM_CALIBRATION_LOOP             4U
-
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -75,32 +68,6 @@ static inline void tm_stop(time_measurement_t *tmp,
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
-
-/**
- * @brief   Time measurement initialization.
- * @note    Internal use only.
- *
- * @param[out] tcp      pointer to the @p tm_calibration_t structure
- *
- * @notapi
- */
-void __tm_calibration_init(void) {
-  time_measurement_t tm;
-  unsigned i;
-
-  /* Time Measurement subsystem calibration, it does a null measurement
-     and calculates the call overhead which is subtracted to real
-     measurements.*/
-  ch_system.tmc.offset = (rtcnt_t)0;
-  chTMObjectInit(&tm);
-  i = TM_CALIBRATION_LOOP;
-  do {
-    chTMStartMeasurementX(&tm);
-    chTMStopMeasurementX(&tm);
-    i--;
-  } while (i > 0U);
-  ch_system.tmc.offset = tm.best;
-}
 
 /**
  * @brief   Initializes a @p TimeMeasurement object.

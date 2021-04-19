@@ -124,7 +124,7 @@ void chInstanceObjectInit(os_instance_t *oip,
 
 #if CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED
   /* Trace buffer initialization.*/
-  __trace_init(oip);
+  __trace_object_init(&oip->trace_buffer);
 #endif
 
   /* Statistics initialization.*/

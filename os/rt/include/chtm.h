@@ -34,6 +34,13 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of iterations in the calibration loop.
+ * @note    This is required in order to assess the best result in
+ *          architectures with instruction cache.
+ */
+#define TM_CALIBRATION_LOOP             4U
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -88,7 +95,6 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void __tm_calibration_init(void);
   void chTMObjectInit(time_measurement_t *tmp);
   NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp);
   NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp);
@@ -101,6 +107,32 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Time measurement initialization.
+ * @note    Internal use only.
+ *
+ * @param[out] tcp      pointer to the @p tm_calibration_t structure
+ *
+ * @notapi
+ */
+static inline void __tm_calibration_object_init(tm_calibration_t *tcp) {
+  unsigned i;
+  time_measurement_t tm;
+
+  /* Time Measurement subsystem calibration, it does a null measurement
+     and calculates the call overhead which is subtracted to real
+     measurements.*/
+  tcp->offset = (rtcnt_t)0;
+  chTMObjectInit(&tm);
+  i = TM_CALIBRATION_LOOP;
+  do {
+    chTMStartMeasurementX(&tm);
+    chTMStopMeasurementX(&tm);
+    i--;
+  } while (i > 0U);
+  tcp->offset = tm.best;
+}
 
 #endif /* CH_CFG_USE_TM == TRUE */
 

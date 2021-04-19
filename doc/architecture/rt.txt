@@ -79,13 +79,13 @@
  *     + {static} chSchGoSleepTimeoutS()
  *   }
  *   class tm_calibration_t {
- *     # __tm_calibration_init()
+ *     # __tm_calibration_object_init()
  *   }
  *   class system_debug_t {
  *     # __dbg_object_init()
  *   }
  *   class trace_buffer_t {
- *     # __trace_init()
+ *     # __trace_object_init()
  *   }
  *   class kernel_stats_t {
  *     # __stats_object_init()

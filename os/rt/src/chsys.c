@@ -163,14 +163,14 @@ void chSysInit(void) {
     ch_system.instances[i] = NULL;
   }
 
+#if CH_CFG_USE_TM == TRUE
+  /* Time Measurement calibration.*/
+  __tm_calibration_object_init(&ch_system.tmc);
+#endif
+
 #if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)
   /* Registry initialization when SMP mode is enabled.*/
   chRegObjectInit(&ch_system.reglist);
-#endif
-
-#if CH_CFG_USE_TM == TRUE
-  /* Time Measurement initialization.*/
-  __tm_calibration_init();
 #endif
 
   /* User system initialization hook.*/
