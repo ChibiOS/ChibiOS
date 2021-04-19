@@ -59,18 +59,16 @@
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] oip       pointer to the OS instance
  * @param[in] tp        the thread to be made ready
  * @return              The thread pointer.
  *
  * @notapi
  */
-static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
+static thread_t *__sch_ready_behind(thread_t *tp) {
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
               "invalid state");
-  chDbgAssert(tp->owner == oip, "invalid core");
 
   /* Tracing the event.*/
   __trace_ready(tp, tp->u.rdymsg);
@@ -79,7 +77,7 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
   tp->state = CH_STATE_READY;
 
   /* Insertion in the priority queue.*/
-  return (thread_t *)ch_pqueue_insert_behind(&oip->rlist.pqueue,
+  return (thread_t *)ch_pqueue_insert_behind(&tp->owner->rlist.pqueue,
                                              &tp->hdr.pqueue);
 }
 
@@ -94,18 +92,16 @@ static thread_t *__sch_ready_behind(os_instance_t *oip, thread_t *tp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] oip       pointer to the OS instance
  * @param[in] tp        the thread to be made ready
  * @return              The thread pointer.
  *
  * @notapi
  */
-static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
+static thread_t *__sch_ready_ahead(thread_t *tp) {
 
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
               "invalid state");
-  chDbgAssert(tp->owner == oip, "invalid core");
 
   /* Tracing the event.*/
   __trace_ready(tp, tp->u.rdymsg);
@@ -114,7 +110,7 @@ static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
   tp->state = CH_STATE_READY;
 
   /* Insertion in the priority queue.*/
-  return (thread_t *)ch_pqueue_insert_ahead(&oip->rlist.pqueue,
+  return (thread_t *)ch_pqueue_insert_ahead(&tp->owner->rlist.pqueue,
                                             &tp->hdr.pqueue);
 }
 
@@ -126,18 +122,17 @@ static thread_t *__sch_ready_ahead(os_instance_t *oip, thread_t *tp) {
  * @note    Not a user function, it is meant to be invoked by the scheduler
  *          itself.
  *
- * @param[in] oip       pointer to the OS instance
- *
  * @notapi
  */
-static void __sch_reschedule_behind(os_instance_t *oip) {
-  thread_t *otp = __sch_get_currthread(oip);
+static void __sch_reschedule_behind(void) {
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
   ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
-  __sch_set_currthread(oip, ntp);
+  __instance_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
   if (otp->hdr.pqueue.prio == IDLEPRIO) {
@@ -150,7 +145,7 @@ static void __sch_reschedule_behind(os_instance_t *oip) {
 #endif
 
   /* Placing in ready list behind peers.*/
-  otp = __sch_ready_behind(oip, otp);
+  otp = __sch_ready_behind(otp);
 
   /* Swap operation as tail call.*/
   chSysSwitch(ntp, otp);
@@ -163,18 +158,17 @@ static void __sch_reschedule_behind(os_instance_t *oip) {
  * @note    Not a user function, it is meant to be invoked by the scheduler
  *          itself.
  *
- * @param[in] oip       pointer to the OS instance
- *
  * @notapi
  */
-static void __sch_reschedule_ahead(os_instance_t *oip) {
-  thread_t *otp = __sch_get_currthread(oip);
+static void __sch_reschedule_ahead(void) {
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
   ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
-  __sch_set_currthread(oip, ntp);
+  __instance_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
   if (otp->hdr.pqueue.prio == IDLEPRIO) {
@@ -182,7 +176,7 @@ static void __sch_reschedule_ahead(os_instance_t *oip) {
   }
 
   /* Placing in ready list ahead of peers.*/
-  otp = __sch_ready_ahead(oip, otp);
+  otp = __sch_ready_ahead(otp);
 
   /* Swap operation as tail call.*/
   chSysSwitch(ntp, otp);
@@ -226,7 +220,7 @@ static void __sch_wakeup(void *p) {
   tp->u.rdymsg = MSG_TIMEOUT;
 
   /* Goes behind peers because it went to sleep voluntarily.*/
-  (void) __sch_ready_behind(currcore, tp);
+  (void) __sch_ready_behind(tp);
   chSysUnlockFromISR();
 }
 
@@ -276,22 +270,19 @@ void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
  * @iclass
  */
 thread_t *chSchReadyI(thread_t *tp) {
-  os_instance_t *oip = currcore;
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL);
 
 #if CH_CFG_SMP_MODE == TRUE
-  if (tp->owner != oip) {
+  if (tp->owner != currcore) {
     /* Readying up the remote thread and triggering a reschedule on
        the other core.*/
     chSysNotifyInstance(tp->owner);
-    return __sch_ready_behind(tp->owner, tp);
   }
 #endif
 
-  /* The thread is handled by the local core.*/
-  return __sch_ready_behind(oip, tp);
+  return __sch_ready_behind(tp);
 }
 
 /**
@@ -305,7 +296,7 @@ thread_t *chSchReadyI(thread_t *tp) {
  */
 void chSchGoSleepS(tstate_t newstate) {
   os_instance_t *oip = currcore;
-  thread_t *otp = __sch_get_currthread(oip);
+  thread_t *otp = __instance_get_currthread(oip);
   thread_t *ntp;
 
   chDbgCheckClassS();
@@ -325,7 +316,7 @@ void chSchGoSleepS(tstate_t newstate) {
   /* Next thread in ready list becomes current.*/
   ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
-  __sch_set_currthread(oip, ntp);
+  __instance_set_currthread(oip, ntp);
 
   /* Handling idle-enter hook.*/
   if (ntp->hdr.pqueue.prio == IDLEPRIO) {
@@ -358,7 +349,7 @@ void chSchGoSleepS(tstate_t newstate) {
  * @sclass
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
-  thread_t *tp = __sch_get_currthread(currcore);
+  thread_t *tp = __instance_get_currthread(currcore);
 
   chDbgCheckClassS();
 
@@ -397,7 +388,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
  */
 void chSchWakeupS(thread_t *ntp, msg_t msg) {
   os_instance_t *oip = currcore;
-  thread_t *otp = __sch_get_currthread(oip);
+  thread_t *otp = __instance_get_currthread(oip);
 
   chDbgCheckClassS();
 
@@ -414,7 +405,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
     /* Readying up the remote thread and triggering a reschedule on
        the other core.*/
     chSysNotifyInstance(ntp->owner);
-    (void) __sch_ready_behind(ntp->owner, ntp);
+    (void) __sch_ready_behind(ntp);
     return;
   }
 #endif
@@ -424,12 +415,12 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
      running immediately and the invoking thread goes in the ready
      list instead.*/
   if (ntp->hdr.pqueue.prio <= otp->hdr.pqueue.prio) {
-    (void) __sch_ready_behind(oip, ntp);
+    (void) __sch_ready_behind(ntp);
   }
   else {
     /* The old thread goes back in the ready list ahead of its peers
        because it has not exhausted its time slice.*/
-    otp = __sch_ready_ahead(oip, otp);
+    otp = __sch_ready_ahead(otp);
 
     /* Handling idle-leave hook.*/
     if (otp->hdr.pqueue.prio == IDLEPRIO) {
@@ -438,7 +429,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
 
     /* The extracted thread is marked as current.*/
     ntp->state = CH_STATE_CURRENT;
-    __sch_set_currthread(oip, ntp);
+    __instance_set_currthread(oip, ntp);
 
     /* Swap operation as tail call.*/
     chSysSwitch(ntp, otp);
@@ -456,12 +447,12 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
  */
 void chSchRescheduleS(void) {
   os_instance_t *oip = currcore;
-  thread_t *tp = __sch_get_currthread(oip);
+  thread_t *tp = __instance_get_currthread(oip);
 
   chDbgCheckClassS();
 
   if (firstprio(&oip->rlist.pqueue) > tp->hdr.pqueue.prio) {
-    __sch_reschedule_ahead(oip);
+    __sch_reschedule_ahead();
   }
 }
 
@@ -481,7 +472,7 @@ void chSchRescheduleS(void) {
  */
 bool chSchIsPreemptionRequired(void) {
   os_instance_t *oip = currcore;
-  thread_t *tp = __sch_get_currthread(oip);
+  thread_t *tp = __instance_get_currthread(oip);
 
   tprio_t p1 = firstprio(&oip->rlist.pqueue);
   tprio_t p2 = tp->hdr.pqueue.prio;
@@ -513,13 +504,13 @@ bool chSchIsPreemptionRequired(void) {
  */
 void chSchDoPreemption(void) {
   os_instance_t *oip = currcore;
-  thread_t *otp = __sch_get_currthread(oip);
+  thread_t *otp = __instance_get_currthread(oip);
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
   ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
-  __sch_set_currthread(oip, ntp);
+  __instance_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
   if (otp->hdr.pqueue.prio == IDLEPRIO) {
@@ -533,7 +524,7 @@ void chSchDoPreemption(void) {
 
     /* The thread consumed its time quantum so it is enqueued behind threads
        with same priority level, however, it acquires a new time quantum.*/
-    otp = __sch_ready_behind(oip, otp);
+    otp = __sch_ready_behind(otp);
 
     /* The thread being swapped out receives a new time quantum.*/
     otp->ticks = (tslices_t)CH_CFG_TIME_QUANTUM;
@@ -541,12 +532,12 @@ void chSchDoPreemption(void) {
   else {
     /* The thread didn't consume all its time quantum so it is put ahead of
        threads with equal priority and does not acquire a new time quantum.*/
-    otp = __sch_ready_ahead(oip, otp);
+    otp = __sch_ready_ahead(otp);
   }
 #else /* !(CH_CFG_TIME_QUANTUM > 0) */
   /* If the round-robin mechanism is disabled then the thread goes always
      ahead of its peers.*/
-  otp = __sch_ready_ahead(oip, otp);
+  otp = __sch_ready_ahead(otp);
 #endif /* !(CH_CFG_TIME_QUANTUM > 0) */
 
   /* Swap operation as tail call.*/
@@ -564,24 +555,24 @@ void chSchDoPreemption(void) {
  */
 void chSchPreemption(void) {
   os_instance_t *oip = currcore;
-  thread_t *tp = __sch_get_currthread(oip);
+  thread_t *tp = __instance_get_currthread(oip);
   tprio_t p1 = firstprio(&oip->rlist.pqueue);
   tprio_t p2 = tp->hdr.pqueue.prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
   if (tp->ticks > (tslices_t)0) {
     if (p1 > p2) {
-      __sch_reschedule_ahead(oip);
+      __sch_reschedule_ahead();
     }
   }
   else {
     if (p1 >= p2) {
-      __sch_reschedule_behind(oip);
+      __sch_reschedule_behind();
     }
   }
 #else /* CH_CFG_TIME_QUANTUM == 0 */
   if (p1 > p2) {
-    __sch_reschedule_ahead(oip);
+    __sch_reschedule_ahead();
   }
 #endif /* CH_CFG_TIME_QUANTUM == 0 */
 }
@@ -596,12 +587,12 @@ void chSchPreemption(void) {
  */
 void chSchDoYieldS(void) {
   os_instance_t *oip = currcore;
-  thread_t *tp = __sch_get_currthread(oip);
+  thread_t *tp = __instance_get_currthread(oip);
 
   chDbgCheckClassS();
 
   if (firstprio(&oip->rlist.pqueue) >= tp->hdr.pqueue.prio) {
-    __sch_reschedule_behind(oip);
+    __sch_reschedule_behind();
   }
 }
 
@@ -619,13 +610,13 @@ void chSchDoYieldS(void) {
  */
 thread_t *chSchSelectFirstI(void) {
   os_instance_t *oip = currcore;
-  thread_t *otp = __sch_get_currthread(oip);
+  thread_t *otp = __instance_get_currthread(oip);
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
   ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
   ntp->state = CH_STATE_CURRENT;
-  __sch_set_currthread(oip, ntp);
+  __instance_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
   if (otp->hdr.pqueue.prio == IDLEPRIO) {
@@ -633,7 +624,7 @@ thread_t *chSchSelectFirstI(void) {
   }
 
   /* Placing in ready list ahead of peers.*/
-  (void) __sch_ready_ahead(oip, otp);
+  (void) __sch_ready_ahead(otp);
 
   return ntp;
 }

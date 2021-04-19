@@ -135,7 +135,7 @@ extern "C" {
 static inline void chRegSetThreadName(const char *name) {
 
 #if CH_CFG_USE_REGISTRY == TRUE
-  __sch_get_currthread(currcore)->name = name;
+  __sch_get_currthread()->name = name;
 #else
   (void)name;
 #endif

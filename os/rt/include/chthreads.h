@@ -339,7 +339,7 @@ extern "C" {
  */
 static inline thread_t *chThdGetSelfX(void) {
 
-  return __sch_get_currthread(currcore);
+  return __sch_get_currthread();
 }
 
 /**

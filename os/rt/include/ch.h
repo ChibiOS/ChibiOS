@@ -108,9 +108,9 @@
 #include "chstats.h"
 #include "chobjects.h"
 #include "chsys.h"
+#include "chinstances.h"
 #include "chvt.h"
 #include "chschd.h"
-#include "chinstances.h"
 #include "chthreads.h"
 
 /* Optional subsystems headers.*/

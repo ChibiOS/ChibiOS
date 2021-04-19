@@ -127,19 +127,14 @@
  *
  * @notapi
  */
-#define firstprio(rlp)                  ((rlp)->next->prio)
+#define firstprio(rlp)              ((rlp)->next->prio)
 
 /**
  * @brief   Current thread pointer get macro.
  * @note    This macro is not meant to be used in the application code but
  *          only from within the kernel, use @p chThdGetSelfX() instead.
  */
-#define __sch_get_currthread(oip)       (oip)->rlist.current
-
-/**
- * @brief   Current thread pointer set macro.
- */
-#define __sch_set_currthread(oip, tp)   (oip)->rlist.current = (tp)
+#define __sch_get_currthread()      __instance_get_currthread(currcore)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
