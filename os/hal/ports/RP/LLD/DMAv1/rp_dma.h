@@ -178,10 +178,10 @@ __STATIC_INLINE uint32_t dmaChannelGetAndClearInterrupts(const rp_dma_channel_t 
 __STATIC_INLINE void dmaChannelEnableInterruptX(const rp_dma_channel_t *dmachp) {
 
   if (SIO->CPUID == 0U) {
-    dmachp->dma->SET.C[0].INTE = dmachp->chnmask;
+    dmachp->dma->SET.INTE0 = dmachp->chnmask;
   }
   else {
-    dmachp->dma->SET.C[1].INTE = dmachp->chnmask;
+    dmachp->dma->SET.INTE1 = dmachp->chnmask;
   }
 }
 
@@ -195,8 +195,8 @@ __STATIC_INLINE void dmaChannelEnableInterruptX(const rp_dma_channel_t *dmachp) 
  */
 __STATIC_INLINE void dmaChannelDisableInterruptX(const rp_dma_channel_t *dmachp) {
 
-  dmachp->dma->CLR.C[0].INTE = dmachp->chnmask;
-  dmachp->dma->CLR.C[1].INTE = dmachp->chnmask;
+  dmachp->dma->CLR.INTE0 = dmachp->chnmask;
+  dmachp->dma->CLR.INTE1 = dmachp->chnmask;
 }
 
 /**
