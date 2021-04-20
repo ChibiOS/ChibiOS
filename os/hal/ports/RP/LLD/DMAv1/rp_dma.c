@@ -122,8 +122,8 @@ OSAL_IRQ_HANDLER(RP_DMA_IRQ_0_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Getting and clearing pending interrupts for core 0.*/
-  ints = DMA->C[0].INTS;
-  DMA->C[0].INTS = ints;
+  ints = DMA->INTS0;
+  DMA->INTS0 = ints;
 
   /* Scanning sources.*/
   dmachp = __rp_dma_channels;
@@ -150,8 +150,8 @@ OSAL_IRQ_HANDLER(RP_DMA_IRQ_1_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Getting and clearing pending interrupts for core 1.*/
-  ints = DMA->C[1].INTS;
-  DMA->C[1].INTS = ints;
+  ints = DMA->INTS1;
+  DMA->INTS1 = ints;
 
   /* Scanning sources.*/
   dmachp = __rp_dma_channels;
