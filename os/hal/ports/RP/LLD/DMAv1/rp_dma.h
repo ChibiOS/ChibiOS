@@ -125,7 +125,6 @@ extern "C" {
                                           void *param);
   void dmaChannelFreeI(const rp_dma_channel_t *dmachp);
   void dmaChannelFree(const rp_dma_channel_t *dmachp);
-  void dmaServeInterrupt(const rp_dma_channel_t *dmachp);
 #ifdef __cplusplus
 }
 #endif
@@ -300,7 +299,7 @@ __STATIC_INLINE void dmaChannelEnableX(const rp_dma_channel_t *dmachp) {
  *
  * @special
  */
-__STATIC_INLINE void dmaChanneSuspendX(const rp_dma_channel_t *dmachp) {
+__STATIC_INLINE void dmaChannelSuspendX(const rp_dma_channel_t *dmachp) {
 
   dmachp->channel->CTRL_TRIG &= ~DMA_CTRL_TRIG_EN;
 }
@@ -314,7 +313,7 @@ __STATIC_INLINE void dmaChanneSuspendX(const rp_dma_channel_t *dmachp) {
  */
 __STATIC_INLINE void dmaChannelDisableX(const rp_dma_channel_t *dmachp) {
 
-  dmaChanneSuspendX(dmachp);
+  dmaChannelSuspendX(dmachp);
   dmaChannelAbortX(dmachp);
   (void) dmaChannelGetAndClearInterrupts(dmachp);
 }

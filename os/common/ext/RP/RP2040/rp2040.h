@@ -89,7 +89,19 @@ typedef struct {
   __IO uint32_t         WRITE_ADDR;
   __IO uint32_t         TRANS_COUNT;
   __IO uint32_t         CTRL_TRIG;
-  __I  uint32_t         resvd10[12];
+  __IO uint32_t         AL1_CTRL;
+  __IO uint32_t         AL1_READ_ADDR;
+  __IO uint32_t         AL1_WRITE_ADDR;
+  __IO uint32_t         AL1_TRANSFER_COUNT_TRIG;
+  __IO uint32_t         AL2_CTRL;
+  __IO uint32_t         AL2_TRANSFER_COUNT;
+  __IO uint32_t         AL2_READ_ADDR;
+  __IO uint32_t         AL2_WRITE_ADDR_TRIG;
+  __IO uint32_t         AL3_CTRL;
+  __IO uint32_t         AL3_WRITE_ADDR;
+  __IO uint32_t         AL3_TRANSFER_COUNT;
+  __IO uint32_t         AL3_READ_ADDR_TRIG;
+//  __I  uint32_t         resvd10[12];
 } DMA_Channel_Typedef;
 
 typedef struct {
@@ -106,6 +118,7 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __IO uint32_t         INTS;
+  __I  uint32_t         resvd10;
   } C[2];
   __IO uint32_t         TIMER[4];
   __IO uint32_t         MULTI_CHAN_TRIGGER;
