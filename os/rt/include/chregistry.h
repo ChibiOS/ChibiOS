@@ -125,12 +125,13 @@ extern "C" {
 
 /**
  * @brief   Initializes a registry.
+ * @note    Internal use only.
  *
  * @param[out] rp       pointer to a @p registry_t structure
  *
  * @init
  */
-static inline void chRegObjectInit(registry_t *rp) {
+static inline void __reg_object_init(registry_t *rp) {
 
   ch_queue_init(&rp->queue);
 }

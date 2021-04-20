@@ -113,7 +113,7 @@ void chInstanceObjectInit(os_instance_t *oip,
 
 #if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == FALSE)
   /* Registry initialization when SMP mode is disabled.*/
-  chRegObjectInit(&oip->reglist);
+  __reg_object_init(&oip->reglist);
 #endif
 
   /* Virtual timers list initialization.*/

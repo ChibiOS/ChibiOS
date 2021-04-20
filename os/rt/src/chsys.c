@@ -170,7 +170,7 @@ void chSysInit(void) {
 
 #if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)
   /* Registry initialization when SMP mode is enabled.*/
-  chRegObjectInit(&ch_system.reglist);
+  __reg_object_init(&ch_system.reglist);
 #endif
 
   /* User system initialization hook.*/
