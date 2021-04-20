@@ -67,20 +67,20 @@
  *     - {static} ch1 : os_instance_t
  *   }
  *   class tm_calibration_t {
- *     # __tm_calibration_object_init()
+ *     ~ __tm_calibration_object_init()
  *   }
  *   class system_debug_t {
- *     # __dbg_object_init()
+ *     ~ __dbg_object_init()
  *   }
  *   class trace_buffer_t {
- *     # __trace_object_init()
+ *     ~ __trace_object_init()
  *   }
  *   class kernel_stats_t {
- *     # __stats_object_init()
+ *     ~ __stats_object_init()
  *   }
  *   class registry_t {
  *     - queue : ch_queue_t
- *     # __reg_object_init()
+ *     ~ __reg_object_init()
  *     + {static} chRegFirstThread()
  *     + {static} chRegNextThread()
  *     + {static} chRegFindThreadByName()
@@ -189,24 +189,37 @@
  * @enduml
  *
  * @startuml {rt_arch.png} "RT Synchronization"
- * class CoreAPI <<(S,#FF7700) Singleton>> {
+ * package OS {
+ *   class ch_system_t
+ *   class ready_list_t
+ *   class thread_t {
+ *     - queue: ch_queue_t
+ *     - wtmtxp: mutex_t *
+ *   }
+ * }
+ * package "Lists and Queues" {
+ *   class ch_list_t
+ *   class ch_queue_t
  * }
  * package Synchronization {
+ * 
  *   class thread_reference_t {
- *     # ref : thread_t *
+ *     - ref : thread_t *
  *     + chThdSuspendS()
  *     + chThdSuspendTimeoutS()
  *     + chThdResumeI()
  *     + chThdResumeS()
  *   }
  *   class thread_queue_t {
+ *     - queue: ch_queue_t
  *     + chThdQueueObjectInit()
  *     + chThdEnqueueTimeoutS()
  *     + chThdDequeueNextI()
  *     + chThdDequeueAllI()
  *   }
  *   class semaphore_t {
- *     # cnt : cnt_t
+ *     - queue: ch_queue_t
+ *     - cnt : cnt_t
  *     + chSemObjectInit()
  *     + chSemWait()
  *     + chSemWaitTimeout()
@@ -214,9 +227,10 @@
  *     + chSemReset()
  *   }
  *   class mutex_t {
- *     # owner : thread_t *
- *     # next : mutex_t *
- *     # cnt : cnt_t
+ *     - queue: ch_queue_t
+ *     - owner : thread_t *
+ *     - next : mutex_t *
+ *     - cnt : cnt_t
  *     + chMtxObjectInit()
  *     + chMtxLock()
  *     + chMtxTryLock()
@@ -224,14 +238,13 @@
  *     + chMtxUnlockAll()
  *   }
  *   class condition_variable_t {
+ *     - queue: ch_queue_t
  *     + chCondObjectInit()
  *     + chCondSignal()
  *     + chCondBroadcast()
  *     + chCondWait()
  *     + chCondWaitTimeout()
  *   }
- * }
- * package Messages {
  *   class events {
  *     + chEvtObjectInit()
  *     + chEvtRegister()
@@ -242,6 +255,8 @@
  *     + {static} chEvtWaitAll()
  *     + {static} chEvtDispatch()
  *   }
+ * }
+ * package Messages {
  *   class messages <<(S,#FF7700) Singleton>> {
  *     + {static} chMsgWait()
  *     + {static} chMsgGet()
@@ -250,39 +265,30 @@
  *   }
  * }
  * 
- * thread_reference_t o-- "0..1" thread_t
- * thread_reference_t ..> CoreAPI : use
+ * Synchronization ..> OS : use
  * 
- * thread_queue_t o-- "0..*" thread_t : queued
- * thread_queue_t ..> CoreAPI : use
+ * thread_reference_t o-- "0..1" thread_t : referred\nthread
  * 
- * thd_queue_t <|-- thread_queue_t
- * thd_queue_t <|-- semaphore_t
- * thd_queue_t <|-- mutex_t
- * thd_queue_t <|-- condition_variable_t
+ * thread_queue_t o-- "0..*" thread_t : queued\nthreads
+ * 
+ * ch_queue_t "1" --* thread_queue_t
+ * ch_queue_t "1" --* semaphore_t
+ * ch_queue_t "1" --* mutex_t
+ * ch_queue_t "1" --* condition_variable_t
  * 
  * thread_t <.. messages : use
  * 
- * thread_t -- events
- * thread_t o-- "0..1" mutex_t: waiting on
+ * thread_t o-- "0..1" mutex_t: owned\nmutexes
  * 
  * semaphore_t o-- "0..*" thread_t : waiting\nthreads
- * semaphore_t ..> CoreAPI : use
  * 
- * condition_variable_t --> thread_t : current
- * condition_variable_t ..> CoreAPI : use
+ * condition_variable_t o-- "0..*" thread_t : waiting\nthreads
  * 
  * mutex_t "1" -l- "0..*" condition_variable_t : collaboration
- * mutex_t o-- "0..*" thread_t : waiting
- * mutex_t o-- "0..1" thread_t : owner
- * mutex_t o-- "0..1" mutex_t : next owned
- * mutex_t "0..*" --o thread_t : owned
- * mutex_t ..> CoreAPI : use
- * 
- * events ..> CoreAPI : use
- * 
- * messages ..> CoreAPI : use
+ * mutex_t o-- "0..*" thread_t : waiting\nthreads
+ * mutex_t o-- "0..1" thread_t : waiting\nthreads
+ * mutex_t o-- "0..1" mutex_t : next\nowned mutex
+ * mutex_t "0..*" --o thread_t : owned\nmutexes
  * 
  * @enduml
- *
  */
