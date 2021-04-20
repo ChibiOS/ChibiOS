@@ -190,8 +190,6 @@
  *
  * @startuml {rt_arch.png} "RT Synchronization"
  * package OS {
- *   class ch_system_t
- *   class ready_list_t
  *   class thread_t {
  *     - queue: ch_queue_t
  *     - wtmtxp: mutex_t *
@@ -201,7 +199,7 @@
  *   class ch_list_t
  *   class ch_queue_t
  * }
- * package Synchronization {
+ * package "Low Level Synchronization" {
  * 
  *   class thread_reference_t {
  *     - ref : thread_t *
@@ -210,13 +208,23 @@
  *     + chThdResumeI()
  *     + chThdResumeS()
  *   }
- *   class thread_queue_t {
+ *   class threads_queue_t {
  *     - queue: ch_queue_t
  *     + chThdQueueObjectInit()
  *     + chThdEnqueueTimeoutS()
  *     + chThdDequeueNextI()
  *     + chThdDequeueAllI()
  *   }
+ * }
+ * package Messages {
+ *   class messages <<(S,#FF7700) Singleton>> {
+ *     + {static} chMsgWait()
+ *     + {static} chMsgGet()
+ *     + {static} chMsgRelease()
+ *     + {static} chMsgSend()
+ *   }
+ * }
+ * package Semaphores {
  *   class semaphore_t {
  *     - queue: ch_queue_t
  *     - cnt : cnt_t
@@ -226,6 +234,8 @@
  *     + chSemSignal()
  *     + chSemReset()
  *   }
+ * }
+ * package Monitors {
  *   class mutex_t {
  *     - queue: ch_queue_t
  *     - owner : thread_t *
@@ -245,50 +255,48 @@
  *     + chCondWait()
  *     + chCondWaitTimeout()
  *   }
- *   class events {
- *     + chEvtObjectInit()
- *     + chEvtRegister()
- *     + chEvtBroadcastFlags()
+ *   mutex_t "1" .l. "0..*" condition_variable_t : indirect\ncollaboration
+ *   mutex_t o-- "0..*" thread_t : waiting\nthreads
+ *   mutex_t o-- "0..1" thread_t : owner\nthread
+ *   mutex_t o-- "0..1" mutex_t : next\nowned mutex
+ *   condition_variable_t o-- "0..*" thread_t : waiting\nthreads
+ * }
+ * 
+ * messages -u- thread_t : collaboration
+ * 
+ * package Events {
+ *   class events <<(S,#FF7700) Singleton>> {
  *     + {static} chEvtSignal()
  *     + {static} chEvtWaitOne()
  *     + {static} chEvtWaitAny()
  *     + {static} chEvtWaitAll()
  *     + {static} chEvtDispatch()
  *   }
- * }
- * package Messages {
- *   class messages <<(S,#FF7700) Singleton>> {
- *     + {static} chMsgWait()
- *     + {static} chMsgGet()
- *     + {static} chMsgRelease()
- *     + {static} chMsgSend()
+ *   class event_source_t {
+ *     + chEvtObjectInit()
+ *     + chEvtRegister()
+ *     + chEvtBroadcastFlags()
  *   }
+ *   class event_listener_t {
+ *   }
+ *   event_source_t o-- event_listener_t : registered\nlisteners
+ *   event_listener_t o-- "1" thread_t : listening\nthread
  * }
  * 
- * Synchronization ..> OS : use
+ * events -u- thread_t : collaboration
  * 
  * thread_reference_t o-- "0..1" thread_t : referred\nthread
  * 
- * thread_queue_t o-- "0..*" thread_t : queued\nthreads
+ * threads_queue_t o-- "0..*" thread_t : queued\nthreads
  * 
- * ch_queue_t "1" --* thread_queue_t
+ * ch_queue_t "1" --* threads_queue_t
  * ch_queue_t "1" --* semaphore_t
  * ch_queue_t "1" --* mutex_t
  * ch_queue_t "1" --* condition_variable_t
  * 
- * thread_t <.. messages : use
- * 
- * thread_t o-- "0..1" mutex_t: owned\nmutexes
+ * thread_t o-- "0..*" mutex_t: owned\nmutexes
  * 
  * semaphore_t o-- "0..*" thread_t : waiting\nthreads
- * 
- * condition_variable_t o-- "0..*" thread_t : waiting\nthreads
- * 
- * mutex_t "1" -l- "0..*" condition_variable_t : collaboration
- * mutex_t o-- "0..*" thread_t : waiting\nthreads
- * mutex_t o-- "0..1" thread_t : waiting\nthreads
- * mutex_t o-- "0..1" mutex_t : next\nowned mutex
- * mutex_t "0..*" --o thread_t : owned\nmutexes
  * 
  * @enduml
  */
