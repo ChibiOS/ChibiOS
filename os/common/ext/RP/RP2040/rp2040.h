@@ -123,7 +123,7 @@ typedef struct {
   __IO uint32_t         INTE0;
   __IO uint32_t         INTF0;
   __IO uint32_t         INTS0;
-  __I  uint32_t         resvd10;
+  __I  uint32_t         resvd410;
   __IO uint32_t         INTE1;
   __IO uint32_t         INTF1;
   __IO uint32_t         INTS1;
@@ -141,11 +141,18 @@ typedef struct {
     DMA_Channel_Typedef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
-    struct {
-    __IO uint32_t       INTE;
-    __IO uint32_t       INTF;
-    __IO uint32_t       INTS;
-    } C[2];
+//    struct {
+//    __IO uint32_t       INTE;
+//    __IO uint32_t       INTF;
+//    __IO uint32_t       INTS;
+//    } C[2];
+    __IO uint32_t       INTE0;
+    __IO uint32_t       INTF0;
+    __IO uint32_t       INTS0;
+    __I  uint32_t       resvd410;
+    __IO uint32_t       INTE1;
+    __IO uint32_t       INTF1;
+    __IO uint32_t       INTS1;
     __IO uint32_t       TIMER[4];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
@@ -161,11 +168,18 @@ typedef struct {
     DMA_Channel_Typedef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
-    struct {
-    __IO uint32_t       INTE;
-    __IO uint32_t       INTF;
-    __IO uint32_t       INTS;
-    } C[2];
+//    struct {
+//    __IO uint32_t       INTE;
+//    __IO uint32_t       INTF;
+//    __IO uint32_t       INTS;
+//    } C[2];
+    __IO uint32_t       INTE0;
+    __IO uint32_t       INTF0;
+    __IO uint32_t       INTS0;
+    __I  uint32_t       resvd410;
+    __IO uint32_t       INTE1;
+    __IO uint32_t       INTF1;
+    __IO uint32_t       INTS1;
     __IO uint32_t       TIMER[4];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
@@ -181,11 +195,18 @@ typedef struct {
     DMA_Channel_Typedef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
-    struct {
-    __IO uint32_t       INTE;
-    __IO uint32_t       INTF;
-    __IO uint32_t       INTS;
-    } C[2];
+//    struct {
+//    __IO uint32_t       INTE;
+//    __IO uint32_t       INTF;
+//    __IO uint32_t       INTS;
+//    } C[2];
+    __IO uint32_t       INTE0;
+    __IO uint32_t       INTF0;
+    __IO uint32_t       INTS0;
+    __I  uint32_t       resvd410;
+    __IO uint32_t       INTE1;
+    __IO uint32_t       INTF1;
+    __IO uint32_t       INTS1;
     __IO uint32_t       TIMER[4];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
