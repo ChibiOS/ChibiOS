@@ -61,23 +61,30 @@
  *     + {static} port_switch()
  *     + {static} port_timer_get_time()
  *   }
+ * 
  *   class System <<(S,#FF7700) Singleton>> {
  *     - {static} ch_system : ch_system_t
  *     - {static} ch0 : os_instance_t
  *     - {static} ch1 : os_instance_t
  *   }
+ * 
  *   class tm_calibration_t {
+ *     ~ offset : sysinterval_t
  *     ~ __tm_calibration_object_init()
  *   }
+ * 
  *   class system_debug_t {
  *     ~ __dbg_object_init()
  *   }
+ * 
  *   class trace_buffer_t {
  *     ~ __trace_object_init()
  *   }
+ * 
  *   class kernel_stats_t {
  *     ~ __stats_object_init()
  *   }
+ * 
  *   class registry_t {
  *     - queue : ch_queue_t
  *     ~ __reg_object_init()
@@ -87,6 +94,8 @@
  *     + {static} chRegFindThreadByPointer()
  *     + {static} chRegFindThreadByWorkingArea()
  *   }
+ *   registry_t "1" o-- "1--*" thread_t : alive\nthreads
+ * 
  *   class ch_system_t <<used by all>>{
  *     + state : ch_system_state_t
  *     - reglist : registry_t
@@ -99,6 +108,11 @@
  *     + {static} chSysUnlockFromISR()
  *     + {static} chSysSwitch()
  *   }
+ *   ch_system_t .u.> "Port Layer" : use
+ *   ch_system_t *-- "1" registry_t : SMP\nonly
+ *   ch_system_t *-l- "1" tm_calibration_t
+ *   ch_system_t "1" o-- "1..*" os_instance_t : registered\ninstances
+ * 
  *   class os_instance_t {
  *     # rlist : ready_list_t
  *     # vtlist : virtual_timers_list_t
@@ -109,12 +123,19 @@
  *     # kernel_stats : kernel_stats_t
  *     + chInstanceObjectInit()
  *   }
+ *   os_instance_t *-- "1" thread_t : Main\nThread
+ *   os_instance_t *-- "1" registry_t : Non-SMP\nonly
+ *   os_instance_t *-- "1" system_debug_t
+ *   os_instance_t *-- "1" trace_buffer_t
+ *   os_instance_t *-- "1" kernel_stats_t
+ * 
  *   class thread_t {
  *     .. union ..
  *     - list : ch_list_t
  *     - queue : ch_queue_t
  *     - pqueue : ch_pqueue_t
  *     .. end union ..
+ *     - state : tstate_t
  *     - owner : os_instance_t
  *     - rqueue : ch_queue_t
  *     - ctx : port_context
@@ -127,6 +148,9 @@
  *     + chThdAddRef()
  *     + chThdRelease()
  *   }
+ *   thread_t o-- "0..*" thread_t : threads waiting\nfor termination
+ *   thread_t o-- "1" os_instance_t : owner\ninstance
+ * 
  *   class ready_list_t {
  *     - pqueue : ch_pqueue_t
  *     - current : thread_t *
@@ -135,27 +159,15 @@
  *     + {static} chSchGoSleepS()
  *     + {static} chSchGoSleepTimeoutS()
  *   }
+ *   ready_list_t "1" o-- "1..*" thread_t : ready\nthreads
+ *   ready_list_t "0..1" o-- "1" thread_t : current\nthread
+ *   ready_list_t "1" --* os_instance_t : instance\nready list
  * }
  * 
  * OS ..> "Lists and Queues" : use
- * ch_system_t .u.> "Port Layer" : use
  * System *-- "1" ch_system_t : system\nroot object
  * System *-- "1..2" os_instance_t
- * ch_system_t *-- "1" registry_t : SMP\nonly
- * ch_system_t *-- "1" tm_calibration_t
- * ch_system_t o-- "1..*" os_instance_t : registered\ninstances
- * os_instance_t *-- "1" thread_t : Main\nThread
- * os_instance_t *-- "1" registry_t : Non-SMP\nonly
- * os_instance_t *-- "1" system_debug_t
- * os_instance_t *-- "1" trace_buffer_t
- * os_instance_t *-- "1" kernel_stats_t
  * 
- * thread_t o-- "0..*" thread_t : threads waiting\nfor termination
- * thread_t o-- "1" os_instance_t : owner\ninstance
- * thread_t "1..*" --o registry_t : alive\nthreads
- * ready_list_t o-- "1..*" thread_t : ready\nthreads
- * ready_list_t o-- "1" thread_t : current\nthread
- * ready_list_t "1" --* os_instance_t : instance\nready list
  * 
  * package "Virtual Timers" {
  *   class delta_list_t {
@@ -163,6 +175,7 @@
  *     - prev : delta_list_t *
  *     - delta : sysinterval_t
  *   }
+ * 
  *   class virtual_timer_t {
  *     - dlist : delta_list_t
  *     - func : vtfunc_t
@@ -171,6 +184,9 @@
  *     + chVTSet()
  *     + chVTReset()
  *   }
+ *   virtual_timer_t <.. ready_list_t : use
+ *   virtual_timer_t *-- "1" delta_list_t
+ * 
  *   class virtual_timers_list_t {
  *     - dlist : delta_list_t
  *     - systime : systime_t
@@ -178,13 +194,10 @@
  *     - laststamp : uint64_t
  *     # __vt_object_init()
  *   }
+ *   virtual_timers_list_t o-u- "0..*" virtual_timer_t : active timers
+ *   virtual_timers_list_t *-u- "1" delta_list_t
+ *   virtual_timers_list_t "1" --* os_instance_t
  * }
- * 
- * virtual_timer_t <.. ready_list_t : use
- * virtual_timer_t *-- "1" delta_list_t
- * virtual_timers_list_t o-u- "0..*" virtual_timer_t : active timers
- * virtual_timers_list_t *-u- "1" delta_list_t
- * virtual_timers_list_t "1" --* os_instance_t
  * 
  * @enduml
  *
@@ -273,14 +286,21 @@
  *     + {static} chEvtDispatch()
  *   }
  *   class event_source_t {
+ *     - next : event_listener_t *
  *     + chEvtObjectInit()
  *     + chEvtRegister()
  *     + chEvtBroadcastFlags()
  *   }
  *   class event_listener_t {
+ *     - next : event_listener_t *
+ *     - listener : thread_t *
+ *     - events : eventmask_t
+ *     - flags : eventflags_t
+ *     - wflags : eventflags_t
  *   }
- *   event_source_t o-- event_listener_t : registered\nlisteners
- *   event_listener_t o-- "1" thread_t : listening\nthread
+ *   event_source_t "1" o-- "0..*" event_listener_t : registered\nlisteners
+ *   event_listener_t o-- "1" event_listener_t : next\nregistered\nlistener
+ *   event_listener_t "0..*" o-- "1" thread_t : listening\nthread
  * }
  * 
  * events -u- thread_t : collaboration
