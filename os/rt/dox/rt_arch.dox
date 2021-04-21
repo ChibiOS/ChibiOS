@@ -132,19 +132,20 @@
  *     + {static} chSysUnlockFromISR()
  *     + {static} chSysSwitch()
  *   }
- *   ch_system_t .r.> "Port Layer" : use
+ *   ch_system_t .l.> "Port Layer" : use
  *   ch_system_t *-- "1" registry_t : SMP\nonly
  *   ch_system_t *-- "1" tm_calibration_t
- *   ch_system_t "1" o-- "1..*" os_instance_t : registered\ninstances
+ *   ch_system_t "1" o-- "1..*" os_instance_t : registered\ninstances\none for\neach core
  * 
  *   class os_instance_t {
- *     # rlist : ready_list_t
- *     # vtlist : virtual_timers_list_t
- *     # reglist : registry_t
- *     # mainthread : thread_t
- *     # dbg : system_debug_t
- *     # trace_buffer : trace_buffer_t
- *     # kernel_stats : kernel_stats_t
+ *     ~ core_id : core_id_t
+ *     ~ rlist : ready_list_t
+ *     ~ vtlist : virtual_timers_list_t
+ *     ~ reglist : registry_t
+ *     ~ mainthread : thread_t
+ *     ~ dbg : system_debug_t
+ *     ~ trace_buffer : trace_buffer_t
+ *     ~ kernel_stats : kernel_stats_t
  *     + chInstanceObjectInit()
  *     ~ __instance_get_currthread()
  *     ~ __instance_set_currthread()
@@ -207,6 +208,7 @@
  *     - dlist : delta_list_t
  *     - func : vtfunc_t
  *     - par : void *
+ *     + {static} chVTDoTickI()
  *     + chVTObjectInit()
  *     + chVTSet()
  *     + chVTReset()
