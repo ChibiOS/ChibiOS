@@ -74,14 +74,34 @@
  *   }
  * 
  *   class system_debug_t {
+ *     # panic_msg : volatile char *
+ *     # isr_cnt : cnt_t
+ *     # lock_cnt : cnt_t
  *     ~ __dbg_object_init()
+ *     + chDbgCheck()
+ *     + chDbgAssert()
+ *     + chDbgCheckClassI()
+ *     + chDbgCheckClassS()
+ *   }
+ * 
+ *   class trace_event_t {
  *   }
  * 
  *   class trace_buffer_t {
+ *     - prt : trace_event_t *
  *     ~ __trace_object_init()
+ *     + chDbgWriteTrace()
+ *     + chDbgSuspendTrace()
+ *     + chDbgResumeTrace()
  *   }
+ *   trace_buffer_t "1" *-- "1..*" trace_event_t : trace events\nbuffer
+ *   trace_buffer_t "1" o-- "1" trace_event_t : next\nwritten
  * 
  *   class kernel_stats_t {
+ *     # n_irq : ucnt_t
+ *     # n_ctxswc : ucnt_t
+ *     # m_crit_thd : time_measurement_t
+ *     # m_crit_isr : time_measurement_t
  *     ~ __stats_object_init()
  *   }
  * 
@@ -96,7 +116,7 @@
  *   }
  *   registry_t "1" o-- "1--*" thread_t : alive\nthreads
  * 
- *   class ch_system_t <<used by all>>{
+ *   class ch_system_t {
  *     + state : ch_system_state_t
  *     - reglist : registry_t
  *     - tmc : tm_calibration_t
