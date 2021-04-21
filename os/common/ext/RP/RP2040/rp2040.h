@@ -101,25 +101,18 @@ typedef struct {
   __IO uint32_t         AL3_WRITE_ADDR;
   __IO uint32_t         AL3_TRANSFER_COUNT;
   __IO uint32_t         AL3_READ_ADDR_TRIG;
-//  __I  uint32_t         resvd10[12];
 } DMA_Channel_Typedef;
 
 typedef struct {
   __I  uint32_t         CTDREQ;
   __I  uint32_t         TCR;
-  __I  uint32_t         resvd8[56];
+  __I  uint32_t         resvd8[14];
 } DMA_Debug_Typedef;
 
 typedef struct {
   DMA_Channel_Typedef   CH[12];
   __I  uint32_t         resvd300[64];
   __IO uint32_t         INTR;
-//  struct {
-//  __IO uint32_t         INTE;
-//  __IO uint32_t         INTF;
-//  __IO uint32_t         INTS;
-//  __I  uint32_t         resvd10;
-//  } C[2];
   __IO uint32_t         INTE0;
   __IO uint32_t         INTF0;
   __IO uint32_t         INTS0;
@@ -141,11 +134,6 @@ typedef struct {
     DMA_Channel_Typedef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
-//    struct {
-//    __IO uint32_t       INTE;
-//    __IO uint32_t       INTF;
-//    __IO uint32_t       INTS;
-//    } C[2];
     __IO uint32_t       INTE0;
     __IO uint32_t       INTF0;
     __IO uint32_t       INTS0;
@@ -168,11 +156,6 @@ typedef struct {
     DMA_Channel_Typedef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
-//    struct {
-//    __IO uint32_t       INTE;
-//    __IO uint32_t       INTF;
-//    __IO uint32_t       INTS;
-//    } C[2];
     __IO uint32_t       INTE0;
     __IO uint32_t       INTF0;
     __IO uint32_t       INTS0;
@@ -195,11 +178,6 @@ typedef struct {
     DMA_Channel_Typedef CH[12];
     __I  uint32_t       resvd300[64];
     __IO uint32_t       INTR;
-//    struct {
-//    __IO uint32_t       INTE;
-//    __IO uint32_t       INTF;
-//    __IO uint32_t       INTS;
-//    } C[2];
     __IO uint32_t       INTE0;
     __IO uint32_t       INTF0;
     __IO uint32_t       INTS0;
