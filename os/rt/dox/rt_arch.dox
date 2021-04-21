@@ -59,6 +59,9 @@
  *     + {static} port_enable()
  *     + {static} port_disable()
  *     + {static} port_switch()
+ *     + {static} port_wait_for_interrupt()
+ *     + {static} port_rt_get_counter_value()
+ *     + {static} port_get_core_id()
  *     + {static} port_timer_get_time()
  *   }
  * 
@@ -66,6 +69,7 @@
  *     - {static} ch_system : ch_system_t
  *     - {static} ch0 : os_instance_t
  *     - {static} ch1 : os_instance_t
+ *     ~ currcore: os_instance_t *
  *   }
  * 
  *   class tm_calibration_t {
@@ -128,7 +132,7 @@
  *     + {static} chSysUnlockFromISR()
  *     + {static} chSysSwitch()
  *   }
- *   ch_system_t .u.> "Port Layer" : use
+ *   ch_system_t .r.> "Port Layer" : use
  *   ch_system_t *-- "1" registry_t : SMP\nonly
  *   ch_system_t *-- "1" tm_calibration_t
  *   ch_system_t "1" o-- "1..*" os_instance_t : registered\ninstances
@@ -142,6 +146,8 @@
  *     # trace_buffer : trace_buffer_t
  *     # kernel_stats : kernel_stats_t
  *     + chInstanceObjectInit()
+ *     ~ __instance_get_currthread()
+ *     ~ __instance_set_currthread()
  *   }
  *   os_instance_t *-- "1" thread_t : Main\nThread
  *   os_instance_t *-- "1" registry_t : Non-SMP\nonly
@@ -187,7 +193,8 @@
  * OS ..> "Lists and Queues" : use
  * System *-- "1" ch_system_t : system\nroot object
  * System *-- "1..2" os_instance_t : predefined\ninstances
- * System o.. os_instance_t : current\ncore
+ * System o.. "1" os_instance_t : current core/instance\nmediated by\nport layer
+ * System ..> "Port Layer" : use
  * 
  * package "Virtual Timers" {
  *   class delta_list_t {
