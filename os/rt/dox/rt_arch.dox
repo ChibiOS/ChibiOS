@@ -51,6 +51,10 @@
  * }
  * 
  * package OS {
+ *   class "Port Timer" <<(S,#FF7700) Singleton>> {
+ *     + {static} port_timer_get_time()
+ *   }
+ * 
  *   class "Port Layer" <<(S,#FF7700) Singleton>> {
  *     + {static} port_init()
  *     + {static} port_lock()
@@ -62,8 +66,8 @@
  *     + {static} port_wait_for_interrupt()
  *     + {static} port_rt_get_counter_value()
  *     + {static} port_get_core_id()
- *     + {static} port_timer_get_time()
  *   }
+ *   "Port Layer" .r.> "Port Timer" : use\ntick-less mode\nonly
  * 
  *   class System <<(S,#FF7700) Singleton>> {
  *     - {static} ch_system : ch_system_t
@@ -132,9 +136,9 @@
  *     + {static} chSysUnlockFromISR()
  *     + {static} chSysSwitch()
  *   }
- *   ch_system_t .l.> "Port Layer" : use
+ *   ch_system_t .u.> "Port Layer" : use
  *   ch_system_t *-- "1" registry_t : SMP\nonly
- *   ch_system_t *-- "1" tm_calibration_t
+ *   ch_system_t *-r- "1" tm_calibration_t
  *   ch_system_t "1" o-- "1..*" os_instance_t : registered\ninstances\none for\neach core
  * 
  *   class os_instance_t {
@@ -195,7 +199,6 @@
  * System *-- "1" ch_system_t : system\nroot object
  * System *-- "1..2" os_instance_t : predefined\ninstances
  * System o.. "1" os_instance_t : current core/instance\nmediated by\nport layer
- * System ..> "Port Layer" : use
  * 
  * package "Virtual Timers" {
  *   class delta_list_t {
@@ -223,9 +226,10 @@
  *     - laststamp : uint64_t
  *     # __vt_object_init()
  *   }
- *   virtual_timers_list_t o-u- "0..*" virtual_timer_t : active timers
- *   virtual_timers_list_t *-u- "1" delta_list_t
+ *   virtual_timers_list_t o-- "0..*" virtual_timer_t : active timers
+ *   virtual_timers_list_t *-- "1" delta_list_t
  *   virtual_timers_list_t "1" --* os_instance_t
+ *   virtual_timers_list_t ..> "Port Timer" : use\ntick-less mode\nonly
  * }
  * 
  * @enduml
