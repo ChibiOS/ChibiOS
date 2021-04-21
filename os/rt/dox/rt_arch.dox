@@ -90,9 +90,9 @@
  *   class trace_buffer_t {
  *     - prt : trace_event_t *
  *     ~ __trace_object_init()
- *     + chDbgWriteTrace()
- *     + chDbgSuspendTrace()
- *     + chDbgResumeTrace()
+ *     + chTraceWrite()
+ *     + chTraceSuspend()
+ *     + chTraceResume()
  *   }
  *   trace_buffer_t "1" *-- "1..*" trace_event_t : trace events\nbuffer
  *   trace_buffer_t "1" o-- "1" trace_event_t : next\nwritten
@@ -130,7 +130,7 @@
  *   }
  *   ch_system_t .u.> "Port Layer" : use
  *   ch_system_t *-- "1" registry_t : SMP\nonly
- *   ch_system_t *-l- "1" tm_calibration_t
+ *   ch_system_t *-- "1" tm_calibration_t
  *   ch_system_t "1" o-- "1..*" os_instance_t : registered\ninstances
  * 
  *   class os_instance_t {
@@ -186,8 +186,8 @@
  * 
  * OS ..> "Lists and Queues" : use
  * System *-- "1" ch_system_t : system\nroot object
- * System *-- "1..2" os_instance_t
- * 
+ * System *-- "1..2" os_instance_t : predefined\ninstances
+ * System o.. os_instance_t : current\ncore
  * 
  * package "Virtual Timers" {
  *   class delta_list_t {
