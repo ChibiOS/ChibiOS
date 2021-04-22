@@ -131,6 +131,10 @@
 #define ADC_CFGR_EXTEN_FALLING          (2U << 10U)
 #define ADC_CFGR_EXTEN_BOTH             (3U << 10U)
 
+#define ADC_CFGR_CONT_MASK            (1U << 13U)
+#define ADC_CFGR_CONT_DISABLED        (0U << 13U)
+#define ADC_CFGR_CONT_ENABLED         (1U << 13U)
+
 #define ADC_CFGR_DISCEN_MASK            (1U << 16U)
 #define ADC_CFGR_DISCEN_DISABLED        (0U << 16U)
 #define ADC_CFGR_DISCEN_ENABLED         (1U << 16U)

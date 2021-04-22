@@ -735,6 +735,10 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
  */
 void adcSTM32EnableVREF(ADCDriver *adcp) {
 
+#ifdef STM32H7XX
+  chDbgAssert(STM32_PWR_CR2 & PWR_CR2_MONEN,
+              "adcSTM32EnableVREF need PWR_CR2_MONEN in STM32_PWR_CR2");
+#endif
   adcp->adcc->CCR |= ADC_CCR_VREFEN;
 }
 
@@ -764,6 +768,11 @@ void adcSTM32DisableVREF(ADCDriver *adcp) {
  * @notapi
  */
 void adcSTM32EnableTS(ADCDriver *adcp) {
+
+#ifdef STM32H7XX
+  chDbgAssert(STM32_PWR_CR2 & PWR_CR2_MONEN,
+              "adcSTM32EnableVREF need PWR_CR2_MONEN in STM32_PWR_CR2");
+#endif
 
   adcp->adcc->CCR |= ADC_CCR_TSEN;
 }
