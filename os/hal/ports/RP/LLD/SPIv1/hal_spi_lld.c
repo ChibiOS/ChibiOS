@@ -165,7 +165,7 @@ void spi_lld_start(SPIDriver *spip) {
     if (false) {
     }
 #if RP_SPI_USE_SPI0 == TRUE
-    if (&SPID0 == spip) {
+    else if (&SPID0 == spip) {
       spip->dmarx = dmaChannelAllocI(RP_SPI_SPI0_RX_DMA_CHANNEL,
                                      RP_IRQ_SPI0_PRIORITY,
                                     (rp_dmaisr_t)spi_lld_serve_rx_interrupt,
@@ -182,7 +182,7 @@ void spi_lld_start(SPIDriver *spip) {
     }
 #endif
 #if RP_SPI_USE_SPI1 == TRUE
-    if (&SPID1 == spip) {
+    else if (&SPID1 == spip) {
       spip->dmarx = dmaChannelAllocI(RP_SPI_SPI1_RX_DMA_CHANNEL,
                                      RP_IRQ_SPI1_PRIORITY,
                                     (rp_dmaisr_t)spi_lld_serve_rx_interrupt,
@@ -253,12 +253,12 @@ void spi_lld_stop(SPIDriver *spip) {
     if (false) {
     }
 #if RP_SPI_USE_SPI0 == TRUE
-    if (&SPID0 == spip) {
+    else if (&SPID0 == spip) {
       hal_lld_peripheral_reset(RESETS_ALLREG_SPI0);
     }
 #endif
 #if RP_SPI_USE_SPI1 == TRUE
-    if (&SPID1 == spip) {
+    else if (&SPID1 == spip) {
       hal_lld_peripheral_reset(RESETS_ALLREG_SPI1);
     }
 #endif
