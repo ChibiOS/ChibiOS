@@ -120,8 +120,7 @@ typedef struct {
   __IO uint32_t         INTE1;
   __IO uint32_t         INTF1;
   __IO uint32_t         INTS1;
-  __IO uint32_t         TIMER[2];
-  __I  uint32_t         resvd428[2];
+  __IO uint32_t         TIMER[4];
   __IO uint32_t         MULTI_CHAN_TRIGGER;
   __IO uint32_t         SNIFF_CTRL;
   __IO uint32_t         SNIFF_DATA;
@@ -143,8 +142,7 @@ typedef struct {
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
-    __IO uint32_t       TIMER[2];
-    __I  uint32_t       resvd428[2];
+    __IO uint32_t       TIMER[4];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
     __IO uint32_t       SNIFF_DATA;
@@ -167,8 +165,7 @@ typedef struct {
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
-    __IO uint32_t       TIMER[2];
-    __I  uint32_t       resvd428[2];
+    __IO uint32_t       TIMER[4];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
     __IO uint32_t       SNIFF_DATA;
@@ -191,8 +188,7 @@ typedef struct {
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
-    __IO uint32_t       TIMER[2];
-    __I  uint32_t       resvd428[2];
+    __IO uint32_t       TIMER[4];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
     __IO uint32_t       SNIFF_DATA;
