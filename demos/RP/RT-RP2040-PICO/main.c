@@ -22,13 +22,6 @@ void spi_cb(SPIDriver *spip) {
   (void)spip;
 }
 
-SPIConfig spicfg1 = {
-  .end_cb   = spi_cb,
-  .ssline   = 4U,
-  .SSPCR0   = 0U,
-  .SSPCPSR  = 0U
-};
-
 semaphore_t blinker_sem;
 
 /*
@@ -71,9 +64,23 @@ int main(void) {
   palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
 
   /*
-   * Settin up SPI0.
+   * Setting up SPI0.
    */
-  spiStart(&SPID0, &spicfg1);
+  {
+    static SPIConfig spicfg1 = {
+      .end_cb   = spi_cb,
+      .ssline   = 4U,
+      .SSPCR0   = SPI_SSPCR0_FRF_MOTOROLA | SPI_SSPCR0_DSS_8BIT,
+      .SSPCPSR  = 0U
+    };
+    spicfg1.SSPCPSR = hal_lld_get_clock(clk_peri) / 1000000U;
+    spiStart(&SPID0, &spicfg1);
+
+    static const uint16_t txbuf[16] = {0, 1, 2, 3, 4, 5, 6, 7,
+                                       0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF};
+    static uint16_t rxbuf[16];
+    spiExchange(&SPID0, 16U, txbuf, rxbuf);
+  }
 
   /*
    * Creates the blinker thread.
