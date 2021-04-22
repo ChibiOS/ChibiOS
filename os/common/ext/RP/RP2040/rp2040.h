@@ -120,16 +120,18 @@ typedef struct {
   __IO uint32_t         INTE1;
   __IO uint32_t         INTF1;
   __IO uint32_t         INTS1;
-  __IO uint32_t         TIMER[4];
+  __IO uint32_t         TIMER[2];
+  __I  uint32_t         resvd428[2];
   __IO uint32_t         MULTI_CHAN_TRIGGER;
   __IO uint32_t         SNIFF_CTRL;
   __IO uint32_t         SNIFF_DATA;
+  __I  uint32_t         resvd43C;
   __I  uint32_t         FIFO_LEVELS;
   __IO uint32_t         CHAN_ABORT;
   __I  uint32_t         N_CHANNELS;
   __I  uint32_t         resvd44C[237];
   DMA_Debug_Typedef     CH_DBG[12];
-  __I  uint32_t         resvdAC8[334];
+  __I  uint32_t         resvdB00[320];
   struct {
     DMA_Channel_Typedef CH[12];
     __I  uint32_t       resvd300[64];
@@ -141,16 +143,18 @@ typedef struct {
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
-    __IO uint32_t       TIMER[4];
+    __IO uint32_t       TIMER[2];
+    __I  uint32_t       resvd428[2];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
     __IO uint32_t       SNIFF_DATA;
+    __I  uint32_t       resvd43C;
     __I  uint32_t       FIFO_LEVELS;
     __IO uint32_t       CHAN_ABORT;
     __I  uint32_t       N_CHANNELS;
     __I  uint32_t       resvd44C[237];
     DMA_Debug_Typedef   CH_DBG[12];
-    __I  uint32_t       resvdAC8[334];
+    __I  uint32_t       resvdB00[320];
   } XOR;
   struct {
     DMA_Channel_Typedef CH[12];
@@ -163,16 +167,18 @@ typedef struct {
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
-    __IO uint32_t       TIMER[4];
+    __IO uint32_t       TIMER[2];
+    __I  uint32_t       resvd428[2];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
     __IO uint32_t       SNIFF_DATA;
+    __I  uint32_t       resvd43C;
     __I  uint32_t       FIFO_LEVELS;
     __IO uint32_t       CHAN_ABORT;
     __I  uint32_t       N_CHANNELS;
     __I  uint32_t       resvd44C[237];
     DMA_Debug_Typedef   CH_DBG[12];
-    __I  uint32_t       resvdAC8[334];
+    __I  uint32_t       resvdB00[320];
   } SET;
   struct {
     DMA_Channel_Typedef CH[12];
@@ -185,16 +191,18 @@ typedef struct {
     __IO uint32_t       INTE1;
     __IO uint32_t       INTF1;
     __IO uint32_t       INTS1;
-    __IO uint32_t       TIMER[4];
+    __IO uint32_t       TIMER[2];
+    __I  uint32_t       resvd428[2];
     __IO uint32_t       MULTI_CHAN_TRIGGER;
     __IO uint32_t       SNIFF_CTRL;
     __IO uint32_t       SNIFF_DATA;
+    __I  uint32_t       resvd43C;
     __I  uint32_t       FIFO_LEVELS;
     __IO uint32_t       CHAN_ABORT;
     __I  uint32_t       N_CHANNELS;
     __I  uint32_t       resvd44C[237];
     DMA_Debug_Typedef   CH_DBG[12];
-    __I  uint32_t       resvdAC8[334];
+    __I  uint32_t       resvdB00[320];
   } CLR;
 } DMA_TypeDef;
 
