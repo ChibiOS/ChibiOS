@@ -203,8 +203,8 @@ void spi_lld_start(SPIDriver *spip) {
     }
 
     /* DMA setup.*/
-    dmaChannelSetSourceX(spip->dmarx, (uint32_t)&spip->spi->SSPDR);
-    dmaChannelSetDestinationX(spip->dmatx, (uint32_t)&spip->spi->SSPDR);
+    dmaChannelSetDestinationX(spip->dmarx, (uint32_t)&spip->spi->SSPDR);
+    dmaChannelSetSourceX(spip->dmatx, (uint32_t)&spip->spi->SSPDR);
   }
 
   /* Configuration-dependent DMA settings.*/

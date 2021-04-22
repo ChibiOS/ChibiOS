@@ -17,6 +17,18 @@
 #include "ch.h"
 #include "hal.h"
 
+void spi_cb(SPIDriver *spip) {
+
+  (void)spip;
+}
+
+SPIConfig spicfg1 = {
+  .end_cb   = spi_cb,
+  .ssline   = 4U,
+  .SSPCR0   = 0U,
+  .SSPCPSR  = 0U
+};
+
 semaphore_t blinker_sem;
 
 /*
@@ -57,6 +69,11 @@ int main(void) {
    * Setting up GPIOs.
    */
   palSetLineMode(25U, PAL_MODE_OUTPUT_PUSHPULL | PAL_RP_PAD_DRIVE12);
+
+  /*
+   * Settin up SPI0.
+   */
+  spiStart(&SPID0, &spicfg1);
 
   /*
    * Creates the blinker thread.
