@@ -58,78 +58,23 @@
 /*===========================================================================*/
 
 /**
- * @brief   SIO driver condition flags type.
+ * @brief   Type of a SIO events mask.
  */
-typedef uint32_t sioflags_t;
-
-/**
- * @brief   Generic SIO notification callback type.
- *
- * @param[in] siop     pointer to the @p SIODriver object
- */
-typedef void (*siocb_t)(SIODriver *siop);
-
-/**
- * @brief   Receive error SIO notification callback type.
- *
- * @param[in] siop     pointer to the @p SIODriver object triggering the
- *                      callback
- * @param[in] e         receive error mask
- */
-typedef void (*sioecb_t)(SIODriver *siop, sioflags_t e);
-
-/**
- * @brief   Driver configuration structure.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
- */
-struct hal_sio_config {
-  /**
-   * @brief   Receive buffer filled callback.
-   * @note    Can be @p NULL.
-   */
-  siocb_t                   rxne_cb;
-  /**
-   * @brief   End of transmission buffer callback.
-   * @note    Can be @p NULL.
-   */
-  siocb_t                   txnf_cb;
-  /**
-   * @brief   Physical end of transmission callback.
-   * @note    Can be @p NULL.
-   */
-  siocb_t                   txend_cb;
-  /**
-   * @brief   Receive event callback.
-   * @note    Can be @p NULL.
-   */
-  sioecb_t                  rxevt_cb;
-  /* End of the mandatory fields.*/
-};
-
-/**
- * @brief   Structure representing a SIO driver.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
- */
-struct hal_sio_driver {
-  /**
-   * @brief Driver state.
-   */
-  siostate_t               state;
-  /**
-   * @brief Current configuration data.
-   */
-  const SIOConfig          *config;
-#if defined(SIO_DRIVER_EXT_FIELDS)
-  SIO_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields.*/
-};
+typedef uint32_t sio_events_mask_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the SIO driver structure.
+ */
+#define sio_lld_driver_fields
+
+/**
+ * @brief   Low level fields of the SIO configuration structure.
+ */
+#define sio_lld_config_fields
 
 /**
  * @brief   Determines the state of the RX FIFO.
@@ -141,7 +86,7 @@ struct hal_sio_driver {
  *
  * @notapi
  */
-#define sio_lld_rx_is_empty(siop) true
+#define sio_lld_is_rx_empty(siop) true
 
 /**
  * @brief   Determines the state of the TX FIFO.
@@ -153,29 +98,19 @@ struct hal_sio_driver {
  *
  * @notapi
  */
-#define sio_lld_tx_is_full(siop) true
+#define sio_lld_is_tx_full(siop) true
 
 /**
- * @brief   Returns one frame from the RX FIFO.
- * @note    If the FIFO is empty then the returned value is unpredictable.
+ * @brief   Determines the transmission state.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @return              The frame from RX FIFO.
+ * @return              The TX FIFO state.
+ * @retval false        if transmission is idle
+ * @retval true         if transmission is ongoing
  *
  * @notapi
  */
-#define sio_lld_rx_get(siop)
-
-/**
- * @brief   Pushes one frame into the TX FIFO.
- * @note    If the FIFO is full then the behavior is unpredictable.
- *
- * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] data      frame to be written
- *
- * @notapi
- */
-#define sio_lld_tx_put(siop, data)
+#define sio_lld_is_tx_ongoing(siop) false
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -188,12 +123,17 @@ extern SIODriver SIOD1;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sio_lld_init(void);
-  void sio_lld_start(SIODriver *siop);
-  void sio_lld_stop(SIODriver *siop);
-  size_t sio_lld_read(SIODriver *siop, void *buffer, size_t size);
-  size_t sio_lld_write(SIODriver *siop, const void *buffer, size_t size);
-  msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
+void sio_lld_init(void);
+bool  sio_lld_start(SIODriver *siop);
+void sio_lld_stop(SIODriver *siop);
+void sio_lld_start_operation(SIODriver *siop);
+void sio_lld_stop_operation(SIODriver *siop);
+sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop);
+size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
+size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
+msg_t sio_lld_get(SIODriver *siop);
+void sio_lld_put(SIODriver *siop, uint_fast16_t data);
+msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
 #ifdef __cplusplus
 }
 #endif
