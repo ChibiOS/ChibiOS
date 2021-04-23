@@ -32,6 +32,17 @@
 /*===========================================================================*/
 
 /**
+ * @name    Possible ADC errors mask bits.
+ * @{
+ */
+#define ADC_ERR_DMAFAILURE      1U  /**< DMA operations failure.            */
+#define ADC_ERR_OVERFLOW        2U  /**< ADC overflow condition.            */
+#define ADC_ERR_AWD1            4U  /**< Watchdog 1 triggered.              */
+#define ADC_ERR_AWD2            8U  /**< Watchdog 2 triggered.              */
+#define ADC_ERR_AWD3            16U /**< Watchdog 3 triggered.              */
+/** @} */
+
+/**
  * @name    Available analog channels
  * @{
  */
@@ -506,17 +517,9 @@ typedef uint8_t adcsample_t;
 typedef uint32_t adc_channels_num_t;
 
 /**
- * @brief   Possible ADC failure causes.
- * @note    Error codes are architecture dependent and should not relied
- *          upon.
+ * @brief   Type of an ADC error mask.
  */
-typedef enum {
-  ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
-  ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
-  ADC_ERR_AWD1 = 2,                         /**< Watchdog 1 triggered.      */
-  ADC_ERR_AWD2 = 3,                         /**< Watchdog 2 triggered.      */
-  ADC_ERR_AWD3 = 4                          /**< Watchdog 3 triggered.      */
-} adcerror_t;
+typedef uint32_t adcerror_t;
 
 /**
  * @brief   Type of a DMA channel pointer choice.

@@ -361,17 +361,22 @@ void adc_lld_serve_interrupt(ADCDriver *adcp) {
   /* It could be a spurious interrupt caused by overflows after DMA disabling,
      just ignore it in this case.*/
   if (adcp->grpp != NULL) {
-    /* Note, an overflow may occur after the conversion ended before the driver
+    adcerror_t emask = 0U;
+
+   /* Note, an overflow may occur after the conversion ended before the driver
        is able to stop the ADC, this is why the DMA channel is checked too.*/
     if ((isr & ADC_ISR_OVR) &&
         (dmaStreamGetTransactionSize(adcp->dmastp) > 0)) {
       /* ADC overflow condition, this could happen only if the DMA is unable
          to read data fast enough.*/
-      _adc_isr_error_code(adcp, ADC_ERR_OVERFLOW);
+      emask |= ADC_ERR_OVERFLOW;
     }
     if (isr & ADC_ISR_AWD1) {
       /* Analog watchdog error.*/
-      _adc_isr_error_code(adcp, ADC_ERR_AWD);
+      emask |= ADC_ERR_AWD1;
+    }
+    if (emask != 0U) {
+      _adc_isr_error_code(adcp, emask);
     }
   }
 }
