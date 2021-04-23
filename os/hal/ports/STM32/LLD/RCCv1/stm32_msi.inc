@@ -144,8 +144,24 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static inline void msi_reset(void) {
+
+  /* Resetting to the MSI clock in case we come here after an initialization,
+     because a debugger for example.*/
+  RCC->CR = RCC_CR_MSION;
+  while ((RCC->CR & RCC_CR_MSIRDY) == 0) {
+    /* Wait until MSI is stable.*/
+  }
+
+  /* Clocking from MSI, in case MSI was not the default source.*/
+  RCC->CFGR = 0;
+  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_MSI) {
+    /* Wait until MSI is selected.*/
+  }
+}
+
 static inline void msi_init(void) {
-  uint32_t cr;
+  uint32_t cr, csr;
 
   /* Initial clocks setup and wait for MSI stabilization, the MSI clock is
      always enabled because it is the fall back clock when PLL the fails.
@@ -159,8 +175,9 @@ static inline void msi_init(void) {
   cr = STM32_MSIRANGE | RCC_CR_MSION;
 #endif
   RCC->CR = cr;
-  while ((RCC->CR & RCC_CR_MSIRDY) == 0)
-    ;                                       /* Wait until MSI is stable.    */
+  while ((RCC->CR & RCC_CR_MSIRDY) == 0) {
+    /* Wait until MSI is stable.*/
+  }
 
   /* Clocking from MSI, in case MSI was not the default source.*/
   RCC->CFGR = 0;
@@ -169,9 +186,13 @@ static inline void msi_init(void) {
 
   /* Updating MSISRANGE value. MSISRANGE can be set only when MSIRGSEL is high.
      This range is used exiting the Standby mode until MSIRGSEL is set.*/
-  cr       |= RCC_CR_MSIRGSEL;
-  RCC->CR   = cr;
-  RCC->CSR |= STM32_MSISRANGE;
+  cr      |= RCC_CR_MSIRGSEL;
+  RCC->CR  = cr;
+
+  csr      = RCC->CSR;
+  csr     &= ~STM32_MSISRANGE_MASK;
+  csr     |= STM32_MSISRANGE;
+  RCC->CSR = csr;
 }
 
 /*===========================================================================*/
