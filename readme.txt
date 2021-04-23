@@ -130,6 +130,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed (again) LPUART1 support for STM32H7xx (bug #1113)
+       (backported to 20.3.4).
 - FIX: Fixed wrong errors handling in STM32 ADC drivers (bug #1152).
 - FIX: Fixed wrong behavior in Serial-USB driver (bug #1151)
        (backported to 20.3.4)(backported to 19.1.5).
