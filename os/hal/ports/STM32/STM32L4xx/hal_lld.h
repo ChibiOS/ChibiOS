@@ -1362,7 +1362,8 @@
 #define STM32_PLLSAI2REN            (0 << 24)
 #endif
 
-/* Inclusion of PLLSAI-related checks and calculations.*/
+/* Inclusion of PLLSAI-related checks and calculations, all PLLs share the
+   same clock source so enforcing this condition.*/
 #define STM32_PLLSAI1M_VALUE STM32_PLLM_VALUE
 #define STM32_PLLSAI2M_VALUE STM32_PLLM_VALUE
 #define STM32_PLLSAI1CLKIN STM32_PLLCLKIN
