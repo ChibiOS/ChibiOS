@@ -170,15 +170,6 @@
 /*---------------------------------------------------------------------------*/
 #if STM32_PLLSAI1_HAS_P || defined(__DOXYGEN__)
 /**
- * @brief   PLLSAI1 P output clock frequency.
- */
-#if (STM32_PLLSAI1PDIV_VALUE == 0) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1_P_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1P_VALUE)
-#else
-#define STM32_PLLSAI1_P_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1PDIV_VALUE)
-#endif
-
-/**
  * @brief   STM32_PLLSAI1P field.
  */
 #if (STM32_PLLSAI1P_VALUE == 7) || defined(__DOXYGEN__)
@@ -189,6 +180,25 @@
 
 #else
 #error "invalid STM32_PLLSAI1P_VALUE value specified"
+#endif
+
+/**
+ * @brief   STM32_PLLSAI1PDIV field.
+ */
+#if ((STM32_PLLSAI1PDIV_VALUE != 1) && (STM32_PLLSAI1PDIV_VALUE <= 31)) ||  \
+    defined(__DOXYGEN__)
+#define STM32_PLLSAI1PDIV           (STM32_PLLSAI1PDIV_VALUE << 27)
+#else
+#error "invalid STM32_PLLSAI1PDIV_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLLSAI1 P output clock frequency.
+ */
+#if (STM32_PLLSAI1PDIV_VALUE == 0) || defined(__DOXYGEN__)
+#define STM32_PLLSAI1_P_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1P_VALUE)
+#else
+#define STM32_PLLSAI1_P_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1PDIV_VALUE)
 #endif
 
 /*
@@ -306,7 +316,7 @@ static inline void pllsai1_init(void) {
                      STM32_PLLSAI1REN  | STM32_PLLSAI1Q   |
                      STM32_PLLSAI1QEN  | STM32_PLLSAI1P   |
                      STM32_PLLSAI1PEN  | STM32_PLLSAI1N   |
-                     STM32_PLLSAI1M    | STM32_PLLSAI1SRC;
+                     STM32_PLLSAI1M;
   RCC->CR |= RCC_CR_PLLSAI1ON;
 
   /* Waiting for PLL lock.*/

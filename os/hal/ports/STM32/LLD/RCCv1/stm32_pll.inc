@@ -169,15 +169,6 @@
 /*---------------------------------------------------------------------------*/
 #if STM32_PLL_HAS_P || defined(__DOXYGEN__)
 /**
- * @brief   PLL P output clock frequency.
- */
-#if (STM32_PLLPDIV_VALUE == 0) || defined(__DOXYGEN__)
-#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLP_VALUE)
-#else
-#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLPDIV_VALUE)
-#endif
-
-/**
  * @brief   STM32_PLLP field.
  */
 #if (STM32_PLLP_VALUE == 7) || defined(__DOXYGEN__)
@@ -200,6 +191,15 @@
 
 #else
 #error "invalid STM32_PLLPDIV_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLL P output clock frequency.
+ */
+#if (STM32_PLLPDIV_VALUE == 0) || defined(__DOXYGEN__)
+#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLP_VALUE)
+#else
+#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLPDIV_VALUE)
 #endif
 
 /*
