@@ -27,13 +27,13 @@
 /*===========================================================================*/
 
 /*
- * Setup for STMicroelectronics STM32 Nucleo-WL5JC board.
+ * Setup for STMicroelectronics STM32 Nucleo-WL55JC board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_NUCLEO_WL55JC
+#define BOARD_ST_NUCLEO64_WL55JC
 #define BOARD_NAME                  "STMicroelectronics STM32 Nucleo-WL55JC"
 
 /*
@@ -65,8 +65,8 @@
  */
 #define GPIOA_BUTTON_1              0U
 #define GPIOA_BUTTON_2              1U
-#define GPIOA_LPUART1_TX            2U
-#define GPIOA_LPUART1_RX            3U
+#define GPIOA_USART2_TX             2U
+#define GPIOA_USART2_RX             3U
 #define GPIOA_ARD_D10               4U
 #define GPIOA_ARD_D13               5U
 #define GPIOA_ARD_D12               6U
@@ -170,8 +170,8 @@
  */
 #define LINE_BUTTON_1               PAL_LINE(GPIOA, 0U)
 #define LINE_BUTTON_2               PAL_LINE(GPIOA, 1U)
-#define LINE_LPUART1_TX             PAL_LINE(GPIOA, 2U)
-#define LINE_LPUART1_RX             PAL_LINE(GPIOA, 3U)
+#define LINE_USART2_TX              PAL_LINE(GPIOA, 2U)
+#define LINE_USART2_RX              PAL_LINE(GPIOA, 3U)
 #define LINE_ARD_D10                PAL_LINE(GPIOA, 4U)
 #define LINE_ARD_D13                PAL_LINE(GPIOA, 5U)
 #define LINE_ARD_D12                PAL_LINE(GPIOA, 6U)
@@ -258,8 +258,8 @@
  *
  * PA0  - BUTTON_1                  (input pullup).
  * PA1  - BUTTON_2                  (input pullup).
- * PA2  - LPUART1_TX                (alternate 8).
- * PA3  - LPUART1_RX                (alternate 8).
+ * PA2  - USART2_TX                 (alternate 7).
+ * PA3  - USART2_RX                 (alternate 7).
  * PA4  - ARD_D10                   (input floating).
  * PA5  - ARD_D13                   (input floating).
  * PA6  - ARD_D12                   (input floating).
@@ -275,8 +275,8 @@
  */
 #define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_BUTTON_1) |       \
                                      PIN_MODE_INPUT(GPIOA_BUTTON_2) |       \
-                                     PIN_MODE_ALTERNATE(GPIOA_LPUART1_TX) | \
-                                     PIN_MODE_ALTERNATE(GPIOA_LPUART1_RX) | \
+                                     PIN_MODE_ALTERNATE(GPIOA_USART2_TX) |  \
+                                     PIN_MODE_ALTERNATE(GPIOA_USART2_RX) |  \
                                      PIN_MODE_INPUT(GPIOA_ARD_D10) |        \
                                      PIN_MODE_INPUT(GPIOA_ARD_D13) |        \
                                      PIN_MODE_INPUT(GPIOA_ARD_D12) |        \
@@ -291,8 +291,8 @@
                                      PIN_MODE_INPUT(GPIOA_JTDI))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_BUTTON_1) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOA_BUTTON_2) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_LPUART1_TX) | \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_LPUART1_RX) | \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_USART2_TX) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_USART2_RX) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOA_ARD_D10) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOA_ARD_D13) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOA_ARD_D12) |    \
@@ -307,8 +307,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOA_JTDI))
 #define VAL_GPIOA_OSPEEDR           (PIN_OSPEED_HIGH(GPIOA_BUTTON_1) |      \
                                      PIN_OSPEED_HIGH(GPIOA_BUTTON_2) |      \
-                                     PIN_OSPEED_HIGH(GPIOA_LPUART1_TX) |    \
-                                     PIN_OSPEED_HIGH(GPIOA_LPUART1_RX) |    \
+                                     PIN_OSPEED_HIGH(GPIOA_USART2_TX) |     \
+                                     PIN_OSPEED_HIGH(GPIOA_USART2_RX) |     \
                                      PIN_OSPEED_HIGH(GPIOA_ARD_D10) |       \
                                      PIN_OSPEED_HIGH(GPIOA_ARD_D13) |       \
                                      PIN_OSPEED_HIGH(GPIOA_ARD_D12) |       \
@@ -323,8 +323,8 @@
                                      PIN_OSPEED_HIGH(GPIOA_JTDI))
 #define VAL_GPIOA_PUPDR             (PIN_PUPDR_PULLUP(GPIOA_BUTTON_1) |     \
                                      PIN_PUPDR_PULLUP(GPIOA_BUTTON_2) |     \
-                                     PIN_PUPDR_FLOATING(GPIOA_LPUART1_TX) | \
-                                     PIN_PUPDR_FLOATING(GPIOA_LPUART1_RX) | \
+                                     PIN_PUPDR_FLOATING(GPIOA_USART2_TX) |  \
+                                     PIN_PUPDR_FLOATING(GPIOA_USART2_RX) |  \
                                      PIN_PUPDR_FLOATING(GPIOA_ARD_D10) |    \
                                      PIN_PUPDR_FLOATING(GPIOA_ARD_D13) |    \
                                      PIN_PUPDR_FLOATING(GPIOA_ARD_D12) |    \
@@ -339,8 +339,8 @@
                                      PIN_PUPDR_FLOATING(GPIOA_JTDI))
 #define VAL_GPIOA_ODR               (PIN_ODR_LOW(GPIOA_BUTTON_1) |          \
                                      PIN_ODR_HIGH(GPIOA_BUTTON_2) |         \
-                                     PIN_ODR_HIGH(GPIOA_LPUART1_TX) |       \
-                                     PIN_ODR_HIGH(GPIOA_LPUART1_RX) |       \
+                                     PIN_ODR_HIGH(GPIOA_USART2_TX) |        \
+                                     PIN_ODR_HIGH(GPIOA_USART2_RX) |        \
                                      PIN_ODR_HIGH(GPIOA_ARD_D10) |          \
                                      PIN_ODR_HIGH(GPIOA_ARD_D13) |          \
                                      PIN_ODR_HIGH(GPIOA_ARD_D12) |          \
@@ -355,8 +355,8 @@
                                      PIN_ODR_HIGH(GPIOA_JTDI))
 #define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_BUTTON_1, 0U) |      \
                                      PIN_AFIO_AF(GPIOA_BUTTON_2, 0U) |      \
-                                     PIN_AFIO_AF(GPIOA_LPUART1_TX, 8U) |    \
-                                     PIN_AFIO_AF(GPIOA_LPUART1_RX, 8U) |    \
+                                     PIN_AFIO_AF(GPIOA_USART2_TX, 7U) |     \
+                                     PIN_AFIO_AF(GPIOA_USART2_RX, 7U) |     \
                                      PIN_AFIO_AF(GPIOA_ARD_D10, 0U) |       \
                                      PIN_AFIO_AF(GPIOA_ARD_D13, 0U) |       \
                                      PIN_AFIO_AF(GPIOA_ARD_D12, 0U) |       \
@@ -371,8 +371,8 @@
                                      PIN_AFIO_AF(GPIOA_JTDI, 0U))
 #define VAL_GPIOA_ASCR              (PIN_ASCR_DISABLED(GPIOA_BUTTON_1) |    \
                                      PIN_ASCR_DISABLED(GPIOA_BUTTON_2) |    \
-                                     PIN_ASCR_DISABLED(GPIOA_LPUART1_TX) |  \
-                                     PIN_ASCR_DISABLED(GPIOA_LPUART1_RX) |  \
+                                     PIN_ASCR_DISABLED(GPIOA_USART2_TX) |   \
+                                     PIN_ASCR_DISABLED(GPIOA_USART2_RX) |   \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D10) |     \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D13) |     \
                                      PIN_ASCR_DISABLED(GPIOA_ARD_D12) |     \
@@ -387,8 +387,8 @@
                                      PIN_ASCR_DISABLED(GPIOA_JTDI))
 #define VAL_GPIOA_LOCKR             (PIN_LOCKR_DISABLED(GPIOA_BUTTON_1) |   \
                                      PIN_LOCKR_DISABLED(GPIOA_BUTTON_2) |   \
-                                     PIN_LOCKR_DISABLED(GPIOA_LPUART1_TX) | \
-                                     PIN_LOCKR_DISABLED(GPIOA_LPUART1_RX) | \
+                                     PIN_LOCKR_DISABLED(GPIOA_USART2_TX) |  \
+                                     PIN_LOCKR_DISABLED(GPIOA_USART2_RX) |  \
                                      PIN_LOCKR_DISABLED(GPIOA_ARD_D10) |    \
                                      PIN_LOCKR_DISABLED(GPIOA_ARD_D13) |    \
                                      PIN_LOCKR_DISABLED(GPIOA_ARD_D12) |    \

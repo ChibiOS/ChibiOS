@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32WLExC memory setup.
+ * STM32WLxxC memory setup.
  */
 MEMORY
 {

@@ -94,6 +94,10 @@
 #define STM32_IRQ_EXTI4_PRIORITY            6
 #define STM32_IRQ_EXTI5_9_PRIORITY          6
 #define STM32_IRQ_EXTI10_15_PRIORITY        6
+#define STM32_IRQ_EXTI17_PRIORITY           6
+#define STM32_IRQ_EXTI18_PRIORITY           6
+#define STM32_IRQ_EXTI19_PRIORITY           6
+#define STM32_IRQ_EXTI20_PRIORITY           6
 #define STM32_IRQ_EXTI16_34_PRIORITY        6
 #define STM32_IRQ_EXTI45_PRIORITY           6
 
@@ -181,17 +185,17 @@
 /*
  * RTC driver system settings.
  */
-#define STM32_RTC_PRESA_VALUE               4
-#define STM32_RTC_PRESS_VALUE               4
+#define STM32_RTC_PRESA_VALUE               128
+#define STM32_RTC_PRESS_VALUE               256
 #define STM32_RTC_CR_INIT                   0
 #define STM32_RTC_TAMPCR_INIT               0
 
 /*
  * SERIAL driver system settings.
  */
-#define STM32_SERIAL_USE_USART1             TRUE
+#define STM32_SERIAL_USE_USART1             FALSE
 #define STM32_SERIAL_USE_USART2             FALSE
-#define STM32_SERIAL_USE_LPUART1            FALSE
+#define STM32_SERIAL_USE_LPUART1            TRUE
 #define STM32_SERIAL_USART1_PRIORITY        12
 #define STM32_SERIAL_USART2_PRIORITY        12
 #define STM32_SERIAL_LPUART1_PRIORITY       12

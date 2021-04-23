@@ -68,7 +68,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
+   * Activates the serial driver using the driver default configuration.
    */
   sdStart(&LPSD1, NULL);
   sdWrite(&LPSD1, (uint8_t*)"Initialized\r\n", 13);

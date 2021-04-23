@@ -4,12 +4,12 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32wlxx_board.xsd">
   <configuration_settings>
-    <templates_path>resources/gencfg/processors/boards/stm32l4xx/templates</templates_path>
+    <templates_path>resources/gencfg/processors/boards/stm32wlxx/templates</templates_path>
     <output_path>..</output_path>
     <hal_version>5.0.x</hal_version>
   </configuration_settings>
-  <board_name>STMicroelectronics STM32 Nucleo-WL5JC</board_name>
-  <board_id>ST_NUCLEO_WL5JC</board_id>
+  <board_name>STMicroelectronics STM32 Nucleo-WL55JC</board_name>
+  <board_id>ST_NUCLEO64_WL55JC</board_id>
   <board_functions></board_functions>
   <subtype>STM32WL55xx</subtype>
   <clocks
