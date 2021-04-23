@@ -82,6 +82,8 @@ static void hal_lld_backup_domain_init(void) {
 #endif
 
 #if HAL_USE_RTC
+  /* RTC APB bus clock enable */
+  RCC->APB1ENR1 |= RCC_APB1ENR1_RTCAPBEN;
   /* If the backup domain hasn't been initialized yet then proceed with
      initialization.*/
   if ((RCC->BDCR & RCC_BDCR_RTCEN) == 0) {
@@ -278,7 +280,7 @@ void stm32_clock_init(void) {
     uint32_t ccipr = STM32_RNGSEL    | STM32_ADCSEL    | STM32_LPTIM3SEL  |
                      STM32_LPTIM2SEL | STM32_LPTIM1SEL | STM32_I2C3SEL    |
                      STM32_I2C2SEL   | STM32_I2C1SEL   | STM32_LPUART1SEL |
-                     STM32_SPI2SEL | STM32_USART2SEL   | STM32_USART1SEL;
+                     STM32_SPI2SEL   | STM32_USART2SEL | STM32_USART1SEL;
 
     RCC->CCIPR = ccipr;
   }

@@ -129,6 +129,15 @@
 #define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
+/* IPCC attributes.*/
+#if defined(STM32WL55xx) || defined(STM32WL54xx) || defined(__DOXYGEN__)
+#define STM32_HAS_IPCC                      TRUE
+#define STM32_IPCC_RX_CHANNELS              6
+#define STM32_IPCC_TX_CHANNELS              6
+#else
+#define STM32_HAS_IPCC                      FALSE
+#endif /* defined(STM32WL55xx) || defined(STM32WL54xx) */
+
 /* IWDG attributes.*/
 #define STM32_HAS_IWDG                      TRUE
 #define STM32_IWDG_IS_WINDOWED              TRUE
@@ -167,7 +176,7 @@
 #define STM32_RTC_STORAGE_SIZE              32
 #define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
 #define STM32_RTC_WKUP_HANDLER              Vector4C
-#define STM32_RTC_ALARM_HANDLER             VectorE4
+#define STM32_RTC_ALARM_HANDLER             VectorE8
 #define STM32_RTC_TAMP_STAMP_NUMBER         2
 #define STM32_RTC_WKUP_NUMBER               3
 #define STM32_RTC_ALARM_NUMBER              42
@@ -177,8 +186,28 @@
 #define STM32_RTC_IRQ_ENABLE() do {                                         \
   nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER, STM32_IRQ_EXTI19_PRIORITY); \
   nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI20_PRIORITY);       \
-  nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI18_PRIORITY);      \
+  nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI17_PRIORITY);      \
 } while (false)
+
+ /* Enabling RTC-related EXTI lines.*/
+#define STM32_RTC_ENABLE_ALL_EXTI() do {                                    \
+  extiEnableGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |                       \
+                   EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |                  \
+                   EXTI_MASK1(STM32_RTC_WKUP_EXTI),                         \
+                   EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);     \
+} while (false)
+
+/* Clearing EXTI interrupts. */
+#define STM32_RTC_CLEAR_ALL_EXTI() do {                                     \
+} while (false)
+
+/* Masks used to preserve state of RTC and TAMP register reserved bits. */
+#define STM32_RTC_CR_MASK                   0xE7FFFF7F
+#define STM32_RTC_PRER_MASK                 0x007F7FFF
+#define STM32_TAMP_CR1_MASK                 0xFFFF0007
+#define STM32_TAMP_CR2_MASK                 0x07070007
+#define STM32_TAMP_FLTCR_MASK               0x000000FF
+#define STM32_TAMP_IER_MASK                 0x003C0003
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE

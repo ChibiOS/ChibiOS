@@ -363,14 +363,14 @@
  *
  * @api
  */
-#define rccEnableADC1(lp) rccEnableAHB2(RCC_AHB2ENR_ADCEN, lp)
+#define rccEnableADC1(lp) rccEnableAPB2(RCC_APB2ENR_ADCEN, lp)
 
 /**
  * @brief   Disables the ADC1 peripheral clock.
  *
  * @api
  */
-#define rccDisableADC1() rccDisableAHB2(RCC_APB2RSTR_ADCRST)
+#define rccDisableADC1() rccDisableAPB2(RCC_APB2RSTR_ADCRST)
 
 /**
  * @brief   Resets the ADC1 peripheral.
@@ -621,14 +621,14 @@
 #define rccEnableSPIR(lp) rccEnableAPB3(RCC_APB3ENR_SUBGHZSPIEN, lp)
 
 /**
- * @brief   Disables the SPI2 peripheral clock.
+ * @brief   Disables the SPIR peripheral clock.
  *
  * @api
  */
 #define rccDisableSPIR() rccDisableAPB3(RCC_APB3ENR_SUBGHZSPIEN)
 
 /**
- * @brief   Resets the SPI2 peripheral.
+ * @brief   Resets the SPIR peripheral.
  *
  * @api
  */
@@ -799,7 +799,7 @@
 #define rccDisableLPUART1() rccDisableAPB1R2(RCC_APB1ENR2_LPUART1EN)
 
 /**
- * @brief   Resets the USART1 peripheral.
+ * @brief   Resets the LPUART1 peripheral.
  *
  * @api
  */

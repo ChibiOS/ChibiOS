@@ -577,8 +577,10 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   if (alarm == 0) {
     if (alarmspec != NULL) {
       rtcp->rtc->CR &= ~RTC_CR_ALRAE;
+#if defined(RTC_ICSR_ALRAWF)
       while (!(rtcp->rtc->ICSR & RTC_ICSR_ALRAWF))
         ;
+#endif
       rtcp->rtc->ALRMAR = alarmspec->alrmr;
       rtcp->rtc->CR |= RTC_CR_ALRAE;
       rtcp->rtc->CR |= RTC_CR_ALRAIE;
@@ -592,8 +594,10 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
   else {
     if (alarmspec != NULL) {
       rtcp->rtc->CR &= ~RTC_CR_ALRBE;
+#if defined(RTC_ICSR_ALRBWF)
       while (!(rtcp->rtc->ICSR & RTC_ICSR_ALRBWF))
         ;
+#endif
       rtcp->rtc->ALRMBR = alarmspec->alrmr;
       rtcp->rtc->CR |= RTC_CR_ALRBE;
       rtcp->rtc->CR |= RTC_CR_ALRBIE;
