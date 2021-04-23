@@ -31,11 +31,11 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_PLL)
-#define STM32_HAS_PLL           FALSE
+#if !defined(STM32_RCC_HAS_PLL)
+#define STM32_RCC_HAS_PLL           FALSE
 #endif
 
-#if STM32_HAS_PLL
+#if STM32_RCC_HAS_PLL
 
 /* Checks on configurations.*/
 #if !defined(STM32_PLLSRC)
@@ -54,15 +54,15 @@
 #error "STM32_PLLPDIV_VALUE not defined in mcuconf.h"
 #endif
 
-#if STM32_PLL_HAS_P && !defined(STM32_PLLP_VALUE)
+#if STM32_RCC_PLL_HAS_P && !defined(STM32_PLLP_VALUE)
 #error "STM32_PLLP_VALUE not defined in mcuconf.h"
 #endif
 
-#if STM32_PLL_HAS_Q && !defined(STM32_PLLQ_VALUE)
+#if STM32_RCC_PLL_HAS_Q && !defined(STM32_PLLQ_VALUE)
 #error "STM32_PLLQ_VALUE not defined in mcuconf.h"
 #endif
 
-#if STM32_PLL_HAS_R && !defined(STM32_PLLR_VALUE)
+#if STM32_RCC_PLL_HAS_R && !defined(STM32_PLLR_VALUE)
 #error "STM32_PLLR_VALUE not defined in mcuconf.h"
 #endif
 
@@ -112,15 +112,15 @@
 #error "STM32_ACTIVATE_PLL not defined in hal_lld.h"
 #endif
 
-#if STM32_PLL_HAS_P && !defined(STM32_PLLPEN)
+#if STM32_RCC_PLL_HAS_P && !defined(STM32_PLLPEN)
 #error "STM32_PLLPEN not defined in hal_lld.h"
 #endif
 
-#if STM32_PLL_HAS_Q && !defined(STM32_PLLQEN)
+#if STM32_RCC_PLL_HAS_Q && !defined(STM32_PLLQEN)
 #error "STM32_PLLQEN not defined in hal_lld.h"
 #endif
 
-#if STM32_PLL_HAS_R && !defined(STM32_PLLREN)
+#if STM32_RCC_PLL_HAS_R && !defined(STM32_PLLREN)
 #error "STM32_PLLREN not defined in hal_lld.h"
 #endif
 
@@ -167,7 +167,7 @@
 /*---------------------------------------------------------------------------*/
 /* P output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
-#if STM32_PLL_HAS_P || defined(__DOXYGEN__)
+#if STM32_RCC_PLL_HAS_P || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLP field.
  */
@@ -210,15 +210,15 @@
 #error "STM32_PLL_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
 #endif
 
-#else /* !STM32_PLL_HAS_P */
+#else /* !STM32_RCC_PLL_HAS_P */
 #define STM32_PLLP                  0
 #define STM32_PLLPEN                0
-#endif /* !STM32_PLL_HAS_P */
+#endif /* !STM32_RCC_PLL_HAS_P */
 
 /*---------------------------------------------------------------------------*/
 /* Q output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
-#if STM32_PLL_HAS_Q || defined(__DOXYGEN__)
+#if STM32_RCC_PLL_HAS_Q || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLQ field.
  */
@@ -251,15 +251,15 @@
 #error "STM32_PLL_Q_CLKOUT outside acceptable range (STM32_PLLQ_MIN...STM32_PLLQ_MAX)"
 #endif
 
-#else /* !STM32_PLL_HAS_Q */
+#else /* !STM32_RCC_PLL_HAS_Q */
 #define STM32_PLLQ                  0
 #define STM32_PLLQEN                0
-#endif /* !STM32_PLL_HAS_Q */
+#endif /* !STM32_RCC_PLL_HAS_Q */
 
 /*---------------------------------------------------------------------------*/
 /* R output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
-#if STM32_PLL_HAS_R || defined(__DOXYGEN__)
+#if STM32_RCC_PLL_HAS_R || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLR field.
  */
@@ -292,10 +292,10 @@
 #error "STM32_PLL_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
 #endif
 
-#else /* !STM32_PLL_HAS_R */
+#else /* !STM32_RCC_PLL_HAS_R */
 #define STM32_PLLR                  0
 #define STM32_PLLREN                0
-#endif /* !STM32_PLL_HAS_R */
+#endif /* !STM32_RCC_PLL_HAS_R */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -340,6 +340,6 @@ static inline void pll_deinit(void) {
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
-#endif /* STM32_HAS_PLL */
+#endif /* STM32_RCC_HAS_PLL */
 
 /** @} */

@@ -35,27 +35,27 @@
  */
 
 /* RCC attributes.*/
-#define STM32_HAS_HSI16                     TRUE
-#define STM32_HAS_HSI48                     TRUE
-#define STM32_HAS_MSI                       TRUE
-#define STM32_HAS_LSI                       TRUE
-#define STM32_HAS_LSE                       TRUE
-#define STM32_HAS_HSE                       TRUE
+#define STM32_RCC_HAS_HSI16                 TRUE
+/*#define STM32_RCC_HAS_HSI48                 TRUE*/ /* See below, it changes.*/
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
 
-#define STM32_HAS_PLL                       TRUE
-#define STM32_PLL_HAS_P                     TRUE
-#define STM32_PLL_HAS_Q                     TRUE
-#define STM32_PLL_HAS_R                     TRUE
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
 
-#define STM32_HAS_PLLSAI1                   TRUE
-#define STM32_PLLSAI1_HAS_P                 TRUE
-#define STM32_PLLSAI1_HAS_Q                 TRUE
-#define STM32_PLLSAI1_HAS_R                 TRUE
+#define STM32_RCC_HAS_PLLSAI1               TRUE
+#define STM32_RCC_PLLSAI1_HAS_P             TRUE
+#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
+#define STM32_RCC_PLLSAI1_HAS_R             TRUE
 
-#define STM32_HAS_PLLSAI2                   TRUE
-#define STM32_PLLSAI2_HAS_P                 TRUE
-#define STM32_PLLSAI2_HAS_Q                 FALSE
-#define STM32_PLLSAI2_HAS_R                 TRUE
+#define STM32_RCC_HAS_PLLSAI2               TRUE
+#define STM32_RCC_PLLSAI2_HAS_P             TRUE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             TRUE
 
 /*===========================================================================*/
 /* Common.                                                                   */
@@ -103,8 +103,8 @@
 
 #if defined(STM32L432xx) || defined(STM32L433xx) || defined(__DOXYGEN__)
 
-/* Clock attributes.*/
-#define STM32_CLOCK_HAS_HSI48               TRUE
+/* RCC attributes.*/
+#define STM32_RCC_HAS_HSI48                 TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -325,8 +325,8 @@
 
 #if defined(STM32L443xx) || defined(__DOXYGEN__)
 
-/* Clock attributes.*/
-#define STM32_CLOCK_HAS_HSI48               TRUE
+/* RCC attributes.*/
+#define STM32_RCC_HAS_HSI48                 TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -568,8 +568,8 @@
 
 #if defined(STM32L452xx) || defined(__DOXYGEN__)
 
-/* Clock attributes.*/
-#define STM32_CLOCK_HAS_HSI48               TRUE
+/* RCC attributes.*/
+#define STM32_RCC_HAS_HSI48                 TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -812,8 +812,8 @@
 
 #if defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L486xx)
 
-/* Clock attributes.*/
-#define STM32_CLOCK_HAS_HSI48               FALSE
+/* RCC attributes.*/
+#define STM32_RCC_HAS_HSI48                 FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1092,8 +1092,8 @@
 
 #if defined(STM32L496xx) || defined(STM32L4A6xx)
 
-/* Clock attributes.*/
-#define STM32_CLOCK_HAS_HSI48               FALSE
+/* RCC attributes.*/
+#define STM32_RCC_HAS_HSI48                 FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE

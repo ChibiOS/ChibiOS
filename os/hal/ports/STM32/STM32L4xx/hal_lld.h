@@ -246,7 +246,7 @@
 #define STM32_SAI2SEL_OFF       0xFFFFFFFFU /**< SAI2 clock is not required.*/
 
 #define STM32_CLK48SEL_MASK     (3 << 26)   /**< CLK48SEL mask.             */
-#if !STM32_CLOCK_HAS_HSI48
+#if !STM32_RCC_HAS_HSI48
 #define STM32_CLK48SEL_NOCLK    (0 << 26)   /**< CLK48 disabled.            */
 #else
 #define STM32_CLK48SEL_HSI48    (0 << 26)   /**< CLK48 source is HSI48.     */
@@ -1043,7 +1043,7 @@
 
 #endif /* !STM32_HSI16_ENABLED */
 
-#if STM32_CLOCK_HAS_HSI48
+#if STM32_RCC_HAS_HSI48
 #if STM32_HSI48_ENABLED
 #else /* !STM32_HSI48_ENABLED */
 
@@ -1055,7 +1055,7 @@
 #error "HSI48 not enabled, required by STM32_CLK48SEL"
 #endif
 #endif /* !STM32_HSI48_ENABLED */
-#endif /* STM32_CLOCK_HAS_HSI48 */
+#endif /* STM32_RCC_HAS_HSI48 */
 
 /*
  * HSE related checks.
@@ -1620,7 +1620,7 @@
 /**
  * @brief   48MHz clock frequency.
  */
-#if !STM32_CLOCK_HAS_HSI48 || defined(__DOXYGEN__)
+#if !STM32_RCC_HAS_HSI48 || defined(__DOXYGEN__)
 
 #if (STM32_CLK48SEL == STM32_CLK48SEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_48CLK                 0
@@ -1634,7 +1634,7 @@
 #error "invalid source selected for 48CLK clock"
 #endif
 
-#else /* STM32_CLOCK_HAS_HSI48 */
+#else /* STM32_RCC_HAS_HSI48 */
 
 #if (STM32_CLK48SEL == STM32_CLK48SEL_HSI48) || defined(__DOXYGEN__)
 #define STM32_48CLK                 STM32_HSI48CLK
@@ -1648,7 +1648,7 @@
 #error "invalid source selected for 48CLK clock"
 #endif
 
-#endif /* STM32_CLOCK_HAS_HSI48 */
+#endif /* STM32_RCC_HAS_HSI48 */
 
 /**
  * @brief   SAI1 clock frequency.

@@ -31,11 +31,11 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_PLLSAI1)
-#define STM32_HAS_PLLSAI1           FALSE
+#if !defined(STM32_RCC_HAS_PLLSAI1)
+#define STM32_RCC_HAS_PLLSAI1           FALSE
 #endif
 
-#if STM32_HAS_PLLSAI1
+#if STM32_RCC_HAS_PLLSAI1
 
 /* Checks on configurations.*/
 #if !defined(STM32_PLLSRC)
@@ -54,15 +54,15 @@
 #error "STM32_PLLSAI1PDIV_VALUE not defined in mcuconf.h"
 #endif
 
-#if STM32_PLLSAI1_HAS_P && !defined(STM32_PLLSAI1P_VALUE)
+#if STM32_RCC_PLLSAI1_HAS_P && !defined(STM32_PLLSAI1P_VALUE)
 #error "STM32_PLLSAI1P_VALUE not defined in mcuconf.h"
 #endif
 
-#if STM32_PLLSAI1_HAS_Q && !defined(STM32_PLLSAI1Q_VALUE)
+#if STM32_RCC_PLLSAI1_HAS_Q && !defined(STM32_PLLSAI1Q_VALUE)
 #error "STM32_PLLSAI1Q_VALUE not defined in mcuconf.h"
 #endif
 
-#if STM32_PLLSAI1_HAS_R && !defined(STM32_PLLSAI1R_VALUE)
+#if STM32_RCC_PLLSAI1_HAS_R && !defined(STM32_PLLSAI1R_VALUE)
 #error "STM32_PLLSAI1R_VALUE not defined in mcuconf.h"
 #endif
 
@@ -113,15 +113,15 @@
 #endif
 
 
-#if STM32_PLLSAI1_HAS_P && !defined(STM32_PLLSAI1PEN)
+#if STM32_RCC_PLLSAI1_HAS_P && !defined(STM32_PLLSAI1PEN)
 #error "STM32_PLLSAI1PEN not defined in hal_lld.h"
 #endif
 
-#if STM32_PLLSAI1_HAS_Q && !defined(STM32_PLLSAI1QEN)
+#if STM32_RCC_PLLSAI1_HAS_Q && !defined(STM32_PLLSAI1QEN)
 #error "STM32_PLLSAI1QEN not defined in hal_lld.h"
 #endif
 
-#if STM32_PLLSAI1_HAS_R && !defined(STM32_PLLSAI1REN)
+#if STM32_RCC_PLLSAI1_HAS_R && !defined(STM32_PLLSAI1REN)
 #error "STM32_PLLSAI1REN not defined in hal_lld.h"
 #endif
 
@@ -168,7 +168,7 @@
 /*---------------------------------------------------------------------------*/
 /* P output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
-#if STM32_PLLSAI1_HAS_P || defined(__DOXYGEN__)
+#if STM32_RCC_PLLSAI1_HAS_P || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLSAI1P field.
  */
@@ -209,15 +209,15 @@
 #error "STM32_PLLSAI1_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
 #endif
 
-#else /* !STM32_PLLSAI1_HAS_P */
+#else /* !STM32_RCC_PLLSAI1_HAS_P */
 #define STM32_PLLSAI1P              0
 #define STM32_PLLSAI1PEN            0
-#endif /* !STM32_PLLSAI1_HAS_P */
+#endif /* !STM32_RCC_PLLSAI1_HAS_P */
 
 /*---------------------------------------------------------------------------*/
 /* Q output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
-#if STM32_PLLSAI1_HAS_Q || defined(__DOXYGEN__)
+#if STM32_RCC_PLLSAI1_HAS_Q || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLSAI1Q field.
  */
@@ -250,15 +250,15 @@
 #error "STM32_PLLSAI1_Q_CLKOUT outside acceptable range (STM32_PLLQ_MIN...STM32_PLLQ_MAX)"
 #endif
 
-#else /* !STM32_PLLSAI1_HAS_Q */
+#else /* !STM32_RCC_PLLSAI1_HAS_Q */
 #define STM32_PLLSAI1Q              0
 #define STM32_PLLSAI1QEN            0
-#endif /* !STM32_PLLSAI1_HAS_Q */
+#endif /* !STM32_RCC_PLLSAI1_HAS_Q */
 
 /*---------------------------------------------------------------------------*/
 /* R output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
-#if STM32_PLLSAI1_HAS_R || defined(__DOXYGEN__)
+#if STM32_RCC_PLLSAI1_HAS_R || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLSAI1R field.
  */
@@ -291,10 +291,10 @@
 #error "STM32_PLLSAI1_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
 #endif
 
-#else /* !STM32_PLLSAI1_HAS_R */
+#else /* !STM32_RCC_PLLSAI1_HAS_R */
 #define STM32_PLLSAI1R              0
 #define STM32_PLLSAI1REN            0
-#endif /* !STM32_PLLSAI1_HAS_R */
+#endif /* !STM32_RCC_PLLSAI1_HAS_R */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -339,6 +339,6 @@ static inline void pllsai1_deinit(void) {
 /* Driver exported functions.                                                */
 /*===========================================================================*/
 
-#endif /* STM32_HAS_PLLSAI1 */
+#endif /* STM32_RCC_HAS_PLLSAI1 */
 
 /** @} */

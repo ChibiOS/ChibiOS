@@ -61,8 +61,8 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_MSI)
-#error "STM32_HAS_MSI not defined in stm32_registry.h"
+#if !defined(STM32_RCC_HAS_MSI)
+#error "STM32_RCC_HAS_MSI not defined in stm32_registry.h"
 #endif
 
 /* Checks on configurations.*/

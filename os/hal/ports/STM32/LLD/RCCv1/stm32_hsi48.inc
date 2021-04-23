@@ -36,13 +36,17 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_HSI48)
-#error "STM32_HAS_HSI48 not defined in stm32_registry.h"
+#if !defined(STM32_RCC_HAS_HSI48)
+#error "STM32_RCC_HAS_HSI48 not defined in stm32_registry.h"
 #endif
 
 /* Checks on configurations.*/
 #if !defined(STM32_HSI48_ENABLED)
 #error "STM32_HSI48_ENABLED not defined in mcuconf.h"
+#endif
+
+#if (STM32_RCC_HAS_HSI48 == FALSE) && (STM32_HSI48_ENABLED == TRUE)
+#error "HSI48 not present on this device"
 #endif
 
 /*===========================================================================*/
