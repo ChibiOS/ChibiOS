@@ -1025,16 +1025,12 @@
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLQCLK) ||                           \
     (STM32_QSPISEL == STM32_QSPISEL_PLLQCLK) ||                             \
     defined(__DOXYGEN__)
-
-  #if STM32_PLLCLKIN == 0
-    #error "PLL activation required but no PLL clock selected"
-  #endif
-
   /**
    * @brief   PLL activation flag.
    */
   #define STM32_ACTIVATE_PLL        TRUE
 #else
+
   #define STM32_ACTIVATE_PLL        FALSE
 #endif
 
@@ -1045,6 +1041,7 @@
     (STM32_ADC345SEL == STM32_ADC345SEL_PLLPCLK) ||                         \
     defined(__DOXYGEN__)
   #define STM32_PLLPEN              (1 << 16)
+
 #else
   #define STM32_PLLPEN              (0 << 16)
 #endif
@@ -1059,6 +1056,7 @@
     (STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK) ||                           \
     defined(__DOXYGEN__)
   #define STM32_PLLQEN              (1 << 20)
+
 #else
   #define STM32_PLLQEN              (0 << 20)
 #endif
@@ -1070,6 +1068,7 @@
     (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
     defined(__DOXYGEN__)
   #define STM32_PLLREN              (1 << 24)
+
 #else
   #define STM32_PLLREN              (0 << 24)
 #endif
