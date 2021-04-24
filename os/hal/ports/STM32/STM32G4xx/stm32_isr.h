@@ -82,16 +82,20 @@
 #define STM32_DMA1_CH4_HANDLER              Vector78
 #define STM32_DMA1_CH5_HANDLER              Vector7C
 #define STM32_DMA1_CH6_HANDLER              Vector80
+#if !defined(STM32G431xx) && !defined(STM32G441xx)
 #define STM32_DMA1_CH7_HANDLER              Vector84
 #define STM32_DMA1_CH8_HANDLER              Vector1C0
+#endif
 #define STM32_DMA2_CH1_HANDLER              Vector120
 #define STM32_DMA2_CH2_HANDLER              Vector124
 #define STM32_DMA2_CH3_HANDLER              Vector128
 #define STM32_DMA2_CH4_HANDLER              Vector12C
 #define STM32_DMA2_CH5_HANDLER              Vector130
 #define STM32_DMA2_CH6_HANDLER              Vector1C4
+#if !defined(STM32G431xx) && !defined(STM32G441xx)
 #define STM32_DMA2_CH7_HANDLER              Vector1C8
 #define STM32_DMA2_CH8_HANDLER              Vector1CC
+#endif
 
 #define STM32_DMA1_CH1_NUMBER               11
 #define STM32_DMA1_CH2_NUMBER               12
@@ -99,16 +103,20 @@
 #define STM32_DMA1_CH4_NUMBER               14
 #define STM32_DMA1_CH5_NUMBER               15
 #define STM32_DMA1_CH6_NUMBER               16
+#if !defined(STM32G431xx) && !defined(STM32G441xx)
 #define STM32_DMA1_CH7_NUMBER               17
 #define STM32_DMA1_CH8_NUMBER               96
+#endif
 #define STM32_DMA2_CH1_NUMBER               56
 #define STM32_DMA2_CH2_NUMBER               57
 #define STM32_DMA2_CH3_NUMBER               58
 #define STM32_DMA2_CH4_NUMBER               59
 #define STM32_DMA2_CH5_NUMBER               60
 #define STM32_DMA2_CH6_NUMBER               97
+#if !defined(STM32G431xx) && !defined(STM32G441xx)
 #define STM32_DMA2_CH7_NUMBER               98
 #define STM32_DMA2_CH8_NUMBER               99
+#endif
 
 /*
  * EXTI unit.
