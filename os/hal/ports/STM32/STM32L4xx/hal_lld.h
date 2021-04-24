@@ -1433,12 +1433,16 @@
  */
 #if (STM32_USART1SEL == STM32_USART1SEL_PCLK2) || defined(__DOXYGEN__)
 #define STM32_USART1CLK             STM32_PCLK2
+
 #elif STM32_USART1SEL == STM32_USART1SEL_SYSCLK
 #define STM32_USART1CLK             STM32_SYSCLK
+
 #elif STM32_USART1SEL == STM32_USART1SEL_HSI16
 #define STM32_USART1CLK             STM32_HSI16CLK
+
 #elif STM32_USART1SEL == STM32_USART1SEL_LSE
 #define STM32_USART1CLK             STM32_LSECLK
+
 #else
 #error "invalid source selected for USART1 clock"
 #endif
@@ -1448,12 +1452,16 @@
  */
 #if (STM32_USART2SEL == STM32_USART2SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_USART2CLK             STM32_PCLK1
+
 #elif STM32_USART2SEL == STM32_USART2SEL_SYSCLK
 #define STM32_USART2CLK             STM32_SYSCLK
+
 #elif STM32_USART2SEL == STM32_USART2SEL_HSI16
 #define STM32_USART2CLK             STM32_HSI16CLK
+
 #elif STM32_USART2SEL == STM32_USART2SEL_LSE
 #define STM32_USART2CLK             STM32_LSECLK
+
 #else
 #error "invalid source selected for USART2 clock"
 #endif
@@ -1463,12 +1471,16 @@
  */
 #if (STM32_USART3SEL == STM32_USART3SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_USART3CLK             STM32_PCLK1
+
 #elif STM32_USART3SEL == STM32_USART3SEL_SYSCLK
 #define STM32_USART3CLK             STM32_SYSCLK
+
 #elif STM32_USART3SEL == STM32_USART3SEL_HSI16
 #define STM32_USART3CLK             STM32_HSI16CLK
+
 #elif STM32_USART3SEL == STM32_USART3SEL_LSE
 #define STM32_USART3CLK             STM32_LSECLK
+
 #else
 #error "invalid source selected for USART3 clock"
 #endif
@@ -1478,12 +1490,16 @@
  */
 #if (STM32_UART4SEL == STM32_UART4SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_UART4CLK              STM32_PCLK1
+
 #elif STM32_UART4SEL == STM32_UART4SEL_SYSCLK
 #define STM32_UART4CLK              STM32_SYSCLK
+
 #elif STM32_UART4SEL == STM32_UART4SEL_HSI16
 #define STM32_UART4CLK              STM32_HSI16CLK
+
 #elif STM32_UART4SEL == STM32_UART4SEL_LSE
 #define STM32_UART4CLK              STM32_LSECLK
+
 #else
 #error "invalid source selected for UART4 clock"
 #endif
@@ -1493,12 +1509,16 @@
  */
 #if (STM32_UART5SEL == STM32_UART5SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_UART5CLK              STM32_PCLK1
+
 #elif STM32_UART5SEL == STM32_UART5SEL_SYSCLK
 #define STM32_UART5CLK              STM32_SYSCLK
+
 #elif STM32_UART5SEL == STM32_UART5SEL_HSI16
 #define STM32_UART5CLK              STM32_HSI16CLK
+
 #elif STM32_UART5SEL == STM32_UART5SEL_LSE
 #define STM32_UART5CLK              STM32_LSECLK
+
 #else
 #error "invalid source selected for UART5 clock"
 #endif
@@ -1508,12 +1528,16 @@
  */
 #if (STM32_LPUART1SEL == STM32_LPUART1SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_LPUART1CLK            STM32_PCLK1
+
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_SYSCLK
 #define STM32_LPUART1CLK            STM32_SYSCLK
+
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16
 #define STM32_LPUART1CLK            STM32_HSI16CLK
+
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_LSE
 #define STM32_LPUART1CLK            STM32_LSECLK
+
 #else
 #error "invalid source selected for LPUART1 clock"
 #endif
@@ -1523,10 +1547,13 @@
  */
 #if (STM32_I2C1SEL == STM32_I2C1SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C1CLK               STM32_PCLK1
+
 #elif STM32_I2C1SEL == STM32_I2C1SEL_SYSCLK
 #define STM32_I2C1CLK               STM32_SYSCLK
+
 #elif STM32_I2C1SEL == STM32_I2C1SEL_HSI16
 #define STM32_I2C1CLK               STM32_HSI16CLK
+
 #else
 #error "invalid source selected for I2C1 clock"
 #endif
@@ -1536,10 +1563,13 @@
  */
 #if (STM32_I2C2SEL == STM32_I2C2SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C2CLK               STM32_PCLK1
+
 #elif STM32_I2C2SEL == STM32_I2C2SEL_SYSCLK
 #define STM32_I2C2CLK               STM32_SYSCLK
+
 #elif STM32_I2C2SEL == STM32_I2C2SEL_HSI16
 #define STM32_I2C2CLK               STM32_HSI16CLK
+
 #else
 #error "invalid source selected for I2C2 clock"
 #endif
@@ -1549,10 +1579,13 @@
  */
 #if (STM32_I2C3SEL == STM32_I2C3SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C3CLK               STM32_PCLK1
+
 #elif STM32_I2C3SEL == STM32_I2C3SEL_SYSCLK
 #define STM32_I2C3CLK               STM32_SYSCLK
+
 #elif STM32_I2C3SEL == STM32_I2C3SEL_HSI16
 #define STM32_I2C3CLK               STM32_HSI16CLK
+
 #else
 #error "invalid source selected for I2C3 clock"
 #endif
@@ -1562,10 +1595,13 @@
  */
 #if (STM32_I2C4SEL == STM32_I2C4SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_I2C4CLK               STM32_PCLK1
+
 #elif STM32_I2C4SEL == STM32_I2C4SEL_SYSCLK
 #define STM32_I2C4CLK               STM32_SYSCLK
+
 #elif STM32_I2C4SEL == STM32_I2C4SEL_HSI16
 #define STM32_I2C4CLK               STM32_HSI16CLK
+
 #else
 #error "invalid source selected for I2C4 clock"
 #endif
@@ -1575,12 +1611,16 @@
  */
 #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_LPTIM1CLK             STM32_PCLK1
+
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI
 #define STM32_LPTIM1CLK             STM32_LSICLK
+
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16
 #define STM32_LPTIM1CLK             STM32_HSI16CLK
+
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
 #define STM32_LPTIM1CLK             STM32_LSECLK
+
 #else
 #error "invalid source selected for LPTIM1 clock"
 #endif
@@ -1590,12 +1630,16 @@
  */
 #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_LPTIM2CLK             STM32_PCLK1
+
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSI
 #define STM32_LPTIM2CLK             STM32_LSICLK
+
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_HSI16
 #define STM32_LPTIM2CLK             STM32_HSI16CLK
+
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSE
 #define STM32_LPTIM2CLK             STM32_LSECLK
+
 #else
 #error "invalid source selected for LPTIM2 clock"
 #endif
@@ -1607,12 +1651,16 @@
 
 #if (STM32_CLK48SEL == STM32_CLK48SEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_48CLK                 0
+
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1
 #define STM32_48CLK                 (STM32_PLLSAI1VCO / STM32_PLLSAI1Q_VALUE)
+
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLL
 #define STM32_48CLK                 (STM32_PLLVCO / STM32_PLLQ_VALUE)
+
 #elif STM32_CLK48SEL == STM32_CLK48SEL_MSI
 #define STM32_48CLK                 STM32_MSICLK
+
 #else
 #error "invalid source selected for 48CLK clock"
 #endif
@@ -1621,12 +1669,16 @@
 
 #if (STM32_CLK48SEL == STM32_CLK48SEL_HSI48) || defined(__DOXYGEN__)
 #define STM32_48CLK                 STM32_HSI48CLK
+
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1
 #define STM32_48CLK                 (STM32_PLLSAI1VCO / STM32_PLLSAI1Q_VALUE)
+
 #elif STM32_CLK48SEL == STM32_CLK48SEL_PLL
 #define STM32_48CLK                 (STM32_PLLVCO / STM32_PLLQ_VALUE)
+
 #elif STM32_CLK48SEL == STM32_CLK48SEL_MSI
 #define STM32_48CLK                 STM32_MSICLK
+
 #else
 #error "invalid source selected for 48CLK clock"
 #endif
@@ -1638,14 +1690,19 @@
  */
 #if (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) || defined(__DOXYGEN__)
 #define STM32_SAI1CLK               STM32_PLLSAI1_P_CLKOUT
+
 #elif STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2
 #define STM32_SAI1CLK               STM32_PLLSAI2_P_CLKOUT
+
 #elif STM32_SAI1SEL == STM32_SAI1SEL_PLL
 #define STM32_SAI1CLK               STM32_PLL_P_CLKOUT
+
 #elif STM32_SAI1SEL == STM32_SAI1SEL_EXTCLK
 #define STM32_SAI1CLK               0 /* Unknown, would require a board value */
+
 #elif STM32_SAI1SEL == STM32_SAI1SEL_OFF
 #define STM32_SAI1CLK               0
+
 #else
 #error "invalid source selected for SAI1 clock"
 #endif
@@ -1655,14 +1712,19 @@
  */
 #if (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) || defined(__DOXYGEN__)
 #define STM32_SAI2CLK               STM32_PLLSAI1_P_CLKOUT
+
 #elif STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2
 #define STM32_SAI2CLK               STM32_PLLSAI2_P_CLKOUT
+
 #elif STM32_SAI2SEL == STM32_SAI2SEL_PLL
 #define STM32_SAI2CLK               STM32_PLL_P_CLKOUT
+
 #elif STM32_SAI2SEL == STM32_SAI2SEL_EXTCLK
 #define STM32_SAI2CLK               0 /* Unknown, would require a board value */
+
 #elif STM32_SAI2SEL == STM32_SAI2SEL_OFF
 #define STM32_SAI2CLK               0
+
 #else
 #error "invalid source selected for SAI2 clock"
 #endif
@@ -1682,12 +1744,16 @@
  */
 #if (STM32_ADCSEL == STM32_ADCSEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_ADCCLK                0
+
 #elif STM32_ADCSEL == STM32_ADCSEL_PLLSAI1
 #define STM32_ADCCLK                STM32_PLLSAI1_R_CLKOUT
+
 #elif STM32_ADCSEL == STM32_ADCSEL_PLLSAI2
 #define STM32_ADCCLK                STM32_PLLSAI2_R_CLKOUT
+
 #elif STM32_ADCSEL == STM32_ADCSEL_SYSCLK
 #define STM32_ADCCLK                STM32_SYSCLK
+
 #else
 #error "invalid source selected for ADC clock"
 #endif
@@ -1697,8 +1763,10 @@
  */
 #if (STM32_SWPMI1SEL == STM32_SWPMI1SEL_PCLK1) || defined(__DOXYGEN__)
 #define STM32_SWPMI1CLK             STM32_PCLK1
+
 #elif STM32_SWPMI1SEL == STM32_SWPMI1SEL_HSI16
 #define STM32_SWPMI1CLK             STM32_HSI16CLK
+
 #else
 #error "invalid source selected for SWPMI1 clock"
 #endif
@@ -1708,8 +1776,10 @@
  */
 #if (STM32_DFSDMSEL == STM32_DFSDMSEL_PCLK2) || defined(__DOXYGEN__)
 #define STM32_DFSDMCLK              STM32_PCLK2
+
 #elif STM32_DFSDMSEL == STM32_DFSDMSEL_SYSCLK
 #define STM32_DFSDMCLK              STM32_SYSCLK
+
 #else
 #error "invalid source selected for DFSDM clock"
 #endif
@@ -1724,6 +1794,7 @@
  */
 #if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK1               (STM32_PCLK1 * 1)
+
 #else
 #define STM32_TIMCLK1               (STM32_PCLK1 * 2)
 #endif
@@ -1733,6 +1804,7 @@
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
 #define STM32_TIMCLK2               (STM32_PCLK2 * 1)
+
 #else
 #define STM32_TIMCLK2               (STM32_PCLK2 * 2)
 #endif
