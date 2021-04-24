@@ -1285,6 +1285,14 @@
 #error "PLLSAI1 activation required but no PLL clock selected"
 #endif
 
+/**
+ * @brief   PLLSAI1 activation flag.
+ */
+#define STM32_ACTIVATE_PLLSAI1      TRUE
+#else
+#define STM32_ACTIVATE_PLLSAI1      FALSE
+#endif
+
 /*
  * PLLSAI2 enable check.
  */
@@ -1295,14 +1303,6 @@
 
 #if STM32_PLLCLKIN == 0
 #error "PLLSAI2 activation required but no PLL clock selected"
-#endif
-
-/**
- * @brief   PLLSAI1 activation flag.
- */
-#define STM32_ACTIVATE_PLLSAI1      TRUE
-#else
-#define STM32_ACTIVATE_PLLSAI1      FALSE
 #endif
 
 /**
