@@ -48,9 +48,10 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32L432xx) || defined(STM32L433xx) || defined(STM32L443xx) || \
-    defined(STM32L452xx) || defined(STM32L471xx) || defined(STM32L475xx) || \
-    defined(STM32L476xx) || defined(STM32L496xx) || defined(__DOXYGEN__)
+#if defined(STM32L422xx) || defined(STM32L432xx) || defined(STM32L433xx) || \
+    defined(STM32L443xx) || defined(STM32L452xx) || defined(STM32L471xx) || \
+    defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L496xx) || \
+    defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32L4xx Ultra Low Power"
 
 #elif defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx)
