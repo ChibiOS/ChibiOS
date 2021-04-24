@@ -911,20 +911,6 @@
  */
 #if STM32_HSE_ENABLED
 
-  #if STM32_HSECLK == 0
-    #error "HSE frequency not defined"
-  #else /* STM32_HSECLK != 0 */
-    #if defined(STM32_HSE_BYPASS)
-      #if (STM32_HSECLK < STM32_HSECLK_BYP_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)
-        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_BYP_MIN...STM32_HSECLK_BYP_MAX)"
-      #endif
-    #else /* !defined(STM32_HSE_BYPASS) */
-      #if (STM32_HSECLK < STM32_HSECLK_MIN) || (STM32_HSECLK > STM32_HSECLK_MAX)
-        #error "STM32_HSECLK outside acceptable range (STM32_HSECLK_MIN...STM32_HSECLK_MAX)"
-      #endif
-    #endif /* !defined(STM32_HSE_BYPASS) */
-  #endif /* STM32_HSECLK != 0 */
-
 #else /* !STM32_HSE_ENABLED */
 
   #if STM32_SW == STM32_SW_HSE
