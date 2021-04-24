@@ -1180,15 +1180,11 @@
     (STM32_SAI1SEL == STM32_SAI1SEL_PLL) ||                                 \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLL) ||                                 \
     defined(__DOXYGEN__)
-
-#if STM32_PLLCLKIN == 0
-#error "PLL activation required but no PLL clock selected"
-#endif
-
 /**
  * @brief   PLL activation flag.
  */
 #define STM32_ACTIVATE_PLL          TRUE
+
 #else
 #define STM32_ACTIVATE_PLL          FALSE
 #endif
@@ -1200,6 +1196,7 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLL) ||                                 \
     defined(__DOXYGEN__)
 #define STM32_PLLPEN                (1 << 16)
+
 #else
 #define STM32_PLLPEN                (0 << 16)
 #endif
@@ -1209,6 +1206,7 @@
  */
 #if (STM32_CLK48SEL == STM32_CLK48SEL_PLL) || defined(__DOXYGEN__)
 #define STM32_PLLQEN                (1 << 20)
+
 #else
 #define STM32_PLLQEN                (0 << 20)
 #endif
@@ -1220,6 +1218,7 @@
     (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
     defined(__DOXYGEN__)
 #define STM32_PLLREN                (1 << 24)
+
 #else
 #define STM32_PLLREN                (0 << 24)
 #endif
@@ -1262,15 +1261,11 @@
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) ||                           \
     (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) ||                               \
     defined(__DOXYGEN__)
-
-#if STM32_PLLCLKIN == 0
-#error "PLLSAI1 activation required but no PLL clock selected"
-#endif
-
 /**
  * @brief   PLLSAI1 activation flag.
  */
 #define STM32_ACTIVATE_PLLSAI1      TRUE
+
 #else
 #define STM32_ACTIVATE_PLLSAI1      FALSE
 #endif
@@ -1282,15 +1277,11 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2) ||                             \
     (STM32_ADCSEL == STM32_ADCSEL_PLLSAI2) ||                               \
     defined(__DOXYGEN__)
-
-#if STM32_PLLCLKIN == 0
-#error "PLLSAI2 activation required but no PLL clock selected"
-#endif
-
 /**
  * @brief   PLLSAI2 activation flag.
  */
 #define STM32_ACTIVATE_PLLSAI2      TRUE
+
 #else
 #define STM32_ACTIVATE_PLLSAI2      FALSE
 #endif
@@ -1302,6 +1293,7 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) ||                             \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI1PEN            (1 << 16)
+
 #else
 #define STM32_PLLSAI1PEN            (0 << 16)
 #endif
@@ -1311,6 +1303,7 @@
  */
 #if (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) || defined(__DOXYGEN__)
 #define STM32_PLLSAI1QEN            (1 << 20)
+
 #else
 #define STM32_PLLSAI1QEN            (0 << 20)
 #endif
@@ -1320,6 +1313,7 @@
  */
 #if (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) || defined(__DOXYGEN__)
 #define STM32_PLLSAI1REN            (1 << 24)
+
 #else
 #define STM32_PLLSAI1REN            (0 << 24)
 #endif
@@ -1331,6 +1325,7 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2) ||                             \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI2PEN            (1 << 16)
+
 #else
 #define STM32_PLLSAI2PEN            (0 << 16)
 #endif
@@ -1340,6 +1335,7 @@
  */
 #if (STM32_ADCSEL == STM32_ADCSEL_PLLSAI2) || defined(__DOXYGEN__)
 #define STM32_PLLSAI2REN            (1 << 24)
+
 #else
 #define STM32_PLLSAI2REN            (0 << 24)
 #endif
