@@ -203,12 +203,12 @@ void spi_lld_start(SPIDriver *spip) {
     }
 
     /* DMA setup.*/
-    dmaChannelSetDestinationX(spip->dmarx, (uint32_t)&spip->spi->SSPDR);
-    dmaChannelSetSourceX(spip->dmatx, (uint32_t)&spip->spi->SSPDR);
+    dmaChannelSetSourceX(spip->dmarx, (uint32_t)&spip->spi->SSPDR);
+    dmaChannelSetDestinationX(spip->dmatx, (uint32_t)&spip->spi->SSPDR);
   }
 
   /* Configuration-dependent DMA settings.*/
-  dss = (spip->config->SSPCR0 & SPI_SSPCR0_DSS_Msk) >> SPI_SSPCR0_DSS_Pos;
+  dss = (spip->config->SSPCR0 & SPI_SSPCR0_DSS_Msk)/* >> SPI_SSPCR0_DSS_Pos*/;
   if (dss <= SPI_SSPCR0_DSS_8BIT) {
     /* Frame width is 8 bits or smaller.*/
     spip->rxdmamode = (spip->rxdmamode & ~DMA_CTRL_TRIG_DATA_SIZE_Msk) |

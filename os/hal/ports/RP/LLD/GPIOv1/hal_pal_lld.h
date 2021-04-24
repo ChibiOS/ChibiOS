@@ -109,6 +109,7 @@
 #define PAL_MODE_ALTERNATE_SIO              (PAL_MODE_ALTERNATE(5U))
 #define PAL_MODE_ALTERNATE_PIO0             (PAL_MODE_ALTERNATE(6U))
 #define PAL_MODE_ALTERNATE_PIO1             (PAL_MODE_ALTERNATE(7U))
+#define PAL_MODE_ALTERNATE_CLK              (PAL_MODE_ALTERNATE(8U))
 #define PAL_MODE_ALTERNATE_USB              (PAL_MODE_ALTERNATE(9U))
 /** @} */
 
@@ -388,7 +389,7 @@ __STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
 
   ctrlbits = (mode & 0x007FFFFFU) >> 0U;
   oebits   = (mode & 0x00800000U) >> 23U;
-  padbits  = (mode & 0xF0000000U) >> 24;
+  padbits  = (mode & 0xF0000000U) >> 24U;
 
   /* Setting up GPIO direction first.*/
   if (oebits != 0U) {
