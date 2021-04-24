@@ -121,6 +121,7 @@ void hal_lld_init(void) {
  */
 void stm32_clock_init(void) {
 
+#if !STM32_NO_INIT
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
@@ -140,7 +141,7 @@ void stm32_clock_init(void) {
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, true);
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
 
   /* Core voltage setup, backup domain access enabled and left open.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
@@ -238,6 +239,7 @@ void stm32_clock_init(void) {
            (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
     }
   }
+#endif /* STM32_NO_INIT */
 }
 
 /** @} */
