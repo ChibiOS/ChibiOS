@@ -47,6 +47,29 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Remote replica of @p chSysHalt().
+ * @note    The difference is that it does not change the system state and
+ *          does not call the port hook again.
+ */
+void port_local_halt(void) {
+
+  port_disable();
+
+  /* Logging the event.*/
+  __trace_halt("remote panic");
+
+  /* Pointing to the passed message.*/
+  currcore->dbg.panic_msg = "remote panic";
+
+  /* Halt hook code, usually empty.*/
+  CH_CFG_SYSTEM_HALT_HOOK(reason);
+
+  /* Harmless infinite loop.*/
+  while (true) {
+  }
+}
+
 /*===========================================================================*/
 /* Module interrupt handlers.                                                */
 /*===========================================================================*/
@@ -150,12 +173,13 @@ CH_IRQ_HANDLER(Vector80) {
   /* Read FIFO is fully emptied.*/
   while ((SIO->FIFO_ST & SIO_FIFO_ST_VLD) != 0U) {
     uint32_t message = SIO->FIFO_RD;
+    if (message == PORT_FIFO_PANIC_MESSAGE) {
+      port_local_halt();
+    }
 #if defined(PORT_HANDLE_FIFO_MESSAGE)
     if (message != PORT_FIFO_RESCHEDULE_MESSAGE) {
       PORT_HANDLE_FIFO_MESSAGE(0U, message);
     }
-#else
-    (void)message;
 #endif
   }
 

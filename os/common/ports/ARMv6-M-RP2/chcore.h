@@ -92,11 +92,14 @@
  * @brief   Port-related fields added to the OS instance structure.
  */
 #define PORT_INSTANCE_EXTRA_FIELDS
+/** @} */
 
 /**
- * @brief   Reschedule message sent through IPC FIFOs.
+ * @brief   IPC messages
+ * @{
  */
 #define PORT_FIFO_RESCHEDULE_MESSAGE    0xFFFFFFFFU
+#define PORT_FIFO_PANIC_MESSAGE         0xFFFFFFFEU
 /** @} */
 
 /**
@@ -458,6 +461,15 @@ struct port_context {
     __port_switch(ntp, otp);                                                \
   } while (0)
 #endif
+
+/**
+ * @brief   Panic notification.
+ * @note    It is sent without polling for FIFO space because the other side
+ *          could be unable to empty the FIFO after a catastrophic error.
+ */
+#define PORT_SYSTEM_HALT_HOOK() do {                                        \
+    SIO->FIFO_WR = PORT_FIFO_PANIC_MESSAGE;                                 \
+  } while (false)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
