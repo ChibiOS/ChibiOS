@@ -135,6 +135,8 @@
 - NEW: Added latency measurement test application.
 - FIX: Fixed STM32G431 DMA defines error (bug #1155)
        (backported to 20.3.4).
+- FIX: Fixed wrong checks related to PLLSAI2 on L4 and L4+ (bug #1156)
+       (backported to 20.3.4)(backported to 19.1.5).
 - FIX: Fixed errors in STM32L4xx registry (bug #1154)
        (backported to 20.3.4)(backported to 19.1.5).
 - FIX: Fixed QUADSPI errata fix applied to all platforms (bug #1153)
