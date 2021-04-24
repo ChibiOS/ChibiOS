@@ -81,27 +81,28 @@
 #define STM32_HAS_ICACHE                    TRUE
 
 /* RCC attributes.*/
-#define STM32_HAS_HSI16                     TRUE
-#define STM32_HAS_HSI48                     TRUE
-#define STM32_HAS_MSI                       TRUE
-#define STM32_HAS_LSI                       TRUE
-#define STM32_HAS_LSE                       TRUE
-#define STM32_HAS_HSE                       TRUE
+#define STM32_RCC_HAS_HSI16                 TRUE
+#define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
 
-#define STM32_HAS_PLL                       TRUE
-#define STM32_PLL_HAS_P                     TRUE
-#define STM32_PLL_HAS_Q                     TRUE
-#define STM32_PLL_HAS_R                     TRUE
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
 
-#define STM32_HAS_PLLSAI1                   TRUE
-#define STM32_PLLSAI1_HAS_P                 TRUE
-#define STM32_PLLSAI1_HAS_Q                 TRUE
-#define STM32_PLLSAI1_HAS_R                 TRUE
+#define STM32_RCC_HAS_PLLSAI1               TRUE
+#define STM32_RCC_PLLSAI1_HAS_P             TRUE
+#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
+#define STM32_RCC_PLLSAI1_HAS_R             TRUE
 
-#define STM32_HAS_PLLSAI2                   TRUE
-#define STM32_PLLSAI2_HAS_P                 TRUE
-#define STM32_PLLSAI2_HAS_Q                 FALSE
-#define STM32_PLLSAI2_HAS_R                 FALSE
+#define STM32_RCC_HAS_PLLSAI2               TRUE
+#define STM32_RCC_PLLSAI2_HAS_P             TRUE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
