@@ -67,15 +67,6 @@
 /** @} */
 
 /**
- * @name    Internal clock sources
- * @{
- */
-#define STM32_HSI16CLK          16000000    /**< 16MHz internal clock.      */
-#define STM32_HSI48CLK          48000000    /**< 48MHz internal clock.      */
-#define STM32_LSICLK            32000       /**< Low speed internal clock.  */
-/** @} */
-
-/**
  * @name    PWR_CR1 register bits definitions
  * @{
  */
