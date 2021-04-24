@@ -124,6 +124,10 @@
 #error "STM32_PLLREN not defined in hal_lld.h"
 #endif
 
+#if STM32_ACTIVATE_PLL && (STM32_PLLCLKIN == 0)
+#error "PLL activation required but no PLL clock selected"
+#endif
+
 #if (STM32_PLLCLKIN != 0) &&                                                \
     ((STM32_PLLCLKIN < STM32_PLLIN_MIN) || (STM32_PLLCLKIN > STM32_PLLIN_MAX))
 #error "STM32_PLLCLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"

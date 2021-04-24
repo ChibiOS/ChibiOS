@@ -70,7 +70,7 @@
  * @name    Internal clock sources
  * @{
  */
-#define STM32_HSI16CLK          16000000    /**< 16MHz internal clock.  */
+#define STM32_HSI16CLK          16000000    /**< 16MHz internal clock.      */
 #define STM32_HSI48CLK          48000000    /**< 48MHz internal clock.      */
 #define STM32_LSICLK            32000       /**< Low speed internal clock.  */
 /** @} */
@@ -100,25 +100,6 @@
 /** @} */
 
 /**
- * @name    RCC_CR register bits definitions
- * @{
- */
-#define STM32_MSIRANGE_MASK     (15 << 4)   /**< MSIRANGE field mask.       */
-#define STM32_MSIRANGE_100K     (0 << 4)    /**< 100kHz nominal.            */
-#define STM32_MSIRANGE_200K     (1 << 4)    /**< 200kHz nominal.            */
-#define STM32_MSIRANGE_400K     (2 << 4)    /**< 400kHz nominal.            */
-#define STM32_MSIRANGE_800K     (3 << 4)    /**< 800kHz nominal.            */
-#define STM32_MSIRANGE_1M       (4 << 4)    /**< 1MHz nominal.              */
-#define STM32_MSIRANGE_2M       (5 << 4)    /**< 2MHz nominal.              */
-#define STM32_MSIRANGE_4M       (6 << 4)    /**< 4MHz nominal.              */
-#define STM32_MSIRANGE_8M       (7 << 4)    /**< 8MHz nominal.              */
-#define STM32_MSIRANGE_16M      (8 << 4)    /**< 16MHz nominal.             */
-#define STM32_MSIRANGE_24M      (9 << 4)    /**< 24MHz nominal.             */
-#define STM32_MSIRANGE_32M      (10 << 4)   /**< 32MHz nominal.             */
-#define STM32_MSIRANGE_48M      (11 << 4)   /**< 48MHz nominal.             */
-/** @} */
-
-/**
  * @name    RCC_CFGR register bits definitions
  * @{
  */
@@ -127,31 +108,6 @@
 #define STM32_SW_HSI16          (1 << 0)    /**< SYSCLK source is HSI.      */
 #define STM32_SW_HSE            (2 << 0)    /**< SYSCLK source is HSE.      */
 #define STM32_SW_PLL            (3 << 0)    /**< SYSCLK source is PLL.      */
-
-#define STM32_HPRE_MASK         (15 << 4)   /**< HPRE field mask.           */
-#define STM32_HPRE_DIV1         (0 << 4)    /**< SYSCLK divided by 1.       */
-#define STM32_HPRE_DIV2         (8 << 4)    /**< SYSCLK divided by 2.       */
-#define STM32_HPRE_DIV4         (9 << 4)    /**< SYSCLK divided by 4.       */
-#define STM32_HPRE_DIV8         (10 << 4)   /**< SYSCLK divided by 8.       */
-#define STM32_HPRE_DIV16        (11 << 4)   /**< SYSCLK divided by 16.      */
-#define STM32_HPRE_DIV64        (12 << 4)   /**< SYSCLK divided by 64.      */
-#define STM32_HPRE_DIV128       (13 << 4)   /**< SYSCLK divided by 128.     */
-#define STM32_HPRE_DIV256       (14 << 4)   /**< SYSCLK divided by 256.     */
-#define STM32_HPRE_DIV512       (15 << 4)   /**< SYSCLK divided by 512.     */
-
-#define STM32_PPRE1_MASK        (7 << 8)    /**< PPRE1 field mask.          */
-#define STM32_PPRE1_DIV1        (0 << 8)    /**< HCLK divided by 1.         */
-#define STM32_PPRE1_DIV2        (4 << 8)    /**< HCLK divided by 2.         */
-#define STM32_PPRE1_DIV4        (5 << 8)    /**< HCLK divided by 4.         */
-#define STM32_PPRE1_DIV8        (6 << 8)    /**< HCLK divided by 8.         */
-#define STM32_PPRE1_DIV16       (7 << 8)    /**< HCLK divided by 16.        */
-
-#define STM32_PPRE2_MASK        (7 << 11)   /**< PPRE2 field mask.          */
-#define STM32_PPRE2_DIV1        (0 << 11)   /**< HCLK divided by 1.         */
-#define STM32_PPRE2_DIV2        (4 << 11)   /**< HCLK divided by 2.         */
-#define STM32_PPRE2_DIV4        (5 << 11)   /**< HCLK divided by 4.         */
-#define STM32_PPRE2_DIV8        (6 << 11)   /**< HCLK divided by 8.         */
-#define STM32_PPRE2_DIV16       (7 << 11)   /**< HCLK divided by 16.        */
 
 #define STM32_STOPWUCK_MASK     (1 << 15)   /**< STOPWUCK field mask.       */
 #define STM32_STOPWUCK_MSI      (0 << 15)   /**< Wakeup clock is MSI.       */
@@ -1049,51 +1005,13 @@
 #error "invalid STM32_VOS value specified"
 #endif
 
-/**
- * @brief   MSI frequency.
- */
-#if STM32_MSIRANGE == STM32_MSIRANGE_100K
-#define STM32_MSICLK                100000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_200K
-#define STM32_MSICLK                200000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_400K
-#define STM32_MSICLK                400000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_800K
-#define STM32_MSICLK                800000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_1M
-#define STM32_MSICLK                1000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_2M
-#define STM32_MSICLK                2000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_4M
-#define STM32_MSICLK                4000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_8M
-#define STM32_MSICLK                8000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_16M
-#define STM32_MSICLK                16000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_24M
-#define STM32_MSICLK                24000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_32M
-#define STM32_MSICLK                32000000
-#elif STM32_MSIRANGE == STM32_MSIRANGE_48M
-#define STM32_MSICLK                48000000
-#else
-#error "invalid STM32_MSIRANGE value specified"
-#endif
-
-/**
- * @brief   MSIS frequency.
- */
-#if STM32_MSISRANGE == STM32_MSISRANGE_1M
-#define STM32_MSISCLK               1000000
-#elif STM32_MSISRANGE == STM32_MSISRANGE_2M
-#define STM32_MSISCLK               2000000
-#elif STM32_MSISRANGE == STM32_MSISRANGE_4M
-#define STM32_MSISCLK               4000000
-#elif STM32_MSISRANGE == STM32_MSISRANGE_8M
-#define STM32_MSISCLK               8000000
-#else
-#error "invalid STM32_MSISRANGE value specified"
-#endif
+/* Clock handlers.*/
+#include "stm32_lse.inc"
+#include "stm32_lsi.inc"
+#include "stm32_msi.inc"
+#include "stm32_hsi16.inc"
+#include "stm32_hsi48.inc"
+#include "stm32_hse.inc"
 
 /*
  * HSI16 related checks.
@@ -1124,8 +1042,8 @@
 #error "HSI16 not enabled, required by STM32_SAI1SEL"
 #endif
 
-#if ((STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI1) ||                            \
-     (STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI2)) &&                           \
+#if ((STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) ||                            \
+     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2)) &&                           \
     (STM32_PLLSRC == STM32_PLLSRC_HSI16)
 #error "HSI16 not enabled, required by STM32_SAI2SEL"
 #endif
@@ -1228,8 +1146,8 @@
       #error "HSE not enabled, required by STM32_SAI1SEL"
     #endif
 
-    #if ((STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI1) |                         \
-         (STM32_SAI2SEL == STM32_SAI1SEL_PLLSAI2)) &&                       \
+    #if ((STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) |                         \
+         (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2)) &&                       \
         (STM32_PLLSRC == STM32_PLLSRC_HSE)
       #error "HSE not enabled, required by STM32_SAI2SEL"
     #endif
@@ -1297,21 +1215,11 @@
  * MSI related checks.
  */
 #if (STM32_MSIRANGE == STM32_MSIRANGE_48M) && !STM32_MSIPLL_ENABLED
-#warning "STM32_MSIRANGE_48M should be used with STM32_MSIPLL_ENABLED"
+  #warning "STM32_MSIRANGE_48M should be used with STM32_MSIPLL_ENABLED"
 #endif
 
 /**
- * @brief   STM32_PLLM field.
- */
-#if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 16)) ||                \
-    defined(__DOXYGEN__)
-#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << 4)
-#else
-#error "invalid STM32_PLLM_VALUE value specified"
-#endif
-
-/**
- * @brief   PLL input clock frequency.
+ * @brief   PLLs input clock frequency.
  */
 #if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
 #define STM32_PLLCLKIN              (STM32_HSECLK / STM32_PLLM_VALUE)
@@ -1330,14 +1238,6 @@
 #endif
 
 /*
- * PLL input frequency range check.
- */
-#if (STM32_PLLCLKIN != 0) &&                                                \
-    ((STM32_PLLCLKIN < STM32_PLLIN_MIN) || (STM32_PLLCLKIN > STM32_PLLIN_MAX))
-#error "STM32_PLLCLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
-#endif
-
-/*
  * PLL enable check.
  */
 #if (STM32_HSI48_ENABLED && (STM32_CLK48SEL == STM32_CLK48SEL_PLL)) ||      \
@@ -1346,89 +1246,13 @@
     (STM32_SAI1SEL == STM32_SAI1SEL_PLL) ||                                 \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLL) ||                                 \
     defined(__DOXYGEN__)
-
-#if STM32_PLLCLKIN == 0
-#error "PLL activation required but no PLL clock selected"
-#endif
-
 /**
  * @brief   PLL activation flag.
  */
 #define STM32_ACTIVATE_PLL          TRUE
 #else
+
 #define STM32_ACTIVATE_PLL          FALSE
-#endif
-
-/**
- * @brief   STM32_PLLN field.
- */
-#if ((STM32_PLLN_VALUE >= 8) && (STM32_PLLN_VALUE <= 127)) ||               \
-    defined(__DOXYGEN__)
-#define STM32_PLLN                  (STM32_PLLN_VALUE << 8)
-#else
-#error "invalid STM32_PLLN_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLP field.
- */
-#if (STM32_PLLP_VALUE == 7) || defined(__DOXYGEN__)
-#define STM32_PLLP                  (0 << 17)
-
-#elif STM32_PLLP_VALUE == 17
-#define STM32_PLLP                  (1 << 17)
-
-#else
-#error "invalid STM32_PLLP_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLQ field.
- */
-#if (STM32_PLLQ_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLLQ                  (0 << 21)
-
-#elif STM32_PLLQ_VALUE == 4
-#define STM32_PLLQ                  (1 << 21)
-
-#elif STM32_PLLQ_VALUE == 6
-#define STM32_PLLQ                  (2 << 21)
-
-#elif STM32_PLLQ_VALUE == 8
-#define STM32_PLLQ                  (3 << 21)
-
-#else
-#error "invalid STM32_PLLQ_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLR field.
- */
-#if (STM32_PLLR_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLLR                  (0 << 25)
-
-#elif STM32_PLLR_VALUE == 4
-#define STM32_PLLR                  (1 << 25)
-
-#elif STM32_PLLR_VALUE == 6
-#define STM32_PLLR                  (2 << 25)
-
-#elif STM32_PLLR_VALUE == 8
-#define STM32_PLLR                  (3 << 25)
-
-#else
-#error "invalid STM32_PLLR_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLPDIV field.
- */
-#if (STM32_PLLPDIV_VALUE == 0) ||                                           \
-    ((STM32_PLLPDIV_VALUE != 1) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
-    defined(__DOXYGEN__)
-#define STM32_PLLPDIV               (STM32_PLLPDIV_VALUE << 27)
-#else
-#error "invalid STM32_PLLPDIV_VALUE value specified"
 #endif
 
 /**
@@ -1438,6 +1262,7 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLL) ||                                 \
     defined(__DOXYGEN__)
 #define STM32_PLLPEN                (1 << 16)
+
 #else
 #define STM32_PLLPEN                (0 << 16)
 #endif
@@ -1447,6 +1272,7 @@
  */
 #if (STM32_CLK48SEL == STM32_CLK48SEL_PLL) || defined(__DOXYGEN__)
 #define STM32_PLLQEN                (1 << 20)
+
 #else
 #define STM32_PLLQEN                (0 << 20)
 #endif
@@ -1458,65 +1284,13 @@
     (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
     defined(__DOXYGEN__)
 #define STM32_PLLREN                (1 << 24)
+
 #else
 #define STM32_PLLREN                (0 << 24)
 #endif
 
-/**
- * @brief   PLL VCO frequency.
- */
-#define STM32_PLLVCO                (STM32_PLLCLKIN * STM32_PLLN_VALUE)
-
-/*
- * PLL VCO frequency range check.
- */
-#if STM32_ACTIVATE_PLL &&                                                   \
-    ((STM32_PLLVCO < STM32_PLLVCO_MIN) || (STM32_PLLVCO > STM32_PLLVCO_MAX))
-#error "STM32_PLLVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
-#endif
-
-/**
- * @brief   PLL P output clock frequency.
- */
-#if (STM32_PLLPDIV_VALUE == 0) || defined(__DOXYGEN__)
-#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLP_VALUE)
-#else
-#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLPDIV_VALUE)
-#endif
-
-/**
- * @brief   PLL Q output clock frequency.
- */
-#define STM32_PLL_Q_CLKOUT          (STM32_PLLVCO / STM32_PLLQ_VALUE)
-
-/**
- * @brief   PLL R output clock frequency.
- */
-#define STM32_PLL_R_CLKOUT          (STM32_PLLVCO / STM32_PLLR_VALUE)
-
-/*
- * PLL-P output frequency range check.
- */
-#if STM32_ACTIVATE_PLL &&                                                   \
-    ((STM32_PLL_P_CLKOUT < STM32_PLLP_MIN) || (STM32_PLL_P_CLKOUT > STM32_PLLP_MAX))
-#error "STM32_PLL_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
-#endif
-
-/*
- * PLL-Q output frequency range check.
- */
-#if STM32_ACTIVATE_PLL &&                                                   \
-    ((STM32_PLL_Q_CLKOUT < STM32_PLLQ_MIN) || (STM32_PLL_Q_CLKOUT > STM32_PLLQ_MAX))
-#error "STM32_PLL_Q_CLKOUT outside acceptable range (STM32_PLLQ_MIN...STM32_PLLQ_MAX)"
-#endif
-
-/*
- * PLL-R output frequency range check.
- */
-#if STM32_ACTIVATE_PLL &&                                                   \
-    ((STM32_PLL_R_CLKOUT < STM32_PLLR_MIN) || (STM32_PLL_R_CLKOUT > STM32_PLLR_MAX))
-#error "STM32_PLL_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
-#endif
+/* Inclusion of PLL-related checks and calculations.*/
+#include <stm32_pll.inc>
 
 /**
  * @brief   System clock source.
@@ -1540,147 +1314,10 @@
 #error "invalid STM32_SW value specified"
 #endif
 
-/* Check on the system clock.*/
-#if STM32_SYSCLK > STM32_SYSCLK_MAX
-#error "STM32_SYSCLK above maximum rated frequency (STM32_SYSCLK_MAX)"
-#endif
-
-/**
- * @brief   AHB frequency.
- */
-#if (STM32_HPRE == STM32_HPRE_DIV1) || defined(__DOXYGEN__)
-#define STM32_HCLK                  (STM32_SYSCLK / 1)
-
-#elif STM32_HPRE == STM32_HPRE_DIV2
-#define STM32_HCLK                  (STM32_SYSCLK / 2)
-
-#elif STM32_HPRE == STM32_HPRE_DIV4
-#define STM32_HCLK                  (STM32_SYSCLK / 4)
-
-#elif STM32_HPRE == STM32_HPRE_DIV8
-#define STM32_HCLK                  (STM32_SYSCLK / 8)
-
-#elif STM32_HPRE == STM32_HPRE_DIV16
-#define STM32_HCLK                  (STM32_SYSCLK / 16)
-
-#elif STM32_HPRE == STM32_HPRE_DIV64
-#define STM32_HCLK                  (STM32_SYSCLK / 64)
-
-#elif STM32_HPRE == STM32_HPRE_DIV128
-#define STM32_HCLK                  (STM32_SYSCLK / 128)
-
-#elif STM32_HPRE == STM32_HPRE_DIV256
-#define STM32_HCLK                  (STM32_SYSCLK / 256)
-
-#elif STM32_HPRE == STM32_HPRE_DIV512
-#define STM32_HCLK                  (STM32_SYSCLK / 512)
-
-#else
-#error "invalid STM32_HPRE value specified"
-#endif
-
-/*
- * AHB frequency check.
- */
-#if STM32_HCLK > STM32_SYSCLK_MAX
-#error "STM32_HCLK exceeding maximum frequency (STM32_SYSCLK_MAX)"
-#endif
-
-/**
- * @brief   APB1 frequency.
- */
-#if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK1                 (STM32_HCLK / 1)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV2
-#define STM32_PCLK1                 (STM32_HCLK / 2)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV4
-#define STM32_PCLK1                 (STM32_HCLK / 4)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV8
-#define STM32_PCLK1                 (STM32_HCLK / 8)
-
-#elif STM32_PPRE1 == STM32_PPRE1_DIV16
-#define STM32_PCLK1                 (STM32_HCLK / 16)
-
-#else
-#error "invalid STM32_PPRE1 value specified"
-#endif
-
-/*
- * APB1 frequency check.
- */
-#if STM32_PCLK1 > STM32_PCLK1_MAX
-#error "STM32_PCLK1 exceeding maximum frequency (STM32_PCLK1_MAX)"
-#endif
-
-/**
- * @brief   APB2 frequency.
- */
-#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK2                 (STM32_HCLK / 1)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV2
-#define STM32_PCLK2                 (STM32_HCLK / 2)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV4
-#define STM32_PCLK2                 (STM32_HCLK / 4)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV8
-#define STM32_PCLK2                 (STM32_HCLK / 8)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV16
-#define STM32_PCLK2                 (STM32_HCLK / 16)
-
-#else
-#error "invalid STM32_PPRE2 value specified"
-#endif
-
-/*
- * APB2 frequency check.
- */
-#if STM32_PCLK2 > STM32_PCLK2_MAX
-#error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
-#endif
-
-/**
- * @brief   STM32_PLLSAI1M field.
- */
-#if ((STM32_PLLSAI1M_VALUE >= 1) && (STM32_PLLSAI1M_VALUE <= 16)) ||        \
-    defined(__DOXYGEN__)
-#define STM32_PLLSAI1M              ((STM32_PLLSAI1M_VALUE - 1) << 4)
-#else
-#error "invalid STM32_PLLSAI1M_VALUE value specified"
-#endif
-
-/**
- * @brief   PLLSAI1 input clock frequency.
- */
-#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1CLKIN          (STM32_HSECLK / STM32_PLLSAI1M_VALUE)
-
-#elif STM32_PLLSRC == STM32_PLLSRC_MSI
-#define STM32_PLLSAI1CLKIN          (STM32_MSICLK / STM32_PLLSAI1M_VALUE)
-
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI16
-#define STM32_PLLSAI1CLKIN          (STM32_HSI16CLK / STM32_PLLSAI1M_VALUE)
-
-#elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
-#define STM32_PLLSAI1CLKIN          0
-
-#else
-#error "invalid STM32_PLLSRC value specified"
-#endif
-
-/*
- * PLLSAI1 input frequency range check.
- */
-#if (STM32_PLLSAI1CLKIN != 0) &&                                            \
-    ((STM32_PLLSAI1CLKIN < STM32_PLLIN_MIN) ||                              \
-     (STM32_PLLSAI1CLKIN > STM32_PLLIN_MAX))
-#error "STM32_PLLSAI1CLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
-#endif
+/* Bus handlers.*/
+#include "stm32_ahb.inc"
+#include "stm32_apb1.inc"
+#include "stm32_apb2.inc"
 
 /*
  * PLLSAI1 enable check.
@@ -1690,88 +1327,28 @@
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) ||                           \
     (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) ||                               \
     defined(__DOXYGEN__)
-
-#if STM32_PLLSAI1CLKIN == 0
-#error "PLLSAI1 activation required but no PLL clock selected"
-#endif
-
 /**
  * @brief   PLLSAI1 activation flag.
  */
 #define STM32_ACTIVATE_PLLSAI1      TRUE
+
 #else
 #define STM32_ACTIVATE_PLLSAI1      FALSE
 #endif
 
-/**
- * @brief   STM32_PLLSAI1N field.
+/*
+ * PLLSAI2 enable check.
  */
-#if ((STM32_PLLSAI1N_VALUE >= 8) && (STM32_PLLSAI1N_VALUE <= 127)) ||       \
+#if (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2) ||                             \
+    (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2) ||                             \
     defined(__DOXYGEN__)
-#define STM32_PLLSAI1N               (STM32_PLLSAI1N_VALUE << 8)
-#else
-#error "invalid STM32_PLLSAI1N_VALUE value specified"
-#endif
-
 /**
- * @brief   STM32_PLLSAI1P field.
+ * @brief   PLLSAI2 activation flag.
  */
-#if (STM32_PLLSAI1P_VALUE == 7) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1P              (0 << 17)
-
-#elif STM32_PLLSAI1P_VALUE == 17
-#define STM32_PLLSAI1P              (1 << 17)
+#define STM32_ACTIVATE_PLLSAI2      TRUE
 
 #else
-#error "invalid STM32_PLLSAI1P_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLSAI1Q field.
- */
-#if (STM32_PLLSAI1Q_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1Q              (0 << 21)
-
-#elif STM32_PLLSAI1Q_VALUE == 4
-#define STM32_PLLSAI1Q              (1 << 21)
-
-#elif STM32_PLLSAI1Q_VALUE == 6
-#define STM32_PLLSAI1Q              (2 << 21)
-
-#elif STM32_PLLSAI1Q_VALUE == 8
-#define STM32_PLLSAI1Q              (3 << 21)
-
-#else
-#error "invalid STM32_PLLSAI1Q_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLSAI1R field.
- */
-#if (STM32_PLLSAI1R_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1R              (0 << 25)
-
-#elif STM32_PLLSAI1R_VALUE == 4
-#define STM32_PLLSAI1R              (1 << 25)
-
-#elif STM32_PLLSAI1R_VALUE == 6
-#define STM32_PLLSAI1R              (2 << 25)
-
-#elif STM32_PLLSAI1R_VALUE == 8
-#define STM32_PLLSAI1R              (3 << 25)
-
-#else
-#error "invalid STM32_PLLSAI1R_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLSAI1PDIV field.
- */
-#if ((STM32_PLLSAI1PDIV_VALUE != 1) && (STM32_PLLSAI1PDIV_VALUE <= 31)) ||  \
-    defined(__DOXYGEN__)
-#define STM32_PLLSAI1PDIV           (STM32_PLLSAI1PDIV_VALUE << 27)
-#else
-#error "invalid STM32_PLLSAI1PDIV_VALUE value specified"
+#define STM32_ACTIVATE_PLLSAI2      FALSE
 #endif
 
 /**
@@ -1781,6 +1358,7 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) ||                             \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI1PEN            (1 << 16)
+
 #else
 #define STM32_PLLSAI1PEN            (0 << 16)
 #endif
@@ -1790,6 +1368,7 @@
  */
 #if (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) || defined(__DOXYGEN__)
 #define STM32_PLLSAI1QEN            (1 << 20)
+
 #else
 #define STM32_PLLSAI1QEN            (0 << 20)
 #endif
@@ -1799,174 +1378,9 @@
  */
 #if (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) || defined(__DOXYGEN__)
 #define STM32_PLLSAI1REN            (1 << 24)
+
 #else
 #define STM32_PLLSAI1REN            (0 << 24)
-#endif
-
-/**
- * @brief   PLLSAI1 VCO frequency.
- */
-#define STM32_PLLSAI1VCO             (STM32_PLLSAI1CLKIN * STM32_PLLSAI1N_VALUE)
-
-/*
- * PLLSAI1 VCO frequency range check.
- */
-#if STM32_ACTIVATE_PLLSAI1 &&                                               \
-    ((STM32_PLLSAI1VCO < STM32_PLLVCO_MIN) || (STM32_PLLSAI1VCO > STM32_PLLVCO_MAX))
-#error "STM32_PLLSAI1VCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
-#endif
-
-/**
- * @brief   PLLSAI1-P output clock frequency.
- */
-#if (STM32_PLLSAI1PDIV_VALUE == 0) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1_P_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1P_VALUE)
-#else
-#define STM32_PLLSAI1_P_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1PDIV_VALUE)
-#endif
-
-/**
- * @brief   PLLSAI1-Q output clock frequency.
- */
-#define STM32_PLLSAI1_Q_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1Q_VALUE)
-
-/**
- * @brief   PLLSAI1-R output clock frequency.
- */
-#define STM32_PLLSAI1_R_CLKOUT      (STM32_PLLSAI1VCO / STM32_PLLSAI1R_VALUE)
-
-/*
- * PLLSAI1-P output frequency range check.
- */
-#if STM32_ACTIVATE_PLLSAI1 &&                                               \
-    ((STM32_PLLSAI1_P_CLKOUT < STM32_PLLP_MIN) || (STM32_PLLSAI1_P_CLKOUT > STM32_PLLP_MAX))
-#error "STM32_PLLSAI1_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
-#endif
-
-/*
- * PLLSAI1-Q output frequency range check.
- */
-#if STM32_ACTIVATE_PLLSAI1 &&                                               \
-    ((STM32_PLLSAI1_Q_CLKOUT < STM32_PLLQ_MIN) || (STM32_PLLSAI1_Q_CLKOUT > STM32_PLLQ_MAX))
-#error "STM32_PLLSAI1_Q_CLKOUT outside acceptable range (STM32_PLLQ_MIN...STM32_PLLQ_MAX)"
-#endif
-
-/*
- * PLLSAI1-R output frequency range check.
- */
-#if STM32_ACTIVATE_PLLSAI1 &&                                               \
-    ((STM32_PLLSAI1_R_CLKOUT < STM32_PLLR_MIN) || (STM32_PLLSAI1_R_CLKOUT > STM32_PLLR_MAX))
-#error "STM32_PLLSAI1_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
-#endif
-
-/**
- * @brief   STM32_PLLSAI2M field.
- */
-#if ((STM32_PLLSAI2M_VALUE >= 1) && (STM32_PLLSAI2M_VALUE <= 16)) ||        \
-    defined(__DOXYGEN__)
-#define STM32_PLLSAI2M              ((STM32_PLLSAI2M_VALUE - 1) << 4)
-#else
-#error "invalid STM32_PLLSAI2M_VALUE value specified"
-#endif
-
-/**
- * @brief   PLLSAI2 input clock frequency.
- */
-#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2CLKIN          (STM32_HSECLK / STM32_PLLSAI2M_VALUE)
-
-#elif STM32_PLLSRC == STM32_PLLSRC_MSI
-#define STM32_PLLSAI2CLKIN          (STM32_MSICLK / STM32_PLLSAI2M_VALUE)
-
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI16
-#define STM32_PLLSAI2CLKIN          (STM32_HSI16CLK / STM32_PLLSAI2M_VALUE)
-
-#elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
-#define STM32_PLLSAI2CLKIN          0
-
-#else
-#error "invalid STM32_PLLSRC value specified"
-#endif
-
-/*
- * PLLSAI2 input frequency range check.
- */
-#if (STM32_PLLSAI2CLKIN != 0) &&                                            \
-    ((STM32_PLLSAI2CLKIN < STM32_PLLIN_MIN) ||                              \
-     (STM32_PLLSAI2CLKIN > STM32_PLLIN_MAX))
-#error "STM32_PLLSAI2CLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
-#endif
-
-/*
- * PLLSAI2 enable check.
- */
-#if (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2) ||                             \
-    (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2) ||                             \
-    (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1) ||                               \
-    defined(__DOXYGEN__)
-
-#if STM32_PLLSAI2CLKIN == 0
-#error "PLLSAI2 activation required but no PLL clock selected"
-#endif
-
-/**
- * @brief   PLLSAI2 activation flag.
- */
-#define STM32_ACTIVATE_PLLSAI2      TRUE
-#else
-#define STM32_ACTIVATE_PLLSAI2      FALSE
-#endif
-
-/**
- * @brief   STM32_PLLSAI2N field.
- */
-#if ((STM32_PLLSAI2N_VALUE >= 8) && (STM32_PLLSAI2N_VALUE <= 127)) ||       \
-    defined(__DOXYGEN__)
-#define STM32_PLLSAI2N               (STM32_PLLSAI2N_VALUE << 8)
-#else
-#error "invalid STM32_PLLSAI2N_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLSAI2P field.
- */
-#if (STM32_PLLSAI2P_VALUE == 7) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2P              (0 << 17)
-
-#elif STM32_PLLSAI2P_VALUE == 17
-#define STM32_PLLSAI2P              (1 << 17)
-
-#else
-#error "invalid STM32_PLLSAI2P_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLSAI2R field.
- */
-#if (STM32_PLLSAI2R_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2R              (0 << 25)
-
-#elif STM32_PLLSAI2R_VALUE == 4
-#define STM32_PLLSAI2R              (1 << 25)
-
-#elif STM32_PLLSAI2R_VALUE == 6
-#define STM32_PLLSAI2R              (2 << 25)
-
-#elif STM32_PLLSAI2R_VALUE == 8
-#define STM32_PLLSAI2R              (3 << 25)
-
-#else
-#error "invalid STM32_PLLSAI2R_VALUE value specified"
-#endif
-
-/**
- * @brief   STM32_PLLSAI2PDIV field.
- */
-#if ((STM32_PLLSAI2PDIV_VALUE != 1) && (STM32_PLLSAI2PDIV_VALUE <= 31)) ||  \
-    defined(__DOXYGEN__)
-#define STM32_PLLSAI2PDIV           (STM32_PLLSAI2PDIV_VALUE << 27)
-#else
-#error "invalid STM32_PLLSAI2PDIV_VALUE value specified"
 #endif
 
 /**
@@ -1976,9 +1390,17 @@
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2) ||                             \
     defined(__DOXYGEN__)
 #define STM32_PLLSAI2PEN            (1 << 16)
+
 #else
 #define STM32_PLLSAI2PEN            (0 << 16)
 #endif
+
+/**
+ * @brief   STM32_PLLSAI2QEN field.
+ * @note    Always enabled.
+ * @note    It should depend on some condition.
+ */
+#define STM32_PLLSAI2QEN            (1 << 20)
 
 /**
  * @brief   STM32_PLLSAI2REN field.
@@ -1987,48 +1409,12 @@
  */
 #define STM32_PLLSAI2REN            (1 << 24)
 
-/**
- * @brief   PLLSAI2 VCO frequency.
- */
-#define STM32_PLLSAI2VCO             (STM32_PLLSAI2CLKIN * STM32_PLLSAI2N_VALUE)
-
-/*
- * PLLSAI2 VCO frequency range check.
- */
-#if STM32_ACTIVATE_PLLSAI2 &&                                               \
-    ((STM32_PLLSAI2VCO < STM32_PLLVCO_MIN) || (STM32_PLLSAI2VCO > STM32_PLLVCO_MAX))
-#error "STM32_PLLSAI2VCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
-#endif
-
-/**
- * @brief   PLLSAI2-P output clock frequency.
- */
-#if (STM32_PLLSAI2PDIV_VALUE == 0) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2_P_CLKOUT      (STM32_PLLSAI2VCO / STM32_PLLSAI2P_VALUE)
-#else
-#define STM32_PLLSAI2_P_CLKOUT      (STM32_PLLSAI2VCO / STM32_PLLSAI2PDIV_VALUE)
-#endif
-
-/**
- * @brief   PLLSAI2-R output clock frequency.
- */
-#define STM32_PLLSAI2_R_CLKOUT      (STM32_PLLSAI2VCO / STM32_PLLSAI2R_VALUE)
-
-/*
- * PLLSAI2-P output frequency range check.
- */
-#if STM32_ACTIVATE_PLLSAI2 &&                                               \
-    ((STM32_PLLSAI2_P_CLKOUT < STM32_PLLP_MIN) || (STM32_PLLSAI2_P_CLKOUT > STM32_PLLP_MAX))
-#error "STM32_PLLSAI2_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
-#endif
-
-/*
- * PLLSAI2-R output frequency range check.
- */
-#if STM32_ACTIVATE_PLLSAI2 &&                                               \
-    ((STM32_PLLSAI2_R_CLKOUT < STM32_PLLR_MIN) || (STM32_PLLSAI2_R_CLKOUT > STM32_PLLR_MAX))
-#error "STM32_PLLSAI2_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
-#endif
+/* Inclusion of PLLSAI-related checks and calculations, all PLLs share the
+   same clock source so enforcing this condition.*/
+#define STM32_PLLSAI1CLKIN STM32_PLLCLKIN
+#define STM32_PLLSAI2CLKIN STM32_PLLCLKIN
+#include <stm32_pllsai1.inc>
+#include <stm32_pllsai2.inc>
 
 /**
  * @brief   MCO divider clock frequency.

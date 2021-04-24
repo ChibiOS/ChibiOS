@@ -54,7 +54,7 @@
 
 #define STM32_RCC_HAS_PLLSAI2               TRUE
 #define STM32_RCC_PLLSAI2_HAS_P             TRUE
-#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_Q             TRUE
 #define STM32_RCC_PLLSAI2_HAS_R             TRUE
 
 /*===========================================================================*/

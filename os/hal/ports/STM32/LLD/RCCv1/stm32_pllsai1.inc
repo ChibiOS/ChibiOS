@@ -124,7 +124,11 @@
 #error "STM32_PLLSAI1REN not defined in hal_lld.h"
 #endif
 
-#if (STM32_PLLSAI1CLKIN != 0) &&                                                \
+#if STM32_ACTIVATE_PLLSAI1 && (STM32_PLLSAI1CLKIN == 0)
+#error "PLLSAI1 activation required but no PLL clock selected"
+#endif
+
+#if (STM32_PLLSAI1CLKIN != 0) &&                                            \
     ((STM32_PLLSAI1CLKIN < STM32_PLLIN_MIN) || (STM32_PLLSAI1CLKIN > STM32_PLLIN_MAX))
 #error "STM32_PLLSAI1CLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
 #endif
