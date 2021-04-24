@@ -57,18 +57,16 @@
 /**
  * @brief   Complementary output, active is logic level one.
  * @note    This is an STM32-specific setting.
- * @note    This setting is only available if the configuration option
- *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
- *          timers TIM1 and TIM8.
+ * @note    This setting is only available if the timer supports the
+ *          BDTR register.
  */
 #define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_HIGH    0x10
 
 /**
  * @brief   Complementary output, active is logic level zero.
  * @note    This is an STM32-specific setting.
- * @note    This setting is only available if the configuration option
- *          @p STM32_PWM_USE_ADVANCED is set to TRUE and only for advanced
- *          timers TIM1 and TIM8.
+ * @note    This setting is only available if the timer supports the
+ *          BDTR register.
  */
 #define PWM_COMPLEMENTARY_OUTPUT_ACTIVE_LOW     0x20
 /** @} */
@@ -81,16 +79,6 @@
  * @name    Configuration options
  * @{
  */
-/**
- * @brief   If advanced timer features switch.
- * @details If set to @p TRUE the advanced features for TIM1 and TIM8 are
- *          enabled.
- * @note    The default is @p FALSE.
- */
-#if !defined(STM32_PWM_USE_ADVANCED) || defined(__DOXYGEN__)
-#define STM32_PWM_USE_ADVANCED              FALSE
-#endif
-
 /**
  * @brief   PWMD1 driver enable switch.
  * @details If set to @p TRUE the support for PWMD1 is included.
@@ -540,11 +528,6 @@
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
-#if STM32_PWM_USE_ADVANCED && !STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM8 && \
-    !STM32_PWM_USE_TIM20
-#error "advanced mode selected but no advanced timer assigned"
-#endif
-
 /* Checks on allocation of TIMx units.*/
 #if STM32_PWM_USE_TIM1
 #if defined(STM32_TIM1_IS_USED)
@@ -854,13 +837,11 @@ typedef struct {
    * @note  The value of this field should normally be equal to zero.
    */
   uint32_t                  cr2;
-#if STM32_PWM_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief TIM BDTR (break & dead-time) register initialization data.
    * @note  The value of this field should normally be equal to zero.
    */                                                                     \
    uint32_t                 bdtr;
-#endif
    /**
     * @brief TIM DIER register initialization data.
     * @note  The value of this field should normally be equal to zero.
@@ -901,6 +882,10 @@ struct PWMDriver {
    * @brief Timer base clock.
    */
   uint32_t                  clock;
+  /**
+   * @brief Presence of BDTR register.
+   */
+  bool                      has_bdtr;
   /**
    * @brief Pointer to the TIMx registers block.
    */
