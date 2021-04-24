@@ -112,7 +112,6 @@
 #error "STM32_ACTIVATE_PLLSAI1 not defined in hal_lld.h"
 #endif
 
-
 #if STM32_RCC_PLLSAI1_HAS_P && !defined(STM32_PLLSAI1PEN)
 #error "STM32_PLLSAI1PEN not defined in hal_lld.h"
 #endif
