@@ -72,10 +72,10 @@
 #endif
 
 /*===========================================================================*/
-/* STM32L432xx, STM32L433xx.                                                 */
+/* STM32L432xx.                                                              */
 /*===========================================================================*/
 
-#if defined(STM32L432xx) || defined(STM32L433xx) || defined(__DOXYGEN__)
+#if defined(STM32L432xx) || defined(__DOXYGEN__)
 
 /* Clock attributes.*/
 #define STM32_CLOCK_HAS_HSI48               TRUE
@@ -294,10 +294,10 @@
 #endif /* defined(STM32L432xx) */
 
 /*===========================================================================*/
-/* STM32L443xx.                                                              */
+/* STM32L433xx, STM32L443xx.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32L443xx) || defined(__DOXYGEN__)
+#if defined(STM32L433xx) || defined(STM32L443xx) || defined(__DOXYGEN__)
 
 /* Clock attributes.*/
 #define STM32_CLOCK_HAS_HSI48               TRUE
@@ -357,8 +357,8 @@
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
 #define STM32_HAS_GPIOC                     TRUE
-#define STM32_HAS_GPIOD                     FALSE
-#define STM32_HAS_GPIOE                     FALSE
+#define STM32_HAS_GPIOD                     TRUE
+#define STM32_HAS_GPIOE                     TRUE
 #define STM32_HAS_GPIOF                     FALSE
 #define STM32_HAS_GPIOG                     FALSE
 #define STM32_HAS_GPIOH                     TRUE
