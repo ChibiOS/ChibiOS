@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.4 ***
+- NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
+       the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
 - FIX: Fixed STM32G431 DMA defines error (bug #1155).
 - FIX: Fixed errors in STM32L4xx registry (bug #1154).
 - FIX: Fixed QUADSPI errata fix applied to all platforms (bug #1153).
