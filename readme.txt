@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed QUADSPI errata fix applied to all platforms (bug #1153).
 - FIX: Fixed wrong behavior in Serial-USB driver (bug #1151).
 - FIX: Fixed L0x2 series DAC not allocated in registry (bug #1150).
 - FIX: Fixed missing STM32F765 from registry (bug #1145).
