@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.4 ***
+- FIX: Fixed QUADSPI errata fix applied to all platforms (bug #1153).
 - FIX: Fixed (again) LPUART1 support for STM32H7xx (bug #1113).
 - FIX: Fixed wrong behavior in Serial-USB driver (bug #1151).
 - FIX: Fixed L0x2 series DAC not allocated in registry (bug #1150).
