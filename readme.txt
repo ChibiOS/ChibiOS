@@ -130,6 +130,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed QUADSPI errata fix applied to all platforms (bug #1153)
+       (backported to 20.3.4)(backported to 19.1.5).
 - FIX: Fixed (again) LPUART1 support for STM32H7xx (bug #1113)
        (backported to 20.3.4).
 - FIX: Fixed wrong errors handling in STM32 ADC drivers (bug #1152).
@@ -145,7 +147,7 @@
        (backported to 20.3.4).
 - FIX: Fixed incorrect IRQ vector for PVM (bug #1146)
        (backported to 20.3.4).
-- FIX: Fixed missing STM32F765 from registry (bug #1145).
+- FIX: Fixed missing STM32F765 from registry (bug #1145)
        (backported to 20.3.3)(backported to 19.1.5).
 - FIX: Fixed wrong macro check on STM32 SPIv3 (bug #1144)
        (backported to 20.3.3)(backported to 19.1.5).
