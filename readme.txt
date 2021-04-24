@@ -76,6 +76,8 @@
 *** 20.3.4 ***
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
        the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
+- FIX: Fixed wrong check on HAL_USE_RTC in STM32G4 clock initialization
+       (bug #1157).
 - FIX: Fixed wrong checks related to PLLSAI2 on L4 and L4+ (bug #1156).
 - FIX: Fixed STM32G431 DMA defines error (bug #1155).
 - FIX: Fixed errors in STM32L4xx registry (bug #1154).
