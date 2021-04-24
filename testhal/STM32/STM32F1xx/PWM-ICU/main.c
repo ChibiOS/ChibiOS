@@ -41,9 +41,7 @@ static PWMConfig pwmcfg = {
   },
   0,
   0,
-#if STM32_PWM_USE_ADVANCED
   0
-#endif
 };
 
 icucnt_t last_width, last_period;
