@@ -103,25 +103,6 @@
 /** @} */
 
 /**
- * @name    RCC_CR register bits definitions
- * @{
- */
-#define STM32_MSIRANGE_MASK     (15 << 4)   /**< MSIRANGE field mask.       */
-#define STM32_MSIRANGE_100K     (0 << 4)    /**< 100kHz nominal.            */
-#define STM32_MSIRANGE_200K     (1 << 4)    /**< 200kHz nominal.            */
-#define STM32_MSIRANGE_400K     (2 << 4)    /**< 400kHz nominal.            */
-#define STM32_MSIRANGE_800K     (3 << 4)    /**< 800kHz nominal.            */
-#define STM32_MSIRANGE_1M       (4 << 4)    /**< 1MHz nominal.              */
-#define STM32_MSIRANGE_2M       (5 << 4)    /**< 2MHz nominal.              */
-#define STM32_MSIRANGE_4M       (6 << 4)    /**< 4MHz nominal.              */
-#define STM32_MSIRANGE_8M       (7 << 4)    /**< 8MHz nominal.              */
-#define STM32_MSIRANGE_16M      (8 << 4)    /**< 16MHz nominal.             */
-#define STM32_MSIRANGE_24M      (9 << 4)    /**< 24MHz nominal.             */
-#define STM32_MSIRANGE_32M      (10 << 4)   /**< 32MHz nominal.             */
-#define STM32_MSIRANGE_48M      (11 << 4)   /**< 48MHz nominal.             */
-/** @} */
-
-/**
  * @name    RCC_CFGR register bits definitions
  * @{
  */
