@@ -158,6 +158,10 @@ void stm32_clock_init(void) {
   secflags = RCC->SECSR;
 #endif
 
+  /* SYSCFG clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
+
   /* PWR clock enable.*/
 #if defined(HAL_USE_RTC) && defined(RCC_APB1ENR1_RTCAPBEN)
   RCC->APB1ENR1 = RCC_APB1ENR1_PWREN | RCC_APB1ENR1_RTCAPBEN;
@@ -267,10 +271,6 @@ void stm32_clock_init(void) {
 
   /* Cache enable.*/
   icache_init();
-
-  /* SYSCFG clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, true);
 
 #endif /* STM32_NO_INIT */
 }

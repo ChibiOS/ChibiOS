@@ -136,12 +136,12 @@ void stm32_clock_init(void) {
   FLASH->ACR = FLASH_ACR_DCEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
                STM32_MSI_FLASHBITS;
 
-  /* PWR clock enabled.*/
-  rccEnablePWRInterface(false);
-
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
+
+  /* PWR clock enabled.*/
+  rccEnablePWRInterface(false);
 
   /* Core voltage setup, backup domain access enabled and left open.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;

@@ -148,8 +148,9 @@
   #error "invalid STM32_MSISRANGE value specified"
 #endif
 
+/* Some headers do not have this definition.*/
 #if !defined(RCC_CFGR_SWS_MSI)
-#define RCC_CFGR_SWS_MSI                0U
+#define RCC_CFGR_SWS_MSI            0U
 #endif
 
 /*===========================================================================*/

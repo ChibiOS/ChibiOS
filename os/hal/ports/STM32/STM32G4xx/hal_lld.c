@@ -133,6 +133,10 @@ void stm32_clock_init(void) {
   rccResetAPB1R2(~0);
   rccResetAPB2(~0);
 
+  /* SYSCFG clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
+
   /* PWR clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
   rccEnableAPB1R1(RCC_APB1ENR1_PWREN | RCC_APB1ENR1_RTCAPBEN, false)
@@ -180,7 +184,7 @@ void stm32_clock_init(void) {
                 STM32_USART1SEL;
   RCC->CCIPR2 = STM32_QSPISEL    | STM32_I2C4SEL;
 
-  /* Set flash WS's for SYSCLK source */
+  /* Set flash WS's for SYSCLK source.*/
   FLASH->ACR = FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN | FLASH_ACR_ICEN   |
                FLASH_ACR_PRFTEN   | STM32_FLASHBITS;
   while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
@@ -194,10 +198,6 @@ void stm32_clock_init(void) {
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
     ;
 #endif
-
-  /* SYSCFG clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, true);
 
 #endif /* STM32_NO_INIT */
 }
