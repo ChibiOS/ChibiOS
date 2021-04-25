@@ -75,8 +75,8 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t ct) {
     dmaChannelDisableX(spip->dmarx);
 #if defined(RP_SPI_DMA_ERROR_HOOK)
     RP_SPI_DMA_ERROR_HOOK(spip);
-  }
 #endif
+  }
 
   /* Portable SPI ISR code defined in the high level driver, note, it is
      a macro.*/
