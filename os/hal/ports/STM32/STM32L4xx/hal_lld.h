@@ -1019,7 +1019,6 @@
  * HSE related checks.
  */
 #if STM32_HSE_ENABLED
-
 #else /* !STM32_HSE_ENABLED */
 
   #if STM32_SW == STM32_SW_HSE
@@ -1078,15 +1077,6 @@
  * LSE related checks.
  */
 #if STM32_LSE_ENABLED
-
-  #if (STM32_LSECLK == 0)
-    #error "LSE frequency not defined"
-  #endif
-
-  #if (STM32_LSECLK < STM32_LSECLK_MIN) || (STM32_LSECLK > STM32_LSECLK_MAX)
-    #error "STM32_LSECLK outside acceptable range (STM32_LSECLK_MIN...STM32_LSECLK_MAX)"
-  #endif
-
 #else /* !STM32_LSE_ENABLED */
 
   #if STM32_RTCSEL == STM32_RTCSEL_LSE
