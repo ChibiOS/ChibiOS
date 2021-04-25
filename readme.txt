@@ -74,8 +74,8 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Upgraded the clock initialization for STM32L4 and STM32L4++ to the
-       new standard (started with STM32G4).
+- NEW: Upgraded the clock initialization for STM32G0, STM32L4 and STM32L4++
+       to the new standard (started with STM32G4).
 - NEW: Added support for STM32L422.
 - NEW: Added support for STM32WLx5.
 - NEW: Added initial support for RP2040.
