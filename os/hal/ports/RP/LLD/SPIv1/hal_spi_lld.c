@@ -68,17 +68,14 @@ static uint16_t dummyrx;
 static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t ct) {
 
   /* DMA errors handling.*/
-#if defined(RP_SPI_DMA_ERROR_HOOK)
   if ((ct & DMA_CTRL_TRIG_AHB_ERROR) != 0U) {
 
     /* Stopping DMAs.*/
     dmaChannelDisableX(spip->dmatx);
     dmaChannelDisableX(spip->dmarx);
-
+#if defined(RP_SPI_DMA_ERROR_HOOK)
     RP_SPI_DMA_ERROR_HOOK(spip);
   }
-#else
-  (void)ct;
 #endif
 
   /* Portable SPI ISR code defined in the high level driver, note, it is
@@ -202,13 +199,13 @@ void spi_lld_start(SPIDriver *spip) {
       osalDbgAssert(false, "invalid SPI instance");
     }
 
-    /* DMA setup.*/
+    /* DMA setup for SPI DR.*/
     dmaChannelSetSourceX(spip->dmarx, (uint32_t)&spip->spi->SSPDR);
     dmaChannelSetDestinationX(spip->dmatx, (uint32_t)&spip->spi->SSPDR);
   }
 
   /* Configuration-dependent DMA settings.*/
-  dss = (spip->config->SSPCR0 & SPI_SSPCR0_DSS_Msk)/* >> SPI_SSPCR0_DSS_Pos*/;
+  dss = (spip->config->SSPCR0 & SPI_SSPCR0_DSS_Msk);
   if (dss <= SPI_SSPCR0_DSS_8BIT) {
     /* Frame width is 8 bits or smaller.*/
     spip->rxdmamode = (spip->rxdmamode & ~DMA_CTRL_TRIG_DATA_SIZE_Msk) |
