@@ -148,6 +148,10 @@
   #error "invalid STM32_MSISRANGE value specified"
 #endif
 
+#if !defined(RCC_CFGR_SWS_MSI)
+#define RCC_CFGR_SWS_MSI                0U
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

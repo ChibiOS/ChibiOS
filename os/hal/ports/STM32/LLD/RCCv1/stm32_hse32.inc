@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv1/stm32_apb2.inc
- * @brief   Shared APB2 clock handler.
+ * @file    RCCv1/stm32_hse32.inc
+ * @brief   Shared HSE32 clock handler.
  *
- * @addtogroup STM32_APB2_HANDLER
+ * @addtogroup STM32_HSE32_HANDLER
  * @{
  */
 
@@ -27,65 +27,50 @@
 /*===========================================================================*/
 
 /**
- * @name    PPRE1 field bits definitions
- * @{
+ * @brief   HSE32 clock frequency.
  */
-#define STM32_PPRE2_MASK        (7U << RCC_CFGR_PPRE2_Pos)
-#define STM32_PPRE2_FIELD(n)    ((n) << RCC_CFGR_PPRE2_Pos)
-#define STM32_PPRE2_DIV1        STM32_PPRE2_FIELD(0U)
-#define STM32_PPRE2_DIV2        STM32_PPRE2_FIELD(4U)
-#define STM32_PPRE2_DIV4        STM32_PPRE2_FIELD(5U)
-#define STM32_PPRE2_DIV8        STM32_PPRE2_FIELD(6U)
-#define STM32_PPRE2_DIV16       STM32_PPRE2_FIELD(7U)
-/** @} */
+#define STM32_HSI32CLK          32000000
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
+#if !defined(STM32_RCC_HAS_HSE32)
+#error "STM32_RCC_HAS_HSE32 not defined in stm32_registry.h"
+#endif
 
 /* Checks on configurations.*/
-#if !defined(STM32_PPRE2)
-#error "STM32_PPRE2 not defined in mcuconf.h"
+#if !defined(STM32_HSE32_ENABLED)
+#error "STM32_HSE32_ENABLED not defined in mcuconf.h"
 #endif
 
-/* Input checks.*/
-#if !defined(STM32_PCLK1_MAX)
-#error "STM32_PCLK1_MAX not defined in hal_lld.h"
+#if defined(STM32_HSECLK)
+#error "STM32_HSECLK should not be defined in board.h"
 #endif
 
-#if !defined(STM32_HCLK)
-#error "STM32_HCLK not defined in hal_lld.h"
+#if defined(STM32_HSE_ENABLED)
+#error "STM32_HSE_ENABLED should not be defined in mcuconf.h"
 #endif
 
-/**
- * @brief   APB2 frequency.
- */
-#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK2                 (STM32_HCLK / 1U)
+#if STM32_HSE32_ENABLED
 
-#elif STM32_PPRE2 == STM32_PPRE2_DIV2
-#define STM32_PCLK2                 (STM32_HCLK / 2U)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV4
-#define STM32_PCLK2                 (STM32_HCLK / 4U)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV8
-#define STM32_PCLK2                 (STM32_HCLK / 8U)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV16
-#define STM32_PCLK2                 (STM32_HCLK / 16U)
-
+/* HSE clock frequency.*/
+#if STM32_HSE32PRE == STM32_HSE32PRE_DIV1
+#define STM32_HSECLK                STM32_HSE32CLK
+#elif STM32_HSE32PRE == STM32_HSE32PRE_DIV2
+#define STM32_HSECLK                (STM32_HSE32CLK / 2)
 #else
-#error "invalid STM32_PPRE2 value specified"
+#error "invalid STM32_HSE32PRE value specified"
 #endif
 
-/*
- * APB2 frequency check.
- */
-#if STM32_PCLK2 > STM32_PCLK2_MAX
-#error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
+#if !defined(STM32_HSE32SRC) ||                                         \
+  (STM32_HSE32SRC != STM32_HSE32_XTAL &&                                \
+   STM32_HSE32SRC != STM32_HSE32_TCXO &&                                \
+   STM32_HSE32SRC != STM32_HSE32_EXTS)
+#error "STM32_HSE32SRC should by defined in mcuconf.h with correct value"
+#endif
+
 #endif
 
 /*===========================================================================*/
@@ -99,6 +84,26 @@
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static inline void hse32_init(void) {
+
+#if STM32_HSE32_ENABLED
+
+#if STM32_HSE32SRC == STM32_HSE32_TCXO
+  /* Enable PB0-VDDTCXO.*/
+  RCC->CR |= RCC_CR_HSEBYPPWR;
+#endif /* STM32_HSESRC == STM32_HSE_TCXO */
+
+  /* Set HSE32 SYSCLK prescaler.*/
+  RCC->CR |= STM32_HSE32PRE;
+
+  /* HSE32 activation.*/
+  RCC->CR |= RCC_CR_HSEON;
+
+  while ((RCC->CR & RCC_CR_HSERDY) == 0)
+    ;                                       /* Wait until HSE32 is stable.    */
+#endif
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */

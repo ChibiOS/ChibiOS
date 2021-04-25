@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv1/stm32_apb2.inc
- * @brief   Shared APB2 clock handler.
+ * @file    RCCv1/stm32_bd.inc
+ * @brief   Shared backup domain handler.
  *
- * @addtogroup STM32_APB2_HANDLER
+ * @addtogroup STM32_BD_HANDLER
  * @{
  */
 
@@ -26,67 +26,9 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @name    PPRE1 field bits definitions
- * @{
- */
-#define STM32_PPRE2_MASK        (7U << RCC_CFGR_PPRE2_Pos)
-#define STM32_PPRE2_FIELD(n)    ((n) << RCC_CFGR_PPRE2_Pos)
-#define STM32_PPRE2_DIV1        STM32_PPRE2_FIELD(0U)
-#define STM32_PPRE2_DIV2        STM32_PPRE2_FIELD(4U)
-#define STM32_PPRE2_DIV4        STM32_PPRE2_FIELD(5U)
-#define STM32_PPRE2_DIV8        STM32_PPRE2_FIELD(6U)
-#define STM32_PPRE2_DIV16       STM32_PPRE2_FIELD(7U)
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/* Registry checks for robustness.*/
-
-/* Checks on configurations.*/
-#if !defined(STM32_PPRE2)
-#error "STM32_PPRE2 not defined in mcuconf.h"
-#endif
-
-/* Input checks.*/
-#if !defined(STM32_PCLK1_MAX)
-#error "STM32_PCLK1_MAX not defined in hal_lld.h"
-#endif
-
-#if !defined(STM32_HCLK)
-#error "STM32_HCLK not defined in hal_lld.h"
-#endif
-
-/**
- * @brief   APB2 frequency.
- */
-#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK2                 (STM32_HCLK / 1U)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV2
-#define STM32_PCLK2                 (STM32_HCLK / 2U)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV4
-#define STM32_PCLK2                 (STM32_HCLK / 4U)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV8
-#define STM32_PCLK2                 (STM32_HCLK / 8U)
-
-#elif STM32_PPRE2 == STM32_PPRE2_DIV16
-#define STM32_PCLK2                 (STM32_HCLK / 16U)
-
-#else
-#error "invalid STM32_PPRE2 value specified"
-#endif
-
-/*
- * APB2 frequency check.
- */
-#if STM32_PCLK2 > STM32_PCLK2_MAX
-#error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
-#endif
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -99,6 +41,45 @@
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+/**
+ * @brief   Initializes the backup domain.
+ */
+static inline void bd_init(void) {
+  uint32_t bdcr;
+
+  /* Current settings.*/
+  bdcr = RCC->BDCR;
+
+#if HAL_USE_RTC
+  /* RTC enable.*/
+  if ((bdcr & RCC_BDCR_RTCEN) == 0U) {
+    bdcr |= RCC_BDCR_RTCEN;
+  }
+#endif
+
+  /* Selectors.*/
+  bdcr &= ~(STM32_RTCSEL_MASK | STM32_LSCOSEL_MASK);
+  bdcr |= STM32_RTCSEL | STM32_LSCOSEL;
+
+  /* Final settings.*/
+  RCC->BDCR = bdcr;
+}
+
+/**
+ * @brief   Resets the backup domain.
+ * @note    WARNING! Changing RTC clock source impossible without reset
+ *          of the whole BKP domain.
+ */
+static inline void bd_reset(void) {
+
+  /* Reset BKP domain if different clock source selected.*/
+  if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
+    /* Backup domain reset.*/
+    RCC->BDCR = RCC_BDCR_BDRST;
+    RCC->BDCR = 0U;
+  }
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
