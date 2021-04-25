@@ -163,7 +163,7 @@ void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
 msg_t sbSendMessageTimeout(sb_class_t *sbcp,
                            msg_t msg,
                            sysinterval_t timeout) {
-  thread_t *ctp = currp;
+  thread_t *ctp = __sch_get_currthread();
 
   chDbgCheck(sbcp != NULL);
 
@@ -171,7 +171,7 @@ msg_t sbSendMessageTimeout(sb_class_t *sbcp,
 
   /* Sending the message.*/
   ctp->u.sentmsg = msg;
-  __msg_insert(ctp, &sbcp->tp->msgqueue);
+  __ch_msg_insert(ctp, &sbcp->tp->msgqueue);
   if (sbcp->tp->state == CH_STATE_WTMSG) {
     (void) chSchReadyI(sbcp->tp);
   }

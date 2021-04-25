@@ -58,13 +58,13 @@ __attribute__((noinline))
 void port_syslock_noinline(void) {
 
   port_lock();
-  _stats_start_measure_crit_thd();
-  _dbg_check_lock();
+  __stats_start_measure_crit_thd();
+  __dbg_check_lock();
 }
 
 uint32_t port_get_s_psp(void) {
 
-  return (uint32_t)currp->ctx.syscall.psp;
+  return (uint32_t)__sch_get_currthread()->ctx.syscall.psp;
 }
 
 __attribute__((weak))
@@ -144,7 +144,7 @@ void SVC_Handler(void) {
     struct port_extctx *newctxp;
 
     /* Supervisor PSP from the thread context structure.*/
-    s_psp = (uint32_t)currp->ctx.syscall.psp;
+    s_psp = (uint32_t)__sch_get_currthread()->ctx.syscall.psp;
 
     /* Pushing the port_linkctx into the supervisor stack.*/
     s_psp -= sizeof (struct port_linkctx);
@@ -334,7 +334,7 @@ void __port_irq_epilogue(void) {
         __set_CONTROL(control & ~1U);
 
         /* Switching to S-PSP taking it from the thread context.*/
-        s_psp = (uint32_t)currp->ctx.syscall.psp;
+        s_psp = (uint32_t)__sch_get_currthread()->ctx.syscall.psp;
 
         /* Pushing the middle context for returning to the original frame
            and mode.*/

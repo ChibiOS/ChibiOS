@@ -63,12 +63,6 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if CH_CFG_USE_MESSAGES_PRIORITY == TRUE
-#define msg_insert(tp, qp) ch_sch_prio_insert(&tp->hdr.queue, qp)
-#else
-#define msg_insert(tp, qp) ch_queue_insert(&tp->hdr.queue, qp)
-#endif
-
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -91,7 +85,7 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
 
   chSysLock();
   currtp->u.sentmsg = msg;
-  msg_insert(currtp, &tp->msgqueue);
+  __ch_msg_insert(currtp, &tp->msgqueue);
   if (tp->state == CH_STATE_WTMSG) {
     (void) chSchReadyI(tp);
   }
