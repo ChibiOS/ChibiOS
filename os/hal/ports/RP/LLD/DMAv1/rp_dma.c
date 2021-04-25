@@ -98,9 +98,11 @@ static void serve_interrupt(const rp_dma_channel_t *dmachp) {
 
   /* Get channel control, disable then clear any bus error flags.*/
   ct = dmachp->channel->CTRL_TRIG;
-  DMA->CLR.CH[dmachp->chnidx].CTRL_TRIG = DMA_CTRL_TRIG_EN;
-  DMA->SET.CH[dmachp->chnidx].CTRL_TRIG = DMA_CTRL_TRIG_READ_ERROR |
-                                          DMA_CTRL_TRIG_WRITE_ERROR;
+
+  osalDbgAssert((ct & DMA_CTRL_TRIG_BUSY) == 0U, "still busy");
+
+  dmachp->channel->CTRL_TRIG = DMA_CTRL_TRIG_READ_ERROR |
+                               DMA_CTRL_TRIG_WRITE_ERROR;
 
   /* Calling the associated function, if defined.*/
   if (dma.channels[dmachp->chnidx].func != NULL) {
