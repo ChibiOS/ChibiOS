@@ -66,10 +66,6 @@
 [/#if]
 #define STM32_LSEDRV                (${doc1.board.clocks.@LSEDrive[0]?word_list[0]?number}U << 3U)
 
-#if !defined(STM32_HSECLK)
-#define STM32_HSECLK                ${doc1.board.clocks.@HSEFrequency[0]}U
-#endif
-
 /*
  * Board voltages.
  * Required for performance limits calculation.

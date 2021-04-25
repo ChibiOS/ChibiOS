@@ -45,10 +45,6 @@
 
 #define STM32_LSEDRV                (2U << 3U)
 
-#if !defined(STM32_HSECLK)
-#define STM32_HSECLK                32000000U
-#endif
-
 /*
  * Board voltages.
  * Required for performance limits calculation.

@@ -22,23 +22,6 @@
                     </xs:element>
                     <xs:element name="clocks" maxOccurs="1" minOccurs="1">
                         <xs:complexType>
-                            <xs:attribute name="HSEBypass" use="required">
-                                <xs:simpleType>
-                                    <xs:restriction base="xs:string">
-                                        <xs:whiteSpace value="collapse"></xs:whiteSpace>
-                                        <xs:enumeration value="false"></xs:enumeration>
-                                    </xs:restriction>
-                                </xs:simpleType>
-                            </xs:attribute>
-                            <xs:attribute name="HSEFrequency" use="required">
-                                <xs:simpleType>
-                                    <xs:restriction base="xs:int">
-                                        <xs:whiteSpace value="collapse"></xs:whiteSpace>
-                                        <xs:minInclusive value="32000000"></xs:minInclusive>
-                                        <xs:maxInclusive value="32000000"></xs:maxInclusive>
-                                    </xs:restriction>
-                                </xs:simpleType>
-                            </xs:attribute>
                             <xs:attribute name="LSEBypass" use="required">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">

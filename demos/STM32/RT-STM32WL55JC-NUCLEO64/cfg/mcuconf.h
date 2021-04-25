@@ -43,8 +43,8 @@
 #define STM32_HSI16_ENABLED                 TRUE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_LSIPRE                        STM32_LSIPRE_NODIV
-#define STM32_HSE_ENABLED                   FALSE
-#define STM32_HSECLKSRC                     STM32_HSE_XTAL
+#define STM32_HSE32_ENABLED                 TRUE
+#define STM32_HSE32SRC                      STM32_HSE32_XTAL
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_MSIPLL_ENABLED                TRUE
 #define STM32_MSIRANGE                      STM32_MSIRANGE_4M
@@ -63,8 +63,7 @@
 #define STM32_STOPWUCK                      STM32_STOPWUCK_MSI
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
-#define STM32_LSCOSEL                       STM32_LSCOSEL_LSE
-#define STM32_LSCO_ENABLED                  FALSE
+#define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
 
 
 /*
