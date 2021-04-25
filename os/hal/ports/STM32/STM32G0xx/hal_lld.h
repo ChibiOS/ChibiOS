@@ -834,25 +834,25 @@
     #endif /* !defined(STM32_HSE_BYPASS) */
   #endif /* STM32_HSECLK != 0 */
 
-  #else /* !STM32_HSE_ENABLED */
+#else /* !STM32_HSE_ENABLED */
 
-    #if STM32_SW == STM32_SW_HSE
-      #error "HSE not enabled, required by STM32_SW"
-    #endif
+  #if STM32_SW == STM32_SW_HSE
+    #error "HSE not enabled, required by STM32_SW"
+  #endif
 
-    #if (STM32_SW == STM32_SW_PLLRCLK) && (STM32_PLLSRC == STM32_PLLSRC_HSE)
-      #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
-    #endif
+  #if (STM32_SW == STM32_SW_PLLRCLK) && (STM32_PLLSRC == STM32_PLLSRC_HSE)
+    #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
+  #endif
 
-    #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                               \
-        ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                          \
-         (STM32_PLLSRC == STM32_PLLSRC_HSE))
-      #error "HSE not enabled, required by STM32_MCOSEL"
-    #endif
+  #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                 \
+      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
+       (STM32_PLLSRC == STM32_PLLSRC_HSE))
+    #error "HSE not enabled, required by STM32_MCOSEL"
+  #endif
 
-    #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
-      #error "HSE not enabled, required by STM32_RTCSEL"
-    #endif
+  #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
+    #error "HSE not enabled, required by STM32_RTCSEL"
+  #endif
 
 #endif /* !STM32_HSE_ENABLED */
 

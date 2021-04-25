@@ -1045,20 +1045,20 @@
     #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
   #endif
 
-  #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                               \
-      ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                              \
+  #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                 \
+      ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                \
        (STM32_PLLSRC == STM32_PLLSRC_HSE))
     #error "HSE not enabled, required by STM32_MCOSEL"
   #endif
 
-  #if ((STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) |                         \
-       (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2)) &&                       \
+  #if ((STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) |                           \
+       (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2)) &&                         \
       (STM32_PLLSRC == STM32_PLLSRC_HSE)
     #error "HSE not enabled, required by STM32_SAI1SEL"
   #endif
 
-  #if ((STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) |                         \
-       (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2)) &&                       \
+  #if ((STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) |                           \
+       (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2)) &&                         \
       (STM32_PLLSRC == STM32_PLLSRC_HSE)
     #error "HSE not enabled, required by STM32_SAI2SEL"
   #endif
