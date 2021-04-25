@@ -30,8 +30,8 @@
  * @name    PPRE1 field bits definitions
  * @{
  */
-#define STM32_PPRE2_MASK        (7U << 11U)  /**< PPRE2 field mask.         */
-#define STM32_PPRE2_FIELD(n)    ((n) << 11U) /**< PPRE2 field value.        */
+#define STM32_PPRE2_MASK        (7U << RCC_CFGR_PPRE2_Pos)
+#define STM32_PPRE2_FIELD(n)    ((n) << RCC_CFGR_PPRE2_Pos)
 #define STM32_PPRE2_DIV1        STM32_PPRE2_FIELD(0U)
 #define STM32_PPRE2_DIV2        STM32_PPRE2_FIELD(4U)
 #define STM32_PPRE2_DIV4        STM32_PPRE2_FIELD(5U)
@@ -63,19 +63,19 @@
  * @brief   APB2 frequency.
  */
 #if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK2                 (STM32_HCLK / 1)
+#define STM32_PCLK2                 (STM32_HCLK / 1U)
 
 #elif STM32_PPRE2 == STM32_PPRE2_DIV2
-#define STM32_PCLK2                 (STM32_HCLK / 2)
+#define STM32_PCLK2                 (STM32_HCLK / 2U)
 
 #elif STM32_PPRE2 == STM32_PPRE2_DIV4
-#define STM32_PCLK2                 (STM32_HCLK / 4)
+#define STM32_PCLK2                 (STM32_HCLK / 4U)
 
 #elif STM32_PPRE2 == STM32_PPRE2_DIV8
-#define STM32_PCLK2                 (STM32_HCLK / 8)
+#define STM32_PCLK2                 (STM32_HCLK / 8U)
 
 #elif STM32_PPRE2 == STM32_PPRE2_DIV16
-#define STM32_PCLK2                 (STM32_HCLK / 16)
+#define STM32_PCLK2                 (STM32_HCLK / 16U)
 
 #else
 #error "invalid STM32_PPRE2 value specified"

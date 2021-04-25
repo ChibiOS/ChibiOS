@@ -138,7 +138,7 @@
  */
 #if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 16)) ||                \
     defined(__DOXYGEN__)
-#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << 4)
+#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1U) << RCC_PLLCFGR_PLLM_Pos)
 
 #else
 #error "invalid STM32_PLLM_VALUE value specified"
@@ -149,7 +149,7 @@
  */
 #if ((STM32_PLLN_VALUE >= 8) && (STM32_PLLN_VALUE <= 127)) ||               \
     defined(__DOXYGEN__)
-#define STM32_PLLN                  (STM32_PLLN_VALUE << 8)
+#define STM32_PLLN                  (STM32_PLLN_VALUE << RCC_PLLCFGR_PLLN_Pos)
 
 #else
 #error "invalid STM32_PLLN_VALUE value specified"
@@ -176,23 +176,24 @@
  * @brief   STM32_PLLP field.
  */
 #if (STM32_PLLP_VALUE == 7) || defined(__DOXYGEN__)
-#define STM32_PLLP                  (0 << 17)
+#define STM32_PLLP                  (0U << RCC_PLLCFGR_PLLP_Pos)
 
 #elif STM32_PLLP_VALUE == 17
-#define STM32_PLLP                  (1 << 17)
+#define STM32_PLLP                  (1U << RCC_PLLCFGR_PLLP_Pos)
 
 #else
 #error "invalid STM32_PLLP_VALUE value specified"
 #endif
 
+/* PDIV is not present on all devices.*/
+#if defined(RCC_PLLCFGR_PLLPDIV_Pos) || defined(__DOXYGEN__)
 /**
  * @brief   STM32_PLLPDIV field.
  */
 #if (STM32_PLLPDIV_VALUE == 0) ||                                           \
     ((STM32_PLLPDIV_VALUE >= 2) && (STM32_PLLPDIV_VALUE <= 31)) ||          \
     defined(__DOXYGEN__)
-#define STM32_PLLPDIV               (STM32_PLLPDIV_VALUE << 27)
-
+#define STM32_PLLPDIV               (STM32_PLLPDIV_VALUE << RCC_PLLCFGR_PLLPDIV_Pos)
 #else
 #error "invalid STM32_PLLPDIV_VALUE value specified"
 #endif
@@ -206,6 +207,11 @@
 #define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLPDIV_VALUE)
 #endif
 
+#else
+#define STM32_PLL_P_CLKOUT          (STM32_PLLVCO / STM32_PLLP_VALUE)
+#define STM32_PLLPDIV               0U
+#endif
+
 /*
  * PLL-P output frequency range check.
  */
@@ -215,8 +221,8 @@
 #endif
 
 #else /* !STM32_RCC_PLL_HAS_P */
-#define STM32_PLLP                  0
-#define STM32_PLLPEN                0
+#define STM32_PLLP                  0U
+#define STM32_PLLPEN                0U
 #endif /* !STM32_RCC_PLL_HAS_P */
 
 /*---------------------------------------------------------------------------*/
@@ -227,16 +233,16 @@
  * @brief   STM32_PLLQ field.
  */
 #if (STM32_PLLQ_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLLQ                  (0 << 21)
+#define STM32_PLLQ                  (0U << RCC_PLLCFGR_PLLQ_Pos)
 
 #elif STM32_PLLQ_VALUE == 4
-#define STM32_PLLQ                  (1 << 21)
+#define STM32_PLLQ                  (1U << RCC_PLLCFGR_PLLQ_Pos)
 
 #elif STM32_PLLQ_VALUE == 6
-#define STM32_PLLQ                  (2 << 21)
+#define STM32_PLLQ                  (2U << RCC_PLLCFGR_PLLQ_Pos)
 
 #elif STM32_PLLQ_VALUE == 8
-#define STM32_PLLQ                  (3 << 21)
+#define STM32_PLLQ                  (3U << RCC_PLLCFGR_PLLQ_Pos)
 
 #else
 #error "invalid STM32_PLLQ_VALUE value specified"
@@ -256,8 +262,8 @@
 #endif
 
 #else /* !STM32_RCC_PLL_HAS_Q */
-#define STM32_PLLQ                  0
-#define STM32_PLLQEN                0
+#define STM32_PLLQ                  0U
+#define STM32_PLLQEN                0U
 #endif /* !STM32_RCC_PLL_HAS_Q */
 
 /*---------------------------------------------------------------------------*/
@@ -268,16 +274,16 @@
  * @brief   STM32_PLLR field.
  */
 #if (STM32_PLLR_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLLR                  (0 << 25)
+#define STM32_PLLR                  (0U << RCC_PLLCFGR_PLLR_Pos)
 
 #elif STM32_PLLR_VALUE == 4
-#define STM32_PLLR                  (1 << 25)
+#define STM32_PLLR                  (1U << RCC_PLLCFGR_PLLR_Pos)
 
 #elif STM32_PLLR_VALUE == 6
-#define STM32_PLLR                  (2 << 25)
+#define STM32_PLLR                  (2U << RCC_PLLCFGR_PLLR_Pos)
 
 #elif STM32_PLLR_VALUE == 8
-#define STM32_PLLR                  (3 << 25)
+#define STM32_PLLR                  (3U << RCC_PLLCFGR_PLLR_Pos)
 
 #else
 #error "invalid STM32_PLLR_VALUE value specified"
@@ -297,8 +303,8 @@
 #endif
 
 #else /* !STM32_RCC_PLL_HAS_R */
-#define STM32_PLLR                  0
-#define STM32_PLLREN                0
+#define STM32_PLLR                  0U
+#define STM32_PLLREN                0U
 #endif /* !STM32_RCC_PLL_HAS_R */
 
 /*===========================================================================*/
@@ -325,15 +331,17 @@ static inline void pll_init(void) {
   RCC->CR |= RCC_CR_PLLON;
 
   /* Waiting for PLL lock.*/
-  while ((RCC->CR & RCC_CR_PLLRDY) == 0)
+  while ((RCC->CR & RCC_CR_PLLRDY) == 0U)
     ;
 #endif
 }
 
 static inline void pll_deinit(void) {
 
+#if STM32_ACTIVATE_PLL
   /* PLL de-activation.*/
   RCC->PLLCFGR &= ~RCC_CR_PLLON;
+#endif
 }
 
 /*===========================================================================*/

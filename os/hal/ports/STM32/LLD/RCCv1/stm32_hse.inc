@@ -99,7 +99,7 @@ static inline void hse_init(void) {
 #endif
   /* HSE activation.*/
   RCC->CR |= RCC_CR_HSEON;
-  while ((RCC->CR & RCC_CR_HSERDY) == 0) {
+  while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
   }
 #endif
 }

@@ -29,15 +29,15 @@
 /**
  * @brief   LSI clock frequency.
  */
-#define STM32_LSIRCCLK          32000
+#define STM32_LSIRCCLK          32000U
 
 /**
  * @name    RCC_CSR register bits definitions
  * @{
  */
-#define STM32_LSIPRE_MASK       (1 << 4)    /**< LSIPRE field mask.         */
-#define STM32_LSIPRE_NODIV      (0 << 4)    /**< LSI not divided.           */
-#define STM32_LSIPRE_DIV128     (1 << 4)    /**< LSI divided by 128         */
+#define STM32_LSIPRE_MASK       (1U << RCC_CSR_LSIPRE_Pos)
+#define STM32_LSIPRE_NODIV      (0U << RCC_CSR_LSIPRE_Pos)
+#define STM32_LSIPRE_DIV128     (1U << RCC_CSR_LSIPRE_Pos)
 /** @} */
 
 /*===========================================================================*/
@@ -70,13 +70,13 @@
 #if (STM32_LSIPRE == STM32_LSIPRE_NODIV) || defined(__DOXYGEN__)
 #define STM32_LSICLK                (STM32_LSIRCCLK)
 #elif STM32_LSIPRE == STM32_LSIPRE_DIV128
-#define STM32_LSICLK                (STM32_LSIRCCLK / 128)
+#define STM32_LSICLK                (STM32_LSIRCCLK / 128U)
 #else
 #error "invalid STM32_LSIPRE value specified"
 #endif
 
 #else /* !STM32_RCC_HAS_LSI_PRESCALER */
-#define STM32_LSIPRE                0
+#define STM32_LSIPRE                0U
 #define STM32_LSICLK                (STM32_LSIRCCLK)
 #endif /* !STM32_RCC_HAS_LSI_PRESCALER */
 
@@ -97,7 +97,7 @@ static inline void lsi_init(void) {
 #if STM32_LSI_ENABLED
   /* LSI activation.*/
   RCC->CSR |= STM32_LSIPRE | RCC_CSR_LSION;
-  while ((RCC->CSR & RCC_CSR_LSIRDY) == 0) {
+  while ((RCC->CSR & RCC_CSR_LSIRDY) == 0U) {
   }
 #endif
 }

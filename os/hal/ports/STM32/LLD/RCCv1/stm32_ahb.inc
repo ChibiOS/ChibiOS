@@ -30,8 +30,8 @@
  * @name    HPRE field bits definitions
  * @{
  */
-#define STM32_HPRE_MASK         (15U << 4U) /**< HPRE field mask.           */
-#define STM32_HPRE_FIELD(n)     ((n) << 4U) /**< HPRE field value.          */
+#define STM32_HPRE_MASK         (15U << RCC_CFGR_HPRE_Pos)
+#define STM32_HPRE_FIELD(n)     ((n) << RCC_CFGR_HPRE_Pos)
 #define STM32_HPRE_DIV1         STM32_HPRE_FIELD(0U)
 #define STM32_HPRE_DIV2         STM32_HPRE_FIELD(8U)
 #define STM32_HPRE_DIV4         STM32_HPRE_FIELD(9U)
@@ -67,31 +67,31 @@
  * @brief   AHB frequency.
  */
 #if (STM32_HPRE == STM32_HPRE_DIV1) || defined(__DOXYGEN__)
-#define STM32_HCLK                  (STM32_SYSCLK / 1)
+#define STM32_HCLK                  (STM32_SYSCLK / 1U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV2
-#define STM32_HCLK                  (STM32_SYSCLK / 2)
+#define STM32_HCLK                  (STM32_SYSCLK / 2U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV4
-#define STM32_HCLK                  (STM32_SYSCLK / 4)
+#define STM32_HCLK                  (STM32_SYSCLK / 4U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV8
-#define STM32_HCLK                  (STM32_SYSCLK / 8)
+#define STM32_HCLK                  (STM32_SYSCLK / 8U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV16
-#define STM32_HCLK                  (STM32_SYSCLK / 16)
+#define STM32_HCLK                  (STM32_SYSCLK / 16U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV64
-#define STM32_HCLK                  (STM32_SYSCLK / 64)
+#define STM32_HCLK                  (STM32_SYSCLK / 64U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV128
-#define STM32_HCLK                  (STM32_SYSCLK / 128)
+#define STM32_HCLK                  (STM32_SYSCLK / 128U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV256
-#define STM32_HCLK                  (STM32_SYSCLK / 256)
+#define STM32_HCLK                  (STM32_SYSCLK / 256U)
 
 #elif STM32_HPRE == STM32_HPRE_DIV512
-#define STM32_HCLK                  (STM32_SYSCLK / 512)
+#define STM32_HCLK                  (STM32_SYSCLK / 512U)
 
 #else
 #error "invalid STM32_HPRE value specified"

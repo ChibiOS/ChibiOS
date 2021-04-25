@@ -29,7 +29,7 @@
 /**
  * @brief   HSI16 clock frequency.
  */
-#define STM32_HSI16CLK          16000000
+#define STM32_HSI16CLK          16000000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -62,7 +62,7 @@ static inline void hsi16_init(void) {
 #if STM32_HSI16_ENABLED
   /* HSI activation.*/
   RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0) {
+  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
   }
 #endif
 }

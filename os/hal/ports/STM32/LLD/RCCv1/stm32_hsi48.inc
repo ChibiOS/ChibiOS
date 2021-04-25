@@ -29,7 +29,7 @@
 /**
  * @brief   HSI48 clock frequency.
  */
-#define STM32_HSI48CLK          48000000
+#define STM32_HSI48CLK          48000000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -66,7 +66,7 @@ static inline void hsi48_init(void) {
 #if STM32_HSI48_ENABLED
   /* HSI activation.*/
   RCC->CRRCR |= RCC_CRRCR_HSI48ON;
-  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0) {
+  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0U) {
   }
 #endif
 }
