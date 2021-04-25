@@ -753,21 +753,6 @@
 #error "Using a wrong mcuconf.h file, STM32L4A6_MCUCONF not defined"
 #endif
 
-/*
- * Board files sanity checks.
- */
-#if !defined(STM32_LSECLK)
-#error "STM32_LSECLK not defined in board.h"
-#endif
-
-#if !defined(STM32_LSEDRV)
-#error "STM32_LSEDRV not defined in board.h"
-#endif
-
-#if !defined(STM32_HSECLK)
-#error "STM32_HSECLK not defined in board.h"
-#endif
-
 /* Voltage related limits.*/
 #if (STM32_VOS == STM32_VOS_RANGE1) || defined(__DOXYGEN__)
 /**
