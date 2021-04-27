@@ -73,6 +73,8 @@ extern "C" {
 #endif
   void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                   vtfunc_t vtfunc, void *par);
+  void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
+                            vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
   void chVTDoTickI(void);
 #if CH_CFG_USE_TIMESTAMP == TRUE
@@ -304,7 +306,7 @@ static inline void chVTReset(virtual_timer_t *vtp) {
 }
 
 /**
- * @brief   Enables a virtual timer.
+ * @brief   Enables a one-shot virtual timer.
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
  * @pre     The timer must have been initialized using @p chVTObjectInit()
@@ -333,7 +335,7 @@ static inline void chVTSetI(virtual_timer_t *vtp, sysinterval_t delay,
 }
 
 /**
- * @brief   Enables a virtual timer.
+ * @brief   Enables a one-shot virtual timer.
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
  * @pre     The timer must have been initialized using @p chVTObjectInit()
@@ -360,6 +362,88 @@ static inline void chVTSet(virtual_timer_t *vtp, sysinterval_t delay,
   chSysLock();
   chVTSetI(vtp, delay, vtfunc, par);
   chSysUnlock();
+}
+
+/**
+ * @brief   Enables a continuous virtual timer.
+ * @details If the virtual timer was already enabled then it is re-enabled
+ *          using the new parameters.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @iclass
+ */
+static inline void chVTSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
+                                      vtfunc_t vtfunc, void *par) {
+
+  chVTResetI(vtp);
+  chVTDoSetContinuousI(vtp, delay, vtfunc, par);
+}
+
+/**
+ * @brief   Enables a continuous virtual timer.
+ * @details If the virtual timer was already enabled then it is re-enabled
+ *          using the new parameters.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @api
+ */
+static inline void chVTContinuousSet(virtual_timer_t *vtp, sysinterval_t delay,
+                                     vtfunc_t vtfunc, void *par) {
+
+  chSysLock();
+  chVTSetContinuousI(vtp, delay, vtfunc, par);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Changes a timer reload time interval.
+ * @note    This function is meant to be called from a timer callback, it
+ *          does nothing in any other context.
+ * @note    Calling this function from a one-shot timer callback turns it
+ *          into a continuous timer.
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] reload    the new reload value, zero means no reload
+ * @return              The previous reload value
+ *
+ * @special
+ */
+static inline sysinterval_t chVTSetReload(virtual_timer_t *vtp,
+                                          sysinterval_t reload) {
+  sysinterval_t old_reload;
+
+  old_reload = vtp->reload;
+  vtp->reload = reload;
+
+  return old_reload;
 }
 
 #if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
