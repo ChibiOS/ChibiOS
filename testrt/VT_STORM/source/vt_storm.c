@@ -86,44 +86,27 @@ static void sweeper0_cb(void *p) {
 
   chSysLockFromISR();
   chVTSetI(&wrapper, (sysinterval_t)-1, wrapper_cb, NULL);
-  chVTSetI(&sweeper0, delay, sweeper0_cb, NULL);
   chSysUnlockFromISR();
 }
 
 static void sweeperm1_cb(void *p) {
 
   (void)p;
-
-  chSysLockFromISR();
-  chVTSetI(&sweeperm1, delay - 1, sweeperm1_cb, NULL);
-  chSysUnlockFromISR();
 }
 
 static void sweeperp1_cb(void *p) {
 
   (void)p;
-
-  chSysLockFromISR();
-  chVTSetI(&sweeperp1, delay + 1, sweeperp1_cb, NULL);
-  chSysUnlockFromISR();
 }
 
 static void sweeperm3_cb(void *p) {
 
   (void)p;
-
-  chSysLockFromISR();
-  chVTSetI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
-  chSysUnlockFromISR();
 }
 
 static void sweeperp3_cb(void *p) {
 
   (void)p;
-
-  chSysLockFromISR();
-  chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
-  chSysUnlockFromISR();
 }
 
 /*===========================================================================*/
@@ -182,11 +165,11 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       /* Starting sweepers.*/
       chSysLock();
       chVTSetI(&watchdog, TIME_MS2I(501), watchdog_cb, NULL);
-      chVTSetI(&sweeper0, delay, sweeper0_cb, NULL);
-      chVTSetI(&sweeperm1, delay - 1, sweeperm1_cb, NULL);
-      chVTSetI(&sweeperp1, delay + 1, sweeperp1_cb, NULL);
-      chVTSetI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
-      chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
+      chVTSetContinuousI(&sweeper0, delay, sweeper0_cb, NULL);
+      chVTSetContinuousI(&sweeperm1, delay - 1, sweeperm1_cb, NULL);
+      chVTSetContinuousI(&sweeperp1, delay + 1, sweeperp1_cb, NULL);
+      chVTSetContinuousI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
+      chVTSetContinuousI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
       chVTSetI(&wrapper, (sysinterval_t) - 1, wrapper_cb, NULL);
 
       /* Letting them run for half second.*/
