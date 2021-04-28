@@ -129,47 +129,18 @@ static void vt_list_compress(virtual_timers_list_t *vtlp,
 }
 #endif
 
-/*===========================================================================*/
-/* Module exported functions.                                                */
-/*===========================================================================*/
-
 /**
- * @brief   Enables a virtual timer.
- * @details The timer is enabled and programmed to trigger after the delay
- *          specified as parameter.
- * @pre     The timer must not be already armed before calling this function.
- * @note    The callback function is invoked from interrupt context.
- *
- * @param[out] vtp      the @p virtual_timer_t structure pointer
- * @param[in] delay     the number of ticks before the operation timeouts, the
- *                      special values are handled as follow:
- *                      - @a TIME_INFINITE is allowed but interpreted as a
- *                        normal time specification.
- *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
- * @param[in] vtfunc    the timer callback function. After invoking the
- *                      callback the timer is disabled and the structure can
- *                      be disposed or reused.
- * @param[in] par       a parameter that will be passed to the callback
- *                      function
- *
- * @iclass
+ * @brief   Enqueues a virtual timer in a virtual timers list.
  */
-void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
-                vtfunc_t vtfunc, void *par) {
-  virtual_timers_list_t *vtlp = &currcore->vtlist;
+static void vt_enqueue(virtual_timers_list_t *vtlp,
+                       virtual_timer_t *vtp,
+                       systime_t now,
+                       sysinterval_t delay) {
   delta_list_t *dlp;
   sysinterval_t delta;
 
-  chDbgCheckClassI();
-  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
-
-  vtp->par = par;
-  vtp->func = vtfunc;
-
 #if CH_CFG_ST_TIMEDELTA > 0
   {
-    systime_t now = chVTGetSystemTimeX();
     sysinterval_t deltanow;
 
     /* If the requested delay is lower than the minimum safe delta then it
@@ -260,6 +231,96 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
   vtlp->dlist.delta = (sysinterval_t)-1;
 }
 
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables a one-shot virtual timer.
+ * @details The timer is enabled and programmed to trigger after the delay
+ *          specified as parameter.
+ * @pre     The timer must not be already armed before calling this function.
+ * @note    The callback function is invoked from interrupt context.
+ *
+ * @param[out] vtp      the @p virtual_timer_t structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @iclass
+ */
+void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
+                vtfunc_t vtfunc, void *par) {
+  virtual_timers_list_t *vtlp = &currcore->vtlist;
+  systime_t now;
+
+  chDbgCheckClassI();
+  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
+
+  /* Current system time.*/
+  now = chVTGetSystemTimeX();
+
+  /* Timer initialization.*/
+  vtp->par     = par;
+  vtp->func    = vtfunc;
+  vtp->last    = now;
+  vtp->reload  = (sysinterval_t)0;
+
+  /* Inserting the timer in the delta list.*/
+  vt_enqueue(vtlp, vtp, vtp->last, delay);
+}
+
+/**
+ * @brief   Enables a continuous virtual timer.
+ * @details The timer is enabled and programmed to trigger after the delay
+ *          specified as parameter.
+ * @pre     The timer must not be already armed before calling this function.
+ * @note    The callback function is invoked from interrupt context.
+ *
+ * @param[out] vtp      the @p virtual_timer_t structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @iclass
+ */
+void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
+                          vtfunc_t vtfunc, void *par) {
+  virtual_timers_list_t *vtlp = &currcore->vtlist;
+  systime_t now;
+
+  chDbgCheckClassI();
+  chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
+
+  /* Current system time.*/
+  now = chVTGetSystemTimeX();
+
+  /* Timer initialization.*/
+  vtp->par     = par;
+  vtp->func    = vtfunc;
+  vtp->last    = now;
+  vtp->reload  = delay;
+
+  /* Inserting the timer in the delta list.*/
+  vt_enqueue(vtlp, vtp, vtp->last, delay);
+}
+
 /**
  * @brief   Disables a Virtual Timer.
  * @pre     The timer must be in armed state before calling this function.
@@ -273,17 +334,17 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
   chDbgCheckClassI();
   chDbgCheck(vtp != NULL);
-  chDbgAssert(vtp->func != NULL, "timer not set or already triggered");
+  chDbgAssert(chVTIsArmedI(vtp), "timer not armed");
 
 #if CH_CFG_ST_TIMEDELTA == 0
 
   /* The delta of the timer is added to the next timer.*/
   vtp->dlist.next->delta += vtp->dlist.delta;
 
- /* Removing the element from the delta list.*/
+ /* Removing the element from the delta list, marking it as not armed.*/
   vtp->dlist.prev->next = vtp->dlist.next;
   vtp->dlist.next->prev = vtp->dlist.prev;
-  vtp->func = NULL;
+  vtp->dlist.next = NULL;
 
   /* The above code changes the value in the header when the removed element
      is the last of the list, restoring it.*/
@@ -297,19 +358,21 @@ void chVTDoResetI(virtual_timer_t *vtp) {
     /* Removing the element from the delta list.*/
     vtp->dlist.prev->next = vtp->dlist.next;
     vtp->dlist.next->prev = vtp->dlist.prev;
-    vtp->func = NULL;
 
     /* Adding delta to the next element, if it is not the last one.*/
     if (is_timer(&vtlp->dlist, vtp->dlist.next))
       vtp->dlist.next->delta += vtp->dlist.delta;
 
+    /* Marking timer as not armed.*/
+    vtp->dlist.next = NULL;
+
     return;
   }
 
-  /* Removing the first timer from the list.*/
+  /* Removing the first timer from the list, marking it as not armed.*/
   vtlp->dlist.next = vtp->dlist.next;
   vtlp->dlist.next->prev = &vtlp->dlist;
-  vtp->func = NULL;
+  vtp->dlist.next = NULL;
 
   /* If the list become empty then the alarm timer is stopped and done.*/
   if (is_vtlist_empty(&vtlp->dlist)) {
@@ -378,29 +441,30 @@ void chVTDoTickI(void) {
     --vtlp->dlist.next->delta;
     while (vtlp->dlist.next->delta == (sysinterval_t)0) {
       virtual_timer_t *vtp;
-      vtfunc_t fn;
 
+      /* Triggered timer.*/
       vtp = (virtual_timer_t *)vtlp->dlist.next;
-      fn = vtp->func;
-      vtp->func = NULL;
+
+      /* Removing the element from the delta list, marking it as not armed.*/
       vtp->dlist.next->prev = &vtlp->dlist;
       vtlp->dlist.next = vtp->dlist.next;
+      vtp->dlist.next = NULL;
+
       chSysUnlockFromISR();
-      fn(vtp->par);
+      vtp->func(vtp->par);
       chSysLockFromISR();
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   delta_list_t *dlp;
-  systime_t now;
   sysinterval_t delta, nowdelta;
+  systime_t now = chVTGetSystemTimeX();
 
   /* Looping through timers.*/
   dlp = vtlp->dlist.next;
   while (true) {
 
-    /* Getting the system time as reference.*/
-    now = chVTGetSystemTimeX();
+    /* Delta between current time and last execution time.*/
     nowdelta = chTimeDiffX(vtlp->lasttime, now);
 
     /* The list scan is limited by the timers header having
@@ -412,31 +476,50 @@ void chVTDoTickI(void) {
 
     /* Consuming all timers between "vtp->lasttime" and now.*/
     do {
-      vtfunc_t fn;
       virtual_timer_t *vtp = (virtual_timer_t *)dlp;
 
       /* The "last time" becomes this timer's expiration time.*/
       vtlp->lasttime += dlp->delta;
       nowdelta -= dlp->delta;
 
-      /* Removing the timer from the list.*/
+      /* Removing the timer from the list, marking it as not armed.*/
       dlp->next->prev = &vtlp->dlist;
       vtlp->dlist.next = dlp->next;
-
-      /* Calling the associated function and then marking the timer as
-         non active.*/
-      fn = vtp->func;
-      vtp->func = NULL;
+      dlp->next = NULL;
 
       /* If the list becomes empty then the timer is stopped.*/
       if (is_vtlist_empty(&vtlp->dlist)) {
         port_timer_stop_alarm();
       }
 
+      /* Now "last" marks the current deadline based on the stored
+         reload value. It is done before calling the callback because
+         the reload value could change. Note that "reload" could be
+         zero, no harm.*/
+      vtp->last = chTimeAddX(vtp->last, vtp->reload);
+
       /* The callback is invoked outside the kernel critical zone.*/
       chSysUnlockFromISR();
-      fn(vtp->par);
+      vtp->func(vtp->par);
       chSysLockFromISR();
+
+      /* Getting again the system time after executing the callback in
+         order to reduce error.*/
+      now = chVTGetSystemTimeX();
+
+      /* If a reload is defined the timer needs to be restarted.*/
+      if (vtp->reload > (sysinterval_t)0) {
+        sysinterval_t skipped_delta;
+
+        /* Calculating how much the real current time skipped past the
+           hypothetical current deadline.*/
+        skipped_delta = chTimeDiffX(vtp->last, now);
+
+        chDbgAssert(skipped_delta < vtp->reload, "skipped deadline");
+
+        /* Enqueuing the timer again using the calculated delta.*/
+        vt_enqueue(vtlp, vtp, now, vtp->reload - skipped_delta);
+      }
 
       /* Next element in the list.*/
       dlp = vtlp->dlist.next;
@@ -451,7 +534,8 @@ void chVTDoTickI(void) {
 
   /* The "unprocessed nowdelta" time slice is added to "last time"
      and subtracted to next timer's delta.*/
-  vtlp->lasttime += nowdelta;
+//  vtlp->lasttime += nowdelta;
+  vtlp->lasttime = chTimeAddX(vtlp->lasttime, nowdelta);
   vtlp->dlist.next->delta -= nowdelta;
 
   /* Recalculating the next alarm time.*/

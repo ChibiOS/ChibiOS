@@ -98,6 +98,14 @@ typedef struct ch_virtual_timer {
    * @brief   Timer callback function parameter.
    */
   void                          *par;
+  /**
+   * @brief   Time of the last activation.
+   */
+  systime_t                     last;
+  /**
+   * @brief   Current reload interval.
+   */
+  sysinterval_t                 reload;
 } virtual_timer_t;
 
 /**

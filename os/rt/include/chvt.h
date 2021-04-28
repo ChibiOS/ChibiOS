@@ -73,6 +73,8 @@ extern "C" {
 #endif
   void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                   vtfunc_t vtfunc, void *par);
+  void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
+                            vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
   void chVTDoTickI(void);
 #if CH_CFG_USE_TIMESTAMP == TRUE
@@ -100,7 +102,7 @@ extern "C" {
  */
 static inline void chVTObjectInit(virtual_timer_t *vtp) {
 
-  vtp->func = NULL;
+  vtp->dlist.next = NULL;
 }
 
 /**
@@ -246,7 +248,7 @@ static inline bool chVTIsArmedI(const virtual_timer_t *vtp) {
 
   chDbgCheckClassI();
 
-  return (bool)(vtp->func != NULL);
+  return (bool)(vtp->dlist.next != NULL);
 }
 
 /**
@@ -304,7 +306,7 @@ static inline void chVTReset(virtual_timer_t *vtp) {
 }
 
 /**
- * @brief   Enables a virtual timer.
+ * @brief   Enables a one-shot virtual timer.
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
  * @pre     The timer must have been initialized using @p chVTObjectInit()
@@ -333,7 +335,7 @@ static inline void chVTSetI(virtual_timer_t *vtp, sysinterval_t delay,
 }
 
 /**
- * @brief   Enables a virtual timer.
+ * @brief   Enables a one-shot virtual timer.
  * @details If the virtual timer was already enabled then it is re-enabled
  *          using the new parameters.
  * @pre     The timer must have been initialized using @p chVTObjectInit()
@@ -360,6 +362,121 @@ static inline void chVTSet(virtual_timer_t *vtp, sysinterval_t delay,
   chSysLock();
   chVTSetI(vtp, delay, vtfunc, par);
   chSysUnlock();
+}
+
+/**
+ * @brief   Enables a continuous virtual timer.
+ * @details If the virtual timer was already enabled then it is re-enabled
+ *          using the new parameters.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @iclass
+ */
+static inline void chVTSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
+                                      vtfunc_t vtfunc, void *par) {
+
+  chVTResetI(vtp);
+  chVTDoSetContinuousI(vtp, delay, vtfunc, par);
+}
+
+/**
+ * @brief   Enables a continuous virtual timer.
+ * @details If the virtual timer was already enabled then it is re-enabled
+ *          using the new parameters.
+ * @pre     The timer must have been initialized using @p chVTObjectInit()
+ *          or @p chVTDoSetI().
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] delay     the number of ticks before the operation timeouts, the
+ *                      special values are handled as follow:
+ *                      - @a TIME_INFINITE is allowed but interpreted as a
+ *                        normal time specification.
+ *                      - @a TIME_IMMEDIATE this value is not allowed.
+ *                      .
+ * @param[in] vtfunc    the timer callback function. After invoking the
+ *                      callback the timer is disabled and the structure can
+ *                      be disposed or reused.
+ * @param[in] par       a parameter that will be passed to the callback
+ *                      function
+ *
+ * @api
+ */
+static inline void chVTSetContinuous(virtual_timer_t *vtp, sysinterval_t delay,
+                                     vtfunc_t vtfunc, void *par) {
+
+  chSysLock();
+  chVTSetContinuousI(vtp, delay, vtfunc, par);
+  chSysUnlock();
+}
+
+/**
+ * @brief   Returns the current reload value.
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @return              The reload value.
+ *
+ * @xclass
+ */
+static inline sysinterval_t chVTGetReloadIntervalX(virtual_timer_t *vtp) {
+
+  return vtp->reload;
+}
+
+/**
+ * @brief   Changes a timer reload time interval.
+ * @note    This function is meant to be called from a timer callback, it
+ *          does nothing in any other context.
+ * @note    Calling this function from a one-shot timer callback turns it
+ *          into a continuous timer.
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] reload    the new reload value, zero means no reload
+ *
+ * @xclass
+ */
+static inline void chVTSetReloadIntervalX(virtual_timer_t *vtp,
+                                          sysinterval_t reload) {
+
+  vtp->reload = reload;
+}
+
+/**
+ * @brief   Returns the remaining time interval before next timer trigger.
+ * @note    This function can be called while the timer is active or
+ *          after stopping it.
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @return              The remaining time interval.
+ *
+ * @xclass
+ */
+static inline sysinterval_t chVTGetRemainingIntervalX(virtual_timer_t *vtp) {
+  sysinterval_t elapsed_time;
+
+  /* Time elapsed since last triggering or 1st activation.*/
+  elapsed_time  = chTimeDiffX(vtp->last, chVTGetSystemTimeX());
+
+  /* Current time could have slipped past the next deadline, compensating.*/
+  if (elapsed_time > vtp->reload) {
+    elapsed_time = vtp->reload;
+  }
+
+  /* Returning the remaining time interval.*/
+  return vtp->reload - elapsed_time;
 }
 
 #if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
