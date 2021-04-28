@@ -19,7 +19,6 @@
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 
-#if 0
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
@@ -34,14 +33,6 @@ static THD_FUNCTION(Thread1, arg) {
     palSetLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
   }
-}
-#endif
-
-virtual_timer_t vt1;
-void vtfunc(void *par) {
-
-  (void)par;
-  palToggleLine(LINE_LED_GREEN);
 }
 
 /*
@@ -69,8 +60,7 @@ int main(void) {
   /*
    * Creates the blinker thread.
    */
-//  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  chVTSetContinuous(&vt1, TIME_MS2I(500), vtfunc, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
