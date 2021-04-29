@@ -430,6 +430,58 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __I  uint32_t         INTS;
+  __I  uint32_t         resvd44[1007];
+  struct {
+    __IO uint32_t         TIMEHW;
+    __IO uint32_t         TIMELW;
+    __I  uint32_t         TIMEHR;
+    __I  uint32_t         TIMELR;
+    __IO uint32_t         ALARM[4];           /* NUM_TIMERS */
+    __IO uint32_t         ARMED;
+    __I  uint32_t         TIMERAWH;
+    __I  uint32_t         TIMERAWL;
+    __IO uint32_t         DBGPAUSE;
+    __IO uint32_t         PAUSE;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __I  uint32_t         INTS;
+    __I  uint32_t         resvd44[1007];
+  } XOR;
+  struct {
+    __IO uint32_t         TIMEHW;
+    __IO uint32_t         TIMELW;
+    __I  uint32_t         TIMEHR;
+    __I  uint32_t         TIMELR;
+    __IO uint32_t         ALARM[4];           /* NUM_TIMERS */
+    __IO uint32_t         ARMED;
+    __I  uint32_t         TIMERAWH;
+    __I  uint32_t         TIMERAWL;
+    __IO uint32_t         DBGPAUSE;
+    __IO uint32_t         PAUSE;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __I  uint32_t         INTS;
+    __I  uint32_t         resvd44[1007];
+  } SET;
+  struct {
+    __IO uint32_t         TIMEHW;
+    __IO uint32_t         TIMELW;
+    __I  uint32_t         TIMEHR;
+    __I  uint32_t         TIMELR;
+    __IO uint32_t         ALARM[4];           /* NUM_TIMERS */
+    __IO uint32_t         ARMED;
+    __I  uint32_t         TIMERAWH;
+    __I  uint32_t         TIMERAWL;
+    __IO uint32_t         DBGPAUSE;
+    __IO uint32_t         PAUSE;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __I  uint32_t         INTS;
+    __I  uint32_t         resvd44[1007];
+  } CLR;
 } TIMER_TypeDef;
 
 typedef struct {
@@ -566,6 +618,52 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __IO uint32_t         INTS;
+  __I  uint32_t         resvd30[1012];
+  struct {
+    __IO uint32_t         CLKDIVM1;
+    __IO uint32_t         SETUP0;
+    __IO uint32_t         SETUP1;
+    __IO uint32_t         CTRL;
+    __IO uint32_t         IRQSETUP0;
+    __IO uint32_t         IRQSETUP1;
+    __IO uint32_t         RTC1;
+    __IO uint32_t         RTC0;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd30[1012];
+  } XOR;
+  struct {
+    __IO uint32_t         CLKDIVM1;
+    __IO uint32_t         SETUP0;
+    __IO uint32_t         SETUP1;
+    __IO uint32_t         CTRL;
+    __IO uint32_t         IRQSETUP0;
+    __IO uint32_t         IRQSETUP1;
+    __IO uint32_t         RTC1;
+    __IO uint32_t         RTC0;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd30[1012];
+  } SET;
+  struct {
+    __IO uint32_t         CLKDIVM1;
+    __IO uint32_t         SETUP0;
+    __IO uint32_t         SETUP1;
+    __IO uint32_t         CTRL;
+    __IO uint32_t         IRQSETUP0;
+    __IO uint32_t         IRQSETUP1;
+    __IO uint32_t         RTC1;
+    __IO uint32_t         RTC0;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd30[1012];
+  } CLR;
 } RTC_TypeDef;
 
 typedef struct {
@@ -611,6 +709,142 @@ typedef struct {
   __IO uint32_t         FSSPKLEN;
   __I  uint32_t         resvdA4;
   __IO uint32_t         CLRRESTARTDET;
+  __I  uint32_t         resvdac[981];
+  struct {
+    __IO uint32_t         CON;
+    __IO uint32_t         TAR;
+    __IO uint32_t         SAR;
+    __I  uint32_t         resvdC;
+    __IO uint32_t         DATACMD;
+    __IO uint32_t         SSSCLHCNT;
+    __IO uint32_t         SSSCLLCNT;
+    __IO uint32_t         FSSCLHCNT;
+    __IO uint32_t         FSSCLLCNT;
+    __I  uint32_t         resvd24[2];
+    __IO uint32_t         INTRSTAT;
+    __IO uint32_t         INTRMASK;
+    __IO uint32_t         RAWINTRSTAT;
+    __IO uint32_t         RXTL;
+    __IO uint32_t         TXTL;
+    __IO uint32_t         CLRINTR;
+    __IO uint32_t         CLRRXUNDER;
+    __IO uint32_t         CLRRXOVER;
+    __IO uint32_t         CLRTXOVER;
+    __IO uint32_t         CLRRDREQ;
+    __IO uint32_t         CLRTXABRT;
+    __IO uint32_t         CLRRXDONE;
+    __IO uint32_t         CLRACTIVITY;
+    __IO uint32_t         CLRSTOPDET;
+    __IO uint32_t         CLRSTARTDET;
+    __IO uint32_t         CLRGENCALL;
+    __IO uint32_t         ENABLE;
+    __IO uint32_t         STATUS;
+    __IO uint32_t         TXFLR;
+    __IO uint32_t         RXFLR;
+    __IO uint32_t         SDAHOLD;
+    __IO uint32_t         TXABRTSOURCE;
+    __IO uint32_t         SLVDATANACKONLY;
+    __IO uint32_t         DMACR;
+    __IO uint32_t         DMATDLR;
+    __IO uint32_t         DMARDLR;
+    __IO uint32_t         SDASETUP;
+    __IO uint32_t         ACKGENERALCALL;
+    __IO uint32_t         ENABLESTATUS;
+    __IO uint32_t         FSSPKLEN;
+    __I  uint32_t         resvdA4;
+    __IO uint32_t         CLRRESTARTDET;
+    __I  uint32_t         resvdac[981];
+  } XOR;
+  struct {
+    __IO uint32_t         CON;
+    __IO uint32_t         TAR;
+    __IO uint32_t         SAR;
+    __I  uint32_t         resvdC;
+    __IO uint32_t         DATACMD;
+    __IO uint32_t         SSSCLHCNT;
+    __IO uint32_t         SSSCLLCNT;
+    __IO uint32_t         FSSCLHCNT;
+    __IO uint32_t         FSSCLLCNT;
+    __I  uint32_t         resvd24[2];
+    __IO uint32_t         INTRSTAT;
+    __IO uint32_t         INTRMASK;
+    __IO uint32_t         RAWINTRSTAT;
+    __IO uint32_t         RXTL;
+    __IO uint32_t         TXTL;
+    __IO uint32_t         CLRINTR;
+    __IO uint32_t         CLRRXUNDER;
+    __IO uint32_t         CLRRXOVER;
+    __IO uint32_t         CLRTXOVER;
+    __IO uint32_t         CLRRDREQ;
+    __IO uint32_t         CLRTXABRT;
+    __IO uint32_t         CLRRXDONE;
+    __IO uint32_t         CLRACTIVITY;
+    __IO uint32_t         CLRSTOPDET;
+    __IO uint32_t         CLRSTARTDET;
+    __IO uint32_t         CLRGENCALL;
+    __IO uint32_t         ENABLE;
+    __IO uint32_t         STATUS;
+    __IO uint32_t         TXFLR;
+    __IO uint32_t         RXFLR;
+    __IO uint32_t         SDAHOLD;
+    __IO uint32_t         TXABRTSOURCE;
+    __IO uint32_t         SLVDATANACKONLY;
+    __IO uint32_t         DMACR;
+    __IO uint32_t         DMATDLR;
+    __IO uint32_t         DMARDLR;
+    __IO uint32_t         SDASETUP;
+    __IO uint32_t         ACKGENERALCALL;
+    __IO uint32_t         ENABLESTATUS;
+    __IO uint32_t         FSSPKLEN;
+    __I  uint32_t         resvdA4;
+    __IO uint32_t         CLRRESTARTDET;
+    __I  uint32_t         resvdac[981];
+  } SET;
+  struct {
+    __IO uint32_t         CON;
+    __IO uint32_t         TAR;
+    __IO uint32_t         SAR;
+    __I  uint32_t         resvdC;
+    __IO uint32_t         DATACMD;
+    __IO uint32_t         SSSCLHCNT;
+    __IO uint32_t         SSSCLLCNT;
+    __IO uint32_t         FSSCLHCNT;
+    __IO uint32_t         FSSCLLCNT;
+    __I  uint32_t         resvd24[2];
+    __IO uint32_t         INTRSTAT;
+    __IO uint32_t         INTRMASK;
+    __IO uint32_t         RAWINTRSTAT;
+    __IO uint32_t         RXTL;
+    __IO uint32_t         TXTL;
+    __IO uint32_t         CLRINTR;
+    __IO uint32_t         CLRRXUNDER;
+    __IO uint32_t         CLRRXOVER;
+    __IO uint32_t         CLRTXOVER;
+    __IO uint32_t         CLRRDREQ;
+    __IO uint32_t         CLRTXABRT;
+    __IO uint32_t         CLRRXDONE;
+    __IO uint32_t         CLRACTIVITY;
+    __IO uint32_t         CLRSTOPDET;
+    __IO uint32_t         CLRSTARTDET;
+    __IO uint32_t         CLRGENCALL;
+    __IO uint32_t         ENABLE;
+    __IO uint32_t         STATUS;
+    __IO uint32_t         TXFLR;
+    __IO uint32_t         RXFLR;
+    __IO uint32_t         SDAHOLD;
+    __IO uint32_t         TXABRTSOURCE;
+    __IO uint32_t         SLVDATANACKONLY;
+    __IO uint32_t         DMACR;
+    __IO uint32_t         DMATDLR;
+    __IO uint32_t         DMARDLR;
+    __IO uint32_t         SDASETUP;
+    __IO uint32_t         ACKGENERALCALL;
+    __IO uint32_t         ENABLESTATUS;
+    __IO uint32_t         FSSPKLEN;
+    __I  uint32_t         resvdA4;
+    __IO uint32_t         CLRRESTARTDET;
+    __I  uint32_t         resvdac[981];
+  } CLR;
 } I2C_TypeDef;
 
 typedef struct {
@@ -623,6 +857,43 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __IO uint32_t         INTS;
+  __I  uint32_t         resvd24[1015];
+struct {
+    __IO uint32_t         CS;
+    __IO uint32_t         RESULT;
+    __IO uint32_t         FCS;
+    __IO uint32_t         FIFO;
+    __IO uint32_t         DIV;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd24[1015];
+  } XOR;
+struct {
+    __IO uint32_t         CS;
+    __IO uint32_t         RESULT;
+    __IO uint32_t         FCS;
+    __IO uint32_t         FIFO;
+    __IO uint32_t         DIV;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd24[1015];
+  } SET;
+struct {
+    __IO uint32_t         CS;
+    __IO uint32_t         RESULT;
+    __IO uint32_t         FCS;
+    __IO uint32_t         FIFO;
+    __IO uint32_t         DIV;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd24[1015];
+  } CLR;
 } ADC_TypeDef;
 
 typedef struct {
@@ -651,6 +922,91 @@ typedef struct {
   __IO uint32_t         INTE;
   __IO uint32_t         INTF;
   __IO uint32_t         INTS;
+  __I  uint32_t         resvd9c[985];
+  struct {
+    __IO uint32_t         DEVADDRCTRL;
+    __IO uint32_t         INTEPADDRCTRL[15]; /* USB_HOST_INTERRUPT_ENDPOINTS */
+    __IO uint32_t         MAINCTRL;
+    __IO uint32_t         SOFRW;
+    __I  uint32_t         SOFRD;
+    __IO uint32_t         SIECTRL;
+    __IO uint32_t         SIESTATUS;
+    __IO uint32_t         INTEPCTRL;
+    __IO uint32_t         BUFSTATUS;
+    __IO uint32_t         BUFCPUSHOULDHANDLE;
+    __IO uint32_t         ABORT;
+    __IO uint32_t         ABORTDONE;
+    __IO uint32_t         EPSTALLARM;
+    __IO uint32_t         NAKPOLL;
+    __IO uint32_t         EPNAKSTALLSTATUS;
+    __IO uint32_t         MUXING;
+    __IO uint32_t         PWR;
+    __IO uint32_t         PHYDIRECT;
+    __IO uint32_t         PHYDIRECTOVERRIDE;
+    __IO uint32_t         PHYTRIM;
+    __IO uint32_t         LINESTATETUNING;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd9c[985];
+  } XOR;
+  struct {
+    __IO uint32_t         DEVADDRCTRL;
+    __IO uint32_t         INTEPADDRCTRL[15]; /* USB_HOST_INTERRUPT_ENDPOINTS */
+    __IO uint32_t         MAINCTRL;
+    __IO uint32_t         SOFRW;
+    __I  uint32_t         SOFRD;
+    __IO uint32_t         SIECTRL;
+    __IO uint32_t         SIESTATUS;
+    __IO uint32_t         INTEPCTRL;
+    __IO uint32_t         BUFSTATUS;
+    __IO uint32_t         BUFCPUSHOULDHANDLE;
+    __IO uint32_t         ABORT;
+    __IO uint32_t         ABORTDONE;
+    __IO uint32_t         EPSTALLARM;
+    __IO uint32_t         NAKPOLL;
+    __IO uint32_t         EPNAKSTALLSTATUS;
+    __IO uint32_t         MUXING;
+    __IO uint32_t         PWR;
+    __IO uint32_t         PHYDIRECT;
+    __IO uint32_t         PHYDIRECTOVERRIDE;
+    __IO uint32_t         PHYTRIM;
+    __IO uint32_t         LINESTATETUNING;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd9c[985];
+  } SET;
+  struct {
+    __IO uint32_t         DEVADDRCTRL;
+    __IO uint32_t         INTEPADDRCTRL[15]; /* USB_HOST_INTERRUPT_ENDPOINTS */
+    __IO uint32_t         MAINCTRL;
+    __IO uint32_t         SOFRW;
+    __I  uint32_t         SOFRD;
+    __IO uint32_t         SIECTRL;
+    __IO uint32_t         SIESTATUS;
+    __IO uint32_t         INTEPCTRL;
+    __IO uint32_t         BUFSTATUS;
+    __IO uint32_t         BUFCPUSHOULDHANDLE;
+    __IO uint32_t         ABORT;
+    __IO uint32_t         ABORTDONE;
+    __IO uint32_t         EPSTALLARM;
+    __IO uint32_t         NAKPOLL;
+    __IO uint32_t         EPNAKSTALLSTATUS;
+    __IO uint32_t         MUXING;
+    __IO uint32_t         PWR;
+    __IO uint32_t         PHYDIRECT;
+    __IO uint32_t         PHYDIRECTOVERRIDE;
+    __IO uint32_t         PHYTRIM;
+    __IO uint32_t         LINESTATETUNING;
+    __IO uint32_t         INTR;
+    __IO uint32_t         INTE;
+    __IO uint32_t         INTF;
+    __IO uint32_t         INTS;
+    __I  uint32_t         resvd9c[985];
+  } CLR;
 } USB_TypeDef;
 
 typedef struct {
@@ -659,6 +1015,31 @@ typedef struct {
   __I  uint32_t         REASON;
   __IO uint32_t         SCRATCH[8];
   __IO uint32_t         TICK;
+  __I  uint32_t         resvd30[1012];
+  struct {
+    __IO uint32_t         CTRL;
+    __O  uint32_t         LOAD;
+    __I  uint32_t         REASON;
+    __IO uint32_t         SCRATCH[8];
+    __IO uint32_t         TICK;
+    __I  uint32_t         resvd30[1012];
+  } XOR;
+  struct {
+    __IO uint32_t         CTRL;
+    __O  uint32_t         LOAD;
+    __I  uint32_t         REASON;
+    __IO uint32_t         SCRATCH[8];
+    __IO uint32_t         TICK;
+    __I  uint32_t         resvd30[1012];
+  } SET;
+  struct {
+    __IO uint32_t         CTRL;
+    __O  uint32_t         LOAD;
+    __I  uint32_t         REASON;
+    __IO uint32_t         SCRATCH[8];
+    __IO uint32_t         TICK;
+    __I  uint32_t         resvd30[1012];
+  } CLR;
 } WATCHDOG_TypeDef;
 
 typedef struct {
@@ -690,6 +1071,100 @@ typedef struct {
   __IO uint32_t         INTE1;
   __IO uint32_t         INTF1;
   __I  uint32_t         INTS1;
+  __I  uint32_t         resvd144[943];
+  struct {
+  __IO uint32_t         CTRL;
+  __I  uint32_t         FSTAT;
+  __IO uint32_t         FDEBUG;
+  __I  uint32_t         FLEVEL;
+  __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         IRQ;
+  __O  uint32_t         IRQFORCE;
+  __IO uint32_t         INPUTSYNCBYPASS;
+  __IO uint32_t         DBGPADOUT;
+  __IO uint32_t         DBGPADOE;
+  __IO uint32_t         DBGCFGINFO;
+  __O  uint32_t         INSTRMEM[32];
+  struct {
+    __IO uint32_t       CLKDIV;
+    __IO uint32_t       EXECCTRL;
+    __IO uint32_t       SHIFTCTRL;
+    __I  uint32_t       ADDR;
+    __IO uint32_t       INSTR;
+    __IO uint32_t       PINCTRL;
+  } SM[4];                                /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE0;
+  __IO uint32_t         INTF0;
+  __I  uint32_t         INTS0;
+  __IO uint32_t         INTE1;
+  __IO uint32_t         INTF1;
+  __I  uint32_t         INTS1;
+  __I  uint32_t         resvd144[943];
+  } XOR;
+  struct {
+  __IO uint32_t         CTRL;
+  __I  uint32_t         FSTAT;
+  __IO uint32_t         FDEBUG;
+  __I  uint32_t         FLEVEL;
+  __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         IRQ;
+  __O  uint32_t         IRQFORCE;
+  __IO uint32_t         INPUTSYNCBYPASS;
+  __IO uint32_t         DBGPADOUT;
+  __IO uint32_t         DBGPADOE;
+  __IO uint32_t         DBGCFGINFO;
+  __O  uint32_t         INSTRMEM[32];
+  struct {
+    __IO uint32_t       CLKDIV;
+    __IO uint32_t       EXECCTRL;
+    __IO uint32_t       SHIFTCTRL;
+    __I  uint32_t       ADDR;
+    __IO uint32_t       INSTR;
+    __IO uint32_t       PINCTRL;
+  } SM[4];                                /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE0;
+  __IO uint32_t         INTF0;
+  __I  uint32_t         INTS0;
+  __IO uint32_t         INTE1;
+  __IO uint32_t         INTF1;
+  __I  uint32_t         INTS1;
+  __I  uint32_t         resvd144[943];
+  } SET;
+  struct {
+  __IO uint32_t         CTRL;
+  __I  uint32_t         FSTAT;
+  __IO uint32_t         FDEBUG;
+  __I  uint32_t         FLEVEL;
+  __O  uint32_t         TXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __I  uint32_t         RXF[4];            /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         IRQ;
+  __O  uint32_t         IRQFORCE;
+  __IO uint32_t         INPUTSYNCBYPASS;
+  __IO uint32_t         DBGPADOUT;
+  __IO uint32_t         DBGPADOE;
+  __IO uint32_t         DBGCFGINFO;
+  __O  uint32_t         INSTRMEM[32];
+  struct {
+    __IO uint32_t       CLKDIV;
+    __IO uint32_t       EXECCTRL;
+    __IO uint32_t       SHIFTCTRL;
+    __I  uint32_t       ADDR;
+    __IO uint32_t       INSTR;
+    __IO uint32_t       PINCTRL;
+  } SM[4];                                /* NUM_PIO_STATE_MACHINES */
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE0;
+  __IO uint32_t         INTF0;
+  __I  uint32_t         INTS0;
+  __IO uint32_t         INTE1;
+  __IO uint32_t         INTF1;
+  __I  uint32_t         INTS1;
+  __I  uint32_t         resvd144[943];
+  } CLR;
 } PIO_TypeDef;
 /** @} */
 
