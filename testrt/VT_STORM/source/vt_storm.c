@@ -155,7 +155,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
   chprintf(cfg->out, "*** Delta:        %d\r\n", CH_CFG_ST_TIMEDELTA);
   chprintf(cfg->out, "\r\n");
 
-  for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++){
+  for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
 
     chprintf(cfg->out, "Iteration %d\r\n", i);
 
