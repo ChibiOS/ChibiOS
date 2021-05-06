@@ -461,98 +461,75 @@ void chVTDoTickI(void) {
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   delta_list_t *dlp;
   sysinterval_t delta, nowdelta;
-  systime_t now = chVTGetSystemTimeX();
+  systime_t now;
+
+  /* Delta between current time and last execution time.*/
+  now = chVTGetSystemTimeX();
+  nowdelta = chTimeDiffX(vtlp->lasttime, now);
 
   /* Looping through timers.*/
   dlp = vtlp->dlist.next;
   while (true) {
+    virtual_timer_t *vtp = (virtual_timer_t *)dlp;
 
-    /* Delta between current time and last execution time.*/
-    nowdelta = chTimeDiffX(vtlp->lasttime, now);
-
-    /* The list scan is limited by the timers header having
-       "vtlp->dlist.delta == (sysinterval_t)-1" which is
+    /* Checking if the next timer in the list is within the current
+       time delta. Note that the list scan is limited by the timers
+       header having "vtlp->dlist.delta == (sysinterval_t)-1" which is
        greater than all deltas.*/
     if (nowdelta < dlp->delta) {
       break;
     }
 
-    /* Consuming all timers between "vtp->lasttime" and now.*/
-    do {
-      virtual_timer_t *vtp = (virtual_timer_t *)dlp;
+    /* Last time deadline is updated to the next timer's time.*/
+    vtlp->lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
+    vtp->last = vtlp->lasttime;
 
-      /* The "last time" becomes this timer's expiration time.*/
-//      vtlp->lasttime += dlp->delta;
-      vtlp->lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
-      nowdelta -= dlp->delta;
+    chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
 
-      /* Removing the timer from the list, marking it as not armed.*/
-      dlp->next->prev = &vtlp->dlist;
-      vtlp->dlist.next = dlp->next;
-      dlp->next = NULL;
+    /* Removing the next timer from the list, marking it as not armed.*/
+    dlp->next->prev = &vtlp->dlist;
+    vtlp->dlist.next = dlp->next;
+    dlp->next = NULL;
 
-      /* If the list becomes empty then the timer is stopped.*/
-      if (is_vtlist_empty(&vtlp->dlist)) {
-        port_timer_stop_alarm();
-      }
-
-      /* Now "last" marks the current deadline based on the stored
-         reload value. It is done before calling the callback because
-         the reload value could change. Note that "reload" could be
-         zero, no harm.*/
-      vtp->last = chTimeAddX(vtp->last, vtp->reload);
-
-      /* The callback is invoked outside the kernel critical zone.*/
-      chSysUnlockFromISR();
-      vtp->func(vtp->par);
-      chSysLockFromISR();
-
-      /* Getting again the system time after executing the callback in
-         order to reduce error.*/
-      now = chVTGetSystemTimeX();
-
-//      chDbgAssert((int)chTimeDiffX(vtp->last, now) >= 0, "back in time");
-
-      /* If a reload is defined the timer needs to be restarted.*/
-      if (vtp->reload > (sysinterval_t)0) {
-        sysinterval_t skipped_delta;
-
-#if 1
-        /* Calculating how much the actual current time skipped past the
-           predicted current deadline.*/
-        skipped_delta = chTimeDiffX(vtp->last, now);
-
-//        if (vtp->reload == 121) {
-//          chTraceWriteI(vtp, (void *)now);
-//          chTraceWriteI(vtp, (void *)vtp->last);
-//          chTraceWriteI(vtp, (void *)skipped_delta);
-//        }
-
-        chDbgAssert(skipped_delta <= vtp->reload, "skipped deadline");
-
-        /* Enqueuing the timer again using the calculated delta.*/
-        vt_enqueue(vtlp, vtp, now, vtp->reload - skipped_delta);
-#else
-        chVTDoSetI(vtp, vtp->reload, vtp->func, vtp->par);
-#endif
-      }
-
-      /* Next element in the list.*/
-      dlp = vtlp->dlist.next;
+    /* If the list becomes empty then the timer is stopped.*/
+    if (is_vtlist_empty(&vtlp->dlist)) {
+      port_timer_stop_alarm();
     }
-    while (dlp->delta <= nowdelta);
+
+    /* The callback is invoked outside the kernel critical section, it
+       is re-entered on the callback return. Note that "lasttime" can
+       be modified within the callback if some timer function is
+       called.*/
+    chSysUnlockFromISR();
+    vtp->func(vtp->par);
+    chSysLockFromISR();
+
+    /* Delta between current time and last execution time.*/
+    now = chVTGetSystemTimeX();
+    nowdelta = chTimeDiffX(vtlp->lasttime, now);
+
+    /* If a reload is defined the timer needs to be restarted.*/
+    if (vtp->reload > (sysinterval_t)0) {
+       sysinterval_t skipped_delta;
+
+       /* Calculating how much the actual current time skipped past the
+         current deadline.*/
+       skipped_delta = chTimeDiffX(vtp->last, now);
+
+       chDbgAssert(skipped_delta <= vtp->reload, "skipped deadline");
+
+       /* Enqueuing the timer again using the calculated delta.*/
+       vt_enqueue(vtlp, vtp, now, vtp->reload - skipped_delta);
+    }
+
+    /* Next element in the list.*/
+    dlp = vtlp->dlist.next;
   }
 
   /* If the list is empty, nothing else to do.*/
   if (is_vtlist_empty(&vtlp->dlist)) {
     return;
   }
-
-  /* The "unprocessed nowdelta" time slice is added to "last time"
-     and subtracted to next timer's delta.*/
-//  vtlp->lasttime += nowdelta;
-//  vtlp->lasttime = chTimeAddX(vtlp->lasttime, nowdelta);
-//  vtlp->dlist.next->delta -= nowdelta;
 
   /* Recalculating the next alarm time.*/
   delta = dlp->delta - chTimeDiffX(vtlp->lasttime, now);
