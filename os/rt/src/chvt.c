@@ -204,6 +204,8 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
+  (void)now;
+
   /* Delta is initially equal to the specified delay.*/
   delta = delay;
 #endif /* CH_CFG_ST_TIMEDELTA == 0 */
@@ -274,11 +276,10 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
   /* Timer initialization.*/
   vtp->par     = par;
   vtp->func    = vtfunc;
-  vtp->last    = now;
   vtp->reload  = (sysinterval_t)0;
 
   /* Inserting the timer in the delta list.*/
-  vt_enqueue(vtlp, vtp, vtp->last, delay);
+  vt_enqueue(vtlp, vtp, now, delay);
 }
 
 /**
@@ -317,11 +318,10 @@ void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
   /* Timer initialization.*/
   vtp->par     = par;
   vtp->func    = vtfunc;
-  vtp->last    = now;
   vtp->reload  = delay;
 
   /* Inserting the timer in the delta list.*/
-  vt_enqueue(vtlp, vtp, vtp->last, delay);
+  vt_enqueue(vtlp, vtp, now, delay);
 }
 
 /**
@@ -424,6 +424,43 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 }
 
 /**
+ * @brief   Returns the remaining time interval before next timer trigger.
+ * @note    This function can be called while the timer is active or
+ *          after stopping it.
+ *
+ * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @return              The remaining time interval.
+ *
+ * @iclass
+ */
+sysinterval_t chVTGetRemainingIntervalI(virtual_timer_t *vtp) {
+  virtual_timers_list_t *vtlp = &currcore->vtlist;
+  sysinterval_t deadline;
+  delta_list_t *dlp;
+
+  chDbgCheckClassI();
+
+  deadline = (sysinterval_t)0;
+  dlp = vtlp->dlist.next;
+  do {
+    deadline += dlp->delta;
+    if (dlp == &vtp->dlist) {
+      systime_t now = chVTGetSystemTimeX();
+      sysinterval_t nowdelta = chTimeDiffX(vtlp->lasttime, now);
+      if (nowdelta > deadline) {
+        return (sysinterval_t)0;
+      }
+      return nowdelta - deadline;
+    }
+    dlp = dlp->next;
+  } while (dlp != &vtlp->dlist);
+
+  chDbgAssert(false, "timer not in list");
+
+  return (sysinterval_t)-1;
+}
+
+/**
  * @brief   Virtual timers ticker.
  * @note    The system lock is released before entering the callback and
  *          re-acquired immediately after. It is callback's responsibility
@@ -471,6 +508,7 @@ void chVTDoTickI(void) {
   dlp = vtlp->dlist.next;
   while (true) {
     virtual_timer_t *vtp = (virtual_timer_t *)dlp;
+    systime_t lasttime;
 
     /* Checking if the next timer in the list is within the current
        time delta. Note that the list scan is limited by the timers
@@ -481,8 +519,8 @@ void chVTDoTickI(void) {
     }
 
     /* Last time deadline is updated to the next timer's time.*/
-    vtlp->lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
-    vtp->last = vtlp->lasttime;
+    lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
+    vtlp->lasttime = lasttime;
 
     chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
 
@@ -514,7 +552,7 @@ void chVTDoTickI(void) {
 
        /* Calculating how much the actual current time skipped past the
          current deadline.*/
-       skipped_delta = chTimeDiffX(vtp->last, now);
+       skipped_delta = chTimeDiffX(lasttime, now);
 
        chDbgAssert(skipped_delta <= vtp->reload, "skipped deadline");
 

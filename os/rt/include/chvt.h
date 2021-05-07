@@ -76,6 +76,7 @@ extern "C" {
   void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
                             vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
+  sysinterval_t chVTGetRemainingIntervalI(virtual_timer_t *vtp);
   void chVTDoTickI(void);
 #if CH_CFG_USE_TIMESTAMP == TRUE
   systimestamp_t chVTGetTimeStampI(void);
@@ -452,31 +453,6 @@ static inline void chVTSetReloadIntervalX(virtual_timer_t *vtp,
                                           sysinterval_t reload) {
 
   vtp->reload = reload;
-}
-
-/**
- * @brief   Returns the remaining time interval before next timer trigger.
- * @note    This function can be called while the timer is active or
- *          after stopping it.
- *
- * @param[in] vtp       the @p virtual_timer_t structure pointer
- * @return              The remaining time interval.
- *
- * @xclass
- */
-static inline sysinterval_t chVTGetRemainingIntervalX(virtual_timer_t *vtp) {
-  sysinterval_t elapsed_time;
-
-  /* Time elapsed since last triggering or 1st activation.*/
-  elapsed_time  = chTimeDiffX(vtp->last, chVTGetSystemTimeX());
-
-  /* Current time could have slipped past the next deadline, compensating.*/
-  if (elapsed_time > vtp->reload) {
-    elapsed_time = vtp->reload;
-  }
-
-  /* Returning the remaining time interval.*/
-  return vtp->reload - elapsed_time;
 }
 
 #if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
