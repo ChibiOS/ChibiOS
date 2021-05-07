@@ -51,7 +51,7 @@
 /*===========================================================================*/
 
 #if CH_CFG_USE_MESSAGES_PRIORITY == TRUE
-#define __ch_msg_insert(qp, tp) ch_sch_prio_insert(&tp->hdr.queue, qp)
+#define __ch_msg_insert(qp, tp) ch_sch_prio_insert(qp, &tp->hdr.queue)
 #else
 #define __ch_msg_insert(qp, tp) ch_queue_insert(qp, &tp->hdr.queue)
 #endif

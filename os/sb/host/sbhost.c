@@ -171,7 +171,7 @@ msg_t sbSendMessageTimeout(sb_class_t *sbcp,
 
   /* Sending the message.*/
   ctp->u.sentmsg = msg;
-  __ch_msg_insert(ctp, &sbcp->tp->msgqueue);
+  __ch_msg_insert(&sbcp->tp->msgqueue, ctp);
   if (sbcp->tp->state == CH_STATE_WTMSG) {
     (void) chSchReadyI(sbcp->tp);
   }

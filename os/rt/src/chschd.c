@@ -234,12 +234,12 @@ static void __sch_wakeup(void *p) {
  * @note    The insertion is done by scanning the list from the highest
  *          priority toward the lowest.
  *
- * @param[in] tp        the pointer to the thread to be inserted in the list
  * @param[in] qp        the pointer to the threads list header
+ * @param[in] tp        the pointer to the thread to be inserted in the list
  *
  * @notapi
  */
-void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
+void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp) {
 
   ch_queue_t *cp = qp;
   do {

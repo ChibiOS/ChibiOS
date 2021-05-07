@@ -159,7 +159,7 @@ extern "C" {
   void chSchDoYieldS(void);
   thread_t *chSchSelectFirstI(void);
 #if CH_CFG_OPTIMIZE_SPEED == FALSE
-  void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp);
+  void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp);
 #endif /* CH_CFG_OPTIMIZE_SPEED == FALSE */
 #ifdef __cplusplus
 }
@@ -172,7 +172,7 @@ extern "C" {
 /* If the performance code path has been chosen then all the following
    functions are inlined into the various kernel modules.*/
 #if CH_CFG_OPTIMIZE_SPEED == TRUE
-static inline void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
+static inline void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp) {
 
   ch_queue_t *cp = qp;
   do {

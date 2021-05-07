@@ -170,8 +170,8 @@ void chMtxLockS(mutex_t *mp) {
         switch (tp->state) {
         case CH_STATE_WTMTX:
           /* Re-enqueues the mutex owner with its new priority.*/
-          ch_sch_prio_insert(ch_queue_dequeue(&tp->hdr.queue),
-                             &tp->u.wtmtxp->queue);
+          ch_sch_prio_insert(&tp->u.wtmtxp->queue,
+                             ch_queue_dequeue(&tp->hdr.queue));
           tp = tp->u.wtmtxp->owner;
           /*lint -e{9042} [16.1] Continues the while.*/
           continue;
@@ -191,8 +191,8 @@ void chMtxLockS(mutex_t *mp) {
         case CH_STATE_SNDMSGQ:
 #endif
           /* Re-enqueues tp with its new priority on the queue.*/
-          ch_sch_prio_insert(ch_queue_dequeue(&tp->hdr.queue),
-                             &tp->u.wtmtxp->queue);
+          ch_sch_prio_insert(&tp->u.wtmtxp->queue,
+                             ch_queue_dequeue(&tp->hdr.queue));
           break;
 #endif
         case CH_STATE_READY:
@@ -211,7 +211,7 @@ void chMtxLockS(mutex_t *mp) {
       }
 
       /* Sleep on the mutex.*/
-      ch_sch_prio_insert(&currtp->hdr.queue, &mp->queue);
+      ch_sch_prio_insert(&mp->queue, &currtp->hdr.queue);
       currtp->u.wtmtxp = mp;
       chSchGoSleepS(CH_STATE_WTMTX);
 
