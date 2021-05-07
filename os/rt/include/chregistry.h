@@ -89,7 +89,7 @@ typedef struct {
  *
  * @param[in] tp        thread to remove from the registry
  */
-#define REG_REMOVE(tp) ch_queue_dequeue(&(tp)->rqueue)
+#define REG_REMOVE(tp) (void) ch_queue_dequeue(&(tp)->rqueue)
 
 /**
  * @brief   Adds a thread to the registry list.

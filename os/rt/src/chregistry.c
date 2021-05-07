@@ -68,7 +68,7 @@
 /*===========================================================================*/
 
 #define _offsetof(st, m)                                                    \
-  /*lint -save -e9005 -e9033 -e413 [11.8, 10.8 1.3] Normal pointers
+  /*lint -save -e9005 -e9033 -e413 [11.8, 10.8, 1.3] Normal pointers
     arithmetic, it is safe.*/                                               \
   ((size_t)((char *)&((st *)0)->m - (char *)0))                             \
   /*lint -restore*/
@@ -137,7 +137,9 @@ thread_t *chRegFirstThread(void) {
 
   chSysLock();
   p = (uint8_t *)REG_HEADER(currcore)->next;
-  tp = (thread_t *)(p - offsetof(thread_t, rqueue));
+  /*lint -save -e413 [1.3] Safe to subtract a calculated offset.*/
+  tp = (thread_t *)(p - _offsetof(thread_t, rqueue));
+  /*lint -restore*/
 #if CH_CFG_USE_DYNAMIC == TRUE
   tp->refs++;
 #endif
@@ -171,7 +173,9 @@ thread_t *chRegNextThread(thread_t *tp) {
 #if CH_CFG_USE_DYNAMIC == TRUE
   else {
     uint8_t *p = (uint8_t *)nqp;
-    ntp = (thread_t *)(p - offsetof(thread_t, rqueue));
+    /*lint -save -e413 [1.3] Safe to subtract a calculated offset.*/
+    ntp = (thread_t *)(p - _offsetof(thread_t, rqueue));
+    /*lint -restore*/
 
     chDbgAssert(ntp->refs < (trefs_t)255, "too many references");
 

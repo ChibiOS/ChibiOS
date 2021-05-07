@@ -291,7 +291,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   vtp->dlist.next->delta += vtp->dlist.delta;
 
  /* Removing the element from the delta list, marking it as not armed.*/
-  ch_dlist_dequeue(&vtp->dlist);
+  (void) ch_dlist_dequeue(&vtp->dlist);
   vtp->dlist.next = NULL;
 
   /* The above code changes the value in the header when the removed element
@@ -305,7 +305,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   if (!ch_dlist_isfirst(&vtlp->dlist, &vtp->dlist)) {
 
     /* Removing the element from the delta list.*/
-    ch_dlist_dequeue(&vtp->dlist);
+    (void) ch_dlist_dequeue(&vtp->dlist);
 
     /* Adding delta to the next element, if it is not the last one.*/
     if (is_timer(&vtlp->dlist, vtp->dlist.next)) {
@@ -429,7 +429,7 @@ void chVTDoTickI(void) {
       vtp = (virtual_timer_t *)vtlp->dlist.next;
 
       /* Removing the element from the delta list, marking it as not armed.*/
-      ch_dlist_dequeue(&vtp->dlist);
+      (void) ch_dlist_dequeue(&vtp->dlist);
       vtp->dlist.next = NULL;
 
       chSysUnlockFromISR();
@@ -467,7 +467,7 @@ void chVTDoTickI(void) {
     chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
 
     /* Removing the timer from the list, marking it as not armed.*/
-    ch_dlist_dequeue(dlp);
+    (void) ch_dlist_dequeue(dlp);
     dlp->next = NULL;
 
     /* If the list becomes empty then the timer is stopped.*/

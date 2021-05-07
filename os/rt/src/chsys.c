@@ -53,7 +53,7 @@ os_instance_t ch0;
 /**
  * @brief   Working area for core 0 idle thread.
  */
-THD_WORKING_AREA(ch_c0_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+static THD_WORKING_AREA(ch_c0_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
 extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
@@ -88,7 +88,7 @@ os_instance_t ch1;
 /**
  * @brief   Working area for core 1 idle thread.
  */
-THD_WORKING_AREA(ch_c1_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+static THD_WORKING_AREA(ch_c1_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
@@ -159,7 +159,7 @@ void chSysInit(void) {
 
   /* System object initialization.*/
   ch_system.state = ch_sys_initializing;
-  for (i = 0U; i < PORT_CORES_NUMBER; i++) {
+  for (i = 0U; i < (unsigned)PORT_CORES_NUMBER; i++) {
     ch_system.instances[i] = NULL;
   }
 
