@@ -53,6 +53,7 @@ KERNSRC := $(CHIBIOS)/os/rt/src/chsys.c \
            $(CHIBIOS)/os/rt/src/chtrace.c \
            $(CHIBIOS)/os/rt/src/chvt.c \
            $(CHIBIOS)/os/rt/src/chschd.c \
+           $(CHIBIOS)/os/rt/src/chinstances.c \
            $(CHIBIOS)/os/rt/src/chthreads.c \
            $(CHIBIOS)/os/rt/src/chtm.c \
            $(CHIBIOS)/os/rt/src/chstats.c \
