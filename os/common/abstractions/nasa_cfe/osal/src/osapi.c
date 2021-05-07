@@ -160,8 +160,10 @@ static osal_t osal;
 /**
  * @brief   System time callback.
  */
-static void systime_update(void *p) {
+static void systime_update(virtual_timer_t *vtp, void *p) {
   sysinterval_t delay = (sysinterval_t)p;
+
+  (void)vtp;
 
   chSysLockFromISR();
   osal.localtime.microsecs += 1000;
@@ -176,8 +178,10 @@ static void systime_update(void *p) {
 /**
  * @brief   Virtual timers callback.
  */
-static void timer_handler(void *p) {
+static void timer_handler(virtual_timer_t *vtp, void *p) {
   osal_timer_t *otp = (osal_timer_t *)p;
+
+  (void)vtp;
 
   /* Real callback.*/
   otp->callback_ptr((uint32)p);

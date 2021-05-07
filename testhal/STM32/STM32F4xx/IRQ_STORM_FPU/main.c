@@ -142,7 +142,7 @@ static const GPTConfig gpt3cfg = {
   0
 };
 
-CH_FAST_IRQ_HANDLER(STM32_TIM1_UP_HANDLER) {
+CH_FAST_IRQ_HANDLER(STM32_TIM1_UP_TIM10_HANDLER) {
   float f1, f2, f3, f4, f5;
 
   TIM1->SR = 0;
@@ -230,7 +230,7 @@ int main(void) {
    * Enabling TIM1 as a fast interrupts source.
    */
   rccEnableTIM1(false);
-  nvicEnableVector(STM32_TIM1_UP_NUMBER, 0);
+  nvicEnableVector(STM32_TIM1_UP_TIM10_NUMBER, 0);
   TIM1->ARR  = 10000;
   TIM1->PSC  = 0;
   TIM1->CNT  = 0;

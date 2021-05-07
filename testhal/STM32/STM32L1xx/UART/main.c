@@ -19,8 +19,9 @@
 
 static virtual_timer_t vt1, vt2;
 
-static void restart(void *p) {
+static void restart(virtual_timer_t *vtp, void *p) {
 
+  (void)vtp;
   (void)p;
 
   chSysLockFromISR();
@@ -28,9 +29,11 @@ static void restart(void *p) {
   chSysUnlockFromISR();
 }
 
-static void ledoff(void *p) {
+static void ledoff(virtual_timer_t *vtp, void *p) {
 
+  (void)vtp;
   (void)p;
+
   palClearPad(GPIOB, GPIOB_LED4);
 }
 
@@ -52,8 +55,7 @@ static void txend2(UARTDriver *uartp) {
   (void)uartp;
   palClearPad(GPIOB, GPIOB_LED4);
   chSysLockFromISR();
-  chVTResetI(&vt1);
-  chVTDoSetI(&vt1, TIME_MS2I(5000), restart, NULL);
+  chVTSetI(&vt1, TIME_MS2I(5000), restart, NULL);
   chSysUnlockFromISR();
 }
 
@@ -78,8 +80,7 @@ static void rxchar(UARTDriver *uartp, uint16_t c) {
   /* Flashing the LED each time a character is received.*/
   palSetPad(GPIOB, GPIOB_LED4);
   chSysLockFromISR();
-  chVTResetI(&vt2);
-  chVTDoSetI(&vt2, TIME_MS2I(200), ledoff, NULL);
+  chVTSetI(&vt2, TIME_MS2I(200), ledoff, NULL);
   chSysUnlockFromISR();
 }
 

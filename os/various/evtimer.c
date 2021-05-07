@@ -45,8 +45,10 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static void tmrcb(void *p) {
+static void tmrcb(virtual_timer_t *vtp, void *p) {
   event_timer_t *etp = p;
+
+  (void)vtp;
 
   chSysLockFromISR();
   chEvtBroadcastI(&etp->et_es);
