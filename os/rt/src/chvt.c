@@ -291,7 +291,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   vtp->dlist.next->delta += vtp->dlist.delta;
 
  /* Removing the element from the delta list, marking it as not armed.*/
-  dlist_dequeue(&vtp->dlist);
+  ch_dlist_dequeue(&vtp->dlist);
   vtp->dlist.next = NULL;
 
   /* The above code changes the value in the header when the removed element
@@ -374,22 +374,26 @@ void chVTDoResetI(virtual_timer_t *vtp) {
  */
 sysinterval_t chVTGetRemainingIntervalI(virtual_timer_t *vtp) {
   virtual_timers_list_t *vtlp = &currcore->vtlist;
-  sysinterval_t deadline;
+  sysinterval_t delta;
   ch_delta_list_t *dlp;
 
   chDbgCheckClassI();
 
-  deadline = (sysinterval_t)0;
+  delta = (sysinterval_t)0;
   dlp = vtlp->dlist.next;
   do {
-    deadline += dlp->delta;
+    delta += dlp->delta;
     if (dlp == &vtp->dlist) {
+#if CH_CFG_ST_TIMEDELTA > 0
       systime_t now = chVTGetSystemTimeX();
       sysinterval_t nowdelta = chTimeDiffX(vtlp->lasttime, now);
-      if (nowdelta > deadline) {
+      if (nowdelta > delta) {
         return (sysinterval_t)0;
       }
-      return nowdelta - deadline;
+      return nowdelta - delta;
+#else
+      return delta;
+#endif
     }
     dlp = dlp->next;
   } while (dlp != &vtlp->dlist);
@@ -415,7 +419,7 @@ void chVTDoTickI(void) {
 
 #if CH_CFG_ST_TIMEDELTA == 0
   vtlp->systime++;
-  if (!is_vtlist_empty(&vtlp->dlist)) {
+  if (ch_dlist_notempty(&vtlp->dlist)) {
     /* The list is not empty, processing elements on top.*/
     --vtlp->dlist.next->delta;
     while (vtlp->dlist.next->delta == (sysinterval_t)0) {
@@ -425,12 +429,11 @@ void chVTDoTickI(void) {
       vtp = (virtual_timer_t *)vtlp->dlist.next;
 
       /* Removing the element from the delta list, marking it as not armed.*/
-      vtp->dlist.next->prev = &vtlp->dlist;
-      vtlp->dlist.next = vtp->dlist.next;
+      ch_dlist_dequeue(&vtp->dlist);
       vtp->dlist.next = NULL;
 
       chSysUnlockFromISR();
-      vtp->func(vtp->par);
+      vtp->func(vtp, vtp->par);
       chSysLockFromISR();
     }
   }
