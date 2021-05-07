@@ -59,8 +59,9 @@ static volatile bool saturated;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static void watchdog_cb(void *p) {
+static void watchdog_cb(virtual_timer_t *vtp, void *p) {
 
+  (void)vtp;
   (void)p;
 
   chSysLockFromISR();
@@ -75,54 +76,55 @@ static void watchdog_cb(void *p) {
   saturated = true;
 }
 
-static void wrapper_cb(void *p) {
+static void wrapper_cb(virtual_timer_t *vtp, void *p) {
 
+  (void)vtp;
   (void)p;
 }
 
-static void sweeper0_cb(void *p) {
+static void sweeper0_cb(virtual_timer_t *vtp, void *p) {
 
   (void)p;
 
   chSysLockFromISR();
   chVTSetI(&wrapper, (sysinterval_t)-1, wrapper_cb, NULL);
-  chVTSetI(&sweeper0, delay, sweeper0_cb, NULL);
+  chVTSetI(vtp, delay, sweeper0_cb, NULL);
   chSysUnlockFromISR();
 }
 
-static void sweeperm1_cb(void *p) {
+static void sweeperm1_cb(virtual_timer_t *vtp, void *p) {
 
   (void)p;
 
   chSysLockFromISR();
-  chVTSetI(&sweeperm1, delay - 1, sweeperm1_cb, NULL);
+  chVTSetI(vtp, delay - 1, sweeperm1_cb, NULL);
   chSysUnlockFromISR();
 }
 
-static void sweeperp1_cb(void *p) {
+static void sweeperp1_cb(virtual_timer_t *vtp, void *p) {
 
   (void)p;
 
   chSysLockFromISR();
-  chVTSetI(&sweeperp1, delay + 1, sweeperp1_cb, NULL);
+  chVTSetI(vtp, delay + 1, sweeperp1_cb, NULL);
   chSysUnlockFromISR();
 }
 
-static void sweeperm3_cb(void *p) {
+static void sweeperm3_cb(virtual_timer_t *vtp, void *p) {
 
   (void)p;
 
   chSysLockFromISR();
-  chVTSetI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
+  chVTSetI(vtp, delay - 3, sweeperm3_cb, NULL);
   chSysUnlockFromISR();
 }
 
-static void sweeperp3_cb(void *p) {
+static void sweeperp3_cb(virtual_timer_t *vtp, void *p) {
 
   (void)p;
 
   chSysLockFromISR();
-  chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
+  chVTSetI(vtp, delay + 3, sweeperp3_cb, NULL);
   chSysUnlockFromISR();
 }
 

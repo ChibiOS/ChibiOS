@@ -60,7 +60,11 @@ static semaphore_t sem1;
 static mutex_t mtx1;
 #endif
 
-static void tmo(void *param) {(void)param;}
+static void tmo(virtual_timer_t *vtp, void *param) {
+
+  (void)vtp;
+  (void)param;
+}
 
 #if CH_CFG_USE_MESSAGES
 static THD_FUNCTION(bmk_thread1, p) {

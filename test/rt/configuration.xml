@@ -410,9 +410,10 @@ test_println("");]]></value>
             </condition>
             <shared_code>
               <value><![CDATA[/* Timer callback for testing system functions in ISR context.*/
-static void vtcb(void *p) {
+static void vtcb(virtual_timer_t *vtp, void *p) {
   syssts_t sts;
 
+  (void)vtp;
   (void)p;
 
   /* Testing normal case.*/
@@ -3645,7 +3646,11 @@ static semaphore_t sem1;
 static mutex_t mtx1;
 #endif
 
-static void tmo(void *param) {(void)param;}
+static void tmo(virtual_timer_t *vtp, void *param) {
+
+  (void)vtp;
+  (void)param;
+}
 
 #if CH_CFG_USE_MESSAGES
 static THD_FUNCTION(bmk_thread1, p) {

@@ -219,13 +219,9 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
 void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                 vtfunc_t vtfunc, void *par) {
   virtual_timers_list_t *vtlp = &currcore->vtlist;
-  systime_t now;
 
   chDbgCheckClassI();
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
-
-  /* Current system time.*/
-  now = chVTGetSystemTimeX();
 
   /* Timer initialization.*/
   vtp->par     = par;
@@ -233,7 +229,7 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
   vtp->reload  = (sysinterval_t)0;
 
   /* Inserting the timer in the delta list.*/
-  vt_enqueue(vtlp, vtp, now, delay);
+  vt_enqueue(vtlp, vtp, chVTGetSystemTimeX(), delay);
 }
 
 /**
@@ -261,13 +257,9 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
 void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
                           vtfunc_t vtfunc, void *par) {
   virtual_timers_list_t *vtlp = &currcore->vtlist;
-  systime_t now;
 
   chDbgCheckClassI();
   chDbgCheck((vtp != NULL) && (vtfunc != NULL) && (delay != TIME_IMMEDIATE));
-
-  /* Current system time.*/
-  now = chVTGetSystemTimeX();
 
   /* Timer initialization.*/
   vtp->par     = par;
@@ -275,7 +267,7 @@ void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
   vtp->reload  = delay;
 
   /* Inserting the timer in the delta list.*/
-  vt_enqueue(vtlp, vtp, now, delay);
+  vt_enqueue(vtlp, vtp, chVTGetSystemTimeX(), delay);
 }
 
 /**
@@ -485,7 +477,7 @@ void chVTDoTickI(void) {
        be modified within the callback if some timer function is
        called.*/
     chSysUnlockFromISR();
-    vtp->func(vtp->par);
+    vtp->func(vtp, vtp->par);
     chSysLockFromISR();
 
     /* Delta between current time and last execution time.*/

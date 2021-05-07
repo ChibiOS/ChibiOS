@@ -185,8 +185,10 @@ static void __sch_reschedule_ahead(void) {
 /*
  * Timeout wakeup callback.
  */
-static void __sch_wakeup(void *p) {
+static void __sch_wakeup(virtual_timer_t *vtp, void *p) {
   thread_t *tp = (thread_t *)p;
+
+  (void)vtp;
 
   chSysLockFromISR();
   switch (tp->state) {
@@ -222,6 +224,8 @@ static void __sch_wakeup(void *p) {
   /* Goes behind peers because it went to sleep voluntarily.*/
   (void) __sch_ready_behind(tp);
   chSysUnlockFromISR();
+
+  return;
 }
 
 /*===========================================================================*/

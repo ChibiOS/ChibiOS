@@ -55,14 +55,24 @@ typedef enum {
 } system_state_t;
 
 /**
- * @brief   Type of a Virtual Timer callback function.
- */
-typedef void (*vtfunc_t)(void *p);
-
-/**
  * @brief   Type of a Virtual Timer.
  */
-typedef struct ch_virtual_timer {
+typedef struct ch_virtual_timer virtual_timer_t;
+
+/**
+ * @brief   Type of a Virtual Timer callback function.
+ *
+ * @param[in] vtp       pointer to the @p virtual_timer_t calling this callback
+ * @param[in[ p         optional argument to the callback
+ * @return              The interval to be reloaded into the timer or zero.
+ * @retval 0            if the timer must not be reloaded.
+ */
+typedef void (*vtfunc_t)(virtual_timer_t *vtp, void *p);
+
+/**
+ * @brief   Structure representing a Virtual Timer.
+ */
+struct ch_virtual_timer {
   /**
    * @brief   Delta list element.
    */
@@ -79,7 +89,7 @@ typedef struct ch_virtual_timer {
    * @brief   Current reload interval.
    */
   sysinterval_t                 reload;
-} virtual_timer_t;
+};
 
 /**
  * @brief   Type of virtual timers list header.
