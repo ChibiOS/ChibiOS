@@ -101,6 +101,59 @@ static inline bool is_timer(delta_list_t *dlhp, delta_list_t *dlp) {
 }
 
 /**
+ * @brief   Dequeues an element from the delta list.
+ *
+ * @param[in] dlp       pointer to the delta list element
+ *
+ * @notapi
+ */
+static delta_list_t *dlist_dequeue(delta_list_t *dlp) {
+
+  dlp->prev->next = dlp->next;
+  dlp->next->prev = dlp->prev;
+
+  return dlp;
+}
+
+/**
+ * @brief   Dequeues an element from the delta list.
+ *
+ * @param[in] dlhp      pointer to the delta list header
+ *
+ * @notapi
+ */
+static delta_list_t *dlist_remove_first(delta_list_t *dlhp) {
+  delta_list_t *dlp = dlhp->next;
+
+  dlhp->next       = dlp->next;
+  dlhp->next->prev = dlhp;
+
+  return dlp;
+}
+
+static void dlist_insert_after(delta_list_t *dlhp,
+                               delta_list_t *dlp,
+                               sysinterval_t delta) {
+
+  dlp->delta      = delta;
+  dlp->prev       = dlhp;
+  dlp->next       = dlp->prev->next;
+  dlp->next->prev = dlp;
+  dlhp->next      = dlp;
+}
+
+static void dlist_insert_before(delta_list_t *dlhp,
+                                delta_list_t *dlp,
+                                sysinterval_t delta) {
+
+  dlp->delta      = delta;
+  dlp->next       = dlhp;
+  dlp->prev       = dlp->next->prev;
+  dlp->prev->next = dlp;
+  dlhp->prev      = dlp;
+}
+
+/**
  * @brief   Delta list compression.
  *
  * @param[in] vtlp      pointer to the delta list to be compressed
@@ -158,11 +211,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
       /* The delta list is empty, the current time becomes the new
          delta list base time, the timer is inserted.*/
       vtlp->lasttime = now;
-      vtlp->dlist.next = &vtp->dlist;
-      vtlp->dlist.prev = &vtp->dlist;
-      vtp->dlist.next = &vtlp->dlist;
-      vtp->dlist.prev = &vtlp->dlist;
-      vtp->dlist.delta = delay;
+      dlist_insert_after(&vtlp->dlist, &vtp->dlist, delay);
 
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
       /* The delta could be too large for the physical timer to handle.*/
@@ -222,11 +271,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
   }
 
   /* The timer is inserted in the delta list.*/
-  vtp->dlist.next       = dlp;
-  vtp->dlist.prev       = vtp->dlist.next->prev;
-  vtp->dlist.prev->next = &vtp->dlist;
-  dlp->prev             = &vtp->dlist;
-  vtp->dlist.delta      = delta;
+  dlist_insert_before(dlp, &vtp->dlist, delta);
 
   /* Calculate new delta for the following entry.*/
   dlp->delta -= delta;
@@ -345,8 +390,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   vtp->dlist.next->delta += vtp->dlist.delta;
 
  /* Removing the element from the delta list, marking it as not armed.*/
-  vtp->dlist.prev->next = vtp->dlist.next;
-  vtp->dlist.next->prev = vtp->dlist.prev;
+  dlist_dequeue(&vtp->dlist);
   vtp->dlist.next = NULL;
 
   /* The above code changes the value in the header when the removed element
@@ -358,13 +402,14 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   /* If the timer is not the first of the list then it is simply unlinked
      else the operation is more complex.*/
   if (!is_first_timer(&vtlp->dlist, &vtp->dlist)) {
+
     /* Removing the element from the delta list.*/
-    vtp->dlist.prev->next = vtp->dlist.next;
-    vtp->dlist.next->prev = vtp->dlist.prev;
+    dlist_dequeue(&vtp->dlist);
 
     /* Adding delta to the next element, if it is not the last one.*/
-    if (is_timer(&vtlp->dlist, vtp->dlist.next))
+    if (is_timer(&vtlp->dlist, vtp->dlist.next)) {
       vtp->dlist.next->delta += vtp->dlist.delta;
+    }
 
     /* Marking timer as not armed.*/
     vtp->dlist.next = NULL;
@@ -373,8 +418,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   }
 
   /* Removing the first timer from the list, marking it as not armed.*/
-  vtlp->dlist.next = vtp->dlist.next;
-  vtlp->dlist.next->prev = &vtlp->dlist;
+  dlist_remove_first(&vtlp->dlist);
   vtp->dlist.next = NULL;
 
   /* If the list become empty then the alarm timer is stopped and done.*/
@@ -386,12 +430,6 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
   /* The delta of the removed timer is added to the new first timer.*/
   vtlp->dlist.next->delta += vtp->dlist.delta;
-
-  /* If the new first timer has a delta of zero then the alarm is not
-     modified, the already programmed alarm will serve it.*/
-/*  if (vtlp->dlist.next->delta == 0) {
-    return;
-  }*/
 
   /* Distance in ticks between the last alarm event and current time.*/
   nowdelta = chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX());
@@ -524,9 +562,8 @@ void chVTDoTickI(void) {
 
     chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
 
-    /* Removing the next timer from the list, marking it as not armed.*/
-    dlp->next->prev = &vtlp->dlist;
-    vtlp->dlist.next = dlp->next;
+    /* Removing the timer from the list, marking it as not armed.*/
+    dlist_dequeue(dlp);
     dlp->next = NULL;
 
     /* If the list becomes empty then the timer is stopped.*/
