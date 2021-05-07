@@ -85,7 +85,7 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
 
   chSysLock();
   currtp->u.sentmsg = msg;
-  __ch_msg_insert(currtp, &tp->msgqueue);
+  __ch_msg_insert(&tp->msgqueue, currtp);
   if (tp->state == CH_STATE_WTMSG) {
     (void) chSchReadyI(tp);
   }

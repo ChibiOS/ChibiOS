@@ -76,9 +76,9 @@
 /*===========================================================================*/
 
 #if CH_CFG_USE_SEMAPHORES_PRIORITY == TRUE
-#define sem_insert(tp, qp) ch_sch_prio_insert(&tp->hdr.queue, qp)
+#define sem_insert(qp, tp) ch_sch_prio_insert(&tp->hdr.queue, qp)
 #else
-#define sem_insert(tp, qp) ch_queue_insert(&tp->hdr.queue, qp)
+#define sem_insert(qp, tp) ch_queue_insert(qp, &tp->hdr.queue)
 #endif
 
 /*===========================================================================*/
@@ -199,7 +199,7 @@ msg_t chSemWaitS(semaphore_t *sp) {
   if (--sp->cnt < (cnt_t)0) {
     thread_t *currtp = chThdGetSelfX();
     currtp->u.wtsemp = sp;
-    sem_insert(currtp, &sp->queue);
+    sem_insert(&sp->queue, currtp);
     chSchGoSleepS(CH_STATE_WTSEM);
 
     return currtp->u.rdymsg;
@@ -272,7 +272,7 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, sysinterval_t timeout) {
     }
     thread_t *currtp = chThdGetSelfX();
     currtp->u.wtsemp = sp;
-    sem_insert(currtp, &sp->queue);
+    sem_insert(&sp->queue, currtp);
 
     return chSchGoSleepTimeoutS(CH_STATE_WTSEM, timeout);
   }
@@ -388,7 +388,7 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
   }
   if (--spw->cnt < (cnt_t)0) {
     thread_t *currtp = chThdGetSelfX();
-    sem_insert(currtp, &spw->queue);
+    sem_insert(&spw->queue, currtp);
     currtp->u.wtsemp = spw;
     chSchGoSleepS(CH_STATE_WTSEM);
     msg = currtp->u.rdymsg;

@@ -184,12 +184,12 @@ static inline bool ch_list_notempty(ch_list_t *lp) {
 /**
  * @brief   Pushes an element on top of a stack list.
  *
- * @param[in] p     the pointer to the element to be inserted in the list
  * @param[in] lp    the pointer to the list header
+ * @param[in] p     the pointer to the element to be inserted in the list
  *
  * @notapi
  */
-static inline void ch_list_push(ch_list_t *p, ch_list_t *lp) {
+static inline void ch_list_link(ch_list_t *lp, ch_list_t *p) {
 
   p->next = lp->next;
   lp->next = p;
@@ -204,7 +204,7 @@ static inline void ch_list_push(ch_list_t *p, ch_list_t *lp) {
  *
  * @notapi
  */
-static inline ch_list_t *ch_list_pop(ch_list_t *lp) {
+static inline ch_list_t *ch_list_unlink(ch_list_t *lp) {
 
   ch_list_t *p = lp->next;
   lp->next = p->next;
@@ -254,12 +254,12 @@ static inline bool ch_queue_notempty(const ch_queue_t *qp) {
 /**
  * @brief   Inserts an element into a queue.
  *
- * @param[in] p         the pointer to the element to be inserted in the queue
  * @param[in] qp        the pointer to the queue header
+ * @param[in] p         the pointer to the element to be inserted in the queue
  *
  * @notapi
  */
-static inline void ch_queue_insert(ch_queue_t *p, ch_queue_t *qp) {
+static inline void ch_queue_insert(ch_queue_t *qp, ch_queue_t *p) {
 
   p->next       = qp;
   p->prev       = qp->prev;

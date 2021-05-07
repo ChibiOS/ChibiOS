@@ -521,7 +521,7 @@ void chThdExitS(msg_t msg) {
 #if CH_CFG_USE_WAITEXIT == TRUE
   /* Waking up any waiting thread.*/
   while (ch_list_notempty(&currtp->waiting)) {
-    (void) chSchReadyI((thread_t *)ch_list_pop(&currtp->waiting));
+    (void) chSchReadyI((thread_t *)ch_list_unlink(&currtp->waiting));
   }
 #endif
 
@@ -580,7 +580,7 @@ msg_t chThdWait(thread_t *tp) {
 #endif
 
   if (tp->state != CH_STATE_FINAL) {
-    ch_list_push(&currtp->hdr.list, &tp->waiting);
+    ch_list_link(&tp->waiting, &currtp->hdr.list);
     chSchGoSleepS(CH_STATE_WTEXIT);
   }
   msg = tp->u.exitcode;
@@ -882,7 +882,7 @@ msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
     return MSG_TIMEOUT;
   }
 
-  ch_queue_insert((ch_queue_t *)currtp, &tqp->queue);
+  ch_queue_insert(&tqp->queue, (ch_queue_t *)currtp);
 
   return chSchGoSleepTimeoutS(CH_STATE_QUEUED, timeout);
 }

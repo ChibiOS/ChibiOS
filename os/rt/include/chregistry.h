@@ -98,7 +98,7 @@ typedef struct {
  * @param[in] oip       pointer to the OS instance
  * @param[in] tp        thread to add to the registry
  */
-#define REG_INSERT(oip, tp) ch_queue_insert(&(tp)->rqueue, REG_HEADER(oip))
+#define REG_INSERT(oip, tp) ch_queue_insert(REG_HEADER(oip), &(tp)->rqueue)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

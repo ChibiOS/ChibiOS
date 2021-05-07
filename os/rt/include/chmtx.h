@@ -92,12 +92,6 @@ struct ch_mutex {
  */
 #define MUTEX_DECL(name) mutex_t name = __MUTEX_DATA(name)
 
-#if CH_CFG_USE_MESSAGES_PRIORITY == TRUE
-#define __ch_msg_insert(tp, qp) ch_sch_prio_insert(&tp->hdr.queue, qp)
-#else
-#define __ch_msg_insert(tp, qp) ch_queue_insert(&tp->hdr.queue, qp)
-#endif
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
