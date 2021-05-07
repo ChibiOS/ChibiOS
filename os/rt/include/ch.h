@@ -98,10 +98,10 @@
 /* Base kernel headers.*/
 #include "chtypes.h"
 #include "chearly.h"
-#include "chlists.h"
-#include "chalign.h"
 #include "chdebug.h"
 #include "chtime.h"
+#include "chlists.h"
+#include "chalign.h"
 #include "chtrace.h"
 #include "chport.h"
 #include "chtm.h"

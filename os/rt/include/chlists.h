@@ -83,9 +83,24 @@ typedef struct ch_priority_queue ch_priority_queue_t;
  * @note    Link fields are void pointers in order to avoid aliasing issues.
  */
 struct ch_priority_queue {
-  ch_priority_queue_t   *next;      /**< @brief Next in the list/queue.     */
+  ch_priority_queue_t   *next;      /**< @brief Next in the queue.          */
   ch_priority_queue_t   *prev;      /**< @brief Previous in the queue.      */
-  tprio_t               prio;
+  tprio_t               prio;       /**< @brief Priority of this element.   */
+};
+
+/**
+ * @brief   Type of a generic bidirectional linked delta list
+ *          header and element.
+ */
+typedef struct ch_delta_list ch_delta_list_t;
+
+/**
+ * @brief   Delta list element and header structure.
+ */
+struct ch_delta_list {
+  ch_delta_list_t       *next;      /**< @brief Next in the delta list.     */
+  ch_delta_list_t       *prev;      /**< @brief Previous in the delta list. */
+  sysinterval_t         delta;      /**< @brief Time interval from previous.*/
 };
 
 /*===========================================================================*/
@@ -399,6 +414,143 @@ static inline ch_priority_queue_t *ch_pqueue_insert_ahead(ch_priority_queue_t *p
   pqp->prev     = p;
 
   return p;
+}
+
+/**
+ * @brief   Delta list initialization.
+ *
+ * @param[out] dlp     pointer to the delta list header
+ *
+ * @notapi
+ */
+static inline void ch_dlist_init(ch_delta_list_t *dlhp) {
+
+  dlhp->next  = dlhp;
+  dlhp->prev  = dlhp;
+  dlhp->delta = (sysinterval_t)-1;
+}
+
+/**
+ * @brief   Evaluates to @p true if the specified delta list is empty.
+ *
+ * @param[in] dlhp      pointer to the delta list header
+ * @return              The status of the delta list.
+ *
+ * @notapi
+ */
+static inline bool ch_dlist_isempty(ch_delta_list_t *dlhp) {
+
+  return (bool)(dlhp == dlhp->next);
+}
+
+/**
+ * @brief   Evaluates to @p true if the specified queue is not empty.
+ *
+ * @param[in] dlhp      pointer to the delta list header
+ * @return              The status of the delta list.
+ *
+ * @notapi
+ */
+static inline bool ch_dlist_notempty(ch_delta_list_t *dlhp) {
+
+  return (bool)(dlhp != dlhp->next);
+}
+
+/**
+ * @brief   Last element in the delta list check.
+ *
+ * @param[in] dlhp      pointer to the delta list header
+ * @param[in] dlp       pointer to the delta list element
+ *
+ * @notapi
+ */
+static inline bool ch_dlist_islast(ch_delta_list_t *dlhp,
+                                   ch_delta_list_t *dlp) {
+
+  return (bool)(dlp->next == dlhp);
+}
+
+/**
+ * @brief   Fist element in the delta list check.
+ *
+ * @param[in] dlhp      pointer to the delta list header
+ * @param[in] dlp       pointer to the delta list element
+ *
+ * @notapi
+ */
+static inline bool ch_dlist_isfirst(ch_delta_list_t *dlhp,
+                                    ch_delta_list_t *dlp) {
+
+  return (bool)(dlhp->next == dlp);
+}
+
+/**
+ * @brief   Inserts an element after another header element.
+ *
+ * @param[in] dlhp      pointer to the delta list header element
+ * @param[in] dlp       element to be inserted after the header element
+ *
+ * @notapi
+ */
+static inline void ch_dlist_insert_after(ch_delta_list_t *dlhp,
+                                         ch_delta_list_t *dlp,
+                                         sysinterval_t delta) {
+
+  dlp->delta      = delta;
+  dlp->prev       = dlhp;
+  dlp->next       = dlp->prev->next;
+  dlp->next->prev = dlp;
+  dlhp->next      = dlp;
+}
+
+/**
+ * @brief   Inserts an element before another header element.
+ *
+ * @param[in] dlhp      pointer to the delta list header element
+ * @param[in] dlp       element to be inserted before the header element
+ *
+ * @notapi
+ */
+static inline void ch_dlist_insert_before(ch_delta_list_t *dlhp,
+                                          ch_delta_list_t *dlp,
+                                          sysinterval_t delta) {
+
+  dlp->delta      = delta;
+  dlp->next       = dlhp;
+  dlp->prev       = dlp->next->prev;
+  dlp->prev->next = dlp;
+  dlhp->prev      = dlp;
+}
+
+/**
+ * @brief   Dequeues an element from the delta list.
+ *
+ * @param[in] dlhp      pointer to the delta list header
+ *
+ * @notapi
+ */
+static inline ch_delta_list_t *ch_dlist_remove_first(ch_delta_list_t *dlhp) {
+  ch_delta_list_t *dlp = dlhp->next;
+
+  dlhp->next       = dlp->next;
+  dlhp->next->prev = dlhp;
+
+  return dlp;
+}
+
+/**
+ * @brief   Dequeues an element from the delta list.
+ *
+ * @param[in] dlp       pointer to the delta list element
+ *
+ * @notapi
+ */
+static inline ch_delta_list_t *ch_dlist_dequeue(ch_delta_list_t *dlp) {
+
+  dlp->prev->next = dlp->next;
+  dlp->next->prev = dlp->prev;
+
+  return dlp;
 }
 
 #endif /* CHLISTS_H */

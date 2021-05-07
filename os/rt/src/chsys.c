@@ -283,7 +283,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
 
   /* Timers list integrity check.*/
   if ((testmask & CH_INTEGRITY_VTLIST) != 0U) {
-    delta_list_t *dlp;
+    ch_delta_list_t *dlp;
 
     /* Scanning the timers list forward.*/
     n = (cnt_t)0;

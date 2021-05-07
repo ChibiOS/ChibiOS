@@ -60,36 +60,13 @@ typedef enum {
 typedef void (*vtfunc_t)(void *p);
 
 /**
- * @brief   Type of a Virtual Timer structure.
- */
-typedef struct ch_delta_list delta_list_t;
-
-/**
- * @brief   Virtual Timer delta list element and header structure.
- */
-struct ch_delta_list {
-  /**
-   * @brief   Next timer in the list.
-   */
-  delta_list_t                  *next;
-  /**
-   * @brief   Previous timer in the list.
-   */
-  delta_list_t                  *prev;
-  /**
-   * @brief   Time delta before timeout.
-   */
-  sysinterval_t                 delta;
-};
-
-/**
  * @brief   Type of a Virtual Timer.
  */
 typedef struct ch_virtual_timer {
   /**
    * @brief   Delta list element.
    */
-  delta_list_t                  dlist;
+  ch_delta_list_t               dlist;
   /**
    * @brief   Timer callback function pointer.
    */
@@ -114,7 +91,7 @@ typedef struct ch_virtual_timers_list {
   /**
    * @brief   Delta list header.
    */
-  delta_list_t                  dlist;
+  ch_delta_list_t               dlist;
 #if (CH_CFG_ST_TIMEDELTA == 0) || defined(__DOXYGEN__)
   /**
    * @brief   System Time counter.
@@ -142,7 +119,7 @@ typedef struct ch_registry {
   /**
    * @brief   Registry queue header.
    */
-  ch_queue_t                  queue;
+  ch_queue_t                    queue;
 } registry_t;
 
 /**

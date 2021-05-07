@@ -48,45 +48,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   List empty check.
- *
- * @param[in] dlhp      pointer to the delta list header
- *
- * @notapi
- */
-static inline bool is_vtlist_empty(delta_list_t *dlhp) {
-
-  return (bool)(dlhp == dlhp->next);
-}
-
 #if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
-/**
- * @brief   Last timer in the list check.
- *
- * @param[in] dlhp      pointer to the delta list header
- * @param[in] dlp       pointer to the delta list element
- *
- * @notapi
- */
-static inline bool is_last_timer(delta_list_t *dlhp, delta_list_t *dlp) {
-
-  return (bool)(dlp->next == dlhp);
-}
-
-/**
- * @brief   Fist timer in the list check.
- *
- * @param[in] dlhp      pointer to the delta list header
- * @param[in] dlp       pointer to the delta list element
- *
- * @notapi
- */
-static inline bool is_first_timer(delta_list_t *dlhp, delta_list_t *dlp) {
-
-  return (bool)(dlhp->next == dlp);
-}
-
 /**
  * @brief   Timer check.
  *
@@ -95,62 +57,9 @@ static inline bool is_first_timer(delta_list_t *dlhp, delta_list_t *dlp) {
  *
  * @notapi
  */
-static inline bool is_timer(delta_list_t *dlhp, delta_list_t *dlp) {
+static inline bool is_timer(ch_delta_list_t *dlhp, ch_delta_list_t *dlp) {
 
   return (bool)(dlp != dlhp);
-}
-
-/**
- * @brief   Dequeues an element from the delta list.
- *
- * @param[in] dlp       pointer to the delta list element
- *
- * @notapi
- */
-static delta_list_t *dlist_dequeue(delta_list_t *dlp) {
-
-  dlp->prev->next = dlp->next;
-  dlp->next->prev = dlp->prev;
-
-  return dlp;
-}
-
-/**
- * @brief   Dequeues an element from the delta list.
- *
- * @param[in] dlhp      pointer to the delta list header
- *
- * @notapi
- */
-static delta_list_t *dlist_remove_first(delta_list_t *dlhp) {
-  delta_list_t *dlp = dlhp->next;
-
-  dlhp->next       = dlp->next;
-  dlhp->next->prev = dlhp;
-
-  return dlp;
-}
-
-static void dlist_insert_after(delta_list_t *dlhp,
-                               delta_list_t *dlp,
-                               sysinterval_t delta) {
-
-  dlp->delta      = delta;
-  dlp->prev       = dlhp;
-  dlp->next       = dlp->prev->next;
-  dlp->next->prev = dlp;
-  dlhp->next      = dlp;
-}
-
-static void dlist_insert_before(delta_list_t *dlhp,
-                                delta_list_t *dlp,
-                                sysinterval_t delta) {
-
-  dlp->delta      = delta;
-  dlp->next       = dlhp;
-  dlp->prev       = dlp->next->prev;
-  dlp->prev->next = dlp;
-  dlhp->prev      = dlp;
 }
 
 /**
@@ -163,7 +72,7 @@ static void dlist_insert_before(delta_list_t *dlhp,
  */
 static void vt_list_compress(virtual_timers_list_t *vtlp,
                              sysinterval_t deltanow) {
-  delta_list_t *dlp = vtlp->dlist.next;
+  ch_delta_list_t *dlp = vtlp->dlist.next;
 
   vtlp->lasttime = chTimeAddX(vtlp->lasttime, deltanow);
 
@@ -192,7 +101,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
                        virtual_timer_t *vtp,
                        systime_t now,
                        sysinterval_t delay) {
-  delta_list_t *dlp;
+  ch_delta_list_t *dlp;
   sysinterval_t delta;
 
 #if CH_CFG_ST_TIMEDELTA > 0
@@ -206,12 +115,12 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
     }
 
     /* Special case where the timers list is empty.*/
-    if (is_vtlist_empty(&vtlp->dlist)) {
+    if (ch_dlist_isempty(&vtlp->dlist)) {
 
       /* The delta list is empty, the current time becomes the new
          delta list base time, the timer is inserted.*/
       vtlp->lasttime = now;
-      dlist_insert_after(&vtlp->dlist, &vtp->dlist, delay);
+      ch_dlist_insert_after(&vtlp->dlist, &vtp->dlist, delay);
 
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
       /* The delta could be too large for the physical timer to handle.*/
@@ -271,7 +180,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
   }
 
   /* The timer is inserted in the delta list.*/
-  dlist_insert_before(dlp, &vtp->dlist, delta);
+  ch_dlist_insert_before(dlp, &vtp->dlist, delta);
 
   /* Calculate new delta for the following entry.*/
   dlp->delta -= delta;
@@ -401,10 +310,10 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
   /* If the timer is not the first of the list then it is simply unlinked
      else the operation is more complex.*/
-  if (!is_first_timer(&vtlp->dlist, &vtp->dlist)) {
+  if (!ch_dlist_isfirst(&vtlp->dlist, &vtp->dlist)) {
 
     /* Removing the element from the delta list.*/
-    dlist_dequeue(&vtp->dlist);
+    ch_dlist_dequeue(&vtp->dlist);
 
     /* Adding delta to the next element, if it is not the last one.*/
     if (is_timer(&vtlp->dlist, vtp->dlist.next)) {
@@ -418,11 +327,11 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   }
 
   /* Removing the first timer from the list, marking it as not armed.*/
-  dlist_remove_first(&vtlp->dlist);
+  ch_dlist_remove_first(&vtlp->dlist);
   vtp->dlist.next = NULL;
 
   /* If the list become empty then the alarm timer is stopped and done.*/
-  if (is_vtlist_empty(&vtlp->dlist)) {
+  if (ch_dlist_isempty(&vtlp->dlist)) {
     port_timer_stop_alarm();
 
     return;
@@ -474,7 +383,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 sysinterval_t chVTGetRemainingIntervalI(virtual_timer_t *vtp) {
   virtual_timers_list_t *vtlp = &currcore->vtlist;
   sysinterval_t deadline;
-  delta_list_t *dlp;
+  ch_delta_list_t *dlp;
 
   chDbgCheckClassI();
 
@@ -534,7 +443,7 @@ void chVTDoTickI(void) {
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
-  delta_list_t *dlp;
+  ch_delta_list_t *dlp;
   sysinterval_t delta, nowdelta;
   systime_t now;
 
@@ -563,11 +472,11 @@ void chVTDoTickI(void) {
     chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
 
     /* Removing the timer from the list, marking it as not armed.*/
-    dlist_dequeue(dlp);
+    ch_dlist_dequeue(dlp);
     dlp->next = NULL;
 
     /* If the list becomes empty then the timer is stopped.*/
-    if (is_vtlist_empty(&vtlp->dlist)) {
+    if (ch_dlist_isempty(&vtlp->dlist)) {
       port_timer_stop_alarm();
     }
 
@@ -602,7 +511,7 @@ void chVTDoTickI(void) {
   }
 
   /* If the list is empty, nothing else to do.*/
-  if (is_vtlist_empty(&vtlp->dlist)) {
+  if (ch_dlist_isempty(&vtlp->dlist)) {
     return;
   }
 
