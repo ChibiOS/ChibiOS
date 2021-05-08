@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed warning in STM32 ADCv4 (bug #1158).
 - FIX: Fixed wrong checks related to PLLSAI2 on L4 and L4+ (bug #1156).
 - FIX: Fixed errors in STM32L4xx registry (bug #1154).
 - FIX: Fixed QUADSPI errata fix applied to all platforms (bug #1153).
