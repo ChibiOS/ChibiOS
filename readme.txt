@@ -134,6 +134,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed warning in STM32 ADCv4 (bug #1158)
+       (backported to 20.3.4)(backported to 19.1.5).
 - FIX: Fixed wrong check on HAL_USE_RTC in STM32G4 clock initialization
        (bug #1157)(backported to 20.3.4).
 - FIX: Fixed wrong checks related to PLLSAI2 on L4 and L4+ (bug #1156)

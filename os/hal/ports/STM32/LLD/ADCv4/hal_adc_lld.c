@@ -556,7 +556,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t dmamode, cfgr;
+  uint32_t dmamode, cfgr = 0U;
   const ADCConversionGroup *grpp = adcp->grpp;
 
 #if STM32_ADC_USE_ADC12 == TRUE
