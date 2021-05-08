@@ -31,6 +31,7 @@
 /*===========================================================================*/
 
 #if STM32_ADC_DUAL_MODE == TRUE
+#define ADC12_CCR_DUAL 	0b00110 // TODO use definitions
 #if STM32_ADC_COMPACT_SAMPLES == TRUE
 /* Compact type dual mode, 2x8-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
@@ -45,6 +46,7 @@
 #endif /* !STM32_ADC_COMPACT_SAMPLES */
 
 #else /* STM32_ADC_DUAL_MODE == FALSE */
+#define ADC12_CCR_DUAL 	0b00000 // TODO use definitions
 #if STM32_ADC_COMPACT_SAMPLES
 /* Compact type single mode, 8-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_BYTE | STM32_DMA_CR_PSIZE_BYTE)
@@ -317,18 +319,23 @@ OSAL_IRQ_HANDLER(STM32_ADC12_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
+  /* Handle ADC1 ISR first in adc_lld_serve_interrupt. */
   isr  = ADC1->ISR;
-#if STM32_ADC_DUAL_MODE
-  isr |= ADC2->ISR;
-#endif
   ADC1->ISR = isr;
-#if STM32_ADC_DUAL_MODE
-  ADC2->ISR = isr;
-#endif
 #if defined(STM32_ADC_ADC12_IRQ_HOOK)
   STM32_ADC_ADC12_IRQ_HOOK
 #endif
   adc_lld_serve_interrupt(&ADCD1, isr);
+
+  /* Handle ADC2 ISR next in adc_lld_serve_interrupt. */
+#if STM32_ADC_DUAL_MODE
+  isr |= ADC2->ISR;
+  ADC2->ISR = isr;
+#if defined(STM32_ADC_ADC12_IRQ_HOOK)
+  STM32_ADC_ADC12_IRQ_HOOK
+#endif
+  adc_lld_serve_interrupt(&ADCD1, isr);
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -403,7 +410,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC12 == TRUE
   rccEnableADC12(true);
   rccResetADC12();
-  ADC12_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF;
+  ADC12_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF | ADC12_CCR_DUAL;
   rccDisableADC12();
 #endif
 #if STM32_ADC_USE_ADC3 == TRUE
@@ -528,7 +535,7 @@ void adc_lld_stop(ADCDriver *adcp) {
       adcp->data.dma = NULL;
 
       /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF;
+      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF | ADC12_CCR_DUAL;
       rccDisableADC12();
     }
 #endif
@@ -627,25 +634,40 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
+  /* clear AWD1..3 flags */
   adcp->adcm->ISR   = adcp->adcm->ISR;
-  adcp->adcm->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE;
+  /* If a callback is set enable the overflow and analog watch dog interrupts. */
+  if (grpp->error_cb != NULL) {
+    adcp->adcm->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE 
+                                      | ADC_IER_AWD2IE 
+                                      | ADC_IER_AWD3IE;
+  }
 #if STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC12 == TRUE
   /* Configuration for dual mode ADC12 */
   if (&ADCD1 == adcp) {
+    /* clear AWD1..3 flags */
+    adcp->adcs->ISR   = adcp->adcs->ISR;
+    /* If a callback is set enable the overflow and analog watch dog interrupts. */
+    if (grpp->error_cb != NULL) {
+    adcp->adcs->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE
+                                      | ADC_IER_AWD2IE
+                                      | ADC_IER_AWD3IE;
     /* Configuring the CCR register with the user-specified settings
       in the conversion group configuration structure, static settings are
       preserved.*/
     adcp->adcc->CCR   = (adcp->adcc->CCR &
-                        (ADC_CCR_CKMODE_MASK | ADC_CCR_DAMDF_MASK)) | ccr;
+                          (ADC_CCR_CKMODE_MASK | ADC_CCR_DAMDF_MASK | ADC_CCR_DUAL_MASK)) | ccr;
 
     adcp->adcm->CFGR2 = grpp->cfgr2;
     adcp->adcm->PCSEL = grpp->pcsel;
     adcp->adcm->LTR1  = grpp->ltr1;
     adcp->adcm->HTR1  = grpp->htr1;
-    adcp->adcm->LTR1  = grpp->ltr2;
-    adcp->adcm->HTR1  = grpp->htr2;
-    adcp->adcm->LTR1  = grpp->ltr3;
-    adcp->adcm->HTR1  = grpp->htr3;
+    adcp->adcm->LTR2    = grpp->ltr2;
+    adcp->adcm->HTR2    = grpp->htr2;
+    adcp->adcm->LTR3    = grpp->ltr3;
+    adcp->adcm->HTR3    = grpp->htr3;
+    adcp->adcm->AWD2CR  = grpp->awd2cr;
+    adcp->adcm->AWD3CR  = grpp->awd3cr;
     adcp->adcm->SMPR1 = grpp->smpr[0];
     adcp->adcm->SMPR2 = grpp->smpr[1];
     adcp->adcm->SQR1  = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
@@ -654,12 +676,14 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adcm->SQR4  = grpp->sqr[3];
     adcp->adcs->CFGR2 = grpp->cfgr2;
     adcp->adcs->PCSEL = grpp->pcsel;
-    adcp->adcs->LTR1  = grpp->ltr1;
-    adcp->adcs->HTR1  = grpp->htr1;
-    adcp->adcs->LTR1  = grpp->ltr2;
-    adcp->adcs->HTR1  = grpp->htr2;
-    adcp->adcs->LTR1  = grpp->ltr3;
-    adcp->adcs->HTR1  = grpp->htr3;
+    adcp->adcs->LTR1    = grpp->sltr1;
+    adcp->adcs->HTR1    = grpp->shtr1;
+    adcp->adcs->LTR2    = grpp->sltr2;
+    adcp->adcs->HTR2    = grpp->shtr2;
+    adcp->adcs->LTR3    = grpp->sltr3;
+    adcp->adcs->HTR3    = grpp->shtr3;
+    adcp->adcs->AWD2CR  = grpp->sawd2cr;
+    adcp->adcs->AWD3CR  = grpp->sawd3cr;
     adcp->adcs->SMPR1 = grpp->ssmpr[0];
     adcp->adcs->SMPR2 = grpp->ssmpr[1];
     adcp->adcs->SQR1  = grpp->ssqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
@@ -671,23 +695,22 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adcm->CFGR  = cfgr;
     adcp->adcs->CFGR  = cfgr;
   }
-
+}
 #endif /* STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC12 == TRUE */
 
 #if STM32_ADC_DUAL_MODE == FALSE || STM32_ADC_USE_ADC3 == TRUE
   /* Configuration for ADC3 and single mode ADC1 */
-#if STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC3 == TRUE
-  if (&ADCD3 == adcp)
-#endif
-  {
+
     adcp->adcm->CFGR2 = grpp->cfgr2;
     adcp->adcm->PCSEL = grpp->pcsel;
     adcp->adcm->LTR1  = grpp->ltr1;
     adcp->adcm->HTR1  = grpp->htr1;
-    adcp->adcm->LTR1  = grpp->ltr2;
-    adcp->adcm->HTR1  = grpp->htr2;
-    adcp->adcm->LTR1  = grpp->ltr3;
-    adcp->adcm->HTR1  = grpp->htr3;
+    adcp->adcm->LTR2    = grpp->ltr2;
+    adcp->adcm->HTR2    = grpp->htr2;
+    adcp->adcm->LTR3    = grpp->ltr3;
+    adcp->adcm->HTR3    = grpp->htr3;
+    adcp->adcm->AWD2CR  = grpp->awd2cr;
+    adcp->adcm->AWD3CR  = grpp->awd3cr;
     adcp->adcm->SMPR1 = grpp->smpr[0];
     adcp->adcm->SMPR2 = grpp->smpr[1];
     adcp->adcm->SQR1  = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels);
@@ -697,7 +720,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
     /* ADC configuration.*/
     adcp->adcm->CFGR  = cfgr;
-  }
 #endif
 
   /* Starting conversion.*/

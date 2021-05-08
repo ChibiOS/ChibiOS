@@ -607,10 +607,26 @@ typedef union {
   uint32_t                  ltr3;                                           \
   /* ADC HTR3 register initialization data.*/                               \
   uint32_t                  htr3;                                           \
+  /* ADC AWD2CR register initialization data.*/                             \
+  uint32_t                  awd2cr;                                         \
+  /* ADC AWD3CR register initialization data.*/                             \
+  uint32_t                  awd3cr;                                         \
   /* ADC SMPRx registers initialization data.*/                             \
   uint32_t                  smpr[2];                                        \
   /* ADC SQRx register initialization data.*/                               \
   uint32_t                  sqr[4];                                         \
+  /* Slave ADC LTR/HTRx registers initialization data.                      \
+     NOTE: This field is only present in dual mode.*/                       \
+  uint32_t                  sltr1;                                          \
+  uint32_t                  shtr1;                                          \
+  uint32_t                  sltr2;                                          \
+  uint32_t                  shtr2;                                          \
+  uint32_t                  sltr3;                                          \
+  uint32_t                  shtr3;                                          \
+  /* Slave ADC AWDxCR registers initialization data.                        \
+     NOTE: This field is only present in dual mode.*/                       \
+  uint32_t                  sawd2cr;                                        \
+  uint32_t                  sawd3cr;                                        \
   /* Slave ADC SMPRx registers initialization data.                         \
      NOTE: This field is only present in dual mode.*/                       \
   uint32_t                  ssmpr[2];                                       \
@@ -629,6 +645,8 @@ typedef union {
   uint32_t                  htr2;                                           \
   uint32_t                  ltr3;                                           \
   uint32_t                  htr3;                                           \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4]
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
@@ -689,6 +707,15 @@ typedef union {
 #define ADC_SMPR2_SMP_AN18(n)   ((n) << 24U)/**< @brief AN18 sampling time. */
 #define ADC_SMPR2_SMP_AN19(n)   ((n) << 27U)/**< @brief AN19 sampling time. */
 /** @} */
+
+/**
+ * @name    Analog watchdog settings helper macros
+ * @{
+ */
+#define ADC_CFGR_AWD1_N(n)      ((n) << 26U)/**< @brief AWD1 channel number */
+#define ADC_AWD23_MASK(n)       (1U << (n)) /**< @brief AWD2/3 channels mask*/
+/** @} */
+
 
 /*===========================================================================*/
 /* External declarations.                                                    */
