@@ -62,6 +62,7 @@ static inline bool is_timer(ch_delta_list_t *dlhp, ch_delta_list_t *dlp) {
   return (bool)(dlp != dlhp);
 }
 
+#if 0
 /**
  * @brief   Delta list compression.
  *
@@ -92,6 +93,7 @@ static void vt_list_compress(virtual_timers_list_t *vtlp,
     dlp->delta -= deltanow;
   }
 }
+#endif
 #endif
 
 /**
@@ -140,12 +142,16 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
     deltanow = chTimeDiffX(vtlp->lasttime, now);
     delta    = deltanow + delay;
 
-    /* Scenario where a very large delay exceeded the numeric range, it
-       requires a special handling, the compression procedure.*/
+    /* Scenario where a very large delay exceeded the numeric range, the
+       delta is shortened to make it fit the numeric range, the timer
+       will be triggered "deltanow" cycles earlier.*/
     if (delta < deltanow) {
-      vt_list_compress(vtlp, deltanow);
+//      vt_list_compress(vtlp, deltanow);
       delta = delay;
     }
+
+    /* Checking if this timer would become the first in the delta list, this
+       requires changing the current alarm setting.*/
     if (delta < vtlp->dlist.next->delta) {
       sysinterval_t deadline_delta;
 
