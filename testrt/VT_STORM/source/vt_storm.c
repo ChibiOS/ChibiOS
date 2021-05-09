@@ -52,8 +52,10 @@ static const vt_storm_config_t *config;
 static virtual_timer_t watchdog;
 static virtual_timer_t wrapper;
 static virtual_timer_t sweeper0, sweeperm1, sweeperp1, sweeperm3, sweeperp3;
+static virtual_timer_t continuous;
 static volatile sysinterval_t delay;
 static volatile bool saturated;
+static uint32_t vtcus;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -128,6 +130,13 @@ static void sweeperp3_cb(virtual_timer_t *vtp, void *p) {
   chSysUnlockFromISR();
 }
 
+static void continuous_cb(virtual_timer_t *vtp, void *p) {
+
+  (void)vtp;
+  (void)p;
+  vtcus++;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -177,6 +186,10 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
   for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
 
     chprintf(cfg->out, "Iteration %d\r\n", i);
+    chThdSleepS(TIME_MS2I(10));
+
+    /* Starting continuous timer.*/
+    vtcus = 0;
 
     delay = 120;
     saturated = false;
@@ -190,6 +203,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTSetI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
       chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
       chVTSetI(&wrapper, (sysinterval_t) - 1, wrapper_cb, NULL);
+      chVTSetContinuousI(&continuous, TIME_US2I(50), continuous_cb, NULL);
 
       /* Letting them run for half second.*/
       chThdSleepS(TIME_MS2I(500));
@@ -202,6 +216,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTResetI(&sweeperm3);
       chVTResetI(&sweeperp3);
       chVTResetI(&wrapper);
+      chVTResetI(&continuous);
       chSysUnlock();
 
       if (saturated) {
@@ -215,11 +230,11 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     } while (delay >= 5);
 
     if (saturated) {
-      chprintf(cfg->out, "\r\nSaturated at %d uS\r\n\r\n", TIME_I2US(delay));
+      chprintf(cfg->out, "\r\nSaturated at %u uS", TIME_I2US(delay));
+      chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
     }
     else {
-
-      chprintf(cfg->out, "\r\n\r\n");
+      chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
     }
   }
 }
