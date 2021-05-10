@@ -61,6 +61,39 @@ static inline bool is_timer(ch_delta_list_t *dlhp, ch_delta_list_t *dlp) {
 
   return (bool)(dlp != dlhp);
 }
+
+#if 0
+/**
+ * @brief   Delta list compression.
+ *
+ * @param[in] vtlp      pointer to the delta list to be compressed
+ * @param[in] deltanow  interval to be compacted starting from "lasttime"
+ *
+ * @notapi
+ */
+static void vt_list_compress(virtual_timers_list_t *vtlp,
+                             sysinterval_t deltanow) {
+  ch_delta_list_t *dlp = vtlp->dlist.next;
+
+  vtlp->lasttime = chTimeAddX(vtlp->lasttime, deltanow);
+
+  /* The loop is bounded because the delta list header has the delta field
+     set to (sysinterval_t)-1 which is larger than all deltas.*/
+  while (dlp->delta < deltanow) {
+    deltanow  -= dlp->delta;
+    dlp->delta = (sysinterval_t)0;
+    dlp        = dlp->next;
+  }
+
+  /* Adjusting next timer in the list, if any.*/
+  if (is_timer(&vtlp->dlist, dlp)) {
+
+    chDbgAssert(deltanow <= dlp->delta, "invalid delta");
+
+    dlp->delta -= deltanow;
+  }
+}
+#endif
 #endif
 
 /**
@@ -113,6 +146,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
        delta is shortened to make it fit the numeric range, the timer
        will be triggered "deltanow" cycles earlier.*/
     if (delta < deltanow) {
+//      vt_list_compress(vtlp, deltanow);
       delta = delay;
     }
 
@@ -455,22 +489,17 @@ void chVTDoTickI(void) {
     vtp->func(vtp, vtp->par);
     chSysLockFromISR();
 
-    /* Delta between current time and last execution time.*/
+    /* Delta between current time after callback and last execution time.*/
     now = chVTGetSystemTimeX();
-    nowdelta = chTimeDiffX(vtlp->lasttime, now);
+    nowdelta = chTimeDiffX(lasttime, now);
 
     /* If a reload is defined the timer needs to be restarted.*/
     if (vtp->reload > (sysinterval_t)0) {
-       sysinterval_t skipped_delta;
 
-       /* Calculating how much the actual current time skipped past the
-         current deadline.*/
-       skipped_delta = chTimeDiffX(lasttime, now);
-
-       chDbgAssert(skipped_delta <= vtp->reload, "skipped deadline");
+       chDbgAssert(nowdelta <= vtp->reload, "skipped deadline");
 
        /* Enqueuing the timer again using the calculated delta.*/
-       vt_enqueue(vtlp, vtp, now, vtp->reload - skipped_delta);
+       vt_enqueue(vtlp, vtp, now, vtp->reload - nowdelta);
     }
 
     /* Next element in the list.*/
@@ -482,8 +511,10 @@ void chVTDoTickI(void) {
     return;
   }
 
-  /* Recalculating the next alarm time.*/
-  delta = dlp->delta - chTimeDiffX(vtlp->lasttime, now);
+  /* Calculating the next alarm time.*/
+  delta = dlp->delta - nowdelta;
+
+  /* For normal timers limit to CH_CFG_ST_TIMEDELTA.*/
   if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
     delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
   }
