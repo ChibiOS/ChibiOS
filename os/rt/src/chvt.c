@@ -110,12 +110,6 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
   {
     sysinterval_t deltanow;
 
-    /* If the requested delay is lower than the minimum safe delta then it
-       is raised to the minimum safe value.*/
-    if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
-      delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-    }
-
     /* Special case where the timers list is empty.*/
     if (ch_dlist_isempty(&vtlp->dlist)) {
 
@@ -124,9 +118,17 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
       vtlp->lasttime = now;
       ch_dlist_insert_after(&vtlp->dlist, &vtp->dlist, delay);
 
+      /* If the requested delay is lower than the minimum safe delta then it
+         is raised to the minimum safe value.*/
+      if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+        /* We need to avoid that the system time goes past the alarm we are
+           going to set before the alarm is actually set.*/
+        delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+      }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-      /* The delta could be too large for the physical timer to handle.*/
-      if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+      else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+        /* The delta could be too large for the physical timer to handle
+           this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
         delay = (sysinterval_t)TIME_MAX_SYSTIME;
       }
 #endif
@@ -482,9 +484,8 @@ void chVTDoTickI(void) {
     }
 
     /* The callback is invoked outside the kernel critical section, it
-       is re-entered on the callback return. Note that "lasttime" can
-       be modified within the callback if some timer function is
-       called.*/
+       is re-entered on the callback return. Note that "lasttime" can be
+       modified within the callback if some timer function is called.*/
     chSysUnlockFromISR();
     vtp->func(vtp, vtp->par);
     chSysLockFromISR();
