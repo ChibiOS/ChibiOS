@@ -523,6 +523,43 @@ static inline void ch_dlist_insert_before(ch_delta_list_t *dlhp,
 }
 
 /**
+ * @brief   Inserts an element in a delta list.
+ *
+ * @param[in] dlhp      pointer to the delta list header element
+ * @param[in] dlep      element to be inserted before the header element
+ * @param[in] delta     delta of the element to be inserted
+ *
+ * @notapi
+ */
+static inline void ch_dlist_insert(ch_delta_list_t *dlhp,
+                                   ch_delta_list_t *dlep,
+                                   sysinterval_t delta) {
+  ch_delta_list_t *dlp;
+
+  /* The delta list is scanned in order to find the correct position for
+     this element. */
+  dlp = dlhp->next;
+  while (dlp->delta < delta) {
+    /* Debug assert if the element is already in the list.*/
+    chDbgAssert(dlp != dlep, "element already in list");
+
+    delta -= dlp->delta;
+    dlp = dlp->next;
+  }
+
+  /* The timer is inserted in the delta list.*/
+  ch_dlist_insert_before(dlp, dlep, delta);
+
+  /* Adjusting delta for the following element.*/
+  dlp->delta -= delta;
+
+  /* Special case when the inserted element is in last position in the list,
+     the value in the header must be restored, just doing it is faster than
+     checking then doing.*/
+  dlhp->delta = (sysinterval_t)-1;
+}
+
+/**
  * @brief   Dequeues an element from the delta list.
  *
  * @param[in] dlhp      pointer to the delta list header

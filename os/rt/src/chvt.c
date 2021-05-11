@@ -61,39 +61,6 @@ static inline bool is_timer(ch_delta_list_t *dlhp, ch_delta_list_t *dlp) {
 
   return (bool)(dlp != dlhp);
 }
-
-#if 0
-/**
- * @brief   Delta list compression.
- *
- * @param[in] vtlp      pointer to the delta list to be compressed
- * @param[in] deltanow  interval to be compacted starting from "lasttime"
- *
- * @notapi
- */
-static void vt_list_compress(virtual_timers_list_t *vtlp,
-                             sysinterval_t deltanow) {
-  ch_delta_list_t *dlp = vtlp->dlist.next;
-
-  vtlp->lasttime = chTimeAddX(vtlp->lasttime, deltanow);
-
-  /* The loop is bounded because the delta list header has the delta field
-     set to (sysinterval_t)-1 which is larger than all deltas.*/
-  while (dlp->delta < deltanow) {
-    deltanow  -= dlp->delta;
-    dlp->delta = (sysinterval_t)0;
-    dlp        = dlp->next;
-  }
-
-  /* Adjusting next timer in the list, if any.*/
-  if (is_timer(&vtlp->dlist, dlp)) {
-
-    chDbgAssert(deltanow <= dlp->delta, "invalid delta");
-
-    dlp->delta -= deltanow;
-  }
-}
-#endif
 #endif
 
 /**
@@ -103,7 +70,6 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
                        virtual_timer_t *vtp,
                        systime_t now,
                        sysinterval_t delay) {
-  ch_delta_list_t *dlp;
   sysinterval_t delta;
 
 #if CH_CFG_ST_TIMEDELTA > 0
@@ -148,7 +114,6 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
        delta is shortened to make it fit the numeric range, the timer
        will be triggered "deltanow" cycles earlier.*/
     if (delta < deltanow) {
-//      vt_list_compress(vtlp, deltanow);
       delta = delay;
     }
 
@@ -161,7 +126,8 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
          and next deadline.*/
       deadline_delta = delta;
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-      /* The delta could be too large for the physical timer to handle.*/
+      /* The delta could be too large for the physical timer to handle
+         this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
       if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
         deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
       }
@@ -176,26 +142,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
   delta = delay;
 #endif /* CH_CFG_ST_TIMEDELTA == 0 */
 
-  /* The delta list is scanned in order to find the correct position for
-     this timer. */
-  dlp = vtlp->dlist.next;
-  while (dlp->delta < delta) {
-    /* Debug assert if the timer is already in the list.*/
-    chDbgAssert(dlp != &vtp->dlist, "timer already armed");
-
-    delta -= dlp->delta;
-    dlp = dlp->next;
-  }
-
-  /* The timer is inserted in the delta list.*/
-  ch_dlist_insert_before(dlp, &vtp->dlist, delta);
-
-  /* Calculate new delta for the following entry.*/
-  dlp->delta -= delta;
-
-  /* Special case when the timer is in last position in the list, the
-     value in the header must be restored.*/
-  vtlp->dlist.delta = (sysinterval_t)-1;
+  ch_dlist_insert(&vtlp->dlist, &vtp->dlist, delta);
 }
 
 /*===========================================================================*/
