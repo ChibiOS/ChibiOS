@@ -264,12 +264,15 @@ void chVTDoResetI(virtual_timer_t *vtp) {
     (void) ch_dlist_dequeue(&vtp->dlist);
 
     /* Adding delta to the next element, if it is not the last one.*/
-    if (is_timer(&vtlp->dlist, vtp->dlist.next)) {
-      vtp->dlist.next->delta += vtp->dlist.delta;
-    }
+    vtp->dlist.next->delta += vtp->dlist.delta;
 
     /* Marking timer as not armed.*/
     vtp->dlist.next = NULL;
+
+    /* Special case when the removed element from the last position in the list,
+       the value in the header must be restored, just doing it is faster than
+       checking then doing.*/
+    vtlp->dlist.delta = (sysinterval_t)-1;
 
     return;
   }
@@ -416,6 +419,7 @@ void chVTDoTickI(void) {
     lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
     vtlp->lasttime = lasttime;
 
+    // TODO, remove this assert, it is triggered also by some valid cases.
     chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
 
     /* Removing the timer from the list, marking it as not armed.*/
@@ -434,7 +438,7 @@ void chVTDoTickI(void) {
     vtp->func(vtp, vtp->par);
     chSysLockFromISR();
 
-    /* Delta between current time after callback and last execution time.*/
+    /* Delta between current time after callback execution time.*/
     now = chVTGetSystemTimeX();
     nowdelta = chTimeDiffX(lasttime, now);
 
