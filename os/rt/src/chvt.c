@@ -99,7 +99,8 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
       }
 #endif
 
-      /* Being the first element in the list the alarm timer is started.*/
+      /* Being the first element inserted in the list the alarm timer
+         is started.*/
       port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
 
       return;
@@ -401,19 +402,15 @@ void chVTDoTickI(void) {
   now = chVTGetSystemTimeX();
   nowdelta = chTimeDiffX(vtlp->lasttime, now);
 
-  /* Looping through timers.*/
+  /* Looping through timers consuming all timers with deltas lower or equal
+     than the interval between "now" and "lasttime".
+     Note that the list scan is limited by the delta list header having
+     "vtlp->dlist.delta == (sysinterval_t)-1" which is reater than all
+      deltas.*/
   dlp = vtlp->dlist.next;
-  while (true) {
+  while (nowdelta >= dlp->delta) {
     virtual_timer_t *vtp = (virtual_timer_t *)dlp;
     systime_t lasttime;
-
-    /* Checking if the next timer in the list is within the current
-       time delta. Note that the list scan is limited by the timers
-       header having "vtlp->dlist.delta == (sysinterval_t)-1" which is
-       greater than all deltas.*/
-    if (nowdelta < dlp->delta) {
-      break;
-    }
 
     /* Last time deadline is updated to the next timer's time.*/
     lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
