@@ -64,6 +64,40 @@ static inline bool is_timer(ch_delta_list_t *dlhp, ch_delta_list_t *dlp) {
 #endif
 
 /**
+ * @brief   Inserts a timer as first element in a delta list.
+ * @note    This is the special case when the delta list is initially empty.
+ */
+static void vt_insert_first(virtual_timers_list_t *vtlp,
+                            virtual_timer_t *vtp,
+                            systime_t now,
+                            sysinterval_t delay) {
+
+  /* The delta list is empty, the current time becomes the new
+     delta list base time, the timer is inserted.*/
+  vtlp->lasttime = now;
+  ch_dlist_insert_after(&vtlp->dlist, &vtp->dlist, delay);
+
+  /* If the requested delay is lower than the minimum safe delta then it
+     is raised to the minimum safe value.*/
+  if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+    /* We need to avoid that the system time goes past the alarm we are
+       going to set before the alarm is actually set.*/
+    delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+  }
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+  else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+    /* The delta could be too large for the physical timer to handle
+       this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
+    delay = (sysinterval_t)TIME_MAX_SYSTIME;
+  }
+#endif
+
+  /* Being the first element inserted in the list the alarm timer
+     is started.*/
+  port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
+}
+
+/**
  * @brief   Enqueues a virtual timer in a virtual timers list.
  */
 static void vt_enqueue(virtual_timers_list_t *vtlp,
@@ -74,47 +108,25 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
 
 #if CH_CFG_ST_TIMEDELTA > 0
   {
-    sysinterval_t deltanow;
+    sysinterval_t nowdelta;
 
     /* Special case where the timers list is empty.*/
     if (ch_dlist_isempty(&vtlp->dlist)) {
 
-      /* The delta list is empty, the current time becomes the new
-         delta list base time, the timer is inserted.*/
-      vtlp->lasttime = now;
-      ch_dlist_insert_after(&vtlp->dlist, &vtp->dlist, delay);
-
-      /* If the requested delay is lower than the minimum safe delta then it
-         is raised to the minimum safe value.*/
-      if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
-        /* We need to avoid that the system time goes past the alarm we are
-           going to set before the alarm is actually set.*/
-        delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-      }
-#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-      else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
-        /* The delta could be too large for the physical timer to handle
-           this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-        delay = (sysinterval_t)TIME_MAX_SYSTIME;
-      }
-#endif
-
-      /* Being the first element inserted in the list the alarm timer
-         is started.*/
-      port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
+      vt_insert_first(vtlp, vtp, now, delay);
 
       return;
     }
 
     /* Delay as delta from 'lasttime'. Note, it can overflow and the value
        becomes lower than 'deltanow'.*/
-    deltanow = chTimeDiffX(vtlp->lasttime, now);
-    delta    = deltanow + delay;
+    nowdelta = chTimeDiffX(vtlp->lasttime, now);
+    delta    = nowdelta + delay;
 
     /* Scenario where a very large delay exceeded the numeric range, the
        delta is shortened to make it fit the numeric range, the timer
        will be triggered "deltanow" cycles earlier.*/
-    if (delta < deltanow) {
+    if (delta < nowdelta) {
       delta = delay;
     }
 
@@ -448,7 +460,26 @@ void chVTDoTickI(void) {
       chDbgAssert(nowdelta <= vtp->reload, "skipped deadline");
 
       /* Enqueuing the timer again using the calculated delta.*/
-      vt_enqueue(vtlp, vtp, now, vtp->reload - nowdelta);
+      sysinterval_t delay = vtp->reload - nowdelta;
+
+      /* Special case where the timers list is empty.*/
+      if (ch_dlist_isempty(&vtlp->dlist)) {
+
+        vt_insert_first(vtlp, vtp, now, delay);
+      }
+      else {
+        /* Delay as delta from 'lasttime'. Note, it can overflow and the value
+           becomes lower than 'nowdelta'. In that case the delta is shortened
+           to make it fit the numeric range and the timer will be triggered
+           "nowdelta" cycles earlier.*/
+        delta = nowdelta + delay;
+        if (delta < nowdelta) {
+          delta = delay;
+        }
+
+        /* Insert into delta list. */
+        ch_dlist_insert(&vtlp->dlist, &vtp->dlist, delta);
+      }
     }
 
     /* Next element in the list.*/

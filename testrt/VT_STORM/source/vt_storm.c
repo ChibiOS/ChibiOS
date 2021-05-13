@@ -227,7 +227,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       palToggleLine(config->line);
       chprintf(cfg->out, ".");
       delay--;
-    } while (delay >= 5);
+    } while (delay >= 10);
 
     if (saturated) {
       chprintf(cfg->out, "\r\nSaturated at %u uS", TIME_I2US(delay));
