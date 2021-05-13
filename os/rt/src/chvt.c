@@ -408,7 +408,7 @@ void chVTDoTickI(void) {
   /* Looping through timers consuming all timers with deltas lower or equal
      than the interval between "now" and "lasttime".
      Note that the list scan is limited by the delta list header having
-     "vtlp->dlist.delta == (sysinterval_t)-1" which is reater than all
+     "vtlp->dlist.delta == (sysinterval_t)-1" which is greater than all
       deltas.*/
   dlp = vtlp->dlist.next;
   while (nowdelta >= dlp->delta) {
@@ -426,7 +426,7 @@ void chVTDoTickI(void) {
     (void) ch_dlist_dequeue(dlp);
     dlp->next = NULL;
 
-    /* If the list becomes empty then the timer is stopped.*/
+    /* If the list becomes empty then the alarm is disabled.*/
     if (ch_dlist_isempty(&vtlp->dlist)) {
       port_timer_stop_alarm();
     }
@@ -445,10 +445,10 @@ void chVTDoTickI(void) {
     /* If a reload is defined the timer needs to be restarted.*/
     if (vtp->reload > (sysinterval_t)0) {
 
-       chDbgAssert(nowdelta <= vtp->reload, "skipped deadline");
+      chDbgAssert(nowdelta <= vtp->reload, "skipped deadline");
 
-       /* Enqueuing the timer again using the calculated delta.*/
-       vt_enqueue(vtlp, vtp, now, vtp->reload - nowdelta);
+      /* Enqueuing the timer again using the calculated delta.*/
+      vt_enqueue(vtlp, vtp, now, vtp->reload - nowdelta);
     }
 
     /* Next element in the list.*/
@@ -473,6 +473,8 @@ void chVTDoTickI(void) {
     delta = (sysinterval_t)TIME_MAX_SYSTIME;
   }
 #endif
+
+  /* Update alarm time to next timer.*/
   port_timer_set_alarm(chTimeAddX(now, delta));
 
   chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
