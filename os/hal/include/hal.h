@@ -42,6 +42,10 @@
 #define HAL_USE_CAN                         FALSE
 #endif
 
+#if !defined(HAL_USE_CLK)
+#define HAL_USE_CLK                         FALSE
+#endif
+
 #if !defined(HAL_USE_CRY)
 #define HAL_USE_CRY                         FALSE
 #endif
@@ -267,6 +271,41 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Driver inline functions.                                                  */
+/*===========================================================================*/
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Switches to a different clock configuration
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @special
+ */
+static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
+
+  return hal_clock_switch_mode(ccp);
+}
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @xclass
+ */
+static inline halfreq_t halClockGetPointX(halclkpoint_t clkpt) {
+
+  return hal_lld_get_clock_point(clkpt);
+}
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 #endif /* HAL_H */
 
