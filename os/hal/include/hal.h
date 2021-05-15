@@ -289,7 +289,7 @@ extern "C" {
  */
 static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 
-  return hal_clock_switch_mode(ccp);
+  return hal_lld_clock_switch_mode(ccp);
 }
 
 /**
@@ -301,7 +301,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
  *
  * @xclass
  */
-static inline halfreq_t halClockGetPointX(halclkpoint_t clkpt) {
+static inline halfreq_t halClockGetPointX(unsigned clkpt) {
 
   return hal_lld_get_clock_point(clkpt);
 }

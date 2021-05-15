@@ -84,7 +84,7 @@ void hal_lld_init(void) {
  *
  * @notapi
  */
-bool hal_clock_switch_mode(const halclkcfg_t *ccp) {
+bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
 
   (void)ccp;
 
@@ -100,7 +100,7 @@ bool hal_clock_switch_mode(const halclkcfg_t *ccp) {
  *
  * @notapi
  */
-halfreq_t hal_lld_get_clock_point(halclkpoint_t clkpt) {
+halfreq_t hal_lld_get_clock_point(unsigned clkpt) {
 
   (void)clkpt;
 

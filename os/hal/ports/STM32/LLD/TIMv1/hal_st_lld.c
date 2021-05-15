@@ -407,12 +407,14 @@
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
 #endif
 
+#if 0 /* TODO remove */
 #if ST_CLOCK_SRC % OSAL_ST_FREQUENCY != 0
 #error "the selected ST frequency is not obtainable because integer rounding"
 #endif
 
 #if (ST_CLOCK_SRC / OSAL_ST_FREQUENCY) - 1 > 0xFFFF
 #error "the selected ST frequency is not obtainable because TIM timer prescaler limits"
+#endif
 #endif
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
@@ -486,6 +488,10 @@ void st_lld_init(void) {
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   /* Free running counter mode.*/
+  osalDbgAssert((ST_CLOCK_SRC % OSAL_ST_FREQUENCY) == 0U,
+                "clock rounding error");
+  osalDbgAssert(((ST_CLOCK_SRC / OSAL_ST_FREQUENCY) - 1U) < 0x10000,
+                "clock prescaler overflow");
 
   /* Enabling timer clock.*/
   ST_ENABLE_CLOCK();
