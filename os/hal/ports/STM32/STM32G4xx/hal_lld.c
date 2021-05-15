@@ -216,7 +216,7 @@ __STATIC_INLINE void bd_init(void) {
  *
  * @notapi
  */
-bool hal_clock_check_tree(const halclkcfg_t *ccp) {
+bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   static const uint32_t hprediv[16] = {1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U,
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
@@ -516,7 +516,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 void hal_lld_init(void) {
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
-  if (hal_clock_check_tree(&hal_clkcfg_default)) {
+  if (hal_lld_clock_check_tree(&hal_clkcfg_default)) {
     osalSysHalt("clkcfg");
   }
 #endif
@@ -683,7 +683,7 @@ void stm32_clock_init(void) {
  */
 bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
 
-  if (hal_clock_check_tree(ccp)) {
+  if (hal_lld_clock_check_tree(ccp)) {
     return true;
   }
 
