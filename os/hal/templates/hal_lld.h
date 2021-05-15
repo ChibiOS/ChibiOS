@@ -68,14 +68,6 @@
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
- * @brief   Type of clock point names.
- */
-typedef enum {
-  clk_core = 0,
-  clk_peripherals = 1
-} halclkpt_t;
-
-/**
  * @brief   Type of a clock point frequency in Hz.
  */
 typedef uint32_t halfreq_t;
