@@ -166,44 +166,7 @@ static const system_limits_t vos_range2 = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-/**
- * @brief   Resets the backup domain.
- */
-__STATIC_INLINE void bd_reset(void) {
-
-  /* Reset BKP domain if different clock source selected.*/
-  if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
-    /* Backup domain reset.*/
-    RCC->BDCR = RCC_BDCR_BDRST;
-    RCC->BDCR = 0U;
-  }
-}
-
-/**
- * @brief   Initializes the backup domain.
- * @note    WARNING! Changing RTC clock source impossible without reset
- *          of the whole BKP domain.
- */
-__STATIC_INLINE void bd_init(void) {
-  uint32_t bdcr;
-
-  /* Current settings.*/
-  bdcr = RCC->BDCR;
-
-#if HAL_USE_RTC
-  /* RTC clock enabled.*/
-  if ((bdcr & RCC_BDCR_RTCEN) == 0) {
-    bdcr |= RCC_BDCR_RTCEN;
-  }
-#endif /* HAL_USE_RTC */
-
-  /* Selectors.*/
-  bdcr &= ~(STM32_RTCSEL_MASK | STM32_LSCOSEL_MASK);
-  bdcr |= STM32_RTCSEL | STM32_LSCOSEL;
-
-  /* Final settings.*/
-  RCC->BDCR = bdcr;
-}
+#include "stm32_bd.inc"
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
