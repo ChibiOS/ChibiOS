@@ -56,6 +56,10 @@
 #define RP_ROSCCLK              6500000     /**< 6.5MHz internal clock.     */
 /** @} */
 
+/**
+ * @brief   Dynamic clock supported.
+ */
+#define HAL_LLD_USE_CLOCK_MANAGEMENT
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -122,23 +126,40 @@
  * @name    Various clock points.
  * @{
  */
-#define RP_GPOUT0_CLK           hal_lld_get_clock(clk_gpout0)
-#define RP_GPOUT1_CLK           hal_lld_get_clock(clk_gpout1)
-#define RP_GPOUT2_CLK           hal_lld_get_clock(clk_gpout2)
-#define RP_GPOUT3_CLK           hal_lld_get_clock(clk_gpout3)
-#define RP_REF_CLK              hal_lld_get_clock(clk_ref)
-#define RP_CORE_CLK             hal_lld_get_clock(clk_sys)
-#define RP_PERI_CLK             hal_lld_get_clock(clk_peri)
-#define RP_USB_CLK              hal_lld_get_clock(clk_usb)
-#define RP_ADC_CLK              hal_lld_get_clock(clk_adc)
-#define RP_RTC_CLK              hal_lld_get_clock(clk_rtc)
+#define RP_GPOUT0_CLK           hal_lld_get_clock_point(clk_gpout0)
+#define RP_GPOUT1_CLK           hal_lld_get_clock_point(clk_gpout1)
+#define RP_GPOUT2_CLK           hal_lld_get_clock_point(clk_gpout2)
+#define RP_GPOUT3_CLK           hal_lld_get_clock_point(clk_gpout3)
+#define RP_REF_CLK              hal_lld_get_clock_point(clk_ref)
+#define RP_CORE_CLK             hal_lld_get_clock_point(clk_sys)
+#define RP_PERI_CLK             hal_lld_get_clock_point(clk_peri)
+#define RP_USB_CLK              hal_lld_get_clock_point(clk_usb)
+#define RP_ADC_CLK              hal_lld_get_clock_point(clk_adc)
+#define RP_RTC_CLK              hal_lld_get_clock_point(clk_rtc)
 /** @} */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-typedef enum clock_index clock_index_t;
+/**
+ * @brief   Type of a clock point identifier.
+ */
+typedef enum clock_index halclkpt_t;
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a clock point frequency in Hz.
+ */
+typedef uint32_t halfreq_t;
+
+/**
+ * @brief   Type of a clock configuration structure.
+ */
+typedef struct {
+  uint32_t          dummy;
+} halclkcfg_t;
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -167,11 +188,6 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
-__STATIC_INLINE uint32_t hal_lld_get_clock(clock_index_t clk_index) {
-
-  return clock_get_hz(clk_index);
-}
-
 __STATIC_INLINE void hal_lld_peripheral_reset(uint32_t mask) {
 
   RESETS->RESET |=  mask;
@@ -184,6 +200,41 @@ __STATIC_INLINE void hal_lld_peripheral_unreset(uint32_t mask) {
     /* Waiting for reset.*/
   }
 }
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Switches to a different clock configuration
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @notapi
+ */
+__STATIC_INLINE bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
+
+  (void)ccp;
+
+  return false;
+}
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+__STATIC_INLINE halfreq_t hal_lld_get_clock_point(halclkpt_t clkpt) {
+
+  osalDbgAssert(clkpt < CLK_COUNT, "invalid clock point");
+
+  return clock_get_hz(clkpt);
+}
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 #endif /* HAL_LLD_H */
 

@@ -117,13 +117,14 @@ __STATIC_INLINE void uart_enable_tx_irq(SIODriver *siop) {
  * @param[in] siop       pointer to a @p SIODriver object
  */
 __STATIC_INLINE void uart_init(SIODriver *siop) {
-  uint32_t clock, div, idiv, fdiv;
+  uint32_t div, idiv, fdiv;
+  halfreq_t clock;
 
-  clock = hal_lld_get_clock(clk_peri);
+  clock = halClockGetPointX(clk_peri);
 
   osalDbgAssert(clock > 0U, "no clock");
 
-  div = (8U * clock) / siop->config->baud;
+  div = (8U * (uint32_t)clock) / siop->config->baud;
   idiv = div >> 7;
   fdiv = ((div & 0x7FU) + 1U) / 2U;
 
@@ -135,47 +136,6 @@ __STATIC_INLINE void uart_init(SIODriver *siop) {
   /* Registers settings, the LCR_H write also latches dividers values.*/
   siop->uart->UARTLCR_H = siop->config->UARTLCR_H & ~UART_LCRH_CFG_FORBIDDEN;
   siop->uart->UARTCR    = siop->config->UARTCR    & ~UART_CR_CFG_FORBIDDEN;
-
-#if 0
-  USART_TypeDef *u = siop->usart;
-  uint32_t presc, brr;
-
-  /* Prescaler calculation.*/
-  static const uint32_t prescvals[] = {1, 2, 4, 6, 8, 10, 12, 16, 32, 64, 128, 256};
-  presc = prescvals[siop->config->presc];
-
- /* Baud rate setting.*/
-#if RP_SIO_USE_LPUART1
-  if (siop == &LPSIOD1) {
-    osalDbgAssert((siop->clock >= siop->config->baud * 3U) &&
-                  (siop->clock <= siop->config->baud * 4096U),
-                  "invalid baud rate vs input clock");
-
-    brr = (uint32_t)(((uint64_t)(siop->clock / presc) * (uint64_t)256) / siop->config->baud);
-
-    osalDbgAssert((brr >= 0x300) && (brr < 0x100000), "invalid BRR value");
-  }
- else
-#endif
-  {
-    brr = (uint32_t)((siop->clock / presc) / siop->config->baud);
-
-    /* Correcting BRR value when oversampling by 8 instead of 16.
-       Fraction is still 4 bits wide, but only lower 3 bits used.
-       Mantissa is doubled, but Fraction is left the same.*/
-    if ((siop->config->cr1 & USART_CR1_OVER8) != 0U) {
-      brr = ((brr & ~7U) * 2U) | (brr & 7U);
-    }
-
-    osalDbgAssert(brr < 0x10000, "invalid BRR value");
-  }
-
-  /* Setting up USART.*/
-  u->BRR   = brr;
-  u->CR1   = siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN;
-  u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
-  u->CR3   = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
-#endif
 }
 
 /*===========================================================================*/
