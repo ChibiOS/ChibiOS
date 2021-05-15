@@ -216,7 +216,7 @@ __STATIC_INLINE void bd_init(void) {
  *
  * @notapi
  */
-bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
+static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   static const uint32_t hprediv[16] = {1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U,
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
@@ -443,10 +443,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   }
 
   /* Making sure HSI16 is activated.*/
-  RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
-    /* Waiting for HSI16 activation.*/
-  }
+  hsi16_enable();
 
   /* Disabling boost mode.*/
   PWR->CR5 = PWR_CR5_R1MODE;
@@ -460,15 +457,9 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* Resetting flash ACR settings to the default value.*/
   FLASH->ACR = 0x00040601U;
 
-  /* HSE setup.*/
-  if ((ccp->rcc_cr & RCC_CR_HSEON) == 0U) {
-    RCC->CR &= ~RCC_CR_HSEON;
-  }
-  else {
-    RCC->CR |= RCC_CR_HSEON;
-    while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
-      /* Waiting for HSE activation.*/
-    }
+  /* HSE setup, if required, before starting the PLL.*/
+  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
+    hse_enable();
   }
 
   /* PLL setup.*/
@@ -479,9 +470,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
   /* PLL activation polling if required.*/
   if ((ccp->rcc_cr & RCC_CR_PLLON) != 0U) {
-    while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {
-      /* Waiting for PLL lock.*/
-    }
+    pll_wait_lock();
   }
 
   /* MCO and bus dividers first.*/

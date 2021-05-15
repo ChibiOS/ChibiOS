@@ -323,7 +323,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void pllsai1_init(void) {
+__STATIC_INLINE void pllsai1_init(void) {
 
 #if STM32_ACTIVATE_PLLSAI1
   /* PLLSAI1 activation.*/
@@ -340,7 +340,7 @@ static inline void pllsai1_init(void) {
 #endif
 }
 
-static inline void pllsai1_deinit(void) {
+__STATIC_INLINE void pllsai1_deinit(void) {
 
 #if STM32_ACTIVATE_PLLSAI1
   /* PLLSAI1 de-activation.*/

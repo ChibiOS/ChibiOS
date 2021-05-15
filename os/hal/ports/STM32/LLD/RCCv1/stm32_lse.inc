@@ -87,7 +87,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void lse_init(void) {
+__STATIC_INLINE void lse_init(void) {
 
 #if STM32_LSE_ENABLED
   /* LSE activation.*/

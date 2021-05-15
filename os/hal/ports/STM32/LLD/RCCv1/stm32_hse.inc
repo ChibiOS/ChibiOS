@@ -89,18 +89,28 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_INLINE void hse_enable(void) {
 
-static inline void hse_init(void) {
+#if defined(STM32_HSE_BYPASS)
+  /* HSE Bypass case.*/
+  RCC->CR |= RCC_CR_HSEON | RCC_CR_HSEBYP;
+#else
+  RCC->CR |= RCC_CR_HSEON;
+#endif
+  while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
+    /* Waiting for HSE activation.*/
+  }
+}
+
+__STATIC_INLINE void hse_disable(void) {
+
+  RCC->CR &= ~RCC_CR_HSEON;
+}
+
+__STATIC_INLINE void hse_init(void) {
 
 #if STM32_HSE_ENABLED
-#if defined(STM32_HSE_BYPASS)
-  /* HSE Bypass.*/
-  RCC->CR |= RCC_CR_HSEON | RCC_CR_HSEBYP;
-#endif
-  /* HSE activation.*/
-  RCC->CR |= RCC_CR_HSEON;
-  while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
-  }
+  hse_enable();
 #endif
 }
 

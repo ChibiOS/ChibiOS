@@ -319,7 +319,14 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void pll_init(void) {
+__STATIC_INLINE void pll_wait_lock(void) {
+
+  while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {
+    /* Waiting for PLL lock.*/
+  }
+}
+
+__STATIC_INLINE void pll_init(void) {
 
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
@@ -330,13 +337,11 @@ static inline void pll_init(void) {
                  STM32_PLLM    | STM32_PLLSRC;
   RCC->CR |= RCC_CR_PLLON;
 
-  /* Waiting for PLL lock.*/
-  while ((RCC->CR & RCC_CR_PLLRDY) == 0U)
-    ;
+  pll_wait_lock();
 #endif
 }
 
-static inline void pll_deinit(void) {
+__STATIC_INLINE void pll_deinit(void) {
 
 #if STM32_ACTIVATE_PLL
   /* PLL de-activation.*/

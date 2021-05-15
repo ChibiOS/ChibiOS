@@ -165,7 +165,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void msi_reset(void) {
+__STATIC_INLINE void msi_reset(void) {
 
   /* Resetting to the MSI clock in case we come here after an initialization,
      because a debugger for example.*/
@@ -181,7 +181,7 @@ static inline void msi_reset(void) {
   }
 }
 
-static inline void msi_init(void) {
+__STATIC_INLINE void msi_init(void) {
   uint32_t cr, csr;
 
   /* Initial clocks setup and wait for MSI stabilization, the MSI clock is

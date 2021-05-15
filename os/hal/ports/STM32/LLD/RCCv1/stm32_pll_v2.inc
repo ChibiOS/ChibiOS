@@ -321,7 +321,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void pll_init(void) {
+__STATIC_INLINE void pll_init(void) {
 
 #if STM32_ACTIVATE_PLL
   /* PLLM and PLLSRC are common to all PLLs.*/
@@ -340,7 +340,7 @@ static inline void pll_init(void) {
 #endif
 }
 
-static inline void pll_deinit(void) {
+__STATIC_INLINE void pll_deinit(void) {
 
   /* PLL de-activation.*/
   RCC->PLLCFGR &= ~RCC_CR_PLLON;

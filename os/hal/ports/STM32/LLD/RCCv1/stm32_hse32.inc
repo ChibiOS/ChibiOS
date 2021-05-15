@@ -85,7 +85,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void hse32_init(void) {
+__STATIC_INLINE void hse32_init(void) {
 
 #if STM32_HSE32_ENABLED
 

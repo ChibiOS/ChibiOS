@@ -61,7 +61,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void hsi48_init(void) {
+__STATIC_INLINE void hsi48_init(void) {
 
 #if STM32_HSI48_ENABLED
   /* HSI activation.*/

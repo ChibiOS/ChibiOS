@@ -45,7 +45,7 @@
 /**
  * @brief   Initializes the backup domain.
  */
-static inline void bd_init(void) {
+__STATIC_INLINE void bd_init(void) {
   uint32_t bdcr;
 
   /* Current settings.*/
@@ -71,7 +71,7 @@ static inline void bd_init(void) {
  * @note    WARNING! Changing RTC clock source impossible without reset
  *          of the whole BKP domain.
  */
-static inline void bd_reset(void) {
+__STATIC_INLINE void bd_reset(void) {
 
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {

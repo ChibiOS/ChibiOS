@@ -57,13 +57,24 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void hsi16_init(void) {
+__STATIC_INLINE void hsi16_enable(void) {
+
+  RCC->CR |= RCC_CR_HSION;
+  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
+    /* Waiting for HSI16 activation.*/
+  }
+}
+
+__STATIC_INLINE void hsi16_disable(void) {
+
+  RCC->CR &= ~RCC_CR_HSION;
+}
+
+__STATIC_INLINE void hsi16_init(void) {
 
 #if STM32_HSI16_ENABLED
   /* HSI activation.*/
-  RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
-  }
+  hsi16_enable();
 #endif
 }
 
