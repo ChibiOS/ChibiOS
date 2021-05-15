@@ -29,6 +29,76 @@
 #include "board.h"
 #include "halconf.h"
 
+/*===========================================================================*/
+/* Driver constants.                                                         */
+/*===========================================================================*/
+
+/**
+ * @brief   ChibiOS/HAL identification macro.
+ */
+#define __CHIBIOS_HAL__
+
+/**
+ * @brief   Stable release flag.
+ */
+#define CH_HAL_STABLE           0
+
+/**
+ * @name    ChibiOS/HAL version identification
+ * @{
+ */
+/**
+ * @brief   HAL version string.
+ */
+#define HAL_VERSION             "7.2.0"
+
+/**
+ * @brief   HAL version major number.
+ */
+#define CH_HAL_MAJOR            7
+
+/**
+ * @brief   HAL version minor number.
+ */
+#define CH_HAL_MINOR            2
+
+/**
+ * @brief   HAL version patch number.
+ */
+#define CH_HAL_PATCH            0
+/** @} */
+
+/**
+ * @name    Return codes
+ * @{
+ */
+/**
+ * @brief HAL operation success.
+ */
+#define HAL_SUCCESS             false
+/**
+ * @brief HAL operation failed.
+ */
+#define HAL_FAILED              true
+/** @} */
+
+/*===========================================================================*/
+/* Driver pre-compile time settings.                                         */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Derived constants and error checks.                                       */
+/*===========================================================================*/
+
+/* Configuration file checks.*/
+#if !defined(_CHIBIOS_HAL_CONF_)
+#error "invalid configuration file"
+#endif
+
+#if !defined(_CHIBIOS_HAL_CONF_VER_7_1_)
+#error "obsolete or unknown configuration file"
+#endif
+
 /* Error checks on the configuration header file.*/
 #if !defined(HAL_USE_PAL)
 #define HAL_USE_PAL                         FALSE
@@ -118,136 +188,6 @@
 #define HAL_USE_WSPI                        FALSE
 #endif
 
-/* Low Level HAL support.*/
-#include "hal_lld.h"
-
-/* Abstract interfaces.*/
-#include "hal_objects.h"
-#include "hal_streams.h"
-#include "hal_channels.h"
-#include "hal_files.h"
-#include "hal_ioblock.h"
-#include "hal_mmcsd.h"
-#include "hal_persistent.h"
-#include "hal_flash.h"
-
-/* Shared headers.*/
-#include "hal_buffers.h"
-#include "hal_queues.h"
-
-/* Normal drivers.*/
-#include "hal_pal.h"
-#include "hal_adc.h"
-#include "hal_can.h"
-#include "hal_crypto.h"
-#include "hal_dac.h"
-#include "hal_efl.h"
-#include "hal_gpt.h"
-#include "hal_i2c.h"
-#include "hal_i2s.h"
-#include "hal_icu.h"
-#include "hal_mac.h"
-#include "hal_pwm.h"
-#include "hal_rtc.h"
-#include "hal_serial.h"
-#include "hal_sdc.h"
-#include "hal_sio.h"
-#include "hal_spi.h"
-#include "hal_trng.h"
-#include "hal_uart.h"
-#include "hal_usb.h"
-#include "hal_wdg.h"
-#include "hal_wspi.h"
-
-/*
- *  The ST driver is a special case, it is only included if the OSAL is
- *  configured to require it.
- */
-#if OSAL_ST_MODE != OSAL_ST_MODE_NONE
-#include "hal_st.h"
-#endif
-
-/* Complex drivers.*/
-#include "hal_mmc_spi.h"
-#include "hal_serial_usb.h"
-
-/* Community drivers.*/
-#if defined(HAL_USE_COMMUNITY) || defined(__DOXYGEN__)
-#if (HAL_USE_COMMUNITY == TRUE) || defined(__DOXYGEN__)
-#include "hal_community.h"
-#endif
-#endif
-
-/*===========================================================================*/
-/* Driver constants.                                                         */
-/*===========================================================================*/
-
-/**
- * @brief   ChibiOS/HAL identification macro.
- */
-#define __CHIBIOS_HAL__
-
-/**
- * @brief   Stable release flag.
- */
-#define CH_HAL_STABLE           0
-
-/**
- * @name    ChibiOS/HAL version identification
- * @{
- */
-/**
- * @brief   HAL version string.
- */
-#define HAL_VERSION             "7.1.0"
-
-/**
- * @brief   HAL version major number.
- */
-#define CH_HAL_MAJOR            7
-
-/**
- * @brief   HAL version minor number.
- */
-#define CH_HAL_MINOR            1
-
-/**
- * @brief   HAL version patch number.
- */
-#define CH_HAL_PATCH            0
-/** @} */
-
-/**
- * @name    Return codes
- * @{
- */
-/**
- * @brief HAL operation success.
- */
-#define HAL_SUCCESS             false
-/**
- * @brief HAL operation failed.
- */
-#define HAL_FAILED              true
-/** @} */
-
-/*===========================================================================*/
-/* Driver pre-compile time settings.                                         */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Derived constants and error checks.                                       */
-/*===========================================================================*/
-
-/* Configuration file checks.*/
-#if !defined(_CHIBIOS_HAL_CONF_)
-#error "invalid configuration file"
-#endif
-
-#if !defined(_CHIBIOS_HAL_CONF_VER_7_1_)
-#error "obsolete or unknown configuration file"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -307,6 +247,70 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
   return hal_lld_get_clock_point(clkpt);
 }
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
+
+/*===========================================================================*/
+/* Driver late inclusions.                                                   */
+/*===========================================================================*/
+
+/* Low Level HAL support.*/
+#include "hal_lld.h"
+
+/* Abstract interfaces.*/
+#include "hal_objects.h"
+#include "hal_streams.h"
+#include "hal_channels.h"
+#include "hal_files.h"
+#include "hal_ioblock.h"
+#include "hal_mmcsd.h"
+#include "hal_persistent.h"
+#include "hal_flash.h"
+
+/* Shared headers.*/
+#include "hal_buffers.h"
+#include "hal_queues.h"
+
+/* Normal drivers.*/
+#include "hal_pal.h"
+#include "hal_adc.h"
+#include "hal_can.h"
+#include "hal_crypto.h"
+#include "hal_dac.h"
+#include "hal_efl.h"
+#include "hal_gpt.h"
+#include "hal_i2c.h"
+#include "hal_i2s.h"
+#include "hal_icu.h"
+#include "hal_mac.h"
+#include "hal_pwm.h"
+#include "hal_rtc.h"
+#include "hal_serial.h"
+#include "hal_sdc.h"
+#include "hal_sio.h"
+#include "hal_spi.h"
+#include "hal_trng.h"
+#include "hal_uart.h"
+#include "hal_usb.h"
+#include "hal_wdg.h"
+#include "hal_wspi.h"
+
+/*
+ *  The ST driver is a special case, it is only included if the OSAL is
+ *  configured to require it.
+ */
+#if OSAL_ST_MODE != OSAL_ST_MODE_NONE
+#include "hal_st.h"
+#endif
+
+/* Complex drivers.*/
+#include "hal_mmc_spi.h"
+#include "hal_serial_usb.h"
+
+/* Community drivers.*/
+#if defined(HAL_USE_COMMUNITY) || defined(__DOXYGEN__)
+#if (HAL_USE_COMMUNITY == TRUE) || defined(__DOXYGEN__)
+#include "hal_community.h"
+#endif
+#endif
 
 #endif /* HAL_H */
 

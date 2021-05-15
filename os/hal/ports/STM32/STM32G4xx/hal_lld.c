@@ -436,9 +436,16 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   PWR->CR3 = PWR_CR3_EIWF;
   PWR->CR4 = 0U;
 
-  /* Making sure HSI is activated.*/
+  /* Waiting for all regulator status bits to be cleared, this means that
+     power levels are stable.*/
+  while ((PWR->SR2 & (PWR_SR2_VOSF | PWR_SR2_REGLPF)) != 0U) {
+    /* Waiting for the regulator to be ready.*/
+  }
+
+  /* Making sure HSI16 is activated.*/
   RCC->CR |= RCC_CR_HSION;
   while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
+    /* Waiting for HSI16 activation.*/
   }
 
   /* Disabling boost mode.*/
@@ -489,6 +496,13 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   PWR->CR3 = ccp->pwr_cr3;
   PWR->CR4 = ccp->pwr_cr4;
   PWR->CR5 = ccp->pwr_cr5;
+
+  /* Wait on LPR bit clear.*/
+  if ((ccp->pwr_cr1 & PWR_CR1_LPR) == 0U) {
+    while ((PWR->SR2 & PWR_SR2_REGLPF) != 0U) {
+      /* Waiting for the regulator to be ready.*/
+    }
+  }
 
   /* Switching to the final clock source.*/
   RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW_Msk) | (ccp->rcc_cfgr & RCC_CFGR_SW_Msk);
