@@ -301,7 +301,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
  *
  * @xclass
  */
-static inline halfreq_t halClockGetPointX(unsigned clkpt) {
+static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 
   return hal_lld_get_clock_point(clkpt);
 }

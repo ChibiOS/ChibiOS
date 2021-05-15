@@ -100,7 +100,7 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
  *
  * @notapi
  */
-halfreq_t hal_lld_get_clock_point(unsigned clkpt) {
+halfreq_t hal_lld_get_clock_point(halclkpt_t clkpt) {
 
   (void)clkpt;
 
