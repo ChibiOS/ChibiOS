@@ -517,7 +517,7 @@ static inline void __vt_object_init(virtual_timers_list_t *vtlp) {
   vtlp->lasttime = (systime_t)0;
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 #if CH_CFG_USE_TIMESTAMP == TRUE
-  currcore->vtlist.laststamp = (systimestamp_t)chVTGetSystemTimeX();
+  vtlp->laststamp = (systimestamp_t)chVTGetSystemTimeX();
 #endif
 }
 
