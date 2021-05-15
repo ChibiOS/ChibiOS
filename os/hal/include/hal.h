@@ -42,10 +42,6 @@
 #define HAL_USE_CAN                         FALSE
 #endif
 
-#if !defined(HAL_USE_CLK)
-#define HAL_USE_CLK                         FALSE
-#endif
-
 #if !defined(HAL_USE_CRY)
 #define HAL_USE_CRY                         FALSE
 #endif
