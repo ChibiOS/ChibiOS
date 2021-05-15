@@ -61,7 +61,6 @@ static inline bool is_timer(ch_delta_list_t *dlhp, ch_delta_list_t *dlp) {
 
   return (bool)(dlp != dlhp);
 }
-#endif
 
 /**
  * @brief   Inserts a timer as first element in a delta list.
@@ -96,6 +95,7 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
      is started.*/
   port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
 }
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 /**
  * @brief   Enqueues a virtual timer in a virtual timers list.
