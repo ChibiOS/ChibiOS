@@ -28,6 +28,11 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of thresholds in the wait states array.
+ */
+#define STM32_WS_THRESHOLDS             9
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -116,7 +121,7 @@ typedef struct {
   halfreq_t     pllq_min;
   halfreq_t     pllr_max;
   halfreq_t     pllr_min;
-  halfreq_t     flash_thresholds[9];
+  halfreq_t     flash_thresholds[STM32_WS_THRESHOLDS];
 } system_limits_t;
 
 /**
@@ -187,7 +192,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   halfreq_t hsi16clk = 0U, hseclk = 0U, pllselclk;
   halfreq_t pllpclk = 0U, pllqclk = 0U, pllrclk = 0U;
   halfreq_t sysclk, hclk, pclk1, pclk2, pclk1tim, pclk2tim, mcoclk;
-  uint32_t mcodiv;
+  uint32_t mcodiv, flashws;
 
   /* System limits based on desired VOS settings.*/
   if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_1) {
@@ -301,12 +306,12 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   if ((ccp->pwr_cr5 & PWR_CR5_R1MODE) == 0U) {
-    if (sysclk < slp->sysclk_max_boost) {
+    if (sysclk > slp->sysclk_max_boost) {
       return true;
     }
   }
   else {
-    if (sysclk < slp->sysclk_max_noboost) {
+    if (sysclk > slp->sysclk_max_noboost) {
       return true;
     }
   }
@@ -366,6 +371,14 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     return true;
   }
   mcoclk /= mcodiv;
+
+  /* Flash settings.*/
+  flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
+  if (flashws >= STM32_WS_THRESHOLDS) {
+    return true;
+  }  if (hclk > slp->flash_thresholds[flashws]) {
+    return true;
+  }
 
   /* Writing out results.*/
   clock_points[CLK_SYSCLK]   = sysclk;
