@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: USARTv2, USARTv3 updated for dynamic clocking.
 - NEW: Dynamic support implemented for STM32G4xx.
 - NEW: Dynamic clocks support in HAL.
 - NEW: Reload feature added to RT virtual timers.

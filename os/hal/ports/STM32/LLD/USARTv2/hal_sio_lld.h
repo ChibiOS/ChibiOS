@@ -262,9 +262,7 @@ typedef uint32_t sio_events_mask_t;
  */
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
-  USART_TypeDef             *usart;                                         \
-  /* USART clock frequency.*/                                               \
-  uint32_t                  clock
+  USART_TypeDef             *usart
 
 /**
  * @brief   Low level fields of the SIO configuration structure.

@@ -193,8 +193,9 @@ __STATIC_INLINE void usart_enable_tx_end_irq(SIODriver *siop) {
  * @details This function must be invoked with interrupts disabled.
  *
  * @param[in] siop       pointer to a @p SIODriver object
+ * @param[in] clock      base clock for the USART
  */
-__STATIC_INLINE void usart_init(SIODriver *siop) {
+__STATIC_INLINE void usart_init(SIODriver *siop, uint32_t clock) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr;
 
@@ -205,18 +206,18 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
  /* Baud rate setting.*/
 #if STM32_SIO_USE_LPUART1
   if (siop == &LPSIOD1) {
-    osalDbgAssert((siop->clock >= siop->config->baud * 3U) &&
-                  (siop->clock <= siop->config->baud * 4096U),
+    osalDbgAssert((clock >= siop->config->baud * 3U) &&
+                  (clock <= siop->config->baud * 4096U),
                   "invalid baud rate vs input clock");
 
-    brr = (uint32_t)(((uint64_t)(siop->clock / presc) * (uint64_t)256) / siop->config->baud);
+    brr = (uint32_t)(((uint64_t)(clock / presc) * (uint64_t)256) / siop->config->baud);
 
     osalDbgAssert((brr >= 0x300) && (brr < 0x100000), "invalid BRR value");
   }
  else
 #endif
   {
-    brr = (uint32_t)((siop->clock / presc) / siop->config->baud);
+    brr = (uint32_t)((clock / presc) / siop->config->baud);
 
     /* Correcting BRR value when oversampling by 8 instead of 16.
        Fraction is still 4 bits wide, but only lower 3 bits used.
@@ -255,49 +256,39 @@ void sio_lld_init(void) {
 #if STM32_SIO_USE_USART1 == TRUE
   sioObjectInit(&SIOD1);
   SIOD1.usart = USART1;
-  SIOD1.clock = STM32_USART1CLK;
 #endif
 #if STM32_SIO_USE_USART2 == TRUE
   sioObjectInit(&SIOD2);
   SIOD2.usart = USART2;
-  SIOD2.clock = STM32_USART2CLK;
 #endif
 #if STM32_SIO_USE_USART3 == TRUE
   sioObjectInit(&SIOD3);
   SIOD3.usart = USART3;
-  SIOD3.clock = STM32_USART3CLK;
 #endif
 #if STM32_SIO_USE_UART4 == TRUE
   sioObjectInit(&SIOD4);
   SIOD4.usart = UART4;
-  SIOD4.clock = STM32_UART4CLK;
 #endif
 #if STM32_SIO_USE_UART5 == TRUE
   sioObjectInit(&SIOD5);
   SIOD5.usart = UART5;
-  SIOD5.clock = STM32_UART5CLK;
 #endif
 #if STM32_SIO_USE_USART6 == TRUE
   sioObjectInit(&SIOD6);
   SIOD6.usart = USART6;
-  SIOD6.clock = STM32_USART6CLK;
 #endif
 #if STM32_SIO_USE_UART7 == TRUE
   sioObjectInit(&SIOD7);
   SIOD7.usart = UART7;
-  SIOD7.clock = STM32_UART7CLK;
 #endif
 #if STM32_SIO_USE_UART8 == TRUE
   sioObjectInit(&SIOD8);
   SIOD8.usart = UART8;
-  SIOD8.clock = STM32_UART8CLK;
 #endif
 #if STM32_SIO_USE_LPUART1 == TRUE
   sioObjectInit(&LPSIOD1);
   LPSIOD1.usart = LPUART1;
-  LPSIOD1.clock = STM32_LPUART1CLK;
 #endif
-
 }
 
 /**
@@ -311,6 +302,7 @@ void sio_lld_init(void) {
  * @notapi
  */
 bool sio_lld_start(SIODriver *siop) {
+  uint32_t clock = 0U;
 
   /* Using the default configuration if the application passed a
      NULL pointer.*/
@@ -325,54 +317,63 @@ bool sio_lld_start(SIODriver *siop) {
     }
 #if STM32_SIO_USE_USART1 == TRUE
     else if (&SIOD1 == siop) {
+      clock = STM32_USART1CLK;
       rccResetUSART1();
       rccEnableUSART1(true);
     }
 #endif
 #if STM32_SIO_USE_USART2 == TRUE
     else if (&SIOD2 == siop) {
+      clock = STM32_USART2CLK;
       rccResetUSART2();
       rccEnableUSART2(true);
     }
 #endif
 #if STM32_SIO_USE_USART3 == TRUE
     else if (&SIOD3 == siop) {
+      clock = STM32_USART3CLK;
       rccResetUSART3();
       rccEnableUSART3(true);
     }
 #endif
 #if STM32_SIO_USE_UART4 == TRUE
     else if (&SIOD4 == siop) {
+      clock = STM32_UART4CLK;
       rccResetUART4();
       rccEnableUART4(true);
     }
 #endif
 #if STM32_SIO_USE_UART5 == TRUE
     else if (&SIOD5 == siop) {
+      clock = STM32_UART5CLK;
       rccResetUART5();
       rccEnableUART5(true);
     }
 #endif
 #if STM32_SIO_USE_USART6 == TRUE
     else if (&SIOD6 == siop) {
+      clock = STM32_USART6CLK;
       rccResetUSART6();
       rccEnableUSART6(true);
     }
 #endif
 #if STM32_SIO_USE_UART7 == TRUE
     else if (&SIOD7 == siop) {
+      clock = STM32_UART7CLK;
       rccResetUART7();
       rccEnableUART7(true);
     }
 #endif
 #if STM32_SIO_USE_UART8 == TRUE
     else if (&SIOD8 == siop) {
+      clock = STM32_UART8CLK;
       rccResetUART8();
       rccEnableUART8(true);
     }
 #endif
 #if STM32_SIO_USE_LPUART1 == TRUE
     else if (&LPSIOD1 == siop) {
+      clock = STM32_LPUART1CLK;
       rccResetLPUART1();
       rccEnableLPUART1(true);
     }
@@ -391,7 +392,7 @@ bool sio_lld_start(SIODriver *siop) {
   }
 
   /* Configures the peripheral.*/
-  usart_init(siop);
+  usart_init(siop, clock);
 
   return false;
 }
