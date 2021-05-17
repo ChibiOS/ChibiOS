@@ -139,10 +139,10 @@
  */
 #define STM32_ADC_DUAL_MODE                 FALSE
 #define STM32_ADC_COMPACT_SAMPLES           FALSE
-#define STM32_ADC_USE_ADC1                  TRUE
-#define STM32_ADC_USE_ADC2                  TRUE
-#define STM32_ADC_USE_ADC3                  TRUE
-#define STM32_ADC_USE_ADC4                  TRUE
+#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_USE_ADC2                  FALSE
+#define STM32_ADC_USE_ADC3                  FALSE
+#define STM32_ADC_USE_ADC4                  FALSE
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
 #define STM32_ADC_ADC2_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
 #define STM32_ADC_ADC3_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
