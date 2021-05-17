@@ -250,7 +250,6 @@
 /*
  * PWM driver system settings.
  */
-#define STM32_PWM_USE_ADVANCED              ${doc.STM32_PWM_USE_ADVANCED!"FALSE"}
 #define STM32_PWM_USE_TIM1                  ${doc.STM32_PWM_USE_TIM1!"FALSE"}
 #define STM32_PWM_USE_TIM2                  ${doc.STM32_PWM_USE_TIM2!"FALSE"}
 #define STM32_PWM_USE_TIM3                  ${doc.STM32_PWM_USE_TIM3!"FALSE"}

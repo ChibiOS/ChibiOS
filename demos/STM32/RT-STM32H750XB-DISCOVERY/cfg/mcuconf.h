@@ -39,7 +39,6 @@
 #define STM32H755_MCUCONF
 #define STM32H747_MCUCONF
 #define STM32H757_MCUCONF
-#define STM32H750_MCUCONF
 
 /*
  * General settings.
@@ -330,7 +329,6 @@
 /*
  * PWM driver system settings.
  */
-#define STM32_PWM_USE_ADVANCED              FALSE
 #define STM32_PWM_USE_TIM1                  FALSE
 #define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM3                  FALSE
