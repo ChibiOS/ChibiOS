@@ -731,14 +731,6 @@
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC34_CLOCK_MODE"
 #endif
-
-#if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
-#endif
-
-#if STM32_ADC34_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC34_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
-#endif
 #endif /* defined(STM32F3XX) */
 
 #if defined(STM32L4XX) || defined(STM32L4XXP)
@@ -752,10 +744,6 @@
 #define STM32_ADC123_CLOCK              (STM32_ADCCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC123_CLOCK_MODE"
-#endif
-
-#if STM32_ADC123_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC123_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 #endif /* defined(STM32L4XX) || defined(STM32L4XXP) */
 
@@ -782,14 +770,6 @@
 #define STM32_ADC345_CLOCK              (STM32_HCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC345_CLOCK_MODE"
-#endif
-
-#if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
-#endif
-
-#if STM32_ADC345_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC345_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 #endif /* defined(STM32G4XX) */
 

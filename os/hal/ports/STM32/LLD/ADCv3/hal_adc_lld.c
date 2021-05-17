@@ -630,6 +630,10 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
+
+      osalDbgAssert(STM32_ADC12_CLOCK <= STM32_ADCCLK_MAX,
+                    "invalid clock frequency");
+
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC1_DMA_STREAM,
                                      STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
@@ -654,6 +658,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC2
     if (&ADCD2 == adcp) {
+
+      osalDbgAssert(STM32_ADC12_CLOCK <= STM32_ADCCLK_MAX,
+                    "invalid clock frequency");
+
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC2_DMA_STREAM,
                                      STM32_ADC_ADC2_DMA_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
@@ -678,6 +686,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3
     if (&ADCD3 == adcp) {
+
+      osalDbgAssert(STM32_ADC345_CLOCK <= STM32_ADCCLK_MAX,
+                    "invalid clock frequency");
+
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC3_DMA_STREAM,
                                      STM32_ADC_ADC3_DMA_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
@@ -705,6 +717,10 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC4
     if (&ADCD4 == adcp) {
+
+      osalDbgAssert(STM32_ADC345_CLOCK <= STM32_ADCCLK_MAX,
+                    "invalid clock frequency");
+
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC4_DMA_STREAM,
                                      STM32_ADC_ADC4_DMA_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,

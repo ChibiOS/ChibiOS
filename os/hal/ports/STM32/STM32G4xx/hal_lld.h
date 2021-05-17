@@ -1428,7 +1428,7 @@
 #endif
 
 /**
- * @brief   ADC clock frequency.
+ * @brief   ADC12 clock frequency.
  */
 #if (STM32_ADC12SEL == STM32_ADC12SEL_NOCLK) || defined(__DOXYGEN__)
   #define STM32_ADC12CLK            0
@@ -1444,7 +1444,7 @@
 #endif
 
 /**
- * @brief   ADC clock frequency.
+ * @brief   ADC345 clock frequency.
  */
 #if (STM32_ADC345SEL == STM32_ADC345SEL_NOCLK) || defined(__DOXYGEN__)
   #define STM32_ADC345CLK           0
