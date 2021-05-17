@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Dynamic support implemented for STM32G4xx.
+- NEW: Dynamic clocks support in HAL.
 - NEW: Reload feature added to RT virtual timers.
 - NEW: Upgraded the clock initialization for STM32G0, STM32L4 and STM32L4++
        to the new standard (started with STM32G4).
