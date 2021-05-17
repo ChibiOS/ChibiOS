@@ -477,6 +477,11 @@ void usb_lld_start(USBDriver *usbp) {
     /* Clock activation.*/
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
+
+      osalDbgAssert((STM32_USBCLK >= (48000000U - STM32_USB_48MHZ_DELTA)) &&
+                    (STM32_USBCLK <= (48000000U + STM32_USB_48MHZ_DELTA)),
+                    "invalid clock frequency");
+
       /* USB clock enabled.*/
       rccEnableUSB(true);
       /* Powers up the transceiver while holding the USB in reset state.*/

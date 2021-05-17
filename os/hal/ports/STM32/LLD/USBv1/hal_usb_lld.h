@@ -166,11 +166,6 @@
 #error "invalid STM32_USB_48MHZ_DELTA setting, it must not exceed 250000"
 #endif
 
-#if (STM32_USBCLK < (48000000 - STM32_USB_48MHZ_DELTA)) ||                  \
-    (STM32_USBCLK > (48000000 + STM32_USB_48MHZ_DELTA))
-#error "the USB driver requires a 48MHz clock"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
