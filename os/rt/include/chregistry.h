@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chregistry.h
+ * @file    rt/include/chregistry.h
  * @brief   Threads registry macros and structures.
  *
  * @addtogroup registry
@@ -75,28 +75,30 @@ typedef struct {
 /*===========================================================================*/
 
 /**
+ * @brief   Access to the registry list header.
+ */
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+#define REG_HEADER(oip) (&ch_system.reglist.queue)
+#else
+#define REG_HEADER(oip) (&(oip)->reglist.queue)
+#endif
+
+/**
  * @brief   Removes a thread from the registry list.
  * @note    This macro is not meant for use in application code.
  *
  * @param[in] tp        thread to remove from the registry
  */
-#define REG_REMOVE(tp) {                                                    \
-  (tp)->older->newer = (tp)->newer;                                         \
-  (tp)->newer->older = (tp)->older;                                         \
-}
+#define REG_REMOVE(tp) ch_queue_dequeue(&(tp)->rqueue)
 
 /**
  * @brief   Adds a thread to the registry list.
  * @note    This macro is not meant for use in application code.
  *
+ * @param[in] oip       pointer to the OS instance
  * @param[in] tp        thread to add to the registry
  */
-#define REG_INSERT(tp) {                                                    \
-  (tp)->newer = (thread_t *)&ch.rlist;                                      \
-  (tp)->older = ch.rlist.older;                                           \
-  (tp)->older->newer = (tp);                                                \
-  ch.rlist.older = (tp);                                                  \
-}
+#define REG_INSERT(oip, tp) ch_queue_insert(&(tp)->rqueue, REG_HEADER(oip))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -122,6 +124,19 @@ extern "C" {
 /*===========================================================================*/
 
 /**
+ * @brief   Initializes a registry.
+ * @note    Internal use only.
+ *
+ * @param[out] rp       pointer to a @p registry_t structure
+ *
+ * @init
+ */
+static inline void __reg_object_init(registry_t *rp) {
+
+  ch_queue_init(&rp->queue);
+}
+
+/**
  * @brief   Sets the current thread name.
  * @pre     This function only stores the pointer to the name if the option
  *          @p CH_CFG_USE_REGISTRY is enabled else no action is performed.
@@ -133,7 +148,7 @@ extern "C" {
 static inline void chRegSetThreadName(const char *name) {
 
 #if CH_CFG_USE_REGISTRY == TRUE
-  ch.rlist.current->name = name;
+  __sch_get_currthread()->name = name;
 #else
   (void)name;
 #endif

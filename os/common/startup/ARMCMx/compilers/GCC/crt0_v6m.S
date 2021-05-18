@@ -129,6 +129,13 @@
 #define CRT0_CALL_DESTRUCTORS               TRUE
 #endif
 
+/**
+ * @brief   Number of extra cores.
+ */
+#if !defined(CRT0_EXTRA_CORES_NUMBER) || defined(__DOXYGEN__)
+#define CRT0_EXTRA_CORES_NUMBER             0
+#endif
+
 /*===========================================================================*/
 /* Code section.                                                             */
 /*===========================================================================*/
@@ -174,7 +181,7 @@ _crt0_entry:
 
 #if CRT0_INIT_CORE == TRUE
                 /* Core initialization.*/
-                bl      __core_init
+                bl      __cpu_init
 #endif
 
                 /* Early initialization..*/
@@ -211,9 +218,9 @@ endpsloop:
 #if CRT0_INIT_DATA == TRUE
                 /* Data initialization. Note, it assumes that the DATA size
                   is a multiple of 4 so the linker file must ensure this.*/
-                ldr     r1, =_textdata
-                ldr     r2, =_data
-                ldr     r3, =_edata
+                ldr     r1, =__textdata_base__
+                ldr     r2, =__data_base__
+                ldr     r3, =__data_end__
 dloop:
                 cmp     r2, r3
                 bge     enddloop
@@ -229,8 +236,8 @@ enddloop:
                 /* BSS initialization. Note, it assumes that the DATA size
                   is a multiple of 4 so the linker file must ensure this.*/
                 movs    r0, #0
-                ldr     r1, =_bss_start
-                ldr     r2, =_bss_end
+                ldr     r1, =__bss_base__
+                ldr     r2, =__bss_end__
 bloop:
                 cmp     r1, r2
                 bge     endbloop
@@ -250,8 +257,8 @@ endbloop:
 
 #if CRT0_CALL_CONSTRUCTORS == TRUE
                 /* Constructors invocation.*/
-                ldr     r4, =__init_array_start
-                ldr     r5, =__init_array_end
+                ldr     r4, =__init_array_base__
+                ldr     r5, =__init_array_end__
 initloop:
                 cmp     r4, r5
                 bge     endinitloop
@@ -267,8 +274,8 @@ endinitloop:
 
 #if CRT0_CALL_DESTRUCTORS == TRUE
                 /* Destructors invocation.*/
-                ldr     r4, =__fini_array_start
-                ldr     r5, =__fini_array_end
+                ldr     r4, =__fini_array_base__
+                ldr     r5, =__fini_array_end__
 finiloop:
                 cmp     r4, r5
                 bge     endfiniloop
@@ -283,6 +290,85 @@ endfiniloop:
                 ldr     r1, =__default_exit
                 bx      r1
 
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 0
+                .align  2
+                .thumb_func
+                .global _crt0_c1_entry
+_crt0_c1_entry:
+                /* Interrupts are globally masked initially.*/
+                cpsid   i
+
+#if CRT0_FORCE_MSP_INIT == TRUE
+                /* MSP stack pointers initialization.*/
+                ldr     r0, =__c1_main_stack_end__
+                msr     MSP, r0
+#endif
+
+                /* PSP stack pointers initialization.*/
+                ldr     r0, =__c1_process_stack_end__
+                msr     PSP, r0
+
+                /* CPU mode initialization as configured.*/
+                movs    r0, #CRT0_CONTROL_INIT
+                msr     CONTROL, r0
+                isb
+
+#if CRT0_VTOR_INIT == TRUE
+                ldr     r0, =_vectors
+                ldr     r1, =SCB_VTOR
+                str     r0, [r1]
+#endif
+
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __c1_cpu_init
+#endif
+
+                /* Early initialization..*/
+                bl      __c1_early_init
+
+#if CRT0_INIT_STACKS == TRUE
+                ldr     r0, =CRT0_STACKS_FILL_PATTERN
+                /* Main Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c1_main_stack_base__
+                ldr     r2, =__c1_main_stack_end__
+c1msloop:
+                cmp     r1, r2
+                bge     c1endmsloop
+                str     r0, [r1]
+                adds    r1, #4
+                b       c1msloop
+c1endmsloop:
+                /* Process Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c1_process_stack_base__
+                ldr     r2, =__c1_process_stack_end__
+c1psloop:
+                cmp     r1, r2
+                bge     c1endpsloop
+                str     r0, [r1]
+                adds    r1, #4
+                b       c1psloop
+c1endpsloop:
+#endif
+
+                /* Late initialization..*/
+                bl      __c1_late_init
+
+                /* Main program invocation, r0 contains the returned value.*/
+                bl      c1_main
+
+                /* Branching to the defined exit handler.*/
+                ldr     r1, =__c1_default_exit
+                bx      r1
+
+#elif CRT0_EXTRA_CORES_NUMBER > 1
+#error "unsupported number of extra cores"
 #endif
 
 /** @} */

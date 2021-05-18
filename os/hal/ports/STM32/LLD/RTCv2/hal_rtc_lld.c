@@ -127,7 +127,7 @@ static void rtc_decode_date(uint32_t dr, RTCDateTime *timespec) {
                      ((dr >> RTC_TR_MNU_OFFSET) & 15);
   timespec->day   = (((dr >> RTC_DR_DT_OFFSET) & 3) * 10) +
                      ((dr >> RTC_DR_DU_OFFSET) & 15);
-  timespec->dayofweek = ((dr >> RTC_DR_WDU_OFFSET) & 7) + 1;
+  timespec->dayofweek = (dr >> RTC_DR_WDU_OFFSET) & 7;
 }
 
 /**
@@ -194,7 +194,7 @@ static uint32_t rtc_encode_date(const RTCDateTime *timespec) {
   dr = dr | ((n % 10) << RTC_DR_DT_OFFSET);
 
   /* Days of week conversion.*/
-  dr = dr | ((timespec->dayofweek - 1) << RTC_DR_WDU_OFFSET);
+  dr = dr | (timespec->dayofweek << RTC_DR_WDU_OFFSET);
 
   return dr;
 }
@@ -687,7 +687,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp      pointer to RTC driver structure.
- * @param[in] alarm     alarm identifier. Can be 1 or 2.
+ * @param[in] alarm     alarm identifier. Can be 0 or 1.
  * @param[in] alarmspec pointer to a @p RTCAlarm structure.
  *
  * @notapi
@@ -740,7 +740,7 @@ void rtc_lld_set_alarm(RTCDriver *rtcp,
  * @note    The function can be called from any context.
  *
  * @param[in] rtcp       pointer to RTC driver structure
- * @param[in] alarm      alarm identifier
+ * @param[in] alarm     alarm identifier. Can be 0 or 1.
  * @param[out] alarmspec pointer to a @p RTCAlarm structure
  *
  * @notapi

@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chlib.h
+ * @file    oslib/include/chlib.h
  * @brief   ChibiOS/LIB main include file.
  * @details This header includes all the required library headers. This file
  *          is meant do be included by @p ch.h not directly by user.
@@ -38,7 +38,7 @@
 /**
  * @brief   ChibiOS/LIB identification macro.
  */
-#define _CHIBIOS_OSLIB_
+#define __CHIBIOS_OSLIB__
 
 /**
  * @brief   Stable release flag.
@@ -52,7 +52,7 @@
 /**
  * @brief   OS Library version string.
  */
-#define CH_OSLIB_VERSION        "1.2.0"
+#define CH_OSLIB_VERSION        "1.3.0"
 
 /**
  * @brief   OS Library version major number.
@@ -62,7 +62,7 @@
 /**
  * @brief   OS Library version minor number.
  */
-#define CH_OSLIB_MINOR          2
+#define CH_OSLIB_MINOR          3
 
 /**
  * @brief   OS Library version patch number.
@@ -79,7 +79,7 @@
 /*===========================================================================*/
 
 /* Host OS checks.*/
-#if !defined(_CHIBIOS_RT_) && !defined(_CHIBIOS_NIL_)
+#if !defined(__CHIBIOS_RT__) && !defined(__CHIBIOS_NIL__)
 #error "OS check failed, must be included after ch.h"
 #endif
 
@@ -109,8 +109,15 @@
 #endif
 
 #if !defined(CH_CFG_USE_OBJ_CACHES)
-//#error "CH_CFG_USE_OBJ_CACHES not defined in chconf.h"
-#define CH_CFG_USE_OBJ_CACHES 0
+#error "CH_CFG_USE_OBJ_CACHES not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_DELEGATES)
+#error "CH_CFG_USE_DELEGATES not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_JOBS)
+#error "CH_CFG_USE_JOBS not defined in chconf.h"
 #endif
 
 /* Objects factory options checks.*/
@@ -147,10 +154,6 @@
 #error "malformed chlicense.h"
 #endif
 
-#if CH_CUSTOMER_LIC_OSLIB == FALSE
-#error "ChibiOS/LIB not licensed"
-#endif
-
 #if (CH_LICENSE_FEATURES != CH_FEATURES_FULL) &&                            \
     (CH_LICENSE_FEATURES != CH_FEATURES_INTERMEDIATE) &&                    \
     (CH_LICENSE_FEATURES != CH_FEATURES_BASIC)
@@ -176,20 +179,34 @@
     (CH_LICENSE_FEATURES == CH_FEATURES_BASIC)
 
 /* Restricted subsystems.*/
-#undef CH_CFG_USE_MEMCORE
 #undef CH_CFG_USE_HEAP
 #undef CH_CFG_USE_MEMPOOLS
 #undef CH_CFG_USE_OBJ_FIFOS
 #undef CH_CFG_USE_PIPES
+#undef CH_CFG_USE_OBJ_CACHES
+#undef CH_CFG_USE_DELEGATES
+#undef CH_CFG_USE_JOBS
 
-#define CH_CFG_USE_MEMCORE                  FALSE
 #define CH_CFG_USE_HEAP                     FALSE
 #define CH_CFG_USE_MEMPOOLS                 FALSE
 #define CH_CFG_USE_OBJ_FIFOS                FALSE
 #define CH_CFG_USE_PIPES                    FALSE
+#define CH_CFG_USE_OBJ_CACHES               FALSE
+#define CH_CFG_USE_DELEGATES                FALSE
+#define CH_CFG_USE_JOBS                     FALSE
 
 #endif /* (CH_CUSTOMER_LIC_OSLIB == FALSE) ||
           (CH_LICENSE_FEATURES == CH_FEATURES_BASIC) */
+
+/* Restrictions in unlicensed mode.*/
+#if (CH_CUSTOMER_LIC_OSLIB == FALSE)
+
+/* Restricted subsystems.*/
+#undef CH_CFG_USE_MAILBOXES
+
+#define CH_CFG_USE_MAILBOXES                FALSE
+
+#endif /* CH_CUSTOMER_LIC_OSLIB == FALSE */
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -216,6 +233,8 @@
 #include "chobjfifos.h"
 #include "chpipes.h"
 #include "chobjcaches.h"
+#include "chdelegates.h"
+#include "chjobs.h"
 #include "chfactory.h"
 
 /*===========================================================================*/
@@ -227,16 +246,16 @@
  *
  * @notapi
  */
-static inline void _oslib_init(void) {
+static inline void __oslib_init(void) {
 
 #if CH_CFG_USE_MEMCORE == TRUE
-  _core_init();
+  __core_init();
 #endif
 #if CH_CFG_USE_HEAP == TRUE
-  _heap_init();
+  __heap_init();
 #endif
 #if CH_CFG_USE_FACTORY == TRUE
-  _factory_init();
+  __factory_init();
 #endif
 }
 

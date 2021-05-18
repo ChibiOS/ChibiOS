@@ -113,7 +113,7 @@ GCOVSRC = $(KERNSRC)
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DSIMULATOR
+UDEFS = -DSIMULATOR -DTEST_CFG_SIZE_REPORT=0
 
 # Define ASM defines here
 UADEFS =
@@ -166,4 +166,4 @@ RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
 include $(RULESPATH)/rules.mk
 
 misra:
-	@wine lint-nt -v -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC)
+	@wine lint-nt -w3 $(DEFS) pclint/co-gcc.lnt pclint/au-misra3.lnt pclint/waivers.lnt $(IINCDIR) $(KERNSRC) $(LIBSRC)

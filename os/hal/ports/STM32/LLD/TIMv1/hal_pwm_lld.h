@@ -85,7 +85,7 @@
  * @brief   If advanced timer features switch.
  * @details If set to @p TRUE the advanced features for TIM1 and TIM8 are
  *          enabled.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_ADVANCED) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_ADVANCED              FALSE
@@ -94,7 +94,7 @@
 /**
  * @brief   PWMD1 driver enable switch.
  * @details If set to @p TRUE the support for PWMD1 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM1) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM1                  FALSE
@@ -103,7 +103,7 @@
 /**
  * @brief   PWMD2 driver enable switch.
  * @details If set to @p TRUE the support for PWMD2 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM2) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM2                  FALSE
@@ -112,7 +112,7 @@
 /**
  * @brief   PWMD3 driver enable switch.
  * @details If set to @p TRUE the support for PWMD3 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM3) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM3                  FALSE
@@ -121,7 +121,7 @@
 /**
  * @brief   PWMD4 driver enable switch.
  * @details If set to @p TRUE the support for PWMD4 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM4) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM4                  FALSE
@@ -130,7 +130,7 @@
 /**
  * @brief   PWMD5 driver enable switch.
  * @details If set to @p TRUE the support for PWMD5 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM5) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM5                  FALSE
@@ -139,7 +139,7 @@
 /**
  * @brief   PWMD8 driver enable switch.
  * @details If set to @p TRUE the support for PWMD8 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM8) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM8                  FALSE
@@ -148,16 +148,61 @@
 /**
  * @brief   PWMD9 driver enable switch.
  * @details If set to @p TRUE the support for PWMD9 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM9) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM9                  FALSE
 #endif
 
 /**
+ * @brief   PWMD10 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD10 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM10) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM10                 FALSE
+#endif
+
+/**
+ * @brief   PWMD11 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD11 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM11) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM11                 FALSE
+#endif
+
+/**
+ * @brief   PWMD12 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD12 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM12) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM12                 FALSE
+#endif
+
+/**
+ * @brief   PWMD13 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD13 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM13) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM13                 FALSE
+#endif
+
+/**
+ * @brief   PWMD14 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD14 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM14) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM14                 FALSE
+#endif
+
+/**
  * @brief   PWMD15 driver enable switch.
  * @details If set to @p TRUE the support for PWMD15 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM15) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM15                 FALSE
@@ -166,7 +211,7 @@
 /**
  * @brief   PWMD16 driver enable switch.
  * @details If set to @p TRUE the support for PWMD16 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM16) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM16                 FALSE
@@ -175,10 +220,37 @@
 /**
  * @brief   PWMD17 driver enable switch.
  * @details If set to @p TRUE the support for PWMD17 is included.
- * @note    The default is @p TRUE.
+ * @note    The default is @p FALSE.
  */
 #if !defined(STM32_PWM_USE_TIM17) || defined(__DOXYGEN__)
 #define STM32_PWM_USE_TIM17                 FALSE
+#endif
+
+/**
+ * @brief   PWMD20 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD20 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM20) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM20                 FALSE
+#endif
+
+/**
+ * @brief   PWMD21 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD21 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM21) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM21                 FALSE
+#endif
+
+/**
+ * @brief   PWMD22 driver enable switch.
+ * @details If set to @p TRUE the support for PWMD22 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_PWM_USE_TIM22) || defined(__DOXYGEN__)
+#define STM32_PWM_USE_TIM22                 FALSE
 #endif
 
 /**
@@ -231,6 +303,41 @@
 #endif
 
 /**
+ * @brief   PWMD10 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM10_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM10_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   PWMD11 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM11_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM11_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   PWMD12 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM12_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM12_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   PWMD13 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM13_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM13_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   PWMD14 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM14_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM14_IRQ_PRIORITY        7
+#endif
+
+/**
  * @brief   PWMD15 interrupt priority level setting.
  */
 #if !defined(STM32_PWM_TIM15_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -249,6 +356,27 @@
  */
 #if !defined(STM32_PWM_TIM17_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_PWM_TIM17_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   PWMD20 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM20_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM20_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   PWMD21 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM21_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM21_IRQ_PRIORITY        7
+#endif
+
+/**
+ * @brief   PWMD22 interrupt priority level setting.
+ */
+#if !defined(STM32_PWM_TIM22_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_PWM_TIM22_IRQ_PRIORITY        7
 #endif
 /** @} */
 
@@ -284,6 +412,26 @@
 #define STM32_HAS_TIM9                      FALSE
 #endif
 
+#if !defined(STM32_HAS_TIM10)
+#define STM32_HAS_TIM10                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM11)
+#define STM32_HAS_TIM11                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM12)
+#define STM32_HAS_TIM12                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM13)
+#define STM32_HAS_TIM13                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM14)
+#define STM32_HAS_TIM14                     FALSE
+#endif
+
 #if !defined(STM32_HAS_TIM15)
 #define STM32_HAS_TIM15                     FALSE
 #endif
@@ -294,6 +442,18 @@
 
 #if !defined(STM32_HAS_TIM17)
 #define STM32_HAS_TIM17                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM20)
+#define STM32_HAS_TIM20                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM21)
+#define STM32_HAS_TIM21                     FALSE
+#endif
+
+#if !defined(STM32_HAS_TIM22)
+#define STM32_HAS_TIM22                     FALSE
 #endif
 
 #if STM32_PWM_USE_TIM1 && !STM32_HAS_TIM1
@@ -324,6 +484,26 @@
 #error "TIM9 not present in the selected device"
 #endif
 
+#if STM32_PWM_USE_TIM10 && !STM32_HAS_TIM10
+#error "TIM10 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM11 && !STM32_HAS_TIM11
+#error "TIM11 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM12 && !STM32_HAS_TIM12
+#error "TIM12 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM13 && !STM32_HAS_TIM13
+#error "TIM13 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM14 && !STM32_HAS_TIM14
+#error "TIM14 not present in the selected device"
+#endif
+
 #if STM32_PWM_USE_TIM15 && !STM32_HAS_TIM15
 #error "TIM15 not present in the selected device"
 #endif
@@ -336,15 +516,32 @@
 #error "TIM17 not present in the selected device"
 #endif
 
+#if STM32_PWM_USE_TIM20 && !STM32_HAS_TIM20
+#error "TIM20 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM21 && !STM32_HAS_TIM21
+#error "TIM21 not present in the selected device"
+#endif
+
+#if STM32_PWM_USE_TIM22 && !STM32_HAS_TIM22
+#error "TIM22 not present in the selected device"
+#endif
+
 #if !STM32_PWM_USE_TIM1  && !STM32_PWM_USE_TIM2  &&                         \
     !STM32_PWM_USE_TIM3  && !STM32_PWM_USE_TIM4  &&                         \
     !STM32_PWM_USE_TIM5  && !STM32_PWM_USE_TIM8  &&                         \
-    !STM32_PWM_USE_TIM9  && !STM32_PWM_USE_TIM15 &&                         \
-    !STM32_PWM_USE_TIM16 && !STM32_PWM_USE_TIM17
+    !STM32_PWM_USE_TIM9  && !STM32_PWM_USE_TIM10 &&                         \
+    !STM32_PWM_USE_TIM11 && !STM32_PWM_USE_TIM11 &&                         \
+    !STM32_PWM_USE_TIM13 && !STM32_PWM_USE_TIM13 &&                         \
+    !STM32_PWM_USE_TIM15 && !STM32_PWM_USE_TIM15 &&                         \
+    !STM32_PWM_USE_TIM17 && !STM32_PWM_USE_TIM20 &&                         \
+    !STM32_PWM_USE_TIM21 && !STM32_PWM_USE_TIM22
 #error "PWM driver activated but no TIM peripheral assigned"
 #endif
 
-#if STM32_PWM_USE_ADVANCED && !STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM8
+#if STM32_PWM_USE_ADVANCED && !STM32_PWM_USE_TIM1 && !STM32_PWM_USE_TIM8 && \
+    !STM32_PWM_USE_TIM20
 #error "advanced mode selected but no advanced timer assigned"
 #endif
 
@@ -405,6 +602,46 @@
 #endif
 #endif
 
+#if STM32_PWM_USE_TIM10
+#if defined(STM32_TIM10_IS_USED)
+#error "PWMD10 requires TIM10 but the timer is already used"
+#else
+#define STM32_TIM10_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM11
+#if defined(STM32_TIM11_IS_USED)
+#error "PWMD11 requires TIM11 but the timer is already used"
+#else
+#define STM32_TIM11_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM12
+#if defined(STM32_TIM12_IS_USED)
+#error "PWMD12 requires TIM12 but the timer is already used"
+#else
+#define STM32_TIM12_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM13
+#if defined(STM32_TIM13_IS_USED)
+#error "PWMD13 requires TIM13 but the timer is already used"
+#else
+#define STM32_TIM13_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM14
+#if defined(STM32_TIM14_IS_USED)
+#error "PWMD14 requires TIM14 but the timer is already used"
+#else
+#define STM32_TIM14_IS_USED
+#endif
+#endif
+
 #if STM32_PWM_USE_TIM15
 #if defined(STM32_TIM15_IS_USED)
 #error "PWMD15 requires TIM15 but the timer is already used"
@@ -426,6 +663,30 @@
 #error "PWMD17 requires TIM17 but the timer is already used"
 #else
 #define STM32_TIM17_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM20
+#if defined(STM32_TIM20_IS_USED)
+#error "PWMD20 requires TIM20 but the timer is already used"
+#else
+#define STM32_TIM20_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM21
+#if defined(STM32_TIM21_IS_USED)
+#error "PWMD21 requires TIM21 but the timer is already used"
+#else
+#define STM32_TIM21_IS_USED
+#endif
+#endif
+
+#if STM32_PWM_USE_TIM22
+#if defined(STM32_TIM22_IS_USED)
+#error "PWMD22 requires TIM22 but the timer is already used"
+#else
+#define STM32_TIM22_IS_USED
 #endif
 #endif
 
@@ -465,6 +726,31 @@
 #error "Invalid IRQ priority assigned to TIM9"
 #endif
 
+#if STM32_PWM_USE_TIM10 && !defined(STM32_TIM10_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM10_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM10"
+#endif
+
+#if STM32_PWM_USE_TIM11 && !defined(STM32_TIM11_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM11_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM11"
+#endif
+
+#if STM32_PWM_USE_TIM12 && !defined(STM32_TIM12_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM12_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM12"
+#endif
+
+#if STM32_PWM_USE_TIM13 && !defined(STM32_TIM13_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM13_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM13"
+#endif
+
+#if STM32_PWM_USE_TIM14 && !defined(STM32_TIM14_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM14_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM14"
+#endif
+
 #if STM32_PWM_USE_TIM15 && !defined(STM32_TIM15_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM15_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM15"
@@ -478,6 +764,21 @@
 #if STM32_PWM_USE_TIM17 && !defined(STM32_TIM17_SUPPRESS_ISR) &&            \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM17_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM17"
+#endif
+
+#if STM32_PWM_USE_TIM20 && !defined(STM32_TIM20_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM20_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM20"
+#endif
+
+#if STM32_PWM_USE_TIM21 && !defined(STM32_TIM21_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM21_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM21"
+#endif
+
+#if STM32_PWM_USE_TIM22 && !defined(STM32_TIM22_SUPPRESS_ISR) &&            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_PWM_TIM22_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM22"
 #endif
 
 /*===========================================================================*/
@@ -661,6 +962,26 @@ extern PWMDriver PWMD8;
 extern PWMDriver PWMD9;
 #endif
 
+#if STM32_PWM_USE_TIM10 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD10;
+#endif
+
+#if STM32_PWM_USE_TIM11 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD11;
+#endif
+
+#if STM32_PWM_USE_TIM12 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD12;
+#endif
+
+#if STM32_PWM_USE_TIM13 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD13;
+#endif
+
+#if STM32_PWM_USE_TIM14 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD14;
+#endif
+
 #if STM32_PWM_USE_TIM15 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD15;
 #endif
@@ -671,6 +992,18 @@ extern PWMDriver PWMD16;
 
 #if STM32_PWM_USE_TIM17 && !defined(__DOXYGEN__)
 extern PWMDriver PWMD17;
+#endif
+
+#if STM32_PWM_USE_TIM20 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD20;
+#endif
+
+#if STM32_PWM_USE_TIM21 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD21;
+#endif
+
+#if STM32_PWM_USE_TIM22 && !defined(__DOXYGEN__)
+extern PWMDriver PWMD22;
 #endif
 
 #ifdef __cplusplus

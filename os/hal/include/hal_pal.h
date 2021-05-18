@@ -327,31 +327,34 @@ typedef struct {
  */
 #if ((PAL_USE_CALLBACKS == TRUE) && (PAL_USE_WAIT == TRUE)) ||              \
     defined(__DOXYGEN__)
-#define _pal_isr_code(e) do {                                               \
-  if (_pal_events[e].cb != NULL) {                                          \
-    _pal_events[e].cb(_pal_events[e].arg);                                  \
-  }                                                                         \
-  osalSysLockFromISR();                                                     \
-  osalThreadDequeueAllI(&_pal_events[e].threads, MSG_OK);                   \
-  osalSysUnlockFromISR();                                                   \
-} while (false)
+#define _pal_isr_code(e)                                                    \
+  do {                                                                      \
+    if (_pal_events[e].cb != NULL) {                                        \
+      _pal_events[e].cb(_pal_events[e].arg);                                \
+    }                                                                       \
+    osalSysLockFromISR();                                                   \
+    osalThreadDequeueAllI(&_pal_events[e].threads, MSG_OK);                 \
+    osalSysUnlockFromISR();                                                 \
+  } while (false)
 #endif /* (PAL_USE_CALLBACKS == TRUE) && (PAL_USE_WAIT == TRUE) */
 
 #if (PAL_USE_CALLBACKS == TRUE) && (PAL_USE_WAIT == FALSE)
-#define _pal_isr_code(e) do {                                               \
-  if (_pal_events[e].cb != NULL) {                                          \
-    _pal_events[e].cb(_pal_events[e].arg);                                  \
-  }                                                                         \
-} while (false)
+#define _pal_isr_code(e)                                                    \
+  do {                                                                      \
+    if (_pal_events[e].cb != NULL) {                                        \
+      _pal_events[e].cb(_pal_events[e].arg);                                \
+    }                                                                       \
+  } while (false)
 #endif /* (PAL_USE_CALLBACKS == TRUE) && (PAL_USE_WAIT == FALSE) */
 
 #if ((PAL_USE_CALLBACKS == FALSE) && (PAL_USE_WAIT == TRUE)) ||             \
     defined(__DOXYGEN__)
-#define _pal_isr_code(e) do {                                               \
-  osalSysLockFromISR();                                                     \
-  osalThreadDequeueAllI(&_pal_events[e].threads, MSG_OK);                   \
-  osalSysUnlockFromISR();                                                   \
-} while (false)
+#define _pal_isr_code(e)                                                    \
+  do {                                                                      \
+    osalSysLockFromISR();                                                   \
+    osalThreadDequeueAllI(&_pal_events[e].threads, MSG_OK);                 \
+    osalSysUnlockFromISR();                                                 \
+  } while (false)
 #endif /* (PAL_USE_CALLBACKS == FALSE) && (PAL_USE_WAIT == TRUE) */
 
 /** @} */
@@ -545,7 +548,13 @@ typedef struct {
  * @special
  */
 #if !defined(pal_lld_setgroupmode) || defined(__DOXYGEN__)
-#define palSetGroupMode(port, mask, offset, mode)
+#define palSetGroupMode(port, mask, offset, mode)                           \
+  do {                                                                      \
+    (void)(port);                                                           \
+    (void)(mask);                                                           \
+    (void)(offset);                                                         \
+    (void)(port);                                                           \
+  } while (mode)
 #else
 #define palSetGroupMode(port, mask, offset, mode)                           \
   pal_lld_setgroupmode(port, mask, offset, mode)

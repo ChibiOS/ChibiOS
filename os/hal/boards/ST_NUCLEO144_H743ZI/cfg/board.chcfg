@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- STM32F7xx board Template -->
+<!-- STM32H7xx board Template -->
 <board
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32f7xx_board.xsd">
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/boards/stm32h7xx_board.xsd">
   <configuration_settings>
     <templates_path>resources/gencfg/processors/boards/stm32h7xx/templates</templates_path>
     <output_path>..</output_path>
@@ -27,10 +27,10 @@
   <ports>
     <GPIOA>
       <pin0
-        ID="ZIO_D32 TIM2_CH1"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -51,39 +51,39 @@
         Mode="Alternate"
         Alternate="11" />
       <pin3
-        ID="ARD_A0 ADC123_IN3"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID="ZIO_D24 SPI3_NSS"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin5
-        ID="ARD_D13 SPI1_SCK"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID="ARD_D12 SPI1_MISO"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="ARD_D11 SPI1_MOSI ZIO_D71 RMII_RX_DV"
+        ID="RMII_CRS_DV"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -91,7 +91,7 @@
         Mode="Alternate"
         Alternate="11" />
       <pin8
-        ID="USB_SOF"
+        ID="USB_SOF MCO1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -147,17 +147,17 @@
         Mode="Alternate"
         Alternate="0" />
       <pin15
-        ID="ZIO_D20 I2S3_WS"
+        ID="T_JTDI"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="PullUp"
-        Mode="Input"
+        Mode="Alternate"
         Alternate="0" />
     </GPIOA>
     <GPIOB>
       <pin0
-        ID="ZIO_D33 TIM3_CH3 LED1"
+        ID="LED1 LED_GREEN LED"
         Type="PushPull"
         Level="Low"
         Speed="Maximum"
@@ -165,55 +165,55 @@
         Mode="Output"
         Alternate="0" />
       <pin1
-        ID="ZIO_A6 ADC12_IN9"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="ZIO_D27 QSPI_CLK"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="ZIO_D23 I2S3_CK"
+        ID="SWO"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="PullUp"
-        Mode="Input"
+        Mode="Alternate"
         Alternate="0" />
       <pin4
-        ID="ZIO_D25 SPI3_MISO"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin5
-        ID="ZIO_D22 I2S3_SD"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID="ZIO_D26 QSPI_BK1_NCS"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="LED2"
+        ID="LED2 LED_BLUE"
         Type="PushPull"
         Level="Low"
         Speed="Maximum"
@@ -221,47 +221,47 @@
         Mode="Output"
         Alternate="0" />
       <pin8
-        ID="ARD_D15 I2C1_SCL"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID="ARD_D14 I2C1_SDA"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin10
-        ID="ZIO_D36 TIM2_CH3"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin11
-        ID="ZIO_D35 TIM2_CH4"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID="ZIO_D19 I2S2_WS"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin13
-        ID="ZIO_D18 I2S2_CK RMII_TXD1"
+        ID="RMII_TXD1"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -269,7 +269,7 @@
         Mode="Alternate"
         Alternate="11" />
       <pin14
-        ID="LED3"
+        ID="LED3 LED_RED"
         Type="PushPull"
         Level="Low"
         Speed="Maximum"
@@ -277,20 +277,20 @@
         Mode="Output"
         Alternate="0" />
       <pin15
-        ID="ZIO_D17 I2S2_SD"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
     </GPIOB>
     <GPIOC>
       <pin0
-        ID="ARD_A1 ADC123_IN10"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -303,18 +303,18 @@
         Mode="Alternate"
         Alternate="11" />
       <pin2
-        ID="ZIO_A7 ADC123_IN12"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="ARD_A2 ADC123_IN13"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -335,58 +335,58 @@
         Mode="Alternate"
         Alternate="11" />
       <pin6
-        ID="ZIO_D16 I2S2_MCK"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="ZIO_D21 I2S3_MCK"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID="ZIO_D43 SDMMC_D0"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID="ZIO_D44 SDMMC_D1"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin10
-        ID="ZIO_D45 SDMMC_D2"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin11
-        ID="ZIO_D46 SDMMC_D3"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID="ZIO_D47 SDMMC_CK"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -417,66 +417,66 @@
     </GPIOC>
     <GPIOD>
       <pin0
-        ID="ZIO_D67 CAN1_RX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="ZIO_D66 CAN1_TX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="ZIO_D48 SDMMC_CMD"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="ZIO_D55 USART2_CTS"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID="ZIO_D54 USART2_RTS"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin5
-        ID="ZIO_D53 USART2_TX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID="ZIO_D52 USART2_RX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="ZIO_D51 USART2_SCLK"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -505,52 +505,52 @@
         Mode="Input"
         Alternate="0" />
       <pin11
-        ID="ZIO_D30 QSPI_BK1_IO0"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID="ZIO_D29 QSPI_BK1_IO1"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin13
-        ID="ZIO_D28 QSPI_BK1_IO3"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin14
-        ID="ARD_D10 SPI1_NSS"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin15
-        ID="ARD_D9 TIM4_CH4"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
     </GPIOD>
     <GPIOE>
       <pin0
-        ID="ZIO_D34 TIM4_ETR"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -563,103 +563,103 @@
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="ZIO_D31 ZIO_D56 SAI1_MCLK_A"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="ZIO_D60 SAI1_SD_B"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID="ZIO_D57 SAI1_FS_A"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin5
-        ID="ZIO_D58 SAI1_SCK_A"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID="ZIO_D59 SAI1_SD_A"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="ZIO_D41 TIM1_ETR"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID="ZIO_D42 TIM1_CH1N"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID="ARD_D6 TIM1_CH1"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin10
-        ID="ZIO_D40 TIM1_CH2N"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin11
-        ID="ARD_D5 TIM1_CH2"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID="ZIO_D39 TIM1_CH3N"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin13
-        ID="ARD_D3 TIM1_CH3"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin14
-        ID="ZIO_D38"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -667,60 +667,60 @@
         Mode="Input"
         Alternate="0" />
       <pin15
-        ID="ZIO_D37 TIM1_BKIN1"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
     </GPIOE>
     <GPIOF>
       <pin0
-        ID="ZIO_D68 I2C2_SDA"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="ZIO_D69 I2C2_SCL"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="ZIO_D70 I2C2_SMBA"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="ARD_A3 ADC3_IN9"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID="ZIO_A8 ADC3_IN14"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin5
-        ID="ARD_A4 ADC3_IN15"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -733,34 +733,34 @@
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="ZIO_D62 SAI1_MCLK_B"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID="ZIO_D61 SAI1_SCK_B"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID="ZIO_D63 SAI1_FS_B"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin10
-        ID="ARD_A5 ADC3_IN8"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -773,7 +773,7 @@
         Mode="Input"
         Alternate="0" />
       <pin12
-        ID="ARD_D8"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -781,7 +781,7 @@
         Mode="Input"
         Alternate="0" />
       <pin13
-        ID="ARD_D7"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -789,7 +789,7 @@
         Mode="Input"
         Alternate="0" />
       <pin14
-        ID="ARD_D4"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -797,7 +797,7 @@
         Mode="Input"
         Alternate="0" />
       <pin15
-        ID="ARD_D2"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -807,7 +807,7 @@
     </GPIOF>
     <GPIOG>
       <pin0
-        ID="ZIO_D65"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -815,7 +815,7 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="ZIO_D64"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -823,7 +823,7 @@
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="ZIO_D49"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -831,7 +831,7 @@
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="ZIO_D50"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -855,19 +855,19 @@
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID="USB_GPIO_OUT"
+        ID="USB_FS_PWR_EN"
         Type="PushPull"
-        Level="High"
-        Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
+        Level="Low"
+        Speed="Minimum"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin7
-        ID="USB_GPIO_IN"
+        ID="USB_FS_OVCR"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="PullUp"
+        Speed="Minimum"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin8
@@ -879,10 +879,10 @@
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID="ARD_D0 USART6_RX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
@@ -919,10 +919,10 @@
         Mode="Alternate"
         Alternate="11" />
       <pin14
-        ID="ARD_D1 USART6_TX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />

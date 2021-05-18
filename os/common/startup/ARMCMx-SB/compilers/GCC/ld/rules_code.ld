@@ -25,25 +25,25 @@ SECTIONS
 
     .xtors : ALIGN(4)
     {
-        __init_array_start = .;
+        __init_array_base__ = .;
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
-        __init_array_end = .;
-        __fini_array_start = .;
+        __init_array_end__ = .;
+        __fini_array_base__ = .;
         KEEP(*(.fini_array))
         KEEP(*(SORT(.fini_array.*)))
-        __fini_array_end = .;
+        __fini_array_end__ = .;
     } > CODE_SPACE
 
-    .text : ALIGN(4)
+    .text : ALIGN_WITH_INPUT
     {
-        __text_base = .;
+        __text_base__ = .;
         *(.text)
         *(.text.*)
         *(.glue_7t)
         *(.glue_7)
         *(.gcc*)
-        __text_end = .;
+        __text_end__ = .;
     } > CODE_SPACE
 
     .rodata : ALIGN(4)
@@ -61,8 +61,10 @@ SECTIONS
     } > CODE_SPACE
 
     .ARM.exidx : {
+        __exidx_base__ = .;
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end__ = .;
         __exidx_end = .;
      } > CODE_SPACE
 

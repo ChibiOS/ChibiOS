@@ -21,28 +21,18 @@
  * @file    nil_test_sequence_003.c
  * @brief   Test Sequence 003 code.
  *
- * @page nil_test_sequence_003 [3] Semaphores
+ * @page nil_test_sequence_003 [3] Threads Functionality
  *
  * File: @ref nil_test_sequence_003.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to
- * counter semaphores.
- *
- * <h2>Conditions</h2>
- * This sequence is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
- * .
+ * threading.
  *
  * <h2>Test Cases</h2>
  * - @subpage nil_test_003_001
- * - @subpage nil_test_003_002
- * - @subpage nil_test_003_003
  * .
  */
-
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -50,230 +40,105 @@
 
 #include "ch.h"
 
-static thread_t *tp1;
-static bool terminate;
-static semaphore_t sem1, sem2;
-
-/*
- * Signaler thread.
- */
-static THD_FUNCTION(signaler, arg) {
-
-  (void)arg;
-
-  /* Initializing global resources.*/
-  terminate = false;
-  chSemObjectInit(&sem1, 0);
-  chSemObjectInit(&sem2, 0);
-
-  while (!terminate) {
-    chSysLock();
-    if (chSemGetCounterI(&sem1) < 0)
-      chSemSignalI(&sem1);
-    chSemResetI(&sem2, 0);
-    chSchRescheduleS();
-    chSysUnlock();
-
-    chThdSleepMilliseconds(250);
-  }
-}
-
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
 /**
- * @page nil_test_003_001 [3.1] Semaphore primitives, no state change
+ * @page nil_test_003_001 [3.1] Thread Sleep functionality
  *
  * <h2>Description</h2>
- * Wait, Signal and Reset primitives are tested. The testing thread
- * does not trigger a state change.
+ * The functionality of @p chThdSleep() and derivatives is tested.
  *
  * <h2>Test Steps</h2>
- * - [3.1.1] The function chSemWait() is invoked, after return the
- *   counter and the returned message are tested.
- * - [3.1.2] The function chSemSignal() is invoked, after return the
- *   counter is tested.
- * - [3.1.3] The function chSemReset() is invoked, after return the
- *   counter is tested.
+ * - [3.1.1] The current system time is read then a sleep is performed
+ *   for 100 system ticks and on exit the system time is verified
+ *   again.
+ * - [3.1.2] The current system time is read then a sleep is performed
+ *   for 100000 microseconds and on exit the system time is verified
+ *   again.
+ * - [3.1.3] The current system time is read then a sleep is performed
+ *   for 100 milliseconds and on exit the system time is verified
+ *   again.
+ * - [3.1.4] The current system time is read then a sleep is performed
+ *   for 1 second and on exit the system time is verified again.
+ * - [3.1.5] Function chThdSleepUntil() is tested with a timeline of
+ *   "now" + 100 ticks.
  * .
  */
 
-static void nil_test_003_001_setup(void) {
-  chSemObjectInit(&sem1, 1);
-}
-
-static void nil_test_003_001_teardown(void) {
-  chSemReset(&sem1, 0);
-}
-
 static void nil_test_003_001_execute(void) {
+  systime_t time;
 
-  /* [3.1.1] The function chSemWait() is invoked, after return the
-     counter and the returned message are tested.*/
+  /* [3.1.1] The current system time is read then a sleep is performed
+     for 100 system ticks and on exit the system time is verified
+     again.*/
   test_set_step(1);
   {
-    msg_t msg;
-
-    msg = chSemWait(&sem1);
-    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
-    test_assert(MSG_OK == msg, "wrong returned message");
+    time = chVTGetSystemTimeX();
+    chThdSleep(100);
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + 1),
+                            "out of time window");
   }
+  test_end_step(1);
 
-  /* [3.1.2] The function chSemSignal() is invoked, after return the
-     counter is tested.*/
+  /* [3.1.2] The current system time is read then a sleep is performed
+     for 100000 microseconds and on exit the system time is verified
+     again.*/
   test_set_step(2);
   {
-    chSemSignal(&sem1);
-    test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");
+    time = chVTGetSystemTimeX();
+    chThdSleepMicroseconds(100000);
+    test_assert_time_window(chTimeAddX(time, TIME_US2I(100000)),
+                            chTimeAddX(time, TIME_US2I(100000) + 1),
+                            "out of time window");
   }
+  test_end_step(2);
 
-  /* [3.1.3] The function chSemReset() is invoked, after return the
-     counter is tested.*/
+  /* [3.1.3] The current system time is read then a sleep is performed
+     for 100 milliseconds and on exit the system time is verified
+     again.*/
   test_set_step(3);
   {
-    chSemReset(&sem1, 2);
-    test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");
+    time = chVTGetSystemTimeX();
+    chThdSleepMilliseconds(100);
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(100)),
+                            chTimeAddX(time, TIME_MS2I(100) + 1),
+                            "out of time window");
   }
+  test_end_step(3);
+
+  /* [3.1.4] The current system time is read then a sleep is performed
+     for 1 second and on exit the system time is verified again.*/
+  test_set_step(4);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepSeconds(1);
+    test_assert_time_window(chTimeAddX(time, TIME_S2I(1)),
+                            chTimeAddX(time, TIME_S2I(1) + 1),
+                            "out of time window");
+  }
+  test_end_step(4);
+
+  /* [3.1.5] Function chThdSleepUntil() is tested with a timeline of
+     "now" + 100 ticks.*/
+  test_set_step(5);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepUntil(chTimeAddX(time, 100));
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + 1),
+                            "out of time window");
+  }
+  test_end_step(5);
 }
 
 static const testcase_t nil_test_003_001 = {
-  "Semaphore primitives, no state change",
-  nil_test_003_001_setup,
-  nil_test_003_001_teardown,
+  "Thread Sleep functionality",
+  NULL,
+  NULL,
   nil_test_003_001_execute
-};
-
-/**
- * @page nil_test_003_002 [3.2] Semaphore primitives, with state change
- *
- * <h2>Description</h2>
- * Wait, Signal and Reset primitives are tested. The testing thread
- * triggers a state change.
- *
- * <h2>Test Steps</h2>
- * - [3.2.1] The function chSemWait() is invoked, after return the
- *   counter and the returned message are tested. The semaphore is
- *   signaled by another thread.
- * - [3.2.2] The function chSemWait() is invoked, after return the
- *   counter and the returned message are tested. The semaphore is
- *   reset by another thread.
- * .
- */
-
-static void nil_test_003_002_setup(void) {
-  thread_config_t tc = {
-    chThdGetPriorityX() - 1,
-    "signaler",
-    wa_common,
-    THD_WORKING_AREA_END(wa_common),
-    signaler,
-    NULL
-  };
-  tp1 = chThdCreate(&tc);
-}
-
-static void nil_test_003_002_teardown(void) {
-  terminate = true;
-  chThdWait(tp1);
-}
-
-static void nil_test_003_002_execute(void) {
-
-  /* [3.2.1] The function chSemWait() is invoked, after return the
-     counter and the returned message are tested. The semaphore is
-     signaled by another thread.*/
-  test_set_step(1);
-  {
-    msg_t msg;
-
-    msg = chSemWait(&sem1);
-    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
-    test_assert(MSG_OK == msg, "wrong returned message");
-  }
-
-  /* [3.2.2] The function chSemWait() is invoked, after return the
-     counter and the returned message are tested. The semaphore is
-     reset by another thread.*/
-  test_set_step(2);
-  {
-    msg_t msg;
-
-    msg = chSemWait(&sem2);
-    test_assert_lock(chSemGetCounterI(&sem2) == 0,"wrong counter value");
-    test_assert(MSG_RESET == msg, "wrong returned message");
-  }
-}
-
-static const testcase_t nil_test_003_002 = {
-  "Semaphore primitives, with state change",
-  nil_test_003_002_setup,
-  nil_test_003_002_teardown,
-  nil_test_003_002_execute
-};
-
-/**
- * @page nil_test_003_003 [3.3] Semaphores timeout
- *
- * <h2>Description</h2>
- * Timeout on semaphores is tested.
- *
- * <h2>Test Steps</h2>
- * - [3.3.1] The function chSemWaitTimeout() is invoked a first time,
- *   after return the system time, the counter and the returned message
- *   are tested.
- * - [3.3.2] The function chSemWaitTimeout() is invoked again, after
- *   return the system time, the counter and the returned message are
- *   tested.
- * .
- */
-
-static void nil_test_003_003_setup(void) {
-  chSemObjectInit(&sem1, 0);
-}
-
-static void nil_test_003_003_teardown(void) {
-  chSemReset(&sem1, 0);
-}
-
-static void nil_test_003_003_execute(void) {
-  systime_t time;
-  msg_t msg;
-
-  /* [3.3.1] The function chSemWaitTimeout() is invoked a first time,
-     after return the system time, the counter and the returned message
-     are tested.*/
-  test_set_step(1);
-  {
-    time = chVTGetSystemTimeX();
-    msg = chSemWaitTimeout(&sem1, TIME_MS2I(1000));
-    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
-                            chTimeAddX(time, TIME_MS2I(1000) + 1),
-                            "out of time window");
-    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
-    test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
-  }
-
-  /* [3.3.2] The function chSemWaitTimeout() is invoked again, after
-     return the system time, the counter and the returned message are
-     tested.*/
-  test_set_step(2);
-  {
-    time = chVTGetSystemTimeX();
-    msg = chSemWaitTimeout(&sem1, TIME_MS2I(1000));
-    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
-                            chTimeAddX(time, TIME_MS2I(1000) + 1),
-                            "out of time window");
-    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
-    test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
-  }
-}
-
-static const testcase_t nil_test_003_003 = {
-  "Semaphores timeout",
-  nil_test_003_003_setup,
-  nil_test_003_003_teardown,
-  nil_test_003_003_execute
 };
 
 /****************************************************************************
@@ -285,17 +150,13 @@ static const testcase_t nil_test_003_003 = {
  */
 const testcase_t * const nil_test_sequence_003_array[] = {
   &nil_test_003_001,
-  &nil_test_003_002,
-  &nil_test_003_003,
   NULL
 };
 
 /**
- * @brief   Semaphores.
+ * @brief   Threads Functionality.
  */
 const testsequence_t nil_test_sequence_003 = {
-  "Semaphores",
+  "Threads Functionality",
   nil_test_sequence_003_array
 };
-
-#endif /* CH_CFG_USE_SEMAPHORES */

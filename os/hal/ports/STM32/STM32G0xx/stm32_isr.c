@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    STM32G0xx/stm32_isr.h
+ * @file    STM32G0xx/stm32_isr.c
  * @brief   STM32G0xx ISR handler code.
  *
- * @addtogroup SRM32G0xx_ISR
+ * @addtogroup STM32G0xx_ISR
  * @{
  */
 
@@ -27,6 +27,13 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+
+#define exti_serve_irq(pr, channel) {                                       \
+                                                                            \
+  if ((pr) & (1U << (channel))) {                                           \
+    _pal_isr_code(channel);                                                 \
+  }                                                                         \
+}
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -40,182 +47,31 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#define exti_serve_irq(pr, channel) {                                       \
-                                                                            \
-  if ((pr) & (1U << (channel))) {                                           \
-    _pal_isr_code(channel);                                                 \
-  }                                                                         \
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS)) || defined(__DOXYGEN__)
-#if !defined(STM32_DISABLE_EXTI0_1_HANDLER)
-/**
- * @brief   EXTI[0]...EXTI[1] interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(Vector54) {
-  uint32_t pr;
+#include "stm32_dma1_ch23.inc"
+#include "stm32_dma1_ch4567.inc"
 
-  OSAL_IRQ_PROLOGUE();
+#include "stm32_exti0_1.inc"
+#include "stm32_exti2_3.inc"
+#include "stm32_exti4_15.inc"
+#include "stm32_exti19-21.inc"
 
-  pr = EXTI->RPR1 | EXTI->FPR1;
-  pr &= ((1U << 0) | (1U << 1));
-  EXTI->RPR1 = EXTI->FPR1 = pr;
+#include "stm32_usart1.inc"
+#include "stm32_usart2.inc"
+#include "stm32_usart3_4_lp1.inc"
 
-  exti_serve_irq(pr, 0);
-  exti_serve_irq(pr, 1);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
-#if !defined(STM32_DISABLE_EXTI2_3_HANDLER)
-/**
- * @brief   EXTI[2]...EXTI[3] interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(Vector58) {
-  uint32_t pr;
-
-  OSAL_IRQ_PROLOGUE();
-
-  pr = EXTI->RPR1 | EXTI->FPR1;
-  pr &= ((1U << 2) | (1U << 3));
-  EXTI->RPR1 = EXTI->FPR1 = pr;
-
-  exti_serve_irq(pr, 2);
-  exti_serve_irq(pr, 3);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
-#if !defined(STM32_DISABLE_EXTI4_15_HANDLER)
-/**
- * @brief   EXTI[4]...EXTI[15] interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(Vector5C) {
-  uint32_t pr;
-
-  OSAL_IRQ_PROLOGUE();
-
-  pr = EXTI->RPR1 | EXTI->FPR1;
-  pr &= ((1U << 4)  | (1U << 5)  | (1U << 6)  | (1U << 7)  | (1U << 8)  |
-         (1U << 9)  | (1U << 10) | (1U << 11) | (1U << 12) | (1U << 13) |
-         (1U << 14) | (1U << 15));
-  EXTI->RPR1 = EXTI->FPR1 = pr;
-
-  exti_serve_irq(pr, 4);
-  exti_serve_irq(pr, 5);
-  exti_serve_irq(pr, 6);
-  exti_serve_irq(pr, 7);
-  exti_serve_irq(pr, 8);
-  exti_serve_irq(pr, 9);
-  exti_serve_irq(pr, 10);
-  exti_serve_irq(pr, 11);
-  exti_serve_irq(pr, 12);
-  exti_serve_irq(pr, 13);
-  exti_serve_irq(pr, 14);
-  exti_serve_irq(pr, 15);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-#endif /* HAL_USE_PAL && (PAL_USE_WAIT || PAL_USE_CALLBACKS) */
-
-#if HAL_USE_SERIAL || HAL_USE_UART || defined(__DOXYGEN__)
-#if !defined(STM32_DISABLE_USART1_HANDLER)
-/**
- * @brief   USART1 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_USART1_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_USART1
-  sd_lld_serve_interrupt(&SD1);
-#endif
-#endif
-#if HAL_USE_UART
-#if STM32_UART_USE_USART1
-  uart_lld_serve_interrupt(&UARTD1);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
-#if !defined(STM32_DISABLE_USART2_HANDLER)
-/**
- * @brief   USART2 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_USART2_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_USART2
-  sd_lld_serve_interrupt(&SD2);
-#endif
-#endif
-#if HAL_USE_UART
-#if STM32_UART_USE_USART2
-  uart_lld_serve_interrupt(&UARTD2);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-
-#if !defined(STM32_DISABLE_USART34LP1_HANDLER)
-/**
- * @brief   USART 3, 4 and LP1 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_USART34LP1_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-#if HAL_USE_SERIAL
-#if STM32_SERIAL_USE_USART3
-  sd_lld_serve_interrupt(&SD3);
-#endif
-#if STM32_SERIAL_USE_UART4
-  sd_lld_serve_interrupt(&SD4);
-#endif
-#if STM32_SERIAL_USE_LPUART1
-  sd_lld_serve_interrupt(&LPSD1);
-#endif
-#endif
-#if HAL_USE_UART
-#if STM32_UART_USE_USART3
-  uart_lld_serve_interrupt(&UARTD3);
-#endif
-#if STM32_UART_USE_UART4
-  uart_lld_serve_interrupt(&UARTD4);
-#endif
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif
-#endif /* HAL_USE_SERIAL || HAL_USE_UART */
+#include "stm32_tim1.inc"
+#include "stm32_tim2.inc"
+#include "stm32_tim3.inc"
+#include "stm32_tim6.inc"
+#include "stm32_tim7.inc"
+#include "stm32_tim14.inc"
+#include "stm32_tim15.inc"
+#include "stm32_tim16.inc"
+#include "stm32_tim17.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -228,17 +84,24 @@ OSAL_IRQ_HANDLER(STM32_USART34LP1_HANDLER) {
  */
 void irqInit(void) {
 
-#if HAL_USE_PAL
-  nvicEnableVector(EXTI0_1_IRQn, STM32_IRQ_EXTI0_1_PRIORITY);
-  nvicEnableVector(EXTI2_3_IRQn, STM32_IRQ_EXTI2_3_PRIORITY);
-  nvicEnableVector(EXTI4_15_IRQn, STM32_IRQ_EXTI4_15_PRIORITY);
-#endif
+  exti0_1_irq_init();
+  exti2_3_irq_init();
+  exti4_15_irq_init();
+  exti19_exti21_irq_init();
 
-#if HAL_USE_SERIAL || HAL_USE_UART
-  nvicEnableVector(STM32_USART1_NUMBER, STM32_IRQ_USART1_PRIORITY);
-  nvicEnableVector(STM32_USART2_NUMBER, STM32_IRQ_USART2_PRIORITY);
-  nvicEnableVector(STM32_USART3_4_LP1_NUMBER, STM32_IRQ_USART3_4_LP1_PRIORITY);
-#endif
+  tim1_irq_init();
+  tim2_irq_init();
+  tim3_irq_init();
+  tim6_irq_init();
+  tim7_irq_init();
+  tim14_irq_init();
+  tim15_irq_init();
+  tim16_irq_init();
+  tim17_irq_init();
+
+  usart1_irq_init();
+  usart2_irq_init();
+  usart3_usart4_lpuart1_irq_init();
 }
 
 /**
@@ -248,17 +111,24 @@ void irqInit(void) {
  */
 void irqDeinit(void) {
 
-#if HAL_USE_PAL
-  nvicDisableVector(EXTI0_1_IRQn);
-  nvicDisableVector(EXTI2_3_IRQn);
-  nvicDisableVector(EXTI4_15_IRQn);
-#endif
+  exti0_1_irq_deinit();
+  exti2_3_irq_deinit();
+  exti4_15_irq_deinit();
+  exti19_exti21_irq_deinit();
 
-#if HAL_USE_SERIAL || HAL_USE_UART
-  nvicDisableVector(STM32_USART1_NUMBER);
-  nvicDisableVector(STM32_USART2_NUMBER);
-  nvicDisableVector(STM32_USART3_4_LP1_NUMBER);
-#endif
+  tim1_irq_deinit();
+  tim2_irq_deinit();
+  tim3_irq_deinit();
+  tim6_irq_deinit();
+  tim7_irq_deinit();
+  tim14_irq_deinit();
+  tim15_irq_deinit();
+  tim16_irq_deinit();
+  tim17_irq_deinit();
+
+  usart1_irq_deinit();
+  usart2_irq_deinit();
+  usart3_usart4_lpuart1_irq_deinit();
 }
 
 /** @} */

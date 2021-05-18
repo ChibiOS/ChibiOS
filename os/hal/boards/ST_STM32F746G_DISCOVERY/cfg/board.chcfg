@@ -99,7 +99,7 @@
         Mode="Alternate"
         Alternate="11" />
       <pin8
-        ID="ARD_D5"
+        ID="ARD_D10"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -1075,7 +1075,7 @@
     </GPIOH>
     <GPIOI>
       <pin0
-        ID="ARD_D10"
+        ID="ARD_D5"
         Type="PushPull"
         Level="High"
         Speed="Maximum"

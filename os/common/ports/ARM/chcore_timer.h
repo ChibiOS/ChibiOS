@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,9 +27,6 @@
 
 #ifndef CHCORE_TIMER_H
 #define CHCORE_TIMER_H
-
-/* This is the only header in the HAL designed to be include-able alone.*/
-#include "hal_st.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -69,6 +66,7 @@
  * @notapi
  */
 static inline void port_timer_start_alarm(systime_t time) {
+  void stStartAlarm(systime_t time);
 
   stStartAlarm(time);
 }
@@ -79,6 +77,7 @@ static inline void port_timer_start_alarm(systime_t time) {
  * @notapi
  */
 static inline void port_timer_stop_alarm(void) {
+  void stStopAlarm(void);
 
   stStopAlarm();
 }
@@ -91,6 +90,7 @@ static inline void port_timer_stop_alarm(void) {
  * @notapi
  */
 static inline void port_timer_set_alarm(systime_t time) {
+  void stSetAlarm(systime_t time);
 
   stSetAlarm(time);
 }
@@ -103,6 +103,7 @@ static inline void port_timer_set_alarm(systime_t time) {
  * @notapi
  */
 static inline systime_t port_timer_get_time(void) {
+  systime_t stGetCounter(void);
 
   return stGetCounter();
 }
@@ -115,6 +116,7 @@ static inline systime_t port_timer_get_time(void) {
  * @notapi
  */
 static inline systime_t port_timer_get_alarm(void) {
+  systime_t stGetAlarm(void);
 
   return stGetAlarm();
 }

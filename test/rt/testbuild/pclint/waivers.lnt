@@ -10,6 +10,7 @@
 /* Reinforcing type checking for some critical types even if not required by
    MISRA.*/
 -strong(AJX, systime_t)
+-strong(AJX, sysinterval_t)
 -strong(AJX, rtcnt_t)
 -strong(AJX, rttime_t)
 -strong(AJX, syssts_t)

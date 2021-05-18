@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chdynamic.c
+ * @file    rt/src/chdynamic.c
  * @brief   Dynamic threads code.
  *
  * @addtogroup dynamic_threads
@@ -90,19 +90,14 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
     return NULL;
   }
 
-  thread_descriptor_t td = {
-    name,
-    wsp,
-    (stkalign_t *)((uint8_t *)wsp + size),
-    prio,
-    pf,
-    arg
-  };
+  thread_descriptor_t td = THD_DESCRIPTOR(name, wsp,
+                                          (stkalign_t *)((uint8_t *)wsp + size),
+                                          prio, pf, arg);
 
 #if CH_DBG_FILL_THREADS == TRUE
-  _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + size,
-                  CH_DBG_STACK_FILL_VALUE);
+  __thd_memfill((uint8_t *)wsp,
+                (uint8_t *)wsp + size,
+                CH_DBG_STACK_FILL_VALUE);
 #endif
 
   chSysLock();
@@ -154,19 +149,14 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
     return NULL;
   }
 
-  thread_descriptor_t td = {
-    name,
-    wsp,
-    (stkalign_t *)((uint8_t *)wsp + mp->object_size),
-    prio,
-    pf,
-    arg
-  };
+  thread_descriptor_t td = THD_DESCRIPTOR(name, wsp,
+                                          (stkalign_t *)((uint8_t *)wsp + mp->object_size),
+                                          prio, pf, arg);
 
 #if CH_DBG_FILL_THREADS == TRUE
-  _thread_memfill((uint8_t *)wsp,
-                  (uint8_t *)wsp + mp->object_size,
-                  CH_DBG_STACK_FILL_VALUE);
+  __thd_memfill((uint8_t *)wsp,
+                (uint8_t *)wsp + mp->object_size,
+                CH_DBG_STACK_FILL_VALUE);
 #endif
 
   chSysLock();

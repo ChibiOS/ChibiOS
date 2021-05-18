@@ -169,6 +169,7 @@
 #define MII_LAN8710A_ID         0x0007C0F1
 #define MII_LAN8720_ID          0x0007C0F0
 #define MII_LAN8742A_ID         0x0007C130
+#define MII_LAN8740A_ID         0x0007C110
 /** @} */
 
 #endif /* MII_H */

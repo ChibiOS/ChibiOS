@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -82,10 +82,18 @@
 #define STM32_IRQ_EXTI16_PRIORITY           3
 #define STM32_IRQ_EXTI17_20_PRIORITY        3
 #define STM32_IRQ_EXTI21_22_PRIORITY        3
+
 #define STM32_IRQ_USART1_PRIORITY           3
 #define STM32_IRQ_USART2_PRIORITY           3
-#define STM32_IRQ_UART4_5_PRIORITY          3
+#define STM32_IRQ_USART4_5_PRIORITY         3
 #define STM32_IRQ_LPUART1_PRIORITY          3
+
+#define STM32_IRQ_TIM2_PRIORITY             1
+#define STM32_IRQ_TIM3_PRIORITY             1
+#define STM32_IRQ_TIM6_PRIORITY             1
+#define STM32_IRQ_TIM7_PRIORITY             1
+#define STM32_IRQ_TIM21_PRIORITY            1
+#define STM32_IRQ_TIM22_PRIORITY            1
 
 /*
  * ADC driver system settings.
@@ -96,7 +104,7 @@
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     2
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
-#define STM32_ADC_PRESCALER_VALUE           1
+#define STM32_ADC_PRESCALER_VALUE           2
 
 /*
  * DAC driver system settings.
@@ -120,12 +128,6 @@
 #define STM32_GPT_USE_TIM7                  FALSE
 #define STM32_GPT_USE_TIM21                 FALSE
 #define STM32_GPT_USE_TIM22                 FALSE
-#define STM32_GPT_TIM2_IRQ_PRIORITY         2
-#define STM32_GPT_TIM3_IRQ_PRIORITY         2
-#define STM32_GPT_TIM6_IRQ_PRIORITY         2
-#define STM32_GPT_TIM7_IRQ_PRIORITY         2
-#define STM32_GPT_TIM21_IRQ_PRIORITY        2
-#define STM32_GPT_TIM22_IRQ_PRIORITY        2
 
 /*
  * I2C driver system settings.
@@ -156,10 +158,6 @@
 #define STM32_ICU_USE_TIM3                  FALSE
 #define STM32_ICU_USE_TIM21                 FALSE
 #define STM32_ICU_USE_TIM22                 FALSE
-#define STM32_ICU_TIM2_IRQ_PRIORITY         3
-#define STM32_ICU_TIM3_IRQ_PRIORITY         3
-#define STM32_ICU_TIM21_IRQ_PRIORITY        3
-#define STM32_ICU_TIM22_IRQ_PRIORITY        3
 
 /*
  * PWM driver system settings.
@@ -168,10 +166,6 @@
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_USE_TIM21                 FALSE
 #define STM32_PWM_USE_TIM22                 FALSE
-#define STM32_PWM_TIM2_IRQ_PRIORITY         3
-#define STM32_PWM_TIM3_IRQ_PRIORITY         3
-#define STM32_PWM_TIM21_IRQ_PRIORITY        3
-#define STM32_PWM_TIM22_IRQ_PRIORITY        3
 
 /*
  * SERIAL driver system settings.
@@ -181,6 +175,15 @@
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
 #define STM32_SERIAL_USE_LPUART1            FALSE
+
+/*
+ * SIO driver system settings.
+ */
+#define STM32_SIO_USE_USART1                FALSE
+#define STM32_SIO_USE_USART2                FALSE
+#define STM32_SIO_USE_UART4                 FALSE
+#define STM32_SIO_USE_UART5                 FALSE
+#define STM32_SIO_USE_LPUART1               FALSE
 
 /*
  * SPI driver system settings.
@@ -204,6 +207,11 @@
 #define STM32_ST_USE_TIMER                  21
 
 /*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 FALSE
+
+/*
  * UART driver system settings.
  */
 #define STM32_UART_USE_USART1               FALSE
@@ -223,6 +231,14 @@
 #define STM32_UART_UART5_RX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 6)
 #define STM32_UART_UART5_TX_DMA_STREAM      STM32_DMA_STREAM_ID(1, 7)
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
+
+/*
+ * USB driver system settings.
+ */
+#define STM32_USB_USE_USB1                  TRUE
+#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      0
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      0
 
 /*
  * WDG driver system settings.

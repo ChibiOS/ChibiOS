@@ -21,7 +21,7 @@
  * @file    ex.h
  * @brief   EX main include file.
  *
- * @addtogroup ex_info
+ * @addtogroup EX_INFO
  * @details EX related info.
  * @{
  */
@@ -36,7 +36,7 @@
 /**
  * @brief   ChibiOS/EX identification macro.
  */
-#define _CHIBIOS_EX_
+#define __CHIBIOS_EX__
 
 /**
  * @brief   Stable release flag.

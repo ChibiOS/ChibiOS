@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chpipes.h
+ * @file    oslib/include/chpipes.h
  * @brief   Pipes macros and structures.
  *
  * @addtogroup oslib_pipes
@@ -85,7 +85,7 @@ typedef struct {
  * @param[in] size      number of @p uint8_t elements in the buffer array
  */
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
-#define _PIPE_DATA(name, buffer, size) {                                    \
+#define __PIPE_DATA(name, buffer, size) {                                   \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + size,                                               \
   (uint8_t *)(buffer),                                                      \
@@ -94,12 +94,12 @@ typedef struct {
   false,                                                                    \
   NULL,                                                                     \
   NULL,                                                                     \
-  _MUTEX_DATA(name.cmtx),                                                   \
-  _MUTEX_DATA(name.wmtx),                                                   \
-  _MUTEX_DATA(name.rmtx),                                                   \
+  __MUTEX_DATA(name.cmtx),                                                  \
+  __MUTEX_DATA(name.wmtx),                                                  \
+  __MUTEX_DATA(name.rmtx),                                                  \
 }
 #else /* CH_CFG_USE_MUTEXES == FALSE */
-#define _PIPE_DATA(name, buffer, size) {                                    \
+#define __PIPE_DATA(name, buffer, size) {                                   \
   (uint8_t *)(buffer),                                                      \
   (uint8_t *)(buffer) + size,                                               \
   (uint8_t *)(buffer),                                                      \
@@ -108,9 +108,9 @@ typedef struct {
   false,                                                                    \
   NULL,                                                                     \
   NULL,                                                                     \
-  _SEMAPHORE_DATA(name.csem, (cnt_t)1),                                     \
-  _SEMAPHORE_DATA(name.wsem, (cnt_t)1),                                     \
-  _SEMAPHORE_DATA(name.rsem, (cnt_t)1),                                     \
+  __SEMAPHORE_DATA(name.csem, (cnt_t)1),                                    \
+  __SEMAPHORE_DATA(name.wsem, (cnt_t)1),                                    \
+  __SEMAPHORE_DATA(name.rsem, (cnt_t)1),                                    \
 }
 #endif /* CH_CFG_USE_MUTEXES == FALSE */
 
@@ -124,7 +124,7 @@ typedef struct {
  * @param[in] size      number of @p uint8_t elements in the buffer array
  */
 #define PIPE_DECL(name, buffer, size)                                       \
-  pipe_t name = _PIPE_DATA(name, buffer, size)
+  pipe_t name = __PIPE_DATA(name, buffer, size)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

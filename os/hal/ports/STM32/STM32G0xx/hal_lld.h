@@ -264,7 +264,7 @@
 #define STM32_RNGDIV_8          STM32_RNGDIV_FIELD(3U)
 
 #define STM32_ADCSEL_MASK       (3U << 30U) /**< ADCSEL mask.               */
-#define STM32_ADCSEL_NOCLK      (0U << 30U) /**< ADC source is SYSCLK.      */
+#define STM32_ADCSEL_SYSCLK     (0U << 30U) /**< ADC source is SYSCLK.      */
 #define STM32_ADCSEL_PLLPCLK    (1U << 30U) /**< ADC source is PLLPCLK.     */
 #define STM32_ADCSEL_HSI16      (2U << 30U) /**< ADC source is HSI16.       */
 /** @} */
@@ -402,7 +402,7 @@
  * @note    The allowed values are 2..32.
  */
 #if !defined(STM32_PLLP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLP_VALUE                    4
+#define STM32_PLLP_VALUE                    2
 #endif
 
 /**
@@ -862,7 +862,7 @@
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
 
-  #if STM32_RTCSEL == STM32_RTCSEL_LSI
+  #if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI)
     #error "LSI not enabled, required by STM32_RTCSEL"
   #endif
 
@@ -1463,8 +1463,8 @@
 /**
  * @brief   ADC clock frequency.
  */
-#if (STM32_ADCSEL == STM32_ADCSEL_NOCLK) || defined(__DOXYGEN__)
-#define STM32_ADCCLK                0
+#if (STM32_ADCSEL == STM32_ADCSEL_SYSCLK) || defined(__DOXYGEN__)
+#define STM32_ADCCLK                STM32_SYSCLK
 #elif STM32_ADCSEL == STM32_ADCSEL_PLLPCLK
 #define STM32_ADCCLK                STM32_PLL_P_CLKOUT
 #elif STM32_ADCSEL == STM32_ADCSEL_HSI16
@@ -1544,10 +1544,12 @@
 
 /* Various helpers.*/
 #include "nvic.h"
+#include "cache.h"
 #include "stm32_isr.h"
 #include "stm32_dma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
+#include "stm32_tim.h"
 
 #ifdef __cplusplus
 extern "C" {

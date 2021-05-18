@@ -10,13 +10,14 @@ LWBINDSRC = \
 
 
 # Add blocks of files from Filelists.mk as required for enabled options
-LWSRC = $(COREFILES) $(CORE4FILES) $(APIFILES) $(LWBINDSRC) $(NETIFFILES) $(HTTPDFILES)
+LWSRC_REQUIRED = $(COREFILES) $(CORE4FILES) $(APIFILES) $(LWBINDSRC) $(NETIFFILES)
+LWSRC_EXTRAS ?= $(HTTPFILES)
 
 LWINC = \
         $(CHIBIOS)/os/various/lwip_bindings \
         $(LWIPDIR)/include
 
 # Shared variables
-ALLCSRC += $(LWSRC)
+ALLCSRC += $(LWSRC_REQUIRED) $(LWSRC_EXTRAS)
 ALLINC  += $(LWINC) \
-           $(CHIBIOS)/os/various 
+           $(CHIBIOS)/os/various

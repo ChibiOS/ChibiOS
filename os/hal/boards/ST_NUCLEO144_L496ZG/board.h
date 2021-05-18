@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@
 #if !defined(STM32_LSECLK)
 #define STM32_LSECLK                0U
 #endif
+
+#define STM32_LSEDRV                (3U << 3U)
 
 #if !defined(STM32_HSECLK)
 #define STM32_HSECLK                0U
@@ -202,23 +204,6 @@
 #define GPIOH_PIN14                 14U
 #define GPIOH_PIN15                 15U
 
-#define GPIOI_PIN0                  0U
-#define GPIOI_PIN1                  1U
-#define GPIOI_PIN2                  2U
-#define GPIOI_PIN3                  3U
-#define GPIOI_PIN4                  4U
-#define GPIOI_PIN5                  5U
-#define GPIOI_PIN6                  6U
-#define GPIOI_PIN7                  7U
-#define GPIOI_PIN8                  8U
-#define GPIOI_PIN9                  9U
-#define GPIOI_PIN10                 10U
-#define GPIOI_PIN11                 11U
-#define GPIOI_PIN12                 12U
-#define GPIOI_PIN13                 13U
-#define GPIOI_PIN14                 14U
-#define GPIOI_PIN15                 15U
-
 /*
  * IO lines assignments.
  */
@@ -279,6 +264,10 @@
 #define PIN_PUPDR_PULLUP(n)         (1U << ((n) * 2U))
 #define PIN_PUPDR_PULLDOWN(n)       (2U << ((n) * 2U))
 #define PIN_AFIO_AF(n, v)           ((v) << (((n) % 8U) * 4U))
+#define PIN_ASCR_DISABLED(n)        (0U << (n))
+#define PIN_ASCR_ENABLED(n)         (1U << (n))
+#define PIN_LOCKR_DISABLED(n)       (0U << (n))
+#define PIN_LOCKR_ENABLED(n)        (1U << (n))
 
 /*
  * GPIOA setup:
@@ -396,6 +385,38 @@
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0U) |         \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0U) |         \
                                      PIN_AFIO_AF(GPIOA_PIN15, 0U))
+#define VAL_GPIOA_ASCR              (PIN_ASCR_DISABLED(GPIOA_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN3) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN5) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN6) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN7) |        \
+                                     PIN_ASCR_DISABLED(GPIOA_USB_SOF) |     \
+                                     PIN_ASCR_DISABLED(GPIOA_USB_VBUS) |    \
+                                     PIN_ASCR_DISABLED(GPIOA_USB_ID) |      \
+                                     PIN_ASCR_DISABLED(GPIOA_USB_DM) |      \
+                                     PIN_ASCR_DISABLED(GPIOA_USB_DP) |      \
+                                     PIN_ASCR_DISABLED(GPIOA_SWDIO) |       \
+                                     PIN_ASCR_DISABLED(GPIOA_SWCLK) |       \
+                                     PIN_ASCR_DISABLED(GPIOA_PIN15))
+#define VAL_GPIOA_LOCKR             (PIN_LOCKR_DISABLED(GPIOA_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN5) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN6) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN7) |       \
+                                     PIN_LOCKR_DISABLED(GPIOA_USB_SOF) |    \
+                                     PIN_LOCKR_DISABLED(GPIOA_USB_VBUS) |   \
+                                     PIN_LOCKR_DISABLED(GPIOA_USB_ID) |     \
+                                     PIN_LOCKR_DISABLED(GPIOA_USB_DM) |     \
+                                     PIN_LOCKR_DISABLED(GPIOA_USB_DP) |     \
+                                     PIN_LOCKR_DISABLED(GPIOA_SWDIO) |      \
+                                     PIN_LOCKR_DISABLED(GPIOA_SWCLK) |      \
+                                     PIN_LOCKR_DISABLED(GPIOA_PIN15))
 
 /*
  * GPIOB setup:
@@ -513,6 +534,38 @@
                                      PIN_AFIO_AF(GPIOB_PIN13, 0U) |         \
                                      PIN_AFIO_AF(GPIOB_LED3, 0U) |          \
                                      PIN_AFIO_AF(GPIOB_PIN15, 0U))
+#define VAL_GPIOB_ASCR              (PIN_ASCR_DISABLED(GPIOB_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_SWO) |         \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN5) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN6) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_LED2) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN8) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN9) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN10) |       \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN11) |       \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN12) |       \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN13) |       \
+                                     PIN_ASCR_DISABLED(GPIOB_LED3) |        \
+                                     PIN_ASCR_DISABLED(GPIOB_PIN15))
+#define VAL_GPIOB_LOCKR             (PIN_LOCKR_DISABLED(GPIOB_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_SWO) |        \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN5) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN6) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_LED2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN8) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN9) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN10) |      \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN11) |      \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN12) |      \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN13) |      \
+                                     PIN_LOCKR_DISABLED(GPIOB_LED3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOB_PIN15))
 
 /*
  * GPIOC setup:
@@ -630,6 +683,38 @@
                                      PIN_AFIO_AF(GPIOC_BUTTON, 0U) |        \
                                      PIN_AFIO_AF(GPIOC_PIN14, 0U) |         \
                                      PIN_AFIO_AF(GPIOC_PIN15, 0U))
+#define VAL_GPIOC_ASCR              (PIN_ASCR_DISABLED(GPIOC_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN3) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN5) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN6) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_LED1) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN8) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN9) |        \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN10) |       \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN11) |       \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN12) |       \
+                                     PIN_ASCR_DISABLED(GPIOC_BUTTON) |      \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN14) |       \
+                                     PIN_ASCR_DISABLED(GPIOC_PIN15))
+#define VAL_GPIOC_LOCKR             (PIN_LOCKR_DISABLED(GPIOC_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN5) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN6) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_LED1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN8) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN9) |       \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN10) |      \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN11) |      \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN12) |      \
+                                     PIN_LOCKR_DISABLED(GPIOC_BUTTON) |     \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN14) |      \
+                                     PIN_LOCKR_DISABLED(GPIOC_PIN15))
 
 /*
  * GPIOD setup:
@@ -747,6 +832,38 @@
                                      PIN_AFIO_AF(GPIOD_PIN13, 0U) |         \
                                      PIN_AFIO_AF(GPIOD_PIN14, 0U) |         \
                                      PIN_AFIO_AF(GPIOD_PIN15, 0U))
+#define VAL_GPIOD_ASCR              (PIN_ASCR_DISABLED(GPIOD_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN3) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN5) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN6) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN7) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN8) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN9) |        \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN10) |       \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN11) |       \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN12) |       \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN13) |       \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN14) |       \
+                                     PIN_ASCR_DISABLED(GPIOD_PIN15))
+#define VAL_GPIOD_LOCKR             (PIN_LOCKR_DISABLED(GPIOD_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN5) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN6) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN7) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN8) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN9) |       \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN10) |      \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN11) |      \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN12) |      \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN13) |      \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN14) |      \
+                                     PIN_LOCKR_DISABLED(GPIOD_PIN15))
 
 /*
  * GPIOE setup:
@@ -864,6 +981,38 @@
                                      PIN_AFIO_AF(GPIOE_PIN13, 0U) |         \
                                      PIN_AFIO_AF(GPIOE_PIN14, 0U) |         \
                                      PIN_AFIO_AF(GPIOE_PIN15, 0U))
+#define VAL_GPIOE_ASCR              (PIN_ASCR_DISABLED(GPIOE_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN3) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN5) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN6) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN7) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN8) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN9) |        \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN10) |       \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN11) |       \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN12) |       \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN13) |       \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN14) |       \
+                                     PIN_ASCR_DISABLED(GPIOE_PIN15))
+#define VAL_GPIOE_LOCKR             (PIN_LOCKR_DISABLED(GPIOE_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN5) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN6) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN7) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN8) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN9) |       \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN10) |      \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN11) |      \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN12) |      \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN13) |      \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN14) |      \
+                                     PIN_LOCKR_DISABLED(GPIOE_PIN15))
 
 /*
  * GPIOF setup:
@@ -981,6 +1130,38 @@
                                      PIN_AFIO_AF(GPIOF_PIN13, 0U) |         \
                                      PIN_AFIO_AF(GPIOF_PIN14, 0U) |         \
                                      PIN_AFIO_AF(GPIOF_PIN15, 0U))
+#define VAL_GPIOF_ASCR              (PIN_ASCR_DISABLED(GPIOF_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN3) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN5) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN6) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN7) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN8) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN9) |        \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN10) |       \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN11) |       \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN12) |       \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN13) |       \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN14) |       \
+                                     PIN_ASCR_DISABLED(GPIOF_PIN15))
+#define VAL_GPIOF_LOCKR             (PIN_LOCKR_DISABLED(GPIOF_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN5) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN6) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN7) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN8) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN9) |       \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN10) |      \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN11) |      \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN12) |      \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN13) |      \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN14) |      \
+                                     PIN_LOCKR_DISABLED(GPIOF_PIN15))
 
 /*
  * GPIOG setup:
@@ -1098,6 +1279,38 @@
                                      PIN_AFIO_AF(GPIOG_PIN13, 0U) |         \
                                      PIN_AFIO_AF(GPIOG_PIN14, 0U) |         \
                                      PIN_AFIO_AF(GPIOG_PIN15, 0U))
+#define VAL_GPIOG_ASCR              (PIN_ASCR_DISABLED(GPIOG_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN3) |        \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOG_USB_OVER_CURRENT) |\
+                                     PIN_ASCR_DISABLED(GPIOG_USB_POWER_SWITCH_ON) |\
+                                     PIN_ASCR_DISABLED(GPIOG_LPUART1_TX) |  \
+                                     PIN_ASCR_DISABLED(GPIOG_LPUART1_RX) |  \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN9) |        \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN10) |       \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN11) |       \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN12) |       \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN13) |       \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN14) |       \
+                                     PIN_ASCR_DISABLED(GPIOG_PIN15))
+#define VAL_GPIOG_LOCKR             (PIN_LOCKR_DISABLED(GPIOG_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOG_USB_OVER_CURRENT) |\
+                                     PIN_LOCKR_DISABLED(GPIOG_USB_POWER_SWITCH_ON) |\
+                                     PIN_LOCKR_DISABLED(GPIOG_LPUART1_TX) | \
+                                     PIN_LOCKR_DISABLED(GPIOG_LPUART1_RX) | \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN9) |       \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN10) |      \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN11) |      \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN12) |      \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN13) |      \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN14) |      \
+                                     PIN_LOCKR_DISABLED(GPIOG_PIN15))
 
 /*
  * GPIOH setup:
@@ -1215,123 +1428,38 @@
                                      PIN_AFIO_AF(GPIOH_PIN13, 0U) |         \
                                      PIN_AFIO_AF(GPIOH_PIN14, 0U) |         \
                                      PIN_AFIO_AF(GPIOH_PIN15, 0U))
-
-/*
- * GPIOI setup:
- *
- * PI0  - PIN0                      (analog).
- * PI1  - PIN1                      (analog).
- * PI2  - PIN2                      (analog).
- * PI3  - PIN3                      (analog).
- * PI4  - PIN4                      (analog).
- * PI5  - PIN5                      (analog).
- * PI6  - PIN6                      (analog).
- * PI7  - PIN7                      (analog).
- * PI8  - PIN8                      (analog).
- * PI9  - PIN9                      (analog).
- * PI10 - PIN10                     (analog).
- * PI11 - PIN11                     (analog).
- * PI12 - PIN12                     (analog).
- * PI13 - PIN13                     (analog).
- * PI14 - PIN14                     (analog).
- * PI15 - PIN15                     (analog).
- */
-#define VAL_GPIOI_MODER             (PIN_MODE_ANALOG(GPIOI_PIN0) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN1) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN2) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN3) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN4) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN5) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN6) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN7) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN8) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN9) |          \
-                                     PIN_MODE_ANALOG(GPIOI_PIN10) |         \
-                                     PIN_MODE_ANALOG(GPIOI_PIN11) |         \
-                                     PIN_MODE_ANALOG(GPIOI_PIN12) |         \
-                                     PIN_MODE_ANALOG(GPIOI_PIN13) |         \
-                                     PIN_MODE_ANALOG(GPIOI_PIN14) |         \
-                                     PIN_MODE_ANALOG(GPIOI_PIN15))
-#define VAL_GPIOI_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOI_PIN0) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN1) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN2) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN3) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN4) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN5) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN6) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN7) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN8) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN9) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN10) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN11) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN12) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN13) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN14) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOI_PIN15))
-#define VAL_GPIOI_OSPEEDR           (PIN_OSPEED_VERYLOW(GPIOI_PIN0) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN1) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN2) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN3) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN4) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN5) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN6) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN7) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN8) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN9) |       \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN10) |      \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN11) |      \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN12) |      \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN13) |      \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN14) |      \
-                                     PIN_OSPEED_VERYLOW(GPIOI_PIN15))
-#define VAL_GPIOI_PUPDR             (PIN_PUPDR_FLOATING(GPIOI_PIN0) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN1) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN2) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN3) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN4) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN5) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN6) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN7) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN8) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN9) |       \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN10) |      \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN11) |      \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN12) |      \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN13) |      \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN14) |      \
-                                     PIN_PUPDR_FLOATING(GPIOI_PIN15))
-#define VAL_GPIOI_ODR               (PIN_ODR_LOW(GPIOI_PIN0) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN1) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN2) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN3) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN4) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN5) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN6) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN7) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN8) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN9) |              \
-                                     PIN_ODR_LOW(GPIOI_PIN10) |             \
-                                     PIN_ODR_LOW(GPIOI_PIN11) |             \
-                                     PIN_ODR_LOW(GPIOI_PIN12) |             \
-                                     PIN_ODR_LOW(GPIOI_PIN13) |             \
-                                     PIN_ODR_LOW(GPIOI_PIN14) |             \
-                                     PIN_ODR_LOW(GPIOI_PIN15))
-#define VAL_GPIOI_AFRL              (PIN_AFIO_AF(GPIOI_PIN0, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN1, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN2, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN3, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN4, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN5, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN6, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN7, 0U))
-#define VAL_GPIOI_AFRH              (PIN_AFIO_AF(GPIOI_PIN8, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN9, 0U) |          \
-                                     PIN_AFIO_AF(GPIOI_PIN10, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN11, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN12, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN13, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN14, 0U) |         \
-                                     PIN_AFIO_AF(GPIOI_PIN15, 0U))
+#define VAL_GPIOH_ASCR              (PIN_ASCR_DISABLED(GPIOH_PIN0) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN1) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN2) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN3) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN4) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN5) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN6) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN7) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN8) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN9) |        \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN10) |       \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN11) |       \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN12) |       \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN13) |       \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN14) |       \
+                                     PIN_ASCR_DISABLED(GPIOH_PIN15))
+#define VAL_GPIOH_LOCKR             (PIN_LOCKR_DISABLED(GPIOH_PIN0) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN1) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN2) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN3) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN4) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN5) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN6) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN7) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN8) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN9) |       \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN10) |      \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN11) |      \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN12) |      \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN13) |      \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN14) |      \
+                                     PIN_LOCKR_DISABLED(GPIOH_PIN15))
 
 /*===========================================================================*/
 /* External declarations.                                                    */

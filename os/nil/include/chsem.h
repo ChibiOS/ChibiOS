@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -51,6 +51,33 @@
 /*===========================================================================*/
 
 /**
+ * @name    Semaphores macros
+ * @{
+ */
+/**
+ * @brief   Data part of a static semaphore initializer.
+ * @details This macro should be used when statically initializing a semaphore
+ *          that is part of a bigger structure.
+ *
+ * @param[in] name      the name of the semaphore variable
+ * @param[in] n         the counter initial value, this value must be
+ *                      non-negative
+ */
+#define __SEMAPHORE_DATA(name, n) {n}
+
+/**
+ * @brief   Static semaphore initializer.
+ * @details Statically initialized semaphores require no explicit
+ *          initialization using @p chSemInit().
+ *
+ * @param[in] name      the name of the semaphore variable
+ * @param[in] n         the counter initial value, this value must be
+ *                      non-negative
+ */
+#define SEMAPHORE_DECL(name, n) semaphore_t name = __SEMAPHORE_DATA(name, n)
+/** @} */
+
+/**
  * @name    Macro Functions
  * @{
  */
@@ -63,7 +90,41 @@
  *
  * @init
  */
-#define chSemObjectInit(sp, n) ((sp)->cnt = n)
+#define chSemObjectInit(sp, n) ((sp)->cnt = (n))
+
+/**
+ * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
+ * @note    This function implicitly sends @p MSG_RESET as message.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ * @param[in] n         the new value of the semaphore counter. The value must
+ *                      be non-negative.
+ *
+ * @api
+ */
+#define chSemReset(sp, n) chSemResetWithMessage(sp, n, MSG_RESET)
+
+/**
+ * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ * @note    This function implicitly sends @p MSG_RESET as message.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ * @param[in] n         the new value of the semaphore counter. The value must
+ *                      be non-negative.
+ *
+ * @iclass
+ */
+#define chSemResetI(sp, n) chSemResetWithMessageI(sp, n, MSG_RESET)
 
 /**
  * @brief   Performs a wait operation on a semaphore.
@@ -133,8 +194,8 @@ extern "C" {
   msg_t chSemWaitTimeoutS(semaphore_t *sp, sysinterval_t timeout);
   void chSemSignal(semaphore_t *sp);
   void chSemSignalI(semaphore_t *sp);
-  void chSemReset(semaphore_t *sp, cnt_t n);
-  void chSemResetI(semaphore_t *sp, cnt_t n);
+  void chSemResetWithMessage(semaphore_t *sp, cnt_t n, msg_t msg);
+  void chSemResetWithMessageI(semaphore_t *sp, cnt_t n, msg_t msg);
 #ifdef __cplusplus
 }
 #endif

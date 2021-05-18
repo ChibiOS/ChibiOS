@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chvt.h
+ * @file    rt/include/chvt.h
  * @brief   Time and Virtual Timers module macros and structures.
  *
  * @addtogroup time
@@ -71,10 +71,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _vt_init(void);
   void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                   vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
+  void chVTDoTickI(void);
+#if CH_CFG_USE_TIMESTAMP == TRUE
+  systimestamp_t chVTGetTimeStampI(void);
+  void chVTResetTimeStampI(void);
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -115,7 +119,7 @@ static inline void chVTObjectInit(virtual_timer_t *vtp) {
 static inline systime_t chVTGetSystemTimeX(void) {
 
 #if CH_CFG_ST_TIMEDELTA == 0
-  return ch.vtlist.systime;
+  return currcore->vtlist.systime;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   return port_timer_get_time();
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
@@ -157,8 +161,8 @@ static inline sysinterval_t chVTTimeElapsedSinceX(systime_t start) {
 /**
  * @brief   Checks if the current system time is within the specified time
  *          window.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because the
+ *          time window has zero size.
  *
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
@@ -175,8 +179,8 @@ static inline bool chVTIsSystemTimeWithinX(systime_t start, systime_t end) {
 /**
  * @brief   Checks if the current system time is within the specified time
  *          window.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because the
+ *          time window has zero size.
  *
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
@@ -207,19 +211,21 @@ static inline bool chVTIsSystemTimeWithin(systime_t start, systime_t end) {
  * @iclass
  */
 static inline bool chVTGetTimersStateI(sysinterval_t *timep) {
+  virtual_timers_list_t *vtlp = &currcore->vtlist;
+  delta_list_t *dlp = &vtlp->dlist;
 
   chDbgCheckClassI();
 
-  if (&ch.vtlist == (virtual_timers_list_t *)ch.vtlist.next) {
+  if (dlp == dlp->next) {
     return false;
   }
 
   if (timep != NULL) {
 #if CH_CFG_ST_TIMEDELTA == 0
-    *timep = ch.vtlist.next->delta;
+    *timep = dlp->next->delta;
 #else
-    *timep = (ch.vtlist.next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
-             chTimeDiffX(ch.vtlist.lasttime, chVTGetSystemTimeX());
+    *timep = (dlp->next->delta + (sysinterval_t)CH_CFG_ST_TIMEDELTA) -
+             chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX());
 #endif
   }
 
@@ -356,114 +362,72 @@ static inline void chVTSet(virtual_timer_t *vtp, sysinterval_t delay,
   chSysUnlock();
 }
 
+#if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Virtual timers ticker.
- * @note    The system lock is released before entering the callback and
- *          re-acquired immediately after. It is callback's responsibility
- *          to acquire the lock if needed. This is done in order to reduce
- *          interrupts jitter when many timers are in use.
+ * @brief   Generates a monotonic time stamp.
+ * @details This function generates a monotonic time stamp synchronized with
+ *          the system time. The time stamp has the same resolution of
+ *          system time.
+ * @note    There is an assumption, this function must be called at
+ *          least once before the system time wraps back to zero or
+ *          synchronization is lost. You may use a periodic virtual timer with
+ *          a very large interval in order to keep time stamps synchronized
+ *          by calling this function.
  *
- * @iclass
+ * @return              The time stamp.
+ *
+ * @api
  */
-static inline void chVTDoTickI(void) {
+static inline systimestamp_t chVTGetTimeStamp(void) {
+  systimestamp_t stamp;
+
+  chSysLock();
+
+  stamp = chVTGetTimeStampI();
+
+  chSysUnlock();
+
+  return stamp;
+}
+
+/**
+ * @brief   Resets and re-synchronizes the time stamps monotonic counter.
+ *
+ * @api
+ */
+static inline void chVTResetTimeStamp(void) {
 
   chDbgCheckClassI();
 
+  chSysLock();
+
+  chVTResetTimeStampI();
+
+  chSysUnlock();
+}
+#endif /* CH_CFG_USE_TIMESTAMP == TRUE */
+
+/**
+ * @brief   Virtual Timers instance initialization.
+ * @note    Internal use only.
+ *
+ * @param[out] vtlp     pointer to the @p virtual_timers_list_t structure
+ *
+ * @notapi
+ */
+static inline void __vt_object_init(virtual_timers_list_t *vtlp) {
+
+  vtlp->dlist.next  = &vtlp->dlist;
+  vtlp->dlist.prev  = &vtlp->dlist;
+  vtlp->dlist.delta = (sysinterval_t)-1;
 #if CH_CFG_ST_TIMEDELTA == 0
-  ch.vtlist.systime++;
-  if (&ch.vtlist != (virtual_timers_list_t *)ch.vtlist.next) {
-    /* The list is not empty, processing elements on top.*/
-    --ch.vtlist.next->delta;
-    while (ch.vtlist.next->delta == (sysinterval_t)0) {
-      virtual_timer_t *vtp;
-      vtfunc_t fn;
-
-      vtp = ch.vtlist.next;
-      fn = vtp->func;
-      vtp->func = NULL;
-      vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
-      ch.vtlist.next = vtp->next;
-      chSysUnlockFromISR();
-      fn(vtp->par);
-      chSysLockFromISR();
-    }
-  }
+  vtlp->systime = (systime_t)0;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
-  virtual_timer_t *vtp;
-  systime_t now;
-  sysinterval_t delta, nowdelta;
-
-  /* Looping through timers.*/
-  vtp = ch.vtlist.next;
-  while (true) {
-
-    /* Getting the system time as reference.*/
-    now = chVTGetSystemTimeX();
-    nowdelta = chTimeDiffX(ch.vtlist.lasttime, now);
-
-    /* The list scan is limited by the timers header having
-       "ch.vtlist.vt_delta == (sysinterval_t)-1" which is
-       greater than all deltas.*/
-    if (nowdelta < vtp->delta) {
-      break;
-    }
-
-    /* Consuming all timers between "vtp->lasttime" and now.*/
-    do {
-      vtfunc_t fn;
-
-      /* The "last time" becomes this timer's expiration time.*/
-      ch.vtlist.lasttime += vtp->delta;
-      nowdelta -= vtp->delta;
-
-      vtp->next->prev = (virtual_timer_t *)&ch.vtlist;
-      ch.vtlist.next = vtp->next;
-      fn = vtp->func;
-      vtp->func = NULL;
-
-      /* If the list becomes empty then the timer is stopped.*/
-      if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
-        port_timer_stop_alarm();
-      }
-
-      /* The callback is invoked outside the kernel critical zone.*/
-      chSysUnlockFromISR();
-      fn(vtp->par);
-      chSysLockFromISR();
-
-      /* Next element in the list.*/
-      vtp = ch.vtlist.next;
-    }
-    while (vtp->delta <= nowdelta);
-  }
-
-  /* If the list is empty, nothing else to do.*/
-  if (ch.vtlist.next == (virtual_timer_t *)&ch.vtlist) {
-    return;
-  }
-
-  /* The "unprocessed nowdelta" time slice is added to "last time"
-     and subtracted to next timer's delta.*/
-  ch.vtlist.lasttime += nowdelta;
-  ch.vtlist.next->delta -= nowdelta;
-
-  /* Recalculating the next alarm time.*/
-  delta = vtp->delta - chTimeDiffX(ch.vtlist.lasttime, now);
-  if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
-    delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-  }
-#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-  /* The delta could be too large for the physical timer to handle.*/
-  else if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
-    delta = (sysinterval_t)TIME_MAX_SYSTIME;
-  }
-#endif
-  port_timer_set_alarm(chTimeAddX(now, delta));
-
-  chDbgAssert(chTimeDiffX(ch.vtlist.lasttime, chVTGetSystemTimeX()) <=
-              chTimeDiffX(ch.vtlist.lasttime, chTimeAddX(now, delta)),
-              "exceeding delta");
+  vtlp->lasttime = (systime_t)0;
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
+#if CH_CFG_USE_TIMESTAMP == TRUE
+  currcore->vtlist.laststamp = (systimestamp_t)chVTGetSystemTimeX();
+#endif
 }
 
 #endif /* CHVT_H */

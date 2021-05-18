@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chobjcaches.c
+ * @file    oslib/src/chobjcaches.c
  * @brief   Objects Caches code.
  * @details Objects caches.
  *          <h2>Operation mode</h2>
@@ -167,7 +167,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
 
   while (true) {
     /* Waiting for an object buffer to become available in the LRU.*/
-    chSemWaitS(&ocp->lru_sem);
+    (void) chSemWaitS(&ocp->lru_sem);
 
     /* Now an object buffer is in the LRU for sure, taking it from the
        LRU tail.*/
@@ -208,7 +208,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
       is written. It is responsibility of the write function to release
       the buffer.*/
     objp->obj_flags = OC_FLAG_INHASH | OC_FLAG_FORGET;
-    ocp->writef(ocp, objp, true);
+    (void) ocp->writef(ocp, objp, true);
 
     /* Critical section enter again.*/
     chSysLock();
@@ -231,8 +231,8 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
  * @param[in] objn      number of elements in the objects table array
  * @param[in] objsz     size of elements in the objects table array, the
  *                      minimum value is <tt>sizeof (oc_object_t)</tt>.
- * @param[in] hashp     pointer to the hash objects as an array of
- *                      @p oc_object_t
+ * @param[in] objvp     pointer to the hash objects as an array of structures
+ *                      starting with an @p oc_object_t
  * @param[in] readf     pointer to an object reader function
  * @param[in] writef    pointer to an object writer function
  *
@@ -248,8 +248,8 @@ void chCacheObjectInit(objects_cache_t *ocp,
                        oc_writef_t writef) {
 
   chDbgCheck((ocp != NULL) && (hashp != NULL) && (objvp != NULL) &&
-             ((hashn & (hashn - 1U)) == 0U) &&
-             (objn > (size_t)0) && (hashn >= objn) &&
+             ((hashn & (hashn - (ucnt_t)1)) == (ucnt_t)0) &&
+             (objn > (ucnt_t)0) && (hashn >= objn) &&
              (objsz >= sizeof (oc_object_t)) &&
              ((objsz & (PORT_NATURAL_ALIGN - 1U)) == 0U));
 
@@ -283,9 +283,9 @@ void chCacheObjectInit(objects_cache_t *ocp,
     objp->obj_key   = 0U;
     objp->obj_flags = OC_FLAG_INLRU;
     objp->dptr      = NULL;
-    objvp += objsz;
+    objvp = (void *)((uint8_t *)objvp + objsz);
     objn--;
-  } while (objn > 0U);
+  } while (objn > (ucnt_t)0);
 }
 
 /**
@@ -311,11 +311,11 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
 
   /* Checking the cache for a hit.*/
   objp = hash_get_s(ocp, group, key);
-
-  chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) == OC_FLAG_INHASH,
-              "not in hash");
-
   if (objp != NULL) {
+
+    chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) == OC_FLAG_INHASH,
+                "not in hash");
+
     /* Cache hit, checking if the buffer is owned by some
        other thread.*/
     if (chSemGetCounterI(&objp->obj_sem) > (cnt_t)0) {
@@ -339,7 +339,7 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
       chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == 0U, "in LRU");
 
       /* Waiting on the buffer semaphore.*/
-      chSemWaitS(&objp->obj_sem);
+      (void) chSemWaitS(&objp->obj_sem);
     }
   }
   else {
@@ -435,6 +435,7 @@ void chCacheReleaseObjectI(objects_cache_t *ocp,
  *          reported by this function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] objp      pointer to the @p oc_object_t structure
  * @param[in] async     requests an asynchronous operation if supported, the
  *                      function is then responsible for releasing the
  *                      object
@@ -463,6 +464,7 @@ bool chCacheReadObject(objects_cache_t *ocp,
  *          reported by this function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t structure
+ * @param[in] objp      pointer to the @p oc_object_t structure
  * @param[in] async     requests an asynchronous operation if supported, the
  *                      function is then responsible for releasing the
  *                      object

@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -237,14 +237,14 @@ eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
  * @brief   Adds a set of event flags directly to the specified @p thread_t.
  *
  * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] events    the event flags set to be ORed
  *
  * @api
  */
-void chEvtSignal(thread_t *tp, eventmask_t mask) {
+void chEvtSignal(thread_t *tp, eventmask_t events) {
 
   chSysLock();
-  chEvtSignalI(tp, mask);
+  chEvtSignalI(tp, events);
   chSchRescheduleS();
   chSysUnlock();
 }
@@ -257,16 +257,16 @@ void chEvtSignal(thread_t *tp, eventmask_t mask) {
  *          reschedule must not be performed in ISRs.
  *
  * @param[in] tp        the thread to be signaled
- * @param[in] mask      the event flags set to be ORed
+ * @param[in] events    the event flags set to be ORed
  *
  * @iclass
  */
-void chEvtSignalI(thread_t *tp, eventmask_t mask) {
+void chEvtSignalI(thread_t *tp, eventmask_t events) {
 
   chDbgCheckClassI();
   chDbgCheck(tp != NULL);
 
-  tp->epmask |= mask;
+  tp->epmask |= events;
   if ((NIL_THD_IS_WTOREVT(tp) &&
        ((tp->epmask & tp->u1.ewmask) != (eventmask_t)0)) ||
       (NIL_THD_IS_WTANDEVT(tp) &&

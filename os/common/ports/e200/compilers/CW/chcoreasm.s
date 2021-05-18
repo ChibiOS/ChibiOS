@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -56,8 +56,10 @@
  */
 #if defined(_CHIBIOS_RT_CONF_)
 #define CONTEXT_OFFSET  12
+
 #elif defined(_CHIBIOS_NIL_CONF_)
 #define CONTEXT_OFFSET  0
+
 #else
 #error "invalid chconf.h"
 #endif
@@ -80,8 +82,8 @@ _port_switch:
         se_stw      r0, 0(r1)
         e_stmw      r14, 4(r1)
 
-        se_stw      r1, 12(r4)
-        se_lwz      r1, 12(r3)
+        se_stw      r1, CONTEXT_OFFSET(r4)
+        se_lwz      r1, CONTEXT_OFFSET(r3)
 
         e_lmw       r14, 4(r1)
         se_lwz      r0, 0(r1)

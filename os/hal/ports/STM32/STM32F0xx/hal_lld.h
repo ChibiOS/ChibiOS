@@ -616,7 +616,7 @@
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
 
-#if STM32_RTCSEL == STM32_RTCSEL_LSI
+#if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI)
 #error "LSI not enabled, required by STM32_RTCSEL"
 #endif
 
@@ -990,6 +990,7 @@
 #include "stm32_dma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
+#include "stm32_tim.h"
 
 #ifdef __cplusplus
 extern "C" {

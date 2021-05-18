@@ -65,8 +65,8 @@
  */
 #define STM32_FLASH_SIZE_64K                64U
 #define STM32_FLASH_SIZE_128K               128U
-#define STM32_FLASH_SECTORS_TOTAL_64K       128
-#define STM32_FLASH_SECTORS_TOTAL_128K      256
+#define STM32_FLASH_SECTORS_TOTAL_64K       32
+#define STM32_FLASH_SECTORS_TOTAL_128K      64
 
 /* 64K flash.*/
 #define STM32_FLASH_SECTOR_SIZE_64K         ((STM32_FLASH_SIZE_64K         \
@@ -131,7 +131,7 @@ extern "C" {
   flash_error_t efl_lld_start_erase_all(void *instance);
   flash_error_t efl_lld_start_erase_sector(void *instance,
                                            flash_sector_t sector);
-  flash_error_t efl_lld_query_erase(void *instance, uint32_t *wait_time);
+  flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec);
   flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector);
 #ifdef __cplusplus
 }

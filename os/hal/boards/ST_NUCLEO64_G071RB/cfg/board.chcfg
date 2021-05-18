@@ -11,13 +11,13 @@
   <board_name>STMicroelectronics STM32 Nucleo64-G071RB</board_name>
   <board_id>ST_NUCLEO64_G071RB</board_id>
   <board_functions></board_functions>
-  <subtype>STM32G071xB</subtype>
+  <subtype>STM32G071xx</subtype>
   <clocks HSEFrequency="8000000" HSEBypass="false" LSEFrequency="32768"
   	LSEBypass="false" LSEDrive="3 High Drive (default)" />
   <ports>
     <GPIOA>
       <pin0
-        ID="ARD_A0_IN0"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -25,7 +25,7 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="ARD_A1_IN1"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -49,7 +49,7 @@
         Mode="Alternate"
         Alternate="1"/>
       <pin4
-        ID="ARD_A2_IN4"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Maximum"

@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,7 +39,7 @@
 /**
  * @brief   ChibiOS/NIL identification macro.
  */
-#define _CHIBIOS_NIL_
+#define __CHIBIOS_NIL__
 
 /**
  * @brief   Stable release flag.
@@ -53,7 +53,7 @@
 /**
  * @brief   Kernel version string.
  */
-#define CH_KERNEL_VERSION       "4.0.0"
+#define CH_KERNEL_VERSION       "4.1.0"
 
 /**
  * @brief   Kernel version major number.
@@ -63,7 +63,7 @@
 /**
  * @brief   Kernel version minor number.
  */
-#define CH_KERNEL_MINOR         0
+#define CH_KERNEL_MINOR         1
 
 /**
  * @brief   Kernel version patch number.
@@ -73,6 +73,7 @@
 
 /**
  * @name    Constants for configuration options
+ * @{
  */
 /**
  * @brief   Generic 'false' preprocessor boolean constant.
@@ -399,7 +400,7 @@ typedef uint32_t time_conv_t;
 /**
  * @brief   Type of a structure representing the system.
  */
-typedef struct nil_system nil_system_t;
+typedef struct nil_os_instance os_instance_t;
 
 /**
  * @brief Thread function.
@@ -407,9 +408,9 @@ typedef struct nil_system nil_system_t;
 typedef void (*tfunc_t)(void *p);
 
 /**
- * @brief   Type of a structure representing a thread static configuration.
+ * @brief   Type of a thread descriptor.
  */
-typedef struct nil_thread_cfg thread_config_t;
+typedef struct nil_thread_descriptor thread_descriptor_t;
 
 /**
  * @brief   Type of a structure representing a thread.
@@ -447,13 +448,13 @@ struct nil_threads_queue {
 };
 
 /**
- * @brief   Structure representing a thread static configuration.
+ * @brief   Structure representing a thread descriptor.
  */
-struct nil_thread_cfg {
-  tprio_t           prio;       /**< @brief Thread priority slot.           */
-  const char        *namep;     /**< @brief Thread name, for debugging.     */
+struct nil_thread_descriptor {
+  const char        *name;      /**< @brief Thread name, for debugging.     */
   stkalign_t        *wbase;     /**< @brief Thread working area base.       */
   stkalign_t        *wend;      /**< @brief Thread working area end.        */
+  tprio_t           prio;       /**< @brief Thread priority slot.           */
   tfunc_t           funcp;      /**< @brief Thread function.                */
   void              *arg;       /**< @brief Thread function argument.       */
 };
@@ -467,9 +468,9 @@ struct nil_thread {
   /* Note, the following union contains a pointer/value while the thread is
      in a sleeping state or a wake-up message when the thread is made ready.*/
   union {
-    msg_t               msg;        /**< @brief Wake-up message.            */
+    msg_t               msg;        /**< @brief Wake-up/exit message.       */
     void                *p;         /**< @brief Generic pointer.            */
-    nil_system_t        *nsp;       /**< @brief Pointer to nil base struct. */
+    os_instance_t       *nsp;       /**< @brief Pointer to nil base struct. */
     thread_reference_t  *trp;       /**< @brief Pointer to thread reference.*/
     threads_queue_t     *tqp;       /**< @brief Pointer to thread queue.    */
     thread_t            *tp;        /**< @brief Pointer to thread.          */
@@ -500,7 +501,7 @@ struct nil_thread {
  * @note    This structure contain all the data areas used by the OS except
  *          stacks.
  */
-struct nil_system {
+struct nil_os_instance {
   /**
    * @brief   Pointer to the running thread.
    */
@@ -558,8 +559,8 @@ struct nil_system {
 /*===========================================================================*/
 
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-#define _dbg_enter_lock() (nil.lock_cnt = (cnt_t)1)
-#define _dbg_leave_lock() (nil.lock_cnt = (cnt_t)0)
+#define __dbg_enter_lock() (nil.lock_cnt = (cnt_t)1)
+#define __dbg_leave_lock() (nil.lock_cnt = (cnt_t)0)
 #endif
 
 /**
@@ -575,26 +576,39 @@ struct nil_system {
  * @brief   Start of user threads table.
  */
 #define THD_TABLE_BEGIN                                                     \
-  const thread_config_t nil_thd_configs[] = {
+  const thread_descriptor_t nil_thd_configs[] = {
 
 /**
  * @brief   Entry of user threads table
  */
-#define THD_TABLE_THREAD(prio, name, wap, funcp, arg)                       \
-  {prio, name,                                                              \
-   wap, THD_WORKING_AREA_END(wap),                                          \
-   funcp, arg},
+#define THD_TABLE_THREAD(_prio, _name, _wap, _funcp, _arg)                  \
+  {                                                                         \
+    .name  = (_name),                                                       \
+    .wbase = (_wap),                                                        \
+    .wend  = THD_WORKING_AREA_END(_wap),                                    \
+    .prio  = (_prio),                                                       \
+    .funcp = (_funcp),                                                      \
+    .arg   = (_arg)                                                         \
+  },
 
 /**
  * @brief   End of user threads table.
  */
 #define THD_TABLE_END                                                       \
-  {CH_CFG_MAX_THREADS, "idle", THD_IDLE_BASE, THD_IDLE_END, NULL, NULL}                   \
+  {                                                                         \
+    .name  = "idle",                                                        \
+    .wbase = THD_IDLE_BASE,                                                 \
+    .wend  = THD_IDLE_END,                                                  \
+    .prio  = CH_CFG_MAX_THREADS,                                            \
+    .funcp = NULL,                                                          \
+    .arg  = NULL                                                            \
+  }                                                                         \
 };
 /** @} */
 
 /**
  * @name    Memory alignment support macros
+ * @{
  */
 /**
  * @brief   Alignment mask constant.
@@ -640,6 +654,7 @@ struct nil_system {
 
 /**
  * @name    Working Areas
+ * @{
  */
 /**
  * @brief   Calculates the total Working Area size.
@@ -679,6 +694,7 @@ struct nil_system {
 
 /**
  * @name    Threads abstraction macros
+ * @{
  */
 /**
  * @brief   Thread declaration macro.
@@ -690,6 +706,7 @@ struct nil_system {
 
 /**
  * @name    ISRs abstraction macros
+ * @{
  */
 /**
  * @brief   Priority level validation macro.
@@ -736,7 +753,7 @@ struct nil_system {
  */
 #define CH_IRQ_PROLOGUE()                                                   \
   PORT_IRQ_PROLOGUE();                                                      \
-  _dbg_check_enter_isr()
+  __dbg_check_enter_isr()
 
 /**
  * @brief   IRQ handler exit code.
@@ -745,7 +762,7 @@ struct nil_system {
  * @special
  */
 #define CH_IRQ_EPILOGUE()                                                   \
-  _dbg_check_leave_isr();                                                   \
+  __dbg_check_leave_isr();                                                  \
   PORT_IRQ_EPILOGUE()
 
 /**
@@ -760,6 +777,7 @@ struct nil_system {
 
 /**
  * @name    Fast ISRs abstraction macros
+ * @{
  */
 /**
  * @brief   Standard fast IRQ handler declaration.
@@ -885,6 +903,7 @@ struct nil_system {
 
 /**
  * @name    Threads queues
+ * @{
  */
 /**
  * @brief   Data part of a static threads queue object initializer.
@@ -893,7 +912,7 @@ struct nil_system {
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define _THREADS_QUEUE_DATA(name) {(cnt_t)0}
+#define __THREADS_QUEUE_DATA(name) {(cnt_t)0}
 
 /**
  * @brief   Static threads queue object initializer.
@@ -902,35 +921,8 @@ struct nil_system {
  *
  * @param[in] name      the name of the threads queue variable
  */
-#define _THREADS_QUEUE_DECL(name)                                           \
-  threads_queue_t name = _THREADS_QUEUE_DATA(name)
-/** @} */
-
-/**
- * @name    Semaphores macros
- * @{
- */
-/**
- * @brief   Data part of a static semaphore initializer.
- * @details This macro should be used when statically initializing a semaphore
- *          that is part of a bigger structure.
- *
- * @param[in] name      the name of the semaphore variable
- * @param[in] n         the counter initial value, this value must be
- *                      non-negative
- */
-#define _SEMAPHORE_DATA(name, n) {n}
-
-/**
- * @brief   Static semaphore initializer.
- * @details Statically initialized semaphores require no explicit
- *          initialization using @p chSemInit().
- *
- * @param[in] name      the name of the semaphore variable
- * @param[in] n         the counter initial value, this value must be
- *                      non-negative
- */
-#define SEMAPHORE_DECL(name, n) semaphore_t name = _SEMAPHORE_DATA(name, n)
+#define THREADS_QUEUE_DECL(name)                                            \
+  threads_queue_t name = __THREADS_QUEUE_DATA(name)
 /** @} */
 
 /**
@@ -961,7 +953,7 @@ struct nil_system {
  */
 #define chSysDisable() {                                                    \
   port_disable();                                                           \
-  _dbg_check_disable();                                                     \
+  __dbg_check_disable();                                                    \
 }
 
 /**
@@ -977,7 +969,7 @@ struct nil_system {
  */
 #define chSysSuspend() {                                                    \
   port_suspend();                                                           \
-  _dbg_check_suspend();                                                     \
+  __dbg_check_suspend();                                                    \
 }
 
 /**
@@ -990,7 +982,7 @@ struct nil_system {
  * @special
  */
 #define chSysEnable() {                                                     \
-  _dbg_check_enable();                                                      \
+  __dbg_check_enable();                                                     \
   port_enable();                                                            \
 }
 
@@ -1001,7 +993,7 @@ struct nil_system {
  */
 #define chSysLock() {                                                       \
   port_lock();                                                              \
-  _dbg_check_lock();                                                        \
+  __dbg_check_lock();                                                       \
 }
 
 /**
@@ -1010,7 +1002,7 @@ struct nil_system {
  * @special
  */
 #define chSysUnlock() {                                                     \
-  _dbg_check_unlock();                                                      \
+  __dbg_check_unlock();                                                     \
   port_unlock();                                                            \
 }
 
@@ -1028,7 +1020,7 @@ struct nil_system {
  */
 #define chSysLockFromISR() {                                                \
   port_lock_from_isr();                                                     \
-  _dbg_check_lock_from_isr();                                               \
+  __dbg_check_lock_from_isr();                                              \
 }
 
 /**
@@ -1045,7 +1037,7 @@ struct nil_system {
  * @special
  */
 #define chSysUnlockFromISR() {                                              \
-  _dbg_check_unlock_from_isr();                                             \
+  __dbg_check_unlock_from_isr();                                            \
   port_unlock_from_isr();                                                   \
 }
 
@@ -1070,7 +1062,7 @@ struct nil_system {
 #define chSchWakeupS(ntp, msg) do {                                         \
   chSchReadyI(ntp, msg);                                                    \
   chSchRescheduleS();                                                       \
-} while (0)
+} while (false)
 
 /**
  * @brief   Evaluates if a reschedule is required.
@@ -1113,7 +1105,7 @@ struct nil_system {
 #define chThdResumeS(trp, msg) do {                                         \
   chThdResumeI(trp, msg);                                                   \
   chSchRescheduleS();                                                       \
-} while (0)
+} while (false)
 
 /**
  * @brief   Delays the invoking thread for the specified number of seconds.
@@ -1229,8 +1221,8 @@ struct nil_system {
 /**
  * @brief   Checks if the current system time is within the specified time
  *          window.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because the
+ *          time window has zero size.
  *
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
@@ -1265,23 +1257,6 @@ struct nil_system {
  */
 #define chTimeDiffX(start, end)                                             \
   ((sysinterval_t)((systime_t)((systime_t)(end) - (systime_t)(start))))
-
-/**
- * @brief   Checks if the specified time is within the specified time range.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
- *
- * @param[in] time      the time to be verified
- * @param[in] start     the start of the time window (inclusive)
- * @param[in] end       the end of the time window (non inclusive)
- * @retval true         current time within the specified time window.
- * @retval false        current time not within the specified time window.
- *
- * @xclass
- */
-#define chTimeIsInRangeX(time, start, end)                                  \
-  ((bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <             \
-          (systime_t)((systime_t)(end) - (systime_t)(start))))
 
 /**
  * @brief   Function parameters check.
@@ -1334,17 +1309,17 @@ struct nil_system {
 
 /* Empty macros if the state checker is not enabled.*/
 #if CH_DBG_SYSTEM_STATE_CHECK == FALSE
-#define _dbg_enter_lock()
-#define _dbg_leave_lock()
-#define _dbg_check_disable()
-#define _dbg_check_suspend()
-#define _dbg_check_enable()
-#define _dbg_check_lock()
-#define _dbg_check_unlock()
-#define _dbg_check_lock_from_isr()
-#define _dbg_check_unlock_from_isr()
-#define _dbg_check_enter_isr()
-#define _dbg_check_leave_isr()
+#define __dbg_enter_lock()
+#define __dbg_leave_lock()
+#define __dbg_check_disable()
+#define __dbg_check_suspend()
+#define __dbg_check_enable()
+#define __dbg_check_lock()
+#define __dbg_check_unlock()
+#define __dbg_check_lock_from_isr()
+#define __dbg_check_unlock_from_isr()
+#define __dbg_check_enter_isr()
+#define __dbg_check_leave_isr()
 #define chDbgCheckClassI()
 #define chDbgCheckClassS()
 #endif
@@ -1357,8 +1332,8 @@ struct nil_system {
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
 extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 #endif
-extern nil_system_t nil;
-extern const thread_config_t nil_thd_configs[];
+extern os_instance_t nil;
+extern const thread_descriptor_t nil_thd_configs[];
 #endif
 
 #ifdef __cplusplus
@@ -1377,11 +1352,12 @@ extern "C" {
   void chSysRestoreStatusX(syssts_t sts);
   thread_t *chSchReadyI(thread_t *tp, msg_t msg);
   bool chSchIsPreemptionRequired(void);
-  void chSchDoReschedule(void);
+  void chSchDoPreemption(void);
   void chSchRescheduleS(void);
   msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout);
-  thread_t *chThdCreateI(const thread_config_t *tcp);
-  thread_t *chThdCreate(const thread_config_t *tcp);
+  bool chTimeIsInRangeX(systime_t time, systime_t start, systime_t end);
+  thread_t *chThdCreateI(const thread_descriptor_t *tdp);
+  thread_t *chThdCreate(const thread_descriptor_t *tdp);
   void chThdExit(msg_t msg);
 #if CH_CFG_USE_WAITEXIT == TRUE
   msg_t chThdWait(thread_t *tp);
@@ -1396,15 +1372,15 @@ extern "C" {
   void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg);
   void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg);
 #if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-  void _dbg_check_disable(void);
-  void _dbg_check_suspend(void);
-  void _dbg_check_enable(void);
-  void _dbg_check_lock(void);
-  void _dbg_check_unlock(void);
-  void _dbg_check_lock_from_isr(void);
-  void _dbg_check_unlock_from_isr(void);
-  void _dbg_check_enter_isr(void);
-  void _dbg_check_leave_isr(void);
+  void __dbg_check_disable(void);
+  void __dbg_check_suspend(void);
+  void __dbg_check_enable(void);
+  void __dbg_check_lock(void);
+  void __dbg_check_unlock(void);
+  void __dbg_check_lock_from_isr(void);
+  void __dbg_check_unlock_from_isr(void);
+  void __dbg_check_enter_isr(void);
+  void __dbg_check_leave_isr(void);
   void chDbgCheckClassI(void);
   void chDbgCheckClassS(void);
 #endif

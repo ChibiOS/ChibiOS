@@ -279,6 +279,7 @@
 #define STM32_TIM_CCER_CC3NP                (1U << 11)
 #define STM32_TIM_CCER_CC4E                 (1U << 12)
 #define STM32_TIM_CCER_CC4P                 (1U << 13)
+#define STM32_TIM_CCER_CC4NE                (1U << 14)
 #define STM32_TIM_CCER_CC4NP                (1U << 15)
 #define STM32_TIM_CCER_CC5E                 (1U << 16)
 #define STM32_TIM_CCER_CC5P                 (1U << 17)
@@ -514,11 +515,25 @@ typedef struct {
   volatile uint32_t     RCR;
   volatile uint32_t     CCR[4];
   volatile uint32_t     BDTR;
+#if defined(STM32G4)
+  volatile uint32_t     CCXR[2];
+  volatile uint32_t     CCMR3;
+  volatile uint32_t     DTR2;
+  volatile uint32_t     ECR;
+  volatile uint32_t     TISEL;
+  volatile uint32_t     AF1;
+  volatile uint32_t     AF2;
+  volatile uint32_t     OR;
+  volatile uint32_t     RESERVED0[220];
+  volatile uint32_t     DCR;
+  volatile uint32_t     DMAR;
+#else
   volatile uint32_t     DCR;
   volatile uint32_t     DMAR;
   volatile uint32_t     OR;
   volatile uint32_t     CCMR3;
   volatile uint32_t     CCXR[2];
+#endif
 } stm32_tim_t;
 
 /**

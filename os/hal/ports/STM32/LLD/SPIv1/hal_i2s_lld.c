@@ -557,14 +557,26 @@ void i2s_lld_stop_exchange(I2SDriver *i2sp) {
        to wait for TXE = 1 and BSY = 0.*/
     while ((i2sp->spi->SR & (SPI_SR_TXE | SPI_SR_BSY)) != SPI_SR_TXE)
       ;
+
+    /* Stop SPI/I2S peripheral.*/
+    i2sp->spi->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
   }
 
-  /* Stop SPI/I2S peripheral.*/
-  i2sp->spi->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
-
-  /* Stop RX DMA, if enabled.*/
-  if (NULL != i2sp->dmarx)
+  /* Stop RX DMA, if enabled then draining the RX DR.*/
+  if (NULL != i2sp->dmarx) {
     dmaStreamDisable(i2sp->dmarx);
+
+    /* Waiting for some data to be present in RX DR.*/
+    while ((i2sp->spi->SR & SPI_SR_RXNE) != SPI_SR_RXNE)
+      ;
+
+    /* Stop SPI/I2S peripheral.*/
+    i2sp->spi->I2SCFGR &= ~SPI_I2SCFGR_I2SE;
+
+    /* Purging data in DR.*/
+    while ((i2sp->spi->SR & SPI_SR_RXNE) != 0)
+      (void) i2sp->spi->DR;
+  }
 }
 
 #endif /* HAL_USE_I2S */

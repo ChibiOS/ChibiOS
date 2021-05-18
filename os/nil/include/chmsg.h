@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -55,6 +55,24 @@
  * @{
  */
 /**
+ * @brief   Suspends the thread and waits for an incoming message.
+ * @post    After receiving a message the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
+ * @note    If the message is a pointer then you can assume that the data
+ *          pointed by the message is stable until you invoke @p chMsgRelease()
+ *          because the sending thread is suspended until then.
+ * @note    The reference counter of the sender thread is not increased, the
+ *          returned pointer is a temporary reference.
+ *
+ * @return              A pointer to the thread carrying the message.
+ *
+ * @sclass
+ */
+#define chMsgWaitS() chMsgWaitTimeoutS(TIME_INFINITE)
+
+/**
  * @brief   Returns the message carried by the specified thread.
  * @pre     This function must be invoked immediately after exiting a call
  *          to @p chMsgWait().
@@ -77,9 +95,9 @@
  * @sclass
  */
 #define chMsgReleaseS(tp, msg) do {                                         \
-  chSchReadyI(tp, msg);                                                     \
+  (void) chSchReadyI(tp, msg);                                              \
   chSchRescheduleS();                                                       \
-  } while (0)
+  } while (false)
 /** @} */
 
 /*===========================================================================*/
@@ -91,6 +109,8 @@ extern "C" {
 #endif
   msg_t chMsgSend(thread_t *tp, msg_t msg);
   thread_t *chMsgWait(void);
+  thread_t *chMsgWaitTimeout(sysinterval_t timeout);
+  thread_t *chMsgWaitTimeoutS(sysinterval_t timeout);
   void chMsgRelease(thread_t *tp, msg_t msg);
 #ifdef __cplusplus
 }

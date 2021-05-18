@@ -9,6 +9,7 @@
 /* Reinforcing type checking for some critical types even if not required by
    MISRA.*/
 -strong(AJX, systime_t)
+-strong(AJX, sysinterval_t)
 -strong(AJX, rtcnt_t)
 -strong(AJX, rttime_t)
 -strong(AJX, syssts_t)
@@ -58,6 +59,7 @@
 -e9016                      /* Rule-18.4 */
 -e844 -e954                 /* Rule-18.13 */
 -e9018                      /* Rule-19.2 */
+-e9021                      /* Rule-20.5 */
 -e9024                      /* Rule-20.10 */
 
 /* Waiver Directive 2.1, Rule 1.1, Rule 1.2, assembler is allowed in some
@@ -81,7 +83,7 @@
    it, of course, does not have nor requires a prior declaration.*/
 -esym(9075, main)
 
-/* Waiver Rule 8.7, the static analyser has no visibility of functions called
+/* Waiver Rule 8.7, the static analyzer has no visibility of functions called
    from asm modules.*/
 -e765
 

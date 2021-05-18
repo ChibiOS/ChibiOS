@@ -89,6 +89,16 @@ extern "C" {
   void efl_lld_init(void);
   void efl_lld_start(EFlashDriver *eflp);
   void efl_lld_stop(EFlashDriver *eflp);
+  const flash_descriptor_t *efl_lld_get_descriptor(void *instance);
+  flash_error_t efl_lld_read(void *instance, flash_offset_t offset,
+                             size_t n, uint8_t *rp);
+  flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
+                                size_t n, const uint8_t *pp);
+  flash_error_t efl_lld_start_erase_all(void *instance);
+  flash_error_t efl_lld_start_erase_sector(void *instance,
+                                           flash_sector_t sector);
+  flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec);
+  flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector);
 #ifdef __cplusplus
 }
 #endif

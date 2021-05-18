@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -40,8 +40,10 @@
  */
 #if defined(_CHIBIOS_RT_CONF_)
 #define CONTEXT_OFFSET  12
+
 #elif defined(_CHIBIOS_NIL_CONF_)
 #define CONTEXT_OFFSET  0
+
 #else
 #error "invalid chconf.h"
 #endif
@@ -63,11 +65,11 @@
                 .balign 16
 
                 .code   32
-                .global _port_switch_arm
-_port_switch_arm:
+                .global __port_switch_arm
+__port_switch_arm:
                 stmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-                str     sp, [r1, #12]
-                ldr     sp, [r0, #12]
+                str     sp, [r1, #CONTEXT_OFFSET]
+                ldr     sp, [r0, #CONTEXT_OFFSET]
                 ldmfd   sp!, {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
 /*
@@ -125,11 +127,11 @@ _irq_ret_arm:
 
                 // Context switch.
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_lock
+                bl      __dbg_check_lock
 #endif
-                bl      chSchDoReschedule
+                bl      chSchDoPreemption
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
 
                 // Re-establish the IRQ conditions again.
@@ -149,10 +151,10 @@ _irq_ret_arm:
  */
                 .balign 16
                 .code   32
-                .globl  _port_thread_start
-_port_thread_start:
+                .globl  __port_thread_start
+__port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-                bl      _dbg_check_unlock
+                bl      __dbg_check_unlock
 #endif
                 msr     CPSR_c, #MODE_SYS
                 mov     r0, r5
@@ -160,7 +162,7 @@ _port_thread_start:
                 bx      r4
                 mov     r0, #0              /* MSG_OK */
                 bl      chThdExit
-_zombies:       b       _zombies
+.zombies:       b       .zombies
 
 #endif /* !defined(__DOXYGEN__) */
 

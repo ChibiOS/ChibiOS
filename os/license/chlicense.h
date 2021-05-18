@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,6 +45,7 @@
 
 /**
  * @name    Deployment Options
+ * @{
  */
 #define CH_DEPLOY_UNLIMITED                -1
 #define CH_DEPLOY_NONE                      0
@@ -64,6 +65,7 @@
 #define CH_LICENSE_PARTNER                  7
 /** @} */
 
+#include "chversion.h"
 #include "chcustomer.h"
 #if CH_LICENSE == CH_LICENSE_PARTNER
 #include "chpartner.h"
@@ -80,6 +82,111 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Checks on chversion.h.*/
+#if !defined(__CHIBIOS__)
+  #error "__CHIBIOS__ not defined in chversion.h"
+#endif
+
+#if !defined(CH_VERSION_STABLE)
+  #error "CH_VERSION_STABLE not defined in chversion.h"
+#endif
+
+#if !defined(CH_VERSION_YEAR)
+  #error "CH_VERSION_YEAR not defined in chversion.h"
+#endif
+
+#if !defined(CH_VERSION_MONTH)
+  #error "CH_VERSION_MONTH not defined in chversion.h"
+#endif
+
+#if !defined(CH_VERSION_PATCH)
+  #error "CH_VERSION_PATCH not defined in chversion.h"
+#endif
+
+#if !defined(CH_VERSION_NICKNAME)
+  #error "CH_VERSION_NICKNAME not defined in chversion.h"
+#endif
+
+#if !defined(CH_VERSION_DATE)
+  #error "CH_VERSION_DATE not defined in chversion.h"
+#endif
+
+#if (CH_VERSION_STABLE < 0) || (CH_VERSION_STABLE > 1)
+  #error "invalid CH_VERSION_STABLE value in chversion.h"
+#endif
+
+#if (CH_VERSION_YEAR < 12) || (CH_VERSION_YEAR > 99)
+  #error "invalid CH_VERSION_YEAR value in chversion.h"
+#endif
+
+#if (CH_VERSION_MONTH < 1) || (CH_VERSION_MONTH > 12)
+  #error "invalid CH_VERSION_MONTH value in chversion.h"
+#endif
+
+#if (CH_VERSION_DATE < 201201) || (CH_VERSION_DATE > 209912)
+  #error "invalid CH_VERSION_DATE value in chversion.h"
+#endif
+
+/* Checks on chcustomer.h.*/
+#if !defined(CH_CUSTOMER_ID_STRING)
+#error "CH_CUSTOMER_ID_STRING not defined in chcustomer.h"
+#endif
+
+#if !defined(CH_CUSTOMER_ID_CODE)
+#error "CH_CUSTOMER_ID_CODE not defined in chcustomer.h"
+#endif
+
+#if !defined(CH_CUSTOMER_LICENSE_EOS_DATE)
+#error "CH_CUSTOMER_LICENSE_EOS_DATE not defined in chcustomer.h"
+#endif
+
+#if !defined(CH_CUSTOMER_LICENSE_VERSION_YEAR)
+#error "CH_CUSTOMER_LICENSE_VERSION_YEAR not defined in chcustomer.h"
+#endif
+
+#if !defined(CH_CUSTOMER_LICENSE_VERSION_MONTH)
+#error "CH_CUSTOMER_LICENSE_VERSION_MONTH not defined in chcustomer.h"
+#endif
+
+#if !defined(CH_CUSTOMER_LICENSE_VERSION_DATE)
+#error "CH_CUSTOMER_LICENSE_VERSION_DATE not defined in chcustomer.h"
+#endif
+
+#if !defined(CH_LICENSE)
+#error "CH_LICENSE not defined in chcustomer.h"
+#endif
+
+#if (CH_CUSTOMER_LICENSE_EOS_DATE < 201201) ||                              \
+    (CH_CUSTOMER_LICENSE_EOS_DATE > 209912)
+#error "invalid CH_CUSTOMER_LICENSE_EOS_DATE value in chcustomer.h"
+#endif
+
+#if (CH_CUSTOMER_LICENSE_VERSION_YEAR < 12) ||                              \
+    (CH_CUSTOMER_LICENSE_VERSION_YEAR > 99)
+#error "invalid CH_CUSTOMER_LICENSE_VERSION_YEAR value in chcustomer.h"
+#endif
+
+#if (CH_CUSTOMER_LICENSE_VERSION_MONTH < 1) ||                              \
+    (CH_CUSTOMER_LICENSE_VERSION_MONTH > 12)
+#error "invalid CH_CUSTOMER_LICENSE_VERSION_MONTH value in chcustomer.h"
+#endif
+
+#if (CH_CUSTOMER_LICENSE_VERSION_DATE < 201201) ||                          \
+    (CH_CUSTOMER_LICENSE_VERSION_DATE > 209912)
+  #error "invalid CH_CUSTOMER_LICENSE_VERSION_DATE value in chversion.h"
+#endif
+
+/* Checks on licensed versions.*/
+#if CH_VERSION_DATE > CH_CUSTOMER_LICENSE_VERSION_DATE
+#error "this ChibiOS version is newer than your license, see chcustomer.h"
+#endif
+
+/* Checks on end-of-support date.*/
+#if CH_VERSION_DATE > CH_CUSTOMER_LICENSE_EOS_DATE
+#error "this ChibiOS version is beyond your End-Of-Support date, see chcustomer.h"
+#endif
+
+/* Defaults for GPL license.*/
 #if (CH_LICENSE == CH_LICENSE_GPL) || defined(__DOXYGEN__)
 /**
  * @brief   License identification string.

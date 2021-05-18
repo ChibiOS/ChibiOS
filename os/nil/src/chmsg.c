@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -101,11 +101,79 @@ thread_t *chMsgWait(void) {
   thread_t *tp;
 
   chSysLock();
+  tp = chMsgWaitS();
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Suspends the thread and waits for an incoming message or a
+ *          timeout to occur.
+ * @post    After receiving a message the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
+ * @note    If the message is a pointer then you can assume that the data
+ *          pointed by the message is stable until you invoke @p chMsgRelease()
+ *          because the sending thread is suspended until then.
+ * @note    The reference counter of the sender thread is not increased, the
+ *          returned pointer is a temporary reference.
+ *
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              A pointer to the thread carrying the message.
+ * @retval NULL         if a timeout occurred.
+ *
+ * @api
+ */
+thread_t *chMsgWaitTimeout(sysinterval_t timeout) {
+  thread_t *tp;
+
+  chSysLock();
+  tp = chMsgWaitTimeoutS(timeout);
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Suspends the thread and waits for an incoming message or a
+ *          timeout to occur.
+ * @post    After receiving a message the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
+ * @note    If the message is a pointer then you can assume that the data
+ *          pointed by the message is stable until you invoke @p chMsgRelease()
+ *          because the sending thread is suspended until then.
+ * @note    The reference counter of the sender thread is not increased, the
+ *          returned pointer is a temporary reference.
+ *
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              A pointer to the thread carrying the message.
+ * @retval NULL         if a timeout occurred.
+ *
+ * @sclass
+ */
+thread_t *chMsgWaitTimeoutS(sysinterval_t timeout) {
+  thread_t *tp;
+
+  chDbgCheckClassS();
+
   tp = nil_find_thread(NIL_STATE_SNDMSGQ, nil.current);
   if (tp == NULL) {
-    tp = (thread_t *)chSchGoSleepTimeoutS(NIL_STATE_WTMSG, TIME_INFINITE);
+    msg_t msg = chSchGoSleepTimeoutS(NIL_STATE_WTMSG, timeout);
+    if (msg != MSG_TIMEOUT) {
+      return (thread_t *)msg;
+    }
   }
-  chSysUnlock();
 
   return tp;
 }

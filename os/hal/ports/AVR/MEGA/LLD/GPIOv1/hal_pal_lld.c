@@ -29,10 +29,13 @@
 /*==========================================================================*/
 /* Driver exported variables.                                               */
 /*==========================================================================*/
+
+#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE)
 /**
  * @brief   Event records for the 16 GPIO EXTI channels.
  */
 palevent_t _pal_events[16];
+#endif
 
 /*==========================================================================*/
 /* Driver local variables and types.                                        */

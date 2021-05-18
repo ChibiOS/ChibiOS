@@ -118,7 +118,6 @@
 #if !defined(STM32_CAN_CAN1_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 #endif
-/** @} */
 
 /**
  * @brief   CAN2 interrupt priority level setting.
@@ -126,7 +125,6 @@
 #if !defined(STM32_CAN_CAN2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_CAN_CAN2_IRQ_PRIORITY         11
 #endif
-/** @} */
 
 /**
  * @brief   CAN3 interrupt priority level setting.
@@ -452,6 +450,8 @@ extern "C" {
   void can_lld_receive(CANDriver *canp,
                        canmbx_t mailbox,
                        CANRxFrame *ctfp);
+  void can_lld_abort(CANDriver *canp,
+                     canmbx_t mailbox);
 #if CAN_USE_SLEEP_MODE
   void can_lld_sleep(CANDriver *canp);
   void can_lld_wakeup(CANDriver *canp);

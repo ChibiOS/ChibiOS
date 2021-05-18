@@ -97,13 +97,22 @@ static inline void init_pwr(void) {
   (void)pwr;
 #endif
 
-  PWR->CR1   = STM32_PWR_CR1 | 0xF0000000;
+  /* Lower C3 byte, it must be programmed at very first, then waiting for
+     power supply to stabilize.*/
+  PWR->CR3   = STM32_PWR_CR3 & 0x000000FFU;
+  while ((PWR->CSR1 & PWR_CSR1_ACTVOSRDY) == 0)
+    ; /* CHTODO timeout handling.*/
+
+  PWR->CR1   = STM32_PWR_CR1 | 0xF0000000U;
   PWR->CR2   = STM32_PWR_CR2;
-  PWR->CR3   = STM32_PWR_CR3;
+  PWR->CR3   = STM32_PWR_CR3;   /* Other bits, lower byte is not changed.   */
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
+#if !defined(STM32_ENFORCE_H7_REV_XY)
+  SYSCFG->PWRCR = STM32_ODEN;
+#endif
   while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0)
-    ;
+    ; /* CHTODO timeout handling.*/
 #if STM32_PWR_CR2 & PWR_CR2_BREN
 //  while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)
 //    ;
@@ -126,19 +135,22 @@ static inline void init_pwr(void) {
  */
 void hal_lld_init(void) {
 
+#if STM32_NO_INIT == FALSE
   /* Reset of all peripherals. AHB3 is not reset entirely because FMC could
      have been initialized in the board initialization file (board.c).
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
   rccResetAHB1(~0);
   rccResetAHB2(~0);
-  rccResetAHB3(~(RCC_AHB3RSTR_CPURST | RCC_AHB3RSTR_FMCRST));
-  rccResetAHB4(~(STM32_GPIO_EN_MASK));
+  rccResetAHB3(~(RCC_AHB3RSTR_FMCRST |
+                 0x80000000U));     /* Was RCC_AHB3RSTR_CPURST in Rev-V.*/
+  rccResetAHB4(~(RCC_APB4RSTR_SYSCFGRST | STM32_GPIO_EN_MASK));
   rccResetAPB1L(~0);
   rccResetAPB1H(~0);
   rccResetAPB2(~0);
   rccResetAPB3(~0);
   rccResetAPB4(~0);
+#endif /* STM32_NO_INIT == FALSE */
 
   /* DMA subsystems initialization.*/
 #if defined(STM32_BDMA_REQUIRED)
@@ -146,6 +158,9 @@ void hal_lld_init(void) {
 #endif
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();
+#endif
+#if defined(STM32_MDMA_REQUIRED)
+  mdmaInit();
 #endif
 
   /* IRQ subsystem initialization.*/
@@ -171,7 +186,7 @@ void hal_lld_init(void) {
 
     /* The SRAM2 bank can optionally made a non cache-able area for use by
        DMA engines.*/
-    mpuConfigureRegion(MPU_REGION_7,
+    mpuConfigureRegion(STM32_NOCACHE_MPU_REGION,
                        base,
                        MPU_RASR_ATTR_AP_RW_RW |
                        MPU_RASR_ATTR_NON_CACHEABLE |
@@ -194,6 +209,7 @@ void hal_lld_init(void) {
  * @special
  */
 void stm32_clock_init(void) {
+#if STM32_NO_INIT == FALSE
   uint32_t cfgr;
 
 #if 0
@@ -201,13 +217,16 @@ void stm32_clock_init(void) {
   (void)rcc;
 #endif
 
-#if STM32_NO_INIT == FALSE
-#if !defined(STM32_DISABLE_ERRATA_2_2_15)
+#if defined(STM32_ENFORCE_H7_REV_XY)
   /* Fix for errata 2.2.15: Reading from AXI SRAM might lead to data
      read corruption.
      AXI->TARG7_FN_MOD.*/
   *((volatile uint32_t *)(0x51000000 + 0x1108 + 0x7000)) = 0x00000001U;
 #endif
+
+  /* SYSCFG clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB4(RCC_APB4ENR_SYSCFGEN, true);
 
   /* PWR initialization.*/
   init_pwr();
@@ -230,7 +249,10 @@ void stm32_clock_init(void) {
 
   /* Registers cleared to reset values.*/
   RCC->CR      = RCC_CR_HSION;             /* CR Reset value.              */
-  RCC->ICSCR   = 0x40000000U;              /* ICSCR Reset value.           */
+  RCC->HSICFGR = 0x40000000U;              /* HSICFGR Reset value.         */
+#if !defined(STM32_ENFORCE_H7_REV_XY)
+  RCC->CSICFGR = 0x20000000U;              /* CSICFGR Reset value.         */
+#endif
   RCC->CSR     = 0x00000000U;              /* CSR reset value.             */
   RCC->PLLCFGR = 0x01FF0000U;              /* PLLCFGR reset value.         */
 
@@ -254,14 +276,22 @@ void stm32_clock_init(void) {
 #endif
   while ((RCC->CR & RCC_CR_HSERDY) == 0)
     ;                           /* Waits until HSE is stable.               */
-#endif
+#endif /* STM32_HSE_ENABLED == TRUE */
+
+  /* HSI48 activation.*/
+#if STM32_HSI48_ENABLED == TRUE
+  RCC->CR |= RCC_CR_HSI48ON;
+  while ((RCC->CR & RCC_CR_HSI48RDY) == 0)
+    ;                           /* Waits until HSI48 is stable.             */
+
+#endif /* STM32_HSI48_ENABLED == TRUE */
 
   /* CSI activation.*/
 #if STM32_CSI_ENABLED == TRUE
   RCC->CR |= RCC_CR_CSION;
   while ((RCC->CR & RCC_CR_CSIRDY) == 0)
     ;                           /* Waits until CSI is stable.               */
-#endif /* STM32_HSE_ENABLED == TRUE */
+#endif /* STM32_CSI_ENABLED == TRUE */
 
   /* LSI activation.*/
 #if STM32_LSI_ENABLED == TRUE
@@ -367,7 +397,8 @@ void stm32_clock_init(void) {
                   STM32_I2C4SEL   | STM32_LPUART1SEL;
 
   /* Flash setup.*/
-  FLASH->ACR = FLASH_ACR_WRHIGHFREQ_2 | STM32_FLASHBITS;
+  FLASH->ACR = FLASH_ACR_WRHIGHFREQ_1 | FLASH_ACR_WRHIGHFREQ_0 |
+               STM32_FLASHBITS;
   while ((FLASH->ACR & FLASH_ACR_LATENCY) !=
          (STM32_FLASHBITS & FLASH_ACR_LATENCY)) {
   }
@@ -389,16 +420,12 @@ void stm32_clock_init(void) {
                   STM32_UART4SEL  | STM32_USART3SEL | STM32_USART2SEL |
                   STM32_USART1SEL;
 #endif
-#endif /* STM32_NO_INIT */
 
   /* RAM1 2 and 3 clocks enabled.*/
   rccEnableSRAM1(true);
   rccEnableSRAM2(true);
   rccEnableSRAM3(true);
-
-  /* SYSCFG clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPB4(RCC_APB4ENR_SYSCFGEN, true);
+#endif /* STM32_NO_INIT */
 }
 
 /** @} */

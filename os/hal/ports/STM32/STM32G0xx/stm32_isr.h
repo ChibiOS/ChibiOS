@@ -33,6 +33,18 @@
  * @name    ISRs suppressed in standard drivers
  * @{
  */
+#define STM32_TIM1_SUPPRESS_ISR
+#define STM32_TIM2_SUPPRESS_ISR
+#define STM32_TIM3_SUPPRESS_ISR
+#define STM32_TIM4_SUPPRESS_ISR
+#define STM32_TIM5_SUPPRESS_ISR
+#define STM32_TIM6_SUPPRESS_ISR
+#define STM32_TIM7_SUPPRESS_ISR
+#define STM32_TIM14_SUPPRESS_ISR
+#define STM32_TIM15_SUPPRESS_ISR
+#define STM32_TIM16_SUPPRESS_ISR
+#define STM32_TIM17_SUPPRESS_ISR
+
 #define STM32_USART1_SUPPRESS_ISR
 #define STM32_USART2_SUPPRESS_ISR
 #define STM32_USART3_SUPPRESS_ISR
@@ -41,23 +53,54 @@
 /** @} */
 
 /**
- * @name    ISR names and numbers remapping
+ * @name    ISR names and numbers
  * @{
  */
 /*
+ * ADC unit.
+ */
+#define STM32_ADC1_HANDLER                  Vector70
+#define STM32_ADC1_NUMBER                   12
+
+/*
+ * DMA unit.
+ */
+#define STM32_DMA1_CH1_HANDLER              Vector64
+#define STM32_DMA1_CH23_HANDLER             Vector68
+#define STM32_DMA1_CH4567_HANDLER           Vector6C
+
+#define STM32_DMA1_CH1_NUMBER               9
+#define STM32_DMA1_CH23_NUMBER              10
+#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
+#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
+#define STM32_DMA1_CH4567_NUMBER            11
+#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
+
+#define STM32_DMA1_CH1_CMASK                0x00000001U
+#define STM32_DMA1_CH2_CMASK                0x00000006U
+#define STM32_DMA1_CH3_CMASK                0x00000006U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
+
+/*
  * EXTI unit.
  */
-#define STM32_EXTI_LINE01_HANDLER           Vector54
-#define STM32_EXTI_LINE23_HANDLER           Vector58
-#define STM32_EXTI_LINE4_15_HANDLER         Vector5C
-#define STM32_EXTI_LINE16_HANDLER           Vector44
-#define STM32_EXTI_LINE1921_HANDLER         Vector48
+#define STM32_EXTI0_1_HANDLER               Vector54
+#define STM32_EXTI2_3_HANDLER               Vector58
+#define STM32_EXTI4_15_HANDLER              Vector5C
+#define STM32_EXTI16_HANDLER                Vector44
+#define STM32_EXTI1921_HANDLER              Vector48
 
-#define STM32_EXTI_LINE01_NUMBER            5
-#define STM32_EXTI_LINE23_NUMBER            6
-#define STM32_EXTI_LINE4_15_NUMBER          7
-#define STM32_EXTI_LINE16_NUMBER            1
-#define STM32_EXTI_LINE1921_NUMBER          2
+#define STM32_EXTI0_1_NUMBER                5
+#define STM32_EXTI2_3_NUMBER                6
+#define STM32_EXTI4_15_NUMBER               7
+#define STM32_EXTI6_NUMBER                  1
+#define STM32_EXTI1921_NUMBER               2
 
 /*
  * I2C units.
@@ -74,7 +117,7 @@
 #define STM32_TIM1_UP_HANDLER               Vector74
 #define STM32_TIM1_CC_HANDLER               Vector78
 #define STM32_TIM2_HANDLER                  Vector7C
-#define STM32_TIM3_HANDLER                  VectorB4
+#define STM32_TIM3_HANDLER                  Vector80
 #define STM32_TIM6_HANDLER                  Vector84
 #define STM32_TIM7_HANDLER                  Vector88
 #define STM32_TIM14_HANDLER                 Vector8C
@@ -85,7 +128,7 @@
 #define STM32_TIM1_UP_NUMBER                13
 #define STM32_TIM1_CC_NUMBER                14
 #define STM32_TIM2_NUMBER                   15
-#define STM32_TIM3_NUMBER                   29
+#define STM32_TIM3_NUMBER                   16
 #define STM32_TIM6_NUMBER                   17
 #define STM32_TIM7_NUMBER                   18
 #define STM32_TIM14_NUMBER                  19
@@ -109,103 +152,9 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @name    Configuration options
- * @{
- */
-/**
- * @brief   EXTI0..1 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI0_1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI0_1_PRIORITY          3
-#endif
-
-/**
- * @brief   EXTI2..3 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI2_3_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI2_3_PRIORITY          3
-#endif
-
-/**
- * @brief   EXTI4..15 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI4_15_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI4_15_PRIORITY         3
-#endif
-
-/**
- * @brief   EXTI16 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI16_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI16_PRIORITY           3
-#endif
-
-/**
- * @brief   EXTI17..18 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_EXTI17_18_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_EXTI17_18_PRIORITY        3
-#endif
-
-/**
- * @brief   USART1 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_USART1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_USART1_PRIORITY           3
-#endif
-
-/**
- * @brief   USART2 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_USART2_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_USART2_PRIORITY           3
-#endif
-
-/**
- * @brief   USART3, 4 and LP1 interrupt priority level setting.
- */
-#if !defined(STM32_IRQ_USART3_4_LP1_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_IRQ_USART3_4_LP1_PRIORITY     3
-#endif
-/** @} */
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/* IRQ priority checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI0_1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI0_1_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI2_3_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI2_3_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI4_15_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI4_15_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI16_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI17_18_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_EXTI17_18_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_USART1_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART2_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_USART2_PRIORITY"
-#endif
-
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART3_4_LP1_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_USART3_4_LP1_PRIORITY"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

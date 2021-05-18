@@ -21,13 +21,13 @@
  * @file    rt_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page rt_test_sequence_004 [4] Suspend/Resume
+ * @page rt_test_sequence_004 [4] Time Stamps Functionality
  *
  * File: @ref rt_test_sequence_004.c
  *
  * <h2>Description</h2>
- * This sequence tests the ChibiOS/RT functionalities related to
- * threads suspend/resume.
+ * This sequence tests the ChibiOS/RT functionalities related to time
+ * stamps.
  *
  * <h2>Test Cases</h2>
  * - @subpage rt_test_004_001
@@ -38,80 +38,49 @@
  * Shared code.
  ****************************************************************************/
 
-static thread_reference_t tr1;
-
-static THD_FUNCTION(thread1, p) {
-
-  chSysLock();
-  chThdResumeI(&tr1, MSG_OK);
-  chSchRescheduleS();
-  chSysUnlock();
-  test_emit_token(*(char *)p);
-}
+#include "ch.h"
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
 /**
- * @page rt_test_004_001 [4.1] Suspend and Resume functionality
+ * @page rt_test_004_001 [4.1] Time Stamps functionality
  *
  * <h2>Description</h2>
- * The functionality of chThdSuspendTimeoutS() and chThdResumeI() is
- * tested.
+ * The functionality of the API @p chVTGetTimeStamp() is tested.
  *
  * <h2>Test Steps</h2>
- * - [4.1.1] The function chThdSuspendTimeoutS() is invoked, the thread
- *   is remotely resumed with message @p MSG_OK. On return the message
- *   and the state of the reference are tested.
- * - [4.1.2] The function chThdSuspendTimeoutS() is invoked, the thread
- *   is not resumed so a timeout must occur. On return the message and
- *   the state of the reference are tested.
+ * - [4.1.1] Time stamps are generated and checked for monotonicity.
  * .
  */
 
-static void rt_test_004_001_setup(void) {
-  tr1 = NULL;
-}
-
 static void rt_test_004_001_execute(void) {
-  systime_t time;
-  msg_t msg;
 
-  /* [4.1.1] The function chThdSuspendTimeoutS() is invoked, the thread
-     is remotely resumed with message @p MSG_OK. On return the message
-     and the state of the reference are tested.*/
+  /* [4.1.1] Time stamps are generated and checked for monotonicity.*/
   test_set_step(1);
   {
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-1, thread1, "A");
-    chSysLock();
-    msg = chThdSuspendTimeoutS(&tr1, TIME_INFINITE);
-    chSysUnlock();
-    test_assert(NULL == tr1, "not NULL");
-    test_assert(MSG_OK == msg,"wrong returned message");
-    test_wait_threads();
-  }
+    systime_t start, end;
+    systimestamp_t last, now;
 
-  /* [4.1.2] The function chThdSuspendTimeoutS() is invoked, the thread
-     is not resumed so a timeout must occur. On return the message and
-     the state of the reference are tested.*/
-  test_set_step(2);
-  {
-    chSysLock();
-    time = chVTGetSystemTimeX();
-    msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(1000));
-    chSysUnlock();
-    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
-                            chTimeAddX(time, TIME_MS2I(1000) + CH_CFG_ST_TIMEDELTA + 1),
-                            "out of time window");
-    test_assert(NULL == tr1, "not NULL");
-    test_assert(MSG_TIMEOUT == msg, "wrong returned message");
+    last = chVTGetTimeStamp();
+    start = test_wait_tick();
+    end = chTimeAddX(start, TIME_MS2I(1000));
+    do {
+      now = chVTGetTimeStamp();
+      test_assert(last <= now, "not monotonic");
+      last = now;
+#if defined(SIMULATOR)
+      _sim_check_for_interrupts();
+#endif
+    } while (chVTIsSystemTimeWithinX(start, end));
   }
+  test_end_step(1);
 }
 
 static const testcase_t rt_test_004_001 = {
-  "Suspend and Resume functionality",
-  rt_test_004_001_setup,
+  "Time Stamps functionality",
+  NULL,
   NULL,
   rt_test_004_001_execute
 };
@@ -129,9 +98,9 @@ const testcase_t * const rt_test_sequence_004_array[] = {
 };
 
 /**
- * @brief   Suspend/Resume.
+ * @brief   Time Stamps Functionality.
  */
 const testsequence_t rt_test_sequence_004 = {
-  "Suspend/Resume",
+  "Time Stamps Functionality",
   rt_test_sequence_004_array
 };

@@ -706,6 +706,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
                            STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C1_TX_DMA_CHANNEL) |
                            STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY);
+#if STM32_DMA_SUPPORTS_DMAMUX
+        dmaSetRequestSource(i2cp->dmarx, STM32_DMAMUX1_I2C1_RX);
+        dmaSetRequestSource(i2cp->dmatx, STM32_DMAMUX1_I2C1_TX);
+#endif
       }
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
@@ -742,6 +746,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
                            STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C2_TX_DMA_CHANNEL) |
                            STM32_DMA_CR_PL(STM32_I2C_I2C2_DMA_PRIORITY);
+#if STM32_DMA_SUPPORTS_DMAMUX
+        dmaSetRequestSource(i2cp->dmarx, STM32_DMAMUX1_I2C2_RX);
+        dmaSetRequestSource(i2cp->dmatx, STM32_DMAMUX1_I2C2_TX);
+#endif
       }
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
@@ -778,6 +786,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
                            STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C3_TX_DMA_CHANNEL) |
                            STM32_DMA_CR_PL(STM32_I2C_I2C3_DMA_PRIORITY);
+#if STM32_DMA_SUPPORTS_DMAMUX
+        dmaSetRequestSource(i2cp->dmarx, STM32_DMAMUX1_I2C3_RX);
+        dmaSetRequestSource(i2cp->dmatx, STM32_DMAMUX1_I2C3_TX);
+#endif
       }
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
@@ -814,6 +826,10 @@ void i2c_lld_start(I2CDriver *i2cp) {
                            STM32_DMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
         i2cp->txdmamode |= STM32_DMA_CR_CHSEL(I2C4_TX_DMA_CHANNEL) |
                            STM32_DMA_CR_PL(STM32_I2C_I2C4_DMA_PRIORITY);
+#if STM32_DMA_SUPPORTS_DMAMUX
+        dmaSetRequestSource(i2cp->dmarx, STM32_DMAMUX1_I2C4_RX);
+        dmaSetRequestSource(i2cp->dmatx, STM32_DMAMUX1_I2C4_TX);
+#endif
       }
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
@@ -1024,9 +1040,12 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
 
   /* In case of a software timeout a STOP is sent as an extreme attempt
-     to release the bus.*/
+     to release the bus and DMA is forcibly disabled.*/
   if (msg == MSG_TIMEOUT) {
     dp->CR2 |= I2C_CR2_STOP;
+#if STM32_I2C_USE_DMA == TRUE
+    dmaStreamDisable(i2cp->dmarx);
+#endif
   }
 
   return msg;
@@ -1133,9 +1152,13 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   msg = osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
 
   /* In case of a software timeout a STOP is sent as an extreme attempt
-     to release the bus.*/
+     to release the bus and DMA is forcibly disabled.*/
   if (msg == MSG_TIMEOUT) {
     dp->CR2 |= I2C_CR2_STOP;
+#if STM32_I2C_USE_DMA == TRUE
+    dmaStreamDisable(i2cp->dmarx);
+    dmaStreamDisable(i2cp->dmatx);
+#endif
   }
 
   return msg;

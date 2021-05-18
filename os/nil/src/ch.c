@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,7 +38,7 @@
 /**
  * @brief   System data structures.
  */
-nil_system_t nil;
+os_instance_t nil;
 
 /*===========================================================================*/
 /* Module local variables.                                                   */
@@ -88,6 +88,7 @@ thread_t *nil_find_thread(tstate_t state, void *p) {
  * @param[in] cnt       number of threads to be readied as a negative number,
  *                      non negative numbers are ignored
  * @param[in] msg       the wakeup message
+ * @return              The number of readied threads.
  *
  * @notapi
  */
@@ -116,7 +117,7 @@ cnt_t nil_ready_all(void *p, cnt_t cnt, msg_t msg) {
  *
  * @notapi
  */
-void _dbg_check_disable(void) {
+void __dbg_check_disable(void) {
 
   if ((nil.isr_cnt != (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
     chSysHalt("SV#1");
@@ -128,7 +129,7 @@ void _dbg_check_disable(void) {
  *
  * @notapi
  */
-void _dbg_check_suspend(void) {
+void __dbg_check_suspend(void) {
 
   if ((nil.isr_cnt != (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
     chSysHalt("SV#2");
@@ -140,7 +141,7 @@ void _dbg_check_suspend(void) {
  *
  * @notapi
  */
-void _dbg_check_enable(void) {
+void __dbg_check_enable(void) {
 
   if ((nil.isr_cnt != (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
     chSysHalt("SV#3");
@@ -152,7 +153,7 @@ void _dbg_check_enable(void) {
  *
  * @notapi
  */
-void _dbg_check_lock(void) {
+void __dbg_check_lock(void) {
 
   if ((nil.isr_cnt != (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
     chSysHalt("SV#4");
@@ -165,7 +166,7 @@ void _dbg_check_lock(void) {
  *
  * @notapi
  */
-void _dbg_check_unlock(void) {
+void __dbg_check_unlock(void) {
 
   if ((nil.isr_cnt != (cnt_t)0) || (nil.lock_cnt <= (cnt_t)0)) {
     chSysHalt("SV#5");
@@ -178,7 +179,7 @@ void _dbg_check_unlock(void) {
  *
  * @notapi
  */
-void _dbg_check_lock_from_isr(void) {
+void __dbg_check_lock_from_isr(void) {
 
   if ((nil.isr_cnt <= (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
     chSysHalt("SV#6");
@@ -191,7 +192,7 @@ void _dbg_check_lock_from_isr(void) {
  *
  * @notapi
  */
-void _dbg_check_unlock_from_isr(void) {
+void __dbg_check_unlock_from_isr(void) {
 
   if ((nil.isr_cnt <= (cnt_t)0) || (nil.lock_cnt <= (cnt_t)0)) {
     chSysHalt("SV#7");
@@ -204,7 +205,7 @@ void _dbg_check_unlock_from_isr(void) {
  *
  * @notapi
  */
-void _dbg_check_enter_isr(void) {
+void __dbg_check_enter_isr(void) {
 
   port_lock_from_isr();
   if ((nil.isr_cnt < (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
@@ -219,7 +220,7 @@ void _dbg_check_enter_isr(void) {
  *
  * @notapi
  */
-void _dbg_check_leave_isr(void) {
+void __dbg_check_leave_isr(void) {
 
   port_lock_from_isr();
   if ((nil.isr_cnt <= (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
@@ -272,13 +273,13 @@ void chDbgCheckClassS(void) {
  * @special
  */
 void chSysInit(void) {
-  const thread_config_t *tcp;
+  const thread_descriptor_t *tdp;
 
   /* Optional library modules.*/
-  _oslib_init();
+  __oslib_init();
 
   /* Architecture layer initialization.*/
-  port_init();
+  port_init(&nil);
 
   /* System initialization hook.*/
   CH_CFG_SYSTEM_INIT_HOOK();
@@ -302,11 +303,11 @@ void chSysInit(void) {
 
 #if CH_CFG_AUTOSTART_THREADS == TRUE
   /* Iterates through the list of threads to be auto-started.*/
-  tcp = nil_thd_configs;
+  tdp = nil_thd_configs;
   do {
-    chThdCreateI(tcp);
-    tcp++;
-  } while (tcp->funcp != NULL);
+    (void) chThdCreateI(tdp);
+    tdp++;
+  } while (tdp->funcp != NULL);
 #endif
 
   /* Starting the dance.*/
@@ -369,10 +370,13 @@ void chSysTimerHandlerI(void) {
         /* Timeout on queues/semaphores requires a special handling because
            the counter must be incremented.*/
         /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
+#if CH_CFG_USE_SEMAPHORES == TRUE
         if (NIL_THD_IS_WTQUEUE(tp)) {
           tp->u1.semp->cnt++;
         }
-        else if (NIL_THD_IS_SUSPENDED(tp)) {
+        else
+#endif
+        if (NIL_THD_IS_SUSPENDED(tp)) {
           *tp->u1.trp = NULL;
         }
         /*lint -restore*/
@@ -527,8 +531,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  * @details This function verifies if the current realtime counter value
  *          lies within the specified range or not. The test takes care
  *          of the realtime counter wrapping to zero on overflow.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because a
+ *          null time range is specified.
  * @note    This function is only available if the port layer supports the
  *          option @p PORT_SUPPORTS_RT.
  *
@@ -542,7 +546,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  */
 bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-  return (bool)((cnt - start) < (end - start));
+  return (bool)(((rtcnt_t)cnt - (rtcnt_t)start) <
+                ((rtcnt_t)end - (rtcnt_t)start));
 }
 
 /**
@@ -614,7 +619,7 @@ bool chSchIsPreemptionRequired(void) {
  *
  * @special
  */
-void chSchDoReschedule(void) {
+void chSchDoPreemption(void) {
   thread_t *otp = nil.current;
 
   nil.current = nil.next;
@@ -634,7 +639,7 @@ void chSchRescheduleS(void) {
   chDbgCheckClassS();
 
   if (chSchIsRescRequiredI()) {
-    chSchDoReschedule();
+    chSchDoPreemption();
   }
 }
 
@@ -723,31 +728,50 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
 }
 
 /**
+ * @brief   Checks if the specified time is within the specified time range.
+ * @note    When start==end then the function returns always false because the
+ *          time window has zero size.
+ *
+ * @param[in] time      the time to be verified
+ * @param[in] start     the start of the time window (inclusive)
+ * @param[in] end       the end of the time window (non inclusive)
+ * @retval true         current time within the specified time window.
+ * @retval false        current time not within the specified time window.
+ *
+ * @xclass
+ */
+bool chTimeIsInRangeX(systime_t time, systime_t start, systime_t end) {
+
+  return (bool)((systime_t)((systime_t)(time) - (systime_t)(start)) <
+                (systime_t)((systime_t)(end) - (systime_t)(start)));
+}
+
+/**
  * @brief   Creates a new thread into a static memory area.
  * @details The new thread is initialized and make ready to execute.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
- * @param[out] tcp      pointer to the thread configuration structure
+ * @param[out] tdp      pointer to the thread descriptor structure
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread.
  *
  * @iclass
  */
-thread_t *chThdCreateI(const thread_config_t *tcp) {
+thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
   thread_t *tp;
 
-  chDbgCheck((tcp->prio < CH_CFG_MAX_THREADS) &&
-             (tcp->wbase != NULL) &&
-             MEM_IS_ALIGNED(tcp->wbase, PORT_WORKING_AREA_ALIGN) &&
-             (tcp->wend > tcp->wbase) &&
-             MEM_IS_ALIGNED(tcp->wbase, PORT_STACK_ALIGN) &&
-             (tcp->funcp != NULL));
+  chDbgCheck((tdp->prio < (tprio_t)CH_CFG_MAX_THREADS) &&
+             (tdp->wbase != NULL) &&
+             MEM_IS_ALIGNED(tdp->wbase, PORT_WORKING_AREA_ALIGN) &&
+             (tdp->wend > tdp->wbase) &&
+             MEM_IS_ALIGNED(tdp->wbase, PORT_STACK_ALIGN) &&
+             (tdp->funcp != NULL));
 
   chDbgCheckClassI();
 
   /* Pointer to the thread slot to be used.*/
-  tp = &nil.threads[tcp->prio];
+  tp = &nil.threads[tdp->prio];
   chDbgAssert(NIL_THD_IS_WTSTART(tp) || NIL_THD_IS_FINAL(tp),
               "priority slot taken");
 
@@ -755,11 +779,11 @@ thread_t *chThdCreateI(const thread_config_t *tcp) {
   tp->epmask = (eventmask_t)0;
 #endif
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
-  tp->wabase = (stkalign_t *)tcp->wbase;
+  tp->wabase = (stkalign_t *)tdp->wbase;
 #endif
 
   /* Port dependent thread initialization.*/
-  PORT_SETUP_CONTEXT(tp, tcp->wbase, tcp->wend, tcp->funcp, tcp->arg);
+  PORT_SETUP_CONTEXT(tp, tdp->wbase, tdp->wend, tdp->funcp, tdp->arg);
 
   /* Initialization hook.*/
   CH_CFG_THREAD_EXT_INIT_HOOK(tp);
@@ -774,17 +798,17 @@ thread_t *chThdCreateI(const thread_config_t *tcp) {
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
- * @param[out] tcp      pointer to the thread configuration structure
+ * @param[out] tdp      pointer to the thread descriptor structure
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread.
  *
  * @api
  */
-thread_t *chThdCreate(const thread_config_t *tcp) {
+thread_t *chThdCreate(const thread_descriptor_t *tdp) {
   thread_t *tp;
 
   chSysLock();
-  tp = chThdCreateI(tcp);
+  tp = chThdCreateI(tdp);
   chSchRescheduleS();
   chSysUnlock();
 
@@ -830,7 +854,8 @@ void chThdExit(msg_t msg) {
 #endif
 
   /* Going into final state with exit message stored.*/
-  chSchGoSleepTimeoutS(NIL_STATE_FINAL, msg);
+  nil.current->u1.msg = msg;
+  (void) chSchGoSleepTimeoutS(NIL_STATE_FINAL, TIME_INFINITE);
 
   /* The thread never returns here.*/
   chDbgAssert(false, "zombies apocalypse");

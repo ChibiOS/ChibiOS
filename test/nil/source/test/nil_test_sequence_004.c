@@ -21,40 +21,59 @@
  * @file    nil_test_sequence_004.c
  * @brief   Test Sequence 004 code.
  *
- * @page nil_test_sequence_004 [4] Suspend/Resume
+ * @page nil_test_sequence_004 [4] Semaphores
  *
  * File: @ref nil_test_sequence_004.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/NIL functionalities related to
- * threads suspend/resume.
+ * counter semaphores.
+ *
+ * <h2>Conditions</h2>
+ * This sequence is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_SEMAPHORES
+ * .
  *
  * <h2>Test Cases</h2>
  * - @subpage nil_test_004_001
+ * - @subpage nil_test_004_002
+ * - @subpage nil_test_004_003
  * .
  */
+
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
+#include "ch.h"
+
 static thread_t *tp1;
 static bool terminate;
-static thread_reference_t tr1;
+static semaphore_t sem1, sem2;
 
 /*
- * Resumer thread.
+ * Signaler thread.
  */
-static THD_FUNCTION(resumer, arg) {
+static THD_FUNCTION(signaler, arg) {
 
   (void)arg;
 
   /* Initializing global resources.*/
   terminate = false;
-  tr1 = NULL;
+  chSemObjectInit(&sem1, 0);
+  chSemObjectInit(&sem2, 0);
 
   while (!terminate) {
-    chThdResume(&tr1, MSG_OK);
+    chSysLock();
+    if (chSemGetCounterI(&sem1) < 0)
+      chSemSignalI(&sem1);
+    chSemResetI(&sem2, 0);
+    chSchRescheduleS();
+    chSysUnlock();
+
     chThdSleepMilliseconds(250);
   }
 }
@@ -64,79 +83,204 @@ static THD_FUNCTION(resumer, arg) {
  ****************************************************************************/
 
 /**
- * @page nil_test_004_001 [4.1] Suspend and Resume functionality
+ * @page nil_test_004_001 [4.1] Semaphore primitives, no state change
  *
  * <h2>Description</h2>
- * The functionality of chThdSuspendTimeoutS() and chThdResumeI() is
- * tested.
+ * Wait, Signal and Reset primitives are tested. The testing thread
+ * does not trigger a state change.
  *
  * <h2>Test Steps</h2>
- * - [4.1.1] The function chThdSuspendTimeoutS() is invoked, the thread
- *   is remotely resumed with message @p MSG_OK. On return the message
- *   and the state of the reference are tested.
- * - [4.1.2] The function chThdSuspendTimeoutS() is invoked, the thread
- *   is not resumed so a timeout must occur. On return the message and
- *   the state of the reference are tested.
+ * - [4.1.1] The function chSemWait() is invoked, after return the
+ *   counter and the returned message are tested.
+ * - [4.1.2] The function chSemSignal() is invoked, after return the
+ *   counter is tested.
+ * - [4.1.3] The function chSemReset() is invoked, after return the
+ *   counter is tested.
  * .
  */
 
 static void nil_test_004_001_setup(void) {
-  thread_config_t tc = {
-    chThdGetPriorityX() - 1,
-    "resumer",
-    wa_common,
-    THD_WORKING_AREA_END(wa_common),
-    resumer,
-    NULL
-  };
-  tp1 = chThdCreate(&tc);
+  chSemObjectInit(&sem1, 1);
 }
 
 static void nil_test_004_001_teardown(void) {
+  chSemReset(&sem1, 0);
+}
+
+static void nil_test_004_001_execute(void) {
+
+  /* [4.1.1] The function chSemWait() is invoked, after return the
+     counter and the returned message are tested.*/
+  test_set_step(1);
+  {
+    msg_t msg;
+
+    msg = chSemWait(&sem1);
+    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+    test_assert(MSG_OK == msg, "wrong returned message");
+  }
+  test_end_step(1);
+
+  /* [4.1.2] The function chSemSignal() is invoked, after return the
+     counter is tested.*/
+  test_set_step(2);
+  {
+    chSemSignal(&sem1);
+    test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");
+  }
+  test_end_step(2);
+
+  /* [4.1.3] The function chSemReset() is invoked, after return the
+     counter is tested.*/
+  test_set_step(3);
+  {
+    chSemReset(&sem1, 2);
+    test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");
+  }
+  test_end_step(3);
+}
+
+static const testcase_t nil_test_004_001 = {
+  "Semaphore primitives, no state change",
+  nil_test_004_001_setup,
+  nil_test_004_001_teardown,
+  nil_test_004_001_execute
+};
+
+/**
+ * @page nil_test_004_002 [4.2] Semaphore primitives, with state change
+ *
+ * <h2>Description</h2>
+ * Wait, Signal and Reset primitives are tested. The testing thread
+ * triggers a state change.
+ *
+ * <h2>Test Steps</h2>
+ * - [4.2.1] The function chSemWait() is invoked, after return the
+ *   counter and the returned message are tested. The semaphore is
+ *   signaled by another thread.
+ * - [4.2.2] The function chSemWait() is invoked, after return the
+ *   counter and the returned message are tested. The semaphore is
+ *   reset by another thread.
+ * .
+ */
+
+static void nil_test_004_002_setup(void) {
+  thread_descriptor_t td = {
+    .name  = "signaler",
+    .wbase = wa_common,
+    .wend  = THD_WORKING_AREA_END(wa_common),
+    .prio  = chThdGetPriorityX() - 1,
+    .funcp = signaler,
+    .arg   = NULL
+  };
+  tp1 = chThdCreate(&td);
+}
+
+static void nil_test_004_002_teardown(void) {
   terminate = true;
   chThdWait(tp1);
 }
 
-static void nil_test_004_001_execute(void) {
+static void nil_test_004_002_execute(void) {
+
+  /* [4.2.1] The function chSemWait() is invoked, after return the
+     counter and the returned message are tested. The semaphore is
+     signaled by another thread.*/
+  test_set_step(1);
+  {
+    msg_t msg;
+
+    msg = chSemWait(&sem1);
+    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+    test_assert(MSG_OK == msg, "wrong returned message");
+  }
+  test_end_step(1);
+
+  /* [4.2.2] The function chSemWait() is invoked, after return the
+     counter and the returned message are tested. The semaphore is
+     reset by another thread.*/
+  test_set_step(2);
+  {
+    msg_t msg;
+
+    msg = chSemWait(&sem2);
+    test_assert_lock(chSemGetCounterI(&sem2) == 0,"wrong counter value");
+    test_assert(MSG_RESET == msg, "wrong returned message");
+  }
+  test_end_step(2);
+}
+
+static const testcase_t nil_test_004_002 = {
+  "Semaphore primitives, with state change",
+  nil_test_004_002_setup,
+  nil_test_004_002_teardown,
+  nil_test_004_002_execute
+};
+
+/**
+ * @page nil_test_004_003 [4.3] Semaphores timeout
+ *
+ * <h2>Description</h2>
+ * Timeout on semaphores is tested.
+ *
+ * <h2>Test Steps</h2>
+ * - [4.3.1] The function chSemWaitTimeout() is invoked a first time,
+ *   after return the system time, the counter and the returned message
+ *   are tested.
+ * - [4.3.2] The function chSemWaitTimeout() is invoked again, after
+ *   return the system time, the counter and the returned message are
+ *   tested.
+ * .
+ */
+
+static void nil_test_004_003_setup(void) {
+  chSemObjectInit(&sem1, 0);
+}
+
+static void nil_test_004_003_teardown(void) {
+  chSemReset(&sem1, 0);
+}
+
+static void nil_test_004_003_execute(void) {
   systime_t time;
   msg_t msg;
 
-  /* [4.1.1] The function chThdSuspendTimeoutS() is invoked, the thread
-     is remotely resumed with message @p MSG_OK. On return the message
-     and the state of the reference are tested.*/
+  /* [4.3.1] The function chSemWaitTimeout() is invoked a first time,
+     after return the system time, the counter and the returned message
+     are tested.*/
   test_set_step(1);
   {
-    chSysLock();
-    msg = chThdSuspendTimeoutS(&tr1, TIME_INFINITE);
-    chSysUnlock();
-    test_assert(NULL == tr1, "not NULL");
-    test_assert(MSG_OK == msg,"wrong returned message");
-  }
-
-  /* [4.1.2] The function chThdSuspendTimeoutS() is invoked, the thread
-     is not resumed so a timeout must occur. On return the message and
-     the state of the reference are tested.*/
-  test_set_step(2);
-  {
-    thread_reference_t tr = NULL;
-
-    chSysLock();
     time = chVTGetSystemTimeX();
-    msg = chThdSuspendTimeoutS(&tr, TIME_MS2I(1000));
-    chSysUnlock();
+    msg = chSemWaitTimeout(&sem1, TIME_MS2I(1000));
     test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
                             chTimeAddX(time, TIME_MS2I(1000) + 1),
                             "out of time window");
-    test_assert(NULL == tr, "not NULL");
-    test_assert(MSG_TIMEOUT == msg, "wrong returned message");
+    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+    test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
   }
+  test_end_step(1);
+
+  /* [4.3.2] The function chSemWaitTimeout() is invoked again, after
+     return the system time, the counter and the returned message are
+     tested.*/
+  test_set_step(2);
+  {
+    time = chVTGetSystemTimeX();
+    msg = chSemWaitTimeout(&sem1, TIME_MS2I(1000));
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
+                            chTimeAddX(time, TIME_MS2I(1000) + 1),
+                            "out of time window");
+    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
+    test_assert(MSG_TIMEOUT == msg, "wrong timeout message");
+  }
+  test_end_step(2);
 }
 
-static const testcase_t nil_test_004_001 = {
-  "Suspend and Resume functionality",
-  nil_test_004_001_setup,
-  nil_test_004_001_teardown,
-  nil_test_004_001_execute
+static const testcase_t nil_test_004_003 = {
+  "Semaphores timeout",
+  nil_test_004_003_setup,
+  nil_test_004_003_teardown,
+  nil_test_004_003_execute
 };
 
 /****************************************************************************
@@ -148,13 +292,17 @@ static const testcase_t nil_test_004_001 = {
  */
 const testcase_t * const nil_test_sequence_004_array[] = {
   &nil_test_004_001,
+  &nil_test_004_002,
+  &nil_test_004_003,
   NULL
 };
 
 /**
- * @brief   Suspend/Resume.
+ * @brief   Semaphores.
  */
 const testsequence_t nil_test_sequence_004 = {
-  "Suspend/Resume",
+  "Semaphores",
   nil_test_sequence_004_array
 };
+
+#endif /* CH_CFG_USE_SEMAPHORES */

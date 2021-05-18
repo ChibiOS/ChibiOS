@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -60,7 +60,7 @@
  */
 #define osFeature_MainThread        1       
 #define osFeature_Pool              1
-#define osFeature_MailQ             0
+#define osFeature_MailQ             1
 #define osFeature_MessageQ          1
 #define osFeature_Signals           24
 #define osFeature_Semaphore         ((1U << 31) - 1U)
@@ -121,6 +121,10 @@
 
 #if !CH_CFG_USE_SEMAPHORES
 #error "CMSIS RTOS requires CH_CFG_USE_SEMAPHORES"
+#endif
+
+#if !CH_CFG_USE_OBJ_FIFOS
+#error "CMSIS RTOS requires CH_CFG_USE_OBJ_FIFOS"
 #endif
 
 #if !CH_CFG_USE_DYNAMIC
@@ -218,7 +222,12 @@ typedef memory_pool_t *osPoolId;
 /**
  * @brief   Type of pointer to message queue control block.
  */
-typedef struct mailbox *osMessageQId;
+typedef mailbox_t *osMessageQId;
+
+/**
+ * @brief   Type of pointer to mail queue control block.
+ */
+typedef objects_fifo_t *osMailQId;
 
 /**
  * @brief   Type of an event.
@@ -231,7 +240,7 @@ typedef struct {
     int32_t                 signals;
   } value;
   union {
-/*    osMailQId               mail_id;*/
+    osMailQId               mail_id;
     osMessageQId            message_id;
   } def;
 } osEvent;
@@ -286,6 +295,17 @@ typedef struct os_messageQ_def {
   mailbox_t                 *mailbox;
   void                      *items;
 } osMessageQDef_t;
+
+/**
+ * @brief   Type of a mail queue definition block.
+ */
+typedef struct os_mailQ_def {
+  uint32_t                  queue_sz;
+  uint32_t                  item_sz;
+  objects_fifo_t            *fifo;
+  msg_t                     *msgbuf;
+  void                      *objbuf;
+} osMailQDef_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -403,7 +423,7 @@ static mailbox_t os_messageQ_obj_##name;                                    \
 const osMessageQDef_t os_messageQ_def_##name = {                            \
   (queue_sz),                                                               \
   sizeof (type),                                                            \
-  (void *)&os_messageQ_obj_##name,                                          \
+  (mailbox_t*)&os_messageQ_obj_##name,                                      \
   (void *)&os_messageQ_buf_##name[0]                                        \
 }
 #endif
@@ -412,6 +432,31 @@ const osMessageQDef_t os_messageQ_def_##name = {                            \
  * @brief   Access a Message Queue definition.
  */
 #define osMessageQ(name) &os_messageQ_def_##name
+
+/**
+ * @brief   Define a Mail Queue.
+ */
+#if defined(osObjectsExternal)
+#define osMailQDef(name, queue_sz, type)                \
+  extern const osMailQDef_t os_mailQ_def_##name         
+#else
+#define osMailQDef(name, queue_sz, type)                \
+  static msg_t os_mailQ_mb_buf_##name[queue_sz];        \
+  static type os_mailQ_pool_buf_##name[queue_sz];       \
+  static objects_fifo_t os_mailQ_fifo_##name;           \
+  const osMailQDef_t os_mailQ_def_##name = {            \
+    (queue_sz),                                         \
+    sizeof (type),                                      \
+    &os_mailQ_fifo_##name,                              \
+    (msg_t*)&os_mailQ_mb_buf_##name[0],                 \
+    (void *)&os_mailQ_pool_buf_##name[0]                \
+  }
+#endif
+
+/**
+ * @brief   Access a Mail Queue definition.
+ */
+#define osMailQ(name) &os_mailQ_def_##name
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -457,6 +502,13 @@ extern "C" {
                         uint32_t millisec);
   osEvent osMessageGet(osMessageQId queue_id,
                        uint32_t millisec);
+  osMailQId osMailCreate(const osMailQDef_t *mail_def,
+                         osThreadId thread_id);
+  void *osMailAlloc(osMailQId queue_id, uint32_t millisec);
+  void *osMailCAlloc(osMailQId queue_id, uint32_t millisec);
+  osStatus osMailPut(osMailQId queue_id, void *mail);
+  osEvent osMailGet(osMailQId queue_id, uint32_t millisec);
+  osStatus osMailFree(osMailQId queue_id, void *mail);
 #ifdef __cplusplus
 }
 #endif
@@ -504,7 +556,7 @@ static inline osStatus osThreadYield(void) {
  */
 static inline osPriority osThreadGetPriority(osThreadId thread_id) {
 
-  return (osPriority)(NORMALPRIO - thread_id->prio);
+  return (osPriority)(NORMALPRIO - thread_id->hdr.pqueue.prio);
 }
 
 /**

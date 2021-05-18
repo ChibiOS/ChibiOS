@@ -38,7 +38,7 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-#if !defined(_CHIBIOS_NIL_) || defined(__DOXYGEN__)
+#if !defined(__CHIBIOS_NIL__) || defined(__DOXYGEN__)
 /**
  * @brief   Shell termination event source.
  */

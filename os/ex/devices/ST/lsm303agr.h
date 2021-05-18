@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016..2018 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016..2019 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -465,6 +465,7 @@ typedef enum {
   LSM303AGR_ACC_END_LITTLE = 0x00, /**< Little Endian                      */
   LSM303AGR_ACC_END_BIG = 0x40     /**< Big Endian                         */
 } lsm303agr_acc_end_t;
+/** @} */
 
 /**
  * @name    LSM303AGR compass subsystem data structures and types.
@@ -496,6 +497,7 @@ typedef enum {
   LSM303AGR_COMP_LPOW_DIS = 0x00,   /**< High Resolution Mode               */
   LSM303AGR_COMP_LPOW_EN = 0x10     /**< Low Power Mode                     */
 } lsm303agr_comp_lpow_t;
+/** @} */
 
 /**
  * @name    LSM303AGR main system data structures and types.

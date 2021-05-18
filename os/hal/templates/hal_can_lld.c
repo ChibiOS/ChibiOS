@@ -209,6 +209,21 @@ void can_lld_receive(CANDriver *canp,
 
 }
 
+/**
+ * @brief   Tries to abort an ongoing transmission.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number
+ *
+ * @notapi
+ */
+void can_lld_abort(CANDriver *canp,
+                   canmbx_t mailbox) {
+
+  (void)canp;
+  (void)mailbox;
+}
+
 #if (CAN_USE_SLEEP_MODE == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Enters the sleep mode.

@@ -51,4 +51,5 @@
 			<resource resourceType="PROJECT" workspacePath="/RT-STM32L476RG-NUCLEO"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

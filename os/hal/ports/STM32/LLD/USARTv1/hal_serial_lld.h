@@ -112,6 +112,24 @@
 #endif
 
 /**
+ * @brief   UART9 driver enable switch.
+ * @details If set to @p TRUE the support for UART9 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SERIAL_USE_UART9) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USE_UART9              FALSE
+#endif
+
+/**
+ * @brief   UART10 driver enable switch.
+ * @details If set to @p TRUE the support for UART10 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SERIAL_USE_UART10) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USE_UART10             FALSE
+#endif
+
+/**
  * @brief   USART1 interrupt priority level setting.
  */
 #if !defined(STM32_SERIAL_USART1_PRIORITY) || defined(__DOXYGEN__)
@@ -166,6 +184,20 @@
 #if !defined(STM32_SERIAL_UART8_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SERIAL_UART8_PRIORITY         12
 #endif
+
+/**
+ * @brief   UART9 interrupt priority level setting.
+ */
+#if !defined(STM32_SERIAL_UART9_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SERIAL_UART9_PRIORITY         12
+#endif
+
+/**
+ * @brief   UART10 interrupt priority level setting.
+ */
+#if !defined(STM32_SERIAL_UART10_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SERIAL_UART10_PRIORITY        12
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -204,10 +236,19 @@
 #error "UART8 not present in the selected device"
 #endif
 
+#if STM32_SERIAL_USE_UART9 && !STM32_HAS_UART9
+#error "UART9 not present in the selected device"
+#endif
+
+#if STM32_SERIAL_USE_UART10 && !STM32_HAS_UART10
+#error "UART10 not present in the selected device"
+#endif
+
 #if !STM32_SERIAL_USE_USART1 && !STM32_SERIAL_USE_USART2 &&                 \
     !STM32_SERIAL_USE_USART3 && !STM32_SERIAL_USE_UART4  &&                 \
     !STM32_SERIAL_USE_UART5  && !STM32_SERIAL_USE_USART6 &&                 \
-    !STM32_SERIAL_USE_UART7  && !STM32_SERIAL_USE_UART8
+    !STM32_SERIAL_USE_UART7  && !STM32_SERIAL_USE_UART8  &&                 \
+    !STM32_SERIAL_USE_UART9  && !STM32_SERIAL_USE_UART10
 #error "SERIAL driver activated but no USART/UART peripheral assigned"
 #endif
 
@@ -249,6 +290,97 @@
 #if STM32_SERIAL_USE_UART8 &&                                               \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_UART8_PRIORITY)
 #error "Invalid IRQ priority assigned to UART8"
+#endif
+
+#if STM32_SERIAL_USE_UART9 &&                                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_UART9_PRIORITY)
+#error "Invalid IRQ priority assigned to UART9"
+#endif
+
+#if STM32_SERIAL_USE_UART10 &&                                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_UART10_PRIORITY)
+#error "Invalid IRQ priority assigned to UART10"
+#endif
+
+/* Checks on allocation of USARTx units.*/
+#if STM32_SERIAL_USE_USART1
+#if defined(STM32_USART1_IS_USED)
+#error "SD1 requires USART1 but it is already used"
+#else
+#define STM32_USART1_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART2
+#if defined(STM32_USART2_IS_USED)
+#error "SD2 requires USART2 but it is already used"
+#else
+#define STM32_USART2_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART3
+#if defined(STM32_USART3_IS_USED)
+#error "SD3 requires USART3 but it is already used"
+#else
+#define STM32_USART3_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART4
+#if defined(STM32_UART4_IS_USED)
+#error "SD4 requires UART4 but it is already used"
+#else
+#define STM32_UART4_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART5
+#if defined(STM32_UART5_IS_USED)
+#error "SD5 requires UART5 but it is already used"
+#else
+#define STM32_UART5_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART6
+#if defined(STM32_USART6_IS_USED)
+#error "SD6 requires USART6 but it is already used"
+#else
+#define STM32_USART6_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART7
+#if defined(STM32_UART7_IS_USED)
+#error "SD7 requires UART7 but it is already used"
+#else
+#define STM32_UART7_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART8
+#if defined(STM32_UART8_IS_USED)
+#error "SD8 requires UART8 but it is already used"
+#else
+#define STM32_UART8_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART9
+#if defined(STM32_UART9_IS_USED)
+#error "SD9 requires UART9 but it is already used"
+#else
+#define STM32_UART9_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_UART10
+#if defined(STM32_UART10_IS_USED)
+#error "SD10 requires UART10 but it is already used"
+#else
+#define STM32_UART10_IS_USED
+#endif
 #endif
 
 /*===========================================================================*/
@@ -301,6 +433,8 @@ typedef struct {
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the USART registers block.*/                                \
   USART_TypeDef             *usart;                                         \
+  /* Clock frequency for the associated USART/UART.*/                       \
+  uint32_t                  clock;                                          \
   /* Mask to be applied on received frames.*/                               \
   uint8_t                   rxmask;
 
@@ -344,6 +478,12 @@ extern SerialDriver SD7;
 #if STM32_SERIAL_USE_UART8 && !defined(__DOXYGEN__)
 extern SerialDriver SD8;
 #endif
+#if STM32_SERIAL_USE_UART9 && !defined(__DOXYGEN__)
+extern SerialDriver SD9;
+#endif
+#if STM32_SERIAL_USE_UART10 && !defined(__DOXYGEN__)
+extern SerialDriver SD10;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -351,6 +491,7 @@ extern "C" {
   void sd_lld_init(void);
   void sd_lld_start(SerialDriver *sdp, const SerialConfig *config);
   void sd_lld_stop(SerialDriver *sdp);
+  void sd_lld_serve_interrupt(SerialDriver *sdp);
 #ifdef __cplusplus
 }
 #endif

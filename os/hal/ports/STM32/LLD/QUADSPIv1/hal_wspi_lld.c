@@ -94,7 +94,18 @@ static void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
      operation. Race condition hidden here.*/
   while (dmaStreamGetTransactionSize(wspip->dma) > 0U)
     ;
-  dmaStreamDisable(wspip->dma);
+
+  /* Clearing DMA interrupts here because the DMA ISR is not called on
+     transfer complete.*/
+  dmaStreamClearInterrupt(wspip->dma);
+
+  /* Handling of errata: Extra data written in the FIFO at the end of a
+     read transfer.*/
+  if (wspip->state == WSPI_RECEIVE) {
+    while ((wspip->qspi->SR & QUADSPI_SR_BUSY) != 0U) {
+      (void) wspip->qspi->DR;
+    }
+  }
 }
 
 /*===========================================================================*/
@@ -170,6 +181,9 @@ void wspi_lld_start(WSPIDriver *wspip) {
                                    (void *)wspip);
       osalDbgAssert(wspip->dma != NULL, "unable to allocate stream");
       rccEnableQUADSPI1(true);
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_QUADSPI);
+#endif
     }
 #endif
 

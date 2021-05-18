@@ -94,9 +94,15 @@
 #define STM32_IRQ_EXTI16_PRIORITY           ${doc.STM32_IRQ_EXTI16_PRIORITY!"3"}
 #define STM32_IRQ_EXTI17_20_PRIORITY        ${doc.STM32_IRQ_EXTI17_20_PRIORITY!"3"}
 #define STM32_IRQ_EXTI21_22_PRIORITY        ${doc.STM32_IRQ_EXTI21_22_PRIORITY!"3"}
+
 #define STM32_IRQ_USART1_PRIORITY           ${doc.STM32_IRQ_USART1_PRIORITY!"3"}
 #define STM32_IRQ_USART2_PRIORITY           ${doc.STM32_IRQ_USART2_PRIORITY!"3"}
 #define STM32_IRQ_LPUART1_PRIORITY          ${doc.STM32_IRQ_LPUART1_PRIORITY!"3"}
+
+#define STM32_IRQ_TIM2_PRIORITY             ${doc.STM32_IRQ_TIM2_PRIORITY!"1"}
+#define STM32_IRQ_TIM6_PRIORITY             ${doc.STM32_IRQ_TIM6_PRIORITY!"1"}
+#define STM32_IRQ_TIM21_PRIORITY            ${doc.STM32_IRQ_TIM21_PRIORITY!"1"}
+#define STM32_IRQ_TIM22_PRIORITY            ${doc.STM32_IRQ_TIM22_PRIORITY!"1"}
 
 /*
  * ADC driver system settings.
@@ -107,7 +113,7 @@
 #define STM32_ADC_ADC1_DMA_PRIORITY         ${doc.STM32_ADC_ADC1_DMA_PRIORITY!"2"}
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     ${doc.STM32_ADC_ADC1_DMA_IRQ_PRIORITY!"2"}
 #define STM32_ADC_ADC1_DMA_STREAM           ${doc.STM32_ADC_ADC1_DMA_STREAM!"STM32_DMA_STREAM_ID(1, 1)"}
-#define STM32_ADC_PRESCALER_VALUE           ${doc.STM32_ADC_PRESCALER_VALUE!"1"}
+#define STM32_ADC_PRESCALER_VALUE           ${doc.STM32_ADC_PRESCALER_VALUE!"2"}
 
 /*
  * DAC driver system settings.
@@ -124,10 +130,6 @@
 #define STM32_GPT_USE_TIM6                  ${doc.STM32_GPT_USE_TIM6!"FALSE"}
 #define STM32_GPT_USE_TIM21                 ${doc.STM32_GPT_USE_TIM21!"FALSE"}
 #define STM32_GPT_USE_TIM22                 ${doc.STM32_GPT_USE_TIM22!"FALSE"}
-#define STM32_GPT_TIM2_IRQ_PRIORITY         ${doc.STM32_GPT_TIM2_IRQ_PRIORITY!"2"}
-#define STM32_GPT_TIM6_IRQ_PRIORITY         ${doc.STM32_GPT_TIM6_IRQ_PRIORITY!"2"}
-#define STM32_GPT_TIM21_IRQ_PRIORITY        ${doc.STM32_GPT_TIM21_IRQ_PRIORITY!"2"}
-#define STM32_GPT_TIM22_IRQ_PRIORITY        ${doc.STM32_GPT_TIM22_IRQ_PRIORITY!"2"}
 
 /*
  * I2C driver system settings.
@@ -152,9 +154,6 @@
 #define STM32_ICU_USE_TIM2                  ${doc.STM32_ICU_USE_TIM2!"FALSE"}
 #define STM32_ICU_USE_TIM21                 ${doc.STM32_ICU_USE_TIM21!"FALSE"}
 #define STM32_ICU_USE_TIM22                 ${doc.STM32_ICU_USE_TIM22!"FALSE"}
-#define STM32_ICU_TIM2_IRQ_PRIORITY         ${doc.STM32_ICU_TIM2_IRQ_PRIORITY!"3"}
-#define STM32_ICU_TIM21_IRQ_PRIORITY        ${doc.STM32_ICU_TIM21_IRQ_PRIORITY!"3"}
-#define STM32_ICU_TIM22_IRQ_PRIORITY        ${doc.STM32_ICU_TIM22_IRQ_PRIORITY!"3"}
 
 /*
  * PWM driver system settings.
@@ -162,9 +161,6 @@
 #define STM32_PWM_USE_TIM2                  ${doc.STM32_PWM_USE_TIM2!"FALSE"}
 #define STM32_PWM_USE_TIM21                 ${doc.STM32_PWM_USE_TIM21!"FALSE"}
 #define STM32_PWM_USE_TIM22                 ${doc.STM32_PWM_USE_TIM22!"FALSE"}
-#define STM32_PWM_TIM2_IRQ_PRIORITY         ${doc.STM32_PWM_TIM2_IRQ_PRIORITY!"3"}
-#define STM32_PWM_TIM21_IRQ_PRIORITY        ${doc.STM32_PWM_TIM21_IRQ_PRIORITY!"3"}
-#define STM32_PWM_TIM22_IRQ_PRIORITY        ${doc.STM32_PWM_TIM22_IRQ_PRIORITY!"3"}
 
 /*
  * SERIAL driver system settings.
@@ -172,6 +168,13 @@
 #define STM32_SERIAL_USE_USART1             ${doc.STM32_SERIAL_USE_USART1!"FALSE"}
 #define STM32_SERIAL_USE_USART2             ${doc.STM32_SERIAL_USE_USART2!"TRUE"}
 #define STM32_SERIAL_USE_LPUART1            ${doc.STM32_SERIAL_USE_LPUART1!"FALSE"}
+
+/*
+ * SIO driver system settings.
+ */
+#define STM32_SIO_USE_USART1                ${doc.STM32_SIO_USE_USART1!"FALSE"}
+#define STM32_SIO_USE_USART2                ${doc.STM32_SIO_USE_USART2!"FALSE"}
+#define STM32_SIO_USE_LPUART1               ${doc.STM32_SIO_USE_LPUART1!"FALSE"}
 
 /*
  * SPI driver system settings.
@@ -193,6 +196,11 @@
  */
 #define STM32_ST_IRQ_PRIORITY               ${doc.STM32_ST_IRQ_PRIORITY!"2"}
 #define STM32_ST_USE_TIMER                  ${doc.STM32_ST_USE_TIMER!"21"}
+
+/*
+ * TRNG driver system settings.
+ */
+#define STM32_TRNG_USE_RNG1                 ${doc.STM32_TRNG_USE_RNG1!"FALSE"}
 
 /*
  * UART driver system settings.

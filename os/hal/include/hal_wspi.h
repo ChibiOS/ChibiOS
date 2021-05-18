@@ -71,9 +71,10 @@ typedef enum {
   WSPI_UNINIT = 0,                  /**< Not initialized.                   */
   WSPI_STOP = 1,                    /**< Stopped.                           */
   WSPI_READY = 2,                   /**< Ready.                             */
-  WSPI_ACTIVE = 3,                  /**< Exchanging data.                   */
-  WSPI_COMPLETE = 4,                /**< Asynchronous operation complete.   */
-  WSPI_MEMMAP = 5                   /**< In memory mapped mode.             */
+  WSPI_SEND = 3,                    /**< Sending data.                      */
+  WSPI_RECEIVE = 4,                 /**< Receiving data.                    */
+  WSPI_COMPLETE = 5,                /**< Asynchronous operation complete.   */
+  WSPI_MEMMAP = 6                   /**< In memory mapped mode.             */
 } wspistate_t;
 
 /**
@@ -140,6 +141,10 @@ struct hal_wspi_config {
    * @brief   Operation complete callback or @p NULL.
    */
   wspicallback_t            end_cb;
+  /**
+   * @brief   Operation error callback or @p NULL.
+   */
+  wspicallback_t            error_cb;
   /* End of the mandatory fields.*/
   wspi_lld_config_fields;
 };
@@ -270,7 +275,7 @@ struct hal_wspi_driver {
   osalDbgAssert(((cmdp)->cfg & WSPI_CFG_DATA_MODE_MASK) ==                  \
                 WSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode specified");                                     \
-  (wspip)->state = WSPI_ACTIVE;                                             \
+  (wspip)->state = WSPI_SEND;                                               \
   wspi_lld_command(wspip, cmdp);                                            \
 }
 
@@ -290,7 +295,7 @@ struct hal_wspi_driver {
   osalDbgAssert(((cmdp)->cfg & WSPI_CFG_DATA_MODE_MASK) !=                  \
                 WSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode required");                                      \
-  (wspip)->state = WSPI_ACTIVE;                                             \
+  (wspip)->state = WSPI_SEND;                                               \
   wspi_lld_send(wspip, cmdp, n, txbuf);                                     \
 }
 
@@ -310,7 +315,7 @@ struct hal_wspi_driver {
   osalDbgAssert(((cmdp)->cfg & WSPI_CFG_DATA_MODE_MASK) !=                  \
                 WSPI_CFG_DATA_MODE_NONE,                                    \
                 "data mode required");                                      \
-  (wspip)->state = WSPI_ACTIVE;                                             \
+  (wspip)->state = WSPI_RECEIVE;                                            \
   wspi_lld_receive(wspip, cmdp, n, rxbuf);                                  \
 }
 
@@ -353,16 +358,17 @@ struct hal_wspi_driver {
  * @brief   Wakes up the waiting thread.
  *
  * @param[in] wspip     pointer to the @p WSPIDriver object
+ * @param[in] msg       the wakeup message
  *
  * @notapi
  */
-#define _wspi_wakeup_isr(wspip) {                                           \
+#define _wspi_wakeup_isr(wspip, msg) {                                      \
   osalSysLockFromISR();                                                     \
-  osalThreadResumeI(&(wspip)->thread, MSG_OK);                              \
+  osalThreadResumeI(&(wspip)->thread, msg);                                 \
   osalSysUnlockFromISR();                                                   \
 }
 #else /* !WSPI_USE_WAIT */
-#define _wspi_wakeup_isr(wspip)
+#define _wspi_wakeup_isr(wspip, msg)
 #endif /* !WSPI_USE_WAIT */
 
 /**
@@ -388,7 +394,33 @@ struct hal_wspi_driver {
   }                                                                         \
   else                                                                      \
     (wspip)->state = WSPI_READY;                                            \
-  _wspi_wakeup_isr(wspip);                                                  \
+  _wspi_wakeup_isr(wspip, MSG_OK);                                          \
+}
+
+/**
+ * @brief   Common error ISR code.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] wspip     pointer to the @p WSPIDriver object
+ *
+ * @notapi
+ */
+#define _wspi_error_code(wspip) {                                           \
+  if ((wspip)->config->error_cb) {                                          \
+    (wspip)->state = WSPI_COMPLETE;                                         \
+    (wspip)->config->error_cb(wspip);                                       \
+    if ((wspip)->state == WSPI_COMPLETE)                                    \
+      (wspip)->state = WSPI_READY;                                          \
+  }                                                                         \
+  else                                                                      \
+    (wspip)->state = WSPI_READY;                                            \
+  _wspi_wakeup_isr(wspip, MSG_RESET);                                       \
 }
 /** @} */
 
@@ -409,10 +441,10 @@ extern "C" {
   void wspiStartReceive(WSPIDriver *wspip, const wspi_command_t *cmdp,
                         size_t n, uint8_t *rxbuf);
 #if WSPI_USE_WAIT == TRUE
-  void wspiCommand(WSPIDriver *wspip, const wspi_command_t *cmdp);
-  void wspiSend(WSPIDriver *wspip, const wspi_command_t *cmdp,
+  bool wspiCommand(WSPIDriver *wspip, const wspi_command_t *cmdp);
+  bool wspiSend(WSPIDriver *wspip, const wspi_command_t *cmdp,
                 size_t n, const uint8_t *txbuf);
-  void wspiReceive(WSPIDriver *wspip, const wspi_command_t *cmdp,
+  bool wspiReceive(WSPIDriver *wspip, const wspi_command_t *cmdp,
                    size_t n, uint8_t *rxbuf);
 #endif
 #if WSPI_SUPPORTS_MEMMAP == TRUE

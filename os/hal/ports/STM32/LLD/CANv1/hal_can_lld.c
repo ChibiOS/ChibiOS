@@ -657,10 +657,12 @@ void can_lld_init(void) {
 #endif
 
   /* Filters initialization.*/
+#if STM32_CAN_USE_CAN1
 #if STM32_HAS_CAN2
   can_lld_set_filters(&CAND1, STM32_CAN_MAX_FILTERS / 2, 0, NULL);
 #else
   can_lld_set_filters(&CAND1, STM32_CAN_MAX_FILTERS, 0, NULL);
+#endif
 #endif
 
 #if STM32_HAS_CAN3
@@ -940,6 +942,20 @@ void can_lld_receive(CANDriver *canp,
   crfp->DLC = rdtr & CAN_RDT0R_DLC;
   crfp->FMI = (uint8_t)(rdtr >> 8);
   crfp->TIME = (uint16_t)(rdtr >> 16);
+}
+
+/**
+ * @brief   Tries to abort an ongoing transmission.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number
+ *
+ * @notapi
+ */
+void can_lld_abort(CANDriver *canp,
+                   canmbx_t mailbox) {
+
+  canp->can->TSR = 128U << ((mailbox - 1U) * 8U);
 }
 
 #if CAN_USE_SLEEP_MODE || defined(__DOXYGEN__)

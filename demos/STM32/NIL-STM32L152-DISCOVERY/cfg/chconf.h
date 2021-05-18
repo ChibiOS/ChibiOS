@@ -47,12 +47,16 @@
  * @note    This values also defines the number of available priorities
  *          (0..CH_CFG_MAX_THREADS-1).
  */
+#if !defined(CH_CFG_MAX_THREADS)
 #define CH_CFG_MAX_THREADS                  3
+#endif
 
 /**
  * @brief   Auto starts threads when @p chSysInit() is invoked.
  */
+#if !defined(CH_CFG_AUTOSTART_THREADS)
 #define CH_CFG_AUTOSTART_THREADS            TRUE
+#endif
 
 /** @} */
 
@@ -67,7 +71,9 @@
  * @brief   System time counter resolution.
  * @note    Allowed values are 16 or 32 bits.
  */
+#if !defined(CH_CFG_ST_RESOLUTION)
 #define CH_CFG_ST_RESOLUTION                16
+#endif
 
 /**
  * @brief   System tick frequency.
@@ -75,7 +81,9 @@
  *          option defines the maximum amount of time allowed for
  *          timeouts.
  */
+#if !defined(CH_CFG_ST_FREQUENCY)
 #define CH_CFG_ST_FREQUENCY                 1000
+#endif
 
 /**
  * @brief   Time delta constant for the tick-less mode.
@@ -85,7 +93,9 @@
  *          The value one is not valid, timeouts are rounded up to
  *          this value.
  */
+#if !defined(CH_CFG_ST_TIMEDELTA)
 #define CH_CFG_ST_TIMEDELTA                 2
+#endif
 
 /** @} */
 
@@ -103,7 +113,9 @@
  *
  * @note    The default is @p TRUE.
  */
+#if !defined(CH_CFG_USE_WAITEXIT)
 #define CH_CFG_USE_WAITEXIT                 TRUE
+#endif
 
 /**
  * @brief   Semaphores APIs.
@@ -111,7 +123,9 @@
  *
  * @note    The default is @p TRUE.
  */
+#if !defined(CH_CFG_USE_SEMAPHORES)
 #define CH_CFG_USE_SEMAPHORES               TRUE
+#endif
 
 /**
  * @brief   Mutexes APIs.
@@ -120,7 +134,9 @@
  * @note    Feature not currently implemented.
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_CFG_USE_MUTEXES)
 #define CH_CFG_USE_MUTEXES                  FALSE
+#endif
 
 /**
  * @brief   Events Flags APIs.
@@ -128,7 +144,9 @@
  *
  * @note    The default is @p TRUE.
  */
+#if !defined(CH_CFG_USE_EVENTS)
 #define CH_CFG_USE_EVENTS                   TRUE
+#endif
 
 /**
  * @brief   Synchronous Messages APIs.
@@ -137,7 +155,18 @@
  *
  * @note    The default is @p TRUE.
  */
+#if !defined(CH_CFG_USE_MESSAGES)
 #define CH_CFG_USE_MESSAGES                 TRUE
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name OSLIB options
+ * @{
+ */
+/*===========================================================================*/
 
 /**
  * @brief   Mailboxes APIs.
@@ -147,7 +176,9 @@
  * @note    The default is @p TRUE.
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
+#if !defined(CH_CFG_USE_MAILBOXES)
 #define CH_CFG_USE_MAILBOXES                TRUE
+#endif
 
 /**
  * @brief   Core Memory Manager APIs.
@@ -156,43 +187,9 @@
  *
  * @note    The default is @p TRUE.
  */
+#if !defined(CH_CFG_USE_MEMCORE)
 #define CH_CFG_USE_MEMCORE                  TRUE
-
-/**
- * @brief   Heap Allocator APIs.
- * @details If enabled then the memory heap allocator APIs are included
- *          in the kernel.
- *
- * @note    The default is @p TRUE.
- */
-#define CH_CFG_USE_HEAP                     TRUE
-
-/**
- * @brief   Memory Pools Allocator APIs.
- * @details If enabled then the memory pools allocator APIs are included
- *          in the kernel.
- *
- * @note    The default is @p TRUE.
- */
-#define CH_CFG_USE_MEMPOOLS                 TRUE
-
-/**
- * @brief  Objects FIFOs APIs.
- * @details If enabled then the objects FIFOs APIs are included
- *          in the kernel.
- *
- * @note    The default is @p TRUE.
- */
-#define CH_CFG_USE_OBJ_FIFOS                TRUE
-
-/**
- * @brief   Pipes APIs.
- * @details If enabled then the pipes APIs are included
- *          in the kernel.
- *
- * @note    The default is @p TRUE.
- */
-#define CH_CFG_USE_PIPES                    TRUE
+#endif
 
 /**
  * @brief   Managed RAM size.
@@ -205,7 +202,86 @@
  *          provide the @p __heap_base__ and @p __heap_end__ symbols.
  * @note    Requires @p CH_CFG_USE_MEMCORE.
  */
+#if !defined(CH_CFG_MEMCORE_SIZE)
 #define CH_CFG_MEMCORE_SIZE                 0
+#endif
+
+/**
+ * @brief   Heap Allocator APIs.
+ * @details If enabled then the memory heap allocator APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_HEAP)
+#define CH_CFG_USE_HEAP                     TRUE
+#endif
+
+/**
+ * @brief   Memory Pools Allocator APIs.
+ * @details If enabled then the memory pools allocator APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_MEMPOOLS)
+#define CH_CFG_USE_MEMPOOLS                 TRUE
+#endif
+
+/**
+ * @brief  Objects FIFOs APIs.
+ * @details If enabled then the objects FIFOs APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_OBJ_FIFOS)
+#define CH_CFG_USE_OBJ_FIFOS                TRUE
+#endif
+
+/**
+ * @brief   Pipes APIs.
+ * @details If enabled then the pipes APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_PIPES)
+#define CH_CFG_USE_PIPES                    TRUE
+#endif
+
+/**
+ * @brief   Objects Caches APIs.
+ * @details If enabled then the objects caches APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_OBJ_CACHES)
+#define CH_CFG_USE_OBJ_CACHES               TRUE
+#endif
+
+/**
+ * @brief   Delegate threads APIs.
+ * @details If enabled then the delegate threads APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_DELEGATES)
+#define CH_CFG_USE_DELEGATES                TRUE
+#endif
+
+/**
+ * @brief   Jobs Queues APIs.
+ * @details If enabled then the jobs queues APIs are included
+ *          in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_JOBS)
+#define CH_CFG_USE_JOBS                     TRUE
+#endif
 
 /** @} */
 
@@ -223,44 +299,60 @@
  *
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_CFG_USE_FACTORY)
 #define CH_CFG_USE_FACTORY                  TRUE
+#endif
 
 /**
  * @brief   Maximum length for object names.
  * @details If the specified length is zero then the name is stored by
  *          pointer but this could have unintended side effects.
  */
+#if !defined(CH_CFG_FACTORY_MAX_NAMES_LENGTH)
 #define CH_CFG_FACTORY_MAX_NAMES_LENGTH     8
+#endif
 
 /**
  * @brief   Enables the registry of generic objects.
  */
+#if !defined(CH_CFG_FACTORY_OBJECTS_REGISTRY)
 #define CH_CFG_FACTORY_OBJECTS_REGISTRY     TRUE
+#endif
 
 /**
  * @brief   Enables factory for generic buffers.
  */
+#if !defined(CH_CFG_FACTORY_GENERIC_BUFFERS)
 #define CH_CFG_FACTORY_GENERIC_BUFFERS      TRUE
+#endif
 
 /**
  * @brief   Enables factory for semaphores.
  */
+#if !defined(CH_CFG_FACTORY_SEMAPHORES)
 #define CH_CFG_FACTORY_SEMAPHORES           TRUE
+#endif
 
 /**
  * @brief   Enables factory for mailboxes.
  */
+#if !defined(CH_CFG_FACTORY_MAILBOXES)
 #define CH_CFG_FACTORY_MAILBOXES            TRUE
+#endif
 
 /**
  * @brief   Enables factory for objects FIFOs.
  */
+#if !defined(CH_CFG_FACTORY_OBJ_FIFOS)
 #define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
+#endif
 
 /**
  * @brief   Enables factory for Pipes.
  */
+#if !defined(CH_CFG_FACTORY_PIPES)
 #define CH_CFG_FACTORY_PIPES                TRUE
+#endif
 
 /** @} */
 
@@ -277,35 +369,45 @@
  * @note    Feature not currently implemented.
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_DBG_STATISTICS)
 #define CH_DBG_STATISTICS                   FALSE
+#endif
 
 /**
  * @brief   Debug option, system state check.
  *
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_DBG_SYSTEM_STATE_CHECK)
 #define CH_DBG_SYSTEM_STATE_CHECK           FALSE
+#endif
 
 /**
  * @brief   Debug option, parameters checks.
  *
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_DBG_ENABLE_CHECKS)
 #define CH_DBG_ENABLE_CHECKS                FALSE
+#endif
 
 /**
  * @brief   System assertions.
  *
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_DBG_ENABLE_ASSERTS)
 #define CH_DBG_ENABLE_ASSERTS               FALSE
+#endif
 
 /**
  * @brief   Stack check.
  *
  * @note    The default is @p FALSE.
  */
+#if !defined(CH_DBG_ENABLE_STACK_CHECK)
 #define CH_DBG_ENABLE_STACK_CHECK           FALSE
+#endif
 
 /** @} */
 

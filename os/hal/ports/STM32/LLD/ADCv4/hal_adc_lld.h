@@ -54,6 +54,7 @@
 #define ADC_CHANNEL_IN16        16U /**< @brief External analog input 16.   */
 #define ADC_CHANNEL_IN17        17U /**< @brief External analog input 17.   */
 #define ADC_CHANNEL_IN18        18U /**< @brief External analog input 18.   */
+#define ADC_CHANNEL_IN19        19U /**< @brief External analog input 19.   */
 /** @} */
 
 /**
@@ -79,6 +80,7 @@
 #define ADC_SELMASK_IN16        (1U << ADC_CHANNEL_IN16)
 #define ADC_SELMASK_IN17        (1U << ADC_CHANNEL_IN17)
 #define ADC_SELMASK_IN18        (1U << ADC_CHANNEL_IN18)
+#define ADC_SELMASK_IN19        (1U << ADC_CHANNEL_IN19)
 /** @} */
 
 /**
@@ -109,10 +111,16 @@
 
 #define ADC_CFGR_RES_MASK               (7U << 2U)
 #define ADC_CFGR_RES_16BITS             (0U << 2U)
+#define ADC_CFGR_RES_10BITS             (3U << 2U)
+#if !defined(STM32_ENFORCE_H7_REV_XY)
+#define ADC_CFGR_RES_14BITS             (5U << 2U)
+#define ADC_CFGR_RES_12BITS             (6U << 2U)
+#define ADC_CFGR_RES_8BITS              (7U << 2U)
+#else
 #define ADC_CFGR_RES_14BITS             (1U << 2U)
 #define ADC_CFGR_RES_12BITS             (2U << 2U)
-#define ADC_CFGR_RES_10BITS             (3U << 2U)
 #define ADC_CFGR_RES_8BITS              (4U << 2U)
+#endif
 
 #define ADC_CFGR_EXTSEL_MASK            (15U << 5U)
 #define ADC_CFGR_EXTSEL_SRC(n)          ((n) << 5U)
@@ -122,6 +130,10 @@
 #define ADC_CFGR_EXTEN_RISING           (1U << 10U)
 #define ADC_CFGR_EXTEN_FALLING          (2U << 10U)
 #define ADC_CFGR_EXTEN_BOTH             (3U << 10U)
+
+#define ADC_CFGR_CONT_MASK            (1U << 13U)
+#define ADC_CFGR_CONT_DISABLED        (0U << 13U)
+#define ADC_CFGR_CONT_ENABLED         (1U << 13U)
 
 #define ADC_CFGR_DISCEN_MASK            (1U << 16U)
 #define ADC_CFGR_DISCEN_DISABLED        (0U << 16U)
@@ -137,12 +149,20 @@
  */
 #define ADC_CCR_DUAL_MASK               (31U << 0U)
 #define ADC_CCR_DUAL_FIELD(n)           ((n) << 0U)
+#define ADC_CCR_DUAL_INDEPENDENT        (0U << 0U)  /**< @brief Independent, dual mode disabled.                             */
+#define ADC_CCR_DUAL_REG_SIMULT         (6U << 0U)  /**< @brief Regular simultaneous.                                        */
+#define ADC_CCR_DUAL_REG_INTERL         (7U << 0U)  /**< @brief Regular interleaved.                                         */
+#define ADC_CCR_DUAL_INJ_SIMULT         (5U << 0U)  /**< @brief Injected simultaneous.                                       */
+#define ADC_CCR_DUAL_INJ_ALTERNATE      (9U << 0U)  /**< @brief Injected alternate trigger.                                  */
+#define ADC_CCR_DUAL_REG_SIM_INJ_SIM    (1U << 0U)  /**< @brief Combined regular simultaneous + injected simultaneous.       */
+#define ADC_CCR_DUAL_REG_SIM_INJ_ALT    (2U << 0U)  /**< @brief Combined regular simultaneous + injected alternate trigger.  */
+#define ADC_CCR_DUAL_REG_INT_INJ_SIM    (3U << 0U)  /**< @brief Combined regular interleaved  + injected simultaneous.       */
 #define ADC_CCR_DELAY_MASK              (15U << 8U)
 #define ADC_CCR_DELAY_FIELD(n)          ((n) << 8U)
 #define ADC_CCR_DAMDF_MASK              (3U << 14U)
 #define ADC_CCR_DAMDF_DISABLED          (0U << 14U)
 #define ADC_CCR_DAMDF_HWORD             (2U << 14U)
-#define ADC_CCR_DAMDF_WORD              (3U << 14U)
+#define ADC_CCR_DAMDF_BYTE              (3U << 14U)
 #define ADC_CCR_CKMODE_MASK             (3U << 16U)
 #define ADC_CCR_CKMODE_ADCCK            (0U << 16U)
 #define ADC_CCR_CKMODE_AHB_DIV1         (1U << 16U)
@@ -289,14 +309,14 @@
 #error "STM32_ADC3_NUMBER not defined in registry"
 #endif
 
-/* Units checks related to dual mode.*/
-#if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC1 && !STM32_HAS_ADC2
-#error "ADC2 not present in the selected device, required for dual mode"
-#endif
-
 /* At least one ADC must be assigned.*/
 #if !STM32_ADC_USE_ADC12 && !STM32_ADC_USE_ADC3
 #error "ADC driver activated but no ADC peripheral assigned"
+#endif
+
+/* Dual mode is only supported with ADC12.*/
+#if !STM32_ADC_USE_ADC12 && STM32_ADC_DUAL_MODE
+#error "STM32_ADC_DUAL_MODE only supported with ADC12"
 #endif
 
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
@@ -341,7 +361,42 @@
 #error "Invalid IRQ priority assigned to ADC3"
 #endif
 
+#if !defined(STM32_ENFORCE_H7_REV_XY)
 /* ADC clock source checks.*/
+#if (STM32_D1HPRE == STM32_D1HPRE_DIV1)
+#define STM32_ADC_SCLK                  STM32_HCLK
+#else
+#define STM32_ADC_SCLK                  (STM32_HCLK / 2)
+#endif
+
+#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+/* CHTODO: also check ADC_CCR_PRESC.*/
+#define STM32_ADC12_CLOCK               (STM32_ADCCLK / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 1 / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 2 / 2)
+#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC12_CLOCK               (STM32_ADC_SCLK / 4 / 2)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
+#endif
+
+#if STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+/* CHTODO: also check ADC_CCR_PRESC.*/
+#define STM32_ADC3_CLOCK               (STM32_ADCCLK / 2)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 1 / 2)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 2 / 2)
+#elif STM32_ADC_ADC3_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC3_CLOCK               (STM32_ADC_SCLK / 4 / 2)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC3_CLOCK_MODE"
+#endif
+
+#else /* defined(STM32_ENFORCE_H7_REV_XY) */
+
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
 #define STM32_ADC12_CLOCK               STM32_ADCCLK
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
@@ -366,6 +421,8 @@
 #error "invalid clock mode selected for STM32_ADC_ADC3_CLOCK_MODE"
 #endif
 
+#endif /* defined(STM32_ENFORCE_H7_REV_XY) */
+
 #if STM32_ADC12_CLOCK > STM32_ADCCLK_MAX
 #error "STM32_ADC12_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
@@ -373,6 +430,44 @@
 #if STM32_ADC3_CLOCK > STM32_ADCCLK_MAX
 #error "STM32_ADC3_CLOCK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
+
+#if !defined(STM32_ENFORCE_H7_REV_XY)
+/* ADC boost checks.*/
+#if   STM32_ADC12_CLOCK >  6250000
+#define STM32_ADC12_BOOST               (1U << 8U)
+#elif STM32_ADC12_CLOCK > 12500000
+#define STM32_ADC12_BOOST               (2U << 8U)
+#elif STM32_ADC12_CLOCK > 25000000
+#define STM32_ADC12_BOOST               (3U << 8U)
+#else
+#define STM32_ADC12_BOOST               (0U << 8U)
+#endif
+
+#if   STM32_ADC3_CLOCK >  6250000
+#define STM32_ADC3_BOOST                (1U << 8U)
+#elif STM32_ADC3_CLOCK > 12500000
+#define STM32_ADC3_BOOST                (2U << 8U)
+#elif STM32_ADC3_CLOCK > 25000000
+#define STM32_ADC3_BOOST                (3U << 8U)
+#else
+#define STM32_ADC3_BOOST                (0U << 8U)
+#endif
+
+#else /* defined(STM32_ENFORCE_H7_REV_XY) */
+
+#if STM32_ADC12_CLOCK > 20000000
+#define STM32_ADC12_BOOST               (1U << 8U)
+#else
+#define STM32_ADC12_BOOST               (0U << 8U)
+#endif
+
+#if STM32_ADC3_CLOCK > 20000000
+#define STM32_ADC3_BOOST                (1U << 8U)
+#else
+#define STM32_ADC3_BOOST                (0U << 8U)
+#endif
+
+#endif /* defined(STM32_ENFORCE_H7_REV_XY) */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -525,7 +620,6 @@ typedef union {
   uint32_t                  cfgr2;                                          \
   uint32_t                  ccr;                                            \
   uint32_t                  pcsel;                                          \
-  uint32_t                  difsel;                                         \
   uint32_t                  ltr1;                                           \
   uint32_t                  htr1;                                           \
   uint32_t                  ltr2;                                           \

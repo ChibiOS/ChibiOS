@@ -156,12 +156,16 @@ static void otg_disable_ep(USBDriver *usbp) {
   unsigned i;
 
   for (i = 0; i <= usbp->otgparams->num_endpoints; i++) {
-    otgp->ie[i].DIEPCTL = 0;
-    otgp->ie[i].DIEPTSIZ = 0;
-    otgp->ie[i].DIEPINT = 0xFFFFFFFF;
 
-    otgp->oe[i].DOEPCTL = 0;
-    otgp->oe[i].DOEPTSIZ = 0;
+    if ((otgp->ie[i].DIEPCTL & DIEPCTL_EPENA) != 0U) {
+      otgp->ie[i].DIEPCTL |= DIEPCTL_EPDIS;
+    }
+
+    if ((otgp->oe[i].DOEPCTL & DIEPCTL_EPENA) != 0U) {
+      otgp->oe[i].DOEPCTL |= DIEPCTL_EPDIS;
+    }
+
+    otgp->ie[i].DIEPINT = 0xFFFFFFFF;
     otgp->oe[i].DOEPINT = 0xFFFFFFFF;
   }
   otgp->DAINTMSK = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
@@ -559,6 +563,9 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* Suspend handling.*/
   if (sts & GINTSTS_USBSUSP) {
+    /* Stopping all ongoing transfers.*/
+    otg_disable_ep(usbp);
+
     /* Default suspend action.*/
     _usb_suspend(usbp);
   }

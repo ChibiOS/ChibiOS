@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chobjfifos.h
+ * @file    oslib/include/chobjfifos.h
  * @brief   Objects FIFO structures and macros.
  * @details This module implements a generic FIFO queue of objects by
  *          coupling a Guarded Memory Pool (for objects storage) and
@@ -422,6 +422,7 @@ static inline msg_t chFifoReceiveObjectTimeout(objects_fifo_t *ofp,
 
   return chMBFetchTimeout(&ofp->mbx, (msg_t *)objpp, timeout);
 }
+
 #endif /* CH_CFG_USE_OBJ_FIFOS == TRUE */
 
 #endif /* CHOBJFIFOS_H */

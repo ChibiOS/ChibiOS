@@ -77,7 +77,7 @@ static const flash_descriptor_t efl_lld_size1[STM32_FLASH_NUMBER_OF_BANKS] = {
                            FLASH_ATTR_ECC_CAPABLE   |
                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
       .page_size         = STM32_FLASH_LINE_SIZE,
-      .sectors_count     = STM32_FLASH_SECTORS_TOTAL_1M,
+      .sectors_count     = (STM32_FLASH_SECTORS_TOTAL_1M * 2),
       .sectors           = NULL,
       .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE_1M,
       .address           = (uint8_t *)FLASH_BASE,
@@ -105,7 +105,7 @@ static const flash_descriptor_t efl_lld_size2[STM32_FLASH_NUMBER_OF_BANKS] = {
                            FLASH_ATTR_ECC_CAPABLE   |
                            FLASH_ATTR_ECC_ZERO_LINE_CAPABLE,
       .page_size         = STM32_FLASH_LINE_SIZE,
-      .sectors_count     = STM32_FLASH_SECTORS_TOTAL_2M,
+      .sectors_count     = (STM32_FLASH_SECTORS_TOTAL_2M * 2),
       .sectors           = NULL,
       .sectors_size      = STM32_FLASH_DUAL_SECTOR_SIZE_2M,
       .address           = (uint8_t *)FLASH_BASE,
@@ -167,7 +167,7 @@ static inline size_t stm32_flash_get_size(void) {
 static inline bool stm32_flash_dual_bank(EFlashDriver *eflp) {
 
 #if STM32_FLASH_NUMBER_OF_BANKS > 1
-  return ((eflp->flash->SR & (FLASH_OPTR_DBANK | FLASH_OPTR_DB1M)) != 0U);
+  return ((eflp->flash->OPTR & (FLASH_OPTR_DBANK | FLASH_OPTR_DB1M)) != 0U);
 #endif
   return false;
 }
@@ -603,7 +603,7 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
     return FLASH_BUSY_ERASING;
   }
 
-  /* Address of the sector in the selected bank.*/
+  /* Address of the sector in the bank.*/
   address = (uint32_t *)(bank->address +
                         flashGetSectorOffset(getBaseFlash(devp), sector));
 
@@ -611,7 +611,8 @@ flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector) {
   devp->state = FLASH_READ;
 
   /* Scanning the sector space.*/
-  for (i = 0U; i < bank->sectors_size / sizeof(uint32_t); i++) {
+  uint32_t sector_size = flashGetSectorSize(getBaseFlash(devp), sector);
+  for (i = 0U; i < sector_size / sizeof(uint32_t); i++) {
     if (*address != 0xFFFFFFFFU) {
       err = FLASH_ERROR_VERIFY;
       break;

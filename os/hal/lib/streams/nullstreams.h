@@ -45,17 +45,17 @@
  * @brief   @p NullStream specific data.
  */
 #define _null_stream_data                                                   \
-  _base_sequential_stream_data
+  _base_buffered_stream_data
 
 /**
  * @brief   @p NullStream virtual methods table.
  */
 struct NullStreamVMT {
-  _base_sequential_stream_methods
+  _base_buffered_stream_methods
 };
 
 /**
- * @extends BaseSequentialStream
+ * @extends BaseBufferedStream
  *
  * @brief   Null stream object.
  */

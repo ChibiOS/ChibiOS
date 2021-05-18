@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmsg.c
+ * @file    rt/src/chmsg.c
  * @brief   Messages code.
  *
  * @addtogroup messages
@@ -64,9 +64,9 @@
 /*===========================================================================*/
 
 #if CH_CFG_USE_MESSAGES_PRIORITY == TRUE
-#define msg_insert(tp, qp) queue_prio_insert(tp, qp)
+#define msg_insert(tp, qp) ch_sch_prio_insert(&tp->hdr.queue, qp)
 #else
-#define msg_insert(tp, qp) queue_insert(tp, qp)
+#define msg_insert(tp, qp) ch_queue_insert(&tp->hdr.queue, qp)
 #endif
 
 /*===========================================================================*/
@@ -85,18 +85,18 @@
  * @api
  */
 msg_t chMsgSend(thread_t *tp, msg_t msg) {
-  thread_t *ctp = currp;
+  thread_t *currtp = chThdGetSelfX();
 
   chDbgCheck(tp != NULL);
 
   chSysLock();
-  ctp->u.sentmsg = msg;
-  msg_insert(ctp, &tp->msgqueue);
+  currtp->u.sentmsg = msg;
+  msg_insert(currtp, &tp->msgqueue);
   if (tp->state == CH_STATE_WTMSG) {
     (void) chSchReadyI(tp);
   }
   chSchGoSleepS(CH_STATE_SNDMSGQ);
-  msg = ctp->u.rdymsg;
+  msg = currtp->u.rdymsg;
   chSysUnlock();
 
   return msg;
@@ -116,18 +116,87 @@ msg_t chMsgSend(thread_t *tp, msg_t msg) {
  *
  * @return              A pointer to the thread carrying the message.
  *
- * @api
+ * @sclass
  */
-thread_t *chMsgWait(void) {
+thread_t *chMsgWaitS(void) {
+  thread_t *currtp = chThdGetSelfX();
   thread_t *tp;
 
-  chSysLock();
-  if (!chMsgIsPendingI(currp)) {
+  chDbgCheckClassS();
+
+  if (!chMsgIsPendingI(currtp)) {
     chSchGoSleepS(CH_STATE_WTMSG);
   }
-  tp = queue_fifo_remove(&currp->msgqueue);
+  tp = (thread_t *)ch_queue_fifo_remove(&currtp->msgqueue);
   tp->state = CH_STATE_SNDMSG;
-  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Suspends the thread and waits for an incoming message or a
+ *          timeout to occur.
+ * @post    After receiving a message the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
+ * @note    If the message is a pointer then you can assume that the data
+ *          pointed by the message is stable until you invoke @p chMsgRelease()
+ *          because the sending thread is suspended until then.
+ * @note    The reference counter of the sender thread is not increased, the
+ *          returned pointer is a temporary reference.
+ *
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              A pointer to the thread carrying the message.
+ * @retval NULL         if a timeout occurred.
+ *
+ * @sclass
+ */
+thread_t *chMsgWaitTimeoutS(sysinterval_t timeout) {
+  thread_t *currtp = chThdGetSelfX();
+  thread_t *tp;
+
+  chDbgCheckClassS();
+
+  if (!chMsgIsPendingI(currtp)) {
+    if (chSchGoSleepTimeoutS(CH_STATE_WTMSG, timeout) != MSG_OK) {
+      return NULL;
+    }
+  }
+  tp = (thread_t *)ch_queue_fifo_remove(&currtp->msgqueue);
+  tp->state = CH_STATE_SNDMSG;
+
+  return tp;
+}
+
+/**
+ * @brief   Poll to check for an incoming message.
+ * @post    If a message is available the function @p chMsgGet() must be
+ *          called in order to retrieve the message and then @p chMsgRelease()
+ *          must be invoked in order to acknowledge the reception and send
+ *          the answer.
+ * @note    If the message is a pointer then you can assume that the data
+ *          pointed by the message is stable until you invoke @p chMsgRelease()
+ *          because the sending thread is suspended until then.
+ * @note    The reference counter of the sender thread is not increased, the
+ *          returned pointer is a temporary reference.
+ *
+ * @return              Result of the poll.
+ * @retval  NULL        if no incoming message waiting.
+ *
+ * @sclass
+ */
+thread_t *chMsgPollS(void) {
+  thread_t *currtp = chThdGetSelfX();
+  thread_t *tp = NULL;
+
+  if (chMsgIsPendingI(currtp)) {
+    tp = (thread_t *)ch_queue_fifo_remove(&currtp->msgqueue);
+    tp->state = CH_STATE_SNDMSG;
+  }
 
   return tp;
 }

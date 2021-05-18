@@ -137,6 +137,7 @@ void canStop(CANDriver *canp) {
                 "invalid state");
 
   /* The low level driver is stopped.*/
+  canp->state  = CAN_STOPPING;
   can_lld_stop(canp);
   canp->config = NULL;
   canp->state  = CAN_STOP;
@@ -216,6 +217,24 @@ bool canTryReceiveI(CANDriver *canp,
   can_lld_receive(canp, mailbox, crfp);
 
   return false;
+}
+
+/**
+ * @brief   Tries to abort an ongoing transmission.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] mailbox   mailbox number
+ *
+ * @xclass
+ */
+void canTryAbortX(CANDriver *canp,
+                  canmbx_t mailbox) {
+
+  osalDbgCheck((canp != NULL) &&
+               (mailbox != CAN_ANY_MAILBOX) &&
+               (mailbox <= (canmbx_t)CAN_TX_MAILBOXES));
+
+  can_lld_abort(canp, mailbox);
 }
 
 /**

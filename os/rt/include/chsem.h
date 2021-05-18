@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsem.h
+ * @file    rt/include/chsem.h
  * @brief   Semaphores macros and structures.
  *
  * @addtogroup semaphores
@@ -50,7 +50,7 @@
  * @brief   Semaphore structure.
  */
 typedef struct ch_semaphore {
-  threads_queue_t       queue;      /**< @brief Queue of the threads sleeping
+  ch_queue_t            queue;      /**< @brief Queue of the threads sleeping
                                                 on this semaphore.          */
   cnt_t                 cnt;        /**< @brief The semaphore counter.      */
 } semaphore_t;
@@ -68,7 +68,7 @@ typedef struct ch_semaphore {
  * @param[in] n         the counter initial value, this value must be
  *                      non-negative
  */
-#define _SEMAPHORE_DATA(name, n) {_THREADS_QUEUE_DATA(name.queue), n}
+#define __SEMAPHORE_DATA(name, n) {__CH_QUEUE_DATA(name.queue), n}
 
 /**
  * @brief   Static semaphore initializer.
@@ -79,7 +79,7 @@ typedef struct ch_semaphore {
  * @param[in] n         the counter initial value, this value must be
  *                      non-negative
  */
-#define SEMAPHORE_DECL(name, n) semaphore_t name = _SEMAPHORE_DATA(name, n)
+#define SEMAPHORE_DECL(name, n) semaphore_t name = __SEMAPHORE_DATA(name, n)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -89,8 +89,8 @@ typedef struct ch_semaphore {
 extern "C" {
 #endif
   void chSemObjectInit(semaphore_t *sp, cnt_t n);
-  void chSemReset(semaphore_t *sp, cnt_t n);
-  void chSemResetI(semaphore_t *sp, cnt_t n);
+  void chSemResetWithMessage(semaphore_t *sp, cnt_t n, msg_t msg);
+  void chSemResetWithMessageI(semaphore_t *sp, cnt_t n, msg_t msg);
   msg_t chSemWait(semaphore_t *sp);
   msg_t chSemWaitS(semaphore_t *sp);
   msg_t chSemWaitTimeout(semaphore_t *sp, sysinterval_t timeout);
@@ -106,6 +106,46 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
+ * @note    This function implicitly sends @p MSG_RESET as message.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ * @param[in] n         the new value of the semaphore counter. The value must
+ *                      be non-negative.
+ *
+ * @api
+ */
+static inline void chSemReset(semaphore_t *sp, cnt_t n) {
+
+  chSemResetWithMessage(sp, n, MSG_RESET);
+}
+
+/**
+ * @brief   Performs a reset operation on the semaphore.
+ * @post    After invoking this function all the threads waiting on the
+ *          semaphore, if any, are released and the semaphore counter is set
+ *          to the specified, non negative, value.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ * @note    This function implicitly sends @p MSG_RESET as message.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ * @param[in] n         the new value of the semaphore counter. The value must
+ *                      be non-negative.
+ *
+ * @iclass
+ */
+static inline void chSemResetI(semaphore_t *sp, cnt_t n) {
+
+  chSemResetWithMessageI(sp, n, MSG_RESET);
+}
 
 /**
  * @brief   Decreases the semaphore counter.

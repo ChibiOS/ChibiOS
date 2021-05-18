@@ -64,9 +64,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
-#define STM32_ADC1_HANDLER                  Vector70
-#define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC1_DMA_CHN                  0x00000000
@@ -92,26 +89,6 @@
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             5
 #define STM32_DMA2_NUM_CHANNELS             0
-#define STM32_DMA1_CH1_HANDLER              Vector64
-#define STM32_DMA1_CH23_HANDLER             Vector68
-#define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH1_NUMBER               9
-#define STM32_DMA1_CH23_NUMBER              10
-#define STM32_DMA1_CH4567_NUMBER            11
-
-#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
-#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
-
-#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -138,8 +115,6 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C1_GLOBAL_NUMBER            23
 #define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_I2C1_RX_DMA_CHN               0x06000600
@@ -177,14 +152,10 @@
 #define STM32_HAS_TIM2                      TRUE
 #define STM32_TIM2_IS_32BITS                FALSE
 #define STM32_TIM2_CHANNELS                 4
-#define STM32_TIM2_HANDLER                  Vector7C
-#define STM32_TIM2_NUMBER                   15
 
 #define STM32_HAS_TIM21                     TRUE
 #define STM32_TIM21_IS_32BITS               FALSE
 #define STM32_TIM21_CHANNELS                2
-#define STM32_TIM21_HANDLER                 Vector90
-#define STM32_TIM21_NUMBER                  20
 
 #define STM32_HAS_TIM1                      FALSE
 #define STM32_HAS_TIM3                      FALSE
@@ -257,9 +228,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
-#define STM32_ADC1_HANDLER                  Vector70
-#define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC1_DMA_CHN                  0x00000000
@@ -285,26 +253,6 @@
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA2_NUM_CHANNELS             0
-#define STM32_DMA1_CH1_HANDLER              Vector64
-#define STM32_DMA1_CH23_HANDLER             Vector68
-#define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH1_NUMBER               9
-#define STM32_DMA1_CH23_NUMBER              10
-#define STM32_DMA1_CH4567_NUMBER            11
-
-#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
-#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
-
-#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -332,8 +280,6 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C1_GLOBAL_NUMBER            23
 #define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_I2C1_RX_DMA_CHN               0x06000600
@@ -368,20 +314,14 @@
 #define STM32_HAS_TIM2                      TRUE
 #define STM32_TIM2_IS_32BITS                FALSE
 #define STM32_TIM2_CHANNELS                 4
-#define STM32_TIM2_HANDLER                  Vector7C
-#define STM32_TIM2_NUMBER                   15
 
 #define STM32_HAS_TIM21                     TRUE
 #define STM32_TIM21_IS_32BITS               FALSE
 #define STM32_TIM21_CHANNELS                2
-#define STM32_TIM21_HANDLER                 Vector90
-#define STM32_TIM21_NUMBER                  20
 
 #define STM32_HAS_TIM22                     TRUE
 #define STM32_TIM22_IS_32BITS               FALSE
 #define STM32_TIM22_CHANNELS                2
-#define STM32_TIM22_HANDLER                 Vector98
-#define STM32_TIM22_NUMBER                  22
 
 #define STM32_HAS_TIM1                      FALSE
 #define STM32_HAS_TIM3                      FALSE
@@ -453,9 +393,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
-#define STM32_ADC1_HANDLER                  Vector70
-#define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC1_DMA_CHN                  0x00000000
@@ -481,26 +418,6 @@
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA2_NUM_CHANNELS             0
-#define STM32_DMA1_CH1_HANDLER              Vector64
-#define STM32_DMA1_CH23_HANDLER             Vector68
-#define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH1_NUMBER               9
-#define STM32_DMA1_CH23_NUMBER              10
-#define STM32_DMA1_CH4567_NUMBER            11
-
-#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
-#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
-
-#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -529,8 +446,6 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C1_GLOBAL_NUMBER            23
 #define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_I2C1_RX_DMA_CHN               0x06000600
@@ -539,8 +454,6 @@
 #define STM32_I2C1_TX_DMA_CHN               0x00600060
 
 #define STM32_HAS_I2C2                      TRUE
-#define STM32_I2C2_GLOBAL_HANDLER           VectorA0
-#define STM32_I2C2_GLOBAL_NUMBER            24
 #define STM32_I2C2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
 #define STM32_I2C2_RX_DMA_CHN               0x00070000
 #define STM32_I2C2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
@@ -581,26 +494,18 @@
 #define STM32_HAS_TIM2                      TRUE
 #define STM32_TIM2_IS_32BITS                FALSE
 #define STM32_TIM2_CHANNELS                 4
-#define STM32_TIM2_HANDLER                  Vector7C
-#define STM32_TIM2_NUMBER                   15
 
 #define STM32_HAS_TIM6                      TRUE
 #define STM32_TIM6_IS_32BITS                FALSE
 #define STM32_TIM6_CHANNELS                 0
-#define STM32_TIM6_HANDLER                  Vector84
-#define STM32_TIM6_NUMBER                   17
 
 #define STM32_HAS_TIM21                     TRUE
 #define STM32_TIM21_IS_32BITS               FALSE
 #define STM32_TIM21_CHANNELS                2
-#define STM32_TIM21_HANDLER                 Vector90
-#define STM32_TIM21_NUMBER                  20
 
 #define STM32_HAS_TIM22                     TRUE
 #define STM32_TIM22_IS_32BITS               FALSE
 #define STM32_TIM22_CHANNELS                2
-#define STM32_TIM22_HANDLER                 Vector98
-#define STM32_TIM22_NUMBER                  22
 
 #define STM32_HAS_TIM1                      FALSE
 #define STM32_HAS_TIM3                      FALSE
@@ -680,9 +585,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
-#define STM32_ADC1_HANDLER                  Vector70
-#define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC1_DMA_CHN                  0x00000000
@@ -697,13 +599,13 @@
 #define STM32_HAS_CAN3                      FALSE
 
 /* DAC attributes.*/
-#define STM32_HAS_DAC1_CH1                  FALSE
+#define STM32_HAS_DAC1_CH1                  TRUE
 #define STM32_DAC1_CH1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_DAC1_CH1_DMA_CHN              0x00000090
 
-#define STM32_HAS_DAC1_CH2                  FALSE
-#define STM32_HAS_DAC2_CH1                  FALSE
-#define STM32_HAS_DAC2_CH2                  FALSE
+#define STM32_HAS_DAC1_CH2                  TRUE
+#define STM32_HAS_DAC2_CH1                  TRUE
+#define STM32_HAS_DAC2_CH2                  TRUE
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE
@@ -711,26 +613,6 @@
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA2_NUM_CHANNELS             0
-#define STM32_DMA1_CH1_HANDLER              Vector64
-#define STM32_DMA1_CH23_HANDLER             Vector68
-#define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH1_NUMBER               9
-#define STM32_DMA1_CH23_NUMBER              10
-#define STM32_DMA1_CH4567_NUMBER            11
-
-#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
-#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
-
-#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -759,8 +641,6 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C1_GLOBAL_NUMBER            23
 #define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_I2C1_RX_DMA_CHN               0x06000600
@@ -769,8 +649,6 @@
 #define STM32_I2C1_TX_DMA_CHN               0x00600060
 
 #define STM32_HAS_I2C2                      TRUE
-#define STM32_I2C2_GLOBAL_HANDLER           VectorA0
-#define STM32_I2C2_GLOBAL_NUMBER            24
 #define STM32_I2C2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
 #define STM32_I2C2_RX_DMA_CHN               0x00070000
 #define STM32_I2C2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
@@ -807,26 +685,18 @@
 #define STM32_HAS_TIM2                      TRUE
 #define STM32_TIM2_IS_32BITS                FALSE
 #define STM32_TIM2_CHANNELS                 4
-#define STM32_TIM2_HANDLER                  Vector7C
-#define STM32_TIM2_NUMBER                   15
 
 #define STM32_HAS_TIM6                      TRUE
 #define STM32_TIM6_IS_32BITS                FALSE
 #define STM32_TIM6_CHANNELS                 0
-#define STM32_TIM6_HANDLER                  Vector84
-#define STM32_TIM6_NUMBER                   17
 
 #define STM32_HAS_TIM21                     TRUE
 #define STM32_TIM21_IS_32BITS               FALSE
 #define STM32_TIM21_CHANNELS                2
-#define STM32_TIM21_HANDLER                 Vector90
-#define STM32_TIM21_NUMBER                  20
 
 #define STM32_HAS_TIM22                     TRUE
 #define STM32_TIM22_IS_32BITS               FALSE
 #define STM32_TIM22_CHANNELS                2
-#define STM32_TIM22_HANDLER                 Vector98
-#define STM32_TIM22_NUMBER                  22
 
 #define STM32_HAS_TIM1                      FALSE
 #define STM32_HAS_TIM3                      FALSE
@@ -878,10 +748,6 @@
 #define STM32_USB_ACCESS_SCHEME_2x16        TRUE
 #define STM32_USB_PMA_SIZE                  1024
 #define STM32_USB_HAS_BCDR                  TRUE
-#define STM32_USB1_LP_HANDLER               VectorBC
-#define STM32_USB1_LP_NUMBER                31
-#define STM32_USB1_HP_HANDLER               VectorBC
-#define STM32_USB1_HP_NUMBER                31
 
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
@@ -912,9 +778,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
-#define STM32_ADC1_HANDLER                  Vector70
-#define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC1_DMA_CHN                  0x00000000
@@ -945,26 +808,6 @@
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA2_NUM_CHANNELS             0
-#define STM32_DMA1_CH1_HANDLER              Vector64
-#define STM32_DMA1_CH23_HANDLER             Vector68
-#define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH1_NUMBER               9
-#define STM32_DMA1_CH23_NUMBER              10
-#define STM32_DMA1_CH4567_NUMBER            11
-
-#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
-#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
-
-#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -994,8 +837,6 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C1_GLOBAL_NUMBER            23
 #define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_I2C1_RX_DMA_CHN               0x06000600
@@ -1004,16 +845,12 @@
 #define STM32_I2C1_TX_DMA_CHN               0x00600060
 
 #define STM32_HAS_I2C2                      TRUE
-#define STM32_I2C2_GLOBAL_HANDLER           VectorA0
-#define STM32_I2C2_GLOBAL_NUMBER            24
 #define STM32_I2C2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
 #define STM32_I2C2_RX_DMA_CHN               0x00070000
 #define STM32_I2C2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
 #define STM32_I2C2_TX_DMA_CHN               0x00007000
 
 #define STM32_HAS_I2C3                      TRUE
-#define STM32_I2C3_GLOBAL_HANDLER           Vector94
-#define STM32_I2C3_GLOBAL_NUMBER            21
 #define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_I2C3_RX_DMA_CHN               0x00E0E000
@@ -1050,38 +887,26 @@
 #define STM32_HAS_TIM2                      TRUE
 #define STM32_TIM2_IS_32BITS                FALSE
 #define STM32_TIM2_CHANNELS                 4
-#define STM32_TIM2_HANDLER                  Vector7C
-#define STM32_TIM2_NUMBER                   15
 
 #define STM32_HAS_TIM3                      TRUE
 #define STM32_TIM3_IS_32BITS                FALSE
 #define STM32_TIM3_CHANNELS                 4
-#define STM32_TIM3_HANDLER                  Vector80
-#define STM32_TIM3_NUMBER                   16
 
 #define STM32_HAS_TIM6                      TRUE
 #define STM32_TIM6_IS_32BITS                FALSE
 #define STM32_TIM6_CHANNELS                 0
-#define STM32_TIM6_HANDLER                  Vector84
-#define STM32_TIM6_NUMBER                   17
 
 #define STM32_HAS_TIM7                      TRUE
 #define STM32_TIM7_IS_32BITS                FALSE
 #define STM32_TIM7_CHANNELS                 0
-#define STM32_TIM7_HANDLER                  Vector88
-#define STM32_TIM7_NUMBER                   18
 
 #define STM32_HAS_TIM21                     TRUE
 #define STM32_TIM21_IS_32BITS               FALSE
 #define STM32_TIM21_CHANNELS                2
-#define STM32_TIM21_HANDLER                 Vector90
-#define STM32_TIM21_NUMBER                  20
 
 #define STM32_HAS_TIM22                     TRUE
 #define STM32_TIM22_IS_32BITS               FALSE
 #define STM32_TIM22_CHANNELS                2
-#define STM32_TIM22_HANDLER                 Vector98
-#define STM32_TIM22_NUMBER                  22
 
 #define STM32_HAS_TIM1                      FALSE
 #define STM32_HAS_TIM4                      FALSE
@@ -1171,9 +996,6 @@
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 #define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
-#define STM32_ADC1_IRQ_SHARED_WITH_EXTI     TRUE
-#define STM32_ADC1_HANDLER                  Vector70
-#define STM32_ADC1_NUMBER                   12
 #define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_ADC1_DMA_CHN                  0x00000000
@@ -1204,26 +1026,6 @@
 #define STM32_DMA_SUPPORTS_CSELR            TRUE
 #define STM32_DMA1_NUM_CHANNELS             7
 #define STM32_DMA2_NUM_CHANNELS             0
-#define STM32_DMA1_CH1_HANDLER              Vector64
-#define STM32_DMA1_CH23_HANDLER             Vector68
-#define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH1_NUMBER               9
-#define STM32_DMA1_CH23_NUMBER              10
-#define STM32_DMA1_CH4567_NUMBER            11
-
-#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
-#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
-#define DMA1_CH2_CMASK                      0x00000006U
-#define DMA1_CH3_CMASK                      0x00000006U
-
-#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
-#define DMA1_CH4_CMASK                      0x00000078U
-#define DMA1_CH5_CMASK                      0x00000078U
-#define DMA1_CH6_CMASK                      0x00000078U
-#define DMA1_CH7_CMASK                      0x00000078U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -1253,8 +1055,6 @@
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C1_GLOBAL_NUMBER            23
 #define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_I2C1_RX_DMA_CHN               0x06000600
@@ -1263,16 +1063,12 @@
 #define STM32_I2C1_TX_DMA_CHN               0x00600060
 
 #define STM32_HAS_I2C2                      TRUE
-#define STM32_I2C2_GLOBAL_HANDLER           VectorA0
-#define STM32_I2C2_GLOBAL_NUMBER            24
 #define STM32_I2C2_RX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 5)
 #define STM32_I2C2_RX_DMA_CHN               0x00070000
 #define STM32_I2C2_TX_DMA_MSK               STM32_DMA_STREAM_ID_MSK(1, 4)
 #define STM32_I2C2_TX_DMA_CHN               0x00007000
 
 #define STM32_HAS_I2C3                      TRUE
-#define STM32_I2C3_GLOBAL_HANDLER           Vector94
-#define STM32_I2C3_GLOBAL_NUMBER            21
 #define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
 #define STM32_I2C3_RX_DMA_CHN               0x00E0E000
@@ -1309,38 +1105,26 @@
 #define STM32_HAS_TIM2                      TRUE
 #define STM32_TIM2_IS_32BITS                FALSE
 #define STM32_TIM2_CHANNELS                 4
-#define STM32_TIM2_HANDLER                  Vector7C
-#define STM32_TIM2_NUMBER                   15
 
 #define STM32_HAS_TIM3                      TRUE
 #define STM32_TIM3_IS_32BITS                FALSE
 #define STM32_TIM3_CHANNELS                 4
-#define STM32_TIM3_HANDLER                  Vector80
-#define STM32_TIM3_NUMBER                   16
 
 #define STM32_HAS_TIM6                      TRUE
 #define STM32_TIM6_IS_32BITS                FALSE
 #define STM32_TIM6_CHANNELS                 0
-#define STM32_TIM6_HANDLER                  Vector84
-#define STM32_TIM6_NUMBER                   17
 
 #define STM32_HAS_TIM7                      TRUE
 #define STM32_TIM7_IS_32BITS                FALSE
 #define STM32_TIM7_CHANNELS                 0
-#define STM32_TIM7_HANDLER                  Vector88
-#define STM32_TIM7_NUMBER                   18
 
 #define STM32_HAS_TIM21                     TRUE
 #define STM32_TIM21_IS_32BITS               FALSE
 #define STM32_TIM21_CHANNELS                2
-#define STM32_TIM21_HANDLER                 Vector90
-#define STM32_TIM21_NUMBER                  20
 
 #define STM32_HAS_TIM22                     TRUE
 #define STM32_TIM22_IS_32BITS               FALSE
 #define STM32_TIM22_CHANNELS                2
-#define STM32_TIM22_HANDLER                 Vector98
-#define STM32_TIM22_NUMBER                  22
 
 #define STM32_HAS_TIM1                      FALSE
 #define STM32_HAS_TIM4                      FALSE
@@ -1404,10 +1188,6 @@
 #define STM32_USB_ACCESS_SCHEME_2x16        TRUE
 #define STM32_USB_PMA_SIZE                  1024
 #define STM32_USB_HAS_BCDR                  TRUE
-#define STM32_USB1_LP_HANDLER               VectorBC
-#define STM32_USB1_LP_NUMBER                31
-#define STM32_USB1_HP_HANDLER               VectorBC
-#define STM32_USB1_HP_NUMBER                31
 
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE

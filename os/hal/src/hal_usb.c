@@ -720,6 +720,10 @@ void _usb_suspend(USBDriver *usbp) {
   /* Notification of suspend event.*/
   _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
 
+  /* Terminating all pending transactions.*/
+  usbp->transmitting  = 0;
+  usbp->receiving     = 0;
+
   /* Signaling the event to threads waiting on endpoints.*/
 #if USB_USE_WAIT == TRUE
   {

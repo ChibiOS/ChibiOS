@@ -185,7 +185,7 @@
 /**
  * @brief   ChibiOS/HAL identification macro.
  */
-#define _CHIBIOS_HAL_
+#define __CHIBIOS_HAL__
 
 /**
  * @brief   Stable release flag.
@@ -221,7 +221,13 @@
  * @name    Return codes
  * @{
  */
+/**
+ * @brief HAL operation success.
+ */
 #define HAL_SUCCESS             false
+/**
+ * @brief HAL operation failed.
+ */
 #define HAL_FAILED              true
 /** @} */
 

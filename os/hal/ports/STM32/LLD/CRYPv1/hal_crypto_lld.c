@@ -191,7 +191,7 @@ static cryerror_t cryp_do_transfer(CRYDriver *cryp,
       }
 
       if ((nr < szw) && ((CRYP->SR & CRYP_SR_IFNF) != 0U)) {
-        CRYP->DR = __UNALIGNED_UINT32_READ(in);
+        CRYP->DIN = __UNALIGNED_UINT32_READ(in);
         in += 4;
         nr++;
       }
@@ -411,13 +411,13 @@ void cry_lld_start(CRYDriver *cryp) {
                        STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD |
                        STM32_DMA_CR_DMEIE | STM32_DMA_CR_TEIE |
                        STM32_DMA_CR_TCIE);
-      dmaStreamSetPeripheral(cryp->cryp_dma_in,  &CRYP->DR);
+      dmaStreamSetPeripheral(cryp->cryp_dma_in,  &CRYP->DIN);
       dmaStreamSetPeripheral(cryp->cryp_dma_out, &CRYP->DOUT);
       dmaStreamSetFIFO(cryp->cryp_dma_in,  STM32_DMA_FCR_DMDIS);
       dmaStreamSetFIFO(cryp->cryp_dma_out, STM32_DMA_FCR_DMDIS);
 #if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(cryp->dma_cryp_in, STM32_DMAMUX1_CRYP_IN);
-      dmaSetRequestSource(cryp->dma_cryp_out, STM32_DMAMUX1_CRYP_OUT);
+      dmaSetRequestSource(cryp->cryp_dma_in, STM32_DMAMUX1_CRYP_IN);
+      dmaSetRequestSource(cryp->cryp_dma_out, STM32_DMAMUX1_CRYP_OUT);
 #endif
 #endif /* STM32_CRY_CRYP_SIZE_THRESHOLD != 0 */
       rccEnableCRYP(true);
@@ -442,7 +442,7 @@ void cry_lld_start(CRYDriver *cryp) {
       dmaStreamSetMemory0(cryp->hash_dma, &HASH->DIN);
       dmaStreamSetFIFO(cryp->hash_dma, STM32_DMA_FCR_DMDIS);
 #if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(cryp->dma_hash, STM32_DMAMUX1_HASH);
+      dmaSetRequestSource(cryp->hash_dma, STM32_DMAMUX1_HASH_IN);
 #endif
 #endif /* STM32_CRY_HASH_SIZE_THRESHOLD != 0 */
       rccEnableHASH(true);
@@ -615,10 +615,10 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
   }
 
   /* Pushing the AES block in the FIFO, it is assumed to be empty.*/
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[0]);
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[4]);
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[8]);
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[12]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[0]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[4]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[8]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[12]);
 
   /* Reading the result.*/
   for (i = 0U; i < 4; i++, out += 4) {
@@ -673,10 +673,10 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
   }
 
   /* Pushing the AES block in the FIFO, it is assumed to be empty.*/
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[0]);
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[4]);
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[8]);
-  CRYP->DR = __UNALIGNED_UINT32_READ(&in[12]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[0]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[4]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[8]);
+  CRYP->DIN = __UNALIGNED_UINT32_READ(&in[12]);
 
   /* Reading the result.*/
   for (i = 0U; i < 4; i++, out += 4) {

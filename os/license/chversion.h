@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,7 +37,7 @@
 /**
  * @brief   ChibiOS product identification macro.
  */
-#define _CHIBIOS_
+#define __CHIBIOS__
 
 /**
  * @brief   Stable release flag.
@@ -51,17 +51,17 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "0.0.0"
+#define CH_VERSION              "2012.1.0"
 
 /**
  * @brief   ChibiOS version release year.
  */
-#define CH_VERSION_YEAR         0
+#define CH_VERSION_YEAR         12
 
 /**
  * @brief   ChibiOS version release month.
  */
-#define CH_VERSION_MONTH        0
+#define CH_VERSION_MONTH        1
 
 /**
  * @brief   ChibiOS version patch number.
@@ -81,6 +81,12 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/**
+ * @brief   Current version date in numeric form (yyyymm).
+ */
+#define CH_VERSION_DATE                                                     \
+  (((CH_VERSION_YEAR + 2000) * 100) + CH_VERSION_MONTH)
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */

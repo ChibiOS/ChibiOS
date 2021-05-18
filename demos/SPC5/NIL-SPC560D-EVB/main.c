@@ -123,7 +123,7 @@ THD_FUNCTION(Thread2, arg) {
  */
 THD_TABLE_BEGIN
   THD_TABLE_THREAD(0, "blinker",      waThread1,       Thread1,      NULL)
-  THD_TABLE_THREAD(2, "tester",       waThread2,       Thread2,      NULL)
+  THD_TABLE_THREAD(4, "tester",       waThread2,       Thread2,      NULL)
 THD_TABLE_END
 
 /*

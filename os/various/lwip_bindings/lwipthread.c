@@ -193,7 +193,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
 
   if (*pbuf != NULL) {
 #if ETH_PAD_SIZE
-    pbuf_header(pbuf, -ETH_PAD_SIZE); /* drop the padding word */
+    pbuf_header(*pbuf, -ETH_PAD_SIZE); /* drop the padding word */
 #endif
 
     /* Iterates through the pbuf chain. */
@@ -201,7 +201,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
       macReadReceiveDescriptor(&rd, (uint8_t *)q->payload, (size_t)q->len);
     macReleaseReceiveDescriptor(&rd);
 
-    MIB2_STATS_NETIF_ADD(netif, ifinoctets, *pbuf->tot_len);
+    MIB2_STATS_NETIF_ADD(netif, ifinoctets, (*pbuf)->tot_len);
 
     if (*(uint8_t *)((*pbuf)->payload) & 1) {
       /* broadcast or multicast packet*/
@@ -213,7 +213,7 @@ static bool low_level_input(struct netif *netif, struct pbuf **pbuf) {
     }
 
 #if ETH_PAD_SIZE
-    pbuf_header(pbuf, ETH_PAD_SIZE); /* reclaim the padding word */
+    pbuf_header(*pbuf, ETH_PAD_SIZE); /* reclaim the padding word */
 #endif
 
     LINK_STATS_INC(link.recv);
@@ -266,6 +266,38 @@ static err_t ethernetif_init(struct netif *netif) {
   return ERR_OK;
 }
 
+static net_addr_mode_t addressMode;
+static ip4_addr_t ip, gateway, netmask;
+static struct netif thisif;
+
+void lwipDefaultLinkUpCB(void *p)
+{
+  struct netif *ifc = (struct netif*) p;
+  (void) ifc;
+#if LWIP_AUTOIP
+  if (addressMode == NET_ADDRESS_AUTO)
+    autoip_start(ifc);
+#endif
+#if LWIP_DHCP
+  if (addressMode == NET_ADDRESS_DHCP)
+    dhcp_start(ifc);
+#endif
+}
+
+void lwipDefaultLinkDownCB(void *p)
+{
+  struct netif *ifc = (struct netif*) p;
+  (void) ifc;
+#if LWIP_AUTOIP
+  if (addressMode == NET_ADDRESS_AUTO)
+    autoip_stop(ifc);
+#endif
+#if LWIP_DHCP
+  if (addressMode == NET_ADDRESS_DHCP)
+    dhcp_stop(ifc);
+#endif
+}
+
 /**
  * @brief LWIP handling thread.
  *
@@ -275,11 +307,10 @@ static err_t ethernetif_init(struct netif *netif) {
 static THD_FUNCTION(lwip_thread, p) {
   event_timer_t evt;
   event_listener_t el0, el1;
-  ip_addr_t ip, gateway, netmask;
-  static struct netif thisif = { 0 };
   static const MACConfig mac_config = {thisif.hwaddr};
-  net_addr_mode_t addressMode;
   err_t result;
+  tcpip_callback_fn link_up_cb = NULL;
+  tcpip_callback_fn link_down_cb = NULL;
 
   chRegSetThreadName(LWIP_THREAD_NAME);
 
@@ -288,7 +319,7 @@ static THD_FUNCTION(lwip_thread, p) {
 
   /* TCP/IP parameters, runtime or compile time.*/
   if (p) {
-    struct lwipthread_opts *opts = p;
+    lwipthread_opts_t *opts = p;
     unsigned i;
 
     for (i = 0; i < 6; i++)
@@ -300,6 +331,8 @@ static THD_FUNCTION(lwip_thread, p) {
 #if LWIP_NETIF_HOSTNAME
     thisif.hostname = opts->ourHostName;
 #endif
+    link_up_cb = opts->link_up_cb;
+    link_down_cb = opts->link_down_cb;
   }
   else {
     thisif.hwaddr[0] = LWIP_ETHADDR_0;
@@ -311,11 +344,22 @@ static THD_FUNCTION(lwip_thread, p) {
     LWIP_IPADDR(&ip);
     LWIP_GATEWAY(&gateway);
     LWIP_NETMASK(&netmask);
+#if LWIP_DHCP
+    addressMode = NET_ADDRESS_DHCP;
+#elif LWIP_AUTOIP
+    addressMode = NET_ADDRESS_AUTO;
+#else
     addressMode = NET_ADDRESS_STATIC;
+#endif
 #if LWIP_NETIF_HOSTNAME
     thisif.hostname = NULL;
 #endif
   }
+
+  if (!link_up_cb)
+    link_up_cb = lwipDefaultLinkUpCB;
+  if (!link_down_cb)
+    link_down_cb = lwipDefaultLinkDownCB;
 
 #if LWIP_NETIF_HOSTNAME
   if (thisif.hostname == NULL)
@@ -323,6 +367,8 @@ static THD_FUNCTION(lwip_thread, p) {
 #endif
 
   macStart(&ETHD1, &mac_config);
+
+  MIB2_INIT_NETIF(&thisif, snmp_ifType_ethernet_csmacd, 0);
 
   /* Add interface. */
   result = netifapi_netif_add(&thisif, &ip, &netmask, &gateway, NULL, ethernetif_init, tcpip_input);
@@ -332,20 +378,8 @@ static THD_FUNCTION(lwip_thread, p) {
     osalSysHalt("netif_add error");   // Not sure what else we can do if an error occurs here.
   };
 
-  netif_set_default(&thisif);
-
-  switch (addressMode)
-  {
-#if LWIP_AUTOIP
-    case NET_ADDRESS_AUTO:
-        autoip_start(&thisif);
-        break;
-#endif
-
-    default:
-      netif_set_up(&thisif);
-      break;
-  }
+  netifapi_netif_set_default(&thisif);
+  netifapi_netif_set_up(&thisif);
 
   /* Setup event sources.*/
   evtObjectInit(&evt, LWIP_LINK_POLL_INTERVAL);
@@ -366,22 +400,16 @@ static THD_FUNCTION(lwip_thread, p) {
         if (current_link_status) {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_up,
                                      &thisif, 0);
-#if LWIP_DHCP
-          if (addressMode == NET_ADDRESS_DHCP)
-            dhcp_start(&thisif);
-#endif
+          tcpip_callback_with_block(link_up_cb, &thisif, 0);
         }
         else {
           tcpip_callback_with_block((tcpip_callback_fn) netif_set_link_down,
                                      &thisif, 0);
-#if LWIP_DHCP
-          if (addressMode == NET_ADDRESS_DHCP)
-            dhcp_stop(&thisif);
-#endif
+          tcpip_callback_with_block(link_down_cb, &thisif, 0);
         }
       }
     }
-    
+
     if (mask & FRAME_RECEIVED_ID) {
       struct pbuf *p;
       while (low_level_input(&thisif, &p)) {
@@ -413,6 +441,7 @@ static THD_FUNCTION(lwip_thread, p) {
  *                      then the static configuration is used.
  */
 void lwipInit(const lwipthread_opts_t *opts) {
+
   /* Creating the lwIP thread (it changes priority internally).*/
   chThdCreateStatic(wa_lwip_thread, sizeof (wa_lwip_thread),
                     chThdGetPriorityX() - 1, lwip_thread, (void *)opts);
@@ -423,6 +452,79 @@ void lwipInit(const lwipthread_opts_t *opts) {
   chSysLock();
   chThdSuspendS(&lwip_trp);
   chSysUnlock();
+}
+
+typedef struct lwip_reconf_params {
+  const lwipreconf_opts_t *opts;
+  semaphore_t completion;
+} lwip_reconf_params_t;
+
+static void do_reconfigure(void *p)
+{
+  lwip_reconf_params_t *reconf = (lwip_reconf_params_t*) p;
+
+  switch (addressMode) {
+#if LWIP_DHCP
+  case NET_ADDRESS_DHCP: {
+    if (netif_is_up(&thisif))
+      dhcp_stop(&thisif);
+    break;
+  }
+#endif
+  case NET_ADDRESS_STATIC: {
+    ip4_addr_t zero = { 0 };
+    netif_set_ipaddr(&thisif, &zero);
+    netif_set_netmask(&thisif, &zero);
+    netif_set_gw(&thisif, &zero);
+    break;
+  }
+#if LWIP_AUTOIP
+  case NET_ADDRESS_AUTO: {
+    if (netif_is_up(&thisif))
+      autoip_stop(&thisif);
+    break;
+  }
+#endif
+  }
+
+  ip.addr = reconf->opts->address;
+  gateway.addr = reconf->opts->gateway;
+  netmask.addr = reconf->opts->netmask;
+  addressMode = reconf->opts->addrMode;
+
+  switch (addressMode) {
+#if LWIP_DHCP
+  case NET_ADDRESS_DHCP: {
+    if (netif_is_up(&thisif))
+      dhcp_start(&thisif);
+    break;
+  }
+#endif
+  case NET_ADDRESS_STATIC: {
+    netif_set_ipaddr(&thisif, &ip);
+    netif_set_netmask(&thisif, &netmask);
+    netif_set_gw(&thisif, &gateway);
+    break;
+  }
+#if LWIP_AUTOIP
+  case NET_ADDRESS_AUTO: {
+    if (netif_is_up(&thisif))
+      autoip_start(&thisif);
+    break;
+  }
+#endif
+  }
+
+  chSemSignal(&reconf->completion);
+}
+
+void lwipReconfigure(const lwipreconf_opts_t *opts)
+{
+  lwip_reconf_params_t params;
+  params.opts = opts;
+  chSemObjectInit(&params.completion, 0);
+  tcpip_callback_with_block(do_reconfigure, &params, 0);
+  chSemWait(&params.completion);
 }
 
 /** @} */

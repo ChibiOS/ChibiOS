@@ -15,7 +15,7 @@
 */
 
 /*
- * ST32F746xG generic setup.
+ * STM32H743xI generic setup.
  * 
  * AXI SRAM     - BSS, Data, Heap.
  * SRAM1+SRAM2  - None.
@@ -27,22 +27,22 @@
  */
 MEMORY
 {
-    flash0  : org = 0x08000000, len = 2M        /* Flash bank1+bank2 */
-    flash1  : org = 0x08000000, len = 1M        /* Flash bank 1 */
-    flash2  : org = 0x08100000, len = 1M        /* Flash bank 2 */
-    flash3  : org = 0x00000000, len = 0
-    flash4  : org = 0x00000000, len = 0
-    flash5  : org = 0x00000000, len = 0
-    flash6  : org = 0x00000000, len = 0
-    flash7  : org = 0x00000000, len = 0
-    ram0    : org = 0x24000000, len = 512k      /* AXI SRAM */
-    ram1    : org = 0x30000000, len = 256k      /* AHB SRAM1+SRAM2 */
-    ram2    : org = 0x30000000, len = 288k      /* AHB SRAM1+SRAM2+SRAM3 */
-    ram3    : org = 0x30040000, len = 32k       /* AHB SRAM3 */
-    ram4    : org = 0x38000000, len = 64k       /* AHB SRAM4 */
-    ram5    : org = 0x20000000, len = 128k      /* DTCM-RAM */
-    ram6    : org = 0x00000000, len = 64k       /* ITCM-RAM */
-    ram7    : org = 0x38800000, len = 4k        /* BCKP SRAM */
+    flash0 (rx) : org = 0x08000000, len = 2M        /* Flash bank1+bank2 */
+    flash1 (rx) : org = 0x08000000, len = 1M        /* Flash bank 1 */
+    flash2 (rx) : org = 0x08100000, len = 1M        /* Flash bank 2 */
+    flash3 (rx) : org = 0x00000000, len = 0
+    flash4 (rx) : org = 0x00000000, len = 0
+    flash5 (rx) : org = 0x00000000, len = 0
+    flash6 (rx) : org = 0x00000000, len = 0
+    flash7 (rx) : org = 0x00000000, len = 0
+    ram0   (wx) : org = 0x24000000, len = 512k      /* AXI SRAM */
+    ram1   (wx) : org = 0x30000000, len = 256k      /* AHB SRAM1+SRAM2 */
+    ram2   (wx) : org = 0x30000000, len = 288k      /* AHB SRAM1+SRAM2+SRAM3 */
+    ram3   (wx) : org = 0x30040000, len = 32k       /* AHB SRAM3 */
+    ram4   (wx) : org = 0x38000000, len = 64k       /* AHB SRAM4 */
+    ram5   (wx) : org = 0x20000000, len = 128k      /* DTCM-RAM */
+    ram6   (wx) : org = 0x00000000, len = 64k       /* ITCM-RAM */
+    ram7   (wx) : org = 0x38800000, len = 4k        /* BCKP SRAM */
 }
 
 /* For each data/text section two region are defined, a virtual region

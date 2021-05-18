@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chmempools.h
+ * @file    oslib/include/chmempools.h
  * @brief   Memory Pools macros and structures.
  *
  * @addtogroup oslib_mempools
@@ -95,7 +95,7 @@ typedef struct {
  * @param[in] align     required memory alignment
  * @param[in] provider  memory provider function for the memory pool
  */
-#define _MEMORYPOOL_DATA(name, size, align, provider)                       \
+#define __MEMORYPOOL_DATA(name, size, align, provider)                      \
   {NULL, size, align, provider}
 
 /**
@@ -110,7 +110,7 @@ typedef struct {
  *                      if the pool is not allowed to grow automatically
  */
 #define MEMORYPOOL_DECL(name, size, align, provider)                        \
-  memory_pool_t name = _MEMORYPOOL_DATA(name, size, align, provider)
+  memory_pool_t name = __MEMORYPOOL_DATA(name, size, align, provider)
 
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
@@ -122,9 +122,9 @@ typedef struct {
  * @param[in] size      size of the memory pool contained objects
  * @param[in] align     required memory alignment
  */
-#define _GUARDEDMEMORYPOOL_DATA(name, size, align) {                        \
-  _SEMAPHORE_DATA(name.sem, (cnt_t)0),                                      \
-  _MEMORYPOOL_DATA(NULL, size, align, NULL)                                 \
+#define __GUARDEDMEMORYPOOL_DATA(name, size, align) {                       \
+  __SEMAPHORE_DATA(name.sem, (cnt_t)0),                                     \
+  __MEMORYPOOL_DATA(NULL, size, align, NULL)                                \
 }
 
 /**
@@ -137,7 +137,7 @@ typedef struct {
  * @param[in] align     required memory alignment
  */
 #define GUARDEDMEMORYPOOL_DECL(name, size, align)                           \
-  guarded_memory_pool_t name = _GUARDEDMEMORYPOOL_DATA(name, size, align)
+  guarded_memory_pool_t name = __GUARDEDMEMORYPOOL_DATA(name, size, align)
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /*===========================================================================*/
@@ -253,6 +253,7 @@ static inline void chGuardedPoolObjectInit(guarded_memory_pool_t *gmp,
  * @pre     The guarded memory pool must be already been initialized.
  *
  * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
+ * @return              The counter of the guard semaphore.
  *
  * @iclass
  */

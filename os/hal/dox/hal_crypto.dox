@@ -15,10 +15,10 @@
 */
 
 /**
- * @defgroup TRNG TRNG Driver
- * @brief   Generic True Random Numbers Generator Driver.
- * @details This module implements a generic TRNG driver.
- * @pre     In order to use the TRNG driver the @p HAL_USE_TRNG option
+ * @defgroup CRYPTO Crypto Driver
+ * @brief   Generic Crypto Driver.
+ * @details This module implements a generic Cryptography driver.
+ * @pre     In order to use the crypto driver the @p HAL_USE_CRY option
  *          must be enabled in @p halconf.h.
  *
  * @ingroup HAL_NORMAL_DRIVERS

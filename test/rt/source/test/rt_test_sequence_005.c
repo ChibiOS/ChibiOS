@@ -21,66 +21,29 @@
  * @file    rt_test_sequence_005.c
  * @brief   Test Sequence 005 code.
  *
- * @page rt_test_sequence_005 [5] Counter Semaphores
+ * @page rt_test_sequence_005 [5] Threads Functionality
  *
  * File: @ref rt_test_sequence_005.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS/RT functionalities related to
- * counter semaphores.
- *
- * <h2>Conditions</h2>
- * This sequence is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
- * .
+ * threading.
  *
  * <h2>Test Cases</h2>
  * - @subpage rt_test_005_001
  * - @subpage rt_test_005_002
  * - @subpage rt_test_005_003
  * - @subpage rt_test_005_004
- * - @subpage rt_test_005_005
- * - @subpage rt_test_005_006
  * .
  */
-
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
-#include "ch.h"
+static THD_FUNCTION(thread, p) {
 
-static semaphore_t sem1;
-
-static THD_FUNCTION(thread1, p) {
-
-  chSemWait(&sem1);
   test_emit_token(*(char *)p);
-}
-
-static THD_FUNCTION(thread2, p) {
-
-  (void)p;
-  chThdSleepMilliseconds(50);
-  chSysLock();
-  chSemSignalI(&sem1); /* For coverage reasons */
-  chSchRescheduleS();
-  chSysUnlock();
-}
-
-static THD_FUNCTION(thread3, p) {
-
-  (void)p;
-  chSemWait(&sem1);
-  chSemSignal(&sem1);
-}
-
-static THD_FUNCTION(thread4, p) {
-
-  chBSemSignal((binary_semaphore_t *)p);
 }
 
 /****************************************************************************
@@ -88,405 +51,293 @@ static THD_FUNCTION(thread4, p) {
  ****************************************************************************/
 
 /**
- * @page rt_test_005_001 [5.1] Semaphore primitives, no state change
+ * @page rt_test_005_001 [5.1] Thread Sleep functionality
  *
  * <h2>Description</h2>
- * Wait, Signal and Reset primitives are tested. The testing thread
- * does not trigger a state change.
+ * The functionality of @p chThdSleep() and derivatives is tested.
  *
  * <h2>Test Steps</h2>
- * - [5.1.1] The function chSemWait() is invoked, after return the
- *   counter and the returned message are tested.
- * - [5.1.2] The function chSemSignal() is invoked, after return the
- *   counter is tested.
- * - [5.1.3] The function chSemReset() is invoked, after return the
- *   counter is tested.
+ * - [5.1.1] The current system time is read then a sleep is performed
+ *   for 100 system ticks and on exit the system time is verified
+ *   again.
+ * - [5.1.2] The current system time is read then a sleep is performed
+ *   for 100000 microseconds and on exit the system time is verified
+ *   again.
+ * - [5.1.3] The current system time is read then a sleep is performed
+ *   for 100 milliseconds and on exit the system time is verified
+ *   again.
+ * - [5.1.4] The current system time is read then a sleep is performed
+ *   for 1 second and on exit the system time is verified again.
+ * - [5.1.5] Function chThdSleepUntil() is tested with a timeline of
+ *   "now" + 100 ticks.
  * .
  */
 
-static void rt_test_005_001_setup(void) {
-  chSemObjectInit(&sem1, 1);
-}
-
-static void rt_test_005_001_teardown(void) {
-  chSemReset(&sem1, 0);
-}
-
 static void rt_test_005_001_execute(void) {
+  systime_t time;
 
-  /* [5.1.1] The function chSemWait() is invoked, after return the
-     counter and the returned message are tested.*/
+  /* [5.1.1] The current system time is read then a sleep is performed
+     for 100 system ticks and on exit the system time is verified
+     again.*/
   test_set_step(1);
   {
-    msg_t msg;
-
-    msg = chSemWait(&sem1);
-    test_assert_lock(chSemGetCounterI(&sem1) == 0, "wrong counter value");
-    test_assert(MSG_OK == msg, "wrong returned message");
+    time = chVTGetSystemTimeX();
+    chThdSleep(100);
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + CH_CFG_ST_TIMEDELTA + 1),
+                            "out of time window");
   }
+  test_end_step(1);
 
-  /* [5.1.2] The function chSemSignal() is invoked, after return the
-     counter is tested.*/
+  /* [5.1.2] The current system time is read then a sleep is performed
+     for 100000 microseconds and on exit the system time is verified
+     again.*/
   test_set_step(2);
   {
-    chSemSignal(&sem1);
-    test_assert_lock(chSemGetCounterI(&sem1) == 1, "wrong counter value");
+    time = chVTGetSystemTimeX();
+    chThdSleepMicroseconds(100000);
+    test_assert_time_window(chTimeAddX(time, TIME_US2I(100000)),
+                            chTimeAddX(time, TIME_US2I(100000) + CH_CFG_ST_TIMEDELTA + 1),
+                            "out of time window");
   }
+  test_end_step(2);
 
-  /* [5.1.3] The function chSemReset() is invoked, after return the
-     counter is tested.*/
+  /* [5.1.3] The current system time is read then a sleep is performed
+     for 100 milliseconds and on exit the system time is verified
+     again.*/
   test_set_step(3);
   {
-    chSemReset(&sem1, 2);
-    test_assert_lock(chSemGetCounterI(&sem1) == 2, "wrong counter value");
+    time = chVTGetSystemTimeX();
+    chThdSleepMilliseconds(100);
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(100)),
+                            chTimeAddX(time, TIME_MS2I(100) + CH_CFG_ST_TIMEDELTA + 1),
+                            "out of time window");
   }
+  test_end_step(3);
+
+  /* [5.1.4] The current system time is read then a sleep is performed
+     for 1 second and on exit the system time is verified again.*/
+  test_set_step(4);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepSeconds(1);
+    test_assert_time_window(chTimeAddX(time, TIME_S2I(1)),
+                            chTimeAddX(time, TIME_S2I(1) + CH_CFG_ST_TIMEDELTA + 1),
+                            "out of time window");
+  }
+  test_end_step(4);
+
+  /* [5.1.5] Function chThdSleepUntil() is tested with a timeline of
+     "now" + 100 ticks.*/
+  test_set_step(5);
+  {
+    time = chVTGetSystemTimeX();
+    chThdSleepUntil(chTimeAddX(time, 100));
+    test_assert_time_window(chTimeAddX(time, 100),
+                            chTimeAddX(time, 100 + CH_CFG_ST_TIMEDELTA + 1),
+                            "out of time window");
+  }
+  test_end_step(5);
 }
 
 static const testcase_t rt_test_005_001 = {
-  "Semaphore primitives, no state change",
-  rt_test_005_001_setup,
-  rt_test_005_001_teardown,
+  "Thread Sleep functionality",
+  NULL,
+  NULL,
   rt_test_005_001_execute
 };
 
 /**
- * @page rt_test_005_002 [5.2] Semaphore enqueuing test
+ * @page rt_test_005_002 [5.2] Ready List functionality, threads priority order
  *
  * <h2>Description</h2>
- * Five threads with randomized priorities are enqueued to a semaphore
- * then awakened one at time. The test expects that the threads reach
- * their goal in FIFO order or priority order depending on the @p
- * CH_CFG_USE_SEMAPHORES_PRIORITY configuration setting.
+ * Five threads, are enqueued in the ready list and atomically
+ * executed. The test expects the threads to perform their operations
+ * in correct priority order regardless of the initial order.
  *
  * <h2>Test Steps</h2>
- * - [5.2.1] Five threads are created with mixed priority levels (not
- *   increasing nor decreasing). Threads enqueue on a semaphore
- *   initialized to zero.
- * - [5.2.2] The semaphore is signaled 5 times. The thread activation
+ * - [5.2.1] Creating 5 threads with increasing priority, execution
+ *   sequence is tested.
+ * - [5.2.2] Creating 5 threads with decreasing priority, execution
+ *   sequence is tested.
+ * - [5.2.3] Creating 5 threads with pseudo-random priority, execution
  *   sequence is tested.
  * .
  */
 
-static void rt_test_005_002_setup(void) {
-  chSemObjectInit(&sem1, 0);
-}
-
 static void rt_test_005_002_execute(void) {
 
-  /* [5.2.1] Five threads are created with mixed priority levels (not
-     increasing nor decreasing). Threads enqueue on a semaphore
-     initialized to zero.*/
+  /* [5.2.1] Creating 5 threads with increasing priority, execution
+     sequence is tested.*/
   test_set_step(1);
   {
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+5, thread1, "A");
-    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()+1, thread1, "B");
-    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()+3, thread1, "C");
-    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()+4, thread1, "D");
-    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()+2, thread1, "E");
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
+    test_wait_threads();
+    test_assert_sequence("ABCDE", "invalid sequence");
   }
+  test_end_step(1);
 
-  /* [5.2.2] The semaphore is signaled 5 times. The thread activation
+  /* [5.2.2] Creating 5 threads with decreasing priority, execution
      sequence is tested.*/
   test_set_step(2);
   {
-    chSemSignal(&sem1);
-    chSemSignal(&sem1);
-    chSemSignal(&sem1);
-    chSemSignal(&sem1);
-    chSemSignal(&sem1);
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
     test_wait_threads();
-#if CH_CFG_USE_SEMAPHORES_PRIORITY
-    test_assert_sequence("ADCEB", "invalid sequence");
-#else
     test_assert_sequence("ABCDE", "invalid sequence");
-#endif
   }
+  test_end_step(2);
+
+  /* [5.2.3] Creating 5 threads with pseudo-random priority, execution
+     sequence is tested.*/
+  test_set_step(3);
+  {
+    threads[1] = chThdCreateStatic(wa[1], WA_SIZE, chThdGetPriorityX()-4, thread, "D");
+    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()-5, thread, "E");
+    threads[4] = chThdCreateStatic(wa[4], WA_SIZE, chThdGetPriorityX()-1, thread, "A");
+    threads[3] = chThdCreateStatic(wa[3], WA_SIZE, chThdGetPriorityX()-2, thread, "B");
+    threads[2] = chThdCreateStatic(wa[2], WA_SIZE, chThdGetPriorityX()-3, thread, "C");
+    test_wait_threads();
+    test_assert_sequence("ABCDE", "invalid sequence");
+  }
+  test_end_step(3);
 }
 
 static const testcase_t rt_test_005_002 = {
-  "Semaphore enqueuing test",
-  rt_test_005_002_setup,
+  "Ready List functionality, threads priority order",
+  NULL,
   NULL,
   rt_test_005_002_execute
 };
 
 /**
- * @page rt_test_005_003 [5.3] Semaphore timeout test
+ * @page rt_test_005_003 [5.3] Priority change test
  *
  * <h2>Description</h2>
- * The three possible semaphore waiting modes (do not wait, wait with
- * timeout, wait without timeout) are explored. The test expects that
- * the semaphore wait function returns the correct value in each of the
- * above scenario and that the semaphore structure status is correct
- * after each operation.
+ * A series of priority changes are performed on the current thread in
+ * order to verify that the priority change happens as expected.
  *
  * <h2>Test Steps</h2>
- * - [5.3.1] Testing special case TIME_IMMEDIATE.
- * - [5.3.2] Testing non-timeout condition.
- * - [5.3.3] Testing timeout condition.
+ * - [5.3.1] Thread priority is increased by one then a check is
+ *   performed.
+ * - [5.3.2] Thread priority is returned to the previous value then a
+ *   check is performed.
  * .
  */
 
-static void rt_test_005_003_setup(void) {
-  chSemObjectInit(&sem1, 0);
-}
-
 static void rt_test_005_003_execute(void) {
-  unsigned i;
-  systime_t target_time;
-  msg_t msg;
+  tprio_t prio, p1;
 
-  /* [5.3.1] Testing special case TIME_IMMEDIATE.*/
+  /* [5.3.1] Thread priority is increased by one then a check is
+     performed.*/
   test_set_step(1);
   {
-    msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
-    test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
-    test_assert(sem1.cnt == 0, "counter not zero");
+    prio = chThdGetPriorityX();
+    p1 = chThdSetPriority(prio + 1);
+    test_assert(p1 == prio, "unexpected returned priority level");
+    test_assert(chThdGetPriorityX() == prio + 1, "unexpected priority level");
   }
+  test_end_step(1);
 
-  /* [5.3.2] Testing non-timeout condition.*/
+  /* [5.3.2] Thread priority is returned to the previous value then a
+     check is performed.*/
   test_set_step(2);
   {
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX() - 1,
-                                   thread2, 0);
-    msg = chSemWaitTimeout(&sem1, TIME_MS2I(500));
-    test_wait_threads();
-    test_assert(msg == MSG_OK, "wrong wake-up message");
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
-    test_assert(sem1.cnt == 0, "counter not zero");
+    p1 = chThdSetPriority(p1);
+    test_assert(p1 == prio + 1, "unexpected returned priority level");
+    test_assert(chThdGetPriorityX() == prio, "unexpected priority level");
   }
-
-  /* [5.3.3] Testing timeout condition.*/
-  test_set_step(3);
-  {
-    target_time = chTimeAddX(test_wait_tick(), TIME_MS2I(5 * 50));
-    for (i = 0; i < 5; i++) {
-      test_emit_token('A' + i);
-      msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
-      test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-      test_assert(queue_isempty(&sem1.queue), "queue not empty");
-      test_assert(sem1.cnt == 0, "counter not zero");
-    }
-    test_assert_sequence("ABCDE", "invalid sequence");
-    test_assert_time_window(target_time,
-                            chTimeAddX(target_time, ALLOWED_DELAY),
-                            "out of time window");
-  }
+  test_end_step(2);
 }
 
 static const testcase_t rt_test_005_003 = {
-  "Semaphore timeout test",
-  rt_test_005_003_setup,
+  "Priority change test",
+  NULL,
   NULL,
   rt_test_005_003_execute
 };
 
+#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
 /**
- * @page rt_test_005_004 [5.4] Testing chSemAddCounterI() functionality
+ * @page rt_test_005_004 [5.4] Priority change test with Priority Inheritance
  *
  * <h2>Description</h2>
- * The functon is tested by waking up a thread then the semaphore
- * counter value is tested.
+ * A series of priority changes are performed on the current thread in
+ * order to verify that the priority change happens as expected.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_MUTEXES
+ * .
  *
  * <h2>Test Steps</h2>
- * - [5.4.1] A thread is created, it goes to wait on the semaphore.
- * - [5.4.2] The semaphore counter is increased by two, it is then
- *   tested to be one, the thread must have completed.
+ * - [5.4.1] Simulating a priority boost situation (prio > realprio).
+ * - [5.4.2] Raising thread priority above original priority but below
+ *   the boosted level.
+ * - [5.4.3] Raising thread priority above the boosted level.
+ * - [5.4.4] Restoring original conditions.
  * .
  */
 
-static void rt_test_005_004_setup(void) {
-  chSemObjectInit(&sem1, 0);
-}
-
 static void rt_test_005_004_execute(void) {
+  tprio_t prio, p1;
 
-  /* [5.4.1] A thread is created, it goes to wait on the semaphore.*/
+  /* [5.4.1] Simulating a priority boost situation (prio > realprio).*/
   test_set_step(1);
   {
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread1, "A");
+    prio = chThdGetPriorityX();
+    chThdGetSelfX()->hdr.pqueue.prio += 2;
+    test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");
   }
+  test_end_step(1);
 
-  /* [5.4.2] The semaphore counter is increased by two, it is then
-     tested to be one, the thread must have completed.*/
+  /* [5.4.2] Raising thread priority above original priority but below
+     the boosted level.*/
   test_set_step(2);
   {
-    chSysLock();
-    chSemAddCounterI(&sem1, 2);
-    chSchRescheduleS();
-    chSysUnlock();
-    test_wait_threads();
-    test_assert_lock(chSemGetCounterI(&sem1) == 1, "invalid counter");
-    test_assert_sequence("A", "invalid sequence");
+    p1 = chThdSetPriority(prio + 1);
+    test_assert(p1 == prio, "unexpected returned priority level");
+    test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 2, "unexpected priority level");
+    test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real priority level");
   }
+  test_end_step(2);
+
+  /* [5.4.3] Raising thread priority above the boosted level.*/
+  test_set_step(3);
+  {
+    p1 = chThdSetPriority(prio + 3);
+    test_assert(p1 == prio + 1, "unexpected returned priority level");
+    test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 3, "unexpected priority level");
+    test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority level");
+  }
+  test_end_step(3);
+
+  /* [5.4.4] Restoring original conditions.*/
+  test_set_step(4);
+  {
+    chSysLock();
+    chThdGetSelfX()->hdr.pqueue.prio = prio;
+    chThdGetSelfX()->realprio = prio;
+    chSysUnlock();
+  }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_005_004 = {
-  "Testing chSemAddCounterI() functionality",
-  rt_test_005_004_setup,
+  "Priority change test with Priority Inheritance",
+  NULL,
   NULL,
   rt_test_005_004_execute
 };
-
-/**
- * @page rt_test_005_005 [5.5] Testing chSemWaitSignal() functionality
- *
- * <h2>Description</h2>
- * This test case explicitly addresses the @p chSemWaitSignal()
- * function. A thread is created that performs a wait and a signal
- * operations. The tester thread is awakened from an atomic wait/signal
- * operation. The test expects that the semaphore wait function returns
- * the correct value in each of the above scenario and that the
- * semaphore structure status is correct after each operation.
- *
- * <h2>Test Steps</h2>
- * - [5.5.1] An higher priority thread is created that performs
- *   non-atomical wait and signal operations on a semaphore.
- * - [5.5.2] The function chSemSignalWait() is invoked by specifying
- *   the same semaphore for the wait and signal phases. The counter
- *   value must be one on exit.
- * - [5.5.3] The function chSemSignalWait() is invoked again by
- *   specifying the same semaphore for the wait and signal phases. The
- *   counter value must be one on exit.
- * .
- */
-
-static void rt_test_005_005_setup(void) {
-  chSemObjectInit(&sem1, 0);
-}
-
-static void rt_test_005_005_teardown(void) {
-  test_wait_threads();
-}
-
-static void rt_test_005_005_execute(void) {
-
-  /* [5.5.1] An higher priority thread is created that performs
-     non-atomical wait and signal operations on a semaphore.*/
-  test_set_step(1);
-  {
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE, chThdGetPriorityX()+1, thread3, 0);
-  }
-
-  /* [5.5.2] The function chSemSignalWait() is invoked by specifying
-     the same semaphore for the wait and signal phases. The counter
-     value must be one on exit.*/
-  test_set_step(2);
-  {
-    chSemSignalWait(&sem1, &sem1);
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
-    test_assert(sem1.cnt == 0, "counter not zero");
-  }
-
-  /* [5.5.3] The function chSemSignalWait() is invoked again by
-     specifying the same semaphore for the wait and signal phases. The
-     counter value must be one on exit.*/
-  test_set_step(3);
-  {
-    chSemSignalWait(&sem1, &sem1);
-    test_assert(queue_isempty(&sem1.queue), "queue not empty");
-    test_assert(sem1.cnt == 0, "counter not zero");
-  }
-}
-
-static const testcase_t rt_test_005_005 = {
-  "Testing chSemWaitSignal() functionality",
-  rt_test_005_005_setup,
-  rt_test_005_005_teardown,
-  rt_test_005_005_execute
-};
-
-/**
- * @page rt_test_005_006 [5.6] Testing Binary Semaphores special case
- *
- * <h2>Description</h2>
- * This test case tests the binary semaphores functionality. The test
- * both checks the binary semaphore status and the expected status of
- * the underlying counting semaphore.
- *
- * <h2>Test Steps</h2>
- * - [5.6.1] Creating a binary semaphore in "taken" state, the state is
- *   checked.
- * - [5.6.2] Resetting the binary semaphore in "taken" state, the state
- *   must not change.
- * - [5.6.3] Starting a signaler thread at a lower priority.
- * - [5.6.4] Waiting for the binary semaphore to be signaled, the
- *   semaphore is expected to be taken.
- * - [5.6.5] Signaling the binary semaphore, checking the binary
- *   semaphore state to be "not taken" and the underlying counter
- *   semaphore counter to be one.
- * - [5.6.6] Signaling the binary semaphore again, the internal state
- *   must not change from "not taken".
- * .
- */
-
-static void rt_test_005_006_teardown(void) {
-  test_wait_threads();
-}
-
-static void rt_test_005_006_execute(void) {
-  binary_semaphore_t bsem;
-  msg_t msg;
-
-  /* [5.6.1] Creating a binary semaphore in "taken" state, the state is
-     checked.*/
-  test_set_step(1);
-  {
-    chBSemObjectInit(&bsem, true);
-    test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");
-  }
-
-  /* [5.6.2] Resetting the binary semaphore in "taken" state, the state
-     must not change.*/
-  test_set_step(2);
-  {
-    chBSemReset(&bsem, true);
-    test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");
-  }
-
-  /* [5.6.3] Starting a signaler thread at a lower priority.*/
-  test_set_step(3);
-  {
-    threads[0] = chThdCreateStatic(wa[0], WA_SIZE,
-                                   chThdGetPriorityX()-1, thread4, &bsem);
-  }
-
-  /* [5.6.4] Waiting for the binary semaphore to be signaled, the
-     semaphore is expected to be taken.*/
-  test_set_step(4);
-  {
-    msg = chBSemWait(&bsem);
-    test_assert_lock(chBSemGetStateI(&bsem) == true, "not taken");
-    test_assert(msg == MSG_OK, "unexpected message");
-  }
-
-  /* [5.6.5] Signaling the binary semaphore, checking the binary
-     semaphore state to be "not taken" and the underlying counter
-     semaphore counter to be one.*/
-  test_set_step(5);
-  {
-    chBSemSignal(&bsem);
-    test_assert_lock(chBSemGetStateI(&bsem) ==false, "still taken");
-    test_assert_lock(chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");
-  }
-
-  /* [5.6.6] Signaling the binary semaphore again, the internal state
-     must not change from "not taken".*/
-  test_set_step(6);
-  {
-    chBSemSignal(&bsem);
-    test_assert_lock(chBSemGetStateI(&bsem) == false, "taken");
-    test_assert_lock(chSemGetCounterI(&bsem.sem) == 1, "unexpected counter");
-  }
-}
-
-static const testcase_t rt_test_005_006 = {
-  "Testing Binary Semaphores special case",
-  NULL,
-  rt_test_005_006_teardown,
-  rt_test_005_006_execute
-};
+#endif /* CH_CFG_USE_MUTEXES */
 
 /****************************************************************************
  * Exported data.
@@ -499,18 +350,16 @@ const testcase_t * const rt_test_sequence_005_array[] = {
   &rt_test_005_001,
   &rt_test_005_002,
   &rt_test_005_003,
+#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
   &rt_test_005_004,
-  &rt_test_005_005,
-  &rt_test_005_006,
+#endif
   NULL
 };
 
 /**
- * @brief   Counter Semaphores.
+ * @brief   Threads Functionality.
  */
 const testsequence_t rt_test_sequence_005 = {
-  "Counter Semaphores",
+  "Threads Functionality",
   rt_test_sequence_005_array
 };
-
-#endif /* CH_CFG_USE_SEMAPHORES */

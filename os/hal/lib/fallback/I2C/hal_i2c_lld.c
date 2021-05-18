@@ -76,7 +76,7 @@ static msg_t i2c_write_stop(I2CDriver *i2cp);
 static inline void i2c_delay(I2CDriver *i2cp) {
 
 #if SW_I2C_USE_OSAL_DELAY || defined(__DOXYGEN__)
-  osalThreadSleep(i2cp->config->ticks);
+  osalThreadSleepS(i2cp->config->ticks);
 #else
   i2cp->config->delay();
 #endif
@@ -94,7 +94,8 @@ static inline msg_t i2c_check_arbitration(I2CDriver *i2cp) {
 
 static inline msg_t i2c_check_timeout(I2CDriver *i2cp) {
 
-  if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end)) {
+  if ((i2cp->start != i2cp->end) &&
+      (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end))) {
     i2c_write_stop(i2cp);
     return MSG_TIMEOUT;
   }
@@ -105,7 +106,8 @@ static inline msg_t i2c_check_timeout(I2CDriver *i2cp) {
 static msg_t i2c_wait_clock(I2CDriver *i2cp) {
 
   while (palReadLine(i2cp->config->scl) == PAL_LOW) {
-    if (!osalOsIsTimeWithinX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end)) {
+    if ((i2cp->start != i2cp->end) &&
+        (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), i2cp->start, i2cp->end))) {
       return MSG_TIMEOUT;
     }
     i2c_delay(i2cp);
@@ -347,18 +349,18 @@ void i2c_lld_stop(I2CDriver *i2cp) {
  */
 msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                      uint8_t *rxbuf, size_t rxbytes,
-                                     systime_t timeout) {
+                                     sysinterval_t timeout) {
 
   /* Setting timeout fields.*/
   i2cp->start = osalOsGetSystemTimeX();
   i2cp->end = i2cp->start;
   if (timeout != TIME_INFINITE) {
-    i2cp->end += timeout;
+    i2cp->end = osalTimeAddX(i2cp->start, timeout);
   }
 
   CHECK_ERROR(i2c_write_start(i2cp));
 
-  /* Sending anddress and mode.*/
+  /* Sending address and mode.*/
   CHECK_ERROR(i2c_write_header(i2cp, addr, true));
 
   do {
@@ -399,19 +401,19 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                       const uint8_t *txbuf, size_t txbytes,
                                       uint8_t *rxbuf, size_t rxbytes,
-                                      systime_t timeout) {
+                                      sysinterval_t timeout) {
 
   /* Setting timeout fields.*/
   i2cp->start = osalOsGetSystemTimeX();
   i2cp->end = i2cp->start;
   if (timeout != TIME_INFINITE) {
-    i2cp->end += timeout;
+    i2cp->end = osalTimeAddX(i2cp->start, timeout);
   }
 
-  /* send start condition */  
+  /* Sending start condition.*/
   CHECK_ERROR(i2c_write_start(i2cp));
 
-  /* Sending anddress and mode.*/
+  /* Sending address and mode.*/
   CHECK_ERROR(i2c_write_header(i2cp, addr, false));
 
   do {
@@ -421,9 +423,9 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   /* Is there a read phase? */
   if (rxbytes > 0U) {
 
-    /* send restart condition */  
+    /* Sending restart condition.*/
     CHECK_ERROR(i2c_write_restart(i2cp));
-    /* Sending anddress and mode.*/
+    /* Sending address and mode.*/
     CHECK_ERROR(i2c_write_header(i2cp, addr, true));
 
     do {

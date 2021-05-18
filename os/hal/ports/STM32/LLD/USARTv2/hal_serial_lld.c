@@ -40,19 +40,19 @@
 #endif
 
 /* Differences in L4+ headers.*/
-#if defined(USART_CR1_TXEIE_TXFNFIE)
+#if !defined(USART_CR1_TXEIE)
 #define USART_CR1_TXEIE                     USART_CR1_TXEIE_TXFNFIE
 #endif
 
-#if defined(USART_CR1_RXNEIE_RXFNEIE)
+#if !defined(USART_CR1_RXNEIE)
 #define USART_CR1_RXNEIE                    USART_CR1_RXNEIE_RXFNEIE
 #endif
 
-#if defined(USART_ISR_TXE_TXFNF)
+#if !defined(USART_ISR_TXE)
 #define USART_ISR_TXE                       USART_ISR_TXE_TXFNF
 #endif
 
-#if defined(USART_ISR_RXNE_RXFNE)
+#if !defined(USART_ISR_RXNE)
 #define USART_ISR_RXNE                      USART_ISR_RXNE_RXFNE
 #endif
 
@@ -230,26 +230,34 @@ static uint8_t sd_out_buflp1[STM32_SERIAL_LPUART1_OUT_BUF_SIZE];
  * @param[in] config    the architecture-dependent serial driver configuration
  */
 static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
-  uint32_t fck;
+  uint32_t brr;
   USART_TypeDef *u = sdp->usart;
 
   /* Baud rate setting.*/
 #if STM32_SERIAL_USE_LPUART1
   if (sdp == &LPSD1) {
-    fck = (uint32_t)(((uint64_t)sdp->clock * 256) / config->speed);
+    osalDbgAssert((sdp->clock >= config->speed * 3U) &&
+                  (sdp->clock <= config->speed * 4096U),
+                  "invalid baud rate vs input clock");
+
+    brr = (uint32_t)(((uint64_t)sdp->clock * 256) / config->speed);
+
+    osalDbgAssert((brr >= 0x300) && (brr < 0x100000), "invalid BRR value");
   }
   else
 #endif
   {
-    fck = (uint32_t)(sdp->clock / config->speed);
-  }
+    brr = (uint32_t)(sdp->clock / config->speed);
 
-  /* Correcting USARTDIV when oversampling by 8 instead of 16.
-     Fraction is still 4 bits wide, but only lower 3 bits used.
-     Mantissa is doubled, but Fraction is left the same.*/
-  if (config->cr1 & USART_CR1_OVER8)
-    fck = ((fck & ~7) * 2) | (fck & 7);
-  u->BRR = fck;
+    /* Correcting BRR value when oversampling by 8 instead of 16.
+       Fraction is still 4 bits wide, but only lower 3 bits used.
+       Mantissa is doubled, but Fraction is left the same.*/
+    if (config->cr1 & USART_CR1_OVER8)
+      brr = ((brr & ~7) * 2) | (brr & 7);
+
+    osalDbgAssert(brr < 0x10000, "invalid BRR value");
+  }
+  u->BRR = brr;
 
   /* Note that some bits are enforced.*/
   u->CR2 = config->cr2 | USART_CR2_LBDIE;

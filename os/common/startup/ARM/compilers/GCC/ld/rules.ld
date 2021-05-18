@@ -16,30 +16,30 @@
 
 __stacks_total_size__	    = __und_stack_size__ + __abt_stack_size__ + __fiq_stack_size__ + __irq_stack_size__ + __svc_stack_size__ + __sys_stack_size__;
 
-__ram0_start__          = ORIGIN(ram0);
+__ram0_base__           = ORIGIN(ram0);
 __ram0_size__           = LENGTH(ram0);
-__ram0_end__            = __ram0_start__ + __ram0_size__;
-__ram1_start__          = ORIGIN(ram1);
+__ram0_end__            = __ram0_base__ + __ram0_size__;
+__ram1_base__           = ORIGIN(ram1);
 __ram1_size__           = LENGTH(ram1);
-__ram1_end__            = __ram1_start__ + __ram1_size__;
-__ram2_start__          = ORIGIN(ram2);
+__ram1_end__            = __ram1_base__ + __ram1_size__;
+__ram2_base__           = ORIGIN(ram2);
 __ram2_size__           = LENGTH(ram2);
-__ram2_end__            = __ram2_start__ + __ram2_size__;
-__ram3_start__          = ORIGIN(ram3);
+__ram2_end__            = __ram2_base__ + __ram2_size__;
+__ram3_base__           = ORIGIN(ram3);
 __ram3_size__           = LENGTH(ram3);
-__ram3_end__            = __ram3_start__ + __ram3_size__;
-__ram4_start__          = ORIGIN(ram4);
+__ram3_end__            = __ram3_base__ + __ram3_size__;
+__ram4_base__           = ORIGIN(ram4);
 __ram4_size__           = LENGTH(ram4);
-__ram4_end__            = __ram4_start__ + __ram4_size__;
-__ram5_start__          = ORIGIN(ram5);
+__ram4_end__            = __ram4_base__ + __ram4_size__;
+__ram5_base__           = ORIGIN(ram5);
 __ram5_size__           = LENGTH(ram5);
-__ram5_end__            = __ram5_start__ + __ram5_size__;
-__ram6_start__          = ORIGIN(ram6);
+__ram5_end__            = __ram5_base__ + __ram5_size__;
+__ram6_base__           = ORIGIN(ram6);
 __ram6_size__           = LENGTH(ram6);
-__ram6_end__            = __ram6_start__ + __ram6_size__;
-__ram7_start__          = ORIGIN(ram7);
+__ram6_end__            = __ram6_base__ + __ram6_size__;
+__ram7_base__           = ORIGIN(ram7);
 __ram7_size__           = LENGTH(ram7);
-__ram7_end__            = __ram7_start__ + __ram7_size__;
+__ram7_end__            = __ram7_base__ + __ram7_size__;
 
 ENTRY(Reset_Handler)
 
@@ -56,29 +56,38 @@ SECTIONS
 
     constructors : ALIGN(4) 
     {
-        PROVIDE(__init_array_start = .);
+        PROVIDE(__init_array_base__ = .);
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
-        PROVIDE(__init_array_end = .);
+        PROVIDE(__init_array_end__ = .);
     } > flash
 
     destructors : ALIGN(4) 
     {
-        PROVIDE(__fini_array_start = .);
+        PROVIDE(__fini_array_base__ = .);
         KEEP(*(.fini_array))
         KEEP(*(SORT(.fini_array.*)))
-        PROVIDE(__fini_array_end = .);
+        PROVIDE(__fini_array_end__ = .);
     } > flash
 
     .text : ALIGN_WITH_INPUT
     {
+       __text_base__ = .;
         *(.text)
         *(.text.*)
-        *(.rodata)
-        *(.rodata.*)
         *(.glue_7t)
         *(.glue_7)
         *(.gcc*)
+        __text_end__ = .;
+    } > flash
+
+    .rodata : ALIGN(4)
+    {
+        __rodata_base__ = .;
+        *(.rodata)
+        *(.rodata.*)
+        . = ALIGN(4);
+        __rodata_end__ = .;
     } > flash
 
     .ARM.extab :
@@ -87,9 +96,11 @@ SECTIONS
     } > flash
 
     .ARM.exidx : {
-        PROVIDE(__exidx_start = .);
+        __exidx_base__ = .;
+        __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        PROVIDE(__exidx_end = .);
+        __exidx_end__ = .;
+        __exidx_end = .;
      } > flash
 
     .eh_frame_hdr :
@@ -109,7 +120,6 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;
-    _textdata = _etext;
 
     .stacks (NOLOAD) :
     {
@@ -125,22 +135,26 @@ SECTIONS
     {
         . = ALIGN(4);
         PROVIDE(_data = .);
+       __textdata_base__ = LOADADDR(.data);
+       __data_base__ = .;
         *(.data)
         *(.data.*)
         *(.ramtext)
         . = ALIGN(4);
         PROVIDE(_edata = .);
+        __data_end__ = .;
     } > DATA_RAM AT > flash
 
     .bss (NOLOAD) : ALIGN(4)
     {
         . = ALIGN(4);
-        PROVIDE(_bss_start = .);
+        __bss_base__ = .;
         *(.bss)
         *(.bss.*)
         *(COMMON)
         . = ALIGN(4);
-        PROVIDE(_bss_end = .);
+        . = ALIGN(4);
+        __bss_end__ = .;
         PROVIDE(end = .);
     } > BSS_RAM    
 

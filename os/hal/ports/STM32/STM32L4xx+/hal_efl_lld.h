@@ -146,7 +146,7 @@ extern "C" {
   flash_error_t efl_lld_start_erase_all(void *instance);
   flash_error_t efl_lld_start_erase_sector(void *instance,
                                            flash_sector_t sector);
-  flash_error_t efl_lld_query_erase(void *instance, uint32_t *wait_time);
+  flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec);
   flash_error_t efl_lld_verify_erase(void *instance, flash_sector_t sector);
 #ifdef __cplusplus
 }

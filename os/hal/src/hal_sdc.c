@@ -373,15 +373,9 @@ static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
 static bool mmc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   uint32_t cmdarg;
   uint32_t resp[1];
-  uint8_t *scratchpad = sdcp->config->scratchpad;
 
   /* Safe default.*/
   *clk = SDC_CLK_25MHz;
-
-  /* Use safe default when there is no space for data.*/
-  if (NULL == scratchpad) {
-    return HAL_SUCCESS;
-  }
 
   cmdarg = mmc_cmd6_construct(MMC_SWITCH_WRITE_BYTE, 185, 1, 0);
   if (!(sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SWITCH, cmdarg, resp) ||
@@ -688,12 +682,7 @@ bool sdcConnect(SDCDriver *sdcp) {
 
     /* The card is a MMC, checking if it is a large device.*/
     if (_mmcsd_get_slice(sdcp->csd, MMCSD_CSD_MMC_CSD_STRUCTURE_SLICE) > 1U) {
-      uint8_t *ext_csd = sdcp->config->scratchpad;
-
-      /* Size detection requires the buffer.*/
-      if (NULL == ext_csd) {
-        goto failed;
-      }
+      uint8_t *ext_csd = sdcp->buf;
 
       if (sdc_lld_read_special(sdcp, ext_csd, 512, MMCSD_CMD_SEND_EXT_CSD, 0)) {
         goto failed;

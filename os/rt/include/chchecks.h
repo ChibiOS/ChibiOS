@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chchecks.h
+ * @file    rt/include/chchecks.h
  * @brief   Configuration file checks header.
  *
  * @addtogroup conf_checks
@@ -44,8 +44,13 @@
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_RT_CONF_VER_6_0_)
+#if !defined(_CHIBIOS_RT_CONF_VER_7_0_)
 #error "obsolete or unknown configuration file"
+#endif
+
+/* System checks.*/
+#if !defined(CH_CFG_SMP_MODE)
+#error "CH_CFG_SMP_MODE not defined in chconf.h"
 #endif
 
 /* System timers checks.*/
@@ -90,6 +95,10 @@
 /* Subsystem options checks.*/
 #if !defined(CH_CFG_USE_TM)
 #error "CH_CFG_USE_TM not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_USE_TIMESTAMP)
+#error "CH_CFG_USE_TIMESTAMP not defined in chconf.h"
 #endif
 
 #if !defined(CH_CFG_USE_REGISTRY)
@@ -182,12 +191,20 @@
 #endif
 
 /* System hooks checks.*/
+#if !defined(CH_CFG_SYSTEM_EXTRA_FIELDS)
+#error "CH_CFG_SYSTEM_EXTRA_FIELDS not defined in chconf.h"
+#endif
+
 #if !defined(CH_CFG_SYSTEM_INIT_HOOK)
 #error "CH_CFG_SYSTEM_INIT_HOOK not defined in chconf.h"
 #endif
 
-#if !defined(CH_CFG_SYSTEM_EXTRA_FIELDS)
-#error "CH_CFG_SYSTEM_EXTRA_FIELDS not defined in chconf.h"
+#if !defined(CH_CFG_OS_INSTANCE_INIT_HOOK)
+#error "CH_CFG_OS_INSTANCE_INIT_HOOK not defined in chconf.h"
+#endif
+
+#if !defined(CH_CFG_OS_INSTANCE_EXTRA_FIELDS)
+#error "CH_CFG_OS_INSTANCE_EXTRA_FIELDS not defined in chconf.h"
 #endif
 
 #if !defined(CH_CFG_THREAD_EXTRA_FIELDS)

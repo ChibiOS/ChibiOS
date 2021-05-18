@@ -145,7 +145,7 @@ typedef struct {
 /*===========================================================================*/
 
 #if SNOR_SHARED_BUS == FALSE
-#define bus_acquire(busp)
+#define bus_acquire(busp, config)
 #define bus_release(busp)
 #endif
 

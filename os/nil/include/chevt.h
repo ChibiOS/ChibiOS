@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -203,7 +203,7 @@ typedef void (*evhandler_t)(eventid_t id);
  *
  * @iclass
  */
-#define chEvtAddEventsI(events) (bool)(nil.current->epmask |= events)
+#define chEvtAddEventsI(events) (nil.current->epmask |= events)
 
 /**
  * @brief   Returns the events mask.
@@ -227,11 +227,6 @@ typedef void (*evhandler_t)(eventid_t id);
  *
  * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The mask of the lowest event id served and cleared.
  * @retval 0            if the operation has timed out.
  *
@@ -245,13 +240,8 @@ typedef void (*evhandler_t)(eventid_t id);
  *          @p mask to become pending then the events are cleared and
  *          returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The mask of the served and cleared events.
  * @retval 0            if the operation has timed out.
  *
@@ -264,13 +254,8 @@ typedef void (*evhandler_t)(eventid_t id);
  * @details The function waits for all the events specified in @p mask to
  *          become pending then the events are cleared and returned.
  *
- * @param[in] mask      mask of the event flags that the function should wait
+ * @param[in] events    events that the function should wait
  *                      for, @p ALL_EVENTS enables all the events
- * @param[in] timeout   the number of ticks before the operation timeouts,
- *                      the following special values are allowed:
- *                      - @a TIME_IMMEDIATE immediate timeout.
- *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The mask of the served and cleared events.
  * @retval 0            if the operation has timed out.
  *

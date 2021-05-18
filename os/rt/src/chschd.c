@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chschd.c
+ * @file    rt/src/chschd.c
  * @brief   Scheduler code.
  *
  * @addtogroup scheduler
@@ -36,11 +36,6 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   System data structures.
- */
-ch_system_t ch;
-
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -52,152 +47,6 @@ ch_system_t ch;
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
-
-/*===========================================================================*/
-/* Module exported functions.                                                */
-/*===========================================================================*/
-
-/**
- * @brief   Scheduler initialization.
- *
- * @notapi
- */
-void _scheduler_init(void) {
-
-  queue_init(&ch.rlist.queue);
-  ch.rlist.prio = NOPRIO;
-#if CH_CFG_USE_REGISTRY == TRUE
-  ch.rlist.newer = (thread_t *)&ch.rlist;
-  ch.rlist.older = (thread_t *)&ch.rlist;
-#endif
-}
-
-#if (CH_CFG_OPTIMIZE_SPEED == FALSE) || defined(__DOXYGEN__)
-/**
- * @brief   Inserts a thread into a priority ordered queue.
- * @note    The insertion is done by scanning the list from the highest
- *          priority toward the lowest.
- *
- * @param[in] tp        the pointer to the thread to be inserted in the list
- * @param[in] tqp       the pointer to the threads list header
- *
- * @notapi
- */
-void queue_prio_insert(thread_t *tp, threads_queue_t *tqp) {
-
-  thread_t *cp = (thread_t *)tqp;
-  do {
-    cp = cp->queue.next;
-  } while ((cp != (thread_t *)tqp) && (cp->prio >= tp->prio));
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
-}
-
-/**
- * @brief   Inserts a thread into a queue.
- *
- * @param[in] tp        the pointer to the thread to be inserted in the list
- * @param[in] tqp       the pointer to the threads list header
- *
- * @notapi
- */
-void queue_insert(thread_t *tp, threads_queue_t *tqp) {
-
-  tp->queue.next             = (thread_t *)tqp;
-  tp->queue.prev             = tqp->prev;
-  tp->queue.prev->queue.next = tp;
-  tqp->prev                  = tp;
-}
-
-/**
- * @brief   Removes the first-out thread from a queue and returns it.
- * @note    If the queue is priority ordered then this function returns the
- *          thread with the highest priority.
- *
- * @param[in] tqp       the pointer to the threads list header
- * @return              The removed thread pointer.
- *
- * @notapi
- */
-thread_t *queue_fifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->next;
-
-  tqp->next             = tp->queue.next;
-  tqp->next->queue.prev = (thread_t *)tqp;
-
-  return tp;
-}
-
-/**
- * @brief   Removes the last-out thread from a queue and returns it.
- * @note    If the queue is priority ordered then this function returns the
- *          thread with the lowest priority.
- *
- * @param[in] tqp   the pointer to the threads list header
- * @return          The removed thread pointer.
- *
- * @notapi
- */
-thread_t *queue_lifo_remove(threads_queue_t *tqp) {
-  thread_t *tp = tqp->prev;
-
-  tqp->prev             = tp->queue.prev;
-  tqp->prev->queue.next = (thread_t *)tqp;
-
-  return tp;
-}
-
-/**
- * @brief   Removes a thread from a queue and returns it.
- * @details The thread is removed from the queue regardless of its relative
- *          position and regardless the used insertion method.
- *
- * @param[in] tp        the pointer to the thread to be removed from the queue
- * @return              The removed thread pointer.
- *
- * @notapi
- */
-thread_t *queue_dequeue(thread_t *tp) {
-
-  tp->queue.prev->queue.next = tp->queue.next;
-  tp->queue.next->queue.prev = tp->queue.prev;
-
-  return tp;
-}
-
-/**
- * @brief   Pushes a thread_t on top of a stack list.
- *
- * @param[in] tp    the pointer to the thread to be inserted in the list
- * @param[in] tlp   the pointer to the threads list header
- *
- * @notapi
- */
-void list_insert(thread_t *tp, threads_list_t *tlp) {
-
-  tp->queue.next = tlp->next;
-  tlp->next      = tp;
-}
-
-/**
- * @brief   Pops a thread from the top of a stack list and returns it.
- * @pre     The list must be non-empty before calling this function.
- *
- * @param[in] tlp       the pointer to the threads list header
- * @return              The removed thread pointer.
- *
- * @notapi
- */
-thread_t *list_remove(threads_list_t *tlp) {
-
-  thread_t *tp = tlp->next;
-  tlp->next = tp->queue.next;
-
-  return tp;
-}
-#endif /* CH_CFG_OPTIMIZE_SPEED */
 
 /**
  * @brief   Inserts a thread in the Ready List placing it behind its peers.
@@ -213,29 +62,23 @@ thread_t *list_remove(threads_list_t *tlp) {
  * @param[in] tp        the thread to be made ready
  * @return              The thread pointer.
  *
- * @iclass
+ * @notapi
  */
-thread_t *chSchReadyI(thread_t *tp) {
-  thread_t *cp;
+static thread_t *__sch_ready_behind(thread_t *tp) {
 
-  chDbgCheckClassI();
-  chDbgCheck(tp != NULL);
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
               "invalid state");
 
-  tp->state = CH_STATE_READY;
-  cp = (thread_t *)&ch.rlist.queue;
-  do {
-    cp = cp->queue.next;
-  } while (cp->prio >= tp->prio);
-  /* Insertion on prev.*/
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
+  /* Tracing the event.*/
+  __trace_ready(tp, tp->u.rdymsg);
 
-  return tp;
+  /* The thread is marked ready.*/
+  tp->state = CH_STATE_READY;
+
+  /* Insertion in the priority queue.*/
+  return (thread_t *)ch_pqueue_insert_behind(&tp->owner->rlist.pqueue,
+                                             &tp->hdr.pqueue);
 }
 
 /**
@@ -252,71 +95,97 @@ thread_t *chSchReadyI(thread_t *tp) {
  * @param[in] tp        the thread to be made ready
  * @return              The thread pointer.
  *
- * @iclass
+ * @notapi
  */
-thread_t *chSchReadyAheadI(thread_t *tp) {
-  thread_t *cp;
+static thread_t *__sch_ready_ahead(thread_t *tp) {
 
-  chDbgCheckClassI();
-  chDbgCheck(tp != NULL);
   chDbgAssert((tp->state != CH_STATE_READY) &&
               (tp->state != CH_STATE_FINAL),
               "invalid state");
 
-  tp->state = CH_STATE_READY;
-  cp = (thread_t *)&ch.rlist.queue;
-  do {
-    cp = cp->queue.next;
-  } while (cp->prio > tp->prio);
-  /* Insertion on prev.*/
-  tp->queue.next             = cp;
-  tp->queue.prev             = cp->queue.prev;
-  tp->queue.prev->queue.next = tp;
-  cp->queue.prev             = tp;
+  /* Tracing the event.*/
+  __trace_ready(tp, tp->u.rdymsg);
 
-  return tp;
+  /* The thread is marked ready.*/
+  tp->state = CH_STATE_READY;
+
+  /* Insertion in the priority queue.*/
+  return (thread_t *)ch_pqueue_insert_ahead(&tp->owner->rlist.pqueue,
+                                            &tp->hdr.pqueue);
 }
 
 /**
- * @brief   Puts the current thread to sleep into the specified state.
- * @details The thread goes into a sleeping state. The possible
- *          @ref thread_states are defined into @p threads.h.
+ * @brief   Switches to the first thread on the runnable queue.
+ * @details The current thread is positioned in the ready list behind all
+ *          threads having the same priority. The thread regains its time
+ *          quantum.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself.
  *
- * @param[in] newstate  the new thread state
- *
- * @sclass
+ * @notapi
  */
-void chSchGoSleepS(tstate_t newstate) {
-  thread_t *otp = currp;
+static void __sch_reschedule_behind(void) {
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
+  thread_t *ntp;
 
-  chDbgCheckClassS();
+  /* Picks the first thread from the ready queue and makes it current.*/
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp->state = CH_STATE_CURRENT;
+  __instance_set_currthread(oip, ntp);
 
-  /* New state.*/
-  otp->state = newstate;
+  /* Handling idle-leave hook.*/
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
+    CH_CFG_IDLE_LEAVE_HOOK();
+  }
 
 #if CH_CFG_TIME_QUANTUM > 0
-  /* The thread is renouncing its remaining time slices so it will have a new
-     time quantum when it will wakeup.*/
+  /* It went behind peers so it gets a new time quantum.*/
   otp->ticks = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
 
-  /* Next thread in ready list becomes current.*/
-  currp = queue_fifo_remove(&ch.rlist.queue);
-  currp->state = CH_STATE_CURRENT;
-
-  /* Handling idle-enter hook.*/
-  if (currp->prio == IDLEPRIO) {
-    CH_CFG_IDLE_ENTER_HOOK();
-  }
+  /* Placing in ready list behind peers.*/
+  otp = __sch_ready_behind(otp);
 
   /* Swap operation as tail call.*/
-  chSysSwitch(currp, otp);
+  chSysSwitch(ntp, otp);
+}
+
+/**
+ * @brief   Switches to the first thread on the runnable queue.
+ * @details The current thread is positioned in the ready list ahead of all
+ *          threads having the same priority.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself.
+ *
+ * @notapi
+ */
+static void __sch_reschedule_ahead(void) {
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
+  thread_t *ntp;
+
+  /* Picks the first thread from the ready queue and makes it current.*/
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp->state = CH_STATE_CURRENT;
+  __instance_set_currthread(oip, ntp);
+
+  /* Handling idle-leave hook.*/
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
+    CH_CFG_IDLE_LEAVE_HOOK();
+  }
+
+  /* Placing in ready list ahead of peers.*/
+  otp = __sch_ready_ahead(otp);
+
+  /* Swap operation as tail call.*/
+  chSysSwitch(ntp, otp);
 }
 
 /*
  * Timeout wakeup callback.
  */
-static void wakeup(void *p) {
+static void __sch_wakeup(void *p) {
   thread_t *tp = (thread_t *)p;
 
   chSysLockFromISR();
@@ -340,15 +209,122 @@ static void wakeup(void *p) {
   case CH_STATE_WTCOND:
 #endif
     /* States requiring dequeuing.*/
-    (void) queue_dequeue(tp);
+    (void) ch_queue_dequeue(&tp->hdr.queue);
     break;
   default:
     /* Any other state, nothing to do.*/
     break;
   }
+
+  /* Standard message for timeout conditions.*/
   tp->u.rdymsg = MSG_TIMEOUT;
-  (void) chSchReadyI(tp);
+
+  /* Goes behind peers because it went to sleep voluntarily.*/
+  (void) __sch_ready_behind(tp);
   chSysUnlockFromISR();
+}
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
+#if (CH_CFG_OPTIMIZE_SPEED == FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Inserts a thread into a priority ordered queue.
+ * @note    The insertion is done by scanning the list from the highest
+ *          priority toward the lowest.
+ *
+ * @param[in] tp        the pointer to the thread to be inserted in the list
+ * @param[in] qp        the pointer to the threads list header
+ *
+ * @notapi
+ */
+void ch_sch_prio_insert(ch_queue_t *tp, ch_queue_t *qp) {
+
+  ch_queue_t *cp = qp;
+  do {
+    cp = cp->next;
+  } while ((cp != qp) &&
+           (((thread_t *)cp)->hdr.pqueue.prio >= ((thread_t *)tp)->hdr.pqueue.prio));
+  tp->next       = cp;
+  tp->prev       = cp->prev;
+  tp->prev->next = tp;
+  cp->prev       = tp;
+}
+#endif /* CH_CFG_OPTIMIZE_SPEED */
+
+/**
+ * @brief   Inserts a thread in the Ready List placing it behind its peers.
+ * @details The thread is positioned behind all threads with higher or equal
+ *          priority.
+ * @pre     The thread must not be already inserted in any list through its
+ *          @p next and @p prev or list corruption would occur.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ *
+ * @param[in] tp        the thread to be made ready
+ * @return              The thread pointer.
+ *
+ * @iclass
+ */
+thread_t *chSchReadyI(thread_t *tp) {
+
+  chDbgCheckClassI();
+  chDbgCheck(tp != NULL);
+
+#if CH_CFG_SMP_MODE == TRUE
+  if (tp->owner != currcore) {
+    /* Readying up the remote thread and triggering a reschedule on
+       the other core.*/
+    chSysNotifyInstance(tp->owner);
+  }
+#endif
+
+  return __sch_ready_behind(tp);
+}
+
+/**
+ * @brief   Puts the current thread to sleep into the specified state.
+ * @details The thread goes into a sleeping state. The possible
+ *          @ref thread_states are defined into @p threads.h.
+ *
+ * @param[in] newstate  the new thread state
+ *
+ * @sclass
+ */
+void chSchGoSleepS(tstate_t newstate) {
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
+  thread_t *ntp;
+
+  chDbgCheckClassS();
+
+  chDbgAssert(otp != chSysGetIdleThreadX(), "sleeping in idle thread");
+  chDbgAssert(otp->owner == oip, "invalid core");
+
+  /* New state.*/
+  otp->state = newstate;
+
+#if CH_CFG_TIME_QUANTUM > 0
+  /* The thread is renouncing its remaining time slices so it will have a new
+     time quantum when it will wakeup.*/
+  otp->ticks = (tslices_t)CH_CFG_TIME_QUANTUM;
+#endif
+
+  /* Next thread in ready list becomes current.*/
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp->state = CH_STATE_CURRENT;
+  __instance_set_currthread(oip, ntp);
+
+  /* Handling idle-enter hook.*/
+  if (ntp->hdr.pqueue.prio == IDLEPRIO) {
+    CH_CFG_IDLE_ENTER_HOOK();
+  }
+
+  /* Swap operation as tail call.*/
+  chSysSwitch(ntp, otp);
 }
 
 /**
@@ -373,13 +349,14 @@ static void wakeup(void *p) {
  * @sclass
  */
 msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
+  thread_t *tp = __instance_get_currthread(currcore);
 
   chDbgCheckClassS();
 
   if (TIME_INFINITE != timeout) {
     virtual_timer_t vt;
 
-    chVTDoSetI(&vt, timeout, wakeup, currp);
+    chVTDoSetI(&vt, timeout, __sch_wakeup, (void *)tp);
     chSchGoSleepS(newstate);
     if (chVTIsArmedI(&vt)) {
       chVTDoResetI(&vt);
@@ -389,7 +366,7 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
     chSchGoSleepS(newstate);
   }
 
-  return currp->u.rdymsg;
+  return tp->u.rdymsg;
 }
 
 /**
@@ -410,36 +387,49 @@ msg_t chSchGoSleepTimeoutS(tstate_t newstate, sysinterval_t timeout) {
  * @sclass
  */
 void chSchWakeupS(thread_t *ntp, msg_t msg) {
-  thread_t *otp = currp;
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
 
   chDbgCheckClassS();
 
-  chDbgAssert((ch.rlist.queue.next == (thread_t *)&ch.rlist.queue) ||
-              (ch.rlist.current->prio >= ch.rlist.queue.next->prio),
+  chDbgAssert((oip->rlist.pqueue.next == &oip->rlist.pqueue) ||
+              (oip->rlist.current->hdr.pqueue.prio >= oip->rlist.pqueue.next->prio),
               "priority order violation");
 
   /* Storing the message to be retrieved by the target thread when it will
      restart execution.*/
   ntp->u.rdymsg = msg;
 
+#if CH_CFG_SMP_MODE == TRUE
+  if (ntp->owner != oip) {
+    /* Readying up the remote thread and triggering a reschedule on
+       the other core.*/
+    chSysNotifyInstance(ntp->owner);
+    (void) __sch_ready_behind(ntp);
+    return;
+  }
+#endif
+
   /* If the waken thread has a not-greater priority than the current
      one then it is just inserted in the ready list else it made
      running immediately and the invoking thread goes in the ready
      list instead.*/
-  if (ntp->prio <= otp->prio) {
-    (void) chSchReadyI(ntp);
+  if (ntp->hdr.pqueue.prio <= otp->hdr.pqueue.prio) {
+    (void) __sch_ready_behind(ntp);
   }
   else {
-    otp = chSchReadyAheadI(otp);
+    /* The old thread goes back in the ready list ahead of its peers
+       because it has not exhausted its time slice.*/
+    otp = __sch_ready_ahead(otp);
 
     /* Handling idle-leave hook.*/
-    if (otp->prio == IDLEPRIO) {
+    if (otp->hdr.pqueue.prio == IDLEPRIO) {
       CH_CFG_IDLE_LEAVE_HOOK();
     }
 
     /* The extracted thread is marked as current.*/
-    currp = ntp;
     ntp->state = CH_STATE_CURRENT;
+    __instance_set_currthread(oip, ntp);
 
     /* Swap operation as tail call.*/
     chSysSwitch(ntp, otp);
@@ -450,15 +440,19 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
  * @brief   Performs a reschedule if a higher priority thread is runnable.
  * @details If a thread with a higher priority than the current thread is in
  *          the ready list then make the higher priority thread running.
+ * @note    Only local threads are considered, other cores are signaled
+ *          and perform a reschedule locally.
  *
  * @sclass
  */
 void chSchRescheduleS(void) {
+  os_instance_t *oip = currcore;
+  thread_t *tp = __instance_get_currthread(oip);
 
   chDbgCheckClassS();
 
-  if (chSchIsRescRequiredI()) {
-    chSchDoRescheduleAhead();
+  if (firstprio(&oip->rlist.pqueue) > tp->hdr.pqueue.prio) {
+    __sch_reschedule_ahead();
   }
 }
 
@@ -467,8 +461,8 @@ void chSchRescheduleS(void) {
  * @brief   Evaluates if preemption is required.
  * @details The decision is taken by comparing the relative priorities and
  *          depending on the state of the round robin timeout counter.
- * @note    Not a user function, it is meant to be invoked by the scheduler
- *          itself or from within the port layer.
+ * @note    Not a user function, it is meant to be invoked from within
+ *          the port layer in the IRQ-related preemption code.
  *
  * @retval true         if there is a thread that must go in running state
  *                      immediately.
@@ -477,15 +471,18 @@ void chSchRescheduleS(void) {
  * @special
  */
 bool chSchIsPreemptionRequired(void) {
-  tprio_t p1 = firstprio(&ch.rlist.queue);
-  tprio_t p2 = currp->prio;
+  os_instance_t *oip = currcore;
+  thread_t *tp = __instance_get_currthread(oip);
+
+  tprio_t p1 = firstprio(&oip->rlist.pqueue);
+  tprio_t p2 = tp->hdr.pqueue.prio;
 
 #if CH_CFG_TIME_QUANTUM > 0
   /* If the running thread has not reached its time quantum, reschedule only
      if the first thread on the ready queue has a higher priority.
      Otherwise, if the running thread has used up its time quantum, reschedule
      if the first thread on the ready queue has equal or higher priority.*/
-  return (currp->ticks > (tslices_t)0) ? (p1 > p2) : (p1 >= p2);
+  return (tp->ticks > (tslices_t)0) ? (p1 > p2) : (p1 >= p2);
 #else
   /* If the round robin preemption feature is not enabled then performs a
      simpler comparison.*/
@@ -494,99 +491,40 @@ bool chSchIsPreemptionRequired(void) {
 }
 #endif /* !defined(CH_SCH_IS_PREEMPTION_REQUIRED_HOOKED) */
 
-/**
- * @brief   Switches to the first thread on the runnable queue.
- * @details The current thread is positioned in the ready list behind all
- *          threads having the same priority. The thread regains its time
- *          quantum.
- * @note    Not a user function, it is meant to be invoked by the scheduler
- *          itself.
- *
- * @special
- */
-void chSchDoRescheduleBehind(void) {
-  thread_t *otp = currp;
-
-  /* Picks the first thread from the ready queue and makes it current.*/
-  currp = queue_fifo_remove(&ch.rlist.queue);
-  currp->state = CH_STATE_CURRENT;
-
-  /* Handling idle-leave hook.*/
-  if (otp->prio == IDLEPRIO) {
-    CH_CFG_IDLE_LEAVE_HOOK();
-  }
-
-#if CH_CFG_TIME_QUANTUM > 0
-  /* It went behind peers so it gets a new time quantum.*/
-  otp->ticks = (tslices_t)CH_CFG_TIME_QUANTUM;
-#endif
-
-  /* Placing in ready list behind peers.*/
-  otp = chSchReadyI(otp);
-
-  /* Swap operation as tail call.*/
-  chSysSwitch(currp, otp);
-}
-
-/**
- * @brief   Switches to the first thread on the runnable queue.
- * @details The current thread is positioned in the ready list ahead of all
- *          threads having the same priority.
- * @note    Not a user function, it is meant to be invoked by the scheduler
- *          itself.
- *
- * @special
- */
-void chSchDoRescheduleAhead(void) {
-  thread_t *otp = currp;
-
-  /* Picks the first thread from the ready queue and makes it current.*/
-  currp = queue_fifo_remove(&ch.rlist.queue);
-  currp->state = CH_STATE_CURRENT;
-
-  /* Handling idle-leave hook.*/
-  if (otp->prio == IDLEPRIO) {
-    CH_CFG_IDLE_LEAVE_HOOK();
-  }
-
-  /* Placing in ready list ahead of peers.*/
-  otp = chSchReadyAheadI(otp);
-
-  /* Swap operation as tail call.*/
-  chSysSwitch(currp, otp);
-}
-
-#if !defined(CH_SCH_DO_RESCHEDULE_HOOKED)
+#if !defined(CH_SCH_DO_PREEMPTION_HOOKED)
 /**
  * @brief   Switches to the first thread on the runnable queue.
  * @details The current thread is positioned in the ready list behind or
  *          ahead of all threads having the same priority depending on
  *          if it used its whole time slice.
- * @note    Not a user function, it is meant to be invoked by the scheduler
- *          itself or from within the port layer.
+ * @note    Not a user function, it is meant to be invoked from within
+ *          the port layer in the IRQ-related preemption code.
  *
  * @special
  */
-void chSchDoReschedule(void) {
-  thread_t *otp = currp;
+void chSchDoPreemption(void) {
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
+  thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  currp = queue_fifo_remove(&ch.rlist.queue);
-  currp->state = CH_STATE_CURRENT;
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp->state = CH_STATE_CURRENT;
+  __instance_set_currthread(oip, ntp);
 
   /* Handling idle-leave hook.*/
-  if (otp->prio == IDLEPRIO) {
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
     CH_CFG_IDLE_LEAVE_HOOK();
   }
 
 #if CH_CFG_TIME_QUANTUM > 0
   /* If CH_CFG_TIME_QUANTUM is enabled then there are two different scenarios
      to handle on preemption: time quantum elapsed or not.*/
-  if (currp->ticks == (tslices_t)0) {
+  if (otp->ticks == (tslices_t)0) {
 
     /* The thread consumed its time quantum so it is enqueued behind threads
        with same priority level, however, it acquires a new time quantum.*/
-    otp = chSchReadyI(otp);
+    otp = __sch_ready_behind(otp);
 
     /* The thread being swapped out receives a new time quantum.*/
     otp->ticks = (tslices_t)CH_CFG_TIME_QUANTUM;
@@ -594,17 +532,101 @@ void chSchDoReschedule(void) {
   else {
     /* The thread didn't consume all its time quantum so it is put ahead of
        threads with equal priority and does not acquire a new time quantum.*/
-    otp = chSchReadyAheadI(otp);
+    otp = __sch_ready_ahead(otp);
   }
 #else /* !(CH_CFG_TIME_QUANTUM > 0) */
   /* If the round-robin mechanism is disabled then the thread goes always
      ahead of its peers.*/
-  otp = chSchReadyAheadI(otp);
+  otp = __sch_ready_ahead(otp);
 #endif /* !(CH_CFG_TIME_QUANTUM > 0) */
 
   /* Swap operation as tail call.*/
-  chSysSwitch(currp, otp);
+  chSysSwitch(ntp, otp);
 }
-#endif /* !defined(CH_SCH_DO_RESCHEDULE_HOOKED) */
+#endif /* !defined(CH_SCH_DO_PREEMPTION_HOOKED) */
+
+#if !defined(CH_SCH_PREEMPTION_HOOKED)
+/**
+ * @brief   All-in-one preemption code.
+ * @note    Not a user function, it is meant to be invoked from within
+ *          the port layer in the IRQ-related preemption code.
+ *
+ * @special
+ */
+void chSchPreemption(void) {
+  os_instance_t *oip = currcore;
+  thread_t *tp = __instance_get_currthread(oip);
+  tprio_t p1 = firstprio(&oip->rlist.pqueue);
+  tprio_t p2 = tp->hdr.pqueue.prio;
+
+#if CH_CFG_TIME_QUANTUM > 0
+  if (tp->ticks > (tslices_t)0) {
+    if (p1 > p2) {
+      __sch_reschedule_ahead();
+    }
+  }
+  else {
+    if (p1 >= p2) {
+      __sch_reschedule_behind();
+    }
+  }
+#else /* CH_CFG_TIME_QUANTUM == 0 */
+  if (p1 > p2) {
+    __sch_reschedule_ahead();
+  }
+#endif /* CH_CFG_TIME_QUANTUM == 0 */
+}
+#endif /* !defined(CH_SCH_PREEMPTION_HOOKED) */
+
+/**
+ * @brief   Yields the time slot.
+ * @details Yields the CPU control to the next thread in the ready list with
+ *          equal or higher priority, if any.
+ *
+ * @sclass
+ */
+void chSchDoYieldS(void) {
+  os_instance_t *oip = currcore;
+  thread_t *tp = __instance_get_currthread(oip);
+
+  chDbgCheckClassS();
+
+  if (firstprio(&oip->rlist.pqueue) >= tp->hdr.pqueue.prio) {
+    __sch_reschedule_behind();
+  }
+}
+
+/**
+ * @brief   Makes runnable the fist thread in the ready list, does not
+ *          reschedule internally.
+ * @details The current thread is positioned in the ready list ahead of all
+ *          threads having the same priority.
+ * @note    Not a user function, it is meant to be invoked by the scheduler
+ *          itself.
+ *
+ * @return              The pointer to the thread being switched in.
+ *
+ * @special
+ */
+thread_t *chSchSelectFirstI(void) {
+  os_instance_t *oip = currcore;
+  thread_t *otp = __instance_get_currthread(oip);
+  thread_t *ntp;
+
+  /* Picks the first thread from the ready queue and makes it current.*/
+  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp->state = CH_STATE_CURRENT;
+  __instance_set_currthread(oip, ntp);
+
+  /* Handling idle-leave hook.*/
+  if (otp->hdr.pqueue.prio == IDLEPRIO) {
+    CH_CFG_IDLE_LEAVE_HOOK();
+  }
+
+  /* Placing in ready list ahead of peers.*/
+  (void) __sch_ready_ahead(otp);
+
+  return ntp;
+}
 
 /** @} */

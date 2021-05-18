@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -223,10 +223,10 @@ struct port_context {
   /*lint -restore*/                                                         \
 }
 
- /**
+/**
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
-  */
+ */
 #define PORT_WA_SIZE(n) ((sizeof (void *) * 4U) +                           \
                          sizeof (struct port_intctx) +                      \
                          ((size_t)(n)) +                                    \
@@ -242,6 +242,16 @@ struct port_context {
  */
 #define PORT_WORKING_AREA(s, n)                                             \
   stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_PRIORITY(n) false
+
+/**
+ * @brief   Priority level verification macro.
+ */
+#define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n) false
 
 /**
  * @brief   IRQ prologue code.
@@ -321,7 +331,9 @@ extern "C" {
 /**
  * @brief   Port-related initialization code.
  */
-static inline void port_init(void) {
+static inline void port_init(os_instance_t *oip) {
+
+  (void)oip;
 
   port_irq_sts = (syssts_t)0;
   port_isr_context_flag = false;

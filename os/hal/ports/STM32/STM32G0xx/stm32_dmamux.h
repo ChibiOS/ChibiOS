@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32G0xx/stm32_isr.h
+ * @file    STM32G0xx/stm32_dmamux.h
  * @brief   STM32G0xx DMAMUX handler header.
  *
  * @addtogroup STM32G0xx_DMAMUX

@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chbsem.h
+ * @file    oslib/include/chbsem.h
  * @brief   Binary semaphores structures and macros.
  * @details Binary semaphores related APIs and services.
  *          <h2>Operation mode</h2>
@@ -88,8 +88,8 @@ typedef struct ch_binary_semaphore {
  * @param[in] name      the name of the semaphore variable
  * @param[in] taken     the semaphore initial state
  */
-#define _BSEMAPHORE_DATA(name, taken)                                       \
-  {_SEMAPHORE_DATA(name.sem, ((taken) ? 0 : 1))}
+#define __BSEMAPHORE_DATA(name, taken)                                      \
+  {__SEMAPHORE_DATA(name.sem, ((taken) ? 0 : 1))}
 
 /**
  * @brief   Static semaphore initializer.
@@ -100,7 +100,7 @@ typedef struct ch_binary_semaphore {
  * @param[in] taken     the semaphore initial state
  */
 #define BSEMAPHORE_DECL(name, taken)                                        \
-    binary_semaphore_t name = _BSEMAPHORE_DATA(name, taken)
+  binary_semaphore_t name = __BSEMAPHORE_DATA(name, taken)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

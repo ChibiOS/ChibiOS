@@ -107,6 +107,9 @@ void halInit(void) {
 #if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
   sdcInit();
 #endif
+#if (HAL_USE_SIO == TRUE) || defined(__DOXYGEN__)
+  sioInit();
+#endif
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
   spiInit();
 #endif

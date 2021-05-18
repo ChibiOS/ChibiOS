@@ -21,761 +21,272 @@
  * @file    oslib_test_sequence_007.c
  * @brief   Test Sequence 007 code.
  *
- * @page oslib_test_sequence_007 [7] Objects Factory
+ * @page oslib_test_sequence_007 [7] Memory Pools
  *
  * File: @ref oslib_test_sequence_007.c
  *
  * <h2>Description</h2>
  * This sequence tests the ChibiOS library functionalities related to
- * the object factory.
+ * memory pools.
  *
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - (CH_CFG_USE_FACTORY == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE) && (CH_CFG_USE_HEAP == TRUE)
+ * - CH_CFG_USE_MEMPOOLS
  * .
  *
  * <h2>Test Cases</h2>
  * - @subpage oslib_test_007_001
  * - @subpage oslib_test_007_002
  * - @subpage oslib_test_007_003
- * - @subpage oslib_test_007_004
- * - @subpage oslib_test_007_005
- * - @subpage oslib_test_007_006
  * .
  */
 
-#if ((CH_CFG_USE_FACTORY == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE) && (CH_CFG_USE_HEAP == TRUE)) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
  ****************************************************************************/
 
+#define MEMORY_POOL_SIZE 4
+
+static uint32_t objects[MEMORY_POOL_SIZE];
+static MEMORYPOOL_DECL(mp1, sizeof (uint32_t), PORT_NATURAL_ALIGN, NULL);
+
+#if CH_CFG_USE_SEMAPHORES
+static GUARDEDMEMORYPOOL_DECL(gmp1, sizeof (uint32_t), PORT_NATURAL_ALIGN);
+#endif
+
+static void *null_provider(size_t size, unsigned align) {
+
+  (void)size;
+  (void)align;
+
+  return NULL;
+}
 
 /****************************************************************************
  * Test cases.
  ****************************************************************************/
 
-#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
- * @page oslib_test_007_001 [7.1] Objects Registry
+ * @page oslib_test_007_001 [7.1] Loading and emptying a memory pool
  *
  * <h2>Description</h2>
- * This test case verifies the static objects registry.
- *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE
- * .
+ * The memory pool functionality is tested by loading and emptying it,
+ * all conditions are tested.
  *
  * <h2>Test Steps</h2>
- * - [7.1.1] Retrieving a registered object by name, must not exist.
- * - [7.1.2] Registering an object, it must not exists, must succeed.
- * - [7.1.3] Registering an object with the same name, must fail.
- * - [7.1.4] Retrieving the registered object by name, must exist, then
- *   increasing the reference counter, finally releasing both
- *   references.
- * - [7.1.5] Releasing the first reference to the object, must not
- *   trigger an assertion.
- * - [7.1.6] Retrieving the registered object by name again, must not
- *   exist.
+ * - [7.1.1] Adding the objects to the pool using chPoolLoadArray().
+ * - [7.1.2] Emptying the pool using chPoolAlloc().
+ * - [7.1.3] Now must be empty.
+ * - [7.1.4] Adding the objects to the pool using chPoolFree().
+ * - [7.1.5] Emptying the pool using chPoolAlloc() again.
+ * - [7.1.6] Now must be empty again.
+ * - [7.1.7] Covering the case where a provider is unable to return
+ *   more memory.
  * .
  */
 
-static void oslib_test_007_001_teardown(void) {
-  registered_object_t *rop;
-
-  rop = chFactoryFindObject("myobj");
-  if (rop != NULL) {
-    while (rop->element.refs > 0U) {
-      chFactoryReleaseObject(rop);
-    }
-  }
+static void oslib_test_007_001_setup(void) {
+  chPoolObjectInit(&mp1, sizeof (uint32_t), NULL);
 }
 
 static void oslib_test_007_001_execute(void) {
-  registered_object_t *rop;
+  unsigned i;
 
-  /* [7.1.1] Retrieving a registered object by name, must not exist.*/
+  /* [7.1.1] Adding the objects to the pool using chPoolLoadArray().*/
   test_set_step(1);
   {
-    rop = chFactoryFindObject("myobj");
-    test_assert(rop == NULL, "found");
+    chPoolLoadArray(&mp1, objects, MEMORY_POOL_SIZE);
   }
   test_end_step(1);
 
-  /* [7.1.2] Registering an object, it must not exists, must succeed.*/
+  /* [7.1.2] Emptying the pool using chPoolAlloc().*/
   test_set_step(2);
   {
-    static uint32_t myobj = 0x55aa;
-
-    rop = chFactoryRegisterObject("myobj", (void *)&myobj);
-    test_assert(rop != NULL, "cannot register");
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      test_assert(chPoolAlloc(&mp1) != NULL, "list empty");
   }
   test_end_step(2);
 
-  /* [7.1.3] Registering an object with the same name, must fail.*/
+  /* [7.1.3] Now must be empty.*/
   test_set_step(3);
   {
-    registered_object_t *rop1;
-    static uint32_t myobj = 0x55aa;
-
-    rop1 = chFactoryRegisterObject("myobj", (void *)&myobj);
-    test_assert(rop1 == NULL, "can register");
+    test_assert(chPoolAlloc(&mp1) == NULL, "list not empty");
   }
   test_end_step(3);
 
-  /* [7.1.4] Retrieving the registered object by name, must exist, then
-     increasing the reference counter, finally releasing both
-     references.*/
+  /* [7.1.4] Adding the objects to the pool using chPoolFree().*/
   test_set_step(4);
   {
-    registered_object_t *rop1, *rop2;
-
-    rop1 = chFactoryFindObject("myobj");
-    test_assert(rop1 != NULL, "not found");
-    test_assert(*(uint32_t *)(rop1->objp) == 0x55aa, "object mismatch");
-    test_assert(rop == rop1, "object reference mismatch");
-    test_assert(rop1->element.refs == 2, "object reference mismatch");
-
-    rop2 = (registered_object_t *)chFactoryDuplicateReference(&rop1->element);
-    test_assert(rop1 == rop2, "object reference mismatch");
-    test_assert(*(uint32_t *)(rop2->objp) == 0x55aa, "object mismatch");
-    test_assert(rop2->element.refs == 3, "object reference mismatch");
-
-    chFactoryReleaseObject(rop2);
-    test_assert(rop1->element.refs == 2, "references mismatch");
-
-    chFactoryReleaseObject(rop1);
-    test_assert(rop->element.refs == 1, "references mismatch");
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      chPoolFree(&mp1, &objects[i]);
   }
   test_end_step(4);
 
-  /* [7.1.5] Releasing the first reference to the object, must not
-     trigger an assertion.*/
+  /* [7.1.5] Emptying the pool using chPoolAlloc() again.*/
   test_set_step(5);
   {
-    chFactoryReleaseObject(rop);
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      test_assert(chPoolAlloc(&mp1) != NULL, "list empty");
   }
   test_end_step(5);
 
-  /* [7.1.6] Retrieving the registered object by name again, must not
-     exist.*/
+  /* [7.1.6] Now must be empty again.*/
   test_set_step(6);
   {
-    rop = chFactoryFindObject("myobj");
-    test_assert(rop == NULL, "found");
+    test_assert(chPoolAlloc(&mp1) == NULL, "list not empty");
   }
   test_end_step(6);
+
+  /* [7.1.7] Covering the case where a provider is unable to return
+     more memory.*/
+  test_set_step(7);
+  {
+    chPoolObjectInit(&mp1, sizeof (uint32_t), null_provider);
+    test_assert(chPoolAlloc(&mp1) == NULL, "provider returned memory");
+  }
+  test_end_step(7);
 }
 
 static const testcase_t oslib_test_007_001 = {
-  "Objects Registry",
+  "Loading and emptying a memory pool",
+  oslib_test_007_001_setup,
   NULL,
-  oslib_test_007_001_teardown,
   oslib_test_007_001_execute
 };
-#endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE */
 
-#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page oslib_test_007_002 [7.2] Dynamic Buffers Factory
+ * @page oslib_test_007_002 [7.2] Loading and emptying a guarded memory pool without waiting
  *
  * <h2>Description</h2>
- * This test case verifies the dynamic buffers factory.
+ * The memory pool functionality is tested by loading and emptying it,
+ * all conditions are tested.
  *
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE
+ * - CH_CFG_USE_SEMAPHORES
  * .
  *
  * <h2>Test Steps</h2>
- * - [7.2.1] Retrieving a dynamic buffer by name, must not exist.
- * - [7.2.2] Creating a dynamic buffer it must not exists, must
- *   succeed.
- * - [7.2.3] Creating a dynamic buffer with the same name, must fail.
- * - [7.2.4] Retrieving the dynamic buffer by name, must exist, then
- *   increasing the reference counter, finally releasing both
- *   references.
- * - [7.2.5] Releasing the first reference to the dynamic buffer, must
- *   not trigger an assertion.
- * - [7.2.6] Retrieving the dynamic buffer by name again, must not
- *   exist.
+ * - [7.2.1] Adding the objects to the pool using
+ *   chGuardedPoolLoadArray().
+ * - [7.2.2] Emptying the pool using chGuardedPoolAllocTimeout().
+ * - [7.2.3] Now must be empty.
+ * - [7.2.4] Adding the objects to the pool using chGuardedPoolFree().
+ * - [7.2.5] Emptying the pool using chGuardedPoolAllocTimeout() again.
+ * - [7.2.6] Now must be empty again.
  * .
  */
 
-static void oslib_test_007_002_teardown(void) {
-  dyn_buffer_t *dbp;
-
-  dbp = chFactoryFindBuffer("mybuf");
-  if (dbp != NULL) {
-    while (dbp->element.refs > 0U) {
-      chFactoryReleaseBuffer(dbp);
-    }
-  }
+static void oslib_test_007_002_setup(void) {
+  chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
 }
 
 static void oslib_test_007_002_execute(void) {
-  dyn_buffer_t *dbp;
+  unsigned i;
 
-  /* [7.2.1] Retrieving a dynamic buffer by name, must not exist.*/
+  /* [7.2.1] Adding the objects to the pool using
+     chGuardedPoolLoadArray().*/
   test_set_step(1);
   {
-    dbp = chFactoryFindBuffer("mybuf");
-    test_assert(dbp == NULL, "found");
+    chGuardedPoolLoadArray(&gmp1, objects, MEMORY_POOL_SIZE);
   }
   test_end_step(1);
 
-  /* [7.2.2] Creating a dynamic buffer it must not exists, must
-     succeed.*/
+  /* [7.2.2] Emptying the pool using chGuardedPoolAllocTimeout().*/
   test_set_step(2);
   {
-    dbp = chFactoryCreateBuffer("mybuf", 128U);
-    test_assert(dbp != NULL, "cannot create");
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");
   }
   test_end_step(2);
 
-  /* [7.2.3] Creating a dynamic buffer with the same name, must fail.*/
+  /* [7.2.3] Now must be empty.*/
   test_set_step(3);
   {
-    dyn_buffer_t *dbp1;
-
-    dbp1 = chFactoryCreateBuffer("mybuf", 128U);
-    test_assert(dbp1 == NULL, "can create");
+    test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");
   }
   test_end_step(3);
 
-  /* [7.2.4] Retrieving the dynamic buffer by name, must exist, then
-     increasing the reference counter, finally releasing both
-     references.*/
+  /* [7.2.4] Adding the objects to the pool using
+     chGuardedPoolFree().*/
   test_set_step(4);
   {
-    dyn_buffer_t *dbp1, *dbp2;
-
-    dbp1 = chFactoryFindBuffer("mybuf");
-    test_assert(dbp1 != NULL, "not found");
-    test_assert(dbp == dbp1, "object reference mismatch");
-    test_assert(dbp1->element.refs == 2, "object reference mismatch");
-
-    dbp2 = (dyn_buffer_t *)chFactoryDuplicateReference(&dbp1->element);
-    test_assert(dbp1 == dbp2, "object reference mismatch");
-    test_assert(dbp2->element.refs == 3, "object reference mismatch");
-
-    chFactoryReleaseBuffer(dbp2);
-    test_assert(dbp1->element.refs == 2, "references mismatch");
-
-    chFactoryReleaseBuffer(dbp1);
-    test_assert(dbp->element.refs == 1, "references mismatch");
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      chGuardedPoolFree(&gmp1, &objects[i]);
   }
   test_end_step(4);
 
-  /* [7.2.5] Releasing the first reference to the dynamic buffer, must
-     not trigger an assertion.*/
+  /* [7.2.5] Emptying the pool using chGuardedPoolAllocTimeout()
+     again.*/
   test_set_step(5);
   {
-    chFactoryReleaseBuffer(dbp);
+    for (i = 0; i < MEMORY_POOL_SIZE; i++)
+      test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) != NULL, "list empty");
   }
   test_end_step(5);
 
-  /* [7.2.6] Retrieving the dynamic buffer by name again, must not
-     exist.*/
+  /* [7.2.6] Now must be empty again.*/
   test_set_step(6);
   {
-    dbp = chFactoryFindBuffer("mybuf");
-    test_assert(dbp == NULL, "found");
+    test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_IMMEDIATE) == NULL, "list not empty");
   }
   test_end_step(6);
 }
 
 static const testcase_t oslib_test_007_002 = {
-  "Dynamic Buffers Factory",
+  "Loading and emptying a guarded memory pool without waiting",
+  oslib_test_007_002_setup,
   NULL,
-  oslib_test_007_002_teardown,
   oslib_test_007_002_execute
 };
-#endif /* CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
-#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
 /**
- * @page oslib_test_007_003 [7.3] Dynamic Semaphores Factory
+ * @page oslib_test_007_003 [7.3] Guarded Memory Pools timeout
  *
  * <h2>Description</h2>
- * This test case verifies the dynamic semaphores factory.
+ * The timeout features for the Guarded Memory Pools is tested.
  *
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_FACTORY_SEMAPHORES == TRUE
+ * - CH_CFG_USE_SEMAPHORES
  * .
  *
  * <h2>Test Steps</h2>
- * - [7.3.1] Retrieving a dynamic semaphore by name, must not exist.
- * - [7.3.2] Creating a dynamic semaphore it must not exists, must
- *   succeed.
- * - [7.3.3] Creating a dynamic semaphore with the same name, must
- *   fail.
- * - [7.3.4] Retrieving the dynamic semaphore by name, must exist, then
- *   increasing the reference counter, finally releasing both
- *   references.
- * - [7.3.5] Releasing the first reference to the dynamic semaphore
- *   must not trigger an assertion.
- * - [7.3.6] Retrieving the dynamic semaphore by name again, must not
- *   exist.
+ * - [7.3.1] Trying to allocate with 100mS timeout, must fail because
+ *   the pool is empty.
  * .
  */
 
-static void oslib_test_007_003_teardown(void) {
-  dyn_semaphore_t *dsp;
-
-  dsp = chFactoryFindSemaphore("mysem");
-  if (dsp != NULL) {
-    while (dsp->element.refs > 0U) {
-      chFactoryReleaseSemaphore(dsp);
-    }
-  }
+static void oslib_test_007_003_setup(void) {
+  chGuardedPoolObjectInit(&gmp1, sizeof (uint32_t));
 }
 
 static void oslib_test_007_003_execute(void) {
-  dyn_semaphore_t *dsp;
 
-  /* [7.3.1] Retrieving a dynamic semaphore by name, must not exist.*/
+  /* [7.3.1] Trying to allocate with 100mS timeout, must fail because
+     the pool is empty.*/
   test_set_step(1);
   {
-    dsp = chFactoryFindSemaphore("mysem");
-    test_assert(dsp == NULL, "found");
+    test_assert(chGuardedPoolAllocTimeout(&gmp1, TIME_MS2I(100)) == NULL, "list not empty");
   }
   test_end_step(1);
-
-  /* [7.3.2] Creating a dynamic semaphore it must not exists, must
-     succeed.*/
-  test_set_step(2);
-  {
-    dsp = chFactoryCreateSemaphore("mysem", 0);
-    test_assert(dsp != NULL, "cannot create");
-  }
-  test_end_step(2);
-
-  /* [7.3.3] Creating a dynamic semaphore with the same name, must
-     fail.*/
-  test_set_step(3);
-  {
-    dyn_semaphore_t *dsp1;
-
-    dsp1 = chFactoryCreateSemaphore("mysem", 0);
-    test_assert(dsp1 == NULL, "can create");
-  }
-  test_end_step(3);
-
-  /* [7.3.4] Retrieving the dynamic semaphore by name, must exist, then
-     increasing the reference counter, finally releasing both
-     references.*/
-  test_set_step(4);
-  {
-    dyn_semaphore_t *dsp1, *dsp2;
-
-    dsp1 = chFactoryFindSemaphore("mysem");
-    test_assert(dsp1 != NULL, "not found");
-    test_assert(dsp == dsp1, "object reference mismatch");
-    test_assert(dsp1->element.refs == 2, "object reference mismatch");
-
-    dsp2 = (dyn_semaphore_t *)chFactoryDuplicateReference(&dsp1->element);
-    test_assert(dsp1 == dsp2, "object reference mismatch");
-    test_assert(dsp2->element.refs == 3, "object reference mismatch");
-
-    chFactoryReleaseSemaphore(dsp2);
-    test_assert(dsp1->element.refs == 2, "references mismatch");
-
-    chFactoryReleaseSemaphore(dsp1);
-    test_assert(dsp->element.refs == 1, "references mismatch");
-  }
-  test_end_step(4);
-
-  /* [7.3.5] Releasing the first reference to the dynamic semaphore
-     must not trigger an assertion.*/
-  test_set_step(5);
-  {
-    chFactoryReleaseSemaphore(dsp);
-  }
-  test_end_step(5);
-
-  /* [7.3.6] Retrieving the dynamic semaphore by name again, must not
-     exist.*/
-  test_set_step(6);
-  {
-    dsp = chFactoryFindSemaphore("mysem");
-    test_assert(dsp == NULL, "found");
-  }
-  test_end_step(6);
 }
 
 static const testcase_t oslib_test_007_003 = {
-  "Dynamic Semaphores Factory",
+  "Guarded Memory Pools timeout",
+  oslib_test_007_003_setup,
   NULL,
-  oslib_test_007_003_teardown,
   oslib_test_007_003_execute
 };
-#endif /* CH_CFG_FACTORY_SEMAPHORES == TRUE */
-
-#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
-/**
- * @page oslib_test_007_004 [7.4] Dynamic Mailboxes Factory
- *
- * <h2>Description</h2>
- * This test case verifies the dynamic mailboxes factory.
- *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_FACTORY_MAILBOXES == TRUE
- * .
- *
- * <h2>Test Steps</h2>
- * - [7.4.1] Retrieving a dynamic mailbox by name, must not exist.
- * - [7.4.2] Creating a dynamic mailbox it must not exists, must
- *   succeed.
- * - [7.4.3] Creating a dynamic mailbox with the same name, must fail.
- * - [7.4.4] Retrieving the dynamic mailbox by name, must exist, then
- *   increasing the reference counter, finally releasing both
- *   references.
- * - [7.4.5] Releasing the first reference to the dynamic mailbox must
- *   not trigger an assertion.
- * - [7.4.6] Retrieving the dynamic mailbox by name again, must not
- *   exist.
- * .
- */
-
-static void oslib_test_007_004_teardown(void) {
-  dyn_mailbox_t *dmp;
-
-  dmp = chFactoryFindMailbox("mymbx");
-  if (dmp != NULL) {
-    while (dmp->element.refs > 0U) {
-      chFactoryReleaseMailbox(dmp);
-    }
-  }
-}
-
-static void oslib_test_007_004_execute(void) {
-  dyn_mailbox_t *dmp;
-
-  /* [7.4.1] Retrieving a dynamic mailbox by name, must not exist.*/
-  test_set_step(1);
-  {
-    dmp = chFactoryFindMailbox("mymbx");
-    test_assert(dmp == NULL, "found");
-  }
-  test_end_step(1);
-
-  /* [7.4.2] Creating a dynamic mailbox it must not exists, must
-     succeed.*/
-  test_set_step(2);
-  {
-    dmp = chFactoryCreateMailbox("mymbx", 16U);
-    test_assert(dmp != NULL, "cannot create");
-  }
-  test_end_step(2);
-
-  /* [7.4.3] Creating a dynamic mailbox with the same name, must
-     fail.*/
-  test_set_step(3);
-  {
-    dyn_mailbox_t *dmp1;
-
-    dmp1 = chFactoryCreateMailbox("mymbx", 16U);
-    test_assert(dmp1 == NULL, "can create");
-  }
-  test_end_step(3);
-
-  /* [7.4.4] Retrieving the dynamic mailbox by name, must exist, then
-     increasing the reference counter, finally releasing both
-     references.*/
-  test_set_step(4);
-  {
-    dyn_mailbox_t *dmp1, *dmp2;
-
-    dmp1 = chFactoryFindMailbox("mymbx");
-    test_assert(dmp1 != NULL, "not found");
-    test_assert(dmp == dmp1, "object reference mismatch");
-    test_assert(dmp1->element.refs == 2, "object reference mismatch");
-
-    dmp2 = (dyn_mailbox_t *)chFactoryDuplicateReference(&dmp1->element);
-    test_assert(dmp1 == dmp2, "object reference mismatch");
-    test_assert(dmp2->element.refs == 3, "object reference mismatch");
-
-    chFactoryReleaseMailbox(dmp2);
-    test_assert(dmp1->element.refs == 2, "references mismatch");
-
-    chFactoryReleaseMailbox(dmp1);
-    test_assert(dmp->element.refs == 1, "references mismatch");
-  }
-  test_end_step(4);
-
-  /* [7.4.5] Releasing the first reference to the dynamic mailbox must
-     not trigger an assertion.*/
-  test_set_step(5);
-  {
-    chFactoryReleaseMailbox(dmp);
-  }
-  test_end_step(5);
-
-  /* [7.4.6] Retrieving the dynamic mailbox by name again, must not
-     exist.*/
-  test_set_step(6);
-  {
-    dmp = chFactoryFindMailbox("mymbx");
-    test_assert(dmp == NULL, "found");
-  }
-  test_end_step(6);
-}
-
-static const testcase_t oslib_test_007_004 = {
-  "Dynamic Mailboxes Factory",
-  NULL,
-  oslib_test_007_004_teardown,
-  oslib_test_007_004_execute
-};
-#endif /* CH_CFG_FACTORY_MAILBOXES == TRUE */
-
-#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
-/**
- * @page oslib_test_007_005 [7.5] Dynamic Objects FIFOs Factory
- *
- * <h2>Description</h2>
- * This test case verifies the dynamic objects FIFOs factory.
- *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_FACTORY_OBJ_FIFOS == TRUE
- * .
- *
- * <h2>Test Steps</h2>
- * - [7.5.1] Retrieving a dynamic objects FIFO by name, must not exist.
- * - [7.5.2] Creating a dynamic objects FIFO it must not exists, must
- *   succeed.
- * - [7.5.3] Creating a dynamic objects FIFO with the same name, must
- *   fail.
- * - [7.5.4] Retrieving the dynamic objects FIFO by name, must exist,
- *   then increasing the reference counter, finally releasing both
- *   references.
- * - [7.5.5] Releasing the first reference to the dynamic objects FIFO
- *   must not trigger an assertion.
- * - [7.5.6] Retrieving the dynamic objects FIFO by name again, must
- *   not exist.
- * .
- */
-
-static void oslib_test_007_005_teardown(void) {
-  dyn_objects_fifo_t *dofp;
-
-  dofp = chFactoryFindObjectsFIFO("myfifo");
-  if (dofp != NULL) {
-    while (dofp->element.refs > 0U) {
-      chFactoryReleaseObjectsFIFO(dofp);
-    }
-  }
-}
-
-static void oslib_test_007_005_execute(void) {
-  dyn_objects_fifo_t *dofp;
-
-  /* [7.5.1] Retrieving a dynamic objects FIFO by name, must not
-     exist.*/
-  test_set_step(1);
-  {
-    dofp = chFactoryFindObjectsFIFO("myfifo");
-    test_assert(dofp == NULL, "found");
-  }
-  test_end_step(1);
-
-  /* [7.5.2] Creating a dynamic objects FIFO it must not exists, must
-     succeed.*/
-  test_set_step(2);
-  {
-    dofp = chFactoryCreateObjectsFIFO("myfifo", 16U, 16U, PORT_NATURAL_ALIGN);
-    test_assert(dofp != NULL, "cannot create");
-  }
-  test_end_step(2);
-
-  /* [7.5.3] Creating a dynamic objects FIFO with the same name, must
-     fail.*/
-  test_set_step(3);
-  {
-    dyn_objects_fifo_t *dofp1;
-
-    dofp1 = chFactoryCreateObjectsFIFO("myfifo", 16U, 16U, PORT_NATURAL_ALIGN);
-    test_assert(dofp1 == NULL, "can create");
-  }
-  test_end_step(3);
-
-  /* [7.5.4] Retrieving the dynamic objects FIFO by name, must exist,
-     then increasing the reference counter, finally releasing both
-     references.*/
-  test_set_step(4);
-  {
-    dyn_objects_fifo_t *dofp1, *dofp2;
-
-    dofp1 = chFactoryFindObjectsFIFO("myfifo");
-    test_assert(dofp1 != NULL, "not found");
-    test_assert(dofp == dofp1, "object reference mismatch");
-    test_assert(dofp1->element.refs == 2, "object reference mismatch");
-
-    dofp2 = (dyn_objects_fifo_t *)chFactoryDuplicateReference(&dofp1->element);
-    test_assert(dofp1 == dofp2, "object reference mismatch");
-    test_assert(dofp2->element.refs == 3, "object reference mismatch");
-
-    chFactoryReleaseObjectsFIFO(dofp2);
-    test_assert(dofp1->element.refs == 2, "references mismatch");
-
-    chFactoryReleaseObjectsFIFO(dofp1);
-    test_assert(dofp->element.refs == 1, "references mismatch");
-  }
-  test_end_step(4);
-
-  /* [7.5.5] Releasing the first reference to the dynamic objects FIFO
-     must not trigger an assertion.*/
-  test_set_step(5);
-  {
-    chFactoryReleaseObjectsFIFO(dofp);
-  }
-  test_end_step(5);
-
-  /* [7.5.6] Retrieving the dynamic objects FIFO by name again, must
-     not exist.*/
-  test_set_step(6);
-  {
-    dofp = chFactoryFindObjectsFIFO("myfifo");
-    test_assert(dofp == NULL, "found");
-  }
-  test_end_step(6);
-}
-
-static const testcase_t oslib_test_007_005 = {
-  "Dynamic Objects FIFOs Factory",
-  NULL,
-  oslib_test_007_005_teardown,
-  oslib_test_007_005_execute
-};
-#endif /* CH_CFG_FACTORY_OBJ_FIFOS == TRUE */
-
-#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
-/**
- * @page oslib_test_007_006 [7.6] Dynamic Pipes Factory
- *
- * <h2>Description</h2>
- * This test case verifies the dynamic pipes factory.
- *
- * <h2>Conditions</h2>
- * This test is only executed if the following preprocessor condition
- * evaluates to true:
- * - CH_CFG_FACTORY_PIPES == TRUE
- * .
- *
- * <h2>Test Steps</h2>
- * - [7.6.1] Retrieving a dynamic pipe by name, must not exist.
- * - [7.6.2] Creating a dynamic pipe it must not exists, must succeed.
- * - [7.6.3] Creating a dynamic pipe with the same name, must fail.
- * - [7.6.4] Retrieving the dynamic pipe by name, must exist, then
- *   increasing the reference counter, finally releasing both
- *   references.
- * - [7.6.5] Releasing the first reference to the dynamic pipe must not
- *   trigger an assertion.
- * - [7.6.6] Retrieving the dynamic pipe by name again, must not exist.
- * .
- */
-
-static void oslib_test_007_006_teardown(void) {
-  dyn_pipe_t *dpp;
-
-  dpp = chFactoryFindPipe("mypipe");
-  if (dpp != NULL) {
-    while (dpp->element.refs > 0U) {
-      chFactoryReleasePipe(dpp);
-    }
-  }
-}
-
-static void oslib_test_007_006_execute(void) {
-  dyn_pipe_t *dpp;
-
-  /* [7.6.1] Retrieving a dynamic pipe by name, must not exist.*/
-  test_set_step(1);
-  {
-    dpp = chFactoryFindPipe("mypipe");
-    test_assert(dpp == NULL, "found");
-  }
-  test_end_step(1);
-
-  /* [7.6.2] Creating a dynamic pipe it must not exists, must
-     succeed.*/
-  test_set_step(2);
-  {
-    dpp = chFactoryCreatePipe("mypipe", 16U);
-    test_assert(dpp != NULL, "cannot create");
-  }
-  test_end_step(2);
-
-  /* [7.6.3] Creating a dynamic pipe with the same name, must fail.*/
-  test_set_step(3);
-  {
-    dyn_pipe_t *dpp1;
-
-    dpp1 = chFactoryCreatePipe("mypipe", 16U);
-    test_assert(dpp1 == NULL, "can create");
-  }
-  test_end_step(3);
-
-  /* [7.6.4] Retrieving the dynamic pipe by name, must exist, then
-     increasing the reference counter, finally releasing both
-     references.*/
-  test_set_step(4);
-  {
-    dyn_pipe_t *dpp1, *dpp2;
-
-    dpp1 = chFactoryFindPipe("mypipe");
-    test_assert(dpp1 != NULL, "not found");
-    test_assert(dpp == dpp1, "object reference mismatch");
-    test_assert(dpp1->element.refs == 2, "object reference mismatch");
-
-    dpp2 = (dyn_pipe_t *)chFactoryDuplicateReference(&dpp1->element);
-    test_assert(dpp1 == dpp2, "object reference mismatch");
-    test_assert(dpp2->element.refs == 3, "object reference mismatch");
-
-    chFactoryReleasePipe(dpp2);
-    test_assert(dpp1->element.refs == 2, "references mismatch");
-
-    chFactoryReleasePipe(dpp1);
-    test_assert(dpp->element.refs == 1, "references mismatch");
-  }
-  test_end_step(4);
-
-  /* [7.6.5] Releasing the first reference to the dynamic pipe must not
-     trigger an assertion.*/
-  test_set_step(5);
-  {
-    chFactoryReleasePipe(dpp);
-  }
-  test_end_step(5);
-
-  /* [7.6.6] Retrieving the dynamic pipe by name again, must not
-     exist.*/
-  test_set_step(6);
-  {
-    dpp = chFactoryFindPipe("mypipe");
-    test_assert(dpp == NULL, "found");
-  }
-  test_end_step(6);
-}
-
-static const testcase_t oslib_test_007_006 = {
-  "Dynamic Pipes Factory",
-  NULL,
-  oslib_test_007_006_teardown,
-  oslib_test_007_006_execute
-};
-#endif /* CH_CFG_FACTORY_PIPES == TRUE */
+#endif /* CH_CFG_USE_SEMAPHORES */
 
 /****************************************************************************
  * Exported data.
@@ -785,33 +296,22 @@ static const testcase_t oslib_test_007_006 = {
  * @brief   Array of test cases.
  */
 const testcase_t * const oslib_test_sequence_007_array[] = {
-#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
   &oslib_test_007_001,
-#endif
-#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &oslib_test_007_002,
 #endif
-#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
   &oslib_test_007_003,
-#endif
-#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
-  &oslib_test_007_004,
-#endif
-#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
-  &oslib_test_007_005,
-#endif
-#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
-  &oslib_test_007_006,
 #endif
   NULL
 };
 
 /**
- * @brief   Objects Factory.
+ * @brief   Memory Pools.
  */
 const testsequence_t oslib_test_sequence_007 = {
-  "Objects Factory",
+  "Memory Pools",
   oslib_test_sequence_007_array
 };
 
-#endif /* (CH_CFG_USE_FACTORY == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE) && (CH_CFG_USE_HEAP == TRUE) */
+#endif /* CH_CFG_USE_MEMPOOLS */

@@ -296,6 +296,16 @@
 /** @} */
 
 /**
+ * @name    RCC_CCIPR2 register bits definitions
+ * @{
+ */
+#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C1SEL mask.              */
+#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C1 source is PCLK1.      */
+#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C1 source is SYSCLK.     */
+#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C1 source is HSI16.      */
+/** @} */
+
+/**
  * @name    RCC_BDCR register bits definitions
  * @{
  */
@@ -684,6 +694,13 @@
 #endif
 
 /**
+ * @brief   I2C4 clock source.
+ */
+#if !defined(STM32_I2C4SEL) || defined(__DOXYGEN__)
+#define STM32_I2C4SEL                       STM32_I2C4SEL_SYSCLK
+#endif
+
+/**
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
@@ -766,6 +783,10 @@
 
 #if defined(STM32L433xx) && !defined(STM32L433_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L433_MCUCONF not defined"
+#endif
+
+#if defined(STM32L475xx) && !defined(STM32L475_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L475_MCUCONF not defined"
 #endif
 
 #if defined(STM32L476xx) && !defined(STM32L476_MCUCONF)
@@ -1065,6 +1086,9 @@
 #if (STM32_I2C3SEL == STM32_I2C3SEL_HSI16)
 #error "HSI16 not enabled, required by I2C3SEL"
 #endif
+#if (STM32_I2C4SEL == STM32_I2C4SEL_HSI16)
+#error "HSI16 not enabled, required by I2C4SEL"
+#endif
 
 #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16)
 #error "HSI16 not enabled, required by LPTIM1SEL"
@@ -1155,7 +1179,7 @@
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
 
-  #if STM32_RTCSEL == STM32_RTCSEL_LSI
+  #if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI)
     #error "LSI not enabled, required by STM32_RTCSEL"
   #endif
 
@@ -2076,6 +2100,19 @@
 #endif
 
 /**
+ * @brief   I2C4 clock frequency.
+ */
+#if (STM32_I2C4SEL == STM32_I2C4SEL_PCLK1) || defined(__DOXYGEN__)
+#define STM32_I2C4CLK               STM32_PCLK1
+#elif STM32_I2C4SEL == STM32_I2C4SEL_SYSCLK
+#define STM32_I2C4CLK               STM32_SYSCLK
+#elif STM32_I2C4SEL == STM32_I2C4SEL_HSI16
+#define STM32_I2C4CLK               STM32_HSI16CLK
+#else
+#error "invalid source selected for I2C4 clock"
+#endif
+
+/**
  * @brief   LPTIM1 clock frequency.
  */
 #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PCLK1) || defined(__DOXYGEN__)
@@ -2137,6 +2174,40 @@
 #endif
 
 #endif /* STM32_CLOCK_HAS_HSI48 */
+
+/**
+ * @brief   SAI1 clock frequency.
+ */
+#if (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) || defined(__DOXYGEN__)
+#define STM32_SAI1CLK               STM32_PLLSAI1_P_CLKOUT
+#elif STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI2
+#define STM32_SAI1CLK               STM32_PLLSAI2_P_CLKOUT
+#elif STM32_SAI1SEL == STM32_SAI1SEL_PLL
+#define STM32_SAI1CLK               STM32_PLL_P_CLKOUT
+#elif STM32_SAI1SEL == STM32_SAI1SEL_EXTCLK
+#define STM32_SAI1CLK               0 /* Unknown, would require a board value */
+#elif STM32_SAI1SEL == STM32_SAI1SEL_OFF
+#define STM32_SAI1CLK               0
+#else
+#error "invalid source selected for SAI1 clock"
+#endif
+
+/**
+ * @brief   SAI2 clock frequency.
+ */
+#if (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) || defined(__DOXYGEN__)
+#define STM32_SAI2CLK               STM32_PLLSAI1_P_CLKOUT
+#elif STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI2
+#define STM32_SAI2CLK               STM32_PLLSAI2_P_CLKOUT
+#elif STM32_SAI2SEL == STM32_SAI2SEL_PLL
+#define STM32_SAI2CLK               STM32_PLL_P_CLKOUT
+#elif STM32_SAI2SEL == STM32_SAI2SEL_EXTCLK
+#define STM32_SAI2CLK               0 /* Unknown, would require a board value */
+#elif STM32_SAI2SEL == STM32_SAI2SEL_OFF
+#define STM32_SAI2CLK               0
+#else
+#error "invalid source selected for SAI2 clock"
+#endif
 
 /**
  * @brief   USB clock point.
@@ -2266,6 +2337,7 @@
 #include "stm32_dma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
+#include "stm32_tim.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -637,6 +637,25 @@ chSysEnable();]]></value>
                   </step>
                 </steps>
               </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Time and Intervals Functionality.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/RT functionalities related to time and intervals management.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
               <case>
                 <brief>
                   <value>System Tick Counter functionality.</value>
@@ -670,9 +689,167 @@ chSysEnable();]]></value>
                       <value><![CDATA[systime_t time = chVTGetSystemTimeX();
 while (time == chVTGetSystemTimeX()) {
 #if defined(SIMULATOR)
-  _sim_check_for_interrupts();
+    _sim_check_for_interrupts();
 #endif
 }]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+              <case>
+                <brief>
+                  <value>Time ranges functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of the API @p chTimeIsInRangeX() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Checking case where start == end, it must always evaluate as not in range.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+bool b;
+
+b = chTimeIsInRangeX((systime_t)0, (systime_t)0, (systime_t)0);
+test_assert(b == false, "in range");
+b = chTimeIsInRangeX((systime_t)-1, (systime_t)0, (systime_t)0);
+test_assert(b == false, "in range");
+b = chTimeIsInRangeX((systime_t)0, (systime_t)-1, (systime_t)-1);
+test_assert(b == false, "in range");
+b = chTimeIsInRangeX((systime_t)-1, (systime_t)-1, (systime_t)-1);
+test_assert(b == false, "in range");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking boundaries for start &lt; end.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+bool b;
+
+b = chTimeIsInRangeX((systime_t)10, (systime_t)10, (systime_t)100);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)9, (systime_t)10, (systime_t)100);
+test_assert(b == false, "in range");
+b = chTimeIsInRangeX((systime_t)99, (systime_t)10, (systime_t)100);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)100, (systime_t)10, (systime_t)100);
+test_assert(b == false, "in range");
+]]></value>
+                    </code>
+                  </step>
+                  <step>
+                    <description>
+                      <value>Checking boundaries for start &gt; end.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+bool b;
+
+b = chTimeIsInRangeX((systime_t)100, (systime_t)100, (systime_t)10);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)99, (systime_t)100, (systime_t)10);
+test_assert(b == false, "in range");
+b = chTimeIsInRangeX((systime_t)9, (systime_t)100, (systime_t)10);
+test_assert(b == true, "not in range");
+b = chTimeIsInRangeX((systime_t)10, (systime_t)100, (systime_t)10);
+test_assert(b == false, "in range");
+]]></value>
+                    </code>
+                  </step>
+                </steps>
+              </case>
+            </cases>
+          </sequence>
+          <sequence>
+            <type index="0">
+              <value>Internal Tests</value>
+            </type>
+            <brief>
+              <value>Time Stamps Functionality.</value>
+            </brief>
+            <description>
+              <value>This sequence tests the ChibiOS/RT functionalities related to time stamps.</value>
+            </description>
+            <condition>
+              <value />
+            </condition>
+            <shared_code>
+              <value><![CDATA[#include "ch.h"]]></value>
+            </shared_code>
+            <cases>
+              <case>
+                <brief>
+                  <value>Time Stamps functionality.</value>
+                </brief>
+                <description>
+                  <value>The functionality of the API @p chVTGetTimeStamp() is tested.</value>
+                </description>
+                <condition>
+                  <value />
+                </condition>
+                <various_code>
+                  <setup_code>
+                    <value />
+                  </setup_code>
+                  <teardown_code>
+                    <value />
+                  </teardown_code>
+                  <local_variables>
+                    <value />
+                  </local_variables>
+                </various_code>
+                <steps>
+                  <step>
+                    <description>
+                      <value>Time stamps are generated and checked for monotonicity.</value>
+                    </description>
+                    <tags>
+                      <value />
+                    </tags>
+                    <code>
+                      <value><![CDATA[
+systime_t start, end;
+systimestamp_t last, now;
+  
+last = chVTGetTimeStamp();
+start = test_wait_tick();
+end = chTimeAddX(start, TIME_MS2I(1000));
+do {
+  now = chVTGetTimeStamp();
+  test_assert(last <= now, "not monotonic");
+  last = now;
+#if defined(SIMULATOR)
+  _sim_check_for_interrupts();
+#endif
+} while (chVTIsSystemTimeWithinX(start, end));]]></value>
                     </code>
                   </step>
                 </steps>
@@ -955,7 +1132,7 @@ test_assert(chThdGetPriorityX() == prio, "unexpected priority level");]]></value
                     </tags>
                     <code>
                       <value><![CDATA[prio = chThdGetPriorityX();
-chThdGetSelfX()->prio += 2;
+chThdGetSelfX()->hdr.pqueue.prio += 2;
 test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");]]></value>
                     </code>
                   </step>
@@ -969,7 +1146,7 @@ test_assert(chThdGetPriorityX() == prio + 2, "unexpected priority level");]]></v
                     <code>
                       <value><![CDATA[p1 = chThdSetPriority(prio + 1);
 test_assert(p1 == prio, "unexpected returned priority level");
-test_assert(chThdGetSelfX()->prio == prio + 2, "unexpected priority level");
+test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 2, "unexpected priority level");
 test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real priority level");]]></value>
                     </code>
                   </step>
@@ -983,7 +1160,7 @@ test_assert(chThdGetSelfX()->realprio == prio + 1, "unexpected returned real pri
                     <code>
                       <value><![CDATA[p1 = chThdSetPriority(prio + 3);
 test_assert(p1 == prio + 1, "unexpected returned priority level");
-test_assert(chThdGetSelfX()->prio == prio + 3, "unexpected priority level");
+test_assert(chThdGetSelfX()->hdr.pqueue.prio == prio + 3, "unexpected priority level");
 test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority level");]]></value>
                     </code>
                   </step>
@@ -996,7 +1173,7 @@ test_assert(chThdGetSelfX()->realprio == prio + 3, "unexpected real priority lev
                     </tags>
                     <code>
                       <value><![CDATA[chSysLock();
-chThdGetSelfX()->prio = prio;
+chThdGetSelfX()->hdr.pqueue.prio = prio;
 chThdGetSelfX()->realprio = prio;
 chSysUnlock();]]></value>
                     </code>
@@ -1298,7 +1475,7 @@ msg_t msg;]]></value>
                     <code>
                       <value><![CDATA[msg = chSemWaitTimeout(&sem1, TIME_IMMEDIATE);
 test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -1315,7 +1492,7 @@ test_assert(sem1.cnt == 0, "counter not zero");]]></value>
 msg = chSemWaitTimeout(&sem1, TIME_MS2I(500));
 test_wait_threads();
 test_assert(msg == MSG_OK, "wrong wake-up message");
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -1332,7 +1509,7 @@ for (i = 0; i < 5; i++) {
   test_emit_token('A' + i);
   msg = chSemWaitTimeout(&sem1, TIME_MS2I(50));
   test_assert(msg == MSG_TIMEOUT, "wrong wake-up message");
-  test_assert(queue_isempty(&sem1.queue), "queue not empty");
+  test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
   test_assert(sem1.cnt == 0, "counter not zero");
 }
 test_assert_sequence("ABCDE", "invalid sequence");
@@ -1437,7 +1614,7 @@ test_assert_sequence("A", "invalid sequence");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[chSemSignalWait(&sem1, &sem1);
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -1450,7 +1627,7 @@ test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </tags>
                     <code>
                       <value><![CDATA[chSemSignalWait(&sem1, &sem1);
-test_assert(queue_isempty(&sem1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&sem1.queue), "queue not empty");
 test_assert(sem1.cnt == 0, "counter not zero");]]></value>
                     </code>
                   </step>
@@ -2142,7 +2319,7 @@ test_assert(!b, "not locked");]]></value>
                     <code>
                       <value><![CDATA[chMtxUnlock(&m1);
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");]]></value>
                     </code>
                   </step>
                   <step>
@@ -2171,7 +2348,7 @@ test_assert(!b, "not locked");
 
 chMtxUnlockAll();
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");]]></value>
                     </code>
                   </step>
                   <step>
@@ -2267,7 +2444,7 @@ test_assert(m1.owner != NULL, "not owned");]]></value>
                     <code>
                       <value><![CDATA[chMtxUnlock(&m1);
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");]]></value>
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");]]></value>
                     </code>
                   </step>
                   <step>
@@ -2300,7 +2477,7 @@ chSysLock();
 chMtxUnlockAllS();
 chSysUnlock();
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
 test_assert(m1.cnt == 0, "invalid recursion counter");]]></value>
                     </code>
                   </step>
@@ -2321,7 +2498,7 @@ test_assert(m1.owner != NULL, "not owned");
 test_assert(m1.cnt == 2, "invalid recursion counter");
 chMtxUnlockAll();
 test_assert(m1.owner == NULL, "still owned");
-test_assert(queue_isempty(&m1.queue), "queue not empty");
+test_assert(ch_queue_isempty(&m1.queue), "queue not empty");
 test_assert(m1.cnt == 0, "invalid recursion counter");]]></value>
                     </code>
                   </step>
@@ -4346,8 +4523,8 @@ test_println(" lock+unlock/S");]]></value>
                       <value />
                     </tags>
                     <code>
-                      <value><![CDATA[test_print("--- System: ");
-test_printn(sizeof(ch_system_t));
+                      <value><![CDATA[test_print("--- OS    : ");
+test_printn(sizeof(os_instance_t));
 test_println(" bytes");]]></value>
                     </code>
                   </step>

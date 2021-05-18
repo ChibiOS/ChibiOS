@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chsys.c
+ * @file    rt/src/chsys.c
  * @brief   System related code.
  *
  * @addtogroup system
@@ -39,12 +39,80 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   System root object.
+ */
+ch_system_t ch_system;
+
+/**
+ * @brief   Core 0 OS instance.
+ */
+os_instance_t ch0;
+
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
- * @brief   Idle thread working area.
+ * @brief   Working area for core 0 idle thread.
  */
-THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+THD_WORKING_AREA(ch_c0_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
 #endif
+
+/**
+ * @brief   Core 0 OS instance configuration.
+ */
+const os_instance_config_t ch_core0_cfg = {
+  .name             = "c0",
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  .mainthread_base  = &__main_thread_stack_base__,
+  .mainthread_end   = &__main_thread_stack_end__,
+#elif CH_CFG_USE_DYNAMIC == TRUE
+  .mainthread_base  = NULL,
+  .mainthread_end   = NULL,
+#endif
+#if CH_CFG_NO_IDLE_THREAD == FALSE
+  .idlethread_base  = THD_WORKING_AREA_BASE(ch_c0_idle_thread_wa),
+  .idlethread_end   = THD_WORKING_AREA_END(ch_c0_idle_thread_wa)
+#endif
+};
+#endif
+
+#if (PORT_CORES_NUMBER > 1) || defined(__DOXYGEN__)
+/**
+ * @brief   Core 1 OS instance.
+ */
+os_instance_t ch1;
+
+#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
+/**
+ * @brief   Working area for core 1 idle thread.
+ */
+THD_WORKING_AREA(ch_c1_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+#endif
+
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+extern stkalign_t __c1_main_thread_stack_base__, __c1_main_thread_stack_end__;
+#endif
+
+/**
+ * @brief   Core 1 OS instance configuration.
+ */
+const os_instance_config_t ch_core1_cfg = {
+  .name             = "c1",
+#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+  .mainthread_base  = &__c1_main_thread_stack_base__,
+  .mainthread_end   = &__c1_main_thread_stack_end__,
+#elif CH_CFG_USE_DYNAMIC == TRUE
+  .mainthread_base  = NULL,
+  .mainthread_end   = NULL,
+#endif
+#if CH_CFG_NO_IDLE_THREAD == FALSE
+  .idlethread_base  = THD_WORKING_AREA_BASE(ch_c1_idle_thread_wa),
+  .idlethread_end   = THD_WORKING_AREA_END(ch_c1_idle_thread_wa)
+#endif
+};
+#endif /* PORT_CORES_NUMBER > 1 */
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -58,121 +126,65 @@ THD_WORKING_AREA(ch_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
-/**
- * @brief   This function implements the idle thread infinite loop.
- * @details The function puts the processor in the lowest power mode capable
- *          to serve interrupts.<br>
- *          The priority is internally set to the minimum system value so
- *          that this thread is executed only if there are no other ready
- *          threads in the system.
- *
- * @param[in] p         the thread parameter, unused in this scenario
- */
-static void _idle_thread(void *p) {
-
-  (void)p;
-
-  while (true) {
-    /*lint -save -e522 [2.2] Apparently no side effects because it contains
-      an asm instruction.*/
-    port_wait_for_interrupt();
-    /*lint -restore*/
-    CH_CFG_IDLE_LOOP_HOOK();
-  }
-}
-#endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
-
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   ChibiOS/RT initialization.
+ * @brief   Waits for the system state to be equal to the specified one.
+ * @note    Can be called before @p chSchObjectInit() in order to wait
+ *          for system initialization by another core.
+ *
+ * @special
+ */
+void chSysWaitSystemState(system_state_t state) {
+
+  while (ch_system.state != state) {
+  }
+}
+
+/**
+ * @brief   System initialization.
  * @details After executing this function the current instructions stream
  *          becomes the main thread.
  * @pre     Interrupts must disabled before invoking this function.
  * @post    The main thread is created with priority @p NORMALPRIO and
  *          interrupts are enabled.
+ * @post    the system is in @p ch_sys_running state.
  *
  * @special
  */
 void chSysInit(void) {
+  unsigned i;
 
-  _scheduler_init();
-  _vt_init();
-  _trace_init();
-  _oslib_init();
-
-#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-  ch.dbg.isr_cnt  = (cnt_t)0;
-  ch.dbg.lock_cnt = (cnt_t)0;
-#endif
-#if CH_CFG_USE_TM == TRUE
-  _tm_init();
-#endif
-#if CH_DBG_STATISTICS == TRUE
-  _stats_init();
-#endif
-
-#if CH_CFG_NO_IDLE_THREAD == FALSE
-  /* Now this instructions flow becomes the main thread.*/
-#if CH_CFG_USE_REGISTRY == TRUE
-  currp = _thread_init(&ch.mainthread, (const char *)&ch_debug, NORMALPRIO);
-#else
-  currp = _thread_init(&ch.mainthread, "main", NORMALPRIO);
-#endif
-#else
-  /* Now this instructions flow becomes the idle thread.*/
-  currp = _thread_init(&ch.mainthread, "idle", IDLEPRIO);
-#endif
-
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
-  {
-    /* Setting up the base address of the static main thread stack, the
-       symbol must be provided externally.*/
-    extern stkalign_t __main_thread_stack_base__;
-    currp->wabase = &__main_thread_stack_base__;
+  /* System object initialization.*/
+  ch_system.state = ch_sys_initializing;
+  for (i = 0U; i < PORT_CORES_NUMBER; i++) {
+    ch_system.instances[i] = NULL;
   }
-#elif CH_CFG_USE_DYNAMIC == TRUE
-  currp->wabase = NULL;
+
+#if CH_CFG_USE_TM == TRUE
+  /* Time Measurement calibration.*/
+  __tm_calibration_object_init(&ch_system.tmc);
 #endif
 
-  /* Setting up the caller as current thread.*/
-  currp->state = CH_STATE_CURRENT;
-
-  /* Port layer initialization last because it depend on some of the
-     initializations performed before.*/
-  port_init();
-
-#if CH_DBG_STATISTICS == TRUE
-  /* Starting measurement for this thread.*/
-  chTMStartMeasurementX(&currp->stats);
+#if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)
+  /* Registry initialization when SMP mode is enabled.*/
+  __reg_object_init(&ch_system.reglist);
 #endif
 
-  /* Initialization hook.*/
+  /* User system initialization hook.*/
   CH_CFG_SYSTEM_INIT_HOOK();
 
+  /* OS library modules.*/
+  __oslib_init();
+
+  /* Initializing default OS instance.*/
+  chInstanceObjectInit(&ch0, &ch_core0_cfg);
+
   /* It is alive now.*/
-  chSysEnable();
-
-#if CH_CFG_NO_IDLE_THREAD == FALSE
-  {
-    static const thread_descriptor_t idle_descriptor = {
-      "idle",
-      THD_WORKING_AREA_BASE(ch_idle_thread_wa),
-      THD_WORKING_AREA_END(ch_idle_thread_wa),
-      IDLEPRIO,
-      _idle_thread,
-      NULL
-    };
-
-    /* This thread has the lowest priority in the system, its role is just to
-       serve interrupts in its context while keeping the lowest energy saving
-       mode compatible with the system status.*/
-    (void) chThdCreate(&idle_descriptor);
-  }
-#endif
+  ch_system.state = ch_sys_running;
+  chSysUnlock();
 }
 
 /**
@@ -192,13 +204,22 @@ void chSysHalt(const char *reason) {
   port_disable();
 
   /* Logging the event.*/
-  _trace_halt(reason);
+  __trace_halt(reason);
 
   /* Pointing to the passed message.*/
-  ch.dbg.panic_msg = reason;
+  currcore->dbg.panic_msg = reason;
 
   /* Halt hook code, usually empty.*/
   CH_CFG_SYSTEM_HALT_HOOK(reason);
+
+#if defined(PORT_SYSTEM_HALT_HOOK)
+  /* Port-related actions, this could include halting other instances
+     via some inter-core messaging or other means.*/
+  PORT_SYSTEM_HALT_HOOK();
+#endif
+
+  /* Entering the halted state.*/
+  ch_system.state = ch_sys_halted;
 
   /* Harmless infinite loop.*/
   while (true) {
@@ -230,27 +251,28 @@ void chSysHalt(const char *reason) {
  * @iclass
  */
 bool chSysIntegrityCheckI(unsigned testmask) {
+  os_instance_t *oip = currcore;
   cnt_t n;
 
   chDbgCheckClassI();
 
   /* Ready List integrity check.*/
   if ((testmask & CH_INTEGRITY_RLIST) != 0U) {
-    thread_t *tp;
+    ch_priority_queue_t *pqp;
 
     /* Scanning the ready list forward.*/
     n = (cnt_t)0;
-    tp = ch.rlist.queue.next;
-    while (tp != (thread_t *)&ch.rlist.queue) {
+    pqp = oip->rlist.pqueue.next;
+    while (pqp != &oip->rlist.pqueue) {
       n++;
-      tp = tp->queue.next;
+      pqp = pqp->next;
     }
 
     /* Scanning the ready list backward.*/
-    tp = ch.rlist.queue.prev;
-    while (tp != (thread_t *)&ch.rlist.queue) {
+    pqp = oip->rlist.pqueue.prev;
+    while (pqp != &oip->rlist.pqueue) {
       n--;
-      tp = tp->queue.prev;
+      pqp = pqp->prev;
     }
 
     /* The number of elements must match.*/
@@ -261,21 +283,21 @@ bool chSysIntegrityCheckI(unsigned testmask) {
 
   /* Timers list integrity check.*/
   if ((testmask & CH_INTEGRITY_VTLIST) != 0U) {
-    virtual_timer_t * vtp;
+    delta_list_t *dlp;
 
     /* Scanning the timers list forward.*/
     n = (cnt_t)0;
-    vtp = ch.vtlist.next;
-    while (vtp != (virtual_timer_t *)&ch.vtlist) {
+    dlp = oip->vtlist.dlist.next;
+    while (dlp != &oip->vtlist.dlist) {
       n++;
-      vtp = vtp->next;
+      dlp = dlp->next;
     }
 
     /* Scanning the timers list backward.*/
-    vtp = ch.vtlist.prev;
-    while (vtp != (virtual_timer_t *)&ch.vtlist) {
+    dlp = oip->vtlist.dlist.prev;
+    while (dlp != &oip->vtlist.dlist) {
       n--;
-      vtp = vtp->prev;
+      dlp = dlp->prev;
     }
 
     /* The number of elements must match.*/
@@ -286,21 +308,25 @@ bool chSysIntegrityCheckI(unsigned testmask) {
 
 #if CH_CFG_USE_REGISTRY == TRUE
   if ((testmask & CH_INTEGRITY_REGISTRY) != 0U) {
-    thread_t *tp;
+    ch_queue_t *qp, *rqp;
+
+    /* Registry header, access to this list depends on the current
+       kernel configuration.*/
+    rqp = REG_HEADER(oip);
 
     /* Scanning the ready list forward.*/
     n = (cnt_t)0;
-    tp = ch.rlist.newer;
-    while (tp != (thread_t *)&ch.rlist) {
+    qp = rqp->next;
+    while (qp != rqp) {
       n++;
-      tp = tp->newer;
+      qp = qp->next;
     }
 
     /* Scanning the ready list backward.*/
-    tp = ch.rlist.older;
-    while (tp != (thread_t *)&ch.rlist) {
+    qp = rqp->prev;
+    while (qp != rqp) {
       n--;
-      tp = tp->older;
+      qp = qp->prev;
     }
 
     /* The number of elements must match.*/
@@ -331,18 +357,21 @@ bool chSysIntegrityCheckI(unsigned testmask) {
  * @iclass
  */
 void chSysTimerHandlerI(void) {
+#if (CH_CFG_TIME_QUANTUM > 0) || (CH_DBG_THREADS_PROFILING == TRUE)
+  thread_t *currtp = chThdGetSelfX();
+#endif
 
   chDbgCheckClassI();
 
 #if CH_CFG_TIME_QUANTUM > 0
   /* Running thread has not used up quantum yet? */
-  if (currp->ticks > (tslices_t)0) {
+  if (currtp->ticks > (tslices_t)0) {
     /* Decrement remaining quantum.*/
-    currp->ticks--;
+    currtp->ticks--;
   }
 #endif
 #if CH_DBG_THREADS_PROFILING == TRUE
-  currp->time++;
+  currtp->time++;
 #endif
   chVTDoTickI();
   CH_CFG_SYSTEM_TICK_HOOK();
@@ -403,8 +432,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  * @details This function verifies if the current realtime counter value
  *          lies within the specified range or not. The test takes care
  *          of the realtime counter wrapping to zero on overflow.
- * @note    When start==end then the function returns always true because the
- *          whole time range is specified.
+ * @note    When start==end then the function returns always false because a
+ *          null time range is specified.
  * @note    This function is only available if the port layer supports the
  *          option @p PORT_SUPPORTS_RT.
  *
@@ -418,7 +447,8 @@ void chSysRestoreStatusX(syssts_t sts) {
  */
 bool chSysIsCounterWithinX(rtcnt_t cnt, rtcnt_t start, rtcnt_t end) {
 
-  return (bool)((cnt - start) < (end - start));
+  return (bool)(((rtcnt_t)cnt - (rtcnt_t)start) <
+                ((rtcnt_t)end - (rtcnt_t)start));
 }
 
 /**

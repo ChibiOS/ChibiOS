@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -169,17 +169,22 @@ void chSemSignalI(semaphore_t *sp) {
  * @post    After invoking this function all the threads waiting on the
  *          semaphore, if any, are released and the semaphore counter is set
  *          to the specified, non negative, value.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
  *
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         the new value of the semaphore counter. The value must
  *                      be non-negative.
+ * @param[in] msg       message to be sent
  *
  * @api
  */
-void chSemReset(semaphore_t *sp, cnt_t n) {
+void chSemResetWithMessage(semaphore_t *sp, cnt_t n, msg_t msg) {
 
   chSysLock();
-  chSemResetI(sp, n);
+  chSemResetWithMessageI(sp, n, msg);
   chSchRescheduleS();
   chSysUnlock();
 }
@@ -197,10 +202,11 @@ void chSemReset(semaphore_t *sp, cnt_t n) {
  * @param[in] sp        pointer to a @p semaphore_t structure
  * @param[in] n         the new value of the semaphore counter. The value must
  *                      be non-negative.
+ * @param[in] msg       message to be sent
  *
  * @iclass
  */
-void chSemResetI(semaphore_t *sp, cnt_t n) {
+void chSemResetWithMessageI(semaphore_t *sp, cnt_t n, msg_t msg) {
   cnt_t cnt;
 
   chDbgCheckClassI();
@@ -210,7 +216,7 @@ void chSemResetI(semaphore_t *sp, cnt_t n) {
   sp->cnt = n;
 
   /* Does nothing for cnt >= 0, calling anyway.*/
-  (void) nil_ready_all((void *)sp, cnt, MSG_RESET);
+  (void) nil_ready_all((void *)sp, cnt, msg);
 }
 
 #endif /* CH_CFG_USE_SEMAPHORES == TRUE */

@@ -13,7 +13,7 @@ then
   if egrep -q "STM32F746_MCUCONF" <<< "$conffile" || egrep -q "STM32F756_MCUCONF" <<< "$conffile"
   then
     echo Processing: $1
-    egrep -e "\#define\s+[a-zA-Z0-9_()]*\s+[a-zA-Z0-9_]" <<< "$conffile" | sed -r 's/\#define\s+([a-zA-Z0-9_]*)(\([^)]*\))?\s+/\1=/g' > ./values.txt
+    egrep -e "\#define\s+[a-zA-Z0-9_()]*\s+[^\s]" <<< "$conffile" | sed -r 's/\#define\s+([a-zA-Z0-9_]*)(\([^)]*\))?\s+/\1=/g' > ./values.txt
     if ! fmpp -q -C conf.fmpp -S ../ftl/processors/conf/mcuconf_stm32f746xx
     then
       echo

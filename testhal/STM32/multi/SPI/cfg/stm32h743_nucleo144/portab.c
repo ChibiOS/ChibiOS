@@ -43,7 +43,7 @@ const SPIConfig c_spicfg = {
   true,
   spi_circular_cb,
   GPIOD,
-  GPIOD_SPI1_NSS,
+  14,
   SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
   0
 };
@@ -55,7 +55,7 @@ const SPIConfig hs_spicfg = {
   false,
   NULL,
   GPIOD,
-  GPIOD_SPI1_NSS,
+  14,
   SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
   0
 };
@@ -67,7 +67,7 @@ const SPIConfig ls_spicfg = {
   false,
   NULL,
   GPIOD,
-  GPIOD_SPI1_NSS,
+  14,
   SPI_CFG1_MBR_DIV128 | SPI_CFG1_DSIZE_VALUE(7),
   0
 };
@@ -93,11 +93,11 @@ void portab_setup(void) {
   /*
    * SPI1 I/O pins setup.
    */
-  palSetLineMode(LINE_SPI1_SCK, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
-  palSetLineMode(LINE_SPI1_MISO, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
-  palSetLineMode(LINE_SPI1_MOSI, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
-  palSetLineMode(LINE_SPI1_NSS, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
-  palSetLine(LINE_SPI1_NSS);
+  palSetPadMode(GPIOA, 5, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
+  palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
+  palSetPadMode(GPIOB, 5, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
+  palSetPadMode(GPIOD, 14, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
+  palSetPad(GPIOD, 14);
 }
 
 /** @} */

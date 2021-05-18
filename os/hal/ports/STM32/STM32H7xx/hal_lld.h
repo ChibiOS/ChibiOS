@@ -47,11 +47,29 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32H743xx) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32H743 Very High Performance with DSP and FPU"
+#if defined(STM32H742xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H742 Single Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H743xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H743 Single Core Very High Performance with DSP and FPU"
 
 #elif defined(STM32H753xx)
-#define PLATFORM_NAME           "STM32H753 Very High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32H753 Single Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H745xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H745 Dual Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H755xx)
+#define PLATFORM_NAME           "STM32H755 Dual Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H747xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H747 Dual Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H757xx)
+#define PLATFORM_NAME           "STM32H757 Dual Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H750xx)
+#define PLATFORM_NAME           "STM32H750 Value Line Very High Performance with DSP and FPU"
 
 #else
 #error "STM32H7xx device not specified"
@@ -66,6 +84,7 @@
 #endif
 /** @} */
 
+#if !defined(STM32_ENFORCE_H7_REV_XY)
 /**
  * @name    Absolute Maximum Ratings
  * @{
@@ -73,132 +92,167 @@
 /**
  * @brief   Absolute maximum system clock.
  */
-#define STM32_SYSCLK_MAX        400000000
+#define STM32_SYSCLK_MAX                480000000
+
+/**
+ * @brief   Maximum SYSCLK clock frequency without voltage boost.
+ */
+#define STM32_SYSCLK_MAX_NOBOOST        400000000
 
 /**
  * @brief   Absolute maximum HCLK clock.
  */
-#define STM32_HCLK_MAX          200000000
+#define STM32_HCLK_MAX                  (STM32_SYSCLK_MAX / 2)
 
 /**
  * @brief   Maximum HSE clock frequency.
  */
-#define STM32_HSECLK_MAX        48000000
+#define STM32_HSECLK_MAX                48000000
 
 /**
  * @brief   Maximum HSE clock frequency using an external source.
  */
-#define STM32_HSECLK_BYP_MAX    50000000
+#define STM32_HSECLK_BYP_MAX            50000000
 
 /**
  * @brief   Minimum HSE clock frequency.
  */
-#define STM32_HSECLK_MIN        4000000
+#define STM32_HSECLK_MIN                4000000
 
 /**
  * @brief   Minimum HSE clock frequency.
  */
-#define STM32_HSECLK_BYP_MIN    4000000
+#define STM32_HSECLK_BYP_MIN            4000000
 
 /**
  * @brief   Maximum LSE clock frequency.
  */
-#define STM32_LSE_CK_MAX        32768
+#define STM32_LSE_CK_MAX                32768
 
 /**
  * @brief   Maximum LSE clock frequency.
  */
-#define STM32_LSE_CK_BYP_MAX    1000000
+#define STM32_LSE_CK_BYP_MAX            1000000
 
 /**
  * @brief   Minimum LSE clock frequency.
  */
-#define STM32_LSE_CK_MIN        32768
+#define STM32_LSE_CK_MIN                32768
 
 /**
  * @brief   Minimum PLLs input clock frequency..
  */
-#define STM32_PLLIN_MIN         1000000
+#define STM32_PLLIN_MIN                 1000000
 
 /**
  * @brief   PLLs input threshold frequency 1.
  */
-#define STM32_PLLIN_THRESHOLD1  2000000
+#define STM32_PLLIN_THRESHOLD1          2000000
 
 /**
  * @brief   PLLs input threshold frequency 2.
  */
-#define STM32_PLLIN_THRESHOLD2  4000000
+#define STM32_PLLIN_THRESHOLD2          4000000
 
 /**
  * @brief   PLLs input threshold frequency 3.
  */
-#define STM32_PLLIN_THRESHOLD3  8000000
+#define STM32_PLLIN_THRESHOLD3          8000000
 
 /**
  * @brief   Maximum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MAX         16000000
+#define STM32_PLLIN_MAX                 16000000
 
 /**
  * @brief   Minimum PLLs VCO clock frequency.
  */
-#define STM32_PLLVCO_MIN        150000000
+#define STM32_PLLVCO_MIN                150000000   /* DS says 192, RM says 150.    */
 
 /**
  * @brief   Threshold PLLs clock frequency.
  */
-#define STM32_PLLVCO_THRESHOLD  420000000
+#define STM32_PLLVCO_THRESHOLD          420000000
 
 /**
  * @brief   Maximum PLLs VCOH clock frequency.
  */
-#define STM32_PLLVCO_MAX        836000000
+#define STM32_PLLVCO_MAX                960000000
 
 /**
  * @brief   Maximum APB1 clock frequency.
  */
-#define STM32_PCLK1_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK1_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum APB2 clock frequency.
  */
-#define STM32_PCLK2_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK2_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum APB3 clock frequency.
  */
-#define STM32_PCLK3_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK3_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum APB4 clock frequency.
  */
-#define STM32_PCLK4_MAX         (STM32_HCLK_MAX / 2)
+#define STM32_PCLK4_MAX                 (STM32_HCLK_MAX / 2)
 
 /**
  * @brief   Maximum SPI1, SPI2 and SPI3 clock frequency.
  */
-#define STM32_SPI123_MAX        133000000
+#define STM32_SPI123_MAX                200000000
 
 /**
  * @brief   Maximum SPI4, SPI5 and SPI6 clock frequency.
  */
-#define STM32_SPI456_MAX        100000000
+#define STM32_SPI456_MAX                125000000
 
 /**
  * @brief   Maximum ADC clock frequency.
  */
-#define STM32_ADCCLK_MAX        36000000
+#define STM32_ADCCLK_MAX                50000000
 /** @} */
+
+#else /* defined(STM32_ENFORCE_H7_REV_XY) */
+
+#define STM32_SYSCLK_MAX                400000000
+#define STM32_SYSCLK_MAX_NOBOOST        400000000
+#define STM32_HCLK_MAX                  (STM32_SYSCLK_MAX / 2)
+#define STM32_HSECLK_MAX                48000000
+#define STM32_HSECLK_BYP_MAX            50000000
+#define STM32_HSECLK_MIN                4000000
+#define STM32_HSECLK_BYP_MIN            4000000
+#define STM32_LSE_CK_MAX                32768
+#define STM32_LSE_CK_BYP_MAX            1000000
+#define STM32_LSE_CK_MIN                32768
+#define STM32_PLLIN_MIN                 1000000
+#define STM32_PLLIN_THRESHOLD1          2000000
+#define STM32_PLLIN_THRESHOLD2          4000000
+#define STM32_PLLIN_THRESHOLD3          8000000
+#define STM32_PLLIN_MAX                 16000000
+#define STM32_PLLVCO_MIN                150000000
+#define STM32_PLLVCO_THRESHOLD          420000000
+#define STM32_PLLVCO_MAX                836000000
+#define STM32_PCLK1_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_PCLK2_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_PCLK3_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_PCLK4_MAX                 (STM32_HCLK_MAX / 2)
+#define STM32_SPI123_MAX                133000000
+#define STM32_SPI456_MAX                100000000
+#define STM32_ADCCLK_MAX                36000000
+
+#endif /* defined(STM32_ENFORCE_H7_REV_XY) */
 
 /**
  * @name    Internal clock sources frequencies
  * @{
  */
-#define STM32_HSI_OSC           64000000
-#define STM32_HSI48_OSC         48000000
-#define STM32_CSI_OSC           4000000
-#define STM32_LSI_OSC           32000
+#define STM32_HSI_OSC                   64000000
+#define STM32_HSI48_OSC                 48000000
+#define STM32_CSI_OSC                   4000000
+#define STM32_LSI_OSC                   32000
 /** @} */
 
 /**
@@ -288,6 +342,9 @@
  * @name    Configuration switches to be used in @p mcuconf.h
  * @{
  */
+#define STM32_ODEN_DISABLED             0U
+#define STM32_ODEN_ENABLED              (SYSCFG_PWRCR_ODEN)
+
 #define STM32_VOS_SCALE3                (PWR_D3CR_VOS_0)
 #define STM32_VOS_SCALE2                (PWR_D3CR_VOS_1)
 #define STM32_VOS_SCALE1                (PWR_D3CR_VOS_1 | PWR_D3CR_VOS_0)
@@ -535,16 +592,26 @@
  */
 /**
  * @brief   Disables the PWR/RCC initialization in the HAL.
+ * @note    All the clock tree constants are calculated but the initialization
+ *          is not performed.
  */
 #if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
 #define STM32_NO_INIT                       FALSE
 #endif
 
 /**
- * @brief   SYS_CK value assumed if @p STM32_NO_INIT is enabled.
+ * @brief   Target code for this HAL configuration.
+ * @note    Core 1 is the Cortex-M7, core 2 is the Cortex-M4.
  */
-#if !defined(STM32_SYS_CK_ENFORCED_VALUE) || defined(__DOXYGEN__)
-#define STM32_SYS_CK_ENFORCED_VALUE         STM32_HSICLK
+#if !defined(STM32_TARGET_CORE) || defined(__DOXYGEN__)
+#define STM32_TARGET_CORE                   1
+#endif
+
+/**
+ * @brief   MPU region to be used for no-cache RAM area.
+ */
+#if !defined(STM32_NOCACHE_MPU_REGION) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
 #endif
 
 /**
@@ -1224,9 +1291,36 @@
 #error "Using a wrong mcuconf.h file, STM32H7xx_MCUCONF not defined"
 #endif
 
-#if (defined(STM32H743xx) || defined(STM32H753xx)) &&                       \
-    !defined(STM32H743_MCUCONF)
+#if defined(STM32H750xx)&& !defined(STM32H750_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H750_MCUCONF not defined"
+#endif
+
+#if defined(STM32H742xx)&& !defined(STM32H742_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H742_MCUCONF not defined"
+#endif
+
+#if defined(STM32H743xx)&& !defined(STM32H743_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H743_MCUCONF not defined"
+#endif
+
+#if defined(STM32H753xx)&& !defined(STM32H753_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H753_MCUCONF not defined"
+#endif
+
+#if defined(STM32H745xx)&& !defined(STM32H745_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H745_MCUCONF not defined"
+#endif
+
+#if defined(STM32H755xx)&& !defined(STM32H755_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H755_MCUCONF not defined"
+#endif
+
+#if defined(STM32H747xx)&& !defined(STM32H747_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H747_MCUCONF not defined"
+#endif
+
+#if defined(STM32H757xx)&& !defined(STM32H757_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H757_MCUCONF not defined"
 #endif
 
 /*
@@ -1243,23 +1337,23 @@
 #endif
 
 /**
- * @name    Constants depending on VOS setting
+ * @name    Constants depending on VOS and ODEN setting
  * @{
  */
-#if (STM32_VOS == STM32_VOS_SCALE1) || defined(__DOXYGEN__)
+#if STM32_VOS == STM32_VOS_SCALE1
 #define STM32_0WS_THRESHOLD         70000000U
 #define STM32_1WS_THRESHOLD         140000000U
 #define STM32_2WS_THRESHOLD         210000000U
-#define STM32_3WS_THRESHOLD         0U
-#define STM32_4WS_THRESHOLD         0U
-#define STM32_PLLOUT_MAX            400000000U
+#define STM32_3WS_THRESHOLD         225000000U
+#define STM32_4WS_THRESHOLD         240000000U
+#define STM32_PLLOUT_MAX            480000000U
 #define STM32_PLLOUT_MIN            1500000U
 
 #elif STM32_VOS == STM32_VOS_SCALE2
 #define STM32_0WS_THRESHOLD         55000000U
 #define STM32_1WS_THRESHOLD         110000000U
 #define STM32_2WS_THRESHOLD         165000000U
-#define STM32_3WS_THRESHOLD         220000000U
+#define STM32_3WS_THRESHOLD         225000000U
 #define STM32_4WS_THRESHOLD         0U
 #define STM32_PLLOUT_MAX            300000000U
 #define STM32_PLLOUT_MIN            1500000U
@@ -1407,7 +1501,7 @@
 #else /* !STM32_LSI_ENABLED */
 #define STM32_LSI_CK            0U
 
-#if STM32_RTCSEL == STM32_RTCSEL_LSI_CK
+#if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI_CK)
 #error "LSI not enabled, required by STM32_RTCSEL"
 #endif
 
@@ -1966,10 +2060,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYS_CK                STM32_SYS_CK_ENFORCED_VALUE
-
-#elif (STM32_SW == STM32_SW_HSI_CK)
+#if (STM32_SW == STM32_SW_HSI_CK) || defined(__DOXYGEN__)
 #define STM32_SYS_CK                STM32_HSI_CK
 
 #elif (STM32_SW == STM32_SW_CSI_CK)
@@ -1988,8 +2079,17 @@
 /*
  * Check on the system clock.
  */
-#if STM32_SW > STM32_SYSCLK_MAX
+#if STM32_SYS_CK > STM32_SYSCLK_MAX
 #error "STM32_SYS_CK above maximum rated frequency (STM32_SYSCLK_MAX)"
+#endif
+
+/*
+ * ODEN setting based on clock frequency.
+ */
+#if STM32_SYS_CK > STM32_SYSCLK_MAX_NOBOOST
+#define STM32_ODEN                  STM32_ODEN_ENABLED
+#else
+#define STM32_ODEN                  STM32_ODEN_DISABLED
 #endif
 
 /**
@@ -2128,11 +2228,6 @@
 #endif
 
 /**
- * @brief   Core clock.
- */
-#define STM32_CORE_CK               STM32_SYS_D1CPRE_CK
-
-/**
  * @brief   HCLK clock.
  */
 #if (STM32_D1HPRE == STM32_D1HPRE_DIV1) || defined(__DOXYGEN__)
@@ -2155,6 +2250,34 @@
 #define STM32_HCLK                  (STM32_SYS_D1CPRE_CK / 512U)
 #else
 #error "invalid STM32_D1HPRE value specified"
+#endif
+
+/**
+ * @brief   Core clock.
+ */
+#define STM32_CORE1_CK              STM32_SYS_D1CPRE_CK
+
+/**
+ * @brief   Core clock.
+ */
+#define STM32_CORE2_CK              STM32_HCLK
+
+#if (STM32_TARGET_CORE == 1) || defined(__DOXYGEN__)
+
+#if STM32_HAS_M7 != TRUE
+#error "Cortex-M7 not present in this device"
+#endif
+#define STM32_CORE_CK               STM32_CORE1_CK
+
+#elif STM32_TARGET_CORE == 2
+
+#if STM32_HAS_M4 != TRUE
+#error "Cortex-M4 not present in this device"
+#endif
+#define STM32_CORE_CK               STM32_CORE2_CK
+
+#else
+#error "invalid STM32_TARGET_CORE value specified"
 #endif
 
 /*
@@ -2492,7 +2615,7 @@
 /**
  * @brief   LPUART1 clock.
  */
-#define STM32_LPUART1CLK            STM32_PCLK1
+#define STM32_LPUART1CLK            STM32_PCLK4
 
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_PLL2_Q_CK
 #define STM32_LPUART1CLK            STM32_PLL2_Q_CK
@@ -2742,14 +2865,20 @@
 
 #if (STM32_SDMMCSEL == STM32_SDMMCSEL_PLL1_Q_CK) || defined(__DOXYGEN__)
 /**
- * @brief   SDMMC frequency.
+ * @brief   SDMMC1 frequency.
  */
-#define STM32_SDMMCCLK              STM32_PLL1_Q_CK
+#define STM32_SDMMC1CLK             STM32_PLL1_Q_CK
+
+/**
+ * @brief   SDMMC2 frequency.
+ */
+#define STM32_SDMMC2CLK             STM32_PLL1_Q_CK
 
 #elif STM32_SDMMCSEL == STM32_SDMMCSEL_PLL2_R_CK
-#define STM32_SDMMCCLK              STM32_PLL2_R_CK
+#define STM32_SDMMC1CLK             STM32_PLL2_R_CK
+#define STM32_SDMMC2CLK             STM32_PLL2_R_CK
 #else
-#error "invalid source selected for STM32_SDMMCSEL clock"
+#error "invalid source selected for STM32_SDMMCxSEL clock"
 #endif
 
 #if (STM32_QSPISEL == STM32_QSPISEL_HCLK) || defined(__DOXYGEN__)
@@ -2903,10 +3032,12 @@
 #include "cache.h"
 #include "mpu_v7m.h"
 #include "stm32_isr.h"
+#include "stm32_mdma.h"
 #include "stm32_dma.h"
 #include "stm32_bdma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
+#include "stm32_tim.h"
 
 #ifdef __cplusplus
 extern "C" {

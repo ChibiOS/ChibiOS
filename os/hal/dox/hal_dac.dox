@@ -19,7 +19,7 @@
  * @brief Generic DAC Driver.
  * @details This module implements a generic DAC (Digital to Analog Converter)
  *          driver.
- * @pre     In order to use the MAC driver the @p HAL_USE_DAC option
+ * @pre     In order to use the DAC driver the @p HAL_USE_DAC option
  *          must be enabled in @p halconf.h.
  *
  * @ingroup HAL_NORMAL_DRIVERS

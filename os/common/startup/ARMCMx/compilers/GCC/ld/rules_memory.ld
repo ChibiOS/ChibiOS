@@ -14,55 +14,55 @@
     limitations under the License.
 */
 
-__ram0_start__          = ORIGIN(ram0);
+__ram0_base__           = ORIGIN(ram0);
 __ram0_size__           = LENGTH(ram0);
-__ram0_end__            = __ram0_start__ + __ram0_size__;
-__ram1_start__          = ORIGIN(ram1);
+__ram0_end__            = __ram0_base__ + __ram0_size__;
+__ram1_base__           = ORIGIN(ram1);
 __ram1_size__           = LENGTH(ram1);
-__ram1_end__            = __ram1_start__ + __ram1_size__;
-__ram2_start__          = ORIGIN(ram2);
+__ram1_end__            = __ram1_base__ + __ram1_size__;
+__ram2_base__           = ORIGIN(ram2);
 __ram2_size__           = LENGTH(ram2);
-__ram2_end__            = __ram2_start__ + __ram2_size__;
-__ram3_start__          = ORIGIN(ram3);
+__ram2_end__            = __ram2_base__ + __ram2_size__;
+__ram3_base__           = ORIGIN(ram3);
 __ram3_size__           = LENGTH(ram3);
-__ram3_end__            = __ram3_start__ + __ram3_size__;
-__ram4_start__          = ORIGIN(ram4);
+__ram3_end__            = __ram3_base__ + __ram3_size__;
+__ram4_base__           = ORIGIN(ram4);
 __ram4_size__           = LENGTH(ram4);
-__ram4_end__            = __ram4_start__ + __ram4_size__;
-__ram5_start__          = ORIGIN(ram5);
+__ram4_end__            = __ram4_base__ + __ram4_size__;
+__ram5_base__           = ORIGIN(ram5);
 __ram5_size__           = LENGTH(ram5);
-__ram5_end__            = __ram5_start__ + __ram5_size__;
-__ram6_start__          = ORIGIN(ram6);
+__ram5_end__            = __ram5_base__ + __ram5_size__;
+__ram6_base__           = ORIGIN(ram6);
 __ram6_size__           = LENGTH(ram6);
-__ram6_end__            = __ram6_start__ + __ram6_size__;
-__ram7_start__          = ORIGIN(ram7);
+__ram6_end__            = __ram6_base__ + __ram6_size__;
+__ram7_base__           = ORIGIN(ram7);
 __ram7_size__           = LENGTH(ram7);
-__ram7_end__            = __ram7_start__ + __ram7_size__;
+__ram7_end__            = __ram7_base__ + __ram7_size__;
 
-__flash0_start__        = ORIGIN(flash0);
+__flash0_base__         = ORIGIN(flash0);
 __flash0_size__         = LENGTH(flash0);
-__flash0_end__          = __flash0_start__ + __flash0_size__;
-__flash1_start__        = ORIGIN(flash1);
+__flash0_end__          = __flash0_base__ + __flash0_size__;
+__flash1_base__         = ORIGIN(flash1);
 __flash1_size__         = LENGTH(flash1);
-__flash1_end__          = __flash1_start__ + __flash1_size__;
-__flash2_start__        = ORIGIN(flash2);
+__flash1_end__          = __flash1_base__ + __flash1_size__;
+__flash2_base__         = ORIGIN(flash2);
 __flash2_size__         = LENGTH(flash2);
-__flash2_end__          = __flash2_start__ + __flash2_size__;
-__flash3_start__        = ORIGIN(flash3);
+__flash2_end__          = __flash2_base__ + __flash2_size__;
+__flash3_base__         = ORIGIN(flash3);
 __flash3_size__         = LENGTH(flash3);
-__flash3_end__          = __flash3_start__ + __flash3_size__;
-__flash4_start__        = ORIGIN(flash4);
+__flash3_end__          = __flash3_base__ + __flash3_size__;
+__flash4_base__         = ORIGIN(flash4);
 __flash4_size__         = LENGTH(flash4);
-__flash4_end__          = __flash4_start__ + __flash4_size__;
-__flash5_start__        = ORIGIN(flash5);
+__flash4_end__          = __flash4_base__ + __flash4_size__;
+__flash5_base__         = ORIGIN(flash5);
 __flash5_size__         = LENGTH(flash5);
-__flash5_end__          = __flash5_start__ + __flash5_size__;
-__flash6_start__        = ORIGIN(flash6);
+__flash5_end__          = __flash5_base__ + __flash5_size__;
+__flash6_base__         = ORIGIN(flash6);
 __flash6_size__         = LENGTH(flash6);
-__flash6_end__          = __flash6_start__ + __flash6_size__;
-__flash7_start__        = ORIGIN(flash7);
+__flash6_end__          = __flash6_base__ + __flash6_size__;
+__flash7_base__         = ORIGIN(flash7);
 __flash7_size__         = LENGTH(flash7);
-__flash7_end__          = __flash7_start__ + __flash7_size__;
+__flash7_end__          = __flash7_base__ + __flash7_size__;
 
 SECTIONS
 {

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -440,8 +440,8 @@ typedef struct {
 /**
  * @brief   Associates a peripheral data register to a DMA stream.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @param[in] addr      value to be written in the PAR register
@@ -455,8 +455,8 @@ typedef struct {
 /**
  * @brief   Associates a memory destination to a DMA stream.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @param[in] addr      value to be written in the M0AR register
@@ -483,8 +483,8 @@ typedef struct {
 /**
  * @brief   Sets the number of transfers to be performed.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @param[in] size      value to be written in the CNDTR register
@@ -498,8 +498,8 @@ typedef struct {
 /**
  * @brief   Returns the number of transfers to be performed.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @return              The number of transfers to be performed.
@@ -511,8 +511,8 @@ typedef struct {
 /**
  * @brief   Programs the stream mode settings.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @param[in] mode      value to be written in the CR register
@@ -526,8 +526,8 @@ typedef struct {
 /**
  * @brief   Programs the stream FIFO settings.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @param[in] mode      value to be written in the FCR register
@@ -541,8 +541,8 @@ typedef struct {
 /**
  * @brief   DMA stream enable.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  *
@@ -559,8 +559,8 @@ typedef struct {
  * @note    This function can be invoked in both ISR or thread context.
  * @note    Interrupts enabling flags are set to zero after this call, see
  *          bug 3607518.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  *
@@ -578,8 +578,8 @@ typedef struct {
 /**
  * @brief   DMA stream interrupt sources clear.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  *
@@ -593,8 +593,8 @@ typedef struct {
  * @brief   Starts a memory to memory operation using the specified stream.
  * @note    The default transfer data mode is "byte to byte" but it can be
  *          changed by specifying extra options in the @p mode parameter.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @param[in] mode      value to be written in the CCR register, this value
@@ -620,8 +620,8 @@ typedef struct {
 
 /**
  * @brief   Polled wait for DMA transfer end.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  */
@@ -636,8 +636,8 @@ typedef struct {
 /**
  * @brief   DMA stream current target.
  * @note    This function can be invoked in both ISR or thread context.
- * @pre     The stream must have been allocated using @p dmaStreamAllocate().
- * @post    After use the stream can be released using @p dmaStreamRelease().
+ * @pre     The stream must have been allocated using @p dmaStreamAlloc().
+ * @post    After use the stream can be released using @p dmaStreamFree().
  *
  * @param[in] dmastp    pointer to a stm32_dma_stream_t structure
  * @return              Current memory target index.

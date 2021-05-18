@@ -27,6 +27,8 @@
 #ifndef HAL_ST_H
 #define HAL_ST_H
 
+#include "hal_st_lld.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -39,55 +41,55 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Compatibility with old LLDS.*/
+#if !defined(ST_LLD_NUM_ALARMS)
+#define ST_LLD_NUM_ALARMS                   1
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-#include "hal_st_lld.h"
+typedef void (*st_callback_t)(unsigned alarm);
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Returns the time counter value.
- * @note    This functionality is only available in free running mode, the
- *          behaviour in periodic mode is undefined.
- *
- * @return              The counter value.
- *
- * @api
- */
-#define stGetCounter() st_lld_get_counter()
-
-/**
- * @brief   Determines if the alarm is active.
- *
- * @return              The alarm status.
- * @retval false        if the alarm is not active.
- * @retval true         is the alarm is active
- *
- * @api
- */
-#define stIsAlarmActive() st_lld_is_alarm_active()
-/** @} */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if (ST_LLD_NUM_ALARMS > 1) && !defined(__DOXYGEN__)
+extern st_callback_t st_callbacks[ST_LLD_NUM_ALARMS];
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void stInit(void);
+#if defined(ST_LLD_MULTICORE_SUPPORT)
+  void stBind(void);
+#endif
+#if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
+  systime_t stGetCounter(void);
   void stStartAlarm(systime_t abstime);
   void stStopAlarm(void);
   void stSetAlarm(systime_t abstime);
   systime_t stGetAlarm(void);
+  bool stIsAlarmActive(void);
+#if ST_LLD_NUM_ALARMS > 1
+  void stSetCallback(unsigned alarm, st_callback_t cb);
+#if defined(ST_LLD_MULTICORE_SUPPORT)
+  void stBindAlarmN(unsigned alarm);
+#endif
+  void stStartAlarmN(unsigned alarm, systime_t abstime);
+  void stStopAlarmN(unsigned alarm);
+  void stSetAlarmN(unsigned alarm, systime_t abstime);
+  systime_t stGetAlarmN(unsigned alarm);
+  bool stIsAlarmActiveN(unsigned alarm);
+#endif /* ST_LLD_NUM_ALARMS > 1 */
+#endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 #ifdef __cplusplus
 }
 #endif

@@ -85,7 +85,19 @@ static msg_t _get(void *ip) {
   return b;
 }
 
-static const struct MemStreamVMT vmt = {(size_t)0, _writes, _reads, _put, _get};
+static msg_t _unget(void* ip, uint8_t b)
+{
+  MemoryStream* msp = ip;
+
+  if (msp->offset <= 0)
+    return MSG_RESET;
+  msp->offset -= 1;
+  *(msp->buffer + msp->offset) = b;
+
+  return MSG_OK;
+}
+
+static const struct MemStreamVMT vmt = {(size_t)0, _writes, _reads, _put, _get, _unget};
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

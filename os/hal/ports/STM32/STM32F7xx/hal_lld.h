@@ -1148,7 +1148,7 @@
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
 
-#if STM32_RTCSEL == STM32_RTCSEL_LSI
+#if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI)
 #error "LSI not enabled, required by STM32_RTCSEL"
 #endif
 
@@ -2104,6 +2104,11 @@
 #endif
 
 /**
+ * @brief   RNG clock point.
+ */
+#define STM32_RNGCLK                STM32_PLL48CLK
+
+/**
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
@@ -2160,6 +2165,7 @@
 #include "stm32_dma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
+#include "stm32_tim.h"
 
 #ifdef __cplusplus
 extern "C" {

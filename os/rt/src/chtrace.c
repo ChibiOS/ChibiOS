@@ -1,12 +1,12 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chtrace.c
+ * @file    rt/src/chtrace.c
  * @brief   Tracer code.
  *
  * @addtogroup trace
@@ -54,21 +54,20 @@
  *
  * @notapi
  */
-static NOINLINE void trace_next(void) {
+NOINLINE static void trace_next(os_instance_t *oip) {
 
-  ch.dbg.trace_buffer.ptr->time    = chVTGetSystemTimeX();
+  oip->trace_buffer.ptr->time    = chVTGetSystemTimeX();
 #if PORT_SUPPORTS_RT == TRUE
-  ch.dbg.trace_buffer.ptr->rtstamp = chSysGetRealtimeCounterX();
+  oip->trace_buffer.ptr->rtstamp = chSysGetRealtimeCounterX();
 #else
-  ch.dbg.trace_buffer.ptr->rtstamp = (rtcnt_t)0;
+  oip->trace_buffer.ptr->rtstamp = (rtcnt_t)0;
 #endif
 
   /* Trace hook, useful in order to interface debug tools.*/
-  CH_CFG_TRACE_HOOK(ch.dbg.trace_buffer.ptr);
+  CH_CFG_TRACE_HOOK(oip->trace_buffer.ptr);
 
-  if (++ch.dbg.trace_buffer.ptr >=
-      &ch.dbg.trace_buffer.buffer[CH_DBG_TRACE_BUFFER_SIZE]) {
-    ch.dbg.trace_buffer.ptr = &ch.dbg.trace_buffer.buffer[0];
+  if (++oip->trace_buffer.ptr >= &oip->trace_buffer.buffer[CH_DBG_TRACE_BUFFER_SIZE]) {
+    oip->trace_buffer.ptr = &oip->trace_buffer.buffer[0];
   }
 }
 #endif
@@ -79,17 +78,41 @@ static NOINLINE void trace_next(void) {
 
 #if (CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED) || defined(__DOXYGEN__)
 /**
- * @brief   Trace circular buffer subsystem initialization.
+ * @brief   Circular trace buffer initialization.
  * @note    Internal use only.
+ *
+ * @param[out] tbp      pointer to the @p trace_buffer_t structure
+ *
+ * @notapi
  */
-void _trace_init(void) {
+void __trace_object_init(trace_buffer_t *tbp) {
   unsigned i;
 
-  ch.dbg.trace_buffer.suspended = (uint16_t)~CH_DBG_TRACE_MASK;
-  ch.dbg.trace_buffer.size      = CH_DBG_TRACE_BUFFER_SIZE;
-  ch.dbg.trace_buffer.ptr       = &ch.dbg.trace_buffer.buffer[0];
+  tbp->suspended = (uint16_t)~CH_DBG_TRACE_MASK;
+  tbp->size      = CH_DBG_TRACE_BUFFER_SIZE;
+  tbp->ptr       = &tbp->buffer[0];
   for (i = 0U; i < (unsigned)CH_DBG_TRACE_BUFFER_SIZE; i++) {
-    ch.dbg.trace_buffer.buffer[i].type = CH_TRACE_TYPE_UNUSED;
+    tbp->buffer[i].type = CH_TRACE_TYPE_UNUSED;
+  }
+}
+
+/**
+ * @brief   Inserts in the circular debug trace buffer a ready record.
+ *
+ * @param[in] tp        the thread that just become ready
+ * @param[in] msg       the thread ready message
+ *
+ * @notapi
+ */
+void __trace_ready(thread_t *tp, msg_t msg) {
+  os_instance_t *oip = currcore;
+
+  if ((oip->trace_buffer.suspended & CH_DBG_TRACE_MASK_READY) == 0U) {
+    oip->trace_buffer.ptr->type        = CH_TRACE_TYPE_READY;
+    oip->trace_buffer.ptr->state       = (uint8_t)tp->state;
+    oip->trace_buffer.ptr->u.rdy.tp    = tp;
+    oip->trace_buffer.ptr->u.rdy.msg   = msg;
+    trace_next(oip);
   }
 }
 
@@ -101,16 +124,15 @@ void _trace_init(void) {
  *
  * @notapi
  */
-void _trace_switch(thread_t *ntp, thread_t *otp) {
+void __trace_switch(thread_t *ntp, thread_t *otp) {
+  os_instance_t *oip = currcore;
 
-  (void)ntp;
-
-  if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_SWITCH) == 0U) {
-    ch.dbg.trace_buffer.ptr->type        = CH_TRACE_TYPE_SWITCH;
-    ch.dbg.trace_buffer.ptr->state       = (uint8_t)otp->state;
-    ch.dbg.trace_buffer.ptr->u.sw.ntp    = currp;
-    ch.dbg.trace_buffer.ptr->u.sw.wtobjp = otp->u.wtobjp;
-    trace_next();
+  if ((oip->trace_buffer.suspended & CH_DBG_TRACE_MASK_SWITCH) == 0U) {
+    oip->trace_buffer.ptr->type        = CH_TRACE_TYPE_SWITCH;
+    oip->trace_buffer.ptr->state       = (uint8_t)otp->state;
+    oip->trace_buffer.ptr->u.sw.ntp    = ntp;
+    oip->trace_buffer.ptr->u.sw.wtobjp = otp->u.wtobjp;
+    trace_next(oip);
   }
 }
 
@@ -121,14 +143,15 @@ void _trace_switch(thread_t *ntp, thread_t *otp) {
  *
  * @notapi
  */
-void _trace_isr_enter(const char *isr) {
+void __trace_isr_enter(const char *isr) {
+  os_instance_t *oip = currcore;
 
-  if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_ISR) == 0U) {
+  if ((oip->trace_buffer.suspended & CH_DBG_TRACE_MASK_ISR) == 0U) {
     port_lock_from_isr();
-    ch.dbg.trace_buffer.ptr->type        = CH_TRACE_TYPE_ISR_ENTER;
-    ch.dbg.trace_buffer.ptr->state       = 0U;
-    ch.dbg.trace_buffer.ptr->u.isr.name  = isr;
-    trace_next();
+    oip->trace_buffer.ptr->type        = CH_TRACE_TYPE_ISR_ENTER;
+    oip->trace_buffer.ptr->state       = 0U;
+    oip->trace_buffer.ptr->u.isr.name  = isr;
+    trace_next(oip);
     port_unlock_from_isr();
   }
 }
@@ -140,14 +163,15 @@ void _trace_isr_enter(const char *isr) {
  *
  * @notapi
  */
-void _trace_isr_leave(const char *isr) {
+void __trace_isr_leave(const char *isr) {
+  os_instance_t *oip = currcore;
 
-  if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_ISR) == 0U) {
+  if ((oip->trace_buffer.suspended & CH_DBG_TRACE_MASK_ISR) == 0U) {
     port_lock_from_isr();
-    ch.dbg.trace_buffer.ptr->type        = CH_TRACE_TYPE_ISR_LEAVE;
-    ch.dbg.trace_buffer.ptr->state       = 0U;
-    ch.dbg.trace_buffer.ptr->u.isr.name  = isr;
-    trace_next();
+    oip->trace_buffer.ptr->type        = CH_TRACE_TYPE_ISR_LEAVE;
+    oip->trace_buffer.ptr->state       = 0U;
+    oip->trace_buffer.ptr->u.isr.name  = isr;
+    trace_next(oip);
     port_unlock_from_isr();
   }
 }
@@ -159,13 +183,14 @@ void _trace_isr_leave(const char *isr) {
  *
  * @notapi
  */
-void _trace_halt(const char *reason) {
+void __trace_halt(const char *reason) {
+  os_instance_t *oip = currcore;
 
-  if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_HALT) == 0U) {
-    ch.dbg.trace_buffer.ptr->type          = CH_TRACE_TYPE_HALT;
-    ch.dbg.trace_buffer.ptr->state         = 0;
-    ch.dbg.trace_buffer.ptr->u.halt.reason = reason;
-    trace_next();
+  if ((oip->trace_buffer.suspended & CH_DBG_TRACE_MASK_HALT) == 0U) {
+    oip->trace_buffer.ptr->type          = CH_TRACE_TYPE_HALT;
+    oip->trace_buffer.ptr->state         = 0;
+    oip->trace_buffer.ptr->u.halt.reason = reason;
+    trace_next(oip);
   }
 }
 
@@ -177,16 +202,17 @@ void _trace_halt(const char *reason) {
  *
  * @iclass
  */
-void chDbgWriteTraceI(void *up1, void *up2) {
+void chTraceWriteI(void *up1, void *up2) {
+  os_instance_t *oip = currcore;
 
   chDbgCheckClassI();
 
-  if ((ch.dbg.trace_buffer.suspended & CH_DBG_TRACE_MASK_USER) == 0U) {
-    ch.dbg.trace_buffer.ptr->type       = CH_TRACE_TYPE_USER;
-    ch.dbg.trace_buffer.ptr->state      = 0;
-    ch.dbg.trace_buffer.ptr->u.user.up1 = up1;
-    ch.dbg.trace_buffer.ptr->u.user.up2 = up2;
-    trace_next();
+  if ((oip->trace_buffer.suspended & CH_DBG_TRACE_MASK_USER) == 0U) {
+    oip->trace_buffer.ptr->type       = CH_TRACE_TYPE_USER;
+    oip->trace_buffer.ptr->state      = 0;
+    oip->trace_buffer.ptr->u.user.up1 = up1;
+    oip->trace_buffer.ptr->u.user.up2 = up2;
+    trace_next(oip);
   }
 }
 
@@ -198,10 +224,10 @@ void chDbgWriteTraceI(void *up1, void *up2) {
  *
  * @api
  */
-void chDbgWriteTrace(void *up1, void *up2) {
+void chTraceWrite(void *up1, void *up2) {
 
   chSysLock();
-  chDbgWriteTraceI(up1, up2);
+  chTraceWriteI(up1, up2);
   chSysUnlock();
 }
 
@@ -212,11 +238,11 @@ void chDbgWriteTrace(void *up1, void *up2) {
  *
  * @iclass
  */
-void chDbgSuspendTraceI(uint16_t mask) {
+void chTraceSuspendI(uint16_t mask) {
 
   chDbgCheckClassI();
 
-  ch.dbg.trace_buffer.suspended |= mask;
+  currcore->trace_buffer.suspended |= mask;
 }
 
 /**
@@ -226,10 +252,10 @@ void chDbgSuspendTraceI(uint16_t mask) {
  *
  * @api
  */
-void chDbgSuspendTrace(uint16_t mask) {
+void chTraceSuspend(uint16_t mask) {
 
   chSysLock();
-  chDbgSuspendTraceI(mask);
+  chTraceSuspendI(mask);
   chSysUnlock();
 }
 
@@ -240,11 +266,11 @@ void chDbgSuspendTrace(uint16_t mask) {
  *
  * @iclass
  */
-void chDbgResumeTraceI(uint16_t mask) {
+void chTraceResumeI(uint16_t mask) {
 
   chDbgCheckClassI();
 
-  ch.dbg.trace_buffer.suspended &= ~mask;
+  currcore->trace_buffer.suspended &= ~mask;
 }
 
 /**
@@ -254,10 +280,10 @@ void chDbgResumeTraceI(uint16_t mask) {
  *
  * @api
  */
-void chDbgResumeTrace(uint16_t mask) {
+void chTraceResume(uint16_t mask) {
 
   chSysLock();
-  chDbgResumeTraceI(mask);
+  chTraceResumeI(mask);
   chSysUnlock();
 }
 #endif /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED */

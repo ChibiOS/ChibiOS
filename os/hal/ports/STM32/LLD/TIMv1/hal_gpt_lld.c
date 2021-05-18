@@ -107,6 +107,14 @@ GPTDriver GPTD9;
 #endif
 
 /**
+ * @brief   GPTD10 driver identifier.
+ * @note    The driver GPTD10 allocates the timer TIM10 when enabled.
+ */
+#if STM32_GPT_USE_TIM10 || defined(__DOXYGEN__)
+GPTDriver GPTD10;
+#endif
+
+/**
  * @brief   GPTD11 driver identifier.
  * @note    The driver GPTD11 allocates the timer TIM11 when enabled.
  */
@@ -120,6 +128,14 @@ GPTDriver GPTD11;
  */
 #if STM32_GPT_USE_TIM12 || defined(__DOXYGEN__)
 GPTDriver GPTD12;
+#endif
+
+/**
+ * @brief   GPTD13 driver identifier.
+ * @note    The driver GPTD13 allocates the timer TIM13 when enabled.
+ */
+#if STM32_GPT_USE_TIM13 || defined(__DOXYGEN__)
+GPTDriver GPTD13;
 #endif
 
 /**
@@ -352,85 +368,37 @@ OSAL_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
 
 #if STM32_GPT_USE_TIM9 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM9_SUPPRESS_ISR)
-#if !defined(STM32_TIM9_HANDLER)
-#error "STM32_TIM9_HANDLER not defined"
-#endif
-/**
- * @brief   TIM9 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_TIM9_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  gpt_lld_serve_interrupt(&GPTD9);
-
-  OSAL_IRQ_EPILOGUE();
-}
+#error "TIM9 ISR not defined by platform"
 #endif /* !defined(STM32_TIM9_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM9 */
 
+#if STM32_GPT_USE_TIM10 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM10_SUPPRESS_ISR)
+#error "TIM10 ISR not defined by platform"
+#endif /* !defined(STM32_TIM10_SUPPRESS_ISR) */
+#endif /* STM32_GPT_USE_TIM10 */
+
 #if STM32_GPT_USE_TIM11 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM11_SUPPRESS_ISR)
-#if !defined(STM32_TIM11_HANDLER)
-#error "STM32_TIM11_HANDLER not defined"
-#endif
-/**
- * @brief   TIM11 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_TIM11_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  gpt_lld_serve_interrupt(&GPTD11);
-
-  OSAL_IRQ_EPILOGUE();
-}
+#error "TIM11 ISR not defined by platform"
 #endif /* !defined(STM32_TIM11_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM11 */
 
 #if STM32_GPT_USE_TIM12 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM12_SUPPRESS_ISR)
-#if !defined(STM32_TIM12_HANDLER)
-#error "STM32_TIM12_HANDLER not defined"
-#endif
-/**
- * @brief   TIM12 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_TIM12_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  gpt_lld_serve_interrupt(&GPTD12);
-
-  OSAL_IRQ_EPILOGUE();
-}
+#error "TIM12 ISR not defined by platform"
 #endif /* !defined(STM32_TIM12_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM12 */
 
+#if STM32_GPT_USE_TIM13 || defined(__DOXYGEN__)
+#if !defined(STM32_TIM13_SUPPRESS_ISR)
+#error "TIM13 ISR not defined by platform"
+#endif /* !defined(STM32_TIM13_SUPPRESS_ISR) */
+#endif /* STM32_GPT_USE_TIM13 */
+
 #if STM32_GPT_USE_TIM14 || defined(__DOXYGEN__)
 #if !defined(STM32_TIM14_SUPPRESS_ISR)
-#if !defined(STM32_TIM14_HANDLER)
-#error "STM32_TIM14_HANDLER not defined"
-#endif
-/**
- * @brief   TIM14 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_TIM14_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  gpt_lld_serve_interrupt(&GPTD14);
-
-  OSAL_IRQ_EPILOGUE();
-}
+#error "TIM14 ISR not defined by platform"
 #endif /* !defined(STM32_TIM14_SUPPRESS_ISR) */
 #endif /* STM32_GPT_USE_TIM14 */
 
@@ -559,6 +527,12 @@ void gpt_lld_init(void) {
   gptObjectInit(&GPTD9);
 #endif
 
+#if STM32_GPT_USE_TIM10
+  /* Driver initialization.*/
+  GPTD10.tim = STM32_TIM10;
+  gptObjectInit(&GPTD10);
+#endif
+
 #if STM32_GPT_USE_TIM11
   /* Driver initialization.*/
   GPTD11.tim = STM32_TIM11;
@@ -569,6 +543,12 @@ void gpt_lld_init(void) {
   /* Driver initialization.*/
   GPTD12.tim = STM32_TIM12;
   gptObjectInit(&GPTD12);
+#endif
+
+#if STM32_GPT_USE_TIM13
+  /* Driver initialization.*/
+  GPTD13.tim = STM32_TIM13;
+  gptObjectInit(&GPTD13);
 #endif
 
 #if STM32_GPT_USE_TIM14
@@ -755,6 +735,21 @@ void gpt_lld_start(GPTDriver *gptp) {
     }
 #endif
 
+#if STM32_GPT_USE_TIM10
+    if (&GPTD10 == gptp) {
+      rccEnableTIM10(true);
+      rccResetTIM10();
+#if !defined(STM32_TIM10_SUPPRESS_ISR)
+      nvicEnableVector(STM32_TIM10_NUMBER, STM32_GPT_TIM10_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM10CLK)
+      gptp->clock = STM32_TIM10CLK;
+#else
+      gptp->clock = STM32_TIMCLK2;
+#endif
+    }
+#endif
+
 #if STM32_GPT_USE_TIM11
     if (&GPTD11 == gptp) {
       rccEnableTIM11(true);
@@ -785,6 +780,21 @@ void gpt_lld_start(GPTDriver *gptp) {
     }
 #endif
 
+#if STM32_GPT_USE_TIM13
+    if (&GPTD13 == gptp) {
+      rccEnableTIM13(true);
+      rccResetTIM13();
+#if !defined(STM32_TIM13_SUPPRESS_ISR)
+      nvicEnableVector(STM32_TIM13_NUMBER, STM32_GPT_TIM13_IRQ_PRIORITY);
+#endif
+#if defined(STM32_TIM13CLK)
+      gptp->clock = STM32_TIM13CLK;
+#else
+      gptp->clock = STM32_TIMCLK1;
+#endif
+    }
+#endif
+
 #if STM32_GPT_USE_TIM14
     if (&GPTD14 == gptp) {
       rccEnableTIM14(true);
@@ -796,18 +806,6 @@ void gpt_lld_start(GPTDriver *gptp) {
       gptp->clock = STM32_TIM14CLK;
 #else
       gptp->clock = STM32_TIMCLK1;
-#endif
-    }
-#endif
-
-#if STM32_GPT_USE_TIM15
-    if (&GPTD15 == gptp) {
-      rccEnableTIM15(true);
-      rccResetTIM15();
-#if defined(STM32_TIM15CLK)
-      gptp->clock = STM32_TIM15CLK;
-#else
-      gptp->clock = STM32_TIMCLK2;
 #endif
     }
 #endif
@@ -988,6 +986,15 @@ void gpt_lld_stop(GPTDriver *gptp) {
     }
 #endif
 
+#if STM32_GPT_USE_TIM10
+    if (&GPTD10 == gptp) {
+#if !defined(STM32_TIM10_SUPPRESS_ISR)
+      nvicDisableVector(STM32_TIM10_NUMBER);
+#endif
+      rccDisableTIM10();
+    }
+#endif
+
 #if STM32_GPT_USE_TIM11
     if (&GPTD11 == gptp) {
 #if !defined(STM32_TIM11_SUPPRESS_ISR)
@@ -1003,6 +1010,15 @@ void gpt_lld_stop(GPTDriver *gptp) {
       nvicDisableVector(STM32_TIM12_NUMBER);
 #endif
       rccDisableTIM12();
+    }
+#endif
+
+#if STM32_GPT_USE_TIM13
+    if (&GPTD13 == gptp) {
+#if !defined(STM32_TIM13_SUPPRESS_ISR)
+      nvicDisableVector(STM32_TIM13_NUMBER);
+#endif
+      rccDisableTIM13();
     }
 #endif
 
@@ -1122,13 +1138,14 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
  * @notapi
  */
 void gpt_lld_serve_interrupt(GPTDriver *gptp) {
+  uint32_t sr;
 
-  gptp->tim->SR = 0;
-  if (gptp->state == GPT_ONESHOT) {
-    gptp->state = GPT_READY;                /* Back in GPT_READY state.     */
-    gpt_lld_stop_timer(gptp);               /* Timer automatically stopped. */
+  sr  = gptp->tim->SR;
+  sr &= gptp->tim->DIER & STM32_TIM_DIER_IRQ_MASK;
+  gptp->tim->SR = ~sr;
+  if ((sr & STM32_TIM_SR_UIF) != 0) {
+    _gpt_isr_invoke_cb(gptp);
   }
-  gptp->config->callback(gptp);
 }
 
 #endif /* HAL_USE_GPT */

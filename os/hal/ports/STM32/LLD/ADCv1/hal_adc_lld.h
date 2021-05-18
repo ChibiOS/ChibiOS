@@ -35,6 +35,7 @@
  * @name    Sampling rates
  * @{
  */
+#if defined(STM32F0XX) || defined(__DOXYGEN__)
 #define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time   */
 #define ADC_SMPR_SMP_7P5        1U  /**< @brief 21 cycles conversion time.  */
 #define ADC_SMPR_SMP_13P5       2U  /**< @brief 28 cycles conversion time.  */
@@ -43,6 +44,16 @@
 #define ADC_SMPR_SMP_55P5       5U  /**< @brief 68 cycles conversion time.  */
 #define ADC_SMPR_SMP_71P5       6U  /**< @brief 84 cycles conversion time.  */
 #define ADC_SMPR_SMP_239P5      7U  /**< @brief 252 cycles conversion time. */
+#elif defined(STM32L0XX)
+#define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time   */
+#define ADC_SMPR_SMP_3P5        1U  /**< @brief 16 cycles conversion time.  */
+#define ADC_SMPR_SMP_7P5        2U  /**< @brief 20 cycles conversion time.  */
+#define ADC_SMPR_SMP_12P5       3U  /**< @brief 25 cycles conversion time.  */
+#define ADC_SMPR_SMP_19P5       4U  /**< @brief 31 cycles conversion time.  */
+#define ADC_SMPR_SMP_39P5       5U  /**< @brief 52 cycles conversion time.  */
+#define ADC_SMPR_SMP_79P5       6U  /**< @brief 92 cycles conversion time.  */
+#define ADC_SMPR_SMP_160P5      7U  /**< @brief 173 cycles conversion time. */
+#endif
 /** @} */
 
 /**
@@ -150,7 +161,7 @@
  *          default, @p STM32_ADC_CKMODE_ADCCLK).
  */
 #if !defined(STM32_ADC_PRESCALER_VALUE) || defined(__DOXYGEN__)
-#define STM32_ADC_PRESCALER_VALUE           1
+#define STM32_ADC_PRESCALER_VALUE           2
 #endif
 #endif
 
@@ -160,35 +171,85 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Supported devices checks.*/
+#if !defined(STM32F0XX) && !defined(STM32L0XX)
+#error "ADCv1 only supports F0 and L0 STM32 devices"
+#endif
+
+#if defined(STM32L0XX) || defined(__DOXYGEN__)
+#define STM32_ADCV1_OVERSAMPLING            TRUE
+#else
+#define STM32_ADCV1_OVERSAMPLING            FALSE
+#endif
+
+/* Registry checks.*/
+#if !defined(STM32_HAS_ADC1)
+#error "STM32_HAS_ADC1 not defined in registry"
+#endif
+
+#if !defined(STM32_ADC_SUPPORTS_PRESCALER)
+#error "STM32_ADC_SUPPORTS_PRESCALER not defined in registry"
+#endif
+
+#if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER))
+#error "STM32_ADC1_HANDLER not defined in registry"
+#endif
+
+#if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_NUMBER))
+#error "STM32_ADC1_NUMBER not defined in registry"
+#endif
+
 #if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
 #error "ADC1 not present in the selected device"
 #endif
 
+/* Units checks.*/
+#if STM32_ADC_USE_ADC1 && !STM32_HAS_ADC1
+#error "ADC1 not present in the selected device"
+#endif
+
+/* At least one ADC must be assigned.*/
 #if !STM32_ADC_USE_ADC1
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
-#if STM32_ADC1_IRQ_SHARED_WITH_EXTI == FALSE
+/* ADC IRQ priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1"
 #endif
-#endif
 
+/* DMA IRQ priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC1 DMA"
 #endif
 
+/* DMA priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC1"
 #endif
 
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
+#error "ADC DMA stream not defined"
+#endif
+#if STM32_DMA_SUPPORTS_DMAMUX
+
+#else /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+/* Check on the validity of the assigned DMA channels.*/
+#if STM32_ADC_USE_ADC1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_MSK)
+#error "invalid DMA stream associated to ADC1"
+#endif
+
+#endif /* !STM32_DMA_SUPPORTS_DMAMUX */
+
+/* ADC clock source checks.*/
 #if STM32_ADC_SUPPORTS_PRESCALER == TRUE
-#if STM32_ADC_PRESCALER_VALUE == 1
-#define STM32_ADC_PRESC                     0U
-#elif STM32_ADC_PRESCALER_VALUE == 2
+#if STM32_ADC_PRESCALER_VALUE == 2
 #define STM32_ADC_PRESC                     1U
 #elif STM32_ADC_PRESCALER_VALUE == 4
 #define STM32_ADC_PRESC                     2U
@@ -213,17 +274,6 @@
 #else
 #error "Invalid value assigned to STM32_ADC_PRESCALER_VALUE"
 #endif
-#endif
-
-/* Check on the presence of the DMA streams settings in mcuconf.h.*/
-#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
-#error "ADC DMA stream not defined"
-#endif
-
-/* Check on the validity of the assigned DMA channels.*/
-#if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_MSK)
-#error "invalid DMA stream associated to ADC1"
 #endif
 
 #if !defined(STM32_DMA_REQUIRED)
@@ -346,13 +396,13 @@ extern "C" {
   void adc_lld_start_conversion(ADCDriver *adcp);
   void adc_lld_stop_conversion(ADCDriver *adcp);
   void adc_lld_serve_interrupt(ADCDriver *adcp);
-  void adcSTM32EnableVREF(void);
-  void adcSTM32DisableVREF(void);
-  void adcSTM32EnableTS(void);
-  void adcSTM32DisableTS(void);
+  void adcSTM32EnableVREF(ADCDriver *adcp);
+  void adcSTM32DisableVREF(ADCDriver *adcp);
+  void adcSTM32EnableTS(ADCDriver *adcp);
+  void adcSTM32DisableTS(ADCDriver *adcp);
 #if defined(ADC_CCR_VBATEN)
-  void adcSTM32EnableVBAT(void);
-  void adcSTM32DisableVBAT(void);
+  void adcSTM32EnableVBAT(ADCDriver *adcp);
+  void adcSTM32DisableVBAT(ADCDriver *adcp);
 #endif
 #ifdef __cplusplus
 }

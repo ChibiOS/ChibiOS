@@ -42,8 +42,8 @@
 /**
  * @brief   Use OSAL delays.
  * @details If set to @p TRUE then delays are implemented using the
- *          thread-friendy delay function else a delay function must
- *          be provided extenally.
+ *          thread-friendly delay function else a delay function must
+ *          be provided externally.
  */
 #if !defined(SW_I2C_USE_OSAL_DELAY) || defined(__DOXYGEN__)
 #define SW_I2C_USE_OSAL_DELAY               TRUE
@@ -217,10 +217,10 @@ extern "C" {
   msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                         const uint8_t *txbuf, size_t txbytes,
                                         uint8_t *rxbuf, size_t rxbytes,
-                                        systime_t timeout);
+                                        sysinterval_t timeout);
   msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                        uint8_t *rxbuf, size_t rxbytes,
-                                       systime_t timeout);
+                                       sysinterval_t timeout);
 #ifdef __cplusplus
 }
 #endif

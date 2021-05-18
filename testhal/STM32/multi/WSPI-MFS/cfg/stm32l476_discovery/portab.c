@@ -36,6 +36,7 @@
 
 const WSPIConfig WSPIcfg1 = {
   .end_cb           = NULL,
+  .error_cb         = NULL,
   .dcr              = STM32_DCR_FSIZE(24U) |        /* 16MB device.         */
                       STM32_DCR_CSHT(1U)            /* NCS 2 cycles delay.  */
 };

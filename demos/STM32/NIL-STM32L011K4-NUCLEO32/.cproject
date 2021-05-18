@@ -37,7 +37,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="NIL-STM32L152-DISCOVERY.null.1703860681" name="NIL-STM32L152-DISCOVERY"/>
+		<project id="NIL-STM32L011K4-NUCLEO32.null.1703860681" name="NIL-STM32L011K4-NUCLEO32"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -48,7 +48,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/NIL-STM32L152-DISCOVERY"/>
+			<resource resourceType="PROJECT" workspacePath="/NIL-STM32L011K4-NUCLEO32"/>
 		</configuration>
 	</storageModule>
 </cproject>

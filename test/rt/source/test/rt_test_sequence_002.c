@@ -36,7 +36,6 @@
  * - @subpage rt_test_002_001
  * - @subpage rt_test_002_002
  * - @subpage rt_test_002_003
- * - @subpage rt_test_002_004
  * .
  */
 
@@ -91,6 +90,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "ready list check failed");
   }
+  test_end_step(1);
 
   /* [2.1.2] Testing Virtual Timers List integrity.*/
   test_set_step(2);
@@ -100,6 +100,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "virtual timers list check failed");
   }
+  test_end_step(2);
 
   /* [2.1.3] Testing Registry List integrity.*/
   test_set_step(3);
@@ -109,6 +110,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "registry list check failed");
   }
+  test_end_step(3);
 
   /* [2.1.4] Testing Port-defined integrity.*/
   test_set_step(4);
@@ -118,6 +120,7 @@ static void rt_test_002_001_execute(void) {
     chSysUnlock();
     test_assert(result == false, "port layer check failed");
   }
+  test_end_step(4);
 }
 
 static const testcase_t rt_test_002_001 = {
@@ -155,6 +158,7 @@ static void rt_test_002_002_execute(void) {
     sts = chSysGetStatusAndLockX();
     chSysRestoreStatusX(sts);
   }
+  test_end_step(1);
 
   /* [2.2.2] Testing chSysGetStatusAndLockX() and
      chSysRestoreStatusX(), reentrant case.*/
@@ -165,6 +169,7 @@ static void rt_test_002_002_execute(void) {
     chSysRestoreStatusX(sts);
     chSysUnlock();
   }
+  test_end_step(2);
 
   /* [2.2.3] Testing chSysUnconditionalLock().*/
   test_set_step(3);
@@ -173,6 +178,7 @@ static void rt_test_002_002_execute(void) {
     chSysUnconditionalLock();
     chSysUnlock();
   }
+  test_end_step(3);
 
   /* [2.2.4] Testing chSysUnconditionalUnlock().*/
   test_set_step(4);
@@ -181,6 +187,7 @@ static void rt_test_002_002_execute(void) {
     chSysUnconditionalUnlock();
     chSysUnconditionalUnlock();
   }
+  test_end_step(4);
 
   /* [2.2.5] Testing from ISR context using a virtual timer.*/
   test_set_step(5);
@@ -191,6 +198,7 @@ static void rt_test_002_002_execute(void) {
 
     test_assert(chVTIsArmed(&vt) == false, "timer still armed");
   }
+  test_end_step(5);
 }
 
 static const testcase_t rt_test_002_002 = {
@@ -222,6 +230,7 @@ static void rt_test_002_003_execute(void) {
     chSysSuspend();
     chSysEnable();
   }
+  test_end_step(1);
 }
 
 static const testcase_t rt_test_002_003 = {
@@ -229,40 +238,6 @@ static const testcase_t rt_test_002_003 = {
   NULL,
   NULL,
   rt_test_002_003_execute
-};
-
-/**
- * @page rt_test_002_004 [2.4] System Tick Counter functionality
- *
- * <h2>Description</h2>
- * The functionality of the API @p chVTGetSystemTimeX() is tested.
- *
- * <h2>Test Steps</h2>
- * - [2.4.1] A System Tick Counter increment is expected, the test
- *   simply hangs if it does not happen.
- * .
- */
-
-static void rt_test_002_004_execute(void) {
-
-  /* [2.4.1] A System Tick Counter increment is expected, the test
-     simply hangs if it does not happen.*/
-  test_set_step(1);
-  {
-    systime_t time = chVTGetSystemTimeX();
-    while (time == chVTGetSystemTimeX()) {
-#if defined(SIMULATOR)
-      _sim_check_for_interrupts();
-#endif
-    }
-  }
-}
-
-static const testcase_t rt_test_002_004 = {
-  "System Tick Counter functionality",
-  NULL,
-  NULL,
-  rt_test_002_004_execute
 };
 
 /****************************************************************************
@@ -276,7 +251,6 @@ const testcase_t * const rt_test_sequence_002_array[] = {
   &rt_test_002_001,
   &rt_test_002_002,
   &rt_test_002_003,
-  &rt_test_002_004,
   NULL
 };
 
