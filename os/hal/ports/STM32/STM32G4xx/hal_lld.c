@@ -103,7 +103,18 @@ const halclkcfg_t hal_clkcfg_default = {
 /**
  * @brief   Dynamic clock points for this device.
  */
-static halfreq_t clock_points[CLK_ARRAY_SIZE];
+static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
+  [CLK_SYSCLK]      = STM32_SYSCLK,
+  [CLK_PLLPCLK]     = STM32_PLL_P_CLKOUT,
+  [CLK_PLLQCLK]     = STM32_PLL_Q_CLKOUT,
+  [CLK_PLLRCLK]     = STM32_PLL_R_CLKOUT,
+  [CLK_HCLK]        = STM32_HCLK,
+  [CLK_PCLK1]       = STM32_PCLK1,
+  [CLK_PCLK1TIM]    = STM32_TIMP1CLK,
+  [CLK_PCLK2]       = STM32_PCLK2,
+  [CLK_PCLK2TIM]    = STM32_TIMP2CLK,
+  [CLK_MCO]         = STM32_MCOCLK,
+};
 
 /**
  * @brief   Type of a structure representing system limits.
@@ -493,12 +504,6 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
  * @notapi
  */
 void hal_lld_init(void) {
-
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
-  if (hal_lld_clock_check_tree(&hal_clkcfg_default)) {
-    osalSysHalt("clkcfg");
-  }
-#endif
 
   /* DMA subsystems initialization.*/
 #if defined(STM32_DMA_REQUIRED)
