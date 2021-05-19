@@ -2,12 +2,9 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.9-stretch
+      - image: memfault/circleci-codechecker-runner:latest
     steps:
       - checkout
-      - run:
-          name: Install apt packages
-          command: 'sudo apt install p7zip-full gcc-arm-none-eabi binutils-arm-none-eabi'
       - run:
           name: Build Demo
           command: |
@@ -36,7 +33,7 @@ jobs:
 
   unit-test:
     docker:
-      - image: circleci/python:3.6.9-stretch
+      - image: memfault/circleci-codechecker-runner:latest
     steps:
       - checkout
       - run:
