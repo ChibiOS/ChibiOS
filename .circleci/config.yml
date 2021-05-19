@@ -18,6 +18,8 @@ jobs:
   static-analysis:
     docker:
       - image: memfault/circleci-codechecker-runner:latest
+    environment:
+      CC_LOGGER_GCC_LIKE: arm-none-eabi-gcc
     steps:
       - checkout
       - run:
