@@ -18,6 +18,22 @@ jobs:
       - store_artifacts:
           path: ./demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB/build/ch.elf
 
+  static-analysis:
+    docker:
+      - image: memfault/circleci-codechecker-runner:latest
+    steps:
+      - checkout
+      - run:
+          name: Run CodeChecker
+          command: |
+            source /home/circleci/codechecker/venv/bin/activate
+            cd ext
+            7za x fatfs-0.13c_patched.7z
+            cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
+            CodeChecker check -b "make" --output ./reports --enable sensitive --ctu
+      - store_artifacts:
+          path: ./demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB/reports
+
   unit-test:
     docker:
       - image: circleci/python:3.6.9-stretch
