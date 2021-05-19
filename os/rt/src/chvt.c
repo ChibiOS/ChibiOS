@@ -510,7 +510,7 @@ void chVTDoTickI(void) {
 
   chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
               chTimeDiffX(vtlp->lasttime, chTimeAddX(now, delta)),
-              "exceeding delta");
+              "insufficient delta");
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
