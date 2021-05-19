@@ -675,6 +675,9 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
+  /* Updating the CMSIS variable.*/
+  SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
+
   return false;
 }
 
