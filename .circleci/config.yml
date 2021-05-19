@@ -12,7 +12,7 @@ jobs:
           name: Build Demo
           command: |
             cd ext
-            ls *.7z | xargs -I {} 7za x {}
+            for f in `ls *.7z`; do 7za x "$f"; done
             cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
             make 
       - store_artifacts:
@@ -28,7 +28,7 @@ jobs:
           command: |
             source /home/circleci/codechecker/venv/bin/activate
             cd ext
-            ls *.7z | xargs -I {} 7za x {}
+            for f in `ls *.7z`; do 7za x "$f"; done
             cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
             CodeChecker check -b "make" --output ./reports --enable sensitive --ctu
       - store_artifacts:
