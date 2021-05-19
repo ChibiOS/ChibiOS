@@ -23,11 +23,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Decompress ext
+          command: for f in `ls *.7z`; do 7za x "$f"; done
+      - run:
           name: Run CodeChecker
           command: |
             source /home/circleci/codechecker/venv/bin/activate
             cd ext
-            for f in `ls *.7z`; do 7za x "$f"; done
             cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
             CodeChecker check -b "make" --ctu --enable sensitive --output ./reports 
       - store_artifacts:
