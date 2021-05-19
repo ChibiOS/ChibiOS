@@ -631,8 +631,15 @@ void adc_lld_start(ADCDriver *adcp) {
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
 
+#if defined(STM32_ADC12_CLOCK)
       osalDbgAssert(STM32_ADC12_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
+#elif defined(STM32_ADC123_CLOCK)
+      osalDbgAssert(STM32_ADC123_CLOCK <= STM32_ADCCLK_MAX,
+                    "invalid clock frequency");
+#else
+#error "missing clock macro"
+#endif
 
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC1_DMA_STREAM,
                                      STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
