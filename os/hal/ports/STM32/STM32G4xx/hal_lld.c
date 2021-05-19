@@ -65,7 +65,7 @@ const halclkcfg_t hal_clkcfg_reset = {
  * @brief   Default clock configuration.
  */
 const halclkcfg_t hal_clkcfg_default = {
-  .pwr_cr1              = STM32_VOS_RANGE1,
+  .pwr_cr1              = STM32_VOS_RANGE1 | PWR_CR1_DBP,
   .pwr_cr2              = STM32_PWR_CR2,
   .pwr_cr3              = STM32_PWR_CR3,
   .pwr_cr4              = STM32_PWR_CR4,
