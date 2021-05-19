@@ -29,7 +29,7 @@ jobs:
             cd ext
             for f in `ls *.7z`; do 7za x "$f"; done
             cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
-            CodeChecker check -b "make" --output ./reports --enable sensitive --ctu
+            CodeChecker check -b "make" --ctu --enable sensitive --output ./reports 
       - store_artifacts:
           path: ./demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB/reports
 
