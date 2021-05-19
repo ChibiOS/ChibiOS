@@ -709,25 +709,33 @@
 /* ADC clock source checks.*/
 #if defined(STM32F3XX)
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC12_CLOCK               STM32_ADC12CLK
+#define STM32_ADC1_CLOCK                STM32_ADC12CLK
+#define STM32_ADC2_CLOCK                STM32_ADC12CLK
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 1)
+#define STM32_ADC2_CLOCK                (STM32_HCLK / 1)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 2)
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 2)
+#define STM32_ADC2_CLOCK                (STM32_HCLK / 2)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 4)
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 4)
+#define STM32_ADC2_CLOCK                (STM32_HCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
 #endif
 
 #if STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC34_CLOCK               STM32_ADC34CLK
+#define STM32_ADC3_CLOCK                STM32_ADC34CLK
+#define STM32_ADC4_CLOCK                STM32_ADC34CLK
 #elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC34_CLOCK               (STM32_HCLK / 1)
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 1)
+#define STM32_ADC4_CLOCK                (STM32_HCLK / 1)
 #elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC34_CLOCK               (STM32_HCLK / 2)
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 2)
+#define STM32_ADC4_CLOCK                (STM32_HCLK / 2)
 #elif STM32_ADC_ADC34_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC34_CLOCK               (STM32_HCLK / 4)
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 4)
+#define STM32_ADC4_CLOCK                (STM32_HCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC34_CLOCK_MODE"
 #endif
@@ -735,13 +743,21 @@
 
 #if defined(STM32L4XX) || defined(STM32L4XXP)
 #if STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC123_CLOCK              (STM32_ADCCLK / ADC123_PRESC_VALUE)
+#define STM32_ADC1_CLOCK                (STM32_ADCCLK / ADC123_PRESC_VALUE)
+#define STM32_ADC2_CLOCK                (STM32_ADCCLK / ADC123_PRESC_VALUE)
+#define STM32_ADC3_CLOCK                (STM32_ADCCLK / ADC123_PRESC_VALUE)
 #elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC123_CLOCK              (STM32_ADCCLK / 1)
+#define STM32_ADC1_CLOCK                (STM32_ADCCLK / 1)
+#define STM32_ADC2_CLOCK                (STM32_ADCCLK / 1)
+#define STM32_ADC3_CLOCK                (STM32_ADCCLK / 1)
 #elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC123_CLOCK              (STM32_ADCCLK / 2)
+#define STM32_ADC1_CLOCK                (STM32_ADCCLK / 2)
+#define STM32_ADC2_CLOCK                (STM32_ADCCLK / 2)
+#define STM32_ADC3_CLOCK                (STM32_ADCCLK / 2)
 #elif STM32_ADC_ADC123_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC123_CLOCK              (STM32_ADCCLK / 4)
+#define STM32_ADC1_CLOCK                (STM32_ADCCLK / 4)
+#define STM32_ADC2_CLOCK                (STM32_ADCCLK / 4)
+#define STM32_ADC3_CLOCK                (STM32_ADCCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC123_CLOCK_MODE"
 #endif
@@ -749,25 +765,37 @@
 
 #if defined(STM32G4XX)
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC12_CLOCK               (STM32_ADC12CLK / ADC12_PRESC_VALUE)
+#define STM32_ADC1_CLOCK                (STM32_ADC12CLK / ADC12_PRESC_VALUE)
+#define STM32_ADC2_CLOCK                (STM32_ADC12CLK / ADC12_PRESC_VALUE)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 1)
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 1)
+#define STM32_ADC2_CLOCK                (STM32_HCLK / 1)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 2)
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 2)
+#define STM32_ADC2_CLOCK                (STM32_HCLK / 2)
 #elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC12_CLOCK               (STM32_HCLK / 4)
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 4)
+#define STM32_ADC2_CLOCK                (STM32_HCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
 #endif
 
 #if STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC345_CLOCK              (STM32_ADC345CLK / ADC345_PRESC_VALUE)
+#define STM32_ADC3_CLOCK                (STM32_ADC345CLK / ADC345_PRESC_VALUE)
+#define STM32_ADC4_CLOCK                (STM32_ADC345CLK / ADC345_PRESC_VALUE)
+#define STM32_ADC5_CLOCK                (STM32_ADC345CLK / ADC345_PRESC_VALUE)
 #elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC345_CLOCK              (STM32_HCLK / 1)
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 1)
+#define STM32_ADC4_CLOCK                (STM32_HCLK / 1)
+#define STM32_ADC5_CLOCK                (STM32_HCLK / 1)
 #elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC345_CLOCK              (STM32_HCLK / 2)
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 2)
+#define STM32_ADC4_CLOCK                (STM32_HCLK / 2)
+#define STM32_ADC5_CLOCK                (STM32_HCLK / 2)
 #elif STM32_ADC_ADC345_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC345_CLOCK              (STM32_HCLK / 4)
+#define STM32_ADC3_CLOCK                (STM32_HCLK / 4)
+#define STM32_ADC4_CLOCK                (STM32_HCLK / 4)
+#define STM32_ADC5_CLOCK                (STM32_HCLK / 4)
 #else
 #error "invalid clock mode selected for STM32_ADC_ADC345_CLOCK_MODE"
 #endif
