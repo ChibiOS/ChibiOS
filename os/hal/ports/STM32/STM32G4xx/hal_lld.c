@@ -405,6 +405,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   return false;
 }
+
 /**
  * @brief   Switches to a different clock configuration.
  *

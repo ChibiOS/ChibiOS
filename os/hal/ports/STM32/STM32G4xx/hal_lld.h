@@ -1498,6 +1498,15 @@
 #define STM32_USBCLK                STM32_48CLK
 
 /**
+ * @brief   Voltage boost settings.
+ */
+#if (STM32_SYSCLK > STM32_SYSCLK_MAX_NOBOOST) || defined(__DOXYGEN__)
+#define STM32_CR5BITS               0
+#else
+#define STM32_CR5BITS               PWR_CR5_R1MODE
+#endif
+
+/**
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
@@ -1529,13 +1538,6 @@
 
 #else
   #define STM32_FLASHBITS           FLASH_ACR_LATENCY_8WS
-#endif
-
-/* Frequency-dependent settings for PWR_CR5.*/
-#if STM32_SYSCLK > STM32_SYSCLK_MAX_NOBOOST
-#define STM32_CR5BITS               0
-#else
-#define STM32_CR5BITS               PWR_CR5_R1MODE
 #endif
 
 /*===========================================================================*/
