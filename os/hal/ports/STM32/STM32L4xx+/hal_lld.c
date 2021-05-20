@@ -513,6 +513,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* If the clock source is not MSI then we switch to MSI and reset some
      other relevant registers to their default value.*/
   if ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_MSI) {
+
     /* Making sure MSI is activated and in use.*/
     msi_reset();
 
