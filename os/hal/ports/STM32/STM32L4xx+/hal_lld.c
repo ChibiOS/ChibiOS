@@ -147,8 +147,7 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
  * @brief   Type of a structure representing system limits.
  */
 typedef struct {
-  halfreq_t     sysclk_max_boost;
-  halfreq_t     sysclk_max_noboost;
+  halfreq_t     sysclk_max;
   halfreq_t     pllin_max;
   halfreq_t     pllin_min;
   halfreq_t     pllvco_max;
@@ -163,11 +162,30 @@ typedef struct {
 } system_limits_t;
 
 /**
- * @brief   System limits for VOS RANGE1.
+ * @brief   System limits for VOS range 1 with boost.
  */
-static const system_limits_t vos_range1 = {
-  .sysclk_max_boost     = STM32_VOS1_SYSCLK_MAX,
-  .sysclk_max_noboost   = STM32_VOS1_SYSCLK_MAX_NOBOOST,
+static const system_limits_t vos_range1_boost = {
+  .sysclk_max           = STM32_BOOST_SYSCLK_MAX,
+  .pllin_max            = STM32_BOOST_PLLIN_MAX,
+  .pllin_min            = STM32_BOOST_PLLIN_MIN,
+  .pllvco_max           = STM32_BOOST_PLLVCO_MAX,
+  .pllvco_min           = STM32_BOOST_PLLVCO_MIN,
+  .pllp_max             = STM32_BOOST_PLLP_MAX,
+  .pllp_min             = STM32_BOOST_PLLP_MIN,
+  .pllq_max             = STM32_BOOST_PLLQ_MAX,
+  .pllq_min             = STM32_BOOST_PLLQ_MIN,
+  .pllr_max             = STM32_BOOST_PLLR_MAX,
+  .pllr_min             = STM32_BOOST_PLLR_MIN,
+  .flash_thresholds     = {STM32_BOOST_0WS_THRESHOLD, STM32_BOOST_1WS_THRESHOLD,
+                           STM32_BOOST_2WS_THRESHOLD, STM32_BOOST_3WS_THRESHOLD,
+                           STM32_BOOST_4WS_THRESHOLD, STM32_BOOST_5WS_THRESHOLD}
+};
+
+/**
+ * @brief   System limits for VOS range 1 without boost.
+ */
+static const system_limits_t vos_range1_noboost = {
+  .sysclk_max           = STM32_VOS1_SYSCLK_MAX,
   .pllin_max            = STM32_VOS1_PLLIN_MAX,
   .pllin_min            = STM32_VOS1_PLLIN_MIN,
   .pllvco_max           = STM32_VOS1_PLLVCO_MAX,
@@ -184,11 +202,10 @@ static const system_limits_t vos_range1 = {
 };
 
 /**
- * @brief   System limits for VOS RANGE2.
+ * @brief   System limits for VOS range 2.
  */
 static const system_limits_t vos_range2 = {
-  .sysclk_max_boost     = STM32_VOS2_SYSCLK_MAX,
-  .sysclk_max_noboost   = STM32_VOS2_SYSCLK_MAX_NOBOOST,
+  .sysclk_max           = STM32_VOS2_SYSCLK_MAX,
   .pllin_max            = STM32_VOS2_PLLIN_MAX,
   .pllin_min            = STM32_VOS2_PLLIN_MIN,
   .pllvco_max           = STM32_VOS2_PLLVCO_MAX,
@@ -308,10 +325,18 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* System limits based on desired VOS settings.*/
   if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_1) {
+    if ((ccp->pwr_cr1 & PWR_CR5_R1MODE) != 0U) {
+      return true;
+    }
     slp = &vos_range2;
   }
   else if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_0) {
-    slp = &vos_range1;
+    if ((ccp->pwr_cr1 & PWR_CR5_R1MODE) != 0U) {
+      slp = &vos_range1_boost;
+    }
+    else {
+      slp = &vos_range1_noboost;
+    }
   }
   else {
     return true;
@@ -389,15 +414,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     sysclk = 0U;
   }
 
-  if ((ccp->pwr_cr5 & PWR_CR5_R1MODE) == 0U) {
-    if (sysclk > slp->sysclk_max_boost) {
-      return true;
-    }
-  }
-  else {
-    if (sysclk > slp->sysclk_max_noboost) {
-      return true;
-    }
+  if (sysclk > slp->sysclk_max) {
+    return true;
   }
 
   /* HCLK frequency.*/

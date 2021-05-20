@@ -181,7 +181,7 @@ static const system_limits_t vos_range1_noboost = {
 };
 
 /**
- * @brief   System limits for VOS RANGE2.
+ * @brief   System limits for VOS range 2.
  */
 static const system_limits_t vos_range2 = {
   .sysclk_max           = STM32_VOS2_SYSCLK_MAX,
