@@ -31,7 +31,7 @@
 /**
  * @brief   Number of thresholds in the wait states array.
  */
-#define STM32_WS_THRESHOLDS             9
+#define STM32_WS_THRESHOLDS             5
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -57,8 +57,9 @@ const halclkcfg_t hal_clkcfg_reset = {
   .rcc_cr               = RCC_CR_HSIKERON | RCC_CR_HSION,
   .rcc_cfgr             = RCC_CFGR_SW_HSI,
   .rcc_pllcfgr          = 0U,
+  .rcc_crrcr            = 0U,
   .flash_acr            = FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN   |
-                          FLASH_ACR_ICEN     | FLASH_ACR_LATENCY_1WS
+                          FLASH_ACR_ICEN     | FLASH_ACR_LATENCY_0WS
 };
 
 /**
@@ -89,6 +90,11 @@ const halclkcfg_t hal_clkcfg_default = {
                           STM32_PLLQEN  | STM32_PLLP   |
                           STM32_PLLPEN  | STM32_PLLN   |
                           STM32_PLLM    | STM32_PLLSRC,
+#if STM32_HSI48_ENABLED
+  .rcc_crrcr            = RCC_CRRCR_HSI48ON,
+#else
+  .rcc_crrcr            = 0U,
+#endif
   .flash_acr            = FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN   |
                           FLASH_ACR_ICEN     | FLASH_ACR_PRFTEN |
                           STM32_FLASHBITS
@@ -120,8 +126,7 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
  * @brief   Type of a structure representing system limits.
  */
 typedef struct {
-  halfreq_t     sysclk_max_boost;
-  halfreq_t     sysclk_max_noboost;
+  halfreq_t     sysclk_max;
   halfreq_t     pllin_max;
   halfreq_t     pllin_min;
   halfreq_t     pllvco_max;
@@ -136,11 +141,30 @@ typedef struct {
 } system_limits_t;
 
 /**
- * @brief   System limits for VOS RANGE1.
+ * @brief   System limits for VOS range 1 with boost.
  */
-static const system_limits_t vos_range1 = {
-  .sysclk_max_boost     = STM32_VOS1_SYSCLK_MAX,
-  .sysclk_max_noboost   = STM32_VOS1_SYSCLK_MAX_NOBOOST,
+static const system_limits_t vos_range1_boost = {
+  .sysclk_max           = STM32_BOOST_SYSCLK_MAX,
+  .pllin_max            = STM32_BOOST_PLLIN_MAX,
+  .pllin_min            = STM32_BOOST_PLLIN_MIN,
+  .pllvco_max           = STM32_BOOST_PLLVCO_MAX,
+  .pllvco_min           = STM32_BOOST_PLLVCO_MIN,
+  .pllp_max             = STM32_BOOST_PLLP_MAX,
+  .pllp_min             = STM32_BOOST_PLLP_MIN,
+  .pllq_max             = STM32_BOOST_PLLQ_MAX,
+  .pllq_min             = STM32_BOOST_PLLQ_MIN,
+  .pllr_max             = STM32_BOOST_PLLR_MAX,
+  .pllr_min             = STM32_BOOST_PLLR_MIN,
+  .flash_thresholds     = {STM32_BOOST_0WS_THRESHOLD, STM32_BOOST_1WS_THRESHOLD,
+                           STM32_BOOST_2WS_THRESHOLD, STM32_BOOST_3WS_THRESHOLD,
+                           STM32_BOOST_4WS_THRESHOLD}
+};
+
+/**
+ * @brief   System limits for VOS range 1 without boost.
+ */
+static const system_limits_t vos_range1_noboost = {
+  .sysclk_max           = STM32_VOS1_SYSCLK_MAX,
   .pllin_max            = STM32_VOS1_PLLIN_MAX,
   .pllin_min            = STM32_VOS1_PLLIN_MIN,
   .pllvco_max           = STM32_VOS1_PLLVCO_MAX,
@@ -153,17 +177,14 @@ static const system_limits_t vos_range1 = {
   .pllr_min             = STM32_VOS1_PLLR_MIN,
   .flash_thresholds     = {STM32_VOS1_0WS_THRESHOLD, STM32_VOS1_1WS_THRESHOLD,
                            STM32_VOS1_2WS_THRESHOLD, STM32_VOS1_3WS_THRESHOLD,
-                           STM32_VOS1_4WS_THRESHOLD, STM32_VOS1_5WS_THRESHOLD,
-                           STM32_VOS1_6WS_THRESHOLD, STM32_VOS1_7WS_THRESHOLD,
-                           STM32_VOS1_8WS_THRESHOLD}
+                           STM32_VOS1_4WS_THRESHOLD}
 };
 
 /**
  * @brief   System limits for VOS RANGE2.
  */
 static const system_limits_t vos_range2 = {
-  .sysclk_max_boost     = STM32_VOS2_SYSCLK_MAX,
-  .sysclk_max_noboost   = STM32_VOS2_SYSCLK_MAX_NOBOOST,
+  .sysclk_max           = STM32_VOS2_SYSCLK_MAX,
   .pllin_max            = STM32_VOS2_PLLIN_MAX,
   .pllin_min            = STM32_VOS2_PLLIN_MIN,
   .pllvco_max           = STM32_VOS2_PLLVCO_MAX,
@@ -176,9 +197,7 @@ static const system_limits_t vos_range2 = {
   .pllr_min             = STM32_VOS2_PLLR_MIN,
   .flash_thresholds     = {STM32_VOS2_0WS_THRESHOLD, STM32_VOS2_1WS_THRESHOLD,
                            STM32_VOS2_2WS_THRESHOLD, STM32_VOS2_3WS_THRESHOLD,
-                           STM32_VOS2_4WS_THRESHOLD, STM32_VOS2_5WS_THRESHOLD,
-                           STM32_VOS2_6WS_THRESHOLD, STM32_VOS2_7WS_THRESHOLD,
-                           STM32_VOS2_8WS_THRESHOLD}
+                           STM32_VOS2_4WS_THRESHOLD}
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -211,10 +230,18 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* System limits based on desired VOS settings.*/
   if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_1) {
+    if ((ccp->pwr_cr1 & PWR_CR5_R1MODE) != 0U) {
+      return true;
+    }
     slp = &vos_range2;
   }
   else if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_0) {
-    slp = &vos_range1;
+    if ((ccp->pwr_cr1 & PWR_CR5_R1MODE) != 0U) {
+      slp = &vos_range1_boost;
+    }
+    else {
+      slp = &vos_range1_noboost;
+    }
   }
   else {
     return true;
@@ -320,15 +347,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     sysclk = 0U;
   }
 
-  if ((ccp->pwr_cr5 & PWR_CR5_R1MODE) == 0U) {
-    if (sysclk > slp->sysclk_max_boost) {
-      return true;
-    }
-  }
-  else {
-    if (sysclk > slp->sysclk_max_noboost) {
-      return true;
-    }
+  if (sysclk > slp->sysclk_max) {
+    return true;
   }
 
   /* HCLK frequency.*/
@@ -425,9 +445,6 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
   /* Restoring default PWR settings related clocks and sleep modes.*/
   PWR->CR1 = PWR_CR1_VOS_0;
-  PWR->CR2 = 0U;
-  PWR->CR3 = PWR_CR3_EIWF;
-  PWR->CR4 = 0U;
 
   /* Waiting for all regulator status bits to be cleared, this means that
      power levels are stable.*/
@@ -435,35 +452,49 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
     /* Waiting for the regulator to be ready.*/
   }
 
-  /* Making sure HSI16 is activated.*/
-  hsi16_enable();
+  /* If the clock source is not HSI then we switch to HSI and reset some
+     other relevant registers to their default value.*/
+  if ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI) {
 
-  /* Disabling boost mode.*/
-  PWR->CR5 = PWR_CR5_R1MODE;
+    /* Making sure HSI is activated and in use.*/
+    hsi16_reset();
 
-  /* Switching to the HSI oscillator.*/
-  RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW_Msk) | RCC_CFGR_SW_HSI;
-  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI) {
-    /* Waiting for clock switch.*/
+    /* Resetting flash ACR settings to the default value.*/
+    FLASH->ACR = 0x00040600U;
+
+    /* Resetting all other clock sources and PLLs.*/
+    RCC->CRRCR = 0U;
+    RCC->CR    = 0x00000063U;
+    while ((RCC->CR & RCC_CR_HSERDY) != 0U) {
+      /* Waiting for oscillators to shut down.*/
+    }
+
+    /* Disabling boost mode.*/
+    PWR->CR5 = PWR_CR5_R1MODE;
   }
-
-  /* Resetting flash ACR settings to the default value.*/
-  FLASH->ACR = 0x00040601U;
 
   /* HSE setup, if required, before starting the PLL.*/
   if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
     hse_enable();
   }
 
+  /* HSI48 setup, if required, before starting the PLL.*/
+  if ((ccp->rcc_crrcr & RCC_CRRCR_HSI48ON) != 0U) {
+    hsi48_enable();
+  }
+
   /* PLL setup.*/
   RCC->PLLCFGR = ccp->rcc_pllcfgr;
 
-  /* HSI, HSE, PLL enabled if specified.*/
+  /* PLLs enabled if specified.*/
   RCC->CR =  ccp->rcc_cr;
 
   /* PLL activation polling if required.*/
-  if ((ccp->rcc_cr & RCC_CR_PLLON) != 0U) {
-    pll_wait_lock();
+  while (true) {
+    if (((ccp->rcc_cr & RCC_CR_PLLON) != 0U) && pll_not_locked()) {
+      continue;
+    }
+    break;
   }
 
   /* MCO and bus dividers first.*/
@@ -479,10 +510,19 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   PWR->CR4 = ccp->pwr_cr4;
   PWR->CR5 = ccp->pwr_cr5;
 
-  /* Wait on LPR bit clear.*/
+  /* Waiting for the correct regulator state.*/
   if ((ccp->pwr_cr1 & PWR_CR1_LPR) == 0U) {
+    /* Main mode selected.*/
+
     while ((PWR->SR2 & PWR_SR2_REGLPF) != 0U) {
-      /* Waiting for the regulator to be ready.*/
+      /* Waiting for the regulator to be in main mode.*/
+    }
+  }
+  else {
+    /* Low power mode selected.*/
+
+    while ((PWR->SR2 & PWR_SR2_REGLPF) == 0U) {
+      /* Waiting for the regulator to be in low power mode.*/
     }
   }
 

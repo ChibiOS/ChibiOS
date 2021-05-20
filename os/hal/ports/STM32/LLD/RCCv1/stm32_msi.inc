@@ -180,7 +180,7 @@ __STATIC_INLINE void msi_reset(void) {
   RCC->CR = (RCC->CR & ~RCC_CR_MSIRANGE_Msk) | RCC_CR_MSIRANGE_6;
 
   /* Clocking from MSI, in case MSI was not the default source.*/
-  RCC->CFGR = 0U;
+  RCC->CFGR = RCC_CFGR_SW_MSI;
   while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_MSI) {
     /* Wait until MSI is selected.*/
   }

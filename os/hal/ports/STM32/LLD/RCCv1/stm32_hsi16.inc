@@ -70,6 +70,18 @@ __STATIC_INLINE void hsi16_disable(void) {
   RCC->CR &= ~RCC_CR_HSION;
 }
 
+__STATIC_INLINE void hsi16_reset(void) {
+
+  /* Making sure HSI is active and ready.*/
+  hsi16_enable();
+
+  /* Clocking from HSI, in case HSI was not the default source.*/
+  RCC->CFGR = RCC_CFGR_SW_HSI;
+  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI) {
+    /* Wait until HSI is selected.*/
+  }
+}
+
 __STATIC_INLINE void hsi16_init(void) {
 
 #if STM32_HSI16_ENABLED
