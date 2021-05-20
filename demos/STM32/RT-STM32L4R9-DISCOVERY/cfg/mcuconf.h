@@ -43,9 +43,11 @@
  * HAL driver system settings.
  */
 #define STM32_NO_INIT                       FALSE
+#define STM32_CLOCK_DYNAMIC                 FALSE
 #define STM32_VOS                           STM32_VOS_RANGE1
-#define STM32_PVD_ENABLE                    FALSE
-#define STM32_PLS                           STM32_PLS_LEV0
+#define STM32_PWR_CR2                       (PWR_CR2_PLS_LEV0 | PWR_CR2_IOSV)
+#define STM32_PWR_CR3                       (PWR_CR3_EIWF)
+#define STM32_PWR_CR4                       (0U)
 #define STM32_HSI16_ENABLED                 FALSE
 #define STM32_HSI48_ENABLED                 FALSE
 #define STM32_LSI_ENABLED                   TRUE
