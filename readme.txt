@@ -75,7 +75,7 @@
 
 *** Next ***
 - NEW: STM32 ADCv3, USARTv2, USARTv3, USBv1 updated for dynamic clocking.
-- NEW: Dynamic support implemented for STM32G4xx.
+- NEW: Dynamic support implemented for STM32G4, STM32L4+.
 - NEW: Dynamic clocks support in HAL.
 - NEW: Reload feature added to RT virtual timers.
 - NEW: Upgraded the clock initialization for STM32G0, STM32L4 and STM32L4++

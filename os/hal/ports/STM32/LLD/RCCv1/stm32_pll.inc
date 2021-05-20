@@ -319,9 +319,14 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_INLINE bool pll_not_locked(void) {
+
+  return (bool)((RCC->CR & RCC_CR_PLLRDY) == 0U);
+}
+
 __STATIC_INLINE void pll_wait_lock(void) {
 
-  while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {
+  while (pll_not_locked()) {
     /* Waiting for PLL lock.*/
   }
 }

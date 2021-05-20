@@ -323,6 +323,18 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_INLINE bool pllsai1_not_locked(void) {
+
+  return (bool)((RCC->CR & RCC_CR_PLLSAI1RDY) == 0U);
+}
+
+__STATIC_INLINE void pllsai1_wait_lock(void) {
+
+  while (pllsai1_not_locked()) {
+    /* Waiting for PLLSAI1 lock.*/
+  }
+}
+
 __STATIC_INLINE void pllsai1_init(void) {
 
 #if STM32_ACTIVATE_PLLSAI1

@@ -61,13 +61,24 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_INLINE void hsi48_enable(void) {
+
+  RCC->CRRCR |= RCC_CRRCR_HSI48ON;
+  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0U) {
+    /* Waiting for HSI48 activation.*/
+  }
+}
+
+__STATIC_INLINE void hsi48_disable(void) {
+
+  RCC->CRRCR &= ~RCC_CRRCR_HSI48ON;
+}
+
 __STATIC_INLINE void hsi48_init(void) {
 
 #if STM32_HSI48_ENABLED
   /* HSI activation.*/
-  RCC->CRRCR |= RCC_CRRCR_HSI48ON;
-  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0U) {
-  }
+  hsi48_enable();
 #endif
 }
 

@@ -167,12 +167,17 @@
 
 __STATIC_INLINE void msi_reset(void) {
 
-  /* Resetting to the MSI clock in case we come here after an initialization,
-     because a debugger for example.*/
-  RCC->CR = RCC_CR_MSION;
+  /* Making sure MSI is active and ready.*/
+  RCC->CR |= RCC_CR_MSION;
   while ((RCC->CR & RCC_CR_MSIRDY) == 0U) {
     /* Wait until MSI is stable.*/
   }
+
+  /* Resetting MSI defaults.
+     Note from RM0432: MSIRANGE can be modified when MSI is OFF (MSION=0)
+     or when MSI is ready (MSIRDY=1). MSIRANGE must NOT be modified when
+     MSI is ON and NOT ready (MSION=1 and MSIRDY=0).*/
+  RCC->CR = (RCC->CR & ~RCC_CR_MSIRANGE_Msk) | RCC_CR_MSIRANGE_6;
 
   /* Clocking from MSI, in case MSI was not the default source.*/
   RCC->CFGR = 0U;

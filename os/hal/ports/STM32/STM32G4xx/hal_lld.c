@@ -139,42 +139,46 @@ typedef struct {
  * @brief   System limits for VOS RANGE1.
  */
 static const system_limits_t vos_range1 = {
-  .sysclk_max_boost     = 170000000U,
-  .sysclk_max_noboost   = 150000000U,
-  .pllin_max            =  16000000U,
-  .pllin_min            =   2660000U,
-  .pllvco_max           = 344000000U,
-  .pllvco_min           =  96000000U,
-  .pllp_max             = 170000000U,
-  .pllp_min             =   2064500U,
-  .pllq_max             = 170000000U,
-  .pllq_min             =   8000000U,
-  .pllr_max             = 170000000U,
-  .pllr_min             =   8000000U,
-  .flash_thresholds     = { 20000000U,  40000000U,  60000000U,  80000000U,
-                           100000000U, 120000000U, 140000000U, 160000000U,
-                           170000000U}
+  .sysclk_max_boost     = STM32_VOS1_SYSCLK_MAX,
+  .sysclk_max_noboost   = STM32_VOS1_SYSCLK_MAX_NOBOOST,
+  .pllin_max            = STM32_VOS1_PLLIN_MAX,
+  .pllin_min            = STM32_VOS1_PLLIN_MIN,
+  .pllvco_max           = STM32_VOS1_PLLVCO_MAX,
+  .pllvco_min           = STM32_VOS1_PLLVCO_MIN,
+  .pllp_max             = STM32_VOS1_PLLP_MAX,
+  .pllp_min             = STM32_VOS1_PLLP_MIN,
+  .pllq_max             = STM32_VOS1_PLLQ_MAX,
+  .pllq_min             = STM32_VOS1_PLLQ_MIN,
+  .pllr_max             = STM32_VOS1_PLLR_MAX,
+  .pllr_min             = STM32_VOS1_PLLR_MIN,
+  .flash_thresholds     = {STM32_VOS1_0WS_THRESHOLD, STM32_VOS1_1WS_THRESHOLD,
+                           STM32_VOS1_2WS_THRESHOLD, STM32_VOS1_3WS_THRESHOLD,
+                           STM32_VOS1_4WS_THRESHOLD, STM32_VOS1_5WS_THRESHOLD,
+                           STM32_VOS1_6WS_THRESHOLD, STM32_VOS1_7WS_THRESHOLD,
+                           STM32_VOS1_8WS_THRESHOLD}
 };
 
 /**
  * @brief   System limits for VOS RANGE2.
  */
 static const system_limits_t vos_range2 = {
-  .sysclk_max_boost     =         0U,
-  .sysclk_max_noboost   =  26000000U,
-  .pllin_max            =  16000000U,
-  .pllin_min            =   2660000U,
-  .pllvco_max           = 128000000U,
-  .pllvco_min           =  96000000U,
-  .pllp_max             =  26000000U,
-  .pllp_min             =   2064500U,
-  .pllq_max             =  26000000U,
-  .pllq_min             =   8000000U,
-  .pllr_max             =  26000000U,
-  .pllr_min             =   8000000U,
-  .flash_thresholds     = {  8000000U,  16000000U,  26000000U,         0U,
-                                   0U,         0U,         0U,         0U,
-                                   0U}
+  .sysclk_max_boost     = STM32_VOS2_SYSCLK_MAX,
+  .sysclk_max_noboost   = STM32_VOS2_SYSCLK_MAX_NOBOOST,
+  .pllin_max            = STM32_VOS2_PLLIN_MAX,
+  .pllin_min            = STM32_VOS2_PLLIN_MIN,
+  .pllvco_max           = STM32_VOS2_PLLVCO_MAX,
+  .pllvco_min           = STM32_VOS2_PLLVCO_MIN,
+  .pllp_max             = STM32_VOS2_PLLP_MAX,
+  .pllp_min             = STM32_VOS2_PLLP_MIN,
+  .pllq_max             = STM32_VOS2_PLLQ_MAX,
+  .pllq_min             = STM32_VOS2_PLLQ_MIN,
+  .pllr_max             = STM32_VOS2_PLLR_MAX,
+  .pllr_min             = STM32_VOS2_PLLR_MIN,
+  .flash_thresholds     = {STM32_VOS2_0WS_THRESHOLD, STM32_VOS2_1WS_THRESHOLD,
+                           STM32_VOS2_2WS_THRESHOLD, STM32_VOS2_3WS_THRESHOLD,
+                           STM32_VOS2_4WS_THRESHOLD, STM32_VOS2_5WS_THRESHOLD,
+                           STM32_VOS2_6WS_THRESHOLD, STM32_VOS2_7WS_THRESHOLD,
+                           STM32_VOS2_8WS_THRESHOLD}
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -387,7 +391,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
   if (flashws >= STM32_WS_THRESHOLDS) {
     return true;
-  }  if (hclk > slp->flash_thresholds[flashws]) {
+  }
+  if (hclk > slp->flash_thresholds[flashws]) {
     return true;
   }
 

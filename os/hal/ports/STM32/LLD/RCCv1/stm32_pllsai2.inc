@@ -323,6 +323,22 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_INLINE bool pllsai2_not_locked(void) {
+
+  if ((RCC->CR & RCC_CR_PLLSAI2ON) == 0U) {
+    /* Disabled, no need to lock.*/
+    return false;
+  }
+  return (bool)((RCC->CR & RCC_CR_PLLSAI2RDY) == 0U);
+}
+
+__STATIC_INLINE void pllsai2_wait_lock(void) {
+
+  while (pllsai2_not_locked()) {
+    /* Waiting for PLLSAI2 lock.*/
+  }
+}
+
 __STATIC_INLINE void pllsai2_init(void) {
 
 #if STM32_ACTIVATE_PLLSAI2
@@ -335,8 +351,7 @@ __STATIC_INLINE void pllsai2_init(void) {
   RCC->CR |= RCC_CR_PLLSAI2ON;
 
   /* Waiting for PLL lock.*/
-  while ((RCC->CR & RCC_CR_PLLSAI2RDY) == 0U)
-    ;
+  pllsai2_wait_lock();
 #endif
 }
 
