@@ -36,7 +36,8 @@
 /**
  * @brief   FLASH_ACR reset value.
  */
-#define STM32_FLASH_ACR_RESET           0x00000600U
+#define STM32_FLASH_ACR_RESET           (FLASH_ACR_DCEN | FLASH_ACR_ICEN |  \
+                                         FLASH_ACR_LATENCY_0WS)
 
 /**
  * @brief   MSI range array size.
@@ -69,8 +70,7 @@ const halclkcfg_t hal_clkcfg_reset = {
   .rcc_pllsai1cfgr      = 0U,
   .rcc_pllsai2cfgr      = 0U,
   .rcc_crrcr            = 0U,
-  .flash_acr            = FLASH_ACR_DCEN | FLASH_ACR_ICEN |
-                          FLASH_ACR_LATENCY_0WS
+  .flash_acr            = STM32_FLASH_ACR_RESET
 };
 
 /**
