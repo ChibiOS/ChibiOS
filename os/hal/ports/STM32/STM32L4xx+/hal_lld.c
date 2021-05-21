@@ -537,6 +537,9 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
     /* Resetting flash ACR settings to the default value.*/
     FLASH->ACR = 0x00000600U;
+    while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != 0U) {
+      /* Waiting for flash wait states setup.*/
+    }
 
     /* Resetting all other clock sources and PLLs.*/
     RCC->CRRCR = 0U;
