@@ -371,7 +371,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* MSI clock.*/
-  msiidx = (uint8_t)((ccp->rcc_cr & RCC_CR_MSIRANGE) >> RCC_CR_MSIRANGE_Pos);
+  msiidx = (ccp->rcc_cr & RCC_CR_MSIRANGE) >> RCC_CR_MSIRANGE_Pos;
   if (msiidx >= STM32_MSIRANGE_ARRAY_SIZE) {
     return true;
   }
