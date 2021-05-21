@@ -486,8 +486,8 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* PLL setup.*/
   RCC->PLLCFGR = ccp->rcc_pllcfgr;
 
-  /* PLLs enabled if specified.*/
-  RCC->CR =  ccp->rcc_cr;
+  /* PLLs enabled if specified, note, HSI16 is kept running.*/
+  RCC->CR =  ccp->rcc_cr | RCC_CR_HSION;
 
   /* PLL activation polling if required.*/
   while (true) {
@@ -530,6 +530,11 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW_Msk) | (ccp->rcc_cfgr & RCC_CFGR_SW_Msk);
   while ((RCC->CFGR & RCC_CFGR_SWS) != ((ccp->rcc_cfgr & RCC_CFGR_SW_Msk) << RCC_CFGR_SWS_Pos)) {
     /* Waiting for clock switch.*/
+  }
+
+  /* If HSI16 is not in configuration then it is finally shut down.*/
+  if ((ccp->rcc_cr & RCC_CR_HSION) == 0U) {
+    hsi16_disable();
   }
 
   return false;

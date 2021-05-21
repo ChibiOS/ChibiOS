@@ -165,19 +165,29 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void msi_reset(void) {
+__STATIC_INLINE void msi_enable(void) {
 
-  /* Making sure MSI is active and ready.*/
   RCC->CR |= RCC_CR_MSION;
   while ((RCC->CR & RCC_CR_MSIRDY) == 0U) {
     /* Wait until MSI is stable.*/
   }
+}
+
+__STATIC_INLINE void msi_disable(void) {
+
+  RCC->CR &= ~RCC_CR_MSION;
+}
+
+__STATIC_INLINE void msi_reset(void) {
 
   /* Resetting MSI defaults.
      Note from RM0432: MSIRANGE can be modified when MSI is OFF (MSION=0)
      or when MSI is ready (MSIRDY=1). MSIRANGE must NOT be modified when
      MSI is ON and NOT ready (MSION=1 and MSIRDY=0).*/
   RCC->CR = (RCC->CR & ~RCC_CR_MSIRANGE_Msk) | RCC_CR_MSIRANGE_6;
+
+  /* Making sure MSI is active and ready.*/
+  msi_enable();
 
   /* Clocking from MSI, in case MSI was not the default source.*/
   RCC->CFGR = RCC_CFGR_SW_MSI;
