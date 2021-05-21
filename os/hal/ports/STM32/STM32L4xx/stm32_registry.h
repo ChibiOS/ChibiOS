@@ -34,270 +34,6 @@
  * @{
  */
 
-/* RCC attributes.*/
-#define STM32_RCC_HAS_HSI16                 TRUE
-/*#define STM32_RCC_HAS_HSI48                 TRUE*/ /* See below, it changes.*/
-#define STM32_RCC_HAS_MSI                   TRUE
-#define STM32_RCC_HAS_LSI                   TRUE
-#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
-#define STM32_RCC_HAS_LSE                   TRUE
-#define STM32_RCC_HAS_HSE                   TRUE
-
-#define STM32_RCC_HAS_PLL                   TRUE
-#define STM32_RCC_PLL_HAS_P                 TRUE
-#define STM32_RCC_PLL_HAS_Q                 TRUE
-#define STM32_RCC_PLL_HAS_R                 TRUE
-
-#define STM32_RCC_HAS_PLLSAI1               TRUE
-#define STM32_RCC_PLLSAI1_HAS_P             TRUE
-#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
-#define STM32_RCC_PLLSAI1_HAS_R             TRUE
-
-#define STM32_RCC_HAS_PLLSAI2               TRUE
-#define STM32_RCC_PLLSAI2_HAS_P             TRUE
-#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
-#define STM32_RCC_PLLSAI2_HAS_R             TRUE
-
-/*===========================================================================*/
-/* STM32L422xx                                                               */
-/*===========================================================================*/
-
-#if defined(STM32L422xx) || defined(__DOXYGEN__)
-
-
- /* Enabling RTC-related EXTI lines.*/
-#define STM32_RTC_ENABLE_ALL_EXTI() do {                                    \
-  extiEnableGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |                       \
-                   EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |                  \
-                   EXTI_MASK1(STM32_RTC_WKUP_EXTI),                         \
-                   EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);     \
-} while (false)
-
-/* Clearing EXTI interrupts. */
-#define STM32_RTC_CLEAR_ALL_EXTI() do {                                     \
-  extiClearGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |                        \
-                  EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |                   \
-                  EXTI_MASK1(STM32_RTC_WKUP_EXTI));                         \
-} while (false)
-
-/* Masks used to preserve state of RTC and TAMP register reserved bits. */
-#define STM32_RTC_CR_MASK                   0xE7FFFF7F
-#define STM32_RTC_PRER_MASK                 0x007F7FFF
-#define STM32_TAMP_CR1_MASK                 0x003C0003
-#define STM32_TAMP_CR2_MASK                 0x030300FF
-#define STM32_TAMP_FLTCR_MASK               0x000000FF
-#define STM32_TAMP_IER_MASK                 0x003C0003
-
-
-
-/* Clock attributes.*/
-#define STM32_RCC_HAS_HSI48                 TRUE
-
-/* ADC attributes.*/
-#define STM32_HAS_ADC1                      TRUE
-#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3))
-#define STM32_ADC1_DMA_CHN                  0x00000000
-
-#define STM32_HAS_ADC2                      TRUE
-#define STM32_ADC2_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 4))
-#define STM32_ADC2_DMA_CHN                  0x00000000
-
-#define STM32_HAS_ADC3                      FALSE
-#define STM32_HAS_ADC4                      FALSE
-
-/* CAN attributes.*/
-#define STM32_HAS_CAN1                      FALSE
-#define STM32_HAS_CAN2                      FALSE
-#define STM32_HAS_CAN3                      FALSE
-
-/* DAC attributes.*/
-#define STM32_HAS_DAC1_CH1                  FALSE
-#define STM32_HAS_DAC1_CH2                  FALSE
-#define STM32_HAS_DAC2_CH1                  FALSE
-#define STM32_HAS_DAC2_CH2                  FALSE
-
-/* DMA attributes.*/
-#define STM32_ADVANCED_DMA                  TRUE
-#define STM32_DMA_SUPPORTS_DMAMUX           FALSE
-#define STM32_DMA_SUPPORTS_CSELR            TRUE
-#define STM32_DMA1_NUM_CHANNELS             7
-#define STM32_DMA2_NUM_CHANNELS             7
-
-/* ETH attributes.*/
-#define STM32_HAS_ETH                       FALSE
-
-/* EXTI attributes.*/
-/* TODO à verifier */
-#define STM32_EXTI_NUM_LINES                40  
-#define STM32_EXTI_IMR1_MASK                0xFF820000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFFF87U
-
-/* Flash attributes.*/
-#define STM32_FLASH_NUMBER_OF_BANKS         1
-#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
-#define STM32_FLASH_SECTORS_PER_BANK        256 /* Maximum, can be redefined.*/
-#endif
-
-/* GPIO attributes.*/
-#define STM32_HAS_GPIOA                     TRUE
-#define STM32_HAS_GPIOB                     TRUE
-#define STM32_HAS_GPIOC                     TRUE
-#define STM32_HAS_GPIOD                     FALSE
-#define STM32_HAS_GPIOE                     FALSE
-#define STM32_HAS_GPIOF                     FALSE
-#define STM32_HAS_GPIOG                     FALSE
-#define STM32_HAS_GPIOH                     FALSE
-#define STM32_HAS_GPIOI                     FALSE
-#define STM32_HAS_GPIOJ                     FALSE
-#define STM32_HAS_GPIOK                     FALSE
-#define STM32_GPIO_EN_MASK                  (RCC_AHB2ENR_GPIOAEN |          \
-                                             RCC_AHB2ENR_GPIOBEN |          \
-                                             RCC_AHB2ENR_GPIOCEN)
-
-/* I2C attributes.*/
-#define STM32_HAS_I2C1                      TRUE
-#define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 7) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 6))
-#define STM32_I2C1_RX_DMA_CHN               0x03500000
-#define STM32_I2C1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 6) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 7))
-#define STM32_I2C1_TX_DMA_CHN               0x05300000
-
-#define STM32_HAS_I2C3                      TRUE
-#define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3))
-#define STM32_I2C3_RX_DMA_CHN               0x00000300
-#define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2))
-#define STM32_I2C3_TX_DMA_CHN               0x00000030
-
-#define STM32_HAS_I2C2                      FALSE
-#define STM32_HAS_I2C4                      FALSE
-
-/* QUADSPI attributes.*/
-#define STM32_HAS_QUADSPI1                  TRUE
-#define STM32_QUADSPI1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 5) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 7))
-#define STM32_QUADSPI1_DMA_CHN              0x03050000
-
-/* SDMMC attributes.*/
-#define STM32_HAS_SDMMC1                    FALSE
-#define STM32_HAS_SDMMC2                    FALSE
-
-/* SPI attributes.*/
-#define STM32_HAS_SPI1                      TRUE
-#define STM32_SPI1_SUPPORTS_I2S             FALSE
-#define STM32_SPI1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 3))
-#define STM32_SPI1_RX_DMA_CHN               0x00000410
-#define STM32_SPI1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 4))
-#define STM32_SPI1_TX_DMA_CHN               0x00004100
-
-#define STM32_HAS_SPI3                      FALSE
-#define STM32_HAS_SPI2                      FALSE
-#define STM32_HAS_SPI4                      FALSE
-#define STM32_HAS_SPI5                      FALSE
-#define STM32_HAS_SPI6                      FALSE
-
-/* TIM attributes.*/
-#define STM32_TIM_MAX_CHANNELS              6
-
-#define STM32_HAS_TIM1                      TRUE
-#define STM32_TIM1_IS_32BITS                FALSE
-#define STM32_TIM1_CHANNELS                 6
-
-#define STM32_HAS_TIM2                      TRUE
-#define STM32_TIM2_IS_32BITS                TRUE
-#define STM32_TIM2_CHANNELS                 4
-
-#define STM32_HAS_TIM6                      TRUE
-#define STM32_TIM6_IS_32BITS                FALSE
-#define STM32_TIM6_CHANNELS                 0
-
-#define STM32_HAS_TIM7                      TRUE
-#define STM32_TIM7_IS_32BITS                FALSE
-#define STM32_TIM7_CHANNELS                 0
-
-#define STM32_HAS_TIM15                     TRUE
-#define STM32_TIM15_IS_32BITS               FALSE
-#define STM32_TIM15_CHANNELS                2/* SPI attributes. */
-#define STM32_HAS_SPIR                      FALSE
-
-
-#define STM32_HAS_TIM16                     TRUE
-#define STM32_TIM16_IS_32BITS               FALSE
-#define STM32_TIM16_CHANNELS                2
-
-#define STM32_HAS_TIM3                      FALSE
-#define STM32_HAS_TIM4                      FALSE
-#define STM32_HAS_TIM5                      FALSE
-#define STM32_HAS_TIM8                      FALSE
-#define STM32_HAS_TIM9                      FALSE
-#define STM32_HAS_TIM10                     FALSE
-#define STM32_HAS_TIM11                     FALSE
-#define STM32_HAS_TIM12                     FALSE
-#define STM32_HAS_TIM13                     FALSE
-#define STM32_HAS_TIM14                     FALSE
-#define STM32_HAS_TIM17                     FALSE
-#define STM32_HAS_TIM18                     FALSE
-#define STM32_HAS_TIM19                     FALSE
-#define STM32_HAS_TIM20                     FALSE
-#define STM32_HAS_TIM21                     FALSE
-#define STM32_HAS_TIM22                     FALSE
-
-/* USART attributes.*/
-#define STM32_HAS_USART1                    TRUE
-#define STM32_USART1_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 7))
-#define STM32_USART1_RX_DMA_CHN             0x02020000
-#define STM32_USART1_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 4) |\
-                                             STM32_DMA_STREAM_ID_MSK(2, 6))
-#define STM32_USART1_TX_DMA_CHN             0x00202000
-
-#define STM32_HAS_USART2                    TRUE
-#define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 6))
-#define STM32_USART2_RX_DMA_CHN             0x00200000
-#define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 7))
-#define STM32_USART2_TX_DMA_CHN             0x02000000
-
-#define STM32_HAS_LPUART1                   TRUE
-
-#define STM32_HAS_USART3                    FALSE
-#define STM32_HAS_UART4                     FALSE
-#define STM32_HAS_UART5                     FALSE
-#define STM32_HAS_USART6                    FALSE
-#define STM32_HAS_UART7                     FALSE
-#define STM32_HAS_UART8                     FALSE
-
-/* USB attributes.*/
-#define STM32_HAS_USB                       TRUE
-#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
-#define STM32_USB_PMA_SIZE                  1024
-#define STM32_USB_HAS_BCDR                  TRUE
-
-#define STM32_HAS_OTG1                      FALSE
-#define STM32_HAS_OTG2                      FALSE
-
-/* IWDG attributes.*/
-#define STM32_HAS_IWDG                      TRUE
-#define STM32_IWDG_IS_WINDOWED              TRUE
-
-/* LTDC attributes.*/
-#define STM32_HAS_LTDC                      FALSE
-
-/* DMA2D attributes.*/
-#define STM32_HAS_DMA2D                     FALSE
-
-/* FSMC attributes.*/
-#define STM32_HAS_FSMC                      TRUE
-
-/* CRC attributes.*/
-#define STM32_HAS_CRC                       TRUE
-#define STM32_CRC_PROGRAMMABLE              TRUE
-
-#endif /* defined(STM32L422xx) */
-
 /*===========================================================================*/
 /* Common.                                                                   */
 /*===========================================================================*/
@@ -345,7 +81,28 @@
 #if defined(STM32L432xx) || defined(__DOXYGEN__)
 
 /* RCC attributes.*/
+#define STM32_RCC_HAS_HSI16                 TRUE
 #define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
+
+#define STM32_RCC_HAS_PLLSAI1               TRUE
+#define STM32_RCC_PLLSAI1_HAS_P             TRUE
+#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
+#define STM32_RCC_PLLSAI1_HAS_R             TRUE
+
+#define STM32_RCC_HAS_PLLSAI2               FALSE
+#define STM32_RCC_PLLSAI2_HAS_P             FALSE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -561,13 +318,292 @@
 #endif /* defined(STM32L432xx) */
 
 /*===========================================================================*/
+/* STM32L422xx                                                               */
+/*===========================================================================*/
+
+#if defined(STM32L422xx) || defined(__DOXYGEN__)
+
+ /* Enabling RTC-related EXTI lines.*/
+#define STM32_RTC_ENABLE_ALL_EXTI() do {                                    \
+  extiEnableGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |                       \
+                   EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |                  \
+                   EXTI_MASK1(STM32_RTC_WKUP_EXTI),                         \
+                   EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);     \
+} while (false)
+
+/* Clearing EXTI interrupts. */
+#define STM32_RTC_CLEAR_ALL_EXTI() do {                                     \
+  extiClearGroup1(EXTI_MASK1(STM32_RTC_ALARM_EXTI) |                        \
+                  EXTI_MASK1(STM32_RTC_TAMP_STAMP_EXTI) |                   \
+                  EXTI_MASK1(STM32_RTC_WKUP_EXTI));                         \
+} while (false)
+
+/* Masks used to preserve state of RTC and TAMP register reserved bits. */
+#define STM32_RTC_CR_MASK                   0xE7FFFF7F
+#define STM32_RTC_PRER_MASK                 0x007F7FFF
+#define STM32_TAMP_CR1_MASK                 0x003C0003
+#define STM32_TAMP_CR2_MASK                 0x030300FF
+#define STM32_TAMP_FLTCR_MASK               0x000000FF
+#define STM32_TAMP_IER_MASK                 0x003C0003
+
+/* RCC attributes.*/
+#define STM32_RCC_HAS_HSI16                 TRUE
+#define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
+
+#define STM32_RCC_HAS_PLLSAI1               FALSE
+#define STM32_RCC_PLLSAI1_HAS_P             FALSE
+#define STM32_RCC_PLLSAI1_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI1_HAS_R             FALSE
+
+#define STM32_RCC_HAS_PLLSAI2               FALSE
+#define STM32_RCC_PLLSAI2_HAS_P             FALSE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             FALSE
+
+/* ADC attributes.*/
+#define STM32_HAS_ADC1                      TRUE
+#define STM32_ADC1_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 1) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_ADC1_DMA_CHN                  0x00000000
+
+#define STM32_HAS_ADC2                      TRUE
+#define STM32_ADC2_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(1, 2) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_ADC2_DMA_CHN                  0x00000000
+
+#define STM32_HAS_ADC3                      FALSE
+#define STM32_HAS_ADC4                      FALSE
+
+/* CAN attributes.*/
+#define STM32_HAS_CAN1                      FALSE
+#define STM32_HAS_CAN2                      FALSE
+#define STM32_HAS_CAN3                      FALSE
+
+/* DAC attributes.*/
+#define STM32_HAS_DAC1_CH1                  FALSE
+#define STM32_HAS_DAC1_CH2                  FALSE
+#define STM32_HAS_DAC2_CH1                  FALSE
+#define STM32_HAS_DAC2_CH2                  FALSE
+
+/* DMA attributes.*/
+#define STM32_ADVANCED_DMA                  TRUE
+#define STM32_DMA_SUPPORTS_DMAMUX           FALSE
+#define STM32_DMA_SUPPORTS_CSELR            TRUE
+#define STM32_DMA1_NUM_CHANNELS             7
+#define STM32_DMA2_NUM_CHANNELS             7
+
+/* ETH attributes.*/
+#define STM32_HAS_ETH                       FALSE
+
+/* EXTI attributes.*/
+/* TODO à verifier */
+#define STM32_EXTI_NUM_LINES                40
+#define STM32_EXTI_IMR1_MASK                0xFF820000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFF87U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        256 /* Maximum, can be redefined.*/
+#endif
+
+/* GPIO attributes.*/
+#define STM32_HAS_GPIOA                     TRUE
+#define STM32_HAS_GPIOB                     TRUE
+#define STM32_HAS_GPIOC                     TRUE
+#define STM32_HAS_GPIOD                     FALSE
+#define STM32_HAS_GPIOE                     FALSE
+#define STM32_HAS_GPIOF                     FALSE
+#define STM32_HAS_GPIOG                     FALSE
+#define STM32_HAS_GPIOH                     FALSE
+#define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
+#define STM32_GPIO_EN_MASK                  (RCC_AHB2ENR_GPIOAEN |          \
+                                             RCC_AHB2ENR_GPIOBEN |          \
+                                             RCC_AHB2ENR_GPIOCEN)
+
+/* I2C attributes.*/
+#define STM32_HAS_I2C1                      TRUE
+#define STM32_I2C1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 7) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_I2C1_RX_DMA_CHN               0x03500000
+#define STM32_I2C1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 6) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 7))
+#define STM32_I2C1_TX_DMA_CHN               0x05300000
+
+#define STM32_HAS_I2C3                      TRUE
+#define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3))
+#define STM32_I2C3_RX_DMA_CHN               0x00000300
+#define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_I2C3_TX_DMA_CHN               0x00000030
+
+#define STM32_HAS_I2C2                      FALSE
+#define STM32_HAS_I2C4                      FALSE
+
+/* QUADSPI attributes.*/
+#define STM32_HAS_QUADSPI1                  TRUE
+#define STM32_QUADSPI1_DMA_MSK              (STM32_DMA_STREAM_ID_MSK(1, 5) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 7))
+#define STM32_QUADSPI1_DMA_CHN              0x03050000
+
+/* SDMMC attributes.*/
+#define STM32_HAS_SDMMC1                    FALSE
+#define STM32_HAS_SDMMC2                    FALSE
+
+/* SPI attributes.*/
+#define STM32_HAS_SPI1                      TRUE
+#define STM32_SPI1_SUPPORTS_I2S             FALSE
+#define STM32_SPI1_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_SPI1_RX_DMA_CHN               0x00000410
+#define STM32_SPI1_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_SPI1_TX_DMA_CHN               0x00004100
+
+#define STM32_HAS_SPI3                      FALSE
+#define STM32_HAS_SPI2                      FALSE
+#define STM32_HAS_SPI4                      FALSE
+#define STM32_HAS_SPI5                      FALSE
+#define STM32_HAS_SPI6                      FALSE
+
+/* TIM attributes.*/
+#define STM32_TIM_MAX_CHANNELS              6
+
+#define STM32_HAS_TIM1                      TRUE
+#define STM32_TIM1_IS_32BITS                FALSE
+#define STM32_TIM1_CHANNELS                 6
+
+#define STM32_HAS_TIM2                      TRUE
+#define STM32_TIM2_IS_32BITS                TRUE
+#define STM32_TIM2_CHANNELS                 4
+
+#define STM32_HAS_TIM6                      TRUE
+#define STM32_TIM6_IS_32BITS                FALSE
+#define STM32_TIM6_CHANNELS                 0
+
+#define STM32_HAS_TIM7                      TRUE
+#define STM32_TIM7_IS_32BITS                FALSE
+#define STM32_TIM7_CHANNELS                 0
+
+#define STM32_HAS_TIM15                     TRUE
+#define STM32_TIM15_IS_32BITS               FALSE
+#define STM32_TIM15_CHANNELS                2/* SPI attributes. */
+#define STM32_HAS_SPIR                      FALSE
+
+
+#define STM32_HAS_TIM16                     TRUE
+#define STM32_TIM16_IS_32BITS               FALSE
+#define STM32_TIM16_CHANNELS                2
+
+#define STM32_HAS_TIM3                      FALSE
+#define STM32_HAS_TIM4                      FALSE
+#define STM32_HAS_TIM5                      FALSE
+#define STM32_HAS_TIM8                      FALSE
+#define STM32_HAS_TIM9                      FALSE
+#define STM32_HAS_TIM10                     FALSE
+#define STM32_HAS_TIM11                     FALSE
+#define STM32_HAS_TIM12                     FALSE
+#define STM32_HAS_TIM13                     FALSE
+#define STM32_HAS_TIM14                     FALSE
+#define STM32_HAS_TIM17                     FALSE
+#define STM32_HAS_TIM18                     FALSE
+#define STM32_HAS_TIM19                     FALSE
+#define STM32_HAS_TIM20                     FALSE
+#define STM32_HAS_TIM21                     FALSE
+#define STM32_HAS_TIM22                     FALSE
+
+/* USART attributes.*/
+#define STM32_HAS_USART1                    TRUE
+#define STM32_USART1_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 5) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 7))
+#define STM32_USART1_RX_DMA_CHN             0x02020000
+#define STM32_USART1_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 4) |\
+                                             STM32_DMA_STREAM_ID_MSK(2, 6))
+#define STM32_USART1_TX_DMA_CHN             0x00202000
+
+#define STM32_HAS_USART2                    TRUE
+#define STM32_USART2_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 6))
+#define STM32_USART2_RX_DMA_CHN             0x00200000
+#define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 7))
+#define STM32_USART2_TX_DMA_CHN             0x02000000
+
+#define STM32_HAS_LPUART1                   TRUE
+
+#define STM32_HAS_USART3                    FALSE
+#define STM32_HAS_UART4                     FALSE
+#define STM32_HAS_UART5                     FALSE
+#define STM32_HAS_USART6                    FALSE
+#define STM32_HAS_UART7                     FALSE
+#define STM32_HAS_UART8                     FALSE
+
+/* USB attributes.*/
+#define STM32_HAS_USB                       TRUE
+#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
+#define STM32_USB_PMA_SIZE                  1024
+#define STM32_USB_HAS_BCDR                  TRUE
+
+#define STM32_HAS_OTG1                      FALSE
+#define STM32_HAS_OTG2                      FALSE
+
+/* IWDG attributes.*/
+#define STM32_HAS_IWDG                      TRUE
+#define STM32_IWDG_IS_WINDOWED              TRUE
+
+/* LTDC attributes.*/
+#define STM32_HAS_LTDC                      FALSE
+
+/* DMA2D attributes.*/
+#define STM32_HAS_DMA2D                     FALSE
+
+/* FSMC attributes.*/
+#define STM32_HAS_FSMC                      TRUE
+
+/* CRC attributes.*/
+#define STM32_HAS_CRC                       TRUE
+#define STM32_CRC_PROGRAMMABLE              TRUE
+
+#endif /* defined(STM32L422xx) */
+
+/*===========================================================================*/
 /* STM32L433xx, STM32L443xx.                                                 */
 /*===========================================================================*/
 
 #if defined(STM32L433xx) || defined(STM32L443xx) || defined(__DOXYGEN__)
 
 /* RCC attributes.*/
+#define STM32_RCC_HAS_HSI16                 TRUE
 #define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
+
+#define STM32_RCC_HAS_PLLSAI1               TRUE
+#define STM32_RCC_PLLSAI1_HAS_P             TRUE
+#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
+#define STM32_RCC_PLLSAI1_HAS_R             TRUE
+
+#define STM32_RCC_HAS_PLLSAI2               FALSE
+#define STM32_RCC_PLLSAI2_HAS_P             FALSE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -810,7 +846,28 @@
 #if defined(STM32L452xx) || defined(__DOXYGEN__)
 
 /* RCC attributes.*/
+#define STM32_RCC_HAS_HSI16                 TRUE
 #define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
+
+#define STM32_RCC_HAS_PLLSAI1               TRUE
+#define STM32_RCC_PLLSAI1_HAS_P             TRUE
+#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
+#define STM32_RCC_PLLSAI1_HAS_R             TRUE
+
+#define STM32_RCC_HAS_PLLSAI2               FALSE
+#define STM32_RCC_PLLSAI2_HAS_P             FALSE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1054,7 +1111,28 @@
 #if defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L486xx)
 
 /* RCC attributes.*/
+#define STM32_RCC_HAS_HSI16                 TRUE
 #define STM32_RCC_HAS_HSI48                 FALSE
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
+
+#define STM32_RCC_HAS_PLLSAI1               TRUE
+#define STM32_RCC_PLLSAI1_HAS_P             TRUE
+#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
+#define STM32_RCC_PLLSAI1_HAS_R             TRUE
+
+#define STM32_RCC_HAS_PLLSAI2               TRUE
+#define STM32_RCC_PLLSAI2_HAS_P             TRUE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -1334,7 +1412,28 @@
 #if defined(STM32L496xx) || defined(STM32L4A6xx)
 
 /* RCC attributes.*/
+#define STM32_RCC_HAS_HSI16                 TRUE
 #define STM32_RCC_HAS_HSI48                 FALSE
+#define STM32_RCC_HAS_MSI                   TRUE
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL                   TRUE
+#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_Q                 TRUE
+#define STM32_RCC_PLL_HAS_R                 TRUE
+
+#define STM32_RCC_HAS_PLLSAI1               TRUE
+#define STM32_RCC_PLLSAI1_HAS_P             TRUE
+#define STM32_RCC_PLLSAI1_HAS_Q             TRUE
+#define STM32_RCC_PLLSAI1_HAS_R             TRUE
+
+#define STM32_RCC_HAS_PLLSAI2               TRUE
+#define STM32_RCC_PLLSAI2_HAS_P             TRUE
+#define STM32_RCC_PLLSAI2_HAS_Q             FALSE
+#define STM32_RCC_PLLSAI2_HAS_R             TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
