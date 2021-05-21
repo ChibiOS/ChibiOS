@@ -50,11 +50,22 @@
 #if !defined(VT_STORM_CFG_ITERATIONS) || defined(__DOXYGEN__)
 #define VT_STORM_CFG_ITERATIONS             100
 #endif
+
+/**
+ * @brief   Minimum delay for each iteration.
+ */
+#if !defined(VT_STORM_CFG_MIN_DELAY) || defined(__DOXYGEN__)
+#define VT_STORM_CFG_MIN_DELAY              10
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (VT_STORM_CFG_MIN_DELAY < 5) || (VT_STORM_CFG_MIN_DELAY > 100)
+#error "invalid VT_STORM_CFG_MIN_DELAY value"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */

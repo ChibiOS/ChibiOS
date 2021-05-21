@@ -190,11 +190,12 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
   chprintf(cfg->out, "*** Test Board:   %s\r\n", BOARD_NAME);
 #endif
   chprintf(cfg->out, "***\r\n");
-  chprintf(cfg->out, "*** Randomize:    %d\r\n", VT_STORM_CFG_RANDOMIZE);
-  chprintf(cfg->out, "*** System Time:  %d\r\n", CH_CFG_ST_RESOLUTION);
-  chprintf(cfg->out, "*** Intervals:    %d\r\n", CH_CFG_INTERVALS_SIZE);
-  chprintf(cfg->out, "*** SysTick:      %d\r\n", CH_CFG_ST_FREQUENCY);
-  chprintf(cfg->out, "*** Delta:        %d\r\n", CH_CFG_ST_TIMEDELTA);
+  chprintf(cfg->out, "*** Randomize:     %d\r\n", VT_STORM_CFG_RANDOMIZE);
+  chprintf(cfg->out, "*** Minimum Delay: %d\r\n", VT_STORM_CFG_MIN_DELAY);
+  chprintf(cfg->out, "*** System Time:   %d\r\n", CH_CFG_ST_RESOLUTION);
+  chprintf(cfg->out, "*** Intervals:     %d\r\n", CH_CFG_INTERVALS_SIZE);
+  chprintf(cfg->out, "*** SysTick:       %d\r\n", CH_CFG_ST_FREQUENCY);
+  chprintf(cfg->out, "*** Delta:         %d\r\n", CH_CFG_ST_TIMEDELTA);
   chprintf(cfg->out, "\r\n");
 
   for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
@@ -241,7 +242,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       palToggleLine(config->line);
       chprintf(cfg->out, ".");
       delay--;
-    } while (delay >= 5);
+    } while (delay >= VT_STORM_CFG_MIN_DELAY);
 
     if (saturated) {
       chprintf(cfg->out, "\r\nSaturated at %u uS", TIME_I2US(delay));
