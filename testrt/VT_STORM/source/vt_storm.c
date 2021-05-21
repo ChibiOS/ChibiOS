@@ -135,6 +135,20 @@ static void continuous_cb(virtual_timer_t *vtp, void *p) {
   (void)vtp;
   (void)p;
   vtcus++;
+
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     chSysLockFromISR();
+     r = rand() & 255;
+     chSysUnlockFromISR();
+     while (r--)
+       x++;
+   }
+#endif
 }
 
 /*===========================================================================*/
@@ -227,7 +241,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       palToggleLine(config->line);
       chprintf(cfg->out, ".");
       delay--;
-    } while (delay >= 10);
+    } while (delay >= 5);
 
     if (saturated) {
       chprintf(cfg->out, "\r\nSaturated at %u uS", TIME_I2US(delay));
