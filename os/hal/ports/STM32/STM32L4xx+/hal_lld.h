@@ -71,22 +71,24 @@
  * @{
  */
 #define CLK_SYSCLK              0U
-#define CLK_PLLPCLK             1U
-#define CLK_PLLQCLK             2U
-#define CLK_PLLRCLK             3U
-#define CLK_PLLSAI1PCLK         4U
-#define CLK_PLLSAI1QCLK         5U
-#define CLK_PLLSAI1RCLK         6U
-#define CLK_PLLSAI2PCLK         7U
-#define CLK_PLLSAI2QCLK         8U
-#define CLK_PLLSAI2RCLK         9U
-#define CLK_HCLK                10U
-#define CLK_PCLK1               11U
-#define CLK_PCLK1TIM            12U
-#define CLK_PCLK2               13U
-#define CLK_PCLK2TIM            14U
-#define CLK_MCO                 15U
-#define CLK_ARRAY_SIZE          16U
+#define CLK_MSICLK              1U
+#define CLK_MSISCLK             2U
+#define CLK_PLLPCLK             3U
+#define CLK_PLLQCLK             4U
+#define CLK_PLLRCLK             5U
+#define CLK_PLLSAI1PCLK         6U
+#define CLK_PLLSAI1QCLK         7U
+#define CLK_PLLSAI1RCLK         8U
+#define CLK_PLLSAI2PCLK         9U
+#define CLK_PLLSAI2QCLK         10U
+#define CLK_PLLSAI2RCLK         11U
+#define CLK_HCLK                12U
+#define CLK_PCLK1               13U
+#define CLK_PCLK1TIM            14U
+#define CLK_PCLK2               15U
+#define CLK_PCLK2TIM            16U
+#define CLK_MCO                 17U
+#define CLK_ARRAY_SIZE          18U
 /** @} */
 
 /**
@@ -2029,8 +2031,8 @@ typedef struct {
  */
 #define hal_lld_get_clock_point(clkpt)                                      \
   ((clkpt) == CLK_SYSCLK      ? STM32_SYSCLK            :                   \
-   (clkpt) == CLK_HCLK        ? STM32_HCLK              :                   \
-   (clkpt) == CLK_PCLK1       ? STM32_PCLK1             :                   \
+   (clkpt) == CLK_MSICLK      ? STM32_MSICLK            :                   \
+   (clkpt) == CLK_MSISCLK     ? STM32_MSISCLK           :                   \
    (clkpt) == CLK_PLLPCLK     ? STM32_PLL_P_CLKOUT      :                   \
    (clkpt) == CLK_PLLQCLK     ? STM32_PLL_Q_CLKOUT      :                   \
    (clkpt) == CLK_PLLRCLK     ? STM32_PLL_R_CLKOUT      :                   \
@@ -2040,6 +2042,8 @@ typedef struct {
    (clkpt) == CLK_PLLSAI2PCLK ? STM32_PLLSAI2_P_CLKOUT  :                   \
    (clkpt) == CLK_PLLSAI2QCLK ? STM32_PLLSAI2_Q_CLKOUT  :                   \
    (clkpt) == CLK_PLLSAI2RCLK ? STM32_PLLSAI2_R_CLKOUT  :                   \
+   (clkpt) == CLK_HCLK        ? STM32_HCLK              :                   \
+   (clkpt) == CLK_PCLK1       ? STM32_PCLK1             :                   \
    (clkpt) == CLK_PCLK1TIM    ? STM32_TIMP1CLK          :                   \
    (clkpt) == CLK_PCLK2       ? STM32_PCLK2             :                   \
    (clkpt) == CLK_PCLK2TIM    ? STM32_TIMP2CLK          :                   \

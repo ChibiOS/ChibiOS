@@ -43,7 +43,6 @@
  */
 uint32_t SystemCoreClock = STM32_HCLK;
 
-
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Post-reset clock configuration.

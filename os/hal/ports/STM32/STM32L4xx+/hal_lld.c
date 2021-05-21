@@ -33,6 +33,16 @@
  */
 #define STM32_WS_THRESHOLDS             6
 
+/**
+ * @brief   FLASH_ACR reset value.
+ */
+#define STM32_FLASH_ACR_RESET           0x00000600U
+
+/**
+ * @brief   MSI range array size.
+ */
+#define STM32_MSIRANGE_ARRAY_SIZE       12
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -120,12 +130,25 @@ const halclkcfg_t hal_clkcfg_default = {
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Safe setting of flash ACR register.
+ */
+static void flash_set_acr(uint32_t acr) {
+
+  FLASH->ACR = acr;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
+    /* Waiting for flash wait states setup.*/
+  }
+}
+
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Dynamic clock points for this device.
  */
 static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_SYSCLK]      = STM32_SYSCLK,
+  [CLK_MSICLK]      = STM32_MSICLK,
+  [CLK_MSISCLK]     = STM32_MSISCLK,
   [CLK_PLLPCLK]     = STM32_PLL_P_CLKOUT,
   [CLK_PLLQCLK]     = STM32_PLL_Q_CLKOUT,
   [CLK_PLLRCLK]     = STM32_PLL_R_CLKOUT,
@@ -312,6 +335,11 @@ static bool hal_lld_check_pll(const system_limits_t *slp,
  * @notapi
  */
 static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
+  static const uint32_t msirange[STM32_MSIRANGE_ARRAY_SIZE] =
+                                         {100000U, 200000U, 400000U,
+                                          800000U, 1000000U, 2000000U,
+                                          4000000U, 8000000U, 16000000U,
+                                          24000000U, 32000000U, 48000000U};
   static const uint32_t hprediv[16] = {1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U,
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
@@ -321,7 +349,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   halfreq_t pllsai1pclk = 0U, pllsai1qclk = 0U, pllsai1rclk = 0U;
   halfreq_t pllsai2pclk = 0U, pllsai2qclk = 0U, pllsai2rclk = 0U;
   halfreq_t sysclk, hclk, pclk1, pclk2, pclk1tim, pclk2tim, mcoclk;
-  uint32_t mcodiv, flashws;
+  uint32_t mcodiv, flashws, msiidx;
 
   /* System limits based on desired VOS settings.*/
   if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_1) {
@@ -343,9 +371,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* MSI clock.*/
-  if ((ccp->rcc_cr & RCC_CR_MSION) != 0U) {
-    msiclk = STM32_MSICLK;
+  msiidx = (uint8_t)((ccp->rcc_cr & RCC_CR_MSIRANGE) >> RCC_CR_MSIRANGE_Pos);
+  if (msiidx >= STM32_MSIRANGE_ARRAY_SIZE) {
+    return true;
   }
+  msiclk = msirange[msiidx];
 
   /* HSI16 clock.*/
   if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
@@ -486,8 +516,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     return true;
   }
 
-  /* Writing out results.*/
+  /* Writing out results, note, clock_points[CLK_MSISCLK] is not modified
+     because it is a static-only setting.*/
   clock_points[CLK_SYSCLK]      = sysclk;
+  clock_points[CLK_MSICLK]      = msiclk;
   clock_points[CLK_PLLPCLK]     = pllpclk;
   clock_points[CLK_PLLQCLK]     = pllqclk;
   clock_points[CLK_PLLRCLK]     = pllrclk;
@@ -536,10 +568,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
     msi_reset();
 
     /* Resetting flash ACR settings to the default value.*/
-    FLASH->ACR = 0x00000600U;
-    while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != 0U) {
-      /* Waiting for flash wait states setup.*/
-    }
+    flash_set_acr(STM32_FLASH_ACR_RESET);
 
     /* Resetting all other clock sources and PLLs.*/
     RCC->CRRCR = 0U;
@@ -593,7 +622,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   RCC->CFGR = (RCC->CFGR & RCC_CFGR_SW_Msk) | (ccp->rcc_cfgr & ~RCC_CFGR_SW_Msk);
 
   /* Final flash ACR settings.*/
-  FLASH->ACR = ccp->flash_acr;
+  flash_set_acr(ccp->flash_acr);
 
   /* Final PWR modes.*/
   PWR->CR1 = ccp->pwr_cr1;
@@ -691,6 +720,10 @@ void stm32_clock_init(void) {
   lse_init();
   lsi_init();
 
+  /* MSISRANGE setup.*/
+  RCC->CR |= RCC_CR_MSIRGSEL;
+  RCC->CSR = (RCC->CSR & ~RCC_CSR_MSISRANGE_Msk) | STM32_MSISRANGE;
+
   /* Selecting the default clock/power/flash configuration.*/
   if (hal_lld_clock_raw_switch(&hal_clkcfg_default)) {
     osalSysHalt("clkswc");
@@ -723,8 +756,8 @@ void stm32_clock_init(void) {
   rccResetAPB2(~0);
 
   /* Flash setup for selected MSI speed setting.*/
-  FLASH->ACR = FLASH_ACR_DCEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
-               STM32_MSI_FLASHBITS;
+  flash_set_acr(FLASH_ACR_DCEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
+                STM32_MSI_FLASHBITS);
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
@@ -798,10 +831,7 @@ void stm32_clock_init(void) {
 
   /* Set flash WS's for SYSCLK source */
   if (STM32_FLASHBITS > STM32_MSI_FLASHBITS) {
-    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS;
-    while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
-           (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
-    }
+    flash_set_acr((FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS);
   }
 
   /* Switching to the configured SYSCLK source if it is different from MSI.*/
@@ -814,10 +844,7 @@ void stm32_clock_init(void) {
 
   /* Reduce the flash WS's for SYSCLK source if they are less than MSI WSs */
   if (STM32_FLASHBITS < STM32_MSI_FLASHBITS) {
-    FLASH->ACR = (FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS;
-    while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
-           (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
-    }
+    flash_set_acr((FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS);
   }
 #endif /* STM32_NO_INIT */
 }
