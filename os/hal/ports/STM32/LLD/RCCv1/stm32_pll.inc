@@ -331,8 +331,11 @@ __STATIC_INLINE void pll_wait_lock(void) {
   }
 }
 
+#endif /* STM32_RCC_HAS_PLL */
+
 __STATIC_INLINE void pll_init(void) {
 
+#if STM32_RCC_HAS_PLL
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
   RCC->PLLCFGR = STM32_PLLPDIV | STM32_PLLR   |
@@ -344,13 +347,16 @@ __STATIC_INLINE void pll_init(void) {
 
   pll_wait_lock();
 #endif
+#endif
 }
 
 __STATIC_INLINE void pll_deinit(void) {
 
+#if STM32_RCC_HAS_PLL
 #if STM32_ACTIVATE_PLL
   /* PLL de-activation.*/
   RCC->PLLCFGR &= ~RCC_CR_PLLON;
+#endif
 #endif
 }
 
@@ -361,7 +367,5 @@ __STATIC_INLINE void pll_deinit(void) {
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
-
-#endif /* STM32_RCC_HAS_PLL */
 
 /** @} */

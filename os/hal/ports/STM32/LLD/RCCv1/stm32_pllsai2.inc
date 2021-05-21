@@ -339,8 +339,11 @@ __STATIC_INLINE void pllsai2_wait_lock(void) {
   }
 }
 
+#endif /* STM32_RCC_HAS_PLLSAI2 */
+
 __STATIC_INLINE void pllsai2_init(void) {
 
+#if STM32_RCC_HAS_PLLSAI2
 #if STM32_ACTIVATE_PLLSAI2
   /* PLLSAI2 activation.*/
   RCC->PLLSAI2CFGR = STM32_PLLSAI2PDIV | STM32_PLLSAI2R   |
@@ -353,13 +356,16 @@ __STATIC_INLINE void pllsai2_init(void) {
   /* Waiting for PLL lock.*/
   pllsai2_wait_lock();
 #endif
+#endif
 }
 
 __STATIC_INLINE void pllsai2_deinit(void) {
 
+#if STM32_RCC_HAS_PLLSAI2
 #if STM32_ACTIVATE_PLLSAI2
   /* PLLSAI2 de-activation.*/
   RCC->PLLSAI2CFGR &= ~RCC_CR_PLLSAI2ON;
+#endif
 #endif
 }
 
@@ -370,7 +376,5 @@ __STATIC_INLINE void pllsai2_deinit(void) {
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
-
-#endif /* STM32_RCC_HAS_PLLSAI2 */
 
 /** @} */
