@@ -29,7 +29,7 @@
 /**
  * @brief   HSE32 clock frequency.
  */
-#define STM32_HSI32CLK          32000000
+#define STM32_HSE32CLK          32000000
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -85,10 +85,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void hse32_init(void) {
-
-#if STM32_HSE32_ENABLED
-
+__STATIC_INLINE void hse32_enable(void) {
 #if STM32_HSE32SRC == STM32_HSE32_TCXO
   /* Enable PB0-VDDTCXO.*/
   RCC->CR |= RCC_CR_HSEBYPPWR;
@@ -100,8 +97,15 @@ __STATIC_INLINE void hse32_init(void) {
   /* HSE32 activation.*/
   RCC->CR |= RCC_CR_HSEON;
 
-  while ((RCC->CR & RCC_CR_HSERDY) == 0)
-    ;                                       /* Wait until HSE32 is stable.    */
+  while ((RCC->CR & RCC_CR_HSERDY) == 0) {
+    /* Wait until HSE32 is stable.    */
+  }
+}
+
+__STATIC_INLINE void hse32_init(void) {
+
+#if STM32_HSE32_ENABLED
+  hse32_enable();
 #endif
 }
 
