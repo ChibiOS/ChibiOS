@@ -132,6 +132,8 @@ const halclkcfg_t hal_clkcfg_default = {
 
 /**
  * @brief   Safe setting of flash ACR register.
+ *
+ * @param[in] acr       value for the ACR register
  */
 static void flash_set_acr(uint32_t acr) {
 

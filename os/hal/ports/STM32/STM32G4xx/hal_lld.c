@@ -33,6 +33,14 @@
  */
 #define STM32_WS_THRESHOLDS             5
 
+/**
+ * @brief   FLASH_ACR reset value.
+ */
+#define STM32_FLASH_ACR_RESET           (FLASH_ACR_DBG_SWEN |               \
+                                         FLASH_ACR_DCEN     |               \
+                                         FLASH_ACR_ICEN     |               \
+                                         FLASH_ACR_LATENCY_0WS)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -57,8 +65,7 @@ const halclkcfg_t hal_clkcfg_reset = {
   .rcc_cfgr             = RCC_CFGR_SW_HSI,
   .rcc_pllcfgr          = 0U,
   .rcc_crrcr            = 0U,
-  .flash_acr            = FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN   |
-                          FLASH_ACR_ICEN     | FLASH_ACR_LATENCY_0WS
+  .flash_acr            = STM32_FLASH_ACR_RESET
 };
 
 /**
@@ -205,6 +212,19 @@ static const system_limits_t vos_range2 = {
 /*===========================================================================*/
 
 #include "stm32_bd.inc"
+
+/**
+ * @brief   Safe setting of flash ACR register.
+ *
+ * @param[in] acr       value for the ACR register
+ */
+static void flash_set_acr(uint32_t acr) {
+
+  FLASH->ACR = acr;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
+    /* Waiting for flash wait states setup.*/
+  }
+}
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
@@ -459,10 +479,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
     hsi16_reset();
 
     /* Resetting flash ACR settings to the default value.*/
-    FLASH->ACR = 0x00040600U;
-    while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != 0U) {
-      /* Waiting for flash wait states setup.*/
-    }
+    flash_set_acr(STM32_FLASH_ACR_RESET);
 
     /* Resetting all other clock sources and PLLs.*/
     RCC->CRRCR = 0U;
@@ -503,7 +520,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   RCC->CFGR = (RCC->CFGR & RCC_CFGR_SW_Msk) | (ccp->rcc_cfgr & ~RCC_CFGR_SW_Msk);
 
   /* Final flash ACR settings.*/
-  FLASH->ACR = ccp->flash_acr;
+  flash_set_acr(ccp->flash_acr);
 
   /* Final PWR modes.*/
   PWR->CR1 = ccp->pwr_cr1;
@@ -689,11 +706,8 @@ void stm32_clock_init(void) {
   RCC->CCIPR2 = STM32_QSPISEL    | STM32_I2C4SEL;
 
   /* Set flash WS's for SYSCLK source.*/
-  FLASH->ACR = FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN | FLASH_ACR_ICEN   |
-               FLASH_ACR_PRFTEN   | STM32_FLASHBITS;
-  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
-         (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
-  }
+  flash_set_acr(FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN | FLASH_ACR_ICEN   |
+                FLASH_ACR_PRFTEN   | STM32_FLASHBITS;
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
 #if STM32_SW != STM32_SW_HSI16
