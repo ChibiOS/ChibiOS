@@ -53,7 +53,6 @@ int main(void) {
   /*
    * Activates the Serial or SIO driver using the default configuration.
    */
-//  sdStart(&LPSD1, NULL);
   sioStart(&LPSIOD1, NULL);
   sioStartOperation(&LPSIOD1, NULL);
 
