@@ -58,8 +58,6 @@ uint32_t SystemCoreClock = STM32_HCLK;
 const halclkcfg_t hal_clkcfg_reset = {
   .pwr_cr1              = PWR_CR1_VOS_0,
   .pwr_cr2              = 0U,
-  .pwr_cr3              = PWR_CR3_EIWF,
-  .pwr_cr4              = 0U,
   .pwr_cr5              = PWR_CR5_R1MODE,
   .rcc_cr               = RCC_CR_HSIKERON | RCC_CR_HSION,
   .rcc_cfgr             = RCC_CFGR_SW_HSI,
@@ -74,8 +72,6 @@ const halclkcfg_t hal_clkcfg_reset = {
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS_RANGE1 | PWR_CR1_DBP,
   .pwr_cr2              = STM32_PWR_CR2,
-  .pwr_cr3              = STM32_PWR_CR3,
-  .pwr_cr4              = STM32_PWR_CR4,
   .pwr_cr5              = STM32_CR5BITS,
   .rcc_cr               = 0U
 #if STM32_HSI16_ENABLED
@@ -525,8 +521,6 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* Final PWR modes.*/
   PWR->CR1 = ccp->pwr_cr1;
   PWR->CR2 = ccp->pwr_cr2;
-  PWR->CR3 = ccp->pwr_cr3;
-  PWR->CR4 = ccp->pwr_cr4;
   PWR->CR5 = ccp->pwr_cr5;
 
   /* Waiting for the correct regulator state.*/
@@ -622,6 +616,24 @@ void stm32_clock_init(void) {
   /* Backup domain made accessible.*/
   PWR->CR1 |= PWR_CR1_DBP;
 
+  /* Static PWR initializations.*/
+  PWR->CR3   = STM32_PWR_CR3;
+  PWR->CR4   = STM32_PWR_CR4;
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+  PWR->PUCRD = STM32_PWR_PUCRD;
+  PWR->PDCRD = STM32_PWR_PDCRD;
+  PWR->PUCRE = STM32_PWR_PUCRE;
+  PWR->PDCRE = STM32_PWR_PDCRE;
+  PWR->PUCRF = STM32_PWR_PUCRF;
+  PWR->PDCRF = STM32_PWR_PDCRF;
+  PWR->PUCRG = STM32_PWR_PUCRG;
+  PWR->PDCRG = STM32_PWR_PDCRG;
+
   /* Backup domain reset.*/
   bd_reset();
 
@@ -675,6 +687,20 @@ void stm32_clock_init(void) {
   PWR->CR3 = STM32_PWR_CR3;
   PWR->CR4 = STM32_PWR_CR4;
   PWR->CR5 = STM32_CR5BITS;
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+  PWR->PUCRD = STM32_PWR_PUCRD;
+  PWR->PDCRD = STM32_PWR_PDCRD;
+  PWR->PUCRE = STM32_PWR_PUCRE;
+  PWR->PDCRE = STM32_PWR_PDCRE;
+  PWR->PUCRF = STM32_PWR_PUCRF;
+  PWR->PDCRF = STM32_PWR_PDCRF;
+  PWR->PUCRG = STM32_PWR_PUCRG;
+  PWR->PDCRG = STM32_PWR_PDCRG;
 
   /* Backup domain reset.*/
   bd_reset();
@@ -707,7 +733,7 @@ void stm32_clock_init(void) {
 
   /* Set flash WS's for SYSCLK source.*/
   flash_set_acr(FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN | FLASH_ACR_ICEN   |
-                FLASH_ACR_PRFTEN   | STM32_FLASHBITS;
+                FLASH_ACR_PRFTEN   | STM32_FLASHBITS);
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
 #if STM32_SW != STM32_SW_HSI16
