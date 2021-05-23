@@ -44,6 +44,16 @@
 #define STM32_PWR_CR2                       (STM32_PVDRT_LEV0 | STM32_PVDFT_LEV0 | STM32_PVDE_DISABLED)
 #define STM32_PWR_CR3                       (PWR_CR3_EIWUL)
 #define STM32_PWR_CR4                       (0U)
+#define STM32_PWR_PUCRA                     (0U)
+#define STM32_PWR_PDCRA                     (0U)
+#define STM32_PWR_PUCRB                     (0U)
+#define STM32_PWR_PDCRB                     (0U)
+#define STM32_PWR_PUCRC                     (0U)
+#define STM32_PWR_PDCRC                     (0U)
+#define STM32_PWR_PUCRD                     (0U)
+#define STM32_PWR_PDCRD                     (0U)
+#define STM32_PWR_PUCRF                     (0U)
+#define STM32_PWR_PDCRF                     (0U)
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSI16_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   FALSE
