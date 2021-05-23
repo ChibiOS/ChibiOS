@@ -1496,7 +1496,7 @@ typedef struct {
    (clkpt) == CLK_PLLRCLK  ? STM32_PLL_R_CLKOUT  :                          \
    (clkpt) == CLK_HCLK     ? STM32_HCLK          :                          \
    (clkpt) == CLK_PCLK     ? STM32_PCLK          :                          \
-   (clkpt) == CLK_PCLK TIM ? STM32_TIMPCLK       :                          \
+   (clkpt) == CLK_PCLKTIM  ? STM32_TIMPCLK       :                          \
    (clkpt) == CLK_MCO      ? STM32_MCOCLK        :                          \
    0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */

@@ -611,11 +611,8 @@ void stm32_clock_init(void) {
                STM32_LPUART1SEL;
 
   /* Set flash WS's for SYSCLK source.*/
-  FLASH->ACR = FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
-               STM32_FLASHBITS;
-  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) !=
-         (STM32_FLASHBITS & FLASH_ACR_LATENCY_Msk)) {
-  }
+  flash_set_acr(FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
+                STM32_FLASHBITS);
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
 #if STM32_SW != STM32_SW_HSISYS
