@@ -215,10 +215,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
   const system_limits_t *slp;
-  halfreq_t hsi16clk = 0U, hseclk = 0U, pllselclk;
+  halfreq_t hsi16clk = 0U, hseclk = 0U, pllselclk, hsisysclk;
   halfreq_t pllpclk = 0U, pllqclk = 0U, pllrclk = 0U;
   halfreq_t sysclk, hclk, pclk, pclktim, mcoclk;
-  uint32_t mcodiv, flashws;
+  uint32_t mcodiv, flashws, hsidiv;
 
   /* System limits based on desired VOS settings.*/
   if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_1) {
@@ -235,6 +235,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
     hsi16clk = STM32_HSI16CLK;
   }
+
+  /* HSISYS clock.*/
+  hsidiv = 1U << ((ccp->pwr_cr1 & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos);
+  hsisysclk = hsi16clk / hsidiv;
 
   /* HSE clock.*/
   if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
@@ -308,13 +312,19 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   /* SYSCLK frequency.*/
   switch(ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
   case RCC_CFGR_SW_HSI:
-    sysclk = hsi16clk;
+    sysclk = hsisysclk;
     break;
   case RCC_CFGR_SW_HSE:
     sysclk = hseclk;
     break;
   case RCC_CFGR_SW_PLL:
     sysclk = pllrclk;
+    break;
+  case RCC_CFGR_SW_LSI:
+    sysclk = STM32_LSICLK;
+    break;
+  case RCC_CFGR_SW_LSE:
+    sysclk = STM32_LSECLK;
     break;
   default:
     sysclk = 0U;
@@ -378,14 +388,15 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* Writing out results.*/
-  clock_points[CLK_SYSCLK]   = sysclk;
-  clock_points[CLK_PLLPCLK]  = pllpclk;
-  clock_points[CLK_PLLQCLK]  = pllqclk;
-  clock_points[CLK_PLLRCLK]  = pllrclk;
-  clock_points[CLK_HCLK]     = hclk;
-  clock_points[CLK_PCLK]     = pclk;
-  clock_points[CLK_PCLKTIM]  = pclktim;
-  clock_points[CLK_MCO]      = mcoclk;
+  clock_points[CLK_SYSCLK]    = sysclk;
+  clock_points[CLK_HSISYSCLK] = hsisysclk;
+  clock_points[CLK_PLLPCLK]   = pllpclk;
+  clock_points[CLK_PLLQCLK]   = pllqclk;
+  clock_points[CLK_PLLRCLK]   = pllrclk;
+  clock_points[CLK_HCLK]      = hclk;
+  clock_points[CLK_PCLK]      = pclk;
+  clock_points[CLK_PCLKTIM]   = pclktim;
+  clock_points[CLK_MCO]       = mcoclk;
 
   return false;
 }
