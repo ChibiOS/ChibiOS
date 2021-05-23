@@ -60,6 +60,24 @@
 #define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(PWR_CR2_PLS_LEV0 | PWR_CR2_IOSV)"}
 #define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_EIWF)"}
 #define STM32_PWR_CR4                       ${doc.STM32_PWR_CR4!"(0U)"}
+#define STM32_PWR_PUCRA                     ${doc.STM32_PWR_PUCRA!"(0U)"}
+#define STM32_PWR_PDCRA                     ${doc.STM32_PWR_PDCRA!"(0U)"}
+#define STM32_PWR_PUCRB                     ${doc.STM32_PWR_PUCRB!"(0U)"}
+#define STM32_PWR_PDCRB                     ${doc.STM32_PWR_PDCRB!"(0U)"}
+#define STM32_PWR_PUCRC                     ${doc.STM32_PWR_PUCRC!"(0U)"}
+#define STM32_PWR_PDCRC                     ${doc.STM32_PWR_PDCRC!"(0U)"}
+#define STM32_PWR_PUCRD                     ${doc.STM32_PWR_PUCRD!"(0U)"}
+#define STM32_PWR_PDCRD                     ${doc.STM32_PWR_PDCRD!"(0U)"}
+#define STM32_PWR_PUCRE                     ${doc.STM32_PWR_PUCRE!"(0U)"}
+#define STM32_PWR_PDCRE                     ${doc.STM32_PWR_PDCRE!"(0U)"}
+#define STM32_PWR_PUCRF                     ${doc.STM32_PWR_PUCRF!"(0U)"}
+#define STM32_PWR_PDCRF                     ${doc.STM32_PWR_PDCRF!"(0U)"}
+#define STM32_PWR_PUCRG                     ${doc.STM32_PWR_PUCRG!"(0U)"}
+#define STM32_PWR_PDCRG                     ${doc.STM32_PWR_PDCRG!"(0U)"}
+#define STM32_PWR_PUCRH                     ${doc.STM32_PWR_PUCRH!"(0U)"}
+#define STM32_PWR_PDCRH                     ${doc.STM32_PWR_PDCRH!"(0U)"}
+#define STM32_PWR_PUCRI                     ${doc.STM32_PWR_PUCRI!"(0U)"}
+#define STM32_PWR_PDCRI                     ${doc.STM32_PWR_PDCRI!"(0U)"}
 #define STM32_HSI16_ENABLED                 ${doc.STM32_HSI16_ENABLED!"FALSE"}
 #define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"FALSE"}
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"TRUE"}

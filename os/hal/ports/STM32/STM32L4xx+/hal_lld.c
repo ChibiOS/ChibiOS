@@ -61,8 +61,6 @@ uint32_t SystemCoreClock = STM32_HCLK;
 const halclkcfg_t hal_clkcfg_reset = {
   .pwr_cr1              = PWR_CR1_VOS_0,
   .pwr_cr2              = 0U,
-  .pwr_cr3              = PWR_CR3_EIWF,
-  .pwr_cr4              = 0U,
   .pwr_cr5              = PWR_CR5_R1MODE,
   .rcc_cr               = RCC_CR_MSIRANGE_6 | RCC_CR_MSION,
   .rcc_cfgr             = RCC_CFGR_SW_MSI,
@@ -79,8 +77,6 @@ const halclkcfg_t hal_clkcfg_reset = {
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS_RANGE1 | PWR_CR1_DBP,
   .pwr_cr2              = STM32_PWR_CR2,
-  .pwr_cr3              = STM32_PWR_CR3,
-  .pwr_cr4              = STM32_PWR_CR4,
   .pwr_cr5              = STM32_CR5BITS,
   .rcc_cr               = 0U
 #if STM32_MSIPLL_ENABLED
@@ -629,8 +625,6 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* Final PWR modes.*/
   PWR->CR1 = ccp->pwr_cr1;
   PWR->CR2 = ccp->pwr_cr2;
-  PWR->CR3 = ccp->pwr_cr3;
-  PWR->CR4 = ccp->pwr_cr4;
   PWR->CR5 = ccp->pwr_cr5;
 
   /* Waiting for the correct regulator state.*/
@@ -715,6 +709,38 @@ void stm32_clock_init(void) {
   /* Backup domain made accessible.*/
   PWR->CR1 |= PWR_CR1_DBP;
 
+  /* Static PWR initializations.*/
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+#if STM32_HAS_GPIOD
+  PWR->PUCRD = STM32_PWR_PUCRD;
+  PWR->PDCRD = STM32_PWR_PDCRD;
+#endif
+#if STM32_HAS_GPIOE
+  PWR->PUCRE = STM32_PWR_PUCRE;
+  PWR->PDCRE = STM32_PWR_PDCRE;
+#endif
+#if STM32_HAS_GPIOF
+  PWR->PUCRF = STM32_PWR_PUCRF;
+  PWR->PDCRF = STM32_PWR_PDCRF;
+#endif
+#if STM32_HAS_GPIOG
+  PWR->PUCRG = STM32_PWR_PUCRG;
+  PWR->PDCRG = STM32_PWR_PDCRG;
+#endif
+#if STM32_HAS_GPIOH
+  PWR->PUCRH = STM32_PWR_PUCRH;
+  PWR->PDCRH = STM32_PWR_PDCRH;
+#endif
+#if STM32_HAS_GPIOI
+  PWR->PUCRI = STM32_PWR_PUCRI;
+  PWR->PDCRI = STM32_PWR_PDCRI;
+#endif
+
   /* Backup domain reset.*/
   bd_reset();
 
@@ -774,10 +800,40 @@ void stm32_clock_init(void) {
     ;                                       /* stable.                      */
 
   /* Additional PWR configurations.*/
-  PWR->CR2 = STM32_PWR_CR2;
-  PWR->CR3 = STM32_PWR_CR3;
-  PWR->CR4 = STM32_PWR_CR4;
-  PWR->CR5 = STM32_CR5BITS;
+  PWR->CR2  = STM32_PWR_CR2;
+  PWR->CR3  = STM32_PWR_CR3;
+  PWR->CR4  = STM32_PWR_CR4;
+  PWR->CR5  = STM32_CR5BITS;
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+#if STM32_HAS_GPIOD
+  PWR->PUCRD = STM32_PWR_PUCRD;
+  PWR->PDCRD = STM32_PWR_PDCRD;
+#endif
+#if STM32_HAS_GPIOE
+  PWR->PUCRE = STM32_PWR_PUCRE;
+  PWR->PDCRE = STM32_PWR_PDCRE;
+#endif
+#if STM32_HAS_GPIOF
+  PWR->PUCRF = STM32_PWR_PUCRF;
+  PWR->PDCRF = STM32_PWR_PDCRF;
+#endif
+#if STM32_HAS_GPIOG
+  PWR->PUCRG = STM32_PWR_PUCRG;
+  PWR->PDCRG = STM32_PWR_PDCRG;
+#endif
+#if STM32_HAS_GPIOH
+  PWR->PUCRH = STM32_PWR_PUCRH;
+  PWR->PDCRH = STM32_PWR_PDCRH;
+#endif
+#if STM32_HAS_GPIOI
+  PWR->PUCRI = STM32_PWR_PUCRI;
+  PWR->PDCRI = STM32_PWR_PDCRI;
+#endif
 
   /* MSI clock reset.*/
   msi_reset();

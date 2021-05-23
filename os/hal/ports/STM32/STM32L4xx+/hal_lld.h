@@ -357,6 +357,132 @@
 #endif
 
 /**
+ * @brief   PWR PUCRA register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRA) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRA                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRA register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRA) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRA                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRB register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRB) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRB                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRB register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRB) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRB                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRC register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRC) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRC                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRC register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRC) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRC                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRD register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRD) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRD                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRD register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRD) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRD                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRE register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRE) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRE                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRE register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRE) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRE                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRF register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRF) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRF                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRF register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRF) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRF                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRG register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRG) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRG                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRG register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRG) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRG                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRH register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRH) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRH                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRH register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRH) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRH                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRI register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRI) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRI                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRI register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRI) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRI                     (0U)
+#endif
+
+/**
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
@@ -2001,8 +2127,6 @@ typedef uint32_t halfreq_t;
 typedef struct {
   uint32_t          pwr_cr1;
   uint32_t          pwr_cr2;
-  uint32_t          pwr_cr3;
-  uint32_t          pwr_cr4;
   uint32_t          pwr_cr5;
   uint32_t          rcc_cr;
   uint32_t          rcc_cfgr;
