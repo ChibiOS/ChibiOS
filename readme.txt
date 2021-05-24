@@ -75,6 +75,7 @@
 
 *** Next ***
 - NEW: STM32 ADCv3, USARTv2, USARTv3, USBv1 updated for dynamic clocking.
+- NEW: Improved PWR settings for STM32G0, STM32G4 and STM32L4+.
 - NEW: Dynamic support implemented for STM32G0, STM32G4, STM32L4+, STM32WL.
 - NEW: Dynamic clocks support in HAL.
 - NEW: Reload feature added to RT virtual timers.
@@ -137,6 +138,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
 - NEW: Added latency measurement test application.
+- FIX: Fixed wrong wait states calculation in STM32G4xx, insufficient
+       boost settings (bug #1159)(backported to 20.3.4).
 - FIX: Fixed warning in STM32 ADCv4 (bug #1158)
        (backported to 20.3.4)(backported to 19.1.5).
 - FIX: Fixed wrong check on HAL_USE_RTC in STM32G4 clock initialization
