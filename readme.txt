@@ -74,8 +74,12 @@
 *****************************************************************************
 
 *** 20.3.4 ***
+- NEW: Improved PWR settings for STM32G4.
+- NEW: Improved boost settings for STM32G4.
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
        the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
+- FIX: Fixed wrong wait states calculation in STM32G4xx, insufficient
+       boost settings (bug #1159).
 - FIX: Fixed warning in STM32 ADCv4 (bug #1158).
 - FIX: Fixed wrong check on HAL_USE_RTC in STM32G4 clock initialization
        (bug #1157).
