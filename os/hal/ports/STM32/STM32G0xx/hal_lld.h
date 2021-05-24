@@ -670,7 +670,7 @@
 /**
  * @brief   Maximum PLL-P output clock frequency.
  */
-#define STM32_PLLP_MAX              122000000
+#define STM32_PLLP_MAX              128000000
 
 /**
  * @brief   Minimum PLL-P output clock frequency.
