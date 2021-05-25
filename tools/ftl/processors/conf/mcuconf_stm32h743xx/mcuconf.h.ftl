@@ -235,7 +235,7 @@
  * ADC driver system settings.
  */
 #define STM32_ADC_DUAL_MODE                 ${doc.STM32_ADC_DUAL_MODE!"FALSE"}
-#define STM32_ADC_COMPACT_SAMPLES           ${doc.STM32_ADC_COMPACT_SAMPLES!"FALSE"}
+#define STM32_ADC_SAMPLES_SIZE              ${doc.STM32_ADC_SAMPLES_SIZE!"16"}
 #define STM32_ADC_USE_ADC12                 ${doc.STM32_ADC_USE_ADC12!"TRUE"}
 #define STM32_ADC_USE_ADC3                  ${doc.STM32_ADC_USE_ADC3!"FALSE"}
 #define STM32_ADC_ADC12_DMA_STREAM          ${doc.STM32_ADC_ADC12_DMA_STREAM!"STM32_DMA_STREAM_ID_ANY"}

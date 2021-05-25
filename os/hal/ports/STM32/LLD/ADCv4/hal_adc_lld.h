@@ -32,6 +32,17 @@
 /*===========================================================================*/
 
 /**
+ * @name    Possible ADC errors mask bits.
+ * @{
+ */
+#define ADC_ERR_DMAFAILURE      1U  /**< DMA operations failure.            */
+#define ADC_ERR_OVERFLOW        2U  /**< ADC overflow condition.            */
+#define ADC_ERR_AWD1            4U  /**< Watchdog 1 triggered.              */
+#define ADC_ERR_AWD2            8U  /**< Watchdog 2 triggered.              */
+#define ADC_ERR_AWD3            16U /**< Watchdog 3 triggered.              */
+/** @} */
+
+/**
  * @name    Available analog channels
  * @{
  */
@@ -131,6 +142,10 @@
 #define ADC_CFGR_EXTEN_FALLING          (2U << 10U)
 #define ADC_CFGR_EXTEN_BOTH             (3U << 10U)
 
+#define ADC_CFGR_CONT_MASK            (1U << 13U)
+#define ADC_CFGR_CONT_DISABLED        (0U << 13U)
+#define ADC_CFGR_CONT_ENABLED         (1U << 13U)
+
 #define ADC_CFGR_DISCEN_MASK            (1U << 16U)
 #define ADC_CFGR_DISCEN_DISABLED        (0U << 16U)
 #define ADC_CFGR_DISCEN_ENABLED         (1U << 16U)
@@ -182,12 +197,14 @@
 #endif
 
 /**
- * @brief   Makes the ADC samples type an 8bits one.
- * @note    10, 12, 14 and 16 bits sampling mode must not be used when this
- *          option is enabled.
+ * @brief   Specifies the ADC samples width.
+ * @note    Must be 8, 16 or 32.
+ * @note    10, 12, 14 and 16 bits sampling modes must not be used when 
+ *          this option is set to 8.
+ * @note    32 is useful when oversampling is activated.
  */
-#if !defined(STM32_ADC_COMPACT_SAMPLES) || defined(__DOXYGEN__)
-#define STM32_ADC_COMPACT_SAMPLES           FALSE
+#if !defined(STM32_ADC_SAMPLES_SIZE) || defined(__DOXYGEN__)
+#define STM32_ADC_SAMPLES_SIZE               16
 #endif
 
 /**
@@ -357,6 +374,16 @@
 #error "Invalid IRQ priority assigned to ADC3"
 #endif
 
+#if ((STM32_ADC_SAMPLES_SIZE != 8)  &&					                    \
+     (STM32_ADC_SAMPLES_SIZE != 16) &&				                        \
+     (STM32_ADC_SAMPLES_SIZE != 32))
+#error "STM32_ADC_SAMPLES_SIZE must be 8, 16 or 32"
+#endif
+
+#if (STM32_ADC_SAMPLES_SIZE != 32) && STM32_ADC_DUAL_MODE
+#error "STM32_ADC_SAMPLES_SIZE = 32 not compatible with STM32_ADC_DUAL_MODE"
+#endif
+
 #if !defined(STM32_ENFORCE_H7_REV_XY)
 /* ADC clock source checks.*/
 #if (STM32_D1HPRE == STM32_D1HPRE_DIV1)
@@ -490,10 +517,12 @@
 /**
  * @brief   ADC sample data type.
  */
-#if !STM32_ADC_COMPACT_SAMPLES || defined(__DOXYGEN__)
+#if (STM32_ADC_SAMPLES_SIZE == 16) || defined(__DOXYGEN__)
 typedef uint16_t adcsample_t;
-#else
+#elif (STM32_ADC_SAMPLES_SIZE == 8)
 typedef uint8_t adcsample_t;
+#elif (STM32_ADC_SAMPLES_SIZE == 32)
+typedef uint32_t adcsample_t;
 #endif
 
 /**
@@ -502,17 +531,9 @@ typedef uint8_t adcsample_t;
 typedef uint32_t adc_channels_num_t;
 
 /**
- * @brief   Possible ADC failure causes.
- * @note    Error codes are architecture dependent and should not relied
- *          upon.
+ * @brief   Type of an ADC error mask.
  */
-typedef enum {
-  ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
-  ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
-  ADC_ERR_AWD1 = 2,                         /**< Watchdog 1 triggered.      */
-  ADC_ERR_AWD2 = 3,                         /**< Watchdog 2 triggered.      */
-  ADC_ERR_AWD3 = 4                          /**< Watchdog 3 triggered.      */
-} adcerror_t;
+typedef uint32_t adcerror_t;
 
 /**
  * @brief   Type of a DMA channel pointer choice.
@@ -600,10 +621,26 @@ typedef union {
   uint32_t                  ltr3;                                           \
   /* ADC HTR3 register initialization data.*/                               \
   uint32_t                  htr3;                                           \
+  /* ADC AWD2CR register initialization data.*/                             \
+  uint32_t                  awd2cr;                                         \
+  /* ADC AWD3CR register initialization data.*/                             \
+  uint32_t                  awd3cr;                                         \
   /* ADC SMPRx registers initialization data.*/                             \
   uint32_t                  smpr[2];                                        \
   /* ADC SQRx register initialization data.*/                               \
   uint32_t                  sqr[4];                                         \
+  /* Slave ADC LTR/HTRx registers initialization data.                      \
+     NOTE: This field is only present in dual mode.*/                       \
+  uint32_t                  sltr1;                                          \
+  uint32_t                  shtr1;                                          \
+  uint32_t                  sltr2;                                          \
+  uint32_t                  shtr2;                                          \
+  uint32_t                  sltr3;                                          \
+  uint32_t                  shtr3;                                          \
+  /* Slave ADC AWDxCR registers initialization data.                        \
+     NOTE: This field is only present in dual mode.*/                       \
+  uint32_t                  sawd2cr;                                        \
+  uint32_t                  sawd3cr;                                        \
   /* Slave ADC SMPRx registers initialization data.                         \
      NOTE: This field is only present in dual mode.*/                       \
   uint32_t                  ssmpr[2];                                       \
@@ -622,6 +659,8 @@ typedef union {
   uint32_t                  htr2;                                           \
   uint32_t                  ltr3;                                           \
   uint32_t                  htr3;                                           \
+  uint32_t                  awd2cr;                                         \
+  uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4]
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
@@ -681,6 +720,24 @@ typedef union {
 #define ADC_SMPR2_SMP_AN17(n)   ((n) << 21U)/**< @brief AN17 sampling time. */
 #define ADC_SMPR2_SMP_AN18(n)   ((n) << 24U)/**< @brief AN18 sampling time. */
 #define ADC_SMPR2_SMP_AN19(n)   ((n) << 27U)/**< @brief AN19 sampling time. */
+/** @} */
+
+/**
+ * @name    Analog watchdog settings helper macros
+ * @{
+ */
+#define ADC_CFGR_AWD1_N(n)      ((n) << 26U)/**< @brief AWD1 channel number */
+#define ADC_AWD23_MASK(n)       (1U << (n)) /**< @brief AWD2/3 channels mask*/
+/** @} */
+
+/**
+ * @name    Oversampling settings helper macros
+ * @{
+ */
+#define ADC_CFGR2_OVSS_N(n)     ((n) << 5U)/**< @brief ovsr right shift */
+#define ADC_CFGR2_OVSR_N(n)     ((n) << 16U)/**< @brief oversampling ratio */
+#define ADC_CFGR2_LSHIFT_N(n)   ((n) << 28U)/**< @brief ovsr left shift */
+
 /** @} */
 
 /*===========================================================================*/

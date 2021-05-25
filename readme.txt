@@ -74,6 +74,10 @@
 *****************************************************************************
 
 *** 20.3.4 ***
+- NEW: STM32 improved ADCv4 driver (H7) back-ported from trunk.
+- NEW: New "VT Storm" test application for RT.
+- NEW: More efficient virtual timers implementation for RT, it has been
+       back-ported from RT7.
 - NEW: Improved PWR settings for STM32G4.
 - NEW: Improved boost settings for STM32G4.
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
