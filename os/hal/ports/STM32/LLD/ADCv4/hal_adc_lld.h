@@ -197,12 +197,14 @@
 #endif
 
 /**
- * @brief   Makes the ADC samples type an 8bits one.
- * @note    10, 12, 14 and 16 bits sampling mode must not be used when this
- *          option is enabled.
+ * @brief   Specifies the ADC samples width.
+ * @note    Must be 8, 16 or 32.
+ * @note    10, 12, 14 and 16 bits sampling modes must not be used when 
+ *          this option is set to 8.
+ * @note    32 is useful when oversampling is activated.
  */
-#if !defined(STM32_ADC_COMPACT_SAMPLES) || defined(__DOXYGEN__)
-#define STM32_ADC_COMPACT_SAMPLES           FALSE
+#if !defined(STM32_ADC_SAMPLES_SIZE) || defined(__DOXYGEN__)
+#define STM32_ADC_SAMPLES_SIZE               16
 #endif
 
 /**
@@ -372,6 +374,16 @@
 #error "Invalid IRQ priority assigned to ADC3"
 #endif
 
+#if ((STM32_ADC_SAMPLES_SIZE != 8)  &&					                    \
+     (STM32_ADC_SAMPLES_SIZE != 16) &&				                        \
+     (STM32_ADC_SAMPLES_SIZE != 32))
+#error "STM32_ADC_SAMPLES_SIZE must be 8, 16 or 32"
+#endif
+
+#if (STM32_ADC_SAMPLES_SIZE != 32) && STM32_ADC_DUAL_MODE
+#error "STM32_ADC_SAMPLES_SIZE = 32 not compatible with STM32_ADC_DUAL_MODE"
+#endif
+
 #if !defined(STM32_ENFORCE_H7_REV_XY)
 /* ADC clock source checks.*/
 #if (STM32_D1HPRE == STM32_D1HPRE_DIV1)
@@ -505,10 +517,12 @@
 /**
  * @brief   ADC sample data type.
  */
-#if !STM32_ADC_COMPACT_SAMPLES || defined(__DOXYGEN__)
+#if (STM32_ADC_SAMPLES_SIZE == 16) || defined(__DOXYGEN__)
 typedef uint16_t adcsample_t;
-#else
+#elif (STM32_ADC_SAMPLES_SIZE == 8)
 typedef uint8_t adcsample_t;
+#elif (STM32_ADC_SAMPLES_SIZE == 32)
+typedef uint32_t adcsample_t;
 #endif
 
 /**
@@ -716,6 +730,15 @@ typedef union {
 #define ADC_AWD23_MASK(n)       (1U << (n)) /**< @brief AWD2/3 channels mask*/
 /** @} */
 
+/**
+ * @name    Oversampling settings helper macros
+ * @{
+ */
+#define ADC_CFGR2_OVSS_N(n)     ((n) << 5U)/**< @brief ovsr right shift */
+#define ADC_CFGR2_OVSR_N(n)     ((n) << 16U)/**< @brief oversampling ratio */
+#define ADC_CFGR2_LSHIFT_N(n)   ((n) << 28U)/**< @brief ovsr left shift */
+
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -31,34 +31,37 @@
 /*===========================================================================*/
 
 #if STM32_ADC_DUAL_MODE == TRUE
-#define ADC12_CCR_DUAL 	0b00110 // TODO use definitions
-#if STM32_ADC_COMPACT_SAMPLES == TRUE
+#define ADC12_CCR_DUAL 	ADC_CCR_DUAL_REG_SIMULT
+#if STM32_ADC_SAMPLES_SIZE == 8
 /* Compact type dual mode, 2x8-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_BYTE | STM32_BDMA_CR_PSIZE_BYTE)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_BYTE
 
-#else /* STM32_ADC_COMPACT_SAMPLES == FALSE */
+#else /* STM32_ADC_SAMPLES_SIZE == 16 */
 /* Large type dual mode, 2x16bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_HWORD | STM32_BDMA_CR_PSIZE_HWORD)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_HWORD
-#endif /* !STM32_ADC_COMPACT_SAMPLES */
+#endif /*  STM32_ADC_SAMPLES_SIZE == 8 */
 
 #else /* STM32_ADC_DUAL_MODE == FALSE */
-#define ADC12_CCR_DUAL 	0b00000 // TODO use definitions
-#if STM32_ADC_COMPACT_SAMPLES
+#define ADC12_CCR_DUAL 	ADC_CCR_DUAL_INDEPENDENT
+#if STM32_ADC_SAMPLES_SIZE == 8
 /* Compact type single mode, 8-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_BYTE | STM32_DMA_CR_PSIZE_BYTE)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_BYTE | STM32_BDMA_CR_PSIZE_BYTE)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_DISABLED
-
-#else /* STM32_ADC_COMPACT_SAMPLES == FALSE */
+#elif STM32_ADC_SAMPLES_SIZE == 32
+#define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
+#define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_WORD | STM32_BDMA_CR_PSIZE_WORD)
+#define ADC_DMA_DAMDF   ADC_CCR_DAMDF_DISABLED
+#else /* STM32_ADC_SAMPLES_SIZE == 16 */
 /* Large type single mode, 16-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_HWORD | STM32_BDMA_CR_PSIZE_HWORD)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_DISABLED
-#endif /* STM32_ADC_COMPACT_SAMPLES == FALSE */
+#endif /* STM32_ADC_SAMPLES_SIZE == 8 */
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 
 /*===========================================================================*/
@@ -140,7 +143,7 @@ static void adc_lld_analog_on(ADCDriver *adcp) {
 }
 
 /**
- * @brief   Disables the ADC  analog circuit.
+ * @brief   Disables the ADC analog circuit.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  */
