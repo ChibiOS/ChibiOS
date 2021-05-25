@@ -55,7 +55,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if ((SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)) ||        \
+#if ((SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(__CHIBIOS_NIL__)) ||        \
     defined(__DOXYGEN__)
 static void cmd_exit(BaseSequentialStream *chp, int argc, char *argv[]) {
 
@@ -123,7 +123,7 @@ static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
     shellUsage(chp, "systime");
     return;
   }
-  chprintf(chp, "%lu" SHELL_NEWLINE_STR, (unsigned long)chVTGetSystemTime());
+  chprintf(chp, "%lu" SHELL_NEWLINE_STR, (unsigned long)chVTGetSystemTimeX());
 }
 #endif
 
@@ -232,7 +232,7 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
  * @brief   Array of the default commands.
  */
 const ShellCommand shell_local_commands[] = {
-#if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(_CHIBIOS_NIL_)
+#if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(__CHIBIOS_NIL__)
   {"exit", cmd_exit},
 #endif
 #if SHELL_CMD_INFO_ENABLED == TRUE

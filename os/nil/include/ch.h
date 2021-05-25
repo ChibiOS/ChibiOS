@@ -169,6 +169,12 @@
   "WTOREVT", "WTANDEVT", "SNDMSGQ", "SNDMSG", "WTMSG", "FINAL"
 /** @} */
 
+/**
+ * @name    RT options not existing in NIL
+ */
+#define CH_CFG_USE_REGISTRY         FALSE
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
