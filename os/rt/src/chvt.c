@@ -491,10 +491,10 @@ void chVTDoTickI(void) {
     return;
   }
 
-  /* Calculating the next alarm time.*/
+  /* Calculating the delta to the next alarm time.*/
   delta = dlp->delta - nowdelta;
 
-  /* For normal timers limit to CH_CFG_ST_TIMEDELTA.*/
+  /* Limit delta to CH_CFG_ST_TIMEDELTA.*/
   if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
     delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
   }
