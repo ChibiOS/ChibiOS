@@ -103,6 +103,18 @@ static void sweeper0_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     r = rand() & 15;
+     while (r--) {
+       x++;
+     }
+   }
+#endif
   chVTSetI(&wrapper, (sysinterval_t)-1, wrapper_cb, NULL);
   chVTSetI(vtp, delay, sweeper0_cb, NULL);
   chSysUnlockFromISR();
@@ -113,6 +125,18 @@ static void sweeperm1_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     r = rand() & 15;
+     while (r--) {
+       x++;
+     }
+   }
+#endif
   chVTSetI(vtp, delay - 1, sweeperm1_cb, NULL);
   chSysUnlockFromISR();
 }
@@ -122,6 +146,18 @@ static void sweeperp1_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     r = rand() & 15;
+     while (r--) {
+       x++;
+     }
+   }
+#endif
   chVTSetI(vtp, delay + 1, sweeperp1_cb, NULL);
   chSysUnlockFromISR();
 }
@@ -131,6 +167,18 @@ static void sweeperm3_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     r = rand() & 15;
+     while (r--) {
+       x++;
+     }
+   }
+#endif
   chVTSetI(vtp, delay - 3, sweeperm3_cb, NULL);
   chSysUnlockFromISR();
 }
@@ -140,6 +188,18 @@ static void sweeperp3_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 
   chSysLockFromISR();
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     r = rand() & 15;
+     while (r--) {
+       x++;
+     }
+   }
+#endif
   chVTSetI(vtp, delay + 3, sweeperp3_cb, NULL);
   chSysUnlockFromISR();
 }

@@ -55,7 +55,7 @@
  * @brief   Minimum delay for each iteration.
  */
 #if !defined(VT_STORM_CFG_MIN_DELAY) || defined(__DOXYGEN__)
-#define VT_STORM_CFG_MIN_DELAY              10
+#define VT_STORM_CFG_MIN_DELAY              5
 #endif
 
 /**
