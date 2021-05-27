@@ -217,7 +217,7 @@ static void continuous_cb(virtual_timer_t *vtp, void *p) {
      unsigned r;
 
      chSysLockFromISR();
-     r = rand() & 255;
+     r = rand() & 15;
      chSysUnlockFromISR();
      while (r--) {
        x++;
