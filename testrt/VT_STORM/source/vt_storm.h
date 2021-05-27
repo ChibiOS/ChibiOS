@@ -57,6 +57,13 @@
 #if !defined(VT_STORM_CFG_MIN_DELAY) || defined(__DOXYGEN__)
 #define VT_STORM_CFG_MIN_DELAY              10
 #endif
+
+/**
+ * @brief   Enable hammer timers.
+ */
+#if !defined(VT_STORM_CFG_HAMMERS) || defined(__DOXYGEN__)
+#define VT_STORM_CFG_HAMMERS                TRUE
+#endif
 /** @} */
 
 /*===========================================================================*/

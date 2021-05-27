@@ -52,10 +52,24 @@ static const vt_storm_config_t *config;
 static virtual_timer_t watchdog;
 static virtual_timer_t wrapper;
 static virtual_timer_t sweeper0, sweeperm1, sweeperp1, sweeperm3, sweeperp3;
+static virtual_timer_t guard0, guard1, guard2, guard3;
 static virtual_timer_t continuous;
 static volatile sysinterval_t delay;
 static volatile bool saturated;
 static uint32_t vtcus;
+
+#if VT_STORM_CFG_HAMMERS
+/*
+ * GPTs configuration.
+ */
+static void hammer_gpt_cb(GPTDriver *gptp);
+static const GPTConfig hammer_gpt_cfg = {
+  1000000,              /* 1MHz timer clock.*/
+  hammer_gpt_cb,    /* Timer callback.*/
+  0,
+  0
+};
+#endif
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -145,11 +159,43 @@ static void continuous_cb(virtual_timer_t *vtp, void *p) {
      chSysLockFromISR();
      r = rand() & 255;
      chSysUnlockFromISR();
-     while (r--)
+     while (r--) {
        x++;
+     }
    }
 #endif
 }
+
+static void guard_cb(virtual_timer_t *vtp, void *p) {
+
+  (void)vtp;
+  (void)p;
+}
+
+#if VT_STORM_CFG_HAMMERS
+/**
+ * @brief   GPT callback.
+ */
+static void hammer_gpt_cb(GPTDriver *gptp) {
+
+  (void)gptp;
+
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     chSysLockFromISR();
+     r = rand() & 31;
+     chSysUnlockFromISR();
+     while (r--) {
+       x++;
+     }
+   }
+#endif
+}
+#endif
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -191,12 +237,21 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
 #endif
   chprintf(cfg->out, "***\r\n");
   chprintf(cfg->out, "*** Randomize:        %d\r\n", VT_STORM_CFG_RANDOMIZE);
+  chprintf(cfg->out, "*** Hammers:          %d\r\n", VT_STORM_CFG_HAMMERS);
   chprintf(cfg->out, "*** Minimum Delay:    %d ticks\r\n", VT_STORM_CFG_MIN_DELAY);
   chprintf(cfg->out, "*** System Time size: %d bits\r\n", CH_CFG_ST_RESOLUTION);
   chprintf(cfg->out, "*** Intervals size:   %d bits\r\n", CH_CFG_INTERVALS_SIZE);
   chprintf(cfg->out, "*** SysTick:          %d Hz\r\n", CH_CFG_ST_FREQUENCY);
   chprintf(cfg->out, "*** Delta:            %d cycles\r\n", CH_CFG_ST_TIMEDELTA);
   chprintf(cfg->out, "\r\n");
+
+#if VT_STORM_CFG_HAMMERS
+  /* Starting hammer timers.*/
+  gptStart(&GPTD3, &hammer_gpt_cfg);
+  gptStart(&GPTD4, &hammer_gpt_cfg);
+  gptStartContinuous(&GPTD3, 99);
+  gptStartContinuous(&GPTD4, 101);
+#endif
 
   for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
 
@@ -219,6 +274,10 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
       chVTSetI(&wrapper, (sysinterval_t) - 1, wrapper_cb, NULL);
       chVTSetContinuousI(&continuous, TIME_US2I(50), continuous_cb, NULL);
+      chVTSetI(&guard0, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM / 2), guard_cb, NULL);
+      chVTSetI(&guard1, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM - 1), guard_cb, NULL);
+      chVTSetI(&guard2, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM + 1), guard_cb, NULL);
+      chVTSetI(&guard3, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM * 2), guard_cb, NULL);
 
       /* Letting them run for half second.*/
       chThdSleepS(TIME_MS2I(500));
@@ -232,6 +291,10 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTResetI(&sweeperp3);
       chVTResetI(&wrapper);
       chVTResetI(&continuous);
+      chVTResetI(&guard0);
+      chVTResetI(&guard1);
+      chVTResetI(&guard2);
+      chVTResetI(&guard3);
       chSysUnlock();
 
       if (saturated) {
@@ -249,6 +312,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
     }
     else {
+      chprintf(cfg->out, "\r\nNon saturated");
       chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
     }
   }

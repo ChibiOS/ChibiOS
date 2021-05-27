@@ -132,8 +132,8 @@
 #define STM32_IRQ_TIM1_TRGCO_TIM17_PRIORITY 7
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
 #define STM32_IRQ_TIM2_PRIORITY             7
-#define STM32_IRQ_TIM3_PRIORITY             9
-#define STM32_IRQ_TIM4_PRIORITY             10
+#define STM32_IRQ_TIM3_PRIORITY             3
+#define STM32_IRQ_TIM4_PRIORITY             4
 #define STM32_IRQ_TIM5_PRIORITY             7
 #define STM32_IRQ_TIM6_PRIORITY             7
 #define STM32_IRQ_TIM7_PRIORITY             7
