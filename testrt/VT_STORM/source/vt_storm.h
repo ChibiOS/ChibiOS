@@ -41,7 +41,7 @@
  * @brief   Timings randomization.
  */
 #if !defined(VT_STORM_CFG_RANDOMIZE) || defined(__DOXYGEN__)
-#define VT_STORM_CFG_RANDOMIZE              TRUE
+#define VT_STORM_CFG_RANDOMIZE              0
 #endif
 
 /**
@@ -52,7 +52,7 @@
 #endif
 
 /**
- * @brief   Minimum delay for each iteration.
+ * @brief   Minimum delay for each iteration in system ticks.
  */
 #if !defined(VT_STORM_CFG_MIN_DELAY) || defined(__DOXYGEN__)
 #define VT_STORM_CFG_MIN_DELAY              5
@@ -62,7 +62,7 @@
  * @brief   Enable hammer timers.
  */
 #if !defined(VT_STORM_CFG_HAMMERS) || defined(__DOXYGEN__)
-#define VT_STORM_CFG_HAMMERS                TRUE
+#define VT_STORM_CFG_HAMMERS                0
 #endif
 /** @} */
 

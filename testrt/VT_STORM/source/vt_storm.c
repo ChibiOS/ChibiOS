@@ -321,7 +321,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     /* Starting continuous timer.*/
     vtcus = 0;
 
-    delay = 120;
+    delay = TIME_US2I(120);
     saturated = false;
     do {
       /* Starting sweepers.*/
@@ -364,8 +364,10 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
 
       palToggleLine(config->line);
       chprintf(cfg->out, ".");
-      delay--;
-    } while (delay >= VT_STORM_CFG_MIN_DELAY);
+      if (delay >= TIME_US2I(1)) {
+        delay -= TIME_US2I(1);
+      }
+    } while (delay >= (sysinterval_t)VT_STORM_CFG_MIN_DELAY);
 
     if (saturated) {
       chprintf(cfg->out, "\r\nSaturated at %u uS", TIME_I2US(delay));
