@@ -61,6 +61,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if STM32_RCC_HAS_HSI48 == TRUE
 __STATIC_INLINE void hsi48_enable(void) {
 
   RCC->CRRCR |= RCC_CRRCR_HSI48ON;
@@ -73,6 +74,7 @@ __STATIC_INLINE void hsi48_disable(void) {
 
   RCC->CRRCR &= ~RCC_CRRCR_HSI48ON;
 }
+#endif /* STM32_RCC_HAS_HSI48 == TRUE */
 
 __STATIC_INLINE void hsi48_init(void) {
 
