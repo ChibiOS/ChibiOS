@@ -409,7 +409,7 @@ void chVTDoTickI(void) {
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
-  ch_delta_list_t *dlp;
+  virtual_timer_t *vtp;
   sysinterval_t delta, nowdelta;
   systime_t now;
 
@@ -418,25 +418,31 @@ void chVTDoTickI(void) {
   nowdelta = chTimeDiffX(vtlp->lasttime, now);
 
   /* Looping through timers consuming all timers with deltas lower or equal
-     than the interval between "now" and "lasttime".
-     Note that the list scan is limited by the delta list header having
-     "vtlp->dlist.delta == (sysinterval_t)-1" which is greater than all
-      deltas.*/
-  dlp = vtlp->dlist.next;
-  while (nowdelta >= dlp->delta) {
-    virtual_timer_t *vtp = (virtual_timer_t *)dlp;
+     than the interval between "now" and "lasttime".*/
+  while (true) {
     systime_t lasttime;
 
+    /* First timer in the delta list.*/
+    vtp = (virtual_timer_t *)vtlp->dlist.next;
+
+    /* Loop break condition.
+       Note that the list scan is limited by the delta list header having
+       "vtlp->dlist.delta == (sysinterval_t)-1" which is greater than all
+       deltas*/
+    if (nowdelta < vtp->dlist.delta) {
+      break;
+    }
+
     /* Last time deadline is updated to the next timer's time.*/
-    lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
+    lasttime = chTimeAddX(vtlp->lasttime, vtp->dlist.delta);
     vtlp->lasttime = lasttime;
 
     // TODO, remove this assert, it is triggered also by some valid cases.
     chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
 
     /* Removing the timer from the list, marking it as not armed.*/
-    (void) ch_dlist_dequeue(dlp);
-    dlp->next = NULL;
+    (void) ch_dlist_dequeue(&vtp->dlist);
+    vtp->dlist.next = NULL;
 
     /* If the list becomes empty then the alarm is disabled.*/
     if (ch_dlist_isempty(&vtlp->dlist)) {
@@ -481,9 +487,6 @@ void chVTDoTickI(void) {
         ch_dlist_insert(&vtlp->dlist, &vtp->dlist, delta);
       }
     }
-
-    /* Next element in the list.*/
-    dlp = vtlp->dlist.next;
   }
 
   /* If the list is empty, nothing else to do.*/
@@ -492,7 +495,7 @@ void chVTDoTickI(void) {
   }
 
   /* Calculating the delta to the next alarm time.*/
-  delta = dlp->delta - nowdelta;
+  delta = vtp->dlist.delta - nowdelta;
 
   /* Limit delta to CH_CFG_ST_TIMEDELTA.*/
   if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
