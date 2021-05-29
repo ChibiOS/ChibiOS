@@ -406,6 +406,11 @@ void chVTDoTickI(void) {
       chSysUnlockFromISR();
       vtp->func(vtp, vtp->par);
       chSysLockFromISR();
+
+      /* If a reload is defined the timer needs to be restarted.*/
+      if (vtp->reload > (sysinterval_t)0) {
+        ch_dlist_insert(&vtlp->dlist, &vtp->dlist, vtp->reload);
+      }
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
