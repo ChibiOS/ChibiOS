@@ -58,19 +58,6 @@ static volatile sysinterval_t delay;
 static volatile bool saturated;
 static uint32_t vtcus;
 
-#if VT_STORM_CFG_HAMMERS
-/*
- * GPTs configuration.
- */
-static void hammer_gpt_cb(GPTDriver *gptp);
-static const GPTConfig hammer_gpt_cfg = {
-  1000000,              /* 1MHz timer clock.*/
-  hammer_gpt_cb,    /* Timer callback.*/
-  0,
-  0
-};
-#endif
-
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -232,31 +219,6 @@ static void guard_cb(virtual_timer_t *vtp, void *p) {
   (void)p;
 }
 
-#if VT_STORM_CFG_HAMMERS
-/**
- * @brief   GPT callback.
- */
-static void hammer_gpt_cb(GPTDriver *gptp) {
-
-  (void)gptp;
-
-#if VT_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     chSysLockFromISR();
-     r = rand() & 31;
-     chSysUnlockFromISR();
-     while (r--) {
-       x++;
-     }
-   }
-#endif
-}
-#endif
-
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -302,15 +264,15 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
   chprintf(cfg->out, "*** System Time size: %d bits\r\n", CH_CFG_ST_RESOLUTION);
   chprintf(cfg->out, "*** Intervals size:   %d bits\r\n", CH_CFG_INTERVALS_SIZE);
   chprintf(cfg->out, "*** SysTick:          %d Hz\r\n", CH_CFG_ST_FREQUENCY);
-  chprintf(cfg->out, "*** Delta:            %d cycles\r\n", CH_CFG_ST_TIMEDELTA);
+  chprintf(cfg->out, "*** Delta:            %d ticks\r\n", CH_CFG_ST_TIMEDELTA);
   chprintf(cfg->out, "\r\n");
 
 #if VT_STORM_CFG_HAMMERS
   /* Starting hammer timers.*/
-  gptStart(&GPTD3, &hammer_gpt_cfg);
-  gptStart(&GPTD4, &hammer_gpt_cfg);
-  gptStartContinuous(&GPTD3, 99);
-  gptStartContinuous(&GPTD4, 101);
+  gptStart(cfg->gpt1p, cfg->gptcfg1p);
+  gptStart(cfg->gpt2p, cfg->gptcfg2p);
+  gptStartContinuous(cfg->gpt1p, 99);
+  gptStartContinuous(cfg->gpt2p, 101);
 #endif
 
   for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
@@ -379,5 +341,53 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     }
   }
 }
+
+#if VT_STORM_CFG_HAMMERS || defined(__DOXYGEN__)
+/**
+ * @brief   GPT callback 1.
+ */
+void vt_storm_gpt1_cb(GPTDriver *gptp) {
+
+  (void)gptp;
+
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     chSysLockFromISR();
+     r = rand() & 31;
+     chSysUnlockFromISR();
+     while (r--) {
+       x++;
+     }
+   }
+#endif
+}
+
+/**
+ * @brief   GPT callback 2.
+ */
+void vt_storm_gpt2_cb(GPTDriver *gptp) {
+
+  (void)gptp;
+
+#if VT_STORM_CFG_RANDOMIZE != FALSE
+   /* Pseudo-random delay.*/
+   {
+     static volatile unsigned x = 0;
+     unsigned r;
+
+     chSysLockFromISR();
+     r = rand() & 31;
+     chSysUnlockFromISR();
+     while (r--) {
+       x++;
+     }
+   }
+#endif
+}
+#endif
 
 /** @} */

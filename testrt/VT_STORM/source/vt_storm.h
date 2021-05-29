@@ -41,7 +41,7 @@
  * @brief   Timings randomization.
  */
 #if !defined(VT_STORM_CFG_RANDOMIZE) || defined(__DOXYGEN__)
-#define VT_STORM_CFG_RANDOMIZE              0
+#define VT_STORM_CFG_RANDOMIZE              TRUE
 #endif
 
 /**
@@ -62,7 +62,7 @@
  * @brief   Enable hammer timers.
  */
 #if !defined(VT_STORM_CFG_HAMMERS) || defined(__DOXYGEN__)
-#define VT_STORM_CFG_HAMMERS                0
+#define VT_STORM_CFG_HAMMERS                TRUE
 #endif
 /** @} */
 
@@ -87,6 +87,24 @@ typedef struct {
    * @brief   LED line.
    */
   ioline_t              line;
+#if VT_STORM_CFG_HAMMERS || defined(__DOXYGEN__)
+  /**
+   * @brief   GPT driver 1.
+   */
+  GPTDriver             *gpt1p;
+  /**
+   * @brief   GPT driver 2.
+   */
+  GPTDriver             *gpt2p;
+  /**
+   * @brief   GPT1 configuration 1.
+   */
+  const GPTConfig       *gptcfg1p;
+  /**
+   * @brief   GPT1 configuration 2.
+   */
+  const GPTConfig       *gptcfg2p;
+#endif
   /**
    * @brief   System clock.
    */
@@ -105,6 +123,10 @@ typedef struct {
 extern "C" {
 #endif
   void vt_storm_execute(const vt_storm_config_t *cfg);
+#if VT_STORM_CFG_HAMMERS
+  void vt_storm_gpt1_cb(GPTDriver *gptp);
+  void vt_storm_gpt2_cb(GPTDriver *gptp);
+#endif
 #ifdef __cplusplus
 }
 #endif
