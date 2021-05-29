@@ -413,10 +413,6 @@ void chVTDoTickI(void) {
   sysinterval_t delta, nowdelta;
   systime_t now;
 
-  /* Delta between current time and last execution time.*/
-  now = chVTGetSystemTimeX();
-  nowdelta = chTimeDiffX(vtlp->lasttime, now);
-
   /* Looping through timers consuming all timers with deltas lower or equal
      than the interval between "now" and "lasttime".*/
   while (true) {
@@ -424,6 +420,10 @@ void chVTDoTickI(void) {
 
     /* First timer in the delta list.*/
     vtp = (virtual_timer_t *)vtlp->dlist.next;
+
+    /* Delta between current time and last execution time.*/
+    now = chVTGetSystemTimeX();
+    nowdelta = chTimeDiffX(vtlp->lasttime, now);
 
     /* Loop break condition.
        Note that the list scan is limited by the delta list header having
@@ -456,17 +456,19 @@ void chVTDoTickI(void) {
     vtp->func(vtp, vtp->par);
     chSysLockFromISR();
 
-    /* Delta between current time after callback execution time.*/
-    now = chVTGetSystemTimeX();
-    nowdelta = chTimeDiffX(lasttime, now);
-
     /* If a reload is defined the timer needs to be restarted.*/
     if (vtp->reload > (sysinterval_t)0) {
+      sysinterval_t delay;
+
+      /* Refreshing the current time after spending time in the callback for
+         a more accurate detection of too fast reloads.*/
+      now = chVTGetSystemTimeX();
+      nowdelta = chTimeDiffX(lasttime, now);
 
       chDbgAssert(nowdelta <= vtp->reload, "skipped deadline");
 
       /* Enqueuing the timer again using the calculated delta.*/
-      sysinterval_t delay = vtp->reload - nowdelta;
+      delay = vtp->reload - nowdelta;
 
       /* Special case where the timers list is empty.*/
       if (ch_dlist_isempty(&vtlp->dlist)) {
