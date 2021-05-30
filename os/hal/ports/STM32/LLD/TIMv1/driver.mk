@@ -1,5 +1,3 @@
-PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/hal_st_lld.c
-
 ifeq ($(USE_SMART_BUILD),yes)
 ifneq ($(findstring HAL_USE_GPT TRUE,$(HALCONF)),)
 PLATFORMSRC += $(CHIBIOS)/os/hal/ports/STM32/LLD/TIMv1/hal_gpt_lld.c
