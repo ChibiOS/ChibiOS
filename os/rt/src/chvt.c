@@ -50,19 +50,6 @@
 
 #if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
 /**
- * @brief   Timer check.
- *
- * @param[in] dlhp      pointer to the delta list header
- * @param[in] dlp       pointer to the delta list element
- *
- * @notapi
- */
-static inline bool is_timer(ch_delta_list_t *dlhp, ch_delta_list_t *dlp) {
-
-  return (bool)(dlp != dlhp);
-}
-
-/**
  * @brief   Inserts a timer as first element in a delta list.
  * @note    This is the special case when the delta list is initially empty.
  */
