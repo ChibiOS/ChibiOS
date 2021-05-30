@@ -470,10 +470,27 @@ void chVTDoTickI(void) {
       now = chVTGetSystemTimeX();
       nowdelta = chTimeDiffX(lasttime, now);
 
+#if !defined(CH_VT_RFCU_DISABLED)
+      /* Checking if the required reload is feasible.*/
+      if (nowdelta > vtp->reload) {
+        /* System time is already past the deadline, logging the fault and
+           proceeding with a minimum delay.*/
+
+        chDbgAssert(false, "skipped deadline");
+        chRFCUCollectFaultsI(CH_RFCU_VT_SKIPPED_DEADLINE);
+
+        delay = (sysinterval_t)0;
+      }
+      else {
+        /* Enqueuing the timer again using the calculated delta.*/
+        delay = vtp->reload - nowdelta;
+      }
+#else
       chDbgAssert(nowdelta <= vtp->reload, "skipped deadline");
 
       /* Enqueuing the timer again using the calculated delta.*/
       delay = vtp->reload - nowdelta;
+#endif
 
       /* Special case where the timers list is empty.*/
       if (ch_dlist_isempty(&vtlp->dlist)) {
@@ -516,11 +533,24 @@ void chVTDoTickI(void) {
 #endif
 
   /* Update alarm time to next timer.*/
-  port_timer_set_alarm(chTimeAddX(now, delta));
+  {
+    sysinterval_t next_alarm = chTimeAddX(now, delta);
 
-  chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
-              chTimeDiffX(vtlp->lasttime, chTimeAddX(now, delta)),
-              "insufficient delta");
+    port_timer_set_alarm(next_alarm);
+
+#if !defined(CH_VT_RFCU_DISABLED)
+    if (chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) >
+        chTimeDiffX(vtlp->lasttime, next_alarm)) {
+
+      chDbgAssert(false, "insufficient delta");
+      chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
+    }
+#else
+    chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
+                chTimeDiffX(vtlp->lasttime, next_alarm),
+                "insufficient delta");
+#endif
+  }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
