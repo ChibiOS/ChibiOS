@@ -356,8 +356,8 @@
                     <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ST\STM32F3xx</state>
-                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
-                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\compilers\IAR</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\oslib\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\rt\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\oslib\include</state>
@@ -655,7 +655,7 @@
                     <state>$PROJ_DIR$\..\cfg</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\license</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
-                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</state>
                 </option>
                 <option>
@@ -1448,8 +1448,8 @@
                     <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\ext\ST\STM32F3xx</state>
-                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
-                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\compilers\IAR</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\oslib\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\rt\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\oslib\include</state>
@@ -1747,7 +1747,7 @@
                     <state>$PROJ_DIR$\..\cfg</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\license</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx</state>
-                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</state>
                 </option>
                 <option>
@@ -2276,25 +2276,25 @@
             <group>
                 <name>port</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\chcore.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\chcore.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\chcore.h</name>
+                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\chcore.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\chcore_timer.h</name>
+                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\chcore_timer.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\chcore_v7m.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\chcore.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\chcore_v7m.h</name>
+                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\chcore.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\compilers\IAR\chcoreasm_v7m.s</name>
+                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR\chcoreasm.s</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMCMx\compilers\IAR\chtypes.h</name>
+                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR\chtypes.h</name>
                 </file>
             </group>
             <group>
@@ -2726,6 +2726,12 @@
                     <name>$PROJ_DIR$\..\..\..\..\os\rt\include\chevents.h</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\..\..\os\rt\include\chinstances.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\os\rt\include\chrfcu.h</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\..\..\os\rt\include\chmsg.h</name>
                 </file>
                 <file>
@@ -2777,6 +2783,9 @@
                     <name>$PROJ_DIR$\..\..\..\..\os\rt\src\chevents.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\..\..\os\rt\src\chinstances.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\..\..\os\rt\src\chmsg.c</name>
                 </file>
                 <file>
@@ -2784,6 +2793,9 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\os\rt\src\chregistry.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\os\rt\src\chrfcu.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\os\rt\src\chschd.c</name>
@@ -2964,6 +2976,12 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_011.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_012.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\test\rt\source\test\rt_test_sequence_012.h</name>
                 </file>
             </group>
         </group>
