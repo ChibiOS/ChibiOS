@@ -49,6 +49,8 @@ __initial_msp
                 AREA    CSTACK, NOINIT, READWRITE, ALIGN=3
 __main_thread_stack_base__
                 EXPORT  __main_thread_stack_base__
+__main_thread_stack_end__
+                EXPORT  __main_thread_stack_end__
 proc_stack_mem  SPACE   proc_stack_size
                 EXPORT  __initial_sp
 __initial_sp
@@ -104,11 +106,11 @@ __early_init    PROC
  * User Initial Stack & Heap.
  */
                 IF      :DEF:__MICROLIB
-                
+
                 EXPORT  __initial_sp
                 EXPORT  __heap_base
                 EXPORT  __heap_limit
-                
+
                 ELSE
 
                 IMPORT  __use_two_region_memory

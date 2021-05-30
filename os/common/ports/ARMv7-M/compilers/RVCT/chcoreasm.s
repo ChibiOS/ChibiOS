@@ -126,7 +126,7 @@ __port_thread_start PROC
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-.zombies        b       .zombies
+zombies         b       zombies
                 ENDP
 
 /*
@@ -159,7 +159,7 @@ __port_exit_from_isr
 #else
                 svc     #0
 #endif
-.waithere       b       .waithere
+waithere        b       waithere
                 ENDP
 
                 END
