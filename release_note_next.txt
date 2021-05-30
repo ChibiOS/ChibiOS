@@ -8,83 +8,49 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 
 *** ChibiOS next highlights ****
 
-- New NIL 4.0.
-- New ARM SandBox subsystem.
-- New modules in OSLIB.
-- Support for STM32G0xx and STM32G4xx.
-- Support for all STM32 timers in all drivers.
-- Improved support for all STM32s.
-- Improved MFS module.
+- NEW RT 7.0.
+- Support for RP2040 and Raspberry Pico board.
+- Support for STM32L5xx, STM32WBxx and STM32WLxx.
+- Dynamic clock support in HAL.
+- Improved STM32 HAL.
+- Added ARMv8-M port.
 
 *** ChibiOS next general improvements ***
 
-- Lots of style fixes thanks to the new code checker tool.
-- Improved syscalls.c support.
-- Updated FatFS to version 0.13c.
-- Updated lwIP to version 2.1.2.
-- Updated WolfSSL to latest version.
-- Added support for .cc files extensions in makefiles.
 
 *** What's new in RT/NIL ports ***
 
-- Added support for a syscall entry point, it is used by the new ChibiOS/SB
-  subsystem.
+- Addes SMP port for Cortex-M0 required by RP2040.
+- The old generic ARMCMx port has been split in ARMv6-M, ARMv7-M and ARMv8-M-ML
+  ports.
 
-*** What's new in OS Library 1.2.0 ***
+*** What's new in OS Library 1.3.0 ***
 
-- Improved OSLIB initialization.
-- Modified core allocator to be able to get blocks starting from bottom
-  or top of the available memory range.
-- Re-introduced missing chGuardedPoolGetCounterI() function to guarded
-  pools allocator.
-- Added a cache class to OSLIB (experimental).
-- Added support for delegate threads.
-- Added support for asynchronous jobs queues.
+- Internal rework to make it compatible with RT 7.0.0 and NIL 4.1.0.
 
-*** What's new in SB 1.0.0 ***
+*** What's new in SB 1.1.0 ***
 
-- New sandbox subsystem. It allows to have untrusted/unreliable code to
-  be run into one or more isolated enclaves (experimental).
-  - Currently only GCC is supported.
+- Internal rework to make it compatible with RT 7.0.0.
   
-*** What's new in RT 6.1.0 ***
+*** What's new in RT 7.0.0 ***
 
-- Added a "library generator" project for RT, it allows to
-  generate a library with a pre-configured RT. It also includes
-  an "header generator" able to generate an unified "ch.h" with
-  all options resolved.
-- New functions: chSemResetWithMessageI() and chSemResetWithMessage().
-- Improvements to messages, new functions chMsgWaitS(), chMsgWaitTimeoutS(),
-  chMsgWaitTimeout(), chMsgPollS(), chMsgPoll().
+- Support for SMP multi-core threading.
+- 64 bits monotonic time stamps with the same resolution of Virtual Timers.
+- Much more efficient and accurate Virtual Timers in tick-less mode.
+- Automatic reload of Virtual Timers, now both one-shot and continuous timers
+  are supported.
+- Internal reorganization to better fit the general architectural design. For
+  example, lists/queus code has been centralized in a dedicated module.
 
-*** What's new in NIL 4.0.0 ***
 
-- New NIL 4.
-  - Increased API compatibility with RT.
-  - Full threading (create, wait, exit).
-  - Events support like in RT (optional).
-  - Messages support like in RT (optional).
-  - Full OSLIB support.
-- New functions: chSemResetWithMessageI() and chSemResetWithMessage().
-- Improvements to messages, new functions chMsgWaitS(),
-  chMsgWaitTimeoutS(), chMsgWaitTimeout().
+*** What's new in NIL 4.1.0 ***
 
-*** What's new in HAL 7.1.0 ***
+- Internal rework to make it compatible with RT 7.0.0.
 
-- Added a new interface for range-finder devices.
-- Added transactional updates to MFS. Doubled data headers magic numbers
-  for improved safety and to keep the final write aligned to 64 bits.
-- Modified AES GCM function signatures.
-- Added and embedded flash driver model in HAL. Added an implementation
-  for STM32F1xx, STM32L4xx, STM32L4xx+. 
-- Modified the ST driver to support, optionally, multiple additional
-  callback-capable channels.
-- Added error handling to WSPI driver, now LLDs can report error
-  conditions to upper layers.
-- Added canTryAbortX() function to CAN driver, implemented
-  for STM32 CANv1.
+*** What's new in HAL 7.2.0 ***
+
        
-*** What's new in EX 1.1.0 ***
+*** What's new in EX 1.2.0 ***
 
 
 *** What's new in AVR HAL support ***
@@ -92,27 +58,5 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 
 *** What's new in STM32 HAL support ***
 
-- Added support for STM32G0xx.
-- Added support for STM32G4xx.
-- Improved DMAv1 and DMAv2 drivers.
-- TRNG support added to STM32F7xx, STM32G0xx, STM32G4xx, STM32H7xx and
-  STM32L0xx.
-- Idle callback support for STM32 USARTv1 UART driver.
-- Improved support for shared handlers. Now there are centralized
-  inclusion modules (.inc) containing shared handlers. The new modules
-  can be included by the various STM32 platforms. So far the new system
-  has been implemented for STM32G0, STM32G4, STM32L0, STM32L4, STM32L4+,
-  STM32F7, STM3277.
-- Added support for timers 9..17, 20..22 to STM32 PWM driver.
-- Added support for timers 9..17, 20..22 to STM32 ICU driver.
-- Added support for timers 10 and 13 to STM32 GPT driver.
-- Added support for timers 9..14 to STM32 ST driver.
 
 *** What's new in tools ***
-
-- Code style checker tool added.
-- Introduced mcuconf.h updater tool for STM32F407, STM32L052/L053/L062/L063,
-  STM32L072/L073, STM32G4x1/G4x3/G4x4.
-- Added script to generate board files from command line, just
-  run ./os/hal/boards/genboard.sh with the board directory name
-  as parameter.

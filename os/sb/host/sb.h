@@ -49,7 +49,7 @@
 /**
  * @brief   Safety Extensions version string.
  */
-#define CH_SB_VERSION           "1.0.0"
+#define CH_SB_VERSION           "1.1.0"
 
 /**
  * @brief   Safety Extensions version major number.
@@ -59,7 +59,7 @@
 /**
  * @brief   Safety Extensions version minor number.
  */
-#define CH_SB_MINOR             0
+#define CH_SB_MINOR             1
 
 /**
  * @brief   Safety Extensions version patch number.
