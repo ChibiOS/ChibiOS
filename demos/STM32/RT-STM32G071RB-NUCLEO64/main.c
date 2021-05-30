@@ -50,6 +50,14 @@ int main(void) {
   halInit();
   chSysInit();
 
+  if (halClockSwitchMode(&hal_clkcfg_reset)) {
+    chSysHalt("switch to reset failed");
+  }
+
+  if (halClockSwitchMode(&hal_clkcfg_default)) {
+    chSysHalt("switch to default failed");
+  }
+
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */

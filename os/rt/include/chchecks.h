@@ -255,6 +255,10 @@
 #error "CH_CFG_TRACE_HOOK not defined in chconf.h"
 #endif
 
+#if !defined(CH_CFG_RUNTIME_FAULTS_HOOK)
+#error "CH_CFG_RUNTIME_FAULTS_HOOK not defined in chconf.h"
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

@@ -412,6 +412,13 @@ struct ch_os_instance {
    * @brief   Core associated to this instance.
    */
   core_id_t                     core_id;
+#if (CH_CFG_SMP_MODE == FALSE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Runtime Faults Collection Unit for this instance.
+   * @note    This field is present only if the SMP mode is disabled.
+   */
+  rfcu_t                        rfcu;
+#endif
   /**
    * @brief   Pointer to the instance configuration data.
    */
@@ -469,6 +476,13 @@ typedef struct ch_system {
    * @note    This field is present only if the SMP mode is enabled.
    */
   registry_t                    reglist;
+#endif
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Runtime Faults Collection Unit.
+   * @note    This field is present only if the SMP mode is enabled.
+   */
+  rfcu_t                        rfcu;
 #endif
 #if defined(PORT_SYSTEM_EXTRA_FIELDS) || defined(__DOXYGEN__)
   /* Extra fields from port layer.*/

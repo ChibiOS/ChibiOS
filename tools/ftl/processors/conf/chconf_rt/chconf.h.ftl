@@ -810,6 +810,14 @@
   /* Trace code here.*/                                                     \
 }
 
+/**
+ * @brief   Runtime Faults Collection Unit hook.
+ * @details This hook is invoked each time new faults are collected and stored.
+ */
+#define CH_CFG_RUNTIME_FAULTS_HOOK(mask) {                                  \
+  /* Faults handling code here.*/                                           \
+}
+
 /** @} */
 
 /*===========================================================================*/

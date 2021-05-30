@@ -98,6 +98,7 @@
 /* Base kernel headers.*/
 #include "chtypes.h"
 #include "chearly.h"
+#include "chrfcu.h"
 #include "chdebug.h"
 #include "chtime.h"
 #include "chlists.h"
