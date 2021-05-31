@@ -59,7 +59,11 @@ extern "C" {
 /*
  * Allowed delay in timeout checks.
  */
-#define ALLOWED_DELAY TIME_MS2I(2)
+#if CH_CFG_ST_TIMEDELTA == 0
+#define ALLOWED_DELAY           2
+#else
+#define ALLOWED_DELAY           CH_CFG_ST_TIMEDELTA
+#endif
 
 /*
  * Maximum number of test threads.
