@@ -429,9 +429,6 @@ void chVTDoTickI(void) {
     lasttime = chTimeAddX(vtlp->lasttime, vtp->dlist.delta);
     vtlp->lasttime = lasttime;
 
-    // TODO, remove this assert, it is triggered also by some valid cases.
-    chDbgAssert((int)chTimeDiffX(vtlp->lasttime, now) >= 0, "back in time");
-
     /* Removing the timer from the list, marking it as not armed.*/
     (void) ch_dlist_dequeue(&vtp->dlist);
     vtp->dlist.next = NULL;
