@@ -534,31 +534,35 @@ void chVTDoTickI(void) {
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
-  delta_list_t *dlp;
+  virtual_timer_t *vtp;
   sysinterval_t delta, nowdelta;
   systime_t now;
 
-  /* Delta between current time and last execution time.*/
-  now = chVTGetSystemTimeX();
-  nowdelta = chTimeDiffX(vtlp->lasttime, now);
-
   /* Looping through timers consuming all timers with deltas lower or equal
-     than the interval between "now" and "lasttime".
-     Note that the list scan is limited by the delta list header having
-     "vtlp->dlist.delta == (sysinterval_t)-1" which is greater than all
-      deltas.*/
-  dlp = vtlp->dlist.next;
-  while (nowdelta >= dlp->delta) {
-    virtual_timer_t *vtp = (virtual_timer_t *)dlp;
-    systime_t lasttime;
+     than the interval between "now" and "lasttime".*/
+  while (true) {
     vtfunc_t fn;
 
+    /* First timer in the delta list.*/
+    vtp = (virtual_timer_t *)vtlp->dlist.next;
+
+    /* Delta between current time and last execution time.*/
+    now = chVTGetSystemTimeX();
+    nowdelta = chTimeDiffX(vtlp->lasttime, now);
+
+    /* Loop break condition.
+       Note that the list scan is limited by the delta list header having
+       "vtlp->dlist.delta == (sysinterval_t)-1" which is greater than all
+       deltas*/
+    if (nowdelta < vtp->dlist.delta) {
+      break;
+    }
+
     /* Last time deadline is updated to the next timer's time.*/
-    lasttime = chTimeAddX(vtlp->lasttime, dlp->delta);
-    vtlp->lasttime = lasttime;
+    vtlp->lasttime = chTimeAddX(vtlp->lasttime, vtp->dlist.delta);
 
     /* Removing the timer from the list.*/
-    (void) vt_dequeue(dlp);
+    (void) vt_dequeue(&vtp->dlist);
 
     /* Marking the timer as not armed.*/
     fn = vtp->func;
@@ -575,13 +579,6 @@ void chVTDoTickI(void) {
     chSysUnlockFromISR();
     fn(vtp->par);
     chSysLockFromISR();
-
-    /* Delta between current time after callback execution time.*/
-    now = chVTGetSystemTimeX();
-    nowdelta = chTimeDiffX(lasttime, now);
-
-    /* Next element in the list.*/
-    dlp = vtlp->dlist.next;
   }
 
   /* If the list is empty, nothing else to do.*/
@@ -589,10 +586,10 @@ void chVTDoTickI(void) {
     return;
   }
 
-  /* Calculating the next alarm time.*/
-  delta = dlp->delta - nowdelta;
+  /* Calculating the delta to the next alarm time.*/
+  delta = vtp->dlist.delta - nowdelta;
 
-  /* For normal timers limit to CH_CFG_ST_TIMEDELTA.*/
+  /* Limit delta to CH_CFG_ST_TIMEDELTA.*/
   if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
     delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
   }

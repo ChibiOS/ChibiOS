@@ -52,7 +52,7 @@
  *          setting also defines the system tick time unit.
  */
 #if !defined(CH_CFG_ST_FREQUENCY)
-#define CH_CFG_ST_FREQUENCY                 1000000
+#define CH_CFG_ST_FREQUENCY                 21250000
 #endif
 
 /**

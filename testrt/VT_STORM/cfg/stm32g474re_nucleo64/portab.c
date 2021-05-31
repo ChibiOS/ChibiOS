@@ -35,12 +35,40 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
+#if VT_STORM_CFG_HAMMERS || defined(__DOXYGEN__)
+/*
+ * GPT4 configuration.
+ */
+static const GPTConfig gpt3cfg = {
+  1000000,              /* 1MHz timer clock.*/
+  vt_storm_gpt1_cb,     /* Timer callback.*/
+  0,
+  0
+};
+
+/*
+ * GPT3 configuration.
+ */
+static const GPTConfig gpt4cfg = {
+  1000000,              /* 1MHz timer clock.*/
+  vt_storm_gpt2_cb,     /* Timer callback.*/
+  0,
+  0
+};
+#endif
+
 /*
  * VT Storm configuration.
  */
 const vt_storm_config_t portab_vt_storm_config = {
   (BaseSequentialStream  *)&PORTAB_SD1,
   PORTAB_LINE_LED1,
+#if VT_STORM_CFG_HAMMERS
+  &GPTD3,
+  &GPTD4,
+  &gpt3cfg,
+  &gpt4cfg,
+#endif
   STM32_SYSCLK
 };
 
