@@ -39,8 +39,15 @@
 #define STM32_NO_INIT                       FALSE
 #define STM32_CLOCK_DYNAMIC                 FALSE
 #define STM32_VOS                           STM32_VOS_RANGE1
-#define STM32_PVD_ENABLE                    FALSE
-#define STM32_PLS                           STM32_PLS_LEV0
+#define STM32_PWR_CR2                       (PWR_CR2_PLS_LVL0 | PWR_CR2_PVDE)
+#define STM32_PWR_PUCRA                     (0U)
+#define STM32_PWR_PDCRA                     (0U)
+#define STM32_PWR_PUCRB                     (0U)
+#define STM32_PWR_PDCRB                     (0U)
+#define STM32_PWR_PUCRC                     (0U)
+#define STM32_PWR_PDCRC                     (0U)
+#define STM32_PWR_PUCRH                     (0U)
+#define STM32_PWR_PDCRH                     (0U)
 #define STM32_HSI16_ENABLED                 TRUE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_LSIPRE                        STM32_LSIPRE_NODIV
@@ -65,7 +72,7 @@
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
 #define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
-#define STM32_PWR_CR2                       (PWR_CR2_PLS_LVL0 | PWR_CR2_PVDE)
+
 
 /*
  * Peripherals clock sources.

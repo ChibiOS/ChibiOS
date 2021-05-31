@@ -44,6 +44,14 @@
 #define STM32_RCC_CR_RESET              0x00000061U
 
 /**
+ * @brief   PWR CR bits safe for fast switch.
+ */
+#define STM32_PWR_CR1_SAFE_ONLY_MASK    (PWR_CR1_LPR             |          \
+                                         PWR_CR1_FPDS            |          \
+                                         PWR_CR1_SUBGHZSPINSSSEL |          \
+                                         PWR_CR1_LPMS_Msk)
+
+/**
  * @brief   MSI range array size.
  */
 #define STM32_MSIRANGE_ARRAY_SIZE       12
@@ -65,8 +73,6 @@ uint32_t SystemCoreClock = STM32_HCLK;
 const halclkcfg_t hal_clkcfg_reset = {
   .pwr_cr1              = PWR_CR1_VOS_0,
   .pwr_cr2              = 0U,
-  .pwr_cr3              = PWR_CR3_EWRFBUSY,
-  .pwr_cr4              = 0U,
   .rcc_cr               = RCC_CR_MSIRANGE_6 | RCC_CR_MSION,
   .rcc_cfgr             = RCC_CFGR_PPRE2F | RCC_CFGR_PPRE1F | RCC_CFGR_HPREF,
   .rcc_extcfgr          = 0U,
@@ -80,8 +86,6 @@ const halclkcfg_t hal_clkcfg_reset = {
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS | PWR_CR1_DBP,
   .pwr_cr2              = STM32_PWR_CR2,
-  .pwr_cr3              = STM32_PWR_CR3,
-  .pwr_cr4              = STM32_PWR_CR4,
   .rcc_cr               = RCC_CR_MSIRANGE_6 | RCC_CR_MSION
 #if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
@@ -463,23 +467,21 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   return false;
 }
+
 /**
- * @brief   Switches to a different clock configuration.
+ * @brief   Configures full clock settings.
  *
  * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
- * @return              The clock switch result.
+ * @return              The clock configuration result.
  * @retval false        if the clock switch succeeded
  * @retval true         if the clock switch failed
  *
  * @notapi
  */
-bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
+bool hal_lld_clock_raw_config(const halclkcfg_t *ccp) {
 
   /* Restoring default PWR settings related clocks and sleep modes.*/
   PWR->CR1 = PWR_CR1_VOS_0;
-  PWR->CR2 = 0U;
-  PWR->CR3 = PWR_CR3_EWRFBUSY;
-  PWR->CR4 = 0U;
 
   /* Waiting for all regulator status bits to be cleared, this means that
      power levels are stable.*/
@@ -533,20 +535,16 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* Final PWR modes.*/
   PWR->CR1 = ccp->pwr_cr1;
   PWR->CR2 = ccp->pwr_cr2;
-  PWR->CR3 = ccp->pwr_cr3;
-  PWR->CR4 = ccp->pwr_cr4;
 
   /* Waiting for the correct regulator state.*/
   if ((ccp->pwr_cr1 & PWR_CR1_LPR) == 0U) {
     /* Main mode selected.*/
-
     while ((PWR->SR2 & PWR_SR2_REGLPF) != 0U) {
       /* Waiting for the regulator to be in main mode.*/
     }
   }
   else {
     /* Low power mode selected.*/
-
     while ((PWR->SR2 & PWR_SR2_REGLPF) == 0U) {
       /* Waiting for the regulator to be in low power mode.*/
     }
@@ -554,9 +552,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
   /* Switching to the final clock source.*/
   RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW_Msk) | (ccp->rcc_cfgr & RCC_CFGR_SW_Msk);
-  /* Apply RCC EXTCFGR.*/
   RCC->EXTCFGR = ccp->rcc_extcfgr;
-
   while ((RCC->CFGR & RCC_CFGR_SWS) != ((ccp->rcc_cfgr & RCC_CFGR_SW_Msk) << RCC_CFGR_SWS_Pos)) {
     /* Waiting for clock switch.*/
   }
@@ -568,6 +564,7 @@ bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
   return false;
 }
+
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
@@ -620,12 +617,24 @@ void stm32_clock_init(void) {
 
   /* RTC clock enable.*/
 #if HAL_USE_RTC
-  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, false)
+  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, false);
 #endif
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
   /* Backup domain made accessible.*/
   PWR->CR1 |= PWR_CR1_DBP;
+
+  /* Static PWR initializations.*/
+  PWR->CR3 = STM32_PWR_CR3;
+  PWR->CR4 = STM32_PWR_CR4;
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+  PWR->PUCRH = STM32_PWR_PUCRH;
+  PWR->PDCRH = STM32_PWR_PDCRH;
 
   /* Backup domain reset.*/
   bd_reset();
@@ -635,7 +644,7 @@ void stm32_clock_init(void) {
   lsi_init();
 
   /* Selecting the default clock/power/flash configuration.*/
-  if (hal_lld_clock_raw_switch(&hal_clkcfg_default)) {
+  if (hal_lld_clock_raw_config(&hal_clkcfg_default)) {
     osalSysHalt("clkswc");
   }
 
@@ -656,6 +665,14 @@ void stm32_clock_init(void) {
   PWR->CR2 = STM32_PWR_CR2;
   PWR->CR3 = STM32_PWR_CR3;
   PWR->CR4 = STM32_PWR_CR4;
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+  PWR->PUCRH = STM32_PWR_PUCRH;
+  PWR->PDCRH = STM32_PWR_PDCRH;
 
   /* MSI clock reset.*/
   msi_reset();
@@ -724,7 +741,7 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
-  if (hal_lld_clock_raw_switch(ccp)) {
+  if (hal_lld_clock_raw_config(ccp)) {
     return true;
   }
 

@@ -390,6 +390,62 @@
 #endif
 
 /**
+ * @brief   PWR PUCRA register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRA) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRA                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRA register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRA) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRA                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRB register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRB) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRB                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRB register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRB) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRB                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRC register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRC) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRC                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRC register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRC) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRC                     (0U)
+#endif
+
+/**
+ * @brief   PWR PUCRD register initialization value.
+ */
+#if !defined(STM32_PWR_PUCRH) || defined(__DOXYGEN__)
+#define STM32_PWR_PUCRH                     (0U)
+#endif
+
+/**
+ * @brief   PWR PDCRD register initialization value.
+ */
+#if !defined(STM32_PWR_PDCRH) || defined(__DOXYGEN__)
+#define STM32_PWR_PDCRH                     (0U)
+#endif
+
+/**
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
@@ -1504,14 +1560,22 @@ typedef uint32_t halfreq_t;
 typedef struct {
   uint32_t          pwr_cr1;
   uint32_t          pwr_cr2;
-  uint32_t          pwr_cr3;
-  uint32_t          pwr_cr4;
   uint32_t          rcc_cr;
   uint32_t          rcc_cfgr;
   uint32_t          rcc_extcfgr;
   uint32_t          rcc_pllcfgr;
   uint32_t          flash_acr;
 } halclkcfg_t;
+
+/**
+ * @brief   Type of a clock switch-only structure.
+ */
+typedef struct {
+  uint32_t          pwr_cr1;
+  uint32_t          rcc_cfgr;
+  uint32_t          rcc_extcfgr;
+  uint32_t          flash_acr;
+} halclkswc_t;
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
