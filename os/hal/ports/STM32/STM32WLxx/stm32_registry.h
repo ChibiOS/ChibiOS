@@ -34,6 +34,7 @@
  * @{
  */
 
+/* RCC attributes.*/
 #define STM32_RCC_HAS_HSI16                 TRUE
 #define STM32_RCC_HAS_HSI48                 FALSE
 #define STM32_RCC_HAS_MSI                   TRUE
@@ -95,7 +96,7 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                47
 #define STM32_EXTI_IMR1_MASK                0xFF9E0000U
-#define STM32_EXTI_IMR2_MASK                0xFFFFDFFBU
+#define STM32_EXTI_IMR2_MASK                0xFFFFDCFBU
 
 /* Flash attributes.*/
 #define STM32_FLASH_NUMBER_OF_BANKS         1
@@ -186,6 +187,8 @@
 #define STM32_HAS_RTC                       TRUE
 #define STM32_RTC_HAS_SUBSECONDS            TRUE
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#define STM32_RTC_HAS_BINARY_MODE           TRUE
+#define STM32_RTC_HAS_MIXED_MODE            TRUE
 #define STM32_RTC_NUM_ALARMS                2
 #define STM32_RTC_STORAGE_SIZE              32
 #define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
