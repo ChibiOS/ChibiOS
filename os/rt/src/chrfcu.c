@@ -71,24 +71,25 @@ void chRFCUCollectFaultsI(rfcu_mask_t mask) {
 /**
  * @brief   Returns the current faults mask clearing it.
  *
+ * @param[in] mask      mask of faults to be read and cleared
  * @return              The current faults mask.
  * @retval 0            if no faults were collected since last call to this
  *                      function.
  */
-rfcu_mask_t chRFCUGetAndClearFaultsI(void) {
-  rfcu_mask_t mask;
+rfcu_mask_t chRFCUGetAndClearFaultsI(rfcu_mask_t mask) {
+  rfcu_mask_t m;
 
 #if CH_CFG_SMP_MODE == FALSE
   os_instance_t *oip = currcore;
 
-  mask = oip->rfcu.mask;
-  oip->rfcu.mask = (rfcu_mask_t)0;
+  m = oip->rfcu.mask & mask;
+  oip->rfcu.mask &= ~m;
 #else
 
-  mask = ch_system.rfcu.mask;
-  ch_system.rfcu.mask = (rfcu_mask_t)0;
+  m = ch_system.rfcu.mask & mask;
+  ch_system.rfcu.mask &= ~m;
 #endif
 
-  return mask;
+  return m;
 }
 /** @} */

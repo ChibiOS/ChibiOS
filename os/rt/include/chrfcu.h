@@ -40,6 +40,11 @@
 #define CH_RFCU_VT_SKIPPED_DEADLINE         2U
 /** @} */
 
+/**
+ * @brief   Mask of all faults.
+ */
+#define CH_RFCU_ALL_FAULTS                  ((rfcu_mask_t)-1)
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -79,7 +84,7 @@ typedef struct ch_rfcu {
 extern "C" {
 #endif
   void chRFCUCollectFaultsI(rfcu_mask_t mask);
-  rfcu_mask_t chRFCUGetAndClearFaultsI(void);
+  rfcu_mask_t chRFCUGetAndClearFaultsI(rfcu_mask_t mask);
 #ifdef __cplusplus
 }
 #endif
