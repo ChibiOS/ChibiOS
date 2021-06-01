@@ -415,7 +415,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
  *
  * @notapi
  */
-bool hal_lld_clock_raw_config(const halclkcfg_t *ccp) {
+static bool hal_lld_clock_raw_config(const halclkcfg_t *ccp) {
 
   /* Restoring default PWR settings related clocks and sleep modes.*/
   PWR->CR1 = PWR_CR1_VOS_0;
@@ -514,7 +514,7 @@ bool hal_lld_clock_raw_config(const halclkcfg_t *ccp) {
  *
  * @notapi
  */
-bool hal_lld_clock_raw_switch(const halclkswc_t *cwp) {
+static bool hal_lld_clock_raw_switch(const halclkswc_t *cwp) {
 
   /* PWR modes.*/
   PWR->CR1 = (PWR->CR1 & ~STM32_PWR_CR1_SAFE_ONLY_MASK) |
