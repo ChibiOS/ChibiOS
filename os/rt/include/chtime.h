@@ -274,73 +274,12 @@ typedef uint32_t time_conv_t;
   (time_msecs_t)((((time_conv_t)(interval) * (time_conv_t)1000000) +        \
                   (time_conv_t)CH_CFG_ST_FREQUENCY - (time_conv_t)1) /      \
                  (time_conv_t)CH_CFG_ST_FREQUENCY)
-
-/**
- * @brief   Time stamp interval to seconds.
- * @details Converts from time stamp ticks number to seconds.
- * @note    The result is rounded down to the second boundary.
- * @note    Use of this macro for large values is not secure because of
- *          integer overflows. Make sure your value can be correctly
- *          converted.
- *
- * @param[in] timestamp time stamp in ticks
- *
- * @return              The number of seconds.
- *
- * @api
- */
-#define TIME_TS2S(timestamp)                                                \
-  (time_secs_t)(((systimestamp_t)(timestamp) /                              \
-      (systimestamp_t)CH_CFG_ST_FREQUENCY))
-
-/**
- * @brief   Time stamp interval to milliseconds.
- * @details Converts from time stamp ticks number to milliseconds.
- * @note    The result is rounded down to the millisecond boundary.
- * @note    Use of this macro for large values is not secure because of
- *          integer overflows. Make sure your value can be correctly
- *          converted.
- *
- * @param[in] interval  time stamp in ticks
- *
- * @return              The number of milliseconds.
- *
- * @api
- */
-#define TIME_TS2MS(interval)                                                \
-  (time_msecs_t)((((systimestamp_t)(interval) %                             \
-      (systimestamp_t)(CH_CFG_ST_FREQUENCY)) /                              \
-      (systimestamp_t)((systimestamp_t)CH_CFG_ST_FREQUENCY /                \
-        (systimestamp_t)1000)) % 1000)
-
-/**
- * @brief   Time stamp interval to microseconds.
- * @details Converts from time stamp ticks number to microseconds.
- * @note    The result is rounded down to the microsecond boundary.
- * @note    Use of this macro for large values is not secure because of
- *          integer overflows. Make sure your value can be correctly
- *          converted.
- *
- * @param[in] interval  time stamp in ticks
- *
- * @return              The number of microseconds.
- *
- * @api
- */
-#define TIME_TS2US(interval)                                                \
-  (time_usecs_t)((((systimestamp_t)(interval) %                             \
-      (systimestamp_t)(CH_CFG_ST_FREQUENCY)) /                              \
-      (systimestamp_t)((systimestamp_t)CH_CFG_ST_FREQUENCY /                \
-      (systimestamp_t)1000000)) % 1000000)
 /** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-/*
- * Virtual Timers APIs.
- */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -492,75 +431,6 @@ static inline time_usecs_t chTimeI2US(sysinterval_t interval) {
 }
 
 /**
- * @brief   Time stamp interval to seconds.
- * @details Converts from time stamp interval to seconds.
- * @note    The result is rounded up to the next second boundary.
- *
- * @param[in] interval  interval in ticks
- * @return              The number of seconds.
- *
- * @special
- */
-static inline time_secs_t chTimeTS2S(systimestamp_t interval) {
-  systimestamp_t secs;
-
-  secs = ((interval +
-         (systimestamp_t)CH_CFG_ST_FREQUENCY - (systimestamp_t)1) /
-         (systimestamp_t)CH_CFG_ST_FREQUENCY);
-
-  chDbgAssert(secs < (systimestamp_t)((time_secs_t)-1),
-              "conversion overflow");
-
-  return (time_secs_t)secs;
-}
-
-/**
- * @brief   Time stamp interval to milliseconds.
- * @details Converts from time stamp interval to milliseconds.
- * @note    The result is rounded up to the next millisecond boundary.
- *
- * @param[in] interval  interval in ticks
- * @return              The number of milliseconds.
- *
- * @special
- */
-static inline time_msecs_t chTimeTS2MS(systimestamp_t interval) {
-  systimestamp_t msecs;
-
-  msecs = ((interval * (systimestamp_t)1000) +
-           (systimestamp_t)CH_CFG_ST_FREQUENCY - (systimestamp_t)1) /
-          (systimestamp_t)CH_CFG_ST_FREQUENCY;
-
-  chDbgAssert(msecs < (systimestamp_t)((time_msecs_t)-1),
-              "conversion overflow");
-
-  return (time_msecs_t)msecs;
-}
-
-/**
- * @brief   Time stamp interval to microseconds.
- * @details Converts from time stamp interval to microseconds.
- * @note    The result is rounded up to the next microsecond boundary.
- *
- * @param[in] interval  interval in ticks
- * @return              The number of microseconds.
- *
- * @special
- */
-static inline time_usecs_t chTimeTS2US(systimestamp_t interval) {
-  systimestamp_t usecs;
-
-  usecs = ((interval * (systimestamp_t)1000000) +
-           (systimestamp_t)CH_CFG_ST_FREQUENCY - (systimestamp_t)1) /
-          (systimestamp_t)CH_CFG_ST_FREQUENCY;
-
-  chDbgAssert(usecs < (systimestamp_t)((time_usecs_t)-1),
-              "conversion overflow");
-
-  return (time_usecs_t)usecs;
-}
-
-/**
  * @brief   Adds an interval to a system time returning a system time.
  *
  * @param[in] systime   base system time
@@ -604,8 +474,10 @@ static inline sysinterval_t chTimeDiffX(systime_t start, systime_t end) {
  * @param[in] time      the time to be verified
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
- * @retval true         current time within the specified time window.
- * @retval false        current time not within the specified time window.
+ * @retval true         if the current time is within the specified
+ *                      time window.
+ * @retval false        if the current time is not within the specified
+ *                      time window.
  *
  * @xclass
  */
@@ -618,22 +490,69 @@ static inline bool chTimeIsInRangeX(systime_t time,
 }
 
 /**
- * @brief   Time stamp millisecond count in current second.
- * @details Gets millisecond count of current second.
- * @note    The result is rounded up to the next millisecond boundary.
+ * @brief   Adds an interval to a time stamp returning a time stamp.
  *
- * @param[in] interval  interval in time stamp ticks
- * @return              The count of milliseconds.
+ * @param[in] stamp     base time stamp
+ * @param[in] interval  interval to be added
+ * @return              The new time stamp.
  *
- * @special
+ * @xclass
  */
-static inline time_msecs_t chTSSecMS(systimestamp_t interval) {
+static inline sysinterval_t chTimeStampAddX(systimestamp_t stamp,
+                                            sysinterval_t interval) {
 
-  return (time_msecs_t)(interval /
-         ((systimestamp_t)CH_CFG_ST_FREQUENCY / (systimestamp_t)1000)
-          % (time_msecs_t)1000);
+  return stamp + (sysinterval_t)interval;
 }
 
+/**
+ * @brief   Subtracts two time stamps returning an interval.
+ * @note    Intervals can then be used for converting in absolute time.
+ *
+ * @param[in] start     first time stamp
+ * @param[in] end       second time stamp
+ * @return              The interval representing the time stamps difference.
+ *
+ * @xclass
+ */
+static inline sysinterval_t chTimeStampDiffX(systimestamp_t start,
+                                             systimestamp_t end) {
+  systimestamp_t diff;
+
+  /* Time difference as a wide time stamp.*/
+  diff = end - start;
+
+  chDbgAssert(diff <= (systimestamp_t)((sysinterval_t)-1),
+              "conversion overflow");
+
+  /*lint -save -e9033 [10.8] This cast is required by the operation, it is
+    known that the destination type can be wider.*/
+  return (sysinterval_t)diff;
+  /*lint -restore*/
+}
+
+/**
+ * @brief   Checks if the specified time stamp is within the specified time
+ *          stamps range.
+ * @note    When start==end then the function returns always false because the
+ *          time window has zero size.
+ *
+ * @param[in] stamp     the time stamp to be verified
+ * @param[in] start     the start of the time stamp window (inclusive)
+ * @param[in] end       the end of the time stamp window (non inclusive)
+ * @retval true         if the current time stamp is within the specified
+ *                      time stamp window.
+ * @retval false        if the current time stamp is not within the specified
+ *                      time stamp window.
+ *
+ * @xclass
+ */
+static inline bool chTimeStampIsInRangeX(systimestamp_t stamp,
+                                         systimestamp_t start,
+                                         systimestamp_t end) {
+
+  return (bool)((systime_t)((systime_t)stamp - (systime_t)start) <
+                (systime_t)((systime_t)end - (systime_t)start));
+}
 /** @} */
 
 #endif /* CHTIME_H */
