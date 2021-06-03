@@ -198,7 +198,7 @@
  * @brief   Enables the WSPI subsystem.
  */
 #if !defined(HAL_USE_WSPI) || defined(__DOXYGEN__)
-#define HAL_USE_WSPI                        FALSE
+#define HAL_USE_WSPI                        TRUE
 #endif
 
 /*===========================================================================*/
