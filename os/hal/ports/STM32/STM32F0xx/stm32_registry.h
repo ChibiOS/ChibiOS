@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -128,6 +128,14 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                20
 #define STM32_EXTI_IMR1_MASK                0xFFF50000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               4U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        16 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -446,6 +454,14 @@
 #define STM32_EXTI_NUM_LINES                32
 #define STM32_EXTI_IMR1_MASK                0x0FF40000U
 
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               4U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        16 /* Maximum, can be redefined.*/
+#endif
+
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
@@ -662,6 +678,14 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                32
 #define STM32_EXTI_IMR1_MASK                0x7FF40000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               4U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        16 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -887,6 +911,14 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                32
 #define STM32_EXTI_IMR1_MASK                0x7FF40000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               4U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        16 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1121,6 +1153,14 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                32
 #define STM32_EXTI_IMR1_MASK                0x0F940000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               4U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        16 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1363,6 +1403,14 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                32
 #define STM32_EXTI_IMR1_MASK                0x7F840000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               2U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        64 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1635,6 +1683,14 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                32
 #define STM32_EXTI_IMR1_MASK                0x7F840000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               2U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        64 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
@@ -1923,6 +1979,14 @@
 /* EXTI attributes.*/
 #define STM32_EXTI_NUM_LINES                32
 #define STM32_EXTI_IMR1_MASK                0x7F840000U
+
+/* Flash attributes.*/
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH_SECTOR_SIZE             4096U
+#define STM32_FLASH_LINE_SIZE               2U
+#if !defined(STM32_FLASH_SECTORS_PER_BANK) || defined(__DOXYGEN__)
+#define STM32_FLASH_SECTORS_PER_BANK        64 /* Maximum, can be redefined.*/
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
