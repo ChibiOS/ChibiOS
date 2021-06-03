@@ -498,10 +498,10 @@ static inline bool chTimeIsInRangeX(systime_t time,
  *
  * @xclass
  */
-static inline sysinterval_t chTimeStampAddX(systimestamp_t stamp,
-                                            sysinterval_t interval) {
+static inline systimestamp_t chTimeStampAddX(systimestamp_t stamp,
+                                             sysinterval_t interval) {
 
-  return stamp + (sysinterval_t)interval;
+  return stamp + (systimestamp_t)interval;
 }
 
 /**
@@ -550,8 +550,8 @@ static inline bool chTimeStampIsInRangeX(systimestamp_t stamp,
                                          systimestamp_t start,
                                          systimestamp_t end) {
 
-  return (bool)((systime_t)((systime_t)stamp - (systime_t)start) <
-                (systime_t)((systime_t)end - (systime_t)start));
+  return (bool)((systimestamp_t)((systimestamp_t)stamp - (systimestamp_t)start) <
+                (systimestamp_t)((systimestamp_t)end - (systimestamp_t)start));
 }
 /** @} */
 
