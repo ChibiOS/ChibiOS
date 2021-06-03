@@ -73,7 +73,8 @@ static void wspi_lld_serve_mdma_interrupt(WSPIDriver *wspip, uint32_t flags) {
   (void)wspip;
   (void)flags;
 
-  if (wspip->state == WSPI_RECEIVE) {
+  if (((flags & STM32_MDMA_CISR_CTCIF) != 0U) &&
+      (wspip->state == WSPI_RECEIVE)) {
     /* Portable WSPI ISR code defined in the high level driver, note, it is
      a macro.*/
     _wspi_isr_code(wspip);
@@ -82,7 +83,7 @@ static void wspi_lld_serve_mdma_interrupt(WSPIDriver *wspip, uint32_t flags) {
   }
   /* DMA errors handling.*/
 #if defined(STM32_WSPI_MDMA_ERROR_HOOK)
-  if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
+  else if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
     STM32_WSPI_MDMA_ERROR_HOOK(wspip);
   }
 #endif
@@ -233,7 +234,6 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
                   STM32_MDMA_CTCR_DINC_FIXED    |   /* Destination fixed.   */
                   STM32_MDMA_CTCR_SINC_INC;         /* Source incremented.  */
   uint32_t ccr  = STM32_MDMA_CCR_PL(STM32_WSPI_QUADSPI1_MDMA_PRIORITY) |
-                  STM32_MDMA_CCR_CTCIE          |   /* On transfer complete.*/
                   STM32_MDMA_CCR_TEIE;              /* On transfer error.   */
 
   /* MDMA initializations.*/
@@ -361,17 +361,20 @@ void wspi_lld_unmap_flash(WSPIDriver *wspip) {
  * @param[in] wspip     pointer to the @p WSPIDriver object
  */
 void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
+  uint32_t sr;
 
-  wspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
-                     QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
+  sr = wspip->qspi->SR;
+  wspip->qspi->FCR = sr;
 
-  if (wspip->state == WSPI_SEND) {
+  if (((sr & QUADSPI_FCR_CTCF) != 0U) && (wspip->state == WSPI_SEND)) {
     /* Portable WSPI ISR code defined in the high level driver, note, it is
      a macro.*/
     _wspi_isr_code(wspip);
 
     mdmaChannelDisableX(wspip->mdma);
   }
+
+  /* TODO errors handling.*/
 }
 
 #endif /* HAL_USE_WSPI */
