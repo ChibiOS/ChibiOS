@@ -3,7 +3,8 @@ PORTSRC = ${CHIBIOS}/os/common/ports/AVR/chcore.c
 
 PORTASM = 
 
-PORTINC = ${CHIBIOS}/os/common/ports/AVR \
+PORTINC = $(CHIBIOS)/os/common/portability/GCC \
+          ${CHIBIOS}/os/common/ports/AVR \
           ${CHIBIOS}/os/common/ports/AVR/compilers/GCC
 
 # Shared variables
