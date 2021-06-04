@@ -21,7 +21,7 @@
  * @file    ARMv8-M-ML/chcore.c
  * @brief   ARMv8-M MainLine port code.
  *
- * @addtogroup ARMv8_M_ML_CORE
+ * @addtogroup ARMV8M_ML_CORE
  * @{
  */
 

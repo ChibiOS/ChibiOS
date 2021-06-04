@@ -21,7 +21,7 @@
  * @file    ARMv6-M/compilers/RVCT/chcoreasm.s
  * @brief   ARMv6-M port low level code.
  *
- * @addtogroup ARMv6_M_RVCT_CORE
+ * @addtogroup ARMV6M_RVCT_CORE
  * @{
  */
 

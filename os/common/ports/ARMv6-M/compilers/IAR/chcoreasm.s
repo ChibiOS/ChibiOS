@@ -21,7 +21,7 @@
  * @file    ARMv6-M/compilers/IAR/chcoreasm.s
  * @brief   ARMv6-M port low level code.
  *
- * @addtogroup ARMv6_M_IAR_CORE
+ * @addtogroup ARMV6M_IAR_CORE
  * @{
  */
 

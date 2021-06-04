@@ -21,7 +21,7 @@
  * @file    ARMv7-M/compilers/GCC/chcoreasm.S
  * @brief   ARMv7-M port low level code.
  *
- * @addtogroup ARMv7_M_GCC_CORE
+ * @addtogroup ARMV7M_GCC_CORE
  * @{
  */
 

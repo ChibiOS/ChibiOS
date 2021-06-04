@@ -21,7 +21,7 @@
  * @file    ARMv7-M/chcore_timer.h
  * @brief   System timer header file.
  *
- * @addtogroup ARMv7_M_TIMER
+ * @addtogroup ARMV7M_TIMER
  * @{
  */
 

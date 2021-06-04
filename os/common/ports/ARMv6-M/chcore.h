@@ -21,7 +21,7 @@
  * @file    ARMv6-M/chcore.h
  * @brief   ARMv6-M port macros and structures.
  *
- * @addtogroup ARMv6_M_CORE
+ * @addtogroup ARMV6M_CORE
  * @{
  */
 

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    compilers/GCC/chcoreasm_v7m.S
- * @brief   ARMv7-M architecture port low level code.
+ * @file    ARMv8-M-ML-TZ/compilers/GCC/chcoreasm.S
+ * @brief   ARMv8-M MainLine architecture port low level code.
  *
- * @addtogroup ARMCMx_GCC_CORE
+ * @addtogroup ARMV8M_ML_TZ_GCC_CORE
  * @{
  */
 
@@ -218,7 +218,7 @@ PendSV_Handler:
                 beq.w   port_delay_reschedule   /* Tail call on far address.*/
 #endif
                 /* Pointer to the current thread.*/
-                ldr     r0, =ch
+                ldr     r0, =ch0
 //                movw    r0, #:lower16:ch
 //                movt    r0, #:upper16:ch
                 ldr     r0, [r0, #CURRENT_OFFSET]

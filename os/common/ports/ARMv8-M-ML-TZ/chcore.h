@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMv8-M-ML/chcore.h
- * @brief   ARMv8-M mainline port macros and structures.
+ * @file    ARMv8-M-ML-TZ/chcore.h
+ * @brief   ARMv8-M MainLine port macros and structures.
  *
- * @addtogroup ARMV8M_ML_CORE
+ * @addtogroup ARMV8M_ML_TZ_CORE
  * @{
  */
 
@@ -379,14 +379,6 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Type of stack and memory alignment enforcement.
- * @note    In this architecture the stack alignment is enforced to 64 bits,
- *          32 bits alignment is supported by hardware but deprecated by ARM,
- *          the implementation choice is to not offer the option.
- */
-typedef uint64_t stkalign_t;
-
-/**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
@@ -496,6 +488,11 @@ struct port_context {
  */
 #define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
   (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) <= CORTEX_PRIORITY_PENDSV))
+
+/**
+ * @brief   Optimized thread function declaration macro.
+ */
+#define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
  * @brief   Initialization of stack check part of thread context.

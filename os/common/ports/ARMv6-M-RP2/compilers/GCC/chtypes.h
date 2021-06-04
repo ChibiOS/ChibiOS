@@ -19,9 +19,9 @@
 
 /**
  * @file    ARMv6-M-RP2/compilers/GCC/chtypes.h
- * @brief   ARMv6-M port system types.
+ * @brief   ARMv6-M-RP2 port system types.
  *
- * @addtogroup ARMv6_M_RP2_GCC_CORE
+ * @addtogroup ARMV6M_RP2_GCC_CORE
  * @{
  */
 

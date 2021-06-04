@@ -18,7 +18,7 @@
  * @file    ARMv7-M/mpu.h
  * @brief   ARMv7-M MPU support macros and structures.
  *
- * @addtogroup ARMv7_M_MPU
+ * @addtogroup ARMV7M_MPU
  * @{
  */
 

@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMv8-M-ML/chcore.c
- * @brief   ARMv8-M mainline port code.
+ * @file    ARMv8-M-ML-TZ/chcore.c
+ * @brief   ARMv8-M MainLine port code.
  *
- * @addtogroup ARMV8M_ML_CORE
+ * @addtogroup ARMV8M_ML_TZ_CORE
  * @{
  */
 

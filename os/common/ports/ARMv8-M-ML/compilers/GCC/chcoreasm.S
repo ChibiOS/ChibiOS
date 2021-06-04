@@ -21,7 +21,7 @@
  * @file    ARMv8-M-ML/compilers/GCC/chcoreasm.S
  * @brief   ARMv8-M MainLine port low level code.
  *
- * @addtogroup ARMv8_M_ML_GCC_CORE
+ * @addtogroup ARMV8M_ML_GCC_CORE
  * @{
  */
 

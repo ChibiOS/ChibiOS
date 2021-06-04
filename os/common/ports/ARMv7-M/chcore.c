@@ -21,7 +21,7 @@
  * @file    ARMv7-M/chcore.c
  * @brief   ARMv7-M port code.
  *
- * @addtogroup ARMv7_M_CORE
+ * @addtogroup ARMV7M_CORE
  * @{
  */
 

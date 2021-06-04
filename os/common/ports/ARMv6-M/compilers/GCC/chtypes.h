@@ -21,7 +21,7 @@
  * @file    ARMv6-M/compilers/GCC/chtypes.h
  * @brief   ARMv6-M port system types.
  *
- * @addtogroup ARMv6_M_GCC_CORE
+ * @addtogroup ARMV6M_GCC_CORE
  * @{
  */
 

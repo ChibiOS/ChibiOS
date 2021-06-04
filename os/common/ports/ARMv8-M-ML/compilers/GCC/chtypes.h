@@ -19,9 +19,9 @@
 
 /**
  * @file    ARMv8-M-ML/compilers/GCC/chtypes.h
- * @brief   ARMv8-M-ML port system types.
+ * @brief   ARMv8-M MainLine port system types.
  *
- * @addtogroup ARMv8_M_ML_GCC_CORE
+ * @addtogroup ARMV8M_ML_GCC_CORE
  * @{
  */
 
