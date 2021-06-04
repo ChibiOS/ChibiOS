@@ -67,12 +67,6 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#define _offsetof(st, m)                                                    \
-  /*lint -save -e9005 -e9033 -e413 [11.8, 10.8, 1.3] Normal pointers
-    arithmetic, it is safe.*/                                               \
-  ((size_t)((char *)&((st *)0)->m - (char *)0))                             \
-  /*lint -restore*/
-
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -90,30 +84,30 @@ ROMCONST chdebug_t ch_debug = {
   (uint8_t)sizeof (void *),
   (uint8_t)sizeof (systime_t),
   (uint8_t)sizeof (thread_t),
-  (uint8_t)_offsetof(thread_t, hdr.pqueue.prio),
-  (uint8_t)_offsetof(thread_t, ctx),
-  (uint8_t)_offsetof(thread_t, rqueue.next),
-  (uint8_t)_offsetof(thread_t, rqueue.prev),
-  (uint8_t)_offsetof(thread_t, name),
+  (uint8_t)__CH_OFFSETOF(thread_t, hdr.pqueue.prio),
+  (uint8_t)__CH_OFFSETOF(thread_t, ctx),
+  (uint8_t)__CH_OFFSETOF(thread_t, rqueue.next),
+  (uint8_t)__CH_OFFSETOF(thread_t, rqueue.prev),
+  (uint8_t)__CH_OFFSETOF(thread_t, name),
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
-  (uint8_t)_offsetof(thread_t, wabase),
+  (uint8_t)__CH_OFFSETOF(thread_t, wabase),
 #else
   (uint8_t)0,
 #endif
-  (uint8_t)_offsetof(thread_t, state),
-  (uint8_t)_offsetof(thread_t, flags),
+  (uint8_t)__CH_OFFSETOF(thread_t, state),
+  (uint8_t)__CH_OFFSETOF(thread_t, flags),
 #if CH_CFG_USE_DYNAMIC == TRUE
-  (uint8_t)_offsetof(thread_t, refs),
+  (uint8_t)__CH_OFFSETOF(thread_t, refs),
 #else
   (uint8_t)0,
 #endif
 #if CH_CFG_TIME_QUANTUM > 0
-  (uint8_t)_offsetof(thread_t, ticks),
+  (uint8_t)__CH_OFFSETOF(thread_t, ticks),
 #else
   (uint8_t)0,
 #endif
 #if CH_DBG_THREADS_PROFILING == TRUE
-  (uint8_t)_offsetof(thread_t, time)
+  (uint8_t)__CH_OFFSETOF(thread_t, time)
 #else
   (uint8_t)0
 #endif
@@ -138,7 +132,7 @@ thread_t *chRegFirstThread(void) {
   chSysLock();
   p = (uint8_t *)REG_HEADER(currcore)->next;
   /*lint -save -e413 [1.3] Safe to subtract a calculated offset.*/
-  tp = (thread_t *)(p - _offsetof(thread_t, rqueue));
+  tp = (thread_t *)(p - __CH_OFFSETOF(thread_t, rqueue));
   /*lint -restore*/
 #if CH_CFG_USE_DYNAMIC == TRUE
   tp->refs++;
@@ -174,7 +168,7 @@ thread_t *chRegNextThread(thread_t *tp) {
   else {
     uint8_t *p = (uint8_t *)nqp;
     /*lint -save -e413 [1.3] Safe to subtract a calculated offset.*/
-    ntp = (thread_t *)(p - _offsetof(thread_t, rqueue));
+    ntp = (thread_t *)(p - __CH_OFFSETOF(thread_t, rqueue));
     /*lint -restore*/
 
     chDbgAssert(ntp->refs < (trefs_t)255, "too many references");

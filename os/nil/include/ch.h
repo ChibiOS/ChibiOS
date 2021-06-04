@@ -377,6 +377,48 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+#if defined(PORT_DOES_NOT_PROVIDE_TYPES) || defined(__DOXYGEN__)
+/**
+ * @name    Kernel types
+ * @{
+ */
+typedef port_rtcnt_t    rtcnt_t;            /**< Realtime counter.          */
+typedef port_syssts_t   syssts_t;           /**< System status word.        */
+typedef port_stkalign_t stkalign_t;         /**< Stack alignment type.      */
+
+#if (PORT_ARCH_REGISTERS_WIDTH == 32) || defined(__DOXYGEN__)
+typedef uint8_t         tstate_t;           /**< Thread state.              */
+typedef uint32_t        tprio_t;            /**< Thread priority.           */
+typedef int32_t         msg_t;              /**< Inter-thread message.      */
+typedef int32_t         eventid_t;          /**< Numeric event identifier.  */
+typedef uint32_t        eventmask_t;        /**< Mask of event identifiers. */
+typedef uint32_t        eventflags_t;       /**< Mask of event flags.       */
+typedef int32_t         cnt_t;              /**< Generic signed counter.    */
+typedef uint32_t        ucnt_t;             /**< Generic unsigned counter.  */
+#elif PORT_ARCH_REGISTERS_WIDTH == 16
+typedef uint8_t         tstate_t;           /**< Thread state.              */
+typedef uint16_t        tprio_t;            /**< Thread priority.           */
+typedef int16_t         msg_t;              /**< Inter-thread message.      */
+typedef int16_t         eventid_t;          /**< Numeric event identifier.  */
+typedef uint16_t        eventmask_t;        /**< Mask of event identifiers. */
+typedef uint16_t        eventflags_t;       /**< Mask of event flags.       */
+typedef int16_t         cnt_t;              /**< Generic signed counter.    */
+typedef uint16_t        ucnt_t;             /**< Generic unsigned counter.  */
+#elif PORT_ARCH_REGISTERS_WIDTH == 8
+typedef uint8_t         tstate_t;           /**< Thread state.              */
+typedef uint8_t         tprio_t;            /**< Thread priority.           */
+typedef int16_t         msg_t;              /**< Inter-thread message.      */
+typedef int8_t          eventid_t;          /**< Numeric event identifier.  */
+typedef uint8_t         eventmask_t;        /**< Mask of event identifiers. */
+typedef uint8_t         eventflags_t;       /**< Mask of event flags.       */
+typedef int8_t          cnt_t;              /**< Generic signed counter.    */
+typedef uint8_t         ucnt_t;             /**< Generic unsigned counter.  */
+#else
+#error "unsupported PORT_ARCH_REGISTERS_WIDTH value"
+#endif
+/** @} */
+#endif /* defined(PORT_DOES_NOT_PROVIDE_TYPES) */
+
 #if (CH_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
 /**
  * @brief   Type of system time.

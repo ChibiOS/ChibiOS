@@ -424,14 +424,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of stack and memory alignment enforcement.
- * @note    In this architecture the stack alignment is enforced to 64 bits,
- *          32 bits alignment is supported by hardware but deprecated by ARM,
- *          the implementation choice is to not offer the option.
- */
-typedef uint64_t stkalign_t;
-
-/**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
@@ -604,6 +596,11 @@ struct port_context {
 #else
   /* Note, checked above.*/
 #endif
+
+/**
+ * @brief   Optimized thread function declaration macro.
+ */
+#define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Simplified interface between ports and RT/NIL.
 - NEW: STM32 ADCv3, USARTv2, USARTv3, USBv1 updated for dynamic clocking.
 - NEW: Improved PWR settings for STM32G0, STM32G4 and STM32L4+.
 - NEW: Dynamic support implemented for STM32G0, STM32G4, STM32L4+, STM32WL.

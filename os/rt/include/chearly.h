@@ -28,6 +28,13 @@
 #ifndef CHEARLY_H
 #define CHEARLY_H
 
+/* Port architecture-related definitions.*/
+#if !defined(PORT_NEW_TYPES)
+#include "chtypes.h"
+#else
+#include "chporttypes.h"
+#endif
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -40,9 +47,79 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if defined(PORT_DOES_NOT_PROVIDE_TYPES)
+#if !defined(PORT_ARCH_SIZEOF_DATA_PTR)
+#error "PORT_ARCH_SIZEOF_DATA_PTR not defined in chtypes.h"
+#endif
+
+#if !defined(PORT_ARCH_SIZEOF_CODE_PTR)
+#error "PORT_ARCH_SIZEOF_CODE_PTR not defined in chtypes.h"
+#endif
+
+#if !defined(PORT_ARCH_REGISTERS_WIDTH)
+#error "PORT_ARCH_REGISTERS_WIDTH not defined in chtypes.h"
+#endif
+
+#if !defined(PORT_ARCH_REVERSE_ORDER)
+#error "PORT_ARCH_REVERSE_ORDER not defined in chtypes.h"
+#endif
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+#if defined(PORT_DOES_NOT_PROVIDE_TYPES) || defined(__DOXYGEN__)
+/**
+ * @name    Kernel types
+ * @{
+ */
+typedef port_rtcnt_t    rtcnt_t;            /**< Realtime counter.          */
+typedef port_rttime_t   rttime_t;           /**< Realtime accumulator.      */
+typedef port_syssts_t   syssts_t;           /**< System status word.        */
+typedef port_stkalign_t stkalign_t;         /**< Stack alignment type.      */
+
+#if (PORT_ARCH_REGISTERS_WIDTH == 32) || defined(__DOXYGEN__)
+typedef uint8_t         tmode_t;            /**< Thread flags.              */
+typedef uint8_t         tstate_t;           /**< Thread state.              */
+typedef uint8_t         trefs_t;            /**< Thread references counter. */
+typedef uint8_t         tslices_t;          /**< Thread time slices counter.*/
+typedef uint32_t        tprio_t;            /**< Thread priority.           */
+typedef int32_t         msg_t;              /**< Inter-thread message.      */
+typedef int32_t         eventid_t;          /**< Numeric event identifier.  */
+typedef uint32_t        eventmask_t;        /**< Mask of event identifiers. */
+typedef uint32_t        eventflags_t;       /**< Mask of event flags.       */
+typedef int32_t         cnt_t;              /**< Generic signed counter.    */
+typedef uint32_t        ucnt_t;             /**< Generic unsigned counter.  */
+#elif PORT_ARCH_REGISTERS_WIDTH == 16
+typedef uint8_t         tmode_t;            /**< Thread flags.              */
+typedef uint8_t         tstate_t;           /**< Thread state.              */
+typedef uint8_t         trefs_t;            /**< Thread references counter. */
+typedef uint8_t         tslices_t;          /**< Thread time slices counter.*/
+typedef uint16_t        tprio_t;            /**< Thread priority.           */
+typedef int16_t         msg_t;              /**< Inter-thread message.      */
+typedef int16_t         eventid_t;          /**< Numeric event identifier.  */
+typedef uint16_t        eventmask_t;        /**< Mask of event identifiers. */
+typedef uint16_t        eventflags_t;       /**< Mask of event flags.       */
+typedef int16_t         cnt_t;              /**< Generic signed counter.    */
+typedef uint16_t        ucnt_t;             /**< Generic unsigned counter.  */
+#elif PORT_ARCH_REGISTERS_WIDTH == 8
+typedef uint8_t         tmode_t;            /**< Thread flags.              */
+typedef uint8_t         tstate_t;           /**< Thread state.              */
+typedef uint8_t         trefs_t;            /**< Thread references counter. */
+typedef uint8_t         tslices_t;          /**< Thread time slices counter.*/
+typedef uint8_t         tprio_t;            /**< Thread priority.           */
+typedef int16_t         msg_t;              /**< Inter-thread message.      */
+typedef int8_t          eventid_t;          /**< Numeric event identifier.  */
+typedef uint8_t         eventmask_t;        /**< Mask of event identifiers. */
+typedef uint8_t         eventflags_t;       /**< Mask of event flags.       */
+typedef int8_t          cnt_t;              /**< Generic signed counter.    */
+typedef uint8_t         ucnt_t;             /**< Generic unsigned counter.  */
+#else
+#error "unsupported PORT_ARCH_REGISTERS_WIDTH value"
+#endif
+/** @} */
+#endif /* defined(PORT_DOES_NOT_PROVIDE_TYPES) */
 
 /**
  * @brief   Type of a core identifier.
@@ -66,8 +143,23 @@ typedef struct ch_os_instance os_instance_t;
 
 /**
  * @brief   Utility to make the parameter a quoted string.
+ *
+ * @param[in] a        literal to be string-ified
  */
 #define __CH_STRINGIFY(a) #a
+
+/**
+ * @brief   Structure field offset utility.
+ *
+ * @param[in] st        structured type name
+ * @param[in] m         field name in the structured type
+ * @return              The offset of the field in the structured type.
+ */
+#define __CH_OFFSETOF(st, m)                                                \
+  /*lint -save -e9005 -e9033 -e413 [11.8, 10.8, 1.3] Normal pointers
+    arithmetic, it is safe.*/                                               \
+  ((size_t)((char *)&((st *)0)->m - (char *)0))                             \
+  /*lint -restore*/
 
 /*===========================================================================*/
 /* External declarations.                                                    */
