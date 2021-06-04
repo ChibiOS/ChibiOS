@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    ARMv6-M/chcore.h
- * @brief   ARMv6-M port macros and structures.
+ * @file    ARMv6-M-RP2/chcore.h
+ * @brief   ARMv6-M-RP2 port macros and structures.
  *
  * @addtogroup ARMv6_M_RP2_CORE
  * @{
@@ -296,14 +296,6 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Type of stack and memory alignment enforcement.
- * @note    In this architecture the stack alignment is enforced to 64 bits,
- *          32 bits alignment is supported by hardware but deprecated by ARM,
- *          the implementation choice is to not offer the option.
- */
-typedef uint64_t stkalign_t;
-
-/**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
@@ -362,6 +354,11 @@ struct port_context {
  */
 #define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
   (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
+
+/**
+ * @brief   Optimized thread function declaration macro.
+ */
+#define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.

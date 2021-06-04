@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    chcore_timer.h
+ * @file    ARMv7-M/chcore_timer.h
  * @brief   System timer header file.
  *
- * @addtogroup ARMCMx_TIMER
+ * @addtogroup ARMv7_M_TIMER
  * @{
  */
 

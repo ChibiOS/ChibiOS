@@ -18,8 +18,8 @@
 */
 
 /**
- * @file    ARMv6-M/chcore.c
- * @brief   ARMv6-M port code.
+ * @file    ARMv6-M-RP2/chcore.c
+ * @brief   ARMv6-M-RP2 port code.
  *
  * @addtogroup ARMv6_M_RP2_CORE
  * @{

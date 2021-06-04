@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMv6-M/compilers/GCC/chcoreasm.S
- * @brief   ARMv6-M port low level code.
+ * @file    ARMv6-M-RP2/compilers/GCC/chcoreasm.S
+ * @brief   ARMv6-M-RP2 port low level code.
  *
- * @addtogroup ARMv6_M_GCC_CORE
+ * @addtogroup ARMv6_M_RP2_GCC_CORE
  * @{
  */
 

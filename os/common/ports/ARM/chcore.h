@@ -214,12 +214,6 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Type of stack and memory alignment enforcement.
- * @note    In this architecture the stack alignment is enforced to 64 bits.
- */
-typedef uint64_t stkalign_t;
-
-/**
  * @brief   Generic ARM register.
  */
 typedef void *regarm_t;
@@ -282,6 +276,11 @@ struct port_context {
  * @note    Not applicable in this architecture.
  */
 #define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n) false
+
+/**
+ * @brief   Optimized thread function declaration macro.
+ */
+#define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.

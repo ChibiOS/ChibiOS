@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    chcore_timer.h
+ * @file    ARMv6-M-RP2/chcore_timer.h
  * @brief   System timer header file.
  *
  * @addtogroup ARMv6_M_RP2_TIMER

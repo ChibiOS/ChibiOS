@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    common/ARMCMx/mpu.h
- * @brief   Cortex-Mx MPU support macros and structures.
+ * @file    ARMv7-M/mpu.h
+ * @brief   ARMv7-M MPU support macros and structures.
  *
- * @addtogroup COMMON_ARMCMx_MPU
+ * @addtogroup ARMv7_M_MPU
  * @{
  */
 
