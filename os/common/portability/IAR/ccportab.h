@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    GHS/ccportab.h
+ * @file    IAR/ccportab.h
  * @brief   Compiler portability layer.
  *
  * @defgroup CC_PORTAB Compiler portability.
@@ -54,14 +54,14 @@
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-#define CC_SECTION(s)       __attribute__((section(s)))
+//#define CC_SECTION(s)       /* TODO */
 
 /**
  * @brief   Marks a function or variable as a weak symbol.
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-#define CC_WEAK             __attribute__((weak))
+//#define CC_WEAK             /* TODO */
 
 /**
  * @brief   Marks a function or variable as used.
@@ -70,49 +70,49 @@
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-#define CC_USED             __attribute__((used))
+//#define CC_USED             /* TODO */
 
 /**
  * @brief   Enforces alignment of the variable declared afterward.
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-#define CC_ALIGN_DATA(n)    __attribute__((aligned(n)))
+//#define CC_ALIGN_DATA(n)    /* TODO */
 
 /**
  * @brief   Enforces alignment of a function declared afterward.
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-#define CC_ALIGN_CODE(n)    __attribute__((aligned(n)))
+//#define CC_ALIGN_CODE(n)    /* TODO */
 
 /**
  * @brief   Enforces packing of the structure declared afterward.
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-#define CC_PACK             __attribute__((packed))
+#define CC_PACK             __packed
 
 /**
  * @brief   Marks a function as not inlineable.
  * @note    Can be implemented as an empty macro if not supported by the
  *          compiler.
  */
-#define CC_NO_INLINE        __noinline
+#define CC_NO_INLINE        _Pragma("inline=never")
 
 /**
  * @brief   Enforces a function inline.
  * @note    Can be implemented as an empty macro if not supported by the
  *          compiler.
  */
-#define CC_FORCE_INLINE
+#define CC_FORCE_INLINE     inline
 
 /**
  * @brief   Marks a function as non-returning.
  * @note    Can be implemented as an empty macro if not supported by the
  *          compiler.
  */
-#define CC_NO_RETURN        __attribute__((noreturn))
+#define CC_NO_RETURN
 
 /**
  * @brief   Enforces a variable in a ROM area.

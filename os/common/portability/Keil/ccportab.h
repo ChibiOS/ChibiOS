@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    GHS/ccportab.h
+ * @file    Keil/ccportab.h
  * @brief   Compiler portability layer.
  *
  * @defgroup CC_PORTAB Compiler portability.
@@ -91,21 +91,21 @@
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-#define CC_PACK             __attribute__((packed))
+#define CC_PACK             __packed
 
 /**
  * @brief   Marks a function as not inlineable.
  * @note    Can be implemented as an empty macro if not supported by the
  *          compiler.
  */
-#define CC_NO_INLINE        __noinline
+#define CC_NO_INLINE        __attribute__((noinline))
 
 /**
  * @brief   Enforces a function inline.
  * @note    Can be implemented as an empty macro if not supported by the
  *          compiler.
  */
-#define CC_FORCE_INLINE
+#define CC_FORCE_INLINE     __attribute__((always_inline))
 
 /**
  * @brief   Marks a function as non-returning.
