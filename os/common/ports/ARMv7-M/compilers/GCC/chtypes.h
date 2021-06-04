@@ -79,7 +79,6 @@ typedef uint64_t            port_stkalign_t;
 /**
  * @brief   ROM constant modifier.
  * @note    It is set to use the "const" keyword in this port.
- * @deprecated
  */
 #define ROMCONST            CC_ROMCONST
 
@@ -87,13 +86,11 @@ typedef uint64_t            port_stkalign_t;
  * @brief   Makes functions not inlineable.
  * @note    If the compiler does not support such attribute then some
  *          time-dependent services could be degraded.
- * @deprecated
  */
 #define NOINLINE            CC_NO_INLINE
 
 /**
  * @brief   Memory alignment enforcement for variables.
- * @deprecated
  */
 #define ALIGNED_VAR(n)      CC_ALIGN_DATA(n)
 
@@ -101,7 +98,6 @@ typedef uint64_t            port_stkalign_t;
  * @brief   Size of a pointer.
  * @note    To be used where the sizeof operator cannot be used, preprocessor
  *          expressions for example.
- * @deprecated
  */
 #define SIZEOF_PTR          PORT_ARCH_SIZEOF_DATA_PTR
 
