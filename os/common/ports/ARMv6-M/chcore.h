@@ -449,14 +449,6 @@ extern "C" {
 }
 #endif
 
-#if CH_CFG_ST_TIMEDELTA > 0
-#if PORT_USE_ALT_TIMER == FALSE
-#include "chcore_timer.h"
-#else /* PORT_USE_ALT_TIMER != FALSE */
-#include "chcore_timer_alt.h"
-#endif /* PORT_USE_ALT_TIMER != FALSE */
-#endif /* CH_CFG_ST_TIMEDELTA > 0 */
-
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
@@ -573,6 +565,18 @@ static inline void port_wait_for_interrupt(void) {
   __WFI();
 #endif
 }
+
+#endif /* !defined(_FROM_ASM_) */
+
+/*===========================================================================*/
+/* Module late inclusions.                                                   */
+/*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
+
+#if CH_CFG_ST_TIMEDELTA > 0
+#include "chcore_timer.h"
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */
 

@@ -23,7 +23,7 @@
  * @details This file is a template of the system driver macros provided by
  *          a port.
  *
- * @addtogroup port_core
+ * @addtogroup TEMPLATE_CORE
  * @{
  */
 
@@ -150,12 +150,6 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Type of stack and memory alignment enforcement.
- * @note    In this architecture the stack alignment is enforced to 64 bits.
- */
-typedef uint64_t stkalign_t;
-
-/**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
@@ -191,6 +185,11 @@ struct port_context {
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Optimized thread function declaration macro.
+ */
+#define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
@@ -441,16 +440,10 @@ static inline rtcnt_t port_rt_get_counter_value(void) {
 /* Module late inclusions.                                                   */
 /*===========================================================================*/
 
-/* The following code is not processed when the file is included from an
-   asm module.*/
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0
-#if !PORT_USE_ALT_TIMER
 #include "chcore_timer.h"
-#else /* PORT_USE_ALT_TIMER */
-#include "chcore_timer_alt.h"
-#endif /* PORT_USE_ALT_TIMER */
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */

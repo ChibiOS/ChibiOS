@@ -489,12 +489,6 @@ extern "C" {
 }
 #endif
 
-#if PORT_USE_ALT_TIMER == FALSE
-#include "chcore_timer.h"
-#else /* PORT_USE_ALT_TIMER == TRUE */
-#include "chcore_timer_alt.h"
-#endif /* PORT_USE_ALT_TIMER == TRUE */
-
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
@@ -683,6 +677,18 @@ __STATIC_INLINE core_id_t port_get_core_id(void) {
 
   return SIO->CPUID;
 }
+
+#endif /* !defined(_FROM_ASM_) */
+
+/*===========================================================================*/
+/* Module late inclusions.                                                   */
+/*===========================================================================*/
+
+#if !defined(_FROM_ASM_)
+
+#if CH_CFG_ST_TIMEDELTA > 0
+#include "chcore_timer.h"
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */
 

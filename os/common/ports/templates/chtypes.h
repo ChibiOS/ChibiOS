@@ -19,13 +19,9 @@
 
 /**
  * @file    templates/chtypes.h
- * @brief   System types template.
+ * @brief   Template port system types.
  *
- * @addtogroup port_types
- * @details The types defined in this file may change depending on the target
- *          architecture. You may also try to optimize the size of the various
- *          types in order to privilege size or performance, be careful in
- *          doing so.
+ * @addtogroup TEMPLATE_CORE
  * @{
  */
 
@@ -36,65 +32,74 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "ccportab.h"
+
 /**
- * @name    Kernel types
+ * @name    Architecture data constraints
+ */
+#define PORT_ARCH_SIZEOF_DATA_PTR   4
+#define PORT_ARCH_SIZEOF_CODE_PTR   4
+#define PORT_ARCH_REGISTERS_WIDTH   32
+#define PORT_ARCH_REVERSE_ORDER     1
+/** @} */
+
+/**
+ * @name    Port types
  * @{
  */
-typedef uint32_t            rtcnt_t;        /**< Realtime counter.          */
-typedef uint64_t            rttime_t;       /**< Realtime accumulator.      */
-typedef uint32_t            syssts_t;       /**< System status word.        */
-typedef uint8_t             tmode_t;        /**< Thread flags.              */
-typedef uint8_t             tstate_t;       /**< Thread state.              */
-typedef uint8_t             trefs_t;        /**< Thread references counter. */
-typedef uint8_t             tslices_t;      /**< Thread time slices counter.*/
-typedef uint32_t            tprio_t;        /**< Thread priority.           */
-typedef int32_t             msg_t;          /**< Inter-thread message.      */
-typedef int32_t             eventid_t;      /**< Numeric event identifier.  */
-typedef uint32_t            eventmask_t;    /**< Mask of event identifiers. */
-typedef uint32_t            eventflags_t;   /**< Mask of event flags.       */
-typedef int32_t             cnt_t;          /**< Generic signed counter.    */
-typedef uint32_t            ucnt_t;         /**< Generic unsigned counter.  */
+/**
+ * @brief   Realtime counter.
+ */
+typedef uint32_t            port_rtcnt_t;
+
+/**
+ * @brief   Realtime accumulator.
+ */
+typedef uint64_t            port_rttime_t;
+
+/**
+ * @brief   System status word.
+ */
+typedef uint32_t            port_syssts_t;
+
+/**
+ * @brief   Type of stack and memory alignment enforcement.
+ * @note    In this architecture the stack alignment is enforced to 64 bits,
+ *          32 bits alignment is supported by hardware but deprecated by ARM,
+ *          the implementation choice is to not offer the option.
+ */
+typedef uint64_t            port_stkalign_t;
 /** @} */
+
+/**
+ * @brief   This port does not define OS-related types.
+ */
+#define PORT_DOES_NOT_PROVIDE_TYPES
 
 /**
  * @brief   ROM constant modifier.
  * @note    It is set to use the "const" keyword in this port.
  */
-#define ROMCONST            const
+#define ROMCONST            CC_ROMCONST
 
 /**
  * @brief   Makes functions not inlineable.
- * @note    If the compiler does not support such attribute then the
- *          realtime counter precision could be degraded.
+ * @note    If the compiler does not support such attribute then some
+ *          time-dependent services could be degraded.
  */
-#define NOINLINE            __attribute__((noinline))
-
-/**
- * @brief   Optimized thread function declaration macro.
- */
-#define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
-
-/**
- * @brief   Packed variable specifier.
- */
-#define PACKED_VAR          __attribute__((packed))
+#define NOINLINE            CC_NO_INLINE
 
 /**
  * @brief   Memory alignment enforcement for variables.
  */
-#define ALIGNED_VAR(n)      __attribute__((aligned(n)))
+#define ALIGNED_VAR(n)      CC_ALIGN_DATA(n)
 
 /**
  * @brief   Size of a pointer.
  * @note    To be used where the sizeof operator cannot be used, preprocessor
  *          expressions for example.
  */
-#define SIZEOF_PTR          4
-
-/**
- * @brief   True if alignment is low-high in current architecture.
- */
-#define REVERSE_ORDER       1
+#define SIZEOF_PTR          PORT_ARCH_SIZEOF_DATA_PTR
 
 #endif /* CHTYPES_H */
 
