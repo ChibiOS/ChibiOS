@@ -11,6 +11,7 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 - NEW RT 7.0.
 - Support for RP2040 and Raspberry Pico board.
 - Support for STM32L5xx, STM32WBxx and STM32WLxx.
+- Support for more STM32 sub-families.
 - Dynamic clock support in HAL.
 - Improved STM32 HAL.
 - Added ARMv8-M port.
@@ -23,6 +24,8 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 - Addes SMP port for Cortex-M0 required by RP2040.
 - The old generic ARMCMx port has been split in ARMv6-M, ARMv7-M and ARMv8-M-ML
   ports.
+- Simplified interface between RT/NIL and port layer.
+- Removed duplicated files in the port layers: chtypes.h, chcore_timer.h.
 
 *** What's new in OS Library 1.3.0 ***
 
@@ -34,14 +37,15 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
   
 *** What's new in RT 7.0.0 ***
 
-- Support for SMP multi-core threading.
+- Support for full-SMP multi-core threading.
+- Support for decoupled multi-core threading.
 - 64 bits monotonic time stamps with the same resolution of Virtual Timers.
 - Much more efficient and accurate Virtual Timers in tick-less mode.
 - Automatic reload of Virtual Timers, now both one-shot and continuous timers
   are supported.
 - Internal reorganization to better fit the general architectural design. For
   example, lists/queus code has been centralized in a dedicated module.
-
+- New trace event for entering the "ready" state.
 
 *** What's new in NIL 4.1.0 ***
 
