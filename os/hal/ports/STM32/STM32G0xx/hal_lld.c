@@ -502,6 +502,7 @@ static bool hal_lld_clock_raw_config(const halclkcfg_t *ccp) {
   return false;
 }
 
+#if 0
 /**
  * @brief   Configures clock switch-only settings.
  * @note    This is a fast reconfiguration, clock sources settings are not
@@ -531,6 +532,7 @@ static bool hal_lld_clock_raw_switch(const halclkswc_t *cwp) {
 
   return false;
 }
+#endif
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
