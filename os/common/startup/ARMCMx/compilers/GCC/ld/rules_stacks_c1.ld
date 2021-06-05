@@ -31,7 +31,7 @@ SECTIONS
     } > C1_MAIN_STACK_RAM
 
     /* Special section for process stack.*/
-    .pstack (NOLOAD) :
+    .c1_pstack (NOLOAD) :
     {
         . = ALIGN(8);
         __c1_process_stack_base__ = .;
