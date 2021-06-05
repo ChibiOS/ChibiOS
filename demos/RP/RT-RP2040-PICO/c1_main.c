@@ -24,25 +24,7 @@
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
-static void cmd_offsets(BaseSequentialStream *chp, int argc, char *argv[]) {
-
-  (void)argv;
-  if (argc > 0) {
-    shellUsage(chp, "offsets");
-    return;
-  }
-
-  chprintf((BaseSequentialStream *)chp, "resvd300 %4x\r\n", _offsetof(DMA_TypeDef *, resvd300));
-  chprintf((BaseSequentialStream *)chp, "resvd410 %4x\r\n", _offsetof(DMA_TypeDef *, resvd410));
-  chprintf((BaseSequentialStream *)chp, "resvd44C %4x\r\n", _offsetof(DMA_TypeDef *, resvd44C));
-  chprintf((BaseSequentialStream *)chp, "resvdB00 %4x\r\n", _offsetof(DMA_TypeDef *, resvdB00));
-  chprintf((BaseSequentialStream *)chp, "XOR %4x\r\n", _offsetof(DMA_TypeDef *, XOR));
-  chprintf((BaseSequentialStream *)chp, "SET %4x\r\n", _offsetof(DMA_TypeDef *, SET));
-  chprintf((BaseSequentialStream *)chp, "CLR %4x\r\n", _offsetof(DMA_TypeDef *, CLR));
-}
-
 static const ShellCommand commands[] = {
-  {"offsets", cmd_offsets},
   {NULL, NULL}
 };
 
@@ -54,7 +36,7 @@ static const ShellConfig shell_cfg1 = {
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThreadTimer, 128);
+static CH_SYS_CORE1_ALLOCATE THD_WORKING_AREA(waThreadTimer, 128);
 static THD_FUNCTION(ThreadTimer, arg) {
   extern semaphore_t blinker_sem;
 
