@@ -17,6 +17,13 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 
 *** ChibiOS next general improvements ***
 
+- Added chscanf() and buffered streams.
+- Added option to LWIP bindings to use memory pools instead of heap allocator.
+- Added dynamic reconfiguration API to lwIP bindings.
+- Updated FatFS to version 0.14.
+- Updated CMSIS headers for STM32F7, G0, G4, H7, L0, L4, L4+.
+- Mail Queues test implementation in CMSIS RTOS wrapper.
+- Added latency measurement test application.
 
 *** What's new in RT/NIL ports ***
 
@@ -33,6 +40,7 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 *** What's new in SB 1.1.0 ***
 
 - Internal rework to make it compatible with RT 7.0.0.
+- Safer messages mechanism for sandboxes.
   
 *** What's new in RT 7.0.0 ***
 
@@ -53,10 +61,12 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 *** What's new in HAL 7.2.0 ***
 
 - Clocks reconfiguration API.
-       
+- Updated SIO driver model to support more use cases.
+
 *** What's new in EX 1.2.0 ***
 
-- None.
+- Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
+  MEMS Accelerometers.
 
 *** What's new in AVR HAL support ***
 
@@ -65,7 +75,14 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 *** What's new in STM32 HAL support ***
 
 - Dynamic clock support for L4+, G0 and G4 families.
+- Improved PWR settings for L4+, G0 and G4 families.
 - Support for more STM32 sub-families.
+- Added MACv2 driver for STM32H7xx.
+- Added support for UART9 and UART10 in STM32 USARTv1 drivers.
+- Updated STM32F4xx platform with new IRQ handling, enabled the missing timers.
+- SIO driver STM32 implementation for USARTv2 and USARTv3.
+- Support for 3 analog watchdogs in ADCv3 (STM32F3, L4, L4+, G4).
+- Support for 3 analog watchdogs in ADCv5 (STM32G0).
 
 *** What's new in tools ***
 

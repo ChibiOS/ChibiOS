@@ -87,7 +87,6 @@
 - NEW: Added support for STM32L422.
 - NEW: Added support for STM32WLx5.
 - NEW: Added initial support for RP2040.
-- NEW: Added time conversion macros and functions for monotonic time stamps
 - NEW: Added support for STM32WB55.
 - NEW: Added chscanf() and buffered streams, contributed by Alex Lewontin.
 - NEW: Added option to LWIP bindings to use memory pools instead of heap
@@ -139,7 +138,7 @@
 - EX:  Implemented cache handling in the ADXL355 device driver.
 - EX:  Added support for ADXL355 Low Noise, Low Drift, Low Power, 3-Axis
        MEMS Accelerometers.
-- NEW: Safer messages mechanism for sandboxes (to be backported to 20.3.1).
+- NEW: Safer messages mechanism for sandboxes.
 - NEW: Added latency measurement test application.
 - FIX: Fixed wrong wait states calculation in STM32G4xx, insufficient
        boost settings (bug #1159)(backported to 20.3.4).
