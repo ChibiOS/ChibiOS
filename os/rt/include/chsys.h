@@ -74,15 +74,11 @@
 #if defined(PORT_INSTANCE_ACCESS)
   #define currcore                      PORT_INSTANCE_ACCESS
 #else /* !defined(PORT_INSTANCE_ACCESS) */
-  #if defined(PORT_CORES_NUMBER)
-    #if (PORT_CORES_NUMBER > 1) || defined(__DOXYGEN__)
-      #define currcore                  ch_system.instances[port_get_core_id()]
-    #else
-      #define currcore                  (&ch0)
-    #endif
+  #if (PORT_CORES_NUMBER > 1) || defined(__DOXYGEN__)
+    #define currcore                    ch_system.instances[port_get_core_id()]
   #else
     #define currcore                    (&ch0)
-  #endif /* defined(PORT_CORES_NUMBER) */
+  #endif
 #endif /* defined(PORT_INSTANCE_ACCESS) */
 
 /*===========================================================================*/
