@@ -355,8 +355,9 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F4xx</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ST\STM32F4xx</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\os\common\portability\IAR</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARM-common</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\rt\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\oslib\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\hal\osal\rt-nil</state>
@@ -1444,8 +1445,9 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\startup\ARMCMx\devices\STM32F4xx</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\ext\ST\STM32F4xx</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\os\common\portability\IAR</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARM-common</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\rt\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\oslib\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\os\hal\osal\rt-nil</state>
@@ -2191,13 +2193,7 @@
                     <name>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M\chcore.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M\chcore_timer.h</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR\chcoreasm.s</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR\chtypes.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\os\common\ports\ARMv7-M\mpu.h</name>
