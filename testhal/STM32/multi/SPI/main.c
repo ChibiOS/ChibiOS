@@ -23,8 +23,8 @@
 /*
  * SPI TX and RX buffers.
  */
-CC_ALIGN(32) static uint8_t txbuf[512];
-CC_ALIGN(32) static uint8_t rxbuf[512];
+CC_ALIGN_DATA(32) static uint8_t txbuf[512];
+CC_ALIGN_DATA(32) static uint8_t rxbuf[512];
 
 #if SPI_SUPPORTS_CIRCULAR == TRUE
 /*
