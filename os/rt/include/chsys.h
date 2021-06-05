@@ -52,6 +52,18 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if defined(PORT_CORE0_BSS_SECTION) || defined(__DOXYGEN__)
+#define CH_SYS_CORE0_ALLOCATE               PORT_CORE0_BSS_SECTION
+#else
+#define CH_SYS_CORE0_ALLOCATE               /* Default.*/
+#endif
+
+#if defined(PORT_CORE1_BSS_SECTION) || defined(__DOXYGEN__)
+#define CH_SYS_CORE1_ALLOCATE               PORT_CORE1_BSS_SECTION
+#else
+#define CH_SYS_CORE1_ALLOCATE               /* Default.*/
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
