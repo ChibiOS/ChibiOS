@@ -322,8 +322,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
 /**
  * @brief   Returns the remaining time interval before next timer trigger.
- * @note    This function can be called while the timer is active or
- *          after stopping it.
+ * @note    This function can be called while the timer is active.
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @return              The remaining time interval.
@@ -348,7 +347,7 @@ sysinterval_t chVTGetRemainingIntervalI(virtual_timer_t *vtp) {
       if (nowdelta > delta) {
         return (sysinterval_t)0;
       }
-      return nowdelta - delta;
+      return delta - nowdelta;
 #else
       return delta;
 #endif
