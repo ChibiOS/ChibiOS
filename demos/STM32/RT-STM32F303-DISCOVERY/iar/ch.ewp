@@ -2287,13 +2287,7 @@
                     <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\chcore.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\chcore_timer.h</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR\chcoreasm.s</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\os\common\ports\ARMv7-M\compilers\IAR\chtypes.h</name>
                 </file>
             </group>
             <group>
