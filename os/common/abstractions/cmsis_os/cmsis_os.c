@@ -69,9 +69,11 @@ __STATIC_INLINE sysinterval_t tmo(uint32_t millisec) {
 /**
  * @brief   Virtual timers common callback.
  */
-static void timer_cb(void const *arg) {
-
+static void timer_cb(virtual_timer_t *vtp, void const *arg) {
   osTimerId timer_id = (osTimerId)arg;
+
+  (void)vtp;
+
   timer_id->ptimer(timer_id->argument);
   if (timer_id->type == osTimerPeriodic) {
     chSysLockFromISR();
