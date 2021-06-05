@@ -77,14 +77,14 @@
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-//#define CC_ALIGN_DATA(n)    /* TODO */
+#define CC_ALIGN_DATA(n)    _Pragma(__CH_STRINGIFY(data_alignment=n))
 
 /**
  * @brief   Enforces alignment of a function declared afterward.
  * @note    If the compiler does not support such a feature then this macro
  *          must not be defined or it could originate errors.
  */
-//#define CC_ALIGN_CODE(n)    /* TODO */
+#define CC_ALIGN_CODE(n)    _Pragma(__CH_STRINGIFY(data_alignment=n))
 
 /**
  * @brief   Enforces packing of the structure declared afterward.
