@@ -30,12 +30,12 @@
 /* Buffers are allocated with size and address aligned to the cache
    line size.*/
 #if CACHE_LINE_SIZE > 0
-CC_ALIGN(CACHE_LINE_SIZE)
+CC_ALIGN_DATA(CACHE_LINE_SIZE)
 #endif
 adcsample_t samples1[CACHE_SIZE_ALIGN(adcsample_t, ADC_GRP1_NUM_CHANNELS * ADC_GRP1_BUF_DEPTH)];
 
 #if CACHE_LINE_SIZE > 0
-CC_ALIGN(CACHE_LINE_SIZE)
+CC_ALIGN_DATA(CACHE_LINE_SIZE)
 #endif
 adcsample_t samples2[CACHE_SIZE_ALIGN(adcsample_t, ADC_GRP2_NUM_CHANNELS * ADC_GRP2_BUF_DEPTH)];
 
