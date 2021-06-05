@@ -163,16 +163,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables an alternative timer implementation.
- * @details Usually the port uses a timer interface defined in the file
- *          @p chcore_timer.h, if this option is enabled then the file
- *          @p chcore_timer_alt.h is included instead.
- */
-#if !defined(PORT_USE_ALT_TIMER)
-#define PORT_USE_ALT_TIMER              FALSE
-#endif
-
-/**
  * @brief   Stack size for the system idle thread.
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved

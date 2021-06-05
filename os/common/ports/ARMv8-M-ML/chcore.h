@@ -131,17 +131,6 @@
 #define PORT_INT_REQUIRED_STACK         64
 #endif
 
-
-/**
- * @brief   Enables an alternative timer implementation.
- * @details Usually the port uses a timer interface defined in the file
- *          @p chcore_timer.h, if this option is enabled then the file
- *          @p chcore_timer_alt.h is included instead.
- */
-#if !defined(PORT_USE_ALT_TIMER)
-#define PORT_USE_ALT_TIMER              FALSE
-#endif
-
 /**
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */

@@ -113,16 +113,6 @@
 #define PORT_INT_REQUIRED_STACK         16384
 #endif
 
-/**
- * @brief   Enables an alternative timer implementation.
- * @details Usually the port uses a timer interface defined in the file
- *          @p chcore_timer.h, if this option is enabled then the file
- *          @p chcore_timer_alt.h is included instead.
- */
-#if !defined(PORT_USE_ALT_TIMER) || defined(__DOXYGEN__)
-#define PORT_USE_ALT_TIMER              FALSE
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
