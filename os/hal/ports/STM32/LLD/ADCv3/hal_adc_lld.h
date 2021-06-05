@@ -706,6 +706,33 @@
 #endif
 #endif /* defined(STM32G4XX) */
 
+#if defined(STM32WBXX)
+#if STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV2
+#define ADC1_PRESC_VALUE                2
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV4
+#define ADC1_PRESC_VALUE                4
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV6
+#define ADC1_PRESC_VALUE                6
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV8
+#define ADC1_PRESC_VALUE                8
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV10
+#define ADC1_PRESC_VALUE                10
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV12
+#define ADC1_PRESC_VALUE                12
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV16
+#define ADC1_PRESC_VALUE                16
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV32
+#define ADC1_PRESC_VALUE                32
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV64
+#define ADC1_PRESC_VALUE                64
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV128
+#define ADC1_PRESC_VALUE                128
+#elif STM32_ADC_ADC1_PRESC == ADC_CCR_PRESC_DIV256
+#define ADC1_PRESC_VALUE                256
+#error "invalid clock divider selected for STM32_ADC_ADC12_PRESC"
+#endif
+#endif /* defined(STM32WBXX) */
+
 /* ADC clock source checks.*/
 #if defined(STM32F3XX)
 #if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
@@ -804,6 +831,20 @@
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
 #endif
+
+#if defined(STM32WBXX)
+#if STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
+#define STM32_ADC1_CLOCK                (STM32_ADCCLK / ADC1_PRESC_VALUE)
+#elif STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 1)
+#elif STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 2)
+#elif STM32_ADC_ADC1_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC1_CLOCK                (STM32_HCLK / 4)
+#else
+#error "invalid clock mode selected for STM32_ADC_ADC1_CLOCK_MODE"
+#endif
+#endif /* defined(STM32WBXX) */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
