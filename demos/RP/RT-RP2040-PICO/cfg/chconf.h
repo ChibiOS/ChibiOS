@@ -606,7 +606,7 @@
  *          different from @p CH_DBG_TRACE_MASK_DISABLED.
  */
 #if !defined(CH_DBG_TRACE_BUFFER_SIZE)
-#define CH_DBG_TRACE_BUFFER_SIZE            64
+#define CH_DBG_TRACE_BUFFER_SIZE            128
 #endif
 
 /**
