@@ -47,15 +47,14 @@ ch_system_t ch_system;
 /**
  * @brief   Core 0 OS instance.
  */
-CH_SYS_CORE0_ALLOCATE
-os_instance_t ch0;
+CH_SYS_CORE0_MEMORY os_instance_t ch0;
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Working area for core 0 idle thread.
  */
-CH_SYS_CORE0_ALLOCATE
-static THD_WORKING_AREA(ch_c0_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+static CH_SYS_CORE0_MEMORY THD_WORKING_AREA(ch_c0_idle_thread_wa,
+                                            PORT_IDLE_THREAD_STACK_SIZE);
 
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
 extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
@@ -84,15 +83,14 @@ const os_instance_config_t ch_core0_cfg = {
 /**
  * @brief   Core 1 OS instance.
  */
-CH_SYS_CORE1_ALLOCATE
-os_instance_t ch1;
+CH_SYS_CORE1_MEMORY os_instance_t ch1;
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Working area for core 1 idle thread.
  */
-CH_SYS_CORE1_ALLOCATE
-static THD_WORKING_AREA(ch_c1_idle_thread_wa, PORT_IDLE_THREAD_STACK_SIZE);
+static CH_SYS_CORE1_MEMORY THD_WORKING_AREA(ch_c1_idle_thread_wa,
+                                            PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE

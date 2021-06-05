@@ -36,7 +36,7 @@ static const ShellConfig shell_cfg1 = {
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
-static CH_SYS_CORE1_ALLOCATE THD_WORKING_AREA(waThreadTimer, 128);
+static CH_SYS_CORE1_MEMORY THD_WORKING_AREA(waThreadTimer, 128);
 static THD_FUNCTION(ThreadTimer, arg) {
   extern semaphore_t blinker_sem;
 

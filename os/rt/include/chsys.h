@@ -53,15 +53,15 @@
 /*===========================================================================*/
 
 #if defined(PORT_CORE0_BSS_SECTION) || defined(__DOXYGEN__)
-#define CH_SYS_CORE0_ALLOCATE               PORT_CORE0_BSS_SECTION
+#define CH_SYS_CORE0_MEMORY             PORT_CORE0_BSS_SECTION
 #else
-#define CH_SYS_CORE0_ALLOCATE               /* Default.*/
+#define CH_SYS_CORE0_MEMORY             /* Default.*/
 #endif
 
 #if defined(PORT_CORE1_BSS_SECTION) || defined(__DOXYGEN__)
-#define CH_SYS_CORE1_ALLOCATE               PORT_CORE1_BSS_SECTION
+#define CH_SYS_CORE1_MEMORY             PORT_CORE1_BSS_SECTION
 #else
-#define CH_SYS_CORE1_ALLOCATE               /* Default.*/
+#define CH_SYS_CORE1_MEMORY             /* Default.*/
 #endif
 
 /*===========================================================================*/

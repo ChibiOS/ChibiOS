@@ -197,6 +197,20 @@
 #define PORT_SPINLOCK_NUMBER            31
 #endif
 
+/**
+ * @brief   Preferential BSS section for core zero.
+ */
+#if !defined(PORT_CORE0_BSS_SECTION)
+#define PORT_CORE0_BSS_SECTION          CC_SECTION(".ram4_clear.core0")
+#endif
+
+/**
+ * @brief   Preferential BSS section for core one.
+ */
+#if !defined(PORT_CORE1_BSS_SECTION)
+#define PORT_CORE1_BSS_SECTION          CC_SECTION(".ram5_clear.core1")
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -677,7 +691,7 @@ __STATIC_INLINE core_id_t port_get_core_id(void) {
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0
-#include "chcore_timer.h"
+#include "chcore_timer_rp2.h"
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */
