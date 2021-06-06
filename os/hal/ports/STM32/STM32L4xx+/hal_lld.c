@@ -126,19 +126,6 @@ const halclkcfg_t hal_clkcfg_default = {
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Safe setting of flash ACR register.
- *
- * @param[in] acr       value for the ACR register
- */
-static void flash_set_acr(uint32_t acr) {
-
-  FLASH->ACR = acr;
-  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
-    /* Waiting for flash wait states setup.*/
-  }
-}
-
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Dynamic clock points for this device.
@@ -250,6 +237,19 @@ static const system_limits_t vos_range2 = {
 #include "stm32_bd.inc"
 
 /**
+ * @brief   Safe setting of flash ACR register.
+ *
+ * @param[in] acr       value for the ACR register
+ */
+static void flash_set_acr(uint32_t acr) {
+
+  FLASH->ACR = acr;
+  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
+    /* Waiting for flash wait states setup.*/
+  }
+}
+
+/**
  * @brief   Configures the PWR unit.
  * @note    CR1, CR2 and CR5 are not initialized inside this function.
  */
@@ -299,7 +299,7 @@ static void hal_lld_set_static_pwr(void) {
 static void hal_lld_set_static_clocks(void) {
   uint32_t ccipr;
 
-  /*Clock-related settings (dividers, MCO etc).*/
+  /* Clock-related settings (dividers, MCO etc).*/
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
               STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
 
@@ -316,7 +316,7 @@ static void hal_lld_set_static_clocks(void) {
      pseudo settings.*/
   ccipr = STM32_OSPISEL    | STM32_PLLSAI2DIVR |
           STM32_SDMMCSEL   | STM32_DSISEL    | STM32_ADFSDMSEL |
-         STM32_DFSDMSEL   | STM32_I2C4SEL;
+          STM32_DFSDMSEL   | STM32_I2C4SEL;
 #if STM32_SAI2SEL != STM32_SAI2SEL_OFF
   ccipr |= STM32_SAI2SEL;
 #endif
