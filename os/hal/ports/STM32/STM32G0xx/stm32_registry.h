@@ -101,9 +101,6 @@
 #define STM32_RCC_HAS_PLLSAI1               FALSE
 #define STM32_RCC_HAS_PLLSAI2               FALSE
 
-/* SPI attributes. */
-#define STM32_HAS_SPIR                      FALSE
-
 /*===========================================================================*/
 /* STM32G070xx.                                                              */
 /*===========================================================================*/

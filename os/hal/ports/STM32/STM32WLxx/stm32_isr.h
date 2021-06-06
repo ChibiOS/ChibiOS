@@ -99,7 +99,7 @@
 #define STM32_EXTI10_15_HANDLER             VectorE4
 #define STM32_EXTI16_34_HANDLER             Vector44    /* PVD PVM3         */
 #define STM32_EXTI21_22_HANDLER             Vector140   /* COMP1..2         */
-#define STM32_EXTI45_HANDLER                Vector108   /* RTR              */
+#define STM32_EXTI45_HANDLER                Vector108   /* SG               */
 
 #define STM32_EXTI0_NUMBER                  6
 #define STM32_EXTI1_NUMBER                  7

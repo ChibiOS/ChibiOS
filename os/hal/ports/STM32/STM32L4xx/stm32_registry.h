@@ -71,9 +71,6 @@
 #define STM32_HAS_CRYP1                     FALSE
 #endif
 
-/* SPI attributes. */
-#define STM32_HAS_SPIR                      FALSE
-
 /*===========================================================================*/
 /* STM32L432xx.                                                              */
 /*===========================================================================*/
@@ -499,8 +496,6 @@
 #define STM32_HAS_TIM15                     TRUE
 #define STM32_TIM15_IS_32BITS               FALSE
 #define STM32_TIM15_CHANNELS                2/* SPI attributes. */
-#define STM32_HAS_SPIR                      FALSE
-
 
 #define STM32_HAS_TIM16                     TRUE
 #define STM32_TIM16_IS_32BITS               FALSE

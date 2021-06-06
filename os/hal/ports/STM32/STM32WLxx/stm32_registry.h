@@ -166,19 +166,16 @@
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
 
-/* Radio Transceiver (RTR) attributes.*/
-#define STM32_HAS_RTR                       TRUE
+/* SUBGHZ attributes.*/
+#define STM32_HAS_SG                        TRUE
 #if defined(STM32WLE5xx) || defined(STM32WL55xx) || defined(__DOXYGEN__)
-#define STM32_RTR_HAS_LORA_MODEM            TRUE
+#define STM32_SG_HAS_LORA_MODEM             TRUE
 #else
-#define STM32_RTR_HAS_LORA_MODEM            FALSE
+#define STM32_SG_HAS_LORA_MODEM             FALSE
 #endif /* defined(STM32WLE5xx) || defined(STM32WL55xx) */
-#define STM32_RTR_HAS_FSK_MODEM             TRUE
-#define STM32_RTR_HAS_MSK_MODEM             TRUE
-#define STM32_RTR_HAS_BPSK_MODEM            TRUE
-#define STM32_RTR_IRQ_EXTI                  44
-#define STM32_RTR_BUSY_EXTI                 45
-#define STM32_RTR_IRQ_HANDLER               Vector108
+#define STM32_SG_HAS_FSK_MODEM              TRUE
+#define STM32_SG_HAS_MSK_MODEM              TRUE
+#define STM32_SG_HAS_BPSK_MODEM             TRUE
 
 /* RNG attributes.*/
 #define STM32_HAS_RNG1                      TRUE
@@ -236,9 +233,6 @@
 
 #define STM32_HAS_SPI2                      TRUE
 #define STM32_SPI2_SUPPORTS_I2S             TRUE
-
-#define STM32_HAS_SPIR                      TRUE
-#define STM32_SPIR_SUPPORTS_I2S             FALSE
 
 #define STM32_HAS_SPI3                      FALSE
 #define STM32_HAS_SPI4                      FALSE

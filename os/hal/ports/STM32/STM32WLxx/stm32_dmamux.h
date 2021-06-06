@@ -73,8 +73,8 @@
 #define STM32_DMAMUX1_TIM17_UP      38
 #define STM32_DMAMUX1_AES_IN        39
 #define STM32_DMAMUX1_AES_OUT       40
-#define STM32_DMAMUX1_SPIR_RX       41
-#define STM32_DMAMUX1_SPIR_TX       42
+#define STM32_DMAMUX1_SGSPI_RX      41
+#define STM32_DMAMUX1_SGSPI_TX      42
 /** @} */
 
 /*===========================================================================*/

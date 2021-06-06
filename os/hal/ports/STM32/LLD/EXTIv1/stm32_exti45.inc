@@ -70,7 +70,7 @@ static inline void exti45_irq_deinit(void) {
 #if defined(STM32_EXTI45_IS_USED) || defined(__DOXYGEN__)
 #if !defined(STM32_DISABLE_EXTI45_HANDLER)
 /**
- * @brief   EXTI[33] interrupt handler.
+ * @brief   EXTI[45] interrupt handler.
  *
  * @isr
  */
