@@ -249,6 +249,83 @@ static const system_limits_t vos_range2 = {
 
 #include "stm32_bd.inc"
 
+/**
+ * @brief   Configures the PWR unit.
+ * @note    CR1, CR2 and CR5 are not initialized inside this function.
+ */
+static void hal_lld_set_static_pwr(void) {
+
+  /* PWR clock enabled.*/
+  rccEnablePWRInterface(false);
+
+  /* Static PWR configurations.*/
+  PWR->CR3   = STM32_PWR_CR3;
+  PWR->CR4   = STM32_PWR_CR4;
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+#if STM32_HAS_GPIOD
+  PWR->PUCRD = STM32_PWR_PUCRD;
+  PWR->PDCRD = STM32_PWR_PDCRD;
+#endif
+#if STM32_HAS_GPIOE
+  PWR->PUCRE = STM32_PWR_PUCRE;
+  PWR->PDCRE = STM32_PWR_PDCRE;
+#endif
+#if STM32_HAS_GPIOF
+  PWR->PUCRF = STM32_PWR_PUCRF;
+  PWR->PDCRF = STM32_PWR_PDCRF;
+#endif
+#if STM32_HAS_GPIOG
+  PWR->PUCRG = STM32_PWR_PUCRG;
+  PWR->PDCRG = STM32_PWR_PDCRG;
+#endif
+#if STM32_HAS_GPIOH
+  PWR->PUCRH = STM32_PWR_PUCRH;
+  PWR->PDCRH = STM32_PWR_PDCRH;
+#endif
+#if STM32_HAS_GPIOI
+  PWR->PUCRI = STM32_PWR_PUCRI;
+  PWR->PDCRI = STM32_PWR_PDCRI;
+#endif
+}
+
+/**
+ * @brief   Initializes static muxes and dividers.
+ */
+static void hal_lld_set_static_clocks(void) {
+  uint32_t ccipr;
+
+  /*Clock-related settings (dividers, MCO etc).*/
+  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
+              STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
+
+  /* CCIPR register initialization, note, must take care of the _OFF
+     pseudo settings.*/
+  ccipr =                                      STM32_ADCSEL    |
+          STM32_CLK48SEL   | STM32_LPTIM2SEL | STM32_LPTIM1SEL |
+          STM32_I2C3SEL    | STM32_I2C2SEL   | STM32_I2C1SEL   |
+          STM32_LPUART1SEL | STM32_UART5SEL  | STM32_UART4SEL  |
+          STM32_USART3SEL  | STM32_USART2SEL | STM32_USART1SEL;
+  RCC->CCIPR = ccipr;
+
+  /* CCIPR2 register initialization, note, must take care of the _OFF
+     pseudo settings.*/
+  ccipr = STM32_OSPISEL    | STM32_PLLSAI2DIVR |
+          STM32_SDMMCSEL   | STM32_DSISEL    | STM32_ADFSDMSEL |
+         STM32_DFSDMSEL   | STM32_I2C4SEL;
+#if STM32_SAI2SEL != STM32_SAI2SEL_OFF
+  ccipr |= STM32_SAI2SEL;
+#endif
+#if STM32_SAI1SEL != STM32_SAI1SEL_OFF
+  ccipr |= STM32_SAI1SEL;
+#endif
+  RCC->CCIPR2 = ccipr;
+}
+
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 static bool hal_lld_check_pll(const system_limits_t *slp,
                               uint32_t cfgr,
@@ -703,43 +780,11 @@ void stm32_clock_init(void) {
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
 
-  /* PWR clock enabled.*/
-  rccEnablePWRInterface(false);
+  /* Static PWR configurations.*/
+  hal_lld_set_static_pwr();
 
   /* Backup domain made accessible.*/
   PWR->CR1 |= PWR_CR1_DBP;
-
-  /* Static PWR initializations.*/
-  PWR->PUCRA = STM32_PWR_PUCRA;
-  PWR->PDCRA = STM32_PWR_PDCRA;
-  PWR->PUCRB = STM32_PWR_PUCRB;
-  PWR->PDCRB = STM32_PWR_PDCRB;
-  PWR->PUCRC = STM32_PWR_PUCRC;
-  PWR->PDCRC = STM32_PWR_PDCRC;
-#if STM32_HAS_GPIOD
-  PWR->PUCRD = STM32_PWR_PUCRD;
-  PWR->PDCRD = STM32_PWR_PDCRD;
-#endif
-#if STM32_HAS_GPIOE
-  PWR->PUCRE = STM32_PWR_PUCRE;
-  PWR->PDCRE = STM32_PWR_PDCRE;
-#endif
-#if STM32_HAS_GPIOF
-  PWR->PUCRF = STM32_PWR_PUCRF;
-  PWR->PDCRF = STM32_PWR_PDCRF;
-#endif
-#if STM32_HAS_GPIOG
-  PWR->PUCRG = STM32_PWR_PUCRG;
-  PWR->PDCRG = STM32_PWR_PDCRG;
-#endif
-#if STM32_HAS_GPIOH
-  PWR->PUCRH = STM32_PWR_PUCRH;
-  PWR->PDCRH = STM32_PWR_PDCRH;
-#endif
-#if STM32_HAS_GPIOI
-  PWR->PUCRI = STM32_PWR_PUCRI;
-  PWR->PDCRI = STM32_PWR_PDCRI;
-#endif
 
   /* Backup domain reset.*/
   bd_reset();
@@ -751,6 +796,9 @@ void stm32_clock_init(void) {
   /* MSISRANGE setup.*/
   RCC->CR |= RCC_CR_MSIRGSEL;
   RCC->CSR = (RCC->CSR & ~RCC_CSR_MSISRANGE_Msk) | STM32_MSISRANGE;
+
+  /* Static clocks setup.*/
+  hal_lld_set_static_clocks();
 
   /* Selecting the default clock/power/flash configuration.*/
   if (hal_lld_clock_raw_switch(&hal_clkcfg_default)) {
@@ -791,49 +839,17 @@ void stm32_clock_init(void) {
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
 
-  /* PWR clock enabled.*/
-  rccEnablePWRInterface(false);
+  /* Static PWR configurations.*/
+  hal_lld_set_static_pwr();
+
+  /* Additional PWR configurations.*/
+  PWR->CR2  = STM32_PWR_CR2;
+  PWR->CR5  = STM32_CR5BITS;
 
   /* Core voltage setup, backup domain access enabled and left open.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
   while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */
     ;                                       /* stable.                      */
-
-  /* Additional PWR configurations.*/
-  PWR->CR2  = STM32_PWR_CR2;
-  PWR->CR3  = STM32_PWR_CR3;
-  PWR->CR4  = STM32_PWR_CR4;
-  PWR->CR5  = STM32_CR5BITS;
-  PWR->PUCRA = STM32_PWR_PUCRA;
-  PWR->PDCRA = STM32_PWR_PDCRA;
-  PWR->PUCRB = STM32_PWR_PUCRB;
-  PWR->PDCRB = STM32_PWR_PDCRB;
-  PWR->PUCRC = STM32_PWR_PUCRC;
-  PWR->PDCRC = STM32_PWR_PDCRC;
-#if STM32_HAS_GPIOD
-  PWR->PUCRD = STM32_PWR_PUCRD;
-  PWR->PDCRD = STM32_PWR_PDCRD;
-#endif
-#if STM32_HAS_GPIOE
-  PWR->PUCRE = STM32_PWR_PUCRE;
-  PWR->PDCRE = STM32_PWR_PDCRE;
-#endif
-#if STM32_HAS_GPIOF
-  PWR->PUCRF = STM32_PWR_PUCRF;
-  PWR->PDCRF = STM32_PWR_PDCRF;
-#endif
-#if STM32_HAS_GPIOG
-  PWR->PUCRG = STM32_PWR_PUCRG;
-  PWR->PDCRG = STM32_PWR_PDCRG;
-#endif
-#if STM32_HAS_GPIOH
-  PWR->PUCRH = STM32_PWR_PUCRH;
-  PWR->PDCRH = STM32_PWR_PDCRH;
-#endif
-#if STM32_HAS_GPIOI
-  PWR->PUCRI = STM32_PWR_PUCRI;
-  PWR->PDCRI = STM32_PWR_PDCRI;
-#endif
 
   /* MSI clock reset.*/
   msi_reset();
@@ -857,35 +873,8 @@ void stm32_clock_init(void) {
   pllsai1_init();
   pllsai2_init();
 
-  /* Other clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
-              STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
-
-  /* CCIPR register initialization, note, must take care of the _OFF
-     pseudo settings.*/
-  {
-    uint32_t ccipr =                                      STM32_ADCSEL    |
-                     STM32_CLK48SEL   | STM32_LPTIM2SEL | STM32_LPTIM1SEL |
-                     STM32_I2C3SEL    | STM32_I2C2SEL   | STM32_I2C1SEL   |
-                     STM32_LPUART1SEL | STM32_UART5SEL  | STM32_UART4SEL  |
-                     STM32_USART3SEL  | STM32_USART2SEL | STM32_USART1SEL;
-    RCC->CCIPR = ccipr;
-  }
-
-  /* CCIPR2 register initialization, note, must take care of the _OFF
-     pseudo settings.*/
-  {
-    uint32_t ccipr = STM32_OSPISEL    | STM32_PLLSAI2DIVR |
-                     STM32_SDMMCSEL   | STM32_DSISEL    | STM32_ADFSDMSEL |
-                     STM32_DFSDMSEL   | STM32_I2C4SEL;
-#if STM32_SAI2SEL != STM32_SAI2SEL_OFF
-    ccipr |= STM32_SAI2SEL;
-#endif
-#if STM32_SAI1SEL != STM32_SAI1SEL_OFF
-    ccipr |= STM32_SAI1SEL;
-#endif
-    RCC->CCIPR2 = ccipr;
-  }
+  /* Static clocks setup.*/
+  hal_lld_set_static_clocks();
 
   /* Set flash WS's for SYSCLK source */
   if (STM32_FLASHBITS > STM32_MSI_FLASHBITS) {
