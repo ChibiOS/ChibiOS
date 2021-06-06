@@ -234,7 +234,9 @@
 #define STM32_HAS_SPI2                      TRUE
 #define STM32_SPI2_SUPPORTS_I2S             TRUE
 
-#define STM32_HAS_SPI3                      FALSE
+#define STM32_HAS_SPI3                      TRUE
+#define STM32_SPI3_SUPPORTS_I2S             FALSE
+
 #define STM32_HAS_SPI4                      FALSE
 #define STM32_HAS_SPI5                      FALSE
 #define STM32_HAS_SPI6                      FALSE

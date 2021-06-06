@@ -646,21 +646,21 @@
  *
  * @api
  */
-#define rccEnableSPIR(lp) rccEnableAPB3(RCC_APB3ENR_SUBGHZSPIEN, lp)
+#define rccEnableSPI3(lp) rccEnableAPB3(RCC_APB3ENR_SUBGHZSPIEN, lp)
 
 /**
  * @brief   Disables the SPIR peripheral clock.
  *
  * @api
  */
-#define rccDisableSPIR() rccDisableAPB3(RCC_APB3ENR_SUBGHZSPIEN)
+#define rccDisableSPI3() rccDisableAPB3(RCC_APB3ENR_SUBGHZSPIEN)
 
 /**
  * @brief   Resets the SPIR peripheral.
  *
  * @api
  */
-#define rccResetSPIR() rccResetAPB3(RCC_APB3RSTR_SUBGHZSPIRST)
+#define rccResetSPI3() rccResetAPB3(RCC_APB3RSTR_SUBGHZSPIRST)
 /** @} */
 
 /**
