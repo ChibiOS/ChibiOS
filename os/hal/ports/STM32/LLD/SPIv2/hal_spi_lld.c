@@ -234,11 +234,7 @@ void spi_lld_init(void) {
 
 #if STM32_SPI_USE_SPI3
   spiObjectInit(&SPID3);
-#if !defined(SUBGHZSPI)
   SPID3.spi       = SPI3;
-#else
-  SPID3.spi       = SUBGHZSPI;
-#endif
   SPID3.dmarx     = NULL;
   SPID3.dmatx     = NULL;
   SPID3.rxdmamode = STM32_DMA_CR_CHSEL(SPI3_RX_DMA_STREAM) |

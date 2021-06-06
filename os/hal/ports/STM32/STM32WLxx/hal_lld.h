@@ -336,6 +336,11 @@
 #define STM32_LSCOSEL_LSE       (3 << 24)   /**< LSE on LSCO pin.           */
 /** @} */
 
+/**
+ * @brief   Mapping SUBGHZSPI on SPI3.
+ */
+#define SPI3                    SUBGHZSPI
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
