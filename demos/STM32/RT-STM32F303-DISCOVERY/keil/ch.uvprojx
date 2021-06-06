@@ -335,8 +335,8 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>-USTM32F303xC -DTEST_CFG_SIZE_REPORT=0</MiscControls>
-              <Define>CORTEX_USE_FPU=0 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
+              <MiscControls>-USTM32F303xC</MiscControls>
+              <Define>CORTEX_USE_FPU=0 TEST_CFG_SIZE_REPORT=0 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\cfg;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include;..\..\..\..\os\common\ext\ST\STM32F3xx;..\..\..\..\os\common\portability\Keil;..\..\..\..\os\common\ports\ARM-common;..\..\..\..\os\common\ports\ARMv7-M;..\..\..\..\os\rt\include;..\..\..\..\os\oslib\include;..\..\..\..\os\hal\osal\rt-nil;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD\ADCv3;..\..\..\..\os\hal\ports\STM32\LLD\CANv1;..\..\..\..\os\hal\ports\STM32\LLD\DACv1;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\SYSTICKv1;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USART;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1;..\..\..\..\test\lib;..\..\..\..\test\rt\source\test;..\..\..\..\test\oslib\source\test</IncludePath>
             </VariousControls>
@@ -353,8 +353,8 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls>--cpreproc --cpreproc_opts=-D,CORTEX_USE_FPU=0</MiscControls>
-              <Define></Define>
+              <MiscControls>--cpreproc</MiscControls>
+              <Define>CORTEX_USE_FPU=0</Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\cfg;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ports\ARMv7-M;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</IncludePath>
             </VariousControls>
