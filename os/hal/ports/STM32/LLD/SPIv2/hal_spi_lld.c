@@ -78,14 +78,6 @@
   STM32_DMA_GETCHANNEL(STM32_SPI_SPI6_TX_DMA_STREAM,                        \
                        STM32_SPI6_TX_DMA_CHN)
 
-#define SPIR_RX_DMA_STREAM                                                  \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPIR_RX_DMA_STREAM,                        \
-                       STM32_SPIR_RX_DMA_CHN)
-
-#define SPIR_TX_DMA_STREAM                                                  \
-  STM32_DMA_GETCHANNEL(STM32_SPI_SPIR_TX_DMA_STREAM,                        \
-                       STM32_SPIR_TX_DMA_CHN)
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -118,11 +110,6 @@ SPIDriver SPID5;
 /** @brief SPI6 driver identifier.*/
 #if STM32_SPI_USE_SPI6 || defined(__DOXYGEN__)
 SPIDriver SPID6;
-#endif
-
-/** @brief SPIR driver identifier.*/
-#if STM32_SPI_USE_SPIR || defined(__DOXYGEN__)
-SPIDriver SPIDR;
 #endif
 
 /*===========================================================================*/
@@ -316,24 +303,6 @@ void spi_lld_init(void) {
                     STM32_DMA_CR_DMEIE |
                     STM32_DMA_CR_TEIE;
 #endif
-
-#if STM32_SPI_USE_SPIR
-  spiObjectInit(&SPIDR);
-  SPIDR.spi       = SUBGHZSPI;
-  SPIDR.dmarx     = NULL;
-  SPIDR.dmatx     = NULL;
-  SPIDR.rxdmamode = STM32_DMA_CR_CHSEL(SPIR_RX_DMA_STREAM) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPIR_DMA_PRIORITY) |
-                    STM32_DMA_CR_DIR_P2M |
-                    STM32_DMA_CR_TCIE |
-                    STM32_DMA_CR_DMEIE |
-                    STM32_DMA_CR_TEIE;
-  SPIDR.txdmamode = STM32_DMA_CR_CHSEL(SPIR_TX_DMA_STREAM) |
-                    STM32_DMA_CR_PL(STM32_SPI_SPIR_DMA_PRIORITY) |
-                    STM32_DMA_CR_DIR_M2P |
-                    STM32_DMA_CR_DMEIE |
-                    STM32_DMA_CR_TEIE;
-#endif
 }
 
 /**
@@ -462,25 +431,6 @@ void spi_lld_start(SPIDriver *spip) {
 #endif
     }
 #endif
-#if STM32_SPI_USE_SPIR
-    if (&SPIDR == spip) {
-      spip->dmarx = dmaStreamAllocI(STM32_SPI_SPIR_RX_DMA_STREAM,
-                                    STM32_SPI_SPIR_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
-      spip->dmatx = dmaStreamAllocI(STM32_SPI_SPIR_TX_DMA_STREAM,
-                                    STM32_SPI_SPIR_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
-      rccEnableSPIR(true);
-#if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPIR_RX);
-      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPIR_TX);
-#endif
-    }
-#endif
 
     /* DMA setup.*/
     dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
@@ -565,10 +515,6 @@ void spi_lld_stop(SPIDriver *spip) {
 #if STM32_SPI_USE_SPI6
     if (&SPID6 == spip)
       rccDisableSPI6();
-#endif
-#if STM32_SPI_USE_SPIR
-    if (&SPIDR == spip)
-      rccDisableSPIR();
 #endif
   }
 }
