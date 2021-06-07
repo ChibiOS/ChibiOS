@@ -98,23 +98,47 @@
  *                      the event source is broadcasted
  * @param[in] wflags    mask of flags the listening thread is interested in
  *
- * @api
+ * @iclass
  */
-void chEvtRegisterMaskWithFlags(event_source_t *esp,
-                                event_listener_t *elp,
-                                eventmask_t events,
-                                eventflags_t wflags) {
+void chEvtRegisterMaskWithFlagsI(event_source_t *esp,
+                                 event_listener_t *elp,
+                                 eventmask_t events,
+                                 eventflags_t wflags) {
   thread_t *currtp = chThdGetSelfX();
 
+  chDbgCheckClassI();
   chDbgCheck((esp != NULL) && (elp != NULL));
 
-  chSysLock();
   elp->next     = esp->next;
   esp->next     = elp;
   elp->listener = currtp;
   elp->events   = events;
   elp->flags    = (eventflags_t)0;
   elp->wflags   = wflags;
+}
+
+/**
+ * @brief   Registers an Event Listener on an Event Source.
+ * @details Once a thread has registered as listener on an event source it
+ *          will be notified of all events broadcasted there.
+ * @note    Multiple Event Listeners can specify the same bits to be ORed to
+ *          different threads.
+ *
+ * @param[in] esp       pointer to the  @p event_source_t structure
+ * @param[in] elp       pointer to the @p event_listener_t structure
+ * @param[in] events    events to be ORed to the thread when
+ *                      the event source is broadcasted
+ * @param[in] wflags    mask of flags the listening thread is interested in
+ *
+ * @api
+ */
+void chEvtRegisterMaskWithFlags(event_source_t *esp,
+                                event_listener_t *elp,
+                                eventmask_t events,
+                                eventflags_t wflags) {
+
+  chSysLock();
+  chEvtRegisterMaskWithFlagsI(esp, elp, events, wflags);
   chSysUnlock();
 }
 
@@ -163,6 +187,8 @@ void chEvtUnregister(event_source_t *esp, event_listener_t *elp) {
 eventmask_t chEvtGetAndClearEventsI(eventmask_t events) {
   thread_t *currtp = chThdGetSelfX();
   eventmask_t m;
+
+  chDbgCheckClassI();
 
   m = currtp->epending & events;
   currtp->epending &= ~events;

@@ -120,6 +120,10 @@ typedef void (*evhandler_t)(eventid_t id);
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void chEvtRegisterMaskWithFlagsI(event_source_t *esp,
+                                   event_listener_t *elp,
+                                   eventmask_t events,
+                                   eventflags_t wflags);
   void chEvtRegisterMaskWithFlags(event_source_t *esp,
                                   event_listener_t *elp,
                                   eventmask_t events,
