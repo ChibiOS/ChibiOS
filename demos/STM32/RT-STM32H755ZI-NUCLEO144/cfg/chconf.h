@@ -597,7 +597,7 @@
  * @note    The default is @p CH_DBG_TRACE_MASK_DISABLED.
  */
 #if !defined(CH_DBG_TRACE_MASK)
-#define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_NONE
+#define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_DISABLED
 #endif
 
 /**
