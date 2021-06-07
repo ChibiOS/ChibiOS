@@ -234,44 +234,6 @@ eventmask_t chEvtAddEvents(eventmask_t events) {
 }
 
 /**
- * @brief   Signals all the Event Listeners registered on the specified Event
- *          Source.
- * @details This function variants ORs the specified event flags to all the
- *          threads registered on the @p event_source_t in addition to the
- *          event flags specified by the threads themselves in the
- *          @p event_listener_t objects.
- * @post    This function does not reschedule so a call to a rescheduling
- *          function must be performed before unlocking the kernel. Note that
- *          interrupt handlers always reschedule on exit so an explicit
- *          reschedule must not be performed in ISRs.
- *
- * @param[in] esp       pointer to the @p event_source_t structure
- * @param[in] flags     the flags set to be added to the listener flags mask
- *
- * @iclass
- */
-void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
-  event_listener_t *elp;
-
-  chDbgCheckClassI();
-  chDbgCheck(esp != NULL);
-
-  elp = esp->next;
-  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
-  while (elp != (event_listener_t *)esp) {
-  /*lint -restore*/
-    elp->flags |= flags;
-    /* When flags == 0 the thread will always be signaled because the
-       source does not emit any flag.*/
-    if ((flags == (eventflags_t)0) ||
-        ((flags & elp->wflags) != (eventflags_t)0)) {
-      chEvtSignalI(elp->listener, elp->events);
-    }
-    elp = elp->next;
-  }
-}
-
-/**
  * @brief   Returns the unmasked flags associated to an @p event_listener_t.
  * @details The flags are returned and the @p event_listener_t flags mask is
  *          cleared.
@@ -320,24 +282,6 @@ eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
 
 /**
  * @brief   Adds a set of event flags directly to the specified @p thread_t.
- *
- * @param[in] tp        the thread to be signaled
- * @param[in] events    the events set to be ORed
- *
- * @api
- */
-void chEvtSignal(thread_t *tp, eventmask_t events) {
-
-  chDbgCheck(tp != NULL);
-
-  chSysLock();
-  chEvtSignalI(tp, events);
-  chSchRescheduleS();
-  chSysUnlock();
-}
-
-/**
- * @brief   Adds a set of event flags directly to the specified @p thread_t.
  * @post    This function does not reschedule so a call to a rescheduling
  *          function must be performed before unlocking the kernel. Note that
  *          interrupt handlers always reschedule on exit so an explicit
@@ -361,6 +305,62 @@ void chEvtSignalI(thread_t *tp, eventmask_t events) {
        ((tp->epending & tp->u.ewmask) == tp->u.ewmask))) {
     tp->u.rdymsg = MSG_OK;
     (void) chSchReadyI(tp);
+  }
+}
+
+/**
+ * @brief   Adds a set of event flags directly to the specified @p thread_t.
+ *
+ * @param[in] tp        the thread to be signaled
+ * @param[in] events    the events set to be ORed
+ *
+ * @api
+ */
+void chEvtSignal(thread_t *tp, eventmask_t events) {
+
+  chDbgCheck(tp != NULL);
+
+  chSysLock();
+  chEvtSignalI(tp, events);
+  chSchRescheduleS();
+  chSysUnlock();
+}
+
+/**
+ * @brief   Signals all the Event Listeners registered on the specified Event
+ *          Source.
+ * @details This function variants ORs the specified event flags to all the
+ *          threads registered on the @p event_source_t in addition to the
+ *          event flags specified by the threads themselves in the
+ *          @p event_listener_t objects.
+ * @post    This function does not reschedule so a call to a rescheduling
+ *          function must be performed before unlocking the kernel. Note that
+ *          interrupt handlers always reschedule on exit so an explicit
+ *          reschedule must not be performed in ISRs.
+ *
+ * @param[in] esp       pointer to the @p event_source_t structure
+ * @param[in] flags     the flags set to be added to the listener flags mask
+ *
+ * @iclass
+ */
+void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
+  event_listener_t *elp;
+
+  chDbgCheckClassI();
+  chDbgCheck(esp != NULL);
+
+  elp = esp->next;
+  /*lint -save -e9087 -e740 [11.3, 1.3] Cast required by list handling.*/
+  while (elp != (event_listener_t *)esp) {
+  /*lint -restore*/
+    elp->flags |= flags;
+    /* When flags == 0 the thread will always be signaled because the
+       source does not emit any flag.*/
+    if ((flags == (eventflags_t)0) ||
+        ((flags & elp->wflags) != (eventflags_t)0)) {
+      chEvtSignalI(elp->listener, elp->events);
+    }
+    elp = elp->next;
   }
 }
 
