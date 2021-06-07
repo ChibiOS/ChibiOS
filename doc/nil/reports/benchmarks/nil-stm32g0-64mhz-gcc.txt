@@ -1,14 +1,14 @@
 
 *** ChibiOS/NIL Test Suite
 ***
-*** Compiled:     Mar 18 2020 - 11:50:46
+*** Compiled:     Jun  7 2021 - 09:09:00
 *** Platform:     STM32G0 Entry-level
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G071RB
 ***
-*** Text size:    27204 bytes
-*** RO data size: 7032 bytes
+*** Text size:    36780 bytes
+*** RO data size: 6984 bytes
 *** Data size:    128 bytes
-*** BSS size:     3420 bytes
+*** BSS size:     3408 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv6-M
 --- Core Variant:                       Cortex-M0+
---- Compiler:                           GCC 5.4.1 20160919 (release) [ARM/embedded-5-branch revision 240496]
+--- Compiler:                           GCC 10.2.1 20201103 (release)
 --- Port Info:                          Preemption through NMI
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -26,9 +26,9 @@
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/NIL
 --- Stable Flag:                        0
---- Version String:                     4.0.0
+--- Version String:                     4.1.0
 --- Major Number:                       4
---- Minor Number:                       0
+--- Minor Number:                       1
 --- Patch Number:                       0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -110,31 +110,31 @@
 === Test Sequence 8 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 8.1 (Messages performance #1)
---- Score : 175820 msgs/S, 351640 ctxswc/S
+--- Score : 262289 msgs/S, 524578 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.2 (Messages performance #2)
---- Score : 129290 msgs/S, 258580 ctxswc/S
+--- Score : 181299 msgs/S, 362598 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.3 (Context Switch performance)
---- Score : 540648 ctxswc/S
+--- Score : 801240 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.4 (Threads performance, full cycle)
---- Score : 128511 threads/S
+--- Score : 168417 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.5 (Threads performance, create/exit only)
---- Score : 161613 threads/S
+--- Score : 197526 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.6 (Semaphores wait/signal performance)
---- Score : 627436 wait+signal/S
+--- Score : 1224852 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.7 (RAM Footprint)
---- System: 232 bytes
+--- OS    : 232 bytes
 --- Thread: 24 bytes
 --- Semaph: 4 bytes
 --- EventS: 4 bytes
@@ -147,14 +147,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Mar 18 2020 - 11:50:46
+*** Compiled:     Jun  7 2021 - 09:09:00
 *** Platform:     STM32G0 Entry-level
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G071RB
 ***
-*** Text size:    27204 bytes
-*** RO data size: 7032 bytes
+*** Text size:    36780 bytes
+*** RO data size: 6984 bytes
 *** Data size:    128 bytes
-*** BSS size:     3420 bytes
+*** BSS size:     3408 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -162,7 +162,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv6-M
 --- Core Variant:                       Cortex-M0+
---- Compiler:                           GCC 5.4.1 20160919 (release) [ARM/embedded-5-branch revision 240496]
+--- Compiler:                           GCC 10.2.1 20201103 (release)
 --- Port Info:                          Preemption through NMI
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -172,9 +172,9 @@ Final result: SUCCESS
 --- Test Case 1.2 (OS Library Info)
 --- Product:                            ChibiOS/LIB
 --- Stable Flag:                        0
---- Version String:                     1.2.0
+--- Version String:                     1.3.0
 --- Major Number:                       1
---- Minor Number:                       2
+--- Minor Number:                       3
 --- Patch Number:                       0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -272,4 +272,5 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
+
 

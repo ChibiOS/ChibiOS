@@ -1,14 +1,14 @@
 
 *** ChibiOS/NIL Test Suite
 ***
-*** Compiled:     Mar 18 2020 - 12:34:45
+*** Compiled:     Jun  7 2021 - 09:12:58
 *** Platform:     STM32F303xC Analog & DSP
 *** Test Board:   STMicroelectronics STM32F3-Discovery
 ***
-*** Text size:    27496 bytes
-*** RO data size: 7068 bytes
+*** Text size:    38468 bytes
+*** RO data size: 7028 bytes
 *** Data size:    128 bytes
-*** BSS size:     3488 bytes
+*** BSS size:     3704 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M4
---- Compiler:                           GCC 9.2.1 20191025 (release) [ARM/arm-9-branch revision 277599]
+--- Compiler:                           GCC 10.2.1 20201103 (release)
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -25,10 +25,10 @@
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/NIL
---- Stable Flag:                        1
---- Version String:                     4.0.0
+--- Stable Flag:                        0
+--- Version String:                     4.1.0
 --- Major Number:                       4
---- Minor Number:                       0
+--- Minor Number:                       1
 --- Patch Number:                       0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -110,31 +110,31 @@
 === Test Sequence 8 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 8.1 (Messages performance #1)
---- Score : 188466 msgs/S, 376932 ctxswc/S
+--- Score : 262753 msgs/S, 525506 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.2 (Messages performance #2)
---- Score : 134820 msgs/S, 269640 ctxswc/S
+--- Score : 180890 msgs/S, 361780 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.3 (Context Switch performance)
---- Score : 671272 ctxswc/S
+--- Score : 1017592 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.4 (Threads performance, full cycle)
---- Score : 142281 threads/S
+--- Score : 179986 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.5 (Threads performance, create/exit only)
---- Score : 186513 threads/S
+--- Score : 223585 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.6 (Semaphores wait/signal performance)
---- Score : 757832 wait+signal/S
+--- Score : 1142764 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 8.7 (RAM Footprint)
---- System: 232 bytes
+--- OS    : 232 bytes
 --- Thread: 24 bytes
 --- Semaph: 4 bytes
 --- EventS: 4 bytes
@@ -147,14 +147,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Mar 18 2020 - 12:34:45
+*** Compiled:     Jun  7 2021 - 09:12:58
 *** Platform:     STM32F303xC Analog & DSP
 *** Test Board:   STMicroelectronics STM32F3-Discovery
 ***
-*** Text size:    27496 bytes
-*** RO data size: 7068 bytes
+*** Text size:    38468 bytes
+*** RO data size: 7028 bytes
 *** Data size:    128 bytes
-*** BSS size:     3488 bytes
+*** BSS size:     3704 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -162,7 +162,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M4
---- Compiler:                           GCC 9.2.1 20191025 (release) [ARM/arm-9-branch revision 277599]
+--- Compiler:                           GCC 10.2.1 20201103 (release)
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -171,10 +171,10 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (OS Library Info)
 --- Product:                            ChibiOS/LIB
---- Stable Flag:                        1
---- Version String:                     1.2.0
+--- Stable Flag:                        0
+--- Version String:                     1.3.0
 --- Major Number:                       1
---- Minor Number:                       2
+--- Minor Number:                       3
 --- Patch Number:                       0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -272,4 +272,5 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
+
 
