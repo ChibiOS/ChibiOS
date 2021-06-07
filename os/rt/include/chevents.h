@@ -132,8 +132,8 @@ extern "C" {
   eventmask_t chEvtGetAndClearEventsI(eventmask_t events);
   eventmask_t chEvtGetAndClearEvents(eventmask_t events);
   eventmask_t chEvtAddEvents(eventmask_t events);
-  eventflags_t chEvtGetAndClearFlags(event_listener_t *elp);
   eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp);
+  eventflags_t chEvtGetAndClearFlags(event_listener_t *elp);
   void chEvtSignal(thread_t *tp, eventmask_t events);
   void chEvtSignalI(thread_t *tp, eventmask_t events);
   void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags);

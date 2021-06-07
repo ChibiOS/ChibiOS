@@ -272,6 +272,29 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
 }
 
 /**
+ * @brief   Returns the unmasked flags associated to an @p event_listener_t.
+ * @details The flags are returned and the @p event_listener_t flags mask is
+ *          cleared.
+ *
+ * @param[in] elp       pointer to the @p event_listener_t structure
+ * @return              The flags added to the listener by the associated
+ *                      event source.
+ *
+ * @iclass
+ */
+eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp) {
+  eventflags_t flags;
+
+  chDbgCheckClassI();
+  chDbgCheck(elp != NULL);
+
+  flags = elp->flags;
+  elp->flags = (eventflags_t)0;
+
+  return flags & elp->wflags;
+}
+
+/**
  * @brief   Returns the flags associated to an @p event_listener_t.
  * @details The flags are returned and the @p event_listener_t flags mask is
  *          cleared.
@@ -284,6 +307,8 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
  */
 eventflags_t chEvtGetAndClearFlags(event_listener_t *elp) {
   eventflags_t flags;
+
+  chDbgCheck(elp != NULL);
 
   chSysLock();
   flags = elp->flags;
@@ -358,26 +383,6 @@ void chEvtBroadcastFlags(event_source_t *esp, eventflags_t flags) {
   chEvtBroadcastFlagsI(esp, flags);
   chSchRescheduleS();
   chSysUnlock();
-}
-
-/**
- * @brief   Returns the unmasked flags associated to an @p event_listener_t.
- * @details The flags are returned and the @p event_listener_t flags mask is
- *          cleared.
- *
- * @param[in] elp       pointer to the @p event_listener_t structure
- * @return              The flags added to the listener by the associated
- *                      event source.
- *
- * @iclass
- */
-eventflags_t chEvtGetAndClearFlagsI(event_listener_t *elp) {
-  eventflags_t flags;
-
-  flags = elp->flags;
-  elp->flags = (eventflags_t)0;
-
-  return flags & elp->wflags;
 }
 
 /**
