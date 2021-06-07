@@ -209,7 +209,126 @@ static void flash_set_acr(uint32_t acr) {
   }
 }
 
+/**
+ * @brief   Configures the PWR unit.
+ * @note    CR1, CR2 and CR5 are not initialized inside this function.
+ */
+static void hal_lld_set_static_pwr(void) {
+
+  /* Static PWR configurations.*/
+  PWR->CR3 = STM32_PWR_CR3;
+  PWR->CR4 = STM32_PWR_CR4;
+  PWR->PUCRA = STM32_PWR_PUCRA;
+  PWR->PDCRA = STM32_PWR_PDCRA;
+  PWR->PUCRB = STM32_PWR_PUCRB;
+  PWR->PDCRB = STM32_PWR_PDCRB;
+  PWR->PUCRC = STM32_PWR_PUCRC;
+  PWR->PDCRC = STM32_PWR_PDCRC;
+  PWR->PUCRH = STM32_PWR_PUCRH;
+  PWR->PDCRH = STM32_PWR_PDCRH;
+}
+
+/**
+ * @brief   Initializes static muxes and dividers.
+ */
+static void hal_lld_set_static_clocks(void) {
+
+  uint32_t ccipr;
+
+  /* Clock-related settings (dividers, MCO etc).*/
+  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
+              STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
+  RCC->EXTCFGR = STM32_SHDHPRE;
+
+  /* CCIPR register initialization, note, must take care of the _OFF
+     pseudo settings.*/
+  ccipr = STM32_RNGSEL    | STM32_ADCSEL    | STM32_LPTIM3SEL  |
+          STM32_LPTIM2SEL | STM32_LPTIM1SEL | STM32_I2C3SEL    |
+          STM32_I2C2SEL   | STM32_I2C1SEL   | STM32_LPUART1SEL |
+          STM32_SPI2SEL   | STM32_USART2SEL | STM32_USART1SEL;
+
+  RCC->CCIPR = ccipr;
+}
+
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+static bool hal_lld_check_pll(const system_limits_t *slp,
+                              uint32_t cfgr,
+                              halfreq_t selclk,
+                              halfreq_t *pclkp,
+                              halfreq_t *qclkp,
+                              halfreq_t *rclkp) {
+
+  uint32_t mdiv, ndiv, pdiv, qdiv, rdiv;
+  halfreq_t vcoclk, pclk = 0U, qclk = 0U, rclk = 0U;
+
+  /* PLL M divider.*/
+  mdiv = ((cfgr & RCC_PLLCFGR_PLLM_Msk) >> RCC_PLLCFGR_PLLM_Pos) + 1U;
+
+  /* PLL N divider.*/
+  ndiv = (cfgr & RCC_PLLCFGR_PLLN_Msk) >> RCC_PLLCFGR_PLLN_Pos;
+  if (ndiv < STM32_PLLN_VALUE_MIN) {
+      return true;
+  }
+
+  /* PLL VCO frequency.*/
+  vcoclk = (selclk / (halfreq_t)mdiv) * (halfreq_t)ndiv;
+
+  if((vcoclk < slp->pllvco_min) || (vcoclk > slp->pllvco_max)) {
+    return true;
+  }
+
+  /* PLL P output frequency.*/
+  pdiv = ((cfgr & RCC_PLLCFGR_PLLP_Msk) >> RCC_PLLCFGR_PLLP_Pos) + 1;
+
+  if ((pdiv < STM32_PLLP_VALUE_MIN) || (pdiv > STM32_PLLP_VALUE_MAX)) {
+    return true;
+  }
+
+  if ((cfgr & RCC_PLLCFGR_PLLPEN) != 0U) {
+    pclk = vcoclk / pdiv ;
+
+    if((pclk < slp->pllp_min) || (pclk > slp->pllp_max)) {
+      return true;
+    }
+  }
+
+  /* PLL Q output frequency.*/
+  qdiv = ((cfgr & RCC_PLLCFGR_PLLQ_Msk) >> RCC_PLLCFGR_PLLQ_Pos) + 1;
+
+  if (qdiv < STM32_PLLQ_VALUE_MIN) {
+    return true;
+  }
+
+  if ((cfgr & RCC_PLLCFGR_PLLQEN) != 0U) {
+    qclk = vcoclk / qdiv;
+
+    if((qclk < slp->pllq_min) || (qclk > slp->pllq_max)) {
+      return true;
+    }
+  }
+
+  /* PLL R output frequency.*/
+  rdiv = ((cfgr & RCC_PLLCFGR_PLLR_Msk) >> RCC_PLLCFGR_PLLR_Pos) + 1;
+
+  if (rdiv < STM32_PLLR_VALUE_MIN) {
+    return true;
+  }
+
+  if ((cfgr & RCC_PLLCFGR_PLLREN) != 0U) {
+    rclk = vcoclk / rdiv;
+
+    if((rclk < slp->pllr_min) || (rclk > slp->pllr_max)) {
+      return true;
+    }
+  }
+
+  *pclkp = pclk;
+  *qclkp = qclk;
+  *rclkp = rclk;
+
+  return false;
+}
+
 /**
  * @brief   Recalculates the clock tree frequencies.
  *
@@ -221,6 +340,7 @@ static void flash_set_acr(uint32_t acr) {
  * @notapi
  */
 static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
+
   static const uint32_t msirange[STM32_MSIRANGE_ARRAY_SIZE] =
                                        {100000U, 200000U, 400000U,
                                         800000U, 1000000U, 2000000U,
@@ -282,68 +402,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* PLL outputs.*/
   if ((ccp->rcc_cr & RCC_CR_PLLON) != 0U) {
-    uint32_t pllmdiv, pllndiv, pllpdiv, pllqdiv, pllrdiv;
-    halfreq_t pllvcoclk;
-
-    /* PLL M divider.*/
-    pllmdiv = ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLM_Msk) >> RCC_PLLCFGR_PLLM_Pos) + 1U;
-
-    /* PLL N divider.*/
-    pllndiv = (ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLN_Msk) >> RCC_PLLCFGR_PLLN_Pos;
-    if (pllndiv < STM32_PLLN_VALUE_MIN) {
+    if (hal_lld_check_pll(slp, ccp->rcc_pllcfgr, pllselclk,
+                          &pllpclk, &pllqclk, &pllrclk)) {
       return true;
-    }
-
-    /* PLL VCO frequency.*/
-    pllvcoclk = (pllselclk / (halfreq_t)pllmdiv) * (halfreq_t)pllndiv;
-
-    if((pllvcoclk < slp->pllvco_min) || (pllvcoclk > slp->pllvco_max)) {
-      return true;
-    }
-
-    /* PLL P output frequency.*/
-    pllpdiv = ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLP_Msk) >> RCC_PLLCFGR_PLLP_Pos) + 1;
-
-    if ((pllpdiv < STM32_PLLP_VALUE_MIN) || (pllpdiv > STM32_PLLP_VALUE_MAX)) {
-      return true;
-    }
-
-    if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLPEN) != 0U) {
-      pllpclk = pllvcoclk / pllpdiv ;
-
-      if((pllpclk < slp->pllp_min) || (pllpclk > slp->pllp_max)) {
-        return true;
-      }
-    }
-
-    /* PLL Q output frequency.*/
-    pllqdiv = ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLQ_Msk) >> RCC_PLLCFGR_PLLQ_Pos) + 1;
-
-    if (pllqdiv < STM32_PLLQ_VALUE_MIN) {
-        return true;
-    }
-
-    if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLQEN) != 0U) {
-      pllqclk = pllvcoclk / pllqdiv;
-
-      if((pllqclk < slp->pllq_min) || (pllqclk > slp->pllq_max)) {
-        return true;
-      }
-    }
-
-    /* PLL R output frequency.*/
-    pllrdiv = ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLR_Msk) >> RCC_PLLCFGR_PLLR_Pos) + 1;
-
-    if (pllrdiv < STM32_PLLR_VALUE_MIN) {
-        return true;
-    }
-
-    if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLREN) != 0U) {
-      pllrclk = pllvcoclk / pllrdiv;
-
-      if((pllrclk < slp->pllr_min) || (pllrclk > slp->pllr_max)) {
-        return true;
-      }
     }
   }
 
@@ -621,20 +682,12 @@ void stm32_clock_init(void) {
 #endif
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
-  /* Backup domain made accessible.*/
-  PWR->CR1 |= PWR_CR1_DBP;
 
   /* Static PWR initializations.*/
-  PWR->CR3 = STM32_PWR_CR3;
-  PWR->CR4 = STM32_PWR_CR4;
-  PWR->PUCRA = STM32_PWR_PUCRA;
-  PWR->PDCRA = STM32_PWR_PDCRA;
-  PWR->PUCRB = STM32_PWR_PUCRB;
-  PWR->PDCRB = STM32_PWR_PDCRB;
-  PWR->PUCRC = STM32_PWR_PUCRC;
-  PWR->PDCRC = STM32_PWR_PDCRC;
-  PWR->PUCRH = STM32_PWR_PUCRH;
-  PWR->PDCRH = STM32_PWR_PDCRH;
+  hal_lld_set_static_pwr();
+
+  /* Backup domain made accessible.*/
+  PWR->CR1 |= PWR_CR1_DBP;
 
   /* Backup domain reset.*/
   bd_reset();
@@ -642,6 +695,9 @@ void stm32_clock_init(void) {
   /* Static clocks setup.*/
   lse_init();
   lsi_init();
+
+  /* Static clocks setup.*/
+  hal_lld_set_static_clocks();
 
   /* Selecting the default clock/power/flash configuration.*/
   if (hal_lld_clock_raw_config(&hal_clkcfg_default)) {
@@ -655,24 +711,14 @@ void stm32_clock_init(void) {
   flash_set_acr(FLASH_ACR_DCEN   | FLASH_ACR_ICEN |
                 FLASH_ACR_PRFTEN |STM32_FLASHBITS);
 
+  /* Static PWR initializations.*/
+  hal_lld_set_static_pwr();
+
   /* Core voltage setup, backup domain access enabled and left open.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
   while ((PWR->SR2 & PWR_SR2_VOSF) != 0) {
     /* Wait until regulator is stable.*/
   }
-
-   /* Additional PWR configurations.*/
-  PWR->CR2 = STM32_PWR_CR2;
-  PWR->CR3 = STM32_PWR_CR3;
-  PWR->CR4 = STM32_PWR_CR4;
-  PWR->PUCRA = STM32_PWR_PUCRA;
-  PWR->PDCRA = STM32_PWR_PDCRA;
-  PWR->PUCRB = STM32_PWR_PUCRB;
-  PWR->PDCRB = STM32_PWR_PDCRB;
-  PWR->PUCRC = STM32_PWR_PUCRC;
-  PWR->PDCRC = STM32_PWR_PDCRC;
-  PWR->PUCRH = STM32_PWR_PUCRH;
-  PWR->PDCRH = STM32_PWR_PDCRH;
 
   /* MSI clock reset.*/
   msi_reset();
@@ -693,21 +739,8 @@ void stm32_clock_init(void) {
   /* PLLs activation, if required.*/
   pll_init();
 
-  /* Other clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
-              STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
-  RCC->EXTCFGR = STM32_SHDHPRE;
-
-  /* CCIPR register initialization, note, must take care of the _OFF
-     pseudo settings.*/
-  {
-    uint32_t ccipr = STM32_RNGSEL    | STM32_ADCSEL    | STM32_LPTIM3SEL  |
-                     STM32_LPTIM2SEL | STM32_LPTIM1SEL | STM32_I2C3SEL    |
-                     STM32_I2C2SEL   | STM32_I2C1SEL   | STM32_LPUART1SEL |
-                     STM32_SPI2SEL   | STM32_USART2SEL | STM32_USART1SEL;
-
-    RCC->CCIPR = ccipr;
-  }
+  /* Static clocks setup.*/
+  hal_lld_set_static_clocks();
 
   /* Set flash WS's according HCLK3.*/
   flash_set_acr((FLASH->ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS);
