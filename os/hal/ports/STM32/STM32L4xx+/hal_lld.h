@@ -1386,7 +1386,7 @@
  */
 #if (STM32_HSI48_ENABLED && (STM32_CLK48SEL == STM32_CLK48SEL_PLL)) ||      \
     (STM32_SW == STM32_SW_PLL) ||                                           \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
     (STM32_SAI1SEL == STM32_SAI1SEL_PLL) ||                                 \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLL) ||                                 \
     defined(__DOXYGEN__)
@@ -1425,7 +1425,7 @@
  * @brief   STM32_PLLREN field.
  */
 #if (STM32_SW == STM32_SW_PLL) ||                                           \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
     defined(__DOXYGEN__)
 #define STM32_PLLREN                (1 << 24)
 
@@ -1578,8 +1578,8 @@
 #elif STM32_MCOSEL == STM32_MCOSEL_HSE
 #define STM32_MCODIVCLK             STM32_HSECLK
 
-#elif STM32_MCOSEL == STM32_MCOSEL_PLL
-#define STM32_MCODIVCLK             STM32_PLL_P_CLKOUT
+#elif STM32_MCOSEL == STM32_MCOSEL_PLLRCLK
+#define STM32_MCODIVCLK             hal_lld_get_clock_point(CLK_PLLRCLK)
 
 #elif STM32_MCOSEL == STM32_MCOSEL_LSI
 #define STM32_MCODIVCLK             STM32_LSICLK
