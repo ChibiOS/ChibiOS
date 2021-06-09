@@ -97,6 +97,7 @@ static void cry_test_003_001_execute(void) {
 
     test_assert(ret == CRY_NOERROR, "failed load transient key");
   }
+  test_end_step(1);
 
   /* [3.1.2] Encrypt.*/
   test_set_step(2);
@@ -110,8 +111,8 @@ static void cry_test_003_001_execute(void) {
     for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
       test_assert(msg_encrypted[i] == ((uint32_t*) refAES_CBC_128)[i], "encrypt mismatch");
     }
-
   }
+  test_end_step(2);
 
   /* [3.1.3] Decrypt.*/
   test_set_step(3);
@@ -125,8 +126,8 @@ static void cry_test_003_001_execute(void) {
     for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
       test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
     }
-
   }
+  test_end_step(3);
 
   /* [3.1.4] loading the key with 24 byte size.*/
   test_set_step(4);
@@ -135,6 +136,7 @@ static void cry_test_003_001_execute(void) {
 
     test_assert(ret == CRY_NOERROR, "failed load transient key");
   }
+  test_end_step(4);
 
   /* [3.1.5] Encrypt.*/
   test_set_step(5);
@@ -148,8 +150,8 @@ static void cry_test_003_001_execute(void) {
     for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
       test_assert(msg_encrypted[i] == ((uint32_t*) refAES_CBC_192)[i], "encrypt mismatch");
     }
-
   }
+  test_end_step(5);
 
   /* [3.1.6] Decrypt.*/
   test_set_step(6);
@@ -163,8 +165,8 @@ static void cry_test_003_001_execute(void) {
     for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
       test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
     }
-
   }
+  test_end_step(6);
 
   /* [3.1.7] loading the key with 32 byte size.*/
   test_set_step(7);
@@ -173,6 +175,7 @@ static void cry_test_003_001_execute(void) {
 
     test_assert(ret == CRY_NOERROR, "failed load transient key");
   }
+  test_end_step(7);
 
   /* [3.1.8] Encrypt.*/
   test_set_step(8);
@@ -188,6 +191,7 @@ static void cry_test_003_001_execute(void) {
     }
 
   }
+  test_end_step(8);
 
   /* [3.1.9] Decrypt.*/
   test_set_step(9);
@@ -203,6 +207,7 @@ static void cry_test_003_001_execute(void) {
     }
 
   }
+  test_end_step(9);
 }
 
 static const testcase_t cry_test_003_001 = {
@@ -254,6 +259,7 @@ static void cry_test_003_002_execute(void) {
 
     test_assert(ret == CRY_NOERROR, "failed load transient key");
   }
+  test_end_step(1);
 
   /* [3.2.2] Encrypt.*/
   test_set_step(2);
@@ -269,6 +275,7 @@ static void cry_test_003_002_execute(void) {
     }
 
   }
+  test_end_step(2);
 
   /* [3.2.3] Decrypt.*/
   test_set_step(3);
@@ -284,6 +291,7 @@ static void cry_test_003_002_execute(void) {
     }
 
   }
+  test_end_step(3);
 
   /* [3.2.4] loading the key with 24 byte size.*/
   test_set_step(4);
@@ -292,6 +300,7 @@ static void cry_test_003_002_execute(void) {
 
     test_assert(ret == CRY_NOERROR, "failed load transient key");
   }
+  test_end_step(4);
 
   /* [3.2.5] Encrypt.*/
   test_set_step(5);
@@ -307,6 +316,7 @@ static void cry_test_003_002_execute(void) {
     }
 
   }
+  test_end_step(5);
 
   /* [3.2.6] Decrypt.*/
   test_set_step(6);
@@ -322,6 +332,7 @@ static void cry_test_003_002_execute(void) {
     }
 
   }
+  test_end_step(6);
 
   /* [3.2.7] loading the key with 32 byte size.*/
   test_set_step(7);
@@ -330,6 +341,7 @@ static void cry_test_003_002_execute(void) {
 
     test_assert(ret == CRY_NOERROR, "failed load transient key");
   }
+  test_end_step(7);
 
   /* [3.2.8] Encrypt.*/
   test_set_step(8);
@@ -345,6 +357,7 @@ static void cry_test_003_002_execute(void) {
     }
 
   }
+  test_end_step(8);
 
   /* [3.2.9] Decrypt.*/
   test_set_step(9);
@@ -360,6 +373,7 @@ static void cry_test_003_002_execute(void) {
     }
 
   }
+  test_end_step(9);
 }
 
 static const testcase_t cry_test_003_002 = {

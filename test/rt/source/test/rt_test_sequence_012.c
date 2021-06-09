@@ -142,7 +142,7 @@ static THD_FUNCTION(bmk_thread8, p) {
  * Test cases.
  ****************************************************************************/
 
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_012_001 [12.1] Messages performance #1
  *
@@ -154,7 +154,7 @@ static THD_FUNCTION(bmk_thread8, p) {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MESSAGES
+ * - CH_CFG_USE_MESSAGES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -204,9 +204,9 @@ static const testcase_t rt_test_012_001 = {
   NULL,
   rt_test_012_001_execute
 };
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_012_002 [12.2] Messages performance #2
  *
@@ -218,7 +218,7 @@ static const testcase_t rt_test_012_001 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MESSAGES
+ * - CH_CFG_USE_MESSAGES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -268,9 +268,9 @@ static const testcase_t rt_test_012_002 = {
   NULL,
   rt_test_012_002_execute
 };
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_012_003 [12.3] Messages performance #3
  *
@@ -283,7 +283,7 @@ static const testcase_t rt_test_012_002 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MESSAGES
+ * - CH_CFG_USE_MESSAGES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -346,7 +346,7 @@ static const testcase_t rt_test_012_003 = {
   NULL,
   rt_test_012_003_execute
 };
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
 /**
  * @page rt_test_012_004 [12.4] Context Switch performance
@@ -551,7 +551,7 @@ static const testcase_t rt_test_012_006 = {
   rt_test_012_006_execute
 };
 
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_012_007 [12.7] Mass reschedule performance
  *
@@ -564,7 +564,7 @@ static const testcase_t rt_test_012_006 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
+ * - CH_CFG_USE_SEMAPHORES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -642,7 +642,7 @@ static const testcase_t rt_test_012_007 = {
   NULL,
   rt_test_012_007_execute
 };
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /**
  * @page rt_test_012_008 [12.8] Round-Robin voluntary reschedule
@@ -768,7 +768,7 @@ static const testcase_t rt_test_012_009 = {
   rt_test_012_009_execute
 };
 
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_012_010 [12.10] Semaphores wait/signal performance
  *
@@ -781,7 +781,7 @@ static const testcase_t rt_test_012_009 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
+ * - CH_CFG_USE_SEMAPHORES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -840,9 +840,9 @@ static const testcase_t rt_test_012_010 = {
   NULL,
   rt_test_012_010_execute
 };
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES ==TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_012_011 [12.11] Mutexes lock/unlock performance
  *
@@ -855,7 +855,7 @@ static const testcase_t rt_test_012_010 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MUTEXES
+ * - CH_CFG_USE_MUTEXES ==TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -914,7 +914,7 @@ static const testcase_t rt_test_012_011 = {
   NULL,
   rt_test_012_011_execute
 };
-#endif /* CH_CFG_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES ==TRUE */
 
 /**
  * @page rt_test_012_012 [12.12] RAM Footprint
@@ -1046,27 +1046,27 @@ static const testcase_t rt_test_012_012 = {
  * @brief   Array of test cases.
  */
 const testcase_t * const rt_test_sequence_012_array[] = {
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   &rt_test_012_001,
 #endif
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   &rt_test_012_002,
 #endif
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   &rt_test_012_003,
 #endif
   &rt_test_012_004,
   &rt_test_012_005,
   &rt_test_012_006,
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   &rt_test_012_007,
 #endif
   &rt_test_012_008,
   &rt_test_012_009,
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   &rt_test_012_010,
 #endif
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES ==TRUE) || defined(__DOXYGEN__)
   &rt_test_012_011,
 #endif
   &rt_test_012_012,

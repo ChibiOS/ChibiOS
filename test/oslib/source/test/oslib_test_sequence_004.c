@@ -32,7 +32,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_JOBS
+ * - CH_CFG_USE_JOBS == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -40,7 +40,7 @@
  * .
  */
 
-#if (CH_CFG_USE_JOBS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_JOBS == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -185,4 +185,4 @@ const testsequence_t oslib_test_sequence_004 = {
   oslib_test_sequence_004_array
 };
 
-#endif /* CH_CFG_USE_JOBS */
+#endif /* CH_CFG_USE_JOBS == TRUE */

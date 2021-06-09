@@ -184,6 +184,7 @@ static void cry_test_009_001_execute(void) {
        test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC256_1)[i], "hmac mismatch");
     }
   }
+  test_end_step(1);
 
   /* [9.1.2] hmac 512.*/
   test_set_step(2);
@@ -194,6 +195,7 @@ static void cry_test_009_001_execute(void) {
        test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC512_1)[i], "hmac mismatch");
     }
   }
+  test_end_step(2);
 }
 
 static const testcase_t cry_test_009_001 = {
@@ -238,6 +240,7 @@ static void cry_test_009_002_execute(void) {
        test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC256_1)[i], "hmac mismatch");
     }
   }
+  test_end_step(1);
 
   /* [9.2.2] hmac 512.*/
   test_set_step(2);
@@ -248,6 +251,7 @@ static void cry_test_009_002_execute(void) {
        test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC512_1)[i], "hmac mismatch");
     }
   }
+  test_end_step(2);
 }
 
 static const testcase_t cry_test_009_002 = {

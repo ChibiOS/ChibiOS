@@ -32,7 +32,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_DYNAMIC
+ * - CH_CFG_USE_DYNAMIC == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -41,7 +41,7 @@
  * .
  */
 
-#if (CH_CFG_USE_DYNAMIC) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -63,7 +63,7 @@ static THD_FUNCTION(dyn_thread1, p) {
  * Test cases.
  ****************************************************************************/
 
-#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_011_001 [11.1] Threads creation from Memory Heap
  *
@@ -76,7 +76,7 @@ static THD_FUNCTION(dyn_thread1, p) {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_HEAP
+ * - CH_CFG_USE_HEAP == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -174,9 +174,9 @@ static const testcase_t rt_test_011_001 = {
   NULL,
   rt_test_011_001_execute
 };
-#endif /* CH_CFG_USE_HEAP */
+#endif /* CH_CFG_USE_HEAP == TRUE */
 
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_011_002 [11.2] Threads creation from Memory Pool
  *
@@ -188,7 +188,7 @@ static const testcase_t rt_test_011_001 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MEMPOOLS
+ * - CH_CFG_USE_MEMPOOLS == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -274,7 +274,7 @@ static const testcase_t rt_test_011_002 = {
   NULL,
   rt_test_011_002_execute
 };
-#endif /* CH_CFG_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
 /****************************************************************************
  * Exported data.
@@ -284,10 +284,10 @@ static const testcase_t rt_test_011_002 = {
  * @brief   Array of test cases.
  */
 const testcase_t * const rt_test_sequence_011_array[] = {
-#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
   &rt_test_011_001,
 #endif
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
   &rt_test_011_002,
 #endif
   NULL
@@ -301,4 +301,4 @@ const testsequence_t rt_test_sequence_011 = {
   rt_test_sequence_011_array
 };
 
-#endif /* CH_CFG_USE_DYNAMIC */
+#endif /* CH_CFG_USE_DYNAMIC == TRUE */

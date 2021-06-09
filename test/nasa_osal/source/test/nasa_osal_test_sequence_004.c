@@ -76,6 +76,7 @@ static void nasa_osal_test_004_001_execute(void) {
                          0);
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(1);
 
   /* [4.1.2] OS_BinSemCreate() is invoked with sem_name set to NULL, an
      error is expected.*/
@@ -89,6 +90,7 @@ static void nasa_osal_test_004_001_execute(void) {
                          0);
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(2);
 
   /* [4.1.3] OS_BinSemCreate() is invoked with an invalid
      sem_initial_value, an error is expected.*/
@@ -102,6 +104,7 @@ static void nasa_osal_test_004_001_execute(void) {
                          0);
     test_assert(err == OS_INVALID_INT_NUM, "counter error not detected");
   }
+  test_end_step(3);
 
   /* [4.1.4] OS_BinSemCreate() is invoked with a very long timer name,
      an error is expected.*/
@@ -117,6 +120,7 @@ static void nasa_osal_test_004_001_execute(void) {
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
 #endif
   }
+  test_end_step(4);
 
   /* [4.1.5] OS_BinSemDelete() is invoked with timer_id set to -1, an
      error is expected.*/
@@ -127,6 +131,7 @@ static void nasa_osal_test_004_001_execute(void) {
     err = OS_BinSemDelete((uint32)-1);
     test_assert(err == OS_ERR_INVALID_ID, "wrong semaphore id not detected");
   }
+  test_end_step(5);
 
   /* [4.1.6] OS_BinSemCreate() is invoked twice with duplicated name,
      an error is expected, then the queue is deleted using
@@ -147,6 +152,7 @@ static void nasa_osal_test_004_001_execute(void) {
     err = OS_BinSemDelete(bsid1);
     test_assert(err == OS_SUCCESS, "semaphore deletion failed");
   }
+  test_end_step(6);
 }
 
 static const testcase_t nasa_osal_test_004_001 = {
@@ -179,6 +185,7 @@ static void nasa_osal_test_004_002_execute(void) {
     err = OS_BinSemFlush((uint32)-1);
     test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nasa_osal_test_004_002 = {
@@ -211,6 +218,7 @@ static void nasa_osal_test_004_003_execute(void) {
     err = OS_BinSemGive((uint32)-1);
     test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nasa_osal_test_004_003 = {
@@ -243,6 +251,7 @@ static void nasa_osal_test_004_004_execute(void) {
     err = OS_BinSemTake((uint32)-1);
     test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nasa_osal_test_004_004 = {
@@ -288,6 +297,7 @@ static void nasa_osal_test_004_005_execute(void) {
     err = OS_BinSemTimedWait((uint32)-1, 1000);
     test_assert(err == OS_ERR_INVALID_ID, "invalid sem_id not detected");
   }
+  test_end_step(1);
 
   /* [4.5.2] OS_BinSemTimedWait() is invoked with msecs set to 0, an
      error is expected.*/
@@ -298,6 +308,7 @@ static void nasa_osal_test_004_005_execute(void) {
     err = OS_BinSemTimedWait(bsid, 0);
     test_assert(err == OS_INVALID_INT_NUM, "invalid msec not detected");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nasa_osal_test_004_005 = {
@@ -334,6 +345,7 @@ static void nasa_osal_test_004_006_execute(void) {
     err = OS_BinSemGetIdByName(NULL, "semaphore");
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(1);
 
   /* [4.6.2] OS_BinSemGetIdByName() is invoked with semaphore name set
      to NULL, an error is expected.*/
@@ -344,6 +356,7 @@ static void nasa_osal_test_004_006_execute(void) {
     err = OS_BinSemGetIdByName(&bsid, NULL);
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(2);
 
   /* [4.6.3] OS_BinSemGetIdByName() is invoked with a very long task
      name, an error is expected.*/
@@ -354,6 +367,7 @@ static void nasa_osal_test_004_006_execute(void) {
     err = OS_BinSemGetIdByName(&bsid, "very very long semaphore name");
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
   }
+  test_end_step(3);
 }
 
 static const testcase_t nasa_osal_test_004_006 = {
@@ -397,6 +411,7 @@ static void nasa_osal_test_004_007_execute(void) {
     err = OS_BinSemTimedWait(bsid, 1000);
     test_assert(err == OS_SEM_TIMEOUT, "unexpected error code");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nasa_osal_test_004_007 = {

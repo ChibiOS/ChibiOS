@@ -87,6 +87,7 @@ static void nasa_osal_test_003_001_execute(void) {
                          tmr_callback);
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(1);
 
   /* [3.1.2] OS_TimerCreate() is invoked with timer_name set to NULL,
      an error is expected.*/
@@ -102,6 +103,7 @@ static void nasa_osal_test_003_001_execute(void) {
                          tmr_callback);
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(2);
 
   /* [3.1.3] OS_TimerCreate() is invoked with accuracy set to NULL, an
      error is expected.*/
@@ -116,6 +118,7 @@ static void nasa_osal_test_003_001_execute(void) {
                          tmr_callback);
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(3);
 
   /* [3.1.4] OS_TimerCreate() is invoked with callback_ptr set to NULL,
      an error is expected.*/
@@ -131,6 +134,7 @@ static void nasa_osal_test_003_001_execute(void) {
                          NULL);                     /* Error.*/
     test_assert(err == OS_TIMER_ERR_INVALID_ARGS, "NULL not detected");
   }
+  test_end_step(4);
 
   /* [3.1.5] OS_TimerCreate() is invoked with a very long timer name,
      an error is expected.*/
@@ -146,6 +150,7 @@ static void nasa_osal_test_003_001_execute(void) {
                          tmr_callback);
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
   }
+  test_end_step(5);
 
   /* [3.1.6] OS_TimerDelete() is invoked with timer_id set to -1, an
      error is expected.*/
@@ -156,6 +161,7 @@ static void nasa_osal_test_003_001_execute(void) {
     err = OS_TimerDelete((uint32)-1);
     test_assert(err == OS_ERR_INVALID_ID, "wrong timer id not detected");
   }
+  test_end_step(6);
 
   /* [3.1.7] OS_TimerCreate() is invoked twice with duplicated name, an
      error is expected, then the queue is deleted using
@@ -175,6 +181,7 @@ static void nasa_osal_test_003_001_execute(void) {
     err = OS_TimerDelete(tmid1);
     test_assert(err == OS_SUCCESS, "timer deletion failed");
   }
+  test_end_step(7);
 }
 
 static const testcase_t nasa_osal_test_003_001 = {
@@ -207,6 +214,7 @@ static void nasa_osal_test_003_002_execute(void) {
     err = OS_TimerSet((uint32)-1, 10, 10);
     test_assert(err == OS_ERR_INVALID_ID, "invalid timer_id not detected");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nasa_osal_test_003_002 = {
@@ -243,6 +251,7 @@ static void nasa_osal_test_003_003_execute(void) {
     err = OS_TimerGetIdByName(NULL, "timer");
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(1);
 
   /* [3.3.2] OS_TimerGetIdByName() is invoked with timer name set to
      NULL, an error is expected.*/
@@ -253,6 +262,7 @@ static void nasa_osal_test_003_003_execute(void) {
     err = OS_TimerGetIdByName(&tmid, NULL);
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
   }
+  test_end_step(2);
 
   /* [3.3.3] OS_TimerGetIdByName() is invoked with a very long task
      name, an error is expected.*/
@@ -263,6 +273,7 @@ static void nasa_osal_test_003_003_execute(void) {
     err = OS_TimerGetIdByName(&tmid, "very very long timer name");
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
   }
+  test_end_step(3);
 }
 
 static const testcase_t nasa_osal_test_003_003 = {
@@ -310,6 +321,7 @@ static void nasa_osal_test_003_004_execute(void) {
     err = OS_TimerGetIdByName(&local_tmid, "test timer");
     test_assert(err == OS_SUCCESS, "timer not found");
   }
+  test_end_step(1);
 
   /* [3.4.2] Setting up the timer for a 70mS one-shot tick.*/
   test_set_step(2);
@@ -319,6 +331,7 @@ static void nasa_osal_test_003_004_execute(void) {
     err = OS_TimerSet(local_tmid, 70000, 0);
     test_assert(err == OS_SUCCESS, "timer setup failed");
   }
+  test_end_step(2);
 
   /* [3.4.3] Waiting one second then counting the occurred ticks.*/
   test_set_step(3);
@@ -326,6 +339,7 @@ static void nasa_osal_test_003_004_execute(void) {
     (void) OS_TaskDelay(1000);
     test_assert(cnt == 1, "wrong ticks");
   }
+  test_end_step(3);
 }
 
 static const testcase_t nasa_osal_test_003_004 = {
@@ -375,6 +389,7 @@ static void nasa_osal_test_003_005_execute(void) {
     err = OS_TimerGetIdByName(&local_tmid, "test timer");
     test_assert(err == OS_SUCCESS, "timer not found");
   }
+  test_end_step(1);
 
   /* [3.5.2] Setting up the timer for a 70mS periodic tick.*/
   test_set_step(2);
@@ -384,6 +399,7 @@ static void nasa_osal_test_003_005_execute(void) {
     err = OS_TimerSet(local_tmid, 70000, 70000);
     test_assert(err == OS_SUCCESS, "timer setup failed");
   }
+  test_end_step(2);
 
   /* [3.5.3] Waiting one second then counting the occurred ticks.*/
   test_set_step(3);
@@ -391,6 +407,7 @@ static void nasa_osal_test_003_005_execute(void) {
     (void) OS_TaskDelay(1000);
     test_assert(cnt == 14, "wrong ticks");
   }
+  test_end_step(3);
 
   /* [3.5.4] Stopping the timer.*/
   test_set_step(4);
@@ -400,6 +417,7 @@ static void nasa_osal_test_003_005_execute(void) {
     err = OS_TimerSet(local_tmid, 0, 0);
     test_assert(err == OS_SUCCESS, "timer stop failed");
   }
+  test_end_step(4);
 }
 
 static const testcase_t nasa_osal_test_003_005 = {

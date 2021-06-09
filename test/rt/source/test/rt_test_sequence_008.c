@@ -32,7 +32,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MUTEXES
+ * - CH_CFG_USE_MUTEXES == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -48,7 +48,7 @@
  * .
  */
 
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -305,7 +305,7 @@ static const testcase_t rt_test_008_001 = {
   rt_test_008_001_execute
 };
 
-#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_008_002 [8.2] Priority inheritance, simple case
  *
@@ -320,7 +320,7 @@ static const testcase_t rt_test_008_001 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_DBG_THREADS_PROFILING
+ * - CH_DBG_THREADS_PROFILING == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -377,9 +377,9 @@ static const testcase_t rt_test_008_002 = {
   NULL,
   rt_test_008_002_execute
 };
-#endif /* CH_DBG_THREADS_PROFILING */
+#endif /* CH_DBG_THREADS_PROFILING == TRUE */
 
-#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_008_003 [8.3] Priority inheritance, complex case
  *
@@ -393,7 +393,7 @@ static const testcase_t rt_test_008_002 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_DBG_THREADS_PROFILING
+ * - CH_DBG_THREADS_PROFILING == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -453,7 +453,7 @@ static const testcase_t rt_test_008_003 = {
   NULL,
   rt_test_008_003_execute
 };
-#endif /* CH_DBG_THREADS_PROFILING */
+#endif /* CH_DBG_THREADS_PROFILING == TRUE */
 
 /**
  * @page rt_test_008_004 [8.4] Priority return verification
@@ -581,7 +581,7 @@ static const testcase_t rt_test_008_004 = {
   rt_test_008_004_execute
 };
 
-#if (!CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES_RECURSIVE == FALSE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_008_005 [8.5] Repeated locks, non recursive scenario
  *
@@ -592,7 +592,7 @@ static const testcase_t rt_test_008_004 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - !CH_CFG_USE_MUTEXES_RECURSIVE
+ * - CH_CFG_USE_MUTEXES_RECURSIVE == FALSE
  * .
  *
  * <h2>Test Steps</h2>
@@ -687,9 +687,9 @@ static const testcase_t rt_test_008_005 = {
   NULL,
   rt_test_008_005_execute
 };
-#endif /* !CH_CFG_USE_MUTEXES_RECURSIVE */
+#endif /* CH_CFG_USE_MUTEXES_RECURSIVE == FALSE */
 
-#if (CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES_RECURSIVE == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_008_006 [8.6] Repeated locks using, recursive scenario
  *
@@ -700,7 +700,7 @@ static const testcase_t rt_test_008_005 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MUTEXES_RECURSIVE
+ * - CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -833,9 +833,9 @@ static const testcase_t rt_test_008_006 = {
   NULL,
   rt_test_008_006_execute
 };
-#endif /* CH_CFG_USE_MUTEXES_RECURSIVE */
+#endif /* CH_CFG_USE_MUTEXES_RECURSIVE == TRUE */
 
-#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_008_007 [8.7] Condition Variable signal test
  *
@@ -849,7 +849,7 @@ static const testcase_t rt_test_008_006 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_CONDVARS
+ * - CH_CFG_USE_CONDVARS == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -906,9 +906,9 @@ static const testcase_t rt_test_008_007 = {
   NULL,
   rt_test_008_007_execute
 };
-#endif /* CH_CFG_USE_CONDVARS */
+#endif /* CH_CFG_USE_CONDVARS == TRUE */
 
-#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_008_008 [8.8] Condition Variable broadcast test
  *
@@ -921,7 +921,7 @@ static const testcase_t rt_test_008_007 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_CONDVARS
+ * - CH_CFG_USE_CONDVARS == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -969,9 +969,9 @@ static const testcase_t rt_test_008_008 = {
   NULL,
   rt_test_008_008_execute
 };
-#endif /* CH_CFG_USE_CONDVARS */
+#endif /* CH_CFG_USE_CONDVARS == TRUE */
 
-#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_008_009 [8.9] Condition Variable priority boost test
  *
@@ -986,7 +986,7 @@ static const testcase_t rt_test_008_008 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_CONDVARS
+ * - CH_CFG_USE_CONDVARS == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -1076,7 +1076,7 @@ static const testcase_t rt_test_008_009 = {
   NULL,
   rt_test_008_009_execute
 };
-#endif /* CH_CFG_USE_CONDVARS */
+#endif /* CH_CFG_USE_CONDVARS == TRUE */
 
 /****************************************************************************
  * Exported data.
@@ -1087,26 +1087,26 @@ static const testcase_t rt_test_008_009 = {
  */
 const testcase_t * const rt_test_sequence_008_array[] = {
   &rt_test_008_001,
-#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
   &rt_test_008_002,
 #endif
-#if (CH_DBG_THREADS_PROFILING) || defined(__DOXYGEN__)
+#if (CH_DBG_THREADS_PROFILING == TRUE) || defined(__DOXYGEN__)
   &rt_test_008_003,
 #endif
   &rt_test_008_004,
-#if (!CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES_RECURSIVE == FALSE) || defined(__DOXYGEN__)
   &rt_test_008_005,
 #endif
-#if (CH_CFG_USE_MUTEXES_RECURSIVE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES_RECURSIVE == TRUE) || defined(__DOXYGEN__)
   &rt_test_008_006,
 #endif
-#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
   &rt_test_008_007,
 #endif
-#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
   &rt_test_008_008,
 #endif
-#if (CH_CFG_USE_CONDVARS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_CONDVARS == TRUE) || defined(__DOXYGEN__)
   &rt_test_008_009,
 #endif
   NULL
@@ -1120,4 +1120,4 @@ const testsequence_t rt_test_sequence_008 = {
   rt_test_sequence_008_array
 };
 
-#endif /* CH_CFG_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES == TRUE */

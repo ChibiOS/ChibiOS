@@ -264,7 +264,7 @@ static const testcase_t rt_test_005_003 = {
   rt_test_005_003_execute
 };
 
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_005_004 [5.4] Priority change test with Priority Inheritance
  *
@@ -275,7 +275,7 @@ static const testcase_t rt_test_005_003 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MUTEXES
+ * - CH_CFG_USE_MUTEXES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -337,7 +337,7 @@ static const testcase_t rt_test_005_004 = {
   NULL,
   rt_test_005_004_execute
 };
-#endif /* CH_CFG_USE_MUTEXES */
+#endif /* CH_CFG_USE_MUTEXES == TRUE */
 
 /****************************************************************************
  * Exported data.
@@ -350,7 +350,7 @@ const testcase_t * const rt_test_sequence_005_array[] = {
   &rt_test_005_001,
   &rt_test_005_002,
   &rt_test_005_003,
-#if (CH_CFG_USE_MUTEXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   &rt_test_005_004,
 #endif
   NULL

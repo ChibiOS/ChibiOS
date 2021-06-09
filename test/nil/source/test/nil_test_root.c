@@ -53,14 +53,14 @@ const testsequence_t * const nil_test_suite_array[] = {
   &nil_test_sequence_001,
   &nil_test_sequence_002,
   &nil_test_sequence_003,
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   &nil_test_sequence_004,
 #endif
   &nil_test_sequence_005,
-#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
   &nil_test_sequence_006,
 #endif
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   &nil_test_sequence_007,
 #endif
   &nil_test_sequence_008,

@@ -1,19 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SPC5-Config version="1.0.0">
-  <application name="Crypto Test Suite" version="1.0.0" standalone="true" locked="false">
-    <description>Test Specification for Hal Crypto </description>
-    <component id="org.chibios.spc5.components.portable.generic_startup">
-      <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
-    </component>
-    <instances>
-      <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
-      <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
-        <description>
-          <brief>
-            <value>Chibios Hal Crypto Test Suite.</value>
-          </brief>
-          <copyright>
-            <value><![CDATA[/*
+
+<instance locked="false"
+  id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
+  <description>
+    <brief>
+      <value>Chibios Hal Crypto Test Suite.</value>
+    </brief>
+    <copyright>
+      <value><![CDATA[/*
     ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,17 +21,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */]]></value>
-          </copyright>
-          <introduction>
-            <value>Test suite for ChibiOS Crypto Hal. The purpose of this suite is to perform unit tests on the Hal Crypto and to converge to 100% code coverage through successive improvements.</value>
-          </introduction>
-        </description>
-        <global_data_and_code>
-          <code_prefix>
-            <value>cry_</value>
-          </code_prefix>
-          <global_definitions>
-            <value><![CDATA[
+    </copyright>
+    <introduction>
+      <value>Test suite for ChibiOS Crypto Hal. The purpose of this
+        suite is to perform unit tests on the Hal Crypto and to converge
+        to 100% code coverage through successive improvements.</value>
+    </introduction>
+  </description>
+  <global_data_and_code>
+    <code_prefix>
+      <value>cry_</value>
+    </code_prefix>
+    <global_definitions>
+      <value><![CDATA[
 extern void cryptoTest_setStream(BaseSequentialStream * s);
 extern void cryptoTest_printArray32(bool isLE,const uint32_t *a,size_t len);
 #ifdef LOG_CRYPTO_DATA
@@ -84,9 +79,9 @@ extern const uint8_t sha_msg3[SHA_LEN_3];
 
 
 ]]></value>
-          </global_definitions>
-          <global_code>
-            <value><![CDATA[
+    </global_definitions>
+    <global_code>
+      <value><![CDATA[
 
 #if CRYPTO_LOG_LEVEL == 1
 #include "chprintf.h"
@@ -197,25 +192,25 @@ void cryptoTest_printArray32(bool isLE,const uint32_t *a,size_t len)
 }
 
             	]]></value>
-          </global_code>
-        </global_data_and_code>
+    </global_code>
+  </global_data_and_code>
 
-        <sequences>
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>AES ECB</value>
-            </brief>
-            <description>
-              <value>AES ECB</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+  <sequences>
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>AES ECB</value>
+      </brief>
+      <description>
+        <value>AES ECB</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_aes.h"
 static const CRYConfig config_Polling = {
@@ -228,62 +223,62 @@ static const CRYConfig config_DMA = {
     AES_CFBS_128       //cfbs
 };
                 ]]></value>
-            </shared_code>
-            <cases>
-              <case>
-                <brief>
-                  <value>AES ECB Polling</value>
-                </brief>
-                <description>
-                  <value>testing AES ECB with various Keys</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>AES ECB Polling</value>
+          </brief>
+          <description>
+            <value>testing AES ECB with various Keys</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,16, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -295,17 +290,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -317,32 +312,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,24, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -354,17 +349,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -376,32 +371,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 32 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 32 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,32, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -413,17 +408,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -435,64 +430,64 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-               <case>
-                <brief>
-                  <value>AES ECB DMA</value>
-                </brief>
-                <description>
-                  <value>testing AES ECB with various Keys</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+              </code>
+            </step>
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>AES ECB DMA</value>
+          </brief>
+          <description>
+            <value>testing AES ECB with various Keys</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,16, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -504,17 +499,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -526,32 +521,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,24, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -563,17 +558,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -585,32 +580,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 32 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 32 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,32, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -622,17 +617,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -644,29 +639,29 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-            </cases>
-          </sequence>
+              </code>
+            </step>
+          </steps>
+        </case>
+      </cases>
+    </sequence>
 
 
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>AES CFB</value>
-            </brief>
-            <description>
-              <value>AES CFB</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>AES CFB</value>
+      </brief>
+      <description>
+        <value>AES CFB</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_aes.h"
 static const CRYConfig config_Polling = {
@@ -679,62 +674,62 @@ static const CRYConfig config_DMA = {
     AES_CFBS_128       //cfbs
 };
                 ]]></value>
-            </shared_code>
-            <cases>
-              <case>
-                <brief>
-                  <value>AES CFB Polling</value>
-                </brief>
-                <description>
-                  <value>testing AES CFB with various Keys</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>AES CFB Polling</value>
+          </brief>
+          <description>
+            <value>testing AES CFB with various Keys</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,16, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -746,17 +741,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -768,32 +763,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,24, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -805,17 +800,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -827,32 +822,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 32 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 32 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,32, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -864,17 +859,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -886,64 +881,64 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-               <case>
-                <brief>
-                  <value>AES CFB DMA</value>
-                </brief>
-                <description>
-                  <value>testing AES CFB with various Keys</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+              </code>
+            </step>
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>AES CFB DMA</value>
+          </brief>
+          <description>
+            <value>testing AES CFB with various Keys</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,16, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -955,17 +950,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -977,32 +972,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,24, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1014,17 +1009,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1036,32 +1031,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 32 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 32 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,32, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1073,17 +1068,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CFB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1095,29 +1090,29 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-            </cases>
-          </sequence>
+              </code>
+            </step>
+          </steps>
+        </case>
+      </cases>
+    </sequence>
 
 
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>AES CBC</value>
-            </brief>
-            <description>
-              <value>AES CBC</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>AES CBC</value>
+      </brief>
+      <description>
+        <value>AES CBC</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_aes.h"
 static const CRYConfig config_Polling = {
@@ -1130,62 +1125,62 @@ static const CRYConfig config_DMA = {
     AES_CFBS_128       //cfbs
 };
                 ]]></value>
-            </shared_code>
-            <cases>
-              <case>
-                <brief>
-                  <value>AES CBC Polling</value>
-                </brief>
-                <description>
-                  <value>testing AES CBC with various Keys</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>AES CBC Polling</value>
+          </brief>
+          <description>
+            <value>testing AES CBC with various Keys</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,16, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1195,19 +1190,18 @@ SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
 for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
   test_assert(msg_encrypted[i] == ((uint32_t*) refAES_CBC_128)[i], "encrypt mismatch");
 }
-
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1217,34 +1211,33 @@ SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
 for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
   test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
 }
-
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,24, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1254,19 +1247,18 @@ SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
 for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
   test_assert(msg_encrypted[i] == ((uint32_t*) refAES_CBC_192)[i], "encrypt mismatch");
 }
-
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1276,34 +1268,33 @@ SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
 for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
   test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
 }
-
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 32 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 32 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,32, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1315,17 +1306,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1337,64 +1328,64 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-               <case>
-                <brief>
-                  <value>AES CBC DMA</value>
-                </brief>
-                <description>
-                  <value>testing AES CBC with various Keys</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+              </code>
+            </step>
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>AES CBC DMA</value>
+          </brief>
+          <description>
+            <value>testing AES CBC with various Keys</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,16, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1406,17 +1397,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1428,32 +1419,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,24, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1465,17 +1456,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1487,32 +1478,32 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 32 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 32 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,32, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1524,17 +1515,17 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptAES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1546,29 +1537,29 @@ for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-            </cases>
-          </sequence>
+              </code>
+            </step>
+          </steps>
+        </case>
+      </cases>
+    </sequence>
 
-		  
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>(T)DES</value>
-            </brief>
-            <description>
-              <value>(T)DES testing</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>(T)DES</value>
+      </brief>
+      <description>
+        <value>(T)DES testing</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_des.h"
 static const CRYConfig configDES_Polling=
@@ -1584,62 +1575,62 @@ static const CRYConfig configDES_DMA=
 };
 
                 ]]></value>
-            </shared_code>
-            <cases>
-			 <case>
-                <brief>
-                  <value>DES Polling</value>
-                </brief>
-                <description>
-                  <value>testing DES in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>DES Polling</value>
+          </brief>
+          <description>
+            <value>testing DES in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
 memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &configDES_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 8 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 8 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,8, (uint8_t *) test_keys);
 
 test_assert(ret == CRY_NOERROR, "failed load transient key");
 ]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryEncryptDES(&CRYD1, 0, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
 
 test_assert(ret == CRY_NOERROR, "encrypt failed");
@@ -1651,17 +1642,17 @@ for (int i = 0; i < 2; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 ret = cryDecryptDES(&CRYD1, 0, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
 
 test_assert(ret == CRY_NOERROR, "decrypt failed");
@@ -1673,654 +1664,654 @@ for (int i = 0; i < 2; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>
-              
-              <case>
-                <brief>
-                  <value>TDES CBC Polling</value>
-                </brief>
-                <description>
-                  <value>testing TDES CBC in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
-memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
-memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configDES_Polling);
 
-                      ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
-  cryerror_t ret;
-]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
 
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
 
-test_assert(ret == CRY_NOERROR, "encrypt failed");
 
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+          </steps>
+        </case>
 
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_16)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
-
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
-
-test_assert(ret == CRY_NOERROR, "encrypt failed");
-
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_24)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                 
-                 
-
-                </steps>
-              </case>
-               <case>
-                <brief>
-                  <value>TDES ECB Polling</value>
-                </brief>
-                <description>
-                  <value>testing TDES ECB in polling mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
-memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
-memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configDES_Polling);
-
-                      ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
-  cryerror_t ret;
-]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
-
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
-
-test_assert(ret == CRY_NOERROR, "encrypt failed");
-
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_16)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
-
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
-
-test_assert(ret == CRY_NOERROR, "encrypt failed");
-
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_24)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-
-
-
-                </steps>
-              </case>
-            
-			
-              
-              <case>
-                <brief>
-                  <value>TDES CBC DMA</value>
-                </brief>
-                <description>
-                  <value>testing TDES CBC in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
-memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
-memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configDES_DMA);
-
-                      ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
-  cryerror_t ret;
-]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
-
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
-
-test_assert(ret == CRY_NOERROR, "encrypt failed");
-
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_16)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
-
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
-
-test_assert(ret == CRY_NOERROR, "encrypt failed");
-
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_24)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                 
-                 
-
-                </steps>
-              </case>
-               <case>
-                <brief>
-                  <value>TDES ECB DMA</value>
-                </brief>
-                <description>
-                  <value>testing TDES ECB in DMA mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
-memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
-memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
-cryStart(&CRYD1, &configDES_DMA);
-
-                      ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
-  cryerror_t ret;
-]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key with 16 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
-
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
-
-test_assert(ret == CRY_NOERROR, "encrypt failed");
-
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_16)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>loading the key with 24 byte size</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
-
-test_assert(ret == CRY_NOERROR, "failed load transient key");
-]]></value>
-                    </code>
-                  </step>
-                  <step>
-                    <description>
-                      <value>Encrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
-
-test_assert(ret == CRY_NOERROR, "encrypt failed");
-
-SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_24)[i], "encrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-                   <step>
-                    <description>
-                      <value>Decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
-ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
-
-test_assert(ret == CRY_NOERROR, "decrypt failed");
-
-SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
-
-for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
-  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
-}
-
-]]></value>
-                    </code>
-                  </step>
-
-
-
-                </steps>
-              </case>
-           
-
-			</cases>
-          </sequence>
-
-          
-          
-          
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>TRNG</value>
-            </brief>
-            <description>
-              <value>TRNG testing</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
+        <case>
+          <brief>
+            <value>TDES CBC Polling</value>
+          </brief>
+          <description>
+            <value>testing TDES CBC in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
               <value><![CDATA[
+memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
+memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+cryStart(&CRYD1, &configDES_Polling);
+
+                      ]]></value>
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
+  cryerror_t ret;
+]]></value>
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_16)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_24)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+
+
+
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>TDES ECB Polling</value>
+          </brief>
+          <description>
+            <value>testing TDES ECB in polling mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
+memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
+memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+cryStart(&CRYD1, &configDES_Polling);
+
+                      ]]></value>
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
+  cryerror_t ret;
+]]></value>
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_16)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_24)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+
+
+
+          </steps>
+        </case>
+
+
+
+        <case>
+          <brief>
+            <value>TDES CBC DMA</value>
+          </brief>
+          <description>
+            <value>testing TDES CBC in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
+memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
+memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+cryStart(&CRYD1, &configDES_DMA);
+
+                      ]]></value>
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
+  cryerror_t ret;
+]]></value>
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_16)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_CBC_24)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_CBC(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted,(uint8_t*)test_vectors);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+
+
+
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>TDES ECB DMA</value>
+          </brief>
+          <description>
+            <value>testing TDES ECB in DMA mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
+memcpy((char*) msg_clear, test_plain_data, TEST_DATA_BYTE_LEN);
+memset(msg_encrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+memset(msg_decrypted, 0xff, TEST_MSG_DATA_BYTE_LEN);
+cryStart(&CRYD1, &configDES_DMA);
+
+                      ]]></value>
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
+  cryerror_t ret;
+]]></value>
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key with 16 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,16, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_16)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>loading the key with 24 byte size</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_des,24, (uint8_t *) test_keys);
+
+test_assert(ret == CRY_NOERROR, "failed load transient key");
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Encrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryEncryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_clear, (uint8_t*) msg_encrypted);
+
+test_assert(ret == CRY_NOERROR, "encrypt failed");
+
+SHOW_ENCRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_encrypted[i] == ((uint32_t*) refTDES_ECB_24)[i], "encrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>Decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
+ret = cryDecryptDES_ECB(&CRYD1, 0,TEST_DATA_BYTE_LEN, (uint8_t*) msg_encrypted, (uint8_t*) msg_decrypted);
+
+test_assert(ret == CRY_NOERROR, "decrypt failed");
+
+SHOW_DECRYPDATA(TEST_DATA_WORD_LEN);
+
+for (int i = 0; i < TEST_DATA_WORD_LEN; i++) {
+  test_assert(msg_decrypted[i] == msg_clear[i], "decrypt mismatch");
+}
+
+]]></value>
+              </code>
+            </step>
+
+
+
+          </steps>
+        </case>
+
+
+      </cases>
+    </sequence>
+
+
+
+
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>TRNG</value>
+      </brief>
+      <description>
+        <value>TRNG testing</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 
 static const CRYConfig configTRNG_Polling=
@@ -2330,45 +2321,45 @@ static const CRYConfig configTRNG_Polling=
 };
 
                 ]]></value>
-            </shared_code>
-            <cases>
-       <case>
-                <brief>
-                  <value>TRNG Polling</value>
-                </brief>
-                <description>
-                  <value>testing TRNG in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>TRNG Polling</value>
+          </brief>
+          <description>
+            <value>testing TRNG in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 cryStart(&CRYD1, &configTRNG_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                 
-                   <step>
-                    <description>
-                      <value>Random generation and test</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+
+            <step>
+              <description>
+                <value>Random generation and test</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 uint32_t random[4];
 int i;
 
@@ -2388,36 +2379,36 @@ for (i=1;i<4;i++)
 
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>
-              
-              
+
+
+
+
+          </steps>
+        </case>
+
+
 
       </cases>
-          </sequence>
+    </sequence>
 
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>SHA</value>
-            </brief>
-            <description>
-              <value>SHA testing</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>SHA</value>
+      </brief>
+      <description>
+        <value>SHA testing</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_sha.h"
 
@@ -2500,49 +2491,49 @@ static cryerror_t crySHA512(CRYDriver *cryp, size_t size,const uint8_t *in, uint
 }
 
                 ]]></value>
-            </shared_code>
-            <cases>
-       <case>
-                <brief>
-                  <value>SHA1 Polling</value>
-                </brief>
-                <description>
-                  <value>testing SHA1 in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>SHA1 Polling</value>
+          </brief>
+          <description>
+            <value>testing SHA1 in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
 memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
 cryStart(&CRYD1, &configSHA_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
   uint32_t *ref;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                 
-                   <step>
-                    <description>
-                      <value>Digest</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+
+            <step>
+              <description>
+                <value>Digest</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 //---- Empty Block Test   
 ret = crySHA1(&CRYD1,0,(uint8_t*)msg_clear,(uint8_t*)digest);    
 
@@ -2619,57 +2610,57 @@ for (int i = 0; i < 5; i++) {
 
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>
-              
-   <case>
-                <brief>
-                  <value>SHA256 Polling</value>
-                </brief>
-                <description>
-                  <value>testing SHA256 in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+
+
+
+
+          </steps>
+        </case>
+
+        <case>
+          <brief>
+            <value>SHA256 Polling</value>
+          </brief>
+          <description>
+            <value>testing SHA256 in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
 memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
 cryStart(&CRYD1, &configSHA_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
   uint32_t *ref;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                 
-                   <step>
-                    <description>
-                      <value>Digest</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+
+            <step>
+              <description>
+                <value>Digest</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 
 //---- One Block Test
 ret = crySHA256(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
@@ -2732,56 +2723,56 @@ for (int i = 0; i < 8; i++) {
 
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>           
- <case>
-                <brief>
-                  <value>SHA512 Polling</value>
-                </brief>
-                <description>
-                  <value>testing SHA512 in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+
+
+
+
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>SHA512 Polling</value>
+          </brief>
+          <description>
+            <value>testing SHA512 in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
 memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
 cryStart(&CRYD1, &configSHA_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
   uint32_t *ref;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                 
-                   <step>
-                    <description>
-                      <value>Digest</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+
+            <step>
+              <description>
+                <value>Digest</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 //---- One Block Test
 ret = crySHA512(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
 
@@ -2844,34 +2835,34 @@ for (int i = 0; i < 16; i++) {
 
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>   
+
+
+
+
+          </steps>
+        </case>
       </cases>
-          </sequence>
+    </sequence>
 
 
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>SHA</value>
-            </brief>
-            <description>
-              <value>SHA testing</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>SHA</value>
+      </brief>
+      <description>
+        <value>SHA testing</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_sha.h"
 
@@ -2949,49 +2940,49 @@ static cryerror_t crySHA512(CRYDriver *cryp, size_t size,const uint8_t *in, uint
 }
 
                 ]]></value>
-            </shared_code>
-            <cases>
-       <case>
-                <brief>
-                  <value>SHA1 DMA</value>
-                </brief>
-                <description>
-                  <value>testing SHA1 in DMA mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>SHA1 DMA</value>
+          </brief>
+          <description>
+            <value>testing SHA1 in DMA mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
 memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
 cryStart(&CRYD1, &configSHA_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
   uint32_t *ref;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                 
-                   <step>
-                    <description>
-                      <value>Digest</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+
+            <step>
+              <description>
+                <value>Digest</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 //---- Empty Block Test   
 ret = crySHA1(&CRYD1,0,(uint8_t*)msg_clear,(uint8_t*)digest);    
 
@@ -3067,57 +3058,57 @@ for (int i = 0; i < 5; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>
-              
-   <case>
-                <brief>
-                  <value>SHA256 DMA</value>
-                </brief>
-                <description>
-                  <value>testing SHA256 in DMA mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+
+
+
+
+          </steps>
+        </case>
+
+        <case>
+          <brief>
+            <value>SHA256 DMA</value>
+          </brief>
+          <description>
+            <value>testing SHA256 in DMA mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
 memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
 cryStart(&CRYD1, &configSHA_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
   uint32_t *ref;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                 
-                   <step>
-                    <description>
-                      <value>Digest</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+
+            <step>
+              <description>
+                <value>Digest</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 
 //---- One Block Test
 ret = crySHA256(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
@@ -3180,56 +3171,56 @@ for (int i = 0; i < 8; i++) {
 
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>           
- <case>
-                <brief>
-                  <value>SHA512 DMA</value>
-                </brief>
-                <description>
-                  <value>testing SHA512 in DMA mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+
+
+
+
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>SHA512 DMA</value>
+          </brief>
+          <description>
+            <value>testing SHA512 in DMA mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(msg_clear, 0, TEST_MSG_DATA_BYTE_LEN);
 memset(digest, 0, MAX_DIGEST_SIZE_INWORD);
 memcpy((char*) msg_clear, sha_msg0, SHA_LEN_0);
 cryStart(&CRYD1, &configSHA_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
   cryerror_t ret;
   uint32_t *ref;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                 
-                   <step>
-                    <description>
-                      <value>Digest</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+
+            <step>
+              <description>
+                <value>Digest</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 //---- One Block Test
 ret = crySHA512(&CRYD1,SHA_LEN_0,(uint8_t*)msg_clear,(uint8_t*)digest);
 
@@ -3291,33 +3282,33 @@ for (int i = 0; i < 16; i++) {
 }
 
 ]]></value>
-                    </code>
-                  </step>
-                  
-                
+              </code>
+            </step>
 
-                 
- 
-                </steps>
-              </case>   
-     </cases>
-          </sequence>
-       
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>GCM</value>
-            </brief>
-            <description>
-              <value>GCM testing</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+
+
+
+
+          </steps>
+        </case>
+      </cases>
+    </sequence>
+
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>GCM</value>
+      </brief>
+      <description>
+        <value>GCM testing</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_gcm.h"
 #define plaintext msg_clear
@@ -3364,48 +3355,48 @@ const struct test_gcm_t test_gcm_k[TEST_GCM_LEN]={
  
 
                 ]]></value>
-            </shared_code>
-            <cases>
-			 <case>
-                <brief>
-                  <value>GCM Polling</value>
-                </brief>
-                <description>
-                  <value>testing GCM in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>GCM Polling</value>
+          </brief>
+          <description>
+            <value>testing GCM in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
   memset(cypher, 0xff, TEST_MSG_DATA_BYTE_LEN);
   memset(authtag, 0xff, TEST_MSG_DATA_BYTE_LEN);
   cryStart(&CRYD1, &config_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
 cryerror_t ret;
 	uint32_t *ref;
 	uint8_t i,len1,len2;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key, encrypt and decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key, encrypt and decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 for (i = 0;i<TEST_GCM_LEN;i++) {
     
         test_print("gcm test : ");
@@ -3489,59 +3480,59 @@ for (i = 0;i<TEST_GCM_LEN;i++) {
 
 	}
 ]]></value>
-                    </code>
-                  </step>
+              </code>
+            </step>
 
 
-                  
-                
 
-                 
- 
-                </steps>
-              </case>
-              
 
-   <case>
-                <brief>
-                  <value>GCM DMA</value>
-                </brief>
-                <description>
-                  <value>testing GCM in DMA mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+
+
+
+          </steps>
+        </case>
+
+
+        <case>
+          <brief>
+            <value>GCM DMA</value>
+          </brief>
+          <description>
+            <value>testing GCM in DMA mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
   memset(cypher, 0xff, TEST_MSG_DATA_BYTE_LEN);
   memset(authtag, 0xff, TEST_MSG_DATA_BYTE_LEN);
   cryStart(&CRYD1, &config_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
 cryerror_t ret;
 	uint32_t *ref;
 	uint8_t i,len1,len2;
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>loading the key, encrypt and decrypt</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>loading the key, encrypt and decrypt</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 for (i = 0;i<TEST_GCM_LEN;i++) {
 
         test_print("gcm test : ");
@@ -3625,38 +3616,38 @@ for (i = 0;i<TEST_GCM_LEN;i++) {
 
 	}
 ]]></value>
-                    </code>
-                  </step>
+              </code>
+            </step>
 
 
-                  
-                
 
-                 
- 
-                </steps>
-              </case>
-              
 
-			</cases>
-          </sequence>
 
-		       
-<sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>HMAC</value>
-            </brief>
-            <description>
-              <value>HMAC testing</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+
+
+          </steps>
+        </case>
+
+
+      </cases>
+    </sequence>
+
+
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>HMAC</value>
+      </brief>
+      <description>
+        <value>HMAC testing</value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include <string.h>
 #include "ref_hmac.h"
 #define plaintext msg_clear
@@ -3764,113 +3755,107 @@ static void cryHMAC512(CRYDriver *cryp) {
 }
 
                 ]]></value>
-            </shared_code>
-            <cases>
-			 <case>
-                <brief>
-                  <value>HMAC Polling</value>
-                </brief>
-                <description>
-                  <value>testing HMAC in polled mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>HMAC Polling</value>
+          </brief>
+          <description>
+            <value>testing HMAC in polled mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(HMACOUT, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_Polling);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>hmac 256</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>hmac 256</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 cryHMAC256(&CRYD1);    
 
 for (int i = 0; i < 8; i++) {
    test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC256_1)[i], "hmac mismatch");
 }
 ]]></value>
-                    </code>
-                  </step>
-                                   <step>
-                    <description>
-                      <value>hmac 512</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>hmac 512</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 cryHMAC512(&CRYD1);    
 
 for (int i = 0; i < 16; i++) {
    test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC512_1)[i], "hmac mismatch");
 }
 ]]></value>
-                    </code>
-                  </step> 
-                
-
-                 
- 
-                </steps>
-              </case>
-              
-
-   <case>
-                <brief>
-                  <value>HMAC DMA</value>
-                </brief>
-                <description>
-                  <value>testing HMAC in DMA mode</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value><![CDATA[
+              </code>
+            </step>
+          </steps>
+        </case>
+        <case>
+          <brief>
+            <value>HMAC DMA</value>
+          </brief>
+          <description>
+            <value>testing HMAC in DMA mode</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value><![CDATA[
 memset(HMACOUT, 0xff, TEST_MSG_DATA_BYTE_LEN);
 cryStart(&CRYD1, &config_DMA);
 
                       ]]></value>
-                  </setup_code>
-                  <teardown_code>
-                    <value><![CDATA[cryStop(&CRYD1);]]></value>
-                  </teardown_code>
-                  <local_variables>
-                    <value><![CDATA[
+            </setup_code>
+            <teardown_code>
+              <value><![CDATA[cryStop(&CRYD1);]]></value>
+            </teardown_code>
+            <local_variables>
+              <value><![CDATA[
 ]]></value>
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>hmac 256</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>hmac 256</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 cryHMAC256(&CRYD1);    
 
 
@@ -3878,44 +3863,28 @@ for (int i = 0; i < 8; i++) {
    test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC256_1)[i], "hmac mismatch");
 }
 ]]></value>
-                    </code>
-                  </step>
-				  
-				    <step>
-                    <description>
-                      <value>hmac 512</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+              </code>
+            </step>
+            <step>
+              <description>
+                <value>hmac 512</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 cryHMAC512(&CRYD1);    
 
 for (int i = 0; i < 16; i++) {
    test_assert(HMACOUT[i] == ((uint32_t*) refHMAC_HMAC512_1)[i], "hmac mismatch");
 }
 ]]></value>
-                    </code>
-                  </step> 
-
-
-                  
-                
-
-                 
- 
-                </steps>
-              </case>
-              
-
-			</cases>
-          </sequence>
-
-
-       </sequences>
-      </instance>
-    </instances>
-    <exportedFeatures />
-  </application>
-</SPC5-Config>
+              </code>
+            </step>
+          </steps>
+        </case>
+      </cases>
+    </sequence>
+  </sequences>
+</instance>

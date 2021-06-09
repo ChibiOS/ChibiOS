@@ -108,7 +108,7 @@ static THD_FUNCTION(bmk_thread4, p) {
  * Test cases.
  ****************************************************************************/
 
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page nil_test_008_001 [8.1] Messages performance #1
  *
@@ -120,7 +120,7 @@ static THD_FUNCTION(bmk_thread4, p) {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MESSAGES
+ * - CH_CFG_USE_MESSAGES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -179,9 +179,9 @@ static const testcase_t nil_test_008_001 = {
   NULL,
   nil_test_008_001_execute
 };
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page nil_test_008_002 [8.2] Messages performance #2
  *
@@ -193,7 +193,7 @@ static const testcase_t nil_test_008_001 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MESSAGES
+ * - CH_CFG_USE_MESSAGES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -252,7 +252,7 @@ static const testcase_t nil_test_008_002 = {
   NULL,
   nil_test_008_002_execute
 };
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */
 
 /**
  * @page nil_test_008_003 [8.3] Context Switch performance
@@ -467,7 +467,7 @@ static const testcase_t nil_test_008_005 = {
   nil_test_008_005_execute
 };
 
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page nil_test_008_006 [8.6] Semaphores wait/signal performance
  *
@@ -480,7 +480,7 @@ static const testcase_t nil_test_008_005 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
+ * - CH_CFG_USE_SEMAPHORES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -539,7 +539,7 @@ static const testcase_t nil_test_008_006 = {
   NULL,
   nil_test_008_006_execute
 };
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /**
  * @page nil_test_008_007 [8.7] RAM Footprint
@@ -637,16 +637,16 @@ static const testcase_t nil_test_008_007 = {
  * @brief   Array of test cases.
  */
 const testcase_t * const nil_test_sequence_008_array[] = {
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   &nil_test_008_001,
 #endif
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   &nil_test_008_002,
 #endif
   &nil_test_008_003,
   &nil_test_008_004,
   &nil_test_008_005,
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   &nil_test_008_006,
 #endif
   &nil_test_008_007,

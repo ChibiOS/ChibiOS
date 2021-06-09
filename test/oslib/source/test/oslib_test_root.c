@@ -52,25 +52,25 @@
  */
 const testsequence_t * const oslib_test_suite_array[] = {
   &oslib_test_sequence_001,
-#if (CH_CFG_USE_MAILBOXES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MAILBOXES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_sequence_002,
 #endif
-#if (CH_CFG_USE_PIPES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_PIPES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_sequence_003,
 #endif
-#if (CH_CFG_USE_JOBS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_JOBS == TRUE) || defined(__DOXYGEN__)
   &oslib_test_sequence_004,
 #endif
-#if (CH_CFG_USE_DELEGATES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_DELEGATES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_sequence_005,
 #endif
-#if (CH_CFG_USE_OBJ_CACHES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_OBJ_CACHES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_sequence_006,
 #endif
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
   &oslib_test_sequence_007,
 #endif
-#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
   &oslib_test_sequence_008,
 #endif
 #if ((CH_CFG_USE_FACTORY == TRUE) && (CH_CFG_USE_MEMPOOLS == TRUE) && (CH_CFG_USE_HEAP == TRUE)) || defined(__DOXYGEN__)

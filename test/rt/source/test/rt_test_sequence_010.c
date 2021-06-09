@@ -31,7 +31,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_EVENTS
+ * - CH_CFG_USE_EVENTS == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -45,7 +45,7 @@
  * .
  */
 
-#if (CH_CFG_USE_EVENTS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -426,7 +426,7 @@ static const testcase_t rt_test_010_005 = {
   rt_test_010_005_execute
 };
 
-#if (CH_CFG_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS_TIMEOUT == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_010_006 [10.6] Events Flags wait timeouts
  *
@@ -437,7 +437,7 @@ static const testcase_t rt_test_010_005 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_EVENTS_TIMEOUT
+ * - CH_CFG_USE_EVENTS_TIMEOUT == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -488,7 +488,7 @@ static const testcase_t rt_test_010_006 = {
   NULL,
   rt_test_010_006_execute
 };
-#endif /* CH_CFG_USE_EVENTS_TIMEOUT */
+#endif /* CH_CFG_USE_EVENTS_TIMEOUT == TRUE */
 
 /**
  * @page rt_test_010_007 [10.7] Broadcasting using chEvtBroadcast()
@@ -586,7 +586,7 @@ const testcase_t * const rt_test_sequence_010_array[] = {
   &rt_test_010_003,
   &rt_test_010_004,
   &rt_test_010_005,
-#if (CH_CFG_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_EVENTS_TIMEOUT == TRUE) || defined(__DOXYGEN__)
   &rt_test_010_006,
 #endif
   &rt_test_010_007,
@@ -601,4 +601,4 @@ const testsequence_t rt_test_sequence_010 = {
   rt_test_sequence_010_array
 };
 
-#endif /* CH_CFG_USE_EVENTS */
+#endif /* CH_CFG_USE_EVENTS == TRUE */

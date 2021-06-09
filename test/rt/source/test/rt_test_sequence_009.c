@@ -32,7 +32,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MESSAGES
+ * - CH_CFG_USE_MESSAGES == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -40,7 +40,7 @@
  * .
  */
 
-#if (CH_CFG_USE_MESSAGES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -129,4 +129,4 @@ const testsequence_t rt_test_sequence_009 = {
   rt_test_sequence_009_array
 };
 
-#endif /* CH_CFG_USE_MESSAGES */
+#endif /* CH_CFG_USE_MESSAGES == TRUE */

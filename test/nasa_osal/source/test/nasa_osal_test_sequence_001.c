@@ -110,6 +110,7 @@ static void nasa_osal_test_001_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
     test_assert_sequence("", "task executed");
   }
+  test_end_step(1);
 
   /* [1.1.2] OS_TaskCreate() is invoked with task_name set to NULL, an
      error is expected.*/
@@ -128,6 +129,7 @@ static void nasa_osal_test_001_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
     test_assert_sequence("", "task executed");
   }
+  test_end_step(2);
 
   /* [1.1.3] OS_TaskCreate() is invoked with stack_pointer set to NULL,
      an error is expected.*/
@@ -146,6 +148,7 @@ static void nasa_osal_test_001_001_execute(void) {
     test_assert(err == OS_INVALID_POINTER, "NULL not detected");
     test_assert_sequence("", "task executed");
   }
+  test_end_step(3);
 
   /* [1.1.4] OS_TaskCreate() is invoked with a very long task name, an
      error is expected.*/
@@ -164,6 +167,7 @@ static void nasa_osal_test_001_001_execute(void) {
     test_assert(err == OS_ERR_NAME_TOO_LONG, "name limit not detected");
     test_assert_sequence("", "task executed");
   }
+  test_end_step(4);
 
   /* [1.1.5] OS_TaskCreate() is invoked with priority below and above
      allowed range, an error is expected.*/
@@ -192,6 +196,7 @@ static void nasa_osal_test_001_001_execute(void) {
     test_assert(err == OS_ERR_INVALID_PRIORITY, "priority error not detected");
     test_assert_sequence("", "task executed");
   }
+  test_end_step(5);
 
   /* [1.1.6] OS_TaskCreate() is invoked with a stack size below
      minimum, an error is expected.*/
@@ -210,6 +215,7 @@ static void nasa_osal_test_001_001_execute(void) {
     test_assert(err == OS_INVALID_INT_NUM, "stack insufficient size not detected");
     test_assert_sequence("", "task executed");
   }
+  test_end_step(6);
 
   /* [1.1.7] OS_TaskCreate() is invoked twice with duplicated name and
      then duplicated stack, an error is expected in both cases.*/
@@ -262,6 +268,7 @@ static void nasa_osal_test_001_001_execute(void) {
     test_assert(err == OS_SUCCESS, "wait failed");
     test_assert_sequence("A", "task not executed");
   }
+  test_end_step(7);
 }
 
 static const testcase_t nasa_osal_test_001_001 = {
@@ -337,6 +344,7 @@ static void nasa_osal_test_001_002_execute(void) {
                         0);
     test_assert(err == OS_SUCCESS, "task 1 creation failed");
   }
+  test_end_step(1);
 
   /* [1.2.2] Tasks are made runnable atomically and their execution
      order tested.*/
@@ -345,6 +353,7 @@ static void nasa_osal_test_001_002_execute(void) {
     OS_TaskDelay(5);
     test_assert_sequence("ABCD", "task order violation");
   }
+  test_end_step(2);
 
   /* [1.2.3] Four tasks are created in priority order from high to
      low.*/
@@ -389,6 +398,7 @@ static void nasa_osal_test_001_002_execute(void) {
                         0);
     test_assert(err == OS_SUCCESS, "task 4 creation failed");
   }
+  test_end_step(3);
 
   /* [1.2.4] Tasks are made runnable atomically and their execution
      order tested.*/
@@ -397,6 +407,7 @@ static void nasa_osal_test_001_002_execute(void) {
     OS_TaskDelay(5);
     test_assert_sequence("ABCD", "task order violation");
   }
+  test_end_step(4);
 
   /* [1.2.5] Four tasks are created in an not ordered way.*/
   test_set_step(5);
@@ -440,6 +451,7 @@ static void nasa_osal_test_001_002_execute(void) {
                         0);
     test_assert(err == OS_SUCCESS, "task 3 creation failed");
   }
+  test_end_step(5);
 
   /* [1.2.6] Tasks are made runnable atomically and their execution
      order tested.*/
@@ -448,6 +460,7 @@ static void nasa_osal_test_001_002_execute(void) {
     OS_TaskDelay(5);
     test_assert_sequence("ABCD", "task order violation");
   }
+  test_end_step(6);
 }
 
 static const testcase_t nasa_osal_test_001_002 = {
@@ -480,6 +493,7 @@ static void nasa_osal_test_001_003_execute(void) {
     err = OS_TaskDelete((uint32)-1);
     test_assert(err == OS_ERR_INVALID_ID, "wrong task id not detected");
   }
+  test_end_step(1);
 }
 
 static const testcase_t nasa_osal_test_001_003 = {
@@ -520,6 +534,7 @@ static void nasa_osal_test_001_004_execute(void) {
                         0);
     test_assert(err == OS_SUCCESS, "deletable task creation failed");
   }
+  test_end_step(1);
 
   /* [1.4.2] Letting the task run for a while then deleting it. A check
      is performed on the correct execution of the delete handler.*/
@@ -532,6 +547,7 @@ static void nasa_osal_test_001_004_execute(void) {
     test_assert(err == OS_SUCCESS, "delete failed");
     test_assert_sequence("ABC", "events order violation");
   }
+  test_end_step(2);
 }
 
 static const testcase_t nasa_osal_test_001_004 = {

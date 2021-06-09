@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Simplified test XML schema.
 - NEW: Simplified interface between ports and RT/NIL.
 - NEW: Removed duplicated files for ARM ports: chtypes.h.
 - NEW: Removed duplicated files for all ports: chcore_timer.h.

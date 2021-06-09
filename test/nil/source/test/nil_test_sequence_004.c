@@ -32,7 +32,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
+ * - CH_CFG_USE_SEMAPHORES == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -42,7 +42,7 @@
  * .
  */
 
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -305,4 +305,4 @@ const testsequence_t nil_test_sequence_004 = {
   nil_test_sequence_004_array
 };
 
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */

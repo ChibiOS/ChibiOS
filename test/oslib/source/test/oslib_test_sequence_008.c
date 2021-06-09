@@ -32,7 +32,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_HEAP
+ * - CH_CFG_USE_HEAP == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -41,7 +41,7 @@
  * .
  */
 
-#if (CH_CFG_USE_HEAP) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -289,4 +289,4 @@ const testsequence_t oslib_test_sequence_008 = {
   oslib_test_sequence_008_array
 };
 
-#endif /* CH_CFG_USE_HEAP */
+#endif /* CH_CFG_USE_HEAP == TRUE */

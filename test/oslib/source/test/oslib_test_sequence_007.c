@@ -32,7 +32,7 @@
  * <h2>Conditions</h2>
  * This sequence is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_MEMPOOLS
+ * - CH_CFG_USE_MEMPOOLS == TRUE
  * .
  *
  * <h2>Test Cases</h2>
@@ -42,7 +42,7 @@
  * .
  */
 
-#if (CH_CFG_USE_MEMPOOLS) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -157,7 +157,7 @@ static const testcase_t oslib_test_007_001 = {
   oslib_test_007_001_execute
 };
 
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page oslib_test_007_002 [7.2] Loading and emptying a guarded memory pool without waiting
  *
@@ -168,7 +168,7 @@ static const testcase_t oslib_test_007_001 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
+ * - CH_CFG_USE_SEMAPHORES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -244,9 +244,9 @@ static const testcase_t oslib_test_007_002 = {
   NULL,
   oslib_test_007_002_execute
 };
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @page oslib_test_007_003 [7.3] Guarded Memory Pools timeout
  *
@@ -256,7 +256,7 @@ static const testcase_t oslib_test_007_002 = {
  * <h2>Conditions</h2>
  * This test is only executed if the following preprocessor condition
  * evaluates to true:
- * - CH_CFG_USE_SEMAPHORES
+ * - CH_CFG_USE_SEMAPHORES == TRUE
  * .
  *
  * <h2>Test Steps</h2>
@@ -286,7 +286,7 @@ static const testcase_t oslib_test_007_003 = {
   NULL,
   oslib_test_007_003_execute
 };
-#endif /* CH_CFG_USE_SEMAPHORES */
+#endif /* CH_CFG_USE_SEMAPHORES == TRUE */
 
 /****************************************************************************
  * Exported data.
@@ -297,10 +297,10 @@ static const testcase_t oslib_test_007_003 = {
  */
 const testcase_t * const oslib_test_sequence_007_array[] = {
   &oslib_test_007_001,
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_007_002,
 #endif
-#if (CH_CFG_USE_SEMAPHORES) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   &oslib_test_007_003,
 #endif
   NULL
@@ -314,4 +314,4 @@ const testsequence_t oslib_test_sequence_007 = {
   oslib_test_sequence_007_array
 };
 
-#endif /* CH_CFG_USE_MEMPOOLS */
+#endif /* CH_CFG_USE_MEMPOOLS == TRUE */
