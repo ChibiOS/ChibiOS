@@ -1,19 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SPC5-Config version="1.0.0">
-  <application name="ChibiOS/NIL Test Suite" version="1.0.0" standalone="true" locked="false">
-    <description>Test Specification for ChibiOS/NIL.</description>
-    <component id="org.chibios.spc5.components.portable.generic_startup">
-      <component id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine" />
-    </component>
-    <instances>
-      <instance locked="false" id="org.chibios.spc5.components.portable.generic_startup" />
-      <instance locked="false" id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
-        <description>
-          <brief>
-            <value>ChibiOS/NIL Test Suite.</value>
-          </brief>
-          <copyright>
-            <value><![CDATA[/*
+
+<instance locked="false"
+  id="org.chibios.spc5.components.portable.chibios_unitary_tests_engine">
+  <description>
+    <brief>
+      <value>ChibiOS/NIL Test Suite.</value>
+    </brief>
+    <copyright>
+      <value><![CDATA[/*
     ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,77 +21,82 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */]]></value>
-          </copyright>
-          <introduction>
-            <value>Test suite for core benchmarks. The purpose of this suite is to perform general benchmarks in order to assess performance of cores and/or compilers.</value>
-          </introduction>
-        </description>
-        <global_data_and_code>
-          <code_prefix>
-            <value>corebmk</value>
-          </code_prefix>
-          <global_definitions>
-            <value><![CDATA[
+    </copyright>
+    <introduction>
+      <value>Test suite for core benchmarks. The purpose of this suite
+        is to perform general benchmarks in order to assess
+        performance of cores and/or compilers.
+      </value>
+    </introduction>
+  </description>
+  <global_data_and_code>
+    <code_prefix>
+      <value>corebmk_</value>
+    </code_prefix>
+    <global_definitions>
+      <value><![CDATA[
 /**/
 ]]></value>
-          </global_definitions>
-          <global_code>
-            <value><![CDATA[
+    </global_definitions>
+    <global_code>
+      <value><![CDATA[
 /**/
 ]]></value>
-          </global_code>
-        </global_data_and_code>
-        <sequences>
-          <sequence>
-            <type index="0">
-              <value>Internal Tests</value>
-            </type>
-            <brief>
-              <value>Information.</value>
-            </brief>
-            <description>
-              <value>This sequence reports configuration and version information about execution environment.</value>
-            </description>
-            <condition>
-              <value />
-            </condition>
-            <shared_code>
-              <value><![CDATA[
+    </global_code>
+  </global_data_and_code>
+  <sequences>
+    <sequence>
+      <type index="0">
+        <value>Internal Tests</value>
+      </type>
+      <brief>
+        <value>Information.</value>
+      </brief>
+      <description>
+        <value>This sequence reports configuration and version
+          information about execution environment.
+        </value>
+      </description>
+      <condition>
+        <value />
+      </condition>
+      <shared_code>
+        <value><![CDATA[
 #include "ch.h"
 ]]></value>
-            </shared_code>
-            <cases>
-              <case>
-                <brief>
-                  <value>Environment Info.</value>
-                </brief>
-                <description>
-                  <value>Environment-related info are reported.</value>
-                </description>
-                <condition>
-                  <value />
-                </condition>
-                <various_code>
-                  <setup_code>
-                    <value />
-                  </setup_code>
-                  <teardown_code>
-                    <value />
-                  </teardown_code>
-                  <local_variables>
-                    <value />
-                  </local_variables>
-                </various_code>
-                <steps>
-                  <step>
-                    <description>
-                      <value>Architecture and Compiler information.</value>
-                    </description>
-                    <tags>
-                      <value />
-                    </tags>
-                    <code>
-                      <value><![CDATA[
+      </shared_code>
+      <cases>
+        <case>
+          <brief>
+            <value>Environment Info.</value>
+          </brief>
+          <description>
+            <value>Environment-related info are reported.</value>
+          </description>
+          <condition>
+            <value />
+          </condition>
+          <various_code>
+            <setup_code>
+              <value />
+            </setup_code>
+            <teardown_code>
+              <value />
+            </teardown_code>
+            <local_variables>
+              <value />
+            </local_variables>
+          </various_code>
+          <steps>
+            <step>
+              <description>
+                <value>Architecture and Compiler information.</value>
+              </description>
+              <tags>
+                <value />
+              </tags>
+              <code>
+                <value><![CDATA[
 #if defined(PORT_ARCHITECTURE_NAME)
 test_print("--- Architecture:                       ");
 test_println(PORT_ARCHITECTURE_NAME);
@@ -131,15 +129,11 @@ test_printn(PORT_WORKING_AREA_ALIGN);
 test_println("");
 #endif
 ]]></value>
-                    </code>
-                  </step>
-                </steps>
-              </case>
-            </cases>
-          </sequence>
-        </sequences>
-      </instance>
-    </instances>
-    <exportedFeatures />
-  </application>
-</SPC5-Config>
+              </code>
+            </step>
+          </steps>
+        </case>
+      </cases>
+    </sequence>
+  </sequences>
+</instance>
