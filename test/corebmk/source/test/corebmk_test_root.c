@@ -13,6 +13,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+/*
+    This module is based on the work of John Walker (April of 1989) and
+    merely adapted to work in ChibiOS. The author has not specified
+    additional license terms so this is released using the most permissive
+    license used in ChibiOS. The license covers the changes only, not the
+    original work.
+ */
 
 /**
  * @mainpage Test Suite Specification
@@ -43,7 +50,9 @@
  * @brief   Array of test sequences.
  */
 const testsequence_t * const corebmk_test_suite_array[] = {
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
   &corebmk_test_sequence_001,
+#endif
   NULL
 };
 
@@ -51,7 +60,7 @@ const testsequence_t * const corebmk_test_suite_array[] = {
  * @brief   Test suite root structure.
  */
 const testsuite_t corebmk_test_suite = {
-  "ChibiOS/NIL Test Suite",
+  "Core Benchmarks Test Suite",
   corebmk_test_suite_array
 };
 

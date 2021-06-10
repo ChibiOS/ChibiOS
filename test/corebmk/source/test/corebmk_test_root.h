@@ -13,6 +13,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+/*
+    This module is based on the work of John Walker (April of 1989) and
+    merely adapted to work in ChibiOS. The author has not specified
+    additional license terms so this is released using the most permissive
+    license used in ChibiOS. The license covers the changes only, not the
+    original work.
+ */
 
 /**
  * @file    corebmk_test_root.h

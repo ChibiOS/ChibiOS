@@ -21,14 +21,11 @@
     original work.
  */
 
-/**
- * @file    corebmk_test_sequence_001.h
- * @brief   Test Sequence 001 header.
- */
-
-#ifndef COREBMK_TEST_SEQUENCE_001_H
-#define COREBMK_TEST_SEQUENCE_001_H
-
-extern const testsequence_t corebmk_test_sequence_001;
-
-#endif /* COREBMK_TEST_SEQUENCE_001_H */
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void fourn_float(float data[], int nn[], const int ndim, const int isign);
+  void fourn_double(double data[], int nn[], const int ndim, const int isign);
+#ifdef __cplusplus
+}
+#endif
