@@ -180,7 +180,8 @@ if (fdatas != NULL) {
             <local_variables>
               <value><![CDATA[
 time_msecs_t msecs;
-size_t fasize, fanum;
+size_t fasize;
+int fanum;
 int faedge;
 int nsize[] = {0, 0, 0};
 ]]></value>
@@ -196,9 +197,9 @@ int nsize[] = {0, 0, 0};
               </tags>
               <code>
                 <value><![CDATA[
-faedge = ASIZE;                                 /* FFT array edge size.*/
+faedge = ASIZE;                                     /* FFT array edge size.*/
 fanum  = faedge * faedge;
-fasize = ((fanum + 1) * 2 * sizeof(float));     /* FFT array size.*/
+fasize = ((size_t)(fanum + 1) * 2 * sizeof(float)); /* FFT array size.*/
 fdatas = (float *)chHeapAlloc(NULL, fasize);
 nsize[1] = nsize[2] = faedge;
 
@@ -276,7 +277,7 @@ msecs = chTimeI2MS(chTimeDiffX(start, end));
             </step>
             <step>
               <description>
-                <value>Printing results</value>
+                <value>Printing execution time</value>
               </description>
               <tags>
                 <value />

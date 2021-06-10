@@ -143,7 +143,7 @@ static const testcase_t corebmk_test_001_001 = {
  * - [1.2.1] Allocating memory for single precision work matrix.
  * - [1.2.2] Printing setup.
  * - [1.2.3] Running single precision FFT iterations.
- * - [1.2.4] Printing results.
+ * - [1.2.4] Printing execution time.
  * .
  */
 
@@ -159,16 +159,17 @@ static void corebmk_test_001_002_teardown(void) {
 
 static void corebmk_test_001_002_execute(void) {
   time_msecs_t msecs;
-  size_t fasize, fanum;
+  size_t fasize;
+  int fanum;
   int faedge;
   int nsize[] = {0, 0, 0};
 
   /* [1.2.1] Allocating memory for single precision work matrix.*/
   test_set_step(1);
   {
-    faedge = ASIZE;                                 /* FFT array edge size.*/
+    faedge = ASIZE;                                     /* FFT array edge size.*/
     fanum  = faedge * faedge;
-    fasize = ((fanum + 1) * 2 * sizeof(float));     /* FFT array size.*/
+    fasize = ((size_t)(fanum + 1) * 2 * sizeof(float)); /* FFT array size.*/
     fdatas = (float *)chHeapAlloc(NULL, fasize);
     nsize[1] = nsize[2] = faedge;
 
@@ -232,7 +233,7 @@ static void corebmk_test_001_002_execute(void) {
   }
   test_end_step(3);
 
-  /* [1.2.4] Printing results.*/
+  /* [1.2.4] Printing execution time.*/
   test_set_step(4);
   {
     test_print("--- Time  : ");
