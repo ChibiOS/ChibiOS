@@ -1,11 +1,11 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun  7 2021 - 08:51:33
+*** Compiled:     Jun 11 2021 - 11:12:01
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    51148 bytes
+*** Text size:    50964 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes
@@ -189,7 +189,7 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 904248 msgs/S, 1808496 ctxswc/S
+--- Score : 923906 msgs/S, 1847812 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
@@ -201,7 +201,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 2821568 ctxswc/S
+--- Score : 2893608 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
@@ -209,15 +209,15 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 634325 threads/S
+--- Score : 639095 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 288135 reschedules/S, 1728810 ctxswc/S
+--- Score : 289115 reschedules/S, 1734690 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 1748060 ctxswc/S
+--- Score : 1752560 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
@@ -249,11 +249,11 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Jun  7 2021 - 08:51:33
+*** Compiled:     Jun 11 2021 - 11:12:01
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    51148 bytes
+*** Text size:    50964 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes

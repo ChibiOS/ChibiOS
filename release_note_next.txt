@@ -47,6 +47,9 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 
 - Support for full-SMP multi-core threading.
 - Support for decoupled multi-core threading.
+- Performance improvements thanks to code paths tuning using likely/unlikely
+  macros. This feature requires compiler support and is currently enabled
+  for GCC.
 - 64 bits monotonic time stamps with the same resolution of system time.
 - Much more efficient and accurate Virtual Timers in tick-less mode.
 - Automatic reload of Virtual Timers, now both one-shot and continuous timers

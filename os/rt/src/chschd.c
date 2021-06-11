@@ -414,11 +414,13 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
   }
 #endif
 
-  /* If the waken thread has a not-greater priority than the current
+  /* If the woken thread has a not-greater priority than the current
      one then it is just inserted in the ready list else it made
      running immediately and the invoking thread goes in the ready
-     list instead.*/
-  if (ntp->hdr.pqueue.prio <= otp->hdr.pqueue.prio) {
+     list instead.
+     Note, we are favoring the path where the woken thread has higher
+     priority.*/
+  if (unlikely(ntp->hdr.pqueue.prio <= otp->hdr.pqueue.prio)) {
     (void) __sch_ready_behind(ntp);
   }
   else {
@@ -455,7 +457,9 @@ void chSchRescheduleS(void) {
 
   chDbgCheckClassS();
 
-  if (firstprio(&oip->rlist.pqueue) > tp->hdr.pqueue.prio) {
+  /* Note, we are favoring the path where the reschedule is necessary
+     because higher priority threads are ready.*/
+  if (likely(firstprio(&oip->rlist.pqueue) > tp->hdr.pqueue.prio)) {
     __sch_reschedule_ahead();
   }
 }
@@ -563,19 +567,21 @@ void chSchPreemption(void) {
   tprio_t p1 = firstprio(&oip->rlist.pqueue);
   tprio_t p2 = tp->hdr.pqueue.prio;
 
+  /* Note, we are favoring the path where preemption is necessary
+     because higher priority threads are ready.*/
 #if CH_CFG_TIME_QUANTUM > 0
   if (tp->ticks > (tslices_t)0) {
-    if (p1 > p2) {
+    if (likely(p1 > p2)) {
       __sch_reschedule_ahead();
     }
   }
   else {
-    if (p1 >= p2) {
+    if (likely(p1 >= p2)) {
       __sch_reschedule_behind();
     }
   }
 #else /* CH_CFG_TIME_QUANTUM == 0 */
-  if (p1 > p2) {
+  if (likely(p1 > p2)) {
     __sch_reschedule_ahead();
   }
 #endif /* CH_CFG_TIME_QUANTUM == 0 */
@@ -595,7 +601,9 @@ void chSchDoYieldS(void) {
 
   chDbgCheckClassS();
 
-  if (firstprio(&oip->rlist.pqueue) >= tp->hdr.pqueue.prio) {
+  /* If this function has been called then it is likely there are threads
+     at same priority level.*/
+  if (likely(firstprio(&oip->rlist.pqueue) >= tp->hdr.pqueue.prio)) {
     __sch_reschedule_behind();
   }
 }
