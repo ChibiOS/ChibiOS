@@ -112,8 +112,8 @@
 void __dbg_check_disable(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt != (cnt_t)0) ||
-      (oip->dbg.lock_cnt != (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt != (cnt_t)0) ||
+               (oip->dbg.lock_cnt != (cnt_t)0))) {
     chSysHalt("SV#1");
   }
 }
@@ -126,8 +126,8 @@ void __dbg_check_disable(void) {
 void __dbg_check_suspend(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt != (cnt_t)0) ||
-      (oip->dbg.lock_cnt != (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt != (cnt_t)0) ||
+               (oip->dbg.lock_cnt != (cnt_t)0))) {
     chSysHalt("SV#2");
   }
 }
@@ -140,8 +140,8 @@ void __dbg_check_suspend(void) {
 void __dbg_check_enable(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt != (cnt_t)0) ||
-      (oip->dbg.lock_cnt != (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt != (cnt_t)0) ||
+               (oip->dbg.lock_cnt != (cnt_t)0))) {
     chSysHalt("SV#3");
   }
 }
@@ -154,8 +154,8 @@ void __dbg_check_enable(void) {
 void __dbg_check_lock(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt != (cnt_t)0) ||
-      (oip->dbg.lock_cnt != (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt != (cnt_t)0) ||
+               (oip->dbg.lock_cnt != (cnt_t)0))) {
     chSysHalt("SV#4");
   }
   oip->dbg.lock_cnt = (cnt_t)1;
@@ -169,8 +169,8 @@ void __dbg_check_lock(void) {
 void __dbg_check_unlock(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt != (cnt_t)0) ||
-      (oip->dbg.lock_cnt <= (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt != (cnt_t)0) ||
+               (oip->dbg.lock_cnt <= (cnt_t)0))) {
     chSysHalt("SV#5");
   }
   oip->dbg.lock_cnt = (cnt_t)0;
@@ -184,8 +184,8 @@ void __dbg_check_unlock(void) {
 void __dbg_check_lock_from_isr(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt <= (cnt_t)0) ||
-      (oip->dbg.lock_cnt != (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt <= (cnt_t)0) ||
+               (oip->dbg.lock_cnt != (cnt_t)0))) {
     chSysHalt("SV#6");
   }
   oip->dbg.lock_cnt = (cnt_t)1;
@@ -199,8 +199,8 @@ void __dbg_check_lock_from_isr(void) {
 void __dbg_check_unlock_from_isr(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt <= (cnt_t)0) ||
-      (oip->dbg.lock_cnt <= (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt <= (cnt_t)0) ||
+               (oip->dbg.lock_cnt <= (cnt_t)0))) {
     chSysHalt("SV#7");
   }
   oip->dbg.lock_cnt = (cnt_t)0;
@@ -215,8 +215,8 @@ void __dbg_check_enter_isr(void) {
   os_instance_t *oip = currcore;
 
   port_lock_from_isr();
-  if ((oip->dbg.isr_cnt < (cnt_t)0) ||
-      (oip->dbg.lock_cnt != (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt < (cnt_t)0) ||
+               (oip->dbg.lock_cnt != (cnt_t)0))) {
     chSysHalt("SV#8");
   }
   oip->dbg.isr_cnt++;
@@ -232,8 +232,8 @@ void __dbg_check_leave_isr(void) {
   os_instance_t *oip = currcore;
 
   port_lock_from_isr();
-  if ((oip->dbg.isr_cnt <= (cnt_t)0) ||
-      (oip->dbg.lock_cnt != (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt <= (cnt_t)0) ||
+               (oip->dbg.lock_cnt != (cnt_t)0))) {
     chSysHalt("SV#9");
   }
   oip->dbg.isr_cnt--;
@@ -251,8 +251,8 @@ void __dbg_check_leave_isr(void) {
 void chDbgCheckClassI(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt < (cnt_t)0) ||
-      (oip->dbg.lock_cnt <= (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt < (cnt_t)0) ||
+               (oip->dbg.lock_cnt <= (cnt_t)0))) {
     chSysHalt("SV#10");
   }
 }
@@ -268,8 +268,8 @@ void chDbgCheckClassI(void) {
 void chDbgCheckClassS(void) {
   os_instance_t *oip = currcore;
 
-  if ((oip->dbg.isr_cnt != (cnt_t)0) ||
-      (oip->dbg.lock_cnt <= (cnt_t)0)) {
+  if (unlikely((oip->dbg.isr_cnt != (cnt_t)0) ||
+               (oip->dbg.lock_cnt <= (cnt_t)0))) {
     chSysHalt("SV#11");
   }
 }

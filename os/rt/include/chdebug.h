@@ -118,7 +118,7 @@ typedef struct ch_system_debug {
 #define chDbgCheck(c) do {                                                  \
   /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
   if (CH_DBG_ENABLE_CHECKS != FALSE) {                                      \
-    if (!(c)) {                                                             \
+    if (unlikely(!(c))) {                                                   \
   /*lint -restore*/                                                         \
       chSysHalt(__func__);                                                  \
     }                                                                       \
@@ -144,7 +144,7 @@ typedef struct ch_system_debug {
 #define chDbgAssert(c, r) do {                                              \
   /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
   if (CH_DBG_ENABLE_ASSERTS != FALSE) {                                     \
-    if (!(c)) {                                                             \
+    if (unlikely(!(c))) {                                                   \
   /*lint -restore*/                                                         \
       chSysHalt(__func__);                                                  \
     }                                                                       \
