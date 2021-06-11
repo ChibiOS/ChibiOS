@@ -373,10 +373,10 @@ static inline ch_priority_queue_t *ch_pqueue_remove_highest(ch_priority_queue_t 
 static inline ch_priority_queue_t *ch_pqueue_insert_behind(ch_priority_queue_t *pqp,
                                                            ch_priority_queue_t *p) {
 
-  /* Scanning priority queue.*/
+  /* Scanning priority queue, the list is assumed to be mostly empty.*/
   do {
     pqp = pqp->next;
-  } while (pqp->prio >= p->prio);
+  } while (unlikely(pqp->prio >= p->prio));
 
   /* Insertion on prev.*/
   p->next       = pqp;
@@ -402,10 +402,10 @@ static inline ch_priority_queue_t *ch_pqueue_insert_behind(ch_priority_queue_t *
 static inline ch_priority_queue_t *ch_pqueue_insert_ahead(ch_priority_queue_t *pqp,
                                                           ch_priority_queue_t *p) {
 
-  /* Scanning priority queue.*/
+  /* Scanning priority queue, the list is assumed to be mostly empty.*/
   do {
     pqp = pqp->next;
-  } while (pqp->prio > p->prio);
+  } while (unlikely(pqp->prio > p->prio));
 
   /* Insertion on prev.*/
   p->next       = pqp;

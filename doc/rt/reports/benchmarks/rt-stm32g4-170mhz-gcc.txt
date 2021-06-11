@@ -1,11 +1,11 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun 11 2021 - 11:12:01
+*** Compiled:     Jun 11 2021 - 13:55:11
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    50964 bytes
+*** Text size:    51060 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes
@@ -189,35 +189,35 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 923906 msgs/S, 1847812 ctxswc/S
+--- Score : 1062491 msgs/S, 2124982 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 794387 msgs/S, 1588774 ctxswc/S
+--- Score : 923906 msgs/S, 1847812 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 794386 msgs/S, 1588772 ctxswc/S
+--- Score : 923906 msgs/S, 1847812 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 2893608 ctxswc/S
+--- Score : 2943712 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 515147 threads/S
+--- Score : 518288 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 639095 threads/S
+--- Score : 643936 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 289115 reschedules/S, 1734690 ctxswc/S
+--- Score : 290102 reschedules/S, 1740612 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 1752560 ctxswc/S
+--- Score : 1761640 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
@@ -249,11 +249,11 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Jun 11 2021 - 11:12:01
+*** Compiled:     Jun 11 2021 - 13:55:11
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    50964 bytes
+*** Text size:    51060 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes
