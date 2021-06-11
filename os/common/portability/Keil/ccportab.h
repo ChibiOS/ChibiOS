@@ -120,6 +120,20 @@
  *          compiler.
  */
 #define CC_ROMCONST         const
+
+/**
+ * @brief   Marks a boolean expression as likely true.
+ *
+ * @param[in] x         a valid expression
+ */
+#define CC_LIKELY(x)        x
+
+/**
+ * @brief   Marks a boolean expression as likely false.
+ *
+ * @param[in] x         a valid expression
+ */
+#define CC_UNLIKELY(x)      x
 /** @} */
 
 /*===========================================================================*/

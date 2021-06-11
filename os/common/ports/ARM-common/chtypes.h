@@ -101,6 +101,28 @@ typedef uint64_t            port_stkalign_t;
  */
 #define SIZEOF_PTR          PORT_ARCH_SIZEOF_DATA_PTR
 
+/**
+ * @brief   Marks a boolean expression as likely true.
+ *
+ * @param[in] x         a valid expression
+ */
+#if defined(CC_LIKELY) || defined(__DOXYGEN__)
+#define PORT_LIKELY(x)      CC_LIKELY(x)
+#else
+#define PORT_LIKELY(x)      x
+#endif
+
+/**
+ * @brief   Marks a boolean expression as likely false.
+ *
+ * @param[in] x         a valid expression
+ */
+#if defined(CC_UNLIKELY) || defined(__DOXYGEN__)
+#define PORT_UNLIKELY(x)    CC_UNLIKELY(x)
+#else
+#define PORT_UNLIKELY(x)    x
+#endif
+
 #endif /* CHTYPES_H */
 
 /** @} */

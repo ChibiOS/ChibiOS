@@ -146,7 +146,7 @@ typedef struct ch_os_instance os_instance_t;
  *
  * @param[in] a        literal to be string-ified
  */
-#define __CH_STRINGIFY(a) #a
+#define __CH_STRINGIFY(a)   #a
 
 /**
  * @brief   Structure field offset utility.
@@ -160,6 +160,39 @@ typedef struct ch_os_instance os_instance_t;
     arithmetic, it is safe.*/                                               \
   ((size_t)((char *)&((st *)0)->m - (char *)0))                             \
   /*lint -restore*/
+
+/**
+ * @brief   Marks an expression result as used.
+ *
+ * @param[in] x         a valid expression
+ */
+#define __CH_USED(x)    (void)(x)
+
+/**
+ * @brief   Marks a boolean expression as likely true.
+ * @note    No namespace prefix for this macro because it is commonly defined
+ *          by operating systems.
+ *
+ * @param[in] x         a valid expression
+ */
+#if defined(PORT_LIKELY) || defined(__DOXYGEN__)
+#define likely(x)       PORT_LIKELY(x)
+#else
+#define likely(x)       x
+#endif
+
+/**
+ * @brief   Marks a boolean expression as likely false.
+ * @note    No namespace prefix for this macro because it is commonly defined
+ *          by operating systems.
+ *
+ * @param[in] x         a valid expression
+ */
+#if defined(PORT_UNLIKELY) || defined(__DOXYGEN__)
+#define unlikely(x)     PORT_UNLIKELY(x)
+#else
+#define unlikely(x)     x
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */
