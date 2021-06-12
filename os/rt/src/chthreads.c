@@ -530,7 +530,7 @@ void chThdExitS(msg_t msg) {
 #if CH_CFG_USE_DYNAMIC == TRUE
     /* Static threads are immediately removed from the registry because there
        is no memory to recover.*/
-    if (unlikely(((currtp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC))) {
+    if (((currtp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC)) {
       REG_REMOVE(currtp);
     }
 #else
@@ -578,7 +578,7 @@ msg_t chThdWait(thread_t *tp) {
   chDbgAssert(tp->refs > (trefs_t)0, "no references");
 #endif
 
-  if (tp->state != CH_STATE_FINAL) {
+  if (likely(tp->state != CH_STATE_FINAL)) {
     ch_list_link(&tp->waiting, &currtp->hdr.list);
     chSchGoSleepS(CH_STATE_WTEXIT);
   }
@@ -686,7 +686,7 @@ void chThdSleepUntil(systime_t time) {
 
   chSysLock();
   interval = chTimeDiffX(chVTGetSystemTimeX(), time);
-  if (interval > (sysinterval_t)0) {
+  if (likely(interval > (sysinterval_t)0)) {
     chThdSleepS(interval);
   }
   chSysUnlock();
@@ -711,7 +711,7 @@ systime_t chThdSleepUntilWindowed(systime_t prev, systime_t next) {
 
   chSysLock();
   time = chVTGetSystemTimeX();
-  if (chTimeIsInRangeX(time, prev, next)) {
+  if (likely(chTimeIsInRangeX(time, prev, next))) {
     chThdSleepS(chTimeDiffX(time, next));
   }
   chSysUnlock();
@@ -765,7 +765,7 @@ msg_t chThdSuspendS(thread_reference_t *trp) {
  *                      handled as follow:
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state.
- *                      - @a TIME_IMMEDIATE the thread is not enqueued and
+ *                      - @a TIME_IMMEDIATE the thread is not suspended and
  *                        the function returns @p MSG_TIMEOUT as if a timeout
  *                        occurred.
  *                      .
@@ -779,7 +779,7 @@ msg_t chThdSuspendTimeoutS(thread_reference_t *trp, sysinterval_t timeout) {
 
   chDbgAssert(*trp == NULL, "not NULL");
 
-  if (TIME_IMMEDIATE == timeout) {
+  if (unlikely(TIME_IMMEDIATE == timeout)) {
     return MSG_TIMEOUT;
   }
 
@@ -877,7 +877,7 @@ void chThdResume(thread_reference_t *trp, msg_t msg) {
 msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
   thread_t *currtp = chThdGetSelfX();
 
-  if (TIME_IMMEDIATE == timeout) {
+  if (unlikely(TIME_IMMEDIATE == timeout)) {
     return MSG_TIMEOUT;
   }
 
