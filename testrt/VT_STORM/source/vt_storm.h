@@ -41,7 +41,7 @@
  * @brief   Timings randomization.
  */
 #if !defined(VT_STORM_CFG_RANDOMIZE) || defined(__DOXYGEN__)
-#define VT_STORM_CFG_RANDOMIZE              TRUE
+#define VT_STORM_CFG_RANDOMIZE              FALSE
 #endif
 
 /**
@@ -62,7 +62,7 @@
  * @brief   Enable hammer timers.
  */
 #if !defined(VT_STORM_CFG_HAMMERS) || defined(__DOXYGEN__)
-#define VT_STORM_CFG_HAMMERS                TRUE
+#define VT_STORM_CFG_HAMMERS                FALSE
 #endif
 /** @} */
 

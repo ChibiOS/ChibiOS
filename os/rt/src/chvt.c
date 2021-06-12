@@ -479,20 +479,21 @@ void chVTDoTickI(void) {
       if (ch_dlist_isempty(&vtlp->dlist)) {
 
         vt_insert_first(vtlp, vtp, now, delay);
-      }
-      else {
-        /* Delay as delta from 'lasttime'. Note, it can overflow and the value
-           becomes lower than 'nowdelta'. In that case the delta is shortened
-           to make it fit the numeric range and the timer will be triggered
-           "nowdelta" cycles earlier.*/
-        delta = nowdelta + delay;
-        if (delta < nowdelta) {
-          delta = delay;
-        }
 
-        /* Insert into delta list. */
-        ch_dlist_insert(&vtlp->dlist, &vtp->dlist, delta);
+        return;
       }
+
+      /* Delay as delta from 'lasttime'. Note, it can overflow and the value
+         becomes lower than 'nowdelta'. In that case the delta is shortened
+         to make it fit the numeric range and the timer will be triggered
+         "nowdelta" cycles earlier.*/
+      delta = nowdelta + delay;
+      if (delta < nowdelta) {
+        delta = delay;
+      }
+
+      /* Insert into delta list. */
+      ch_dlist_insert(&vtlp->dlist, &vtp->dlist, delta);
     }
   }
 

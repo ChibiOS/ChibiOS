@@ -283,9 +283,11 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     /* Starting continuous timer.*/
     vtcus = 0;
 
-    delay = TIME_US2I(120);
+    delay = TIME_US2I(128);
     saturated = false;
     do {
+      sysinterval_t decrease;
+
       /* Starting sweepers.*/
       chSysLock();
       chVTSetI(&watchdog, TIME_MS2I(501), watchdog_cb, NULL);
@@ -302,7 +304,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTSetI(&guard3, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM * 2), guard_cb, NULL);
 
       /* Letting them run for half second.*/
-      chThdSleepS(TIME_MS2I(500));
+      chThdSleepS(TIME_MS2I(100));
 
       /* Stopping everything.*/
       chVTResetI(&watchdog);
@@ -326,13 +328,18 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
 
       palToggleLine(config->line);
       chprintf(cfg->out, ".");
-      if (delay >= TIME_US2I(1)) {
-        delay -= TIME_US2I(1);
+//      if (delay >= TIME_US2I(1)) {
+//        delay -= TIME_US2I(1);
+//      }
+      decrease = delay / (sysinterval_t)64;
+      if (decrease == (sysinterval_t)0) {
+        decrease = (sysinterval_t)1;
       }
+      delay = delay - decrease;
     } while (delay >= (sysinterval_t)VT_STORM_CFG_MIN_DELAY);
 
     if (saturated) {
-      chprintf(cfg->out, "\r\nSaturated at %u uS", TIME_I2US(delay));
+      chprintf(cfg->out, "\r\nSaturated at %u uS %u ticks", TIME_I2US(delay), delay);
       chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
     }
     else {

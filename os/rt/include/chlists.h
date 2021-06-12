@@ -539,7 +539,7 @@ static inline void ch_dlist_insert(ch_delta_list_t *dlhp,
   /* The delta list is scanned in order to find the correct position for
      this element. */
   dlp = dlhp->next;
-  while (dlp->delta < delta) {
+  while (likely(dlp->delta < delta)) {
     /* Debug assert if the element is already in the list.*/
     chDbgAssert(dlp != dlep, "element already in list");
 
