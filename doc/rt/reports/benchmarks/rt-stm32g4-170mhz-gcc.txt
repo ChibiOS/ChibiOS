@@ -5,7 +5,7 @@
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    51108 bytes
+*** Text size:    51140 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes
@@ -205,11 +205,11 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 521467 threads/S
+--- Score : 524686 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 653843 threads/S
+--- Score : 658912 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
@@ -221,7 +221,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 1531462 timers/S
+--- Score : 1531464 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
@@ -253,7 +253,7 @@ Final result: SUCCESS
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    51108 bytes
+*** Text size:    51140 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes

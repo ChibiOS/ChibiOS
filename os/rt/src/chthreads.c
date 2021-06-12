@@ -529,12 +529,12 @@ void chThdExitS(msg_t msg) {
   /* Static threads with no references are immediately removed from the
      registry because there is no memory to recover.*/
 #if CH_CFG_USE_DYNAMIC == TRUE
-  if ((currtp->refs == (trefs_t)0) &&
-      ((currtp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC)) {
+  if (unlikely((currtp->refs == (trefs_t)0) &&
+               ((currtp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC))) {
     REG_REMOVE(currtp);
   }
 #else
-  if (currtp->refs == (trefs_t)0) {
+  if (unlikely(currtp->refs == (trefs_t)0)) {
     REG_REMOVE(currtp);
   }
 #endif
