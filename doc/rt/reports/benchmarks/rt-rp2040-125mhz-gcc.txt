@@ -1,11 +1,11 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun  7 2021 - 09:25:54
+*** Compiled:     Jun 12 2021 - 18:26:28
 *** Platform:     RP2040
 *** Test Board:   Raspberry Pi Pico
 ***
-*** Text size:    59972 bytes
+*** Text size:    60116 bytes
 *** RO data size: 11380 bytes
 *** Data size:    220 bytes
 *** BSS size:     4232 bytes
@@ -189,39 +189,39 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 408486 msgs/S, 816972 ctxswc/S
+--- Score : 409826 msgs/S, 819652 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 328076 msgs/S, 656152 ctxswc/S
+--- Score : 328939 msgs/S, 657878 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 328076 msgs/S, 656152 ctxswc/S
+--- Score : 327217 msgs/S, 654434 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 1305448 ctxswc/S
+--- Score : 1312304 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 218909 threads/S
+--- Score : 218145 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 282160 threads/S
+--- Score : 283440 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 98268 reschedules/S, 589608 ctxswc/S
+--- Score : 102963 reschedules/S, 617778 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 770400 ctxswc/S
+--- Score : 784920 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 371286 timers/S
+--- Score : 371284 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
@@ -249,11 +249,11 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Jun  7 2021 - 09:25:54
+*** Compiled:     Jun 12 2021 - 18:26:28
 *** Platform:     RP2040
 *** Test Board:   Raspberry Pi Pico
 ***
-*** Text size:    59972 bytes
+*** Text size:    60116 bytes
 *** RO data size: 11380 bytes
 *** Data size:    220 bytes
 *** BSS size:     4232 bytes
@@ -374,5 +374,4 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
-
 
