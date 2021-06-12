@@ -530,7 +530,7 @@ void chThdExitS(msg_t msg) {
 #if CH_CFG_USE_DYNAMIC == TRUE
     /* Static threads are immediately removed from the registry because there
        is no memory to recover.*/
-    if (((currtp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC)) {
+    if (unlikely(((currtp->flags & CH_FLAG_MODE_MASK) == CH_FLAG_MODE_STATIC))) {
       REG_REMOVE(currtp);
     }
 #else
