@@ -520,7 +520,7 @@ void chThdExitS(msg_t msg) {
 
 #if CH_CFG_USE_WAITEXIT == TRUE
   /* Waking up any waiting thread.*/
-  while (ch_list_notempty(&currtp->waiting)) {
+  while (unlikely(ch_list_notempty(&currtp->waiting))) {
     (void) chSchReadyI((thread_t *)ch_list_unlink(&currtp->waiting));
   }
 #endif

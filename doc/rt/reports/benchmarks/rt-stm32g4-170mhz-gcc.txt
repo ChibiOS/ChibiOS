@@ -1,11 +1,11 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun 11 2021 - 13:55:11
+*** Compiled:     Jun 12 2021 - 07:55:58
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    51060 bytes
+*** Text size:    51108 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes
@@ -205,11 +205,11 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 518288 threads/S
+--- Score : 521467 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 643936 threads/S
+--- Score : 653843 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
@@ -249,11 +249,11 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Jun 11 2021 - 13:55:11
+*** Compiled:     Jun 12 2021 - 07:55:58
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    51060 bytes
+*** Text size:    51108 bytes
 *** RO data size: 9904 bytes
 *** Data size:    220 bytes
 *** BSS size:     5400 bytes

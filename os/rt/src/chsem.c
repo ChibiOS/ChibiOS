@@ -265,7 +265,7 @@ msg_t chSemWaitTimeoutS(semaphore_t *sp, sysinterval_t timeout) {
               "inconsistent semaphore");
 
   if (--sp->cnt < (cnt_t)0) {
-    if (TIME_IMMEDIATE == timeout) {
+    if (unlikely(TIME_IMMEDIATE == timeout)) {
       sp->cnt++;
 
       return MSG_TIMEOUT;

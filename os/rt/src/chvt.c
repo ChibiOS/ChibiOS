@@ -445,7 +445,7 @@ void chVTDoTickI(void) {
     chSysLockFromISR();
 
     /* If a reload is defined the timer needs to be restarted.*/
-    if (vtp->reload > (sysinterval_t)0) {
+    if (unlikely(vtp->reload > (sysinterval_t)0)) {
       sysinterval_t delay;
 
       /* Refreshing the current time after spending time in the callback for
