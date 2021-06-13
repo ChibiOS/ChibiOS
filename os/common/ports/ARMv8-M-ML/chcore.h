@@ -435,7 +435,7 @@ struct port_context {
   PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                      \
   PORT_SETUP_CONTEXT_FPU(tp);                                               \
   PORT_SETUP_CONTEXT_MPU(tp);                                               \
-} while (0)
+} while (false)
 
 /**
  * @brief   Computes the thread working area global size.
@@ -515,7 +515,7 @@ struct port_context {
       chSysHalt("stack overflow");                                          \
     }                                                                       \
     __port_switch(ntp, otp);                                                \
-  } while (0)
+  } while (false)
 #endif
 
 /*===========================================================================*/

@@ -375,7 +375,7 @@ struct port_context {
   (tp)->ctx.sp->r4 = (uint32_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (uint32_t)(arg);                                       \
   (tp)->ctx.sp->lr = (uint32_t)__port_thread_start;                         \
-} while (0)
+} while (false)
 
 /**
  * @brief   Computes the thread working area global size.
@@ -460,7 +460,7 @@ struct port_context {
       chSysHalt("stack overflow");                                          \
     }                                                                       \
     __port_switch(ntp, otp);                                                \
-  } while (0)
+  } while (false)
 #endif
 
 /**

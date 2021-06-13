@@ -604,7 +604,7 @@ struct port_context {
   (tp)->ctx.sp->lr = (uint32_t)__port_thread_start;                         \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
-} while (0)
+} while (false)
 
 /**
  * @brief   Context switch area size.
@@ -703,7 +703,7 @@ struct port_context {
         chSysHalt("stack overflow");                                        \
       }                                                                     \
       __port_switch(ntp, otp);                                              \
-    } while (0)
+    } while (false)
 
   #else
     #define port_switch(ntp, otp) do {                                      \
@@ -712,7 +712,7 @@ struct port_context {
       /* Setting up the guard page for the switched-in thread.*/            \
       mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,                        \
                           chThdGetSelfX()->wabase);                         \
-    } while (0)
+    } while (false)
   #endif
 #endif
 
