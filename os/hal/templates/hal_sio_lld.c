@@ -204,7 +204,7 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
  * @notapi
  */
 msg_t sio_lld_get(SIODriver *siop) {
-  msg_t msg = 0U;
+  msg_t msg = (msg_t)0;
 
   (void)siop;
 

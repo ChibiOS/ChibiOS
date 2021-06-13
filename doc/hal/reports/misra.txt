@@ -108,3 +108,6 @@
 --- Module:   ..\..\..\os\hal\templates\hal_wdg_lld.c (C)
 
 --- Module:   ..\..\..\os\hal\templates\hal_wspi_lld.c (C)
+
+executed 6-13-2021
+

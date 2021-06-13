@@ -185,7 +185,8 @@ static msg_t __ctl(void *ip, unsigned int operation, void *arg) {
     osalDbgAssert(false, "invalid CTL operation");
     break;
   default:
-    break;
+    /* Delegating to the LLD if supported.*/
+    return sio_lld_control(siop, operation, arg);
   }
   return MSG_OK;
 }
@@ -453,7 +454,11 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
+  /*lint -save -e506 -e681 [2.1] Silencing this error because it is
+    tested with a template implementation of sio_lld_is_rx_empty() which
+    is constant.*/
   while (sio_lld_is_rx_empty(siop)) {
+  /*lint -restore*/
     msg = osalThreadSuspendTimeoutS(&siop->sync_rx, timeout);
   }
 
@@ -484,7 +489,11 @@ msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
+  /*lint -save -e506 -e681 [2.1] Silencing this error because it is
+    tested with a template implementation of sio_lld_is_tx_full() which
+    is constant.*/
   while (sio_lld_is_tx_full(siop)) {
+  /*lint -restore*/
     msg = osalThreadSuspendTimeoutS(&siop->sync_tx, timeout);
   }
 
@@ -512,7 +521,11 @@ msg_t sioSynchronizeTXEnd(SIODriver *siop, sysinterval_t timeout) {
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
+  /*lint -save -e506 -e774 [2.1, 14.3] Silencing this error because
+    it is tested with a template implementation of sio_lld_is_tx_ongoing()
+    which is constant.*/
   if (sio_lld_is_tx_ongoing(siop)) {
+  /*lint -restore*/
     msg = osalThreadSuspendTimeoutS(&siop->sync_txend, timeout);
   }
   else {

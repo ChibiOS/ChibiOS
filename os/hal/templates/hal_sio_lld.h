@@ -69,12 +69,14 @@ typedef uint32_t sio_events_mask_t;
 /**
  * @brief   Low level fields of the SIO driver structure.
  */
-#define sio_lld_driver_fields
+#define sio_lld_driver_fields                                               \
+  uint32_t dummy
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
  */
-#define sio_lld_config_fields
+#define sio_lld_config_fields                                               \
+  uint32_t dummy
 
 /**
  * @brief   Determines the state of the RX FIFO.
@@ -86,7 +88,7 @@ typedef uint32_t sio_events_mask_t;
  *
  * @notapi
  */
-#define sio_lld_is_rx_empty(siop) true
+#define sio_lld_is_rx_empty(siop) false
 
 /**
  * @brief   Determines the state of the TX FIFO.
@@ -98,7 +100,7 @@ typedef uint32_t sio_events_mask_t;
  *
  * @notapi
  */
-#define sio_lld_is_tx_full(siop) true
+#define sio_lld_is_tx_full(siop) false
 
 /**
  * @brief   Determines the transmission state.

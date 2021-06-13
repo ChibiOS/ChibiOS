@@ -468,6 +468,7 @@ extern "C" {
   void sioStop(SIODriver *siop);
   void sioStartOperation(SIODriver *siop, const SIOOperation *operation);
   void sioStopOperation(SIODriver *siop);
+  sio_events_mask_t sioGetAndClearEvents(SIODriver *siop);
   size_t sioAsyncRead(SIODriver *siop, uint8_t *buffer, size_t n);
   size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n);
 #if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)

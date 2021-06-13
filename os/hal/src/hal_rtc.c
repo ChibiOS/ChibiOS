@@ -246,8 +246,8 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
   /* Day of the year calculation.*/
   year = timp->tm_year + 1900;
   timp->tm_yday = timp->tm_mday - 1;
-  timp->tm_yday += accu_month_len[timp->tm_mon];
-  is_leap_year = ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+  timp->tm_yday += (int)accu_month_len[timp->tm_mon];
+  is_leap_year = (((year % 4) == 0) && ((year % 100) != 0)) || ((year % 400) == 0);
   if (is_leap_year && (timp->tm_mon > 1)) {
     timp->tm_yday++;
   }
@@ -313,7 +313,7 @@ uint32_t rtcConvertDateTimeToFAT(const RTCDateTime *timespec) {
     if (hour == 24U) {
       hour = 0U;
       day += 1U;
-      if (day > month_len[month - 1U]) {
+      if (day > (uint32_t)month_len[month - 1U]) {
         day = 1U;
         month += 1U;
       }
