@@ -125,10 +125,15 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
       /* A small delay that will become the first element in the delta list
          and next deadline.*/
       deadline_delta = delta;
+
+      /* Limit delta to CH_CFG_ST_TIMEDELTA.*/
+      if (deadline_delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+        deadline_delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+      }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
       /* The delta could be too large for the physical timer to handle
          this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-      if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+      else if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
         deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
       }
 #endif
