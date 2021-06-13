@@ -171,6 +171,7 @@
 
 /**
  * @name    RT options not existing in NIL
+ * @{
  */
 #define CH_CFG_USE_REGISTRY         FALSE
 /** @} */
