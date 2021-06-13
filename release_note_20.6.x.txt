@@ -1,12 +1,12 @@
 ******************************************************************************
-*** ChibiOS next Release Notes.                                            ***
+*** ChibiOS 21.6.x Release Notes.                                          ***
 ******************************************************************************
 
-ChibiOS next is composed of several independent but inter-operable
+ChibiOS 21.6.x is composed of several independent but inter-operable
 sub-projects: RT, NIL, SB, HAL, EX. Plus several external libraries
 integrated in our structure: WolfSSL, FatFS and lwIP.
 
-*** ChibiOS next highlights ****
+*** ChibiOS 21.6.x highlights ****
 
 - NEW RT 7.0.
 - Support for RP2040 and Raspberry Pico board.
@@ -15,7 +15,7 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 - Improved STM32 HAL.
 - Added ARMv8-M port.
 
-*** ChibiOS next general improvements ***
+*** ChibiOS 21.6.x general improvements ***
 
 - Added chscanf() and buffered streams.
 - Added option to LWIP bindings to use memory pools instead of heap allocator.

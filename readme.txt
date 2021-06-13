@@ -73,7 +73,7 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
-*** Next ***
+*** 21.6.0 ***
 - NEW: Simplified test XML schema.
 - NEW: Simplified interface between ports and RT/NIL.
 - NEW: Removed duplicated files for ARM ports: chtypes.h.
