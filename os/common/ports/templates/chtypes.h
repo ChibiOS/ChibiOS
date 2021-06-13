@@ -21,7 +21,7 @@
  * @file    templates/chtypes.h
  * @brief   Template port system types.
  *
- * @addtogroup TEMPLATE_CORE
+ * @addtogroup port_types
  * @{
  */
 

@@ -59,12 +59,12 @@
  */
 
 /**
- * @defgroup instances OS Instances
+ * @defgroup os_structures OS Types and Structures
  * @ingroup os
  */
 
 /**
- * @defgroup system System Management
+ * @defgroup instances OS Instances
  * @ingroup os
  */
 
@@ -86,6 +86,11 @@
 /**
  * @defgroup base Base Kernel Services
  * @ingroup kernel
+ */
+
+/**
+ * @defgroup system System Management
+ * @ingroup base
  */
 
 /**

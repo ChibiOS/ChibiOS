@@ -21,7 +21,7 @@
  * @file    templates/chcore.c
  * @brief   Port related template code.
  *
- * @addtogroup TEMPLATE_CORE
+ * @addtogroup port_core
  * @details Non portable code templates.
  * @{
  */

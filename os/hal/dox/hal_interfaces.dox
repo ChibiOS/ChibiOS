@@ -55,6 +55,17 @@
  */
 
 /**
+ * @defgroup HAL_BUFFERED_STREAMS Buffered Streams Class
+ * @ingroup HAL_INTERFACES
+ */
+
+/**
  * @defgroup HAL_CHPRINTF Output Formatter Utility
  * @ingroup HAL_INTERFACES
  */
+
+/**
+ * @defgroup HAL_CHSCANF Input Formatter Utility
+ * @ingroup HAL_INTERFACES
+ */
+ 
