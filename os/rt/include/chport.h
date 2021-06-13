@@ -23,7 +23,10 @@
  *
  * @addtogroup port_wrapper
  * @details This module performs checks on the information exported by
- *          the port layer.
+ *          the port layer. The port layer is checked at compile time
+ *          in order to make sure that it exports all the required macros
+ *          and definitions.
+ * @note    This module does not export any functionality.
  * @{
  */
 

@@ -49,29 +49,47 @@
  */
 
 /**
+ * @defgroup os System
+ * @ingroup kernel
+ */
+
+/**
+ * @defgroup port_wrapper Port Interface
+ * @ingroup os
+ */
+
+/**
+ * @defgroup instances OS Instances
+ * @ingroup os
+ */
+
+/**
+ * @defgroup system System Management
+ * @ingroup os
+ */
+
+/**
+ * @defgroup rfcu Runtime Faults Collection Unit
+ * @ingroup os
+ */
+
+/**
+ * @defgroup os_lists Lists and Queues
+ * @ingroup os
+ */
+
+/**
+ * @defgroup scheduler Scheduler
+ * @ingroup os
+ */
+
+/**
  * @defgroup base Base Kernel Services
- * @details Base kernel services, the base subsystems are always included in
- *          the OS builds.
  * @ingroup kernel
  */
 
 /**
  * @defgroup mem Memory Alignment
- * @ingroup base
- */
-
-/**
- * @defgroup system System Management
- * @ingroup base
- */
-
-/**
- * @defgroup os_lists Lists and Queues
- * @ingroup base
- */
-
-/**
- * @defgroup scheduler Scheduler
  * @ingroup base
  */
 

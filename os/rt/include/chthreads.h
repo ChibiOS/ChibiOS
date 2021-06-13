@@ -214,6 +214,7 @@ typedef struct {
  * @param[in] prio      thread priority
  * @param[in] funcp     thread function pointer
  * @param[in] arg       thread argument
+ * @param[in] oip       instance affinity
  */
 #define THD_DESCRIPTOR_AFFINITY(name, wbase, wend, prio, funcp, arg, oip) { \
   (name),                                                                   \

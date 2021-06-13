@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    rt/src/chinstance.c
+ * @file    rt/src/chinstances.c
  * @brief   OS instances code.
  *
  * @addtogroup instances
