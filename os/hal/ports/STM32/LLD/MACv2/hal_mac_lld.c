@@ -406,9 +406,9 @@ void mac_lld_start(MACDriver *macp) {
      Note that the complete setup of the MAC is performed when the link
      status is detected.*/
 #if STM32_MAC_IP_CHECKSUM_OFFLOAD
-  ETH->MACCR |= ETH_MACCR_IPCO | ETH_MACCR_RE | ETH_MACCR_TE;
+  ETH->MACCR |= ETH_MACCR_IPC | ETH_MACCR_RE | ETH_MACCR_TE;
 #else
-  ETH->MACCR |=                  ETH_MACCR_RE | ETH_MACCR_TE;
+  ETH->MACCR |=                 ETH_MACCR_RE | ETH_MACCR_TE;
 #endif
 
   /* DMA general settings.*/
@@ -584,7 +584,7 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
     if (!(rdes->rdes3 & STM32_RDES3_ES)
         && !(rdes->rdes2 & STM32_RDES2_DAF)
 #if STM32_MAC_IP_CHECKSUM_OFFLOAD
-        && !(rdes->rdes1 & (STM32_RDES1_IHCE | STM32_RDES1_IPCE))
+        && !(rdes->rdes1 & (STM32_RDES1_IPHE | STM32_RDES1_IPCE))
 #endif
         && (rdes->rdes3 & STM32_RDES3_FD) && (rdes->rdes3 & STM32_RDES3_LD)) {
       /* Found a valid one.*/
