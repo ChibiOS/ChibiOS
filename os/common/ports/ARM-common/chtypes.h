@@ -36,6 +36,7 @@
 
 /**
  * @name    Architecture data constraints
+ * @{
  */
 #define PORT_ARCH_SIZEOF_DATA_PTR   4
 #define PORT_ARCH_SIZEOF_CODE_PTR   4
