@@ -141,6 +141,8 @@
        MEMS Accelerometers.
 - NEW: Safer messages mechanism for sandboxes.
 - NEW: Added latency measurement test application.
+- FIX: Fixed STM32 SDMMCv2 driver invalid initial clock settings (bug #1160)
+       (backported to 20.3.4).
 - FIX: Fixed wrong wait states calculation in STM32G4xx, insufficient
        boost settings (bug #1159)(backported to 20.3.4).
 - FIX: Fixed warning in STM32 ADCv4 (bug #1158)
