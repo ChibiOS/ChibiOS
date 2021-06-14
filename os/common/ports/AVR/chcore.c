@@ -93,7 +93,7 @@ void _port_switch(thread_t *ntp, thread_t *otp) {
   asm volatile ("push    r28");
   asm volatile ("push    r29");
 
-#if defined(_CHIBIOS_RT_)
+#if defined(__CHIBIOS_RT__)
   asm volatile ("movw    r30, r22");
   asm volatile ("in      r0, 0x3d");
   asm volatile ("std     Z+5, r0");
@@ -107,7 +107,7 @@ void _port_switch(thread_t *ntp, thread_t *otp) {
   asm volatile ("out     0x3e, r0");
 #endif
 
-#if defined(_CHIBIOS_NIL_)
+#if defined(__CHIBIOS_NIL__)
   asm volatile ("movw    r30, r22");
   asm volatile ("in      r0, 0x3d");
   asm volatile ("std     Z+0, r0");
