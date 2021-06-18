@@ -100,9 +100,14 @@
 #include "hal.h"
 
 #else /* TEST_CFG_CHIBIOS_SUPPORT == FALSE */
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #endif /* TEST_CFG_CHIBIOS_SUPPORT == FALSE */
+
+#if (TEST_CFG_CHIBIOS_SUPPORT == FALSE) && (TEST_CFG_DELAY_BETWEEN_TESTS==TRUE)
+#error "TEST_CFG_DELAY_BETWEEN_TESTS requires TEST_CFG_CHIBIOS_SUPPORT"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -298,9 +303,9 @@ extern "C" {
                                  systime_t end,
                                  const char *msg);
 #endif
-  void test_printn(uint32_t n);
-  void test_print(const char *msgp);
-  void test_println(const char *msgp);
+  void test_putchar(char c);
+  int test_vprintf(const char *fmt, va_list ap);
+  int test_printf(const char *fmt, ...);
   void test_emit_token(char token);
   bool test_execute_putchar(test_putchar_t putfunc,
                             const testsuite_t *tsp);
@@ -336,6 +341,43 @@ static inline msg_t test_execute(BaseSequentialStream *stream,
   return (msg_t)test_execute_stream(stream, tsp);
 }
 #endif
+
+
+/**
+ * @brief   Prints a decimal unsigned number.
+ *
+ * @param[in] n         the number to be printed
+ *
+ * @api
+ */
+static inline void test_printn(uint32_t n) {
+
+  test_printf("%u", n);
+}
+
+/**
+ * @brief   Prints a line without final end-of-line.
+ *
+ * @param[in] msgp      the message
+ *
+ * @api
+ */
+static inline void test_print(const char *msgp) {
+
+  test_printf("%s", msgp);
+}
+
+/**
+ * @brief   Prints a line.
+ *
+ * @param[in] msgp      the message
+ *
+ * @api
+ */
+static inline void test_println(const char *msgp) {
+
+  test_printf("%s"TEST_CFG_EOL_STRING, msgp);
+}
 
 #endif /* CH_TEST_H */
 

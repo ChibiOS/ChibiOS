@@ -61,13 +61,6 @@ static int test_stream_putchar(int c) {
 }
 #endif
 
-static void test_putchar(char c) {
-
-  if (chtest.putchar != NULL) {
-    chtest.putchar(c);
-  }
-}
-
 static void test_clear_tokens(void) {
 
   chtest.tokp = chtest.tokens_buffer;
@@ -132,27 +125,23 @@ static void test_print_fat_line(void) {
  * @retval true         if one or more tests failed.
  */
 static bool test_execute_inner(const testsuite_t *tsp) {
-  int tseq, tcase;
+  unsigned tseq, tcase;
 
   /* Test execution.*/
-  test_println("");
+  test_printf(TEST_CFG_EOL_STRING);
   if (tsp->name != NULL) {
-    test_print("*** ");
-    test_println(tsp->name);
+    test_printf("*** %s"TEST_CFG_EOL_STRING, tsp->name);
   }
   else {
-    test_println("*** Test Suite");
+    test_printf("*** Test Suite"TEST_CFG_EOL_STRING);
   }
-  test_println("***");
-  test_print("*** Compiled:     ");
-  test_println(__DATE__ " - " __TIME__);
+  test_printf("***"TEST_CFG_EOL_STRING);
+  test_printf("*** Compiled:     %s"TEST_CFG_EOL_STRING, __DATE__ " - " __TIME__);
 #if defined(PLATFORM_NAME)
-  test_print("*** Platform:     ");
-  test_println(PLATFORM_NAME);
+  test_printf("*** Platform:     %s"TEST_CFG_EOL_STRING, PLATFORM_NAME);
 #endif
 #if defined(BOARD_NAME)
-  test_print("*** Test Board:   ");
-  test_println(BOARD_NAME);
+  test_printf("*** Test Board:   %s"TEST_CFG_EOL_STRING, BOARD_NAME);
 #endif
 #if TEST_CFG_SIZE_REPORT == TRUE
   {
@@ -160,77 +149,58 @@ static bool test_execute_inner(const testsuite_t *tsp) {
                    __rodata_base__, __rodata_end__,
                    __data_base__,   __data_end__,
                    __bss_base__,    __bss_end__;
-    test_println("***");
-    test_print("*** Text size:    ");
-    test_printn((uint32_t)(&__text_end__ - &__text_base__));
-    test_println(" bytes");
-    test_print("*** RO data size: ");
-    test_printn((uint32_t)(&__rodata_end__ - &__rodata_base__));
-    test_println(" bytes");
-    test_print("*** Data size:    ");
-    test_printn((uint32_t)(&__data_end__ - &__data_base__));
-    test_println(" bytes");
-    test_print("*** BSS size:     ");
-    test_printn((uint32_t)(&__bss_end__ - &__bss_base__));
-    test_println(" bytes");
+    test_printf("***"TEST_CFG_EOL_STRING);
+    test_printf("*** Text size:    %u bytes"TEST_CFG_EOL_STRING, &__text_end__   - &__text_base__);
+    test_printf("*** RO data size: %u bytes"TEST_CFG_EOL_STRING, &__rodata_end__ - &__rodata_base__);
+    test_printf("*** Data size:    %u bytes"TEST_CFG_EOL_STRING, &__data_end__   - &__data_base__);
+    test_printf("*** BSS size:     %u bytes"TEST_CFG_EOL_STRING, &__bss_end__    - &__bss_base__);
   }
 #endif
 #if defined(TEST_REPORT_HOOK_HEADER)
-  TEST_REPORT_HOOK_HEADER
+  TEST_REPORT_HOOK_HEADER();
 #endif
-  test_println("");
+  test_printf(TEST_CFG_EOL_STRING);
 
   chtest.global_fail = false;
-  tseq = 0;
+  tseq = 0U;
   while (tsp->sequences[tseq] != NULL) {
+#if defined(TEST_REPORT_HOOK_TESTSEQUENCE)
+    TEST_REPORT_HOOK_TESTSEQUENCE(tsp->sequences[tseq]);
+#endif
 #if TEST_CFG_SHOW_SEQUENCES == TRUE
     test_print_fat_line();
-    test_print("=== Test Sequence ");
-    test_printn(tseq + 1);
-    test_print(" (");
-    test_print(tsp->sequences[tseq]->name);
-    test_println(")");
+    test_printf("=== Test Sequence %u (%s)"TEST_CFG_EOL_STRING, tseq + 1U, tsp->sequences[tseq]->name);
 #endif
-    tcase = 0;
+    tcase = 0U;
     while (tsp->sequences[tseq]->cases[tcase] != NULL) {
       test_print_line();
-      test_print("--- Test Case ");
-      test_printn(tseq + 1);
-      test_print(".");
-      test_printn(tcase + 1);
-      test_print(" (");
-      test_print(tsp->sequences[tseq]->cases[tcase]->name);
-      test_println(")");
+      test_printf("--- Test Case %u.%u (%s)"TEST_CFG_EOL_STRING, tseq + 1U, tcase + 1U, tsp->sequences[tseq]->cases[tcase]->name);
 #if TEST_CFG_DELAY_BETWEEN_TESTS > 0
       osalThreadSleepMilliseconds(TEST_CFG_DELAY_BETWEEN_TESTS);
 #endif
+#if defined(TEST_REPORT_HOOK_TESTCASE)
+      TEST_REPORT_HOOK_TESTCASE(tsp->sequences[tseq]->cases[tcase]);
+#endif
       test_execute_case(tsp->sequences[tseq]->cases[tcase]);
       if (chtest.local_fail) {
-        test_print("--- Result: FAILURE (#");
-        test_printn(chtest.current_step);
-        test_print(" [");
+        test_printf("--- Result: FAILURE (#%u [", chtest.current_step, "", chtest.failure_message);
         test_print_tokens();
-        test_print("] \"");
-        test_print(chtest.failure_message);
-        test_println("\")");
+        test_printf("] \"%s\")"TEST_CFG_EOL_STRING, chtest.failure_message);
       }
       else {
-        test_println("--- Result: SUCCESS");
+        test_printf("--- Result: SUCCESS"TEST_CFG_EOL_STRING);
       }
       tcase++;
     }
     tseq++;
   }
   test_print_line();
-  test_println("");
-  test_print("Final result: ");
-  if (chtest.global_fail)
-    test_println("FAILURE");
-  else
-    test_println("SUCCESS");
+  test_printf(TEST_CFG_EOL_STRING);
+  test_printf("Final result: %s"TEST_CFG_EOL_STRING,
+              chtest.global_fail ? "FAILURE" : "SUCCESS");
 
 #if defined(TEST_REPORT_HOOK_END)
-  TEST_REPORT_HOOK_END
+  TEST_REPORT_HOOK_END();
 #endif
 
   return chtest.global_fail;
@@ -282,55 +252,6 @@ bool __test_assert_time_window(systime_t start,
                        msg);
 }
 #endif /* TEST_CFG_CHIBIOS_SUPPORT == TRUE */
-
-/**
- * @brief   Prints a decimal unsigned number.
- *
- * @param[in] n         the number to be printed
- *
- * @api
- */
-void test_printn(uint32_t n) {
-  char buf[16], *p;
-
-  if (!n) {
-    test_putchar('0');
-  }
-  else {
-    p = buf;
-    while (n) {
-      *p++ = (n % 10) + '0', n /= 10;
-    }
-    while (p > buf) {
-      test_putchar(*--p);
-    }
-  }
-}
-
-/**
- * @brief   Prints a line without final end-of-line.
- *
- * @param[in] msgp      the message
- *
- * @api
- */
-void test_print(const char *msgp) {
-
-  test_print_string(msgp);
-}
-
-/**
- * @brief   Prints a line.
- *
- * @param[in] msgp      the message
- *
- * @api
- */
-void test_println(const char *msgp) {
-
-  test_print_string(msgp);
-  test_print_string(TEST_CFG_EOL_STRING);
-}
 
 /**
  * @brief   Emits a token into the tokens buffer from a critical zone.
