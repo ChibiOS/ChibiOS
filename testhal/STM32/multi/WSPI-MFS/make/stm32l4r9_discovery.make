@@ -111,7 +111,7 @@ include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-include $(CHIBIOS)/test/lib/test.mk
+include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/mfs/mfs_test.mk
 include $(CHIBIOS)/os/hal/lib/complex/serial_nor/devices/macronix_mx25/hal_flash_device.mk
 include $(CHIBIOS)/os/hal/lib/complex/mfs/hal_mfs.mk

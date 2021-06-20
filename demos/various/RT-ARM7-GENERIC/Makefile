@@ -124,7 +124,7 @@ include $(CHIBIOS)/os/common/startup/ARM/compilers/GCC/mk/startup_lpc214x.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARM/compilers/GCC/mk/port_generic.mk
 # Other files (optional).
-#include $(CHIBIOS)/test/lib/test.mk
+#include $(CHIBIOS)/os/test/test.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 

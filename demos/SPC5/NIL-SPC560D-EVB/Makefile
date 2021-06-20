@@ -93,7 +93,7 @@ include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 include $(CHIBIOS)/os/nil/nil.mk
 include $(CHIBIOS)/os/common/ports/e200/compilers/GCC/mk/port.mk
 # Other files (optional).
-include $(CHIBIOS)/test/lib/test.mk
+include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/nil/nil_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 

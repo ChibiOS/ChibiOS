@@ -109,7 +109,7 @@ include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-include $(CHIBIOS)/test/lib/test.mk
+include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/nasa_osal/nasa_osal_test.mk
 include $(CHIBIOS)/os/common/abstractions/nasa_cfe/osal/cfe_osal.mk
 include $(CHIBIOS)/os/common/abstractions/nasa_cfe/psp/cfe_psp.mk
