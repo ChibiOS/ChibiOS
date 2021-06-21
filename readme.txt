@@ -74,4 +74,5 @@
 *****************************************************************************
 
 *** 21.6.1 ***
+- FIX: Fixed I2S-related definitions missing in STM32F3xx registry (bug #1162).
 - FIX: Fixed AVR port broken (bug #1161).
