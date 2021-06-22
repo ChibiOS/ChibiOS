@@ -238,9 +238,6 @@
 #error "Invalid DMA priority assigned to SPI3"
 #endif
 
-/* The following checks are only required when there is a DMA able to
-   reassign streams to different channels.*/
-#if STM32_ADVANCED_DMA
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_I2S_USE_SPI1 && (!defined(STM32_I2S_SPI1_RX_DMA_STREAM) ||        \
                            !defined(STM32_I2S_SPI1_TX_DMA_STREAM))
@@ -287,7 +284,43 @@
     !STM32_DMA_IS_VALID_STREAM(STM32_I2S_SPI3_TX_DMA_STREAM)
 #error "invalid DMA stream associated to SPI3 TX"
 #endif
-#endif /* STM32_ADVANCED_DMA */
+
+/* Devices without DMAMUX require an additional check.*/
+#if STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX
+
+/* Check on the validity of the assigned DMA channels.*/
+#if STM32_I2S_USE_SPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI1_RX_DMA_STREAM, STM32_I2S1_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI1 RX"
+#endif
+
+#if STM32_I2S_USE_SPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI1_TX_DMA_STREAM, STM32_I2S1_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI1 TX"
+#endif
+
+#if STM32_I2S_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI2_RX_DMA_STREAM, STM32_I2S2_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI2 RX"
+#endif
+
+#if STM32_I2S_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI2_TX_DMA_STREAM, STM32_I2S2_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI2 TX"
+#endif
+
+#if STM32_I2S_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI3_RX_DMA_STREAM, STM32_I2S3_RX_DMA_MSK)
+#error "invalid DMA stream associated to SPI3 RX"
+#endif
+
+#if STM32_I2S_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_I2S_SPI3_TX_DMA_STREAM, STM32_I2S3_TX_DMA_MSK)
+#error "invalid DMA stream associated to SPI3 TX"
+#endif
+
+
+#endif /* STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX */
 
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
