@@ -49,8 +49,8 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static char *test_ltoswd(char *p, long num, unsigned radix, long divisor) {
-  int i;
+static char *test_ltoswd(char *p, long num, int radix, long divisor) {
+  int i, c;
   char *q;
   long l, ll;
 
@@ -63,14 +63,15 @@ static char *test_ltoswd(char *p, long num, unsigned radix, long divisor) {
 
   q = p + MAX_FILLER;
   do {
-    i = (int)(l % radix);
-    i += '0';
-    if (i > '9') {
-      i += 'A' - '0' - 10;
+    c = (int)(l % (long)radix);
+    c += '0';
+    if (c > '9') {
+      c += ('A' - '0') - 10;
     }
-    *--q = i;
+    *--q = (char)c;
     l /= radix;
-  } while ((ll /= radix) != 0);
+    ll /= radix;
+  } while (ll != 0);
 
   i = (int)(p + MAX_FILLER - q);
   do {
@@ -80,7 +81,7 @@ static char *test_ltoswd(char *p, long num, unsigned radix, long divisor) {
   return p;
 }
 
-static char *test_ltoa(char *p, long num, unsigned radix) {
+static char *test_ltoa(char *p, long num, int radix) {
 
   return test_ltoswd(p, num, radix, 0);
 }
@@ -125,16 +126,17 @@ void test_putchar(char c) {
  * @api
  */
 int test_vprintf(const char *fmt, va_list ap) {
-  char *p, *s, c, filler;
-  int i, precision, width;
-  int n = 0;
-  bool is_long, left_align, do_sign;
-  long l;
+  int n;
   char tmpbuf[MAX_FILLER + 1];
 
+  n = 0;
   while (true) {
+    char *p, *s, c, filler;
+    int i, precision, width;
+    bool is_long, left_align, do_sign;
+
     c = *fmt++;
-    if (c == 0) {
+    if (c == '\0') {
       return n;
     }
 
@@ -144,6 +146,7 @@ int test_vprintf(const char *fmt, va_list ap) {
       continue;
     }
 
+    /* Pointers to the temporary buffer.*/
     p = tmpbuf;
     s = tmpbuf;
 
@@ -178,10 +181,10 @@ int test_vprintf(const char *fmt, va_list ap) {
       width = 0;
       while (true) {
         c = *fmt++;
-        if (c == 0) {
+        if (c == '\0') {
           return n;
         }
-        if (c >= '0' && c <= '9') {
+        if ((c >= '0') && (c <= '9')) {
           c -= '0';
           width = width * 10 + c;
         }
@@ -195,7 +198,7 @@ int test_vprintf(const char *fmt, va_list ap) {
     precision = 0;
     if (c == '.') {
       c = *fmt++;
-      if (c == 0) {
+      if (c == '\0') {
         return n;
       }
       if (c == '*') {
@@ -203,11 +206,11 @@ int test_vprintf(const char *fmt, va_list ap) {
         c = *fmt++;
       }
       else {
-        while (c >= '0' && c <= '9') {
+        while ((c >= '0') && (c <= '9')) {
           c -= '0';
           precision = precision * 10 + c;
           c = *fmt++;
-          if (c == 0) {
+          if (c == '\0') {
             return n;
           }
         }
@@ -215,10 +218,10 @@ int test_vprintf(const char *fmt, va_list ap) {
     }
 
     /* Long modifier.*/
-    if (c == 'l' || c == 'L') {
+    if ((c == 'l') || (c == 'L')) {
       is_long = true;
       c = *fmt++;
-      if (c == 0) {
+      if (c == '\0') {
         return n;
       }
     }
@@ -228,76 +231,81 @@ int test_vprintf(const char *fmt, va_list ap) {
 
     /* Command decoding.*/
     switch (c) {
+      int radix;
+      long arg;
+
     case 'c':
       filler = ' ';
       *p++ = va_arg(ap, int);
       break;
     case 's':
       filler = ' ';
-      if ((s = va_arg(ap, char *)) == 0) {
+      if ((s = va_arg(ap, char *)) == NULL) {
         s = "(null)";
       }
       if (precision == 0) {
         precision = 32767;
       }
-      for (p = s; *p && (--precision >= 0); p++)
-        ;
+      for (p = s; (*p != '\0') && (--precision >= 0); p++) {
+        /* Scanning string.*/
+      }
       break;
     case 'D':
     case 'd':
     case 'I':
     case 'i':
       if (is_long) {
-        l = va_arg(ap, long);
+        arg = va_arg(ap, long);
       }
       else {
-        l = va_arg(ap, int);
+        arg = va_arg(ap, int);
       }
-      if (l < 0) {
+      if (arg < 0) {
         *p++ = '-';
-        l = -l;
+        arg = -arg;
       }
       else
         if (do_sign) {
           *p++ = '+';
         }
-      p = test_ltoa(p, l, 10);
+      p = test_ltoa(p, arg, 10);
       break;
     case 'X':
     case 'x':
     case 'P':
     case 'p':
-      c = 16;
+      radix = 16;
       goto unsigned_common;
     case 'U':
     case 'u':
-      c = 10;
+      radix = 10;
       goto unsigned_common;
     case 'O':
     case 'o':
-      c = 8;
+      radix = 8;
 unsigned_common:
       if (is_long) {
-        l = va_arg(ap, unsigned long);
+        arg = va_arg(ap, unsigned long);
       }
       else {
-        l = va_arg(ap, unsigned int);
+        arg = va_arg(ap, unsigned int);
       }
-      p = test_ltoa(p, l, c);
+      p = test_ltoa(p, arg, radix);
       break;
     default:
       *p++ = c;
       break;
     }
     i = (int)(p - s);
-    if ((width -= i) < 0) {
+    width -= i;
+    if (width < 0) {
       width = 0;
     }
     if (left_align == false) {
       width = -width;
     }
     if (width < 0) {
-      if ((*s == '-' || *s == '+') && filler == '0') {
+      if (((*s == '-') || (*s == '+')) && (filler == '0')) {
         test_putchar(*s++);
         n++;
         i--;
