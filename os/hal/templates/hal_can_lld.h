@@ -70,7 +70,7 @@
 /**
  * @brief   Type of a structure representing an CAN driver.
  */
-typedef struct CANDriver CANDriver;
+typedef struct hal_can_driver CANDriver;
 
 /**
  * @brief   Type of a transmission mailbox index.
@@ -137,9 +137,9 @@ typedef struct {
 } CANRxFrame;
 
 /**
- * @brief   Driver configuration structure.
+ * @brief   Type of a CAN configuration structure.
  */
-typedef struct {
+typedef struct hal_can_config {
   /* End of the mandatory fields.*/
   uint32_t                  dummy;
 } CANConfig;
@@ -147,7 +147,7 @@ typedef struct {
 /**
  * @brief   Structure representing an CAN driver.
  */
-struct CANDriver {
+struct hal_can_driver {
   /**
    * @brief   Driver state.
    */
