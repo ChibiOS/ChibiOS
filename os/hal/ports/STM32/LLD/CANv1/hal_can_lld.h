@@ -187,9 +187,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing an CAN driver.
+ * @brief   Type of a CAN driver.
  */
-typedef struct CANDriver CANDriver;
+typedef struct hal_can_driver CANDriver;
 
 /**
  * @brief   Type of a transmission mailbox index.
@@ -303,9 +303,9 @@ typedef struct {
 } CANFilter;
 
 /**
- * @brief   Driver configuration structure.
+ * @brief   Type of a CAN configuration structure.
  */
-typedef struct {
+typedef struct hal_can_config {
   /**
    * @brief   CAN MCR register initialization data.
    * @note    Some bits in this register are enforced by the driver regardless
@@ -323,7 +323,7 @@ typedef struct {
 /**
  * @brief   Structure representing an CAN driver.
  */
-struct CANDriver {
+struct hal_can_driver {
   /**
    * @brief   Driver state.
    */

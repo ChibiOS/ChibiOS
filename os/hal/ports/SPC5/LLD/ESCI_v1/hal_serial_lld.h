@@ -128,7 +128,7 @@
  *          implementation defines its own version and the custom static
  *          initializers.
  */
-typedef struct {
+typedef struct hal_serial_config {
   /**
    * @brief Bit rate.
    */
