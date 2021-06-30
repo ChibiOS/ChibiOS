@@ -86,7 +86,12 @@ const halclkcfg_t hal_clkcfg_reset = {
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS | PWR_CR1_DBP,
   .pwr_cr2              = STM32_PWR_CR2,
-  .rcc_cr               = RCC_CR_MSIRANGE_6 | RCC_CR_MSION
+  .rcc_cr               = 0U
+#if STM32_MSIPLL_ENABLED
+                        | STM32_MSIRANGE | RCC_CR_MSIPLLEN | RCC_CR_MSION
+#else
+                        | STM32_MSIRANGE |                   RCC_CR_MSION
+#endif
 #if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
 #endif
@@ -473,13 +478,13 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case STM32_MCOSEL_HSE32:
     mcoclk = STM32_HSE32CLK;
     break;
-  case STM32_MCOSEL_PLL:
+  case STM32_MCOSEL_PLLRCLK:
     mcoclk = pllrclk;
     break;
-  case STM32_MCOSEL_PLLP:
+  case STM32_MCOSEL_PLLPCLK:
     mcoclk = pllpclk;
     break;
-  case STM32_MCOSEL_PLLQ:
+  case STM32_MCOSEL_PLLQCLK:
     mcoclk = pllqclk;
     break;
   case STM32_MCOSEL_LSI:
@@ -695,6 +700,10 @@ void stm32_clock_init(void) {
   /* Static clocks setup.*/
   lse_init();
   lsi_init();
+
+  /* MSISRANGE setup.*/
+  RCC->CR |= RCC_CR_MSIRGSEL;
+  RCC->CSR = (RCC->CSR & ~RCC_CSR_MSISRANGE_Msk) | STM32_MSISRANGE;
 
   /* Static clocks setup.*/
   hal_lld_set_static_clocks();

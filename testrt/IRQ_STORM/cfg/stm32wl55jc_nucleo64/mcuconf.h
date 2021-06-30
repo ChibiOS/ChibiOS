@@ -86,7 +86,7 @@
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
 #define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
 #define STM32_LPTIM3SEL                     STM32_LPTIM3SEL_PCLK1
-#define STM32_SPI2S2SEL                     STM32_SPI2S2SEL_PLLQ
+#define STM32_SPI2S2SEL                     STM32_SPI2S2SEL_PLLQCLK
 #define STM32_RNGSEL                        STM32_RNGSEL_LSE
 #define STM32_RTCSEL                        STM32_RTCSEL_LSE
 

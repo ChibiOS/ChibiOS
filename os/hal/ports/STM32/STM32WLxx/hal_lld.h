@@ -181,12 +181,12 @@
 #define STM32_MCOSEL_SYSCLK     (1 << 24)   /**< SYSCLK on MCO pin.         */
 #define STM32_MCOSEL_MSI        (2 << 24)   /**< MSI clock on MCO pin.      */
 #define STM32_MCOSEL_HSI16      (3 << 24)   /**< HSI16 clock on MCO pin.    */
-#define STM32_MCOSEL_HSE32      (4 << 24)   /**< HSE32 clock on MCO pin.      */
-#define STM32_MCOSEL_PLL        (5 << 24)   /**< PLL clock on MCO pin.      */
+#define STM32_MCOSEL_HSE32      (4 << 24)   /**< HSE32 clock on MCO pin.    */
+#define STM32_MCOSEL_PLLRCLK    (5 << 24)   /**< PLLR clock on MCO pin.     */
 #define STM32_MCOSEL_LSI        (6 << 24)   /**< LSI clock on MCO pin.      */
 #define STM32_MCOSEL_LSE        (8 << 24)   /**< LSE clock on MCO pin.      */
-#define STM32_MCOSEL_PLLP       (13 << 24)  /**< PLLP clock on MCO pin.     */
-#define STM32_MCOSEL_PLLQ       (14 << 24)  /**< PLLQ clock on MCO pin.     */
+#define STM32_MCOSEL_PLLPCLK    (13 << 24)  /**< PLLP clock on MCO pin.     */
+#define STM32_MCOSEL_PLLQCLK    (14 << 24)  /**< PLLQ clock on MCO pin.     */
 
 #define STM32_MCOPRE_MASK       (7 << 28)   /**< MCOPRE field mask.         */
 #define STM32_MCOPRE_DIV1       (0 << 28)   /**< MCO divided by 1.          */
@@ -264,9 +264,9 @@
 #define STM32_USART2SEL_LSE     (3 << 2)    /**< USART2 source is LSE.      */
 
 #define STM32_SPI2S2SEL_MASK    (3 << 8)    /**< SPI2S2SEL mask.            */
-#define STM32_SPI2S2SEL_PLLQ    (1 << 8)    /**< SPI2S2 source is PLLQ.     */
+#define STM32_SPI2S2SEL_PLLQCLK (1 << 8)    /**< SPI2S2 source is PLLQ.     */
 #define STM32_SPI2S2SEL_HSI16   (2 << 8)    /**< SPI2S2 source is HSI16.    */
-#define STM32_SPI2S2SEL_I2SCKIN (3 << 8)    /**< SPI2S2 source is External Input.*/
+#define STM32_SPI2S2SEL_CKIN    (3 << 8)    /**< SPI2S2 source is External Input.*/
 
 #define STM32_LPUART1SEL_MASK   (3 << 10)   /**< LPUART1 mask.              */
 #define STM32_LPUART1SEL_PCLK1  (0 << 10)   /**< LPUART1 source is PCLK1.   */
@@ -310,11 +310,11 @@
 #define STM32_ADCSEL_MASK       (3 << 28)   /**< ADCSEL mask.               */
 #define STM32_ADCSEL_NOCLK      (0 << 28)   /**< ADC clock disabled.        */
 #define STM32_ADCSEL_HSI16      (1 << 28)   /**< ADC source is HSI16.       */
-#define STM32_ADCSEL_PLLP       (2 << 28)   /**< ADC source is PLL.         */
+#define STM32_ADCSEL_PLLPCLK    (2 << 28)   /**< ADC source is PLL.         */
 #define STM32_ADCSEL_SYSCLK     (3 << 28)   /**< ADC source is SYSCLK.      */
 
 #define STM32_RNGSEL_MASK       (3 << 30)   /**< RNGSEL mask.               */
-#define STM32_RNGSEL_PLLQ       (0 << 30)   /**< RNG source is PLL.         */
+#define STM32_RNGSEL_PLLQCLK    (0 << 30)   /**< RNG source is PLL.         */
 #define STM32_RNGSEL_LSI        (1 << 30)   /**< RNG source is LSI.         */
 #define STM32_RNGSEL_LSE        (2 << 30)   /**< RNG source is LSE.         */
 #define STM32_RNGSEL_MSI        (3 << 30)   /**< RNG source is MSI.         */
@@ -685,6 +685,13 @@
 #endif
 
 /**
+ * @brief   SPI2S2SEL value (SPI2S2s clock source).
+ */
+#if !defined(STM32_SPI2S2SEL) || defined(__DOXYGEN__)
+#define STM32_SPI2S2SEL                     STM32_SPI2S2SEL_I2SCKIN
+#endif
+
+/**
  * @brief   RTC clock source.
  */
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
@@ -992,7 +999,9 @@
 #endif
 
 #if (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                                 \
-    ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                  \
+    ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK ||                               \
+      STM32_MCOSEL == STM32_MCOSEL_PLLPCLK ||                               \
+      STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) &&                              \
      (STM32_PLLSRC == STM32_PLLSRC_HSI16))
 #error "HSI16 not enabled, required by STM32_MCOSEL"
 #endif
@@ -1027,7 +1036,7 @@
 #error "HSI16 not enabled, required by LPTIM3SEL"
 #endif
 
-#if (STM32_SPI2SEL == STM32_SPI2SEL_HSI16)
+#if (STM32_SPI2S2SEL == STM32_SPI2S2SEL_HSI16)
 #error "HSI16 not enabled, required by SPI2S2SEL"
 #endif
 
@@ -1053,7 +1062,9 @@
   #endif
 
   #if (STM32_MCOSEL == STM32_MCOSEL_HSE32) ||                               \
-      ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                              \
+      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK ||                             \
+        STM32_MCOSEL == STM32_MCOSEL_PLLPCLK ||                             \
+        STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) &&                            \
        (STM32_PLLSRC == STM32_PLLSRC_HSE))
     #error "HSE32 not enabled, required by STM32_MCOSEL"
   #endif
@@ -1192,7 +1203,12 @@
  * PLL enable check.
  */
 #if (STM32_SW == STM32_SW_PLL) ||                                           \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
+    (STM32_ADC1SEL == STM32_ADCSEL_PLLPCLK) ||                              \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) ||                               \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) ||                               \
+    (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) ||                               \
+    (STM32_SPI2S2SEL == STM32_SPI2S2SEL_PLLQCLK) ||                         \
     defined(__DOXYGEN__)
 
 /**
@@ -1206,8 +1222,8 @@
 /**
  * @brief   STM32_PLLPEN field.
  */
-#if (STM32_ADC1SEL == STM32_ADCSEL_PLLP) ||                                \
-    (STM32_MCOSEL == STM32_MCOSEL_PLLP) ||                                 \
+#if (STM32_ADC1SEL == STM32_ADCSEL_PLLPCLK) ||                              \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) ||                               \
     defined(__DOXYGEN__)
 #define STM32_PLLPEN                (1 << 16)
 #else
@@ -1217,9 +1233,9 @@
 /**
  * @brief   STM32_PLLQEN field.
  */
-#if (STM32_MCOSEL == STM32_MCOSEL_PLLQ) ||                                  \
-    (STM32_RNGSEL == STM32_RNGSEL_PLLQ) ||                                  \
-    (STM32_SPI2S2SEL == STM32_SPI2S2SEL_PLLQ) ||                            \
+#if (STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) ||                               \
+    (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) ||                               \
+    (STM32_SPI2S2SEL == STM32_SPI2S2SEL_PLLQCLK) ||                         \
     defined(__DOXYGEN__)
 #define STM32_PLLQEN                (1 << 24)
 #else
@@ -1230,7 +1246,7 @@
  * @brief   STM32_PLLREN field.
  */
 #if (STM32_SW == STM32_SW_PLL) ||                                           \
-    (STM32_MCOSEL == STM32_MCOSEL_PLL) ||                                   \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
     defined(__DOXYGEN__)
 #define STM32_PLLREN                (1 << 28)
 #else
@@ -1286,13 +1302,13 @@
 #elif STM32_MCOSEL == STM32_MCOSEL_HSE32
 #define STM32_MCODIVCLK             STM32_HSE32CLK
 
-#elif STM32_MCOSEL == STM32_MCOSEL_PLL
+#elif STM32_MCOSEL == STM32_MCOSEL_PLLRCLK
 #define STM32_MCODIVCLK             STM32_PLL_R_CLKOUT
 
-#elif STM32_MCOSEL == STM32_MCOSEL_PLLP
+#elif STM32_MCOSEL == STM32_MCOSEL_PLLPCLK
 #define STM32_MCODIVCLK             STM32_PLL_P_CLKOUT
 
-#elif STM32_MCOSEL == STM32_MCOSEL_PLLQ
+#elif STM32_MCOSEL == STM32_MCOSEL_PLLQCLK
 #define STM32_MCODIVCLK             STM32_PLL_Q_CLKOUT
 
 #elif STM32_MCOSEL == STM32_MCOSEL_LSI
@@ -1478,7 +1494,7 @@
 /**
  * @brief   RNG clock point.
  */
-#if (STM32_RNGSEL == STM32_RNGSEL_PLLQ) || defined(__DOXYGEN__)
+#if (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) || defined(__DOXYGEN__)
 #define STM32_RNGCLK                hal_lld_get_clock_point(CLK_PLLQCLK)
 #elif STM32_RNGSEL == STM32_RNGSEL_LSI
 #define STM32_RNGCLK                STM32_LSICLK
@@ -1489,13 +1505,26 @@
 #endif
 
 /**
+ * @brief   SPI2S2 clock frequency.
+ */
+#if (STM32_SPI2S2SEL == STM32_SPI2S2SEL_PLLQCLK) || defined(__DOXYGEN__)
+#define STM32_SPI2S2CLK           hal_lld_get_clock_point(CLK__PLLQCLK)
+#elif STM32_SPI2S2SEL == STM32_SPI2S2SEL_HSI16
+#define STM32_SPI2S2CLK           STM32_HSI16CLK
+#elif STM32_SPI2S2SEL == STM32_SPI2S2SEL_CKIN
+#define STM32_SPI2S2CLK            0 /* Unknown, would require a board value */
+#else
+#error "invalid source selected for SPI2S2 clock"
+#endif
+
+/**
  * @brief   ADC clock frequency.
  */
 #if (STM32_ADCSEL == STM32_ADCSEL_NOCLK) || defined(__DOXYGEN__)
 #define STM32_ADCCLK                0
 #elif STM32_ADCSEL == STM32_ADCSEL_HSI16
 #define STM32_ADCCLK                STM32_HSI16CLK
-#elif STM32_ADCSEL == STM32_ADCSEL_PLLP
+#elif STM32_ADCSEL == STM32_ADCSEL_PLLPCLK
 #define STM32_ADCCLK                hal_lld_get_clock_point(CLK__PLLPCLK)
 #elif STM32_ADCSEL == STM32_ADCSEL_SYSCLK
 #define STM32_ADCCLK                hal_lld_get_clock_point(CLK_SYSCLK)
