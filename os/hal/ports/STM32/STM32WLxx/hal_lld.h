@@ -263,10 +263,10 @@
 #define STM32_USART2SEL_HSI16   (2 << 2)    /**< USART2 source is HSI16.    */
 #define STM32_USART2SEL_LSE     (3 << 2)    /**< USART2 source is LSE.      */
 
-#define STM32_SPI2SEL_MASK      (3 << 8)   /**< SPI2S2SEL mask.            */
-#define STM32_SPI2SEL_PCLK1     (1 << 8)   /**< SPI2S source is PLLQCLK.   */
-#define STM32_SPI2SEL_HSI16     (2 << 8)   /**< SPI2S source is HSI16.     */
-#define STM32_SPI2SEL_I2SCKIN   (3 << 8)   /**< SPI2S source is External Input.*/
+#define STM32_SPI2S2SEL_MASK    (3 << 8)    /**< SPI2S2SEL mask.            */
+#define STM32_SPI2S2SEL_PLLQ    (1 << 8)    /**< SPI2S2 source is PLLQ.     */
+#define STM32_SPI2S2SEL_HSI16   (2 << 8)    /**< SPI2S2 source is HSI16.    */
+#define STM32_SPI2S2SEL_I2SCKIN (3 << 8)    /**< SPI2S2 source is External Input.*/
 
 #define STM32_LPUART1SEL_MASK   (3 << 10)   /**< LPUART1 mask.              */
 #define STM32_LPUART1SEL_PCLK1  (0 << 10)   /**< LPUART1 source is PCLK1.   */
@@ -1207,7 +1207,7 @@
  * @brief   STM32_PLLPEN field.
  */
 #if (STM32_ADC1SEL == STM32_ADCSEL_PLLP) ||                                \
-    (STM32_MCOSEL == STM32_MCOSEL_PLLP) ||                                  \
+    (STM32_MCOSEL == STM32_MCOSEL_PLLP) ||                                 \
     defined(__DOXYGEN__)
 #define STM32_PLLPEN                (1 << 16)
 #else
@@ -1219,6 +1219,7 @@
  */
 #if (STM32_MCOSEL == STM32_MCOSEL_PLLQ) ||                                  \
     (STM32_RNGSEL == STM32_RNGSEL_PLLQ) ||                                  \
+    (STM32_SPI2S2SEL == STM32_SPI2S2SEL_PLLQ) ||                            \
     defined(__DOXYGEN__)
 #define STM32_PLLQEN                (1 << 24)
 #else
