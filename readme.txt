@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 19.1.5 ***
+- FIX: Fixed invalid STM32 TIM21/TIM22 debug freeze setting (bug #1164).
 - FIX: Fixed warning in STM32 ADCv4 (bug #1158).
 - FIX: Fixed wrong checks related to PLLSAI2 on L4 and L4+ (bug #1156).
 - FIX: Fixed errors in STM32L4xx registry (bug #1154).
