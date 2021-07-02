@@ -296,7 +296,7 @@
 #define ST_NUMBER                           STM32_TIM21_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK2
 #define ST_ENABLE_CLOCK()                   rccEnableTIM21(true)
-#define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB2_FZ_DBG_TIM21_STOP
+#define ST_ENABLE_STOP()                    DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM21_STOP
 
 #elif STM32_ST_USE_TIMER == 22
 
@@ -312,7 +312,7 @@
 #define ST_NUMBER                           STM32_TIM22_NUMBER
 #define ST_CLOCK_SRC                        STM32_TIMCLK2
 #define ST_ENABLE_CLOCK()                   rccEnableTIM22(true)
-#define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB2_FZ_DBG_TIM21_STOP
+#define ST_ENABLE_STOP()                    DBGMCU->APB2FZ |= DBGMCU_APB2_FZ_DBG_TIM21_STOP
 
 #else
 #error "STM32_ST_USE_TIMER specifies an unsupported timer"
