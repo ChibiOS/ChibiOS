@@ -59,7 +59,7 @@
         <xs:element name="condition" type="conditionType" maxOccurs="1"
           minOccurs="1">
         </xs:element>
-        <xs:element name="shared_code" type="global_data_and_codeType"
+        <xs:element name="shared_code" type="codeWrapperType"
           maxOccurs="1" minOccurs="1">
         </xs:element>
         <xs:element name="cases" type="casesType" maxOccurs="1"
@@ -187,4 +187,6 @@
         </xs:element>
       </xs:sequence>
     </xs:complexType>
+
+    <xs:element name="instance" type="instanceType"></xs:element>
 </xs:schema>
