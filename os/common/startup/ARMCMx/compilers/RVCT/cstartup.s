@@ -84,7 +84,7 @@ Reset_Handler   PROC
                 isb
                 bl      __early_init
 
-                IF      {CPU} = "Cortex-M4.fp.sp"
+                IF      {TARGET_FPU_SOFTVFP} == {FALSE}
                 LDR     R0, =0xE000ED88           ; Enable CP10,CP11
                 LDR     R1, [R0]
                 ORR     R1, R1, #(0xF << 20)

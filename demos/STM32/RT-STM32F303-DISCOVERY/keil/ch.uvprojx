@@ -353,8 +353,8 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls>--cpreproc</MiscControls>
-              <Define>CORTEX_USE_FPU=0</Define>
+              <MiscControls>--cpreproc --cpreproc_opts=-DCORTEX_USE_FPU=0</MiscControls>
+              <Define></Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\cfg;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ports\ARMv7-M;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY</IncludePath>
             </VariousControls>
