@@ -1051,6 +1051,17 @@
  */
 #if STM32_HSE32_ENABLED
 
+  #if !defined(STM32_HSE32SRC) ||                                         \
+    (STM32_HSE32SRC != STM32_HSE32_XTAL &&                                \
+     STM32_HSE32SRC != STM32_HSE32_TCXO &&                                \
+     STM32_HSE32SRC != STM32_HSE32_EXTS)
+    #error "STM32_HSE32SRC should by defined in mcuconf.h with correct value"
+  #endif
+
+  #if STM32_HSE32SRC == STM32_HSE32_TCXO
+    #error "HSE32 TCXO should be controled using SUBGHZ Radio Driver"
+  #endif
+
 #else /* !STM32_HSE32_ENABLED */
 
   #if STM32_SW == STM32_SW_HSE

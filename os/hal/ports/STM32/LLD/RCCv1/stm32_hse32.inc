@@ -64,13 +64,6 @@
 #error "invalid STM32_HSE32PRE value specified"
 #endif
 
-#if !defined(STM32_HSE32SRC) ||                                         \
-  (STM32_HSE32SRC != STM32_HSE32_XTAL &&                                \
-   STM32_HSE32SRC != STM32_HSE32_TCXO &&                                \
-   STM32_HSE32SRC != STM32_HSE32_EXTS)
-#error "STM32_HSE32SRC should by defined in mcuconf.h with correct value"
-#endif
-
 #endif
 
 /*===========================================================================*/
@@ -86,10 +79,6 @@
 /*===========================================================================*/
 
 __STATIC_INLINE void hse32_enable(void) {
-#if STM32_HSE32SRC == STM32_HSE32_TCXO
-  /* Enable PB0-VDDTCXO.*/
-  RCC->CR |= RCC_CR_HSEBYPPWR;
-#endif /* STM32_HSESRC == STM32_HSE_TCXO */
 
   /* Set HSE32 SYSCLK prescaler.*/
   RCC->CR |= STM32_HSE32PRE;
