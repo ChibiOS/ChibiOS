@@ -97,12 +97,15 @@
 /*===========================================================================*/
 
 #if TEST_CFG_CHIBIOS_SUPPORT == TRUE
+#include <stdarg.h>
+
 #include "hal.h"
 
 #else /* TEST_CFG_CHIBIOS_SUPPORT == FALSE */
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #endif /* TEST_CFG_CHIBIOS_SUPPORT == FALSE */
 
 #if (TEST_CFG_CHIBIOS_SUPPORT == FALSE) && (TEST_CFG_DELAY_BETWEEN_TESTS==TRUE)
