@@ -48,7 +48,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/RT-STM32F469I-SDP-K1"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-STM32F469I-EVAL-SDP-CK1Z"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
