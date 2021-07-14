@@ -28,6 +28,8 @@
 #ifndef CH_TEST_H
 #define CH_TEST_H
 
+#include <stdarg.h>
+
 #if defined(TEST_USE_CFG_FILE)
 #include "testconf.h"
 #endif
@@ -344,7 +346,6 @@ static inline msg_t test_execute(BaseSequentialStream *stream,
   return (msg_t)test_execute_stream(stream, tsp);
 }
 #endif
-
 
 /**
  * @brief   Prints a decimal unsigned number.
