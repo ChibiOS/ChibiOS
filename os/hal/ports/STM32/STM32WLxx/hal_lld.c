@@ -683,7 +683,7 @@ void stm32_clock_init(void) {
 
   /* RTC clock enable.*/
 #if HAL_USE_RTC
-  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, false);
+  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true);
 #endif
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
