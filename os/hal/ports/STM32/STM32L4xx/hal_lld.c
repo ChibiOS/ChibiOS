@@ -106,6 +106,11 @@ void stm32_clock_init(void) {
   /* PWR clock enabled.*/
   rccEnablePWRInterface(false);
 
+  /* RTC APB clock enable.*/
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
+  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
+#endif
+
   /* Core voltage setup, backup domain access enabled and left open.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
   while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */

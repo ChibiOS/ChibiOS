@@ -780,6 +780,11 @@ void stm32_clock_init(void) {
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
 
+  /* RTC APB clock enable.*/
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
+  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
+#endif
+
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
@@ -838,6 +843,11 @@ void stm32_clock_init(void) {
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
+
+  /* RTC APB clock enable.*/
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
+  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
+#endif
 
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
