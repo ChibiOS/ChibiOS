@@ -688,7 +688,7 @@
  * @brief   SPI2S2SEL value (SPI2S2s clock source).
  */
 #if !defined(STM32_SPI2S2SEL) || defined(__DOXYGEN__)
-#define STM32_SPI2S2SEL                     STM32_SPI2S2SEL_I2SCKIN
+#define STM32_SPI2S2SEL                     STM32_SPI2S2SEL_CKIN
 #endif
 
 /**
