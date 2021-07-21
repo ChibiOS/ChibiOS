@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Support for STM32G491 (bug #1187)
 - NEW: Made STM32H7 non-cacheable memory option also shareable.
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially

@@ -115,6 +115,8 @@
   #include "stm32g474xx.h"
 #elif defined(STM32G484xx)
   #include "stm32g484xx.h"
+#elif defined(STM32G491xx)
+  #include "stm32g491xx.h"
 #elif defined(STM32GBK1CB)
   #include "stm32gbk1cb.h"
 #else
