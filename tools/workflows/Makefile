@@ -29,7 +29,7 @@ linters := $(shell find $(ROOT)/tools/style -type f -name "*.sh")
 # Build makefile based projects
 all : makefiles
 makefiles : $(makefiles) $(multi_makefiles)
-	@! grep -q -r -m 1 \\"failure\\" $(TEST_RESULTS) 2>&1 > /dev/null || ( \
+	@! grep -q -r -m 1 "failure" $(TEST_RESULTS) 2>&1 > /dev/null || ( \
 		echo "Exiting because there are build failures"; \
 		exit 1)
 
