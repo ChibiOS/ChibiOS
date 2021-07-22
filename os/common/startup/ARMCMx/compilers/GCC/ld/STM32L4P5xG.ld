@@ -27,10 +27,10 @@ MEMORY
     flash5  : org = 0x00000000, len = 0
     flash6  : org = 0x00000000, len = 0
     flash7  : org = 0x00000000, len = 0
-    ram0    : org = 0x20000000, len = 320k  /* SRAM1+SRAM2 */
+    ram0    : org = 0x20000000, len = 320k  /* SRAM1+SRAM2+SRAM3 */
     ram1    : org = 0x20000000, len = 128k  /* SRAM1 */
-    ram2    : org = 0x20030000, len = 128k  /* SRAM2 */
-    ram3    : org = 0x00000000, len = 0
+    ram2    : org = 0x20020000, len = 64k   /* SRAM2 */
+    ram3    : org = 0x20030000, len = 128k  /* SRAM3 */
     ram4    : org = 0x10000000, len = 64k   /* SRAM2 alias */
     ram5    : org = 0x00000000, len = 0
     ram6    : org = 0x00000000, len = 0
