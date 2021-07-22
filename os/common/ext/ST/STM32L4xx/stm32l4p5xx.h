@@ -1185,7 +1185,7 @@ typedef struct
   __IO uint32_t SR;          /*!< WWDG Status register,        Address offset: 0x08 */
 } WWDG_TypeDef;
 
-#if  STM32L4P5xx
+#ifdef  STM32L4P5xx
 /**
   * @brief HASH
   */
@@ -1587,7 +1587,7 @@ typedef struct
 #define RTC                 ((RTC_TypeDef *) RTC_BASE)
 #define WWDG                ((WWDG_TypeDef *) WWDG_BASE)
 #define IWDG                ((IWDG_TypeDef *) IWDG_BASE)
-#if  STM32L4P5xx
+#ifdef  STM32L4P5xx
 #define TAMP                ((TAMP_TypeDef *) TAMP_BASE)
 #endif /* STM32L412xx || STM32L422xx || STM32L4P5xx || STM32L4Q5xx */
 #define SPI2                ((SPI_TypeDef *) SPI2_BASE)

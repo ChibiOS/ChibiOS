@@ -24,6 +24,8 @@
                                 <xs:enumeration value="STM32L486xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L496xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L4A6xx"></xs:enumeration>
+                                <xs:enumeration value="STM32L4P5xx"></xs:enumeration>
+                                <xs:enumeration value="STM32L4Q5xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L4R5xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L4R7xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L4R9xx"></xs:enumeration>
