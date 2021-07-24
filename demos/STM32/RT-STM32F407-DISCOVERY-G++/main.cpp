@@ -175,7 +175,7 @@ protected:
 
     test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
     test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
-    exit(test_global_fail);
+    exit(chtest.global_fail);
   }
 
 public:

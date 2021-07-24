@@ -7,22 +7,24 @@ ROOT := $(realpath ../..)
 TEST_RESULTS := $(ROOT)/test_results
 DOC_RESULTS := $(ROOT)/doc_results
 
+# Directory with auxiliary scripts
+WORKFLOWS := $(ROOT)/tools/workflows
+
 # Defines what targets to build in makefile based projects, the order matter.
 TARGETS := all clean
 
 # Find all projects to build
-makefiles := $(shell find $(ROOT)/demos -type f -name Makefile)
-makefiles += $(shell find $(ROOT)/test -type f -name Makefile)
-makefiles += $(shell find $(ROOT)/testex -type f -name Makefile)
-makefiles += $(shell find $(ROOT)/testhal -type f -name Makefile -not \
-			   -path "*/multi/*")
-makefiles += $(shell find $(ROOT)/testrt -type f -name Makefile)
-multi_makefiles := $(shell find $(ROOT)/testhal -type f -path "*/multi/*" \
-					 -name "*.make")
+makefile_dirs := $(addprefix $(ROOT)/,demos test testex testhal testrt)
+makefiles += $(shell find $(makefile_dirs) -type f -not -path "*/multi/*" \
+			   -name Makefile )
+multi_makefiles := $(shell find $(makefile_dirs) -type f -path "*/multi/*" \
+				     -name "*.make")
+external := $(addprefix $(ROOT)/ext/,fatfs lwip pico-sdk wolfssl)
+
 docs := $(shell find $(ROOT)/doc -type f -name Doxyfile_html)
 linters := $(shell find $(ROOT)/tools/style -type f -name "*.sh")
 
-.PHONY : all makefiles docs info lint clean
+.PHONY : all makefiles external docs info lint clean
 .PHONY : $(makefiles) $(multi_makefiles)
 .PHONY : $(linters) $(docs)
 
@@ -33,15 +35,20 @@ makefiles : $(makefiles) $(multi_makefiles)
 		echo "Exiting because there are build failures"; \
 		exit 1)
 
-$(makefiles) :
+$(makefiles) : $(external)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))
-	+python $(ROOT)/tools/workflows/make.py -C $(@D) -f $(@F) \
-		-p $(ROOT)/ -r $(TEST_RESULTS) $(TARGETS)
+	+python $(WORKFLOWS)/make.py -C $(@D) -f $(@F) -p $(ROOT)/ \
+		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml $(TARGETS)
 
-$(multi_makefiles) :
+$(multi_makefiles) : $(external)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))
-	+python $(ROOT)/tools/workflows/make.py -C $(dir $(@D)) -f make/$(@F) \
-		-p $(ROOT)/ -r $(TEST_RESULTS) $(TARGETS)
+	+python $(WORKFLOWS)/make.py -C $(dir $(@D)) -f make/$(@F) -p $(ROOT)/ \
+		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml $(TARGETS)
+
+# External projects
+external : $(external)
+$(external) :
+	7z x $@*.7z -o$(@D)
 
 # Build documentation
 docs : $(docs)
@@ -85,3 +92,4 @@ info :
 clean :
 	rm -rf $(TEST_RESULTS)
 	rm -rf $(DOC_RESULTS)
+	rm -rf $(external)

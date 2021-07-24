@@ -19,15 +19,18 @@ An example of running this script for building a demo project:
 This script requires the following packages to be installed:
 
     pip install junit-xml
+    pip install pyyaml
 """
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 import time
 
 import junit_xml
+import yaml
 
 
 def get_jobserver_auth_fds():
@@ -43,7 +46,31 @@ def get_jobserver_auth_fds():
     return ()
 
 
+class SkipRules:
+    def __init__(self, filename):
+        self.filename = filename
+        self.rules = None
+
+    def match(self, path, stderr):
+        if self.rules is None:
+            self.load()
+
+        for rule in self.rules:
+            if (re.match(rule['path'], path)
+                    and re.search(rule['stderr'], stderr)):
+                return True, rule['reason']
+
+        return False, None
+
+    def load(self):
+        with open(self.filename) as fd:
+            self.rules = yaml.load(fd, Loader=yaml.FullLoader)
+
+
 def make(args):
+    if args.skip_rules:
+        skip_rules = SkipRules(args.skip_rules)
+
     directory = args.directory or ''
     makefile = args.makefile or ''
 
@@ -96,12 +123,16 @@ def make(args):
             stdout=ret.stdout,
             stderr=ret.stderr,
         )
+        suite.test_cases.append(case)
 
         if ret.returncode != 0:
-            case.add_failure_info(
-                'Ended with non-zero exit code: {}'.format(ret.returncode))
+            skipped, msg = skip_rules.match(path, ret.stderr)
+            if skipped:
+                case.add_skipped_info(msg)
+                continue
 
-        suite.test_cases.append(case)
+            msg = 'Ended with non-zero exit code: {}'.format(ret.returncode)
+            case.add_failure_info(msg)
 
     if args.result == '-':
         suite.to_file(sys.stdout, [suite])
@@ -133,6 +164,8 @@ def main():
     parser.add_argument('-p', '--prefix', metavar='prefix',
                         help=('Prefix path which should be removed for test '
                               'result'))
+    parser.add_argument('-s', '--skip-rules', metavar='skip-rules',
+                        help=('YAML-file with skip rules'))
     parser.add_argument('targets', metavar='target', nargs='*',
                         default=['all', 'clean'],
                         help='Names of targets to run')
