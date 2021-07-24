@@ -64,7 +64,7 @@ class SkipRules:
 
     def load(self):
         with open(self.filename) as fd:
-            self.rules = yaml.load(fd, Loader=yaml.FullLoader)
+            self.rules = yaml.safe_load(fd)
 
 
 def make(args):
