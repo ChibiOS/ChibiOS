@@ -38,6 +38,7 @@
  */
 #define STM32_NO_INIT                       FALSE
 #define STM32_CLOCK_DYNAMIC                 FALSE
+#define STM32_TARGET_CORE                   1
 #define STM32_VOS                           STM32_VOS_RANGE1
 #define STM32_PWR_CR2                       (PWR_CR2_PLS_LVL0 | PWR_CR2_PVDE)
 #define STM32_PWR_PUCRA                     (0U)
@@ -66,6 +67,7 @@
 #define STM32_PLLQ_VALUE                    2
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_SHDHPRE                       STM32_SHDHPRE_DIV1
+#define STM32_C2HPRE                        STM32_C2HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV1
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
 #define STM32_STOPWUCK                      STM32_STOPWUCK_MSI

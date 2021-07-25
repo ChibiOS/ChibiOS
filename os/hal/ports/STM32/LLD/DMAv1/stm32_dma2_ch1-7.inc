@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv1/stm32_hse32.inc
- * @brief   Shared HSE32 clock handler.
+ * @file    DMAv1/stm32_dma2_ch1-7.inc
+ * @brief   Shared DMA2 Channels 1 - 7 handler.
  *
- * @addtogroup STM32_HSE32_HANDLER
+ * @addtogroup STM32_DMA2_CH1_7_HANDLER
  * @{
  */
 
@@ -26,45 +26,14 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   HSE32 clock frequency.
- */
-#define STM32_HSE32CLK          32000000U
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Registry checks for robustness.*/
-#if !defined(STM32_RCC_HAS_HSE32)
-#error "STM32_RCC_HAS_HSE32 not defined in stm32_registry.h"
+/* Other checks.*/
+#if !defined(STM32_DMA2_CH1_7_HANDLER)
+#error "STM32_DMA2_CH1_7_HANDLER not defined in stm32_isr.h"
 #endif
-
-/* Checks on configurations.*/
-#if !defined(STM32_HSE32_ENABLED)
-#error "STM32_HSE32_ENABLED not defined in mcuconf.h"
-#endif
-
-#if defined(STM32_HSECLK)
-#error "STM32_HSECLK should not be defined in board.h"
-#endif
-
-#if defined(STM32_HSE_ENABLED)
-#error "STM32_HSE_ENABLED should not be defined in mcuconf.h"
-#endif
-
-/* HSE clock frequency.*/
-#if STM32_HSE32_ENABLED
-  #if STM32_HSE32PRE == STM32_HSE32PRE_DIV1
-    #define STM32_HSECLK                STM32_HSE32CLK
-  #elif STM32_HSE32PRE == STM32_HSE32PRE_DIV2
-    #define STM32_HSECLK                (STM32_HSE32CLK / 2U)
-  #else
-    #error "invalid STM32_HSE32PRE value specified"
-  #endif
-#else
-  #define STM32_HSECLK          0U
-#endif /* STM32_HSE32_ENABLED */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -78,29 +47,44 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void hse32_enable(void) {
-
-  /* Set HSE32 SYSCLK prescaler.*/
-  RCC->CR |= STM32_HSE32PRE;
-
-  /* HSE32 activation.*/
-  RCC->CR |= RCC_CR_HSEON;
-
-  while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
-    /* Wait until HSE32 is stable.    */
-  }
-}
-
-__STATIC_INLINE void hse32_init(void) {
-
-#if STM32_HSE32_ENABLED
-  hse32_enable();
-#endif
-}
-
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if defined(STM32_DMA_REQUIRED) || defined(__DOXYGEN__)
+/**
+ * @brief   DMA2 streams 1 - 7 shared ISR.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_DMA2_CH1_7_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  /* Check on channel 1.*/
+  dmaServeInterrupt(STM32_DMA2_STREAM3);
+
+  /* Check on channel 2.*/
+  dmaServeInterrupt(STM32_DMA2_STREAM3);
+
+  /* Check on channel 3.*/
+  dmaServeInterrupt(STM32_DMA2_STREAM3);
+
+  /* Check on channel 4.*/
+  dmaServeInterrupt(STM32_DMA2_STREAM4);
+
+  /* Check on channel 5.*/
+  dmaServeInterrupt(STM32_DMA2_STREAM5);
+
+  /* Check on channel 6.*/
+  dmaServeInterrupt(STM32_DMA2_STREAM6);
+
+  /* Check on channel 7.*/
+  dmaServeInterrupt(STM32_DMA2_STREAM7);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

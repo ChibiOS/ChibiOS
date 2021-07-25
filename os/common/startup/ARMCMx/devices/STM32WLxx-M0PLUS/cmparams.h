@@ -17,12 +17,12 @@
 
 /**
  * @file    STM32WLxx/cmparams.h
- * @brief   ARM Cortex-M4 parameters for the STM32WLxx.
+ * @brief   ARM Cortex-M0+ parameters for the STM32WLxx.
  *
  * @defgroup ARMCMx_STM32WLxx STM32WLxx Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
- * @details This file contains the Cortex-M4 specific parameters for the
- *          STM32WLxx platform.
+ * @details This file contains the Cortex-M0+ specific parameters for the
+ *          STM32L4xx platform.
  * @{
  */
 
@@ -32,7 +32,7 @@
 /**
  * @brief   Cortex core model.
  */
-#define CORTEX_MODEL            4
+#define CORTEX_MODEL            0U
 
 /**
  * @brief   Floating Point unit presence.
@@ -42,7 +42,7 @@
 /**
  * @brief   Number of bits in priority masks.
  */
-#define CORTEX_PRIORITY_BITS    4
+#define CORTEX_PRIORITY_BITS    2
 
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
@@ -57,12 +57,15 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 8.
  */
-#define CORTEX_NUM_VECTORS      72
+#define CORTEX_NUM_VECTORS      32
 
 
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
+
+/* Define the core to be used.*/
+#define CORE_CM0PLUS
 
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from

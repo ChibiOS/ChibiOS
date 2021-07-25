@@ -51,6 +51,8 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if STM32_TARGET_CORE == 1
+
 #include "stm32_exti0.inc"
 #include "stm32_exti1.inc"
 #include "stm32_exti2.inc"
@@ -61,11 +63,28 @@
 #include "stm32_exti16_34.inc"
 #include "stm32_exti45.inc"
 
+#include "stm32_tim1.inc"
+
+#else /* STM32_TARGET_CORE == 2 */
+
+#include "stm32_dma1_ch123.inc"
+#include "stm32_dma1_ch4567.inc"
+#include "stm32_dma2_ch1-7.inc"
+
+#include "stm32_exti0_1.inc"
+#include "stm32_exti2_3.inc"
+#include "stm32_exti4_15.inc"
+#include "stm32_exti16_34.inc"
+#include "stm32_exti45.inc"
+
+#include "stm32_tim1_shared.inc"
+
+#endif /* STM32_TARGET_CORE == 1 */
+
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 #include "stm32_lpuart1.inc"
 
-#include "stm32_tim1.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
@@ -81,6 +100,7 @@
  */
 void irqInit(void) {
 
+#if STM32_TARGET_CORE == 1
   exti0_irq_init();
   exti1_irq_init();
   exti2_irq_init();
@@ -90,6 +110,13 @@ void irqInit(void) {
   exti10_15_irq_init();
   exti16_exti34_irq_init();
   exti45_irq_init();
+#else
+  exti0_1_irq_init();
+  exti2_3_irq_init();
+  exti4_15_irq_init();
+  exti16_exti34_irq_init();
+  exti45_irq_init();
+#endif /* STM32_TARGET_CORE == 1 */
 
   tim1_irq_init();
   tim2_irq_init();
@@ -108,6 +135,7 @@ void irqInit(void) {
  */
 void irqDeinit(void) {
 
+#if STM32_TARGET_CORE == 1
   exti0_irq_deinit();
   exti1_irq_deinit();
   exti2_irq_deinit();
@@ -117,6 +145,11 @@ void irqDeinit(void) {
   exti10_15_irq_deinit();
   exti16_exti34_irq_deinit();
   exti45_irq_deinit();
+#else
+  exti0_1_irq_deinit();
+  exti2_3_irq_deinit();
+  exti4_15_irq_deinit();
+#endif /* STM32_TARGET_CORE == 1 */
 
   tim1_irq_deinit();
   tim2_irq_deinit();

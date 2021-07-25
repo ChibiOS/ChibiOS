@@ -36,12 +36,12 @@
 /**
  * @brief   FLASH_ACR reset value.
  */
-#define STM32_FLASH_ACR_RESET           0x00000600U
+#define STM32_FLASH_ACR_RESET           0x00000600UL
 
 /**
  * @brief   RCC_CR reset value.
  */
-#define STM32_RCC_CR_RESET              0x00000061U
+#define STM32_RCC_CR_RESET              0x00000061UL
 
 /**
  * @brief   PWR CR bits safe for fast switch.
@@ -105,7 +105,7 @@ const halclkcfg_t hal_clkcfg_default = {
   .rcc_cfgr             = STM32_MCOPRE | STM32_MCOSEL |
                           STM32_PPRE2  | STM32_PPRE1  |
                           STM32_HPRE   | STM32_SW,
-  .rcc_extcfgr          = STM32_SHDHPRE,
+  .rcc_extcfgr          = STM32_SHDHPRE | STM32_C2HPRE,
   .rcc_pllcfgr          = STM32_PLLR   | STM32_PLLREN |
                           STM32_PLLQ   | STM32_PLLQEN |
                           STM32_PLLP   | STM32_PLLPEN |
@@ -132,6 +132,7 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   STM32_HCLK,
   STM32_PCLK1,
   STM32_TIMP1CLK,
+  STM32_HCLK2,
   STM32_PCLK2,
   STM32_TIMP2CLK,
   STM32_HCLK3,
@@ -201,6 +202,7 @@ static const system_limits_t vos_range2 = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if (STM32_NO_INIT == FALSE || defined(HAL_LLD_USE_CLOCK_MANAGEMENT)) || defined(__DOXYGEN__)
 /**
  * @brief   Safe setting of flash ACR register.
  *
@@ -213,7 +215,9 @@ static void flash_set_acr(uint32_t acr) {
     /* Waiting for flash wait states setup.*/
   }
 }
+#endif /* (STM32_NO_INIT == TRUE || defined(HAL_LLD_USE_CLOCK_MANAGEMENT)) */
 
+#if (STM32_NO_INIT == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Configures the PWR unit.
  * @note    CR1, CR2 and CR5 are not initialized inside this function.
@@ -243,7 +247,7 @@ static void hal_lld_set_static_clocks(void) {
   /* Clock-related settings (dividers, MCO etc).*/
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_STOPWUCK |
               STM32_PPRE2  | STM32_PPRE1  | STM32_HPRE;
-  RCC->EXTCFGR = STM32_SHDHPRE;
+  RCC->EXTCFGR = STM32_SHDHPRE | STM32_C2HPRE;
 
   /* CCIPR register initialization, note, must take care of the _OFF
      pseudo settings.*/
@@ -254,6 +258,7 @@ static void hal_lld_set_static_clocks(void) {
 
   RCC->CCIPR = ccipr;
 }
+#endif /* (STM32_NO_INIT == FALSE) */
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 static bool hal_lld_check_pll(const system_limits_t *slp,
@@ -358,7 +363,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   halfreq_t hsi16clk = 0U, hseclk = 0U, msiclk = 0U, pllselclk;
   halfreq_t pllpclk = 0U, pllqclk = 0U, pllrclk = 0U;
-  halfreq_t sysclk, hclk, pclk1, pclk2, pclk1tim, pclk2tim, hclk3, mcoclk;
+  halfreq_t sysclk, hclk, pclk1, pclk2, pclk1tim, pclk2tim, hclk2, hclk3, mcoclk;
   uint32_t mcodiv;
   uint32_t msiidx, flashws;
 
@@ -436,7 +441,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* LPRUN sysclk check.*/
-  if (((ccp->pwr_cr1 & PWR_CR1_LPR_Msk) != 0) && (sysclk > STM32_LPRUN_SYSCLK_MAX) ) {
+  if (((ccp->pwr_cr1 & PWR_CR1_LPR_Msk) != 0U) && (sysclk > STM32_LPRUN_SYSCLK_MAX) ) {
     return true;
   }
 
@@ -461,7 +466,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     pclk2tim = pclk2 * 2U;
   }
 
-  /* HCLK3 frequncy.*/
+  /* HCLK2 frequency.*/
+  hclk2 = sysclk / hprediv[(ccp->rcc_extcfgr & RCC_EXTCFGR_C2HPRE_Msk) >> RCC_EXTCFGR_C2HPRE_Pos];
+
+  /* HCLK3 frequency.*/
   hclk3 = sysclk / hprediv[(ccp->rcc_extcfgr & RCC_EXTCFGR_SHDHPRE_Msk) >> RCC_EXTCFGR_SHDHPRE_Pos];
 
   /* MCO clock.*/
@@ -526,6 +534,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   clock_points[CLK_HCLK]     = hclk;
   clock_points[CLK_PCLK1]    = pclk1;
   clock_points[CLK_PCLK1TIM] = pclk1tim;
+  clock_points[CLK_HCLK2]    = hclk2;
   clock_points[CLK_PCLK2]    = pclk2;
   clock_points[CLK_PCLK2TIM] = pclk2tim;
   clock_points[CLK_HCLK3]    = hclk3;
@@ -672,14 +681,14 @@ void stm32_clock_init(void) {
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
-  rccResetAHB1(~0);
+  rccResetAHB1(~0UL);
   rccResetAHB2(~STM32_GPIO_EN_MASK);
   /* Reset all except FLASH.*/
   rccResetAHB3(RCC_AHB3RSTR_PKARST | RCC_AHB3RSTR_AESRST |
                RCC_AHB3RSTR_RNGRST | RCC_AHB3RSTR_HSEMRST);
-  rccResetAPB1R1(~0);
-  rccResetAPB1R2(~0);
-  rccResetAPB2(~0);
+  rccResetAPB1R1(~0UL);
+  rccResetAPB1R2(~0UL);
+  rccResetAPB2(~0UL);
 
   /* RTC clock enable.*/
 #if HAL_USE_RTC
