@@ -218,8 +218,8 @@
 #endif
 
 /* Some ST headers do not have this definition.*/
-#if !defined(RCC_CFGR_SWS_HSI)
-#define RCC_CFGR_SWS_HSI        (0x00000000UL)
+#if !defined(RCC_CFGR_SWS_MSI)
+#define RCC_CFGR_SWS_MSI        (0x00000000UL)
 #endif
 
 /* Some ST headers do not have this definition.*/
