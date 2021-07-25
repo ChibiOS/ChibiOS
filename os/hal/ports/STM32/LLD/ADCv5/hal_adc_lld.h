@@ -200,8 +200,8 @@
 /*===========================================================================*/
 
 /* Supported devices checks.*/
-#if !defined(STM32G0XX)
-#error "ADCv5 only supports G0 STM32 devices"
+#if !defined(STM32G0XX) && !defined(STM32WLXX)
+#error "ADCv5 only supports G0 and WL STM32 devices"
 #endif
 
 /* Registry checks.*/
@@ -366,7 +366,7 @@ typedef uint32_t adcerror_t;
  *          Manual.
  * @note    PRESC bits must not be specified and left to zero.
  */
-#define adcSTM32SetCCR(ccr) (ADC->CCR = (ccr))
+#define adcSTM32SetCCR(ccr) (ADC1_COMMON->CCR = (ccr))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
