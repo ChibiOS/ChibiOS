@@ -44,7 +44,7 @@
 /**
  * @brief   Stable release flag.
  */
-#define CH_HAL_STABLE           0
+#define CH_HAL_STABLE           1
 
 /**
  * @name    ChibiOS/HAL version identification
@@ -53,7 +53,7 @@
 /**
  * @brief   HAL version string.
  */
-#define HAL_VERSION             "7.2.0"
+#define HAL_VERSION             "7.3.0"
 
 /**
  * @brief   HAL version major number.
@@ -63,7 +63,7 @@
 /**
  * @brief   HAL version minor number.
  */
-#define CH_HAL_MINOR            2
+#define CH_HAL_MINOR            3
 
 /**
  * @brief   HAL version patch number.
