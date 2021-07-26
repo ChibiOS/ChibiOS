@@ -241,7 +241,7 @@ static const system_limits_t vos_range2 = {
  *
  * @param[in] acr       value for the ACR register
  */
-static void flash_set_acr(uint32_t acr) {
+__STATIC_INLINE void flash_set_acr(uint32_t acr) {
 
   FLASH->ACR = acr;
   while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
@@ -253,7 +253,7 @@ static void flash_set_acr(uint32_t acr) {
  * @brief   Configures the PWR unit.
  * @note    CR1, CR2 and CR5 are not initialized inside this function.
  */
-static void hal_lld_set_static_pwr(void) {
+__STATIC_INLINE void hal_lld_set_static_pwr(void) {
 
   /* PWR clock enabled.*/
   rccEnablePWRInterface(false);
@@ -296,7 +296,7 @@ static void hal_lld_set_static_pwr(void) {
 /**
  * @brief   Initializes static muxes and dividers.
  */
-static void hal_lld_set_static_clocks(void) {
+__STATIC_INLINE void hal_lld_set_static_clocks(void) {
   uint32_t ccipr;
 
   /* Clock-related settings (dividers, MCO etc).*/
