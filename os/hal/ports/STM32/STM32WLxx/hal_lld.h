@@ -368,14 +368,6 @@
 #endif
 
 /**
- * @brief   Target code for this HAL configuration.
- * @note    Core 1 is the Cortex-M4, core 2 is the Cortex-M0+.
- */
-#if !defined(STM32_TARGET_CORE) || defined(__DOXYGEN__)
-#define STM32_TARGET_CORE                   1
-#endif
-
-/**
  * @brief   Enables the dynamic clock handling.
  */
 #if !defined(STM32_CLOCK_DYNAMIC) || defined(__DOXYGEN__)
@@ -734,12 +726,11 @@
 #error "Using a wrong mcuconf.h file, STM32WLxx_MCUCONF not defined"
 #endif
 
-/**
- * @brief   Target core for this HAL configuration.
- * @note    Core 1 is the Cortex-M4, core 2 is the Cortex-M0+.
+/*
+ * Target core checks.
  */
-#if !defined(STM32_TARGET_CORE) || defined(__DOXYGEN__)
-#define STM32_TARGET_CORE                   1
+#if !defined(STM32_TARGET_CORE)
+#error "STM32_TARGET_CORE not defined in mcuconf.h"
 #endif
 
 #if (STM32_TARGET_CORE == 2) && (STM32_HAS_M0 == FALSE)
@@ -748,7 +739,7 @@
 
 #if (defined(CORE_CM0PLUS) && (STM32_TARGET_CORE == 1)) || \
     (!defined(CORE_CM0PLUS) && (STM32_TARGET_CORE == 2))
-#error "wrong target core specified"
+#error "wrong target core specified in mcuconf.h"
 #endif
 
 /*

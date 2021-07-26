@@ -202,27 +202,24 @@ static const system_limits_t vos_range2 = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#if (STM32_NO_INIT == FALSE || defined(HAL_LLD_USE_CLOCK_MANAGEMENT)) || defined(__DOXYGEN__)
 /**
  * @brief   Safe setting of flash ACR register.
  *
  * @param[in] acr       value for the ACR register
  */
-static void flash_set_acr(uint32_t acr) {
+__STATIC_INLINE void flash_set_acr(uint32_t acr) {
 
   FLASH->ACR = acr;
   while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
     /* Waiting for flash wait states setup.*/
   }
 }
-#endif /* (STM32_NO_INIT == TRUE || defined(HAL_LLD_USE_CLOCK_MANAGEMENT)) */
 
-#if (STM32_NO_INIT == FALSE) || defined(__DOXYGEN__)
 /**
  * @brief   Configures the PWR unit.
  * @note    CR1, CR2 and CR5 are not initialized inside this function.
  */
-static void hal_lld_set_static_pwr(void) {
+__STATIC_INLINE void hal_lld_set_static_pwr(void) {
 
   /* Static PWR configurations.*/
   PWR->CR3 = STM32_PWR_CR3;
@@ -240,7 +237,7 @@ static void hal_lld_set_static_pwr(void) {
 /**
  * @brief   Initializes static muxes and dividers.
  */
-static void hal_lld_set_static_clocks(void) {
+__STATIC_INLINE void hal_lld_set_static_clocks(void) {
 
   uint32_t ccipr;
 
@@ -258,7 +255,6 @@ static void hal_lld_set_static_clocks(void) {
 
   RCC->CCIPR = ccipr;
 }
-#endif /* (STM32_NO_INIT == FALSE) */
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 static bool hal_lld_check_pll(const system_limits_t *slp,

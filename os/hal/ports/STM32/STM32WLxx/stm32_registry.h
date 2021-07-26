@@ -200,7 +200,7 @@
 #define STM32_RTC_TAMP_STAMP_EXTI           19
 #define STM32_RTC_WKUP_EXTI                 20
 
-#if STM32_TARGET_CORE == 1
+#if !defined(CORE_CM0PLUS)
 
 #define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
 #define STM32_RTC_WKUP_HANDLER              Vector4C
@@ -221,7 +221,7 @@
 #define STM32_RTC_IRQ_ENABLE()                                              \
   nvicEnableVector(STM32_RTC_COMMON_NUMBER, STM32_IRQ_EXTI17_20_IRQ_PRIORITY)
 
-#endif /* STM32_TARGET_CORE == 1 */
+#endif /* !defined(CORE_CM0PLUS) */
 
  /* Enabling RTC-related EXTI lines.*/
 #define STM32_RTC_ENABLE_ALL_EXTI() do {                                    \
