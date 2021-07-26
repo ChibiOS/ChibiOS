@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv1/stm32_hse32.inc
- * @brief   Shared HSE32 clock handler.
+ * @file    TIMv1/stm32_tim1_shared.inc
+ * @brief   Shared TIM1 shared handler.
  *
- * @addtogroup STM32_HSE32_HANDLER
+ * @addtogroup STM32_TIM1_SHARED_HANDLER
  * @{
  */
 
@@ -26,45 +26,38 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   HSE32 clock frequency.
- */
-#define STM32_HSE32CLK          32000000U
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_RCC_HAS_HSE32)
-#error "STM32_RCC_HAS_HSE32 not defined in stm32_registry.h"
+#if !defined(STM32_HAS_TIM1)
+#error "STM32_HAS_TIM1 not defined in registry"
 #endif
 
-/* Checks on configurations.*/
-#if !defined(STM32_HSE32_ENABLED)
-#error "STM32_HSE32_ENABLED not defined in mcuconf.h"
+/* Driver checks for robustness, undefined USE macros are defaulted to
+   FALSE. This makes this module independent from drivers implementation.*/
+#if !defined(STM32_GPT_USE_TIM1)
+#define STM32_GPT_USE_TIM1                  FALSE
+#endif
+#if !defined(STM32_ICU_USE_TIM1)
+#define STM32_ICU_USE_TIM1                  FALSE
+#endif
+#if !defined(STM32_PWM_USE_TIM1)
+#define STM32_PWM_USE_TIM1                  FALSE
+#endif
+#if !defined(STM32_ST_USE_TIM1)
+#define STM32_ST_USE_TIM1                   FALSE
 #endif
 
-#if defined(STM32_HSECLK)
-#error "STM32_HSECLK should not be defined in board.h"
+#if STM32_HAS_TIM1
+
+/* Priority settings checks.*/
+#if !defined(STM32_IRQ_TIM1_PRIORITY)
+#error "STM32_IRQ_TIM1_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if defined(STM32_HSE_ENABLED)
-#error "STM32_HSE_ENABLED should not be defined in mcuconf.h"
-#endif
-
-/* HSE clock frequency.*/
-#if STM32_HSE32_ENABLED
-  #if STM32_HSE32PRE == STM32_HSE32PRE_DIV1
-    #define STM32_HSECLK                STM32_HSE32CLK
-  #elif STM32_HSE32PRE == STM32_HSE32PRE_DIV2
-    #define STM32_HSECLK                (STM32_HSE32CLK / 2U)
-  #else
-    #error "invalid STM32_HSE32PRE value specified"
-  #endif
-#else
-  #define STM32_HSECLK          0U
-#endif /* STM32_HSE32_ENABLED */
+#endif /* STM32_HAS_TIM1 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -78,29 +71,59 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void hse32_enable(void) {
-
-  /* Set HSE32 SYSCLK prescaler.*/
-  RCC->CR |= STM32_HSE32PRE;
-
-  /* HSE32 activation.*/
-  RCC->CR |= RCC_CR_HSEON;
-
-  while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
-    /* Wait until HSE32 is stable.    */
-  }
+static inline void tim1_irq_init(void) {
+#if defined(STM32_TIM1_IS_USED)
+  nvicEnableVector(STM32_TIM1_SHARED_NUMBER, STM32_IRQ_TIM1_PRIORITY);
+#endif
 }
 
-__STATIC_INLINE void hse32_init(void) {
-
-#if STM32_HSE32_ENABLED
-  hse32_enable();
+static inline void tim1_irq_deinit(void) {
+#if defined(STM32_TIM1_IS_USED)
+  nvicDisableVector(STM32_TIM1_SHARED_NUMBER);
 #endif
 }
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if defined(STM32_TIM1_IS_USED) || defined(__DOXYGEN__)
+/**
+ * @brief   TIM1 shared interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_TIM1_SHARED_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+#if HAL_USE_GPT
+#if STM32_GPT_USE_TIM1
+  gpt_lld_serve_interrupt(&GPTD1);
+#endif
+#endif
+#if HAL_USE_ICU
+#if STM32_ICU_USE_TIM1
+  icu_lld_serve_interrupt(&ICUD1);
+#endif
+#endif
+#if HAL_USE_PWM
+#if STM32_PWM_USE_TIM1
+  pwm_lld_serve_interrupt(&PWMD1);
+#endif
+#endif
+#if 1
+#if STM32_ST_USE_TIM1
+  if (0 != (TIM1->SR & TIM_SR_UIF)) {
+    st_lld_serve_interrupt();
+  }
+#endif
+#endif
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

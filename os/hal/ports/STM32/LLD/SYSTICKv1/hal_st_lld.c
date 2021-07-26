@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    TIMv1/hal_st_lld.c
+ * @file    SYSTICKv1/hal_st_lld.c
  * @brief   ST Driver subsystem low level driver code.
  *
  * @addtogroup ST

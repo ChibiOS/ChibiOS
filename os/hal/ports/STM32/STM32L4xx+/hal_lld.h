@@ -26,6 +26,7 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
+ *          - STM32L4P5xx, STM32L4Q5xx.
  *          - STM32L4R5xx, STM32L4R7xx, STM32L4R9xx.
  *          - STM32L4S5xx, STM32L4S7xx, STM32L4S9xx.
  *          .
@@ -47,11 +48,12 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || \
-    defined(__DOXYGEN__)
+#if defined(STM32L4P5xx) || defined(STM32L4R5xx) || defined(STM32L4R7xx) ||   \
+    defined(STM32L4R9xx) ||  defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32L4+ Ultra Low Power"
 
-#elif defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx)
+#elif defined(STM32L4Q5xx) || defined(STM32L4S5xx) || defined(STM32L4S7xx) || \
+      defined(STM32L4S9xx)
 #define PLATFORM_NAME           "STM32L4+ Ultra Low Power with Crypto"
 
 #else
@@ -948,7 +950,13 @@
 #error "Using a wrong mcuconf.h file, STM32L4xx_MCUCONF not defined"
 #endif
 
-#if defined(STM32L4R5xx) && !defined(STM32L4R5_MCUCONF)
+#if defined(STM32L4P5xx) && !defined(STM32L4P5_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L4P5_MCUCONF not defined"
+
+#elif defined(STM32L4Q5xx) && !defined(STM32L4Q5_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L4Q5_MCUCONF not defined"
+
+#elif defined(STM32L4R5xx) && !defined(STM32L4R5_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L4R5_MCUCONF not defined"
 
 #elif defined(STM32L4S5xx) && !defined(STM32L4S5_MCUCONF)

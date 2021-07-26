@@ -1,8 +1,8 @@
-STM32 ADCv1 driver.
+STM32 ADCv5 driver.
 
 Driver capability:
 
-- Supports the STM32 "simple" ADC, the one found on small devices (G0).
+- Supports the STM32 "simple" ADC, the one found on small devices (G0 and WL).
 
 The file registry must export:
 

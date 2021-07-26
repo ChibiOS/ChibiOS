@@ -30,6 +30,39 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/* Mapping RCC registers depends on target core.*/
+#if  STM32_TARGET_CORE == 1
+#define STM32_RCC_AHB1ENR           RCC->AHB1ENR
+#define STM32_RCC_AHB2ENR           RCC->AHB2ENR
+#define STM32_RCC_AHB3ENR           RCC->AHB3ENR
+#define STM32_RCC_APB1ENR1          RCC->APB1ENR1
+#define STM32_RCC_APB1ENR2          RCC->APB1ENR2
+#define STM32_RCC_APB2ENR           RCC->APB2ENR
+#define STM32_RCC_APB3ENR           RCC->APB3ENR
+#define STM32_RCC_AHB1SMENR         RCC->AHB1SMENR
+#define STM32_RCC_AHB2SMENR         RCC->AHB2SMENR
+#define STM32_RCC_AHB3SMENR         RCC->AHB3SMENR
+#define STM32_RCC_APB1SMENR1        RCC->APB1SMENR1
+#define STM32_RCC_APB1SMENR2        RCC->APB1SMENR2
+#define STM32_RCC_APB2SMENR         RCC->APB2SMENR
+#define STM32_RCC_APB3SMENR         RCC->APB3SMENR
+#else /*  STM32_TARGET_CORE == 2 */
+#define STM32_RCC_AHB1ENR           RCC->C2AHB1ENR
+#define STM32_RCC_AHB2ENR           RCC->C2AHB2ENR
+#define STM32_RCC_AHB3ENR           RCC->C2AHB3ENR
+#define STM32_RCC_APB1ENR1          RCC->C2APB1ENR1
+#define STM32_RCC_APB1ENR2          RCC->C2APB1ENR2
+#define STM32_RCC_APB2ENR           RCC->C2APB2ENR
+#define STM32_RCC_APB3ENR           RCC->C2APB3ENR
+#define STM32_RCC_AHB1SMENR         RCC->C2AHB1SMENR
+#define STM32_RCC_AHB2SMENR         RCC->C2AHB2SMENR
+#define STM32_RCC_AHB3SMENR         RCC->C2AHB3SMENR
+#define STM32_RCC_APB1SMENR1        RCC->C2APB1SMENR1
+#define STM32_RCC_APB1SMENR2        RCC->C2APB1SMENR2
+#define STM32_RCC_APB2SMENR         RCC->C2APB2SMENR
+#define STM32_RCC_APB3SMENR         RCC->C2APB3SMENR
+#endif /* STM32_TARGET_CORE == 1 */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -59,12 +92,12 @@
  * @api
  */
 #define rccEnableAPB1R1(mask, lp) {                                         \
-  RCC->APB1ENR1 |= (mask);                                                  \
+  STM32_RCC_APB1ENR1 |= (mask);                                             \
   if (lp)                                                                   \
-    RCC->APB1SMENR1 |= (mask);                                              \
+    STM32_RCC_APB1SMENR1 |= (mask);                                         \
   else                                                                      \
-    RCC->APB1SMENR1 &= ~(mask);                                             \
-  (void)RCC->APB1SMENR1;                                                    \
+    STM32_RCC_APB1SMENR1 &= ~(mask);                                        \
+  (void)STM32_RCC_APB1SMENR1;                                               \
 }
 
 /**
@@ -75,9 +108,9 @@
  * @api
  */
 #define rccDisableAPB1R1(mask) {                                            \
-  RCC->APB1ENR1 &= ~(mask);                                                 \
-  RCC->APB1SMENR1 &= ~(mask);                                               \
-  (void)RCC->APB1SMENR1;                                                    \
+  STM32_RCC_APB1ENR1 &= ~(mask);                                            \
+  STM32_RCC_APB1SMENR1 &= ~(mask);                                          \
+  (void)STM32_RCC_APB1SMENR1;                                               \
 }
 
 /**
@@ -102,12 +135,12 @@
  * @api
  */
 #define rccEnableAPB1R2(mask, lp) {                                         \
-  RCC->APB1ENR2 |= (mask);                                                  \
+  STM32_RCC_APB1ENR2 |= (mask);                                             \
   if (lp)                                                                   \
-    RCC->APB1SMENR2 |= (mask);                                              \
+    STM32_RCC_APB1SMENR2 |= (mask);                                         \
   else                                                                      \
-    RCC->APB1SMENR2 &= ~(mask);                                             \
-  (void)RCC->APB1SMENR2;                                                    \
+    STM32_RCC_APB1SMENR2 &= ~(mask);                                        \
+  (void)STM32_RCC_APB1SMENR2;                                               \
 }
 
 /**
@@ -118,9 +151,9 @@
  * @api
  */
 #define rccDisableAPB1R2(mask) {                                            \
-  RCC->APB1ENR2 &= ~(mask);                                                 \
-  RCC->APB1SMENR2 &= ~(mask);                                               \
-  (void)RCC->APB1SMENR2;                                                    \
+  STM32_RCC_APB1ENR2 &= ~(mask);                                            \
+  STM32_RCC_APB1SMENR2 &= ~(mask);                                          \
+  (void)STM32_RCC_APB1SMENR2;                                               \
 }
 
 /**
@@ -145,12 +178,12 @@
  * @api
  */
 #define rccEnableAPB2(mask, lp) {                                           \
-  RCC->APB2ENR |= (mask);                                                   \
+  STM32_RCC_APB2ENR |= (mask);                                              \
   if (lp)                                                                   \
-    RCC->APB2SMENR |= (mask);                                               \
+    STM32_RCC_APB2SMENR |= (mask);                                          \
   else                                                                      \
-    RCC->APB2SMENR &= ~(mask);                                              \
-  (void)RCC->APB2SMENR;                                                     \
+    STM32_RCC_APB2SMENR &= ~(mask);                                         \
+  (void)STM32_RCC_APB2SMENR;                                                \
 }
 
 /**
@@ -161,9 +194,9 @@
  * @api
  */
 #define rccDisableAPB2(mask) {                                              \
-  RCC->APB2ENR &= ~(mask);                                                  \
-  RCC->APB2SMENR &= ~(mask);                                                \
-  (void)RCC->APB2SMENR;                                                     \
+  STM32_RCC_APB2ENR &= ~(mask);                                             \
+  STM32_RCC_APB2SMENR &= ~(mask);                                           \
+  (void)STM32_RCC_APB2SMENR;                                                \
 }
 
 /**
@@ -188,12 +221,12 @@
  * @api
  */
 #define rccEnableAPB3(mask, lp) {                                           \
-  RCC->APB3ENR |= (mask);                                                   \
+  STM32_RCC_APB3ENR |= (mask);                                              \
   if (lp)                                                                   \
-    RCC->APB3SMENR |= (mask);                                               \
+    STM32_RCC_APB3SMENR |= (mask);                                          \
   else                                                                      \
-    RCC->APB3SMENR &= ~(mask);                                              \
-  (void)RCC->APB3SMENR;                                                     \
+    STM32_RCC_APB3SMENR &= ~(mask);                                         \
+  (void)STM32_RCC_APB3SMENR;                                                \
 }
 
 /**
@@ -204,9 +237,9 @@
  * @api
  */
 #define rccDisableAPB3(mask) {                                              \
-  RCC->APB3ENR &= ~(mask);                                                  \
-  RCC->APB3SMENR &= ~(mask);                                                \
-  (void)RCC->APB3SMENR;                                                     \
+  STM32_RCC_APB3ENR &= ~(mask);                                             \
+  STM32_RCC_APB3SMENR &= ~(mask);                                           \
+  (void)STM32_RCC_APB3SMENR;                                                \
 }
 
 /**
@@ -231,12 +264,12 @@
  * @api
  */
 #define rccEnableAHB1(mask, lp) {                                           \
-  RCC->AHB1ENR |= (mask);                                                   \
+  STM32_RCC_AHB1ENR |= (mask);                                              \
   if (lp)                                                                   \
-    RCC->AHB1SMENR |= (mask);                                               \
+    STM32_RCC_AHB1SMENR |= (mask);                                          \
   else                                                                      \
-    RCC->AHB1SMENR &= ~(mask);                                              \
-  (void)RCC->AHB1SMENR;                                                     \
+    STM32_RCC_AHB1SMENR &= ~(mask);                                         \
+  (void)STM32_RCC_AHB1SMENR;                                                \
 }
 
 /**
@@ -247,9 +280,9 @@
  * @api
  */
 #define rccDisableAHB1(mask) {                                              \
-  RCC->AHB1ENR &= ~(mask);                                                  \
-  RCC->AHB1SMENR &= ~(mask);                                                \
-  (void)RCC->AHB1SMENR;                                                     \
+  STM32_RCC_AHB1ENR &= ~(mask);                                             \
+  STM32_RCC_AHB1SMENR &= ~(mask);                                           \
+  (void)STM32_RCC_AHB1SMENR;                                                \
 }
 
 /**
@@ -274,12 +307,12 @@
  * @api
  */
 #define rccEnableAHB2(mask, lp) {                                           \
-  RCC->AHB2ENR |= (mask);                                                   \
+  STM32_RCC_AHB2ENR |= (mask);                                              \
   if (lp)                                                                   \
-    RCC->AHB2SMENR |= (mask);                                               \
+    STM32_RCC_AHB2SMENR |= (mask);                                          \
   else                                                                      \
-    RCC->AHB2SMENR &= ~(mask);                                              \
-  (void)RCC->AHB2SMENR;                                                     \
+    STM32_RCC_AHB2SMENR &= ~(mask);                                         \
+  (void)STM32_RCC_AHB2SMENR;                                                \
 }
 
 /**
@@ -290,9 +323,9 @@
  * @api
  */
 #define rccDisableAHB2(mask) {                                              \
-  RCC->AHB2ENR &= ~(mask);                                                  \
-  RCC->AHB2SMENR &= ~(mask);                                                \
-  (void)RCC->AHB2SMENR;                                                     \
+  STM32_RCC_AHB2ENR &= ~(mask);                                             \
+  STM32_RCC_AHB2SMENR &= ~(mask);                                           \
+  (void)STM32_RCC_AHB2SMENR;                                                \
 }
 
 /**
@@ -317,12 +350,12 @@
  * @api
  */
 #define rccEnableAHB3(mask, lp) {                                           \
-  RCC->AHB3ENR |= (mask);                                                   \
+  STM32_RCC_AHB3ENR |= (mask);                                              \
   if (lp)                                                                   \
-    RCC->AHB3SMENR |= (mask);                                               \
+    STM32_RCC_AHB3SMENR |= (mask);                                          \
   else                                                                      \
-    RCC->AHB3SMENR &= ~(mask);                                              \
-  (void)RCC->AHB3SMENR;                                                     \
+    STM32_RCC_AHB3SMENR &= ~(mask);                                         \
+  (void)STM32_RCC_AHB3SMENR;                                                \
 }
 
 /**
@@ -333,9 +366,9 @@
  * @api
  */
 #define rccDisableAHB3(mask) {                                              \
-  RCC->AHB3ENR &= ~(mask);                                                  \
-  RCC->AHB3SMENR &= ~(mask);                                                \
-  (void)RCC->AHB3SMENR;                                                     \
+  STM32_RCC_AHB3ENR &= ~(mask);                                             \
+  STM32_RCC_AHB3SMENR &= ~(mask);                                           \
+  (void)STM32_RCC_AHB3SMENR;                                                \
 }
 
 /**
@@ -391,21 +424,21 @@
  *
  * @api
  */
-#define rccEnableDAC1(lp) rccEnableAPB1R1(RCC_APB1ENR1_DAC1EN, lp)
+#define rccEnableDAC1(lp) rccEnableAPB1R1(RCC_APB1ENR1_DACEN, lp)
 
 /**
  * @brief   Disables the DAC1 peripheral clock.
  *
  * @api
  */
-#define rccDisableDAC1() rccDisableAPB1R1(RCC_APB1ENR1_DAC1EN)
+#define rccDisableDAC1() rccDisableAPB1R1(RCC_APB1ENR1_DACEN)
 
 /**
  * @brief   Resets the DAC1 peripheral.
  *
  * @api
  */
-#define rccResetDAC1() rccResetAPB1R1(RCC_APB1RSTR1_DAC1RST)
+#define rccResetDAC1() rccResetAPB1R1(RCC_APB1RSTR1_DACRST)
 /** @} */
 
 /**

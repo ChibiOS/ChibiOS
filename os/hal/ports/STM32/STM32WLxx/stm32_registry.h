@@ -29,6 +29,15 @@
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
 
+/* Cores.*/
+#if defined(STM32WL55xx) || defined(STM32WL54xx)
+#define STM32_HAS_M4                        TRUE
+#define STM32_HAS_M0                        TRUE
+#else
+#define STM32_HAS_M4                        TRUE
+#define STM32_HAS_M0                        FALSE
+#endif
+
 /**
  * @name    STM32WLxx capabilities
  * @{
@@ -54,18 +63,13 @@
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_ADC_SUPPORTS_OVERSAMPLING     TRUE
+#define STM32_ADC_SUPPORTS_PRESCALER        TRUE
 
 /* CAN attributes.*/
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
 #define STM32_HAS_CAN3                      FALSE
-
-/* CPU2 attributes.*/
-#if defined(STM32WL55xx) || defined(STM32WL54xx) || defined(__DOXYGEN__)
-#define STM32_HAS_CPU2                      TRUE
-#else
-#define STM32_HAS_CPU2                      FALSE
-#endif /* defined(STM32WL55xx) || defined(STM32WL54xx) */
 
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
@@ -135,8 +139,12 @@
 #define STM32_HAS_HASH1                     FALSE
 
 /* HSEM attributes.*/
+#if defined(STM32WL55xx) || defined(STM32WL54xx) || defined(__DOXYGEN__)
 #define STM32_HAS_HSEM                      TRUE
 #define STM32_HSEM_SEMAPHORES               16
+#else
+#define STM32_HAS_HSEM                      FALSE
+#endif /* defined(STM32WL55xx) || defined(STM32WL54xx) */
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
@@ -188,20 +196,32 @@
 #define STM32_RTC_HAS_MIXED_MODE            TRUE
 #define STM32_RTC_NUM_ALARMS                2
 #define STM32_RTC_STORAGE_SIZE              32
+#define STM32_RTC_ALARM_EXTI                17
+#define STM32_RTC_TAMP_STAMP_EXTI           19
+#define STM32_RTC_WKUP_EXTI                 20
+
+#if STM32_TARGET_CORE == 1
+
 #define STM32_RTC_TAMP_STAMP_HANDLER        Vector48
 #define STM32_RTC_WKUP_HANDLER              Vector4C
 #define STM32_RTC_ALARM_HANDLER             VectorE8
 #define STM32_RTC_TAMP_STAMP_NUMBER         2
 #define STM32_RTC_WKUP_NUMBER               3
 #define STM32_RTC_ALARM_NUMBER              42
-#define STM32_RTC_ALARM_EXTI                17
-#define STM32_RTC_TAMP_STAMP_EXTI           19
-#define STM32_RTC_WKUP_EXTI                 20
 #define STM32_RTC_IRQ_ENABLE() do {                                         \
   nvicEnableVector(STM32_RTC_TAMP_STAMP_NUMBER, STM32_IRQ_EXTI19_PRIORITY); \
   nvicEnableVector(STM32_RTC_WKUP_NUMBER, STM32_IRQ_EXTI20_PRIORITY);       \
   nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI17_PRIORITY);      \
 } while (false)
+
+#else
+
+#define STM32_RTC_COMMON_HANDLER            Vector48
+#define STM32_RTC_COMMON_NUMBER             2
+#define STM32_RTC_IRQ_ENABLE()                                              \
+  nvicEnableVector(STM32_RTC_COMMON_NUMBER, STM32_IRQ_EXTI17_20_IRQ_PRIORITY)
+
+#endif /* STM32_TARGET_CORE == 1 */
 
  /* Enabling RTC-related EXTI lines.*/
 #define STM32_RTC_ENABLE_ALL_EXTI() do {                                    \
@@ -211,7 +231,7 @@
                    EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);     \
 } while (false)
 
-/* Clearing EXTI interrupts. */
+/* Clearing RTC-related EXTI interrupts. */
 #define STM32_RTC_CLEAR_ALL_EXTI() do {                                     \
 } while (false)
 

@@ -85,14 +85,6 @@
 #error "STM32_RNGCLK not defined in this HAL"
 #endif
 
-#if ((STM32_RNGCLK < 47000000) || (STM32_RNGCLK > 49000000)) &&             \
-    ((STM32_RNGCLK < 3500000)  || (STM32_RNGCLK > 4500000))
-#if !defined(STM32_DISABLE_RNG_CLOCK_CHECK)
-#error "STM32_RNGCLK is not within a tested clock range"
-#error "define STM32_DISABLE_RNG_CLOCK_CHECK to override this check"
-#endif
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

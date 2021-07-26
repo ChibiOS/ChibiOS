@@ -16,7 +16,7 @@
 
 /**
  * @file    hal_efl_lld.h
- * @brief   STM32L4R/Snxx Embedded Flash subsystem low level driver header.
+ * @brief   STM32L4+ Embedded Flash subsystem low level driver header.
  *
  * @addtogroup HAL_EFL
  * @{
@@ -51,9 +51,9 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if defined(STM32L4R5xx) || defined(STM32L4R7xx) || defined(STM32L4R9xx) || \
-    defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
-    defined(__DOXYGEN__)
+#if defined(STM32L4P5xx) || defined(STM32L4Q5xx) || defined(STM32L4R5xx) || \
+    defined(STM32L4R7xx) || defined(STM32L4R9xx) || defined(STM32L4S5xx) || \
+    defined(STM32L4S7xx) || defined(STM32L4S9xx) || defined(__DOXYGEN__)
 
 /* Flash size register. */
 #define STM32_FLASH_SIZE_REGISTER           0x1FFF75E0

@@ -94,7 +94,7 @@ typedef enum {
 /**
  * @brief   Structure representing a serial driver.
  */
-typedef struct SerialDriver SerialDriver;
+typedef struct hal_serial_driver SerialDriver;
 
 #include "hal_serial_lld.h"
 
@@ -120,7 +120,7 @@ struct SerialDriverVMT {
  * @details This class extends @p BaseAsynchronousChannel by adding physical
  *          I/O queues.
  */
-struct SerialDriver {
+struct hal_serial_driver {
   /** @brief Virtual Methods Table.*/
   const struct SerialDriverVMT *vmt;
   _serial_driver_data
