@@ -708,6 +708,13 @@
 #if !defined(STM32_RTCSEL) || defined(__DOXYGEN__)
 #define STM32_RTCSEL                        STM32_RTCSEL_LSI
 #endif
+
+/**
+ * @brief   RNG clock source.
+ */
+#if !defined(STM32_RNGSEL) || defined(__DOXYGEN__)
+#define STM32_RNGSEL                        STM32_RNGSEL_PLLQCLK
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -1244,7 +1251,7 @@
  * PLL enable check.
  */
 #if (STM32_SW == STM32_SW_PLL) ||                                           \
-    (STM32_ADC1SEL == STM32_ADCSEL_PLLPCLK) ||                              \
+    (STM32_ADCSEL == STM32_ADCSEL_PLLPCLK) ||                               \
     (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
     (STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) ||                               \
     (STM32_MCOSEL == STM32_MCOSEL_PLLQCLK) ||                               \
@@ -1263,7 +1270,7 @@
 /**
  * @brief   STM32_PLLPEN field.
  */
-#if (STM32_ADC1SEL == STM32_ADCSEL_PLLPCLK) ||                              \
+#if (STM32_ADCSEL == STM32_ADCSEL_PLLPCLK) ||                               \
     (STM32_MCOSEL == STM32_MCOSEL_PLLPCLK) ||                               \
     defined(__DOXYGEN__)
 #define STM32_PLLPEN                (1U << 16)

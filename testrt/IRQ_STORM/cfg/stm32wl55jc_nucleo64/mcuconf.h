@@ -79,7 +79,7 @@
 /*
  * Peripherals clock sources.
  */
-#define STM32_ADC1SEL                       STM32_ADCSEL_NOCLK
+#define STM32_ADCSEL                        STM32_ADCSEL_NOCLK
 #define STM32_USART1SEL                     STM32_USART1SEL_SYSCLK
 #define STM32_USART2SEL                     STM32_USART2SEL_SYSCLK
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
