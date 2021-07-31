@@ -103,13 +103,13 @@ void st_lld_init(void) {
 
   /* Enter initialization mode.*/
   RTC->ICSR |= RTC_ICSR_INIT;
-  while ((RTC->ICSR & RTC_ICSR_INITF) == 0) {
+  while ((RTC->ICSR & RTC_ICSR_INITF) == 0U) {
     /* Waint for init flag.*/
   }
 
   /* Activate free running Binary mode.*/
   RTC->ICSR |= RTC_ICSR_BIN_0;
-  /* */
+  /* Set RTC prescaler.*/
   RTC->PRER = STM32_ST_RTC_PRER_BITS;
 
   /* Exit initialization mode.*/
@@ -142,9 +142,6 @@ void st_lld_serve_interrupt(void) {
   RTC->SCR = isr;
 
   if ((isr & RTC_MISR_ALRAMF) != 0U) {
-
-    /* Disable RTC Alarm A.*/
-    RTC->CR &= ~(RTC_CR_ALRAE | RTC_CR_ALRAIE);
 
     osalSysLockFromISR();
     osalOsTimerHandlerI();
