@@ -211,7 +211,8 @@
 /**
  * @brief   STM32_PLLP field.
  */
-#if ((STM32_PLLP_VALUE_MIN >= STM32_PLLP_VALUE_MIN) && (STM32_PLLP_VALUE_MAX <= 32)) ||                \
+#if ((STM32_PLLP_VALUE >= STM32_PLLP_VALUE_MIN) &&                          \
+     (STM32_PLLP_VALUE <= STM32_PLLP_VALUE_MAX)) ||                         \
     defined(__DOXYGEN__)
 #define STM32_PLLP                  ((STM32_PLLP_VALUE - 1) << 17)
 #else
@@ -282,7 +283,8 @@
 /**
  * @brief   STM32_PLLR field.
  */
-#if ((STM32_PLLR_VALUE >= STM32_PLLR_VALUE_MIN) && (STM32_PLLR_VALUE <= STM32_PLLP_VALUE_MAX)) ||                 \
+#if ((STM32_PLLR_VALUE >= STM32_PLLR_VALUE_MIN) &&                          \
+     (STM32_PLLR_VALUE <= STM32_PLLR_VALUE_MAX)) ||                         \
     defined(__DOXYGEN__)
 #define STM32_PLLR                  ((STM32_PLLR_VALUE - 1) << 29)
 #else
