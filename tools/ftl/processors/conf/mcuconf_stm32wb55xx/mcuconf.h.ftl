@@ -54,8 +54,9 @@
 #define STM32_PLS                           ${doc.STM32_PLS!"STM32_PLS_LEV0"}
 #define STM32_HSI16_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
 #define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"FALSE"}
-#define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"TRUE"}
-#define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
+#define STM32_LSI1_ENABLED                  ${doc.STM32_LSI_ENABLED!"TRUE"}
+#define STM32_LSI2_ENABLED                  ${doc.STM32_LSI_ENABLED!"FALSE"}
+#define STM32_HSE32_ENABLED                 ${doc.STM32_HSE32_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
 #define STM32_MSIPLL_ENABLED                ${doc.STM32_MSIPLL_ENABLED!"FALSE"}
 #define STM32_MSIRANGE                      ${doc.STM32_MSIRANGE!"STM32_MSIRANGE_4M"}
@@ -90,7 +91,7 @@
 #define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK1"}
 #define STM32_LPTIM2SEL                     ${doc.STM32_LPTIM2SEL!"STM32_LPTIM2SEL_PCLK1"}
 #define STM32_SAI1SEL                       ${doc.STM32_SAI1SEL!"STM32_SAI1SEL_OFF"}
-#define STM32_CLK48SEL                      ${doc.STM32_CLK48SEL!"STM32_CLK48SEL_PLLSAI1"}
+#define STM32_CLK48SEL                      ${doc.STM32_CLK48SEL!"STM32_CLK48SEL_PLLSAI1QCLK"}
 #define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"STM32_ADCSEL_SYSCLK"}
 #define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"STM32_RTCSEL_LSI"}
 

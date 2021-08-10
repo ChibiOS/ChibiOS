@@ -275,9 +275,9 @@ clean: CLEAN_RULE_HOOK
 	@echo Cleaning
 	@echo - $(DEPDIR)
 	@-rm -fR $(DEPDIR)/* $(BUILDDIR)/* 2>/dev/null
-	@-if [ -d "$(DEPDIR)" ]; then rmdir -p --ignore-fail-on-non-empty $(subst ./,,$(DEPDIR)) 2>/dev/null; fi
+	@-if [ -d "$(DEPDIR)" ]; then rmdir -p $(subst ./,,$(DEPDIR)) 2>/dev/null; fi
 	@echo - $(BUILDDIR)
-	@-if [ -d "$(BUILDDIR)" ]; then rmdir -p --ignore-fail-on-non-empty $(subst ./,,$(BUILDDIR)) 2>/dev/null; fi
+	@-if [ -d "$(BUILDDIR)" ]; then rmdir -p $(subst ./,,$(BUILDDIR)) 2>/dev/null; fi
 	@echo
 	@echo Done
 
