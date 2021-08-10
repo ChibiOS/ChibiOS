@@ -670,9 +670,6 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= (1 << 1);
-#if defined(STM32WBXX)
-      rccEnableADC1(true);
-#endif
 #if defined(STM32F3XX) || defined(STM32G4XX)
       rccEnableADC12(true);
 #endif
@@ -698,9 +695,6 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= (1 << 2);
-#if defined(STM32WBXX)
-      rccEnableADC1(true);
-#endif
 #if defined(STM32F3XX)
       rccEnableADC34(true);
 #endif
@@ -729,9 +723,6 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
       clkmask |= (1 << 3);
-#if defined(STM32WBXX)
-      rccEnableADC1(true);
-#endif
 #if defined(STM32F3XX)
       rccEnableADC34(true);
 #endif
