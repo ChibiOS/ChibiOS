@@ -54,8 +54,8 @@
 #define STM32_PLS                           ${doc.STM32_PLS!"STM32_PLS_LEV0"}
 #define STM32_HSI16_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
 #define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"FALSE"}
-#define STM32_LSI1_ENABLED                  ${doc.STM32_LSI_ENABLED!"TRUE"}
-#define STM32_LSI2_ENABLED                  ${doc.STM32_LSI_ENABLED!"FALSE"}
+#define STM32_LSI1_ENABLED                  ${doc.STM32_LSI1_ENABLED!"TRUE"}
+#define STM32_LSI2_ENABLED                  ${doc.STM32_LSI2_ENABLED!"FALSE"}
 #define STM32_HSE32_ENABLED                 ${doc.STM32_HSE32_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
 #define STM32_MSIPLL_ENABLED                ${doc.STM32_MSIPLL_ENABLED!"FALSE"}
