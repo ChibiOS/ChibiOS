@@ -90,7 +90,7 @@ int main(void) {
 
   cryStart(&CRYD1, &cryConfig);
 
-  res = cryLoadTransientKey(&CRYD1, (cryalgorithm_t) cry_algo_aes,16, key);
+  res = cryLoadAESTransientKey(&CRYD1, 16, key);
 
   res = cryEncryptAES(&CRYD1, tkey, data, data_encrypted);
   if (res != CRY_NOERROR) {
