@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167)
+  (backported to 21.6.1).
 - FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166)
   (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed missing chrfcu.c file in rt.mk (bug #1165)
