@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.6.1 ***
+- FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166).
 - FIX: Fixed missing chrfcu.c file in rt.mk (bug #1165).
 - FIX: Fixed invalid STM32 TIM21/TIM22 debug freeze setting (bug #1164).
 - FIX: Fixed Missing RTC APB enable on STM32G0xx (bug #1163).
