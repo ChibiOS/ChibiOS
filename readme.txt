@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166)
+  (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed missing chrfcu.c file in rt.mk (bug #1165)
   (backported to 21.6.1).
 - FIX: Fixed invalid STM32 TIM21/TIM22 debug freeze setting (bug #1164)
