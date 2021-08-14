@@ -1195,9 +1195,9 @@ typedef struct {
 #define __RTC_BASE                        (__APBPERIPH_BASE + 0x0005C000U)
 
 #define __DMA_BASE                        (__AHBPERIPH_BASE + 0x00000000U)
-#define __USB_BASE                        (__AHBPERIPH_BASE + 0x01100000U)
-#define __PIO0_BASE                       (__AHBPERIPH_BASE + 0x02000000U)
-#define __PIO1_BASE                       (__AHBPERIPH_BASE + 0x03000000U)
+#define __USB_BASE                        (__AHBPERIPH_BASE + 0x00110000U)
+#define __PIO0_BASE                       (__AHBPERIPH_BASE + 0x00200000U)
+#define __PIO1_BASE                       (__AHBPERIPH_BASE + 0x00300000U)
 
 #define __SIO_BASE                        (__IOPORT_BASE    + 0x00000000U)
 /** @} */
