@@ -77,6 +77,8 @@ typedef struct {
   uint8_t   off_sys_reglist;        /**< @brief Offset of @p reglist field. */
   uint8_t   off_sys_rfcu;           /**< @brief Offset of @p rfcu field.    */
   uint8_t   off_sys_reserved[4];
+  uint8_t   off_inst_rlist_current; /**< @brief Offset of @p rlist.current
+                                                field.                      */
   uint8_t   off_inst_rlist;         /**< @brief Offset of @p rlist field.   */
   uint8_t   off_inst_vtlist;        /**< @brief Offset of @p vtlist field.  */
   uint8_t   off_inst_reglist;       /**< @brief Offset of @p reglist field. */

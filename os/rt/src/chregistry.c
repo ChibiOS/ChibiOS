@@ -75,70 +75,71 @@
  * OS signature in ROM plus debug-related information.
  */
 ROMCONST chdebug_t ch_debug = {
-  .identifier           = {'m', 'a', 'i', 'n'},
-  .zero                 = (uint8_t)0,
-  .size                 = (uint8_t)sizeof (chdebug_t),
-  .version              = (uint16_t)(((unsigned)CH_KERNEL_MAJOR << 11U) |
-                                     ((unsigned)CH_KERNEL_MINOR << 6U) |
-                                     ((unsigned)CH_KERNEL_PATCH << 0U)),
-  .ptrsize              = (uint8_t)sizeof (void *),
-  .timesize             = (uint8_t)sizeof (systime_t),
-  .intervalsize         = (uint8_t)sizeof (sysinterval_t),
-  .threadsize           = (uint8_t)sizeof (thread_t),
-  .off_prio             = (uint8_t)__CH_OFFSETOF(thread_t, hdr.pqueue.prio),
-  .off_ctx              = (uint8_t)__CH_OFFSETOF(thread_t, ctx),
-  .off_newer            = (uint8_t)__CH_OFFSETOF(thread_t, rqueue.next),
-  .off_older            = (uint8_t)__CH_OFFSETOF(thread_t, rqueue.prev),
-  .off_name             = (uint8_t)__CH_OFFSETOF(thread_t, name),
+  .identifier               = {'m', 'a', 'i', 'n'},
+  .zero                     = (uint8_t)0,
+  .size                     = (uint8_t)sizeof (chdebug_t),
+  .version                  = (uint16_t)(((unsigned)CH_KERNEL_MAJOR << 11U) |
+                                         ((unsigned)CH_KERNEL_MINOR << 6U) |
+                                         ((unsigned)CH_KERNEL_PATCH << 0U)),
+  .ptrsize                  = (uint8_t)sizeof (void *),
+  .timesize                 = (uint8_t)sizeof (systime_t),
+  .intervalsize             = (uint8_t)sizeof (sysinterval_t),
+  .threadsize               = (uint8_t)sizeof (thread_t),
+  .off_prio                 = (uint8_t)__CH_OFFSETOF(thread_t, hdr.pqueue.prio),
+  .off_ctx                  = (uint8_t)__CH_OFFSETOF(thread_t, ctx),
+  .off_newer                = (uint8_t)__CH_OFFSETOF(thread_t, rqueue.next),
+  .off_older                = (uint8_t)__CH_OFFSETOF(thread_t, rqueue.prev),
+  .off_name                 = (uint8_t)__CH_OFFSETOF(thread_t, name),
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
-  .off_stklimit         = (uint8_t)__CH_OFFSETOF(thread_t, wabase),
+  .off_stklimit             = (uint8_t)__CH_OFFSETOF(thread_t, wabase),
 #else
-  .off_stklimit         = (uint8_t)0,
+  .off_stklimit             = (uint8_t)0,
 #endif
-  .off_state            = (uint8_t)__CH_OFFSETOF(thread_t, state),
-  .off_flags            = (uint8_t)__CH_OFFSETOF(thread_t, flags),
+  .off_state                = (uint8_t)__CH_OFFSETOF(thread_t, state),
+  .off_flags                = (uint8_t)__CH_OFFSETOF(thread_t, flags),
 #if CH_CFG_USE_DYNAMIC == TRUE
-  .off_refs             = (uint8_t)__CH_OFFSETOF(thread_t, refs),
+  .off_refs                 = (uint8_t)__CH_OFFSETOF(thread_t, refs),
 #else
-  .off_refs             = (uint8_t)0,
+  .off_refs                 = (uint8_t)0,
 #endif
 #if CH_CFG_TIME_QUANTUM > 0
-  .off_preempt          = (uint8_t)__CH_OFFSETOF(thread_t, ticks),
+  .off_preempt              = (uint8_t)__CH_OFFSETOF(thread_t, ticks),
 #else
-  .off_preempt          = (uint8_t)0,
+  .off_preempt              = (uint8_t)0,
 #endif
 #if CH_DBG_THREADS_PROFILING == TRUE
-  .off_time             = (uint8_t)__CH_OFFSETOF(thread_t, time),
+  .off_time                 = (uint8_t)__CH_OFFSETOF(thread_t, time),
 #else
-  .off_time             = (uint8_t)0,
+  .off_time                 = (uint8_t)0,
 #endif
-  .off_reserved         = {(uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0},
-  .instancesnum         = (uint8_t)PORT_CORES_NUMBER,
-  .off_sys_state        = (uint8_t)__CH_OFFSETOF(ch_system_t, state),
-  .off_sys_instances    = (uint8_t)__CH_OFFSETOF(ch_system_t, instances),
+  .off_reserved             = {(uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0},
+  .instancesnum             = (uint8_t)PORT_CORES_NUMBER,
+  .off_sys_state            = (uint8_t)__CH_OFFSETOF(ch_system_t, state),
+  .off_sys_instances        = (uint8_t)__CH_OFFSETOF(ch_system_t, instances),
 #if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)
-  .off_sys_reglist      = (uint8_t)__CH_OFFSETOF(ch_system_t, reglist),
+  .off_sys_reglist          = (uint8_t)__CH_OFFSETOF(ch_system_t, reglist),
 #else
-  .off_sys_reglist      = (uint8_t)0,
+  .off_sys_reglist          = (uint8_t)0,
 #endif
 #if CH_CFG_SMP_MODE == TRUE
-  .off_sys_rfcu         = (uint8_t)__CH_OFFSETOF(ch_system_t, rfcu),
+  .off_sys_rfcu             = (uint8_t)__CH_OFFSETOF(ch_system_t, rfcu),
 #else
-  .off_sys_rfcu         = (uint8_t)0,
+  .off_sys_rfcu             = (uint8_t)0,
 #endif
-  .off_sys_reserved     = {(uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0},
-  .off_inst_rlist       = (uint8_t)__CH_OFFSETOF(os_instance_t, rlist),
-  .off_inst_vtlist      = (uint8_t)__CH_OFFSETOF(os_instance_t, vtlist),
+  .off_sys_reserved         = {(uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0},
+  .off_inst_rlist_current   = (uint8_t)__CH_OFFSETOF(os_instance_t, rlist.current),
+  .off_inst_rlist           = (uint8_t)__CH_OFFSETOF(os_instance_t, rlist),
+  .off_inst_vtlist          = (uint8_t)__CH_OFFSETOF(os_instance_t, vtlist),
 #if ((CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == FALSE))
-  .off_inst_reglist     = (uint8_t)__CH_OFFSETOF(os_instance_t, reglist),
+  .off_inst_reglist         = (uint8_t)__CH_OFFSETOF(os_instance_t, reglist),
 #else
-  .off_inst_reglist     = (uint8_t)0,
+  .off_inst_reglist         = (uint8_t)0,
 #endif
-  .off_inst_core_id     = (uint8_t)__CH_OFFSETOF(os_instance_t, core_id),
+  .off_inst_core_id         = (uint8_t)__CH_OFFSETOF(os_instance_t, core_id),
 #if CH_CFG_SMP_MODE == FALSE
-  .off_inst_rfcu        = (uint8_t)__CH_OFFSETOF(os_instance_t, rfcu)
+  .off_inst_rfcu            = (uint8_t)__CH_OFFSETOF(os_instance_t, rfcu)
 #else
-  .off_inst_rfcu        = (uint8_t)0
+  .off_inst_rfcu            = (uint8_t)0
 #endif
 };
 
