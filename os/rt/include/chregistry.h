@@ -66,8 +66,22 @@ typedef struct {
   uint8_t   off_state;              /**< @brief Offset of @p state field.   */
   uint8_t   off_flags;              /**< @brief Offset of @p flags field.   */
   uint8_t   off_refs;               /**< @brief Offset of @p refs field.    */
-  uint8_t   off_preempt;            /**< @brief Offset of @p preempt field. */
+  uint8_t   off_preempt;            /**< @brief Offset of @p ticks field.   */
   uint8_t   off_time;               /**< @brief Offset of @p time field.    */
+  uint8_t   off_reserved[5];
+  uint8_t   intervalsize;           /**< @brief Size of a @p sysinterval_t. */
+  uint8_t   instancesnum;           /**< @brief Number of instances.        */
+  uint8_t   off_sys_state;          /**< @brief Offset of @p state field.   */
+  uint8_t   off_sys_instances;      /**< @brief Offset of @p instances array
+                                                field.                      */
+  uint8_t   off_sys_reglist;        /**< @brief Offset of @p reglist field. */
+  uint8_t   off_sys_rfcu;           /**< @brief Offset of @p rfcu field.    */
+  uint8_t   off_sys_reserved[4];
+  uint8_t   off_inst_rlist;         /**< @brief Offset of @p rlist field.   */
+  uint8_t   off_inst_vtlist;        /**< @brief Offset of @p vtlist field.  */
+  uint8_t   off_inst_reglist;       /**< @brief Offset of @p reglist field. */
+  uint8_t   off_inst_core_id;       /**< @brief Offset of @p core_id field. */
+  uint8_t   off_inst_rfcu;          /**< @brief Offset of @p rfcu field.    */
 } chdebug_t;
 
 /*===========================================================================*/

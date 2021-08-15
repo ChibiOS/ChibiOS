@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed insufficient information in RT registry (bug #1169)(TBP).
+- FIX: Fixed code base not compatible with -Wcast-align=strict (bug #1168)(TBP).
 - FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167)
   (backported to 21.6.1).
 - FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166)
