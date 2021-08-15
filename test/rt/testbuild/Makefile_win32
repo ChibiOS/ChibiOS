@@ -153,10 +153,10 @@ BIN  = $(CP) -O binary
 COV  = gcov
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Wcast-align=strict
 
 # Define C++ warning options here
-CPPWARN = -Wall -Wextra -Wundef -Wcast-align=strict
+CPPWARN = -Wall -Wextra -Wundef
 
 #
 # Compiler settings

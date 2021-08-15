@@ -534,8 +534,8 @@ struct port_context {
  */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   PORT_SETUP_CONTEXT_BASEPRI_NS(tp);                                        \
-  (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
-                                        sizeof (struct port_intctx));       \
+  (tp)->ctx.sp = (struct port_intctx *)(void *)                             \
+                   ((uint8_t *)(wtop) - sizeof (struct port_intctx));       \
   (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
   (tp)->ctx.r5          = (uint32_t)(arg);                                  \
   (tp)->ctx.r4          = (uint32_t)(pf);                                   \
