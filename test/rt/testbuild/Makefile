@@ -156,7 +156,7 @@ COV  = gcov
 CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
 
 # Define C++ warning options here
-CPPWARN = -Wall -Wextra -Wundef
+CPPWARN = -Wall -Wextra -Wundef -Wcast-align=strict
 
 #
 # Compiler settings
