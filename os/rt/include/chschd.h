@@ -178,7 +178,7 @@ static inline void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp) {
   do {
     cp = cp->next;
   } while ((cp != qp) &&
-           (((thread_t *)cp)->hdr.pqueue.prio >= ((thread_t *)tp)->hdr.pqueue.prio));
+           (threadref(cp)->hdr.pqueue.prio >= threadref(tp)->hdr.pqueue.prio));
   tp->next       = cp;
   tp->prev       = cp->prev;
   tp->prev->next = tp;

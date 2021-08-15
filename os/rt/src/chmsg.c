@@ -121,7 +121,7 @@ thread_t *chMsgWaitS(void) {
   if (!chMsgIsPendingI(currtp)) {
     chSchGoSleepS(CH_STATE_WTMSG);
   }
-  tp = (thread_t *)ch_queue_fifo_remove(&currtp->msgqueue);
+  tp = threadref(ch_queue_fifo_remove(&currtp->msgqueue));
   tp->state = CH_STATE_SNDMSG;
 
   return tp;
@@ -160,7 +160,7 @@ thread_t *chMsgWaitTimeoutS(sysinterval_t timeout) {
       return NULL;
     }
   }
-  tp = (thread_t *)ch_queue_fifo_remove(&currtp->msgqueue);
+  tp = threadref(ch_queue_fifo_remove(&currtp->msgqueue));
   tp->state = CH_STATE_SNDMSG;
 
   return tp;
@@ -188,7 +188,7 @@ thread_t *chMsgPollS(void) {
   thread_t *tp = NULL;
 
   if (chMsgIsPendingI(currtp)) {
-    tp = (thread_t *)ch_queue_fifo_remove(&currtp->msgqueue);
+    tp = threadref(ch_queue_fifo_remove(&currtp->msgqueue));
     tp->state = CH_STATE_SNDMSG;
   }
 

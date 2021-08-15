@@ -183,8 +183,8 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
   /* The thread structure is laid out in the upper part of the thread
      workspace. The thread position structure is aligned to the required
      stack alignment because it represents the stack top.*/
-  tp = (thread_t *)((uint8_t *)tdp->wend -
-                    MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN));
+  tp = threadref(((uint8_t *)tdp->wend -
+                 MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN)));
 
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   /* Stack boundary.*/
@@ -358,8 +358,8 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
   /* The thread structure is laid out in the upper part of the thread
      workspace. The thread position structure is aligned to the required
      stack alignment because it represents the stack top.*/
-  tp = (thread_t *)((uint8_t *)wsp + size -
-                    MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN));
+  tp = threadref(((uint8_t *)wsp + size -
+                 MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN)));
 
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   /* Stack boundary.*/
@@ -521,7 +521,7 @@ void chThdExitS(msg_t msg) {
 #if CH_CFG_USE_WAITEXIT == TRUE
   /* Waking up any waiting thread.*/
   while (unlikely(ch_list_notempty(&currtp->waiting))) {
-    (void) chSchReadyI((thread_t *)ch_list_unlink(&currtp->waiting));
+    (void) chSchReadyI(threadref(ch_list_unlink(&currtp->waiting)));
   }
 #endif
 

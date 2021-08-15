@@ -496,7 +496,7 @@ static inline void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 
   chDbgAssert(ch_queue_notempty(&tqp->queue), "empty queue");
 
-  tp = (thread_t *)ch_queue_fifo_remove(&tqp->queue);
+  tp = threadref(ch_queue_fifo_remove(&tqp->queue));
 
   chDbgAssert(tp->state == CH_STATE_QUEUED, "invalid state");
 

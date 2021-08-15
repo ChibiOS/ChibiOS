@@ -597,8 +597,8 @@ struct port_context {
  *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
-  (tp)->ctx.sp = (struct port_intctx *)((uint8_t *)(wtop) -                 \
-                                        sizeof (struct port_intctx));       \
+  (tp)->ctx.sp = (struct port_intctx *)(void *)								\
+  	  	  	  	   ((uint8_t *)(wtop) - sizeof (struct port_intctx));       \
   (tp)->ctx.sp->r4 = (uint32_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (uint32_t)(arg);                                       \
   (tp)->ctx.sp->lr = (uint32_t)__port_thread_start;                         \

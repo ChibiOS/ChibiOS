@@ -150,7 +150,7 @@ void chSemResetWithMessageI(semaphore_t *sp, cnt_t n, msg_t msg) {
 
   sp->cnt = n;
   while (ch_queue_notempty(&sp->queue)) {
-    chSchReadyI((thread_t *)ch_queue_lifo_remove(&sp->queue))->u.rdymsg = msg;
+    chSchReadyI(threadref(ch_queue_lifo_remove(&sp->queue)))->u.rdymsg = msg;
   }
 }
 
@@ -296,7 +296,7 @@ void chSemSignal(semaphore_t *sp) {
               ((sp->cnt < (cnt_t)0) && ch_queue_notempty(&sp->queue)),
               "inconsistent semaphore");
   if (++sp->cnt <= (cnt_t)0) {
-    chSchWakeupS((thread_t *)ch_queue_fifo_remove(&sp->queue), MSG_OK);
+    chSchWakeupS(threadref(ch_queue_fifo_remove(&sp->queue)), MSG_OK);
   }
   chSysUnlock();
 }
@@ -323,7 +323,7 @@ void chSemSignalI(semaphore_t *sp) {
   if (++sp->cnt <= (cnt_t)0) {
     /* Note, it is done this way in order to allow a tail call on
              chSchReadyI().*/
-    thread_t *tp = (thread_t *)ch_queue_fifo_remove(&sp->queue);
+    thread_t *tp = threadref(ch_queue_fifo_remove(&sp->queue));
     tp->u.rdymsg = MSG_OK;
     (void) chSchReadyI(tp);
   }
@@ -352,7 +352,7 @@ void chSemAddCounterI(semaphore_t *sp, cnt_t n) {
 
   while (n > (cnt_t)0) {
     if (++sp->cnt <= (cnt_t)0) {
-      chSchReadyI((thread_t *)ch_queue_fifo_remove(&sp->queue))->u.rdymsg = MSG_OK;
+      chSchReadyI(threadref(ch_queue_fifo_remove(&sp->queue)))->u.rdymsg = MSG_OK;
     }
     n--;
   }
@@ -384,7 +384,7 @@ msg_t chSemSignalWait(semaphore_t *sps, semaphore_t *spw) {
               ((spw->cnt < (cnt_t)0) && ch_queue_notempty(&spw->queue)),
               "inconsistent semaphore");
   if (++sps->cnt <= (cnt_t)0) {
-    chSchReadyI((thread_t *)ch_queue_fifo_remove(&sps->queue))->u.rdymsg = MSG_OK;
+    chSchReadyI(threadref(ch_queue_fifo_remove(&sps->queue)))->u.rdymsg = MSG_OK;
   }
   if (--spw->cnt < (cnt_t)0) {
     thread_t *currtp = chThdGetSelfX();

@@ -83,16 +83,15 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
                               const char *name, tprio_t prio,
                               tfunc_t pf, void *arg) {
   thread_t *tp;
-  void *wsp;
+  void *wbase, *wend;
 
-  wsp = chHeapAllocAligned(heapp, size, PORT_WORKING_AREA_ALIGN);
-  if (wsp == NULL) {
+  wbase = chHeapAllocAligned(heapp, size, PORT_WORKING_AREA_ALIGN);
+  if (wbase == NULL) {
     return NULL;
   }
+  wend = (void *)((uint8_t *)wbase + size);
 
-  thread_descriptor_t td = THD_DESCRIPTOR(name, wsp,
-                                          (stkalign_t *)((uint8_t *)wsp + size),
-                                          prio, pf, arg);
+  thread_descriptor_t td = THD_DESCRIPTOR(name, wbase, wend, prio, pf, arg);
 
 #if CH_DBG_FILL_THREADS == TRUE
   __thd_memfill((uint8_t *)wsp,
@@ -140,18 +139,17 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
 thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
                                     tprio_t prio, tfunc_t pf, void *arg) {
   thread_t *tp;
-  void *wsp;
+  void *wbase, *wend;
 
   chDbgCheck(mp != NULL);
 
-  wsp = chPoolAlloc(mp);
-  if (wsp == NULL) {
+  wbase = chPoolAlloc(mp);
+  if (wbase == NULL) {
     return NULL;
   }
+  wend = (void *)((uint8_t *)wbase + mp->object_size);
 
-  thread_descriptor_t td = THD_DESCRIPTOR(name, wsp,
-                                          (stkalign_t *)((uint8_t *)wsp + mp->object_size),
-                                          prio, pf, arg);
+  thread_descriptor_t td = THD_DESCRIPTOR(name, wbase, wend, prio, pf, arg);
 
 #if CH_DBG_FILL_THREADS == TRUE
   __thd_memfill((uint8_t *)wsp,
