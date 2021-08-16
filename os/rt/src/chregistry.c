@@ -115,7 +115,7 @@ ROMCONST chdebug_t ch_debug = {
   .off_reserved             = {(uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0},
   .instancesnum             = (uint8_t)PORT_CORES_NUMBER,
   .off_sys_state            = (uint8_t)__CH_OFFSETOF(ch_system_t, state),
-  .off_sys_instances        = (uint8_t)__CH_OFFSETOF(ch_system_t, instances),
+  .off_sys_instances        = (uint8_t)__CH_OFFSETOF(ch_system_t, instances[0]),
 #if (CH_CFG_USE_REGISTRY == TRUE) && (CH_CFG_SMP_MODE == TRUE)
   .off_sys_reglist          = (uint8_t)__CH_OFFSETOF(ch_system_t, reglist),
 #else
