@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed semaphores broken when CH_CFG_USE_SEMAPHORES_PRIORITY is enabled
+       (bug #1172).
 - FIX: Fixed idle thread stack area not cleared when CH_DBG_FILL_THREADS
        is enabled (bug #1171).
 - FIX: Fixed function chRegNextThread() broken when CH_CFG_USE_DYNAMIC
@@ -81,15 +83,15 @@
 - FIX: Fixed insufficient information in RT registry (bug #1169)(TBP).
 - FIX: Fixed code base not compatible with -Wcast-align=strict (bug #1168)(TBP).
 - FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167)
-  (backported to 21.6.1).
+       (backported to 21.6.1).
 - FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166)
-  (backported to 21.6.1)(backported to 20.3.4).
+       (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed missing chrfcu.c file in rt.mk (bug #1165)
-  (backported to 21.6.1).
+       (backported to 21.6.1).
 - FIX: Fixed invalid STM32 TIM21/TIM22 debug freeze setting (bug #1164)
-  (backported to 21.6.1)(backported to 20.3.4).
+       (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed missing RTC APB enable on STM32G0xx (bug #1163)
-  (backported to 21.6.1)
+       (backported to 21.6.1)
 - FIX: Fixed I2S-related definitions missing in STM32F3xx registry (bug #1162)
-  (backported to 21.6.1)(backported to 20.3.4).
+       (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed AVR port broken (bug #1161)(backported to 21.6.1).
