@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed function chRegNextThread() broken when CH_CFG_USE_DYNAMIC
+       is disabled (bug #1170).
 - FIX: Fixed insufficient information in RT registry (bug #1169)(TBP).
 - FIX: Fixed code base not compatible with -Wcast-align=strict (bug #1168)(TBP).
 - FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167)

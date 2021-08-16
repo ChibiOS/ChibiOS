@@ -194,18 +194,18 @@ thread_t *chRegNextThread(thread_t *tp) {
   if (nqp == REG_HEADER(currcore)) {
     ntp = NULL;
   }
-#if CH_CFG_USE_DYNAMIC == TRUE
   else {
     uint8_t *p = (uint8_t *)nqp;
     /*lint -save -e413 [1.3] Safe to subtract a calculated offset.*/
     ntp = threadref((p - __CH_OFFSETOF(thread_t, rqueue)));
     /*lint -restore*/
 
+#if CH_CFG_USE_DYNAMIC == TRUE
     chDbgAssert(ntp->refs < (trefs_t)255, "too many references");
 
     ntp->refs++;
-  }
 #endif
+  }
   chSysUnlock();
 #if CH_CFG_USE_DYNAMIC == TRUE
   chThdRelease(tp);
