@@ -179,7 +179,7 @@ struct port_context {
 
 #define APUSH(p, a) do {                                                    \
   (p) -= sizeof(void *);                                                    \
-  *(void **)(p) = (void*)(a);                                               \
+  *(void **)(void *)(p) = (void*)(a);                                       \
 } while (false)
 
 /* Darwin requires the stack to be aligned to a 16-byte boundary at
@@ -187,7 +187,7 @@ struct port_context {
  * to save MMX registers). This aligns to 'mod' module 16, so that we'll end
  * up with the right alignment after pushing the args. */
 #define AALIGN(p, mask, mod)                                                \
-  p = (void *)((((uint32_t)(p) - (uint32_t)(mod)) & ~(uint32_t)(mask)) + (uint32_t)(mod)) \
+  p = (void *)((((uint32_t)(p) - (uint32_t)(mod)) & ~(uint32_t)(mask)) + (uint32_t)(mod))
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
@@ -204,12 +204,12 @@ struct port_context {
   APUSH(esp, pf);                                                           \
   APUSH(esp, 0);                                                            \
   esp -= sizeof(struct port_intctx);                                        \
-  ((struct port_intctx *)esp)->eip = (void *)_port_thread_start;            \
-  ((struct port_intctx *)esp)->ebx = NULL;                                  \
-  ((struct port_intctx *)esp)->edi = NULL;                                  \
-  ((struct port_intctx *)esp)->esi = NULL;                                  \
-  ((struct port_intctx *)esp)->ebp = (void *)savebp;                        \
-  (tp)->ctx.sp = (struct port_intctx *)esp;                                 \
+  ((struct port_intctx *)(void *)esp)->eip = (void *)_port_thread_start;    \
+  ((struct port_intctx *)(void *)esp)->ebx = NULL;                          \
+  ((struct port_intctx *)(void *)esp)->edi = NULL;                          \
+  ((struct port_intctx *)(void *)esp)->esi = NULL;                          \
+  ((struct port_intctx *)(void *)esp)->ebp = (void *)savebp;                \
+  (tp)->ctx.sp = (struct port_intctx *)(void *)esp;                         \
   /*lint -restore*/                                                         \
 }
 

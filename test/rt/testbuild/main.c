@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
   test_execute((BaseSequentialStream *)&CD1, &rt_test_suite);
   test_execute((BaseSequentialStream *)&CD1, &oslib_test_suite);
-  if (test_global_fail)
+  if (chtest.global_fail)
     exit(1);
   else
     exit(0);
