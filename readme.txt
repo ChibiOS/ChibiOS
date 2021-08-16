@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed idle thread stack area not cleared when CH_DBG_FILL_THREADS
+       is enabled (bug #1171).
 - FIX: Fixed function chRegNextThread() broken when CH_CFG_USE_DYNAMIC
        is disabled (bug #1170).
 - FIX: Fixed insufficient information in RT registry (bug #1169)(TBP).

@@ -131,6 +131,7 @@ thread_t *__thd_object_init(os_instance_t *oip,
 #if (CH_DBG_FILL_THREADS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Memory fill utility.
+ * @todo    Optimize using the stack align type instead of uint8_t.
  *
  * @param[in] startp    first address to fill
  * @param[in] endp      last address to fill +1
