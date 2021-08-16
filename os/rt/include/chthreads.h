@@ -291,7 +291,7 @@ extern "C" {
                                const char *name,
                                tprio_t prio);
 #if CH_DBG_FILL_THREADS == TRUE
-  void __thd_memfill(uint8_t *startp, uint8_t *endp, uint8_t v);
+  void __thd_stackfill(uint8_t *startp, uint8_t *endp);
 #endif
   thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp);
   thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp);

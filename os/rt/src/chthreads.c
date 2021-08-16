@@ -130,20 +130,18 @@ thread_t *__thd_object_init(os_instance_t *oip,
 
 #if (CH_DBG_FILL_THREADS == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Memory fill utility.
- * @todo    Optimize using the stack align type instead of uint8_t.
+ * @brief   Stack fill utility.
  *
  * @param[in] startp    first address to fill
  * @param[in] endp      last address to fill +1
- * @param[in] v         filler value
  *
  * @notapi
  */
-void __thd_memfill(uint8_t *startp, uint8_t *endp, uint8_t v) {
+void __thd_stackfill(uint8_t *startp, uint8_t *endp) {
 
-  while (startp < endp) {
-    *startp++ = v;
-  }
+  do {
+    *startp++ = CH_DBG_STACK_FILL_VALUE;
+  } while (likely(startp < endp));
 }
 #endif /* CH_DBG_FILL_THREADS */
 
@@ -234,9 +232,7 @@ thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
 #endif
 
 #if CH_DBG_FILL_THREADS == TRUE
-  __thd_memfill((uint8_t *)tdp->wbase,
-                (uint8_t *)tdp->wend,
-                CH_DBG_STACK_FILL_VALUE);
+  __thd_stackfill((uint8_t *)tdp->wbase, (uint8_t *)tdp->wend);
 #endif
 
   chSysLock();
@@ -299,9 +295,7 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
 #endif
 
 #if CH_DBG_FILL_THREADS == TRUE
-  __thd_memfill((uint8_t *)tdp->wbase,
-                (uint8_t *)tdp->wend,
-                CH_DBG_STACK_FILL_VALUE);
+  __thd_stackfill((uint8_t *)tdp->wbase, (uint8_t *)tdp->wend);
 #endif
 
   chSysLock();
@@ -349,9 +343,7 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
 #endif
 
 #if CH_DBG_FILL_THREADS == TRUE
-  __thd_memfill((uint8_t *)wsp,
-                (uint8_t *)wsp + size,
-                CH_DBG_STACK_FILL_VALUE);
+  __thd_stackfill((uint8_t *)wsp, (uint8_t *)wsp + size);
 #endif
 
   chSysLock();

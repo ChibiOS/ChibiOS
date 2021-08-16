@@ -94,9 +94,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   thread_descriptor_t td = THD_DESCRIPTOR(name, wbase, wend, prio, pf, arg);
 
 #if CH_DBG_FILL_THREADS == TRUE
-  __thd_memfill((uint8_t *)wbase,
-                (uint8_t *)wbase + size,
-                CH_DBG_STACK_FILL_VALUE);
+  __thd_stackfill((uint8_t *)wbase, (uint8_t *)wend);
 #endif
 
   chSysLock();
@@ -152,9 +150,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
   thread_descriptor_t td = THD_DESCRIPTOR(name, wbase, wend, prio, pf, arg);
 
 #if CH_DBG_FILL_THREADS == TRUE
-  __thd_memfill((uint8_t *)wbase,
-                (uint8_t *)wbase + mp->object_size,
-                CH_DBG_STACK_FILL_VALUE);
+  __thd_stackfill((uint8_t *)wbase, (uint8_t *)wend);
 #endif
 
   chSysLock();

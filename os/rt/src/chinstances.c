@@ -174,9 +174,8 @@ void chInstanceObjectInit(os_instance_t *oip,
     };
 
 #if CH_DBG_FILL_THREADS == TRUE
-    __thd_memfill((uint8_t *)idle_descriptor.wbase,
-                  (uint8_t *)idle_descriptor.wend,
-                  CH_DBG_STACK_FILL_VALUE);
+    __thd_stackfill((uint8_t *)idle_descriptor.wbase,
+                    (uint8_t *)idle_descriptor.wend);
 #endif
 
     /* This thread has the lowest priority in the system, its role is just to
