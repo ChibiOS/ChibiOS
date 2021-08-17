@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed problem with N25Q driver (bug #1173)
+       (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed semaphores broken when CH_CFG_USE_SEMAPHORES_PRIORITY is enabled
        (bug #1172).
 - FIX: Fixed idle thread stack area not cleared when CH_DBG_FILL_THREADS
