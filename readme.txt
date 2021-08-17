@@ -82,6 +82,7 @@
 - NEW: Improved boost settings for STM32G4.
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
        the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
+- FIX: Fixed problem with N25Q driver (bug #1173).       
 - FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166).
 - FIX: Fixed invalid STM32 TIM21/TIM22 debug freeze setting (bug #1164).
 - FIX: Fixed I2S-related definitions missing in STM32F3xx registry (bug #1162).
