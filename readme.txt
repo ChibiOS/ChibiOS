@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed problem with RC initialization mask of the GPIO for the 
+       STM32L4x3 (bug #1174) (backported to 20.3.4).
 - FIX: Fixed problem with N25Q driver (bug #1173)
        (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed semaphores broken when CH_CFG_USE_SEMAPHORES_PRIORITY is enabled
