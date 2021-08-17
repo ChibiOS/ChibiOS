@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.6.1 ***
+- FIX: Fixed problem with N25Q driver (bug #1173).
 - FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167).
 - FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166).
 - FIX: Fixed missing chrfcu.c file in rt.mk (bug #1165).
