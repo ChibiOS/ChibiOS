@@ -37,3 +37,7 @@
 - path: "demos/SPC5/"
   stderr: "ccppc: (Command not found|No such file or directory)"
   reason: "ccppc compiler required"
+
+- path: "demos/various/RT-Win32-Simulator"
+  stderr: "fatal error: windows.h: No such file or directory"
+  reason: "Windows required"

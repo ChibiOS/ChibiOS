@@ -20,6 +20,7 @@ This script requires the following packages to be installed:
 
     pip install junit-xml
     pip install pyyaml
+    pip install requests
 """
 
 import argparse
@@ -28,8 +29,10 @@ import re
 import subprocess
 import sys
 import time
+from xml.etree import ElementTree
 
 import junit_xml
+import requests
 import yaml
 
 
@@ -142,6 +145,43 @@ def make(args):
             suite.to_file(f, [suite])
 
 
+def check_rules(args):
+    def get_signature(content):
+        root = ElementTree.fromstring(content)
+        return (
+            root.findtext('className'),
+            root.findtext('stderr'),
+        )
+
+    if not args.skip_rules:
+        sys.stderr.write('--skip-rules is required\n')
+        sys.exit(2)
+
+    skip_rules = SkipRules(args.skip_rules)
+
+    url = args.check_rules
+    if not url.endswith('/api/xml'):
+        url += '/api/xml'
+
+    resp = requests.get(url)
+    if resp.status_code != 200:
+        sys.stderr.write('Got unexpected response {}\n'
+                         .format(resp.status_code))
+        sys.exit(3)
+
+    path, stderr = get_signature(resp.content)
+    if not (path and stderr):
+        sys.stderr.write('Cannot find path and stderr\n')
+        sys.exit(4)
+
+    matched, msg = skip_rules.match(path, stderr)
+    if matched:
+        sys.stdout.write('Matched rule: {}\n'.format(msg))
+    else:
+        sys.stdout.write('Not matched!\n')
+        sys.exit(1)
+
+
 def main():
     parser = argparse.ArgumentParser(description=(
         'Execute make targets and generate JUnit results'
@@ -165,13 +205,19 @@ def main():
                         help=('Prefix path which should be removed for test '
                               'result'))
     parser.add_argument('-s', '--skip-rules', metavar='skip-rules',
-                        help=('YAML-file with skip rules'))
+                        help='YAML-file with skip rules')
+    parser.add_argument('-c', '--check-rules', metavar='check-rules',
+                        help='URL to a test result in Jenkins job')
     parser.add_argument('targets', metavar='target', nargs='*',
                         default=['all', 'clean'],
                         help='Names of targets to run')
 
     args = parser.parse_args()
-    make(args)
+
+    if args.check_rules:
+        check_rules(args)
+    else:
+        make(args)
 
 
 if __name__ == '__main__':
