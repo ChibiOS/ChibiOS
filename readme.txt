@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unitary test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
 - FIX: Fixed invalid DMAMUX settings in DMAv1 for some devices (bug #1176)(TBP).
