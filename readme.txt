@@ -77,6 +77,8 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unitary test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed path ambiguity between STM32 USARTv2 and USARTv3 drivers
+       (bug #1177)(TBP).
 - FIX: Fixed invalid DMAMUX settings in DMAv1 for some devices (bug #1176)(TBP).
 - FIX: Fixed wrong macro in the demo STM32F7xx-SPI-ADXL355 (bug #1175) 
        (backported to 21.6.1).
