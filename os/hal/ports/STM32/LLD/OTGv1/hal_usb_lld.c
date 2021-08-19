@@ -763,6 +763,11 @@ void usb_lld_start(USBDriver *usbp) {
 
       /* 48MHz 1.1 PHY.*/
       otgp->DCFG = 0x02200000 | DCFG_DSPD_FS11;
+
+#if CORTEX_ENABLE_WFI_IDLE == TRUE
+      // enable USB with WFI
+      rccDisableUSB2_HSULPI();
+#endif
     }
 #endif
 
