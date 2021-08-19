@@ -29,8 +29,8 @@
 /*
  * SPI TX and RX buffers.
  */
-CC_ALIGN(32) static uint8_t txbuf[32];
-CC_ALIGN(32) static uint8_t rxbuf[32];
+CC_ALIGN_DATA(32) static uint8_t txbuf[32];
+CC_ALIGN_DATA(32) static uint8_t rxbuf[32];
 
 /* ADXL355 Driver: This object represent an ADXL355 instance */
 static ADXL355Driver ADXL355D1;
