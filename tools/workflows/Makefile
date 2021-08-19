@@ -13,36 +13,41 @@ WORKFLOWS := $(ROOT)/tools/workflows
 # Defines what targets to build in makefile based projects, the order matter.
 TARGETS := all clean
 
-# Find all projects to build
+# Makefile based projects
 makefile_dirs := $(addprefix $(ROOT)/,demos test testex testhal testrt)
-makefiles += $(shell find $(makefile_dirs) -type f -not -path "*/multi/*" \
-			   -name Makefile )
-multi_makefiles := $(shell find $(makefile_dirs) -type f -path "*/multi/*" \
-				     -name "*.make")
+makefiles := $(shell $(WORKFLOWS)/find.py --makefile --make --no-overlaps \
+			   $(makefile_dirs))
+
+single_makefiles := $(filter Makefile,$(makefiles))
+multi_makefiles := $(filter-out Makefile,$(makefiles))
+
+# External dependencies
 external := $(addprefix $(ROOT)/ext/,fatfs lwip pico-sdk wolfssl)
 
+# Documents
 docs := $(shell find $(ROOT)/doc -type f -name Doxyfile_html)
+
+# Linter scripts
 linters := $(shell find $(ROOT)/tools/style -type f -name "*.sh")
 
 .PHONY : all makefiles external docs info lint clean
-.PHONY : $(makefiles) $(multi_makefiles)
-.PHONY : $(linters) $(docs)
+.PHONY : $(makefiles) $(linters) $(docs)
 
 # Build makefile based projects
 all : makefiles
-makefiles : $(makefiles) $(multi_makefiles)
+makefiles : $(makefiles)
 	@! grep -q -r -m 1 "failure" $(TEST_RESULTS) 2>&1 > /dev/null || ( \
 		echo "Exiting because there are build failures"; \
 		exit 1)
 
-$(makefiles) : $(external)
+$(single_makefiles) : $(external)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))
-	+python $(WORKFLOWS)/make.py -C $(@D) -f $(@F) -p $(ROOT)/ \
+	+$(WORKFLOWS)/make.py -C $(@D) -f $(@F) -p $(ROOT)/ \
 		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml $(TARGETS)
 
 $(multi_makefiles) : $(external)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))
-	+python $(WORKFLOWS)/make.py -C $(dir $(@D)) -f make/$(@F) -p $(ROOT)/ \
+	+$(WORKFLOWS)/make.py -C $(dir $(@D)) -f make/$(@F) -p $(ROOT)/ \
 		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml $(TARGETS)
 
 # External projects
