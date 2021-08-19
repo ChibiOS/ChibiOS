@@ -75,7 +75,7 @@
 
 *** Next ***
 - NEW: EFL driver and demo for STM32F3xx.
-- NEW: New unitary test subsystem under /os/test. Now it is officially
+- NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
 - FIX: Fixed STM32G071 mcuconf.h template not showing TIM14/15/16/17
        (bug #1178)(TBP).
