@@ -18,8 +18,8 @@ makefile_dirs := $(addprefix $(ROOT)/,demos test testex testhal testrt)
 makefiles := $(shell $(WORKFLOWS)/find.py --makefile --make --no-overlaps \
 			   $(makefile_dirs))
 
-single_makefiles := $(filter Makefile,$(makefiles))
-multi_makefiles := $(filter-out Makefile,$(makefiles))
+single_makefiles := $(filter-out %.make,$(makefiles))
+multi_makefiles := $(filter %.make,$(makefiles))
 
 # External dependencies
 external := $(addprefix $(ROOT)/ext/,fatfs lwip pico-sdk wolfssl)
