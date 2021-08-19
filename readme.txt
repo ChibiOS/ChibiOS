@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: New unitary test subsystem under /os/test. Now it is officially
+       ChibiOS/TEST.
+- FIX: Fixed invalid DMAMUX settings in DMAv1 for some devices (bug #1176)(TBP).
 - FIX: Fixed wrong macro in the demo STM32F7xx-SPI-ADXL355 (bug #1175) 
        (backported to 21.6.1).
 - FIX: Fixed problem with RC initialization mask of the GPIO for the 
@@ -81,11 +84,11 @@
 - FIX: Fixed problem with N25Q driver (bug #1173)
        (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed semaphores broken when CH_CFG_USE_SEMAPHORES_PRIORITY is enabled
-       (bug #1172).
+       (bug #1172)(TBP).
 - FIX: Fixed idle thread stack area not cleared when CH_DBG_FILL_THREADS
-       is enabled (bug #1171).
+       is enabled (bug #1171)(TBP).
 - FIX: Fixed function chRegNextThread() broken when CH_CFG_USE_DYNAMIC
-       is disabled (bug #1170).
+       is disabled (bug #1170)(TBP).
 - FIX: Fixed insufficient information in RT registry (bug #1169)(TBP).
 - FIX: Fixed code base not compatible with -Wcast-align=strict (bug #1168)(TBP).
 - FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167)
