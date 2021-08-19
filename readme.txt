@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- FIX: Fixed wrong macro in the demo STM32F7xx-SPI-ADXL355 (bug #1175) 
+       (backported to 21.6.1).
 - FIX: Fixed problem with RC initialization mask of the GPIO for the 
        STM32L4x3 (bug #1174) (backported to 20.3.4).
 - FIX: Fixed problem with N25Q driver (bug #1173)
