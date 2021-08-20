@@ -77,6 +77,8 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed error in STM32_ADCCLK_MIN for STM32F37x/hal_lld.h (bug #1180)
+       (TBP)(backported to 20.3.4).
 - FIX: Fixed direct calls to RT in STM32 RTCv2 and RTCv3 (bug #1179)
        (TBP)(backported to 20.3.4).
 - FIX: Fixed STM32G071 mcuconf.h template not showing TIM14/15/16/17
