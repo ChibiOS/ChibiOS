@@ -82,6 +82,7 @@
 - NEW: Improved boost settings for STM32G4.
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
        the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
+- FIX: Fixed direct calls to RT in STM32 RTCv2 and RTCv3 (bug #1179).
 - FIX: Fixed invalid DMAMUX settings in DMAv1 for some devices (bug #1176).
 - FIX: Fixed problem with RC initialization mask of the GPIO for the 
        STM32L4x3 (bug #1174).
