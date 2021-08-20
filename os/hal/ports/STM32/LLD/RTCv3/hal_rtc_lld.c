@@ -212,10 +212,10 @@ static ps_error_t _read(void *instance, ps_offset_t offset,
   volatile uint32_t *bkpr = &((RTCDriver *)instance)->tamp->BKP0R;
   unsigned i;
 
-  chDbgCheck((instance != NULL) && (rp != NULL));
-  chDbgCheck((n > 0U) && (n <= STM32_RTC_STORAGE_SIZE));
-  chDbgCheck((offset < STM32_RTC_STORAGE_SIZE) &&
-             (offset + n <= STM32_RTC_STORAGE_SIZE));
+  osalDbgCheck((instance != NULL) && (rp != NULL));
+  osalDbgCheck((n > 0U) && (n <= STM32_RTC_STORAGE_SIZE));
+  osalDbgCheck((offset < STM32_RTC_STORAGE_SIZE) &&
+               (offset + n <= STM32_RTC_STORAGE_SIZE));
 
   for (i = 0; i < (unsigned)n; i++) {
     unsigned index = ((unsigned)offset + i) / sizeof (uint32_t);
@@ -231,10 +231,10 @@ static ps_error_t _write(void *instance, ps_offset_t offset,
   volatile uint32_t *bkpr = &((RTCDriver *)instance)->tamp->BKP0R;
   unsigned i;
 
-  chDbgCheck((instance != NULL) && (wp != NULL));
-  chDbgCheck((n > 0U) && (n <= STM32_RTC_STORAGE_SIZE));
-  chDbgCheck((offset < STM32_RTC_STORAGE_SIZE) &&
-             (offset + n <= STM32_RTC_STORAGE_SIZE));
+  osalDbgCheck((instance != NULL) && (wp != NULL));
+  osalDbgCheck((n > 0U) && (n <= STM32_RTC_STORAGE_SIZE));
+  osalDbgCheck((offset < STM32_RTC_STORAGE_SIZE) &&
+               (offset + n <= STM32_RTC_STORAGE_SIZE));
 
   for (i = 0; i < (unsigned)n; i++) {
     unsigned index = ((unsigned)offset + i) / sizeof (uint32_t);

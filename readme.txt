@@ -77,11 +77,14 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed direct calls to RT in STM32 RTCv2 and RTCv3 (bug #1179)
+       (TBP)(backported to 20.3.4).
 - FIX: Fixed STM32G071 mcuconf.h template not showing TIM14/15/16/17
        (bug #1178)(TBP).
 - FIX: Fixed path ambiguity between STM32 USARTv2 and USARTv3 drivers
        (bug #1177)(TBP).
-- FIX: Fixed invalid DMAMUX settings in DMAv1 for some devices (bug #1176)(TBP).
+- FIX: Fixed invalid DMAMUX settings in DMAv1 for some devices (bug #1176)
+       (TBP)(backported to 20.3.4).
 - FIX: Fixed wrong macro in the demo STM32F7xx-SPI-ADXL355 (bug #1175) 
        (backported to 21.6.1).
 - FIX: Fixed problem with RC initialization mask of the GPIO for the 
