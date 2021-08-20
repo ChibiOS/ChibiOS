@@ -64,14 +64,20 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH4567_HANDLER) {
   /* Check on channel 4.*/
   dmaServeInterrupt(STM32_DMA1_STREAM4);
 
+#if STM32_DMA1_NUM_CHANNELS >= 5
   /* Check on channel 5.*/
   dmaServeInterrupt(STM32_DMA1_STREAM5);
+#endif
 
+#if STM32_DMA1_NUM_CHANNELS >= 6
   /* Check on channel 6.*/
   dmaServeInterrupt(STM32_DMA1_STREAM6);
+#endif
 
+#if STM32_DMA1_NUM_CHANNELS >= 7
   /* Check on channel 7.*/
   dmaServeInterrupt(STM32_DMA1_STREAM7);
+#endif
 
   OSAL_IRQ_EPILOGUE();
 }
