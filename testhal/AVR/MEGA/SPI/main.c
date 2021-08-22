@@ -41,6 +41,7 @@ void spiCallback(SPIDriver *spip) {
  * @biref   SPI configuration strucrture.
  */
 static const SPIConfig spiCfg = {
+  false,
   spiCallback,                  /* SPI callback.                  */
   IOPORT2,                      /* SPI chip select port.          */
   7,                            /* SPI chip select pad.           */
