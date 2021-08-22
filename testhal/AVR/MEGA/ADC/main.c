@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016 Theodore Ateba
+    ChibiOS - Copyright (C) 2016...2021 Theodore Ateba
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -39,10 +39,11 @@ static adcsample_t sample_buff[MY_NUM_CH * MY_SAMPLING_NUMBER];
  * Channels:    IN0 (Arduino Pin A0).
  */
 static const ADCConversionGroup my_conversion_group = {
-  FALSE,      /* Not circular buffer.       */
-  MY_NUM_CH,  /* Number of channels.        */
-  NULL,       /* No ADC callback function.  */
-  1,          /* Channel mask.              */
+  FALSE,      /* Not circular buffer.           */
+  MY_NUM_CH,  /* Number of channels.            */
+  NULL,       /* No ADC callback function.      */
+  NULL,       /* No ADC Callback erro function. */
+  1,          /* Channel mask.                  */
 };
 
 static const ADCConfig adcConfig = {
