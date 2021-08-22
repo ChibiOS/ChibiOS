@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2015..2021 Theodore Ateba
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ static void spi_set_stransfer_mode(SPI_MODE_t mode) {
     case SPI_TRANSFER_MODE1:
       SPIC.CTRL = (SPIC.CTRL & ~SPI_MODE_gm) | SPI_MODE_1_gc;
     break;
-    
+
     case SPI_TRANSFER_MODE2:
       SPIC.CTRL = (SPIC.CTRL & ~SPI_MODE_gm) | SPI_MODE_2_gc;
     break;
@@ -142,7 +142,7 @@ static void spi_set_clock_prescaler(SPI_PRESCALER_t prescaler) {
     case SPI_PRESCALER_16:
       SPIC.CTRL = (SPIC.CTRL & ~SPI_PRESCALER_gm) | SPI_PRESCALER_DIV4_gc;
     break;
-    
+
     case SPI_PRESCALER_64:
       SPIC.CTRL = (SPIC.CTRL & ~SPI_PRESCALER_gm) | SPI_PRESCALER_DIV4_gc;
     break;
@@ -171,7 +171,7 @@ static void spi_set_clock_prescaler(SPI_PRESCALER_t prescaler) {
     case SPI_INT_LEVEL_LOW:
       SPIC.INTCTRL = (SPIC.INTCTRL & ~SPI_INTLVL_gm) | SPI_INTLVL_LO_gc;
     break;
-    
+
     case SPI_INT_LEVEL_MEDIUM:
       SPIC.INTCTRL = (SPIC.INTCTRL & ~SPI_INTLVL_gm) | SPI_INTLVL_MED_gc;
     break;
@@ -278,7 +278,7 @@ void spi_lld_start(SPIDriver *spip) {
 	  // SPI interrupt disabled,
 	  // SPI enabled,
 	  // SPI master enabled.
-    
+
     spip->spi->INTCTRL = SPI_INTLVL_OFF_gc;
 
     spip->spi->CTRL = (spip->config->clk2x ? SPI_CLK2X_bm : 0)    |
@@ -370,6 +370,20 @@ void spi_lld_exchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf)
   spip->spi->DATA = (spip->txbuf ? spip->txbuf[0] : DUMMY_SPI_SEND_VALUE);
 }
 
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Aborts the ongoing SPI operation, if any.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+void spi_lld_abort(SPIDriver *spip) {
+
+  /* Stopping SPI.*/
+
+}
+#endif /* SPI_SUPPORTS_CIRCULAR == TRUE */
 
 /**
  * @brief   Exchanges one frame using a polled wait.
