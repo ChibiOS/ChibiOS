@@ -39,6 +39,7 @@ void spiCallback(SPIDriver *spip) {
  * @biref   SPI configuration strucrture.
  */
 static const SPIConfig spiCfg = {
+  false,
   spiCallback,            /* SPI callback.            */
   IOPORT2,                /* SPI chip select port.    */
   7,                      /* SPI chip select pad.     */
@@ -105,7 +106,7 @@ int main(void) {
    * Starts the LED blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  
+
   chprintf(chp, "AVR SPI program testhal program example.\r\n");
 
   while (TRUE) {
