@@ -68,7 +68,8 @@ typedef struct {
   uint8_t   off_refs;               /**< @brief Offset of @p refs field.    */
   uint8_t   off_preempt;            /**< @brief Offset of @p ticks field.   */
   uint8_t   off_time;               /**< @brief Offset of @p time field.    */
-  uint8_t   off_reserved[5];
+  uint8_t   off_reserved[4];
+  uint8_t   intctxsize;             /**< @brief Size of a @p port_intctx.   */
   uint8_t   intervalsize;           /**< @brief Size of a @p sysinterval_t. */
   uint8_t   instancesnum;           /**< @brief Number of instances.        */
   uint8_t   off_sys_state;          /**< @brief Offset of @p state field.   */

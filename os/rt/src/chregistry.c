@@ -85,6 +85,7 @@ ROMCONST chdebug_t ch_debug = {
   .timesize                 = (uint8_t)sizeof (systime_t),
   .intervalsize             = (uint8_t)sizeof (sysinterval_t),
   .threadsize               = (uint8_t)sizeof (thread_t),
+  .intctxsize               = (uint8_t)sizeof (struct port_intctx),
   .off_prio                 = (uint8_t)__CH_OFFSETOF(thread_t, hdr.pqueue.prio),
   .off_ctx                  = (uint8_t)__CH_OFFSETOF(thread_t, ctx),
   .off_newer                = (uint8_t)__CH_OFFSETOF(thread_t, rqueue.next),
@@ -112,7 +113,7 @@ ROMCONST chdebug_t ch_debug = {
 #else
   .off_time                 = (uint8_t)0,
 #endif
-  .off_reserved             = {(uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0},
+  .off_reserved             = {(uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0},
   .instancesnum             = (uint8_t)PORT_CORES_NUMBER,
   .off_sys_state            = (uint8_t)__CH_OFFSETOF(ch_system_t, state),
   .off_sys_instances        = (uint8_t)__CH_OFFSETOF(ch_system_t, instances[0]),
