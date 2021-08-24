@@ -219,6 +219,42 @@ static inline delta_list_t *vt_dequeue(delta_list_t *dlp) {
   return dlp;
 }
 
+#if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
+/**
+ * @brief   Inserts a timer as first element in a delta list.
+ * @note    This is the special case when the delta list is initially empty.
+ */
+static void vt_insert_first(virtual_timers_list_t *vtlp,
+                            virtual_timer_t *vtp,
+                            systime_t now,
+                            sysinterval_t delay) {
+
+  /* The delta list is empty, the current time becomes the new
+     delta list base time, the timer is inserted.*/
+  vtlp->lasttime = now;
+  vt_insert_after(&vtlp->dlist, &vtp->dlist, delay);
+
+  /* If the requested delay is lower than the minimum safe delta then it
+     is raised to the minimum safe value.*/
+  if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+    /* We need to avoid that the system time goes past the alarm we are
+       going to set before the alarm is actually set.*/
+    delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+  }
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+  else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+    /* The delta could be too large for the physical timer to handle
+       this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
+    delay = (sysinterval_t)TIME_MAX_SYSTIME;
+  }
+#endif
+
+  /* Being the first element inserted in the list the alarm timer
+     is started.*/
+  port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
+}
+#endif /* CH_CFG_ST_TIMEDELTA > 0 */
+
 /**
  * @brief   Enqueues a virtual timer in a virtual timers list.
  */
@@ -235,29 +271,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
     /* Special case where the timers list is empty.*/
     if (vt_is_empty(&vtlp->dlist)) {
 
-      /* The delta list is empty, the current time becomes the new
-         delta list base time, the timer is inserted.*/
-      vtlp->lasttime = now;
-      vt_insert_after(&vtlp->dlist, &vtp->dlist, delay);
-
-      /* If the requested delay is lower than the minimum safe delta then it
-         is raised to the minimum safe value.*/
-      if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
-        /* We need to avoid that the system time goes past the alarm we are
-           going to set before the alarm is actually set.*/
-        delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-      }
-    #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-      else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
-        /* The delta could be too large for the physical timer to handle
-           this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-        delay = (sysinterval_t)TIME_MAX_SYSTIME;
-      }
-    #endif
-
-      /* Being the first element inserted in the list the alarm timer
-         is started.*/
-      port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
+      vt_insert_first(vtlp, vtp, now, delay);
 
       return;
     }
@@ -282,10 +296,15 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
       /* A small delay that will become the first element in the delta list
          and next deadline.*/
       deadline_delta = delta;
+
+      /* Limit delta to CH_CFG_ST_TIMEDELTA.*/
+      if (deadline_delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+        deadline_delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+      }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
       /* The delta could be too large for the physical timer to handle
          this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-      if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+      else if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
         deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
       }
 #endif
@@ -410,7 +429,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
     return;
   }
 
-  /* Removing the first timer from the list and marking it as not armed.*/
+  /* Removing the first timer from the list, marking it as not armed.*/
   vt_remove_first(&vtlp->dlist);
   vtp->func = NULL;
 
@@ -456,8 +475,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
 /**
  * @brief   Returns the remaining time interval before next timer trigger.
- * @note    This function can be called while the timer is active or
- *          after stopping it.
+ * @note    This function can be called while the timer is active.
  *
  * @param[in] vtp       the @p virtual_timer_t structure pointer
  * @return              The remaining time interval.
@@ -482,7 +500,7 @@ sysinterval_t chVTGetRemainingIntervalI(virtual_timer_t *vtp) {
       if (nowdelta > delta) {
         return (sysinterval_t)0;
       }
-      return nowdelta - delta;
+      return delta - nowdelta;
 #else
       return delta;
 #endif
@@ -601,11 +619,15 @@ void chVTDoTickI(void) {
 #endif
 
   /* Update alarm time to next timer.*/
-  port_timer_set_alarm(chTimeAddX(now, delta));
+  {
+    sysinterval_t next_alarm = chTimeAddX(now, delta);
 
-  chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
-              chTimeDiffX(vtlp->lasttime, chTimeAddX(now, delta)),
-              "insufficient delta");
+    port_timer_set_alarm(next_alarm);
+
+    chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
+                chTimeDiffX(vtlp->lasttime, next_alarm),
+                "insufficient delta");
+  }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
