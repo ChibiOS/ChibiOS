@@ -79,33 +79,33 @@
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
 - FIX: Fixed STM32 ADCv3 differences in headers (bug #1182)
-       (TBP)(backported to 20.3.4).
+       (backported to 20.3.4).
 - FIX: Fixed DMAv1 compile fail on STM32L011 (bug #1181)
-       (TBP)(backported to 20.3.4).
+       (backported to 20.3.4).
 - FIX: Fixed error in STM32_ADCCLK_MIN for STM32F37x/hal_lld.h (bug #1180)
-       (TBP)(backported to 20.3.4).
+       (backported to 20.3.4).
 - FIX: Fixed direct calls to RT in STM32 RTCv2 and RTCv3 (bug #1179)
-       (TBP)(backported to 20.3.4).
+       (backported to 20.3.4).
 - FIX: Fixed STM32G071 mcuconf.h template not showing TIM14/15/16/17
-       (bug #1178)(TBP).
+       (bug #1178).
 - FIX: Fixed path ambiguity between STM32 USARTv2 and USARTv3 drivers
-       (bug #1177)(TBP).
+       (bug #1177).
 - FIX: Fixed invalid DMAMUX settings in DMAv1 for some devices (bug #1176)
-       (TBP)(backported to 20.3.4).
+       (backported to 20.3.4).
 - FIX: Fixed wrong macro in the demo STM32F7xx-SPI-ADXL355 (bug #1175) 
        (backported to 21.6.1).
 - FIX: Fixed problem with RC initialization mask of the GPIO for the 
-       STM32L4x3 (bug #1174) (backported to 20.3.4).
+       STM32L4x3 (bug #1174)(backported to 20.3.4).
 - FIX: Fixed problem with N25Q driver (bug #1173)
        (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed semaphores broken when CH_CFG_USE_SEMAPHORES_PRIORITY is enabled
-       (bug #1172)(TBP).
+       (bug #1172).
 - FIX: Fixed idle thread stack area not cleared when CH_DBG_FILL_THREADS
-       is enabled (bug #1171)(TBP).
+       is enabled (bug #1171).
 - FIX: Fixed function chRegNextThread() broken when CH_CFG_USE_DYNAMIC
-       is disabled (bug #1170)(TBP).
-- FIX: Fixed insufficient information in RT registry (bug #1169)(TBP).
-- FIX: Fixed code base not compatible with -Wcast-align=strict (bug #1168)(TBP).
+       is disabled (bug #1170).
+- FIX: Fixed insufficient information in RT registry (bug #1169).
+- FIX: Fixed code base not compatible with -Wcast-align=strict (bug #1168).
 - FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167)
        (backported to 21.6.1).
 - FIX: Fixed missing constant in ADuCM36x hal_lld.c (bug #1166)
