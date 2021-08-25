@@ -533,7 +533,7 @@ static inline void chSysNotifyInstance(os_instance_t *oip) {
  */
 static inline thread_t *chSysGetIdleThreadX(void) {
 
-  return (thread_t *)currcore->rlist.pqueue.prev;
+  return threadref(currcore->rlist.pqueue.prev);
 }
 #endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 

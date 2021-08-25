@@ -92,7 +92,7 @@ void chCondSignal(condition_variable_t *cp) {
 
   chSysLock();
   if (ch_queue_notempty(&cp->queue)) {
-    chSchWakeupS((thread_t *)ch_queue_fifo_remove(&cp->queue), MSG_OK);
+    chSchWakeupS(threadref(ch_queue_fifo_remove(&cp->queue)), MSG_OK);
   }
   chSysUnlock();
 }
@@ -114,7 +114,7 @@ void chCondSignalI(condition_variable_t *cp) {
   chDbgCheck(cp != NULL);
 
   if (ch_queue_notempty(&cp->queue)) {
-    thread_t *tp = (thread_t *)ch_queue_fifo_remove(&cp->queue);
+    thread_t *tp = threadref(ch_queue_fifo_remove(&cp->queue));
     tp->u.rdymsg = MSG_OK;
     (void) chSchReadyI(tp);
   }
@@ -155,7 +155,7 @@ void chCondBroadcastI(condition_variable_t *cp) {
      ready list in FIFO order. The wakeup message is set to @p MSG_RESET in
      order to make a chCondBroadcast() detectable from a chCondSignal().*/
   while (ch_queue_notempty(&cp->queue)) {
-    chSchReadyI((thread_t *)ch_queue_fifo_remove(&cp->queue))->u.rdymsg = MSG_RESET;
+    chSchReadyI(threadref(ch_queue_fifo_remove(&cp->queue)))->u.rdymsg = MSG_RESET;
   }
 }
 

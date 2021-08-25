@@ -77,8 +77,8 @@ static thread_t *__sch_ready_behind(thread_t *tp) {
   tp->state = CH_STATE_READY;
 
   /* Insertion in the priority queue.*/
-  return (thread_t *)ch_pqueue_insert_behind(&tp->owner->rlist.pqueue,
-                                             &tp->hdr.pqueue);
+  return threadref(ch_pqueue_insert_behind(&tp->owner->rlist.pqueue,
+                                           &tp->hdr.pqueue));
 }
 
 /**
@@ -110,8 +110,8 @@ static thread_t *__sch_ready_ahead(thread_t *tp) {
   tp->state = CH_STATE_READY;
 
   /* Insertion in the priority queue.*/
-  return (thread_t *)ch_pqueue_insert_ahead(&tp->owner->rlist.pqueue,
-                                            &tp->hdr.pqueue);
+  return threadref(ch_pqueue_insert_ahead(&tp->owner->rlist.pqueue,
+                                          &tp->hdr.pqueue));
 }
 
 /**
@@ -130,7 +130,7 @@ static void __sch_reschedule_behind(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp = threadref(ch_pqueue_remove_highest(&oip->rlist.pqueue));
   ntp->state = CH_STATE_CURRENT;
   __instance_set_currthread(oip, ntp);
 
@@ -166,7 +166,7 @@ static void __sch_reschedule_ahead(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp = threadref(ch_pqueue_remove_highest(&oip->rlist.pqueue));
   ntp->state = CH_STATE_CURRENT;
   __instance_set_currthread(oip, ntp);
 
@@ -186,7 +186,7 @@ static void __sch_reschedule_ahead(void) {
  * Timeout wakeup callback.
  */
 static void __sch_wakeup(virtual_timer_t *vtp, void *p) {
-  thread_t *tp = (thread_t *)p;
+  thread_t *tp = threadref(p);
 
   (void)vtp;
 
@@ -249,7 +249,7 @@ void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp) {
   do {
     cp = cp->next;
   } while ((cp != qp) &&
-           (((thread_t *)cp)->hdr.pqueue.prio >= ((thread_t *)tp)->hdr.pqueue.prio));
+           (threadref(cp)->hdr.pqueue.prio >= threadref(tp)->hdr.pqueue.prio));
   tp->next       = cp;
   tp->prev       = cp->prev;
   tp->prev->next = tp;
@@ -318,7 +318,7 @@ void chSchGoSleepS(tstate_t newstate) {
 #endif
 
   /* Next thread in ready list becomes current.*/
-  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp = threadref(ch_pqueue_remove_highest(&oip->rlist.pqueue));
   ntp->state = CH_STATE_CURRENT;
   __instance_set_currthread(oip, ntp);
 
@@ -516,7 +516,7 @@ void chSchDoPreemption(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp = threadref(ch_pqueue_remove_highest(&oip->rlist.pqueue));
   ntp->state = CH_STATE_CURRENT;
   __instance_set_currthread(oip, ntp);
 
@@ -626,7 +626,7 @@ thread_t *chSchSelectFirstI(void) {
   thread_t *ntp;
 
   /* Picks the first thread from the ready queue and makes it current.*/
-  ntp = (thread_t *)ch_pqueue_remove_highest(&oip->rlist.pqueue);
+  ntp = threadref(ch_pqueue_remove_highest(&oip->rlist.pqueue));
   ntp->state = CH_STATE_CURRENT;
   __instance_set_currthread(oip, ntp);
 
