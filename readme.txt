@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.6.1 ***
+- NEW: Made STM32H7 non-cacheable memory option also shareable.
 - FIX: Fixed wrong macro in the demo STM32F7xx-SPI-ADXL355 (bug #1175).
 - FIX: Fixed problem with N25Q driver (bug #1173).
 - FIX: Fixed wrong chconf.h for ADuCM36x demos (bug #1167).
