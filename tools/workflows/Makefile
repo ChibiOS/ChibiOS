@@ -36,8 +36,7 @@ linters := $(shell find $(ROOT)/tools/style -type f -name "*.sh")
 # Build makefile based projects
 all : makefiles
 makefiles : $(makefiles)
-	$(WORKFLOWS)/report.py -t $(TEST_RESULTS) | \
-		tee $(TEST_RESULTS)/test_results
+	$(WORKFLOWS)/report.py -t $(TEST_RESULTS) -r $(TEST_RESULTS)/test_results
 
 $(single_makefiles) : $(external)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))

@@ -43,6 +43,10 @@ def report(args, fd):
             fd.write(stderr.text)
         fd.write('\n')
 
+    def write(fds, string):
+        for fd in fds:
+            fd.write(string)
+
     thick_line = '=' * 70 + '\n'
     thin_line = '-' * 70 + '\n'
 
@@ -86,8 +90,12 @@ def report(args, fd):
     for testcase in failures:
         write_failed_status(fd, testcase)
 
-    fd.write(thin_line)
-    fd.write('Ran {total:d} tests in {time:.3f}s\n\n'.format(
+    fds = [fd]
+    if fd != sys.stdout:
+        fds.append(sys.stdout)
+
+    write(fds, thin_line)
+    write(fds, 'Ran {total:d} tests in {time:.3f}s\n\n'.format(
         total=total_count,
         time=time,
     ))
@@ -102,14 +110,14 @@ def report(args, fd):
     )
 
     if failures_count > 0:
-        fd.write('FAILED ({})\n'.format(context))
+        write(fds, 'FAILED ({})\n'.format(context))
         sys.exit(1)
 
     if context:
-        fd.write('OK ({})\n'.format(context))
+        write(fds, 'OK ({})\n'.format(context))
         sys.exit(0)
 
-    fd.write('OK\n')
+    write(fds, 'OK\n')
 
 
 def main():
