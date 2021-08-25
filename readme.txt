@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.4 ***
+- NEW: Made STM32H7 non-cacheable memory option also shareable.
 - NEW: STM32 improved ADCv4 driver (H7) back-ported from trunk.
 - NEW: New "VT Storm" test application for RT.
 - NEW: More efficient virtual timers implementation for RT, it has been

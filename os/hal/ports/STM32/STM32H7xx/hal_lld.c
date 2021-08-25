@@ -190,6 +190,7 @@ void hal_lld_init(void) {
                        base,
                        MPU_RASR_ATTR_AP_RW_RW |
                        MPU_RASR_ATTR_NON_CACHEABLE |
+                       MPU_RASR_ATTR_S |
                        size |
                        MPU_RASR_ENABLE);
     mpuEnable(MPU_CTRL_PRIVDEFENA);
