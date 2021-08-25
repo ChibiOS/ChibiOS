@@ -36,9 +36,8 @@ linters := $(shell find $(ROOT)/tools/style -type f -name "*.sh")
 # Build makefile based projects
 all : makefiles
 makefiles : $(makefiles)
-	@! grep -q -r -m 1 "failure" $(TEST_RESULTS) 2>&1 > /dev/null || ( \
-		echo "Exiting because there are build failures"; \
-		exit 1)
+	$(WORKFLOWS)/report.py -t $(TEST_RESULTS) | \
+		tee $(TEST_RESULTS)/test_results
 
 $(single_makefiles) : $(external)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))
