@@ -174,43 +174,34 @@ void cry_lld_stop(CRYDriver *cryp) {
   }
 }
 
+#if (CRY_LLD_SUPPORTS_AES == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Initializes the transient key for a specific algorithm.
+ * @brief   Initializes the AES transient key.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[in] algorithm         the algorithm identifier
  * @param[in] size              key size in bytes
  * @param[in] keyp              pointer to the key data
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
- * @retval CRY_ERR_INV_ALGO     if the specified algorithm is unknown or
- *                              unsupported.
- * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid.
+ * @retval CRY_ERR_INV_KEY_SIZE if the specified key size is invalid for the specified algorithm.
  *
  * @notapi
  */
-cryerror_t cry_lld_loadkey(CRYDriver        *cryp,
-                           cryalgorithm_t   algorithm,
+cryerror_t cry_lld_aes_loadkey(CRYDriver        *cryp,
                            size_t           size,
                            const uint8_t    *keyp) {
 
   uint8_t i;
 
   (void)cryp;
-  (void)size;
 
   if (size != AES_BLOCK_SIZE) {
     return CRY_ERR_INV_KEY_SIZE; /* invalid size error code. */
   }
 
-  if (algorithm == cry_algo_aes) {
-    /* Load the Key into the AES key memory. */
-    for (i = 0; i < AES_BLOCK_SIZE; i++) {
-      AES.KEY = keyp[i];
-    }
-  }
-
-  if (algorithm == cry_algo_des) {
+  /* Load the Key into the AES key memory. */
+  for (i = 0; i < AES_BLOCK_SIZE; i++) {
+    AES.KEY = keyp[i];
   }
 
   return CRY_NOERROR;
@@ -336,6 +327,7 @@ cryerror_t cry_lld_decrypt_AES(CRYDriver      *cryp,
 
   return CRY_NOERROR;
 }
+#endif
 
 #endif /* HAL_USE_CRY == TRUE */
 

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -97,99 +97,28 @@
 /* Driver data structures and types.                                        */
 /*==========================================================================*/
 
-/**
- * @brief   Type of a structure representing an SPI driver.
- */
-typedef struct SPIDriver SPIDriver;
-
-/**
- * @brief   SPI notification callback type.
- *
- * @param[in] spip      pointer to the @p SPIDriver object triggering the
- *                      callback
- */
-typedef void (*spicallback_t)(SPIDriver *spip);
-
-/**
- * @brief   Driver configuration structure.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
- */
-typedef struct {
-  /**
-   * @brief Operation complete callback.
-   */
-  spicallback_t         end_cb;
-  /* End of the mandatory fields. */
-  /**
-   * @brief Port used of Slave Select
-   */
-  ioportid_t            ssport;
-  /**
-   * @brief Pad used of Slave Select
-   */
-  uint8_t               sspad;
-  /**
-   * @brief SPI Control Register initialization data.
-   */
-  uint8_t               spcr;
-  /**
-   * @brief SPI Status Register initialization data.
-   */
-  uint8_t               spsr;
-} SPIConfig;
-
-/**
- * @brief   Structure representing an SPI driver.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
- */
-struct SPIDriver {
-  /**
-   * @brief Driver state.
-   */
-  spistate_t                state;
-  /**
-   * @brief Current configuration data.
-   */
-  const SPIConfig           *config;
-#if SPI_USE_WAIT || defined(__DOXYGEN__)
-  /**
-   * @brief Waiting thread.
-   */
-  thread_reference_t        thread;
-#endif /* SPI_USE_WAIT */
-#if SPI_USE_MUTUAL_EXCLUSION || defined(__DOXYGEN__)
-  /**
-   * @brief Mutex protecting the bus.
-   */
-  mutex_t                   mutex;
-#endif /* SPI_USE_MUTUAL_EXCLUSION */
-#if defined(SPI_DRIVER_EXT_FIELDS)
-  SPI_DRIVER_EXT_FIELDS
-#endif
-  /* End of the mandatory fields. */
-  /**
-   * @brief   Pointer to the buffer with data to send.
-   */
-  const uint8_t             *txbuf;
-  /**
-   * @brief   Pointer to the buffer to store received data.
-   */
-  uint8_t                   *rxbuf;
-  /**
-   * @brief   Number of bytes of data to exchange.
-   */
-  size_t                    exbytes;
-  /**
-   * @brief   Current index in buffer when exchanging data.
-   */
-  size_t                    exidx;
-};
-
 /*==========================================================================*/
 /* Driver macros.                                                           */
 /*==========================================================================*/
+
+/**
+ * @brief   Circular mode support flag.
+ */
+#define SPI_SUPPORTS_CIRCULAR           TRUE
+
+#define spi_lld_driver_fields                                                \
+  const uint8_t             *txbuf;                                          \
+  uint8_t                   *rxbuf;                                          \
+  size_t                    exbytes;                                         \
+  size_t                    exidx;
+
+
+/**
+ * @brief   Low level fields of the SPI configuration structure.
+ */
+#define spi_lld_config_fields                                               \
+  uint8_t               spcr;                                               \
+  uint8_t               spsr;
 
 /**
  * @brief   Ignores data on the SPI bus.
@@ -253,6 +182,9 @@ extern "C" {
   void spi_lld_exchange(SPIDriver *spip, size_t n,
                         const void *txbuf, void *rxbuf);
 
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+void spi_lld_abort(SPIDriver *spip);
+#endif
 #if AVR_SPI_USE_16BIT_POLLED_EXCHANGE
   uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
 #else

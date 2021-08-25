@@ -268,13 +268,38 @@ typedef struct {
  * @post    After use the stream can be released using @p bdmaStreamRelease().
  *
  * @param[in] stp       pointer to an @p stm32_bdma_stream_t structure
- * @param[in] addr      value to be written in the CMAR register
+ * @param[in] addr      value to be written in the CM0AR register
  *
  * @special
  */
-#define bdmaStreamSetMemory(stp, addr) {                                    \
+#define bdmaStreamSetMemory0(stp, addr) {                                   \
   (stp)->channel->CM0AR  = (uint32_t)(addr);                                \
 }
+
+/**
+ * @brief   Associates a memory destination to a BDMA stream.
+ * @note    This function can be invoked in both ISR or thread context.
+ * @pre     The stream must have been allocated using @p bdmaStreamAllocate().
+ * @post    After use the stream can be released using @p bdmaStreamRelease().
+ *
+ * @param[in] stp       pointer to an @p stm32_bdma_stream_t structure
+ * @param[in] addr      value to be written in the CM1AR register
+ *
+ * @special
+ */
+#define bdmaStreamSetMemory1(stp, addr) {                                   \
+  (stp)->channel->CM1AR  = (uint32_t)(addr);                                \
+}
+
+/**
+ * @brief   Alias of @p bdmaStreamSetMemory0() for compatibility.
+ *
+ * @param[in] stp       pointer to an @p stm32_bdma_stream_t structure
+ * @param[in] addr      value to be written in the CM0AR register
+ *
+ * @special
+ */
+#define bdmaStreamSetMemory(stp, addr)  bdmaStreamSetMemory0(stp, addr)
 
 /**
  * @brief   Sets the number of transfers to be performed.

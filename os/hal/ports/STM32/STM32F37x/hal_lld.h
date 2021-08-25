@@ -130,7 +130,7 @@
 /**
  * @brief   Minimum ADC clock frequency.
  */
-#define STM32_ADCCLK_MIN        6000000
+#define STM32_ADCCLK_MIN        600000
 
 /**
  * @brief   Maximum SDADC clock frequency in fast mode.
