@@ -389,7 +389,7 @@ __STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
 
   ctrlbits = (mode & 0x007FFFFFU) >> 0U;
   oebits   = (mode & 0x00800000U) >> 23U;
-  padbits  = (mode & 0xF0000000U) >> 24U;
+  padbits  = (mode & 0xFF000000U) >> 24U;
 
   /* Setting up GPIO direction first.*/
   if (oebits != 0U) {
