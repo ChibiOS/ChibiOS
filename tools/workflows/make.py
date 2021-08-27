@@ -80,12 +80,14 @@ def make(args):
     path = os.path.join(directory, makefile)
     if args.prefix:
         assert path.startswith(args.prefix)
-        path = path[len(args.prefix):]
+        path = path[len(args.prefix):].lstrip(os.path.sep)
 
+    package = path.partition(os.path.sep)[0]
     suite = junit_xml.TestSuite(
         path,
         timestamp=time.time(),
         file=path,
+        package=package,
     )
 
     cmd = ['/usr/bin/env', 'make']
