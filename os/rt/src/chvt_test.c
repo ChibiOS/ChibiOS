@@ -72,7 +72,7 @@ static systime_t vt_set_alarm(systime_t basetime, sysinterval_t delta) {
   /* Absolute time for next alarm.*/
   next_alarm = chTimeAddX(basetime, delta);
 
-#if 0
+#if 1
   while (true) {
     sysinterval_t nowdelta;
 
@@ -89,6 +89,10 @@ static systime_t vt_set_alarm(systime_t basetime, sysinterval_t delta) {
     /* Trying again with a more relaxed minimum delta.*/
     mindelta *= (sysinterval_t)2;
     next_alarm = chTimeAddX(next_alarm, mindelta);
+
+#if !defined(CH_VT_RFCU_DISABLED)
+    chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
+#endif
   }
 #else
   /* Setting up the alarm on the next deadline.*/
@@ -535,18 +539,9 @@ void chVTDoTickI(void) {
   /* Update alarm time to next timer.*/
   next_alarm = vt_set_alarm(now, delta);
 
-#if !defined(CH_VT_RFCU_DISABLED)
-    if (chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) >
-        chTimeDiffX(vtlp->lasttime, next_alarm)) {
-
-      chDbgAssert(false, "insufficient delta");
-      chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
-    }
-#else
-    chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
-                chTimeDiffX(vtlp->lasttime, next_alarm),
-                "insufficient delta");
-#endif
+  chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
+              chTimeDiffX(vtlp->lasttime, next_alarm),
+              "insufficient delta");
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
