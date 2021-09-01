@@ -232,6 +232,7 @@ static void guard_cb(virtual_timer_t *vtp, void *p) {
  */
 void vt_storm_execute(const vt_storm_config_t *cfg) {
   unsigned i;
+  bool delta_warning;
 
   config = cfg;
 
@@ -284,7 +285,8 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     vtcus = 0;
 
     delay = TIME_US2I(128);
-    saturated = false;
+    saturated     = false;
+    delta_warning = false;
     do {
       sysinterval_t decrease;
 
@@ -319,10 +321,18 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTResetI(&guard1);
       chVTResetI(&guard2);
       chVTResetI(&guard3);
+
+      /* Check for relevant RFCU events.*/
+      delta_warning = chRFCUGetAndClearFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA |
+                                               CH_RFCU_VT_SKIPPED_DEADLINE) != (rfcu_mask_t)0;
       chSysUnlock();
 
       if (saturated) {
         chprintf(cfg->out, "#");
+        break;
+      }
+      else if (delta_warning) {
+        chprintf(cfg->out, "+");
         break;
       }
 
@@ -338,14 +348,19 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       delay = delay - decrease;
     } while (delay >= (sysinterval_t)VT_STORM_CFG_MIN_DELAY);
 
+    if (delta_warning) {
+      chprintf(cfg->out, "\r\nRFCU warning detected", TIME_I2US(delay), delay);
+    }
+    else {
+      chprintf(cfg->out, "\r\nNo warnings");
+    }
     if (saturated) {
       chprintf(cfg->out, "\r\nSaturated at %u uS %u ticks", TIME_I2US(delay), delay);
-      chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
     }
     else {
       chprintf(cfg->out, "\r\nNon saturated");
-      chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
     }
+    chprintf(cfg->out, "\r\nContinuous ticks %u\r\n\r\n", vtcus);
   }
 }
 
