@@ -277,6 +277,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
 #endif
 
   for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
+    bool dw;
 
     chprintf(cfg->out, "Iteration %d\r\n", i);
     chThdSleepS(TIME_MS2I(10));
@@ -305,7 +306,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTSetI(&guard2, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM + 1), guard_cb, NULL);
       chVTSetI(&guard3, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM * 2), guard_cb, NULL);
 
-      /* Letting them run for half second.*/
+      /* Letting them run for a while.*/
       chThdSleepS(TIME_MS2I(100));
 
       /* Stopping everything.*/
@@ -323,21 +324,23 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTResetI(&guard3);
 
       /* Check for relevant RFCU events.*/
-      delta_warning = chRFCUGetAndClearFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA |
-                                               CH_RFCU_VT_SKIPPED_DEADLINE) != (rfcu_mask_t)0;
+      dw = chRFCUGetAndClearFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA |
+                                    CH_RFCU_VT_SKIPPED_DEADLINE) != (rfcu_mask_t)0;
       chSysUnlock();
 
       if (saturated) {
         chprintf(cfg->out, "#");
         break;
       }
-      else if (delta_warning) {
+      else if (dw) {
+        palToggleLine(config->line);
         chprintf(cfg->out, "+");
-        break;
+        delta_warning = true;
       }
-
-      palToggleLine(config->line);
-      chprintf(cfg->out, ".");
+      else {
+        palToggleLine(config->line);
+        chprintf(cfg->out, ".");
+      }
 //      if (delay >= TIME_US2I(1)) {
 //        delay -= TIME_US2I(1);
 //      }
