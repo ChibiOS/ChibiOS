@@ -13,6 +13,10 @@ WORKFLOWS := $(ROOT)/tools/workflows
 # Defines what targets to build in makefile based projects, the order matter.
 TARGETS := all clean
 
+# If set to true, use virtual environment for python dependencies. Otherwise,
+# use system libraries.
+USE_VENV := false
+
 # Makefile based projects
 makefile_dirs := $(addprefix $(ROOT)/,demos test testex testhal testrt)
 makefiles := $(shell $(WORKFLOWS)/find.py --makefile --make --no-overlaps \
@@ -30,23 +34,39 @@ docs := $(shell find $(ROOT)/doc -type f -name Doxyfile_html)
 # Linter scripts
 linters := $(shell find $(ROOT)/tools/style -type f -name "*.sh")
 
-.PHONY : all makefiles external docs info lint clean
+# Python virtual environment
+venv := $(WORKFLOWS)/.venv
+venv_activate := $(venv)/bin/activate
+venv_python := $(venv)/bin/python
+
+ifeq ($(USE_VENV),true)
+	python := $(venv_python)
+    makefile_venv := $(venv_activate)
+else
+	python := python
+    makefile_venv :=
+endif
+
+.PHONY : all makefiles external docs info lint clean venv
 .PHONY : $(makefiles) $(linters) $(docs)
 
 # Build makefile based projects
 all : makefiles
 makefiles : $(makefiles)
-	$(WORKFLOWS)/report.py -t $(TEST_RESULTS) -r $(TEST_RESULTS)/test_results
+	$(python) $(WORKFLOWS)/report.py -t $(TEST_RESULTS) \
+		-r $(TEST_RESULTS)/test_results
 
-$(single_makefiles) : $(external)
+$(single_makefiles) : $(external) $(makefile_venv)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))
-	+$(WORKFLOWS)/make.py -C $(@D) -f $(@F) -p $(ROOT)/ \
-		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml $(TARGETS)
+	+$(python) $(WORKFLOWS)/make.py -C $(@D) -f $(@F) -p $(ROOT)/ \
+		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml \
+		-t $(WORKFLOWS)/target.yaml $(TARGETS)
 
-$(multi_makefiles) : $(external)
+$(multi_makefiles) : $(external) $(makefile_venv)
 	@mkdir -p $(TEST_RESULTS)/$(subst $(ROOT)/,,$(@D))
-	+$(WORKFLOWS)/make.py -C $(dir $(@D)) -f make/$(@F) -p $(ROOT)/ \
-		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml $(TARGETS)
+	+$(python) $(WORKFLOWS)/make.py -C $(dir $(@D)) -f make/$(@F) -p $(ROOT)/ \
+		-r $(TEST_RESULTS) -s $(WORKFLOWS)/skip.yaml \
+		-t $(WORKFLOWS)/target.yaml $(TARGETS)
 
 # External projects
 external : $(external)
@@ -90,9 +110,20 @@ info :
 	@echo
 	@which perl && perl -v || echo "perl not present"
 	@echo
+	@which python3 && python3 -V || echo "python3 not present"
+	@echo
+
+# Prepare Python virtual environment
+venv : $(venv_activate)
+$(venv_activate) :
+	python3 -mvenv $(venv)
+	$(venv)/bin/pip install \
+		-r $(WORKFLOWS)/requirements.txt \
+		-c $(WORKFLOWS)/constraints.txt
 
 # Clean up results of tests and docs
 clean :
 	rm -rf $(TEST_RESULTS)
 	rm -rf $(DOC_RESULTS)
 	rm -rf $(external)
+	rm -rf $(venv)

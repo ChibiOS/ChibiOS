@@ -24,6 +24,7 @@ This script requires the following packages to be installed:
 """
 
 import argparse
+import collections
 import os
 import re
 import subprocess
@@ -49,31 +50,40 @@ def get_jobserver_auth_fds():
     return ()
 
 
-class SkipRules:
+class BaseRules:
     def __init__(self, filename):
         self.filename = filename
-        self.rules = None
+        self._rules = None
 
-    def match(self, path, stderr):
-        if self.rules is None:
+    def load(self):
+        with open(self.filename) as fd:
+            self._rules = yaml.safe_load(fd)
+
+    @property
+    def rules(self):
+        if self._rules is None:
             self.load()
+        return self._rules
 
+
+class SkipRules(BaseRules):
+    def match(self, path, stderr):
         for rule in self.rules:
             if (re.match(rule['path'], path)
                     and re.search(rule['stderr'], stderr)):
                 return True, rule['reason']
-
         return False, None
 
-    def load(self):
-        with open(self.filename) as fd:
-            self.rules = yaml.safe_load(fd)
+
+class TargetRules(BaseRules):
+    def match(self, path):
+        for rule, targets in self.rules.items():
+            if re.match(rule, path):
+                return targets
+        return None
 
 
-def make(args):
-    if args.skip_rules:
-        skip_rules = SkipRules(args.skip_rules)
-
+def get_params(args):
     directory = args.directory or ''
     makefile = args.makefile or ''
 
@@ -82,25 +92,50 @@ def make(args):
         assert path.startswith(args.prefix)
         path = path[len(args.prefix):].lstrip(os.path.sep)
 
-    package = path.partition(os.path.sep)[0]
+    return Params(path, directory, makefile)
+
+Params = collections.namedtuple('Params', [
+    'path',
+    'directory',
+    'makefile',
+])
+
+
+def get_targets(args, path):
+    if args.target_rules:
+        target_rules = TargetRules(args.target_rules)
+        targets = target_rules.match(path)
+        if targets is not None:
+            return targets
+    return args.targets
+
+
+def make(args):
+    if args.skip_rules:
+        skip_rules = SkipRules(args.skip_rules)
+
+    params = get_params(args) 
+
+    package = params.path.partition(os.path.sep)[0]
     suite = junit_xml.TestSuite(
-        path,
+        params.path,
         timestamp=time.time(),
-        file=path,
+        file=params.path,
         package=package,
     )
 
     cmd = ['/usr/bin/env', 'make']
-    if args.directory:
-        cmd.extend(['-C', args.directory])
-    if args.makefile:
-        cmd.extend(['-f', args.makefile])
+    if params.directory:
+        cmd.extend(['-C', params.directory])
+    if params.makefile:
+        cmd.extend(['-f', params.makefile])
     if args.jobs > 1:
         cmd.extend(['-j', str(args.jobs)])
 
     jobserver_auth_fds = get_jobserver_auth_fds()
+    targets = get_targets(args, params.path)
 
-    for target in args.targets:
+    for target in targets:
         if not target:
             continue
 
@@ -118,10 +153,11 @@ def make(args):
 
         case_name = 'make ' + target
         case_log = ' '.join(cmd_target)
+        case_classname = params.path
         case = junit_xml.TestCase(
             case_name,
-            classname=path,
-            file=path,
+            classname=case_classname,
+            file=params.path,
             log=case_log,
             timestamp=timestamp,
             elapsed_sec=(end - start),
@@ -131,7 +167,7 @@ def make(args):
         suite.test_cases.append(case)
 
         if ret.returncode != 0:
-            skipped, msg = skip_rules.match(path, ret.stderr)
+            skipped, msg = skip_rules.match(params.path, ret.stderr)
             if skipped:
                 case.add_skipped_info(msg)
                 continue
@@ -142,12 +178,12 @@ def make(args):
     if args.result == '-':
         suite.to_file(sys.stdout, [suite])
     else:
-        test_result_path = os.path.join(args.result, path) + '.xml'
+        test_result_path = os.path.join(args.result, params.path) + '.xml'
         with open(test_result_path, 'w') as f:
             suite.to_file(f, [suite])
 
 
-def check_rules(args):
+def check_skip_rules(args):
     def get_signature(content):
         root = ElementTree.fromstring(content)
         return (
@@ -184,40 +220,56 @@ def check_rules(args):
         sys.exit(1)
 
 
+def check_target_rules(args):
+    if not args.target_rules:
+        sys.stderr.write('--target-rules is required\n')
+        sys.exit(1)
+
+    params = get_params(args) 
+    targets = get_targets(args, params.path)
+    sys.stdout.write(' '.join(targets))
+
+
 def main():
     parser = argparse.ArgumentParser(description=(
         'Execute make targets and generate JUnit results'
     ))
     # Make specific arguments
-    parser.add_argument('-C', '--directory', metavar='dir',
+    parser.add_argument('-C', '--directory',
                         help='Change directory to dir (equivalent to '
                              '`make -C dir`)')
-    parser.add_argument('-f', '--makefile', metavar='file',
+    parser.add_argument('-f', '--makefile',
                         help='Use file as a makefile (equivalent to '
                              '`make -f file`)')
-    parser.add_argument('-j', '--jobs', metavar='jobs',
+    parser.add_argument('-j', '--jobs',
                         type=int, default=1,
                         help='Number of simultaneous jobs (equivalent to '
                              '`make -j jobs`)')
     # Test specific arguments
-    parser.add_argument('-r', '--result', metavar='result',
+    parser.add_argument('-r', '--result',
                         default='-',
                         help='Directory to store JUnit XML test result')
-    parser.add_argument('-p', '--prefix', metavar='prefix',
+    parser.add_argument('-p', '--prefix',
                         help=('Prefix path which should be removed for test '
                               'result'))
-    parser.add_argument('-s', '--skip-rules', metavar='skip-rules',
+    parser.add_argument('-s', '--skip-rules',
                         help='YAML-file with skip rules')
-    parser.add_argument('-c', '--check-rules', metavar='check-rules',
+    parser.add_argument('-S', '--check-skip-rules',
                         help='URL to a test result in Jenkins job')
+    parser.add_argument('-t', '--target-rules',
+                        help='YAML-file with target rules')
+    parser.add_argument('-T', '--check-target-rules', action='store_true',
+                        help='Print target rules for a given makefile')
     parser.add_argument('targets', metavar='target', nargs='*',
                         default=['all', 'clean'],
                         help='Names of targets to run')
 
     args = parser.parse_args()
 
-    if args.check_rules:
-        check_rules(args)
+    if args.check_skip_rules:
+        check_skip_rules(args)
+    elif args.check_target_rules:
+        check_target_rules(args)
     else:
         make(args)
 
