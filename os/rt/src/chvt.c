@@ -49,7 +49,16 @@
 /*===========================================================================*/
 
 #if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
-#if 1
+/**
+ * @brief   Alarm time setup.
+ * @note    An RFCU fault is registered if the system time skips past
+ *          <tt>(basetime + delta)</tt>, the deadline is skipped forward
+ *          in order to compensate for the event.
+ *
+ * @param[in] basetime  last known system time
+ * @param[in] delta     delta time over @p basetime
+ * @return              The absolute time for next alarm.
+ */
 static systime_t vt_set_alarm(systime_t basetime, sysinterval_t delta) {
   sysinterval_t mindelta;
   systime_t next_alarm;
@@ -102,37 +111,6 @@ static systime_t vt_set_alarm(systime_t basetime, sysinterval_t delta) {
 
   return next_alarm;
 }
-
-#else
-static systime_t vt_set_alarm(systime_t basetime, sysinterval_t delta) {
-  sysinterval_t mindelta;
-  systime_t next_alarm;
-
-  /* Initial delta is what is configured statically.*/
-  mindelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-
-  if (delta < mindelta) {
-    /* We need to avoid that the system time goes past the alarm we are
-       going to set before the alarm is actually set.*/
-    delta = mindelta;
-  }
-#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-  else if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
-    /* The delta could be too large for the physical timer to handle
-       this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-    delta = (sysinterval_t)TIME_MAX_SYSTIME;
-  }
-#endif
-
-  /* Absolute time for next alarm.*/
-  next_alarm = chTimeAddX(basetime, delta);
-
-  /* Setting up the alarm on the next deadline.*/
-  port_timer_set_alarm(next_alarm);
-
-  return next_alarm;
-}
-#endif
 
 /**
  * @brief   Inserts a timer as first element in a delta list.
