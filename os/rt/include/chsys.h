@@ -332,6 +332,7 @@ extern "C" {
 #endif
   void chSysWaitSystemState(system_state_t state);
   void chSysInit(void);
+  thread_t *chSysGetIdleThreadX(void);
   bool chSysIntegrityCheckI(unsigned testmask);
   void chSysTimerHandlerI(void);
   syssts_t chSysGetStatusAndLockX(void);
@@ -517,25 +518,6 @@ static inline void chSysNotifyInstance(os_instance_t *oip) {
   port_notify_instance(oip);
 }
 #endif
-
-#if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
-/**
- * @brief   Returns a pointer to the idle thread.
- * @pre     In order to use this function the option @p CH_CFG_NO_IDLE_THREAD
- *          must be disabled.
- * @note    The reference counter of the idle thread is not incremented but
- *          it is not strictly required being the idle thread a static
- *          object.
- *
- * @return              Pointer to the idle thread.
- *
- * @xclass
- */
-static inline thread_t *chSysGetIdleThreadX(void) {
-
-  return threadref(currcore->rlist.pqueue.prev);
-}
-#endif /* CH_CFG_NO_IDLE_THREAD == FALSE */
 
 #endif /* CHSYS_H */
 

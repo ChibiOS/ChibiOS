@@ -55,6 +55,7 @@ CH_SYS_CORE0_MEMORY os_instance_t ch0;
  */
 static CH_SYS_CORE0_MEMORY THD_WORKING_AREA(ch_c0_idle_thread_wa,
                                             PORT_IDLE_THREAD_STACK_SIZE);
+#endif
 
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
 extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
@@ -77,7 +78,6 @@ const os_instance_config_t ch_core0_cfg = {
   .idlethread_end   = THD_WORKING_AREA_END(ch_c0_idle_thread_wa)
 #endif
 };
-#endif
 
 #if (PORT_CORES_NUMBER > 1) || defined(__DOXYGEN__)
 /**
@@ -231,6 +231,26 @@ void chSysHalt(const char *reason) {
   /* Harmless infinite loop.*/
   while (true) {
   }
+}
+
+/**
+ * @brief   Returns a pointer to the idle thread.
+ * @note    The reference counter of the idle thread is not incremented but
+ *          it is not strictly required being the idle thread a static
+ *          object.
+ * @note    This function cannot be called from the idle thread itself,
+ *          use @p chThdGetSelfX() in that case.
+ *
+ * @return              Pointer to the idle thread.
+ *
+ * @xclass
+ */
+thread_t *chSysGetIdleThreadX(void) {
+  thread_t *tp = threadref(currcore->rlist.pqueue.prev);
+
+  chDbgAssert(tp->hdr.pqueue.prio == IDLEPRIO, "not idle thread");
+
+  return tp;
 }
 
 /**
