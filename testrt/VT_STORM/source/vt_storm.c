@@ -280,7 +280,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     bool dw;
 
     chprintf(cfg->out, "Iteration %d\r\n", i);
-    chThdSleepS(TIME_MS2I(10));
+    chThdSleep(TIME_MS2I(10));
 
     /* Starting continuous timer.*/
     vtcus = 0;
