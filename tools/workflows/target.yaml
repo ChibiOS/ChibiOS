@@ -1,0 +1,8 @@
+# A makefile path is checked against each key represented as a regex until
+# a matching one is found from top to bottom. If found, its targets are used
+# to build a corresponding makefile in the same order they are defined in
+# the rule. It's recommended to keep regexes as much specific as possible.
+
+demos/various/RT-ARMCM4-MAKELIB/Makefile:
+  - lib
+  - clean
