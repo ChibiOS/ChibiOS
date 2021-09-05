@@ -34,6 +34,11 @@
  */
 #define STM32_RTC_SSR_INIT_VALUE            0xFFFFFFFFUL
 
+/* Requires services from the EXTI driver.*/
+#if !defined(STM32_EXTI_REQUIRED)
+#define STM32_EXTI_REQUIRED
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
