@@ -109,7 +109,7 @@ static const LSM6DSLConfig lsm6dslcfg = {
   NULL,
   NULL,
   LSM6DSL_ACC_FS_2G,
-  LSM6DSL_GYRO_ODR_52Hz,
+  LSM6DSL_ACC_ODR_52Hz,
   NULL,
   NULL,
   LSM6DSL_GYRO_FS_250DPS,
