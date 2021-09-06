@@ -76,6 +76,7 @@
 *** 21.6.1 ***
 - NEW: Made STM32H7 non-cacheable memory option also shareable.
 - NEW: EFL driver and demo for STM32F3xx.
+- FIX: Fixed wrong configuration in testex LSM6DSL demos (bug #1184).
 - FIX: Fixed CH_CFG_NO_IDLE_THREAD option causes compiler errors (bug #1183) .
 - FIX: Fixed STM32 ADCv3 differences in headers (bug #1182).
 - FIX: Fixed DMAv1 compile fail on STM32L011 (bug #1181).
