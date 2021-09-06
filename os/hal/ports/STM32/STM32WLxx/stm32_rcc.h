@@ -673,7 +673,7 @@
 #define rccResetSPI2() rccResetAPB1R1(RCC_APB1RSTR1_SPI2RST)
 
 /**
- * @brief   Enables the SPIR peripheral clock.
+ * @brief   Enables the SPI3 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
@@ -682,14 +682,14 @@
 #define rccEnableSPI3(lp) rccEnableAPB3(RCC_APB3ENR_SUBGHZSPIEN, lp)
 
 /**
- * @brief   Disables the SPIR peripheral clock.
+ * @brief   Disables the SPI3 peripheral clock.
  *
  * @api
  */
 #define rccDisableSPI3() rccDisableAPB3(RCC_APB3ENR_SUBGHZSPIEN)
 
 /**
- * @brief   Resets the SPIR peripheral.
+ * @brief   Resets the SPI3 peripheral.
  *
  * @api
  */

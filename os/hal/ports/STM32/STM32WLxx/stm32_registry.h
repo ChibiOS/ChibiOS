@@ -75,9 +75,6 @@
 #define STM32_HAS_CRC                       TRUE
 #define STM32_CRC_PROGRAMMABLE              TRUE
 
-/* CRYP attributes.*/
-#define STM32_HAS_CRYP1                     TRUE
-
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
 #define STM32_HAS_DAC1_CH2                  FALSE
@@ -135,8 +132,6 @@
 #define STM32_HAS_GTZC_TZSC                 FALSE
 #define STM32_HAS_GTZC_TZIC                 FALSE
 #endif /* defined(STM32WL55xx) || defined(STM32WL54xx) */
-
-#define STM32_HAS_HASH1                     FALSE
 
 /* HSEM attributes.*/
 #if defined(STM32WL55xx) || defined(STM32WL54xx) || defined(__DOXYGEN__)
