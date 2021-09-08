@@ -78,6 +78,8 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed invalid check in chVTResetTimeStamp() function (bug #1185)
+       (TO BE backported to 21.6.1).
 - FIX: Fixed wrong configuration in testex LSM6DSL demos (bug #1184)
        (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed CH_CFG_NO_IDLE_THREAD option causes compiler errors (bug #1183) 

@@ -490,8 +490,6 @@ static inline systimestamp_t chVTGetTimeStamp(void) {
  */
 static inline void chVTResetTimeStamp(void) {
 
-  chDbgCheckClassI();
-
   chSysLock();
 
   chVTResetTimeStampI();
