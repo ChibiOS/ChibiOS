@@ -285,7 +285,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     /* Starting continuous timer.*/
     vtcus = 0;
 
-    delay = TIME_US2I(128);
+    delay = TIME_MS2I(5);
     saturated     = false;
     delta_warning = false;
     do {
@@ -300,7 +300,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTSetI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
       chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
       chVTSetI(&wrapper, (sysinterval_t) - 1, wrapper_cb, NULL);
-      chVTSetContinuousI(&continuous, TIME_US2I(50), continuous_cb, NULL);
+      chVTSetContinuousI(&continuous, CH_CFG_ST_TIMEDELTA * 10, continuous_cb, NULL);
       chVTSetI(&guard0, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM / 2), guard_cb, NULL);
       chVTSetI(&guard1, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM - 1), guard_cb, NULL);
       chVTSetI(&guard2, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM + 1), guard_cb, NULL);
@@ -344,7 +344,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
 //      if (delay >= TIME_US2I(1)) {
 //        delay -= TIME_US2I(1);
 //      }
-      decrease = delay / (sysinterval_t)64;
+      decrease = delay / (sysinterval_t)32;
       if (decrease == (sysinterval_t)0) {
         decrease = (sysinterval_t)1;
       }
