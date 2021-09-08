@@ -57,9 +57,8 @@
  *
  * @param[in] basetime  last known system time
  * @param[in] delta     delta time over @p basetime
- * @return              The absolute time for next alarm.
  */
-static systime_t vt_set_alarm(systime_t basetime, sysinterval_t delta) {
+static void vt_set_alarm(systime_t basetime, sysinterval_t delta) {
   sysinterval_t mindelta;
   systime_t next_alarm;
 
@@ -108,8 +107,6 @@ static systime_t vt_set_alarm(systime_t basetime, sysinterval_t delta) {
     chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
 #endif
   }
-
-  return next_alarm;
 }
 
 /**
@@ -184,7 +181,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
        requires changing the current alarm setting.*/
     if (delta < vtlp->dlist.next->delta) {
 
-      (void) vt_set_alarm(vtlp->lasttime, delta);
+      vt_set_alarm(vtlp->lasttime, delta);
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
@@ -357,7 +354,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   delta = vtlp->dlist.next->delta - nowdelta;
 
   /* Setting up the alarm.*/
-  (void) vt_set_alarm(now, delta);
+  vt_set_alarm(now, delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
@@ -443,7 +440,7 @@ void chVTDoTickI(void) {
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
   sysinterval_t delta, nowdelta;
-  systime_t now, next_alarm;
+  systime_t now;
 
   /* Looping through timers consuming all timers with deltas lower or equal
      than the interval between "now" and "lasttime".*/
@@ -547,11 +544,7 @@ void chVTDoTickI(void) {
   delta = vtp->dlist.delta - nowdelta;
 
   /* Update alarm time to next timer.*/
-  next_alarm = vt_set_alarm(now, delta);
-
-  chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
-              chTimeDiffX(vtlp->lasttime, next_alarm),
-              "insufficient delta");
+  vt_set_alarm(now, delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
