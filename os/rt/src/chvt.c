@@ -181,7 +181,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
        requires changing the current alarm setting.*/
     if (delta < vtlp->dlist.next->delta) {
 
-      vt_set_alarm(vtlp->lasttime, delta);
+      vt_set_alarm(now, delay);
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
