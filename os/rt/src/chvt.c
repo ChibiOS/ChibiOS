@@ -60,7 +60,6 @@
  */
 static void vt_set_alarm(systime_t basetime, sysinterval_t delta) {
   sysinterval_t mindelta;
-  systime_t next_alarm;
 
   /* Initial delta is what is configured statically.*/
   mindelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
@@ -82,11 +81,8 @@ static void vt_set_alarm(systime_t basetime, sysinterval_t delta) {
     sysinterval_t nowdelta;
     systime_t now;
 
-    /* Absolute time for next alarm.*/
-    next_alarm = chTimeAddX(basetime, delta);
-
     /* Setting up the alarm on the next deadline.*/
-    port_timer_set_alarm(next_alarm);
+    port_timer_set_alarm(chTimeAddX(basetime, delta));
 
     /* Check on current time, we need to detect the error condition where
        current time skipped past the calculated deadline.*/
@@ -149,13 +145,13 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
  */
 static void vt_enqueue(virtual_timers_list_t *vtlp,
                        virtual_timer_t *vtp,
-                       systime_t now,
                        sysinterval_t delay) {
   sysinterval_t delta;
 
 #if CH_CFG_ST_TIMEDELTA > 0
   {
     sysinterval_t nowdelta;
+    systime_t now = chVTGetSystemTimeX();
 
     /* Special case where the timers list is empty.*/
     if (ch_dlist_isempty(&vtlp->dlist)) {
@@ -185,7 +181,6 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
-  (void)now;
 
   /* Delta is initially equal to the specified delay.*/
   delta = delay;
@@ -233,7 +228,7 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
   vtp->reload  = (sysinterval_t)0;
 
   /* Inserting the timer in the delta list.*/
-  vt_enqueue(vtlp, vtp, chVTGetSystemTimeX(), delay);
+  vt_enqueue(vtlp, vtp, delay);
 }
 
 /**
@@ -271,7 +266,7 @@ void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
   vtp->reload  = delay;
 
   /* Inserting the timer in the delta list.*/
-  vt_enqueue(vtlp, vtp, chVTGetSystemTimeX(), delay);
+  vt_enqueue(vtlp, vtp, delay);
 }
 
 /**
@@ -481,14 +476,13 @@ void chVTDoTickI(void) {
     chSysUnlockFromISR();
     vtp->func(vtp, vtp->par);
     chSysLockFromISR();
-
+    now = chVTGetSystemTimeX();
     /* If a reload is defined the timer needs to be restarted.*/
     if (unlikely(vtp->reload > (sysinterval_t)0)) {
       sysinterval_t delay;
 
-      /* Refreshing the current time after spending time in the callback for
+      /* Refreshing the now delta after spending time in the callback for
          a more accurate detection of too fast reloads.*/
-      now = chVTGetSystemTimeX();
       nowdelta = chTimeDiffX(lasttime, now);
 
 #if !defined(CH_VT_RFCU_DISABLED)
