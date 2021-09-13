@@ -80,7 +80,7 @@ static void vt_set_alarm(systime_t now, sysinterval_t delay) {
   while (true) {
     sysinterval_t nowdelta;
     systime_t newnow;
-/*463788*/
+
     /* Setting up the alarm on the next deadline.*/
     port_timer_set_alarm(chTimeAddX(now, delay));
 
