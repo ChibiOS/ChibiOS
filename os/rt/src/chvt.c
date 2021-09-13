@@ -85,7 +85,11 @@ static void vt_set_alarm(systime_t now, sysinterval_t delay) {
     port_timer_set_alarm(chTimeAddX(now, delay));
 
     /* Check on current time, we need to detect the error condition where
-       current time skipped past the calculated deadline.*/
+       current time skipped past the calculated deadline.
+       Note that the "<" condition is intentional, we want to make sure
+       that the alarm is set before the deadline is reached because the
+       comparison could happen on the transition depending on the timer
+       architecture.*/
     newnow = chVTGetSystemTimeX();
     nowdelta = chTimeDiffX(now, newnow);
     if (nowdelta < delay) {
@@ -101,6 +105,7 @@ static void vt_set_alarm(systime_t now, sysinterval_t delay) {
   }
 
 #if !defined(CH_VT_RFCU_DISABLED)
+  /* Checking if a skip occurred.*/
   if (currdelta > CH_CFG_ST_TIMEDELTA) {
     chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
   }
