@@ -334,6 +334,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
 
   /* If the list become empty then the alarm timer is stopped and done.*/
   if (ch_dlist_isempty(&vtlp->dlist)) {
+
     port_timer_stop_alarm();
 
     return;
@@ -481,15 +482,18 @@ void chVTDoTickI(void) {
        is re-entered on the callback return. Note that "lasttime" can be
        modified within the callback if some timer function is called.*/
     chSysUnlockFromISR();
+
     vtp->func(vtp, vtp->par);
+
     chSysLockFromISR();
-    now = chVTGetSystemTimeX();
+
     /* If a reload is defined the timer needs to be restarted.*/
     if (unlikely(vtp->reload > (sysinterval_t)0)) {
       sysinterval_t delay;
 
       /* Refreshing the now delta after spending time in the callback for
          a more accurate detection of too fast reloads.*/
+      now = chVTGetSystemTimeX();
       nowdelta = chTimeDiffX(lasttime, now);
 
 #if !defined(CH_VT_RFCU_DISABLED)
