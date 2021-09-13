@@ -232,7 +232,6 @@ static void guard_cb(virtual_timer_t *vtp, void *p) {
  */
 void vt_storm_execute(const vt_storm_config_t *cfg) {
   unsigned i;
-  bool delta_warning;
 
   config = cfg;
 
@@ -277,7 +276,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
 #endif
 
   for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
-    bool dw;
+    bool warning;
 
     chprintf(cfg->out, "Iteration %d\r\n", i);
     chThdSleep(TIME_MS2I(10));
@@ -286,9 +285,10 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
     vtcus = 0;
 
     delay = TIME_MS2I(5);
-    saturated     = false;
-    delta_warning = false;
+    saturated = false;
+    warning   = false;
     do {
+      rfcu_mask_t mask;
       sysinterval_t decrease;
 
       /* Starting sweepers.*/
@@ -300,7 +300,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTSetI(&sweeperm3, delay - 3, sweeperm3_cb, NULL);
       chVTSetI(&sweeperp3, delay + 3, sweeperp3_cb, NULL);
       chVTSetI(&wrapper, (sysinterval_t) - 1, wrapper_cb, NULL);
-      chVTSetContinuousI(&continuous, CH_CFG_ST_TIMEDELTA * 10, continuous_cb, NULL);
+      chVTSetContinuousI(&continuous, TIME_US2I(50), continuous_cb, NULL);
       chVTSetI(&guard0, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM / 2), guard_cb, NULL);
       chVTSetI(&guard1, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM - 1), guard_cb, NULL);
       chVTSetI(&guard2, TIME_MS2I(250) + (CH_CFG_TIME_QUANTUM + 1), guard_cb, NULL);
@@ -324,18 +324,28 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       chVTResetI(&guard3);
 
       /* Check for relevant RFCU events.*/
-      dw = chRFCUGetAndClearFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA |
-                                    CH_RFCU_VT_SKIPPED_DEADLINE) != (rfcu_mask_t)0;
+      mask = chRFCUGetAndClearFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA |
+                                      CH_RFCU_VT_SKIPPED_DEADLINE);
       chSysUnlock();
 
       if (saturated) {
         chprintf(cfg->out, "#");
         break;
       }
-      else if (dw) {
+      else if (mask == CH_RFCU_VT_INSUFFICIENT_DELTA) {
+        palToggleLine(config->line);
+        chprintf(cfg->out, "x");
+        warning = true;
+      }
+      else if (mask == CH_RFCU_VT_SKIPPED_DEADLINE) {
         palToggleLine(config->line);
         chprintf(cfg->out, "+");
-        delta_warning = true;
+        warning = true;
+      }
+      else if (mask == (CH_RFCU_VT_INSUFFICIENT_DELTA | CH_RFCU_VT_SKIPPED_DEADLINE)) {
+        palToggleLine(config->line);
+        chprintf(cfg->out, "*");
+        warning = true;
       }
       else {
         palToggleLine(config->line);
@@ -351,7 +361,7 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
       delay = delay - decrease;
     } while (delay >= (sysinterval_t)VT_STORM_CFG_MIN_DELAY);
 
-    if (delta_warning) {
+    if (warning) {
       chprintf(cfg->out, "\r\nRFCU warning detected", TIME_I2US(delay), delay);
     }
     else {
