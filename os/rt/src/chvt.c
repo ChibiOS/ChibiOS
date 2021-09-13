@@ -144,6 +144,16 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
   /* Being the first element inserted in the list the alarm timer
      is started.*/
   port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
+
+#if !defined(CH_VT_RFCU_DISABLED)
+  /* Checking if a skip occurred.*/
+  {
+    systime_t newnow = chVTGetSystemTimeX();
+    if (chTimeDiffX(now, newnow) >= delay) {
+      chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
+    }
+  }
+#endif
 }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
