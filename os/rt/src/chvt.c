@@ -55,54 +55,56 @@
  *          <tt>(basetime + delta)</tt>, the deadline is skipped forward
  *          in order to compensate for the event.
  *
- * @param[in] basetime  last known system time
- * @param[in] delta     delta time over @p basetime
+ * @param[in] now       last known system time
+ * @param[in] delay     delay over @p basetime
  */
-static void vt_set_alarm(systime_t basetime, sysinterval_t delta) {
-  sysinterval_t mindelta;
+static void vt_set_alarm(systime_t now, sysinterval_t delay) {
+  sysinterval_t currdelta;
 
   /* Initial delta is what is configured statically.*/
-  mindelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+  currdelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
 
-  if (delta < mindelta) {
+  if (delay < currdelta) {
     /* We need to avoid that the system time goes past the alarm we are
        going to set before the alarm is actually set.*/
-    delta = mindelta;
+    delay = currdelta;
   }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-  else if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
+  else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
     /* The delta could be too large for the physical timer to handle
        this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-    delta = (sysinterval_t)TIME_MAX_SYSTIME;
+    delay = (sysinterval_t)TIME_MAX_SYSTIME;
   }
 #endif
 
   while (true) {
     sysinterval_t nowdelta;
-    systime_t now;
+    systime_t newnow;
 
     /* Setting up the alarm on the next deadline.*/
-    port_timer_set_alarm(chTimeAddX(basetime, delta));
+    port_timer_set_alarm(chTimeAddX(now, delay));
 
     /* Check on current time, we need to detect the error condition where
        current time skipped past the calculated deadline.*/
-    now = chVTGetSystemTimeX();
-    nowdelta = chTimeDiffX(basetime, now);
-    if (nowdelta < delta) {
+    newnow = chVTGetSystemTimeX();
+    nowdelta = chTimeDiffX(now, newnow);
+    if (nowdelta < delay) {
       break;
     }
 
     /* Trying again with a more relaxed minimum delta.*/
-    mindelta += (sysinterval_t)1;
+    currdelta += (sysinterval_t)1;
 
     /* Current time becomes the new "base" time.*/
-    basetime = now;
-    delta = mindelta;
+    now = newnow;
+    delay = currdelta;
+  }
 
 #if !defined(CH_VT_RFCU_DISABLED)
+  if (currdelta > CH_CFG_ST_TIMEDELTA) {
     chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
-#endif
   }
+#endif
 }
 
 /**
