@@ -52,11 +52,11 @@
 /**
  * @brief   Alarm time setup.
  * @note    An RFCU fault is registered if the system time skips past
- *          <tt>(basetime + delta)</tt>, the deadline is skipped forward
+ *          <tt>(now + delay)</tt>, the deadline is skipped forward
  *          in order to compensate for the event.
  *
  * @param[in] now       last known system time
- * @param[in] delay     delay over @p basetime
+ * @param[in] delay     delay over @p now
  */
 static void vt_set_alarm(systime_t now, sysinterval_t delay) {
   sysinterval_t currdelta;
