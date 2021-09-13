@@ -232,6 +232,7 @@ static void guard_cb(virtual_timer_t *vtp, void *p) {
  */
 void vt_storm_execute(const vt_storm_config_t *cfg) {
   unsigned i;
+  sysinterval_t periodic;
 
   config = cfg;
 
@@ -274,6 +275,14 @@ void vt_storm_execute(const vt_storm_config_t *cfg) {
   gptStartContinuous(cfg->gpt1p, 99);
   gptStartContinuous(cfg->gpt2p, 101);
 #endif
+
+  /* Interval for the periodic timer, note that slow systicks would
+     result in a period of 1, which is not acceptable, increasing it
+     to two.*/
+  periodic = TIME_US2I(50);
+  if (periodic < (sysinterval_t)2) {
+    periodic = (sysinterval_t)2;
+  }
 
   for (i = 1; i <= VT_STORM_CFG_ITERATIONS; i++) {
     bool warning;
