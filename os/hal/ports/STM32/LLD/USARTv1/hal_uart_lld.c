@@ -256,7 +256,7 @@ static void usart_start(UARTDriver *uartp) {
   usart_stop(uartp);
 
   /* Baud rate setting.*/
-  fck = (uint32_t)(uartp->clock / uartp->config->speed);
+  fck = (uint32_t)((uartp->clock + uartp->config->speed/2) / uartp->config->speed);
 
   /* Correcting USARTDIV when oversampling by 8 instead of 16.
      Fraction is still 4 bits wide, but only lower 3 bits used.

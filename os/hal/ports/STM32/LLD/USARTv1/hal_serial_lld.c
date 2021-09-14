@@ -112,7 +112,7 @@ static void usart_init(SerialDriver *sdp, const SerialConfig *config) {
   uint32_t brr;
   USART_TypeDef *u = sdp->usart;
 
-  brr = (uint32_t)(sdp->clock / config->speed);
+  brr = (uint32_t)((sdp->clock + config->speed/2) / config->speed);
 
 #if defined(USART_CR1_OVER8)
   /* Correcting BRR value when oversampling by 8 instead of 16.

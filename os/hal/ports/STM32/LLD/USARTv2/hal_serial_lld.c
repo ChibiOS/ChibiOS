@@ -243,14 +243,14 @@ static void usart_init(SerialDriver *sdp,
                   (clock <= config->speed * 4096U),
                   "invalid baud rate vs input clock");
 
-    brr = (uint32_t)(((uint64_t)clock * 256) / config->speed);
+    brr = (uint32_t)(((uint64_t)clock * 256 + config->speed/2) / config->speed);
 
     osalDbgAssert((brr >= 0x300) && (brr < 0x100000), "invalid BRR value");
   }
   else
 #endif
   {
-    brr = (uint32_t)(clock / config->speed);
+    brr = (uint32_t)((clock + config->speed/2) / config->speed);
 
     /* Correcting BRR value when oversampling by 8 instead of 16.
        Fraction is still 4 bits wide, but only lower 3 bits used.
