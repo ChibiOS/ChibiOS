@@ -1854,10 +1854,13 @@
 /*
  * PLLI2S VCO frequency range check.
  */
+#if HAL_USE_I2S == TRUE
 #if (STM32_PLLI2SVCO < STM32_PLLVCO_MIN) ||                                 \
     (STM32_PLLI2SVCO > STM32_PLLVCO_MAX)
 #error "STM32_PLLI2SVCO outside acceptable range (STM32_PLLVCO_MIN...STM32_PLLVCO_MAX)"
 #endif
+#endif
+
 
 /**
  * @brief   PLLI2S P output clock frequency.
