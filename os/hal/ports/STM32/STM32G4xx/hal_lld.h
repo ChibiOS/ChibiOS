@@ -26,7 +26,7 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32G431xx, STM32G441xx, STM32G471xx.
+ *          - STM32G431xx, STM32G441xx, STM32G471xx, STM32G491xx.
  *          - STM32G473xx, STM32G483xx.
  *          - STM32G474xx, STM32G484xx.
  *          - STM32GBK1CB.
@@ -49,7 +49,7 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx) || \
+#if defined(STM32G431xx) || defined(STM32G441xx) || defined(STM32G471xx) || defined(STM32G491xx) || \
     defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32G4 Access Line"
 
@@ -760,6 +760,9 @@
 
 #elif defined(STM32GBK1CB) && !defined(STM32GBK1CB_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32GBK1CB_MCUCONF not defined"
+
+#elif defined(STM32G491xx) && !defined(STM32G491_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G491_MCUCONF not defined"
 
 #endif
 
