@@ -15,13 +15,13 @@
 */
 
 /**
- * @file    STM32G4xx/cmparams.h
- * @brief   ARM Cortex-M4 parameters for the STM32G4xx.
+ * @file    STM32MP1xx/cmparams.h
+ * @brief   ARM Cortex-M4 parameters for the STM32MP1xx.
  *
- * @defgroup ARMCMx_STM32Gxx STM32Gxx Specific Parameters
+ * @defgroup ARMCMx_STM32MP1xx STM32MP1xx Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M4 specific parameters for the
- *          STM32G4xx platform.
+ *          STM32MP1xx platform.
  * @{
  */
 
@@ -46,11 +46,12 @@
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
-#if !defined(STM32G431xx) && !defined(STM32G441xx) &&                       \
-    !defined(STM32G471xx) && !defined(STM32G473xx) &&                       \
-    !defined(STM32G474xx) && !defined(STM32G483xx) &&                       \
-    !defined(STM32G484xx) && !defined(STM32GBK1CB) &&                       \
-    !defined(STM32G91xx)
+#if !defined(STM32MP157Axx) && !defined(STM32MP157Cxx) &&                   \
+    !defined(STM32MP157Dxx) && !defined(STM32MP157Fxx) &&                   \
+    !defined(STM32MP153Axx) && !defined(STM32MP153Cxx) &&                   \
+    !defined(STM32MP153Dxx) && !defined(STM32MP153Fxx) &&                   \
+    !defined(STM32MP151Axx) && !defined(STM32MP151Cxx) &&                   \
+    !defined(STM32MP151Dxx) && !defined(STM32MP151Fxx) &&                   \
 #include "board.h"
 #endif
 
@@ -59,7 +60,7 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 8.
  */
-#define CORTEX_NUM_VECTORS      104
+#define CORTEX_NUM_VECTORS      112
 
 /* The following code is not processed when the file is included from an
    asm module.*/
@@ -68,7 +69,7 @@
 /* Including the device CMSIS header. Note, we are not using the definitions
    from this header because we need this file to be usable also from
    assembler source files. We verify that the info matches instead.*/
-#include "stm32g4xx.h"
+#include "stm32mp1xx.h"
 
 /*lint -save -e9029 [10.4] Signedness comes from external files, it is
   unpredictable but gives no problems.*/
