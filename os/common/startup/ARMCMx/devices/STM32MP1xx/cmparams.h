@@ -51,7 +51,7 @@
     !defined(STM32MP153Axx) && !defined(STM32MP153Cxx) &&                   \
     !defined(STM32MP153Dxx) && !defined(STM32MP153Fxx) &&                   \
     !defined(STM32MP151Axx) && !defined(STM32MP151Cxx) &&                   \
-    !defined(STM32MP151Dxx) && !defined(STM32MP151Fxx) &&                   \
+    !defined(STM32MP151Dxx) && !defined(STM32MP151Fxx)
 #include "board.h"
 #endif
 
