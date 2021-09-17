@@ -18,7 +18,7 @@
  * @file    STM32MP1xx/stm32_registry.h
  * @brief   STM32MP1xx capabilities registry.
  *
- * @addtogroup HAL
+ * @addtogroup STM32MP1xx_REGISTRY
  * @{
  */
 
@@ -76,6 +76,10 @@
 /* ETH attributes.*/
 
 /* EXTI attributes.*/
+#define STM32_EXTI_NUM_LINES                76
+#define STM32_EXTI_IMR1_MASK                0xFFFE0000U
+#define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU
+#define STM32_EXTI_IMR3_MASK                0xFFFFFDE9U
 
 /* Flash attributes.*/
 
