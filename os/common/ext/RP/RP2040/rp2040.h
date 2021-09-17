@@ -897,6 +897,67 @@ struct {
 } ADC_TypeDef;
 
 typedef struct {
+  struct {
+    __IO uint32_t       CSR;
+    __IO uint32_t       DIV;
+    __IO uint32_t       CTR;
+    __IO uint32_t       CC;
+    __IO uint32_t       TOP;
+  } CH[8];
+  __IO uint32_t         EN;
+  __IO uint32_t         INTR;
+  __IO uint32_t         INTE;
+  __IO uint32_t         INTF;
+  __I  uint32_t         INTS;
+  __I  uint32_t         resvdpwm[979];
+  struct {
+    struct {
+      __IO uint32_t     CSR;
+      __IO uint32_t     DIV;
+      __IO uint32_t     CTR;
+      __IO uint32_t     CC;
+      __IO uint32_t     TOP;
+    } CH[8];
+    __IO uint32_t       EN;
+    __IO uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvdpwm[979];
+  } XOR;
+  struct {
+    struct {
+      __IO uint32_t     CSR;
+      __IO uint32_t     DIV;
+      __IO uint32_t     CTR;
+      __IO uint32_t     CC;
+      __IO uint32_t     TOP;
+    } CH[8];
+    __IO uint32_t       EN;
+    __IO uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvdpwm[979];
+  } SET;
+  struct {
+    struct {
+      __IO uint32_t     CSR;
+      __IO uint32_t     DIV;
+      __IO uint32_t     CTR;
+      __IO uint32_t     CC;
+      __IO uint32_t     TOP;
+    } CH[8];
+    __IO uint32_t       EN;
+    __IO uint32_t       INTR;
+    __IO uint32_t       INTE;
+    __IO uint32_t       INTF;
+    __I  uint32_t       INTS;
+    __I  uint32_t       resvdpwm[979];
+  } CLR;
+} PWM_TypeDef;
+
+typedef struct {
   __IO uint32_t         DEVADDRCTRL;
   __IO uint32_t         INTEPADDRCTRL[15]; /* USB_HOST_INTERRUPT_ENDPOINTS */
   __IO uint32_t         MAINCTRL;
@@ -2476,6 +2537,191 @@ typedef struct {
 #define I2C_IC_COMP_PARAM_1_APB_DATA_WIDTH_Msk           (3U << I2C_IC_COMP_PARAM_1_APB_DATA_WIDTH_Pos)
 #define I2C_IC_COMP_PARAM_1_APB_DATA_WIDTH               I2C_IC_COMP_PARAM_1_APB_DATA_WIDTH_Msk
 /** @} */
+
+/**
+ * @name    PWM bits definitions
+ * @{
+ */
+#define PWM_CSR_PH_ADV_Pos                               7U
+#define PWM_CSR_PH_ADV_Msk                               (1U << PWM_CSR_PH_ADV_Pos)
+#define PWM_CSR_PH_ADV                                   PWM_CSR_PH_ADV_Msk
+#define PWM_CSR_PH_RET_Pos                               6U
+#define PWM_CSR_PH_RET_Msk                               (1U << PWM_CSR_PH_RET_Pos)
+#define PWM_CSR_PH_RET                                   PWM_CSR_PH_RET_Msk
+#define PWM_CSR_DIVMODE_Pos                              4U
+#define PWM_CSR_DIVMODE_Msk                              (0x3U << PWM_CSR_DIVMODE_Pos)
+#define PWM_CSR_DIVMODE(n)                               ((n) << PWM_CSR_DIVMODE_Pos)
+#define PWM_CSR_B_INV_Pos                                3U
+#define PWM_CSR_B_INV_Msk                                (1U << PWM_CSR_B_INV_Pos)
+#define PWM_CSR_B_INV                                    PWM_CSR_B_INV_Msk
+#define PWM_CSR_A_INV_Pos                                2U
+#define PWM_CSR_A_INV_Msk                                (1U << PWM_CSR_A_INV_Pos)
+#define PWM_CSR_A_INV                                    PWM_CSR_A_INV_Msk
+#define PWM_CSR_PH_CORRECT_Pos                           1U
+#define PWM_CSR_PH_CORRECT_Msk                           (1U << PWM_CSR_PH_CORRECT_Pos)
+#define PWM_CSR_PH_CORRECT                               PWM_CSR_PH_CORRECT_Msk
+#define PWM_CSR_EN_Pos                                   0U
+#define PWM_CSR_EN_Msk                                   (1U << PWM_CSR_EN_Pos)
+#define PWM_CSR_EN                                       PWM_CSR_EN_Msk
+#define PWM_CSR_PH_CORRECT_PHASE_CORRECT_MODULATION      (1U << PWM_CSR_PH_CORRECT_Pos)
+#define PWM_CSR_PH_CORRECT_TRAILING_EDGE                 (0U << PWM_CSR_PH_CORRECT_Pos)
+#define PWM_CSR_DIVMODE_FREE                             PWM_CSR_DIVMODE(0U)
+#define PWM_CSR_DIVMODE_GATED                            PWM_CSR_DIVMODE(1U)
+#define PWM_CSR_DIVMODE_RISING_EDGE                      PWM_CSR_DIVMODE(2U)
+#define PWM_CSR_DIVMODE_FALING_EDGE                      PWM_CSR_DIVMODE(3U)
+
+#define PWM_DIV_INT_Pos                                  4U
+#define PWM_DIV_INT_Msk                                  (0xFFU << PWM_DIV_INT_Pos)
+#define PWM_DIV_INT                                      PWM_DIV_INT_Msk
+#define PWM_DIV_FRAC_Pos                                 0U
+#define PWM_DIV_FRAC_Msk                                 (0xFU << PWM_DIV_FRAC_Pos)
+#define PWM_DIV_FRAC                                     PWM_DIV_FRAC_Msk
+
+#define PWM_CTR_COUNTER_Pos                              0U
+#define PWM_CTR_COUNTER_Msk                              (0xFFFFU << PWM_CTR_COUNTER_Pos)
+#define PWM_CTR_COUNTER                                  PWM_CTR_COUNTER_Msk
+
+#define PWM_CC_B_Pos                                     16U
+#define PWM_CC_B_Msk                                     (0xFFFFU << PWM_CC_B_Pos)
+#define PWM_CC_B                                         PWM_CC_B_Msk
+#define PWM_CC_A_Pos                                     0U
+#define PWM_CC_A_Msk                                     (0xFFFFU << PWM_CC_A_Pos)
+#define PWM_CC_A                                         PWM_CC_A_Msk
+
+#define PWM_TOP_VALUE_Pos                                0U
+#define PWM_TOP_VALUE_Msk                                (0xFFFFU << PWM_TOP_VALUE_Pos)
+#define PWM_TOP_VALUE                                    PWM_TOP_VALUE_Msk
+
+#define PWM_EN_CH7_Pos                                   7U
+#define PWM_EN_CH7_Msk                                   (1U << PWM_EN_CH7_Pos)
+#define PWM_EN_CH7                                       PWM_EN_CH7_Msk
+#define PWM_EN_CH6_Pos                                   6U
+#define PWM_EN_CH6_Msk                                   (1U << PWM_EN_CH6_Pos)
+#define PWM_EN_CH6                                       PWM_EN_CH6_Msk
+#define PWM_EN_CH5_Pos                                   5U
+#define PWM_EN_CH5_Msk                                   (1U << PWM_EN_CH5_Pos)
+#define PWM_EN_CH5                                       PWM_EN_CH5_Msk
+#define PWM_EN_CH4_Pos                                   4U
+#define PWM_EN_CH4_Msk                                   (1U << PWM_EN_CH4_Pos)
+#define PWM_EN_CH4                                       PWM_EN_CH4_Msk
+#define PWM_EN_CH3_Pos                                   3U
+#define PWM_EN_CH3_Msk                                   (1U << PWM_EN_CH3_Pos)
+#define PWM_EN_CH3                                       PWM_EN_CH3_Msk
+#define PWM_EN_CH2_Pos                                   2U
+#define PWM_EN_CH2_Msk                                   (1U << PWM_EN_CH2_Pos)
+#define PWM_EN_CH2                                       PWM_EN_CH2_Msk
+#define PWM_EN_CH1_Pos                                   1U
+#define PWM_EN_CH1_Msk                                   (1U << PWM_EN_CH1_Pos)
+#define PWM_EN_CH1                                       PWM_EN_CH1_Msk
+#define PWM_EN_CH0_Pos                                   0U
+#define PWM_EN_CH0_Msk                                   (1U << PWM_EN_CH0_Pos)
+#define PWM_EN_CH0                                       PWM_EN_CH0_Msk
+
+#define PWM_INTR_CH7_Pos                                 7U
+#define PWM_INTR_CH7_Msk                                 (1U << PWM_INTR_CH7_Pos)
+#define PWM_INTR_CH7                                     PWM_INTR_CH7_Msk
+#define PWM_INTR_CH6_Pos                                 6U
+#define PWM_INTR_CH6_Msk                                 (1U << PWM_INTR_CH6_Pos)
+#define PWM_INTR_CH6                                     PWM_INTR_CH6_Msk
+#define PWM_INTR_CH5_Pos                                 5U
+#define PWM_INTR_CH5_Msk                                 (1U << PWM_INTR_CH5_Pos)
+#define PWM_INTR_CH5                                     PWM_INTR_CH5_Msk
+#define PWM_INTR_CH4_Pos                                 4U
+#define PWM_INTR_CH4_Msk                                 (1U << PWM_INTR_CH4_Pos)
+#define PWM_INTR_CH4                                     PWM_INTR_CH4_Msk
+#define PWM_INTR_CH3_Pos                                 3U
+#define PWM_INTR_CH3_Msk                                 (1U << PWM_INTR_CH3_Pos)
+#define PWM_INTR_CH3                                     PWM_INTR_CH3_Msk
+#define PWM_INTR_CH2_Pos                                 2U
+#define PWM_INTR_CH2_Msk                                 (1U << PWM_INTR_CH2_Pos)
+#define PWM_INTR_CH2                                     PWM_INTR_CH2_Msk
+#define PWM_INTR_CH1_Pos                                 1U
+#define PWM_INTR_CH1_Msk                                 (1U << PWM_INTR_CH1_Pos)
+#define PWM_INTR_CH1                                     PWM_INTR_CH1_Msk
+#define PWM_INTR_CH0_Pos                                 0U
+#define PWM_INTR_CH0_Msk                                 (1U << PWM_INTR_CH0_Pos)
+#define PWM_INTR_CH0                                     PWM_INTR_CH0_Msk
+#define PWM_INTR_CH(n)                                   (1U << n)
+
+#define PWM_INTE_CH7_Pos                                 7U
+#define PWM_INTE_CH7_Msk                                 (1U << PWM_INTE_CH7_Pos)
+#define PWM_INTE_CH7                                     PWM_INTE_CH7_Msk
+#define PWM_INTE_CH6_Pos                                 6U
+#define PWM_INTE_CH6_Msk                                 (1U << PWM_INTE_CH6_Pos)
+#define PWM_INTE_CH6                                     PWM_INTE_CH6_Msk
+#define PWM_INTE_CH5_Pos                                 5U
+#define PWM_INTE_CH5_Msk                                 (1U << PWM_INTE_CH5_Pos)
+#define PWM_INTE_CH5                                     PWM_INTE_CH5_Msk
+#define PWM_INTE_CH4_Pos                                 4U
+#define PWM_INTE_CH4_Msk                                 (1U << PWM_INTE_CH4_Pos)
+#define PWM_INTE_CH4                                     PWM_INTE_CH4_Msk
+#define PWM_INTE_CH3_Pos                                 3U
+#define PWM_INTE_CH3_Msk                                 (1U << PWM_INTE_CH3_Pos)
+#define PWM_INTE_CH3                                     PWM_INTE_CH3_Msk
+#define PWM_INTE_CH2_Pos                                 2U
+#define PWM_INTE_CH2_Msk                                 (1U << PWM_INTE_CH2_Pos)
+#define PWM_INTE_CH2                                     PWM_INTE_CH2_Msk
+#define PWM_INTE_CH1_Pos                                 1U
+#define PWM_INTE_CH1_Msk                                 (1U << PWM_INTE_CH1_Pos)
+#define PWM_INTE_CH1                                     PWM_INTE_CH1_Msk
+#define PWM_INTE_CH0_Pos                                 0U
+#define PWM_INTE_CH0_Msk                                 (1U << PWM_INTE_CH0_Pos)
+#define PWM_INTE_CH0                                     PWM_INTE_CH0_Msk
+#define PWM_INTE_CH(n)                                   (1U << n)
+
+#define PWM_INTF_CH7_Pos                                 7U
+#define PWM_INTF_CH7_Msk                                 (1U << PWM_INTF_CH7_Pos)
+#define PWM_INTF_CH7                                     PWM_INTF_CH7_Msk
+#define PWM_INTF_CH6_Pos                                 6U
+#define PWM_INTF_CH6_Msk                                 (1U << PWM_INTF_CH6_Pos)
+#define PWM_INTF_CH6                                     PWM_INTF_CH6_Msk
+#define PWM_INTF_CH5_Pos                                 5U
+#define PWM_INTF_CH5_Msk                                 (1U << PWM_INTF_CH5_Pos)
+#define PWM_INTF_CH5                                     PWM_INTF_CH5_Msk
+#define PWM_INTF_CH4_Pos                                 4U
+#define PWM_INTF_CH4_Msk                                 (1U << PWM_INTF_CH4_Pos)
+#define PWM_INTF_CH4                                     PWM_INTF_CH4_Msk
+#define PWM_INTF_CH3_Pos                                 3U
+#define PWM_INTF_CH3_Msk                                 (1U << PWM_INTF_CH3_Pos)
+#define PWM_INTF_CH3                                     PWM_INTF_CH3_Msk
+#define PWM_INTF_CH2_Pos                                 2U
+#define PWM_INTF_CH2_Msk                                 (1U << PWM_INTF_CH2_Pos)
+#define PWM_INTF_CH2                                     PWM_INTF_CH2_Msk
+#define PWM_INTF_CH1_Pos                                 1U
+#define PWM_INTF_CH1_Msk                                 (1U << PWM_INTF_CH1_Pos)
+#define PWM_INTF_CH1                                     PWM_INTF_CH1_Msk
+#define PWM_INTF_CH0_Pos                                 0U
+#define PWM_INTF_CH0_Msk                                 (1U << PWM_INTF_CH0_Pos)
+#define PWM_INTF_CH0                                     PWM_INTF_CH0_Msk
+#define PWM_INTF_CH(n)                                   (1U << n)
+
+#define PWM_INTS_CH7_Pos                                 7U
+#define PWM_INTS_CH7_Msk                                 (1U << PWM_INTS_CH7_Pos)
+#define PWM_INTS_CH7                                     PWM_INTS_CH7_Msk
+#define PWM_INTS_CH6_Pos                                 6U
+#define PWM_INTS_CH6_Msk                                 (1U << PWM_INTS_CH6_Pos)
+#define PWM_INTS_CH6                                     PWM_INTS_CH6_Msk
+#define PWM_INTS_CH5_Pos                                 5U
+#define PWM_INTS_CH5_Msk                                 (1U << PWM_INTS_CH5_Pos)
+#define PWM_INTS_CH5                                     PWM_INTS_CH5_Msk
+#define PWM_INTS_CH4_Pos                                 4U
+#define PWM_INTS_CH4_Msk                                 (1U << PWM_INTS_CH4_Pos)
+#define PWM_INTS_CH4                                     PWM_INTS_CH4_Msk
+#define PWM_INTS_CH3_Pos                                 3U
+#define PWM_INTS_CH3_Msk                                 (1U << PWM_INTS_CH3_Pos)
+#define PWM_INTS_CH3                                     PWM_INTS_CH3_Msk
+#define PWM_INTS_CH2_Pos                                 2U
+#define PWM_INTS_CH2_Msk                                 (1U << PWM_INTS_CH2_Pos)
+#define PWM_INTS_CH2                                     PWM_INTS_CH2_Msk
+#define PWM_INTS_CH1_Pos                                 1U
+#define PWM_INTS_CH1_Msk                                 (1U << PWM_INTS_CH1_Pos)
+#define PWM_INTS_CH1                                     PWM_INTS_CH1_Msk
+#define PWM_INTS_CH0_Pos                                 0U
+#define PWM_INTS_CH0_Msk                                 (1U << PWM_INTS_CH0_Pos)
+#define PWM_INTS_CH0                                     PWM_INTS_CH0_Msk
+#define PWM_INTS_CH(n)                                   (1U << n)
+/** @} */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
