@@ -10,7 +10,7 @@ if [ $# -eq 2 ]
 elif [ $# -eq 1 ]
 then
   declare conffile=$(<$1)
-  if egrep -q "STM32G071_MCUCONF" <<< "$conffile"
+  if egrep -q "STM32G071_MCUCONF" <<< "$conffile" ||  egrep -q "STM32G081_MCUCONF" <<< "$conffile"
   then
     echo Processing: $1
     egrep -e "\#define\s+[a-zA-Z0-9_()]*\s+[^\s]" <<< "$conffile" | sed -r 's/\#define\s+([a-zA-Z0-9_]*)(\([^)]*\))?\s+/\1=/g' > ./values.txt
