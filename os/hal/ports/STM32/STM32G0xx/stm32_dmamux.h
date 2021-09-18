@@ -96,6 +96,24 @@
 #define STM32_DMAMUX1_UCPD1_TX      59
 #define STM32_DMAMUX1_UCPD2_RX      60
 #define STM32_DMAMUX1_UCPD2_TX      61
+#define STM32_DMAMUX1_I2C3_RX       62
+#define STM32_DMAMUX1_I2C3_TX       63
+#define STM32_DMAMUX1_LPUART2_RX    64
+#define STM32_DMAMUX1_LPUART2_TX    65
+#define STM32_DMAMUX1_SPI3_RX       66
+#define STM32_DMAMUX1_SPI3_TX       67
+#define STM32_DMAMUX1_TIM3_CH1      68
+#define STM32_DMAMUX1_TIM3_CH2      69
+#define STM32_DMAMUX1_TIM3_CH3      70
+#define STM32_DMAMUX1_TIM3_CH4      71
+#define STM32_DMAMUX1_TIM3_TRIG     72
+#define STM32_DMAMUX1_TIM3_UP       73
+#define STM32_DMAMUX1_USART5_RX     74
+#define STM32_DMAMUX1_USART5_TX     75
+#define STM32_DMAMUX1_UART5_RX      STM32_DMAMUX1_USART5_RX /* Legacy.      */
+#define STM32_DMAMUX1_UART5_TX      STM32_DMAMUX1_USART5_TX /* Legacy.      */
+#define STM32_DMAMUX1_USART6_RX     76
+#define STM32_DMAMUX1_USART6_TX     77
 /** @} */
 
 /*===========================================================================*/

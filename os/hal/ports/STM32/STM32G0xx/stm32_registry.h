@@ -74,7 +74,7 @@
 #define STM32_TAMP_FLTCR_MASK               0x000000FF
 #define STM32_TAMP_IER_MASK                 0x003C0003
 
-#if defined(STM32G081xx) || defined(__DOXYGEN__)
+#if defined(STM32G081xx) || defined(STM32G0C1xx) || defined(__DOXYGEN__)
 #define STM32_HAS_RNG1                      TRUE
 #define STM32_HAS_HASH1                     FALSE
 #define STM32_HAS_CRYP1                     TRUE
@@ -251,6 +251,7 @@
 #define STM32_HAS_UART7                     FALSE
 #define STM32_HAS_UART8                     FALSE
 #define STM32_HAS_LPUART1                   TRUE
+#define STM32_HAS_LPUART2                   FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_OTG1                      FALSE
@@ -429,10 +430,12 @@
 #define STM32_HAS_USART3                    TRUE
 #define STM32_HAS_UART4                     TRUE
 #define STM32_HAS_LPUART1                   TRUE
+
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
 #define STM32_HAS_UART7                     FALSE
 #define STM32_HAS_UART8                     FALSE
+#define STM32_HAS_LPUART2                   FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_OTG1                      FALSE
@@ -615,10 +618,12 @@
 #define STM32_HAS_USART3                    TRUE
 #define STM32_HAS_UART4                     TRUE
 #define STM32_HAS_LPUART1                   TRUE
+
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
 #define STM32_HAS_UART7                     FALSE
 #define STM32_HAS_UART8                     FALSE
+#define STM32_HAS_LPUART2                   FALSE
 
 /* USB attributes.*/
 #define STM32_HAS_OTG1                      FALSE
