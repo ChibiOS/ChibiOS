@@ -65,7 +65,7 @@
 /*===========================================================================*/
 
 static inline void usart2_lpuart2_irq_init(void) {
-#if defined(STM32_USART32_IS_USED) || defined(STM32_LPUART2_IS_USED)
+#if defined(STM32_USART2_IS_USED) || defined(STM32_LPUART2_IS_USED)
   nvicEnableVector(STM32_USART2_LP2_NUMBER, STM32_IRQ_USART2_LP2_PRIORITY);
 #endif
 }
