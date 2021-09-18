@@ -78,6 +78,11 @@ int main(void) {
   sdStart(&SD2, NULL);
 
   /*
+   * Shell manager initialization.
+   */
+  shellInit();
+
+  /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);

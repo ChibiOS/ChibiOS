@@ -74,15 +74,17 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Support for STM32G491 (bug #1187)
+- NEW: Support for STM32G031, STM32G0B1, STM32G0C1.
 - NEW: Made STM32H7 non-cacheable memory option also shareable.
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
-- FIX: fixes for uart clock rounding, missing DMA streams and timers (bug #1186)
+- FIX: Support for STM32G491 (bug #1187)(TBP).
+- FIX: fixes for uart clock rounding, missing DMA streams and timers
+       (bug #1186)(TBP).
 - FIX: Fixed invalid check in chVTResetTimeStamp() function (bug #1185)
-       (TO BE backported to 21.6.1).
-- FIX: Fixed wrong configuration in testex LSM6DSL demos (bug #1184)
+       (TBP).
+- FIX: Fixed wrong configuration in testex LSM6DSL demos (bug #1184).
        (backported to 21.6.1)(backported to 20.3.4).
 - FIX: Fixed CH_CFG_NO_IDLE_THREAD option causes compiler errors (bug #1183) 
        (backported to 21.6.1).

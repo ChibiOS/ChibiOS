@@ -15,8 +15,9 @@
                        	<xs:restriction base="xs:string">
                        		<xs:whiteSpace value="collapse"></xs:whiteSpace>
                             <xs:enumeration value="STM32G030xx"></xs:enumeration>
-                            <xs:enumeration value="STM32G031xx"></xs:enumeration>
                             <xs:enumeration value="STM32G070xx"></xs:enumeration>
+                            <xs:enumeration value="STM32G031xx"></xs:enumeration>
+                            <xs:enumeration value="STM32G041xx"></xs:enumeration>
                             <xs:enumeration value="STM32G071xx"></xs:enumeration>
                             <xs:enumeration value="STM32G081xx"></xs:enumeration>
                             <xs:enumeration value="STM32G0B1xx"></xs:enumeration>
