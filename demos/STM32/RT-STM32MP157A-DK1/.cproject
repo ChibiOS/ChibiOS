@@ -38,7 +38,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="RT-STM32MP157C-DK.null.1004513353" name="RT-STM32MP157C-DK"/>
+		<project id="RT-STM32MP157A-DK1.null.1004513353" name="RT-STM32MP157A-DK1"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -49,7 +49,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/RT-STM32MP157C-DK"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-STM32MP157A-DK1"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
