@@ -18,7 +18,7 @@
  * @file    USART/stm32_usart2_lp2.inc
  * @brief   Shared USART2, LPUART2 handler.
  *
- * @addtogroup STM32_USART2_LP1_HANDLER
+ * @addtogroup STM32_USART2_LP2_HANDLER
  * @{
  */
 

@@ -37,7 +37,6 @@
 #define STM32_TIM2_SUPPRESS_ISR
 #define STM32_TIM3_SUPPRESS_ISR
 #define STM32_TIM4_SUPPRESS_ISR
-#define STM32_TIM5_SUPPRESS_ISR
 #define STM32_TIM6_SUPPRESS_ISR
 #define STM32_TIM7_SUPPRESS_ISR
 #define STM32_TIM14_SUPPRESS_ISR
@@ -71,18 +70,23 @@
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
 #define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH4567_DMA2_CH12345_HANDLER  Vector6C
+#define STM32_DMA1_CH4567_DMA2_CH12345_HANDLER Vector6C
 
 #define STM32_DMA1_CH1_NUMBER               9
 #define STM32_DMA1_CH23_NUMBER              10
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH4567_NUMBER            11
-#define STM32_DMA1_CH4567_DMA2_CH12345_NUMBER   11
+#define STM32_DMA1_CH4567_DMA2_CH12345_NUMBER 11
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA2_CH1_NUMBER               STM32_DMA1_CH4567_DMA2_CH12345_NUMBER
+#define STM32_DMA2_CH2_NUMBER               STM32_DMA1_CH4567_DMA2_CH12345_NUMBER
+#define STM32_DMA2_CH3_NUMBER               STM32_DMA1_CH4567_DMA2_CH12345_NUMBER
+#define STM32_DMA2_CH4_NUMBER               STM32_DMA1_CH4567_DMA2_CH12345_NUMBER
+#define STM32_DMA2_CH5_NUMBER               STM32_DMA1_CH4567_DMA2_CH12345_NUMBER
 
 #define STM32_DMA1_CH1_CMASK                0x00000001U
 #define STM32_DMA1_CH2_CMASK                0x00000006U
@@ -91,6 +95,11 @@
 #define STM32_DMA1_CH5_CMASK                0x00000078U
 #define STM32_DMA1_CH6_CMASK                0x00000078U
 #define STM32_DMA1_CH7_CMASK                0x00000078U
+#define STM32_DMA2_CH1_CMASK                0x0000001FU
+#define STM32_DMA2_CH2_CMASK                0x0000001FU
+#define STM32_DMA2_CH3_CMASK                0x0000001FU
+#define STM32_DMA2_CH4_CMASK                0x0000001FU
+#define STM32_DMA2_CH5_CMASK                0x0000001FU
 
 /*
  * EXTI unit.
@@ -125,6 +134,7 @@
 #define STM32_TIM1_CC_HANDLER               Vector78
 #define STM32_TIM2_HANDLER                  Vector7C
 #define STM32_TIM3_HANDLER                  Vector80
+#define STM32_TIM3_TIM4_HANDLER             Vector80
 #define STM32_TIM6_HANDLER                  Vector84
 #define STM32_TIM7_HANDLER                  Vector88
 #define STM32_TIM14_HANDLER                 Vector8C
@@ -136,6 +146,7 @@
 #define STM32_TIM1_CC_NUMBER                14
 #define STM32_TIM2_NUMBER                   15
 #define STM32_TIM3_NUMBER                   16
+#define STM32_TIM3_TIM4_NUMBER              16
 #define STM32_TIM6_NUMBER                   17
 #define STM32_TIM7_NUMBER                   18
 #define STM32_TIM14_NUMBER                  19

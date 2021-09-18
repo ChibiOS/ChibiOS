@@ -39,7 +39,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="1" />
+        Alternate="6" />
       <pin3
         ID="STLK_TX"
         Type="PushPull"
@@ -47,7 +47,7 @@
         Speed="High"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="1"/>
+        Alternate="6"/>
       <pin4
         ID=""
         Type="PushPull"
@@ -171,12 +171,12 @@
         Mode="Input"
         Alternate="0" />
       <pin3
-        ID="LED_GREEN LED"
+        ID=""
         Type="PushPull"
-        Level="Low"
+        Level="High"
         Speed="Maximum"
-        Resistor="Floating"
-        Mode="Output"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin4
         ID=""
@@ -325,12 +325,12 @@
         Mode="Input"
         Alternate="0" />
       <pin6
-        ID=""
+        ID="LED_GREEN LED"
         Type="PushPull"
-        Level="High"
+        Level="Low"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Input"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin7
         ID=""

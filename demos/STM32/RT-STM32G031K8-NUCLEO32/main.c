@@ -26,7 +26,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SD2,
+  (BaseSequentialStream *)&LPSD1,
   commands
 };
 
@@ -75,7 +75,7 @@ int main(void) {
   /*
    * Activates the serial driver 2 using the driver default configuration.
    */
-  sdStart(&SD2, NULL);
+  sdStart(&LPSD1, NULL);
 
   /*
    * Shell manager initialization.
