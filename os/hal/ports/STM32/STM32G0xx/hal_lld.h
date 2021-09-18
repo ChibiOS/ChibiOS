@@ -26,7 +26,7 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32G031xx.
+ *          - STM32G031xx, STM32G041xx.
  *          - STM32G070xx.
  *          - STM32G071xx, STM32G081xx.
  *          - STM32G0B1xx, STM32G0C1xx.
@@ -54,6 +54,9 @@
 
 #elif defined(STM32G031xx)
 #define PLATFORM_NAME           "STM32G0 Entry-level"
+
+#elif defined(STM32G041xx)
+#define PLATFORM_NAME           "STM32G0 Entry-level with Crypto"
 
 #elif defined(STM32G071xx)
 #define PLATFORM_NAME           "STM32G0 Entry-level"
@@ -726,6 +729,9 @@
 
 #elif defined(STM32G031xx) && !defined(STM32G031_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G031_MCUCONF not defined"
+
+#elif defined(STM32G041xx) && !defined(STM32G041_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G041_MCUCONF not defined"
 
 #elif defined(STM32G071xx) && !defined(STM32G071_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G071_MCUCONF not defined"
