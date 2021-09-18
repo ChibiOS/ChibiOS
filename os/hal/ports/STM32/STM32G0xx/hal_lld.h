@@ -26,8 +26,10 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
+ *          - STM32G031xx.
  *          - STM32G070xx.
  *          - STM32G071xx, STM32G081xx.
+ *          - STM32G0B1xx, STM32G0C1xx.
  *          .
  *
  * @addtogroup HAL
@@ -50,11 +52,20 @@
 #if defined(STM32G070xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32G0 Entry-level Value Line"
 
+#elif defined(STM32G031xx)
+#define PLATFORM_NAME           "STM32G0 Entry-level"
+
 #elif defined(STM32G071xx)
 #define PLATFORM_NAME           "STM32G0 Entry-level"
 
 #elif defined(STM32G081xx)
 #define PLATFORM_NAME           "STM32G0 Entry-level with Crypto"
+
+#elif defined(STM32G0B1xx)
+#define PLATFORM_NAME           "STM32G0 Extended Flash"
+
+#elif defined(STM32G0C1xx)
+#define PLATFORM_NAME           "STM32G0 Extended Flash with Crypto"
 
 #else
 #error "STM32G0 device not specified"
@@ -713,11 +724,20 @@
 #if defined(STM32G070xx) && !defined(STM32G070_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G070_MCUCONF not defined"
 
+#elif defined(STM32G031xx) && !defined(STM32G031_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G031_MCUCONF not defined"
+
 #elif defined(STM32G071xx) && !defined(STM32G071_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G071_MCUCONF not defined"
 
 #elif defined(STM32G081xx) && !defined(STM32G081_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G071_MCUCONF not defined"
+
+#elif defined(STM32G0B1xx) && !defined(STM32G0B1_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G0B1_MCUCONF not defined"
+
+#elif defined(STM32G0C1xx) && !defined(STM32G0C1_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G0C1_MCUCONF not defined"
 
 #endif
 
