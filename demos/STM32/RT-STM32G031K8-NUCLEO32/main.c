@@ -16,8 +16,19 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "rt_test_root.h"
-#include "oslib_test_root.h"
+
+#include "shell.h"
+
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+static const ShellCommand commands[] = {
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SD2,
+  commands
+};
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -76,10 +87,10 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-   if (!palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
-    }
-    chThdSleepMilliseconds(500);
+    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                            "shell", NORMALPRIO + 1,
+                                            shellThread, (void *)&shell_cfg1);
+    chThdWait(shelltp);               /* Waiting termination.             */
+    chThdSleepMilliseconds(1000);
   }
 }
