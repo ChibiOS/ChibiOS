@@ -83,6 +83,7 @@
 - NEW: Improved boost settings for STM32G4.
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
        the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
+- FIX: Fixed invalid RCC LPUART1 clock enable on STM32G0xx (bug #1189).
 - FIX: Fixed wrong configuration in testex LSM6DSL demos (bug #1184).
 - FIX: Fixed STM32 ADCv3 differences in headers (bug #1182).
 - FIX: Fixed DMAv1 compile fail on STM32L011 (bug #1181).
