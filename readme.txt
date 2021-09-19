@@ -79,8 +79,10 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
-- FIX: Support for STM32G491 (bug #1187)(TBP).
-- FIX: fixes for uart clock rounding, missing DMA streams and timers
+- FIX: Fixed invalid RCC LPUART1 clock enable on STM32G0xx (bug #1189)
+       (TBP to 21.6.1)(backported to 20.3.4).
+- FIX: Support for STM32G491 (bug #1187)(TBP to 21.6.1).
+- FIX: Fixes for uart clock rounding, missing DMA streams and timers
        (bug #1186)(TBP).
 - FIX: Fixed invalid check in chVTResetTimeStamp() function (bug #1185)
        (TBP).

@@ -808,14 +808,14 @@
  *
  * @api
  */
-#define rccEnableLPUART1(lp) rccEnableAPBR1(RCC_APBENR1_LPTIM2EN, lp)
+#define rccEnableLPUART1(lp) rccEnableAPBR1(RCC_APBENR1_LPUART1EN, lp)
 
 /**
  * @brief   Disables the LPUART1 peripheral clock.
  *
  * @api
  */
-#define rccDisableLPUART1() rccDisableAPBR1(RCC_APBENR1_LPTIM2EN)
+#define rccDisableLPUART1() rccDisableAPBR1(RCC_APBENR1_LPUART1EN)
 
 /**
  * @brief   Resets the USART1 peripheral.
