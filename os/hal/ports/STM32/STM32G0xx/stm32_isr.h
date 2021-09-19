@@ -70,14 +70,14 @@
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
 #define STM32_DMA1_CH4567_HANDLER           Vector6C
-#define STM32_DMA1_CH4567_DMA2_CH12345_HANDLER Vector6C
+#define STM32_DMA1_CH4567_DMA2_CH12345_HANDLER STM32_DMA1_CH4567_HANDLER
 
 #define STM32_DMA1_CH1_NUMBER               9
 #define STM32_DMA1_CH23_NUMBER              10
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH4567_NUMBER            11
-#define STM32_DMA1_CH4567_DMA2_CH12345_NUMBER 11
+#define STM32_DMA1_CH4567_DMA2_CH12345_NUMBER STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
 #define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
@@ -134,7 +134,7 @@
 #define STM32_TIM1_CC_HANDLER               Vector78
 #define STM32_TIM2_HANDLER                  Vector7C
 #define STM32_TIM3_HANDLER                  Vector80
-#define STM32_TIM3_TIM4_HANDLER             Vector80
+#define STM32_TIM3_TIM4_HANDLER             STM32_TIM3_HANDLER
 #define STM32_TIM6_HANDLER                  Vector84
 #define STM32_TIM7_HANDLER                  Vector88
 #define STM32_TIM14_HANDLER                 Vector8C
@@ -146,7 +146,7 @@
 #define STM32_TIM1_CC_NUMBER                14
 #define STM32_TIM2_NUMBER                   15
 #define STM32_TIM3_NUMBER                   16
-#define STM32_TIM3_TIM4_NUMBER              16
+#define STM32_TIM3_TIM4_NUMBER              STM32_TIM3_NUMBER
 #define STM32_TIM6_NUMBER                   17
 #define STM32_TIM7_NUMBER                   18
 #define STM32_TIM14_NUMBER                  19
@@ -159,15 +159,17 @@
  */
 #define STM32_USART1_HANDLER                VectorAC
 #define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_LP2_HANDLER            VectorB0
-#define STM32_USART3_4_LP1_HANDLER          VectorB4
-#define STM32_USART3_4_5_6_LP1_HANDLER      VectorB4
+#define STM32_USART2_LP2_HANDLER            STM32_USART2_HANDLER
+#define STM32_LPUART1_HANDLER               VectorB4
+#define STM32_USART3_4_LP1_HANDLER          STM32_LPUART1_HANDLER
+#define STM32_USART3_4_5_6_LP1_HANDLER      STM32_LPUART1_HANDLER
 
 #define STM32_USART1_NUMBER                 27
 #define STM32_USART2_NUMBER                 28
-#define STM32_USART2_LP2_NUMBER             28
-#define STM32_USART3_4_LP1_NUMBER           29
-#define STM32_USART3_4_5_6_LP1_NUMBER       29
+#define STM32_USART2_LP2_NUMBER             STM32_USART2_NUMBER
+#define STM32_LPUART1_NUMBER                29
+#define STM32_USART3_4_LP1_NUMBER           STM32_LPUART1_NUMBER
+#define STM32_USART3_4_5_6_LP1_NUMBER       STM32_LPUART1_NUMBER
 /** @} */
 
 /*===========================================================================*/
