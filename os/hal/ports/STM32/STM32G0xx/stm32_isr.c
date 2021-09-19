@@ -83,10 +83,12 @@
 
 #include "stm32_tim1.inc"
 #include "stm32_tim2.inc"
-#if STM32_HAS_TIM4
+#if STM32_HAS_TIM3 && STM32_HAS_TIM4
 #include "stm32_tim3_4.inc"
-#else
+#elif STM32_HAS_TIM3
 #include "stm32_tim3.inc"
+#else
+#error "unknown TIMs combination"
 #endif
 #include "stm32_tim6.inc"
 #include "stm32_tim7.inc"
@@ -113,9 +115,9 @@ void irqInit(void) {
 
   tim1_irq_init();
   tim2_irq_init();
-#if STM32_HAS_TIM4
+#if STM32_HAS_TIM3 && STM32_HAS_TIM4
   tim3_tim4_irq_init();
-#else
+#elif STM32_HAS_TIM3
   tim3_irq_init();
 #endif
   tim6_irq_init();
@@ -154,9 +156,9 @@ void irqDeinit(void) {
 
   tim1_irq_deinit();
   tim2_irq_deinit();
-#if STM32_HAS_TIM4
+#if STM32_HAS_TIM3 && STM32_HAS_TIM4
   tim3_tim4_irq_deinit();
-#else
+#elif STM32_HAS_TIM3
   tim3_irq_deinit();
 #endif
   tim6_irq_deinit();

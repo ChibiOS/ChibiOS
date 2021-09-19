@@ -75,9 +75,9 @@
 /*
  * Peripherals clocks and sources.
  */
-#define STM32_USART1SEL                     STM32_USART1SEL_SYSCLK
-#define STM32_USART2SEL                     STM32_USART2SEL_SYSCLK
-#define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
+#define STM32_USART1SEL                     STM32_USART1SEL_PCLK
+#define STM32_USART2SEL                     STM32_USART2SEL_PCLK
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_PCLK
 #define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK
 #define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK
