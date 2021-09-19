@@ -33,6 +33,7 @@
 
 #define STM32G0xx_MCUCONF
 #define STM32G031_MCUCONF
+#define STM32G041_MCUCONF
 
 /*
  * HAL driver system settings.
@@ -77,13 +78,10 @@
 #define STM32_USART1SEL                     STM32_USART1SEL_SYSCLK
 #define STM32_USART2SEL                     STM32_USART2SEL_SYSCLK
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
-#define STM32_CECSEL                        STM32_CECSEL_HSI16DIV
 #define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK
 #define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK
-#define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK
 #define STM32_TIM1SEL                       STM32_TIM1SEL_TIMPCLK
-#define STM32_TIM15SEL                      STM32_TIM15SEL_TIMPCLK
 #define STM32_RNGSEL                        STM32_RNGSEL_HSI16
 #define STM32_RNGDIV_VALUE                  1
 #define STM32_ADCSEL                        STM32_ADCSEL_PLLPCLK
@@ -99,16 +97,13 @@
 
 #define STM32_IRQ_USART1_PRIORITY           2
 #define STM32_IRQ_USART2_PRIORITY           2
-#define STM32_IRQ_USART3_4_LP1_PRIORITY     2
+#define STM32_IRQ_LPUART1_PRIORITY          2
 
 #define STM32_IRQ_TIM1_UP_PRIORITY          1
 #define STM32_IRQ_TIM1_CC_PRIORITY          1
 #define STM32_IRQ_TIM2_PRIORITY             1
 #define STM32_IRQ_TIM3_PRIORITY             1
-#define STM32_IRQ_TIM6_PRIORITY             1
-#define STM32_IRQ_TIM7_PRIORITY             1
 #define STM32_IRQ_TIM14_PRIORITY            1
-#define STM32_IRQ_TIM15_PRIORITY            1
 #define STM32_IRQ_TIM16_PRIORITY            1
 #define STM32_IRQ_TIM17_PRIORITY            1
 
@@ -123,28 +118,12 @@
 #define STM32_ADC_PRESCALER_VALUE           2
 
 /*
- * DAC driver system settings.
- */
-#define STM32_DAC_DUAL_MODE                 FALSE
-#define STM32_DAC_USE_DAC1_CH1              FALSE
-#define STM32_DAC_USE_DAC1_CH2              FALSE
-#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     3
-#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     3
-#define STM32_DAC_DAC1_CH1_DMA_PRIORITY     2
-#define STM32_DAC_DAC1_CH2_DMA_PRIORITY     2
-#define STM32_DAC_DAC1_CH1_DMA_STREAM       STM32_DMA_STREAM_ID_ANY
-#define STM32_DAC_DAC1_CH2_DMA_STREAM       STM32_DMA_STREAM_ID_ANY
-
-/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  FALSE
 #define STM32_GPT_USE_TIM2                  FALSE
 #define STM32_GPT_USE_TIM3                  FALSE
-#define STM32_GPT_USE_TIM6                  FALSE
-#define STM32_GPT_USE_TIM7                  FALSE
 #define STM32_GPT_USE_TIM14                 FALSE
-#define STM32_GPT_USE_TIM15                 FALSE
 #define STM32_GPT_USE_TIM16                 FALSE
 #define STM32_GPT_USE_TIM17                 FALSE
 
@@ -170,7 +149,6 @@
 #define STM32_ICU_USE_TIM1                  FALSE
 #define STM32_ICU_USE_TIM2                  FALSE
 #define STM32_ICU_USE_TIM3                  FALSE
-#define STM32_ICU_USE_TIM15                 FALSE
 
 /*
  * PWM driver system settings.
@@ -179,7 +157,6 @@
 #define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_USE_TIM14                 FALSE
-#define STM32_PWM_USE_TIM15                 FALSE
 #define STM32_PWM_USE_TIM16                 FALSE
 #define STM32_PWM_USE_TIM17                 FALSE
 
@@ -196,8 +173,6 @@
  */
 #define STM32_SERIAL_USE_USART1             FALSE
 #define STM32_SERIAL_USE_USART2             FALSE
-#define STM32_SERIAL_USE_USART3             FALSE
-#define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_LPUART1            TRUE
 
 /*
@@ -205,8 +180,6 @@
  */
 #define STM32_SIO_USE_USART1                FALSE
 #define STM32_SIO_USE_USART2                FALSE
-#define STM32_SIO_USE_USART3                FALSE
-#define STM32_SIO_USE_UART4                 FALSE
 #define STM32_SIO_USE_LPUART1               FALSE
 
 /*
@@ -232,7 +205,7 @@
 
 /*
  * TRNG driver system settings.
- * NOTE: STM32G081 only.
+ * NOTE: STM32G041 only.
  */
 #define STM32_TRNG_USE_RNG1                 FALSE
 
@@ -241,20 +214,12 @@
  */
 #define STM32_UART_USE_USART1               FALSE
 #define STM32_UART_USE_USART2               FALSE
-#define STM32_UART_USE_USART3               FALSE
-#define STM32_UART_USE_UART4                FALSE
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
 #define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
 #define STM32_UART_USART2_RX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
 #define STM32_UART_USART2_TX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART3_RX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_USART3_TX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_UART4_RX_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
-#define STM32_UART_UART4_TX_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
-#define STM32_UART_USART3_DMA_PRIORITY      0
-#define STM32_UART_UART4_DMA_PRIORITY       0
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
 
 /*
