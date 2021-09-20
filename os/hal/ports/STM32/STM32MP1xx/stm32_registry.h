@@ -52,6 +52,12 @@
     defined(STM32MP151Dxx) || defined(STM32MP151Fxx) ||                     \
     defined(__DOXYGEN__)
 
+/* RCC attributes.*/
+#define STM32_RCC_HAS_PLL3                  TRUE
+#define STM32_RCC_PLL3_HAS_P                TRUE
+#define STM32_RCC_PLL3_HAS_Q                TRUE
+#define STM32_RCC_PLL3_HAS_R                TRUE
+
 /* ADC attributes.*/
 
 /* CAN attributes.*/
