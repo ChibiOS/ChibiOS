@@ -412,6 +412,29 @@
  * @api
  */
 #define rccResetI2C2() rccResetAPBR1(RCC_APBRSTR1_I2C2RST)
+
+/**
+ * @brief   Enables the I2C3 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableI2C3(lp) rccEnableAPBR1(RCC_APBENR1_I2C3EN, lp)
+
+/**
+ * @brief   Disables the I2C3 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableI2C3() rccDisableAPBR1(RCC_APBENR1_I2C3EN)
+
+/**
+ * @brief   Resets the I2C3 peripheral.
+ *
+ * @api
+ */
+#define rccResetI2C3() rccResetAPBR1(RCC_APBRSTR1_I2C3RST)
 /** @} */
 
 /**
@@ -491,6 +514,29 @@
  * @api
  */
 #define rccResetSPI2() rccResetAPBR1(RCC_APBRSTR1_SPI2RST)
+
+/**
+ * @brief   Enables the SPI3 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSPI3(lp) rccEnableAPBR1(RCC_APBENR1_SPI3EN, lp)
+
+/**
+ * @brief   Disables the SPI3 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableSPI3() rccDisableAPBR1(RCC_APBENR1_SPI3EN)
+
+/**
+ * @brief   Resets the SPI3 peripheral.
+ *
+ * @api
+ */
+#define rccResetSPI3() rccResetAPBR1(RCC_APBRSTR1_SPI3RST)
 /** @} */
 
 /**
@@ -802,6 +848,52 @@
 #define rccResetUART4() rccResetAPBR1(RCC_APBRSTR1_USART4RST)
 
 /**
+ * @brief   Enables the UART5 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART5(lp) rccEnableAPBR1(RCC_APBENR1_USART5EN, lp)
+
+/**
+ * @brief   Disables the UART5 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUART5() rccDisableAPBR1(RCC_APBENR1_USART5EN)
+
+/**
+ * @brief   Resets the UART5 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART5() rccResetAPBR1(RCC_APBRSTR1_USART5RST)
+
+/**
+ * @brief   Enables the USART6 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSART6(lp) rccEnableAPBR1(RCC_APBENR1_USART6EN, lp)
+
+/**
+ * @brief   Disables the USART6 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUSART6() rccDisableAPBR1(RCC_APBENR1_USART6EN)
+
+/**
+ * @brief   Resets the USART6 peripheral.
+ *
+ * @api
+ */
+#define rccResetUSART6() rccResetAPBR1(RCC_APBRSTR1_USART6RST)
+
+/**
  * @brief   Enables the LPUART1 peripheral clock.
  *
  * @param[in] lp        low power enable flag
@@ -818,11 +910,62 @@
 #define rccDisableLPUART1() rccDisableAPBR1(RCC_APBENR1_LPUART1EN)
 
 /**
- * @brief   Resets the USART1 peripheral.
+ * @brief   Resets the LPUART1 peripheral.
  *
  * @api
  */
 #define rccResetLPUART1() rccResetAPBR1(RCC_APBRSTR1_LPUART1RST)
+
+/**
+ * @brief   Enables the LPUART2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableLPUART2(lp) rccEnableAPBR1(RCC_APBENR1_LPUART2EN, lp)
+
+/**
+ * @brief   Disables the LPUART2 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableLPUART2() rccDisableAPBR1(RCC_APBENR1_LPUART2EN)
+
+/**
+ * @brief   Resets the LPUART2 peripheral.
+ *
+ * @api
+ */
+#define rccResetLPUART2() rccResetAPBR1(RCC_APBRSTR1_LPUART2RST)
+/** @} */
+
+/**
+ * @name    USB peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the USB peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSB(lp) rccEnableAPBR1(RCC_APBENR1_USBEN, lp)
+
+/**
+ * @brief   Disables the USB peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUSB() rccDisableAPBR1(RCC_APBENR1_USBEN)
+
+/**
+ * @brief   Resets the USB peripheral.
+ *
+ * @api
+ */
+#define rccResetUSB() rccResetAPBR1(RCC_APBRSTR1_USBRST)
 /** @} */
 
 /**

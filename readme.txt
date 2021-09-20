@@ -74,7 +74,7 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Support for STM32G031, STM32G0B1, STM32G0C1.
+- NEW: Support for STM32G031, STM32G041, STM32G0B1, STM32G0C1.
 - NEW: Made STM32H7 non-cacheable memory option also shareable.
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
