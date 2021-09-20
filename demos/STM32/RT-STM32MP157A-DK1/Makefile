@@ -99,10 +99,10 @@ include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32mp1xx.mk
 # HAL-OSAL files (optional).
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx/platform.mk
-#include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G474RE/board.mk
-#include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32MP1xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_STM32MP157A_DK1/board.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
