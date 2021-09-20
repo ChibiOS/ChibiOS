@@ -92,13 +92,22 @@
 /** @} */
 
 /**
+ * @name    Internal clocks
+ * @{
+ */
+#define STM32_HSICLK            64000000
+#define STM32_CSICLK            4000000
+#define STM32_LSICLK            32000
+/** @} */
+
+/**
  * @name    RCC_RCK3SELR register bits definitions
  * @{
  */
 #define STM32_PLL3SRC_HSI        (0 << 0)   /**< PLL3 clock source is HSI.  */
 #define STM32_PLL3SRC_HSE        (1 << 0)   /**< PLL3 clock source is HSE.  */
 #define STM32_PLL3SRC_CSI        (2 << 0)   /**< PLL3 clock source is CSI.  */
-#define STM32_PLL3SRC_NOCLOCK    (3 << 0)   /**< PLL3 clock source disabled.*/
+#define STM32_PLL3SRC_NOCLOCK    (3 << 0)   /**< PLL3 clock disabled.       */
 /** @} */
 
 /**
@@ -109,6 +118,16 @@
 #define STM32_PLL4SRC_HSE        (1 << 0)   /**< PLL4 clock source is HSE.  */
 #define STM32_PLL4SRC_CSI        (2 << 0)   /**< PLL4 clock source is CSI.  */
 #define STM32_PLL4SRC_I2S_CKIN   (3 << 0)   /**< PLL4 clock source is I2SCK.*/
+/** @} */
+
+/**
+ * @name    RCC_CPERCKSELR register bits definitions
+ * @{
+ */
+#define STM32_CKPERSRC_HSI       (0 << 0)   /**< PERSRC clock source is HSI.*/
+#define STM32_CKPERSRC_CSI       (1 << 0)   /**< PERSRC clock source is HSE.*/
+#define STM32_CKPERSRC_HSE       (2 << 0)   /**< PERSRC clock source is CSI.*/
+#define STM32_CKPERSRC_NOCLOCK   (3 << 0)   /**< PERSRC clock disabled.     */
 /** @} */
 
 /*===========================================================================*/
@@ -154,10 +173,24 @@
 #endif
 
 /**
+ * @brief   PWR MCUCR register initialization value.
+ */
+#if !defined(STM32_PWR_MCUCR) || defined(__DOXYGEN__)
+#define STM32_PWR_MCUCR                     XXXXXXXXXXXXXXX
+#endif
+
+/**
  * @brief   PWR MCUWKUPENR register initialization value.
  */
 #if !defined(STM32_PWR_MCUWKUPENR) || defined(__DOXYGEN__)
 #define STM32_PWR_MCUWKUPENR                XXXXXXXXXXXXXXX
+#endif
+
+/**
+ * @brief   Frequency of the external I2S clock or zero if unused.
+ */
+#if !defined(STM32_I2S_CKIN_VALUE) || defined(__DOXYGEN__)
+#define STM32_I2S_CKIN_VALUE                0
 #endif
 
 /**
@@ -166,21 +199,6 @@
  */
 #if !defined(STM32_CSI_ENABLED) || defined(__DOXYGEN__)
 #define STM32_CSI_ENABLED                   FALSE
-#endif
-
-/**
- * @brief   MCU divider setting.
- */
-#if !defined(STM32_MCUDIV) || defined(__DOXYGEN__)
-#define STM32_MCUDIV                        XXXXXXXXXXXXXXX
-#endif
-
-/**
- * @brief   MCU main clock source selection.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
- */
-#if !defined(STM32_MCUSSRC) || defined(__DOXYGEN__)
-#define STM32_MCUSSRC                       XXXXXXXXXXXXXX
 #endif
 
 /**
@@ -284,8 +302,23 @@
 #endif
 
 /**
- * @brief   APB1DIV prescaler setting.
+ * @brief   MCU divider setting.
  * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ */
+#if !defined(STM32_MCUDIV) || defined(__DOXYGEN__)
+#define STM32_MCUDIV                        XXXXXXXXXXXXXXX
+#endif
+
+/**
+ * @brief   MCU main clock source selection.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ */
+#if !defined(STM32_MCUSSRC) || defined(__DOXYGEN__)
+#define STM32_MCUSSRC                       XXXXXXXXXXXXXX
+#endif
+
+/**
+ * @brief   APB1DIV prescaler setting.
  */
 #if !defined(STM32_APB1DIV) || defined(__DOXYGEN__)
 #define STM32_APB1DIV                       XXXXXXXXXXXXXXX
@@ -293,7 +326,6 @@
 
 /**
  * @brief   APB2DIV prescaler setting.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
  */
 #if !defined(STM32_APB2DIV) || defined(__DOXYGEN__)
 #define STM32_APB2DIV                       XXXXXXXXXXXXXXX
@@ -301,46 +333,16 @@
 
 /**
  * @brief   APB3DIV prescaler setting.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
  */
 #if !defined(STM32_APB3DIV) || defined(__DOXYGEN__)
 #define STM32_APB3DIV                       XXXXXXXXXXXXXXX
 #endif
 
 /**
- * @brief   APB4DIV prescaler setting.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @brief   Clock source for peripherals.
  */
-#if !defined(STM32_APB4DIV) || defined(__DOXYGEN__)
-#define STM32_APB4DIV                       XXXXXXXXXXXXXXX
-#endif
-
-/**
- * @brief   MCO1 clock source.
- */
-#if !defined(STM32_MCO1SEL) || defined(__DOXYGEN__)
-#define STM32_MCO1SEL                       XXXXXXXXXXXXXXX
-#endif
-
-/**
- * @brief   MCO1 divider value.
- */
-#if !defined(STM32_MCO1DIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_MCO1DIV_VALUE                 8
-#endif
-
-/**
- * @brief   MCO2 clock source.
- */
-#if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
-#define STM32_MCO2SEL                       XXXXXXXXXXXXXXX
-#endif
-
-/**
- * @brief   MCO2 divider value.
- */
-#if !defined(STM32_MCO2DIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_MCO2DIV_VALUE                 8
+#if !defined(STM32_CKPERSRC) || defined(__DOXYGEN__)
+#define STM32_CKPERSRC                      STM32_CKPERSRC_HSI
 #endif
 /** @} */
 
@@ -402,37 +404,199 @@
  * @name    System Limits
  * @{
  */
-#define STM32_BOOST_SYSCLK_MAX          170000000
-#define STM32_BOOST_HSECLK_MAX          48000000
-#define STM32_BOOST_HSECLK_BYP_MAX      48000000
-#define STM32_BOOST_HSECLK_MIN          8000000
-#define STM32_BOOST_HSECLK_BYP_MIN      8000000
-#define STM32_BOOST_LSECLK_MAX          32768
-#define STM32_BOOST_LSECLK_BYP_MAX      1000000
-#define STM32_BOOST_LSECLK_MIN          32768
-#define STM32_BOOST_LSECLK_BYP_MIN      32768
-#define STM32_BOOST_PLLIN_MAX           16000000
-#define STM32_BOOST_PLLIN_MIN           2660000
-#define STM32_BOOST_PLLVCO_MAX          344000000
-#define STM32_BOOST_PLLVCO_MIN          96000000
-#define STM32_BOOST_PLLP_MAX            170000000
-#define STM32_BOOST_PLLP_MIN            2064500
-#define STM32_BOOST_PLLQ_MAX            170000000
-#define STM32_BOOST_PLLQ_MIN            8000000
-#define STM32_BOOST_PLLR_MAX            170000000
-#define STM32_BOOST_PLLR_MIN            8000000
-#define STM32_BOOST_PCLK1_MAX           170000000
-#define STM32_BOOST_PCLK2_MAX           170000000
-#define STM32_BOOST_ADCCLK_MAX          60000000
-
-#define STM32_BOOST_0WS_THRESHOLD       34000000
-#define STM32_BOOST_1WS_THRESHOLD       68000000
-#define STM32_BOOST_2WS_THRESHOLD       102000000
-#define STM32_BOOST_3WS_THRESHOLD       136000000
-#define STM32_BOOST_4WS_THRESHOLD       170000000
+#define STM32_MCUSS_CK_MAX              209000000
+#define STM32_PLLIN_MAX                 16000000
+#define STM32_PLLIN_MIN                 4000000
+#define STM32_PLLIN_SD_THRESHOLD        8000000
+#define STM32_BOOST_PLLVCO_MAX          800000000
+#define STM32_BOOST_PLLVCO_MIN          400000000
+#define STM32_BOOST_PLLP_MAX            800000000
+#define STM32_BOOST_PLLP_MIN            3125000
+#define STM32_BOOST_PLLQ_MAX            800000000
+#define STM32_BOOST_PLLQ_MIN            3125000
+#define STM32_BOOST_PLLR_MAX            800000000
+#define STM32_BOOST_PLLR_MIN            3125000
+#define STM32_BOOST_PCLK1_MAX           104500000
+#define STM32_BOOST_PCLK2_MAX           104500000
+#define STM32_BOOST_PCLK3_MAX           104500000
+#define STM32_BOOST_ADCCLK_BOOST_MAX    36000000
+#define STM32_BOOST_ADCCLK_NOBOOST_MAX  20000000
 /** @} */
 
-/* TODO */
+/* External oscillator settings check.*/
+#if !defined(STM32_LSECLK)
+#error "STM32_LSECLK not defined in board.h"
+#endif
+
+#if !defined(STM32_HSECLK)
+#error "STM32_HSECLK not defined in board.h"
+#endif
+
+/* Clock handlers.*/
+//#include "stm32_csi.inc"
+//#include "stm32_hsi64.inc"
+
+/*
+ * CSI related checks.
+ */
+#if STM32_CSI_ENABLED
+#else /* !STM32_CSI_ENABLED */
+
+  #if STM32_PLL3SRC == STM32_PLL3SRC_CSI
+    #error "CSI not enabled, required by STM32_PLL3SRC"
+  #endif
+
+  #if STM32_PLL4SRC == STM32_PLL4SRC_CSI
+    #error "CSI not enabled, required by STM32_PLL4SRC"
+  #endif
+
+  #if STM32_CKPERSRC == STM32_CKPERSRC_CSI
+    #error "CSI not enabled, required by STM32_CKPERSRC"
+  #endif
+#endif /* !STM32_CSI_ENABLED */
+
+/**
+ * @brief   PLL3 input clock frequency.
+ */
+#if (STM32_PLL3SRC == STM32_PLL3SRC_HSI) || defined(__DOXYGEN__)
+  #define STM32_PLL3CLKIN           (STM32_HSICLK / STM32_PLL3M_VALUE)
+
+#elif STM32_PLL3SRC == STM32_PLL3SRC_HSE
+  #define STM32_PLL3CLKIN           (STM32_HSECLK / STM32_PLL3M_VALUE)
+
+#elif STM32_PLL3SRC == STM32_PLL3SRC_CSI
+  #define STM32_PLL3CLKIN           (STM32_CSICLK / STM32_PLL3M_VALUE)
+
+#elif STM32_PLL3SRC == STM32_PLL3SRC_NOCLOCK
+  #define STM32_PLL3CLKIN           0
+
+#else
+  #error "invalid STM32_PLL3SRC value specified"
+#endif
+
+/*
+ * PLL3 enable check.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                                                                 \
+    defined(__DOXYGEN__)
+  /**
+   * @brief   PLL activation flag.
+   */
+  #define STM32_ACTIVATE_PLL3       TRUE
+#else
+
+  #define STM32_ACTIVATE_PLL3       FALSE
+#endif
+
+/**
+ * @brief   STM32_PLL3DIVPEN field.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                         \
+    defined(__DOXYGEN__)
+  #define STM32_PLL3DIVPEN          (1 << 4)
+
+#else
+  #define STM32_PLL3DIVPEN          (0 << 4)
+#endif
+
+/**
+ * @brief   STM32_PLL3DIVQEN field.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                         \
+    defined(__DOXYGEN__)
+  #define STM32_PLL3DIVQEN          (1 << 5)
+
+#else
+  #define STM32_PLL3DIVQEN          (0 << 5)
+#endif
+
+/**
+ * @brief   STM32_PLL3DIVREN field.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                         \
+    defined(__DOXYGEN__)
+  #define STM32_PLL3DIVREN          (1 << 6)
+
+#else
+  #define STM32_PLL3DIVREN          (0 << 6)
+#endif
+
+/**
+ * @brief   PLL4 input clock frequency.
+ */
+#if (STM32_PLL4SRC == STM32_PLL4SRC_HSI) || defined(__DOXYGEN__)
+  #define STM32_PLL4CLKIN           (STM32_HSICLK / STM32_PLL4M_VALUE)
+
+#elif STM32_PLL4SRC == STM32_PLL4SRC_HSE
+  #define STM32_PLL4CLKIN           (STM32_HSECLK / STM32_PLL4M_VALUE)
+
+#elif STM32_PLL4SRC == STM32_PLL4SRC_CSI
+  #define STM32_PLL4CLKIN           (STM32_CSICLK / STM32_PLL4M_VALUE)
+
+#elif STM32_PLL4SRC == STM32_PLL4SRC_I2S_CKIN
+  #if STM32_I2S_CKIN_VALUE <= 0
+    #error "STM32_I2S_CKIN_VALUE is zero but it is selected as PLL4 input"
+  #endif
+  #define STM32_PLL4CLKIN           (STM32_I2S_CKIN_VALUE / STM32_PLL4M_VALUE)
+
+#else
+  #error "invalid STM32_PLL4SRC value specified"
+#endif
+
+/*
+ * PLL4 enable check.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                                                                 \
+    defined(__DOXYGEN__)
+  /**
+   * @brief   PLL activation flag.
+   */
+  #define STM32_ACTIVATE_PLL4       TRUE
+#else
+
+  #define STM32_ACTIVATE_PLL4       FALSE
+#endif
+
+/**
+ * @brief   STM32_PLL4DIVPEN field.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                         \
+    defined(__DOXYGEN__)
+  #define STM32_PLL4DIVPEN          (1 << 4)
+
+#else
+  #define STM32_PLL4DIVPEN          (0 << 4)
+#endif
+
+/**
+ * @brief   STM32_PLL4DIVQEN field.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                         \
+    defined(__DOXYGEN__)
+  #define STM32_PLL4DIVQEN          (1 << 5)
+
+#else
+  #define STM32_PLL4DIVQEN          (0 << 5)
+#endif
+
+/**
+ * @brief   STM32_PLL4DIVREN field.
+ * TODO: Check all conditions.
+ */
+#if TRUE ||                         \
+    defined(__DOXYGEN__)
+  #define STM32_PLL4DIVREN          (1 << 6)
+
+#else
+  #define STM32_PLL4DIVREN          (0 << 6)
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
