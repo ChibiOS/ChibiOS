@@ -76,11 +76,11 @@
 #endif
 
 #if !defined(STM32_PLLVCO_MAX)
-#error "STM32_PLLIN_MAX not defined in hal_lld.h"
+#error "STM32_PLLVCO_MAX not defined in hal_lld.h"
 #endif
 
 #if !defined(STM32_PLLVCO_MIN)
-#error "STM32_PLLIN_MAX not defined in hal_lld.h"
+#error "STM32_PLLVCO_MIN not defined in hal_lld.h"
 #endif
 
 #if !defined(STM32_PLLP_MAX)
@@ -222,7 +222,6 @@
 
 #else /* !STM32_RCC_PLL_HAS_P */
 #define STM32_PLLP                  0U
-#define STM32_PLLPEN                0U
 #endif /* !STM32_RCC_PLL_HAS_P */
 
 /*---------------------------------------------------------------------------*/
@@ -263,7 +262,6 @@
 
 #else /* !STM32_RCC_PLL_HAS_Q */
 #define STM32_PLLQ                  0U
-#define STM32_PLLQEN                0U
 #endif /* !STM32_RCC_PLL_HAS_Q */
 
 /*---------------------------------------------------------------------------*/
@@ -304,7 +302,6 @@
 
 #else /* !STM32_RCC_PLL_HAS_R */
 #define STM32_PLLR                  0U
-#define STM32_PLLREN                0U
 #endif /* !STM32_RCC_PLL_HAS_R */
 
 /*===========================================================================*/
