@@ -33,7 +33,7 @@
 /*
  * Board identifier.
  */
-#define BOARD_ST_STM32L476_DISCOVERY
+#define BOARD_ST_STM32MP157A_DK1
 #define BOARD_NAME                  "STMicroelectronics STM32MP157A-DK1"
 
 /*
@@ -43,6 +43,8 @@
 #if !defined(STM32_LSECLK)
 #define STM32_LSECLK                32768U
 #endif
+
+#define STM32_LSEDRV                (3U << 3U)
 
 #if !defined(STM32_HSECLK)
 #define STM32_HSECLK                24000000U

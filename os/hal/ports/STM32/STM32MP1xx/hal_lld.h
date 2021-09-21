@@ -112,6 +112,16 @@
 /** @} */
 
 /**
+ * @name    RCC_MSSCKSELR register bits definitions
+ * @{
+ */
+#define STM32_MCUSSRC_HSI        (0 << 0)   /**< MCU clock source is HSI.  */
+#define STM32_MCUSSRC_HSE        (1 << 0)   /**< MCU clock source is HSE.  */
+#define STM32_MCUSSRC_CSI        (2 << 0)   /**< MCU clock source is CSI.  */
+#define STM32_MCUSSRC_PLL3P      (3 << 0)   /**< MCU clock source is PLL3P.*/
+/** @} */
+
+/**
  * @name    RCC_CPERCKSELR register bits definitions
  * @{
  */
@@ -190,7 +200,7 @@
 
 /**
  * @brief   Enables or disables the HSI64 clock source.
- * @note    This initialization is performed only if TZEN=0
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
  *          otherwise the setting must match the initialization performed
  *          on the Cortex-A side.
  */
@@ -210,7 +220,7 @@
 
 /**
  * @brief   Enables or disables the HSE clock source.
- * @note    This initialization is performed only if TZEN=0
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
  *          otherwise the setting must match the initialization performed
  *          on the Cortex-A side.
  */
@@ -347,7 +357,7 @@
  *          on the Cortex-A side.
  */
 #if !defined(STM32_MCUSSRC) || defined(__DOXYGEN__)
-#define STM32_MCUSSRC                       2222222222
+#define STM32_MCUSSRC                       STM32_MCUSSRC_PLL3P
 #endif
 
 /**
@@ -651,6 +661,28 @@
 
 /* Inclusion of PLL-related checks and calculations.*/
 #include <stm32_pll3.inc>
+
+/**
+ * @brief   MCU system clock source.
+ */
+#if STM32_NO_INIT || defined(__DOXYGEN__)
+  #define STM32_MCUSS_CK             STM32_CSICLK
+
+#elif (STM32_MCUSSRC == STM32_MCUSSRC_HSI)
+  #define STM32_MCUSS_CK             STM32_HSI64CLK
+
+#elif (STM32_MCUSSRC == STM32_MCUSSRC_HSE)
+  #define STM32_MCUSS_CK             STM32_HSECLK
+
+#elif (STM32_MCUSSRC == STM32_MCUSSRC_CSI)
+  #define STM32_MCUSS_CK             STM32_CSICLK
+
+#elif (STM32_MCUSSRC == STM32_MCUSSRC_PLL3P)
+  #define STM32_MCUSS_CK             STM32_PLL3_P_CLKOUT
+
+#else
+  #error "invalid STM32_MCUSSRC value specified"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
