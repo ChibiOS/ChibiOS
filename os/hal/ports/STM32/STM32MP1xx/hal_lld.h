@@ -92,15 +92,6 @@
 /** @} */
 
 /**
- * @name    Internal clocks
- * @{
- */
-#define STM32_HSICLK            64000000
-#define STM32_CSICLK            4000000
-#define STM32_LSICLK            32000
-/** @} */
-
-/**
  * @name    RCC_RCK3SELR register bits definitions
  * @{
  */
@@ -194,16 +185,40 @@
 #endif
 
 /**
+ * @brief   Enables or disables the HSE clock source.
+ * @note    This initialization is performed only if TZEN=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
+ */
+#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSE_ENABLED                   TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the HSI64 clock source.
+ * @note    This initialization is performed only if TZEN=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
+ */
+#if !defined(STM32_HSI64_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI64_ENABLED                 TRUE
+#endif
+
+/**
  * @brief   Enables or disables the CSI clock source.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_CSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_CSI_ENABLED                   FALSE
+#define STM32_CSI_ENABLED                   TRUE
 #endif
 
 /**
  * @brief   Clock source for the PLL3.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_PLL3SRC) || defined(__DOXYGEN__)
 #define STM32_PLL3SRC                       STM32_PLL3SRC_HSE
@@ -212,7 +227,9 @@
 /**
  * @brief   PLL3 M divider value.
  * @note    The allowed values are 1..64.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_PLL3DIVM_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3DIVM_VALUE                3
@@ -221,7 +238,9 @@
 /**
  * @brief   PLL3 N multiplier value.
  * @note    The allowed values are 25..200.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_PLL3DIVN_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3DIVN_VALUE                50
@@ -230,7 +249,9 @@
 /**
  * @brief   PLL3 P divider value or zero if disabled.
  * @note    The allowed values are 1..128.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_PLL3DIVP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3DIVP_VALUE                2
@@ -239,7 +260,9 @@
 /**
  * @brief   PLL3 Q divider value.
  * @note    The allowed values are 1..128.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_PLL3DIVQ_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3DIVQ_VALUE                4
@@ -248,7 +271,9 @@
 /**
  * @brief   PLL3 R divider value.
  * @note    The allowed values are 1..128.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_PLL3DIVR_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL3DIVR_VALUE                4
@@ -303,7 +328,9 @@
 
 /**
  * @brief   MCU divider setting.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_MCUDIV) || defined(__DOXYGEN__)
 #define STM32_MCUDIV                        2222222222
@@ -311,7 +338,9 @@
 
 /**
  * @brief   MCU main clock source selection.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
  */
 #if !defined(STM32_MCUSSRC) || defined(__DOXYGEN__)
 #define STM32_MCUSSRC                       2222222222
@@ -405,6 +434,12 @@
  * @{
  */
 #define STM32_MCUSS_CK_MAX              209000000
+
+#define STM32_HSECLK_MAX                48000000
+#define STM32_HSECLK_MIN                8000000
+#define STM32_HSECLK_BYP_MAX            48000000
+#define STM32_HSECLK_BYP_MIN            8000000
+
 #define STM32_PLL3INCLK_MAX             16000000
 #define STM32_PLL3INCLK_MIN             4000000
 #define STM32_PLL3INCLK_SD_MIN          8000000
@@ -443,8 +478,9 @@
 #endif
 
 /* Clock handlers.*/
-//#include "stm32_csi.inc"
-//#include "stm32_hsi64.inc"
+#include "stm32_csi.inc"
+#include "stm32_hsi64.inc"
+#include "stm32_hse.inc"
 
 /*
  * CSI related checks.
@@ -469,7 +505,7 @@
  * @brief   PLL3 input clock frequency.
  */
 #if (STM32_PLL3SRC == STM32_PLL3SRC_HSI) || defined(__DOXYGEN__)
-  #define STM32_PLL3MCLK            STM32_HSICLK
+  #define STM32_PLL3MCLK            STM32_HSI64CLK
 
 #elif STM32_PLL3SRC == STM32_PLL3SRC_HSE
   #define STM32_PLL3MCLK            STM32_HSECLK
@@ -539,7 +575,7 @@
  * @brief   PLL4 input clock frequency.
  */
 #if (STM32_PLL4SRC == STM32_PLL4SRC_HSI) || defined(__DOXYGEN__)
-  #define STM32_PLL4MCLK            STM32_HSICLK
+  #define STM32_PLL4MCLK            STM32_HSI64CLK
 
 #elif STM32_PLL4SRC == STM32_PLL4SRC_HSE
   #define STM32_PLL4MCLK            STM32_HSECLK

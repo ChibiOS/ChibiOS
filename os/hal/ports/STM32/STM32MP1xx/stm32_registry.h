@@ -53,6 +53,9 @@
     defined(__DOXYGEN__)
 
 /* RCC attributes.*/
+#define STM32_RCC_HAS_CSI                   TRUE
+#define STM32_RCC_HAS_HSI64                 TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
 #define STM32_RCC_HAS_PLL3                  TRUE
 #define STM32_RCC_PLL3_HAS_P                TRUE
 #define STM32_RCC_PLL3_HAS_Q                TRUE
