@@ -138,9 +138,6 @@
 
 /**
  * @brief   If enabled assumes TZEN active.
- * @note    If @p STM32_TZEN_ENABLED==TRUE and @p STM32_TZEN_MCKPROT==TRUE
- *          then secure initializations are not performed but settings are
- *          still used to calculate the various clock points.
  */
 #if !defined(STM32_TZEN_ENABLED) || defined(__DOXYGEN__)
 #define STM32_TZEN_ENABLED                  TRUE
@@ -148,12 +145,9 @@
 
 /**
  * @brief   If enabled assumes MCKPROT active.
- * @note    If @p STM32_TZEN_ENABLED==TRUE and @p STM32_TZEN_MCKPROT==TRUE
- *          then secure initializations are not performed but settings are
- *          still used to calculate the various clock points.
  */
-#if !defined(STM32_TZEN_MCKPROT) || defined(__DOXYGEN__)
-#define STM32_TZEN_MCKPROT                  TRUE
+#if !defined(STM32_MCKPROT_ENABLED) || defined(__DOXYGEN__)
+#define STM32_MCKPROT_ENABLED               TRUE
 #endif
 
 /**
@@ -185,13 +179,13 @@
 #endif
 
 /**
- * @brief   Enables or disables the HSE clock source.
- * @note    This initialization is performed only if TZEN=0
+ * @brief   Enables or disables the CSI clock source.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
  *          otherwise the setting must match the initialization performed
  *          on the Cortex-A side.
  */
-#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSE_ENABLED                   TRUE
+#if !defined(STM32_CSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_CSI_ENABLED                   TRUE
 #endif
 
 /**
@@ -205,13 +199,23 @@
 #endif
 
 /**
- * @brief   Enables or disables the CSI clock source.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ * @brief   Enables or disables the LSI clock source.
+ * @note    This initialization is performed only if TZEN=0
  *          otherwise the setting must match the initialization performed
  *          on the Cortex-A side.
  */
-#if !defined(STM32_CSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_CSI_ENABLED                   TRUE
+#if !defined(STM32_LSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_LSI_ENABLED                   TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the HSE clock source.
+ * @note    This initialization is performed only if TZEN=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
+ */
+#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSE_ENABLED                   TRUE
 #endif
 
 /**
@@ -480,6 +484,7 @@
 /* Clock handlers.*/
 #include "stm32_csi.inc"
 #include "stm32_hsi64.inc"
+#include "stm32_lsi.inc"
 #include "stm32_hse.inc"
 
 /*
