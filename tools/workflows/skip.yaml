@@ -30,7 +30,7 @@
 # * Provide meaningful messages as reasons and even specify bug numbers if
 #   build failures are caused by or tracked in them.
 
-- path: "testhal/AVR/MEGA/ext"
+- path: "testhal/AVR/MEGA/EXT"
   stderr: "error: unknown type name ‘EXTDriver‘"
   reason: "not fixed for a while, silencing"
 
