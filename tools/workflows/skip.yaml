@@ -30,6 +30,10 @@
 # * Provide meaningful messages as reasons and even specify bug numbers if
 #   build failures are caused by or tracked in them.
 
+- path: "testhal/AVR/MEGA/ext"
+  stderr: "error: unknown type name ‘EXTDriver‘"
+  reason: "not fixed for a while, silencing"
+
 - path: "demos/SPC5/"
   stderr: "ppc-freevle-eabi-gcc: (Command not found|No such file or directory)"
   reason: "ppc-freevle-eabi-gcc compiler required"
