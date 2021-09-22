@@ -59,42 +59,22 @@
 
 __STATIC_INLINE void csi_enable(void) {
 
-#if 0
-  RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
+  RCC->OCENSETR = RCC_OCENSETR_CSION;
+  while ((RCC->OCRDYR & RCC_OCRDYR_CSIRDY) == 0U) {
     /* Waiting for CSI activation.*/
   }
-#endif
 }
 
 __STATIC_INLINE void csi_disable(void) {
 
-#if 0
-  RCC->CR &= ~RCC_CR_HSION;
-#endif
-}
-
-__STATIC_INLINE void csi_reset(void) {
-
-#if 0
-  /* Making sure HSI is active and ready.*/
-  hsi16_enable();
-
-  /* Clocking from HSI, in case HSI was not the default source.*/
-  RCC->CFGR = RCC_CFGR_SW_HSI;
-  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI) {
-    /* Wait until HSI is selected.*/
-  }
-#endif
+  RCC->OCENCLRR = RCC_OCENCLRR_CSION;
 }
 
 __STATIC_INLINE void csi_init(void) {
 
-#if 0
 #if STM32_CSI_ENABLED
   /* HSI activation.*/
-  hsi16_enable();
-#endif
+  csi_enable();
 #endif
 }
 

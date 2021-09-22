@@ -92,6 +92,16 @@
 /** @} */
 
 /**
+ * @name    RCC_HSICFGR register bits definitions
+ * @{
+ */
+#define STM32_HSIDIV_DIV1        (0 << 0)   /**< HSI is divided by 1.       */
+#define STM32_HSIDIV_DIV2        (1 << 0)   /**< HSI is divided by 2.       */
+#define STM32_HSIDIV_DIV4        (2 << 0)   /**< HSI is divided by 4.       */
+#define STM32_HSIDIV_DIV8        (3 << 0)   /**< HSI is divided by 8.       */
+/** @} */
+
+/**
  * @name    RCC_RCK3SELR register bits definitions
  * @{
  */
@@ -189,23 +199,13 @@
 #endif
 
 /**
- * @brief   Enables or disables the CSI clock source.
+ * @brief   Enables or disables the HSE clock source.
  * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
  *          otherwise the setting must match the initialization performed
  *          on the Cortex-A side.
  */
-#if !defined(STM32_CSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_CSI_ENABLED                   TRUE
-#endif
-
-/**
- * @brief   Enables or disables the HSI64 clock source.
- * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
- *          otherwise the setting must match the initialization performed
- *          on the Cortex-A side.
- */
-#if !defined(STM32_HSI64_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI64_ENABLED                 TRUE
+#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSE_ENABLED                   TRUE
 #endif
 
 /**
@@ -219,13 +219,34 @@
 #endif
 
 /**
- * @brief   Enables or disables the HSE clock source.
+ * @brief   Enables or disables the CSI clock source.
  * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
  *          otherwise the setting must match the initialization performed
  *          on the Cortex-A side.
  */
-#if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSE_ENABLED                   TRUE
+#if !defined(STM32_CSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_CSI_ENABLED                   TRUE
+#endif
+
+/**
+ * @brief   Enables or disables the HSI clock source.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
+ */
+#if !defined(STM32_HSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI_ENABLED                   TRUE
+#endif
+
+
+/**
+ * @brief   HSI divider setting.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
+ */
+#if !defined(STM32_HSIDIV) || defined(__DOXYGEN__)
+#define STM32_HSIDIV                        STM32_HSIDIV_DIV1
 #endif
 
 /**
@@ -493,7 +514,7 @@
 
 /* Clock handlers.*/
 #include "stm32_csi.inc"
-#include "stm32_hsi64.inc"
+#include "stm32_hsi.inc"
 #include "stm32_lsi.inc"
 #include "stm32_hse.inc"
 
@@ -520,7 +541,7 @@
  * @brief   PLL3 input clock frequency.
  */
 #if (STM32_PLL3SRC == STM32_PLL3SRC_HSI) || defined(__DOXYGEN__)
-  #define STM32_PLL3MCLK            STM32_HSI64CLK
+  #define STM32_PLL3MCLK            STM32_HSICLK
 
 #elif STM32_PLL3SRC == STM32_PLL3SRC_HSE
   #define STM32_PLL3MCLK            STM32_HSECLK
@@ -590,7 +611,7 @@
  * @brief   PLL4 input clock frequency.
  */
 #if (STM32_PLL4SRC == STM32_PLL4SRC_HSI) || defined(__DOXYGEN__)
-  #define STM32_PLL4MCLK            STM32_HSI64CLK
+  #define STM32_PLL4MCLK            STM32_HSICLK
 
 #elif STM32_PLL4SRC == STM32_PLL4SRC_HSE
   #define STM32_PLL4MCLK            STM32_HSECLK
@@ -669,7 +690,7 @@
   #define STM32_MCUSS_CK             STM32_CSICLK
 
 #elif (STM32_MCUSSRC == STM32_MCUSSRC_HSI)
-  #define STM32_MCUSS_CK             STM32_HSI64CLK
+  #define STM32_MCUSS_CK             STM32_HSICLK
 
 #elif (STM32_MCUSSRC == STM32_MCUSSRC_HSE)
   #define STM32_MCUSS_CK             STM32_HSECLK

@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv1/stm32_hsi64.inc
- * @brief   Shared HSI64 clock handler.
+ * @file    RCCv1/stm32_hsi.inc
+ * @brief   Shared HSI clock handler.
  *
- * @addtogroup STM32_HSI64_HANDLER
+ * @addtogroup STM32_HSI_HANDLER
  * @{
  */
 
@@ -36,13 +36,36 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_RCC_HAS_HSI64)
-#error "STM32_RCC_HAS_HSI64 not defined in stm32_registry.h"
+#if !defined(STM32_RCC_HAS_HSI)
+#error "STM32_RCC_HAS_HSI not defined in stm32_registry.h"
 #endif
 
 /* Checks on configurations.*/
-#if !defined(STM32_HSI64_ENABLED)
-#error "STM32_HSI64_ENABLED not defined in mcuconf.h"
+#if !defined(STM32_HSI_ENABLED)
+#error "STM32_HSI_ENABLED not defined in mcuconf.h"
+#endif
+
+#if !defined(STM32_HSIDIV)
+#error "STM32_HSIDIV not defined in mcuconf.h"
+#endif
+
+/**
+ * @brief   Final HSI clock.
+ */
+#if (STM32_HSIDIV == STM32_HSIDIV_DIV1) || defined(__DOXYGEN__)
+  #define STM32_HSICLK              (STM32_HSI64CLK / 1U)
+
+#elif STM32_HSIDIV == STM32_HSIDIV_DIV2
+  #define STM32_HSICLK              (STM32_HSI64CLK / 2U)
+
+#elif STM32_HSIDIV == STM32_HSIDIV_DIV4
+  #define STM32_HSICLK              (STM32_HSI64CLK / 4U)
+
+#elif STM32_HSIDIV == STM32_HSIDIV_DIV8
+  #define STM32_HSICLK              (STM32_HSI64CLK / 8U)
+
+#else
+  #error "invalid STM32_HSIDIV value specified"
 #endif
 
 /*===========================================================================*/
@@ -57,44 +80,24 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void hsi65_enable(void) {
+__STATIC_INLINE void hsi_enable(void) {
 
-#if 0
-  RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
-    /* Waiting for HSI64 activation.*/
+  RCC->OCENSETR = RCC_OCENSETR_HSION;
+  while ((RCC->OCRDYR & RCC_OCRDYR_HSIRDY) == 0U) {
+    /* Waiting for HSI activation.*/
   }
-#endif
 }
 
-__STATIC_INLINE void hsi16_disable(void) {
+__STATIC_INLINE void hsi_disable(void) {
 
-#if 0
-  RCC->CR &= ~RCC_CR_HSION;
-#endif
+  RCC->OCENCLRR = RCC_OCENCLRR_HSION;
 }
 
-__STATIC_INLINE void hsi64_reset(void) {
+__STATIC_INLINE void hsi_init(void) {
 
-#if 0
-  /* Making sure HSI is active and ready.*/
-  hsi16_enable();
-
-  /* Clocking from HSI, in case HSI was not the default source.*/
-  RCC->CFGR = RCC_CFGR_SW_HSI;
-  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI) {
-    /* Wait until HSI is selected.*/
-  }
-#endif
-}
-
-__STATIC_INLINE void hsi64_init(void) {
-
-#if 0
-#if STM32_HSI64_ENABLED
+#if STM32_HSI_ENABLED
   /* HSI activation.*/
-  hsi16_enable();
-#endif
+  hsi_enable();
 #endif
 }
 

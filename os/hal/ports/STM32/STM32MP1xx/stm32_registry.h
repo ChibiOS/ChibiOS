@@ -54,7 +54,7 @@
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_CSI                   TRUE
-#define STM32_RCC_HAS_HSI64                 TRUE
+#define STM32_RCC_HAS_HSI                   TRUE
 #define STM32_RCC_HAS_LSI                   TRUE
 #define STM32_RCC_HAS_HSE                   TRUE
 #define STM32_RCC_HAS_PLL3                  TRUE

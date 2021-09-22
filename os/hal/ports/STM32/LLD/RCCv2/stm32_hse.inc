@@ -102,21 +102,31 @@ __STATIC_INLINE void hse_enable(void) {
     /* Waiting for HSE activation.*/
   }
 #endif
+
+#if defined(STM32_HSE_BYPASS) && defined(STM32_HSE_DIGBYPASS)
+  /* HSE digital bypass case.*/
+  RCC->OCENSETR = RCC_OCENSETR_HSEBYP | RCC_OCENSETR_DIGBYP | RCC_OCENSETR_HSEON;
+#elif defined(STM32_HSE_BYPASS)
+  /* HSE analog bypass case.*/
+  RCC->OCENSETR = RCC_OCENSETR_HSEBYP | RCC_OCENSETR_HSEON;
+#else
+  /* HSE no bypass case.*/
+  RCC->OCENSETR = RCC_OCENSETR_HSEON;
+#endif
+  while ((RCC->OCRDYR & RCC_OCRDYR_HSERDY) == 0U) {
+    /* Waiting for HSE activation.*/
+  }
 }
 
 __STATIC_INLINE void hse_disable(void) {
 
-#if 0
-  RCC->CR &= ~RCC_CR_HSEON;
-#endif
+  RCC->OCENCLRR = RCC_OCENSETR_HSEON;
 }
 
 __STATIC_INLINE void hse_init(void) {
 
-#if 0
 #if STM32_HSE_ENABLED
   hse_enable();
-#endif
 #endif
 }
 
