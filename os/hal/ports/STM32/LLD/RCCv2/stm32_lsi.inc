@@ -57,7 +57,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void lsi_init(void) {
+__STATIC_FORCEINLINE void lsi_init(void) {
 
 #if STM32_LSI_ENABLED
   /* LSI activation.*/

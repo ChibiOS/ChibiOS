@@ -80,7 +80,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void hsi_enable(void) {
+__STATIC_FORCEINLINE void hsi_enable(void) {
 
   RCC->OCENSETR = RCC_OCENSETR_HSION;
   while ((RCC->OCRDYR & RCC_OCRDYR_HSIRDY) == 0U) {
@@ -88,12 +88,12 @@ __STATIC_INLINE void hsi_enable(void) {
   }
 }
 
-__STATIC_INLINE void hsi_disable(void) {
+__STATIC_FORCEINLINE void hsi_disable(void) {
 
   RCC->OCENCLRR = RCC_OCENCLRR_HSION;
 }
 
-__STATIC_INLINE void hsi_init(void) {
+__STATIC_FORCEINLINE void hsi_init(void) {
 
 #if STM32_HSI_ENABLED
   /* HSI activation.*/

@@ -282,6 +282,17 @@
 #endif
 
 /**
+ * @brief   PLL3 N multiplier fractional value.
+ * @note    The allowed values are 0..8191.
+ * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
+ *          otherwise the setting must match the initialization performed
+ *          on the Cortex-A side.
+ */
+#if !defined(STM32_PLL3FRACV_VALUE) || defined(__DOXYGEN__)
+#define STM32_PLL3FRACV_VALUE               0
+#endif
+
+/**
  * @brief   PLL3 P divider value or zero if disabled.
  * @note    The allowed values are 1..128.
  * @note    This initialization is performed only if TZEN=0 or MCKPROT=0
@@ -475,9 +486,9 @@
 #define STM32_HSECLK_BYP_MAX            48000000
 #define STM32_HSECLK_BYP_MIN            8000000
 
-#define STM32_PLL3INCLK_MAX             16000000
-#define STM32_PLL3INCLK_MIN             4000000
-#define STM32_PLL3INCLK_SD_MIN          8000000
+#define STM32_PLL3REFCLK_MAX            16000000
+#define STM32_PLL3REFCLK_MIN            4000000
+#define STM32_PLL3REFCLK_SD_MIN         8000000
 #define STM32_PLL3VCOCLK_MAX            800000000
 #define STM32_PLL3VCOCLK_MIN            400000000
 #define STM32_PLL3PCLK_MAX              800000000

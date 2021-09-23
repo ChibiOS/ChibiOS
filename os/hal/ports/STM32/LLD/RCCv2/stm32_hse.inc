@@ -89,7 +89,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void hse_enable(void) {
+__STATIC_FORCEINLINE void hse_enable(void) {
 
 #if 0
 #if defined(STM32_HSE_BYPASS)
@@ -118,12 +118,12 @@ __STATIC_INLINE void hse_enable(void) {
   }
 }
 
-__STATIC_INLINE void hse_disable(void) {
+__STATIC_FORCEINLINE void hse_disable(void) {
 
   RCC->OCENCLRR = RCC_OCENSETR_HSEON;
 }
 
-__STATIC_INLINE void hse_init(void) {
+__STATIC_FORCEINLINE void hse_init(void) {
 
 #if STM32_HSE_ENABLED
   hse_enable();

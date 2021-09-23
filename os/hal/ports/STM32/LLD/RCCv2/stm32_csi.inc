@@ -57,7 +57,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void csi_enable(void) {
+__STATIC_FORCEINLINE void csi_enable(void) {
 
   RCC->OCENSETR = RCC_OCENSETR_CSION;
   while ((RCC->OCRDYR & RCC_OCRDYR_CSIRDY) == 0U) {
@@ -65,12 +65,12 @@ __STATIC_INLINE void csi_enable(void) {
   }
 }
 
-__STATIC_INLINE void csi_disable(void) {
+__STATIC_FORCEINLINE void csi_disable(void) {
 
   RCC->OCENCLRR = RCC_OCENCLRR_CSION;
 }
 
-__STATIC_INLINE void csi_init(void) {
+__STATIC_FORCEINLINE void csi_init(void) {
 
 #if STM32_CSI_ENABLED
   /* HSI activation.*/
