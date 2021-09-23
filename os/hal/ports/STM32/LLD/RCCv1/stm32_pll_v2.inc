@@ -356,7 +356,7 @@ __STATIC_INLINE void pll_deinit(void) {
 #if STM32_RCC_HAS_PLL
 #if STM32_ACTIVATE_PLL
  /* PLL de-activation.*/
-  RCC->PLLCFGR &= ~RCC_CR_PLLON;
+  RCC->CR &= ~RCC_CR_PLLON;
 #endif
 #endif
 }
