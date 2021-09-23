@@ -160,14 +160,14 @@
  * @brief   If enabled assumes TZEN active.
  */
 #if !defined(STM32_TZEN_ENABLED) || defined(__DOXYGEN__)
-#define STM32_TZEN_ENABLED                  TRUE
+#define STM32_TZEN_ENABLED                  FALSE
 #endif
 
 /**
  * @brief   If enabled assumes MCKPROT active.
  */
 #if !defined(STM32_MCKPROT_ENABLED) || defined(__DOXYGEN__)
-#define STM32_MCKPROT_ENABLED               TRUE
+#define STM32_MCKPROT_ENABLED               FALSE
 #endif
 
 /**
@@ -181,14 +181,14 @@
  * @brief   PWR MCUCR register initialization value.
  */
 #if !defined(STM32_PWR_MCUCR) || defined(__DOXYGEN__)
-#define STM32_PWR_MCUCR                     2222222222
+#define STM32_PWR_MCUCR                     0
 #endif
 
 /**
  * @brief   PWR MCUWKUPENR register initialization value.
  */
 #if !defined(STM32_PWR_MCUWKUPENR) || defined(__DOXYGEN__)
-#define STM32_PWR_MCUWKUPENR                2222222222
+#define STM32_PWR_MCUWKUPENR                0
 #endif
 
 /**

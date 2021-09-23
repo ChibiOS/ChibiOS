@@ -46,6 +46,17 @@ uint32_t SystemCoreClock = 0; //STM32_HCLK;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Configures the PWR unit.
+ * @note    CR1, CR2 and CR5 are not initialized inside this function.
+ */
+__STATIC_INLINE void hal_lld_set_static_pwr(void) {
+
+  /* Static PWR configurations.*/
+  PWR->MCUCR        = STM32_PWR_MCUCR;
+  PWR->MCUWKUPENR   = STM32_PWR_MCUWKUPENR;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -91,6 +102,23 @@ void stm32_clock_init(void) {
 void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
+  /* Trying to allocate SYSCFG.*/
+  rccEnableAPB3(RCC_MC_APB3ENSETR_SYSCFGEN, false);
+
+  /* Static PWR configurations.*/
+  hal_lld_set_static_pwr();
+
+  /* Clocks setup.*/
+//  lse_init();
+#if !STM32_TZEN_ENABLED
+  lsi_init();
+#endif
+#if !STM32_TZEN_ENABLED && !STM32_MCKPROT_ENABLED
+  hsi_init();
+  csi_init();
+  hse_init();
+#endif
+
 #endif /* STM32_NO_INIT */
 }
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */

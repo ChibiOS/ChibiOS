@@ -99,6 +99,54 @@ __STATIC_FORCEINLINE void rccResetAPB1(uint32_t mask) {
 }
 
 /**
+ * @brief   Enables the clock of one or more peripheral on the APB3 bus.
+ *
+ * @param[in] mask      APB3 peripherals mask
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+__STATIC_FORCEINLINE void rccEnableAPB3(uint32_t mask, bool lp) {
+
+  RCC->MC_APB3ENSETR = mask;
+  if (lp) {
+    RCC->MC_APB3LPENSETR = mask;
+  }
+  else {
+    RCC->MC_APB3LPENCLRR = mask;
+  }
+  (void) RCC->MC_APB3ENSETR;
+}
+
+/**
+ * @brief   Disables the clock of one or more peripheral on the APB3 bus).
+ *
+ * @param[in] mask      APB3 peripherals mask
+ *
+ * @api
+ */
+__STATIC_FORCEINLINE void rccDisableAPB3(uint32_t mask) {
+
+  RCC->MC_APB3ENCLRR = mask;
+  RCC->MC_APB3LPENCLRR = mask;
+  (void) RCC->MC_APB3LPENCLRR;
+}
+
+/**
+ * @brief   Resets one or more peripheral on the APB3 bus.
+ *
+ * @param[in] mask      APB3 peripherals mask
+ *
+ * @api
+ */
+__STATIC_FORCEINLINE void rccResetAPB3(uint32_t mask) {
+
+  RCC->APB3RSTSETR = mask;
+  RCC->APB3RSTCLRR = mask;
+  (void) RCC->APB3RSTCLRR;
+}
+
+/**
  * @brief   Enables the clock of one or more peripheral on the AHB4 bus.
  *
  * @param[in] mask      AHB4 peripherals mask
