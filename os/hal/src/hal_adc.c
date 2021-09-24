@@ -103,7 +103,7 @@ msg_t adcStart(ADCDriver *adcp, const ADCConfig *config) {
                 "invalid state");
   adcp->config = config;
 
-#if defined(UART_LLD_ENHANCED_API)
+#if defined(ADC_LLD_ENHANCED_API)
   msg = adc_lld_start(adcp);
 #else
   adc_lld_start(adcp);
