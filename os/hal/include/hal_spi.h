@@ -498,7 +498,7 @@ extern "C" {
 #endif
   void spiInit(void);
   void spiObjectInit(SPIDriver *spip);
-  void spiStart(SPIDriver *spip, const SPIConfig *config);
+  msg_t spiStart(SPIDriver *spip, const SPIConfig *config);
   void spiStop(SPIDriver *spip);
   void spiSelect(SPIDriver *spip);
   void spiUnselect(SPIDriver *spip);

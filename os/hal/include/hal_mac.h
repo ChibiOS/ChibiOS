@@ -179,7 +179,7 @@ extern "C" {
 #endif
   void macInit(void);
   void macObjectInit(MACDriver *macp);
-  void macStart(MACDriver *macp, const MACConfig *config);
+  msg_t macStart(MACDriver *macp, const MACConfig *config);
   void macStop(MACDriver *macp);
   void macSetAddress(MACDriver *macp, const uint8_t *p);
   msg_t macWaitTransmitDescriptor(MACDriver *macp,

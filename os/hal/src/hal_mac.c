@@ -89,20 +89,37 @@ void macObjectInit(MACDriver *macp) {
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @param[in] config    pointer to the @p MACConfig object
+ * @return              The operation status.
  *
  * @api
  */
-void macStart(MACDriver *macp, const MACConfig *config) {
+msg_t macStart(MACDriver *macp, const MACConfig *config) {
+  msg_t msg;
 
   osalDbgCheck((macp != NULL) && (config != NULL));
 
   osalSysLock();
   osalDbgAssert(macp->state == MAC_STOP,
                 "invalid state");
+
   macp->config = config;
+
+#if defined(MAC_LLD_ENHANCED_API)
+  msg = mac_lld_start(macp);
+#else
   mac_lld_start(macp);
-  macp->state = MAC_ACTIVE;
+  msg = HAL_START_SUCCESS;
+#endif
+  if (msg == HAL_START_SUCCESS) {
+    macp->state = MAC_ACTIVE;
+  }
+  else {
+    macp->state = MAC_STOP;
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**

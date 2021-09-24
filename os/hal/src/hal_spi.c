@@ -85,20 +85,37 @@ void spiObjectInit(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] config    pointer to the @p SPIConfig object
+ * @return              The operation status.
  *
  * @api
  */
-void spiStart(SPIDriver *spip, const SPIConfig *config) {
+msg_t spiStart(SPIDriver *spip, const SPIConfig *config) {
+  msg_t msg;
 
   osalDbgCheck((spip != NULL) && (config != NULL));
 
   osalSysLock();
   osalDbgAssert((spip->state == SPI_STOP) || (spip->state == SPI_READY),
                 "invalid state");
+
   spip->config = config;
+
+#if defined(SPI_LLD_ENHANCED_API)
+  msg = spi_lld_start(spip);
+#else
   spi_lld_start(spip);
-  spip->state = SPI_READY;
+  msg = HAL_START_SUCCESS;
+#endif
+  if (msg == HAL_START_SUCCESS) {
+    spip->state = SPI_READY;
+  }
+  else {
+    spip->state = SPI_STOP;
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**

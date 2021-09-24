@@ -83,22 +83,39 @@ void pwmObjectInit(PWMDriver *pwmp) {
  *
  * @param[in] pwmp      pointer to a @p PWMDriver object
  * @param[in] config    pointer to a @p PWMConfig object
+ * @return              The operation status.
  *
  * @api
  */
-void pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
+msg_t pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
+  msg_t msg;
 
   osalDbgCheck((pwmp != NULL) && (config != NULL));
 
   osalSysLock();
   osalDbgAssert((pwmp->state == PWM_STOP) || (pwmp->state == PWM_READY),
                 "invalid state");
+
   pwmp->config = config;
   pwmp->period = config->period;
+  pwmp->enabled = 0U;
+
+#if defined(PWM_LLD_ENHANCED_API)
+  msg = pwm_lld_start(pwmp);
+#else
   pwm_lld_start(pwmp);
-  pwmp->enabled = 0;
-  pwmp->state = PWM_READY;
+  msg = HAL_START_SUCCESS;
+#endif
+  if (msg == HAL_START_SUCCESS) {
+    pwmp->state = PWM_READY;
+  }
+  else {
+    pwmp->state = PWM_STOP;
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**

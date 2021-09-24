@@ -286,7 +286,7 @@ extern "C" {
 #endif
   void pwmInit(void);
   void pwmObjectInit(PWMDriver *pwmp);
-  void pwmStart(PWMDriver *pwmp, const PWMConfig *config);
+  msg_t pwmStart(PWMDriver *pwmp, const PWMConfig *config);
   void pwmStop(PWMDriver *pwmp);
   void pwmChangePeriod(PWMDriver *pwmp, pwmcnt_t period);
   void pwmEnableChannel(PWMDriver *pwmp,
