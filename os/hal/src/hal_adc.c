@@ -89,10 +89,12 @@ void adcObjectInit(ADCDriver *adcp) {
  * @param[in] adcp      pointer to the @p ADCDriver object
  * @param[in] config    pointer to the @p ADCConfig object. Depending on
  *                      the implementation the value can be @p NULL.
+ * @return              The operation status.
  *
  * @api
  */
-void adcStart(ADCDriver *adcp, const ADCConfig *config) {
+msg_t adcStart(ADCDriver *adcp, const ADCConfig *config) {
+  msg_t msg;
 
   osalDbgCheck(adcp != NULL);
 
@@ -100,9 +102,23 @@ void adcStart(ADCDriver *adcp, const ADCConfig *config) {
   osalDbgAssert((adcp->state == ADC_STOP) || (adcp->state == ADC_READY),
                 "invalid state");
   adcp->config = config;
+
+#if defined(UART_LLD_ENHANCED_API)
+  msg = adc_lld_start(adcp);
+#else
   adc_lld_start(adcp);
-  adcp->state = ADC_READY;
+  msg = HAL_START_SUCCESS;
+#endif
+  if (msg == HAL_START_SUCCESS) {
+    adcp->state = ADC_READY;
+  }
+  else {
+    adcp->state = ADC_STOP;
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**

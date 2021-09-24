@@ -255,10 +255,15 @@ msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
 
   osalDbgAssert((siop->state == SIO_STOP) || (siop->state == SIO_READY),
                 "invalid state");
-
   siop->config = config;
+
   msg = sio_lld_start(siop);
-  siop->state = SIO_READY;
+  if (msg == HAL_START_SUCCESS) {
+    siop->state = SIO_READY;
+  }
+  else {
+    siop->state = SIO_STOP;
+  }
 
   osalSysUnlock();
 

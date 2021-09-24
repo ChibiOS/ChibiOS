@@ -91,6 +91,7 @@ void uartObjectInit(UARTDriver *uartp) {
  *
  * @param[in] uartp     pointer to the @p UARTDriver object
  * @param[in] config    pointer to the @p UARTConfig object
+ * @return              The operation status.
  *
  * @api
  */
@@ -111,8 +112,13 @@ msg_t uartStart(UARTDriver *uartp, const UARTConfig *config) {
   uart_lld_start(uartp);
   msg = HAL_START_SUCCESS;
 #endif
+  if (msg == HAL_START_SUCCESS) {
+    uartp->state = UART_READY;
+  }
+  else {
+    uartp->state = UART_STOP;
+  }
 
-  uartp->state = UART_READY;
   osalSysUnlock();
 
   return msg;
