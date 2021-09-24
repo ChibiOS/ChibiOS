@@ -38,6 +38,7 @@
  */
 #define STM32_NO_INIT                       FALSE
 #define STM32_CLOCK_DYNAMIC                 FALSE
+#define STM32_TARGET_CORE                   1
 #define STM32_VOS                           STM32_VOS_RANGE1
 #define STM32_PWR_CR2                       (PWR_CR2_PLS_LVL0 | PWR_CR2_PVDE)
 #define STM32_PWR_PUCRA                     (0U)
@@ -66,6 +67,7 @@
 #define STM32_PLLQ_VALUE                    2
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_SHDHPRE                       STM32_SHDHPRE_DIV1
+#define STM32_C2HPRE                        STM32_C2HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV1
 #define STM32_PPRE2                         STM32_PPRE2_DIV1
 #define STM32_STOPWUCK                      STM32_STOPWUCK_MSI
@@ -77,7 +79,7 @@
 /*
  * Peripherals clock sources.
  */
-#define STM32_ADC1SEL                       STM32_ADCSEL_NOCLK
+#define STM32_ADCSEL                        STM32_ADCSEL_NOCLK
 #define STM32_USART1SEL                     STM32_USART1SEL_SYSCLK
 #define STM32_USART2SEL                     STM32_USART2SEL_SYSCLK
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
@@ -86,7 +88,7 @@
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
 #define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
 #define STM32_LPTIM3SEL                     STM32_LPTIM3SEL_PCLK1
-#define STM32_SPI2SEL                       STM32_SPI2SEL_PCLK1
+#define STM32_SPI2S2SEL                     STM32_SPI2S2SEL_PLLQCLK
 #define STM32_RNGSEL                        STM32_RNGSEL_LSE
 #define STM32_RTCSEL                        STM32_RTCSEL_LSE
 
@@ -209,7 +211,7 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  TRUE 
+#define STM32_SPI_USE_SPI1                  TRUE
 #define STM32_SPI_USE_SPI2                  FALSE
 #define STM32_SPI_USE_SPI3                  TRUE
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
@@ -223,6 +225,16 @@
 #define STM32_SPI_SPI1_IRQ_PRIORITY         10
 #define STM32_SPI_SPI2_IRQ_PRIORITY         10
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
+
+/*
+ * I2S driver system settings.
+ */
+#define STM32_I2S_USE_SPI2                  FALSE
+#define STM32_I2S_SPI2_IRQ_PRIORITY         10
+#define STM32_I2S_SPI2_DMA_PRIORITY         1
+#define STM32_I2S_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      osalSysHalt("DMA failure")
 
 /*
  * ST driver system settings.
