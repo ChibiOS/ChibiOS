@@ -433,7 +433,7 @@ extern "C" {
 #endif
   void wspiInit(void);
   void wspiObjectInit(WSPIDriver *wspip);
-  void wspiStart(WSPIDriver *wspip, const WSPIConfig *config);
+  msg_t wspiStart(WSPIDriver *wspip, const WSPIConfig *config);
   void wspiStop(WSPIDriver *wspip);
   void wspiStartCommand(WSPIDriver *wspip, const wspi_command_t *cmdp);
   void wspiStartSend(WSPIDriver *wspip, const wspi_command_t *cmdp,

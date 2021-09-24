@@ -108,7 +108,7 @@ extern "C" {
 #endif
   void trngInit(void);
   void trngObjectInit(TRNGDriver *trngp);
-  void trngStart(TRNGDriver *trngp, const TRNGConfig *config);
+  msg_t trngStart(TRNGDriver *trngp, const TRNGConfig *config);
   void trngStop(TRNGDriver *trngp);
   bool trngGenerate(TRNGDriver *trngp, size_t size, uint8_t *out);
 #ifdef __cplusplus

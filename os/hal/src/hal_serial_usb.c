@@ -237,6 +237,7 @@ void sduObjectInit(SerialUSBDriver *sdup) {
  *
  * @param[in] sdup      pointer to a @p SerialUSBDriver object
  * @param[in] config    the serial over USB driver configuration
+ * @return              The operation status.
  *
  * @api
  */

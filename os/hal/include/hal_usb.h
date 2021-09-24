@@ -604,7 +604,7 @@ extern "C" {
 #endif
   void usbInit(void);
   void usbObjectInit(USBDriver *usbp);
-  void usbStart(USBDriver *usbp, const USBConfig *config);
+  msg_t usbStart(USBDriver *usbp, const USBConfig *config);
   void usbStop(USBDriver *usbp);
   void usbInitEndpointI(USBDriver *usbp, usbep_t ep,
                         const USBEndpointConfig *epcp);

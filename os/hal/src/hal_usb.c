@@ -297,10 +297,12 @@ void usbObjectInit(USBDriver *usbp) {
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] config    pointer to the @p USBConfig object
+ * @return              The operation status.
  *
  * @api
  */
-void usbStart(USBDriver *usbp, const USBConfig *config) {
+msg_t usbStart(USBDriver *usbp, const USBConfig *config) {
+  msg_t msg;
   unsigned i;
 
   osalDbgCheck((usbp != NULL) && (config != NULL));
@@ -308,13 +310,28 @@ void usbStart(USBDriver *usbp, const USBConfig *config) {
   osalSysLock();
   osalDbgAssert((usbp->state == USB_STOP) || (usbp->state == USB_READY),
                 "invalid state");
+
   usbp->config = config;
   for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
     usbp->epc[i] = NULL;
   }
+
+#if defined(USB_LLD_ENHANCED_API)
+  msg = usb_lld_start(usbp);
+#else
   usb_lld_start(usbp);
-  usbp->state = USB_READY;
+  msg = HAL_START_SUCCESS;
+#endif
+  if (msg == HAL_START_SUCCESS) {
+    usbp->state = USB_READY;
+  }
+  else {
+    usbp->state = USB_STOP;
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**

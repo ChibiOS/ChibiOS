@@ -404,10 +404,11 @@ void mmcObjectInit(MMCDriver *mmcp) {
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
  * @param[in] config    pointer to the @p MMCConfig object.
+ * @return              The operation status.
  *
  * @api
  */
-void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
+msg_t mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 
   osalDbgCheck((mmcp != NULL) && (config != NULL));
   osalDbgAssert((mmcp->state == BLK_STOP) || (mmcp->state == BLK_ACTIVE),
@@ -415,6 +416,8 @@ void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 
   mmcp->config = config;
   mmcp->state = BLK_ACTIVE;
+
+  return HAL_START_SUCCESS;
 }
 
 /**

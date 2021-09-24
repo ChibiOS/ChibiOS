@@ -75,7 +75,7 @@ typedef enum {
 extern "C" {
 #endif
   void wdgInit(void);
-  void wdgStart(WDGDriver *wdgp, const WDGConfig * config);
+  msg_t wdgStart(WDGDriver *wdgp, const WDGConfig * config);
   void wdgStop(WDGDriver *wdgp);
   void wdgReset(WDGDriver *wdgp);
 #ifdef __cplusplus

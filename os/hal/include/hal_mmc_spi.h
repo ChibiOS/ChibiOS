@@ -169,7 +169,7 @@ extern "C" {
 #endif
   void mmcInit(void);
   void mmcObjectInit(MMCDriver *mmcp);
-  void mmcStart(MMCDriver *mmcp, const MMCConfig *config);
+  msg_t mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
   bool mmcConnect(MMCDriver *mmcp);
   bool mmcDisconnect(MMCDriver *mmcp);
