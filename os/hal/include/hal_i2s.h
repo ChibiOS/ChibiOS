@@ -225,7 +225,7 @@ extern "C" {
 #endif
   void i2sInit(void);
   void i2sObjectInit(I2SDriver *i2sp);
-  void i2sStart(I2SDriver *i2sp, const I2SConfig *config);
+  msg_t i2sStart(I2SDriver *i2sp, const I2SConfig *config);
   void i2sStop(I2SDriver *i2sp);
   void i2sStartExchange(I2SDriver *i2sp);
   void i2sStopExchange(I2SDriver *i2sp);

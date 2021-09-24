@@ -76,20 +76,37 @@ void i2sObjectInit(I2SDriver *i2sp) {
  *
  * @param[in] i2sp      pointer to the @p I2SDriver object
  * @param[in] config    pointer to the @p I2SConfig object
+ * @return              The operation status.
  *
  * @api
  */
-void i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
+msg_t i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
+  msg_t msg;
 
   osalDbgCheck((i2sp != NULL) && (config != NULL));
 
   osalSysLock();
   osalDbgAssert((i2sp->state == I2S_STOP) || (i2sp->state == I2S_READY),
                 "invalid state");
+
   i2sp->config = config;
+
+#if defined(I2S_LLD_ENHANCED_API)
+  msg = i2s_lld_start(i2sp);
+#else
   i2s_lld_start(i2sp);
-  i2sp->state = I2S_READY;
+  msg = HAL_START_SUCCESS;
+#endif
+  if (msg == HAL_START_SUCCESS) {
+    i2sp->state = I2S_READY;
+  }
+  else {
+    i2sp->state = I2S_STOP;
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**

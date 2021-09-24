@@ -349,7 +349,7 @@ extern "C" {
 #endif
   void dacInit(void);
   void dacObjectInit(DACDriver *dacp);
-  void dacStart(DACDriver *dacp, const DACConfig *config);
+  msg_t dacStart(DACDriver *dacp, const DACConfig *config);
   void dacStop(DACDriver *dacp);
   void dacPutChannelX(DACDriver *dacp,
                       dacchannel_t channel,

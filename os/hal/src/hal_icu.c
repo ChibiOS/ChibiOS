@@ -76,20 +76,37 @@ void icuObjectInit(ICUDriver *icup) {
  *
  * @param[in] icup      pointer to the @p ICUDriver object
  * @param[in] config    pointer to the @p ICUConfig object
+ * @return              The operation status.
  *
  * @api
  */
-void icuStart(ICUDriver *icup, const ICUConfig *config) {
+msg_t icuStart(ICUDriver *icup, const ICUConfig *config) {
+  msg_t msg;
 
   osalDbgCheck((icup != NULL) && (config != NULL));
 
   osalSysLock();
   osalDbgAssert((icup->state == ICU_STOP) || (icup->state == ICU_READY),
                 "invalid state");
+
   icup->config = config;
+
+#if defined(ICU_LLD_ENHANCED_API)
+  msg = icu_lld_start(icup);
+#else
   icu_lld_start(icup);
-  icup->state = ICU_READY;
+  msg = HAL_START_SUCCESS;
+#endif
+  if (msg == HAL_START_SUCCESS) {
+    icup->state = ICU_READY;
+  }
+  else {
+    icup->state = ICU_STOP;
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**

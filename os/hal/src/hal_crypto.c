@@ -82,10 +82,12 @@ void cryObjectInit(CRYDriver *cryp) {
  * @param[in] cryp              pointer to the @p CRYDriver object
  * @param[in] config            pointer to the @p CRYConfig object. Depending
  *                              on the implementation the value can be @p NULL.
+ * @return                      The operation status.
  *
  * @api
  */
-void cryStart(CRYDriver *cryp, const CRYConfig *config) {
+msg_t cryStart(CRYDriver *cryp, const CRYConfig *config) {
+  msg_t msg;
 
   osalDbgCheck(cryp != NULL);
 
@@ -94,10 +96,26 @@ void cryStart(CRYDriver *cryp, const CRYConfig *config) {
                 "invalid state");
   cryp->config = config;
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
+#if defined(CRY_LLD_ENHANCED_API)
+  msg = cry_lld_start(cryp);
+#else
   cry_lld_start(cryp);
+  msg = HAL_START_SUCCESS;
 #endif
+  if (msg == HAL_START_SUCCESS) {
+    cryp->state = CRY_READY;
+  }
+  else {
+    cryp->state = CRY_STOP;
+  }
+#else
   cryp->state = CRY_READY;
+  msg = HAL_START_SUCCESS;
+#endif
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**
