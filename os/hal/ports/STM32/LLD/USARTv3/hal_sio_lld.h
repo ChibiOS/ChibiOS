@@ -366,7 +366,7 @@ extern SIODriver LPSIOD1;
 extern "C" {
 #endif
   void sio_lld_init(void);
-  bool  sio_lld_start(SIODriver *siop);
+  msg_t  sio_lld_start(SIODriver *siop);
   void sio_lld_stop(SIODriver *siop);
   void sio_lld_start_operation(SIODriver *siop);
   void sio_lld_stop_operation(SIODriver *siop);

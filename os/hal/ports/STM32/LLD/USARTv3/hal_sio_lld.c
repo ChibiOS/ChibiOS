@@ -296,12 +296,10 @@ void sio_lld_init(void) {
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The operation status.
- * @retval false        if the driver has been correctly started.
- * @retval true         if an error occurred.
  *
  * @notapi
  */
-bool sio_lld_start(SIODriver *siop) {
+msg_t sio_lld_start(SIODriver *siop) {
   uint32_t clock = 0U;
 
   /* Using the default configuration if the application passed a
@@ -394,7 +392,7 @@ bool sio_lld_start(SIODriver *siop) {
   /* Configures the peripheral.*/
   usart_init(siop, clock);
 
-  return false;
+  return HAL_START_SUCCESS;
 }
 
 

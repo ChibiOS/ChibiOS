@@ -77,12 +77,43 @@
  */
 /**
  * @brief HAL operation success.
+ * @deprecated
  */
 #define HAL_SUCCESS             false
 /**
  * @brief HAL operation failed.
+ * @deprecated
  */
 #define HAL_FAILED              true
+/** @} */
+
+/**
+ * @name    Error codes for start functions
+ * @{
+ */
+#define HAL_START_SUCCESS       MSG_OK
+/**
+ * @brief   Configuration error.
+ * @details An error has been detected in the driver configuration structure.
+ */
+#define HAL_START_CONFIG_ERROR  (msg_t)-16
+/**
+ * @brief   A required resource is not available.
+ * @details One of the resources required for driver operations is not
+ *          available.
+ */
+#define HAL_START_NO_RESOURCE   (msg_t)-17
+/**
+ * @brief   The peripheral is busy.
+ * @details The peripheral is not available or taken by some other system
+ *          actor.
+ */
+#define HAL_START_HW_BUSY       (msg_t)-18
+/**
+ * @brief   Peripheral failure.
+ * @details Peripheral failed during initialization, for example HW timeouts.
+ */
+#define HAL_START_HW_FAILURE    (msg_t)-19
 /** @} */
 
 /*===========================================================================*/

@@ -464,7 +464,7 @@ extern "C" {
 #endif
   void sioInit(void);
   void sioObjectInit(SIODriver *siop);
-  bool sioStart(SIODriver *siop, const SIOConfig *config);
+  msg_t sioStart(SIODriver *siop, const SIOConfig *config);
   void sioStop(SIODriver *siop);
   void sioStartOperation(SIODriver *siop, const SIOOperation *operation);
   void sioStopOperation(SIODriver *siop);

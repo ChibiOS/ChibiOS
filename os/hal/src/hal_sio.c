@@ -243,13 +243,11 @@ void sioObjectInit(SIODriver *siop) {
  * @param[in] config    pointer to the @p SIOConfig object, can be @p NULL
  *                      if the default configuration is desired
  * @return              The operation status.
- * @retval false        if the driver has been correctly started.
- * @retval true         if an error occurred.
  *
  * @api
  */
-bool sioStart(SIODriver *siop, const SIOConfig *config) {
-  bool result;
+msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
+  msg_t msg;
 
   osalDbgCheck(siop != NULL);
 
@@ -259,12 +257,12 @@ bool sioStart(SIODriver *siop, const SIOConfig *config) {
                 "invalid state");
 
   siop->config = config;
-  result = sio_lld_start(siop);
+  msg = sio_lld_start(siop);
   siop->state = SIO_READY;
 
   osalSysUnlock();
 
-  return result;
+  return msg;
 }
 
 /**
