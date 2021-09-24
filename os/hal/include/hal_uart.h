@@ -392,7 +392,7 @@ extern "C" {
 #endif
   void uartInit(void);
   void uartObjectInit(UARTDriver *uartp);
-  void uartStart(UARTDriver *uartp, const UARTConfig *config);
+  msg_t uartStart(UARTDriver *uartp, const UARTConfig *config);
   void uartStop(UARTDriver *uartp);
   void uartStartSend(UARTDriver *uartp, size_t n, const void *txbuf);
   void uartStartSendI(UARTDriver *uartp, size_t n, const void *txbuf);
