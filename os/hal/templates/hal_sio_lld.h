@@ -126,9 +126,9 @@ extern SIODriver SIOD1;
 extern "C" {
 #endif
 void sio_lld_init(void);
-bool  sio_lld_start(SIODriver *siop);
+msg_t  sio_lld_start(SIODriver *siop);
 void sio_lld_stop(SIODriver *siop);
-msg_t sio_lld_start_operation(SIODriver *siop);
+void sio_lld_start_operation(SIODriver *siop);
 void sio_lld_stop_operation(SIODriver *siop);
 sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop);
 size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);

@@ -294,7 +294,7 @@ extern "C" {
 #else
   void sdObjectInit(SerialDriver *sdp);
 #endif
-  void sdStart(SerialDriver *sdp, const SerialConfig *config);
+  msg_t sdStart(SerialDriver *sdp, const SerialConfig *config);
   void sdStop(SerialDriver *sdp);
   void sdIncomingDataI(SerialDriver *sdp, uint8_t b);
   msg_t sdRequestDataI(SerialDriver *sdp);
