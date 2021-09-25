@@ -108,15 +108,24 @@ void stm32_clock_init(void) {
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
-  /* Clocks setup.*/
+  /* Clocks setup, this is only necessary when no trusted environment
+     is started on the MPU side (device in engineering mode).*/
 //  lse_init();
 #if !STM32_TZEN_ENABLED
+  osalDbgAssert((RCC->TZCR & RCC_TZCR_TZEN) == 0U, "TZEN enabled");
   lsi_init();
 #endif
-#if !STM32_TZEN_ENABLED && !STM32_MCKPROT_ENABLED
+#if !STM32_TZEN_ENABLED || !STM32_MCKPROT_ENABLED
+  osalDbgAssert(((RCC->TZCR & RCC_TZCR_TZEN) == 0U) ||
+                ((RCC->TZCR & RCC_TZCR_MCKPROT) == 0U), "MCKPROT enabled");
   hsi_init();
   csi_init();
   hse_init();
+#endif
+
+  /* PLLs activation, if required.*/
+#if !STM32_TZEN_ENABLED || !STM32_MCKPROT_ENABLED
+  pll3_init();
 #endif
 
 #endif /* STM32_NO_INIT */

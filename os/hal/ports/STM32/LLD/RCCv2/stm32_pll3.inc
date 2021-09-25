@@ -252,7 +252,7 @@
  * @brief   PLL VCO frequency.
  */
 #define STM32_PLL3VCOCLK                                                    \
-  (((STM32_PLL3REFCLK * 2) *                                                \
+  (((STM32_PLL3REFCLK * 1) *                                                \
     ((STM32_PLL3DIVN_VALUE * 8192) + STM32_PLL3FRACV_VALUE)) / 8192)
 
 /*
@@ -391,7 +391,7 @@ __STATIC_FORCEINLINE void pll_wait_lock(void) {
 
 #endif /* STM32_RCC_HAS_PLL */
 
-__STATIC_FORCEINLINE void pll_init(void) {
+__STATIC_FORCEINLINE void pll3_init(void) {
 
 #if STM32_RCC_HAS_PLL3
 #if STM32_ACTIVATE_PLL3
@@ -410,7 +410,7 @@ __STATIC_FORCEINLINE void pll_init(void) {
 #endif
 }
 
-__STATIC_FORCEINLINE void pll_deinit(void) {
+__STATIC_FORCEINLINE void pll3_deinit(void) {
 
 #if STM32_RCC_HAS_PLL3
 #if STM32_ACTIVATE_PLL3
