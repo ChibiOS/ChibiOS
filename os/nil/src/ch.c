@@ -158,7 +158,7 @@ void __dbg_check_lock(void) {
   if ((nil.isr_cnt != (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
     chSysHalt("SV#4");
   }
-  _dbg_enter_lock();
+  __dbg_enter_lock();
 }
 
 /**
@@ -171,7 +171,7 @@ void __dbg_check_unlock(void) {
   if ((nil.isr_cnt != (cnt_t)0) || (nil.lock_cnt <= (cnt_t)0)) {
     chSysHalt("SV#5");
   }
-  _dbg_leave_lock();
+  __dbg_leave_lock();
 }
 
 /**
@@ -184,7 +184,7 @@ void __dbg_check_lock_from_isr(void) {
   if ((nil.isr_cnt <= (cnt_t)0) || (nil.lock_cnt != (cnt_t)0)) {
     chSysHalt("SV#6");
   }
-  _dbg_enter_lock();
+  __dbg_enter_lock();
 }
 
 /**
@@ -197,7 +197,7 @@ void __dbg_check_unlock_from_isr(void) {
   if ((nil.isr_cnt <= (cnt_t)0) || (nil.lock_cnt <= (cnt_t)0)) {
     chSysHalt("SV#7");
   }
-  _dbg_leave_lock();
+  __dbg_leave_lock();
 }
 
 /**

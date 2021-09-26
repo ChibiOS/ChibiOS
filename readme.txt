@@ -81,6 +81,8 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed NIL invalid references when debug options are enabled (bug #1191)
+       (TBP to 21.6.1)
 - FIX: Fixed problem in stm32_pll.inc and stm32_pllv2.inc (bug #1190)
        (TBP to 21.6.1)
 - FIX: Fixed invalid RCC LPUART1 clock enable on STM32G0xx (bug #1189)
