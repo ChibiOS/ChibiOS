@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -mno-spe -msoft-float
 endif
 
 # C specific options here (added to USE_OPT).
@@ -83,17 +83,17 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 CONFDIR  := .
-BUILDDIR := ./build-ht
-DEPDIR   := ./.dep-ht
+BUILDDIR := ./build-gcc-eabivle
+DEPDIR   := ./.dep-gcc-eabivle
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc56ecxx.mk
+include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc560dxx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC56EC/board.mk
-include $(CHIBIOS)/os/hal/ports/SPC5/SPC56ECxx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_EVB_SPC560D/board.mk
+include $(CHIBIOS)/os/hal/ports/SPC5/SPC560Dxx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -106,7 +106,7 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/SPC56EC74.ld
+LDSCRIPT= $(STARTUPLD)/SPC560D40.ld
 
 # C sources here.
 CSRC = $(ALLCSRC) \
@@ -153,12 +153,9 @@ ULIBS =
 # Compiler settings
 #
 
-MCU  = e200zx -meabi -msdata=none -mregnames # HighTec
-#MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
+MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
 
-TRGT = ppc-vle-
-#TRGT = powerpc-eabivle-
-#TRGT = ppc-freevle-eabi-
+TRGT = powerpc-eabivle-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.

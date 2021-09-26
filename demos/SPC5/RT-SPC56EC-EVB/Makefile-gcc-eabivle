@@ -83,8 +83,8 @@ PROJECT = ch
 # Imported source files and paths
 CHIBIOS = ../../..
 CONFDIR  := .
-BUILDDIR := ./build-ht
-DEPDIR   := ./.dep-ht
+BUILDDIR := ./build-gcc-eabivle
+DEPDIR   := ./.dep-gcc-eabivle
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -153,12 +153,9 @@ ULIBS =
 # Compiler settings
 #
 
-MCU  = e200zx -meabi -msdata=none -mregnames # HighTec
-#MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
+MCU  = e200z4 -meabi -msdata=none -mregnames # Free GCC
 
-TRGT = ppc-vle-
-#TRGT = powerpc-eabivle-
-#TRGT = ppc-freevle-eabi-
+TRGT = powerpc-eabivle-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.

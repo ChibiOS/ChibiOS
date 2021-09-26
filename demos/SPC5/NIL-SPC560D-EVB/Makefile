@@ -136,8 +136,8 @@ INCDIR = $(CHIBIOS)/os/license \
 MCU  = e200z0 -meabi -msdata=none -mregnames # Free GCC
 
 #TRGT = ppc-vle-
-#TRGT = powerpc-eabivle-
-TRGT = ppc-freevle-eabi-
+TRGT = powerpc-eabivle-
+#TRGT = ppc-freevle-eabi-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
