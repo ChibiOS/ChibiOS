@@ -98,10 +98,10 @@ _port_switch:
         .type       _port_thread_start, @function
 _port_thread_start:
 #if CH_DBG_SYSTEM_STATE_CHECK
-        e_bl        _dbg_check_unlock
+        e_bl        __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-        e_bl        _stats_stop_measure_crit_thd
+        e_bl        __stats_stop_measure_crit_thd
 #endif
         wrteei      1
         mr          r3, r31

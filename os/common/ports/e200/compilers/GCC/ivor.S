@@ -211,15 +211,15 @@ _ivor_exit:
         e_bl        _stats_start_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-        e_bl        _dbg_check_lock
+        e_bl        __dbg_check_lock
 #endif
         e_bl        chSchIsPreemptionRequired
         se_cmpi     r3, 0
         se_beq      .noresch
-        e_bl        chSchDoReschedule
+        e_bl        chSchDoPreemption
 .noresch:
 #if CH_DBG_SYSTEM_STATE_CHECK
-        e_bl        _dbg_check_unlock
+        e_bl        __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
         e_bl        _stats_stop_measure_crit_thd

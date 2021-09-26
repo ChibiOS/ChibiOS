@@ -505,9 +505,11 @@ extern void _IVOR10(void);
  * @brief   Kernel port layer initialization.
  * @details IVOR4 and IVOR10 initialization.
  */
-static inline void port_init(void) {
+static inline void port_init(os_instance_t *oip) {
   uint32_t n;
   unsigned i;
+
+  (void)oip;
 
   /* Initializing the SPRG0 register to zero, it is required for interrupts
      handling.*/
