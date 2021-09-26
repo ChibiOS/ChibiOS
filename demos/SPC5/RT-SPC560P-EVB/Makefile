@@ -134,8 +134,8 @@ INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 MCU  = e200z0 -meabi -msdata=none -mregnames # Free GCC
 
 #TRGT = ppc-vle-
-#TRGT = powerpc-eabivle-
-TRGT = ppc-freevle-eabi-
+TRGT = powerpc-eabivle-
+#TRGT = ppc-freevle-eabi-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
@@ -167,7 +167,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DTEST_CFG_SIZE_REPORT=0
 
 # Define ASM defines here
 UADEFS =
