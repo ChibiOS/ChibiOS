@@ -134,13 +134,11 @@ int main(void) {
   chprintf((BaseSequentialStream *)&PORTAB_SD1, "Cumulative time:   %8u cycles\r\n\r\n", (uint32_t)tm2.cumulative);
 
   /*
-   * Normal main() thread activity, if the button is pressed then the DAC
-   * transfer is stopped.
+   * Normal main() thread activity, does nothing but sleep.
    */
   while (true) {
-    if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
-    }
     chThdSleepMilliseconds(500);
   }
+
   return 0;
 }
