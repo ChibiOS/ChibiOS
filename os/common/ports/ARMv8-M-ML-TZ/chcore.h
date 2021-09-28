@@ -179,7 +179,7 @@
  * @details This size depends on the idle thread implementation, usually
  *          the idle thread should take no more space than those reserved
  *          by @p PORT_INT_REQUIRED_STACK.
- * @note    In this port it is set to 16 because the idle thread does have
+ * @note    In this port it is set to 64 because the idle thread does have
  *          a stack frame when compiling without optimizations. You may
  *          reduce this value to zero when compiling with optimizations.
  */
