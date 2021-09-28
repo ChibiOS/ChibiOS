@@ -81,6 +81,7 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed hang in spi_lld_ignore() in SPIv3 on H7 (bug #1193)
 - FIX: Fixed invalid references in e200 port (bug #1192)
        (TBP to 21.6.1)
 - FIX: Fixed NIL invalid references when debug options are enabled (bug #1191)
