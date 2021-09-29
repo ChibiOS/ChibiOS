@@ -75,7 +75,7 @@ thread_t *port_schedule_next(void) {
   chSysLock();
 
   /* TODO statistics, tracing etc */
-  ntp = chSchSelectFirstI();
+  ntp = chSchSelectFirst();
 
   chSysUnlock();
 

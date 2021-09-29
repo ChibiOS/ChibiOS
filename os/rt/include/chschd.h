@@ -157,7 +157,7 @@ extern "C" {
   void chSchDoPreemption(void);
   void chSchPreemption(void);
   void chSchDoYieldS(void);
-  thread_t *chSchSelectFirstI(void);
+  thread_t *chSchSelectFirst(void);
 #if CH_CFG_OPTIMIZE_SPEED == FALSE
   void ch_sch_prio_insert(ch_queue_t *qp, ch_queue_t *tp);
 #endif /* CH_CFG_OPTIMIZE_SPEED == FALSE */

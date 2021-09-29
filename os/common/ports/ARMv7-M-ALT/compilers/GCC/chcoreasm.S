@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMv7-M/compilers/GCC/chcoreasm.S
- * @brief   ARMv7-M port low level code.
+ * @file    ARMv7-M-ALT/compilers/GCC/chcoreasm.S
+ * @brief   ARMv7-M (alternate) architecture port low level code.
  *
- * @addtogroup ARMV7M_GCC_CORE
+ * @addtogroup ARMV7M_ALT_GCC_CORE
  * @{
  */
 
@@ -44,9 +44,11 @@
  * RTOS-specific context offset.
  */
 #if defined(_CHIBIOS_RT_CONF_)
+#define CURRENT_OFFSET  12
 #define CONTEXT_OFFSET  12
 
 #elif defined(_CHIBIOS_NIL_CONF_)
+#define CURRENT_OFFSET  0           /* nil.current */
 #define CONTEXT_OFFSET  0
 
 #else
@@ -54,11 +56,8 @@
 #endif
 
 /* MPU-related constants.*/
+#define MPU_RNR         0xE000ED98
 #define MPU_RBAR        0xE000ED9C
-
-/* Other constants.*/
-#define SCB_ICSR        0xE000ED04
-#define ICSR_PENDSVSET  0x10000000
 
                 .syntax unified
                 .cpu    cortex-m4
@@ -72,106 +71,179 @@
                 .text
 
 /*--------------------------------------------------------------------------*
- * Performs a context switch between two threads.
+ * Context switch macros depending on various options.
+ *--------------------------------------------------------------------------*/
+
+                /* Store integer context through R1.*/
+                .macro  PORT_STORE_INTEGER_CONTEXT
+                mrs     r2, PSP
+                mrs     r3, BASEPRI
+                stmia   r1!, {r2-r11,lr}
+                .endm
+
+                /* Load integer context through R0.*/
+                .macro  PORT_RESTORE_INTEGER_CONTEXT
+                ldmia   r0!, {r2-r11, lr}
+                msr     PSP, r2
+                msr     BASEPRI, r3
+                .endm
+
+#if CORTEX_USE_FPU
+                /* Store float context through R1.*/
+                .macro  PORT_STORE_FLOAT_CONTEXT
+                vstmia  r1!, {s16-s31}
+                .endm
+
+                /* Load float context through R0.*/
+                .macro  PORT_RESTORE_FLOAT_CONTEXT
+                vldmia  r0!, {s16-s31}
+                .endm
+#else
+                .macro  PORT_STORE_FLOAT_CONTEXT
+                .endm
+
+                .macro  PORT_RESTORE_FLOAT_CONTEXT
+                .endm
+#endif
+
+                /* Store MPU context through R1.*/
+                .macro  PORT_STORE_MPU_CONTEXT
+#if PORT_SWITCHED_REGIONS_NUMBER == 1
+                ldr     r2, =MPU_RBAR
+                mov     r3, #0
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
+                stmia   r1!, {r4-r5}
+#endif
+#if PORT_SWITCHED_REGIONS_NUMBER == 2
+                ldr     r2, =MPU_RBAR
+                mov     r3, #0
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
+                add     r3, #1
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r6, r7}        /* RBAR1, RASR1 */
+                stmia   r1!, {r4-r7}
+#endif
+#if PORT_SWITCHED_REGIONS_NUMBER == 3
+                ldr     r2, =MPU_RBAR
+                mov     r3, #0
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
+                add     r3, #1
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r6, r7}        /* RBAR1, RASR1 */
+                add     r3, #1
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r8, r9}        /* RBAR2, RASR2 */
+                stmia   r1!, {r4-r9}
+#endif
+#if PORT_SWITCHED_REGIONS_NUMBER == 4
+                ldr     r2, =MPU_RBAR
+                mov     r3, #0
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
+                add     r3, #1
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r6, r7}        /* RBAR1, RASR1 */
+                add     r3, #1
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r8, r9}        /* RBAR2, RASR2 */
+                add     r3, #1
+                str     r3, [r2, #-4]       /* RNR */
+                ldm     r2, {r10, r11}      /* RBAR3, RASR3 */
+                stmia   r1!, {r4-r11}
+#endif
+                .endm
+
+                /* Load MPU context through R0.*/
+                .macro  PORT_LOAD_MPU_CONTEXT
+#if PORT_SWITCHED_REGIONS_NUMBER == 1
+                ldr     r2, =MPU_RNR
+                mov     r3, #0
+                ldmia   r0!, {r4-r5}
+                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
+#endif
+#if PORT_SWITCHED_REGIONS_NUMBER == 2
+                ldr     r2, =MPU_RNR
+                mov     r3, #0
+                ldmia   r0!, {r4-r7}
+                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
+                add     r3, #1
+                stm     r2, {r3, r6-r7}     /* RNR, RBAR1, RASR1 */
+#endif
+#if PORT_SWITCHED_REGIONS_NUMBER == 3
+                ldr     r2, =MPU_RNR
+                mov     r3, #0
+                ldmia   r0!, {r4-r9}
+                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
+                add     r3, #1
+                stm     r2, {r3, r6-r7}     /* RNR, RBAR1, RASR1 */
+                add     r3, #1
+                stm     r2, {r3, r8-r9}     /* RNR, RBAR2, RASR2 */
+#endif
+#if PORT_SWITCHED_REGIONS_NUMBER == 4
+                ldr     r2, =MPU_RNR
+                mov     r3, #0
+                ldmia   r0!, {r4-r11}
+                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
+                add     r3, #1
+                stm     r2, {r3, r6-r7}     /* RNR, RBAR1, RASR1 */
+                add     r3, #1
+                stm     r2, {r3, r8-r9}     /* RNR, RBAR2, RASR2 */
+                add     r3, #1
+                stm     r2, {r3, r10-r11}   /* RNR, RBAR3, RASR3 */
+#endif
+                .endm
+
+/*--------------------------------------------------------------------------*
+ * Performs a context switch between two threads using SVC.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  __port_switch
-__port_switch:
-                push    {r4, r5, r6, r7, r8, r9, r10, r11, lr}
-#if CORTEX_USE_FPU
-                /* Saving FPU context.*/
-                vpush   {s16-s31}
-#endif
+                .globl  SVC_Handler
+SVC_Handler:
+                /* Context store for old thread.*/
+                adds    r1, #CONTEXT_OFFSET
+                PORT_STORE_INTEGER_CONTEXT
+                PORT_STORE_FLOAT_CONTEXT
+                PORT_STORE_MPU_CONTEXT
 
-#if PORT_SWITCHED_REGIONS_NUMBER > 0
-                /* Saving MPU context.*/
-                ldr     r2, =MPU_RBAR
-#if PORT_SWITCHED_REGIONS_NUMBER >= 1
-                mov     r3, #0
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r4, r5}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 2
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r6, r7}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 3
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r8, r9}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 4
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r10, r11}  /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 1
-                push    {r4, r5}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 2
-                push    {r4, r5, r6, r7}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 3
-                push    {r4, r5, r6, r7, r8, r9}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 4
-                push    {r4, r5, r6, r7, r8, r9, r10, r11}
-#endif
-#endif
+                /* Context load for new thread.*/
+                adds    r0, #CONTEXT_OFFSET
+                PORT_RESTORE_INTEGER_CONTEXT
+                PORT_RESTORE_FLOAT_CONTEXT
+                PORT_LOAD_MPU_CONTEXT
 
-                str     sp, [r1, #CONTEXT_OFFSET]
-#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) &&                                \
-    ((CORTEX_MODEL == 3) || (CORTEX_MODEL == 4))
-                /* Workaround for ARM errata 752419, only applied if
-                   condition exists for it to be triggered.*/
-                ldr     r3, [r0, #CONTEXT_OFFSET]
-                mov     sp, r3
-#else
-                ldr     sp, [r0, #CONTEXT_OFFSET]
-#endif
+                bx      lr
 
-#if PORT_SWITCHED_REGIONS_NUMBER > 0
-                /* Restoring MPU context.*/
-#if PORT_SWITCHED_REGIONS_NUMBER == 1
-                pop     {r4, r5}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 2
-                pop     {r4, r5, r6, r7}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 3
-                pop     {r4, r5, r6, r7, r8, r9}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 4
-                pop     {r4, r5, r6, r7, r8, r9, r10, r11}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 1
-                mov     r3, #0
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r4, r5}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 2
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r6, r7}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 3
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r8, r9}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 4
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r10, r11}  /* RBAR, RASR */
-#endif
-#endif
+/*--------------------------------------------------------------------------*
+ * Tail preemption check using PENDSV.
+ *--------------------------------------------------------------------------*/
+                .thumb_func
+                .globl  PendSV_Handler
+PendSV_Handler:
+                /* Pointer to the current instance, assuming single instance.*/
+                ldr     r0, =ch0
+//                movw    r0, #:lower16:ch
+//                movt    r0, #:upper16:ch
+                ldr     r1, [r0, #CURRENT_OFFSET]
 
-#if CORTEX_USE_FPU
-                /* Restoring FPU context.*/
-                vpop    {s16-s31}
-#endif
-                pop     {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+                /* Context store for old thread.*/
+                adds    r1, #CONTEXT_OFFSET
+                PORT_STORE_INTEGER_CONTEXT
+                PORT_STORE_FLOAT_CONTEXT
+                PORT_STORE_MPU_CONTEXT
+
+                /* Selecting the thread to be swapped in, R0 points to it.*/
+                bl      port_schedule_next
+
+                /* Context load for new thread.*/
+                adds    r0, #CONTEXT_OFFSET
+                PORT_RESTORE_INTEGER_CONTEXT
+                PORT_RESTORE_FLOAT_CONTEXT
+                PORT_LOAD_MPU_CONTEXT
+
+                bx      lr
 
 /*--------------------------------------------------------------------------*
  * Start a thread by invoking its work function.
@@ -184,60 +256,16 @@ __port_switch:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
-#if CH_DBG_ENABLE_STACK_CHECK && PORT_ENABLE_GUARD_PAGES
-                bl      __port_set_region
-#endif
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      __dbg_check_unlock
-#endif
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
-#if CORTEX_SIMPLIFIED_PRIORITY
-                cpsie   i
-#else
-                movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
+                movs    r3, #CORTEX_BASEPRI_DISABLED
                 msr     BASEPRI, r3
-#endif
                 mov     r0, r5
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
 .zombies:       b       .zombies
-
-/*--------------------------------------------------------------------------*
- * Post-IRQ switch code.
- *
- * Exception handlers return here for context switching.
- *--------------------------------------------------------------------------*/
-                .thumb_func
-                .globl  __port_switch_from_isr
-__port_switch_from_isr:
-#if CH_DBG_STATISTICS
-                bl      __stats_start_measure_crit_thd
-#endif
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      __dbg_check_lock
-#endif
-                bl      chSchDoPreemption
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      __dbg_check_unlock
-#endif
-#if CH_DBG_STATISTICS
-                bl      __stats_stop_measure_crit_thd
-#endif
-                .globl  __port_exit_from_isr
-__port_exit_from_isr:
-#if CORTEX_SIMPLIFIED_PRIORITY
-                movw    r3, #:lower16:SCB_ICSR
-                movt    r3, #:upper16:SCB_ICSR
-                mov     r2, ICSR_PENDSVSET
-                str     r2, [r3, #0]
-                cpsie   i
-#else /* !CORTEX_SIMPLIFIED_PRIORITY */
-                svc     #0
-#endif /* !CORTEX_SIMPLIFIED_PRIORITY */
-.L1:            b       .L1
 
 #endif /* !defined(__DOXYGEN__) */
 

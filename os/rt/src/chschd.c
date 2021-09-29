@@ -620,7 +620,7 @@ void chSchDoYieldS(void) {
  *
  * @special
  */
-thread_t *chSchSelectFirstI(void) {
+thread_t *chSchSelectFirst(void) {
   os_instance_t *oip = currcore;
   thread_t *otp = __instance_get_currthread(oip);
   thread_t *ntp;

@@ -67,7 +67,7 @@
 /**
  * @brief   Disabled value for BASEPRI register.
  */
-#define CORTEX_BASEPRI_DISABLED         0U
+#define CORTEX_BASEPRI_DISABLED         0
 
 /**
  * @brief   Total priority levels.
@@ -85,7 +85,7 @@
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY         0U
+#define CORTEX_MAXIMUM_PRIORITY         0
 
 /**
  * @brief   SVCALL handler priority.
@@ -471,9 +471,6 @@ struct port_context {
   uint32_t              r9;
   uint32_t              r10;
   uint32_t              r11;
-#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
-  uint32_t              splim;
-#endif
   uint32_t              lr_exc;
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
   uint32_t              s16;
