@@ -82,7 +82,7 @@
                 .endm
 
                 /* Load integer context through R0.*/
-                .macro  PORT_RESTORE_INTEGER_CONTEXT
+                .macro  PORT_LOAD_INTEGER_CONTEXT
                 ldmia   r0!, {r2-r11, lr}
                 msr     PSP, r2
                 msr     BASEPRI, r3
@@ -95,14 +95,14 @@
                 .endm
 
                 /* Load float context through R0.*/
-                .macro  PORT_RESTORE_FLOAT_CONTEXT
+                .macro  PORT_LOAD_FLOAT_CONTEXT
                 vldmia  r0!, {s16-s31}
                 .endm
 #else
                 .macro  PORT_STORE_FLOAT_CONTEXT
                 .endm
 
-                .macro  PORT_RESTORE_FLOAT_CONTEXT
+                .macro  PORT_LOAD_FLOAT_CONTEXT
                 .endm
 #endif
 
@@ -210,8 +210,8 @@ SVC_Handler:
 
                 /* Context load for new thread.*/
                 adds    r0, #CONTEXT_OFFSET
-                PORT_RESTORE_INTEGER_CONTEXT
-                PORT_RESTORE_FLOAT_CONTEXT
+                PORT_LOAD_INTEGER_CONTEXT
+                PORT_LOAD_FLOAT_CONTEXT
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
@@ -224,8 +224,6 @@ SVC_Handler:
 PendSV_Handler:
                 /* Pointer to the current instance, assuming single instance.*/
                 ldr     r0, =ch0
-//                movw    r0, #:lower16:ch
-//                movt    r0, #:upper16:ch
                 ldr     r1, [r0, #CURRENT_OFFSET]
 
                 /* Context store for old thread.*/
@@ -239,8 +237,8 @@ PendSV_Handler:
 
                 /* Context load for new thread.*/
                 adds    r0, #CONTEXT_OFFSET
-                PORT_RESTORE_INTEGER_CONTEXT
-                PORT_RESTORE_FLOAT_CONTEXT
+                PORT_LOAD_INTEGER_CONTEXT
+                PORT_LOAD_FLOAT_CONTEXT
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
