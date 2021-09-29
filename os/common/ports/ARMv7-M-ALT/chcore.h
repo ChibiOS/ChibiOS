@@ -72,7 +72,7 @@
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS          (1U << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
@@ -104,8 +104,7 @@
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIO_MASK(n)                                                 \
-  ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
 /** @} */
 
 /*===========================================================================*/
@@ -360,7 +359,7 @@
 /**
  * @brief   Maximum usable priority for normal ISRs.
  */
-#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1U)
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
 
 /**
  * @brief   BASEPRI level within kernel lock.
@@ -418,12 +417,6 @@ struct port_linkctx {
  *          switch.
  */
 struct port_intctx {
-#if (PORT_SWITCHED_REGIONS_NUMBER > 0) || defined(__DOXYGEN__)
-  struct {
-    uint32_t            rbar;
-    uint32_t            rasr;
-  } regions[PORT_SWITCHED_REGIONS_NUMBER];
-#endif
   uint32_t              r0;
   uint32_t              r1;
   uint32_t              r2;
@@ -490,6 +483,12 @@ struct port_context {
   uint32_t              s30;
   uint32_t              s31;
 #endif /* CORTEX_USE_FPU == TRUE */
+#if (PORT_SWITCHED_REGIONS_NUMBER > 0) || defined(__DOXYGEN__)
+  struct {
+    uint32_t            rbar;
+    uint32_t            rasr;
+  } regions[PORT_SWITCHED_REGIONS_NUMBER];
+#endif
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
     uint32_t            psp;
@@ -592,6 +591,7 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_intctx *)(void *)                             \
                    ((uint8_t *)(wtop) - sizeof (struct port_intctx));       \
+  (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
   (tp)->ctx.r4          = (uint32_t)(pf);                                   \
   (tp)->ctx.r5          = (uint32_t)(arg);                                  \
   (tp)->ctx.lr_exc      = (uint32_t)PORT_EXC_RETURN;                        \
