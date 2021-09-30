@@ -646,11 +646,7 @@ struct port_context {
  *          enabled to invoke system APIs.
  */
 #define PORT_IRQ_EPILOGUE() do {                                            \
-  port_lock_from_isr();                                                     \
-  if (chSchIsPreemptionRequired()) {                                        \
-    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;                                     \
-  }                                                                         \
-  port_unlock_from_isr();                                                   \
+  SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;                                       \
 } while (false)
 
 /**

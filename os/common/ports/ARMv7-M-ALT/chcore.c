@@ -58,19 +58,20 @@
 /**
  * @brief   Tail ISR context switch code.
  *
- * @return              The thread being switched-in.
+ * @return              The threads pointers encoded in a single 64 bits value.
  */
-thread_t *port_schedule_next(void) {
-  thread_t *ntp;
+uint64_t port_schedule_next(void) {
+  uint64_t x;
 
-  chSysLock();
+  if (chSchIsPreemptionRequired()) {
+    x = ((uint64_t)(uint32_t)chThdGetSelfX() << 32) |
+        ((uint64_t)(uint32_t)chSchSelectFirst() << 0);
+  }
+  else {
+    x = 0ULL;
+  }
 
-  /* TODO statistics, tracing etc */
-  ntp = chSchSelectFirst();
-
-  chSysUnlock();
-
-  return ntp;
+  return x;
 }
 
 /**

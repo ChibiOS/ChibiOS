@@ -222,18 +222,18 @@ SVC_Handler:
                 .thumb_func
                 .globl  PendSV_Handler
 PendSV_Handler:
-                /* Pointer to the current instance, assuming single instance.*/
-                ldr     r0, =ch0
-                ldr     r1, [r0, #CURRENT_OFFSET]
+                push    {lr}
+                bl      port_schedule_next
+                cmp     r0, #0
+                it      eq
+                popeq   {pc}
+                pop     {lr}
 
                 /* Context store for old thread.*/
                 adds    r1, #CONTEXT_OFFSET
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
-
-                /* Selecting the thread to be swapped in, R0 points to it.*/
-                bl      port_schedule_next
 
                 /* Context load for new thread.*/
                 adds    r0, #CONTEXT_OFFSET
