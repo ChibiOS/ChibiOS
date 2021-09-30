@@ -91,22 +91,27 @@ int main(void) {
   nvicEnableVector(0, CORTEX_MAX_KERNEL_PRIORITY);
 
   /* Printing banner.*/
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Compiled:      %s\r\n", __DATE__ " - " __TIME__);
-#if defined(PLATFORM_NAME)
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Platform:      %s\r\n", PLATFORM_NAME);
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "\r\n\r\n*** ChibiOS/RT WKP-STORM benchmark and test\r\n***\r\n");
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Kernel:       %s\r\n", CH_KERNEL_VERSION);
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Compiled:     %s\r\n", __DATE__ " - " __TIME__);
+#ifdef PORT_COMPILER_NAME
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Compiler:     %s\r\n", PORT_COMPILER_NAME);
 #endif
-#if defined(BOARD_NAME)
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Test Board:    %s\r\n", BOARD_NAME);
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Architecture: %s\r\n", PORT_ARCHITECTURE_NAME);
+#ifdef PORT_CORE_VARIANT_NAME
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Core Variant: %s\r\n", PORT_CORE_VARIANT_NAME);
 #endif
-#if defined(PORT_ARCHITECTURE_NAME)
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Architecture:  %s\r\n", PORT_ARCHITECTURE_NAME);
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** System Clock: %d\r\n", SystemCoreClock);
+#ifdef PORT_INFO
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Port Info:    %s\r\n", PORT_INFO);
 #endif
-#if defined(PORT_CORE_VARIANT_NAME)
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Core Variant:  %s @ %uMHz\r\n", PORT_CORE_VARIANT_NAME, SystemCoreClock / 1000000U);
+#ifdef PLATFORM_NAME
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Platform:     %s\r\n", PLATFORM_NAME);
 #endif
-#if defined(PORT_COMPILER_NAME)
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Compiler:      %s\r\n\r\n", PORT_COMPILER_NAME);
+#ifdef BOARD_NAME
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Test Board:   %s\r\n", BOARD_NAME);
 #endif
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "***\r\n");
   chThdSleepMilliseconds(500U);
 
   /* Test loop.*/
