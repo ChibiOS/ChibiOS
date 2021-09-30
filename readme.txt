@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added an alternate port for ARMv7-M, it uses less RAM and it is
+       faster at interrupt processing, it is slightly slower at
+       thread-to-thread context switch so it is not a full replacement.
 - NEW: Now all xxxStart() functions in HAL are able to report a driver
        activation error.
 - NEW: Support for STM32G031, STM32G041, STM32G0B1, STM32G0C1.
