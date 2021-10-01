@@ -22,8 +22,9 @@
  * @{
  */
 
-#include <source/fpu_storm.h>
 #include "hal.h"
+#include "fpu_storm.h"
+
 #include "portab.h"
 
 /*===========================================================================*/
@@ -39,7 +40,7 @@
  */
 static const GPTConfig gpt4cfg = {
   1000000,              /* 1MHz timer clock.*/
-  irq_storm_gpt1_cb,    /* Timer callback.*/
+  fpu_storm_gpt1_cb,    /* Timer callback.*/
   0,
   0
 };
@@ -49,7 +50,7 @@ static const GPTConfig gpt4cfg = {
  */
 static const GPTConfig gpt3cfg = {
   1000000,              /* 1MHz timer clock.*/
-  irq_storm_gpt2_cb,    /* Timer callback.*/
+  fpu_storm_gpt2_cb,    /* Timer callback.*/
   0,
   0
 };

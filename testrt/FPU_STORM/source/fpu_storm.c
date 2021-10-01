@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -34,9 +34,6 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-#define MSG_SEND_LEFT                   (msg_t)0
-#define MSG_SEND_RIGHT                  (msg_t)1
-
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -49,117 +46,161 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-static const irq_storm_config_t *config;
+static const fpu_storm_config_t *config;
 
+static uint32_t wdgcnt;
 static bool saturated;
-
-/*
- * Mailboxes and buffers.
- */
-static mailbox_t mb[IRQ_STORM_CFG_NUM_THREADS];
-static msg_t b[IRQ_STORM_CFG_NUM_THREADS][IRQ_STORM_CFG_MAILBOX_SIZE];
-
-/*
- * Threads working areas.
- */
-static THD_WORKING_AREA(irq_storm_thread_wa[IRQ_STORM_CFG_NUM_THREADS],
-                        IRQ_STORM_CFG_STACK_SIZE);
-
-/*
- * Pointers to threads.
- */
-static thread_t *threads[IRQ_STORM_CFG_NUM_THREADS];
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+CC_NO_INLINE static float ff1(float par) {
+
+  asm volatile ("nop" : : : "s1", "s2", "s3", "s4", "s5", "s6", "s7",
+                            "s8", "s9", "s10", "s11", "s12", "s13",
+                            "s14", "s15", "s16", "s17", "s18", "s19",
+                            "s20", "s21", "s22", "s23", "s24", "s25",
+                            "s26", "s27", "s28", "s29", "s30", "s31");
+
+  return par;
+}
+
+CC_NO_INLINE static float ff2(float par1, float par2,
+                              float par3, float par4) {
+
+  asm volatile ("nop" : : : "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11",
+                            "s12", "s13", "s14", "s15", "s16", "s17", "s18",
+                            "s19", "s20", "s21", "s22", "s23", "s24", "s25",
+                            "s26", "s27", "s28", "s29", "s30", "s31");
+
+  return (par1 + par2) * (par3 + par4);
+}
+
+/*
+ * Test worker thread.
+ */
+static THD_WORKING_AREA(waWorkerThread, 256);
+static THD_FUNCTION(WorkerThread, arg) {
+
+  (void)arg;
+
+  while (1) {
+    float f1, f2, f3, f4, f5, f6;
+
+    /* Loading values in FPU registers for monitoring.*/
+    f1 = ff1(3.0f);
+    f2 = ff1(4.0f);
+    f3 = ff1(5.0f);
+    f5 = f1 + f2 + f3;
+    f4 = ff1(6.0f);
+    f5 = ff2(f5, f4, f5, f4);
+    f6 = ff1(f5) * ff1(f2);
+    if (f5 != 324.0f) {
+      chSysHalt("float corrupion #1");
+    }
+    if (f6 != 1296.0f) {
+      chSysHalt("float corrupion #2");
+    }
+
+    wdgcnt++;
+  }
+}
+
+/*
+ * Test periodic thread.
+ */
+static THD_WORKING_AREA(waPeriodicThread, 256);
+static THD_FUNCTION(PeriodicThread, arg) {
+
+  (void)arg;
+
+  while (1) {
+    float f1, f2, f3, f4, f5, f6;
+
+    /* Loading values in FPU registers for monitoring.*/
+    f1 = ff1(4.0f);
+    f2 = ff1(5.0f);
+    f3 = ff1(6.0f);
+    f5 = f1 + f2 + f3;
+    f4 = ff1(7.0f);
+    f5 = ff2(f5, f4, f5, f4);
+    f6 = ff1(f5) * ff1(f2);
+    if (f5 != 484.0f) {
+      chSysHalt("float corrupion #3");
+    }
+    if (f6 != 2420.0f) {
+      chSysHalt("float corrupion #4");
+    }
+
+    chThdSleepSeconds(1);
+  }
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-/*
- * Test worker threads.
- */
-static THD_FUNCTION(irq_storm_thread, arg) {
-  static unsigned cnt = 0;
-  unsigned me = (unsigned)arg;
-  unsigned target;
-  msg_t msg;
-
-  chRegSetThreadName("irq_storm");
-
-  /* Thread loop, until terminated.*/
-  while (chThdShouldTerminateX() == false) {
-
-    /* Waiting for a message.*/
-   chMBFetchTimeout(&mb[me], &msg, TIME_INFINITE);
-
-#if IRQ_STORM_CFG_RANDOMIZE != FALSE
-   /* Pseudo-random delay.*/
-   {
-     static volatile unsigned x = 0;
-     unsigned r;
-
-     chSysLock();
-     r = rand() & 15;
-     chSysUnlock();
-     while (r--)
-       x++;
-   }
-#else /* IRQ_STORM_CFG_RANDOMIZE == FALSE */
-   /* No delay.*/
-#endif /* IRQ_STORM_CFG_RANDOMIZE == FALSE */
-
-    /* Deciding in which direction to re-send the message.*/
-    if (msg == MSG_SEND_LEFT)
-      target = me - 1;
-    else
-      target = me + 1;
-
-    if (target < IRQ_STORM_CFG_NUM_THREADS) {
-      /* If this thread is not at the end of a chain re-sending the message,
-         note this check works because the variable target is unsigned.*/
-      msg = chMBPostTimeout(&mb[target], msg, TIME_IMMEDIATE);
-      if (msg != MSG_OK)
-        saturated = TRUE;
-    }
-    else {
-      /* Provides a visual feedback about the system.*/
-      if (++cnt >= 500) {
-        cnt = 0;
-        palToggleLine(config->line);
-      }
-    }
-  }
-}
-
 /**
  * @brief   GPT1 callback.
  */
-void irq_storm_gpt1_cb(GPTDriver *gptp) {
-  msg_t msg;
+void fpu_storm_gpt1_cb(GPTDriver *gptp) {
+  static uint32_t lastcnt;
+  float f1, f2, f3, f4, f5, f6;
 
   (void)gptp;
-  chSysLockFromISR();
-  msg = chMBPostI(&mb[0], MSG_SEND_RIGHT);
-  if (msg != MSG_OK)
+
+  /* Loading values in FPU registers for monitoring.*/
+  f1 = ff1(2.0f);
+  f2 = ff1(3.0f);
+  f3 = ff1(4.0f);
+  f5 = f1 + f2 + f3;
+  f4 = ff1(5.0f);
+  f5 = ff2(f5, f4, f5, f4);
+  f6 = ff1(f5) * ff1(f2);
+  if (f5 != 196.0f) {
+    chSysHalt("float corrupion #5");
+  }
+  if (f6 != 588.0f) {
+    chSysHalt("float corrupion #6");
+  }
+
+  /* Checking saturation condition.*/
+  if (lastcnt == wdgcnt) {
     saturated = true;
-  chSysUnlockFromISR();
+  }
+  lastcnt = wdgcnt;
 }
 
 /**
  * @brief   GPT2 callback.
  */
-void irq_storm_gpt2_cb(GPTDriver *gptp) {
-  msg_t msg;
+void fpu_storm_gpt2_cb(GPTDriver *gptp) {
+  static uint32_t lastcnt;
+  float f1, f2, f3, f4, f5, f6;
 
   (void)gptp;
-  chSysLockFromISR();
-  msg = chMBPostI(&mb[IRQ_STORM_CFG_NUM_THREADS - 1], MSG_SEND_LEFT);
-  if (msg != MSG_OK)
+
+  /* Loading values in FPU registers for monitoring.*/
+  f1 = ff1(1.0f);
+  f2 = ff1(2.0f);
+  f3 = ff1(3.0f);
+  f5 = f1 + f2 + f3;
+  f4 = ff1(4.0f);
+  f5 = ff2(f5, f4, f5, f4);
+  f6 = ff1(f5) * ff1(f2);
+  if (f5 != 100.0f) {
+    chSysHalt("float corrupion #7");
+  }
+  if (f6 != 200.0f) {
+    chSysHalt("float corrupion #8");
+  }
+
+  /* Checking saturation condition.*/
+  if (lastcnt == wdgcnt) {
     saturated = true;
-  chSysUnlockFromISR();
+  }
+  lastcnt = wdgcnt;
 }
 
 /**
@@ -169,7 +210,8 @@ void irq_storm_gpt2_cb(GPTDriver *gptp) {
  *
  * @api
  */
-void irq_storm_execute(const irq_storm_config_t *cfg) {
+void fpu_storm_execute(const fpu_storm_config_t *cfg) {
+  thread_t *worker, *periodic;
   unsigned i;
   gptcnt_t interval, threshold, worst;
 
@@ -181,20 +223,16 @@ void irq_storm_execute(const irq_storm_config_t *cfg) {
   gptStart(cfg->gpt2p, cfg->gptcfg2p);
 
   /*
-   * Initializes the mailboxes and creates the worker threads.
+   * Starting the worker threads.
    */
-  for (i = 0; i < IRQ_STORM_CFG_NUM_THREADS; i++) {
-    chMBObjectInit(&mb[i], b[i], IRQ_STORM_CFG_MAILBOX_SIZE);
-    threads[i] = chThdCreateStatic(irq_storm_thread_wa[i],
-                                   sizeof irq_storm_thread_wa[i],
-                                   IRQ_STORM_CFG_THREADS_PRIORITY,
-                                   irq_storm_thread,
-                                   (void *)i);
-  }
+  worker   = chThdCreateStatic(waWorkerThread, sizeof waWorkerThread,
+                             NORMALPRIO - 20, WorkerThread, NULL);
+  periodic = chThdCreateStatic(waPeriodicThread, sizeof waPeriodicThread,
+                             NORMALPRIO - 10, PeriodicThread, NULL);
 
   /* Printing environment information.*/
   chprintf(cfg->out, "");
-  chprintf(cfg->out, "\r\n*** ChibiOS/RT IRQ-STORM long duration test\r\n***\r\n");
+  chprintf(cfg->out, "\r\n*** ChibiOS/RT FPU-STORM long duration test\r\n***\r\n");
   chprintf(cfg->out, "*** Kernel:       %s\r\n", CH_KERNEL_VERSION);
   chprintf(cfg->out, "*** Compiled:     %s\r\n", __DATE__ " - " __TIME__);
 #ifdef PORT_COMPILER_NAME
@@ -215,14 +253,12 @@ void irq_storm_execute(const irq_storm_config_t *cfg) {
   chprintf(cfg->out, "*** Test Board:   %s\r\n", BOARD_NAME);
 #endif
   chprintf(cfg->out, "***\r\n");
-  chprintf(cfg->out, "*** Iterations:   %d\r\n", IRQ_STORM_CFG_ITERATIONS);
-  chprintf(cfg->out, "*** Randomize:    %d\r\n", IRQ_STORM_CFG_RANDOMIZE);
-  chprintf(cfg->out, "*** Threads:      %d\r\n", IRQ_STORM_CFG_NUM_THREADS);
-  chprintf(cfg->out, "*** Mailbox size: %d\r\n\r\n", IRQ_STORM_CFG_MAILBOX_SIZE);
+  chprintf(cfg->out, "*** Iterations:   %d\r\n", FPU_STORM_CFG_ITERATIONS);
+  chprintf(cfg->out, "*** Randomize:    %d\r\n", FPU_STORM_CFG_RANDOMIZE);
 
   /* Test loop.*/
   worst = 0;
-  for (i = 1; i <= IRQ_STORM_CFG_ITERATIONS; i++){
+  for (i = 1; i <= FPU_STORM_CFG_ITERATIONS; i++){
 
     chprintf(cfg->out, "Iteration %d\r\n", i);
     saturated = false;
@@ -266,11 +302,10 @@ void irq_storm_execute(const irq_storm_config_t *cfg) {
   chprintf(cfg->out, "\r\nTest Complete\r\n");
 
   /* Terminating threads and cleaning up.*/
-  for (i = 0; i < IRQ_STORM_CFG_NUM_THREADS; i++) {
-    chThdTerminate(threads[i]);
-    chThdWait(threads[i]);
-    threads[i] = NULL;
-  }
+  chThdTerminate(worker);
+  chThdTerminate(periodic);
+  chThdWait(worker);
+  chThdWait(periodic);
 }
 
 /** @} */

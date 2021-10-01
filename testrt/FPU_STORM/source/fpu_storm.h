@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    irq_storm.h
+ * @file    fpu_storm.h
  * @brief   IRQ Storm stress test header.
  *
- * @addtogroup IRQ_STORM
+ * @addtogroup FPU_STORM
  * @{
  */
 
-#ifndef IRQ_STORM_H
-#define IRQ_STORM_H
+#ifndef FPU_STORM_H
+#define FPU_STORM_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -40,43 +40,15 @@
 /**
  * @brief   Timings randomization.
  */
-#if !defined(IRQ_STORM_CFG_RANDOMIZE) || defined(__DOXYGEN__)
-#define IRQ_STORM_CFG_RANDOMIZE             FALSE
+#if !defined(FPU_STORM_CFG_RANDOMIZE) || defined(__DOXYGEN__)
+#define FPU_STORM_CFG_RANDOMIZE             FALSE
 #endif
 
 /**
  * @brief   Number of test iterations.
  */
-#if !defined(IRQ_STORM_CFG_ITERATIONS) || defined(__DOXYGEN__)
-#define IRQ_STORM_CFG_ITERATIONS            100
-#endif
-
-/**
- * @brief   Number of storm threads.
- */
-#if !defined(IRQ_STORM_CFG_NUM_THREADS) || defined(__DOXYGEN__)
-#define IRQ_STORM_CFG_NUM_THREADS           8
-#endif
-
-/**
- * @brief   Priority of storm threads.
- */
-#if !defined(IRQ_STORM_CFG_THREADS_PRIORITY) || defined(__DOXYGEN__)
-#define IRQ_STORM_CFG_THREADS_PRIORITY      (tprio_t)(NORMALPRIO-20)
-#endif
-
-/**
- * @brief   Mailboxes size.
- */
-#if !defined(IRQ_STORM_CFG_MAILBOX_SIZE) || defined(__DOXYGEN__)
-#define IRQ_STORM_CFG_MAILBOX_SIZE          4
-#endif
-
-/**
- * @brief   Stack size for worker threads.
- */
-#if !defined(IRQ_STORM_CFG_STACK_SIZE) || defined(__DOXYGEN__)
-#define IRQ_STORM_CFG_STACK_SIZE            128
+#if !defined(FPU_STORM_CFG_ITERATIONS) || defined(__DOXYGEN__)
+#define FPU_STORM_CFG_ITERATIONS            100
 #endif
 /** @} */
 
@@ -117,7 +89,7 @@ typedef struct {
    * @brief   System clock.
    */
   uint32_t              sysclk;
-} irq_storm_config_t;
+} fpu_storm_config_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -130,9 +102,9 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void irq_storm_gpt1_cb(GPTDriver *gptp);
-  void irq_storm_gpt2_cb(GPTDriver *gptp);
-  void irq_storm_execute(const irq_storm_config_t *cfg);
+  void fpu_storm_gpt1_cb(GPTDriver *gptp);
+  void fpu_storm_gpt2_cb(GPTDriver *gptp);
+  void fpu_storm_execute(const fpu_storm_config_t *cfg);
 #ifdef __cplusplus
 }
 #endif
@@ -141,6 +113,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* IRQ_STORM_H */
+#endif /* FPU_STORM_H */
 
 /** @} */
