@@ -266,14 +266,14 @@ void fpu_storm_execute(const fpu_storm_config_t *cfg) {
 
     /* Timer intervals starting at 2mS then decreased by 10% after each
        cycle.*/
-    for (interval = 2000; interval >= 2; interval -= (interval + 9) / 10) {
+    for (interval = 2000; interval >= 2; interval -= (interval + 49) / 50) {
 
       /* Timers programmed slightly out of phase each other.*/
       gptStartContinuous(cfg->gpt1p, interval - 1); /* Slightly out of phase.*/
       gptStartContinuous(cfg->gpt2p, interval + 1); /* Slightly out of phase.*/
 
       /* Storming for one second.*/
-      chThdSleepMilliseconds(1000);
+      chThdSleepMilliseconds(250);
 
       /* Timers stopped.*/
       gptStopTimer(cfg->gpt1p);
