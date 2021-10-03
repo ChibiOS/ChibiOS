@@ -362,6 +362,11 @@
 #define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
 
 /**
+ * @brief   Minimum usable priority for normal ISRs.
+ */
+#define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1)
+
+/**
  * @brief   BASEPRI level within kernel lock.
  */
 #define CORTEX_BASEPRI_KERNEL                                               \
@@ -513,7 +518,7 @@ struct port_context {
  * @brief   Priority level verification macro.
  */
 #define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
-  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) < CORTEX_PRIORITY_LEVELS))
+  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) <= CORTEX_MIN_KERNEL_PRIORITY))
 
 /**
  * @brief   Optimized thread function declaration macro.
