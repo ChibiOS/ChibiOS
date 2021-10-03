@@ -283,7 +283,7 @@ void port_init(void) {
   }
 #endif
 
-#if PORT_USE_SYSCALL == TRUE
+#if (PORT_ENABLE_GUARD_PAGES == TRUE) || (PORT_USE_SYSCALL == TRUE)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif

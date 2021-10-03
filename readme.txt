@@ -83,7 +83,9 @@
 - NEW: Improved boost settings for STM32G4.
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
        the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
-- FIX: removed incorrect ADCv4 checks for MONEN (bug #1194)
+- FIX: Fixed ARMCMx port, MPU not enabled when PORT_ENABLE_GUARD_PAGES is set
+       (bug #1195).
+- FIX: Fixed removed incorrect ADCv4 checks for MONEN (bug #1194)
 - FIX: Fixed hang in spi_lld_ignore() in SPIv3 on H7 (bug #1193)
 - FIX: Fixed invalid RCC LPUART1 clock enable on STM32G0xx (bug #1189).
 - FIX: Fixed wrong configuration in testex LSM6DSL demos (bug #1184).
