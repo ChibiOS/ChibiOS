@@ -84,7 +84,9 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
-- FIX: removed incorrect ADCv4 checks for MONEN (bug #1194)
+- FIX: Fixed ARMCMx port, MPU not enabled when PORT_ENABLE_GUARD_PAGES is set
+       (bug #1195)(TBP to 21.6.1).
+- FIX: Fixed removed incorrect ADCv4 checks for MONEN (bug #1194)
 - FIX: Fixed hang in spi_lld_ignore() in SPIv3 on H7 (bug #1193)
 - FIX: Fixed invalid references in e200 port (bug #1192)
        (TBP to 21.6.1)
