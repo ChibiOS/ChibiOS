@@ -61,17 +61,18 @@
  * @return              The threads pointers encoded in a single 64 bits value.
  */
 uint64_t port_schedule_next(void) {
-  uint64_t x;
+
+  /* Note, not an error, we are outside the ISR already.*/
+  chSysLock();
 
   if (chSchIsPreemptionRequired()) {
-    x = ((uint64_t)(uint32_t)chThdGetSelfX() << 32) |
-        ((uint64_t)(uint32_t)chSchSelectFirst() << 0);
-  }
-  else {
-    x = 0ULL;
+    return ((uint64_t)(uint32_t)chThdGetSelfX() << 32) |
+           ((uint64_t)(uint32_t)chSchSelectFirst() << 0);
   }
 
-  return x;
+  chSysUnlock();
+
+  return (uint64_t)0;
 }
 
 /**
