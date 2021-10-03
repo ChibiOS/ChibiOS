@@ -210,12 +210,12 @@ SVC_Handler:
 
                 /* Context load for new thread.*/
                 adds    r0, #CONTEXT_OFFSET
-                PORT_LOAD_INTEGER_CONTEXT
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
+                ldr     r3, [r0, #4]        /* BASEPRI offset */
                 cmp     r3, #CORTEX_BASEPRI_DISABLED
                 bne     1f
-                push    {r0, lr}
+                mov     r4, r0
                 /* Returning to a preempted thread, performing a logical
                    "unlock" and handling statistics.*/
 #if CH_DBG_SYSTEM_STATE_CHECK
@@ -224,10 +224,11 @@ SVC_Handler:
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
-                pop     {r0, lr}
+                mov     r0, r4
 1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
+                PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_FLOAT_CONTEXT
                 PORT_LOAD_MPU_CONTEXT
 
@@ -257,12 +258,12 @@ PendSV_Handler:
 
                 /* Context load for new thread.*/
                 adds    r0, #CONTEXT_OFFSET
-                PORT_LOAD_INTEGER_CONTEXT
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
+                ldr     r3, [r0, #4]        /* BASEPRI offset */
                 cmp     r3, #CORTEX_BASEPRI_DISABLED
                 bne     1f
-                push    {r0, lr}
+                mov     r4, r0
                 /* Returning to a preempted thread, performing a logical
                    "unlock" and handling statistics.*/
 #if CH_DBG_SYSTEM_STATE_CHECK
@@ -271,10 +272,11 @@ PendSV_Handler:
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
-                pop     {r0, lr}
+                mov     r0, r4
 1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
+                PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_FLOAT_CONTEXT
                 PORT_LOAD_MPU_CONTEXT
 
