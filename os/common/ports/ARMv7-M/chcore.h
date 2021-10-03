@@ -240,7 +240,7 @@
 #endif
 
 #if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
-    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 8))
+    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
 #endif
 
