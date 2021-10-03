@@ -214,10 +214,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (CH_DBG_ENABLE_STACK_CHECK == FALSE) && (PORT_ENABLE_GUARD_PAGES == TRUE)
-#error "PORT_ENABLE_GUARD_PAGES requires CH_DBG_ENABLE_STACK_CHECK"
-#endif
-
 #if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 4)
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif

@@ -289,15 +289,13 @@ void port_init(os_instance_t *oip) {
   }
 #endif
 
-#if PORT_USE_SYSCALL == TRUE
+#if (PORT_ENABLE_GUARD_PAGES == TRUE) || (PORT_USE_SYSCALL == TRUE)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif
 }
 
-#if ((CH_DBG_ENABLE_STACK_CHECK == TRUE) &&                                 \
-     (PORT_ENABLE_GUARD_PAGES == TRUE)) ||                                  \
-    defined(__DOXYGEN__)
+#if (PORT_ENABLE_GUARD_PAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Setting up MPU region for the current thread.
  */
