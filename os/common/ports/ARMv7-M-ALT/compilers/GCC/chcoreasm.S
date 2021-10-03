@@ -280,48 +280,6 @@ PendSV_Handler:
 
                 bx      lr
 
-
-
-#if 0
-                push    {lr}
-                bl      port_schedule_next
-                cmp     r0, #0
-                it      eq
-                popeq   {pc}
-                pop     {lr}
-
-                /* Context store for old thread.*/
-                adds    r1, #CONTEXT_OFFSET
-                PORT_STORE_INTEGER_CONTEXT
-                PORT_STORE_FLOAT_CONTEXT
-                PORT_STORE_MPU_CONTEXT
-
-                /* Context load for new thread.*/
-                adds    r0, #CONTEXT_OFFSET
-                PORT_LOAD_INTEGER_CONTEXT
-
-#if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
-                cmp     r3, #CORTEX_BASEPRI_DISABLED
-                bne     1f
-                push    {r0, lr}
-                /* Returning to a preempted thread, performing a logical
-                   "unlock" and handling statistics.*/
-#if CH_DBG_SYSTEM_STATE_CHECK
-                bl      __dbg_check_unlock
-#endif
-#if CH_DBG_STATISTICS
-                bl      __stats_stop_measure_crit_thd
-#endif
-                pop     {r0, lr}
-1:
-#endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
-
-                PORT_LOAD_FLOAT_CONTEXT
-                PORT_LOAD_MPU_CONTEXT
-
-                bx      lr
-#endif
-
 /*--------------------------------------------------------------------------*
  * Start a thread by invoking its work function.
  *

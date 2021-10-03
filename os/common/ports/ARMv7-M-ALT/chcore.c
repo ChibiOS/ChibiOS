@@ -65,7 +65,7 @@ uint64_t port_schedule_next(void) {
   /* Note, not an error, we are outside the ISR already.*/
   chSysLock();
 
-  if (chSchIsPreemptionRequired()) {
+  if (likely(chSchIsPreemptionRequired())) {
     return ((uint64_t)(uint32_t)chThdGetSelfX() << 32) |
            ((uint64_t)(uint32_t)chSchSelectFirst() << 0);
   }
