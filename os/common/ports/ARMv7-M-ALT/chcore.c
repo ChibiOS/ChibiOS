@@ -55,19 +55,38 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+#if (PORT_ENABLE_GUARD_PAGES == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Setting up MPU region for the current thread.
+ */
+void __port_set_region(void) {
+
+  mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,
+                      chThdGetSelfX()->wabase);
+}
+#endif
+
 /**
  * @brief   Tail ISR context switch code.
  *
  * @return              The threads pointers encoded in a single 64 bits value.
  */
-uint64_t port_schedule_next(void) {
+uint64_t __port_schedule_next(void) {
 
   /* Note, not an error, we are outside the ISR already.*/
   chSysLock();
 
   if (likely(chSchIsPreemptionRequired())) {
-    return ((uint64_t)(uint32_t)chThdGetSelfX() << 32) |
-           ((uint64_t)(uint32_t)chSchSelectFirst() << 0);
+    thread_t *otp, *ntp;
+
+    otp = chThdGetSelfX();
+    ntp = chSchSelectFirst();
+
+#if PORT_ENABLE_GUARD_PAGES == TRUE
+    mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION, ntp->wabase);
+#endif
+
+    return ((uint64_t)(uint32_t)otp << 32) | ((uint64_t)(uint32_t)ntp << 0);
   }
 
   chSysUnlock();
@@ -118,7 +137,7 @@ void port_init(os_instance_t *oip) {
   }
 #endif
 
-#if PORT_USE_SYSCALL == TRUE
+#if (PORT_ENABLE_GUARD_PAGES == TRUE) || (PORT_USE_SYSCALL == TRUE)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif

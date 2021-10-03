@@ -243,7 +243,7 @@ PendSV_Handler:
                 mrs     r3, BASEPRI
                 push    {r3, lr}
 
-                bl      port_schedule_next
+                bl      __port_schedule_next
                 cmp     r0, #0
                 it      eq
                 popeq   {r3, pc}
@@ -293,6 +293,9 @@ PendSV_Handler:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
+#if PORT_ENABLE_GUARD_PAGES
+                bl      __port_set_region
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      __dbg_check_unlock
 #endif

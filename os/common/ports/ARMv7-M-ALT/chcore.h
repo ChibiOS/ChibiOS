@@ -214,6 +214,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if (CH_DBG_ENABLE_STACK_CHECK == FALSE) && (PORT_ENABLE_GUARD_PAGES == TRUE)
+#error "PORT_ENABLE_GUARD_PAGES requires CH_DBG_ENABLE_STACK_CHECK"
+#endif
+
 #if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 4)
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif
@@ -707,7 +711,7 @@ struct port_context {
   #if PORT_ENABLE_GUARD_PAGES == FALSE
     #define port_switch(ntp, otp) do {                                      \
       struct port_intctx *r13 = (struct port_intctx *)__get_PSP();          \
-      if ((stkalign_t *)(r13 - 1) < (otp)->wabase) {                        \
+      if ((stkalign_t *)(void *)(r13 - 1) < (otp)->wabase) {                \
         chSysHalt("stack overflow");                                        \
       }                                                                     \
       __port_switch(ntp, otp);                                              \
