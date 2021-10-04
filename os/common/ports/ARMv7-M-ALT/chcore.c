@@ -55,6 +55,63 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+CC_NO_INLINE void __port_syslock_noinline(void) {
+
+  port_lock();
+  __stats_start_measure_crit_thd();
+  __dbg_check_lock();
+}
+
+uint32_t __port_get_s_psp(void) {
+
+  return (uint32_t)__sch_get_currthread()->ctx.syscall.psp;
+}
+
+CC_WEAK void port_syscall(struct port_extctx *ctxp, uint32_t n) {
+
+  (void)ctxp;
+  (void)n;
+
+  chSysHalt("svc");
+}
+
+void port_unprivileged_jump(uint32_t pc, uint32_t psp) {
+  struct port_extctx *ectxp;
+  struct port_linkctx *lctxp;
+  uint32_t s_psp   = __get_PSP();
+  uint32_t control = __get_CONTROL();
+
+  /* Creating a port_extctx context for user mode entry.*/
+  psp -= sizeof (struct port_extctx);
+  ectxp = (struct port_extctx *)psp;
+
+  /* Initializing the user mode entry context.*/
+  memset((void *)ectxp, 0, sizeof (struct port_extctx));
+  ectxp->pc    = pc;
+  ectxp->xpsr  = 0x01000000U;
+#if CORTEX_USE_FPU == TRUE
+  ectxp->fpscr = __get_FPSCR();
+#endif
+
+  /* Creating a middle context for user mode entry.*/
+  s_psp -= sizeof (struct port_linkctx);
+  lctxp  = (struct port_linkctx *)s_psp;
+
+  /* CONTROL and PSP values for user mode.*/
+  lctxp->control = control | 1U;
+  lctxp->ectxp   = ectxp;
+
+  /* PSP now points to the port_linkctx structure, it will be removed
+     by SVC.*/
+  __set_PSP(s_psp);
+
+  asm volatile ("svc 1");
+
+  chSysHalt("svc");
+}
+#endif
+
 #if (PORT_ENABLE_GUARD_PAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Setting up MPU region for the current thread.
