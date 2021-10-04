@@ -399,29 +399,8 @@
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
- * @note    This structure is empty in this port.
  */
-struct port_extctx {};
-
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Link context structure.
- * @details This structure is used when there is the need to save extra
- *          context information that is not part of the registers stacked
- *          in HW.
- */
-struct port_linkctx {
-  uint32_t              control;
-  struct port_extctx    *ectxp;
-};
-#endif
-
-/**
- * @brief   System saved context.
- * @details This structure represents the inner stack frame during a context
- *          switch.
- */
-struct port_intctx {
+struct port_extctx {
   uint32_t              r0;
   uint32_t              r1;
   uint32_t              r2;
@@ -452,14 +431,25 @@ struct port_intctx {
 #endif /* CORTEX_USE_FPU == TRUE */
 };
 
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Platform dependent part of the @p thread_t structure.
- * @details In this port the structure just holds a pointer to the
- *          @p port_intctx structure representing the stack pointer
- *          at context switch time.
+ * @brief   Link context structure.
+ * @details This structure is used when there is the need to save extra
+ *          context information that is not part of the registers stacked
+ *          in HW.
  */
-struct port_context {
-  struct port_intctx    *sp;
+struct port_linkctx {
+  uint32_t              control;
+  struct port_extctx    *ectxp;
+};
+#endif
+
+/**
+ * @brief   System saved context.
+ * @details This structure represents the inner context during a context
+ *          switch.
+ */
+struct port_intctx {
   uint32_t              basepri;
   uint32_t              r4;
   uint32_t              r5;
@@ -494,6 +484,17 @@ struct port_context {
     uint32_t            rasr;
   } regions[PORT_SWITCHED_REGIONS_NUMBER];
 #endif
+};
+
+/**
+ * @brief   Platform dependent part of the @p thread_t structure.
+ * @details In this port the structure just holds a pointer to the
+ *          @p port_intctx structure representing the stack pointer
+ *          at context switch time.
+ */
+struct port_context {
+  struct port_extctx    *sp;
+  struct port_intctx    regs;
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
     uint32_t            psp;
@@ -590,18 +591,16 @@ struct port_context {
 
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
- * @details This code usually setup the context switching frame represented
- *          by an @p port_intctx structure.
  */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
-  (tp)->ctx.sp = (struct port_intctx *)(void *)                             \
-                   ((uint8_t *)(wtop) - sizeof (struct port_intctx));       \
-  (tp)->ctx.basepri     = CORTEX_BASEPRI_KERNEL;                            \
-  (tp)->ctx.r4          = (uint32_t)(pf);                                   \
-  (tp)->ctx.r5          = (uint32_t)(arg);                                  \
-  (tp)->ctx.lr_exc      = (uint32_t)PORT_EXC_RETURN;                        \
-  (tp)->ctx.sp->pc      = (uint32_t)__port_thread_start;                    \
-  (tp)->ctx.sp->xpsr    = (uint32_t)0x01000000;                             \
+  (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
+                   ((uint8_t *)(wtop) - sizeof (struct port_extctx));       \
+  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
+  (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
+  (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
+  (tp)->ctx.regs.lr_exc     = (uint32_t)PORT_EXC_RETURN;                    \
+  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
+  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
@@ -610,7 +609,7 @@ struct port_context {
 /**
  * @brief   Context switch area size.
  */
-#define PORT_WA_CTX_SIZE    sizeof (struct port_intctx)
+#define PORT_WA_CTX_SIZE    sizeof (struct port_extctx)
 
 /**
  * @brief   Computes the thread working area global size.
@@ -706,7 +705,7 @@ struct port_context {
 #else /* CH_DBG_ENABLE_STACK_CHECK == TRUE */
   #if PORT_ENABLE_GUARD_PAGES == FALSE
     #define port_switch(ntp, otp) do {                                      \
-      struct port_intctx *r13 = (struct port_intctx *)__get_PSP();          \
+      struct port_extctx *r13 = (struct port_extctx *)__get_PSP();          \
       if ((stkalign_t *)(void *)(r13 - 1) < (otp)->wabase) {                \
         chSysHalt("stack overflow");                                        \
       }                                                                     \
