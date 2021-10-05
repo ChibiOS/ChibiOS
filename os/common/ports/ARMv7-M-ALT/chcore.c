@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 /*===========================================================================*/
@@ -65,7 +67,7 @@ CC_NO_INLINE void __port_syslock_noinline(void) {
 
 uint32_t __port_get_s_psp(void) {
 
-  return (uint32_t)__sch_get_currthread()->ctx.syscall.psp;
+  return (uint32_t)__sch_get_currthread()->ctx.syscall.s_psp;
 }
 
 CC_WEAK void port_syscall(struct port_extctx *ctxp, uint32_t n) {
@@ -76,41 +78,34 @@ CC_WEAK void port_syscall(struct port_extctx *ctxp, uint32_t n) {
   chSysHalt("svc");
 }
 
-void port_unprivileged_jump(uint32_t pc, uint32_t psp) {
+void port_unprivileged_jump(uint32_t u_pc, uint32_t u_psp) {
+  thread_t *tp = chThdGetSelfX();
   struct port_extctx *ectxp;
-  struct port_linkctx *lctxp;
-  uint32_t s_psp   = __get_PSP();
-  uint32_t control = __get_CONTROL();
+
+  /* Storing the current PSP position in the thread context, this position
+     will be used for system calls processing,*/
+  tp->ctx.syscall.s_psp = __get_PSP();
 
   /* Creating a port_extctx context for user mode entry.*/
-  psp -= sizeof (struct port_extctx);
-  ectxp = (struct port_extctx *)psp;
+  u_psp -= sizeof (struct port_extctx);
+  ectxp = (struct port_extctx *)u_psp;
 
   /* Initializing the user mode entry context.*/
   memset((void *)ectxp, 0, sizeof (struct port_extctx));
-  ectxp->pc    = pc;
+  ectxp->pc    = u_pc;
   ectxp->xpsr  = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
   ectxp->fpscr = __get_FPSCR();
 #endif
 
-  /* Creating a middle context for user mode entry.*/
-  s_psp -= sizeof (struct port_linkctx);
-  lctxp  = (struct port_linkctx *)s_psp;
+  /* Setting up the new PSP into the unprivileged area.*/
+  __set_PSP(u_psp);
 
-  /* CONTROL and PSP values for user mode.*/
-  lctxp->control = control | 1U;
-  lctxp->ectxp   = ectxp;
-
-  /* PSP now points to the port_linkctx structure, it will be removed
-     by SVC.*/
-  __set_PSP(s_psp);
-
+  /* Jump with no return. */
   asm volatile ("svc 1");
-
   chSysHalt("svc");
 }
-#endif
+#endif /* PORT_USE_SYSCALL == TRUE */
 
 #if (PORT_ENABLE_GUARD_PAGES == TRUE) || defined(__DOXYGEN__)
 /**

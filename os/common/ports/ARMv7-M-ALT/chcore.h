@@ -431,19 +431,6 @@ struct port_extctx {
 #endif /* CORTEX_USE_FPU == TRUE */
 };
 
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Link context structure.
- * @details This structure is used when there is the need to save extra
- *          context information that is not part of the registers stacked
- *          in HW.
- */
-struct port_linkctx {
-  uint32_t              control;
-  struct port_extctx    *ectxp;
-};
-#endif
-
 /**
  * @brief   System saved context.
  * @details This structure represents the inner context during a context
@@ -459,6 +446,7 @@ struct port_intctx {
   uint32_t              r9;
   uint32_t              r10;
   uint32_t              r11;
+  uint32_t              control;
   uint32_t              lr_exc;
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
   uint32_t              s16;
@@ -497,7 +485,7 @@ struct port_context {
   struct port_intctx    regs;
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
-    uint32_t            psp;
+    uint32_t            s_psp;
     const void          *p;
   } syscall;
 #endif
@@ -531,8 +519,8 @@ struct port_context {
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.syscall.psp = (uint32_t)(wtop);                               \
-    (tp)->ctx.syscall.p   = NULL;
+    (tp)->ctx.syscall.s_psp = (uint32_t)(wtop);                             \
+    (tp)->ctx.syscall.p         = NULL;
 #else
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
 #endif
@@ -541,7 +529,7 @@ struct port_context {
  * @brief   Initialization of FPU part of thread context.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-#define __PORT_SETUP_CONTEXT_FPU(tp)                                          \
+#define __PORT_SETUP_CONTEXT_FPU(tp)                                        \
   (tp)->ctx.sp->fpscr = (uint32_t)0
 #else
 #define __PORT_SETUP_CONTEXT_FPU(tp)

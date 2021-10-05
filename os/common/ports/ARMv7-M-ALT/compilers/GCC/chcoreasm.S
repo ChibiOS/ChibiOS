@@ -78,14 +78,16 @@
                 .macro  PORT_STORE_INTEGER_CONTEXT
                 mrs     r2, PSP
                 mrs     r3, BASEPRI
-                stmia   r1!, {r2-r11,lr}
+                mrs     r12, CONTROL
+                stmia   r1!, {r2-r12,lr}
                 .endm
 
                 /* Load integer context through R0.*/
                 .macro  PORT_LOAD_INTEGER_CONTEXT
-                ldmia   r0!, {r2-r11, lr}
+                ldmia   r0!, {r2-r12, lr}
                 msr     PSP, r2
                 msr     BASEPRI, r3
+                msr     CONTROL, r12
                 .endm
 
 #if CORTEX_USE_FPU
@@ -202,6 +204,26 @@
                 .thumb_func
                 .globl  SVC_Handler
 SVC_Handler:
+#if PORT_USE_SYSCALL
+                mrs     r3, PSP
+                ldr     r3, [r3, #24]       /* PC position. */
+                ldrh    r3, [r3, #-2]       /* SVC opcode.  */
+                mrs     r2, CONTROL
+                tst     r2, #1
+                beq     frompriv
+                /* SVC called from non-privileged mode, it is a syscall.*/
+
+
+frompriv:
+                /* SVC called from privileged mode.*/
+                ands    r3, #255
+                beq     ctxswitch
+                /* Called for non-privileged mode change.*/
+
+
+ctxswitch:
+                /* Called for context switch.*/
+#endif
                 /* Context store for old thread.*/
                 adds    r1, #CONTEXT_OFFSET
                 PORT_STORE_INTEGER_CONTEXT
@@ -252,7 +274,8 @@ PendSV_Handler:
                 /* Context store for old thread.*/
                 adds    r1, #CONTEXT_OFFSET
                 mrs     r2, PSP
-                stmia   r1!, {r2-r11,lr}
+                mrs     r12, CONTROL
+                stmia   r1!, {r2-r12,lr}
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
