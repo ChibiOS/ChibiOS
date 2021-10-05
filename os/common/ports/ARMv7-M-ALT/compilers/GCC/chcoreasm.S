@@ -219,7 +219,10 @@ frompriv:
                 ands    r3, #255
                 beq     ctxswitch
                 /* Called for non-privileged mode change.*/
-
+                msr     PSP, r0             /* Discarding SVC context.      */
+                orr     r2, #1
+                msr     CONTROL, r2         /* Switching to non-privileged. */
+                bx      lr
 
 ctxswitch:
                 /* Called for context switch.*/
