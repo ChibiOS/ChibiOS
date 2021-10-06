@@ -486,6 +486,7 @@ struct port_context {
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
     uint32_t            s_psp;
+    uint32_t            u_psp;
     const void          *p;
   } syscall;
 #endif

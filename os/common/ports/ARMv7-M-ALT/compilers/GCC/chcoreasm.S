@@ -207,25 +207,29 @@ SVC_Handler:
 #if PORT_USE_SYSCALL
                 mrs     r3, PSP
                 ldr     r3, [r3, #24]       /* PC position. */
-                ldrh    r3, [r3, #-2]       /* SVC opcode.  */
                 mrs     r2, CONTROL
                 tst     r2, #1
                 beq     frompriv
-                /* SVC called from non-privileged mode, it is a syscall.*/
-
+                /* SVC called from non-privileged mode for a syscall.*/
+                bic     r2, #1
+                msr     CONTROL, r2
+                /* Note, LR already contains the return address.*/
+                ldrh    r0, [r3, #-2]       /* SVC opcode.  */
+                and     r0, #255
+                b       __port_do_syscall_entry
 
 frompriv:
-                /* SVC called from privileged mode.*/
+                /* SVC called from privileged mode for unprivileged return.*/
+                ldrh    r3, [r3, #-2]       /* SVC opcode.  */
                 ands    r3, #255
                 beq     ctxswitch
                 /* Called for non-privileged mode change.*/
-                msr     PSP, r0             /* Discarding SVC context.      */
                 orr     r2, #1
                 msr     CONTROL, r2         /* Switching to non-privileged. */
-                bx      lr
+                b       __port_do_syscall_return
 
 ctxswitch:
-                /* Called for context switch.*/
+                /* SVC called from privilege mode for context switch.*/
 #endif
                 /* Context store for old thread.*/
                 adds    r1, #CONTEXT_OFFSET

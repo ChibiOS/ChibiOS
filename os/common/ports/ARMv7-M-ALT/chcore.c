@@ -58,24 +58,45 @@
 /*===========================================================================*/
 
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-CC_NO_INLINE void __port_syslock_noinline(void) {
-
-  port_lock();
-  __stats_start_measure_crit_thd();
-  __dbg_check_lock();
-}
-
-uint32_t __port_get_s_psp(void) {
-
-  return (uint32_t)__sch_get_currthread()->ctx.syscall.s_psp;
-}
-
 CC_WEAK void port_syscall(struct port_extctx *ctxp, uint32_t n) {
 
   (void)ctxp;
   (void)n;
 
-  chSysHalt("svc");
+  while (true) {
+    /* In unprivileged mode but nothing to do.*/;
+  }
+}
+
+CC_WEAK void __port_do_syscall_entry(uint32_t n) {
+  thread_t *tp = __sch_get_currthread();
+  struct port_extctx *ectxp, *newctxp;
+  uint32_t u_psp;
+
+  /* Caller context in unprivileged memory.*/
+  u_psp = __get_PSP();
+  tp->ctx.syscall.u_psp = u_psp;
+  ectxp = (struct port_extctx *)u_psp;
+
+  /* Return context for change in privileged mode.*/
+  newctxp = ((struct port_extctx *)tp->ctx.syscall.s_psp) - 1;
+
+  /* Creating context for return in privileged mode.*/
+  newctxp->r0     = (uint32_t)ectxp;
+  newctxp->r1     = n;
+  newctxp->pc     = (uint32_t)port_syscall;
+  newctxp->xpsr   = 0x01000000U;
+#if CORTEX_USE_FPU == TRUE
+  newctxp->fpscr  = FPU->FPDSCR;
+#endif
+
+  /* Switching PSP to the privileged mode PSP.*/
+  __set_PSP((uint32_t)newctxp);
+}
+
+CC_WEAK void __port_do_syscall_return(void) {
+
+  __set_PSP(__sch_get_currthread()->ctx.syscall.u_psp);
 }
 
 void port_unprivileged_jump(uint32_t u_pc, uint32_t u_psp) {
@@ -86,8 +107,9 @@ void port_unprivileged_jump(uint32_t u_pc, uint32_t u_psp) {
      will be used for system calls processing,*/
   tp->ctx.syscall.s_psp = __get_PSP();
 
-  /* Creating a port_extctx context for user mode entry.*/
+  /* Creating a port_extctx context for unprivileged mode entry.*/
   u_psp -= sizeof (struct port_extctx);
+  tp->ctx.syscall.u_psp = u_psp;
   ectxp = (struct port_extctx *)u_psp;
 
   /* Initializing the user mode entry context.*/
@@ -98,11 +120,8 @@ void port_unprivileged_jump(uint32_t u_pc, uint32_t u_psp) {
   ectxp->fpscr = __get_FPSCR();
 #endif
 
-  /* Setting up the new PSP into the unprivileged area.*/
-  __set_PSP(u_psp);
-
-  /* Jump with no return. */
-  asm volatile ("svc 1");
+  /* Jump with no return to the context saved at "u_psp". */
+  asm volatile ("svc     #1");
   chSysHalt("svc");
 }
 #endif /* PORT_USE_SYSCALL == TRUE */
