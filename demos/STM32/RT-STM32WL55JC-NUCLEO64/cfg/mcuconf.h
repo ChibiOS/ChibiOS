@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32L4xx drivers configuration.
+ * STM32WLxx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -131,10 +131,8 @@
 #define STM32_ADC_USE_ADC1                  FALSE
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
-#define STM32_ADC_ADC12_IRQ_PRIORITY        5
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
-#define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC_ADC123_PRESC              ADC_CCR_PRESC_DIV2
 
 /*
  * DAC driver system settings.
