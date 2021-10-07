@@ -446,7 +446,6 @@ struct port_intctx {
   uint32_t              r9;
   uint32_t              r10;
   uint32_t              r11;
-  uint32_t              control;
   uint32_t              lr_exc;
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
   uint32_t              s16;

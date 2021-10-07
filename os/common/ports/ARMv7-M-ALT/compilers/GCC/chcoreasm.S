@@ -78,16 +78,14 @@
                 .macro  PORT_STORE_INTEGER_CONTEXT
                 mrs     r2, PSP
                 mrs     r3, BASEPRI
-                mrs     r12, CONTROL
-                stmia   r1!, {r2-r12,lr}
+                stmia   r1!, {r2-r11,lr}
                 .endm
 
                 /* Load integer context through R0.*/
                 .macro  PORT_LOAD_INTEGER_CONTEXT
-                ldmia   r0!, {r2-r12, lr}
+                ldmia   r0!, {r2-r11, lr}
                 msr     PSP, r2
                 msr     BASEPRI, r3
-                msr     CONTROL, r12
                 .endm
 
 #if CORTEX_USE_FPU
@@ -281,8 +279,7 @@ PendSV_Handler:
                 /* Context store for old thread.*/
                 adds    r1, #CONTEXT_OFFSET
                 mrs     r2, PSP
-                mrs     r12, CONTROL
-                stmia   r1!, {r2-r12,lr}
+                stmia   r1!, {r2-r11,lr}
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
