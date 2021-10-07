@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32L4xx drivers configuration.
+ * STM32WLxx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -40,7 +40,7 @@
 #define STM32_CLOCK_DYNAMIC                 FALSE
 #define STM32_TARGET_CORE                   1
 #define STM32_VOS                           STM32_VOS_RANGE1
-#define STM32_PWR_CR2                       (PWR_CR2_PLS_LVL0 | PWR_CR2_PVDE)
+#define STM32_PWR_CR2                       (PWR_CR2_PLS_LVL0)
 #define STM32_PWR_PUCRA                     (0U)
 #define STM32_PWR_PDCRA                     (0U)
 #define STM32_PWR_PUCRB                     (0U)
@@ -50,7 +50,7 @@
 #define STM32_PWR_PUCRH                     (0U)
 #define STM32_PWR_PDCRH                     (0U)
 #define STM32_HSI16_ENABLED                 TRUE
-#define STM32_LSI_ENABLED                   TRUE
+#define STM32_LSI_ENABLED                   FALSE
 #define STM32_LSIPRE                        STM32_LSIPRE_NODIV
 #define STM32_HSE32_ENABLED                 TRUE
 #define STM32_HSE32SRC                      STM32_HSE32_XTAL
@@ -74,7 +74,6 @@
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
 #define STM32_MCOPRE                        STM32_MCOPRE_DIV1
 #define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
-
 
 /*
  * Peripherals clock sources.
@@ -115,7 +114,7 @@
 #define STM32_IRQ_TIM1_CC_PRIORITY          7
 #define STM32_IRQ_TIM2_PRIORITY             7
 #define STM32_IRQ_TIM16_PRIORITY            7
-#define STM32_IRQ_TIM17_PRIORITY            9
+#define STM32_IRQ_TIM17_PRIORITY            7
 #define STM32_IRQ_LPTIM1_PRIORITY           7
 #define STM32_IRQ_LPTIM2_PRIORITY           7
 #define STM32_IRQ_LPTIM3_PRIORITY           7
@@ -127,14 +126,13 @@
 /*
  * ADC driver system settings.
  */
-#define STM32_ADC_COMPACT_SAMPLES           FALSE
 #define STM32_ADC_USE_ADC1                  FALSE
-#define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
+#define STM32_ADC_ADC1_CKMODE               STM32_ADC_CKMODE_ADCCLK
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
-#define STM32_ADC_ADC12_IRQ_PRIORITY        5
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
-#define STM32_ADC_ADC123_CLOCK_MODE         ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC_ADC123_PRESC              ADC_CCR_PRESC_DIV2
+#define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
+#define STM32_ADC_PRESCALER_VALUE           2
 
 /*
  * DAC driver system settings.
@@ -178,8 +176,6 @@
  */
 #define STM32_ICU_USE_TIM1                  FALSE
 #define STM32_ICU_USE_TIM2                  FALSE
-#define STM32_ICU_USE_TIM16                 FALSE
-#define STM32_ICU_USE_TIM17                 FALSE
 
 /*
  * PWM driver system settings.
@@ -209,6 +205,13 @@
 #define STM32_SERIAL_LPUART1_PRIORITY       12
 
 /*
+ * SIO driver system settings.
+ */
+#define STM32_SIO_USE_USART1                FALSE
+#define STM32_SIO_USE_USART2                FALSE
+#define STM32_SIO_USE_LPUART1               FALSE
+
+/*
  * SPI driver system settings.
  */
 #define STM32_SPI_USE_SPI1                  FALSE
@@ -222,8 +225,10 @@
 #define STM32_SPI_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
 #define STM32_SPI_SPI1_DMA_PRIORITY         1
 #define STM32_SPI_SPI2_DMA_PRIORITY         1
+#define STM32_SPI_SPI3_DMA_PRIORITY         1
 #define STM32_SPI_SPI1_IRQ_PRIORITY         10
 #define STM32_SPI_SPI2_IRQ_PRIORITY         10
+#define STM32_SPI_SPI3_IRQ_PRIORITY         10
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 
 /*
@@ -251,7 +256,7 @@
  * UART driver system settings.
  */
 #define STM32_UART_USE_USART1               FALSE
-#define STM32_UART_USE_USART2               TRUE
+#define STM32_UART_USE_USART2               FALSE
 #define STM32_UART_USE_LPUART1              FALSE
 #define STM32_UART_USART1_RX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
 #define STM32_UART_USART1_TX_DMA_STREAM     STM32_DMA_STREAM_ID_ANY
@@ -265,11 +270,5 @@
  * WDG driver system settings.
  */
 #define STM32_WDG_USE_IWDG                  FALSE
-
-
-/* STM32FLASH driver settings */
-#define STM32FLASH_SECTORS_COUNT            128
-#define STM32FLASH_SECTOR_SIZE              (2 * 1024)
-#define STM32FLASH_PAGE_SIZE                8
 
 #endif /* MCUCONF_H */
