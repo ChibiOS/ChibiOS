@@ -63,9 +63,7 @@ CC_WEAK void port_syscall(struct port_extctx *ctxp, uint32_t n) {
   (void)ctxp;
   (void)n;
 
-  while (true) {
-    /* In unprivileged mode but nothing to do.*/;
-  }
+  chSysHalt("unimplemented syscall");
 }
 
 CC_WEAK void __port_do_syscall_entry(uint32_t n) {
