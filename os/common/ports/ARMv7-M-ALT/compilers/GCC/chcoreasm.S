@@ -77,14 +77,25 @@
                 /* Store integer context through R1.
                    On entry R2=PSP, R3=BASEPRI, R12=CONTROL.*/
                 .macro  PORT_STORE_INTEGER_CONTEXT
+#if PORT_USE_SYSCALL
+                stmia   r1!, {r2-r12,lr}
+#else
                 stmia   r1!, {r2-r11,lr}
+#endif
                 .endm
 
                 /* Load integer context through R0.*/
                 .macro  PORT_LOAD_INTEGER_CONTEXT
+#if PORT_USE_SYSCALL
+                ldmia   r0!, {r2-r12, lr}
+                msr     PSP, r2
+                msr     BASEPRI, r3
+                msr     CONTROL, r12
+#else
                 ldmia   r0!, {r2-r11, lr}
                 msr     PSP, r2
                 msr     BASEPRI, r3
+#endif
                 .endm
 
 #if CORTEX_USE_FPU
@@ -218,7 +229,7 @@ SVC_Handler:
 frompriv:
                 /* SVC called from privileged mode for unprivileged return.*/
                 ldr     r3, [r2, #24]       /* PC position. */
-                ldrh    r3, [r2, #-2]       /* SVC opcode.  */
+                ldrh    r3, [r3, #-2]       /* SVC opcode.  */
                 ands    r3, #255
                 beq     ctxswitch
                 /* Called for non-privileged mode change.*/
@@ -282,6 +293,9 @@ PendSV_Handler:
                 adds    r1, #CONTEXT_OFFSET
 
                 mrs     r2, PSP
+#if PORT_USE_SYSCALL
+                mrs     r12, CONTROL
+#endif
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT

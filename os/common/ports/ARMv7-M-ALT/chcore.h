@@ -116,7 +116,7 @@
  * @TODO
  */
 #if !defined(PORT_USE_SYSCALL) || defined(__DOXYGEN__)
-#define PORT_USE_SYSCALL                FALSE
+#define PORT_USE_SYSCALL                TRUE
 #endif
 
 /**
@@ -446,6 +446,9 @@ struct port_intctx {
   uint32_t              r9;
   uint32_t              r10;
   uint32_t              r11;
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+  uint32_t              control;
+#endif
   uint32_t              lr_exc;
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
   uint32_t              s16;
@@ -519,8 +522,10 @@ struct port_context {
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.syscall.s_psp = (uint32_t)(wtop);                             \
-    (tp)->ctx.syscall.p         = NULL;
+    (tp)->ctx.regs.control          = (uint32_t)__get_CONTROL() &           \
+                                      CONTROL_FPCA_Pos;                     \
+    (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
+    (tp)->ctx.syscall.p             = NULL;
 #else
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
 #endif
@@ -530,7 +535,7 @@ struct port_context {
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
 #define __PORT_SETUP_CONTEXT_FPU(tp)                                        \
-  (tp)->ctx.sp->fpscr = (uint32_t)0
+  (tp)->ctx.sp->fpscr               = (uint32_t)0
 #else
 #define __PORT_SETUP_CONTEXT_FPU(tp)
 #endif
@@ -543,35 +548,35 @@ struct port_context {
 
 #elif (PORT_SWITCHED_REGIONS_NUMBER == 1) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U
+    (tp)->ctx.sp->regions[0].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[0].rasr   = 0U
 
 #elif (PORT_SWITCHED_REGIONS_NUMBER == 2) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U
+    (tp)->ctx.sp->regions[0].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[0].rasr   = 0U;                                   \
+    (tp)->ctx.sp->regions[1].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[1].rasr   = 0U
 
 #elif (PORT_SWITCHED_REGIONS_NUMBER == 3) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rasr  = 0U
+    (tp)->ctx.sp->regions[0].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[0].rasr   = 0U;                                   \
+    (tp)->ctx.sp->regions[1].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[1].rasr   = 0U;                                   \
+    (tp)->ctx.sp->regions[2].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[2].rasr   = 0U
 
 #elif (PORT_SWITCHED_REGIONS_NUMBER == 4) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[3].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[3].rasr  = 0U
+    (tp)->ctx.sp->regions[0].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[0].rasr   = 0U;                                   \
+    (tp)->ctx.sp->regions[1].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[1].rasr   = 0U;                                   \
+    (tp)->ctx.sp->regions[2].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[2].rasr   = 0U;                                   \
+    (tp)->ctx.sp->regions[3].rbar   = 0U;                                   \
+    (tp)->ctx.sp->regions[3].rasr   = 0U
 
 #else
   /* Note, checked above.*/
