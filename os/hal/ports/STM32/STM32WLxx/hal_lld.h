@@ -24,10 +24,8 @@
  *          - STM32_LSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32WLE5Cx, STM32WLE5Jx, STM32WLE5Ux.
- *          - STM32WLE4Cx, STM32WLE4Jx, STM32WLE4Ux.
- *          - STM32WL5Cx, STM32WL5Jx, STM32WL5Ux.
- *          - STM32WL4Cx, STM32WL4Jx, STM32WL4Ux.
+ *          - STM32WL55xx, STM32WL54xx.
+ *          - STM32WLE5xx, STM32WLE4xx.
  *          .
  *
  * @addtogroup HAL
