@@ -74,10 +74,9 @@
  * Context switch macros depending on various options.
  *--------------------------------------------------------------------------*/
 
-                /* Store integer context through R1.*/
+                /* Store integer context through R1.
+                   On entry R2=PSP, R3=BASEPRI, R12=CONTROL.*/
                 .macro  PORT_STORE_INTEGER_CONTEXT
-                mrs     r2, PSP
-                mrs     r3, BASEPRI
                 stmia   r1!, {r2-r11,lr}
                 .endm
 
@@ -202,40 +201,43 @@
                 .thumb_func
                 .globl  SVC_Handler
 SVC_Handler:
+                mrs     r2, PSP
 #if PORT_USE_SYSCALL
-                mrs     r3, PSP
-                ldr     r3, [r3, #24]       /* PC position. */
-                mrs     r2, CONTROL
-                tst     r2, #1
+                mrs     r12, CONTROL
+                tst     r12, #1
                 beq     frompriv
                 /* SVC called from non-privileged mode for a syscall.*/
-                bic     r2, #1
-                msr     CONTROL, r2
+                bic     r12, #1
+                msr     CONTROL, r12        /* Switching to privileged. */
                 /* Note, LR already contains the return address.*/
+                ldr     r3, [r2, #24]       /* PC position. */
                 ldrh    r0, [r3, #-2]       /* SVC opcode.  */
                 and     r0, #255
                 b       __port_do_syscall_entry
 
 frompriv:
                 /* SVC called from privileged mode for unprivileged return.*/
-                ldrh    r3, [r3, #-2]       /* SVC opcode.  */
+                ldr     r3, [r2, #24]       /* PC position. */
+                ldrh    r3, [r2, #-2]       /* SVC opcode.  */
                 ands    r3, #255
                 beq     ctxswitch
                 /* Called for non-privileged mode change.*/
-                orr     r2, #1
-                msr     CONTROL, r2         /* Switching to non-privileged. */
+                orr     r12, #1
+                msr     CONTROL, r12        /* Switching to non-privileged. */
                 b       __port_do_syscall_return
 
 ctxswitch:
                 /* SVC called from privilege mode for context switch.*/
 #endif
-                /* Context store for old thread.*/
+                /* Context store for old thread through R1.*/
                 adds    r1, #CONTEXT_OFFSET
+
+                mrs     r3, BASEPRI
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
-                /* Context load for new thread.*/
+                /* Context load for new thread through R0.*/
                 adds    r0, #CONTEXT_OFFSET
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
@@ -276,14 +278,15 @@ PendSV_Handler:
                 popeq   {r3, pc}
                 pop     {r3, lr}
 
-                /* Context store for old thread.*/
+                /* Context store for old thread through R1.*/
                 adds    r1, #CONTEXT_OFFSET
+
                 mrs     r2, PSP
-                stmia   r1!, {r2-r11,lr}
+                PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
-                /* Context load for new thread.*/
+                /* Context load for new thread through R0.*/
                 adds    r0, #CONTEXT_OFFSET
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
