@@ -170,39 +170,45 @@
                 .macro  PORT_LOAD_MPU_CONTEXT
 #if PORT_SWITCHED_REGIONS_NUMBER == 1
                 ldr     r2, =MPU_RNR
-                mov     r3, #0
-                ldmia   r0!, {r4-r5}
-                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
+                mov     r1, #0
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 2
                 ldr     r2, =MPU_RNR
-                mov     r3, #0
-                ldmia   r0!, {r4-r7}
-                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
-                add     r3, #1
-                stm     r2, {r3, r6-r7}     /* RNR, RBAR1, RASR1 */
+                mov     r1, #0
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
+                mov     r1, #1
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RASR1 */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 3
                 ldr     r2, =MPU_RNR
                 mov     r3, #0
-                ldmia   r0!, {r4-r9}
-                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
-                add     r3, #1
-                stm     r2, {r3, r6-r7}     /* RNR, RBAR1, RASR1 */
-                add     r3, #1
-                stm     r2, {r3, r8-r9}     /* RNR, RBAR2, RASR2 */
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
+                mov     r1, #1
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RASR1 */
+                mov     r1, #2
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR2, RASR2 */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 4
                 ldr     r2, =MPU_RNR
                 mov     r3, #0
-                ldmia   r0!, {r4-r11}
-                stm     r2, {r3, r4-r5}     /* RNR, RBAR0, RASR0 */
-                add     r3, #1
-                stm     r2, {r3, r6-r7}     /* RNR, RBAR1, RASR1 */
-                add     r3, #1
-                stm     r2, {r3, r8-r9}     /* RNR, RBAR2, RASR2 */
-                add     r3, #1
-                stm     r2, {r3, r10-r11}   /* RNR, RBAR3, RASR3 */
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
+                mov     r1, #1
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RASR1 */
+                mov     r1, #2
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR2, RASR2 */
+                mov     r1, #3
+                ldmia   r0!, {r3, r12}
+                stm     r2, {r1, r3, r12}   /* RNR, RBAR3, RASR3 */
 #endif
                 .endm
 
