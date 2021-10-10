@@ -73,7 +73,7 @@ int main(void) {
                      MPU_RASR_SIZE_64K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
-                     0x20020000U,
+                     0x2001E000U,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
                      MPU_RASR_SIZE_4K |
@@ -83,8 +83,8 @@ int main(void) {
     .wbase      = waUnprivileged1,
     .wend       = THD_WORKING_AREA_END(waUnprivileged1),
     .prio       = NORMALPRIO + 1,
-    .u_pc       = 0x08070001U,
-    .u_psp      = 0x20020000U,
+    .u_pc       = 0x08070011U,
+    .u_psp      = 0x2001F000U,
     .arg        = NULL
   };
   chThdCreateUnprivileged(&utd);
