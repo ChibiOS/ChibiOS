@@ -26,6 +26,9 @@
  */
 int main(void) {
 
+  while(1)
+    ;
+
   /* API layer initialization.*/
   sbApiInit();
 
