@@ -25,8 +25,6 @@
  * @{
  */
 
-#include <string.h>
-
 #include "ch.h"
 
 /*===========================================================================*/
@@ -95,32 +93,6 @@ CC_WEAK void __port_do_syscall_entry(uint32_t n) {
 CC_WEAK void __port_do_syscall_return(void) {
 
   __set_PSP(__sch_get_currthread()->ctx.syscall.u_psp);
-}
-
-void port_unprivileged_jump(uint32_t u_pc, uint32_t u_psp) {
-  thread_t *tp = chThdGetSelfX();
-  struct port_extctx *ectxp;
-
-  /* Storing the current PSP position in the thread context, this position
-     will be used for system calls processing,*/
-  tp->ctx.syscall.s_psp = __get_PSP();
-
-  /* Creating a port_extctx context for unprivileged mode entry.*/
-  u_psp -= sizeof (struct port_extctx);
-  tp->ctx.syscall.u_psp = u_psp;
-  ectxp = (struct port_extctx *)u_psp;
-
-  /* Initializing the user mode entry context.*/
-  memset((void *)ectxp, 0, sizeof (struct port_extctx));
-  ectxp->pc    = u_pc;
-  ectxp->xpsr  = 0x01000000U;
-#if CORTEX_USE_FPU == TRUE
-  ectxp->fpscr = __get_FPSCR();
-#endif
-
-  /* Jump with no return to the context saved at "u_psp". */
-  asm volatile ("svc     #1");
-  chSysHalt("svc");
 }
 #endif /* PORT_USE_SYSCALL == TRUE */
 

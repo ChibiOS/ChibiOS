@@ -725,11 +725,8 @@ struct port_context {
 #ifdef __cplusplus
 extern "C" {
 #endif
-void port_init(os_instance_t *oip);
-void __port_thread_start(void);
-#if PORT_USE_SYSCALL == TRUE
-  void port_unprivileged_jump(uint32_t pc, uint32_t psp);
-#endif
+  void port_init(os_instance_t *oip);
+  void __port_thread_start(void);
 #ifdef __cplusplus
 }
 #endif
@@ -893,6 +890,7 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 #if CH_CFG_ST_TIMEDELTA > 0
 #include "chcore_timer.h"
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
+#include "chcoreapi.h"
 
 #endif /* !defined(_FROM_ASM_) */
 

@@ -1,5 +1,6 @@
 # List of the ChibiOS/RT ARMv7M generic port files.
-PORTSRC = $(CHIBIOS)/os/common/ports/ARMv7-M-ALT/chcore.c
+PORTSRC = $(CHIBIOS)/os/common/ports/ARMv7-M-ALT/chcore.c \
+          $(CHIBIOS)/os/common/ports/ARMv7-M-ALT/chcoreapi.c
           
 PORTASM = $(CHIBIOS)/os/common/ports/ARMv7-M-ALT/compilers/GCC/chcoreasm.S
 
