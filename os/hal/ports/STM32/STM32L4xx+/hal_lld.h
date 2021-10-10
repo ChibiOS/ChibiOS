@@ -1474,11 +1474,6 @@
 /*
  * PLLSAI1 enable check.
  */
-#if ((STM32_SAI1SEL == STM32_SAI1SEL_OFF) &&                                \
-    (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) ||                           \
-    (STM32_ADCSEL == STM32_ADCSEL_PLLSAI1))
-#error "PLLSAI1 is off and cannot supply CLK48 or ADC"
-#endif
 #if (STM32_SAI1SEL == STM32_SAI1SEL_PLLSAI1) ||                             \
     (STM32_SAI2SEL == STM32_SAI2SEL_PLLSAI1) ||                             \
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLSAI1) ||                           \
