@@ -40,6 +40,19 @@ static const sb_config_t sb_config1 = {
   .stderr_stream  = (SandboxStream *)&LPSIOD1
 };
 
+/* Sandbox 2 configuration.*/
+static const sb_config_t sb_config2 = {
+  .code_region    = 0U,
+  .data_region    = 1U,
+  .regions        = {
+    {(uint32_t)&__flash2_base__,   (uint32_t)&__flash2_end__,  false},
+    {(uint32_t)&__ram2_base__,     (uint32_t)&__ram2_end__,    true}
+  },
+  .stdin_stream   = (SandboxStream *)&LPSIOD1,
+  .stdout_stream  = (SandboxStream *)&LPSIOD1,
+  .stderr_stream  = (SandboxStream *)&LPSIOD1
+};
+
 /* Sandbox objects.*/
 sb_class_t sbx1, sbx2;
 
@@ -61,7 +74,7 @@ static THD_FUNCTION(Thread1, arg) {
     (void) sbSendMessage(&sbx1, (msg_t)i);
     palSetLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
-//    (void) sbSendMessage(&sbx1, (msg_t)i);
+    (void) sbSendMessage(&sbx2, (msg_t)i);
     i++;
   }
 }
@@ -94,7 +107,9 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
   /*
-   * Creating a static box using MPU.
+   * Creating **static** boxes using MPU.
+   * Note: The two regions cover both sandbox 1 and 2, there is no
+   *       isolation among them.
    */
   mpuConfigureRegion(MPU_REGION_0,
                      0x08070000U,
@@ -106,27 +121,23 @@ int main(void) {
                      0x2001E000U,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
-                     MPU_RASR_SIZE_4K |
+                     MPU_RASR_SIZE_8K |
                      MPU_RASR_ENABLE);
-#if 0
-  unprivileged_thread_descriptor_t utd = {
-    .name       = "unprivileged",
-    .wbase      = waUnprivileged1,
-    .wend       = THD_WORKING_AREA_END(waUnprivileged1),
-    .prio       = NORMALPRIO + 1,
-    .u_pc       = 0x08070011U,
-    .u_psp      = 0x2001F000U,
-    .arg        = NULL
-  };
-  chThdCreateUnprivileged(&utd);
-#endif
 
-  /* Starting sandboxed thread.*/
+  /* Starting sandboxed thread 1.*/
   utp1 = sbStartThread(&sbx1, &sb_config1, "sbx1",
                        waUnprivileged1, sizeof (waUnprivileged1),
                        NORMALPRIO - 1);
   if (utp1 == NULL) {
     chSysHalt("sbx1 failed");
+  }
+
+  /* Starting sandboxed thread 2.*/
+  utp1 = sbStartThread(&sbx2, &sb_config2, "sbx2",
+                       waUnprivileged1, sizeof (waUnprivileged1),
+                       NORMALPRIO - 1);
+  if (utp1 == NULL) {
+    chSysHalt("sbx2 failed");
   }
 
   /*
