@@ -51,30 +51,13 @@
 
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
 static THD_FUNCTION(unprivileged_handler, arg) {
-  unprivileged_thread_descriptor_t *utdp = (unprivileged_thread_descriptor_t *)arg;
   thread_t *utp = chThdGetSelfX();
-  uint32_t u_psp = utdp->u_psp;
-  struct port_extctx *ectxp;
 
-  /* Persistent thread parameter.*/
-  utp->ctx.syscall.p = utdp->arg;
+  (void)arg;
 
   /* Storing the current PSP position in the thread context, this position
      will be used for system calls processing,*/
   utp->ctx.syscall.s_psp = __get_PSP();
-
-  /* Creating a port_extctx context for unprivileged mode entry.*/
-  u_psp -= sizeof (struct port_extctx);
-  utp->ctx.syscall.u_psp = u_psp;
-  ectxp = (struct port_extctx *)u_psp;
-
-  /* Initializing the user mode entry context.*/
-  memset((void *)ectxp, 0, sizeof (struct port_extctx));
-  ectxp->pc    = utdp->u_pc;
-  ectxp->xpsr  = 0x01000000U;
-#if CORTEX_USE_FPU == TRUE
-  ectxp->fpscr = __get_FPSCR();
-#endif
 
   /* Jump with no return to the context saved at "u_psp". */
   asm volatile ("svc     #1");
@@ -93,6 +76,8 @@ static THD_FUNCTION(unprivileged_handler, arg) {
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
 thread_t *chThdCreateUnprivileged(const unprivileged_thread_descriptor_t *utdp) {
   thread_t *utp;
+  uint32_t u_psp;
+  struct port_extctx *ectxp;
 
   /* Creating a thread on the unprivileged handler.*/
   thread_descriptor_t td = {
@@ -101,12 +86,15 @@ thread_t *chThdCreateUnprivileged(const unprivileged_thread_descriptor_t *utdp) 
     .wend       = utdp->wend,
     .prio       = utdp->prio,
     .funcp      = unprivileged_handler,
-    .arg        = (void *)utdp,
+    .arg        = NULL,
 #if CH_CFG_SMP_MODE != FALSE
     .instance   = NULL
 #endif
   };
   utp = chThdCreateSuspended(&td);
+
+  /* Persistent thread parameter.*/
+  utp->ctx.syscall.p = utdp->arg;
 
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
   /* Regions for the unprivileged thread, will be set up on switch-in.*/
@@ -114,6 +102,20 @@ thread_t *chThdCreateUnprivileged(const unprivileged_thread_descriptor_t *utdp) 
     utp->ctx.regions[i].rasr = utdp->regions[i].rasr;
     utp->ctx.regions[i].rbar = utdp->regions[i].rbar;
   }
+#endif
+
+  /* Creating entry frame.*/
+  u_psp = utdp->u_psp - sizeof (struct port_extctx);
+  utp->ctx.syscall.u_psp = u_psp;
+  ectxp = (struct port_extctx *)u_psp;
+
+  /* Initializing the unprivileged mode entry context, clearing
+     all registers.*/
+  memset((void *)ectxp, 0, sizeof (struct port_extctx));
+  ectxp->pc    = utdp->u_pc;
+  ectxp->xpsr  = 0x01000000U;
+#if CORTEX_USE_FPU == TRUE
+  ectxp->fpscr = __get_FPSCR();
 #endif
 
   /* Starting the thread.*/
