@@ -106,6 +106,7 @@ include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M-ALT/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/sb/host/compilers/GCC/sbhost.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
@@ -114,7 +115,7 @@ include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32G474xE.ld
+LDSCRIPT= ./STM32G474xE_SB.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

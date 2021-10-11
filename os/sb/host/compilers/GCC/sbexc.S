@@ -54,7 +54,7 @@ port_syscall:
                 ldr         r3, =sb_syscalls
                 ldr.w       r3, [r3, r1, lsl #2]
                 blx         r3
-                svc         0
+                svc         1
 .zombies1:      b           .zombies1
 
                 .align      2

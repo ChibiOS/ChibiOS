@@ -102,6 +102,62 @@ void sbObjectInit(sb_class_t *sbcp) {
 /**
  * @brief   Starts a sandboxed thread.
  *
+ * @param[out] sbcp     pointer to the sandbox object
+ * @param[in] config    pointer to the sandbox configuration
+ * @return              The thread pointer.
+ * @retval NULL         if the sandbox thread creation failed.
+ */
+thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
+                        const char *name, void *wsp, size_t size,
+                        tprio_t prio) {
+  thread_t *utp;
+  const sb_header_t *sbhp;
+
+  /* Header location.*/
+  sbhp = (const sb_header_t *)config->regions[config->code_region].base;
+
+  /* Checking header magic numbers.*/
+  if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
+    return NULL;
+  }
+
+  /* Checking header size and alignment.*/
+  if (sbhp->hdr_size != sizeof (sb_header_t)) {
+    return NULL;
+  }
+
+  /* Linking configuration information.*/
+  sbcp->config = config;
+
+  unprivileged_thread_descriptor_t utd = {
+    .name       = name,
+    .wbase      = (stkalign_t *)wsp,
+    .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
+    .prio       = prio,
+    .u_pc       = (config->regions[config->code_region].base +
+                   sizeof (sb_header_t)) | 1U,
+    .u_psp      = config->regions[config->data_region].end,
+    .arg        = (void *)sbcp
+  };
+
+  utp = chThdCreateUnprivileged(&utd);
+
+  /* For messages exchange.*/
+  sbcp->tp      = utp;
+#if CH_CFG_USE_MESSAGES == TRUE
+  sbcp->msg_tp  = NULL;
+#endif
+#if CH_CFG_USE_EVENTS == TRUE
+  chEvtObjectInit(&sbcp->es);
+#endif
+
+  return utp;
+}
+
+#if 0
+/**
+ * @brief   Starts a sandboxed thread.
+ *
  * @param[in] sbcp      pointer to the sandbox object
  * @return              The function returns only if the operation failed.
  *
@@ -142,6 +198,7 @@ void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
   /* Must never happen condition.*/
   chSysHalt("returned");
 }
+#endif
 
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**

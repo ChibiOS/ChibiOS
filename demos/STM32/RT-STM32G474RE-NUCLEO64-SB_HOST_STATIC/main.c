@@ -16,8 +16,32 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "sb.h"
+
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
+
+/* Static memory areas used by sandboxes.*/
+extern uint32_t __flash1_base__, __flash1_end__,
+                __flash2_base__, __flash2_end__,
+                __ram1_base__,   __ram1_end__,
+                __ram2_base__,   __ram2_end__;
+
+/* Sandbox 1 configuration.*/
+static const sb_config_t sb_config1 = {
+  .code_region    = 0U,
+  .data_region    = 1U,
+  .regions        = {
+    {(uint32_t)&__flash1_base__,   (uint32_t)&__flash1_end__,  false},
+    {(uint32_t)&__ram1_base__,     (uint32_t)&__ram1_end__,    true}
+  },
+  .stdin_stream   = (SandboxStream *)&LPSIOD1,
+  .stdout_stream  = (SandboxStream *)&LPSIOD1,
+  .stderr_stream  = (SandboxStream *)&LPSIOD1
+};
+
+/* Sandbox objects.*/
+sb_class_t sbx1, sbx2;
 
 static THD_WORKING_AREA(waUnprivileged1, 256);
 
@@ -26,14 +50,19 @@ static THD_WORKING_AREA(waUnprivileged1, 256);
  */
 static THD_WORKING_AREA(waThread1, 256);
 static THD_FUNCTION(Thread1, arg) {
+  unsigned i = 1U;
 
   (void)arg;
+
   chRegSetThreadName("blinker");
   while (true) {
     palClearLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
+    (void) sbSendMessage(&sbx1, (msg_t)i);
     palSetLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
+//    (void) sbSendMessage(&sbx1, (msg_t)i);
+    i++;
   }
 }
 
@@ -41,6 +70,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  thread_t *utp1;
 
   /*
    * System initializations.
@@ -64,7 +94,7 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
   /*
-   * Creates an unprivileged thread.
+   * Creating a static box using MPU.
    */
   mpuConfigureRegion(MPU_REGION_0,
                      0x08070000U,
@@ -78,6 +108,7 @@ int main(void) {
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
                      MPU_RASR_SIZE_4K |
                      MPU_RASR_ENABLE);
+#if 0
   unprivileged_thread_descriptor_t utd = {
     .name       = "unprivileged",
     .wbase      = waUnprivileged1,
@@ -88,6 +119,15 @@ int main(void) {
     .arg        = NULL
   };
   chThdCreateUnprivileged(&utd);
+#endif
+
+  /* Starting sandboxed thread.*/
+  utp1 = sbStartThread(&sbx1, &sb_config1, "sbx1",
+                       waUnprivileged1, sizeof (waUnprivileged1),
+                       NORMALPRIO - 1);
+  if (utp1 == NULL) {
+    chSysHalt("sbx1 failed");
+  }
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

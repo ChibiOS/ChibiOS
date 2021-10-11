@@ -26,16 +26,9 @@
  */
 int main(void) {
 
-  while(1)
-    ;
-
   /* API layer initialization.*/
   sbApiInit();
 
-  /*
-   * Normal main() activity, in this demo it does nothing except
-   * sleeping in a loop.
-   */
 #if 0
   /* Test for exception on interrupt.*/
   asm volatile ("mov r0, #64");

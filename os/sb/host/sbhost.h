@@ -176,6 +176,9 @@ extern "C" {
   bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size);
   void sbObjectInit(sb_class_t *sbcp);
   void sbStart(sb_class_t *sbcp, const sb_config_t *config);
+  thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
+                          const char *name, void *wsp, size_t size,
+                          tprio_t prio);
   msg_t sbSendMessageTimeout(sb_class_t *sbcp,
                              msg_t msg,
                              sysinterval_t timeout);

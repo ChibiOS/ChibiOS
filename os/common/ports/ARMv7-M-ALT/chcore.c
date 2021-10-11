@@ -56,6 +56,18 @@
 /*===========================================================================*/
 
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+CC_NO_INLINE void port_syslock_noinline(void) {
+
+  port_lock();
+  __stats_start_measure_crit_thd();
+  __dbg_check_lock();
+}
+
+CC_NO_INLINE uint32_t port_get_s_psp(void) {
+
+  return (uint32_t)__sch_get_currthread()->ctx.syscall.s_psp;
+}
+
 CC_WEAK void port_syscall(struct port_extctx *ctxp, uint32_t n) {
 
   (void)ctxp;
