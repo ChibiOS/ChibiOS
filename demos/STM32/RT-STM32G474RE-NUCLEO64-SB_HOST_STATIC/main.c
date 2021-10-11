@@ -57,6 +57,7 @@ static const sb_config_t sb_config2 = {
 sb_class_t sbx1, sbx2;
 
 static THD_WORKING_AREA(waUnprivileged1, 256);
+static THD_WORKING_AREA(waUnprivileged2, 256);
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -134,7 +135,7 @@ int main(void) {
 
   /* Starting sandboxed thread 2.*/
   utp1 = sbStartThread(&sbx2, &sb_config2, "sbx2",
-                       waUnprivileged1, sizeof (waUnprivileged1),
+                       waUnprivileged2, sizeof (waUnprivileged2),
                        NORMALPRIO - 1);
   if (utp1 == NULL) {
     chSysHalt("sbx2 failed");
