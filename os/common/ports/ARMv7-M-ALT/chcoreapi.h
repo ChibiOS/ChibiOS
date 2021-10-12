@@ -45,6 +45,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of an MPU region registers structure.
+ *
+ */
+typedef struct {
+  uint32_t        rbar;
+  uint32_t        rasr;
+} mpureg_t;
+
+/**
  * @brief   Type of an unprivileged thread descriptor.
  */
 typedef struct {
@@ -79,10 +88,7 @@ typedef struct {
   /**
    * @brief   MPU regions to be initialized.
    */
-  struct {
-    uint32_t        rbar;
-    uint32_t        rasr;
-  } regions [PORT_SWITCHED_REGIONS_NUMBER];
+  mpureg_t          regions [PORT_SWITCHED_REGIONS_NUMBER];
 } unprivileged_thread_descriptor_t;
 
 /*===========================================================================*/

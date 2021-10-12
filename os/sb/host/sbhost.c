@@ -144,6 +144,11 @@ thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
     .u_psp      = config->regions[config->data_region].end,
     .arg        = (void *)sbcp
   };
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
+  for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
+    utd.regions[i] = config->mpuregs[i];
+  }
+#endif
 
   utp = chThdCreateUnprivileged(&utd);
 
@@ -158,52 +163,6 @@ thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
 
   return utp;
 }
-
-#if 0
-/**
- * @brief   Starts a sandboxed thread.
- *
- * @param[in] sbcp      pointer to the sandbox object
- * @return              The function returns only if the operation failed.
- *
- * @api
- */
-void sbStart(sb_class_t *sbcp, const sb_config_t *config) {
-  uint32_t pc, psp;
-  const sb_header_t *sbhp;
-
-  /* Header location.*/
-  sbhp = (const sb_header_t *)config->regions[config->code_region].base;
-
-  /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
-    return;
-  }
-
-  /* Checking header size and alignment.*/
-  if (sbhp->hdr_size != sizeof (sb_header_t)) {
-    return;
-  }
-
-  /* PC initial address, by convention it is immediately after the header.*/
-  pc = (config->regions[config->code_region].base + sizeof (sb_header_t)) | 1U;
-
-  /* PSP initial address.*/
-  psp = config->regions[config->data_region].end;
-
-  /* Additional context information.*/
-  sbcp->config = config;
-  sbcp->tp     = chThdGetSelfX();
-  sbcp->tp->ctx.syscall.p    = (const void *)sbcp;
-  sbcp->tp->ctx.syscall.psp  = __get_PSP();
-
-  /* Jumping to the unprivileged code.*/
-  port_unprivileged_jump(pc, psp);
-
-  /* Must never happen condition.*/
-  chSysHalt("returned");
-}
-#endif
 
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**

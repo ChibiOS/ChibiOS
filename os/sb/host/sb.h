@@ -49,17 +49,17 @@
 /**
  * @brief   Safety Extensions version string.
  */
-#define CH_SB_VERSION           "1.1.0"
+#define CH_SB_VERSION           "2.0.0"
 
 /**
  * @brief   Safety Extensions version major number.
  */
-#define CH_SB_MAJOR             1
+#define CH_SB_MAJOR             2
 
 /**
  * @brief   Safety Extensions version minor number.
  */
-#define CH_SB_MINOR             1
+#define CH_SB_MINOR             0
 
 /**
  * @brief   Safety Extensions version patch number.
@@ -115,6 +115,11 @@
 
 #if (SB_NUM_REGIONS < 1) || (SB_NUM_REGIONS > 4)
 #error "invalid SB_NUM_REGIONS value"
+#endif
+
+#if (PORT_SWITCHED_REGIONS_NUMBER > 0) &&                                   \
+    (PORT_SWITCHED_REGIONS_NUMBER != SB_NUM_REGIONS)
+#error "SB_NUM_REGIONS not matching PORT_SWITCHED_REGIONS_NUMBER"
 #endif
 
 /*===========================================================================*/
