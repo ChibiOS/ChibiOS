@@ -91,16 +91,6 @@ typedef uint32_t eventmask_t;
  */
 typedef uint32_t eventflags_t;
 
-/**
- * @brief   Type of a sandbox API internal state variables.
- */
-typedef struct {
-  /**
-   * @brief   System tick frequency.
-   */
-  time_conv_t               frequency;
-} sbapi_state_t;
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -172,12 +162,10 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern sbapi_state_t sb;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sbApiInit(void);
+
 #ifdef __cplusplus
 }
 #endif
@@ -452,8 +440,9 @@ static inline uint32_t sbEventBroadcastFlags(eventflags_t flags) {
  */
 static inline sysinterval_t sbTimeS2I(time_secs_t secs) {
   time_conv_t ticks;
+  uint32_t f = sbGetFrequency();
 
-  ticks = (time_conv_t)secs * sb.frequency;
+  ticks = (time_conv_t)secs * f;
 
 /*  sbDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
               "conversion overflow");*/
@@ -473,9 +462,9 @@ static inline sysinterval_t sbTimeS2I(time_secs_t secs) {
  */
 static inline sysinterval_t sbTimeMS2I(time_msecs_t msec) {
   time_conv_t ticks;
+  uint32_t f = sbGetFrequency();
 
-  ticks = (((time_conv_t)msec * sb.frequency) +
-           (time_conv_t)999) / (time_conv_t)1000;
+  ticks = (((time_conv_t)msec * f) + (time_conv_t)999) / (time_conv_t)1000;
 
 /*  chDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
               "conversion overflow");*/
@@ -495,9 +484,9 @@ static inline sysinterval_t sbTimeMS2I(time_msecs_t msec) {
  */
 static inline sysinterval_t sbTimeUS2I(time_usecs_t usec) {
   time_conv_t ticks;
+  uint32_t f = sbGetFrequency();
 
-  ticks = (((time_conv_t)usec * sb.frequency) +
-           (time_conv_t)999999) / (time_conv_t)1000000;
+  ticks = (((time_conv_t)usec * f) + (time_conv_t)999999) / (time_conv_t)1000000;
 
 /*  chDbgAssert(ticks <= (time_conv_t)TIME_MAX_INTERVAL,
               "conversion overflow");*/
@@ -517,10 +506,9 @@ static inline sysinterval_t sbTimeUS2I(time_usecs_t usec) {
  */
 static inline time_secs_t sbTimeI2S(sysinterval_t interval) {
   time_conv_t secs;
+  uint32_t f = sbGetFrequency();
 
-  secs = ((time_conv_t)interval +
-          sb.frequency -
-          (time_conv_t)1) / sb.frequency;
+  secs = ((time_conv_t)interval + f - (time_conv_t)1) / f;
 
 /*  sbDbgAssert(secs < (time_conv_t)((time_secs_t)-1),
               "conversion overflow");*/
@@ -540,10 +528,9 @@ static inline time_secs_t sbTimeI2S(sysinterval_t interval) {
  */
 static inline time_msecs_t sbTimeI2MS(sysinterval_t interval) {
   time_conv_t msecs;
+  uint32_t f = sbGetFrequency();
 
-  msecs = (((time_conv_t)interval * (time_conv_t)1000) +
-           sb.frequency - (time_conv_t)1) /
-          sb.frequency;
+  msecs = (((time_conv_t)interval * (time_conv_t)1000) + f - (time_conv_t)1) / f;
 
 /*  sbDbgAssert(msecs < (time_conv_t)((time_msecs_t)-1),
               "conversion overflow");*/
@@ -563,9 +550,9 @@ static inline time_msecs_t sbTimeI2MS(sysinterval_t interval) {
  */
 static inline time_usecs_t sbTimeI2US(sysinterval_t interval) {
   time_conv_t usecs;
+  uint32_t f = sbGetFrequency();
 
-  usecs = (((time_conv_t)interval * (time_conv_t)1000000) +
-           sb.frequency - (time_conv_t)1) / sb.frequency;
+  usecs = (((time_conv_t)interval * (time_conv_t)1000000) + f - (time_conv_t)1) / f;
 
 /*  sbDbgAssert(usecs <= (time_conv_t)((time_usecs_t)-1),
               "conversion overflow");*/

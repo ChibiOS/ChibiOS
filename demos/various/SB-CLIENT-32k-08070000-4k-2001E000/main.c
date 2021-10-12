@@ -26,9 +26,6 @@
  */
 int main(void) {
 
-  /* API layer initialization.*/
-  sbApiInit();
-
 #if 0
   /* Test for exception on interrupt.*/
   asm volatile ("mov r0, #64");
