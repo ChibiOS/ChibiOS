@@ -6,3 +6,6 @@
 demos/various/RT-ARMCM4-MAKELIB/Makefile:
   - lib
   - clean
+
+testhal/STM32/STM32WLxx/Makefile: []
+
