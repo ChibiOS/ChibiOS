@@ -33,30 +33,30 @@ static const sb_config_t sb_config1 = {
   .code_region    = 0U,
   .data_region    = 1U,
   .regions        = {
-    {
+    [0] = {
       (uint32_t)&__flash1_base__,   (uint32_t)&__flash1_end__,  false
     },
-    {
+    [1] = {
        (uint32_t)&__ram1_base__,    (uint32_t)&__ram1_end__,    true
     }
   },
   .mpuregs        = {
-    {
+    [0] = {
       (uint32_t)&__flash1_base__,   MPU_RASR_ATTR_AP_RO_RO |
                                     MPU_RASR_ATTR_CACHEABLE_WT_NWA |
                                     MPU_RASR_SIZE_32K |
                                     MPU_RASR_ENABLE
     },
-    {
+    [1] = {
       (uint32_t)&__ram1_base__,     MPU_RASR_ATTR_AP_RW_RW |
                                     MPU_RASR_ATTR_CACHEABLE_WB_WA |
                                     MPU_RASR_SIZE_4K |
                                     MPU_RASR_ENABLE
     }
   },
-  .stdin_stream   = (SandboxStream *)&LPSIOD1,
-  .stdout_stream  = (SandboxStream *)&LPSIOD1,
-  .stderr_stream  = (SandboxStream *)&LPSIOD1
+  .stdin_stream   = (SandboxStream *)&LPSD1,
+  .stdout_stream  = (SandboxStream *)&LPSD1,
+  .stderr_stream  = (SandboxStream *)&LPSD1
 };
 
 /* Sandbox 2 configuration.*/
@@ -64,30 +64,30 @@ static const sb_config_t sb_config2 = {
   .code_region    = 0U,
   .data_region    = 1U,
   .regions        = {
-    {
+    [0] = {
       (uint32_t)&__flash2_base__,   (uint32_t)&__flash2_end__,  false
     },
-    {
+    [1] = {
       (uint32_t)&__ram2_base__,     (uint32_t)&__ram2_end__,    true
     }
   },
   .mpuregs        = {
-    {
+    [0] = {
       (uint32_t)&__flash2_base__,   MPU_RASR_ATTR_AP_RO_RO |
                                     MPU_RASR_ATTR_CACHEABLE_WT_NWA |
                                     MPU_RASR_SIZE_32K |
                                     MPU_RASR_ENABLE
     },
-    {
+    [1] = {
       (uint32_t)&__ram2_base__,     MPU_RASR_ATTR_AP_RW_RW |
                                     MPU_RASR_ATTR_CACHEABLE_WB_WA |
                                     MPU_RASR_SIZE_4K |
                                     MPU_RASR_ENABLE
     }
   },
-  .stdin_stream   = (SandboxStream *)&LPSIOD1,
-  .stdout_stream  = (SandboxStream *)&LPSIOD1,
-  .stderr_stream  = (SandboxStream *)&LPSIOD1
+  .stdin_stream   = (SandboxStream *)&LPSD1,
+  .stdout_stream  = (SandboxStream *)&LPSD1,
+  .stderr_stream  = (SandboxStream *)&LPSD1
 };
 
 /* Sandbox objects.*/
@@ -142,10 +142,9 @@ int main(void) {
   chEvtRegister(&sb.termination_es, &el1, (eventid_t)0);
 
   /*
-   * Activates the Serial or SIO driver using the default configuration.
+   * Activates the Serial driver using the default configuration.
    */
-  sioStart(&LPSIOD1, NULL);
-  sioStartOperation(&LPSIOD1, NULL);
+  sdStart(&LPSD1, NULL);
 
   /*
    * Creates the blinker thread.
@@ -176,19 +175,19 @@ int main(void) {
 
     /* Checking for user button, launching test suite if pressed.*/
     if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&LPSIOD1, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&LPSIOD1, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
     }
 
     /* Waiting for a sandbox event or timeout.*/
     if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
 
       if (chThdTerminatedX(utp1)) {
-        chprintf((BaseSequentialStream *)&LPSIOD1, "SB1 terminated\r\n");
+        chprintf((BaseSequentialStream *)&LPSD1, "SB1 terminated\r\n");
       }
 
       if (chThdTerminatedX(utp2)) {
-        chprintf((BaseSequentialStream *)&LPSIOD1, "SB2 terminated\r\n");
+        chprintf((BaseSequentialStream *)&LPSD1, "SB2 terminated\r\n");
       }
     }
   }

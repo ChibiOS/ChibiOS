@@ -111,9 +111,7 @@ typedef struct {
   /**
    * @brief   MPU regions initialization values.
    * @note    Regions initialization values must be chosen to be
-   *          functionally equivalent to the values in the "regions"
-   *          field.
-   *
+   *          consistent with the values in the "regions" field.
    */
   mpureg_t                      mpuregs[SB_NUM_REGIONS];
 #endif
