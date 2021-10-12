@@ -149,7 +149,7 @@ UsageFault_Handler:
 
                 /* Exception exit point.*/
 .do_exit:
-                bl          chThdExitS
+                bl          __sb_abort
 .zombies2:      b           .zombies2
 
                 .align      2

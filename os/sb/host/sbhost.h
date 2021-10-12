@@ -55,6 +55,21 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a sandbox manager global structure.
+ */
+typedef struct {
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Event source for sandbox termination.
+   */
+  event_source_t                termination_es;
+#endif
+} sb_t;
+
+/**
+ * @brief   Type of a sandbox memory region.
+ */
 typedef struct {
   /**
    * @brief   Memory range base.
@@ -168,6 +183,8 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern sb_t sb;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -189,6 +206,18 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Initialization of the sandbox host.
+ *
+ * @init
+ */
+static inline void sbHostInit(void) {
+
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  chEvtObjectInit(&sb.termination_es);
+#endif
+}
 
 #if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
 /**

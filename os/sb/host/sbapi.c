@@ -922,6 +922,14 @@ static void sb_undef_handler(struct port_extctx *ectxp) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+void __sb_abort(msg_t msg) {
+
+#if CH_CFG_USE_EVENTS == TRUE
+  chEvtBroadcastI(&sb.termination_es);
+#endif
+  chThdExitS(msg);
+}
+
 void sb_api_stdio(struct port_extctx *ectxp) {
 
   switch (ectxp->r0) {
@@ -955,7 +963,12 @@ void sb_api_stdio(struct port_extctx *ectxp) {
 
 void sb_api_exit(struct port_extctx *ectxp) {
 
-  chThdExit((msg_t )ectxp->r0);
+  chSysLock();
+#if CH_CFG_USE_EVENTS == TRUE
+  chEvtBroadcastI(&sb.termination_es);
+#endif
+  chThdExitS((msg_t )ectxp->r0);
+  chSysUnlock();
 
   /* Cannot get here.*/
   ectxp->r0 = SB_ERR_ENOSYS;

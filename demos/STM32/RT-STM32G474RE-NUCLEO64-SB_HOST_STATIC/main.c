@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "sb.h"
+#include "chprintf.h"
 
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
@@ -72,10 +73,10 @@ static THD_FUNCTION(Thread1, arg) {
   while (true) {
     palClearLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
-    (void) sbSendMessage(&sbx1, (msg_t)i);
+    (void) sbSendMessageTimeout(&sbx1, (msg_t)i, TIME_MS2I(10));
     palSetLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
-    (void) sbSendMessage(&sbx2, (msg_t)i);
+    (void) sbSendMessageTimeout(&sbx2, (msg_t)i, TIME_MS2I(10));
     i++;
   }
 }
@@ -84,7 +85,8 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-  thread_t *utp1;
+  thread_t *utp1, *utp2;
+  event_listener_t el1;
 
   /*
    * System initializations.
@@ -92,9 +94,16 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   * - SandBox manager initialization.
    */
   halInit();
   chSysInit();
+  sbHostInit();
+
+  /*
+   * Listening to sandbox events.
+   */
+  chEvtRegister(&sb.termination_es, &el1, (eventid_t)0);
 
   /*
    * Activates the Serial or SIO driver using the default configuration.
@@ -134,7 +143,7 @@ int main(void) {
   }
 
   /* Starting sandboxed thread 2.*/
-  utp1 = sbStartThread(&sbx2, &sb_config2, "sbx2",
+  utp2 = sbStartThread(&sbx2, &sb_config2, "sbx2",
                        waUnprivileged2, sizeof (waUnprivileged2),
                        NORMALPRIO - 1);
   if (utp1 == NULL) {
@@ -142,15 +151,28 @@ int main(void) {
   }
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * Normal main() thread activity, in this demo it monitos the user button
+   * and checks for sandboxes state.
    */
   while (true) {
-   if (palReadLine(LINE_BUTTON)) {
+
+    /* Checking for user button, launching test suite if pressed.*/
+    if (palReadLine(LINE_BUTTON)) {
       test_execute((BaseSequentialStream *)&LPSIOD1, &rt_test_suite);
       test_execute((BaseSequentialStream *)&LPSIOD1, &oslib_test_suite);
     }
-    chThdSleepMilliseconds(500);
+
+    /* Waiting for a sandbox event or timeout.*/
+    if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
+
+      if (chThdTerminatedX(utp1)) {
+        chprintf((BaseSequentialStream *)&LPSIOD1, "SB1 terminated\r\n");
+      }
+
+      if (chThdTerminatedX(utp2)) {
+        chprintf((BaseSequentialStream *)&LPSIOD1, "SB2 terminated\r\n");
+      }
+    }
   }
 }
 
