@@ -207,6 +207,10 @@ static void __sch_wakeup(virtual_timer_t *vtp, void *p) {
     /* Falls through.*/
   case CH_STATE_QUEUED:
     /* Falls through.*/
+#if CH_CFG_USE_MESSAGES == TRUE
+  case CH_STATE_SNDMSGQ:
+    /* Falls through.*/
+#endif
 #if (CH_CFG_USE_CONDVARS == TRUE) && (CH_CFG_USE_CONDVARS_TIMEOUT == TRUE)
   case CH_STATE_WTCOND:
 #endif

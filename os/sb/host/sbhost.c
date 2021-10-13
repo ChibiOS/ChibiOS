@@ -201,7 +201,7 @@ msg_t sbSendMessageTimeout(sb_class_t *sbcp,
   /* If a timeout occurred while the boxed thread already received the message
      then this thread needs to "unregister" as sender, the boxed error will
      get SB_ERR_EBUSY when/if trying to reply.*/
-  if (sbcp->msg_tp == ctp) {
+  if ((msg == MSG_TIMEOUT) && (sbcp->msg_tp == ctp)) {
     sbcp->msg_tp = NULL;
   }
 
