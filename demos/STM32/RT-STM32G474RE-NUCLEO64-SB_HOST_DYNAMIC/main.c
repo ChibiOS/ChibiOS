@@ -101,19 +101,13 @@ static THD_WORKING_AREA(waUnprivileged2, 256);
  */
 static THD_WORKING_AREA(waThread1, 256);
 static THD_FUNCTION(Thread1, arg) {
-  unsigned i = 1U;
 
   (void)arg;
 
   chRegSetThreadName("blinker");
   while (true) {
-    palClearLine(LINE_LED_GREEN);
+    palToggleLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
-    (void) sbSendMessageTimeout(&sbx1, (msg_t)i, TIME_MS2I(10));
-    palSetLine(LINE_LED_GREEN);
-    chThdSleepMilliseconds(500);
-    (void) sbSendMessageTimeout(&sbx2, (msg_t)i, TIME_MS2I(10));
-    i++;
   }
 }
 
@@ -121,6 +115,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  unsigned i = 1U;
   thread_t *utp1, *utp2;
   event_listener_t el1;
 
@@ -190,6 +185,18 @@ int main(void) {
         chprintf((BaseSequentialStream *)&LPSD1, "SB2 terminated\r\n");
       }
     }
+
+    if ((i & 1) == 0U) {
+      if (!chThdTerminatedX(utp1)) {
+        (void) sbSendMessageTimeout(&sbx1, (msg_t)i, TIME_MS2I(10));
+      }
+    }
+    else {
+      if (!chThdTerminatedX(utp2)) {
+        (void) sbSendMessageTimeout(&sbx2, (msg_t)i, TIME_MS2I(10));
+      }
+    }
+    i++;
   }
 }
 
