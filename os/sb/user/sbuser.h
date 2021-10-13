@@ -19,9 +19,9 @@
 
 /**
  * @file    sb/user/sbapi.h
- * @brief   ARMv7-M sandbox user API macros and structures.
+ * @brief   ARM SandBox user API macros and structures.
  *
- * @addtogroup ARMV7M_SANDBOX_USERAPI
+ * @addtogroup ARM_SANDBOX_USER_API
  * @{
  */
 

@@ -19,7 +19,7 @@
 
 /**
  * @file    sb/host/sbposix.c
- * @brief   ARM sandbox host Posix API code.
+ * @brief   ARM SandBox host Posix API code.
  *
  * @addtogroup ARM_SANDBOX_HOSTAPI
  * @{

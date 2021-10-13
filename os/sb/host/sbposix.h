@@ -19,9 +19,9 @@
 
 /**
  * @file    sb/host/sbposix.h
- * @brief   ARM sandbox host Posix API macros and structures.
+ * @brief   ARM SandBox host Posix API macros and structures.
  *
- * @addtogroup ARM_SANDBOX_POSIX
+ * @addtogroup ARM_SANDBOX_HOSTAPI
  * @{
  */
 

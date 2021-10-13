@@ -19,7 +19,7 @@
 
 /**
  * @file    sb/host/sbhost.c
- * @brief   ARM sandbox host code.
+ * @brief   ARM SandBox host code.
  *
  * @addtogroup ARM_SANDBOX
  * @{

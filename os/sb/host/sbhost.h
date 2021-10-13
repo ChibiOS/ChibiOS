@@ -19,7 +19,7 @@
 
 /**
  * @file    sb/host/sbhost.h
- * @brief   ARM sandbox host macros and structures.
+ * @brief   ARM SandBox host macros and structures.
  *
  * @addtogroup ARM_SANDBOX
  * @{
