@@ -328,8 +328,6 @@ void spiAbort(SPIDriver *spip) {
  *          idle words on the SPI bus and ignores the received data.
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
- * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p end_cb = @p NULL).
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
@@ -356,8 +354,6 @@ void spiIgnore(SPIDriver *spip, size_t n) {
  *          operation.
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
- * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p end_cb = @p NULL).
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -389,8 +385,6 @@ void spiExchange(SPIDriver *spip, size_t n,
  * @details This synchronous function performs a transmit operation.
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
- * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p end_cb = @p NULL).
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -419,8 +413,6 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @details This synchronous function performs a receive operation.
  * @pre     In order to use this function the option @p SPI_USE_WAIT must be
  *          enabled.
- * @pre     In order to use this function the driver must have been configured
- *          without callbacks (@p end_cb = @p NULL).
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
