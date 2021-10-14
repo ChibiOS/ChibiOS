@@ -153,32 +153,32 @@ struct hal_spi_config {
   bool                      circular;
 #endif
   /**
-   * @brief Operation complete callback or @p NULL.
+   * @brief   Operation complete callback or @p NULL.
    */
   spicallback_t             end_cb;
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
   /**
-   * @brief The chip select line.
+   * @brief   The chip select line.
    */
   ioline_t                  ssline;
 #endif
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined(__DOXYGEN__)
   /**
-   * @brief The chip select port.
+   * @brief   The chip select port.
    */
   ioportid_t                ssport;
   /**
-   * @brief The chip select port mask.
+   * @brief   The chip select port mask.
    */
   ioportmask_t              ssmask;
 #endif
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined(__DOXYGEN__)
   /**
-   * @brief The chip select port.
+   * @brief   The chip select port.
    */
   ioportid_t                ssport;
   /**
-   * @brief The chip select pad number.
+   * @brief   The chip select pad number.
    */
   uint_fast8_t              sspad;
 #endif
@@ -231,9 +231,9 @@ struct hal_spi_driver {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @return              The buffer state.
- * @retval              false if the driver filled/sent the first half of the
+ * @retval false        if the driver filled/sent the first half of the
  *                      buffer.
- * @retval              true if the driver filled/sent the second half of the
+ * @retval true         if the driver filled/sent the second half of the
  *                      buffer.
  *
  * @special
