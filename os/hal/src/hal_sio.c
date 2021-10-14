@@ -447,6 +447,8 @@ size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n) {
  * @retval MSG_RESET        operation has been stopped while waiting.
  * @retval SIO_MSG_IDLE     if RX line went idle.
  * @retval SIO_MSG_ERRORS   if RX errors occurred during wait.
+ *
+ * @api
  */
 msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
   msg_t msg = MSG_OK;
@@ -482,6 +484,8 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
  * @retval MSG_OK           if there is space in the TX FIFO.
  * @retval MSG_TIMEOUT      if synchronization timed out.
  * @retval MSG_RESET        operation has been stopped while waiting.
+ *
+ * @api
  */
 msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
   msg_t msg = MSG_OK;
@@ -514,6 +518,8 @@ msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
  * @return                  The synchronization result.
  * @retval MSG_OK           if TX operation finished.
  * @retval MSG_TIMEOUT      if synchronization timed out.
+ *
+ * @api
  */
 msg_t sioSynchronizeTXEnd(SIODriver *siop, sysinterval_t timeout) {
   msg_t msg;
