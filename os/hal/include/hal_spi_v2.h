@@ -173,11 +173,11 @@ struct hal_spi_config {
   /**
    * @brief   Operation complete callback or @p NULL.
    */
-  spicallback_t             end_cb;
+  spicb_t                   end_cb;
   /**
    * @brief   Operation error callback or @p NULL.
    */
-  spicallback_t             error_cb;
+  spicb_t                   error_cb;
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
   /**
    * @brief   The chip select line.
