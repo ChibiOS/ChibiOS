@@ -107,9 +107,9 @@ msg_t adcStart(ADCDriver *adcp, const ADCConfig *config) {
   msg = adc_lld_start(adcp);
 #else
   adc_lld_start(adcp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     adcp->state = ADC_READY;
   }
   else {

@@ -384,7 +384,7 @@ msg_t sio_lld_start(SIODriver *siop) {
   /* Configures the peripheral.*/
   usart_init(siop, clock);
 
-  return HAL_START_SUCCESS;
+  return HAL_RET_SUCCESS;
 }
 
 

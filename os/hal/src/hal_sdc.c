@@ -580,9 +580,9 @@ msg_t sdcStart(SDCDriver *sdcp, const SDCConfig *config) {
   msg = sdc_lld_start(sdcp);
 #else
   sdc_lld_start(sdcp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     sdcp->state = BLK_ACTIVE;
   }
   else {

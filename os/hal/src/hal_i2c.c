@@ -106,9 +106,9 @@ msg_t i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
   msg = i2c_lld_start(i2cp);
 #else
   i2c_lld_start(i2cp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     i2cp->state = I2C_READY;
   }
   else {

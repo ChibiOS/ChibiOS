@@ -110,9 +110,9 @@ msg_t uartStart(UARTDriver *uartp, const UARTConfig *config) {
   msg = uart_lld_start(uartp);
 #else
   uart_lld_start(uartp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     uartp->state = UART_READY;
   }
   else {

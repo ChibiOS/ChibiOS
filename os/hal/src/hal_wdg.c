@@ -82,9 +82,9 @@ msg_t wdgStart(WDGDriver *wdgp, const WDGConfig *config) {
   msg = wdg_lld_start(wdgp);
 #else
   wdg_lld_start(wdgp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     wdgp->state = WDG_READY;
   }
   else {

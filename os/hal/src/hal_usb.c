@@ -320,9 +320,9 @@ msg_t usbStart(USBDriver *usbp, const USBConfig *config) {
   msg = usb_lld_start(usbp);
 #else
   usb_lld_start(usbp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     usbp->state = USB_READY;
   }
   else {

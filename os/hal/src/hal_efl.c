@@ -109,9 +109,9 @@ msg_t eflStart(EFlashDriver *eflp, const EFlashConfig *config) {
   msg = efl_lld_start(eflp);
 #else
   efl_lld_start(eflp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     eflp->state = FLASH_READY;
   }
   else {

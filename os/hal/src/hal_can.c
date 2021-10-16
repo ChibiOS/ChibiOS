@@ -120,9 +120,9 @@ msg_t canStart(CANDriver *canp, const CANConfig *config) {
   msg = can_lld_start(canp);
 #else
   can_lld_start(canp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     canp->state = CAN_READY;
   }
 

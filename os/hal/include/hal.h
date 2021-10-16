@@ -53,17 +53,17 @@
 /**
  * @brief   HAL version string.
  */
-#define HAL_VERSION             "7.2.0"
+#define HAL_VERSION             "8.0.0"
 
 /**
  * @brief   HAL version major number.
  */
-#define CH_HAL_MAJOR            7
+#define CH_HAL_MAJOR            8
 
 /**
  * @brief   HAL version minor number.
  */
-#define CH_HAL_MINOR            2
+#define CH_HAL_MINOR            0
 
 /**
  * @brief   HAL version patch number.
@@ -88,32 +88,32 @@
 /** @} */
 
 /**
- * @name    Error codes for start functions
+ * @name    Return codes for HAL functions
  * @{
  */
-#define HAL_START_SUCCESS       MSG_OK
+#define HAL_RET_SUCCESS         MSG_OK
 /**
  * @brief   Configuration error.
  * @details An error has been detected in the driver configuration structure.
  */
-#define HAL_START_CONFIG_ERROR  (msg_t)-16
+#define HAL_RET_CONFIG_ERROR    (msg_t)-16
 /**
  * @brief   A required resource is not available.
  * @details One of the resources required for driver operations is not
  *          available.
  */
-#define HAL_START_NO_RESOURCE   (msg_t)-17
+#define HAL_RET_NO_RESOURCE     (msg_t)-17
 /**
  * @brief   The peripheral is busy.
  * @details The peripheral is not available or taken by some other system
  *          actor.
  */
-#define HAL_START_HW_BUSY       (msg_t)-18
+#define HAL_RET_HW_BUSY         (msg_t)-18
 /**
  * @brief   Peripheral failure.
  * @details Peripheral failed during initialization, for example HW timeouts.
  */
-#define HAL_START_HW_FAILURE    (msg_t)-19
+#define HAL_RET_HW_FAILURE      (msg_t)-19
 /** @} */
 
 /*===========================================================================*/
@@ -129,7 +129,7 @@
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_HAL_CONF_VER_7_1_)
+#if !defined(_CHIBIOS_HAL_CONF_VER_8_0_)
 #error "obsolete or unknown configuration file"
 #endif
 

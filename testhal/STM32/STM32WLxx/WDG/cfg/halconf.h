@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
 #define HALCONF_H
 
 #define _CHIBIOS_HAL_CONF_
-#define _CHIBIOS_HAL_CONF_VER_7_1_
+#define _CHIBIOS_HAL_CONF_VER_8_0_
 
 #include "mcuconf.h"
 
@@ -416,6 +416,26 @@
 #endif
 
 /*===========================================================================*/
+/* SIO driver related settings.                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Default bit rate.
+ * @details Configuration parameter, this is the baud rate selected for the
+ *          default configuration.
+ */
+#if !defined(SIO_DEFAULT_BITRATE) || defined(__DOXYGEN__)
+#define SIO_DEFAULT_BITRATE                 38400
+#endif
+
+/**
+ * @brief   Support for thread synchronization API.
+ */
+#if !defined(SIO_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
+#define SIO_USE_SYNCHRONIZATION             TRUE
+#endif
+
+/*===========================================================================*/
 /* SERIAL_USB driver related setting.                                        */
 /*===========================================================================*/
 
@@ -524,10 +544,6 @@
  */
 #if !defined(WSPI_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
 #define WSPI_USE_MUTUAL_EXCLUSION           TRUE
-#endif
-
-#if !defined(HAL_USE_STM32FLASH) || defined(__DOXYGEN__)
-#define HAL_USE_STM32FLASH                  TRUE
 #endif
 
 #endif /* HALCONF_H */

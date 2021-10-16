@@ -417,7 +417,7 @@ msg_t mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
   mmcp->config = config;
   mmcp->state = BLK_ACTIVE;
 
-  return HAL_START_SUCCESS;
+  return HAL_RET_SUCCESS;
 }
 
 /**

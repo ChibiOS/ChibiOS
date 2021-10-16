@@ -29,7 +29,7 @@
 #define HALCONF_H
 
 #define _CHIBIOS_HAL_CONF_
-#define _CHIBIOS_HAL_CONF_VER_7_1_
+#define _CHIBIOS_HAL_CONF_VER_8_0_
 
 #include "mcuconf.h"
 
@@ -242,6 +242,24 @@
 #endif
 
 /*===========================================================================*/
+/* CAN driver related settings.                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Sleep mode related APIs inclusion switch.
+ */
+#if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
+#define CAN_USE_SLEEP_MODE                  TRUE
+#endif
+
+/**
+ * @brief   Enforces the driver to use direct callbacks rather than OSAL events.
+ */
+#if !defined(CAN_ENFORCE_USE_CALLBACKS) || defined(__DOXYGEN__)
+#define CAN_ENFORCE_USE_CALLBACKS           FALSE
+#endif
+
+/*===========================================================================*/
 /* CRY driver related settings.                                              */
 /*===========================================================================*/
 
@@ -395,6 +413,26 @@
  */
 #if !defined(SERIAL_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define SERIAL_BUFFERS_SIZE                 16
+#endif
+
+/*===========================================================================*/
+/* SIO driver related settings.                                              */
+/*===========================================================================*/
+
+/**
+ * @brief   Default bit rate.
+ * @details Configuration parameter, this is the baud rate selected for the
+ *          default configuration.
+ */
+#if !defined(SIO_DEFAULT_BITRATE) || defined(__DOXYGEN__)
+#define SIO_DEFAULT_BITRATE                 38400
+#endif
+
+/**
+ * @brief   Support for thread synchronization API.
+ */
+#if !defined(SIO_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
+#define SIO_USE_SYNCHRONIZATION             TRUE
 #endif
 
 /*===========================================================================*/

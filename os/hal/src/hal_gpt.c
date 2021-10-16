@@ -96,9 +96,9 @@ msg_t gptStart(GPTDriver *gptp, const GPTConfig *config) {
   msg = gpt_lld_start(gptp);
 #else
   gpt_lld_start(gptp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     gptp->state = GPT_READY;
   }
   else {

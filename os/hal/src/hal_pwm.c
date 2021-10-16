@@ -104,9 +104,9 @@ msg_t pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
   msg = pwm_lld_start(pwmp);
 #else
   pwm_lld_start(pwmp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     pwmp->state = PWM_READY;
   }
   else {

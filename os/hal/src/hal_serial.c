@@ -196,9 +196,9 @@ msg_t sdStart(SerialDriver *sdp, const SerialConfig *config) {
   msg = sd_lld_start(sdp, config);
 #else
   sd_lld_start(sdp, config);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     sdp->state = SD_READY;
   }
   else {

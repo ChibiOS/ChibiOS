@@ -260,7 +260,7 @@ msg_t sduStart(SerialUSBDriver *sdup, const SerialUSBConfig *config) {
 
   osalSysUnlock();
 
-  return HAL_START_SUCCESS;
+  return HAL_RET_SUCCESS;
 }
 
 /**

@@ -102,9 +102,9 @@ msg_t spiStart(SPIDriver *spip, const SPIConfig *config) {
   msg = spi_lld_start(spip);
 #else
   spi_lld_start(spip);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     spip->state = SPI_READY;
   }
   else {

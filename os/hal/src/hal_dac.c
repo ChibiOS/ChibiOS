@@ -107,9 +107,9 @@ msg_t dacStart(DACDriver *dacp, const DACConfig *config) {
   msg = dac_lld_start(dacp);
 #else
   dac_lld_start(dacp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     dacp->state = DAC_READY;
   }
   else {

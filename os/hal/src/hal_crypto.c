@@ -100,9 +100,9 @@ msg_t cryStart(CRYDriver *cryp, const CRYConfig *config) {
   msg = cry_lld_start(cryp);
 #else
   cry_lld_start(cryp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     cryp->state = CRY_READY;
   }
   else {
@@ -110,7 +110,7 @@ msg_t cryStart(CRYDriver *cryp, const CRYConfig *config) {
   }
 #else
   cryp->state = CRY_READY;
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
 
   osalSysUnlock();

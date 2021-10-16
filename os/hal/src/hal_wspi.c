@@ -104,9 +104,9 @@ msg_t wspiStart(WSPIDriver *wspip, const WSPIConfig *config) {
   msg = wspi_lld_start(wspip);
 #else
   wspi_lld_start(wspip);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     wspip->state = WSPI_READY;
   }
   else {

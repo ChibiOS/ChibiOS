@@ -258,7 +258,7 @@ msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
   siop->config = config;
 
   msg = sio_lld_start(siop);
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     siop->state = SIO_READY;
   }
   else {

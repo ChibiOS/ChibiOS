@@ -96,9 +96,9 @@ msg_t trngStart(TRNGDriver *trngp, const TRNGConfig *config) {
   msg = trng_lld_start(trngp);
 #else
   trng_lld_start(trngp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     trngp->state = TRNG_READY;
   }
   else {

@@ -95,9 +95,9 @@ msg_t i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
   msg = i2s_lld_start(i2sp);
 #else
   i2s_lld_start(i2sp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     i2sp->state = I2S_READY;
   }
   else {

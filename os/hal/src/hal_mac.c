@@ -108,9 +108,9 @@ msg_t macStart(MACDriver *macp, const MACConfig *config) {
   msg = mac_lld_start(macp);
 #else
   mac_lld_start(macp);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     macp->state = MAC_ACTIVE;
   }
   else {

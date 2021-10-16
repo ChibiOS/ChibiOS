@@ -95,9 +95,9 @@ msg_t icuStart(ICUDriver *icup, const ICUConfig *config) {
   msg = icu_lld_start(icup);
 #else
   icu_lld_start(icup);
-  msg = HAL_START_SUCCESS;
+  msg = HAL_RET_SUCCESS;
 #endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     icup->state = ICU_READY;
   }
   else {

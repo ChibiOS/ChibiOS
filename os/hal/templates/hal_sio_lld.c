@@ -90,7 +90,7 @@ msg_t sio_lld_start(SIODriver *siop) {
   }
   /* Configures the peripheral.*/
 
-  return HAL_START_SUCCESS;
+  return HAL_RET_SUCCESS;
 }
 
 /**
