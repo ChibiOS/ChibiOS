@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    hal_spi_v2.h
- * @brief   SPI (v2) Driver macros and structures.
+ * @file    hal_spi_v1.h
+ * @brief   SPI (v1) Driver macros and structures.
  *
- * @addtogroup SPI_V2
+ * @addtogroup SPI_V1
  * @{
  */
 
-#ifndef HAL_SPI_V2_H
-#define HAL_SPI_V2_H
+#ifndef HAL_SPI_V1_H
+#define HAL_SPI_V1_H
 
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
 
@@ -53,14 +53,11 @@
  * @{
  */
 /**
- * @brief   Support for thread synchronization API.
+ * @brief   Enables synchronous APIs.
+ * @note    Disabling this option saves both code and data space.
  */
-#if !defined(SPI_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
 #if !defined(SPI_USE_WAIT) || defined(__DOXYGEN__)
-#define SPI_USE_SYNCHRONIZATION             FALSE
-#else
-#define SPI_USE_SYNCHRONIZATION             SPI_USE_WAIT
-#endif
+#define SPI_USE_WAIT                        TRUE
 #endif
 
 /**
@@ -84,7 +81,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(SPI_SELECT_MODE) || defined(__DOXYGEN__)
-#define SPI_SELECT_MODE                     SPI_SELECT_MODE_LINE
+#define SPI_SELECT_MODE                     SPI_SELECT_MODE_PAD
 #endif
 /** @} */
 
@@ -128,7 +125,6 @@ typedef enum {
  * @brief   Type of a structure representing an SPI driver.
  */
 typedef struct hal_spi_driver SPIDriver;
-
 /**
  * @brief   Type of a SPI driver configuration structure.
  */
@@ -140,19 +136,11 @@ typedef struct hal_spi_config SPIConfig;
  * @param[in] spip      pointer to the @p SPIDriver object triggering the
  *                      callback
  */
-typedef void (*spicb_t)(SPIDriver *spip);
+typedef void (*spicallback_t)(SPIDriver *spip);
 
 /* Including the low level driver header, it exports information required
    for completing types.*/
-#include "hal_spi_v2_lld.h"
-
-#if !defined(SPI_SUPPORTS_CIRCULAR)
-#error "SPI_SUPPORTS_CIRCULAR not defined in LLD"
-#endif
-
-#if !defined(SPI_SUPPORTS_SLAVE_MODE)
-#error "SPI_SUPPORTS_SLAVE_MODE not defined in LLD"
-#endif
+#include "hal_spi_lld.h"
 
 /**
  * @brief   Driver configuration structure.
@@ -164,46 +152,33 @@ struct hal_spi_config {
    */
   bool                      circular;
 #endif
-#if (SPI_SUPPORTS_SLAVE_MODE == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Enables the circular buffer mode.
-   */
-  bool                      slave;
-#endif
   /**
    * @brief   Operation complete callback or @p NULL.
    */
-  spicb_t                   end_cb;
-  /**
-   * @brief   Operation error callback or @p NULL.
-   */
-  spicb_t                   error_cb;
+  spicallback_t             end_cb;
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
   /**
    * @brief   The chip select line.
-   * @note    Only used in master mode.
    */
   ioline_t                  ssline;
-#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined(__DOXYGEN__)
   /**
    * @brief   The chip select port.
-   * @note    Only used in master mode.
    */
   ioportid_t                ssport;
   /**
    * @brief   The chip select port mask.
-   * @note    Only used in master mode.
    */
   ioportmask_t              ssmask;
-#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
+#endif
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined(__DOXYGEN__)
   /**
    * @brief   The chip select port.
-   * @note    Only used in master mode.
    */
   ioportid_t                ssport;
   /**
    * @brief   The chip select pad number.
-   * @note    Only used in master mode.
    */
   uint_fast8_t              sspad;
 #endif
@@ -223,12 +198,12 @@ struct hal_spi_driver {
    * @brief Current configuration data.
    */
   const SPIConfig           *config;
-#if (SPI_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Synchronization point for transfer.
+   * @brief   Waiting thread.
    */
-  thread_reference_t        sync_transfer;
-#endif /* SPI_USE_SYNCHRONIZATION == TRUE */
+  thread_reference_t        thread;
+#endif /* SPI_USE_WAIT == TRUE */
 #if (SPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting the peripheral.
@@ -331,6 +306,86 @@ do {                                                                        \
 #endif
 
 /**
+ * @brief   Ignores data on the SPI bus.
+ * @details This asynchronous function starts the transmission of a series of
+ *          idle words on the SPI bus and ignores the received data.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be ignored
+ *
+ * @iclass
+ */
+#define spiStartIgnoreI(spip, n) {                                          \
+  (spip)->state = SPI_ACTIVE;                                               \
+  spi_lld_ignore(spip, n);                                                  \
+}
+
+/**
+ * @brief   Exchanges data on the SPI bus.
+ * @details This asynchronous function starts a simultaneous transmit/receive
+ *          operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to be exchanged
+ * @param[in] txbuf     the pointer to the transmit buffer
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @iclass
+ */
+#define spiStartExchangeI(spip, n, txbuf, rxbuf) {                          \
+  (spip)->state = SPI_ACTIVE;                                               \
+  spi_lld_exchange(spip, n, txbuf, rxbuf);                                  \
+}
+
+/**
+ * @brief   Sends data over the SPI bus.
+ * @details This asynchronous function starts a transmit operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to send
+ * @param[in] txbuf     the pointer to the transmit buffer
+ *
+ * @iclass
+ */
+#define spiStartSendI(spip, n, txbuf) {                                     \
+  (spip)->state = SPI_ACTIVE;                                               \
+  spi_lld_send(spip, n, txbuf);                                             \
+}
+
+/**
+ * @brief   Receives data from the SPI bus.
+ * @details This asynchronous function starts a receive operation.
+ * @pre     A slave must have been selected using @p spiSelect() or
+ *          @p spiSelectI().
+ * @post    At the end of the operation the configured callback is invoked.
+ * @note    The buffers are organized as uint8_t arrays for data sizes below
+ *          or equal to 8 bits else it is organized as uint16_t arrays.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] n         number of words to receive
+ * @param[out] rxbuf    the pointer to the receive buffer
+ *
+ * @iclass
+ */
+#define spiStartReceiveI(spip, n, rxbuf) {                                  \
+  (spip)->state = SPI_ACTIVE;                                               \
+  spi_lld_receive(spip, n, rxbuf);                                          \
+}
+
+/**
  * @brief   Exchanges one frame using a polled wait.
  * @details This synchronous function exchanges one frame using a polled
  *          synchronization method. This function is useful when exchanging
@@ -350,7 +405,7 @@ do {                                                                        \
  * @name    Low level driver helper macros
  * @{
  */
-#if (SPI_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Wakes up the waiting thread.
  *
@@ -360,12 +415,12 @@ do {                                                                        \
  */
 #define _spi_wakeup_isr(spip) {                                             \
   osalSysLockFromISR();                                                     \
-  osalThreadResumeI(&(spip)->sync_transfer, MSG_OK);                        \
+  osalThreadResumeI(&(spip)->thread, MSG_OK);                               \
   osalSysUnlockFromISR();                                                   \
 }
-#else /* !SPI_USE_SYNCHRONIZATION */
+#else /* !SPI_USE_WAIT */
 #define _spi_wakeup_isr(spip)
-#endif /* !SPI_USE_SYNCHRONIZATION */
+#endif /* !SPI_USE_WAIT */
 
 /**
  * @brief   Common ISR code when circular mode is not supported.
@@ -447,21 +502,16 @@ extern "C" {
   void spiStop(SPIDriver *spip);
   void spiSelect(SPIDriver *spip);
   void spiUnselect(SPIDriver *spip);
-  bool spiStartIgnoreI(SPIDriver *spip, size_t n);
-  bool spiStartIgnore(SPIDriver *spip, size_t n);
-  bool spiStartExchangeI(SPIDriver *spip, size_t n,
-                         const void *txbuf, void *rxbuf);
-  bool spiStartExchange(SPIDriver *spip, size_t n,
+  void spiStartIgnore(SPIDriver *spip, size_t n);
+  void spiStartExchange(SPIDriver *spip, size_t n,
                         const void *txbuf, void *rxbuf);
-  bool spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf);
-  bool spiStartSend(SPIDriver *spip, size_t n, const void *txbuf);
-  bool spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf);
-  bool spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf);
-  size_t spiStopTransferI(SPIDriver *spip);
-  size_t spiStopTransfer(SPIDriver *spip);
-#if SPI_USE_SYNCHRONIZATION == TRUE
-  msg_t spiSynchronizeS(SPIDriver *spip, sysinterval_t timeout);
-  msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout);
+  void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf);
+  void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf);
+#if SPI_SUPPORTS_CIRCULAR == TRUE
+  void spiAbortI(SPIDriver *spip);
+  void spiAbort(SPIDriver *spip);
+#endif
+#if SPI_USE_WAIT == TRUE
   void spiIgnore(SPIDriver *spip, size_t n);
   void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
   void spiSend(SPIDriver *spip, size_t n, const void *txbuf);
@@ -477,6 +527,6 @@ extern "C" {
 
 #endif /* HAL_USE_SPI == TRUE */
 
-#endif /* HAL_SPI_V2_H */
+#endif /* HAL_SPI_V1_H */
 
 /** @} */

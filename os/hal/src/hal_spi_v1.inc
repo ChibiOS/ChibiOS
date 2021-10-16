@@ -15,14 +15,12 @@
 */
 
 /**
- * @file    hal_spi_v2.c
- * @brief   SPI (v2) Driver code.
+ * @file    hal_spi_v1.c
+ * @brief   SPI (v1) Driver code.
  *
- * @addtogroup SPI_V2
+ * @addtogroup SPI_V1
  * @{
  */
-
-#include "hal.h"
 
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
 
@@ -67,10 +65,10 @@ void spiInit(void) {
  */
 void spiObjectInit(SPIDriver *spip) {
 
-  spip->state           = SPI_STOP;
-  spip->config          = NULL;
-#if SPI_USE_SYNCHRONIZATION == TRUE
-  spip->synch_transfer  = NULL;
+  spip->state = SPI_STOP;
+  spip->config = NULL;
+#if SPI_USE_WAIT == TRUE
+  spip->thread = NULL;
 #endif
 #if SPI_USE_MUTUAL_EXCLUSION == TRUE
   osalMutexObjectInit(&spip->mutex);
@@ -186,49 +184,17 @@ void spiUnselect(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
- *
- * @iclass
- */
-bool spiStartIgnoreI(SPIDriver *spip, size_t n) {
-
-  osalDbgCheck((spip != NULL) && (n > 0U));
-#if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
-#endif
-
-  osalDbgAssert(spip->state == SPI_READY, "not ready");
-
-  spip->state = SPI_ACTIVE;
-  return spi_lld_ignore(spip, n);
-}
-
-/**
- * @brief   Ignores data on the SPI bus.
- * @details This asynchronous function starts the transmission of a series of
- *          idle words on the SPI bus and ignores the received data.
- * @pre     A slave must have been selected using @p spiSelect() or
- *          @p spiSelectI().
- * @post    At the end of the operation the configured callback is invoked.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be ignored
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @api
  */
-bool spiStartIgnore(SPIDriver *spip, size_t n) {
-  bool ret;
+void spiStartIgnore(SPIDriver *spip, size_t n) {
+
+  osalDbgCheck((spip != NULL) && (n > 0U));
 
   osalSysLock();
-  ret = spiStartIgnoreI(spip, n);
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  spiStartIgnoreI(spip, n);
   osalSysUnlock();
-
-  return ret;
 }
 
 /**
@@ -245,56 +211,19 @@ bool spiStartIgnore(SPIDriver *spip, size_t n) {
  * @param[in] n         number of words to be exchanged
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
- * @iclass
+ * @api
  */
-bool spiStartExchangeI(SPIDriver *spip, size_t n,
-                       const void *txbuf, void *rxbuf) {
+void spiStartExchange(SPIDriver *spip, size_t n,
+                      const void *txbuf, void *rxbuf) {
 
   osalDbgCheck((spip != NULL) && (n > 0U) &&
                (rxbuf != NULL) && (txbuf != NULL));
-#if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
-#endif
-
-  osalDbgAssert(spip->state == SPI_READY, "not ready");
-
-  spip->state = SPI_ACTIVE;
-  return spi_lld_exchange(spip, n, txbuf, rxbuf);
-}
-
-/**
- * @brief   Exchanges data on the SPI bus.
- * @details This asynchronous function starts a simultaneous transmit/receive
- *          operation.
- * @pre     A slave must have been selected using @p spiSelect() or
- *          @p spiSelectI().
- * @post    At the end of the operation the configured callback is invoked.
- * @note    The buffers are organized as uint8_t arrays for data sizes below
- *          or equal to 8 bits else it is organized as uint16_t arrays.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be exchanged
- * @param[in] txbuf     the pointer to the transmit buffer
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
- *
- * @api
- */
-bool spiStartExchange(SPIDriver *spip, size_t n,
-                      const void *txbuf, void *rxbuf) {
-  bool ret;
 
   osalSysLock();
-  ret = spiStartExchangeI(spip, n, txbuf, rxbuf);
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  spiStartExchangeI(spip, n, txbuf, rxbuf);
   osalSysUnlock();
-
-  return ret;
 }
 
 /**
@@ -309,51 +238,17 @@ bool spiStartExchange(SPIDriver *spip, size_t n,
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
- * @iclass
+ * @api
  */
-bool spiStartSendI(spip, n, txbuf) {
+void spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
   osalDbgCheck((spip != NULL) && (n > 0U) && (txbuf != NULL));
-#if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
-#endif
-
-  osalDbgAssert(spip->state == SPI_READY, "not ready");
-
-  spip->state = SPI_ACTIVE;
-  return spi_lld_send(spip, n, txbuf);
-}
-
-/**
- * @brief   Sends data over the SPI bus.
- * @details This asynchronous function starts a transmit operation.
- * @pre     A slave must have been selected using @p spiSelect() or
- *          @p spiSelectI().
- * @post    At the end of the operation the configured callback is invoked.
- * @note    The buffers are organized as uint8_t arrays for data sizes below
- *          or equal to 8 bits else it is organized as uint16_t arrays.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to send
- * @param[in] txbuf     the pointer to the transmit buffer
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
- *
- * @api
- */
-bool spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
-  bool ret;
 
   osalSysLock();
-  ret = spiStartSendI(spip, n, txbuf);
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  spiStartSendI(spip, n, txbuf);
   osalSysUnlock();
-
-  return ret;
 }
 
 /**
@@ -368,111 +263,69 @@ bool spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
+ *
+ * @api
+ */
+void spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
+
+  osalDbgCheck((spip != NULL) && (n > 0U) && (rxbuf != NULL));
+
+  osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
+  spiStartReceiveI(spip, n, rxbuf);
+  osalSysUnlock();
+}
+
+#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Aborts the ongoing SPI operation.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
  *
  * @iclass
  */
-bool spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf) {
+void spiAbortI(SPIDriver *spip) {
 
-  osalDbgCheck((spip != NULL) && (n > 0U) && (rxbuf != NULL));
-#if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
-#endif
+  osalDbgCheckClassI();
 
-  osalDbgAssert(spip->state == SPI_READY, "not ready");
-
-  spip->state = SPI_ACTIVE;
-  return spi_lld_receive(spip, n, rxbuf);
-}
-
-/**
- * @brief   Receives data from the SPI bus.
- * @details This asynchronous function starts a receive operation.
- * @pre     A slave must have been selected using @p spiSelect() or
- *          @p spiSelectI().
- * @post    At the end of the operation the configured callback is invoked.
- * @note    The buffers are organized as uint8_t arrays for data sizes below
- *          or equal to 8 bits else it is organized as uint16_t arrays.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to receive
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
- *
- * @api
- */
-bool spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
-  bool ret;
-
-  osalSysLock();
-  ret = spiStartReceiveI(spip, n, rxbuf);
-  osalSysUnlock();
-
-  return ret;
-}
-
-#if (SPI_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Synchronizes with current transfer completion.
- * @note    This function can only be called by a single thread at time.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] timeout       synchronization timeout
- * @return                  The synchronization result.
- * @retval MSG_OK           if TX operation finished.
- * @retval MSG_TIMEOUT      if synchronization timed out.
- *
- * @sclass
- */
-msg_t spiSynchronizeS(SPIDriver *spip, sysinterval_t timeout) {
-  msg_t msg;
-
-  osalDbgCheck((spip != NULL) && (n > 0U));
-  osalDbgAssert((spip->state == SPI_ACTIVE) || (spip->state == SPI_READY),
+  osalDbgCheck(spip != NULL);
+  osalDbgAssert((spip->state == SPI_ACTIVE) || (spip->state == SPI_COMPLETE),
                 "invalid state");
 
-  if (spip->state == SPI_ACTIVE) {
-    msg = osalThreadSuspendTimeoutS(&spip->sync_transfer, timeout);
-  }
-  else {
-    msg = MSG_OK;
-  }
-
-  return msg;
+  spi_lld_abort(spip);
+  spip->state = SPI_READY;
+#if SPI_USE_WAIT == TRUE
+  osalThreadResumeI(&spip->thread, MSG_OK);
+#endif
 }
 
 /**
- * @brief   Synchronizes with current transfer completion.
- * @note    This function can only be called by a single thread at time.
+ * @brief   Aborts the ongoing SPI operation, if any.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] timeout       synchronization timeout
- * @return                  The synchronization result.
- * @retval MSG_OK           if TX operation finished.
- * @retval MSG_TIMEOUT      if synchronization timed out.
  *
  * @api
  */
-msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout) {
-  msg_t msg;
+void spiAbort(SPIDriver *spip) {
 
   osalSysLock();
-  msg = spiSynchronizeS(spip, timeout);
+  osalDbgAssert((spip->state == SPI_READY) || (spip->state == SPI_ACTIVE),
+                "invalid state");
+  if (spip->state == SPI_ACTIVE) {
+    spiAbortI(spip);
+    osalOsRescheduleS();
+  }
   osalSysUnlock();
-
-  return msg;
 }
+#endif
 
+#if (SPI_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Ignores data on the SPI bus.
  * @details This synchronous function performs the transmission of a series of
  *          idle words on the SPI bus and ignores the received data.
- * @pre     In order to use this function the option @p SPI_USE_SYNCHRONIZATION
- *          must be enabled.
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
@@ -481,9 +334,15 @@ msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout) {
  */
 void spiIgnore(SPIDriver *spip, size_t n) {
 
+  osalDbgCheck((spip != NULL) && (n > 0U));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
   osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartIgnoreI(spip, n);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
 
@@ -491,8 +350,8 @@ void spiIgnore(SPIDriver *spip, size_t n) {
  * @brief   Exchanges data on the SPI bus.
  * @details This synchronous function performs a simultaneous transmit/receive
  *          operation.
- * @pre     In order to use this function the option @p SPI_USE_SYNCHRONIZATION
- *          must be enabled.
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -506,17 +365,24 @@ void spiIgnore(SPIDriver *spip, size_t n) {
 void spiExchange(SPIDriver *spip, size_t n,
                  const void *txbuf, void *rxbuf) {
 
+  osalDbgCheck((spip != NULL) && (n > 0U) &&
+               (rxbuf != NULL) && (txbuf != NULL));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
   osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartExchangeI(spip, n, txbuf, rxbuf);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
 
 /**
  * @brief   Sends data over the SPI bus.
  * @details This synchronous function performs a transmit operation.
- * @pre     In order to use this function the option @p SPI_USE_SYNCHRONIZATION
- *          must be enabled.
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -528,17 +394,23 @@ void spiExchange(SPIDriver *spip, size_t n,
  */
 void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
 
+  osalDbgCheck((spip != NULL) && (n > 0U) && (txbuf != NULL));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
   osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartSendI(spip, n, txbuf);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
 
 /**
  * @brief   Receives data from the SPI bus.
  * @details This synchronous function performs a receive operation.
- * @pre     In order to use this function the option @p SPI_USE_SYNCHRONIZATION
- *          must be enabled.
+ * @pre     In order to use this function the option @p SPI_USE_WAIT must be
+ *          enabled.
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
@@ -550,12 +422,18 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 
+  osalDbgCheck((spip != NULL) && (n > 0U) && (rxbuf != NULL));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((spip->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
   osalSysLock();
+  osalDbgAssert(spip->state == SPI_READY, "not ready");
   spiStartReceiveI(spip, n, rxbuf);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+  (void) osalThreadSuspendS(&spip->thread);
   osalSysUnlock();
 }
-#endif /* SPI_USE_SYNCHRONIZATION == TRUE */
+#endif /* SPI_USE_WAIT == TRUE */
 
 #if (SPI_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
 /**
