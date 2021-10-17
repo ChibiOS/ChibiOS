@@ -48,8 +48,11 @@
  * @name    SPI-specific messages
  * @{
  */
-#define MSG_SPI_BUFFER_FULL                 MSG_OK
 #define MSG_SPI_BUFFER_HALF                 (msg_t)-3
+#define MSG_SPI_BUFFER_FULL                 (msg_t)-4
+#define MSG_SPI_COMPLETE                    MSG_OK
+#define MSG_SPI_TIMEOUT                     MSG_TIMEOUT
+#define MSG_SPI_STOPPED                     MSG_RESET
 /** @} */
 
 /*===========================================================================*/
@@ -152,8 +155,8 @@ typedef struct hal_spi_config SPIConfig;
 /**
  * @brief   SPI notification callback type.
  *
- * @param[in] spip      pointer to the @p SPIDriver object triggering the
- *                      callback
+ * @param[in] spip              pointer to the @p SPIDriver object
+ *                              triggering the callback
  */
 typedef void (*spicb_t)(SPIDriver *spip);
 
@@ -269,12 +272,12 @@ struct hal_spi_driver {
  * @brief   Buffer state.
  * @note    This function is meant to be called from the SPI callback only.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @return              The buffer state.
- * @retval false        if the driver filled/sent the first half of the
- *                      buffer.
- * @retval true         if the driver filled/sent the second half of the
- *                      buffer.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @return                      The buffer state.
+ * @retval false                if the driver filled/sent the first half of
+ *                              the buffer.
+ * @retval true                 if the driver filled/sent the second half of
+ *                              the buffer.
  *
  * @special
  */
@@ -284,7 +287,7 @@ struct hal_spi_driver {
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @iclass
  */
@@ -297,7 +300,7 @@ do {                                                                        \
  * @brief   Deasserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @iclass
  */
@@ -354,9 +357,9 @@ do {                                                                        \
  *          polling than suspending the thread waiting for an interrupt.
  * @note    This API is implemented as a macro in order to minimize latency.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] frame     the data frame to send over the SPI bus
- * @return              The received data frame from the SPI bus.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] frame             the data frame to send over the SPI bus
+ * @return                      The received data frame from the SPI bus.
  */
 #define spiPolledExchange(spip, frame) spi_lld_polled_exchange(spip, frame)
 /** @} */
@@ -383,6 +386,33 @@ do {                                                                        \
 #endif /* !SPI_USE_SYNCHRONIZATION */
 
 /**
+ * @brief   Common ISR code in linear mode.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Waiting thread wakeup, if any.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define __spi_isr_complete_code(spip) {                                     \
+  if ((spip)->config->end_cb) {                                             \
+    (spip)->state = SPI_COMPLETE;                                           \
+    (spip)->config->end_cb(spip);                                           \
+    if ((spip)->state == SPI_COMPLETE)                                      \
+      (spip)->state = SPI_READY;                                            \
+  }                                                                         \
+  else {                                                                    \
+    (spip)->state = SPI_READY;                                              \
+  }                                                                         \
+  __spi_wakeup_isr(spip, MSG_OK);                                           \
+}
+
+/**
  * @brief   Half buffer filled ISR code in circular mode.
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
@@ -390,7 +420,7 @@ do {                                                                        \
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @notapi
  */
@@ -410,7 +440,7 @@ do {                                                                        \
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @notapi
  */
@@ -430,8 +460,8 @@ do {                                                                        \
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] msg       error code
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] msg               error code
  *
  * @notapi
  */

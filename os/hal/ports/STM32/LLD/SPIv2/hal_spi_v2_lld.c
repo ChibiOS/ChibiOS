@@ -155,9 +155,8 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     }
   }
   else {
-    /* Portable SPI ISR code defined in the high level driver, note, it is
-       a macro.*/
-    __spi_isr_full_code(spip);
+    /* Operation finished interrupt.*/
+    __spi_isr_complete_code(spip);
   }
 }
 

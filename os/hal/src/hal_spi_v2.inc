@@ -59,7 +59,7 @@ void spiInit(void) {
 /**
  * @brief   Initializes the standard part of a @p SPIDriver structure.
  *
- * @param[out] spip     pointer to the @p SPIDriver object
+ * @param[out] spip             pointer to the @p SPIDriver object
  *
  * @init
  */
@@ -81,9 +81,9 @@ void spiObjectInit(SPIDriver *spip) {
 /**
  * @brief   Configures and activates the SPI peripheral.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] config    pointer to the @p SPIConfig object
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] config            pointer to the @p SPIConfig object
+ * @return                      The operation status.
  *
  * @api
  */
@@ -118,7 +118,7 @@ msg_t spiStart(SPIDriver *spip, const SPIConfig *config) {
 /**
  * @brief   Deactivates the SPI peripheral.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @api
  */
@@ -141,7 +141,7 @@ void spiStop(SPIDriver *spip) {
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @api
  */
@@ -159,7 +159,7 @@ void spiSelect(SPIDriver *spip) {
  * @brief   Deasserts the slave select signal.
  * @details The previously selected peripheral is unselected.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @api
  */
@@ -181,9 +181,9 @@ void spiUnselect(SPIDriver *spip) {
  *          @p spiSelectI().
  * @post    At the end of the operation the configured callback is invoked.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be ignored
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to be ignored
+ * @return                      The operation status.
  *
  * @iclass
  */
@@ -217,9 +217,9 @@ msg_t spiStartIgnoreI(SPIDriver *spip, size_t n) {
  *          @p spiSelectI().
  * @post    At the end of the operation the configured callback is invoked.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be ignored
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to be ignored
+ * @return                      The operation status.
  *
  * @api
  */
@@ -243,11 +243,11 @@ msg_t spiStartIgnore(SPIDriver *spip, size_t n) {
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be exchanged
- * @param[in] txbuf     the pointer to the transmit buffer
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to be exchanged
+ * @param[in] txbuf             the pointer to the transmit buffer
+ * @param[out] rxbuf            the pointer to the receive buffer
+ * @return                      The operation status.
  *
  * @iclass
  */
@@ -285,11 +285,11 @@ msg_t spiStartExchangeI(SPIDriver *spip, size_t n,
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be exchanged
- * @param[in] txbuf     the pointer to the transmit buffer
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to be exchanged
+ * @param[in] txbuf             the pointer to the transmit buffer
+ * @param[out] rxbuf            the pointer to the receive buffer
+ * @return                      The operation status.
  *
  * @api
  */
@@ -313,10 +313,10 @@ msg_t spiStartExchange(SPIDriver *spip, size_t n,
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to send
- * @param[in] txbuf     the pointer to the transmit buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to send
+ * @param[in] txbuf             the pointer to the transmit buffer
+ * @return                      The operation status.
  *
  * @iclass
  */
@@ -351,10 +351,10 @@ msg_t spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf) {
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to send
- * @param[in] txbuf     the pointer to the transmit buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to send
+ * @param[in] txbuf             the pointer to the transmit buffer
+ * @return                      The operation status.
  *
  * @api
  */
@@ -377,10 +377,10 @@ msg_t spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to receive
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to receive
+ * @param[out] rxbuf            the pointer to the receive buffer
+ * @return                      The operation status.
  *
  * @iclass
  */
@@ -415,10 +415,10 @@ msg_t spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf) {
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to receive
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to receive
+ * @param[out] rxbuf            the pointer to the receive buffer
+ * @return                      The operation status.
  *
  * @api
  */
@@ -435,10 +435,10 @@ msg_t spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
 /**
  * @brief   Stops the ongoing SPI operation.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[out sizep     pointer to the counter of frames not yet transferred
- *                      or @p NULL
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[out sizep             pointer to the counter of frames not yet
+ *                              transferred or @p NULL
+ * @return                      The operation status.
  *
  * @iclass
  */
@@ -461,7 +461,7 @@ msg_t spiStopTranferI(SPIDriver *spip, size_t *sizep) {
     spip->state = SPI_READY;
 
 #if SPI_USE_SYNCHRONIZATION == TRUE
-    osalThreadResumeI(&spip->sync_transfer, MSG_OK);
+    osalThreadResumeI(&spip->sync_transfer, MSG_SPI_STOPPED);
 #endif
   }
   else {
@@ -474,10 +474,10 @@ msg_t spiStopTranferI(SPIDriver *spip, size_t *sizep) {
 /**
  * @brief   Stops the ongoing SPI operation, if any.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[out sizep     pointer to the counter of frames not yet transferred
- *                      or @p NULL
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[out sizep             pointer to the counter of frames not yet
+ *                              transferred or @p NULL
+ * @return                      The operation status.
  *
  * @api
  */
@@ -499,11 +499,16 @@ msg_t spiStopTranfer(SPIDriver *spip, size_t *sizep) {
  * @brief   Synchronizes with current transfer completion.
  * @note    This function can only be called by a single thread at time.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] timeout       synchronization timeout
- * @return                  The synchronization result.
- * @retval MSG_OK           if TX operation finished.
- * @retval MSG_TIMEOUT      if synchronization timed out.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] timeout           synchronization timeout
+ * @return                      The synchronization result.
+ * @retval MSG_SPI_COMPLETE     if operation completed without errors.
+ * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
+ * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
+ * @retval MSG_SPI_BUFFER_FULL  if operation finished on buffer full (circular
+ *                              mode only).
+ * @retval MSG_SPI_BUFFER_HALF  if operation finished on buffer half (circular
+ *                              mode only).
  *
  * @sclass
  */
@@ -518,7 +523,7 @@ msg_t spiSynchronizeS(SPIDriver *spip, sysinterval_t timeout) {
     msg = osalThreadSuspendTimeoutS(&spip->sync_transfer, timeout);
   }
   else {
-    msg = MSG_OK;
+    msg = MSG_SPI_COMPLETE;
   }
 
   return msg;
@@ -528,11 +533,16 @@ msg_t spiSynchronizeS(SPIDriver *spip, sysinterval_t timeout) {
  * @brief   Synchronizes with current transfer completion.
  * @note    This function can only be called by a single thread at time.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] timeout       synchronization timeout
- * @return                  The synchronization result.
- * @retval MSG_OK           if TX operation finished.
- * @retval MSG_TIMEOUT      if synchronization timed out.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] timeout           synchronization timeout
+ * @return                      The synchronization result.
+ * @retval MSG_SPI_COMPLETE     if operation completed without errors.
+ * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
+ * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
+ * @retval MSG_SPI_BUFFER_FULL  if operation finished on buffer full (circular
+ *                              mode only).
+ * @retval MSG_SPI_BUFFER_HALF  if operation finished on buffer half (circular
+ *                              mode only).
  *
  * @api
  */
@@ -553,9 +563,12 @@ msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout) {
  * @pre     In order to use this function the option @p SPI_USE_SYNCHRONIZATION
  *          must be enabled.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be ignored
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to be ignored
+ * @return                      The operation status.
+ * @retval MSG_SPI_COMPLETE     if operation completed without errors.
+ * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
+ * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
  *
  * @api
  */
@@ -583,11 +596,15 @@ msg_t spiIgnore(SPIDriver *spip, size_t n) {
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to be exchanged
- * @param[in] txbuf     the pointer to the transmit buffer
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to be exchanged
+ * @param[in] txbuf             the pointer to the transmit buffer
+ * @param[out] rxbuf            the pointer to the receive buffer
+ * @return                      The operation status.
+ * @retval MSG_SPI_COMPLETE     if operation completed without errors.
+ *                              mode only).
+ * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
+ * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
  *
  * @api
  */
@@ -615,10 +632,13 @@ msg_t spiExchange(SPIDriver *spip, size_t n,
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to send
- * @param[in] txbuf     the pointer to the transmit buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to send
+ * @param[in] txbuf             the pointer to the transmit buffer
+ * @return                      The operation status.
+ * @retval MSG_SPI_COMPLETE     if operation completed without errors.
+ * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
+ * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
  *
  * @api
  */
@@ -645,10 +665,13 @@ msg_t spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @note    The buffers are organized as uint8_t arrays for data sizes below
  *          or equal to 8 bits else it is organized as uint16_t arrays.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] n         number of words to receive
- * @param[out] rxbuf    the pointer to the receive buffer
- * @return              The operation status.
+ * @param[in] spip              pointer to the @p SPIDriver object
+ * @param[in] n                 number of words to receive
+ * @param[out] rxbuf            the pointer to the receive buffer
+ * @return                      The operation status.
+ * @retval MSG_SPI_COMPLETE     if operation completed without errors.
+ * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
+ * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
  *
  * @api
  */
@@ -676,7 +699,7 @@ msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @pre     In order to use this function the option @p SPI_USE_MUTUAL_EXCLUSION
  *          must be enabled.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @api
  */
@@ -692,7 +715,7 @@ void spiAcquireBus(SPIDriver *spip) {
  * @pre     In order to use this function the option @p SPI_USE_MUTUAL_EXCLUSION
  *          must be enabled.
  *
- * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] spip              pointer to the @p SPIDriver object
  *
  * @api
  */
