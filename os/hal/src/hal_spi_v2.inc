@@ -461,7 +461,7 @@ msg_t spiStopTranferI(SPIDriver *spip, size_t *sizep) {
     spip->state = SPI_READY;
 
 #if SPI_USE_SYNCHRONIZATION == TRUE
-    osalThreadResumeI(&spip->sync_transfer, MSG_SPI_STOPPED);
+    osalThreadResumeI(&spip->sync_transfer, MSG_RESET);
 #endif
   }
   else {
@@ -502,13 +502,9 @@ msg_t spiStopTranfer(SPIDriver *spip, size_t *sizep) {
  * @param[in] spip              pointer to the @p SPIDriver object
  * @param[in] timeout           synchronization timeout
  * @return                      The synchronization result.
- * @retval MSG_SPI_COMPLETE     if operation completed without errors.
- * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
- * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
- * @retval MSG_SPI_BUFFER_FULL  if operation finished on buffer full (circular
- *                              mode only).
- * @retval MSG_SPI_BUFFER_HALF  if operation finished on buffer half (circular
- *                              mode only).
+ * @retval MSG_OK               if operation completed without errors.
+ * @retval MSG_TIMEOUT          if synchronization timed out.
+ * @retval MSG_RESET            if the transfer has been stopped.
  *
  * @sclass
  */
@@ -523,7 +519,7 @@ msg_t spiSynchronizeS(SPIDriver *spip, sysinterval_t timeout) {
     msg = osalThreadSuspendTimeoutS(&spip->sync_transfer, timeout);
   }
   else {
-    msg = MSG_SPI_COMPLETE;
+    msg = MSG_OK;
   }
 
   return msg;
@@ -536,13 +532,9 @@ msg_t spiSynchronizeS(SPIDriver *spip, sysinterval_t timeout) {
  * @param[in] spip              pointer to the @p SPIDriver object
  * @param[in] timeout           synchronization timeout
  * @return                      The synchronization result.
- * @retval MSG_SPI_COMPLETE     if operation completed without errors.
- * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
- * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
- * @retval MSG_SPI_BUFFER_FULL  if operation finished on buffer full (circular
- *                              mode only).
- * @retval MSG_SPI_BUFFER_HALF  if operation finished on buffer half (circular
- *                              mode only).
+ * @retval MSG_OK               if operation completed without errors.
+ * @retval MSG_TIMEOUT          if synchronization timed out.
+ * @retval MSG_RESET            if the transfer has been stopped.
  *
  * @api
  */
@@ -566,9 +558,9 @@ msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout) {
  * @param[in] spip              pointer to the @p SPIDriver object
  * @param[in] n                 number of words to be ignored
  * @return                      The operation status.
- * @retval MSG_SPI_COMPLETE     if operation completed without errors.
- * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
- * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
+ * @retval MSG_OK               if operation completed without errors.
+ * @retval MSG_TIMEOUT          if synchronization timed out.
+ * @retval MSG_RESET            if the transfer has been stopped.
  *
  * @api
  */
@@ -601,10 +593,9 @@ msg_t spiIgnore(SPIDriver *spip, size_t n) {
  * @param[in] txbuf             the pointer to the transmit buffer
  * @param[out] rxbuf            the pointer to the receive buffer
  * @return                      The operation status.
- * @retval MSG_SPI_COMPLETE     if operation completed without errors.
- *                              mode only).
- * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
- * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
+ * @retval MSG_OK               if operation completed without errors.
+ * @retval MSG_TIMEOUT          if synchronization timed out.
+ * @retval MSG_RESET            if the transfer has been stopped.
  *
  * @api
  */
@@ -636,9 +627,9 @@ msg_t spiExchange(SPIDriver *spip, size_t n,
  * @param[in] n                 number of words to send
  * @param[in] txbuf             the pointer to the transmit buffer
  * @return                      The operation status.
- * @retval MSG_SPI_COMPLETE     if operation completed without errors.
- * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
- * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
+ * @retval MSG_OK               if operation completed without errors.
+ * @retval MSG_TIMEOUT          if synchronization timed out.
+ * @retval MSG_RESET            if the transfer has been stopped.
  *
  * @api
  */
@@ -669,9 +660,9 @@ msg_t spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] n                 number of words to receive
  * @param[out] rxbuf            the pointer to the receive buffer
  * @return                      The operation status.
- * @retval MSG_SPI_COMPLETE     if operation completed without errors.
- * @retval MSG_SPI_TIMEOUT      if synchronization timed out.
- * @retval MSG_SPI_STOPPED      if the transfer has been stopped.
+ * @retval MSG_OK               if operation completed without errors.
+ * @retval MSG_TIMEOUT          if synchronization timed out.
+ * @retval MSG_RESET            if the transfer has been stopped.
  *
  * @api
  */

@@ -44,17 +44,6 @@
 #define SPI_SELECT_MODE_LLD                 4   /** @brief LLD-defined mode.*/
 /** @} */
 
-/**
- * @name    SPI-specific messages
- * @{
- */
-#define MSG_SPI_BUFFER_HALF                 (msg_t)-3
-#define MSG_SPI_BUFFER_FULL                 (msg_t)-4
-#define MSG_SPI_COMPLETE                    MSG_OK
-#define MSG_SPI_TIMEOUT                     MSG_TIMEOUT
-#define MSG_SPI_STOPPED                     MSG_RESET
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -428,7 +417,6 @@ do {                                                                        \
   if ((spip)->config->end_cb) {                                             \
     (spip)->config->end_cb(spip);                                           \
   }                                                                         \
-  __spi_wakeup_isr(spip, MSG_SPI_BUFFER_HALF);                              \
 }
 
 /**
@@ -452,7 +440,6 @@ do {                                                                        \
       (spip)->state = SPI_ACTIVE;                                           \
     }                                                                       \
   }                                                                         \
-  __spi_wakeup_isr(spip, MSG_SPI_BUFFER_FULL);                              \
 }
 
 /**
