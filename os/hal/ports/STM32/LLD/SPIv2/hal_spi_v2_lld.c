@@ -143,11 +143,11 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   if (spip->config->circular) {
     if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
-      _spi_isr_half_code(spip);
+      __spi_isr_half_code(spip);
     }
     if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
       /* End buffer interrupt.*/
-      _spi_isr_full_code(spip);
+      __spi_isr_full_code(spip);
     }
   }
   else {
@@ -157,7 +157,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
 
     /* Portable SPI ISR code defined in the high level driver, note, it is
        a macro.*/
-    _spi_isr_code(spip);
+    __spi_isr_code(spip);
   }
 }
 
@@ -179,6 +179,36 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
   (void)spip;
   (void)flags;
 #endif
+}
+
+static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxstream,
+                             uint32_t txstream, uint32_t priority){
+
+  spip->dmarx = dmaStreamAllocI(rxstream, priority,
+                                (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
+                                (void *)spip);
+  if (spip->dmarx == NULL) {
+    return HAL_RET_NO_RESOURCE;
+  }
+
+  spip->dmatx = dmaStreamAllocI(txstream, priority,
+                                (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
+                                (void *)spip);
+  if (spip->dmatx == NULL) {
+    dmaStreamFreeI(spip->dmarx);
+    return HAL_RET_NO_RESOURCE;
+  }
+
+  return HAL_RET_SUCCESS;
+}
+
+
+static msg_t spi_lld_wait_not_busy(SPIDriver *spip) {
+
+  while ((spip->spi->SR & SPI_SR_BSY) != 0U) {
+  }
+
+  return HAL_RET_SUCCESS;
 }
 
 /*===========================================================================*/
@@ -309,128 +339,130 @@ void spi_lld_init(void) {
  * @brief   Configures and activates the SPI peripheral.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ * @return              The operation status.
  *
  * @notapi
  */
-void spi_lld_start(SPIDriver *spip) {
+msg_t spi_lld_start(SPIDriver *spip) {
   uint32_t ds;
+  msg_t msg;
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (spip->state == SPI_STOP) {
+    if (false) {
+    }
+
 #if STM32_SPI_USE_SPI1
-    if (&SPID1 == spip) {
-      spip->dmarx = dmaStreamAllocI(STM32_SPI_SPI1_RX_DMA_STREAM,
-                                    STM32_SPI_SPI1_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
-      spip->dmatx = dmaStreamAllocI(STM32_SPI_SPI1_TX_DMA_STREAM,
-                                    STM32_SPI_SPI1_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+    else if (&SPID1 == spip) {
+      msg = spi_lld_get_dma(spip,
+                            STM32_SPI_SPI1_RX_DMA_STREAM,
+                            STM32_SPI_SPI1_TX_DMA_STREAM,
+                            STM32_SPI_SPI1_IRQ_PRIORITY);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
       rccEnableSPI1(true);
+      rccResetSPI1();
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI1_RX);
       dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI1_TX);
 #endif
     }
 #endif
+
 #if STM32_SPI_USE_SPI2
     if (&SPID2 == spip) {
-      spip->dmarx = dmaStreamAllocI(STM32_SPI_SPI2_RX_DMA_STREAM,
-                                    STM32_SPI_SPI2_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
-      spip->dmatx = dmaStreamAllocI(STM32_SPI_SPI2_TX_DMA_STREAM,
-                                    STM32_SPI_SPI2_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+      msg = spi_lld_get_dma(spip,
+                            STM32_SPI_SPI2_RX_DMA_STREAM,
+                            STM32_SPI_SPI2_TX_DMA_STREAM,
+                            STM32_SPI_SPI2_IRQ_PRIORITY);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
       rccEnableSPI2(true);
+      rccResetSPI2();
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI2_RX);
       dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI2_TX);
 #endif
     }
 #endif
+
 #if STM32_SPI_USE_SPI3
-    if (&SPID3 == spip) {
-      spip->dmarx = dmaStreamAllocI(STM32_SPI_SPI3_RX_DMA_STREAM,
-                                    STM32_SPI_SPI3_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
-      spip->dmatx = dmaStreamAllocI(STM32_SPI_SPI3_TX_DMA_STREAM,
-                                    STM32_SPI_SPI3_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+    else if (&SPID3 == spip) {
+      msg = spi_lld_get_dma(spip,
+                            STM32_SPI_SPI3_RX_DMA_STREAM,
+                            STM32_SPI_SPI3_TX_DMA_STREAM,
+                            STM32_SPI_SPI3_IRQ_PRIORITY);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
       rccEnableSPI3(true);
+      rccResetSPI3();
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI3_RX);
       dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI3_TX);
 #endif
     }
 #endif
+
 #if STM32_SPI_USE_SPI4
-    if (&SPID4 == spip) {
-      spip->dmarx = dmaStreamAllocI(STM32_SPI_SPI4_RX_DMA_STREAM,
-                                    STM32_SPI_SPI4_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
-      spip->dmatx = dmaStreamAllocI(STM32_SPI_SPI4_TX_DMA_STREAM,
-                                    STM32_SPI_SPI4_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+    else if (&SPID4 == spip) {
+      msg = spi_lld_get_dma(spip,
+                            STM32_SPI_SPI4_RX_DMA_STREAM,
+                            STM32_SPI_SPI4_TX_DMA_STREAM,
+                            STM32_SPI_SPI4_IRQ_PRIORITY);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
       rccEnableSPI4(true);
+      rccResetSPI4();
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI4_RX);
       dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI4_TX);
 #endif
     }
 #endif
+
 #if STM32_SPI_USE_SPI5
-    if (&SPID5 == spip) {
-      spip->dmarx = dmaStreamAllocI(STM32_SPI_SPI5_RX_DMA_STREAM,
-                                    STM32_SPI_SPI5_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
-      spip->dmatx = dmaStreamAllocI(STM32_SPI_SPI5_TX_DMA_STREAM,
-                                    STM32_SPI_SPI5_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+    else if (&SPID5 == spip) {
+      msg = spi_lld_get_dma(spip,
+                            STM32_SPI_SPI5_RX_DMA_STREAM,
+                            STM32_SPI_SPI5_TX_DMA_STREAM,
+                            STM32_SPI_SPI5_IRQ_PRIORITY);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
       rccEnableSPI5(true);
+      rccResetSPI5();
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI5_RX);
       dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI5_TX);
 #endif
     }
 #endif
+
 #if STM32_SPI_USE_SPI6
     if (&SPID6 == spip) {
-      spip->dmarx = dmaStreamAllocI(STM32_SPI_SPI6_RX_DMA_STREAM,
-                                    STM32_SPI_SPI6_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmarx != NULL, "unable to allocate stream");
-      spip->dmatx = dmaStreamAllocI(STM32_SPI_SPI6_TX_DMA_STREAM,
-                                    STM32_SPI_SPI6_IRQ_PRIORITY,
-                                    (stm32_dmaisr_t)spi_lld_serve_tx_interrupt,
-                                    (void *)spip);
-      osalDbgAssert(spip->dmatx != NULL, "unable to allocate stream");
+      msg = spi_lld_get_dma(spip,
+                            STM32_SPI_SPI6_RX_DMA_STREAM,
+                            STM32_SPI_SPI6_TX_DMA_STREAM,
+                            STM32_SPI_SPI6_IRQ_PRIORITY);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
       rccEnableSPI6(true);
+      rccResetSPI6();
 #if STM32_DMA_SUPPORTS_DMAMUX
       dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI6_RX);
       dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI6_TX);
 #endif
     }
 #endif
+
+    else {
+      osalDbgAssert(false, "invalid SPI instance");
+    }
 
     /* DMA setup.*/
     dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
@@ -469,6 +501,8 @@ void spi_lld_start(SPIDriver *spip) {
   spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
                     SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   spip->spi->CR1 |= SPI_CR1_SPE;
+
+  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -555,10 +589,11 @@ void spi_lld_unselect(SPIDriver *spip) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
+ * @return              The operation status.
  *
  * @notapi
  */
-bool spi_lld_ignore(SPIDriver *spip, size_t n) {
+msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
@@ -573,7 +608,7 @@ bool spi_lld_ignore(SPIDriver *spip, size_t n) {
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  return false;
+  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -588,11 +623,12 @@ bool spi_lld_ignore(SPIDriver *spip, size_t n) {
  * @param[in] n         number of words to be exchanged
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
+ * @return              The operation status.
  *
  * @notapi
  */
-bool spi_lld_exchange(SPIDriver *spip, size_t n,
-                      const void *txbuf, void *rxbuf) {
+msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
+                       const void *txbuf, void *rxbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
@@ -607,7 +643,7 @@ bool spi_lld_exchange(SPIDriver *spip, size_t n,
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  return false;
+  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -620,10 +656,11 @@ bool spi_lld_exchange(SPIDriver *spip, size_t n,
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
+ * @return              The operation status.
  *
  * @notapi
  */
-void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
+msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
@@ -637,6 +674,8 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
+
+  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -649,10 +688,11 @@ void spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
+ * @return              The operation status.
  *
  * @notapi
  */
-void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
+msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
@@ -666,23 +706,38 @@ void spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
+
+  return HAL_RET_SUCCESS;
 }
 
-#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Aborts the ongoing SPI operation, if any.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[out sizep     pointer to the counter of frames not yet transferred
+ *                      or @p NULL
+ * @return              The operation status.
  *
  * @notapi
  */
-void spi_lld_abort(SPIDriver *spip) {
+msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
+  msg_t msg;
 
-  /* Stopping DMAs.*/
+  /* Stopping TX DMA.*/
   dmaStreamDisable(spip->dmatx);
+
+  /* Waiting for the SPI to become not busy.*/
+  msg = spi_lld_wait_not_busy(spip);
+
+  /* Stopping RX DMA.*/
   dmaStreamDisable(spip->dmarx);
+
+  if (sizep != NULL) {
+    *sizep = dmaStreamGetTransactionSize(spip->dmatx);
+  }
+
+  return msg;
 }
-#endif /* SPI_SUPPORTS_CIRCULAR == TRUE */
 
 /**
  * @brief   Exchanges one frame using a polled wait.

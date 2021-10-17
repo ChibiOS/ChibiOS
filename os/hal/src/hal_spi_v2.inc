@@ -98,13 +98,8 @@ msg_t spiStart(SPIDriver *spip, const SPIConfig *config) {
 
   spip->config = config;
 
-#if defined(SPI_LLD_ENHANCED_API)
   msg = spi_lld_start(spip);
-#else
-  spi_lld_start(spip);
-  msg = HAL_START_SUCCESS;
-#endif
-  if (msg == HAL_START_SUCCESS) {
+  if (msg == HAL_RET_SUCCESS) {
     spip->state = SPI_READY;
   }
   else {
@@ -112,6 +107,10 @@ msg_t spiStart(SPIDriver *spip, const SPIConfig *config) {
   }
 
   osalSysUnlock();
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
 
   return msg;
 }
@@ -185,12 +184,13 @@ void spiUnselect(SPIDriver *spip) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @iclass
  */
-bool spiStartIgnoreI(SPIDriver *spip, size_t n) {
+msg_t spiStartIgnoreI(SPIDriver *spip, size_t n) {
+  msg_t msg;
+
+  osalDbgCheckClassI();
 
   osalDbgCheck((spip != NULL) && (n > 0U));
 #if SPI_SUPPORTS_CIRCULAR
@@ -200,7 +200,13 @@ bool spiStartIgnoreI(SPIDriver *spip, size_t n) {
   osalDbgAssert(spip->state == SPI_READY, "not ready");
 
   spip->state = SPI_ACTIVE;
-  return spi_lld_ignore(spip, n);
+  msg = spi_lld_ignore(spip, n);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
 }
 
 /**
@@ -214,19 +220,17 @@ bool spiStartIgnoreI(SPIDriver *spip, size_t n) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @api
  */
-bool spiStartIgnore(SPIDriver *spip, size_t n) {
-  bool ret;
+msg_t spiStartIgnore(SPIDriver *spip, size_t n) {
+  msg_t msg;
 
   osalSysLock();
-  ret = spiStartIgnoreI(spip, n);
+  msg = spiStartIgnoreI(spip, n);
   osalSysUnlock();
 
-  return ret;
+  return msg;
 }
 
 /**
@@ -244,13 +248,14 @@ bool spiStartIgnore(SPIDriver *spip, size_t n) {
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @iclass
  */
-bool spiStartExchangeI(SPIDriver *spip, size_t n,
+msg_t spiStartExchangeI(SPIDriver *spip, size_t n,
                        const void *txbuf, void *rxbuf) {
+  msg_t msg;
+
+  osalDbgCheckClassI();
 
   osalDbgCheck((spip != NULL) && (n > 0U) &&
                (rxbuf != NULL) && (txbuf != NULL));
@@ -261,7 +266,13 @@ bool spiStartExchangeI(SPIDriver *spip, size_t n,
   osalDbgAssert(spip->state == SPI_READY, "not ready");
 
   spip->state = SPI_ACTIVE;
-  return spi_lld_exchange(spip, n, txbuf, rxbuf);
+  msg = spi_lld_exchange(spip, n, txbuf, rxbuf);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
 }
 
 /**
@@ -279,20 +290,18 @@ bool spiStartExchangeI(SPIDriver *spip, size_t n,
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @api
  */
-bool spiStartExchange(SPIDriver *spip, size_t n,
+msg_t spiStartExchange(SPIDriver *spip, size_t n,
                       const void *txbuf, void *rxbuf) {
-  bool ret;
+  msg_t msg;
 
   osalSysLock();
-  ret = spiStartExchangeI(spip, n, txbuf, rxbuf);
+  msg = spiStartExchangeI(spip, n, txbuf, rxbuf);
   osalSysUnlock();
 
-  return ret;
+  return msg;
 }
 
 /**
@@ -308,12 +317,13 @@ bool spiStartExchange(SPIDriver *spip, size_t n,
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @iclass
  */
-bool spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf) {
+msg_t spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf) {
+  msg_t msg;
+
+  osalDbgCheckClassI();
 
   osalDbgCheck((spip != NULL) && (n > 0U) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
@@ -323,7 +333,13 @@ bool spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf) {
   osalDbgAssert(spip->state == SPI_READY, "not ready");
 
   spip->state = SPI_ACTIVE;
-  return spi_lld_send(spip, n, txbuf);
+  msg = spi_lld_send(spip, n, txbuf);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
 }
 
 /**
@@ -339,19 +355,17 @@ bool spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @api
  */
-bool spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
-  bool ret;
+msg_t spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
+  msg_t msg;
 
   osalSysLock();
-  ret = spiStartSendI(spip, n, txbuf);
+  msg = spiStartSendI(spip, n, txbuf);
   osalSysUnlock();
 
-  return ret;
+  return msg;
 }
 
 /**
@@ -367,12 +381,13 @@ bool spiStartSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @iclass
  */
-bool spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf) {
+msg_t spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf) {
+  msg_t msg;
+
+  osalDbgCheckClassI();
 
   osalDbgCheck((spip != NULL) && (n > 0U) && (rxbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
@@ -382,7 +397,13 @@ bool spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf) {
   osalDbgAssert(spip->state == SPI_READY, "not ready");
 
   spip->state = SPI_ACTIVE;
-  return spi_lld_receive(spip, n, rxbuf);
+  msg = spi_lld_receive(spip, n, rxbuf);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
 }
 
 /**
@@ -398,19 +419,79 @@ bool spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf) {
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
  * @return              The operation status.
- * @retval false        if the operation started correctly.
- * @retval true         if the operation did not start.
  *
  * @api
  */
-bool spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
-  bool ret;
+msg_t spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
+  msg_t msg;
 
   osalSysLock();
-  ret = spiStartReceiveI(spip, n, rxbuf);
+  msg = spiStartReceiveI(spip, n, rxbuf);
   osalSysUnlock();
 
-  return ret;
+  return msg;
+}
+
+/**
+ * @brief   Stops the ongoing SPI operation.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[out sizep     pointer to the counter of frames not yet transferred
+ *                      or @p NULL
+ * @return              The operation status.
+ *
+ * @iclass
+ */
+msg_t spiStopTranferI(SPIDriver *spip, size_t *sizep) {
+  msg_t msg;
+
+  osalDbgCheckClassI();
+
+  osalDbgCheck(spip != NULL);
+
+  osalDbgAssert((spip->state == SPI_READY) ||
+                (spip->state == SPI_ACTIVE) ||
+                (spip->state == SPI_COMPLETE),
+                "invalid state");
+
+  if ((spip->state == SPI_ACTIVE) || (spip->state == SPI_COMPLETE)) {
+
+    /* Stopping transfer at low level.*/
+    msg = spi_lld_stop_transfer(spip, sizep);
+    spip->state = SPI_READY;
+
+#if SPI_USE_SYNCHRONIZATION == TRUE
+    osalThreadResumeI(&spip->sync_transfer, MSG_OK);
+#endif
+  }
+  else {
+    msg = HAL_RET_SUCCESS;
+  }
+
+  return msg;
+}
+
+/**
+ * @brief   Stops the ongoing SPI operation, if any.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[out sizep     pointer to the counter of frames not yet transferred
+ *                      or @p NULL
+ * @return              The operation status.
+ *
+ * @api
+ */
+msg_t spiStopTranfer(SPIDriver *spip, size_t *sizep) {
+  msg_t msg;
+
+  osalSysLock();
+
+  msg = spiStopTranferI(spip, sizep);
+  osalOsRescheduleS();
+
+  osalSysUnlock();
+
+  return msg;
 }
 
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
@@ -474,16 +555,23 @@ msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout) {
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to be ignored
+ * @return              The operation status.
  *
  * @api
  */
-void spiIgnore(SPIDriver *spip, size_t n) {
-  bool ret;
+msg_t spiIgnore(SPIDriver *spip, size_t n) {
+  msg_t msg;
 
   osalSysLock();
-  spiStartIgnoreI(spip, n);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+
+    msg = spiStartIgnoreI(spip, n);
+    if (msg != MSG_OK) {
+      msg = spiSynchronizeS(spip, TIME_INFINITE);
+    }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**
@@ -499,16 +587,24 @@ void spiIgnore(SPIDriver *spip, size_t n) {
  * @param[in] n         number of words to be exchanged
  * @param[in] txbuf     the pointer to the transmit buffer
  * @param[out] rxbuf    the pointer to the receive buffer
+ * @return              The operation status.
  *
  * @api
  */
-void spiExchange(SPIDriver *spip, size_t n,
+msg_t spiExchange(SPIDriver *spip, size_t n,
                  const void *txbuf, void *rxbuf) {
+  msg_t msg;
 
   osalSysLock();
-  spiStartExchangeI(spip, n, txbuf, rxbuf);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+
+  msg = spiStartExchangeI(spip, n, txbuf, rxbuf);
+  if (msg != MSG_OK) {
+    msg = spiSynchronizeS(spip, TIME_INFINITE);
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**
@@ -522,15 +618,23 @@ void spiExchange(SPIDriver *spip, size_t n,
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to send
  * @param[in] txbuf     the pointer to the transmit buffer
+ * @return              The operation status.
  *
  * @api
  */
-void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
+msg_t spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
+  msg_t msg;
 
   osalSysLock();
-  spiStartSendI(spip, n, txbuf);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+
+  msg = spiStartSendI(spip, n, txbuf);
+  if (msg != MSG_OK) {
+    msg = spiSynchronizeS(spip, TIME_INFINITE);
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 
 /**
@@ -544,15 +648,23 @@ void spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
  * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] n         number of words to receive
  * @param[out] rxbuf    the pointer to the receive buffer
+ * @return              The operation status.
  *
  * @api
  */
-void spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
+msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
+  msg_t msg;
 
   osalSysLock();
-  spiStartReceiveI(spip, n, rxbuf);
-  (void) spiSynchronizeS(spip, TIME_INFINITE);
+
+  msg = spiStartReceiveI(spip, n, rxbuf);
+  if (msg != MSG_OK) {
+    msg = spiSynchronizeS(spip, TIME_INFINITE);
+  }
+
   osalSysUnlock();
+
+  return msg;
 }
 #endif /* SPI_USE_SYNCHRONIZATION == TRUE */
 

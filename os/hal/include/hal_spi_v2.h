@@ -64,6 +64,13 @@
 #endif
 
 /**
+ * @brief   Inserts an assertion on function errors before returning.
+ */
+#if !defined(SPI_USE_ASSERT_ON_ERROR) || defined(__DOXYGEN__)
+#define SPI_USE_ASSERT_ON_ERROR             TRUE
+#endif
+
+/**
  * @brief   Enables circular transfers APIs.
  * @note    Disabling this option saves both code and data space.
  */
@@ -358,13 +365,13 @@ do {                                                                        \
  *
  * @notapi
  */
-#define _spi_wakeup_isr(spip) {                                             \
+#define __spi_wakeup_isr(spip) {                                            \
   osalSysLockFromISR();                                                     \
   osalThreadResumeI(&(spip)->sync_transfer, MSG_OK);                        \
   osalSysUnlockFromISR();                                                   \
 }
 #else /* !SPI_USE_SYNCHRONIZATION */
-#define _spi_wakeup_isr(spip)
+#define __spi_wakeup_isr(spip)
 #endif /* !SPI_USE_SYNCHRONIZATION */
 
 /**
@@ -381,7 +388,7 @@ do {                                                                        \
  *
  * @notapi
  */
-#define _spi_isr_code(spip) {                                               \
+#define __spi_isr_code(spip) {                                              \
   if ((spip)->config->end_cb) {                                             \
     (spip)->state = SPI_COMPLETE;                                           \
     (spip)->config->end_cb(spip);                                           \
@@ -390,7 +397,7 @@ do {                                                                        \
   }                                                                         \
   else                                                                      \
     (spip)->state = SPI_READY;                                              \
-  _spi_wakeup_isr(spip);                                                    \
+  __spi_wakeup_isr(spip);                                                   \
 }
 
 /**
@@ -405,7 +412,7 @@ do {                                                                        \
  *
  * @notapi
  */
-#define _spi_isr_half_code(spip) {                                          \
+#define __spi_isr_half_code(spip) {                                         \
   if ((spip)->config->end_cb) {                                             \
     (spip)->config->end_cb(spip);                                           \
   }                                                                         \
@@ -424,7 +431,7 @@ do {                                                                        \
  *
  * @notapi
  */
-#define _spi_isr_full_code(spip) {                                          \
+#define __spi_isr_full_code(spip) {                                         \
   if ((spip)->config->end_cb) {                                             \
     (spip)->state = SPI_COMPLETE;                                           \
     (spip)->config->end_cb(spip);                                           \
@@ -447,25 +454,25 @@ extern "C" {
   void spiStop(SPIDriver *spip);
   void spiSelect(SPIDriver *spip);
   void spiUnselect(SPIDriver *spip);
-  bool spiStartIgnoreI(SPIDriver *spip, size_t n);
-  bool spiStartIgnore(SPIDriver *spip, size_t n);
-  bool spiStartExchangeI(SPIDriver *spip, size_t n,
+  msg_t spiStartIgnoreI(SPIDriver *spip, size_t n);
+  msg_t spiStartIgnore(SPIDriver *spip, size_t n);
+  msg_t spiStartExchangeI(SPIDriver *spip, size_t n,
+                          const void *txbuf, void *rxbuf);
+  msg_t spiStartExchange(SPIDriver *spip, size_t n,
                          const void *txbuf, void *rxbuf);
-  bool spiStartExchange(SPIDriver *spip, size_t n,
-                        const void *txbuf, void *rxbuf);
-  bool spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf);
-  bool spiStartSend(SPIDriver *spip, size_t n, const void *txbuf);
-  bool spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf);
-  bool spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf);
-  size_t spiStopTransferI(SPIDriver *spip);
-  size_t spiStopTransfer(SPIDriver *spip);
+  msg_t spiStartSendI(SPIDriver *spip, size_t n, const void *txbuf);
+  msg_t spiStartSend(SPIDriver *spip, size_t n, const void *txbuf);
+  msg_t spiStartReceiveI(SPIDriver *spip, size_t n, void *rxbuf);
+  msg_t spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf);
+  msg_t spiStopTransferI(SPIDriver *spip, size_t *sizep);
+  msg_t spiStopTransfer(SPIDriver *spip, size_t *sizep);
 #if SPI_USE_SYNCHRONIZATION == TRUE
   msg_t spiSynchronizeS(SPIDriver *spip, sysinterval_t timeout);
   msg_t spiSynchronize(SPIDriver *spip, sysinterval_t timeout);
-  void spiIgnore(SPIDriver *spip, size_t n);
-  void spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
-  void spiSend(SPIDriver *spip, size_t n, const void *txbuf);
-  void spiReceive(SPIDriver *spip, size_t n, void *rxbuf);
+  msg_t spiIgnore(SPIDriver *spip, size_t n);
+  msg_t spiExchange(SPIDriver *spip, size_t n, const void *txbuf, void *rxbuf);
+  msg_t spiSend(SPIDriver *spip, size_t n, const void *txbuf);
+  msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf);
 #endif
 #if SPI_USE_MUTUAL_EXCLUSION == TRUE
   void spiAcquireBus(SPIDriver *spip);
