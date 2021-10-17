@@ -111,7 +111,7 @@
 #define HAL_RET_HW_BUSY         (msg_t)-18
 /**
  * @brief   Peripheral failure.
- * @details Peripheral failed during initialization, for example HW timeouts.
+ * @details Peripheral failed, for example HW timeouts.
  */
 #define HAL_RET_HW_FAILURE      (msg_t)-19
 /** @} */

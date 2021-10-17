@@ -44,6 +44,14 @@
 #define SPI_SELECT_MODE_LLD                 4   /** @brief LLD-defined mode.*/
 /** @} */
 
+/**
+ * @name    SPI-specific messages
+ * @{
+ */
+#define MSG_SPI_BUFFER_FULL                 MSG_OK
+#define MSG_SPI_BUFFER_HALF                 (msg_t)-3
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -365,7 +373,7 @@ do {                                                                        \
  *
  * @notapi
  */
-#define __spi_wakeup_isr(spip) {                                            \
+#define __spi_wakeup_isr(spip, msg) {                                       \
   osalSysLockFromISR();                                                     \
   osalThreadResumeI(&(spip)->sync_transfer, MSG_OK);                        \
   osalSysUnlockFromISR();                                                   \
@@ -373,32 +381,6 @@ do {                                                                        \
 #else /* !SPI_USE_SYNCHRONIZATION */
 #define __spi_wakeup_isr(spip)
 #endif /* !SPI_USE_SYNCHRONIZATION */
-
-/**
- * @brief   Common ISR code when circular mode is not supported.
- * @details This code handles the portable part of the ISR code:
- *          - Callback invocation.
- *          - Waiting thread wakeup, if any.
- *          - Driver state transitions.
- *          .
- * @note    This macro is meant to be used in the low level drivers
- *          implementation only.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-#define __spi_isr_code(spip) {                                              \
-  if ((spip)->config->end_cb) {                                             \
-    (spip)->state = SPI_COMPLETE;                                           \
-    (spip)->config->end_cb(spip);                                           \
-    if ((spip)->state == SPI_COMPLETE)                                      \
-      (spip)->state = SPI_READY;                                            \
-  }                                                                         \
-  else                                                                      \
-    (spip)->state = SPI_READY;                                              \
-  __spi_wakeup_isr(spip);                                                   \
-}
 
 /**
  * @brief   Half buffer filled ISR code in circular mode.
@@ -416,6 +398,7 @@ do {                                                                        \
   if ((spip)->config->end_cb) {                                             \
     (spip)->config->end_cb(spip);                                           \
   }                                                                         \
+  __spi_wakeup_isr(spip, MSG_SPI_BUFFER_HALF);                              \
 }
 
 /**
@@ -435,9 +418,28 @@ do {                                                                        \
   if ((spip)->config->end_cb) {                                             \
     (spip)->state = SPI_COMPLETE;                                           \
     (spip)->config->end_cb(spip);                                           \
-    if ((spip)->state == SPI_COMPLETE)                                      \
+    if ((spip)->state == SPI_COMPLETE) {                                    \
       (spip)->state = SPI_ACTIVE;                                           \
+    }                                                                       \
   }                                                                         \
+  __spi_wakeup_isr(spip, MSG_SPI_BUFFER_FULL);                              \
+}
+
+/**
+ * @brief   ISR error reporting code..
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] msg       error code
+ *
+ * @notapi
+ */
+#define __spi_isr_error_code(spip, msg) {                                   \
+  if ((spip)->config->error_cb) {                                           \
+    (spip)->config->error_cb(spip);                                         \
+  }                                                                         \
+  __spi_wakeup_isr(spip, msg);                                              \
 }
 /** @} */
 

@@ -132,15 +132,19 @@ static uint16_t dummyrx;
 static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
 
   /* DMA errors handling.*/
-#if defined(STM32_SPI_DMA_ERROR_HOOK)
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
+#if defined(STM32_SPI_DMA_ERROR_HOOK)
+    /* Hook first, if defined.*/
     STM32_SPI_DMA_ERROR_HOOK(spip);
-  }
-#else
-  (void)flags;
 #endif
 
-  if (spip->config->circular) {
+    /* Aborting the transfer, best effort.*/
+    (void) spi_lld_stop_transfer(spip, NULL);
+
+    /* Reporting the failure.*/
+    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
+  }
+  else if (spip->config->circular) {
     if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
       __spi_isr_half_code(spip);
@@ -151,13 +155,9 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     }
   }
   else {
-    /* Stopping DMAs.*/
-    dmaStreamDisable(spip->dmatx);
-    dmaStreamDisable(spip->dmarx);
-
     /* Portable SPI ISR code defined in the high level driver, note, it is
        a macro.*/
-    __spi_isr_code(spip);
+    __spi_isr_full_code(spip);
   }
 }
 
@@ -170,17 +170,29 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
 static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
 
   /* DMA errors handling.*/
-#if defined(STM32_SPI_DMA_ERROR_HOOK)
-  (void)spip;
   if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
+#if defined(STM32_SPI_DMA_ERROR_HOOK)
+    /* Hook first, if defined.*/
     STM32_SPI_DMA_ERROR_HOOK(spip);
-  }
-#else
-  (void)spip;
-  (void)flags;
 #endif
+
+    /* Aborting the transfer, best effort.*/
+    (void) spi_lld_stop_transfer(spip, NULL);
+
+    /* Reporting the failure.*/
+    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
+  }
 }
 
+/**
+ * @brief   DMA streams allocation.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] rxstream  stream to be allocated for RX
+ * @param[in] txstream  stream to be allocated for TX
+ * @param[in] priority  streams IRQ priority
+ * @return              The operation status.
+ */
 static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxstream,
                              uint32_t txstream, uint32_t priority){
 
