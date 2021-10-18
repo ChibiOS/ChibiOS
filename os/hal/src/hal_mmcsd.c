@@ -104,7 +104,7 @@ uint32_t _mmcsd_get_capacity(const uint32_t *csd) {
     return ((a + 1U) << (b + 2U)) << (c - 9U);  /* 2^9 == MMCSD_BLOCK_SIZE. */
   case 1:
     /* CSD version 2.0.*/
-    return 1024U * (_mmcsd_get_slice(csd, MMCSD_CSD_20_C_SIZE_SLICE) + 1U);
+    return 512U * (_mmcsd_get_slice(csd, MMCSD_CSD_20_C_SIZE_SLICE) + 1U);
   default:
     /* Reserved value detected.*/
     break;
