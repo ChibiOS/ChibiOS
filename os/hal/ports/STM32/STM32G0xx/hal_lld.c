@@ -86,6 +86,9 @@ const halclkcfg_t hal_clkcfg_default = {
 #if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
 #endif
+#if STM32_HSI48_ENABLED
+                        | RCC_CR_HSI48ON
+#endif
 #if STM32_HSE_ENABLED
                         | RCC_CR_HSEON
 #endif
@@ -255,12 +258,25 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
   /* Clock-related settings (dividers, MCO etc).*/
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE | STM32_HPRE;
 
-  /* CCIPR register initialization, note.*/
-  RCC->CCIPR = STM32_ADCSEL    | STM32_RNGDIV    | STM32_RNGSEL    |
-               STM32_TIM15SEL  | STM32_TIM1SEL   | STM32_LPTIM2SEL |
-               STM32_LPTIM1SEL | STM32_I2S1SEL   | STM32_I2C1SEL   |
-               STM32_CECSEL    | STM32_USART2SEL | STM32_USART1SEL |
-               STM32_LPUART1SEL;
+#if STM32_RCC_HAS_CCIPR2
+  /* CCIPR register initialization.*/
+  RCC->CCIPR =  STM32_ADCSEL    | STM32_RNGDIV    | STM32_RNGSEL    |
+                STM32_TIM15SEL  | STM32_TIM1SEL   | STM32_LPTIM2SEL |
+                STM32_LPTIM1SEL | STM32_I2C2SEL   | STM32_I2C1SEL   |
+                STM32_CECSEL    | STM32_USART2SEL | STM32_USART1SEL |
+                STM32_LPUART1SEL;
+
+  /* CCIPR2 register initialization.*/
+  RCC->CCIPR2 = STM32_USBSEL    | STM32_FDCANSEL  | STM32_I2S2SEL   |
+                STM32_I2S1SEL;
+#else
+  /* CCIPR register initialization.*/
+  RCC->CCIPR =  STM32_ADCSEL    | STM32_RNGDIV    | STM32_RNGSEL    |
+                STM32_TIM15SEL  | STM32_TIM1SEL   | STM32_LPTIM2SEL |
+                STM32_LPTIM1SEL | STM32_I2S1SEL   | STM32_I2C1SEL   |
+                STM32_CECSEL    | STM32_USART2SEL | STM32_USART1SEL |
+                STM32_LPUART1SEL;
+#endif
 }
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
@@ -508,6 +524,13 @@ static bool hal_lld_clock_raw_config(const halclkcfg_t *ccp) {
     hse_enable();
   }
 
+#if STM32_RCC_HAS_HSI48
+  /* HSI48 setup, if required, before starting the PLL.*/
+  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
+    hsi48_enable();
+  }
+#endif
+
   /* PLL setup.*/
   RCC->PLLCFGR = ccp->rcc_pllcfgr;
 
@@ -707,6 +730,7 @@ void stm32_clock_init(void) {
   lse_init();
   lsi_init();
   hsi16_init();
+  hsi48_init();
   hse_init();
 
   /* Backup domain initializations.*/

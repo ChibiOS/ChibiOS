@@ -170,6 +170,14 @@
 #define STM32_LPUART1_NUMBER                29
 #define STM32_USART3_4_LP1_NUMBER           STM32_LPUART1_NUMBER
 #define STM32_USART3_4_5_6_LP1_NUMBER       STM32_LPUART1_NUMBER
+
+/*
+ * USB units.
+ */
+#define STM32_USB1_HP_HANDLER               Vector60
+#define STM32_USB1_LP_HANDLER               Vector60
+#define STM32_USB1_HP_NUMBER                8
+#define STM32_USB1_LP_NUMBER                8
 /** @} */
 
 /*===========================================================================*/

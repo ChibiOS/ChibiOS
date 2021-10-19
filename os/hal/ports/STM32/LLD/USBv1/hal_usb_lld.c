@@ -36,6 +36,11 @@
 
 #define EPR_EP_TYPE_IS_ISO(bits) ((bits & EPR_EP_TYPE_MASK) == EPR_EP_TYPE_ISO)
 
+/* Addressing differences in headers.*/
+#if !defined(USB_CNTR_L2RES) && defined(USB_CNTR_RESUME)
+#define USB_CNTR_L2RES  USB_CNTR_RESUME
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -759,7 +764,7 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
   udp = USB_GET_DESCRIPTOR(ep);
   pmap = USB_ADDR2PTR(udp->RXADDR0);
   for (n = 0; n < 4; n++) {
-    *(uint16_t *)buf = (uint16_t)*pmap++;
+    *(uint16_t *)(void *)buf = (uint16_t)*pmap++;
     buf += 2;
   }
 }

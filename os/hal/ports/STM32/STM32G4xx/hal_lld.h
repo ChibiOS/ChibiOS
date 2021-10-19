@@ -1015,10 +1015,10 @@
     #error "HSI16 not enabled, required by STM32_USART3SEL"
   #endif
   #if (STM32_UART4SEL == STM32_UART4SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_UART4SEL_HSI16"
+    #error "HSI16 not enabled, required by STM32_UART4SEL"
   #endif
   #if (STM32_UART5SEL == STM32_UART5SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_UART5SEL_HSI16"
+    #error "HSI16 not enabled, required by STM32_UART5SEL"
   #endif
   #if (STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16)
     #error "HSI16 not enabled, required by STM32_LPUART1SEL"
@@ -1049,7 +1049,7 @@
   #endif
 
   #if (STM32_QSPISEL == STM32_QSPISEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_QSPISEL_HSI16"
+    #error "HSI16 not enabled, required by STM32_QSPISEL"
   #endif
 
 #endif /* !STM32_HSI16_ENABLED */

@@ -164,14 +164,19 @@
 #define STM32_SW_LSI            (3U << 0U)  /**< SYSCLK source is LSI.      */
 #define STM32_SW_LSE            (4U << 0U)  /**< SYSCLK source is LSE.      */
 
-#define STM32_MCOSEL_MASK       (7U << 24U) /**< MCOSEL field mask.         */
+#define STM32_MCOSEL_MASK       (15U << 24U)/**< MCOSEL field mask.         */
 #define STM32_MCOSEL_NOCLOCK    (0U << 24U) /**< No clock on MCO pin.       */
 #define STM32_MCOSEL_SYSCLK     (1U << 24U) /**< SYSCLK on MCO pin.         */
+#define STM32_MCOSEL_HSI48      (3U << 24U) /**< HSI48 clock on MCO pin.    */
 #define STM32_MCOSEL_HSI16      (3U << 24U) /**< HSI16 clock on MCO pin.    */
 #define STM32_MCOSEL_HSE        (4U << 24U) /**< HSE clock on MCO pin.      */
 #define STM32_MCOSEL_PLLRCLK    (5U << 24U) /**< PLLR clock on MCO pin.     */
 #define STM32_MCOSEL_LSI        (6U << 24U) /**< LSI clock on MCO pin.      */
 #define STM32_MCOSEL_LSE        (7U << 24U) /**< LSE clock on MCO pin.      */
+#define STM32_MCOSEL_PLLPCLK    (8U << 24U) /**< PLLP clock on MCO pin.     */
+#define STM32_MCOSEL_PLLQCLK    (9U << 24U) /**< PLLQ clock on MCO pin.     */
+#define STM32_MCOSEL_RTCCLK     (10U << 24U)/**< RTC clock on MCO pin.      */
+#define STM32_MCOSEL_RTCWKP     (11U << 24U)/**< RTC WKP clock on MCO pin.  */
 
 #define STM32_MCOPRE_MASK       (7U << 28U) /**< MCOPRE field mask.         */
 #define STM32_MCOPRE_FIELD(n)   ((n) << 28U)/**< MCOPRE field value         */
@@ -226,11 +231,18 @@
 #define STM32_I2C1SEL_SYSCLK    (1U << 12U) /**< I2C1 source is SYSCLK.     */
 #define STM32_I2C1SEL_HSI16     (2U << 12U) /**< I2C1 source is HSI16.      */
 
+#if STM32_RCC_HAS_CCIPR2
+#define STM32_I2C2SEL_MASK      (3U << 14U) /**< I2C1SEL mask.              */
+#define STM32_I2C2SEL_PCLK      (0U << 14U) /**< I2C1 source is PCLK.       */
+#define STM32_I2C2SEL_SYSCLK    (1U << 14U) /**< I2C1 source is SYSCLK.     */
+#define STM32_I2C2SEL_HSI16     (2U << 14U) /**< I2C1 source is HSI16.      */
+#else
 #define STM32_I2S1SEL_MASK      (3U << 14U) /**< I2S1SEL mask.              */
 #define STM32_I2S1SEL_SYSCLK    (0U << 14U) /**< I2S1 source is SYSCLK.     */
 #define STM32_I2S1SEL_PLLPCLK   (1U << 14U) /**< I2S1 source is PLLPCLK.    */
 #define STM32_I2S1SEL_HSI16     (2U << 14U) /**< I2S1 source is HSI16.      */
 #define STM32_I2S1SEL_CKIN      (3U << 14U) /**< I2S1 source is CKIN.       */
+#endif
 
 #define STM32_LPTIM1SEL_MASK    (3U << 18U) /**< LPTIM1SEL mask.            */
 #define STM32_LPTIM1SEL_PCLK    (0U << 18U) /**< LPTIM1 source is PCLK.     */
@@ -269,6 +281,36 @@
 #define STM32_ADCSEL_SYSCLK     (0U << 30U) /**< ADC source is SYSCLK.      */
 #define STM32_ADCSEL_PLLPCLK    (1U << 30U) /**< ADC source is PLLPCLK.     */
 #define STM32_ADCSEL_HSI16      (2U << 30U) /**< ADC source is HSI16.       */
+/** @} */
+
+
+/**
+ * @name    RCC_CCIPR2 register bits definitions
+ * @{
+ */
+#if STM32_RCC_HAS_CCIPR2 || defined(__DOXYGEN__)
+#define STM32_I2S1SEL_MASK      (3U << 0U)  /**< I2S1SEL mask.              */
+#define STM32_I2S1SEL_SYSCLK    (0U << 0U)  /**< I2S1 source is SYSCLK.     */
+#define STM32_I2S1SEL_PLLPCLK   (1U << 0U)  /**< I2S1 source is PLLPCLK.    */
+#define STM32_I2S1SEL_HSI16     (2U << 0U)  /**< I2S1 source is HSI16.      */
+#define STM32_I2S1SEL_CKIN      (3U << 0U)  /**< I2S1 source is CKIN.       */
+#endif /* STM32_RCC_HAS_CCIPR2 */
+
+#define STM32_I2S2SEL_MASK      (3U << 2U)  /**< I2S2SEL mask.              */
+#define STM32_I2S2SEL_SYSCLK    (0U << 2U)  /**< I2S2 source is SYSCLK.     */
+#define STM32_I2S2SEL_PLLPCLK   (1U << 2U)  /**< I2S2 source is PLLPCLK.    */
+#define STM32_I2S2SEL_HSI16     (2U << 2U)  /**< I2S2 source is HSI16.      */
+#define STM32_I2S2SEL_CKIN      (3U << 2U)  /**< I2S2 source is CKIN.       */
+
+#define STM32_FDCANSEL_MASK     (3U << 8U)  /**< FDCANSEL mask.             */
+#define STM32_FDCANSEL_PCLK     (0U << 8U)  /**< FDCANSEL source is PCLK.   */
+#define STM32_FDCANSEL_PLLQCLK  (1U << 8U)  /**< FDCANSEL source is PLLQCLK.*/
+#define STM32_FDCANSEL_HSE      (2U << 8U)  /**< FDCANSEL source is HSE.    */
+
+#define STM32_USBSEL_MASK       (3U << 12U) /**< USBSEL mask.               */
+#define STM32_USBSEL_HSI48      (0U << 12U) /**< USBSEL source is HSI48.    */
+#define STM32_USBSEL_PLLQCLK    (1U << 12U) /**< USBSEL source is PLLQCLK.  */
+#define STM32_USBSEL_HSE        (2U << 12U) /**< USBSEL source is HSE.      */
 /** @} */
 
 /**
@@ -484,6 +526,13 @@
 #endif
 
 /**
+ * @brief   Enables or disables the HSI48 clock source.
+ */
+#if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI48_ENABLED                 FALSE
+#endif
+
+/**
  * @brief   Enables or disables the HSE clock source.
  */
 #if !defined(STM32_HSE_ENABLED) || defined(__DOXYGEN__)
@@ -610,6 +659,20 @@
 #endif
 
 /**
+ * @brief   FDCAN clock source.
+ */
+#if !defined(STM32_FDCANSEL) || defined(__DOXYGEN__)
+#define STM32_FDCANSEL                      STM32_FDCANSEL_PCLK
+#endif
+
+/**
+ * @brief   USB clock source.
+ */
+#if !defined(STM32_USBSEL) || defined(__DOXYGEN__)
+#define STM32_USBSEL                        STM32_USBSEL_HSI48
+#endif
+
+/**
  * @brief   USART1 clock source.
  */
 #if !defined(STM32_USART1SEL) || defined(__DOXYGEN__)
@@ -645,10 +708,24 @@
 #endif
 
 /**
+ * @brief   I2C2 clock source.
+ */
+#if !defined(STM32_I2C2SEL) || defined(__DOXYGEN__)
+#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK
+#endif
+
+/**
  * @brief   I2S1 clock source.
  */
 #if !defined(STM32_I2S1SEL) || defined(__DOXYGEN__)
 #define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
+#endif
+
+/**
+ * @brief   I2S2 clock source.
+ */
+#if !defined(STM32_I2S2SEL) || defined(__DOXYGEN__)
+#define STM32_I2S2SEL                       STM32_I2S2SEL_SYSCLK
 #endif
 
 /**
@@ -915,6 +992,7 @@
 #include "stm32_lse.inc"
 #include "stm32_lsi.inc"
 #include "stm32_hsi16.inc"
+#include "stm32_hsi48.inc"
 #include "stm32_hse.inc"
 
 /*
@@ -935,6 +1013,8 @@
      L4 devices.*/
 
   #if (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                               \
+      (STM32_I2S1SEL == STM32_I2S1SEL_HSI16) ||                             \
+      (STM32_I2S2SEL == STM32_I2S2SEL_HSI16) ||                             \
       ((STM32_MCOSEL == STM32_MCOSEL_PLL) &&                                \
        (STM32_PLLSRC == STM32_PLLSRC_HSI16))
     #error "HSI16 not enabled, required by STM32_MCOSEL"
@@ -979,6 +1059,24 @@
 #endif /* !STM32_HSI16_ENABLED */
 
 /*
+ * HSI48 related checks.
+ */
+#if STM32_RCC_HAS_HSI48
+#if STM32_HSI48_ENABLED
+#else /* !STM32_HSI48_ENABLED */
+
+  #if STM32_MCOSEL == STM32_MCOSEL_HSI48
+    #error "HSI48 not enabled, required by STM32_MCOSEL"
+  #endif
+
+  #if (STM32_USBSEL == STM32_USBSEL_HSI48) && (HAL_USE_USB == TRUE)
+    #error "HSI48 not enabled, required by STM32_USBSEL"
+  #endif
+
+#endif /* !STM32_HSI48_ENABLED */
+#endif /* STM32_RCC_HAS_HSI48 */
+
+/*
  * HSE related checks.
  */
 #if STM32_HSE_ENABLED
@@ -993,6 +1091,8 @@
   #endif
 
   #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                 \
+      (STM32_FDCANSEL == STM32_FDCANSEL_HSE) ||                             \
+      (STM32_USBSEL == STM32_USBSEL_HSE) ||                                 \
       ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
        (STM32_PLLSRC == STM32_PLLSRC_HSE))
     #error "HSE not enabled, required by STM32_MCOSEL"
@@ -1101,6 +1201,9 @@
     (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) ||                               \
     (STM32_ADCSEL == STM32_ADCSEL_PLLPCLK) ||                               \
     (STM32_I2S1SEL == STM32_I2S1SEL_PLLPCLK) ||                             \
+    (STM32_I2S2SEL == STM32_I2S2SEL_PLLPCLK) ||                             \
+    (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
+    (STM32_USBSEL == STM32_USBSEL_PLLQCLK) ||                               \
     defined(__DOXYGEN__)
   /**
    * @brief   PLL activation flag.
@@ -1128,6 +1231,8 @@
 #if (STM32_TIM1SEL == STM32_TIM1SEL_PLLQCLK) ||                             \
     (STM32_TIM15SEL == STM32_TIM15SEL_PLLQCLK) ||                           \
     (STM32_RNGSEL == STM32_RNGSEL_PLLQCLK) ||                               \
+    (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
+    (STM32_USBSEL == STM32_USBSEL_PLLQCLK) ||                               \
     defined(__DOXYGEN__)
 #define STM32_PLLQEN                (1 << 24)
 #else
@@ -1139,6 +1244,7 @@
  */
 #if (STM32_ADCSEL == STM32_ADCSEL_PLLPCLK) ||                               \
     (STM32_I2S1SEL == STM32_I2S1SEL_PLLPCLK) ||                             \
+    (STM32_I2S2SEL == STM32_I2S2SEL_PLLPCLK) ||                             \
     defined(__DOXYGEN__)
 #define STM32_PLLPEN                (1 << 16)
 #else
@@ -1524,6 +1630,38 @@
  * @brief   Clock of timers connected to APB2.
  */
 #define STM32_TIMCLK2               hal_lld_get_clock_point(CLK_PCLKTIM)
+
+/**
+ * @brief   FDCAN clock point.
+ */
+#if (STM32_FDCANSEL == STM32_FDCANSEL_PCLK) || defined(__DOXYGEN__)
+  #define STM32_FDCANCLK            hal_lld_get_clock_point(CLK_PCLK)
+
+#elif STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK
+  #define STM32_FDCANCLK            hal_lld_get_clock_point(CLK_PLLQCLK)
+
+#elif STM32_FDCANSEL == STM32_FDCANSEL_HSE
+  #define STM32_FDCANCLK            STM32_HSECLK
+
+#else
+  #error "invalid source selected for FDCAN clock"
+#endif
+
+/**
+ * @brief   USB clock point.
+ */
+#if (STM32_USBSEL == STM32_USBSEL_HSI48) || defined(__DOXYGEN__)
+  #define STM32_USBCLK              STM32_HSI48CLK
+
+#elif STM32_USBSEL == STM32_USBSEL_PLLQCLK
+  #define STM32_USBCLK              hal_lld_get_clock_point(CLK_PLLQCLK)
+
+#elif STM32_USBSEL == STM32_USBSEL_HSE
+  #define STM32_USBCLK              STM32_HSECLK
+
+#else
+  #error "invalid source selected for USB clock"
+#endif
 
 /**
  * @brief   Flash settings.

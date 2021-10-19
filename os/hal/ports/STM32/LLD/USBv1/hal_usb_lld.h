@@ -131,6 +131,10 @@
 #error "USB driver activated but no USB peripheral assigned"
 #endif
 
+#if !defined(STM32_USBCLK)
+#error "STM32_USBCLK not defined"
+#endif
+
 #if STM32_USB_USE_USB1 &&                                                   \
     (STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER) &&                       \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_USB_USB1_HP_IRQ_PRIORITY)
@@ -164,6 +168,12 @@
 
 #if (STM32_USB_48MHZ_DELTA < 0) || (STM32_USB_48MHZ_DELTA > 250000)
 #error "invalid STM32_USB_48MHZ_DELTA setting, it must not exceed 250000"
+#endif
+
+/* Allowing for a small tolerance.*/
+#if (STM32_USBCLK < (48000000 - STM32_USB_48MHZ_DELTA)) ||                  \
+    (STM32_USBCLK > (48000000 + STM32_USB_48MHZ_DELTA))
+#error "the USB USBv1 driver requires a 48MHz clock"
 #endif
 
 /*===========================================================================*/
@@ -473,9 +483,9 @@ struct USBDriver {
  */
 #define usb_lld_wakeup_host(usbp)                                           \
   do {                                                                      \
-    STM32_USB->CNTR |= USB_CNTR_RESUME;                                     \
+    STM32_USB->CNTR |= USB_CNTR_L2RES;                                      \
     osalThreadSleepMilliseconds(STM32_USB_HOST_WAKEUP_DURATION);            \
-    STM32_USB->CNTR &= ~USB_CNTR_RESUME;                                    \
+    STM32_USB->CNTR &= ~USB_CNTR_L2RES;                                     \
   } while (false)
 
 /*===========================================================================*/

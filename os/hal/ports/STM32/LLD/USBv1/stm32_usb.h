@@ -136,6 +136,8 @@ typedef struct {
   #define STM32_USBRAM_BASE     USB1_PMAADDR
 #elif defined(USB_PMAADDR)
   #define STM32_USBRAM_BASE     USB_PMAADDR
+#elif defined(USB_DRD_PMAADDR)
+#define STM32_USBRAM_BASE       USB_DRD_PMAADDR
 #else
   #define STM32_USBRAM_BASE     (APB1PERIPH_BASE + 0x6000)
 #endif

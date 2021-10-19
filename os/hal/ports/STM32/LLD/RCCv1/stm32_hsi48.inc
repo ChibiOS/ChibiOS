@@ -62,6 +62,7 @@
 /*===========================================================================*/
 
 #if STM32_RCC_HAS_HSI48 == TRUE
+#if defined(RCC_CRRCR_HSI48ON)
 __STATIC_INLINE void hsi48_enable(void) {
 
   RCC->CRRCR |= RCC_CRRCR_HSI48ON;
@@ -74,6 +75,22 @@ __STATIC_INLINE void hsi48_disable(void) {
 
   RCC->CRRCR &= ~RCC_CRRCR_HSI48ON;
 }
+#endif /* defined(RCC_CRRCR_HSI48ON) */
+
+#if defined(RCC_CR_HSI48ON)
+__STATIC_INLINE void hsi48_enable(void) {
+
+  RCC->CR |= RCC_CR_HSI48ON;
+  while ((RCC->CR & RCC_CR_HSI48RDY) == 0U) {
+    /* Waiting for HSI48 activation.*/
+  }
+}
+
+__STATIC_INLINE void hsi48_disable(void) {
+
+  RCC->CR &= ~RCC_CR_HSI48ON;
+}
+#endif /* defined(RCC_CR_HSI48ON) */
 #endif /* STM32_RCC_HAS_HSI48 == TRUE */
 
 __STATIC_INLINE void hsi48_init(void) {
