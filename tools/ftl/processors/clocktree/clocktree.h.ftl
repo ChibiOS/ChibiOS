@@ -94,7 +94,9 @@
 #if !defined(name) || defined(__DOXYGEN__)
 ${("#define " + name)?right_pad(44) + prename + mux["name"] + "_" + mux["inputs"][0]["name"]}
 #endif
+[#sep]
 
+[/#sep]
 [/#list]
 /** @} */
 
@@ -119,7 +121,9 @@ ${("#define " + name)?right_pad(44) + prename + mux["name"] + "_" + mux["inputs"
  * @brief   ${clock["description"]?cap_first} clock point.
  */
 ${("#define " + prename + clock["name"] + postclocks)?right_pad(44) + clock["frequency"]}
+[#sep]
 
+[/#sep]
 [/#list]
 /** @} */
 
