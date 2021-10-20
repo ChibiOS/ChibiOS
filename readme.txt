@@ -84,6 +84,8 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed PLLSA1x input frequency calculated incorrectly (bug #1197)
+       (TBP to 21.6.1).
 - FIX: Fixed ARMCMx port, MPU not enabled when PORT_ENABLE_GUARD_PAGES is set
        (bug #1195)(backported to 20.3.4)(TBP to 21.6.1).
 - FIX: Fixed removed incorrect ADCv4 checks for MONEN (bug #1194)

@@ -1371,7 +1371,7 @@
 #endif
 
 /**
- * @brief   PLLs input clock frequency.
+ * @brief   PLL input clock frequency.
  */
 #if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
 #define STM32_PLLCLKIN              (STM32_HSECLK / STM32_PLLM_VALUE)
@@ -1471,6 +1471,44 @@
 #include "stm32_apb1.inc"
 #include "stm32_apb2.inc"
 
+/**
+ * @brief   PLLSAI1 input clock frequency.
+ */
+#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
+#define STM32_PLLSAI1CLKIN          (STM32_HSECLK / STM32_PLLSAI1M_VALUE)
+
+#elif STM32_PLLSRC == STM32_PLLSRC_MSI
+#define STM32_PLLSAI1CLKIN          (STM32_MSICLK / STM32_PLLSAI1M_VALUE)
+
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI16
+#define STM32_PLLSAI1CLKIN          (STM32_HSI16CLK / STM32_PLLSAI1M_VALUE)
+
+#elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
+#define STM32_PLLSAI1CLKIN          0
+
+#else
+#error "invalid STM32_PLLSRC value specified"
+#endif
+
+/**
+ * @brief   PLLSAI2 input clock frequency.
+ */
+#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
+#define STM32_PLLSAI2CLKIN          (STM32_HSECLK / STM32_PLLSAI2M_VALUE)
+
+#elif STM32_PLLSRC == STM32_PLLSRC_MSI
+#define STM32_PLLSAI2CLKIN          (STM32_MSICLK / STM32_PLLSAI2M_VALUE)
+
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI16
+#define STM32_PLLSAI2CLKIN          (STM32_HSI16CLK / STM32_PLLSAI2M_VALUE)
+
+#elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
+#define STM32_PLLSAI2CLKIN          0
+
+#else
+#error "invalid STM32_PLLSRC value specified"
+#endif
+
 /*
  * PLLSAI1 enable check.
  */
@@ -1561,10 +1599,7 @@
  */
 #define STM32_PLLSAI2REN            (1 << 24)
 
-/* Inclusion of PLLSAI-related checks and calculations, all PLLs share the
-   same clock source so enforcing this condition.*/
-#define STM32_PLLSAI1CLKIN STM32_PLLCLKIN
-#define STM32_PLLSAI2CLKIN STM32_PLLCLKIN
+/* Inclusion of PLLSAI-related checks and calculations.*/
 #include <stm32_pllsai1.inc>
 #include <stm32_pllsai2.inc>
 
