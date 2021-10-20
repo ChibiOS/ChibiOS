@@ -36,11 +36,6 @@
 
 #define EPR_EP_TYPE_IS_ISO(bits) ((bits & EPR_EP_TYPE_MASK) == EPR_EP_TYPE_ISO)
 
-/* Addressing differences in headers.*/
-#if !defined(USB_CNTR_L2RES) && defined(USB_CNTR_RESUME)
-#define USB_CNTR_L2RES  USB_CNTR_RESUME
-#endif
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

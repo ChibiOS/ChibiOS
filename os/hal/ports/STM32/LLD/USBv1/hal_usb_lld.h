@@ -53,6 +53,11 @@
  */
 #define USB_SET_ADDRESS_ACK_HANDLING        USB_SET_ADDRESS_ACK_SW
 
+/* Addressing differences in headers.*/
+#if !defined(USB_CNTR_L2RES) && defined(USB_CNTR_RESUME)
+#define USB_CNTR_L2RES  USB_CNTR_RESUME
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
