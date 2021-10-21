@@ -380,7 +380,7 @@ static inline void test_print(const char *msgp) {
  */
 static inline void test_println(const char *msgp) {
 
-  test_printf("%s"TEST_CFG_EOL_STRING, msgp);
+  test_printf("%s" TEST_CFG_EOL_STRING, msgp);
 }
 
 #endif /* CH_TEST_H */
