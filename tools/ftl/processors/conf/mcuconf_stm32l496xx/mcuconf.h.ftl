@@ -76,12 +76,12 @@
 #define STM32_MCOSEL                        ${doc.STM32_MCOSEL!"STM32_MCOSEL_NOCLOCK"}
 #define STM32_MCOPRE                        ${doc.STM32_MCOPRE!"STM32_MCOPRE_DIV1"}
 #define STM32_LSCOSEL                       ${doc.STM32_LSCOSEL!"STM32_LSCOSEL_NOCLOCK"}
-#define STM32_PLLSAI1N_VALUE                ${doc.STM32_PLLSAI1N_VALUE!"72"}
+#define STM32_PLLSAI1N_VALUE                ${doc.STM32_PLLSAI1N_VALUE!"48"}
 #define STM32_PLLSAI1PDIV_VALUE             ${doc.STM32_PLLSAI1PDIV_VALUE!"6"}
 #define STM32_PLLSAI1P_VALUE                ${doc.STM32_PLLSAI1P_VALUE!"7"}
-#define STM32_PLLSAI1Q_VALUE                ${doc.STM32_PLLSAI1Q_VALUE!"6"}
+#define STM32_PLLSAI1Q_VALUE                ${doc.STM32_PLLSAI1Q_VALUE!"4"}
 #define STM32_PLLSAI1R_VALUE                ${doc.STM32_PLLSAI1R_VALUE!"6"}
-#define STM32_PLLSAI2N_VALUE                ${doc.STM32_PLLSAI2N_VALUE!"72"}
+#define STM32_PLLSAI2N_VALUE                ${doc.STM32_PLLSAI2N_VALUE!"48"}
 #define STM32_PLLSAI2PDIV_VALUE             ${doc.STM32_PLLSAI2PDIV_VALUE!"6"}
 #define STM32_PLLSAI2P_VALUE                ${doc.STM32_PLLSAI2P_VALUE!"7"}
 #define STM32_PLLSAI2R_VALUE                ${doc.STM32_PLLSAI2R_VALUE!"6"}
