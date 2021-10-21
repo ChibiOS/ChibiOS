@@ -14,6 +14,7 @@
 						<xs:simpleType>
 							<xs:restriction base="xs:string">
 								<xs:whiteSpace value="collapse"></xs:whiteSpace>
+                                <xs:enumeration value="STM32L422xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L432xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L443xx"></xs:enumeration>
                                 <xs:enumeration value="STM32L452xx"></xs:enumeration>
