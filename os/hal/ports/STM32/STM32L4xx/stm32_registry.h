@@ -160,7 +160,7 @@
 #define STM32_HAS_GPIOE                     FALSE
 #define STM32_HAS_GPIOF                     FALSE
 #define STM32_HAS_GPIOG                     FALSE
-#define STM32_HAS_GPIOH                     FALSE
+#define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     FALSE
 #define STM32_HAS_GPIOJ                     FALSE
 #define STM32_HAS_GPIOK                     FALSE
@@ -353,7 +353,7 @@
 #define STM32_RCC_HAS_HSE                   TRUE
 
 #define STM32_RCC_HAS_PLL                   TRUE
-#define STM32_RCC_PLL_HAS_P                 TRUE
+#define STM32_RCC_PLL_HAS_P                 FALSE
 #define STM32_RCC_PLL_HAS_Q                 TRUE
 #define STM32_RCC_PLL_HAS_R                 TRUE
 
@@ -418,11 +418,11 @@
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
 #define STM32_HAS_GPIOC                     TRUE
-#define STM32_HAS_GPIOD                     FALSE
+#define STM32_HAS_GPIOD                     TRUE
 #define STM32_HAS_GPIOE                     FALSE
 #define STM32_HAS_GPIOF                     FALSE
 #define STM32_HAS_GPIOG                     FALSE
-#define STM32_HAS_GPIOH                     FALSE
+#define STM32_HAS_GPIOH                     TRUE
 #define STM32_HAS_GPIOI                     FALSE
 #define STM32_HAS_GPIOJ                     FALSE
 #define STM32_HAS_GPIOK                     FALSE
@@ -1500,7 +1500,7 @@
 #define STM32_HAS_GPIOF                     TRUE
 #define STM32_HAS_GPIOG                     TRUE
 #define STM32_HAS_GPIOH                     TRUE
-#define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOI                     TRUE
 #define STM32_HAS_GPIOJ                     FALSE
 #define STM32_HAS_GPIOK                     FALSE
 #define STM32_GPIO_EN_MASK                  (RCC_AHB2ENR_GPIOAEN |          \

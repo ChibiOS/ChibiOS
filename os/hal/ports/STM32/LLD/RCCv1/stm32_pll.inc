@@ -222,6 +222,7 @@
 
 #else /* !STM32_RCC_PLL_HAS_P */
 #define STM32_PLLP                  0U
+#define STM32_PLLPDIV               0U
 #endif /* !STM32_RCC_PLL_HAS_P */
 
 /*---------------------------------------------------------------------------*/

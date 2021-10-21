@@ -714,6 +714,10 @@
 
 /* Only some devices have strongly checked mcuconf.h files. Others will be
    added gradually.*/
+#if defined(STM32L422xx) && !defined(STM32L422_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L422_MCUCONF not defined"
+#endif
+
 #if defined(STM32L432xx) && !defined(STM32L432_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L432_MCUCONF not defined"
 #endif
