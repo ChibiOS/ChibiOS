@@ -1,9 +1,11 @@
 # C++ wrapper files.
-CHCPPSRC = $(CHIBIOS)/os/various/cpp_wrappers/ch.cpp \
-           $(CHIBIOS)/os/various/cpp_wrappers/syscalls_cpp.cpp
+CHCPPSRC   = $(CHIBIOS)/os/various/syscalls.c
 
-CHCPPINC = $(CHIBIOS)/os/various/cpp_wrappers
+CHCPPSRCPP = $(CHIBIOS)/os/various/cpp_wrappers/ch.cpp
+
+CHCPPINC   = $(CHIBIOS)/os/various/cpp_wrappers
 
 # Shared variables
-ALLCPPSRC += $(CHCPPSRC)
+ALLCSRC   += $(CHCPPSRC)
+ALLCPPSRC += $(CHCPPSRCPP)
 ALLINC    += $(CHCPPINC)

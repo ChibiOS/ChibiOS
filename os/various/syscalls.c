@@ -118,6 +118,19 @@ int _write_r(struct _reent *r, int file, char * ptr, int len) {
 /***************************************************************************/
 
 __attribute__((used))
+int _open_r(struct _reent *r, const char *p, int a, int b) {
+
+  (void)r;
+  (void)p;
+  (void)a;
+  (void)b;
+  __errno_r(r) = EINVAL;
+  return -1;
+}
+
+/***************************************************************************/
+
+__attribute__((used))
 int _close_r(struct _reent *r, int file) {
   (void)r;
   (void)file;
@@ -181,9 +194,10 @@ void _exit(int status) {
 /***************************************************************************/
 
 __attribute__((used))
-int _kill(int pid, int sig) {
+int _kill_r(struct _reent *r, int pid, int sig) {
   (void) pid;
   (void) sig;
+  __errno_r(r) = EINVAL;
   return -1;
 }
 
