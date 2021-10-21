@@ -26,7 +26,7 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32L432xx, STM32L433xx, STM32L443xx.
+ *          - STM32L422xx, STM32L432xx, STM32L433xx, STM32L443xx.
  *          - STM32L471xx, STM32L475xx, STM32L476xx, STM32L496xx.
  *          - STM32L485xx, STM32L486xx, STM32L4A6xx.
  *          .
