@@ -84,6 +84,8 @@
 - NEW: EFL driver and demo for STM32F3xx.
 - NEW: New unit test subsystem under /os/test. Now it is officially
        ChibiOS/TEST.
+- FIX: Fixed function nvicSetSystemHandlerPriority() failing with CM0+ cores
+       (bug #1199)(backported to 20.3.4)(TBP to 21.6.1).
 - FIX: Fixed several problems in STM32L4xx PLL and GPIO settings (bug #1198)
        (backported to 20.3.4)(TBP to 21.6.1).
 - FIX: Fixed PLLSA1x input frequency calculated incorrectly (bug #1197)
