@@ -500,7 +500,7 @@
  * @note    The allowed values are 8..86.
  */
 #if !defined(STM32_PLLSAI1N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1N_VALUE                80
+#define STM32_PLLSAI1N_VALUE                48
 #endif
 
 /**
@@ -524,7 +524,7 @@
  * @note    The allowed values are 2, 4, 6, 8.
  */
 #if !defined(STM32_PLLSAI1Q_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI1Q_VALUE                6
+#define STM32_PLLSAI1Q_VALUE                4
 #endif
 
 /**
@@ -540,7 +540,7 @@
  * @note    The allowed values are 8..86.
  */
 #if !defined(STM32_PLLSAI2N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLSAI2N_VALUE                80
+#define STM32_PLLSAI2N_VALUE                48
 #endif
 
 /**
