@@ -155,6 +155,10 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     }
   }
   else {
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
+
     /* Operation finished interrupt.*/
     __spi_isr_complete_code(spip);
   }

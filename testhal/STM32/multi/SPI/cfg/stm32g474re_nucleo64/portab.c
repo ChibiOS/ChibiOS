@@ -57,7 +57,7 @@ const SPIConfig c_spicfg = {
  * Maximum speed SPI configuration (42.5MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig hs_spicfg = {
-  .circular         = true,
+  .circular         = false,
 #if SPI_SUPPORTS_SLAVE_MODE == TRUE
   .slave            = false,
 #endif
@@ -73,7 +73,7 @@ const SPIConfig hs_spicfg = {
  * Low speed SPI configuration (664,062kHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig ls_spicfg = {
-  .circular         = true,
+  .circular         = false,
 #if SPI_SUPPORTS_SLAVE_MODE == TRUE
   .slave            = false,
 #endif
