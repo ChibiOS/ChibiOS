@@ -52,6 +52,16 @@ void spi_circular_cb(SPIDriver *spip) {
 #endif
 
 /*
+ * SPI error callback, only used by SPI driver v2.
+ */
+void spi_error_cb(SPIDriver *spip) {
+
+  (void)spip;
+
+  chSysHalt("SPI error");
+}
+
+/*
  * SPI bus contender 1.
  */
 static THD_WORKING_AREA(spi_thread_1_wa, 256);

@@ -442,7 +442,7 @@ msg_t spiStartReceive(SPIDriver *spip, size_t n, void *rxbuf) {
  *
  * @iclass
  */
-msg_t spiStopTranferI(SPIDriver *spip, size_t *sizep) {
+msg_t spiStopTransferI(SPIDriver *spip, size_t *sizep) {
   msg_t msg;
 
   osalDbgCheckClassI();
@@ -481,12 +481,12 @@ msg_t spiStopTranferI(SPIDriver *spip, size_t *sizep) {
  *
  * @api
  */
-msg_t spiStopTranfer(SPIDriver *spip, size_t *sizep) {
+msg_t spiStopTransfer(SPIDriver *spip, size_t *sizep) {
   msg_t msg;
 
   osalSysLock();
 
-  msg = spiStopTranferI(spip, sizep);
+  msg = spiStopTransferI(spip, sizep);
   osalOsRescheduleS();
 
   osalSysUnlock();

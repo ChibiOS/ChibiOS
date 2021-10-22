@@ -178,9 +178,9 @@ struct hal_spi_config {
   bool                      slave;
 #endif
   /**
-   * @brief   Operation complete callback or @p NULL.
+   * @brief   Operation data callback or @p NULL.
    */
-  spicb_t                   end_cb;
+  spicb_t                   data_cb;
   /**
    * @brief   Operation error callback or @p NULL.
    */
@@ -351,6 +351,24 @@ do {                                                                        \
  * @return                      The received data frame from the SPI bus.
  */
 #define spiPolledExchange(spip, frame) spi_lld_polled_exchange(spip, frame)
+
+/**
+ * @brief   Compatibility API with SPI driver v1.
+ *
+ * @param[in] spip              pointer to the @p SPIDriver object
+ *
+ * @iclass
+ */
+#define spiAbortI(spip)         spiStopTransferI(spip, NULL)
+
+/**
+ * @brief   Compatibility API with SPI driver v1.
+ *
+ * @param[in] spip              pointer to the @p SPIDriver object
+ *
+ * @api
+ */
+#define spiAbort(spip)          spiStopTransfer(spip, NULL)
 /** @} */
 
 /**
@@ -389,9 +407,9 @@ do {                                                                        \
  * @notapi
  */
 #define __spi_isr_complete_code(spip) {                                     \
-  if ((spip)->config->end_cb) {                                             \
+  if ((spip)->config->data_cb) {                                            \
     (spip)->state = SPI_COMPLETE;                                           \
-    (spip)->config->end_cb(spip);                                           \
+    (spip)->config->data_cb(spip);                                          \
     if ((spip)->state == SPI_COMPLETE)                                      \
       (spip)->state = SPI_READY;                                            \
   }                                                                         \
@@ -414,8 +432,8 @@ do {                                                                        \
  * @notapi
  */
 #define __spi_isr_half_code(spip) {                                         \
-  if ((spip)->config->end_cb) {                                             \
-    (spip)->config->end_cb(spip);                                           \
+  if ((spip)->config->data_cb) {                                            \
+    (spip)->config->data_cb(spip);                                          \
   }                                                                         \
 }
 
@@ -433,9 +451,9 @@ do {                                                                        \
  * @notapi
  */
 #define __spi_isr_full_code(spip) {                                         \
-  if ((spip)->config->end_cb) {                                             \
+  if ((spip)->config->data_cb) {                                            \
     (spip)->state = SPI_COMPLETE;                                           \
-    (spip)->config->end_cb(spip);                                           \
+    (spip)->config->data_cb(spip);                                          \
     if ((spip)->state == SPI_COMPLETE) {                                    \
       (spip)->state = SPI_ACTIVE;                                           \
     }                                                                       \

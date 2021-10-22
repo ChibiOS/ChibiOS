@@ -16,6 +16,11 @@ all:
 	+@make --no-print-directory -f ./make/stm32f407_discovery.make all
 	@echo ====================================================================
 	@echo
+	@echo
+	@echo === Building for STM32G474RE-Nucleo64 ==============================
+	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32H743-Nucleo144 ===============================
 	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make all
 	@echo ====================================================================
@@ -44,6 +49,8 @@ clean:
 	+@make --no-print-directory -f ./make/stm32f303_discovery.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32f407_discovery.make clean
+	@echo
+	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make clean
 	@echo
