@@ -38,7 +38,7 @@ void spi_circular_cb(SPIDriver *spip);
 void spi_error_cb(SPIDriver *spip);
 
 /*
- * Circular SPI configuration (21MHz, CPHA=0, CPOL=0, MSb first).
+ * Circular SPI configuration (42.5MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig c_spicfg = {
   .circular         = true,
@@ -54,7 +54,7 @@ const SPIConfig c_spicfg = {
 };
 
 /*
- * Maximum speed SPI configuration (21MHz, CPHA=0, CPOL=0, MSb first).
+ * Maximum speed SPI configuration (42.5MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig hs_spicfg = {
   .circular         = true,
@@ -70,7 +70,7 @@ const SPIConfig hs_spicfg = {
 };
 
 /*
- * Low speed SPI configuration (328.125kHz, CPHA=0, CPOL=0, MSb first).
+ * Low speed SPI configuration (664,062kHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig ls_spicfg = {
   .circular         = true,

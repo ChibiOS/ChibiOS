@@ -606,7 +606,7 @@ msg_t spiExchange(SPIDriver *spip, size_t n,
   osalSysLock();
 
   msg = spiStartExchangeI(spip, n, txbuf, rxbuf);
-  if (msg != MSG_OK) {
+  if (msg == MSG_OK) {
     msg = spiSynchronizeS(spip, TIME_INFINITE);
   }
 
