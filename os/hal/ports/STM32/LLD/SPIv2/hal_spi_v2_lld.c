@@ -116,9 +116,6 @@ SPIDriver SPID6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static const uint16_t dummytx = 0xFFFFU;
-static uint16_t dummyrx;
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -361,6 +358,9 @@ void spi_lld_init(void) {
 msg_t spi_lld_start(SPIDriver *spip) {
   uint32_t ds;
   msg_t msg;
+
+  /* Resetting TX pattern source.*/
+  spip->txsource = 0xFFFFFFFFU;
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (spip->state == SPI_STOP) {
@@ -612,11 +612,11 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
-  dmaStreamSetMemory0(spip->dmarx, &dummyrx);
+  dmaStreamSetMemory0(spip->dmarx, &spip->rxsink);
   dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode);
 
-  dmaStreamSetMemory0(spip->dmatx, &dummytx);
+  dmaStreamSetMemory0(spip->dmatx, &spip->txsource);
   dmaStreamSetTransactionSize(spip->dmatx, n);
   dmaStreamSetMode(spip->dmatx, spip->txdmamode);
 
@@ -679,7 +679,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
-  dmaStreamSetMemory0(spip->dmarx, &dummyrx);
+  dmaStreamSetMemory0(spip->dmarx, &spip->rxsink);
   dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode);
 
@@ -715,7 +715,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   dmaStreamSetTransactionSize(spip->dmarx, n);
   dmaStreamSetMode(spip->dmarx, spip->rxdmamode | STM32_DMA_CR_MINC);
 
-  dmaStreamSetMemory0(spip->dmatx, &dummytx);
+  dmaStreamSetMemory0(spip->dmatx, &spip->txsource);
   dmaStreamSetTransactionSize(spip->dmatx, n);
   dmaStreamSetMode(spip->dmatx, spip->txdmamode);
 

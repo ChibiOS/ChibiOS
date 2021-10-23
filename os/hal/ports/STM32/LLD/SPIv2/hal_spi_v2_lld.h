@@ -488,7 +488,11 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;                                      \
+  /* Sink for discarded data.*/                                             \
+  uint32_t                  rxsink;                                         \
+  /* Source for default TX pattern.*/                                       \
+  uint32_t                  txsource
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
