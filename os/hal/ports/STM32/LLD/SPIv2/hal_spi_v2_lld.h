@@ -39,7 +39,7 @@
 /**
  * @brief   Slave mode support flag.
  */
-#define SPI_SUPPORTS_SLAVE_MODE         FALSE
+#define SPI_SUPPORTS_SLAVE_MODE         TRUE
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

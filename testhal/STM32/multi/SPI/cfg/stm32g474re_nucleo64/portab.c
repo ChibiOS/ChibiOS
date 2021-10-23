@@ -42,9 +42,7 @@ void spi_error_cb(SPIDriver *spip);
  */
 const SPIConfig c_spicfg = {
   .circular         = true,
-#if SPI_SUPPORTS_SLAVE_MODE == TRUE
   .slave            = false,
-#endif
   .data_cb          = spi_circular_cb,
   .error_cb         = spi_error_cb,
   .ssport           = GPIOB,
@@ -58,11 +56,9 @@ const SPIConfig c_spicfg = {
  */
 const SPIConfig hs_spicfg = {
   .circular         = false,
-#if SPI_SUPPORTS_SLAVE_MODE == TRUE
   .slave            = false,
-#endif
   .data_cb          = NULL,
-  .error_cb         = NULL,
+  .error_cb         = spi_error_cb,
   .ssport           = GPIOB,
   .sspad            = 12U,
   .cr1              = SPI_CR1_BR_0,
@@ -74,11 +70,9 @@ const SPIConfig hs_spicfg = {
  */
 const SPIConfig ls_spicfg = {
   .circular         = false,
-#if SPI_SUPPORTS_SLAVE_MODE == TRUE
   .slave            = false,
-#endif
   .data_cb          = NULL,
-  .error_cb         = NULL,
+  .error_cb         = spi_error_cb,
   .ssport           = GPIOB,
   .sspad            = 12U,
   .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1,
