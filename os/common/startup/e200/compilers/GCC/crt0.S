@@ -241,6 +241,13 @@ __early_init:
 __late_init:
         se_blr
 
+        /* Default implementation for __eabi() function.*/
+        .weak       __eabi
+        .type       __eabi, @function
+__eabi:
+        /* R2 and R13 initialization is done in the startup code.*/
+        se_blr
+
 #endif /* !defined(__DOXYGEN__) */
 
 /** @} */
