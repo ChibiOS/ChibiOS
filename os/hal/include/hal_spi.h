@@ -30,8 +30,14 @@
 #if defined(HAL_LLD_SELECT_SPI_V2) || defined(__DOXYGEN__)
 #include "hal_spi_v2.h"
 #endif
+
 #if !defined(HAL_LLD_SELECT_SPI_V2) || defined(__DOXYGEN__)
 #include "hal_spi_v1.h"
+#endif
+
+/* For compatibility with v1 driver which does not require this.*/
+#if !defined(SPI_SUPPORTS_SLAVE_MODE)
+#define SPI_SUPPORTS_SLAVE_MODE             FALSE
 #endif
 
 #endif /* HAL_USE_SPI == TRUE */

@@ -167,14 +167,35 @@ int main(void) {
     txbuf[i] = (uint8_t)i;
   cacheBufferFlush(&txbuf[0], sizeof txbuf);
 
+#if SPI_SUPPORTS_SLAVE_MODE == TRUE
+  spiStart(&PORTAB_SPI1, &hs_spicfg); /* Master transfer parameters.       */
+  spiStart(&PORTAB_SPI2, &sl_spicfg); /* Slave transfer parameters.        */
+  do {
+    size_t size;
+
+    spiStartReceive(&PORTAB_SPI2, 512, rxbuf);
+    spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
+    spiSend(&PORTAB_SPI1, 256, txbuf);
+    spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
+
+    /* Slave status.*/
+    spiStopTransfer(&PORTAB_SPI2, &size);
+    chThdSleepMilliseconds(100);
+  } while (palReadLine(PORTAB_LINE_BUTTON) != PORTAB_BUTTON_PRESSED);
+
+  /* Waiting button release.*/
+  while (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+    chThdSleepMilliseconds(100);
+  }
+#endif
+
 #if SPI_SUPPORTS_CIRCULAR == TRUE
   /*
    * Starting a continuous operation for test.
    */
   spiStart(&PORTAB_SPI1, &c_spicfg);  /* Setup transfer parameters.       */
   spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
-  spiExchange(&PORTAB_SPI1, 512,
-              txbuf, rxbuf);          /* Atomic transfer operations.      */
+  spiSend(&PORTAB_SPI1, 512, txbuf);  /* Atomic transfer operations.      */
   spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
   cacheBufferInvalidate(&rxbuf[0],    /* Cache invalidation over the      */
                         sizeof rxbuf);/* buffer.                          */

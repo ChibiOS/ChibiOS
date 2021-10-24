@@ -48,7 +48,7 @@ const SPIConfig c_spicfg = {
   .ssport           = GPIOB,
   .sspad            = 12U,
   .cr1              = SPI_CR1_BR_0,
-  .cr2              = 0U
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
 /*
@@ -62,7 +62,7 @@ const SPIConfig hs_spicfg = {
   .ssport           = GPIOB,
   .sspad            = 12U,
   .cr1              = SPI_CR1_BR_0,
-  .cr2              = 0U
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
 /*
@@ -76,7 +76,19 @@ const SPIConfig ls_spicfg = {
   .ssport           = GPIOB,
   .sspad            = 12U,
   .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1,
-  .cr2              = 0U
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
+};
+
+/*
+ * Slave SPI configuration (CPHA=0, CPOL=0, MSb first).
+ */
+const SPIConfig sl_spicfg = {
+  .circular         = false,
+  .slave            = true,
+  .data_cb          = NULL,
+  .error_cb         = spi_error_cb,
+  .cr1              = 0U,
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
 /*===========================================================================*/

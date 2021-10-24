@@ -38,6 +38,7 @@
 #define PORTAB_BUTTON_PRESSED       PAL_HIGH
 
 #define PORTAB_SPI1                 SPID2
+#define PORTAB_SPI2                 SPID3
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -62,6 +63,7 @@
 extern const SPIConfig c_spicfg;
 extern const SPIConfig hs_spicfg;
 extern const SPIConfig ls_spicfg;
+extern const SPIConfig sl_spicfg;
 
 #ifdef __cplusplus
 extern "C" {
