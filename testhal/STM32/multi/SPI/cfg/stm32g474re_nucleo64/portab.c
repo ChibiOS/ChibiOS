@@ -113,14 +113,26 @@ void portab_setup(void) {
    * SPI2 I/O pins setup.
    */
   palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(5) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New SCK.     */
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 SCK.    */
   palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(5) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New MISO.    */
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 MISO.   */
   palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(5) |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New MOSI.    */
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 MOSI.   */
   palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
-                           PAL_STM32_OSPEED_HIGHEST);       /* New CS.      */
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 CS.     */
   palSetPad(GPIOB, 12);
+
+  /*
+   * SPI3 I/O pins setup.
+   */
+  palSetPadMode(GPIOB, 3,  PAL_MODE_ALTERNATE(6) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI3 SCK.    */
+  palSetPadMode(GPIOB, 4,  PAL_MODE_ALTERNATE(6) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI3 MISO.   */
+  palSetPadMode(GPIOB, 5,  PAL_MODE_ALTERNATE(6) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI3 MOSI.   */
+  palSetPadMode(GPIOA, 4,  PAL_MODE_ALTERNATE(6) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI3 NSSS.   */
 }
 
 /** @} */
