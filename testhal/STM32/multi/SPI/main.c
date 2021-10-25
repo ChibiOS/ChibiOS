@@ -167,7 +167,7 @@ int main(void) {
     txbuf[i] = (uint8_t)i;
   cacheBufferFlush(&txbuf[0], sizeof txbuf);
 
-#if SPI_SUPPORTS_SLAVE_MODE == TRUE
+#if 0//SPI_SUPPORTS_SLAVE_MODE == TRUE
   spiStart(&PORTAB_SPI1, &hs_spicfg); /* Master transfer parameters.       */
   spiStart(&PORTAB_SPI2, &sl_spicfg); /* Slave transfer parameters.        */
   do {
