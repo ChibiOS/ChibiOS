@@ -167,19 +167,26 @@ int main(void) {
     txbuf[i] = (uint8_t)i;
   cacheBufferFlush(&txbuf[0], sizeof txbuf);
 
-#if 0//SPI_SUPPORTS_SLAVE_MODE == TRUE
-  spiStart(&PORTAB_SPI1, &hs_spicfg); /* Master transfer parameters.       */
-  spiStart(&PORTAB_SPI2, &sl_spicfg); /* Slave transfer parameters.        */
+#if SPI_SUPPORTS_SLAVE_MODE == TRUE
+  spiStart(&PORTAB_SPI1, &hs_spicfg);   /* Master transfer parameters.      */
+  spiStart(&PORTAB_SPI2, &sl_spicfg);   /* Slave transfer parameters.       */
   do {
     size_t size;
 
+    /* Starting asynchronous SPI slave 512 frames receive.*/
     spiStartReceive(&PORTAB_SPI2, 512, rxbuf);
-    spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
-    spiSend(&PORTAB_SPI1, 256, txbuf);
-    spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
 
-    /* Slave status.*/
+    /* Starting synchronous master 256 frames send.*/
+    spiSelect(&PORTAB_SPI1);
+    spiSend(&PORTAB_SPI1, 256, txbuf);
+    spiUnselect(&PORTAB_SPI1);
+
+    /* Stopping slave and getting slave status, it should still be
+       ongoing because the master sent just 256 frames.*/
     spiStopTransfer(&PORTAB_SPI2, &size);
+
+    /* Toggle the LED, wait a little bit and repeat.*/
+    palToggleLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(100);
   } while (palReadLine(PORTAB_LINE_BUTTON) != PORTAB_BUTTON_PRESSED);
 
