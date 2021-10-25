@@ -570,7 +570,7 @@ msg_t spiIgnore(SPIDriver *spip, size_t n) {
   osalSysLock();
 
     msg = spiStartIgnoreI(spip, n);
-    if (msg != MSG_OK) {
+    if (msg == MSG_OK) {
       msg = spiSynchronizeS(spip, TIME_INFINITE);
     }
 
@@ -639,7 +639,7 @@ msg_t spiSend(SPIDriver *spip, size_t n, const void *txbuf) {
   osalSysLock();
 
   msg = spiStartSendI(spip, n, txbuf);
-  if (msg != MSG_OK) {
+  if (msg == MSG_OK) {
     msg = spiSynchronizeS(spip, TIME_INFINITE);
   }
 
@@ -672,7 +672,7 @@ msg_t spiReceive(SPIDriver *spip, size_t n, void *rxbuf) {
   osalSysLock();
 
   msg = spiStartReceiveI(spip, n, rxbuf);
-  if (msg != MSG_OK) {
+  if (msg == MSG_OK) {
     msg = spiSynchronizeS(spip, TIME_INFINITE);
   }
 
