@@ -196,8 +196,8 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
     STM32_SPI_DMA_ERROR_HOOK(spip);
 #endif
 
-    /* Aborting the transfer, best effort.*/
-    (void) spi_lld_stop_transfer(spip, NULL);
+    /* Aborting the transfer.*/
+    (void) spi_lld_stop_cleanly(spip);
 
     /* Reporting the failure.*/
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
