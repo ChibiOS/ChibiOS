@@ -871,6 +871,8 @@ msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
+  spip->spi->CR1 |= SPI_CR1_SPE;
+
   /*
    * Data register must be accessed with the appropriate data size.
    * Byte size access (uint8_t *) for transactions that are <= 8-bit.
@@ -879,18 +881,23 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
   if ((spip->config->cr2 & SPI_CR2_DS) <= (SPI_CR2_DS_2 |
                                            SPI_CR2_DS_1 |
                                            SPI_CR2_DS_0)) {
-    volatile uint8_t *spidr = (volatile uint8_t *)&spip->spi->DR;
-    *spidr = (uint8_t)frame;
-    while ((spip->spi->SR & SPI_SR_RXNE) == 0)
+    volatile uint8_t *dr8p = (volatile uint8_t *)&spip->spi->DR;
+    *dr8p = (uint8_t)frame;
+    while ((spip->spi->SR & SPI_SR_RXNE) == 0U)
       ;
-    return (uint16_t)*spidr;
+    frame = (uint16_t)*dr8p;
   }
   else {
-    spip->spi->DR = frame;
-    while ((spip->spi->SR & SPI_SR_RXNE) == 0)
+    volatile uint16_t *dr16p = (volatile uint16_t *)&spip->spi->DR;
+    *dr16p = (uint16_t)frame;
+    while ((spip->spi->SR & SPI_SR_RXNE) == 0U)
       ;
-    return spip->spi->DR;
+    frame = (uint16_t)*dr16p;
   }
+
+  spip->spi->CR1 &= ~SPI_CR1_SPE;
+
+  return frame;
 }
 
 #endif /* HAL_USE_SPI */
