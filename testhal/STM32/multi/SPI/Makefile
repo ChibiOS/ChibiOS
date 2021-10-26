@@ -12,7 +12,7 @@ all:
 	+@make --no-print-directory -f ./make/stm32f303_discovery.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32373C-Ecal ====================================
+	@echo === Building for STM32373C-Eval ====================================
 	+@make --no-print-directory -f ./make/stm32f373vc_eval.make all
 	@echo ====================================================================
 	@echo
