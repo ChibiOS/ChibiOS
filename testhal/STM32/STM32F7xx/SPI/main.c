@@ -29,24 +29,28 @@
  * Maximum speed SPI configuration (27MHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig hs_spicfg = {
-  false,
-  NULL,
-  GPIOB,
-  GPIOB_ARD_D15,
-  SPI_CR1_CPOL | SPI_CR1_BR_0,
-  SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssport           = GPIOB,
+  .sspad            = GPIOB_ARD_D15,
+  .cr1              = SPI_CR1_CPOL | SPI_CR1_BR_0,
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
 /*
  * Low speed SPI configuration (421.875kHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig ls_spicfg = {
-  false,
-  NULL,
-  GPIOB,
-  GPIOB_ARD_D14,
-  SPI_CR1_BR_2 | SPI_CR1_BR_1,
-  SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssport           = GPIOB,
+  .sspad            = GPIOB_ARD_D14,
+  .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1,
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
 /*

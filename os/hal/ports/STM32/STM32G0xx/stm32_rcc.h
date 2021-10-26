@@ -513,7 +513,7 @@
  *
  * @api
  */
-#define rccResetSPI1() rccResetAPB(RCC_APBRSTR2_SPI1RST)
+#define rccResetSPI1() rccResetAPBR2(RCC_APBRSTR2_SPI1RST)
 
 /**
  * @brief   Enables the SPI2 peripheral clock.
