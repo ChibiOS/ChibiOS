@@ -871,6 +871,7 @@ msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
+  /* Enabling SPI for the exchange.*/
   spip->spi->CR1 |= SPI_CR1_SPE;
 
   /*
@@ -883,18 +884,21 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
                                            SPI_CR2_DS_0)) {
     volatile uint8_t *dr8p = (volatile uint8_t *)&spip->spi->DR;
     *dr8p = (uint8_t)frame;
-    while ((spip->spi->SR & SPI_SR_RXNE) == 0U)
-      ;
+    while ((spip->spi->SR & SPI_SR_RXNE) == 0U) {
+      /* Waiting frame transfer.*/
+    }
     frame = (uint16_t)*dr8p;
   }
   else {
     volatile uint16_t *dr16p = (volatile uint16_t *)&spip->spi->DR;
     *dr16p = (uint16_t)frame;
-    while ((spip->spi->SR & SPI_SR_RXNE) == 0U)
-      ;
+    while ((spip->spi->SR & SPI_SR_RXNE) == 0U) {
+      /* Waiting frame transfer.*/
+    }
     frame = (uint16_t)*dr16p;
   }
 
+  /* Disabling SPI and done.*/
   spip->spi->CR1 &= ~SPI_CR1_SPE;
 
   return frame;
