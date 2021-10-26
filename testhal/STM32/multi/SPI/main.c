@@ -42,11 +42,15 @@ void spi_circular_cb(SPIDriver *spip) {
 
   if (spiIsBufferComplete(spip)) {
     /* 2nd half.*/
+#if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
+#endif
   }
   else {
     /* 1st half.*/
+#if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
+#endif
   }
 }
 #endif
@@ -71,7 +75,9 @@ static THD_FUNCTION(spi_thread_1, p) {
   chRegSetThreadName("SPI thread 1");
   while (true) {
     spiAcquireBus(&PORTAB_SPI1);        /* Acquire ownership of the bus.    */
+#if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
+#endif
     spiStart(&PORTAB_SPI1, &hs_spicfg); /* Setup transfer parameters.       */
     spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
     spiExchange(&PORTAB_SPI1, 512,
@@ -99,7 +105,9 @@ static THD_FUNCTION(spi_thread_2, p) {
   chRegSetThreadName("SPI thread 2");
   while (true) {
     spiAcquireBus(&PORTAB_SPI1);        /* Acquire ownership of the bus.    */
+#if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
+#endif
     spiStart(&PORTAB_SPI1, &ls_spicfg); /* Setup transfer parameters.       */
     spiSelect(&PORTAB_SPI1);            /* Slave Select assertion.          */
     spiExchange(&PORTAB_SPI1, 512,
@@ -186,7 +194,9 @@ int main(void) {
     spiStopTransfer(&PORTAB_SPI2, &size);
 
     /* Toggle the LED, wait a little bit and repeat.*/
+#if defined(PORTAB_LINE_LED1)
     palToggleLine(PORTAB_LINE_LED1);
+#endif
     chThdSleepMilliseconds(100);
   } while (palReadLine(PORTAB_LINE_BUTTON) != PORTAB_BUTTON_PRESSED);
 

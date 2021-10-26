@@ -37,7 +37,7 @@
 #define PORTAB_LINE_BUTTON          LINE_BUTTON
 #define PORTAB_BUTTON_PRESSED       PAL_HIGH
 
-#define PORTAB_SPI1                 SPID1
+#define PORTAB_SPI1                 SPID2
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */

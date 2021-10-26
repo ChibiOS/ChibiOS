@@ -12,10 +12,17 @@ all:
 	+@make --no-print-directory -f ./make/stm32f303_discovery.make all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32373C-Ecal ====================================
+	+@make --no-print-directory -f ./make/stm32f373vc_eval.make all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32F407-Discovery ===============================
 	+@make --no-print-directory -f ./make/stm32f407_discovery.make all
 	@echo ====================================================================
 	@echo
+	@echo === Building for STM32F746NG-Discovery =============================
+	+@make --no-print-directory -f ./make/stm32f746ng_discovery.make all
+	@echo ====================================================================
 	@echo
 	@echo === Building for STM32G474RE-Nucleo64 ==============================
 	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make all
@@ -48,7 +55,11 @@ clean:
 	@echo
 	+@make --no-print-directory -f ./make/stm32f303_discovery.make clean
 	@echo
+	+@make --no-print-directory -f ./make/stm32f373vc_eval.make clean
+	@echo
 	+@make --no-print-directory -f ./make/stm32f407_discovery.make clean
+	@echo
+	+@make --no-print-directory -f ./make/stm32f746ng_discovery.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make clean
 	@echo
