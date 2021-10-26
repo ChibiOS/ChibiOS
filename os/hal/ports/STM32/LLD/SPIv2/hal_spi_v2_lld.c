@@ -121,23 +121,85 @@ SPIDriver SPID6;
 /*===========================================================================*/
 
 /**
- * @brief   Waits for the SPI do be not busy and stops it.
+ * @brief   Stopping the SPI transaction.
+ * @note    This is done nicely or by brutally resetting it depending on
+ *          the mode and settings.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  */
-static msg_t spi_lld_stop_cleanly(SPIDriver *spip) {
+static msg_t spi_lld_stop_abort(SPIDriver *spip) {
 
-  /* Stopping TX DMA channel.*/
-  dmaStreamDisable(spip->dmatx);
+  if (!spip->config->slave) {
+    /* Master mode, stopping gracefully.*/
 
-  /* Waiting for current frame completion then stop SPI.*/
-  while ((spip->spi->SR & SPI_SR_BSY) != 0U) {
+    /* Stopping TX DMA channel.*/
+    dmaStreamDisable(spip->dmatx);
+
+    /* Waiting for current frame completion then stop SPI.*/
+    while ((spip->spi->SR & SPI_SR_BSY) != 0U) {
+    }
+    spip->spi->CR1 &= ~SPI_CR1_SPE;
+
+    /* Now it is idle, stopping RX DMA channel.*/
+    dmaStreamDisable(spip->dmarx);
   }
-  spip->spi->CR1 &= ~SPI_CR1_SPE;
+  else {
+    /* Slave mode, this will not be nice.*/
 
-  /* Now it is idle, stopping RX DMA channel.*/
-  dmaStreamDisable(spip->dmarx);
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
 
+    /* Resetting SPI, this will stop it for sure and leave it
+       in a clean state.*/
+    if (false) {
+    }
+
+#if STM32_SPI_USE_SPI1
+    else if (&SPID1 == spip) {
+      rccResetSPI1();
+    }
+#endif
+
+#if STM32_SPI_USE_SPI2
+    else if (&SPID2 == spip) {
+      rccResetSPI2();
+    }
+#endif
+
+#if STM32_SPI_USE_SPI3
+    else if (&SPID3 == spip) {
+      rccResetSPI3();
+    }
+#endif
+
+#if STM32_SPI_USE_SPI4
+    else if (&SPID4 == spip) {
+      rccResetSPI4();
+    }
+#endif
+
+#if STM32_SPI_USE_SPI5
+    else if (&SPID5 == spip) {
+      rccResetSPI5();
+    }
+#endif
+
+#if STM32_SPI_USE_SPI6
+    else if (&SPID6 == spip) {
+      rccResetSPI6();
+    }
+#endif
+
+    else {
+      osalDbgAssert(false, "invalid SPI instance");
+    }
+
+    /* Reconfiguring SPI.*/
+    spip->spi->CR1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
+    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH |
+                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  }
   return HAL_RET_SUCCESS;
 }
 
@@ -157,7 +219,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
 #endif
 
     /* Aborting the transfer.*/
-    (void) spi_lld_stop_cleanly(spip);
+    (void) spi_lld_stop_abort(spip);
 
     /* Reporting the failure.*/
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
@@ -174,7 +236,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   }
   else {
     /* Stopping the transfer.*/
-    (void) spi_lld_stop_cleanly(spip);
+    (void) spi_lld_stop_abort(spip);
 
     /* Operation finished interrupt.*/
     __spi_isr_complete_code(spip);
@@ -197,7 +259,7 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
 #endif
 
     /* Aborting the transfer.*/
-    (void) spi_lld_stop_cleanly(spip);
+    (void) spi_lld_stop_abort(spip);
 
     /* Reporting the failure.*/
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
@@ -522,7 +584,6 @@ msg_t spi_lld_start(SPIDriver *spip) {
   }
 
   /* SPI setup and enable.*/
-  spip->spi->CR1 &= ~SPI_CR1_SPE;
   if (spip->config->slave) {
     spip->spi->CR1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
     spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH |
@@ -550,7 +611,7 @@ void spi_lld_stop(SPIDriver *spip) {
   if (spip->state == SPI_READY) {
 
     /* Just in case this has been called uncleanly.*/
-    (void) spi_lld_stop_cleanly(spip);
+    (void) spi_lld_stop_abort(spip);
 
     /* SPI cleanup.*/
     spip->spi->CR1  = 0;
@@ -787,10 +848,10 @@ msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
   msg_t msg;
 
   /* Stopping everything.*/
-  msg = spi_lld_stop_cleanly(spip);
+  msg = spi_lld_stop_abort(spip);
 
   if (sizep != NULL) {
-    *sizep = dmaStreamGetTransactionSize(spip->dmatx);
+    *sizep = dmaStreamGetTransactionSize(spip->dmarx);
   }
 
   return msg;
