@@ -200,6 +200,7 @@ static msg_t spi_lld_stop_abort(SPIDriver *spip) {
     spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH |
                       SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   }
+
   return HAL_RET_SUCCESS;
 }
 

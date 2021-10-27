@@ -554,6 +554,7 @@ extern "C" {
   msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
   msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
   msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep);
+  uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
 #ifdef __cplusplus
 }
 #endif
