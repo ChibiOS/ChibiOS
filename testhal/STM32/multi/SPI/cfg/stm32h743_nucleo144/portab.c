@@ -35,41 +35,45 @@
 /*===========================================================================*/
 
 void spi_circular_cb(SPIDriver *spip);
+void spi_error_cb(SPIDriver *spip);
 
 /*
  * Circular SPI configuration (25MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig c_spicfg = {
-  true,
-  spi_circular_cb,
-  GPIOD,
-  14,
-  SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
-  0
+  .circular         = true,
+  .data_cb          = spi_circular_cb,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOD,
+  .sspad            = 14U,
+  .cfg1             = SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
+  .cfg2             = 0U
 };
 
 /*
  * Maximum speed SPI configuration (25MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig hs_spicfg = {
-  false,
-  NULL,
-  GPIOD,
-  14,
-  SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
-  0
+  .circular         = false,
+  .data_cb          = NULL,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOD,
+  .sspad            = 14U,
+  .cfg1             = SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
+  .cfg2             = 0U
 };
 
 /*
  * Low speed SPI configuration (1.5625MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig ls_spicfg = {
-  false,
-  NULL,
-  GPIOD,
-  14,
-  SPI_CFG1_MBR_DIV128 | SPI_CFG1_DSIZE_VALUE(7),
-  0
+  .circular         = false,
+  .data_cb          = NULL,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOD,
+  .sspad            = 14U,
+  .cfg1             = SPI_CFG1_MBR_DIV128 | SPI_CFG1_DSIZE_VALUE(7),
+  .cfg2             = 0U
 };
 
 /*===========================================================================*/

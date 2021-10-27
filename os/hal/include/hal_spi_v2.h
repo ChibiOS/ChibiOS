@@ -165,7 +165,7 @@ struct hal_spi_config {
 #endif
 #if (SPI_SUPPORTS_SLAVE_MODE == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Enables the circular buffer mode.
+   * @brief   Enables the slave mode.
    */
   bool                      slave;
 #endif

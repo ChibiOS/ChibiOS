@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    SPIv2/hal_spi_v2_lld.h
+ * @file    SPIv3/hal_spi_v2_lld.h
  * @brief   STM32 SPI (v2) subsystem low level driver header.
  *
  * @addtogroup SPI
@@ -39,7 +39,36 @@
 /**
  * @brief   Slave mode support flag.
  */
-#define SPI_SUPPORTS_SLAVE_MODE         TRUE
+#define SPI_SUPPORTS_SLAVE_MODE         FALSE
+
+/**
+ * @name    Register helpers not found in ST headers
+ * @{
+ */
+#define SPI_CFG1_MBR_VALUE(n)           ((n) << SPI_CFG1_MBR_Pos)
+#define SPI_CFG1_MBR_DIV2               SPI_CFG1_MBR_VALUE(0)
+#define SPI_CFG1_MBR_DIV4               SPI_CFG1_MBR_VALUE(1)
+#define SPI_CFG1_MBR_DIV8               SPI_CFG1_MBR_VALUE(2)
+#define SPI_CFG1_MBR_DIV16              SPI_CFG1_MBR_VALUE(3)
+#define SPI_CFG1_MBR_DIV32              SPI_CFG1_MBR_VALUE(4)
+#define SPI_CFG1_MBR_DIV64              SPI_CFG1_MBR_VALUE(5)
+#define SPI_CFG1_MBR_DIV128             SPI_CFG1_MBR_VALUE(6)
+#define SPI_CFG1_MBR_DIV256             SPI_CFG1_MBR_VALUE(7)
+#define SPI_CFG1_CRCSIZE_VALUE(n)       ((n) << SPI_CFG1_CRCSIZE_Pos)
+#define SPI_CFG1_UDRDET_VALUE(n)        ((n) << SPI_CFG1_UDRDET_Pos)
+#define SPI_CFG1_UDRCFG_VALUE(n)        ((n) << SPI_CFG1_UDRCFG_Pos)
+#define SPI_CFG1_FTHLV_VALUE(n)         ((n) << SPI_CFG1_FTHLV_Pos)
+#define SPI_CFG1_DSIZE_VALUE(n)         ((n) << SPI_CFG1_DSIZE_Pos)
+
+#define SPI_CFG2_SP_VALUE(n)            ((n) << SPI_CFG2_SP_Pos)
+#define SPI_CFG2_COMM_VALUE(n)          ((n) << SPI_CFG2_COMM_Pos)
+#define SPI_CFG2_COMM_FULL_DUPLEX       SPI_CFG2_COMM_VALUE(0)
+#define SPI_CFG2_COMM_TRANSMITTER       SPI_CFG2_COMM_VALUE(1)
+#define SPI_CFG2_COMM_RECEIVER          SPI_CFG2_COMM_VALUE(2)
+#define SPI_CFG2_COMM_HALF_DUPLEX       SPI_CFG2_COMM_VALUE(3)
+#define SPI_CFG2_MIDI_VALUE(n)          ((n) << SPI_CFG2_MIDI_Pos)
+#define SPI_CFG2_MSSI_VALUE(n)          ((n) << SPI_CFG2_MSSI_Pos)
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -283,6 +312,98 @@
 #error "Invalid IRQ priority assigned to SPI6"
 #endif
 
+/* Check on the presence of the DMA streams settings in mcuconf.h.*/
+#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI1_TX_DMA_STREAM))
+#error "SPI1 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI2_TX_DMA_STREAM))
+#error "SPI2 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI3_TX_DMA_STREAM))
+#error "SPI3 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI4_TX_DMA_STREAM))
+#error "SPI4 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_STREAM) ||        \
+                           !defined(STM32_SPI_SPI5_TX_DMA_STREAM))
+#error "SPI5 DMA streams not defined"
+#endif
+
+#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_BDMA_STREAM) ||       \
+                           !defined(STM32_SPI_SPI6_TX_BDMA_STREAM))
+#error "SPI6 BDMA streams not defined"
+#endif
+
+/* Check on the validity of the assigned DMA streams.*/
+#if STM32_SPI_USE_SPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI1_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI1 RX"
+#endif
+
+#if STM32_SPI_USE_SPI1 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI1_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI1 TX"
+#endif
+
+#if STM32_SPI_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI2 RX"
+#endif
+
+#if STM32_SPI_USE_SPI2 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI2 TX"
+#endif
+
+#if STM32_SPI_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI3 RX"
+#endif
+
+#if STM32_SPI_USE_SPI3 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI3 TX"
+#endif
+
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI4 RX"
+#endif
+
+#if STM32_SPI_USE_SPI4 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI4 TX"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI5 RX"
+#endif
+
+#if STM32_SPI_USE_SPI5 &&                                                   \
+    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to SPI5 TX"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_BDMA_IS_VALID_STREAM(STM32_SPI_SPI6_RX_BDMA_STREAM)
+#error "Invalid BDMA stream assigned to SPI6 RX"
+#endif
+
+#if STM32_SPI_USE_SPI6 &&                                                   \
+    !STM32_BDMA_IS_VALID_STREAM(STM32_SPI_SPI6_TX_BDMA_STREAM)
+#error "Invalid BDMA stream assigned to SPI6 TX"
+#endif
+
 #if STM32_SPI_USE_SPI1 &&                                                   \
     !STM32_DMA_IS_VALID_PRIORITY(STM32_SPI_SPI1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to SPI1"
@@ -313,161 +434,19 @@
 #error "Invalid DMA priority assigned to SPI6"
 #endif
 
-/* Check on the presence of the DMA streams settings in mcuconf.h.*/
-#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI1_TX_DMA_STREAM))
-#error "SPI1 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI2_TX_DMA_STREAM))
-#error "SPI2 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI3_TX_DMA_STREAM))
-#error "SPI3 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI4_TX_DMA_STREAM))
-#error "SPI4 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI5_TX_DMA_STREAM))
-#error "SPI5 DMA streams not defined"
-#endif
-
-#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA_STREAM) ||        \
-                           !defined(STM32_SPI_SPI6_TX_DMA_STREAM))
-#error "SPI6 DMA streams not defined"
-#endif
-
-/* Check on the validity of the assigned DMA channels.*/
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI1_TX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI1 TX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_RX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI2 RX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI2_TX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI2 TX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_RX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI3 RX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI3_TX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI3 TX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_RX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI4 RX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI4_TX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI4 TX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_RX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI5 RX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI5_TX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI5 TX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI6_RX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI6 RX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_STREAM(STM32_SPI_SPI6_TX_DMA_STREAM)
-#error "Invalid DMA channel assigned to SPI6 TX"
-#endif
-
-/* Devices without DMAMUX require an additional check.*/
-#if STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX
-
-/* Check on the validity of the assigned DMA channels.*/
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_RX_DMA_STREAM, STM32_SPI1_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI1 RX"
-#endif
-
-#if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI1_TX_DMA_STREAM, STM32_SPI1_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI1 TX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_RX_DMA_STREAM, STM32_SPI2_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI2 RX"
-#endif
-
-#if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI2_TX_DMA_STREAM, STM32_SPI2_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI2 TX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_RX_DMA_STREAM, STM32_SPI3_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI3 RX"
-#endif
-
-#if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI3_TX_DMA_STREAM, STM32_SPI3_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI3 TX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_RX_DMA_STREAM, STM32_SPI4_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI4 RX"
-#endif
-
-#if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI4_TX_DMA_STREAM, STM32_SPI4_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI4 TX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_RX_DMA_STREAM, STM32_SPI5_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI5 RX"
-#endif
-
-#if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI5_TX_DMA_STREAM, STM32_SPI5_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI5 TX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_RX_DMA_STREAM, STM32_SPI6_RX_DMA_MSK)
-#error "invalid DMA stream associated to SPI6 RX"
-#endif
-
-#if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_DMA_IS_VALID_ID(STM32_SPI_SPI6_TX_DMA_STREAM, STM32_SPI6_TX_DMA_MSK)
-#error "invalid DMA stream associated to SPI6 TX"
-#endif
-
-#endif /* STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX */
-
+#if STM32_SPI_USE_SPI1 || STM32_SPI_USE_SPI2 || STM32_SPI_USE_SPI3 ||       \
+    STM32_SPI_USE_SPI4 || STM32_SPI_USE_SPI5
+#define STM32_SPI_DMA_REQUIRED
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
+#endif
+#endif
+
+#if STM32_SPI_USE_SPI6
+#define STM32_SPI_BDMA_REQUIRED
+#if !defined(STM32_BDMA_REQUIRED)
+#define STM32_BDMA_REQUIRED
+#endif
 #endif
 
 #if SPI_SELECT_MODE == SPI_SELECT_MODE_LLD
@@ -482,16 +461,27 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @brief   Low level fields of the SPI driver structure.
- */
+#if (defined(STM32_SPI_DMA_REQUIRED) &&                                     \
+     defined(STM32_SPI_BDMA_REQUIRED)) || defined(__DOXYGEN__)
 #define spi_lld_driver_fields                                               \
   /* Pointer to the SPIx registers block.*/                                 \
   SPI_TypeDef               *spi;                                           \
-  /* Receive DMA stream.*/                                                  \
-  const stm32_dma_stream_t  *dmarx;                                         \
-  /* Transmit DMA stream.*/                                                 \
-  const stm32_dma_stream_t  *dmatx;                                         \
+  /** DMA type for this instance.*/                                         \
+  bool                      is_bdma;                                        \
+  /** Union of the RX DMA streams.*/                                        \
+  union {                                                                   \
+    /* Receive DMA stream.*/                                                \
+    const stm32_dma_stream_t  *dma;                                         \
+    /* Receive BDMA stream.*/                                               \
+    const stm32_bdma_stream_t *bdma;                                        \
+  } rx;                                                                     \
+  /* Union of the TX DMA streams.*/                                         \
+  union {                                                                   \
+    /* Transmit DMA stream.*/                                               \
+    const stm32_dma_stream_t  *dma;                                         \
+    /* Transmit DMA stream.*/                                               \
+    const stm32_bdma_stream_t *bdma;                                        \
+  } tx;                                                                     \
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
@@ -500,15 +490,64 @@
   uint32_t                  rxsink;                                         \
   /* Source for default TX pattern.*/                                       \
   uint32_t                  txsource
+#endif
+
+#if defined(STM32_SPI_DMA_REQUIRED) && !defined(STM32_SPI_BDMA_REQUIRED)
+#define spi_lld_driver_fields                                               \
+  /* Pointer to the SPIx registers block.*/                                 \
+  SPI_TypeDef               *spi;                                           \
+  /** Union of the RX DMA streams.*/                                        \
+  union {                                                                   \
+    /* Receive DMA stream.*/                                                \
+    const stm32_dma_stream_t  *dma;                                         \
+  } rx;                                                                     \
+  /* Union of the TX DMA streams.*/                                         \
+  union {                                                                   \
+    /* Transmit DMA stream.*/                                               \
+    const stm32_dma_stream_t  *dma;                                         \
+  } tx;                                                                     \
+  /* RX DMA mode bit mask.*/                                                \
+  uint32_t                  rxdmamode;                                      \
+  /* TX DMA mode bit mask.*/                                                \
+  uint32_t                  txdmamode;                                      \
+  /* Sink for discarded data.*/                                             \
+  uint32_t                  rxsink;                                         \
+  /* Source for default TX pattern.*/                                       \
+  uint32_t                  txsource
+#endif
+
+#if !defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
+#define spi_lld_driver_fields                                               \
+  /* Pointer to the SPIx registers block.*/                                 \
+  SPI_TypeDef               *spi;                                           \
+  /** Union of the RX DMA streams.*/                                        \
+  union {                                                                   \
+    /* Receive BDMA stream.*/                                               \
+    const stm32_bdma_stream_t  *bdma;                                       \
+  } rx;                                                                     \
+  /* Union of the TX DMA streams.*/                                         \
+  union {                                                                   \
+    /* Transmit DMA stream.*/                                               \
+    const stm32_bdma_stream_t  *bdma;                                       \
+  } tx;                                                                     \
+  /* RX DMA mode bit mask.*/                                                \
+  uint32_t                  rxdmamode;                                      \
+  /* TX DMA mode bit mask.*/                                                \
+  uint32_t                  txdmamode;                                      \
+  /* Sink for discarded data.*/                                             \
+  uint32_t                  rxsink;                                         \
+  /* Source for default TX pattern.*/                                       \
+  uint32_t                  txsource
+#endif
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
  */
 #define spi_lld_config_fields                                               \
-  /* SPI CR1 register initialization data.*/                                \
-  uint16_t                  cr1;                                            \
-  /* SPI CR2 register initialization data.*/                                \
-  uint16_t                  cr2
+  /* SPI CFG1 register initialization data.*/                               \
+  uint32_t                  cfg1;                                           \
+  /* SPI CFG2 register initialization data.*/                               \
+  uint32_t                  cfg2
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -554,7 +593,7 @@ extern "C" {
   msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
   msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
   msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep);
-  uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
+  uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame);
 #ifdef __cplusplus
 }
 #endif
