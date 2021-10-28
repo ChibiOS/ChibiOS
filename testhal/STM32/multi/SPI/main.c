@@ -17,7 +17,6 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "ccportab.h"
 #include "portab.h"
 
 /*
