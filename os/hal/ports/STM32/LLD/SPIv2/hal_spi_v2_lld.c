@@ -460,7 +460,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
 #endif
 
 #if STM32_SPI_USE_SPI2
-    if (&SPID2 == spip) {
+    else if (&SPID2 == spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI2_RX_DMA_STREAM,
                             STM32_SPI_SPI2_TX_DMA_STREAM,
@@ -532,7 +532,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
 #endif
 
 #if STM32_SPI_USE_SPI6
-    if (&SPID6 == spip) {
+    else if (&SPID6 == spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI6_RX_DMA_STREAM,
                             STM32_SPI_SPI6_TX_DMA_STREAM,
