@@ -700,6 +700,9 @@ msg_t spi_lld_start(SPIDriver *spip) {
   uint32_t dsize;
   msg_t msg;
 
+  /* Resetting TX pattern source.*/
+  spip->txsource = (uint32_t)STM32_SPI_FILLER_PATTERN;
+
   /* If in stopped state then enables the SPI and DMA clocks.*/
   if (spip->state == SPI_STOP) {
     if (false) {

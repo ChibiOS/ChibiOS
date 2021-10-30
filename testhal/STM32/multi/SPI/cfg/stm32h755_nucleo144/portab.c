@@ -44,8 +44,8 @@ const SPIConfig c_spicfg = {
   .circular         = true,
   .data_cb          = spi_circular_cb,
   .error_cb         = spi_error_cb,
-  .ssport           = GPIOD,
-  .sspad            = 14U,
+  .ssport           = GPIOA,
+  .sspad            = 4U,
   .cfg1             = SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
   .cfg2             = 0U
 };
@@ -57,8 +57,8 @@ const SPIConfig hs_spicfg = {
   .circular         = false,
   .data_cb          = NULL,
   .error_cb         = spi_error_cb,
-  .ssport           = GPIOD,
-  .sspad            = 14U,
+  .ssport           = GPIOA,
+  .sspad            = 4U,
   .cfg1             = SPI_CFG1_MBR_DIV8 | SPI_CFG1_DSIZE_VALUE(7),
   .cfg2             = 0U
 };
@@ -70,8 +70,8 @@ const SPIConfig ls_spicfg = {
   .circular         = false,
   .data_cb          = NULL,
   .error_cb         = spi_error_cb,
-  .ssport           = GPIOD,
-  .sspad            = 14U,
+  .ssport           = GPIOA,
+  .sspad            = 4U,
   .cfg1             = SPI_CFG1_MBR_DIV128 | SPI_CFG1_DSIZE_VALUE(7),
   .cfg2             = 0U
 };
@@ -97,11 +97,15 @@ void portab_setup(void) {
   /*
    * SPI1 I/O pins setup.
    */
-  palSetPadMode(GPIOA, 5, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
-  palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
-  palSetPadMode(GPIOB, 5, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
-  palSetPadMode(GPIOD, 14, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
-  palSetPad(GPIOD, 14);
+  palSetPadMode(GPIOA, 5, PAL_MODE_ALTERNATE(5) |
+                          PAL_STM32_OSPEED_HIGHEST);    /* SPI1 SCK.        */
+  palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(5) |
+                          PAL_STM32_OSPEED_HIGHEST);    /* SPI1 MISO.       */
+  palSetPadMode(GPIOB, 5, PAL_MODE_ALTERNATE(5) |
+                          PAL_STM32_OSPEED_HIGHEST);    /* SPI1 MOSI.       */
+  palSetPadMode(GPIOA, 4, PAL_MODE_OUTPUT_PUSHPULL |
+                          PAL_STM32_OSPEED_HIGHEST);    /* SPI1 NSS.        */
+  palSetPad(GPIOA, 4);
 }
 
 /** @} */
