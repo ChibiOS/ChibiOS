@@ -354,7 +354,12 @@ static void spi_lld_serve_interrupt(SPIDriver *spip) {
   spip->spi->IFCR = sr;
 
   if ((sr & SPI_SR_OVR) != 0U) {
-    /* TODO: fault notification.*/
+
+    /* Aborting the transfer.*/
+    spi_lld_stop_abort(spip);
+
+    /* Reporting the failure.*/
+    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
 }
 
