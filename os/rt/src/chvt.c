@@ -221,6 +221,65 @@ static inline delta_list_t *vt_dequeue(delta_list_t *dlp) {
 
 #if (CH_CFG_ST_TIMEDELTA > 0) || defined(__DOXYGEN__)
 /**
+ * @brief   Alarm time setup.
+ * @note    An RFCU fault is registered if the system time skips past
+ *          <tt>(now + delay)</tt>, the deadline is skipped forward
+ *          in order to compensate for the event.
+ *
+ * @param[in] now       last known system time
+ * @param[in] delay     delay over @p now
+ */
+static void vt_set_alarm(systime_t now, sysinterval_t delay) {
+  sysinterval_t currdelta;
+
+  /* Initial delta is what is configured statically.*/
+  currdelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+
+  if (delay < currdelta) {
+    /* We need to avoid that the system time goes past the alarm we are
+       going to set before the alarm is actually set.*/
+    delay = currdelta;
+  }
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+  else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+    /* The delta could be too large for the physical timer to handle
+       this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
+    delay = (sysinterval_t)TIME_MAX_SYSTIME;
+  }
+#endif
+
+  /* Deadline skip detection and correction loop.*/
+  while (true) {
+    sysinterval_t nowdelta;
+    systime_t newnow;
+
+    /* Setting up the alarm on the next deadline.*/
+    port_timer_set_alarm(chTimeAddX(now, delay));
+
+    /* Check on current time, we need to detect the error condition where
+       current time skipped past the calculated deadline.
+       Note that the "<" condition is intentional, we want to make sure
+       that the alarm is set before the deadline is reached because the
+       comparison could happen on the transition depending on the timer
+       architecture.*/
+    newnow = chVTGetSystemTimeX();
+    nowdelta = chTimeDiffX(now, newnow);
+    if (nowdelta < delay) {
+      break;
+    }
+
+    /* Trying again with a more relaxed minimum delta.*/
+    currdelta += (sysinterval_t)1;
+
+    /* Current time becomes the new "base" time.*/
+    now = newnow;
+    delay = currdelta;
+  }
+
+  chDbgAssert(currdelta <= CH_CFG_ST_TIMEDELTA, "insufficient delta");
+}
+
+/**
  * @brief   Inserts a timer as first element in a delta list.
  * @note    This is the special case when the delta list is initially empty.
  */
@@ -228,18 +287,22 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
                             virtual_timer_t *vtp,
                             systime_t now,
                             sysinterval_t delay) {
+  sysinterval_t currdelta;
 
   /* The delta list is empty, the current time becomes the new
      delta list base time, the timer is inserted.*/
   vtlp->lasttime = now;
   vt_insert_after(&vtlp->dlist, &vtp->dlist, delay);
 
+  /* Initial delta is what is configured statically.*/
+  currdelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+
   /* If the requested delay is lower than the minimum safe delta then it
      is raised to the minimum safe value.*/
-  if (delay < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
+  if (delay < currdelta) {
     /* We need to avoid that the system time goes past the alarm we are
        going to set before the alarm is actually set.*/
-    delay = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+    delay = currdelta;
   }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
   else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
@@ -252,6 +315,30 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
   /* Being the first element inserted in the list the alarm timer
      is started.*/
   port_timer_start_alarm(chTimeAddX(vtlp->lasttime, delay));
+
+  /* Deadline skip detection and correction loop.*/
+  while (true) {
+    systime_t newnow;
+
+    /* Check on current time, we need to detect the error condition where
+       current time skipped past the calculated deadline.
+       Note that the "<" condition is intentional, we want to make sure
+       that the alarm is set before the deadline is reached because the
+       comparison could happen on the transition depending on the timer
+       architecture.*/
+    newnow = chVTGetSystemTimeX();
+    if (chTimeDiffX(now, newnow) < delay) {
+      break;
+    }
+
+    /* Trying again with a more relaxed minimum delta.*/
+    currdelta += (sysinterval_t)1;
+
+    /* Setting up the alarm on the next deadline.*/
+    port_timer_set_alarm(chTimeAddX(now, currdelta));
+  }
+
+  chDbgAssert(currdelta <= CH_CFG_ST_TIMEDELTA, "insufficient delta");
 }
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
@@ -260,13 +347,13 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
  */
 static void vt_enqueue(virtual_timers_list_t *vtlp,
                        virtual_timer_t *vtp,
-                       systime_t now,
                        sysinterval_t delay) {
   sysinterval_t delta;
 
 #if CH_CFG_ST_TIMEDELTA > 0
   {
     sysinterval_t nowdelta;
+    systime_t now = chVTGetSystemTimeX();
 
     /* Special case where the timers list is empty.*/
     if (vt_is_empty(&vtlp->dlist)) {
@@ -291,28 +378,11 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
     /* Checking if this timer would become the first in the delta list, this
        requires changing the current alarm setting.*/
     if (delta < vtlp->dlist.next->delta) {
-      sysinterval_t deadline_delta;
 
-      /* A small delay that will become the first element in the delta list
-         and next deadline.*/
-      deadline_delta = delta;
-
-      /* Limit delta to CH_CFG_ST_TIMEDELTA.*/
-      if (deadline_delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
-        deadline_delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-      }
-#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-      /* The delta could be too large for the physical timer to handle
-         this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-      else if (deadline_delta > (sysinterval_t)TIME_MAX_SYSTIME) {
-        deadline_delta = (sysinterval_t)TIME_MAX_SYSTIME;
-      }
-#endif
-      port_timer_set_alarm(chTimeAddX(vtlp->lasttime, deadline_delta));
+      vt_set_alarm(now, delay);
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
-  (void)now;
 
   /* Delta is initially equal to the specified delay.*/
   delta = delay;
@@ -377,7 +447,7 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
   vtp->func    = vtfunc;
 
   /* Inserting the timer in the delta list.*/
-  vt_enqueue(vtlp, vtp, chVTGetSystemTimeX(), delay);
+  vt_enqueue(vtlp, vtp, delay);
 }
 
 /**
@@ -408,6 +478,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
      is the last of the list, restoring it.*/
   vtlp->dlist.delta = (sysinterval_t)-1;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
+  systime_t now;
   sysinterval_t nowdelta, delta;
 
   /* If the timer is not the first of the list then it is simply unlinked
@@ -444,7 +515,8 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   vtlp->dlist.next->delta += vtp->dlist.delta;
 
   /* Distance in ticks between the last alarm event and current time.*/
-  nowdelta = chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX());
+  now = chVTGetSystemTimeX();
+  nowdelta = chTimeDiffX(vtlp->lasttime, now);
 
   /* If the current time surpassed the time of the next element in list
      then the event interrupt is already pending, just return.*/
@@ -455,21 +527,8 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   /* Distance from the next scheduled event and now.*/
   delta = vtlp->dlist.next->delta - nowdelta;
 
-  /* Making sure to not schedule an event closer than CH_CFG_ST_TIMEDELTA
-     ticks from now.*/
-  if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
-    delta = nowdelta + (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-  }
-  else {
-    delta = nowdelta + delta;
-#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-    /* The delta could be too large for the physical timer to handle.*/
-    if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
-      delta = (sysinterval_t)TIME_MAX_SYSTIME;
-    }
-#endif
-  }
-  port_timer_set_alarm(chTimeAddX(vtlp->lasttime, delta));
+  /* Setting up the alarm.*/
+  vt_set_alarm(now, delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
@@ -607,27 +666,8 @@ void chVTDoTickI(void) {
   /* Calculating the delta to the next alarm time.*/
   delta = vtp->dlist.delta - nowdelta;
 
-  /* Limit delta to CH_CFG_ST_TIMEDELTA.*/
-  if (delta < (sysinterval_t)CH_CFG_ST_TIMEDELTA) {
-    delta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
-  }
-#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-  /* The delta could be too large for the physical timer to handle.*/
-  else if (delta > (sysinterval_t)TIME_MAX_SYSTIME) {
-    delta = (sysinterval_t)TIME_MAX_SYSTIME;
-  }
-#endif
-
   /* Update alarm time to next timer.*/
-  {
-    sysinterval_t next_alarm = chTimeAddX(now, delta);
-
-    port_timer_set_alarm(next_alarm);
-
-    chDbgAssert(chTimeDiffX(vtlp->lasttime, chVTGetSystemTimeX()) <=
-                chTimeDiffX(vtlp->lasttime, next_alarm),
-                "insufficient delta");
-  }
+  vt_set_alarm(now, delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
