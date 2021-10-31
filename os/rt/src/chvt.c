@@ -51,7 +51,7 @@
 /**
  * @brief   Delta list initialization.
  *
- * @param[out] dlp     pointer to the delta list header
+ * @param[out] dlhp     pointer to the delta list header
  *
  * @notapi
  */
@@ -118,6 +118,7 @@ static inline bool vt_is_timer(delta_list_t *dlhp, delta_list_t *dlp) {
  *
  * @param[in] dlhp      pointer to the delta list header element
  * @param[in] dlp       element to be inserted after the header element
+ * @param[in] delta     delta of the element to be inserted
  *
  * @notapi
  */
@@ -137,6 +138,7 @@ static inline void vt_insert_after(delta_list_t *dlhp,
  *
  * @param[in] dlhp      pointer to the delta list header element
  * @param[in] dlp       element to be inserted before the header element
+ * @param[in] delta     delta of the element to be inserted
  *
  * @notapi
  */
@@ -398,8 +400,6 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
 /**
  * @brief   Virtual Timers initialization.
  * @note    Internal use only.
- *
- * @param[out] vtlp     pointer to the @p virtual_timers_list_t structure
  *
  * @notapi
  */
