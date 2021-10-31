@@ -158,6 +158,8 @@ static void spi_lld_stop_abort(SPIDriver *spip) {
   }
 
   /* Reconfiguring SPI.*/
+  spip->spi->CR1  = 0;
+  spip->spi->CR2  = 0;
   spip->spi->CFG1 = (spip->config->cfg1 & ~SPI_CFG1_FTHLV_Msk) |
                     SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
   spip->spi->CFG2 = (spip->config->cfg2 | SPI_CFG2_MASTER | SPI_CFG2_SSOE) &
@@ -212,7 +214,7 @@ static msg_t spi_lld_stop_nicely(SPIDriver *spip) {
   return HAL_RET_SUCCESS;
 }
 
-#if defined(STM32_SPI_BDMA_REQUIRED)
+#if defined(STM32_SPI_BDMA_REQUIRED) || defined(__DOXYGEN__)
 /**
  * @brief   Shared DMA end-of-rx service routine.
  *
@@ -276,7 +278,7 @@ static void spi_lld_serve_bdma_tx_interrupt(SPIDriver *spip, uint32_t flags) {
 }
 #endif /* defined(STM32_SPI_BDMA_REQUIRED) */
 
-#if defined(STM32_SPI_DMA_REQUIRED)
+#if defined(STM32_SPI_DMA_REQUIRED) || defined(__DOXYGEN__)
 /**
  * @brief   Shared DMA end-of-rx service routine.
  *
@@ -356,6 +358,7 @@ static void spi_lld_serve_interrupt(SPIDriver *spip) {
   }
 }
 
+#if defined(STM32_SPI_DMA_REQUIRED) || defined(__DOXYGEN__)
 /**
  * @brief   DMA streams allocation.
  *
@@ -385,7 +388,9 @@ static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxstream,
 
   return HAL_RET_SUCCESS;
 }
+#endif
 
+#if defined(STM32_SPI_BDMA_REQUIRED) || defined(__DOXYGEN__)
 /**
  * @brief   BDMA streams allocation.
  *
@@ -415,6 +420,7 @@ static msg_t spi_lld_get_bdma(SPIDriver *spip, uint32_t rxstream,
 
   return HAL_RET_SUCCESS;
 }
+#endif
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -930,13 +936,9 @@ void spi_lld_stop(SPIDriver *spip) {
   /* If in ready state then disables the SPI clock.*/
   if (spip->state == SPI_READY) {
 
-    /* SPI disable.*/
-    spip->spi->CR1 &= ~SPI_CR1_SPE;
-    spip->spi->CR1  = 0U;
-    spip->spi->CR2  = 0U;
-    spip->spi->CFG1 = 0U;
-    spip->spi->CFG2 = 0U;
-    spip->spi->IER  = 0U;
+    /* Just in case this has been called uncleanly.*/
+    (void) spi_lld_stop_abort(spip);
+
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
     if (spip->is_bdma)
 #endif

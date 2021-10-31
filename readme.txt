@@ -75,7 +75,7 @@
 
 *** Next ***
 - NEW: SPIv2 driver has been implemented on: STM32F0, STM32F3, STM32F7,
-       STM32G0, STM32G4, STM32L4, STM32L4+.
+       STM32G0, STM32G4, STM32L4, STM32L4+, STM32H7.
 - NEW: New SPIv2 driver model, it is compatible with the previous SPI driver
        and introduces: better runtime errors handling, slave mode,
        data synchronization function, various other improvements.
