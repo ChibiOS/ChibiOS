@@ -72,12 +72,33 @@ SPIDriver SPID6;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void spi_lld_start_master(SPIDriver *spip) {
+static void spi_lld_configure(SPIDriver *spip) {
+
+  /* SPI setup and enable.*/
+  spip->spi->CR1  = 0U;
+  spip->spi->CR2  = 0U;
+  spip->spi->IER  = SPI_IER_OVRIE;
+  spip->spi->IFCR = 0xFFFFFFFFU;
+  spip->spi->CFG1 = (spip->config->cfg1 & ~SPI_CFG1_FTHLV_Msk) |
+                    SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
+  if (spip->config->slave) {
+    spip->spi->CFG2 = spip->config->cfg2 & ~SPI_CFG2_COMM_Msk;
+  }
+  else {
+    spip->spi->CFG2 = (spip->config->cfg2 | SPI_CFG2_MASTER | SPI_CFG2_SSOE) &
+                      ~SPI_CFG2_COMM_Msk;
+  }
+}
+
+static void spi_lld_start_transfer(SPIDriver *spip) {
   uint32_t cr1;
 
   cr1 = spip->spi->CR1;
   spip->spi->CR1 = cr1 | SPI_CR1_SPE;
-  spip->spi->CR1 = cr1 | SPI_CR1_SPE | SPI_CR1_CSTART;
+
+  if (!spip->config->slave) {
+    spip->spi->CR1 = cr1 | SPI_CR1_SPE | SPI_CR1_CSTART;
+  }
 }
 
 static void spi_lld_wait_complete(SPIDriver *spip) {
@@ -158,13 +179,7 @@ static void spi_lld_stop_abort(SPIDriver *spip) {
   }
 
   /* Reconfiguring SPI.*/
-  spip->spi->CR1  = 0;
-  spip->spi->CR2  = 0;
-  spip->spi->CFG1 = (spip->config->cfg1 & ~SPI_CFG1_FTHLV_Msk) |
-                    SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
-  spip->spi->CFG2 = (spip->config->cfg2 | SPI_CFG2_MASTER | SPI_CFG2_SSOE) &
-                    ~SPI_CFG2_COMM_Msk;
-  spip->spi->IER  = SPI_IER_OVRIE;
+  spi_lld_configure(spip);
 }
 
 /**
@@ -173,6 +188,13 @@ static void spi_lld_stop_abort(SPIDriver *spip) {
  * @param[in] spip      pointer to the @p SPIDriver object
  */
 static msg_t spi_lld_stop_nicely(SPIDriver *spip) {
+
+  if (spip->config->slave) {
+
+    spi_lld_stop_abort(spip);
+
+    return HAL_RET_SUCCESS;
+  }
 
   /* Stopping DMAs and waiting for FIFOs to be empty.*/
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
@@ -916,15 +938,8 @@ msg_t spi_lld_start(SPIDriver *spip) {
   }
 #endif
 
-  /* SPI setup.*/
-  spip->spi->CR1  = 0U;
-  spip->spi->CR2  = 0U;
-  spip->spi->CFG1 = (spip->config->cfg1 & ~SPI_CFG1_FTHLV_Msk) |
-                    SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
-  spip->spi->CFG2 = (spip->config->cfg2 | SPI_CFG2_MASTER | SPI_CFG2_SSOE) &
-                    ~SPI_CFG2_COMM_Msk;
-  spip->spi->IER  = SPI_IER_OVRIE;
-  spip->spi->IFCR = 0xFFFFFFFFU;
+  /* SPI setup and enable.*/
+  spi_lld_configure(spip);
 
   return HAL_RET_SUCCESS;
 }
@@ -1089,7 +1104,7 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
   }
 #endif
 
-  spi_lld_start_master(spip);
+  spi_lld_start_transfer(spip);
 
   return HAL_RET_SUCCESS;
 }
@@ -1152,7 +1167,7 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
   }
 #endif
 
-  spi_lld_start_master(spip);
+  spi_lld_start_transfer(spip);
 
   return HAL_RET_SUCCESS;
 }
@@ -1212,7 +1227,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   }
 #endif
 
-  spi_lld_start_master(spip);
+  spi_lld_start_transfer(spip);
 
   return HAL_RET_SUCCESS;
 }
@@ -1272,7 +1287,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   }
 #endif
 
-  spi_lld_start_master(spip);
+  spi_lld_start_transfer(spip);
 
   return HAL_RET_SUCCESS;
 }

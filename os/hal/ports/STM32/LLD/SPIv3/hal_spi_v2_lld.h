@@ -39,7 +39,7 @@
 /**
  * @brief   Slave mode support flag.
  */
-#define SPI_SUPPORTS_SLAVE_MODE         FALSE
+#define SPI_SUPPORTS_SLAVE_MODE         TRUE
 
 /**
  * @name    Register helpers not found in ST headers
