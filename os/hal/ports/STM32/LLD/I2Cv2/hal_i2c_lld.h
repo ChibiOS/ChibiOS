@@ -355,9 +355,9 @@ typedef uint16_t i2caddr_t;
 typedef uint32_t i2cflags_t;
 
 /**
- * @brief   Type of I2C driver configuration structure.
+ * @brief   I2C driver configuration structure.
  */
-typedef struct {
+struct hal_i2c_config {
   /**
    * @brief   TIMINGR register initialization.
    * @note    Refer to the STM32 reference manual, the values are affected
@@ -374,17 +374,22 @@ typedef struct {
    * @note    Only the ADD10 bit can eventually be specified here.
    */
   uint32_t        cr2;
-} I2CConfig;
+};
+
+/**
+ * @brief   Type of a structure representing an I2C configuration.
+ */
+typedef struct hal_i2c_config I2CConfig;
 
 /**
  * @brief   Type of a structure representing an I2C driver.
  */
-typedef struct I2CDriver I2CDriver;
+typedef struct hal_i2c_driver I2CDriver;
 
 /**
  * @brief   Structure representing an I2C driver.
  */
-struct I2CDriver {
+struct hal_i2c_driver {
   /**
    * @brief   Driver state.
    */

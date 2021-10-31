@@ -110,9 +110,9 @@ typedef uint8_t i2cflags_t;
 typedef void (*i2c_delay_t)(void);
 
 /**
- * @brief   Type of I2C driver configuration structure.
+ * @brief   I2C driver configuration structure.
  */
-typedef struct {
+struct hal_i2c_config {
   /**
    * @brief   10 bits addressing switch.
    */
@@ -136,17 +136,22 @@ typedef struct {
    */
   i2c_delay_t               delay;
 #endif
-} I2CConfig;
+};
+
+/**
+ * @brief   Type of a structure representing an I2C configuration.
+ */
+typedef struct hal_i2c_config I2CConfig;
 
 /**
  * @brief   Type of a structure representing an I2C driver.
  */
-typedef struct I2CDriver I2CDriver;
+typedef struct hal_i2c_driver I2CDriver;
 
 /**
  * @brief   Structure representing an I2C driver.
  */
-struct I2CDriver {
+struct hal_i2c_driver {
   /**
    * @brief   Driver state.
    */

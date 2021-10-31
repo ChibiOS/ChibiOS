@@ -99,19 +99,24 @@ typedef uint8_t i2cflags_t;
  * @note    Implementations may extend this structure to contain more,
  *          architecture dependent, fields.
  */
-typedef struct {
+struct hal_i2c_config {
 
   /**
    * @brief Specifies the I2C clock frequency.
    */
   uint32_t        clock_speed;
 
-} I2CConfig;
+};
+
+/**
+ * @brief   Type of a structure representing an I2C configuration.
+ */
+typedef struct hal_i2c_config I2CConfig;
 
 /**
  * @brief   Structure representing an I2C driver.
  */
-struct I2CDriver {
+struct hal_i2c_driver {
   /**
    * @brief   Driver state.
    */
@@ -171,7 +176,7 @@ struct I2CDriver {
 /**
  * @brief   Type of a structure representing an I2C driver.
  */
-typedef struct I2CDriver I2CDriver;
+typedef struct hal_i2c_driver I2CDriver;
 
 /*==========================================================================*/
 /* Driver macros.                                                           */

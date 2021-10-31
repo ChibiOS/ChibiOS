@@ -385,9 +385,9 @@ typedef enum {
 } i2cdutycycle_t;
 
 /**
- * @brief   Type of I2C driver configuration structure.
+ * @brief   I2C driver configuration structure.
  */
-typedef struct {
+struct hal_i2c_config {
   /* End of the mandatory fields.*/
   i2copmode_t     op_mode;       /**< @brief Specifies the I2C mode.        */
   uint32_t        clock_speed;   /**< @brief Specifies the clock frequency.
@@ -395,17 +395,22 @@ typedef struct {
                                       than 400kHz.                          */
   i2cdutycycle_t  duty_cycle;    /**< @brief Specifies the I2C fast mode
                                       duty cycle.                           */
-} I2CConfig;
+};
+
+/**
+ * @brief   Type of a structure representing an I2C configuration.
+ */
+typedef struct hal_i2c_config I2CConfig;
 
 /**
  * @brief   Type of a structure representing an I2C driver.
  */
-typedef struct I2CDriver I2CDriver;
+typedef struct hal_i2c_driver I2CDriver;
 
 /**
  * @brief   Structure representing an I2C driver.
  */
-struct I2CDriver {
+struct hal_i2c_driver {
   /**
    * @brief   Driver state.
    */
