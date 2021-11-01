@@ -116,6 +116,7 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
+include $(CHIBIOS)/os/various/httpd_fatfs_bindings/httpd_fatfs.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F107xC.ld

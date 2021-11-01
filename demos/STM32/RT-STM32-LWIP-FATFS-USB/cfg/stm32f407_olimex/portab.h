@@ -33,6 +33,8 @@
 
 #define PORTAB_SDU1                 SDU1
 
+#define PORTAB_SDC1                 SDCD1
+
 #define PORTAB_BLINK_LED1           LINE_LED
 
 /*===========================================================================*/
