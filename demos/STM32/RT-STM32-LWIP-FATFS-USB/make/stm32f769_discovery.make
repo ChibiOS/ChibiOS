@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -116,6 +116,7 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
+include $(CHIBIOS)/os/various/httpd_fatfs_bindings/httpd_fatfs.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F76xxI.ld
@@ -156,7 +157,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DFATFS_HAL_DEVICE=SDCD2
 
 # Define ASM defines here
 UADEFS =
