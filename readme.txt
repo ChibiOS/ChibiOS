@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Integrated FatFS with lwIP HTTPD, now it is possible to serve files
+       using HTTP from a storage device.
 - NEW: Updated FatFS to version 0.14b.
 - NEW: SPIv2 driver has been implemented on: STM32F0, STM32F3, STM32F7,
        STM32G0, STM32G4, STM32L4, STM32L4+, STM32H7.
