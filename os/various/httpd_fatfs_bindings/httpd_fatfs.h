@@ -41,17 +41,17 @@
 #endif
 
 #if !LWIP_HTTPD_DYNAMIC_FILE_READ
-#error "LWIP_HTTPD_CUSTOM_FILES not enabled"
+#error "LWIP_HTTPD_DYNAMIC_FILE_READ not enabled"
 #endif
 
 #if !LWIP_HTTPD_DYNAMIC_HEADERS
-#error "LWIP_HTTPD_CUSTOM_FILES not enabled"
+#error "LWIP_HTTPD_DYNAMIC_HEADERS not enabled"
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  void httpd_fatfs_init(void);
 #ifdef __cplusplus
 }
 #endif
