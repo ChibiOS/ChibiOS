@@ -338,7 +338,7 @@
               <MiscControls>-USTM32F303xC</MiscControls>
               <Define>CORTEX_USE_FPU=0 TEST_CFG_SIZE_REPORT=0 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\cfg;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include;..\..\..\..\os\common\ext\ST\STM32F3xx;..\..\..\..\os\common\portability\Keil;..\..\..\..\os\common\ports\ARM-common;..\..\..\..\os\common\ports\ARMv7-M;..\..\..\..\os\rt\include;..\..\..\..\os\oslib\include;..\..\..\..\os\hal\osal\rt-nil;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD\ADCv3;..\..\..\..\os\hal\ports\STM32\LLD\CANv1;..\..\..\..\os\hal\ports\STM32\LLD\DACv1;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\SYSTICKv1;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USART;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1;..\..\..\..\test\lib;..\..\..\..\test\rt\source\test;..\..\..\..\test\oslib\source\test</IncludePath>
+              <IncludePath>..\;..\cfg;..\..\..\..\os\license;..\..\..\..\os\common\startup\ARMCMx\devices\STM32F3xx;..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include;..\..\..\..\os\common\ext\ST\STM32F3xx;..\..\..\..\os\common\portability\Keil;..\..\..\..\os\common\ports\ARM-common;..\..\..\..\os\common\ports\ARMv7-M;..\..\..\..\os\rt\include;..\..\..\..\os\oslib\include;..\..\..\..\os\hal\osal\rt-nil;..\..\..\..\os\hal\include;..\..\..\..\os\hal\boards\ST_STM32F3_DISCOVERY;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32F3xx;..\..\..\..\os\hal\ports\STM32\LLD\ADCv3;..\..\..\..\os\hal\ports\STM32\LLD\CANv1;..\..\..\..\os\hal\ports\STM32\LLD\DACv1;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\I2Cv2;..\..\..\..\os\hal\ports\STM32\LLD\RTCv2;..\..\..\..\os\hal\ports\STM32\LLD\SPIv2;..\..\..\..\os\hal\ports\STM32\LLD\SYSTICKv1;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USART;..\..\..\..\os\hal\ports\STM32\LLD\USARTv2;..\..\..\..\os\hal\ports\STM32\LLD\USBv1;..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1;..\..\..\..\os\test\include;..\..\..\..\test\rt\source\test;..\..\..\..\test\oslib\source\test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1243,11 +1243,6 @@
           <GroupName>test</GroupName>
           <Files>
             <File>
-              <FileName>ch_test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\test\lib\ch_test.c</FilePath>
-            </File>
-            <File>
               <FileName>rt_test_root.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\test\rt\source\test\rt_test_root.c</FilePath>
@@ -1361,6 +1356,16 @@
               <FileName>oslib_test_sequence_009.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\test\oslib\source\test\oslib_test_sequence_009.c</FilePath>
+            </File>
+            <File>
+              <FileName>ch_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\test\src\ch_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>ch_test_printf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\test\src\ch_test_printf.c</FilePath>
             </File>
           </Files>
         </Group>

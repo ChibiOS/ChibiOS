@@ -380,7 +380,7 @@
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1</state>
-                    <state>$PROJ_DIR$\..\..\..\..\test\lib</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\test\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\test\rt\source\test</state>
                     <state>$PROJ_DIR$\..\..\..\..\test\oslib\source\test</state>
                 </option>
@@ -1474,7 +1474,7 @@
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USARTv2</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\USBv1</state>
                     <state>$PROJ_DIR$\..\..\..\..\os\hal\ports\STM32\LLD\xWDGv1</state>
-                    <state>$PROJ_DIR$\..\..\..\..\test\lib</state>
+                    <state>$PROJ_DIR$\..\..\..\..\os\test\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\test\rt\source\test</state>
                     <state>$PROJ_DIR$\..\..\..\..\test\oslib\source\test</state>
                     <state>$PROJ_DIR$\..\</state>
@@ -2825,10 +2825,13 @@
         <group>
             <name>lib</name>
             <file>
-                <name>$PROJ_DIR$\..\..\..\..\test\lib\ch_test.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\os\test\src\ch_test.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\..\test\lib\ch_test.h</name>
+                <name>$PROJ_DIR$\..\..\..\..\os\test\include\ch_test.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\os\test\src\ch_test_printf.c</name>
             </file>
         </group>
         <group>
