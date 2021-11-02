@@ -743,15 +743,20 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
 #if STM32_SPI_USE_SPI1
     else if (&SPID1 == spip) {
+      msg = rccEnableSPI1(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetSPI1();
+
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI1_RX_DMA_STREAM,
                             STM32_SPI_SPI1_TX_DMA_STREAM,
                             STM32_SPI_SPI1_IRQ_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
+        rccDisableSPI1();
         return msg;
       }
-      rccEnableSPI1(true);
-      rccResetSPI1();
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI1_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI1_TX);
     }
@@ -759,15 +764,20 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
 #if STM32_SPI_USE_SPI2
     else if (&SPID2 == spip) {
+      msg = rccEnableSPI2(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetSPI2();
+
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI2_RX_DMA_STREAM,
                             STM32_SPI_SPI2_TX_DMA_STREAM,
                             STM32_SPI_SPI2_IRQ_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
+        rccDisableSPI2();
         return msg;
       }
-      rccEnableSPI2(true);
-      rccResetSPI2();
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI2_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI2_TX);
     }
@@ -775,15 +785,20 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
 #if STM32_SPI_USE_SPI3
     else if (&SPID3 == spip) {
+      msg = rccEnableSPI3(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetSPI3();
+
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI3_RX_DMA_STREAM,
                             STM32_SPI_SPI3_TX_DMA_STREAM,
                             STM32_SPI_SPI3_IRQ_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
+        rccDisableSPI3();
         return msg;
       }
-      rccEnableSPI3(true);
-      rccResetSPI3();
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI3_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI3_TX);
     }
@@ -791,15 +806,20 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
 #if STM32_SPI_USE_SPI4
     else if (&SPID4 == spip) {
+      msg = rccEnableSPI4(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetSPI4();
+
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI4_RX_DMA_STREAM,
                             STM32_SPI_SPI4_TX_DMA_STREAM,
                             STM32_SPI_SPI4_IRQ_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
+        rccDisableSPI4();
         return msg;
       }
-      rccEnableSPI4(true);
-      rccResetSPI4();
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI4_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI4_TX);
     }
@@ -807,15 +827,20 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
 #if STM32_SPI_USE_SPI5
     else if (&SPID5 == spip) {
+      msg = rccEnableSPI5(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetSPI5();
+
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI5_RX_DMA_STREAM,
                             STM32_SPI_SPI5_TX_DMA_STREAM,
                             STM32_SPI_SPI5_IRQ_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
+        rccDisableSPI5();
         return msg;
       }
-      rccEnableSPI5(true);
-      rccResetSPI5();
       dmaSetRequestSource(spip->rx.dma, STM32_DMAMUX1_SPI5_RX);
       dmaSetRequestSource(spip->tx.dma, STM32_DMAMUX1_SPI5_TX);
     }
@@ -823,16 +848,20 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
 #if STM32_SPI_USE_SPI6
     else if (&SPID6 == spip) {
-      rccEnableSPI6(true);
+      msg = rccEnableSPI6(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetSPI6();
+
       msg = spi_lld_get_bdma(spip,
                              STM32_SPI_SPI6_RX_BDMA_STREAM,
                              STM32_SPI_SPI6_TX_BDMA_STREAM,
                              STM32_SPI_SPI6_IRQ_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
+        rccDisableSPI6();
         return msg;
       }
-      rccEnableSPI6(true);
-      rccResetSPI6();
       bdmaSetRequestSource(spip->rx.bdma, STM32_DMAMUX2_SPI6_RX);
       bdmaSetRequestSource(spip->tx.bdma, STM32_DMAMUX2_SPI6_TX);
     }
