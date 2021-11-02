@@ -239,6 +239,9 @@ extern "C" {
 }
 #endif
 
+/* Low Level HAL support.*/
+#include "hal_lld.h"
+
 /*===========================================================================*/
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
@@ -277,9 +280,6 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 /*===========================================================================*/
 /* Driver late inclusions.                                                   */
 /*===========================================================================*/
-
-/* Low Level HAL support.*/
-#include "hal_lld.h"
 
 /* Abstract interfaces.*/
 #include "hal_objects.h"
