@@ -377,7 +377,6 @@ msg_t sio_lld_start(SIODriver *siop) {
     siop->sync_rx      = NULL;
     siop->sync_tx      = NULL;
     siop->sync_txend   = NULL;
-//    siop->events       = 0U;
 #endif
   }
 
@@ -386,7 +385,6 @@ msg_t sio_lld_start(SIODriver *siop) {
 
   return HAL_RET_SUCCESS;
 }
-
 
 /**
  * @brief   Deactivates the SIO peripheral.

@@ -89,7 +89,6 @@
 #define SRAMCAN_SIZE  ((uint32_t)(SRAMCAN_TMSA +                            \
                                   (STM32_FDCAN_TM_NBR * SRAMCAN_TM_SIZE)))
 
-
 #define TIMEOUT_INIT_MS                 250U
 #define TIMEOUT_CSA_MS                  250U
 
@@ -389,7 +388,7 @@ void can_lld_transmit(CANDriver *canp, canmbx_t mailbox, const CANTxFrame *ctfp)
   /* Writing frame.*/
   tx_address = canp->ram_base +
                ((SRAMCAN_TBSA + (put_index * SRAMCAN_TB_SIZE)) / sizeof (uint32_t));
-  
+
   *tx_address++ = ctfp->header32[0];
   *tx_address++ = ctfp->header32[1];
   for (unsigned i = 0U; i < dlc_to_bytes[ctfp->DLC]; i += 4U) {
@@ -451,7 +450,7 @@ void can_lld_receive(CANDriver *canp, canmbx_t mailbox, CANRxFrame *crfp) {
       return;
     }
   }
-  
+
   if (mailbox == 1U) {
      /* GET index RXF0, add it and the length to the rx_address.*/
      get_index = (canp->fdcan->RXF0S & FDCAN_RXF0S_F0GI_Msk) >> FDCAN_RXF0S_F0GI_Pos;
@@ -567,7 +566,7 @@ void can_lld_serve_interrupt(CANDriver *canp) {
   }
 
   /* Overflow events.*/
-  if (((ir & FDCAN_IR_RF0L) != 0U) || ((ir & FDCAN_IR_RF1L) != 0U) ) {
+  if (((ir & FDCAN_IR_RF0L) != 0U) || ((ir & FDCAN_IR_RF1L) != 0U)) {
     _can_error_isr(canp, CAN_OVERFLOW_ERROR);
   }
 

@@ -1251,7 +1251,6 @@
 #define STM32_ACTIVATE_PLL          FALSE
 #endif
 
-
 /**
  * @brief   STM32_PLLPEN field.
  */

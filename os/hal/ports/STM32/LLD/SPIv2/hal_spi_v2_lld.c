@@ -277,7 +277,7 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
  * @return              The operation status.
  */
 static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxstream,
-                             uint32_t txstream, uint32_t priority){
+                             uint32_t txstream, uint32_t priority) {
 
   spip->dmarx = dmaStreamAllocI(rxstream, priority,
                                 (stm32_dmaisr_t)spi_lld_serve_rx_interrupt,

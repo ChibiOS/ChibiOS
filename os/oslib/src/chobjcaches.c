@@ -200,7 +200,6 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
       return objp;
     }
 
-
     /* Out of critical section.*/
     chSysUnlock();
 

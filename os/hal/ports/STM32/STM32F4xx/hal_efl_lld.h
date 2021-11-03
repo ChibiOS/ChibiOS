@@ -51,8 +51,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if defined(STM32F413xx) || defined(STM32F412xx) || defined(STM32F40_41xxx)  \
-						 || defined(__DOXYGEN__)
+#if defined(STM32F413xx) || defined(STM32F412xx) ||                         \
+    defined(STM32F40_41xxx) || defined(__DOXYGEN__)
 
 /* Flash size register. */
 #define STM32_FLASH_SIZE_REGISTER           0x1FFF7A22

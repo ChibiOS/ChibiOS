@@ -525,7 +525,7 @@
  *
  * @api
  */
-#define rccResetGTZC() /*rccResetAHB1(RCC_AHB1RST_GTZCRST)*/
+#define rccResetGTZC() /* Disabled rccResetAHB1(RCC_AHB1RST_GTZCRST) */
 /** @} */
 
 /**

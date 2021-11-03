@@ -117,7 +117,7 @@ void st_lld_init(void) {
 
   /* Wait for shadow reg. update.*/
   while ((RTC->ICSR & RTC_ICSR_RSF) == 0U) {
-    // wait RSF flag
+    /* Wait RSF flag.*/
   }
 
   /* Compare all Sub Seconds 32 bits for RTC Alarm A.*/

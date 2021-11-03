@@ -160,7 +160,6 @@
 #define STM32_I2C4_ERROR_NUMBER             83
 #define STM32_I2C4_EVENT_NUMBER             84
 
-
 /*
  * OCTOSPI unit.
  */

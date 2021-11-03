@@ -31,7 +31,7 @@
 /*===========================================================================*/
 
 #if STM32_ADC_DUAL_MODE == TRUE
-#define ADC12_CCR_DUAL 	ADC_CCR_DUAL_REG_SIMULT
+#define ADC12_CCR_DUAL  ADC_CCR_DUAL_REG_SIMULT
 #if STM32_ADC_SAMPLES_SIZE == 8
 /* Compact type dual mode, 2x8-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
@@ -46,7 +46,7 @@
 #endif /*  STM32_ADC_SAMPLES_SIZE == 8 */
 
 #else /* STM32_ADC_DUAL_MODE == FALSE */
-#define ADC12_CCR_DUAL 	ADC_CCR_DUAL_INDEPENDENT
+#define ADC12_CCR_DUAL  ADC_CCR_DUAL_INDEPENDENT
 #if STM32_ADC_SAMPLES_SIZE == 8
 /* Compact type single mode, 8-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_BYTE | STM32_DMA_CR_PSIZE_BYTE)
@@ -641,9 +641,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adcm->ISR   = adcp->adcm->ISR;
   /* If a callback is set enable the overflow and analog watch dog interrupts. */
   if (grpp->error_cb != NULL) {
-    adcp->adcm->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE 
-                                      | ADC_IER_AWD2IE 
-                                      | ADC_IER_AWD3IE;
+    adcp->adcm->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE |
+                                        ADC_IER_AWD2IE |
+                                        ADC_IER_AWD3IE;
   }
 #if STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC12 == TRUE
   /* Configuration for dual mode ADC12 */
@@ -652,9 +652,10 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adcs->ISR   = adcp->adcs->ISR;
     /* If a callback is set enable the overflow and analog watch dog interrupts. */
     if (grpp->error_cb != NULL) {
-    adcp->adcs->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE
-                                      | ADC_IER_AWD2IE
-                                      | ADC_IER_AWD3IE;
+    adcp->adcs->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE |
+                                        ADC_IER_AWD2IE |
+                                        ADC_IER_AWD3IE;
+
     /* Configuring the CCR register with the user-specified settings
       in the conversion group configuration structure, static settings are
       preserved.*/

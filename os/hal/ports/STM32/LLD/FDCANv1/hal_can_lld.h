@@ -287,7 +287,6 @@ typedef struct {
   };
 } CANRxStandardFilter;
 
-
 /**
  * @brief   CAN extended filter.
  * @note    Accessing the frame data as word16 or word32 is not portable
@@ -310,7 +309,6 @@ typedef struct {
     };
   };
 } CANRxExtendedFilter;
-
 
 /**
  * @brief   Type of a CAN configuration structure.

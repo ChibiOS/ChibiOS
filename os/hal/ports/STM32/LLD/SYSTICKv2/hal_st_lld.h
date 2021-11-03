@@ -84,7 +84,6 @@
 #error "RTC does not support binary mode"
 #endif
 
-
 #if (OSAL_ST_RESOLUTION != 32)
 #error "ST based on RTC requires 32bits resolution. Set CH_CFG_ST_RESOLUTION to 32."
 #endif
@@ -176,7 +175,6 @@ static inline void st_lld_set_alarm(systime_t abstime) {
 
   st_lld_start_alarm(abstime);
 }
-
 
 /**
  * @brief   Determines if the alarm is active.

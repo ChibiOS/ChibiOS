@@ -473,7 +473,6 @@
 #define STM32_LSI_ENABLED                   TRUE
 #endif
 
-
 /**
  * @brief   LSI prescaler value.
  */

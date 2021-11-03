@@ -354,7 +354,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     /* PLL VCO frequency.*/
     pllvcoclk = (pllselclk / (halfreq_t)pllmdiv) * (halfreq_t)pllndiv;
 
-    if((pllvcoclk < slp->pllvco_min) || (pllvcoclk > slp->pllvco_max)) {
+    if ((pllvcoclk < slp->pllvco_min) || (pllvcoclk > slp->pllvco_max)) {
       return true;
     }
 
@@ -363,7 +363,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLPEN) != 0U) {
       pllpclk = pllvcoclk / pllpdiv;
 
-      if((pllpclk < slp->pllp_min) || (pllpclk > slp->pllp_max)) {
+      if ((pllpclk < slp->pllp_min) || (pllpclk > slp->pllp_max)) {
         return true;
       }
     }
@@ -373,7 +373,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLQEN) != 0U) {
       pllqclk = pllvcoclk / pllqdiv;
 
-      if((pllqclk < slp->pllq_min) || (pllqclk > slp->pllq_max)) {
+      if ((pllqclk < slp->pllq_min) || (pllqclk > slp->pllq_max)) {
         return true;
       }
     }
@@ -383,14 +383,14 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLREN) != 0U) {
       pllrclk = pllvcoclk / pllrdiv;
 
-      if((pllrclk < slp->pllr_min) || (pllrclk > slp->pllr_max)) {
+      if ((pllrclk < slp->pllr_min) || (pllrclk > slp->pllr_max)) {
         return true;
       }
     }
   }
 
   /* SYSCLK frequency.*/
-  switch(ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
+  switch (ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
   case RCC_CFGR_SW_HSI:
     sysclk = hsisysclk;
     break;
@@ -427,7 +427,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* MCO clock.*/
-  switch(ccp->rcc_cfgr & RCC_CFGR_MCOSEL_Msk) {
+  switch (ccp->rcc_cfgr & RCC_CFGR_MCOSEL_Msk) {
   case STM32_MCOSEL_NOCLOCK:
     mcoclk = 0U;
     break;

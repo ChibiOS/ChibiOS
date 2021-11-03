@@ -539,8 +539,8 @@ void usb_lld_reset(USBDriver *usbp) {
   STM32_USB->BTABLE = BTABLE_ADDR;
   STM32_USB->ISTR   = 0;
   STM32_USB->DADDR  = DADDR_EF;
-  cntr              = /*CNTR_ESOFM | */ CNTR_RESETM  | CNTR_SUSPM |
-                      CNTR_WKUPM | /*CNTR_ERRM | CNTR_PMAOVRM |*/ CNTR_CTRM;
+  cntr              = /* CNTR_ESOFM | */ CNTR_RESETM  | CNTR_SUSPM |
+                      CNTR_WKUPM | /* CNTR_ERRM | CNTR_PMAOVRM |*/ CNTR_CTRM;
   /* The SOF interrupt is only enabled if a callback is defined for
      this service because it is an high rate source.*/
   if (usbp->config->sof_cb != NULL)

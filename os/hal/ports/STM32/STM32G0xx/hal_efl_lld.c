@@ -193,8 +193,8 @@ void efl_lld_init(void) {
   /* Find the size of the flash and set descriptor reference. */
   uint8_t i;
   for (i = 0; i < (sizeof(efl_lld_flash_sizes) / sizeof(efl_lld_size_t)); i++) {
-	    if (efl_lld_flash_sizes[i].desc->size == stm32_flash_get_size()) {
-	    	EFLD1.descriptor = efl_lld_flash_sizes[i].desc;
+      if (efl_lld_flash_sizes[i].desc->size == stm32_flash_get_size()) {
+        EFLD1.descriptor = efl_lld_flash_sizes[i].desc;
       if (stm32_flash_dual_bank(&EFLD1)) {
         /* Point to the dual bank descriptor. */
         EFLD1.descriptor++;

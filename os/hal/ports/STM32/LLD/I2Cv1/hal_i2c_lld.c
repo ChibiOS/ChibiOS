@@ -81,7 +81,7 @@
 
 #define I2C_EV9_MASTER_ADD10                                                \
   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | I2C_SR1_ADD10))
-  
+
 #define I2C_EV5_MASTER_MODE_INVALID                                         \
   ((uint32_t)(((I2C_SR2_MSL | I2C_SR2_BUSY) << 16) | (I2C_SR1_SB |          \
               I2C_SR1_STOPF)))
@@ -284,7 +284,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
     break;
   case I2C_EV8_2_MASTER_BYTE_TRANSMITTED:
     /* Catches BTF event after the end of transmission.*/
-    (void)dp->DR; /* clear BTF.*/
+    (void)dp->DR; /* Clear BTF.*/
     if (dmaStreamGetTransactionSize(i2cp->dmarx) > 0) {
       /* Starts "read after write" operation, LSB = 1 -> receive.*/
       i2cp->addr |= 0x01;
@@ -306,7 +306,7 @@ static void i2c_lld_serve_event_interrupt(I2CDriver *i2cp) {
   if (event & (I2C_SR1_ADDR | I2C_SR1_ADD10))
     (void)dp->SR2;
 
-  /* BERR flag doesn’t happen anymore in event handling */
+  /* BERR flag doesnï¿½t happen anymore in event handling */
 #if 0
   /* Errata 2.4.6 for STM32F40x, Spurious Bus Error detection in Master mode.*/
   if (event & I2C_SR1_BERR) {

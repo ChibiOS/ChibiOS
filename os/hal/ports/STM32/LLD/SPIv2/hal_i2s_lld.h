@@ -319,7 +319,6 @@
 #error "invalid DMA stream associated to SPI3 TX"
 #endif
 
-
 #endif /* STM32_ADVANCED_DMA && !STM32_DMA_SUPPORTS_DMAMUX */
 
 #if !defined(STM32_DMA_REQUIRED)

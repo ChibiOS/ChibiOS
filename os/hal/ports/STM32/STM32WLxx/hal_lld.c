@@ -279,7 +279,7 @@ static bool hal_lld_check_pll(const system_limits_t *slp,
   /* PLL VCO frequency.*/
   vcoclk = (selclk / (halfreq_t)mdiv) * (halfreq_t)ndiv;
 
-  if((vcoclk < slp->pllvco_min) || (vcoclk > slp->pllvco_max)) {
+  if ((vcoclk < slp->pllvco_min) || (vcoclk > slp->pllvco_max)) {
     return true;
   }
 
@@ -291,9 +291,9 @@ static bool hal_lld_check_pll(const system_limits_t *slp,
   }
 
   if ((cfgr & RCC_PLLCFGR_PLLPEN) != 0U) {
-    pclk = vcoclk / pdiv ;
+    pclk = vcoclk / pdiv;
 
-    if((pclk < slp->pllp_min) || (pclk > slp->pllp_max)) {
+    if ((pclk < slp->pllp_min) || (pclk > slp->pllp_max)) {
       return true;
     }
   }
@@ -308,7 +308,7 @@ static bool hal_lld_check_pll(const system_limits_t *slp,
   if ((cfgr & RCC_PLLCFGR_PLLQEN) != 0U) {
     qclk = vcoclk / qdiv;
 
-    if((qclk < slp->pllq_min) || (qclk > slp->pllq_max)) {
+    if ((qclk < slp->pllq_min) || (qclk > slp->pllq_max)) {
       return true;
     }
   }
@@ -323,7 +323,7 @@ static bool hal_lld_check_pll(const system_limits_t *slp,
   if ((cfgr & RCC_PLLCFGR_PLLREN) != 0U) {
     rclk = vcoclk / rdiv;
 
-    if((rclk < slp->pllr_min) || (rclk > slp->pllr_max)) {
+    if ((rclk < slp->pllr_min) || (rclk > slp->pllr_max)) {
       return true;
     }
   }
@@ -415,7 +415,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* SYSCLK frequency.*/
-  switch(ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
+  switch (ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
   case STM32_SW_HSI16:
     sysclk = hsi16clk;
     break;
@@ -437,7 +437,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* LPRUN sysclk check.*/
-  if (((ccp->pwr_cr1 & PWR_CR1_LPR_Msk) != 0U) && (sysclk > STM32_LPRUN_SYSCLK_MAX) ) {
+  if (((ccp->pwr_cr1 & PWR_CR1_LPR_Msk) != 0U) && (sysclk > STM32_LPRUN_SYSCLK_MAX)) {
     return true;
   }
 
@@ -469,7 +469,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   hclk3 = sysclk / hprediv[(ccp->rcc_extcfgr & RCC_EXTCFGR_SHDHPRE_Msk) >> RCC_EXTCFGR_SHDHPRE_Pos];
 
   /* MCO clock.*/
-  switch(ccp->rcc_cfgr & RCC_CFGR_MCOSEL_Msk) {
+  switch (ccp->rcc_cfgr & RCC_CFGR_MCOSEL_Msk) {
   case STM32_MCOSEL_NOCLOCK:
     mcoclk = 0U;
     break;
@@ -661,7 +661,6 @@ void hal_lld_init(void) {
   /* IRQ subsystem initialization.*/
   irqInit();
 }
-
 
 /**
  * @brief   STM32WLxx clocks and PLL initialization.

@@ -1296,35 +1296,35 @@
 #error "Using a wrong mcuconf.h file, STM32H7xx_MCUCONF not defined"
 #endif
 
-#if defined(STM32H750xx)&& !defined(STM32H750_MCUCONF)
+#if defined(STM32H750xx) && !defined(STM32H750_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H750_MCUCONF not defined"
 #endif
 
-#if defined(STM32H742xx)&& !defined(STM32H742_MCUCONF)
+#if defined(STM32H742xx) && !defined(STM32H742_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H742_MCUCONF not defined"
 #endif
 
-#if defined(STM32H743xx)&& !defined(STM32H743_MCUCONF)
+#if defined(STM32H743xx) && !defined(STM32H743_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H743_MCUCONF not defined"
 #endif
 
-#if defined(STM32H753xx)&& !defined(STM32H753_MCUCONF)
+#if defined(STM32H753xx) && !defined(STM32H753_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H753_MCUCONF not defined"
 #endif
 
-#if defined(STM32H745xx)&& !defined(STM32H745_MCUCONF)
+#if defined(STM32H745xx) && !defined(STM32H745_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H745_MCUCONF not defined"
 #endif
 
-#if defined(STM32H755xx)&& !defined(STM32H755_MCUCONF)
+#if defined(STM32H755xx) && !defined(STM32H755_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H755_MCUCONF not defined"
 #endif
 
-#if defined(STM32H747xx)&& !defined(STM32H747_MCUCONF)
+#if defined(STM32H747xx) && !defined(STM32H747_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H747_MCUCONF not defined"
 #endif
 
-#if defined(STM32H757xx)&& !defined(STM32H757_MCUCONF)
+#if defined(STM32H757xx) && !defined(STM32H757_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32H757_MCUCONF not defined"
 #endif
 

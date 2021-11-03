@@ -396,7 +396,7 @@ static void spi_lld_serve_interrupt(SPIDriver *spip) {
  * @return              The operation status.
  */
 static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxstream,
-                             uint32_t txstream, uint32_t priority){
+                             uint32_t txstream, uint32_t priority) {
 
   spip->rx.dma = dmaStreamAllocI(rxstream, priority,
                                  (stm32_dmaisr_t)spi_lld_serve_dma_rx_interrupt,
@@ -428,7 +428,7 @@ static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxstream,
  * @return              The operation status.
  */
 static msg_t spi_lld_get_bdma(SPIDriver *spip, uint32_t rxstream,
-                              uint32_t txstream, uint32_t priority){
+                              uint32_t txstream, uint32_t priority) {
 
   spip->rx.bdma = bdmaStreamAllocI(rxstream, priority,
                                    (stm32_bdmaisr_t)spi_lld_serve_bdma_rx_interrupt,

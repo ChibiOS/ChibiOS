@@ -95,7 +95,6 @@
 
 #define STM32_RCC_HAS_PLL                   TRUE
 #define STM32_RCC_PLL_HAS_P                 TRUE
-/*#define STM32_RCC_PLL_HAS_Q                 TRUE*/ /* Varies, see below.*/
 #define STM32_RCC_PLL_HAS_R                 TRUE
 
 #define STM32_RCC_HAS_PLLSAI1               FALSE

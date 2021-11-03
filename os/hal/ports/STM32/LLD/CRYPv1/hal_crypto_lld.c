@@ -1540,7 +1540,7 @@ cryerror_t cry_lld_SHA256_init(CRYDriver *cryp, SHA256Context *sha256ctxp) {
   sha256ctxp->last_size = 0U;
 
   /* Initializing operation.*/
-  HASH->CR = /*HASH_CR_MDMAT |*/ HASH_CR_ALGO_1 | HASH_CR_ALGO_0 |
+  HASH->CR = /* HASH_CR_MDMAT |*/ HASH_CR_ALGO_1 | HASH_CR_ALGO_0 |
              HASH_CR_DATATYPE_1 | HASH_CR_INIT;
 
   return CRY_NOERROR;

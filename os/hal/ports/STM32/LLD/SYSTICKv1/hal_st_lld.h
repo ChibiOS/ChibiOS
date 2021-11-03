@@ -137,7 +137,7 @@
 #if !defined(STM32_HAS_TIM22)
 #define STM32_HAS_TIM22                     FALSE
 #endif
-/**/
+/* End of checks to be removed.*/
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 
@@ -684,7 +684,6 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
-
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 
 /**
@@ -785,7 +784,6 @@ static inline bool st_lld_is_alarm_active(void) {
  * @notapi
  */
 static inline void st_lld_start_alarm_n(unsigned alarm, systime_t abstime) {
-
 
   STM32_ST_TIM->CCR[alarm] = (uint32_t)abstime;
   STM32_ST_TIM->SR         = 0;

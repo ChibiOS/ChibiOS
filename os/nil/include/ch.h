@@ -418,7 +418,7 @@ typedef uint8_t         ucnt_t;             /**< Generic unsigned counter.  */
 #error "unsupported PORT_ARCH_REGISTERS_WIDTH value"
 #endif
 /** @} */
-#endif /* defined(PORT_DOES_NOT_PROVIDE_TYPES) */
+#endif
 
 #if (CH_CFG_ST_RESOLUTION == 32) || defined(__DOXYGEN__)
 /**

@@ -238,7 +238,6 @@
 #define STM32_HSI_ENABLED                   TRUE
 #endif
 
-
 /**
  * @brief   HSI divider setting.
  * @note    This initialization is performed only if TZEN=0 or MCKPROT=0

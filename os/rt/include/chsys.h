@@ -91,7 +91,7 @@
   #else
     #define currcore                    (&ch0)
   #endif
-#endif /* defined(PORT_INSTANCE_ACCESS) */
+#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */

@@ -199,7 +199,7 @@
 /**
  * @brief   Specifies the ADC samples width.
  * @note    Must be 8, 16 or 32.
- * @note    10, 12, 14 and 16 bits sampling modes must not be used when 
+ * @note    10, 12, 14 and 16 bits sampling modes must not be used when
  *          this option is set to 8.
  * @note    32 is useful when oversampling is activated.
  */
@@ -374,8 +374,8 @@
 #error "Invalid IRQ priority assigned to ADC3"
 #endif
 
-#if ((STM32_ADC_SAMPLES_SIZE != 8)  &&					                    \
-     (STM32_ADC_SAMPLES_SIZE != 16) &&				                        \
+#if ((STM32_ADC_SAMPLES_SIZE != 8)  &&                                      \
+     (STM32_ADC_SAMPLES_SIZE != 16) &&                                      \
      (STM32_ADC_SAMPLES_SIZE != 32))
 #error "STM32_ADC_SAMPLES_SIZE must be 8, 16 or 32"
 #endif

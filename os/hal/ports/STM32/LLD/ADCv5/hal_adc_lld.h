@@ -254,7 +254,6 @@
 #error "ADC DMA stream not defined"
 #endif
 
-
 /* ADC clock source checks.*/
 #if STM32_ADC_PRESCALER_VALUE == 2
 #define STM32_ADC_PRESC                     1U

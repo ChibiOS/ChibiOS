@@ -288,7 +288,6 @@
 #define STM32_ADCSEL_HSI16      (2U << 30U) /**< ADC source is HSI16.       */
 /** @} */
 
-
 /**
  * @name    RCC_CCIPR2 register bits definitions
  * @{
@@ -1568,7 +1567,6 @@
 
 #elif STM32_RNGSEL == STM32_RNGSEL_PLLQCLK
   #define STM32_RNGCLK              (hal_lld_get_clock_point(CLK_PLLQCLK) / STM32_RNGDIV_VALUE)
-
 
 #else
 #error "invalid source selected for RNG clock"

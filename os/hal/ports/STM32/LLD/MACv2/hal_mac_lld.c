@@ -279,7 +279,7 @@ OSAL_IRQ_HANDLER(STM32_ETH_HANDLER) {
  * @notapi
  */
 void mac_lld_init(void) {
-  unsigned i,j;
+  unsigned i, j;
 
   macObjectInit(&ETHD1);
   ETHD1.link_up = false;
@@ -292,7 +292,7 @@ void mac_lld_init(void) {
     __eth_rd[i].rdes2 = 0;
     __eth_rd[i].rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
     for (j = 0; j < BUFFER_SIZE; j++) {
-      __eth_rb[i][j] = 825373492; /* telltale "1234" */
+      __eth_rb[i][j] = 825373492; /* Telltale "1234".*/
     }
   }
   for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
@@ -301,7 +301,7 @@ void mac_lld_init(void) {
     __eth_td[i].tdes2 = 0;
     __eth_td[i].tdes3 = 0;
     for (j = 0; j < BUFFER_SIZE; j++) {
-      __eth_tb[i][j] = 892745528; /* telltale "5678" */
+      __eth_tb[i][j] = 892745528; /* Telltale "5678".*/
     }
   }
 
@@ -376,7 +376,7 @@ void mac_lld_start(MACDriver *macp) {
 
   /* MAC clocks activation and commanded reset procedure.*/
   rccEnableETH(true);
- 
+
   /* ISR vector enabled.*/
   nvicEnableVector(STM32_ETH_NUMBER, STM32_MAC_ETH1_IRQ_PRIORITY);
 
@@ -426,7 +426,6 @@ void mac_lld_start(MACDriver *macp) {
   ETH->DMACSR    = ETH_DMACSR_NIS;
   ETH->DMACIER   = ETH_DMACIER_NIE | ETH_DMACIER_RIE | ETH_DMACIER_TIE;
 
-
   /* Check because errata on some devices. There should be no need to
      disable flushing because the TXFIFO should be empty on macStart().*/
 #if !defined(STM32_MAC_DISABLE_TX_FLUSH)
@@ -440,9 +439,8 @@ void mac_lld_start(MACDriver *macp) {
   ETH->MTLRQOMR   = ETH_MTLRQOMR_DISTCPEF | ETH_MTLRQOMR_RSF;
   ETH->MTLTQOMR   = ETH_MTLTQOMR_TSF;
   ETH->DMACTCR   = ETH_DMACTCR_ST | ETH_DMACTCR_TPBL_1PBL;
-  ETH->DMACRCR   = ETH_DMACRCR_SR | ETH_DMACRCR_RPBL_1PBL 
-                     | (STM32_MAC_BUFFERS_SIZE << ETH_DMACRCR_RBSZ_Pos
-                     & ETH_DMACRCR_RBSZ);
+  ETH->DMACRCR   = ETH_DMACRCR_SR | ETH_DMACRCR_RPBL_1PBL |
+                   (STM32_MAC_BUFFERS_SIZE << ETH_DMACRCR_RBSZ_Pos & ETH_DMACRCR_RBSZ);
 }
 
 /**
@@ -503,9 +501,9 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
     return MSG_TIMEOUT;
   }
 
-  tdes->tdes0 = (uint32_t )__eth_tb[macp->tdindex];
-  /* Marks the current descriptor as locked using a reserved bit.*/
-  /*tdes->tdes0 |= STM32_TDES0_LOCKED; */
+  tdes->tdes0 = (uint32_t)__eth_tb[macp->tdindex];
+  /* Marks the current descriptor as locked using a reserved bit.
+     tdes->tdes0 |= STM32_TDES0_LOCKED; */
   tdes->tdes1++;
 
   /* Next TX descriptor to use.*/
@@ -589,7 +587,7 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
         && (rdes->rdes3 & STM32_RDES3_FD) && (rdes->rdes3 & STM32_RDES3_LD)) {
       /* Found a valid one.*/
       rdp->offset   = 0;
-      rdp->size     = (rdes->rdes3 & STM32_RDES3_PL_MASK) -2; /* Lose CRC */ 
+      rdp->size     = (rdes->rdes3 & STM32_RDES3_PL_MASK) -2; /* Lose CRC.*/
       rdp->physdesc = rdes;
       /* Reposition in ring.*/
       macp->rdindex++;
