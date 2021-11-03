@@ -429,10 +429,11 @@ void adc_lld_init(void) {
  * @brief   Configures and activates the ADC peripheral.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
+ * @return              The operation status.
  *
  * @notapi
  */
-void adc_lld_start(ADCDriver *adcp) {
+msg_t adc_lld_start(ADCDriver *adcp) {
 
   /* Handling the default configuration.*/
   if (adcp->config == NULL) {
@@ -443,12 +444,21 @@ void adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC12 == TRUE
     if (&ADCD1 == adcp) {
+      msg_t msg = rccEnableADC12(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetADC12();
+
       adcp->data.dma = dmaStreamAllocI(STM32_ADC_ADC12_DMA_STREAM,
                                        STM32_ADC_ADC12_IRQ_PRIORITY,
                                        (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                                        (void *)adcp);
-      osalDbgAssert(adcp->data.dma != NULL, "unable to allocate stream");
-      rccEnableADC12(true);
+      if (adcp->data.dma == NULL) {
+        rccDisableADC12();
+        return HAL_RET_NO_RESOURCE;
+      }
+
       dmaSetRequestSource(adcp->data.dma, STM32_DMAMUX1_ADC1);
 
       /* Setting DMA peripheral-side pointer.*/
@@ -470,12 +480,21 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3 == TRUE
     if (&ADCD3 == adcp) {
+      msg_t msg = rccEnableADC3(true);
+      if (msg != HAL_RET_SUCCESS) {
+        return msg;
+      }
+      rccResetADC3();
+
       adcp->data.bdma = bdmaStreamAllocI(STM32_ADC_ADC3_BDMA_STREAM,
                                          STM32_ADC_ADC3_IRQ_PRIORITY,
                                          (stm32_dmaisr_t)adc_lld_serve_bdma_interrupt,
                                          (void *)adcp);
-      osalDbgAssert(adcp->data.bdma != NULL, "unable to allocate stream");
-      rccEnableADC3(true);
+      if (adcp->data.bdma == NULL) {
+        rccDisableADC3();
+        return HAL_RET_NO_RESOURCE;
+      }
+
       bdmaSetRequestSource(adcp->data.bdma, STM32_DMAMUX2_ADC3_REQ);
 
       /* Setting DMA peripheral-side pointer.*/
@@ -509,6 +528,8 @@ void adc_lld_start(ADCDriver *adcp) {
     /* Master ADC enabled here in order to reduce conversions latencies.*/
     adc_lld_analog_on(adcp);
   }
+
+  return HAL_RET_SUCCESS;
 }
 
 /**

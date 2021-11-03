@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: STM32 ADCv2 now supports return code on start function.
 - NEW: Integrated FatFS with lwIP HTTPD, now it is possible to serve files
        using HTTP from a storage device.
 - NEW: Updated FatFS to version 0.14b.
