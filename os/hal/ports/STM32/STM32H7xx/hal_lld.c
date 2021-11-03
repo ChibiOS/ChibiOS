@@ -195,9 +195,11 @@ void hal_lld_init(void) {
                        MPU_RASR_ENABLE);
     mpuEnable(MPU_CTRL_PRIVDEFENA);
 
+#if STM32_TARGET_CORE == 1
     /* Invalidating data cache to make sure that the MPU settings are taken
        immediately.*/
     SCB_CleanInvalidateDCache();
+#endif
   }
 #endif
 }
