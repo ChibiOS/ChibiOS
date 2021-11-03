@@ -29,14 +29,8 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palSetLine(LINE_LED1);
-    chThdSleepMilliseconds(50);
-    palSetLine(LINE_LED2);
-    chThdSleepMilliseconds(200);
-    palClearLine(LINE_LED1);
-    chThdSleepMilliseconds(50);
-    palClearLine(LINE_LED2);
-    chThdSleepMilliseconds(200);
+    palToggleLine(LINE_LED3);
+    chThdSleepMilliseconds(250);
   }
 }
 
@@ -58,7 +52,7 @@ int main(void) {
   /*
    * Activates the serial driver 1 using the driver default configuration.
    */
-  sdStart(&SD3, NULL);
+//  sdStart(&SD3, NULL);
 
   /*
    * Creates the example thread.
@@ -71,8 +65,8 @@ int main(void) {
    */
   while (1) {
     if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&SD3, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD3, &oslib_test_suite);
+//      test_execute((BaseSequentialStream *)&SD3, &rt_test_suite);
+//      test_execute((BaseSequentialStream *)&SD3, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);
   }
