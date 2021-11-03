@@ -63,27 +63,12 @@
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAPB1L(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAPB1L(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->APB1LENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->APB1LENR |= mask;
   if (lp) {
@@ -94,15 +79,6 @@ __STATIC_INLINE msg_t rccEnableAPB1L(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->APB1LLPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->APB1LENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->APB1LENR |= mask;
   if (lp) {
@@ -113,8 +89,6 @@ __STATIC_INLINE msg_t rccEnableAPB1L(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->APB1LLPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -181,27 +155,12 @@ __STATIC_INLINE void rccResetAPB1L(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAPB1H(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAPB1H(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->APB1HENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->APB1HENR |= mask;
   if (lp) {
@@ -212,15 +171,6 @@ __STATIC_INLINE msg_t rccEnableAPB1H(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->APB1HLPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->APB1HENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->APB1HENR |= mask;
   if (lp) {
@@ -231,8 +181,6 @@ __STATIC_INLINE msg_t rccEnableAPB1H(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->APB1HLPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -298,27 +246,12 @@ __STATIC_INLINE void rccResetAPB1H(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAPB2(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAPB2(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->APB2ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->APB2ENR |= mask;
   if (lp) {
@@ -329,15 +262,6 @@ __STATIC_INLINE msg_t rccEnableAPB2(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->APB2LPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->APB2ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->APB2ENR |= mask;
   if (lp) {
@@ -348,8 +272,6 @@ __STATIC_INLINE msg_t rccEnableAPB2(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->APB2LPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -416,27 +338,12 @@ __STATIC_INLINE void rccResetAPB2(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAPB3(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAPB3(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->APB3ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->APB3ENR |= mask;
   if (lp) {
@@ -447,15 +354,6 @@ __STATIC_INLINE msg_t rccEnableAPB3(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->APB3LPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->APB3ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->APB3ENR |= mask;
   if (lp) {
@@ -466,8 +364,6 @@ __STATIC_INLINE msg_t rccEnableAPB3(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->APB3LPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -534,27 +430,12 @@ __STATIC_INLINE void rccResetAPB3(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAPB4(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAPB4(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->APB4ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->APB4ENR |= mask;
   if (lp) {
@@ -565,15 +446,6 @@ __STATIC_INLINE msg_t rccEnableAPB4(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->APB4LPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->APB4ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->APB4ENR |= mask;
   if (lp) {
@@ -584,8 +456,6 @@ __STATIC_INLINE msg_t rccEnableAPB4(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->APB4LPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -652,27 +522,12 @@ __STATIC_INLINE void rccResetAPB4(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAHB1(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAHB1(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->AHB1ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->AHB1ENR |= mask;
   if (lp) {
@@ -683,15 +538,6 @@ __STATIC_INLINE msg_t rccEnableAHB1(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->AHB1LPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->AHB1ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->AHB1ENR |= mask;
   if (lp) {
@@ -702,8 +548,6 @@ __STATIC_INLINE msg_t rccEnableAHB1(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->AHB1LPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -770,27 +614,12 @@ __STATIC_INLINE void rccResetAHB1(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAHB2(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAHB2(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->AHB2ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->AHB2ENR |= mask;
   if (lp) {
@@ -801,15 +630,6 @@ __STATIC_INLINE msg_t rccEnableAHB2(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->AHB2LPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->AHB2ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->AHB2ENR |= mask;
   if (lp) {
@@ -820,8 +640,6 @@ __STATIC_INLINE msg_t rccEnableAHB2(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->AHB2LPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -888,27 +706,12 @@ __STATIC_INLINE void rccResetAHB2(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAHB3(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAHB3(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->AHB3ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->AHB3ENR |= mask;
   if (lp) {
@@ -919,15 +722,6 @@ __STATIC_INLINE msg_t rccEnableAHB3(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->AHB3LPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->AHB3ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->AHB3ENR |= mask;
   if (lp) {
@@ -938,8 +732,6 @@ __STATIC_INLINE msg_t rccEnableAHB3(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->AHB3LPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -1006,27 +798,12 @@ __STATIC_INLINE void rccResetAHB3(uint32_t mask) {
  *
  * @param[in] mask              mask of peripherals to be enabled
  * @param[in] lp                low power enable flag
- * @return                      The operation status.
- * @retval HAL_RET_SUCCESS      if the operation succeeded.
- * @retval HAL_RET_NO_RESOURCE  if the operation failed because one or more
- *                              peripherals are taken by the other core.
  *
  * @api
  */
-__STATIC_INLINE msg_t rccEnableAHB4(uint32_t mask, bool lp) {
+__STATIC_INLINE void rccEnableAHB4(uint32_t mask, bool lp) {
 
 #if STM32_TARGET_CORE == 1
-#if STM32_HAS_M4 && STM32_HAS_M7
-  /* When there are two cores then this check is required for peripheral
-     allocation.*/
-  if ((RCC_C2->AHB4ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C1->AHB4ENR |= mask;
   if (lp) {
@@ -1037,15 +814,6 @@ __STATIC_INLINE msg_t rccEnableAHB4(uint32_t mask, bool lp) {
   }
   (void)RCC_C1->AHB4LPENR;
 #else
-#if STM32_HAS_M4 && STM32_HAS_M7
-  if ((RCC_C1->AHB4ENR & mask) != 0U) {
-
-    osalDbgAssert(false, "peripherals not available");
-
-    return HAL_RET_NO_RESOURCE;
-  }
-#endif
-
   /* Allocating and enabling the peripherals.*/
   RCC_C2->AHB4ENR |= mask;
   if (lp) {
@@ -1056,8 +824,6 @@ __STATIC_INLINE msg_t rccEnableAHB4(uint32_t mask, bool lp) {
   }
   (void)RCC_C2->AHB4LPENR;
 #endif
-
-  return HAL_RET_SUCCESS;
 }
 
 /**

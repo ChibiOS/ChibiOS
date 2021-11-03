@@ -444,20 +444,16 @@ msg_t adc_lld_start(ADCDriver *adcp) {
   if (adcp->state == ADC_STOP) {
 #if STM32_ADC_USE_ADC12 == TRUE
     if (&ADCD1 == adcp) {
-      msg_t msg = rccEnableADC12(true);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccResetADC12();
-
       adcp->data.dma = dmaStreamAllocI(STM32_ADC_ADC12_DMA_STREAM,
                                        STM32_ADC_ADC12_IRQ_PRIORITY,
                                        (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                                        (void *)adcp);
       if (adcp->data.dma == NULL) {
-        rccDisableADC12();
         return HAL_RET_NO_RESOURCE;
       }
+
+      rccEnableADC12(true);
+      rccResetADC12();
 
       dmaSetRequestSource(adcp->data.dma, STM32_DMAMUX1_ADC1);
 
@@ -480,20 +476,16 @@ msg_t adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3 == TRUE
     if (&ADCD3 == adcp) {
-      msg_t msg = rccEnableADC3(true);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccResetADC3();
-
       adcp->data.bdma = bdmaStreamAllocI(STM32_ADC_ADC3_BDMA_STREAM,
                                          STM32_ADC_ADC3_IRQ_PRIORITY,
                                          (stm32_dmaisr_t)adc_lld_serve_bdma_interrupt,
                                          (void *)adcp);
       if (adcp->data.bdma == NULL) {
-        rccDisableADC3();
         return HAL_RET_NO_RESOURCE;
       }
+
+      rccEnableADC3(true);
+      rccResetADC3();
 
       bdmaSetRequestSource(adcp->data.bdma, STM32_DMAMUX2_ADC3_REQ);
 
