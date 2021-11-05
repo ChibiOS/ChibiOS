@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef HAL_SPI_LLD_H
-#define HAL_SPI_LLD_H
+#ifndef HAL_SPI_V2_LLD_H
+#define HAL_SPI_V2_LLD_H
 
 #if HAL_USE_SPI || defined(__DOXYGEN__)
 
@@ -600,6 +600,6 @@ extern "C" {
 
 #endif /* HAL_USE_SPI */
 
-#endif /* HAL_SPI_LLD_H */
+#endif /* HAL_SPI_V2_LLD_H */
 
 /** @} */
