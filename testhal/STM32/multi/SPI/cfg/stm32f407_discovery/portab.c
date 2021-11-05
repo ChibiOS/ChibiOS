@@ -35,41 +35,48 @@
 /*===========================================================================*/
 
 void spi_circular_cb(SPIDriver *spip);
+void spi_error_cb(SPIDriver *spip);
 
 /*
  * Circular SPI configuration (21MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig c_spicfg = {
-  true,
-  spi_circular_cb,
-  GPIOB,
-  12,
-  0,
-  0
+  .circular         = true,
+  .slave            = false,
+  .data_cb          = spi_circular_cb,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOB,
+  .sspad            = 12U,
+  .cr1              = 0U,
+  .cr2              = 0U
 };
 
 /*
  * Maximum speed SPI configuration (21MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig hs_spicfg = {
-  false,
-  NULL,
-  GPIOB,
-  12,
-  0,
-  0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOB,
+  .sspad            = 12U,
+  .cr1              = 0U,
+  .cr2              = 0U
 };
 
 /*
  * Low speed SPI configuration (328.125kHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig ls_spicfg = {
-  false,
-  NULL,
-  GPIOB,
-  12,
-  SPI_CR1_BR_2 | SPI_CR1_BR_1,
-  0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOB,
+  .sspad            = 12U,
+  .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1,
+  .cr2              = 0U
 };
 
 /*===========================================================================*/
