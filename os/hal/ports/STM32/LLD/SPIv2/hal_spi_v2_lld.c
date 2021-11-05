@@ -120,6 +120,21 @@ SPIDriver SPID6;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static void spi_lld_configure(SPIDriver *spip) {
+
+  /* SPI setup.*/
+  if (spip->config->slave) {
+    spip->spi->CR1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
+    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH |
+                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  }
+  else {
+    spip->spi->CR1  = (spip->config->cr1 | SPI_CR1_MSTR) & ~SPI_CR1_SPE;
+    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
+                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  }
+}
+
 /**
  * @brief   Stopping the SPI transaction.
  * @note    This is done nicely or by brutally resetting it depending on
@@ -196,9 +211,7 @@ static msg_t spi_lld_stop_abort(SPIDriver *spip) {
     }
 
     /* Reconfiguring SPI.*/
-    spip->spi->CR1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
-    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH |
-                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+    spi_lld_configure(spip);
   }
 
   return HAL_RET_SUCCESS;
@@ -584,17 +597,8 @@ msg_t spi_lld_start(SPIDriver *spip) {
     spip->txdmamode &= ~(STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
   }
 
-  /* SPI setup and enable.*/
-  if (spip->config->slave) {
-    spip->spi->CR1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
-    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH |
-                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-  }
-  else {
-    spip->spi->CR1  = (spip->config->cr1 | SPI_CR1_MSTR) & ~SPI_CR1_SPE;
-    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
-                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-  }
+  /* SPI setup.*/
+  spi_lld_configure(spip);
 
   return HAL_RET_SUCCESS;
 }
