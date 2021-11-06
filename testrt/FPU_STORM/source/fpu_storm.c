@@ -255,6 +255,7 @@ void fpu_storm_execute(const fpu_storm_config_t *cfg) {
   chprintf(cfg->out, "***\r\n");
   chprintf(cfg->out, "*** Iterations:   %d\r\n", FPU_STORM_CFG_ITERATIONS);
   chprintf(cfg->out, "*** Randomize:    %d\r\n", FPU_STORM_CFG_RANDOMIZE);
+  chprintf(cfg->out, "\r\n");
 
   /* Test loop.*/
   worst = 0;
