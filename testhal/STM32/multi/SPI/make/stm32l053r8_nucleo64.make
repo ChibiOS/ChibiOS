@@ -66,12 +66,7 @@ endif
 # Stack size to the allocated to the Cortex-M main/exceptions stack. This
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
-  USE_EXCEPTIONS_STACKSIZE = 0x400
-endif
-
-# Enables the use of FPU (no, softfp, hard).
-ifeq ($(USE_FPU),)
-  USE_FPU = no
+  USE_EXCEPTIONS_STACKSIZE = 0x200
 endif
 
 #
@@ -86,7 +81,10 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS = ../../../..
+CHIBIOS  := ../../../..
+CONFDIR  := ./cfg/stm32l053r8_nucleo64
+BUILDDIR := ./build/stm32l053r8_nucleo64
+DEPDIR   := ./.dep/stm32l053r8_nucleo64
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -100,6 +98,8 @@ include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv6-M/compilers/GCC/mk/port.mk
+# Auto-build files in ./source recursively.
+include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
 #include $(CHIBIOS)/os/test/test.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
@@ -112,6 +112,7 @@ LDSCRIPT= $(STARTUPLD)/STM32L053x8.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
+       $(CONFDIR)/portab.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -142,10 +143,33 @@ TCPPSRC =
 ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(ALLINC) $(TESTINC)
+INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 
 #
 # Project, sources and paths
+##############################################################################
+
+##############################################################################
+# Start of user section
+#
+
+# List all user C define here, like -D_DEBUG=1
+UDEFS =
+
+# Define ASM defines here
+UADEFS =
+
+# List all user directories here
+UINCDIR =
+
+# List the user directory to look for the libraries here
+ULIBDIR =
+
+# List all user libraries here
+ULIBS =
+
+#
+# End of user section
 ##############################################################################
 
 ##############################################################################
@@ -185,29 +209,6 @@ CPPWARN = -Wall -Wextra -Wundef
 
 #
 # Compiler settings
-##############################################################################
-
-##############################################################################
-# Start of user section
-#
-
-# List all user C define here, like -D_DEBUG=1
-UDEFS =
-
-# Define ASM defines here
-UADEFS =
-
-# List all user directories here
-UINCDIR =
-
-# List the user directory to look for the libraries here
-ULIBDIR =
-
-# List all user libraries here
-ULIBS =
-
-#
-# End of user defines
 ##############################################################################
 
 RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk

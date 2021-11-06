@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -74,6 +74,11 @@ ifeq ($(USE_FPU),)
   USE_FPU = no
 endif
 
+# FPU-related options.
+ifeq ($(USE_FPU_OPT),)
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16 -fsingle-precision-constant
+endif
+
 #
 # Architecture or project specific options
 ##############################################################################
@@ -86,32 +91,38 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS = ../../../..
+CHIBIOS  := ../../../..
+CONFDIR  := ./cfg/stm32f103rb_olimex
+BUILDDIR := ./build/stm32f103rb_olimex
+DEPDIR   := ./.dep/stm32f103rb_olimex
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l1xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32f1xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L1xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32L_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F1xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/OLIMEX_STM32_P103/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
+# Auto-build files in ./source recursively.
+include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
 #include $(CHIBIOS)/os/test/test.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32L152xB.ld
+LDSCRIPT= $(STARTUPLD)/STM32F103xB.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
+       $(CONFDIR)/portab.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -142,17 +153,40 @@ TCPPSRC =
 ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(ALLINC) $(TESTINC)
+INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 
 #
 # Project, sources and paths
 ##############################################################################
 
 ##############################################################################
+# Start of user section
+#
+
+# List all user C define here, like -D_DEBUG=1
+UDEFS =
+
+# Define ASM defines here
+UADEFS =
+
+# List all user directories here
+UINCDIR =
+
+# List the user directory to look for the libraries here
+ULIBDIR =
+
+# List all user libraries here
+ULIBS =
+
+#
+# End of user section
+##############################################################################
+
+##############################################################################
 # Compiler settings
 #
 
-MCU  = cortex-m3
+MCU  = cortex-m4
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-
@@ -185,29 +219,6 @@ CPPWARN = -Wall -Wextra -Wundef
 
 #
 # Compiler settings
-##############################################################################
-
-##############################################################################
-# Start of user section
-#
-
-# List all user C define here, like -D_DEBUG=1
-UDEFS =
-
-# Define ASM defines here
-UADEFS =
-
-# List all user directories here
-UINCDIR =
-
-# List the user directory to look for the libraries here
-ULIBDIR =
-
-# List all user libraries here
-ULIBS =
-
-#
-# End of user defines
 ##############################################################################
 
 RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk

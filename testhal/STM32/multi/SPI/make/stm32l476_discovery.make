@@ -186,7 +186,7 @@ ULIBS =
 # Compiler settings
 #
 
-MCU  = cortex-m7
+MCU  = cortex-m4
 
 #TRGT = arm-elf-
 TRGT = arm-none-eabi-
