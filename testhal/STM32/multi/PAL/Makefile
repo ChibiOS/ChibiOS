@@ -36,8 +36,8 @@ all:
 	+@make --no-print-directory -f make/stm32l053_discovery.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32L151-Discovery ===============================
-	+@make --no-print-directory -f make/stm32l151_discovery.make all
+	@echo === Building for STM32L152RB-Discovery ===============================
+	+@make --no-print-directory -f make/stm32l152rb_discovery.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32L476-Discovery ===============================
@@ -71,7 +71,7 @@ clean:
 	@echo
 	+@make --no-print-directory -f make/stm32l053_discovery.make clean
 	@echo
-	+@make --no-print-directory -f make/stm32l151_discovery.make clean
+	+@make --no-print-directory -f make/stm32l152rb_discovery.make clean
 	@echo
 	+@make --no-print-directory -f make/stm32l476_discovery.make clean
 	@echo
