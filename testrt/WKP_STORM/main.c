@@ -91,7 +91,7 @@ int main(void) {
   nvicEnableVector(0, CORTEX_MAX_KERNEL_PRIORITY);
 
   /* Printing banner.*/
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "\r\n\r\n*** ChibiOS/RT WKP-STORM benchmark and test\r\n***\r\n");
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "\r\n*** ChibiOS/RT WKP-STORM benchmark and test\r\n***\r\n");
   chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Kernel:       %s\r\n", CH_KERNEL_VERSION);
   chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Compiled:     %s\r\n", __DATE__ " - " __TIME__);
 #ifdef PORT_COMPILER_NAME
@@ -111,7 +111,7 @@ int main(void) {
 #ifdef BOARD_NAME
   chprintf((BaseSequentialStream *)&PORTAB_SD1, "*** Test Board:   %s\r\n", BOARD_NAME);
 #endif
-  chprintf((BaseSequentialStream *)&PORTAB_SD1, "***\r\n");
+  chprintf((BaseSequentialStream *)&PORTAB_SD1, "***\r\n\r\n");
   chThdSleepMilliseconds(500U);
 
   /* Test loop.*/

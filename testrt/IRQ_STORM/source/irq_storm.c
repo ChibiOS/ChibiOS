@@ -193,7 +193,6 @@ void irq_storm_execute(const irq_storm_config_t *cfg) {
   }
 
   /* Printing environment information.*/
-  chprintf(cfg->out, "");
   chprintf(cfg->out, "\r\n*** ChibiOS/RT IRQ-STORM long duration test\r\n***\r\n");
   chprintf(cfg->out, "*** Kernel:       %s\r\n", CH_KERNEL_VERSION);
   chprintf(cfg->out, "*** Compiled:     %s\r\n", __DATE__ " - " __TIME__);
