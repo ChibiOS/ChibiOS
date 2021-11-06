@@ -82,7 +82,7 @@ endif
 # Define project name here.
 PROJECT = ch
 
-# Imported source files and paths
+# Imported source files and paths.
 CHIBIOS  := ../../..
 CONFDIR  := ./cfg
 BUILDDIR := ./build
@@ -118,7 +118,7 @@ CSRC =  $(ALLCSRC)  \
 CPPSRC = $(ALLCPPSRC)
 
 # Header files here.
-INCDIR = $(CONFDIR) $(ALLINC)  $(TESTINC)
+INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
 #
 # Project, sources and paths.
@@ -236,7 +236,7 @@ endif
 
 # AVR programmer flags for AVRDUDE programmer.
 ifeq ($(AVR_PROGRAMMER),$(AVRDUDE_PROGRAMMER))
-AVRDUDE_FLAGS = -p $(MCU)
+AVRDUDE_FLAGS =  -p $(MCU)
 AVRDUDE_FLAGS += -P $(AVRDUDE_PORT)
 AVRDUDE_FLAGS += -b 115200
 AVRDUDE_FLAGS += -c $(AVRDUDE_PROGRAMMER_ID)
@@ -249,18 +249,18 @@ endif
 ifeq ($(AVR_PROGRAMMER),$(DFU_PROGRAMMER))
 DFU_WRITE_FLASH = flash --force
 DFU_ERASE_FLASH = erase
-DFU_RESET=reset
+DFU_RESET       = reset
 endif
 
 # AVR programmer flags for MICRONUCLEUS programmer.
 ifeq ($(AVR_PROGRAMMER),$(MICRONUCLEUS_PROGRAMMER))
 MICRONUCLEUS_TIMEOUT_ARG = --timeout 60
-MICRONUCLEUS_RUN_ARG = --run
+MICRONUCLEUS_RUN_ARG  = --run
 MICRONUCLEUS_TYPE_ARG = --type raw
 MICRONUCLEUS_DUMP_PROGRESS = --dump-progress
-MICRONUCLEUS_FLAGS=$(MICRONUCLEUS_TYPE_ARG)
-MICRONUCLEUS_FLAGS+=$(MICRONUCLEUS_TIMEOUT_ARG)
-MICRONUCLEUS_FLAGS+=$(MICRONUCLEUS_RUN_ARG)
+MICRONUCLEUS_FLAGS =  $(MICRONUCLEUS_TYPE_ARG)
+MICRONUCLEUS_FLAGS += $(MICRONUCLEUS_TIMEOUT_ARG)
+MICRONUCLEUS_FLAGS += $(MICRONUCLEUS_RUN_ARG)
 endif
 
 #

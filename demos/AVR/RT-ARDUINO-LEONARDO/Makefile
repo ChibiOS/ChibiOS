@@ -56,7 +56,6 @@ ifeq ($(USE_VERBOSE_PROGRAMMATION),)
   USE_VERBOSE_PROGRAMMATION = no
 endif
 
-
 # Enable this if you want to use AVRDUDE programmer.
 ifeq ($(USE_AVRDUDE_PROGRAMMER),)
   USE_AVRDUDE_PROGRAMMER = yes
@@ -71,6 +70,7 @@ endif
 ifeq ($(USE_MICRONUCLEUS_PROGRAMMER),)
   USE_MICRONUCLEUS_PROGRAMMER = no
 endif
+
 #
 # Building and programming global options.
 ##############################################################################
@@ -82,7 +82,7 @@ endif
 # Define project name here.
 PROJECT = ch
 
-# Imported source files and paths
+# Imported source files and paths.
 CHIBIOS  := ../../..
 CONFDIR  := ./cfg
 BUILDDIR := ./build
@@ -167,7 +167,7 @@ CPPWARN =
 #
 
 # List all user C define here, like -D_DEBUG=1.
-UDEFS =
+UDEFS = -DTEST_CFG_SIZE_REPORT=0
 
 # Define ASM defines here.
 UADEFS =
@@ -197,11 +197,11 @@ MICRONUCLEUS          = micronucleus
 
 # Set the AVR programmer according to the selection..
 ifeq ($(USE_AVRDUDE_PROGRAMMER),yes)
-	AVR_PROGRAMMER      = $(AVRDUDE_PROGRAMMER)
+	AVR_PROGRAMMER = $(AVRDUDE_PROGRAMMER)
 else ifeq ($(USE_DFU_PROGRAMMER),yes)
-	AVR_PROGRAMMER      = $(DFU_PROGRAMMER)
+	AVR_PROGRAMMER = $(DFU_PROGRAMMER)
 else ifeq ($(USE_MICRONUCLEUS_PROGRAMMER),yes)
-	AVR_PROGRAMMER      = $(MICRONUCLEUS_PROGRAMMER)
+	AVR_PROGRAMMER = $(MICRONUCLEUS_PROGRAMMER)
 else
   $(error ERROR: Please you need to configure the AVR programmer!)
 endif
@@ -209,7 +209,7 @@ endif
 # AVR serial port.
 AVRDUDE_PORT = /dev/ttyACM0
 
-AVRDUDE_WRITE_FLASH = -D -Uflash:w:$(BUILDDIR)/$(PROJECT).hex
+AVRDUDE_WRITE_FLASH = -D -U flash:w:$(BUILDDIR)/$(PROJECT).hex
 
 # Check if the counter cycle erase must be performed after device programming.
 ifeq ($(USE_AVRDUDE_ERASE_COUNTER),yes)
@@ -228,13 +228,13 @@ endif
 
 # AVR programmer flags for AVRDUDE programmer.
 ifeq ($(AVR_PROGRAMMER),$(AVRDUDE_PROGRAMMER))
-AVRDUDE_FLAGS = -p $(MCU)
+AVRDUDE_FLAGS =  -p $(MCU)
 AVRDUDE_FLAGS += -P $(AVRDUDE_PORT)
 AVRDUDE_FLAGS += -b 57600
 AVRDUDE_FLAGS += -c $(AVRDUDE_PROGRAMMER_ID)
-AVRDUDE_FLAGS +=$(AVRDUDE_NO_VERIFY)
-AVRDUDE_FLAGS +=$(AVRDUDE_VERBOSE)
-AVRDUDE_FLAGS +=$(AVRDUDE_ERASE_COUNTER)
+AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
+AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
+AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
 endif
 
 # AVR programmer flags for DFU programmer.
@@ -247,10 +247,10 @@ endif
 # AVR programmer flags for MICRONUCLEUS programmer.
 ifeq ($(AVR_PROGRAMMER),$(MICRONUCLEUS_PROGRAMMER))
 MICRONUCLEUS_TIMEOUT_ARG = --timeout 60
-MICRONUCLEUS_RUN_ARG     = --run
-MICRONUCLEUS_TYPE_ARG    = --type raw
+MICRONUCLEUS_RUN_ARG  = --run
+MICRONUCLEUS_TYPE_ARG = --type raw
 MICRONUCLEUS_DUMP_PROGRESS = --dump-progress
-MICRONUCLEUS_FLAGS = $(MICRONUCLEUS_TYPE_ARG)
+MICRONUCLEUS_FLAGS =  $(MICRONUCLEUS_TYPE_ARG)
 MICRONUCLEUS_FLAGS += $(MICRONUCLEUS_TIMEOUT_ARG)
 MICRONUCLEUS_FLAGS += $(MICRONUCLEUS_RUN_ARG)
 endif
@@ -279,7 +279,7 @@ ifeq ($(AVR_PROGRAMMER),$(AVRDUDE_PROGRAMMER))
 program: $(BUILDDIR)/$(PROJECT).hex
 	@echo
 	@echo Programming $(MCU) device.
-	$(AVR_PROGRAMMER) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH)
+	$(AVR_PROGRAMMER) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $<
 	@echo Done.
 endif
 
