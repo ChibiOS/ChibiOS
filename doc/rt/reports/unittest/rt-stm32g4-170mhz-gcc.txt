@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Sep 30 2021 - 08:37:51
+*** Compiled:     Nov  6 2021 - 20:24:06
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    49348 bytes
+*** Text size:    49364 bytes
 *** RO data size: 10044 bytes
 *** Data size:    220 bytes
-*** BSS size:     5400 bytes
+*** BSS size:     5448 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -225,7 +225,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 7391280 wait+signal/S
+--- Score : 7391276 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Sep 30 2021 - 08:37:51
+*** Compiled:     Nov  6 2021 - 20:24:06
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    49348 bytes
+*** Text size:    49364 bytes
 *** RO data size: 10044 bytes
 *** Data size:    220 bytes
-*** BSS size:     5400 bytes
+*** BSS size:     5448 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
