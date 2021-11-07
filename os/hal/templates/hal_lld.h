@@ -30,6 +30,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Requires use of SPIv2 driver model.
+ */
+#define HAL_LLD_SELECT_SPI_V2           TRUE
+
+/**
  * @brief   Specifies implementation of dynamic clock management.
  */
 #define HAL_LLD_USE_CLOCK_MANAGEMENT
