@@ -853,24 +853,24 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ./src \
-                         ../../os/hal/dox \
-                         ../../os/hal/src \
-                         ../../os/hal/include \
-                         ../../os/hal/ports/STM32/STM32F3xx \
-                         ../../os/hal/ports/STM32/LLD/ADCv3 \
-                         ../../os/hal/ports/STM32/LLD/CANv1 \
-                         ../../os/hal/ports/STM32/LLD/DACv1 \
-                         ../../os/hal/ports/STM32/LLD/DMAv1 \
-                         ../../os/hal/ports/STM32/LLD/EXTIv1 \
-                         ../../os/hal/ports/STM32/LLD/GPIOv2 \
-                         ../../os/hal/ports/STM32/LLD/I2Cv2 \
-                         ../../os/hal/ports/STM32/LLD/RTCv2 \
-                         ../../os/hal/ports/STM32/LLD/SPIv2 \
-                         ../../os/hal/ports/STM32/LLD/TIMv1 \
-                         ../../os/hal/ports/STM32/LLD/USARTv2 \
-                         ../../os/hal/ports/STM32/LLD/USBv1 \
-                         ../../os/hal/ports/STM32/LLD/xWDGv1 \
-                         ../../os/hal/templates/osal
+                         ../../../os/hal/dox \
+                         ../../../os/hal/src \
+                         ../../../os/hal/include \
+                         ../../../os/hal/ports/STM32/STM32F3xx \
+                         ../../../os/hal/ports/STM32/LLD/ADCv3 \
+                         ../../../os/hal/ports/STM32/LLD/CANv1 \
+                         ../../../os/hal/ports/STM32/LLD/DACv1 \
+                         ../../../os/hal/ports/STM32/LLD/DMAv1 \
+                         ../../../os/hal/ports/STM32/LLD/EXTIv1 \
+                         ../../../os/hal/ports/STM32/LLD/GPIOv2 \
+                         ../../../os/hal/ports/STM32/LLD/I2Cv2 \
+                         ../../../os/hal/ports/STM32/LLD/RTCv2 \
+                         ../../../os/hal/ports/STM32/LLD/SPIv2 \
+                         ../../../os/hal/ports/STM32/LLD/TIMv1 \
+                         ../../../os/hal/ports/STM32/LLD/USARTv2 \
+                         ../../../os/hal/ports/STM32/LLD/USBv1 \
+                         ../../../os/hal/ports/STM32/LLD/xWDGv1 \
+                         ../../../os/hal/templates/osal
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1208,7 +1208,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = ../../manuals/html/hal_stm32f3xx
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1420,7 +1420,7 @@ GENERATE_HTMLHELP      = NO
 # written to the html output directory.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-CHM_FILE               = ../../ChibiOS_HAL.chm
+CHM_FILE               = ../../../manuals/ChibiOS_HAL_STM32F3xx.chm
 
 # The HHC_LOCATION tag can be used to specify the location (absolute path
 # including file name) of the HTML help compiler (hhc.exe). If non-empty,

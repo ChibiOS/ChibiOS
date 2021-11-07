@@ -1,5 +1,5 @@
-del html\*.* /Q
+del ..\..\manuals\html\ex\*.* /Q
 doxygen Doxyfile_html
-del html\*.md5
-del html\*.map
+del ..\..\manuals\html\ex\*.md5
+del ..\..\manuals\html\ex\*.map
 pause

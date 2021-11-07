@@ -1,6 +1,6 @@
 #!/bin/bash
-rm html/*
+rm ../../manuals/html/hal/*
 doxygen Doxyfile_html
-rm html/*.md5
-rm html/*.map
+rm ../../manuals/html/hal/*.md5
+rm ../../manuals/html/hal/*.map
 

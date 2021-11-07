@@ -854,31 +854,32 @@ WARN_LOGFILE           =
 
 INPUT                  = ./src \
                          ../common/src \
-                         ../../os/license \
-                         ../../os/rt/dox \
-                         ../../os/rt/src \
-                         ../../os/rt/include \
-                         ../../os/rt/templates \
-                         ../../os/nil/dox \
-                         ../../os/nil/src \
-                         ../../os/nil/include \
-                         ../../os/nil/templates \
-                         ../../os/oslib/dox \
-                         ../../os/oslib/src \
-                         ../../os/oslib/include \
-                         ../../os/common/ports/templates \
-                         ../../os/hal/dox \
-                         ../../os/hal/src \
-                         ../../os/hal/include \
-                         ../../os/hal/lib/streams \
-                         ../../os/hal/lib/complex/mfs \
-                         ../../os/hal/lib/complex/serial_nor \
-                         ../../os/hal/templates \
-                         ../../os/hal/templates/osal \
-                         ../../os/ex/dox \
-                         ../../os/ex/devices/Bosch \
-                         ../../os/ex/devices/ST \
-                         ../../os/ex/include
+                         ../../../os/license \
+                         ../../../os/rt/dox \
+                         ../../../os/rt/src \
+                         ../../../os/rt/include \
+                         ../../../os/rt/templates \
+                         ../../../os/nil/dox \
+                         ../../../os/nil/src \
+                         ../../../os/nil/include \
+                         ../../../os/nil/templates \
+                         ../../../os/oslib/dox \
+                         ../../../os/oslib/src \
+                         ../../../os/oslib/include \
+                         ../../../os/common/ports/templates \
+                         ../../../os/hal/dox \
+                         ../../../os/hal/src \
+                         ../../../os/hal/include \
+                         ../../../os/hal/lib/streams \
+                         ../../../os/hal/lib/complex/mfs \
+                         ../../../os/hal/lib/complex/serial_nor \
+                         ../../../os/hal/templates \
+                         ../../../os/hal/templates/osal \
+                         ../../../os/ex/dox \
+                         ../../../os/ex/devices/ADI \
+                         ../../../os/ex/devices/Bosch \
+                         ../../../os/ex/devices/ST \
+                         ../../../os/ex/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1216,7 +1217,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = ../../manuals/html/full_rm
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1428,7 +1429,7 @@ GENERATE_HTMLHELP      = NO
 # written to the html output directory.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-CHM_FILE               = ../../ChibiOS_RT.chm
+CHM_FILE               = ../../../manuals/ChibiOS_Full-RM.chm
 
 # The HHC_LOCATION tag can be used to specify the location (absolute path
 # including file name) of the HTML help compiler (hhc.exe). If non-empty,
