@@ -841,7 +841,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @brief   Aborts the ongoing SPI operation, if any.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
- * @param[out sizep     pointer to the counter of frames not yet transferred
+ * @param[out] sizep    pointer to the counter of frames not yet transferred
  *                      or @p NULL
  * @return              The operation status.
  *
