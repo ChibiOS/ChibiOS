@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    hal_spi_lld.c
- * @brief   PLATFORM SPI subsystem low level driver source.
+ * @file    hal_spi_v1_lld.c
+ * @brief   PLATFORM SPI (v1) subsystem low level driver source.
  *
- * @addtogroup SPI
+ * @addtogroup SPI_V1
  * @{
  */
 
@@ -80,13 +80,22 @@ void spi_lld_init(void) {
 void spi_lld_start(SPIDriver *spip) {
 
   if (spip->state == SPI_STOP) {
+
     /* Enables the peripheral.*/
+    if (false) {
+    }
+
 #if PLATFORM_SPI_USE_SPI1 == TRUE
     if (&SPID1 == spip) {
 
     }
 #endif
+
+    else {
+      osalDbgAssert(false, "invalid SPI instance");
+    }
   }
+
   /* Configures the peripheral.*/
 
 }
@@ -101,15 +110,24 @@ void spi_lld_start(SPIDriver *spip) {
 void spi_lld_stop(SPIDriver *spip) {
 
   if (spip->state == SPI_READY) {
+
     /* Disables the peripheral.*/
+    if (false) {
+    }
+
 #if PLATFORM_SPI_USE_SPI1 == TRUE
     if (&SPID1 == spip) {
 
     }
 #endif
+
+    else {
+      osalDbgAssert(false, "invalid SPI instance");
+    }
   }
 }
 
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
 /**
  * @brief   Asserts the slave select signal and prepares for transfers.
  *
@@ -136,6 +154,7 @@ void spi_lld_unselect(SPIDriver *spip) {
   (void)spip;
 
 }
+#endif
 
 /**
  * @brief   Ignores data on the SPI bus.

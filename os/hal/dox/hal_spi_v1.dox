@@ -15,15 +15,15 @@
 */
 
 /**
- * @defgroup SPI SPI Driver
- * @brief   Generic SPI Driver.
+ * @defgroup SPI_V1 SPIv1 Driver
+ * @brief   Generic SPI Driver (legacy).
  * @details This module implements a generic SPI (Serial Peripheral Interface)
  *          driver allowing bidirectional and monodirectional transfers,
  *          complex atomic transactions are supported as well.
  * @pre     In order to use the SPI driver the @p HAL_USE_SPI option
  *          must be enabled in @p halconf.h.
  *
- * @section spi_1 Driver State Machine
+ * @section spi_v1_1 Driver State Machine
  * The driver implements a state machine internally, not all the driver
  * functionalities can be used in any moment, any transition not explicitly
  * shown in the following diagram has to be considered an error and shall
