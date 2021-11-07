@@ -372,6 +372,7 @@ do {                                                                        \
  * @brief   Wakes up the waiting thread.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] msg       wakeup message
  *
  * @notapi
  */
