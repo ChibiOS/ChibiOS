@@ -1,7 +1,7 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun  6 2021 - 16:32:38
+*** Compiled:     Nov  7 2021 - 13:22:58
 *** Platform:     STM32F303xC Analog & DSP
 *** Test Board:   STMicroelectronics STM32F3-Discovery
 
@@ -21,10 +21,10 @@
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/RT
 --- Stable Flag:                        0
---- Version String:                     7.0.0
+--- Version String:                     7.0.1
 --- Major Number:                       7
 --- Minor Number:                       0
---- Patch Number:                       0
+--- Patch Number:                       1
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
@@ -184,47 +184,47 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 194018 msgs/S, 388036 ctxswc/S
+--- Score : 196669 msgs/S, 393338 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 164717 msgs/S, 329434 ctxswc/S
+--- Score : 166625 msgs/S, 333250 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 164716 msgs/S, 329432 ctxswc/S
+--- Score : 166625 msgs/S, 333250 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 730768 ctxswc/S
+--- Score : 736376 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 116474 threads/S
+--- Score : 116099 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 144541 threads/S
+--- Score : 148110 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 50338 reschedules/S, 302028 ctxswc/S
+--- Score : 49918 reschedules/S, 299508 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 392800 ctxswc/S
+--- Score : 387512 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 227628 timers/S
+--- Score : 208798 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 687152 wait+signal/S
+--- Score : 672712 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 469684 lock+unlock/S
+--- Score : 484716 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)

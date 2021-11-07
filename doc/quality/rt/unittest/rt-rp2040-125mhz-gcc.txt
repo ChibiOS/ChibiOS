@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun 12 2021 - 18:26:28
+*** Compiled:     Nov  7 2021 - 14:06:41
 *** Platform:     RP2040
 *** Test Board:   Raspberry Pi Pico
 ***
-*** Text size:    60116 bytes
-*** RO data size: 11380 bytes
+*** Text size:    57344 bytes
+*** RO data size: 11928 bytes
 *** Data size:    220 bytes
-*** BSS size:     4232 bytes
+*** BSS size:     4240 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv6-M
 --- Core Variant:                       Cortex-M0+
---- Compiler:                           GCC 10.2.1 20201103 (release)
+--- Compiler:                           GCC 10.3.1 20210621 (release)
 --- Port Info:                          Preemption through NMI (SMP)
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -26,10 +26,10 @@
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/RT
 --- Stable Flag:                        0
---- Version String:                     7.0.0
+--- Version String:                     7.0.1
 --- Major Number:                       7
 --- Minor Number:                       0
---- Patch Number:                       0
+--- Patch Number:                       1
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
@@ -189,47 +189,47 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 409826 msgs/S, 819652 ctxswc/S
+--- Score : 404519 msgs/S, 809038 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 328939 msgs/S, 657878 ctxswc/S
+--- Score : 324666 msgs/S, 649332 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 327217 msgs/S, 654434 ctxswc/S
+--- Score : 326362 msgs/S, 652724 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 1312304 ctxswc/S
+--- Score : 1312296 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 218145 threads/S
+--- Score : 218909 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 283440 threads/S
+--- Score : 284731 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 102963 reschedules/S, 617778 ctxswc/S
+--- Score : 102794 reschedules/S, 616764 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 784920 ctxswc/S
+--- Score : 773980 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 371284 timers/S
+--- Score : 507362 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 1420420 wait+signal/S
+--- Score : 1408412 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 1014172 lock+unlock/S
+--- Score : 1022468 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Jun 12 2021 - 18:26:28
+*** Compiled:     Nov  7 2021 - 14:06:41
 *** Platform:     RP2040
 *** Test Board:   Raspberry Pi Pico
 ***
-*** Text size:    60116 bytes
-*** RO data size: 11380 bytes
+*** Text size:    57344 bytes
+*** RO data size: 11928 bytes
 *** Data size:    220 bytes
-*** BSS size:     4232 bytes
+*** BSS size:     4240 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -264,7 +264,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv6-M
 --- Core Variant:                       Cortex-M0+
---- Compiler:                           GCC 10.2.1 20201103 (release)
+--- Compiler:                           GCC 10.3.1 20210621 (release)
 --- Port Info:                          Preemption through NMI (SMP)
 --- Natural alignment:                  4
 --- Stack alignment:                    8

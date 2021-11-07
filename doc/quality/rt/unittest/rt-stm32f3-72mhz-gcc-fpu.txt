@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun  6 2021 - 15:17:09
+*** Compiled:     Nov  7 2021 - 13:08:27
 *** Platform:     STM32F303xC Analog & DSP
 *** Test Board:   STMicroelectronics STM32F3-Discovery
 ***
-*** Text size:    49096 bytes
-*** RO data size: 9876 bytes
+*** Text size:    46864 bytes
+*** RO data size: 10016 bytes
 *** Data size:    220 bytes
-*** BSS size:     7888 bytes
+*** BSS size:     7936 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M4F
---- Compiler:                           GCC 10.2.1 20201103 (release)
+--- Compiler:                           GCC 10.3.1 20210621 (release)
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -26,10 +26,10 @@
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/RT
 --- Stable Flag:                        0
---- Version String:                     7.0.0
+--- Version String:                     7.0.1
 --- Major Number:                       7
 --- Minor Number:                       0
---- Patch Number:                       0
+--- Patch Number:                       1
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
@@ -189,47 +189,47 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 246528 msgs/S, 493056 ctxswc/S
+--- Score : 274755 msgs/S, 549510 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 219475 msgs/S, 438950 ctxswc/S
+--- Score : 241567 msgs/S, 483134 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 219475 msgs/S, 438950 ctxswc/S
+--- Score : 241567 msgs/S, 483134 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 682336 ctxswc/S
+--- Score : 695520 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 149349 threads/S
+--- Score : 149971 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 177309 threads/S
+--- Score : 179968 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 76746 reschedules/S, 460476 ctxswc/S
+--- Score : 76910 reschedules/S, 461460 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 459980 ctxswc/S
+--- Score : 462940 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 458654 timers/S
+--- Score : 431296 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 2525780 wait+signal/S
+--- Score : 2570920 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 791044 lock+unlock/S
+--- Score : 791052 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Jun  6 2021 - 15:17:09
+*** Compiled:     Nov  7 2021 - 13:08:27
 *** Platform:     STM32F303xC Analog & DSP
 *** Test Board:   STMicroelectronics STM32F3-Discovery
 ***
-*** Text size:    49096 bytes
-*** RO data size: 9876 bytes
+*** Text size:    46864 bytes
+*** RO data size: 10016 bytes
 *** Data size:    220 bytes
-*** BSS size:     7888 bytes
+*** BSS size:     7936 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -264,7 +264,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M4F
---- Compiler:                           GCC 10.2.1 20201103 (release)
+--- Compiler:                           GCC 10.3.1 20210621 (release)
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
