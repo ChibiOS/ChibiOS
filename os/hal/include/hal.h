@@ -41,7 +41,7 @@
 /**
  * @brief   Stable release flag.
  */
-#define CH_HAL_STABLE           0
+#define CH_HAL_STABLE           1
 
 /**
  * @name    ChibiOS/HAL version identification
