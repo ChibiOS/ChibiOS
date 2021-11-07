@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Jun  7 2021 - 10:25:08
+*** Compiled:     Nov  7 2021 - 11:30:57
 *** Platform:     STM32H755 Dual Core Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32 Nucleo144-H755ZI
 ***
-*** Text size:    52140 bytes
-*** RO data size: 10312 bytes
+*** Text size:    50408 bytes
+*** RO data size: 10452 bytes
 *** Data size:    220 bytes
-*** BSS size:     5536 bytes
+*** BSS size:     5600 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M7
---- Compiler:                           GCC 10.2.1 20201103 (release)
+--- Compiler:                           GCC 10.3.1 20210621 (release)
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -26,10 +26,10 @@
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/RT
 --- Stable Flag:                        0
---- Version String:                     7.0.0
+--- Version String:                     7.0.1
 --- Major Number:                       7
 --- Minor Number:                       0
---- Patch Number:                       0
+--- Patch Number:                       1
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
@@ -189,47 +189,47 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 2597364 msgs/S, 5194728 ctxswc/S
+--- Score : 2926800 msgs/S, 5853600 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 2399973 msgs/S, 4799946 ctxswc/S
+--- Score : 2608670 msgs/S, 5217340 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 2399974 msgs/S, 4799948 ctxswc/S
+--- Score : 2608671 msgs/S, 5217342 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 8947952 ctxswc/S
+--- Score : 8727192 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 1163051 threads/S
+--- Score : 1564411 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 1592364 threads/S
+--- Score : 1707425 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 808470 reschedules/S, 4850820 ctxswc/S
+--- Score : 805362 reschedules/S, 4832172 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 5623820 ctxswc/S
+--- Score : 5303820 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 3390972 timers/S
+--- Score : 2596348 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 14545300 wait+signal/S
+--- Score : 14545316 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 7164100 lock+unlock/S
+--- Score : 7272660 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Jun  7 2021 - 10:25:08
+*** Compiled:     Nov  7 2021 - 11:30:57
 *** Platform:     STM32H755 Dual Core Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32 Nucleo144-H755ZI
 ***
-*** Text size:    52140 bytes
-*** RO data size: 10312 bytes
+*** Text size:    50408 bytes
+*** RO data size: 10452 bytes
 *** Data size:    220 bytes
-*** BSS size:     5536 bytes
+*** BSS size:     5600 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -264,7 +264,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M7
---- Compiler:                           GCC 10.2.1 20201103 (release)
+--- Compiler:                           GCC 10.3.1 20210621 (release)
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
