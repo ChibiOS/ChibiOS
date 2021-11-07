@@ -1,0 +1,70 @@
+******************************************************************************
+*** ChibiOS 21.11.x Release Notes.                                         ***
+******************************************************************************
+
+ChibiOS 21.11.x is composed of several independent but inter-operable
+sub-projects: RT, NIL, SB, HAL, EX. Plus several external libraries
+integrated in our structure: WolfSSL, FatFS and lwIP.
+
+*** ChibiOS 21.11.x highlights ****
+
+- New sandboxe sybsystem 2.0.
+- FatFS support for lwIP HTTPD subsystem.
+- Improved HTTPD support in MAC demo.
+- Improved STM32 HAL.
+- Added ARMv7-M (alternate) port.
+- New unit test library.
+
+*** What's new in RT/NIL ports ***
+
+- New ARMv7-M-ALT port can be used as alternative of the classi ARMv7-M port:
+  - Lower thread-to-thread performance.
+  - Improved IRQ latency.
+  - Improved thread-fly-back time from ISRs.
+  - Lower RAM usage.
+  - Improved syscall support.
+  - Support for safer sandboxes 2.0.
+  - Support for creation of unprivileged threads.
+
+*** What's new in OS Library 1.3.0 ***
+
+- None.
+
+*** What's new in SB 2.0.0 ***
+
+- Cleaner and easier to use API.
+- Safer messages with timeouts.
+  
+*** What's new in RT 7.0.1 ***
+
+- Improved Virtual Timers:
+  - Higher performance.
+  - Graceful failure mode for insufficient delta.
+  - Better warnings reporting in RFCU unit.
+
+*** What's new in NIL 4.1.1 ***
+
+- Minor internal adjustments.
+
+*** What's new in HAL 8.0.0 ***
+
+- Support for return codes from all xxxStart() functions.
+- New SPIv2 driver model with masted and slave support.
+
+*** What's new in EX 1.2.0 ***
+
+- None.
+
+*** What's new in AVR HAL support ***
+
+- None.
+
+*** What's new in STM32 HAL support ***
+
+- SPIv2 support for all sub-families. SPIv1 still available as fallback.
+- EFL driver and demo for STM32F3xx.
+- Support for STM32G031, STM32G041, STM32G0B1, STM32G0C1.
+
+*** What's new in tools ***
+
+- None.
