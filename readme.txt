@@ -74,4 +74,5 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Added option to copy vectors in RAM on startup for GCC ARMv7-M.
+- NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
+       ARMv7-M and ARMv8-M-ML.
