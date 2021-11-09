@@ -20,8 +20,8 @@ SECTIONS
     {
         PROVIDE(_textdata = LOADADDR(.data));
         PROVIDE(_data = .);
-       __textdata_base__ = LOADADDR(.data);
-       __data_base__ = .;
+        __textdata_base__ = LOADADDR(.data);
+        __data_base__ = .;
         *(.data)
         *(.data.*)
         *(.ramtext)
