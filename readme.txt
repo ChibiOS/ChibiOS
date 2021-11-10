@@ -74,8 +74,11 @@
 *****************************************************************************
 
 *** 21.11.1 ***
+- NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
+       ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
+- FIX: Fixed STM32G0B1 demo application hangs debuggers (bug #1200).
 
 *** 21.11.0 ***
 - NEW: STM32 ADCv2 now supports return code on start function.
