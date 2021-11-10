@@ -112,6 +112,14 @@
 #endif
 
 /**
+ * @brief   Vectors table initialization.
+ * @details Vectors are copied in RAM on startup.
+ */
+#if !defined(CRT0_INIT_VECTORS) || defined(__DOXYGEN__)
+#define CRT0_INIT_VECTORS                   FALSE
+#endif
+
+/**
  * @brief   DATA segment initialization switch.
  */
 #if !defined(CRT0_INIT_DATA) || defined(__DOXYGEN__)
@@ -205,8 +213,7 @@ _crt0_entry:
 
 #if CRT0_VTOR_INIT == TRUE
                 ldr     r0, =_vectors
-                movw    r1, #SCB_VTOR & 0xFFFF
-                movt    r1, #SCB_VTOR >> 16
+                ldr     r1, =SCB_VTOR
                 str     r0, [r1]
 #endif
 
@@ -282,9 +289,30 @@ psloop:
                 blo     psloop
 #endif
 
+#if CRT0_INIT_VECTORS == TRUE
+                /* Vectors initialization. Note, it assumes that the vectors
+                   size is a multiple of 4 so the linker file must ensure
+                   this.*/
+                ldr     r1, =__textvectors_base__
+                ldr     r2, =__vectors_base__
+                ldr     r3, =__vectors_end__
+                mov     r4, r2
+vloop:
+                cmp     r2, r3
+                ittt    lo
+                ldrlo   r0, [r1], #4
+                strlo   r0, [r2], #4
+                blo     vloop
+
+                /* VTOR now pointing to the RAM table.*/
+                ldr     r1, =SCB_VTOR
+                str     r4, [r1]
+#endif
+
 #if CRT0_INIT_DATA == TRUE
-                /* Data initialization. Note, it assumes that the DATA size
-                  is a multiple of 4 so the linker file must ensure this.*/
+                /* Data initialization. Note, it assumes that the DATA
+                   size is a multiple of 4 so the linker file must ensure
+                   this.*/
                 ldr     r1, =__textdata_base__
                 ldr     r2, =__data_base__
                 ldr     r3, =__data_end__
@@ -297,8 +325,9 @@ dloop:
 #endif
 
 #if CRT0_INIT_BSS == TRUE
-                /* BSS initialization. Note, it assumes that the DATA size
-                  is a multiple of 4 so the linker file must ensure this.*/
+                /* BSS initialization. Note, it assumes that the DATA
+                   size is a multiple of 4 so the linker file must ensure
+                   this.*/
                 movs    r0, #0
                 ldr     r1, =__bss_base__
                 ldr     r2, =__bss_end__
