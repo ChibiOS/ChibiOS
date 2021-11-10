@@ -69,7 +69,11 @@ uint32_t SystemCoreClock = STM32_HCLK;
  */
 const halclkcfg_t hal_clkcfg_reset = {
   .pwr_cr1              = PWR_CR1_VOS_0 | PWR_CR1_FPD_STOP,
+#if defined (PWR_CR2_PVMEN_USB)
+  .pwr_cr2              = PWR_CR2_PVMEN_USB,
+#else
   .pwr_cr2              = 0U,
+#endif
   .rcc_cr               = RCC_CR_HSION,
   .rcc_cfgr             = RCC_CFGR_SW_HSI,
   .rcc_pllcfgr          = 0U,
@@ -81,7 +85,11 @@ const halclkcfg_t hal_clkcfg_reset = {
  */
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS_RANGE1 | PWR_CR1_DBP,
-  .pwr_cr2              = STM32_PWR_CR2,
+#if defined (PWR_CR2_PVMEN_USB)
+  .pwr_cr2              = PWR_CR2_PVMEN_USB,
+#else
+  .pwr_cr2              = 0U,
+#endif
   .rcc_cr               = 0U
 #if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
