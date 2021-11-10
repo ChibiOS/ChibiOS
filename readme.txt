@@ -73,6 +73,10 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 21.11.1 ***
+- NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
+- NEW: Added SPIv2 support also to STM32WB and STM32WL.
+
 *** 21.11.0 ***
 - NEW: STM32 ADCv2 now supports return code on start function.
 - NEW: Integrated FatFS with lwIP HTTPD, now it is possible to serve files

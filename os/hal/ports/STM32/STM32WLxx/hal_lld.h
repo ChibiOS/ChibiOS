@@ -42,6 +42,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Requires use of SPIv2 driver model.
+ */
+#define HAL_LLD_SELECT_SPI_V2           TRUE
+
+/**
  * @name    Platform identification
  * @{
  */
