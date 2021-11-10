@@ -18,8 +18,6 @@
  * STM32H755xI (M7 side) generic setup.
  * Flash1 is assumed to be in use for the M7 core.
  * Flash2 is not touched and can be used by the M4 core.
- * RAM1 and RAM2 are assumed to be in use for the M7 core.
- * RAM3 and RAM4 are not touched and can be used by the M4 core.
  * 
  * AXI SRAM     - BSS, Data, Heap.
  * SRAM1+SRAM2  - None.
