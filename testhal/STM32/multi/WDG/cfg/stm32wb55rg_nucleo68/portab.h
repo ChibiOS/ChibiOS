@@ -29,7 +29,7 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define PORTAB_BLINK_LED1           LINE_LED_GREEN
+#define PORTAB_LINE_LED1            LINE_LED_GREEN
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */

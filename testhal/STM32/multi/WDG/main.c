@@ -22,9 +22,11 @@
  * Watchdog deadline set to more than one second (LSI=40000 / (64 * 1000)).
  */
 static const WDGConfig wdgcfg = {
-  STM32_IWDG_PR_64,
-  STM32_IWDG_RL(1000),
-  STM32_IWDG_WIN_DISABLED
+  .pr           = STM32_IWDG_PR_64,
+  .rlr          = STM32_IWDG_RL(1000),
+#if STM32_IWDG_IS_WINDOWED
+  .winr         = STM32_IWDG_WIN_DISABLED,
+#endif
 };
 
 /*
@@ -52,7 +54,7 @@ int main(void) {
    */
   while (true) {
     wdgReset(&WDGD1);
-    palToggleLine(PORTAB_BLINK_LED1);
+    palToggleLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
   }
   return 0;
