@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added STM32L073RZ-Nucleo64 to USB-CDC "multi" demo. Removed old demo.
 - NEW: Added an STM32 WDG "multi" demo. Removed all old WDG demos.
 - NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
        ARMv7-M and ARMv8-M-ML.
