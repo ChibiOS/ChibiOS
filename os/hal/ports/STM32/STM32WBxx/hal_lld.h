@@ -1140,10 +1140,6 @@
     #error "LSI1 or LSI2 not enabled, required by STM32_RNGSEL"
   #endif
 
-  #
-#else
-  /* Define required for IWDG.*/
-  #define STM32_LSI_ENABLED TRUE
 #endif /* !(STM32_LSI1_ENABLED || STM32_LSI2_ENABLED) */
 
 #if !STM32_LSI1_ENABLED

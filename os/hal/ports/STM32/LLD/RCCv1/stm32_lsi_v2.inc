@@ -29,7 +29,7 @@
 /**
  * @brief   LSI clock frequency.
  */
-#define STM32_LSICLK                32000U
+#define STM32_LSICLK                        32000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -57,6 +57,13 @@
 
 #if defined(STM32_LSI_ENABLED)
 #error "STM32_LSI_ENABLED should not be defined in mcuconf.h"
+#endif
+
+/* Define STM32_LSI_ENABLED for compatibility with other drivers (xWDG) */
+#if STM32_LSI1_ENABLED || STM32_LSI2_ENABLED
+#define STM32_LSI_ENABLED                   TRUE
+#else
+#define STM32_LSI_ENABLED                   FALSE
 #endif
 
 /*===========================================================================*/
