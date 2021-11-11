@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added an STM32 WDG "multi" demo.
 - NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.

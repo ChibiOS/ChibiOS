@@ -95,7 +95,6 @@ __STATIC_INLINE void lsi_init(void) {
   while ((RCC->CSR & RCC_CSR_LSI2RDY) == 0U) {
   }
 #endif
-
 }
 
 /*===========================================================================*/
