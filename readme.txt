@@ -82,4 +82,4 @@
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Fixed STM32G0B1 demo application hangs debuggers (bug #1200)
        (backported to 21.11.1).
-
+- FIX: Fixed STM32_SDMMC2_NUMBER on STM32H7 (bug #1201)
