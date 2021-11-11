@@ -55,8 +55,8 @@ void portab_setup(void) {
   /*
    * Configuring USB DP and DM PINs.
    */
-  palSetPadMode(GPIOA, GPIOA_PIN11, PAL_MODE_INPUT_ANALOG);
-  palSetPadMode(GPIOA, GPIOA_PIN12, PAL_MODE_INPUT_ANALOG);
+//  palSetPadMode(GPIOA, GPIOA_PIN11, PAL_MODE_INPUT_ANALOG);
+//  palSetPadMode(GPIOA, GPIOA_PIN12, PAL_MODE_INPUT_ANALOG);
 }
 
 /** @} */

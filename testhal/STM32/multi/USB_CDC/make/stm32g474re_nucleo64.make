@@ -55,7 +55,7 @@ endif
 # Stack size to be allocated to the Cortex-M process stack. This stack is
 # the stack used by the main() thread.
 ifeq ($(USE_PROCESS_STACKSIZE),)
-  USE_PROCESS_STACKSIZE = 0x200
+  USE_PROCESS_STACKSIZE = 0x400
 endif
 
 # Stack size to the allocated to the Cortex-M main/exceptions stack. This
@@ -86,26 +86,26 @@ endif
 PROJECT = ch
 
 # Target settings.
-MCU  = cortex-m0
+MCU  = cortex-m4
 
 # Imported source files and paths.
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg/stm32l073rz_nucleo64
-BUILDDIR := ./build/stm32l073rz_nucleo64
-DEPDIR   := ./.dep/stm32l073rz_nucleo64
+CONFDIR  := ./cfg/stm32g474re_nucleo64
+BUILDDIR := ./build/stm32g474re_nucleo64
+DEPDIR   := ./.dep/stm32g474re_nucleo64
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l0xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L0xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_L073RZ/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G474RE/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMv6-M/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
@@ -115,8 +115,8 @@ include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 
-# Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32L073xZ.ld
+# Define linker script file here.
+LDSCRIPT= $(STARTUPLD)/STM32G474xE.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

@@ -15,48 +15,58 @@
 */
 
 /**
- * @file    portab.c
- * @brief   Application portability module code.
+ * @file    portab.h
+ * @brief   Application portability macros and structures.
  *
  * @addtogroup application_portability
  * @{
  */
 
-#include "hal.h"
-
-#include "portab.h"
-
-/*===========================================================================*/
-/* Module local definitions.                                                 */
-/*===========================================================================*/
+#ifndef PORTAB_H
+#define PORTAB_H
 
 /*===========================================================================*/
-/* Module exported variables.                                                */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
-/*===========================================================================*/
-/* Module local types.                                                       */
-/*===========================================================================*/
+#define PORTAB_USB1                 USBD1
+
+#define PORTAB_SDU1                 SDU1
+
+#define PORTAB_BLINK_LED1           LINE_LED_RIGHT_GREEN
 
 /*===========================================================================*/
-/* Module local variables.                                                   */
+/* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local functions.                                                   */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module exported functions.                                                */
+/* Module data structures and types.                                         */
 /*===========================================================================*/
 
-void portab_setup(void) {
+/*===========================================================================*/
+/* Module macros.                                                            */
+/*===========================================================================*/
 
-  /*
-   * Configuring USB DP and DM PINs.
-   */
-  palSetPadMode(GPIOA, GPIOA_PIN11, PAL_MODE_INPUT_ANALOG);
-  palSetPadMode(GPIOA, GPIOA_PIN12, PAL_MODE_INPUT_ANALOG);
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void portab_setup(void);
+#ifdef __cplusplus
 }
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+#endif /* PORTAB_H */
 
 /** @} */
