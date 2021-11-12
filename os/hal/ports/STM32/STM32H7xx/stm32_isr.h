@@ -221,7 +221,7 @@
 #define STM32_SDMMC2_HANDLER                Vector230
 
 #define STM32_SDMMC1_NUMBER                 49
-#define STM32_SDMMC2_NUMBER                 131
+#define STM32_SDMMC2_NUMBER                 124
 
 /*
  * SPI units.
