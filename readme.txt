@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 20.3.5 ***
+- FIX: Fixed STM32_SDMMC2_NUMBER on STM32H7 (bug #1201).
+
 *** 20.3.4 ***
 - NEW: Made STM32H7 non-cacheable memory option also shareable.
 - NEW: STM32 improved ADCv4 driver (H7) back-ported from trunk.
