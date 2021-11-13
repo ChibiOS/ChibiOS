@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Increased stacks size in RT test suite from 128 to 192. added an
+       option to override the stack size by defining THREADS_STACK_SIZE
+       in the makefile.
 - NEW: Added STM32L073RZ-Nucleo64 to USB-CDC "multi" demo. Removed old demo.
 - NEW: Added an STM32 WDG "multi" demo. Removed all old WDG demos.
 - NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
