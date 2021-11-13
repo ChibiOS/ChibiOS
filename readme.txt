@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: USBv1 driver optimization and removal of a potential race condition
+       (not demonstrated).
 - NEW: Added elfAcquireBus()/eflReleaseBus() functions to EFL driver.
 - NEW: Increased stacks size in RT test suite from 128 to 192. added an
        option to override the stack size by defining THREADS_STACK_SIZE

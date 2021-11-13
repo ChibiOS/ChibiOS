@@ -283,16 +283,17 @@ static void usb_packet_write_from_buffer(usbep_t ep,
  * @brief   Common ISR code, serves the EP-related interrupts.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
- * @param[in] ep        endpoint number
+ * @param[in] istr      ISTR register value to consider
  *
  * @notapi
  */
-static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
+static void usb_serve_endpoints(USBDriver *usbp, uint32_t istr) {
+  uint32_t ep = istr & ISTR_EP_ID_MASK;
   size_t n;
   uint32_t epr = STM32_USB->EPR[ep];
   const USBEndpointConfig *epcp = usbp->epc[ep];
 
-  if (epr & EPR_CTR_TX) {
+  if ((istr & ISTR_DIR) == 0U) {
     /* IN endpoint, transmission.*/
     USBInEndpointState *isp = epcp->in_state;
 
@@ -318,7 +319,7 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
       _usb_isr_invoke_in_cb(usbp, ep);
     }
   }
-  if (epr & EPR_CTR_RX) {
+  else {
     /* OUT endpoint, receive.*/
 
     EPR_CLEAR_CTR_RX(ep);
@@ -375,7 +376,7 @@ OSAL_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
   /* Endpoint events handling.*/
   istr = STM32_USB->ISTR;
   while (istr & ISTR_CTR) {
-    usb_serve_endpoints(usbp, istr & ISTR_EP_ID_MASK);
+    usb_serve_endpoints(usbp, istr);
     istr = STM32_USB->ISTR;
   }
 
@@ -395,12 +396,12 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
+  /* Reading interrupt sources and atomically clearing them.*/
   istr = STM32_USB->ISTR;
+  STM32_USB->ISTR = ~istr;
 
   /* USB bus reset condition handling.*/
   if (istr & ISTR_RESET) {
-    STM32_USB->ISTR = ~ISTR_RESET;
-
     _usb_reset(usbp);
   }
 
@@ -410,8 +411,6 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
 #if STM32_USB_LOW_POWER_ON_SUSPEND
     STM32_USB->CNTR |= CNTR_LP_MODE;
 #endif
-    STM32_USB->ISTR = ~ISTR_SUSP;
-
     _usb_suspend(usbp);
   }
 
@@ -420,7 +419,6 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
     uint32_t fnr = STM32_USB->FNR;
     if (!(fnr & FNR_RXDP)) {
       STM32_USB->CNTR &= ~CNTR_FSUSP;
-
       _usb_wakeup(usbp);
     }
 #if STM32_USB_LOW_POWER_ON_SUSPEND
@@ -430,18 +428,16 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
       STM32_USB->CNTR |= CNTR_LP_MODE;
     }
 #endif
-    STM32_USB->ISTR = ~ISTR_WKUP;
   }
 
   /* SOF handling.*/
   if (istr & ISTR_SOF) {
     _usb_isr_invoke_sof_cb(usbp);
-    STM32_USB->ISTR = ~ISTR_SOF;
   }
 
   /* Endpoint events handling.*/
   while (istr & ISTR_CTR) {
-    usb_serve_endpoints(usbp, istr & ISTR_EP_ID_MASK);
+    usb_serve_endpoints(usbp, istr);
     istr = STM32_USB->ISTR;
   }
 
