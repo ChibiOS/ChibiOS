@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -34,6 +34,14 @@
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables the @p eflAcquireUse() and @p eflReleaseUse() APIs.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(EFL_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define EFL_USE_MUTUAL_EXCLUSION            TRUE
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -96,10 +104,16 @@ typedef struct hal_efl_config {
  */
 struct hal_efl_driver {
   /**
-   * @brief   SNORDriver Virtual Methods Table.
+   * @brief   EFlashDriver Virtual Methods Table.
    */
   const struct EFlashDriverVMT  *vmt;
   _efl_driver_data
+#if (EFL_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting EFL.
+   */
+  mutex_t                   mutex;
+#endif /* EFL_USE_MUTUAL_EXCLUSION == TRUE */
   /* End of the mandatory fields.*/
   efl_lld_driver_fields;
 };
@@ -115,10 +129,12 @@ struct hal_efl_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void eflInit(void);
-  void eflObjectInit(EFlashDriver *eflp);
+  void  eflInit(void);
+  void  eflObjectInit(EFlashDriver *eflp);
   msg_t eflStart(EFlashDriver *eflp, const EFlashConfig *config);
-  void eflStop(EFlashDriver *eflp);
+  void  eflStop(EFlashDriver *eflp);
+  void  eflAcquireBus(EFlashDriver *eflp);
+  void  eflReleaseBus(EFlashDriver *eflp);
 #ifdef __cplusplus
 }
 #endif
