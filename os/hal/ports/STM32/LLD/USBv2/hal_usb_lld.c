@@ -500,7 +500,7 @@ OSAL_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
 
   /* Endpoint events handling.*/
   istr = usbp->usb->ISTR;
-  while ((istr & USB_ISTR_SOF) != 0U) {
+  while ((istr & USB_ISTR_CTR) != 0U) {
     usb_serve_endpoints(usbp, istr);
     istr = usbp->usb->ISTR;
   }
@@ -565,7 +565,7 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
   }
 
   /* Endpoint events handling.*/
-  while ((istr & USB_ISTR_SOF) != 0U) {
+  while ((istr & USB_ISTR_CTR) != 0U) {
     usb_serve_endpoints(usbp, istr);
     istr = usbp->usb->ISTR;
   }
@@ -887,15 +887,13 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
   uint32_t *pmap;
   USB_DRD_PMABuffDescTypeDef *udp;
-  uint32_t n;
 
   (void)usbp;
+
   udp = USB_GET_DESCRIPTOR(ep);
   pmap = USB_GET_RX_BUFFER(udp);
-  for (n = 0; n < 4; n++) {
-    *(uint16_t *)(void *)buf = (uint16_t)*pmap++;
-    buf += 2;
-  }
+  *(uint32_t *)(void *)(buf + 0) = *pmap++;
+  *(uint32_t *)(void *)(buf + 4) = *pmap++;
 }
 
 /**
@@ -910,10 +908,10 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
   /* Transfer initialization.*/
-  if (osp->rxsize == 0)         /* Special case for zero sized packets.*/
-    osp->rxpkts = 1;
+  if (osp->rxsize == 0U)        /* Special case for zero sized packets.*/
+    osp->rxpkts = 1U;
   else
-    osp->rxpkts = (uint16_t)((osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
+    osp->rxpkts = (uint16_t)((osp->rxsize + usbp->epc[ep]->out_maxsize - 1U)/
                              usbp->epc[ep]->out_maxsize);
 
   CHEPR_SET_STATRX(usbp, ep, USB_EP_RX_VALID);
