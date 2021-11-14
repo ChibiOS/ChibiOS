@@ -783,7 +783,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 
   /* CHEPxR register cleared and initialized.*/
   usbp->usb->CHEPR[ep] = usbp->usb->CHEPR[ep];
-  usbp->usb->CHEPR[ep] = chepr;
+  usbp->usb->CHEPR[ep] = chepr | ep;
 }
 
 /**

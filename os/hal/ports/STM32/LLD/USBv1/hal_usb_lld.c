@@ -653,18 +653,9 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 #endif
   }
 
-  /* Resetting the data toggling bits for this endpoint.*/
-  if (STM32_USB->EPR[ep] & EPR_DTOG_RX) {
-    epr |= EPR_DTOG_RX;
-  }
-
-  if (STM32_USB->EPR[ep] & EPR_DTOG_TX) {
-    epr |= EPR_DTOG_TX;
-  }
-
-  /* EPxR register setup.*/
-  EPR_SET(ep, epr | ep);
-  EPR_TOGGLE(ep, epr);
+  /* CHEPxR register cleared and initialized.*/
+  STM32_USB->EPR[ep] = STM32_USB->EPR[ep];
+  STM32_USB->EPR[ep] = epr | ep;
 }
 
 /**
@@ -682,8 +673,10 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
 
   /* Disabling all endpoints.*/
   for (i = 1; i <= USB_ENDPOINTS_NUMBER; i++) {
-    EPR_TOGGLE(i, 0);
-    EPR_SET(i, 0);
+
+    /* Clearing all toggle bits then zeroing the rest.*/
+    STM32_USB->EPR[i] = STM32_USB->EPR[i];
+    STM32_USB->EPR[i] = 0U;
   }
 }
 
@@ -757,6 +750,7 @@ void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
   uint32_t n;
 
   (void)usbp;
+
   udp = USB_GET_DESCRIPTOR(ep);
   pmap = USB_ADDR2PTR(udp->RXADDR0);
   for (n = 0; n < 4; n++) {
@@ -777,11 +771,13 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
   USBOutEndpointState *osp = usbp->epc[ep]->out_state;
 
   /* Transfer initialization.*/
-  if (osp->rxsize == 0)         /* Special case for zero sized packets.*/
+  if (osp->rxsize == 0) {       /* Special case for zero sized packets.*/
     osp->rxpkts = 1;
-  else
+  }
+  else {
     osp->rxpkts = (uint16_t)((osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
                              usbp->epc[ep]->out_maxsize);
+  }
 
   EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
 }
@@ -800,8 +796,9 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
 
   /* Transfer initialization.*/
   n = isp->txsize;
-  if (n > (size_t)usbp->epc[ep]->in_maxsize)
+  if (n > (size_t)usbp->epc[ep]->in_maxsize) {
     n = (size_t)usbp->epc[ep]->in_maxsize;
+  }
 
   isp->txlast = n;
   usb_packet_write_from_buffer(ep, isp->txbuf, n);
@@ -853,8 +850,9 @@ void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
 
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
-  if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_VALID)
+  if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_VALID) {
     EPR_SET_STAT_TX(ep, EPR_STAT_RX_NAK);
+  }
 }
 
 /**
@@ -871,8 +869,9 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
 
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
-  if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_VALID)
+  if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_VALID) {
     EPR_SET_STAT_TX(ep, EPR_STAT_TX_NAK);
+  }
 }
 
 #endif /* HAL_USE_USB */

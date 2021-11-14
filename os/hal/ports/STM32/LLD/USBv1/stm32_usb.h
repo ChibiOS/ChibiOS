@@ -225,13 +225,6 @@ typedef struct {
 
 #define EPR_CTR_MASK            (EPR_CTR_TX | EPR_CTR_RX)
 
-#define EPR_SET(ep, epr)                                                    \
-  STM32_USB->EPR[ep] = ((epr) & ~EPR_TOGGLE_MASK) | EPR_CTR_MASK
-
-#define EPR_TOGGLE(ep, epr)                                                 \
-  STM32_USB->EPR[ep] = (STM32_USB->EPR[ep] ^ ((epr) & EPR_TOGGLE_MASK))     \
-                       | EPR_CTR_MASK
-
 #define EPR_SET_STAT_RX(ep, epr)                                            \
   STM32_USB->EPR[ep] = ((STM32_USB->EPR[ep] &                               \
                         ~(EPR_TOGGLE_MASK & ~EPR_STAT_RX_MASK)) ^           \
