@@ -35,29 +35,29 @@
 /**
  * @brief   Returns an endpoint descriptor pointer.
  */
-#define USB_GET_DESCRIPTOR(ep)      (&USB_DRD_PMA_BUFF[ep])
+#define USB_GET_DESCRIPTOR(ep)      (&STM32_USB_DRD_PMA_BUFF[ep])
 
 /**
  * @brief   Gets the address of a RX buffer.
  */
 #define USB_GET_RX_BUFFER(udp)      (uint32_t *)(USB_DRD_PMAADDR +       \
-                                                ((udp)->RXBD & 0x0000FFFFU))
+                                                ((udp)->RXBD0 & 0x0000FFFFU))
 
 /**
  * @brief   Gets the address of a TX buffer.
  */
 #define USB_GET_TX_BUFFER(ep)      (uint32_t *)(USB_DRD_PMAADDR +       \
-                                               ((udp)->TXBD & 0x0000FFFFU))
+                                               ((udp)->TXBD0 & 0x0000FFFFU))
 
 /**
  * @brief   Gets the counter 0 of a RX buffer.
  */
-#define USB_GET_RX_COUNT0(udp)     (size_t)(((udp)->RXBD >> 16) & 0x000003FFU)
+#define USB_GET_RX_COUNT0(udp)     (size_t)(((udp)->RXBD0 >> 16) & 0x000003FFU)
 
 /**
  * @brief   Gets the counter 0 of a RX buffer.
  */
-#define USB_GET_TX_COUNT0(udp)     (size_t)(((udp)->TXBD >> 16) & 0x000003FFU)
+#define USB_GET_TX_COUNT0(udp)     (size_t)(((udp)->TXBD0 >> 16) & 0x000003FFU)
 
 /**
  * @brief   Gets the counter 1 of a RX buffer.
@@ -73,14 +73,14 @@
  * @brief   Sets the counter 0 of a RX buffer.
  */
 #define USB_SET_RX_COUNT0(udp, n) do {                                      \
-  (udp)->RXBD = (((udp)->RXBD & ~0x03FF0000U) | ((uint32_t)(n) << 16));     \
+  (udp)->RXBD0 = (((udp)->RXBD0 & ~0x03FF0000U) | ((uint32_t)(n) << 16));   \
 } while (false)
 
 /**
  * @brief   Sets the counter 0 of a TX buffer.
  */
 #define USB_SET_TX_COUNT0(udp, n) do {                                      \
-  (udp)->TXBD = (((udp)->TXBD & ~0x03FF0000U) | ((uint32_t)(n) << 16));     \
+  (udp)->TXBD0 = (((udp)->TXBD0 & ~0x03FF0000U) | ((uint32_t)(n) << 16));   \
 } while (false)
 
 /**
@@ -229,12 +229,12 @@ static size_t usb_packet_read_to_buffer(USBDriver *usbp,
                                         uint8_t *buf) {
   size_t n;
   uint32_t w;
-  USB_DRD_PMABuffDescTypeDef *udp = USB_GET_DESCRIPTOR(ep);
+  stm32_usb_pmabufdesc_t *udp = USB_GET_DESCRIPTOR(ep);
   uint32_t *pmap = USB_GET_RX_BUFFER(udp);
   int i;
 
 #if STM32_USB_USE_ISOCHRONOUS
-  uint32_t epr = usbp->usb->CHEPR[ep];
+  uint32_t chepr = usbp->usb->CHEPR[ep];
 
   /* Double buffering is always enabled for isochronous endpoints, and
      although we overlap the two buffers for simplicity, we still need
@@ -243,7 +243,8 @@ static size_t usb_packet_read_to_buffer(USBDriver *usbp,
      in which the next received packet will be stored, so we need to
      read the counter of the OTHER buffer, which is where the last
      received packet was stored.*/
-  if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & USB_EP_DTOG_RX)) {
+  if (((chepr & USB_CHEP_UTYPE_Msk) == USB_EP_ISOCHRONOUS) &&
+      ((chepr & USB_EP_DTOG_RX) != 0U)) {
     n = USB_GET_RX_COUNT1(udp);
   }
   else {
@@ -334,12 +335,12 @@ static void usb_packet_write_from_buffer(USBDriver *usbp,
                                          usbep_t ep,
                                          const uint8_t *buf,
                                          size_t n) {
-  USB_DRD_PMABuffDescTypeDef *udp = USB_GET_DESCRIPTOR(ep);
+  stm32_usb_pmabufdesc_t *udp = USB_GET_DESCRIPTOR(ep);
   uint32_t *pmap = USB_GET_TX_BUFFER(udp);
   int i;
 
 #if STM32_USB_USE_ISOCHRONOUS
-  uint32_t epr = usbp->usb->CHEPR[ep];
+  uint32_t chepr = usbp->usb->CHEPR[ep];
 
   /* Double buffering is always enabled for isochronous endpoints, and
      although we overlap the two buffers for simplicity, we still need
@@ -347,7 +348,8 @@ static void usb_packet_write_from_buffer(USBDriver *usbp,
      that is currently in use by the USB peripheral, that is, the buffer
      from which the next packet will be sent, so we need to write the
      counter of that buffer.*/
-  if (EPR_EP_TYPE_IS_ISO(epr) && (epr & USB_EP_DTOG_TX)) {
+  if (((chepr & USB_CHEP_UTYPE_Msk) == USB_EP_ISOCHRONOUS) &&
+      ((chepr & USB_EP_DTOG_TX) != 0U)) {
     USB_SET_TX_COUNT1(udp, n);
   }
   else {
@@ -709,7 +711,7 @@ void usb_lld_set_address(USBDriver *usbp) {
  */
 void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
   uint32_t chepr;
-  USB_DRD_PMABuffDescTypeDef *dp;
+  stm32_usb_pmabufdesc_t *dp;
   const USBEndpointConfig *epcp = usbp->epc[ep];
 
   /* Setting the endpoint type. Note that isochronous endpoints cannot be
@@ -740,16 +742,15 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 
   /* IN endpoint handling.*/
   if (epcp->in_state != NULL) {
-    dp->TXBD = usb_pm_alloc(usbp, epcp->in_maxsize);
+    dp->TXBD0 = usb_pm_alloc(usbp, epcp->in_maxsize);
 
 #if STM32_USB_USE_ISOCHRONOUS
-    if (epr == USB_EP_ISOCHRONOUS) {
-      epr |= USB_EP_TX_VALID;
-      dp->TXCOUNT1 = dp->TXCOUNT0;
-      dp->TXADDR1  = dp->TXADDR0;   /* Both buffers overlapped.*/
+    if (chepr == USB_EP_ISOCHRONOUS) {
+      chepr |= USB_EP_TX_VALID;
+      dp->TXBD1 = dp->TXBD0;   /* Both buffers overlapped.*/
     }
     else {
-      epr |= USB_EP_TX_NAK;
+      chepr |= USB_EP_TX_NAK;
     }
 #else
     chepr |= USB_EP_TX_NAK;
@@ -768,16 +769,15 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     else {
       nblocks = (((((uint32_t)epcp->out_maxsize - 1U) | 1U) + 1U) / 2U) << 26;
     }
-    dp->RXBD = nblocks | usb_pm_alloc(usbp, epcp->out_maxsize);
+    dp->RXBD0 = nblocks | usb_pm_alloc(usbp, epcp->out_maxsize);
 
 #if STM32_USB_USE_ISOCHRONOUS
-    if (epr == USB_EP_ISOCHRONOUS) {
-      epr |= USB_EP_RX_VALID;
-      dp->RXCOUNT1 = dp->RXCOUNT0;
-      dp->RXADDR1  = dp->RXADDR0;   /* Both buffers overlapped.*/
+    if (chepr == USB_EP_ISOCHRONOUS) {
+      chepr |= USB_EP_RX_VALID;
+      dp->RXBD1 = dp->RXBD0;   /* Both buffers overlapped.*/
     }
     else {
-      epr |= USB_EP_RX_NAK;
+      chepr |= USB_EP_RX_NAK;
     }
 #else
     chepr |= USB_EP_RX_NAK;
@@ -886,7 +886,7 @@ usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
  */
 void usb_lld_read_setup(USBDriver *usbp, usbep_t ep, uint8_t *buf) {
   uint32_t *pmap;
-  USB_DRD_PMABuffDescTypeDef *udp;
+  stm32_usb_pmabufdesc_t *udp;
 
   (void)usbp;
 

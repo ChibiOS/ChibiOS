@@ -62,6 +62,11 @@
  */
 #define STM32_USB                           ((stm32_usb_t *)USB_DRD_BASE)
 
+/**
+ * @brief   Pointer to the USB PMA buffer descriptors block.
+ */
+#define STM32_USB_DRD_PMA_BUFF              ((stm32_usb_pmabufdesc_t *) USB_DRD_PMAADDR)
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -190,16 +195,24 @@
 /*===========================================================================*/
 
 typedef struct {
-  __IO uint32_t CHEPR[8];
-  __IO uint32_t RESERVED0[8];
-  __IO uint32_t CNTR;
-  __IO uint32_t ISTR;
-  __IO uint32_t FNR;
-  __IO uint32_t DADDR;
-  __IO uint32_t RESERVED1;
-  __IO uint32_t LPMCSR;
-  __IO uint32_t BCDR;
+  __IO uint32_t                 CHEPR[8];
+  __IO uint32_t                 RESERVED0[8];
+  __IO uint32_t                 CNTR;
+  __IO uint32_t                 ISTR;
+  __IO uint32_t                 FNR;
+  __IO uint32_t                 DADDR;
+  __IO uint32_t                 RESERVED1;
+  __IO uint32_t                 LPMCSR;
+  __IO uint32_t                 BCDR;
 } stm32_usb_t;
+
+typedef struct {
+  __IO uint32_t                 TXBD0;
+  __IO uint32_t                 RXBD0;
+} stm32_usb_pmabufdesc_t;
+
+#define TXBD1                   RXBD0
+#define RXBD1                   TXBD0
 
 /**
  * @brief   Type of an IN endpoint state structure.
