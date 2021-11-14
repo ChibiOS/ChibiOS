@@ -435,6 +435,11 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
     _usb_isr_invoke_sof_cb(usbp);
   }
 
+  /* ERR handling.*/
+  if (istr & ISTR_ERR) {
+    /* CHTODO */
+  }
+
   /* Endpoint events handling.*/
   while (istr & ISTR_CTR) {
     usb_serve_endpoints(usbp, istr);

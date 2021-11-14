@@ -69,7 +69,7 @@
 #define STM32_I2C1SEL                       STM32_I2C1SEL_APB
 #define STM32_I2C3SEL                       STM32_I2C3SEL_APB
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_APB
-#define STM32_HSI48SEL                      STM32_HSI48SEL_HSI48
+#define STM32_HSI48SEL                      STM32_HSI48SEL_USBPLL
 #define STM32_RTCSEL                        STM32_RTCSEL_LSE
 #define STM32_RTCPRE                        STM32_RTCPRE_DIV2
 
