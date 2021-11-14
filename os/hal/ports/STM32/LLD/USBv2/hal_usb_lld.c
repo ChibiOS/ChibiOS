@@ -34,7 +34,7 @@
 
 #define BTABLE_ADDR     0x0000
 
-#define EPR_EP_TYPE_IS_ISO(bits)    ((bits & EPR_EP_TYPE_MASK) == EPR_EP_TYPE_ISO)
+#define EPR_EP_TYPE_IS_ISO(bits)    ((bits & EPR_EP_TYPE_MASK) == USB_EP_ISOCHRONOUS)
 
 /**
  * @brief   Returns an endpoint descriptor pointer.
@@ -98,7 +98,7 @@
 #define USB_SET_TX_COUNT1(udp, n)   USB_SET_RX_COUNT0(udp, n)
 
 /**
- * @brief   Mask of all the toggling bits in the EPR register.
+ * @brief   Mask of all the toggling bits in the CHEPR register.
  */
 #define CHEPR_TOGGLE_MASK       (USB_CHEP_TX_STTX_Msk |                     \
                                  USB_CHEP_DTOG_TX_Msk |                     \
@@ -124,7 +124,7 @@
 #define CHEPR_SET_STATRX(usbp, ep, epr)                                     \
   (usbp)->usb->CHEPR[ep] = (((usbp)->usb->CHEPR[ep] &                       \
                             ~(CHEPR_TOGGLE_MASK & ~USB_CHEP_RX_STRX_Msk)) ^ \
-                           (epr)) | EPR_CTR_MASK
+                           (epr)) | USB_EP_VTTX | USB_EP_VTRX
 
 /**
  * @brief   Sets the STATTX field.
@@ -132,7 +132,7 @@
 #define CHEPR_SET_STATTX(usbp, ep, epr)                                     \
   (usbp)->usb->CHEPR[ep] = (((usbp)->usb->CHEPR[ep] &                       \
                             ~(CHEPR_TOGGLE_MASK & ~USB_CHEP_TX_STTX_Msk)) ^ \
-                           (epr)) | EPR_CTR_MASK
+                           (epr)) | USB_EP_VTTX | USB_EP_VTRX
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -233,7 +233,7 @@ static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
   USB_DRD_PMABuffDescTypeDef *udp = USB_GET_DESCRIPTOR(ep);
   uint32_t *pmap = USB_GET_RX_BUFFER(udp);
 #if STM32_USB_USE_ISOCHRONOUS
-  uint32_t epr = STM32_USB->EPR[ep];
+  uint32_t epr = STM32_USB->CHEPR[ep];
 
   /* Double buffering is always enabled for isochronous endpoints, and
      although we overlap the two buffers for simplicity, we still need
@@ -242,7 +242,7 @@ static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
      in which the next received packet will be stored, so we need to
      read the counter of the OTHER buffer, which is where the last
      received packet was stored.*/
-  if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_RX)) {
+  if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & USB_EP_DTOG_RX)) {
     n = USB_GET_RX_COUNT1(udp);
   }
   else {
@@ -326,7 +326,7 @@ static void usb_packet_write_from_buffer(usbep_t ep,
   int i = (int)n;
 
 #if STM32_USB_USE_ISOCHRONOUS
-  uint32_t epr = STM32_USB->EPR[ep];
+  uint32_t epr = STM32_USB->CHEPR[ep];
 
   /* Double buffering is always enabled for isochronous endpoints, and
      although we overlap the two buffers for simplicity, we still need
@@ -334,7 +334,7 @@ static void usb_packet_write_from_buffer(usbep_t ep,
      that is currently in use by the USB peripheral, that is, the buffer
      from which the next packet will be sent, so we need to write the
      counter of that buffer.*/
-  if (EPR_EP_TYPE_IS_ISO(epr) && (epr & EPR_DTOG_TX)) {
+  if (EPR_EP_TYPE_IS_ISO(epr) && (epr & USB_EP_DTOG_TX)) {
     USB_SET_TX_COUNT1(udp, n);
   }
   else {
@@ -423,7 +423,7 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
       usb_packet_write_from_buffer(ep, isp->txbuf, n);
 
       /* Starting IN operation.*/
-      CHEPR_SET_STATTX(usbp, ep, EPR_STAT_TX_VALID);
+      CHEPR_SET_STATTX(usbp, ep, USB_EP_TX_VALID);
     }
     else {
       /* Transfer completed, invokes the callback.*/
@@ -460,7 +460,7 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t ep) {
       }
       else {
         /* Transfer not complete, there are more packets to receive.*/
-        CHEPR_SET_STATRX(usbp, ep, EPR_STAT_RX_VALID);
+        CHEPR_SET_STATRX(usbp, ep, USB_EP_RX_STRX);
       }
     }
   }
@@ -486,8 +486,8 @@ OSAL_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
 
   /* Endpoint events handling.*/
   istr = STM32_USB->ISTR;
-  while (istr & ISTR_CTR) {
-    usb_serve_endpoints(usbp, istr & ISTR_EP_ID_MASK);
+  while (istr & USB_ISTR_SOF) {
+    usb_serve_endpoints(usbp, istr & USB_ISTR_IDN_Msk);
     istr = STM32_USB->ISTR;
   }
 
@@ -510,28 +510,28 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
   istr = STM32_USB->ISTR;
 
   /* USB bus reset condition handling.*/
-  if (istr & ISTR_RESET) {
-    STM32_USB->ISTR = ~ISTR_RESET;
+  if (istr & USB_ISTR_RESET) {
+    STM32_USB->ISTR = ~USB_ISTR_RESET;
 
     _usb_reset(usbp);
   }
 
   /* USB bus SUSPEND condition handling.*/
-  if (istr & ISTR_SUSP) {
-    STM32_USB->CNTR |= CNTR_FSUSP;
+  if (istr & USB_ISTR_SUSP) {
+    STM32_USB->CNTR |= USB_CNTR_SUSPEN;
 #if STM32_USB_LOW_POWER_ON_SUSPEND
-    STM32_USB->CNTR |= CNTR_LP_MODE;
+    STM32_USB->CNTR |= USB_CNTR_LP_MODE;
 #endif
-    STM32_USB->ISTR = ~ISTR_SUSP;
+    STM32_USB->ISTR = ~USB_ISTR_SUSP;
 
     _usb_suspend(usbp);
   }
 
   /* USB bus WAKEUP condition handling.*/
-  if (istr & ISTR_WKUP) {
+  if (istr & USB_ISTR_WKUP) {
     uint32_t fnr = STM32_USB->FNR;
-    if (!(fnr & FNR_RXDP)) {
-      STM32_USB->CNTR &= ~CNTR_FSUSP;
+    if (!(fnr & USB_FNR_RXDP)) {
+      STM32_USB->CNTR &= ~USB_CNTR_SUSPEN;
 
       _usb_wakeup(usbp);
     }
@@ -539,21 +539,21 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
     else {
       /* Just noise, going back in SUSPEND mode, reference manual 22.4.5,
          table 169.*/
-      STM32_USB->CNTR |= CNTR_LP_MODE;
+      STM32_USB->CNTR |= USB_CNTR_LP_MODE;
     }
 #endif
-    STM32_USB->ISTR = ~ISTR_WKUP;
+    STM32_USB->ISTR = ~USB_ISTR_WKUP;
   }
 
   /* SOF handling.*/
-  if (istr & ISTR_SOF) {
+  if (istr & USB_ISTR_SOF) {
     _usb_isr_invoke_sof_cb(usbp);
-    STM32_USB->ISTR = ~ISTR_SOF;
+    STM32_USB->ISTR = ~USB_ISTR_SOF;
   }
 
   /* Endpoint events handling.*/
-  while (istr & ISTR_CTR) {
-    usb_serve_endpoints(usbp, istr & ISTR_EP_ID_MASK);
+  while (istr & USB_ISTR_SOF) {
+    usb_serve_endpoints(usbp, istr & USB_ISTR_IDN_Msk);
     istr = STM32_USB->ISTR;
   }
 
@@ -597,7 +597,7 @@ void usb_lld_start(USBDriver *usbp) {
       /* USB clock enabled.*/
       rccEnableUSB(true);
       /* Powers up the transceiver while holding the USB in reset state.*/
-      STM32_USB->CNTR = CNTR_FRES;
+      STM32_USB->CNTR = USB_CNTR_L2RES;
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
          the transceiver power up (1uS).*/
 #if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
@@ -630,7 +630,7 @@ void usb_lld_stop(USBDriver *usbp) {
       nvicDisableVector(STM32_USB1_HP_NUMBER);
 #endif
       nvicDisableVector(STM32_USB1_LP_NUMBER);
-      STM32_USB->CNTR = CNTR_PDWN | CNTR_FRES;
+      STM32_USB->CNTR = USB_CNTR_PDWN | USB_CNTR_L2RES;
       rccDisableUSB();
     }
 #endif
@@ -650,13 +650,13 @@ void usb_lld_reset(USBDriver *usbp) {
   /* Post reset initialization.*/
   STM32_USB->BTABLE = BTABLE_ADDR;
   STM32_USB->ISTR   = 0;
-  STM32_USB->DADDR  = DADDR_EF;
-  cntr              = /* CNTR_ESOFM | */ CNTR_RESETM  | CNTR_SUSPM |
-                      CNTR_WKUPM | /* CNTR_ERRM | CNTR_PMAOVRM |*/ CNTR_CTRM;
+  STM32_USB->DADDR  = USB_DADDR_EF;
+  cntr              = /* USB_CNTR_ESOFM | */ USB_CNTR_RESETM  | USB_CNTR_SUSPM |
+                      USB_CNTR_WKUPM | /* USB_CNTR_ERRM | USB_CNTR_PMAOVRM |*/ USB_CNTR_CTRM;
   /* The SOF interrupt is only enabled if a callback is defined for
      this service because it is an high rate source.*/
   if (usbp->config->sof_cb != NULL)
-    cntr |= CNTR_SOFM;
+    cntr |= USB_CNTR_SOFM;
   STM32_USB->CNTR = cntr;
 
   /* Resets the packet memory allocator.*/
@@ -676,7 +676,7 @@ void usb_lld_reset(USBDriver *usbp) {
  */
 void usb_lld_set_address(USBDriver *usbp) {
 
-  STM32_USB->DADDR = (uint32_t)(usbp->address) | DADDR_EF;
+  STM32_USB->DADDR = (uint32_t)(usbp->address) | USB_DADDR_EF;
 }
 
 /**
@@ -700,20 +700,20 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 #if STM32_USB_USE_ISOCHRONOUS
     osalDbgAssert((epcp->in_state == NULL) || (epcp->out_state == NULL),
                   "isochronous EP cannot be IN and OUT");
-    epr = EPR_EP_TYPE_ISO;
+    epr = USB_EP_ISOCHRONOUS;
     break;
 #else
     osalDbgAssert(false, "isochronous support disabled");
 #endif
     /* Falls through.*/
   case USB_EP_MODE_TYPE_BULK:
-    epr = EPR_EP_TYPE_BULK;
+    epr = USB_EP_BULK;
     break;
   case USB_EP_MODE_TYPE_INTR:
-    epr = EPR_EP_TYPE_INTERRUPT;
+    epr = USB_EP_INTERRUPT;
     break;
   default:
-    epr = EPR_EP_TYPE_CONTROL;
+    epr = USB_EP_CONTROL;
   }
 
   dp = USB_GET_DESCRIPTOR(ep);
@@ -724,16 +724,16 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     dp->TXADDR0  = usb_pm_alloc(usbp, epcp->in_maxsize);
 
 #if STM32_USB_USE_ISOCHRONOUS
-    if (epr == EPR_EP_TYPE_ISO) {
-      epr |= EPR_STAT_TX_VALID;
+    if (epr == USB_EP_ISOCHRONOUS) {
+      epr |= USB_EP_TX_VALID;
       dp->TXCOUNT1 = dp->TXCOUNT0;
       dp->TXADDR1  = dp->TXADDR0;   /* Both buffers overlapped.*/
     }
     else {
-      epr |= EPR_STAT_TX_NAK;
+      epr |= USB_EP_TX_NAK;
     }
 #else
-    epr |= EPR_STAT_TX_NAK;
+    epr |= USB_EP_TX_NAK;
 #endif
   }
 
@@ -751,26 +751,26 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     dp->RXADDR0  = usb_pm_alloc(usbp, epcp->out_maxsize);
 
 #if STM32_USB_USE_ISOCHRONOUS
-    if (epr == EPR_EP_TYPE_ISO) {
-      epr |= EPR_STAT_RX_VALID;
+    if (epr == USB_EP_ISOCHRONOUS) {
+      epr |= USB_EP_RX_VALID;
       dp->RXCOUNT1 = dp->RXCOUNT0;
       dp->RXADDR1  = dp->RXADDR0;   /* Both buffers overlapped.*/
     }
     else {
-      epr |= EPR_STAT_RX_NAK;
+      epr |= USB_EP_RX_NAK;
     }
 #else
-    epr |= EPR_STAT_RX_NAK;
+    epr |= USB_EP_RX_NAK;
 #endif
   }
 
   /* Resetting the data toggling bits for this endpoint.*/
-  if (STM32_USB->EPR[ep] & EPR_DTOG_RX) {
-    epr |= EPR_DTOG_RX;
+  if (STM32_USB->CHEPR[ep] & USB_EP_DTOG_RX) {
+    epr |= USB_EP_DTOG_RX;
   }
 
-  if (STM32_USB->EPR[ep] & EPR_DTOG_TX) {
-    epr |= EPR_DTOG_TX;
+  if (STM32_USB->CHEPR[ep] & USB_EP_DTOG_TX) {
+    epr |= USB_EP_DTOG_TX;
   }
 
   /* EPxR register setup.*/
@@ -792,7 +792,7 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
   usb_pm_reset(usbp);
 
   /* Disabling all endpoints.*/
-  for (i = 1; i <= USB_ENDOPOINTS_NUMBER; i++) {
+  for (i = 1; i <= USB_ENDPOINTS_NUMBER; i++) {
     EPR_TOGGLE(i, 0);
     EPR_SET(i, 0);
   }
@@ -813,10 +813,10 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
 usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
-  switch (STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) {
-  case EPR_STAT_RX_DIS:
+  switch (STM32_USB->CHEPR[ep] & USB_CHEP_RX_STRX_Msk) {
+  case USB_EP_RX_DIS:
     return EP_STATUS_DISABLED;
-  case EPR_STAT_RX_STALL:
+  case USB_EP_RX_STALL:
     return EP_STATUS_STALLED;
   default:
     return EP_STATUS_ACTIVE;
@@ -838,10 +838,10 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
 usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
-  switch (STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) {
-  case EPR_STAT_TX_DIS:
+  switch (STM32_USB->CHEPR[ep] & USB_CHEP_TX_STTX_Msk  ) {
+  case USB_EP_TX_DIS:
     return EP_STATUS_DISABLED;
-  case EPR_STAT_TX_STALL:
+  case USB_EP_TX_STALL:
     return EP_STATUS_STALLED;
   default:
     return EP_STATUS_ACTIVE;
@@ -894,7 +894,7 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
     osp->rxpkts = (uint16_t)((osp->rxsize + usbp->epc[ep]->out_maxsize - 1) /
                              usbp->epc[ep]->out_maxsize);
 
-  EPR_SET_STAT_RX(ep, EPR_STAT_RX_VALID);
+  CHEPR_SET_STATRX(ep, USB_EP_RX_VALID);
 }
 
 /**
@@ -917,7 +917,7 @@ void usb_lld_start_in(USBDriver *usbp, usbep_t ep) {
   isp->txlast = n;
   usb_packet_write_from_buffer(ep, isp->txbuf, n);
 
-  EPR_SET_STAT_TX(ep, EPR_STAT_TX_VALID);
+  CHEPR_SET_STATTX(ep, USB_EP_TX_VALID);
 }
 
 /**
@@ -932,7 +932,7 @@ void usb_lld_stall_out(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
 
-  EPR_SET_STAT_RX(ep, EPR_STAT_RX_STALL);
+  EPR_SET_STAT_RX(ep, USB_EP_RX_STALL);
 }
 
 /**
@@ -947,7 +947,7 @@ void usb_lld_stall_in(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
 
-  EPR_SET_STAT_TX(ep, EPR_STAT_TX_STALL);
+  EPR_SET_STAT_TX(ep, USB_EP_TX_STALL);
 }
 
 /**
@@ -964,8 +964,8 @@ void usb_lld_clear_out(USBDriver *usbp, usbep_t ep) {
 
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
-  if ((STM32_USB->EPR[ep] & EPR_STAT_RX_MASK) != EPR_STAT_RX_VALID)
-    EPR_SET_STAT_TX(ep, EPR_STAT_RX_NAK);
+  if ((STM32_USB->CHEPR[ep] & USB_CHEP_RX_STRX_Msk) != USB_EP_RX_VALID )
+    EPR_SET_STAT_RX(ep, USB_EP_RX_NAK);
 }
 
 /**
@@ -982,8 +982,8 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
 
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
-  if ((STM32_USB->EPR[ep] & EPR_STAT_TX_MASK) != EPR_STAT_TX_VALID)
-    EPR_SET_STAT_TX(ep, EPR_STAT_TX_NAK);
+  if ((STM32_USB->CHEPR[ep] & USB_CHEP_TX_STTX_Msk  ) != USB_EP_TX_VALID)
+    EPR_SET_STAT_TX(ep, USB_EP_TX_NAK );
 }
 
 #endif /* HAL_USE_USB */
