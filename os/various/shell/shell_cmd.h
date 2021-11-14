@@ -62,7 +62,7 @@
 #endif
 
 #if !defined(SHELL_CMD_TEST_WA_SIZE) || defined(__DOXYGEN__)
-#define SHELL_CMD_TEST_WA_SIZE              THD_WORKING_AREA_SIZE(256)
+#define SHELL_CMD_TEST_WA_SIZE              THD_WORKING_AREA_SIZE(512)
 #endif
 
 /*===========================================================================*/
