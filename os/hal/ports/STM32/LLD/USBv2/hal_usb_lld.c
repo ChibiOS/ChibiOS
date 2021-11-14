@@ -168,16 +168,16 @@ static uint8_t ep0setup_buffer[8];
  * @brief   EP0 initialization structure.
  */
 static const USBEndpointConfig ep0config = {
-  USB_EP_MODE_TYPE_CTRL,
-  _usb_ep0setup,
-  _usb_ep0in,
-  _usb_ep0out,
-  0x40,
-  0x40,
-  &ep0_state.in,
-  &ep0_state.out,
-  1,
-  ep0setup_buffer
+  .ep_mode          = USB_EP_MODE_TYPE_CTRL,
+  .setup_cb         = _usb_ep0setup,
+  .in_cb            = _usb_ep0in,
+  .out_cb           = _usb_ep0out,
+  .in_maxsize       = 0x40U,
+  .out_maxsize      = 0x40U,
+  .in_state         = &ep0_state.in,
+  .out_state        = &ep0_state.out,
+  .ep_buffers       = 1U,
+  .setup_buf        = ep0setup_buffer
 };
 
 /*===========================================================================*/
@@ -207,7 +207,7 @@ static uint32_t usb_pm_alloc(USBDriver *usbp, size_t size) {
   uint32_t next;
 
   next = usbp->pmnext;
-  usbp->pmnext += (size + 3) & ~3;
+  usbp->pmnext += (size + 3U) & ~3U;
 
   osalDbgAssert(usbp->pmnext <= STM32_USB_PMA_SIZE, "PMA overflow");
 
@@ -418,7 +418,7 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t istr) {
 
     isp->txcnt += isp->txlast;
     n = isp->txsize - isp->txcnt;
-    if (n > 0) {
+    if (n > 0U) {
       /* Transfer not completed, there are more packets to send.*/
       if (n > epcp->in_maxsize)
         n = epcp->in_maxsize;
@@ -456,7 +456,7 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t istr) {
       /* Transaction data updated.*/
       osp->rxcnt  += n;
       osp->rxsize -= n;
-      osp->rxpkts -= 1;
+      osp->rxpkts -= 1U;
 
       /* The transaction is completed if the specified number of packets
          has been received or the current packet is a short packet.*/
@@ -614,7 +614,7 @@ void usb_lld_start(USBDriver *usbp) {
       nvicEnableVector(STM32_USB1_LP_NUMBER, STM32_USB_USB1_LP_IRQ_PRIORITY);
 
       /* Releases the USB reset.*/
-      STM32_USB->CNTR = 0;
+      STM32_USB->CNTR = 0U;
     }
 #endif
     /* Reset procedure enforced on driver start.*/
@@ -657,10 +657,10 @@ void usb_lld_reset(USBDriver *usbp) {
   uint32_t cntr;
 
   /* Post reset initialization.*/
-  STM32_USB->ISTR   = 0;
+  STM32_USB->ISTR   = 0U;
   STM32_USB->DADDR  = USB_DADDR_EF;
   cntr              = /* USB_CNTR_ESOFM | */ USB_CNTR_RESETM  | USB_CNTR_SUSPM |
-                      USB_CNTR_WKUPM | /* USB_CNTR_ERRM | USB_CNTR_PMAOVRM |*/ USB_CNTR_CTRM;
+                      USB_CNTR_WKUPM | USB_CNTR_ERRM |/* USB_CNTR_PMAOVRM |*/ USB_CNTR_CTRM;
   /* The SOF interrupt is only enabled if a callback is defined for
      this service because it is an high rate source.*/
   if (usbp->config->sof_cb != NULL)
@@ -672,7 +672,7 @@ void usb_lld_reset(USBDriver *usbp) {
 
   /* EP0 initialization.*/
   usbp->epc[0] = &ep0config;
-  usb_lld_init_endpoint(usbp, 0);
+  usb_lld_init_endpoint(usbp, 0U);
 }
 
 /**
