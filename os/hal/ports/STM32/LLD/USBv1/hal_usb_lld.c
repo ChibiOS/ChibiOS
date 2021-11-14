@@ -288,8 +288,8 @@ static void usb_packet_write_from_buffer(usbep_t ep,
  * @notapi
  */
 static void usb_serve_endpoints(USBDriver *usbp, uint32_t istr) {
-  uint32_t ep = istr & ISTR_EP_ID_MASK;
   size_t n;
+  uint32_t ep = istr & ISTR_EP_ID_MASK;
   uint32_t epr = STM32_USB->EPR[ep];
   const USBEndpointConfig *epcp = usbp->epc[ep];
 
@@ -681,7 +681,7 @@ void usb_lld_disable_endpoints(USBDriver *usbp) {
   usb_pm_reset(usbp);
 
   /* Disabling all endpoints.*/
-  for (i = 1; i <= USB_ENDOPOINTS_NUMBER; i++) {
+  for (i = 1; i <= USB_ENDPOINTS_NUMBER; i++) {
     EPR_TOGGLE(i, 0);
     EPR_SET(i, 0);
   }

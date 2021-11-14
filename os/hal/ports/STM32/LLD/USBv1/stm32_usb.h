@@ -31,7 +31,7 @@
  * @brief   Number of the available endpoints.
  * @details This value does not include the endpoint 0 which is always present.
  */
-#define USB_ENDOPOINTS_NUMBER           7
+#define USB_ENDPOINTS_NUMBER            7
 
 /**
  * @brief   Width of USB packet memory accesses.
@@ -49,7 +49,7 @@ typedef struct {
   /**
    * @brief   Endpoint registers.
    */
-  volatile uint32_t             EPR[USB_ENDOPOINTS_NUMBER + 1];
+  volatile uint32_t             EPR[USB_ENDPOINTS_NUMBER + 1];
   /*
    * @brief   Reserved space.
    */
