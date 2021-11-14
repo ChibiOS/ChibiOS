@@ -365,30 +365,30 @@ static void usb_packet_write_from_buffer(USBDriver *usbp,
   while (i >= 16) {
     uint32_t w;
 
-    w  = *(buf + 0);
-    w |= *(buf + 1) << 8;
-    w  = *(buf + 2) << 16;
-    w |= *(buf + 3) << 24;
+    w  = (uint32_t)*(buf + 0);
+    w |= (uint32_t)*(buf + 1) << 8;
+    w |= (uint32_t)*(buf + 2) << 16;
+    w |= (uint32_t)*(buf + 3) << 24;
     *(pmap + 0) = w;
-    w  = *(buf + 4);
-    w |= *(buf + 5) << 8;
-    w  = *(buf + 6) << 16;
-    w |= *(buf + 7) << 24;
+    w  = (uint32_t)*(buf + 4);
+    w |= (uint32_t)*(buf + 5) << 8;
+    w |= (uint32_t)*(buf + 6) << 16;
+    w |= (uint32_t)*(buf + 7) << 24;
     *(pmap + 1) = w;
-    w  = *(buf + 8);
-    w |= *(buf + 9) << 8;
-    w  = *(buf + 10) << 16;
-    w |= *(buf + 11) << 24;
+    w  = (uint32_t)*(buf + 8);
+    w |= (uint32_t)*(buf + 9) << 8;
+    w |= (uint32_t)*(buf + 10) << 16;
+    w |= (uint32_t)*(buf + 11) << 24;
     *(pmap + 2) = w;
-    w  = *(buf + 12);
-    w |= *(buf + 13) << 8;
-    w  = *(buf + 14) << 16;
-    w |= *(buf + 15) << 24;
+    w  = (uint32_t)*(buf + 12);
+    w |= (uint32_t)*(buf + 13) << 8;
+    w |= (uint32_t)*(buf + 14) << 16;
+    w |= (uint32_t)*(buf + 15) << 24;
     *(pmap + 3) = w;
 
     i -= 16;
     buf += 16;
-    pmap += 8;
+    pmap += 4;
   }
 #endif /* STM32_USB_USE_FAST_COPY */
 

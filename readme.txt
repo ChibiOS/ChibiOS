@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: STM32G0B1 USBv2 driver.
 - NEW: USBv1 driver optimization and removal of a potential race condition
        (not demonstrated).
 - NEW: Added elfAcquireBus()/eflReleaseBus() functions to EFL driver.
