@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Memory areas/pointers checker functions added to OSLIB.
 - NEW: STM32G0B1 USBv2 driver.
 - NEW: USBv1 driver optimization and removal of a potential race condition
        (not demonstrated).

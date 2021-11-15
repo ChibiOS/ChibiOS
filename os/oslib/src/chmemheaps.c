@@ -188,7 +188,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
   /* Size is converted in number of elementary allocation units.*/
   pages = MEM_ALIGN_NEXT(size, CH_HEAP_ALIGNMENT) / CH_HEAP_ALIGNMENT;
 
-  /* Taking heap mutex/semaphore.*/
+  /* Taking heap mutex.*/
   H_LOCK(heapp);
 
   /* Start of the free blocks list.*/
@@ -248,7 +248,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
       H_SIZE(hp) = size;
       H_HEAP(hp) = heapp;
 
-      /* Releasing heap mutex/semaphore.*/
+      /* Releasing heap mutex.*/
       H_UNLOCK(heapp);
 
       /*lint -save -e9087 [11.3] Safe cast.*/
@@ -260,7 +260,7 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
     qp = hp;
   }
 
-  /* Releasing heap mutex/semaphore.*/
+  /* Releasing heap mutex.*/
   H_UNLOCK(heapp);
 
   /* More memory is required, tries to get it from the associated provider
@@ -306,7 +306,7 @@ void chHeapFree(void *p) {
   H_PAGES(hp) = MEM_ALIGN_NEXT(H_SIZE(hp),
                                CH_HEAP_ALIGNMENT) / CH_HEAP_ALIGNMENT;
 
-  /* Taking heap mutex/semaphore.*/
+  /* Taking heap mutex.*/
   H_LOCK(heapp);
 
   while (true) {
@@ -333,7 +333,7 @@ void chHeapFree(void *p) {
     qp = H_NEXT(qp);
   }
 
-  /* Releasing heap mutex/semaphore.*/
+  /* Releasing heap mutex.*/
   H_UNLOCK(heapp);
 
   return;
@@ -392,6 +392,56 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp) {
   H_UNLOCK(heapp);
 
   return n;
+}
+
+#define isvalidramexcl(p, a) true
+#define isvalidramincl(p, a) true
+#define isvalidfunction(p) true
+
+/**
+ * @brief   Heap integrity check.
+ * @details Performs an integrity check of a heap stucture.
+ *
+ * @param[in] heapp     pointer to a heap descriptor or @p NULL in order to
+ *                      access the default heap.
+ * @return              The test result.
+ * @retval false        The test succeeded.
+ * @retval true         Test failed.
+ *
+ * @api
+ */
+bool chHeapIntegrityCheck(memory_heap_t *heapp) {
+  bool result = false;
+  heap_header_t *hp;
+
+  /* If an heap is not specified then the default system header is used.*/
+  if (heapp == NULL) {
+    heapp = &default_heap;
+  }
+
+  /* Validating heap object.*/
+  if ((heapp->provider != NULL) && !isvalidfunction(heapp->provider)) {
+    return true;
+  }
+
+  /* Taking heap mutex.*/
+  H_LOCK(heapp);
+
+  hp = &heapp->header;
+  while ((hp = H_NEXT(hp)) != NULL) {
+
+    /* Validating the area pointers.*/
+    if (!isvalidramexcl(hp, CH_HEAP_ALIGNMENT) ||
+        !isvalidramincl(H_LIMIT(hp), CH_HEAP_ALIGNMENT)) {
+      result = true;
+      break;
+    }
+  }
+
+  /* Releasing the heap mutex.*/
+  H_UNLOCK(heapp);
+
+  return result;
 }
 
 #endif /* CH_CFG_USE_HEAP == TRUE */

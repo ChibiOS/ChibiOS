@@ -52,7 +52,7 @@
 /**
  * @brief   OS Library version string.
  */
-#define CH_OSLIB_VERSION        "1.3.0"
+#define CH_OSLIB_VERSION        "1.4.0"
 
 /**
  * @brief   OS Library version major number.
@@ -62,7 +62,7 @@
 /**
  * @brief   OS Library version minor number.
  */
-#define CH_OSLIB_MINOR          3
+#define CH_OSLIB_MINOR          4
 
 /**
  * @brief   OS Library version patch number.
@@ -225,6 +225,7 @@
 /*===========================================================================*/
 
 /* OS Library headers.*/
+#include "chmemareas.h"
 #include "chbsem.h"
 #include "chmboxes.h"
 #include "chmemcore.h"
