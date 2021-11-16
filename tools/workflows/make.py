@@ -197,7 +197,7 @@ def check_skip_rules(args):
 
     skip_rules = SkipRules(args.skip_rules)
 
-    url = args.check_rules
+    url = args.check_skip_rules
     if not url.endswith('/api/xml'):
         url += '/api/xml'
 
