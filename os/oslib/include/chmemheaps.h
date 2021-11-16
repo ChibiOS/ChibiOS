@@ -117,9 +117,9 @@ struct memory_heap {
    */
   memgetfunc2_t         provider;
   /**
-   * @brief   Memory region for this heap.
+   * @brief   Memory area for this heap.
    */
-  memory_region_t       region;
+  memory_area_t         area;
   /**
    * @brief   Free blocks list header.
    */

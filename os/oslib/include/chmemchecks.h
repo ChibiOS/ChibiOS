@@ -45,21 +45,21 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a memory region.
+ * @brief   Type of a memory area.
  */
 typedef struct {
   /**
-   * @brief   Memory region base.
+   * @brief   Memory area base.
    * @note    Value -1 is reserved as end-on-array marker.
    */
   uint8_t                       *base;
   /**
-   * @brief   Memory region size.
+   * @brief   Memory area size.
    * @note    Value 0 represents the whole address space and is only valid
    *          when @p base is also zero.
    */
   size_t                        size;
-} memory_region_t;
+} memory_area_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -73,7 +73,7 @@ typedef struct {
 extern "C" {
 #endif
 #if CH_CFG_USE_MEMCHECKS == TRUE
-  bool chMemIsAreaContainedX(const memory_region_t regions[],
+  bool chMemIsAreaContainedX(const memory_area_t areas[],
                              const void *base,
                              size_t size);
   bool chMemIsAreaWritableX(const void *p,
@@ -93,36 +93,36 @@ extern "C" {
 
 /**
  * @brief   Memory area check.
- * @details Checks if specified area belongs to the specified region.
+ * @details Checks if specified area belongs to the specified area.
  *
- * @param[in] mrp       pointer to an array of valid regions terminated with
+ * @param[in] map       pointer to an array of valid areas terminated with
  *                      a zero element
  * @param[in] p         pointer to the area to be checked
  * @param[in] size      size of the area to be checked
  * @return              The test result.
  * @retval false        if the area is entirely contained within one of the
- *                      specified regions.
+ *                      specified areas.
  * @retval true         if the area check failed.
  *
  * @xclass
  */
-static inline bool chMemIsAreaWithinX(const memory_region_t *mrp,
+static inline bool chMemIsAreaWithinX(const memory_area_t *map,
                                       const void *p,
                                       size_t size) {
   uint8_t *base = (uint8_t *)p;
 
-  return (bool)((base >= mrp->base) &&
-                (size <= (size_t)(mrp->base + mrp->size - base)));
+  return (bool)((base >= map->base) &&
+                (size <= (size_t)(map->base + map->size - base)));
 }
 
 #if CH_CFG_USE_MEMCHECKS == FALSE
 /* Stub implementations for when the functionality is disabled, areas are
    always reported as valid.*/
-static inline bool chMemIsAreaContainedX(const memory_region_t regions[],
+static inline bool chMemIsAreaContainedX(const memory_area_t areas[],
                                          const void *base,
                                          size_t size) {
 
-  (void)regions;
+  (void)areas;
   (void)base;
   (void)size;
 

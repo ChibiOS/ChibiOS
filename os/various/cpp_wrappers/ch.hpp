@@ -463,13 +463,13 @@ namespace chibios_rt {
     /**
      * @brief   Core memory status.
      *
-     * @param[in] mrp       Memory region representing available core space.
+     * @param[in] map       Memory area representing available core space.
      *
      * @xclass
      */
-    static void getStatusX(memory_region_t *mrp) {
+    static void getStatusX(memory_area_t *map) {
 
-      chCoreGetStatusX(mrp);
+      chCoreGetStatusX(map);
     }
   };
 #endif /* CH_CFG_USE_MEMCORE == TRUE */

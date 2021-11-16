@@ -109,7 +109,7 @@ static memory_heap_t default_heap;
 void __heap_init(void) {
 
   default_heap.provider = chCoreAllocAlignedWithOffset;
-  chCoreGetStatusX(&default_heap.region);
+  chCoreGetStatusX(&default_heap.area);
   H_FREE_NEXT(&default_heap.header) = NULL;
   H_FREE_PAGES(&default_heap.header) = 0;
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
@@ -148,8 +148,8 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
   H_FREE_PAGES(&heapp->header) = 0;
   H_FREE_NEXT(hp) = NULL;
   H_FREE_PAGES(hp) = (size - sizeof (heap_header_t)) / CH_HEAP_ALIGNMENT;
-  heapp->region.base = (uint8_t *)(void *)hp;
-  heapp->region.size = H_FREE_FULLSIZE(hp);
+  heapp->area.base = (uint8_t *)(void *)hp;
+  heapp->area.size = H_FREE_FULLSIZE(hp);
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&heapp->mtx);
 #else
@@ -447,7 +447,7 @@ bool chHeapIntegrityCheck(memory_heap_t *heapp) {
     }
 
     /* Validating the found free block.*/
-    if (!chMemIsAreaWithinX(&heapp->region,
+    if (!chMemIsAreaWithinX(&heapp->area,
                             (void *)hp,
                             H_FREE_FULLSIZE(hp))) {
       result = true;

@@ -37,23 +37,23 @@
 /*===========================================================================*/
 
 /**
- * @brief   Default writable memory regions.
+ * @brief   Default writable memory areas.
  * @details By default all memory is writable, user must provide its own
- *          writable regions array for the device in use.
+ *          writable areas array for the device in use.
  * @note    The array is terminated by an end marker (base=-1).
  */
-CC_WEAK memory_region_t __ch_mem_writable_regions[] = {
+CC_WEAK memory_area_t __ch_mem_writable_areas[] = {
   {(uint8_t *)0,  0U},      /* Whole space is writable. */
   {(uint8_t *)-1, 0U},
 };
 
 /**
- * @brief   Default readable memory regions.
+ * @brief   Default readable memory areas.
  * @details By default all memory is readable, user must provide its own
- *          readable regions array for the device in use.
+ *          readable areas array for the device in use.
  * @note    The array is terminated by an end marker (base=-1).
  */
-CC_WEAK memory_region_t __ch_mem_readable_regions[] = {
+CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
   {(uint8_t *)0,  0U},      /* Whole space is readable. */
   {(uint8_t *)-1, 0U},
 };
@@ -76,31 +76,31 @@ CC_WEAK memory_region_t __ch_mem_readable_regions[] = {
 
 /**
  * @brief   Memory area check.
- * @details Checks if specified area belongs to one of the specified regions.
+ * @details Checks if specified area belongs to one of the specified areas.
  *
- * @param[in] mrp       array of valid regions terminated with a zero element
+ * @param[in] map       array of valid areas terminated with a zero element
  * @param[in] base      pointer to the area to be checked
  * @param[in] size      size of the area to be checked
  * @return              The test result.
  * @retval false        if the area is entirely contained within one of the
- *                      specified regions.
+ *                      specified areas.
  * @retval true         if the area check failed.
  *
  * @xclass
  */
-bool chMemIsAreaContainedX(const memory_region_t regions[],
+bool chMemIsAreaContainedX(const memory_area_t areas[],
                            const void *base,
                            size_t size) {
-  const memory_region_t *mrp = &regions[0];
+  const memory_area_t *map = &areas[0];
 
   chDbgCheck(base != NULL);
 
-  /* Scanning the array of the valid regions for a mismatch.*/
-  while (mrp->base != (uint8_t *)-1) {
-    if (chMemIsAreaWithinX(mrp, base, size)) {
+  /* Scanning the array of the valid areas for a mismatch.*/
+  while (map->base != (uint8_t *)-1) {
+    if (chMemIsAreaWithinX(map, base, size)) {
       return true;
     }
-    mrp++;
+    map++;
   }
 
   return false;
@@ -109,19 +109,19 @@ bool chMemIsAreaContainedX(const memory_region_t regions[],
 /**
  * @brief   Memory writable area check.
  * @details Checks if specified pointer belongs to one of the system-defined
- *          writable regions and is aligned as specified.
+ *          writable areas and is aligned as specified.
  * @note    This function is only effective if @p CH_CFG_SYS_WRITABLE_REGIONS
  *          is defined, if it is not defined then just the alignment of
  *          the pointer is checked.
- * @note    @p __ch_mem_writable_regions must be the name of a global
- *          @p memory_region_t array terminated with an end marker (-1, 0).
+ * @note    @p __ch_mem_writable_areas must be the name of a global
+ *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
  * @param[in] p         pointer to be checked
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
  * @retval false        if the area is entirely contained within one of the
- *                      system-defined writable regions.
+ *                      system-defined writable areas.
  * @retval true         if the area check failed.
  *
  * @xclass
@@ -136,25 +136,25 @@ bool chMemIsAreaWritableX(const void *p,
     return true;
   }
 
-  return chMemIsAreaContainedX(__ch_mem_writable_regions, p, size);
+  return chMemIsAreaContainedX(__ch_mem_writable_areas, p, size);
 }
 
 /**
  * @brief   Memory readable area check.
  * @details Checks if specified pointer belongs to one of the system-defined
- *          readable regions and is aligned as specified.
+ *          readable areas and is aligned as specified.
  * @note    This function is only effective if @p CH_CFG_SYS_READABLE_REGIONS
  *          is defined, if it is not defined then just the alignment of
  *          the pointer is checked.
- * @note    @p __ch_mem_readable_regions must be the name of a global
- *          @p memory_region_t array terminated with an end marker (-1, 0).
+ * @note    @p __ch_mem_readable_areas must be the name of a global
+ *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
  * @param[in] p         pointer to be checked
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
  * @retval false        if the area is entirely contained within one of the
- *                      system-defined readable regions.
+ *                      system-defined readable areas.
  * @retval true         if the area check failed.
  *
  * @xclass
@@ -169,7 +169,7 @@ bool chMemIsAreaReadableX(const void *p,
     return true;
   }
 
-  return chMemIsAreaContainedX(__ch_mem_readable_regions, p, size);
+  return chMemIsAreaContainedX(__ch_mem_readable_areas, p, size);
 }
 
 #endif /* CH_CFG_USE_MEMCHECKS == TRUE */

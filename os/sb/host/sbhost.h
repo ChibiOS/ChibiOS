@@ -74,7 +74,7 @@ typedef struct {
   /**
    * @brief   Associated memory area.
    */
-  memory_region_t               area;
+  memory_area_t                 area;
   /**
    * @brief   Writable memory range.
    */

@@ -212,15 +212,15 @@ void *chCoreAllocFromTop(size_t size, unsigned align, size_t offset) {
 /**
  * @brief   Core memory status.
  *
- * @param[in] mrp       Memory region representing available core space.
+ * @param[in] map       Memory area representing available core space.
  *
  * @xclass
  */
-void chCoreGetStatusX(memory_region_t *mrp) {
+void chCoreGetStatusX(memory_area_t *map) {
 
-  mrp->base = ch_memcore.basemem;
+  map->base = ch_memcore.basemem;
   /*lint -save -e9033 [10.8] The cast is safe.*/
-  mrp->size = (size_t)(ch_memcore.topmem - ch_memcore.basemem);
+  map->size = (size_t)(ch_memcore.topmem - ch_memcore.basemem);
   /*lint -restore*/
 }
 #endif /* CH_CFG_USE_MEMCORE == TRUE */
