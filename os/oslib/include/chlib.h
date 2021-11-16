@@ -207,8 +207,10 @@
 
 /* Restricted subsystems.*/
 #undef CH_CFG_USE_MAILBOXES
+#undef CH_CFG_USE_MEMCHECKS
 
 #define CH_CFG_USE_MAILBOXES                FALSE
+#define CH_CFG_USE_MEMCHECKS                FALSE
 
 #endif /* CH_CUSTOMER_LIC_OSLIB == FALSE */
 

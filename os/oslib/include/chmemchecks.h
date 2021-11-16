@@ -72,7 +72,7 @@ typedef struct {
 extern "C" {
 #endif
 #if CH_CFG_USE_MEMCHECKS == TRUE
-  bool chMemIsAreaContainedX(const memory_region_t *mrp,
+  bool chMemIsAreaContainedX(const memory_region_t regions[],
                              const void *base,
                              size_t size);
   bool chMemIsAreaWritableX(const void *p,
@@ -90,14 +90,38 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
+/**
+ * @brief   Memory area check.
+ * @details Checks if specified area belongs to the specified region.
+ *
+ * @param[in] mrp       pointer to an array of valid regions terminated with
+ *                      a zero element
+ * @param[in] base      pointer to the area to be checked
+ * @param[in] size      size of the area to be checked
+ * @return              The test result.
+ * @retval false        if the area is entirely contained within one of the
+ *                      specified regions.
+ * @retval true         if the area check failed.
+ *
+ * @xclass
+ */
+static inline bool chMemIsAreaWithinX(const memory_region_t *mrp,
+                                      const void *base,
+                                      size_t size) {
+  uint8_t *start = (uint8_t *)base;
+
+  return (bool)((start >= mrp->base) && (start <= mrp->end) &&
+                (size <= (size_t)(mrp->end - start + 1U)));
+}
+
 #if CH_CFG_USE_MEMCHECKS == FALSE
 /* Stub implementations for when the functionality is disabled, areas are
    always reported as valid.*/
-static inline bool chMemIsAreaContainedX(const memory_region_t *mrp,
+static inline bool chMemIsAreaContainedX(const memory_region_t regions[],
                                          const void *base,
                                          size_t size) {
 
-  (void)mrp;
+  (void)regions;
   (void)base;
   (void)size;
 

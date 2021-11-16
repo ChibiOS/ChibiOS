@@ -74,11 +74,9 @@ CC_WEAK memory_region_t __ch_mem_readable_regions[] = {
 
 /**
  * @brief   Memory area check.
- * @details Checks if specified area belongs to one of the system-defined
- *          writable regions.
+ * @details Checks if specified area belongs to one of the specified regions.
  *
- * @param[in] mrp       pointer to an array of valid regions terminated with
- *                      a zero element
+ * @param[in] mrp       array of valid regions terminated with a zero element
  * @param[in] base      pointer to the area to be checked
  * @param[in] size      size of the area to be checked
  * @return              The test result.
@@ -88,23 +86,20 @@ CC_WEAK memory_region_t __ch_mem_readable_regions[] = {
  *
  * @xclass
  */
-bool chMemIsAreaContainedX(const memory_region_t *mrp,
+bool chMemIsAreaContainedX(const memory_region_t regions[],
                            const void *base,
                            size_t size) {
-  uint8_t *start;
+  const memory_region_t *mrp = &regions[0];
 
   chDbgCheck(base != NULL);
 
-  start = (uint8_t *)base;
-
   /* Scanning the array of the valid regions for a mismatch.*/
-  do {
-    if ((start >= mrp->base) && (start <= mrp->end) &&
-        (size <= (size_t)(mrp->base - start))) {
+  while (mrp->base != mrp->end) {
+    if (chMemIsAreaWithinX(mrp, base, size)) {
       return true;
     }
     mrp++;
-  } while (mrp->base != mrp->end);
+  }
 
   return false;
 }
@@ -112,7 +107,7 @@ bool chMemIsAreaContainedX(const memory_region_t *mrp,
 /**
  * @brief   Memory writable area check.
  * @details Checks if specified pointer belongs to one of the system-defined
- *          writable regions.
+ *          writable regions and is aligned as specified.
  * @note    This function is only effective if @p CH_CFG_SYS_WRITABLE_REGIONS
  *          is defined, if it is not defined then just the alignment of
  *          the pointer is checked.
@@ -145,7 +140,7 @@ bool chMemIsAreaWritableX(const void *p,
 /**
  * @brief   Memory readable area check.
  * @details Checks if specified pointer belongs to one of the system-defined
- *          readable regions.
+ *          readable regions and is aligned as specified.
  * @note    This function is only effective if @p CH_CFG_SYS_READABLE_REGIONS
  *          is defined, if it is not defined then just the alignment of
  *          the pointer is checked.
