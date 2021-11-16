@@ -18,7 +18,7 @@
 */
 
 /**
- * @file    oslib/src/chmemareas.c
+ * @file    oslib/src/chmemchecks.c
  * @brief   Memory areas and pointers validation code.
  *
  * @addtogroup oslib_memareas
@@ -30,9 +30,31 @@
 
 #include "ch.h"
 
+#if (CH_CFG_USE_MEMCHECKS == TRUE) || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Default writable memory regions.
+ * @details By default all memory is writable, user must provide its own
+ *          writable regions array for the device in use.
+ */
+CC_WEAK memory_region_t __ch_mem_writable_regions[] = {
+  {(uint8_t *)0, (uint8_t *)-1},
+  {(uint8_t *)0, (uint8_t *)0},
+};
+
+/**
+ * @brief   Default readable memory regions.
+ * @details By default all memory is readable, user must provide its own
+ *          readable regions array for the device in use.
+ */
+CC_WEAK memory_region_t __ch_mem_readable_regions[] = {
+  {(uint8_t *)0, (uint8_t *)-1},
+  {(uint8_t *)0, (uint8_t *)0},
+};
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -77,7 +99,7 @@ bool chMemIsAreaContainedX(const memory_region_t *mrp,
 
   /* Scanning the array of the valid regions for a mismatch.*/
   do {
-    if ((start >= mrp->base) && (start < mrp->end) &&
+    if ((start >= mrp->base) && (start <= mrp->end) &&
         (size <= (size_t)(mrp->base - start))) {
       return true;
     }
@@ -117,15 +139,7 @@ bool chMemIsAreaWritableX(const void *p,
     return true;
   }
 
-#if defined (CH_CFG_SYS_WRITABLE_REGIONS)
-  extern memory_region_t *CH_CFG_SYS_WRITABLE_REGIONS;
-
-  return chMemIsAreaContainedX(CH_CFG_SYS_WRITABLE_REGIONS, p, size);
-#else
-  (void)size;
-
-  return false;
-#endif
+  return chMemIsAreaContainedX(__ch_mem_writable_regions, p, size);
 }
 
 /**
@@ -158,15 +172,9 @@ bool chMemIsAreaReadableX(const void *p,
     return true;
   }
 
-#if defined (CH_CFG_SYS_READABLE_REGIONS)
-  extern memory_region_t *CH_CFG_SYS_READABLE_REGIONS;
-
-  return chMemIsAreaContainedX(CH_CFG_SYS_READABLE_REGIONS, p, size);
-#else
-  (void)size;
-
-  return false;
-#endif
+  return chMemIsAreaContainedX(__ch_mem_readable_regions, p, size);
 }
+
+#endif /* CH_CFG_USE_MEMCHECKS == TRUE */
 
 /** @} */

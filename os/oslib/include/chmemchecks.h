@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    oslib/include/chmemareas.h
+ * @file    oslib/include/chmemchecks.h
  * @brief   Memory areas and pointers validation macros and structures.
  *
  * @addtogroup oslib_memareas
  * @{
  */
 
-#ifndef CHMEMAREAS_H
-#define CHMEMAREAS_H
+#ifndef CHMEMCHECKS_H
+#define CHMEMCHECKS_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -54,7 +54,7 @@ typedef struct {
    */
   uint8_t                       *base;
   /**
-   * @brief   Memory region end (non inclusive).
+   * @brief   Memory region end (inclusive).
    * @note    Zero if not used.
    */
   uint8_t                       *end;
@@ -71,6 +71,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
+#if CH_CFG_USE_MEMCHECKS == TRUE
   bool chMemIsAreaContainedX(const memory_region_t *mrp,
                              const void *base,
                              size_t size);
@@ -80,6 +81,7 @@ extern "C" {
   bool chMemIsAreaReadableX(const void *p,
                             size_t size,
                             unsigned align);
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -88,6 +90,43 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* CHMEMAREAS_H */
+#if CH_CFG_USE_MEMCHECKS == FALSE
+/* Stub implementations for when the functionality is disabled, areas are
+   always reported as valid.*/
+static inline bool chMemIsAreaContainedX(const memory_region_t *mrp,
+                                         const void *base,
+                                         size_t size) {
+
+  (void)mrp;
+  (void)base;
+  (void)size;
+
+  return false;
+}
+
+bool chMemIsAreaWritableX(const void *p,
+                          size_t size,
+                          unsigned align) {
+
+  (void)p;
+  (void)size;
+  (void)align;
+
+  return false;
+}
+
+bool chMemIsAreaReadableX(const void *p,
+                          size_t size,
+                          unsigned align) {
+
+  (void)p;
+  (void)size;
+  (void)align;
+
+  return false;
+}
+#endif
+
+#endif /* CHMEMCHECKS_H */
 
 /** @} */

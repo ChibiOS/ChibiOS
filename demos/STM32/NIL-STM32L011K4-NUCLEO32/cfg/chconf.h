@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -178,6 +178,16 @@
  */
 #if !defined(CH_CFG_USE_MAILBOXES)
 #define CH_CFG_USE_MAILBOXES                TRUE
+#endif
+
+/**
+ * @brief   Memory checks APIs.
+ * @details If enabled then the memory checks APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_MEMCHECKS)
+#define CH_CFG_USE_MEMCHECKS                TRUE
 #endif
 
 /**

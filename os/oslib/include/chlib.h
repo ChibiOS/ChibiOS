@@ -88,6 +88,10 @@
 #error "CH_CFG_USE_MAILBOXES not defined in chconf.h"
 #endif
 
+#if !defined(CH_CFG_USE_MEMCHECKS)
+#error "CH_CFG_USE_MEMCHECKS not defined in chconf.h"
+#endif
+
 #if !defined(CH_CFG_USE_MEMCORE)
 #error "CH_CFG_USE_MEMCORE not defined in chconf.h"
 #endif
@@ -225,7 +229,7 @@
 /*===========================================================================*/
 
 /* OS Library headers.*/
-#include "chmemareas.h"
+#include "chmemchecks.h"
 #include "chbsem.h"
 #include "chmboxes.h"
 #include "chmemcore.h"

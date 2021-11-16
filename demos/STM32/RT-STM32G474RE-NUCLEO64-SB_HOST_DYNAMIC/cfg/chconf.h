@@ -362,6 +362,16 @@
 #endif
 
 /**
+ * @brief   Memory checks APIs.
+ * @details If enabled then the memory checks APIs are included in the kernel.
+ *
+ * @note    The default is @p TRUE.
+ */
+#if !defined(CH_CFG_USE_MEMCHECKS)
+#define CH_CFG_USE_MEMCHECKS                TRUE
+#endif
+
+/**
  * @brief   Core Memory Manager APIs.
  * @details If enabled then the core memory manager APIs are included
  *          in the kernel.
@@ -812,9 +822,6 @@
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
-
-#define PORT_USE_SYSCALL                    TRUE
-#define PORT_SWITCHED_REGIONS_NUMBER        2
 
 #endif  /* CHCONF_H */
 
