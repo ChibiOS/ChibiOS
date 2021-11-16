@@ -160,6 +160,7 @@ extern "C" {
   void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align);
   void chHeapFree(void *p);
   size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp);
+  bool chHeapIntegrityCheck(memory_heap_t *heapp);
 #ifdef __cplusplus
 }
 #endif

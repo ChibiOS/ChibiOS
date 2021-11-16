@@ -415,7 +415,7 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp) {
  */
 bool chHeapIntegrityCheck(memory_heap_t *heapp) {
   bool result = false;
-  heap_header_t *hp;
+  heap_header_t *hp, *prevhp;
 
   /* If an heap is not specified then the default system header is used.*/
   if (heapp == NULL) {
@@ -430,8 +430,21 @@ bool chHeapIntegrityCheck(memory_heap_t *heapp) {
   /* Taking heap mutex.*/
   H_LOCK(heapp);
 
+  prevhp = NULL;
   hp = &heapp->header;
   while ((hp = H_FREE_NEXT(hp)) != NULL) {
+
+    /* Order violation or loop.*/
+    if (hp <= prevhp) {
+      result = true;
+      break;
+    }
+
+    /* Checking pointer alignment.*/
+    if (!MEM_IS_ALIGNED(hp, CH_HEAP_ALIGNMENT)) {
+      result = true;
+      break;
+    }
 
     /* Validating the found free block.*/
     if (!chMemIsAreaWithinX(&heapp->region,
@@ -440,6 +453,8 @@ bool chHeapIntegrityCheck(memory_heap_t *heapp) {
       result = true;
       break;
     }
+
+    prevhp = hp;
   }
 
   /* Releasing the heap mutex.*/
