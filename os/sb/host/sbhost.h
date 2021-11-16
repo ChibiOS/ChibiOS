@@ -72,15 +72,9 @@ typedef struct {
  */
 typedef struct {
   /**
-   * @brief   Memory range base.
-   * @note    Zero if not used.
+   * @brief   Associated memory area.
    */
-  uint32_t                      base;
-  /**
-   * @brief   Memory range end (non inclusive).
-   * @note    Zero if not used.
-   */
-  uint32_t                      end;
+  memory_region_t               area;
   /**
    * @brief   Writable memory range.
    */

@@ -23,10 +23,10 @@
 #include "oslib_test_root.h"
 
 /* Static memory areas used by sandboxes.*/
-extern uint32_t __flash1_base__, __flash1_end__,
-                __flash2_base__, __flash2_end__,
-                __ram1_base__,   __ram1_end__,
-                __ram2_base__,   __ram2_end__;
+extern uint8_t __flash1_base__, __flash1_size__,
+               __flash2_base__, __flash2_size__,
+               __ram1_base__,   __ram1_size__,
+               __ram2_base__,   __ram2_size__;
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
@@ -34,10 +34,10 @@ static const sb_config_t sb_config1 = {
   .data_region    = 1U,
   .regions        = {
     [0] = {
-      (uint32_t)&__flash1_base__,   (uint32_t)&__flash1_end__,  false
+      {(uint8_t *)&__flash1_base__, (size_t)&__flash1_size__},  false
     },
     [1] = {
-       (uint32_t)&__ram1_base__,    (uint32_t)&__ram1_end__,    true
+      {(uint8_t *)&__ram1_base__,   (size_t)&__ram1_size__},    true
     }
   },
   .stdin_stream   = (SandboxStream *)&LPSD1,
@@ -51,10 +51,10 @@ static const sb_config_t sb_config2 = {
   .data_region    = 1U,
   .regions        = {
     [0] = {
-      (uint32_t)&__flash2_base__,   (uint32_t)&__flash2_end__,  false
+      {(uint8_t *)&__flash2_base__,  (size_t)&__flash2_size__},  false
     },
     [1] = {
-      (uint32_t)&__ram2_base__,     (uint32_t)&__ram2_end__,    true
+      {(uint8_t *)&__ram2_base__,    (size_t)&__ram2_size__},    true
     }
   },
   .stdin_stream   = (SandboxStream *)&LPSD1,

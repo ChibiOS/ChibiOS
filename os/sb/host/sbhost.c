@@ -61,8 +61,7 @@ bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (((uint32_t)start >= rp->base) && ((uint32_t)start < rp->end) &&
-        (size <= ((size_t)rp->base - (size_t)start))) {
+    if (chMemIsAreaContainedX(&rp->area, start, size)) {
       return true;
     }
     rp++;
@@ -75,8 +74,7 @@ bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (((uint32_t)start >= rp->base) && ((uint32_t)start < rp->end) &&
-        (size <= ((size_t)rp->base - (size_t)start))) {
+    if (chMemIsAreaContainedX(&rp->area, start, size)) {
       return rp->writeable;
     }
     rp++;
@@ -119,7 +117,7 @@ thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
   const sb_header_t *sbhp;
 
   /* Header location.*/
-  sbhp = (const sb_header_t *)config->regions[config->code_region].base;
+  sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
 
   /* Checking header magic numbers.*/
   if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
@@ -139,9 +137,10 @@ thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
     .wbase      = (stkalign_t *)wsp,
     .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
     .prio       = prio,
-    .u_pc       = (config->regions[config->code_region].base +
-                   sizeof (sb_header_t)) | 1U,
-    .u_psp      = config->regions[config->data_region].end,
+    .u_pc       = (uint32_t)(config->regions[config->code_region].area.base +
+                             sizeof (sb_header_t)) | 1U,
+    .u_psp      = (uint32_t)(config->regions[config->data_region].area.base +
+                             config->regions[config->data_region].area.size),
     .arg        = (void *)sbcp
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
