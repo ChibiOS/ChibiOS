@@ -32,6 +32,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "ccportab.h"
+
 /**
  * @name    Derived generic types
  * @{
