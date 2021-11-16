@@ -212,14 +212,15 @@ void *chCoreAllocFromTop(size_t size, unsigned align, size_t offset) {
 /**
  * @brief   Core memory status.
  *
- * @return              The size, in bytes, of the free core memory.
+ * @param[in] mrp       Memory region representing available core space.
  *
  * @xclass
  */
-size_t chCoreGetStatusX(void) {
+void chCoreGetStatusX(memory_region_t *mrp) {
 
+  mrp->base = ch_memcore.basemem;
   /*lint -save -e9033 [10.8] The cast is safe.*/
-  return (size_t)(ch_memcore.topmem - ch_memcore.basemem);
+  mrp->size = (size_t)(ch_memcore.topmem - ch_memcore.basemem);
   /*lint -restore*/
 }
 #endif /* CH_CFG_USE_MEMCORE == TRUE */

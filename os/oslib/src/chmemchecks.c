@@ -40,20 +40,22 @@
  * @brief   Default writable memory regions.
  * @details By default all memory is writable, user must provide its own
  *          writable regions array for the device in use.
+ * @note    The array is terminated by an end marker (base=-1).
  */
 CC_WEAK memory_region_t __ch_mem_writable_regions[] = {
-  {(uint8_t *)0, (uint8_t *)-1},
-  {(uint8_t *)0, (uint8_t *)0},
+  {(uint8_t *)0,  0U},      /* Whole space is writable. */
+  {(uint8_t *)-1, 0U},
 };
 
 /**
  * @brief   Default readable memory regions.
  * @details By default all memory is readable, user must provide its own
  *          readable regions array for the device in use.
+ * @note    The array is terminated by an end marker (base=-1).
  */
 CC_WEAK memory_region_t __ch_mem_readable_regions[] = {
-  {(uint8_t *)0, (uint8_t *)-1},
-  {(uint8_t *)0, (uint8_t *)0},
+  {(uint8_t *)0,  0U},      /* Whole space is readable. */
+  {(uint8_t *)-1, 0U},
 };
 
 /*===========================================================================*/
@@ -94,7 +96,7 @@ bool chMemIsAreaContainedX(const memory_region_t regions[],
   chDbgCheck(base != NULL);
 
   /* Scanning the array of the valid regions for a mismatch.*/
-  while (mrp->base != mrp->end) {
+  while (mrp->base != (uint8_t *)-1) {
     if (chMemIsAreaWithinX(mrp, base, size)) {
       return true;
     }
@@ -111,8 +113,8 @@ bool chMemIsAreaContainedX(const memory_region_t regions[],
  * @note    This function is only effective if @p CH_CFG_SYS_WRITABLE_REGIONS
  *          is defined, if it is not defined then just the alignment of
  *          the pointer is checked.
- * @note    @p CH_CFG_SYS_WRITABLE_REGIONS must be the name of a global
- *          @p memory_region_t array terminated with a zero element.
+ * @note    @p __ch_mem_writable_regions must be the name of a global
+ *          @p memory_region_t array terminated with an end marker (-1, 0).
  *
  * @param[in] p         pointer to be checked
  * @param[in] align     required pointer alignment to be checked, must be
@@ -144,8 +146,8 @@ bool chMemIsAreaWritableX(const void *p,
  * @note    This function is only effective if @p CH_CFG_SYS_READABLE_REGIONS
  *          is defined, if it is not defined then just the alignment of
  *          the pointer is checked.
- * @note    @p CH_CFG_SYS_READABLE_REGIONS must be the name of a global
- *          @p memory_region_t array terminated with a zero element.
+ * @note    @p __ch_mem_readable_regions must be the name of a global
+ *          @p memory_region_t array terminated with an end marker (-1, 0).
  *
  * @param[in] p         pointer to be checked
  * @param[in] align     required pointer alignment to be checked, must be

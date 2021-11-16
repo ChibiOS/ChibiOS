@@ -50,14 +50,15 @@
 typedef struct {
   /**
    * @brief   Memory region base.
-   * @note    Zero if not used.
+   * @note    Value -1 is reserved as end-on-array marker.
    */
   uint8_t                       *base;
   /**
-   * @brief   Memory region end (inclusive).
-   * @note    Zero if not used.
+   * @brief   Memory region size.
+   * @note    Value 0 represents the whole address space and is only valid
+   *          when @p base is also zero.
    */
-  uint8_t                       *end;
+  size_t                        size;
 } memory_region_t;
 
 /*===========================================================================*/
@@ -96,7 +97,7 @@ extern "C" {
  *
  * @param[in] mrp       pointer to an array of valid regions terminated with
  *                      a zero element
- * @param[in] base      pointer to the area to be checked
+ * @param[in] p         pointer to the area to be checked
  * @param[in] size      size of the area to be checked
  * @return              The test result.
  * @retval false        if the area is entirely contained within one of the
@@ -106,12 +107,12 @@ extern "C" {
  * @xclass
  */
 static inline bool chMemIsAreaWithinX(const memory_region_t *mrp,
-                                      const void *base,
+                                      const void *p,
                                       size_t size) {
-  uint8_t *start = (uint8_t *)base;
+  uint8_t *base = (uint8_t *)p;
 
-  return (bool)((start >= mrp->base) && (start <= mrp->end) &&
-                (size <= (size_t)(mrp->end - start + 1U)));
+  return (bool)((base >= mrp->base) &&
+                (size <= (size_t)(mrp->base + mrp->size - base)));
 }
 
 #if CH_CFG_USE_MEMCHECKS == FALSE

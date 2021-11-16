@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Function chCoreGetStatusX() changed to return a memory region object
+       instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
 - NEW: STM32G0B1 USBv2 driver.

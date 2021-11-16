@@ -47,24 +47,26 @@
  * Defaults on the best synchronization mechanism available.
  */
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
-#define H_LOCK(h)       chMtxLock(&(h)->mtx)
-#define H_UNLOCK(h)     chMtxUnlock(&(h)->mtx)
+#define H_LOCK(h)           chMtxLock(&(h)->mtx)
+#define H_UNLOCK(h)         chMtxUnlock(&(h)->mtx)
 #else
-#define H_LOCK(h)       (void) chSemWait(&(h)->sem)
-#define H_UNLOCK(h)     chSemSignal(&(h)->sem)
+#define H_LOCK(h)           (void) chSemWait(&(h)->sem)
+#define H_UNLOCK(h)         chSemSignal(&(h)->sem)
 #endif
 
-#define H_BLOCK(hp)     ((hp) + 1U)
+#define H_BLOCK(hp)         ((hp) + 1U)
 
-#define H_LIMIT(hp)     (H_BLOCK(hp) + H_PAGES(hp))
+#define H_FREE_PAGES(hp)    ((hp)->free.pages)
 
-#define H_NEXT(hp)      ((hp)->free.next)
+#define H_FREE_NEXT(hp)     ((hp)->free.next)
 
-#define H_PAGES(hp)     ((hp)->free.pages)
+#define H_FREE_FULLSIZE(hp) (size_t)(((hp)->free.pages + 1U) * sizeof (heap_header_t))
 
-#define H_HEAP(hp)      ((hp)->used.heap)
+#define H_FREE_LIMIT(hp)    (H_BLOCK(hp) + H_FREE_PAGES(hp))
 
-#define H_SIZE(hp)      ((hp)->used.size)
+#define H_USED_HEAP(hp)     ((hp)->used.heap)
+
+#define H_USED_SIZE(hp)     ((hp)->used.size)
 
 /*
  * Number of pages between two pointers in a MISRA-compatible way.
@@ -107,8 +109,9 @@ static memory_heap_t default_heap;
 void __heap_init(void) {
 
   default_heap.provider = chCoreAllocAlignedWithOffset;
-  H_NEXT(&default_heap.header) = NULL;
-  H_PAGES(&default_heap.header) = 0;
+  chCoreGetStatusX(&default_heap.region);
+  H_FREE_NEXT(&default_heap.header) = NULL;
+  H_FREE_PAGES(&default_heap.header) = 0;
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&default_heap.mtx);
 #else
@@ -141,10 +144,12 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
 
   /* Initializing the heap header.*/
   heapp->provider = NULL;
-  H_NEXT(&heapp->header) = hp;
-  H_PAGES(&heapp->header) = 0;
-  H_NEXT(hp) = NULL;
-  H_PAGES(hp) = (size - sizeof (heap_header_t)) / CH_HEAP_ALIGNMENT;
+  H_FREE_NEXT(&heapp->header) = hp;
+  H_FREE_PAGES(&heapp->header) = 0;
+  H_FREE_NEXT(hp) = NULL;
+  H_FREE_PAGES(hp) = (size - sizeof (heap_header_t)) / CH_HEAP_ALIGNMENT;
+  heapp->region.base = (uint8_t *)(void *)hp;
+  heapp->region.size = H_FREE_FULLSIZE(hp);
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&heapp->mtx);
 #else
@@ -193,15 +198,15 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
 
   /* Start of the free blocks list.*/
   qp = &heapp->header;
-  while (H_NEXT(qp) != NULL) {
+  while (H_FREE_NEXT(qp) != NULL) {
 
     /* Next free block.*/
-    hp = H_NEXT(qp);
+    hp = H_FREE_NEXT(qp);
 
     /* Pointer aligned to the requested alignment.*/
     ahp = (heap_header_t *)MEM_ALIGN_NEXT(H_BLOCK(hp), align) - 1U;
 
-    if ((ahp < H_LIMIT(hp)) && (pages <= NPAGES(H_LIMIT(hp), ahp + 1U))) {
+    if ((ahp < H_FREE_LIMIT(hp)) && (pages <= NPAGES(H_FREE_LIMIT(hp), ahp + 1U))) {
       /* The block is large enough to contain a correctly aligned area
          of sufficient size.*/
 
@@ -209,19 +214,19 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
         /* The block is not properly aligned, must split it.*/
         size_t bpages;
 
-        bpages = NPAGES(H_LIMIT(hp), H_BLOCK(ahp));
-        H_PAGES(hp) = NPAGES(ahp, H_BLOCK(hp));
+        bpages = NPAGES(H_FREE_LIMIT(hp), H_BLOCK(ahp));
+        H_FREE_PAGES(hp) = NPAGES(ahp, H_BLOCK(hp));
         if (bpages > pages) {
           /* The block is bigger than required, must split the excess.*/
           heap_header_t *fp;
 
           /* Creating the excess block.*/
           fp = H_BLOCK(ahp) + pages;
-          H_PAGES(fp) = (bpages - pages) - 1U;
+          H_FREE_PAGES(fp) = (bpages - pages) - 1U;
 
           /* Linking the excess block.*/
-          H_NEXT(fp) = H_NEXT(hp);
-          H_NEXT(hp) = fp;
+          H_FREE_NEXT(fp) = H_FREE_NEXT(hp);
+          H_FREE_NEXT(hp) = fp;
         }
 
         hp = ahp;
@@ -229,24 +234,24 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
       else {
         /* The block is already properly aligned.*/
 
-        if (H_PAGES(hp) == pages) {
+        if (H_FREE_PAGES(hp) == pages) {
           /* Exact size, getting the whole block.*/
-          H_NEXT(qp) = H_NEXT(hp);
+          H_FREE_NEXT(qp) = H_FREE_NEXT(hp);
         }
         else {
           /* The block is bigger than required, must split the excess.*/
           heap_header_t *fp;
 
           fp = H_BLOCK(hp) + pages;
-          H_NEXT(fp) = H_NEXT(hp);
-          H_PAGES(fp) = NPAGES(H_LIMIT(hp), H_BLOCK(fp));
-          H_NEXT(qp) = fp;
+          H_FREE_NEXT(fp) = H_FREE_NEXT(hp);
+          H_FREE_PAGES(fp) = NPAGES(H_FREE_LIMIT(hp), H_BLOCK(fp));
+          H_FREE_NEXT(qp) = fp;
         }
       }
 
       /* Setting in the block owner heap and size.*/
-      H_SIZE(hp) = size;
-      H_HEAP(hp) = heapp;
+      H_USED_SIZE(hp) = size;
+      H_USED_HEAP(hp) = heapp;
 
       /* Releasing heap mutex.*/
       H_UNLOCK(heapp);
@@ -271,8 +276,8 @@ void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align) {
                           sizeof (heap_header_t));
     if (ahp != NULL) {
       hp = ahp - 1U;
-      H_HEAP(hp) = heapp;
-      H_SIZE(hp) = size;
+      H_USED_HEAP(hp) = heapp;
+      H_USED_SIZE(hp) = size;
 
       /*lint -save -e9087 [11.3] Safe cast.*/
       return (void *)ahp;
@@ -299,38 +304,38 @@ void chHeapFree(void *p) {
   /*lint -save -e9087 [11.3] Safe cast.*/
   hp = (heap_header_t *)p - 1U;
   /*lint -restore*/
-  heapp = H_HEAP(hp);
+  heapp = H_USED_HEAP(hp);
   qp = &heapp->header;
 
   /* Size is converted in number of elementary allocation units.*/
-  H_PAGES(hp) = MEM_ALIGN_NEXT(H_SIZE(hp),
-                               CH_HEAP_ALIGNMENT) / CH_HEAP_ALIGNMENT;
+  H_FREE_PAGES(hp) = MEM_ALIGN_NEXT(H_USED_SIZE(hp),
+                                    CH_HEAP_ALIGNMENT) / CH_HEAP_ALIGNMENT;
 
   /* Taking heap mutex.*/
   H_LOCK(heapp);
 
   while (true) {
-    chDbgAssert((hp < qp) || (hp >= H_LIMIT(qp)), "within free block");
+    chDbgAssert((hp < qp) || (hp >= H_FREE_LIMIT(qp)), "within free block");
 
     if (((qp == &heapp->header) || (hp > qp)) &&
-        ((H_NEXT(qp) == NULL) || (hp < H_NEXT(qp)))) {
+        ((H_FREE_NEXT(qp) == NULL) || (hp < H_FREE_NEXT(qp)))) {
       /* Insertion after qp.*/
-      H_NEXT(hp) = H_NEXT(qp);
-      H_NEXT(qp) = hp;
+      H_FREE_NEXT(hp) = H_FREE_NEXT(qp);
+      H_FREE_NEXT(qp) = hp;
       /* Verifies if the newly inserted block should be merged.*/
-      if (H_LIMIT(hp) == H_NEXT(hp)) {
+      if (H_FREE_LIMIT(hp) == H_FREE_NEXT(hp)) {
         /* Merge with the next block.*/
-        H_PAGES(hp) += H_PAGES(H_NEXT(hp)) + 1U;
-        H_NEXT(hp) = H_NEXT(H_NEXT(hp));
+        H_FREE_PAGES(hp) += H_FREE_PAGES(H_FREE_NEXT(hp)) + 1U;
+        H_FREE_NEXT(hp) = H_FREE_NEXT(H_FREE_NEXT(hp));
       }
-      if ((H_LIMIT(qp) == hp)) {
+      if ((H_FREE_LIMIT(qp) == hp)) {
         /* Merge with the previous block.*/
-        H_PAGES(qp) += H_PAGES(hp) + 1U;
-        H_NEXT(qp) = H_NEXT(hp);
+        H_FREE_PAGES(qp) += H_FREE_PAGES(hp) + 1U;
+        H_FREE_NEXT(qp) = H_FREE_NEXT(hp);
       }
       break;
     }
-    qp = H_NEXT(qp);
+    qp = H_FREE_NEXT(qp);
   }
 
   /* Releasing heap mutex.*/
@@ -367,8 +372,8 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp) {
   lpages = 0U;
   n = 0U;
   qp = &heapp->header;
-  while (H_NEXT(qp) != NULL) {
-    size_t pages = H_PAGES(H_NEXT(qp));
+  while (H_FREE_NEXT(qp) != NULL) {
+    size_t pages = H_FREE_PAGES(H_FREE_NEXT(qp));
 
     /* Updating counters.*/
     n++;
@@ -377,7 +382,7 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp) {
       lpages = pages;
     }
 
-    qp = H_NEXT(qp);
+    qp = H_FREE_NEXT(qp);
   }
 
   /* Writing out fragmented free memory.*/
@@ -394,8 +399,6 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp) {
   return n;
 }
 
-#define isvalidramexcl(p, a) true
-#define isvalidramincl(p, a) true
 #define isvalidfunction(p) true
 
 /**
@@ -428,11 +431,12 @@ bool chHeapIntegrityCheck(memory_heap_t *heapp) {
   H_LOCK(heapp);
 
   hp = &heapp->header;
-  while ((hp = H_NEXT(hp)) != NULL) {
+  while ((hp = H_FREE_NEXT(hp)) != NULL) {
 
-    /* Validating the area pointers.*/
-    if (!isvalidramexcl(hp, CH_HEAP_ALIGNMENT) ||
-        !isvalidramincl(H_LIMIT(hp), CH_HEAP_ALIGNMENT)) {
+    /* Validating the found free block.*/
+    if (!chMemIsAreaWithinX(&heapp->region,
+                            (void *)hp,
+                            H_FREE_FULLSIZE(hp))) {
       result = true;
       break;
     }

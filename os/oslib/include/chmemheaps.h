@@ -80,13 +80,31 @@ typedef union heap_header heap_header_t;
  * @brief   Memory heap block header.
  */
 union heap_header {
+  /**
+   * @brief   Header for free blocks.
+   */
   struct {
-    heap_header_t       *next;      /**< @brief Next block in free list.    */
-    size_t              pages;      /**< @brief Size of the area in pages.  */
+    /**
+     * @brief   Next block in free list.
+     */
+    heap_header_t       *next;
+    /**
+     * @brief   Size of the area in pages.
+     */
+    size_t              pages;
   } free;
+  /**
+   * @brief   Header for used blocks.
+   */
   struct {
-    memory_heap_t       *heap;      /**< @brief Block owner heap.           */
-    size_t              size;       /**< @brief Size of the area in bytes.  */
+    /**
+     * @brief   Block owner heap.
+     */
+    memory_heap_t       *heap;
+    /**
+     * @brief   Size of the area in bytes.
+     */
+    size_t              size;
   } used;
 };
 
@@ -94,13 +112,28 @@ union heap_header {
  * @brief   Structure describing a memory heap.
  */
 struct memory_heap {
-  memgetfunc2_t         provider;   /**< @brief Memory blocks provider for
-                                                this heap.                  */
-  heap_header_t         header;     /**< @brief Free blocks list header.    */
+  /**
+   * @brief   Memory blocks provider for this heap.
+   */
+  memgetfunc2_t         provider;
+  /**
+   * @brief   Memory region for this heap.
+   */
+  memory_region_t       region;
+  /**
+   * @brief   Free blocks list header.
+   */
+  heap_header_t         header;
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
-  mutex_t               mtx;        /**< @brief Heap access mutex.          */
+  /**
+   * @brief   Heap access mutex.
+   */
+  mutex_t               mtx;
 #else
-  semaphore_t           sem;        /**< @brief Heap access semaphore.      */
+  /**
+   * @brief   Heap access fallback semaphore.
+   */
+  semaphore_t           sem;
 #endif
 };
 

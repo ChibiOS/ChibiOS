@@ -125,7 +125,7 @@ extern "C" {
   void *chCoreAllocFromTopI(size_t size, unsigned align, size_t offset);
   void *chCoreAllocFromBase(size_t size, unsigned align, size_t offset);
   void *chCoreAllocFromTop(size_t size, unsigned align, size_t offset);
-  size_t chCoreGetStatusX(void);
+  void chCoreGetStatusX(memory_region_t *mrp);
 #ifdef __cplusplus
 }
 #endif
