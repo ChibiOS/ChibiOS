@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added EFL driver implementation for STM32G4xx.
 - NEW: Function chCoreGetStatusX() changed to return a memory region object
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
