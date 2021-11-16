@@ -130,6 +130,7 @@ static void cmd_systime(BaseSequentialStream *chp, int argc, char *argv[]) {
 #if (SHELL_CMD_MEM_ENABLED == TRUE) || defined(__DOXYGEN__)
 static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
   size_t n, total, largest;
+  memory_region_t region;
 
   (void)argv;
   if (argc > 0) {
@@ -137,7 +138,8 @@ static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
     return;
   }
   n = chHeapStatus(NULL, &total, &largest);
-  chprintf(chp, "core free memory : %u bytes" SHELL_NEWLINE_STR, chCoreGetStatusX());
+  chCoreGetStatusX(&region);
+  chprintf(chp, "core free memory : %u bytes" SHELL_NEWLINE_STR, region.size);
   chprintf(chp, "heap fragments   : %u" SHELL_NEWLINE_STR, n);
   chprintf(chp, "heap free total  : %u bytes" SHELL_NEWLINE_STR, total);
   chprintf(chp, "heap free largest: %u bytes" SHELL_NEWLINE_STR, largest);
