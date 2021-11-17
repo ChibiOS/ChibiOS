@@ -22,11 +22,7 @@
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 
-/* Static memory areas used by sandboxes.*/
-extern uint8_t __flash1_base__, __flash1_size__,
-               __flash2_base__, __flash2_size__,
-               __ram1_base__,   __ram1_size__,
-               __ram2_base__,   __ram2_size__;
+#include "startup_defs.h"
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
@@ -34,10 +30,10 @@ static const sb_config_t sb_config1 = {
   .data_region    = 1U,
   .regions        = {
     [0] = {
-      {(uint8_t *)&__flash1_base__, (size_t)&__flash1_size__},  false
+      {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE}, false
     },
     [1] = {
-      {(uint8_t *)&__ram1_base__,   (size_t)&__ram1_size__},    true
+      {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},   true
     }
   },
   .stdin_stream   = (SandboxStream *)&LPSD1,
@@ -51,10 +47,10 @@ static const sb_config_t sb_config2 = {
   .data_region    = 1U,
   .regions        = {
     [0] = {
-      {(uint8_t *)&__flash2_base__,  (size_t)&__flash2_size__},  false
+      {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE}, false
     },
     [1] = {
-      {(uint8_t *)&__ram2_base__,    (size_t)&__ram2_size__},    true
+      {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},   true
     }
   },
   .stdin_stream   = (SandboxStream *)&LPSD1,
