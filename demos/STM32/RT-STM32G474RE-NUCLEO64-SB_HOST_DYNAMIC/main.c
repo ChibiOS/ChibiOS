@@ -33,7 +33,7 @@ static const sb_config_t sb_config1 = {
       {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE}, false
     },
     [1] = {
-      {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},    true
+      {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},   true
     }
   },
   .mpuregs        = {
@@ -64,7 +64,7 @@ static const sb_config_t sb_config2 = {
       {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE}, false
     },
     [1] = {
-      {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},    true
+      {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},   true
     }
   },
   .mpuregs        = {
