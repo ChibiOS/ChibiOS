@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    USBv1/hal_usb_lld.h
+ * @file    USBv2/hal_usb_lld.h
  * @brief   STM32 USB subsystem low level driver header.
  *
  * @addtogroup USB
@@ -27,11 +27,15 @@
 
 #if HAL_USE_USB || defined(__DOXYGEN__)
 
-#include "stm32_usb.h"
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Number of the available endpoints.
+ * @details This value does not include the endpoint 0 which is always present.
+ */
+#define USB_ENDPOINTS_NUMBER                7
 
 /**
  * @brief   Maximum endpoint address.
@@ -53,10 +57,15 @@
  */
 #define USB_SET_ADDRESS_ACK_HANDLING        USB_SET_ADDRESS_ACK_SW
 
-/* Addressing differences in headers.*/
-#if !defined(USB_CNTR_L2RES) && defined(USB_CNTR_RESUME)
-#define USB_CNTR_L2RES  USB_CNTR_RESUME
-#endif
+/**
+ * @brief   Pointer to the USB registers block.
+ */
+#define STM32_USB                           ((stm32_usb_t *)USB_DRD_BASE)
+
+/**
+ * @brief   Pointer to the USB PMA buffer descriptors block.
+ */
+#define STM32_USB_DRD_PMA_BUFF              ((stm32_usb_pmabufdesc_t *) USB_DRD_PMAADDR)
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -184,6 +193,26 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
+
+typedef struct {
+  __IO uint32_t                 CHEPR[8];
+  __IO uint32_t                 RESERVED0[8];
+  __IO uint32_t                 CNTR;
+  __IO uint32_t                 ISTR;
+  __IO uint32_t                 FNR;
+  __IO uint32_t                 DADDR;
+  __IO uint32_t                 RESERVED1;
+  __IO uint32_t                 LPMCSR;
+  __IO uint32_t                 BCDR;
+} stm32_usb_t;
+
+typedef struct {
+  __IO uint32_t                 TXBD0;
+  __IO uint32_t                 RXBD0;
+} stm32_usb_pmabufdesc_t;
+
+#define TXBD1                   RXBD0
+#define RXBD1                   TXBD0
 
 /**
  * @brief   Type of an IN endpoint state structure.
@@ -415,6 +444,10 @@ struct USBDriver {
 #endif
   /* End of the mandatory fields.*/
   /**
+   * @brief   Associated USB peripheral.
+   */
+  stm32_usb_t                   *usb;
+  /**
    * @brief   Pointer to the next address in the packet memory.
    */
   uint32_t                      pmnext;
@@ -451,14 +484,13 @@ struct USBDriver {
 #define usb_lld_get_transaction_size(usbp, ep)                              \
   ((usbp)->epc[ep]->out_state->rxcnt)
 
-#if STM32_USB_HAS_BCDR || defined(__DOXYGEN__)
 /**
  * @brief   Connects the USB device.
  *
  * @notapi
  */
 #if !defined(usb_lld_connect_bus)
-#define usb_lld_connect_bus(usbp) (STM32_USB->BCDR |= USB_BCDR_DPPU)
+#define usb_lld_connect_bus(usbp) ((usbp)->usb->BCDR |= USB_BCDR_DPPU)
 #endif
 
 /**
@@ -467,19 +499,8 @@ struct USBDriver {
  * @notapi
  */
 #if !defined(usb_lld_disconnect_bus)
-#define usb_lld_disconnect_bus(usbp) (STM32_USB->BCDR &= ~USB_BCDR_DPPU)
+#define usb_lld_disconnect_bus(usbp) ((usbp)->usb->BCDR &= ~USB_BCDR_DPPU)
 #endif
-#endif /* STM32_USB_HAS_BCDR */
-
-#if defined(STM32L1XX)
-#if !defined(usb_lld_connect_bus)
-#define usb_lld_connect_bus(usbp) (SYSCFG->PMC |= SYSCFG_PMC_USB_PU)
-#endif
-
-#if !defined(usb_lld_disconnect_bus)
-#define usb_lld_disconnect_bus(usbp) (SYSCFG->PMC &= ~SYSCFG_PMC_USB_PU)
-#endif
-#endif /* STM32L1XX */
 
 /**
  * @brief   Start of host wake-up procedure.
@@ -488,9 +509,9 @@ struct USBDriver {
  */
 #define usb_lld_wakeup_host(usbp)                                           \
   do {                                                                      \
-    STM32_USB->CNTR |= USB_CNTR_L2RES;                                      \
+    (usbp)->usb->CNTR |= USB_CNTR_L2RES;                                    \
     osalThreadSleepMilliseconds(STM32_USB_HOST_WAKEUP_DURATION);            \
-    STM32_USB->CNTR &= ~USB_CNTR_L2RES;                                     \
+    (usbp)->usb->CNTR &= ~USB_CNTR_L2RES;                                   \
   } while (false)
 
 /*===========================================================================*/

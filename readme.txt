@@ -74,6 +74,11 @@
 *****************************************************************************
 
 *** 21.11.1 ***
+- NEW: Added EFL driver implementation for STM32G4xx.
+- NEW: STM32G0B1 USBv2 driver.
+- NEW: USBv1 driver optimization and removal of a potential race condition
+       (not demonstrated).
+- NEW: Added elfAcquireBus()/eflReleaseBus() functions to EFL driver.
 - NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.

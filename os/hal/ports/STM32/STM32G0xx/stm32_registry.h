@@ -828,9 +828,7 @@
 
 /* USB attributes.*/
 #define STM32_HAS_USB                       TRUE
-#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
 #define STM32_USB_PMA_SIZE                  2048
-#define STM32_USB_HAS_BCDR                  TRUE
 
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
