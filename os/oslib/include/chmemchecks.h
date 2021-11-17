@@ -119,7 +119,7 @@ static inline bool chMemIsAreaWithinX(const memory_area_t *map,
 /* Stub implementations for when the functionality is disabled, areas are
    always reported as valid.*/
 static inline bool chMemIsAreaContainedX(const memory_area_t areas[],
-                                         const void *base,
+                                         const void *p,
                                          size_t size) {
 
   (void)areas;

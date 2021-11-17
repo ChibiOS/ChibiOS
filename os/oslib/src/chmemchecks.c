@@ -78,8 +78,9 @@ CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
  * @brief   Memory area check.
  * @details Checks if specified area belongs to one of the specified areas.
  *
- * @param[in] map       array of valid areas terminated with a zero element
- * @param[in] base      pointer to the area to be checked
+ * @param[in] map       array of valid areas terminated with an end
+ *                      marker (base=-1)
+ * @param[in] p         pointer to the area to be checked
  * @param[in] size      size of the area to be checked
  * @return              The test result.
  * @retval false        if the area is entirely contained within one of the
@@ -89,15 +90,15 @@ CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
  * @xclass
  */
 bool chMemIsAreaContainedX(const memory_area_t areas[],
-                           const void *base,
+                           const void *p,
                            size_t size) {
   const memory_area_t *map = &areas[0];
 
-  chDbgCheck(base != NULL);
+  chDbgCheck(p != NULL);
 
   /* Scanning the array of the valid areas for a mismatch.*/
   while (map->base != (uint8_t *)-1) {
-    if (chMemIsAreaWithinX(map, base, size)) {
+    if (chMemIsAreaWithinX(map, p, size)) {
       return true;
     }
     map++;
@@ -116,7 +117,7 @@ bool chMemIsAreaContainedX(const memory_area_t areas[],
  * @note    @p __ch_mem_writable_areas must be the name of a global
  *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
- * @param[in] p         pointer to be checked
+ * @param[in] p         pointer to the area to be checked
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
@@ -149,7 +150,7 @@ bool chMemIsAreaWritableX(const void *p,
  * @note    @p __ch_mem_readable_areas must be the name of a global
  *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
- * @param[in] p         pointer to be checked
+ * @param[in] p         pointer to the area to be checked
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
