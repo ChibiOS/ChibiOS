@@ -30,39 +30,55 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define STARTUP_FLASH0_BASE             ((uint32_t)&__flash0_base__)
-#define STARTUP_FLASH0_END              ((uint32_t)&__flash0_end__)
-#define STARTUP_FLASH1_BASE             ((uint32_t)&__flash1_base__)
-#define STARTUP_FLASH1_END              ((uint32_t)&__flash1_end__)
-#define STARTUP_FLASH2_BASE             ((uint32_t)&__flash2_base__)
-#define STARTUP_FLASH2_END              ((uint32_t)&__flash2_end__)
-#define STARTUP_FLASH3_BASE             ((uint32_t)&__flash3_base__)
-#define STARTUP_FLASH3_END              ((uint32_t)&__flash3_end__)
-#define STARTUP_FLASH4_BASE             ((uint32_t)&__flash4_base__)
-#define STARTUP_FLASH4_END              ((uint32_t)&__flash4_end__)
-#define STARTUP_FLASH5_BASE             ((uint32_t)&__flash5_base__)
-#define STARTUP_FLASH5_END              ((uint32_t)&__flash5_end__)
-#define STARTUP_FLASH6_BASE             ((uint32_t)&__flash6_base__)
-#define STARTUP_FLASH6_END              ((uint32_t)&__flash6_end__)
-#define STARTUP_FLASH7_BASE             ((uint32_t)&__flash7_base__)
-#define STARTUP_FLASH7_END              ((uint32_t)&__flash7_end__)
+#define STARTUP_FLASH0_BASE             ((void *)&__flash0_base__)
+#define STARTUP_FLASH1_BASE             ((void *)&__flash1_base__)
+#define STARTUP_FLASH2_BASE             ((void *)&__flash2_base__)
+#define STARTUP_FLASH3_BASE             ((void *)&__flash3_base__)
+#define STARTUP_FLASH4_BASE             ((void *)&__flash4_base__)
+#define STARTUP_FLASH5_BASE             ((void *)&__flash5_base__)
+#define STARTUP_FLASH7_BASE             ((void *)&__flash7_base__)
+#define STARTUP_FLASH6_BASE             ((void *)&__flash6_base__)
+#define STARTUP_FLASH0_END              ((void *)&__flash0_end__)
+#define STARTUP_FLASH1_END              ((void *)&__flash1_end__)
+#define STARTUP_FLASH2_END              ((void *)&__flash2_end__)
+#define STARTUP_FLASH3_END              ((void *)&__flash3_end__)
+#define STARTUP_FLASH4_END              ((void *)&__flash4_end__)
+#define STARTUP_FLASH5_END              ((void *)&__flash5_end__)
+#define STARTUP_FLASH6_END              ((void *)&__flash6_end__)
+#define STARTUP_FLASH7_END              ((void *)&__flash7_end__)
+#define STARTUP_FLASH0_SIZE             ((size_t)&__flash0_size__)
+#define STARTUP_FLASH1_SIZE             ((size_t)&__flash1_size__)
+#define STARTUP_FLASH2_SIZE             ((size_t)&__flash2_size__)
+#define STARTUP_FLASH3_SIZE             ((size_t)&__flash3_size__)
+#define STARTUP_FLASH4_SIZE             ((size_t)&__flash4_size__)
+#define STARTUP_FLASH5_SIZE             ((size_t)&__flash5_size__)
+#define STARTUP_FLASH6_SIZE             ((size_t)&__flash6_size__)
+#define STARTUP_FLASH7_SIZE             ((size_t)&__flash7_size__)
 
-#define STARTUP_RAM0_BASE               ((uint32_t)&__ram0_base__)
-#define STARTUP_RAM0_END                ((uint32_t)&__ram0_end__)
-#define STARTUP_RAM1_BASE               ((uint32_t)&__ram1_base__)
-#define STARTUP_RAM1_END                ((uint32_t)&__ram1_end__)
-#define STARTUP_RAM2_BASE               ((uint32_t)&__ram2_base__)
-#define STARTUP_RAM2_END                ((uint32_t)&__ram2_end__)
-#define STARTUP_RAM3_BASE               ((uint32_t)&__ram3_base__)
-#define STARTUP_RAM3_END                ((uint32_t)&__ram3_end__)
-#define STARTUP_RAM4_BASE               ((uint32_t)&__ram4_base__)
-#define STARTUP_RAM4_END                ((uint32_t)&__ram4_end__)
-#define STARTUP_RAM5_BASE               ((uint32_t)&__ram5_base__)
-#define STARTUP_RAM5_END                ((uint32_t)&__ram5_end__)
-#define STARTUP_RAM6_BASE               ((uint32_t)&__ram6_base__)
-#define STARTUP_RAM6_END                ((uint32_t)&__ram6_end__)
-#define STARTUP_RAM7_BASE               ((uint32_t)&__ram7_base__)
-#define STARTUP_RAM7_END                ((uint32_t)&__ram7_end__)
+#define STARTUP_RAM0_BASE               ((void *)&__ram0_base__)
+#define STARTUP_RAM1_BASE               ((void *)&__ram1_base__)
+#define STARTUP_RAM2_BASE               ((void *)&__ram2_base__)
+#define STARTUP_RAM3_BASE               ((void *)&__ram3_base__)
+#define STARTUP_RAM4_BASE               ((void *)&__ram4_base__)
+#define STARTUP_RAM5_BASE               ((void *)&__ram5_base__)
+#define STARTUP_RAM6_BASE               ((void *)&__ram6_base__)
+#define STARTUP_RAM7_BASE               ((void *)&__ram7_base__)
+#define STARTUP_RAM0_END                ((void *)&__ram0_end__)
+#define STARTUP_RAM1_END                ((void *)&__ram1_end__)
+#define STARTUP_RAM2_END                ((void *)&__ram2_end__)
+#define STARTUP_RAM3_END                ((void *)&__ram3_end__)
+#define STARTUP_RAM4_END                ((void *)&__ram4_end__)
+#define STARTUP_RAM5_END                ((void *)&__ram5_end__)
+#define STARTUP_RAM6_END                ((void *)&__ram6_end__)
+#define STARTUP_RAM7_END                ((void *)&__ram7_end__)
+#define STARTUP_RAM0_SIZE               ((size_t)&__ram0_size__)
+#define STARTUP_RAM1_SIZE               ((size_t)&__ram1_size__)
+#define STARTUP_RAM2_SIZE               ((size_t)&__ram2_size__)
+#define STARTUP_RAM3_SIZE               ((size_t)&__ram3_size__)
+#define STARTUP_RAM4_SIZE               ((size_t)&__ram4_size__)
+#define STARTUP_RAM5_SIZE               ((size_t)&__ram5_size__)
+#define STARTUP_RAM6_SIZE               ((size_t)&__ram6_size__)
+#define STARTUP_RAM7_SIZE               ((size_t)&__ram7_size__)
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -84,22 +100,22 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern uint32_t __flash0_base__, __flash0_end__;
-extern uint32_t __flash1_base__, __flash1_end__;
-extern uint32_t __flash2_base__, __flash2_end__;
-extern uint32_t __flash3_base__, __flash3_end__;
-extern uint32_t __flash4_base__, __flash4_end__;
-extern uint32_t __flash5_base__, __flash5_end__;
-extern uint32_t __flash6_base__, __flash6_end__;
-extern uint32_t __flash7_base__, __flash7_end__;
-extern uint32_t __ram0_base__, __ram0_end__;
-extern uint32_t __ram1_base__, __ram1_end__;
-extern uint32_t __ram2_base__, __ram2_end__;
-extern uint32_t __ram3_base__, __ram3_end__;
-extern uint32_t __ram4_base__, __ram4_end__;
-extern uint32_t __ram5_base__, __ram5_end__;
-extern uint32_t __ram6_base__, __ram6_end__;
-extern uint32_t __ram7_base__, __ram7_end__;
+extern uint8_t __flash0_base__, __flash0_size__, __flash0_end__;
+extern uint8_t __flash1_base__, __flash1_size__, __flash1_end__;
+extern uint8_t __flash2_base__, __flash2_size__, __flash2_end__;
+extern uint8_t __flash3_base__, __flash3_size__, __flash3_end__;
+extern uint8_t __flash4_base__, __flash4_size__, __flash4_end__;
+extern uint8_t __flash5_base__, __flash5_size__, __flash5_end__;
+extern uint8_t __flash6_base__, __flash6_size__, __flash6_end__;
+extern uint8_t __flash7_base__, __flash7_size__, __flash7_end__;
+extern uint8_t __ram0_base__, __ram0_size__, __ram0_end__;
+extern uint8_t __ram1_base__, __ram1_size__, __ram1_end__;
+extern uint8_t __ram2_base__, __ram2_size__, __ram2_end__;
+extern uint8_t __ram3_base__, __ram3_size__, __ram3_end__;
+extern uint8_t __ram4_base__, __ram4_size__, __ram4_end__;
+extern uint8_t __ram5_base__, __ram5_size__, __ram5_end__;
+extern uint8_t __ram6_base__, __ram6_size__, __ram6_end__;
+extern uint8_t __ram7_base__, __ram7_size__, __ram7_end__;
 
 #ifdef __cplusplus
 extern "C" {
