@@ -86,9 +86,9 @@ int main(void) {
   sauEnableRegion(2, 0x0BF90000, 0x0BFA9000, SAU_REGION_NOT_NSC);   /* Non secure system memory.*/
 
   /* Regions depending on scatter file configuration.*/
-  sauEnableRegion(3, STARTUP_FLASH1_BASE, STARTUP_FLASH1_END, SAU_REGION_NSC);
-  sauEnableRegion(4, STARTUP_FLASH2_BASE, STARTUP_FLASH2_END, SAU_REGION_NOT_NSC);
-  sauEnableRegion(5, STARTUP_RAM1_BASE, STARTUP_RAM1_END, SAU_REGION_NOT_NSC);
+  sauEnableRegion(3, (uint32_t)STARTUP_FLASH1_BASE, (uint32_t)STARTUP_FLASH1_END, SAU_REGION_NSC);
+  sauEnableRegion(4, (uint32_t)STARTUP_FLASH2_BASE, (uint32_t)STARTUP_FLASH2_END, SAU_REGION_NOT_NSC);
+  sauEnableRegion(5, (uint32_t)STARTUP_RAM1_BASE, (uint32_t)STARTUP_RAM1_END, SAU_REGION_NOT_NSC);
   sauEnable();
 
   info = cmse_TT((void *)&__flash0_base__);
@@ -103,8 +103,7 @@ int main(void) {
   while (true) {
     if (palReadLine(LINE_BUTTON)) {
       static THD_WORKING_AREA(ns_thd_wa, 256);
-      extern uint32_t __flash2_base__;
-      void *ns_entry = (void *)((uint32_t)&__flash2_base__);
+      void *ns_entry = (void *)STARTUP_FLASH2_BASE;
 
 //      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
 //      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
