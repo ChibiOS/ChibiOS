@@ -79,6 +79,8 @@
 - NEW: USBv1 driver optimization and removal of a potential race condition
        (not demonstrated).
 - NEW: Added elfAcquireBus()/eflReleaseBus() functions to EFL driver.
+- NEW: Added STM32L073RZ-Nucleo64 to USB-CDC "multi" demo. Removed old demo.
+- NEW: Added an STM32 WDG "multi" demo. Removed all old WDG demos.
 - NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
