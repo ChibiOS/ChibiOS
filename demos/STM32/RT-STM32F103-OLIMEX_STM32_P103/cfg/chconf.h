@@ -182,8 +182,7 @@
 
 /**
  * @brief   Time Stamps APIs.
- * @details If enabled then the time time stamps APIs are included in
- *          the kernel.
+ * @details If enabled then the time stamps APIs are included in the kernel.
  *
  * @note    The default is @p TRUE.
  */
