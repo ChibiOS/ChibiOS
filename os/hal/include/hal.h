@@ -50,7 +50,7 @@
 /**
  * @brief   HAL version string.
  */
-#define HAL_VERSION             "8.0.0"
+#define HAL_VERSION             "8.1.0"
 
 /**
  * @brief   HAL version major number.
