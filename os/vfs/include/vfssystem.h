@@ -21,7 +21,7 @@
  * @file    vfs/include/vfssystem.h
  * @brief   VFS system header file.
  *
- * @addtogroup VFS_NODES
+ * @addtogroup VFS_SYSTEM
  * @{
  */
 
@@ -43,6 +43,14 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of a VFS error code.
+ */
+typedef enum {
+  VFS_RET_SUCCESS = 0,    /**< VFS_RET_SUCCESS */
+  VFS_RET_NO_RESOURCE = -1/**< VFS_RET_NO_RESOURCE */
+} vfserr_t;
 
 /**
  * @brief   @p vfs_system_node_t specific methods.
@@ -78,24 +86,57 @@ typedef struct vfs_system_node {
  * @brief   Type of a structure representing the VFS system.
  */
 typedef struct vfs_system {
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   VFS access mutex.
+   */
+  mutex_t                       mtx;
+#else
+  /**
+   * @brief   VFS access fallback semaphore.
+   */
+  semaphore_t                   sem;
+#endif
   /**
    * @brief   Absolute root node.
    */
   vfs_node_t                    *root_node;
+  /**
+   * @brief   Next registration slot.
+   */
+  vfs_driver_t                  **next_driver;
+  /**
+   * @brief   Registration slots.
+   */
+  vfs_driver_t                  *drivers[VFS_CFG_MAX_DRIVERS];
 } vfs_system_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/*
+ * Defaults on the best synchronization mechanism available.
+ */
+#if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
+#define VFS_LOCK()              chMtxLock(&vfs.mtx)
+#define VFS_UNLOCK()            chMtxUnlock(&vfs.mtx)
+#else
+#define VFS_LOCK()              (void) chSemWait(&vfs.sem)
+#define VFS_UNLOCK()            chSemSignal(&vfs.sem)
+#endif
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern vfs_system_t vfs;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  void vfsInit(void);
+  vfserr_t vfsRegisterDriver(vfs_driver_t *vdp);
 #ifdef __cplusplus
 }
 #endif
