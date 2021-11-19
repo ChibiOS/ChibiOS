@@ -1,5 +1,4 @@
-# List of all the ChibiOS/LIB files, there is no need to remove the files
-# from this list, you can disable parts of the kernel by editing chlibconf.h.
+# List of all the ChibiOS/LIB files.
 ifeq ($(USE_SMART_BUILD),yes)
 
 # Configuration files directory
