@@ -296,7 +296,6 @@
  * USB driver system settings.
  */
 #define STM32_USB_USE_USB1                  TRUE
-#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      3
 #define STM32_USB_USE_ISOCHRONOUS           FALSE
 #define STM32_USB_USE_FAST_COPY             TRUE

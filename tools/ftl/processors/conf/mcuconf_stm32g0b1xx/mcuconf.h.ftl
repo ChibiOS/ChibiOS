@@ -69,6 +69,7 @@
 #define STM32_PWR_PDCRF                     ${doc.STM32_PWR_PDCRF!"(0U)"}
 #define STM32_HSIDIV_VALUE                  ${doc.STM32_HSIDIV_VALUE!"1"}
 #define STM32_HSI16_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
+#define STM32_HSI48_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
 #define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
@@ -88,6 +89,7 @@
 /*
  * Peripherals clocks and sources.
  */
+#define STM32_FDCANSEL                      ${doc.STM32_FDCANSEL!"STM32_FDCANSEL_PCLK"}
 #define STM32_USBSEL                        ${doc.STM32_USBSEL!"STM32_USBSEL_PLLQCLK"}
 #define STM32_USART1SEL                     ${doc.STM32_USART1SEL!"STM32_USART1SEL_SYSCLK"}
 #define STM32_USART2SEL                     ${doc.STM32_USART2SEL!"STM32_USART2SEL_SYSCLK"}
@@ -96,7 +98,9 @@
 #define STM32_LPUART2SEL                    ${doc.STM32_LPUART2SEL!"STM32_LPUART2SEL_SYSCLK"}
 #define STM32_CECSEL                        ${doc.STM32_CECSEL!"STM32_CECSEL_HSI16DIV"}
 #define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"STM32_I2C1SEL_PCLK"}
+#define STM32_I2C2SEL                       ${doc.STM32_I2C2SEL!"STM32_I2C2SEL_PCLK"}
 #define STM32_I2S1SEL                       ${doc.STM32_I2S1SEL!"STM32_I2S1SEL_SYSCLK"}
+#define STM32_I2S2SEL                       ${doc.STM32_I2S22SEL!"STM32_I2S2SEL_SYSCLK"}
 #define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK"}
 #define STM32_LPTIM2SEL                     ${doc.STM32_LPTIM2SEL!"STM32_LPTIM2SEL_PCLK"}
 #define STM32_TIM1SEL                       ${doc.STM32_TIM1SEL!"STM32_TIM1SEL_TIMPCLK"}
@@ -303,9 +307,11 @@
  * USB driver system settings.
  */
 #define STM32_USB_USE_USB1                  ${doc.STM32_USB_USE_USB1!"FALSE"}
-#define STM32_USB_LOW_POWER_ON_SUSPEND      ${doc.STM32_USB_LOW_POWER_ON_SUSPEND!"FALSE"}
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_HP_IRQ_PRIORITY!"13"}
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_LP_IRQ_PRIORITY!"14"}
+#define STM32_USB_USE_ISOCHRONOUS           ${doc.STM32_USB_USE_ISOCHRONOUS!"FALSE"}
+#define STM32_USB_USE_FAST_COPY             ${doc.STM32_USB_USE_FAST_COPY!"FALSE"}
+#define STM32_USB_HOST_WAKEUP_DURATION      ${doc.STM32_USB_HOST_WAKEUP_DURATION!"2"}
+#define STM32_USB_48MHZ_DELTA               ${doc.STM32_USB_48MHZ_DELTA!"0"}
 
 /*
  * WDG driver system settings.

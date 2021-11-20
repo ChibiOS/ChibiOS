@@ -58,7 +58,7 @@
 #define STM32_PWR_PDCRF                     (0U)
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSI16_ENABLED                 TRUE
-#define STM32_HSI48_ENABLED                 FALSE
+#define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   FALSE
@@ -296,8 +296,11 @@
  * USB driver system settings.
  */
 #define STM32_USB_USE_USB1                  FALSE
-#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      3
+#define STM32_USB_USE_ISOCHRONOUS           FALSE
+#define STM32_USB_USE_FAST_COPY             FALSE
+#define STM32_USB_HOST_WAKEUP_DURATION      2
+#define STM32_USB_48MHZ_DELTA               0
 
 /*
  * WDG driver system settings.
