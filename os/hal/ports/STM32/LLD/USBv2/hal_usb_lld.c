@@ -535,9 +535,6 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
   /* USB bus SUSPEND condition handling.*/
   if ((istr & USB_ISTR_SUSP) != 0U) {
     usbp->usb->CNTR |= USB_CNTR_SUSPEN;
-#if STM32_USB_LOW_POWER_ON_SUSPEND
-    usbp->usb->CNTR |= USB_CNTR_LP_MODE;
-#endif
     _usb_suspend(usbp);
   }
 
@@ -547,13 +544,6 @@ OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
     if ((fnr & USB_FNR_RXDP) == 0U) {
       _usb_wakeup(usbp);
     }
-#if STM32_USB_LOW_POWER_ON_SUSPEND
-    else {
-      /* Just noise, going back in SUSPEND mode, reference manual 22.4.5,
-         table 169.*/
-      usbp->usb->CNTR |= USB_CNTR_LP_MODE;
-    }
-#endif
   }
 
   /* SOF handling.*/
