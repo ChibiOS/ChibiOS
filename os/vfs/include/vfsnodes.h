@@ -32,6 +32,17 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Node attributes.
+ * @{
+ */
+#define VFS_NODE_ATTR_READONLY      1U
+#define VFS_NODE_ATTR_RESERVED2     2U
+#define VFS_NODE_ATTR_SYSTEM        4U
+#define VFS_NODE_ATTR_RESERVED8     8U
+#define VFS_NODE_ATTR_ISDIR         16U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -48,13 +59,42 @@
 typedef struct vfs_driver vfs_driver_t;
 
 /**
+ * @brief   Type of a file offset.
+ */
+typedef uint32_t vfs_fileoffset_t;
+
+/**
+ * @brief   Type of a node attributes.
+ */
+typedef uint32_t vfs_nodeattr_t;
+
+/**
+ * @brief   Type of a node information structure.
+ * @todo    Add attributes, permissions etc.
+ */
+typedef struct vfs_node_info {
+  /**
+   * @brief   Size of the node.
+   */
+  vfs_nodeattr_t        attr;
+  /**
+   * @brief   Size of the node.
+   */
+  vfs_fileoffset_t      size;
+  /**
+   * @brief   Name of the node.
+   */
+  char                  name[VFS_CFG_MAX_NAMELEN + 1];
+} vfs_node_info_t;
+
+/**
  * @brief   @p vfs_node_t specific methods.
  */
 #define __vfs_node_methods                                                  \
   /* Instance offset, used for multiple inheritance, normally zero. It
      represents the offset between the current object and the container
      object*/                                                               \
-  size_t                        instance_offset;                            \
+  size_t                instance_offset;                                    \
   /* Node release, the object is disposed when the counter reaches zero.*/  \
   void (*release)(void *instance);
 
@@ -119,7 +159,9 @@ typedef struct vfs_directory_node {
  * @brief   @p vfs_file_node_t specific methods.
  */
 #define __vfs_file_node_methods                                             \
-  __vfs_node_methods
+  __vfs_node_methods                                                        \
+  bool (*first)(vfs_node_info_t *nif);                                      \
+  bool (*next)(vfs_node_info_t *nif);
 
 /**
  * @brief   @p vfs_file_node_t specific data.
