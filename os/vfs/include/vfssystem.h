@@ -53,34 +53,34 @@ typedef enum {
 } vfserr_t;
 
 /**
- * @brief   @p vfs_system_node_t specific methods.
+ * @brief   @p vfs_system_directory_node_t specific methods.
  */
-#define __vfs_system_node_methods                                           \
-  __vfs_node_methods
+#define __vfs_system_directory_node_methods                                 \
+  __vfs_directory_node_methods
 
 /**
- * @brief   @p vfs_system_node_t specific data.
+ * @brief   @p vfs_system_directory_node_t specific data.
  */
-#define __vfs_system_node_data                                              \
-  __vfs_node_data
+#define __vfs_system_directory_node_data                                    \
+  __vfs_directory_node_data
 
 /**
- * @brief   @p vfs_system_node_t virtual methods table.
+ * @brief   @p vfs_system_directory_node_t virtual methods table.
  */
-struct vfs_system_node_vmt {
-  __vfs_system_node_methods
+struct vfs_system_directory_node_vmt {
+  __vfs_system_directory_node_methods
 };
 
 /**
- * @brief   Type of a structure representing a VFS system node.
+ * @brief   Type of a structure representing a VFS system directory node.
  */
-typedef struct vfs_system_node {
+typedef struct vfs_system_directory_node {
   /**
    * @brief   Virtual Methods Table.
    */
-  const struct vfs_system_node_vmt *vmt;
-  __vfs_system_node_data
-} vfs_system_node_t;
+  const struct vfs_system_directory_node_vmt *vmt;
+  __vfs_system_directory_node_data
+} vfs_system_directory_node_t;
 
 /**
  * @brief   Type of a structure representing the VFS system.
@@ -100,7 +100,7 @@ typedef struct vfs_system {
   /**
    * @brief   Absolute root node.
    */
-  vfs_node_t                    *root_node;
+  vfs_system_directory_node_t   *root_node;
   /**
    * @brief   Next registration slot.
    */

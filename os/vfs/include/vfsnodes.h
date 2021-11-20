@@ -48,14 +48,6 @@
 typedef struct vfs_driver vfs_driver_t;
 
 /**
- * @brief   Type of a VFS node.
- */
-typedef enum {
-  VFS_NODE_TYPE_DIRECTORY       = 0,/**< VFS_NODE_TYPE_DIRECTORY */
-  VFS_NODE_TYPE_FILE            = 1 /**< VFS_NODE_TYPE_FILE */
-} vfs_node_type_t;
-
-/**
  * @brief   @p vfs_node_t specific methods.
  */
 #define __vfs_node_methods                                                  \
@@ -64,11 +56,7 @@ typedef enum {
      object*/                                                               \
   size_t                        instance_offset;                            \
   /* Node release, the object is disposed when the counter reaches zero.*/  \
-  void (*release)(void *instance);                                          \
-  /* Node type getter function.*/                                           \
-  vfs_node_type_t (*get_type)(void *instance);                              \
-  /* Node name getter function.*/                                           \
-  char (*get_name)(void *instance);
+  void (*release)(void *instance);
 
 /**
  * @brief   @p vfs_node_t specific data.
@@ -87,15 +75,75 @@ struct vfs_node_vmt {
 };
 
 /**
- * @brief   Type of a structure representing a VFS node.
+ * @brief   Type of a structure representing a generic VFS node.
  */
 typedef struct vfs_node {
   /**
    * @brief   Virtual Methods Table.
    */
-  const struct vfs_node_vmt     *vmt;
+  const struct vfs_node_vmt *vmt;
   __vfs_node_data
 } vfs_node_t;
+
+/**
+ * @brief   @p vfs_directory_node_t specific methods.
+ */
+#define __vfs_directory_node_methods                                        \
+  __vfs_node_methods
+
+/**
+ * @brief   @p vfs_directory_node_t specific data.
+ */
+#define __vfs_directory_node_data                                           \
+  __vfs_node_data
+
+/**
+ * @brief   @p vfs_directory_node_t virtual methods table.
+ */
+struct vfs_directory_node_vmt {
+  __vfs_directory_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a directory VFS node.
+ */
+typedef struct vfs_directory_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_directory_node_vmt *vmt;
+  __vfs_directory_node_data
+} vfs_directory_node_t;
+
+/**
+ * @brief   @p vfs_file_node_t specific methods.
+ */
+#define __vfs_file_node_methods                                             \
+  __vfs_node_methods
+
+/**
+ * @brief   @p vfs_file_node_t specific data.
+ */
+#define __vfs_file_node_data                                                \
+  __vfs_node_data
+
+/**
+ * @brief   @p vfs_file_node_t virtual methods table.
+ */
+struct vfs_file_node_vmt {
+  __vfs_file_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a file VFS node.
+ */
+typedef struct vfs_file_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_directory_node_vmt *vmt;
+  __vfs_file_node_data
+} vfs_file_node_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
