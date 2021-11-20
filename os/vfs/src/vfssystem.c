@@ -28,6 +28,13 @@
 #include "vfs.h"
 
 /*===========================================================================*/
+/* Module local definitions.                                                 */
+/*===========================================================================*/
+
+#define BREAK_ON_ERROR(err)                                                 \
+  if ((err) < VFS_RET_SUCCESS) break
+
+/*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
@@ -47,6 +54,63 @@ vfs_system_t vfs;
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
+
+vfserr_t vfs_match_separator(const char **pathp) {
+  vfserr_t err;
+  const char *p = *pathp;
+
+  if (*p++ != '/') {
+    err = VFS_RET_INVALID_PATH;
+  }
+  else {
+    err = VFS_RET_SUCCESS;
+    *pathp = p;
+  }
+
+  return err;
+}
+
+
+vfserr_t vfs_match_filename(const char **pathp, char *fname) {
+  vfserr_t err;
+  size_t n;
+  const char *p = *pathp;
+
+  n = 0U;
+  while (true) {
+    char c = *p++;
+    if ((c == '\0') || (c == '/')) {
+      *pathp = p;
+      *fname = '\0';
+      err = VFS_RET_SUCCESS;
+      break;
+    }
+
+    if (n > VFS_CFG_MAX_NAMELEN) {
+      err = VFS_RET_INVALID_PATH;
+      break;
+    }
+
+    *fname++ = c;
+    n++;
+  }
+
+  return err;
+}
+
+vfserr_t vfs_match_driver(const char **pathp, vfs_driver_t **dpp) {
+  char fname[VFS_CFG_MAX_NAMELEN + 1];
+  vfserr_t err;
+
+  do {
+    err = vfs_match_filename(pathp, fname);
+    BREAK_ON_ERROR(err);
+
+  }
+  while (false);
+
+  return err;
+}
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -89,6 +153,54 @@ vfserr_t vfsRegisterDriver(vfs_driver_t *vdp) {
   }
 
   VFS_UNLOCK();
+
+  return err;
+}
+
+/**
+ * @brief   Opens a VFS directory.
+ *
+ * @param[in] path      absolute path of the directory to be opened
+ * @param[out] vdnpp    pointer to the pointer to the instantiated
+ *                      @p vfs_directory_node_t object
+ * @return              The operation result.
+ */
+vfserr_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
+  vfserr_t err;
+  vfs_driver_t *dp;
+
+  do {
+    err = vfs_match_separator(&path);
+    BREAK_ON_ERROR(err);
+
+    err = vfs_match_driver(&path, &dp);
+    BREAK_ON_ERROR(err);
+  }
+  while (false);
+
+  return err;
+}
+
+/**
+ * @brief   Opens a VFS file.
+ *
+ * @param[in] path      absolute path of the file to be opened
+ * @param[out] vdnpp    pointer to the pointer to the instantiated
+ *                      @p vfs_file_node_t object
+ * @return              The operation result.
+ */
+vfserr_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
+  vfserr_t err;
+  vfs_driver_t *dp;
+
+  do {
+    err = vfs_match_separator(&path);
+    BREAK_ON_ERROR(err);
+
+    err = vfs_match_driver(&path, &dp);
+    BREAK_ON_ERROR(err);
+  }
+  while (false);
 
   return err;
 }

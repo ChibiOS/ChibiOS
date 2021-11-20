@@ -183,7 +183,7 @@ typedef struct vfs_file_node {
   /**
    * @brief   Virtual Methods Table.
    */
-  const struct vfs_directory_node_vmt *vmt;
+  const struct vfs_file_node_vmt *vmt;
   __vfs_file_node_data
 } vfs_file_node_t;
 

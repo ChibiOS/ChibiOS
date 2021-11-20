@@ -48,8 +48,9 @@
  * @brief   Type of a VFS error code.
  */
 typedef enum {
-  VFS_RET_SUCCESS = 0,    /**< VFS_RET_SUCCESS */
-  VFS_RET_NO_RESOURCE = -1/**< VFS_RET_NO_RESOURCE */
+  VFS_RET_SUCCESS       = 0,
+  VFS_RET_NO_RESOURCE   = -1,
+  VFS_RET_INVALID_PATH  = -2,
 } vfserr_t;
 
 /**
@@ -137,6 +138,8 @@ extern "C" {
 #endif
   void vfsInit(void);
   vfserr_t vfsRegisterDriver(vfs_driver_t *vdp);
+  vfserr_t vfsOpenDirectory(const char *name, vfs_directory_node_t **vdnpp);
+  vfserr_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
 #ifdef __cplusplus
 }
 #endif
