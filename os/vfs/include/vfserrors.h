@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    vfs/include/vfssystem.h
- * @brief   VFS system header file.
+ * @file    vfs/include/vfserrors.h
+ * @brief   VFS erors header file.
  *
- * @addtogroup VFS_SYSTEM
+ * @addtogroup VFS_ERRORS
  * @{
  */
 
-#ifndef VFSSYSTEM_H
-#define VFSSYSTEM_H
+#ifndef VFSERRORS_H
+#define VFSERRORS_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -45,84 +45,32 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p vfs_system_directory_node_t specific methods.
+ * @brief   Type of a VFS error code.
  */
-#define __vfs_system_directory_node_methods                                 \
-  __vfs_directory_node_methods
-
-/**
- * @brief   @p vfs_system_directory_node_t specific data.
- */
-#define __vfs_system_directory_node_data                                    \
-  __vfs_directory_node_data
-
-/**
- * @brief   @p vfs_system_directory_node_t virtual methods table.
- */
-struct vfs_system_directory_node_vmt {
-  __vfs_system_directory_node_methods
-};
-
-/**
- * @brief   Type of a structure representing a VFS system directory node.
- */
-typedef struct vfs_system_directory_node {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_system_directory_node_vmt *vmt;
-  __vfs_system_directory_node_data
-} vfs_system_directory_node_t;
-
-/**
- * @brief   Type of a structure representing the VFS system.
- */
-typedef struct vfs_system {
-  /**
-   * @brief   VFS access mutex.
-   */
-  mutex_t                       mtx;
-  /**
-   * @brief   Absolute root node.
-   */
-  vfs_system_directory_node_t   *root_node;
-  /**
-   * @brief   Next registration slot.
-   */
-  vfs_driver_t                  **next_driver;
-  /**
-   * @brief   Registration slots.
-   */
-  vfs_driver_t                  *drivers[VFS_CFG_MAX_DRIVERS];
-} vfs_system_t;
+typedef enum {
+  VFS_RET_SUCCESS       = 0,
+  VFS_RET_NO_RESOURCE   = -1,
+  VFS_RET_NO_DRIVER     = -2,
+  VFS_RET_INVALID_PATH  = -3,
+  VFS_RET_NOT_FOUND     = -4
+} vfserr_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-/*
- * Defaults on the best synchronization mechanism available.
- */
-#define VFS_LOCK()              osalMutexLock(&vfs.mtx)
-#define VFS_UNLOCK()            osalMutexUnlock(&vfs.mtx)
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern vfs_system_t vfs;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void vfsInit(void);
-  vfserr_t vfsRegisterDriver(vfs_driver_t *vdp);
-  vfserr_t vfsOpenDirectory(const char *name, vfs_directory_node_t **vdnpp);
-  vfserr_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* VFSSYSTEM_H */
+#endif /* VFSERRORS_H */
 
 /** @} */

@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "vfs.h"
 
 /*===========================================================================*/
@@ -98,14 +100,28 @@ vfserr_t vfs_match_filename(const char **pathp, char *fname) {
   return err;
 }
 
-vfserr_t vfs_match_driver(const char **pathp, vfs_driver_t **dpp) {
+vfserr_t vfs_match_driver(const char **pathp, vfs_driver_t **vdpp) {
   char fname[VFS_CFG_MAX_NAMELEN + 1];
   vfserr_t err;
+  vfs_driver_t **pp;
 
   do {
+    err = vfs_match_separator(pathp);
+    BREAK_ON_ERROR(err);
+
     err = vfs_match_filename(pathp, fname);
     BREAK_ON_ERROR(err);
 
+    /* Searching among registered drivers.*/
+    pp = &vfs.drivers[0];
+    while (pp < vfs.next_driver) {
+      if (strncmp(fname, (*pp)->vmt->get_name(), VFS_CFG_MAX_NAMELEN) == 0) {
+        *vdpp = *pp;
+        return VFS_RET_SUCCESS;
+      }
+    }
+
+    err = VFS_RET_NO_DRIVER;
   }
   while (false);
 
@@ -170,11 +186,10 @@ vfserr_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
   vfs_driver_t *dp;
 
   do {
-    err = vfs_match_separator(&path);
-    BREAK_ON_ERROR(err);
-
     err = vfs_match_driver(&path, &dp);
     BREAK_ON_ERROR(err);
+
+    err = dp->vmt->open_dir(path, vdnpp);
   }
   while (false);
 
@@ -194,11 +209,10 @@ vfserr_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
   vfs_driver_t *dp;
 
   do {
-    err = vfs_match_separator(&path);
-    BREAK_ON_ERROR(err);
-
     err = vfs_match_driver(&path, &dp);
     BREAK_ON_ERROR(err);
+
+    err = dp->vmt->open_file(path, vfnpp);
   }
   while (false);
 

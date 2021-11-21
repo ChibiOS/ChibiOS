@@ -48,15 +48,17 @@
  * @brief   @p vfs_node_t specific methods.
  */
 #define __vfs_driver_methods                                                \
-  /* Instance offset, used for multiple inheritance, normally zero. It
-     represents the offset between the current object and the container
-     object*/                                                               \
-  size_t                        instance_offset;
+  _base_object_methods                                                      \
+  /* Returns a pointer to the driver name constant.*/                       \
+  const char *(*get_name)(void);                                            \
+  vfserr_t (*open_dir)(const char *path, vfs_directory_node_t **vdnpp);     \
+  vfserr_t (*open_file)(const char *path, vfs_file_node_t **vfnpp);
 
 /**
  * @brief   @p vfs_node_t specific data.
  */
-#define __vfs_driver_data
+#define __vfs_driver_data                                                   \
+  _base_object_data
 
 /**
  * @brief   @p vfs_node_t virtual methods table.

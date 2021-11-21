@@ -69,6 +69,15 @@ typedef uint32_t vfs_fileoffset_t;
 typedef uint32_t vfs_nodeattr_t;
 
 /**
+ * @brief   Type of a file node.
+ */
+typedef enum {
+  VFS_NODE_TYPE_FILE        = 0,
+  VFS_NODE_TYPE_STREAM      = 1,
+  VFS_NODE_TYPE_CHANNEL     = 2,
+} vfs_node_type_t;
+
+/**
  * @brief   Type of a node information structure.
  * @todo    Add attributes, permissions etc.
  */
@@ -91,10 +100,7 @@ typedef struct vfs_node_info {
  * @brief   @p vfs_node_t specific methods.
  */
 #define __vfs_node_methods                                                  \
-  /* Instance offset, used for multiple inheritance, normally zero. It
-     represents the offset between the current object and the container
-     object*/                                                               \
-  size_t                instance_offset;                                    \
+  _base_object_methods                                                      \
   /* Node release, the object is disposed when the counter reaches zero.*/  \
   void (*release)(void *instance);
 
@@ -102,6 +108,7 @@ typedef struct vfs_node_info {
  * @brief   @p vfs_node_t specific data.
  */
 #define __vfs_node_data                                                     \
+  _base_object_data                                                         \
   /* Number of references to this node.*/                                   \
   unsigned              references_counter;                                 \
   /* Driver handling this node.*/                                           \
@@ -173,7 +180,15 @@ typedef struct vfs_directory_node {
  * @brief   @p vfs_file_node_t virtual methods table.
  */
 struct vfs_file_node_vmt {
-  __vfs_file_node_methods
+  __vfs_file_node_methods                                                   \
+  /* Type of the interface of the attached object.*/                        \
+  vfs_node_type_t               type;                                       \
+  /* Object instance pointers.*/                                            \
+  union {                                                                   \
+    /*BaseFileStream              *file;*/                                      \
+    BaseSequentialStream        *stream;                                    \
+    BaseAsynchronousChannel     *channel;                                   \
+  } instance;
 };
 
 /**
