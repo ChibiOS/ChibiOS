@@ -118,7 +118,11 @@ extern "C" {
   void vfsInit(void);
   vfserr_t vfsRegisterDriver(vfs_driver_t *vdp);
   vfserr_t vfsOpenDirectory(const char *name, vfs_directory_node_t **vdnpp);
+  void vfsCloseDirectory(vfs_directory_node_t *vdnp);
   vfserr_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
+  void vfsCloseFile(vfs_file_node_t *vfnp);
+  vfserr_t vfsReadFile(vfs_file_node_t *vfnp, char *buf, size_t n);
+  vfserr_t vfsWriteFile(vfs_file_node_t *vfnp, const char *buf, size_t n);
 #ifdef __cplusplus
 }
 #endif

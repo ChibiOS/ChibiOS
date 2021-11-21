@@ -64,6 +64,8 @@
 #define CH_VFS_PATCH            0
 /** @} */
 
+#include <stddef.h>
+
 /* Dependencies.*/
 #include "osal.h"
 #include "hal_objects.h"

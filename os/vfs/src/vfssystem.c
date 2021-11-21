@@ -197,6 +197,17 @@ vfserr_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
 }
 
 /**
+ * @brief   Releases a @p vfs_directory_node_t object.
+ *
+ * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ *                      to be released
+ */
+void vfsCloseDirectory(vfs_directory_node_t *vdnp) {
+
+  vdnp->vmt->release((void *)vdnp);
+}
+
+/**
  * @brief   Opens a VFS file.
  *
  * @param[in] path      absolute path of the file to be opened
@@ -215,6 +226,59 @@ vfserr_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
     err = dp->vmt->open_file(path, vfnpp);
   }
   while (false);
+
+  return err;
+}
+
+/**
+ * @brief   Releases a @p vfs_file_node_t object.
+ *
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ *                      to be released
+ */
+void vfsCloseFile(vfs_file_node_t *vfnp) {
+
+  vfnp->vmt->release((void *)vfnp);
+}
+
+/**
+ * @brief   File node read.
+ * @details The function reads data from a file node into a buffer.
+ *
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[out] buf      pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred
+ * @return              The transferred number of bytes or an error.
+ *
+ * @api
+ */
+vfserr_t vfsReadFile(vfs_file_node_t *vfnp, char *buf, size_t n) {
+  vfserr_t err = VFS_RET_SUCCESS;
+
+  (void)vfnp;
+  (void)buf;
+  (void)n;
+
+  return err;
+}
+
+/**
+ * @brief   File node write.
+ * @details The function writes data from a buffer to a file node.
+ *
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[out] buf      pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred
+ * @return              The transferred number of bytes or an error.
+ *
+ * @api
+ */
+vfserr_t vfsWriteFile(vfs_file_node_t *vfnp, const char *buf, size_t n) {
+  vfserr_t err = VFS_RET_SUCCESS;
+
+  (void)vfnp;
+  (void)buf;
+  (void)n;
 
   return err;
 }
