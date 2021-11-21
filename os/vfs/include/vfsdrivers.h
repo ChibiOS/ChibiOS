@@ -56,8 +56,8 @@ typedef struct vfs_driver vfs_driver_t;
   _base_object_methods                                                      \
   /* Returns a pointer to the driver name constant.*/                       \
   const char *(*get_name)(void);                                            \
-  vfserr_t (*open_dir)(const char *path, vfs_directory_node_t **vdnpp);     \
-  vfserr_t (*open_file)(const char *path, vfs_file_node_t **vfnpp);
+  msg_t (*open_dir)(const char *path, vfs_directory_node_t **vdnpp);        \
+  msg_t (*open_file)(const char *path, vfs_file_node_t **vfnpp);
 
 /**
  * @brief   @p vfs_node_t specific data.

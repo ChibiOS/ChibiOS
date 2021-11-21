@@ -87,7 +87,6 @@ typedef struct vfs_node_info {
   char                  name[VFS_CFG_MAX_NAMELEN + 1];
 } vfs_node_info_t;
 
-
 /**
  * @brief   Type of a structure representing a generic VFS node.
  */
@@ -151,8 +150,8 @@ typedef struct vfs_directory_node vfs_directory_node_t;
  */
 struct vfs_directory_node_vmt {
   __vfs_directory_node_methods                                              \
-  vfserr_t (*dir_first)(void *instance);                                    \
-  vfserr_t (*dir_next)(void *instance);
+  msg_t (*dir_first)(void *instance);                                       \
+  msg_t (*dir_next)(void *instance);
 };
 
 /**
@@ -176,9 +175,9 @@ typedef struct vfs_file_node vfs_file_node_t;
  */
 #define __vfs_file_node_methods                                             \
   __vfs_node_methods                                                        \
-  vfserr_t (*file_read)(void *instance, char *buf, size_t n);               \
-  vfserr_t (*file_write)(void *instance, const char *buf, size_t n);        \
-  vfserr_t (*file_setpos)(void *instance, vfs_offset_t offset);             \
+  msg_t (*file_read)(void *instance, uint8_t *buf, size_t n);               \
+  msg_t (*file_write)(void *instance, const uint8_t *buf, size_t n);        \
+  msg_t (*file_setpos)(void *instance, vfs_offset_t offset);                \
   vfs_offset_t (*file_getpos)(void *instance);                              \
   vfs_offset_t (*file_getsize)(void *instance);
 

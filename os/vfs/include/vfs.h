@@ -79,6 +79,7 @@
 
 /* Base VFS headers.*/
 #include "vfserrors.h"
+#include "vfsparser.h"
 #include "vfsnodes.h"
 #include "vfsdrivers.h"
 #include "vfssystem.h"

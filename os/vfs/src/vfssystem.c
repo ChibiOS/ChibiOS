@@ -33,9 +33,6 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-#define BREAK_ON_ERROR(err)                                                 \
-  if ((err) < VFS_RET_SUCCESS) break
-
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -57,60 +54,17 @@ vfs_system_t vfs;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-vfserr_t vfs_match_separator(const char **pathp) {
-  vfserr_t err;
-  const char *p = *pathp;
-
-  if (*p++ != '/') {
-    err = VFS_RET_INVALID_PATH;
-  }
-  else {
-    err = VFS_RET_SUCCESS;
-    *pathp = p;
-  }
-
-  return err;
-}
-
-
-vfserr_t vfs_match_filename(const char **pathp, char *fname) {
-  vfserr_t err;
-  size_t n;
-  const char *p = *pathp;
-
-  n = 0U;
-  while (true) {
-    char c = *p++;
-    if ((c == '\0') || (c == '/')) {
-      *pathp = p;
-      *fname = '\0';
-      err = VFS_RET_SUCCESS;
-      break;
-    }
-
-    if (n > VFS_CFG_MAX_NAMELEN) {
-      err = VFS_RET_INVALID_PATH;
-      break;
-    }
-
-    *fname++ = c;
-    n++;
-  }
-
-  return err;
-}
-
-vfserr_t vfs_match_driver(const char **pathp, vfs_driver_t **vdpp) {
+msg_t match_driver(const char **pathp, vfs_driver_t **vdpp) {
   char fname[VFS_CFG_MAX_NAMELEN + 1];
-  vfserr_t err;
+  msg_t err;
   vfs_driver_t **pp;
 
   do {
-    err = vfs_match_separator(pathp);
-    BREAK_ON_ERROR(err);
+    err = vfs_parse_separator(pathp);
+    VFS_BREAK_ON_ERROR(err);
 
-    err = vfs_match_filename(pathp, fname);
-    BREAK_ON_ERROR(err);
+    err = vfs_parse_filename(pathp, fname);
+    VFS_BREAK_ON_ERROR(err);
 
     /* Searching among registered drivers.*/
     pp = &vfs.drivers[0];
@@ -154,9 +108,11 @@ void vfsInit(void) {
  *
  * @param[in] vdp       pointer to a @p vfs_driver_t structure
  * @return              The operation result.
+ *
+ * @api
  */
-vfserr_t vfsRegisterDriver(vfs_driver_t *vdp) {
-  vfserr_t err;
+msg_t vfsRegisterDriver(vfs_driver_t *vdp) {
+  msg_t err;
 
   VFS_LOCK();
 
@@ -180,14 +136,16 @@ vfserr_t vfsRegisterDriver(vfs_driver_t *vdp) {
  * @param[out] vdnpp    pointer to the pointer to the instantiated
  *                      @p vfs_directory_node_t object
  * @return              The operation result.
+ *
+ * @api
  */
-vfserr_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
-  vfserr_t err;
+msg_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
+  msg_t err;
   vfs_driver_t *dp;
 
   do {
-    err = vfs_match_driver(&path, &dp);
-    BREAK_ON_ERROR(err);
+    err = match_driver(&path, &dp);
+    VFS_BREAK_ON_ERROR(err);
 
     err = dp->vmt->open_dir(path, vdnpp);
   }
@@ -201,22 +159,40 @@ vfserr_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
  *
  * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
  *                      to be released
+ *
+ * @api
  */
 void vfsCloseDirectory(vfs_directory_node_t *vdnp) {
 
   vdnp->vmt->release((void *)vdnp);
 }
 
-vfserr_t vfsGetDirectoryFirst(vfs_directory_node_t *vdnp) {
-  vfserr_t err = VFS_RET_EOF;
+/**
+ * @brief   First directory entry.
+ *
+ * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsGetDirectoryFirst(vfs_directory_node_t *vdnp) {
+  msg_t err = VFS_RET_EOF;
 
   (void)vdnp;
 
   return err;
 }
 
-vfserr_t vfsGetDirectoryNext(vfs_directory_node_t *vdnp) {
-  vfserr_t err = VFS_RET_EOF;
+/**
+ * @brief   Next directory entry.
+ *
+ * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsGetDirectoryNext(vfs_directory_node_t *vdnp) {
+  msg_t err = VFS_RET_EOF;
 
   (void)vdnp;
 
@@ -230,14 +206,16 @@ vfserr_t vfsGetDirectoryNext(vfs_directory_node_t *vdnp) {
  * @param[out] vdnpp    pointer to the pointer to the instantiated
  *                      @p vfs_file_node_t object
  * @return              The operation result.
+ *
+ * @api
  */
-vfserr_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
-  vfserr_t err;
+msg_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
+  msg_t err;
   vfs_driver_t *dp;
 
   do {
-    err = vfs_match_driver(&path, &dp);
-    BREAK_ON_ERROR(err);
+    err = match_driver(&path, &dp);
+    VFS_BREAK_ON_ERROR(err);
 
     err = dp->vmt->open_file(path, vfnpp);
   }
@@ -251,6 +229,8 @@ vfserr_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
  *
  * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
  *                      to be released
+ *
+ * @api
  */
 void vfsCloseFile(vfs_file_node_t *vfnp) {
 
@@ -268,8 +248,8 @@ void vfsCloseFile(vfs_file_node_t *vfnp) {
  *
  * @api
  */
-vfserr_t vfsReadFile(vfs_file_node_t *vfnp, char *buf, size_t n) {
-  vfserr_t err = VFS_RET_SUCCESS;
+msg_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
+  msg_t err = VFS_RET_SUCCESS;
 
   (void)vfnp;
   (void)buf;
@@ -289,8 +269,8 @@ vfserr_t vfsReadFile(vfs_file_node_t *vfnp, char *buf, size_t n) {
  *
  * @api
  */
-vfserr_t vfsWriteFile(vfs_file_node_t *vfnp, const char *buf, size_t n) {
-  vfserr_t err = VFS_RET_SUCCESS;
+msg_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
+  msg_t err = VFS_RET_SUCCESS;
 
   (void)vfnp;
   (void)buf;
@@ -308,8 +288,8 @@ vfserr_t vfsWriteFile(vfs_file_node_t *vfnp, const char *buf, size_t n) {
  *
  * @api
  */
-vfserr_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
-  vfserr_t err = VFS_RET_SUCCESS;
+msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
+  msg_t err = VFS_RET_SUCCESS;
 
   (void)vfnp;
   (void)offset;

@@ -18,31 +18,19 @@
 */
 
 /**
- * @file    vfs/include/vfserrors.h
- * @brief   VFS erors header file.
+ * @file    vfs/include/vfsparser.h
+ * @brief   VFS parser utilities header file.
  *
- * @addtogroup VFS_ERRORS
+ * @addtogroup VFS_PARSE
  * @{
  */
 
-#ifndef VFSERRORS_H
-#define VFSERRORS_H
+#ifndef VFSPARSE_H
+#define VFSPARSE_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Error codes compatible with @p msg_t
- * @{
- */
-#define VFS_RET_SUCCESS         MSG_OK
-#define VFS_RET_NO_RESOURCE     (msg_t)-3
-#define VFS_RET_NO_DRIVER       (msg_t)-4
-#define VFS_RET_INVALID_PATH    (msg_t)-5
-#define VFS_RET_NOT_FOUND       (msg_t)-6
-#define VFS_RET_EOF             (msg_t)-7
-/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -60,9 +48,6 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-#define VFS_BREAK_ON_ERROR(err)                                             \
-  if ((err) < VFS_RET_SUCCESS) break
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -70,11 +55,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  msg_t vfs_parse_separator(const char **pathp);
+  msg_t vfs_parse_filename(const char **pathp, char *fname);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* VFSERRORS_H */
+#endif /* VFSPARSE_H */
 
 /** @} */

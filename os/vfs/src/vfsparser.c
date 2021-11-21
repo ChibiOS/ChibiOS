@@ -18,63 +18,82 @@
 */
 
 /**
- * @file    vfs/include/vfserrors.h
- * @brief   VFS erors header file.
+ * @file    vfs/src/chparser.c
+ * @brief   VFS parser utilities code.
  *
- * @addtogroup VFS_ERRORS
+ * @addtogroup VFS_PARSE
  * @{
  */
 
-#ifndef VFSERRORS_H
-#define VFSERRORS_H
+#include <string.h>
+
+#include "vfs.h"
 
 /*===========================================================================*/
-/* Module constants.                                                         */
-/*===========================================================================*/
-
-/**
- * @brief   Error codes compatible with @p msg_t
- * @{
- */
-#define VFS_RET_SUCCESS         MSG_OK
-#define VFS_RET_NO_RESOURCE     (msg_t)-3
-#define VFS_RET_NO_DRIVER       (msg_t)-4
-#define VFS_RET_INVALID_PATH    (msg_t)-5
-#define VFS_RET_NOT_FOUND       (msg_t)-6
-#define VFS_RET_EOF             (msg_t)-7
-/** @} */
-
-/*===========================================================================*/
-/* Module pre-compile time settings.                                         */
+/* Module local definitions.                                                 */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Derived constants and error checks.                                       */
+/* Module exported variables.                                                */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module data structures and types.                                         */
+/* Module local types.                                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module macros.                                                            */
+/* Module local variables.                                                   */
 /*===========================================================================*/
 
-#define VFS_BREAK_ON_ERROR(err)                                             \
-  if ((err) < VFS_RET_SUCCESS) break
-
 /*===========================================================================*/
-/* External declarations.                                                    */
+/* Module local functions.                                                   */
 /*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
 
-#ifdef __cplusplus
+msg_t vfs_parse_separator(const char **pathp) {
+  msg_t err;
+  const char *p = *pathp;
+
+  if (*p++ != '/') {
+    err = VFS_RET_INVALID_PATH;
+  }
+  else {
+    err = VFS_RET_SUCCESS;
+    *pathp = p;
+  }
+
+  return err;
 }
-#endif
 
-#endif /* VFSERRORS_H */
+
+msg_t vfs_parse_filename(const char **pathp, char *fname) {
+  msg_t err;
+  size_t n;
+  const char *p = *pathp;
+
+  n = 0U;
+  while (true) {
+    char c = *p++;
+    if ((c == '\0') || (c == '/')) {
+      *pathp = p;
+      *fname = '\0';
+      err = VFS_RET_SUCCESS;
+      break;
+    }
+
+    if (n > VFS_CFG_MAX_NAMELEN) {
+      err = VFS_RET_INVALID_PATH;
+      break;
+    }
+
+    *fname++ = c;
+    n++;
+  }
+
+  return err;
+}
 
 /** @} */

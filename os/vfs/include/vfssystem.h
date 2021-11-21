@@ -116,14 +116,14 @@ extern vfs_system_t vfs;
 extern "C" {
 #endif
   void vfsInit(void);
-  vfserr_t vfsRegisterDriver(vfs_driver_t *vdp);
-  vfserr_t vfsOpenDirectory(const char *name, vfs_directory_node_t **vdnpp);
+  msg_t vfsRegisterDriver(vfs_driver_t *vdp);
+  msg_t vfsOpenDirectory(const char *name, vfs_directory_node_t **vdnpp);
   void vfsCloseDirectory(vfs_directory_node_t *vdnp);
-  vfserr_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
+  msg_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
   void vfsCloseFile(vfs_file_node_t *vfnp);
-  vfserr_t vfsReadFile(vfs_file_node_t *vfnp, char *buf, size_t n);
-  vfserr_t vfsWriteFile(vfs_file_node_t *vfnp, const char *buf, size_t n);
-  vfserr_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset);
+  msg_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n);
+  msg_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n);
+  msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp);
   vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp);
 #ifdef __cplusplus
