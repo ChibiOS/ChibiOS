@@ -45,6 +45,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a structure representing a VFS driver.
+ */
+typedef struct vfs_driver vfs_driver_t;
+
+/**
  * @brief   @p vfs_node_t specific methods.
  */
 #define __vfs_driver_methods                                                \
@@ -68,15 +73,15 @@ struct vfs_driver_vmt {
 };
 
 /**
- * @brief   Type of a structure representing a VFS driver.
+ * @brief   TStructure representing a VFS driver.
  */
-typedef struct vfs_driver {
+struct vfs_driver {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct vfs_driver_vmt   *vmt;
   __vfs_driver_data
-} vfs_driver_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */

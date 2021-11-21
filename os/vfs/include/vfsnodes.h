@@ -61,21 +61,12 @@ typedef struct vfs_driver vfs_driver_t;
 /**
  * @brief   Type of a file offset.
  */
-typedef uint32_t vfs_fileoffset_t;
+typedef uint32_t vfs_offset_t;
 
 /**
  * @brief   Type of a node attributes.
  */
 typedef uint32_t vfs_nodeattr_t;
-
-/**
- * @brief   Type of a file node.
- */
-typedef enum {
-  VFS_NODE_TYPE_FILE        = 0,
-  VFS_NODE_TYPE_STREAM      = 1,
-  VFS_NODE_TYPE_CHANNEL     = 2,
-} vfs_node_type_t;
 
 /**
  * @brief   Type of a node information structure.
@@ -89,12 +80,18 @@ typedef struct vfs_node_info {
   /**
    * @brief   Size of the node.
    */
-  vfs_fileoffset_t      size;
+  vfs_offset_t          size;
   /**
    * @brief   Name of the node.
    */
   char                  name[VFS_CFG_MAX_NAMELEN + 1];
 } vfs_node_info_t;
+
+
+/**
+ * @brief   Type of a structure representing a generic VFS node.
+ */
+typedef struct vfs_node vfs_node_t;
 
 /**
  * @brief   @p vfs_node_t specific methods.
@@ -122,15 +119,20 @@ struct vfs_node_vmt {
 };
 
 /**
- * @brief   Type of a structure representing a generic VFS node.
+ * @brief   Structure representing a generic VFS node.
  */
-typedef struct vfs_node {
+struct vfs_node {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct vfs_node_vmt *vmt;
   __vfs_node_data
-} vfs_node_t;
+};
+
+/**
+ * @brief   Type of a structure representing a directory VFS node.
+ */
+typedef struct vfs_directory_node vfs_directory_node_t;
 
 /**
  * @brief   @p vfs_directory_node_t specific methods.
@@ -148,27 +150,37 @@ typedef struct vfs_node {
  * @brief   @p vfs_directory_node_t virtual methods table.
  */
 struct vfs_directory_node_vmt {
-  __vfs_directory_node_methods
+  __vfs_directory_node_methods                                              \
+  vfserr_t (*dir_first)(void *instance);                                    \
+  vfserr_t (*dir_next)(void *instance);
 };
 
 /**
- * @brief   Type of a structure representing a directory VFS node.
+ * @brief   Structure representing a directory VFS node.
  */
-typedef struct vfs_directory_node {
+struct vfs_directory_node {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct vfs_directory_node_vmt *vmt;
   __vfs_directory_node_data
-} vfs_directory_node_t;
+};
+
+/**
+ * @brief   Type of a structure representing a file VFS node.
+ */
+typedef struct vfs_file_node vfs_file_node_t;
 
 /**
  * @brief   @p vfs_file_node_t specific methods.
  */
 #define __vfs_file_node_methods                                             \
   __vfs_node_methods                                                        \
-  bool (*first)(vfs_node_info_t *nif);                                      \
-  bool (*next)(vfs_node_info_t *nif);
+  vfserr_t (*file_read)(void *instance, char *buf, size_t n);               \
+  vfserr_t (*file_write)(void *instance, const char *buf, size_t n);        \
+  vfserr_t (*file_setpos)(void *instance, vfs_offset_t offset);             \
+  vfs_offset_t (*file_getpos)(void *instance);                              \
+  vfs_offset_t (*file_getsize)(void *instance);
 
 /**
  * @brief   @p vfs_file_node_t specific data.
@@ -180,27 +192,19 @@ typedef struct vfs_directory_node {
  * @brief   @p vfs_file_node_t virtual methods table.
  */
 struct vfs_file_node_vmt {
-  __vfs_file_node_methods                                                   \
-  /* Type of the interface of the attached object.*/                        \
-  vfs_node_type_t               type;                                       \
-  /* Object instance pointers.*/                                            \
-  union {                                                                   \
-    /*BaseFileStream              *file;*/                                      \
-    BaseSequentialStream        *stream;                                    \
-    BaseAsynchronousChannel     *channel;                                   \
-  } instance;
+  __vfs_file_node_methods
 };
 
 /**
- * @brief   Type of a structure representing a file VFS node.
+ * @brief   Structure representing a file VFS node.
  */
-typedef struct vfs_file_node {
+struct vfs_file_node {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct vfs_file_node_vmt *vmt;
   __vfs_file_node_data
-} vfs_file_node_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */

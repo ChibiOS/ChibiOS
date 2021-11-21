@@ -207,6 +207,22 @@ void vfsCloseDirectory(vfs_directory_node_t *vdnp) {
   vdnp->vmt->release((void *)vdnp);
 }
 
+vfserr_t vfsGetDirectoryFirst(vfs_directory_node_t *vdnp) {
+  vfserr_t err = VFS_RET_EOF;
+
+  (void)vdnp;
+
+  return err;
+}
+
+vfserr_t vfsGetDirectoryNext(vfs_directory_node_t *vdnp) {
+  vfserr_t err = VFS_RET_EOF;
+
+  (void)vdnp;
+
+  return err;
+}
+
 /**
  * @brief   Opens a VFS file.
  *
@@ -281,6 +297,54 @@ vfserr_t vfsWriteFile(vfs_file_node_t *vfnp, const char *buf, size_t n) {
   (void)n;
 
   return err;
+}
+
+/**
+ * @brief   Changes the current file position.
+ *
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] offset    new absolute position
+ * @return              The operation result.
+ *
+ * @api
+ */
+vfserr_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
+  vfserr_t err = VFS_RET_SUCCESS;
+
+  (void)vfnp;
+  (void)offset;
+
+  return err;
+}
+
+/**
+ * @brief   Returns the current file position.
+ *
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @return              The current file position.
+ *
+ * @api
+ */
+vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp) {
+
+  (void)vfnp;
+
+  return 0;
+}
+
+/**
+ * @brief   Returns the current file size.
+ *
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @return              The current file size.
+ *
+ * @api
+ */
+vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp) {
+
+  (void)vfnp;
+
+  return 0;
 }
 
 /** @} */

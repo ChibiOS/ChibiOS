@@ -69,8 +69,6 @@
 /* Dependencies.*/
 #include "osal.h"
 #include "hal_objects.h"
-#include "hal_streams.h"
-#include "hal_channels.h"
 
 /* License.*/
 #include "chlicense.h"

@@ -123,6 +123,9 @@ extern "C" {
   void vfsCloseFile(vfs_file_node_t *vfnp);
   vfserr_t vfsReadFile(vfs_file_node_t *vfnp, char *buf, size_t n);
   vfserr_t vfsWriteFile(vfs_file_node_t *vfnp, const char *buf, size_t n);
+  vfserr_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset);
+  vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp);
+  vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp);
 #ifdef __cplusplus
 }
 #endif

@@ -49,10 +49,11 @@
  */
 typedef enum {
   VFS_RET_SUCCESS       = 0,
-  VFS_RET_NO_RESOURCE   = -1,
-  VFS_RET_NO_DRIVER     = -2,
-  VFS_RET_INVALID_PATH  = -3,
-  VFS_RET_NOT_FOUND     = -4
+  VFS_RET_NO_RESOURCE   = -3,
+  VFS_RET_NO_DRIVER     = -4,
+  VFS_RET_INVALID_PATH  = -5,
+  VFS_RET_NOT_FOUND     = -6,
+  VFS_RET_EOF           = -7
 } vfserr_t;
 
 /*===========================================================================*/
