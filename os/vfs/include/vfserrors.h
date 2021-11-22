@@ -36,13 +36,13 @@
  * @name    Error codes compatible with HAL streams
  * @{
  */
-#define VFS_RET_SUCCESS         STM_OK
-#define VFS_RET_TIMEOUT         STM_TIMEOUT
-#define VFS_RET_EOF             STM_RESET
-#define VFS_RET_NO_RESOURCE     (msg_t)-3
-#define VFS_RET_NO_DRIVER       (msg_t)-4
-#define VFS_RET_INVALID_PATH    (msg_t)-5
-#define VFS_RET_NOT_FOUND       (msg_t)-6
+#define VFS_RET_SUCCESS         0
+#define VFS_RET_TIMEOUT         -1
+#define VFS_RET_EOF             -2
+#define VFS_RET_PAST_LIMIT      -3
+#define VFS_RET_NO_DRIVER       -4
+#define VFS_RET_INVALID_PATH    -5
+#define VFS_RET_NOT_FOUND       -6
 /** @} */
 
 /*===========================================================================*/

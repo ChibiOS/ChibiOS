@@ -175,8 +175,9 @@ typedef struct vfs_file_node vfs_file_node_t;
  */
 #define __vfs_file_node_methods                                             \
   __vfs_node_methods                                                        \
-  msg_t (*file_read)(void *instance, uint8_t *buf, size_t n);               \
-  msg_t (*file_write)(void *instance, const uint8_t *buf, size_t n);        \
+  BaseSequentialStream (*get_stream)(void *instance);                       \
+  ssize_t (*file_read)(void *instance, uint8_t *buf, size_t n);             \
+  ssize_t (*file_write)(void *instance, const uint8_t *buf, size_t n);      \
   msg_t (*file_setpos)(void *instance, vfs_offset_t offset);                \
   vfs_offset_t (*file_getpos)(void *instance);                              \
   vfs_offset_t (*file_getsize)(void *instance);

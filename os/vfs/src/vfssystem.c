@@ -117,7 +117,7 @@ msg_t vfsRegisterDriver(vfs_driver_t *vdp) {
   VFS_LOCK();
 
   if (vfs.next_driver >= &vfs.drivers[VFS_CFG_MAX_DRIVERS]) {
-    err = VFS_RET_NO_RESOURCE;
+    err = VFS_RET_PAST_LIMIT;
   }
   else {
     *vfs.next_driver++ = vdp;
@@ -248,14 +248,9 @@ void vfsCloseFile(vfs_file_node_t *vfnp) {
  *
  * @api
  */
-msg_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
-  msg_t err = VFS_RET_SUCCESS;
+ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
 
-  (void)vfnp;
-  (void)buf;
-  (void)n;
-
-  return err;
+  return vfnp->vmt->file_read((void *)vfnp, buf, n);
 }
 
 /**
@@ -269,14 +264,9 @@ msg_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
  *
  * @api
  */
-msg_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
-  msg_t err = VFS_RET_SUCCESS;
+ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
 
-  (void)vfnp;
-  (void)buf;
-  (void)n;
-
-  return err;
+  return vfnp->vmt->file_write((void *)vfnp, buf, n);
 }
 
 /**
@@ -289,12 +279,8 @@ msg_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
  * @api
  */
 msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
-  msg_t err = VFS_RET_SUCCESS;
 
-  (void)vfnp;
-  (void)offset;
-
-  return err;
+  return vfnp->vmt->file_setpos((void *)vfnp, offset);
 }
 
 /**
@@ -307,9 +293,7 @@ msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
  */
 vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp) {
 
-  (void)vfnp;
-
-  return 0;
+  return vfnp->vmt->file_getpos((void *)vfnp);
 }
 
 /**
@@ -322,9 +306,7 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp) {
  */
 vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp) {
 
-  (void)vfnp;
-
-  return 0;
+  return vfnp->vmt->file_getsize((void *)vfnp);
 }
 
 /** @} */

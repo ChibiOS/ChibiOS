@@ -64,11 +64,12 @@
 #define CH_VFS_PATCH            0
 /** @} */
 
-#include <stddef.h>
+#include <unistd.h>
 
 /* Dependencies.*/
 #include "osal.h"
 #include "hal_objects.h"
+#include "hal_streams.h"
 
 /* License.*/
 #include "chlicense.h"

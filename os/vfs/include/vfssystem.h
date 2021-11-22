@@ -121,8 +121,8 @@ extern "C" {
   void vfsCloseDirectory(vfs_directory_node_t *vdnp);
   msg_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
   void vfsCloseFile(vfs_file_node_t *vfnp);
-  msg_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n);
-  msg_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n);
+  ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n);
+  ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n);
   msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp);
   vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp);
