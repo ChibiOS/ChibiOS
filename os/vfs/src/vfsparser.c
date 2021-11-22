@@ -53,6 +53,11 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+/**
+ * @brief   Parses a path separator.
+ *
+ * @param[in, out]  pathp       pointer to the path under parsing
+ */
 msg_t vfs_parse_separator(const char **pathp) {
   msg_t err;
   const char *p = *pathp;
@@ -68,16 +73,35 @@ msg_t vfs_parse_separator(const char **pathp) {
   return err;
 }
 
-
+/**
+ * @brief   Parses a filename element using the restricted Posix set.
+ * @note    Consumes the next path separator, if any.
+ *
+ * @param[in, out]  pathp       pointer to the path under parsing
+ * @param[out]      fname       extracted file name
+ */
 msg_t vfs_parse_filename(const char **pathp, char *fname) {
-  msg_t err;
+  msg_t err = VFS_RET_INVALID_PATH;
   size_t n;
   const char *p = *pathp;
 
   n = 0U;
   while (true) {
     char c = *p++;
-    if ((c == '\0') || (c == '/')) {
+
+    /* Valid characters for path names.*/
+    if (!isalnum(c) && (c != '_') && (c != '-') && (c != '.')) {
+      break;
+    }
+
+    if (c == '/') {
+      *pathp = p + 1;
+      *fname = '\0';
+      err = VFS_RET_SUCCESS;
+      break;
+    }
+
+    if (c == '\0') {
       *pathp = p;
       *fname = '\0';
       err = VFS_RET_SUCCESS;
@@ -85,7 +109,6 @@ msg_t vfs_parse_filename(const char **pathp, char *fname) {
     }
 
     if (n > VFS_CFG_MAX_NAMELEN) {
-      err = VFS_RET_INVALID_PATH;
       break;
     }
 
