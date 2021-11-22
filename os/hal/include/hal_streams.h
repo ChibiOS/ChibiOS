@@ -56,7 +56,7 @@
   /* Channel put method, blocking.*/                                        \
   msg_t (*put)(void *instance, uint8_t b);                                  \
   /* Channel get method, blocking.*/                                        \
-  msg_t (*get)(void *instance);                                             \
+  msg_t (*get)(void *instance);
 
 /**
  * @brief   @p BaseSequentialStream specific data.
