@@ -121,9 +121,27 @@ static msg_t drv_open_file(void *instance,
                            const char *path,
                            vfs_file_node_t **vfnpp);
 
-static const struct vfs_streams_driver_vmt vmt = {
+static const struct vfs_streams_driver_vmt driver_vmt = {
   .open_dir     = drv_open_dir,
   .open_file    = drv_open_file
+};
+
+static void node_release(void *instance);
+static BaseSequentialStream *node_get_stream(void *instance);
+static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
+static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
+static msg_t node_file_setpos(void *instance, vfs_offset_t offset);
+static vfs_offset_t node_file_getpos(void *instance);
+static vfs_offset_t node_file_getsize(void *instance);
+
+static const struct vfs_stream_file_node_vmt node_vmt = {
+  .release      = node_release,
+  .get_stream   = node_get_stream,
+  .file_read    = node_file_read,
+  .file_write   = node_file_write,
+  .file_setpos  = node_file_setpos,
+  .file_getpos  = node_file_getpos,
+  .file_getsize = node_file_getsize
 };
 
 static vfs_stream_file_node_t drv_file_nodes[DRV_NODES_NUM];
@@ -172,7 +190,7 @@ static msg_t drv_open_file(void *instance,
         if (sfnp != NULL) {
 
           /* Node object initialization.*/
-          sfnp->vmt    = 0;
+          sfnp->vmt    = &node_vmt;
           sfnp->refs   = 1U;
           sfnp->driver = (vfs_driver_t *)drvp;
           sfnp->stream = dsep->stream;
@@ -194,6 +212,67 @@ static msg_t drv_open_file(void *instance,
   return err;
 }
 
+static void node_release(void *instance) {
+  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+
+  osalDbgAssert(sfnp->refs > 0U, "zero count");
+
+  if (--sfnp->refs == 0U) {
+
+    chPoolFree(&((vfs_streams_driver_t *)sfnp->driver)->nodes_pool,
+               (void *)sfnp);
+  }
+}
+
+static BaseSequentialStream *node_get_stream(void *instance) {
+  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+
+  osalDbgAssert(sfnp->refs > 0U, "zero count");
+
+  return sfnp->stream;
+}
+
+static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n) {
+  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+
+  osalDbgAssert(sfnp->refs > 0U, "zero count");
+
+  return streamRead(sfnp->stream, buf, n);
+}
+
+static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
+  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+
+  osalDbgAssert(sfnp->refs > 0U, "zero count");
+
+  return streamWrite(sfnp->stream, buf, n);
+}
+
+static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
+  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+
+  osalDbgAssert(sfnp->refs > 0U, "zero count");
+
+  (void)offset;
+
+  return VFS_RET_NOT_IMPLEMENTED;
+}
+
+static vfs_offset_t node_file_getpos(void *instance) {
+  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+
+  osalDbgAssert(sfnp->refs > 0U, "zero count");
+
+  return 0U;
+}
+
+static vfs_offset_t node_file_getsize(void *instance) {
+
+  (void)instance;
+
+  return 0U;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -201,7 +280,7 @@ static msg_t drv_open_file(void *instance,
 vfs_driver_t *drvStreamsInit(const char *rootname,
                              const drv_stream_element_t *streams) {
 
-  drv_streams.vmt      = &vmt;
+  drv_streams.vmt      = &driver_vmt;
   drv_streams.rootname = rootname;
   drv_streams.streams  = streams;
   chPoolObjectInit(&drv_streams.nodes_pool,
