@@ -106,21 +106,14 @@ msg_t vfs_parse_filename(const char **pathp, char *fname) {
 
   n = 0U;
   while (true) {
-    char c = *p++;
+    char c = *p;
 
     /* Valid characters for path names.*/
     if (!isalnum(c) && (c != '_') && (c != '-') && (c != '.')) {
       break;
     }
 
-    if (c == '/') {
-      *pathp = p + 1;
-      *fname = '\0';
-      err = VFS_RET_SUCCESS;
-      break;
-    }
-
-    if (c == '\0') {
+    if ((c == '/') || (c == '\0')) {
       *pathp = p;
       *fname = '\0';
       err = VFS_RET_SUCCESS;
@@ -132,6 +125,7 @@ msg_t vfs_parse_filename(const char **pathp, char *fname) {
     }
 
     *fname++ = c;
+    p++;
     n++;
   }
 

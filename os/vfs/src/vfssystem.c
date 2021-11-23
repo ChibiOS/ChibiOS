@@ -117,7 +117,7 @@ msg_t vfsRegisterDriver(vfs_driver_t *vdp) {
   VFS_LOCK();
 
   if (vfs.next_driver >= &vfs.drivers[VFS_CFG_MAX_DRIVERS]) {
-    err = VFS_RET_PAST_LIMIT;
+    err = VFS_RET_NO_RESOURCE;
   }
   else {
     *vfs.next_driver++ = vdp;

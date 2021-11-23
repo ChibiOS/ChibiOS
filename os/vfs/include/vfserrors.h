@@ -39,7 +39,7 @@
 #define VFS_RET_SUCCESS         0
 #define VFS_RET_TIMEOUT         -1
 #define VFS_RET_EOF             -2
-#define VFS_RET_PAST_LIMIT      -3
+#define VFS_RET_NO_RESOURCE     -3
 #define VFS_RET_NO_DRIVER       -4
 #define VFS_RET_INVALID_PATH    -5
 #define VFS_RET_NOT_FOUND       -6

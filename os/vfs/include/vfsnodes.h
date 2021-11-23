@@ -106,7 +106,7 @@ typedef struct vfs_node vfs_node_t;
 #define __vfs_node_data                                                     \
   _base_object_data                                                         \
   /* Number of references to this node.*/                                   \
-  unsigned              references_counter;                                 \
+  unsigned              refs;                                               \
   /* Driver handling this node.*/                                           \
   vfs_driver_t          *driver;
 
