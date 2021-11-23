@@ -55,7 +55,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t vfs_parse_separator(const char **pathp);
+  msg_t vfs_parse_match_separator(const char **pathp);
+  msg_t vfs_parse_match_end(const char **pathp);
   msg_t vfs_parse_filename(const char **pathp, char *fname);
 #ifdef __cplusplus
 }

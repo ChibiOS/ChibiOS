@@ -26,6 +26,7 @@
  */
 
 #include <string.h>
+#include <ctype.h>
 
 #include "vfs.h"
 
@@ -54,11 +55,11 @@
 /*===========================================================================*/
 
 /**
- * @brief   Parses a path separator.
+ * @brief   Matches a path separator.
  *
  * @param[in, out]  pathp       pointer to the path under parsing
  */
-msg_t vfs_parse_separator(const char **pathp) {
+msg_t vfs_parse_match_separator(const char **pathp) {
   msg_t err;
   const char *p = *pathp;
 
@@ -68,6 +69,24 @@ msg_t vfs_parse_separator(const char **pathp) {
   else {
     err = VFS_RET_SUCCESS;
     *pathp = p;
+  }
+
+  return err;
+}
+
+/**
+ * @brief   Matches a string end.
+ *
+ * @param[in, out]  pathp       pointer to the path under parsing
+ */
+msg_t vfs_parse_match_end(const char **pathp) {
+  msg_t err;
+
+  if (**pathp != '\0') {
+    err = VFS_RET_INVALID_PATH;
+  }
+  else {
+    err = VFS_RET_SUCCESS;
   }
 
   return err;

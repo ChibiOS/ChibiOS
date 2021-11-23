@@ -47,39 +47,18 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing a VFS driver.
+ * @brief   Type of a stream association structure.
  */
-typedef struct vfs_drv_streams vfs_drv_streams_t;
-
-/**
- * @brief   @p vfs_node_t specific methods.
- */
-#define __vfs_drv_streams_methods                                           \
-  __vfs_driver_methods
-
-/**
- * @brief   @p vfs_node_t specific data.
- */
-#define __vfs_drv_streams_data                                              \
-  __vfs_driver_data
-
-/**
- * @brief   @p vfs_node_t virtual methods table.
- */
-struct vfs_drv_stream_vmt {
-  __vfs_drv_streams_methods
-};
-
-/**
- * @brief   TStructure representing a VFS driver.
- */
-struct vfs_drv_streams {
+typedef struct drv_stream_element {
   /**
-   * @brief   Virtual Methods Table.
+   * @brief   Filename for the stream.
    */
-  const struct vfs_drv_streams_vmt   *vmt;
-  __vfs_drv_streams_data
-};
+  char                          *name;
+  /**
+   * @brief   Pointer to the stream.
+   */
+  BaseSequentialStream          *stream;
+} drv_stream_element_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */

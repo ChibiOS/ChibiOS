@@ -45,43 +45,41 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure representing a VFS driver.
- */
-typedef struct vfs_driver vfs_driver_t;
-
-/**
- * @brief   @p vfs_node_t specific methods.
+ * @brief   @p vfs_driver_t specific methods.
  */
 #define __vfs_driver_methods                                                \
   _base_object_methods                                                      \
-  /* Returns a pointer to the driver name constant.*/                       \
-  const char *(*get_name)(void);                                            \
-  msg_t (*open_dir)(const char *path, vfs_directory_node_t **vdnpp);        \
-  msg_t (*open_file)(const char *path, vfs_file_node_t **vfnpp);
+  msg_t (*open_dir)(void *instance,                                         \
+                    const char *path,                                       \
+                    vfs_directory_node_t **vdnpp);                          \
+  msg_t (*open_file)(void *instance,                                        \
+                     const char *path,                                      \
+                     vfs_file_node_t **vfnpp);
 
 /**
- * @brief   @p vfs_node_t specific data.
+ * @brief   @p vfs_driver_t specific data.
  */
 #define __vfs_driver_data                                                   \
-  _base_object_data
+  _base_object_data                                                         \
+  const char *rootname;
 
 /**
- * @brief   @p vfs_node_t virtual methods table.
+ * @brief   @p vfs_driver_t virtual methods table.
  */
 struct vfs_driver_vmt {
   __vfs_driver_methods
 };
 
 /**
- * @brief   TStructure representing a VFS driver.
+ * @brief   Type of a structure representing a VFS driver.
  */
-struct vfs_driver {
+typedef struct vfs_driver {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct vfs_driver_vmt   *vmt;
   __vfs_driver_data
-};
+} vfs_driver_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
