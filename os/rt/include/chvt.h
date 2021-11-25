@@ -69,8 +69,8 @@
  */
 #define __VIRTUAL_TIMER_DATA() {                                            \
   .dlist = {                                                                \
-    .next   = NULL.                                                         \
-    .prev   = NULL                                                          \
+    .next   = NULL,                                                         \
+    .prev   = NULL,                                                         \
     .delta  = (sysinterval_t)0                                              \
   },                                                                        \
   .func     = NULL,                                                         \
