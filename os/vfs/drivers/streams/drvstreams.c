@@ -35,9 +35,14 @@
 /*===========================================================================*/
 
 /**
- * @brief   Number of nodes pre-allocated in the pool.
+ * @brief   Number of directory nodes pre-allocated in the pool.
  */
-#define DRV_NODES_NUM           2
+#define DRV_DIR_NODES_NUM       1
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#define DRV_FILE_NODES_NUM      2
 
 /**
  * @brief   @p vfs_streams_driver_t specific methods.
@@ -51,7 +56,21 @@
 #define __vfs_streams_driver_data                                           \
   __vfs_driver_data                                                         \
   const drv_stream_element_t    *streams;                                   \
-  memory_pool_t                 nodes_pool;
+  memory_pool_t                 file_nodes_pool;                            \
+  memory_pool_t                 dir_nodes_pool;
+
+/**
+ * @brief   @p vfs_stream_dir_node_t specific methods.
+ */
+#define __vfs_stream_dir_node_methods                                       \
+  __vfs_directory_node_methods
+
+/**
+ * @brief   @p vfs_stream_dir_node_t specific data.
+ */
+#define __vfs_stream_dir_node_data                                          \
+  __vfs_directory_node_data                                                 \
+  unsigned                              index;
 
 /**
  * @brief   @p vfs_stream_file_node_t specific methods.
@@ -93,7 +112,25 @@ typedef struct vfs_drv_streams {
 } vfs_streams_driver_t;
 
 /**
- * @brief   @p vfs_file_node_t virtual methods table.
+ * @brief   @p vfs_stream_dir_node_t virtual methods table.
+ */
+struct vfs_stream_dir_node_vmt {
+  __vfs_stream_dir_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a stream dir VFS node.
+ */
+typedef struct vfs_stream_dir_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_stream_dir_node_vmt *vmt;
+  __vfs_stream_dir_node_data
+} vfs_stream_dir_node_t;
+
+/**
+ * @brief   @p vfs_stream_file_node_t virtual methods table.
  */
 struct vfs_stream_file_node_vmt {
   __vfs_stream_file_node_methods
@@ -127,16 +164,26 @@ static const struct vfs_streams_driver_vmt driver_vmt = {
 };
 
 static void node_release(void *instance);
-static BaseSequentialStream *node_get_stream(void *instance);
+
+static msg_t node_dir_first(void *instance, vfs_node_info_t *nip);
+static msg_t node_dir_next(void *instance, vfs_node_info_t *nip);
+
+static const struct vfs_stream_dir_node_vmt dir_node_vmt = {
+  .release      = node_release,
+  .dir_first    = node_dir_first,
+  .dir_next     = node_dir_next
+};
+
+static BaseSequentialStream *node_file_get_stream(void *instance);
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset);
 static vfs_offset_t node_file_getpos(void *instance);
 static vfs_offset_t node_file_getsize(void *instance);
 
-static const struct vfs_stream_file_node_vmt node_vmt = {
+static const struct vfs_stream_file_node_vmt file_node_vmt = {
   .release      = node_release,
-  .get_stream   = node_get_stream,
+  .get_stream   = node_file_get_stream,
   .file_read    = node_file_read,
   .file_write   = node_file_write,
   .file_setpos  = node_file_setpos,
@@ -144,7 +191,9 @@ static const struct vfs_stream_file_node_vmt node_vmt = {
   .file_getsize = node_file_getsize
 };
 
-static vfs_stream_file_node_t drv_file_nodes[DRV_NODES_NUM];
+static vfs_stream_file_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
+static vfs_stream_file_node_t drv_file_nodes[DRV_FILE_NODES_NUM];
+
 static vfs_streams_driver_t drv_streams;
 
 /*===========================================================================*/
@@ -154,12 +203,36 @@ static vfs_streams_driver_t drv_streams;
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_t **vdnpp) {
+  vfs_streams_driver_t *drvp = (vfs_streams_driver_t *)instance;
+  msg_t err;
 
-  (void)instance;
-  (void)path;
-  (void)vdnpp;
+  do {
+    vfs_stream_dir_node_t *sdnp;
 
-  return VFS_RET_NOT_FOUND;
+    err = vfs_parse_match_separator(&path);
+    VFS_BREAK_ON_ERROR(err);
+
+    err = vfs_parse_match_end(&path);
+    VFS_BREAK_ON_ERROR(err);
+
+    sdnp = chPoolAlloc(&drv_streams.dir_nodes_pool);
+    if (sdnp != NULL) {
+
+      /* Node object initialization.*/
+      sdnp->vmt    = &dir_node_vmt;
+      sdnp->refs   = 1U;
+      sdnp->driver = (vfs_driver_t *)drvp;
+      sdnp->index  = 0U;
+
+      *vdnpp = (vfs_directory_node_t *)sdnp;
+      return VFS_RET_SUCCESS;
+    }
+
+    err = VFS_RET_NO_RESOURCE;
+  }
+  while (false);
+
+  return err;
 }
 
 static msg_t drv_open_file(void *instance,
@@ -186,11 +259,11 @@ static msg_t drv_open_file(void *instance,
       if (strncmp(fname, dsep->name, VFS_CFG_MAX_NAMELEN) == 0) {
         vfs_stream_file_node_t *sfnp;
 
-        sfnp = chPoolAlloc(&drv_streams.nodes_pool);
+        sfnp = chPoolAlloc(&drv_streams.file_nodes_pool);
         if (sfnp != NULL) {
 
           /* Node object initialization.*/
-          sfnp->vmt    = &node_vmt;
+          sfnp->vmt    = &file_node_vmt;
           sfnp->refs   = 1U;
           sfnp->driver = (vfs_driver_t *)drvp;
           sfnp->stream = dsep->stream;
@@ -219,12 +292,41 @@ static void node_release(void *instance) {
 
   if (--sfnp->refs == 0U) {
 
-    chPoolFree(&((vfs_streams_driver_t *)sfnp->driver)->nodes_pool,
+    chPoolFree(&((vfs_streams_driver_t *)sfnp->driver)->file_nodes_pool,
                (void *)sfnp);
   }
 }
 
-static BaseSequentialStream *node_get_stream(void *instance) {
+static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
+  vfs_stream_dir_node_t *sdnp = (vfs_stream_dir_node_t *)instance;
+
+  osalDbgAssert(sdnp->refs > 0U, "zero count");
+
+  sdnp->index = 0U;
+
+  return node_dir_next(instance, nip);
+}
+
+static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
+  vfs_stream_dir_node_t *sdnp = (vfs_stream_dir_node_t *)instance;
+
+  osalDbgAssert(sdnp->refs > 0U, "zero count");
+
+  if (drv_streams.streams[sdnp->index].name != NULL) {
+
+    nip->attr   = VFS_NODE_ATTR_ISSTREAM;
+    nip->size   = (vfs_offset_t)0;
+    strcpy(nip->name, drv_streams.streams[sdnp->index].name);
+
+    sdnp->index++;
+
+    return VFS_RET_SUCCESS;
+  }
+
+  return VFS_RET_EOF;
+}
+
+static BaseSequentialStream *node_file_get_stream(void *instance) {
   vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
 
   osalDbgAssert(sfnp->refs > 0U, "zero count");
@@ -283,10 +385,18 @@ vfs_driver_t *drvStreamsInit(const char *rootname,
   drv_streams.vmt      = &driver_vmt;
   drv_streams.rootname = rootname;
   drv_streams.streams  = streams;
-  chPoolObjectInit(&drv_streams.nodes_pool,
+  chPoolObjectInit(&drv_streams.dir_nodes_pool,
+                   sizeof (vfs_stream_dir_node_t),
+                   chCoreAllocAligned);
+  chPoolLoadArray(&drv_streams.dir_nodes_pool,
+                  drv_dir_nodes,
+                  DRV_DIR_NODES_NUM);
+  chPoolObjectInit(&drv_streams.file_nodes_pool,
                    sizeof (vfs_stream_file_node_t),
                    chCoreAllocAligned);
-  chPoolLoadArray(&drv_streams.nodes_pool, drv_file_nodes, DRV_NODES_NUM);
+  chPoolLoadArray(&drv_streams.file_nodes_pool,
+                  drv_file_nodes,
+                  DRV_FILE_NODES_NUM);
 
   return (vfs_driver_t *)&drv_streams;
 }

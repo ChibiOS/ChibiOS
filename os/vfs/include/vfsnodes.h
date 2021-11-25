@@ -41,6 +41,7 @@
 #define VFS_NODE_ATTR_SYSTEM        4U
 #define VFS_NODE_ATTR_RESERVED8     8U
 #define VFS_NODE_ATTR_ISDIR         16U
+#define VFS_NODE_ATTR_ISSTREAM      256U
 /** @} */
 
 /*===========================================================================*/
@@ -137,7 +138,9 @@ typedef struct vfs_directory_node vfs_directory_node_t;
  * @brief   @p vfs_directory_node_t specific methods.
  */
 #define __vfs_directory_node_methods                                        \
-  __vfs_node_methods
+  __vfs_node_methods                                                        \
+  msg_t (*dir_first)(void *instance, vfs_node_info_t *nip);                 \
+  msg_t (*dir_next)(void *instance, vfs_node_info_t *nip);
 
 /**
  * @brief   @p vfs_directory_node_t specific data.
@@ -149,9 +152,7 @@ typedef struct vfs_directory_node vfs_directory_node_t;
  * @brief   @p vfs_directory_node_t virtual methods table.
  */
 struct vfs_directory_node_vmt {
-  __vfs_directory_node_methods                                              \
-  msg_t (*dir_first)(void *instance);                                       \
-  msg_t (*dir_next)(void *instance);
+  __vfs_directory_node_methods
 };
 
 /**
@@ -175,7 +176,7 @@ typedef struct vfs_file_node vfs_file_node_t;
  */
 #define __vfs_file_node_methods                                             \
   __vfs_node_methods                                                        \
-  BaseSequentialStream *(*get_stream)(void *instance);                       \
+  BaseSequentialStream *(*get_stream)(void *instance);                      \
   ssize_t (*file_read)(void *instance, uint8_t *buf, size_t n);             \
   ssize_t (*file_write)(void *instance, const uint8_t *buf, size_t n);      \
   msg_t (*file_setpos)(void *instance, vfs_offset_t offset);                \
