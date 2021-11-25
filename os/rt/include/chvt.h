@@ -61,6 +61,33 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Data part of a static virtual timer initializer.
+ * @details This macro should be used when statically initializing a virtual
+ *          timer that is part of a bigger structure.
+ *
+ */
+#define __VIRTUAL_TIMER_DATA() {                                            \
+  .dlist = {                                                                \
+    .next   = NULL.                                                         \
+    .prev   = NULL                                                          \
+    .delta  = (sysinterval_t)0                                              \
+  },                                                                        \
+  .func     = NULL,                                                         \
+  .par      = NULL,                                                         \
+  .reload   = (sysinterval_t)0                                              \
+}
+
+/**
+ * @brief   Static virtual timer initializer.
+ * @details Statically initialized virtual timers require no explicit
+ *          initialization using @p chVTObjectInit().
+ *
+ * @param[in] name      the name of the virtual timer variable
+ */
+#define VIRTUAL_TIMER_DECL(name)                                            \
+  virtual_timer_t name = __VIRTUAL_TIMER_DATA()
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

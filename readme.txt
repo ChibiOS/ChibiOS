@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added static initializer for virtual timers in RT.
 - NEW: Added new function chHeapIntegrityCheck().
 - NEW: Added EFL driver implementation for STM32G4xx.
 - NEW: Function chCoreGetStatusX() changed to return a memory region object
