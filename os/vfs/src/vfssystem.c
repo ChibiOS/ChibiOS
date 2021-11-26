@@ -34,6 +34,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#define ROOT_DIR_NODES_NUM              1
+
+/**
  * @brief   @p vfs_root_dir_node_t specific methods.
  */
 #define __vfs_root_dir_node_methods                                         \
@@ -51,9 +56,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   Global VFS state.
+ * @brief   Root VFS driver.
  */
-vfs_system_t vfs;
+vfs_root_driver_t vfs;
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -81,6 +86,30 @@ typedef struct vfs_root_dir_node {
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+static vfs_root_dir_node_t root_dir_nodes[ROOT_DIR_NODES_NUM];
+
+static msg_t root_open_dir(void *instance,
+                           const char *path,
+                           vfs_directory_node_t **vdnpp);
+static msg_t root_open_file(void *instance,
+                            const char *path,
+                            vfs_file_node_t **vfnpp);
+
+static const struct vfs_root_driver_vmt root_driver_vmt = {
+  .open_dir     = root_open_dir,
+  .open_file    = root_open_file
+};
+
+static void node_dir_release(void *instance);
+static msg_t node_dir_first(void *instance, vfs_node_info_t *nip);
+static msg_t node_dir_next(void *instance, vfs_node_info_t *nip);
+
+static const struct vfs_root_dir_node_vmt root_dir_node_vmt = {
+  .release      = node_dir_release,
+  .dir_first    = node_dir_first,
+  .dir_next     = node_dir_next
+};
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -91,9 +120,6 @@ msg_t match_driver(const char **pathp, vfs_driver_t **vdpp) {
   vfs_driver_t **pp;
 
   do {
-    err = vfs_parse_match_separator(pathp);
-    VFS_BREAK_ON_ERROR(err);
-
     err = vfs_parse_filename(pathp, fname);
     VFS_BREAK_ON_ERROR(err);
 
@@ -113,6 +139,30 @@ msg_t match_driver(const char **pathp, vfs_driver_t **vdpp) {
   return err;
 }
 
+static void node_dir_release(void *instance) {
+  vfs_root_dir_node_t *rdnp = (vfs_root_dir_node_t *)instance;
+
+  if (--rdnp->refs == 0U) {
+
+    chPoolFree(&((vfs_root_driver_t *)rdnp->driver)->dir_nodes_pool,
+               (void *)rdnp);
+  }
+}
+
+static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
+  vfs_root_dir_node_t *rdnp = (vfs_root_dir_node_t *)instance;
+
+  rdnp->index = 0U;
+
+  return node_dir_next(instance, nip);
+}
+
+static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
+  vfs_root_dir_node_t *rdnp = (vfs_root_dir_node_t *)instance;
+
+  return VFS_RET_EOF;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -127,6 +177,12 @@ void vfsInit(void) {
 
   vfs.next_driver = &vfs.drivers[0];
 
+  chPoolObjectInit(&vfs.dir_nodes_pool,
+                   sizeof (vfs_root_dir_node_t),
+                   chCoreAllocAligned);
+  chPoolLoadArray(&vfs.dir_nodes_pool,
+                  root_dir_nodes,
+                  ROOT_DIR_NODES_NUM);
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&vfs.mtx);
 #else
@@ -145,8 +201,6 @@ void vfsInit(void) {
 msg_t vfsRegisterDriver(vfs_driver_t *vdp) {
   msg_t err;
 
-  VFS_LOCK();
-
   if (vfs.next_driver >= &vfs.drivers[VFS_CFG_MAX_DRIVERS]) {
     err = VFS_RET_NO_RESOURCE;
   }
@@ -154,8 +208,6 @@ msg_t vfsRegisterDriver(vfs_driver_t *vdp) {
     *vfs.next_driver++ = vdp;
     err = VFS_RET_SUCCESS;
   }
-
-  VFS_UNLOCK();
 
   return err;
 }
@@ -175,10 +227,31 @@ msg_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
   vfs_driver_t *dp;
 
   do {
-    err = match_driver(&path, &dp);
+    err = vfs_parse_match_separator(&path);
     VFS_BREAK_ON_ERROR(err);
 
-    err = dp->vmt->open_dir((void *)dp, path, vdnpp);
+    if (*path == '\0') {
+      /* Creating a root directory node.*/
+      vfs_root_dir_node_t *rdnp = chPoolAlloc(&vfs.dir_nodes_pool);
+      if (rdnp != NULL) {
+
+        /* Node object initialization.*/
+        rdnp->vmt    = &root_dir_node_vmt;
+        rdnp->refs   = 1U;
+        rdnp->driver = (vfs_driver_t *)&vfs;
+        rdnp->index  = 0U;
+
+        *vdnpp = (vfs_directory_node_t *)rdnp;
+        return VFS_RET_SUCCESS;
+      }
+    }
+    else {
+      /* Delegating node creation to a registered driver.*/
+      err = match_driver(&path, &dp);
+      VFS_BREAK_ON_ERROR(err);
+
+      err = dp->vmt->open_dir((void *)dp, path, vdnpp);
+    }
   }
   while (false);
 
@@ -249,6 +322,9 @@ msg_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
   vfs_driver_t *dp;
 
   do {
+    err = vfs_parse_match_separator(&path);
+    VFS_BREAK_ON_ERROR(err);
+
     err = match_driver(&path, &dp);
     VFS_BREAK_ON_ERROR(err);
 

@@ -163,17 +163,17 @@ static const struct vfs_streams_driver_vmt driver_vmt = {
   .open_file    = drv_open_file
 };
 
-static void node_release(void *instance);
-
+static void node_dir_release(void *instance);
 static msg_t node_dir_first(void *instance, vfs_node_info_t *nip);
 static msg_t node_dir_next(void *instance, vfs_node_info_t *nip);
 
 static const struct vfs_stream_dir_node_vmt dir_node_vmt = {
-  .release      = node_release,
+  .release      = node_dir_release,
   .dir_first    = node_dir_first,
   .dir_next     = node_dir_next
 };
 
+static void node_file_release(void *instance);
 static BaseSequentialStream *node_file_get_stream(void *instance);
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
@@ -182,7 +182,7 @@ static vfs_offset_t node_file_getpos(void *instance);
 static vfs_offset_t node_file_getsize(void *instance);
 
 static const struct vfs_stream_file_node_vmt file_node_vmt = {
-  .release      = node_release,
+  .release      = node_file_release,
   .get_stream   = node_file_get_stream,
   .file_read    = node_file_read,
   .file_write   = node_file_write,
@@ -191,7 +191,7 @@ static const struct vfs_stream_file_node_vmt file_node_vmt = {
   .file_getsize = node_file_getsize
 };
 
-static vfs_stream_file_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
+static vfs_stream_dir_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
 static vfs_stream_file_node_t drv_file_nodes[DRV_FILE_NODES_NUM];
 
 static vfs_streams_driver_t drv_streams;
@@ -285,13 +285,13 @@ static msg_t drv_open_file(void *instance,
   return err;
 }
 
-static void node_release(void *instance) {
-  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+static void node_dir_release(void *instance) {
+  vfs_stream_dir_node_t *sdnp = (vfs_stream_dir_node_t *)instance;
 
-  if (--sfnp->refs == 0U) {
+  if (--sdnp->refs == 0U) {
 
-    chPoolFree(&((vfs_streams_driver_t *)sfnp->driver)->file_nodes_pool,
-               (void *)sfnp);
+    chPoolFree(&((vfs_streams_driver_t *)sdnp->driver)->dir_nodes_pool,
+               (void *)sdnp);
   }
 }
 
@@ -318,6 +318,16 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   }
 
   return VFS_RET_EOF;
+}
+
+static void node_file_release(void *instance) {
+  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
+
+  if (--sfnp->refs == 0U) {
+
+    chPoolFree(&((vfs_streams_driver_t *)sfnp->driver)->file_nodes_pool,
+               (void *)sfnp);
+  }
 }
 
 static BaseSequentialStream *node_file_get_stream(void *instance) {

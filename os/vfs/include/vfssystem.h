@@ -32,6 +32,26 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   @p vfs_root_driver_t specific methods.
+ */
+#define __vfs_root_driver_methods                                           \
+  __vfs_driver_methods
+
+/**
+ * @brief   @p vfs_root_driver_t specific data.
+ */
+#define __vfs_root_driver_data                                              \
+  __vfs_driver_data                                                         \
+  /* VFS access mutex.*/                                                    \
+  mutex_t                       mtx;                                        \
+  /* Pool of the root directory nodes.*/                                    \
+  memory_pool_t                 dir_nodes_pool;                             \
+  /* Next registration slot.*/                                              \
+  vfs_driver_t                  **next_driver;                              \
+  /* Registration slots.*/                                                  \
+  vfs_driver_t                  *drivers[VFS_CFG_MAX_DRIVERS];
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -45,38 +65,32 @@
 /*===========================================================================*/
 
 /**
+ * @brief   @p vfs_root_driver_t virtual methods table.
+ */
+struct vfs_root_driver_vmt {
+  __vfs_root_driver_methods
+};
+
+/**
  * @brief   Type of a structure representing the VFS system.
  */
-typedef struct vfs_system {
+typedef struct vfs_root_driver {
   /**
-   * @brief   VFS access mutex.
+   * @brief   Virtual Methods Table.
    */
-  mutex_t                       mtx;
-  /**
-   * @brief   Next registration slot.
-   */
-  vfs_driver_t                  **next_driver;
-  /**
-   * @brief   Registration slots.
-   */
-  vfs_driver_t                  *drivers[VFS_CFG_MAX_DRIVERS];
-} vfs_system_t;
+  const struct vfs_root_driver_vmt  *vmt;
+  __vfs_root_driver_data
+} vfs_root_driver_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-/*
- * Defaults on the best synchronization mechanism available.
- */
-#define VFS_LOCK()              osalMutexLock(&vfs.mtx)
-#define VFS_UNLOCK()            osalMutexUnlock(&vfs.mtx)
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern vfs_system_t vfs;
+extern vfs_root_driver_t vfs;
 
 #ifdef __cplusplus
 extern "C" {
