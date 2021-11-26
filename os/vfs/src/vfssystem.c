@@ -139,6 +139,66 @@ msg_t match_driver(const char **pathp, vfs_driver_t **vdpp) {
   return err;
 }
 
+static msg_t root_open_dir(void *instance,
+                           const char *path,
+                           vfs_directory_node_t **vdnpp) {
+  msg_t err;
+  vfs_root_driver_t *rootp = (vfs_root_driver_t *)instance;
+
+  do {
+    err = vfs_parse_match_separator(&path);
+    VFS_BREAK_ON_ERROR(err);
+
+    if (*path == '\0') {
+      /* Creating a root directory node.*/
+      vfs_root_dir_node_t *rdnp = chPoolAlloc(&rootp->dir_nodes_pool);
+      if (rdnp != NULL) {
+
+        /* Node object initialization.*/
+        rdnp->vmt    = &root_dir_node_vmt;
+        rdnp->refs   = 1U;
+        rdnp->driver = (vfs_driver_t *)&vfs;
+        rdnp->index  = 0U;
+
+        *vdnpp = (vfs_directory_node_t *)rdnp;
+        return VFS_RET_SUCCESS;
+      }
+    }
+    else {
+      vfs_driver_t *dp;
+
+      /* Delegating node creation to a registered driver.*/
+      err = match_driver(&path, &dp);
+      VFS_BREAK_ON_ERROR(err);
+
+      err = dp->vmt->open_dir((void *)dp, path, vdnpp);
+    }
+  }
+  while (false);
+
+  return err;
+}
+
+static msg_t root_open_file(void *instance,
+                            const char *path,
+                            vfs_file_node_t **vfnpp) {
+  msg_t err;
+
+  (void)instance;
+  (void)vfnpp;
+
+  do {
+    err = vfs_parse_match_separator(&path);
+    VFS_BREAK_ON_ERROR(err);
+
+    /* Always not found, there are no files in the root.*/
+    err = VFS_RET_NOT_FOUND;
+  }
+  while (false);
+
+  return err;
+}
+
 static void node_dir_release(void *instance) {
   vfs_root_dir_node_t *rdnp = (vfs_root_dir_node_t *)instance;
 
@@ -160,6 +220,16 @@ static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
 static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   vfs_root_dir_node_t *rdnp = (vfs_root_dir_node_t *)instance;
 
+  if (rdnp->index < VFS_CFG_MAX_DRIVERS) {
+    nip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
+    nip->size   = (vfs_offset_t)0;
+    strcpy(nip->name, rdnp->driver->rootname);
+
+    rdnp->index++;
+
+    return VFS_RET_SUCCESS;
+  }
+
   return VFS_RET_EOF;
 }
 
@@ -174,6 +244,8 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
  * @special
  */
 void vfsInit(void) {
+
+  vfs.vmt = &root_driver_vmt;
 
   vfs.next_driver = &vfs.drivers[0];
 
