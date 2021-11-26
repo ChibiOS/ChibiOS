@@ -1,38 +1,42 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
-    This file is part of ChibiOS.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-    ChibiOS is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation version 3 of the License.
+        http://www.apache.org/licenses/LICENSE-2.0
 
-    ChibiOS is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 */
+
 /**
- * @file    vfs/drivers/drvstreams.h
- * @brief   HAL streams VFS driver header.
+ * @file    portab.h
+ * @brief   Application portability macros and structures.
  *
- * @addtogroup VFS_DRV_STREAMS
- * @details Exposes HAL streams as VFS files.
+ * @addtogroup application_portability
  * @{
  */
 
-#ifndef DRVSTREAMS_H
-#define DRVSTREAMS_H
-
-#include "vfs.h"
+#ifndef PORTAB_H
+#define PORTAB_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+
+#define PORTAB_LINE_LED1            LINE_LED
+#define PORTAB_LED_OFF              PAL_LOW
+#define PORTAB_LED_ON               PAL_HIGH
+
+#define PORTAB_LINE_BUTTON          LINE_BUTTON
+#define PORTAB_BUTTON_PRESSED       PAL_HIGH
+
+#define PORTAB_SD1                  LPSD1
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -46,20 +50,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a stream association structure.
- */
-typedef struct drv_stream_element {
-  /**
-   * @brief   Filename for the stream.
-   */
-  char                          *name;
-  /**
-   * @brief   Pointer to the stream.
-   */
-  BaseSequentialStream          *stream;
-} drv_stream_element_t;
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -71,8 +61,7 @@ typedef struct drv_stream_element {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  vfs_driver_t *drvStreamsInit(const char *rootname,
-                               const drv_stream_element_t *streams);
+  void portab_setup(void);
 #ifdef __cplusplus
 }
 #endif
@@ -81,6 +70,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* DRVSTREAMS_H */
+#endif /* PORTAB_H */
 
 /** @} */

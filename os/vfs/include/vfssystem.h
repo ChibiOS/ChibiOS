@@ -45,36 +45,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p vfs_system_directory_node_t specific methods.
- */
-#define __vfs_system_directory_node_methods                                 \
-  __vfs_directory_node_methods
-
-/**
- * @brief   @p vfs_system_directory_node_t specific data.
- */
-#define __vfs_system_directory_node_data                                    \
-  __vfs_directory_node_data
-
-/**
- * @brief   @p vfs_system_directory_node_t virtual methods table.
- */
-struct vfs_system_directory_node_vmt {
-  __vfs_system_directory_node_methods
-};
-
-/**
- * @brief   Type of a structure representing a VFS system directory node.
- */
-typedef struct vfs_system_directory_node {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_system_directory_node_vmt *vmt;
-  __vfs_system_directory_node_data
-} vfs_system_directory_node_t;
-
-/**
  * @brief   Type of a structure representing the VFS system.
  */
 typedef struct vfs_system {
@@ -82,10 +52,6 @@ typedef struct vfs_system {
    * @brief   VFS access mutex.
    */
   mutex_t                       mtx;
-  /**
-   * @brief   Absolute root node.
-   */
-  vfs_system_directory_node_t   *root_node;
   /**
    * @brief   Next registration slot.
    */
@@ -119,6 +85,10 @@ extern "C" {
   msg_t vfsRegisterDriver(vfs_driver_t *vdp);
   msg_t vfsOpenDirectory(const char *name, vfs_directory_node_t **vdnpp);
   void vfsCloseDirectory(vfs_directory_node_t *vdnp);
+  msg_t vfsReadDirectoryFirst(vfs_directory_node_t *vdnp,
+                              vfs_node_info_t *nip);
+  msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
+                             vfs_node_info_t *nip);
   msg_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
   void vfsCloseFile(vfs_file_node_t *vfnp);
   ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n);

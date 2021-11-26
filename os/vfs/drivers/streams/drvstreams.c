@@ -288,8 +288,6 @@ static msg_t drv_open_file(void *instance,
 static void node_release(void *instance) {
   vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
 
-  osalDbgAssert(sfnp->refs > 0U, "zero count");
-
   if (--sfnp->refs == 0U) {
 
     chPoolFree(&((vfs_streams_driver_t *)sfnp->driver)->file_nodes_pool,
@@ -300,8 +298,6 @@ static void node_release(void *instance) {
 static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
   vfs_stream_dir_node_t *sdnp = (vfs_stream_dir_node_t *)instance;
 
-  osalDbgAssert(sdnp->refs > 0U, "zero count");
-
   sdnp->index = 0U;
 
   return node_dir_next(instance, nip);
@@ -309,8 +305,6 @@ static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
 
 static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   vfs_stream_dir_node_t *sdnp = (vfs_stream_dir_node_t *)instance;
-
-  osalDbgAssert(sdnp->refs > 0U, "zero count");
 
   if (drv_streams.streams[sdnp->index].name != NULL) {
 
@@ -329,15 +323,11 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 static BaseSequentialStream *node_file_get_stream(void *instance) {
   vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
 
-  osalDbgAssert(sfnp->refs > 0U, "zero count");
-
   return sfnp->stream;
 }
 
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n) {
   vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
-
-  osalDbgAssert(sfnp->refs > 0U, "zero count");
 
   return streamRead(sfnp->stream, buf, n);
 }
@@ -345,25 +335,20 @@ static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n) {
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
   vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
 
-  osalDbgAssert(sfnp->refs > 0U, "zero count");
-
   return streamWrite(sfnp->stream, buf, n);
 }
 
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
-  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
 
-  osalDbgAssert(sfnp->refs > 0U, "zero count");
-
+  (void)instance;
   (void)offset;
 
   return VFS_RET_NOT_IMPLEMENTED;
 }
 
 static vfs_offset_t node_file_getpos(void *instance) {
-  vfs_stream_file_node_t *sfnp = (vfs_stream_file_node_t *)instance;
 
-  osalDbgAssert(sfnp->refs > 0U, "zero count");
+  (void)instance;
 
   return 0U;
 }

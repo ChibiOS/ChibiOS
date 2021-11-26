@@ -33,6 +33,19 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+/**
+ * @brief   @p vfs_root_dir_node_t specific methods.
+ */
+#define __vfs_root_dir_node_methods                                         \
+  __vfs_directory_node_methods
+
+/**
+ * @brief   @p vfs_root_dir_node_t specific data.
+ */
+#define __vfs_root_dir_node_data                                            \
+  __vfs_directory_node_data                                                 \
+  unsigned                              index;
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -45,6 +58,24 @@ vfs_system_t vfs;
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
+
+/**
+ * @brief   @p vfs_root_dir_node_t virtual methods table.
+ */
+struct vfs_root_dir_node_vmt {
+  __vfs_root_dir_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a root directory VFS node.
+ */
+typedef struct vfs_root_dir_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_root_dir_node_vmt *vmt;
+  __vfs_root_dir_node_data
+} vfs_root_dir_node_t;
 
 /*===========================================================================*/
 /* Module local variables.                                                   */
@@ -164,6 +195,8 @@ msg_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
  */
 void vfsCloseDirectory(vfs_directory_node_t *vdnp) {
 
+  chDbgAssert(vdnp->refs > 0U, "zero count");
+
   vdnp->vmt->release((void *)vdnp);
 }
 
@@ -171,32 +204,34 @@ void vfsCloseDirectory(vfs_directory_node_t *vdnp) {
  * @brief   First directory entry.
  *
  * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ * @param[out] nip      pointer to a @p vfs_node_info_t structure
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsGetDirectoryFirst(vfs_directory_node_t *vdnp) {
-  msg_t err = VFS_RET_EOF;
+msg_t vfsReadDirectoryFirst(vfs_directory_node_t *vdnp,
+                            vfs_node_info_t *nip) {
 
-  (void)vdnp;
+  chDbgAssert(vdnp->refs > 0U, "zero count");
 
-  return err;
+  return vdnp->vmt->dir_first((void *)vdnp, nip);
 }
 
 /**
  * @brief   Next directory entry.
  *
  * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ * @param[out] nip      pointer to a @p vfs_node_info_t structure
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsGetDirectoryNext(vfs_directory_node_t *vdnp) {
-  msg_t err = VFS_RET_EOF;
+msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
+                           vfs_node_info_t *nip) {
 
-  (void)vdnp;
+  chDbgAssert(vdnp->refs > 0U, "zero count");
 
-  return err;
+  return vdnp->vmt->dir_next((void *)vdnp, nip);
 }
 
 /**
@@ -234,6 +269,8 @@ msg_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
  */
 void vfsCloseFile(vfs_file_node_t *vfnp) {
 
+  chDbgAssert(vfnp->refs > 0U, "zero count");
+
   vfnp->vmt->release((void *)vfnp);
 }
 
@@ -249,6 +286,8 @@ void vfsCloseFile(vfs_file_node_t *vfnp) {
  * @api
  */
 ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
+
+  chDbgAssert(vfnp->refs > 0U, "zero count");
 
   return vfnp->vmt->file_read((void *)vfnp, buf, n);
 }
@@ -266,6 +305,8 @@ ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
  */
 ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
 
+  chDbgAssert(vfnp->refs > 0U, "zero count");
+
   return vfnp->vmt->file_write((void *)vfnp, buf, n);
 }
 
@@ -280,6 +321,8 @@ ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
  */
 msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
 
+  chDbgAssert(vfnp->refs > 0U, "zero count");
+
   return vfnp->vmt->file_setpos((void *)vfnp, offset);
 }
 
@@ -293,6 +336,8 @@ msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
  */
 vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp) {
 
+  chDbgAssert(vfnp->refs > 0U, "zero count");
+
   return vfnp->vmt->file_getpos((void *)vfnp);
 }
 
@@ -305,6 +350,8 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp) {
  * @api
  */
 vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp) {
+
+  chDbgAssert(vfnp->refs > 0U, "zero count");
 
   return vfnp->vmt->file_getsize((void *)vfnp);
 }
