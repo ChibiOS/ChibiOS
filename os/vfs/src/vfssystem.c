@@ -143,13 +143,14 @@ static msg_t root_open_dir(void *instance,
                            const char *path,
                            vfs_directory_node_t **vdnpp) {
   msg_t err;
-  vfs_root_driver_t *rootp = (vfs_root_driver_t *)instance;
 
   do {
     err = vfs_parse_match_separator(&path);
     VFS_BREAK_ON_ERROR(err);
 
     if (*path == '\0') {
+      vfs_root_driver_t *rootp = (vfs_root_driver_t *)instance;
+
       /* Creating a root directory node.*/
       vfs_root_dir_node_t *rdnp = chPoolAlloc(&rootp->dir_nodes_pool);
       if (rdnp != NULL) {
@@ -184,15 +185,25 @@ static msg_t root_open_file(void *instance,
                             vfs_file_node_t **vfnpp) {
   msg_t err;
 
-  (void)instance;
-  (void)vfnpp;
-
   do {
     err = vfs_parse_match_separator(&path);
     VFS_BREAK_ON_ERROR(err);
 
-    /* Always not found, there are no files in the root.*/
-    err = VFS_RET_NOT_FOUND;
+    if (*path == '\0') {
+      (void)instance;
+
+      /* Always not found, there are no files in the root.*/
+      err = VFS_RET_NOT_FOUND;
+    }
+    else {
+      vfs_driver_t *dp;
+
+      /* Delegating node creation to a registered driver.*/
+      err = match_driver(&path, &dp);
+      VFS_BREAK_ON_ERROR(err);
+
+      err = dp->vmt->open_file((void *)dp, path, vfnpp);
+    }
   }
   while (false);
 
@@ -295,39 +306,8 @@ msg_t vfsRegisterDriver(vfs_driver_t *vdp) {
  * @api
  */
 msg_t vfsOpenDirectory(const char *path, vfs_directory_node_t **vdnpp) {
-  msg_t err;
-  vfs_driver_t *dp;
 
-  do {
-    err = vfs_parse_match_separator(&path);
-    VFS_BREAK_ON_ERROR(err);
-
-    if (*path == '\0') {
-      /* Creating a root directory node.*/
-      vfs_root_dir_node_t *rdnp = chPoolAlloc(&vfs.dir_nodes_pool);
-      if (rdnp != NULL) {
-
-        /* Node object initialization.*/
-        rdnp->vmt    = &root_dir_node_vmt;
-        rdnp->refs   = 1U;
-        rdnp->driver = (vfs_driver_t *)&vfs;
-        rdnp->index  = 0U;
-
-        *vdnpp = (vfs_directory_node_t *)rdnp;
-        return VFS_RET_SUCCESS;
-      }
-    }
-    else {
-      /* Delegating node creation to a registered driver.*/
-      err = match_driver(&path, &dp);
-      VFS_BREAK_ON_ERROR(err);
-
-      err = dp->vmt->open_dir((void *)dp, path, vdnpp);
-    }
-  }
-  while (false);
-
-  return err;
+  return vfs.vmt->open_dir((vfs_driver_t *)&vfs, path, vdnpp);
 }
 
 /**
@@ -390,21 +370,8 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
  * @api
  */
 msg_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
-  msg_t err;
-  vfs_driver_t *dp;
 
-  do {
-    err = vfs_parse_match_separator(&path);
-    VFS_BREAK_ON_ERROR(err);
-
-    err = match_driver(&path, &dp);
-    VFS_BREAK_ON_ERROR(err);
-
-    err = dp->vmt->open_file((void *)dp, path, vfnpp);
-  }
-  while (false);
-
-  return err;
+  return vfs.vmt->open_file((vfs_driver_t *)&vfs, path, vfnpp);
 }
 
 /**

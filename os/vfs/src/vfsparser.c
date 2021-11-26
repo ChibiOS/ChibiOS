@@ -100,36 +100,42 @@ msg_t vfs_parse_match_end(const char **pathp) {
  * @param[out]      fname       extracted file name
  */
 msg_t vfs_parse_filename(const char **pathp, char *fname) {
-  msg_t err = VFS_RET_INVALID_PATH;
   size_t n;
-  const char *p = *pathp;
+  const char *p;
 
+  p = *pathp;
   n = 0U;
   while (true) {
     char c = *p;
 
-    /* Valid characters for path names.*/
-    if (!isalnum(c) && (c != '_') && (c != '-') && (c != '.')) {
-      break;
-    }
-
+    /* File names must be terminated by a separator or an end-of-string.*/
     if ((c == '/') || (c == '\0')) {
+
+      /* Consecutive separators are not valid.*/
+      if (n == 0U) {
+        return VFS_RET_INVALID_PATH;
+      }
+
+      /* Advancing the path pointer past the file name in the path and
+         closing the file name string.*/
       *pathp = p;
       *fname = '\0';
-      err = VFS_RET_SUCCESS;
-      break;
+      return VFS_RET_SUCCESS;
+    }
+
+    /* Valid characters for path names.*/
+    if (!isalnum(c) && (c != '_') && (c != '-') && (c != '.')) {
+      return VFS_RET_INVALID_PATH;
     }
 
     if (n > VFS_CFG_MAX_NAMELEN) {
-      break;
+      return VFS_RET_INVALID_PATH;
     }
 
     *fname++ = c;
     p++;
     n++;
   }
-
-  return err;
 }
 
 /** @} */
