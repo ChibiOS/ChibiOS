@@ -234,7 +234,8 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   if (rdnp->index < VFS_CFG_MAX_DRIVERS) {
     nip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
     nip->size   = (vfs_offset_t)0;
-    strcpy(nip->name, rdnp->driver->rootname);
+    strcpy(nip->name,
+           ((vfs_root_driver_t *)rdnp->driver)->drivers[rdnp->index]->rootname);
 
     rdnp->index++;
 
@@ -256,8 +257,8 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
  */
 void vfsInit(void) {
 
-  vfs.vmt = &root_driver_vmt;
-
+  vfs.vmt         = &root_driver_vmt;
+  vfs.rootname    = "";
   vfs.next_driver = &vfs.drivers[0];
 
   chPoolObjectInit(&vfs.dir_nodes_pool,

@@ -57,6 +57,7 @@ static msg_t scan_nodes(BaseSequentialStream *chp, char *path) {
   vfs_directory_node_t *dirp;
   static vfs_node_info_t ni;
 
+  chprintf(chp, "%s\r\n", path);
   res = vfsOpenDirectory(path, &dirp);
   if (res == VFS_RET_SUCCESS) {
     size_t i = strlen(path);
@@ -70,15 +71,15 @@ static msg_t scan_nodes(BaseSequentialStream *chp, char *path) {
 
       fn = ni.name;
       if (ni.attr & VFS_NODE_ATTR_ISDIR) {
-        *(path + i) = '/';
-        strcpy(path + i + 1U, fn);
+        strcat(path + i, fn);
+        strcat(path + i, "/");
         res = scan_nodes(chp, path);
         if (res != VFS_RET_SUCCESS) {
           break;
         }
       }
       else {
-        chprintf(chp, "%s/%s\r\n", path, fn);
+        chprintf(chp, "%s%s\r\n", path, fn);
       }
     }
 
