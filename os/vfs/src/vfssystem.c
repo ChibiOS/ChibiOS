@@ -484,7 +484,7 @@ BaseSequentialStream *vfsGetFileStream(vfs_file_node_t *vfnp) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 
-  return vfnp->vmt->get_stream((void *)vfnp);
+  return vfnp->vmt->file_get_stream((void *)vfnp);
 }
 
 /** @} */

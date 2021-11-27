@@ -182,13 +182,13 @@ static vfs_offset_t node_file_getpos(void *instance);
 static vfs_offset_t node_file_getsize(void *instance);
 
 static const struct vfs_stream_file_node_vmt file_node_vmt = {
-  .release      = node_file_release,
-  .get_stream   = node_file_get_stream,
-  .file_read    = node_file_read,
-  .file_write   = node_file_write,
-  .file_setpos  = node_file_setpos,
-  .file_getpos  = node_file_getpos,
-  .file_getsize = node_file_getsize
+  .release         = node_file_release,
+  .file_get_stream = node_file_get_stream,
+  .file_read       = node_file_read,
+  .file_write      = node_file_write,
+  .file_setpos     = node_file_setpos,
+  .file_getpos     = node_file_getpos,
+  .file_getsize    = node_file_getsize
 };
 
 static vfs_stream_dir_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
