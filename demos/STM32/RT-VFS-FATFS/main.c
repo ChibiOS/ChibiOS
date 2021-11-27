@@ -43,6 +43,7 @@ static event_source_t inserted_event, removed_event;
 
 static NullStream null;
 
+/* Stream to be exposed under /dev as files.*/
 static const drv_stream_element_t streams[] = {
   {"VSD1", (BaseSequentialStream *)&PORTAB_SD1},
   {"null", (BaseSequentialStream *)&null},
