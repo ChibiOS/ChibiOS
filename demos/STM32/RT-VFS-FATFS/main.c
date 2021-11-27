@@ -113,8 +113,8 @@ static const ShellCommand commands[] = {
   {NULL, NULL}
 };
 
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&PORTAB_SD1,
+static ShellConfig shell_cfg1 = {
+  NULL,
   commands
 };
 
@@ -174,6 +174,7 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
   msg_t msg;
+  vfs_file_node_t *file;
   static const evhandler_t evhndl[] = {
     InsertHandler,
     RemoveHandler,
@@ -208,6 +209,13 @@ int main(void) {
     chSysHalt("VFS");
   }
 
+  /* Opening a file for shell I/O.*/
+  msg = vfsOpenFile("/dev/VSD1", &file);
+  if (msg != VFS_RET_SUCCESS) {
+    chSysHalt("VFS");
+  }
+  shell_cfg1.sc_channel = vfsGetFileStream(file);
+
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
@@ -217,6 +225,7 @@ int main(void) {
   chEvtRegister(&shell_terminated, &el2, 2);
   while (true) {
     if (shelltp == NULL) {
+      /* Spawning a shell.*/
       shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
                                     "shell", NORMALPRIO + 1,
                                     shellThread, (void *)&shell_cfg1);

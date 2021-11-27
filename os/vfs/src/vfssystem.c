@@ -472,4 +472,19 @@ vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp) {
   return vfnp->vmt->file_getsize((void *)vfnp);
 }
 
+/**
+ * @brief   Returns the inner stream associated to the file.
+ *
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @return              The current file size.
+ *
+ * @api
+ */
+BaseSequentialStream *vfsGetFileStream(vfs_file_node_t *vfnp) {
+
+  chDbgAssert(vfnp->refs > 0U, "zero count");
+
+  return vfnp->vmt->get_stream((void *)vfnp);
+}
+
 /** @} */

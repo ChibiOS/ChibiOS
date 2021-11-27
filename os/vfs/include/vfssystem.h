@@ -110,6 +110,7 @@ extern "C" {
   msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp);
   vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp);
+  BaseSequentialStream *vfsGetFileStream(vfs_file_node_t *vfnp);
 #ifdef __cplusplus
 }
 #endif
