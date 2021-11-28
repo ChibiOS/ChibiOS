@@ -93,6 +93,7 @@ static msg_t root_open_dir(void *instance,
                            vfs_directory_node_t **vdnpp);
 static msg_t root_open_file(void *instance,
                             const char *path,
+                            unsigned mode,
                             vfs_file_node_t **vfnpp);
 
 static const struct vfs_root_driver_vmt root_driver_vmt = {
@@ -182,6 +183,7 @@ static msg_t root_open_dir(void *instance,
 
 static msg_t root_open_file(void *instance,
                             const char *path,
+                            unsigned mode,
                             vfs_file_node_t **vfnpp) {
   msg_t err;
 
@@ -202,7 +204,7 @@ static msg_t root_open_file(void *instance,
       err = match_driver(&path, &dp);
       VFS_BREAK_ON_ERROR(err);
 
-      err = dp->vmt->open_file((void *)dp, path, vfnpp);
+      err = dp->vmt->open_file((void *)dp, path, mode, vfnpp);
     }
   }
   while (false);
@@ -370,9 +372,9 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
  *
  * @api
  */
-msg_t vfsOpenFile(const char *path, vfs_file_node_t **vfnpp) {
+msg_t vfsOpenFile(const char *path, unsigned mode, vfs_file_node_t **vfnpp) {
 
-  return vfs.vmt->open_file((vfs_driver_t *)&vfs, path, vfnpp);
+  return vfs.vmt->open_file((vfs_driver_t *)&vfs, path, mode, vfnpp);
 }
 
 /**

@@ -103,7 +103,7 @@ extern "C" {
                               vfs_node_info_t *nip);
   msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
                              vfs_node_info_t *nip);
-  msg_t vfsOpenFile(const char *name, vfs_file_node_t **vfnpp);
+  msg_t vfsOpenFile(const char *name, unsigned mode, vfs_file_node_t **vfnpp);
   void vfsCloseFile(vfs_file_node_t *vfnp);
   ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n);
   ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n);

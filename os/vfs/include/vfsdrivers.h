@@ -32,6 +32,21 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    File open modes.
+ * @{
+ */
+#define MODE_READ                   0x01U
+#define MODE_WRITE                  0x02U
+#define MODE_RDWR                   (MODE_READ | MODE_WRITE)
+#define MODE_OPEN                   0x00U
+#define MODE_CREATE_EXCL            0x04U
+#define MODE_CREATE_TRUNCATE        0x08U
+#define MODE_CREATE_OPEN            0x10U
+#define MODE_APPEND                 0x20U
+#define MODE_OPEN_APPEND            (MODE_CREATE_OPEN | MODE_APPEND)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -54,6 +69,7 @@
                     vfs_directory_node_t **vdnpp);                          \
   msg_t (*open_file)(void *instance,                                        \
                      const char *path,                                      \
+                     unsigned mode,                                         \
                      vfs_file_node_t **vfnpp);
 
 /**

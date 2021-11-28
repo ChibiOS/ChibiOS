@@ -71,13 +71,14 @@
  */
 #define __vfs_fatfs_dir_node_data                                           \
   __vfs_directory_node_data                                                 \
-  unsigned                              index;
+  DIR                           dir;
 
 /**
  * @brief   @p vfs_fatfs_file_node_t specific methods.
  */
 #define __vfs_fatfs_file_node_methods                                       \
-  __vfs_file_node_methods
+  __vfs_file_node_methods                                                   \
+  FIL                           file;
 
 /**
  * @brief   @p vfs_fatfs_file_node_t specific data.
@@ -157,6 +158,7 @@ static msg_t drv_open_dir(void *instance,
                           vfs_directory_node_t **vdnpp);
 static msg_t drv_open_file(void *instance,
                            const char *path,
+                           unsigned mode,
                            vfs_file_node_t **vfnpp);
 
 static const struct vfs_fatfs_driver_vmt driver_vmt = {
@@ -183,19 +185,19 @@ static vfs_offset_t node_file_getpos(void *instance);
 static vfs_offset_t node_file_getsize(void *instance);
 
 static const struct vfs_fatfs_file_node_vmt file_node_vmt = {
-  .release      = node_file_release,
-  .get_stream   = node_file_get_stream,
-  .file_read    = node_file_read,
-  .file_write   = node_file_write,
-  .file_setpos  = node_file_setpos,
-  .file_getpos  = node_file_getpos,
-  .file_getsize = node_file_getsize
+  .release         = node_file_release,
+  .file_get_stream = node_file_get_stream,
+  .file_read       = node_file_read,
+  .file_write      = node_file_write,
+  .file_setpos     = node_file_setpos,
+  .file_getpos     = node_file_getpos,
+  .file_getsize    = node_file_getsize
 };
 
 static vfs_fatfs_dir_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
 static vfs_fatfs_file_node_t drv_file_nodes[DRV_FILE_NODES_NUM];
 
-static vfs_fatfs_driver_t drv_streams;
+static vfs_fatfs_driver_t drv_fatfs;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -208,26 +210,6 @@ static msg_t drv_open_dir(void *instance,
   msg_t err;
 
   do {
-    vfs_fatfs_dir_node_t *ffdnp;
-
-    err = vfs_parse_match_separator(&path);
-    VFS_BREAK_ON_ERROR(err);
-
-    err = vfs_parse_match_end(&path);
-    VFS_BREAK_ON_ERROR(err);
-
-    ffdnp = chPoolAlloc(&drv_streams.dir_nodes_pool);
-    if (ffdnp != NULL) {
-
-      /* Node object initialization.*/
-      ffdnp->vmt    = &dir_node_vmt;
-      ffdnp->refs   = 1U;
-      ffdnp->driver = (vfs_driver_t *)drvp;
-      ffdnp->index  = 0U;
-
-      *vdnpp = (vfs_directory_node_t *)ffdnp;
-      return VFS_RET_SUCCESS;
-    }
 
     err = VFS_RET_NO_RESOURCE;
   }
@@ -238,46 +220,12 @@ static msg_t drv_open_dir(void *instance,
 
 static msg_t drv_open_file(void *instance,
                            const char *path,
+                           unsigned mode,
                            vfs_file_node_t **vfnpp) {
   vfs_fatfs_driver_t *drvp = (vfs_fatfs_driver_t *)instance;
-  const drv_stream_element_t *dsep;
   msg_t err;
 
   do {
-    char fname[VFS_CFG_MAX_NAMELEN + 1];
-
-    err = vfs_parse_match_separator(&path);
-    VFS_BREAK_ON_ERROR(err);
-
-    err = vfs_parse_filename(&path, fname);
-    VFS_BREAK_ON_ERROR(err);
-
-    err = vfs_parse_match_end(&path);
-    VFS_BREAK_ON_ERROR(err);
-
-    dsep = &drvp->streams[0];
-    while (dsep->name != NULL) {
-      if (strncmp(fname, dsep->name, VFS_CFG_MAX_NAMELEN) == 0) {
-        vfs_fatfs_file_node_t *fffnp;
-
-        fffnp = chPoolAlloc(&drv_streams.file_nodes_pool);
-        if (fffnp != NULL) {
-
-          /* Node object initialization.*/
-          fffnp->vmt    = &file_node_vmt;
-          fffnp->refs   = 1U;
-          fffnp->driver = (vfs_driver_t *)drvp;
-          fffnp->stream = dsep->stream;
-
-          *vfnpp = (vfs_file_node_t *)fffnp;
-          return VFS_RET_SUCCESS;
-        }
-
-        return VFS_RET_NO_RESOURCE;
-      }
-
-      dsep++;
-    }
 
     err = VFS_RET_NOT_FOUND;
   }
@@ -299,24 +247,11 @@ static void node_dir_release(void *instance) {
 static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
   vfs_fatfs_dir_node_t *ffdnp = (vfs_fatfs_dir_node_t *)instance;
 
-  ffdnp->index = 0U;
-
-  return node_dir_next(instance, nip);
+  return VFS_RET_EOF;
 }
 
 static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   vfs_fatfs_dir_node_t *ffdnp = (vfs_fatfs_dir_node_t *)instance;
-
-  if (drv_streams.streams[ffdnp->index].name != NULL) {
-
-    nip->attr   = VFS_NODE_ATTR_ISSTREAM;
-    nip->size   = (vfs_offset_t)0;
-    strcpy(nip->name, drv_streams.streams[ffdnp->index].name);
-
-    ffdnp->index++;
-
-    return VFS_RET_SUCCESS;
-  }
 
   return VFS_RET_EOF;
 }
@@ -375,26 +310,24 @@ static vfs_offset_t node_file_getsize(void *instance) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-vfs_driver_t *drvStreamsInit(const char *rootname,
-                             const drv_stream_element_t *streams) {
+vfs_driver_t *drvFatfsInit(const char *rootname) {
 
-  drv_streams.vmt      = &driver_vmt;
-  drv_streams.rootname = rootname;
-  drv_streams.streams  = streams;
-  chPoolObjectInit(&drv_streams.dir_nodes_pool,
+  drv_fatfs.vmt      = &driver_vmt;
+  drv_fatfs.rootname = rootname;
+  chPoolObjectInit(&drv_fatfs.dir_nodes_pool,
                    sizeof (vfs_fatfs_dir_node_t),
                    chCoreAllocAligned);
-  chPoolLoadArray(&drv_streams.dir_nodes_pool,
+  chPoolLoadArray(&drv_fatfs.dir_nodes_pool,
                   drv_dir_nodes,
                   DRV_DIR_NODES_NUM);
-  chPoolObjectInit(&drv_streams.file_nodes_pool,
+  chPoolObjectInit(&drv_fatfs.file_nodes_pool,
                    sizeof (vfs_fatfs_file_node_t),
                    chCoreAllocAligned);
-  chPoolLoadArray(&drv_streams.file_nodes_pool,
+  chPoolLoadArray(&drv_fatfs.file_nodes_pool,
                   drv_file_nodes,
                   DRV_FILE_NODES_NUM);
 
-  return (vfs_driver_t *)&drv_streams;
+  return (vfs_driver_t *)&drv_fatfs;
 }
 
 /** @} */

@@ -109,6 +109,7 @@ include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 # VFS files (optional).
 include $(CHIBIOS)/os/vfs/vfs.mk
 include $(CHIBIOS)/os/vfs/drivers/streams/drvstreams.mk
+include $(CHIBIOS)/os/vfs/drivers/fatfs/drvfatfs.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
@@ -117,7 +118,7 @@ include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
-#include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
+include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
 # Define linker script file here.
 LDSCRIPT= $(STARTUPLD)/STM32L4R9xI.ld
