@@ -134,6 +134,18 @@ static thread_t *shelltp = NULL;
 static void InsertHandler(eventid_t id) {
 
   (void)id;
+
+#if defined(DEMO_USE_FATFS)
+#if HAL_USE_SDC
+  if (sdcConnect(&PORTAB_SDCD1)) {
+    return;
+  }
+#else
+  if (mmcConnect(&MMCD1)) {
+    return;
+  }
+#endif
+#endif
 }
 
 /*
@@ -142,6 +154,14 @@ static void InsertHandler(eventid_t id) {
 static void RemoveHandler(eventid_t id) {
 
   (void)id;
+
+#if defined(DEMO_USE_FATFS)
+#if HAL_USE_SDC
+    sdcDisconnect(&PORTAB_SDCD1);
+#else
+    mmcDisconnect(&MMCD1);
+#endif
+#endif
 }
 
 /*

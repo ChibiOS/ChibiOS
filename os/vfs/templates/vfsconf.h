@@ -35,6 +35,13 @@
 #define VFS_CFG_MAX_DRIVERS                 2
 #endif
 
+/**
+ * @brief   Maximum file names handled in VFS.
+ */
+#if !defined(VFS_CFG_MAX_NAMELEN) || defined(__DOXYGEN__)
+#define VFS_CFG_MAX_NAMELEN                 15
+#endif
+
 #endif /* VFSCONF_H */
 
 /** @} */
