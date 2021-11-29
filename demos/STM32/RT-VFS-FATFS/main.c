@@ -229,8 +229,9 @@ int main(void) {
   sdStart(&PORTAB_SD1, NULL);
   nullObjectInit(&nullstream);
 
-  /* Initializing an overlay VFS object as a root, no need for a name.*/
-  drvOverlayObjectInit(&vfs_root, "");
+  /* Initializing an overlay VFS object as a root, bo overlaid driver,
+     no need for a name.*/
+  drvOverlayObjectInit(&vfs_root, NULL, "");
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
   msg = drvOverlayRegisterDriver(&vfs_root,

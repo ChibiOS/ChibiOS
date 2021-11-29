@@ -104,13 +104,14 @@ static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_t **vdnpp) {
   vfs_overlay_driver_t *drvp = (vfs_overlay_driver_t *)instance;
+  const char *scanpath = path;
   msg_t err;
 
   do {
-    err = vfs_parse_match_separator(&path);
+    err = vfs_parse_match_separator(&scanpath);
     VFS_BREAK_ON_ERROR(err);
 
-    if (*path == '\0') {
+    if (*scanpath == '\0') {
 
       /* Creating a root directory node.*/
       vfs_overlay_dir_node_t *onp = chPoolAlloc(&drvp->dir_nodes_pool);
@@ -129,11 +130,23 @@ static msg_t drv_open_dir(void *instance,
     else {
       vfs_driver_t *dp;
 
-      /* Delegating node creation to a registered driver.*/
-      err = match_driver(drvp, &path, &dp);
-      VFS_BREAK_ON_ERROR(err);
-
-      err = dp->vmt->open_dir((void *)dp, path, vdnpp);
+      /* Searching for a match among registered overlays.*/
+      err = match_driver(drvp, &scanpath, &dp);
+      if (err == VFS_RET_SUCCESS) {
+        /* Delegating node creation to a registered driver.*/
+        err = dp->vmt->open_dir((void *)dp,
+                                scanpath,
+                                vdnpp);
+      }
+      else {
+        /* No matching overlay, the whole path is passed to the overlaid
+           driver, if defined, else returning the previous error.*/
+        if (drvp->overlaid_drv != NULL) {
+          err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
+                                                  path,
+                                                  vdnpp);
+        }
+      }
     }
   }
   while (false);
@@ -215,18 +228,21 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 /**
  * @brief   VFS overlay object initialization.
  *
- * @param[out] vodp     pointer to a @p vfs_overlay_driver_t structure
- * @param[in] rootname  name to be attributed to this object
- * @return              A pointer to this initialized object.
+ * @param[out] vodp             pointer to a @p vfs_overlay_driver_t structure
+ * @param[out] overlaid_drv     pointer to a driver to be overlaid
+ * @param[in] rootname          name to be attributed to this object
+ * @return                      A pointer to this initialized object.
  *
  * @api
  */
 vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
+                                   vfs_driver_t *overlaid_drv,
                                    const char *rootname) {
 
-  vodp->vmt         = &driver_vmt;
-  vodp->rootname    = rootname;
-  vodp->next_driver = &vodp->drivers[0];
+  vodp->vmt          = &driver_vmt;
+  vodp->rootname     = rootname;
+  vodp->overlaid_drv = overlaid_drv;
+  vodp->next_driver  = &vodp->drivers[0];
 
   /* Initializing pools.*/
   chPoolObjectInit(&vodp->dir_nodes_pool,
