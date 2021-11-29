@@ -38,6 +38,20 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_STREAMS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_STREAMS_DIR_NODES_NUM       1
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_STREAMS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_STREAMS_FILE_NODES_NUM      2
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -60,6 +74,103 @@ typedef struct drv_stream_element {
   BaseSequentialStream          *stream;
 } drv_stream_element_t;
 
+/**
+ * @brief   @p vfs_stream_dir_node_t specific methods.
+ */
+#define __vfs_stream_dir_node_methods                                       \
+  __vfs_directory_node_methods
+
+/**
+ * @brief   @p vfs_stream_dir_node_t specific data.
+ */
+#define __vfs_stream_dir_node_data                                          \
+  __vfs_directory_node_data                                                 \
+  unsigned                              index;
+
+/**
+ * @brief   @p vfs_stream_dir_node_t virtual methods table.
+ */
+struct vfs_stream_dir_node_vmt {
+  __vfs_stream_dir_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a stream dir VFS node.
+ */
+typedef struct vfs_stream_dir_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_stream_dir_node_vmt *vmt;
+  __vfs_stream_dir_node_data
+} vfs_stream_dir_node_t;
+
+/**
+ * @brief   @p vfs_stream_file_node_t specific methods.
+ */
+#define __vfs_stream_file_node_methods                                      \
+  __vfs_file_node_methods
+
+/**
+ * @brief   @p vfs_stream_file_node_t specific data.
+ */
+#define __vfs_stream_file_node_data                                         \
+  __vfs_file_node_data                                                      \
+  BaseSequentialStream                  *stream;
+
+/**
+ * @brief   @p vfs_stream_file_node_t virtual methods table.
+ */
+struct vfs_stream_file_node_vmt {
+  __vfs_stream_file_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a stream file VFS node.
+ */
+typedef struct vfs_stream_file_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_stream_file_node_vmt *vmt;
+  __vfs_stream_file_node_data
+} vfs_stream_file_node_t;
+
+/**
+ * @brief   @p vfs_streams_driver_t specific methods.
+ */
+#define __vfs_streams_driver_methods                                        \
+  __vfs_driver_methods
+
+/**
+ * @brief   @p vfs_streams_driver_t specific data.
+ */
+#define __vfs_streams_driver_data                                           \
+  __vfs_driver_data                                                         \
+  const drv_stream_element_t    *streams;                                   \
+  memory_pool_t                 file_nodes_pool;                            \
+  memory_pool_t                 dir_nodes_pool;                             \
+  vfs_stream_dir_node_t         dir_nodes[DRV_CFG_STREAMS_DIR_NODES_NUM];   \
+  vfs_stream_file_node_t        file_nodes[DRV_CFG_STREAMS_FILE_NODES_NUM];
+
+/**
+ * @brief   @p vfs_streams_driver_t virtual methods table.
+ */
+struct vfs_streams_driver_vmt {
+  __vfs_streams_driver_methods
+};
+
+/**
+ * @brief   Type of a structure representing a VFS streams driver.
+ */
+typedef struct vfs_drv_streams {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_streams_driver_vmt   *vmt;
+  __vfs_streams_driver_data
+} vfs_streams_driver_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -71,8 +182,9 @@ typedef struct drv_stream_element {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  vfs_driver_t *drvStreamsInit(const char *rootname,
-                               const drv_stream_element_t *streams);
+  vfs_driver_t *drvStreamsObjectInit(vfs_streams_driver_t *vsdp,
+                                     const char *rootname,
+                                     const drv_stream_element_t *streams);
 #ifdef __cplusplus
 }
 #endif

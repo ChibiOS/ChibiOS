@@ -32,26 +32,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @brief   @p vfs_root_driver_t specific methods.
- */
-#define __vfs_root_driver_methods                                           \
-  __vfs_driver_methods
-
-/**
- * @brief   @p vfs_root_driver_t specific data.
- */
-#define __vfs_root_driver_data                                              \
-  __vfs_driver_data                                                         \
-  /* VFS access mutex.*/                                                    \
-  mutex_t                       mtx;                                        \
-  /* Pool of the root directory nodes.*/                                    \
-  memory_pool_t                 dir_nodes_pool;                             \
-  /* Next registration slot.*/                                              \
-  vfs_driver_t                  **next_driver;                              \
-  /* Registration slots.*/                                                  \
-  vfs_driver_t                  *drivers[VFS_CFG_MAX_DRIVERS];
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -64,24 +44,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   @p vfs_root_driver_t virtual methods table.
- */
-struct vfs_root_driver_vmt {
-  __vfs_root_driver_methods
-};
-
-/**
- * @brief   Type of a structure representing the VFS system.
- */
-typedef struct vfs_root_driver {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_root_driver_vmt  *vmt;
-  __vfs_root_driver_data
-} vfs_root_driver_t;
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -90,20 +52,21 @@ typedef struct vfs_root_driver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern vfs_root_driver_t vfs;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void vfsInit(void);
-  msg_t vfsRegisterDriver(vfs_driver_t *vdp);
-  msg_t vfsOpenDirectory(const char *name, vfs_directory_node_t **vdnpp);
+  msg_t vfsOpenDirectory(vfs_driver_t *vdp,
+                         const char *name,
+                         vfs_directory_node_t **vdnpp);
   void vfsCloseDirectory(vfs_directory_node_t *vdnp);
   msg_t vfsReadDirectoryFirst(vfs_directory_node_t *vdnp,
                               vfs_node_info_t *nip);
   msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
                              vfs_node_info_t *nip);
-  msg_t vfsOpenFile(const char *name, unsigned mode, vfs_file_node_t **vfnpp);
+  msg_t vfsOpenFile(vfs_driver_t *vdp,
+                    const char *name,
+                    unsigned mode,
+                    vfs_file_node_t **vfnpp);
   void vfsCloseFile(vfs_file_node_t *vfnp);
   ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n);
   ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n);

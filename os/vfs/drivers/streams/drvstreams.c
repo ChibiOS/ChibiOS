@@ -34,57 +34,6 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   Number of directory nodes pre-allocated in the pool.
- */
-#define DRV_DIR_NODES_NUM       1
-
-/**
- * @brief   Number of file nodes pre-allocated in the pool.
- */
-#define DRV_FILE_NODES_NUM      2
-
-/**
- * @brief   @p vfs_streams_driver_t specific methods.
- */
-#define __vfs_streams_driver_methods                                        \
-  __vfs_driver_methods
-
-/**
- * @brief   @p vfs_streams_driver_t specific data.
- */
-#define __vfs_streams_driver_data                                           \
-  __vfs_driver_data                                                         \
-  const drv_stream_element_t    *streams;                                   \
-  memory_pool_t                 file_nodes_pool;                            \
-  memory_pool_t                 dir_nodes_pool;
-
-/**
- * @brief   @p vfs_stream_dir_node_t specific methods.
- */
-#define __vfs_stream_dir_node_methods                                       \
-  __vfs_directory_node_methods
-
-/**
- * @brief   @p vfs_stream_dir_node_t specific data.
- */
-#define __vfs_stream_dir_node_data                                          \
-  __vfs_directory_node_data                                                 \
-  unsigned                              index;
-
-/**
- * @brief   @p vfs_stream_file_node_t specific methods.
- */
-#define __vfs_stream_file_node_methods                                      \
-  __vfs_file_node_methods
-
-/**
- * @brief   @p vfs_stream_file_node_t specific data.
- */
-#define __vfs_stream_file_node_data                                         \
-  __vfs_file_node_data                                                      \
-  BaseSequentialStream                  *stream;
-
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -92,60 +41,6 @@
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
-
-/**
- * @brief   @p vfs_streams_driver_t virtual methods table.
- */
-struct vfs_streams_driver_vmt {
-  __vfs_streams_driver_methods
-};
-
-/**
- * @brief   Type of a structure representing a VFS streams driver.
- */
-typedef struct vfs_drv_streams {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_streams_driver_vmt   *vmt;
-  __vfs_streams_driver_data
-} vfs_streams_driver_t;
-
-/**
- * @brief   @p vfs_stream_dir_node_t virtual methods table.
- */
-struct vfs_stream_dir_node_vmt {
-  __vfs_stream_dir_node_methods
-};
-
-/**
- * @brief   Type of a structure representing a stream dir VFS node.
- */
-typedef struct vfs_stream_dir_node {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_stream_dir_node_vmt *vmt;
-  __vfs_stream_dir_node_data
-} vfs_stream_dir_node_t;
-
-/**
- * @brief   @p vfs_stream_file_node_t virtual methods table.
- */
-struct vfs_stream_file_node_vmt {
-  __vfs_stream_file_node_methods
-};
-
-/**
- * @brief   Type of a structure representing a stream file VFS node.
- */
-typedef struct vfs_stream_file_node {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_stream_file_node_vmt *vmt;
-  __vfs_stream_file_node_data
-} vfs_stream_file_node_t;
 
 /*===========================================================================*/
 /* Module local variables.                                                   */
@@ -192,11 +87,6 @@ static const struct vfs_stream_file_node_vmt file_node_vmt = {
   .file_getsize    = node_file_getsize
 };
 
-static vfs_stream_dir_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
-static vfs_stream_file_node_t drv_file_nodes[DRV_FILE_NODES_NUM];
-
-static vfs_streams_driver_t drv_streams;
-
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -216,7 +106,7 @@ static msg_t drv_open_dir(void *instance,
     err = vfs_parse_match_end(&path);
     VFS_BREAK_ON_ERROR(err);
 
-    sdnp = chPoolAlloc(&drv_streams.dir_nodes_pool);
+    sdnp = chPoolAlloc(&drvp->dir_nodes_pool);
     if (sdnp != NULL) {
 
       /* Node object initialization.*/
@@ -263,7 +153,7 @@ static msg_t drv_open_file(void *instance,
       if (strncmp(fname, dsep->name, VFS_CFG_MAX_NAMELEN) == 0) {
         vfs_stream_file_node_t *sfnp;
 
-        sfnp = chPoolAlloc(&drv_streams.file_nodes_pool);
+        sfnp = chPoolAlloc(&drvp->file_nodes_pool);
         if (sfnp != NULL) {
 
           /* Node object initialization.*/
@@ -309,12 +199,13 @@ static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
 
 static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   vfs_stream_dir_node_t *sdnp = (vfs_stream_dir_node_t *)instance;
+  vfs_streams_driver_t *vsdp = (vfs_streams_driver_t *)sdnp->driver;
 
-  if (drv_streams.streams[sdnp->index].name != NULL) {
+  if (vsdp->streams[sdnp->index].name != NULL) {
 
-    nip->attr   = VFS_NODE_ATTR_ISSTREAM;
-    nip->size   = (vfs_offset_t)0;
-    strcpy(nip->name, drv_streams.streams[sdnp->index].name);
+    nip->attr = VFS_NODE_ATTR_ISSTREAM;
+    nip->size = (vfs_offset_t)0;
+    strcpy(nip->name, vsdp->streams[sdnp->index].name);
 
     sdnp->index++;
 
@@ -378,26 +269,41 @@ static vfs_offset_t node_file_getsize(void *instance) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-vfs_driver_t *drvStreamsInit(const char *rootname,
-                             const drv_stream_element_t *streams) {
+/**
+ * @brief   VFS streams object initialization.
+ *
+ * @param[out] vsdp     pointer to a @p vfs_streams_driver_t structure
+ * @param[in] rootname  name to be attributed to this object
+ * @param[in] streams   pointer to an array of @p drv_stream_element_t objects
+ * @return              A pointer to this initialized object.
+ *
+ * @api
+ */
+vfs_driver_t *drvStreamsObjectInit(vfs_streams_driver_t *vsdp,
+                                   const char *rootname,
+                                   const drv_stream_element_t *streams) {
 
-  drv_streams.vmt      = &driver_vmt;
-  drv_streams.rootname = rootname;
-  drv_streams.streams  = streams;
-  chPoolObjectInit(&drv_streams.dir_nodes_pool,
+  vsdp->vmt      = &driver_vmt;
+  vsdp->rootname = rootname;
+  vsdp->streams  = streams;
+
+  /* Initializing pools.*/
+  chPoolObjectInit(&vsdp->dir_nodes_pool,
                    sizeof (vfs_stream_dir_node_t),
                    chCoreAllocAligned);
-  chPoolLoadArray(&drv_streams.dir_nodes_pool,
-                  drv_dir_nodes,
-                  DRV_DIR_NODES_NUM);
-  chPoolObjectInit(&drv_streams.file_nodes_pool,
+  chPoolObjectInit(&vsdp->file_nodes_pool,
                    sizeof (vfs_stream_file_node_t),
                    chCoreAllocAligned);
-  chPoolLoadArray(&drv_streams.file_nodes_pool,
-                  drv_file_nodes,
-                  DRV_FILE_NODES_NUM);
 
-  return (vfs_driver_t *)&drv_streams;
+  /* Preloading pools.*/
+  chPoolLoadArray(&vsdp->dir_nodes_pool,
+                  &vsdp->dir_nodes[0],
+                  DRV_CFG_STREAMS_DIR_NODES_NUM);
+  chPoolLoadArray(&vsdp->file_nodes_pool,
+                  &vsdp->file_nodes[0],
+                  DRV_CFG_STREAMS_FILE_NODES_NUM);
+
+  return (vfs_driver_t *)vsdp;
 }
 
 /** @} */

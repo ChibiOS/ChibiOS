@@ -20,6 +20,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "vfs.h"
+#include "drvoverlay.h"
 #include "drvstreams.h"
 
 #include "rt_test_root.h"
@@ -41,12 +42,18 @@ static event_source_t inserted_event, removed_event;
 /* VFS related.                                                              */
 /*===========================================================================*/
 
-static NullStream null;
+/* VFS overlay driver object representing the root directory.*/
+static vfs_overlay_driver_t vfs_root;
+
+/* VFS streams driver object representing the /dev directory.*/
+static vfs_streams_driver_t vfs_dev;
+
+static NullStream nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_stream_element_t streams[] = {
   {"VSD1", (BaseSequentialStream *)&PORTAB_SD1},
-  {"null", (BaseSequentialStream *)&null},
+  {"null", (BaseSequentialStream *)&nullstream},
   {NULL, NULL}
 };
 
@@ -59,7 +66,7 @@ static msg_t scan_nodes(BaseSequentialStream *chp, char *path) {
   static vfs_node_info_t ni;
 
   chprintf(chp, "%s\r\n", path);
-  res = vfsOpenDirectory(path, &dirp);
+  res = vfsOpenDirectory((vfs_driver_t *)&vfs_root, path, &dirp);
   if (res == VFS_RET_SUCCESS) {
     size_t i = strlen(path);
 
@@ -209,29 +216,34 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
-   * - VFS initialization.
    * - Shell manager initialization.
    */
   halInit();
   chSysInit();
-  vfsInit();
   shellInit();
 
   /* Board-dependent setup code.*/
   portab_setup();
 
-  /* Starting a serial port for the shell.*/
+  /* Starting a serial port for the shell, initializing other streams too.*/
   sdStart(&PORTAB_SD1, NULL);
+  nullObjectInit(&nullstream);
 
-  /* Registering various streams on VFS.*/
-  nullObjectInit(&null);
-  msg = vfsRegisterDriver(drvStreamsInit("dev", &streams[0]));
+  /* Initializing an overlay VFS object as a root, no need for a name.*/
+  drvOverlayObjectInit(&vfs_root, "");
+
+  /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
+  msg = drvOverlayRegisterDriver(&vfs_root,
+                                 drvStreamsObjectInit(&vfs_dev,
+                                                      "dev",
+                                                      &streams[0]));
   if (msg != VFS_RET_SUCCESS) {
     chSysHalt("VFS");
   }
 
   /* Opening a file for shell I/O.*/
-  msg = vfsOpenFile("/dev/VSD1",
+  msg = vfsOpenFile((vfs_driver_t *)&vfs_root,
+                    "/dev/VSD1",
                     MODE_OPEN | MODE_RDWR,
                     &file);
   if (msg != VFS_RET_SUCCESS) {

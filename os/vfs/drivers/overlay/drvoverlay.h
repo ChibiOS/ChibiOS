@@ -121,7 +121,7 @@ struct vfs_overlay_driver_vmt {
 /**
  * @brief   Type of a structure representing a VFS Overlay driver.
  */
-typedef struct vfs_drv_streams {
+typedef struct vfs_drv_overlay {
   /**
    * @brief   Virtual Methods Table.
    */
@@ -142,6 +142,8 @@ extern "C" {
 #endif
   vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
                                      const char *rootname);
+  msg_t drvOverlayRegisterDriver(vfs_overlay_driver_t *vodp,
+                                 vfs_driver_t *vdp);
 #ifdef __cplusplus
 }
 #endif
