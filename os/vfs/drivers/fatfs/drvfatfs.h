@@ -170,7 +170,8 @@ typedef struct vfs_drv_streams {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  vfs_driver_t *drvFatFSInit(const char *rootname);
+  vfs_driver_t *drvFatfsObjectInit(vfs_fatfs_driver_t *ffdp,
+                                   const char *rootname);
 #ifdef __cplusplus
 }
 #endif

@@ -142,8 +142,6 @@ static const struct vfs_fatfs_file_node_vmt file_node_vmt = {
 static vfs_fatfs_dir_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
 static vfs_fatfs_file_node_t drv_file_nodes[DRV_FILE_NODES_NUM];
 
-static vfs_fatfs_driver_t drv_fatfs;
-
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -200,7 +198,7 @@ static msg_t drv_open_dir(void *instance,
     vfs_fatfs_dir_node_t *ffdnp;
     FRESULT res;
 
-    ffdnp = chPoolAlloc(&drv_fatfs.dir_nodes_pool);
+    ffdnp = chPoolAlloc(&drvp->dir_nodes_pool);
     if (ffdnp != NULL) {
 
       /* Node object initialization.*/
@@ -215,7 +213,7 @@ static msg_t drv_open_dir(void *instance,
         break;
       }
 
-      chPoolFree(&drv_fatfs.dir_nodes_pool, (void *)ffdnp);
+      chPoolFree(&drvp->dir_nodes_pool, (void *)ffdnp);
     }
 
     err = translate_error(res);
@@ -236,7 +234,7 @@ static msg_t drv_open_file(void *instance,
     vfs_fatfs_file_node_t *fffnp;
     FRESULT res;
 
-    fffnp = chPoolAlloc(&drv_fatfs.file_nodes_pool);
+    fffnp = chPoolAlloc(&drvp->file_nodes_pool);
     if (fffnp != NULL) {
 
       /* Node object initialization.*/
@@ -251,7 +249,7 @@ static msg_t drv_open_file(void *instance,
         break;
       }
 
-      chPoolFree(&drv_fatfs.file_nodes_pool, (void *)fffnp);
+      chPoolFree(&drvp->file_nodes_pool, (void *)fffnp);
     }
 
     err = translate_error(res);
@@ -292,10 +290,11 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 
   do {
     vfs_fatfs_dir_node_t *ffdnp = (vfs_fatfs_dir_node_t *)instance;
+    vfs_fatfs_driver_t *drvp = (vfs_fatfs_driver_t *)ffdnp->driver;
     FRESULT res;
     FILINFO *fip;
 
-    fip = (FILINFO *)chPoolAlloc(&drv_fatfs.info_nodes_pool);
+    fip = (FILINFO *)chPoolAlloc(&drvp->info_nodes_pool);
     if (fip != NULL) {
 
       res = f_readdir(&ffdnp->dir, fip);
@@ -315,7 +314,7 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
         err = translate_error(res);
       }
 
-      chPoolFree(&drv_fatfs.info_nodes_pool, (void *)fip);
+      chPoolFree(&drvp->info_nodes_pool, (void *)fip);
     }
   }
   while (false);
@@ -377,31 +376,41 @@ static vfs_offset_t node_file_getsize(void *instance) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-vfs_driver_t *drvFatfsInit(const char *rootname) {
+/**
+ * @brief   VFS FatFS object initialization.
+ *
+ * @param[out] vodp     pointer to a @p vfs_fatfs_driver_t structure
+ * @param[in] rootname  name to be attributed to this object
+ * @return              A pointer to this initialized object.
+ *
+ * @api
+ */
+vfs_driver_t *drvFatfsObjectInit(vfs_fatfs_driver_t *ffdp,
+                                 const char *rootname) {
 
-  drv_fatfs.vmt      = &driver_vmt;
-  drv_fatfs.rootname = rootname;
+  ffdp->vmt      = &driver_vmt;
+  ffdp->rootname = rootname;
 
   /* Initializing pools.*/
-  chPoolObjectInit(&drv_fatfs.dir_nodes_pool,
+  chPoolObjectInit(&ffdp->dir_nodes_pool,
                    sizeof (vfs_fatfs_dir_node_t),
                    chCoreAllocAligned);
-  chPoolObjectInit(&drv_fatfs.file_nodes_pool,
+  chPoolObjectInit(&ffdp->file_nodes_pool,
                    sizeof (vfs_fatfs_file_node_t),
                    chCoreAllocAligned);
-  chPoolObjectInit(&drv_fatfs.info_nodes_pool,
+  chPoolObjectInit(&ffdp->info_nodes_pool,
                    sizeof (FILINFO),
                    chCoreAllocAligned);
 
   /* Preloading pools.*/
-  chPoolLoadArray(&drv_fatfs.dir_nodes_pool,
+  chPoolLoadArray(&ffdp->dir_nodes_pool,
                   drv_dir_nodes,
                   DRV_DIR_NODES_NUM);
-  chPoolLoadArray(&drv_fatfs.file_nodes_pool,
+  chPoolLoadArray(&ffdp->file_nodes_pool,
                   drv_file_nodes,
                   DRV_FILE_NODES_NUM);
 
-  return (vfs_driver_t *)&drv_fatfs;
+  return (vfs_driver_t *)ffdp;
 }
 
 /** @} */
