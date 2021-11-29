@@ -224,8 +224,9 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
                                    const char *rootname) {
 
-  vodp->vmt      = &driver_vmt;
-  vodp->rootname = rootname;
+  vodp->vmt         = &driver_vmt;
+  vodp->rootname    = rootname;
+  vodp->next_driver = &vodp->drivers[0];
 
   /* Initializing pools.*/
   chPoolObjectInit(&vodp->dir_nodes_pool,
