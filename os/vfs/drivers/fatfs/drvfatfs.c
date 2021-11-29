@@ -30,8 +30,6 @@
 #include "vfs.h"
 #include "drvfatfs.h"
 
-#include "ff.h"
-
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/
@@ -95,60 +93,6 @@
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
-
-/**
- * @brief   @p vfs_fatfs_driver_t virtual methods table.
- */
-struct vfs_fatfs_driver_vmt {
-  __vfs_fatfs_driver_methods
-};
-
-/**
- * @brief   Type of a structure representing a VFS FatFS driver.
- */
-typedef struct vfs_drv_streams {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_fatfs_driver_vmt   *vmt;
-  __vfs_fatfs_driver_data
-} vfs_fatfs_driver_t;
-
-/**
- * @brief   @p vfs_fatfs_dir_node_t virtual methods table.
- */
-struct vfs_fatfs_dir_node_vmt {
-  __vfs_fatfs_dir_node_methods
-};
-
-/**
- * @brief   Type of a structure representing a FatFS directory VFS node.
- */
-typedef struct vfs_fatfs_dir_node {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_fatfs_dir_node_vmt *vmt;
-  __vfs_fatfs_dir_node_data
-} vfs_fatfs_dir_node_t;
-
-/**
- * @brief   @p vfs_fatfs_file_node_t virtual methods table.
- */
-struct vfs_fatfs_file_node_vmt {
-  __vfs_fatfs_file_node_methods
-};
-
-/**
- * @brief   Type of a structure representing a FatFS file VFS node.
- */
-typedef struct vfs_fatfs_file_node {
-  /**
-   * @brief   Virtual Methods Table.
-   */
-  const struct vfs_fatfs_file_node_vmt *vmt;
-  __vfs_fatfs_file_node_data
-} vfs_fatfs_file_node_t;
 
 /*===========================================================================*/
 /* Module local variables.                                                   */

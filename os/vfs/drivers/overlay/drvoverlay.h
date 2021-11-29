@@ -28,8 +28,6 @@
 #ifndef DRVOVERLAY_H
 #define DRVOVERLAY_H
 
-#include "vfs.h"
-
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -43,6 +41,14 @@
 /*===========================================================================*/
 
 /* Configuration options checks.*/
+#if !defined(DRV_CFG_OVERLAY_DIR_NODES_NUM)
+#error "DRV_CFG_OVERLAY_DIR_NODES_NUM not defined in vfsconf.h"
+#endif
+
+#if !defined(DRV_CFG_OVERLAY_DRV_MAX)
+#error "DRV_CFG_OVERLAY_DRV_MAX not defined in vfsconf.h"
+#endif
+
 #if DRV_CFG_OVERLAY_DIR_NODES_NUM < 1
 #error "invalid value for DRV_CFG_OVERLAY_DIR_NODES_NUM"
 #endif

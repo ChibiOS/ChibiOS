@@ -28,7 +28,7 @@
 #ifndef DRVFATFS_H
 #define DRVFATFS_H
 
-#include "vfs.h"
+#include "ff.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -42,9 +42,122 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Configuration options checks.*/
+#if !defined(DRV_CFG_FATFS_DIR_NODES_NUM)
+#error "DRV_CFG_FATFS_DIR_NODES_NUM not defined in vfsconf.h"
+#endif
+
+#if !defined(DRV_CFG_FATFS_FILE_NODES_NUM)
+#error "DRV_CFG_FATFS_FILE_NODES_NUM not defined in vfsconf.h"
+#endif
+
+#if DRV_CFG_FATFS_DIR_NODES_NUM < 1
+#error "invalid value for DRV_CFG_FATFS_DIR_NODES_NUM"
+#endif
+
+#if DRV_CFG_FATFS_FILE_NODES_NUM < 1
+#error "invalid value for DRV_CFG_FATFS_FILE_NODES_NUM"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   @p vfs_fatfs_dir_node_t specific methods.
+ */
+#define __vfs_fatfs_dir_node_methods                                        \
+  __vfs_directory_node_methods
+
+/**
+ * @brief   @p vfs_fatfs_dir_node_t specific data.
+ */
+#define __vfs_fatfs_dir_node_data                                           \
+  __vfs_directory_node_data                                                 \
+  DIR                           dir;
+
+/**
+ * @brief   @p vfs_fatfs_dir_node_t virtual methods table.
+ */
+struct vfs_fatfs_dir_node_vmt {
+  __vfs_fatfs_dir_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a FatFS directory VFS node.
+ */
+typedef struct vfs_fatfs_dir_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_fatfs_dir_node_vmt *vmt;
+  __vfs_fatfs_dir_node_data
+} vfs_fatfs_dir_node_t;
+
+/**
+ * @brief   @p vfs_fatfs_file_node_t specific methods.
+ */
+#define __vfs_fatfs_file_node_methods                                       \
+  __vfs_file_node_methods
+
+/**
+ * @brief   @p vfs_fatfs_file_node_t specific data.
+ */
+#define __vfs_fatfs_file_node_data                                          \
+  __vfs_file_node_data                                                      \
+  FIL                           file;                                       \
+  BaseSequentialStream          *stream;
+
+/**
+ * @brief   @p vfs_fatfs_file_node_t virtual methods table.
+ */
+struct vfs_fatfs_file_node_vmt {
+  __vfs_fatfs_file_node_methods
+};
+
+/**
+ * @brief   Type of a structure representing a FatFS file VFS node.
+ */
+typedef struct vfs_fatfs_file_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_fatfs_file_node_vmt *vmt;
+  __vfs_fatfs_file_node_data
+} vfs_fatfs_file_node_t;
+
+/**
+ * @brief   @p vfs_fatfs_driver_t specific methods.
+ */
+#define __vfs_fatfs_driver_methods                                          \
+  __vfs_driver_methods
+
+/**
+ * @brief   @p vfs_fatfs_driver_t specific data.
+ */
+#define __vfs_fatfs_driver_data                                             \
+  __vfs_driver_data                                                         \
+  memory_pool_t                 file_nodes_pool;                            \
+  memory_pool_t                 dir_nodes_pool;                             \
+  memory_pool_t                 info_nodes_pool;
+
+/**
+ * @brief   @p vfs_fatfs_driver_t virtual methods table.
+ */
+struct vfs_fatfs_driver_vmt {
+  __vfs_fatfs_driver_methods
+};
+
+/**
+ * @brief   Type of a structure representing a VFS FatFS driver.
+ */
+typedef struct vfs_drv_streams {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_fatfs_driver_vmt   *vmt;
+  __vfs_fatfs_driver_data
+} vfs_fatfs_driver_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */

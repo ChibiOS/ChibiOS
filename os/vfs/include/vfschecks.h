@@ -48,6 +48,15 @@
 #error "obsolete or unknown configuration file"
 #endif
 
+/* Configuration options checks.*/
+#if !defined(VFS_CFG_MAX_NAMELEN)
+#error "VFS_CFG_MAX_NAMELEN not defined in vfsconf.h"
+#endif
+
+#if VFS_CFG_MAX_NAMELEN < 12
+#error "invalid value for VFS_CFG_MAX_NAMELEN"
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
