@@ -38,23 +38,18 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Number of directory nodes pre-allocated in the pool.
- */
-#if !defined(DRV_CFG_STREAMS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_STREAMS_DIR_NODES_NUM       1
-#endif
-
-/**
- * @brief   Number of file nodes pre-allocated in the pool.
- */
-#if !defined(DRV_CFG_STREAMS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_STREAMS_FILE_NODES_NUM      2
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Configuration options checks.*/
+#if DRV_CFG_STREAMS_DIR_NODES_NUM < 1
+#error "invalid value for DRV_CFG_STREAMS_DIR_NODES_NUM"
+#endif
+
+#if DRV_CFG_STREAMS_FILE_NODES_NUM < 1
+#error "invalid value for DRV_CFG_STREAMS_FILE_NODES_NUM"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */

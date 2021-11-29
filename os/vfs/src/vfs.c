@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    vfs/src/chsystem.c
- * @brief   VFS system code.
+ * @file    vfs/src/vfs.c
+ * @brief   VFS API code.
  *
- * @addtogroup VFS_SYSTEM
+ * @addtogroup VFS
  * @{
  */
 

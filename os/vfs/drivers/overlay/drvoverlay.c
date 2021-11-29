@@ -194,7 +194,7 @@ static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
 static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   vfs_overlay_dir_node_t *odnp = (vfs_overlay_dir_node_t *)instance;
 
-  if (odnp->index < VFS_CFG_MAX_DRIVERS) {
+  if (odnp->index < DRV_CFG_OVERLAY_DRV_MAX) {
     nip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
     nip->size   = (vfs_offset_t)0;
     strcpy(nip->name,
@@ -236,7 +236,7 @@ vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
   /* Preloading pools.*/
   chPoolLoadArray(&vodp->dir_nodes_pool,
                   &vodp->dir_nodes[0],
-                  DRV_CFG_OVERLAY_NODES_NUM);
+                  DRV_CFG_OVERLAY_DIR_NODES_NUM);
 
   return (vfs_driver_t *)vodp;
 }
@@ -253,7 +253,7 @@ msg_t drvOverlayRegisterDriver(vfs_overlay_driver_t *vodp,
                                vfs_driver_t *vdp) {
   msg_t err;
 
-  if (vodp->next_driver >= &vodp->drivers[VFS_CFG_MAX_DRIVERS]) {
+  if (vodp->next_driver >= &vodp->drivers[DRV_CFG_OVERLAY_DRV_MAX]) {
     err = VFS_RET_NO_RESOURCE;
   }
   else {

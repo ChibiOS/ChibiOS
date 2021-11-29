@@ -38,23 +38,18 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Number of directory nodes pre-allocated in the pool.
- */
-#if !defined(DRV_CFG_OVERLAY_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_OVERLAY_NODES_NUM           1
-#endif
-
-/**
- * @brief   Maximum number of overlayed directories.
- */
-#if !defined(DRV_CFG_OVERLAY_DIR_MAX) || defined(__DOXYGEN__)
-#define DRV_CFG_OVERLAY_DIR_MAX             2
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Configuration options checks.*/
+#if DRV_CFG_OVERLAY_DIR_NODES_NUM < 1
+#error "invalid value for DRV_CFG_OVERLAY_DIR_NODES_NUM"
+#endif
+
+#if (DRV_CFG_OVERLAY_DRV_MAX < 1) || (DRV_CFG_OVERLAY_DRV_MAX > 16)
+#error "invalid value for DRV_CFG_OVERLAY_DRV_MAX"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -105,11 +100,11 @@ typedef struct vfs_overlay_dir_node {
   /* Pool of directory nodes.*/                                             \
   memory_pool_t                     dir_nodes_pool;                         \
   /* Static storage of directory nodes.*/                                   \
-  vfs_overlay_dir_node_t            dir_nodes[DRV_CFG_OVERLAY_NODES_NUM];   \
+  vfs_overlay_dir_node_t            dir_nodes[DRV_CFG_OVERLAY_DIR_NODES_NUM]; \
   /* Next registration slot.*/                                              \
   vfs_driver_t                      **next_driver;                          \
   /* Registration slots.*/                                                  \
-  vfs_driver_t                      *drivers[DRV_CFG_OVERLAY_DIR_MAX];
+  vfs_driver_t                      *drivers[DRV_CFG_OVERLAY_DRV_MAX];
 
 /**
  * @brief   @p vfs_overlay_driver_t virtual methods table.

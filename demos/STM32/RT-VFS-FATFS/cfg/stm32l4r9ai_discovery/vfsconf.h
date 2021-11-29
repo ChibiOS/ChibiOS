@@ -28,19 +28,67 @@
 #define _CHIBIOS_VFS_CONF_
 #define _CHIBIOS_VFS_CONF_VER_1_0_
 
+/*===========================================================================*/
 /**
- * @brief   Maximum of drivers to be registered in VFS.
+ * @name VFS general settings
+ * @{
  */
-#if !defined(VFS_CFG_MAX_DRIVERS) || defined(__DOXYGEN__)
-#define VFS_CFG_MAX_DRIVERS                 2
-#endif
+/*===========================================================================*/
 
 /**
- * @brief   Maximum file names handled in VFS.
+ * @brief   Maximum filename length.
  */
 #if !defined(VFS_CFG_MAX_NAMELEN) || defined(__DOXYGEN__)
 #define VFS_CFG_MAX_NAMELEN                 15
 #endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name Overlay driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Maximum number of overlay directories.
+ */
+#if !defined(DRV_CFG_OVERLAY_DRV_MAX) || defined(__DOXYGEN__)
+#define DRV_CFG_OVERLAY_DRV_MAX             2
+#endif
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_OVERLAY_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_OVERLAY_DIR_NODES_NUM       1
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name Streams driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_STREAMS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_STREAMS_DIR_NODES_NUM       1
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_STREAMS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_STREAMS_FILE_NODES_NUM      2
+#endif
+
+/** @} */
 
 #endif /* VFSCONF_H */
 

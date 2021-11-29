@@ -48,15 +48,6 @@
 #error "obsolete or unknown configuration file"
 #endif
 
-/* Configuration options checks.*/
-#if !defined(VFS_CFG_MAX_DRIVERS)
-#error "VFS_CFG_MAX_DRIVERS not defined in chconf.h"
-#endif
-
-#if (VFS_CFG_MAX_DRIVERS < 1) || (VFS_CFG_MAX_DRIVERS > 16)
-#error "invalid value for VFS_CFG_MAX_DRIVERS"
-#endif
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
