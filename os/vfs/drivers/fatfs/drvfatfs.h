@@ -51,12 +51,20 @@
 #error "DRV_CFG_FATFS_FILE_NODES_NUM not defined in vfsconf.h"
 #endif
 
+#if !defined(DRV_CFG_FATFS_MOUNT_MODE)
+#error "DRV_CFG_FATFS_MOUNT_MODE not defined in vfsconf.h"
+#endif
+
 #if DRV_CFG_FATFS_DIR_NODES_NUM < 1
 #error "invalid value for DRV_CFG_FATFS_DIR_NODES_NUM"
 #endif
 
 #if DRV_CFG_FATFS_FILE_NODES_NUM < 1
 #error "invalid value for DRV_CFG_FATFS_FILE_NODES_NUM"
+#endif
+
+#if (DRV_CFG_FATFS_MOUNT_MODE < 0) || (DRV_CFG_FATFS_MOUNT_MODE > 1)
+#error "invalid value for DRV_CFG_FATFS_MOUNT_MODE"
 #endif
 
 /*===========================================================================*/
@@ -106,7 +114,7 @@ typedef struct vfs_fatfs_dir_node {
 #define __vfs_fatfs_file_node_data                                          \
   __vfs_file_node_data                                                      \
   FIL                           file;                                       \
-  BaseSequentialStream          *stream;
+  BaseSequentialStream          stream;
 
 /**
  * @brief   @p vfs_fatfs_file_node_t virtual methods table.
@@ -139,7 +147,8 @@ typedef struct vfs_fatfs_file_node {
   __vfs_driver_data                                                         \
   memory_pool_t                 file_nodes_pool;                            \
   memory_pool_t                 dir_nodes_pool;                             \
-  memory_pool_t                 info_nodes_pool;
+  memory_pool_t                 info_nodes_pool;                            \
+  FATFS                         fs;
 
 /**
  * @brief   @p vfs_fatfs_driver_t virtual methods table.
@@ -170,8 +179,10 @@ typedef struct vfs_drv_streams {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  vfs_driver_t *drvFatfsObjectInit(vfs_fatfs_driver_t *ffdp,
+  vfs_driver_t *drvFatFSObjectInit(vfs_fatfs_driver_t *ffdp,
                                    const char *rootname);
+  msg_t drvFatFSMount(vfs_fatfs_driver_t *ffdp);
+  msg_t drvFatFSUnmount(vfs_fatfs_driver_t *ffdp);
 #ifdef __cplusplus
 }
 #endif

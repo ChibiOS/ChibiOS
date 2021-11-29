@@ -34,58 +34,6 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   Number of directory nodes pre-allocated in the pool.
- */
-#define DRV_DIR_NODES_NUM       1
-
-/**
- * @brief   Number of file nodes pre-allocated in the pool.
- */
-#define DRV_FILE_NODES_NUM      2
-
-/**
- * @brief   @p vfs_fatfs_driver_t specific methods.
- */
-#define __vfs_fatfs_driver_methods                                          \
-  __vfs_driver_methods
-
-/**
- * @brief   @p vfs_fatfs_driver_t specific data.
- */
-#define __vfs_fatfs_driver_data                                             \
-  __vfs_driver_data                                                         \
-  memory_pool_t                 file_nodes_pool;                            \
-  memory_pool_t                 dir_nodes_pool;                             \
-  memory_pool_t                 info_nodes_pool;
-
-/**
- * @brief   @p vfs_fatfs_dir_node_t specific methods.
- */
-#define __vfs_fatfs_dir_node_methods                                        \
-  __vfs_directory_node_methods
-
-/**
- * @brief   @p vfs_fatfs_dir_node_t specific data.
- */
-#define __vfs_fatfs_dir_node_data                                           \
-  __vfs_directory_node_data                                                 \
-  DIR                           dir;
-
-/**
- * @brief   @p vfs_fatfs_file_node_t specific methods.
- */
-#define __vfs_fatfs_file_node_methods                                       \
-  __vfs_file_node_methods
-
-/**
- * @brief   @p vfs_fatfs_file_node_t specific data.
- */
-#define __vfs_fatfs_file_node_data                                          \
-  __vfs_file_node_data                                                      \
-  FIL                           file;                                       \
-  BaseSequentialStream          *stream;
-
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -139,8 +87,8 @@ static const struct vfs_fatfs_file_node_vmt file_node_vmt = {
   .file_getsize    = node_file_getsize
 };
 
-static vfs_fatfs_dir_node_t drv_dir_nodes[DRV_DIR_NODES_NUM];
-static vfs_fatfs_file_node_t drv_file_nodes[DRV_FILE_NODES_NUM];
+static vfs_fatfs_dir_node_t drv_dir_nodes[DRV_CFG_FATFS_DIR_NODES_NUM];
+static vfs_fatfs_file_node_t drv_file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -335,19 +283,19 @@ static void node_file_release(void *instance) {
 static BaseSequentialStream *node_file_get_stream(void *instance) {
   vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
 
-  return fffnp->stream;
+  return &fffnp->stream;
 }
 
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n) {
   vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
 
-  return streamRead(fffnp->stream, buf, n);
+  return streamRead(&fffnp->stream, buf, n);
 }
 
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
   vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
 
-  return streamWrite(fffnp->stream, buf, n);
+  return streamWrite(&fffnp->stream, buf, n);
 }
 
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
@@ -379,13 +327,13 @@ static vfs_offset_t node_file_getsize(void *instance) {
 /**
  * @brief   VFS FatFS object initialization.
  *
- * @param[out] vodp     pointer to a @p vfs_fatfs_driver_t structure
+ * @param[out] ffdp     pointer to a @p vfs_fatfs_driver_t structure
  * @param[in] rootname  name to be attributed to this object
  * @return              A pointer to this initialized object.
  *
  * @api
  */
-vfs_driver_t *drvFatfsObjectInit(vfs_fatfs_driver_t *ffdp,
+vfs_driver_t *drvFatFSObjectInit(vfs_fatfs_driver_t *ffdp,
                                  const char *rootname) {
 
   ffdp->vmt      = &driver_vmt;
@@ -405,12 +353,40 @@ vfs_driver_t *drvFatfsObjectInit(vfs_fatfs_driver_t *ffdp,
   /* Preloading pools.*/
   chPoolLoadArray(&ffdp->dir_nodes_pool,
                   drv_dir_nodes,
-                  DRV_DIR_NODES_NUM);
+                  DRV_CFG_FATFS_DIR_NODES_NUM);
   chPoolLoadArray(&ffdp->file_nodes_pool,
                   drv_file_nodes,
-                  DRV_FILE_NODES_NUM);
+                  DRV_CFG_FATFS_FILE_NODES_NUM);
 
   return (vfs_driver_t *)ffdp;
+}
+
+/**
+ * @brief   Mounts a FatFS volume.
+ *
+ * @param[in] ffdp      pointer to a @p vfs_fatfs_driver_t structure
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t drvFatFSMount(vfs_fatfs_driver_t *ffdp) {
+
+  return translate_error(f_mount(&ffdp->fs,
+                                 ffdp->rootname,
+                                 DRV_CFG_FATFS_MOUNT_MODE));
+}
+
+/**
+ * @brief   Unmounts a FatFS volume.
+ *
+ * @param[in] ffdp      pointer to a @p vfs_fatfs_driver_t structure
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t drvFatFSUnmount(vfs_fatfs_driver_t *ffdp) {
+
+  return translate_error(f_unmount(ffdp->rootname));
 }
 
 /** @} */
