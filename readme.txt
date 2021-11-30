@@ -74,6 +74,11 @@
 *****************************************************************************
 
 *** Next ***
+- TODO: Implement objects disposing everywhere in RT, see example code
+        in chsem.c.
+- TODO: Implement pointers check everywhere in RT replacing assertions for
+        NULL pointers.
+- NEW: Added MEM_NATURAL_ALIGN macro to RT and NIL.
 - NEW: Added static initializer for virtual timers in RT.
 - NEW: Added new function chHeapIntegrityCheck().
 - NEW: Added EFL driver implementation for STM32G4xx.

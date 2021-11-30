@@ -54,6 +54,13 @@
  * @{
  */
 /**
+ * @brief   Natural data alignment for the current architecture.
+ * @note    Represents the required alignment for integer and pointer
+ *          data types.
+ */
+#define MEM_NATURAL_ALIGN       PORT_NATURAL_ALIGN
+
+/**
  * @brief   Alignment mask constant.
  *
  * @param[in] a         alignment, must be a power of two

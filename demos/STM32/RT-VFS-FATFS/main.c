@@ -221,7 +221,7 @@ static void InsertHandler(eventid_t id) {
 #if defined(DEMO_USE_FATFS)
   msg_t err;
 
-  #if HAL_USE_SDC
+#if HAL_USE_SDC
   if (sdcConnect(&PORTAB_SDCD1)) {
     return;
   }

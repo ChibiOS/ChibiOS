@@ -55,6 +55,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
@@ -100,6 +102,32 @@ void chSemObjectInit(semaphore_t *sp, cnt_t n) {
 
   ch_queue_init(&sp->queue);
   sp->cnt = n;
+}
+
+/**
+ * @brief   Disposes a semaphore.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_ENABLE_HARDENING is enabled then the
+ *          object is cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ *
+ * @dispose
+ */
+void chSemObjectDispose(semaphore_t *sp) {
+
+  chDbgAssert(chMemIsAreaWritableX((void *)sp,
+                                   sizeof (semaphore_t),
+                                   MEM_NATURAL_ALIGN), "pointer error");
+  chDbgAssert(ch_queue_isempty(&sp->queue), "object in use");
+
+#if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/
+  memset((void *)sp, 0, sizeof (semaphore_t));
+#endif
 }
 
 /**
