@@ -87,8 +87,10 @@ static const struct vfs_fatfs_file_node_vmt file_node_vmt = {
   .file_getsize    = node_file_getsize
 };
 
-static vfs_fatfs_dir_node_t drv_dir_nodes[DRV_CFG_FATFS_DIR_NODES_NUM];
-static vfs_fatfs_file_node_t drv_file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
+/**
+ * @brief   Single FatFS driver instance.
+ */
+vfs_fatfs_driver_t vfs_fatfs;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -333,47 +335,59 @@ static vfs_offset_t node_file_getsize(void *instance) {
  *
  * @api
  */
-vfs_driver_t *drvFatFSObjectInit(vfs_fatfs_driver_t *ffdp,
-                                 const char *rootname) {
+vfs_driver_t *drvFatFSInit(const char *rootname) {
 
-  ffdp->vmt      = &driver_vmt;
-  ffdp->rootname = rootname;
+  vfs_fatfs.vmt      = &driver_vmt;
+  vfs_fatfs.rootname = rootname;
 
   /* Initializing pools.*/
-  chPoolObjectInit(&ffdp->dir_nodes_pool,
+  chPoolObjectInit(&vfs_fatfs.dir_nodes_pool,
                    sizeof (vfs_fatfs_dir_node_t),
                    chCoreAllocAligned);
-  chPoolObjectInit(&ffdp->file_nodes_pool,
+  chPoolObjectInit(&vfs_fatfs.file_nodes_pool,
                    sizeof (vfs_fatfs_file_node_t),
                    chCoreAllocAligned);
-  chPoolObjectInit(&ffdp->info_nodes_pool,
+  chPoolObjectInit(&vfs_fatfs.info_nodes_pool,
                    sizeof (FILINFO),
+                   chCoreAllocAligned);
+  chPoolObjectInit(&vfs_fatfs.fs_nodes_pool,
+                   sizeof (FATFS),
                    chCoreAllocAligned);
 
   /* Preloading pools.*/
-  chPoolLoadArray(&ffdp->dir_nodes_pool,
-                  drv_dir_nodes,
+  chPoolLoadArray(&vfs_fatfs.dir_nodes_pool,
+                  &vfs_fatfs.drv_dir_nodes[0],
                   DRV_CFG_FATFS_DIR_NODES_NUM);
-  chPoolLoadArray(&ffdp->file_nodes_pool,
-                  drv_file_nodes,
+  chPoolLoadArray(&vfs_fatfs.file_nodes_pool,
+                  &vfs_fatfs.drv_file_nodes[0],
                   DRV_CFG_FATFS_FILE_NODES_NUM);
 
-  return (vfs_driver_t *)ffdp;
+  return (vfs_driver_t *)&vfs_fatfs;
 }
 
 /**
  * @brief   Mounts a FatFS volume.
  *
- * @param[in] ffdp      pointer to a @p vfs_fatfs_driver_t structure
+ * @param[in] name      name to be assigned to the volume, see FatFS
+ *                      @p f_mount() documentation because there are several
+ *                      options
+ * @param[in] mountnow  immediate mount option
  * @return              The operation result.
  *
  * @api
  */
-msg_t drvFatFSMount(vfs_fatfs_driver_t *ffdp) {
+msg_t drvFatFSMount(const char *name, bool mountnow) {
+  FATFS *fs;
 
-  return translate_error(f_mount(&ffdp->fs,
-                                 ffdp->rootname,
-                                 DRV_CFG_FATFS_MOUNT_MODE));
+  fs = f_getfs(name);
+  if (fs == NULL) {
+    fs = chPoolAlloc(&vfs_fatfs.fs_nodes_pool);
+    if (fs == NULL) {
+      return VFS_RET_NO_RESOURCE;
+    }
+  }
+
+  return translate_error(f_mount(fs, name, (BYTE)(mountnow ? 1 : 0)));
 }
 
 /**
@@ -384,9 +398,20 @@ msg_t drvFatFSMount(vfs_fatfs_driver_t *ffdp) {
  *
  * @api
  */
-msg_t drvFatFSUnmount(vfs_fatfs_driver_t *ffdp) {
+msg_t drvFatFSUnmount(const char *name) {
+  FATFS *fs;
+  FRESULT res;
 
-  return translate_error(f_unmount(ffdp->rootname));
+  fs = f_getfs(name);
+  if (fs == NULL) {
+    return VFS_RET_MEDIA_ERROR;
+  }
+
+  res = f_unmount(name);
+
+  chPoolFree(&vfs_fatfs.fs_nodes_pool, (void *)fs);
+
+  return translate_error(res);
 }
 
 /** @} */

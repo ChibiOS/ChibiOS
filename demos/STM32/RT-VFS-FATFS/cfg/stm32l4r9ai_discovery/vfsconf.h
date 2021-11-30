@@ -111,13 +111,6 @@
 #define DRV_CFG_FATFS_FILE_NODES_NUM        2
 #endif
 
-/**
- * @brief   Mount mode for FatFS.
- */
-#if !defined(DRV_CFG_FATFS_MOUNT_MODE) || defined(__DOXYGEN__)
-#define DRV_CFG_FATFS_MOUNT_MODE            1
-#endif
-
 /** @} */
 
 #endif /* VFSCONF_H */
