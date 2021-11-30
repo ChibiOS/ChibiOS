@@ -343,16 +343,16 @@ vfs_driver_t *drvFatFSInit(const char *rootname) {
   /* Initializing pools.*/
   chPoolObjectInit(&vfs_fatfs.dir_nodes_pool,
                    sizeof (vfs_fatfs_dir_node_t),
-                   chCoreAllocAligned);
+                   chCoreAllocAlignedI);
   chPoolObjectInit(&vfs_fatfs.file_nodes_pool,
                    sizeof (vfs_fatfs_file_node_t),
-                   chCoreAllocAligned);
+                   chCoreAllocAlignedI);
   chPoolObjectInit(&vfs_fatfs.info_nodes_pool,
                    sizeof (FILINFO),
-                   chCoreAllocAligned);
+                   chCoreAllocAlignedI);
   chPoolObjectInit(&vfs_fatfs.fs_nodes_pool,
                    sizeof (FATFS),
-                   chCoreAllocAligned);
+                   chCoreAllocAlignedI);
 
   /* Preloading pools.*/
   chPoolLoadArray(&vfs_fatfs.dir_nodes_pool,

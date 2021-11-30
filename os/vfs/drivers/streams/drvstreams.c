@@ -290,10 +290,10 @@ vfs_driver_t *drvStreamsObjectInit(vfs_streams_driver_t *vsdp,
   /* Initializing pools.*/
   chPoolObjectInit(&vsdp->dir_nodes_pool,
                    sizeof (vfs_stream_dir_node_t),
-                   chCoreAllocAligned);
+                   chCoreAllocAlignedI);
   chPoolObjectInit(&vsdp->file_nodes_pool,
                    sizeof (vfs_stream_file_node_t),
-                   chCoreAllocAligned);
+                   chCoreAllocAlignedI);
 
   /* Preloading pools.*/
   chPoolLoadArray(&vsdp->dir_nodes_pool,

@@ -22,6 +22,9 @@
 #include "vfs.h"
 #include "drvoverlay.h"
 #include "drvstreams.h"
+#if defined(DEMO_USE_FATFS)
+#include "drvfatfs.h"
+#endif
 
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
@@ -32,11 +35,84 @@
 
 #include "portab.h"
 
+
 /*===========================================================================*/
 /* Card insertion monitor.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Card event sources.
+ */
 static event_source_t inserted_event, removed_event;
+
+#if defined(DEMO_USE_FATFS)
+#define POLLING_INTERVAL                10
+#define POLLING_DELAY                   10
+
+/**
+ * @brief   Card monitor timer.
+ */
+static virtual_timer_t tmr;
+
+/**
+ * @brief   Debounce counter.
+ */
+static unsigned cnt;
+
+/**
+ * @brief   Insertion monitor timer callback function.
+ *
+ * @param[in] p         pointer to the @p BaseBlockDevice object
+ *
+ * @notapi
+ */
+static void tmrfunc(virtual_timer_t *vtp, void *p) {
+  BaseBlockDevice *bbdp = p;
+
+  chSysLockFromISR();
+  if (cnt > 0) {
+    if (blkIsInserted(bbdp)) {
+      if (--cnt == 0) {
+        chEvtBroadcastI(&inserted_event);
+      }
+    }
+    else
+      cnt = POLLING_INTERVAL;
+  }
+  else {
+    if (!blkIsInserted(bbdp)) {
+      cnt = POLLING_INTERVAL;
+      chEvtBroadcastI(&removed_event);
+    }
+  }
+  chVTSetI(vtp, TIME_MS2I(POLLING_DELAY), tmrfunc, bbdp);
+  chSysUnlockFromISR();
+}
+
+/**
+ * @brief   Polling monitor start.
+ *
+ * @param[in] p         pointer to an object implementing @p BaseBlockDevice
+ *
+ * @notapi
+ */
+static void tmr_init(void *p) {
+
+  chEvtObjectInit(&inserted_event);
+  chEvtObjectInit(&removed_event);
+  chSysLock();
+  cnt = POLLING_INTERVAL;
+  chVTSetI(&tmr, TIME_MS2I(POLLING_DELAY), tmrfunc, p);
+  chSysUnlock();
+}
+#endif
+
+/*===========================================================================*/
+/* FatFS related.                                                            */
+/*===========================================================================*/
+
+/* FS mounted and ready.*/
+static bool fs_ready = false;
 
 /*===========================================================================*/
 /* VFS related.                                                              */
@@ -143,7 +219,9 @@ static void InsertHandler(eventid_t id) {
   (void)id;
 
 #if defined(DEMO_USE_FATFS)
-#if HAL_USE_SDC
+  msg_t err;
+
+  #if HAL_USE_SDC
   if (sdcConnect(&PORTAB_SDCD1)) {
     return;
   }
@@ -152,6 +230,17 @@ static void InsertHandler(eventid_t id) {
     return;
   }
 #endif
+
+  err = drvFatFSMount("0:", 1);
+  if (err != VFS_RET_SUCCESS) {
+#if HAL_USE_SDC
+    sdcDisconnect(&PORTAB_SDCD1);
+#else
+  if (mmcDisconnect(&MMCD1)) {
+#endif
+   return;
+  }
+  fs_ready = true;
 #endif
 }
 
@@ -168,6 +257,7 @@ static void RemoveHandler(eventid_t id) {
 #else
     mmcDisconnect(&MMCD1);
 #endif
+    fs_ready = false;
 #endif
 }
 
@@ -193,7 +283,7 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
   while (true) {
     palToggleLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
+    chThdSleepMilliseconds(fs_ready ? 250 : 500);
   }
 }
 
@@ -225,6 +315,14 @@ int main(void) {
   /* Board-dependent setup code.*/
   portab_setup();
 
+#if defined(DEMO_USE_FATFS)
+  /* Activates the  SDC driver using default configuration.*/
+  sdcStart(&PORTAB_SDCD1, NULL);
+
+  /* Activates the card insertion monitor.*/
+  tmr_init(&PORTAB_SDCD1);
+#endif
+
   /* Starting a serial port for the shell, initializing other streams too.*/
   sdStart(&PORTAB_SD1, NULL);
   nullObjectInit(&nullstream);
@@ -241,6 +339,14 @@ int main(void) {
   if (msg != VFS_RET_SUCCESS) {
     chSysHalt("VFS");
   }
+
+#if defined(DEMO_USE_FATFS)
+  /* Registering the VFS FatFS wrapped driver as "/fatfs".*/
+  msg = drvOverlayRegisterDriver(&vfs_root, drvFatFSInit("fatfs"));
+  if (msg != VFS_RET_SUCCESS) {
+    chSysHalt("VFS");
+  }
+#endif
 
   /* Opening a file for shell I/O.*/
   msg = vfsOpenFile((vfs_driver_t *)&vfs_root,

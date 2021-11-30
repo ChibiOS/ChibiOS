@@ -247,7 +247,7 @@ vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
   /* Initializing pools.*/
   chPoolObjectInit(&vodp->dir_nodes_pool,
                    sizeof (vfs_overlay_dir_node_t),
-                   chCoreAllocAligned);
+                   chCoreAllocAlignedI);
 
   /* Preloading pools.*/
   chPoolLoadArray(&vodp->dir_nodes_pool,
