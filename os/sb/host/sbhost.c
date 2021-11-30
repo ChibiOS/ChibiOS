@@ -62,7 +62,7 @@ bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
 
   do {
     if (((uint32_t)start >= rp->base) && ((uint32_t)start < rp->end) &&
-        (size <= ((size_t)rp->base - (size_t)start))) {
+        (size <= ((size_t)rp->end - (size_t)start))) {
       return true;
     }
     rp++;
@@ -76,7 +76,7 @@ bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
 
   do {
     if (((uint32_t)start >= rp->base) && ((uint32_t)start < rp->end) &&
-        (size <= ((size_t)rp->base - (size_t)start))) {
+        (size <= ((size_t)rp->end - (size_t)start))) {
       return rp->writeable;
     }
     rp++;
