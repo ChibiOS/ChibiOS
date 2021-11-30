@@ -164,7 +164,7 @@ struct vfs_streams_driver_vmt {
 /**
  * @brief   Type of a structure representing a VFS streams driver.
  */
-typedef struct vfs_drv_streams {
+typedef struct vfs_streams_driver {
   /**
    * @brief   Virtual Methods Table.
    */

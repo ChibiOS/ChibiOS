@@ -124,7 +124,7 @@ struct vfs_overlay_driver_vmt {
 /**
  * @brief   Type of a structure representing a VFS Overlay driver.
  */
-typedef struct vfs_drv_overlay {
+typedef struct vfs_overlay_driver {
   /**
    * @brief   Virtual Methods Table.
    */

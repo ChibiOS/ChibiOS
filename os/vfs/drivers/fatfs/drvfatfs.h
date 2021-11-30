@@ -154,7 +154,7 @@ struct vfs_fatfs_driver_vmt {
 /**
  * @brief   Type of a structure representing a VFS FatFS driver.
  */
-typedef struct vfs_drv_streams {
+typedef struct vfs_fatfs_driver {
   /**
    * @brief   Virtual Methods Table.
    */
