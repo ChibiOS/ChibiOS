@@ -57,6 +57,18 @@
 #error "invalid value for VFS_CFG_MAX_NAMELEN"
 #endif
 
+#if !defined(VFS_CFG_ENABLE_DRV_OVERLAY)
+#error "VFS_CFG_ENABLE_DRV_OVERLAY not defined in vfsconf.h"
+#endif
+
+#if !defined(VFS_CFG_ENABLE_DRV_STREAMS)
+#error "VFS_CFG_ENABLE_DRV_STREAMS not defined in vfsconf.h"
+#endif
+
+#if !defined(VFS_CFG_ENABLE_DRV_FATFS)
+#error "VFS_CFG_ENABLE_DRV_FATFS not defined in vfsconf.h"
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

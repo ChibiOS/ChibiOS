@@ -158,6 +158,7 @@ static void scan_nodes(BaseSequentialStream *chp, char *path) {
         strcpy(path + i, fn);
         strcat(path + i, "/");
         scan_nodes(chp, path);
+        path[i] = '\0';
       }
       else {
         chprintf(chp, "%s%s\r\n", path, fn);
@@ -322,9 +323,15 @@ int main(void) {
   sdStart(&PORTAB_SD1, NULL);
   nullObjectInit(&nullstream);
 
+#if defined(DEMO_USE_FATFS)
+  /* Initializing an overlay VFS object overlaying a FatFS driver,
+     no need for names, both are root.*/
+  drvOverlayObjectInit(&vfs_root, drvFatFSInit(""), "");
+#else
   /* Initializing an overlay VFS object as a root, no overlaid driver,
      no need for a name.*/
   drvOverlayObjectInit(&vfs_root, NULL, "");
+#endif
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
   msg = drvOverlayRegisterDriver(&vfs_root,
@@ -334,14 +341,6 @@ int main(void) {
   if (msg != VFS_RET_SUCCESS) {
     chSysHalt("VFS");
   }
-
-#if defined(DEMO_USE_FATFS)
-  /* Registering the VFS FatFS wrapped driver as "/fatfs".*/
-  msg = drvOverlayRegisterDriver(&vfs_root, drvFatFSInit("fatfs"));
-  if (msg != VFS_RET_SUCCESS) {
-    chSysHalt("VFS");
-  }
-#endif
 
   /* Opening a file for shell I/O.*/
   msg = vfsOpenFile((vfs_driver_t *)&vfs_root,

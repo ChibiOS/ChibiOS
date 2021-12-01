@@ -107,6 +107,7 @@
 - FIX: Fixed DMA stream not disabled in STM32 QUADSPIv1 driver (bug #1203)
        (backported to 20.3.5)(backported to 21.11.1).
 - FIX: Fixed I2C4 DMA streams for STM32L496 (bug #1202)
+       (backported to 20.3.5)(backported to 21.11.1).
 - FIX: Fixed STM32_SDMMC2_NUMBER on STM32H7 (bug #1201)
        (backported to 20.3.5)(backported to 21.11.1).
 - FIX: Fixed STM32G0B1 demo application hangs debuggers (bug #1200)

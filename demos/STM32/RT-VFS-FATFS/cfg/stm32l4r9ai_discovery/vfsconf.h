@@ -46,6 +46,36 @@
 
 /*===========================================================================*/
 /**
+ * @name VFS drivers
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Enables the VFS Overlay Driver.
+ */
+#if !defined(VFS_CFG_ENABLE_DRV_OVERLAY) || defined(__DOXYGEN__)
+#define VFS_CFG_ENABLE_DRV_OVERLAY          TRUE
+#endif
+
+/**
+ * @brief   Enables the VFS Streams Driver.
+ */
+#if !defined(VFS_CFG_ENABLE_DRV_STREAMS) || defined(__DOXYGEN__)
+#define VFS_CFG_ENABLE_DRV_STREAMS          TRUE
+#endif
+
+/**
+ * @brief   Enables the VFS FatFS Driver.
+ */
+#if !defined(VFS_CFG_ENABLE_DRV_FATFS) || defined(__DOXYGEN__)
+#define VFS_CFG_ENABLE_DRV_FATFS            TRUE
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
  * @name Overlay driver settings
  * @{
  */

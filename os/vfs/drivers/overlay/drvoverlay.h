@@ -72,7 +72,9 @@
  */
 #define __vfs_overlay_dir_node_data                                         \
   __vfs_directory_node_data                                                 \
-  unsigned                          index;
+  unsigned                          index;                                  \
+  /* Root node of the overlaid driver or NULL.*/                            \
+  vfs_directory_node_t              *overlaid_root;                         \
 
 /**
  * @brief   @p vfs_overlay_dir_node_t virtual methods table.
@@ -110,7 +112,7 @@ typedef struct vfs_overlay_dir_node {
   /* Static storage of directory nodes.*/                                   \
   vfs_overlay_dir_node_t            dir_nodes[DRV_CFG_OVERLAY_DIR_NODES_NUM]; \
   /* Next registration slot.*/                                              \
-  vfs_driver_t                      **next_driver;                          \
+  unsigned                          next_driver;                            \
   /* Registration slots.*/                                                  \
   vfs_driver_t                      *drivers[DRV_CFG_OVERLAY_DRV_MAX];
 
