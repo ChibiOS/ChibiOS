@@ -91,6 +91,8 @@ static msg_t match_driver(vfs_overlay_driver_t *odp,
         *vdpp = *pp;
         return VFS_RET_SUCCESS;
       }
+
+      pp++;
     }
 
     err = VFS_RET_NO_DRIVER;

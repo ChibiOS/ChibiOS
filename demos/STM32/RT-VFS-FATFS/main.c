@@ -136,7 +136,7 @@ static const drv_stream_element_t streams[] = {
 /* Generic large buffer.*/
 static char pathbuf[1024];
 
-static msg_t scan_nodes(BaseSequentialStream *chp, char *path) {
+static void scan_nodes(BaseSequentialStream *chp, char *path) {
   msg_t res;
   vfs_directory_node_t *dirp;
   static vfs_node_info_t ni;
@@ -155,12 +155,9 @@ static msg_t scan_nodes(BaseSequentialStream *chp, char *path) {
 
       fn = ni.name;
       if (ni.attr & VFS_NODE_ATTR_ISDIR) {
-        strcat(path + i, fn);
+        strcpy(path + i, fn);
         strcat(path + i, "/");
-        res = scan_nodes(chp, path);
-        if (res != VFS_RET_SUCCESS) {
-          break;
-        }
+        scan_nodes(chp, path);
       }
       else {
         chprintf(chp, "%s%s\r\n", path, fn);
@@ -169,8 +166,6 @@ static msg_t scan_nodes(BaseSequentialStream *chp, char *path) {
 
     vfsCloseDirectory(dirp);
   }
-
-  return res;
 }
 
 /*===========================================================================*/

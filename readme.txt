@@ -78,6 +78,9 @@
         in chsem.c.
 - TODO: Implement pointers check everywhere in RT replacing assertions for
         NULL pointers.
+- NEW: Added a new VFS subsystem (Virtual File System), it allows to assemble
+       trees of files from multiple "File System Drivers" into a single tree
+       and access it as a whole.
 - NEW: Added MEM_NATURAL_ALIGN macro to RT and NIL.
 - NEW: Added static initializer for virtual timers in RT.
 - NEW: Added new function chHeapIntegrityCheck().
