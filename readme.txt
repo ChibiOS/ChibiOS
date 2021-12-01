@@ -102,6 +102,8 @@
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
+- FIX: Fixed DMA stream not disabled in STM32 QUADSPIv1 driver (bug #1203)
+       (backported to 20.3.5)(backported to 21.11.1).
 - FIX: Fixed I2C4 DMA streams for STM32L496 (bug #1202)
 - FIX: Fixed STM32_SDMMC2_NUMBER on STM32H7 (bug #1201)
        (backported to 20.3.5)(backported to 21.11.1).

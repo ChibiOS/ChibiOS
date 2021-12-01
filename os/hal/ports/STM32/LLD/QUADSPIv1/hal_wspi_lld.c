@@ -98,6 +98,7 @@ static void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
   /* Clearing DMA interrupts here because the DMA ISR is not called on
      transfer complete.*/
   dmaStreamClearInterrupt(wspip->dma);
+  dmaStreamDisable(wspip->dma);
 
 #if defined(STM32L471xx) || defined(STM32L475xx) ||                         \
     defined(STM32L476xx) || defined(STM32L486xx)
