@@ -86,6 +86,7 @@
 - NEW: Improved boost settings for STM32G4.
 - NEW: Files mcuconf.h for STM32F746, F767, L432, L452, L476, L496 received
        the missing setting STM32_WSPI_QUADSPI1_PRESCALER_VALUE.
+- FIX: Fixed DMA stream not disabled in STM32 QUADSPIv1 driver (bug #1203).
 - FIX: Fixed function nvicSetSystemHandlerPriority() failing with CM0+ cores
        (bug #1199).
 - FIX: Fixed several problems in STM32L4xx PLL and GPIO settings (bug #1198).
