@@ -1451,7 +1451,7 @@
 #define STM32_HAS_ADC4                      FALSE
 
 /* CAN attributes.*/
-#define STM32_CAN_MAX_FILTERS               14
+#define STM32_CAN_MAX_FILTERS               28
 #define STM32_HAS_CAN1                      TRUE
 #define STM32_HAS_CAN2                      TRUE
 #define STM32_HAS_CAN3                      FALSE
