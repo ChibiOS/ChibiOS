@@ -30,11 +30,11 @@
 
 #include "ch.h"
 
-#if (CH_CFG_USE_MEMCHECKS == TRUE) || defined(__DOXYGEN__)
-
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
+
+#if (CH_CFG_USE_MEMCHECKS == TRUE) || defined(__DOXYGEN__)
 
 /**
  * @brief   Default writable memory areas.
@@ -57,6 +57,8 @@ CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
   {(uint8_t *)0,  0U},      /* Whole space is readable. */
   {(uint8_t *)-1, 0U},
 };
+
+#endif /* CH_CFG_USE_MEMCHECKS == TRUE */
 
 /*===========================================================================*/
 /* Module local types.                                                       */
@@ -106,6 +108,8 @@ bool chMemIsAreaContainedX(const memory_area_t areas[],
 
   return false;
 }
+
+#if (CH_CFG_USE_MEMCHECKS == TRUE) || defined(__DOXYGEN__)
 
 /**
  * @brief   Memory writable area check.

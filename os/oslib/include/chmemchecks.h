@@ -118,17 +118,6 @@ static inline bool chMemIsAreaWithinX(const memory_area_t *map,
 #if CH_CFG_USE_MEMCHECKS == FALSE
 /* Stub implementations for when the functionality is disabled, areas are
    always reported as valid.*/
-static inline bool chMemIsAreaContainedX(const memory_area_t areas[],
-                                         const void *p,
-                                         size_t size) {
-
-  (void)areas;
-  (void)base;
-  (void)size;
-
-  return false;
-}
-
 bool chMemIsAreaWritableX(const void *p,
                           size_t size,
                           unsigned align) {
