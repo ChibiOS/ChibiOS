@@ -87,6 +87,7 @@
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Fixed wrong number of CAN filters for STM32L496/9A6 (bug #1204).
 - FIX: Fixed DMA stream not disabled in STM32 QUADSPIv1 driver (bug #1203).
+- FIX: Fixed I2C4 DMA streams for STM32L496 (bug #1202).
 - FIX: Fixed STM32_SDMMC2_NUMBER on STM32H7 (bug #1201).
 - FIX: Fixed STM32G0B1 demo application hangs debuggers (bug #1200).
 
