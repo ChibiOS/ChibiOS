@@ -56,9 +56,9 @@ struct BaseObjectVMT {
 };
 
 /**
- * @brief   Base stream class.
- * @details This class represents a generic blocking unbuffered sequential
- *          data stream.
+ * @brief   Base object class.
+ * @details This class represents a generic object including a virtual
+ *          methods table (VMT).
  */
 typedef struct {
   /** @brief Virtual Methods Table.*/
