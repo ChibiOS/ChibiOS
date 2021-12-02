@@ -78,13 +78,26 @@ static vfs_offset_t node_file_getpos(void *instance);
 static vfs_offset_t node_file_getsize(void *instance);
 
 static const struct vfs_fatfs_file_node_vmt file_node_vmt = {
-  .release         = node_file_release,
-  .file_get_stream = node_file_get_stream,
-  .file_read       = node_file_read,
-  .file_write      = node_file_write,
-  .file_setpos     = node_file_setpos,
-  .file_getpos     = node_file_getpos,
-  .file_getsize    = node_file_getsize
+  .release          = node_file_release,
+  .file_get_stream  = node_file_get_stream,
+  .file_read        = node_file_read,
+  .file_write       = node_file_write,
+  .file_setpos      = node_file_setpos,
+  .file_getpos      = node_file_getpos,
+  .file_getsize     = node_file_getsize
+};
+
+static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n);
+static size_t file_stream_read(void *instance, uint8_t *bp, size_t n);
+static msg_t file_stream_put(void *instance, uint8_t b);
+static msg_t file_stream_get(void *instance);
+
+static const struct BaseSequentialStreamVMT file_stream_vmt = {
+  .instance_offset  = __CH_OFFSETOF(vfs_fatfs_file_node_t, stream.vmt),
+  .write            = file_stream_write,
+  .read             = file_stream_read,
+  .put              = file_stream_put,
+  .get              = file_stream_get
 };
 
 /**
@@ -125,7 +138,7 @@ static msg_t translate_error(FRESULT res) {
     break;
   case FR_DENIED:
   case FR_WRITE_PROTECTED:
-    msg = VFS_RET_ACCESS_ERROR;
+    msg = VFS_RET_ACCESS_DENIED;
     break;
   case FR_EXIST:
     msg = VFS_RET_EXIST;
@@ -188,9 +201,10 @@ static msg_t drv_open_file(void *instance,
     if (fffnp != NULL) {
 
       /* Node object initialization.*/
-      fffnp->vmt    = &file_node_vmt;
-      fffnp->refs   = 1U;
-      fffnp->driver = (vfs_driver_t *)drvp;
+      fffnp->vmt        = &file_node_vmt;
+      fffnp->refs       = 1U;
+      fffnp->driver     = (vfs_driver_t *)drvp;
+      fffnp->stream.vmt = &file_stream_vmt;
 
       res = f_open(&fffnp->file, (TCHAR *)path, (BYTE)mode);
       if (res == FR_OK) {
@@ -290,36 +304,105 @@ static BaseSequentialStream *node_file_get_stream(void *instance) {
 
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n) {
   vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
+  FRESULT res;
+  UINT br;
 
-  return streamRead(&fffnp->stream, buf, n);
+  res = f_read(&fffnp->file, (void *)buf, (UINT)n, &br);
+  if (res != FR_OK) {
+
+    return translate_error(res);
+  }
+
+  return (ssize_t)br;
 }
 
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
   vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
+  FRESULT res;
+  UINT bw;
 
-  return streamWrite(&fffnp->stream, buf, n);
+  res = f_write(&fffnp->file, (const void *)buf, (UINT)n, &bw);
+  if (res != FR_OK) {
+
+    return translate_error(res);
+  }
+
+  return (ssize_t)bw;
 }
 
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
+  vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
 
-  (void)instance;
-  (void)offset;
-
-  return VFS_RET_NOT_IMPLEMENTED;
+  return translate_error(f_lseek(&fffnp->file, (FSIZE_t)offset));
 }
 
 static vfs_offset_t node_file_getpos(void *instance) {
+  vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
 
-  (void)instance;
-
-  return 0U;
+  return (vfs_offset_t)f_tell(&fffnp->file);
 }
 
 static vfs_offset_t node_file_getsize(void *instance) {
+  vfs_fatfs_file_node_t *fffnp = (vfs_fatfs_file_node_t *)instance;
 
-  (void)instance;
+  return (vfs_offset_t)f_size(&fffnp->file);
+}
 
-  return 0U;
+static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
+  vfs_fatfs_file_node_t *fffnp = objGetInstance(vfs_fatfs_file_node_t *,
+                                                (BaseSequentialStream *)instance);
+  msg_t msg;
+
+  msg = fffnp->vmt->file_write((void *)fffnp, bp, n);
+  if (msg < VFS_RET_SUCCESS) {
+
+    return (size_t)0;
+  }
+
+  return (size_t)msg;
+}
+
+static size_t file_stream_read(void *instance, uint8_t *bp, size_t n) {
+  vfs_fatfs_file_node_t *fffnp = objGetInstance(vfs_fatfs_file_node_t *,
+                                                (BaseSequentialStream *)instance);
+  msg_t msg;
+
+  msg = fffnp->vmt->file_read((void *)fffnp, bp, n);
+  if (msg < VFS_RET_SUCCESS) {
+
+    return (size_t)0;
+  }
+
+  return (size_t)msg;
+}
+
+static msg_t file_stream_put(void *instance, uint8_t b) {
+  vfs_fatfs_file_node_t *fffnp = objGetInstance(vfs_fatfs_file_node_t *,
+                                                (BaseSequentialStream *)instance);
+  msg_t msg;
+
+  msg = fffnp->vmt->file_write((void *)fffnp, &b, (size_t)1);
+  if (msg < VFS_RET_SUCCESS) {
+
+    return STM_TIMEOUT;
+  }
+
+  return msg;
+}
+
+static msg_t file_stream_get(void *instance) {
+  vfs_fatfs_file_node_t *fffnp = objGetInstance(vfs_fatfs_file_node_t *,
+                                                (BaseSequentialStream *)instance);
+  msg_t msg;
+  uint8_t b;
+
+  msg = fffnp->vmt->file_read((void *)fffnp, &b, (size_t)1);
+  if (msg < VFS_RET_SUCCESS) {
+
+    return STM_TIMEOUT;
+  }
+
+  return (msg_t)b;
 }
 
 /*===========================================================================*/

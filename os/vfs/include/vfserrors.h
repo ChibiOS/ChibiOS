@@ -45,7 +45,7 @@
 #define VFS_RET_INVALID_PATH    -6
 #define VFS_RET_NOT_FOUND       -7
 #define VFS_RET_EXIST           -8
-#define VFS_RET_ACCESS_ERROR    -9
+#define VFS_RET_ACCESS_DENIED   -9
 #define VFS_RET_MEDIA_ERROR     -10
 #define VFS_RET_INNER_ERROR     -11
 /** @} */
