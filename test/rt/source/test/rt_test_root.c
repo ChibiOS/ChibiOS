@@ -57,7 +57,9 @@ const testsequence_t * const rt_test_suite_array[] = {
   &rt_test_sequence_001,
   &rt_test_sequence_002,
   &rt_test_sequence_003,
+#if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
   &rt_test_sequence_004,
+#endif
   &rt_test_sequence_005,
   &rt_test_sequence_006,
 #if (CH_CFG_USE_SEMAPHORES == TRUE) || defined(__DOXYGEN__)

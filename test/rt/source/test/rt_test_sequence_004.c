@@ -29,10 +29,18 @@
  * This sequence tests the ChibiOS/RT functionalities related to time
  * stamps.
  *
+ * <h2>Conditions</h2>
+ * This sequence is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_CFG_USE_TIMESTAMP == TRUE
+ * .
+ *
  * <h2>Test Cases</h2>
  * - @subpage rt_test_004_001
  * .
  */
+
+#if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
 
 /****************************************************************************
  * Shared code.
@@ -104,3 +112,5 @@ const testsequence_t rt_test_sequence_004 = {
   "Time Stamps Functionality",
   rt_test_sequence_004_array
 };
+
+#endif /* CH_CFG_USE_TIMESTAMP == TRUE */
