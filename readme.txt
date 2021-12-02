@@ -102,6 +102,8 @@
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
+- FIX: Fixed RT test suite build fails when CH_CFG_USE_TIMESTAMP is FALSE
+       (bug #1205)(backported to 21.11.1).
 - FIX: Fixed wrong number of CAN filters for STM32L496/9A6 (bug #1204)
        (backported to 20.3.5)(backported to 21.11.1).
 - FIX: Fixed DMA stream not disabled in STM32 QUADSPIv1 driver (bug #1203)

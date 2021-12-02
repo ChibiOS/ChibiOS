@@ -821,7 +821,7 @@ test_assert(b == false, "in range");
           related to time stamps.</value>
       </description>
       <condition>
-        <value />
+        <value><![CDATA[CH_CFG_USE_TIMESTAMP == TRUE]]></value>
       </condition>
       <shared_code>
         <value><![CDATA[#include "ch.h"]]></value>
