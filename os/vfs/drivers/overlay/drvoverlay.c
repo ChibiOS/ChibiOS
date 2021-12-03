@@ -51,7 +51,7 @@ static msg_t drv_open_dir(void *instance,
                           vfs_directory_node_t **vdnpp);
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           unsigned mode,
+                           int oflag,
                            vfs_file_node_t **vfnpp);
 
 static const struct vfs_overlay_driver_vmt driver_vmt = {
@@ -167,7 +167,7 @@ static msg_t drv_open_dir(void *instance,
 
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           unsigned mode,
+                           int oflag,
                            vfs_file_node_t **vfnpp) {
   vfs_overlay_driver_t *drvp = (vfs_overlay_driver_t *)instance;
   msg_t err;
@@ -189,7 +189,7 @@ static msg_t drv_open_file(void *instance,
       err = match_driver(drvp, &path, &dp);
       VFS_BREAK_ON_ERROR(err);
 
-      err = dp->vmt->open_file((void *)dp, path, mode, vfnpp);
+      err = dp->vmt->open_file((void *)dp, path, oflag, vfnpp);
     }
   }
   while (false);

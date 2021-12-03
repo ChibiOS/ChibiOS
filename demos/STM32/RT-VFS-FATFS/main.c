@@ -343,9 +343,7 @@ int main(void) {
   }
 
   /* Opening a file for shell I/O.*/
-  msg = vfsOpenFile("/dev/VSD1",
-                    MODE_OPEN | MODE_RDWR,
-                    &file);
+  msg = vfsOpenFile("/dev/VSD1", VO_RDWR, &file);
   if (msg != VFS_RET_SUCCESS) {
     chSysHalt("VFS");
   }

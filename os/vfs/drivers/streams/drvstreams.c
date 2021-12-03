@@ -51,7 +51,7 @@ static msg_t drv_open_dir(void *instance,
                           vfs_directory_node_t **vdnpp);
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           unsigned mode,
+                           int oflag,
                            vfs_file_node_t **vfnpp);
 
 static const struct vfs_streams_driver_vmt driver_vmt = {
@@ -128,13 +128,13 @@ static msg_t drv_open_dir(void *instance,
 
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           unsigned mode,
+                           int oflag,
                            vfs_file_node_t **vfnpp) {
   vfs_streams_driver_t *drvp = (vfs_streams_driver_t *)instance;
   const drv_stream_element_t *dsep;
   msg_t err;
 
-  (void)mode;
+  (void)oflag;
 
   do {
     char fname[VFS_CFG_MAX_NAMELEN + 1];

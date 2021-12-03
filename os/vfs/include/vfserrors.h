@@ -48,6 +48,7 @@
 #define VFS_RET_ACCESS_DENIED   -9
 #define VFS_RET_MEDIA_ERROR     -10
 #define VFS_RET_INNER_ERROR     -11
+#define VFS_RET_INVALID_MODE    -12
 /** @} */
 
 /*===========================================================================*/

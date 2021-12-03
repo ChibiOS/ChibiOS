@@ -51,7 +51,7 @@ static msg_t drv_open_dir(void *instance,
                           vfs_directory_node_t **vdnpp);
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           unsigned mode,
+                           int oflag,
                            vfs_file_node_t **vfnpp);
 
 static const struct vfs_fatfs_driver_vmt driver_vmt = {
@@ -151,6 +151,31 @@ static msg_t translate_error(FRESULT res) {
   return msg;
 }
 
+static BYTE translate_oflag(int oflag) {
+
+  switch (oflag & VO_SUPPORTED_FLAGS_MASK) {
+  case VO_RDONLY:                                   /* r */
+    return FA_READ;
+  case VO_RDWR:                                     /* r+ */
+    return FA_READ | FA_WRITE;
+  case VO_CREAT | VO_APPEND | VO_WRONLY:            /* a */
+    return FA_OPEN_APPEND | FA_WRITE;
+  case VO_CREAT | VO_APPEND | VO_RDWR:              /* a+ */
+    return FA_OPEN_APPEND | FA_WRITE | FA_READ;
+  case VO_CREAT | VO_WRONLY:                        /* w */
+    return FA_CREATE_ALWAYS | FA_WRITE;
+  case VO_CREAT | VO_RDWR:                          /* w+ */
+    return FA_CREATE_ALWAYS | FA_WRITE | FA_READ;
+  case VO_CREAT | VO_EXCL | VO_WRONLY:              /* wx */
+    return  FA_CREATE_NEW | FA_WRITE;
+  case VO_CREAT | VO_EXCL | VO_RDWR:                /* w+x */
+    return  FA_CREATE_NEW | FA_WRITE | FA_READ;
+  default:
+  }
+
+  return (BYTE)0;
+}
+
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_t **vdnpp) {
@@ -188,7 +213,7 @@ static msg_t drv_open_dir(void *instance,
 
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           unsigned mode,
+                           int oflag,
                            vfs_file_node_t **vfnpp) {
   msg_t err;
 
@@ -196,6 +221,13 @@ static msg_t drv_open_file(void *instance,
     vfs_fatfs_driver_t *drvp = (vfs_fatfs_driver_t *)instance;
     vfs_fatfs_file_node_t *fffnp;
     FRESULT res;
+    BYTE mode;
+
+    mode = translate_oflag(oflag);
+    if (mode == (BYTE)0) {
+      err = VFS_RET_INVALID_MODE;
+      break;
+    }
 
     fffnp = chPoolAlloc(&drvp->file_nodes_pool);
     if (fffnp != NULL) {
@@ -206,7 +238,7 @@ static msg_t drv_open_file(void *instance,
       fffnp->driver     = (vfs_driver_t *)drvp;
       fffnp->stream.vmt = &file_stream_vmt;
 
-      res = f_open(&fffnp->file, (TCHAR *)path, (BYTE)mode);
+      res = f_open(&fffnp->file, (TCHAR *)path, mode);
       if (res == FR_OK) {
         *vfnpp = (vfs_file_node_t *)fffnp;
         err = VFS_RET_SUCCESS;

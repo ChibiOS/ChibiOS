@@ -28,23 +28,26 @@
 #ifndef VFSDRIVERS_H
 #define VFSDRIVERS_H
 
+#include <fcntl.h>
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @name    File open modes.
+ * @name    File open flags compatible with Posix
  * @{
  */
-#define MODE_READ                   0x01U
-#define MODE_WRITE                  0x02U
-#define MODE_RDWR                   (MODE_READ | MODE_WRITE)
-#define MODE_OPEN                   0x00U
-#define MODE_CREATE_EXCL            0x04U
-#define MODE_CREATE_TRUNCATE        0x08U
-#define MODE_CREATE_OPEN            0x10U
-#define MODE_APPEND                 0x20U
-#define MODE_OPEN_APPEND            (MODE_CREATE_OPEN | MODE_APPEND)
+#define VO_SUPPORTED_FLAGS_MASK     (O_ACCMODE | O_APPEND | O_CREAT |       \
+                                     O_TRUNC | O_EXCL)
+#define VO_ACCMODE                  O_ACCMODE
+#define VO_RDONLY                   O_RDONLY
+#define VO_WRONLY                   O_WRONLY
+#define VO_RDWR                     O_RDWR
+#define VO_APPEND                   O_APPEND
+#define VO_CREAT                    O_CREAT
+#define VO_TRUNC                    O_TRUNC
+#define VO_EXCL                     O_EXCL
 /** @} */
 
 /*===========================================================================*/
@@ -69,7 +72,7 @@
                     vfs_directory_node_t **vdnpp);                          \
   msg_t (*open_file)(void *instance,                                        \
                      const char *path,                                      \
-                     unsigned mode,                                         \
+                     int oflag,                                             \
                      vfs_file_node_t **vfnpp);
 
 /**
