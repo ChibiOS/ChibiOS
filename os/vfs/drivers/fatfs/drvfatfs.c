@@ -171,6 +171,7 @@ static BYTE translate_oflag(int oflag) {
   case VO_CREAT | VO_EXCL | VO_RDWR:                /* w+x */
     return  FA_CREATE_NEW | FA_WRITE | FA_READ;
   default:
+    break;
   }
 
   return (BYTE)0;
