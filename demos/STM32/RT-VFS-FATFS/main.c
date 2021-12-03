@@ -119,7 +119,9 @@ static bool fs_ready = false;
 /*===========================================================================*/
 
 /* VFS overlay driver object representing the root directory.*/
-static vfs_overlay_driver_t vfs_root;
+static vfs_overlay_driver_t root_driver;
+
+vfs_driver_t *vfs_root = (vfs_driver_t *)&root_driver;
 
 /* VFS streams driver object representing the /dev directory.*/
 static vfs_streams_driver_t vfs_dev;
@@ -142,7 +144,7 @@ static void scan_nodes(BaseSequentialStream *chp, char *path) {
   static vfs_node_info_t ni;
 
   chprintf(chp, "%s\r\n", path);
-  res = vfsOpenDirectory((vfs_driver_t *)&vfs_root, path, &dirp);
+  res = vfsOpenDirectory(path, &dirp);
   if (res == VFS_RET_SUCCESS) {
     size_t i = strlen(path);
 
@@ -324,7 +326,7 @@ int main(void) {
 
   /* Initializing an overlay VFS object overlaying a FatFS driver,
      no need for names, both are root.*/
-  drvOverlayObjectInit(&vfs_root, drvFatFSInit(""), "");
+  drvOverlayObjectInit(&root_driver, drvFatFSInit(""), "");
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver,
      no need for a name.*/
@@ -332,7 +334,7 @@ int main(void) {
 #endif
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
-  msg = drvOverlayRegisterDriver(&vfs_root,
+  msg = drvOverlayRegisterDriver(&root_driver,
                                  drvStreamsObjectInit(&vfs_dev,
                                                       "dev",
                                                       &streams[0]));
@@ -341,8 +343,7 @@ int main(void) {
   }
 
   /* Opening a file for shell I/O.*/
-  msg = vfsOpenFile((vfs_driver_t *)&vfs_root,
-                    "/dev/VSD1",
+  msg = vfsOpenFile("/dev/VSD1",
                     MODE_OPEN | MODE_RDWR,
                     &file);
   if (msg != VFS_RET_SUCCESS) {

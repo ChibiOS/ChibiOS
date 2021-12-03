@@ -56,7 +56,6 @@
 /**
  * @brief   Opens a VFS directory.
  *
- * @param[in] vdp       VFS instance where to open the directory
  * @param[in] path      absolute path of the directory to be opened
  * @param[out] vdnpp    pointer to the pointer to the instantiated
  *                      @p vfs_directory_node_t object
@@ -64,11 +63,10 @@
  *
  * @api
  */
-msg_t vfsOpenDirectory(vfs_driver_t *vdp,
-                       const char *path,
+msg_t vfsOpenDirectory(const char *path,
                        vfs_directory_node_t **vdnpp) {
 
-  return vdp->vmt->open_dir(vdp, path, vdnpp);
+  return vfs_root->vmt->open_dir(vfs_root, path, vdnpp);
 }
 
 /**
@@ -123,7 +121,6 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
 /**
  * @brief   Opens a VFS file.
  *
- * @param[in] vdp       VFS instance where to open the file
  * @param[in] path      absolute path of the file to be opened
  * @param[in] mode      file open mode
  * @param[out] vdnpp    pointer to the pointer to the instantiated
@@ -132,12 +129,11 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
  *
  * @api
  */
-msg_t vfsOpenFile(vfs_driver_t *vdp,
-                  const char *path,
+msg_t vfsOpenFile(const char *path,
                   unsigned mode,
                   vfs_file_node_t **vfnpp) {
 
-  return vdp->vmt->open_file(vdp, path, mode, vfnpp);
+  return vfs_root->vmt->open_file(vfs_root, path, mode, vfnpp);
 }
 
 /**

@@ -84,19 +84,21 @@
 #include "vfsnodes.h"
 #include "vfsdrivers.h"
 
+/* Application code is suppored to export this symbol, it is expected to
+   exists.*/
+extern vfs_driver_t *vfs_root;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t vfsOpenDirectory(vfs_driver_t *vdp,
-                         const char *name,
+  msg_t vfsOpenDirectory(const char *name,
                          vfs_directory_node_t **vdnpp);
   void vfsCloseDirectory(vfs_directory_node_t *vdnp);
   msg_t vfsReadDirectoryFirst(vfs_directory_node_t *vdnp,
                               vfs_node_info_t *nip);
   msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
                              vfs_node_info_t *nip);
-  msg_t vfsOpenFile(vfs_driver_t *vdp,
-                    const char *name,
+  msg_t vfsOpenFile(const char *name,
                     unsigned mode,
                     vfs_file_node_t **vfnpp);
   void vfsCloseFile(vfs_file_node_t *vfnp);
