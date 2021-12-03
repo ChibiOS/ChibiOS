@@ -67,6 +67,7 @@
 #define VFS_RET_ENOTDIR         (-32 - ENOTDIR) /* Not a directory */
 #define VFS_RET_EISDIR          (-32 - EISDIR)  /* Is a directory */
 #define VFS_RET_EINVAL          (-32 - EINVAL)  /* Invalid argument */
+#define VFS_RET_EMFILE          (-32 - EMFILE)  /* Too many open files in process */
 #define VFS_RET_ENFILE          (-32 - ENFILE)  /* Too many open files in system */
 #define VFS_RET_EFBIG           (-32 - EFBIG)   /* File too large */
 #define VFS_RET_ENOSPC          (-32 - ENOSPC)  /* No space left on device */
