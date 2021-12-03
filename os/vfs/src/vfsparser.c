@@ -64,7 +64,7 @@ msg_t vfs_parse_match_separator(const char **pathp) {
   const char *p = *pathp;
 
   if (*p++ != '/') {
-    err = VFS_RET_INVALID_PATH;
+    err = VFS_RET_ENOENT;
   }
   else {
     err = VFS_RET_SUCCESS;
@@ -83,7 +83,7 @@ msg_t vfs_parse_match_end(const char **pathp) {
   msg_t err;
 
   if (**pathp != '\0') {
-    err = VFS_RET_INVALID_PATH;
+    err = VFS_RET_ENOENT;
   }
   else {
     err = VFS_RET_SUCCESS;
@@ -113,7 +113,7 @@ msg_t vfs_parse_filename(const char **pathp, char *fname) {
 
       /* Consecutive separators are not valid.*/
       if (n == 0U) {
-        return VFS_RET_INVALID_PATH;
+        return VFS_RET_ENOENT;
       }
 
       /* Advancing the path pointer past the file name in the path and
@@ -125,11 +125,11 @@ msg_t vfs_parse_filename(const char **pathp, char *fname) {
 
     /* Valid characters for path names.*/
     if (!isalnum(c) && (c != '_') && (c != '-') && (c != '.')) {
-      return VFS_RET_INVALID_PATH;
+      return VFS_RET_ENOENT;
     }
 
     if (n > VFS_CFG_MAX_NAMELEN) {
-      return VFS_RET_INVALID_PATH;
+      return VFS_RET_ENOENT;
     }
 
     *fname++ = c;

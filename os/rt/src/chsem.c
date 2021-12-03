@@ -110,9 +110,10 @@ void chSemObjectInit(semaphore_t *sp, cnt_t n) {
  *          performing checks that make sure that the object is in a
  *          state compatible with operations stop.
  * @note    If the option @p CH_CFG_ENABLE_HARDENING is enabled then the
- *          object is cleared, attempts to use the object would likely
+ *          object is also cleared, attempts to use the object would likely
  *          result in a clean memory access violation because dereferencing
- *          of @p NULL pointers.
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
  *
  * @param[in] sp        pointer to a @p semaphore_t structure
  *
@@ -120,9 +121,7 @@ void chSemObjectInit(semaphore_t *sp, cnt_t n) {
  */
 void chSemObjectDispose(semaphore_t *sp) {
 
-  chDbgAssert(chMemIsAreaWritableX((void *)sp,
-                                   sizeof (semaphore_t),
-                                   MEM_NATURAL_ALIGN), "pointer error");
+  chDbgCheck(chMemIsAreaWritableX((void *)sp, sizeof (semaphore_t), MEM_NATURAL_ALIGN));
   chDbgAssert(ch_queue_isempty(&sp->queue), "object in use");
 
 #if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/

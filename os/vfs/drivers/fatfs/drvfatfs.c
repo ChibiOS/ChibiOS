@@ -120,28 +120,28 @@ static msg_t translate_error(FRESULT res) {
     msg = VFS_RET_TIMEOUT;
     break;
   case FR_NOT_ENOUGH_CORE:
+    msg = VFS_RET_ENOMEM;
+    break;
   case FR_TOO_MANY_OPEN_FILES:
-    msg = VFS_RET_NO_RESOURCE;
+    msg = VFS_RET_ENFILE;
     break;
   case FR_DISK_ERR:
   case FR_NOT_READY:
   case FR_INVALID_DRIVE:
   case FR_NO_FILESYSTEM:
-    msg = VFS_RET_MEDIA_ERROR;
+    msg = VFS_RET_EIO;
     break;
   case FR_NO_FILE:
-    msg = VFS_RET_NOT_FOUND;
-    break;
   case FR_NO_PATH:
   case FR_INVALID_NAME:
-    msg = VFS_RET_INVALID_PATH;
+    msg = VFS_RET_ENOENT;
     break;
   case FR_DENIED:
   case FR_WRITE_PROTECTED:
-    msg = VFS_RET_ACCESS_DENIED;
+    msg = VFS_RET_EACCES;
     break;
   case FR_EXIST:
-    msg = VFS_RET_EXIST;
+    msg = VFS_RET_EEXIST;
     break;
   default:
     msg = VFS_RET_INNER_ERROR;
@@ -226,7 +226,7 @@ static msg_t drv_open_file(void *instance,
 
     mode = translate_oflag(oflag);
     if (mode == (BYTE)0) {
-      err = VFS_RET_INVALID_MODE;
+      err = VFS_RET_EINVAL;
       break;
     }
 
@@ -499,7 +499,7 @@ msg_t drvFatFSMount(const char *name, bool mountnow) {
   if (fs == NULL) {
     fs = chPoolAlloc(&vfs_fatfs.fs_nodes_pool);
     if (fs == NULL) {
-      return VFS_RET_NO_RESOURCE;
+      return VFS_RET_ENOMEM;
     }
   }
 
@@ -520,7 +520,7 @@ msg_t drvFatFSUnmount(const char *name) {
 
   fs = f_getfs(name);
   if (fs == NULL) {
-    return VFS_RET_MEDIA_ERROR;
+    return VFS_RET_EINVAL;
   }
 
   res = f_unmount(name);

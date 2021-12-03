@@ -95,7 +95,7 @@ static msg_t match_driver(vfs_overlay_driver_t *odp,
       pp++;
     }
 
-    err = VFS_RET_NO_DRIVER;
+    err = VFS_RET_ENOENT;
   }
   while (false);
 
@@ -180,7 +180,7 @@ static msg_t drv_open_file(void *instance,
       (void)instance;
 
       /* Always not found, there are no files in the root.*/
-      err = VFS_RET_NOT_FOUND;
+      err = VFS_RET_ENOENT;
     }
     else {
       vfs_driver_t *dp;
@@ -300,7 +300,7 @@ msg_t drvOverlayRegisterDriver(vfs_overlay_driver_t *vodp,
   msg_t err;
 
   if (vodp->next_driver >= DRV_CFG_OVERLAY_DRV_MAX) {
-    err = VFS_RET_NO_RESOURCE;
+    err = VFS_RET_ENOMEM;
   }
   else {
     vodp->drivers[vodp->next_driver++] = vdp;

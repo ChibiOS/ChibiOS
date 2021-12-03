@@ -28,14 +28,17 @@
 #ifndef VFSERRORS_H
 #define VFSERRORS_H
 
+#include <errno.h>
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @name    Error codes compatible with HAL streams
+ * @name    Error codes compatible with HAL and Posix
  * @{
  */
+#if 0
 #define VFS_RET_SUCCESS         0
 #define VFS_RET_TIMEOUT         -1
 #define VFS_RET_EOF             -2
@@ -49,6 +52,26 @@
 #define VFS_RET_MEDIA_ERROR     -10
 #define VFS_RET_INNER_ERROR     -11
 #define VFS_RET_INVALID_MODE    -12
+#endif
+#define VFS_RET_SUCCESS         0               /* Success */
+#define VFS_RET_TIMEOUT         -1              /* Timeout */
+#define VFS_RET_EOF             -2              /* End-of-file */
+#define VFS_RET_NOT_IMPLEMENTED -3              /* Not implemented functionality */
+#define VFS_RET_INNER_ERROR     -4              /* Unspecified error */
+#define VFS_RET_ENOENT          (-32 - ENOENT)  /* No such file or directory */
+#define VFS_RET_EIO             (-32 - EIO)     /* I/O error */
+#define VFS_RET_EBADF           (-32 - EBADF)   /* Bad file number */
+#define VFS_RET_ENOMEM          (-32 - ENOMEM)  /* Not enough space */
+#define VFS_RET_EACCES          (-32 - EACCES)  /* Permission denied */
+#define VFS_RET_EEXIST          (-32 - EEXIST)  /* File exists */
+#define VFS_RET_ENOTDIR         (-32 - ENOTDIR) /* Not a directory */
+#define VFS_RET_EISDIR          (-32 - EISDIR)  /* Is a directory */
+#define VFS_RET_EINVAL          (-32 - EINVAL)  /* Invalid argument */
+#define VFS_RET_ENFILE          (-32 - ENFILE)  /* Too many open files in system */
+#define VFS_RET_EFBIG           (-32 - EFBIG)   /* File too large */
+#define VFS_RET_ENOSPC          (-32 - ENOSPC)  /* No space left on device */
+#define VFS_RET_ESPIPE          (-32 - ESPIPE)  /* Illegal seek */
+#define VFS_RET_EROFS           (-32 - EROFS)   /* Read-only file system */
 /** @} */
 
 /*===========================================================================*/

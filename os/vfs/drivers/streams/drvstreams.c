@@ -119,7 +119,7 @@ static msg_t drv_open_dir(void *instance,
       return VFS_RET_SUCCESS;
     }
 
-    err = VFS_RET_NO_RESOURCE;
+    err = VFS_RET_ENOMEM;
   }
   while (false);
 
@@ -166,13 +166,13 @@ static msg_t drv_open_file(void *instance,
           return VFS_RET_SUCCESS;
         }
 
-        return VFS_RET_NO_RESOURCE;
+        return VFS_RET_ENOMEM;
       }
 
       dsep++;
     }
 
-    err = VFS_RET_NOT_FOUND;
+    err = VFS_RET_ENOENT;
   }
   while (false);
 
