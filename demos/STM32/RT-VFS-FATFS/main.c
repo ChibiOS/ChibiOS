@@ -311,19 +311,17 @@ int main(void) {
   /* Board-dependent setup code.*/
   portab_setup();
 
+  /* Starting a serial port for the shell, initializing other streams too.*/
+  sdStart(&PORTAB_SD1, NULL);
+  nullObjectInit(&nullstream);
+
 #if defined(DEMO_USE_FATFS)
   /* Activates the  SDC driver using default configuration.*/
   sdcStart(&PORTAB_SDCD1, NULL);
 
   /* Activates the card insertion monitor.*/
   tmr_init(&PORTAB_SDCD1);
-#endif
 
-  /* Starting a serial port for the shell, initializing other streams too.*/
-  sdStart(&PORTAB_SD1, NULL);
-  nullObjectInit(&nullstream);
-
-#if defined(DEMO_USE_FATFS)
   /* Initializing an overlay VFS object overlaying a FatFS driver,
      no need for names, both are root.*/
   drvOverlayObjectInit(&vfs_root, drvFatFSInit(""), "");
