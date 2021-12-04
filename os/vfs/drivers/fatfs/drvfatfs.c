@@ -192,9 +192,9 @@ static msg_t drv_open_dir(void *instance,
     if (ffdnp != NULL) {
 
       /* Node object initialization.*/
-      ffdnp->vmt    = &dir_node_vmt;
-      ffdnp->refs   = 1U;
-      ffdnp->driver = (vfs_driver_c *)drvp;
+      ffdnp->vmt        = &dir_node_vmt;
+      ffdnp->references = 1U;
+      ffdnp->driver     = (vfs_driver_c *)drvp;
 
       res = f_opendir(&ffdnp->dir, (TCHAR *)path);
       if (res == FR_OK) {
@@ -236,7 +236,7 @@ static msg_t drv_open_file(void *instance,
 
       /* Node object initialization.*/
       fffnp->vmt        = &file_node_vmt;
-      fffnp->refs       = 1U;
+      fffnp->references = 1U;
       fffnp->driver     = (vfs_driver_c *)drvp;
       fffnp->stream.vmt = &file_stream_vmt;
 
@@ -259,11 +259,12 @@ static msg_t drv_open_file(void *instance,
 
 static void node_dir_release(void *instance) {
   vfs_fatfs_dir_node_c *ffdnp = (vfs_fatfs_dir_node_c *)instance;
+  vfs_fatfs_driver_c *drvp = (vfs_fatfs_driver_c *)ffdnp->driver;
 
-  if (--ffdnp->refs == 0U) {
+  __referenced_object_release_impl(instance);
+  if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&((vfs_fatfs_driver_c *)ffdnp->driver)->dir_nodes_pool,
-               (void *)ffdnp);
+    chPoolFree(&drvp->dir_nodes_pool, (void *)ffdnp);
   }
 }
 
@@ -322,11 +323,12 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 
 static void node_file_release(void *instance) {
   vfs_fatfs_file_node_c *fffnp = (vfs_fatfs_file_node_c *)instance;
+  vfs_fatfs_driver_c *drvp = (vfs_fatfs_driver_c *)fffnp->driver;
 
-  if (--fffnp->refs == 0U) {
+  __referenced_object_release_impl(instance);
+  if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&((vfs_fatfs_driver_c *)fffnp->driver)->file_nodes_pool,
-               (void *)fffnp);
+    chPoolFree(&drvp->file_nodes_pool, (void *)fffnp);
   }
 }
 

@@ -41,7 +41,8 @@ typedef struct referenced_object referenced_object_c;
  * @note    This object defines no methods.
  */
 #define __referenced_object_methods                                         \
-  __base_object_methods
+  __base_object_methods                                                     \
+  void (*release)(void *ip);
 
 /**
  * @brief   @p referenced_object_c specific data.
@@ -56,7 +57,6 @@ typedef struct referenced_object referenced_object_c;
  */
 struct __referenced_object_vmt {                                            \
   __referenced_object_methods                                               \
-  unsigned (*release)(referenced_object_c *ip);
 };
 
 /**
@@ -82,11 +82,11 @@ typedef struct referenced_object {
  * @return              A new reference to the object.
  */
 CC_FORCE_INLINE
-static inline referenced_object_c *__referenced_object_objinit_impl(referenced_object_c *ip,
-                                                                    const void *vmt) {
+static inline void *__referenced_object_objinit_impl(void *ip, const void *vmt) {
+  referenced_object_c *objp = (referenced_object_c *)ip;
 
-  __base_object_objinit_impl((base_object_c *)ip, vmt);
-  ip->references = 1U;
+  __base_object_objinit_impl(ip, vmt);
+  objp->references = 1U;
 
   return ip;
 }
@@ -98,9 +98,9 @@ static inline referenced_object_c *__referenced_object_objinit_impl(referenced_o
  *                      disposed.
  */
 CC_FORCE_INLINE
-static inline void __referenced_object_dispose_impl(referenced_object_c *ip) {
+static inline void __referenced_object_dispose_impl(void *ip) {
 
-  __base_object_dispose_impl((base_object_c *)ip);
+  __base_object_dispose_impl(ip);
   /* Nothing.*/
 }
 
@@ -111,20 +111,22 @@ static inline void __referenced_object_dispose_impl(referenced_object_c *ip) {
  * @return              A new reference to the object.
  */
 CC_FORCE_INLINE
-static inline referenced_object_c *__referenced_object_addref_impl(referenced_object_c *ip) {
+static inline void *__referenced_object_addref_impl(void *ip) {
+  referenced_object_c *objp = (referenced_object_c *)ip;
 
-  ip->references++;
+  objp->references++;
 
   return ip;
 }
 
 /**
- * @brief   References count implementation.
+ * @brief   References get implementation.
  */
 CC_FORCE_INLINE
-static inline unsigned __referenced_object_getcount_impl(referenced_object_c *ip) {
+static inline unsigned __referenced_object_getref_impl(void *ip) {
+  referenced_object_c *objp = (referenced_object_c *)ip;
 
-  return ip->references;
+  return objp->references;
 }
 
 /**
@@ -134,15 +136,14 @@ static inline unsigned __referenced_object_getcount_impl(referenced_object_c *ip
  * @return              Remaining references.
  */
 CC_FORCE_INLINE
-static inline unsigned __referenced_object_release_impl(referenced_object_c *ip) {
+static inline void __referenced_object_release_impl(void *ip) {
+  referenced_object_c *objp = (referenced_object_c *)ip;
 
-  osalDbgAssert(ip->references > 0U, "zero references");
+  osalDbgAssert(objp->references > 0U, "zero references");
 
-  if (--ip->references == 0U) {
+  if (--objp->references == 0U) {
     __referenced_object_dispose_impl(ip);
   }
-
-  return ip->references;
 }
 /** @} */
 

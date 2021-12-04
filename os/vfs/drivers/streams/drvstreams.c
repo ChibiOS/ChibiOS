@@ -111,10 +111,10 @@ static msg_t drv_open_dir(void *instance,
     if (sdnp != NULL) {
 
       /* Node object initialization.*/
-      sdnp->vmt    = &dir_node_vmt;
-      sdnp->refs   = 1U;
-      sdnp->driver = (vfs_driver_c *)drvp;
-      sdnp->index  = 0U;
+      sdnp->vmt        = &dir_node_vmt;
+      sdnp->references = 1U;
+      sdnp->driver     = (vfs_driver_c *)drvp;
+      sdnp->index      = 0U;
 
       *vdnpp = (vfs_directory_node_c *)sdnp;
       return VFS_RET_SUCCESS;
@@ -158,10 +158,10 @@ static msg_t drv_open_file(void *instance,
         if (sfnp != NULL) {
 
           /* Node object initialization.*/
-          sfnp->vmt    = &file_node_vmt;
-          sfnp->refs   = 1U;
-          sfnp->driver = (vfs_driver_c *)drvp;
-          sfnp->stream = dsep->stream;
+          sfnp->vmt        = &file_node_vmt;
+          sfnp->references = 1U;
+          sfnp->driver     = (vfs_driver_c *)drvp;
+          sfnp->stream     = dsep->stream;
 
           *vfnpp = (vfs_file_node_c *)sfnp;
           return VFS_RET_SUCCESS;
@@ -182,11 +182,12 @@ static msg_t drv_open_file(void *instance,
 
 static void node_dir_release(void *instance) {
   vfs_stream_dir_node_c *sdnp = (vfs_stream_dir_node_c *)instance;
+  vfs_streams_driver_c *drvp = (vfs_streams_driver_c *)sdnp->driver;
 
-  if (--sdnp->refs == 0U) {
+  __referenced_object_release_impl(instance);
+  if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&((vfs_streams_driver_c *)sdnp->driver)->dir_nodes_pool,
-               (void *)sdnp);
+    chPoolFree(&drvp->dir_nodes_pool, (void *)sdnp);
   }
 }
 
@@ -218,11 +219,12 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 
 static void node_file_release(void *instance) {
   vfs_stream_file_node_c *sfnp = (vfs_stream_file_node_c *)instance;
+  vfs_streams_driver_c *drvp = (vfs_streams_driver_c *)sfnp->driver;
 
-  if (--sfnp->refs == 0U) {
+  __referenced_object_release_impl(instance);
+  if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&((vfs_streams_driver_c *)sfnp->driver)->file_nodes_pool,
-               (void *)sfnp);
+    chPoolFree(&drvp->file_nodes_pool, (void *)sfnp);
   }
 }
 

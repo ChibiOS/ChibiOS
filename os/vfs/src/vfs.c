@@ -79,8 +79,6 @@ msg_t vfsOpenDirectory(const char *path,
  */
 void vfsCloseDirectory(vfs_directory_node_c *vdnp) {
 
-  chDbgAssert(vdnp->refs > 0U, "zero count");
-
   vdnp->vmt->release((void *)vdnp);
 }
 
@@ -96,7 +94,7 @@ void vfsCloseDirectory(vfs_directory_node_c *vdnp) {
 msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
                             vfs_node_info_t *nip) {
 
-  chDbgAssert(vdnp->refs > 0U, "zero count");
+  chDbgAssert(vdnp->references > 0U, "zero count");
 
   return vdnp->vmt->dir_first((void *)vdnp, nip);
 }
@@ -113,7 +111,7 @@ msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
 msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
                            vfs_node_info_t *nip) {
 
-  chDbgAssert(vdnp->refs > 0U, "zero count");
+  chDbgAssert(vdnp->references > 0U, "zero count");
 
   return vdnp->vmt->dir_next((void *)vdnp, nip);
 }
@@ -146,7 +144,7 @@ msg_t vfsOpenFile(const char *path,
  */
 void vfsCloseFile(vfs_file_node_c *vfnp) {
 
-  chDbgAssert(vfnp->refs > 0U, "zero count");
+  chDbgAssert(vfnp->references > 0U, "zero count");
 
   vfnp->vmt->release((void *)vfnp);
 }
@@ -164,7 +162,7 @@ void vfsCloseFile(vfs_file_node_c *vfnp) {
  */
 ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n) {
 
-  chDbgAssert(vfnp->refs > 0U, "zero count");
+  chDbgAssert(vfnp->references > 0U, "zero count");
 
   return vfnp->vmt->file_read((void *)vfnp, buf, n);
 }
@@ -182,7 +180,7 @@ ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n) {
  */
 ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n) {
 
-  chDbgAssert(vfnp->refs > 0U, "zero count");
+  chDbgAssert(vfnp->references > 0U, "zero count");
 
   return vfnp->vmt->file_write((void *)vfnp, buf, n);
 }
@@ -198,7 +196,7 @@ ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n) {
  */
 msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset) {
 
-  chDbgAssert(vfnp->refs > 0U, "zero count");
+  chDbgAssert(vfnp->references > 0U, "zero count");
 
   return vfnp->vmt->file_setpos((void *)vfnp, offset);
 }
@@ -213,7 +211,7 @@ msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset) {
  */
 vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
 
-  chDbgAssert(vfnp->refs > 0U, "zero count");
+  chDbgAssert(vfnp->references > 0U, "zero count");
 
   return vfnp->vmt->file_getpos((void *)vfnp);
 }
@@ -228,7 +226,7 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
  */
 vfs_offset_t vfsGetFileSize(vfs_file_node_c *vfnp) {
 
-  chDbgAssert(vfnp->refs > 0U, "zero count");
+  chDbgAssert(vfnp->references > 0U, "zero count");
 
   return vfnp->vmt->file_getsize((void *)vfnp);
 }
@@ -243,7 +241,7 @@ vfs_offset_t vfsGetFileSize(vfs_file_node_c *vfnp) {
  */
 BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp) {
 
-  chDbgAssert(vfnp->refs > 0U, "zero count");
+  chDbgAssert(vfnp->references > 0U, "zero count");
 
   return vfnp->vmt->file_get_stream((void *)vfnp);
 }

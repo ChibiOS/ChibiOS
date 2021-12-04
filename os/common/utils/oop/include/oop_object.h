@@ -115,15 +115,15 @@ typedef struct base_object {
 /**
  * @brief   Object creation implementation.
  *
- * @param[in] ip        Pointer to a @p referenced_object_c structure to be
+ * @param[in] ip        Pointer to a @p base_object_c structure to be
  *                      initialized.
  * @return              A new reference to the object.
  */
 CC_FORCE_INLINE
-static inline base_object_c *__base_object_objinit_impl(base_object_c *ip,
-                                                        const void *vmt) {
+static inline void *__base_object_objinit_impl(void *ip, const void *vmt) {
+  base_object_c *objp = (base_object_c *)ip;
 
-  ip->vmt = (struct __base_object_vmt *)vmt;
+  objp->vmt = (struct __base_object_vmt *)vmt;
 
   return ip;
 }
@@ -131,11 +131,11 @@ static inline base_object_c *__base_object_objinit_impl(base_object_c *ip,
 /**
  * @brief   Object finalization implementation.
  *
- * @param[in] ip        Pointer to a @p referenced_object_c structure to be
+ * @param[in] ip        Pointer to a @p base_object_c structure to be
  *                      disposed.
  */
 CC_FORCE_INLINE
-static inline void __base_object_dispose_impl(base_object_c *ip) {
+static inline void __base_object_dispose_impl(void *ip) {
 
   (void) ip;
 

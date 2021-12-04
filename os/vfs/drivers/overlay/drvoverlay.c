@@ -122,7 +122,7 @@ static msg_t drv_open_dir(void *instance,
 
         /* Node object initialization.*/
         odnp->vmt           = &dir_node_vmt;
-        odnp->refs          = 1U;
+        odnp->references    = 1U;
         odnp->driver        = (vfs_driver_c *)instance;
         odnp->index         = 0U;
         odnp->overlaid_root = NULL;
@@ -202,12 +202,8 @@ static void node_dir_release(void *instance) {
   vfs_overlay_dir_node_c *odnp = (vfs_overlay_dir_node_c *)instance;
   vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)odnp->driver;
 
-  if (--odnp->refs == 0U) {
-
-    /* Releasing the overlaid driver root node, if taken.*/
-    if (odnp->overlaid_root != NULL) {
-      odnp->overlaid_root->vmt->release((void *)odnp->overlaid_root);
-    }
+  __referenced_object_release_impl(instance);
+  if (__referenced_object_getref_impl(instance) == 0U) {
 
     chPoolFree(&drvp->dir_nodes_pool, (void *)odnp);
   }

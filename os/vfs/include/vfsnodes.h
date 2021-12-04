@@ -97,17 +97,13 @@ typedef struct vfs_node vfs_node_c;
  * @brief   @p vfs_node_c specific methods.
  */
 #define __vfs_node_methods                                                  \
-  __base_object_methods                                                     \
-  /* Node release, the object is disposed when the counter reaches zero.*/  \
-  void (*release)(void *instance);
+  __referenced_object_methods
 
 /**
  * @brief   @p vfs_node_c specific data.
  */
 #define __vfs_node_data                                                     \
-  __base_object_data                                                        \
-  /* Number of references to this node.*/                                   \
-  unsigned              refs;                                               \
+  __referenced_object_data                                                  \
   /* Driver handling this node.*/                                           \
   vfs_driver_c          *driver;
 
