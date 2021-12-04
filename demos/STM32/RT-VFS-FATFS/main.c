@@ -20,11 +20,6 @@
 #include "ch.h"
 #include "hal.h"
 #include "vfs.h"
-#include "drvoverlay.h"
-#include "drvstreams.h"
-#if defined(DEMO_USE_FATFS)
-#include "drvfatfs.h"
-#endif
 
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
@@ -35,7 +30,6 @@
 
 #include "portab.h"
 
-
 /*===========================================================================*/
 /* Card insertion monitor.                                                   */
 /*===========================================================================*/
@@ -45,7 +39,7 @@
  */
 static event_source_t inserted_event, removed_event;
 
-#if defined(DEMO_USE_FATFS)
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
 #define POLLING_INTERVAL                10
 #define POLLING_DELAY                   10
 
@@ -216,7 +210,7 @@ static void InsertHandler(eventid_t id) {
 
   (void)id;
 
-#if defined(DEMO_USE_FATFS)
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
   msg_t err;
 
 #if HAL_USE_SDC
@@ -249,7 +243,7 @@ static void RemoveHandler(eventid_t id) {
 
   (void)id;
 
-#if defined(DEMO_USE_FATFS)
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
 #if HAL_USE_SDC
     sdcDisconnect(&PORTAB_SDCD1);
 #else
@@ -317,7 +311,7 @@ int main(void) {
   sdStart(&PORTAB_SD1, NULL);
   nullObjectInit(&nullstream);
 
-#if defined(DEMO_USE_FATFS)
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
   /* Activates the  SDC driver using default configuration.*/
   sdcStart(&PORTAB_SDCD1, NULL);
 

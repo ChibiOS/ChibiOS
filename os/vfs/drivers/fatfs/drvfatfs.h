@@ -28,6 +28,8 @@
 #ifndef DRVFATFS_H
 #define DRVFATFS_H
 
+#if (VFS_CFG_ENABLE_DRV_FATFS == TRUE) || defined(__DOXYGEN__)
+
 #include "ff.h"
 
 /*===========================================================================*/
@@ -185,6 +187,8 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+#endif /* VFS_CFG_ENABLE_DRV_FATFS == TRUE */
 
 #endif /* DRVFATFS_H */
 

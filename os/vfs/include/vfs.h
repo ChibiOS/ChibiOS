@@ -84,6 +84,19 @@
 #include "vfsnodes.h"
 #include "vfsdrivers.h"
 
+/* File System drivers.*/
+#if VFS_CFG_ENABLE_DRV_OVERLAY == TRUE
+#include "drvoverlay.h"
+#endif
+
+#if VFS_CFG_ENABLE_DRV_STREAMS == TRUE
+#include "drvstreams.h"
+#endif
+
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
+#include "drvfatfs.h"
+#endif
+
 /* Application code is suppored to export this symbol, it is expected to
    exists.*/
 extern vfs_driver_t *vfs_root;

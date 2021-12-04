@@ -28,7 +28,8 @@
 #include <string.h>
 
 #include "vfs.h"
-#include "drvoverlay.h"
+
+#if (VFS_CFG_ENABLE_DRV_OVERLAY == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -309,5 +310,7 @@ msg_t drvOverlayRegisterDriver(vfs_overlay_driver_t *vodp,
 
   return err;
 }
+
+#endif /* VFS_CFG_ENABLE_DRV_OVERLAY == TRUE */
 
 /** @} */

@@ -108,8 +108,6 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 # VFS files (optional).
 include $(CHIBIOS)/os/vfs/vfs.mk
-include $(CHIBIOS)/os/vfs/drivers/overlay/drvoverlay.mk
-include $(CHIBIOS)/os/vfs/drivers/streams/drvstreams.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).

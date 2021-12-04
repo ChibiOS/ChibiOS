@@ -28,7 +28,8 @@
 #include <string.h>
 
 #include "vfs.h"
-#include "drvfatfs.h"
+
+#if (VFS_CFG_ENABLE_DRV_FATFS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -529,5 +530,7 @@ msg_t drvFatFSUnmount(const char *name) {
 
   return translate_error(res);
 }
+
+#endif /* VFS_CFG_ENABLE_DRV_FATFS == TRUE */
 
 /** @} */

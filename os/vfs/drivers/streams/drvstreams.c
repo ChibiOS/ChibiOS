@@ -28,7 +28,8 @@
 #include <string.h>
 
 #include "vfs.h"
-#include "drvstreams.h"
+
+#if (VFS_CFG_ENABLE_DRV_STREAMS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -305,5 +306,7 @@ vfs_driver_t *drvStreamsObjectInit(vfs_streams_driver_t *vsdp,
 
   return (vfs_driver_t *)vsdp;
 }
+
+#endif /* VFS_CFG_ENABLE_DRV_STREAMS == TRUE */
 
 /** @} */
