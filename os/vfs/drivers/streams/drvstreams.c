@@ -111,8 +111,7 @@ static msg_t drv_open_dir(void *instance,
     if (sdnp != NULL) {
 
       /* Node object initialization.*/
-      sdnp->vmt        = &dir_node_vmt;
-      sdnp->references = 1U;
+      __referenced_object_objinit_impl(sdnp, &dir_node_vmt);
       sdnp->driver     = (vfs_driver_c *)drvp;
       sdnp->index      = 0U;
 
@@ -158,8 +157,7 @@ static msg_t drv_open_file(void *instance,
         if (sfnp != NULL) {
 
           /* Node object initialization.*/
-          sfnp->vmt        = &file_node_vmt;
-          sfnp->references = 1U;
+          __referenced_object_objinit_impl(sfnp, &file_node_vmt);
           sfnp->driver     = (vfs_driver_c *)drvp;
           sfnp->stream     = dsep->stream;
 
@@ -286,7 +284,7 @@ vfs_driver_c *drvStreamsObjectInit(vfs_streams_driver_c *vsdp,
                                    const char *rootname,
                                    const drv_stream_element_t *streams) {
 
-  vsdp->vmt      = &driver_vmt;
+  __base_object_objinit_impl(vsdp, &driver_vmt);
   vsdp->rootname = rootname;
   vsdp->streams  = streams;
 

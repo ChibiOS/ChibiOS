@@ -192,8 +192,7 @@ static msg_t drv_open_dir(void *instance,
     if (ffdnp != NULL) {
 
       /* Node object initialization.*/
-      ffdnp->vmt        = &dir_node_vmt;
-      ffdnp->references = 1U;
+      __referenced_object_objinit_impl(ffdnp, &dir_node_vmt);
       ffdnp->driver     = (vfs_driver_c *)drvp;
 
       res = f_opendir(&ffdnp->dir, (TCHAR *)path);
@@ -235,8 +234,7 @@ static msg_t drv_open_file(void *instance,
     if (fffnp != NULL) {
 
       /* Node object initialization.*/
-      fffnp->vmt        = &file_node_vmt;
-      fffnp->references = 1U;
+      __referenced_object_objinit_impl(fffnp, &file_node_vmt);
       fffnp->driver     = (vfs_driver_c *)drvp;
       fffnp->stream.vmt = &file_stream_vmt;
 
@@ -456,7 +454,7 @@ static msg_t file_stream_get(void *instance) {
  */
 vfs_driver_c *drvFatFSInit(const char *rootname) {
 
-  vfs_fatfs.vmt      = &driver_vmt;
+  __base_object_objinit_impl(&vfs_fatfs, &driver_vmt);
   vfs_fatfs.rootname = rootname;
 
   /* Initializing pools.*/

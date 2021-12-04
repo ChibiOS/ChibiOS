@@ -121,8 +121,7 @@ static msg_t drv_open_dir(void *instance,
       if (odnp != NULL) {
 
         /* Node object initialization.*/
-        odnp->vmt           = &dir_node_vmt;
-        odnp->references    = 1U;
+        __referenced_object_objinit_impl(odnp, &dir_node_vmt);
         odnp->driver        = (vfs_driver_c *)instance;
         odnp->index         = 0U;
         odnp->overlaid_root = NULL;
@@ -266,7 +265,7 @@ vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
                                    vfs_driver_c *overlaid_drv,
                                    const char *rootname) {
 
-  vodp->vmt          = &driver_vmt;
+  __base_object_objinit_impl(vodp, &driver_vmt);
   vodp->rootname     = rootname;
   vodp->overlaid_drv = overlaid_drv;
   vodp->next_driver  = 0U;
