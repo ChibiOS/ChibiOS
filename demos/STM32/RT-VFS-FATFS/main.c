@@ -330,7 +330,7 @@ int main(void) {
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver,
      no need for a name.*/
-  drvOverlayObjectInit(&vfs_root, NULL, "");
+  drvOverlayObjectInit(&root_driver, NULL, "");
 #endif
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
