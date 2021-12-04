@@ -57,7 +57,7 @@
 /*===========================================================================*/
 
 /* Forward declaration because nodes holds references to drivers.*/
-typedef struct vfs_driver vfs_driver_t;
+typedef struct vfs_driver vfs_driver_c;
 
 /**
  * @brief   Type of a file offset.
@@ -89,30 +89,30 @@ typedef struct vfs_node_info {
 } vfs_node_info_t;
 
 /**
- * @brief   Type of a structure representing a generic VFS node.
+ * @brief   Type of a generic VFS node class.
  */
-typedef struct vfs_node vfs_node_t;
+typedef struct vfs_node vfs_node_c;
 
 /**
- * @brief   @p vfs_node_t specific methods.
+ * @brief   @p vfs_node_c specific methods.
  */
 #define __vfs_node_methods                                                  \
-  _base_object_methods                                                      \
+  __base_object_methods                                                     \
   /* Node release, the object is disposed when the counter reaches zero.*/  \
   void (*release)(void *instance);
 
 /**
- * @brief   @p vfs_node_t specific data.
+ * @brief   @p vfs_node_c specific data.
  */
 #define __vfs_node_data                                                     \
-  _base_object_data                                                         \
+  __base_object_data                                                        \
   /* Number of references to this node.*/                                   \
   unsigned              refs;                                               \
   /* Driver handling this node.*/                                           \
-  vfs_driver_t          *driver;
+  vfs_driver_c          *driver;
 
 /**
- * @brief   @p vfs_node_t virtual methods table.
+ * @brief   @p vfs_node_c virtual methods table.
  */
 struct vfs_node_vmt {
   __vfs_node_methods
@@ -130,12 +130,12 @@ struct vfs_node {
 };
 
 /**
- * @brief   Type of a structure representing a directory VFS node.
+ * @brief   Type of a directory VFS node class.
  */
-typedef struct vfs_directory_node vfs_directory_node_t;
+typedef struct vfs_directory_node vfs_directory_node_c;
 
 /**
- * @brief   @p vfs_directory_node_t specific methods.
+ * @brief   @p vfs_directory_node_c specific methods.
  */
 #define __vfs_directory_node_methods                                        \
   __vfs_node_methods                                                        \
@@ -143,13 +143,13 @@ typedef struct vfs_directory_node vfs_directory_node_t;
   msg_t (*dir_next)(void *instance, vfs_node_info_t *nip);
 
 /**
- * @brief   @p vfs_directory_node_t specific data.
+ * @brief   @p vfs_directory_node_c specific data.
  */
 #define __vfs_directory_node_data                                           \
   __vfs_node_data
 
 /**
- * @brief   @p vfs_directory_node_t virtual methods table.
+ * @brief   @p vfs_directory_node_c virtual methods table.
  */
 struct vfs_directory_node_vmt {
   __vfs_directory_node_methods
@@ -167,12 +167,12 @@ struct vfs_directory_node {
 };
 
 /**
- * @brief   Type of a structure representing a file VFS node.
+ * @brief   Type of a a file VFS node class.
  */
-typedef struct vfs_file_node vfs_file_node_t;
+typedef struct vfs_file_node vfs_file_node_c;
 
 /**
- * @brief   @p vfs_file_node_t specific methods.
+ * @brief   @p vfs_file_node_c specific methods.
  */
 #define __vfs_file_node_methods                                             \
   __vfs_node_methods                                                        \
@@ -184,13 +184,13 @@ typedef struct vfs_file_node vfs_file_node_t;
   vfs_offset_t (*file_getsize)(void *instance);
 
 /**
- * @brief   @p vfs_file_node_t specific data.
+ * @brief   @p vfs_file_node_c specific data.
  */
 #define __vfs_file_node_data                                                \
   __vfs_node_data
 
 /**
- * @brief   @p vfs_file_node_t virtual methods table.
+ * @brief   @p vfs_file_node_c virtual methods table.
  */
 struct vfs_file_node_vmt {
   __vfs_file_node_methods

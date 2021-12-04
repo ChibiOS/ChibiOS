@@ -113,12 +113,12 @@ static bool fs_ready = false;
 /*===========================================================================*/
 
 /* VFS overlay driver object representing the root directory.*/
-static vfs_overlay_driver_t root_driver;
+static vfs_overlay_driver_c root_driver;
 
-vfs_driver_t *vfs_root = (vfs_driver_t *)&root_driver;
+vfs_driver_c *vfs_root = (vfs_driver_c *)&root_driver;
 
 /* VFS streams driver object representing the /dev directory.*/
-static vfs_streams_driver_t vfs_dev;
+static vfs_streams_driver_c vfs_dev;
 
 static NullStream nullstream;
 
@@ -134,7 +134,7 @@ static char pathbuf[1024];
 
 static void scan_nodes(BaseSequentialStream *chp, char *path) {
   msg_t res;
-  vfs_directory_node_t *dirp;
+  vfs_directory_node_c *dirp;
   static vfs_node_info_t ni;
 
   chprintf(chp, "%s\r\n", path);
@@ -284,7 +284,7 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
   msg_t msg;
-  vfs_file_node_t *file;
+  vfs_file_node_c *file;
   static const evhandler_t evhndl[] = {
     InsertHandler,
     RemoveHandler,

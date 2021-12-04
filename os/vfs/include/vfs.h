@@ -68,6 +68,8 @@
 
 /* Dependencies.*/
 #include "osal.h"
+#include "oop_object.h"
+#include "oop_referenced_object.h"
 #include "hal_objects.h"
 #include "hal_streams.h"
 
@@ -99,28 +101,28 @@
 
 /* Application code is suppored to export this symbol, it is expected to
    exists.*/
-extern vfs_driver_t *vfs_root;
+extern vfs_driver_c *vfs_root;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   msg_t vfsOpenDirectory(const char *name,
-                         vfs_directory_node_t **vdnpp);
-  void vfsCloseDirectory(vfs_directory_node_t *vdnp);
-  msg_t vfsReadDirectoryFirst(vfs_directory_node_t *vdnp,
+                         vfs_directory_node_c **vdnpp);
+  void vfsCloseDirectory(vfs_directory_node_c *vdnp);
+  msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
                               vfs_node_info_t *nip);
-  msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
+  msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
                              vfs_node_info_t *nip);
   msg_t vfsOpenFile(const char *name,
                     unsigned mode,
-                    vfs_file_node_t **vfnpp);
-  void vfsCloseFile(vfs_file_node_t *vfnp);
-  ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n);
-  ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n);
-  msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset);
-  vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp);
-  vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp);
-  BaseSequentialStream *vfsGetFileStream(vfs_file_node_t *vfnp);
+                    vfs_file_node_c **vfnpp);
+  void vfsCloseFile(vfs_file_node_c *vfnp);
+  ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n);
+  ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n);
+  msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset);
+  vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp);
+  vfs_offset_t vfsGetFileSize(vfs_file_node_c *vfnp);
+  BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp);
 #ifdef __cplusplus
 }
 #endif

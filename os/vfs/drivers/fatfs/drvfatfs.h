@@ -66,27 +66,27 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p vfs_fatfs_dir_node_t specific methods.
+ * @brief   @p vfs_fatfs_dir_node_c specific methods.
  */
 #define __vfs_fatfs_dir_node_methods                                        \
   __vfs_directory_node_methods
 
 /**
- * @brief   @p vfs_fatfs_dir_node_t specific data.
+ * @brief   @p vfs_fatfs_dir_node_c specific data.
  */
 #define __vfs_fatfs_dir_node_data                                           \
   __vfs_directory_node_data                                                 \
   DIR                           dir;
 
 /**
- * @brief   @p vfs_fatfs_dir_node_t virtual methods table.
+ * @brief   @p vfs_fatfs_dir_node_c virtual methods table.
  */
 struct vfs_fatfs_dir_node_vmt {
   __vfs_fatfs_dir_node_methods
 };
 
 /**
- * @brief   Type of a structure representing a FatFS directory VFS node.
+ * @brief   Type of a FatFS directory VFS node class.
  */
 typedef struct vfs_fatfs_dir_node {
   /**
@@ -94,16 +94,16 @@ typedef struct vfs_fatfs_dir_node {
    */
   const struct vfs_fatfs_dir_node_vmt *vmt;
   __vfs_fatfs_dir_node_data
-} vfs_fatfs_dir_node_t;
+} vfs_fatfs_dir_node_c;
 
 /**
- * @brief   @p vfs_fatfs_file_node_t specific methods.
+ * @brief   @p vfs_fatfs_file_node_c specific methods.
  */
 #define __vfs_fatfs_file_node_methods                                       \
   __vfs_file_node_methods
 
 /**
- * @brief   @p vfs_fatfs_file_node_t specific data.
+ * @brief   @p vfs_fatfs_file_node_c specific data.
  */
 #define __vfs_fatfs_file_node_data                                          \
   __vfs_file_node_data                                                      \
@@ -111,14 +111,14 @@ typedef struct vfs_fatfs_dir_node {
   BaseSequentialStream          stream;
 
 /**
- * @brief   @p vfs_fatfs_file_node_t virtual methods table.
+ * @brief   @p vfs_fatfs_file_node_c virtual methods table.
  */
 struct vfs_fatfs_file_node_vmt {
   __vfs_fatfs_file_node_methods
 };
 
 /**
- * @brief   Type of a structure representing a FatFS file VFS node.
+ * @brief   Type of a FatFS file VFS node class.
  */
 typedef struct vfs_fatfs_file_node {
   /**
@@ -126,16 +126,16 @@ typedef struct vfs_fatfs_file_node {
    */
   const struct vfs_fatfs_file_node_vmt *vmt;
   __vfs_fatfs_file_node_data
-} vfs_fatfs_file_node_t;
+} vfs_fatfs_file_node_c;
 
 /**
- * @brief   @p vfs_fatfs_driver_t specific methods.
+ * @brief   @p vfs_fatfs_driver_c specific methods.
  */
 #define __vfs_fatfs_driver_methods                                          \
   __vfs_driver_methods
 
 /**
- * @brief   @p vfs_fatfs_driver_t specific data.
+ * @brief   @p vfs_fatfs_driver_c specific data.
  */
 #define __vfs_fatfs_driver_data                                             \
   __vfs_driver_data                                                         \
@@ -143,18 +143,18 @@ typedef struct vfs_fatfs_file_node {
   memory_pool_t                 dir_nodes_pool;                             \
   memory_pool_t                 info_nodes_pool;                            \
   memory_pool_t                 fs_nodes_pool;                              \
-  vfs_fatfs_dir_node_t drv_dir_nodes[DRV_CFG_FATFS_DIR_NODES_NUM];          \
-  vfs_fatfs_file_node_t drv_file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
+  vfs_fatfs_dir_node_c drv_dir_nodes[DRV_CFG_FATFS_DIR_NODES_NUM];          \
+  vfs_fatfs_file_node_c drv_file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
 
 /**
- * @brief   @p vfs_fatfs_driver_t virtual methods table.
+ * @brief   @p vfs_fatfs_driver_c virtual methods table.
  */
 struct vfs_fatfs_driver_vmt {
   __vfs_fatfs_driver_methods
 };
 
 /**
- * @brief   Type of a structure representing a VFS FatFS driver.
+ * @brief   Type of a VFS FatFS driver class.
  */
 typedef struct vfs_fatfs_driver {
   /**
@@ -162,7 +162,7 @@ typedef struct vfs_fatfs_driver {
    */
   const struct vfs_fatfs_driver_vmt   *vmt;
   __vfs_fatfs_driver_data
-} vfs_fatfs_driver_t;
+} vfs_fatfs_driver_c;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -172,12 +172,12 @@ typedef struct vfs_fatfs_driver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern vfs_fatfs_driver_t vfs_fatfs;
+extern vfs_fatfs_driver_c vfs_fatfs;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  vfs_driver_t *drvFatFSInit(const char *rootname);
+  vfs_driver_c *drvFatFSInit(const char *rootname);
   msg_t drvFatFSMount(const char *name, bool mountnow);
   msg_t drvFatFSUnmount(const char *name);
 #ifdef __cplusplus

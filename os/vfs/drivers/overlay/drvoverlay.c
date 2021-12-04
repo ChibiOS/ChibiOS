@@ -49,11 +49,11 @@
 
 static msg_t drv_open_dir(void *instance,
                           const char *path,
-                          vfs_directory_node_t **vdnpp);
+                          vfs_directory_node_c **vdnpp);
 static msg_t drv_open_file(void *instance,
                            const char *path,
                            int oflag,
-                           vfs_file_node_t **vfnpp);
+                           vfs_file_node_c **vfnpp);
 
 static const struct vfs_overlay_driver_vmt driver_vmt = {
   .open_dir     = drv_open_dir,
@@ -74,12 +74,12 @@ static const struct vfs_overlay_dir_node_vmt dir_node_vmt = {
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static msg_t match_driver(vfs_overlay_driver_t *odp,
+static msg_t match_driver(vfs_overlay_driver_c *odp,
                           const char **pathp,
-                          vfs_driver_t **vdpp) {
+                          vfs_driver_c **vdpp) {
   char fname[VFS_CFG_MAX_NAMELEN + 1];
   msg_t err;
-  vfs_driver_t **pp;
+  vfs_driver_c **pp;
 
   do {
     err = vfs_parse_filename(pathp, fname);
@@ -105,8 +105,8 @@ static msg_t match_driver(vfs_overlay_driver_t *odp,
 
 static msg_t drv_open_dir(void *instance,
                           const char *path,
-                          vfs_directory_node_t **vdnpp) {
-  vfs_overlay_driver_t *drvp = (vfs_overlay_driver_t *)instance;
+                          vfs_directory_node_c **vdnpp) {
+  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
   const char *scanpath = path;
   msg_t err;
 
@@ -117,13 +117,13 @@ static msg_t drv_open_dir(void *instance,
     if (*scanpath == '\0') {
 
       /* Creating a root directory node.*/
-      vfs_overlay_dir_node_t *odnp = chPoolAlloc(&drvp->dir_nodes_pool);
+      vfs_overlay_dir_node_c *odnp = chPoolAlloc(&drvp->dir_nodes_pool);
       if (odnp != NULL) {
 
         /* Node object initialization.*/
         odnp->vmt           = &dir_node_vmt;
         odnp->refs          = 1U;
-        odnp->driver        = (vfs_driver_t *)instance;
+        odnp->driver        = (vfs_driver_c *)instance;
         odnp->index         = 0U;
         odnp->overlaid_root = NULL;
 
@@ -135,12 +135,12 @@ static msg_t drv_open_dir(void *instance,
                                                    &odnp->overlaid_root);
         }
 
-        *vdnpp = (vfs_directory_node_t *)odnp;
+        *vdnpp = (vfs_directory_node_c *)odnp;
         return VFS_RET_SUCCESS;
       }
     }
     else {
-      vfs_driver_t *dp;
+      vfs_driver_c *dp;
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
@@ -169,8 +169,8 @@ static msg_t drv_open_dir(void *instance,
 static msg_t drv_open_file(void *instance,
                            const char *path,
                            int oflag,
-                           vfs_file_node_t **vfnpp) {
-  vfs_overlay_driver_t *drvp = (vfs_overlay_driver_t *)instance;
+                           vfs_file_node_c **vfnpp) {
+  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
   msg_t err;
 
   do {
@@ -184,7 +184,7 @@ static msg_t drv_open_file(void *instance,
       err = VFS_RET_ENOENT;
     }
     else {
-      vfs_driver_t *dp;
+      vfs_driver_c *dp;
 
       /* Delegating node creation to a registered driver.*/
       err = match_driver(drvp, &path, &dp);
@@ -199,8 +199,8 @@ static msg_t drv_open_file(void *instance,
 }
 
 static void node_dir_release(void *instance) {
-  vfs_overlay_dir_node_t *odnp = (vfs_overlay_dir_node_t *)instance;
-  vfs_overlay_driver_t *drvp = (vfs_overlay_driver_t *)odnp->driver;
+  vfs_overlay_dir_node_c *odnp = (vfs_overlay_dir_node_c *)instance;
+  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)odnp->driver;
 
   if (--odnp->refs == 0U) {
 
@@ -214,7 +214,7 @@ static void node_dir_release(void *instance) {
 }
 
 static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
-  vfs_overlay_dir_node_t *odnp = (vfs_overlay_dir_node_t *)instance;
+  vfs_overlay_dir_node_c *odnp = (vfs_overlay_dir_node_c *)instance;
 
   odnp->index = 0U;
 
@@ -222,8 +222,8 @@ static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
 }
 
 static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
-  vfs_overlay_dir_node_t *odnp = (vfs_overlay_dir_node_t *)instance;
-  vfs_overlay_driver_t *drvp = (vfs_overlay_driver_t *)odnp->driver;
+  vfs_overlay_dir_node_c *odnp = (vfs_overlay_dir_node_c *)instance;
+  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)odnp->driver;
 
   if (odnp->index < drvp->next_driver) {
     nip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
@@ -259,15 +259,15 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 /**
  * @brief   VFS overlay object initialization.
  *
- * @param[out] vodp             pointer to a @p vfs_overlay_driver_t structure
+ * @param[out] vodp             pointer to a @p vfs_overlay_driver_c structure
  * @param[out] overlaid_drv     pointer to a driver to be overlaid
  * @param[in] rootname          name to be attributed to this object
  * @return                      A pointer to this initialized object.
  *
  * @api
  */
-vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
-                                   vfs_driver_t *overlaid_drv,
+vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
+                                   vfs_driver_c *overlaid_drv,
                                    const char *rootname) {
 
   vodp->vmt          = &driver_vmt;
@@ -277,7 +277,7 @@ vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
 
   /* Initializing pools.*/
   chPoolObjectInit(&vodp->dir_nodes_pool,
-                   sizeof (vfs_overlay_dir_node_t),
+                   sizeof (vfs_overlay_dir_node_c),
                    chCoreAllocAlignedI);
 
   /* Preloading pools.*/
@@ -285,19 +285,19 @@ vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
                   &vodp->dir_nodes[0],
                   DRV_CFG_OVERLAY_DIR_NODES_NUM);
 
-  return (vfs_driver_t *)vodp;
+  return (vfs_driver_c *)vodp;
 }
 
 /**
  * @brief   Registers a VFS driver as an overlay.
  *
- * @param[in] vodp      pointer to a @p vfs_overlay_driver_t structure
+ * @param[in] vodp      pointer to a @p vfs_overlay_driver_c structure
  * @return              The operation result.
  *
  * @api
  */
-msg_t drvOverlayRegisterDriver(vfs_overlay_driver_t *vodp,
-                               vfs_driver_t *vdp) {
+msg_t drvOverlayRegisterDriver(vfs_overlay_driver_c *vodp,
+                               vfs_driver_c *vdp) {
   msg_t err;
 
   if (vodp->next_driver >= DRV_CFG_OVERLAY_DRV_MAX) {

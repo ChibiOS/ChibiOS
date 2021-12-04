@@ -96,6 +96,8 @@ DEPDIR   := ./.dep/stm32g474re_nucleo64
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
+# Common files.
+include $(CHIBIOS)/os/common/utils/utils.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
 # HAL-OSAL files (optional).

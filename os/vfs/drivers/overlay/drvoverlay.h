@@ -64,29 +64,29 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p vfs_overlay_dir_node_t specific methods.
+ * @brief   @p vfs_overlay_dir_node_c specific methods.
  */
 #define __vfs_overlay_dir_node_methods                                      \
   __vfs_directory_node_methods
 
 /**
- * @brief   @p vfs_overlay_dir_node_t specific data.
+ * @brief   @p vfs_overlay_dir_node_c specific data.
  */
 #define __vfs_overlay_dir_node_data                                         \
   __vfs_directory_node_data                                                 \
   unsigned                          index;                                  \
   /* Root node of the overlaid driver or NULL.*/                            \
-  vfs_directory_node_t              *overlaid_root;                         \
+  vfs_directory_node_c              *overlaid_root;                         \
 
 /**
- * @brief   @p vfs_overlay_dir_node_t virtual methods table.
+ * @brief   @p vfs_overlay_dir_node_c virtual methods table.
  */
 struct vfs_overlay_dir_node_vmt {
   __vfs_overlay_dir_node_methods
 };
 
 /**
- * @brief   Type of a structure representing a Overlay directory VFS node.
+ * @brief   Type of an overlay directory VFS node class.
  */
 typedef struct vfs_overlay_dir_node {
   /**
@@ -94,39 +94,39 @@ typedef struct vfs_overlay_dir_node {
    */
   const struct vfs_overlay_dir_node_vmt *vmt;
   __vfs_overlay_dir_node_data
-} vfs_overlay_dir_node_t;
+} vfs_overlay_dir_node_c;
 
 /**
- * @brief   @p vfs_overlay_driver_t specific methods.
+ * @brief   @p vfs_overlay_driver_c specific methods.
  */
 #define __vfs_overlay_driver_methods                                        \
   __vfs_driver_methods
 
 /**
- * @brief   @p vfs_overlay_driver_t specific data.
+ * @brief   @p vfs_overlay_driver_c specific data.
  */
 #define __vfs_overlay_driver_data                                           \
   __vfs_driver_data                                                         \
   /* Pool of directory nodes.*/                                             \
   memory_pool_t                     dir_nodes_pool;                         \
   /* Driver to be overlaid or NULL.*/                                       \
-  vfs_driver_t                      *overlaid_drv;                          \
+  vfs_driver_c                      *overlaid_drv;                          \
   /* Static storage of directory nodes.*/                                   \
-  vfs_overlay_dir_node_t            dir_nodes[DRV_CFG_OVERLAY_DIR_NODES_NUM]; \
+  vfs_overlay_dir_node_c            dir_nodes[DRV_CFG_OVERLAY_DIR_NODES_NUM]; \
   /* Next registration slot.*/                                              \
   unsigned                          next_driver;                            \
   /* Registration slots.*/                                                  \
-  vfs_driver_t                      *drivers[DRV_CFG_OVERLAY_DRV_MAX];
+  vfs_driver_c                      *drivers[DRV_CFG_OVERLAY_DRV_MAX];
 
 /**
- * @brief   @p vfs_overlay_driver_t virtual methods table.
+ * @brief   @p vfs_overlay_driver_c virtual methods table.
  */
 struct vfs_overlay_driver_vmt {
   __vfs_overlay_driver_methods
 };
 
 /**
- * @brief   Type of a structure representing a VFS Overlay driver.
+ * @brief   Type of a VFS overlay driver class.
  */
 typedef struct vfs_overlay_driver {
   /**
@@ -134,7 +134,7 @@ typedef struct vfs_overlay_driver {
    */
   const struct vfs_overlay_driver_vmt   *vmt;
   __vfs_overlay_driver_data
-} vfs_overlay_driver_t;
+} vfs_overlay_driver_c;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -147,11 +147,11 @@ typedef struct vfs_overlay_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  vfs_driver_t *drvOverlayObjectInit(vfs_overlay_driver_t *vodp,
-                                     vfs_driver_t *overlaid_drv,
+  vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
+                                     vfs_driver_c *overlaid_drv,
                                      const char *rootname);
-  msg_t drvOverlayRegisterDriver(vfs_overlay_driver_t *vodp,
-                                 vfs_driver_t *vdp);
+  msg_t drvOverlayRegisterDriver(vfs_overlay_driver_c *vodp,
+                                 vfs_driver_c *vdp);
 #ifdef __cplusplus
 }
 #endif

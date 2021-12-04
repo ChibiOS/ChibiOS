@@ -58,26 +58,26 @@
  *
  * @param[in] path      absolute path of the directory to be opened
  * @param[out] vdnpp    pointer to the pointer to the instantiated
- *                      @p vfs_directory_node_t object
+ *                      @p vfs_directory_node_c object
  * @return              The operation result.
  *
  * @api
  */
 msg_t vfsOpenDirectory(const char *path,
-                       vfs_directory_node_t **vdnpp) {
+                       vfs_directory_node_c **vdnpp) {
 
   return vfs_root->vmt->open_dir(vfs_root, path, vdnpp);
 }
 
 /**
- * @brief   Releases a @p vfs_directory_node_t object.
+ * @brief   Releases a @p vfs_directory_node_c object.
  *
- * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ * @param[in] vdnp      the pointer to the @p vfs_directory_node_c object
  *                      to be released
  *
  * @api
  */
-void vfsCloseDirectory(vfs_directory_node_t *vdnp) {
+void vfsCloseDirectory(vfs_directory_node_c *vdnp) {
 
   chDbgAssert(vdnp->refs > 0U, "zero count");
 
@@ -87,13 +87,13 @@ void vfsCloseDirectory(vfs_directory_node_t *vdnp) {
 /**
  * @brief   First directory entry.
  *
- * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ * @param[in] vdnp      the pointer to the @p vfs_directory_node_c object
  * @param[out] nip      pointer to a @p vfs_node_info_t structure
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsReadDirectoryFirst(vfs_directory_node_t *vdnp,
+msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
                             vfs_node_info_t *nip) {
 
   chDbgAssert(vdnp->refs > 0U, "zero count");
@@ -104,13 +104,13 @@ msg_t vfsReadDirectoryFirst(vfs_directory_node_t *vdnp,
 /**
  * @brief   Next directory entry.
  *
- * @param[in] vdnp      the pointer to the @p vfs_directory_node_t object
+ * @param[in] vdnp      the pointer to the @p vfs_directory_node_c object
  * @param[out] nip      pointer to a @p vfs_node_info_t structure
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
+msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
                            vfs_node_info_t *nip) {
 
   chDbgAssert(vdnp->refs > 0U, "zero count");
@@ -124,27 +124,27 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_t *vdnp,
  * @param[in] path      absolute path of the file to be opened
  * @param[in] mode      file open mode
  * @param[out] vdnpp    pointer to the pointer to the instantiated
- *                      @p vfs_file_node_t object
+ *                      @p vfs_file_node_c object
  * @return              The operation result.
  *
  * @api
  */
 msg_t vfsOpenFile(const char *path,
                   unsigned mode,
-                  vfs_file_node_t **vfnpp) {
+                  vfs_file_node_c **vfnpp) {
 
   return vfs_root->vmt->open_file(vfs_root, path, mode, vfnpp);
 }
 
 /**
- * @brief   Releases a @p vfs_file_node_t object.
+ * @brief   Releases a @p vfs_file_node_c object.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
  *                      to be released
  *
  * @api
  */
-void vfsCloseFile(vfs_file_node_t *vfnp) {
+void vfsCloseFile(vfs_file_node_c *vfnp) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 
@@ -155,14 +155,14 @@ void vfsCloseFile(vfs_file_node_t *vfnp) {
  * @brief   File node read.
  * @details The function reads data from a file node into a buffer.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
  * @param[out] buf      pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred
  * @return              The transferred number of bytes or an error.
  *
  * @api
  */
-ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
+ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 
@@ -173,14 +173,14 @@ ssize_t vfsReadFile(vfs_file_node_t *vfnp, uint8_t *buf, size_t n) {
  * @brief   File node write.
  * @details The function writes data from a buffer to a file node.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
  * @param[out] buf      pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred
  * @return              The transferred number of bytes or an error.
  *
  * @api
  */
-ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
+ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 
@@ -190,13 +190,13 @@ ssize_t vfsWriteFile(vfs_file_node_t *vfnp, const uint8_t *buf, size_t n) {
 /**
  * @brief   Changes the current file position.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
  * @param[in] offset    new absolute position
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
+msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 
@@ -206,12 +206,12 @@ msg_t vfsSetFilePosition(vfs_file_node_t *vfnp, vfs_offset_t offset) {
 /**
  * @brief   Returns the current file position.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
  * @return              The current file position.
  *
  * @api
  */
-vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp) {
+vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 
@@ -221,12 +221,12 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_t *vfnp) {
 /**
  * @brief   Returns the current file size.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
  * @return              The current file size.
  *
  * @api
  */
-vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp) {
+vfs_offset_t vfsGetFileSize(vfs_file_node_c *vfnp) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 
@@ -236,12 +236,12 @@ vfs_offset_t vfsGetFileSize(vfs_file_node_t *vfnp) {
 /**
  * @brief   Returns the inner stream associated to the file.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_t object
+ * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
  * @return              The current file size.
  *
  * @api
  */
-BaseSequentialStream *vfsGetFileStream(vfs_file_node_t *vfnp) {
+BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp) {
 
   chDbgAssert(vfnp->refs > 0U, "zero count");
 

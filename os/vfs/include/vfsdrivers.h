@@ -63,34 +63,34 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p vfs_driver_t specific methods.
+ * @brief   @p vfs_driver_c specific methods.
  */
 #define __vfs_driver_methods                                                \
-  _base_object_methods                                                      \
+  __base_object_methods                                                     \
   msg_t (*open_dir)(void *instance,                                         \
                     const char *path,                                       \
-                    vfs_directory_node_t **vdnpp);                          \
+                    vfs_directory_node_c **vdnpp);                          \
   msg_t (*open_file)(void *instance,                                        \
                      const char *path,                                      \
                      int oflag,                                             \
-                     vfs_file_node_t **vfnpp);
+                     vfs_file_node_c **vfnpp);
 
 /**
- * @brief   @p vfs_driver_t specific data.
+ * @brief   @p vfs_driver_c specific data.
  */
 #define __vfs_driver_data                                                   \
-  _base_object_data                                                         \
+  __base_object_data                                                        \
   const char *rootname;
 
 /**
- * @brief   @p vfs_driver_t virtual methods table.
+ * @brief   @p vfs_driver_c virtual methods table.
  */
 struct vfs_driver_vmt {
   __vfs_driver_methods
 };
 
 /**
- * @brief   Type of a structure representing a VFS driver.
+ * @brief   Type of a VFS driver class.
  */
 typedef struct vfs_driver {
   /**
@@ -98,7 +98,7 @@ typedef struct vfs_driver {
    */
   const struct vfs_driver_vmt   *vmt;
   __vfs_driver_data
-} vfs_driver_t;
+} vfs_driver_c;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
