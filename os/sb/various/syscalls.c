@@ -115,14 +115,13 @@ caddr_t _sbrk_r(struct _reent *r, int incr) {
 }
 
 __attribute__((used))
-int _kill(struct _reent *r, int pid, int sig) {
+int _kill(int pid, int sig) {
 
-  (void) r;
   (void) pid;
   (void) sig;
 
-  chSysHalt("kill");
-  abort();
+  errno = EINVAL;
+  return -1;
 }
 
 __attribute__((used))

@@ -31,6 +31,7 @@
 #include "chprintf.h"
 
 #if (SHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
+#include <fcntl.h>
 #include "vfs.h"
 #endif
 
@@ -297,6 +298,42 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
     chHeapFree((void *)nip);
   }
 }
+
+static void cmd_cat(BaseSequentialStream *chp, int argc, char *argv[]) {
+  char *buf = NULL;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: cat <filename>\r\n");
+    return;
+  }
+
+  do {
+    int fd, n;
+
+    buf= (char *)chHeapAlloc(NULL, 2048);
+    if (buf == NULL) {
+      chprintf(chp, "Out of memory\r\n");
+     break;
+    }
+
+    fd = open(argv[1], O_RDONLY);
+    if(fd == -1) {
+      chprintf(chp, "Cannot open file\r\n");
+      break;
+    }
+
+    while ((n = read(fd, buf, sizeof (buf))) > 0) {
+      chprintf(chp, "%s", buf);
+    }
+
+    (void) close(fd);
+  }
+  while (false);
+
+  if (buf != NULL) {
+    chHeapFree((void *)buf);
+  }
+}
 #endif
 
 /*===========================================================================*/
@@ -327,6 +364,7 @@ const ShellCommand shell_local_commands[] = {
 #endif
 #if SHELL_CMD_FILES_ENABLED == TRUE
   {"tree", cmd_tree},
+  {"cat", cmd_cat},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE
   {"test", cmd_test},
