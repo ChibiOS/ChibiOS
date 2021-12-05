@@ -238,7 +238,7 @@ static void scan_nodes(BaseSequentialStream *chp,
   msg_t res;
   vfs_directory_node_c *dirp;
 
-  chprintf(chp, "%s\r\n", path);
+  chprintf(chp, "%s" SHELL_NEWLINE_STR, path);
   res = vfsOpenDirectory(path, &dirp);
   if (res == VFS_RET_SUCCESS) {
     size_t i = strlen(path);
@@ -258,7 +258,7 @@ static void scan_nodes(BaseSequentialStream *chp,
         path[i] = '\0';
       }
       else {
-        chprintf(chp, "%s%s\r\n", path, fn);
+        chprintf(chp, "%s%s" SHELL_NEWLINE_STR, path, fn);
       }
     }
 
@@ -273,7 +273,7 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
 
   if (argc > 0) {
-    chprintf(chp, "Usage: tree\r\n");
+    chprintf(chp, "Usage: tree" SHELL_NEWLINE_STR);
     return;
   }
 
@@ -281,7 +281,7 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
     pathbuf = (char *)chHeapAlloc(NULL, 1024);
     nip = (vfs_node_info_t *)chHeapAlloc(NULL, 1024);
     if ((pathbuf == NULL) || (nip == NULL)) {
-      chprintf(chp, "Out of memory\r\n");
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
      break;
     }
 
@@ -303,7 +303,7 @@ static void cmd_cat(BaseSequentialStream *chp, int argc, char *argv[]) {
   char *buf = NULL;
 
   if (argc != 1) {
-    chprintf(chp, "Usage: cat <filename>\r\n");
+    chprintf(chp, "Usage: cat <filename>" SHELL_NEWLINE_STR);
     return;
   }
 
@@ -312,19 +312,20 @@ static void cmd_cat(BaseSequentialStream *chp, int argc, char *argv[]) {
 
     buf= (char *)chHeapAlloc(NULL, 2048);
     if (buf == NULL) {
-      chprintf(chp, "Out of memory\r\n");
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
      break;
     }
 
-    fd = open(argv[1], O_RDONLY);
+    fd = open(argv[0], O_RDONLY);
     if(fd == -1) {
-      chprintf(chp, "Cannot open file\r\n");
+      chprintf(chp, "Cannot open file" SHELL_NEWLINE_STR);
       break;
     }
 
-    while ((n = read(fd, buf, sizeof (buf))) > 0) {
-      chprintf(chp, "%s", buf);
+    while ((n = read(fd, buf, sizeof (2048))) > 0) {
+      streamWrite(chp, (const uint8_t *)buf, n);
     }
+    chprintf(chp, SHELL_NEWLINE_STR);
 
     (void) close(fd);
   }

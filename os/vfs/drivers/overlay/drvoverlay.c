@@ -170,13 +170,14 @@ static msg_t drv_open_file(void *instance,
                            int oflag,
                            vfs_file_node_c **vfnpp) {
   vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
+  const char *scanpath = path;
   msg_t err;
 
   do {
-    err = vfs_parse_match_separator(&path);
+    err = vfs_parse_match_separator(&scanpath);
     VFS_BREAK_ON_ERROR(err);
 
-    if (*path == '\0') {
+    if (*scanpath == '\0') {
       (void)instance;
 
       /* Always not found, there are no files in the root.*/
@@ -185,11 +186,23 @@ static msg_t drv_open_file(void *instance,
     else {
       vfs_driver_c *dp;
 
-      /* Delegating node creation to a registered driver.*/
-      err = match_driver(drvp, &path, &dp);
-      VFS_BREAK_ON_ERROR(err);
+      /* Searching for a match among registered overlays.*/
+      err = match_driver(drvp, &scanpath, &dp);
+      if (err == VFS_RET_SUCCESS) {
+        /* Delegating node creation to a registered driver.*/
+        err = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
+      }
+      else {
+        /* No matching overlay, the whole path is passed to the overlaid
+           driver, if defined, else returning the previous error.*/
+        if (drvp->overlaid_drv != NULL) {
+          err = drvp->overlaid_drv->vmt->open_file((void *)drvp->overlaid_drv,
+                                                   path,
+                                                   oflag,
+                                                   vfnpp);
+        }
+      }
 
-      err = dp->vmt->open_file((void *)dp, path, oflag, vfnpp);
     }
   }
   while (false);
