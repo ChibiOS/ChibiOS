@@ -26,7 +26,7 @@
 #define SYSCALL_MAX_FDS                     10
 #endif
 
-static vfs_file_node_t fds[SYSCALL_MAX_FDS];
+static vfs_file_node_c *fds[SYSCALL_MAX_FDS];
 
 static int translate_error(msg_t err) {
 
@@ -40,7 +40,7 @@ static int translate_error(msg_t err) {
 __attribute__((used))
 int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
   msg_t err;
-  vfs_file_node_t *vfnp;
+  vfs_file_node_c *vfnp;
   int file;
 
   (void)mode;
@@ -92,7 +92,7 @@ int _read_r(struct _reent *r, int file, char *ptr, int len) {
     return -1;
   }
 
-  nr = vfsReadFile(fds[file], ptr, (size_t)len);
+  nr = vfsReadFile(fds[file], (uint8_t *)ptr, (size_t)len);
   if (nr < VFS_RET_SUCCESS) {
     __errno_r(r) = translate_error((msg_t)nr);
     return -1;
@@ -104,7 +104,7 @@ int _read_r(struct _reent *r, int file, char *ptr, int len) {
 /***************************************************************************/
 
 __attribute__((used))
-int _write_r(struct _reent *r, int file, char *ptr, int len) {
+int _write_r(struct _reent *r, int file, const char *ptr, int len) {
   ssize_t nw;
 
   if ((file < 0) || (file >= SYSCALL_MAX_FDS) || (fds[file] == NULL)) {
@@ -112,8 +112,8 @@ int _write_r(struct _reent *r, int file, char *ptr, int len) {
     return -1;
   }
 
-  nw = vfsWriteFile(fds[file], ptr, (size_t)len);
-  if (nr < VFS_RET_SUCCESS) {
+  nw = vfsWriteFile(fds[file], (const uint8_t *)ptr, (size_t)len);
+  if (nw < VFS_RET_SUCCESS) {
     __errno_r(r) = translate_error((msg_t)nw);
     return -1;
   }
@@ -212,13 +212,9 @@ int _getpid(void) {
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-void __cxa_pure_virtual() {
-  osalSysHalt("Pure virtual function call.");
-}
-
-#ifdef __cplusplus
+  void __cxa_pure_virtual(void) {
+    osalSysHalt("pure virtual");
+  }
 }
 #endif
 /*** EOF ***/
