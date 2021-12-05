@@ -186,7 +186,9 @@ int _isatty_r(struct _reent *r, int fd) {
 
 __attribute__((used))
 void _exit(int status) {
+
   (void) status;
+
   chSysHalt("exit");
   abort();
 }
@@ -194,11 +196,14 @@ void _exit(int status) {
 /***************************************************************************/
 
 __attribute__((used))
-int _kill_r(struct _reent *r, int pid, int sig) {
+int _kill(struct _reent *r, int pid, int sig) {
+
+  (void) r;
   (void) pid;
   (void) sig;
-  __errno_r(r) = EINVAL;
-  return -1;
+
+  chSysHalt("kill");
+  abort();
 }
 
 /***************************************************************************/
@@ -207,5 +212,20 @@ __attribute__((used))
 int _getpid(void) {
 
   return 1;
+  abort();
 }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void __cxa_pure_virtual(void) {
+
+  chSysHalt("pure virtual function call");
+}
+
+#ifdef __cplusplus
+}
+#endif
+
 /*** EOF ***/
