@@ -118,6 +118,19 @@ int _write_r(struct _reent *r, int file, char * ptr, int len) {
 /***************************************************************************/
 
 __attribute__((used))
+int _open_r(struct _reent *r, const char *p, int a, int b) {
+
+  (void)r;
+  (void)p;
+  (void)a;
+  (void)b;
+  __errno_r(r) = EINVAL;
+  return -1;
+}
+
+/***************************************************************************/
+
+__attribute__((used))
 int _close_r(struct _reent *r, int file) {
   (void)r;
   (void)file;
@@ -173,7 +186,9 @@ int _isatty_r(struct _reent *r, int fd) {
 
 __attribute__((used))
 void _exit(int status) {
+
   (void) status;
+
   chSysHalt("exit");
   abort();
 }
@@ -181,10 +196,14 @@ void _exit(int status) {
 /***************************************************************************/
 
 __attribute__((used))
-int _kill(int pid, int sig) {
+int _kill(struct _reent *r, int pid, int sig) {
+
+  (void) r;
   (void) pid;
   (void) sig;
-  return -1;
+
+  chSysHalt("kill");
+  abort();
 }
 
 /***************************************************************************/
@@ -193,5 +212,20 @@ __attribute__((used))
 int _getpid(void) {
 
   return 1;
+  abort();
 }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void __cxa_pure_virtual(void) {
+
+  chSysHalt("pure virtual function call");
+}
+
+#ifdef __cplusplus
+}
+#endif
+
 /*** EOF ***/
