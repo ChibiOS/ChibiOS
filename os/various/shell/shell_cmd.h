@@ -85,6 +85,10 @@
 #error "SHELL_CMD_THREADS_ENABLED requires CH_CFG_USE_REGISTRY"
 #endif
 
+#if (SHELL_CMD_FILES_ENABLED == TRUE) && (CH_CFG_USE_HEAP == FALSE)
+#error "SHELL_CMD_FILES_ENABLED requires CH_CFG_USE_HEAP"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
