@@ -30,6 +30,10 @@
 #include "shell_cmd.h"
 #include "chprintf.h"
 
+#if (SHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
+#include "vfs.h"
+#endif
+
 #if (SHELL_CMD_TEST_ENABLED == TRUE) || defined(__DOXYGEN__)
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
@@ -226,6 +230,75 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 #endif
 
+#if (SHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
+static void scan_nodes(BaseSequentialStream *chp,
+                       char *path,
+                       vfs_node_info_t *nip) {
+  msg_t res;
+  vfs_directory_node_c *dirp;
+
+  chprintf(chp, "%s\r\n", path);
+  res = vfsOpenDirectory(path, &dirp);
+  if (res == VFS_RET_SUCCESS) {
+    size_t i = strlen(path);
+
+    while (true) {
+      char *fn = nip->name;
+      res = vfsReadDirectoryNext(dirp, nip);
+      if (res != VFS_RET_SUCCESS) {
+        break;
+      }
+
+      fn = nip->name;
+      if (nip->attr & VFS_NODE_ATTR_ISDIR) {
+        strcpy(path + i, fn);
+        strcat(path + i, "/");
+        scan_nodes(chp, path, nip);
+        path[i] = '\0';
+      }
+      else {
+        chprintf(chp, "%s%s\r\n", path, fn);
+      }
+    }
+
+    vfsCloseDirectory(dirp);
+  }
+}
+
+static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
+  char *pathbuf = NULL;
+  vfs_node_info_t *nip = NULL;
+
+  (void)argv;
+
+  if (argc > 0) {
+    chprintf(chp, "Usage: tree\r\n");
+    return;
+  }
+
+  do {
+    pathbuf = (char *)chHeapAlloc(NULL, 1024);
+    nip = (vfs_node_info_t *)chHeapAlloc(NULL, 1024);
+    if ((pathbuf == NULL) || (nip == NULL)) {
+      chprintf(chp, "Out of memory\r\n");
+     break;
+    }
+
+    strcpy(pathbuf, "/");
+    scan_nodes(chp, pathbuf, nip);
+  }
+  while (false);
+
+  if (pathbuf != NULL) {
+    chHeapFree((void *)pathbuf);
+  }
+
+  if (nip != NULL) {
+    chHeapFree((void *)nip);
+  }
+}
+#endif
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -251,6 +324,9 @@ const ShellCommand shell_local_commands[] = {
 #endif
 #if SHELL_CMD_THREADS_ENABLED == TRUE
   {"threads", cmd_threads},
+#endif
+#if SHELL_CMD_FILES_ENABLED == TRUE
+  {"tree", cmd_tree},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE
   {"test", cmd_test},

@@ -129,69 +129,15 @@ static const drv_stream_element_t streams[] = {
   {NULL, NULL}
 };
 
-/* Generic large buffer.*/
-static char pathbuf[1024];
-
-static void scan_nodes(BaseSequentialStream *chp, char *path) {
-  msg_t res;
-  vfs_directory_node_c *dirp;
-  static vfs_node_info_t ni;
-
-  chprintf(chp, "%s\r\n", path);
-  res = vfsOpenDirectory(path, &dirp);
-  if (res == VFS_RET_SUCCESS) {
-    size_t i = strlen(path);
-
-    while (true) {
-      char *fn = ni.name;
-      res = vfsReadDirectoryNext(dirp, &ni);
-      if (res != VFS_RET_SUCCESS) {
-        break;
-      }
-
-      fn = ni.name;
-      if (ni.attr & VFS_NODE_ATTR_ISDIR) {
-        strcpy(path + i, fn);
-        strcat(path + i, "/");
-        scan_nodes(chp, path);
-        path[i] = '\0';
-      }
-      else {
-        chprintf(chp, "%s%s\r\n", path, fn);
-      }
-    }
-
-    vfsCloseDirectory(dirp);
-  }
-}
-
 /*===========================================================================*/
 /* Command line related.                                                     */
 /*===========================================================================*/
 
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
-static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
-
-  (void)argv;
-
-  if (argc > 0) {
-    chprintf(chp, "Usage: tree\r\n");
-    return;
-  }
-
-  strcpy(pathbuf, "/");
-  scan_nodes(chp, (char *)pathbuf);
-}
-
-static const ShellCommand commands[] = {
-  {"tree", cmd_tree},
-  {NULL, NULL}
-};
-
 static ShellConfig shell_cfg1 = {
   NULL,
-  commands
+  NULL
 };
 
 /*===========================================================================*/

@@ -61,6 +61,10 @@
 #define SHELL_CMD_TEST_ENABLED              TRUE
 #endif
 
+#if !defined(SHELL_CMD_FILES_ENABLED) || defined(__DOXYGEN__)
+#define SHELL_CMD_FILES_ENABLED             FALSE
+#endif
+
 #if !defined(SHELL_CMD_TEST_WA_SIZE) || defined(__DOXYGEN__)
 #define SHELL_CMD_TEST_WA_SIZE              THD_WORKING_AREA_SIZE(512)
 #endif

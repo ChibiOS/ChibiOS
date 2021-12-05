@@ -78,6 +78,7 @@
         in chsem.c.
 - TODO: Implement pointers check everywhere in RT replacing assertions for
         NULL pointers.
+- NEW: Added VFS-related commands to the shell, disabled by default.
 - NEW: Added a new VFS subsystem (Virtual File System), it allows to assemble
        trees of files from multiple "File System Drivers" into a single tree
        and access it as a whole.
