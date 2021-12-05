@@ -123,12 +123,12 @@ int _getpid_r(struct _reent *r) {
 }
 
 __attribute__((used))
-int _kill_r(struct _reent *r, int pid, int sig) {
+int _kill(int pid, int sig) {
 
-  (void)pid;
-  (void)sig;
+  (void) pid;
+  (void) sig;
 
-  __errno_r(r) = EINVAL;
+  errno = EINVAL;
   return -1;
 }
 
