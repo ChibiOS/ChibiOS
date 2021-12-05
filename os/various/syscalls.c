@@ -196,9 +196,8 @@ void _exit(int status) {
 /***************************************************************************/
 
 __attribute__((used))
-int _kill(struct _reent *r, int pid, int sig) {
+int _kill(int pid, int sig) {
 
-  (void) r;
   (void) pid;
   (void) sig;
 
