@@ -185,6 +185,7 @@ void _exit(int status) {
   (void) status;
 
   chSysHalt("exit");
+  abort();
 }
 
 /***************************************************************************/
@@ -197,6 +198,7 @@ int _kill(struct _reent *r, int pid, int sig) {
   (void) sig;
 
   chSysHalt("kill");
+  abort();
 }
 
 /***************************************************************************/
@@ -205,5 +207,18 @@ __attribute__((used))
 int _getpid(void) {
 
   return 1;
+  abort();
 }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void __cxa_pure_virtual() {
+  osalSysHalt("Pure virtual function call.");
+}
+
+#ifdef __cplusplus
+}
+#endif
 /*** EOF ***/
