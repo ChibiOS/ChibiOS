@@ -85,6 +85,7 @@
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
+- FIX: Fixed USB not enabled on STM32F103x6 (bug #1206).
 - FIX: Fixed RT test suite build fails when CH_CFG_USE_TIMESTAMP is FALSE
        (bug #1205).
 - FIX: Fixed wrong number of CAN filters for STM32L496/9A6 (bug #1204).
