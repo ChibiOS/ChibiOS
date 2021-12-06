@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    oop_object.h
+ * @file    oop_base_object.h
  * @brief   Base object.
  * @details This header defines a base class that is the root class of
  *          the ChibiOS Object Model.
@@ -60,8 +60,8 @@
  * @{
  */
 
-#ifndef OOP_OBJECT_H
-#define OOP_OBJECT_H
+#ifndef OOP_BASE_OBJECT_H
+#define OOP_BASE_OBJECT_H
 
 #include "ccportab.h"
 #include "osal.h"
@@ -166,6 +166,6 @@ static inline void __base_object_dispose_impl(void *ip) {
   (c)(((size_t)(ip)) - (ip)->vmt->instance_offset)
 /** @} */
 
-#endif /* OOP_OBJECT_H */
+#endif /* OOP_BASE_OBJECT_H */
 
 /** @} */

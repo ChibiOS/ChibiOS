@@ -29,7 +29,7 @@
 #ifndef OOP_REFERENCED_OBJECT_H
 #define OOP_REFERENCED_OBJECT_H
 
-#include "oop_object.h"
+#include "oop_base_object.h"
 
 /**
  * @brief   Type of a referenced object class.
@@ -105,9 +105,9 @@ static inline void __referenced_object_dispose_impl(void *ip) {
 }
 
 /**
- * @brief   Reference creation implementation.
+ * @brief   New reference creation implementation.
  *
- * @param[in] ip        An existing reference to the object.
+ * @param[in] ip        A reference to the object.
  * @return              A new reference to the object.
  */
 CC_FORCE_INLINE
@@ -121,6 +121,9 @@ static inline void *__referenced_object_addref_impl(void *ip) {
 
 /**
  * @brief   References get implementation.
+ *
+ * @param[in] ip        A reference to the object.
+ * @return              Remaining references.
  */
 CC_FORCE_INLINE
 static inline unsigned __referenced_object_getref_impl(void *ip) {
@@ -133,7 +136,6 @@ static inline unsigned __referenced_object_getref_impl(void *ip) {
  * @brief   Reference release implementation.
  *
  * @param[in] ip        A reference to the object.
- * @return              Remaining references.
  */
 CC_FORCE_INLINE
 static inline void __referenced_object_release_impl(void *ip) {
@@ -146,6 +148,29 @@ static inline void __referenced_object_release_impl(void *ip) {
   }
 }
 /** @} */
+
+/**
+ * @brief   New reference creation.
+ *
+ * @param[in] rop       A reference to the object.
+ * @return              A new reference to the object.
+ */
+CC_FORCE_INLINE
+static inline referenced_object_c *roAddRef(referenced_object_c *rop) {
+
+  return (referenced_object_c *)__referenced_object_addref_impl(rop);
+}
+
+/**
+ * @brief   Reference release.
+ *
+ * @param[in] rop       A reference to the object.
+ */
+CC_FORCE_INLINE
+static inline void roRelease(referenced_object_c *rop) {
+
+  return __referenced_object_release_impl(rop);
+}
 
 #endif /* OOP_REFERENCED_OBJECT_H */
 
