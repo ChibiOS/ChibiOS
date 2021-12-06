@@ -171,7 +171,7 @@ extern vfs_fatfs_driver_c vfs_fatfs;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void __vfs_fatfs_driver_init(void);
+  void __drv_fatfs_init(void);
   vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp,
                                    const char *rootname);
   msg_t drvFatFSMount(const char *name, bool mountnow);

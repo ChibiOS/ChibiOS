@@ -282,7 +282,7 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
  *
  * @notapi
  */
-void __vfs_overlay_driver_init(void) {
+void __drv_overlay_init(void) {
 
   /* Initializing pools.*/
   chPoolObjectInit(&vfs_overlay_driver_static.dir_nodes_pool,

@@ -143,7 +143,7 @@ typedef struct vfs_overlay_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void __vfs_overlay_driver_init(void);
+  void __drv_overlay_init(void);
   vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
                                      vfs_driver_c *overlaid_drv,
                                      const char *rootname);

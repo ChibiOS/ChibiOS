@@ -61,15 +61,15 @@
 void vfsInit(void) {
 
 #if VFS_CFG_ENABLE_DRV_OVERLAY == TRUE
-  __vfs_overlay_driver_init();
+  __drv_overlay_init();
 #endif
 
 #if VFS_CFG_ENABLE_DRV_STREAMS == TRUE
-  __vfs_streams_driver_init();
+  __drv_streams_init();
 #endif
 
 #if VFS_CFG_ENABLE_DRV_FATFS == TRUE
-  __vfs_fatfs_driver_init();
+  __drv_fatfs_init();
 #endif
 }
 

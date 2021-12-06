@@ -470,7 +470,7 @@ static msg_t file_stream_get(void *instance) {
  *
  * @notapi
  */
-void __vfs_fatfs_driver_init(void) {
+void __drv_fatfs_init(void) {
 
   /* Initializing pools.*/
   chPoolObjectInit(&vfs_fatfs_driver_static.dir_nodes_pool,

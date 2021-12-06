@@ -295,7 +295,7 @@ static vfs_offset_t node_file_getsize(void *instance) {
  *
  * @notapi
  */
-void __vfs_streams_driver_init(void) {
+void __drv_streams_init(void) {
 
   /* Initializing pools.*/
   chPoolObjectInit(&vfs_streams_driver_static.dir_nodes_pool,
