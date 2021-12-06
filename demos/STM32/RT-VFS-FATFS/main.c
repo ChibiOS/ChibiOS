@@ -121,7 +121,7 @@ static vfs_fatfs_driver_c root_driver;
 static vfs_overlay_driver_c root_overlay_driver;
 
 /* VFS streams driver object representing the /dev directory.*/
-static vfs_streams_driver_c vfs_dev;
+static vfs_streams_driver_c dev_driver;
 
 vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
 
@@ -283,7 +283,7 @@ int main(void) {
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
   msg = drvOverlayRegisterDriver(&root_overlay_driver,
-                                 drvStreamsObjectInit(&vfs_dev,
+                                 drvStreamsObjectInit(&dev_driver,
                                                       "dev",
                                                       &streams[0]));
   if (msg != VFS_RET_SUCCESS) {
