@@ -112,14 +112,16 @@ static bool fs_ready = false;
 /* VFS related.                                                              */
 /*===========================================================================*/
 
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
+/* VFS FatFS driver object representing the root directory.*/
+static vfs_fatfs_driver_c root_driver;
+#endif
+
 /* VFS overlay driver object representing the root directory.*/
 static vfs_overlay_driver_c root_overlay_driver;
 
 /* VFS streams driver object representing the /dev directory.*/
 static vfs_streams_driver_c vfs_dev;
-
-/* VFS FatFS driver object representing the root directory.*/
-static vfs_fatfs_driver_c root_driver;
 
 vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
 
@@ -276,7 +278,7 @@ int main(void) {
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver,
      no need for a name.*/
-  drvOverlayObjectInit(&root_driver, NULL, "");
+  drvOverlayObjectInit(&root_overlay_driver, NULL, "");
 #endif
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
