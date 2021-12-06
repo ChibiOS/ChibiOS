@@ -138,13 +138,7 @@ typedef struct vfs_fatfs_file_node {
  * @brief   @p vfs_fatfs_driver_c specific data.
  */
 #define __vfs_fatfs_driver_data                                             \
-  __vfs_driver_data                                                         \
-  memory_pool_t                 file_nodes_pool;                            \
-  memory_pool_t                 dir_nodes_pool;                             \
-  memory_pool_t                 info_nodes_pool;                            \
-  memory_pool_t                 fs_nodes_pool;                              \
-  vfs_fatfs_dir_node_c drv_dir_nodes[DRV_CFG_FATFS_DIR_NODES_NUM];          \
-  vfs_fatfs_file_node_c drv_file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
+  __vfs_driver_data
 
 /**
  * @brief   @p vfs_fatfs_driver_c virtual methods table.
@@ -177,7 +171,9 @@ extern vfs_fatfs_driver_c vfs_fatfs;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  vfs_driver_c *drvFatFSInit(const char *rootname);
+  void __vfs_fatfs_driver_init(void);
+  vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp,
+                                   const char *rootname);
   msg_t drvFatFSMount(const char *name, bool mountnow);
   msg_t drvFatFSUnmount(const char *name);
 #ifdef __cplusplus

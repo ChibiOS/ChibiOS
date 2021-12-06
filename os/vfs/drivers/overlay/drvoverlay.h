@@ -107,12 +107,8 @@ typedef struct vfs_overlay_dir_node {
  */
 #define __vfs_overlay_driver_data                                           \
   __vfs_driver_data                                                         \
-  /* Pool of directory nodes.*/                                             \
-  memory_pool_t                     dir_nodes_pool;                         \
   /* Driver to be overlaid or NULL.*/                                       \
   vfs_driver_c                      *overlaid_drv;                          \
-  /* Static storage of directory nodes.*/                                   \
-  vfs_overlay_dir_node_c            dir_nodes[DRV_CFG_OVERLAY_DIR_NODES_NUM]; \
   /* Next registration slot.*/                                              \
   unsigned                          next_driver;                            \
   /* Registration slots.*/                                                  \
@@ -147,6 +143,7 @@ typedef struct vfs_overlay_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void __vfs_overlay_driver_init(void);
   vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
                                      vfs_driver_c *overlaid_drv,
                                      const char *rootname);

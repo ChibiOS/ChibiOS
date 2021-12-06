@@ -102,9 +102,34 @@ static const struct BaseSequentialStreamVMT file_stream_vmt = {
 };
 
 /**
- * @brief   Single FatFS driver instance.
+ * @brief   Static members of @p vfs_fatfs_driver_c.
  */
-vfs_fatfs_driver_c vfs_fatfs;
+static struct {
+  /**
+   * @brief   Pool of file system objects.
+   */
+  memory_pool_t                     fs_nodes_pool;
+  /**
+   * @brief   Pool of file info objects.
+   */
+  memory_pool_t                     info_nodes_pool;
+  /**
+   * @brief   Pool of directory nodes.
+   */
+  memory_pool_t                     dir_nodes_pool;
+  /**
+   * @brief   Pool of file nodes.
+   */
+  memory_pool_t                     file_nodes_pool;
+  /**
+   * @brief   Static storage of directory nodes.
+   */
+  vfs_fatfs_dir_node_c              dir_nodes[DRV_CFG_FATFS_DIR_NODES_NUM];
+  /**
+   * @brief   Static storage of file nodes.
+   */
+  vfs_fatfs_file_node_c             file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
+} vfs_fatfs_driver_static;
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
@@ -188,7 +213,7 @@ static msg_t drv_open_dir(void *instance,
     vfs_fatfs_dir_node_c *ffdnp;
     FRESULT res;
 
-    ffdnp = chPoolAlloc(&drvp->dir_nodes_pool);
+    ffdnp = chPoolAlloc(&vfs_fatfs_driver_static.dir_nodes_pool);
     if (ffdnp != NULL) {
 
       /* Node object initialization.*/
@@ -202,7 +227,7 @@ static msg_t drv_open_dir(void *instance,
         break;
       }
 
-      chPoolFree(&drvp->dir_nodes_pool, (void *)ffdnp);
+      chPoolFree(&vfs_fatfs_driver_static.dir_nodes_pool, (void *)ffdnp);
     }
 
     err = translate_error(res);
@@ -230,7 +255,7 @@ static msg_t drv_open_file(void *instance,
       break;
     }
 
-    fffnp = chPoolAlloc(&drvp->file_nodes_pool);
+    fffnp = chPoolAlloc(&vfs_fatfs_driver_static.file_nodes_pool);
     if (fffnp != NULL) {
 
       /* Node object initialization.*/
@@ -245,7 +270,7 @@ static msg_t drv_open_file(void *instance,
         break;
       }
 
-      chPoolFree(&drvp->file_nodes_pool, (void *)fffnp);
+      chPoolFree(&vfs_fatfs_driver_static.file_nodes_pool, (void *)fffnp);
     }
 
     err = translate_error(res);
@@ -257,12 +282,11 @@ static msg_t drv_open_file(void *instance,
 
 static void node_dir_release(void *instance) {
   vfs_fatfs_dir_node_c *ffdnp = (vfs_fatfs_dir_node_c *)instance;
-  vfs_fatfs_driver_c *drvp = (vfs_fatfs_driver_c *)ffdnp->driver;
 
   __referenced_object_release_impl(instance);
   if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&drvp->dir_nodes_pool, (void *)ffdnp);
+    chPoolFree(&vfs_fatfs_driver_static.dir_nodes_pool, (void *)ffdnp);
   }
 }
 
@@ -287,11 +311,10 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 
   do {
     vfs_fatfs_dir_node_c *ffdnp = (vfs_fatfs_dir_node_c *)instance;
-    vfs_fatfs_driver_c *drvp = (vfs_fatfs_driver_c *)ffdnp->driver;
     FRESULT res;
     FILINFO *fip;
 
-    fip = (FILINFO *)chPoolAlloc(&drvp->info_nodes_pool);
+    fip = (FILINFO *)chPoolAlloc(&vfs_fatfs_driver_static.info_nodes_pool);
     if (fip != NULL) {
 
       res = f_readdir(&ffdnp->dir, fip);
@@ -311,7 +334,7 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
         err = translate_error(res);
       }
 
-      chPoolFree(&drvp->info_nodes_pool, (void *)fip);
+      chPoolFree(&vfs_fatfs_driver_static.info_nodes_pool, (void *)fip);
     }
   }
   while (false);
@@ -321,12 +344,11 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 
 static void node_file_release(void *instance) {
   vfs_fatfs_file_node_c *fffnp = (vfs_fatfs_file_node_c *)instance;
-  vfs_fatfs_driver_c *drvp = (vfs_fatfs_driver_c *)fffnp->driver;
 
   __referenced_object_release_impl(instance);
   if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&drvp->file_nodes_pool, (void *)fffnp);
+    chPoolFree(&vfs_fatfs_driver_static.file_nodes_pool, (void *)fffnp);
   }
 }
 
@@ -444,6 +466,36 @@ static msg_t file_stream_get(void *instance) {
 /*===========================================================================*/
 
 /**
+ * @brief   Module initialization.
+ *
+ * @notapi
+ */
+void __vfs_fatfs_driver_init(void) {
+
+  /* Initializing pools.*/
+  chPoolObjectInit(&vfs_fatfs_driver_static.dir_nodes_pool,
+                   sizeof (vfs_fatfs_dir_node_c),
+                   chCoreAllocAlignedI);
+  chPoolObjectInit(&vfs_fatfs_driver_static.file_nodes_pool,
+                   sizeof (vfs_fatfs_file_node_c),
+                   chCoreAllocAlignedI);
+  chPoolObjectInit(&vfs_fatfs_driver_static.info_nodes_pool,
+                   sizeof (FILINFO),
+                   chCoreAllocAlignedI);
+  chPoolObjectInit(&vfs_fatfs_driver_static.fs_nodes_pool,
+                   sizeof (FATFS),
+                   chCoreAllocAlignedI);
+
+  /* Preloading pools.*/
+  chPoolLoadArray(&vfs_fatfs_driver_static.dir_nodes_pool,
+                  &vfs_fatfs_driver_static.dir_nodes[0],
+                  DRV_CFG_FATFS_DIR_NODES_NUM);
+  chPoolLoadArray(&vfs_fatfs_driver_static.file_nodes_pool,
+                  &vfs_fatfs_driver_static.file_nodes[0],
+                  DRV_CFG_FATFS_FILE_NODES_NUM);
+}
+
+/**
  * @brief   VFS FatFS object initialization.
  *
  * @param[out] ffdp     pointer to a @p vfs_fatfs_driver_c structure
@@ -452,34 +504,13 @@ static msg_t file_stream_get(void *instance) {
  *
  * @api
  */
-vfs_driver_c *drvFatFSInit(const char *rootname) {
+vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp,
+                                 const char *rootname) {
 
-  __base_object_objinit_impl(&vfs_fatfs, &driver_vmt);
-  vfs_fatfs.rootname = rootname;
+  __base_object_objinit_impl(vffdp, &driver_vmt);
+  vffdp->rootname = rootname;
 
-  /* Initializing pools.*/
-  chPoolObjectInit(&vfs_fatfs.dir_nodes_pool,
-                   sizeof (vfs_fatfs_dir_node_c),
-                   chCoreAllocAlignedI);
-  chPoolObjectInit(&vfs_fatfs.file_nodes_pool,
-                   sizeof (vfs_fatfs_file_node_c),
-                   chCoreAllocAlignedI);
-  chPoolObjectInit(&vfs_fatfs.info_nodes_pool,
-                   sizeof (FILINFO),
-                   chCoreAllocAlignedI);
-  chPoolObjectInit(&vfs_fatfs.fs_nodes_pool,
-                   sizeof (FATFS),
-                   chCoreAllocAlignedI);
-
-  /* Preloading pools.*/
-  chPoolLoadArray(&vfs_fatfs.dir_nodes_pool,
-                  &vfs_fatfs.drv_dir_nodes[0],
-                  DRV_CFG_FATFS_DIR_NODES_NUM);
-  chPoolLoadArray(&vfs_fatfs.file_nodes_pool,
-                  &vfs_fatfs.drv_file_nodes[0],
-                  DRV_CFG_FATFS_FILE_NODES_NUM);
-
-  return (vfs_driver_c *)&vfs_fatfs;
+  return (vfs_driver_c *)vffdp;
 }
 
 /**
@@ -498,7 +529,7 @@ msg_t drvFatFSMount(const char *name, bool mountnow) {
 
   fs = f_getfs(name);
   if (fs == NULL) {
-    fs = chPoolAlloc(&vfs_fatfs.fs_nodes_pool);
+    fs = chPoolAlloc(&vfs_fatfs_driver_static.fs_nodes_pool);
     if (fs == NULL) {
       return VFS_RET_ENOMEM;
     }
@@ -526,7 +557,7 @@ msg_t drvFatFSUnmount(const char *name) {
 
   res = f_unmount(name);
 
-  chPoolFree(&vfs_fatfs.fs_nodes_pool, (void *)fs);
+  chPoolFree(&vfs_fatfs_driver_static.fs_nodes_pool, (void *)fs);
 
   return translate_error(res);
 }

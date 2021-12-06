@@ -113,17 +113,20 @@ static bool fs_ready = false;
 /*===========================================================================*/
 
 /* VFS overlay driver object representing the root directory.*/
-static vfs_overlay_driver_c root_driver;
-
-vfs_driver_c *vfs_root = (vfs_driver_c *)&root_driver;
+static vfs_overlay_driver_c root_overlay_driver;
 
 /* VFS streams driver object representing the /dev directory.*/
 static vfs_streams_driver_c vfs_dev;
 
+/* VFS FatFS driver object representing the root directory.*/
+static vfs_fatfs_driver_c root_driver;
+
+vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
+
 static NullStream nullstream;
 
 /* Stream to be exposed under /dev as files.*/
-static const drv_stream_element_t streams[] = {
+static const drv_streams_element_t streams[] = {
   {"VSD1", (BaseSequentialStream *)&PORTAB_SD1},
   {"null", (BaseSequentialStream *)&nullstream},
   {NULL, NULL}
@@ -244,10 +247,12 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   * - Virtual File System initialization.
    * - Shell manager initialization.
    */
   halInit();
   chSysInit();
+  vfsInit();
   shellInit();
 
   /* Board-dependent setup code.*/
@@ -266,7 +271,8 @@ int main(void) {
 
   /* Initializing an overlay VFS object overlaying a FatFS driver,
      no need for names, both are root.*/
-  drvOverlayObjectInit(&root_driver, drvFatFSInit(""), "");
+  drvOverlayObjectInit(&root_overlay_driver,
+                       drvFatFSObjectInit(&root_driver, ""), "");
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver,
      no need for a name.*/
@@ -274,7 +280,7 @@ int main(void) {
 #endif
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
-  msg = drvOverlayRegisterDriver(&root_driver,
+  msg = drvOverlayRegisterDriver(&root_overlay_driver,
                                  drvStreamsObjectInit(&vfs_dev,
                                                       "dev",
                                                       &streams[0]));

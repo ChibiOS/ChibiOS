@@ -70,6 +70,20 @@ static const struct vfs_overlay_dir_node_vmt dir_node_vmt = {
   .dir_next     = node_dir_next
 };
 
+/**
+ * @brief   Static members of @p vfs_overlay_driver_c.
+ */
+static struct {
+  /**
+   * @brief   Pool of directory nodes.
+   */
+  memory_pool_t                     dir_nodes_pool;
+  /**
+   * @brief   Static storage of directory nodes.
+   */
+  vfs_overlay_dir_node_c            dir_nodes[DRV_CFG_OVERLAY_DIR_NODES_NUM];
+} vfs_overlay_driver_static;
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -117,7 +131,7 @@ static msg_t drv_open_dir(void *instance,
     if (*scanpath == '\0') {
 
       /* Creating a root directory node.*/
-      vfs_overlay_dir_node_c *odnp = chPoolAlloc(&drvp->dir_nodes_pool);
+      vfs_overlay_dir_node_c *odnp = chPoolAlloc(&vfs_overlay_driver_static.dir_nodes_pool);
       if (odnp != NULL) {
 
         /* Node object initialization.*/
@@ -212,12 +226,11 @@ static msg_t drv_open_file(void *instance,
 
 static void node_dir_release(void *instance) {
   vfs_overlay_dir_node_c *odnp = (vfs_overlay_dir_node_c *)instance;
-  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)odnp->driver;
 
   __referenced_object_release_impl(instance);
   if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&drvp->dir_nodes_pool, (void *)odnp);
+    chPoolFree(&vfs_overlay_driver_static.dir_nodes_pool, (void *)odnp);
   }
 }
 
@@ -265,6 +278,24 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 /*===========================================================================*/
 
 /**
+ * @brief   Module initialization.
+ *
+ * @notapi
+ */
+void __vfs_overlay_driver_init(void) {
+
+  /* Initializing pools.*/
+  chPoolObjectInit(&vfs_overlay_driver_static.dir_nodes_pool,
+                   sizeof (vfs_overlay_dir_node_c),
+                   chCoreAllocAlignedI);
+
+  /* Preloading pools.*/
+  chPoolLoadArray(&vfs_overlay_driver_static.dir_nodes_pool,
+                  &vfs_overlay_driver_static.dir_nodes[0],
+                  DRV_CFG_OVERLAY_DIR_NODES_NUM);
+}
+
+/**
  * @brief   VFS overlay object initialization.
  *
  * @param[out] vodp             pointer to a @p vfs_overlay_driver_c structure
@@ -282,16 +313,6 @@ vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
   vodp->rootname     = rootname;
   vodp->overlaid_drv = overlaid_drv;
   vodp->next_driver  = 0U;
-
-  /* Initializing pools.*/
-  chPoolObjectInit(&vodp->dir_nodes_pool,
-                   sizeof (vfs_overlay_dir_node_c),
-                   chCoreAllocAlignedI);
-
-  /* Preloading pools.*/
-  chPoolLoadArray(&vodp->dir_nodes_pool,
-                  &vodp->dir_nodes[0],
-                  DRV_CFG_OVERLAY_DIR_NODES_NUM);
 
   return (vfs_driver_c *)vodp;
 }

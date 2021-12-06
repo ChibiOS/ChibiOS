@@ -54,6 +54,26 @@
 /*===========================================================================*/
 
 /**
+ * @brief   VFS initialization.
+ *
+ * @init
+ */
+void vfsInit(void) {
+
+#if VFS_CFG_ENABLE_DRV_OVERLAY == TRUE
+  __vfs_overlay_driver_init();
+#endif
+
+#if VFS_CFG_ENABLE_DRV_STREAMS == TRUE
+  __vfs_streams_driver_init();
+#endif
+
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
+  __vfs_fatfs_driver_init();
+#endif
+}
+
+/**
  * @brief   Opens a VFS directory.
  *
  * @param[in] path      absolute path of the directory to be opened

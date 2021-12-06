@@ -106,6 +106,7 @@ extern vfs_driver_c *vfs_root;
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void vfsInit(void);
   msg_t vfsOpenDirectory(const char *name,
                          vfs_directory_node_c **vdnpp);
   void vfsCloseDirectory(vfs_directory_node_c *vdnp);
