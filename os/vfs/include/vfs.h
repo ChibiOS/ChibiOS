@@ -68,8 +68,9 @@
 
 /* Dependencies.*/
 #include "osal.h"
-#include "oop_object.h"
+#include "oop_base_object.h"
 #include "oop_referenced_object.h"
+#include "oop_synchronized_object.h"
 #include "hal_objects.h"
 #include "hal_streams.h"
 
