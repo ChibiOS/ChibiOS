@@ -62,13 +62,13 @@ struct __synchronized_object_vmt {                                          \
 /**
  * @brief   Structure representing a synchronized object class.
  */
-typedef struct synchronized_object {
+struct synchronized_object {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct __synchronized_object_vmt    *vmt;
   __synchronized_object_data
-} synchronized_object_c;
+};
 
 /**
  * @name    Methods implementations

@@ -62,13 +62,13 @@ struct __referenced_object_vmt {                                            \
 /**
  * @brief   Structure representing a referenced object class.
  */
-typedef struct referenced_object {
+struct referenced_object {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct __referenced_object_vmt      *vmt;
   __referenced_object_data
-} referenced_object_c;
+};
 
 /**
  * @name    Methods implementations

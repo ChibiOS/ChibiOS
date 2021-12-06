@@ -100,13 +100,13 @@ struct __base_object_vmt {
 /**
  * @brief   Structure representing a base object class.
  */
-typedef struct base_object {
+struct base_object {
   /**
    * @brief   Virtual Methods Table.
    */
   const struct __base_object_vmt *vmt;
   __base_object_data
-} base_object_c;
+};
 
 /**
  * @name    Methods implementations
