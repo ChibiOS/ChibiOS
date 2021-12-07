@@ -93,6 +93,15 @@
 #define chSemObjectInit(sp, n) ((sp)->cnt = (n))
 
 /**
+ * @brief   Disposes a semaphore.
+ *
+ * @param[in] sp        pointer to a @p semaphore_t structure
+ *
+ * @dispose
+ */
+#define chSemObjectDispose(sp, n) ((void) sp)
+
+/**
  * @brief   Performs a reset operation on the semaphore.
  * @post    After invoking this function all the threads waiting on the
  *          semaphore, if any, are released and the semaphore counter is set

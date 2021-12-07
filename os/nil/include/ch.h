@@ -30,6 +30,8 @@
 #ifndef CH_H
 #define CH_H
 
+#include <string.h>
+
 #include "chtypes.h"
 
 /*===========================================================================*/
@@ -1226,16 +1228,25 @@ struct nil_os_instance {
 /**
  * @brief   Initializes a threads queue object.
  *
- * @param[out] tqp      pointer to the threads queue object
+ * @param[out] tqp      pointer to a @p threads_queue_t structure
  *
  * @init
  */
 #define chThdQueueObjectInit(tqp) ((tqp)->cnt = (cnt_t)0)
 
 /**
+ * @brief   Disposes a threads queue.
+ *
+ * @param[in] tqp       pointer to a @p threads_queue_t structure
+ *
+ * @dispose
+ */
+#define chThdObjectDispose(tqp) ((void) tqp)
+
+/**
  * @brief   Evaluates to @p true if the specified queue is empty.
  *
- * @param[out] tqp      pointer to the threads queue object
+ * @param[out] tqp      pointer to a @p threads_queue_t structure
  * @return              The queue status.
  * @retval false        if the queue is not empty.
  * @retval true         if the queue is empty.

@@ -119,7 +119,7 @@ typedef void (*evhandler_t)(eventid_t id);
  * @note    This function can be invoked before the kernel is initialized
  *          because it just prepares a @p event_source_t structure.
  *
- * @param[in] esp       pointer to the @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t structure
  *
  * @init
  */
@@ -128,14 +128,23 @@ typedef void (*evhandler_t)(eventid_t id);
 } while (0)
 
 /**
+ * @brief   Disposes an Event Source.
+ *
+ * @param[in] esp       pointer to an @p event_source_t structure
+ *
+ * @dispose
+ */
+#define chEvtObjectDispose(esp) ((void) esp)
+
+/**
  * @brief   Registers an Event Listener on an Event Source.
  * @details Once a thread has registered as listener on an event source it
  *          will be notified of all events broadcasted there.
  * @note    Multiple Event Listeners can specify the same bits to be ORed to
  *          different threads.
  *
- * @param[in] esp       pointer to the @p event_source_t structure
- * @param[out] elp      pointer to the @p event_listener_t structure
+ * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[out] elp      pointer to an @p event_listener_t structure
  * @param[in] events    the mask of events to be ORed to the thread when
  *                      the event source is broadcasted
  *
@@ -149,8 +158,8 @@ typedef void (*evhandler_t)(eventid_t id);
  * @note    Multiple Event Listeners can use the same event identifier, the
  *          listener will share the callback function.
  *
- * @param[in] esp       pointer to the  @p event_source_t structure
- * @param[out] elp      pointer to the @p event_listener_t structure
+ * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[out] elp      pointer to an @p event_listener_t structure
  * @param[in] event     numeric identifier assigned to the Event Listener.
  *                      The value must range between zero and the size, in bit,
  *                      of the @p eventmask_t type minus one.
@@ -163,7 +172,7 @@ typedef void (*evhandler_t)(eventid_t id);
 /**
  * @brief   Verifies if there is at least one @p event_listener_t registered.
  *
- * @param[in] esp       pointer to the @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t structure
  * @return              The event source status.
  *
  * @iclass
@@ -174,7 +183,7 @@ typedef void (*evhandler_t)(eventid_t id);
  * @brief   Signals all the Event Listeners registered on the specified Event
  *          Source.
  *
- * @param[in] esp       pointer to the @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t structure
  *
  * @api
  */
@@ -188,7 +197,7 @@ typedef void (*evhandler_t)(eventid_t id);
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] esp       pointer to the @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t structure
  *
  * @iclass
  */
