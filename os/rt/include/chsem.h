@@ -89,6 +89,7 @@ typedef struct ch_semaphore {
 extern "C" {
 #endif
   void chSemObjectInit(semaphore_t *sp, cnt_t n);
+  void chSemObjectDispose(semaphore_t *sp);
   void chSemResetWithMessage(semaphore_t *sp, cnt_t n, msg_t msg);
   void chSemResetWithMessageI(semaphore_t *sp, cnt_t n, msg_t msg);
   msg_t chSemWait(semaphore_t *sp);

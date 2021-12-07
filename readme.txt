@@ -74,10 +74,7 @@
 *****************************************************************************
 
 *** Next ***
-- TODO: Implement objects disposing everywhere in RT, see example code
-        in chsem.c.
-- TODO: Implement pointers check everywhere in RT replacing assertions for
-        NULL pointers.
+- NEW: Added a chXXXDispose() function to all objects in RT.
 - NEW: Added VFS-related commands to the shell, disabled by default.
 - NEW: Added a new VFS subsystem (Virtual File System), it allows to assemble
        trees of files from multiple "File System Drivers" into a single tree

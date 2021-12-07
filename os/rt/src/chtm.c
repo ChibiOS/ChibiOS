@@ -26,6 +26,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_TM == TRUE) || defined(__DOXYGEN__)
@@ -83,6 +85,30 @@ void chTMObjectInit(time_measurement_t *tmp) {
   tmp->last       = (rtcnt_t)0;
   tmp->n          = (ucnt_t)0;
   tmp->cumulative = (rttime_t)0;
+}
+
+/**
+ * @brief   Disposes a @p TimeMeasurement object.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_ENABLE_HARDENING is enabled then the
+ *          object is also cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
+ *
+ * @param[in] sp        pointer to a @p time_measurement_t structure
+ *
+ * @dispose
+ */
+void chTMObjectDispose(time_measurement_t *tmp) {
+
+  chDbgCheck(tmp != NULL);
+
+#if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/
+  memset((tmp)sp, 0, sizeof (time_measurement_t));
+#endif
 }
 
 /**

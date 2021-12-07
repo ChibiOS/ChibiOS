@@ -100,6 +100,7 @@ struct ch_mutex {
 extern "C" {
 #endif
   void chMtxObjectInit(mutex_t *mp);
+  void chMtxObjectDispose(mutex_t *mp);
   void chMtxLock(mutex_t *mp);
   void chMtxLockS(mutex_t *mp);
   bool chMtxTryLock(mutex_t *mp);

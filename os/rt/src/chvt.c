@@ -26,6 +26,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 /*===========================================================================*/
@@ -241,13 +243,54 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
 /*===========================================================================*/
 
 /**
+ * @brief   Initializes a @p virtual_timer_t object.
+ * @note    Initializing a timer object is not strictly required because
+ *          the function @p chVTSetI() initializes the object too. This
+ *          function is only useful if you need to perform a @p chVTIsArmed()
+ *          check before calling @p chVTSetI().
+ *
+ * @param[out] vtp      pointer to a @p virtual_timer_t structure
+ *
+ * @init
+ */
+void chVTObjectInit(virtual_timer_t *vtp) {
+
+  vtp->dlist.next = NULL;
+}
+
+/**
+ * @brief   Disposes a virtual timer.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_ENABLE_HARDENING is enabled then the
+ *          object is also cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
+ *
+ * @param[in] vtp       pointer to a @p virtual_timer_t structure
+ *
+ * @dispose
+ */
+void chVTObjectDispose(virtual_timer_t *vtp) {
+
+  chDbgCheck(vtp != NULL);
+  chDbgAssert(vtp->dlist.next != NULL, "object in use");
+
+#if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/
+  memset((void *)vtp, 0, sizeof (virtual_timer_t));
+#endif
+}
+
+/**
  * @brief   Enables a one-shot virtual timer.
  * @details The timer is enabled and programmed to trigger after the delay
  *          specified as parameter.
  * @pre     The timer must not be already armed before calling this function.
  * @note    The callback function is invoked from interrupt context.
  *
- * @param[out] vtp      the @p virtual_timer_t structure pointer
+ * @param[out] vtp      pointer to a @p virtual_timer_t structure
  * @param[in] delay     the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE is allowed but interpreted as a
@@ -285,7 +328,7 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
  * @pre     The timer must not be already armed before calling this function.
  * @note    The callback function is invoked from interrupt context.
  *
- * @param[out] vtp      the @p virtual_timer_t structure pointer
+ * @param[out] vtp      pointer to a @p virtual_timer_t structure
  * @param[in] delay     the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE is allowed but interpreted as a
@@ -320,7 +363,7 @@ void chVTDoSetContinuousI(virtual_timer_t *vtp, sysinterval_t delay,
  * @brief   Disables a Virtual Timer.
  * @pre     The timer must be in armed state before calling this function.
  *
- * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] vtp       pointer to a @p virtual_timer_t structure
  *
  * @iclass
  */
@@ -405,7 +448,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
  * @brief   Returns the remaining time interval before next timer trigger.
  * @note    This function can be called while the timer is active.
  *
- * @param[in] vtp       the @p virtual_timer_t structure pointer
+ * @param[in] vtp       pointer to a @p virtual_timer_t structure
  * @return              The remaining time interval.
  *
  * @iclass

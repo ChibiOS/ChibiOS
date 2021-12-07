@@ -69,6 +69,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
@@ -108,6 +110,35 @@ void chMtxObjectInit(mutex_t *mp) {
   mp->owner = NULL;
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
   mp->cnt = (cnt_t)0;
+#endif
+}
+
+/**
+ * @brief   Disposes a mutex.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_ENABLE_HARDENING is enabled then the
+ *          object is also cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
+ *
+ * @param[in] mp       pointer to a @p mutex_t structure
+ *
+ * @dispose
+ */
+void chMtxObjectDispose(mutex_t *mp) {
+
+  chDbgCheck(mp != NULL);
+  chDbgAssert(ch_queue_isempty(&mp->queue) && (mp->owner == NULL),
+              "object in use");
+#if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
+  chDbgAssert(mp->cnt == (cnt_t)0, "object in use");
+#endif
+
+#if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/
+  memset((void *)mp, 0, sizeof (mutex_t));
 #endif
 }
 

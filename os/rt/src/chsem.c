@@ -121,8 +121,9 @@ void chSemObjectInit(semaphore_t *sp, cnt_t n) {
  */
 void chSemObjectDispose(semaphore_t *sp) {
 
-  chDbgCheck(chMemIsAreaWritableX((void *)sp, sizeof (semaphore_t), MEM_NATURAL_ALIGN));
-  chDbgAssert(ch_queue_isempty(&sp->queue), "object in use");
+  chDbgCheck(sp != NULL);
+  chDbgAssert(ch_queue_isempty(&sp->queue) && (sp->cnt >= (cnt_t)0),
+              "object in use");
 
 #if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/
   memset((void *)sp, 0, sizeof (semaphore_t));
