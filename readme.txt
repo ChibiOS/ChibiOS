@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a chXXXDispose() function to all objects in NIL.
 - NEW: Added a chXXXDispose() function to all objects in RT.
 - NEW: Added VFS-related commands to the shell, disabled by default.
 - NEW: Added a new VFS subsystem (Virtual File System), it allows to assemble
