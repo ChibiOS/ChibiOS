@@ -64,6 +64,8 @@
 #define CH_VFS_PATCH            0
 /** @} */
 
+#include <string.h>
+#include <ctype.h>
 #include <unistd.h>
 
 /* Dependencies.*/

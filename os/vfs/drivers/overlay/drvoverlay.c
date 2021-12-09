@@ -25,8 +25,6 @@
  * @{
  */
 
-#include <string.h>
-
 #include "vfs.h"
 
 #if (VFS_CFG_ENABLE_DRV_OVERLAY == TRUE) || defined(__DOXYGEN__)

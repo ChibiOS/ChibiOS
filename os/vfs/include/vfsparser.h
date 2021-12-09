@@ -21,12 +21,12 @@
  * @file    vfs/include/vfsparser.h
  * @brief   VFS parser utilities header file.
  *
- * @addtogroup VFS_PARSE
+ * @addtogroup VFS_PARSER
  * @{
  */
 
-#ifndef VFSPARSE_H
-#define VFSPARSE_H
+#ifndef VFSPARSER_H
+#define VFSPARSER_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -66,6 +66,43 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* VFSPARSE_H */
+/**
+ * @brief   Checks for a valid path separator.
+ *
+ * @param[in] c                 The character to be checked.
+ * @return                      The operation result.
+ */
+CC_FORCE_INLINE
+static inline bool vfs_parse_is_separator(char c) {
+
+  return (bool)(c == '/');
+}
+
+/**
+ * @brief   Checks for a valid path terminator.
+ *
+ * @param[in] c                 The character to be checked.
+ * @return                      The operation result.
+ */
+CC_FORCE_INLINE
+static inline bool vfs_parse_is_terminator(char c) {
+
+  return (bool)(c == '\0');
+}
+
+/**
+ * @brief   Checks for a path element character.
+ *
+ * @param[in] c                 The character to be checked.
+ * @return                      The operation result.
+ */
+CC_FORCE_INLINE
+static inline bool vfs_parse_is_filechar(char c) {
+
+  /* Restrictive Posix set.*/
+  return (bool)(isalnum(c) || (c == '_') || (c == '-') || (c == '.'));
+}
+
+#endif /* VFSPARSER_H */
 
 /** @} */

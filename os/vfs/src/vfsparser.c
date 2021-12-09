@@ -21,12 +21,9 @@
  * @file    vfs/src/chparser.c
  * @brief   VFS parser utilities code.
  *
- * @addtogroup VFS_PARSE
+ * @addtogroup VFS_PARSER
  * @{
  */
-
-#include <string.h>
-#include <ctype.h>
 
 #include "vfs.h"
 
@@ -63,7 +60,7 @@ msg_t vfs_parse_match_separator(const char **pathp) {
   msg_t err;
   const char *p = *pathp;
 
-  if (*p++ != '/') {
+  if (vfs_parse_is_separator(*p++)) {
     err = VFS_RET_ENOENT;
   }
   else {
@@ -93,26 +90,26 @@ msg_t vfs_parse_match_end(const char **pathp) {
 }
 
 /**
- * @brief   Parses a filename element using the restricted Posix set.
+ * @brief   Parses a path element using the restricted Posix set.
  * @note    Consumes the next path separator, if any.
  *
  * @param[in, out]  pathp       pointer to the path under parsing
  * @param[out]      fname       extracted file name
  */
 msg_t vfs_parse_filename(const char **pathp, char *fname) {
-  size_t n;
+  size_t size;
   const char *p;
 
   p = *pathp;
-  n = 0U;
+  size = 0U;
   while (true) {
     char c = *p;
 
-    /* File names must be terminated by a separator or an end-of-string.*/
-    if ((c == '/') || (c == '\0')) {
+    /* Path elements must be terminated by a separator or an end-of-string.*/
+    if (vfs_parse_is_separator(c) || vfs_parse_is_terminator(c)) {
 
       /* Consecutive separators are not valid.*/
-      if (n == 0U) {
+      if (size == 0U) {
         return VFS_RET_ENOENT;
       }
 
@@ -124,17 +121,18 @@ msg_t vfs_parse_filename(const char **pathp, char *fname) {
     }
 
     /* Valid characters for path names.*/
-    if (!isalnum(c) && (c != '_') && (c != '-') && (c != '.')) {
+    if (!vfs_parse_is_filechar(c)) {
       return VFS_RET_ENOENT;
     }
 
-    if (n > VFS_CFG_NAMELEN_MAX) {
+    /* Exceeding the path element length.*/
+    if (size > VFS_CFG_NAMELEN_MAX) {
       return VFS_RET_ENOENT;
     }
 
     *fname++ = c;
     p++;
-    n++;
+    size++;
   }
 }
 
