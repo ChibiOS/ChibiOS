@@ -58,7 +58,7 @@ extern "C" {
   msg_t vfs_parse_match_separator(const char **pathp);
   msg_t vfs_parse_match_end(const char **pathp);
   msg_t vfs_parse_get_fname(const char **pathp, char *fname);
-  msg_t vfs_parse_copy_with_separator(char *dst, const char *src);
+  size_t vfs_parse_copy_with_separator(char *dst, const char *src);
 #ifdef __cplusplus
 }
 #endif
