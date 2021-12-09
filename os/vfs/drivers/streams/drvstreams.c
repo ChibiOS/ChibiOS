@@ -159,7 +159,7 @@ static msg_t drv_open_file(void *instance,
   (void)oflag;
 
   do {
-    char fname[VFS_CFG_MAX_NAMELEN + 1];
+    char fname[VFS_CFG_NAMELEN_MAX + 1];
 
     err = vfs_parse_match_separator(&path);
     VFS_BREAK_ON_ERROR(err);
@@ -172,7 +172,7 @@ static msg_t drv_open_file(void *instance,
 
     dsep = &drvp->streams[0];
     while (dsep->name != NULL) {
-      if (strncmp(fname, dsep->name, VFS_CFG_MAX_NAMELEN) == 0) {
+      if (strncmp(fname, dsep->name, VFS_CFG_NAMELEN_MAX) == 0) {
         vfs_streams_file_node_c *sfnp;
 
         sfnp = chPoolAlloc(&vfs_streams_driver_static.file_nodes_pool);

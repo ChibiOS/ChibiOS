@@ -325,8 +325,8 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
         else {
           nip->attr = (vfs_nodeattr_t)fip->fattrib;
           nip->size = (vfs_offset_t)fip->fsize;
-          strncpy(nip->name, fip->fname, VFS_CFG_MAX_NAMELEN);
-          nip->name[VFS_CFG_MAX_NAMELEN] = '\0';
+          strncpy(nip->name, fip->fname, VFS_CFG_NAMELEN_MAX);
+          nip->name[VFS_CFG_NAMELEN_MAX] = '\0';
           err = VFS_RET_SUCCESS;
         }
       }

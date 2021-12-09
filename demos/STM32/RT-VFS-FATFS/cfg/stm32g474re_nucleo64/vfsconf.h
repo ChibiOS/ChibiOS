@@ -38,8 +38,22 @@
 /**
  * @brief   Maximum filename length.
  */
-#if !defined(VFS_CFG_MAX_NAMELEN) || defined(__DOXYGEN__)
-#define VFS_CFG_MAX_NAMELEN                 15
+#if !defined(VFS_CFG_NAMELEN_MAX) || defined(__DOXYGEN__)
+#define VFS_CFG_NAMELEN_MAX                 15
+#endif
+
+/**
+ * @brief   Maximum paths length.
+ */
+#if !defined(VFS_CFG_PATHLEN_MAX) || defined(__DOXYGEN__)
+#define VFS_CFG_PATHLEN_MAX                 1023
+#endif
+
+/**
+ * @brief   Number of shared path buffers.
+ */
+#if !defined(VFS_CFG_PATHBUFS_NUM) || defined(__DOXYGEN__)
+#define VFS_CFG_PATHBUFS_NUM                1
 #endif
 
 /** @} */

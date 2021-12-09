@@ -60,6 +60,9 @@
  */
 void vfsInit(void) {
 
+  /* Shared buffers manager initialization.*/
+  __vfs_buffers_init();
+
 #if VFS_CFG_ENABLE_DRV_OVERLAY == TRUE
   __drv_overlay_init();
 #endif

@@ -85,7 +85,7 @@ typedef struct vfs_node_info {
   /**
    * @brief   Name of the node.
    */
-  char                  name[VFS_CFG_MAX_NAMELEN + 1];
+  char                  name[VFS_CFG_NAMELEN_MAX + 1];
 } vfs_node_info_t;
 
 /**

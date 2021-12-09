@@ -18,15 +18,12 @@
 */
 
 /**
- * @file    vfs/src/chparser.c
- * @brief   VFS parser utilities code.
+ * @file    vfs/src/vfsbuffers.c
+ * @brief   VFS shared path buffers code.
  *
- * @addtogroup VFS_PARSE
+ * @addtogroup VFS_BUFFERS
  * @{
  */
-
-#include <string.h>
-#include <ctype.h>
 
 #include "vfs.h"
 
@@ -46,6 +43,21 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   VFS static data.
+ */
+static struct {
+  /**
+   * @brief   Guarded pool of path buffers.
+   */
+  guarded_memory_pool_t             path_buffers_pool;
+  /**
+   * @brief   Shared path buffers.
+   */
+  char                              path_buffers[VFS_CFG_PATHBUFS_NUM]
+                                                [VFS_CFG_PATHLEN_MAX + 1];
+} vfs_buffers_static;
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -55,87 +67,38 @@
 /*===========================================================================*/
 
 /**
- * @brief   Matches a path separator.
+ * @brief   VFS initialization.
  *
- * @param[in, out]  pathp       pointer to the path under parsing
+ * @init
  */
-msg_t vfs_parse_match_separator(const char **pathp) {
-  msg_t err;
-  const char *p = *pathp;
+void __vfs_buffers_init(void) {
 
-  if (*p++ != '/') {
-    err = VFS_RET_ENOENT;
-  }
-  else {
-    err = VFS_RET_SUCCESS;
-    *pathp = p;
-  }
-
-  return err;
+  chGuardedPoolObjectInit(&vfs_buffers_static.path_buffers_pool,
+                          VFS_CFG_PATHLEN_MAX + 1);
+  chGuardedPoolLoadArray(&vfs_buffers_static.path_buffers_pool,
+                         &vfs_buffers_static.path_buffers[0],
+                         VFS_CFG_PATHBUFS_NUM);
 }
 
 /**
- * @brief   Matches a string end.
+ * @brief   Claims a path buffer, waiting if not available.
  *
- * @param[in, out]  pathp       pointer to the path under parsing
+ * @return                      Pointer to the taken buffer.
  */
-msg_t vfs_parse_match_end(const char **pathp) {
-  msg_t err;
+char *vfs_buffer_take(void) {
 
-  if (**pathp != '\0') {
-    err = VFS_RET_ENOENT;
-  }
-  else {
-    err = VFS_RET_SUCCESS;
-  }
-
-  return err;
+  return (char *)chGuardedPoolAllocTimeout(&vfs_buffers_static.path_buffers_pool,
+                                           TIME_INFINITE);
 }
 
 /**
- * @brief   Parses a filename element using the restricted Posix set.
- * @note    Consumes the next path separator, if any.
+ * @brief   Releases a path buffer.
  *
- * @param[in, out]  pathp       pointer to the path under parsing
- * @param[out]      fname       extracted file name
+ * @param[in] buf               Buffer to be released.
  */
-msg_t vfs_parse_filename(const char **pathp, char *fname) {
-  size_t n;
-  const char *p;
+void vfs_buffer_release(char *buf) {
 
-  p = *pathp;
-  n = 0U;
-  while (true) {
-    char c = *p;
-
-    /* File names must be terminated by a separator or an end-of-string.*/
-    if ((c == '/') || (c == '\0')) {
-
-      /* Consecutive separators are not valid.*/
-      if (n == 0U) {
-        return VFS_RET_ENOENT;
-      }
-
-      /* Advancing the path pointer past the file name in the path and
-         closing the file name string.*/
-      *pathp = p;
-      *fname = '\0';
-      return VFS_RET_SUCCESS;
-    }
-
-    /* Valid characters for path names.*/
-    if (!isalnum(c) && (c != '_') && (c != '-') && (c != '.')) {
-      return VFS_RET_ENOENT;
-    }
-
-    if (n > VFS_CFG_NAMELEN_MAX) {
-      return VFS_RET_ENOENT;
-    }
-
-    *fname++ = c;
-    p++;
-    n++;
-  }
+  chGuardedPoolFree(&vfs_buffers_static.path_buffers_pool, (void *)buf);
 }
 
 /** @} */

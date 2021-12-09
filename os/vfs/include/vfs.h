@@ -67,7 +67,7 @@
 #include <unistd.h>
 
 /* Dependencies.*/
-#include "osal.h"
+#include "ch.h"
 #include "oop_base_object.h"
 #include "oop_referenced_object.h"
 #include "oop_synchronized_object.h"
@@ -84,6 +84,7 @@
 /* Base VFS headers.*/
 #include "vfserrors.h"
 #include "vfsparser.h"
+#include "vfsbuffers.h"
 #include "vfsnodes.h"
 #include "vfsdrivers.h"
 

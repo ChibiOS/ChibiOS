@@ -274,11 +274,13 @@ int main(void) {
   /* Initializing an overlay VFS object overlaying a FatFS driver,
      no need for names, both are root.*/
   drvOverlayObjectInit(&root_overlay_driver,
-                       drvFatFSObjectInit(&root_driver, ""), "");
+                       drvFatFSObjectInit(&root_driver, ""),
+                       NULL,
+                       "");
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver,
      no need for a name.*/
-  drvOverlayObjectInit(&root_overlay_driver, NULL, "");
+  drvOverlayObjectInit(&root_overlay_driver, NULL, NULL, "");
 #endif
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/

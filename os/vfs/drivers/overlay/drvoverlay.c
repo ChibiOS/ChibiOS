@@ -91,7 +91,7 @@ static struct {
 static msg_t match_driver(vfs_overlay_driver_c *odp,
                           const char **pathp,
                           vfs_driver_c **vdpp) {
-  char fname[VFS_CFG_MAX_NAMELEN + 1];
+  char fname[VFS_CFG_NAMELEN_MAX + 1];
   msg_t err;
   vfs_driver_c **pp;
 
@@ -102,7 +102,7 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
     /* Searching among registered drivers.*/
     pp = &odp->drivers[0];
     while (pp < &odp->drivers[odp->next_driver]) {
-      if (strncmp(fname, (*pp)->rootname, VFS_CFG_MAX_NAMELEN) == 0) {
+      if (strncmp(fname, (*pp)->rootname, VFS_CFG_NAMELEN_MAX) == 0) {
         *vdpp = *pp;
         return VFS_RET_SUCCESS;
       }
@@ -300,6 +300,7 @@ void __drv_overlay_init(void) {
  *
  * @param[out] vodp             pointer to a @p vfs_overlay_driver_c structure
  * @param[out] overlaid_drv     pointer to a driver to be overlaid
+ * @param[out] path_prefix      prefix to be added to the paths or @p NULL
  * @param[in] rootname          name to be attributed to this object
  * @return                      A pointer to this initialized object.
  *
@@ -307,11 +308,13 @@ void __drv_overlay_init(void) {
  */
 vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
                                    vfs_driver_c *overlaid_drv,
+                                   const char *path_prefix,
                                    const char *rootname) {
 
   __base_object_objinit_impl(vodp, &driver_vmt);
   vodp->rootname     = rootname;
   vodp->overlaid_drv = overlaid_drv;
+  vodp->path_prefix  = path_prefix;
   vodp->next_driver  = 0U;
 
   return (vfs_driver_c *)vodp;
@@ -320,8 +323,8 @@ vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
 /**
  * @brief   Registers a VFS driver as an overlay.
  *
- * @param[in] vodp      pointer to a @p vfs_overlay_driver_c structure
- * @return              The operation result.
+ * @param[in] vodp              pointer to a @p vfs_overlay_driver_c structure
+ * @return                      The operation result.
  *
  * @api
  */
