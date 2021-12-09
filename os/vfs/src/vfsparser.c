@@ -166,7 +166,7 @@ size_t vfs_parse_copy_with_separator(char *dst, const char *src) {
   /* Checking if it is terminated by a separator, if not then adding it.*/
   if (lc != '/') {
 
-    if (n > VFS_CFG_PATHLEN_MAX) {
+    if (n >= VFS_CFG_PATHLEN_MAX) {
       return 0U;
     }
 
