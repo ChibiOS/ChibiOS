@@ -162,7 +162,7 @@ static msg_t drv_open_file(void *instance,
     err = vfs_parse_match_separator(&path);
     VFS_BREAK_ON_ERROR(err);
 
-    err = vfs_parse_filename(&path, fname);
+    err = vfs_parse_get_fname(&path, fname);
     VFS_BREAK_ON_ERROR(err);
 
     err = vfs_parse_match_end(&path);

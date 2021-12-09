@@ -73,6 +73,7 @@
 #define VFS_RET_ENOSPC          (-32 - ENOSPC)  /* No space left on device */
 #define VFS_RET_ESPIPE          (-32 - ESPIPE)  /* Illegal seek */
 #define VFS_RET_EROFS           (-32 - EROFS)   /* Read-only file system */
+#define VFS_RET_ENAMETOOLONG    (-32 - ENAMETOOLONG)/* File or path name too long */
 /** @} */
 
 /*===========================================================================*/

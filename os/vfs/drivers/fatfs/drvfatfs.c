@@ -157,8 +157,10 @@ static msg_t translate_error(FRESULT res) {
     break;
   case FR_NO_FILE:
   case FR_NO_PATH:
-  case FR_INVALID_NAME:
     msg = VFS_RET_ENOENT;
+    break;
+  case FR_INVALID_NAME:
+    msg = VFS_RET_ENAMETOOLONG;
     break;
   case FR_DENIED:
   case FR_WRITE_PROTECTED:

@@ -90,13 +90,13 @@ msg_t vfs_parse_match_end(const char **pathp) {
 }
 
 /**
- * @brief   Parses a path element using the restricted Posix set.
+ * @brief   Fetches the next path element.
  * @note    Consumes the next path separator, if any.
  *
  * @param[in, out]  pathp       pointer to the path under parsing
  * @param[out]      fname       extracted file name
  */
-msg_t vfs_parse_filename(const char **pathp, char *fname) {
+msg_t vfs_parse_get_fname(const char **pathp, char *fname) {
   size_t size;
   const char *p;
 
@@ -134,6 +134,37 @@ msg_t vfs_parse_filename(const char **pathp, char *fname) {
     p++;
     size++;
   }
+}
+
+msg_t vfs_parse_copy_with_separator(char *dst, const char *src) {
+  size_t n = 0U;
+  char lc = '\0';
+
+  /* Copying the path.*/
+  while ((*dst = *src) != '\0') {
+
+    if (n > VFS_CFG_PATHLEN_MAX) {
+      return VFS_RET_ENAMETOOLONG;
+    }
+
+    lc = *src++;
+    dst++;
+    n++;
+  }
+
+  /* Checking if it is terminated by a separator, if not then adding it.*/
+  if (lc != '/') {
+
+    if (n > VFS_CFG_PATHLEN_MAX) {
+      return VFS_RET_ENAMETOOLONG;
+    }
+
+    *dst++ = '/';
+    *dst = '\0';
+    n++;
+  }
+
+  return (msg_t)n;
 }
 
 /** @} */
