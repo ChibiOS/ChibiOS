@@ -117,6 +117,17 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
   return err;
 }
 
+/* TODO */
+static msg_t build_path(vfs_overlay_driver_c *drvp,
+                        const char *path,
+                        char *buf) {
+
+  (void) drvp;
+  strcpy(buf, path);
+
+  return VFS_RET_SUCCESS;
+}
+
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp) {
@@ -125,9 +136,11 @@ static msg_t drv_open_dir(void *instance,
   msg_t err;
 
   do {
+    /* Expecting an absolute path.*/
     err = vfs_parse_match_separator(&scanpath);
     VFS_BREAK_ON_ERROR(err);
 
+    /* If it is the root.*/
     if (*scanpath == '\0') {
 
       /* Creating a root directory node.*/
@@ -152,7 +165,7 @@ static msg_t drv_open_dir(void *instance,
         return VFS_RET_SUCCESS;
       }
     }
-    else {
+    else { /* Not the root.*/
       vfs_driver_c *dp;
 
       /* Searching for a match among registered overlays.*/
@@ -164,12 +177,26 @@ static msg_t drv_open_dir(void *instance,
                                 vdnpp);
       }
       else {
-        /* No matching overlay, the whole path is passed to the overlaid
-           driver, if defined, else returning the previous error.*/
+        /* Is there an overlaid driver? if so we need to pass request
+           processing there.*/
         if (drvp->overlaid_drv != NULL) {
-          err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
-                                                  path,
-                                                  vdnpp);
+          char *buf;
+
+          /* Taking a path buffer from the pool.*/
+          buf = vfs_buffer_take();
+
+          /* Building the final path for the overlaid driver.*/
+          err = build_path(drvp, path, buf);
+
+          /* Passing the combined path to the overlaid driver.*/
+          if (err == VFS_RET_SUCCESS) {
+            err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
+                                                    buf,
+                                                    vdnpp);
+          }
+
+          /* Buffer returned.*/
+          vfs_buffer_release(buf);
         }
       }
     }
@@ -188,13 +215,14 @@ static msg_t drv_open_file(void *instance,
   msg_t err;
 
   do {
+    /* Expecting an absolute path.*/
     err = vfs_parse_match_separator(&scanpath);
     VFS_BREAK_ON_ERROR(err);
 
     if (*scanpath == '\0') {
       (void)instance;
 
-      /* Always not found, there are no files in the root.*/
+      /* Always not found, root is not a file.*/
       err = VFS_RET_ENOENT;
     }
     else {
@@ -207,16 +235,29 @@ static msg_t drv_open_file(void *instance,
         err = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
       }
       else {
-        /* No matching overlay, the whole path is passed to the overlaid
-           driver, if defined, else returning the previous error.*/
+        /* Is there an overlaid driver? if so we need to pass request
+           processing there.*/
         if (drvp->overlaid_drv != NULL) {
-          err = drvp->overlaid_drv->vmt->open_file((void *)drvp->overlaid_drv,
-                                                   path,
-                                                   oflag,
-                                                   vfnpp);
+          char *buf;
+
+          /* Taking a path buffer from the pool.*/
+          buf = vfs_buffer_take();
+
+          /* Building the final path for the overlaid driver.*/
+          err = build_path(drvp, path, buf);
+
+          /* Passing the combined path to the overlaid driver.*/
+          if (err == VFS_RET_SUCCESS) {
+            err = drvp->overlaid_drv->vmt->open_file((void *)drvp->overlaid_drv,
+                                                     path,
+                                                     oflag,
+                                                     vfnpp);
+          }
+
+          /* Buffer returned.*/
+          vfs_buffer_release(buf);
         }
       }
-
     }
   }
   while (false);
