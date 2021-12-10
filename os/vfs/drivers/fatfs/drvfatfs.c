@@ -498,7 +498,7 @@ void __drv_fatfs_init(void) {
 /**
  * @brief   VFS FatFS object initialization.
  *
- * @param[out] ffdp     pointer to a @p vfs_fatfs_driver_c structure
+ * @param[out] vffdp    pointer to a @p vfs_fatfs_driver_c structure
  * @param[in] rootname  name to be attributed to this object
  * @return              A pointer to this initialized object.
  *
