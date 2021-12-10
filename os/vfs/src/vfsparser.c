@@ -60,7 +60,7 @@ msg_t vfs_parse_match_separator(const char **pathp) {
   msg_t err;
   const char *p = *pathp;
 
-  if (vfs_parse_is_separator(*p++)) {
+  if (!vfs_parse_is_separator(*p++)) {
     err = VFS_RET_ENOENT;
   }
   else {
