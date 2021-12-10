@@ -172,19 +172,20 @@ static msg_t drv_open_file(void *instance,
 }
 
 static void node_dir_release(void *instance) {
-  vfs_sfs_dir_node_c *sfdnp = (vfs_sfs_dir_node_c *)instance;
+  vfs_sfs_dir_node_c *dnp = (vfs_sfs_dir_node_c *)instance;
 
   __referenced_object_release_impl(instance);
   if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&vfs_sfs_driver_static.dir_nodes_pool, (void *)sfdnp);
+    chPoolFree(&vfs_sfs_driver_static.dir_nodes_pool, (void *)dnp);
   }
 }
 
 static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
-  vfs_sfs_dir_node_c *sfdnp = (vfs_sfs_dir_node_c *)instance;
-  msg_t err;
-  FRESULT res;
+  vfs_sfs_dir_node_c *dnp = (vfs_sfs_dir_node_c *)instance;
+  msg_t err = VFS_RET_SUCCESS;;
+
+  (void)dnp;
 
   /* TODO rewind */
   err = node_dir_next(instance, nip);
@@ -196,9 +197,9 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   msg_t err = VFS_RET_SUCCESS;
 
   do {
-    vfs_sfs_dir_node_c *sfdnp = (vfs_sfs_dir_node_c *)instance;
+    vfs_sfs_dir_node_c *dnp = (vfs_sfs_dir_node_c *)instance;
 
-    (void)sfdnp;
+    (void)dnp;
     (void)nip;
   }
   while (false);
@@ -207,25 +208,25 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
 }
 
 static void node_file_release(void *instance) {
-  vfs_sfs_file_node_c *sffnp = (vfs_sfs_file_node_c *)instance;
+  vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
 
   __referenced_object_release_impl(instance);
   if (__referenced_object_getref_impl(instance) == 0U) {
 
-    chPoolFree(&vfs_sfs_driver_static.file_nodes_pool, (void *)sffnp);
+    chPoolFree(&vfs_sfs_driver_static.file_nodes_pool, (void *)fnp);
   }
 }
 
 static BaseSequentialStream *node_file_get_stream(void *instance) {
-  vfs_sfs_file_node_c *sffnp = (vfs_sfs_file_node_c *)instance;
+  vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
 
-  return &sffnp->stream;
+  return &fnp->stream;
 }
 
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n) {
-  vfs_sfs_file_node_c *sffnp = (vfs_sfs_file_node_c *)instance;
+  vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
 
-  (void)sffnp;
+  (void)fnp;
   (void)buf;
   (void)n;
 
@@ -233,9 +234,9 @@ static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n) {
 }
 
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
-  vfs_sfs_file_node_c *sffnp = (vfs_sfs_file_node_c *)instance;
+  vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
 
-  (void)sffnp;
+  (void)fnp;
   (void)buf;
   (void)n;
 
@@ -243,29 +244,36 @@ static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
 }
 
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
-  vfs_sfs_file_node_c *sffnp = (vfs_sfs_file_node_c *)instance;
+  vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
+
+  (void)fnp;
+  (void)offset;
 
   return VFS_RET_SUCCESS;
 }
 
 static vfs_offset_t node_file_getpos(void *instance) {
-  vfs_sfs_file_node_c *sffnp = (vfs_sfs_file_node_c *)instance;
+  vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
+
+  (void)fnp;
 
   return (vfs_offset_t)0;
 }
 
 static vfs_offset_t node_file_getsize(void *instance) {
-  vfs_sfs_file_node_c *sffnp = (vfs_sfs_file_node_c *)instance;
+  vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
+
+  (void)fnp;
 
   return (vfs_offset_t)0;
 }
 
 static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
-  vfs_sfs_file_node_c *sffnp = objGetInstance(vfs_sfs_file_node_c *,
-                                              (BaseSequentialStream *)instance);
+  vfs_sfs_file_node_c *fnp = objGetInstance(vfs_sfs_file_node_c *,
+                                            (BaseSequentialStream *)instance);
   msg_t msg;
 
-  msg = sffnp->vmt->file_write((void *)sffnp, bp, n);
+  msg = fnp->vmt->file_write((void *)fnp, bp, n);
   if (msg < VFS_RET_SUCCESS) {
 
     return (size_t)0;
@@ -275,11 +283,11 @@ static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
 }
 
 static size_t file_stream_read(void *instance, uint8_t *bp, size_t n) {
-  vfs_sfs_file_node_c *sffnp = objGetInstance(vfs_sfs_file_node_c *,
-                                              (BaseSequentialStream *)instance);
+  vfs_sfs_file_node_c *fnp = objGetInstance(vfs_sfs_file_node_c *,
+                                            (BaseSequentialStream *)instance);
   msg_t msg;
 
-  msg = sffnp->vmt->file_read((void *)sffnp, bp, n);
+  msg = fnp->vmt->file_read((void *)fnp, bp, n);
   if (msg < VFS_RET_SUCCESS) {
 
     return (size_t)0;
@@ -289,11 +297,11 @@ static size_t file_stream_read(void *instance, uint8_t *bp, size_t n) {
 }
 
 static msg_t file_stream_put(void *instance, uint8_t b) {
-  vfs_sfs_file_node_c *sffnp = objGetInstance(vfs_sfs_file_node_c *,
-                                              (BaseSequentialStream *)instance);
+  vfs_sfs_file_node_c *fnp = objGetInstance(vfs_sfs_file_node_c *,
+                                            (BaseSequentialStream *)instance);
   msg_t msg;
 
-  msg = sffnp->vmt->file_write((void *)sffnp, &b, (size_t)1);
+  msg = fnp->vmt->file_write((void *)fnp, &b, (size_t)1);
   if (msg < VFS_RET_SUCCESS) {
 
     return STM_TIMEOUT;
@@ -303,12 +311,12 @@ static msg_t file_stream_put(void *instance, uint8_t b) {
 }
 
 static msg_t file_stream_get(void *instance) {
-  vfs_sfs_file_node_c *sffnp = objGetInstance(vfs_sfs_file_node_c *,
-                                              (BaseSequentialStream *)instance);
+  vfs_sfs_file_node_c *fnp = objGetInstance(vfs_sfs_file_node_c *,
+                                            (BaseSequentialStream *)instance);
   msg_t msg;
   uint8_t b;
 
-  msg = sffnp->vmt->file_read((void *)sffnp, &b, (size_t)1);
+  msg = fnp->vmt->file_read((void *)fnp, &b, (size_t)1);
   if (msg < VFS_RET_SUCCESS) {
 
     return STM_TIMEOUT;
@@ -348,19 +356,19 @@ void __drv_sfs_init(void) {
 /**
  * @brief   VFS FatFS object initialization.
  *
- * @param[out] vsfdp     pointer to a @p vfs_sfs_driver_c structure
+ * @param[out] drvp     pointer to a @p vfs_sfs_driver_c structure
  * @param[in] rootname  name to be attributed to this object
  * @return              A pointer to this initialized object.
  *
  * @api
  */
-vfs_driver_c *drvFatFSObjectInit(vfs_sfs_driver_c *vsfdp,
-                                 const char *rootname) {
+vfs_driver_c *drvSFSObjectInit(vfs_sfs_driver_c *drvp,
+                               const char *rootname) {
 
-  __base_object_objinit_impl(vsfdp, &driver_vmt);
-  vsfdp->rootname = rootname;
+  __base_object_objinit_impl(drvp, &driver_vmt);
+  drvp->rootname = rootname;
 
-  return (vfs_driver_c *)vsfdp;
+  return (vfs_driver_c *)drvp;
 }
 
 #endif /* VFS_CFG_ENABLE_DRV_SFS == TRUE */
