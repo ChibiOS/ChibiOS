@@ -18,10 +18,10 @@
 */
 /**
  * @file    vfs/drivers/drvoverlay.h
- * @brief   HAL Overlay VFS driver header.
+ * @brief   Overlays VFS driver header.
  *
  * @addtogroup VFS_DRV_OVERLAY
- * @details Exposes HAL Overlay as VFS files.
+ * @details Implements overlays on top of another VFS driver.
  * @{
  */
 

@@ -19,7 +19,7 @@
 
 /**
  * @file    vfs/drivers/drvoverlay.c
- * @brief   HAL Overlay VFS driver code.
+ * @brief   Overlays VFS driver code.
  *
  * @addtogroup VFS_DRV_OVERLAY
  * @{

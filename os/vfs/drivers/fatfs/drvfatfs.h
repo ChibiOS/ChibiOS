@@ -18,10 +18,10 @@
 */
 /**
  * @file    vfs/drivers/drvfatfs.h
- * @brief   HAL FatFS VFS driver header.
+ * @brief   FatFS VFS driver header.
  *
  * @addtogroup VFS_DRV_FATFS
- * @details Exposes HAL FatFS as VFS files.
+ * @details Exposes FatFS as VFS files.
  * @{
  */
 
@@ -165,8 +165,6 @@ typedef struct vfs_fatfs_driver {
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
-
-extern vfs_fatfs_driver_c vfs_fatfs;
 
 #ifdef __cplusplus
 extern "C" {

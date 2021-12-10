@@ -19,7 +19,7 @@
 
 /**
  * @file    vfs/drivers/drvfatfs.c
- * @brief   HAL FatFS VFS driver code.
+ * @brief   FatFS VFS driver code.
  *
  * @addtogroup VFS_DRV_FATFS
  * @{
