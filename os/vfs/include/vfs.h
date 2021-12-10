@@ -103,7 +103,15 @@
 #include "drvfatfs.h"
 #endif
 
-/* Application code is suppored to export this symbol, it is expected to
+/* TODO temporary */
+#define DRV_CFG_SFS_DIR_NODES_NUM 1
+#define DRV_CFG_SFS_FILE_NODES_NUM 1
+#define VFS_CFG_ENABLE_DRV_SFS FALSE
+#if VFS_CFG_ENABLE_DRV_SFS == TRUE
+#include "drvsfs.h"
+#endif
+
+/* Application code is supposed to export this symbol, it is expected to
    exists.*/
 extern vfs_driver_c *vfs_root;
 
