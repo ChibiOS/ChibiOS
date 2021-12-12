@@ -115,13 +115,18 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
   return err;
 }
 
-/* TODO */
 static msg_t build_path(vfs_overlay_driver_c *drvp,
                         const char *path,
                         char *buf) {
 
-  (void) drvp;
-  strcpy(buf, path);
+  *buf++ = '\0';
+
+  /* Copying the prefix, if defined.*/
+  if (drvp->path_prefix != NULL) {
+    VFS_RETURN_ON_ERROR(vfs_path_append(buf, drvp->path_prefix));
+  }
+
+  VFS_RETURN_ON_ERROR(vfs_path_append(buf, path));
 
   return VFS_RET_SUCCESS;
 }

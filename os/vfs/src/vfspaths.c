@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    vfs/src/chparser.c
- * @brief   VFS parser utilities code.
+ * @file    vfs/src/chpaths.c
+ * @brief   VFS path utilities code.
  *
- * @addtogroup VFS_PARSER
+ * @addtogroup VFS_PATHS
  * @{
  */
 
@@ -52,88 +52,86 @@
 /*===========================================================================*/
 
 /**
- * @brief   Matches a path separator.
+ * @brief   Copies a path into a destination buffer.
+ * @details Up to @p VFS_CFG_PATHLEN_MAX characters are copied. A path
+ *          separator is added to the end of the path if not present.
  *
- * @param[in, out]  pathp       pointer to the path under parsing
+ * @param[out] dst              The destination buffer.
+ * @param[in] src               The source path.
+ * @return                      The copied path size not including the final
+ *                              zero.
+ * @retval 0                    If the path size exceeded @p VFS_CFG_PATHLEN_MAX.
  */
-msg_t vfs_parse_match_separator(const char **pathp) {
-  msg_t err;
-  const char *p = *pathp;
+size_t vfs_path_copy_with_separator(char *dst, const char *src) {
+  size_t n = 0U;
+  char lc = '\0';
 
-  if (!vfs_parse_is_separator(*p++)) {
-    err = VFS_RET_ENOENT;
-  }
-  else {
-    err = VFS_RET_SUCCESS;
-    *pathp = p;
+  /* Copying the path.*/
+  while ((*dst = *src) != '\0') {
+
+    if (n > VFS_CFG_PATHLEN_MAX) {
+      return 0U;
+    }
+
+    lc = *src++;
+    dst++;
+    n++;
   }
 
-  return err;
+  /* Checking if it is terminated by a separator, if not then adding it.*/
+  if (lc != '/') {
+
+    if (n >= VFS_CFG_PATHLEN_MAX) {
+      return 0U;
+    }
+
+    *dst++ = '/';
+    *dst = '\0';
+    n++;
+  }
+
+  return n;
 }
 
-/**
- * @brief   Matches a string end.
- *
- * @param[in, out]  pathp       pointer to the path under parsing
- */
-msg_t vfs_parse_match_end(const char **pathp) {
-  msg_t err;
+msg_t vfs_path_append(char *dst, const char *src) {
+  size_t n;
 
-  if (**pathp != '\0') {
-    err = VFS_RET_ENOENT;
+  /* Current path length.*/
+  n = strnlen(dst, VFS_CFG_PATHLEN_MAX);
+  if (n >= VFS_CFG_PATHLEN_MAX) {
+    return ENAMETOOLONG;
+  }
+
+  /* Making sure to start with a separator in place.*/
+  if (n == 0U) {
+    *dst++ = '/';
+    n++;
   }
   else {
-    err = VFS_RET_SUCCESS;
+    dst = dst + n;
+    if (*(dst - 1) != '/') {
+      *dst++ = '/';
+      n++;
+    }
   }
 
-  return err;
-}
-
-/**
- * @brief   Fetches the next path element.
- * @note    Consumes the next path separator, if any.
- *
- * @param[in, out]  pathp       pointer to the path under parsing
- * @param[out]      fname       extracted file name
- */
-msg_t vfs_parse_get_fname(const char **pathp, char *fname) {
-  size_t size;
-  const char *p;
-
-  p = *pathp;
-  size = 0U;
-  while (true) {
-    char c = *p;
-
-    /* Path elements must be terminated by a separator or an end-of-string.*/
-    if (vfs_parse_is_separator(c) || vfs_parse_is_terminator(c)) {
-
-      /* Consecutive separators are not valid.*/
-      if (size == 0U) {
-        return VFS_RET_ENOENT;
-      }
-
-      /* Advancing the path pointer past the file name in the path and
-         closing the file name string.*/
-      *pathp = p;
-      *fname = '\0';
-      return VFS_RET_SUCCESS;
-    }
-
-    /* Valid characters for path names.*/
-    if (!vfs_parse_is_filechar(c)) {
-      return VFS_RET_ENOENT;
-    }
-
-    /* Exceeding the path element length.*/
-    if (size > VFS_CFG_NAMELEN_MAX) {
-      return VFS_RET_ENOENT;
-    }
-
-    *fname++ = c;
-    p++;
-    size++;
+  /* The appended part needs to not begin with a separator.*/
+  if (*src == '/') {
+    src++;
   }
+
+  /* Appending.*/
+  while ((*dst++ = *src++) != '\0') {
+    n++;
+
+    if (n > VFS_CFG_PATHLEN_MAX) {
+      return ENAMETOOLONG;
+    }
+  }
+
+  *dst = '\0';
+
+  return VFS_RET_SUCCESS;
 }
 
 /** @} */

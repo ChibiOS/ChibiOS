@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    vfs/include/vfsparser.h
- * @brief   VFS parser utilities header file.
+ * @file    vfs/include/vfspaths.h
+ * @brief   VFS path utilities header file.
  *
- * @addtogroup VFS_PARSER
+ * @addtogroup VFS_PATHS
  * @{
  */
 
-#ifndef VFSPARSER_H
-#define VFSPARSER_H
+#ifndef VFSPATHS_H
+#define VFSPATHS_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -55,9 +55,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t vfs_parse_match_separator(const char **pathp);
-  msg_t vfs_parse_match_end(const char **pathp);
-  msg_t vfs_parse_get_fname(const char **pathp, char *fname);
+  size_t vfs_path_copy_with_separator(char *dst, const char *src);
+  msg_t vfs_path_append(char *dst, const char *src);
 #ifdef __cplusplus
 }
 #endif
@@ -66,43 +65,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-/**
- * @brief   Checks for a valid path separator.
- *
- * @param[in] c                 The character to be checked.
- * @return                      The operation result.
- */
-CC_FORCE_INLINE
-static inline bool vfs_parse_is_separator(char c) {
-
-  return (bool)(c == '/');
-}
-
-/**
- * @brief   Checks for a valid path terminator.
- *
- * @param[in] c                 The character to be checked.
- * @return                      The operation result.
- */
-CC_FORCE_INLINE
-static inline bool vfs_parse_is_terminator(char c) {
-
-  return (bool)(c == '\0');
-}
-
-/**
- * @brief   Checks for a path element character.
- *
- * @param[in] c                 The character to be checked.
- * @return                      The operation result.
- */
-CC_FORCE_INLINE
-static inline bool vfs_parse_is_filechar(char c) {
-
-  /* Restrictive Posix set.*/
-  return (bool)(isalnum(c) || (c == '_') || (c == '-') || (c == '.'));
-}
-
-#endif /* VFSPARSER_H */
+#endif /* VFSPATHS_H */
 
 /** @} */

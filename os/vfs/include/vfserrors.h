@@ -92,8 +92,18 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
-#define VFS_BREAK_ON_ERROR(err)                                             \
-  if ((err) < VFS_RET_SUCCESS) break
+#define VFS_BREAK_ON_ERROR(err) do {                                        \
+  if ((err) < VFS_RET_SUCCESS) {                                            \
+    break;                                                                  \
+  }                                                                         \
+} while (false)
+
+#define VFS_RETURN_ON_ERROR(err) do {                                       \
+  msg_t ret = (err);                                                        \
+  if (ret < VFS_RET_SUCCESS) {                                              \
+    return ret;                                                             \
+  }                                                                         \
+} while (false)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
