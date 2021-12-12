@@ -155,7 +155,7 @@ static msg_t drv_open_dir(void *instance,
            could fail, in that case the pointer stays at NULL.*/
         if (drvp->overlaid_drv != NULL) {
           (void) drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
-                                                   "/",
+                                                   drvp->path_prefix == NULL ? "/" : drvp->path_prefix,
                                                    &odnp->overlaid_root);
         }
 
@@ -268,6 +268,10 @@ static void node_dir_release(void *instance) {
 
   __referenced_object_release_impl(instance);
   if (__referenced_object_getref_impl(instance) == 0U) {
+
+    if (odnp->overlaid_root != NULL) {
+      odnp->overlaid_root->vmt->release((void *)odnp->overlaid_root);
+    }
 
     chPoolFree(&vfs_overlay_driver_static.dir_nodes_pool, (void *)odnp);
   }
