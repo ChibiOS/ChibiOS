@@ -119,7 +119,7 @@ static msg_t build_path(vfs_overlay_driver_c *drvp,
                         const char *path,
                         char *buf) {
 
-  *buf++ = '\0';
+  *buf = '\0';
 
   /* Copying the prefix, if defined.*/
   if (drvp->path_prefix != NULL) {
