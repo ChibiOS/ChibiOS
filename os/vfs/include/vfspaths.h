@@ -56,6 +56,7 @@
 extern "C" {
 #endif
   msg_t vfs_path_append(char *dst, const char *src);
+  msg_t vfs_path_normalize(char *dst, const char *src);
 #ifdef __cplusplus
 }
 #endif

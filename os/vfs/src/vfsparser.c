@@ -91,7 +91,8 @@ msg_t vfs_parse_match_end(const char **pathp) {
 
 /**
  * @brief   Fetches the next path element.
- * @note    Consumes the next path separator, if any.
+ * @note    Does not consume the next separator, if any.
+ * @note    It can return an empty element, it has to be detected outside.
  *
  * @param[in, out]  pathp       pointer to the path under parsing
  * @param[out]      fname       extracted file name
@@ -108,26 +109,21 @@ msg_t vfs_parse_get_fname(const char **pathp, char *fname) {
     /* Path elements must be terminated by a separator or an end-of-string.*/
     if (vfs_parse_is_separator(c) || vfs_parse_is_terminator(c)) {
 
-      /* Consecutive separators are not valid.*/
-      if (size == 0U) {
-        return VFS_RET_ENOENT;
-      }
-
       /* Advancing the path pointer past the file name in the path and
          closing the file name string.*/
       *pathp = p;
       *fname = '\0';
-      return VFS_RET_SUCCESS;
+      return (msg_t)size;
     }
 
     /* Valid characters for path names.*/
     if (!vfs_parse_is_filechar(c)) {
-      return VFS_RET_ENOENT;
+      return VFS_RET_EINVAL;
     }
 
     /* Exceeding the path element length.*/
     if (size > VFS_CFG_NAMELEN_MAX) {
-      return VFS_RET_ENOENT;
+      return VFS_RET_ENAMETOOLONG;
     }
 
     *fname++ = c;

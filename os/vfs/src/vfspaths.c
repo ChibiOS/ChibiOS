@@ -101,4 +101,81 @@ msg_t vfs_path_append(char *dst, const char *src) {
   return VFS_RET_SUCCESS;
 }
 
+/**
+ * @brief   Normalizes an absolute path.
+ *
+ * @param[out] dst              The destination buffer.
+ * @param[in] src               The source path.
+ * @return                      The operation status.
+ * @retval VFS_RET_ENAMETOOLONG If the path size exceeded @p VFS_CFG_PATHLEN_MAX.
+ */
+msg_t vfs_path_normalize(char *dst, const char *src) {
+  size_t size;
+
+  VFS_RETURN_ON_ERROR(vfs_parse_match_separator(&src));
+
+  *dst++ = '/';
+  size = 1U;
+  while (true) {
+
+    /* Consecutive input separators are consumed.*/
+    while (vfs_parse_is_separator(*src)) {
+      src++;
+    }
+    msg_t ret;
+    size_t n;
+
+    /* Getting next element from the input path and copying it to
+       the output path.*/
+    ret = vfs_parse_get_fname(&src, dst);
+    VFS_RETURN_ON_ERROR(ret);
+
+    n = (size_t)ret;
+    if (n == 0U) {
+
+      /* If the path contains something after the root separator.*/
+      if (size > 1U) {
+        /* No next path element, replacing the last separator with a zero.*/
+        size--;
+        *(dst - 1) = '\0';
+      }
+
+      return (msg_t)size;
+    }
+
+    /* Handling special cases of "." and "..".*/
+    if (strcmp(dst, ".") == 0) {
+      /* Single dot elements are discarded.*/
+      /* Consecutive input separators are consumed.*/
+      continue;
+    }
+    else if (strcmp(dst, "..") == 0) {
+      /* Double dot elements require to remove the last element from
+         the output path.*/
+      if (size > 1) {
+        /* Back on the separator.*/
+        dst--;
+        size--;
+
+        /* Scanning back to just after the previous separator.*/
+        do {
+          dst--;
+          size--;
+        } while(!vfs_parse_is_separator(*(dst - 1)));
+      }
+      continue;
+    }
+
+    dst  += n;
+    size += n;
+
+    /* Adding a single separator to the output.*/
+    *dst++ = '/';
+    size++;
+
+    do {
+    } while (false);
+  }
+}
+
 /** @} */

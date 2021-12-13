@@ -67,7 +67,7 @@ static struct {
 /*===========================================================================*/
 
 /**
- * @brief   VFS initialization.
+ * @brief   VFS path buffers initialization.
  *
  * @init
  */
