@@ -55,7 +55,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  size_t vfs_path_copy_with_separator(char *dst, const char *src);
   msg_t vfs_path_append(char *dst, const char *src);
 #ifdef __cplusplus
 }

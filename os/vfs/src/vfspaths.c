@@ -52,54 +52,21 @@
 /*===========================================================================*/
 
 /**
- * @brief   Copies a path into a destination buffer.
- * @details Up to @p VFS_CFG_PATHLEN_MAX characters are copied. A path
- *          separator is added to the end of the path if not present.
+ * @brief   Appends a path to a path.
+ * @details Up to @p VFS_CFG_PATHLEN_MAX characters are copied.
  *
  * @param[out] dst              The destination buffer.
  * @param[in] src               The source path.
- * @return                      The copied path size not including the final
- *                              zero.
- * @retval 0                    If the path size exceeded @p VFS_CFG_PATHLEN_MAX.
+ * @return                      The operation status.
+ * @retval VFS_RET_ENAMETOOLONG If the path size exceeded @p VFS_CFG_PATHLEN_MAX.
  */
-size_t vfs_path_copy_with_separator(char *dst, const char *src) {
-  size_t n = 0U;
-  char lc = '\0';
-
-  /* Copying the path.*/
-  while ((*dst = *src) != '\0') {
-
-    if (n > VFS_CFG_PATHLEN_MAX) {
-      return 0U;
-    }
-
-    lc = *src++;
-    dst++;
-    n++;
-  }
-
-  /* Checking if it is terminated by a separator, if not then adding it.*/
-  if (lc != '/') {
-
-    if (n >= VFS_CFG_PATHLEN_MAX) {
-      return 0U;
-    }
-
-    *dst++ = '/';
-    *dst = '\0';
-    n++;
-  }
-
-  return n;
-}
-
 msg_t vfs_path_append(char *dst, const char *src) {
   size_t n;
 
   /* Current path length.*/
   n = strnlen(dst, VFS_CFG_PATHLEN_MAX);
   if (n >= VFS_CFG_PATHLEN_MAX) {
-    return ENAMETOOLONG;
+    return VFS_RET_ENAMETOOLONG;
   }
 
   /* Making sure to start with a separator in place.*/
@@ -125,7 +92,7 @@ msg_t vfs_path_append(char *dst, const char *src) {
     n++;
 
     if (n > VFS_CFG_PATHLEN_MAX) {
-      return ENAMETOOLONG;
+      return VFS_RET_ENAMETOOLONG;
     }
   }
 
