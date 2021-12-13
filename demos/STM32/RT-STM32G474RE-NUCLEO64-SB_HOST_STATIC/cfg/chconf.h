@@ -139,6 +139,19 @@
 #define CH_CFG_NO_IDLE_THREAD               FALSE
 #endif
 
+/**
+ * @brief   Kernel hardening level.
+ * @details This option is the level of functional-safety checks enabled
+ *          in the kerkel. The meaning is:
+ *          - 0: No checks, maximum performance.
+ *          - 1: Reasonable checks.
+ *          - 2: All checks.
+ *          .
+ */
+#if !defined(CH_CFG_HARDENING_LEVEL)
+#define CH_CFG_HARDENING_LEVEL              0
+#endif
+
 /** @} */
 
 /*===========================================================================*/
@@ -821,8 +834,6 @@
 /*===========================================================================*/
 /* Port-specific settings (override port settings defaulted in chcore.h).    */
 /*===========================================================================*/
-
-#define PORT_USE_SYSCALL                    TRUE
 
 #endif  /* CHCONF_H */
 

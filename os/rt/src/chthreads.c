@@ -865,8 +865,8 @@ void chThdQueueObjectInit(threads_queue_t *tqp) {
  * @note    Objects disposing does not involve freeing memory but just
  *          performing checks that make sure that the object is in a
  *          state compatible with operations stop.
- * @note    If the option @p CH_CFG_ENABLE_HARDENING is enabled then the
- *          object is also cleared, attempts to use the object would likely
+ * @note    If the option @p CH_CFG_HARDENING_LEVEL is greater than zero then
+ *          the object is also cleared, attempts to use the object would likely
  *          result in a clean memory access violation because dereferencing
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
@@ -881,7 +881,7 @@ void chThdObjectDispose(threads_queue_t *tqp) {
   chDbgAssert(ch_queue_isempty(&tqp->queue),
               "object in use");
 
-#if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/
+#if CH_CFG_HARDENING_LEVEL > 0
   memset((void *)tqp, 0, sizeof (threads_queue_t));
 #endif
 }

@@ -139,6 +139,19 @@
 #define CH_CFG_NO_IDLE_THREAD               FALSE
 #endif
 
+/**
+ * @brief   Kernel hardening level.
+ * @details This option is the level of functional-safety checks enabled
+ *          in the kerkel. The meaning is:
+ *          - 0: No checks, maximum performance.
+ *          - 1: Reasonable checks.
+ *          - 2: All checks.
+ *          .
+ */
+#if !defined(CH_CFG_HARDENING_LEVEL)
+#define CH_CFG_HARDENING_LEVEL              0
+#endif
+
 /** @} */
 
 /*===========================================================================*/
@@ -703,8 +716,7 @@
  * @details User fields added to the end of the @p thread_t structure.
  */
 #define CH_CFG_THREAD_EXTRA_FIELDS                                          \
-  /* Add threads custom fields here.*/                                      \
-  void *osal_delete_handler;
+  /* Add threads custom fields here.*/
 
 /**
  * @brief   Threads initialization hook.

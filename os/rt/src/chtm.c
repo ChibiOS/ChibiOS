@@ -92,8 +92,8 @@ void chTMObjectInit(time_measurement_t *tmp) {
  * @note    Objects disposing does not involve freeing memory but just
  *          performing checks that make sure that the object is in a
  *          state compatible with operations stop.
- * @note    If the option @p CH_CFG_ENABLE_HARDENING is enabled then the
- *          object is also cleared, attempts to use the object would likely
+ * @note    If the option @p CH_CFG_HARDENING_LEVEL is greater than zero then
+ *          the object is also cleared, attempts to use the object would likely
  *          result in a clean memory access violation because dereferencing
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
@@ -106,8 +106,8 @@ void chTMObjectDispose(time_measurement_t *tmp) {
 
   chDbgCheck(tmp != NULL);
 
-#if 0 /*CH_CFG_ENABLE_HARDENING == TRUE*/
-  memset((tmp)sp, 0, sizeof (time_measurement_t));
+#if CH_CFG_HARDENING_LEVEL > 0
+  memset((void *)tmp, 0, sizeof (time_measurement_t));
 #endif
 }
 

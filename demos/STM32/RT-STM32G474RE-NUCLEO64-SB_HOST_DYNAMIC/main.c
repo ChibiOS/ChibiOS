@@ -26,17 +26,19 @@
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
-  .code_region    = 0U,
-  .data_region    = 1U,
-  .regions        = {
+  .code_region      = 0U,
+  .data_region      = 1U,
+  .regions          = {
     [0] = {
-      {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE}, false
+      .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
+      .writeable    = false
     },
     [1] = {
-      {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},   true
+      .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
+      .writeable    = true
     }
   },
-  .mpuregs        = {
+  .mpuregs          = {
     [0] = {
       (uint32_t)STARTUP_FLASH1_BASE, MPU_RASR_ATTR_AP_RO_RO |
                                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
@@ -50,24 +52,26 @@ static const sb_config_t sb_config1 = {
                                      MPU_RASR_ENABLE
     }
   },
-  .stdin_stream   = (SandboxStream *)&LPSD1,
-  .stdout_stream  = (SandboxStream *)&LPSD1,
-  .stderr_stream  = (SandboxStream *)&LPSD1
+  .stdin_stream     = (SandboxStream *)&LPSD1,
+  .stdout_stream    = (SandboxStream *)&LPSD1,
+  .stderr_stream    = (SandboxStream *)&LPSD1
 };
 
 /* Sandbox 2 configuration.*/
 static const sb_config_t sb_config2 = {
-  .code_region    = 0U,
-  .data_region    = 1U,
-  .regions        = {
+  .code_region      = 0U,
+  .data_region      = 1U,
+  .regions          = {
     [0] = {
-      {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE}, false
+      .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
+      .writeable    = false
     },
     [1] = {
-      {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},   true
+      .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
+      .writeable    = true
     }
   },
-  .mpuregs        = {
+  .mpuregs          = {
     [0] = {
       (uint32_t)STARTUP_FLASH2_BASE, MPU_RASR_ATTR_AP_RO_RO |
                                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
@@ -81,9 +85,9 @@ static const sb_config_t sb_config2 = {
                                      MPU_RASR_ENABLE
     }
   },
-  .stdin_stream   = (SandboxStream *)&LPSD1,
-  .stdout_stream  = (SandboxStream *)&LPSD1,
-  .stderr_stream  = (SandboxStream *)&LPSD1
+  .stdin_stream     = (SandboxStream *)&LPSD1,
+  .stdout_stream    = (SandboxStream *)&LPSD1,
+  .stderr_stream    = (SandboxStream *)&LPSD1
 };
 
 /* Sandbox objects.*/
