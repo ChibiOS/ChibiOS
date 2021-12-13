@@ -94,7 +94,7 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
   vfs_driver_c **pp;
 
   do {
-    err = vfs_parse_get_fname(pathp, fname);
+    err = vfs_parse_get_fname(pathp, fname, VFS_CFG_PATHLEN_MAX);
     VFS_BREAK_ON_ERROR(err);
 
     /* Searching among registered drivers.*/

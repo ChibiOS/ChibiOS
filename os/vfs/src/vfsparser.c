@@ -54,7 +54,7 @@
 /**
  * @brief   Matches a path separator.
  *
- * @param[in, out]  pathp       pointer to the path under parsing
+ * @param[in, out]  pathp       Pointer to the path under parsing.
  */
 msg_t vfs_parse_match_separator(const char **pathp) {
   msg_t err;
@@ -74,7 +74,7 @@ msg_t vfs_parse_match_separator(const char **pathp) {
 /**
  * @brief   Matches a string end.
  *
- * @param[in, out]  pathp       pointer to the path under parsing
+ * @param[in, out]  pathp       Pointer to the path under parsing.
  */
 msg_t vfs_parse_match_end(const char **pathp) {
   msg_t err;
@@ -94,10 +94,11 @@ msg_t vfs_parse_match_end(const char **pathp) {
  * @note    Does not consume the next separator, if any.
  * @note    It can return an empty element, it has to be detected outside.
  *
- * @param[in, out]  pathp       pointer to the path under parsing
- * @param[out]      fname       extracted file name
+ * @param[in, out]  pathp       Pointer to the path under parsing.
+ * @param[out]      fname       Extracted file name.
+ * @param[in]       n           Maximum size in @fname.
  */
-msg_t vfs_parse_get_fname(const char **pathp, char *fname) {
+msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n) {
   size_t size;
   const char *p;
 
@@ -121,8 +122,8 @@ msg_t vfs_parse_get_fname(const char **pathp, char *fname) {
       return VFS_RET_EINVAL;
     }
 
-    /* Exceeding the path element length.*/
-    if (size > VFS_CFG_NAMELEN_MAX) {
+    /* Exceeding the maximum length.*/
+    if (size > n) {
       return VFS_RET_ENAMETOOLONG;
     }
 

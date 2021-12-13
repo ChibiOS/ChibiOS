@@ -127,7 +127,7 @@ msg_t vfs_path_normalize(char *dst, const char *src) {
 
     /* Getting next element from the input path and copying it to
        the output path.*/
-    ret = vfs_parse_get_fname(&src, dst);
+    ret = vfs_parse_get_fname(&src, dst, VFS_CFG_PATHLEN_MAX - size);
     VFS_RETURN_ON_ERROR(ret);
 
     n = (size_t)ret;
