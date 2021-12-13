@@ -17,18 +17,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * @file    vfs/drivers/drvsfs.h
+ * @file    vfs/drivers/drvtemplate.h
  * @brief  SimpleFS VFS driver header.
  *
- * @addtogroup VFS_DRV_SFS
+ * @addtogroup VFS_DRV_TEMPLATE
  * @details Simple FS for VFS.
  * @{
  */
 
-#ifndef DRVSFS_H
-#define DRVSFS_H
+#ifndef DRVTEMPLATE_H
+#define DRVTEMPLATE_H
 
-#if (VFS_CFG_ENABLE_DRV_SFS == TRUE) || defined(__DOXYGEN__)
+#if (VFS_CFG_ENABLE_DRV_TEMPLATE == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -43,20 +43,20 @@
 /*===========================================================================*/
 
 /* Configuration options checks.*/
-#if !defined(DRV_CFG_SFS_DIR_NODES_NUM)
-#error "DRV_CFG_SFS_DIR_NODES_NUM not defined in vfsconf.h"
+#if !defined(DRV_CFG_TEMPLATE_DIR_NODES_NUM)
+#error "DRV_CFG_TEMPLATE_DIR_NODES_NUM not defined in vfsconf.h"
 #endif
 
-#if !defined(DRV_CFG_SFS_FILE_NODES_NUM)
-#error "DRV_CFG_SFS_FILE_NODES_NUM not defined in vfsconf.h"
+#if !defined(DRV_CFG_TEMPLATE_FILE_NODES_NUM)
+#error "DRV_CFG_TEMPLATE_FILE_NODES_NUM not defined in vfsconf.h"
 #endif
 
-#if DRV_CFG_SFS_DIR_NODES_NUM < 1
-#error "invalid value for DRV_CFG_SFS_DIR_NODES_NUM"
+#if DRV_CFG_TEMPLATE_DIR_NODES_NUM < 1
+#error "invalid value for DRV_CFG_TEMPLATE_DIR_NODES_NUM"
 #endif
 
-#if DRV_CFG_SFS_FILE_NODES_NUM < 1
-#error "invalid value for DRV_CFG_SFS_FILE_NODES_NUM"
+#if DRV_CFG_TEMPLATE_FILE_NODES_NUM < 1
+#error "invalid value for DRV_CFG_TEMPLATE_FILE_NODES_NUM"
 #endif
 
 /*===========================================================================*/
@@ -64,95 +64,95 @@
 /*===========================================================================*/
 
 /**
- * @brief   @p vfs_sfs_dir_node_c specific methods.
+ * @brief   @p vfs_template_dir_node_c specific methods.
  */
-#define __vfs_sfs_dir_node_methods                                          \
+#define __vfs_template_dir_node_methods                                          \
   __vfs_directory_node_methods
 
 /**
- * @brief   @p vfs_sfs_dir_node_c specific data.
+ * @brief   @p vfs_template_dir_node_c specific data.
  */
-#define __vfs_sfs_dir_node_data                                             \
+#define __vfs_template_dir_node_data                                             \
   __vfs_directory_node_data
 
 /**
- * @brief   @p vfs_sfs_dir_node_c virtual methods table.
+ * @brief   @p vfs_template_dir_node_c virtual methods table.
  */
-struct vfs_sfs_dir_node_vmt {
-  __vfs_sfs_dir_node_methods
+struct vfs_template_dir_node_vmt {
+  __vfs_template_dir_node_methods
 };
 
 /**
- * @brief   Type of a SimpleFS directory VFS node class.
+ * @brief   Type of a Template directory VFS node class.
  */
-typedef struct vfs_sfs_dir_node {
+typedef struct vfs_template_dir_node {
   /**
    * @brief   Virtual Methods Table.
    */
-  const struct vfs_sfs_dir_node_vmt     *vmt;
-  __vfs_sfs_dir_node_data
-} vfs_sfs_dir_node_c;
+  const struct vfs_template_dir_node_vmt     *vmt;
+  __vfs_template_dir_node_data
+} vfs_template_dir_node_c;
 
 /**
- * @brief   @p vfs_sfs_file_node_c specific methods.
+ * @brief   @p vfs_template_file_node_c specific methods.
  */
-#define __vfs_sfs_file_node_methods                                         \
+#define __vfs_template_file_node_methods                                         \
   __vfs_file_node_methods
 
 /**
- * @brief   @p vfs_sfs_file_node_c specific data.
+ * @brief   @p vfs_template_file_node_c specific data.
  */
-#define __vfs_sfs_file_node_data                                            \
+#define __vfs_template_file_node_data                                            \
   __vfs_file_node_data                                                      \
   BaseSequentialStream                  stream;
 
 /**
- * @brief   @p vfs_sfs_file_node_c virtual methods table.
+ * @brief   @p vfs_template_file_node_c virtual methods table.
  */
-struct vfs_sfs_file_node_vmt {
-  __vfs_sfs_file_node_methods
+struct vfs_template_file_node_vmt {
+  __vfs_template_file_node_methods
 };
 
 /**
- * @brief   Type of a SimpleFS file VFS node class.
+ * @brief   Type of a Template file VFS node class.
  */
-typedef struct vfs_sfs_file_node {
+typedef struct vfs_template_file_node {
   /**
    * @brief   Virtual Methods Table.
    */
-  const struct vfs_sfs_file_node_vmt    *vmt;
-  __vfs_sfs_file_node_data
-} vfs_sfs_file_node_c;
+  const struct vfs_template_file_node_vmt    *vmt;
+  __vfs_template_file_node_data
+} vfs_template_file_node_c;
 
 /**
- * @brief   @p vfs_sfs_driver_c specific methods.
+ * @brief   @p vfs_template_driver_c specific methods.
  */
-#define __vfs_sfs_driver_methods                                            \
+#define __vfs_template_driver_methods                                            \
   __vfs_driver_methods
 
 /**
- * @brief   @p vfs_sfs_driver_c specific data.
+ * @brief   @p vfs_template_driver_c specific data.
  */
-#define __vfs_sfs_driver_data                                               \
+#define __vfs_template_driver_data                                               \
   __vfs_driver_data
 
 /**
- * @brief   @p vfs_sfs_driver_c virtual methods table.
+ * @brief   @p vfs_template_driver_c virtual methods table.
  */
-struct vfs_sfs_driver_vmt {
-  __vfs_sfs_driver_methods
+struct vfs_template_driver_vmt {
+  __vfs_template_driver_methods
 };
 
 /**
- * @brief   Type of a VFS SimpleFS driver class.
+ * @brief   Type of a VFS Template driver class.
  */
-typedef struct vfs_sfs_driver {
+typedef struct vfs_template_driver {
   /**
    * @brief   Virtual Methods Table.
    */
-  const struct vfs_sfs_driver_vmt       *vmt;
-  __vfs_sfs_driver_data
-} vfs_sfs_driver_c;
+  const struct vfs_template_driver_vmt       *vmt;
+  __vfs_template_driver_data
+} vfs_template_driver_c;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -165,8 +165,8 @@ typedef struct vfs_sfs_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void __drv_sfs_init(void);
-  vfs_driver_c *drvSFSObjectInit(vfs_sfs_driver_c *drvp,
+  void __drv_template_init(void);
+  vfs_driver_c *drvTEMPLATEObjectInit(vfs_template_driver_c *drvp,
                                    const char *rootname);
 #ifdef __cplusplus
 }
@@ -176,8 +176,8 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* VFS_CFG_ENABLE_DRV_SFS == TRUE */
+#endif /* VFS_CFG_ENABLE_DRV_TEMPLATE == TRUE */
 
-#endif /* DRVSFS_H */
+#endif /* DRVTEMPLATE_H */
 
 /** @} */

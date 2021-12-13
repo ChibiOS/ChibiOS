@@ -105,11 +105,19 @@
 #endif
 
 /* TODO temporary */
-#define DRV_CFG_SFS_DIR_NODES_NUM 1
-#define DRV_CFG_SFS_FILE_NODES_NUM 1
-#define VFS_CFG_ENABLE_DRV_SFS FALSE
+#define VFS_CFG_ENABLE_DRV_SFS              FALSE
+#define DRV_CFG_SFS_DIR_NODES_NUM           1
+#define DRV_CFG_SFS_FILE_NODES_NUM          1
 #if VFS_CFG_ENABLE_DRV_SFS == TRUE
 #include "drvsfs.h"
+#endif
+
+/* Only for testing, not a real driver.*/
+#define VFS_CFG_ENABLE_DRV_TEMPLATE         FALSE
+#define DRV_CFG_TEMPLATE_DIR_NODES_NUM      1
+#define DRV_CFG_TEMPLATE_FILE_NODES_NUM     1
+#if VFS_CFG_ENABLE_DRV_TEMPLATE == TRUE
+#include "drvtemplate.h"
 #endif
 
 /* Application code is supposed to export this symbol, it is expected to
