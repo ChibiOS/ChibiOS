@@ -117,13 +117,13 @@ msg_t vfs_path_normalize(char *dst, const char *src) {
   *dst++ = '/';
   size = 1U;
   while (true) {
+    msg_t ret;
+    size_t n;
 
     /* Consecutive input separators are consumed.*/
     while (vfs_parse_is_separator(*src)) {
       src++;
     }
-    msg_t ret;
-    size_t n;
 
     /* Getting next element from the input path and copying it to
        the output path.*/
@@ -172,9 +172,6 @@ msg_t vfs_path_normalize(char *dst, const char *src) {
     /* Adding a single separator to the output.*/
     *dst++ = '/';
     size++;
-
-    do {
-    } while (false);
   }
 }
 
