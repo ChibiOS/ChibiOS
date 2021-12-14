@@ -67,6 +67,8 @@
  */
 #define __vfs_driver_methods                                                \
   __base_object_methods                                                     \
+  msg_t (*set_cwd)(void *instance, const char *path);                       \
+  msg_t (*get_cwd)(void *instance, char *buf, size_t size);                 \
   msg_t (*open_dir)(void *instance,                                         \
                     const char *path,                                       \
                     vfs_directory_node_c **vdnpp);                          \

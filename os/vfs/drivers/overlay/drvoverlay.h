@@ -111,6 +111,8 @@ typedef struct vfs_overlay_dir_node {
   vfs_driver_c                      *overlaid_drv;                          \
   /* Path prefix for the overlaid driver or NULL.*/                         \
   const char                        *path_prefix ;                          \
+  /* Current directory or NULL.*/                                           \
+  const char                        *path_cwd;                              \
   /* Next registration slot.*/                                              \
   unsigned                          next_driver;                            \
   /* Registration slots.*/                                                  \

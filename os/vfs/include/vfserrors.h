@@ -38,21 +38,6 @@
  * @name    Error codes compatible with HAL and Posix
  * @{
  */
-#if 0
-#define VFS_RET_SUCCESS         0
-#define VFS_RET_TIMEOUT         -1
-#define VFS_RET_EOF             -2
-#define VFS_RET_NOT_IMPLEMENTED -3
-#define VFS_RET_NO_RESOURCE     -4
-#define VFS_RET_NO_DRIVER       -5
-#define VFS_RET_INVALID_PATH    -6
-#define VFS_RET_NOT_FOUND       -7
-#define VFS_RET_EXIST           -8
-#define VFS_RET_ACCESS_DENIED   -9
-#define VFS_RET_MEDIA_ERROR     -10
-#define VFS_RET_INNER_ERROR     -11
-#define VFS_RET_INVALID_MODE    -12
-#endif
 #define VFS_RET_SUCCESS         0               /* Success */
 #define VFS_RET_TIMEOUT         -1              /* Timeout */
 #define VFS_RET_EOF             -2              /* End-of-file */

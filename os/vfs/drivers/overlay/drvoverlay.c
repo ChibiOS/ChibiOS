@@ -45,6 +45,8 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+static msg_t drv_set_cwd(void *instance, const char *path);
+static msg_t drv_get_cwd(void *instance, char *buf, size_t size);
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp);
@@ -54,6 +56,8 @@ static msg_t drv_open_file(void *instance,
                            vfs_file_node_c **vfnpp);
 
 static const struct vfs_overlay_driver_vmt driver_vmt = {
+  .set_cwd      = drv_set_cwd,
+  .get_cwd      = drv_get_cwd,
   .open_dir     = drv_open_dir,
   .open_file    = drv_open_file
 };
@@ -115,6 +119,17 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
   return err;
 }
 
+static const char *get_current_directory(vfs_overlay_driver_c *drvp) {
+  const char *cwd = drvp->path_cwd;
+
+  /* In case it has not yet been defined using root.*/
+  if (cwd == NULL) {
+    return "/";
+  }
+
+  return cwd;
+}
+
 static msg_t build_path(vfs_overlay_driver_c *drvp,
                         const char *path,
                         char *buf) {
@@ -126,7 +141,34 @@ static msg_t build_path(vfs_overlay_driver_c *drvp,
     VFS_RETURN_ON_ERROR(vfs_path_append(buf, drvp->path_prefix));
   }
 
+  /* If it is a relative path then we need to consider the current directory.*/
+  if (!vfs_parse_is_separator(*path)) {
+
+    /* Adding the current directory, note, it is already a normalized
+       path, no need to re-normalize.*/
+    VFS_RETURN_ON_ERROR(vfs_path_append(buf, get_current_directory(drvp)));
+  }
+
+  /* Finally adding the path requested by the user.*/
   VFS_RETURN_ON_ERROR(vfs_path_append(buf, path));
+
+  return VFS_RET_SUCCESS;
+}
+
+static msg_t drv_set_cwd(void *instance, const char *path) {
+
+  (void) instance;
+  (void) path;
+
+  return VFS_RET_NOT_IMPLEMENTED;
+}
+
+static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
+
+  (void) instance;
+  (void) size;
+
+  strcpy(buf, "/");
 
   return VFS_RET_SUCCESS;
 }
@@ -363,6 +405,7 @@ vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
   vodp->rootname     = rootname;
   vodp->overlaid_drv = overlaid_drv;
   vodp->path_prefix  = path_prefix;
+  vodp->path_cwd     = NULL;
   vodp->next_driver  = 0U;
 
   return (vfs_driver_c *)vodp;
