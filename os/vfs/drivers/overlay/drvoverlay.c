@@ -159,12 +159,111 @@ static msg_t build_path(vfs_overlay_driver_c *drvp,
   return VFS_RET_SUCCESS;
 }
 
+static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
+                               const char *path,
+                               vfs_directory_node_c **vdnpp) {
+  const char *scanpath = path;
+  msg_t err;
+
+  do {
+    /* Expecting an absolute path.*/
+    err = vfs_parse_match_separator(&scanpath);
+    VFS_BREAK_ON_ERROR(err);
+
+    /* If it is the root.*/
+    if (*scanpath == '\0') {
+
+      /* Creating a root directory node.*/
+      vfs_overlay_dir_node_c *odnp = chPoolAlloc(&vfs_overlay_driver_static.dir_nodes_pool);
+      if (odnp != NULL) {
+
+        /* Node object initialization.*/
+        __referenced_object_objinit_impl(odnp, &dir_node_vmt);
+        odnp->driver        = (vfs_driver_c *)drvp;
+        odnp->index         = 0U;
+        odnp->overlaid_root = NULL;
+
+        /* Trying to obtain a root node from the overlaid driver, it
+           could fail, in that case the pointer stays at NULL.*/
+        if (drvp->overlaid_drv != NULL) {
+          (void) drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
+                                                   drvp->path_prefix == NULL ? "/" : drvp->path_prefix,
+                                                   &odnp->overlaid_root);
+        }
+
+        *vdnpp = (vfs_directory_node_c *)odnp;
+        return VFS_RET_SUCCESS;
+      }
+    }
+    else { /* Not the root.*/
+      vfs_driver_c *dp;
+
+      /* Searching for a match among registered overlays.*/
+      err = match_driver(drvp, &scanpath, &dp);
+      if (err == VFS_RET_SUCCESS) {
+        /* Delegating node creation to a registered driver.*/
+        err = dp->vmt->open_dir((void *)dp,
+                                scanpath,
+                                vdnpp);
+      }
+      else {
+        /* Is there an overlaid driver? if so we need to pass request
+           processing there.*/
+        if (drvp->overlaid_drv != NULL) {
+
+          /* Passing the combined path to the overlaid driver.*/
+          if (err == VFS_RET_SUCCESS) {
+            err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
+                                                    path,
+                                                    vdnpp);
+          }
+        }
+      }
+    }
+  }
+  while (false);
+
+  return err;
+}
+
 static msg_t drv_set_cwd(void *instance, const char *path) {
+  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
+  vfs_directory_node_c *vdnp;
+  msg_t ret;
 
-  (void) instance;
-  (void) path;
+  /* One-time allocation of the CWD buffer, this memory is allocated, once,
+     only if the application uses a CWD, it is never released.*/
+  if (drvp->cwd_buffer == NULL) {
+    drvp->cwd_buffer = chCoreAlloc(VFS_CFG_PATHLEN_MAX + 1);
+    if (drvp->cwd_buffer == NULL) {
+      return VFS_RET_ENOMEM;
+    }
+  }
 
-  return VFS_RET_NOT_IMPLEMENTED;
+  /* Putting a normalized prefix path into the buffer.*/
+  ret = vfs_path_normalize(drvp->cwd_buffer,
+                           drvp->path_prefix,
+                           VFS_CFG_PATHLEN_MAX);
+  VFS_RETURN_ON_ERROR(ret);
+
+  /* Pointer to the path just after the imposed prefix.*/
+  drvp->path_cwd = drvp->cwd_buffer + (size_t)ret;
+
+  /* Appending the user CWD. Normalization prevents it to ".."
+     into the imposed prefix path.*/
+  ret = vfs_path_normalize(drvp->path_cwd,
+                           path,
+                           VFS_CFG_PATHLEN_MAX - (size_t)ret);
+  VFS_RETURN_ON_ERROR(ret);
+
+  /* Trying to access the directory in order to validate the
+     combined path.*/
+  ret = open_dir_absolute(drvp, drvp->cwd_buffer, &vdnp);
+  VFS_RETURN_ON_ERROR(ret);
+
+  node_dir_release((void *)vdnp);
+
+  return VFS_RET_SUCCESS;
 }
 
 static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
@@ -407,6 +506,7 @@ vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
   vodp->overlaid_drv = overlaid_drv;
   vodp->path_prefix  = path_prefix;
   vodp->path_cwd     = NULL;
+  vodp->cwd_buffer   = NULL;
   vodp->next_driver  = 0U;
 
   return (vfs_driver_c *)vodp;
