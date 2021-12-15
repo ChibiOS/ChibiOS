@@ -138,7 +138,9 @@ static msg_t build_path(vfs_overlay_driver_c *drvp,
 
   /* Copying the prefix, if defined.*/
   if (drvp->path_prefix != NULL) {
-    VFS_RETURN_ON_ERROR(vfs_path_append(buf, drvp->path_prefix));
+    VFS_RETURN_ON_ERROR(vfs_path_append(buf,
+                                        drvp->path_prefix,
+                                        VFS_CFG_PATHLEN_MAX));
   }
 
   /* If it is a relative path then we need to consider the current directory.*/
@@ -146,11 +148,13 @@ static msg_t build_path(vfs_overlay_driver_c *drvp,
 
     /* Adding the current directory, note, it is already a normalized
        path, no need to re-normalize.*/
-    VFS_RETURN_ON_ERROR(vfs_path_append(buf, get_current_directory(drvp)));
+    VFS_RETURN_ON_ERROR(vfs_path_append(buf,
+                                        get_current_directory(drvp),
+                                        VFS_CFG_PATHLEN_MAX));
   }
 
   /* Finally adding the path requested by the user.*/
-  VFS_RETURN_ON_ERROR(vfs_path_append(buf, path));
+  VFS_RETURN_ON_ERROR(vfs_path_append(buf, path, VFS_CFG_PATHLEN_MAX));
 
   return VFS_RET_SUCCESS;
 }
@@ -164,13 +168,10 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
 }
 
 static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
+  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
 
-  (void) instance;
-  (void) size;
-
-  strcpy(buf, "/");
-
-  return VFS_RET_SUCCESS;
+  *buf = '\0';
+  return vfs_path_append(buf, get_current_directory(drvp), size);
 }
 
 static msg_t drv_open_dir(void *instance,

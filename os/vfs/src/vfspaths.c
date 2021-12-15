@@ -53,19 +53,19 @@
 
 /**
  * @brief   Appends a path to a path.
- * @details Up to @p VFS_CFG_PATHLEN_MAX characters are copied.
  *
  * @param[out] dst              The destination buffer.
  * @param[in] src               The source path.
+ * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ENAMETOOLONG If the path size exceeded @p VFS_CFG_PATHLEN_MAX.
+ * @retval VFS_RET_ENAMETOOLONG If the path size exceeded the buffer size.
  */
-msg_t vfs_path_append(char *dst, const char *src) {
+msg_t vfs_path_append(char *dst, const char *src, size_t size) {
   size_t n;
 
   /* Current path length.*/
-  n = strnlen(dst, VFS_CFG_PATHLEN_MAX);
-  if (n >= VFS_CFG_PATHLEN_MAX) {
+  n = strnlen(dst, size);
+  if (n >= size) {
     return VFS_RET_ENAMETOOLONG;
   }
 
@@ -91,7 +91,7 @@ msg_t vfs_path_append(char *dst, const char *src) {
   while ((*dst++ = *src++) != '\0') {
     n++;
 
-    if (n > VFS_CFG_PATHLEN_MAX) {
+    if (n > size) {
       return VFS_RET_ENAMETOOLONG;
     }
   }
@@ -106,19 +106,19 @@ msg_t vfs_path_append(char *dst, const char *src) {
  *
  * @param[out] dst              The destination buffer.
  * @param[in] src               The source path.
+ * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ENAMETOOLONG If the path size exceeded @p VFS_CFG_PATHLEN_MAX.
+ * @retval VFS_RET_ENAMETOOLONG If the path size exceeded the buffer size.
  */
-msg_t vfs_path_normalize(char *dst, const char *src) {
-  size_t size;
+msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
+  size_t n;
 
   VFS_RETURN_ON_ERROR(vfs_parse_match_separator(&src));
 
   *dst++ = '/';
-  size = 1U;
+  n = 1U;
   while (true) {
     msg_t ret;
-    size_t n;
 
     /* Consecutive input separators are consumed.*/
     while (vfs_parse_is_separator(*src)) {
@@ -127,20 +127,19 @@ msg_t vfs_path_normalize(char *dst, const char *src) {
 
     /* Getting next element from the input path and copying it to
        the output path.*/
-    ret = vfs_parse_get_fname(&src, dst, VFS_CFG_PATHLEN_MAX - size);
+    ret = vfs_parse_get_fname(&src, dst, size - n);
     VFS_RETURN_ON_ERROR(ret);
 
-    n = (size_t)ret;
-    if (n == 0U) {
+    if ((size_t)ret == 0U) {
 
       /* If the path contains something after the root separator.*/
-      if (size > 1U) {
+      if (n > 1U) {
         /* No next path element, replacing the last separator with a zero.*/
-        size--;
+        n--;
         *(dst - 1) = '\0';
       }
 
-      return (msg_t)size;
+      return (msg_t)n;
     }
 
     /* Handling special cases of "." and "..".*/
@@ -152,26 +151,26 @@ msg_t vfs_path_normalize(char *dst, const char *src) {
     else if (strcmp(dst, "..") == 0) {
       /* Double dot elements require to remove the last element from
          the output path.*/
-      if (size > 1) {
+      if (n > 1U) {
         /* Back on the separator.*/
         dst--;
-        size--;
+        n--;
 
         /* Scanning back to just after the previous separator.*/
         do {
           dst--;
-          size--;
+          n--;
         } while(!vfs_parse_is_separator(*(dst - 1)));
       }
       continue;
     }
 
-    dst  += n;
-    size += n;
+    dst += (size_t)ret;
+    n   += (size_t)ret;
 
     /* Adding a single separator to the output.*/
     *dst++ = '/';
-    size++;
+    n++;
   }
 }
 
