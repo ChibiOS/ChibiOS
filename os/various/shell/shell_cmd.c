@@ -310,7 +310,7 @@ static void cmd_cat(BaseSequentialStream *chp, int argc, char *argv[]) {
   do {
     int fd, n;
 
-    buf= (char *)chHeapAlloc(NULL, 2048);
+    buf = (char *)chHeapAlloc(NULL, 2048);
     if (buf == NULL) {
       chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
      break;
@@ -328,6 +328,58 @@ static void cmd_cat(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, SHELL_NEWLINE_STR);
 
     (void) close(fd);
+  }
+  while (false);
+
+  if (buf != NULL) {
+    chHeapFree((void *)buf);
+  }
+}
+
+static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: cd <dirpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    msg_t res;
+
+    res = vfsChangeCurrentDirectory(argv[0]);
+    if (res != VFS_RET_SUCCESS) {
+      chprintf(chp, "failed (%d)" SHELL_NEWLINE_STR, res);
+    }
+  }
+  while (false);
+}
+
+static void cmd_cwd(BaseSequentialStream *chp, int argc, char *argv[]) {
+  char *buf = NULL;
+
+  (void)argv;
+
+  if (argc != 0) {
+    chprintf(chp, "Usage: cwd" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    msg_t res;
+
+    buf = (char *)chHeapAlloc(NULL, VFS_CFG_PATHLEN_MAX + 1);
+    if (buf == NULL) {
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
+     break;
+    }
+
+    res = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
+    if (res == VFS_RET_SUCCESS) {
+      chprintf(chp, "%s" SHELL_NEWLINE_STR, buf);
+    }
+    else {
+      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
+    }
   }
   while (false);
 
@@ -366,6 +418,8 @@ const ShellCommand shell_local_commands[] = {
 #if SHELL_CMD_FILES_ENABLED == TRUE
   {"tree", cmd_tree},
   {"cat", cmd_cat},
+  {"cd", cmd_cd},
+  {"cwd", cmd_cwd},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE
   {"test", cmd_test},

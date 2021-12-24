@@ -128,6 +128,8 @@ extern vfs_driver_c *vfs_root;
 extern "C" {
 #endif
   void vfsInit(void);
+  msg_t vfsChangeCurrentDirectory(const char *path);
+  msg_t vfsGetCurrentDirectory(char *buf, size_t size);
   msg_t vfsOpenDirectory(const char *name,
                          vfs_directory_node_c **vdnpp);
   void vfsCloseDirectory(vfs_directory_node_c *vdnp);

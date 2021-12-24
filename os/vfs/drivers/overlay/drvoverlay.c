@@ -489,8 +489,8 @@ void __drv_overlay_init(void) {
  * @brief   VFS overlay object initialization.
  *
  * @param[out] vodp             pointer to a @p vfs_overlay_driver_c structure
- * @param[out] overlaid_drv     pointer to a driver to be overlaid
- * @param[out] path_prefix      prefix to be added to the paths or @p NULL
+ * @param[in] overlaid_drv      pointer to a driver to be overlaid or @p NULL
+ * @param[in] path_prefix       prefix to be added to the paths or @p NULL
  * @param[in] rootname          name to be attributed to this object
  * @return                      A pointer to this initialized object.
  *

@@ -275,7 +275,7 @@ int main(void) {
      no need for names, both are root.*/
   drvOverlayObjectInit(&root_overlay_driver,
                        drvFatFSObjectInit(&root_driver, ""),
-                       NULL,
+                       "/rt",
                        "");
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver,

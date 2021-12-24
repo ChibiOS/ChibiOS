@@ -75,10 +75,37 @@ void vfsInit(void) {
 }
 
 /**
+ * @brief   Changes the current VFS directory.
+ *
+ * @param[in] path      Path of the new current directory.
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsChangeCurrentDirectory(const char *path) {
+
+  return vfs_root->vmt->set_cwd(vfs_root, path);
+}
+
+/**
+ * @brief   Returns the current VFS directory.
+ *
+ * @param[out] buf      Buffer for the path string.
+ * @param[in] size      Size of the buffer.
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsGetCurrentDirectory(char *buf, size_t size) {
+
+  return vfs_root->vmt->get_cwd(vfs_root, buf, size);
+}
+
+/**
  * @brief   Opens a VFS directory.
  *
- * @param[in] path      absolute path of the directory to be opened
- * @param[out] vdnpp    pointer to the pointer to the instantiated
+ * @param[in] path      Absolute path of the directory to be opened.
+ * @param[out] vdnpp    Pointer to the pointer to the instantiated.
  *                      @p vfs_directory_node_c object
  * @return              The operation result.
  *
@@ -93,8 +120,8 @@ msg_t vfsOpenDirectory(const char *path,
 /**
  * @brief   Releases a @p vfs_directory_node_c object.
  *
- * @param[in] vdnp      the pointer to the @p vfs_directory_node_c object
- *                      to be released
+ * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object
+ *                      to be released.
  *
  * @api
  */
@@ -106,8 +133,8 @@ void vfsCloseDirectory(vfs_directory_node_c *vdnp) {
 /**
  * @brief   First directory entry.
  *
- * @param[in] vdnp      the pointer to the @p vfs_directory_node_c object
- * @param[out] nip      pointer to a @p vfs_node_info_t structure
+ * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object.
+ * @param[out] nip      Pointer to a @p vfs_node_info_t structure.
  * @return              The operation result.
  *
  * @api
@@ -123,8 +150,8 @@ msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
 /**
  * @brief   Next directory entry.
  *
- * @param[in] vdnp      the pointer to the @p vfs_directory_node_c object
- * @param[out] nip      pointer to a @p vfs_node_info_t structure
+ * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object..
+ * @param[out] nip      Pointer to a @p vfs_node_info_t structure
  * @return              The operation result.
  *
  * @api
@@ -140,10 +167,10 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
 /**
  * @brief   Opens a VFS file.
  *
- * @param[in] path      absolute path of the file to be opened
- * @param[in] mode      file open mode
- * @param[out] vdnpp    pointer to the pointer to the instantiated
- *                      @p vfs_file_node_c object
+ * @param[in] path      Path of the file to be opened.
+ * @param[in] mode      File open mode.
+ * @param[out] vdnpp    Pointer to the pointer to the instantiated
+ *                      @p vfs_file_node_c object.
  * @return              The operation result.
  *
  * @api
@@ -158,7 +185,7 @@ msg_t vfsOpenFile(const char *path,
 /**
  * @brief   Releases a @p vfs_file_node_c object.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
+ * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
  *                      to be released
  *
  * @api
@@ -174,9 +201,9 @@ void vfsCloseFile(vfs_file_node_c *vfnp) {
  * @brief   File node read.
  * @details The function reads data from a file node into a buffer.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
- * @param[out] buf      pointer to the data buffer
- * @param[in] n         the maximum amount of data to be transferred
+ * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
+ * @param[out] buf      Pointer to the data buffer.
+ * @param[in] n         Maximum amount of data to be transferred.
  * @return              The transferred number of bytes or an error.
  *
  * @api
@@ -192,9 +219,9 @@ ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n) {
  * @brief   File node write.
  * @details The function writes data from a buffer to a file node.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
- * @param[out] buf      pointer to the data buffer
- * @param[in] n         the maximum amount of data to be transferred
+ * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
+ * @param[out] buf      Pointer to the data buffer.
+ * @param[in] n         Maximum amount of data to be transferred.
  * @return              The transferred number of bytes or an error.
  *
  * @api
@@ -209,8 +236,8 @@ ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n) {
 /**
  * @brief   Changes the current file position.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
- * @param[in] offset    new absolute position
+ * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
+ * @param[in] offset    New absolute position.
  * @return              The operation result.
  *
  * @api
@@ -225,7 +252,7 @@ msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset) {
 /**
  * @brief   Returns the current file position.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
+ * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
  * @return              The current file position.
  *
  * @api
@@ -239,8 +266,8 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
 
 /**
  * @brief   Returns the current file size.
- *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
+ *.
+ * @param[in] vfnp      Pointer to the @p vfs_file_node_c object
  * @return              The current file size.
  *
  * @api
@@ -255,7 +282,7 @@ vfs_offset_t vfsGetFileSize(vfs_file_node_c *vfnp) {
 /**
  * @brief   Returns the inner stream associated to the file.
  *
- * @param[in] vfnp      the pointer to the @p vfs_file_node_c object
+ * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
  * @return              The current file size.
  *
  * @api
