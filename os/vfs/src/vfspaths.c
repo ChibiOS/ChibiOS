@@ -58,7 +58,7 @@
  * @param[in] src               The source path.
  * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ENAMETOOLONG If the path size exceeded the buffer size.
+ * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
  */
 msg_t vfs_path_append(char *dst, const char *src, size_t size) {
   size_t n;
@@ -66,7 +66,7 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
   /* Current path length.*/
   n = strnlen(dst, size);
   if (n >= size) {
-    return VFS_RET_ENAMETOOLONG;
+    return VFS_RET_ERANGE;
   }
 
   /* Making sure to start with a separator in place.*/
@@ -92,7 +92,7 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
     n++;
 
     if (n > size) {
-      return VFS_RET_ENAMETOOLONG;
+      return VFS_RET_ERANGE;
     }
   }
 
@@ -108,7 +108,7 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
  * @param[in] src               The source path.
  * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ENAMETOOLONG If the path size exceeded the buffer size.
+ * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
  */
 msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
   size_t n;
