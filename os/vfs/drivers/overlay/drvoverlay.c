@@ -212,11 +212,9 @@ static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
         if (drvp->overlaid_drv != NULL) {
 
           /* Passing the combined path to the overlaid driver.*/
-          if (err == VFS_RET_SUCCESS) {
-            err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
-                                                    path,
-                                                    vdnpp);
-          }
+          err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
+                                                  path,
+                                                  vdnpp);
         }
       }
     }
@@ -227,43 +225,55 @@ static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
 }
 
 static msg_t drv_set_cwd(void *instance, const char *path) {
-  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
-  vfs_directory_node_c *vdnp;
+  char *buf = NULL;
   msg_t ret;
 
-  /* One-time allocation of the CWD buffer, this memory is allocated, once,
-     only if the application uses a CWD, it is never released.*/
-  if (drvp->cwd_buffer == NULL) {
-    drvp->cwd_buffer = chCoreAlloc(VFS_CFG_PATHLEN_MAX + 1);
+  do {
+    vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
+    vfs_directory_node_c *vdnp;
+    size_t cwdoffset;
+
+    /* Taking a path buffer from the pool.*/
+    buf = vfs_buffer_take();
+
+    /* Putting a normalized prefix path into the buffer.*/
+    ret = vfs_path_normalize(buf, drvp->path_prefix, VFS_CFG_PATHLEN_MAX);
+    VFS_BREAK_ON_ERROR(ret);
+    cwdoffset = (size_t)ret;
+
+    /* Appending the user CWD. Normalization prevents it to ".."
+       into the imposed prefix path.*/
+    ret = vfs_path_normalize(buf + cwdoffset,
+                             path, VFS_CFG_PATHLEN_MAX - (size_t)ret);
+    VFS_BREAK_ON_ERROR(ret);
+
+    /* Trying to access the directory in order to validate the
+       combined path.*/
+    ret = open_dir_absolute(drvp, buf, &vdnp);
+    VFS_BREAK_ON_ERROR(ret);
+    vdnp->vmt->release((void *)vdnp);
+
+    /* One-time allocation of the CWD buffer, this memory is allocated, once,
+       only if the application uses a CWD, it is never released.*/
     if (drvp->cwd_buffer == NULL) {
-      return VFS_RET_ENOMEM;
+      drvp->cwd_buffer = chCoreAlloc(VFS_CFG_PATHLEN_MAX + 1);
+      if (drvp->cwd_buffer == NULL) {
+        ret = VFS_RET_ENOMEM;
+        break;
+      }
     }
-  }
 
-  /* Putting a normalized prefix path into the buffer.*/
-  ret = vfs_path_normalize(drvp->cwd_buffer,
-                           drvp->path_prefix,
-                           VFS_CFG_PATHLEN_MAX);
-  VFS_RETURN_ON_ERROR(ret);
+    /* Copying the validated path into the CWD buffer.*/
+    strcpy(drvp->cwd_buffer, buf);
+    drvp->path_cwd = drvp->cwd_buffer + cwdoffset;
 
-  /* Pointer to the path just after the imposed prefix.*/
-  drvp->path_cwd = drvp->cwd_buffer + (size_t)ret;
+  } while (false);
 
-  /* Appending the user CWD. Normalization prevents it to ".."
-     into the imposed prefix path.*/
-  ret = vfs_path_normalize(drvp->path_cwd,
-                           path,
-                           VFS_CFG_PATHLEN_MAX - (size_t)ret);
-  VFS_RETURN_ON_ERROR(ret);
 
-  /* Trying to access the directory in order to validate the
-     combined path.*/
-  ret = open_dir_absolute(drvp, drvp->cwd_buffer, &vdnp);
-  VFS_RETURN_ON_ERROR(ret);
+  /* Buffer returned.*/
+  vfs_buffer_release(buf);
 
-  node_dir_release((void *)vdnp);
-
-  return VFS_RET_SUCCESS;
+  return ret;
 }
 
 static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
