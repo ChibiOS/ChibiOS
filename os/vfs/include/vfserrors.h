@@ -78,12 +78,14 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+#define VFS_IS_ERROR(err) ((msg_t)(err) < VFS_RET_SUCCESS)
+
 #define VFS_BREAK_ON_ERROR(err)                                             \
-  if ((err) < VFS_RET_SUCCESS) break
+  if (VFS_IS_ERROR(err)) break
 
 #define VFS_RETURN_ON_ERROR(err) do {                                       \
   msg_t __ret = (err);                                                      \
-  if (__ret < VFS_RET_SUCCESS) {                                            \
+  if (VFS_IS_ERROR(__ret)) {                                                \
     return __ret;                                                           \
   }                                                                         \
 } while (false)

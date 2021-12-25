@@ -113,9 +113,6 @@ typedef struct vfs_overlay_dir_node {
   const char                        *path_prefix ;                          \
   /* Current directory or NULL.*/                                           \
   char                              *path_cwd;                              \
-  /* Buffer for absolute current directory or NULL. Contains the prefix
-     plus the current directory normalized.*/                               \
-  char                              *cwd_buffer;                            \
   /* Next registration slot.*/                                              \
   unsigned                          next_driver;                            \
   /* Registration slots.*/                                                  \

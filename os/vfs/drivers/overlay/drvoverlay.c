@@ -159,6 +159,36 @@ static msg_t build_path(vfs_overlay_driver_c *drvp,
   return VFS_RET_SUCCESS;
 }
 
+static msg_t build_absolute_path(vfs_overlay_driver_c *drvp,
+                                 char *buf,
+                                 const char *path) {
+  msg_t ret;
+
+  do {
+
+    /* Initial buffer state, empty string.*/
+    *buf = '\0';
+
+    /* Relative paths handling.*/
+    if (!vfs_parse_is_separator(*path)) {
+      ret = vfs_path_append(buf,
+                            get_current_directory(drvp),
+                            VFS_CFG_PATHLEN_MAX);
+      VFS_BREAK_ON_ERROR(ret);
+    }
+
+    /* Adding the specified path.*/
+    ret = vfs_path_append(buf, path, VFS_CFG_PATHLEN_MAX);
+    VFS_BREAK_ON_ERROR(ret);
+
+    /* Normalization of the absolute path.*/
+    ret = vfs_path_normalize(buf, buf, VFS_CFG_PATHLEN_MAX);
+
+  } while (false);
+
+  return ret;
+}
+
 static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
                                const char *path,
                                vfs_directory_node_c **vdnpp) {
@@ -200,7 +230,7 @@ static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
-      if (err == VFS_RET_SUCCESS) {
+      if (!VFS_IS_ERROR(err)) {
         /* Delegating node creation to a registered driver.*/
         err = dp->vmt->open_dir((void *)dp,
                                 scanpath,
@@ -231,44 +261,33 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
     vfs_directory_node_c *vdnp;
-    size_t cwdoffset;
 
     /* Taking a path buffer from the pool.*/
     buf = vfs_buffer_take();
 
-    /* Putting a normalized prefix path into the buffer.*/
-    ret = vfs_path_normalize(buf, drvp->path_prefix, VFS_CFG_PATHLEN_MAX);
-    VFS_BREAK_ON_ERROR(ret);
-    cwdoffset = (size_t)ret;
-
-    /* Appending the user CWD. Normalization prevents it to ".."
-       into the imposed prefix path.*/
-    ret = vfs_path_normalize(buf + cwdoffset,
-                             path, VFS_CFG_PATHLEN_MAX - (size_t)ret);
+    ret = build_absolute_path(drvp, buf, path);
     VFS_BREAK_ON_ERROR(ret);
 
     /* Trying to access the directory in order to validate the
        combined path.*/
-    ret = open_dir_absolute(drvp, buf, &vdnp);
-    VFS_BREAK_ON_ERROR(ret);
-    vdnp->vmt->release((void *)vdnp);
+//    ret = open_dir_absolute(drvp, buf, &vdnp);
+//    VFS_BREAK_ON_ERROR(ret);
+//    vdnp->vmt->release((void *)vdnp);
 
     /* One-time allocation of the CWD buffer, this memory is allocated, once,
        only if the application uses a CWD, it is never released.*/
-    if (drvp->cwd_buffer == NULL) {
-      drvp->cwd_buffer = chCoreAlloc(VFS_CFG_PATHLEN_MAX + 1);
-      if (drvp->cwd_buffer == NULL) {
+    if (drvp->path_cwd == NULL) {
+      drvp->path_cwd = chCoreAlloc(VFS_CFG_PATHLEN_MAX + 1);
+      if (drvp->path_cwd == NULL) {
         ret = VFS_RET_ENOMEM;
         break;
       }
     }
 
     /* Copying the validated path into the CWD buffer.*/
-    strcpy(drvp->cwd_buffer, buf);
-    drvp->path_cwd = drvp->cwd_buffer + cwdoffset;
+    strcpy(drvp->path_cwd, buf);
 
   } while (false);
-
 
   /* Buffer returned.*/
   vfs_buffer_release(buf);
@@ -325,7 +344,7 @@ static msg_t drv_open_dir(void *instance,
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
-      if (err == VFS_RET_SUCCESS) {
+      if (!VFS_IS_ERROR(err)) {
         /* Delegating node creation to a registered driver.*/
         err = dp->vmt->open_dir((void *)dp,
                                 scanpath,
@@ -344,7 +363,7 @@ static msg_t drv_open_dir(void *instance,
           err = build_path(drvp, path, buf);
 
           /* Passing the combined path to the overlaid driver.*/
-          if (err == VFS_RET_SUCCESS) {
+          if (!VFS_IS_ERROR(err)) {
             err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
                                                     buf,
                                                     vdnpp);
@@ -385,7 +404,7 @@ static msg_t drv_open_file(void *instance,
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
-      if (err == VFS_RET_SUCCESS) {
+      if (!VFS_IS_ERROR(err)) {
         /* Delegating node creation to a registered driver.*/
         err = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
       }
@@ -402,7 +421,7 @@ static msg_t drv_open_file(void *instance,
           err = build_path(drvp, path, buf);
 
           /* Passing the combined path to the overlaid driver.*/
-          if (err == VFS_RET_SUCCESS) {
+          if (!VFS_IS_ERROR(err)) {
             err = drvp->overlaid_drv->vmt->open_file((void *)drvp->overlaid_drv,
                                                      path,
                                                      oflag,
@@ -516,7 +535,6 @@ vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
   vodp->overlaid_drv = overlaid_drv;
   vodp->path_prefix  = path_prefix;
   vodp->path_cwd     = NULL;
-  vodp->cwd_buffer   = NULL;
   vodp->next_driver  = 0U;
 
   return (vfs_driver_c *)vodp;

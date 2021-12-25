@@ -347,7 +347,7 @@ static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
     msg_t res;
 
     res = vfsChangeCurrentDirectory(argv[0]);
-    if (res != VFS_RET_SUCCESS) {
+    if (VFS_IS_ERROR(res)) {
       chprintf(chp, "failed (%d)" SHELL_NEWLINE_STR, res);
     }
   }
@@ -374,11 +374,11 @@ static void cmd_cwd(BaseSequentialStream *chp, int argc, char *argv[]) {
     }
 
     res = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
-    if (res == VFS_RET_SUCCESS) {
-      chprintf(chp, "%s" SHELL_NEWLINE_STR, buf);
+    if (VFS_IS_ERROR(res)) {
+      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
     }
     else {
-      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
+      chprintf(chp, "%s" SHELL_NEWLINE_STR, buf);
     }
   }
   while (false);
