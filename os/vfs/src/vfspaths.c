@@ -130,6 +130,37 @@ msg_t vfs_path_prepend(char *dst, const char *src, size_t size) {
 }
 
 /**
+ * @brief   Adds a separator to the end of a path if it is missing.
+ *
+ * @param[in] dst               The destination path.
+ * @param[in[ size              Destination buffer size.
+ * @return                      The operation status.
+ * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
+ */
+msg_t vfs_path_add_separator(char *dst, size_t size) {
+  size_t dn;
+
+  dn = strnlen(dst, size - 1U);
+
+  if (dn == 0U) {
+    dst[0] = '/';
+    dst[1] = '\0';
+  }
+  else {
+    if (!vfs_parse_is_separator(dst[dn - 1])) {
+      if (dn >= size - 1) {
+        return VFS_RET_ERANGE;
+      }
+
+      dst[dn]     = '/';
+      dst[dn + 1] = '\0';
+    }
+  }
+
+  return dn + 1;
+}
+
+/**
  * @brief   Normalizes an absolute path.
  * @note    The destination buffer can be the same of the source buffer.
  *

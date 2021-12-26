@@ -195,8 +195,14 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
   msg_t err;
 
   do {
-    /* Initial separator is expected, skipping.*/
-    const char *scanpath = path + 1;
+    const char *scanpath;
+
+    /* Making sure there is a final separator.*/
+    err = vfs_path_add_separator(path, VFS_CFG_PATHLEN_MAX + 1);
+    VFS_BREAK_ON_ERROR(err);
+
+    /* Initial separator is expected, skipping it.*/
+    scanpath = path + 1;
 
     /* If it is the root.*/
     if (*scanpath == '\0') {

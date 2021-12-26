@@ -354,13 +354,13 @@ static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
   while (false);
 }
 
-static void cmd_cwd(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
   char *buf = NULL;
 
   (void)argv;
 
   if (argc != 0) {
-    chprintf(chp, "Usage: cwd" SHELL_NEWLINE_STR);
+    chprintf(chp, "Usage: pwd" SHELL_NEWLINE_STR);
     return;
   }
 
@@ -419,7 +419,7 @@ const ShellCommand shell_local_commands[] = {
   {"tree", cmd_tree},
   {"cat", cmd_cat},
   {"cd", cmd_cd},
-  {"cwd", cmd_cwd},
+  {"pwd", cmd_pwd},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE
   {"test", cmd_test},

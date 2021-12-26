@@ -57,6 +57,7 @@ extern "C" {
 #endif
   msg_t vfs_path_append(char *dst, const char *src, size_t size);
   msg_t vfs_path_prepend(char *dst, const char *src, size_t size);
+  msg_t vfs_path_add_separator(char *dst, size_t size);
   msg_t vfs_path_normalize(char *dst, const char *src, size_t size);
 #ifdef __cplusplus
 }
