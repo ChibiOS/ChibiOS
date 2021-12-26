@@ -123,6 +123,8 @@ static vfs_overlay_driver_c root_overlay_driver;
 /* VFS streams driver object representing the /dev directory.*/
 static vfs_streams_driver_c dev_driver;
 
+/* VFS API will use this object as implicit root, defining this
+   symbol is expected.*/
 vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
 
 static NullStream nullstream;
@@ -271,31 +273,29 @@ int main(void) {
   /* Activates the card insertion monitor.*/
   tmr_init(&PORTAB_SDCD1);
 
-  /* Initializing an overlay VFS object overlaying a FatFS driver,
-     no need for names. Note that this virtual file system can only
-     access the "/rt" sub-directory on the physical FatFS volume.*/
+  /* Initializing an overlay VFS object overlaying a FatFS driver. Note
+     that this virtual file system can only access the "/rt" sub-directory
+     on the physical FatFS volume.*/
   drvOverlayObjectInit(&root_overlay_driver,
-                       drvFatFSObjectInit(&root_driver, ""),
-                       "/rt",
-                       "");
+                       drvFatFSObjectInit(&root_driver),
+                       "/rt");
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver,
      no need for a name.*/
-  drvOverlayObjectInit(&root_overlay_driver, NULL, NULL, "");
+  drvOverlayObjectInit(&root_overlay_driver, NULL, NULL);
 #endif
 
   /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
   msg = drvOverlayRegisterDriver(&root_overlay_driver,
-                                 drvStreamsObjectInit(&dev_driver,
-                                                      "dev",
-                                                      &streams[0]));
-  if (msg != VFS_RET_SUCCESS) {
+                                 drvStreamsObjectInit(&dev_driver, &streams[0]),
+                                 "dev");
+  if (VFS_IS_ERROR(msg)) {
     chSysHalt("VFS");
   }
 
   /* Opening a file for shell I/O.*/
   msg = vfsOpenFile("/dev/VSD1", VO_RDWR, &file);
-  if (msg != VFS_RET_SUCCESS) {
+  if (VFS_IS_ERROR(msg)) {
     chSysHalt("VFS");
   }
   shell_cfg1.sc_channel = vfsGetFileStream(file);
