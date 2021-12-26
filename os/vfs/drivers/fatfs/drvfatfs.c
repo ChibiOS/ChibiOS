@@ -498,17 +498,14 @@ void __drv_fatfs_init(void) {
 /**
  * @brief   VFS FatFS object initialization.
  *
- * @param[out] vffdp    pointer to a @p vfs_fatfs_driver_c structure
- * @param[in] rootname  name to be attributed to this object
+ * @param[out] vffdp    Pointer to a @p vfs_fatfs_driver_c structure.
  * @return              A pointer to this initialized object.
  *
  * @api
  */
-vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp,
-                                 const char *rootname) {
+vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp) {
 
   __base_object_objinit_impl(vffdp, &driver_vmt);
-  vffdp->rootname = rootname;
 
   return (vfs_driver_c *)vffdp;
 }
@@ -516,10 +513,10 @@ vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp,
 /**
  * @brief   Mounts a FatFS volume.
  *
- * @param[in] name      name to be assigned to the volume, see FatFS
+ * @param[in] name      Name to be assigned to the volume, see FatFS
  *                      @p f_mount() documentation because there are several
- *                      options
- * @param[in] mountnow  immediate mount option
+ *                      options.
+ * @param[in] mountnow  Immediate mount option.
  * @return              The operation result.
  *
  * @api
@@ -541,7 +538,7 @@ msg_t drvFatFSMount(const char *name, bool mountnow) {
 /**
  * @brief   Unmounts a FatFS volume.
  *
- * @param[in] ffdp      pointer to a @p vfs_fatfs_driver_c structure
+ * @param[in] name      Name of the volume to be unmounted.
  * @return              The operation result.
  *
  * @api

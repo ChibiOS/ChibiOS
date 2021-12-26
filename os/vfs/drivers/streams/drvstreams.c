@@ -315,19 +315,16 @@ void __drv_streams_init(void) {
 /**
  * @brief   VFS streams object initialization.
  *
- * @param[out] vsdp     pointer to a @p vfs_streams_driver_c structure
- * @param[in] rootname  name to be attributed to this object
- * @param[in] streams   pointer to an array of @p drv_streams_element_t objects
+ * @param[out] vsdp     Pointer to a @p vfs_streams_driver_c structure.
+ * @param[in] streams   Pointer to an array of @p drv_streams_element_t objects.
  * @return              A pointer to this initialized object.
  *
  * @api
  */
 vfs_driver_c *drvStreamsObjectInit(vfs_streams_driver_c *vsdp,
-                                   const char *rootname,
                                    const drv_streams_element_t *streams) {
 
   __base_object_objinit_impl(vsdp, &driver_vmt);
-  vsdp->rootname = rootname;
   vsdp->streams  = streams;
 
   return (vfs_driver_c *)vsdp;

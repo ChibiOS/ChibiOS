@@ -183,7 +183,6 @@ extern "C" {
 #endif
   void __drv_streams_init(void);
   vfs_driver_c *drvStreamsObjectInit(vfs_streams_driver_c *vsdp,
-                                     const char *rootname,
                                      const drv_streams_element_t *streams);
 #ifdef __cplusplus
 }

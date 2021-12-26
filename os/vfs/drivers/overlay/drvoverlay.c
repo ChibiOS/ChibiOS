@@ -95,21 +95,22 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
                           vfs_driver_c **vdpp) {
   char fname[VFS_CFG_NAMELEN_MAX + 1];
   msg_t err;
-  vfs_driver_c **pp;
 
   do {
+    unsigned i;
+
     err = vfs_parse_get_fname(pathp, fname, VFS_CFG_PATHLEN_MAX);
     VFS_BREAK_ON_ERROR(err);
 
     /* Searching among registered drivers.*/
-    pp = &odp->drivers[0];
-    while (pp < &odp->drivers[odp->next_driver]) {
-      if (strncmp(fname, (*pp)->rootname, VFS_CFG_NAMELEN_MAX) == 0) {
-        *vdpp = *pp;
+    i = 0U;
+    while (i < odp->next_driver) {
+      if (strncmp(fname, odp->names[i], VFS_CFG_NAMELEN_MAX) == 0) {
+        *vdpp = odp->drivers[i];
         return VFS_RET_SUCCESS;
       }
 
-      pp++;
+      i++;
     }
 
     err = VFS_RET_ENOENT;
@@ -436,7 +437,7 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
   if (odnp->index < drvp->next_driver) {
     nip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
     nip->size   = (vfs_offset_t)0;
-    strcpy(nip->name, drvp->drivers[odnp->index]->rootname);
+    strcpy(nip->name, drvp->names[odnp->index]);
 
     odnp->index++;
 
@@ -485,22 +486,19 @@ void __drv_overlay_init(void) {
 /**
  * @brief   VFS overlay object initialization.
  *
- * @param[out] vodp             pointer to a @p vfs_overlay_driver_c structure
- * @param[in] overlaid_drv      pointer to a driver to be overlaid or @p NULL
- * @param[in] path_prefix       prefix to be added to the paths or @p NULL, it
- *                              must be a normalized absolute path
- * @param[in] rootname          name to be attributed to this object
+ * @param[out] vodp             Pointer to a @p vfs_overlay_driver_c structure.
+ * @param[in] overlaid_drv      Pointer to a driver to be overlaid or @p NULL.
+ * @param[in] path_prefix       Prefix to be added to the paths or @p NULL, it
+ *                              must be a normalized absolute path.
  * @return                      A pointer to this initialized object.
  *
  * @api
  */
 vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
                                    vfs_driver_c *overlaid_drv,
-                                   const char *path_prefix,
-                                   const char *rootname) {
+                                   const char *path_prefix) {
 
   __base_object_objinit_impl(vodp, &driver_vmt);
-  vodp->rootname     = rootname;
   vodp->overlaid_drv = overlaid_drv;
   vodp->path_prefix  = path_prefix;
   vodp->path_cwd     = NULL;
@@ -512,20 +510,26 @@ vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
 /**
  * @brief   Registers a VFS driver as an overlay.
  *
- * @param[in] vodp              pointer to a @p vfs_overlay_driver_c structure
+ * @param[in] vodp              Pointer to a @p vfs_overlay_driver_c structure.
+ * @param[in] vdp               Pointer to a @p vfs_driver_c structure to
+ *                              be registered.
+ * @param[in] name              Name to be associated to the registered driver.
  * @return                      The operation result.
  *
  * @api
  */
 msg_t drvOverlayRegisterDriver(vfs_overlay_driver_c *vodp,
-                               vfs_driver_c *vdp) {
+                               vfs_driver_c *vdp,
+                               const char *name) {
   msg_t err;
 
   if (vodp->next_driver >= DRV_CFG_OVERLAY_DRV_MAX) {
     err = VFS_RET_ENOMEM;
   }
   else {
-    vodp->drivers[vodp->next_driver++] = vdp;
+    vodp->names[vodp->next_driver]   = name;
+    vodp->drivers[vodp->next_driver] = vdp;
+    vodp->next_driver++;
     err = VFS_RET_SUCCESS;
   }
 

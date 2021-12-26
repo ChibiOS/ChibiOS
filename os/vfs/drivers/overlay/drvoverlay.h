@@ -116,6 +116,7 @@ typedef struct vfs_overlay_dir_node {
   /* Next registration slot.*/                                              \
   unsigned                          next_driver;                            \
   /* Registration slots.*/                                                  \
+  const char                        *names[DRV_CFG_OVERLAY_DRV_MAX];        \
   vfs_driver_c                      *drivers[DRV_CFG_OVERLAY_DRV_MAX];
 
 /**
@@ -150,10 +151,10 @@ extern "C" {
   void __drv_overlay_init(void);
   vfs_driver_c *drvOverlayObjectInit(vfs_overlay_driver_c *vodp,
                                      vfs_driver_c *overlaid_drv,
-                                     const char *path_prefix,
-                                     const char *rootname);
+                                     const char *path_prefix);
   msg_t drvOverlayRegisterDriver(vfs_overlay_driver_c *vodp,
-                                 vfs_driver_c *vdp);
+                                 vfs_driver_c *vdp,
+                                 const char *name);
 #ifdef __cplusplus
 }
 #endif

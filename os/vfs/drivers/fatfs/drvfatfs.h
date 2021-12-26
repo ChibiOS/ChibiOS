@@ -170,8 +170,7 @@ typedef struct vfs_fatfs_driver {
 extern "C" {
 #endif
   void __drv_fatfs_init(void);
-  vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp,
-                                   const char *rootname);
+  vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp);
   msg_t drvFatFSMount(const char *name, bool mountnow);
   msg_t drvFatFSUnmount(const char *name);
 #ifdef __cplusplus

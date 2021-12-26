@@ -81,8 +81,7 @@
  * @brief   @p vfs_driver_c specific data.
  */
 #define __vfs_driver_data                                                   \
-  __base_object_data                                                        \
-  const char *rootname;
+  __base_object_data
 
 /**
  * @brief   @p vfs_driver_c virtual methods table.
