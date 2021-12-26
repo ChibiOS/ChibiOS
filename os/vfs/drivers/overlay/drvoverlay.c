@@ -130,35 +130,6 @@ static const char *get_current_directory(vfs_overlay_driver_c *drvp) {
   return cwd;
 }
 
-static msg_t build_path(vfs_overlay_driver_c *drvp,
-                        const char *path,
-                        char *buf) {
-
-  *buf = '\0';
-
-  /* Copying the prefix, if defined.*/
-  if (drvp->path_prefix != NULL) {
-    VFS_RETURN_ON_ERROR(vfs_path_append(buf,
-                                        drvp->path_prefix,
-                                        VFS_CFG_PATHLEN_MAX));
-  }
-
-  /* If it is a relative path then we need to consider the current directory.*/
-  if (!vfs_parse_is_separator(*path)) {
-
-    /* Adding the current directory, note, it is already a normalized
-       path, no need to re-normalize.*/
-    VFS_RETURN_ON_ERROR(vfs_path_append(buf,
-                                        get_current_directory(drvp),
-                                        VFS_CFG_PATHLEN_MAX));
-  }
-
-  /* Finally adding the path requested by the user.*/
-  VFS_RETURN_ON_ERROR(vfs_path_append(buf, path, VFS_CFG_PATHLEN_MAX));
-
-  return VFS_RET_SUCCESS;
-}
-
 static msg_t build_absolute_path(vfs_overlay_driver_c *drvp,
                                  char *buf,
                                  const char *path) {
@@ -277,6 +248,60 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
   return err;
 }
 
+static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
+                                char *path,
+                                int oflag,
+                                vfs_file_node_c **vfnpp) {
+  msg_t err;
+
+  do {
+    const char *scanpath;
+
+    /* Initial separator is expected, skipping it.*/
+    scanpath = path + 1;
+
+    /* If it is the root.*/
+    if (*scanpath == '\0') {
+
+      /* Always not found, root is not a file.*/
+      err = VFS_RET_ENOENT;
+    }
+    else {
+      vfs_driver_c *dp;
+
+      /* Searching for a match among registered overlays.*/
+      err = match_driver(drvp, &scanpath, &dp);
+      if (!VFS_IS_ERROR(err)) {
+        /* Delegating node creation to a registered driver.*/
+        err = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
+      }
+      else {
+        /* Is there an overlaid driver? if so we need to pass request
+           processing there.*/
+        if (drvp->overlaid_drv != NULL) {
+
+          /* Processing the prefix, if defined.*/
+          if (drvp->path_prefix != NULL) {
+            err = vfs_path_prepend(path,
+                                   drvp->path_prefix,
+                                   VFS_CFG_PATHLEN_MAX + 1);
+            VFS_BREAK_ON_ERROR(err);
+          }
+
+          /* Passing the combined path to the overlaid driver.*/
+          err = drvp->overlaid_drv->vmt->open_file((void *)drvp->overlaid_drv,
+                                                   path,
+                                                   oflag,
+                                                   vfnpp);
+        }
+      }
+    }
+  }
+  while (false);
+
+  return err;
+}
+
 static msg_t drv_set_cwd(void *instance, const char *path) {
   char *buf = NULL;
   msg_t ret;
@@ -360,57 +385,24 @@ static msg_t drv_open_file(void *instance,
                            const char *path,
                            int oflag,
                            vfs_file_node_c **vfnpp) {
-  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
-  const char *scanpath = path;
   msg_t err;
+  char *buf;
+
+  /* Taking a path buffer from the pool.*/
+  buf = vfs_buffer_take();
 
   do {
-    /* Expecting an absolute path.*/
-    err = vfs_parse_match_separator(&scanpath);
+    vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
+
+    /* Building the absolute path based on current directory.*/
+    err = build_absolute_path(drvp, buf, path);
     VFS_BREAK_ON_ERROR(err);
 
-    if (*scanpath == '\0') {
-      (void)instance;
+    err = open_absolute_file(drvp, buf, oflag, vfnpp);
+  } while (false);
 
-      /* Always not found, root is not a file.*/
-      err = VFS_RET_ENOENT;
-    }
-    else {
-      vfs_driver_c *dp;
-
-      /* Searching for a match among registered overlays.*/
-      err = match_driver(drvp, &scanpath, &dp);
-      if (!VFS_IS_ERROR(err)) {
-        /* Delegating node creation to a registered driver.*/
-        err = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
-      }
-      else {
-        /* Is there an overlaid driver? if so we need to pass request
-           processing there.*/
-        if (drvp->overlaid_drv != NULL) {
-          char *buf;
-
-          /* Taking a path buffer from the pool.*/
-          buf = vfs_buffer_take();
-
-          /* Building the final path for the overlaid driver.*/
-          err = build_path(drvp, path, buf);
-
-          /* Passing the combined path to the overlaid driver.*/
-          if (!VFS_IS_ERROR(err)) {
-            err = drvp->overlaid_drv->vmt->open_file((void *)drvp->overlaid_drv,
-                                                     path,
-                                                     oflag,
-                                                     vfnpp);
-          }
-
-          /* Buffer returned.*/
-          vfs_buffer_release(buf);
-        }
-      }
-    }
-  }
-  while (false);
+  /* Buffer returned.*/
+  vfs_buffer_release(buf);
 
   return err;
 }
