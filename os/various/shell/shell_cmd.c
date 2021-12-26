@@ -374,12 +374,9 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
 
     /* Opening the (un)specified directory.*/
     res = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
-    if (res == VFS_RET_SUCCESS) {
-      while (true) {
-        res = vfsReadDirectoryNext(dirp, nip);
-        if (res != VFS_RET_SUCCESS) {
-          break;
-        }
+    if (!VFS_IS_ERROR(res)) {
+
+      while (!VFS_IS_ERROR(vfsReadDirectoryNext(dirp, nip))) {
         chprintf(chp, "%s" SHELL_NEWLINE_STR, nip->name);
       }
 
