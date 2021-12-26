@@ -354,6 +354,48 @@ static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
   while (false);
 }
 
+static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
+  vfs_node_info_t *nip = NULL;
+
+  if (argc > 1) {
+    chprintf(chp, "Usage: ls [<dirpath>]" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    msg_t res;
+    vfs_directory_node_c *dirp;
+
+    nip = (vfs_node_info_t *)chHeapAlloc(NULL, 2048);
+    if (nip == NULL) {
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
+     break;
+    }
+
+    /* Opening the (un)specified directory.*/
+    res = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
+    if (res == VFS_RET_SUCCESS) {
+      while (true) {
+        res = vfsReadDirectoryNext(dirp, nip);
+        if (res != VFS_RET_SUCCESS) {
+          break;
+        }
+        chprintf(chp, "%s" SHELL_NEWLINE_STR, nip->name);
+      }
+
+      vfsCloseDirectory(dirp);
+    }
+    else {
+      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
+    }
+
+  } while (false);
+
+  if (nip != NULL) {
+    chHeapFree((void *)nip);
+  }
+}
+
 static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
   char *buf = NULL;
 
@@ -416,10 +458,11 @@ const ShellCommand shell_local_commands[] = {
   {"threads", cmd_threads},
 #endif
 #if SHELL_CMD_FILES_ENABLED == TRUE
-  {"tree", cmd_tree},
   {"cat", cmd_cat},
   {"cd", cmd_cd},
+  {"ls", cmd_ls},
   {"pwd", cmd_pwd},
+  {"tree", cmd_tree},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE
   {"test", cmd_test},
