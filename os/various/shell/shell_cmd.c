@@ -366,7 +366,7 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
     msg_t res;
     vfs_directory_node_c *dirp;
 
-    nip = (vfs_node_info_t *)chHeapAlloc(NULL, 2048);
+    nip = (vfs_node_info_t *)chHeapAlloc(NULL, sizeof (vfs_node_info_t));
     if (nip == NULL) {
       chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
      break;
