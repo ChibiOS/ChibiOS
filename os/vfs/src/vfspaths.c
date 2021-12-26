@@ -102,7 +102,36 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
 }
 
 /**
+ * @brief   Prepends a path to a path.
+ *
+ * @param[in] dst               The destination path.
+ * @param[in] src               The source path.
+ * @param[in[ size              Destination buffer size.
+ * @return                      The operation status.
+ * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
+ */
+msg_t vfs_path_prepend(char *dst, const char *src, size_t size) {
+  size_t dn, sn;
+
+  dn = strnlen(dst, size - 1U);
+  sn = strnlen(src, size - 1U);
+
+  if (dn + sn >= size) {
+    return VFS_RET_ERANGE;
+  }
+
+  /* Making space for the prefix, including the final zero in the move.*/
+  memmove(dst + sn, dst, dn + 1U);
+
+  /* Placing the prefix omitting the final zero.*/
+  memmove(dst, src, sn);
+
+  return (msg_t)sn;
+}
+
+/**
  * @brief   Normalizes an absolute path.
+ * @note    The destination buffer can be the same of the source buffer.
  *
  * @param[out] dst              The destination buffer.
  * @param[in] src               The source path.

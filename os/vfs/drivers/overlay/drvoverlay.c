@@ -189,22 +189,21 @@ static msg_t build_absolute_path(vfs_overlay_driver_c *drvp,
   return ret;
 }
 
-static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
-                               const char *path,
+static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
+                               char *path,
                                vfs_directory_node_c **vdnpp) {
-  const char *scanpath = path;
   msg_t err;
 
   do {
-    /* Expecting an absolute path.*/
-    err = vfs_parse_match_separator(&scanpath);
-    VFS_BREAK_ON_ERROR(err);
+    /* Initial separator is expected, skipping.*/
+    const char *scanpath = path + 1;
 
     /* If it is the root.*/
     if (*scanpath == '\0') {
+      vfs_overlay_dir_node_c *odnp;
 
       /* Creating a root directory node.*/
-      vfs_overlay_dir_node_c *odnp = chPoolAlloc(&vfs_overlay_driver_static.dir_nodes_pool);
+      odnp = chPoolAlloc(&vfs_overlay_driver_static.dir_nodes_pool);
       if (odnp != NULL) {
 
         /* Node object initialization.*/
@@ -220,9 +219,10 @@ static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
                                                    drvp->path_prefix == NULL ? "/" : drvp->path_prefix,
                                                    &odnp->overlaid_root);
         }
-
         *vdnpp = (vfs_directory_node_c *)odnp;
-        return VFS_RET_SUCCESS;
+
+        err = VFS_RET_SUCCESS;
+        break;
       }
     }
     else { /* Not the root.*/
@@ -237,14 +237,31 @@ static msg_t open_dir_absolute(vfs_overlay_driver_c *drvp,
                                 vdnpp);
       }
       else {
+        size_t path_offset;
+
         /* Is there an overlaid driver? if so we need to pass request
            processing there.*/
         if (drvp->overlaid_drv != NULL) {
+
+          /* Processing the prefix, if defined.*/
+          if (drvp->path_prefix != NULL) {
+            err = vfs_path_prepend(path,
+                                   drvp->path_prefix,
+                                   VFS_CFG_PATHLEN_MAX + 1);
+            VFS_BREAK_ON_ERROR(err);
+            path_offset = (size_t)err;
+          }
+          else {
+            path_offset = 0U;
+          }
 
           /* Passing the combined path to the overlaid driver.*/
           err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
                                                   path,
                                                   vdnpp);
+          VFS_BREAK_ON_ERROR(err);
+
+          err = (msg_t)path_offset;
         }
       }
     }
@@ -261,6 +278,7 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
     vfs_directory_node_c *vdnp;
+    size_t path_offset;
 
     /* Taking a path buffer from the pool.*/
     buf = vfs_buffer_take();
@@ -269,10 +287,11 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
     VFS_BREAK_ON_ERROR(ret);
 
     /* Trying to access the directory in order to validate the
-       combined path.*/
-//    ret = open_dir_absolute(drvp, buf, &vdnp);
-//    VFS_BREAK_ON_ERROR(ret);
-//    vdnp->vmt->release((void *)vdnp);
+       combined path. Note, it can modify the path in the buffer.*/
+    ret = open_absolute_dir(drvp, buf, &vdnp);
+    VFS_BREAK_ON_ERROR(ret);
+    vdnp->vmt->release((void *)vdnp);
+    path_offset = (size_t)ret;
 
     /* One-time allocation of the CWD buffer, this memory is allocated, once,
        only if the application uses a CWD, it is never released.*/
@@ -285,7 +304,7 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
     }
 
     /* Copying the validated path into the CWD buffer.*/
-    strcpy(drvp->path_cwd, buf);
+    strcpy(drvp->path_cwd, buf + path_offset);
 
   } while (false);
 
@@ -305,77 +324,28 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp) {
-  vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
-  const char *scanpath = path;
   msg_t err;
+  char *buf;
+
+  /* Taking a path buffer from the pool.*/
+  buf = vfs_buffer_take();
 
   do {
-    /* Expecting an absolute path.*/
-    err = vfs_parse_match_separator(&scanpath);
+    vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
+
+    /* Building the absolute path based on current directory.*/
+    err = build_absolute_path(drvp, buf, path);
     VFS_BREAK_ON_ERROR(err);
 
-    /* If it is the root.*/
-    if (*scanpath == '\0') {
+    err = open_absolute_dir(drvp, buf, vdnpp);
+    VFS_BREAK_ON_ERROR(err);
 
-      /* Creating a root directory node.*/
-      vfs_overlay_dir_node_c *odnp = chPoolAlloc(&vfs_overlay_driver_static.dir_nodes_pool);
-      if (odnp != NULL) {
+    /* Required because the offset returned by open_absolute_dir().*/
+    err = VFS_RET_SUCCESS;
+  } while (false);
 
-        /* Node object initialization.*/
-        __referenced_object_objinit_impl(odnp, &dir_node_vmt);
-        odnp->driver        = (vfs_driver_c *)instance;
-        odnp->index         = 0U;
-        odnp->overlaid_root = NULL;
-
-        /* Trying to obtain a root node from the overlaid driver, it
-           could fail, in that case the pointer stays at NULL.*/
-        if (drvp->overlaid_drv != NULL) {
-          (void) drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
-                                                   drvp->path_prefix == NULL ? "/" : drvp->path_prefix,
-                                                   &odnp->overlaid_root);
-        }
-
-        *vdnpp = (vfs_directory_node_c *)odnp;
-        return VFS_RET_SUCCESS;
-      }
-    }
-    else { /* Not the root.*/
-      vfs_driver_c *dp;
-
-      /* Searching for a match among registered overlays.*/
-      err = match_driver(drvp, &scanpath, &dp);
-      if (!VFS_IS_ERROR(err)) {
-        /* Delegating node creation to a registered driver.*/
-        err = dp->vmt->open_dir((void *)dp,
-                                scanpath,
-                                vdnpp);
-      }
-      else {
-        /* Is there an overlaid driver? if so we need to pass request
-           processing there.*/
-        if (drvp->overlaid_drv != NULL) {
-          char *buf;
-
-          /* Taking a path buffer from the pool.*/
-          buf = vfs_buffer_take();
-
-          /* Building the final path for the overlaid driver.*/
-          err = build_path(drvp, path, buf);
-
-          /* Passing the combined path to the overlaid driver.*/
-          if (!VFS_IS_ERROR(err)) {
-            err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
-                                                    buf,
-                                                    vdnpp);
-          }
-
-          /* Buffer returned.*/
-          vfs_buffer_release(buf);
-        }
-      }
-    }
-  }
-  while (false);
+  /* Buffer returned.*/
+  vfs_buffer_release(buf);
 
   return err;
 }
@@ -519,7 +489,8 @@ void __drv_overlay_init(void) {
  *
  * @param[out] vodp             pointer to a @p vfs_overlay_driver_c structure
  * @param[in] overlaid_drv      pointer to a driver to be overlaid or @p NULL
- * @param[in] path_prefix       prefix to be added to the paths or @p NULL
+ * @param[in] path_prefix       prefix to be added to the paths or @p NULL, it
+ *                              must be a normalized absolute path
  * @param[in] rootname          name to be attributed to this object
  * @return                      A pointer to this initialized object.
  *
