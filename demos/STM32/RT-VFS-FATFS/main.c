@@ -280,8 +280,7 @@ int main(void) {
                        drvFatFSObjectInit(&root_driver),
                        "/rt");
 #else
-  /* Initializing an overlay VFS object as a root, no overlaid driver,
-     no need for a name.*/
+  /* Initializing an overlay VFS object as a root, no overlaid driver.*/
   drvOverlayObjectInit(&root_overlay_driver, NULL, NULL);
 #endif
 
