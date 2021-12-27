@@ -134,9 +134,9 @@ extern "C" {
                          vfs_directory_node_c **vdnpp);
   void vfsCloseDirectory(vfs_directory_node_c *vdnp);
   msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
-                              vfs_node_info_t *nip);
+                              vfs_direntry_info_t *dip);
   msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
-                             vfs_node_info_t *nip);
+                             vfs_direntry_info_t *dip);
   msg_t vfsOpenFile(const char *name,
                     unsigned mode,
                     vfs_file_node_c **vfnpp);
@@ -145,7 +145,7 @@ extern "C" {
   ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n);
   msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp);
-  vfs_offset_t vfsGetFileSize(vfs_file_node_c *vfnp);
+  msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_node_stat_t *nsp);
   BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp);
 #ifdef __cplusplus
 }

@@ -71,9 +71,8 @@ typedef uint32_t vfs_nodeattr_t;
 
 /**
  * @brief   Type of a node information structure.
- * @todo    Add attributes, permissions etc.
  */
-typedef struct vfs_node_info {
+typedef struct vfs_direntry_info {
   /**
    * @brief   Size of the node.
    */
@@ -86,7 +85,22 @@ typedef struct vfs_node_info {
    * @brief   Name of the node.
    */
   char                  name[VFS_CFG_NAMELEN_MAX + 1];
-} vfs_node_info_t;
+} vfs_direntry_info_t;
+
+/**
+ * @brief   Type of a node information structure.
+ * @todo    Add time, permissions etc.
+ */
+typedef struct vfs_node_stat {
+  /**
+   * @brief   Size of the node.
+   */
+  vfs_nodeattr_t        attr;
+  /**
+   * @brief   Size of the node.
+   */
+  vfs_offset_t          size;
+} vfs_node_stat_t;
 
 /**
  * @brief   Type of a generic VFS node class.
@@ -135,8 +149,8 @@ typedef struct vfs_directory_node vfs_directory_node_c;
  */
 #define __vfs_directory_node_methods                                        \
   __vfs_node_methods                                                        \
-  msg_t (*dir_first)(void *instance, vfs_node_info_t *nip);                 \
-  msg_t (*dir_next)(void *instance, vfs_node_info_t *nip);
+  msg_t (*dir_first)(void *instance, vfs_direntry_info_t *dip);             \
+  msg_t (*dir_next)(void *instance, vfs_direntry_info_t *dip);
 
 /**
  * @brief   @p vfs_directory_node_c specific data.
@@ -177,7 +191,9 @@ typedef struct vfs_file_node vfs_file_node_c;
   ssize_t (*file_write)(void *instance, const uint8_t *buf, size_t n);      \
   msg_t (*file_setpos)(void *instance, vfs_offset_t offset);                \
   vfs_offset_t (*file_getpos)(void *instance);                              \
-  vfs_offset_t (*file_getsize)(void *instance);
+  msg_t (*file_getstat)(void *instance, vfs_node_stat_t *nsp);
+
+//msg_t (*file_stat)(void *instance, vfs_node_stat_t *nsp);
 
 /**
  * @brief   @p vfs_file_node_c specific data.

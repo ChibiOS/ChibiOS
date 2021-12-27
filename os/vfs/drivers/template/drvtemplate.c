@@ -63,8 +63,8 @@ static const struct vfs_template_driver_vmt driver_vmt = {
 };
 
 static void node_dir_release(void *instance);
-static msg_t node_dir_first(void *instance, vfs_node_info_t *nip);
-static msg_t node_dir_next(void *instance, vfs_node_info_t *nip);
+static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
+static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
 
 static const struct vfs_template_dir_node_vmt dir_node_vmt = {
   .release      = node_dir_release,
@@ -78,7 +78,7 @@ static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset);
 static vfs_offset_t node_file_getpos(void *instance);
-static vfs_offset_t node_file_getsize(void *instance);
+static msg_t node_file_getstat(void *instance, vfs_node_stat_t *nsp);
 
 static const struct vfs_template_file_node_vmt file_node_vmt = {
   .release          = node_file_release,
@@ -87,7 +87,7 @@ static const struct vfs_template_file_node_vmt file_node_vmt = {
   .file_write       = node_file_write,
   .file_setpos      = node_file_setpos,
   .file_getpos      = node_file_getpos,
-  .file_getsize     = node_file_getsize
+  .file_getstat     = node_file_getstat
 };
 
 static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n);
@@ -210,26 +210,26 @@ static void node_dir_release(void *instance) {
   }
 }
 
-static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
+static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip) {
   vfs_template_dir_node_c *dnp = (vfs_template_dir_node_c *)instance;
   msg_t err = VFS_RET_SUCCESS;;
 
   (void)dnp;
 
   /* TODO rewind */
-  err = node_dir_next(instance, nip);
+  err = node_dir_next(instance, dip);
 
   return err;
 }
 
-static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
+static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
   msg_t err = VFS_RET_SUCCESS;
 
   do {
     vfs_template_dir_node_c *dnp = (vfs_template_dir_node_c *)instance;
 
     (void)dnp;
-    (void)nip;
+    (void)dip;
   }
   while (false);
 
@@ -289,12 +289,12 @@ static vfs_offset_t node_file_getpos(void *instance) {
   return (vfs_offset_t)0;
 }
 
-static vfs_offset_t node_file_getsize(void *instance) {
-  vfs_template_file_node_c *fnp = (vfs_template_file_node_c *)instance;
+static msg_t node_file_getstat(void *instance, vfs_node_stat_t *nsp) {
 
-  (void)fnp;
+  (void)instance;
+  (void)nsp;
 
-  return (vfs_offset_t)0;
+  return VFS_RET_ENOSYS;
 }
 
 static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {

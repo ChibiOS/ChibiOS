@@ -63,8 +63,8 @@ static const struct vfs_overlay_driver_vmt driver_vmt = {
 };
 
 static void node_dir_release(void *instance);
-static msg_t node_dir_first(void *instance, vfs_node_info_t *nip);
-static msg_t node_dir_next(void *instance, vfs_node_info_t *nip);
+static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
+static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
 
 static const struct vfs_overlay_dir_node_vmt dir_node_vmt = {
   .release      = node_dir_release,
@@ -422,22 +422,22 @@ static void node_dir_release(void *instance) {
   }
 }
 
-static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
+static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip) {
   vfs_overlay_dir_node_c *odnp = (vfs_overlay_dir_node_c *)instance;
 
   odnp->index = 0U;
 
-  return node_dir_next(instance, nip);
+  return node_dir_next(instance, dip);
 }
 
-static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
+static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
   vfs_overlay_dir_node_c *odnp = (vfs_overlay_dir_node_c *)instance;
   vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)odnp->driver;
 
   if (odnp->index < drvp->next_driver) {
-    nip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
-    nip->size   = (vfs_offset_t)0;
-    strcpy(nip->name, drvp->names[odnp->index]);
+    dip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
+    dip->size   = (vfs_offset_t)0;
+    strcpy(dip->name, drvp->names[odnp->index]);
 
     odnp->index++;
 
@@ -449,12 +449,12 @@ static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
       odnp->index++;
 
       return odnp->overlaid_root->vmt->dir_first((void *)odnp->overlaid_root,
-                                                 nip);
+                                                 dip);
     }
     if (odnp->index > drvp->next_driver) {
 
       return odnp->overlaid_root->vmt->dir_next((void *)odnp->overlaid_root,
-                                                nip);
+                                                dip);
     }
   }
 

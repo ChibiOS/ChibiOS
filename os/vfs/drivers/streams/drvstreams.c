@@ -63,8 +63,8 @@ static const struct vfs_streams_driver_vmt driver_vmt = {
 };
 
 static void node_dir_release(void *instance);
-static msg_t node_dir_first(void *instance, vfs_node_info_t *nip);
-static msg_t node_dir_next(void *instance, vfs_node_info_t *nip);
+static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
+static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
 
 static const struct vfs_streams_dir_node_vmt dir_node_vmt = {
   .release      = node_dir_release,
@@ -78,16 +78,16 @@ static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset);
 static vfs_offset_t node_file_getpos(void *instance);
-static vfs_offset_t node_file_getsize(void *instance);
+static msg_t node_file_getstat(void *instance, vfs_node_stat_t *nsp);
 
 static const struct vfs_streams_file_node_vmt file_node_vmt = {
-  .release         = node_file_release,
-  .file_get_stream = node_file_get_stream,
-  .file_read       = node_file_read,
-  .file_write      = node_file_write,
-  .file_setpos     = node_file_setpos,
-  .file_getpos     = node_file_getpos,
-  .file_getsize    = node_file_getsize
+  .release          = node_file_release,
+  .file_get_stream  = node_file_get_stream,
+  .file_read        = node_file_read,
+  .file_write       = node_file_write,
+  .file_setpos      = node_file_setpos,
+  .file_getpos      = node_file_getpos,
+  .file_getstat     = node_file_getstat
 };
 
 /**
@@ -237,23 +237,23 @@ static void node_dir_release(void *instance) {
   }
 }
 
-static msg_t node_dir_first(void *instance, vfs_node_info_t *nip) {
+static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip) {
   vfs_streams_dir_node_c *sdnp = (vfs_streams_dir_node_c *)instance;
 
   sdnp->index = 0U;
 
-  return node_dir_next(instance, nip);
+  return node_dir_next(instance, dip);
 }
 
-static msg_t node_dir_next(void *instance, vfs_node_info_t *nip) {
+static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
   vfs_streams_dir_node_c *sdnp = (vfs_streams_dir_node_c *)instance;
   vfs_streams_driver_c *vsdp = (vfs_streams_driver_c *)sdnp->driver;
 
   if (vsdp->streams[sdnp->index].name != NULL) {
 
-    nip->attr = VFS_NODE_ATTR_ISSTREAM;
-    nip->size = (vfs_offset_t)0;
-    strcpy(nip->name, vsdp->streams[sdnp->index].name);
+    dip->attr = VFS_NODE_ATTR_ISSTREAM;
+    dip->size = (vfs_offset_t)0;
+    strcpy(dip->name, vsdp->streams[sdnp->index].name);
 
     sdnp->index++;
 
@@ -306,11 +306,12 @@ static vfs_offset_t node_file_getpos(void *instance) {
   return 0U;
 }
 
-static vfs_offset_t node_file_getsize(void *instance) {
+static msg_t node_file_getstat(void *instance, vfs_node_stat_t *nsp) {
 
   (void)instance;
+  (void)nsp;
 
-  return 0U;
+  return VFS_RET_ENOSYS;
 }
 
 /*===========================================================================*/

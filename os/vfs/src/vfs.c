@@ -134,34 +134,34 @@ void vfsCloseDirectory(vfs_directory_node_c *vdnp) {
  * @brief   First directory entry.
  *
  * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object.
- * @param[out] nip      Pointer to a @p vfs_node_info_t structure.
+ * @param[out] dip      Pointer to a @p vfs_direntry_info_t structure.
  * @return              The operation result.
  *
  * @api
  */
 msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
-                            vfs_node_info_t *nip) {
+                            vfs_direntry_info_t *dip) {
 
   chDbgAssert(vdnp->references > 0U, "zero count");
 
-  return vdnp->vmt->dir_first((void *)vdnp, nip);
+  return vdnp->vmt->dir_first((void *)vdnp, dip);
 }
 
 /**
  * @brief   Next directory entry.
  *
  * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object..
- * @param[out] nip      Pointer to a @p vfs_node_info_t structure
+ * @param[out] dip      Pointer to a @p vfs_direntry_info_t structure
  * @return              The operation result.
  *
  * @api
  */
 msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
-                           vfs_node_info_t *nip) {
+                           vfs_direntry_info_t *dip) {
 
   chDbgAssert(vdnp->references > 0U, "zero count");
 
-  return vdnp->vmt->dir_next((void *)vdnp, nip);
+  return vdnp->vmt->dir_next((void *)vdnp, dip);
 }
 
 /**
@@ -268,15 +268,16 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
  * @brief   Returns the current file size.
  *.
  * @param[in] vfnp      Pointer to the @p vfs_file_node_c object
- * @return              The current file size.
+ * @param[out] nsp      Pointer to a @p vfs_node_stat_t structure.
+ * @return              The operation result.
  *
  * @api
  */
-vfs_offset_t vfsGetFileSize(vfs_file_node_c *vfnp) {
+msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_node_stat_t *nsp) {
 
   chDbgAssert(vfnp->references > 0U, "zero count");
 
-  return vfnp->vmt->file_getsize((void *)vfnp);
+  return vfnp->vmt->file_getstat((void *)vfnp, nsp);
 }
 
 /**
