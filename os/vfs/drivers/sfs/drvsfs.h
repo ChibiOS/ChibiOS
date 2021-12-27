@@ -166,8 +166,7 @@ typedef struct vfs_sfs_driver {
 extern "C" {
 #endif
   void __drv_sfs_init(void);
-  vfs_driver_c *drvSFSObjectInit(vfs_sfs_driver_c *drvp,
-                                   const char *rootname);
+  vfs_driver_c *drvSFSObjectInit(vfs_sfs_driver_c *drvp);
 #ifdef __cplusplus
 }
 #endif

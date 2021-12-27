@@ -166,8 +166,7 @@ typedef struct vfs_template_driver {
 extern "C" {
 #endif
   void __drv_template_init(void);
-  vfs_driver_c *drvTEMPLATEObjectInit(vfs_template_driver_c *drvp,
-                                   const char *rootname);
+  vfs_driver_c *drvTEMPLATEObjectInit(vfs_template_driver_c *drvp);
 #ifdef __cplusplus
 }
 #endif
