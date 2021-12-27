@@ -187,7 +187,7 @@ msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
 
     /* Getting next element from the input path and copying it to
        the output path.*/
-    ret = vfs_parse_get_fname(&src, dst, size - n);
+    ret = vfs_parse_copy_fname(&src, dst, size - n);
     VFS_RETURN_ON_ERROR(ret);
 
     if ((size_t)ret == 0U) {
@@ -198,17 +198,15 @@ msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
         n--;
         *(dst - 1) = '\0';
       }
+      else {
+        *dst = '\0';
+      }
 
       return (msg_t)n;
     }
 
     /* Handling special cases of "." and "..".*/
-    if (strcmp(dst, ".") == 0) {
-      /* Single dot elements are discarded.*/
-      /* Consecutive input separators are consumed.*/
-      continue;
-    }
-    else if (strcmp(dst, "..") == 0) {
+    if (strncmp(dst, "..", 2U) == 0) {
       /* Double dot elements require to remove the last element from
          the output path.*/
       if (n > 1U) {
@@ -222,6 +220,11 @@ msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
           n--;
         } while(!vfs_parse_is_separator(*(dst - 1)));
       }
+      continue;
+    }
+    else if (strncmp(dst, ".", 1U) == 0) {
+      /* Single dot elements are discarded.*/
+      /* Consecutive input separators are consumed.*/
       continue;
     }
 

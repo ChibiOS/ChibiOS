@@ -92,13 +92,14 @@ msg_t vfs_parse_match_end(const char **pathp) {
 /**
  * @brief   Fetches the next path element.
  * @note    Does not consume the next separator, if any.
+ * @note    Does not add a final zero to the fetched fname.
  * @note    It can return an empty element, it has to be detected outside.
  *
  * @param[in, out]  pathp       Pointer to the path under parsing.
  * @param[out]      fname       Extracted file name.
  * @param[in]       n           Maximum size in @fname.
  */
-msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n) {
+msg_t vfs_parse_copy_fname(const char **pathp, char *fname, size_t n) {
   size_t size;
   const char *p;
 
@@ -113,7 +114,6 @@ msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n) {
       /* Advancing the path pointer past the file name in the path and
          closing the file name string.*/
       *pathp = p;
-      *fname = '\0';
       return (msg_t)size;
     }
 
@@ -131,6 +131,26 @@ msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n) {
     p++;
     size++;
   }
+}
+
+/**
+ * @brief   Fetches the next path element.
+ * @note    Does not consume the next separator, if any.
+ * @note    It can return an empty element, it has to be detected outside.
+ *
+ * @param[in, out]  pathp       Pointer to the path under parsing.
+ * @param[out]      fname       Extracted file name.
+ * @param[in]       n           Maximum size in @fname.
+ */
+msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n) {
+  msg_t ret;
+
+  ret = vfs_parse_copy_fname(pathp, fname, n);
+  VFS_RETURN_ON_ERROR(ret);
+
+  fname[ret] = '\0';
+
+  return ret;
 }
 
 /** @} */
