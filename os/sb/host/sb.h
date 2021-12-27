@@ -49,17 +49,17 @@
 /**
  * @brief   Safety Extensions version string.
  */
-#define CH_SB_VERSION           "2.1.0"
+#define CH_SB_VERSION           "3.0.0"
 
 /**
  * @brief   Safety Extensions version major number.
  */
-#define CH_SB_MAJOR             2
+#define CH_SB_MAJOR             3
 
 /**
  * @brief   Safety Extensions version minor number.
  */
-#define CH_SB_MINOR             1
+#define CH_SB_MINOR             0
 
 /**
  * @brief   Safety Extensions version patch number.
@@ -71,23 +71,28 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Number of memory regions for each sandbox.
- */
-#if !defined(SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
-#define SB_CFG_NUM_REGIONS                  2
-#endif
-
-/**
- * @brief   Enables Posix API in sandboxes using VFS.
- */
-#if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)
-#define SB_CFG_ENABLE_VFS                   TRUE
-#endif
+#include "sbconf.h"
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !defined(__CHIBIOS_SB_CONF__)
+#error "missing or wrong configuration file"
+#endif
+
+#if !defined(__CHIBIOS_SB_CONF_VER_3_0__)
+#error "obsolete or unknown configuration file"
+#endif
+
+/* Checks on configuration options.*/
+#if !defined(SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
+#error "SB_CFG_NUM_REGIONS not defined in sbconf.h"
+#endif
+
+#if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)
+#error "SB_CFG_ENABLE_VFS not defined in sbconf.h"
+#endif
 
 /* License checks.*/
 #if !defined(CH_CUSTOMER_LIC_SB) || !defined(CH_LICENSE_FEATURES)
