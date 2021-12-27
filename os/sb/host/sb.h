@@ -163,9 +163,9 @@ extern "C" {
 /*===========================================================================*/
 
 #include "sberr.h"
+#include "sbposix.h"
 #include "sbhost.h"
 #include "sbapi.h"
-#include "sbposix.h"
 
 #endif /* SBHOST_H */
 

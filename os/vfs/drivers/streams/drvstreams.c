@@ -296,7 +296,7 @@ static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
   (void)instance;
   (void)offset;
 
-  return VFS_RET_NOT_IMPLEMENTED;
+  return VFS_RET_ENOSYS;
 }
 
 static vfs_offset_t node_file_getpos(void *instance) {
