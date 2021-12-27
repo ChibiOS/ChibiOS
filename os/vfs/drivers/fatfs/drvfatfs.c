@@ -45,6 +45,8 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+static msg_t drv_set_cwd(void *instance, const char *path);
+static msg_t drv_get_cwd(void *instance, char *buf, size_t size);
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp);
@@ -54,6 +56,8 @@ static msg_t drv_open_file(void *instance,
                            vfs_file_node_c **vfnpp);
 
 static const struct vfs_fatfs_driver_vmt driver_vmt = {
+  .set_cwd      = drv_set_cwd,
+  .get_cwd      = drv_get_cwd,
   .open_dir     = drv_open_dir,
   .open_file    = drv_open_file
 };
@@ -201,6 +205,45 @@ static BYTE translate_oflag(int oflag) {
   }
 
   return (BYTE)0;
+}
+
+static msg_t drv_set_cwd(void *instance, const char *path) {
+#if FF_FS_RPATH >= 1
+
+  (void)instance;
+
+  return translate_error(f_chdir((const TCHAR *)path));
+#else
+
+  (void)instance;
+
+  if (strcmp(path, "/") != 0) {
+    return VFS_RET_ENOENT;
+  }
+
+  return VFS_RET_SUCCESS;
+#endif
+}
+
+static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
+#if FF_FS_RPATH >= 2
+
+  (void)instance;
+
+  return translate_error(f_getcwd((TCHAR *)buf, (UINT)size));
+#else
+
+  (void)instance;
+
+  if (size < 2) {
+    return VFS_RET_ERANGE;
+  }
+
+  buf[0] = '/';
+  buf[1] = '\0';
+
+  return VFS_RET_SUCCESS;
+#endif
 }
 
 static msg_t drv_open_dir(void *instance,
