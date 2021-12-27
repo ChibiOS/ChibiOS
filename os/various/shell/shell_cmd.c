@@ -234,7 +234,7 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
 #if (SHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
 static void scan_nodes(BaseSequentialStream *chp,
                        char *path,
-                       vfs_node_info_t *nip) {
+                       vfs_direntry_info_t *dip) {
   msg_t res;
   vfs_directory_node_c *dirp;
 
@@ -244,17 +244,17 @@ static void scan_nodes(BaseSequentialStream *chp,
     size_t i = strlen(path);
 
     while (true) {
-      char *fn = nip->name;
-      res = vfsReadDirectoryNext(dirp, nip);
+      char *fn = dip->name;
+      res = vfsReadDirectoryNext(dirp, dip);
       if (res != VFS_RET_SUCCESS) {
         break;
       }
 
-      fn = nip->name;
-      if (nip->attr & VFS_NODE_ATTR_ISDIR) {
+      fn = dip->name;
+      if (dip->attr & VFS_NODE_ATTR_ISDIR) {
         strcpy(path + i, fn);
         strcat(path + i, "/");
-        scan_nodes(chp, path, nip);
+        scan_nodes(chp, path, dip);
         path[i] = '\0';
       }
       else {
@@ -268,7 +268,7 @@ static void scan_nodes(BaseSequentialStream *chp,
 
 static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
   char *pathbuf = NULL;
-  vfs_node_info_t *nip = NULL;
+  vfs_direntry_info_t *dip = NULL;
 
   (void)argv;
 
@@ -279,14 +279,14 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   do {
     pathbuf = (char *)chHeapAlloc(NULL, 1024);
-    nip = (vfs_node_info_t *)chHeapAlloc(NULL, 1024);
-    if ((pathbuf == NULL) || (nip == NULL)) {
+    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, 1024);
+    if ((pathbuf == NULL) || (dip == NULL)) {
       chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
      break;
     }
 
     strcpy(pathbuf, "/");
-    scan_nodes(chp, pathbuf, nip);
+    scan_nodes(chp, pathbuf, dip);
   }
   while (false);
 
@@ -294,8 +294,8 @@ static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
     chHeapFree((void *)pathbuf);
   }
 
-  if (nip != NULL) {
-    chHeapFree((void *)nip);
+  if (dip != NULL) {
+    chHeapFree((void *)dip);
   }
 }
 
@@ -355,7 +355,7 @@ static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
-  vfs_node_info_t *nip = NULL;
+  vfs_direntry_info_t *dip = NULL;
 
   if (argc > 1) {
     chprintf(chp, "Usage: ls [<dirpath>]" SHELL_NEWLINE_STR);
@@ -366,8 +366,8 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
     msg_t res;
     vfs_directory_node_c *dirp;
 
-    nip = (vfs_node_info_t *)chHeapAlloc(NULL, sizeof (vfs_node_info_t));
-    if (nip == NULL) {
+    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
+    if (dip == NULL) {
       chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
      break;
     }
@@ -376,8 +376,8 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
     res = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
     if (!VFS_IS_ERROR(res)) {
 
-      while (!VFS_IS_ERROR(vfsReadDirectoryNext(dirp, nip))) {
-        chprintf(chp, "%s" SHELL_NEWLINE_STR, nip->name);
+      while (!VFS_IS_ERROR(vfsReadDirectoryNext(dirp, dip))) {
+        chprintf(chp, "%s" SHELL_NEWLINE_STR, dip->name);
       }
 
       vfsCloseDirectory(dirp);
@@ -388,8 +388,8 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   } while (false);
 
-  if (nip != NULL) {
-    chHeapFree((void *)nip);
+  if (dip != NULL) {
+    chHeapFree((void *)dip);
   }
 }
 
