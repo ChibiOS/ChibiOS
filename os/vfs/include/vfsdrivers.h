@@ -121,6 +121,75 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
+/**
+ * @brief   Changes the current VFS directory.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] path      Path of the new current directory.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvChangeCurrentDirectory(vfs_driver_c *drvp,
+                                                 const char *path) {
+
+  return drvp->vmt->set_cwd(drvp, path);
+}
+
+/**
+ * @brief   Returns the current VFS directory.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[out] buf      Buffer for the path string.
+ * @param[in] size      Size of the buffer.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvGetCurrentDirectory(vfs_driver_c *drvp,
+                                              char *buf, size_t size) {
+
+  return drvp->vmt->get_cwd(drvp, buf, size);
+}
+
+/**
+ * @brief   Opens a VFS directory.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] path      Absolute path of the directory to be opened.
+ * @param[out] vdnpp    Pointer to the pointer to the instantiated.
+ *                      @p vfs_directory_node_c object
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvOpenDirectory(vfs_driver_c *drvp,
+                                        const char *path,
+                                        vfs_directory_node_c **vdnpp) {
+
+  return drvp->vmt->open_dir(drvp, path, vdnpp);
+}
+
+/**
+ * @brief   Opens a VFS file.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] path      Path of the file to be opened.
+ * @param[in] mode      File open mode.
+ * @param[out] vdnpp    Pointer to the pointer to the instantiated
+ *                      @p vfs_file_node_c object.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvOpenFile(vfs_driver_c *drvp,
+                                   const char *path,
+                                   unsigned mode,
+                                   vfs_file_node_c **vfnpp) {
+
+  return drvp->vmt->open_file(drvp, path, mode, vfnpp);
+}
+
 #endif /* VFSDRIVERS_H */
 
 /** @} */

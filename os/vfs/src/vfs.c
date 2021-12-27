@@ -84,7 +84,7 @@ void vfsInit(void) {
  */
 msg_t vfsChangeCurrentDirectory(const char *path) {
 
-  return vfs_root->vmt->set_cwd(vfs_root, path);
+  return vfsDrvChangeCurrentDirectory(vfs_root, path);
 }
 
 /**
@@ -98,7 +98,7 @@ msg_t vfsChangeCurrentDirectory(const char *path) {
  */
 msg_t vfsGetCurrentDirectory(char *buf, size_t size) {
 
-  return vfs_root->vmt->get_cwd(vfs_root, buf, size);
+  return vfsDrvGetCurrentDirectory(vfs_root, buf, size);
 }
 
 /**
@@ -114,7 +114,7 @@ msg_t vfsGetCurrentDirectory(char *buf, size_t size) {
 msg_t vfsOpenDirectory(const char *path,
                        vfs_directory_node_c **vdnpp) {
 
-  return vfs_root->vmt->open_dir(vfs_root, path, vdnpp);
+  return vfsDrvOpenDirectory(vfs_root, path, vdnpp);
 }
 
 /**
@@ -179,7 +179,7 @@ msg_t vfsOpenFile(const char *path,
                   unsigned mode,
                   vfs_file_node_c **vfnpp) {
 
-  return vfs_root->vmt->open_file(vfs_root, path, mode, vfnpp);
+  return vfsDrvOpenFile(vfs_root, path, mode, vfnpp);
 }
 
 /**
