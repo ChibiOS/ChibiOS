@@ -65,7 +65,7 @@ bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
       return true;
     }
     rp++;
-  } while (rp < &sbcp->config->regions[SB_NUM_REGIONS]);
+  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
 
   return false;
 }
@@ -78,7 +78,7 @@ bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
       return rp->writeable;
     }
     rp++;
-  } while (rp < &sbcp->config->regions[SB_NUM_REGIONS]);
+  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
 
   return false;
 }

@@ -100,14 +100,14 @@ typedef struct {
    * @note    The following memory regions are used only for pointers
    *          validation, not for MPU setup.
    */
-  sb_memory_region_t            regions[SB_NUM_REGIONS];
-#if (PORT_SWITCHED_REGIONS_NUMBER == SB_NUM_REGIONS) || defined(__DOXYGEN__)
+  sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
+#if (PORT_SWITCHED_REGIONS_NUMBER == SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
   /**
    * @brief   MPU regions initialization values.
    * @note    Regions initialization values must be chosen to be
    *          consistent with the values in the "regions" field.
    */
-  mpureg_t                      mpuregs[SB_NUM_REGIONS];
+  mpureg_t                      mpuregs[SB_CFG_NUM_REGIONS];
 #endif
   /**
    * @brief   Sandbox STDIN stream.

@@ -74,8 +74,15 @@
 /**
  * @brief   Number of memory regions for each sandbox.
  */
-#if !defined(SB_NUM_REGIONS) || defined(__DOXYGEN__)
-#define SB_NUM_REGIONS                      2
+#if !defined(SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
+#define SB_CFG_NUM_REGIONS                  2
+#endif
+
+/**
+ * @brief   Enables Posix API in sandboxes using VFS.
+ */
+#if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)
+#define SB_CFG_ENABLE_VFS                   TRUE
 #endif
 
 /*===========================================================================*/
@@ -117,13 +124,13 @@
 #error "SandBox requires PORT_USE_SYSCALL == TRUE"
 #endif
 
-#if (SB_NUM_REGIONS < 1) || (SB_NUM_REGIONS > 4)
-#error "invalid SB_NUM_REGIONS value"
+#if (SB_CFG_NUM_REGIONS < 1) || (SB_CFG_NUM_REGIONS > 4)
+#error "invalid SB_CFG_NUM_REGIONS value"
 #endif
 
 #if (PORT_SWITCHED_REGIONS_NUMBER > 0) &&                                   \
-    (PORT_SWITCHED_REGIONS_NUMBER != SB_NUM_REGIONS)
-#error "SB_NUM_REGIONS not matching PORT_SWITCHED_REGIONS_NUMBER"
+    (PORT_SWITCHED_REGIONS_NUMBER != SB_CFG_NUM_REGIONS)
+#error "SB_CFG_NUM_REGIONS not matching PORT_SWITCHED_REGIONS_NUMBER"
 #endif
 
 /*===========================================================================*/
