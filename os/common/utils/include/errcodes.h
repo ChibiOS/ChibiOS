@@ -91,14 +91,14 @@
 #define CH_ERRORS_MASK              (msg_t)0xFF
 #define CH_ENCODE_ERROR(posixerr)   (~CH_ERRORS_MASK | (msg_t)(posixerr))
 #define CH_DECODE_ERROR(err)        ((msg_t)(err) & CH_ERRORS_MASK)
-#define CH_IS_ERROR(x)              (((msg_t)(x) & ~CH_ERRORS_MASK) == ~CH_ERRORS_MASK)
+#define CH_RET_IS_ERROR(x)          (((msg_t)(x) & ~CH_ERRORS_MASK) == ~CH_ERRORS_MASK)
 
 #define CH_BREAK_ON_ERROR(err)                                              \
-  if (CH_IS_ERROR(err)) break
+  if (CH_RET_IS_ERROR(err)) break
 
 #define CH_RETURN_ON_ERROR(err) do {                                        \
   msg_t __ret = (err);                                                      \
-  if (CH_IS_ERROR(__ret)) {                                                 \
+  if (CH_RET_IS_ERROR(__ret)) {                                             \
     return __ret;                                                           \
   }                                                                         \
 } while (false)

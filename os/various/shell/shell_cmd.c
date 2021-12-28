@@ -347,7 +347,7 @@ static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
     msg_t res;
 
     res = vfsChangeCurrentDirectory(argv[0]);
-    if (CH_IS_ERROR(res)) {
+    if (CH_RET_IS_ERROR(res)) {
       chprintf(chp, "failed (%d)" SHELL_NEWLINE_STR, res);
     }
   }
@@ -374,7 +374,7 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
 
     /* Opening the (un)specified directory.*/
     res = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
-    if (!CH_IS_ERROR(res)) {
+    if (!CH_RET_IS_ERROR(res)) {
 
       while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
         chprintf(chp, "%s" SHELL_NEWLINE_STR, dip->name);
@@ -413,7 +413,7 @@ static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
     }
 
     res = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
-    if (CH_IS_ERROR(res)) {
+    if (CH_RET_IS_ERROR(res)) {
       chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
     }
     else {

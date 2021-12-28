@@ -86,7 +86,7 @@ int _read_r(struct _reent *r, int file, char *ptr, int len) {
   }
 
   nr = vfsReadFile(fds[file], (uint8_t *)ptr, (size_t)len);
-  if (CH_IS_ERROR(nr)) {
+  if (CH_RET_IS_ERROR(nr)) {
     __errno_r(r) = CH_DECODE_ERROR(nr);
     return -1;
   }
@@ -106,7 +106,7 @@ int _write_r(struct _reent *r, int file, const char *ptr, int len) {
   }
 
   nw = vfsWriteFile(fds[file], (const uint8_t *)ptr, (size_t)len);
-  if (CH_IS_ERROR(nw)) {
+  if (CH_RET_IS_ERROR(nw)) {
     __errno_r(r) = CH_DECODE_ERROR(nw);
     return -1;
   }

@@ -28,7 +28,8 @@
 #ifndef SBUSER_H
 #define SBUSER_H
 
-#include "sberr.h"
+#include "errcodes.h"
+#include "sbsysc.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */

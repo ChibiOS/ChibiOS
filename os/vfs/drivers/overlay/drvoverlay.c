@@ -208,7 +208,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
-      if (!CH_IS_ERROR(err)) {
+      if (!CH_RET_IS_ERROR(err)) {
         /* Delegating node creation to a registered driver.*/
         err = dp->vmt->open_dir((void *)dp,
                                 scanpath,
@@ -272,7 +272,7 @@ static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
-      if (!CH_IS_ERROR(err)) {
+      if (!CH_RET_IS_ERROR(err)) {
         /* Delegating node creation to a registered driver.*/
         err = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
       }

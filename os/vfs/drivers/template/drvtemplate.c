@@ -142,10 +142,10 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
   (void)instance;
 
   if (strcmp(path, "/") != 0) {
-    return VFS_RET_ENOENT;
+    return CH_RET_ENOENT;
   }
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 }
 
 static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
@@ -153,19 +153,19 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
   (void)instance;
 
   if (size < 2) {
-    return VFS_RET_ERANGE;
+    return CH_RET_ERANGE;
   }
 
   buf[0] = '/';
   buf[1] = '\0';
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 }
 
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp) {
-  msg_t err = VFS_RET_SUCCESS;
+  msg_t err = CH_RET_SUCCESS;
 
   do {
     vfs_template_driver_c *drvp = (vfs_template_driver_c *)instance;
@@ -184,14 +184,14 @@ static msg_t drv_open_file(void *instance,
                            const char *path,
                            int flags,
                            vfs_file_node_c **vfnpp) {
-  msg_t err = VFS_RET_SUCCESS;
+  msg_t err = CH_RET_SUCCESS;
 
   do {
     vfs_template_driver_c *drvp = (vfs_template_driver_c *)instance;
 
     (void)drvp;
     (void)path;
-    (void)oflag;
+    (void)flags;
     (void)vfnpp;
 
   }
@@ -212,7 +212,7 @@ static void node_dir_release(void *instance) {
 
 static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip) {
   vfs_template_dir_node_c *dnp = (vfs_template_dir_node_c *)instance;
-  msg_t err = VFS_RET_SUCCESS;;
+  msg_t err = CH_RET_SUCCESS;;
 
   (void)dnp;
 
@@ -223,7 +223,7 @@ static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip) {
 }
 
 static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
-  msg_t err = VFS_RET_SUCCESS;
+  msg_t err = CH_RET_SUCCESS;
 
   do {
     vfs_template_dir_node_c *dnp = (vfs_template_dir_node_c *)instance;
@@ -278,7 +278,7 @@ static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
   (void)fnp;
   (void)offset;
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 }
 
 static vfs_offset_t node_file_getpos(void *instance) {
@@ -294,7 +294,7 @@ static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp) {
   (void)instance;
   (void)fsp;
 
-  return VFS_RET_ENOSYS;
+  return CH_RET_ENOSYS;
 }
 
 static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
@@ -303,7 +303,7 @@ static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
   msg_t msg;
 
   msg = fnp->vmt->file_write((void *)fnp, bp, n);
-  if (msg < VFS_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return (size_t)0;
   }
@@ -317,7 +317,7 @@ static size_t file_stream_read(void *instance, uint8_t *bp, size_t n) {
   msg_t msg;
 
   msg = fnp->vmt->file_read((void *)fnp, bp, n);
-  if (msg < VFS_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return (size_t)0;
   }
@@ -331,7 +331,7 @@ static msg_t file_stream_put(void *instance, uint8_t b) {
   msg_t msg;
 
   msg = fnp->vmt->file_write((void *)fnp, &b, (size_t)1);
-  if (msg < VFS_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return STM_TIMEOUT;
   }
@@ -346,7 +346,7 @@ static msg_t file_stream_get(void *instance) {
   uint8_t b;
 
   msg = fnp->vmt->file_read((void *)fnp, &b, (size_t)1);
-  if (msg < VFS_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return STM_TIMEOUT;
   }

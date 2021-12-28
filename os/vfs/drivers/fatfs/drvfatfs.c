@@ -456,7 +456,7 @@ static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
   msg_t msg;
 
   msg = fffnp->vmt->file_write((void *)fffnp, bp, n);
-  if (msg < CH_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return (size_t)0;
   }
@@ -470,7 +470,7 @@ static size_t file_stream_read(void *instance, uint8_t *bp, size_t n) {
   msg_t msg;
 
   msg = fffnp->vmt->file_read((void *)fffnp, bp, n);
-  if (msg < CH_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return (size_t)0;
   }
@@ -484,7 +484,7 @@ static msg_t file_stream_put(void *instance, uint8_t b) {
   msg_t msg;
 
   msg = fffnp->vmt->file_write((void *)fffnp, &b, (size_t)1);
-  if (msg < CH_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return STM_TIMEOUT;
   }
@@ -499,7 +499,7 @@ static msg_t file_stream_get(void *instance) {
   uint8_t b;
 
   msg = fffnp->vmt->file_read((void *)fffnp, &b, (size_t)1);
-  if (msg < CH_RET_SUCCESS) {
+  if (CH_RET_IS_ERROR(msg)) {
 
     return STM_TIMEOUT;
   }

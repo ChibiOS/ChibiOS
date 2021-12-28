@@ -32,7 +32,7 @@ int _close_r(struct _reent *r, int file) {
   uint32_t err;
 
   err = sbFileClose((uint32_t)file);
-  if (SB_ERR_ISERROR(err)) {
+  if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = MAKERR(err);
     return -1;
   }
@@ -45,7 +45,7 @@ int _write_r(struct _reent *r, int file, char * ptr, int len) {
   uint32_t err;
 
   err = sbFileWrite((uint32_t)file, (const uint8_t *)ptr, (size_t)len);
-  if (SB_ERR_ISERROR(err)) {
+  if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = MAKERR(err);
     return -1;
   }
@@ -58,7 +58,7 @@ int _read_r(struct _reent *r, int file, char * ptr, int len) {
   uint32_t err;
 
   err = sbFileRead((uint32_t)file, (uint8_t *)ptr, (size_t)len);
-  if (SB_ERR_ISERROR(err)) {
+  if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = MAKERR(err);
     return -1;
   }
@@ -71,7 +71,7 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
   uint32_t err;
 
   err = sbFileSeek((uint32_t)file, (uint32_t)ptr, (uint32_t)dir);
-  if (SB_ERR_ISERROR(err)) {
+  if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = MAKERR(err);
     return -1;
   }
