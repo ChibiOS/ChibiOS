@@ -18,15 +18,15 @@
 */
 
 /**
- * @file    vfs/include/vfserrors.h
- * @brief   VFS erors header file.
+ * @file    errcodes.h
+ * @brief   Errors handling header file.
  *
- * @addtogroup VFS_ERRORS
+ * @addtogroup UTILS_ERRCODES
  * @{
  */
 
-#ifndef VFSERRORS_H
-#define VFSERRORS_H
+#ifndef ERRCODES_H
+#define ERRCODES_H
 
 #include <errno.h>
 
@@ -35,37 +35,36 @@
 /*===========================================================================*/
 
 /**
- * @name    VFS error codes
+ * @name    Error codes
  * @{
  */
-#define VFS_RET_SUCCESS         (msg_t)MSG_OK       /* Success */
-#define VFS_RET_TIMEOUT         (msg_t)MSG_TIMEOUT  /* Timeout */
-#define VFS_RET_EOF             (msg_t)-3           /* End-of-file */
-#define VFS_RET_INNER_ERROR     (msg_t)-4           /* Unexpected condition */
+#define CH_RET_SUCCESS          (msg_t)MSG_OK               /* Success */
+#define CH_RET_TIMEOUT          (msg_t)MSG_TIMEOUT          /* Timeout */
+#define CH_RET_INNER_ERROR      (msg_t)-3                   /* Unexpected condition */
 /** @} */
 
 /**
- * @name    Error codes compatible with Posix
+ * @name    Extra error codes mapped on Posix errors
  * @{
  */
-#define VFS_RET_ENOENT          VFS_ERROR(ENOENT)   /* No such file or directory */
-#define VFS_RET_EIO             VFS_ERROR(EIO)      /* I/O error */
-#define VFS_RET_EBADF           VFS_ERROR(EBADF)    /* Bad file number */
-#define VFS_RET_ENOMEM          VFS_ERROR(ENOMEM)   /* Not enough space */
-#define VFS_RET_EACCES          VFS_ERROR(EACCES)   /* Permission denied */
-#define VFS_RET_EEXIST          VFS_ERROR(EEXIST)   /* File exists */
-#define VFS_RET_ENOTDIR         VFS_ERROR(ENOTDIR)  /* Not a directory */
-#define VFS_RET_EISDIR          VFS_ERROR(EISDIR)   /* Is a directory */
-#define VFS_RET_EINVAL          VFS_ERROR(EINVAL)   /* Invalid argument */
-#define VFS_RET_EMFILE          VFS_ERROR(EMFILE)   /* Too many open files in process */
-#define VFS_RET_ENFILE          VFS_ERROR(ENFILE)   /* Too many open files in system */
-#define VFS_RET_EFBIG           VFS_ERROR(EFBIG)    /* File too large */
-#define VFS_RET_ENOSPC          VFS_ERROR(ENOSPC)   /* No space left on device */
-#define VFS_RET_ESPIPE          VFS_ERROR(ESPIPE)   /* Illegal seek */
-#define VFS_RET_EROFS           VFS_ERROR(EROFS)    /* Read-only file system */
-#define VFS_RET_ERANGE          VFS_ERROR(ERANGE)   /* Result too large */
-#define VFS_RET_ENAMETOOLONG    VFS_ERROR(ENAMETOOLONG)/* File or path name too long */
-#define VFS_RET_ENOSYS          VFS_ERROR(ENOSYS)
+#define CH_RET_ENOENT           CH_ENCODE_ERROR(ENOENT)     /* No such file or directory */
+#define CH_RET_EIO              CH_ENCODE_ERROR(EIO)        /* I/O error */
+#define CH_RET_EBADF            CH_ENCODE_ERROR(EBADF)      /* Bad file number */
+#define CH_RET_ENOMEM           CH_ENCODE_ERROR(ENOMEM)     /* Not enough space */
+#define CH_RET_EACCES           CH_ENCODE_ERROR(EACCES)     /* Permission denied */
+#define CH_RET_EEXIST           CH_ENCODE_ERROR(EEXIST)     /* File exists */
+#define CH_RET_ENOTDIR          CH_ENCODE_ERROR(ENOTDIR)    /* Not a directory */
+#define CH_RET_EISDIR           CH_ENCODE_ERROR(EISDIR)     /* Is a directory */
+#define CH_RET_EINVAL           CH_ENCODE_ERROR(EINVAL)     /* Invalid argument */
+#define CH_RET_EMFILE           CH_ENCODE_ERROR(EMFILE)     /* Too many open files in process */
+#define CH_RET_ENFILE           CH_ENCODE_ERROR(ENFILE)     /* Too many open files in system */
+#define CH_RET_EFBIG            CH_ENCODE_ERROR(EFBIG)      /* File too large */
+#define CH_RET_ENOSPC           CH_ENCODE_ERROR(ENOSPC)     /* No space left on device */
+#define CH_RET_ESPIPE           CH_ENCODE_ERROR(ESPIPE)     /* Illegal seek */
+#define CH_RET_EROFS            CH_ENCODE_ERROR(EROFS)      /* Read-only file system */
+#define CH_RET_ERANGE           CH_ENCODE_ERROR(ERANGE)     /* Result too large */
+#define CH_RET_ENAMETOOLONG     CH_ENCODE_ERROR(ENAMETOOLONG)/* File or path name too long */
+#define CH_RET_ENOSYS           CH_ENCODE_ERROR(ENOSYS)     /* Syscall not implemented */
 /** @} */
 
 /*===========================================================================*/
@@ -88,16 +87,17 @@
  * @name    Errors handling macros
  * @{
  */
-#define VFS_ERRORS_MASK         (msg_t)((msg_t)-1 & ~(msg_t)0xFF)
-#define VFS_ERROR(posixerr)     (VFS_ERRORS_MASK | (msg_t)(posixerr))
-#define VFS_IS_ERROR(x)         (((msg_t)(x) & VFS_ERRORS_MASK) == VFS_ERRORS_MASK)
+#define CH_ERRORS_MASK              (msg_t)0xFF
+#define CH_ENCODE_ERROR(posixerr)   (~CH_ERRORS_MASK | (msg_t)(posixerr))
+#define CH_DECODE_ERROR(err)        ((msg_t)(err) & CH_ERRORS_MASK)
+#define CH_IS_ERROR(x)              (((msg_t)(x) & ~CH_ERRORS_MASK) == ~CH_ERRORS_MASK)
 
-#define VFS_BREAK_ON_ERROR(err)                                             \
-  if (VFS_IS_ERROR(err)) break
+#define CH_BREAK_ON_ERROR(err)                                              \
+  if (CH_IS_ERROR(err)) break
 
-#define VFS_RETURN_ON_ERROR(err) do {                                       \
+#define CH_RETURN_ON_ERROR(err) do {                                        \
   msg_t __ret = (err);                                                      \
-  if (VFS_IS_ERROR(__ret)) {                                                \
+  if (CH_IS_ERROR(__ret)) {                                                 \
     return __ret;                                                           \
   }                                                                         \
 } while (false)
@@ -119,6 +119,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* VFSERRORS_H */
+#endif /* ERRCODES_H */
 
 /** @} */

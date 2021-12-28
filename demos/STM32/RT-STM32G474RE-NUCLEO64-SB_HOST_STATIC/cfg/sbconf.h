@@ -45,6 +45,13 @@
 #define SB_CFG_ENABLE_VFS                   TRUE
 #endif
 
+/**
+ * @brief   Number of file descriptors for each sandbox.
+ */
+#if !defined(SB_CFG_FD_NUM) || defined(__DOXYGEN__)
+#define SB_CFG_FD_NUM                       12
+#endif
+
 #endif  /* SBCONF_H */
 
 /** @} */

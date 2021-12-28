@@ -28,13 +28,6 @@
 
 static vfs_file_node_c *fds[SYSCALL_MAX_FDS];
 
-static int translate_error(msg_t err) {
-
-  err = -err - 32;
-
-  return (int)err;
-}
-
 /***************************************************************************/
 
 __attribute__((used))
@@ -46,8 +39,8 @@ int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
   (void)mode;
 
   err = vfsOpenFile(p, oflag, &vfnp);
-  if (err < VFS_RET_SUCCESS) {
-    __errno_r(r) = translate_error(err);
+  if (err < CH_RET_SUCCESS) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
   }
 
@@ -61,7 +54,7 @@ int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
 
   vfsCloseFile(vfnp);
 
-  __errno_r(r) = translate_error(VFS_RET_EMFILE);
+  __errno_r(r) = EMFILE;
   return -1;
 }
 
@@ -71,7 +64,7 @@ __attribute__((used))
 int _close_r(struct _reent *r, int file) {
 
   if ((file < 0) || (file >= SYSCALL_MAX_FDS) || (fds[file] == NULL)) {
-    __errno_r(r) = translate_error(VFS_RET_EBADF);
+    __errno_r(r) = EBADF;
     return -1;
   }
 
@@ -88,13 +81,13 @@ int _read_r(struct _reent *r, int file, char *ptr, int len) {
   ssize_t nr;
 
   if ((file < 0) || (file >= SYSCALL_MAX_FDS) || (fds[file] == NULL)) {
-    __errno_r(r) = translate_error(VFS_RET_EBADF);
+    __errno_r(r) = EBADF;
     return -1;
   }
 
   nr = vfsReadFile(fds[file], (uint8_t *)ptr, (size_t)len);
-  if (nr < VFS_RET_SUCCESS) {
-    __errno_r(r) = translate_error((msg_t)nr);
+  if (CH_IS_ERROR(nr)) {
+    __errno_r(r) = CH_DECODE_ERROR(nr);
     return -1;
   }
 
@@ -108,13 +101,13 @@ int _write_r(struct _reent *r, int file, const char *ptr, int len) {
   ssize_t nw;
 
   if ((file < 0) || (file >= SYSCALL_MAX_FDS) || (fds[file] == NULL)) {
-    __errno_r(r) = translate_error(VFS_RET_EBADF);
+    __errno_r(r) = EBADF;
     return -1;
   }
 
   nw = vfsWriteFile(fds[file], (const uint8_t *)ptr, (size_t)len);
-  if (nw < VFS_RET_SUCCESS) {
-    __errno_r(r) = translate_error((msg_t)nw);
+  if (CH_IS_ERROR(nw)) {
+    __errno_r(r) = CH_DECODE_ERROR(nw);
     return -1;
   }
 

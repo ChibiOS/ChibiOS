@@ -70,6 +70,7 @@
 
 /* Dependencies.*/
 #include "ch.h"
+#include "errcodes.h"
 #include "oop_base_object.h"
 #include "oop_referenced_object.h"
 #include "oop_synchronized_object.h"
@@ -84,7 +85,6 @@
 #include "vfschecks.h"
 
 /* Base VFS headers.*/
-#include "vfserrors.h"
 #include "vfsparser.h"
 #include "vfspaths.h"
 #include "vfsbuffers.h"

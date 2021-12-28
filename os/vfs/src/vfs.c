@@ -136,6 +136,8 @@ void vfsCloseDirectory(vfs_directory_node_c *vdnp) {
  * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object.
  * @param[out] dip      Pointer to a @p vfs_direntry_info_t structure.
  * @return              The operation result.
+ * @retval 0            Zero entries read, end-of-directory condition.
+ * @retval 1            One directory entry read.
  *
  * @api
  */
@@ -153,6 +155,8 @@ msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
  * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object..
  * @param[out] dip      Pointer to a @p vfs_direntry_info_t structure
  * @return              The operation result.
+ * @retval 0            Zero entries read, end-of-directory condition.
+ * @retval 1            One directory entry read.
  *
  * @api
  */

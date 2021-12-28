@@ -61,10 +61,10 @@ msg_t vfs_parse_match_separator(const char **pathp) {
   const char *p = *pathp;
 
   if (!vfs_parse_is_separator(*p++)) {
-    err = VFS_RET_ENOENT;
+    err = CH_RET_ENOENT;
   }
   else {
-    err = VFS_RET_SUCCESS;
+    err = CH_RET_SUCCESS;
     *pathp = p;
   }
 
@@ -80,10 +80,10 @@ msg_t vfs_parse_match_end(const char **pathp) {
   msg_t err;
 
   if (**pathp != '\0') {
-    err = VFS_RET_ENOENT;
+    err = CH_RET_ENOENT;
   }
   else {
-    err = VFS_RET_SUCCESS;
+    err = CH_RET_SUCCESS;
   }
 
   return err;
@@ -119,12 +119,12 @@ msg_t vfs_parse_copy_fname(const char **pathp, char *fname, size_t n) {
 
     /* Valid characters for path names.*/
     if (!vfs_parse_is_filechar(c)) {
-      return VFS_RET_EINVAL;
+      return CH_RET_EINVAL;
     }
 
     /* Exceeding the maximum length.*/
     if (size > n) {
-      return VFS_RET_ENAMETOOLONG;
+      return CH_RET_ENAMETOOLONG;
     }
 
     *fname++ = c;
@@ -146,7 +146,7 @@ msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n) {
   msg_t ret;
 
   ret = vfs_parse_copy_fname(pathp, fname, n);
-  VFS_RETURN_ON_ERROR(ret);
+  CH_RETURN_ON_ERROR(ret);
 
   fname[ret] = '\0';
 

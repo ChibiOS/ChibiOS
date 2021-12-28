@@ -142,39 +142,39 @@ static msg_t translate_error(FRESULT res) {
 
   switch (res) {
   case FR_OK:
-    msg = VFS_RET_SUCCESS;
+    msg = CH_RET_SUCCESS;
     break;
   case FR_TIMEOUT:
-    msg = VFS_RET_TIMEOUT;
+    msg = CH_RET_TIMEOUT;
     break;
   case FR_NOT_ENOUGH_CORE:
-    msg = VFS_RET_ENOMEM;
+    msg = CH_RET_ENOMEM;
     break;
   case FR_TOO_MANY_OPEN_FILES:
-    msg = VFS_RET_ENFILE;
+    msg = CH_RET_ENFILE;
     break;
   case FR_DISK_ERR:
   case FR_NOT_READY:
   case FR_INVALID_DRIVE:
   case FR_NO_FILESYSTEM:
-    msg = VFS_RET_EIO;
+    msg = CH_RET_EIO;
     break;
   case FR_NO_FILE:
   case FR_NO_PATH:
-    msg = VFS_RET_ENOENT;
+    msg = CH_RET_ENOENT;
     break;
   case FR_INVALID_NAME:
-    msg = VFS_RET_ENAMETOOLONG;
+    msg = CH_RET_ENAMETOOLONG;
     break;
   case FR_DENIED:
   case FR_WRITE_PROTECTED:
-    msg = VFS_RET_EACCES;
+    msg = CH_RET_EACCES;
     break;
   case FR_EXIST:
-    msg = VFS_RET_EEXIST;
+    msg = CH_RET_EEXIST;
     break;
   default:
-    msg = VFS_RET_INNER_ERROR;
+    msg = CH_RET_INNER_ERROR;
     break;
   }
 
@@ -218,10 +218,10 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
   (void)instance;
 
   if (strcmp(path, "/") != 0) {
-    return VFS_RET_ENOENT;
+    return CH_RET_ENOENT;
   }
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 #endif
 }
 
@@ -236,13 +236,13 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
   (void)instance;
 
   if (size < 2) {
-    return VFS_RET_ERANGE;
+    return CH_RET_ERANGE;
   }
 
   buf[0] = '/';
   buf[1] = '\0';
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 #endif
 }
 
@@ -266,7 +266,7 @@ static msg_t drv_open_dir(void *instance,
       res = f_opendir(&ffdnp->dir, (TCHAR *)path);
       if (res == FR_OK) {
         *vdnpp = (vfs_directory_node_c *)ffdnp;
-        err = VFS_RET_SUCCESS;
+        err = CH_RET_SUCCESS;
         break;
       }
 
@@ -294,7 +294,7 @@ static msg_t drv_open_file(void *instance,
 
     mode = translate_oflag(flags);
     if (mode == (BYTE)0) {
-      err = VFS_RET_EINVAL;
+      err = CH_RET_EINVAL;
       break;
     }
 
@@ -309,7 +309,7 @@ static msg_t drv_open_file(void *instance,
       res = f_open(&fffnp->file, (TCHAR *)path, mode);
       if (res == FR_OK) {
         *vfnpp = (vfs_file_node_c *)fffnp;
-        err = VFS_RET_SUCCESS;
+        err = CH_RET_SUCCESS;
         break;
       }
 
@@ -363,14 +363,14 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
       res = f_readdir(&ffdnp->dir, fip);
       if (res == FR_OK) {
         if (fip->fname[0] == '\0') {
-          err = VFS_RET_EOF;
+          err = (msg_t)0;
         }
         else {
           dip->attr = (vfs_nodeattr_t)fip->fattrib;
           dip->size = (vfs_offset_t)fip->fsize;
           strncpy(dip->name, fip->fname, VFS_CFG_NAMELEN_MAX);
           dip->name[VFS_CFG_NAMELEN_MAX] = '\0';
-          err = VFS_RET_SUCCESS;
+          err = (msg_t)1;
         }
       }
       else {
@@ -447,7 +447,7 @@ static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp) {
   fsp->attr = (vfs_nodeattr_t)fffnp->file.obj.attr;
   fsp->size = (vfs_offset_t)fffnp->file.obj.objsize;
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 }
 
 static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
@@ -456,7 +456,7 @@ static size_t file_stream_write(void *instance, const uint8_t *bp, size_t n) {
   msg_t msg;
 
   msg = fffnp->vmt->file_write((void *)fffnp, bp, n);
-  if (msg < VFS_RET_SUCCESS) {
+  if (msg < CH_RET_SUCCESS) {
 
     return (size_t)0;
   }
@@ -470,7 +470,7 @@ static size_t file_stream_read(void *instance, uint8_t *bp, size_t n) {
   msg_t msg;
 
   msg = fffnp->vmt->file_read((void *)fffnp, bp, n);
-  if (msg < VFS_RET_SUCCESS) {
+  if (msg < CH_RET_SUCCESS) {
 
     return (size_t)0;
   }
@@ -484,7 +484,7 @@ static msg_t file_stream_put(void *instance, uint8_t b) {
   msg_t msg;
 
   msg = fffnp->vmt->file_write((void *)fffnp, &b, (size_t)1);
-  if (msg < VFS_RET_SUCCESS) {
+  if (msg < CH_RET_SUCCESS) {
 
     return STM_TIMEOUT;
   }
@@ -499,7 +499,7 @@ static msg_t file_stream_get(void *instance) {
   uint8_t b;
 
   msg = fffnp->vmt->file_read((void *)fffnp, &b, (size_t)1);
-  if (msg < VFS_RET_SUCCESS) {
+  if (msg < CH_RET_SUCCESS) {
 
     return STM_TIMEOUT;
   }
@@ -574,7 +574,7 @@ msg_t drvFatFSMount(const char *name, bool mountnow) {
   if (fs == NULL) {
     fs = chPoolAlloc(&vfs_fatfs_driver_static.fs_nodes_pool);
     if (fs == NULL) {
-      return VFS_RET_ENOMEM;
+      return CH_RET_ENOMEM;
     }
   }
 
@@ -595,7 +595,7 @@ msg_t drvFatFSUnmount(const char *name) {
 
   fs = f_getfs(name);
   if (fs == NULL) {
-    return VFS_RET_EINVAL;
+    return CH_RET_EINVAL;
   }
 
   res = f_unmount(name);

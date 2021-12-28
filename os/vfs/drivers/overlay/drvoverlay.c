@@ -100,20 +100,20 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
     unsigned i;
 
     err = vfs_parse_get_fname(pathp, fname, VFS_CFG_PATHLEN_MAX);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     /* Searching among registered drivers.*/
     i = 0U;
     while (i < odp->next_driver) {
       if (strncmp(fname, odp->names[i], VFS_CFG_NAMELEN_MAX) == 0) {
         *vdpp = odp->drivers[i];
-        return VFS_RET_SUCCESS;
+        return CH_RET_SUCCESS;
       }
 
       i++;
     }
 
-    err = VFS_RET_ENOENT;
+    err = CH_RET_ENOENT;
   }
   while (false);
 
@@ -146,12 +146,12 @@ static msg_t build_absolute_path(vfs_overlay_driver_c *drvp,
       ret = vfs_path_append(buf,
                             get_current_directory(drvp),
                             VFS_CFG_PATHLEN_MAX);
-      VFS_BREAK_ON_ERROR(ret);
+      CH_BREAK_ON_ERROR(ret);
     }
 
     /* Adding the specified path.*/
     ret = vfs_path_append(buf, path, VFS_CFG_PATHLEN_MAX);
-    VFS_BREAK_ON_ERROR(ret);
+    CH_BREAK_ON_ERROR(ret);
 
     /* Normalization of the absolute path.*/
     ret = vfs_path_normalize(buf, buf, VFS_CFG_PATHLEN_MAX);
@@ -171,7 +171,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
 
     /* Making sure there is a final separator.*/
     err = vfs_path_add_separator(path, VFS_CFG_PATHLEN_MAX + 1);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     /* Initial separator is expected, skipping it.*/
     scanpath = path + 1;
@@ -199,7 +199,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
         }
         *vdnpp = (vfs_directory_node_c *)odnp;
 
-        err = VFS_RET_SUCCESS;
+        err = CH_RET_SUCCESS;
         break;
       }
     }
@@ -208,7 +208,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
-      if (!VFS_IS_ERROR(err)) {
+      if (!CH_IS_ERROR(err)) {
         /* Delegating node creation to a registered driver.*/
         err = dp->vmt->open_dir((void *)dp,
                                 scanpath,
@@ -226,7 +226,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
             err = vfs_path_prepend(path,
                                    drvp->path_prefix,
                                    VFS_CFG_PATHLEN_MAX + 1);
-            VFS_BREAK_ON_ERROR(err);
+            CH_BREAK_ON_ERROR(err);
             path_offset = (size_t)err;
           }
           else {
@@ -237,7 +237,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
           err = drvp->overlaid_drv->vmt->open_dir((void *)drvp->overlaid_drv,
                                                   path,
                                                   vdnpp);
-          VFS_BREAK_ON_ERROR(err);
+          CH_BREAK_ON_ERROR(err);
 
           err = (msg_t)path_offset;
         }
@@ -265,14 +265,14 @@ static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
     if (*scanpath == '\0') {
 
       /* Always not found, root is not a file.*/
-      err = VFS_RET_ENOENT;
+      err = CH_RET_ENOENT;
     }
     else {
       vfs_driver_c *dp;
 
       /* Searching for a match among registered overlays.*/
       err = match_driver(drvp, &scanpath, &dp);
-      if (!VFS_IS_ERROR(err)) {
+      if (!CH_IS_ERROR(err)) {
         /* Delegating node creation to a registered driver.*/
         err = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
       }
@@ -286,7 +286,7 @@ static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
             err = vfs_path_prepend(path,
                                    drvp->path_prefix,
                                    VFS_CFG_PATHLEN_MAX + 1);
-            VFS_BREAK_ON_ERROR(err);
+            CH_BREAK_ON_ERROR(err);
           }
 
           /* Passing the combined path to the overlaid driver.*/
@@ -316,12 +316,12 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
     buf = vfs_buffer_take();
 
     ret = build_absolute_path(drvp, buf, path);
-    VFS_BREAK_ON_ERROR(ret);
+    CH_BREAK_ON_ERROR(ret);
 
     /* Trying to access the directory in order to validate the
        combined path. Note, it can modify the path in the buffer.*/
     ret = open_absolute_dir(drvp, buf, &vdnp);
-    VFS_BREAK_ON_ERROR(ret);
+    CH_BREAK_ON_ERROR(ret);
     vdnp->vmt->release((void *)vdnp);
     path_offset = (size_t)ret;
 
@@ -330,7 +330,7 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
     if (drvp->path_cwd == NULL) {
       drvp->path_cwd = chCoreAlloc(VFS_CFG_PATHLEN_MAX + 1);
       if (drvp->path_cwd == NULL) {
-        ret = VFS_RET_ENOMEM;
+        ret = CH_RET_ENOMEM;
         break;
       }
     }
@@ -367,13 +367,13 @@ static msg_t drv_open_dir(void *instance,
 
     /* Building the absolute path based on current directory.*/
     err = build_absolute_path(drvp, buf, path);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     err = open_absolute_dir(drvp, buf, vdnpp);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     /* Required because the offset returned by open_absolute_dir().*/
-    err = VFS_RET_SUCCESS;
+    err = CH_RET_SUCCESS;
   } while (false);
 
   /* Buffer returned.*/
@@ -397,7 +397,7 @@ static msg_t drv_open_file(void *instance,
 
     /* Building the absolute path based on current directory.*/
     err = build_absolute_path(drvp, buf, path);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     err = open_absolute_file(drvp, buf, flags, vfnpp);
   } while (false);
@@ -441,7 +441,7 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
 
     odnp->index++;
 
-    return VFS_RET_SUCCESS;
+    return (msg_t)1;
   }
   if (odnp->overlaid_root != NULL) {
     if (odnp->index == drvp->next_driver) {
@@ -458,7 +458,7 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
     }
   }
 
-  return VFS_RET_EOF;
+  return (msg_t)0;
 }
 
 /*===========================================================================*/
@@ -524,13 +524,13 @@ msg_t drvOverlayRegisterDriver(vfs_overlay_driver_c *vodp,
   msg_t err;
 
   if (vodp->next_driver >= DRV_CFG_OVERLAY_DRV_MAX) {
-    err = VFS_RET_ENOMEM;
+    err = CH_RET_ENOMEM;
   }
   else {
     vodp->names[vodp->next_driver]   = name;
     vodp->drivers[vodp->next_driver] = vdp;
     vodp->next_driver++;
-    err = VFS_RET_SUCCESS;
+    err = CH_RET_SUCCESS;
   }
 
   return err;

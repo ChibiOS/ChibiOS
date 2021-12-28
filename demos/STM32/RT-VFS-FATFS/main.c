@@ -177,7 +177,7 @@ static void InsertHandler(eventid_t id) {
 #endif
 
   err = drvFatFSMount("0:", 1);
-  if (err != VFS_RET_SUCCESS) {
+  if (CH_IS_ERROR(err)) {
 #if HAL_USE_SDC
     sdcDisconnect(&PORTAB_SDCD1);
 #else
@@ -288,13 +288,13 @@ int main(void) {
   msg = drvOverlayRegisterDriver(&root_overlay_driver,
                                  drvStreamsObjectInit(&dev_driver, &streams[0]),
                                  "dev");
-  if (VFS_IS_ERROR(msg)) {
+  if (CH_IS_ERROR(msg)) {
     chSysHalt("VFS");
   }
 
   /* Opening a file for shell I/O.*/
   msg = vfsOpenFile("/dev/VSD1", VO_RDWR, &file);
-  if (VFS_IS_ERROR(msg)) {
+  if (CH_IS_ERROR(msg)) {
     chSysHalt("VFS");
   }
   shell_cfg1.sc_channel = vfsGetFileStream(file);

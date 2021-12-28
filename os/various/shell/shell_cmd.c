@@ -240,13 +240,13 @@ static void scan_nodes(BaseSequentialStream *chp,
 
   chprintf(chp, "%s" SHELL_NEWLINE_STR, path);
   res = vfsOpenDirectory(path, &dirp);
-  if (res == VFS_RET_SUCCESS) {
+  if (res == CH_RET_SUCCESS) {
     size_t i = strlen(path);
 
     while (true) {
       char *fn = dip->name;
       res = vfsReadDirectoryNext(dirp, dip);
-      if (res != VFS_RET_SUCCESS) {
+      if (res < (msg_t)1) {
         break;
       }
 
@@ -347,7 +347,7 @@ static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
     msg_t res;
 
     res = vfsChangeCurrentDirectory(argv[0]);
-    if (VFS_IS_ERROR(res)) {
+    if (CH_IS_ERROR(res)) {
       chprintf(chp, "failed (%d)" SHELL_NEWLINE_STR, res);
     }
   }
@@ -374,9 +374,9 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
 
     /* Opening the (un)specified directory.*/
     res = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
-    if (!VFS_IS_ERROR(res)) {
+    if (!CH_IS_ERROR(res)) {
 
-      while (!VFS_IS_ERROR(vfsReadDirectoryNext(dirp, dip))) {
+      while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
         chprintf(chp, "%s" SHELL_NEWLINE_STR, dip->name);
       }
 
@@ -413,7 +413,7 @@ static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
     }
 
     res = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
-    if (VFS_IS_ERROR(res)) {
+    if (CH_IS_ERROR(res)) {
       chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
     }
     else {

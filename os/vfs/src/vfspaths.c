@@ -58,7 +58,7 @@
  * @param[in] src               The source path.
  * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
+ * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
  */
 msg_t vfs_path_append(char *dst, const char *src, size_t size) {
   size_t n;
@@ -66,7 +66,7 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
   /* Current path length.*/
   n = strnlen(dst, size);
   if (n >= size) {
-    return VFS_RET_ERANGE;
+    return CH_RET_ERANGE;
   }
 
   /* Making sure to start with a separator in place.*/
@@ -92,13 +92,13 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
     n++;
 
     if (n > size) {
-      return VFS_RET_ERANGE;
+      return CH_RET_ERANGE;
     }
   }
 
   *dst = '\0';
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 }
 
 /**
@@ -108,7 +108,7 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
  * @param[in] src               The source path.
  * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
+ * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
  */
 msg_t vfs_path_prepend(char *dst, const char *src, size_t size) {
   size_t dn, sn;
@@ -117,7 +117,7 @@ msg_t vfs_path_prepend(char *dst, const char *src, size_t size) {
   sn = strnlen(src, size - 1U);
 
   if (dn + sn >= size) {
-    return VFS_RET_ERANGE;
+    return CH_RET_ERANGE;
   }
 
   /* Making space for the prefix, including the final zero in the move.*/
@@ -135,7 +135,7 @@ msg_t vfs_path_prepend(char *dst, const char *src, size_t size) {
  * @param[in] dst               The destination path.
  * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
+ * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
  */
 msg_t vfs_path_add_separator(char *dst, size_t size) {
   size_t dn;
@@ -149,7 +149,7 @@ msg_t vfs_path_add_separator(char *dst, size_t size) {
   else {
     if (!vfs_parse_is_separator(dst[dn - 1])) {
       if (dn >= size - 1) {
-        return VFS_RET_ERANGE;
+        return CH_RET_ERANGE;
       }
 
       dst[dn]     = '/';
@@ -168,12 +168,12 @@ msg_t vfs_path_add_separator(char *dst, size_t size) {
  * @param[in] src               The source path.
  * @param[in[ size              Destination buffer size.
  * @return                      The operation status.
- * @retval VFS_RET_ERANGE       If the path size exceeded the buffer size.
+ * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
  */
 msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
   size_t n;
 
-  VFS_RETURN_ON_ERROR(vfs_parse_match_separator(&src));
+  CH_RETURN_ON_ERROR(vfs_parse_match_separator(&src));
 
   *dst++ = '/';
   n = 1U;
@@ -188,7 +188,7 @@ msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
     /* Getting next element from the input path and copying it to
        the output path.*/
     ret = vfs_parse_copy_fname(&src, dst, size - n);
-    VFS_RETURN_ON_ERROR(ret);
+    CH_RETURN_ON_ERROR(ret);
 
     if ((size_t)ret == 0U) {
 

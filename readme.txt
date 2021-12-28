@@ -74,6 +74,11 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a centralized errors handler under /os/common/utils. It will
+       replace those in HAL and SB and will be shared among multiple subsystems.
+- NEW: Added a new OOP model under /os/common/utils. It will replace the
+       one in HAL and will be shared among multiple subsystems.
+- NEW: Changed SB configuration options names to be prefixed with SB_CFG_.
 - NEW: Added a new CH_CFG_HARDENING_LEVEL option to RT.
 - NEW: Added a chXXXDispose() function to all objects in NIL.
 - NEW: Added a chXXXDispose() function to all objects in RT.

@@ -121,10 +121,10 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
   (void)instance;
 
   if (strcmp(path, "/") != 0) {
-    return VFS_RET_ENOENT;
+    return CH_RET_ENOENT;
   }
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 }
 
 static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
@@ -132,13 +132,13 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
   (void)instance;
 
   if (size < 2) {
-    return VFS_RET_ERANGE;
+    return CH_RET_ERANGE;
   }
 
   buf[0] = '/';
   buf[1] = '\0';
 
-  return VFS_RET_SUCCESS;
+  return CH_RET_SUCCESS;
 }
 
 static msg_t drv_open_dir(void *instance,
@@ -151,10 +151,10 @@ static msg_t drv_open_dir(void *instance,
     vfs_streams_dir_node_c *sdnp;
 
     err = vfs_parse_match_separator(&path);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     err = vfs_parse_match_end(&path);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     sdnp = chPoolAlloc(&vfs_streams_driver_static.dir_nodes_pool);
     if (sdnp != NULL) {
@@ -165,10 +165,10 @@ static msg_t drv_open_dir(void *instance,
       sdnp->index      = 0U;
 
       *vdnpp = (vfs_directory_node_c *)sdnp;
-      return VFS_RET_SUCCESS;
+      return CH_RET_SUCCESS;
     }
 
-    err = VFS_RET_ENOMEM;
+    err = CH_RET_ENOMEM;
   }
   while (false);
 
@@ -189,13 +189,13 @@ static msg_t drv_open_file(void *instance,
     char fname[VFS_CFG_NAMELEN_MAX + 1];
 
     err = vfs_parse_match_separator(&path);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     err = vfs_parse_get_fname(&path, fname, VFS_CFG_PATHLEN_MAX);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     err = vfs_parse_match_end(&path);
-    VFS_BREAK_ON_ERROR(err);
+    CH_BREAK_ON_ERROR(err);
 
     dsep = &drvp->streams[0];
     while (dsep->name != NULL) {
@@ -211,16 +211,16 @@ static msg_t drv_open_file(void *instance,
           sfnp->stream     = dsep->stream;
 
           *vfnpp = (vfs_file_node_c *)sfnp;
-          return VFS_RET_SUCCESS;
+          return CH_RET_SUCCESS;
         }
 
-        return VFS_RET_ENOMEM;
+        return CH_RET_ENOMEM;
       }
 
       dsep++;
     }
 
-    err = VFS_RET_ENOENT;
+    err = CH_RET_ENOENT;
   }
   while (false);
 
@@ -257,10 +257,10 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
 
     sdnp->index++;
 
-    return VFS_RET_SUCCESS;
+    return (msg_t)1;
   }
 
-  return VFS_RET_EOF;
+  return (msg_t)0;
 }
 
 static void node_file_release(void *instance) {
@@ -296,7 +296,7 @@ static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
   (void)instance;
   (void)offset;
 
-  return VFS_RET_ENOSYS;
+  return CH_RET_ENOSYS;
 }
 
 static vfs_offset_t node_file_getpos(void *instance) {
@@ -311,7 +311,7 @@ static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp) {
   (void)instance;
   (void)fsp;
 
-  return VFS_RET_ENOSYS;
+  return CH_RET_ENOSYS;
 }
 
 /*===========================================================================*/

@@ -98,6 +98,8 @@ DEPDIR   := ./.dep
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
+# Common files.
+include $(CHIBIOS)/os/common/utils/utils.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx/platform.mk
@@ -107,6 +109,9 @@ include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M-ALT/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/os/sb/host/compilers/GCC/sbhost.mk
+# VFS files (optional).
+include $(CHIBIOS)/os/vfs/vfs.mk
+#include $(CHIBIOS)/os/vfs/vfs_syscalls.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
