@@ -73,6 +73,9 @@ typedef struct {
 extern "C" {
 #endif
 #if CH_CFG_USE_MEMCHECKS == TRUE
+  bool chMemIsStringWithinX(const memory_area_t *map,
+                            const char *s,
+                            size_t n);
   bool chMemIsAreaContainedX(const memory_area_t areas[],
                              const void *base,
                              size_t size);
@@ -93,10 +96,9 @@ extern "C" {
 
 /**
  * @brief   Memory area check.
- * @details Checks if specified area belongs to the specified area.
+ * @details Checks if specified area belongs to the specified memory area.
  *
- * @param[in] map       pointer to an array of valid areas terminated with
- *                      a zero element
+ * @param[in] map       pointer to a @p memory_area_t structure
  * @param[in] p         pointer to the area to be checked
  * @param[in] size      size of the area to be checked
  * @return              The test result.

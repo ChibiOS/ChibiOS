@@ -94,6 +94,10 @@
 #error "SB_CFG_ENABLE_VFS not defined in sbconf.h"
 #endif
 
+#if !defined(SB_CFG_FD_NUM) || defined(__DOXYGEN__)
+#error "SB_CFG_FD_NUM not defined in sbconf.h"
+#endif
+
 /* License checks.*/
 #if !defined(CH_CUSTOMER_LIC_SB) || !defined(CH_LICENSE_FEATURES)
 #error "malformed chlicense.h"
@@ -162,10 +166,13 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#include "sberr.h"
+#include "hal.h"
+#include "errcodes.h"
+
+#include "sbsysc.h"
 #include "sbposix.h"
-#include "sbhost.h"
 #include "sbapi.h"
+#include "sbhost.h"
 
 #endif /* SBHOST_H */
 

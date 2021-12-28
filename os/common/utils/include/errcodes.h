@@ -52,6 +52,7 @@
 #define CH_RET_EBADF            CH_ENCODE_ERROR(EBADF)      /* Bad file number */
 #define CH_RET_ENOMEM           CH_ENCODE_ERROR(ENOMEM)     /* Not enough space */
 #define CH_RET_EACCES           CH_ENCODE_ERROR(EACCES)     /* Permission denied */
+#define CH_RET_EFAULT           CH_ENCODE_ERROR(EACCES)     /* Bad address */
 #define CH_RET_EEXIST           CH_ENCODE_ERROR(EEXIST)     /* File exists */
 #define CH_RET_ENOTDIR          CH_ENCODE_ERROR(ENOTDIR)    /* Not a directory */
 #define CH_RET_EISDIR           CH_ENCODE_ERROR(EISDIR)     /* Is a directory */

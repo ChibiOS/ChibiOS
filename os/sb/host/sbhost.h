@@ -28,9 +28,6 @@
 #ifndef SBHOST_H
 #define SBHOST_H
 
-#include "sberr.h"
-#include "sbapi.h"
-
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -151,7 +148,16 @@ typedef struct {
   thread_t                      *msg_tp;
 #endif
 #if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Sandbox events source.
+   */
   event_source_t                es;
+#endif
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   VFS bindings for Posix API.
+   */
+  sb_ioblock_t                  io;
 #endif
 } sb_class_t;
 
@@ -193,6 +199,7 @@ extern "C" {
   void port_syscall(struct port_extctx *ctxp, uint32_t n);
   bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size);
   bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size);
+  bool sb_is_valid_string_range(sb_class_t *sbcp, const char *s, size_t n);
   void sbObjectInit(sb_class_t *sbcp);
   void sbStart(sb_class_t *sbcp, const sb_config_t *config);
   thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,

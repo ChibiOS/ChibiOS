@@ -48,10 +48,127 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static msg_t create_descriptor(sb_ioblock_t *iop,
+                               vfs_node_c *np,
+                               uint8_t attributes) {
+  unsigned fd;
+
+  for (fd = 0U; fd < SB_CFG_FD_NUM; fd++) {
+    if (iop->vfs_nodes[fd] == NULL) {
+      iop->vfs_nodes[fd]  = np;
+      iop->attributes[fd] = attributes;
+
+      return (msg_t)fd;
+    }
+  }
+
+  return CH_RET_EMFILE;
+}
+
+static bool is_valid_descriptor(sb_ioblock_t *iop, int fd) {
+
+  return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] != NULL);
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+int sb_posix_open(const char *path, int flags) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  vfs_file_node_c *fnp = NULL;
+  msg_t ret;
+
+  if (!sb_is_valid_string_range(sbp, (void *)path, VFS_CFG_PATHLEN_MAX)) {
+    return CH_RET_EFAULT;
+  }
+
+  do {
+    ret = vfsDrvOpenFile(sbp->io.vfs_driver, path, (unsigned)flags, &fnp);
+    CH_BREAK_ON_ERROR(ret);
+
+    ret = create_descriptor(&sbp->io, (vfs_node_c *)fnp, 0);
+    CH_BREAK_ON_ERROR(ret);
+
+    return (int)ret;
+  } while (true);
+
+  if (fnp != NULL) {
+    vfsCloseFile(fnp);
+  }
+
+  return (int)ret;
+}
+
+int sb_posix_close(int fd) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (!is_valid_descriptor(&sbp->io, fd)) {
+    return CH_RET_EBADF;
+  }
+
+  if (sbp->io.attributes[fd] == 0) {
+    vfsCloseFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd]);
+  }
+  else {
+    vfsCloseDirectory((vfs_directory_node_c *)sbp->io.vfs_nodes[fd]);
+  }
+  sbp->io.vfs_nodes[fd] = NULL;
+
+  return CH_RET_SUCCESS;
+}
+
+ssize_t sb_posix_read(int fd, void *buf, size_t count) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (!sb_is_valid_read_range(sbp, (void *)buf, count)) {
+    return CH_RET_EFAULT;
+  }
+
+  if (!is_valid_descriptor(&sbp->io, fd)) {
+    return CH_RET_EBADF;
+  }
+
+  if (sbp->io.attributes[fd] != 0) {
+    return CH_RET_EISDIR;
+  }
+
+  return vfsReadFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);
+}
+
+ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (!sb_is_valid_write_range(sbp, (void *)buf, count)) {
+    return CH_RET_EFAULT;
+  }
+
+  if (!is_valid_descriptor(&sbp->io, fd)) {
+    return CH_RET_EBADF;
+  }
+
+  if (sbp->io.attributes[fd] != 0) {
+    return CH_RET_EISDIR;
+  }
+
+  return vfsWriteFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);
+}
+
+off_t sb_posix_lseek(int fd, off_t offset, int whence) {
+
+  (void)offset;
+  (void)whence;
+
+  if ((fd == 0U) || (fd == 1U) || (fd == 2U)) {
+
+    return CH_RET_ESPIPE;
+  }
+
+  return CH_RET_EBADF;
+}
+
+#else /* Fallbacks for when there is no VFS.*/
 uint32_t sb_posix_open(const char *pathname, uint32_t flags) {
 
   (void)pathname;
@@ -132,5 +249,6 @@ uint32_t sb_posix_lseek(uint32_t fd, uint32_t offset, uint32_t whence) {
 
   return SB_ERR_EBADFD;
 }
+#endif
 
 /** @} */

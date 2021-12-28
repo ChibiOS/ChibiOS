@@ -915,7 +915,7 @@ const port_syscall_t sb_syscalls[256] = {
 
 static void sb_undef_handler(struct port_extctx *ectxp) {
 
-  ectxp->r0 = SB_ERR_ENOSYS;
+  ectxp->r0 = CH_RET_ENOSYS;
 }
 
 static thread_t *sb_msg_wait_timeout_s(sysinterval_t timeout) {
@@ -979,7 +979,7 @@ void sb_api_stdio(struct port_extctx *ectxp) {
                                ectxp->r3);
     break;
   default:
-    ectxp->r0 = SB_ERR_ENOSYS;
+    ectxp->r0 = CH_RET_ENOSYS;
     break;
   }
 }
@@ -994,7 +994,7 @@ void sb_api_exit(struct port_extctx *ectxp) {
   chSysUnlock();
 
   /* Cannot get here.*/
-  ectxp->r0 = SB_ERR_ENOSYS;
+  ectxp->r0 = CH_RET_ENOSYS;
 }
 
 void sb_api_get_systime(struct port_extctx *ectxp) {
@@ -1014,14 +1014,14 @@ void sb_api_sleep(struct port_extctx *ectxp) {
     chThdSleep(interval);
   }
 
-  ectxp->r0 = SB_ERR_NOERROR;
+  ectxp->r0 = CH_RET_SUCCESS;
 }
 
 void sb_api_sleep_until_windowed(struct port_extctx *ectxp) {
 
   chThdSleepUntilWindowed((systime_t )ectxp->r0, (systime_t )ectxp->r1);
 
-  ectxp->r0 = SB_ERR_NOERROR;
+  ectxp->r0 = CH_RET_SUCCESS;
 }
 
 void sb_api_wait_message(struct port_extctx *ectxp) {
@@ -1038,12 +1038,12 @@ void sb_api_wait_message(struct port_extctx *ectxp) {
     thread_t *tp = sbcp->msg_tp;
     sbcp->msg_tp = NULL;
     chMsgReleaseS(tp, MSG_RESET);
-    ectxp->r0 = SB_ERR_EBUSY;
+    ectxp->r0 = MSG_RESET;
   }
 
   chSysUnlock();
 #else
-  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = CH_RET_ENOSYS;
 #endif
 }
 
@@ -1057,15 +1057,15 @@ void sb_api_reply_message(struct port_extctx *ectxp) {
     thread_t *tp = sbcp->msg_tp;
     sbcp->msg_tp = NULL;
     chMsgReleaseS(tp, (msg_t )ectxp->r0);
-    ectxp->r0 = SB_ERR_NOERROR;
+    ectxp->r0 = CH_RET_SUCCESS;
   }
   else {
-    ectxp->r0 = SB_ERR_EBUSY;
+    ectxp->r0 = MSG_RESET;
   }
 
   chSysUnlock();
 #else
-  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = CH_RET_ENOSYS;
 #endif
 }
 
@@ -1075,7 +1075,7 @@ void sb_api_wait_one_timeout(struct port_extctx *ectxp) {
   ectxp->r0 = (uint32_t)chEvtWaitOneTimeout((eventmask_t )ectxp->r0,
                                             (sysinterval_t )ectxp->r1);
 #else
-  ectxp->r0 =  SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 =  CH_RET_ENOSYS;
 #endif
 }
 
@@ -1085,7 +1085,7 @@ void sb_api_wait_any_timeout(struct port_extctx *ectxp) {
   ectxp->r0 = (uint32_t)chEvtWaitAnyTimeout((eventmask_t )ectxp->r0,
                                             (sysinterval_t )ectxp->r1);
 #else
-  ectxp->r0 =  SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 =  CH_RET_ENOSYS;
 #endif
 }
 
@@ -1095,7 +1095,7 @@ void sb_api_wait_all_timeout(struct port_extctx *ectxp) {
   ectxp->r0 = (uint32_t)chEvtWaitAllTimeout((eventmask_t )ectxp->r0,
                                             (sysinterval_t )ectxp->r1);
 #else
-  ectxp->r0 =  SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 =  CH_RET_ENOSYS;
 #endif
 }
 
@@ -1104,9 +1104,9 @@ void sb_api_broadcast_flags(struct port_extctx *ectxp) {
   sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   chEvtBroadcastFlags(&sbcp->es, (eventflags_t )ectxp->r0);
-  ectxp->r0 = SB_ERR_NOERROR;
+  ectxp->r0 = CH_RET_SUCCESS;
 #else
-  ectxp->r0 = SB_ERR_NOT_IMPLEMENTED;
+  ectxp->r0 = CH_RET_ENOSYS;
 #endif
 }
 

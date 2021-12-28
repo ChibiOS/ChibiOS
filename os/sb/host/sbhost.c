@@ -74,8 +74,21 @@ bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (chMemIsAreaContainedX(&rp->area, start, size)) {
+    if (chMemIsAreaWithinX(&rp->area, start, size)) {
       return rp->writeable;
+    }
+    rp++;
+  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
+
+  return false;
+}
+
+bool sb_is_valid_string_range(sb_class_t *sbcp, const char *s, size_t n) {
+  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+
+  do {
+    if (chMemIsAreaWithinX(&rp->area, s, n)) {
+      return true;
     }
     rp++;
   } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);

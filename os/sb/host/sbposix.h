@@ -28,6 +28,10 @@
 #ifndef SBPOSIX_H
 #define SBPOSIX_H
 
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+#include "vfs.h"
+#endif
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -44,6 +48,26 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a sandbox I/O structure.
+ */
+typedef struct {
+  /**
+   * @brief   VFS driver associated to the sandbox as root.
+   */
+  vfs_driver_c                  *vfs_driver;
+  /**
+   * @brief   VFS nodes associated to file descriptors.
+   */
+  vfs_node_c                    *vfs_nodes[SB_CFG_FD_NUM];
+  /**
+   * @brief   Extra attributes added to the VFS nodes.
+   */
+  uint8_t                       attributes[SB_CFG_FD_NUM];
+} sb_ioblock_t;
+#endif
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -55,11 +79,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  uint32_t sb_posix_open(const char *pathname, uint32_t flags);
-  uint32_t sb_posix_close(uint32_t fd);
-  uint32_t sb_posix_read(uint32_t fd, uint8_t *buf, size_t count);
-  uint32_t sb_posix_write(uint32_t fd, const uint8_t *buf, size_t count);
-  uint32_t sb_posix_lseek(uint32_t fd, uint32_t offset, uint32_t whence);
+  int sb_posix_open(const char *path, int flags);
+  int sb_posix_close(int fd);
+  ssize_t sb_posix_read(int fd, void *buf, size_t count);
+  ssize_t sb_posix_write(int fd, const void *buf, size_t count);
+  off_t sb_posix_lseek(int fd, off_t offset, int whence);
 #ifdef __cplusplus
 }
 #endif

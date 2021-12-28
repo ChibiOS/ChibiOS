@@ -77,6 +77,39 @@ CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
 /*===========================================================================*/
 
 /**
+ * @brief   String check.
+ * @details Checks if specified string is entirely contained in the specified
+ *          memory area.
+ *
+ * @param[in] map       pointer to a @p memory_area_t structure
+ * @param[in] s         pointer to the string to be checked
+ * @param[in] n         maximum expected size of the string
+ * @return              The test result.
+ * @retval false        if the string is entirely contained within one of the
+ *                      specified areas.
+ * @retval true         if the string check failed.
+ *
+ * @xclass
+ */
+bool chMemIsStringWithinX(const memory_area_t *map, const char *s, size_t n) {
+  const char *base = (const char *)map->base;
+  const char *end  = (const char *)base + map->size;
+
+  if (s >= base) {
+    while ((s < end) && (n > 0U)) {
+      if (*s == '\0') {
+        return true;
+      }
+
+      s++;
+      n--;
+    }
+  }
+
+  return false;
+}
+
+/**
  * @brief   Memory area check.
  * @details Checks if specified area belongs to one of the specified areas.
  *
