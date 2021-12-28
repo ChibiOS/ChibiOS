@@ -52,7 +52,7 @@ static msg_t drv_open_dir(void *instance,
                           vfs_directory_node_c **vdnpp);
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           int oflag,
+                           int flags,
                            vfs_file_node_c **vfnpp);
 
 static const struct vfs_overlay_driver_vmt driver_vmt = {
@@ -384,7 +384,7 @@ static msg_t drv_open_dir(void *instance,
 
 static msg_t drv_open_file(void *instance,
                            const char *path,
-                           int oflag,
+                           int flags,
                            vfs_file_node_c **vfnpp) {
   msg_t err;
   char *buf;
@@ -399,7 +399,7 @@ static msg_t drv_open_file(void *instance,
     err = build_absolute_path(drvp, buf, path);
     VFS_BREAK_ON_ERROR(err);
 
-    err = open_absolute_file(drvp, buf, oflag, vfnpp);
+    err = open_absolute_file(drvp, buf, flags, vfnpp);
   } while (false);
 
   /* Buffer returned.*/

@@ -74,7 +74,7 @@
                     vfs_directory_node_c **vdnpp);                          \
   msg_t (*open_file)(void *instance,                                        \
                      const char *path,                                      \
-                     int oflag,                                             \
+                     int flags,                                             \
                      vfs_file_node_c **vfnpp);
 
 /**
@@ -175,7 +175,7 @@ static inline msg_t vfsDrvOpenDirectory(vfs_driver_c *drvp,
  *
  * @param[in] drvp      Pointer to the @p vfs_driver_c object.
  * @param[in] path      Path of the file to be opened.
- * @param[in] mode      File open mode.
+ * @param[in] flags     File open flags.
  * @param[out] vdnpp    Pointer to the pointer to the instantiated
  *                      @p vfs_file_node_c object.
  * @return              The operation result.
@@ -184,10 +184,10 @@ static inline msg_t vfsDrvOpenDirectory(vfs_driver_c *drvp,
  */
 static inline msg_t vfsDrvOpenFile(vfs_driver_c *drvp,
                                    const char *path,
-                                   unsigned mode,
+                                   int flags,
                                    vfs_file_node_c **vfnpp) {
 
-  return drvp->vmt->open_file(drvp, path, mode, vfnpp);
+  return drvp->vmt->open_file(drvp, path, flags, vfnpp);
 }
 
 #endif /* VFSDRIVERS_H */

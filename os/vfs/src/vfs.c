@@ -168,7 +168,7 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
  * @brief   Opens a VFS file.
  *
  * @param[in] path      Path of the file to be opened.
- * @param[in] mode      File open mode.
+ * @param[in] flags     File open flags.
  * @param[out] vdnpp    Pointer to the pointer to the instantiated
  *                      @p vfs_file_node_c object.
  * @return              The operation result.
@@ -176,10 +176,10 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
  * @api
  */
 msg_t vfsOpenFile(const char *path,
-                  unsigned mode,
+                  int flags,
                   vfs_file_node_c **vfnpp) {
 
-  return vfsDrvOpenFile(vfs_root, path, mode, vfnpp);
+  return vfsDrvOpenFile(vfs_root, path, flags, vfnpp);
 }
 
 /**

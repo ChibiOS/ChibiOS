@@ -138,7 +138,7 @@ extern "C" {
   msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
                              vfs_direntry_info_t *dip);
   msg_t vfsOpenFile(const char *name,
-                    unsigned mode,
+                    int flags,
                     vfs_file_node_c **vfnpp);
   void vfsCloseFile(vfs_file_node_c *vfnp);
   ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n);
