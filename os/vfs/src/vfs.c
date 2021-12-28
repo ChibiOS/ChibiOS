@@ -268,16 +268,16 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
  * @brief   Returns the current file size.
  *.
  * @param[in] vfnp      Pointer to the @p vfs_file_node_c object
- * @param[out] nsp      Pointer to a @p vfs_node_stat_t structure.
+ * @param[out] fsp      Pointer to a @p vfs_file_stat_t structure.
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_node_stat_t *nsp) {
+msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_file_stat_t *fsp) {
 
   chDbgAssert(vfnp->references > 0U, "zero count");
 
-  return vfnp->vmt->file_getstat((void *)vfnp, nsp);
+  return vfnp->vmt->file_getstat((void *)vfnp, fsp);
 }
 
 /**

@@ -78,7 +78,7 @@ static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
 static msg_t node_file_setpos(void *instance, vfs_offset_t offset);
 static vfs_offset_t node_file_getpos(void *instance);
-static msg_t node_file_getstat(void *instance, vfs_node_stat_t *nsp);
+static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp);
 
 static const struct vfs_streams_file_node_vmt file_node_vmt = {
   .release          = node_file_release,
@@ -306,10 +306,10 @@ static vfs_offset_t node_file_getpos(void *instance) {
   return 0U;
 }
 
-static msg_t node_file_getstat(void *instance, vfs_node_stat_t *nsp) {
+static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp) {
 
   (void)instance;
-  (void)nsp;
+  (void)fsp;
 
   return VFS_RET_ENOSYS;
 }

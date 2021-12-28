@@ -145,7 +145,7 @@ extern "C" {
   ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n);
   msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp);
-  msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_node_stat_t *nsp);
+  msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_file_stat_t *fsp);
   BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp);
 #ifdef __cplusplus
 }

@@ -91,7 +91,7 @@ typedef struct vfs_direntry_info {
  * @brief   Type of a node information structure.
  * @todo    Add time, permissions etc.
  */
-typedef struct vfs_node_stat {
+typedef struct vfs_file_stat {
   /**
    * @brief   Size of the node.
    */
@@ -100,7 +100,7 @@ typedef struct vfs_node_stat {
    * @brief   Size of the node.
    */
   vfs_offset_t          size;
-} vfs_node_stat_t;
+} vfs_file_stat_t;
 
 /**
  * @brief   Type of a generic VFS node class.
@@ -191,9 +191,7 @@ typedef struct vfs_file_node vfs_file_node_c;
   ssize_t (*file_write)(void *instance, const uint8_t *buf, size_t n);      \
   msg_t (*file_setpos)(void *instance, vfs_offset_t offset);                \
   vfs_offset_t (*file_getpos)(void *instance);                              \
-  msg_t (*file_getstat)(void *instance, vfs_node_stat_t *nsp);
-
-//msg_t (*file_stat)(void *instance, vfs_node_stat_t *nsp);
+  msg_t (*file_getstat)(void *instance, vfs_file_stat_t *fsp);
 
 /**
  * @brief   @p vfs_file_node_c specific data.
