@@ -28,6 +28,10 @@
 #ifndef SBUSER_H
 #define SBUSER_H
 
+#include <stdint.h>
+#include <stdbool.h>
+#include <unistd.h>
+
 #include "errcodes.h"
 #include "sbsysc.h"
 
@@ -182,11 +186,11 @@ extern "C" {
  * @param[in] flags     open mode
  * @return              The file descriptor or an error.
  */
-static inline uint32_t sbFileOpen(const char *pathname,
-                                  uint32_t flags) {
+static inline int sbFileOpen(const char *pathname,
+                             int flags) {
 
   __syscall3r(0, SB_POSIX_OPEN, pathname, flags);
-  return r0;
+  return (int)r0;
 }
 
 /**
@@ -195,10 +199,10 @@ static inline uint32_t sbFileOpen(const char *pathname,
  * @param[in] fd        file descriptor
  * @return              Operation result.
  */
-static inline uint32_t sbFileClose(uint32_t fd) {
+static inline int sbFileClose(int fd) {
 
   __syscall2r(0, SB_POSIX_CLOSE, fd);
-  return r0;
+  return (int)r0;
 }
 
 /**
@@ -209,12 +213,12 @@ static inline uint32_t sbFileClose(uint32_t fd) {
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline size_t sbFileRead(uint32_t fd,
-                                uint8_t *buf,
-                                size_t count) {
+static inline ssize_t sbFileRead(int fd,
+                                 void *buf,
+                                 size_t count) {
 
   __syscall4r(0, SB_POSIX_READ, fd, buf, count);
-  return (size_t)r0;
+  return (ssize_t)r0;
 }
 
 /**
@@ -225,12 +229,12 @@ static inline size_t sbFileRead(uint32_t fd,
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline size_t sbFileWrite(uint32_t fd,
-                                 const uint8_t *buf,
-                                 size_t count) {
+static inline ssize_t sbFileWrite(int fd,
+                                  const void *buf,
+                                  size_t count) {
 
   __syscall4r(0, SB_POSIX_WRITE, fd, buf, count);
-  return (size_t)r0;
+  return (ssize_t)r0;
 }
 
 /**
@@ -241,12 +245,12 @@ static inline size_t sbFileWrite(uint32_t fd,
  * @param[in] whence    operation mode
  * @return              Operation result.
  */
-static inline uint32_t sbFileSeek(uint32_t fd,
-                                  uint32_t offset,
-                                  uint32_t whence) {
+static inline off_t sbFileSeek(int fd,
+                               off_t offset,
+                               int whence) {
 
   __syscall4r(0, SB_POSIX_LSEEK, fd, offset, whence);
-  return (size_t)r0;
+  return (off_t)r0;
 }
 
 /**

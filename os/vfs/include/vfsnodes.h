@@ -62,7 +62,7 @@ typedef struct vfs_driver vfs_driver_c;
 /**
  * @brief   Type of a file offset.
  */
-typedef uint32_t vfs_offset_t;
+typedef off_t vfs_offset_t;
 
 /**
  * @brief   Type of a node attributes.
