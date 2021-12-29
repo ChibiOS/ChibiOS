@@ -79,7 +79,9 @@ static void node_file_release(void *instance);
 static BaseSequentialStream *node_file_get_stream(void *instance);
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
-static msg_t node_file_setpos(void *instance, vfs_offset_t offset);
+static msg_t node_file_setpos(void *instance,
+                              vfs_offset_t offset,
+                              vfs_seekmode_t whence);
 static vfs_offset_t node_file_getpos(void *instance);
 static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp);
 
@@ -286,11 +288,14 @@ static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
   return (ssize_t)0;
 }
 
-static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
+static msg_t node_file_setpos(void *instance,
+                              vfs_offset_t offset,
+                              vfs_seekmode_t whence) {
   vfs_sfs_file_node_c *fnp = (vfs_sfs_file_node_c *)instance;
 
   (void)fnp;
   (void)offset;
+  (void)whence;
 
   return CH_RET_SUCCESS;
 }
