@@ -159,16 +159,56 @@ ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
 }
 
 off_t sb_posix_lseek(int fd, off_t offset, int whence) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  msg_t ret;
+  vfs_file_stat_t stat;
+  off_t finaloff;
 
-  (void)offset;
-  (void)whence;
+  if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
+    return CH_RET_EINVAL;
+  }
 
-  if ((fd == 0U) || (fd == 1U) || (fd == 2U)) {
+  if (!is_valid_descriptor(&sbp->io, fd)) {
+    return CH_RET_EBADF;
+  }
 
+  if (sbp->io.attributes[fd] != 0) {
+    return CH_RET_EISDIR;
+  }
+
+  ret = vfsGetFileStat((struct vfs_file_node *)sbp->io.vfs_nodes[fd], &stat);
+  CH_RETURN_ON_ERROR(ret);
+
+  if ((stat.attr & VFS_NODE_ATTR_ISSTREAM) != 0U) {
     return CH_RET_ESPIPE;
   }
 
-  return CH_RET_EBADF;
+  switch (whence) {
+  case SEEK_SET:
+    finaloff = offset;
+    break;
+  case SEEK_CUR:
+    {
+      off_t oldoff = vfsGetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd]);
+      CH_RETURN_ON_ERROR(oldoff);
+
+      finaloff = oldoff + offset;
+    }
+    break;
+  case SEEK_END:
+    finaloff = stat.size + offset;
+    break;
+  }
+
+  if (finaloff < 0) {
+    return CH_RET_EOVERFLOW;
+  }
+
+  ret = vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
+                           finaloff);
+  CH_RETURN_ON_ERROR(ret);
+
+  return finaloff;
 }
 
 void sbPosixRegisterFileDescriptor(sb_class_t *sbp,

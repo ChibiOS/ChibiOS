@@ -66,6 +66,7 @@
 #define CH_RET_ERANGE           CH_ENCODE_ERROR(ERANGE)     /* Result too large */
 #define CH_RET_ENAMETOOLONG     CH_ENCODE_ERROR(ENAMETOOLONG)/* File or path name too long */
 #define CH_RET_ENOSYS           CH_ENCODE_ERROR(ENOSYS)     /* Syscall not implemented */
+#define CH_RET_EOVERFLOW        CH_ENCODE_ERROR(EOVERFLOW)  /* File offset overflow */
 /** @} */
 
 /*===========================================================================*/
