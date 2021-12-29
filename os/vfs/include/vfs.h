@@ -143,7 +143,9 @@ extern "C" {
   void vfsCloseFile(vfs_file_node_c *vfnp);
   ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n);
   ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n);
-  msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset);
+  msg_t vfsSetFilePosition(vfs_file_node_c *vfnp,
+                           vfs_offset_t offset,
+                           vfs_seekmode_t whence);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp);
   msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_file_stat_t *fsp);
   BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp);

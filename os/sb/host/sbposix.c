@@ -162,7 +162,6 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   msg_t ret;
   vfs_file_stat_t stat;
-  off_t finaloff;
 
   if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
     return CH_RET_EINVAL;
@@ -183,32 +182,9 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
     return CH_RET_ESPIPE;
   }
 
-  switch (whence) {
-  case SEEK_SET:
-    finaloff = offset;
-    break;
-  case SEEK_CUR:
-    {
-      off_t oldoff = vfsGetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd]);
-      CH_RETURN_ON_ERROR(oldoff);
-
-      finaloff = oldoff + offset;
-    }
-    break;
-  case SEEK_END:
-    finaloff = stat.size + offset;
-    break;
-  }
-
-  if (finaloff < 0) {
-    return CH_RET_EOVERFLOW;
-  }
-
-  ret = vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
-                           finaloff);
-  CH_RETURN_ON_ERROR(ret);
-
-  return finaloff;
+  return vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
+                            offset,
+                            whence);;
 }
 
 void sbPosixRegisterFileDescriptor(sb_class_t *sbp,

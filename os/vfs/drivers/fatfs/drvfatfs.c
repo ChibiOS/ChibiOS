@@ -79,7 +79,9 @@ static void node_file_release(void *instance);
 static BaseSequentialStream *node_file_get_stream(void *instance);
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
-static msg_t node_file_setpos(void *instance, vfs_offset_t offset);
+static msg_t node_file_setpos(void *instance,
+                              vfs_offset_t offset,
+                              vfs_seekmode_t whence);
 static vfs_offset_t node_file_getpos(void *instance);
 static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp);
 
@@ -443,10 +445,89 @@ static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n) {
   return (ssize_t)bw;
 }
 
-static msg_t node_file_setpos(void *instance, vfs_offset_t offset) {
-  vfs_fatfs_file_node_c *fffnp = (vfs_fatfs_file_node_c *)instance;
+#if 0
+off_t sb_posix_lseek(int fd, off_t offset, int whence) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  msg_t ret;
+  vfs_file_stat_t stat;
+  off_t finaloff;
 
-  return translate_error(f_lseek(&fffnp->file, (FSIZE_t)offset));
+  if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
+    return CH_RET_EINVAL;
+  }
+
+  if (!is_valid_descriptor(&sbp->io, fd)) {
+    return CH_RET_EBADF;
+  }
+
+  if (sbp->io.attributes[fd] != 0) {
+    return CH_RET_EISDIR;
+  }
+
+  ret = vfsGetFileStat((struct vfs_file_node *)sbp->io.vfs_nodes[fd], &stat);
+  CH_RETURN_ON_ERROR(ret);
+
+  if ((stat.attr & VFS_NODE_ATTR_ISSTREAM) != 0U) {
+    return CH_RET_ESPIPE;
+  }
+
+  switch (whence) {
+  case SEEK_SET:
+    finaloff = offset;
+    break;
+  case SEEK_CUR:
+    {
+      off_t oldoff = vfsGetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd]);
+      CH_RETURN_ON_ERROR(oldoff);
+
+      finaloff = oldoff + offset;
+    }
+    break;
+  case SEEK_END:
+    finaloff = stat.size + offset;
+    break;
+  }
+
+  if (finaloff < 0) {
+    return CH_RET_EOVERFLOW;
+  }
+
+  ret = vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
+                           finaloff);
+  CH_RETURN_ON_ERROR(ret);
+
+  return finaloff;
+}
+#endif
+
+static msg_t node_file_setpos(void *instance,
+                              vfs_offset_t offset,
+                              vfs_seekmode_t whence) {
+  vfs_fatfs_file_node_c *fffnp = (vfs_fatfs_file_node_c *)instance;
+  vfs_offset_t finaloff;
+
+  chDbgCheck((whence == SEEK_SET) ||
+             (whence == SEEK_CUR) ||
+             (whence == SEEK_END));
+
+  switch (whence) {
+  case VFS_SEEK_CUR:
+    finaloff = offset + (vfs_offset_t)fffnp->file.fptr;
+    break;
+  case VFS_SEEK_END:
+    finaloff = offset + (vfs_offset_t)fffnp->file.obj.objsize;
+    break;
+  case VFS_SEEK_SET:
+  default:
+    finaloff = offset;
+    break;
+  }
+
+  if (finaloff < 0) {
+    return CH_RET_EOVERFLOW;
+  }
+
+  return translate_error(f_lseek(&fffnp->file, (FSIZE_t)finaloff));
 }
 
 static vfs_offset_t node_file_getpos(void *instance) {

@@ -44,6 +44,15 @@
 #define VFS_NODE_ATTR_ISSTREAM      256U
 /** @} */
 
+/**
+ * @name    Seek modes.
+ * @{
+ */
+#define VFS_SEEK_SET                SEEK_SET
+#define VFS_SEEK_CUR                SEEK_CUR
+#define VFS_SEEK_END                SEEK_END
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -62,7 +71,12 @@ typedef struct vfs_driver vfs_driver_c;
 /**
  * @brief   Type of a file offset.
  */
-typedef off_t vfs_offset_t;
+typedef int32_t vfs_offset_t;
+
+/**
+ * @brief   Type of a seek mode.
+ */
+typedef int vfs_seekmode_t;
 
 /**
  * @brief   Type of a node attributes.
@@ -189,7 +203,9 @@ typedef struct vfs_file_node vfs_file_node_c;
   BaseSequentialStream *(*file_get_stream)(void *instance);                 \
   ssize_t (*file_read)(void *instance, uint8_t *buf, size_t n);             \
   ssize_t (*file_write)(void *instance, const uint8_t *buf, size_t n);      \
-  msg_t (*file_setpos)(void *instance, vfs_offset_t offset);                \
+  msg_t (*file_setpos)(void *instance,                                      \
+                       vfs_offset_t offset,                                 \
+                       vfs_seekmode_t whence);                              \
   vfs_offset_t (*file_getpos)(void *instance);                              \
   msg_t (*file_getstat)(void *instance, vfs_file_stat_t *fsp);
 

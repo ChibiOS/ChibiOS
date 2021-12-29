@@ -242,15 +242,18 @@ ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n) {
  *
  * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
  * @param[in] offset    New absolute position.
+ * @param[in] whence    Seek mode to be used.
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsSetFilePosition(vfs_file_node_c *vfnp, vfs_offset_t offset) {
+msg_t vfsSetFilePosition(vfs_file_node_c *vfnp,
+                         vfs_offset_t offset,
+                         vfs_seekmode_t whence) {
 
   chDbgAssert(vfnp->references > 0U, "zero count");
 
-  return vfnp->vmt->file_setpos((void *)vfnp, offset);
+  return vfnp->vmt->file_setpos((void *)vfnp, offset, whence);
 }
 
 /**
