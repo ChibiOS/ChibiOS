@@ -33,7 +33,7 @@
 /*===========================================================================*/
 
 /**
- * @name    Node attributes.
+ * @name    Node attributes
  * @{
  */
 #define VFS_NODE_ATTR_READONLY      1U
@@ -45,7 +45,7 @@
 /** @} */
 
 /**
- * @name    Seek modes.
+ * @name    Seek modes compatible with Posix
  * @{
  */
 #define VFS_SEEK_SET                SEEK_SET
