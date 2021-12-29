@@ -42,6 +42,7 @@ typedef struct referenced_object referenced_object_c;
  */
 #define __referenced_object_methods                                         \
   __base_object_methods                                                     \
+  void *(*addref)(void *ip);                                                \
   void (*release)(void *ip);
 
 /**
@@ -158,7 +159,7 @@ static inline void __referenced_object_release_impl(void *ip) {
 CC_FORCE_INLINE
 static inline referenced_object_c *roAddRef(referenced_object_c *rop) {
 
-  return (referenced_object_c *)__referenced_object_addref_impl(rop);
+  return (referenced_object_c *)rop->vmt->addref((void *)rop);
 }
 
 /**
@@ -169,7 +170,7 @@ static inline referenced_object_c *roAddRef(referenced_object_c *rop) {
 CC_FORCE_INLINE
 static inline void roRelease(referenced_object_c *rop) {
 
-  return __referenced_object_release_impl(rop);
+  return rop->vmt->release((void *)rop);
 }
 
 #endif /* OOP_REFERENCED_OBJECT_H */

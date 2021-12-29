@@ -62,16 +62,19 @@ static const struct vfs_streams_driver_vmt driver_vmt = {
   .open_file    = drv_open_file
 };
 
+static void *node_dir_addref(void *instance);
 static void node_dir_release(void *instance);
 static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
 static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
 
 static const struct vfs_streams_dir_node_vmt dir_node_vmt = {
+  .addref       = node_dir_addref,
   .release      = node_dir_release,
   .dir_first    = node_dir_first,
   .dir_next     = node_dir_next
 };
 
+static void *node_file_addref(void *instance);
 static void node_file_release(void *instance);
 static BaseSequentialStream *node_file_get_stream(void *instance);
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
@@ -81,6 +84,7 @@ static vfs_offset_t node_file_getpos(void *instance);
 static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp);
 
 static const struct vfs_streams_file_node_vmt file_node_vmt = {
+  .addref           = node_file_addref,
   .release          = node_file_release,
   .file_get_stream  = node_file_get_stream,
   .file_read        = node_file_read,
@@ -227,6 +231,11 @@ static msg_t drv_open_file(void *instance,
   return err;
 }
 
+static void *node_dir_addref(void *instance) {
+
+  return __referenced_object_addref_impl(instance);
+}
+
 static void node_dir_release(void *instance) {
   vfs_streams_dir_node_c *sdnp = (vfs_streams_dir_node_c *)instance;
 
@@ -261,6 +270,11 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
   }
 
   return (msg_t)0;
+}
+
+static void *node_file_addref(void *instance) {
+
+  return __referenced_object_addref_impl(instance);
 }
 
 static void node_file_release(void *instance) {

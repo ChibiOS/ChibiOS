@@ -62,11 +62,13 @@ static const struct vfs_overlay_driver_vmt driver_vmt = {
   .open_file    = drv_open_file
 };
 
+static void *node_dir_addref(void *instance);
 static void node_dir_release(void *instance);
 static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
 static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
 
 static const struct vfs_overlay_dir_node_vmt dir_node_vmt = {
+  .addref       = node_dir_addref,
   .release      = node_dir_release,
   .dir_first    = node_dir_first,
   .dir_next     = node_dir_next
@@ -406,6 +408,11 @@ static msg_t drv_open_file(void *instance,
   vfs_buffer_release(buf);
 
   return err;
+}
+
+static void *node_dir_addref(void *instance) {
+
+  return __referenced_object_addref_impl(instance);
 }
 
 static void node_dir_release(void *instance) {
