@@ -28,6 +28,10 @@
 #ifndef SB_H
 #define SB_H
 
+#include "hal.h"
+#include "vfs.h"
+#include "errcodes.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -146,6 +150,138 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a sandbox manager global structure.
+ */
+typedef struct {
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Event source for sandbox termination.
+   */
+  event_source_t                termination_es;
+#endif
+} sb_t;
+
+/**
+ * @brief   Type of a sandbox memory region.
+ */
+typedef struct {
+  /**
+   * @brief   Associated memory area.
+   */
+  memory_area_t                 area;
+  /**
+   * @brief   Writable memory range.
+   */
+  bool                          writeable;
+} sb_memory_region_t;
+
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a sandbox I/O structure.
+ */
+typedef struct {
+  /**
+   * @brief   VFS nodes associated to file descriptors.
+   */
+  vfs_node_c                    *vfs_nodes[SB_CFG_FD_NUM];
+  /**
+   * @brief   Extra attributes added to the VFS nodes.
+   */
+  uint8_t                       attributes[SB_CFG_FD_NUM];
+} sb_ioblock_t;
+#endif
+
+/**
+ * @brief   Type of a sandbox configuration structure.
+ */
+typedef struct {
+  /**
+   * @brief   Memory region for code.
+   * @note    It is used to locate the startup header.
+   */
+  uint32_t                      code_region;
+  /**
+   * @brief   Memory region for data and stack.
+   * @note    It is used for initial PSP placement.
+   */
+  uint32_t                      data_region;
+  /**
+   * @brief   SandBox regions.
+   * @note    The following memory regions are used only for pointers
+   *          validation, not for MPU setup.
+   */
+  sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
+#if (PORT_SWITCHED_REGIONS_NUMBER == SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
+  /**
+   * @brief   MPU regions initialization values.
+   * @note    Regions initialization values must be chosen to be
+   *          consistent with the values in the "regions" field.
+   */
+  mpureg_t                      mpuregs[SB_CFG_NUM_REGIONS];
+#endif
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   VFS driver associated to the sandbox as root.
+   */
+  vfs_driver_c                  *vfs_driver;
+#else
+  /**
+   * @brief   Sandbox STDIN stream.
+   * @note    Set this to @p NULL if standard I/O is not needed.
+   * @note    By design you can use HAL streams here, you need to use
+   *          a cast however.
+   */
+  SandboxStream                 *stdin_stream;
+  /**
+   * @brief   Sandbox STDOUT stream.
+   * @note    Set this to @p NULL if standard I/O is not needed.
+   * @note    By design you can use HAL streams here, you need to use
+   *          a cast however.
+   */
+  SandboxStream                 *stdout_stream;
+  /**
+   * @brief   Sandbox STDERR stream.
+   * @note    Set this to @p NULL if standard I/O is not needed.
+   * @note    By design you can use HAL streams here, you need to use
+   *          a cast however.
+   */
+  SandboxStream                 *stderr_stream;
+#endif
+} sb_config_t;
+
+/**
+ * @brief   Type of a sandbox object.
+ */
+typedef struct {
+  /**
+   * @brief   Pointer to the sandbox configuration data.
+   */
+  const sb_config_t             *config;
+  /**
+   * @brief   Thread running in the sandbox.
+   */
+  thread_t                      *tp;
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Thread sending a message to the sandbox.
+   */
+  thread_t                      *msg_tp;
+#endif
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Sandbox events source.
+   */
+  event_source_t                es;
+#endif
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   VFS bindings for Posix API.
+   */
+  sb_ioblock_t                  io;
+#endif
+} sb_class_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -165,9 +301,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-#include "hal.h"
-#include "errcodes.h"
 
 #include "sbsysc.h"
 #include "sbposix.h"

@@ -48,6 +48,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 static msg_t create_descriptor(sb_ioblock_t *iop,
                                vfs_node_c *np,
                                uint8_t attributes) {
@@ -69,6 +70,7 @@ static bool is_valid_descriptor(sb_ioblock_t *iop, int fd) {
 
   return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] != NULL);
 }
+#endif
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -85,7 +87,8 @@ int sb_posix_open(const char *path, int flags) {
   }
 
   do {
-    ret = vfsDrvOpenFile(sbp->io.vfs_driver, path, (unsigned)flags, &fnp);
+    ret = vfsDrvOpenFile(sbp->config->vfs_driver, path,
+                         (unsigned)flags, &fnp);
     CH_BREAK_ON_ERROR(ret);
 
     ret = create_descriptor(&sbp->io, (vfs_node_c *)fnp, 0);
@@ -122,7 +125,7 @@ int sb_posix_close(int fd) {
 ssize_t sb_posix_read(int fd, void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!sb_is_valid_read_range(sbp, (void *)buf, count)) {
+  if (!sb_is_valid_write_range(sbp, (void *)buf, count)) {
     return CH_RET_EFAULT;
   }
 
@@ -140,7 +143,7 @@ ssize_t sb_posix_read(int fd, void *buf, size_t count) {
 ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!sb_is_valid_write_range(sbp, (void *)buf, count)) {
+  if (!sb_is_valid_read_range(sbp, (void *)buf, count)) {
     return CH_RET_EFAULT;
   }
 
@@ -166,6 +169,18 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
   }
 
   return CH_RET_EBADF;
+}
+
+void sbPosixRegisterFileDescriptor(sb_class_t *sbp,
+                                   int fd,
+                                   vfs_file_node_c *fnp) {
+
+  chDbgAssert(is_valid_descriptor(&sbp->io, fd) &&
+              sbp->io.vfs_nodes[fd] == NULL,
+              "invalid file descriptor");
+
+  sbp->io.vfs_nodes[fd]  = (vfs_node_c *)fnp;
+  sbp->io.attributes[fd] = 0;
 }
 
 #else /* Fallbacks for when there is no VFS.*/

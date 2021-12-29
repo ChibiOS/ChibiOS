@@ -100,12 +100,13 @@ bool sb_is_valid_string_range(sb_class_t *sbcp, const char *s, size_t n) {
  * @brief   Sandbox object initialization.
  *
  * @param[out] sbcp     pointer to the sandbox object
+ * @param[in] config    pointer to the sandbox configuration
  *
  * @init
  */
-void sbObjectInit(sb_class_t *sbcp) {
+void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config) {
 
-  sbcp->config = NULL;
+  sbcp->config = config;
   sbcp->tp     = NULL;
 #if CH_CFG_USE_MESSAGES == TRUE
   sbcp->msg_tp = NULL;
@@ -118,16 +119,20 @@ void sbObjectInit(sb_class_t *sbcp) {
 /**
  * @brief   Starts a sandboxed thread.
  *
- * @param[out] sbcp     pointer to the sandbox object
- * @param[in] config    pointer to the sandbox configuration
+ * @param[in] sbcp      pointer to a @p sb_class_t structure
+ * @param[in] name      name to be assigned to the thread
+ * @param[out] wsp      pointer to a working area dedicated to the thread stack
+ * @param[in] size      size of the working area
+ * @param[in] prio      the priority level for the new thread
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
-thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
-                        const char *name, void *wsp, size_t size,
+thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
+                        void *wsp, size_t size,
                         tprio_t prio) {
   thread_t *utp;
   const sb_header_t *sbhp;
+  const sb_config_t *config = sbcp->config;
 
   /* Header location.*/
   sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
@@ -141,9 +146,6 @@ thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
   if (sbhp->hdr_size != sizeof (sb_header_t)) {
     return NULL;
   }
-
-  /* Linking configuration information.*/
-  sbcp->config = config;
 
   unprivileged_thread_descriptor_t utd = {
     .name       = name,
@@ -166,12 +168,6 @@ thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
 
   /* For messages exchange.*/
   sbcp->tp      = utp;
-#if CH_CFG_USE_MESSAGES == TRUE
-  sbcp->msg_tp  = NULL;
-#endif
-#if CH_CFG_USE_EVENTS == TRUE
-  chEvtObjectInit(&sbcp->es);
-#endif
 
   return utp;
 }

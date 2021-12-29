@@ -48,26 +48,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Type of a sandbox I/O structure.
- */
-typedef struct {
-  /**
-   * @brief   VFS driver associated to the sandbox as root.
-   */
-  vfs_driver_c                  *vfs_driver;
-  /**
-   * @brief   VFS nodes associated to file descriptors.
-   */
-  vfs_node_c                    *vfs_nodes[SB_CFG_FD_NUM];
-  /**
-   * @brief   Extra attributes added to the VFS nodes.
-   */
-  uint8_t                       attributes[SB_CFG_FD_NUM];
-} sb_ioblock_t;
-#endif
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -84,6 +64,11 @@ extern "C" {
   ssize_t sb_posix_read(int fd, void *buf, size_t count);
   ssize_t sb_posix_write(int fd, const void *buf, size_t count);
   off_t sb_posix_lseek(int fd, off_t offset, int whence);
+#if SB_CFG_ENABLE_VFS == TRUE
+  void sbPosixRegisterFileDescriptor(sb_class_t *sbp,
+                                     int fd,
+                                     vfs_file_node_c *fnp);
+#endif
 #ifdef __cplusplus
 }
 #endif

@@ -53,115 +53,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a sandbox manager global structure.
- */
-typedef struct {
-#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Event source for sandbox termination.
-   */
-  event_source_t                termination_es;
-#endif
-} sb_t;
-
-/**
- * @brief   Type of a sandbox memory region.
- */
-typedef struct {
-  /**
-   * @brief   Associated memory area.
-   */
-  memory_area_t                 area;
-  /**
-   * @brief   Writable memory range.
-   */
-  bool                          writeable;
-} sb_memory_region_t;
-
-/**
- * @brief   Type of a sandbox configuration structure.
- */
-typedef struct {
-  /**
-   * @brief   Memory region for code.
-   * @note    It is used to locate the startup header.
-   */
-  uint32_t                      code_region;
-  /**
-   * @brief   Memory region for data and stack.
-   * @note    It is used for initial PSP placement.
-   */
-  uint32_t                      data_region;
-  /**
-   * @brief   SandBox regions.
-   * @note    The following memory regions are used only for pointers
-   *          validation, not for MPU setup.
-   */
-  sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
-#if (PORT_SWITCHED_REGIONS_NUMBER == SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
-  /**
-   * @brief   MPU regions initialization values.
-   * @note    Regions initialization values must be chosen to be
-   *          consistent with the values in the "regions" field.
-   */
-  mpureg_t                      mpuregs[SB_CFG_NUM_REGIONS];
-#endif
-  /**
-   * @brief   Sandbox STDIN stream.
-   * @note    Set this to @p NULL if standard I/O is not needed.
-   * @note    By design you can use HAL streams here, you need to use
-   *          a cast however.
-   */
-  SandboxStream                 *stdin_stream;
-  /**
-   * @brief   Sandbox STDOUT stream.
-   * @note    Set this to @p NULL if standard I/O is not needed.
-   * @note    By design you can use HAL streams here, you need to use
-   *          a cast however.
-   */
-  SandboxStream                 *stdout_stream;
-  /**
-   * @brief   Sandbox STDERR stream.
-   * @note    Set this to @p NULL if standard I/O is not needed.
-   * @note    By design you can use HAL streams here, you need to use
-   *          a cast however.
-   */
-  SandboxStream                 *stderr_stream;
-} sb_config_t;
-
-/**
- * @brief   Type of a sandbox object.
- */
-typedef struct {
-  /**
-   * @brief   Pointer to the sandbox configuration data.
-   */
-  const sb_config_t             *config;
-  /**
-   * @brief   Thread running in the sandbox.
-   */
-  thread_t                      *tp;
-#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Thread sending a message to the sandbox.
-   */
-  thread_t                      *msg_tp;
-#endif
-#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Sandbox events source.
-   */
-  event_source_t                es;
-#endif
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   VFS bindings for Posix API.
-   */
-  sb_ioblock_t                  io;
-#endif
-} sb_class_t;
-
-/**
  * @brief   Type of a sandbox binary image header.
  */
 typedef struct {
@@ -200,10 +91,9 @@ extern "C" {
   bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size);
   bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size);
   bool sb_is_valid_string_range(sb_class_t *sbcp, const char *s, size_t n);
-  void sbObjectInit(sb_class_t *sbcp);
-  void sbStart(sb_class_t *sbcp, const sb_config_t *config);
-  thread_t *sbStartThread(sb_class_t *sbcp, const sb_config_t *config,
-                          const char *name, void *wsp, size_t size,
+  void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config);
+  thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
+                          void *wsp, size_t size,
                           tprio_t prio);
   msg_t sbSendMessageTimeout(sb_class_t *sbcp,
                              msg_t msg,

@@ -153,24 +153,26 @@ static inline void __referenced_object_release_impl(void *ip) {
 /**
  * @brief   New reference creation.
  *
- * @param[in] rop       A reference to the object.
+ * @param[in] ip        A reference to the object.
  * @return              A new reference to the object.
  */
 CC_FORCE_INLINE
-static inline referenced_object_c *roAddRef(referenced_object_c *rop) {
+static inline referenced_object_c *roAddRef(void *ip) {
+  referenced_object_c *objp = (referenced_object_c *)ip;
 
-  return (referenced_object_c *)rop->vmt->addref((void *)rop);
+  return objp->vmt->addref(ip);
 }
 
 /**
  * @brief   Reference release.
  *
- * @param[in] rop       A reference to the object.
+ * @param[in] ip        A reference to the object.
  */
 CC_FORCE_INLINE
-static inline void roRelease(referenced_object_c *rop) {
+static inline void roRelease(void *ip) {
+  referenced_object_c *objp = (referenced_object_c *)ip;
 
-  return rop->vmt->release((void *)rop);
+  return objp->vmt->release(ip);
 }
 
 #endif /* OOP_REFERENCED_OBJECT_H */

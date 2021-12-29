@@ -23,9 +23,23 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "errcodes.h"
 #include "sbuser.h"
 
-#define MAKERR(e) (-(int)(e))
+__attribute__((used))
+int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
+  uint32_t err;
+
+  (void)mode;
+
+  err = sbFileOpen(p, oflag);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return err;
+}
 
 __attribute__((used))
 int _close_r(struct _reent *r, int file) {
@@ -33,7 +47,7 @@ int _close_r(struct _reent *r, int file) {
 
   err = sbFileClose((uint32_t)file);
   if (CH_RET_IS_ERROR(err)) {
-    __errno_r(r) = MAKERR(err);
+    __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
   }
 
@@ -46,7 +60,7 @@ int _write_r(struct _reent *r, int file, char * ptr, int len) {
 
   err = sbFileWrite((uint32_t)file, (const uint8_t *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
-    __errno_r(r) = MAKERR(err);
+    __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
   }
 
@@ -59,7 +73,7 @@ int _read_r(struct _reent *r, int file, char * ptr, int len) {
 
   err = sbFileRead((uint32_t)file, (uint8_t *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
-    __errno_r(r) = MAKERR(err);
+    __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
   }
 
@@ -72,7 +86,7 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
 
   err = sbFileSeek((uint32_t)file, (uint32_t)ptr, (uint32_t)dir);
   if (CH_RET_IS_ERROR(err)) {
-    __errno_r(r) = MAKERR(err);
+    __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
   }
 

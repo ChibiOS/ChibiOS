@@ -22,7 +22,41 @@
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 
+#include "nullstreams.h"
+
 #include "startup_defs.h"
+
+/*===========================================================================*/
+/* VFS-related.                                                              */
+/*===========================================================================*/
+
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
+/* VFS FatFS driver object representing the root directory.*/
+static vfs_fatfs_driver_c root_driver;
+#endif
+
+/* VFS overlay driver object representing the root directory.*/
+static vfs_overlay_driver_c root_overlay_driver;
+
+/* VFS streams driver object representing the /dev directory.*/
+static vfs_streams_driver_c dev_driver;
+
+/* VFS API will use this object as implicit root, defining this
+   symbol is expected.*/
+vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
+
+static NullStream nullstream;
+
+/* Stream to be exposed under /dev as files.*/
+static const drv_streams_element_t streams[] = {
+  {"VSD1", (BaseSequentialStream *)&LPSD1},
+  {"null", (BaseSequentialStream *)&nullstream},
+  {NULL, NULL}
+};
+
+/*===========================================================================*/
+/* SB-related.                                                               */
+/*===========================================================================*/
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
@@ -52,9 +86,6 @@ static const sb_config_t sb_config1 = {
                                      MPU_RASR_ENABLE
     }
   },
-  .stdin_stream     = (SandboxStream *)&LPSD1,
-  .stdout_stream    = (SandboxStream *)&LPSD1,
-  .stderr_stream    = (SandboxStream *)&LPSD1
 };
 
 /* Sandbox 2 configuration.*/
@@ -85,16 +116,17 @@ static const sb_config_t sb_config2 = {
                                      MPU_RASR_ENABLE
     }
   },
-  .stdin_stream     = (SandboxStream *)&LPSD1,
-  .stdout_stream    = (SandboxStream *)&LPSD1,
-  .stderr_stream    = (SandboxStream *)&LPSD1
 };
 
 /* Sandbox objects.*/
 sb_class_t sbx1, sbx2;
 
-static THD_WORKING_AREA(waUnprivileged1, 256);
-static THD_WORKING_AREA(waUnprivileged2, 256);
+static THD_WORKING_AREA(waUnprivileged1, 512);
+static THD_WORKING_AREA(waUnprivileged2, 512);
+
+/*===========================================================================*/
+/* Main and generic code.                                                    */
+/*===========================================================================*/
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -118,6 +150,8 @@ int main(void) {
   unsigned i = 1U;
   thread_t *utp1, *utp2;
   event_listener_t el1;
+  vfs_file_node_c *fnp;
+  msg_t ret;
 
   /*
    * System initializations.
@@ -125,29 +159,61 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   * - Virtual File System initialization.
    * - SandBox manager initialization.
    */
   halInit();
   chSysInit();
+  vfsInit();
   sbHostInit();
 
   /*
-   * Listening to sandbox events.
-   */
-  chEvtRegister(&sb.termination_es, &el1, (eventid_t)0);
-
-  /*
-   * Activates the Serial driver using the default configuration.
+   * Starting a serial port for I/O, initializing other streams too.
    */
   sdStart(&LPSD1, NULL);
+  nullObjectInit(&nullstream);
 
   /*
-   * Creates the blinker thread.
+   * Creating a blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
+  /*
+   * Initializing an overlay VFS object as a root, no overlaid driver,
+   * registering a streams VFS driver on the VFS overlay root as "/dev".
+   */
+  drvOverlayObjectInit(&root_overlay_driver, NULL, NULL);
+  ret = drvOverlayRegisterDriver(&root_overlay_driver,
+                                 drvStreamsObjectInit(&dev_driver, &streams[0]),
+                                 "dev");
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+
+  /*
+   * Sandbox objects initialization.
+   */
+  sbObjectInit(&sbx1, &sb_config1);
+  sbObjectInit(&sbx2, &sb_config2);
+
+  /*
+   * Associating standard input, output and error to sandboxes. Both sandboxes
+   * use the same serial port in this setup.
+   */
+  ret = vfsOpenFile("/dev/VSD1", 0, &fnp);
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+  sbPosixRegisterFileDescriptor(&sbx1, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
+  sbPosixRegisterFileDescriptor(&sbx1, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
+  sbPosixRegisterFileDescriptor(&sbx1, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
+  sbPosixRegisterFileDescriptor(&sbx2, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
+  sbPosixRegisterFileDescriptor(&sbx2, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
+  sbPosixRegisterFileDescriptor(&sbx2, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
+  vfsCloseFile(fnp);
+
   /* Starting sandboxed thread 1.*/
-  utp1 = sbStartThread(&sbx1, &sb_config1, "sbx1",
+  utp1 = sbStartThread(&sbx1, "sbx1",
                        waUnprivileged1, sizeof (waUnprivileged1),
                        NORMALPRIO - 1);
   if (utp1 == NULL) {
@@ -155,7 +221,7 @@ int main(void) {
   }
 
   /* Starting sandboxed thread 2.*/
-  utp2 = sbStartThread(&sbx2, &sb_config2, "sbx2",
+  utp2 = sbStartThread(&sbx2, "sbx2",
                        waUnprivileged2, sizeof (waUnprivileged2),
                        NORMALPRIO - 1);
   if (utp1 == NULL) {
@@ -163,7 +229,12 @@ int main(void) {
   }
 
   /*
-   * Normal main() thread activity, in this demo it monitos the user button
+   * Listening to sandbox events.
+   */
+  chEvtRegister(&sb.termination_es, &el1, (eventid_t)0);
+
+  /*
+   * Normal main() thread activity, in this demo it monitors the user button
    * and checks for sandboxes state.
    */
   while (true) {
@@ -199,4 +270,3 @@ int main(void) {
     i++;
   }
 }
-
