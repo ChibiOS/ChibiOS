@@ -251,7 +251,8 @@ static void scan_nodes(BaseSequentialStream *chp,
       }
 
       fn = dip->name;
-      if (dip->attr & VFS_NODE_ATTR_ISDIR) {
+//      if (dip->attr & VFS_NODE_ATTR_ISDIR) {
+      if (VFS_MODE_S_ISDIR(dip->mode)) {
         strcpy(path + i, fn);
         strcat(path + i, "/");
         scan_nodes(chp, path, dip);

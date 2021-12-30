@@ -213,6 +213,23 @@ static BYTE translate_oflag(int oflag) {
   return (BYTE)0;
 }
 
+static vfs_mode_t translate_mode(BYTE fattrib) {
+  vfs_mode_t mode = VFS_MODE_S_IRUSR;
+
+  if ((fattrib & AM_RDO) == 0) {
+    mode |= VFS_MODE_S_IWUSR;
+  }
+
+  if ((fattrib & AM_DIR) == 0) {
+    mode |= VFS_MODE_S_IFREG;
+  }
+  else {
+    mode |= VFS_MODE_S_IFDIR;
+  }
+
+  return mode;
+}
+
 static msg_t drv_set_cwd(void *instance, const char *path) {
 #if FF_FS_RPATH >= 1
 
@@ -377,7 +394,7 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
           err = (msg_t)0;
         }
         else {
-          dip->attr = (vfs_nodeattr_t)fip->fattrib;
+          dip->mode = translate_mode(fip->fattrib);
           dip->size = (vfs_offset_t)fip->fsize;
           strncpy(dip->name, fip->fname, VFS_CFG_NAMELEN_MAX);
           dip->name[VFS_CFG_NAMELEN_MAX] = '\0';

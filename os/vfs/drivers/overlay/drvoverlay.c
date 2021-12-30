@@ -442,7 +442,8 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
   vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)odnp->driver;
 
   if (odnp->index < drvp->next_driver) {
-    dip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
+//    dip->attr   = VFS_NODE_ATTR_ISDIR | VFS_NODE_ATTR_READONLY;
+    dip->mode   = VFS_MODE_S_IFDIR | VFS_MODE_S_IRUSR;
     dip->size   = (vfs_offset_t)0;
     strcpy(dip->name, drvp->names[odnp->index]);
 

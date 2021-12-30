@@ -33,15 +33,32 @@
 /*===========================================================================*/
 
 /**
- * @name    Node attributes
+ * @name    Node attributes and helpers
  * @{
  */
+#if 0
 #define VFS_NODE_ATTR_READONLY      1U
 #define VFS_NODE_ATTR_RESERVED2     2U
 #define VFS_NODE_ATTR_SYSTEM        4U
 #define VFS_NODE_ATTR_RESERVED8     8U
 #define VFS_NODE_ATTR_ISDIR         16U
 #define VFS_NODE_ATTR_ISSTREAM      256U
+#endif
+#define VFS_MODE_S_IFMT             S_IFMT
+#define VFS_MODE_S_IFREG            S_IFREG
+#define VFS_MODE_S_IFDIR            S_IFDIR
+#define VFS_MODE_S_IFCHR            S_IFCHR
+#define VFS_MODE_S_IFIFO            S_IFIFO
+
+#define VFS_MODE_S_IRWXU            S_IRWXU
+#define VFS_MODE_S_IRUSR            S_IRUSR
+#define VFS_MODE_S_IWUSR            S_IWUSR
+#define VFS_MODE_S_IXUSR            S_IXUSR
+
+#define VFS_MODE_S_ISREG(mode)      S_ISREG(mode)
+#define VFS_MODE_S_ISDIR(mode)      S_ISDIR(mode)
+#define VFS_MODE_S_ISCHR(mode)      S_ISCHR(mode)
+#define VFS_MODE_S_ISFIFO(mode)     S_ISFIFO(mode)
 /** @} */
 
 /**
@@ -74,6 +91,11 @@ typedef struct vfs_driver vfs_driver_c;
 typedef int32_t vfs_offset_t;
 
 /**
+ * @brief   Type of a node mode.
+ */
+typedef int32_t vfs_mode_t;
+
+/**
  * @brief   Type of a seek mode.
  */
 typedef int vfs_seekmode_t;
@@ -90,7 +112,7 @@ typedef struct vfs_direntry_info {
   /**
    * @brief   Size of the node.
    */
-  vfs_nodeattr_t        attr;
+  vfs_mode_t            mode;
   /**
    * @brief   Size of the node.
    */

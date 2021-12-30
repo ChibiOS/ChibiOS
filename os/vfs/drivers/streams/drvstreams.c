@@ -262,7 +262,8 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
 
   if (vsdp->streams[sdnp->index].name != NULL) {
 
-    dip->attr = VFS_NODE_ATTR_ISSTREAM;
+//    dip->attr = VFS_NODE_ATTR_ISSTREAM;
+    dip->mode = VFS_MODE_S_IFIFO | VFS_MODE_S_IRUSR | VFS_MODE_S_IWUSR;
     dip->size = (vfs_offset_t)0;
     strcpy(dip->name, vsdp->streams[sdnp->index].name);
 
