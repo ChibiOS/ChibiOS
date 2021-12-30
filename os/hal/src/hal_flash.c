@@ -173,7 +173,7 @@ flash_offset_t flashGetAddressOffset(BaseFlash *devp, void * addr) {
  */
 flash_sector_t flashGetOffsetSector(BaseFlash *devp,
                                     flash_offset_t offset) {
-  flash_sector_t sector;
+  flash_sector_t sector, i;
   const flash_descriptor_t *descriptor = flashGetDescriptor(devp);
 
   osalDbgAssert(offset < descriptor->size, "invalid offset");
@@ -181,7 +181,7 @@ flash_sector_t flashGetOffsetSector(BaseFlash *devp,
   if (descriptor->sectors != NULL) {
       flash_offset_t sector_start;
       flash_offset_t sector_end;
-      for (flash_sector_t i = 0; i < descriptor->sectors_count; i++) {
+      for (i = 0; i < descriptor->sectors_count; i++) {
           sector_start = descriptor->sectors[i].offset;
           sector_end = sector_start + descriptor->sectors[i].size - 1U;
           if ((offset >= sector_start) && (offset <= sector_end)) {
