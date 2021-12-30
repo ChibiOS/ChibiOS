@@ -26,30 +26,46 @@
 
 #include "startup_defs.h"
 
+#include "sdmon.h"
+
 /*===========================================================================*/
 /* VFS-related.                                                              */
 /*===========================================================================*/
 
 #if VFS_CFG_ENABLE_DRV_FATFS == TRUE
-/* VFS FatFS driver object representing the root directory.*/
-static vfs_fatfs_driver_c root_driver;
+/* VFS FatFS driver used by all file systems.*/
+static vfs_fatfs_driver_c fatfs_driver;
 #endif
 
-/* VFS overlay driver object representing the root directory.*/
+/* VFS overlay driver object representing the absolute root directory.*/
 static vfs_overlay_driver_c root_overlay_driver;
 
-/* VFS streams driver object representing the /dev directory.*/
-static vfs_streams_driver_c dev_driver;
+/* Segregated roots for the two sandboxes.*/
+static vfs_overlay_driver_c sb1_root_overlay_driver;
+static vfs_overlay_driver_c sb2_root_overlay_driver;
+
+/* Shared directory between the two sandboxes.*/
+static vfs_overlay_driver_c sb_shared_overlay_driver;
+
+/* VFS streams driver objects representing the /dev private directories.*/
+static vfs_streams_driver_c sb1_dev_driver;
+static vfs_streams_driver_c sb2_dev_driver;
 
 /* VFS API will use this object as implicit root, defining this
    symbol is expected.*/
 vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
 
+/* Used for /dev/null.*/
 static NullStream nullstream;
 
-/* Stream to be exposed under /dev as files.*/
-static const drv_streams_element_t streams[] = {
+/* Streams to be exposed under /dev as files.*/
+static const drv_streams_element_t sb1_streams[] = {
   {"VSD1", (BaseSequentialStream *)&SD2},
+  {"null", (BaseSequentialStream *)&nullstream},
+  {NULL, NULL}
+};
+static const drv_streams_element_t sb2_streams[] = {
+  {"VSD1", (BaseSequentialStream *)&LPSD1},
   {"null", (BaseSequentialStream *)&nullstream},
   {NULL, NULL}
 };
@@ -72,7 +88,7 @@ static const sb_config_t sb_config1 = {
       .writeable    = true
     }
   },
-  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+  .vfs_driver       = (vfs_driver_c *)&sb1_root_overlay_driver
 };
 
 /* Sandbox 2 configuration.*/
@@ -89,7 +105,7 @@ static const sb_config_t sb_config2 = {
       .writeable    = true
     }
   },
-  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+  .vfs_driver       = (vfs_driver_c *)&sb2_root_overlay_driver
 };
 
 /* Sandbox objects.*/
@@ -97,6 +113,8 @@ sb_class_t sbx1, sbx2;
 
 static THD_WORKING_AREA(waUnprivileged1, 512);
 static THD_WORKING_AREA(waUnprivileged2, 512);
+
+static thread_t *utp1, *utp2;
 
 /*===========================================================================*/
 /* Main and generic code.                                                    */
@@ -118,14 +136,33 @@ static THD_FUNCTION(Thread1, arg) {
 }
 
 /*
+ * SB termination event.
+ */
+static void SBHandler(eventid_t id) {
+
+  (void)id;
+
+  if (chThdTerminatedX(utp1)) {
+    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated\r\n");
+  }
+
+  if (chThdTerminatedX(utp2)) {
+    chprintf((BaseSequentialStream *)&SD2, "SB2 terminated\r\n");
+  }
+}
+
+/*
  * Application entry point.
  */
 int main(void) {
-  unsigned i = 1U;
-  thread_t *utp1, *utp2;
-  event_listener_t el1;
+  event_listener_t el0, el1, el2;
   vfs_file_node_c *fnp;
   msg_t ret;
+  static const evhandler_t evhndl[] = {
+    sdmonInsertHandler,
+    sdmonRemoveHandler,
+    SBHandler
+  };
 
   /*
    * System initializations.
@@ -142,10 +179,16 @@ int main(void) {
   sbHostInit();
 
   /*
-   * Starting a serial port for I/O, initializing other streams too.
+   * Starting a serial ports for I/O, initializing other streams too.
    */
   sdStart(&SD2, NULL);
+  sdStart(&LPSD1, NULL);
   nullObjectInit(&nullstream);
+
+  /*
+   * Activates the card insertion monitor.
+   */
+  sdmonInit();
 
   /*
    * Creating a blinker thread.
@@ -153,13 +196,44 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
   /*
-   * Initializing an overlay VFS object as a root, no overlaid driver,
-   * registering a streams VFS driver on the VFS overlay root as "/dev".
+   * Initializing an overlay VFS object as a root on top of a FatFS driver.
+   * This is accessible from kernel space and covers the whole file system.
    */
-  drvOverlayObjectInit(&root_overlay_driver, NULL, NULL);
-  ret = drvOverlayRegisterDriver(&root_overlay_driver,
-                                 drvStreamsObjectInit(&dev_driver, &streams[0]),
+  drvOverlayObjectInit(&root_overlay_driver, (vfs_driver_c *)&fatfs_driver, NULL);
+
+  /*
+   * Initializing overlay drivers for the two sandbox roots. Those also use
+   * the FatFS driver but are restricted to "/sb1" and "/sb2" directories.
+   */
+  drvOverlayObjectInit(&sb1_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "sb1");
+  drvOverlayObjectInit(&sb2_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "sb2");
+  ret = drvOverlayRegisterDriver(&sb1_root_overlay_driver,
+                                 drvStreamsObjectInit(&sb1_dev_driver, &sb1_streams[0]),
                                  "dev");
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+  ret = drvOverlayRegisterDriver(&sb2_root_overlay_driver,
+                                 drvStreamsObjectInit(&sb2_dev_driver, &sb2_streams[0]),
+                                 "dev");
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+
+  /*
+   * Initializing overlay driver for the directory shared among the sandboxes.
+   * It is seen as "/shared".
+   */
+  drvOverlayObjectInit(&sb_shared_overlay_driver, (vfs_driver_c *)&fatfs_driver, "shared");
+  ret = drvOverlayRegisterDriver(&sb1_root_overlay_driver,
+                                 (vfs_driver_c *)&sb_shared_overlay_driver,
+                                 "shared");
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+  ret = drvOverlayRegisterDriver(&sb2_root_overlay_driver,
+                                 (vfs_driver_c *)&sb_shared_overlay_driver,
+                                 "shared");
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
@@ -171,16 +245,26 @@ int main(void) {
   sbObjectInit(&sbx2, &sb_config2);
 
   /*
-   * Associating standard input, output and error to sandboxes. Both sandboxes
-   * use the same serial port in this setup.
+   * Associating standard input, output and error to sandbox 1.
    */
-  ret = vfsOpenFile("/dev/VSD1", 0, &fnp);
+  ret = vfsDrvOpenFile((vfs_driver_c *)&sb1_root_overlay_driver,
+                       "/dev/VSD1", 0, &fnp);
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
   sbPosixRegisterFileDescriptor(&sbx1, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
   sbPosixRegisterFileDescriptor(&sbx1, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
   sbPosixRegisterFileDescriptor(&sbx1, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
+  vfsCloseFile(fnp);
+
+  /*
+   * Associating standard input, output and error to sandbox 1.
+   */
+  ret = vfsDrvOpenFile((vfs_driver_c *)&sb2_root_overlay_driver,
+                       "/dev/VSD1", 0, &fnp);
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
   sbPosixRegisterFileDescriptor(&sbx2, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
   sbPosixRegisterFileDescriptor(&sbx2, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
   sbPosixRegisterFileDescriptor(&sbx2, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
@@ -188,20 +272,24 @@ int main(void) {
 
   /*
    * Creating **static** boxes using MPU.
-   * Note: The two regions cover both sandbox 1 and 2, there is no
-   *       isolation among them.
    */
   mpuConfigureRegion(MPU_REGION_0,
-                     0x08070000U,
+                     0x08180000,
                      MPU_RASR_ATTR_AP_RO_RO |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                     MPU_RASR_SIZE_64K |
+                     MPU_RASR_SIZE_512K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
-                     0x2001E000U,
+                     0x20060000,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
-                     MPU_RASR_SIZE_8K |
+                     MPU_RASR_SIZE_128K |
+                     MPU_RASR_ENABLE);
+  mpuConfigureRegion(MPU_REGION_2,
+                     0x20080000,
+                     MPU_RASR_ATTR_AP_RW_RW |
+                     MPU_RASR_ATTR_CACHEABLE_WB_WA |
+                     MPU_RASR_SIZE_128K |
                      MPU_RASR_ENABLE);
 
   /* Starting sandboxed thread 1.*/
@@ -223,13 +311,16 @@ int main(void) {
   /*
    * Listening to sandbox events.
    */
-  chEvtRegister(&sb.termination_es, &el1, (eventid_t)0);
+  chEvtRegister(&sdmon_inserted_event, &el0, (eventid_t)0);
+  chEvtRegister(&sdmon_removed_event, &el1, (eventid_t)1);
+  chEvtRegister(&sb.termination_es, &el2, (eventid_t)2);
 
   /*
    * Normal main() thread activity, in this demo it monitors the user button
    * and checks for sandboxes state.
    */
   while (true) {
+    chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
 
     /* Checking for user button, launching test suite if pressed.*/
     if (palReadLine(LINE_BUTTON)) {
@@ -237,18 +328,7 @@ int main(void) {
       test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
     }
 
-    /* Waiting for a sandbox event or timeout.*/
-    if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
-
-      if (chThdTerminatedX(utp1)) {
-        chprintf((BaseSequentialStream *)&SD2, "SB1 terminated\r\n");
-      }
-
-      if (chThdTerminatedX(utp2)) {
-        chprintf((BaseSequentialStream *)&SD2, "SB2 terminated\r\n");
-      }
-    }
-
+#if 0
     if ((i & 1) == 0U) {
       if (!chThdTerminatedX(utp1)) {
         (void) sbSendMessageTimeout(&sbx1, (msg_t)i, TIME_MS2I(10));
@@ -260,5 +340,6 @@ int main(void) {
       }
     }
     i++;
+#endif
   }
 }

@@ -27,9 +27,9 @@ MEMORY
     flash5 (rx) : org = 0x00000000, len = 0
     flash6 (rx) : org = 0x00000000, len = 0
     flash7 (rx) : org = 0x00000000, len = 0
-    ram0   (wx) : org = 0x20000000, len = 640k - 384k   /* Host data.       */
-    ram1   (wx) : org = 0x20040000, len = 192k          /* Sandbox 1 data.  */
-    ram2   (wx) : org = 0x20070000, len = 192k          /* Sandbox 2 data.  */
+    ram0   (wx) : org = 0x20000000, len = 640k - 256k   /* Host data.       */
+    ram1   (wx) : org = 0x20060000, len = 128k          /* Sandbox 1 data.  */
+    ram2   (wx) : org = 0x20080000, len = 128k          /* Sandbox 2 data.  */
     ram3   (wx) : org = 0x00000000, len = 0
     ram4   (wx) : org = 0x00000000, len = 0
     ram5   (wx) : org = 0x00000000, len = 0
