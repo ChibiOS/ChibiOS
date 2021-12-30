@@ -191,7 +191,7 @@ void sbPosixRegisterFileDescriptor(sb_class_t *sbp,
                                    int fd,
                                    vfs_file_node_c *fnp) {
 
-  chDbgAssert(is_valid_descriptor(&sbp->io, fd) &&
+  chDbgAssert((fd >= 0) && (fd < SB_CFG_FD_NUM) &&
               sbp->io.vfs_nodes[fd] == NULL,
               "invalid file descriptor");
 
