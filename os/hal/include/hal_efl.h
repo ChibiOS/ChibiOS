@@ -133,8 +133,6 @@ extern "C" {
   void  eflObjectInit(EFlashDriver *eflp);
   msg_t eflStart(EFlashDriver *eflp, const EFlashConfig *config);
   void  eflStop(EFlashDriver *eflp);
-  void  eflAcquireBus(EFlashDriver *eflp);
-  void  eflReleaseBus(EFlashDriver *eflp);
 #ifdef __cplusplus
 }
 #endif

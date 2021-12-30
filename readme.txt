@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Improved HAL flash interface with mutual exclusion methods, improved
+       EFL and SNOR drivers to use it.
 - NEW: Added a centralized errors handler under /os/common/utils. It will
        replace those in HAL and SB and will be shared among multiple subsystems.
 - NEW: Added a new OOP model under /os/common/utils. It will replace the

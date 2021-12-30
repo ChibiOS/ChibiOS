@@ -65,6 +65,14 @@
 #if !defined(SNOR_SHARED_BUS) || defined(__DOXYGEN__)
 #define SNOR_SHARED_BUS                     TRUE
 #endif
+
+/**
+ * @brief   Exclusive access control.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(SNOR_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define SNOR_USE_MUTUAL_EXCLUSION            TRUE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -138,6 +146,12 @@ typedef struct {
    * @brief   Device ID and unique ID.
    */
   uint8_t                       device_id[20];
+#if (SNOR_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Mutex protecting SNOR.
+   */
+  mutex_t                   mutex;
+#endif /* EFL_USE_MUTUAL_EXCLUSION == TRUE */
 } SNORDriver;
 
 /*===========================================================================*/

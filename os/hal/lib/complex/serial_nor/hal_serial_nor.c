@@ -48,6 +48,8 @@ static flash_error_t snor_start_erase_sector(void *instance,
 static flash_error_t snor_verify_erase(void *instance,
                                        flash_sector_t sector);
 static flash_error_t snor_query_erase(void *instance, uint32_t *msec);
+static flash_error_t snor_acquire_exclusive(void *instance);
+static flash_error_t snor_release_exclusive(void *instance);
 static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
                                     size_t n, uint8_t *rp);
 
@@ -58,8 +60,8 @@ static const struct SNORDriverVMT snor_vmt = {
   (size_t)0,
   snor_get_descriptor, snor_read, snor_program,
   snor_start_erase_all, snor_start_erase_sector,
-  snor_query_erase, snor_verify_erase,
-  snor_read_sfdp
+  snor_query_erase, snor_verify_erase, snor_acquire_exclusive,
+  snor_release_exclusive, snor_read_sfdp,
 };
 
 /*===========================================================================*/
@@ -299,6 +301,32 @@ static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
   bus_release(devp->config->busp);
 
   return err;
+}
+
+static flash_error_t snor_acquire_exclusive(void *instance) {
+#if (SNOR_USE_MUTUAL_EXCLUSION == TRUE)
+  SNORDriver *devp = (SNORDriver *)instance;
+
+  osalMutexLock(&devp->mutex);
+  return FLASH_NO_ERROR;
+#else
+  (void)instance;
+  osalDbgAssert(false, "mutual exclusion not enabled");
+  return FLASH_ERROR_UNIMPLEMENTED;
+#endif
+}
+
+static flash_error_t snor_release_exclusive(void *instance) {
+#if (SNOR_USE_MUTUAL_EXCLUSION == TRUE)
+  SNORDriver *devp = (SNORDriver *)instance;
+
+  osalMutexUnlock(&devp->mutex);
+  return FLASH_NO_ERROR;
+#else
+  (void)instance;
+  osalDbgAssert(false, "mutual exclusion not enabled");
+  return FLASH_ERROR_UNIMPLEMENTED;
+#endif
 }
 
 /*===========================================================================*/
@@ -647,6 +675,9 @@ void snorObjectInit(SNORDriver *devp) {
   devp->vmt         = &snor_vmt;
   devp->state       = FLASH_STOP;
   devp->config      = NULL;
+#if SNOR_USE_MUTUAL_EXCLUSION == TRUE
+  osalMutexObjectInit(&devp->mutex);
+#endif
 }
 
 /**
