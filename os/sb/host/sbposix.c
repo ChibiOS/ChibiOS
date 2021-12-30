@@ -178,7 +178,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
   ret = vfsGetFileStat((struct vfs_file_node *)sbp->io.vfs_nodes[fd], &stat);
   CH_RETURN_ON_ERROR(ret);
 
-  if ((stat.attr & VFS_NODE_ATTR_ISSTREAM) != 0U) {
+  if (!VFS_MODE_S_ISREG(stat.mode)) {
     return CH_RET_ESPIPE;
   }
 

@@ -33,17 +33,9 @@
 /*===========================================================================*/
 
 /**
- * @name    Node attributes and helpers
+ * @name    Node modes and helpers
  * @{
  */
-#if 0
-#define VFS_NODE_ATTR_READONLY      1U
-#define VFS_NODE_ATTR_RESERVED2     2U
-#define VFS_NODE_ATTR_SYSTEM        4U
-#define VFS_NODE_ATTR_RESERVED8     8U
-#define VFS_NODE_ATTR_ISDIR         16U
-#define VFS_NODE_ATTR_ISSTREAM      256U
-#endif
 #define VFS_MODE_S_IFMT             S_IFMT
 #define VFS_MODE_S_IFREG            S_IFREG
 #define VFS_MODE_S_IFDIR            S_IFDIR
@@ -101,11 +93,6 @@ typedef int32_t vfs_mode_t;
 typedef int vfs_seekmode_t;
 
 /**
- * @brief   Type of a node attributes.
- */
-typedef uint32_t vfs_nodeattr_t;
-
-/**
  * @brief   Type of a node information structure.
  */
 typedef struct vfs_direntry_info {
@@ -129,9 +116,9 @@ typedef struct vfs_direntry_info {
  */
 typedef struct vfs_file_stat {
   /**
-   * @brief   Size of the node.
+   * @brief   Modes of the node.
    */
-  vfs_nodeattr_t        attr;
+  vfs_mode_t            mode;
   /**
    * @brief   Size of the node.
    */

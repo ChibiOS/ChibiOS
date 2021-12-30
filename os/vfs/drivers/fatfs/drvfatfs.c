@@ -556,7 +556,7 @@ static vfs_offset_t node_file_getpos(void *instance) {
 static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp) {
   vfs_fatfs_file_node_c *fffnp = (vfs_fatfs_file_node_c *)instance;
 
-  fsp->attr = (vfs_nodeattr_t)fffnp->file.obj.attr;
+  fsp->mode = translate_mode(fffnp->file.obj.attr);
   fsp->size = (vfs_offset_t)fffnp->file.obj.objsize;
 
   return CH_RET_SUCCESS;
