@@ -114,7 +114,7 @@ sb_class_t sbx1, sbx2;
 static THD_WORKING_AREA(waUnprivileged1, 512);
 static THD_WORKING_AREA(waUnprivileged2, 512);
 
-static thread_t *utp1, *utp2;
+static thread_t *sb1tp, *sb2tp;
 
 /*===========================================================================*/
 /* Main and generic code.                                                    */
@@ -142,11 +142,11 @@ static void SBHandler(eventid_t id) {
 
   (void)id;
 
-  if (chThdTerminatedX(utp1)) {
+  if (chThdTerminatedX(sb1tp)) {
     chprintf((BaseSequentialStream *)&SD2, "SB1 terminated\r\n");
   }
 
-  if (chThdTerminatedX(utp2)) {
+  if (chThdTerminatedX(sb2tp)) {
     chprintf((BaseSequentialStream *)&SD2, "SB2 terminated\r\n");
   }
 }
@@ -293,23 +293,23 @@ int main(void) {
                      MPU_RASR_ENABLE);
 
   /* Starting sandboxed thread 1.*/
-  utp1 = sbStartThread(&sbx1, "sbx1",
-                       waUnprivileged1, sizeof (waUnprivileged1),
-                       NORMALPRIO - 1);
-  if (utp1 == NULL) {
+  sb1tp = sbStartThread(&sbx1, "sbx1",
+                        waUnprivileged1, sizeof (waUnprivileged1),
+                        NORMALPRIO - 1);
+  if (sb1tp == NULL) {
     chSysHalt("sbx1 failed");
   }
 
   /* Starting sandboxed thread 2.*/
-  utp2 = sbStartThread(&sbx2, "sbx2",
-                       waUnprivileged2, sizeof (waUnprivileged2),
-                       NORMALPRIO - 1);
-  if (utp1 == NULL) {
+  sb2tp = sbStartThread(&sbx2, "sbx2",
+                        waUnprivileged2, sizeof (waUnprivileged2),
+                        NORMALPRIO - 1);
+  if (sb2tp == NULL) {
     chSysHalt("sbx2 failed");
   }
 
   /*
-   * Listening to sandbox events.
+   * Listening to sandbox and card events.
    */
   chEvtRegister(&sdmon_inserted_event, &el0, (eventid_t)0);
   chEvtRegister(&sdmon_removed_event, &el1, (eventid_t)1);
