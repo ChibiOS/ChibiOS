@@ -124,7 +124,7 @@ int main(void) {
   unsigned i = 1U;
   thread_t *utp1, *utp2;
   event_listener_t el1;
-  vfs_file_node_c *fnp;
+  vfs_node_c *np;
   msg_t ret;
 
   /*
@@ -174,17 +174,17 @@ int main(void) {
    * Associating standard input, output and error to sandboxes. Both sandboxes
    * use the same serial port in this setup.
    */
-  ret = vfsOpenFile("/dev/VSD1", 0, &fnp);
+  ret = vfsOpen("/dev/VSD1", 0, &np);
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-  sbPosixRegisterFileDescriptor(&sbx1, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx1, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx1, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx2, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx2, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx2, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  vfsCloseFile(fnp);
+  sbPosixRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  vfsClose(np);
 
   /*
    * Creating **static** boxes using MPU.
