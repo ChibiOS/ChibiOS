@@ -50,14 +50,12 @@
 
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 static msg_t create_descriptor(sb_ioblock_t *iop,
-                               vfs_node_c *np,
-                               uint8_t attributes) {
+                               vfs_node_c *np) {
   unsigned fd;
 
   for (fd = 0U; fd < SB_CFG_FD_NUM; fd++) {
     if (iop->vfs_nodes[fd] == NULL) {
       iop->vfs_nodes[fd]  = np;
-      iop->attributes[fd] = attributes;
 
       return (msg_t)fd;
     }
@@ -79,7 +77,7 @@ static bool is_valid_descriptor(sb_ioblock_t *iop, int fd) {
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 int sb_posix_open(const char *path, int flags) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-  vfs_file_node_c *fnp = NULL;
+  vfs_node_c *np = NULL;
   msg_t ret;
 
   if (!sb_is_valid_string_range(sbp, (void *)path, VFS_CFG_PATHLEN_MAX)) {
@@ -87,18 +85,17 @@ int sb_posix_open(const char *path, int flags) {
   }
 
   do {
-    ret = vfsDrvOpenFile(sbp->config->vfs_driver, path,
-                         (unsigned)flags, &fnp);
+    ret = vfsDrvOpen(sbp->config->vfs_driver, path, (unsigned)flags, &np);
     CH_BREAK_ON_ERROR(ret);
 
-    ret = create_descriptor(&sbp->io, (vfs_node_c *)fnp, 0);
+    ret = create_descriptor(&sbp->io, np);
     CH_BREAK_ON_ERROR(ret);
 
     return (int)ret;
   } while (true);
 
-  if (fnp != NULL) {
-    vfsCloseFile(fnp);
+  if (np != NULL) {
+    vfsClose(np);
   }
 
   return (int)ret;
@@ -111,12 +108,7 @@ int sb_posix_close(int fd) {
     return CH_RET_EBADF;
   }
 
-  if (sbp->io.attributes[fd] == 0) {
-    vfsCloseFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd]);
-  }
-  else {
-    vfsCloseDirectory((vfs_directory_node_c *)sbp->io.vfs_nodes[fd]);
-  }
+  vfsClose(sbp->io.vfs_nodes[fd]);
   sbp->io.vfs_nodes[fd] = NULL;
 
   return CH_RET_SUCCESS;
@@ -133,7 +125,7 @@ ssize_t sb_posix_read(int fd, void *buf, size_t count) {
     return CH_RET_EBADF;
   }
 
-  if (sbp->io.attributes[fd] != 0) {
+  if (VFS_MODE_S_ISDIR(sbp->io.vfs_nodes[fd]->mode)) {
     return CH_RET_EISDIR;
   }
 
@@ -151,7 +143,7 @@ ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
     return CH_RET_EBADF;
   }
 
-  if (sbp->io.attributes[fd] != 0) {
+  if (VFS_MODE_S_ISDIR(sbp->io.vfs_nodes[fd]->mode)) {
     return CH_RET_EISDIR;
   }
 
@@ -160,8 +152,6 @@ ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
 
 off_t sb_posix_lseek(int fd, off_t offset, int whence) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-  msg_t ret;
-  vfs_stat_t stat;
 
   if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
     return CH_RET_EINVAL;
@@ -171,14 +161,11 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
     return CH_RET_EBADF;
   }
 
-  if (sbp->io.attributes[fd] != 0) {
+  if (VFS_MODE_S_ISDIR(sbp->io.vfs_nodes[fd]->mode)) {
     return CH_RET_EISDIR;
   }
 
-  ret = vfsGetStat(sbp->io.vfs_nodes[fd], &stat);
-  CH_RETURN_ON_ERROR(ret);
-
-  if (!VFS_MODE_S_ISREG(stat.mode)) {
+  if (!VFS_MODE_S_ISREG(sbp->io.vfs_nodes[fd]->mode)) {
     return CH_RET_ESPIPE;
   }
 
@@ -187,16 +174,13 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
                             whence);;
 }
 
-void sbPosixRegisterFileDescriptor(sb_class_t *sbp,
-                                   int fd,
-                                   vfs_file_node_c *fnp) {
+void sbPosixRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np) {
 
   chDbgAssert((fd >= 0) && (fd < SB_CFG_FD_NUM) &&
               sbp->io.vfs_nodes[fd] == NULL,
               "invalid file descriptor");
 
-  sbp->io.vfs_nodes[fd]  = (vfs_node_c *)fnp;
-  sbp->io.attributes[fd] = 0;
+  sbp->io.vfs_nodes[fd]  = np;
 }
 
 #else /* Fallbacks for when there is no VFS.*/

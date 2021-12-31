@@ -185,10 +185,6 @@ typedef struct {
    * @brief   VFS nodes associated to file descriptors.
    */
   vfs_node_c                    *vfs_nodes[SB_CFG_FD_NUM];
-  /**
-   * @brief   Extra attributes added to the VFS nodes.
-   */
-  uint8_t                       attributes[SB_CFG_FD_NUM];
 } sb_ioblock_t;
 #endif
 

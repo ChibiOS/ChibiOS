@@ -156,7 +156,7 @@ static void SBHandler(eventid_t id) {
  */
 int main(void) {
   event_listener_t el0, el1, el2;
-  vfs_file_node_c *fnp;
+  vfs_node_c *np;
   msg_t ret;
   static const evhandler_t evhndl[] = {
     sdmonInsertHandler,
@@ -247,28 +247,28 @@ int main(void) {
   /*
    * Associating standard input, output and error to sandbox 1.
    */
-  ret = vfsDrvOpenFile((vfs_driver_c *)&sb1_root_overlay_driver,
-                       "/dev/VSD1", 0, &fnp);
+  ret = vfsDrvOpen((vfs_driver_c *)&sb1_root_overlay_driver,
+                   "/dev/VSD1", VO_RDWR, &np);
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-  sbPosixRegisterFileDescriptor(&sbx1, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx1, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx1, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  vfsCloseFile(fnp);
+  sbPosixRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  vfsClose(np);
 
   /*
    * Associating standard input, output and error to sandbox 1.
    */
-  ret = vfsDrvOpenFile((vfs_driver_c *)&sb2_root_overlay_driver,
-                       "/dev/VSD1", 0, &fnp);
+  ret = vfsDrvOpen((vfs_driver_c *)&sb2_root_overlay_driver,
+                   "/dev/VSD1", VO_RDWR, &np);
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-  sbPosixRegisterFileDescriptor(&sbx2, STDIN_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx2, STDOUT_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  sbPosixRegisterFileDescriptor(&sbx2, STDERR_FILENO, (vfs_file_node_c *)roAddRef(fnp));
-  vfsCloseFile(fnp);
+  sbPosixRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbPosixRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  vfsClose(np);
 
   /*
    * Creating **static** boxes using MPU.
