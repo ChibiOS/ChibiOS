@@ -2,6 +2,7 @@
 VFSSRC := $(CHIBIOS)/os/vfs/src/vfsparser.c \
           $(CHIBIOS)/os/vfs/src/vfspaths.c \
           $(CHIBIOS)/os/vfs/src/vfsbuffers.c \
+          $(CHIBIOS)/os/vfs/src/vfsdrivers.c \
           $(CHIBIOS)/os/vfs/src/vfs.c \
           $(CHIBIOS)/os/vfs/drivers/template/drvtemplate.c \
           $(CHIBIOS)/os/vfs/drivers/sfs/drvsfs.c \

@@ -112,7 +112,10 @@ typedef struct vfs_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  msg_t vfsDrvOpen(vfs_driver_c *drvp,
+                   const char *path,
+                   int flags,
+                   vfs_node_c **vnpp);
 #ifdef __cplusplus
 }
 #endif

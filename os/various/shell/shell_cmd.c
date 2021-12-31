@@ -263,7 +263,7 @@ static void scan_nodes(BaseSequentialStream *chp,
       }
     }
 
-    vfsCloseDirectory(dirp);
+    vfsClose((vfs_node_c *)dirp);
   }
 }
 
@@ -381,7 +381,7 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
         chprintf(chp, "%s" SHELL_NEWLINE_STR, dip->name);
       }
 
-      vfsCloseDirectory(dirp);
+      vfsClose((vfs_node_c *)dirp);
     }
     else {
       chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);

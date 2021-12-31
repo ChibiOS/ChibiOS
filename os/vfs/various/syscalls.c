@@ -26,19 +26,19 @@
 #define SYSCALL_MAX_FDS                     10
 #endif
 
-static vfs_file_node_c *fds[SYSCALL_MAX_FDS];
+static vfs_node_c *fds[SYSCALL_MAX_FDS];
 
 /***************************************************************************/
 
 __attribute__((used))
 int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
   msg_t err;
-  vfs_file_node_c *vfnp;
+  vfs_node_c *vnp;
   int file;
 
   (void)mode;
 
-  err = vfsOpenFile(p, oflag, &vfnp);
+  err = vfsOpen(p, oflag, &vnp);
   if (err < CH_RET_SUCCESS) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -47,12 +47,12 @@ int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
   /* Searching for a free file handle.*/
   for (file = 0; file < SYSCALL_MAX_FDS; file++) {
     if (fds[file] == NULL) {
-      fds[file] = vfnp;
+      fds[file] = vnp;
       return file;
     }
   }
 
-  vfsCloseFile(vfnp);
+  vfsClose(vnp);
 
   __errno_r(r) = EMFILE;
   return -1;
@@ -68,7 +68,7 @@ int _close_r(struct _reent *r, int file) {
     return -1;
   }
 
-  vfsCloseFile(fds[file]);
+  vfsClose((vfs_node_c *)fds[file]);
   fds[file] = NULL;
 
   return 0;
@@ -85,7 +85,11 @@ int _read_r(struct _reent *r, int file, char *ptr, int len) {
     return -1;
   }
 
-  nr = vfsReadFile(fds[file], (uint8_t *)ptr, (size_t)len);
+  if (!VFS_MODE_S_ISREG(fds[file]->mode)) {
+    return EISDIR;
+  }
+
+  nr = vfsReadFile((vfs_file_node_c *)fds[file], (uint8_t *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(nr)) {
     __errno_r(r) = CH_DECODE_ERROR(nr);
     return -1;
@@ -105,7 +109,11 @@ int _write_r(struct _reent *r, int file, const char *ptr, int len) {
     return -1;
   }
 
-  nw = vfsWriteFile(fds[file], (const uint8_t *)ptr, (size_t)len);
+  if (!VFS_MODE_S_ISREG(fds[file]->mode)) {
+    return EISDIR;
+  }
+
+  nw = vfsWriteFile((vfs_file_node_c *)fds[file], (const uint8_t *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(nw)) {
     __errno_r(r) = CH_DECODE_ERROR(nw);
     return -1;

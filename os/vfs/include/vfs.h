@@ -132,17 +132,14 @@ extern "C" {
   msg_t vfsGetStat(vfs_node_c *np, vfs_stat_t *sp);
   msg_t vfsChangeCurrentDirectory(const char *path);
   msg_t vfsGetCurrentDirectory(char *buf, size_t size);
-  msg_t vfsOpenDirectory(const char *name,
-                         vfs_directory_node_c **vdnpp);
-  void vfsCloseDirectory(vfs_directory_node_c *vdnp);
+  msg_t vfsOpen(const char *path, int flags, vfs_node_c **vnpp);
+  msg_t vfsOpenDirectory(const char *name, vfs_directory_node_c **vdnpp);
+  msg_t vfsOpenFile(const char *name, int flags, vfs_file_node_c **vfnpp);
+  void vfsClose(vfs_node_c *vnp);
   msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
                               vfs_direntry_info_t *dip);
   msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
                              vfs_direntry_info_t *dip);
-  msg_t vfsOpenFile(const char *name,
-                    int flags,
-                    vfs_file_node_c **vfnpp);
-  void vfsCloseFile(vfs_file_node_c *vfnp);
   ssize_t vfsReadFile(vfs_file_node_c *vfnp, uint8_t *buf, size_t n);
   ssize_t vfsWriteFile(vfs_file_node_c *vfnp, const uint8_t *buf, size_t n);
   msg_t vfsSetFilePosition(vfs_file_node_c *vfnp,

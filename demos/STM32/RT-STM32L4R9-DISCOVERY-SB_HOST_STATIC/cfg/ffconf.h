@@ -1,5 +1,6 @@
 /* CHIBIOS FIX */
 #include "ch.h"
+#define FATFS_CHIBIOS_EXTENSIONS
 
 /*---------------------------------------------------------------------------/
 /  FatFs Functional Configurations

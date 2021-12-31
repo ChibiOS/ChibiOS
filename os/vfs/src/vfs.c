@@ -118,32 +118,64 @@ msg_t vfsGetCurrentDirectory(char *buf, size_t size) {
 }
 
 /**
- * @brief   Opens a VFS directory.
+ * @brief   Opens a VFS file or directory.
  *
- * @param[in] path      Absolute path of the directory to be opened.
- * @param[out] vdnpp    Pointer to the pointer to the instantiated.
- *                      @p vfs_directory_node_c object
+ * @param[in] path      Absolute path of the node to be opened.
+ * @param[in] flags     Open flags.
+ * @param[out] vnpp     Pointer to the pointer to the instantiated
+ *                      @p vfs_node_c object.
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsOpenDirectory(const char *path,
-                       vfs_directory_node_c **vdnpp) {
+msg_t vfsOpen(const char *path, int flags, vfs_node_c **vnpp) {
+
+  return vfsDrvOpen(vfs_root, path, flags, vnpp);
+}
+
+/**
+ * @brief   Opens a VFS directory.
+ *
+ * @param[in] path      Absolute path of the directory to be opened.
+ * @param[out] vdnpp    Pointer to the pointer to the instantiated
+ *                      @p vfs_directory_node_c object.
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsOpenDirectory(const char *path, vfs_directory_node_c **vdnpp) {
 
   return vfsDrvOpenDirectory(vfs_root, path, vdnpp);
 }
 
 /**
- * @brief   Releases a @p vfs_directory_node_c object.
+ * @brief   Opens a VFS file.
  *
- * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object
- *                      to be released.
+ * @param[in] path      Path of the file to be opened.
+ * @param[in] flags     File open flags.
+ * @param[out] vdnpp    Pointer to the pointer to the instantiated
+ *                      @p vfs_file_node_c object.
+ * @return              The operation result.
  *
  * @api
  */
-void vfsCloseDirectory(vfs_directory_node_c *vdnp) {
+msg_t vfsOpenFile(const char *path, int flags, vfs_file_node_c **vfnpp) {
 
-  vdnp->vmt->release((void *)vdnp);
+  return vfsDrvOpenFile(vfs_root, path, flags, vfnpp);
+}
+
+/**
+ * @brief   Releases a @p vfs_node_c or descendant object.
+ *
+ * @param[in] vnp       Pointer to the @p vfs_node_c object to be released.
+ *
+ * @api
+ */
+void vfsClose(vfs_node_c *vnp) {
+
+  chDbgAssert(vnp->references > 0U, "zero count");
+
+  vnp->vmt->release((void *)vnp);
 }
 
 /**
@@ -168,8 +200,8 @@ msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
 /**
  * @brief   Next directory entry.
  *
- * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object..
- * @param[out] dip      Pointer to a @p vfs_direntry_info_t structure
+ * @param[in] vdnp      Pointer to the @p vfs_directory_node_c object.
+ * @param[out] dip      Pointer to a @p vfs_direntry_info_t structure.
  * @return              The operation result.
  * @retval 0            Zero entries read, end-of-directory condition.
  * @retval 1            One directory entry read.
@@ -182,39 +214,6 @@ msg_t vfsReadDirectoryNext(vfs_directory_node_c *vdnp,
   chDbgAssert(vdnp->references > 0U, "zero count");
 
   return vdnp->vmt->dir_next((void *)vdnp, dip);
-}
-
-/**
- * @brief   Opens a VFS file.
- *
- * @param[in] path      Path of the file to be opened.
- * @param[in] flags     File open flags.
- * @param[out] vdnpp    Pointer to the pointer to the instantiated
- *                      @p vfs_file_node_c object.
- * @return              The operation result.
- *
- * @api
- */
-msg_t vfsOpenFile(const char *path,
-                  int flags,
-                  vfs_file_node_c **vfnpp) {
-
-  return vfsDrvOpenFile(vfs_root, path, flags, vfnpp);
-}
-
-/**
- * @brief   Releases a @p vfs_file_node_c object.
- *
- * @param[in] vfnp      Pointer to the @p vfs_file_node_c object.
- *                      to be released
- *
- * @api
- */
-void vfsCloseFile(vfs_file_node_c *vfnp) {
-
-  chDbgAssert(vfnp->references > 0U, "zero count");
-
-  vfnp->vmt->release((void *)vfnp);
 }
 
 /**
