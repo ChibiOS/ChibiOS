@@ -161,7 +161,7 @@ ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
 off_t sb_posix_lseek(int fd, off_t offset, int whence) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   msg_t ret;
-  vfs_file_stat_t stat;
+  vfs_stat_t stat;
 
   if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
     return CH_RET_EINVAL;
@@ -175,7 +175,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
     return CH_RET_EISDIR;
   }
 
-  ret = vfsGetFileStat((struct vfs_file_node *)sbp->io.vfs_nodes[fd], &stat);
+  ret = vfsGetStat(sbp->io.vfs_nodes[fd], &stat);
   CH_RETURN_ON_ERROR(ret);
 
   if (!VFS_MODE_S_ISREG(stat.mode)) {

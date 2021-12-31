@@ -129,6 +129,7 @@ extern vfs_driver_c *vfs_root;
 extern "C" {
 #endif
   void vfsInit(void);
+  msg_t vfsGetStat(vfs_node_c *np, vfs_stat_t *sp);
   msg_t vfsChangeCurrentDirectory(const char *path);
   msg_t vfsGetCurrentDirectory(char *buf, size_t size);
   msg_t vfsOpenDirectory(const char *name,
@@ -148,7 +149,6 @@ extern "C" {
                            vfs_offset_t offset,
                            vfs_seekmode_t whence);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp);
-  msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_file_stat_t *fsp);
   BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp);
 #ifdef __cplusplus
 }

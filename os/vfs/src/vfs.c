@@ -75,6 +75,22 @@ void vfsInit(void) {
 }
 
 /**
+ * @brief   Returns the current file size.
+ *.
+ * @param[in] np        Pointer to the @p vfs_node_c object
+ * @param[out] sp       Pointer to a @p vfs_stat_t structure.
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsGetStat(vfs_node_c *np, vfs_stat_t *sp) {
+
+  chDbgAssert(np->references > 0U, "zero count");
+
+  return np->vmt->node_stat((void *)np, sp);
+}
+
+/**
  * @brief   Changes the current VFS directory.
  *
  * @param[in] path      Path of the new current directory.
@@ -269,22 +285,6 @@ vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp) {
   chDbgAssert(vfnp->references > 0U, "zero count");
 
   return vfnp->vmt->file_getpos((void *)vfnp);
-}
-
-/**
- * @brief   Returns the current file size.
- *.
- * @param[in] vfnp      Pointer to the @p vfs_file_node_c object
- * @param[out] fsp      Pointer to a @p vfs_file_stat_t structure.
- * @return              The operation result.
- *
- * @api
- */
-msg_t vfsGetFileStat(vfs_file_node_c *vfnp, vfs_file_stat_t *fsp) {
-
-  chDbgAssert(vfnp->references > 0U, "zero count");
-
-  return vfnp->vmt->file_getstat((void *)vfnp, fsp);
 }
 
 /**

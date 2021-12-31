@@ -56,26 +56,29 @@ static msg_t drv_open_file(void *instance,
                            vfs_file_node_c **vfnpp);
 
 static const struct vfs_streams_driver_vmt driver_vmt = {
-  .set_cwd      = drv_set_cwd,
-  .get_cwd      = drv_get_cwd,
-  .open_dir     = drv_open_dir,
-  .open_file    = drv_open_file
+  .set_cwd          = drv_set_cwd,
+  .get_cwd          = drv_get_cwd,
+  .open_dir         = drv_open_dir,
+  .open_file        = drv_open_file
 };
 
 static void *node_dir_addref(void *instance);
 static void node_dir_release(void *instance);
+static msg_t node_dir_getstat(void *instance, vfs_stat_t *sp);
 static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
 static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
 
 static const struct vfs_streams_dir_node_vmt dir_node_vmt = {
-  .addref       = node_dir_addref,
-  .release      = node_dir_release,
-  .dir_first    = node_dir_first,
-  .dir_next     = node_dir_next
+  .addref           = node_dir_addref,
+  .release          = node_dir_release,
+  .node_stat        = node_dir_getstat,
+  .dir_first        = node_dir_first,
+  .dir_next         = node_dir_next
 };
 
 static void *node_file_addref(void *instance);
 static void node_file_release(void *instance);
+static msg_t node_file_getstat(void *instance, vfs_stat_t *sp);
 static BaseSequentialStream *node_file_get_stream(void *instance);
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
 static ssize_t node_file_write(void *instance, const uint8_t *buf, size_t n);
@@ -83,17 +86,16 @@ static msg_t node_file_setpos(void *instance,
                               vfs_offset_t offset,
                               vfs_seekmode_t whence);
 static vfs_offset_t node_file_getpos(void *instance);
-static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp);
 
 static const struct vfs_streams_file_node_vmt file_node_vmt = {
   .addref           = node_file_addref,
   .release          = node_file_release,
+  .node_stat        = node_file_getstat,
   .file_get_stream  = node_file_get_stream,
   .file_read        = node_file_read,
   .file_write       = node_file_write,
   .file_setpos      = node_file_setpos,
-  .file_getpos      = node_file_getpos,
-  .file_getstat     = node_file_getstat
+  .file_getpos      = node_file_getpos
 };
 
 /**
@@ -167,8 +169,9 @@ static msg_t drv_open_dir(void *instance,
 
       /* Node object initialization.*/
       __referenced_object_objinit_impl(sdnp, &dir_node_vmt);
-      sdnp->driver     = (vfs_driver_c *)drvp;
-      sdnp->index      = 0U;
+      sdnp->driver  = (vfs_driver_c *)drvp;
+      sdnp->mode    = VFS_MODE_S_IFDIR | VFS_MODE_S_IRUSR;
+      sdnp->index   = 0U;
 
       *vdnpp = (vfs_directory_node_c *)sdnp;
       return CH_RET_SUCCESS;
@@ -189,7 +192,7 @@ static msg_t drv_open_file(void *instance,
   const drv_streams_element_t *dsep;
   msg_t err;
 
-  (void)flags;
+  (void)flags; /* TODO  handle invalid modes.*/
 
   do {
     char fname[VFS_CFG_NAMELEN_MAX + 1];
@@ -213,8 +216,9 @@ static msg_t drv_open_file(void *instance,
 
           /* Node object initialization.*/
           __referenced_object_objinit_impl(sfnp, &file_node_vmt);
-          sfnp->driver     = (vfs_driver_c *)drvp;
-          sfnp->stream     = dsep->stream;
+          sfnp->driver  = (vfs_driver_c *)drvp;
+          sfnp->mode    = VFS_MODE_S_IFIFO | VFS_MODE_S_IRUSR | VFS_MODE_S_IWUSR;
+          sfnp->stream  = dsep->stream;
 
           *vfnpp = (vfs_file_node_c *)sfnp;
           return CH_RET_SUCCESS;
@@ -246,6 +250,15 @@ static void node_dir_release(void *instance) {
 
     chPoolFree(&vfs_streams_driver_static.dir_nodes_pool, (void *)sdnp);
   }
+}
+
+static msg_t node_dir_getstat(void *instance, vfs_stat_t *sp) {
+  vfs_node_c *np = (vfs_node_c *)instance;
+
+  sp->mode = np->mode;
+  sp->size = (vfs_offset_t)0;
+
+  return CH_RET_SUCCESS;
 }
 
 static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip) {
@@ -289,6 +302,15 @@ static void node_file_release(void *instance) {
   }
 }
 
+static msg_t node_file_getstat(void *instance, vfs_stat_t *sp) {
+  vfs_node_c *np = (vfs_node_c *)instance;
+
+  sp->mode = np->mode;
+  sp->size = (vfs_offset_t)0;
+
+  return CH_RET_SUCCESS;
+}
+
 static BaseSequentialStream *node_file_get_stream(void *instance) {
   vfs_streams_file_node_c *sfnp = (vfs_streams_file_node_c *)instance;
 
@@ -323,14 +345,6 @@ static vfs_offset_t node_file_getpos(void *instance) {
   (void)instance;
 
   return 0U;
-}
-
-static msg_t node_file_getstat(void *instance, vfs_file_stat_t *fsp) {
-
-  (void)instance;
-  (void)fsp;
-
-  return CH_RET_ENOSYS;
 }
 
 /*===========================================================================*/

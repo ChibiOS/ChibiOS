@@ -114,7 +114,7 @@ typedef struct vfs_direntry_info {
  * @brief   Type of a node information structure.
  * @todo    Add time, permissions etc.
  */
-typedef struct vfs_file_stat {
+typedef struct vfs_stat {
   /**
    * @brief   Modes of the node.
    */
@@ -123,7 +123,7 @@ typedef struct vfs_file_stat {
    * @brief   Size of the node.
    */
   vfs_offset_t          size;
-} vfs_file_stat_t;
+} vfs_stat_t;
 
 /**
  * @brief   Type of a generic VFS node class.
@@ -134,7 +134,8 @@ typedef struct vfs_node vfs_node_c;
  * @brief   @p vfs_node_c specific methods.
  */
 #define __vfs_node_methods                                                  \
-  __referenced_object_methods
+  __referenced_object_methods                                               \
+  msg_t (*node_stat)(void *instance, vfs_stat_t *fsp);
 
 /**
  * @brief   @p vfs_node_c specific data.
@@ -142,7 +143,9 @@ typedef struct vfs_node vfs_node_c;
 #define __vfs_node_data                                                     \
   __referenced_object_data                                                  \
   /* Driver handling this node.*/                                           \
-  vfs_driver_c          *driver;
+  vfs_driver_c          *driver;                                            \
+  /* Node mode information.*/                                               \
+  vfs_mode_t            mode;
 
 /**
  * @brief   @p vfs_node_c virtual methods table.
@@ -215,8 +218,7 @@ typedef struct vfs_file_node vfs_file_node_c;
   msg_t (*file_setpos)(void *instance,                                      \
                        vfs_offset_t offset,                                 \
                        vfs_seekmode_t whence);                              \
-  vfs_offset_t (*file_getpos)(void *instance);                              \
-  msg_t (*file_getstat)(void *instance, vfs_file_stat_t *fsp);
+  vfs_offset_t (*file_getpos)(void *instance);
 
 /**
  * @brief   @p vfs_file_node_c specific data.
