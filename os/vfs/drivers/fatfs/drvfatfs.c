@@ -181,6 +181,12 @@ static msg_t translate_error(FRESULT res) {
   case FR_EXIST:
     msg = CH_RET_EEXIST;
     break;
+  case FR_IS_DIRECTORY:
+    msg = CH_RET_EISDIR;
+    break;
+  case FR_NOT_DIRECTORY:
+    msg = CH_RET_ENOTDIR;
+    break;
   default:
     msg = CH_RET_INNER_ERROR;
     break;
