@@ -32,7 +32,7 @@ int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
 
   (void)mode;
 
-  err = sbFileOpen(p, oflag);
+  err = sbOpen(p, oflag);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -45,7 +45,7 @@ __attribute__((used))
 int _close_r(struct _reent *r, int file) {
   uint32_t err;
 
-  err = sbFileClose((uint32_t)file);
+  err = sbClose((uint32_t)file);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -58,7 +58,7 @@ __attribute__((used))
 int _write_r(struct _reent *r, int file, char * ptr, int len) {
   uint32_t err;
 
-  err = sbFileWrite((uint32_t)file, (const uint8_t *)ptr, (size_t)len);
+  err = sbWrite((uint32_t)file, (const uint8_t *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -71,7 +71,7 @@ __attribute__((used))
 int _read_r(struct _reent *r, int file, char * ptr, int len) {
   uint32_t err;
 
-  err = sbFileRead((uint32_t)file, (uint8_t *)ptr, (size_t)len);
+  err = sbRead((uint32_t)file, (uint8_t *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -84,7 +84,7 @@ __attribute__((used))
 int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
   uint32_t err;
 
-  err = sbFileSeek((uint32_t)file, (uint32_t)ptr, (uint32_t)dir);
+  err = sbSeek((uint32_t)file, (uint32_t)ptr, (uint32_t)dir);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;

@@ -186,7 +186,7 @@ extern "C" {
  * @param[in] flags     open mode
  * @return              The file descriptor or an error.
  */
-static inline int sbFileOpen(const char *pathname,
+static inline int sbOpen(const char *pathname,
                              int flags) {
 
   __syscall3r(0, SB_POSIX_OPEN, pathname, flags);
@@ -199,9 +199,34 @@ static inline int sbFileOpen(const char *pathname,
  * @param[in] fd        file descriptor
  * @return              Operation result.
  */
-static inline int sbFileClose(int fd) {
+static inline int sbClose(int fd) {
 
   __syscall2r(0, SB_POSIX_CLOSE, fd);
+  return (int)r0;
+}
+
+/**
+ * @brief   Posix-style file descriptor duplication.
+ *
+ * @param[in] fd        file descriptor
+ * @return              Operation result.
+ */
+static inline int sbDup(int fd) {
+
+  __syscall2r(0, SB_POSIX_DUP, fd);
+  return (int)r0;
+}
+
+/**
+ * @brief   Posix-style file descriptor assignment.
+ *
+ * @param[in] oldfd     old file descriptor
+ * @param[in] newfd     new file descriptor
+ * @return              Operation result.
+ */
+static inline int sbDup2(int oldfd, int newfd) {
+
+  __syscall3r(0, SB_POSIX_DUP, oldfd, newfd);
   return (int)r0;
 }
 
@@ -213,9 +238,7 @@ static inline int sbFileClose(int fd) {
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline ssize_t sbFileRead(int fd,
-                                 void *buf,
-                                 size_t count) {
+static inline ssize_t sbRead(int fd, void *buf, size_t count) {
 
   __syscall4r(0, SB_POSIX_READ, fd, buf, count);
   return (ssize_t)r0;
@@ -229,9 +252,7 @@ static inline ssize_t sbFileRead(int fd,
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline ssize_t sbFileWrite(int fd,
-                                  const void *buf,
-                                  size_t count) {
+static inline ssize_t sbWrite(int fd, const void *buf, size_t count) {
 
   __syscall4r(0, SB_POSIX_WRITE, fd, buf, count);
   return (ssize_t)r0;
@@ -245,9 +266,7 @@ static inline ssize_t sbFileWrite(int fd,
  * @param[in] whence    operation mode
  * @return              Operation result.
  */
-static inline off_t sbFileSeek(int fd,
-                               off_t offset,
-                               int whence) {
+static inline off_t sbSeek(int fd, off_t offset, int whence) {
 
   __syscall4r(0, SB_POSIX_LSEEK, fd, offset, whence);
   return (off_t)r0;

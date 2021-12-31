@@ -61,6 +61,8 @@ extern "C" {
 #endif
   int sb_posix_open(const char *path, int flags);
   int sb_posix_close(int fd);
+  int sb_posix_dup(int fd);
+  int sb_posix_dup2(int oldfd, int newfd);
   ssize_t sb_posix_read(int fd, void *buf, size_t count);
   ssize_t sb_posix_write(int fd, const void *buf, size_t count);
   off_t sb_posix_lseek(int fd, off_t offset, int whence);

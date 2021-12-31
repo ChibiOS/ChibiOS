@@ -64,7 +64,17 @@ static msg_t create_descriptor(sb_ioblock_t *iop,
   return CH_RET_EMFILE;
 }
 
-static bool is_valid_descriptor(sb_ioblock_t *iop, int fd) {
+static bool is_valid_descriptor(int fd) {
+
+  return (fd >= 0) && (fd < SB_CFG_FD_NUM);
+}
+
+static bool is_available_descriptor(sb_ioblock_t *iop, int fd) {
+
+  return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] == NULL);
+}
+
+static bool is_existing_descriptor(sb_ioblock_t *iop, int fd) {
 
   return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] != NULL);
 }
@@ -92,7 +102,7 @@ int sb_posix_open(const char *path, int flags) {
     CH_BREAK_ON_ERROR(ret);
 
     return (int)ret;
-  } while (true);
+  } while (false);
 
   if (np != NULL) {
     vfsClose(np);
@@ -104,7 +114,7 @@ int sb_posix_open(const char *path, int flags) {
 int sb_posix_close(int fd) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!is_valid_descriptor(&sbp->io, fd)) {
+  if (!is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -114,6 +124,53 @@ int sb_posix_close(int fd) {
   return CH_RET_SUCCESS;
 }
 
+int sb_posix_dup(int fd) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  vfs_node_c *np;
+  msg_t ret;
+
+  if (!is_existing_descriptor(&sbp->io, fd)) {
+    return CH_RET_EBADF;
+  }
+
+  /* Node associated to the existing file descriptor.*/
+  np = sbp->io.vfs_nodes[fd];
+
+  /* Adding the same node to the new descriptor with increased reference
+     counter.*/
+  ret = create_descriptor(&sbp->io, (vfs_node_c *)roAddRef(np));
+  if (CH_RET_IS_ERROR(ret)) {
+    /* In case of error removing the added reference.*/
+    vfsClose(np);
+  }
+
+  return (int)ret;
+}
+
+int sb_posix_dup2(int oldfd, int newfd) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (!is_existing_descriptor(&sbp->io, oldfd)) {
+    return CH_RET_EBADF;
+  }
+
+  if (!is_valid_descriptor(oldfd)) {
+    return CH_RET_EBADF;
+  }
+
+  if (oldfd == newfd) {
+    return CH_RET_EINVAL;
+  }
+
+  if (sbp->io.vfs_nodes[newfd] != NULL) {
+    vfsClose(sbp->io.vfs_nodes[newfd]);
+  }
+
+  sbp->io.vfs_nodes[newfd] = (vfs_node_c *)roAddRef(sbp->io.vfs_nodes[oldfd]);
+
+  return (int)newfd;
+}
+
 ssize_t sb_posix_read(int fd, void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
@@ -121,7 +178,7 @@ ssize_t sb_posix_read(int fd, void *buf, size_t count) {
     return CH_RET_EFAULT;
   }
 
-  if (!is_valid_descriptor(&sbp->io, fd)) {
+  if (!is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -139,7 +196,7 @@ ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
     return CH_RET_EFAULT;
   }
 
-  if (!is_valid_descriptor(&sbp->io, fd)) {
+  if (!is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -157,7 +214,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
     return CH_RET_EINVAL;
   }
 
-  if (!is_valid_descriptor(&sbp->io, fd)) {
+  if (!is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -176,9 +233,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
 
 void sbPosixRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np) {
 
-  chDbgAssert((fd >= 0) && (fd < SB_CFG_FD_NUM) &&
-              sbp->io.vfs_nodes[fd] == NULL,
-              "invalid file descriptor");
+  chDbgAssert(is_available_descriptor(&sbp->io, fd), "invalid file descriptor");
 
   sbp->io.vfs_nodes[fd]  = np;
 }

@@ -56,9 +56,12 @@
  */
 #define SB_POSIX_OPEN           1
 #define SB_POSIX_CLOSE          2
-#define SB_POSIX_READ           3
-#define SB_POSIX_WRITE          4
-#define SB_POSIX_LSEEK          5
+#define SB_POSIX_DUP            3
+#define SB_POSIX_DUP2           4
+#define SB_POSIX_READ           5
+#define SB_POSIX_WRITE          6
+#define SB_POSIX_LSEEK          7
+#define SB_POSIX_GETDENTS       8
 /** @} */
 
 /*===========================================================================*/

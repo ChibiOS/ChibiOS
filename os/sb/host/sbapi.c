@@ -963,6 +963,13 @@ void sb_api_stdio(struct port_extctx *ectxp) {
   case SB_POSIX_CLOSE:
     ectxp->r0 = sb_posix_close(ectxp->r1);
     break;
+  case SB_POSIX_DUP:
+    ectxp->r0 = sb_posix_dup((int)ectxp->r1);
+    break;
+  case SB_POSIX_DUP2:
+    ectxp->r0 = sb_posix_dup2((int)ectxp->r1,
+                              (int)ectxp->r2);
+    break;
   case SB_POSIX_READ:
     ectxp->r0 = sb_posix_read(ectxp->r1,
                               (void *)ectxp->r2,
