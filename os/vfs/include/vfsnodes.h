@@ -93,7 +93,7 @@ typedef int32_t vfs_mode_t;
 typedef int vfs_seekmode_t;
 
 /**
- * @brief   Type of a node information structure.
+ * @brief   Type of a directory entry structure.
  */
 typedef struct vfs_direntry_info {
   /**
