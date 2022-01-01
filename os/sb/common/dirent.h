@@ -28,7 +28,6 @@
 #ifndef DIRENT_H
 #define DIRENT_H
 
-#include <limits.h>
 #include <sys/types.h>
 
 /*===========================================================================*/
