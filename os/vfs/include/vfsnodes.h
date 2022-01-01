@@ -97,7 +97,7 @@ typedef int vfs_seekmode_t;
  */
 typedef struct vfs_direntry_info {
   /**
-   * @brief   Size of the node.
+   * @brief   Node mode.
    */
   vfs_mode_t            mode;
   /**
