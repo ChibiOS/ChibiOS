@@ -28,7 +28,7 @@
 
 __attribute__((used))
 int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
-  uint32_t err;
+  int err;
 
   (void)mode;
 
@@ -43,9 +43,9 @@ int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
 
 __attribute__((used))
 int _close_r(struct _reent *r, int file) {
-  uint32_t err;
+  int err;
 
-  err = sbClose((uint32_t)file);
+  err = sbClose(file);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -55,10 +55,10 @@ int _close_r(struct _reent *r, int file) {
 }
 
 __attribute__((used))
-int _write_r(struct _reent *r, int file, char * ptr, int len) {
-  uint32_t err;
+int _write_r(struct _reent *r, int file, char *ptr, int len) {
+  int err;
 
-  err = sbWrite((uint32_t)file, (const uint8_t *)ptr, (size_t)len);
+  err = sbWrite(file, (const void *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -68,10 +68,10 @@ int _write_r(struct _reent *r, int file, char * ptr, int len) {
 }
 
 __attribute__((used))
-int _read_r(struct _reent *r, int file, char * ptr, int len) {
-  uint32_t err;
+int _read_r(struct _reent *r, int file, char *ptr, int len) {
+  int err;
 
-  err = sbRead((uint32_t)file, (uint8_t *)ptr, (size_t)len);
+  err = sbRead(file, (void *)ptr, (size_t)len);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -82,9 +82,9 @@ int _read_r(struct _reent *r, int file, char * ptr, int len) {
 
 __attribute__((used))
 int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
-  uint32_t err;
+  int err;
 
-  err = sbSeek((uint32_t)file, (uint32_t)ptr, (uint32_t)dir);
+  err = sbSeek(file, ptr, dir);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;
@@ -94,19 +94,33 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
 }
 
 __attribute__((used))
-int _fstat_r(struct _reent *r, int file, struct stat * st) {
-  (void)r;
-  (void)file;
+int _fstat_r(struct _reent *r, int file, struct stat *st) {
+  int err;
 
-  memset(st, 0, sizeof(*st));
-  st->st_mode = S_IFCHR;
-  return 0;
+  err = sbFstat(file, st);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return (int)err;
 }
 
 __attribute__((used))
 int _isatty_r(struct _reent *r, int fd) {
-  (void)r;
-  (void)fd;
+  int err;
+  struct stat s;
+
+  err = sbFstat(fd, &s);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return 0;
+  }
+
+  if (!S_ISCHR(s.st_mode)) {
+    __errno_r(r) = ENOTTY;
+    return 0;
+  }
 
   return 1;
 }

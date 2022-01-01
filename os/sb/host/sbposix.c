@@ -171,6 +171,30 @@ int sb_posix_dup2(int oldfd, int newfd) {
   return (int)newfd;
 }
 
+int sb_posix_fstat(int fd, struct stat *statbuf) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  msg_t ret;
+  vfs_stat_t vstat;
+
+  if (!sb_is_valid_write_range(sbp, (void *)statbuf, sizeof (struct stat))) {
+    return CH_RET_EFAULT;
+  }
+
+  if (!is_existing_descriptor(&sbp->io, fd)) {
+    return CH_RET_EBADF;
+  }
+
+  ret = vfsGetStat(sbp->io.vfs_nodes[fd], &vstat);
+  if (!CH_RET_IS_ERROR(ret)) {
+    memset((void *)statbuf, 0, sizeof (struct stat));
+    statbuf->st_mode  = (mode_t)vstat.mode;
+    statbuf->st_size  = (off_t)vstat.size;
+    statbuf->st_nlink = 1;
+  }
+
+  return ret;
+}
+
 ssize_t sb_posix_read(int fd, void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 

@@ -970,6 +970,10 @@ void sb_api_stdio(struct port_extctx *ectxp) {
     ectxp->r0 = sb_posix_dup2((int)ectxp->r1,
                               (int)ectxp->r2);
     break;
+  case SB_POSIX_FSTAT:
+    ectxp->r0 = sb_posix_fstat((int)ectxp->r1,
+                               (struct stat *)ectxp->r2);
+    break;
   case SB_POSIX_READ:
     ectxp->r0 = sb_posix_read(ectxp->r1,
                               (void *)ectxp->r2,

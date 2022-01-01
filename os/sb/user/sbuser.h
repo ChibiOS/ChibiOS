@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #include "errcodes.h"
 #include "sbsysc.h"
@@ -228,6 +229,20 @@ static inline int sbDup2(int oldfd, int newfd) {
 
   __syscall3r(0, SB_POSIX_DUP, oldfd, newfd);
   return (int)r0;
+}
+
+/**
+ * @brief   Posix-style file file status.
+ *
+ * @param[in] fd        file descriptor
+ * @param[in] statbuf   pointer to a @p stat structure
+ * @param[in] whence    operation mode
+ * @return              Operation result.
+ */
+static inline int sbFstat(int fd, struct stat *statbuf) {
+
+  __syscall3r(0, SB_POSIX_FSTAT, fd, statbuf);
+  return (off_t)r0;
 }
 
 /**
