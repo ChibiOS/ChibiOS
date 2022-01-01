@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <dirent.h>
+
 #include "ch.h"
 #include "sb.h"
 
@@ -198,7 +200,7 @@ int sb_posix_fstat(int fd, struct stat *statbuf) {
 ssize_t sb_posix_read(int fd, void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!sb_is_valid_write_range(sbp, (void *)buf, count)) {
+  if (!sb_is_valid_write_range(sbp, buf, count)) {
     return CH_RET_EFAULT;
   }
 
@@ -216,7 +218,7 @@ ssize_t sb_posix_read(int fd, void *buf, size_t count) {
 ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!sb_is_valid_read_range(sbp, (void *)buf, count)) {
+  if (!sb_is_valid_read_range(sbp, buf, count)) {
     return CH_RET_EFAULT;
   }
 
@@ -253,6 +255,53 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
   return vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
                             offset,
                             whence);;
+}
+
+ssize_t sbPosixGetdents(int fd, void *buf, size_t count) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  vfs_direntry_info_t *dip;
+  msg_t ret;
+
+  if (!sb_is_valid_write_range(sbp, buf, count)) {
+    return (ssize_t)CH_RET_EFAULT;
+  }
+
+  if (!is_existing_descriptor(&sbp->io, fd)) {
+    return (ssize_t)CH_RET_EBADF;
+  }
+
+  if (!VFS_MODE_S_ISDIR(sbp->io.vfs_nodes[fd]->mode)) {
+    return (ssize_t)CH_RET_ENOTDIR;
+  }
+
+  dip = (vfs_direntry_info_t *)(void *)vfs_buffer_take();
+
+  do {
+    size_t n;
+    struct dirent *dep = (struct dirent *)buf;
+
+    ret = vfsReadDirectoryNext((vfs_directory_node_c *)sbp->io.vfs_nodes[fd], dip);
+    CH_BREAK_ON_ERROR(ret);
+
+    n = sizeof (struct dirent) + strlen(dip->name) + (size_t)1;
+    if (count < n) {
+      ret = CH_RET_EINVAL;
+      break;
+    }
+
+    /* Copying data from VFS structure to the Posix one.*/
+    dep->d_ino    = (ino_t)1; /* TODO */
+    dep->d_reclen = n;
+    dep->d_type   = IFTODT(sbp->io.vfs_nodes[fd]->mode);
+    strcpy(dep->d_name, dip->name);
+
+    ret = (msg_t)n;
+
+  } while (false);
+
+  vfs_buffer_release((char *)dip);
+
+  return (ssize_t)ret;
 }
 
 void sbPosixRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np) {

@@ -1,6 +1,6 @@
 /*
     ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+              2015,2016,2017,2018,2019,2020,2021,2022 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -18,23 +18,30 @@
 */
 
 /**
- * @file    sb/host/sbposix.h
- * @brief   ARM SandBox host Posix API macros and structures.
+ * @file    sb/common/dirent.h
+ * @brief   Replaces the default dirent.h file.
  *
- * @addtogroup ARM_SANDBOX_HOSTAPI
+ * @addtogroup ARM_SANDBOX_DIRENT
  * @{
  */
 
-#ifndef SBPOSIX_H
-#define SBPOSIX_H
+#ifndef DIRENT_H
+#define DIRENT_H
 
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-#include "vfs.h"
-#endif
+#include <limits.h>
+#include <sys/types.h>
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Structure dirent defined fields
+ * @{
+ */
+#define _DIRENT_HAVE_D_RECLEN
+#define _DIRENT_HAVE_D_TYPE
+/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -48,9 +55,19 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+struct dirent {
+  ino_t             d_ino;
+  unsigned short    d_reclen;
+  unsigned char     d_type;
+  char              d_name[];
+};
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+#define IFTODT(mode)        (((mode) & 0170000) >> 12)
+#define DTTOIF(dirtype)     ((dirtype) << 12)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -59,18 +76,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  int sb_posix_open(const char *path, int flags);
-  int sb_posix_close(int fd);
-  int sb_posix_dup(int fd);
-  int sb_posix_dup2(int oldfd, int newfd);
-  int sb_posix_fstat(int fd, struct stat *statbuf);
-  ssize_t sb_posix_read(int fd, void *buf, size_t count);
-  ssize_t sb_posix_write(int fd, const void *buf, size_t count);
-  off_t sb_posix_lseek(int fd, off_t offset, int whence);
-  ssize_t sbPosixGetdents(int fd, void *buf, size_t count);
-#if SB_CFG_ENABLE_VFS == TRUE
-  void sbPosixRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np);
-#endif
+
 #ifdef __cplusplus
 }
 #endif
@@ -79,6 +85,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* SBPOSIX_H */
+#endif /* DIRENT_H */
 
 /** @} */
