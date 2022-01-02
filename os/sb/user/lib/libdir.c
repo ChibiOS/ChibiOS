@@ -53,6 +53,7 @@ int closedir (DIR *dirp) {
 }
 
 struct dirent *readdir (DIR *dirp) {
+  extern int getdents(int fd, void *dp, int count);
 
   while (true) {
     struct dirent *dep;
