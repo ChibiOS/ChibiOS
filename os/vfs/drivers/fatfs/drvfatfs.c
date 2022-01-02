@@ -27,9 +27,9 @@
 
 #include "vfs.h"
 
-#include "ff.h"
-
 #if (VFS_CFG_ENABLE_DRV_FATFS == TRUE) || defined(__DOXYGEN__)
+
+#include "ff.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
