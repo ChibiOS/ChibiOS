@@ -27,6 +27,8 @@
 
 #include "vfs.h"
 
+#include "ff.h"
+
 #if (VFS_CFG_ENABLE_DRV_FATFS == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
@@ -40,6 +42,69 @@
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
+
+/**
+ * @brief   @p vfs_fatfs_dir_node_c specific methods.
+ */
+#define __vfs_fatfs_dir_node_methods                                        \
+  __vfs_directory_node_methods
+
+/**
+ * @brief   @p vfs_fatfs_dir_node_c specific data.
+ */
+#define __vfs_fatfs_dir_node_data                                           \
+  __vfs_directory_node_data                                                 \
+  DIR                           dir;
+
+/**
+ * @brief   @p vfs_fatfs_dir_node_c virtual methods table.
+ */
+struct vfs_fatfs_dir_node_vmt {
+  __vfs_fatfs_dir_node_methods
+};
+
+/**
+ * @brief   Type of a FatFS directory VFS node class.
+ */
+typedef struct vfs_fatfs_dir_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_fatfs_dir_node_vmt *vmt;
+  __vfs_fatfs_dir_node_data
+} vfs_fatfs_dir_node_c;
+
+/**
+ * @brief   @p vfs_fatfs_file_node_c specific methods.
+ */
+#define __vfs_fatfs_file_node_methods                                       \
+  __vfs_file_node_methods
+
+/**
+ * @brief   @p vfs_fatfs_file_node_c specific data.
+ */
+#define __vfs_fatfs_file_node_data                                          \
+  __vfs_file_node_data                                                      \
+  FIL                           file;                                       \
+  BaseSequentialStream          stream;
+
+/**
+ * @brief   @p vfs_fatfs_file_node_c virtual methods table.
+ */
+struct vfs_fatfs_file_node_vmt {
+  __vfs_fatfs_file_node_methods
+};
+
+/**
+ * @brief   Type of a FatFS file VFS node class.
+ */
+typedef struct vfs_fatfs_file_node {
+  /**
+   * @brief   Virtual Methods Table.
+   */
+  const struct vfs_fatfs_file_node_vmt *vmt;
+  __vfs_fatfs_file_node_data
+} vfs_fatfs_file_node_c;
 
 /*===========================================================================*/
 /* Module local variables.                                                   */
