@@ -134,7 +134,7 @@ caddr_t _sbrk_r(struct _reent *r, int incr) {
   prevp = p;
   if ((p + incr > &__heap_end__) ||
       (p + incr < &__heap_base__)) {
-    __errno_r(r)  = ENOMEM;
+    __errno_r(r) = ENOMEM;
     return (caddr_t)-1;
   }
 
@@ -142,12 +142,13 @@ caddr_t _sbrk_r(struct _reent *r, int incr) {
   return (caddr_t)prevp;
 }
 
-int getdents(int fd, void *dp, int count) {
+__attribute__((used))
+int _getdents_r(struct _reent *r, int fd, void *dp, int count) {
   ssize_t n;
 
   n = sbPosixGetdents(fd, dp, count);
   if (CH_RET_IS_ERROR(n)) {
-    errno = CH_DECODE_ERROR(n);
+    __errno_r(r) = CH_DECODE_ERROR(n);
     return -1;
   }
 

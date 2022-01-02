@@ -20,6 +20,8 @@
 #include <fcntl.h>
 #include <dirent.h>
 
+#include <reent.h>
+
 DIR *fdopendir(int fd) {
   DIR *dirp;
 
@@ -53,13 +55,13 @@ int closedir (DIR *dirp) {
 }
 
 struct dirent *readdir (DIR *dirp) {
-  extern int getdents(int fd, void *dp, int count);
+  extern int _getdents_r(struct _reent *r, int fd, void *dp, int count);
 
   while (true) {
     struct dirent *dep;
 
     if (dirp->next == 0) {
-      dirp->size = getdents(dirp->fd, dirp->buf, DIR_BUF_SIZE);
+      dirp->size = _getdents_r(_REENT, dirp->fd, dirp->buf, DIR_BUF_SIZE);
     }
 
     if (dirp->size <= 0) {
