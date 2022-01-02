@@ -68,7 +68,7 @@ struct dirent *readdir (DIR *dirp) {
       return NULL;
     }
 
-    if (dirp->next >= DIR_BUF_SIZE) {
+    if (dirp->next >= dirp->size) {
       dirp->next = 0;
       continue;
     }
