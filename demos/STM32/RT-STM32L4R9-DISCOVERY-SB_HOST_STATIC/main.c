@@ -111,8 +111,8 @@ static const sb_config_t sb_config2 = {
 /* Sandbox objects.*/
 sb_class_t sbx1, sbx2;
 
-static THD_WORKING_AREA(waUnprivileged1, 512);
-static THD_WORKING_AREA(waUnprivileged2, 512);
+static THD_WORKING_AREA(waUnprivileged1, 1024);
+static THD_WORKING_AREA(waUnprivileged2, 1024);
 
 static thread_t *sb1tp, *sb2tp;
 
@@ -155,7 +155,7 @@ static void SBHandler(eventid_t id) {
  * Application entry point.
  */
 int main(void) {
-  event_listener_t el0, el1, el2;
+  event_listener_t elsb;
   vfs_node_c *np;
   msg_t ret;
   static const evhandler_t evhndl[] = {
@@ -310,11 +310,9 @@ int main(void) {
   }
 
   /*
-   * Listening to sandbox and card events.
+   * Listening to sandbox events.
    */
-  chEvtRegister(&sdmon_inserted_event, &el0, (eventid_t)0);
-  chEvtRegister(&sdmon_removed_event, &el1, (eventid_t)1);
-  chEvtRegister(&sb.termination_es, &el2, (eventid_t)2);
+  chEvtRegister(&sb.termination_es, &elsb, (eventid_t)2);
 
   /*
    * Normal main() thread activity, in this demo it monitors the user button

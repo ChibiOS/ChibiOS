@@ -89,12 +89,16 @@ static void tmrfunc(virtual_timer_t *vtp, void *p) {
  * @notapi
  */
 void sdmonInit(void) {
+  static event_listener_t el0, el1;
 
   /* Activates the  SDC driver using default configuration.*/
   sdcStart(&SDCD1, NULL);
 
   chEvtObjectInit(&sdmon_inserted_event);
   chEvtObjectInit(&sdmon_removed_event);
+
+  chEvtRegister(&sdmon_inserted_event, &el0, (eventid_t)0);
+  chEvtRegister(&sdmon_removed_event, &el1, (eventid_t)1);
 
   sdmon_ready = false;
   cnt = POLLING_INTERVAL;
