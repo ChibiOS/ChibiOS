@@ -142,6 +142,18 @@ caddr_t _sbrk_r(struct _reent *r, int incr) {
   return (caddr_t)prevp;
 }
 
+int getdents(int fd, void *dp, int count) {
+  ssize_t n;
+
+  n = sbPosixGetdents(fd, dp, count);
+  if (CH_RET_IS_ERROR(n)) {
+    errno = CH_DECODE_ERROR(n);
+    return -1;
+  }
+
+  return n;
+}
+
 __attribute__((used))
 int _kill(int pid, int sig) {
 

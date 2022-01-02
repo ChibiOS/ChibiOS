@@ -52,6 +52,8 @@
 #define DT_FIFO             IFTODT(S_IFIFO)
 /** @} */
 
+#define DIR_BUF_SIZE        512
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -71,6 +73,13 @@ struct dirent {
   char              d_name[];
 };
 
+typedef struct {
+  int               fd;
+  ssize_t           next;
+  ssize_t           size;
+  char              buf[DIR_BUF_SIZE];
+} DIR;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -85,7 +94,10 @@ struct dirent {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  DIR *fdopendir(int fd);
+  DIR *opendir(const char *name);
+  int closedir (DIR *dirp);
+  struct dirent *readdir (DIR *dirp);
 #ifdef __cplusplus
 }
 #endif

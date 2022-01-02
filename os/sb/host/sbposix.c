@@ -281,7 +281,10 @@ ssize_t sbPosixGetdents(int fd, void *buf, size_t count) {
     struct dirent *dep = (struct dirent *)buf;
 
     ret = vfsReadDirectoryNext((vfs_directory_node_c *)sbp->io.vfs_nodes[fd], dip);
-    CH_BREAK_ON_ERROR(ret);
+    if (ret <= 0) {
+      /* Note, zero means no more directory entries available.*/
+      break;
+    }
 
     n = sizeof (struct dirent) + strlen(dip->name) + (size_t)1;
     if (count < n) {
