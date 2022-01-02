@@ -199,6 +199,7 @@ int main(void) {
    * Initializing an overlay VFS object as a root on top of a FatFS driver.
    * This is accessible from kernel space and covers the whole file system.
    */
+  drvFatFSObjectInit(&fatfs_driver);
   drvOverlayObjectInit(&root_overlay_driver, (vfs_driver_c *)&fatfs_driver, NULL);
 
   /*

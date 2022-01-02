@@ -79,7 +79,7 @@ extern "C" {
   bool chMemIsAreaContainedX(const memory_area_t areas[],
                              const void *base,
                              size_t size);
-  bool chMemIsAreaWritableX(const void *p,
+  bool chMemIsAreaWritableX(void *p,
                             size_t size,
                             unsigned align);
   bool chMemIsAreaReadableX(const void *p,
@@ -111,10 +111,12 @@ extern "C" {
 static inline bool chMemIsAreaWithinX(const memory_area_t *map,
                                       const void *p,
                                       size_t size) {
-  uint8_t *base = (uint8_t *)p;
+  uint8_t *base = map->base;
+  uint8_t *end  = base + map->size - (size_t)1;
+  const uint8_t *p8 = (const uint8_t *)p;
 
-  return (bool)((base >= map->base) &&
-                (size <= (size_t)(map->base + map->size - base)));
+  return (bool)((p8 >= base) && (p8 <= end) &&
+                (size <= (size_t)(end - p8) + (size_t)1));
 }
 
 #if CH_CFG_USE_MEMCHECKS == FALSE

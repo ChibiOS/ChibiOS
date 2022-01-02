@@ -189,6 +189,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
         /* Node object initialization.*/
         __referenced_object_objinit_impl(odnp, &dir_node_vmt);
         odnp->driver        = (vfs_driver_c *)drvp;
+        odnp->mode          = VFS_MODE_S_IFDIR | VFS_MODE_S_IRUSR;
         odnp->index         = 0U;
         odnp->overlaid_root = NULL;
 
@@ -267,7 +268,7 @@ static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
     if (*scanpath == '\0') {
 
       /* Always not found, root is not a file.*/
-      err = CH_RET_ENOENT;
+      err = CH_RET_EISDIR;
     }
     else {
       vfs_driver_c *dp;

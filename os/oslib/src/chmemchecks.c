@@ -93,10 +93,10 @@ CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
  */
 bool chMemIsStringWithinX(const memory_area_t *map, const char *s, size_t n) {
   const char *base = (const char *)map->base;
-  const char *end  = (const char *)base + map->size;
+  const char *end  = (const char *)base + map->size - (size_t)1;
 
   if (s >= base) {
-    while ((s < end) && (n > 0U)) {
+    while ((s <= end) && (n > 0U)) {
       if (*s == '\0') {
         return true;
       }
@@ -164,7 +164,7 @@ bool chMemIsAreaContainedX(const memory_area_t areas[],
  *
  * @xclass
  */
-bool chMemIsAreaWritableX(const void *p,
+bool chMemIsAreaWritableX(void *p,
                           size_t size,
                           unsigned align) {
 

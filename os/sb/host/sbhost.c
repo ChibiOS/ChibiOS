@@ -87,7 +87,7 @@ bool sb_is_valid_string_range(sb_class_t *sbcp, const char *s, size_t n) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (chMemIsAreaWithinX(&rp->area, s, n)) {
+    if (chMemIsStringWithinX(&rp->area, s, n)) {
       return true;
     }
     rp++;
