@@ -34,6 +34,7 @@
 #include <sys/stat.h>
 
 #include "errcodes.h"
+#include "dirent.h"
 #include "sbsysc.h"
 
 /*===========================================================================*/
@@ -285,6 +286,19 @@ static inline off_t sbSeek(int fd, off_t offset, int whence) {
 
   __syscall4r(0, SB_POSIX_LSEEK, fd, offset, whence);
   return (off_t)r0;
+}
+
+/**
+ * @brief   Posix-style directory read.
+ * @param[in] fd        file descriptor
+ * @param[in] buf       buffer pointer
+ * @param[in] count     number of bytes
+ * @return              The number of bytes really transferred or an error.
+ */
+static inline ssize_t sbPosixGetdents(int fd, void *buf, size_t count) {
+
+  __syscall4r(0, SB_POSIX_GETDENTS, fd, buf, count);
+  return (ssize_t)r0;
 }
 
 /**

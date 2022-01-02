@@ -42,6 +42,16 @@
 #define _DIRENT_HAVE_D_TYPE
 /** @} */
 
+/**
+ * @name    File types
+ * @{
+ */
+#define DT_REG              IFTODT(S_IFREG)
+#define DT_DIR              IFTODT(S_IFDIR)
+#define DT_CHR              IFTODT(S_IFCHR)
+#define DT_FIFO             IFTODT(S_IFIFO)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
