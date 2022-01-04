@@ -299,6 +299,7 @@ extern "C" {
 /*===========================================================================*/
 
 #include "sbsysc.h"
+#include "sbelf.h"
 #include "sbposix.h"
 #include "sbapi.h"
 #include "sbhost.h"
