@@ -57,7 +57,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t sbElfLoad(vfs_driver_c *drvp, const char *path, memory_area_t *map);
+  msg_t sbElfLoad(vfs_file_node_c *fnp, memory_area_t *map);
+  msg_t sbElfLoadFile(vfs_driver_c *drvp, const char *path, memory_area_t *map);
 #ifdef __cplusplus
 }
 #endif
