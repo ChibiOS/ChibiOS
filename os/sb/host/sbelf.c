@@ -90,16 +90,16 @@ typedef struct {
 } elf32_header_t;
 
 typedef struct {
-  uint16_t                  sh_name;
-  uint16_t                  sh_type;
-  uint16_t                  sh_flags;
+  uint32_t                  sh_name;
+  uint32_t                  sh_type;
+  uint32_t                  sh_flags;
   uint32_t                  sh_addr;
   uint32_t                  sh_offset;
-  uint16_t                  sh_size;
-  uint16_t                  sh_link;
-  uint16_t                  sh_info;
-  uint16_t                  sh_addralign;
-  uint16_t                  sh_entsize;
+  uint32_t                  sh_size;
+  uint32_t                  sh_link;
+  uint32_t                  sh_info;
+  uint32_t                  sh_addralign;
+  uint32_t                  sh_entsize;
 } elf32_section_header_t;
 
 /*===========================================================================*/

@@ -206,8 +206,8 @@ int main(void) {
    * Initializing overlay drivers for the two sandbox roots. Those also use
    * the FatFS driver but are restricted to "/sb1" and "/sb2" directories.
    */
-  drvOverlayObjectInit(&sb1_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "sb1");
-  drvOverlayObjectInit(&sb2_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "sb2");
+  drvOverlayObjectInit(&sb1_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/sb1");
+  drvOverlayObjectInit(&sb2_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/sb2");
   ret = drvOverlayRegisterDriver(&sb1_root_overlay_driver,
                                  drvStreamsObjectInit(&sb1_dev_driver, &sb1_streams[0]),
                                  "dev");
@@ -323,8 +323,13 @@ int main(void) {
 
     /* Checking for user button, launching test suite if pressed.*/
     if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
+      ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver, "/bin/app.elf", NULL);
+      if (CH_RET_IS_ERROR(ret)) {
+        chSysHalt("ELF");
+      }
+
+//      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
+//      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
     }
 
 #if 0
