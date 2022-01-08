@@ -38,6 +38,8 @@
 
 /* Relevant section types.*/
 #define SHT_PROGBITS        1U
+#define SHT_SYMTAB          2U
+#define SHT_NOBITS          8U
 #define SHT_REL             9U
 
 /* Relevant section flags.*/
@@ -45,6 +47,12 @@
 #define SHF_ALLOC           (1U << 1)
 #define SHF_EXECINSTR       (1U << 2)
 #define SHF_INFO_LINK       (1U << 6)
+
+/* Special section indices.*/
+#define SHN_UNDEF           0U
+
+#define ELF32_R_SYM(v)      ((v) >> 8)
+#define ELF32_R_TYPE(v)     ((v) & 0xFFU)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -55,6 +63,28 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a section number.
+ */
+typedef unsigned elf_secnum_t;
+
+/**
+ * @brief   Type of a symbol number.
+ */
+typedef unsigned elf_symnum_t;
+
+/**
+ * @brief   Type of a loadable section info structure.
+ */
+typedef struct {
+  elf_secnum_t              section;
+  uint32_t                  address;
+  size_t                    bits_size;
+  vfs_offset_t              bits_off;
+  size_t                    rel_size;
+  vfs_offset_t              rel_off;
+} elf_loadable_info_t;
+
+/**
  * @brief   Type of an ELF loader context.
  */
 typedef struct elf_load_context {
@@ -63,10 +93,16 @@ typedef struct elf_load_context {
   uint8_t                   *next;
 
   uint32_t                  entry;
-  uint16_t                  shnum;
-  vfs_offset_t              shoff;
-  vfs_offset_t              stringsoff;
-  uint64_t                  loaded;
+  elf_secnum_t              sections_num;
+  vfs_offset_t              sections_off;
+  elf_symnum_t              symbols_num;
+  vfs_offset_t              symbols_off;
+  elf_loadable_info_t       loadable_code;
+  elf_loadable_info_t       loadable_const;
+  elf_loadable_info_t       loadable_data;
+#if 0
+//  vfs_offset_t              strings_off;
+#endif
 } elf_load_context_t;
 
 /**
@@ -102,6 +138,20 @@ typedef struct {
   uint32_t                  sh_entsize;
 } elf32_section_header_t;
 
+typedef struct {
+  uint32_t                  r_offset;
+  uint32_t                  r_info;
+} elf32_rel_t;
+
+typedef struct {
+  uint32_t                  st_name;
+  uint32_t                  st_value;
+  uint32_t                  st_size;
+  uint8_t                   st_info;
+  uint8_t                   st_other;
+  uint16_t                  st_shndx;
+} elf32_symbol_t;
+
 /*===========================================================================*/
 /* Module local variables.                                                   */
 /*===========================================================================*/
@@ -134,37 +184,218 @@ static msg_t read_section_name(elf_load_context_t *ctxp,
 
 static msg_t read_section_header(elf_load_context_t *ctxp,
                                  elf32_section_header_t *shp,
-                                 unsigned index) {
+                                 elf_secnum_t index) {
   msg_t ret;
 
   ret = vfsSetFilePosition(ctxp->fnp,
-                           ctxp->shoff + ((vfs_offset_t)index *
-                                          (vfs_offset_t)sizeof (elf32_section_header_t)),
+                           ctxp->sections_off + ((vfs_offset_t)index *
+                                                 (vfs_offset_t)sizeof (elf32_section_header_t)),
                            VFS_SEEK_SET);
   CH_RETURN_ON_ERROR(ret);
   return vfsReadFile(ctxp->fnp, (void *)shp, sizeof (elf32_section_header_t));
 }
 
-static msg_t load_section(elf_load_context_t *ctxp,
-                          elf32_section_header_t *shp) {
+static msg_t allocate_section(elf_load_context_t *ctxp,
+                              elf32_section_header_t *shp) {
+  uint8_t *load_address;
 
-  (void)ctxp;
-  (void)shp;
+  /* Checking if the section can fit into the destination memory area.*/
+  load_address = ctxp->map->base + shp->sh_addr;
+  if (!chMemIsAreaWithinX(ctxp->map,
+                          (const void *)load_address,
+                          (size_t)shp->sh_size)) {
+    return CH_RET_ENOMEM;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
+#if 0
+static msg_t reloc_section(elf_load_context_t *ctxp,
+                           elf32_section_header_t *shp) {
+  elf32_relocation_t *rbuf;
+  msg_t ret;
+
+  rbuf = (elf32_relocation_t *)(void *)vfs_buffer_take();
+
+  do {
+    size_t size, remaining_size = (size_t)shp->sh_size;
+
+    ret = vfsSetFilePosition(ctxp->fnp, (vfs_offset_t)shp->sh_offset, VFS_SEEK_SET);
+    CH_BREAK_ON_ERROR(ret);
+
+    /* Reading the relocation section data.*/
+    while (remaining_size > 0U) {
+      unsigned i, n;
+
+      /* Reading relocation data using buffers in order to not make continuous
+         calls to the FS which could be unbuffered.*/
+      if (remaining_size > VFS_BUFFERS_SIZE) {
+        size = VFS_BUFFERS_SIZE;
+      }
+      else {
+        size = remaining_size;
+      }
+
+      ret = vfsReadFile(ctxp->fnp, (void *)rbuf, size);
+      if (CH_RET_IS_ERROR(ret)) {
+        goto yes_it_is_a_goto;
+      }
+
+      /* Number of relocation entries in the buffer.*/
+      n = (unsigned)ret / (unsigned)sizeof (elf32_relocation_t);
+      for (i = 0U; i < n; i++) {
+        ret = reloc_entry(ctxp, &rbuf[i]);
+        if (CH_RET_IS_ERROR(ret)) {
+          goto yes_it_is_a_goto;
+        }
+      }
+
+      remaining_size -= size;
+    }
+
+    ret = CH_RET_SUCCESS;
+  } while (false);
+
+yes_it_is_a_goto:
+
+  vfs_buffer_release((char *)rbuf);
+
+  return ret;
+}
+#endif
+
+static msg_t reloc_entry(elf_load_context_t *ctxp,
+                         elf_loadable_info_t *lip,
+                         elf32_rel_t *rp) {
+  vfs_offset_t oldoff, symoff;
+  elf_symnum_t symnum;
+  uint8_t *relocation_address;
+  msg_t ret;
+  elf32_symbol_t symbol;
+
+  /* Saving current file position.*/
+  oldoff = vfsGetFilePosition(ctxp->fnp);
+
+  /* Checking for a symbol number overflow.*/
+  symnum = (elf_symnum_t)ELF32_R_SYM(rp->r_info);
+  if (symnum > ctxp->symbols_num) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Moving file pointer to the symbol then reading it.*/
+  symoff = ctxp->symbols_off + ((vfs_offset_t)symnum *
+                                (vfs_offset_t)sizeof (elf32_symbol_t));
+  ret = vfsSetFilePosition(ctxp->fnp, symoff, VFS_SEEK_SET);
+  CH_RETURN_ON_ERROR(ret);
+  ret = vfsReadFile(ctxp->fnp, (void *)&symbol, sizeof (elf32_symbol_t));
+  CH_RETURN_ON_ERROR(ret);
+
+  /* Undefined symbols are not handled, this is a loader not a linker.*/
+  if (symbol.st_shndx == SHN_UNDEF) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Symbols must be associated to this specific section.*/
+  if (lip->section != (elf_symnum_t)symbol.st_shndx) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Relocation point address.*/
+  relocation_address = ctxp->map->base + lip->address + symbol.st_value;
+  if (!chMemIsAreaWithinX(ctxp->map,
+                          (const void *)relocation_address,
+                          sizeof (uint32_t))) {
+    return CH_RET_ENOMEM;
+  }
+
+  /* Handling the various relocation point types.*/
+  switch (ELF32_R_TYPE(rp->r_info)) {
+
+  }
+
+  ret = vfsSetFilePosition(ctxp->fnp, oldoff, VFS_SEEK_SET);
+  CH_RETURN_ON_ERROR(ret);
 
   return CH_RET_SUCCESS;
 }
 
 static msg_t reloc_section(elf_load_context_t *ctxp,
-                           elf32_section_header_t *shp) {
+                           elf_loadable_info_t *lip) {
+  elf32_rel_t *rbuf;
+  size_t size, done_size, remaining_size;
+  msg_t ret;
 
-  (void)ctxp;
-  (void)shp;
+  rbuf = (elf32_rel_t *)(void *)vfs_buffer_take();
+
+  /* Reading the relocation section data.*/
+  remaining_size = lip->rel_size;
+  done_size = 0U;
+  while (remaining_size > 0U) {
+    unsigned i, n;
+
+    /* Reading relocation data using buffers in order to not make continuous
+       calls to the FS which could be unbuffered.*/
+    if (remaining_size > VFS_BUFFERS_SIZE) {
+      size = VFS_BUFFERS_SIZE;
+    }
+    else {
+      size = remaining_size;
+    }
+
+    /* Reading a buffer-worth of relocation data.*/
+    ret = vfsSetFilePosition(ctxp->fnp,
+                             lip->rel_off + (vfs_offset_t)done_size,
+                             VFS_SEEK_SET);
+    CH_BREAK_ON_ERROR(ret);
+    ret = vfsReadFile(ctxp->fnp, (void *)rbuf, size);
+    CH_BREAK_ON_ERROR(ret);
+
+    /* Number of relocation entries in the buffer.*/
+    n = (unsigned)ret / (unsigned)sizeof (elf32_rel_t);
+    for (i = 0U; i < n; i++) {
+      ret = reloc_entry(ctxp, lip, &rbuf[i]);
+      CH_BREAK_ON_ERROR(ret);
+    }
+    CH_BREAK_ON_ERROR(ret);
+
+    remaining_size -= size;
+    done_size += size;
+  }
+
+  vfs_buffer_release((char *)rbuf);
+
+  return ret;
+}
+
+static msg_t load_relocate_section(elf_load_context_t *ctxp,
+                                   elf_loadable_info_t *lip) {
+  uint8_t *load_address;
+  msg_t ret;
+
+  /* Checking if the section can fit into the destination memory area.*/
+  load_address = ctxp->map->base + lip->address;
+  if (!chMemIsAreaWithinX(ctxp->map,
+                          (const void *)load_address,
+                          lip->bits_size)) {
+    return CH_RET_ENOMEM;
+  }
+
+  /* Loading the section data into the final memory area.*/
+  if (lip->bits_size > 0U) {
+    ret = vfsSetFilePosition(ctxp->fnp, lip->bits_off, VFS_SEEK_SET);
+    CH_RETURN_ON_ERROR(ret);
+    ret = vfsReadFile(ctxp->fnp, (void *)load_address, lip->bits_size);
+    CH_RETURN_ON_ERROR(ret);
+  }
+
+  ret = reloc_section(ctxp, lip);
+  CH_RETURN_ON_ERROR(ret);
 
   return CH_RET_SUCCESS;
 }
 
 static msg_t init_elf_context(elf_load_context_t *ctxp,
-                              elf32_section_header_t *shp,
                               vfs_file_node_c *fnp,
                               memory_area_t *map) {
   static uint8_t elf32_header[16] = {
@@ -174,6 +405,7 @@ static msg_t init_elf_context(elf_load_context_t *ctxp,
   elf32_header_t h;
   msg_t ret;
 
+  /* Context fully cleared.*/
   memset((void *)ctxp, 0, sizeof (elf_load_context_t));
 
   /* Initializing the fixed part of the context.*/
@@ -195,13 +427,9 @@ static msg_t init_elf_context(elf_load_context_t *ctxp,
   /* TODO more consistency checks.*/
 
   /* Storing info required later.*/
-  ctxp->entry       = h.e_entry;
-  ctxp->shnum       = h.e_shnum;
-  ctxp->shoff       = (vfs_offset_t)h.e_shoff;
-
-  /* Reading the header of the section containing the section names.*/
-  ret = read_section_header(ctxp, shp, (unsigned)h.e_shstrndx);
-  ctxp->stringsoff  = (vfs_offset_t)shp->sh_offset;
+  ctxp->entry        = h.e_entry;
+  ctxp->sections_num = (unsigned)h.e_shnum;
+  ctxp->sections_off = (vfs_offset_t)h.e_shoff;
 
   return CH_RET_SUCCESS;
 }
@@ -211,66 +439,123 @@ static msg_t init_elf_context(elf_load_context_t *ctxp,
 /*===========================================================================*/
 
 msg_t sbElfLoad(vfs_file_node_c *fnp, memory_area_t *map) {
-  elf_load_context_t ctx;
-  elf32_section_header_t sh;
-  unsigned i;
   msg_t ret;
 
   do {
-    ret = init_elf_context(&ctx, &sh, fnp, map);
+    elf_load_context_t ctx;
+    elf_loadable_info_t *lip;
+    elf_secnum_t i;
+
+    ret = init_elf_context(&ctx, fnp, map);
     CH_BREAK_ON_ERROR(ret);
 
-    /* Iterating through sections.*/
-    for (i = 0U; i < (unsigned)ctx.shnum; i++) {
-//      char name[8];
+    /* Iterating through sections, loading.*/
+    for (i = 0U; i < ctx.sections_num; i++) {
+      elf32_section_header_t sh;
 
+      /* Reading the header.*/
       ret = read_section_header(&ctx, &sh, i);
       CH_BREAK_ON_ERROR(ret);
 
-#if 0
-      ret = read_section_name(&ctx, &sh, name, sizeof name);
-      CH_BREAK_ON_ERROR(ret);
+      /* Discovery phase, scanning section headers and gathering data.*/
+      switch (sh.sh_type) {
+      case SHT_PROGBITS:
+        /* Loadable section type, we allow for one executable, one data and
+           one constants sections.*/
+        if ((sh.sh_flags & SHF_ALLOC) != 0U) {
 
-      /* Handling the various sections.*/
-      if (strcmp(name, ".text") == (size_t)0) {
-        ret = load_section(&ctx, &sh, i);
-      }
-      else if (strcmp(name, ".rodata") == (size_t)0) {
-        ret = load_section(&ctx, &sh, i);
-      }
-      else if (strcmp(name, ".data") == (size_t)0) {
-        ret = load_section(&ctx, &sh, i);
-      }
-      else if (strcmp(name, ".bss") == (size_t)0) {
+          if ((sh.sh_flags & SHF_EXECINSTR) != 0U) {
+            /* Executable code section.*/
+            lip = &ctx.loadable_code;
+          }
+          else if ((sh.sh_flags & SHF_WRITE) != 0U) {
+            /* Writable data section.*/
+            lip = &ctx.loadable_data;
+          }
+          else {
+            /* Constants data section.*/
+            lip = &ctx.loadable_const;
+          }
 
-      }
-#endif
+          /* Multiple sections of same kind.*/
+          if (lip->section != 0U) {
+            return CH_RET_ENOEXEC;
+          }
 
-      /* Sections to be loaded.*/
-      if ((sh.sh_type == SHT_PROGBITS) && ((sh.sh_flags & SHF_ALLOC) != 0U)) {
+          lip->section   = i;
+          lip->address   = sh.sh_addr;
+          lip->bits_size = (size_t)sh.sh_size;
+          lip->bits_off  = (vfs_offset_t)sh.sh_offset;
 
-        /* Loading sections with index greater than 63 is not supported.*/
-        if (i >= 64U) {
-          return CH_RET_ENOMEM;
+        }
+        break;
+
+      case SHT_NOBITS:
+        /* Uninitialized data section, we can have more than one, just checking
+           address ranges.*/
+        if ((sh.sh_flags & SHF_ALLOC) != 0U) {
+          ret = allocate_section(&ctx, &sh);
+          CH_RETURN_ON_ERROR(ret);
+        }
+        break;
+
+      case SHT_REL:
+        if ((sh.sh_flags & SHF_INFO_LINK) != 0U) {
+          elf_secnum_t sn = (elf_secnum_t)sh.sh_link;
+
+          if (sn == ctx.loadable_code.section) {
+            /* Executable code section.*/
+            lip = &ctx.loadable_code;
+          }
+          else if (sn == ctx.loadable_data.section) {
+            /* Writable data section.*/
+            lip = &ctx.loadable_data;
+          }
+          else if (sn == ctx.loadable_const.section) {
+            /* Constants data section.*/
+            lip = &ctx.loadable_const;
+          }
+          else {
+            /* Ignoring other relocation sections.*/
+            break;
+          }
+
+          /* Multiple relocation sections associated to the same section.*/
+          if (lip->rel_size != 0U) {
+            return CH_RET_ENOEXEC;
+          }
+
+          lip->rel_size = sh.sh_size;
+          lip->rel_off  = (vfs_offset_t)sh.sh_offset;
+        }
+        break;
+
+      case SHT_SYMTAB:
+        /* Symbols section, this is required for relocation.*/
+
+        if (ctx.symbols_num != 0U) {
+          /* Multiple symbol sections.*/
+          return CH_RET_ENOEXEC;
         }
 
-        ret = load_section(&ctx, &sh);
-        CH_RETURN_ON_ERROR(ret);
+        ctx.symbols_num = (elf_symnum_t)sh.sh_size /
+                          (elf_symnum_t)sizeof (elf32_symbol_t);
+        ctx.symbols_off = (vfs_offset_t)sh.sh_offset;
+        break;
 
-        ctx.loaded |= (1ULL << i);
+      default:
+        /* Ignoring other section types.*/
+        break;
       }
 
-      /* Sections to be relocated, must refer to a loaded section.*/
-      if ((sh.sh_type == SHT_REL) &&
-          ((sh.sh_flags & SHF_INFO_LINK) != 0U) &&
-          ((ctx.loaded & (1ULL << sh.sh_info)) != 0ULL)) {
-
-        ret = reloc_section(&ctx, &sh);
-        CH_RETURN_ON_ERROR(ret);
-
-      }
+      /* Loading phase.*/
+      ret = load_relocate_section(&ctx, &ctx.loadable_code);
+      CH_RETURN_ON_ERROR(ret);
+      ret = load_relocate_section(&ctx, &ctx.loadable_data);
+      CH_RETURN_ON_ERROR(ret);
+      ret = load_relocate_section(&ctx, &ctx.loadable_const);
+      CH_RETURN_ON_ERROR(ret);
     }
-
   } while (false);
 
   return ret;

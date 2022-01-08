@@ -55,7 +55,7 @@ static struct {
    * @brief   Shared path buffers.
    */
   char                              path_buffers[VFS_CFG_PATHBUFS_NUM]
-                                                [VFS_CFG_PATHLEN_MAX + 1];
+                                                [VFS_BUFFERS_SIZE];
 } vfs_buffers_static;
 
 /*===========================================================================*/
@@ -74,7 +74,7 @@ static struct {
 void __vfs_buffers_init(void) {
 
   chGuardedPoolObjectInit(&vfs_buffers_static.path_buffers_pool,
-                          VFS_CFG_PATHLEN_MAX + 1);
+                          VFS_BUFFERS_SIZE);
   chGuardedPoolLoadArray(&vfs_buffers_static.path_buffers_pool,
                          &vfs_buffers_static.path_buffers[0],
                          VFS_CFG_PATHBUFS_NUM);
