@@ -51,6 +51,11 @@
 /* Special section indices.*/
 #define SHN_UNDEF           0U
 
+/* Supported relocation types.*/
+#define R_ARM_ABS32         2U
+#define R_ARM_THM_PC22      10U
+#define R_ARM_THM_JUMP24    30U
+
 #define ELF32_R_SYM(v)      ((v) >> 8)
 #define ELF32_R_TYPE(v)     ((v) & 0xFFU)
 
@@ -268,14 +273,11 @@ yes_it_is_a_goto:
 static msg_t reloc_entry(elf_load_context_t *ctxp,
                          elf_loadable_info_t *lip,
                          elf32_rel_t *rp) {
-  vfs_offset_t oldoff, symoff;
+  vfs_offset_t symoff;
   elf_symnum_t symnum;
-  uint8_t *relocation_address;
+  uint32_t relocation_address;
   msg_t ret;
   elf32_symbol_t symbol;
-
-  /* Saving current file position.*/
-  oldoff = vfsGetFilePosition(ctxp->fnp);
 
   /* Checking for a symbol number overflow.*/
   symnum = (elf_symnum_t)ELF32_R_SYM(rp->r_info);
@@ -302,7 +304,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   }
 
   /* Relocation point address.*/
-  relocation_address = ctxp->map->base + lip->address + symbol.st_value;
+  relocation_address = (uint32_t)ctxp->map->base + lip->address + rp->r_offset;
   if (!chMemIsAreaWithinX(ctxp->map,
                           (const void *)relocation_address,
                           sizeof (uint32_t))) {
@@ -311,11 +313,14 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
 
   /* Handling the various relocation point types.*/
   switch (ELF32_R_TYPE(rp->r_info)) {
-
+  case R_ARM_ABS32:
+    *((uint32_t *)relocation_address) += (uint32_t)ctxp->map->base + symbol.st_value;
+    break;
+  case R_ARM_THM_PC22:
+  case R_ARM_THM_JUMP24:
+  default:
+    return CH_RET_ENOEXEC;
   }
-
-  ret = vfsSetFilePosition(ctxp->fnp, oldoff, VFS_SEEK_SET);
-  CH_RETURN_ON_ERROR(ret);
 
   return CH_RET_SUCCESS;
 }
@@ -360,7 +365,7 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
     CH_BREAK_ON_ERROR(ret);
 
     remaining_size -= size;
-    done_size += size;
+    done_size      += size;
   }
 
   vfs_buffer_release((char *)rbuf);
@@ -389,8 +394,10 @@ static msg_t load_relocate_section(elf_load_context_t *ctxp,
     CH_RETURN_ON_ERROR(ret);
   }
 
-  ret = reloc_section(ctxp, lip);
-  CH_RETURN_ON_ERROR(ret);
+  if (lip->rel_size > 0U) {
+    ret = reloc_section(ctxp, lip);
+    CH_RETURN_ON_ERROR(ret);
+  }
 
   return CH_RET_SUCCESS;
 }
@@ -501,7 +508,7 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, memory_area_t *map) {
 
       case SHT_REL:
         if ((sh.sh_flags & SHF_INFO_LINK) != 0U) {
-          elf_secnum_t sn = (elf_secnum_t)sh.sh_link;
+          elf_secnum_t sn = (elf_secnum_t)sh.sh_info;
 
           if (sn == ctx.loadable_code.section) {
             /* Executable code section.*/
@@ -547,15 +554,15 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, memory_area_t *map) {
         /* Ignoring other section types.*/
         break;
       }
-
-      /* Loading phase.*/
-      ret = load_relocate_section(&ctx, &ctx.loadable_code);
-      CH_RETURN_ON_ERROR(ret);
-      ret = load_relocate_section(&ctx, &ctx.loadable_data);
-      CH_RETURN_ON_ERROR(ret);
-      ret = load_relocate_section(&ctx, &ctx.loadable_const);
-      CH_RETURN_ON_ERROR(ret);
     }
+
+    /* Loading phase.*/
+    ret = load_relocate_section(&ctx, &ctx.loadable_code);
+    CH_RETURN_ON_ERROR(ret);
+    ret = load_relocate_section(&ctx, &ctx.loadable_data);
+    CH_RETURN_ON_ERROR(ret);
+    ret = load_relocate_section(&ctx, &ctx.loadable_const);
+    CH_RETURN_ON_ERROR(ret);
   } while (false);
 
   return ret;

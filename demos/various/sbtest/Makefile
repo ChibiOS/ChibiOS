@@ -22,7 +22,7 @@ all: app.elf
 
 -include $(DEPS)
 
-%.o: %.c
+%.o: %.c $(MAKEFILE_LIST)
 	@echo " CC $<"
 	@$(CC) -MMD $(CFLAGS) -o $@ -c $<
 
@@ -31,6 +31,9 @@ app.elf: $(OBJS)
 	@$(LD) $(LDFLAGS) -o $@ $^
 	@$(STRIP) -g -o app-striped.elf $@
 	@$(SIZE) --common $@
+	@echo " Creating list..."
+	@$(CROSS)objdump -hpxdSsrt app.elf > app.elf.list
+	@$(CROSS)readelf -atSln app.elf > app.elf.read
 
 .PHONY: clean all list
 

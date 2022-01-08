@@ -225,7 +225,7 @@ int main(void) {
    * Initializing overlay driver for the directory shared among the sandboxes.
    * It is seen as "/shared".
    */
-  drvOverlayObjectInit(&sb_shared_overlay_driver, (vfs_driver_c *)&fatfs_driver, "shared");
+  drvOverlayObjectInit(&sb_shared_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/shared");
   ret = drvOverlayRegisterDriver(&sb1_root_overlay_driver,
                                  (vfs_driver_c *)&sb_shared_overlay_driver,
                                  "shared");
@@ -323,7 +323,9 @@ int main(void) {
 
     /* Checking for user button, launching test suite if pressed.*/
     if (palReadLine(LINE_BUTTON)) {
-      ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver, "/bin/app.elf", NULL);
+      static uint8_t loadbuf[1024];
+      static memory_area_t ma = {loadbuf, sizeof (loadbuf)};
+      ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver, "/bin/app.elf", &ma);
       if (CH_RET_IS_ERROR(ret)) {
         chSysHalt("ELF");
       }
