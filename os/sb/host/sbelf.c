@@ -270,14 +270,34 @@ yes_it_is_a_goto:
 }
 #endif
 
+static elf_loadable_info_t *find_loaded_section(elf_load_context_t *ctxp,
+                                                elf_secnum_t sn) {
+
+  if (sn == ctxp->loadable_code.section) {
+    /* Executable code section.*/
+    return &ctxp->loadable_code;
+  }
+  if (sn == ctxp->loadable_data.section) {
+    /* Writable data section.*/
+    return &ctxp->loadable_data;
+  }
+  if (sn == ctxp->loadable_const.section) {
+    /* Constants data section.*/
+    return &ctxp->loadable_const;
+  }
+
+  return NULL;
+}
+
 static msg_t reloc_entry(elf_load_context_t *ctxp,
                          elf_loadable_info_t *lip,
                          elf32_rel_t *rp) {
   vfs_offset_t symoff;
   elf_symnum_t symnum;
   uint32_t relocation_address;
-  msg_t ret;
+  elf_loadable_info_t *symbol_lip;
   elf32_symbol_t symbol;
+  msg_t ret;
 
   /* Checking for a symbol number overflow.*/
   symnum = (elf_symnum_t)ELF32_R_SYM(rp->r_info);
@@ -298,13 +318,16 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
     return CH_RET_ENOEXEC;
   }
 
-  /* Symbols must be associated to this specific section.*/
-  if (lip->section != (elf_symnum_t)symbol.st_shndx) {
+  /* Symbols must be associated to an already loaded section.*/
+  symbol_lip = find_loaded_section(ctxp, (elf_symnum_t)symbol.st_shndx);
+  if (symbol_lip == NULL) {
     return CH_RET_ENOEXEC;
   }
 
   /* Relocation point address.*/
-  relocation_address = (uint32_t)ctxp->map->base + lip->address + rp->r_offset;
+  relocation_address = (uint32_t)ctxp->map->base +
+                       lip->address +
+                       rp->r_offset;
   if (!chMemIsAreaWithinX(ctxp->map,
                           (const void *)relocation_address,
                           sizeof (uint32_t))) {
@@ -314,7 +337,9 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   /* Handling the various relocation point types.*/
   switch (ELF32_R_TYPE(rp->r_info)) {
   case R_ARM_ABS32:
-    *((uint32_t *)relocation_address) += (uint32_t)ctxp->map->base + symbol.st_value;
+    *((uint32_t *)relocation_address) += (uint32_t)ctxp->map->base +
+                                         symbol_lip->address +
+                                         symbol.st_value;
     break;
   case R_ARM_THM_PC22:
   case R_ARM_THM_JUMP24:
@@ -508,21 +533,9 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, memory_area_t *map) {
 
       case SHT_REL:
         if ((sh.sh_flags & SHF_INFO_LINK) != 0U) {
-          elf_secnum_t sn = (elf_secnum_t)sh.sh_info;
 
-          if (sn == ctx.loadable_code.section) {
-            /* Executable code section.*/
-            lip = &ctx.loadable_code;
-          }
-          else if (sn == ctx.loadable_data.section) {
-            /* Writable data section.*/
-            lip = &ctx.loadable_data;
-          }
-          else if (sn == ctx.loadable_const.section) {
-            /* Constants data section.*/
-            lip = &ctx.loadable_const;
-          }
-          else {
+          lip = find_loaded_section(&ctx, (elf_secnum_t)sh.sh_info);
+          if (lip == NULL) {
             /* Ignoring other relocation sections.*/
             break;
           }
