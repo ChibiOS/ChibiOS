@@ -69,6 +69,13 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+#if !defined(__DOXYGEN__)
+extern const memory_area_t __ch_mem_writable_areas[];
+extern const memory_area_t __ch_mem_readable_areas[];
+extern const memory_area_t __ch_mem_executable_areas[];
+
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -77,7 +84,7 @@ extern "C" {
                             const char *s,
                             size_t n);
   bool chMemIsAreaContainedX(const memory_area_t areas[],
-                             const void *base,
+                             const void *p,
                              size_t size);
   bool chMemIsAreaWritableX(void *p,
                             size_t size,
@@ -85,6 +92,7 @@ extern "C" {
   bool chMemIsAreaReadableX(const void *p,
                             size_t size,
                             unsigned align);
+  bool chMemIsAddressExecutableX(const void *p);
 #endif
 #ifdef __cplusplus
 }
@@ -100,23 +108,26 @@ extern "C" {
  *
  * @param[in] map       pointer to a @p memory_area_t structure
  * @param[in] p         pointer to the area to be checked
- * @param[in] size      size of the area to be checked
+ * @param[in] size      size of the area to be checked, zero is considered
+ *                      the whole address space
  * @return              The test result.
- * @retval false        if the area is entirely contained within one of the
+ * @retval true         if the area is entirely contained within one of the
  *                      specified areas.
- * @retval true         if the area check failed.
+ * @retval false        if the area check failed.
  *
  * @xclass
  */
 static inline bool chMemIsAreaWithinX(const memory_area_t *map,
                                       const void *p,
                                       size_t size) {
-  uint8_t *base = map->base;
-  uint8_t *end  = base + map->size - (size_t)1;
-  const uint8_t *p8 = (const uint8_t *)p;
+  const uint8_t *mem_base = (const uint8_t *)map->base;
+  const uint8_t *mem_end  = mem_base + map->size - (size_t)1;
+  const uint8_t *base     = (const uint8_t *)p;
+  const uint8_t *end      = base + size - (size_t)1;
 
-  return (bool)((p8 >= base) && (p8 <= end) &&
-                (size <= (size_t)(end - p8) + (size_t)1));
+  chDbgAssert(mem_base <= mem_end, "invalid memory area");
+
+  return (bool)((base <= end) && (base >= mem_base) && (end <= mem_end));
 }
 
 #if CH_CFG_USE_MEMCHECKS == FALSE
@@ -130,7 +141,7 @@ bool chMemIsAreaWritableX(const void *p,
   (void)size;
   (void)align;
 
-  return false;
+  return true;
 }
 
 bool chMemIsAreaReadableX(const void *p,
@@ -141,7 +152,14 @@ bool chMemIsAreaReadableX(const void *p,
   (void)size;
   (void)align;
 
-  return false;
+  return true;
+}
+
+bool chMemIsAddressExecutableX(const void *p) {
+
+  (void)p;
+
+  return true;
 }
 #endif
 

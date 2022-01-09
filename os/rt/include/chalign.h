@@ -58,14 +58,25 @@
  * @note    Represents the required alignment for integer and pointer
  *          data types.
  */
-#define MEM_NATURAL_ALIGN       PORT_NATURAL_ALIGN
+#define MEM_NATURAL_ALIGN           PORT_NATURAL_ALIGN
+
+/**
+ * @brief   Port-defined check on function pointers.
+ *
+ * @param[in] p         function pointer to be checked
+ */
+#if defined(PORT_IS_VALID_FUNCTION) || defined(__DOXYGEN__)
+#define MEM_IS_VALID_FUNCTION(p)    PORT_IS_VALID_FUNCTION(p)
+#else
+#define MEM_IS_VALID_FUNCTION(p)    true
+#endif
 
 /**
  * @brief   Alignment mask constant.
  *
  * @param[in] a         alignment, must be a power of two
  */
-#define MEM_ALIGN_MASK(a)       ((size_t)(a) - 1U)
+#define MEM_ALIGN_MASK(a)           ((size_t)(a) - 1U)
 
 /**
  * @brief   Aligns to the previous aligned memory address.
@@ -95,7 +106,7 @@
  * @param[in] p         variable to be aligned
  * @param[in] a         alignment, must be a power of two
  */
-#define MEM_IS_ALIGNED(p, a)    (((size_t)(p) & MEM_ALIGN_MASK(a)) == 0U)
+#define MEM_IS_ALIGNED(p, a)        (((size_t)(p) & MEM_ALIGN_MASK(a)) == 0U)
 
 /**
  * @brief   Returns whatever a constant is a valid alignment.

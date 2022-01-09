@@ -669,6 +669,17 @@ struct nil_os_instance {
 #define MEM_NATURAL_ALIGN       PORT_NATURAL_ALIGN
 
 /**
+ * @brief   Port-defined check on function pointers.
+ *
+ * @param[in] p         function pointer to be checked
+ */
+#if defined(PORT_IS_VALID_FUNCTION) || defined(__DOXYGEN__)
+#define MEM_IS_VALID_FUNCTION(p)    PORT_IS_VALID_FUNCTION(p)
+#else
+#define MEM_IS_VALID_FUNCTION(p)    true
+#endif
+
+/**
  * @brief   Alignment mask constant.
  *
  * @param[in] a         alignment, must be a power of two

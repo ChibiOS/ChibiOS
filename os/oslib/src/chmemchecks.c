@@ -42,7 +42,7 @@
  *          writable areas array for the device in use.
  * @note    The array is terminated by an end marker (base=-1).
  */
-CC_WEAK memory_area_t __ch_mem_writable_areas[] = {
+CC_WEAK const memory_area_t __ch_mem_writable_areas[] = {
   {(uint8_t *)0,  0U},      /* Whole space is writable.*/
   {(uint8_t *)-1, 0U},
 };
@@ -53,7 +53,18 @@ CC_WEAK memory_area_t __ch_mem_writable_areas[] = {
  *          readable areas array for the device in use.
  * @note    The array is terminated by an end marker (base=-1).
  */
-CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
+CC_WEAK const memory_area_t __ch_mem_readable_areas[] = {
+  {(uint8_t *)0,  0U},      /* Whole space is readable.*/
+  {(uint8_t *)-1, 0U},
+};
+
+/**
+ * @brief   Default executable memory areas.
+ * @details By default all memory is executable, user must provide its own
+ *          executable areas array for the device in use.
+ * @note    The array is terminated by an end marker (base=-1).
+ */
+CC_WEAK const memory_area_t __ch_mem_executable_areas[] = {
   {(uint8_t *)0,  0U},      /* Whole space is readable.*/
   {(uint8_t *)-1, 0U},
 };
@@ -85,9 +96,9 @@ CC_WEAK memory_area_t __ch_mem_readable_areas[] = {
  * @param[in] s         pointer to the string to be checked
  * @param[in] n         maximum expected size of the string
  * @return              The test result.
- * @retval false        if the string is entirely contained within one of the
+ * @retval true         if the string is entirely contained within one of the
  *                      specified areas.
- * @retval true         if the string check failed.
+ * @retval false        if the string check failed.
  *
  * @xclass
  */
@@ -116,11 +127,12 @@ bool chMemIsStringWithinX(const memory_area_t *map, const char *s, size_t n) {
  * @param[in] map       array of valid areas terminated with an end
  *                      marker (base=-1)
  * @param[in] p         pointer to the area to be checked
- * @param[in] size      size of the area to be checked
+ * @param[in] size      size of the area to be checked, zero is considered
+ *                      the whole address space
  * @return              The test result.
- * @retval false        if the area is entirely contained within one of the
+ * @retval true         if the area is entirely contained within one of the
  *                      specified areas.
- * @retval true         if the area check failed.
+ * @retval false        if the area check failed.
  *
  * @xclass
  */
@@ -148,19 +160,18 @@ bool chMemIsAreaContainedX(const memory_area_t areas[],
  * @brief   Memory writable area check.
  * @details Checks if specified pointer belongs to one of the system-defined
  *          writable areas and is aligned as specified.
- * @note    This function is only effective if @p CH_CFG_SYS_WRITABLE_REGIONS
- *          is defined, if it is not defined then just the alignment of
- *          the pointer is checked.
  * @note    @p __ch_mem_writable_areas must be the name of a global
  *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
  * @param[in] p         pointer to the area to be checked
+ * @param[in] size      size of the area to be checked, zero is considered
+ *                      the whole address space
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
- * @retval false        if the area is entirely contained within one of the
+ * @retval true         if the area is entirely contained within one of the
  *                      system-defined writable areas.
- * @retval true         if the area check failed.
+ * @retval false        if the area check failed.
  *
  * @xclass
  */
@@ -171,7 +182,7 @@ bool chMemIsAreaWritableX(void *p,
   chDbgCheck((align & (align - 1U)) == 0U);
 
   if (!MEM_IS_ALIGNED(p, align)) {
-    return true;
+    return false;
   }
 
   return chMemIsAreaContainedX(__ch_mem_writable_areas, p, size);
@@ -181,19 +192,18 @@ bool chMemIsAreaWritableX(void *p,
  * @brief   Memory readable area check.
  * @details Checks if specified pointer belongs to one of the system-defined
  *          readable areas and is aligned as specified.
- * @note    This function is only effective if @p CH_CFG_SYS_READABLE_REGIONS
- *          is defined, if it is not defined then just the alignment of
- *          the pointer is checked.
  * @note    @p __ch_mem_readable_areas must be the name of a global
  *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
  * @param[in] p         pointer to the area to be checked
+ * @param[in] size      size of the area to be checked, zero is considered
+ *                      the whole address space
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
- * @retval false        if the area is entirely contained within one of the
+ * @retval true         if the area is entirely contained within one of the
  *                      system-defined readable areas.
- * @retval true         if the area check failed.
+ * @retval false        if the area check failed.
  *
  * @xclass
  */
@@ -204,10 +214,36 @@ bool chMemIsAreaReadableX(const void *p,
   chDbgCheck((align & (align - 1U)) == 0U);
 
   if (!MEM_IS_ALIGNED(p, align)) {
-    return true;
+    return false;
   }
 
   return chMemIsAreaContainedX(__ch_mem_readable_areas, p, size);
+}
+
+/**
+ * @brief   Memory executable area check.
+ * @details Checks if specified pointer belongs to one of the system-defined
+ *          executable areas and is aligned properly.
+ * @note    @p __ch_mem_executable_areas must be the name of a global
+ *          @p memory_area_t array terminated with an end marker (-1, 0).
+ *
+ * @param[in] p         pointer to the area to be checked
+ * @return              The test result.
+ * @retval true         if the address belongs to one of the
+ *                      system-defined executable areas.
+ * @retval false        if the address check failed.
+ *
+ * @xclass
+ */
+bool chMemIsAddressExecutableX(const void *p) {
+
+  /*lint -save -e506 -e774 [2.1, 14.3] It can be a constant by design.*/
+  if (!MEM_IS_VALID_FUNCTION(p)) {
+  /*lint -restore*/
+    return false;
+  }
+
+  return chMemIsAreaContainedX(__ch_mem_executable_areas, p, 1);
 }
 
 #endif /* CH_CFG_USE_MEMCHECKS == TRUE */

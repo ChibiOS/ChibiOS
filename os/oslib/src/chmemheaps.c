@@ -399,8 +399,6 @@ size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp) {
   return n;
 }
 
-#define isvalidfunction(p) true
-
 /**
  * @brief   Heap integrity check.
  * @details Performs an integrity check of a heap stucture.
@@ -423,8 +421,10 @@ bool chHeapIntegrityCheck(memory_heap_t *heapp) {
   }
 
   /* Validating heap object.*/
-  if ((heapp->provider != NULL) && !isvalidfunction(heapp->provider)) {
-    return true;
+  if (heapp->provider != NULL) {
+    if (!chMemIsAddressExecutableX(heapp->provider)) {
+      return true;
+    }
   }
 
   /* Taking heap mutex.*/

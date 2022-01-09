@@ -54,7 +54,7 @@
  *
  * @notapi
  */
-NOINLINE static void trace_next(os_instance_t *oip) {
+static NOINLINE void trace_next(os_instance_t *oip) {
 
   oip->trace_buffer.ptr->time    = chVTGetSystemTimeX();
 #if PORT_SUPPORTS_RT == TRUE
