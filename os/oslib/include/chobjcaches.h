@@ -54,6 +54,10 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if CH_CFG_USE_SEMAPHORES == FALSE
+#error "CH_CFG_USE_OBJ_CACHES requires CH_CFG_USE_SEMAPHORES"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
