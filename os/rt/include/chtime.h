@@ -521,8 +521,11 @@ static inline sysinterval_t chTimeStampDiffX(systimestamp_t start,
   /* Time difference as a wide time stamp.*/
   diff = end - start;
 
+  /*lint -save -e685 [14.3] This condition becomes always true when both
+    types have the same width, it is fine, this is an assertion.*/
   chDbgAssert(diff <= (systimestamp_t)((sysinterval_t)-1),
               "conversion overflow");
+  /*lint -restore*/
 
   /*lint -save -e9033 [10.8] This cast is required by the operation, it is
     known that the destination type can be wider.*/
