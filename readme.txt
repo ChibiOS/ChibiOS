@@ -109,6 +109,8 @@
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
+- FIX: Fixed RT testbuild application broken (bug #1208)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed PWR_CR2_USV not set in STM32L4+ mcuconf.h file (bug #1207)
        (backported to 21.11.1).
 - FIX: Fixed USB not enabled on STM32F103x6 (bug #1206)
