@@ -113,7 +113,7 @@ GCOVSRC = $(KERNSRC)
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DSIMULATOR -DTEST_CFG_SIZE_REPORT=0
+UDEFS = -DSIMULATOR -DTEST_CFG_SIZE_REPORT=0 $(XDEFS)
 
 # Define ASM defines here
 UADEFS =
@@ -153,7 +153,7 @@ BIN  = $(CP) -O binary
 COV  = gcov
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Wcast-align=strict
 
 # Define C++ warning options here
 CPPWARN = -Wall -Wextra -Wundef
