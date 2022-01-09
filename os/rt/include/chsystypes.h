@@ -109,6 +109,18 @@ typedef struct ch_system ch_system_t;
  */
 #define __CH_STRINGIFY(a) #a
 
+/**
+ * @brief   Safe cast of a queue pointer to a thread pointer.
+ * @note    Casting to a thread pointer should always be performed using
+ *          this macro. Casting to threads pointer is allowed by design
+ *          and this is the single check point for this operation.
+ *
+ * @param[in] p         pointer to a queue/list structure
+ * @return              The pointer to the thread containing the queue/list
+ *                      element.
+ */
+#define threadref(p)    ((thread_t *)(void *)(p))
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

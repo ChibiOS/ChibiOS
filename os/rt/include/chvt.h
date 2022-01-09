@@ -75,6 +75,7 @@ extern "C" {
   void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
                   vtfunc_t vtfunc, void *par);
   void chVTDoResetI(virtual_timer_t *vtp);
+  sysinterval_t chVTGetRemainingIntervalI(virtual_timer_t *vtp);
   void chVTDoTickI(void);
 #ifdef __cplusplus
 }

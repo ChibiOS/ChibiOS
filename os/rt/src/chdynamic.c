@@ -93,7 +93,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   thread_descriptor_t td = {
     name,
     wsp,
-    (stkalign_t *)((uint8_t *)wsp + size),
+    (stkalign_t *)(void *)((uint8_t *)wsp + size),
     prio,
     pf,
     arg
@@ -157,7 +157,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
   thread_descriptor_t td = {
     name,
     wsp,
-    (stkalign_t *)((uint8_t *)wsp + mp->object_size),
+    (stkalign_t *)(void *)((uint8_t *)wsp + mp->object_size),
     prio,
     pf,
     arg

@@ -153,7 +153,7 @@ void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size) {
   osalDbgAssert(!ibqIsFullI(ibqp), "buffers queue full");
 
   /* Writing size field in the buffer.*/
-  *((size_t *)ibqp->bwrptr) = size;
+  *((size_t *)(void *)ibqp->bwrptr) = size;
 
   /* Posting the buffer in the queue.*/
   ibqp->bcounter++;
@@ -238,7 +238,7 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
 
   /* Setting up the "current" buffer and its boundary.*/
   ibqp->ptr = ibqp->brdptr + sizeof (size_t);
-  ibqp->top = ibqp->ptr + *((size_t *)ibqp->brdptr);
+  ibqp->top = ibqp->ptr + *((size_t *)(void *)ibqp->brdptr);
 
   return MSG_OK;
 }
@@ -493,7 +493,7 @@ uint8_t *obqGetFullBufferI(output_buffers_queue_t *obqp,
   }
 
   /* Buffer size.*/
-  *sizep = *((size_t *)obqp->brdptr);
+  *sizep = *((size_t *)(void *)obqp->brdptr);
 
   return obqp->brdptr + sizeof (size_t);
 }
@@ -630,7 +630,7 @@ void obqPostFullBufferS(output_buffers_queue_t *obqp, size_t size) {
   osalDbgAssert(!obqIsFullI(obqp), "buffers queue full");
 
   /* Writing size field in the buffer.*/
-  *((size_t *)obqp->bwrptr) = size;
+  *((size_t *)(void *)obqp->bwrptr) = size;
 
   /* Posting the buffer in the queue.*/
   obqp->bcounter--;
@@ -804,7 +804,7 @@ bool obqTryFlushI(output_buffers_queue_t *obqp) {
     if (size > 0U) {
 
       /* Writing size field in the buffer.*/
-      *((size_t *)obqp->bwrptr) = size;
+      *((size_t *)(void *)obqp->bwrptr) = size;
 
       /* Posting the buffer in the queue.*/
       obqp->bcounter--;

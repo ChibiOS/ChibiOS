@@ -189,7 +189,7 @@ struct port_context {
 
 #define APUSH(p, a) do {                                                    \
   (p) -= sizeof(void *);                                                    \
-  *(void **)(p) = (void*)(a);                                               \
+  *(void **)(void *)(p) = (void*)(a);                                       \
 } while (false)
 
 /* Darwin requires the stack to be aligned to a 16-byte boundary at
@@ -214,12 +214,12 @@ struct port_context {
   APUSH(esp, pf);                                                           \
   APUSH(esp, 0);                                                            \
   esp -= sizeof(struct port_intctx);                                        \
-  ((struct port_intctx *)esp)->eip = (void *)_port_thread_start;            \
-  ((struct port_intctx *)esp)->ebx = NULL;                                  \
-  ((struct port_intctx *)esp)->edi = NULL;                                  \
-  ((struct port_intctx *)esp)->esi = NULL;                                  \
-  ((struct port_intctx *)esp)->ebp = (void *)savebp;                        \
-  (tp)->ctx.sp = (struct port_intctx *)esp;                                 \
+  ((struct port_intctx *)(void *)esp)->eip = (void *)_port_thread_start;    \
+  ((struct port_intctx *)(void *)esp)->ebx = NULL;                          \
+  ((struct port_intctx *)(void *)esp)->edi = NULL;                          \
+  ((struct port_intctx *)(void *)esp)->esi = NULL;                          \
+  ((struct port_intctx *)(void *)esp)->ebp = (void *)(void *)savebp;        \
+  (tp)->ctx.sp = (struct port_intctx *)(void *)esp;                         \
   /*lint -restore*/                                                         \
 }
 
