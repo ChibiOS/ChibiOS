@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Some MISRA-related fixes.
 - FIX: Fixed missing check in chobjcaches.h (bug #1210).
 - FIX: Fixed RT testbuild application broken (bug #1208).
 - FIX: Fixed USB not enabled on STM32F103x6 (bug #1206).
