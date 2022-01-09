@@ -257,7 +257,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
                             whence);;
 }
 
-ssize_t sbPosixGetdents(int fd, void *buf, size_t count) {
+ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   vfs_direntry_info_t *dip;
   msg_t ret;

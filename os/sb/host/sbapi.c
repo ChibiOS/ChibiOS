@@ -990,9 +990,9 @@ void sb_api_stdio(struct port_extctx *ectxp) {
                                ectxp->r3);
     break;
   case SB_POSIX_GETDENTS:
-    ectxp->r0 = sbPosixGetdents(ectxp->r1,
-                                (void *)ectxp->r2,
-                                (size_t)ectxp->r3);
+    ectxp->r0 = sb_posix_getdents(ectxp->r1,
+                                  (void *)ectxp->r2,
+                                  (size_t)ectxp->r3);
     break;
   default:
     ectxp->r0 = CH_RET_ENOSYS;

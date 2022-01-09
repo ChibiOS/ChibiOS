@@ -67,7 +67,7 @@ extern "C" {
   ssize_t sb_posix_read(int fd, void *buf, size_t count);
   ssize_t sb_posix_write(int fd, const void *buf, size_t count);
   off_t sb_posix_lseek(int fd, off_t offset, int whence);
-  ssize_t sbPosixGetdents(int fd, void *buf, size_t count);
+  ssize_t sb_posix_getdents(int fd, void *buf, size_t count);
 #if SB_CFG_ENABLE_VFS == TRUE
   void sbPosixRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np);
 #endif
