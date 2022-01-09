@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.2 ***
+- FIX: Fixed misspelled chTraceSuspendI() function name (bug #1209).
 - FIX: Fixed RT testbuild application broken (bug #1208).
 
 *** 21.11.1 ***

@@ -258,7 +258,7 @@ extern "C" {
   void chTraceWrite(void *up1, void *up2);
   void chTraceSuspendI(uint16_t mask);
   void chTraceSuspend(uint16_t mask);
-  void chTraceIResume(uint16_t mask);
+  void chTraceResumeI(uint16_t mask);
   void chTraceResume(uint16_t mask);
 #endif /* CH_DBG_TRACE_MASK != CH_DBG_TRACE_MASK_DISABLED */
 #ifdef __cplusplus
