@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 21.11.2 ***
+- FIX: Fixed RT testbuild application broken (bug #1208).
+
 *** 21.11.1 ***
 - NEW: Added EFL driver implementation for STM32G4xx.
 - NEW: STM32G0B1 USBv2 driver.
