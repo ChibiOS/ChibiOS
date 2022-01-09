@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a new MEM_IS_VALID_FUNCTION() macro to RT and NIL.
 - NEW: Improved HAL flash interface with mutual exclusion methods, improved
        EFL and SNOR drivers to use it.
 - NEW: Added a centralized errors handler under /os/common/utils. It will
