@@ -343,6 +343,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
     break;
   case R_ARM_THM_PC22:
   case R_ARM_THM_JUMP24:
+    /* TODO */
   default:
     return CH_RET_ENOEXEC;
   }
