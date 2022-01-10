@@ -1,34 +1,21 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
-    This file is part of ChibiOS.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-    ChibiOS is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation version 3 of the License.
+        http://www.apache.org/licenses/LICENSE-2.0
 
-    ChibiOS is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 */
 
-/**
- * @file    sb/host/sbloader.h
- * @brief   ARM SandBox ELF loader macros and structures.
- *
- * @addtogroup sbhost.h
- * @{
- */
-
-#ifndef SBELF_H
-#define SBELF_H
-
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+#ifndef SDMON_H
+#define SDMON_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -54,24 +41,23 @@
 /* External declarations.                                                    */
 /*===========================================================================*/
 
+extern event_source_t sdmon_inserted_event, sdmon_removed_event;
+extern bool sdmon_ready;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-  msg_t sbElfLoad(vfs_file_node_c *fnp,
-                  const memory_area_t *map);
-  msg_t sbElfLoadFile(vfs_driver_c *drvp,
-                      const char *path,
-                      const memory_area_t *map);
+  void sdmonInit(void);
+  void sdmonInsertHandler(eventid_t id);
+  void sdmonRemoveHandler(eventid_t id);
 #ifdef __cplusplus
 }
 #endif
 
 /*===========================================================================*/
-/* Module inline functions.                                                  */
+/* External declarations.                                                    */
 /*===========================================================================*/
 
-#endif /* SB_CFG_ENABLE_VFS == TRUE */
-
-#endif /* SBELF_H */
+#endif /* SDMON_H */
 
 /** @} */

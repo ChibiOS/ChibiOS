@@ -172,6 +172,50 @@ thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
   return utp;
 }
 
+/**
+ * @brief   Verifies if the sandbox thread is running.
+ *
+ * @param[in] sbcp      pointer to a @p sb_class_t structure
+ * @return              The thread status.
+ *
+ * @api
+ */
+bool sbIsThreadRunningX(sb_class_t *sbcp) {
+
+  if (sbcp->tp == NULL) {
+    return false;
+  }
+
+  return chThdTerminatedX(sbcp->tp);
+}
+
+#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Blocks the execution of the invoking thread until the specified
+ *          sandbox thread terminates then the exit code is returned.
+ * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
+ *          order to use this function.
+ *
+ * @param[in] sbcp      pointer to a @p sb_class_t structure
+ * @return              The exit code from the terminated sandbox thread.
+ * @retval MSG_RESET    Sandbox thread not started.
+ *
+ * @api
+ */
+msg_t sbWaitThread(sb_class_t *sbcp) {
+  msg_t msg;
+
+  if (sbcp->tp == NULL) {
+    return MSG_RESET;
+  }
+
+  msg = chThdWait(sbcp->tp);
+  sbcp->tp = NULL;
+
+  return msg;
+}
+#endif
+
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Sends a message to a sandboxed thread.

@@ -94,7 +94,7 @@ typedef struct {
  */
 typedef struct elf_load_context {
   vfs_file_node_c           *fnp;
-  memory_area_t             *map;
+  const memory_area_t       *map;
   uint8_t                   *next;
 
   uint32_t                  entry;
@@ -430,7 +430,7 @@ static msg_t load_relocate_section(elf_load_context_t *ctxp,
 
 static msg_t init_elf_context(elf_load_context_t *ctxp,
                               vfs_file_node_c *fnp,
-                              memory_area_t *map) {
+                              const memory_area_t *map) {
   static uint8_t elf32_header[16] = {
     0x7f, 0x45, 0x4c, 0x46, 0x01, 0x01, 0x01, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -471,7 +471,7 @@ static msg_t init_elf_context(elf_load_context_t *ctxp,
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-msg_t sbElfLoad(vfs_file_node_c *fnp, memory_area_t *map) {
+msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
   msg_t ret;
 
   do {
@@ -582,7 +582,9 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, memory_area_t *map) {
   return ret;
 }
 
-msg_t sbElfLoadFile(vfs_driver_c *drvp, const char *path, memory_area_t *map) {
+msg_t sbElfLoadFile(vfs_driver_c *drvp,
+                    const char *path,
+                    const memory_area_t *map) {
   vfs_file_node_c *fnp;
   msg_t ret;
 

@@ -95,9 +95,15 @@ extern "C" {
   thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
                           void *wsp, size_t size,
                           tprio_t prio);
+  bool sbIsThreadRunningX(sb_class_t *sbcp);
+#if CH_CFG_USE_WAITEXIT == TRUE
+  msg_t sbWaitThread(sb_class_t *sbcp);
+#endif
+#if CH_CFG_USE_MESSAGES == TRUE
   msg_t sbSendMessageTimeout(sb_class_t *sbcp,
                              msg_t msg,
                              sysinterval_t timeout);
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -117,24 +123,6 @@ static inline void sbHostInit(void) {
   chEvtObjectInit(&sb.termination_es);
 #endif
 }
-
-#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Blocks the execution of the invoking thread until the sandbox
- *          thread terminates then the exit code is returned.
- * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
- *          order to use this function.
- *
- * @param[in] sbcp      pointer to the sandbox object
- * @return              The exit code from the terminated thread.
- *
- * @api
- */
-static inline msg_t sbWait(sb_class_t *sbcp) {
-
-  return chThdWait(sbcp->tp);
-}
-#endif /* CH_CFG_USE_WAITEXIT == TRUE */
 
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
