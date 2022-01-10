@@ -97,8 +97,6 @@ sb_class_t sbx1;
 
 static THD_WORKING_AREA(waUnprivileged1, 1024);
 
-static thread_t *sb1tp;
-
 /*===========================================================================*/
 /* Main and generic code.                                                    */
 /*===========================================================================*/
@@ -125,8 +123,10 @@ static void SBHandler(eventid_t id) {
 
   (void)id;
 
-  if (chThdTerminatedX(sb1tp)) {
-    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated\r\n");
+  if (!sbIsThreadRunningX(&sbx1)) {
+    msg_t msg = sbWaitThread(&sbx1);
+
+    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated (%d)\r\n", msg);
   }
 }
 
@@ -253,6 +253,7 @@ int main(void) {
   vfsClose(np);
 #endif
 
+#if 0
   /* Starting sandboxed thread 1.*/
   sb1tp = sbStartThread(&sbx1, "sbx1",
                         waUnprivileged1, sizeof (waUnprivileged1),
@@ -261,7 +262,6 @@ int main(void) {
     chSysHalt("sbx1 failed");
   }
 
-#if 0
   /* Starting sandboxed thread 2.*/
   sb2tp = sbStartThread(&sbx2, "sbx2",
                         waUnprivileged2, sizeof (waUnprivileged2),
@@ -286,11 +286,20 @@ int main(void) {
     /* Checking for user button, launching sandbox if pressed.*/
     if (palReadLine(LINE_BUTTON)) {
       if (!sbIsThreadRunningX(&sbx1)) {
+
+        /* Loading sandbox code.*/
         ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver,
                             "/bin/app.elf",
                             &sbx1.config->regions[0].area);
         if (CH_RET_IS_ERROR(ret)) {
           chSysHalt("ELF");
+        }
+
+        /* Starting sandboxed thread 1.*/
+        if (sbStartThread(&sbx1, "sbx1",
+                          waUnprivileged1, sizeof (waUnprivileged1),
+                          NORMALPRIO - 1) == NULL) {
+          chSysHalt("sbx1 failed");
         }
       }
 #if 0
