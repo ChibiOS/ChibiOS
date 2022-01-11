@@ -91,7 +91,8 @@
 
                 .thumb
 
-                .section .sandbox, "ax"
+                .section    .sandbox, "ax"
+
                 .align      4
                 .globl      _sandbox
 _sandbox:       .long       0xFE9154C0

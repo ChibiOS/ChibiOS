@@ -289,7 +289,7 @@ int main(void) {
 
         /* Loading sandbox code.*/
         ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver,
-                            "/bin/app.elf",
+                            "/bin/msh.elf",
                             &sbx1.config->regions[0].area);
         if (CH_RET_IS_ERROR(ret)) {
           chSysHalt("ELF");

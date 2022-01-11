@@ -127,16 +127,17 @@ int _isatty_r(struct _reent *r, int fd) {
 
 __attribute__((used))
 caddr_t _sbrk_r(struct _reent *r, int incr) {
-  extern uint8_t __heap_end__, __heap_base__;
+  extern uint8_t /*__heap_end__, */__heap_base__;
   static uint8_t *p = &__heap_base__;
   uint8_t *prevp;
 
   prevp = p;
-  if ((p + incr > &__heap_end__) ||
+/*  if ((p + incr > &__heap_end__) ||
       (p + incr < &__heap_base__)) {
     __errno_r(r) = ENOMEM;
     return (caddr_t)-1;
-  }
+  }*/
+  (void)r;
 
   p += incr;
   return (caddr_t)prevp;

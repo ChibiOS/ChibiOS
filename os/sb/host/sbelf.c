@@ -234,6 +234,23 @@ static elf_loadable_info_t *find_loaded_section(elf_load_context_t *ctxp,
   return NULL;
 }
 
+#if 0
+static msg_t reloc_jump(uint32_t relocation_address,
+                        uint32_t destination_address) {
+
+  uint32_t ins  = (((uint32_t *)relocation_address)[0] << 16) |
+                  (((uint32_t *)relocation_address)[1] << 0);
+  uint32_t s    = (ins >> 26) & 1U;
+  uint32_t j1   = (ins >> 13) & 1U;
+  uint32_t j2   = (ins >> 11) & 1U;
+  uint32_t off  = (s << 24) |
+                  ((~(j1 ^ s) & 1U) << 23) |
+                  ((~(j2 ^ s) & 1U) << 22) |
+                  ((ins & 0x03FF0000U) >> 4) |
+                  ((ins & 0x000007FFU) << 1);
+}
+#endif
+
 static msg_t reloc_entry(elf_load_context_t *ctxp,
                          elf_loadable_info_t *lip,
                          elf32_rel_t *rp) {
@@ -288,7 +305,9 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
     break;
   case R_ARM_THM_PC22:
   case R_ARM_THM_JUMP24:
+//    return reloc_jump(relocation_address, symbol_lip->address);
     /* TODO */
+    break;
   default:
     return CH_RET_ENOEXEC;
   }
