@@ -215,61 +215,6 @@ static msg_t allocate_section(elf_load_context_t *ctxp,
   return CH_RET_SUCCESS;
 }
 
-#if 0
-static msg_t reloc_section(elf_load_context_t *ctxp,
-                           elf32_section_header_t *shp) {
-  elf32_relocation_t *rbuf;
-  msg_t ret;
-
-  rbuf = (elf32_relocation_t *)(void *)vfs_buffer_take();
-
-  do {
-    size_t size, remaining_size = (size_t)shp->sh_size;
-
-    ret = vfsSetFilePosition(ctxp->fnp, (vfs_offset_t)shp->sh_offset, VFS_SEEK_SET);
-    CH_BREAK_ON_ERROR(ret);
-
-    /* Reading the relocation section data.*/
-    while (remaining_size > 0U) {
-      unsigned i, n;
-
-      /* Reading relocation data using buffers in order to not make continuous
-         calls to the FS which could be unbuffered.*/
-      if (remaining_size > VFS_BUFFERS_SIZE) {
-        size = VFS_BUFFERS_SIZE;
-      }
-      else {
-        size = remaining_size;
-      }
-
-      ret = vfsReadFile(ctxp->fnp, (void *)rbuf, size);
-      if (CH_RET_IS_ERROR(ret)) {
-        goto yes_it_is_a_goto;
-      }
-
-      /* Number of relocation entries in the buffer.*/
-      n = (unsigned)ret / (unsigned)sizeof (elf32_relocation_t);
-      for (i = 0U; i < n; i++) {
-        ret = reloc_entry(ctxp, &rbuf[i]);
-        if (CH_RET_IS_ERROR(ret)) {
-          goto yes_it_is_a_goto;
-        }
-      }
-
-      remaining_size -= size;
-    }
-
-    ret = CH_RET_SUCCESS;
-  } while (false);
-
-yes_it_is_a_goto:
-
-  vfs_buffer_release((char *)rbuf);
-
-  return ret;
-}
-#endif
-
 static elf_loadable_info_t *find_loaded_section(elf_load_context_t *ctxp,
                                                 elf_secnum_t sn) {
 
@@ -404,23 +349,24 @@ static msg_t load_relocate_section(elf_load_context_t *ctxp,
   uint8_t *load_address;
   msg_t ret;
 
-  /* Checking if the section can fit into the destination memory area.*/
-  load_address = ctxp->map->base + lip->address;
-  if (!chMemIsAreaWithinX(ctxp->map,
-                          (const void *)load_address,
-                          lip->bits_size)) {
-    return CH_RET_ENOMEM;
-  }
-
-  /* Loading the section data into the final memory area.*/
-  if (lip->bits_size > 0U) {
-    ret = vfsSetFilePosition(ctxp->fnp, lip->bits_off, VFS_SEEK_SET);
-    CH_RETURN_ON_ERROR(ret);
-    ret = vfsReadFile(ctxp->fnp, (void *)load_address, lip->bits_size);
-    CH_RETURN_ON_ERROR(ret);
-  }
-
   if (lip->rel_size > 0U) {
+
+    /* Checking if the section can fit into the destination memory area.*/
+    load_address = ctxp->map->base + lip->address;
+    if (!chMemIsAreaWithinX(ctxp->map,
+                            (const void *)load_address,
+                            lip->bits_size)) {
+      return CH_RET_ENOMEM;
+    }
+
+    /* Loading the section data into the final memory area.*/
+    if (lip->bits_size > 0U) {
+      ret = vfsSetFilePosition(ctxp->fnp, lip->bits_off, VFS_SEEK_SET);
+      CH_RETURN_ON_ERROR(ret);
+      ret = vfsReadFile(ctxp->fnp, (void *)load_address, lip->bits_size);
+      CH_RETURN_ON_ERROR(ret);
+    }
+
     ret = reloc_section(ctxp, lip);
     CH_RETURN_ON_ERROR(ret);
   }
@@ -482,7 +428,7 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
     ret = init_elf_context(&ctx, fnp, map);
     CH_BREAK_ON_ERROR(ret);
 
-    /* Iterating through sections, loading.*/
+    /* Discovery phase, scanning section headers and gathering data.*/
     for (i = 0U; i < ctx.sections_num; i++) {
       elf32_section_header_t sh;
 
@@ -490,7 +436,12 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
       ret = read_section_header(&ctx, &sh, i);
       CH_BREAK_ON_ERROR(ret);
 
-      /* Discovery phase, scanning section headers and gathering data.*/
+      /* Empty sections are not processed.*/
+      if (sh.sh_size == 0U) {
+        continue;
+      }
+
+      /* Deciding what to do with the section depending on type.*/
       switch (sh.sh_type) {
       case SHT_PROGBITS:
         /* Loadable section type, we allow for one executable, one data and
