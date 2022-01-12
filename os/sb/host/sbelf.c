@@ -206,9 +206,9 @@ static msg_t allocate_section(elf_load_context_t *ctxp,
 
   /* Checking if the section can fit into the destination memory area.*/
   load_address = ctxp->map->base + shp->sh_addr;
-  if (!chMemIsAreaWithinX(ctxp->map,
-                          (const void *)load_address,
-                          (size_t)shp->sh_size)) {
+  if (!chMemIsSpaceWithinX(ctxp->map,
+                             (const void *)load_address,
+                             (size_t)shp->sh_size)) {
     return CH_RET_ENOMEM;
   }
 
@@ -290,9 +290,9 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   relocation_address = (uint32_t)ctxp->map->base +
                        lip->address +
                        rp->r_offset;
-  if (!chMemIsAreaWithinX(ctxp->map,
-                          (const void *)relocation_address,
-                          sizeof (uint32_t))) {
+  if (!chMemIsSpaceWithinX(ctxp->map,
+                           (const void *)relocation_address,
+                           sizeof (uint32_t))) {
     return CH_RET_ENOMEM;
   }
 
@@ -372,7 +372,7 @@ static msg_t load_relocate_section(elf_load_context_t *ctxp,
 
     /* Checking if the section can fit into the destination memory area.*/
     load_address = ctxp->map->base + lip->address;
-    if (!chMemIsAreaWithinX(ctxp->map,
+    if (!chMemIsSpaceWithinX(ctxp->map,
                             (const void *)load_address,
                             lip->bits_size)) {
       return CH_RET_ENOMEM;

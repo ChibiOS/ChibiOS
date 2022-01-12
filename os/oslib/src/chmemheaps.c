@@ -447,9 +447,9 @@ bool chHeapIntegrityCheck(memory_heap_t *heapp) {
     }
 
     /* Validating the found free block.*/
-    if (!chMemIsAreaWithinX(&heapp->area,
-                            (void *)hp,
-                            H_FREE_FULLSIZE(hp))) {
+    if (!chMemIsSpaceWithinX(&heapp->area,
+                             (void *)hp,
+                             H_FREE_FULLSIZE(hp))) {
       result = true;
       break;
     }

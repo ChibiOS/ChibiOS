@@ -83,15 +83,15 @@ extern "C" {
   bool chMemIsStringWithinX(const memory_area_t *map,
                             const char *s,
                             size_t n);
-  bool chMemIsAreaContainedX(const memory_area_t areas[],
-                             const void *p,
-                             size_t size);
-  bool chMemIsAreaWritableX(void *p,
-                            size_t size,
-                            unsigned align);
-  bool chMemIsAreaReadableX(const void *p,
-                            size_t size,
-                            unsigned align);
+  bool chMemIsSpaceContainedX(const memory_area_t areas[],
+                              const void *p,
+                              size_t size);
+  bool chMemIsSpaceWritableX(void *p,
+                             size_t size,
+                             unsigned align);
+  bool chMemIsSpaceReadableX(const void *p,
+                             size_t size,
+                             unsigned align);
   bool chMemIsAddressExecutableX(const void *p);
 #endif
 #ifdef __cplusplus
@@ -103,23 +103,22 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @brief   Memory area check.
- * @details Checks if specified area belongs to the specified memory area.
+ * @brief   Memory space inclusion check.
+ * @details Checks if specified space belongs to the specified memory area.
  *
  * @param[in] map       pointer to a @p memory_area_t structure
- * @param[in] p         pointer to the area to be checked
- * @param[in] size      size of the area to be checked, zero is considered
- *                      the whole address space
+ * @param[in] p         pointer to the memory space to be checked
+ * @param[in] size      size of the memory space to be checked, zero is
+ *                      considered the whole address space
  * @return              The test result.
- * @retval true         if the area is entirely contained within one of the
- *                      specified areas.
- * @retval false        if the area check failed.
+ * @retval true         if the memory space is entirely contained.
+ * @retval false        if the memory space is not entirely contained.
  *
  * @xclass
  */
-static inline bool chMemIsAreaWithinX(const memory_area_t *map,
-                                      const void *p,
-                                      size_t size) {
+static inline bool chMemIsSpaceWithinX(const memory_area_t *map,
+                                       const void *p,
+                                       size_t size) {
   const uint8_t *mem_base = (const uint8_t *)map->base;
   const uint8_t *mem_end  = mem_base + map->size - (size_t)1;
   const uint8_t *base     = (const uint8_t *)p;
@@ -128,6 +127,33 @@ static inline bool chMemIsAreaWithinX(const memory_area_t *map,
   chDbgAssert(mem_base <= mem_end, "invalid memory area");
 
   return (bool)((base <= end) && (base >= mem_base) && (end <= mem_end));
+}
+
+/**
+ * @brief   Memory space intersection check.
+ * @details Checks if specified memory space intersects the specified memory
+ *          area.
+ *
+ * @param[in] map       pointer to a @p memory_area_t structure
+ * @param[in] p         pointer to the memory space to be checked
+ * @param[in] size      size of the memory space to be checked, zero is
+ *                      considered the whole address space
+ * @return              The test result.
+ * @retval true         if the memory space is intersecting.
+ * @retval false        if the memory space is not intersecting.
+ *
+ * @xclass
+ */
+static inline bool chMemIsSpaceIntersectingX(const memory_area_t *map,
+                                             const void *p,
+                                             size_t size) {
+  const uint8_t *mem_base = (const uint8_t *)map->base;
+  const uint8_t *mem_end  = mem_base + map->size - (size_t)1;
+  const uint8_t *base     = (const uint8_t *)p;
+  const uint8_t *end      = base + size - (size_t)1;
+
+  return (bool)(((base >= mem_base) && (base <= mem_end)) ||
+                ((end  >= mem_base) && (end  <= mem_end)));
 }
 
 #if CH_CFG_USE_MEMCHECKS == FALSE

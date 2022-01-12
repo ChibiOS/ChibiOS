@@ -61,7 +61,7 @@ bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (chMemIsAreaContainedX(&rp->area, start, size)) {
+    if (chMemIsSpaceWithinX(&rp->area, start, size)) {
       return true;
     }
     rp++;
@@ -74,7 +74,7 @@ bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (chMemIsAreaWithinX(&rp->area, start, size)) {
+    if (chMemIsSpaceWithinX(&rp->area, start, size)) {
       return rp->writeable;
     }
     rp++;

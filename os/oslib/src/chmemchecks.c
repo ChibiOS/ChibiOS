@@ -121,31 +121,32 @@ bool chMemIsStringWithinX(const memory_area_t *map, const char *s, size_t n) {
 }
 
 /**
- * @brief   Memory area check.
- * @details Checks if specified area belongs to one of the specified areas.
+ * @brief   Memory space check.
+ * @details Checks if specified memory space belongs to one of the specified
+ *          areas.
  *
  * @param[in] map       array of valid areas terminated with an end
  *                      marker (base=-1)
- * @param[in] p         pointer to the area to be checked
- * @param[in] size      size of the area to be checked, zero is considered
- *                      the whole address space
+ * @param[in] p         pointer to the memory space to be checked
+ * @param[in] size      size of the memory space to be checked, zero is
+ *                      considered the whole address space
  * @return              The test result.
- * @retval true         if the area is entirely contained within one of the
- *                      specified areas.
- * @retval false        if the area check failed.
+ * @retval true         if the memory space is entirely contained within one
+ *                      of the specified areas.
+ * @retval false        if the memory space check failed.
  *
  * @xclass
  */
-bool chMemIsAreaContainedX(const memory_area_t areas[],
-                           const void *p,
-                           size_t size) {
+bool chMemIsSpaceContainedX(const memory_area_t areas[],
+                            const void *p,
+                            size_t size) {
   const memory_area_t *map = &areas[0];
 
   chDbgCheck(p != NULL);
 
   /* Scanning the array of the valid areas for a mismatch.*/
   while (map->base != (uint8_t *)-1) {
-    if (chMemIsAreaWithinX(map, p, size)) {
+    if (chMemIsSpaceWithinX(map, p, size)) {
       return true;
     }
     map++;
@@ -157,27 +158,27 @@ bool chMemIsAreaContainedX(const memory_area_t areas[],
 #if (CH_CFG_USE_MEMCHECKS == TRUE) || defined(__DOXYGEN__)
 
 /**
- * @brief   Memory writable area check.
- * @details Checks if specified pointer belongs to one of the system-defined
- *          writable areas and is aligned as specified.
+ * @brief   Writable memory space check.
+ * @details Checks if the specified memory space belongs to one of the
+ *          system-defined writable areas and is aligned as specified.
  * @note    @p __ch_mem_writable_areas must be the name of a global
  *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
- * @param[in] p         pointer to the area to be checked
- * @param[in] size      size of the area to be checked, zero is considered
- *                      the whole address space
+ * @param[in] p         pointer to the memory space to be checked
+ * @param[in] size      size of the memory space to be checked, zero is
+ *                      considered the whole address space
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
- * @retval true         if the area is entirely contained within one of the
- *                      system-defined writable areas.
- * @retval false        if the area check failed.
+ * @retval true         if the memory space is entirely contained within one
+ *                      memory space system-defined writable areas.
+ * @retval false        if the memory space check failed.
  *
  * @xclass
  */
-bool chMemIsAreaWritableX(void *p,
-                          size_t size,
-                          unsigned align) {
+bool chMemIsSpaceWritableX(void *p,
+                           size_t size,
+                           unsigned align) {
 
   chDbgCheck((align & (align - 1U)) == 0U);
 
@@ -185,31 +186,31 @@ bool chMemIsAreaWritableX(void *p,
     return false;
   }
 
-  return chMemIsAreaContainedX(__ch_mem_writable_areas, p, size);
+  return chMemIsSpaceContainedX(__ch_mem_writable_areas, p, size);
 }
 
 /**
- * @brief   Memory readable area check.
- * @details Checks if specified pointer belongs to one of the system-defined
- *          readable areas and is aligned as specified.
+ * @brief   Readable memory space check.
+ * @details Checks if specified memory space belongs to one of the
+ *          system-defined readable areas and is aligned as specified.
  * @note    @p __ch_mem_readable_areas must be the name of a global
  *          @p memory_area_t array terminated with an end marker (-1, 0).
  *
- * @param[in] p         pointer to the area to be checked
- * @param[in] size      size of the area to be checked, zero is considered
- *                      the whole address space
+ * @param[in] p         pointer to the memory space to be checked
+ * @param[in] size      size of the memory space to be checked, zero is
+ *                      considered the whole address space
  * @param[in] align     required pointer alignment to be checked, must be
  *                      a power of two
  * @return              The test result.
- * @retval true         if the area is entirely contained within one of the
- *                      system-defined readable areas.
- * @retval false        if the area check failed.
+ * @retval true         if the memory space is entirely contained within one
+ *                      of the system-defined readable areas.
+ * @retval false        if the memory space check failed.
  *
  * @xclass
  */
-bool chMemIsAreaReadableX(const void *p,
-                          size_t size,
-                          unsigned align) {
+bool chMemIsSpaceReadableX(const void *p,
+                           size_t size,
+                           unsigned align) {
 
   chDbgCheck((align & (align - 1U)) == 0U);
 
@@ -217,7 +218,7 @@ bool chMemIsAreaReadableX(const void *p,
     return false;
   }
 
-  return chMemIsAreaContainedX(__ch_mem_readable_areas, p, size);
+  return chMemIsSpaceContainedX(__ch_mem_readable_areas, p, size);
 }
 
 /**
@@ -243,7 +244,7 @@ bool chMemIsAddressExecutableX(const void *p) {
     return false;
   }
 
-  return chMemIsAreaContainedX(__ch_mem_executable_areas, p, 1);
+  return chMemIsSpaceContainedX(__ch_mem_executable_areas, p, 1);
 }
 
 #endif /* CH_CFG_USE_MEMCHECKS == TRUE */
