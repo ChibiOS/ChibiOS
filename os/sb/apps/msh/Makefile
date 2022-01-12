@@ -189,7 +189,7 @@ include $(RULESPATH)/rules.mk
 
 read:
 	@echo "Reading elf..."
-	@$(TRGT)readelf -atSln $(BUILDDIR)/$(PROJECT).elf > $(BUILDDIR)/$(PROJECT).read
+	@$(TRGT)readelf -atSlnr $(BUILDDIR)/$(PROJECT).elf > $(BUILDDIR)/$(PROJECT).read
 
 #
 # Custom rules
