@@ -38,9 +38,20 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Maximum number of ELF regions that can be allocated by the loader.
+ */
+#if !defined(SB_CFG_ELF_MAX_ALLOCATED) || defined(__DOXYGEN__)
+#define SB_CFG_ELF_MAX_ALLOCATED        6
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (SB_CFG_ELF_MAX_ALLOCATED < 2) || (SB_CFG_ELF_MAX_ALLOCATED > 32)
+#error "invalid SB_CFG_ELF_MAX_ALLOCATED value"
+#endif
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */

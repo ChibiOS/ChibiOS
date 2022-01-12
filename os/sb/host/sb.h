@@ -171,6 +171,10 @@ typedef struct {
    */
   memory_area_t                 area;
   /**
+   * @brief   Memory region in use.
+   */
+  bool                          used;
+  /**
    * @brief   Writable memory range.
    */
   bool                          writeable;

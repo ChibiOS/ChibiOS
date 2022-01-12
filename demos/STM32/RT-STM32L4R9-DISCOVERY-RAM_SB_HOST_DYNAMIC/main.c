@@ -67,15 +67,17 @@ static const drv_streams_element_t sb1_streams[] = {
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
   .code_region      = 0U,
-  .data_region      = 1U,
+  .data_region      = 0U,
   .regions          = {
     [0] = {
-      .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
+      .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
+      .used         = true,
       .writeable    = false
     },
     [1] = {
-      .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .writeable    = true
+      .area         = {NULL,                (size_t)0},
+      .used         = false,
+      .writeable    = false,
     }
   },
   .mpuregs          = {
