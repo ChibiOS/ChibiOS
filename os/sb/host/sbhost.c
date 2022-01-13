@@ -203,7 +203,7 @@ bool sbIsThreadRunningX(sb_class_t *sbcp) {
     return false;
   }
 
-  return chThdTerminatedX(sbcp->tp);
+  return !chThdTerminatedX(sbcp->tp);
 }
 
 #if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
