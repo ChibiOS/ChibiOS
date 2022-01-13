@@ -95,10 +95,14 @@
 
                 .align      4
                 .globl      __sandbox
-__sandbox:       .long       0xFE9154C0
+__sandbox:      .long       0xFE9154C0
                 .long       0x0C4519EF
-                .long       16
+                .long       32
                 .long       __crt0_entry
+                .long       0
+                .long       0
+                .long       0
+                .long       0
 
                 .text
 /*

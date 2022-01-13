@@ -299,8 +299,8 @@ int main(void) {
 
         /* Starting sandboxed thread 1.*/
         if (sbStartThread(&sbx1, "sbx1",
-                          waUnprivileged1, sizeof (waUnprivileged1),
-                          NORMALPRIO - 1) == NULL) {
+                          waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
+                          0, NULL, NULL) == NULL) {
           chSysHalt("sbx1 failed");
         }
       }

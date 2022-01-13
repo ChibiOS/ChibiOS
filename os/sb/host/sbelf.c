@@ -37,32 +37,32 @@
 /*===========================================================================*/
 
 /* Relevant ELF file types.*/
-#define ET_EXEC             2U
+#define ET_EXEC                 2U
 
 /* Relevant section types.*/
-#define SHT_PROGBITS        1U
-#define SHT_SYMTAB          2U
-#define SHT_NOBITS          8U
-#define SHT_REL             9U
+#define SHT_PROGBITS            1U
+#define SHT_SYMTAB              2U
+#define SHT_NOBITS              8U
+#define SHT_REL                 9U
 
 /* Relevant section flags.*/
-#define SHF_WRITE           (1U << 0)
-#define SHF_ALLOC           (1U << 1)
-#define SHF_EXECINSTR       (1U << 2)
-#define SHF_INFO_LINK       (1U << 6)
+#define SHF_WRITE               (1U << 0)
+#define SHF_ALLOC               (1U << 1)
+#define SHF_EXECINSTR           (1U << 2)
+#define SHF_INFO_LINK           (1U << 6)
 
 /* Special section indices.*/
-#define SHN_UNDEF           0U
+#define SHN_UNDEF               0U
 
 /* Supported relocation types.*/
-#define R_ARM_ABS32         2U
-#define R_ARM_THM_PC22      10U
-#define R_ARM_THM_JUMP24    30U
-#define R_ARM_MOVW_ABS_NC   43U
-#define R_ARM_MOVT_ABS      44U
+#define R_ARM_ABS32             2U
+#define R_ARM_THM_PC22          10U
+#define R_ARM_THM_JUMP24        30U
+#define R_ARM_THM_MOVW_ABS_NC   47U
+#define R_ARM_THM_MOVT_ABS      48U
 
-#define ELF32_R_SYM(v)      ((v) >> 8)
-#define ELF32_R_TYPE(v)     ((v) & 0xFFU)
+#define ELF32_R_SYM(v)          ((v) >> 8)
+#define ELF32_R_TYPE(v)         ((v) & 0xFFU)
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -280,8 +280,8 @@ static uint32_t get_const16(uint32_t address) {
 
   return ((ins & 0x000000FFU) >> 0) |
          ((ins & 0x00007000U) >> 4) |
-         ((ins & 0x000F0000U) >> 5) |
-         ((ins & 0x04000000U) >> 11);
+         ((ins & 0x000F0000U) >> 4) |
+         ((ins & 0x04000000U) >> 14);
 }
 
 static void set_const16(uint32_t address, uint32_t val16) {
@@ -289,8 +289,8 @@ static void set_const16(uint32_t address, uint32_t val16) {
                   ((uint32_t)(((uint16_t *)address)[1]) << 0);
 
   ins &= ~0x040F70FFU;
-  ins |= ((val16 & 0x00008000U) << 11) |
-         ((val16 & 0x00007800U) << 5) |
+  ins |= ((val16 & 0x00000800U) << 14) |
+         ((val16 & 0x0000F000U) << 4) |
          ((val16 & 0x00000700U) << 4) |
          ((val16 & 0x000000FFU) << 0);
 
@@ -316,7 +316,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   case R_ARM_ABS32:
     *((uint32_t *)relocation_address) += (uint32_t)ctxp->map->base;
     break;
-  case R_ARM_MOVW_ABS_NC:
+  case R_ARM_THM_MOVW_ABS_NC:
     /* Checking for consecutive "movw" relocations without a "movt", we
        consider this an error.*/
     if (ctxp->rel_movw_found) {
@@ -329,7 +329,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
     ctxp->rel_movw_symbol  = ELF32_R_SYM(rp->r_info);
     ctxp->rel_movw_address = relocation_address;
     break;
-  case R_ARM_MOVT_ABS:
+  case R_ARM_THM_MOVT_ABS:
     /* Checking if we found a "movw" instruction before this "movt".*/
     if (!ctxp->rel_movw_found) {
       return CH_RET_ENOEXEC;
