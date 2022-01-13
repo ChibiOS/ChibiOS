@@ -34,7 +34,7 @@ SECTIONS
         *(.gcc*)
         __text_end__ = .;
     }
-
+    
     .rodata : ALIGN(4) ONLY_IF_RO
     {
         __rodata_base__ = .;
@@ -52,16 +52,18 @@ SECTIONS
         KEEP(*(SORT(.fini_array.*)))
         __fini_array_end__ = .;
 
+        *(.eh_frame*)
         *(.ARM.extab* .gnu.linkonce.armextab.*)
+    }
 
+    .ARM.exidx : ALIGN(4)
+    {
         __exidx_base__ = .;
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end__ = .;
         __exidx_end = .;
-
-        *(.eh_frame_hdr)
-    }
+     }
 
     .data : ALIGN(4)
     {
@@ -69,7 +71,6 @@ SECTIONS
        __data_base__ = .;
         *(.data)
         *(.data.*)
-        *(.ramtext)
         . = ALIGN(4);
         PROVIDE(_edata = .);
         __data_end__ = .;
