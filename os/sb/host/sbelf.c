@@ -58,6 +58,8 @@
 #define R_ARM_ABS32         2U
 #define R_ARM_THM_PC22      10U
 #define R_ARM_THM_JUMP24    30U
+#define R_ARM_MOVW_ABS_NC   43U
+#define R_ARM_MOVT_ABS      44U
 
 #define ELF32_R_SYM(v)      ((v) >> 8)
 #define ELF32_R_TYPE(v)     ((v) & 0xFFU)
@@ -100,6 +102,9 @@ typedef struct elf_load_context {
   uint32_t                  entry;
   elf_secnum_t              sections_num;
   vfs_offset_t              sections_off;
+  bool                      rel_movw_found;
+  uint32_t                  rel_movw_symbol;
+  uint32_t                  rel_movw_address;
   elf_section_info_t        *next;
   elf_section_info_t        allocated[SB_CFG_ELF_MAX_ALLOCATED];
 } elf_load_context_t;
@@ -269,10 +274,34 @@ static elf_section_info_t *find_allocated_section(elf_load_context_t *ctxp,
   return NULL;
 }
 
+static uint32_t get_const16(uint32_t address) {
+  uint32_t ins  = ((uint32_t)(((uint16_t *)address)[0]) << 16) |
+                  ((uint32_t)(((uint16_t *)address)[1]) << 0);
+
+  return ((ins & 0x000000FFU) >> 0) |
+         ((ins & 0x00007000U) >> 4) |
+         ((ins & 0x000F0000U) >> 5) |
+         ((ins & 0x04000000U) >> 11);
+}
+
+static void set_const16(uint32_t address, uint32_t val16) {
+  uint32_t ins  = ((uint32_t)(((uint16_t *)address)[0]) << 16) |
+                  ((uint32_t)(((uint16_t *)address)[1]) << 0);
+
+  ins &= ~0x040F70FFU;
+  ins |= ((val16 & 0x00008000U) << 11) |
+         ((val16 & 0x00007800U) << 5) |
+         ((val16 & 0x00000700U) << 4) |
+         ((val16 & 0x000000FFU) << 0);
+
+  ((uint16_t *)address)[0] = (uint16_t)(ins >> 16);
+  ((uint16_t *)address)[1] = (uint16_t)(ins >> 0);
+}
+
 static msg_t reloc_entry(elf_load_context_t *ctxp,
                          elf_section_info_t *esip,
                          elf32_rel_t *rp) {
-  uint32_t relocation_address;
+  uint32_t relocation_address, offset;
 
   /* Relocation point address.*/
   relocation_address = (uint32_t)esip->area.base + rp->r_offset;
@@ -287,11 +316,45 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   case R_ARM_ABS32:
     *((uint32_t *)relocation_address) += (uint32_t)ctxp->map->base;
     break;
+  case R_ARM_MOVW_ABS_NC:
+    /* Checking for consecutive "movw" relocations without a "movt", we
+       consider this an error.*/
+    if (ctxp->rel_movw_found) {
+      return CH_RET_ENOEXEC;
+    }
+
+    /* Storing information about the "movw" instruction to be processed later
+       when the associated "movt" instruction is found.*/
+    ctxp->rel_movw_found   = true;
+    ctxp->rel_movw_symbol  = ELF32_R_SYM(rp->r_info);
+    ctxp->rel_movw_address = relocation_address;
+    break;
+  case R_ARM_MOVT_ABS:
+    /* Checking if we found a "movw" instruction before this "movt".*/
+    if (!ctxp->rel_movw_found) {
+      return CH_RET_ENOEXEC;
+    }
+
+    /* Checking if both instructions referred to the same symbol.*/
+    if (ctxp->rel_movw_symbol != ELF32_R_SYM(rp->r_info)) {
+      return CH_RET_ENOEXEC;
+    }
+
+    /* Relocating both the "movw" and the "movt" instructions.*/
+    offset  = (get_const16(relocation_address) << 16) |
+              (get_const16(ctxp->rel_movw_address) << 0);
+    offset += (uint32_t)ctxp->map->base;
+    set_const16(relocation_address, offset >> 16);
+    set_const16(ctxp->rel_movw_address, offset & 0xFFFFU);
+
+    ctxp->rel_movw_found = false;
+    break;
   case R_ARM_THM_PC22:
   case R_ARM_THM_JUMP24:
-    /* TODO ????*/
+    /* To be ignored.*/
     break;
   default:
+    /* Anything unexpected is handled as an error.*/
     return CH_RET_ENOEXEC;
   }
 
