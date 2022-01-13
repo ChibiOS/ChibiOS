@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-ENTRY(_crt0_entry)
+ENTRY(__crt0_entry)
 
 SECTIONS
 {

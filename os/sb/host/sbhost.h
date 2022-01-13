@@ -69,9 +69,13 @@ typedef struct {
    */
   uint32_t                      hdr_size;
   /**
+   * @brief   Entry point address.
+   */
+  uint32_t                      hdr_entry;
+  /**
    * @brief   Used-defined parameters, defaulted to zero.
    */
-  uint32_t                      user;
+  uint32_t                      user[4];
 } sb_header_t;
 
 /*===========================================================================*/
@@ -93,8 +97,8 @@ extern "C" {
   bool sb_is_valid_string_range(sb_class_t *sbcp, const char *s, size_t n);
   void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config);
   thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
-                          void *wsp, size_t size,
-                          tprio_t prio);
+                          void *wsp, size_t size, tprio_t prio,
+                          int argc, char *argv[], char *envp[]);
   bool sbIsThreadRunningX(sb_class_t *sbcp);
 #if CH_CFG_USE_WAITEXIT == TRUE
   msg_t sbWaitThread(sb_class_t *sbcp);

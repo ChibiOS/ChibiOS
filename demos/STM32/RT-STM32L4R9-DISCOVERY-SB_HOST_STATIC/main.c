@@ -81,10 +81,12 @@ static const sb_config_t sb_config1 = {
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
+      .used         = true,
       .writeable    = false
     },
     [1] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
+      .used         = true,
       .writeable    = true
     }
   },
@@ -98,10 +100,12 @@ static const sb_config_t sb_config2 = {
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
+      .used         = true,
       .writeable    = false
     },
     [1] = {
       .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
+      .used         = true,
       .writeable    = true
     }
   },
@@ -295,16 +299,16 @@ int main(void) {
 
   /* Starting sandboxed thread 1.*/
   sb1tp = sbStartThread(&sbx1, "sbx1",
-                        waUnprivileged1, sizeof (waUnprivileged1),
-                        NORMALPRIO - 1);
+                        waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
+                        0, NULL, NULL);
   if (sb1tp == NULL) {
     chSysHalt("sbx1 failed");
   }
 
   /* Starting sandboxed thread 2.*/
   sb2tp = sbStartThread(&sbx2, "sbx2",
-                        waUnprivileged2, sizeof (waUnprivileged2),
-                        NORMALPRIO - 1);
+                        waUnprivileged2, sizeof (waUnprivileged2), NORMALPRIO - 1,
+                        0, NULL, NULL);
   if (sb2tp == NULL) {
     chSysHalt("sbx2 failed");
   }

@@ -94,12 +94,11 @@
                 .section    .sandbox, "ax"
 
                 .align      4
-                .globl      _sandbox
-_sandbox:       .long       0xFE9154C0
+                .globl      __sandbox
+__sandbox:       .long       0xFE9154C0
                 .long       0x0C4519EF
                 .long       16
-                .long       0
-                b           _crt0_entry
+                .long       __crt0_entry
 
                 .text
 /*
@@ -107,8 +106,8 @@ _sandbox:       .long       0xFE9154C0
  */
                 .align  2
                 .thumb_func
-                .global _crt0_entry
-_crt0_entry:
+                .global __crt0_entry
+__crt0_entry:
 
                 /* PSP stack pointers initialization.*/
                 ldr     r0, =__user_psp_end__

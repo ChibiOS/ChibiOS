@@ -18,7 +18,7 @@
  * RAM sandbox memory setup.
  */
 
-ENTRY(_crt0_entry)
+ENTRY(__crt0_entry)
 
 SECTIONS
 {

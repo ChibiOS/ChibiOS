@@ -124,15 +124,19 @@ void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config) {
  * @param[out] wsp      pointer to a working area dedicated to the thread stack
  * @param[in] size      size of the working area
  * @param[in] prio      the priority level for the new thread
+ * @param[in] argc      number of parameters for the sandbox
+ * @param[in] argv      array of parameters for the sandbox
+ * @param[in] envp      array of environment variables for the sandbox
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
 thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
-                        void *wsp, size_t size,
-                        tprio_t prio) {
+                        void *wsp, size_t size, tprio_t prio,
+                        int argc, char *argv[], char *envp[]) {
   thread_t *utp;
   const sb_header_t *sbhp;
   const sb_config_t *config = sbcp->config;
+  uint32_t *sp;
 
   /* Header location.*/
   sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
@@ -147,15 +151,28 @@ thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
     return NULL;
   }
 
+  /* Checking header entry point.*/
+  if (!chMemIsSpaceWithinX(&config->regions[config->code_region].area,
+                           (const void *)sbhp->hdr_entry,
+                           (size_t)2)) {
+    return NULL;
+  }
+
+  /* Setting up an initial stack for the sandbox.*/
+  sp = (uint32_t *)(void *)(config->regions[config->data_region].area.base +
+                            config->regions[config->data_region].area.size);
+  sp -= 3 * sizeof (uint32_t);
+  sp[0] = (uint32_t)argc;
+  sp[1] = (uint32_t)argv;
+  sp[2] = (uint32_t)envp;
+
   unprivileged_thread_descriptor_t utd = {
     .name       = name,
     .wbase      = (stkalign_t *)wsp,
     .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
     .prio       = prio,
-    .u_pc       = (uint32_t)(config->regions[config->code_region].area.base +
-                             sizeof (sb_header_t)) | 1U,
-    .u_psp      = (uint32_t)(config->regions[config->data_region].area.base +
-                             config->regions[config->data_region].area.size),
+    .u_pc       = sbhp->hdr_entry,
+    .u_psp      = (uint32_t)sp,
     .arg        = (void *)sbcp
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
