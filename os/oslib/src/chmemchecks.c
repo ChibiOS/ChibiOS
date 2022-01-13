@@ -94,30 +94,67 @@ CC_WEAK const memory_area_t __ch_mem_executable_areas[] = {
  *
  * @param[in] map       pointer to a @p memory_area_t structure
  * @param[in] s         pointer to the string to be checked
- * @param[in] n         maximum expected size of the string
- * @return              The test result.
- * @retval true         if the string is entirely contained within one of the
- *                      specified areas.
- * @retval false        if the string check failed.
+ * @param[in] max       maximum expected size of the string inclusive of the
+ *                      final zero
+ * @return              The string size inclusive of the final zero.
+ * @retval 0            if the string check failed.
  *
  * @xclass
  */
-bool chMemIsStringWithinX(const memory_area_t *map, const char *s, size_t n) {
+size_t chMemIsStringWithinX(const memory_area_t *map,
+                            const char *s,
+                            size_t max) {
   const char *base = (const char *)map->base;
   const char *end  = (const char *)base + map->size - (size_t)1;
 
   if (s >= base) {
-    while ((s <= end) && (n > 0U)) {
-      if (*s == '\0') {
-        return true;
-      }
+    size_t n;
 
-      s++;
-      n--;
+    n = (size_t)0;
+    while ((s <= end) && (n < max)) {
+      n++;
+      if (*s++ == '\0') {
+        return n;
+      }
     }
   }
 
-  return false;
+  return (size_t)0;
+}
+
+/**
+ * @brief   Pointers array check.
+ * @details Checks if specified pointers array is entirely contained in the
+ *          specified memory area.
+ *
+ * @param[in] map       pointer to a @p memory_area_t structure
+ * @param[in] pp        zero-terminated pointers array to be checked
+ * @param[in] max       maximum expected size of the pointers array inclusive
+ *                      of the final zero
+ * @return              The pointers array size inclusive of the final zero.
+ * @retval 0            if the pointers array check failed.
+ *
+ * @xclass
+ */
+size_t chMemIsPointersArrayWithinX(const memory_area_t *map,
+                                   const void *pp[],
+                                   size_t max) {
+  const void **base = (const void **)(void *)map->base;
+  const void **end  = (const void **)(void *)(map->base + map->size - sizeof (void *));
+
+  if (pp >= base) {
+    size_t n;
+
+    n = (size_t)0;
+    while ((pp <= end) && (n < max)) {
+      n += sizeof (void *);
+      if (*pp++ == NULL) {
+        return n;
+      }
+    }
+  }
+
+  return (size_t)0;
 }
 
 /**

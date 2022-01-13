@@ -61,7 +61,7 @@ bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (chMemIsSpaceWithinX(&rp->area, start, size)) {
+    if (rp->used && chMemIsSpaceWithinX(&rp->area, start, size)) {
       return true;
     }
     rp++;
@@ -74,7 +74,7 @@ bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (chMemIsSpaceWithinX(&rp->area, start, size)) {
+    if (rp->used && chMemIsSpaceWithinX(&rp->area, start, size)) {
       return rp->writeable;
     }
     rp++;
@@ -83,17 +83,57 @@ bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
   return false;
 }
 
-bool sb_is_valid_string_range(sb_class_t *sbcp, const char *s, size_t n) {
+size_t sb_check_string(sb_class_t *sbcp, const char *s, size_t max) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
 
   do {
-    if (chMemIsStringWithinX(&rp->area, s, n)) {
-      return true;
+    if (rp->used) {
+      size_t n = chMemIsStringWithinX(&rp->area, s, max);
+      if (n > (size_t)0) {
+        return n;
+      }
     }
     rp++;
   } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
 
-  return false;
+  return (size_t)0;
+}
+
+size_t sb_check_pointers_array(sb_class_t *sbcp, const void *pp[], size_t max) {
+  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+
+  do {
+    if (rp->used) {
+      size_t an = chMemIsPointersArrayWithinX(&rp->area, pp, max);
+      if (an > (size_t)0) {
+        return an;
+      }
+    }
+    rp++;
+  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
+
+  return (size_t)0;
+}
+
+size_t sb_check_strings_array(sb_class_t *sbcp, const char *pp[], size_t max) {
+  const char *s;
+  size_t n;
+
+  n = sb_check_pointers_array(sbcp, (const void **)pp, max);
+  if (n > (size_t)0) {
+    while ((s = *pp++) != NULL) {
+      size_t sn;
+
+      sn = sb_check_string(sbcp, s, max - n);
+      if (sn == (size_t)0) {
+        return (size_t)0;
+      }
+
+      n += sn;
+    }
+  }
+
+  return n;
 }
 
 /**

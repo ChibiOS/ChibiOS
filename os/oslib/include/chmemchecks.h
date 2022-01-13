@@ -80,9 +80,12 @@ extern const memory_area_t __ch_mem_executable_areas[];
 extern "C" {
 #endif
 #if CH_CFG_USE_MEMCHECKS == TRUE
-  bool chMemIsStringWithinX(const memory_area_t *map,
-                            const char *s,
-                            size_t n);
+  size_t chMemIsStringWithinX(const memory_area_t *map,
+                              const char *s,
+                              size_t max);
+  size_t chMemIsPointersArrayWithinX(const memory_area_t *map,
+                                     const void *pp[],
+                                     size_t max);
   bool chMemIsSpaceContainedX(const memory_area_t areas[],
                               const void *p,
                               size_t size);

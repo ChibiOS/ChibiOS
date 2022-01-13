@@ -92,7 +92,7 @@ int sb_posix_open(const char *path, int flags) {
   vfs_node_c *np = NULL;
   msg_t ret;
 
-  if (!sb_is_valid_string_range(sbp, (void *)path, VFS_CFG_PATHLEN_MAX)) {
+  if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
   }
 
