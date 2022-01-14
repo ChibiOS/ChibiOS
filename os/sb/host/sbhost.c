@@ -32,6 +32,15 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+#define PUSHSPACE(sp, n) do {                                               \
+  (sp) = (void *)((uint8_t *)(sp) - (n));                                   \
+} while (false)
+
+#define PUSHTYPE(type, sp, p) do {                                          \
+  PUSHSPACE(sp, sizeof (type));                                             \
+  *(type *)(void *)(sp) = (type)(p);                                        \
+} while (false)
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -56,6 +65,45 @@ sb_t sb;
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+size_t sb_strv_getsize(const char *v[], int *np) {
+  const char* s;
+  size_t size;
+  int n;
+
+  size = sizeof (const char *);
+  if (v != NULL) {
+    n = 0;
+    while ((s = *v) != NULL) {
+      size += sizeof (const char *) + strlen(s) + (size_t)1;
+      n++;
+      v++;
+    }
+
+    if (np != NULL) {
+      *np = n;
+    }
+  }
+
+  return MEM_ALIGN_NEXT(size, MEM_NATURAL_ALIGN);
+}
+
+void sb_strv_copy(const char *sp[], void *dp, int n) {
+  char **vp;
+  char *cp;
+  int i;
+
+  vp = (char **)dp;
+  cp = (char *)dp + ((n + 1) * sizeof (char *));
+  for (i = 0; i < n; i++) {
+    const char *ss = sp[i];
+    *(vp + i) = cp;
+    while ((*cp++ = *ss++) != '\0') {
+      /* Copy.*/
+    }
+  }
+  *(vp + n) = NULL;
+}
 
 bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
   const sb_memory_region_t *rp = &sbcp->config->regions[0];
@@ -164,7 +212,6 @@ void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config) {
  * @param[out] wsp      pointer to a working area dedicated to the thread stack
  * @param[in] size      size of the working area
  * @param[in] prio      the priority level for the new thread
- * @param[in] argc      number of parameters for the sandbox
  * @param[in] argv      array of parameters for the sandbox
  * @param[in] envp      array of environment variables for the sandbox
  * @return              The thread pointer.
@@ -172,11 +219,13 @@ void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config) {
  */
 thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
                         void *wsp, size_t size, tprio_t prio,
-                        int argc, char *argv[], char *envp[]) {
+                        const char *argv[], const char *envp[]) {
   thread_t *utp;
   const sb_header_t *sbhp;
   const sb_config_t *config = sbcp->config;
-  uint32_t *sp;
+  void *usp, *uargv, *uenvp;
+  size_t envsize, argsize, parsize;
+  int uargc, uenvc;
 
   /* Header location.*/
   sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
@@ -199,12 +248,40 @@ thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
   }
 
   /* Setting up an initial stack for the sandbox.*/
-  sp = (uint32_t *)(void *)(config->regions[config->data_region].area.base +
-                            config->regions[config->data_region].area.size);
-  sp -= 3 * sizeof (uint32_t);
-  sp[0] = (uint32_t)argc;
-  sp[1] = (uint32_t)argv;
-  sp[2] = (uint32_t)envp;
+  usp = (config->regions[config->data_region].area.base +
+         config->regions[config->data_region].area.size);
+
+  /* Allocating space for environment variables.*/
+  envsize = sb_strv_getsize(envp, &uenvc);
+  PUSHSPACE(usp, envsize);
+  uenvp = usp;
+
+  /* Allocating space for arguments.*/
+  argsize = sb_strv_getsize(argv, &uargc);
+  PUSHSPACE(usp, argsize);
+  uargv = usp;
+
+  /* Allocating space for parameters.*/
+  if (MEM_IS_ALIGNED(usp, PORT_STACK_ALIGN)) {
+    parsize = sizeof (int) + sizeof (const char **) + sizeof (const char **) + sizeof (int);
+  }
+  else {
+    parsize = sizeof (const char **) + sizeof (const char **) + sizeof (int);
+  }
+  PUSHSPACE(usp, parsize);
+
+  /* Checking stack allocation.*/
+  if (!chMemIsSpaceWithinX(&config->regions[config->data_region].area,
+                           usp, envsize + argsize + parsize)) {
+    return NULL;
+  }
+
+  /* Initializing stack.*/
+  sb_strv_copy(envp, uenvp, uenvc);
+  sb_strv_copy(argv, uargv, uargc);
+  *((uint32_t *)usp + 2) = (uint32_t)uenvp;
+  *((uint32_t *)usp + 1) = (uint32_t)uargv;
+  *((uint32_t *)usp + 0) = (uint32_t)uargc;
 
   unprivileged_thread_descriptor_t utd = {
     .name       = name,
@@ -212,7 +289,7 @@ thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
     .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
     .prio       = prio,
     .u_pc       = sbhp->hdr_entry,
-    .u_psp      = (uint32_t)sp,
+    .u_psp      = (uint32_t)usp,
     .arg        = (void *)sbcp
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0

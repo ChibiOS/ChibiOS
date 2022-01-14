@@ -73,7 +73,6 @@ typedef struct {
 extern const memory_area_t __ch_mem_writable_areas[];
 extern const memory_area_t __ch_mem_readable_areas[];
 extern const memory_area_t __ch_mem_executable_areas[];
-
 #endif
 
 #ifdef __cplusplus

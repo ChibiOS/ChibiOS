@@ -17,18 +17,29 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-//#include "sbuser.h"
-
-//const int dogsandcats = 0x55;
+#include "sbuser.h"
 
 /*
  * Application entry point.
  */
-int main(void) {
-//  unsigned i = 1U;
+int main(int argc, char *argv[], char *envp[]) {
+  char *s;
+  unsigned i = 1U;
+
+  printf("argc: %d\r\n", argc);
+  printf("argv: ");
+  while ((s = *argv++) != NULL) {
+    printf("%s", s);
+  }
+  printf("\r\n");
+  printf("envp: ");
+  while ((s = *envp++) != NULL) {
+    printf("%s", s);
+  }
+  printf("\r\n");
 
   while (true) {
-//    printf("#1 Hello World (%u)!!\r\n", i++);
-//    sbSleepMilliseconds(500);
+    printf("#1 Hello World (%u)!!\r\n", i++);
+    sbSleepMilliseconds(500);
   }
 }

@@ -97,6 +97,16 @@ static const sb_config_t sb_config1 = {
 /* Sandbox objects.*/
 sb_class_t sbx1;
 
+static const char *sbx1_argv[] = {
+  "sbx1",
+  NULL
+};
+
+static const char *sbx1_envp[] = {
+  "PATH=/bin",
+  NULL
+};
+
 static THD_WORKING_AREA(waUnprivileged1, 1024);
 
 /*===========================================================================*/
@@ -300,7 +310,7 @@ int main(void) {
         /* Starting sandboxed thread 1.*/
         if (sbStartThread(&sbx1, "sbx1",
                           waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
-                          0, NULL, NULL) == NULL) {
+                          sbx1_argv, sbx1_envp) == NULL) {
           chSysHalt("sbx1 failed");
         }
       }

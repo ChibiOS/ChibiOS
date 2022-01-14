@@ -104,6 +104,12 @@ __sandbox:      .long       0xFE9154C0
                 .long       0
                 .long       0
 
+                .bss
+
+                .global __user_heap_end
+__user_heap_end:
+                .ds.l   1
+
                 .text
 /*
  * CRT0 entry point.
@@ -112,10 +118,14 @@ __sandbox:      .long       0xFE9154C0
                 .thumb_func
                 .global __crt0_entry
 __crt0_entry:
+                /* Popping from the stack the information passed by the
+                   loader.*/
+                pop     {r8, r9, r10, r11}
+                mov     r11, sp
 
                 /* PSP stack pointers initialization.*/
                 ldr     r0, =__user_psp_end__
-                msr     PSP, r0
+                mov     sp, r0
 
 #if CRT0_INIT_STACKS == TRUE
                 /* User process Stack initialization. Note, it assumes that the
@@ -158,6 +168,10 @@ bloop:
                 blo     bloop
 #endif /* CRT0_INIT_BSS == TRUE */
 
+                /* Storing the end of the heap.*/
+                ldr     r0, =__user_heap_end
+                str     r11, [r0], #0
+
 #if CRT0_CALL_CONSTRUCTORS == TRUE
                 /* Constructors invocation.*/
                 ldr     r4, =__init_array_base__
@@ -172,6 +186,9 @@ endinitloop:
 #endif /* CRT0_CALL_CONSTRUCTORS == TRUE */
 
                 /* Main program invocation, r0 contains the returned value.*/
+                mov     r0, r8
+                mov     r1, r9
+                mov     r2, r10
                 bl      main
 
 #if CRT0_CALL_DESTRUCTORS == TRUE

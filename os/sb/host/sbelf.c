@@ -58,6 +58,7 @@
 #define R_ARM_ABS32             2U
 #define R_ARM_THM_PC22          10U
 #define R_ARM_THM_JUMP24        30U
+#define R_ARM_PREL31            42U
 #define R_ARM_THM_MOVW_ABS_NC   47U
 #define R_ARM_THM_MOVT_ABS      48U
 
@@ -304,7 +305,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   uint32_t relocation_address, offset;
 
   /* Relocation point address.*/
-  relocation_address = (uint32_t)esip->area.base + rp->r_offset;
+  relocation_address = (uint32_t)ctxp->map->base + rp->r_offset;
   if (!chMemIsSpaceWithinX(&esip->area,
                            (const void *)relocation_address,
                            sizeof (uint32_t))) {
@@ -351,6 +352,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
     break;
   case R_ARM_THM_PC22:
   case R_ARM_THM_JUMP24:
+  case R_ARM_PREL31:
     /* To be ignored.*/
     break;
   default:

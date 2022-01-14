@@ -92,6 +92,7 @@ extern sb_t sb;
 extern "C" {
 #endif
   void port_syscall(struct port_extctx *ctxp, uint32_t n);
+  size_t sb_strv_getsize(const char *v[], int *np);
   bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size);
   bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size);
   size_t sb_check_string(sb_class_t *sbcp, const char *s, size_t max);
@@ -100,7 +101,7 @@ extern "C" {
   void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config);
   thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
                           void *wsp, size_t size, tprio_t prio,
-                          int argc, char *argv[], char *envp[]);
+                          const char *argv[], const char *envp[]);
   bool sbIsThreadRunningX(sb_class_t *sbcp);
 #if CH_CFG_USE_WAITEXIT == TRUE
   msg_t sbWaitThread(sb_class_t *sbcp);
