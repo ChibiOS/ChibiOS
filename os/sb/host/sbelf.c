@@ -99,8 +99,7 @@ typedef struct {
 typedef struct elf_load_context {
   vfs_file_node_c           *fnp;
   const memory_area_t       *map;
-
-  uint32_t                  entry;
+//  uint32_t                  entry;
   elf_secnum_t              sections_num;
   vfs_offset_t              sections_off;
   bool                      rel_movw_found;
@@ -405,8 +404,15 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
 msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
   msg_t ret;
   elf_load_context_t ctx;
-  elf_secnum_t i;
   elf_section_info_t *esip;
+
+  /* Large structures not used at same time, the compiler could optimize it
+     but it is still a problem when running the code without optimizations for
+     debug.*/
+  union {
+    elf32_header_t h;
+    elf32_section_header_t sh;
+  } u;
 
   /* Load context initialization.*/
   {
@@ -414,8 +420,6 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
       0x7f, 0x45, 0x4c, 0x46, 0x01, 0x01, 0x01, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-    elf32_header_t h;
-    msg_t ret;
 
     /* Context fully cleared.*/
     memset((void *)&ctx, 0, sizeof (elf_load_context_t));
@@ -428,88 +432,91 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
     /* Reading the main ELF header.*/
     ret = vfsSetFilePosition(ctx.fnp, (vfs_offset_t)0, VFS_SEEK_SET);
     CH_RETURN_ON_ERROR(ret);
-    ret = vfsReadFile(ctx.fnp, (void *)&h, sizeof (elf32_header_t));
+    ret = vfsReadFile(ctx.fnp, (void *)&u.h, sizeof (elf32_header_t));
     CH_RETURN_ON_ERROR(ret);
 
     /* Checking for the expected header.*/
-    if (memcmp(h.e_ident, elf32_header, 16) != 0) {
+    if (memcmp(u.h.e_ident, elf32_header, 16) != 0) {
       return CH_RET_ENOEXEC;
     }
 
     /* Accepting executable files only.*/
-    if (h.e_type != ET_EXEC) {
+    if (u.h.e_type != ET_EXEC) {
       return CH_RET_ENOEXEC;
     }
 
     /* TODO more consistency checks.*/
 
     /* Storing info required later.*/
-    ctx.entry        = h.e_entry;
-    ctx.sections_num = (unsigned)h.e_shnum;
-    ctx.sections_off = (vfs_offset_t)h.e_shoff;
+//    ctx.entry        = u.h.e_entry;
+    ctx.sections_num = (unsigned)u.h.e_shnum;
+    ctx.sections_off = (vfs_offset_t)u.h.e_shoff;
   }
 
   /* Loading phase, scanning section headers.*/
-  for (i = 0U; i < ctx.sections_num; i++) {
-    elf32_section_header_t sh;
+  {
+    elf_secnum_t i;
 
-    /* Reading the header.*/
-    ret = vfsSetFilePosition(ctx.fnp,
-                             ctx.sections_off + ((vfs_offset_t)i *
-                                                 (vfs_offset_t)sizeof (elf32_section_header_t)),
-                             VFS_SEEK_SET);
-    CH_RETURN_ON_ERROR(ret);
-    ret = vfsReadFile(ctx.fnp, (void *)&sh, sizeof (elf32_section_header_t));
-    CH_RETURN_ON_ERROR(ret);
+    for (i = 0U; i < ctx.sections_num; i++) {
 
-    /* Empty sections are not processed.*/
-    if (sh.sh_size == 0U) {
-      continue;
-    }
+      /* Reading the header.*/
+      ret = vfsSetFilePosition(ctx.fnp,
+                               ctx.sections_off + ((vfs_offset_t)i *
+                                                   (vfs_offset_t)sizeof (elf32_section_header_t)),
+                               VFS_SEEK_SET);
+      CH_RETURN_ON_ERROR(ret);
+      ret = vfsReadFile(ctx.fnp, (void *)&u.sh, sizeof (elf32_section_header_t));
+      CH_RETURN_ON_ERROR(ret);
 
-    /* Deciding what to do with the section depending on type.*/
-    switch (sh.sh_type) {
-    case SHT_PROGBITS:
-      /* Allocatable section type, needs to be loaded.*/
-      if ((sh.sh_flags & SHF_ALLOC) != 0U) {
-
-        /* Allocating and loading, could fail.*/
-        ret = allocate_load_section(&ctx, i, &sh);
-        CH_RETURN_ON_ERROR(ret);
+      /* Empty sections are not processed.*/
+      if (u.sh.sh_size == 0U) {
+        continue;
       }
-      break;
 
-    case SHT_NOBITS:
-      /* Uninitialized data section, we can have more than one, just checking
-         address ranges.*/
-      if ((sh.sh_flags & SHF_ALLOC) != 0U) {
-        ret = allocate_section(&ctx, i, &sh);
-        CH_RETURN_ON_ERROR(ret);
-      }
-      break;
+      /* Deciding what to do with the section depending on type.*/
+      switch (u.sh.sh_type) {
+      case SHT_PROGBITS:
+        /* Allocatable section type, needs to be loaded.*/
+        if ((u.sh.sh_flags & SHF_ALLOC) != 0U) {
 
-    case SHT_REL:
-      if ((sh.sh_flags & SHF_INFO_LINK) != 0U) {
-
-        esip = find_allocated_section(&ctx, (elf_secnum_t)sh.sh_info);
-        if (esip == NULL) {
-          /* Ignoring other relocation sections.*/
-          break;
+          /* Allocating and loading, could fail.*/
+          ret = allocate_load_section(&ctx, i, &u.sh);
+          CH_RETURN_ON_ERROR(ret);
         }
+        break;
 
-        /* Multiple relocation sections associated to the same section.*/
-        if (esip->rel_size != 0U) {
-          return CH_RET_ENOEXEC;
+      case SHT_NOBITS:
+        /* Uninitialized data section, we can have more than one, just checking
+           address ranges.*/
+        if ((u.sh.sh_flags & SHF_ALLOC) != 0U) {
+          ret = allocate_section(&ctx, i, &u.sh);
+          CH_RETURN_ON_ERROR(ret);
         }
+        break;
 
-        esip->rel_size = sh.sh_size;
-        esip->rel_off  = (vfs_offset_t)sh.sh_offset;
+      case SHT_REL:
+        if ((u.sh.sh_flags & SHF_INFO_LINK) != 0U) {
+
+          esip = find_allocated_section(&ctx, (elf_secnum_t)u.sh.sh_info);
+          if (esip == NULL) {
+            /* Ignoring other relocation sections.*/
+            break;
+          }
+
+          /* Multiple relocation sections associated to the same section.*/
+          if (esip->rel_size != 0U) {
+            return CH_RET_ENOEXEC;
+          }
+
+          esip->rel_size = u.sh.sh_size;
+          esip->rel_off  = (vfs_offset_t)u.sh.sh_offset;
+        }
+        break;
+
+      default:
+        /* Ignoring other section types.*/
+        break;
       }
-      break;
-
-    default:
-      /* Ignoring other section types.*/
-      break;
     }
   }
 
