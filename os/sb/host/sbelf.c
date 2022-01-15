@@ -165,19 +165,6 @@ typedef struct {
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static msg_t read_section_header(elf_load_context_t *ctxp,
-                                 elf32_section_header_t *shp,
-                                 elf_secnum_t index) {
-  msg_t ret;
-
-  ret = vfsSetFilePosition(ctxp->fnp,
-                           ctxp->sections_off + ((vfs_offset_t)index *
-                                                 (vfs_offset_t)sizeof (elf32_section_header_t)),
-                           VFS_SEEK_SET);
-  CH_RETURN_ON_ERROR(ret);
-  return vfsReadFile(ctxp->fnp, (void *)shp, sizeof (elf32_section_header_t));
-}
-
 static msg_t area_is_intersecting(elf_load_context_t *ctxp,
                                  const memory_area_t *map) {
   elf_section_info_t *esip;
@@ -411,132 +398,128 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
   return ret;
 }
 
-static msg_t init_elf_context(elf_load_context_t *ctxp,
-                              vfs_file_node_c *fnp,
-                              const memory_area_t *map) {
-  static uint8_t elf32_header[16] = {
-    0x7f, 0x45, 0x4c, 0x46, 0x01, 0x01, 0x01, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-  };
-  elf32_header_t h;
-  msg_t ret;
-
-  /* Context fully cleared.*/
-  memset((void *)ctxp, 0, sizeof (elf_load_context_t));
-
-  /* Initializing the fixed part of the context.*/
-  ctxp->fnp  = fnp;
-  ctxp->map  = map;
-  ctxp->next = &ctxp->allocated[0];
-
-  /* Reading the main ELF header.*/
-  ret = vfsSetFilePosition(ctxp->fnp, (vfs_offset_t)0, VFS_SEEK_SET);
-  CH_RETURN_ON_ERROR(ret);
-  ret = vfsReadFile(ctxp->fnp, (void *)&h, sizeof (elf32_header_t));
-  CH_RETURN_ON_ERROR(ret);
-
-  /* Checking for the expected header.*/
-  if (memcmp(h.e_ident, elf32_header, 16) != 0) {
-    return CH_RET_ENOEXEC;
-  }
-
-  /* Accepting executable files only.*/
-  if (h.e_type != ET_EXEC) {
-    return CH_RET_ENOEXEC;
-  }
-
-  /* TODO more consistency checks.*/
-
-  /* Storing info required later.*/
-  ctxp->entry        = h.e_entry;
-  ctxp->sections_num = (unsigned)h.e_shnum;
-  ctxp->sections_off = (vfs_offset_t)h.e_shoff;
-
-  return CH_RET_SUCCESS;
-}
-
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
 msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
   msg_t ret;
+  elf_load_context_t ctx;
+  elf_secnum_t i;
+  elf_section_info_t *esip;
 
-  do {
-    elf_load_context_t ctx;
-    elf_secnum_t i;
-    elf_section_info_t *esip;
+  /* Load context initialization.*/
+  {
+    static const uint8_t elf32_header[16] = {
+      0x7f, 0x45, 0x4c, 0x46, 0x01, 0x01, 0x01, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+    elf32_header_t h;
+    msg_t ret;
 
-    ret = init_elf_context(&ctx, fnp, map);
-    CH_BREAK_ON_ERROR(ret);
+    /* Context fully cleared.*/
+    memset((void *)&ctx, 0, sizeof (elf_load_context_t));
 
-    /* Loading phase, scanning section headers.*/
-    for (i = 0U; i < ctx.sections_num; i++) {
-      elf32_section_header_t sh;
+    /* Initializing the fixed part of the context.*/
+    ctx.fnp  = fnp;
+    ctx.map  = map;
+    ctx.next = &ctx.allocated[0];
 
-      /* Reading the header.*/
-      ret = read_section_header(&ctx, &sh, i);
-      CH_BREAK_ON_ERROR(ret);
+    /* Reading the main ELF header.*/
+    ret = vfsSetFilePosition(ctx.fnp, (vfs_offset_t)0, VFS_SEEK_SET);
+    CH_RETURN_ON_ERROR(ret);
+    ret = vfsReadFile(ctx.fnp, (void *)&h, sizeof (elf32_header_t));
+    CH_RETURN_ON_ERROR(ret);
 
-      /* Empty sections are not processed.*/
-      if (sh.sh_size == 0U) {
-        continue;
-      }
-
-      /* Deciding what to do with the section depending on type.*/
-      switch (sh.sh_type) {
-      case SHT_PROGBITS:
-        /* Allocatable section type, needs to be loaded.*/
-        if ((sh.sh_flags & SHF_ALLOC) != 0U) {
-
-          /* Allocating and loading, could fail.*/
-          ret = allocate_load_section(&ctx, i, &sh);
-          CH_RETURN_ON_ERROR(ret);
-        }
-        break;
-
-      case SHT_NOBITS:
-        /* Uninitialized data section, we can have more than one, just checking
-           address ranges.*/
-        if ((sh.sh_flags & SHF_ALLOC) != 0U) {
-          ret = allocate_section(&ctx, i, &sh);
-          CH_RETURN_ON_ERROR(ret);
-        }
-        break;
-
-      case SHT_REL:
-        if ((sh.sh_flags & SHF_INFO_LINK) != 0U) {
-
-          esip = find_allocated_section(&ctx, (elf_secnum_t)sh.sh_info);
-          if (esip == NULL) {
-            /* Ignoring other relocation sections.*/
-            break;
-          }
-
-          /* Multiple relocation sections associated to the same section.*/
-          if (esip->rel_size != 0U) {
-            return CH_RET_ENOEXEC;
-          }
-
-          esip->rel_size = sh.sh_size;
-          esip->rel_off  = (vfs_offset_t)sh.sh_offset;
-        }
-        break;
-
-      default:
-        /* Ignoring other section types.*/
-        break;
-      }
+    /* Checking for the expected header.*/
+    if (memcmp(h.e_ident, elf32_header, 16) != 0) {
+      return CH_RET_ENOEXEC;
     }
 
-    /* Relocating all sections with an associated relocation table.*/
-    for (esip = &ctx.allocated[0]; esip < ctx.next; esip++) {
-      if (esip->rel_off != (vfs_offset_t)0) {
-        ret = reloc_section(&ctx, esip);
+    /* Accepting executable files only.*/
+    if (h.e_type != ET_EXEC) {
+      return CH_RET_ENOEXEC;
+    }
+
+    /* TODO more consistency checks.*/
+
+    /* Storing info required later.*/
+    ctx.entry        = h.e_entry;
+    ctx.sections_num = (unsigned)h.e_shnum;
+    ctx.sections_off = (vfs_offset_t)h.e_shoff;
+  }
+
+  /* Loading phase, scanning section headers.*/
+  for (i = 0U; i < ctx.sections_num; i++) {
+    elf32_section_header_t sh;
+
+    /* Reading the header.*/
+    ret = vfsSetFilePosition(ctx.fnp,
+                             ctx.sections_off + ((vfs_offset_t)i *
+                                                 (vfs_offset_t)sizeof (elf32_section_header_t)),
+                             VFS_SEEK_SET);
+    CH_RETURN_ON_ERROR(ret);
+    ret = vfsReadFile(ctx.fnp, (void *)&sh, sizeof (elf32_section_header_t));
+    CH_RETURN_ON_ERROR(ret);
+
+    /* Empty sections are not processed.*/
+    if (sh.sh_size == 0U) {
+      continue;
+    }
+
+    /* Deciding what to do with the section depending on type.*/
+    switch (sh.sh_type) {
+    case SHT_PROGBITS:
+      /* Allocatable section type, needs to be loaded.*/
+      if ((sh.sh_flags & SHF_ALLOC) != 0U) {
+
+        /* Allocating and loading, could fail.*/
+        ret = allocate_load_section(&ctx, i, &sh);
         CH_RETURN_ON_ERROR(ret);
       }
+      break;
+
+    case SHT_NOBITS:
+      /* Uninitialized data section, we can have more than one, just checking
+         address ranges.*/
+      if ((sh.sh_flags & SHF_ALLOC) != 0U) {
+        ret = allocate_section(&ctx, i, &sh);
+        CH_RETURN_ON_ERROR(ret);
+      }
+      break;
+
+    case SHT_REL:
+      if ((sh.sh_flags & SHF_INFO_LINK) != 0U) {
+
+        esip = find_allocated_section(&ctx, (elf_secnum_t)sh.sh_info);
+        if (esip == NULL) {
+          /* Ignoring other relocation sections.*/
+          break;
+        }
+
+        /* Multiple relocation sections associated to the same section.*/
+        if (esip->rel_size != 0U) {
+          return CH_RET_ENOEXEC;
+        }
+
+        esip->rel_size = sh.sh_size;
+        esip->rel_off  = (vfs_offset_t)sh.sh_offset;
+      }
+      break;
+
+    default:
+      /* Ignoring other section types.*/
+      break;
     }
-  } while (false);
+  }
+
+  /* Relocating all sections with an associated relocation table.*/
+  for (esip = &ctx.allocated[0]; esip < ctx.next; esip++) {
+    if (esip->rel_off != (vfs_offset_t)0) {
+      ret = reloc_section(&ctx, esip);
+      CH_RETURN_ON_ERROR(ret);
+    }
+  }
 
   return ret;
 }
