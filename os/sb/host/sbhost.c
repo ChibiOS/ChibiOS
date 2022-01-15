@@ -105,34 +105,34 @@ void sb_strv_copy(const char *sp[], void *dp, int n) {
   *(vp + n) = NULL;
 }
 
-bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size) {
-  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+bool sb_is_valid_read_range(sb_class_t *sbp, const void *start, size_t size) {
+  const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
     if (rp->used && chMemIsSpaceWithinX(&rp->area, start, size)) {
       return true;
     }
     rp++;
-  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
 
   return false;
 }
 
-bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size) {
-  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+bool sb_is_valid_write_range(sb_class_t *sbp, void *start, size_t size) {
+  const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
     if (rp->used && chMemIsSpaceWithinX(&rp->area, start, size)) {
       return rp->writeable;
     }
     rp++;
-  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
 
   return false;
 }
 
-size_t sb_check_string(sb_class_t *sbcp, const char *s, size_t max) {
-  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+size_t sb_check_string(sb_class_t *sbp, const char *s, size_t max) {
+  const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
     if (rp->used) {
@@ -142,13 +142,13 @@ size_t sb_check_string(sb_class_t *sbcp, const char *s, size_t max) {
       }
     }
     rp++;
-  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
 
   return (size_t)0;
 }
 
-size_t sb_check_pointers_array(sb_class_t *sbcp, const void *pp[], size_t max) {
-  const sb_memory_region_t *rp = &sbcp->config->regions[0];
+size_t sb_check_pointers_array(sb_class_t *sbp, const void *pp[], size_t max) {
+  const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
     if (rp->used) {
@@ -158,21 +158,21 @@ size_t sb_check_pointers_array(sb_class_t *sbcp, const void *pp[], size_t max) {
       }
     }
     rp++;
-  } while (rp < &sbcp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
 
   return (size_t)0;
 }
 
-size_t sb_check_strings_array(sb_class_t *sbcp, const char *pp[], size_t max) {
+size_t sb_check_strings_array(sb_class_t *sbp, const char *pp[], size_t max) {
   const char *s;
   size_t n;
 
-  n = sb_check_pointers_array(sbcp, (const void **)pp, max);
+  n = sb_check_pointers_array(sbp, (const void **)pp, max);
   if (n > (size_t)0) {
     while ((s = *pp++) != NULL) {
       size_t sn;
 
-      sn = sb_check_string(sbcp, s, max - n);
+      sn = sb_check_string(sbp, s, max - n);
       if (sn == (size_t)0) {
         return (size_t)0;
       }
@@ -187,27 +187,27 @@ size_t sb_check_strings_array(sb_class_t *sbcp, const char *pp[], size_t max) {
 /**
  * @brief   Sandbox object initialization.
  *
- * @param[out] sbcp     pointer to the sandbox object
+ * @param[out] sbp      pointer to the sandbox object
  * @param[in] config    pointer to the sandbox configuration
  *
  * @init
  */
-void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config) {
+void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
 
-  sbcp->config = config;
-  sbcp->tp     = NULL;
+  sbp->config = config;
+  sbp->tp     = NULL;
 #if CH_CFG_USE_MESSAGES == TRUE
-  sbcp->msg_tp = NULL;
+  sbp->msg_tp = NULL;
 #endif
 #if CH_CFG_USE_EVENTS == TRUE
-  chEvtObjectInit(&sbcp->es);
+  chEvtObjectInit(&sbp->es);
 #endif
 }
 
 /**
  * @brief   Starts a sandboxed thread.
  *
- * @param[in] sbcp      pointer to a @p sb_class_t structure
+ * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] name      name to be assigned to the thread
  * @param[out] wsp      pointer to a working area dedicated to the thread stack
  * @param[in] size      size of the working area
@@ -217,12 +217,12 @@ void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config) {
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
-thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
+thread_t *sbStartThread(sb_class_t *sbp, const char *name,
                         void *wsp, size_t size, tprio_t prio,
                         const char *argv[], const char *envp[]) {
   thread_t *utp;
   const sb_header_t *sbhp;
-  const sb_config_t *config = sbcp->config;
+  const sb_config_t *config = sbp->config;
   void *usp, *uargv, *uenvp;
   size_t envsize, argsize, parsize;
   int uargc, uenvc;
@@ -290,7 +290,7 @@ thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
     .prio       = prio,
     .u_pc       = sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
-    .arg        = (void *)sbcp
+    .arg        = (void *)sbp
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
   for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
@@ -301,7 +301,7 @@ thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
   utp = chThdCreateUnprivileged(&utd);
 
   /* For messages exchange.*/
-  sbcp->tp      = utp;
+  sbp->tp      = utp;
 
   return utp;
 }
@@ -309,19 +309,148 @@ thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
 /**
  * @brief   Verifies if the sandbox thread is running.
  *
- * @param[in] sbcp      pointer to a @p sb_class_t structure
+ * @param[in] sbp       pointer to a @p sb_class_t structure
  * @return              The thread status.
  *
  * @api
  */
-bool sbIsThreadRunningX(sb_class_t *sbcp) {
+bool sbIsThreadRunningX(sb_class_t *sbp) {
 
-  if (sbcp->tp == NULL) {
+  if (sbp->tp == NULL) {
     return false;
   }
 
-  return !chThdTerminatedX(sbcp->tp);
+  return !chThdTerminatedX(sbp->tp);
 }
+
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Execute an elf file within a sandbox.
+ * @note    The file is loaded into region zero of the sandbox which is
+ *          assumed to be used for both code and data, extra regions are
+ *          not touched by this function.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] pathname  file to be executed
+ * @param[in] argv      arguments to be passed to the sandbox
+ * @param[in] envp      environment variables to be passed to the sandbox
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t sbExec(sb_class_t *sbp, const char *pathname,
+             void *wsp, size_t size, tprio_t prio,
+             const char *argv[], const char *envp[]) {
+  const sb_config_t *config = sbp->config;
+  memory_area_t ma = config->regions[0].area;
+  const sb_header_t *sbhp;
+  msg_t ret;
+  void *usp, *uargv, *uenvp;
+  size_t envsize, argsize, parsize;
+  int uargc, uenvc;
+
+  /* Setting up an initial stack for the sandbox.*/
+  usp = (void *)(config->regions[0].area.base + config->regions[0].area.size);
+
+  /* Allocating space for environment variables.*/
+  envsize = sb_strv_getsize(envp, &uenvc);
+  PUSHSPACE(usp, envsize);
+  uenvp = usp;
+
+  /* Allocating space for arguments.*/
+  argsize = sb_strv_getsize(argv, &uargc);
+  PUSHSPACE(usp, argsize);
+  uargv = usp;
+
+  /* Allocating space for parameters.*/
+  if (MEM_IS_ALIGNED(usp, PORT_STACK_ALIGN)) {
+    parsize = sizeof (int) + sizeof (const char **) + sizeof (const char **) + sizeof (int);
+  }
+  else {
+    parsize = sizeof (const char **) + sizeof (const char **) + sizeof (int);
+  }
+  PUSHSPACE(usp, parsize);
+
+  /* Checking stack allocation.*/
+  if (!chMemIsSpaceWithinX(&config->regions[0].area,
+                           usp, envsize + argsize + parsize)) {
+    return CH_RET_ENOMEM;
+  }
+
+  /* Adjusting the size of the memory area object, we don't want the loaded
+     elf file to overwrite the initialized stack.*/
+  ma.size -= envsize + argsize + parsize;
+
+  /* Initializing stack.*/
+  sb_strv_copy(envp, uenvp, uenvc);
+  sb_strv_copy(argv, uargv, uargc);
+  *((uint32_t *)usp + 2) = (uint32_t)uenvp;
+  *((uint32_t *)usp + 1) = (uint32_t)uargv;
+  *((uint32_t *)usp + 0) = (uint32_t)uargc;
+
+  /* Loading sandbox code into the specified memory area.*/
+  ret = sbElfLoadFile(config->vfs_driver, pathname, &ma);
+  CH_RETURN_ON_ERROR(ret);
+
+  /* Header location.*/
+  sbhp = (const sb_header_t *)(void *)ma.base;
+
+  /* Checking header magic numbers.*/
+  if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Checking header size.*/
+  if (sbhp->hdr_size != sizeof (sb_header_t)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Checking header entry point.*/
+  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_entry, (size_t)2)) {
+    return CH_RET_EFAULT;
+  }
+
+  /* Everything OK, starting the unprivileged thread inside the sandbox.*/
+  unprivileged_thread_descriptor_t utd = {
+    .name       = pathname,
+    .wbase      = (stkalign_t *)wsp,
+    .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
+    .prio       = prio,
+    .u_pc       = sbhp->hdr_entry,
+    .u_psp      = (uint32_t)usp,
+    .arg        = (void *)sbp
+  };
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
+  for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
+    utd.regions[i] = config->mpuregs[i];
+  }
+#endif
+
+  sbp->tp = chThdCreateUnprivileged(&utd);
+
+  if (sbp->tp == NULL) {
+    return CH_RET_ENOMEM;
+  }
+
+  return CH_RET_SUCCESS;
+}
+
+/**
+ * @brief   Registers a file descriptor on a sandbox.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] fd        file descriptor to be assigned
+ * @param[in] np        VFS node to be registered on the file descriptor
+ *
+ * @api
+ */
+void sbRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np) {
+
+  chDbgAssert(sb_is_available_descriptor(&sbp->io, fd), "invalid file descriptor");
+
+  sbp->io.vfs_nodes[fd]  = np;
+}
+#endif
 
 #if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
 /**
@@ -330,21 +459,21 @@ bool sbIsThreadRunningX(sb_class_t *sbcp) {
  * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
  *          order to use this function.
  *
- * @param[in] sbcp      pointer to a @p sb_class_t structure
+ * @param[in] sbp       pointer to a @p sb_class_t structure
  * @return              The exit code from the terminated sandbox thread.
  * @retval MSG_RESET    Sandbox thread not started.
  *
  * @api
  */
-msg_t sbWaitThread(sb_class_t *sbcp) {
+msg_t sbWaitThread(sb_class_t *sbp) {
   msg_t msg;
 
-  if (sbcp->tp == NULL) {
+  if (sbp->tp == NULL) {
     return MSG_RESET;
   }
 
-  msg = chThdWait(sbcp->tp);
-  sbcp->tp = NULL;
+  msg = chThdWait(sbp->tp);
+  sbp->tp = NULL;
 
   return msg;
 }
@@ -354,7 +483,7 @@ msg_t sbWaitThread(sb_class_t *sbcp) {
 /**
  * @brief   Sends a message to a sandboxed thread.
  *
- * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] sbp       pointer to the sandbox object
  * @param[in] msg       message to be sent
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
@@ -367,28 +496,28 @@ msg_t sbWaitThread(sb_class_t *sbcp) {
  *
  * @api
  */
-msg_t sbSendMessageTimeout(sb_class_t *sbcp,
+msg_t sbSendMessageTimeout(sb_class_t *sbp,
                            msg_t msg,
                            sysinterval_t timeout) {
   thread_t *ctp = __sch_get_currthread();
 
-  chDbgCheck(sbcp != NULL);
+  chDbgCheck(sbp != NULL);
 
   chSysLock();
 
   /* Sending the message.*/
   ctp->u.sentmsg = msg;
-  __ch_msg_insert(&sbcp->tp->msgqueue, ctp);
-  if (sbcp->tp->state == CH_STATE_WTMSG) {
-    (void) chSchReadyI(sbcp->tp);
+  __ch_msg_insert(&sbp->tp->msgqueue, ctp);
+  if (sbp->tp->state == CH_STATE_WTMSG) {
+    (void) chSchReadyI(sbp->tp);
   }
   msg = chSchGoSleepTimeoutS(CH_STATE_SNDMSGQ, timeout);
 
   /* If a timeout occurred while the boxed thread already received the message
      then this thread needs to "unregister" as sender, the boxed error will
      get SB_ERR_EBUSY when/if trying to reply.*/
-  if ((msg == MSG_TIMEOUT) && (sbcp->msg_tp == ctp)) {
-    sbcp->msg_tp = NULL;
+  if ((msg == MSG_TIMEOUT) && (sbp->msg_tp == ctp)) {
+    sbp->msg_tp = NULL;
   }
 
   chSysUnlock();

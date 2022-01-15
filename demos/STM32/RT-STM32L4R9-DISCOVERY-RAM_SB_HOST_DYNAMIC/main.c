@@ -107,7 +107,7 @@ static const char *sbx1_envp[] = {
   NULL
 };
 
-static THD_WORKING_AREA(waUnprivileged1, 1024);
+static THD_WORKING_AREA(waUnprivileged1, 2048);
 
 /*===========================================================================*/
 /* Main and generic code.                                                    */
@@ -245,9 +245,9 @@ int main(void) {
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-  sbPosixRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
   vfsClose(np);
 
 #if 0
@@ -259,9 +259,9 @@ int main(void) {
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-  sbPosixRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
   vfsClose(np);
 #endif
 
@@ -299,29 +299,15 @@ int main(void) {
     if (palReadLine(LINE_BUTTON)) {
       if (!sbIsThreadRunningX(&sbx1)) {
 
-        /* Loading sandbox code.*/
-        ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver,
-                            "/bin/msh.elf",
-                            &sbx1.config->regions[0].area);
+        /* Running the sandbox.*/
+        ret = sbExec(&sbx1, "/bin/msh.elf",
+                     waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
+                     sbx1_argv, sbx1_envp);
         if (CH_RET_IS_ERROR(ret)) {
-          chSysHalt("ELF");
-        }
-
-        /* Starting sandboxed thread 1.*/
-        if (sbStartThread(&sbx1, "sbx1",
-                          waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
-                          sbx1_argv, sbx1_envp) == NULL) {
-          chSysHalt("sbx1 failed");
+          chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);
+          chThdSleepMilliseconds(1000);
         }
       }
-#if 0
-      static uint8_t loadbuf[1024];
-      static memory_area_t ma = {loadbuf, sizeof (loadbuf)};
-      ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver, "/bin/app.elf", &ma);
-      if (CH_RET_IS_ERROR(ret)) {
-        chSysHalt("ELF");
-      }
-#endif
     }
   }
 }

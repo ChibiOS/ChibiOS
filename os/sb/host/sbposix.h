@@ -68,9 +68,6 @@ extern "C" {
   ssize_t sb_posix_write(int fd, const void *buf, size_t count);
   off_t sb_posix_lseek(int fd, off_t offset, int whence);
   ssize_t sb_posix_getdents(int fd, void *buf, size_t count);
-#if SB_CFG_ENABLE_VFS == TRUE
-  void sbPosixRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np);
-#endif
 #ifdef __cplusplus
 }
 #endif
@@ -78,6 +75,21 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+static inline bool sb_is_valid_descriptor(int fd) {
+
+  return (fd >= 0) && (fd < SB_CFG_FD_NUM);
+}
+
+static inline bool sb_is_available_descriptor(sb_ioblock_t *iop, int fd) {
+
+  return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] == NULL);
+}
+
+static inline bool sb_is_existing_descriptor(sb_ioblock_t *iop, int fd) {
+
+  return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] != NULL);
+}
 
 #endif /* SBPOSIX_H */
 

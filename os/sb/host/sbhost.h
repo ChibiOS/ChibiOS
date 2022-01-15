@@ -93,21 +93,28 @@ extern "C" {
 #endif
   void port_syscall(struct port_extctx *ctxp, uint32_t n);
   size_t sb_strv_getsize(const char *v[], int *np);
-  bool sb_is_valid_read_range(sb_class_t *sbcp, const void *start, size_t size);
-  bool sb_is_valid_write_range(sb_class_t *sbcp, void *start, size_t size);
-  size_t sb_check_string(sb_class_t *sbcp, const char *s, size_t max);
-  size_t sb_check_pointers_array(sb_class_t *sbcp, const void *pp[], size_t max);
-  size_t sb_check_strings_array(sb_class_t *sbcp, const char *pp[], size_t max);
-  void sbObjectInit(sb_class_t *sbcp, const sb_config_t *config);
-  thread_t *sbStartThread(sb_class_t *sbcp, const char *name,
+  void sb_strv_copy(const char *sp[], void *dp, int n);
+  bool sb_is_valid_read_range(sb_class_t *sbp, const void *start, size_t size);
+  bool sb_is_valid_write_range(sb_class_t *sbp, void *start, size_t size);
+  size_t sb_check_string(sb_class_t *sbp, const char *s, size_t max);
+  size_t sb_check_pointers_array(sb_class_t *sbp, const void *pp[], size_t max);
+  size_t sb_check_strings_array(sb_class_t *sbp, const char *pp[], size_t max);
+  void sbObjectInit(sb_class_t *sbp, const sb_config_t *config);
+  thread_t *sbStartThread(sb_class_t *sbp, const char *name,
                           void *wsp, size_t size, tprio_t prio,
                           const char *argv[], const char *envp[]);
-  bool sbIsThreadRunningX(sb_class_t *sbcp);
+  bool sbIsThreadRunningX(sb_class_t *sbp);
+#if SB_CFG_ENABLE_VFS == TRUE
+  msg_t sbExec(sb_class_t *sbp, const char *pathname,
+               void *wsp, size_t size, tprio_t prio,
+               const char *argv[], const char *envp[]);
+  void sbRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np);
+#endif
 #if CH_CFG_USE_WAITEXIT == TRUE
-  msg_t sbWaitThread(sb_class_t *sbcp);
+  msg_t sbWaitThread(sb_class_t *sbp);
 #endif
 #if CH_CFG_USE_MESSAGES == TRUE
-  msg_t sbSendMessageTimeout(sb_class_t *sbcp,
+  msg_t sbSendMessageTimeout(sb_class_t *sbp,
                              msg_t msg,
                              sysinterval_t timeout);
 #endif
@@ -135,7 +142,7 @@ static inline void sbHostInit(void) {
 /**
  * @brief   Sends a message to a sandboxed thread.
  *
- * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] sbp      pointer to the sandbox object
  * @param[in] msg       message to be sent
  * @return              The returned message.
  * @retval MSG_RESET    if the exchange aborted, sandboxed thread API usage
@@ -143,9 +150,9 @@ static inline void sbHostInit(void) {
  *
  * @api
  */
-static inline msg_t sbSendMessage(sb_class_t *sbcp, msg_t msg) {
+static inline msg_t sbSendMessage(sb_class_t *sbp, msg_t msg) {
 
-  return sbSendMessageTimeout(sbcp, msg, TIME_INFINITE);
+  return sbSendMessageTimeout(sbp, msg, TIME_INFINITE);
 }
 #endif /* CH_CFG_USE_MESSAGES == TRUE */
 
@@ -153,40 +160,40 @@ static inline msg_t sbSendMessage(sb_class_t *sbcp, msg_t msg) {
 /**
  * @brief   Adds a set of event flags directly to the specified sandbox.
  *
- * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] sbp      pointer to the sandbox object
  * @param[in] events    the events set to be ORed
  *
  * @iclass
  */
-static inline void sbEvtSignalI(sb_class_t *sbcp, eventmask_t events) {
+static inline void sbEvtSignalI(sb_class_t *sbp, eventmask_t events) {
 
-  chEvtSignalI(sbcp->tp, events);
+  chEvtSignalI(sbp->tp, events);
 }
 
 /**
  * @brief   Adds a set of event flags directly to the specified sandbox.
  *
- * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] sbp      pointer to the sandbox object
  * @param[in] events    the events set to be ORed
  *
  * @api
  */
-static inline void sbEvtSignal(sb_class_t *sbcp, eventmask_t events) {
+static inline void sbEvtSignal(sb_class_t *sbp, eventmask_t events) {
 
-  chEvtSignal(sbcp->tp, events);
+  chEvtSignal(sbp->tp, events);
 }
 
 /**
  * @brief   Returns the sandbox event source object.
  *
- * @param[in] sbcp      pointer to the sandbox object
+ * @param[in] sbp      pointer to the sandbox object
  * @return              The pointer to the event source object.
  *
  * @xclass
  */
-static inline event_source_t *sbGetEventSourceX(sb_class_t *sbcp) {
+static inline event_source_t *sbGetEventSourceX(sb_class_t *sbp) {
 
-  return &sbcp->es;
+  return &sbp->es;
 }
 #endif /* CH_CFG_USE_EVENTS == TRUE */
 

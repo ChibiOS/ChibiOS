@@ -65,22 +65,7 @@ static msg_t create_descriptor(sb_ioblock_t *iop,
 
   return CH_RET_EMFILE;
 }
-
-static bool is_valid_descriptor(int fd) {
-
-  return (fd >= 0) && (fd < SB_CFG_FD_NUM);
-}
-
-static bool is_available_descriptor(sb_ioblock_t *iop, int fd) {
-
-  return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] == NULL);
-}
-
-static bool is_existing_descriptor(sb_ioblock_t *iop, int fd) {
-
-  return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] != NULL);
-}
-#endif
+#endif /* SB_CFG_ENABLE_VFS == TRUE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -116,7 +101,7 @@ int sb_posix_open(const char *path, int flags) {
 int sb_posix_close(int fd) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!is_existing_descriptor(&sbp->io, fd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -131,7 +116,7 @@ int sb_posix_dup(int fd) {
   vfs_node_c *np;
   msg_t ret;
 
-  if (!is_existing_descriptor(&sbp->io, fd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -152,11 +137,11 @@ int sb_posix_dup(int fd) {
 int sb_posix_dup2(int oldfd, int newfd) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!is_existing_descriptor(&sbp->io, oldfd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, oldfd)) {
     return CH_RET_EBADF;
   }
 
-  if (!is_valid_descriptor(oldfd)) {
+  if (!sb_is_valid_descriptor(oldfd)) {
     return CH_RET_EBADF;
   }
 
@@ -182,7 +167,7 @@ int sb_posix_fstat(int fd, struct stat *statbuf) {
     return CH_RET_EFAULT;
   }
 
-  if (!is_existing_descriptor(&sbp->io, fd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -204,7 +189,7 @@ ssize_t sb_posix_read(int fd, void *buf, size_t count) {
     return CH_RET_EFAULT;
   }
 
-  if (!is_existing_descriptor(&sbp->io, fd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -222,7 +207,7 @@ ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
     return CH_RET_EFAULT;
   }
 
-  if (!is_existing_descriptor(&sbp->io, fd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -240,7 +225,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
     return CH_RET_EINVAL;
   }
 
-  if (!is_existing_descriptor(&sbp->io, fd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
@@ -266,7 +251,7 @@ ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
     return (ssize_t)CH_RET_EFAULT;
   }
 
-  if (!is_existing_descriptor(&sbp->io, fd)) {
+  if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return (ssize_t)CH_RET_EBADF;
   }
 
@@ -305,13 +290,6 @@ ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
   vfs_buffer_release((char *)dip);
 
   return (ssize_t)ret;
-}
-
-void sbPosixRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np) {
-
-  chDbgAssert(is_available_descriptor(&sbp->io, fd), "invalid file descriptor");
-
-  sbp->io.vfs_nodes[fd]  = np;
 }
 
 #else /* Fallbacks for when there is no VFS.*/
