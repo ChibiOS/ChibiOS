@@ -263,10 +263,10 @@ thread_t *sbStartThread(sb_class_t *sbp, const char *name,
 
   /* Allocating space for parameters.*/
   if (MEM_IS_ALIGNED(usp, PORT_STACK_ALIGN)) {
-    parsize = sizeof (int) + sizeof (const char **) + sizeof (const char **) + sizeof (int);
+    parsize = sizeof (uint32_t) * 4;
   }
   else {
-    parsize = sizeof (const char **) + sizeof (const char **) + sizeof (int);
+    parsize = sizeof (uint32_t) * 5;
   }
   PUSHSPACE(usp, parsize);
 
@@ -279,6 +279,7 @@ thread_t *sbStartThread(sb_class_t *sbp, const char *name,
   /* Initializing stack.*/
   sb_strv_copy(envp, uenvp, uenvc);
   sb_strv_copy(argv, uargv, uargc);
+  *((uint32_t *)usp + 4) = (uint32_t)0x55555555;
   *((uint32_t *)usp + 2) = (uint32_t)uenvp;
   *((uint32_t *)usp + 1) = (uint32_t)uargv;
   *((uint32_t *)usp + 0) = (uint32_t)uargc;
@@ -364,10 +365,10 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
 
   /* Allocating space for parameters.*/
   if (MEM_IS_ALIGNED(usp, PORT_STACK_ALIGN)) {
-    parsize = sizeof (int) + sizeof (const char **) + sizeof (const char **) + sizeof (int);
+    parsize = sizeof (uint32_t) * 4;
   }
   else {
-    parsize = sizeof (const char **) + sizeof (const char **) + sizeof (int);
+    parsize = sizeof (uint32_t) * 5;
   }
   PUSHSPACE(usp, parsize);
 
@@ -384,6 +385,7 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   /* Initializing stack.*/
   sb_strv_copy(envp, uenvp, uenvc);
   sb_strv_copy(argv, uargv, uargc);
+  *((uint32_t *)usp + 4) = (uint32_t)0x55555555;
   *((uint32_t *)usp + 2) = (uint32_t)uenvp;
   *((uint32_t *)usp + 1) = (uint32_t)uargv;
   *((uint32_t *)usp + 0) = (uint32_t)uargc;
