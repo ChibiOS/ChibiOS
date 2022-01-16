@@ -185,16 +185,20 @@ int sb_posix_fstat(int fd, struct stat *statbuf) {
 ssize_t sb_posix_read(int fd, void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!sb_is_valid_write_range(sbp, buf, count)) {
-    return CH_RET_EFAULT;
-  }
-
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
   if (VFS_MODE_S_ISDIR(sbp->io.vfs_nodes[fd]->mode)) {
     return CH_RET_EISDIR;
+  }
+
+  if (count == (size_t)0) {
+    return 0;
+  }
+
+  if (!sb_is_valid_write_range(sbp, buf, count)) {
+    return CH_RET_EFAULT;
   }
 
   return vfsReadFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);
@@ -203,16 +207,20 @@ ssize_t sb_posix_read(int fd, void *buf, size_t count) {
 ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  if (!sb_is_valid_read_range(sbp, buf, count)) {
-    return CH_RET_EFAULT;
-  }
-
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
   }
 
   if (VFS_MODE_S_ISDIR(sbp->io.vfs_nodes[fd]->mode)) {
     return CH_RET_EISDIR;
+  }
+
+  if (count == (size_t)0) {
+    return 0;
+  }
+
+  if (!sb_is_valid_read_range(sbp, buf, count)) {
+    return CH_RET_EFAULT;
   }
 
   return vfsWriteFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);

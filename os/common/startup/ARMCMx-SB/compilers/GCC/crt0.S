@@ -101,7 +101,7 @@ __sandbox:      .long       0xFE9154C0
                 .long       __crt0_entry
 
                 .thumb_func
-                .global     _exit
+                .global     _exit               /* Required by newlib.*/
 _exit:
                 svc         #1
 .exitloop:      b           .exitloop
@@ -112,7 +112,13 @@ _exit:
                 .align      2
                 .global __sb_parameters
 __sb_parameters:
-                .ds.l       5
+                .ds.l       1
+                .ds.l       1
+                .global environ                 /* Required by newlib.*/
+environ:
+                .ds.l       1
+                .ds.l       1
+                .ds.l       1
 
                 .text
 /*
