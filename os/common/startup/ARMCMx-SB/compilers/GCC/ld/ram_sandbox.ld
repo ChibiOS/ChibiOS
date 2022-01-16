@@ -40,7 +40,6 @@ SECTIONS
         __rodata_base__ = .;
         *(.rodata)
         *(.rodata.*)
-        . = ALIGN(4);
         __rodata_end__ = .;
 
         __init_array_base__ = .;
