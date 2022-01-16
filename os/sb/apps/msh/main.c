@@ -24,7 +24,7 @@
  */
 int main(int argc, char *argv[], char *envp[]) {
   char *s;
-  unsigned i = 1U;
+  int i = 1;
 
   printf("argc: %d\r\n", argc);
   printf("argv: ");
@@ -38,8 +38,10 @@ int main(int argc, char *argv[], char *envp[]) {
   }
   printf("\r\n");
 
-  while (true) {
+  while (i <= 10) {
     printf("#1 Hello World (%u)!!\r\n", i++);
     sbSleepMilliseconds(500);
   }
+
+  return i;
 }

@@ -99,28 +99,32 @@ __sandbox:      .long       0xFE9154C0
                 .long       0x0C4519EF
                 .long       32
                 .long       __crt0_entry
-                .long       0
-                .long       0
-                .long       0
-                .long       0
+
+                .thumb_func
+                .global     _exit
+_exit:
+                svc         #1
+.exitloop:      b           .exitloop
+                .align      5
 
                 .bss
 
-                .global __user_heap_end
-__user_heap_end:
-                .ds.l   1
+                .align      2
+                .global __sb_parameters
+__sb_parameters:
+                .ds.l       5
 
                 .text
 /*
  * CRT0 entry point.
  */
-                .align  2
+                .align      2
                 .thumb_func
-                .global __crt0_entry
+                .global     __crt0_entry
 __crt0_entry:
                 /* Popping from the stack the information passed by the
-                   loader.*/
-                pop     {r8, r9, r10, r11}
+                   loader, saving the stack position as end of heap.*/
+                pop     {r7, r8, r9, r10}
                 mov     r11, sp
 
                 /* PSP stack pointers initialization.*/
@@ -168,9 +172,9 @@ bloop:
                 blo     bloop
 #endif /* CRT0_INIT_BSS == TRUE */
 
-                /* Storing the end of the heap.*/
-                ldr     r0, =__user_heap_end
-                str     r11, [r0], #0
+                /* Storing the sandbox parameters block.*/
+                ldr     r0, =__sb_parameters
+                stmia   r0, {r7, r8, r9, r10, r11}
 
 #if CRT0_CALL_CONSTRUCTORS == TRUE
                 /* Constructors invocation.*/
@@ -186,13 +190,14 @@ endinitloop:
 #endif /* CRT0_CALL_CONSTRUCTORS == TRUE */
 
                 /* Main program invocation, r0 contains the returned value.*/
-                mov     r0, r8
-                mov     r1, r9
-                mov     r2, r10
+                mov     r0, r7
+                mov     r1, r8
+                mov     r2, r9
                 bl      main
 
 #if CRT0_CALL_DESTRUCTORS == TRUE
                 /* Destructors invocation.*/
+                mov     r6, r0
                 ldr     r4, =__fini_array_base__
                 ldr     r5, =__fini_array_end__
 finiloop:
@@ -201,10 +206,10 @@ finiloop:
                 ldr     r1, [r4], #4
                 blx     r1
                 b       finiloop
+                mov     r0, r6
 endfiniloop:
 #endif /* CRT0_CALL_DESTRUCTORS == TRUE */
-
-.exitloop:      b       .exitloop
+                b       _exit
 
 #endif /* !defined(__DOXYGEN__) */
 

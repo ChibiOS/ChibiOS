@@ -54,6 +54,32 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a parameters structure passed to the sandbox.
+ */
+typedef struct sb_parameters {
+  /**
+   * @brief   Number of arguments.
+   */
+  int                       argc;
+  /**
+   * @brief   Vector of arguments.
+   */
+  char                      **argv;
+  /**
+   * @brief   Pointer to environment variables array.
+   */
+  char                      **envp;
+  /**
+   * @brief   Address of the physical sandbox end.
+   */
+  uint8_t                   *sb_end;
+  /**
+   * @brief   Address of heap end.
+   */
+  uint8_t                   *heap_end;
+} sb_parameters_t;
+
+/**
  * @brief   Type of system time counter.
  */
 typedef uint32_t systime_t;
@@ -168,6 +194,8 @@ typedef uint32_t eventflags_t;
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+extern sb_parameters_t __sb_parameters;
 
 #ifdef __cplusplus
 extern "C" {

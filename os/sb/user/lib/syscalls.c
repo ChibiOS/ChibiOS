@@ -127,16 +127,16 @@ int _isatty_r(struct _reent *r, int fd) {
 
 __attribute__((used))
 caddr_t _sbrk_r(struct _reent *r, int incr) {
-  extern uint8_t /*__heap_end__, */__heap_base__;
-  static uint8_t *p = &__heap_base__;
+  extern uint8_t __heap_base__;
+  uint8_t *p = &__heap_base__;
   uint8_t *prevp;
 
   prevp = p;
-/*  if ((p + incr > &__heap_end__) ||
+  if ((p + incr > __sb_parameters.heap_end) ||
       (p + incr < &__heap_base__)) {
     __errno_r(r) = ENOMEM;
     return (caddr_t)-1;
-  }*/
+  }
   (void)r;
 
   p += incr;
@@ -164,13 +164,6 @@ int _kill(int pid, int sig) {
 
   errno = EINVAL;
   return -1;
-}
-
-__attribute__((used))
-void _exit(int code) {
-
-  sbExit((msg_t)code);
-  abort();
 }
 
 __attribute__((used))
