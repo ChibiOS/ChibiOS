@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "sbuser.h"
 
@@ -24,6 +25,7 @@
 #define SHELL_MAX_ARGUMENTS         20
 #define SHELL_PROMPT_STR            "> "
 #define SHELL_NEWLINE_STR           "\r\n"
+#define SHELL_WELCOME_STR           "ChibiOS/SB shell"
 
 static void shell_write(const char *s) {
   size_t n = strlen(s);
@@ -82,31 +84,71 @@ bool shell_getline(char *line, size_t size) {
   }
 }
 
-static char *fetch_argument(char *p) {
-  char *dp;
+static char *fetch_argument(char **pp) {
+  char *p, *ap;
 
   /* Skipping white space.*/
-  p += strspn(p, " \t");
+  ap = *pp;
+  ap += strspn(ap, " \t");
 
-  if (*p == '\0') {
-    dp = p;
-    p = NULL;
+  if (*ap == '\0') {
+    return  NULL;
   }
-  else if (*p == '"') {
+
+  if (*ap == '"') {
     /* If an argument starts with a double quote then its delimiter is another
        quote.*/
-    p++;
-    dp = strpbrk(p++, "\"");
+    ap++;
+    p = strpbrk(ap, "\"");
   }
   else {
     /* The delimiter is white space.*/
-    dp = strpbrk(p++, " \t");
+    p = strpbrk(ap, " \t");
   }
 
-  /* Replacing the delimiter with a zero.*/
-  *dp = '\0';
+  if (p != NULL) {
+    /* Replacing the delimiter with a zero.*/
+    *p++ = '\0';
+  }
+  else {
+    /* Final one, pointing on the final zero.*/
+    p = ap + strlen(ap);
+  }
+  *pp = p;
 
-  return p;
+  return ap;
+}
+
+static int cmd_exit(int argc, char *argv[]) {
+
+  (void)argc;
+  (void)argv;
+
+  sbExit(0);
+
+  return 0;
+}
+
+static int shell_execute(int argc, char *argv[]) {
+  int i;
+
+  static const struct {
+    const char *name;
+    int (*cmdf)(int argc, char *argv[]);
+  } builtins[] = {
+    {"exit",    cmd_exit},
+    {NULL,      NULL}
+  };
+
+  i = 0;
+  while (builtins[i].name != NULL) {
+    if (strcmp(builtins[i].name, argv[0]) == 0) {
+      return builtins[i].cmdf(argc, argv);
+    }
+    i++;
+  }
+
+  return -1;
 }
 
 /*
@@ -138,10 +180,17 @@ int main(int argc, char *argv[], char *envp[]) {
 #endif
   char line[SHELL_MAX_LINE_LENGTH];
   char *args[SHELL_MAX_ARGUMENTS + 1];
-  char *p;
-  int i, j;
+  char *ap, *tokp;
+  int i;
+
+  (void)argc;
+  (void)argv;
+  (void)envp;
 
   while (true) {
+    /* Welcome.*/
+    shell_write(SHELL_WELCOME_STR SHELL_NEWLINE_STR);
+
     /* Prompt.*/
     shell_write(SHELL_PROMPT_STR);
 
@@ -153,24 +202,20 @@ int main(int argc, char *argv[], char *envp[]) {
     }
 
     /* Parsing arguments.*/
-    p = line;
+    tokp = line;
     i = 0;
-    while ((p = fetch_argument(p)) != NULL) {
+    while ((ap = fetch_argument(&tokp)) != NULL) {
       if (i < SHELL_MAX_ARGUMENTS) {
-        args[i++] = p;
+        args[i++] = ap;
       }
       else {
         i = 0;
-        shell_error("too many argu" SHELL_NEWLINE_STR);
+        shell_error("too many arguments" SHELL_NEWLINE_STR);
         break;
       }
     }
     args[i] = NULL;
 
-    j = 0;
-    while ((p = args[j++]) != NULL) {
-      shell_write(p);
-      shell_write(SHELL_NEWLINE_STR);
-    }
+    shell_execute(i, args);
   }
 }

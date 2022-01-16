@@ -72,7 +72,7 @@ static const sb_config_t sb_config1 = {
     [0] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
       .used         = true,
-      .writeable    = false
+      .writeable    = true
     },
     [1] = {
       .area         = {NULL,                (size_t)0},
