@@ -941,16 +941,38 @@ static thread_t *sb_msg_wait_timeout_s(sysinterval_t timeout) {
   return tp;
 }
 
+
+static void sb_cleanup(void) {
+#if SB_CFG_ENABLE_VFS == TRUE
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  unsigned fd;
+
+  /* Closing all file descriptors.*/
+  for (fd = 0U; fd < SB_CFG_FD_NUM; fd++) {
+    if (sbp->io.vfs_nodes[fd] != NULL) {
+      sbp->io.vfs_nodes[fd]->vmt->release(sbp->io.vfs_nodes[fd]);
+      sbp->io.vfs_nodes[fd] = NULL;
+    }
+  }
+#endif
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
 void __sb_abort(msg_t msg) {
 
+  chSysUnlock();
+
+  sb_cleanup();
+
+  chSysLock();
 #if CH_CFG_USE_EVENTS == TRUE
   chEvtBroadcastI(&sb.termination_es);
 #endif
   chThdExitS(msg);
+  chSysHalt("zombies");
 }
 
 void sb_api_stdio(struct port_extctx *ectxp) {
@@ -1001,6 +1023,8 @@ void sb_api_stdio(struct port_extctx *ectxp) {
 }
 
 void sb_api_exit(struct port_extctx *ectxp) {
+
+  sb_cleanup();
 
   chSysLock();
 #if CH_CFG_USE_EVENTS == TRUE
