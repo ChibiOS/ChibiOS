@@ -19,8 +19,8 @@
 #include "sb.h"
 #include "chprintf.h"
 
-#include "rt_test_root.h"
-#include "oslib_test_root.h"
+//#include "rt_test_root.h"
+//#include "oslib_test_root.h"
 
 #include "nullstreams.h"
 
@@ -138,7 +138,7 @@ static void SBHandler(eventid_t id) {
   if (!sbIsThreadRunningX(&sbx1)) {
     msg_t msg = sbWaitThread(&sbx1);
 
-    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated (%d)\r\n", msg);
+    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated (%08lx)\r\n", msg);
   }
 }
 
@@ -197,91 +197,17 @@ int main(void) {
    * the FatFS driver but are restricted to "/sb1" and "/sb2" directories.
    */
   drvOverlayObjectInit(&sb1_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/sb1");
-//  drvOverlayObjectInit(&sb2_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/sb2");
   ret = drvOverlayRegisterDriver(&sb1_root_overlay_driver,
                                  drvStreamsObjectInit(&sb1_dev_driver, &sb1_streams[0]),
                                  "dev");
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-//  ret = drvOverlayRegisterDriver(&sb2_root_overlay_driver,
-//                                 drvStreamsObjectInit(&sb2_dev_driver, &sb2_streams[0]),
-//                                 "dev");
-//  if (CH_RET_IS_ERROR(ret)) {
-//    chSysHalt("VFS");
-//  }
-
-  /*
-   * Initializing overlay driver for the directory shared among the sandboxes.
-   * It is seen as "/shared".
-   */
-#if 0
-  drvOverlayObjectInit(&sb_shared_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/shared");
-  ret = drvOverlayRegisterDriver(&sb1_root_overlay_driver,
-                                 (vfs_driver_c *)&sb_shared_overlay_driver,
-                                 "shared");
-  if (CH_RET_IS_ERROR(ret)) {
-    chSysHalt("VFS");
-  }
-  ret = drvOverlayRegisterDriver(&sb2_root_overlay_driver,
-                                 (vfs_driver_c *)&sb_shared_overlay_driver,
-                                 "shared");
-  if (CH_RET_IS_ERROR(ret)) {
-    chSysHalt("VFS");
-  }
-#endif
 
   /*
    * Sandbox objects initialization.
    */
   sbObjectInit(&sbx1, &sb_config1);
-//  sbObjectInit(&sbx2, &sb_config2);
-
-  /*
-   * Associating standard input, output and error to sandbox 1.
-   */
-  ret = vfsDrvOpen((vfs_driver_c *)&sb1_root_overlay_driver,
-                   "/dev/VSD1", VO_RDWR, &np);
-  if (CH_RET_IS_ERROR(ret)) {
-    chSysHalt("VFS");
-  }
-  sbRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
-  vfsClose(np);
-
-#if 0
-  /*
-   * Associating standard input, output and error to sandbox 1.
-   */
-  ret = vfsDrvOpen((vfs_driver_c *)&sb2_root_overlay_driver,
-                   "/dev/VSD1", VO_RDWR, &np);
-  if (CH_RET_IS_ERROR(ret)) {
-    chSysHalt("VFS");
-  }
-  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
-  vfsClose(np);
-#endif
-
-#if 0
-  /* Starting sandboxed thread 1.*/
-  sb1tp = sbStartThread(&sbx1, "sbx1",
-                        waUnprivileged1, sizeof (waUnprivileged1),
-                        NORMALPRIO - 1);
-  if (sb1tp == NULL) {
-    chSysHalt("sbx1 failed");
-  }
-
-  /* Starting sandboxed thread 2.*/
-  sb2tp = sbStartThread(&sbx2, "sbx2",
-                        waUnprivileged2, sizeof (waUnprivileged2),
-                        NORMALPRIO - 1);
-  if (sb2tp == NULL) {
-    chSysHalt("sbx2 failed");
-  }
-#endif
 
   /*
    * Listening to sandbox events.
@@ -295,18 +221,31 @@ int main(void) {
   while (true) {
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
 
-    /* Checking for user button, launching sandbox if pressed.*/
-    if (palReadLine(LINE_BUTTON)) {
-      if (!sbIsThreadRunningX(&sbx1)) {
+    if (sdmon_ready && !sbIsThreadRunningX(&sbx1)) {
+      chThdSleepMilliseconds(1000);
 
-        /* Running the sandbox.*/
-        ret = sbExec(&sbx1, "/bin/msh.elf",
-                     waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
-                     sbx1_argv, sbx1_envp);
-        if (CH_RET_IS_ERROR(ret)) {
-          chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);
-          chThdSleepMilliseconds(1000);
-        }
+      /*
+       * Associating standard input, output and error to sandbox 1.
+       */
+      ret = vfsDrvOpen((vfs_driver_c *)&sb1_root_overlay_driver,
+                       "/dev/VSD1", VO_RDWR, &np);
+      if (CH_RET_IS_ERROR(ret)) {
+        chprintf((BaseSequentialStream *)&SD2, "Opening /dev/VSD1 failed (%08lx)\r\n", ret);
+        continue;
+      }
+      sbRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+      sbRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+      sbRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+      vfsClose(np);
+
+      /*
+       * Running the sandbox.
+       */
+      ret = sbExec(&sbx1, "/bin/msh.elf",
+                   waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
+                   sbx1_argv, sbx1_envp);
+      if (CH_RET_IS_ERROR(ret)) {
+        chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);
       }
     }
   }

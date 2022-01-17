@@ -187,9 +187,10 @@ int main(int argc, char *argv[], char *envp[]) {
   (void)argv;
   (void)envp;
 
+  /* Welcome.*/
+  shell_write(SHELL_WELCOME_STR SHELL_NEWLINE_STR SHELL_NEWLINE_STR);
+
   while (true) {
-    /* Welcome.*/
-    shell_write(SHELL_WELCOME_STR SHELL_NEWLINE_STR);
 
     /* Prompt.*/
     shell_write(SHELL_PROMPT_STR);
@@ -216,6 +217,9 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     args[i] = NULL;
 
-    shell_execute(i, args);
+    /* Executing command, if any.*/
+    if (i > 0) {
+      shell_execute(i, args);
+    }
   }
 }
