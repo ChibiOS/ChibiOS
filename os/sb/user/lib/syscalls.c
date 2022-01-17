@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@
 
 #include "errcodes.h"
 #include "sbuser.h"
+#include "syscalls.h"
+
+uint8_t *__sbrk_next = &__heap_base__;
 
 __attribute__((used))
 int _open_r(struct _reent *r, const char *p, int oflag, int mode) {
@@ -127,19 +130,17 @@ int _isatty_r(struct _reent *r, int fd) {
 
 __attribute__((used))
 caddr_t _sbrk_r(struct _reent *r, int incr) {
-  extern uint8_t __heap_base__;
-  uint8_t *p = &__heap_base__;
   uint8_t *prevp;
 
-  prevp = p;
-  if ((p + incr > __sb_parameters.heap_end) ||
-      (p + incr < &__heap_base__)) {
+  prevp = __sbrk_next;
+  if ((prevp + incr > __sb_parameters.heap_end) ||
+      (prevp + incr < &__heap_base__)) {
     __errno_r(r) = ENOMEM;
     return (caddr_t)-1;
   }
   (void)r;
 
-  p += incr;
+  __sbrk_next += incr;
   return (caddr_t)prevp;
 }
 
