@@ -128,7 +128,7 @@ static char *fetch_argument(char **pp) {
   return ap;
 }
 
-static int cmd_env(int argc, char *argv[]) {
+static void cmd_env(int argc, char *argv[]) {
   extern char **environ;
   char **pp;
 
@@ -136,7 +136,7 @@ static int cmd_env(int argc, char *argv[]) {
 
   if (argc != 1) {
     shell_usage("env");
-    return 1;
+    return;
   }
 
   pp = environ;
@@ -144,11 +144,9 @@ static int cmd_env(int argc, char *argv[]) {
     shell_write(*pp++);
     shell_write(SHELL_NEWLINE_STR);
   }
-
-  return 0;
 }
 
-static int cmd_exit(int argc, char *argv[]) {
+static void cmd_exit(int argc, char *argv[]) {
   msg_t msg;
 
   if (argc == 1) {
@@ -159,22 +157,20 @@ static int cmd_exit(int argc, char *argv[]) {
   }
   else {
     shell_usage("exit [n]");
-    return 1;
+    return;
   }
 
   sbExit(msg);
-
-  return 0;
 }
 
-static int cmd_path(int argc, char *argv[]) {
+static void cmd_path(int argc, char *argv[]) {
   char *s;
 
   (void)argv;
 
   if (argc != 1) {
     shell_usage("path");
-    return 1;
+    return;
   }
 
   s = getenv("PATH");
@@ -182,16 +178,14 @@ static int cmd_path(int argc, char *argv[]) {
     shell_write(s);
     shell_write(SHELL_NEWLINE_STR);
   }
-
-  return 0;
 }
 
-static int shell_execute(int argc, char *argv[]) {
+static bool shell_execute(int argc, char *argv[]) {
   int i;
 
   static const struct {
     const char *name;
-    int (*cmdf)(int argc, char *argv[]);
+    void (*cmdf)(int argc, char *argv[]);
   } builtins[] = {
     {"env",     cmd_env},
     {"exit",    cmd_exit},
@@ -202,12 +196,13 @@ static int shell_execute(int argc, char *argv[]) {
   i = 0;
   while (builtins[i].name != NULL) {
     if (strcmp(builtins[i].name, argv[0]) == 0) {
-      return builtins[i].cmdf(argc, argv);
+      builtins[i].cmdf(argc, argv);
+      return false;
     }
     i++;
   }
 
-  return -1;
+  return true;
 }
 
 /*
@@ -262,7 +257,10 @@ int main(int argc, char *argv[], char *envp[]) {
 
     /* Executing command, if any.*/
     if (i > 0) {
-      shell_execute(i, args);
+      if (shell_execute(i, args)){
+        shell_error(args[0]);
+        shell_error("?" SHELL_NEWLINE_STR);
+      }
     }
   }
 }
