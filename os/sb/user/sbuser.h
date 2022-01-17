@@ -510,6 +510,24 @@ static inline uint32_t sbEventBroadcastFlags(eventflags_t flags) {
 }
 
 /**
+ * @brief   Loads an elf file within the sandbox into the specified buffer.
+ * @details The file is loaded and relocated starting from the buffer
+ *          address.
+ *
+ * @param[in] fname     file to be loaded
+ * @param[in] buf       load buffer
+ * @param[in] size      size of the load buffer
+ *
+ * @api
+ */
+static inline int sbLoadElf(const char *fname, uint8_t *buf, size_t size) {
+
+  __syscall3r(12, fname, buf, size);
+  return (uint32_t)r0;
+
+}
+
+/**
  * @brief   Seconds to time interval.
  * @details Converts from seconds to system ticks number.
  * @note    The result is rounded upward to the next tick boundary.

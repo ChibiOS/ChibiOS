@@ -52,6 +52,7 @@
 #define SB_SVC9_HANDLER         sb_api_wait_any_timeout
 #define SB_SVC10_HANDLER        sb_api_wait_all_timeout
 #define SB_SVC11_HANDLER        sb_api_broadcast_flags
+#define SB_SVC12_HANDLER        sb_api_loadelf
 /** @} */
 
 #define __SVC(x) asm volatile ("svc " #x)
@@ -1066,17 +1067,17 @@ void sb_api_sleep_until_windowed(struct port_extctx *ectxp) {
 
 void sb_api_wait_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
-  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   chSysLock();
 
-  if (sbcp->msg_tp == NULL) {
-    sbcp->msg_tp = sb_msg_wait_timeout_s(TIME_INFINITE);
-    ectxp->r0 = (uint32_t)chMsgGet(sbcp->msg_tp);
+  if (sbp->msg_tp == NULL) {
+    sbp->msg_tp = sb_msg_wait_timeout_s(TIME_INFINITE);
+    ectxp->r0 = (uint32_t)chMsgGet(sbp->msg_tp);
   }
   else {
-    thread_t *tp = sbcp->msg_tp;
-    sbcp->msg_tp = NULL;
+    thread_t *tp = sbp->msg_tp;
+    sbp->msg_tp = NULL;
     chMsgReleaseS(tp, MSG_RESET);
     ectxp->r0 = MSG_RESET;
   }
@@ -1089,13 +1090,13 @@ void sb_api_wait_message(struct port_extctx *ectxp) {
 
 void sb_api_reply_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
-  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   chSysLock();
 
-  if (sbcp->msg_tp != NULL) {
-    thread_t *tp = sbcp->msg_tp;
-    sbcp->msg_tp = NULL;
+  if (sbp->msg_tp != NULL) {
+    thread_t *tp = sbp->msg_tp;
+    sbp->msg_tp = NULL;
     chMsgReleaseS(tp, (msg_t )ectxp->r0);
     ectxp->r0 = CH_RET_SUCCESS;
   }
@@ -1141,10 +1142,32 @@ void sb_api_wait_all_timeout(struct port_extctx *ectxp) {
 
 void sb_api_broadcast_flags(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
-  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  chEvtBroadcastFlags(&sbcp->es, (eventflags_t )ectxp->r0);
+  chEvtBroadcastFlags(&sbp->es, (eventflags_t )ectxp->r0);
   ectxp->r0 = CH_RET_SUCCESS;
+#else
+  ectxp->r0 = CH_RET_ENOSYS;
+#endif
+}
+
+void sb_api_loadelf(struct port_extctx *ectxp) {
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  const char *fname = (const char *)ectxp->r0;
+  uint8_t *buf = (uint8_t *)ectxp->r1;
+  size_t size = (size_t)ectxp->r2;
+
+  if ((sb_check_string(sbp, (void *)fname, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) ||
+       !MEM_IS_ALIGNED(buf, MEM_NATURAL_ALIGN) ||
+       !MEM_IS_ALIGNED(size, MEM_NATURAL_ALIGN) ||
+       !sb_is_valid_write_range(sbp, buf, size)) {
+    ectxp->r0 = CH_RET_EFAULT;
+  }
+  else {
+    memory_area_t ma = {buf, size};
+    ectxp->r0 = (uint32_t)sbElfLoadFile(sbp->config->vfs_driver, fname, &ma);
+  }
 #else
   ectxp->r0 = CH_RET_ENOSYS;
 #endif

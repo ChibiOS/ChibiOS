@@ -99,13 +99,10 @@ __sandbox:      .long       0xFE9154C0
                 .long       0x0C4519EF
                 .long       32
                 .long       __crt0_entry
-
-                .thumb_func
-                .global     _exit               /* Required by newlib.*/
-_exit:
-                svc         #1
-.exitloop:      b           .exitloop
-                .align      5
+                .long       __crt0_exit
+                .long       0
+                .long       0
+                .long       0
 
                 .bss
 
@@ -121,13 +118,22 @@ environ:
                 .ds.l       1
 
                 .text
-/*
- * CRT0 entry point.
- */
+
+                /* Default exit method, calling OS exit().*/
+                .align      2
+                .thumb_func
+                .global     __crt0_exit
+__crt0_exit:
+                svc         #1
+.exitloop:      b           .exitloop
+
+                /* Default entry point, note, the "nop" is meant to be there
+                   the loader could overwrite it with a "bkpt".*/
                 .align      2
                 .thumb_func
                 .global     __crt0_entry
 __crt0_entry:
+                nop
                 /* Popping from the stack the information passed by the
                    loader, saving the stack position as end of heap.*/
                 pop     {r7, r8, r9, r10}
@@ -200,7 +206,11 @@ endinitloop:
                 mov     r1, r8
                 mov     r2, r9
                 bl      main
+                /* Falls into _exit().*/
 
+                .thumb_func
+                .global     _exit               /* Required by newlib.*/
+_exit:
 #if CRT0_CALL_DESTRUCTORS == TRUE
                 /* Destructors invocation.*/
                 mov     r6, r0
@@ -215,7 +225,9 @@ finiloop:
                 mov     r0, r6
 endfiniloop:
 #endif /* CRT0_CALL_DESTRUCTORS == TRUE */
-                b       _exit
+                ldr     r1, =__sandbox
+                ldr     r2, [r1], #16           /* Predefined exit vector.*/
+                bx      r2
 
 #endif /* !defined(__DOXYGEN__) */
 
