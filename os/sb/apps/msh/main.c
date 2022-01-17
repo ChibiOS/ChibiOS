@@ -27,6 +27,8 @@
 #define SHELL_NEWLINE_STR           "\r\n"
 #define SHELL_WELCOME_STR           "ChibiOS/SB shell"
 
+static const char *prompt;
+
 static void shell_write(const char *s) {
   size_t n = strlen(s);
 
@@ -42,6 +44,13 @@ static void shell_error(const char *s) {
 static void shell_putc(char c) {
 
   (void) write(STDOUT_FILENO, &c, 1);
+}
+
+static void shell_usage(const char *s) {
+
+  shell_error("usage: ");
+  shell_error(s);
+  shell_error(SHELL_NEWLINE_STR);
 }
 
 bool shell_getline(char *line, size_t size) {
@@ -119,12 +128,60 @@ static char *fetch_argument(char **pp) {
   return ap;
 }
 
-static int cmd_exit(int argc, char *argv[]) {
+static int cmd_env(int argc, char *argv[]) {
+  extern char **environ;
+  char **pp;
 
-  (void)argc;
   (void)argv;
 
-  sbExit(0);
+  if (argc != 1) {
+    shell_usage("env");
+    return 1;
+  }
+
+  pp = environ;
+  while (*pp != NULL) {
+    shell_write(*pp++);
+    shell_write(SHELL_NEWLINE_STR);
+  }
+
+  return 0;
+}
+
+static int cmd_exit(int argc, char *argv[]) {
+  msg_t msg;
+
+  if (argc == 1) {
+    msg = 0;
+  }
+  else if (argc == 2) {
+    msg = atoi(argv[1]);
+  }
+  else {
+    shell_usage("exit [n]");
+    return 1;
+  }
+
+  sbExit(msg);
+
+  return 0;
+}
+
+static int cmd_path(int argc, char *argv[]) {
+  char *s;
+
+  (void)argv;
+
+  if (argc != 1) {
+    shell_usage("path");
+    return 1;
+  }
+
+  s = getenv("PATH");
+  if (s != NULL) {
+    shell_write(s);
+    shell_write(SHELL_NEWLINE_STR);
+  }
 
   return 0;
 }
@@ -136,7 +193,9 @@ static int shell_execute(int argc, char *argv[]) {
     const char *name;
     int (*cmdf)(int argc, char *argv[]);
   } builtins[] = {
+    {"env",     cmd_env},
     {"exit",    cmd_exit},
+    {"path",    cmd_path},
     {NULL,      NULL}
   };
 
@@ -155,45 +214,29 @@ static int shell_execute(int argc, char *argv[]) {
  * Application entry point.
  */
 int main(int argc, char *argv[], char *envp[]) {
-#if 0
-  char *s;
-  int i = 1;
-
-  printf("argc: %d\r\n", argc);
-  printf("argv: ");
-  while ((s = *argv++) != NULL) {
-    printf("%s", s);
-  }
-  printf("\r\n");
-  printf("envp: ");
-  while ((s = *envp++) != NULL) {
-    printf("%s", s);
-  }
-  printf("\r\n");
-
-  while (i <= 10) {
-    printf("#1 Hello World (%u)!!\r\n", i++);
-    sbSleepMilliseconds(500);
-  }
-
-  return i;
-#endif
   char line[SHELL_MAX_LINE_LENGTH];
   char *args[SHELL_MAX_ARGUMENTS + 1];
   char *ap, *tokp;
   int i;
 
+  asm volatile ("bkpt");
+
   (void)argc;
   (void)argv;
   (void)envp;
 
+  prompt = getenv("PROMPT");
+  if (prompt == NULL) {
+    prompt = SHELL_PROMPT_STR;
+  }
+
   /* Welcome.*/
-  shell_write(SHELL_WELCOME_STR SHELL_NEWLINE_STR SHELL_NEWLINE_STR);
+  shell_write(SHELL_NEWLINE_STR SHELL_WELCOME_STR SHELL_NEWLINE_STR);
 
   while (true) {
 
     /* Prompt.*/
-    shell_write(SHELL_PROMPT_STR);
+    shell_write(prompt);
 
     /* Reading input line.*/
     if (shell_getline(line, SHELL_MAX_LINE_LENGTH)) {

@@ -104,6 +104,8 @@ static const char *sbx1_argv[] = {
 
 static const char *sbx1_envp[] = {
   "PATH=/bin",
+  "PROMPT=sb1> ",
+  "HOME=/",
   NULL
 };
 

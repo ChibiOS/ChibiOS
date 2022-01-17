@@ -134,6 +134,7 @@ __crt0_exit:
                 .global     __crt0_entry
 __crt0_entry:
                 nop
+
                 /* Popping from the stack the information passed by the
                    loader, saving the stack position as end of heap.*/
                 pop     {r7, r8, r9, r10}
