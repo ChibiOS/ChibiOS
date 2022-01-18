@@ -306,6 +306,7 @@ extern "C" {
 #include "sbelf.h"
 #include "sbposix.h"
 #include "sbapi.h"
+#include "sbhdr.h"
 #include "sbhost.h"
 
 #endif /* SBHOST_H */

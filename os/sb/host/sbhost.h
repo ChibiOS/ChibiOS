@@ -32,14 +32,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Magic numbers
- * @{
- */
-#define SB_MAGIC1                           0xFE9154C0U
-#define SB_MAGIC2                           0x0C4519EFU
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -51,32 +43,6 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Type of a sandbox binary image header.
- */
-typedef struct {
-  /**
-   * @brief   Magic number 1.
-   */
-  uint32_t                      hdr_magic1;
-  /**
-   * @brief   Magic number 2.
-   */
-  uint32_t                      hdr_magic2;
-  /**
-   * @brief   Header size, inclusive of magic numbers.
-   */
-  uint32_t                      hdr_size;
-  /**
-   * @brief   Entry point address.
-   */
-  uint32_t                      hdr_entry;
-  /**
-   * @brief   Used-defined parameters, defaulted to zero.
-   */
-  uint32_t                      user[4];
-} sb_header_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */

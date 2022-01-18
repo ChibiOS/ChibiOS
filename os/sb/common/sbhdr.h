@@ -18,51 +18,26 @@
 */
 
 /**
- * @file    sb/common/sbsysc.h
- * @brief   Sandbox syscalls common macros and structures.
+ * @file    sb/host/sbhost.h
+ * @brief   ARM SandBox host macros and structures.
  *
- * @addtogroup ARM_SANDBOX_SYSCALLS
+ * @addtogroup ARM_SANDBOX_HEADER
  * @{
  */
 
-#ifndef SBSYSC_H
-#define SBSYSC_H
+#ifndef SBHDR_H
+#define SBHDR_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
 
 /**
- * @name    Syscall codes
+ * @brief   Magic numbers
  * @{
  */
-#define SB_SYSC_POSIX           0
-#define SB_SYSC_EXIT            1
-#define SB_SYSC_GET_SYSTIME     2
-#define SB_SYSC_GET_FREQUENCY   3
-#define SB_SYSC_SLEEP           4
-#define SB_SYSC_SLEEP_UNTIL     5
-#define SB_SYSC_MESSAGE_WAIT    6
-#define SB_SYSC_MESSAGE_REPLY   7
-#define SB_SYSC_EVENT_WAIT_ONE  8
-#define SB_SYSC_EVENT_WAIT_ANY  9
-#define SB_SYSC_EVENT_WAIT_ALL  10
-#define SB_SYSC_EVENT_BROADCAST 11
-/** @} */
-
-/**
- * @name    Posix syscall sub-codes
- * @{
- */
-#define SB_POSIX_OPEN           1
-#define SB_POSIX_CLOSE          2
-#define SB_POSIX_DUP            3
-#define SB_POSIX_DUP2           4
-#define SB_POSIX_FSTAT          9
-#define SB_POSIX_READ           5
-#define SB_POSIX_WRITE          6
-#define SB_POSIX_LSEEK          7
-#define SB_POSIX_GETDENTS       8
+#define SB_HDR_MAGIC1                       0xFE9154C0U
+#define SB_HDR_MAGIC2                       0x0C4519EFU
 /** @} */
 
 /*===========================================================================*/
@@ -76,6 +51,36 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Type of a sandbox binary image header.
+ */
+typedef struct {
+  /**
+   * @brief   Magic number 1.
+   */
+  uint32_t                      hdr_magic1;
+  /**
+   * @brief   Magic number 2.
+   */
+  uint32_t                      hdr_magic2;
+  /**
+   * @brief   Header size, inclusive of magic numbers.
+   */
+  uint32_t                      hdr_size;
+  /**
+   * @brief   Entry vector.
+   */
+  uint32_t                      hdr_entry;
+  /**
+   * @brief   Exit vector.
+   */
+  uint32_t                      hdr_exit;
+  /**
+   * @brief   Used-defined parameters, defaulted to zero.
+   */
+  uint32_t                      user[3];
+} sb_header_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -97,6 +102,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* SBSYSC_H */
+#endif /* SBHDR_H */
 
 /** @} */

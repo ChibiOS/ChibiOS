@@ -231,7 +231,8 @@ thread_t *sbStartThread(sb_class_t *sbp, const char *name,
   sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
 
   /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
+  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
     return NULL;
   }
 
@@ -398,7 +399,8 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   sbhp = (const sb_header_t *)(void *)ma.base;
 
   /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_MAGIC1) || (sbhp->hdr_magic2 != SB_MAGIC2)) {
+  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
     return CH_RET_ENOEXEC;
   }
 
