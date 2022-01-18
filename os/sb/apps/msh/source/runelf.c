@@ -56,5 +56,6 @@ int runelf(const char *fname, int argc, char *argv[], char *envp[]) {
 
   /* Setting up the exit vector for the loaded elf file.*/
   sbhp->hdr_exit = (uint32_t)__returnelf;
+  sbhp->user[0]  = (uint32_t)bufend;
   return __callelf(sbhp, argc, argv, envp);
 }

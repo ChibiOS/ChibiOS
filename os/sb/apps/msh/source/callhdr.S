@@ -52,14 +52,14 @@ __callelf_data:
                 .global     __callelf
 __callelf:
                 ldr         r4, =__callelf_data
-                str         sp, [r4], #0
-                str         lr, [r4], #4
+                str         sp, [r4, #0]
+                str         lr, [r4, #4]
 
                 /* Setting up the call stack for the loaded module.*/
-                ldr         r5, [r0], #20       /* Placed by runelf().      */
+                ldr         r5, [r0, #20]       /* Placed by runelf().      */
                 mov         sp, r5
                 push        {r1, r2, r3, r5}    /* argc, argv, envp, top.   */
-                ldr         r6, [r0], #16
+                ldr         r6, [r0, #12]
                 bx          r6                  /* Jumping to entry point.  */
 
                 /* Call elf return code.*/
@@ -68,9 +68,9 @@ __callelf:
                 .global     __returnelf
 __returnelf:
                 ldr         r4, =__callelf_data
-                ldmdb       r4, {r5, lr}
+                ldmia       r4, {r5, r6}
                 mov         sp, r5
-                bx          lr
+                bx          r6
 
 #endif /* !defined(__DOXYGEN__) */
 

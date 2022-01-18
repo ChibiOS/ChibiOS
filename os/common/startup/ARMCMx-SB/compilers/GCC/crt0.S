@@ -107,11 +107,11 @@ __sandbox:      .long       0xFE9154C0
                 .bss
 
                 .align      2
-                .global __sb_parameters
+                .global     __sb_parameters
 __sb_parameters:
                 .ds.l       1
                 .ds.l       1
-                .global environ                 /* Required by newlib.*/
+                .global     environ             /* Required by newlib.*/
 environ:
                 .ds.l       1
                 .ds.l       1
@@ -227,7 +227,7 @@ finiloop:
 endfiniloop:
 #endif /* CRT0_CALL_DESTRUCTORS == TRUE */
                 ldr     r1, =__sandbox
-                ldr     r2, [r1], #16           /* Predefined exit vector.*/
+                ldr     r2, [r1, #16]           /* Predefined exit vector.*/
                 bx      r2
 
 #endif /* !defined(__DOXYGEN__) */
