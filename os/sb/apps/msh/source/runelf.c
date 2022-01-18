@@ -17,24 +17,44 @@
 #include <unistd.h>
 
 #include "sbuser.h"
+#include "sbhdr.h"
 #include "syscalls.h"
 
-int runelf(const char *fname, char *argv[], char *envp[]) {
+extern int __callelf(sb_header_t *sbhp, int argc, char *argv[], char *envp[]);
+extern int __returnelf(void);
+
+int runelf(const char *fname, int argc, char *argv[], char *envp[]) {
   uint8_t *buf, *bufend;
-  size_t size;
+  sb_header_t *sbhp;
   msg_t ret;
 
+  /* Boundaries of available RAM in the sandbox.*/
   buf = sbrk(0);
   bufend = __sb_parameters.heap_end;
 
+  /* Aligning the start address.*/
   buf = (uint8_t *)((((uint32_t)buf - 1U) | 3U) + 1U);
   if (buf >= bufend) {
     return ENOMEM;
   }
 
-  size = (size_t)(bufend - buf);
-  ret = sbLoadElf(fname, bufend, size);
+  /* Loading the specified file.*/
+  ret = sbLoadElf(fname, buf, (size_t)(bufend - buf));
   if (CH_RET_IS_ERROR(ret)) {
     return CH_DECODE_ERROR(ret);
   }
+
+  /* Pointer to the executable header.*/
+  sbhp = (sb_header_t *)buf;
+
+  /* Checking header.*/
+  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbhp->hdr_magic2 != SB_HDR_MAGIC2) ||
+      (sbhp->hdr_size != sizeof (sb_header_t))) {
+    return ENOEXEC;
+  }
+
+  /* Setting up the exit vector for the loaded elf file.*/
+  sbhp->hdr_exit = (uint32_t)__returnelf;
+  return __callelf(sbhp, argc, argv, envp);
 }
