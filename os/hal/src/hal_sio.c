@@ -465,6 +465,9 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
   while (sio_lld_is_rx_empty(siop)) {
   /*lint -restore*/
     msg = osalThreadSuspendTimeoutS(&siop->sync_rx, timeout);
+    if (msg != MSG_OK) {
+      break;
+    }
   }
 
   osalSysUnlock();
@@ -502,6 +505,9 @@ msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
   while (sio_lld_is_tx_full(siop)) {
   /*lint -restore*/
     msg = osalThreadSuspendTimeoutS(&siop->sync_tx, timeout);
+    if (msg != MSG_OK) {
+      break;
+    }
   }
 
   osalSysUnlock();

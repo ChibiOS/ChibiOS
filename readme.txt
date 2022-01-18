@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.2 ***
+- FIX: Fixed missing exit condition in sioSynchronizeRX() and
+       sioSynchronizeTX() (bug #1211).
 - FIX: Some MISRA-related fixes.
 - FIX: Fixed missing check in chobjcaches.h (bug #1210).
 - FIX: Fixed misspelled chTraceSuspendI() function name (bug #1209).
