@@ -38,9 +38,9 @@
  * @name    Error codes
  * @{
  */
-#define CH_RET_SUCCESS          (msg_t)MSG_OK               /* Success */
-#define CH_RET_TIMEOUT          (msg_t)MSG_TIMEOUT          /* Timeout */
-#define CH_RET_INNER_ERROR      (msg_t)-3                   /* Unexpected condition */
+#define CH_RET_SUCCESS          (int)MSG_OK                 /* Success */
+#define CH_RET_TIMEOUT          (int)MSG_TIMEOUT            /* Timeout */
+#define CH_RET_INNER_ERROR      (int)-3                     /* Unexpected condition */
 /** @} */
 
 /**
@@ -90,16 +90,16 @@
  * @name    Errors handling macros
  * @{
  */
-#define CH_ERRORS_MASK              (msg_t)0xFF
-#define CH_ENCODE_ERROR(posixerr)   (~CH_ERRORS_MASK | (msg_t)(posixerr))
-#define CH_DECODE_ERROR(err)        ((msg_t)(err) & CH_ERRORS_MASK)
-#define CH_RET_IS_ERROR(x)          (((msg_t)(x) & ~CH_ERRORS_MASK) == ~CH_ERRORS_MASK)
+#define CH_ERRORS_MASK              (int)0xFF
+#define CH_ENCODE_ERROR(posixerr)   (~CH_ERRORS_MASK | (int)(posixerr))
+#define CH_DECODE_ERROR(err)        ((int)(err) & CH_ERRORS_MASK)
+#define CH_RET_IS_ERROR(x)          (((int)(x) & ~CH_ERRORS_MASK) == ~CH_ERRORS_MASK)
 
 #define CH_BREAK_ON_ERROR(err)                                              \
   if (CH_RET_IS_ERROR(err)) break
 
 #define CH_RETURN_ON_ERROR(err) do {                                        \
-  msg_t __ret = (err);                                                      \
+  int __ret = (err);                                                        \
   if (CH_RET_IS_ERROR(__ret)) {                                             \
     return __ret;                                                           \
   }                                                                         \

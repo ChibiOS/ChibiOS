@@ -23,8 +23,6 @@
 extern int __callelf(sb_header_t *sbhp, int argc, char *argv[], char *envp[]);
 extern int __returnelf(void);
 
-static char buf[1024];
-
 int runelf(int argc, char *argv[], char *envp[]) {
   uint8_t *buf, *bufend;
   sb_header_t *sbhp;
