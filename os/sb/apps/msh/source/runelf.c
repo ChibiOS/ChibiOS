@@ -25,7 +25,7 @@ extern int __returnelf(void);
 
 static char buf[1024];
 
-int runelf(const char *fname, int argc, char *argv[], char *envp[]) {
+int runelf(int argc, char *argv[], char *envp[]) {
   uint8_t *buf, *bufend;
   sb_header_t *sbhp;
   msg_t ret;
@@ -42,7 +42,7 @@ int runelf(const char *fname, int argc, char *argv[], char *envp[]) {
   }
 
   /* Loading the specified file.*/
-  ret = sbLoadElf(fname, buf, (size_t)(bufend - buf));
+  ret = sbLoadElf(argv[0], buf, (size_t)(bufend - buf));
   if (CH_RET_IS_ERROR(ret)) {
     errno =  CH_DECODE_ERROR(ret);
     return -1;

@@ -181,7 +181,7 @@ static void cmd_path(int argc, char *argv[]) {
 }
 
 static bool shell_execute(int argc, char *argv[]) {
-  extern int runelf(const char *fname, int argc, char *argv[], char *envp[]);
+  extern int runelf(int argc, char *argv[], char *envp[]);
   int i, ret;
 
   static const struct {
@@ -204,7 +204,7 @@ static bool shell_execute(int argc, char *argv[]) {
   }
 
   /* Trying to execute from file.*/
-  ret = runelf(argv[0], argc - 1, argv + 1, environ);
+  ret = runelf(argc, argv, environ);
   if (ret != -1) {
     return false;
   }
