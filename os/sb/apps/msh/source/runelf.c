@@ -23,6 +23,8 @@
 extern int __callelf(sb_header_t *sbhp, int argc, char *argv[], char *envp[]);
 extern int __returnelf(void);
 
+static char buf[1024];
+
 int runelf(const char *fname, int argc, char *argv[], char *envp[]) {
   uint8_t *buf, *bufend;
   sb_header_t *sbhp;
@@ -35,13 +37,15 @@ int runelf(const char *fname, int argc, char *argv[], char *envp[]) {
   /* Aligning the start address.*/
   buf = (uint8_t *)((((uint32_t)buf - 1U) | 3U) + 1U);
   if (buf >= bufend) {
-    return ENOMEM;
+    errno = ENOMEM;
+    return -1;
   }
 
   /* Loading the specified file.*/
   ret = sbLoadElf(fname, buf, (size_t)(bufend - buf));
   if (CH_RET_IS_ERROR(ret)) {
-    return CH_DECODE_ERROR(ret);
+    errno =  CH_DECODE_ERROR(ret);
+    return -1;
   }
 
   /* Pointer to the executable header.*/
@@ -51,7 +55,8 @@ int runelf(const char *fname, int argc, char *argv[], char *envp[]) {
   if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
       (sbhp->hdr_magic2 != SB_HDR_MAGIC2) ||
       (sbhp->hdr_size != sizeof (sb_header_t))) {
-    return ENOEXEC;
+    errno =  ENOEXEC;
+    return -1;
   }
 
   /* Setting up the exit vector for the loaded elf file.*/

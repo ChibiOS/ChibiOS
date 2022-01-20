@@ -25,7 +25,7 @@
 #define SHELL_MAX_ARGUMENTS         20
 #define SHELL_PROMPT_STR            "> "
 #define SHELL_NEWLINE_STR           "\r\n"
-#define SHELL_WELCOME_STR           "ChibiOS/SB shell"
+#define SHELL_WELCOME_STR           "ChibiOS/SB Mini Shell"
 
 static const char *prompt;
 
@@ -160,7 +160,7 @@ static void cmd_exit(int argc, char *argv[]) {
     return;
   }
 
-  sbExit(msg);
+  _exit(msg);
 }
 
 static void cmd_path(int argc, char *argv[]) {
@@ -181,7 +181,8 @@ static void cmd_path(int argc, char *argv[]) {
 }
 
 static bool shell_execute(int argc, char *argv[]) {
-  int i;
+  extern int runelf(const char *fname, int argc, char *argv[], char *envp[]);
+  int i, ret;
 
   static const struct {
     const char *name;
@@ -200,6 +201,12 @@ static bool shell_execute(int argc, char *argv[]) {
       return false;
     }
     i++;
+  }
+
+  /* Trying to execute from file.*/
+  ret = runelf(argv[0], argc - 1, argv + 1, environ);
+  if (ret != -1) {
+    return false;
   }
 
   return true;
@@ -236,7 +243,7 @@ int main(int argc, char *argv[], char *envp[]) {
     /* Reading input line.*/
     if (shell_getline(line, SHELL_MAX_LINE_LENGTH)) {
       shell_write(SHELL_NEWLINE_STR);
-      shell_write("logout");
+      shell_write("logout" SHELL_NEWLINE_STR);
       break;
     }
 
