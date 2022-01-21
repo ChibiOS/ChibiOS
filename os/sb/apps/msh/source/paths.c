@@ -164,6 +164,7 @@ size_t path_add_separator(char *dst, size_t size) {
   return dn + 1;
 }
 
+#if 0
 /**
  * @brief   Normalizes an absolute path.
  * @note    The destination buffer can be the same of the source buffer.
@@ -242,5 +243,6 @@ size_t path_normalize(char *dst, const char *src, size_t size) {
     n++;
   }
 }
+#endif
 
 /** @} */

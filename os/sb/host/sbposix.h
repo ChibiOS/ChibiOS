@@ -68,6 +68,8 @@ extern "C" {
   ssize_t sb_posix_write(int fd, const void *buf, size_t count);
   off_t sb_posix_lseek(int fd, off_t offset, int whence);
   ssize_t sb_posix_getdents(int fd, void *buf, size_t count);
+  int sb_posix_chdir(const char *path);
+  int sb_posix_getcwd(char *buf, size_t size);
 #ifdef __cplusplus
 }
 #endif

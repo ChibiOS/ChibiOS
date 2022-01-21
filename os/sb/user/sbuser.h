@@ -216,8 +216,7 @@ extern "C" {
  * @param[in] flags     open mode
  * @return              The file descriptor or an error.
  */
-static inline int sbOpen(const char *pathname,
-                             int flags) {
+static inline int sbOpen(const char *pathname, int flags) {
 
   __syscall3r(0, SB_POSIX_OPEN, pathname, flags);
   return (int)r0;
@@ -323,10 +322,35 @@ static inline off_t sbSeek(int fd, off_t offset, int whence) {
  * @param[in] count     number of bytes
  * @return              The number of bytes really transferred or an error.
  */
-static inline ssize_t sbPosixGetdents(int fd, void *buf, size_t count) {
+static inline ssize_t sbGetdents(int fd, void *buf, size_t count) {
 
   __syscall4r(0, SB_POSIX_GETDENTS, fd, buf, count);
   return (ssize_t)r0;
+}
+
+/**
+ * @brief   Posix-style change current directory.
+ *
+ * @param[in] path      new current path
+ * @return              Operation result.
+ */
+static inline int sbChdir(const char *path) {
+
+  __syscall2r(0, SB_POSIX_CHDIR, path);
+  return (int)r0;
+}
+
+/**
+ * @brief   Posix-style get current directory.
+ *
+ * @param[in] buf       path buffer
+ * @param[in] size      path buffer size
+ * @return              Operation result.
+ */
+static inline int sbGetcwd(char *buf, size_t size) {
+
+  __syscall3r(0, SB_POSIX_GETCWD, buf, size);
+  return (int)r0;
 }
 
 /**

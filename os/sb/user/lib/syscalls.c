@@ -148,7 +148,7 @@ __attribute__((used))
 int _getdents_r(struct _reent *r, int fd, void *dp, int count) {
   ssize_t n;
 
-  n = sbPosixGetdents(fd, dp, count);
+  n = sbGetdents(fd, dp, count);
   if (CH_RET_IS_ERROR(n)) {
     __errno_r(r) = CH_DECODE_ERROR(n);
     return -1;

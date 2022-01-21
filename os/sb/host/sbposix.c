@@ -300,6 +300,28 @@ ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
   return (ssize_t)ret;
 }
 
+int sb_posix_chdir(const char *path) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    return CH_RET_EFAULT;
+  }
+
+  return (int)vfsDrvChangeCurrentDirectory(sbp->config->vfs_driver, path);
+}
+
+int sb_posix_getcwd(char *buf, size_t size) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (!sb_is_valid_write_range(sbp, buf, size)) {
+    return CH_RET_EFAULT;
+  }
+
+  /* Note, it does not return a pointer to the buffer as required by Posix,
+     this has to be handled on the user-side library.*/
+  return vfsDrvGetCurrentDirectory(sbp->config->vfs_driver, buf, size);
+}
+
 #else /* Fallbacks for when there is no VFS.*/
 uint32_t sb_posix_open(const char *pathname, uint32_t flags) {
 
