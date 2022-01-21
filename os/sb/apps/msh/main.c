@@ -65,9 +65,7 @@ bool shell_getline(char *line, size_t size) {
     if (read(STDIN_FILENO, &c, 1) == 0)
       return true;
 
-    if (c == 4) {
-      shell_putc('^');
-      shell_putc('D');
+    if ((c == 4) && (p == line)) {
       return true;
     }
 
@@ -311,8 +309,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     /* Reading input line.*/
     if (shell_getline(line, SHELL_MAX_LINE_LENGTH)) {
-      shell_write(SHELL_NEWLINE_STR);
-      shell_write("logout" SHELL_NEWLINE_STR);
+      shell_write("exit" SHELL_NEWLINE_STR);
       break;
     }
 
