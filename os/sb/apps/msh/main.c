@@ -20,12 +20,15 @@
 #include <stdlib.h>
 
 #include "sbuser.h"
+#include "paths.h"
 
 #define SHELL_MAX_LINE_LENGTH       128
 #define SHELL_MAX_ARGUMENTS         20
 #define SHELL_PROMPT_STR            "> "
 #define SHELL_NEWLINE_STR           "\r\n"
 #define SHELL_WELCOME_STR           "ChibiOS/SB Mini Shell"
+#define SHELL_DEFAULT_PATH          "/bin"
+#define SHELL_EXECUTABLE_EXTENSION  ".elf"
 
 static const char *prompt;
 
@@ -182,7 +185,7 @@ static void cmd_path(int argc, char *argv[]) {
 
 static bool shell_execute(int argc, char *argv[]) {
   extern int runelf(int argc, char *argv[], char *envp[]);
-  static char pathbuf[1024];
+  char *fname = argv[0];
   int i, ret;
 
   static const struct {
@@ -197,20 +200,82 @@ static bool shell_execute(int argc, char *argv[]) {
 
   i = 0;
   while (builtins[i].name != NULL) {
-    if (strcmp(builtins[i].name, argv[0]) == 0) {
+    if (strcmp(builtins[i].name, fname) == 0) {
       builtins[i].cmdf(argc, argv);
       return false;
     }
     i++;
   }
 
-  /* Searching for execuable.*/
-  while (true) {
+  if (index(fname, '/') != NULL) {
+    /* It is a path, executing as-is without scanning the PATH variable.*/
+     ret = runelf(argc, argv, environ);
+    if (ret != -1) {
+      return false;
+    }
   }
-  /* Trying to execute from file.*/
-  ret = runelf(argc, argv, environ);
-  if (ret != -1) {
-    return false;
+  else {
+    static char pathbuf[1024];
+    char *p, *paths;
+
+    paths = getenv("PATH");
+    if (paths == NULL) {
+      paths = SHELL_DEFAULT_PATH;
+    }
+
+    /* Searching for executable.*/
+    while (true) {
+      size_t n;
+
+      /* Getting next path, exit if there is an empty entry.*/
+      n = strcspn(p, ":");
+      if (n == 0U) {
+        return false;
+      }
+
+      /* Error if the path is too long.*/
+      if (n >= sizeof pathbuf) {
+        errno = ERANGE;
+        break;
+      }
+
+      /* Non absolute paths are ignored.*/
+      if (*p == '/') {
+        /* Building combined path, error on path buffer overflow.*/
+        memmove(pathbuf, p, n);
+        pathbuf[n] = '\0';
+        if (path_append(pathbuf, fname, sizeof pathbuf) == 0U) {
+          errno = ERANGE;
+          break;
+        }
+
+        /* Enforcing an executable file extension, there is no eXecute
+           attribute to handle.*/
+        if (path_add_extension(pathbuf,
+                               SHELL_EXECUTABLE_EXTENSION,
+                               sizeof pathbuf) == 0U) {
+          errno = ERANGE;
+          break;
+        }
+
+        /* Trying to execute from, this path.*/
+        argv[0] = pathbuf;
+        ret = runelf(argc, argv, environ);
+        if (ret != -1) {
+          return false;
+        }
+        if (errno != ENOENT) {
+          break;
+        }
+      }
+
+      /* On the next path, if any.*/
+      p += n;
+      if (*p == '\0') {
+        return false;
+      }
+      p++;
+    }
   }
 
   return true;

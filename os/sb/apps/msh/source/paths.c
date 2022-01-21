@@ -58,9 +58,9 @@
 /**
  * @brief   Appends a path to a path.
  *
- * @param[out] dst              The destination buffer.
- * @param[in] src               The source path.
- * @param[in[ size              Destination buffer size.
+ * @param[in, out]  dst         The destination buffer.
+ * @param[in]       src         The source path.
+ * @param[in]       size        Destination buffer size.
  * @return                      The size of the combined path.
  * @retval 0                    Path error or buffer overflow.
  */
@@ -108,9 +108,9 @@ size_t path_append(char *dst, const char *src, size_t size) {
 /**
  * @brief   Prepends a path to a path.
  *
- * @param[in] dst               The destination path.
- * @param[in] src               The path to be prepended.
- * @param[in[ size              Destination buffer size.
+ * @param[in, out]  dst         The destination path.
+ * @param[in]       src         The path to be prepended.
+ * @param[in]       size        Destination buffer size.
  * @return                      The size of the combined path.
  * @retval 0                    Path error or buffer overflow.
  */
@@ -150,8 +150,8 @@ size_t path_prepend(char *dst, const char *src, size_t size) {
 /**
  * @brief   Adds a separator to the end of a path if it is missing.
  *
- * @param[in] dst               The destination path.
- * @param[in[ size              Destination buffer size.
+ * @param[in, out]  dst         The destination path.
+ * @param[in]       size        Destination buffer size.
  * @return                      The size of the combined path.
  * @retval 0                    Path error or buffer overflow.
  */
@@ -176,6 +176,30 @@ size_t path_add_separator(char *dst, size_t size) {
   }
 
   return dn;
+}
+
+/**
+ * @brief   Adds a file extension to a path, if not present.
+ *
+ * @param[in, out]  dst         The destination path.
+ * @param[in]       ext         The extension string, must include the dot.
+ * @param[in]       size        Destination buffer size.
+ * @return                      The size of the combined path.
+ * @retval 0                    Path error or buffer overflow.
+ */
+size_t path_add_extension(char *dst, const char *ext, size_t size) {
+  size_t dn, en;
+
+  dn = strnlen(dst, size - 1U);
+  en = strnlen(ext, size - 1U);
+  if ((dn < en) || (strcmp(dst + dn - en, ext) != 0)) {
+    if (dn + en >= size) {
+      return 0U;
+    }
+    memmove(dst + dn, ext, en + 1U);
+  }
+
+  return dn + en;
 }
 
 #if 0
