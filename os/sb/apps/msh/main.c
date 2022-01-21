@@ -216,11 +216,11 @@ static bool shell_execute(int argc, char *argv[]) {
   }
   else {
     static char pathbuf[1024];
-    char *p, *paths;
+    char *p;
 
-    paths = getenv("PATH");
-    if (paths == NULL) {
-      paths = SHELL_DEFAULT_PATH;
+    p = getenv("PATH");
+    if (p == NULL) {
+      p = SHELL_DEFAULT_PATH;
     }
 
     /* Searching for executable.*/
