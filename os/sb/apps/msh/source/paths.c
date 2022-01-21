@@ -61,7 +61,7 @@
  * @param[out] dst              The destination buffer.
  * @param[in] src               The source path.
  * @param[in[ size              Destination buffer size.
- * @return                      The combined path size.
+ * @return                      The size of the combined path.
  * @retval 0                    Path error or buffer overflow.
  */
 size_t path_append(char *dst, const char *src, size_t size) {
@@ -111,26 +111,40 @@ size_t path_append(char *dst, const char *src, size_t size) {
  * @param[in] dst               The destination path.
  * @param[in] src               The path to be prepended.
  * @param[in[ size              Destination buffer size.
- * @return                      The operation status.
+ * @return                      The size of the combined path.
  * @retval 0                    Path error or buffer overflow.
  */
 size_t path_prepend(char *dst, const char *src, size_t size) {
   size_t dn, sn;
+  char *buf = dst;
 
   dn = strnlen(dst, size - 1U);
   sn = strnlen(src, size - 1U);
+
+  /* The source path needs to end with a separator in case the destination
+     does not have it. Note, the separator is not written here.*/
+  if ((sn == 0U) || src[sn - 1U] != '/') {
+    sn++;
+  }
+
+  /* If the destination has a separator then skipping it.*/
+  if ((dn > 0U) && (dst[0] == '/')) {
+    dn--;
+    dst++;
+  }
 
   if (dn + sn >= size) {
     return (size_t)0;
   }
 
   /* Making space for the prefix, including the final zero in the move.*/
-  memmove(dst + sn, dst, dn + 1U);
+  memmove(buf + sn, buf, dn + 1U);
 
-  /* Placing the prefix omitting the final zero.*/
-  memmove(dst, src, sn);
+  /* Placing the prefix omitting the final zero then enforcing the separator.*/
+  memmove(buf, src, sn);
+  buf[sn - 1U] = '/';
 
-  return sn;
+  return dn + sn;
 }
 
 /**
@@ -138,7 +152,7 @@ size_t path_prepend(char *dst, const char *src, size_t size) {
  *
  * @param[in] dst               The destination path.
  * @param[in[ size              Destination buffer size.
- * @return                      The operation status.
+ * @return                      The size of the combined path.
  * @retval 0                    Path error or buffer overflow.
  */
 size_t path_add_separator(char *dst, size_t size) {
@@ -151,17 +165,17 @@ size_t path_add_separator(char *dst, size_t size) {
     dst[1] = '\0';
   }
   else {
-    if (dst[dn - 1] != '/') {
-      if (dn >= size - 1) {
+    if (dst[dn - 1U] != '/') {
+      if (dn >= size - 1U) {
         return (size_t)0;
       }
 
       dst[dn]     = '/';
-      dst[dn + 1] = '\0';
+      dst[dn + 1U] = '\0';
     }
   }
 
-  return dn + 1;
+  return dn;
 }
 
 #if 0
