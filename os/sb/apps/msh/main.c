@@ -228,7 +228,8 @@ static bool shell_execute(int argc, char *argv[]) {
       /* Getting next path, exit if there is an empty entry.*/
       n = strcspn(p, ":");
       if (n == 0U) {
-        return false;
+        errno = ENOENT;
+        break;
       }
 
       /* Error if the path is too long.*/
@@ -259,6 +260,7 @@ static bool shell_execute(int argc, char *argv[]) {
         /* Trying to execute from, this path.*/
         argv[0] = pathbuf;
         ret = runelf(argc, argv, environ);
+        argv[0] = fname;
         if (ret != -1) {
           return false;
         }
@@ -270,7 +272,8 @@ static bool shell_execute(int argc, char *argv[]) {
       /* On the next path, if any.*/
       p += n;
       if (*p == '\0') {
-        return false;
+        errno = ENOENT;
+        break;
       }
       p++;
     }
@@ -332,7 +335,7 @@ int main(int argc, char *argv[], char *envp[]) {
     if (i > 0) {
       if (shell_execute(i, args)){
         shell_error(args[0]);
-        shell_error("?" SHELL_NEWLINE_STR);
+        shell_error(": command not found" SHELL_NEWLINE_STR);
       }
     }
   }
