@@ -382,7 +382,7 @@ do {                                                                        \
   osalSysUnlockFromISR();                                                   \
 }
 #else /* !SPI_USE_SYNCHRONIZATION */
-#define __spi_wakeup_isr(spip)
+#define __spi_wakeup_isr(spip, msg)
 #endif /* !SPI_USE_SYNCHRONIZATION */
 
 /**
