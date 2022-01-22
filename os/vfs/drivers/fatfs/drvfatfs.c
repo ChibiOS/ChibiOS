@@ -124,7 +124,11 @@ static const struct vfs_fatfs_driver_vmt driver_vmt = {
   .set_cwd          = drv_set_cwd,
   .get_cwd          = drv_get_cwd,
   .open_dir         = drv_open_dir,
-  .open_file        = drv_open_file
+  .open_file        = drv_open_file,
+  .unlink           = drv_unlink_unimpl,
+  .rename           = drv_rename_unimpl,
+  .mkdir            = drv_mkdir_unimpl,
+  .rmdir            = drv_rmdir_unimpl
 };
 
 static void *node_dir_addref(void *instance);

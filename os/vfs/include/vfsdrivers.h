@@ -120,6 +120,13 @@ extern "C" {
                    const char *path,
                    int flags,
                    vfs_node_c **vnpp);
+  msg_t drv_unlink_unimpl(void *instance, const char *path);
+  msg_t drv_rename_unimpl(void *instance,
+                          const char *oldpath,
+                          const char *newpath);
+  msg_t drv_mkdir_unimpl(void *instance,
+                         const char *path);
+  msg_t drv_rmdir_unimpl(void *instance, const char *path);
 #ifdef __cplusplus
 }
 #endif

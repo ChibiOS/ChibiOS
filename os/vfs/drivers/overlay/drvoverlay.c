@@ -56,10 +56,14 @@ static msg_t drv_open_file(void *instance,
                            vfs_file_node_c **vfnpp);
 
 static const struct vfs_overlay_driver_vmt driver_vmt = {
-  .set_cwd      = drv_set_cwd,
-  .get_cwd      = drv_get_cwd,
-  .open_dir     = drv_open_dir,
-  .open_file    = drv_open_file
+  .set_cwd          = drv_set_cwd,
+  .get_cwd          = drv_get_cwd,
+  .open_dir         = drv_open_dir,
+  .open_file        = drv_open_file,
+  .unlink           = drv_unlink_unimpl,
+  .rename           = drv_rename_unimpl,
+  .mkdir            = drv_mkdir_unimpl,
+  .rmdir            = drv_rmdir_unimpl
 };
 
 static void *node_dir_addref(void *instance);
@@ -68,10 +72,10 @@ static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
 static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
 
 static const struct vfs_overlay_dir_node_vmt dir_node_vmt = {
-  .addref       = node_dir_addref,
-  .release      = node_dir_release,
-  .dir_first    = node_dir_first,
-  .dir_next     = node_dir_next
+  .addref           = node_dir_addref,
+  .release          = node_dir_release,
+  .dir_first        = node_dir_first,
+  .dir_next         = node_dir_next
 };
 
 /**

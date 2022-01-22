@@ -83,4 +83,40 @@ msg_t vfsDrvOpen(vfs_driver_c *drvp,
   return ret;
 }
 
+msg_t drv_unlink_unimpl(void *instance, const char *path) {
+
+  (void)instance;
+  (void)path;
+
+  return CH_RET_ENOSYS;
+}
+
+msg_t drv_rename_unimpl(void *instance,
+                        const char *oldpath,
+                        const char *newpath) {
+
+  (void)instance;
+  (void)oldpath;
+  (void)newpath;
+
+  return CH_RET_ENOSYS;
+}
+
+msg_t drv_mkdir_unimpl(void *instance,
+                       const char *path) {
+
+  (void)instance;
+  (void)path;
+
+  return CH_RET_ENOSYS;
+}
+
+msg_t drv_rmdir_unimpl(void *instance, const char *path) {
+
+  (void)instance;
+  (void)path;
+
+  return CH_RET_ENOSYS;
+}
+
 /** @} */
