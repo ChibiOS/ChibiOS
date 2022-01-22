@@ -165,6 +165,59 @@ msg_t vfsOpenFile(const char *path, int flags, vfs_file_node_c **vfnpp) {
 }
 
 /**
+ * @brief   Unlinks and possibly deletes a file.
+ *
+ * @param[in] path      Path of the file to be unlinked.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsUnlink(const char *path) {
+
+  return vfsDrvUnlink(vfs_root, path);
+}
+
+/**
+ * @brief   Renames a file or directory.
+ *
+ * @param[in] oldpath   Path of the file to be renamed.
+ * @param[in] oldpath   New path of the renamed file.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsRename(const char *oldpath, const char *newpath) {
+
+  return vfsDrvRename(vfs_root, oldpath, newpath);
+}
+
+/**
+ * @brief   Creates a directory.
+ *
+ * @param[in] path      Path of the directory to be created.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsMkdir(const char *path) {
+
+  return vfsDrvMkdir(vfs_root, path);
+}
+
+/**
+ * @brief   Removes a directory.
+ *
+ * @param[in] path      Path of the directory to be removed.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsRmdir(const char *path) {
+
+  return vfsDrvRmdir(vfs_root, path);
+}
+
+/**
  * @brief   Releases a @p vfs_node_c or descendant object.
  *
  * @param[in] vnp       Pointer to the @p vfs_node_c object to be released.
