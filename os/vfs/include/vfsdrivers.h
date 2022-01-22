@@ -75,7 +75,11 @@
   msg_t (*open_file)(void *instance,                                        \
                      const char *path,                                      \
                      int flags,                                             \
-                     vfs_file_node_c **vfnpp);
+                     vfs_file_node_c **vfnpp);                              \
+  msg_t (*unlink)(void *instance, const char *path);                        \
+  msg_t (*rename)(void *instance, const char *oldpath, const char *newpath);\
+  msg_t (*mkdir)(void *instance, const char *path);                         \
+  msg_t (*rmdir)(void *instance, const char *path);
 
 /**
  * @brief   @p vfs_driver_c specific data.
@@ -191,6 +195,68 @@ static inline msg_t vfsDrvOpenFile(vfs_driver_c *drvp,
                                    vfs_file_node_c **vfnpp) {
 
   return drvp->vmt->open_file(drvp, path, flags, vfnpp);
+}
+
+/**
+ * @brief   Unlinks and possibly deletes a file.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] path      Path of the file to be unlinked.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvUnlink(vfs_driver_c *drvp,
+                                 const char *path) {
+
+  return drvp->vmt->unlink(drvp, path);
+}
+
+/**
+ * @brief   Renames a file or directory.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] oldpath   Path of the file to be renamed.
+ * @param[in] oldpath   New path of the renamed file.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvRename(vfs_driver_c *drvp,
+                                 const char *oldpath,
+                                 const char *newpath) {
+
+  return drvp->vmt->rename(drvp, oldpath, newpath);
+}
+
+/**
+ * @brief   Creates a directory.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] path      Path of the directory to be created.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvMkdir(vfs_driver_c *drvp,
+                                const char *path) {
+
+  return drvp->vmt->mkdir(drvp, path);
+}
+
+/**
+ * @brief   Removes a directory.
+ *
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] path      Path of the directory to be removed.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvRmdir(vfs_driver_c *drvp,
+                                const char *path) {
+
+  return drvp->vmt->rmdir(drvp, path);
 }
 
 #endif /* VFSDRIVERS_H */
