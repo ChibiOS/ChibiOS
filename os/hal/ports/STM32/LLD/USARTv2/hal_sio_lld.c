@@ -727,11 +727,12 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   cr3 = u->CR3;
 
   /* Enabled errors/events handling.*/
-  irqmask = ((cr1 & USART_CR1_PEIE)  != 0U ? USART_ISR_PE   : 0U) |
-            ((cr2 & USART_CR2_LBDIE) != 0U ? USART_ISR_LBDF : 0U) |
-            ((cr3 & USART_CR3_EIE)   != 0U ? USART_ISR_FE  |
-                                             USART_ISR_ORE |
-                                             USART_ISR_NE   : 0U);
+  irqmask = ((cr1 & USART_CR1_PEIE)   != 0U ? USART_ISR_PE   : 0U) |
+            ((cr1 & USART_CR1_RXNEIE) != 0U ? USART_ISR_ORE  : 0U) |
+            ((cr2 & USART_CR2_LBDIE)  != 0U ? USART_ISR_LBDF : 0U) |
+            ((cr3 & USART_CR3_EIE)    != 0U ? USART_ISR_FE  |
+                                              USART_ISR_ORE |
+                                              USART_ISR_NE   : 0U);
   evtmask = isr & irqmask;
   if (evtmask != 0U) {
 
