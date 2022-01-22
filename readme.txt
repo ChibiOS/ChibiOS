@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.2 ***
+- FIX: Fixed invalid state transition in SNOR flash driver (bug #1212).
 - FIX: Fixed missing exit condition in sioSynchronizeRX() and
        sioSynchronizeTX() (bug #1211).
 - FIX: Some MISRA-related fixes.

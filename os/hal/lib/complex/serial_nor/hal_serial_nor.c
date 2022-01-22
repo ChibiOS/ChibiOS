@@ -169,9 +169,6 @@ static flash_error_t snor_start_erase_all(void *instance) {
   /* Actual erase implementation.*/
   err = snor_device_start_erase_all(devp);
 
-  /* Ready state again.*/
-  devp->state = FLASH_READY;
-
   /* Bus released.*/
   bus_release(devp->config->busp);
 
