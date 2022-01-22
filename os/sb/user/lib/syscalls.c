@@ -158,6 +158,32 @@ int _getdents_r(struct _reent *r, int fd, void *dp, int count) {
 }
 
 __attribute__((used))
+int _chdir_r(struct _reent *r, const char *path) {
+  int err;
+
+  err = sbChdir(path);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return 0;
+}
+
+__attribute__((used))
+char *_getcwd_r(struct _reent *r, char *buf, size_t size) {
+  int err;
+
+  err = sbGetcwd(buf, size);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return NULL;
+  }
+
+  return buf;
+}
+
+__attribute__((used))
 int _kill(int pid, int sig) {
 
   (void) pid;

@@ -31,6 +31,7 @@
 #define SHELL_EXECUTABLE_EXTENSION  ".elf"
 
 static const char *prompt;
+static char pathbuf[1024];
 
 static void shell_write(const char *s) {
   size_t n = strlen(s);
@@ -129,6 +130,38 @@ static char *fetch_argument(char **pp) {
   return ap;
 }
 
+static void cmd_cd(int argc, char *argv[]) {
+  int ret;
+
+  if (argc != 2) {
+    shell_usage("cd <path>");
+    return;
+  }
+
+  ret = chdir(argv[1]);
+  if (ret == -1) {
+    shell_error(argv[1]);
+    shell_error(": No such file or directory" SHELL_NEWLINE_STR);
+  }
+}
+
+static void cmd_pwd(int argc, char *argv[]) {
+  char *p;
+
+  (void)argv;
+
+  if (argc != 1) {
+    shell_usage("pwd");
+    return;
+  }
+
+  p = getcwd(pathbuf, sizeof pathbuf);
+  if (p != NULL) {
+    shell_write(pathbuf);
+    shell_write(SHELL_NEWLINE_STR);
+  }
+}
+
 static void cmd_env(int argc, char *argv[]) {
   extern char **environ;
   char **pp;
@@ -190,9 +223,11 @@ static bool shell_execute(int argc, char *argv[]) {
     const char *name;
     void (*cmdf)(int argc, char *argv[]);
   } builtins[] = {
+    {"cd",      cmd_cd},
     {"env",     cmd_env},
     {"exit",    cmd_exit},
     {"path",    cmd_path},
+    {"pwd",     cmd_pwd},
     {NULL,      NULL}
   };
 
@@ -213,7 +248,6 @@ static bool shell_execute(int argc, char *argv[]) {
     }
   }
   else {
-    static char pathbuf[1024];
     char *p;
 
     p = getenv("PATH");

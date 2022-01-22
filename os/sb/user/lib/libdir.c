@@ -80,4 +80,16 @@ struct dirent *readdir (DIR *dirp) {
   }
 }
 
+int chdir(const char *path) {
+  extern int _chdir_r(struct _reent *r, const char *path);
+
+  return _chdir_r(_REENT, path);
+}
+
+char *getcwd(char *buf, size_t size) {
+  extern char *_getcwd_r(struct _reent *r, char *buf, size_t size);
+
+  return _getcwd_r(_REENT, buf, size);
+}
+
 /*** EOF ***/
