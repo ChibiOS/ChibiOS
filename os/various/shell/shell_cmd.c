@@ -345,11 +345,11 @@ static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   do {
-    msg_t res;
+    msg_t ret;
 
-    res = vfsChangeCurrentDirectory(argv[0]);
-    if (CH_RET_IS_ERROR(res)) {
-      chprintf(chp, "failed (%d)" SHELL_NEWLINE_STR, res);
+    ret = vfsChangeCurrentDirectory(argv[0]);
+    if (CH_RET_IS_ERROR(ret)) {
+      chprintf(chp, "failed (%d)" SHELL_NEWLINE_STR, ret);
     }
   }
   while (false);
@@ -364,7 +364,7 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   do {
-    msg_t res;
+    msg_t ret;
     vfs_directory_node_c *dirp;
 
     dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
@@ -374,8 +374,8 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
     }
 
     /* Opening the (un)specified directory.*/
-    res = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
-    if (!CH_RET_IS_ERROR(res)) {
+    ret = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
+    if (!CH_RET_IS_ERROR(ret)) {
 
       while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
         chprintf(chp, "%s" SHELL_NEWLINE_STR, dip->name);
@@ -384,13 +384,27 @@ static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
       vfsClose((vfs_node_c *)dirp);
     }
     else {
-      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
+      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
     }
 
   } while (false);
 
   if (dip != NULL) {
     chHeapFree((void *)dip);
+  }
+}
+
+static void cmd_mkdir(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: mkdir <dirpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsMkdir(argv[0]);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
   }
 }
 
@@ -405,7 +419,7 @@ static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   do {
-    msg_t res;
+    msg_t ret;
 
     buf = (char *)chHeapAlloc(NULL, VFS_CFG_PATHLEN_MAX + 1);
     if (buf == NULL) {
@@ -413,9 +427,9 @@ static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
      break;
     }
 
-    res = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
-    if (CH_RET_IS_ERROR(res)) {
-      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, res);
+    ret = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
+    if (CH_RET_IS_ERROR(ret)) {
+      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
     }
     else {
       chprintf(chp, "%s" SHELL_NEWLINE_STR, buf);
@@ -425,6 +439,20 @@ static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   if (buf != NULL) {
     chHeapFree((void *)buf);
+  }
+}
+
+static void cmd_rmdir(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: rmdir <dirpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsRmdir(argv[0]);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
   }
 }
 #endif
@@ -438,32 +466,34 @@ static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
  */
 const ShellCommand shell_local_commands[] = {
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(__CHIBIOS_NIL__)
-  {"exit", cmd_exit},
+  {"exit",      cmd_exit},
 #endif
 #if SHELL_CMD_INFO_ENABLED == TRUE
-  {"info", cmd_info},
+  {"info",      cmd_info},
 #endif
 #if SHELL_CMD_ECHO_ENABLED == TRUE
-  {"echo", cmd_echo},
+  {"echo",      cmd_echo},
 #endif
 #if SHELL_CMD_SYSTIME_ENABLED == TRUE
-  {"systime", cmd_systime},
+  {"systime",   cmd_systime},
 #endif
 #if SHELL_CMD_MEM_ENABLED == TRUE
-  {"mem", cmd_mem},
+  {"mem",       cmd_mem},
 #endif
 #if SHELL_CMD_THREADS_ENABLED == TRUE
-  {"threads", cmd_threads},
+  {"threads",   cmd_threads},
 #endif
 #if SHELL_CMD_FILES_ENABLED == TRUE
-  {"cat", cmd_cat},
-  {"cd", cmd_cd},
-  {"ls", cmd_ls},
-  {"pwd", cmd_pwd},
-  {"tree", cmd_tree},
+  {"cat",       cmd_cat},
+  {"cd",        cmd_cd},
+  {"ls",        cmd_ls},
+  {"mkdir",     cmd_mkdir},
+  {"pwd",       cmd_pwd},
+  {"rmdir",     cmd_rmdir},
+  {"tree",      cmd_tree},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE
-  {"test", cmd_test},
+  {"test",      cmd_test},
 #endif
   {NULL, NULL}
 };

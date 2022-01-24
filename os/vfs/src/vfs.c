@@ -172,7 +172,7 @@ msg_t vfsOpenFile(const char *path, int flags, vfs_file_node_c **vfnpp) {
  *
  * @api
  */
-static inline msg_t vfsUnlink(const char *path) {
+msg_t vfsUnlink(const char *path) {
 
   return vfsDrvUnlink(vfs_root, path);
 }
@@ -186,7 +186,7 @@ static inline msg_t vfsUnlink(const char *path) {
  *
  * @api
  */
-static inline msg_t vfsRename(const char *oldpath, const char *newpath) {
+msg_t vfsRename(const char *oldpath, const char *newpath) {
 
   return vfsDrvRename(vfs_root, oldpath, newpath);
 }
@@ -199,7 +199,7 @@ static inline msg_t vfsRename(const char *oldpath, const char *newpath) {
  *
  * @api
  */
-static inline msg_t vfsMkdir(const char *path) {
+msg_t vfsMkdir(const char *path) {
 
   return vfsDrvMkdir(vfs_root, path);
 }
@@ -212,7 +212,7 @@ static inline msg_t vfsMkdir(const char *path) {
  *
  * @api
  */
-static inline msg_t vfsRmdir(const char *path) {
+msg_t vfsRmdir(const char *path) {
 
   return vfsDrvRmdir(vfs_root, path);
 }

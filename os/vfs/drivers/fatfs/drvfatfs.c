@@ -119,6 +119,8 @@ static msg_t drv_open_file(void *instance,
                            const char *path,
                            int flags,
                            vfs_file_node_c **vfnpp);
+msg_t drv_mkdir(void *instance, const char *path);
+msg_t drv_rmdir(void *instance, const char *path);
 
 static const struct vfs_fatfs_driver_vmt driver_vmt = {
   .set_cwd          = drv_set_cwd,
@@ -127,8 +129,8 @@ static const struct vfs_fatfs_driver_vmt driver_vmt = {
   .open_file        = drv_open_file,
   .unlink           = drv_unlink_unimpl,
   .rename           = drv_rename_unimpl,
-  .mkdir            = drv_mkdir_unimpl,
-  .rmdir            = drv_rmdir_unimpl
+  .mkdir            = drv_mkdir,
+  .rmdir            = drv_rmdir
 };
 
 static void *node_dir_addref(void *instance);
@@ -425,6 +427,20 @@ static msg_t drv_open_file(void *instance,
   while (false);
 
   return err;
+}
+
+msg_t drv_mkdir(void *instance, const char *path) {
+
+  (void)instance;
+
+  return translate_error(f_mkdir(path));
+}
+
+msg_t drv_rmdir(void *instance, const char *path) {
+
+  (void)instance;
+
+  return translate_error(f_rmdir(path));
 }
 
 static void *node_dir_addref(void *instance) {
