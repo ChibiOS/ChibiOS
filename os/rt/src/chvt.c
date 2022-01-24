@@ -34,6 +34,12 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+#if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
+#define VT_MAX_DELAY                                                        \
+  (((sysinterval_t)TIME_MAX_SYSTIME) &                                      \
+   ~(sysinterval_t)(((sysinterval_t)1 << (CH_CFG_ST_RESOLUTION / 2)) - (sysinterval_t)1))
+#endif
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -72,10 +78,10 @@ static void vt_set_alarm(systime_t now, sysinterval_t delay) {
     delay = currdelta;
   }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-  else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+  else if (delay > VT_MAX_DELAY) {
     /* The delta could be too large for the physical timer to handle
        this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-    delay = (sysinterval_t)TIME_MAX_SYSTIME;
+    delay = VT_MAX_DELAY;
   }
 #endif
 
@@ -144,10 +150,10 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
     delay = currdelta;
   }
 #if CH_CFG_INTERVALS_SIZE > CH_CFG_ST_RESOLUTION
-  else if (delay > (sysinterval_t)TIME_MAX_SYSTIME) {
+  else if (delay > VT_MAX_DELAY) {
     /* The delta could be too large for the physical timer to handle
        this can happen when: sizeof (systime_t) < sizeof (sysinterval_t).*/
-    delay = (sysinterval_t)TIME_MAX_SYSTIME;
+    delay = VT_MAX_DELAY;
   }
 #endif
 
@@ -629,11 +635,13 @@ void chVTDoTickI(void) {
     return;
   }
 
-  /* Calculating the delta to the next alarm time.*/
-  delta = vtp->dlist.delta - nowdelta;
+  /* The "unprocessed nowdelta" time slice is added to "last time"
+     and subtracted to next timer's delta.*/
+  vtlp->lasttime += nowdelta;
+  vtlp->dlist.next->delta -= nowdelta;
 
   /* Update alarm time to next timer.*/
-  vt_set_alarm(now, delta);
+  vt_set_alarm(now, vtp->dlist.delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
