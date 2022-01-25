@@ -110,6 +110,8 @@
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
+- FIX: Fixed Virtual Timers failure in a specific condition (bug #1215)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed invalid STM32_OTG_STEPPING for STM32F40_41xxx (bug #1214)
        (backported to 21.11.2).
 - FIX: Fixed SPIv2 driver compile fails when SPI_USE_SYNCHRONIZATION is FALSE

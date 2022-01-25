@@ -531,7 +531,7 @@ void chVTDoTickI(void) {
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
-  sysinterval_t delta, nowdelta;
+  sysinterval_t nowdelta;
   systime_t now;
 
   /* Looping through timers consuming all timers with deltas lower or equal
@@ -578,7 +578,7 @@ void chVTDoTickI(void) {
 
     /* If a reload is defined the timer needs to be restarted.*/
     if (unlikely(vtp->reload > (sysinterval_t)0)) {
-      sysinterval_t delay;
+      sysinterval_t delta, delay;
 
       /* Refreshing the now delta after spending time in the callback for
          a more accurate detection of too fast reloads.*/
@@ -638,7 +638,7 @@ void chVTDoTickI(void) {
   /* The "unprocessed nowdelta" time slice is added to "last time"
      and subtracted to next timer's delta.*/
   vtlp->lasttime += nowdelta;
-  vtlp->dlist.next->delta -= nowdelta;
+  vtp->dlist.delta -= nowdelta;
 
   /* Update alarm time to next timer.*/
   vt_set_alarm(now, vtp->dlist.delta);
