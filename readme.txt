@@ -75,6 +75,7 @@
 
 *** 20.3.5 ***
 - FIX: Some MISRA-related fixes.
+- FIX: Fixed Virtual Timers failure in a specific condition (bug #1215).
 - FIX: Fixed invalid state transition in SNOR flash driver (bug #1212).
 - FIX: Fixed missing check in chobjcaches.h (bug #1210).
 - FIX: Fixed RT testbuild application broken (bug #1208).

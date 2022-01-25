@@ -612,7 +612,7 @@ void chVTDoTickI(void) {
   }
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   virtual_timer_t *vtp;
-  sysinterval_t delta, nowdelta;
+  sysinterval_t nowdelta;
   systime_t now;
 
   /* Looping through timers consuming all timers with deltas lower or equal
@@ -663,11 +663,13 @@ void chVTDoTickI(void) {
     return;
   }
 
-  /* Calculating the delta to the next alarm time.*/
-  delta = vtp->dlist.delta - nowdelta;
+  /* The "unprocessed nowdelta" time slice is added to "last time"
+     and subtracted to next timer's delta.*/
+  vtlp->lasttime += nowdelta;
+  vtp->dlist.delta -= nowdelta;
 
   /* Update alarm time to next timer.*/
-  vt_set_alarm(now, delta);
+  vt_set_alarm(now, vtp->dlist.delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
