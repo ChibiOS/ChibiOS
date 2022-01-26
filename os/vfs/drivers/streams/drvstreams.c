@@ -204,7 +204,7 @@ static msg_t drv_open_file(void *instance,
     err = vfs_parse_match_separator(&path);
     CH_BREAK_ON_ERROR(err);
 
-    err = vfs_parse_get_fname(&path, fname, VFS_CFG_PATHLEN_MAX);
+    err = path_get_element(&path, fname, VFS_CFG_NAMELEN_MAX + 1);
     CH_BREAK_ON_ERROR(err);
 
     err = vfs_parse_match_end(&path);

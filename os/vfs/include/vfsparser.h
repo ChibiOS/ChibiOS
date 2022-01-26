@@ -57,8 +57,6 @@ extern "C" {
 #endif
   msg_t vfs_parse_match_separator(const char **pathp);
   msg_t vfs_parse_match_end(const char **pathp);
-  msg_t vfs_parse_copy_fname(const char **pathp, char *fname, size_t n);
-  msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n);
 #ifdef __cplusplus
 }
 #endif
@@ -66,43 +64,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Checks for a valid path separator.
- *
- * @param[in] c                 The character to be checked.
- * @return                      The operation result.
- */
-CC_FORCE_INLINE
-static inline bool vfs_parse_is_separator(char c) {
-
-  return (bool)(c == '/');
-}
-
-/**
- * @brief   Checks for a valid path terminator.
- *
- * @param[in] c                 The character to be checked.
- * @return                      The operation result.
- */
-CC_FORCE_INLINE
-static inline bool vfs_parse_is_terminator(char c) {
-
-  return (bool)(c == '\0');
-}
-
-/**
- * @brief   Checks for a path element character.
- *
- * @param[in] c                 The character to be checked.
- * @return                      The operation result.
- */
-CC_FORCE_INLINE
-static inline bool vfs_parse_is_filechar(char c) {
-
-  /* Restrictive Posix set.*/
-  return (bool)(isalnum(c) || (c == '_') || (c == '-') || (c == '.'));
-}
 
 #endif /* VFSPARSER_H */
 

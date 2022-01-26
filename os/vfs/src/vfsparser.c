@@ -60,7 +60,7 @@ msg_t vfs_parse_match_separator(const char **pathp) {
   msg_t err;
   const char *p = *pathp;
 
-  if (!vfs_parse_is_separator(*p++)) {
+  if (!path_is_separator(*p++)) {
     err = CH_RET_ENOENT;
   }
   else {
@@ -87,70 +87,6 @@ msg_t vfs_parse_match_end(const char **pathp) {
   }
 
   return err;
-}
-
-/**
- * @brief   Fetches the next path element.
- * @note    Does not consume the next separator, if any.
- * @note    Does not add a final zero to the fetched fname.
- * @note    It can return an empty element, it has to be detected outside.
- *
- * @param[in, out]  pathp       Pointer to the path under parsing.
- * @param[out]      fname       Extracted file name.
- * @param[in]       n           Maximum size in @fname.
- */
-msg_t vfs_parse_copy_fname(const char **pathp, char *fname, size_t n) {
-  size_t size;
-  const char *p;
-
-  p = *pathp;
-  size = 0U;
-  while (true) {
-    char c = *p;
-
-    /* Path elements must be terminated by a separator or an end-of-string.*/
-    if (vfs_parse_is_separator(c) || vfs_parse_is_terminator(c)) {
-
-      /* Advancing the path pointer past the file name in the path and
-         closing the file name string.*/
-      *pathp = p;
-      return (msg_t)size;
-    }
-
-    /* Valid characters for path names.*/
-    if (!vfs_parse_is_filechar(c)) {
-      return CH_RET_EINVAL;
-    }
-
-    /* Exceeding the maximum length.*/
-    if (size > n) {
-      return CH_RET_ENAMETOOLONG;
-    }
-
-    *fname++ = c;
-    p++;
-    size++;
-  }
-}
-
-/**
- * @brief   Fetches the next path element.
- * @note    Does not consume the next separator, if any.
- * @note    It can return an empty element, it has to be detected outside.
- *
- * @param[in, out]  pathp       Pointer to the path under parsing.
- * @param[out]      fname       Extracted file name.
- * @param[in]       n           Maximum size in @fname.
- */
-msg_t vfs_parse_get_fname(const char **pathp, char *fname, size_t n) {
-  msg_t ret;
-
-  ret = vfs_parse_copy_fname(pathp, fname, n);
-  CH_RETURN_ON_ERROR(ret);
-
-  fname[ret] = '\0';
-
-  return ret;
 }
 
 /** @} */

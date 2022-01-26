@@ -218,7 +218,7 @@ size_t path_add_extension(char *dst, const char *ext, size_t size) {
  * @retval 0                    Null element.
  * @retval size                 Buffer overflow.
  */
-size_t path_get_element(const char **pathp, char *dst, size_t size) {
+size_t path_copy_element(const char **pathp, char *dst, size_t size) {
   size_t n;
   const char *p;
 
@@ -246,6 +246,30 @@ size_t path_get_element(const char **pathp, char *dst, size_t size) {
     *dst++ = c;
     p++;
   }
+}
+
+/**
+ * @brief   Fetches the next path element.
+ * @note    Does not consume the next separator, if any.
+ * @note    It can return an empty element, it has to be detected outside.
+ *
+ * @param[in, out]  pathp       Pointer to the path under parsing.
+ * @param[out]      dst         Buffer for the extracted path element
+ * @param[in]       size        Destination buffer size.
+ * @return                      The size of the fetched path element, it does
+ *                              not fetch beyond @p size.
+ * @retval 0                    Null element.
+ * @retval size                 Buffer overflow.
+ */
+size_t path_get_element(const char **pathp, char *dst, size_t size) {
+  size_t n;
+
+  n = path_copy_element(pathp, dst, size);
+  if (n < size) {
+    dst[n] = '\0';
+  }
+
+  return n;
 }
 
 /**

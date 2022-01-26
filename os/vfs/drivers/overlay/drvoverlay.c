@@ -101,18 +101,22 @@ static msg_t match_driver(vfs_overlay_driver_c *odp,
                           const char **pathp,
                           vfs_driver_c **vdpp) {
   char fname[VFS_CFG_NAMELEN_MAX + 1];
+  size_t n;
   msg_t err;
 
   do {
     unsigned i;
 
-    err = vfs_parse_get_fname(pathp, fname, VFS_CFG_PATHLEN_MAX);
-    CH_BREAK_ON_ERROR(err);
+    n = path_get_element(pathp, fname, VFS_CFG_NAMELEN_MAX + 1);
+    if (n >= VFS_CFG_NAMELEN_MAX + 1) {
+      err = CH_RET_ENAMETOOLONG;
+      break;
+    }
 
     /* Searching among registered drivers.*/
     i = 0U;
     while (i < odp->next_driver) {
-      if (strncmp(fname, odp->names[i], VFS_CFG_NAMELEN_MAX) == 0) {
+      if (memcmp(fname, odp->names[i], n) == 0) {
         *vdpp = odp->drivers[i];
         return CH_RET_SUCCESS;
       }
@@ -149,7 +153,7 @@ static msg_t build_absolute_path(vfs_overlay_driver_c *drvp,
     *buf = '\0';
 
     /* Relative paths handling.*/
-    if (!vfs_parse_is_separator(*path)) {
+    if (!path_is_separator(*path)) {
       if (path_append(buf,
                       get_current_directory(drvp),
                       VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
