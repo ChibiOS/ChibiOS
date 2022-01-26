@@ -18,14 +18,18 @@
 */
 
 /**
- * @file    vfs/src/chpaths.c
- * @brief   VFS path utilities code.
+ * @file    paths.c
+ * @brief   Path utilities code.
  *
- * @addtogroup VFS_PATHS
+ * @addtogroup UTILS_PATHS
  * @{
  */
 
-#include "vfs.h"
+#include <string.h>
+#include <stdbool.h>
+
+#include "errcodes.h"
+#include "paths.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -54,19 +58,19 @@
 /**
  * @brief   Appends a path to a path.
  *
- * @param[out] dst              The destination buffer.
- * @param[in] src               The source path.
- * @param[in[ size              Destination buffer size.
- * @return                      The operation status.
- * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
+ * @param[in, out]  dst         The destination buffer.
+ * @param[in]       src         The source path.
+ * @param[in]       size        Destination buffer size.
+ * @return                      The size of the combined path.
+ * @retval 0                    Path error or buffer overflow.
  */
-msg_t vfs_path_append(char *dst, const char *src, size_t size) {
+size_t path_append(char *dst, const char *src, size_t size) {
   size_t n;
 
   /* Current path length.*/
   n = strnlen(dst, size);
   if (n >= size) {
-    return CH_RET_ERANGE;
+    return (size_t)0;
   }
 
   /* Making sure to start with a separator in place.*/
@@ -92,52 +96,66 @@ msg_t vfs_path_append(char *dst, const char *src, size_t size) {
     n++;
 
     if (n > size) {
-      return CH_RET_ERANGE;
+      return (size_t)0;
     }
   }
 
   *dst = '\0';
 
-  return CH_RET_SUCCESS;
+  return n;
 }
 
 /**
  * @brief   Prepends a path to a path.
  *
- * @param[in] dst               The destination path.
- * @param[in] src               The source path.
- * @param[in[ size              Destination buffer size.
- * @return                      The operation status.
- * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
+ * @param[in, out]  dst         The destination path.
+ * @param[in]       src         The path to be prepended.
+ * @param[in]       size        Destination buffer size.
+ * @return                      Offset in the buffer of the original path.
+ * @retval 0                    Path error or buffer overflow.
  */
-msg_t vfs_path_prepend(char *dst, const char *src, size_t size) {
+size_t path_prepend(char *dst, const char *src, size_t size) {
   size_t dn, sn;
+  char *buf = dst;
 
   dn = strnlen(dst, size - 1U);
   sn = strnlen(src, size - 1U);
 
+  /* The source path needs to end with a separator in case the destination
+     does not have it. Note, the separator is not written here.*/
+  if ((sn == 0U) || (src[sn - 1U] != '/')) {
+    sn++;
+  }
+
+  /* If the destination has a separator then skipping it.*/
+  if ((dn > 0U) && (dst[0] == '/')) {
+    dn--;
+    dst++;
+  }
+
   if (dn + sn >= size) {
-    return CH_RET_ERANGE;
+    return (size_t)0;
   }
 
   /* Making space for the prefix, including the final zero in the move.*/
-  memmove(dst + sn, dst, dn + 1U);
+  memmove(buf + sn, dst, dn + 1U);
 
-  /* Placing the prefix omitting the final zero.*/
-  memmove(dst, src, sn);
+  /* Placing the prefix omitting the final zero then enforcing the separator.*/
+  memmove(buf, src, sn);
+  buf[sn - 1U] = '/';
 
-  return (msg_t)sn;
+  return sn;
 }
 
 /**
  * @brief   Adds a separator to the end of a path if it is missing.
  *
- * @param[in] dst               The destination path.
- * @param[in[ size              Destination buffer size.
- * @return                      The operation status.
- * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
+ * @param[in, out]  dst         The destination path.
+ * @param[in]       size        Destination buffer size.
+ * @return                      The size of the combined path.
+ * @retval 0                    Path error or buffer overflow.
  */
-msg_t vfs_path_add_separator(char *dst, size_t size) {
+size_t path_add_separator(char *dst, size_t size) {
   size_t dn;
 
   dn = strnlen(dst, size - 1U);
@@ -145,19 +163,89 @@ msg_t vfs_path_add_separator(char *dst, size_t size) {
   if (dn == 0U) {
     dst[0] = '/';
     dst[1] = '\0';
+    dn++;
   }
   else {
-    if (!vfs_parse_is_separator(dst[dn - 1])) {
-      if (dn >= size - 1) {
-        return CH_RET_ERANGE;
+    if (dst[dn - 1U] != '/') {
+      if (dn >= size - 1U) {
+        return (size_t)0;
       }
 
       dst[dn]     = '/';
-      dst[dn + 1] = '\0';
+      dst[dn + 1U] = '\0';
+      dn++;
     }
   }
 
-  return dn + 1;
+  return dn;
+}
+
+/**
+ * @brief   Adds a file extension to a path, if not present.
+ *
+ * @param[in, out]  dst         The destination path.
+ * @param[in]       ext         The extension string, must include the dot.
+ * @param[in]       size        Destination buffer size.
+ * @return                      The size of the combined path.
+ * @retval 0                    Path error or buffer overflow.
+ */
+size_t path_add_extension(char *dst, const char *ext, size_t size) {
+  size_t dn, en;
+
+  dn = strnlen(dst, size - 1U);
+  en = strnlen(ext, size - 1U);
+  if ((dn < en) || (strcmp(dst + dn - en, ext) != 0)) {
+    if (dn + en >= size) {
+      return 0U;
+    }
+    memmove(dst + dn, ext, en + 1U);
+  }
+
+  return dn + en;
+}
+
+/**
+ * @brief   Fetches the next path element.
+ * @note    Does not consume the next separator, if any.
+ * @note    Does not add a final zero to the fetched fname.
+ * @note    It can return an empty element, it has to be detected outside.
+ *
+ * @param[in, out]  pathp       Pointer to the path under parsing.
+ * @param[out]      dst         Buffer for the extracted path element
+ * @param[in]       size        Destination buffer size.
+ * @return                      The size of the fetched path element, it does
+ *                              not fetch beyond @p size.
+ * @retval 0                    Null element.
+ * @retval size                 Buffer overflow.
+ */
+size_t path_get_element(const char **pathp, char *dst, size_t size) {
+  size_t n;
+  const char *p;
+
+  p = *pathp;
+  n = (size_t)0;
+  while (true) {
+    char c = *p;
+
+    /* Path elements must be terminated by a separator or an end-of-string.*/
+    if ((c == '/') || (c == '\0')) {
+
+      /* Advancing the path pointer past the file name in the path and
+         closing the file name string.*/
+      *pathp = p;
+      return n;
+    }
+
+    n++;
+
+    /* Exceeding the maximum length considering the space for the final zero.*/
+    if (n >= size) {
+      return n;
+    }
+
+    *dst++ = c;
+    p++;
+  }
 }
 
 /**
@@ -165,33 +253,37 @@ msg_t vfs_path_add_separator(char *dst, size_t size) {
  * @note    The destination buffer can be the same of the source buffer.
  *
  * @param[out] dst              The destination buffer.
- * @param[in] src               The source path.
+ * @param[in] src               The source path, must be absolute.
  * @param[in[ size              Destination buffer size.
- * @return                      The operation status.
- * @retval CH_RET_ERANGE        If the path size exceeded the buffer size.
+ * @return                      The size of the normalized path.
+ * @retval 0                    Path error.
  */
-msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
+size_t path_normalize(char *dst, const char *src, size_t size) {
   size_t n;
 
-  CH_RETURN_ON_ERROR(vfs_parse_match_separator(&src));
+  if (*src++ != '/') {
+    return 0;
+  }
 
   *dst++ = '/';
   n = 1U;
   while (true) {
-    msg_t ret;
+    size_t ret;
 
     /* Consecutive input separators are consumed.*/
-    while (vfs_parse_is_separator(*src)) {
+    while (*src == '/') {
       src++;
     }
 
     /* Getting next element from the input path and copying it to
        the output path.*/
-    ret = vfs_parse_copy_fname(&src, dst, size - n);
-    CH_RETURN_ON_ERROR(ret);
+    ret = path_get_element(&src, dst, size - n);
+    if (ret >= size - n) {
+      return (size_t)0;
+    }
 
+    /* No next element condition.*/
     if ((size_t)ret == 0U) {
-
       /* If the path contains something after the root separator.*/
       if (n > 1U) {
         /* No next path element, replacing the last separator with a zero.*/
@@ -202,7 +294,7 @@ msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
         *dst = '\0';
       }
 
-      return (msg_t)n;
+      return n;
     }
 
     /* Handling special cases of "." and "..".*/
@@ -218,7 +310,7 @@ msg_t vfs_path_normalize(char *dst, const char *src, size_t size) {
         do {
           dst--;
           n--;
-        } while(!vfs_parse_is_separator(*(dst - 1)));
+        } while(*(dst - 1) != '/');
       }
       continue;
     }

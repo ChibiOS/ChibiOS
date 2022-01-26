@@ -1,5 +1,5 @@
 # List of the ChibiOS OOP module.
-UTILSSRC =
+UTILSSRC = ${CHIBIOS}/os/common/utils/src/paths.c
  
 UTILSINC = ${CHIBIOS}/os/common/utils/include
 

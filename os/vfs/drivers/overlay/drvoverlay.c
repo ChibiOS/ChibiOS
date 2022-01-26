@@ -150,18 +150,27 @@ static msg_t build_absolute_path(vfs_overlay_driver_c *drvp,
 
     /* Relative paths handling.*/
     if (!vfs_parse_is_separator(*path)) {
-      ret = vfs_path_append(buf,
-                            get_current_directory(drvp),
-                            VFS_CFG_PATHLEN_MAX);
-      CH_BREAK_ON_ERROR(ret);
+      if (path_append(buf,
+                      get_current_directory(drvp),
+                      VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+        ret = CH_RET_ENAMETOOLONG;
+        break;
+      }
     }
 
     /* Adding the specified path.*/
-    ret = vfs_path_append(buf, path, VFS_CFG_PATHLEN_MAX);
-    CH_BREAK_ON_ERROR(ret);
+    if (path_append(buf, path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+      ret = CH_RET_ENAMETOOLONG;
+      break;
+    }
 
     /* Normalization of the absolute path.*/
-    ret = vfs_path_normalize(buf, buf, VFS_CFG_PATHLEN_MAX);
+    if (path_normalize(buf, buf, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+      ret = CH_RET_ENAMETOOLONG;
+      break;
+    }
+
+    ret = CH_RET_SUCCESS;
 
   } while (false);
 
@@ -177,8 +186,10 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
     const char *scanpath;
 
     /* Making sure there is a final separator.*/
-    err = vfs_path_add_separator(path, VFS_CFG_PATHLEN_MAX + 1);
-    CH_BREAK_ON_ERROR(err);
+    if (path_add_separator(path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+      err = CH_RET_ENAMETOOLONG;
+      break;
+    }
 
     /* Initial separator is expected, skipping it.*/
     scanpath = path + 1;
@@ -231,11 +242,12 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
 
           /* Processing the prefix, if defined.*/
           if (drvp->path_prefix != NULL) {
-            err = vfs_path_prepend(path,
-                                   drvp->path_prefix,
-                                   VFS_CFG_PATHLEN_MAX + 1);
-            CH_BREAK_ON_ERROR(err);
-            path_offset = (size_t)err;
+            if ((path_offset = path_prepend(path,
+                                            drvp->path_prefix,
+                                            VFS_CFG_PATHLEN_MAX + 1)) == (size_t)0) {
+              err = CH_RET_ENAMETOOLONG;
+              break;
+            }
           }
           else {
             path_offset = 0U;
@@ -291,10 +303,12 @@ static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
 
           /* Processing the prefix, if defined.*/
           if (drvp->path_prefix != NULL) {
-            err = vfs_path_prepend(path,
-                                   drvp->path_prefix,
-                                   VFS_CFG_PATHLEN_MAX + 1);
-            CH_BREAK_ON_ERROR(err);
+            if (path_prepend(path,
+                             drvp->path_prefix,
+                             VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+              err = CH_RET_ENAMETOOLONG;
+              break;
+            }
           }
 
           /* Passing the combined path to the overlaid driver.*/
@@ -358,7 +372,11 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
   vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
 
   *buf = '\0';
-  return vfs_path_append(buf, get_current_directory(drvp), size);
+  if (path_append(buf, get_current_directory(drvp), size) == (size_t)0) {
+    return CH_RET_ERANGE;
+  }
+
+  return CH_RET_SUCCESS;
 }
 
 static msg_t drv_open_dir(void *instance,
@@ -471,10 +489,12 @@ msg_t drv_mkdir(void *instance, const char *path) {
 
           /* Processing the prefix, if defined.*/
           if (drvp->path_prefix != NULL) {
-            err = vfs_path_prepend(buf,
-                                   drvp->path_prefix,
-                                   VFS_CFG_PATHLEN_MAX + 1);
-            CH_BREAK_ON_ERROR(err);
+            if (path_prepend(buf,
+                             drvp->path_prefix,
+                             VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+              err = CH_RET_ENAMETOOLONG;
+              break;
+            }
           }
 
           /* Passing the combined path to the overlaid driver.*/
@@ -533,10 +553,12 @@ msg_t drv_rmdir(void *instance, const char *path) {
 
           /* Processing the prefix, if defined.*/
           if (drvp->path_prefix != NULL) {
-            err = vfs_path_prepend(buf,
-                                   drvp->path_prefix,
-                                   VFS_CFG_PATHLEN_MAX + 1);
-            CH_BREAK_ON_ERROR(err);
+            if (path_prepend(buf,
+                             drvp->path_prefix,
+                             VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+              err = CH_RET_ENAMETOOLONG;
+              break;
+            }
           }
 
           /* Passing the combined path to the overlaid driver.*/

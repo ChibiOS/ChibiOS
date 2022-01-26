@@ -1,6 +1,5 @@
 # List of all the ChibiOS/VFS files.
 VFSSRC := $(CHIBIOS)/os/vfs/src/vfsparser.c \
-          $(CHIBIOS)/os/vfs/src/vfspaths.c \
           $(CHIBIOS)/os/vfs/src/vfsbuffers.c \
           $(CHIBIOS)/os/vfs/src/vfsdrivers.c \
           $(CHIBIOS)/os/vfs/src/vfs.c \

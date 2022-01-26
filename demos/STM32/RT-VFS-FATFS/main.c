@@ -274,11 +274,11 @@ int main(void) {
   tmr_init(&PORTAB_SDCD1);
 
   /* Initializing an overlay VFS object overlaying a FatFS driver. Note
-     that this virtual file system can only access the "/rt" sub-directory
+     that this virtual file system can only access the "/sb1" sub-directory
      on the physical FatFS volume.*/
   drvOverlayObjectInit(&root_overlay_driver,
                        drvFatFSObjectInit(&root_driver),
-                       "/rt");
+                       "/sb1");
 #else
   /* Initializing an overlay VFS object as a root, no overlaid driver.*/
   drvOverlayObjectInit(&root_overlay_driver, NULL, NULL);

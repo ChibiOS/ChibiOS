@@ -59,6 +59,7 @@ extern "C" {
   size_t path_prepend(char *dst, const char *src, size_t size);
   size_t path_add_separator(char *dst, size_t size);
   size_t path_add_extension(char *dst, const char *ext, size_t size);
+  size_t path_get_element(const char **pathp, char *dst, size_t size);
   size_t path_normalize(char *dst, const char *src, size_t size);
 #ifdef __cplusplus
 }
