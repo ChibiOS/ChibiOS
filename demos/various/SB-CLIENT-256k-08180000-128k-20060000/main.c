@@ -24,19 +24,7 @@
  */
 int main(void) {
   unsigned i = 1U;
-  DIR *dirp;
 
-  sbSleepMilliseconds(2000);
-  dirp = opendir("/");
-  if (dirp != NULL) {
-    struct dirent *dep;
-
-    while ((dep = readdir(dirp)) != NULL) {
-      printf("(%u) %s\r\n", dep->d_type, dep->d_name);
-    }
-
-    closedir(dirp);
-  }
   while (true) {
     printf("#1 Hello World (%u)!!\r\n", i++);
     sbSleepMilliseconds(500);

@@ -25,7 +25,7 @@ int main(void) {
   unsigned i = 1U;
 
   while (true) {
-    printf("#1 Hello World (%u)!!\r\n", i++);
+    printf("#2 Hello World (%u)!!\r\n", i++);
     sbSleepMilliseconds(500);
   }
 }

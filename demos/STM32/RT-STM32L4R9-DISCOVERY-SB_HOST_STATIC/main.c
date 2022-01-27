@@ -257,9 +257,9 @@ int main(void) {
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-  sbPosixRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
   vfsClose(np);
 
   /*
@@ -270,9 +270,9 @@ int main(void) {
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
-  sbPosixRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbPosixRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
   vfsClose(np);
 
   /*
@@ -300,7 +300,7 @@ int main(void) {
   /* Starting sandboxed thread 1.*/
   sb1tp = sbStartThread(&sbx1, "sbx1",
                         waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
-                        0, NULL, NULL);
+                        NULL, NULL);
   if (sb1tp == NULL) {
     chSysHalt("sbx1 failed");
   }
@@ -308,7 +308,7 @@ int main(void) {
   /* Starting sandboxed thread 2.*/
   sb2tp = sbStartThread(&sbx2, "sbx2",
                         waUnprivileged2, sizeof (waUnprivileged2), NORMALPRIO - 1,
-                        0, NULL, NULL);
+                        NULL, NULL);
   if (sb2tp == NULL) {
     chSysHalt("sbx2 failed");
   }
