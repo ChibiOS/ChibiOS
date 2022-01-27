@@ -225,28 +225,6 @@ typedef struct {
    * @brief   VFS driver associated to the sandbox as root.
    */
   vfs_driver_c                  *vfs_driver;
-#else
-  /**
-   * @brief   Sandbox STDIN stream.
-   * @note    Set this to @p NULL if standard I/O is not needed.
-   * @note    By design you can use HAL streams here, you need to use
-   *          a cast however.
-   */
-  SandboxStream                 *stdin_stream;
-  /**
-   * @brief   Sandbox STDOUT stream.
-   * @note    Set this to @p NULL if standard I/O is not needed.
-   * @note    By design you can use HAL streams here, you need to use
-   *          a cast however.
-   */
-  SandboxStream                 *stdout_stream;
-  /**
-   * @brief   Sandbox STDERR stream.
-   * @note    Set this to @p NULL if standard I/O is not needed.
-   * @note    By design you can use HAL streams here, you need to use
-   *          a cast however.
-   */
-  SandboxStream                 *stderr_stream;
 #endif
 } sb_config_t;
 

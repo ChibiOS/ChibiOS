@@ -25,10 +25,11 @@
  * @{
  */
 
-#include <dirent.h>
-
-#include "ch.h"
 #include "sb.h"
+
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+
+#include <dirent.h>
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -50,7 +51,6 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 static msg_t create_descriptor(sb_ioblock_t *iop,
                                vfs_node_c *np) {
   unsigned fd;
@@ -65,13 +65,11 @@ static msg_t create_descriptor(sb_ioblock_t *iop,
 
   return CH_RET_EMFILE;
 }
-#endif /* SB_CFG_ENABLE_VFS == TRUE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 int sb_posix_open(const char *path, int flags) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   vfs_node_c *np = NULL;
@@ -322,87 +320,6 @@ int sb_posix_getcwd(char *buf, size_t size) {
   return vfsDrvGetCurrentDirectory(sbp->config->vfs_driver, buf, size);
 }
 
-#else /* Fallbacks for when there is no VFS.*/
-uint32_t sb_posix_open(const char *pathname, uint32_t flags) {
-
-  (void)pathname;
-  (void)flags;
-
-  return SB_ERR_ENOENT;
-}
-
-uint32_t sb_posix_close(uint32_t fd) {
-
-  if ((fd == 0U) || (fd == 1U) || (fd == 2U)) {
-
-    return SB_ERR_NOERROR;
-  }
-
-  return SB_ERR_EBADFD;
-}
-
-uint32_t sb_posix_read(uint32_t fd, uint8_t *buf, size_t count) {
-  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-
-  if (!sb_is_valid_write_range(sbcp, (void *)buf, count)) {
-    return SB_ERR_EFAULT;
-  }
-
-  if (fd == 0U) {
-    SandboxStream *ssp = sbcp->config->stdin_stream;
-
-    if ((count == 0U) || (ssp == NULL)) {
-      return 0U;
-    }
-
-    return (uint32_t)ssp->vmt->read((void *)ssp, buf, count);
-  }
-
-  return SB_ERR_EBADFD;
-}
-
-uint32_t sb_posix_write(uint32_t fd, const uint8_t *buf, size_t count) {
-  sb_class_t *sbcp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-
-  if (!sb_is_valid_read_range(sbcp, (const void *)buf, count)) {
-    return SB_ERR_EFAULT;
-  }
-
-  if (fd == 1U) {
-    SandboxStream *ssp = sbcp->config->stdout_stream;
-
-    if ((count == 0U) || (ssp == NULL)) {
-      return 0U;
-    }
-
-    return (uint32_t)ssp->vmt->write((void *)ssp, buf, count);
-  }
-
-  if (fd == 2U) {
-    SandboxStream *ssp = sbcp->config->stderr_stream;
-
-    if ((count == 0U) || (ssp == NULL)) {
-      return 0U;
-    }
-
-    return (uint32_t)ssp->vmt->write((void *)ssp, buf, count);
-  }
-
-  return SB_ERR_EBADFD;
-}
-
-uint32_t sb_posix_lseek(uint32_t fd, uint32_t offset, uint32_t whence) {
-
-  (void)offset;
-  (void)whence;
-
-  if ((fd == 0U) || (fd == 1U) || (fd == 2U)) {
-
-    return SB_ERR_ESPIPE;
-  }
-
-  return SB_ERR_EBADFD;
-}
 #endif
 
 /** @} */

@@ -72,7 +72,7 @@ static const sb_config_t sb_config1 = {
       .writeable    = true
     }
   },
-  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+//  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
 };
 
 /* Sandbox 2 configuration.*/
@@ -89,7 +89,7 @@ static const sb_config_t sb_config2 = {
       .writeable    = true
     }
   },
-  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+//  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
 };
 
 /* Sandbox objects.*/

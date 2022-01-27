@@ -40,7 +40,9 @@
  * @name    Standard API handlers
  * @{
  */
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 #define SB_SVC0_HANDLER         sb_api_stdio
+#endif
 #define SB_SVC1_HANDLER         sb_api_exit
 #define SB_SVC2_HANDLER         sb_api_get_systime
 #define SB_SVC3_HANDLER         sb_api_get_frequency
@@ -976,6 +978,7 @@ void __sb_abort(msg_t msg) {
   chSysHalt("zombies");
 }
 
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 void sb_api_stdio(struct port_extctx *ectxp) {
 
   switch (ectxp->r0) {
@@ -1029,6 +1032,7 @@ void sb_api_stdio(struct port_extctx *ectxp) {
     break;
   }
 }
+#endif /* SB_CFG_ENABLE_VFS == TRUE */
 
 void sb_api_exit(struct port_extctx *ectxp) {
 

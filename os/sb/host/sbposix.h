@@ -29,8 +29,8 @@
 #define SBPOSIX_H
 
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+
 #include "vfs.h"
-#endif
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -92,6 +92,8 @@ static inline bool sb_is_existing_descriptor(sb_ioblock_t *iop, int fd) {
 
   return (fd >= 0) && (fd < SB_CFG_FD_NUM) && (iop->vfs_nodes[fd] != NULL);
 }
+
+#endif /* SB_CFG_ENABLE_VFS == TRUE */
 
 #endif /* SBPOSIX_H */
 
