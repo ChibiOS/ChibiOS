@@ -22,7 +22,7 @@
  * @{
  */
 
-#include "hal.h"
+#include "lfs_wspi.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -74,6 +74,79 @@ void *lfs_malloc(size_t size) {
 void lfs_free(void *p) {
 
   (void)p;
+}
+
+int __lfs_read(const struct lfs_config *c, lfs_block_t block,
+               lfs_off_t off, void *buffer, lfs_size_t size) {
+  BaseFlash *flp = (BaseFlash *)c->context;
+  flash_error_t err;
+
+  err = flashRead(flp,
+                  (flash_offset_t)(block * c->block_size) + (flash_offset_t)off,
+                  (size_t)size,
+                  (uint8_t *)buffer);
+  if (err != FLASH_NO_ERROR) {
+    return LFS_ERR_IO;
+  }
+
+  return 0;
+}
+
+int __lfs_prog(const struct lfs_config *c, lfs_block_t block,
+               lfs_off_t off, const void *buffer, lfs_size_t size) {
+  BaseFlash *flp = (BaseFlash *)c->context;
+  flash_error_t err;
+
+  err = flashProgram(flp,
+                     (flash_offset_t)(block * c->block_size) + (flash_offset_t)off,
+                     (size_t)size,
+                     (uint8_t *)buffer);
+  if (err != FLASH_NO_ERROR) {
+    return LFS_ERR_IO;
+  }
+
+  return 0;
+}
+
+int __lfs_erase(const struct lfs_config *c, lfs_block_t block) {
+  BaseFlash *flp = (BaseFlash *)c->context;
+  flash_error_t err;
+
+  err = flashStartEraseSector(flp, (flash_sector_t)block);
+  if (err != FLASH_NO_ERROR) {
+    return LFS_ERR_IO;
+  }
+
+  err = flashWaitErase(flp);
+  if (err != FLASH_NO_ERROR) {
+    return LFS_ERR_IO;
+  }
+
+  return 0;
+}
+
+int __lfs_sync(const struct lfs_config *c) {
+  BaseFlash *flp = (BaseFlash *)c->context;
+
+  (void)flp;
+
+  return 0;
+}
+
+int __lfs_lock(const struct lfs_config *c) {
+  BaseFlash *flp = (BaseFlash *)c->context;
+
+  flashAcquireExclusive(flp);
+
+  return 0;
+}
+
+int __lfs_unlock(const struct lfs_config *c) {
+  BaseFlash *flp = (BaseFlash *)c->context;
+
+  flashReleaseExclusive(flp);
+
+  return 0;
 }
 
 /** @} */

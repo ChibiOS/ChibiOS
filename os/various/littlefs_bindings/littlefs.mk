@@ -6,7 +6,7 @@ LITTLEFSSRC = $(CHIBIOS)/os/various/littlefs_bindings/lfs_wspi.c \
 LITTLEFSINC = $(CHIBIOS)/os/various/littlefs_bindings \
               $(CHIBIOS)/ext/littlefs
 
-DDEFS      += -DLFS_THREADSAFE=1 -DLFS_NO_DEBUG=0 -DLFS_CONFIG=lfs_wspi.h
+DDEFS      += -DLFS_THREADSAFE=1 -DLFS_NO_DEBUG=0 -DLFS_CONFIG=lfs_config.h
 
 # Shared variables
 ALLCSRC += $(LITTLEFSSRC)
