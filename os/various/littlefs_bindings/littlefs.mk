@@ -1,5 +1,5 @@
 # LittleFS files.
-LITTLEFSSRC = $(CHIBIOS)/os/various/littlefs_bindings/lfs_wspi.c \
+LITTLEFSSRC = $(CHIBIOS)/os/various/littlefs_bindings/lfs_hal.c \
               $(CHIBIOS)/ext/littlefs/lfs.c \
               $(CHIBIOS)/ext/littlefs/lfs_util.c
 

@@ -21,8 +21,8 @@
  */
 
 /**
- * @file    lfs_wspi.h
- * @brief   LittleFS bindings header.
+ * @file    lfs_hal.h
+ * @brief   LittleFS-HAL bindings header.
  *
  * @addtogroup LITTLEFS_BINDINGS
  * @{

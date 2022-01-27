@@ -13,16 +13,22 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+/*
+ * Parts of this file are:
+ *
+ * Copyright (c) 2017, Arm Limited. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 /**
- * @file    lfs_wspi.c
- * @brief   LittleFS bindings code.
+ * @file    lfs_hal.c
+ * @brief   LittleFS-HAL bindings code.
  *
  * @addtogroup LITTLEFS_BINDINGS
  * @{
  */
 
-#include "lfs_wspi.h"
+#include "lfs_hal.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
