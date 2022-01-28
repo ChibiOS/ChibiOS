@@ -64,6 +64,8 @@ extern "C" {
   void __vfs_buffers_init(void);
   char *vfs_buffer_take(void);
   void vfs_buffer_release(char *buf);
+  char *vfs_buffer_alloc(void);
+  void vfs_buffer_free(char *buf);
 #ifdef __cplusplus
 }
 #endif

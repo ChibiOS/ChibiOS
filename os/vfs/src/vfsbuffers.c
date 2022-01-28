@@ -50,12 +50,16 @@ static struct {
   /**
    * @brief   Guarded pool of path buffers.
    */
-  guarded_memory_pool_t             path_buffers_pool;
+  guarded_memory_pool_t             path_buffers1_pool;
+  /**
+   * @brief   Normal pool of path buffers.
+   */
+  memory_pool_t                     path_buffers2_pool;
   /**
    * @brief   Shared path buffers.
    */
-  char                              path_buffers[VFS_CFG_PATHBUFS_NUM]
-                                                [VFS_BUFFERS_SIZE];
+  char                              path_buffers1[VFS_CFG_PATHBUFS_NUM]
+                                                 [VFS_BUFFERS_SIZE];
 } vfs_buffers_static;
 
 /*===========================================================================*/
@@ -73,32 +77,56 @@ static struct {
  */
 void __vfs_buffers_init(void) {
 
-  chGuardedPoolObjectInit(&vfs_buffers_static.path_buffers_pool,
+  chGuardedPoolObjectInit(&vfs_buffers_static.path_buffers1_pool,
                           VFS_BUFFERS_SIZE);
-  chGuardedPoolLoadArray(&vfs_buffers_static.path_buffers_pool,
-                         &vfs_buffers_static.path_buffers[0],
+  chGuardedPoolLoadArray(&vfs_buffers_static.path_buffers1_pool,
+                         &vfs_buffers_static.path_buffers1[0],
                          VFS_CFG_PATHBUFS_NUM);
+  chPoolObjectInit(&vfs_buffers_static.path_buffers2_pool,
+                   VFS_BUFFERS_SIZE,
+                   chCoreAllocAlignedI);
 }
 
 /**
- * @brief   Claims a path buffer, waiting if not available.
+ * @brief   Claims a path buffer from the fixed pool, waiting if not available.
  *
  * @return                      Pointer to the taken buffer.
  */
 char *vfs_buffer_take(void) {
 
-  return (char *)chGuardedPoolAllocTimeout(&vfs_buffers_static.path_buffers_pool,
+  return (char *)chGuardedPoolAllocTimeout(&vfs_buffers_static.path_buffers1_pool,
                                            TIME_INFINITE);
 }
 
 /**
- * @brief   Releases a path buffer.
+ * @brief   Releases a path buffer into the fixed pool.
  *
  * @param[in] buf               Buffer to be released.
  */
 void vfs_buffer_release(char *buf) {
 
-  chGuardedPoolFree(&vfs_buffers_static.path_buffers_pool, (void *)buf);
+  chGuardedPoolFree(&vfs_buffers_static.path_buffers1_pool, (void *)buf);
+}
+
+/**
+ * @brief   Allocates a path buffer from the dynamic pool.
+ *
+ * @return                      Pointer to the allocated buffer.
+ * @retval NULL                 If the buffer allocation failed.
+ */
+char *vfs_buffer_alloc(void) {
+
+  return (char *)chPoolAlloc(&vfs_buffers_static.path_buffers2_pool);
+}
+
+/**
+ * @brief   Frees a path buffer into the dynamic pool.
+ *
+ * @param[in] buf               Buffer to be freed.
+ */
+void vfs_buffer_free(char *buf) {
+
+  chPoolFree(&vfs_buffers_static.path_buffers2_pool, (void *)buf);
 }
 
 /** @} */
