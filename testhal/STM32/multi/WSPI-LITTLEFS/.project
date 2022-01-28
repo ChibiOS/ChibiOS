@@ -77,6 +77,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>littlefs</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/ext/littlefs</locationURI>
+		</link>
+		<link>
 			<name>os</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>

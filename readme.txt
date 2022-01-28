@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added integration of LittleFS on top of our flash infrastructure.
 - NEW: Added a new MEM_IS_VALID_FUNCTION() macro to RT and NIL.
 - NEW: Improved HAL flash interface with mutual exclusion methods, improved
        EFL and SNOR drivers to use it.

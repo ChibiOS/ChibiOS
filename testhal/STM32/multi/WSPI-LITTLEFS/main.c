@@ -18,17 +18,54 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "lfs.h"
+#include "lfs_hal.h"
 
 #include "hal_serial_nor.h"
 
 #include "portab.h"
 
-const SNORConfig snorcfg1 = {
+static const SNORConfig snorcfg1 = {
   .busp             = &PORTAB_WSPI1,
   .buscfg           = &WSPIcfg1
 };
 
-SNORDriver snor1;
+static SNORDriver snor1;
+
+static uint8_t __lfs_read_buffer[16];
+static uint8_t __lfs_prog_buffer[16];
+static uint8_t __lfs_lookahead_buffer[16];
+
+static const struct lfs_config lfscfg = {
+    /* Link to the flash device driver.*/
+    .context            = &snor1,
+
+    /* Block device operations.*/
+    .read               = __lfs_read,
+    .prog               = __lfs_prog,
+    .erase              = __lfs_erase,
+    .sync               = __lfs_sync,
+    .lock               = __lfs_lock,
+    .unlock             = __lfs_unlock,
+
+    /* Block device configuration.*/
+    .read_size          = 16,
+    .prog_size          = 16,
+    .block_size         = 4096,
+    .block_count        = 128,
+    .block_cycles       = 500,
+    .cache_size         = 16,
+    .lookahead_size     = 16,
+    .read_buffer        = __lfs_read_buffer,
+    .prog_buffer        = __lfs_prog_buffer,
+    .lookahead_buffer   = __lfs_lookahead_buffer,
+    .name_max           = 0,
+    .file_max           = 0,
+    .attr_max           = 0,
+    .metadata_max       = 0
+};
+
+static lfs_t lfs;
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -50,6 +87,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  int err;
 
   /*
    * System initializations.
@@ -70,18 +108,22 @@ int main(void) {
   /* Initializing and starting snor1 driver.*/
   snorObjectInit(&snor1);
   snorStart(&snor1, &snorcfg1);
-#if 1
-  /* Testing memory mapped mode.*/
-  {
-    uint8_t *addr;
 
-    snorMemoryMap(&snor1, &addr);
-    chThdSleepMilliseconds(50);
-    snorMemoryUnmap(&snor1);
-  }
-#endif
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  /* Mounting the file system, if it fails then formatting.*/
+  err = lfs_mount(&lfs, &lfscfg);
+  if (err < 0) {
+      err = lfs_format(&lfs, &lfscfg);
+      if (err < 0) {
+        chSysHalt("LFS format failed");
+      }
+      err = lfs_mount(&lfs, &lfscfg);
+      if (err < 0) {
+        chSysHalt("LFS mount failed");
+      }
+  }
 
   /* Normal main() thread activity, in this demo it does nothing.*/
   while (true) {
