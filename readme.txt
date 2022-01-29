@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.2 ***
+- FIX: Reverted bug #1100.
 - FIX: Fixed Virtual Timers failure in a specific condition (bug #1215).
 - FIX: Fixed invalid STM32_OTG_STEPPING for STM32F40_41xxx (bug #1214).
 - FIX: Fixed SPIv2 driver compile fails when SPI_USE_SYNCHRONIZATION is FALSE
