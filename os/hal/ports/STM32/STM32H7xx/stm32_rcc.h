@@ -54,6 +54,78 @@
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
+__STATIC_INLINE void __rccResetAPB1L(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->APB1LRSTR |= mask;
+  RCC->APB1LRSTR &= ~mask;
+  (void)RCC->APB1LRSTR;
+}
+
+__STATIC_INLINE void __rccResetAPB1H(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->APB1HRSTR |= mask;
+  RCC->APB1HRSTR &= ~mask;
+  (void)RCC->APB1HRSTR;
+}
+
+__STATIC_INLINE void __rccResetAPB2(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->APB2RSTR |= mask;
+  RCC->APB2RSTR &= ~mask;
+  (void)RCC->APB2RSTR;
+}
+
+__STATIC_INLINE void __rccResetAPB3(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->APB3RSTR |= mask;
+  RCC->APB3RSTR &= ~mask;
+  (void)RCC->APB3RSTR;
+}
+
+__STATIC_INLINE void __rccResetAPB4(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->APB4RSTR |= mask;
+  RCC->APB4RSTR &= ~mask;
+  (void)RCC->APB4RSTR;
+}
+
+__STATIC_INLINE void __rccResetAHB1(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->AHB1RSTR |= mask;
+  RCC->AHB1RSTR &= ~mask;
+  (void)RCC->AHB1RSTR;
+}
+
+__STATIC_INLINE void __rccResetAHB2(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->AHB2RSTR |= mask;
+  RCC->AHB2RSTR &= ~mask;
+  (void)RCC->AHB2RSTR;
+}
+
+__STATIC_INLINE void __rccResetAHB3(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->AHB3RSTR |= mask;
+  RCC->AHB3RSTR &= ~mask;
+  (void)RCC->AHB3RSTR;
+}
+
+__STATIC_INLINE void __rccResetAHB4(uint32_t mask) {
+
+  /* Resetting the peripherals.*/
+  RCC->AHB4RSTR |= mask;
+  RCC->AHB4RSTR &= ~mask;
+  (void)RCC->AHB4RSTR;
+}
+
 /**
  * @name    Generic RCC operations
  * @{
@@ -144,10 +216,7 @@ __STATIC_INLINE void rccResetAPB1L(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->APB1LRSTR |= mask;
-  RCC->APB1LRSTR &= ~mask;
-  (void)RCC->APB1LRSTR;
+  __rccResetAPB1L(mask);
 }
 
 /**
@@ -236,11 +305,9 @@ __STATIC_INLINE void rccResetAPB1H(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->APB1HRSTR |= mask;
-  RCC->APB1HRSTR &= ~mask;
-  (void)RCC->APB1HRSTR;
+  __rccResetAPB1H(mask);
 }
+
 /**
  * @brief   Enables peripherals on APB2.
  *
@@ -327,10 +394,7 @@ __STATIC_INLINE void rccResetAPB2(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->APB2RSTR |= mask;
-  RCC->APB2RSTR &= ~mask;
-  (void)RCC->APB2RSTR;
+  __rccResetAPB2(mask);
 }
 
 /**
@@ -419,10 +483,7 @@ __STATIC_INLINE void rccResetAPB3(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->APB3RSTR |= mask;
-  RCC->APB3RSTR &= ~mask;
-  (void)RCC->APB3RSTR;
+  __rccResetAPB3(mask);
 }
 
 /**
@@ -511,10 +572,7 @@ __STATIC_INLINE void rccResetAPB4(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->APB4RSTR |= mask;
-  RCC->APB4RSTR &= ~mask;
-  (void)RCC->APB4RSTR;
+  __rccResetAPB4(mask);
 }
 
 /**
@@ -603,10 +661,7 @@ __STATIC_INLINE void rccResetAHB1(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->AHB1RSTR |= mask;
-  RCC->AHB1RSTR &= ~mask;
-  (void)RCC->AHB1RSTR;
+  __rccResetAHB1(mask);
 }
 
 /**
@@ -695,10 +750,7 @@ __STATIC_INLINE void rccResetAHB2(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->AHB2RSTR |= mask;
-  RCC->AHB2RSTR &= ~mask;
-  (void)RCC->AHB2RSTR;
+  __rccResetAHB2(mask);
 }
 
 /**
@@ -787,10 +839,7 @@ __STATIC_INLINE void rccResetAHB3(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->AHB3RSTR |= mask;
-  RCC->AHB3RSTR &= ~mask;
-  (void)RCC->AHB3RSTR;
+  __rccResetAHB3(mask);
 }
 
 /**
@@ -879,10 +928,7 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
 #endif
 #endif
 
-  /* Resetting the peripherals.*/
-  RCC->AHB4RSTR |= mask;
-  RCC->AHB4RSTR &= ~mask;
-  (void)RCC->AHB4RSTR;
+  __rccResetAHB4(mask);
 }
 /** @} */
 
