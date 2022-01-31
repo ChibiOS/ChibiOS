@@ -231,10 +231,11 @@ static uint8_t sd_out_buflp1[STM32_SERIAL_LPUART1_OUT_BUF_SIZE];
  */
 static void usart_init(SerialDriver *sdp,
                        const SerialConfig *config) {
-  uint32_t brr;
+  uint32_t brr, clock;
   USART_TypeDef *u = sdp->usart;
 
   /* Baud rate setting.*/
+  clock = sdp->clock;
 #if STM32_SERIAL_USE_LPUART1
   if (sdp == &LPSD1) {
     osalDbgAssert((clock >= config->speed * 3U) &&
@@ -248,8 +249,7 @@ static void usart_init(SerialDriver *sdp,
   else
 #endif
   {
-    brr = (uint32_t)((sdp->clock + config->speed / 2) /
-                     config->speed);
+    brr = (uint32_t)((clock + config->speed / 2) / config->speed);
 
     /* Correcting BRR value when oversampling by 8 instead of 16.
        Fraction is still 4 bits wide, but only lower 3 bits used.
