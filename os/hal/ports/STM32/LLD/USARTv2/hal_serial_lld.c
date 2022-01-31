@@ -228,11 +228,9 @@ static uint8_t sd_out_buflp1[STM32_SERIAL_LPUART1_OUT_BUF_SIZE];
  *
  * @param[in] sdp       pointer to a @p SerialDriver object
  * @param[in] config    the architecture-dependent serial driver configuration
- * @param[in] clock      base clock for the USART
  */
 static void usart_init(SerialDriver *sdp,
-                       const SerialConfig *config,
-                       uint32_t clock) {
+                       const SerialConfig *config) {
   uint32_t brr;
   USART_TypeDef *u = sdp->usart;
 
@@ -250,7 +248,8 @@ static void usart_init(SerialDriver *sdp,
   else
 #endif
   {
-    brr = (uint32_t)((clock + config->speed/2) / config->speed);
+    brr = (uint32_t)((sdp->clock + config->speed / 2) /
+                     config->speed);
 
     /* Correcting BRR value when oversampling by 8 instead of 16.
        Fraction is still 4 bits wide, but only lower 3 bits used.
@@ -605,6 +604,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD1.iqueue, sd_in_buf1, sizeof sd_in_buf1, NULL, &SD1);
   oqObjectInit(&SD1.oqueue, sd_out_buf1, sizeof sd_out_buf1, notify1, &SD1);
   SD1.usart = USART1;
+  SD1.clock = STM32_USART1CLK;
 #if !defined(STM32_USART1_SUPPRESS_ISR) && defined(STM32_USART1_NUMBER)
   nvicEnableVector(STM32_USART1_NUMBER, STM32_SERIAL_USART1_PRIORITY);
 #endif
@@ -615,6 +615,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD2.iqueue, sd_in_buf2, sizeof sd_in_buf2, NULL, &SD2);
   oqObjectInit(&SD2.oqueue, sd_out_buf2, sizeof sd_out_buf2, notify2, &SD2);
   SD2.usart = USART2;
+  SD2.clock = STM32_USART2CLK;
 #if !defined(STM32_USART2_SUPPRESS_ISR) && defined(STM32_USART2_NUMBER)
   nvicEnableVector(STM32_USART2_NUMBER, STM32_SERIAL_USART2_PRIORITY);
 #endif
@@ -625,6 +626,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD3.iqueue, sd_in_buf3, sizeof sd_in_buf3, NULL, &SD3);
   oqObjectInit(&SD3.oqueue, sd_out_buf3, sizeof sd_out_buf3, notify3, &SD3);
   SD3.usart = USART3;
+  SD3.clock = STM32_USART3CLK;
 #if !defined(STM32_USART3_SUPPRESS_ISR) && defined(STM32_USART3_NUMBER)
   nvicEnableVector(STM32_USART3_NUMBER, STM32_SERIAL_USART3_PRIORITY);
 #endif
@@ -635,6 +637,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD4.iqueue, sd_in_buf4, sizeof sd_in_buf4, NULL, &SD4);
   oqObjectInit(&SD4.oqueue, sd_out_buf4, sizeof sd_out_buf4, notify4, &SD4);
   SD4.usart = UART4;
+  SD4.clock = STM32_UART4CLK;
 #if !defined(STM32_UART4_SUPPRESS_ISR) && defined(STM32_UART4_NUMBER)
   nvicEnableVector(STM32_UART4_NUMBER, STM32_SERIAL_UART4_PRIORITY);
 #endif
@@ -645,6 +648,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD5.iqueue, sd_in_buf5, sizeof sd_in_buf5, NULL, &SD5);
   oqObjectInit(&SD5.oqueue, sd_out_buf5, sizeof sd_out_buf5, notify5, &SD5);
   SD5.usart = UART5;
+  SD5.clock = STM32_UART5CLK;
 #if !defined(STM32_UART5_SUPPRESS_ISR) && defined(STM32_UART5_NUMBER)
   nvicEnableVector(STM32_UART5_NUMBER, STM32_SERIAL_UART5_PRIORITY);
 #endif
@@ -655,6 +659,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD6.iqueue, sd_in_buf6, sizeof sd_in_buf6, NULL, &SD6);
   oqObjectInit(&SD6.oqueue, sd_out_buf6, sizeof sd_out_buf6, notify6, &SD6);
   SD6.usart = USART6;
+  SD6.clock = STM32_USART6CLK;
 #if !defined(STM32_USART6_SUPPRESS_ISR) && defined(STM32_USART6_NUMBER)
   nvicEnableVector(STM32_USART6_NUMBER, STM32_SERIAL_USART6_PRIORITY);
 #endif
@@ -665,6 +670,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD7.iqueue, sd_in_buf7, sizeof sd_in_buf7, NULL, &SD7);
   oqObjectInit(&SD7.oqueue, sd_out_buf7, sizeof sd_out_buf7, notify7, &SD7);
   SD7.usart = UART7;
+  SD7.clock = STM32_UART7CLK;
 #if !defined(STM32_UART7_SUPPRESS_ISR) && defined(STM32_UART7_NUMBER)
   nvicEnableVector(STM32_UART7_NUMBER, STM32_SERIAL_UART7_PRIORITY);
 #endif
@@ -675,6 +681,7 @@ void sd_lld_init(void) {
   iqObjectInit(&SD8.iqueue, sd_in_buf8, sizeof sd_in_buf8, NULL, &SD8);
   oqObjectInit(&SD8.oqueue, sd_out_buf8, sizeof sd_out_buf8, notify8, &SD8);
   SD8.usart = UART8;
+  SD8.clock = STM32_UART8CLK;
 #if !defined(STM32_UART8_SUPPRESS_ISR) && defined(STM32_UART8_NUMBER)
   nvicEnableVector(STM32_UART8_NUMBER, STM32_SERIAL_UART8_PRIORITY);
 #endif
@@ -685,6 +692,7 @@ void sd_lld_init(void) {
   iqObjectInit(&LPSD1.iqueue, sd_in_buflp1, sizeof sd_in_buflp1, NULL, &LPSD1);
   oqObjectInit(&LPSD1.oqueue, sd_out_buflp1, sizeof sd_out_buflp1, notifylp1, &LPSD1);
   LPSD1.usart = LPUART1;
+  LPSD1.clock = STM32_LPUART1CLK;
 #if !defined(STM32_LPUART1_SUPPRESS_ISR) && defined(STM32_LPUART1_NUMBER)
   nvicEnableVector(STM32_LPUART1_NUMBER, STM32_SERIAL_LPUART1_PRIORITY);
 #endif
@@ -702,7 +710,6 @@ void sd_lld_init(void) {
  * @notapi
  */
 void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
-  uint32_t clock = 0U;
 
   if (config == NULL)
     config = &default_config;
@@ -710,60 +717,51 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
   if (sdp->state == SD_STOP) {
 #if STM32_SERIAL_USE_USART1
     if (&SD1 == sdp) {
-      clock = STM32_USART1CLK;
       rccEnableUSART1(true);
     }
 #endif
 #if STM32_SERIAL_USE_USART2
     if (&SD2 == sdp) {
-      clock = STM32_USART2CLK;
       rccEnableUSART2(true);
     }
 #endif
 #if STM32_SERIAL_USE_USART3
     if (&SD3 == sdp) {
-      clock = STM32_USART3CLK;
       rccEnableUSART3(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART4
     if (&SD4 == sdp) {
-      clock = STM32_UART4CLK;
       rccEnableUART4(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART5
     if (&SD5 == sdp) {
-      clock = STM32_UART5CLK;
       rccEnableUART5(true);
     }
 #endif
 #if STM32_SERIAL_USE_USART6
     if (&SD6 == sdp) {
-      clock = STM32_USART6CLK;
       rccEnableUSART6(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART7
     if (&SD7 == sdp) {
-      clock = STM32_UART7CLK;
       rccEnableUART7(true);
     }
 #endif
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
-      clock = STM32_UART8CLK;
       rccEnableUART8(true);
     }
 #endif
 #if STM32_SERIAL_USE_LPUART1
     if (&LPSD1 == sdp) {
-      clock = STM32_LPUART1CLK;
       rccEnableLPUART1(true);
     }
 #endif
   }
-  usart_init(sdp, config, clock);
+  usart_init(sdp, config);
 }
 
 /**

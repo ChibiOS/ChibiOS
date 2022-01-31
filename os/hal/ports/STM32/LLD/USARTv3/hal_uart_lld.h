@@ -820,6 +820,10 @@ struct hal_uart_driver {
    */
   USART_TypeDef             *usart;
   /**
+   * @brief   Clock frequency for the associated USART/UART.
+   */
+  uint32_t                  clock;
+  /**
    * @brief   Receive DMA mode bit mask.
    */
   uint32_t                  dmarxmode;
