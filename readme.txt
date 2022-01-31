@@ -75,6 +75,8 @@
 
 *** 21.11.2 ***
 - FIX: Reverted bug #1100.
+- FIX: Fixed clock re-initialization problem in STM32 USARTv2 and USARTv3
+       drivers (bug #1217).
 - FIX: Fixed assertion on initialization of STM32H7xx (bug #1216).
 - FIX: Fixed Virtual Timers failure in a specific condition (bug #1215).
 - FIX: Fixed invalid STM32_OTG_STEPPING for STM32F40_41xxx (bug #1214).
