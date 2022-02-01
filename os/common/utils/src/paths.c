@@ -211,7 +211,7 @@ size_t path_add_extension(char *dst, const char *ext, size_t size) {
  * @note    It can return an empty element, it has to be detected outside.
  *
  * @param[in, out]  pathp       Pointer to the path under parsing.
- * @param[out]      dst         Buffer for the extracted path element
+ * @param[out]      dst         Buffer for the extracted path element.
  * @param[in]       size        Destination buffer size.
  * @return                      The size of the fetched path element, it does
  *                              not fetch beyond @p size.
@@ -254,7 +254,7 @@ size_t path_copy_element(const char **pathp, char *dst, size_t size) {
  * @note    It can return an empty element, it has to be detected outside.
  *
  * @param[in, out]  pathp       Pointer to the path under parsing.
- * @param[out]      dst         Buffer for the extracted path element
+ * @param[out]      dst         Buffer for the extracted path element.
  * @param[in]       size        Destination buffer size.
  * @return                      The size of the fetched path element, it does
  *                              not fetch beyond @p size.
@@ -270,6 +270,45 @@ size_t path_get_element(const char **pathp, char *dst, size_t size) {
   }
 
   return n;
+}
+
+/**
+ * @brief   Verifies that the next path element is equal to the match string.
+ *
+ * @param[in]       path        The source path.
+ * @param[in]       match       String to be matched.
+ * @param[in]       size        Destination buffer size.
+ * @return                      The size of the matched path element, it does
+ *                              not match beyond @p size.
+ * @retval 0                    Null element.
+ * @retval size                 Buffer overflow or no match.
+ */
+size_t path_match_element(const char *path, const char *match, size_t size) {
+  size_t n;
+
+  n = (size_t)0;
+  while (true) {
+    char c1 = *path;
+    char c2 = *match;
+
+    /* Path elements must be terminated by a separator or an end-of-string.*/
+    if ((c1 == '/') || (c1 == '\0')) {
+      return c2 == '\0' ? n : size;
+    }
+
+    if (c1 != c2) {
+      return size;
+    }
+
+    path++;
+    match++;
+    n++;
+
+    /* Exceeding the maximum length considering the space for the final zero.*/
+    if (n >= size) {
+      return size;
+    }
+  }
 }
 
 /**

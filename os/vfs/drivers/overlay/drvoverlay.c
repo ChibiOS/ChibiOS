@@ -100,35 +100,23 @@ static struct {
 static msg_t match_driver(vfs_overlay_driver_c *odp,
                           const char **pathp,
                           vfs_driver_c **vdpp) {
-  char fname[VFS_CFG_NAMELEN_MAX + 1];
-  size_t n;
-  msg_t ret;
+  unsigned i;
 
-  do {
-    unsigned i;
+  i = 0U;
+  while (i < odp->next_driver) {
+    size_t n;
 
-    n = path_get_element(pathp, fname, VFS_CFG_NAMELEN_MAX + 1);
-    if (n >= VFS_CFG_NAMELEN_MAX + 1) {
-      ret = CH_RET_ENAMETOOLONG;
-      break;
+    n = path_match_element(*pathp, odp->names[i], VFS_CFG_NAMELEN_MAX + 1);
+    if (n < VFS_CFG_NAMELEN_MAX + 1) {
+      *pathp += n;
+      *vdpp = odp->drivers[i];
+      return CH_RET_SUCCESS;
     }
 
-    /* Searching among registered drivers.*/
-    i = 0U;
-    while (i < odp->next_driver) {
-      if (memcmp(fname, odp->names[i], n) == 0) {
-        *vdpp = odp->drivers[i];
-        return CH_RET_SUCCESS;
-      }
-
-      i++;
-    }
-
-    ret = CH_RET_ENOENT;
+    i++;
   }
-  while (false);
 
-  return ret;
+  return CH_RET_ENOENT;
 }
 
 static const char *get_current_directory(vfs_overlay_driver_c *drvp) {
@@ -526,7 +514,10 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
   }
 
   do {
+    msg_t oldret, newret;
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
+    vfs_driver_c *olddp, *newdp;
+    const char *op, *np;
 
     /* Building the absolute paths based on current directory.*/
     ret = build_absolute_path(drvp, oldbuf, oldpath);
@@ -534,7 +525,57 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
     ret = build_absolute_path(drvp, newbuf, newpath);
     CH_BREAK_ON_ERROR(ret);
 
+    /* Skipping root separators.*/
+    op = oldbuf + 1;
+    np = newbuf + 1;
 
+    /* Searching for a match among registered drivers.*/
+    oldret = match_driver(drvp, &op, &olddp);
+    newret = match_driver(drvp, &np, &newdp);
+
+    /* There are various combinations to consider.*/
+    if (!CH_RET_IS_ERROR(oldret) && !CH_RET_IS_ERROR(newret)) {
+       /* If paths both refer to registered drivers then must refer to
+          the same driver, we cannot do a rename across drivers.*/
+      if (olddp == newdp) {
+        /* Delegating node renaming to the registered driver.*/
+        ret = olddp->vmt->rename((void *)olddp, op, np);
+      }
+      else {
+        /* Mixed, not allowing it.*/
+        ret = CH_RET_EXDEV;
+      }
+    }
+    else if (CH_RET_IS_ERROR(oldret) && CH_RET_IS_ERROR(newret)) {
+      /* If both paths refer to the overlaid driver then passing down the
+         request.*/
+      if (drvp->overlaid_drv != NULL) {
+
+        /* Processing the prefix, if defined.*/
+        if (drvp->path_prefix != NULL) {
+          if (path_prepend(oldbuf,
+                           drvp->path_prefix,
+                           VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+            ret = CH_RET_ENAMETOOLONG;
+            break;
+          }
+          if (path_prepend(newbuf,
+                           drvp->path_prefix,
+                           VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+            ret = CH_RET_ENAMETOOLONG;
+            break;
+          }
+        }
+
+        /* Passing the combined path to the overlaid driver.*/
+        ret = drvp->overlaid_drv->vmt->rename((void *)drvp->overlaid_drv,
+                                              oldbuf, newbuf);
+      }
+    }
+    else {
+      /* Mixed, not allowing it.*/
+      ret = CH_RET_EXDEV;
+    }
   } while (false);
 
   /* Buffers returned, note, in reverse order.*/
