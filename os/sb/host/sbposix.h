@@ -70,6 +70,10 @@ extern "C" {
   ssize_t sb_posix_getdents(int fd, void *buf, size_t count);
   int sb_posix_chdir(const char *path);
   int sb_posix_getcwd(char *buf, size_t size);
+  int sb_posix_unlink(const char *path);
+  int sb_posix_rename(const char *oldpath, const char *newpath);
+  int sb_posix_mkdir(const char *path, mode_t mode);
+  int sb_posix_rmdir(const char *path);
 #ifdef __cplusplus
 }
 #endif

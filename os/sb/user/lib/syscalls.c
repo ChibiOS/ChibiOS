@@ -145,45 +145,6 @@ caddr_t _sbrk_r(struct _reent *r, int incr) {
 }
 
 __attribute__((used))
-int _getdents_r(struct _reent *r, int fd, void *dp, int count) {
-  ssize_t n;
-
-  n = sbGetdents(fd, dp, count);
-  if (CH_RET_IS_ERROR(n)) {
-    __errno_r(r) = CH_DECODE_ERROR(n);
-    return -1;
-  }
-
-  return n;
-}
-
-__attribute__((used))
-int _chdir_r(struct _reent *r, const char *path) {
-  int err;
-
-  err = sbChdir(path);
-  if (CH_RET_IS_ERROR(err)) {
-    __errno_r(r) = CH_DECODE_ERROR(err);
-    return -1;
-  }
-
-  return 0;
-}
-
-__attribute__((used))
-char *_getcwd_r(struct _reent *r, char *buf, size_t size) {
-  int err;
-
-  err = sbGetcwd(buf, size);
-  if (CH_RET_IS_ERROR(err)) {
-    __errno_r(r) = CH_DECODE_ERROR(err);
-    return NULL;
-  }
-
-  return buf;
-}
-
-__attribute__((used))
 int _kill(int pid, int sig) {
 
   (void) pid;
@@ -198,6 +159,94 @@ int _getpid(void) {
 
   return 1;
   abort();
+}
+
+/* Additional functions not part of newlib.*/
+
+int _getdents_r(struct _reent *r, int fd, void *dp, int count) {
+  ssize_t n;
+
+  n = sbGetdents(fd, dp, count);
+  if (CH_RET_IS_ERROR(n)) {
+    __errno_r(r) = CH_DECODE_ERROR(n);
+    return -1;
+  }
+
+  return n;
+}
+
+int _chdir_r(struct _reent *r, const char *path) {
+  int err;
+
+  err = sbChdir(path);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return 0;
+}
+
+char *_getcwd_r(struct _reent *r, char *buf, size_t size) {
+  int err;
+
+  err = sbGetcwd(buf, size);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return NULL;
+  }
+
+  return buf;
+}
+
+int _unlink_r(struct _reent *r, const char *path) {
+  int err;
+
+  err = sbUnlink(path);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return 0;
+}
+
+int _rename_r(struct _reent *r,
+              const char *oldpath,
+              const char *newpath) {
+  int err;
+
+  err = sbRename(oldpath, newpath);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return 0;
+}
+
+int _mkdir_r(struct _reent *r, const char *path, mode_t mode) {
+  int err;
+
+  err = sbMkdir(path, mode);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return 0;
+}
+
+int _rmdir_r(struct _reent *r, const char *path) {
+  int err;
+
+  err = sbRmdir(path);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return 0;
 }
 
 #ifdef __cplusplus

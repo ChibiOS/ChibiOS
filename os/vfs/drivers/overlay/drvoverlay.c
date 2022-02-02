@@ -53,7 +53,7 @@ static msg_t drv_open_file(void *instance, const char *path,
                            int flags, vfs_file_node_c **vfnpp);
 static msg_t drv_unlink(void *instance, const char *path);
 static msg_t drv_rename(void *instance,const char *oldpath,const char *newpath);
-static msg_t drv_mkdir(void *instance,const char *path);
+static msg_t drv_mkdir(void *instance,const char *path, vfs_mode_t mode);
 static msg_t drv_rmdir(void *instance, const char *path);
 
 static const struct vfs_overlay_driver_vmt driver_vmt = {
@@ -585,7 +585,7 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
   return ret;
 }
 
-msg_t drv_mkdir(void *instance, const char *path) {
+msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
   msg_t ret;
   char *buf;
 
@@ -614,11 +614,29 @@ msg_t drv_mkdir(void *instance, const char *path) {
       ret = match_driver(drvp, &scanpath, &dp);
       if (!CH_RET_IS_ERROR(ret)) {
         /* Delegating directory creation to a registered driver.*/
-        ret = dp->vmt->mkdir((void *)dp, scanpath);
+        ret = dp->vmt->mkdir((void *)dp, scanpath, mode);
       }
       else {
-        /* Passing the request to the overlaid driver, if any.*/
-        ret = drv_overlaid_path_call(drvp, buf, drvp->overlaid_drv->vmt->mkdir);
+        /* Is there an overlaid driver? if so we need to pass request
+           processing there.*/
+        if (drvp->overlaid_drv != NULL) {
+
+          /* Processing the prefix, if defined.*/
+          if (drvp->path_prefix != NULL) {
+            if (path_prepend(buf,
+                             drvp->path_prefix,
+                             VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+              ret = CH_RET_ENAMETOOLONG;
+              break;
+            }
+          }
+
+          /* Passing the combined path to the overlaid driver.*/
+          ret = drvp->overlaid_drv->vmt->mkdir((void *)drvp->overlaid_drv, buf, mode);
+        }
+        else {
+          ret = CH_RET_ENOENT;
+        }
       }
     }
   } while (false);

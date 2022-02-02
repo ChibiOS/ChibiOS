@@ -195,13 +195,14 @@ msg_t vfsRename(const char *oldpath, const char *newpath) {
  * @brief   Creates a directory.
  *
  * @param[in] path      Path of the directory to be created.
+ * @param[in] mode      Mode flags for the directory.
  * @return              The operation result.
  *
  * @api
  */
-msg_t vfsMkdir(const char *path) {
+msg_t vfsMkdir(const char *path, vfs_mode_t mode) {
 
-  return vfsDrvMkdir(vfs_root, path);
+  return vfsDrvMkdir(vfs_root, path, mode);
 }
 
 /**

@@ -92,4 +92,26 @@ char *getcwd(char *buf, size_t size) {
   return _getcwd_r(_REENT, buf, size);
 }
 
+int unlink(const char *path) {
+
+  return _unlink_r(_REENT, path);
+}
+
+int rename(const char *oldpath,
+           const char *newpath) {
+
+  return _rename_r(_REENT, oldpath, newpath);
+}
+
+int mkdir(const char *path, mode_t mode) {
+
+  return _mkdir_r(_REENT, path, mode);
+}
+
+int rmdir(const char *path) {
+  extern int _rmdir_r(struct _reent *r, const char *path);
+
+  return _rmdir_r(_REENT, path);
+}
+
 /*** EOF ***/

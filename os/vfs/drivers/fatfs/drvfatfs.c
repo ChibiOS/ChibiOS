@@ -121,7 +121,7 @@ static msg_t drv_open_file(void *instance,
                            vfs_file_node_c **vfnpp);
 msg_t drv_unlink(void *instance, const char *path);
 msg_t drv_rename(void *instance, const char *oldpath, const char *newpath);
-msg_t drv_mkdir(void *instance, const char *path);
+msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode);
 msg_t drv_rmdir(void *instance, const char *path);
 
 static const struct vfs_fatfs_driver_vmt driver_vmt = {
@@ -445,9 +445,10 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
   return translate_error(f_rename(oldpath, newpath));
 }
 
-msg_t drv_mkdir(void *instance, const char *path) {
+msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
 
   (void)instance;
+  (void)mode; /* Not handled by FatFS.*/
 
   return translate_error(f_mkdir(path));
 }

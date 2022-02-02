@@ -402,7 +402,7 @@ static void cmd_mkdir(BaseSequentialStream *chp, int argc, char *argv[]) {
     return;
   }
 
-  ret = vfsMkdir(argv[0]);
+  ret = vfsMkdir(argv[0], 0777U);
   if (CH_RET_IS_ERROR(ret)) {
     chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
   }

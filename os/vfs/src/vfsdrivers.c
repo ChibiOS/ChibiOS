@@ -103,10 +103,12 @@ msg_t drv_rename_unimpl(void *instance,
 }
 
 msg_t drv_mkdir_unimpl(void *instance,
-                       const char *path) {
+                       const char *path,
+                       vfs_mode_t mode) {
 
   (void)instance;
   (void)path;
+  (void)mode;
 
   return CH_RET_ENOSYS;
 }

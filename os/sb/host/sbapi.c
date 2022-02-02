@@ -1027,6 +1027,20 @@ void sb_api_stdio(struct port_extctx *ectxp) {
     ectxp->r0 = (uint32_t)sb_posix_getcwd((char *)ectxp->r1,
                                           (size_t)ectxp->r2);
     break;
+  case SB_POSIX_UNLINK:
+    ectxp->r0 = (uint32_t)sb_posix_unlink((const char *)ectxp->r1);
+    break;
+  case SB_POSIX_RENAME:
+    ectxp->r0 = (uint32_t)sb_posix_rename((const char *)ectxp->r1,
+                                          (const char *)ectxp->r2);
+    break;
+  case SB_POSIX_MKDIR:
+    ectxp->r0 = (uint32_t)sb_posix_mkdir((const char *)ectxp->r1,
+                                         (mode_t)ectxp->r2);
+    break;
+  case SB_POSIX_RMDIR:
+    ectxp->r0 = (uint32_t)sb_posix_rmdir((const char *)ectxp->r1);
+    break;
   default:
     ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
     break;

@@ -320,6 +320,50 @@ int sb_posix_getcwd(char *buf, size_t size) {
   return vfsDrvGetCurrentDirectory(sbp->config->vfs_driver, buf, size);
 }
 
+int sb_posix_unlink(const char *path) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    return CH_RET_EFAULT;
+  }
+
+  return (int)vfsDrvUnlink(sbp->config->vfs_driver, path);
+}
+
+int sb_posix_rename(const char *oldpath, const char *newpath) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (sb_check_string(sbp, (void *)oldpath, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    return CH_RET_EFAULT;
+  }
+
+  if (sb_check_string(sbp, (void *)newpath, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    return CH_RET_EFAULT;
+  }
+
+  return (int)vfsDrvRename(sbp->config->vfs_driver, oldpath, newpath);
+}
+
+int sb_posix_mkdir(const char *path, mode_t mode) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    return CH_RET_EFAULT;
+  }
+
+  return (int)vfsDrvMkdir(sbp->config->vfs_driver, path, (vfs_mode_t)mode);
+}
+
+int sb_posix_rmdir(const char *path) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    return CH_RET_EFAULT;
+  }
+
+  return (int)vfsDrvRmdir(sbp->config->vfs_driver, path);
+}
+
 #endif
 
 /** @} */

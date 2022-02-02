@@ -137,7 +137,7 @@ extern "C" {
   msg_t vfsOpenFile(const char *name, int flags, vfs_file_node_c **vfnpp);
   msg_t vfsUnlink(const char *path);
   msg_t vfsRename(const char *oldpath, const char *newpath);
-  msg_t vfsMkdir(const char *path);
+  msg_t vfsMkdir(const char *path, vfs_mode_t mode);
   msg_t vfsRmdir(const char *path);
   void vfsClose(vfs_node_c *vnp);
   msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,

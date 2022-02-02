@@ -78,7 +78,7 @@
                      vfs_file_node_c **vfnpp);                              \
   msg_t (*unlink)(void *instance, const char *path);                        \
   msg_t (*rename)(void *instance, const char *oldpath, const char *newpath);\
-  msg_t (*mkdir)(void *instance, const char *path);                         \
+  msg_t (*mkdir)(void *instance, const char *path, vfs_mode_t mode);        \
   msg_t (*rmdir)(void *instance, const char *path);
 
 /**
@@ -125,7 +125,8 @@ extern "C" {
                           const char *oldpath,
                           const char *newpath);
   msg_t drv_mkdir_unimpl(void *instance,
-                         const char *path);
+                         const char *path,
+                         vfs_mode_t mode);
   msg_t drv_rmdir_unimpl(void *instance, const char *path);
 #ifdef __cplusplus
 }
@@ -241,14 +242,16 @@ static inline msg_t vfsDrvRename(vfs_driver_c *drvp,
  *
  * @param[in] drvp      Pointer to the @p vfs_driver_c object.
  * @param[in] path      Path of the directory to be created.
+ * @param[in]           Mode flags for the directory.
  * @return              The operation result.
  *
  * @api
  */
 static inline msg_t vfsDrvMkdir(vfs_driver_c *drvp,
-                                const char *path) {
+                                const char *path,
+                                vfs_mode_t mode) {
 
-  return drvp->vmt->mkdir(drvp, path);
+  return drvp->vmt->mkdir(drvp, path, mode);
 }
 
 /**

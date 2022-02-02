@@ -65,6 +65,10 @@
 #define SB_POSIX_GETDENTS       9
 #define SB_POSIX_CHDIR          10
 #define SB_POSIX_GETCWD         11
+#define SB_POSIX_UNLINK         12
+#define SB_POSIX_RENAME         13
+#define SB_POSIX_MKDIR          14
+#define SB_POSIX_RMDIR          15
 /** @} */
 
 /*===========================================================================*/

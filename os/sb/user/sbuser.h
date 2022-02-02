@@ -354,6 +354,56 @@ static inline int sbGetcwd(char *buf, size_t size) {
 }
 
 /**
+ * @brief   Posix-style unlink file.
+ *
+ * @param[in] path      file to be unlinked
+ * @return              Operation result.
+ */
+static inline int sbUnlink(const char *path) {
+
+  __syscall2r(0, SB_POSIX_UNLINK, path);
+  return (int)r0;
+}
+
+/**
+ * @brief   Posix-style rename file or directory.
+ *
+ * @param[in] oldpath   old path to the file or directory
+ * @param[in] newpath   new path to the file or directory
+ * @return              Operation result.
+ */
+static inline int sbRename(const char *oldpath, const char *newpath) {
+
+  __syscall3r(0, SB_POSIX_RENAME, oldpath, newpath);
+  return (int)r0;
+}
+
+/**
+ * @brief   Posix-style create directory.
+ *
+ * @param[in] path      directory to be created
+ * @param[in] mode      directory creation mode
+ * @return              Operation result.
+ */
+static inline int sbMkdir(const char *path, mode_t mode) {
+
+  __syscall3r(0, SB_POSIX_MKDIR, path, mode);
+  return (int)r0;
+}
+
+/**
+ * @brief   Posix-style remove directory.
+ *
+ * @param[in] path      directory to be removed
+ * @return              Operation result.
+ */
+static inline int sbRmdir(const char *path) {
+
+  __syscall2r(0, SB_POSIX_RMDIR, path);
+  return (int)r0;
+}
+
+/**
  * @brief   Terminates the sandbox.
  *
  * @param[in] msg       The exit message.
