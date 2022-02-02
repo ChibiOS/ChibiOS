@@ -408,6 +408,20 @@ static void cmd_mkdir(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 }
 
+static void cmd_mv(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 2) {
+    chprintf(chp, "Usage: mv <oldpath> <newpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsRename(argv[0], argv[1]);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+  }
+}
+
 static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
   char *buf = NULL;
 
@@ -439,6 +453,20 @@ static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   if (buf != NULL) {
     chHeapFree((void *)buf);
+  }
+}
+
+static void cmd_rm(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: rm <filepath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsUnlink(argv[0]);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
   }
 }
 
@@ -488,7 +516,9 @@ const ShellCommand shell_local_commands[] = {
   {"cd",        cmd_cd},
   {"ls",        cmd_ls},
   {"mkdir",     cmd_mkdir},
+  {"mv",        cmd_mv},
   {"pwd",       cmd_pwd},
+  {"rm",        cmd_rm},
   {"rmdir",     cmd_rmdir},
   {"tree",      cmd_tree},
 #endif
