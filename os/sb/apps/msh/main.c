@@ -197,6 +197,36 @@ static void cmd_exit(int argc, char *argv[]) {
   _exit(msg);
 }
 
+static void cmd_mkdir(int argc, char *argv[]) {
+  int ret;
+
+  if (argc != 2) {
+    shell_usage("mkdir <dirname>");
+    return;
+  }
+
+  ret = mkdir(argv[1], 0777);
+  if (ret == -1) {
+    shell_error(argv[1]);
+    shell_error(": Creation failed" SHELL_NEWLINE_STR);
+  }
+}
+
+static void cmd_mv(int argc, char *argv[]) {
+  int ret;
+
+  if (argc != 3) {
+    shell_usage("mv <old> <new>");
+    return;
+  }
+
+  ret = rename(argv[1], argv[2]);
+  if (ret == -1) {
+    shell_error(argv[1]);
+    shell_error(": No such file or directory" SHELL_NEWLINE_STR);
+  }
+}
+
 static void cmd_path(int argc, char *argv[]) {
   char *s;
 
@@ -214,6 +244,36 @@ static void cmd_path(int argc, char *argv[]) {
   }
 }
 
+static void cmd_rm(int argc, char *argv[]) {
+  int ret;
+
+  if (argc != 2) {
+    shell_usage("rm <filename>");
+    return;
+  }
+
+  ret = unlink(argv[1]);
+  if (ret == -1) {
+    shell_error(argv[1]);
+    shell_error(": No such file or directory" SHELL_NEWLINE_STR);
+  }
+}
+
+static void cmd_rmdir(int argc, char *argv[]) {
+  int ret;
+
+  if (argc != 2) {
+    shell_usage("rmdir <dirname>");
+    return;
+  }
+
+  ret = rmdir(argv[1]);
+  if (ret == -1) {
+    shell_error(argv[1]);
+    shell_error(": Remove failed" SHELL_NEWLINE_STR);
+  }
+}
+
 static bool shell_execute(int argc, char *argv[]) {
   extern int runelf(int argc, char *argv[], char *envp[]);
   char *fname = argv[0];
@@ -226,8 +286,12 @@ static bool shell_execute(int argc, char *argv[]) {
     {"cd",      cmd_cd},
     {"env",     cmd_env},
     {"exit",    cmd_exit},
+    {"mkdir",   cmd_mkdir},
+    {"mv",      cmd_mv},
     {"path",    cmd_path},
     {"pwd",     cmd_pwd},
+    {"rm",      cmd_rm},
+    {"rmdir",   cmd_rmdir},
     {NULL,      NULL}
   };
 
