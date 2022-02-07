@@ -45,19 +45,19 @@ static const SPIConfig spicfg = {
 };
 
 static L3GD20Config l3gd20cfg = {
-  &SPID2,
-  &spicfg,
-  NULL,
-  NULL,
-  L3GD20_FS_250DPS,
-  L3GD20_ODR_760HZ,
+  .spip             = &SPID2,
+  .spicfg           = &spicfg,
+  .gyrosensitivity  = NULL,
+  .gyrobias         = NULL,
+  .gyrofullscale    = L3GD20_FS_250DPS,
+  .gyroodr          = L3GD20_ODR_760HZ,
 #if L3GD20_USE_ADVANCED
-  L3GD20_BDU_CONTINUOUS,
-  L3GD20_END_LITTLE,
-  L3GD20_BW3,
-  L3GD20_HPM_REFERENCE,
-  L3GD20_HPCF_8,
-  L3GD20_LP2M_ON,
+  .gyrobdu          = L3GD20_BDU_CONTINUOUS,
+  .gyroendianness   = L3GD20_END_LITTLE,
+  .gyrobandwidth    = L3GD20_BW3,
+  .gyrohpmode       = L3GD20_HPM_REFERENCE,
+  .gyrohpcfg        = L3GD20_HPCF_8,
+  .gyrolp2mode      = L3GD20_LP2M_ON
 #endif
 };
 
