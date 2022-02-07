@@ -113,9 +113,15 @@ void sglob_init(sglob_t *psglob, size_t offs) {
 }
 
 void sglob_free(sglob_t *psglob) {
+  lstring_t *lsp;
 
   if (psglob->gl_buf != NULL) {
     free(psglob->gl_buf);
+  }
+
+  while ((lsp = psglob->gl_next) != NULL) {
+    psglob->gl_next = lsp->next;
+    free(lsp);
   }
 }
 
