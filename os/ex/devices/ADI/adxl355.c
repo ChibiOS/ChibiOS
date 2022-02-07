@@ -510,7 +510,7 @@ void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config) {
 
   /* Filter register configuration block.*/
   {
-    reg_val = devp->config->accoutputdatarate;
+    reg_val = devp->config->accodr;
 #if ADXL355_USE_ADVANCED || defined(__DOXYGEN__)
     reg_val |= devp->config->acchighpass;
 #endif

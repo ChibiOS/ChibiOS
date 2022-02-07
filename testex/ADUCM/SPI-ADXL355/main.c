@@ -52,14 +52,14 @@ static const SPIConfig spicfg = {
 };
 
 static ADXL355Config adxl355cfg = {
-  &SPID1,
-  &spicfg,
-  NULL,
-  NULL,
-  ADXL355_ACC_FS_2G,
-  ADXL355_ACC_ODR_125HZ,
+  .spip             = &SPID1,
+  .spicfg           = &spicfg,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = ADXL355_ACC_FS_2G,
+  .accodr           = ADXL355_ACC_ODR_125HZ,
 #if ADXL355_USE_ADVANCED
-  ADXL355_ACC_HP_LEV_3
+  .acchighpass      = ADXL355_ACC_HP_LEV_3
 #endif
 };
 

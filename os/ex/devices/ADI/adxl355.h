@@ -43,7 +43,7 @@
 /**
  * @brief   ADXL355 driver version string.
  */
-#define EX_ADXL355_VERSION                  "1.0.0"
+#define EX_ADXL355_VERSION                  "1.0.1"
 
 /**
  * @brief   ADXL355 driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   ADXL355 driver version patch number.
  */
-#define EX_ADXL355_PATCH                    0
+#define EX_ADXL355_PATCH                    1
 /** @} */
 
 /**
@@ -423,7 +423,7 @@ typedef struct {
   /**
    * @brief ADXL355 output data rate selection.
    */
-  adxl355_acc_odr_t         accoutputdatarate;
+  adxl355_acc_odr_t         accodr;
 #if ADXL355_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief   ADXL355 HP filter bandwidth.
