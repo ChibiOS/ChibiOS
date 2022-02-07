@@ -47,15 +47,15 @@ static const SPIConfig spicfg = {
 };
 
 static LIS3DSHConfig lis3dshcfg = {
-  &SPID1,
-  &spicfg,
-  NULL,
-  NULL,
-  LIS3DSH_ACC_FS_2G,
-  LIS3DSH_ACC_ODR_100HZ,
+  .spip             = &SPID1,
+  .spicfg           = &spicfg,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = LIS3DSH_ACC_FS_2G,
+  .accodr           = LIS3DSH_ACC_ODR_100HZ,
 #if LIS3DSH_USE_ADVANCED
-  LIS3DSH_ACC_BW_400HZ,
-  LIS3DSH_ACC_BDU_CONTINUOUS,
+  .accantialiasing  = LIS3DSH_ACC_BW_400HZ,
+  .accbdu           = LIS3DSH_ACC_BDU_CONTINUOUS
 #endif
 };
 

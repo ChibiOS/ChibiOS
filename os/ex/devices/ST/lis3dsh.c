@@ -478,9 +478,9 @@ void lis3dshStart(LIS3DSHDriver *devp, const LIS3DSHConfig *config) {
   /* Control register 4 configuration block.*/
   {
     cr = LIS3DSH_CTRL_REG4_XEN | LIS3DSH_CTRL_REG4_YEN | LIS3DSH_CTRL_REG4_ZEN |
-         devp->config->accoutputdatarate;
+         devp->config->accodr;
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
-    cr |= devp->config->accblockdataupdate;
+    cr |= devp->config->accbdu;
 #endif
   }
 
@@ -522,7 +522,7 @@ void lis3dshStart(LIS3DSHDriver *devp, const LIS3DSHConfig *config) {
   {
     cr = LIS3DSH_CTRL_REG6_ADD_INC;
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
-    cr |= devp->config->accblockdataupdate;
+    cr |= devp->config->accbdu;
 #endif
   }
 

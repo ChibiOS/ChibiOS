@@ -43,7 +43,7 @@
 /**
  * @brief   LIS3DSH driver version string.
  */
-#define EX_LIS3DSH_VERSION                  "1.1.2"
+#define EX_LIS3DSH_VERSION                  "1.1.3"
 
 /**
  * @brief   LIS3DSH driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LIS3DSH driver version patch number.
  */
-#define EX_LIS3DSH_PATCH                    2
+#define EX_LIS3DSH_PATCH                    3
 /** @} */
 
 /**
@@ -480,7 +480,7 @@ typedef struct {
   /**
    * @brief LIS3DSH output data rate selection.
    */
-  lis3dsh_acc_odr_t         accoutputdatarate;
+  lis3dsh_acc_odr_t         accodr;
 #if LIS3DSH_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief   LIS3DSH anti-aliasing bandwidth.
@@ -489,7 +489,7 @@ typedef struct {
   /**
    * @brief   LIS3DSH block data update.
    */
-  lis3dsh_acc_bdu_t         accblockdataupdate;
+  lis3dsh_acc_bdu_t         accbdu;
 #endif
 } LIS3DSHConfig;
 
