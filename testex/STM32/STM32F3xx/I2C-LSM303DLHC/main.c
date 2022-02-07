@@ -37,11 +37,11 @@ static char axisID[LSM303DLHC_ACC_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const I2CConfig i2ccfg = {
-  STM32_TIMINGR_PRESC(15U) |
-  STM32_TIMINGR_SCLDEL(4U) | STM32_TIMINGR_SDADEL(2U) |
-  STM32_TIMINGR_SCLH(15U)  | STM32_TIMINGR_SCLL(21U),
-  0,
-  0
+  .timingr          = STM32_TIMINGR_PRESC(15U) | STM32_TIMINGR_SCLDEL(4U) | 
+                      STM32_TIMINGR_SDADEL(2U) | STM32_TIMINGR_SCLH(15U) | 
+                      STM32_TIMINGR_SCLL(21U),
+  .cr1              = 0,
+  .cr2              = 0
 };
 
 static const LSM303DLHCConfig lsm303dlhccfg = {

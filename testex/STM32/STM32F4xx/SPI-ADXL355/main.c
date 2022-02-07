@@ -40,11 +40,13 @@ static char axisID[ADXL355_ACC_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
-  FALSE,
-  NULL,
-  LINE_ARD_D10,
-  SPI_CR1_BR_1 | SPI_CR1_BR_0,
-  0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssline           = LINE_ARD_D10,
+  .cr1              = SPI_CR1_BR_1 | SPI_CR1_BR_0,
+  .cr2              = 0U
 };
 
 static ADXL355Config adxl355cfg = {
