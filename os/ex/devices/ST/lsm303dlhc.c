@@ -884,7 +884,7 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
   /* Control register 1 configuration block.*/
   {
     cr[1] = LSM303DLHC_CTRL_REG1_A_XEN | LSM303DLHC_CTRL_REG1_A_YEN |
-            LSM303DLHC_CTRL_REG1_A_ZEN | devp->config->accoutdatarate;
+            LSM303DLHC_CTRL_REG1_A_ZEN | devp->config->accodr;
 #if LSM303DLHC_USE_ADVANCED || defined(__DOXYGEN__)
     cr[1] |= devp->config->acclowpower;
 #endif
@@ -905,7 +905,7 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
     cr[4] = devp->config->accfullscale;
 #if LSM303DLHC_USE_ADVANCED || defined(__DOXYGEN__)
     cr[4] |= devp->config->accendianess |
-             devp->config->accblockdataupdate |
+             devp->config->accbdu |
              devp->config->acchighresmode;
 #endif
   }
@@ -975,7 +975,7 @@ void lsm303dlhcStart(LSM303DLHCDriver *devp, const LSM303DLHCConfig *config) {
 
   /* Control register A configuration block.*/
   {
-    cr[1] = devp->config->compoutputdatarate;
+    cr[1] = devp->config->compodr;
   }
 
   /* Control register B configuration block.*/

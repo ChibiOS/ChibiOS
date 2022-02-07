@@ -44,24 +44,24 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM303DLHCConfig lsm303dlhccfg = {
-  &I2CD1,
-  &i2ccfg,
-  NULL,
-  NULL,
-  LSM303DLHC_ACC_FS_4G,
-  LSM303DLHC_ACC_ODR_100Hz,
-#if LSM303DLHC_USE_ADVANCED
-  LSM303DLHC_ACC_LP_DISABLED,
-  LSM303DLHC_ACC_HR_DISABLED,
-  LSM303DLHC_ACC_BDU_BLOCK,
-  LSM303DLHC_ACC_END_LITTLE,
+  .i2cp             = &I2CD1,
+  .i2ccfg           = &i2ccfg,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = LSM303DLHC_ACC_FS_4G,
+  .accodr           = LSM303DLHC_ACC_ODR_100Hz,
+#if LSM303DLHC_USE_ADVANCED || defined(__DOXYGEN__)
+  .acclowpower      = LSM303DLHC_ACC_LP_DISABLED,
+  .acchighresmode   = LSM303DLHC_ACC_HR_DISABLED,
+  .accbdu           = LSM303DLHC_ACC_BDU_BLOCK,
+  .accendianess     = LSM303DLHC_ACC_END_LITTLE,
 #endif
-  NULL,
-  NULL,
-  LSM303DLHC_COMP_FS_1P3GA,
-  LSM303DLHC_COMP_ODR_30HZ,
-#if LSM303DLHC_USE_ADVANCED
-  LSM303DLHC_COMP_MD_BLOCK
+  .compsensitivity  = NULL,
+  .compbias         = NULL,
+  .compfullscale    = LSM303DLHC_COMP_FS_1P3GA,
+  .compodr          = LSM303DLHC_COMP_ODR_30HZ,
+#if LSM303DLHC_USE_ADVANCED || defined(__DOXYGEN__)
+  .compmode         = LSM303DLHC_COMP_MD_BLOCK
 #endif
 };
 
