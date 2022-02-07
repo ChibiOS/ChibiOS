@@ -34,23 +34,23 @@ static float hygrocooked;
 static float thermocooked;
 
 static const I2CConfig i2ccfg = {
-  .op_mode          = OPMODE_I2C,
-  .clock_speed      = 400000,
-  .duty_cycle       = FAST_DUTY_CYCLE_2
+  .op_mode            = OPMODE_I2C,
+  .clock_speed        = 400000,
+  .duty_cycle         = FAST_DUTY_CYCLE_2
 };
 
 static const HTS221Config hts221cfg = {
-  &I2CD1,
-  &i2ccfg,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  HTS221_ODR_7HZ,
+  .i2cp               = &I2CD1,
+  .i2ccfg             = &i2ccfg,
+  .hygrosensitivity   = NULL,
+  .hygrobias          = NULL,
+  .thermosensitivity  = NULL,
+  .thermobias         = NULL,
+  .outputdatarate     = HTS221_ODR_7HZ
 #if HTS221_USE_ADVANCED || defined(__DOXYGEN__)
-  HTS221_BDU_CONTINUOUS,
-  HTS221_AVGH_256,
-  HTS221_AVGT_256
+  .blockdataupdate    = HTS221_BDU_CONTINUOUS,
+  .hygroresolution    = HTS221_AVGH_256,
+  .thermoresolution   = HTS221_AVGT_256
 #endif
 };
 
