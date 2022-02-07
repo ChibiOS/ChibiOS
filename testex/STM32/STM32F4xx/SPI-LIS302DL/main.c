@@ -36,12 +36,14 @@ static char axisID[LIS302DL_ACC_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
-  FALSE,
-  NULL,
-  GPIOE,
-  GPIOE_CS_SPI,
-  SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,
-  0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssport           = GPIOE,
+  .sspad            = GPIOE_CS_SPI,
+  .cr1              = SPI_CR1_BR_0 | SPI_CR1_CPOL | SPI_CR1_CPHA,
+  .cr2              = 0U
 };
 
 static LIS302DLConfig lis302dlcfg = {

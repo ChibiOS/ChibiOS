@@ -34,12 +34,14 @@ static char axisID[L3GD20_GYRO_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const SPIConfig spicfg = {
-  FALSE,
-  NULL,
-  GPIOD,
-  GPIOD_GYRO_CS,
-  SPI_CR1_BR | SPI_CR1_CPOL | SPI_CR1_CPHA,
-  0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssport           = GPIOD,
+  .sspad            = GPIOD_GYRO_CS,
+  .cr1              = SPI_CR1_BR | SPI_CR1_CPOL | SPI_CR1_CPHA,
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
 static L3GD20Config l3gd20cfg = {

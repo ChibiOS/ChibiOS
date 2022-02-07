@@ -33,9 +33,9 @@ static char axis_id[MAX_AXIS_NUMBER] = {'X', 'Y', 'Z'};
 
 /* Generic I2C configuration for every MEMS. */
 static const I2CConfig i2ccfg = {
-  OPMODE_I2C,
-  400000,
-  FAST_DUTY_CYCLE_2,
+  .op_mode          = OPMODE_I2C,
+  .clock_speed      = 400000,
+  .duty_cycle       = FAST_DUTY_CYCLE_2
 };
 
 static uint32_t i;

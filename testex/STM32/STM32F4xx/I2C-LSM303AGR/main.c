@@ -37,9 +37,9 @@ static char axisID[LSM303AGR_ACC_NUMBER_OF_AXES] = {'X', 'Y', 'Z'};
 static uint32_t i;
 
 static const I2CConfig i2ccfg = {
-  OPMODE_I2C,
-  400000,
-  FAST_DUTY_CYCLE_2,
+  .op_mode          = OPMODE_I2C,
+  .clock_speed      = 400000,
+  .duty_cycle       = FAST_DUTY_CYCLE_2
 };
 
 static const LSM303AGRConfig lsm303agrcfg = {
