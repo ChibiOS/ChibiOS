@@ -103,17 +103,17 @@ static const LSM303AGRConfig lsm303agrcfg = {
 static  LSM6DSLDriver LSM6DSLD1;
 
 static const LSM6DSLConfig lsm6dslcfg = {
-  &I2CD1,
-  &i2ccfg,
-  LSM6DSL_SAD_VCC,
-  NULL,
-  NULL,
-  LSM6DSL_ACC_FS_2G,
-  LSM6DSL_ACC_ODR_52Hz,
-  NULL,
-  NULL,
-  LSM6DSL_GYRO_FS_250DPS,
-  LSM6DSL_GYRO_ODR_104Hz
+  .i2cp             = &I2CD1,
+  .i2ccfg           = &i2ccfg,
+  .slaveaddress     = LSM6DSL_SAD_VCC,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = LSM6DSL_ACC_FS_2G,
+  .accodr           = LSM6DSL_ACC_ODR_52HZ,
+  .gyrosensitivity  = NULL,
+  .gyrobias         = NULL,
+  .gyrofullscale    = LSM6DSL_GYRO_FS_250DPS,
+  .gyroodr          = LSM6DSL_GYRO_ODR_104HZ,
 };
 
 /*===========================================================================*/

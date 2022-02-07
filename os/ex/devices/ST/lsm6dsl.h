@@ -43,7 +43,7 @@
 /**
  * @brief   LSM6DSL driver version string.
  */
-#define EX_LSM6DSL_VERSION                  "1.0.1"
+#define EX_LSM6DSL_VERSION                  "1.0.2"
 
 /**
  * @brief   LSM6DSL driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LSM6DSL driver version patch number.
  */
-#define EX_LSM6DSL_PATCH                    1
+#define EX_LSM6DSL_PATCH                    2
 /** @} */
 
 /**
@@ -492,17 +492,17 @@ typedef enum {
  */
 typedef enum {
   LSM6DSL_ACC_ODR_PD = 0x00,        /**< Power down                         */
-  LSM6DSL_ACC_ODR_1P6Hz = 0xB0,     /**< ODR 1.6 Hz (Low Power only)        */
-  LSM6DSL_ACC_ODR_12P5Hz = 0x10,    /**< ODR 12.5 Hz                        */
-  LSM6DSL_ACC_ODR_26Hz = 0x20,      /**< ODR 26 Hz                          */
-  LSM6DSL_ACC_ODR_52Hz = 0x30,      /**< ODR 52 Hz                          */
-  LSM6DSL_ACC_ODR_104Hz = 0x40,     /**< ODR 104 Hz                         */
-  LSM6DSL_ACC_ODR_208Hz = 0x50,     /**< ODR 208 Hz                         */
-  LSM6DSL_ACC_ODR_416Hz = 0x60,     /**< ODR 416 Hz                         */
-  LSM6DSL_ACC_ODR_833Hz = 0x70,     /**< ODR 833 Hz                         */
-  LSM6DSL_ACC_ODR_1P66Hz = 0x80,    /**< ODR 1.66 kHz                       */
-  LSM6DSL_ACC_ODR_3P33Hz = 0x90,    /**< ODR 3.33 kHz                       */
-  LSM6DSL_ACC_ODR_6P66Hz = 0xA0     /**< ODR 6.66 kHz                       */
+  LSM6DSL_ACC_ODR_1P6HZ = 0xB0,     /**< ODR 1.6 Hz (Low Power only)        */
+  LSM6DSL_ACC_ODR_12P5HZ = 0x10,    /**< ODR 12.5 Hz                        */
+  LSM6DSL_ACC_ODR_26HZ = 0x20,      /**< ODR 26 Hz                          */
+  LSM6DSL_ACC_ODR_52HZ = 0x30,      /**< ODR 52 Hz                          */
+  LSM6DSL_ACC_ODR_104HZ = 0x40,     /**< ODR 104 Hz                         */
+  LSM6DSL_ACC_ODR_208HZ = 0x50,     /**< ODR 208 Hz                         */
+  LSM6DSL_ACC_ODR_416HZ = 0x60,     /**< ODR 416 Hz                         */
+  LSM6DSL_ACC_ODR_833HZ = 0x70,     /**< ODR 833 Hz                         */
+  LSM6DSL_ACC_ODR_1P66HZ = 0x80,    /**< ODR 1.66 kHz                       */
+  LSM6DSL_ACC_ODR_3P33HZ = 0x90,    /**< ODR 3.33 kHz                       */
+  LSM6DSL_ACC_ODR_6P66HZ = 0xA0     /**< ODR 6.66 kHz                       */
 } lsm6dsl_acc_odr_t;
 
 /**
@@ -529,16 +529,16 @@ typedef enum {
  */
 typedef enum {
   LSM6DSL_GYRO_ODR_PD = 0x00,       /**< Power down                         */
-  LSM6DSL_GYRO_ODR_12P5Hz = 0x10,   /**< ODR 12.5 Hz                        */
-  LSM6DSL_GYRO_ODR_26Hz = 0x20,     /**< ODR 26 Hz                          */
-  LSM6DSL_GYRO_ODR_52Hz = 0x30,     /**< ODR 52 Hz                          */
-  LSM6DSL_GYRO_ODR_104Hz = 0x40,    /**< ODR 104 Hz                         */
-  LSM6DSL_GYRO_ODR_208Hz = 0x50,    /**< ODR 208 Hz                         */
-  LSM6DSL_GYRO_ODR_416Hz = 0x60,    /**< ODR 416 Hz                         */
-  LSM6DSL_GYRO_ODR_833Hz = 0x70,    /**< ODR 833 Hz                         */
-  LSM6DSL_GYRO_ODR_1P66Hz = 0x80,   /**< ODR 1.66 kHz                       */
-  LSM6DSL_GYRO_ODR_3P33Hz = 0x90,   /**< ODR 3.33 kHz                       */
-  LSM6DSL_GYRO_ODR_6P66Hz = 0xA0    /**< ODR 6.66 kHz                       */
+  LSM6DSL_GYRO_ODR_12P5HZ = 0x10,   /**< ODR 12.5 HZ                        */
+  LSM6DSL_GYRO_ODR_26HZ = 0x20,     /**< ODR 26 Hz                          */
+  LSM6DSL_GYRO_ODR_52HZ = 0x30,     /**< ODR 52 Hz                          */
+  LSM6DSL_GYRO_ODR_104HZ = 0x40,    /**< ODR 104 Hz                         */
+  LSM6DSL_GYRO_ODR_208HZ = 0x50,    /**< ODR 208 Hz                         */
+  LSM6DSL_GYRO_ODR_416HZ = 0x60,    /**< ODR 416 Hz                         */
+  LSM6DSL_GYRO_ODR_833HZ = 0x70,    /**< ODR 833 Hz                         */
+  LSM6DSL_GYRO_ODR_1P66KHZ = 0x80,  /**< ODR 1.66 kHz                       */
+  LSM6DSL_GYRO_ODR_3P33KHZ = 0x90,  /**< ODR 3.33 kHz                       */
+  LSM6DSL_GYRO_ODR_6P66KHZ = 0xA0   /**< ODR 6.66 kHz                       */
 } lsm6dsl_gyro_odr_t;
 
 /**
@@ -630,7 +630,7 @@ typedef struct {
   /**
    * @brief LSM6DSL accelerometer subsystem output data rate.
    */
-  lsm6dsl_acc_odr_t         accoutdatarate;
+  lsm6dsl_acc_odr_t         accodr;
 #if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM6DSL accelerometer subsystem low power mode.
@@ -652,7 +652,7 @@ typedef struct {
   /**
    * @brief LSM6DSL gyroscope subsystem output data rate.
    */
-  lsm6dsl_gyro_odr_t        gyrooutdatarate;
+  lsm6dsl_gyro_odr_t        gyroodr;
 #if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM6DSL gyroscope subsystem low mode configuration.
@@ -661,11 +661,11 @@ typedef struct {
   /**
    * @brief LSM6DSL gyroscope subsystem low pass filter configuration.
    */
-  lsm6dsl_gyro_lpf_t        gyrolowpassfilter;
+  lsm6dsl_gyro_lpf_t        gyrolpfilter;
   /**
    * @brief LSM6DSL block data update
    */
-  lsm6dsl_bdu_t             blockdataupdate;
+  lsm6dsl_bdu_t             bdu;
   /**
    * @brief LSM6DSL  endianness
    */

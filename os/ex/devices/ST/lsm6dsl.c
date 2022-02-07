@@ -885,26 +885,26 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
   cr[0] = LSM6DSL_AD_CTRL1_XL;
   /* Control register 1 configuration block.*/
   {
-      cr[1] = devp->config->accoutdatarate |
+      cr[1] = devp->config->accodr |
               devp->config->accfullscale;
   }
   /* Control register 2 configuration block.*/
   {
-      cr[2] = devp->config->gyrooutdatarate |
+      cr[2] = devp->config->gyroodr |
               devp->config->gyrofullscale;
   }
   /* Control register 3 configuration block.*/
   {
       cr[3] = LSMDSL_CTRL3_C_IF_INC;
 #if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
-      cr[3] |= devp->config->endianness | devp->config->blockdataupdate;
+      cr[3] |= devp->config->endianness | devp->config->bdu;
 #endif
   }
   /* Control register 4 configuration block.*/
   {
       cr[4] = 0;
 #if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
-      if(devp->config->gyrolowpassfilter != LSM6DSL_GYRO_LPF_DISABLED) {
+      if(devp->config->gyrolpfilter != LSM6DSL_GYRO_LPF_DISABLED) {
         cr[4] |= LSMDSL_CTRL4_C_LPF1_SEL_G;
       }
       else {
@@ -924,8 +924,8 @@ void lsm6dslStart(LSM6DSLDriver *devp, const LSM6DSLConfig *config) {
 
 #endif
 #if LSM6DSL_USE_ADVANCED || defined(__DOXYGEN__)
-      if(devp->config->gyrolowpassfilter != LSM6DSL_GYRO_LPF_DISABLED) {
-        cr[6] |= devp->config->gyrolowpassfilter;
+      if(devp->config->gyrolpfilter != LSM6DSL_GYRO_LPF_DISABLED) {
+        cr[6] |= devp->config->gyrolpfilter;
       }
       else {
         /* Nothing to do. */
