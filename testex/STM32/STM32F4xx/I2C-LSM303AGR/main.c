@@ -20,8 +20,6 @@
 #include "chprintf.h"
 #include "lsm303agr.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* LSM303AGR related.                                                        */
 /*===========================================================================*/
@@ -143,7 +141,6 @@ int main(void) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], compcooked[i]);
     }
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   lsm303agrStop(&LSM303AGRD1);
 }

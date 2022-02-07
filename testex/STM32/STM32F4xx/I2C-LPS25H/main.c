@@ -20,8 +20,6 @@
 #include "chprintf.h"
 #include "lps25h.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* LPS25H related.                                                           */
 /*===========================================================================*/
@@ -128,7 +126,6 @@ int main(void) {
     chprintf(chp, "Temp: %.2f\r\n", thermocooked);
 
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   lps25hStop(&LPS25HD1);
 }

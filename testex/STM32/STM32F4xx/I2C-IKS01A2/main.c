@@ -225,6 +225,5 @@ int main(void) {
     }
 
     chThdSleepMilliseconds(500);
-    cls(chp);
   }
 }

@@ -24,8 +24,6 @@
 #define LINE_SPI1_SCK               PAL_LINE(GP0, 1U)
 #define LINE_SPI1_CS                PAL_LINE(GP0, 3U)
 
-#define cls(chp)                    chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* ADXL355 related.                                                          */
 /*===========================================================================*/
@@ -145,7 +143,6 @@ int main(void) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], acccooked[i]);
     }
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   adxl355Stop(&ADXL355D1);
 }

@@ -20,8 +20,6 @@
 #include "chprintf.h"
 #include "hts221.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* HTS221 related.                                                           */
 /*===========================================================================*/
@@ -127,7 +125,6 @@ int main(void) {
     chprintf(chp, "Temp: %.2f\r\n", thermocooked);
 
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   hts221Stop(&HTS221D1);
 }

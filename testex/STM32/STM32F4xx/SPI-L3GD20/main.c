@@ -21,8 +21,6 @@
 #include "chprintf.h"
 #include "l3gd20.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* L3GD20 related.                                                           */
 /*===========================================================================*/
@@ -139,7 +137,6 @@ int main(void) {
     }
 
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   l3gd20Stop(&L3GD20D1);
 }

@@ -19,8 +19,6 @@
 #include "chprintf.h"
 #include "lis3mdl.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* LIS3MDL related.                                                           */
 /*===========================================================================*/
@@ -125,7 +123,6 @@ int main(void) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], compcooked[i]);
     }
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   lis3mdlStop(&LIS3MDLD1);
 }
