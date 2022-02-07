@@ -20,8 +20,6 @@
 #include "chprintf.h"
 #include "lsm6ds0.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* LSM6DS0 related.                                                          */
 /*===========================================================================*/
@@ -152,7 +150,6 @@ int main(void) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], gyrocooked[i]);
     }
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   lsm6ds0Stop(&LSM6DS0D1);
 }

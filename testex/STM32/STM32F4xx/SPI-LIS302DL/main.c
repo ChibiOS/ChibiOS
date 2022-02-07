@@ -21,8 +21,6 @@
 #include "chprintf.h"
 #include "lis302dl.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* LIS302DL related.                                                          */
 /*===========================================================================*/
@@ -132,7 +130,6 @@ int main(void) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], acccooked[i]);
     }
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   lis302dlStop(&LIS302DLD1);
 }

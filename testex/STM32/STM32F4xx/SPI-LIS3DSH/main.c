@@ -21,8 +21,6 @@
 #include "chprintf.h"
 #include "lis3dsh.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* LIS3DSH related.                                                          */
 /*===========================================================================*/
@@ -133,7 +131,6 @@ int main(void) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], acccooked[i]);
     }
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   lis3dshStop(&LIS3DSHD1);
 }

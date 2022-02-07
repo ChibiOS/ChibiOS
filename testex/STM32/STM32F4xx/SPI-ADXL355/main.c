@@ -19,8 +19,6 @@
 #include "chprintf.h"
 #include "adxl355.h"
 
-#define cls(chp)  chprintf(chp, "\033[2J\033[1;1H")
-
 /*===========================================================================*/
 /* ADXL355 related.                                                          */
 /*===========================================================================*/
@@ -109,7 +107,6 @@ int main(void) {
       chprintf(chp, "%c-axis: %.3f\r\n", axisID[i], acccooked[i]);
     }
     chThdSleepMilliseconds(100);
-    cls(chp);
   }
   adxl355Stop(&ADXL355D1);
 }
