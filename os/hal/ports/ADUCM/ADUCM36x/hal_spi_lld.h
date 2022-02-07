@@ -35,6 +35,7 @@
  * @brief   Circular mode support flag.
  */
 #define SPI_SUPPORTS_CIRCULAR           FALSE
+#define SPI_USE_CIRCULAR                FALSE
 
 /**
  * @name    Register helpers not found in ADI headers
