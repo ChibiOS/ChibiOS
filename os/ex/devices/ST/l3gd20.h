@@ -42,7 +42,7 @@
 /**
  * @brief   L3GD20 driver version string.
  */
-#define EX_L3GD20_VERSION                   "1.1.2"
+#define EX_L3GD20_VERSION                   "1.1.3"
 
 /**
  * @brief   L3GD20 driver version major number.
@@ -57,7 +57,7 @@
 /**
  * @brief   L3GD20 driver version patch number.
  */
-#define EX_L3GD20_PATCH                     2
+#define EX_L3GD20_PATCH                     3
 /** @} */
 
 /**
@@ -470,12 +470,12 @@ typedef struct {
   /**
    * @brief   L3GD20 gyroscope system output data rate selection.
    */
-  l3gd20_odr_t              gyrooutputdatarate;
+  l3gd20_odr_t              gyroodr;
 #if L3GD20_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief   L3GD20 gyroscope system block data update.
    */
-  l3gd20_bdu_t              gyroblockdataupdate;
+  l3gd20_bdu_t              gyrobdu;
   /**
    * @brief   L3GD20 gyroscope system endianness.
    */
@@ -491,7 +491,7 @@ typedef struct {
   /**
    * @brief   L3GD20 gyroscope system HP configuration.
    */
-  l3gd20_hpcf_t             gyrohpconfiguration;
+  l3gd20_hpcf_t             gyrohpcfg;
   /**
    * @brief   L3GD20 gyroscope system LP2 filter mode.
    * @details To activate LP2 HP should be active
