@@ -581,9 +581,9 @@ void lps25hStart(LPS25HDriver *devp, const LPS25HConfig *config) {
   /* Control register 1 configuration block.*/
   {
     cr[0] = LPS25H_AD_CTRL_REG1;
-    cr[1] = devp->config->outputdatarate | LPS25H_CTRL_REG1_PD;
+    cr[1] = devp->config->odr | LPS25H_CTRL_REG1_PD;
 #if LPS25H_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->blockdataupdate;
+    cr[1] |= devp->config->bdu;
 #endif
   }
 
