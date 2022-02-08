@@ -43,7 +43,7 @@
 /**
  * @brief   LSM6DS0 driver version string.
  */
-#define EX_LSM6DS0_VERSION                  "1.1.2"
+#define EX_LSM6DS0_VERSION                  "1.1.3"
 
 /**
  * @brief   LSM6DS0 driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LSM6DS0 driver version patch number.
  */
-#define EX_LSM6DS0_PATCH                    2
+#define EX_LSM6DS0_PATCH                    3
 /** @} */
 
 /**
@@ -601,7 +601,7 @@ typedef struct {
   /**
    * @brief LSM6DS0 accelerometer subsystem output data rate.
    */
-  lsm6ds0_acc_odr_t         accoutdatarate;
+  lsm6ds0_acc_odr_t         accodr;
 #if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM6DS0 accelerometer subsystem decimation mode.
@@ -623,7 +623,7 @@ typedef struct {
   /**
    * @brief LSM6DS0 gyroscope subsystem output data rate.
    */
-  lsm6ds0_gyro_odr_t        gyrooutdatarate;
+  lsm6ds0_gyro_odr_t        gyroodr;
 #if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM6DS0 gyroscope subsystem low mode configuration.
@@ -644,7 +644,7 @@ typedef struct {
   /**
    * @brief LSM6DS0 block data update
    */
-  lsm6ds0_bdu_t             blockdataupdate;
+  lsm6ds0_bdu_t             bdu;
   /**
    * @brief LSM6DS0  endianness
    */
