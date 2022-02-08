@@ -42,7 +42,7 @@
 /**
  * @brief   LIS3MDL driver version string.
  */
-#define EX_LIS3MDL_VERSION                  "1.1.2"
+#define EX_LIS3MDL_VERSION                  "1.1.3"
 
 /**
  * @brief   LIS3MDL driver version major number.
@@ -57,7 +57,7 @@
 /**
  * @brief   LIS3MDL driver version patch number.
  */
-#define EX_LIS3MDL_PATCH                    2
+#define EX_LIS3MDL_PATCH                    3
 /** @} */
 
 /**
@@ -427,28 +427,28 @@ typedef struct {
   /**
    * @brief LIS3MDL compass subsystem output data rate.
    */
-  lis3mdl_comp_odr_t        compoutputdatarate;
+  lis3mdl_comp_odr_t        compodr;
 #if LIS3MDL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LIS3MDL compass subsystem low power mode configuration.
    */
-  lis3mdl_comp_lp_t         complowpowermode;
+  lis3mdl_comp_lp_t         complpwrmode;
   /**
    * @brief LIS3MDL compass subsystem conversion mode.
    */
-  lis3mdl_comp_md_t         compconversionmode;
+  lis3mdl_comp_md_t         compconvmode;
   /**
    * @brief LIS3MDL compass subsystem operation mode for X and Y axes.
    */
-  lis3mdl_comp_omxy_t       compoperationmodexy;
+  lis3mdl_comp_omxy_t       compopmodexy;
   /**
    * @brief LIS3MDL compass subsystem operation mode for Z axis.
    */
-  lis3mdl_comp_omz_t        compoperationmodez;
+  lis3mdl_comp_omz_t        compopmodez;
   /**
    * @brief LIS3MDL block data update.
    */
-  lis3mdl_bdu_t             blockdataupdate;
+  lis3mdl_bdu_t             bdu;
   /**
    * @brief LIS3MDL endianness.
    */
