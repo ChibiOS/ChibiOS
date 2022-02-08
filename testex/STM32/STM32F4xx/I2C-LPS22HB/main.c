@@ -40,17 +40,17 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LPS22HBConfig lps22hbcfg = {
-  &I2CD1,
-  &i2ccfg,
-  LPS22HB_SAD_VCC,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  LPS22HB_ODR_10HZ,
+  .i2cp               = &I2CD1,
+  .i2ccfg             = &i2ccfg,
+  .slaveaddress       = LPS22HB_SAD_VCC,
+  .barosensitivity    = NULL,
+  .barobias           = NULL,
+  .thermosensitivity  = NULL,
+  .thermobias         = NULL,
+  .outputdatarate     = LPS22HB_ODR_10HZ,
 #if LPS22HB_USE_ADVANCED
-  LPS22HB_BDU_CONTINUOUS,
-  LPS22HB_LP_ODR_9
+  .blockdataupdate    = LPS22HB_BDU_CONTINUOUS,
+  .lowpass_filter     = LPS22HB_LP_ODR_9
 #endif
 };
 

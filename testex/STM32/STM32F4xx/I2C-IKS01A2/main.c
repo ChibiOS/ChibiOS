@@ -66,16 +66,15 @@ static const HTS221Config hts221cfg = {
 static  LPS22HBDriver LPS22HBD1;
 
 static const LPS22HBConfig lps22hbcfg = {
-  &I2CD1,
-  &i2ccfg,
-  LPS22HB_SAD_VCC,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  LPS22HB_ODR_10HZ,
+  .i2cp               = &I2CD1,
+  .i2ccfg             = &i2ccfg,
+  .slaveaddress       = LPS22HB_SAD_VCC,
+  .barosensitivity    = NULL,
+  .barobias           = NULL,
+  .thermosensitivity  = NULL,
+  .thermobias         = NULL,
+  .outputdatarate     = LPS22HB_ODR_10HZ
 };
-
 /*===========================================================================*/
 /* LSM303AGR related.                                                        */
 /*===========================================================================*/
@@ -84,15 +83,15 @@ static const LPS22HBConfig lps22hbcfg = {
 static LSM303AGRDriver LSM303AGRD1;
 
 static const LSM303AGRConfig lsm303agrcfg = {
-  .i2cp             = &I2CD1,
-  .i2ccfg           = &i2ccfg,
-  .accsensitivity   = NULL,
-  .accbias          = NULL,
-  .accfullscale     = LSM303AGR_ACC_FS_4G,
-  .accodr           = LSM303AGR_ACC_ODR_100Hz,
-  .compsensitivity  = NULL,
-  .compbias         = NULL,
-  .compodr          = LSM303AGR_COMP_ODR_50HZ,
+  .i2cp               = &I2CD1,
+  .i2ccfg             = &i2ccfg,
+  .accsensitivity     = NULL,
+  .accbias            = NULL,
+  .accfullscale       = LSM303AGR_ACC_FS_4G,
+  .accodr             = LSM303AGR_ACC_ODR_100Hz,
+  .compsensitivity    = NULL,
+  .compbias           = NULL,
+  .compodr            = LSM303AGR_COMP_ODR_50HZ,
 };
 
 /*===========================================================================*/
@@ -103,17 +102,17 @@ static const LSM303AGRConfig lsm303agrcfg = {
 static  LSM6DSLDriver LSM6DSLD1;
 
 static const LSM6DSLConfig lsm6dslcfg = {
-  .i2cp             = &I2CD1,
-  .i2ccfg           = &i2ccfg,
-  .slaveaddress     = LSM6DSL_SAD_VCC,
-  .accsensitivity   = NULL,
-  .accbias          = NULL,
-  .accfullscale     = LSM6DSL_ACC_FS_2G,
-  .accodr           = LSM6DSL_ACC_ODR_52HZ,
-  .gyrosensitivity  = NULL,
-  .gyrobias         = NULL,
-  .gyrofullscale    = LSM6DSL_GYRO_FS_250DPS,
-  .gyroodr          = LSM6DSL_GYRO_ODR_104HZ,
+  .i2cp               = &I2CD1,
+  .i2ccfg             = &i2ccfg,
+  .slaveaddress       = LSM6DSL_SAD_VCC,
+  .accsensitivity     = NULL,
+  .accbias            = NULL,
+  .accfullscale       = LSM6DSL_ACC_FS_2G,
+  .accodr             = LSM6DSL_ACC_ODR_52HZ,
+  .gyrosensitivity    = NULL,
+  .gyrobias           = NULL,
+  .gyrofullscale      = LSM6DSL_GYRO_FS_250DPS,
+  .gyroodr            = LSM6DSL_GYRO_ODR_104HZ,
 };
 
 /*===========================================================================*/
