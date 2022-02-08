@@ -84,15 +84,15 @@ static const LPS22HBConfig lps22hbcfg = {
 static LSM303AGRDriver LSM303AGRD1;
 
 static const LSM303AGRConfig lsm303agrcfg = {
-  &I2CD1,
-  &i2ccfg,
-  NULL,
-  NULL,
-  LSM303AGR_ACC_FS_4G,
-  LSM303AGR_ACC_ODR_100Hz,
-  NULL,
-  NULL,
-  LSM303AGR_COMP_ODR_50HZ,
+  .i2cp             = &I2CD1,
+  .i2ccfg           = &i2ccfg,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = LSM303AGR_ACC_FS_4G,
+  .accodr           = LSM303AGR_ACC_ODR_100Hz,
+  .compsensitivity  = NULL,
+  .compbias         = NULL,
+  .compodr          = LSM303AGR_COMP_ODR_50HZ,
 };
 
 /*===========================================================================*/

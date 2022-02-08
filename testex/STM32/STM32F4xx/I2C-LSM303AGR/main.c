@@ -43,23 +43,23 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM303AGRConfig lsm303agrcfg = {
-  &I2CD1,
-  &i2ccfg,
-  NULL,
-  NULL,
-  LSM303AGR_ACC_FS_4G,
-  LSM303AGR_ACC_ODR_100Hz,
+  .i2cp             = &I2CD1,
+  .i2ccfg           = &i2ccfg,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = LSM303AGR_ACC_FS_4G,
+  .accodr           = LSM303AGR_ACC_ODR_100Hz,
 #if LSM303AGR_USE_ADVANCED
-  LSM303AGR_ACC_MODE_LPOW,
-  LSM303AGR_ACC_BDU_BLOCK,
-  LSM303AGR_ACC_END_LITTLE,
+  .accmode          = LSM303AGR_ACC_MODE_LPOW,
+  .accbdu           = LSM303AGR_ACC_BDU_BLOCK,
+  .accendianess     = LSM303AGR_ACC_END_LITTLE,
 #endif
-  NULL,
-  NULL,
-  LSM303AGR_COMP_ODR_50HZ,
+  .compsensitivity  = NULL,
+  .compbias         = NULL,
+  .compodr          = LSM303AGR_COMP_ODR_50HZ,
 #if LSM303AGR_USE_ADVANCED
-  LSM303AGR_COMP_MODE_NORM,
-  LSM303AGR_COMP_LPOW_EN
+  .compmode         = LSM303AGR_COMP_MODE_NORM,
+  .complp           = LSM303AGR_COMP_LPOW_EN
 #endif
 };
 
