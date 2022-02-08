@@ -726,7 +726,7 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
 
   /* Control register 1 configuration block.*/
   {
-    cr[1] = LSM303AGR_ACC_AE_XYZ | devp->config->accoutdatarate;
+    cr[1] = LSM303AGR_ACC_AE_XYZ | devp->config->accodr;
 #if LSM303AGR_USE_ADVANCED || defined(__DOXYGEN__)
     if(devp->config->accmode == LSM303AGR_ACC_MODE_LPOW)
       cr[1] |= LSM303AGR_CTRL_REG1_A_LPEN;
@@ -748,7 +748,7 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
     cr[4] = devp->config->accfullscale;
 #if LSM303AGR_USE_ADVANCED || defined(__DOXYGEN__)
     cr[4] |= devp->config->accendianess |
-             devp->config->accblockdataupdate;
+             devp->config->accbdu;
     if(devp->config->accmode == LSM303AGR_ACC_MODE_HRES)
       cr[4] |= LSM303AGR_CTRL_REG4_A_HR;
 #endif
@@ -819,7 +819,7 @@ void lsm303agrStart(LSM303AGRDriver *devp, const LSM303AGRConfig *config) {
 
   /* Control register A configuration block.*/
   {
-    cr[1] = devp->config->compoutputdatarate;
+    cr[1] = devp->config->compodr;
 #if LSM303AGR_USE_ADVANCED || defined(__DOXYGEN__)
     cr[1] |= devp->config->compmode | devp->config->complp;
 #endif

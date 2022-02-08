@@ -43,7 +43,7 @@
 /**
  * @brief   LSM303AGR driver version string.
  */
-#define EX_LSM303AGR_VERSION                "1.0.1"
+#define EX_LSM303AGR_VERSION                "1.0.2"
 
 /**
  * @brief   LSM303AGR driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LSM303AGR driver version patch number.
  */
-#define EX_LSM303AGR_PATCH                  1
+#define EX_LSM303AGR_PATCH                  2
 /** @} */
 
 /**
@@ -539,7 +539,7 @@ typedef struct {
   /**
    * @brief LSM303AGR accelerometer subsystem output data rate.
    */
-  lsm303agr_acc_odr_t       accoutdatarate;
+  lsm303agr_acc_odr_t       accodr;
 #if LSM303AGR_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM303AGR accelerometer subsystem mode.
@@ -548,7 +548,7 @@ typedef struct {
   /**
    * @brief LSM303AGR accelerometer subsystem block data update.
    */
-  lsm303agr_acc_bdu_t       accblockdataupdate;
+  lsm303agr_acc_bdu_t       accbdu;
   /**
    * @brief  LSM303AGR accelerometer endianness.
    */
@@ -565,7 +565,7 @@ typedef struct {
   /**
    * @brief LSM303AGR compass subsystem output data rate.
    */
-  lsm303agr_comp_odr_t      compoutputdatarate;
+  lsm303agr_comp_odr_t      compodr;
 #if LSM303AGR_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LSM303AGR compass subsystem working mode.
