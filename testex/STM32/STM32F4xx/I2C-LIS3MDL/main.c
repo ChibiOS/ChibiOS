@@ -40,20 +40,20 @@ static const I2CConfig i2ccfg = {
 };
 
 static LIS3MDLConfig lis3mdlcfg = {
-  &I2CD1,
-  &i2ccfg,
-  LIS3MDL_SAD_VCC,
-  NULL,
-  NULL,
-  LIS3MDL_COMP_FS_4GA,
-  LIS3MDL_COMP_ODR_40HZ,
+  .i2cp             = &I2CD1,
+  .i2ccfg           = &i2ccfg,
+  .slaveaddress     = LIS3MDL_SAD_VCC,
+  .compsensitivity  = NULL,
+  .compbias         = NULL,
+  .compfullscale    = LIS3MDL_COMP_FS_4GA,
+  .compodr          = LIS3MDL_COMP_ODR_40HZ,
 #if LIS3MDL_USE_ADVANCED
-  LIS3MDL_COMP_LP_ENABLED,
-  LIS3MDL_COMP_MD_CONTINUOUS,
-  LIS3MDL_COMP_OMXY_LP,
-  LIS3MDL_COMP_OMZ_LP,
-  LIS3MDL_BDU_CONTINUOUS,
-  LIS3MDL_END_LITTLE
+  .complpwrmode     = LIS3MDL_COMP_LP_ENABLED,
+  .compconvmode     = LIS3MDL_COMP_MD_CONTINUOUS,
+  .compopmodexy     = LIS3MDL_COMP_OMXY_LP,
+  .compopmodez      = LIS3MDL_COMP_OMZ_LP,
+  .bdu              = LIS3MDL_BDU_CONTINUOUS,
+  .endianness       = LIS3MDL_END_LITTLE
 #endif
 };
 
