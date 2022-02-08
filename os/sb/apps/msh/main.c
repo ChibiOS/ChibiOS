@@ -165,45 +165,13 @@ static void cmd_pwd(int argc, char *argv[]) {
 }
 
 static void cmd_echo(int argc, char *argv[]) {
-  int i, ret;
-  sglob_t sglob;
+  int i;
 
-  (void)argv;
-
-  if (argc != 2) {
-    shell_usage("echo <string>");
-    return;
-  }
-
-  sglob_init(&sglob, 0);
-
-  ret = sglob_add(&sglob, argv[1]);
-  if (ret != 0) {
-    sglob_free(&sglob);
-    shell_error("echo: out of memory" SHELL_NEWLINE_STR);
-    return;
-  }
-
-  ret = sglob_build(&sglob);
-  switch (ret) {
-  case SGLOB_NOMATCH:
-    sglob_free(&sglob);
-    shell_write(argv[1]);
-    shell_write(SHELL_NEWLINE_STR);
-    return;
-  case SGLOB_NOSPACE:
-    sglob_free(&sglob);
-    shell_error("echo: out of memory" SHELL_NEWLINE_STR);
-    return;
-  }
-
-  for (i = 0; i < sglob.sgl_pathc; i++) {
-    shell_write(sglob.sgl_pathv[i]);
+  for (i = 1; i < argc; i++) {
+    shell_write(argv[i]);
     shell_write(" ");
-    shell_write(SHELL_NEWLINE_STR);
   }
-
-  sglob_free(&sglob);
+  shell_write(SHELL_NEWLINE_STR);
 }
 
 static void cmd_env(int argc, char *argv[]) {
@@ -429,10 +397,6 @@ static bool shell_execute(int argc, char *argv[]) {
  * Application entry point.
  */
 int main(int argc, char *argv[], char *envp[]) {
-  char line[SHELL_MAX_LINE_LENGTH];
-  char *args[SHELL_MAX_ARGUMENTS + 1];
-  char *ap, *tokp;
-  int i;
 
   asm volatile ("bkpt");
 
@@ -449,6 +413,11 @@ int main(int argc, char *argv[], char *envp[]) {
   shell_write(SHELL_NEWLINE_STR SHELL_WELCOME_STR SHELL_NEWLINE_STR);
 
   while (true) {
+    int i, n, ret;
+    char line[SHELL_MAX_LINE_LENGTH];
+    char *args[SHELL_MAX_ARGUMENTS + 1];
+    char *ap, *tokp;
+    sglob_t sglob;
 
     /* Prompt.*/
     shell_write(prompt);
@@ -459,27 +428,65 @@ int main(int argc, char *argv[], char *envp[]) {
       break;
     }
 
-    /* Parsing arguments.*/
+    /* Fetching arguments.*/
     tokp = line;
-    i = 0;
+    n = 0;
     while ((ap = fetch_argument(&tokp)) != NULL) {
-      if (i < SHELL_MAX_ARGUMENTS) {
-        args[i++] = ap;
+      if (n < SHELL_MAX_ARGUMENTS) {
+        args[n++] = ap;
       }
       else {
-        i = 0;
+        n = 0;
         shell_error("too many arguments" SHELL_NEWLINE_STR);
         break;
       }
     }
-    args[i] = NULL;
+    args[n] = NULL;
 
-    /* Executing command, if any.*/
-    if (i > 0) {
-      if (shell_execute(i, args)){
+    /* Special case for empty lines.*/
+    if (n == 0) {
+      continue;
+    }
+
+    /* Adding the command name as-is.*/
+    sglob_init(&sglob, 0);
+    ret = sglob_add(&sglob, args[0]);
+    if (ret == SGLOB_NOSPACE) {
+      shell_error("msh: out of memory" SHELL_NEWLINE_STR);
+      break;
+    }
+
+    /* Arguments processing except those starting with a "-" which are
+       options, those are added without processing.*/
+    for (i = 1; i < n; i++) {
+      /* Accumulating arguments expansion into the "glob".*/
+      if (*args[i] != '-') {
+        ret = sglob_match(&sglob, args[i]);
+      }
+      else {
+        ret = sglob_add(&sglob, args[i]);
+      }
+      if (ret == SGLOB_NOSPACE) {
+        shell_error("msh: out of memory" SHELL_NEWLINE_STR);
+        break;
+      }
+    }
+
+    /* If no errors then executing the command.*/
+    if (ret != SGLOB_NOSPACE) {
+      /* Building the full arguments array.*/
+      ret = sglob_build(&sglob);
+      if (ret != 0) {
+
+      }
+      if (shell_execute(sglob.sgl_pathc, sglob.sgl_pathv)) {
+        shell_error("msh: ");
         shell_error(args[0]);
         shell_error(": command not found" SHELL_NEWLINE_STR);
       }
     }
+
+    /* Freeing memory allocated during processing.*/
+    sglob_free(&sglob);
   }
 }

@@ -55,6 +55,7 @@ typedef struct lstring {
 typedef struct {
   int                   sgl_offs;
   lstring_t             *sgl_next;
+  lstring_t             *sgl_last;
   char                  *sgl_buf;
   int                   sgl_pathc;
   char                  **sgl_pathv;
@@ -72,7 +73,8 @@ typedef struct {
 extern "C" {
 #endif
   void sglob_init(sglob_t *psglob, size_t offs);
-  int sglob_add(sglob_t *psglob, const char *pattern);
+  int sglob_add(sglob_t *psglob, const char *s);
+  int sglob_match(sglob_t *psglob, const char *pattern);
   int sglob_build(sglob_t *psglob);
   void sglob_free(sglob_t *psglob);
 #ifdef __cplusplus

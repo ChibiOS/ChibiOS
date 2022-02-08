@@ -73,11 +73,18 @@ static char *lsalloc(sglob_t *psglob, size_t len) {
   lstring_t *lsp;
 
   lsp = malloc(len + sizeof (lstring_t));
-  if (lsp != NULL) {
-    lsp->next = psglob->sgl_next;
-    psglob->sgl_next = lsp;
+  if (lsp == NULL) {
+    return NULL;
   }
 
+  lsp->next = NULL;
+  if (psglob->sgl_next == NULL) {
+    psglob->sgl_next = psglob->sgl_last = lsp;
+  }
+  else {
+    psglob->sgl_last->next = lsp;
+    psglob->sgl_last = lsp;
+  }
   return lsp->string;
 }
 
@@ -108,11 +115,29 @@ void sglob_init(sglob_t *psglob, size_t offs) {
   psglob->sgl_offs  = offs;
   psglob->sgl_buf   = NULL;
   psglob->sgl_next  = NULL;
+  psglob->sgl_last  = NULL;
   psglob->sgl_pathc = 0;
   psglob->sgl_pathv = NULL;
 }
 
-int sglob_add(sglob_t *psglob, const char *pattern) {
+int sglob_add(sglob_t *psglob, const char *s) {
+  char *p;
+  int ret;
+
+  p = lsalloc(psglob, strlen(s));
+  if (p != NULL) {
+    strcpy(p, s);
+    psglob->sgl_pathc++;
+    ret = 0;
+  }
+  else {
+    ret = SGLOB_NOSPACE;
+  }
+
+  return ret;
+}
+
+int sglob_match(sglob_t *psglob, const char *pattern) {
   int ret;
   DIR *dbp;
 
@@ -121,7 +146,7 @@ int sglob_add(sglob_t *psglob, const char *pattern) {
   do {
     char *lastp, *dirp;
     size_t plen, dirlen;
-    bool no_spec;
+    bool no_spec, found;
     struct dirent *dp;
 
     /* Checking the path length.*/
@@ -155,19 +180,11 @@ int sglob_add(sglob_t *psglob, const char *pattern) {
       dirlen   = strlen(dirp);
     }
 
-    /* Case with no wildcards.*/
+    /* Case with no wildcards, adding with no processing.*/
     no_spec = (bool)((index(lastp, '?') == NULL) &&
                      (index(lastp, '*') == NULL));
     if (no_spec) {
-      char *p;
-
-      p = lsalloc(psglob, plen);
-      if (p != NULL) {
-        strcpy(p, pattern);
-        psglob->sgl_pathc++;
-        ret = 0;
-      }
-      break;
+      return sglob_add(psglob, pattern);
     }
 
     /* Opening the directory part of the path. If it faults then it is not
@@ -175,11 +192,12 @@ int sglob_add(sglob_t *psglob, const char *pattern) {
        detected from outside.*/
     dbp = opendir(dirp == NULL ? "." : dirp);
     if (dbp == NULL) {
-      ret = 0;
+      ret = SGLOB_NOMATCH;
       break;
     }
 
     /* Scanning the directory for matches.*/
+    found = false;
     while ((dp = readdir(dbp)) != NULL) {
       char *p;
 
@@ -188,9 +206,10 @@ int sglob_add(sglob_t *psglob, const char *pattern) {
       }
 
       /* Inserting the new found match into the list.*/
+      found = true;
       p = lsalloc(psglob, dirlen + strlen(dp->d_name) + 1);
       if (p == NULL) {
-        break;
+        goto skiperr;
       }
       *p = '\0';
       if (dirlen > 0) {
@@ -201,9 +220,15 @@ int sglob_add(sglob_t *psglob, const char *pattern) {
       psglob->sgl_pathc++;
     }
 
-    closedir(dbp);
+    if (found) {
+      ret = 0;
+    }
+    else {
+      ret = SGLOB_NOMATCH;
+    }
 
-    ret = 0;
+skiperr:
+    closedir(dbp);
   }
   while (false);
 
@@ -213,10 +238,6 @@ int sglob_add(sglob_t *psglob, const char *pattern) {
 int sglob_build(sglob_t *psglob) {
   lstring_t *lsp;
   int i;
-
-  if (psglob->sgl_pathc == 0) {
-    return SGLOB_NOMATCH;
-  }
 
   psglob->sgl_pathv = malloc((psglob->sgl_pathc + psglob->sgl_offs + 1) *
                             sizeof (char *));
