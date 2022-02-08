@@ -34,24 +34,24 @@ static float barocooked;
 static float thermocooked;
 
 static const I2CConfig i2ccfg = {
-  .op_mode          = OPMODE_I2C,
-  .clock_speed      = 400000,
-  .duty_cycle       = FAST_DUTY_CYCLE_2
+  .op_mode            = OPMODE_I2C,
+  .clock_speed        = 400000,
+  .duty_cycle         = FAST_DUTY_CYCLE_2
 };
 
 static const LPS25HConfig lps25hcfg = {
-  &I2CD1,
-  &i2ccfg,
-  LPS25H_SAD_VCC,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  LPS25H_ODR_7HZ,
+  .i2cp               = &I2CD1,
+  .i2ccfg             = &i2ccfg,
+  .slaveaddress       = LPS25H_SAD_VCC,
+  .barosensitivity    = NULL,
+  .barobias           = NULL,
+  .thermosensitivity  = NULL,
+  .thermobias         = NULL,
+  .odr                = LPS25H_ODR_7HZ,
 #if LPS25H_USE_ADVANCED
-  LPS25H_BDU_CONTINUOUS,
-  LPS25H_AVGP_512,
-  LPS25H_AVGT_512
+  .bdu                = LPS25H_BDU_CONTINUOUS,
+  .baroresolution     = LPS25H_AVGP_512,
+  .thermoresolution   = LPS25H_AVGT_512
 #endif
 };
 

@@ -43,7 +43,7 @@
 /**
  * @brief   LPS25H driver version string.
  */
-#define EX_LPS25H_VERSION                   "1.1.2"
+#define EX_LPS25H_VERSION                   "1.1.3"
 
 /**
  * @brief   LPS25H driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LPS25H driver version patch number.
  */
-#define EX_LPS25H_PATCH                     2
+#define EX_LPS25H_PATCH                     3
 /** @} */
 
 /**
@@ -406,12 +406,12 @@ typedef struct {
   /**
    * @brief LPS25H output data rate selection.
    */
-  lps25h_odr_t              outputdatarate;
+  lps25h_odr_t              odr;
 #if LPS25H_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LPS25H block data update.
    */
-  lps25h_bdu_t              blockdataupdate;
+  lps25h_bdu_t              bdu;
   /**
    * @brief LPS25H barometer subsystem  resolution.
    */
