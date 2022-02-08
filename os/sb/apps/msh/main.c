@@ -22,6 +22,8 @@
 #include "sbuser.h"
 #include "paths.h"
 
+#include "sglob.h"
+
 #define SHELL_MAX_LINE_LENGTH       128
 #define SHELL_MAX_ARGUMENTS         20
 #define SHELL_PROMPT_STR            "> "
@@ -162,6 +164,48 @@ static void cmd_pwd(int argc, char *argv[]) {
   }
 }
 
+static void cmd_echo(int argc, char *argv[]) {
+  int i, ret;
+  sglob_t sglob;
+
+  (void)argv;
+
+  if (argc != 2) {
+    shell_usage("echo <string>");
+    return;
+  }
+
+  sglob_init(&sglob, 0);
+
+  ret = sglob_add(&sglob, argv[1]);
+  if (ret != 0) {
+    sglob_free(&sglob);
+    shell_error("echo: out of memory" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = sglob_build(&sglob);
+  switch (ret) {
+  case SGLOB_NOMATCH:
+    sglob_free(&sglob);
+    shell_write(argv[1]);
+    shell_write(SHELL_NEWLINE_STR);
+    return;
+  case SGLOB_NOSPACE:
+    sglob_free(&sglob);
+    shell_error("echo: out of memory" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  for (i = 0; i < sglob.sgl_pathc; i++) {
+    shell_write(sglob.sgl_pathv[i]);
+    shell_write(" ");
+    shell_write(SHELL_NEWLINE_STR);
+  }
+
+  sglob_free(&sglob);
+}
+
 static void cmd_env(int argc, char *argv[]) {
   extern char **environ;
   char **pp;
@@ -284,6 +328,7 @@ static bool shell_execute(int argc, char *argv[]) {
     void (*cmdf)(int argc, char *argv[]);
   } builtins[] = {
     {"cd",      cmd_cd},
+    {"echo",    cmd_echo},
     {"env",     cmd_env},
     {"exit",    cmd_exit},
     {"mkdir",   cmd_mkdir},

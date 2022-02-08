@@ -74,8 +74,8 @@ static char *lsalloc(sglob_t *psglob, size_t len) {
 
   lsp = malloc(len + sizeof (lstring_t));
   if (lsp != NULL) {
-    lsp->next = psglob->gl_next;
-    psglob->gl_next = lsp;
+    lsp->next = psglob->sgl_next;
+    psglob->sgl_next = lsp;
   }
 
   return lsp->string;
@@ -105,32 +105,19 @@ bool match(const char *pattern, const char *text) {
 
 void sglob_init(sglob_t *psglob, size_t offs) {
 
-  psglob->gl_offs  = offs;
-  psglob->gl_buf   = NULL;
-  psglob->gl_next  = NULL;
-  psglob->gl_pathc = 0;
-  psglob->gl_pathv = NULL;
+  psglob->sgl_offs  = offs;
+  psglob->sgl_buf   = NULL;
+  psglob->sgl_next  = NULL;
+  psglob->sgl_pathc = 0;
+  psglob->sgl_pathv = NULL;
 }
 
-void sglob_free(sglob_t *psglob) {
-  lstring_t *lsp;
-
-  if (psglob->gl_buf != NULL) {
-    free(psglob->gl_buf);
-  }
-
-  while ((lsp = psglob->gl_next) != NULL) {
-    psglob->gl_next = lsp->next;
-    free(lsp);
-  }
-}
-
-int sglob_add(const char *pattern, sglob_t *psglob) {
+int sglob_add(sglob_t *psglob, const char *pattern) {
   int ret;
   DIR *dbp;
 
   dbp = NULL;
-  ret = GLOB_NOSPACE;
+  ret = SGLOB_NOSPACE;
   do {
     char *lastp, *dirp;
     size_t plen, dirlen;
@@ -144,50 +131,49 @@ int sglob_add(const char *pattern, sglob_t *psglob) {
     }
 
     /* Allocating a path buffer if not already done.*/
-    if (psglob->gl_buf == NULL) {
-      psglob->gl_buf = malloc(PATH_MAX);
-      if (psglob->gl_buf == NULL) {
+    if (psglob->sgl_buf == NULL) {
+      psglob->sgl_buf = malloc(PATH_MAX);
+      if (psglob->sgl_buf == NULL) {
         break;
       }
     }
 
     /* We need the path pattern in a writable buffer.*/
-    strcpy(psglob->gl_buf, pattern);
+    strcpy(psglob->sgl_buf, pattern);
 
     /* Finding the last element, the one to be expanded.*/
-    lastp = rindex(psglob->gl_buf, '/');
+    lastp = rindex(psglob->sgl_buf, '/');
     if (lastp == NULL) {
       /* It is all last element.*/
-      lastp    = psglob->gl_buf;
+      lastp    = psglob->sgl_buf;
       dirp     = NULL;
       dirlen   = (size_t)0;
     }
     else {
       *lastp++ = '\0';
-      dirp     = psglob->gl_buf;
+      dirp     = psglob->sgl_buf;
       dirlen   = strlen(dirp);
     }
 
     /* Case with no wildcards.*/
-    no_spec = (bool)((index(lastp, '?') == NULL) && (index(lastp, '*') == NULL));
+    no_spec = (bool)((index(lastp, '?') == NULL) &&
+                     (index(lastp, '*') == NULL));
     if (no_spec) {
       char *p;
 
       p = lsalloc(psglob, plen);
       if (p != NULL) {
         strcpy(p, pattern);
- //       psglob->gl_pathv[psglob->gl_offs + psglob->gl_pathc]     = p;
- //       psglob->gl_pathv[psglob->gl_offs + psglob->gl_pathc + 1] = NULL;
-        psglob->gl_pathc++;
+        psglob->sgl_pathc++;
         ret = 0;
       }
       break;
     }
 
-    /* Opening the directory part of the path. If it fauls then it is not
+    /* Opening the directory part of the path. If it faults then it is not
        reported as an error but an empty sglob is returned, this can be
        detected from outside.*/
-    dbp = opendir(dirp);
+    dbp = opendir(dirp == NULL ? "." : dirp);
     if (dbp == NULL) {
       ret = 0;
       break;
@@ -208,20 +194,62 @@ int sglob_add(const char *pattern, sglob_t *psglob) {
       }
       *p = '\0';
       if (dirlen > 0) {
-        strcat(p, dirp);
+        strcat(p, dirp); /* TODO Optimize strcat */
         strcat(p, "/");
       }
       strcat(p, dp->d_name);
-//      psglob->gl_pathv[psglob->gl_offs + psglob->gl_pathc]     = p;
-//      psglob->gl_pathv[psglob->gl_offs + psglob->gl_pathc + 1] = NULL;
-      psglob->gl_pathc++;
+      psglob->sgl_pathc++;
     }
 
     closedir(dbp);
+
+    ret = 0;
   }
   while (false);
 
   return ret;
+}
+
+int sglob_build(sglob_t *psglob) {
+  lstring_t *lsp;
+  int i;
+
+  if (psglob->sgl_pathc == 0) {
+    return SGLOB_NOMATCH;
+  }
+
+  psglob->sgl_pathv = malloc((psglob->sgl_pathc + psglob->sgl_offs + 1) *
+                            sizeof (char *));
+  if (psglob->sgl_pathv == NULL) {
+    return SGLOB_NOSPACE;
+  }
+
+  i = psglob->sgl_offs;
+  lsp = psglob->sgl_next;
+  while (lsp != NULL) {
+    psglob->sgl_pathv[i++] = lsp->string;
+    lsp = lsp->next;
+  }
+  psglob->sgl_pathv[i] = NULL;
+
+  return 0;
+}
+
+void sglob_free(sglob_t *psglob) {
+  lstring_t *lsp;
+
+  if (psglob->sgl_buf != NULL) {
+    free(psglob->sgl_buf);
+  }
+
+  if (psglob->sgl_pathv != NULL) {
+    free(psglob->sgl_pathv);
+  }
+
+  while ((lsp = psglob->sgl_next) != NULL) {
+    psglob->sgl_next = lsp->next;
+    free(lsp);
+  }
 }
 
 /** @} */

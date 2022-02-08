@@ -32,9 +32,8 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define GLOB_NOSPACE                    1
-#define GLOB_ABORTED                    2
-#define GLOB_NOMATCH                    3
+#define SGLOB_NOSPACE                   1
+#define SGLOB_NOMATCH                   3
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -54,11 +53,11 @@ typedef struct lstring {
 } lstring_t;
 
 typedef struct {
-  int           gl_offs;
-  lstring_t     *gl_next;
-  char          *gl_buf;
-  int           gl_pathc;
-  char          **gl_pathv;
+  int                   sgl_offs;
+  lstring_t             *sgl_next;
+  char                  *sgl_buf;
+  int                   sgl_pathc;
+  char                  **sgl_pathv;
 } sglob_t;
 
 /*===========================================================================*/
@@ -73,8 +72,9 @@ typedef struct {
 extern "C" {
 #endif
   void sglob_init(sglob_t *psglob, size_t offs);
-  int sglob_add(const char *pattern, sglob_t *psglob);
-  void glob_free(sglob_t *psglob);
+  int sglob_add(sglob_t *psglob, const char *pattern);
+  int sglob_build(sglob_t *psglob);
+  void sglob_free(sglob_t *psglob);
 #ifdef __cplusplus
 }
 #endif
