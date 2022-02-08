@@ -47,14 +47,14 @@ static const SPIConfig spicfg = {
 };
 
 static LIS302DLConfig lis302dlcfg = {
-  &SPID1,
-  &spicfg,
-  NULL,
-  NULL,
-  LIS302DL_ACC_FS_2G,
-  LIS302DL_ACC_ODR_100HZ,
+  .spip             = &SPID1,
+  .spicfg           = &spicfg,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = LIS302DL_ACC_FS_2G,
+  .accodr           = LIS302DL_ACC_ODR_100HZ,
 #if LIS302DL_USE_ADVANCED
-  LIS302DL_ACC_HP_1,
+  .acchighpass      = LIS302DL_ACC_HP_1,
 #endif
 };
 

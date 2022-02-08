@@ -43,7 +43,7 @@
 /**
  * @brief   LIS302DL driver version string.
  */
-#define EX_LIS302DL_VERSION                 "1.1.1"
+#define EX_LIS302DL_VERSION                 "1.1.2"
 
 /**
  * @brief   LIS302DL driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   LIS302DL driver version patch number.
  */
-#define EX_LIS302DL_PATCH                   1
+#define EX_LIS302DL_PATCH                   2
 /** @} */
 
 /**
@@ -343,7 +343,7 @@ typedef struct {
   /**
    * @brief LIS302DL output data rate selection.
    */
-  lis302dl_acc_odr_t        accoutputdatarate;
+  lis302dl_acc_odr_t        accodr;
 #if LIS302DL_USE_ADVANCED || defined(__DOXYGEN__)
   /**
    * @brief LIS302DL high pass filtering.

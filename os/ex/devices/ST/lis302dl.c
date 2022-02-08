@@ -455,7 +455,7 @@ void lis302dlStart(LIS302DLDriver *devp, const LIS302DLConfig *config) {
   {
     cr[0] = LIS302DL_CTRL_REG1_XEN | LIS302DL_CTRL_REG1_YEN |
             LIS302DL_CTRL_REG1_ZEN | LIS302DL_CTRL_REG1_PD |
-            devp->config->accoutputdatarate |
+            devp->config->accodr |
             devp->config->accfullscale;
   }
 
