@@ -857,7 +857,7 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
     cr[0] = LSM6DS0_AD_CTRL_REG8;
     cr[1] = LSM6DS0_CTRL_REG8_IF_ADD_INC;
 #if LSM6DS0_USE_ADVANCED || defined(__DOXYGEN__)
-    cr[1] |= devp->config->endianness | devp->config->blockdataupdate;
+    cr[1] |= devp->config->endianness | devp->config->bdu;
 #endif
   }
 #if LSM6DS0_USE_I2C
@@ -888,7 +888,7 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
 
   /* Control register 6 configuration block.*/
   {
-    cr[2] = devp->config->accoutdatarate |
+    cr[2] = devp->config->accodr |
             devp->config->accfullscale;
   }
 
@@ -961,7 +961,7 @@ void lsm6ds0Start(LSM6DS0Driver *devp, const LSM6DS0Config *config) {
   /* Control register 1 configuration block.*/
   {
     cr[1] = devp->config->gyrofullscale |
-            devp->config->gyrooutdatarate;
+            devp->config->gyroodr;
   }
 
   /* Control register 2 configuration block.*/

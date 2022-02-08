@@ -43,29 +43,27 @@ static const I2CConfig i2ccfg = {
 };
 
 static const LSM6DS0Config lsm6ds0cfg = {
-  &I2CD1,
-  &i2ccfg,
-  LSM6DS0_SAD_VCC,
-  NULL,
-  NULL,
-  LSM6DS0_ACC_FS_2G,
-  LSM6DS0_ACC_ODR_50Hz,
+  .i2cp             = &I2CD1,
+  .i2ccfg           = &i2ccfg,
+  .slaveaddress     = LSM6DS0_SAD_VCC,
+  .accsensitivity   = NULL,
+  .accbias          = NULL,
+  .accfullscale     = LSM6DS0_ACC_FS_2G,
+  .accodr           = LSM6DS0_ACC_ODR_50Hz,
 #if LSM6DS0_USE_ADVANCED
-  LSM6DS0_ACC_DEC_X4,
+  .accdecmode       = LSM6DS0_ACC_DEC_X4,
 #endif
-  NULL,
-  NULL,
-  LSM6DS0_GYRO_FS_245DPS,
-  LSM6DS0_GYRO_ODR_119HZ_FC_31,
+  .gyrosensitivity  = NULL,
+  .gyrobias         = NULL,
+  .gyrofullscale    = LSM6DS0_GYRO_FS_245DPS,
+  .gyroodr          = LSM6DS0_GYRO_ODR_119HZ_FC_31,
 #if LSM6DS0_USE_ADVANCED
-  LSM6DS0_GYRO_LP_DISABLED,
-  LSM6DS0_GYRO_OUT_SEL_0,
-  LSM6DS0_GYRO_HP_DISABLED,
-  LSM6DS0_GYRO_HPCF_0,
-#endif
-#if LSM6DS0_USE_ADVANCED
-  LSM6DS0_BDU_BLOCKED,
-  LSM6DS0_END_LITTLE
+  .gyrolowmodecfg   = LSM6DS0_GYRO_LP_DISABLED,
+  .gyrooutsel       = LSM6DS0_GYRO_OUT_SEL_0,
+  .gyrohpfenable    = LSM6DS0_GYRO_HP_DISABLED,
+  .gyrohpcfg        = LSM6DS0_GYRO_HPCF_0,
+  .bdu              = LSM6DS0_BDU_BLOCKED,
+  .endianness       = LSM6DS0_END_LITTLE
 #endif
 };
 
