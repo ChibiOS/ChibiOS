@@ -8,5 +8,5 @@ Contain hardcoded paths prefixed like:
 
 Replace the initial part up to "chibios_trunk" with the path of your ChibiOS
 directory before attempting a debug session using Eclipse. In addition, you
-need also to compile the "SB-CLIENT-32k-08070000-4k-2001E000" project, its
-image (sb.elf) is loaded inside the demo sandbox.
+need also to compile the "SB-APP-MSH" project, its image (msh.elf) is loaded
+inside the demo sandboxes.
