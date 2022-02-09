@@ -416,7 +416,7 @@ int main(int argc, char *argv[], char *envp[]) {
   shell_write(SHELL_NEWLINE_STR SHELL_WELCOME_STR SHELL_NEWLINE_STR);
 
   while (true) {
-    int i, n, ret;
+    int i, n, ret, lastopt;
     char line[SHELL_MAX_LINE_LENGTH];
     char *args[SHELL_MAX_ARGUMENTS + 1];
     char *ap, *tokp;
@@ -452,11 +452,10 @@ int main(int argc, char *argv[], char *envp[]) {
     }
 
     /* Adding the command name as-is.*/
-    sglob_init(&sglob, 0);
+    sglob_init(&sglob);
     ret = sglob_add(&sglob, args[0]);
     if (ret == SGLOB_NOSPACE) {
-      shell_error("msh: out of memory" SHELL_NEWLINE_STR);
-      break;
+      goto outofmem;
     }
 
     /* Arguments processing except those starting with a "-" which are
@@ -470,26 +469,38 @@ int main(int argc, char *argv[], char *envp[]) {
         ret = sglob_add(&sglob, args[i]);
       }
       if (ret == SGLOB_NOSPACE) {
-        shell_error("msh: out of memory" SHELL_NEWLINE_STR);
-        break;
+        goto outofmem;
       }
     }
 
-    /* If no errors then executing the command.*/
-    if (ret != SGLOB_NOSPACE) {
-      /* Building the full arguments array.*/
-      ret = sglob_build(&sglob);
-      if (ret != 0) {
+    /* Building the full arguments array.*/
+    ret = sglob_build(&sglob, 0);
+    if (ret == SGLOB_NOSPACE) {
+      goto outofmem;
+    }
 
-      }
-      if (shell_execute(sglob.sgl_pathc, sglob.sgl_pathv)) {
-        shell_error("msh: ");
-        shell_error(args[0]);
-        shell_error(": command not found" SHELL_NEWLINE_STR);
-      }
+    /* Sorting the glob in sub-groups delimited by option arguments, we don't
+       want arguments to move around options. The base file name is also
+       considered an option and not moved.*/
+    lastopt = 0;
+    for (i = 1; i < n; i++) {
+      /* TODO */
+      (void)lastopt;
+    }
+
+    /* Executing the glob.*/
+    if (shell_execute(sglob.sgl_pathc, sglob.sgl_pathv)) {
+      shell_error("msh: ");
+      shell_error(args[0]);
+      shell_error(": command not found" SHELL_NEWLINE_STR);
     }
 
     /* Freeing memory allocated during processing.*/
+    sglob_free(&sglob);
+    continue;
+
+outofmem:
+    shell_error("msh: out of memory" SHELL_NEWLINE_STR);
     sglob_free(&sglob);
   }
 }

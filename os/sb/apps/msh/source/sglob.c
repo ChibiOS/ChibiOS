@@ -110,9 +110,8 @@ bool match(const char *pattern, const char *text) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void sglob_init(sglob_t *psglob, size_t offs) {
+void sglob_init(sglob_t *psglob) {
 
-  psglob->sgl_offs  = offs;
   psglob->sgl_buf   = NULL;
   psglob->sgl_next  = NULL;
   psglob->sgl_last  = NULL;
@@ -124,7 +123,7 @@ int sglob_add(sglob_t *psglob, const char *s) {
   char *p;
   int ret;
 
-  p = lsalloc(psglob, strlen(s));
+  p = lsalloc(psglob, strlen(s) + 1);
   if (p != NULL) {
     strcpy(p, s);
     psglob->sgl_pathc++;
@@ -235,17 +234,16 @@ skiperr:
   return ret;
 }
 
-int sglob_build(sglob_t *psglob) {
+int sglob_build(sglob_t *psglob, size_t offs) {
   lstring_t *lsp;
   int i;
 
-  psglob->sgl_pathv = malloc((psglob->sgl_pathc + psglob->sgl_offs + 1) *
-                            sizeof (char *));
+  psglob->sgl_pathv = malloc((psglob->sgl_pathc + offs + 1) * sizeof (char *));
   if (psglob->sgl_pathv == NULL) {
     return SGLOB_NOSPACE;
   }
 
-  i = psglob->sgl_offs;
+  i = offs;
   lsp = psglob->sgl_next;
   while (lsp != NULL) {
     psglob->sgl_pathv[i++] = lsp->string;
@@ -254,6 +252,15 @@ int sglob_build(sglob_t *psglob) {
   psglob->sgl_pathv[i] = NULL;
 
   return 0;
+}
+
+void sglob_sort(sglob_t *psglob, int start, int n) {
+
+  (void)psglob;
+  (void)start;
+  (void)n;
+
+  /* TODO */
 }
 
 void sglob_free(sglob_t *psglob) {
