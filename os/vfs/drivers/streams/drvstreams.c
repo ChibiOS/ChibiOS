@@ -204,8 +204,15 @@ static msg_t drv_open_file(void *instance,
     err = vfs_parse_match_separator(&path);
     CH_BREAK_ON_ERROR(err);
 
-    err = path_get_element(&path, fname, VFS_CFG_NAMELEN_MAX + 1);
+    err = (msg_t)path_get_element(&path, fname, VFS_CFG_NAMELEN_MAX + 1);
     CH_BREAK_ON_ERROR(err);
+
+    /* Null element.*/
+    if (err == (msg_t)0) {
+      /* Trying to open the root as a file.*/
+      err = CH_RET_EISDIR;
+      break;
+    }
 
     err = vfs_parse_match_end(&path);
     CH_BREAK_ON_ERROR(err);

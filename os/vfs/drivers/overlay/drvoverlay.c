@@ -222,7 +222,7 @@ static msg_t open_absolute_dir(vfs_overlay_driver_c *drvp,
       if (!CH_RET_IS_ERROR(ret)) {
         /* Delegating node creation to a registered driver.*/
         ret = dp->vmt->open_dir((void *)dp,
-                                scanpath,
+                                *scanpath == '\0' ? "/" : scanpath,
                                 vdnpp);
       }
       else {
@@ -285,8 +285,11 @@ static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
       /* Searching for a match among registered overlays.*/
       ret = match_driver(drvp, &scanpath, &dp);
       if (!CH_RET_IS_ERROR(ret)) {
-        /* Delegating node creation to a registered driver.*/
-        ret = dp->vmt->open_file((void *)dp, scanpath, oflag, vfnpp);
+        /* Delegating node creation to a registered driver, making sure it
+           does not receive an empty path.*/
+        ret = dp->vmt->open_file((void *)dp,
+                                 *scanpath == '\0' ? "/" : scanpath,
+                                 oflag, vfnpp);
       }
       else {
         /* Is there an overlaid driver? if so we need to pass request
