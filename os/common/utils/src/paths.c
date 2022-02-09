@@ -340,7 +340,7 @@ size_t path_normalize(char *dst, const char *src, size_t size) {
 
     /* Getting next element from the input path and copying it to
        the output path.*/
-    ret = path_get_element(&src, dst, size - n);
+    ret = path_copy_element(&src, dst, size - n);
     if (ret >= size - n) {
       return (size_t)0;
     }
