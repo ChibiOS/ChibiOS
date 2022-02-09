@@ -19,9 +19,9 @@
  */
 MEMORY
 {
-    flash0 (rx) : org = 0x08000000, len = 2M - 512k     /* Host code.       */
-    flash1 (rx) : org = 0x08180000, len = 256k          /* Sandbox 1 code.  */
-    flash2 (rx) : org = 0x081C0000, len = 256k          /* Sandbox 2 code.  */
+    flash0 (rx) : org = 0x08000000, len = 2M - 64k      /* Host code.       */
+    flash1 (rx) : org = 0x081F0000, len = 256k          /* Sandbox 1 code.  */
+    flash2 (rx) : org = 0x081F8000, len = 256k          /* Sandbox 2 code.  */
     flash3 (rx) : org = 0x00000000, len = 0
     flash4 (rx) : org = 0x00000000, len = 0
     flash5 (rx) : org = 0x00000000, len = 0

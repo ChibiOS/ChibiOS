@@ -19,7 +19,7 @@
  */
 MEMORY
 {
-    flash0 (rx) : org = 0x081C0000, len = 256k
+    flash0 (rx) : org = 0x081F8000, len = 32k
     ram0   (wx) : org = 0x20080000, len = 128k
 }
 

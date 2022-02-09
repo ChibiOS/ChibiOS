@@ -398,7 +398,10 @@ static bool shell_execute(int argc, char *argv[]) {
  */
 int main(int argc, char *argv[], char *envp[]) {
 
+#if 0
+  /* Enable for RAM debug.*/
   asm volatile ("bkpt");
+#endif
 
   (void)argc;
   (void)argv;

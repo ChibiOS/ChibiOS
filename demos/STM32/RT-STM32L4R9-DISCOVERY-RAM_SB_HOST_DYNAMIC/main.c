@@ -98,7 +98,7 @@ static const sb_config_t sb_config1 = {
 sb_class_t sbx1;
 
 static const char *sbx1_argv[] = {
-  "sbx1",
+  "msh",
   NULL
 };
 

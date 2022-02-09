@@ -20,12 +20,12 @@ endif
 
 # Enable this if you want the linker to remove unused code and data.
 ifeq ($(USE_LINK_GC),)
-  USE_LINK_GC = yes
+  USE_LINK_GC = no
 endif
 
 # Linker extra options here.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = 
+  USE_LDOPT = -q -Wl,-zmax-page-size=512
 endif
 
 # Enable this if you want link time optimizations (LTO).
@@ -61,7 +61,7 @@ endif
 # Stack size to the allocated to the Cortex-M main/exceptions stack. This
 # stack is used for processing interrupts and exceptions.
 ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
-  USE_EXCEPTIONS_STACKSIZE = 0x400
+  USE_EXCEPTIONS_STACKSIZE = 0
 endif
 
 # Enables the use of FPU (no, softfp, hard).
@@ -83,16 +83,16 @@ endif
 #
 
 # Define project name here
-PROJECT = sb
+PROJECT = msh
 
 # Target settings.
 MCU  = cortex-m4
 
 # Imported source files and paths.
-CHIBIOS  := ../../..
-CONFDIR  := ./cfg
-BUILDDIR := ./build
-DEPDIR   := ./.dep
+CHIBIOS  := ../../../..
+CONFDIR  := ./cfg/msh-32k-081F0000-128k-20060000
+BUILDDIR := ./build/msh-32k-081F0000-128k-20060000
+DEPDIR   := ./.dep/msh-32k-081F0000-128k-20060000
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -117,7 +117,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here.
-LDSCRIPT= ./sandbox.ld
+LDSCRIPT= $(CONFDIR)/sandbox.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -156,7 +156,7 @@ CPPWARN = -Wall -Wextra -Wundef
 UDEFS =
 
 # Define ASM defines here
-UADEFS =
+UADEFS = -DCRT0_INIT_DATA=0
 
 # List all user directories here
 UINCDIR =
@@ -186,6 +186,10 @@ include $(RULESPATH)/rules.mk
 ##############################################################################
 # Custom rules
 #
+
+read:
+	@echo "Reading elf..."
+	@$(TRGT)readelf -atSlnr $(BUILDDIR)/$(PROJECT).elf > $(BUILDDIR)/$(PROJECT).read
 
 #
 # Custom rules

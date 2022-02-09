@@ -14,18 +14,20 @@
     limitations under the License.
 */
 
-#include <stdio.h>
-
-#include "sbuser.h"
-
 /*
- * Application entry point.
+ * Sandbox memory setup.
  */
-int main(void) {
-  unsigned i = 1U;
-
-  while (true) {
-    printf("#2 Hello World (%u)!!\r\n", i++);
-    sbSleepMilliseconds(500);
-  }
+MEMORY
+{
+    flash0 (rx) : org = 0x081F0000, len = 32k
+    ram0   (wx) : org = 0x20060000, len = 128k
 }
+
+/* Flash region to be used for exception vectors.*/
+REGION_ALIAS("CODE_SPACE", flash0);
+
+/* RAM region to be used for data.*/
+REGION_ALIAS("DATA_SPACE", ram0);
+
+/* Generic rules inclusion.*/
+INCLUDE rules.ld

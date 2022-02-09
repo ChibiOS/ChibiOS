@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -115,10 +115,32 @@ static const sb_config_t sb_config2 = {
 /* Sandbox objects.*/
 sb_class_t sbx1, sbx2;
 
-static THD_WORKING_AREA(waUnprivileged1, 1024);
-static THD_WORKING_AREA(waUnprivileged2, 1024);
+static const char *sbx1_argv[] = {
+  "msh",
+  NULL
+};
 
-static thread_t *sb1tp, *sb2tp;
+static const char *sbx1_envp[] = {
+  "PATH=/bin",
+  "PROMPT=sb1> ",
+  "HOME=/",
+  NULL
+};
+
+static const char *sbx2_argv[] = {
+  "msh",
+  NULL
+};
+
+static const char *sbx2_envp[] = {
+  "PATH=/bin",
+  "PROMPT=sb2> ",
+  "HOME=/",
+  NULL
+};
+
+static THD_WORKING_AREA(waUnprivileged1, 2048);
+static THD_WORKING_AREA(waUnprivileged2, 2048);
 
 /*===========================================================================*/
 /* Main and generic code.                                                    */
@@ -146,12 +168,16 @@ static void SBHandler(eventid_t id) {
 
   (void)id;
 
-  if (chThdTerminatedX(sb1tp)) {
-    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated\r\n");
+  if (!sbIsThreadRunningX(&sbx1)) {
+    msg_t msg = sbWaitThread(&sbx1);
+
+    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated (%08lx)\r\n", msg);
   }
 
-  if (chThdTerminatedX(sb2tp)) {
-    chprintf((BaseSequentialStream *)&SD2, "SB2 terminated\r\n");
+  if (!sbIsThreadRunningX(&sbx2)) {
+    msg_t msg = sbWaitThread(&sbx2);
+
+    chprintf((BaseSequentialStream *)&SD2, "SB2 terminated (%08lx)\r\n", msg);
   }
 }
 
@@ -162,6 +188,7 @@ int main(void) {
   event_listener_t elsb;
   vfs_node_c *np;
   msg_t ret;
+  thread_t *tp;
   static const evhandler_t evhndl[] = {
     sdmonInsertHandler,
     sdmonRemoveHandler,
@@ -279,10 +306,10 @@ int main(void) {
    * Creating **static** boxes using MPU.
    */
   mpuConfigureRegion(MPU_REGION_0,
-                     0x08180000,
+                     0x081F0000,
                      MPU_RASR_ATTR_AP_RO_RO |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                     MPU_RASR_SIZE_512K |
+                     MPU_RASR_SIZE_64K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
                      0x20060000,
@@ -298,18 +325,18 @@ int main(void) {
                      MPU_RASR_ENABLE);
 
   /* Starting sandboxed thread 1.*/
-  sb1tp = sbStartThread(&sbx1, "sbx1",
-                        waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
-                        NULL, NULL);
-  if (sb1tp == NULL) {
+  tp = sbStartThread(&sbx1, "sbx1",
+                     waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
+                     sbx1_argv, sbx1_envp);
+  if (tp == NULL) {
     chSysHalt("sbx1 failed");
   }
 
   /* Starting sandboxed thread 2.*/
-  sb2tp = sbStartThread(&sbx2, "sbx2",
-                        waUnprivileged2, sizeof (waUnprivileged2), NORMALPRIO - 1,
-                        NULL, NULL);
-  if (sb2tp == NULL) {
+  tp = sbStartThread(&sbx2, "sbx2",
+                     waUnprivileged2, sizeof (waUnprivileged2), NORMALPRIO - 1,
+                     sbx2_argv, sbx2_envp);
+  if (tp == NULL) {
     chSysHalt("sbx2 failed");
   }
 
@@ -327,29 +354,6 @@ int main(void) {
 
     /* Checking for user button, launching test suite if pressed.*/
     if (palReadLine(LINE_BUTTON)) {
-      static uint8_t loadbuf[1024];
-      static memory_area_t ma = {loadbuf, sizeof (loadbuf)};
-      ret = sbElfLoadFile((vfs_driver_c *)&sb1_root_overlay_driver, "/bin/app.elf", &ma);
-      if (CH_RET_IS_ERROR(ret)) {
-        chSysHalt("ELF");
-      }
-
-//      test_execute((BaseSequentialStream *)&SD2, &rt_test_suite);
-//      test_execute((BaseSequentialStream *)&SD2, &oslib_test_suite);
     }
-
-#if 0
-    if ((i & 1) == 0U) {
-      if (!chThdTerminatedX(utp1)) {
-        (void) sbSendMessageTimeout(&sbx1, (msg_t)i, TIME_MS2I(10));
-      }
-    }
-    else {
-      if (!chThdTerminatedX(utp2)) {
-        (void) sbSendMessageTimeout(&sbx2, (msg_t)i, TIME_MS2I(10));
-      }
-    }
-    i++;
-#endif
   }
 }
