@@ -74,6 +74,13 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a Posix-favored shell named "msh" (Mini Shell). The shell is able
+       to run sub-apps inside the same sandbox. The shell can either be placed
+       statically in flash or loaded dynamically in RAM.
+- NEW: Added runnable "apps" capability to SBs, apps available so far: msh, ls.
+- NEW: Added ability to load ELF files to SBs.
+- NEW: Enhanced Posix API for SBs leveraging the VFS integration.
+- NEW: SBs and VFS integration. Each SB can see its own VFS instance.
 - NEW: Added integration of LittleFS on top of our flash infrastructure.
 - NEW: Added a new MEM_IS_VALID_FUNCTION() macro to RT and NIL.
 - NEW: Improved HAL flash interface with mutual exclusion methods, improved
