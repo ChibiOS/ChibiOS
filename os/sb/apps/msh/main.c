@@ -416,7 +416,7 @@ int main(int argc, char *argv[], char *envp[]) {
   shell_write(SHELL_NEWLINE_STR SHELL_WELCOME_STR SHELL_NEWLINE_STR);
 
   while (true) {
-    int i, n, ret, lastopt;
+    int i, n, ret;
     char line[SHELL_MAX_LINE_LENGTH];
     char *args[SHELL_MAX_ARGUMENTS + 1];
     char *ap, *tokp;
@@ -477,15 +477,6 @@ int main(int argc, char *argv[], char *envp[]) {
     ret = sglob_build(&sglob, 0);
     if (ret == SGLOB_NOSPACE) {
       goto outofmem;
-    }
-
-    /* Sorting the glob in sub-groups delimited by option arguments, we don't
-       want arguments to move around options. The base file name is also
-       considered an option and not moved.*/
-    lastopt = 0;
-    for (i = 1; i < n; i++) {
-      /* TODO */
-      (void)lastopt;
     }
 
     /* Executing the glob.*/

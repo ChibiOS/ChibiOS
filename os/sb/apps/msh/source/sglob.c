@@ -78,8 +78,8 @@ static char *lsalloc(sglob_t *psglob, size_t len) {
   }
 
   lsp->next = NULL;
-  if (psglob->sgl_next == NULL) {
-    psglob->sgl_next = psglob->sgl_last = lsp;
+  if (psglob->sgl_hdr.next == NULL) {
+    psglob->sgl_hdr.next = psglob->sgl_last = lsp;
   }
   else {
     psglob->sgl_last->next = lsp;
@@ -112,11 +112,11 @@ bool match(const char *pattern, const char *text) {
 
 void sglob_init(sglob_t *psglob) {
 
-  psglob->sgl_buf   = NULL;
-  psglob->sgl_next  = NULL;
-  psglob->sgl_last  = NULL;
-  psglob->sgl_pathc = 0;
-  psglob->sgl_pathv = NULL;
+  psglob->sgl_hdr.next  = NULL;
+  psglob->sgl_last      = NULL;
+  psglob->sgl_buf       = NULL;
+  psglob->sgl_pathc     = 0;
+  psglob->sgl_pathv     = NULL;
 }
 
 int sglob_add(sglob_t *psglob, const char *s) {
@@ -244,7 +244,7 @@ int sglob_build(sglob_t *psglob, size_t offs) {
   }
 
   i = offs;
-  lsp = psglob->sgl_next;
+  lsp = psglob->sgl_hdr.next;
   while (lsp != NULL) {
     psglob->sgl_pathv[i++] = lsp->string;
     lsp = lsp->next;
@@ -252,15 +252,6 @@ int sglob_build(sglob_t *psglob, size_t offs) {
   psglob->sgl_pathv[i] = NULL;
 
   return 0;
-}
-
-void sglob_sort(sglob_t *psglob, int start, int n) {
-
-  (void)psglob;
-  (void)start;
-  (void)n;
-
-  /* TODO */
 }
 
 void sglob_free(sglob_t *psglob) {
@@ -274,8 +265,8 @@ void sglob_free(sglob_t *psglob) {
     free(psglob->sgl_pathv);
   }
 
-  while ((lsp = psglob->sgl_next) != NULL) {
-    psglob->sgl_next = lsp->next;
+  while ((lsp = psglob->sgl_hdr.next) != NULL) {
+    psglob->sgl_hdr.next = lsp->next;
     free(lsp);
   }
 }
