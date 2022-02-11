@@ -70,6 +70,30 @@ static msg_t create_descriptor(sb_ioblock_t *iop,
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+int sb_posix_stat(const char *path, struct stat *statbuf) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  msg_t ret;
+  vfs_stat_t vstat;
+
+  if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    return CH_RET_EFAULT;
+  }
+
+  if (!sb_is_valid_write_range(sbp, (void *)statbuf, sizeof (struct stat))) {
+    return CH_RET_EFAULT;
+  }
+
+  ret = (int)vfsDrvStat(sbp->config->vfs_driver, path, &vstat);
+  if (!CH_RET_IS_ERROR(ret)) {
+    memset((void *)statbuf, 0, sizeof (struct stat));
+    statbuf->st_mode  = (mode_t)vstat.mode;
+    statbuf->st_size  = (off_t)vstat.size;
+    statbuf->st_nlink = 1;
+  }
+
+  return ret;
+}
+
 int sb_posix_open(const char *path, int flags) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   vfs_node_c *np = NULL;

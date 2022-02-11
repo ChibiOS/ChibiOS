@@ -131,6 +131,7 @@ extern "C" {
   void vfsInit(void);
   msg_t vfsChangeCurrentDirectory(const char *path);
   msg_t vfsGetCurrentDirectory(char *buf, size_t size);
+  msg_t vfsStat(const char *path, vfs_stat_t *sp);
   msg_t vfsOpen(const char *path, int flags, vfs_node_c **vnpp);
   msg_t vfsOpenDirectory(const char *name, vfs_directory_node_c **vdnpp);
   msg_t vfsOpenFile(const char *name, int flags, vfs_file_node_c **vfnpp);

@@ -83,6 +83,14 @@ msg_t vfsDrvOpen(vfs_driver_c *drvp,
   return ret;
 }
 
+msg_t drv_stat_unimpl(void *instance, vfs_stat_t *sp) {
+
+  (void)instance;
+  (void)sp;
+
+  return CH_RET_ENOSYS;
+}
+
 msg_t drv_unlink_unimpl(void *instance, const char *path) {
 
   (void)instance;

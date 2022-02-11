@@ -69,6 +69,9 @@
   __base_object_methods                                                     \
   msg_t (*set_cwd)(void *instance, const char *path);                       \
   msg_t (*get_cwd)(void *instance, char *buf, size_t size);                 \
+  msg_t (*stat)(void *instance,                                             \
+                const char *path,                                           \
+                vfs_stat_t *sp);                                            \
   msg_t (*open_dir)(void *instance,                                         \
                     const char *path,                                       \
                     vfs_directory_node_c **vdnpp);                          \
@@ -120,6 +123,7 @@ extern "C" {
                    const char *path,
                    int flags,
                    vfs_node_c **vnpp);
+  msg_t drv_stat_unimpl(void *instance, vfs_stat_t *sp);
   msg_t drv_unlink_unimpl(void *instance, const char *path);
   msg_t drv_rename_unimpl(void *instance,
                           const char *oldpath,
@@ -165,6 +169,23 @@ static inline msg_t vfsDrvGetCurrentDirectory(vfs_driver_c *drvp,
                                               char *buf, size_t size) {
 
   return drvp->vmt->get_cwd(drvp, buf, size);
+}
+
+/**
+ * @brief   Returns file or directory information.
+ *.
+ * @param[in] drvp      Pointer to the @p vfs_driver_c object.
+ * @param[in] path      Absolute path of the node to be examined.
+ * @param[out] sp       Pointer to a @p vfs_stat_t structure.
+ * @return              The operation result.
+ *
+ * @api
+ */
+static inline msg_t vfsDrvStat(vfs_driver_c *drvp,
+                               const char *path,
+                               vfs_stat_t *sp) {
+
+  return drvp->vmt->stat(drvp, path, sp);
 }
 
 /**

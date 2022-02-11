@@ -102,6 +102,20 @@ msg_t vfsGetCurrentDirectory(char *buf, size_t size) {
 }
 
 /**
+ * @brief   Returns file or directory information.
+ *.
+ * @param[in] path      Absolute path of the node to be examined.
+ * @param[out] sp       Pointer to a @p vfs_stat_t structure.
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsStat(const char *path, vfs_stat_t *sp) {
+
+  return vfsDrvStat(vfs_root, path, sp);
+}
+
+/**
  * @brief   Opens a VFS file or directory.
  *
  * @param[in] path      Absolute path of the node to be opened.

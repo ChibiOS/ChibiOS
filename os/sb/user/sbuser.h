@@ -210,6 +210,19 @@ extern "C" {
 /*===========================================================================*/
 
 /**
+ * @brief   Posix-style file status.
+ *
+ * @param[in] pathname  file to be examined
+ * @param[in] statbuf   pointer to a @p stat structure
+ * @return              Operation result.
+ */
+static inline int sbStat(const char *pathname, struct stat *statbuf) {
+
+  __syscall3r(0, SB_POSIX_STAT, pathname, statbuf);
+  return (int)r0;
+}
+
+/**
  * @brief   Posix-style file open.
  *
  * @param[in] pathname  file to be opened
@@ -260,11 +273,10 @@ static inline int sbDup2(int oldfd, int newfd) {
 }
 
 /**
- * @brief   Posix-style file file status.
+ * @brief   Posix-style file status.
  *
  * @param[in] fd        file descriptor
  * @param[in] statbuf   pointer to a @p stat structure
- * @param[in] whence    operation mode
  * @return              Operation result.
  */
 static inline int sbFstat(int fd, struct stat *statbuf) {

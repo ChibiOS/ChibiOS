@@ -112,6 +112,7 @@ typedef struct vfs_fatfs_file_node {
 
 static msg_t drv_set_cwd(void *instance, const char *path);
 static msg_t drv_get_cwd(void *instance, char *buf, size_t size);
+static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp);
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp);
@@ -127,6 +128,7 @@ msg_t drv_rmdir(void *instance, const char *path);
 static const struct vfs_fatfs_driver_vmt driver_vmt = {
   .set_cwd          = drv_set_cwd,
   .get_cwd          = drv_get_cwd,
+  .stat             = drv_stat,
   .open_dir         = drv_open_dir,
   .open_file        = drv_open_file,
   .unlink           = drv_unlink,
@@ -350,10 +352,46 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
 #endif
 }
 
+static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
+  msg_t ret;
+
+  (void)instance;
+
+  do {
+    FRESULT res;
+    FILINFO *fip;
+
+    fip = (FILINFO *)chPoolAlloc(&vfs_fatfs_driver_static.info_nodes_pool);
+    if (fip != NULL) {
+
+      res = f_stat((const TCHAR *)path, fip);
+      if (res == FR_OK) {
+
+        sp->mode = translate_mode(fip->fattrib);
+        sp->size = (vfs_offset_t)fip->fsize;
+
+        ret = CH_RET_SUCCESS;
+      }
+      else {
+        ret = translate_error(res);
+      }
+
+      chPoolFree(&vfs_fatfs_driver_static.info_nodes_pool, (void *)fip);
+    }
+    else {
+      ret = CH_RET_ENOMEM;
+      break;
+    }
+  }
+  while (false);
+
+  return ret;
+}
+
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp) {
-  msg_t err;
+  msg_t ret;
 
   do {
     vfs_fatfs_driver_c *drvp = (vfs_fatfs_driver_c *)instance;
@@ -363,7 +401,7 @@ static msg_t drv_open_dir(void *instance,
     ffdnp = chPoolAlloc(&vfs_fatfs_driver_static.dir_nodes_pool);
     if (ffdnp != NULL) {
 
-      res = f_opendir(&ffdnp->dir, (TCHAR *)path);
+      res = f_opendir(&ffdnp->dir, (const TCHAR *)path);
       if (res == FR_OK) {
 
         /* Node object initialization.*/
@@ -372,25 +410,29 @@ static msg_t drv_open_dir(void *instance,
         ffdnp->mode     = translate_mode(ffdnp->dir.obj.attr);
 
         *vdnpp = (vfs_directory_node_c *)ffdnp;
-        err = CH_RET_SUCCESS;
+        ret = CH_RET_SUCCESS;
         break;
       }
 
       chPoolFree(&vfs_fatfs_driver_static.dir_nodes_pool, (void *)ffdnp);
     }
+    else {
+      ret = CH_RET_ENOMEM;
+      break;
+    }
 
-    err = translate_error(res);
+    ret = translate_error(res);
   }
   while (false);
 
-  return err;
+  return ret;
 }
 
 static msg_t drv_open_file(void *instance,
                            const char *path,
                            int flags,
                            vfs_file_node_c **vfnpp) {
-  msg_t err;
+  msg_t ret;
 
   do {
     vfs_fatfs_driver_c *drvp = (vfs_fatfs_driver_c *)instance;
@@ -400,14 +442,14 @@ static msg_t drv_open_file(void *instance,
 
     mode = translate_oflag(flags);
     if (mode == (BYTE)0) {
-      err = CH_RET_EINVAL;
+      ret = CH_RET_EINVAL;
       break;
     }
 
     fffnp = chPoolAlloc(&vfs_fatfs_driver_static.file_nodes_pool);
     if (fffnp != NULL) {
 
-      res = f_open(&fffnp->file, (TCHAR *)path, mode);
+      res = f_open(&fffnp->file, (const TCHAR *)path, mode);
       if (res == FR_OK) {
 
         /* Node object initialization.*/
@@ -417,32 +459,37 @@ static msg_t drv_open_file(void *instance,
         fffnp->stream.vmt = &file_stream_vmt;
 
         *vfnpp = (vfs_file_node_c *)fffnp;
-        err = CH_RET_SUCCESS;
+        ret = CH_RET_SUCCESS;
         break;
       }
 
       chPoolFree(&vfs_fatfs_driver_static.file_nodes_pool, (void *)fffnp);
     }
+    else {
+      ret = CH_RET_ENOMEM;
+      break;
+    }
 
-    err = translate_error(res);
+    ret = translate_error(res);
   }
   while (false);
 
-  return err;
+  return ret;
 }
 
 msg_t drv_unlink(void *instance, const char *path) {
 
   (void)instance;
 
-  return translate_error(f_unlink(path));
+  return translate_error(f_unlink((const TCHAR *)path));
 }
 
 msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
 
   (void)instance;
 
-  return translate_error(f_rename(oldpath, newpath));
+  return translate_error(f_rename((const TCHAR *)oldpath,
+                                  (const TCHAR *)newpath));
 }
 
 msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
@@ -450,14 +497,14 @@ msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
   (void)instance;
   (void)mode; /* Not handled by FatFS.*/
 
-  return translate_error(f_mkdir(path));
+  return translate_error(f_mkdir((const TCHAR *)path));
 }
 
 msg_t drv_rmdir(void *instance, const char *path) {
 
   (void)instance;
 
-  return translate_error(f_rmdir(path));
+  return translate_error(f_rmdir((const TCHAR *)path));
 }
 
 static void *node_dir_addref(void *instance) {
@@ -486,22 +533,22 @@ static msg_t node_dir_stat(void *instance, vfs_stat_t *sp) {
 
 static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip) {
   vfs_fatfs_dir_node_c *ffdnp = (vfs_fatfs_dir_node_c *)instance;
-  msg_t err;
+  msg_t ret;
   FRESULT res;
 
   res = f_rewinddir(&ffdnp->dir);
   if (res == FR_OK) {
-    err = node_dir_next(instance, dip);
+    ret = node_dir_next(instance, dip);
   }
   else {
-    err = translate_error(res);
+    ret = translate_error(res);
   }
 
-  return err;
+  return ret;
 }
 
 static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
-  msg_t err;
+  msg_t ret;
 
   do {
     vfs_fatfs_dir_node_c *ffdnp = (vfs_fatfs_dir_node_c *)instance;
@@ -514,26 +561,30 @@ static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip) {
       res = f_readdir(&ffdnp->dir, fip);
       if (res == FR_OK) {
         if (fip->fname[0] == '\0') {
-          err = (msg_t)0;
+          ret = (msg_t)0;
         }
         else {
           dip->mode = translate_mode(fip->fattrib);
           dip->size = (vfs_offset_t)fip->fsize;
           strncpy(dip->name, fip->fname, VFS_CFG_NAMELEN_MAX);
           dip->name[VFS_CFG_NAMELEN_MAX] = '\0';
-          err = (msg_t)1;
+          ret = (msg_t)1;
         }
       }
       else {
-        err = translate_error(res);
+        ret = translate_error(res);
       }
 
       chPoolFree(&vfs_fatfs_driver_static.info_nodes_pool, (void *)fip);
     }
+    else {
+      ret = CH_RET_ENOMEM;
+      break;
+    }
   }
   while (false);
 
-  return err;
+  return ret;
 }
 
 static void *node_file_addref(void *instance) {

@@ -69,6 +69,7 @@
 #define SB_POSIX_RENAME         13
 #define SB_POSIX_MKDIR          14
 #define SB_POSIX_RMDIR          15
+#define SB_POSIX_STAT           16
 /** @} */
 
 /*===========================================================================*/
