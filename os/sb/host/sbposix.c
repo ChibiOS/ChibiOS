@@ -169,7 +169,7 @@ int sb_posix_fstat(int fd, struct stat *statbuf) {
     return CH_RET_EBADF;
   }
 
-  ret = vfsGetStat(sbp->io.vfs_nodes[fd], &vstat);
+  ret = vfsGetNodeStat(sbp->io.vfs_nodes[fd], &vstat);
   if (!CH_RET_IS_ERROR(ret)) {
     memset((void *)statbuf, 0, sizeof (struct stat));
     statbuf->st_mode  = (mode_t)vstat.mode;

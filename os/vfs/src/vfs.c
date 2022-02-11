@@ -75,22 +75,6 @@ void vfsInit(void) {
 }
 
 /**
- * @brief   Returns the current file size.
- *.
- * @param[in] np        Pointer to the @p vfs_node_c object
- * @param[out] sp       Pointer to a @p vfs_stat_t structure.
- * @return              The operation result.
- *
- * @api
- */
-msg_t vfsGetStat(vfs_node_c *np, vfs_stat_t *sp) {
-
-  chDbgAssert(np->references > 0U, "zero count");
-
-  return np->vmt->node_stat((void *)np, sp);
-}
-
-/**
  * @brief   Changes the current VFS directory.
  *
  * @param[in] path      Path of the new current directory.
@@ -216,6 +200,22 @@ msg_t vfsMkdir(const char *path, vfs_mode_t mode) {
 msg_t vfsRmdir(const char *path) {
 
   return vfsDrvRmdir(vfs_root, path);
+}
+
+/**
+ * @brief   Returns node information.
+ *.
+ * @param[in] np        Pointer to the @p vfs_node_c object
+ * @param[out] sp       Pointer to a @p vfs_stat_t structure.
+ * @return              The operation result.
+ *
+ * @api
+ */
+msg_t vfsGetNodeStat(vfs_node_c *np, vfs_stat_t *sp) {
+
+  chDbgAssert(np->references > 0U, "zero count");
+
+  return np->vmt->node_stat((void *)np, sp);
 }
 
 /**

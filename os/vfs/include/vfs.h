@@ -129,7 +129,6 @@ extern vfs_driver_c *vfs_root;
 extern "C" {
 #endif
   void vfsInit(void);
-  msg_t vfsGetStat(vfs_node_c *np, vfs_stat_t *sp);
   msg_t vfsChangeCurrentDirectory(const char *path);
   msg_t vfsGetCurrentDirectory(char *buf, size_t size);
   msg_t vfsOpen(const char *path, int flags, vfs_node_c **vnpp);
@@ -139,6 +138,7 @@ extern "C" {
   msg_t vfsRename(const char *oldpath, const char *newpath);
   msg_t vfsMkdir(const char *path, vfs_mode_t mode);
   msg_t vfsRmdir(const char *path);
+  msg_t vfsGetNodeStat(vfs_node_c *np, vfs_stat_t *sp);
   void vfsClose(vfs_node_c *vnp);
   msg_t vfsReadDirectoryFirst(vfs_directory_node_c *vdnp,
                               vfs_direntry_info_t *dip);
