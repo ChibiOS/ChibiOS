@@ -47,6 +47,7 @@
 
 static msg_t drv_set_cwd(void *instance, const char *path);
 static msg_t drv_get_cwd(void *instance, char *buf, size_t size);
+static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp);
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp);
@@ -58,6 +59,7 @@ static msg_t drv_open_file(void *instance,
 static const struct vfs_streams_driver_vmt driver_vmt = {
   .set_cwd          = drv_set_cwd,
   .get_cwd          = drv_get_cwd,
+  .stat             = drv_stat,
   .open_dir         = drv_open_dir,
   .open_file        = drv_open_file,
   .unlink           = drv_unlink_unimpl,
@@ -153,20 +155,42 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
   return CH_RET_SUCCESS;
 }
 
+static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
+  msg_t ret;
+
+  (void)instance;
+
+  do {
+    ret = vfs_parse_match_separator(&path);
+    CH_BREAK_ON_ERROR(ret);
+
+    ret = vfs_parse_match_end(&path);
+    CH_BREAK_ON_ERROR(ret);
+
+    sp->mode = VFS_MODE_S_IFDIR;
+    sp->size = (vfs_offset_t)0;
+
+    ret = CH_RET_SUCCESS;
+  }
+  while (false);
+
+  return ret;
+}
+
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp) {
   vfs_streams_driver_c *drvp = (vfs_streams_driver_c *)instance;
-  msg_t err;
+  msg_t ret;
 
   do {
     vfs_streams_dir_node_c *sdnp;
 
-    err = vfs_parse_match_separator(&path);
-    CH_BREAK_ON_ERROR(err);
+    ret = vfs_parse_match_separator(&path);
+    CH_BREAK_ON_ERROR(ret);
 
-    err = vfs_parse_match_end(&path);
-    CH_BREAK_ON_ERROR(err);
+    ret = vfs_parse_match_end(&path);
+    CH_BREAK_ON_ERROR(ret);
 
     sdnp = chPoolAlloc(&vfs_streams_driver_static.dir_nodes_pool);
     if (sdnp != NULL) {
@@ -181,11 +205,11 @@ static msg_t drv_open_dir(void *instance,
       return CH_RET_SUCCESS;
     }
 
-    err = CH_RET_ENOMEM;
+    ret = CH_RET_ENOMEM;
   }
   while (false);
 
-  return err;
+  return ret;
 }
 
 static msg_t drv_open_file(void *instance,
@@ -194,28 +218,28 @@ static msg_t drv_open_file(void *instance,
                            vfs_file_node_c **vfnpp) {
   vfs_streams_driver_c *drvp = (vfs_streams_driver_c *)instance;
   const drv_streams_element_t *dsep;
-  msg_t err;
+  msg_t ret;
 
   (void)flags; /* TODO  handle invalid modes.*/
 
   do {
     char fname[VFS_CFG_NAMELEN_MAX + 1];
 
-    err = vfs_parse_match_separator(&path);
-    CH_BREAK_ON_ERROR(err);
+    ret = vfs_parse_match_separator(&path);
+    CH_BREAK_ON_ERROR(ret);
 
-    err = (msg_t)path_get_element(&path, fname, VFS_CFG_NAMELEN_MAX + 1);
-    CH_BREAK_ON_ERROR(err);
+    ret = (msg_t)path_get_element(&path, fname, VFS_CFG_NAMELEN_MAX + 1);
+    CH_BREAK_ON_ERROR(ret);
 
     /* Null element.*/
-    if (err == (msg_t)0) {
+    if (ret == (msg_t)0) {
       /* Trying to open the root as a file.*/
-      err = CH_RET_EISDIR;
+      ret = CH_RET_EISDIR;
       break;
     }
 
-    err = vfs_parse_match_end(&path);
-    CH_BREAK_ON_ERROR(err);
+    ret = vfs_parse_match_end(&path);
+    CH_BREAK_ON_ERROR(ret);
 
     dsep = &drvp->streams[0];
     while (dsep->name != NULL) {
@@ -241,11 +265,11 @@ static msg_t drv_open_file(void *instance,
       dsep++;
     }
 
-    err = CH_RET_ENOENT;
+    ret = CH_RET_ENOENT;
   }
   while (false);
 
-  return err;
+  return ret;
 }
 
 static void *node_dir_addref(void *instance) {

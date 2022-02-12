@@ -483,6 +483,23 @@ static void cmd_rmdir(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
   }
 }
+
+static void cmd_stat(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+  vfs_stat_t statbuf;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: stat <path>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsStat(argv[0], &statbuf);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+  }
+
+  chprintf(chp, "Mode 0x%04lx Size %d" SHELL_NEWLINE_STR, statbuf.mode, statbuf.size);
+}
 #endif
 
 /*===========================================================================*/
@@ -520,6 +537,7 @@ const ShellCommand shell_local_commands[] = {
   {"pwd",       cmd_pwd},
   {"rm",        cmd_rm},
   {"rmdir",     cmd_rmdir},
+  {"stat",      cmd_stat},
   {"tree",      cmd_tree},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE

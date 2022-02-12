@@ -407,8 +407,8 @@ static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
       if (!CH_RET_IS_ERROR(ret)) {
         /* Delegating directory creation to a registered driver.*/
         ret = dp->vmt->stat((void *)dp, scanpath, sp);
+        break;
       }
-      break;
     }
 
     /* Is there an overlaid driver? if so we need to pass request
