@@ -97,10 +97,23 @@ int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
 }
 
 __attribute__((used))
-int _fstat_r(struct _reent *r, int file, struct stat *st) {
+int _fstat_r(struct _reent *r, int file, struct stat *pstat) {
   int err;
 
-  err = sbFstat(file, st);
+  err = sbFstat(file, pstat);
+  if (CH_RET_IS_ERROR(err)) {
+    __errno_r(r) = CH_DECODE_ERROR(err);
+    return -1;
+  }
+
+  return (int)err;
+}
+
+__attribute__((used))
+int _stat_r(struct _reent *r, const char *file, struct stat *pstat) {
+  int err;
+
+  err = sbStat(file, pstat);
   if (CH_RET_IS_ERROR(err)) {
     __errno_r(r) = CH_DECODE_ERROR(err);
     return -1;

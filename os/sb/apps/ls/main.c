@@ -24,19 +24,19 @@
 
 #define NEWLINE_STR         "\r\n"
 
-#define S_ISARG             0x8000
-
 static char *dotp = ".";
 static void *bufp = NULL;
 
-static bool lflag = false;
-static bool aflag = false;
+static bool aflg = false;
+static bool dflg = false;
+static bool lflg = false;
+static bool Uflg = false;
 
 struct afile {
   char          ftype;
-  short         nlink;
+  short         fnlink;
   mode_t        fflags;
-  off_t         size;
+  off_t         fsize;
   char          *fname;
 };
 
@@ -44,6 +44,8 @@ static void usage(void) {
   fprintf(stderr, "Usage: ls [<opts>] [<file>]..." NEWLINE_STR);
   fprintf(stderr, "Options:" NEWLINE_STR);
   fprintf(stderr, "  -a                 do not ignore entries starting with ." NEWLINE_STR);
+  fprintf(stderr, "  -d                 list directories themselves, not their contents" NEWLINE_STR);
+  fprintf(stderr, "  -U                 do not sort; list entries in directory order" NEWLINE_STR);
   fprintf(stderr, "  -l                 use a long listing format" NEWLINE_STR);
 }
 
@@ -65,11 +67,107 @@ static bool gstat(struct afile *fp, const char *file, bool flag) {
   memset(fp, 0, sizeof (struct afile));
   fp->ftype = '-';
 
-  if (flag) {
+  if (flag || lflg) {
+    int ret;
+    struct stat stb;
 
+    ret = stat(file, &stb);
+    if (ret < 0) {
+      fprintf(stderr, "%s not found\n", file);
+      return true;
+    }
+
+    fp->fsize  = stb.st_size;
+    fp->fflags = stb.st_mode & ~S_IFMT;
+    fp->fnlink = stb.st_nlink;
+    switch (fp->fflags) {
+    case S_IFDIR:
+      fp->ftype = 'd';
+      break;
+    case S_IFBLK:
+      fp->ftype = 'b';
+      fp->fsize = stb.st_rdev;
+      break;
+    case S_IFCHR:
+      fp->ftype = 'c';
+      fp->fsize = stb.st_rdev;
+      break;
+    case S_IFSOCK:
+      fp->ftype = 's';
+      fp->fsize = 0;
+      break;
+    }
   }
 
   return false;
+}
+
+static void formatf(const struct afile *fp0, const struct afile *fplast) {
+
+  (void)fp0;
+  (void)fplast;
+
+#if 0
+    register struct afile *fp;
+    long width = 0, w, nentry = fplast - fp0;
+    int i, j, columns, lines;
+    char *cp;
+
+    if (fp0 == fplast)
+        return;
+    if (lflg || Cflg == 0)
+        columns = 1;
+    else {
+        for (fp = fp0; fp < fplast; fp++) {
+            long len = strlen(fmtentry(fp));
+
+            if (len > width)
+                width = len;
+        }
+        if (usetabs)
+            width = (width + 8) &~ 7;
+        else
+            width += 2;
+        columns = twidth / (int)width;
+        if (columns == 0)
+            columns = 1;
+    }
+    lines = ((int)nentry + columns - 1) / columns;
+    for (i = 0; i < lines; i++) {
+        for (j = 0; j < columns; j++) {
+            fp = fp0 + j * lines + i;
+            cp = fmtentry(fp);
+            printf("%s", cp);
+            if (fp + lines >= fplast) {
+                printf("\n");
+                break;
+            }
+            w = strlen(cp);
+            while (w < width)
+                if (usetabs) {
+                    w = (w + 8) &~ 7;
+                    putchar('\t');
+                } else {
+                    w++;
+                    putchar(' ');
+                }
+        }
+    }
+#endif
+}
+
+static int fcmp(const void *a, const void *b) {
+  const struct afile *f1 = a, *f2 = b;
+
+  /* Directories first then alphabetic order.*/
+  if ((f1->ftype == 'd') && (f2->ftype != 'd')) {
+    return -1;
+  }
+  if ((f1->ftype != 'd') && (f2->ftype == 'd')) {
+    return 1;
+  }
+
+  return strcmp(f1->fname, f2->fname);
 }
 
 /*
@@ -88,11 +186,17 @@ int main(int argc, char *argv[], char *envp[]) {
     argv[0]++;
     while (*argv[0] != '\0') {
       switch (*argv[0]) {
-      case 'l':
-        lflag = true;
-        break;
       case 'a':
-        aflag = true;
+        aflg = true;
+        break;
+      case 'd':
+        dflg = true;
+        break;
+      case 'l':
+        lflg = true;
+        break;
+      case 'U':
+        Uflg = true;
         break;
       default:
         usage();
@@ -120,12 +224,24 @@ int main(int argc, char *argv[], char *envp[]) {
   for (i = 0; i < argc; i++) {
       if (gstat(fp, *argv, true)) {
           fp->fname = *argv;
-          fp->fflags |= S_ISARG;
           fp++;
       }
       argv++;
   }
   fplast = fp;
+
+  /* Sorting the array, if not disabled.*/
+  if (!Uflg) {
+    qsort(fp0, fplast - fp0, sizeof (struct afile), fcmp);
+  }
+
+  if (dflg) {
+    /* Not entering directories.*/
+    formatf(fp0, fplast);
+  }
+  else {
+    /* Entering directories.*/
+  }
 
   freeall();
   return 0;
