@@ -23,6 +23,7 @@
 #include <dirent.h>
 
 #define NEWLINE_STR         "\r\n"
+#define TWIDTH              80
 
 static char *dotp = ".";
 static void *bufp = NULL;
@@ -30,6 +31,7 @@ static void *bufp = NULL;
 static bool aflg = false;
 static bool dflg = false;
 static bool lflg = false;
+static bool qflg = false;
 static bool Uflg = false;
 
 struct afile {
@@ -45,8 +47,9 @@ static void usage(void) {
   fprintf(stderr, "Options:" NEWLINE_STR);
   fprintf(stderr, "  -a                 do not ignore entries starting with ." NEWLINE_STR);
   fprintf(stderr, "  -d                 list directories themselves, not their contents" NEWLINE_STR);
-  fprintf(stderr, "  -U                 do not sort; list entries in directory order" NEWLINE_STR);
   fprintf(stderr, "  -l                 use a long listing format" NEWLINE_STR);
+  fprintf(stderr, "  -q                 print ? instead of nongraphic characters" NEWLINE_STR);
+  fprintf(stderr, "  -U                 do not sort; list entries in directory order" NEWLINE_STR);
 }
 
 static void freeall(void) {
@@ -80,7 +83,7 @@ static bool gstat(struct afile *fp, const char *file, bool flag) {
     fp->fsize  = stb.st_size;
     fp->fflags = stb.st_mode & ~S_IFMT;
     fp->fnlink = stb.st_nlink;
-    switch (fp->fflags) {
+    switch (stb.st_mode & S_IFMT) {
     case S_IFDIR:
       fp->ftype = 'd';
       break;
@@ -102,10 +105,170 @@ static bool gstat(struct afile *fp, const char *file, bool flag) {
   return false;
 }
 
-static void formatf(const struct afile *fp0, const struct afile *fplast) {
+static char *fmtmode(char *p, mode_t flags) {
 
-  (void)fp0;
-  (void)fplast;
+  if ((flags & S_IRUSR) != (mode_t)0) {
+    *p++ = 'r';
+  }
+  if ((flags & S_IWUSR) != (mode_t)0) {
+    *p++ = 'w';
+  }
+  if ((flags & S_IXUSR) != (mode_t)0) {
+    *p++ = ((flags & S_ISUID) == (mode_t)0) ? 'x' : 's';
+  }
+  if ((flags & S_IRGRP) != (mode_t)0) {
+    *p++ = 'r';
+  }
+  if ((flags & S_IWGRP) != (mode_t)0) {
+    *p++ = 'w';
+  }
+  if ((flags & S_IXGRP) != (mode_t)0) {
+    *p++ = ((flags & S_ISGID) == (mode_t)0) ? 'x' : 's';
+  }
+  if ((flags & S_IROTH) != (mode_t)0) {
+    *p++ = 'r';
+  }
+  if ((flags & S_IWOTH) != (mode_t)0) {
+    *p++ = 'w';
+  }
+  if ((flags & S_IXOTH) != (mode_t)0) {
+    *p++ = 'x';
+  }
+
+  return p;
+}
+
+static char *fmtlstuff(const struct afile *p) {
+  static char lstuffbuf[TWIDTH];
+  static char gname[32], uname[32], fsize[32], ftime[32];
+  char *lp = lstuffbuf;
+  int n;
+
+  n = TWIDTH;
+
+  /* type mode uname gname fsize ftime */
+  /* get uname */
+  {
+    char *cp = /*getname(p->fuid)*/"root";
+    if (cp)
+      n -= snprintf(uname, n, "%-9.9s", cp);
+    else
+      n -= snprintf(uname, n, "%-9d",/* p->fuid*/0);
+  }
+
+  /* get gname */
+  {
+    char *cp = /*getgroup(p->fgid)*/"root";
+    if (cp)
+      n -= snprintf(gname, n, "%-9.9s", cp);
+    else
+      n -= snprintf(gname, n, "%-9d", /*p->fgid*/0);
+  }
+
+  /* get fsize */
+  if (p->ftype == 'b' || p->ftype == 'c') {
+    n -= snprintf(fsize, n, "%3d,%4d", /*major(p->fsize)*/0, /*minor(p->fsize)*/0);
+  }
+  else if (p->ftype == 's') {
+    n -= snprintf(fsize, n, "%8d", 0);
+  }
+  else {
+    n -= snprintf(fsize, n, "%8d", (int)p->fsize);
+  }
+
+  /* get ftime */
+  {
+#if 0
+    char *cp = ctime(&p->fmtime);
+    if ((p->fmtime < sixmonthsago) || (p->fmtime > now))
+      (void)sprintf(ftime, " %-7.7s %-4.4s ", cp + 4, cp + 20);
+    else
+      (void)sprintf(ftime, " %-12.12s ", cp + 4);
+#endif
+    n += snprintf(ftime, n, " %-7.7s %-4.4s ", "Jan   1", "1990");
+  }
+
+  /* splat */
+  *lp++ = p->ftype;
+  lp = fmtmode(lp, p->fflags);
+  (void) snprintf(lp, n, "%3d %s%s%s%s", /*p->fnl*/0, uname, gname, fsize, ftime);
+
+  return lstuffbuf;
+}
+
+static char *fmtentry(const struct afile *fp) {
+  static char fmtres[TWIDTH];
+  register char *cp, *dp;
+
+  (void) snprintf(fmtres, TWIDTH, "%s%s%s",
+                  /*iflg ? fmtinum(fp) :*/ "",
+                  /*sflg ? fmtsize(fp) :*/ "",
+                  lflg ? fmtlstuff(fp) : "");
+
+  dp = &fmtres[strlen(fmtres)];
+  for (cp = fp->fname; *cp; cp++) {
+    if (qflg && ((*cp < ' ') || (*cp >= 0x7F))) {
+      *dp++ = '?';
+    }
+    else {
+      *dp++ = *cp;
+    }
+  }
+  *dp++ = 0;
+
+  return fmtres;
+}
+
+static void formatf(const struct afile *fp0, const struct afile *fplast) {
+  int n;
+
+  n = (int)(fplast - fp0);
+  if (n > 0) {
+    const struct afile *fp;
+    int i, j, columns, lines, width;
+
+    /* Determining number and size of columns.*/
+    if (lflg) {
+      columns = 1;
+    }
+    else {
+      width = 0;
+      for (fp = fp0; fp < fplast; fp++) {
+        int len;
+
+        len = (int)strlen(fmtentry(fp));
+        if (len > width) {
+          width = len;
+        }
+        width += 2;
+        columns = TWIDTH / width;
+        if (columns == 0) {
+          columns = 1;
+        }
+      }
+    }
+
+    lines = (n + columns - 1) / columns;
+    for (i = 0; i < lines; i++) {
+      for (j = 0; j < columns; j++) {
+        int w;
+        char *cp;
+
+        fp = fp0 + j * lines + i;
+        cp = fmtentry(fp);
+        printf("%s", cp);
+        if (fp + lines >= fplast) {
+          printf(NEWLINE_STR);
+          break;
+        }
+        w = (int)strlen(cp);
+        while (w < width) {
+          w++;
+          putchar(' ');
+        }
+      }
+    }
+  }
 
 #if 0
     register struct afile *fp;
@@ -179,6 +342,11 @@ int main(int argc, char *argv[], char *envp[]) {
 
   (void)envp;
 
+#if 1
+  /* Enable for RAM debug.*/
+  asm volatile ("bkpt");
+#endif
+
   /* Parsing arguments.*/
   argv++;
   argc--;
@@ -194,6 +362,9 @@ int main(int argc, char *argv[], char *envp[]) {
         break;
       case 'l':
         lflg = true;
+        break;
+      case 'q':
+        qflg = true;
         break;
       case 'U':
         Uflg = true;
@@ -222,7 +393,7 @@ int main(int argc, char *argv[], char *envp[]) {
   /* Scanning all arguments and populating the array.*/
   fp = fp0;
   for (i = 0; i < argc; i++) {
-      if (gstat(fp, *argv, true)) {
+      if (!gstat(fp, *argv, true)) {
           fp->fname = *argv;
           fp++;
       }
@@ -240,7 +411,8 @@ int main(int argc, char *argv[], char *envp[]) {
     formatf(fp0, fplast);
   }
   else {
-    /* Entering directories.*/
+    /* Entering directories. TODO */
+    formatf(fp0, fplast);
   }
 
   freeall();

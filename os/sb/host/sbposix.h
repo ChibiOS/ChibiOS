@@ -74,6 +74,7 @@ extern "C" {
   int sb_posix_rename(const char *oldpath, const char *newpath);
   int sb_posix_mkdir(const char *path, mode_t mode);
   int sb_posix_rmdir(const char *path);
+  int sb_posix_stat(const char *path, struct stat *statbuf);
 #ifdef __cplusplus
 }
 #endif

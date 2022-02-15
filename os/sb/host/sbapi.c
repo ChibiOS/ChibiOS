@@ -1041,6 +1041,10 @@ void sb_api_stdio(struct port_extctx *ectxp) {
   case SB_POSIX_RMDIR:
     ectxp->r0 = (uint32_t)sb_posix_rmdir((const char *)ectxp->r1);
     break;
+  case SB_POSIX_STAT:
+    ectxp->r0 = (uint32_t)sb_posix_stat((const char *)ectxp->r1,
+                                        (struct stat *)ectxp->r2);
+    break;
   default:
     ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
     break;
