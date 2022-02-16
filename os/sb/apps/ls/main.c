@@ -30,9 +30,9 @@ static void *bufp = NULL;
 
 static bool aflg = false;
 static bool dflg = false;
+static bool fflg = false;
 static bool lflg = false;
 static bool qflg = false;
-static bool Uflg = false;
 
 struct afile {
   char          ftype;
@@ -47,9 +47,9 @@ static void usage(void) {
   fprintf(stderr, "Options:" NEWLINE_STR);
   fprintf(stderr, "  -a                 do not ignore entries starting with ." NEWLINE_STR);
   fprintf(stderr, "  -d                 list directories themselves, not their contents" NEWLINE_STR);
+  fprintf(stderr, "  -f                 do not sort, enable -a, disable -l" NEWLINE_STR);
   fprintf(stderr, "  -l                 use a long listing format" NEWLINE_STR);
   fprintf(stderr, "  -q                 print ? instead of nongraphic characters" NEWLINE_STR);
-  fprintf(stderr, "  -U                 do not sort; list entries in directory order" NEWLINE_STR);
 }
 
 static void freeall(void) {
@@ -360,14 +360,14 @@ int main(int argc, char *argv[], char *envp[]) {
       case 'd':
         dflg = true;
         break;
+      case 'f':
+        fflg = true;
+        break;
       case 'l':
         lflg = true;
         break;
       case 'q':
         qflg = true;
-        break;
-      case 'U':
-        Uflg = true;
         break;
       default:
         usage();
@@ -375,6 +375,14 @@ int main(int argc, char *argv[], char *envp[]) {
       }
     }
     argv[0]++;
+  }
+
+  /* The "f" flag has side effects.*/
+  if (fflg) {
+    aflg = true;
+    lflg = false;
+    /*sflg = false;*/
+    /*tflg = false*/;
   }
 
   /* Case where no paths are specified.*/
@@ -402,7 +410,7 @@ int main(int argc, char *argv[], char *envp[]) {
   fplast = fp;
 
   /* Sorting the array, if not disabled.*/
-  if (!Uflg) {
+  if (!fflg) {
     qsort(fp0, fplast - fp0, sizeof (struct afile), fcmp);
   }
 
@@ -412,7 +420,39 @@ int main(int argc, char *argv[], char *envp[]) {
   }
   else {
     /* Entering directories. TODO */
-    formatf(fp0, fplast);
+    if (fflg) {
+      fp = fp0;
+    }
+    else {
+      /* Skipping directories.*/
+      for (fp = fp0; fp < fplast && fp->ftype != 'd'; fp++) {
+      }
+      formatf(fp0, fp);
+    }
+#if 0
+
+    if (fp < fplast) {
+      if (fp > fp0) {
+        printf("\n");
+      }
+      for (;;) {
+        formatd(fp->fname, argc > 1);
+        while (subdirs) {
+          struct subdirs *t;
+
+          t = subdirs;
+          subdirs = t->sd_next;
+          printf("\n");
+          formatd(t->sd_name, 1);
+          free((void *)t->sd_name);
+          free((void *)t);
+        }
+        if (++fp == fplast)
+          break;
+        printf("\n");
+      }
+    }
+#endif
   }
 
   freeall();
