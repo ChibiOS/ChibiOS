@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Updated ST Cube headers for STM32H7xx.
 - NEW: Added a Posix-favored shell named "msh" (Mini Shell). The shell is able
        to run sub-apps inside the same sandbox. The shell can either be placed
        statically in flash or loaded dynamically in RAM.
