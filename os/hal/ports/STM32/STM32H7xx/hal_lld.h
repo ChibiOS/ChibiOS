@@ -52,7 +52,19 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(STM32H742xx) || defined(__DOXYGEN__)
+#if defined(STM32H723xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H723 Single Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H733xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H733 Single Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H725xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H725 Single Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H735xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H735 Single Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H742xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32H742 Single Core Very High Performance with DSP and FPU"
 
 #elif defined(STM32H743xx) || defined(__DOXYGEN__)
@@ -89,11 +101,151 @@
 #endif
 /** @} */
 
-#if !defined(STM32_ENFORCE_H7_REV_XY)
+#if defined(STM32H723xx) || defined(STM32H733xx) ||                         \
+    defined(STM32H725xx) || defined(STM32H735xx) ||                         \
+    defined(__DOXYGEN__)
+#define STM32_SYSCLK_HAMSTER_BOOST      550000000
+#else
+#define STM32_SYSCLK_HAMSTER_BOOST      0
+#endif
+
+#if defined(STM32H723xx) || defined(STM32H733xx) ||                         \
+    defined(STM32H725xx) || defined(STM32H735xx) ||                         \
+    defined(__DOXYGEN__)
 /**
  * @name    Absolute Maximum Ratings
  * @{
  */
+/**
+ * @brief   Absolute maximum system clock.
+ */
+#define STM32_SYSCLK_MAX                520000000
+
+/**
+ * @brief   Maximum SYSCLK clock frequency without voltage boost.
+ */
+#define STM32_SYSCLK_MAX_NOBOOST        400000000
+
+/**
+ * @brief   Absolute maximum HCLK clock.
+ */
+#define STM32_HCLK_MAX                  (STM32_SYSCLK_MAX / 2)
+
+/**
+ * @brief   Maximum HSE clock frequency.
+ */
+#define STM32_HSECLK_MAX                50000000
+
+/**
+ * @brief   Maximum HSE clock frequency using an external source.
+ */
+#define STM32_HSECLK_BYP_MAX            50000000
+
+/**
+ * @brief   Minimum HSE clock frequency.
+ */
+#define STM32_HSECLK_MIN                4000000
+
+/**
+ * @brief   Minimum HSE clock frequency.
+ */
+#define STM32_HSECLK_BYP_MIN            4000000
+
+/**
+ * @brief   Maximum LSE clock frequency.
+ */
+#define STM32_LSE_CK_MAX                32768
+
+/**
+ * @brief   Maximum LSE clock frequency.
+ */
+#define STM32_LSE_CK_BYP_MAX            1000000
+
+/**
+ * @brief   Minimum LSE clock frequency.
+ */
+#define STM32_LSE_CK_MIN                32768
+
+/**
+ * @brief   Minimum PLLs input clock frequency..
+ */
+#define STM32_PLLIN_MIN                 1000000
+
+/**
+ * @brief   PLLs input threshold frequency 1.
+ */
+#define STM32_PLLIN_THRESHOLD1          2000000
+
+/**
+ * @brief   PLLs input threshold frequency 2.
+ */
+#define STM32_PLLIN_THRESHOLD2          4000000
+
+/**
+ * @brief   PLLs input threshold frequency 3.
+ */
+#define STM32_PLLIN_THRESHOLD3          8000000
+
+/**
+ * @brief   Maximum PLLs input clock frequency.
+ */
+#define STM32_PLLIN_MAX                 16000000
+
+/**
+ * @brief   Minimum PLLs VCO clock frequency.
+ */
+#define STM32_PLLVCO_MIN                150000000   /* DS says 192, RM says 150.    */
+
+/**
+ * @brief   Threshold PLLs clock frequency.
+ */
+#define STM32_PLLVCO_THRESHOLD          420000000
+
+/**
+ * @brief   Maximum PLLs VCOH clock frequency.
+ */
+#define STM32_PLLVCO_MAX                960000000
+
+/**
+ * @brief   Maximum APB1 clock frequency.
+ */
+#define STM32_PCLK1_MAX                 (STM32_HCLK_MAX / 2)
+
+/**
+ * @brief   Maximum APB2 clock frequency.
+ */
+#define STM32_PCLK2_MAX                 (STM32_HCLK_MAX / 2)
+
+/**
+ * @brief   Maximum APB3 clock frequency.
+ */
+#define STM32_PCLK3_MAX                 (STM32_HCLK_MAX / 2)
+
+/**
+ * @brief   Maximum APB4 clock frequency.
+ */
+#define STM32_PCLK4_MAX                 (STM32_HCLK_MAX / 2)
+
+/**
+ * @brief   Maximum SPI1, SPI2 and SPI3 clock frequency.
+ */
+#define STM32_SPI123_MAX                125000000
+
+/**
+ * @brief   Maximum SPI4, SPI5 and SPI6 clock frequency.
+ */
+#define STM32_SPI456_MAX                68500000
+
+/**
+ * @brief   Maximum ADC clock frequency.
+ */
+#define STM32_ADCCLK_MAX                50000000
+/** @} */
+#else
+
+#endif
+
+#if !defined(STM32_ENFORCE_H7_REV_XY)
 /**
  * @brief   Absolute maximum system clock.
  */
@@ -218,7 +370,6 @@
  * @brief   Maximum ADC clock frequency.
  */
 #define STM32_ADCCLK_MAX                50000000
-/** @} */
 
 #else /* defined(STM32_ENFORCE_H7_REV_XY) */
 
