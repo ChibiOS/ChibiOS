@@ -27,17 +27,21 @@
 
 #include "stm32_registry.h"
 
-#if defined(STM32H723xx) || defined(STM32H733xx) ||                         \
-    defined(STM32H725xx) || defined(STM32H735xx) ||                         \
-    defined(__DOXYGEN__)
-#include "hal_lld_type2.h"
-#else
-#include "hal_lld_type1.h"
-#endif
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Requires use of SPIv2 driver model.
+ */
+#define HAL_LLD_SELECT_SPI_V2           TRUE
+
+/**
+ * @brief   Sub-family identifier
+ */
+#if !defined(STM32H7XX) || defined(__DOXYGEN__)
+#define STM32H7XX
+#endif
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -58,6 +62,14 @@
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
+
+#if defined(STM32H723xx) || defined(STM32H733xx) ||                         \
+    defined(STM32H725xx) || defined(STM32H735xx) ||                         \
+    defined(__DOXYGEN__)
+#include "hal_lld_type2.h"
+#else
+#include "hal_lld_type1.h"
+#endif
 
 /* Various helpers.*/
 #include "nvic.h"

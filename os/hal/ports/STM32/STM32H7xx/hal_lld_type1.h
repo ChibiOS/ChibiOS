@@ -44,11 +44,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Requires use of SPIv2 driver model.
- */
-#define HAL_LLD_SELECT_SPI_V2           TRUE
-
-/**
  * @name    Platform identification macros
  * @{
  */
@@ -78,14 +73,6 @@
 
 #else
 #error "STM32H7xx device not specified"
-#endif
-/** @} */
-
-/**
- * @name    Sub-family identifier
- */
-#if !defined(STM32H7XX) || defined(__DOXYGEN__)
-#define STM32H7XX
 #endif
 /** @} */
 
