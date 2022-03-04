@@ -47,6 +47,41 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Configuration options (common)
+ * @{
+ */
+/**
+ * @brief   Disables the PWR/RCC initialization in the HAL.
+ * @note    All the clock tree constants are calculated but the initialization
+ *          is not performed.
+ */
+#if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
+#define STM32_NO_INIT                       FALSE
+#endif
+
+/**
+ * @brief   MPU region to be used for no-cache RAM area.
+ */
+#if !defined(STM32_NOCACHE_MPU_REGION) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
+#endif
+
+/**
+ * @brief   Add no-cache attribute to SRAM1 and SRAM2.
+ */
+#if !defined(STM32_NOCACHE_SRAM1_SRAM2) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_SRAM1_SRAM2           FALSE
+#endif
+
+/**
+ * @brief   Add no-cache attribute to SRAM3.
+ */
+#if !defined(STM32_NOCACHE_SRAM3) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_SRAM3                 TRUE
+#endif
+/** @} */
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

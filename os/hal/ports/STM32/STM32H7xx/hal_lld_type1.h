@@ -76,6 +76,10 @@
 #endif
 /** @} */
 
+/**
+ * @name    Absolute Maximum Ratings
+ * @{
+ */
 #if !defined(STM32_ENFORCE_H7_REV_XY)
 /**
  * @brief   Absolute maximum system clock.
@@ -231,6 +235,7 @@
 #define STM32_ADCCLK_MAX                36000000
 
 #endif /* defined(STM32_ENFORCE_H7_REV_XY) */
+/** @} */
 
 /**
  * @name    Internal clock sources frequencies
@@ -574,47 +579,15 @@
 /*===========================================================================*/
 
 /**
- * @name    Configuration options
+ * @name    Configuration options (type 1)
  * @{
  */
-/**
- * @brief   Disables the PWR/RCC initialization in the HAL.
- * @note    All the clock tree constants are calculated but the initialization
- *          is not performed.
- */
-#if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
-#define STM32_NO_INIT                       FALSE
-#endif
-
 /**
  * @brief   Target code for this HAL configuration.
  * @note    Core 1 is the Cortex-M7, core 2 is the Cortex-M4.
  */
 #if !defined(STM32_TARGET_CORE) || defined(__DOXYGEN__)
 #define STM32_TARGET_CORE                   1
-#endif
-
-/**
- * @brief   MPU region to be used for no-cache RAM area.
- */
-#if !defined(STM32_NOCACHE_MPU_REGION) || defined(__DOXYGEN__)
-#define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
-#endif
-
-/**
- * @brief   Add no-cache attribute to SRAM1 and SRAM2.
- * @note    MPU region 7 is used if enabled.
- */
-#if !defined(STM32_NOCACHE_SRAM1_SRAM2) || defined(__DOXYGEN__)
-#define STM32_NOCACHE_SRAM1_SRAM2           FALSE
-#endif
-
-/**
- * @brief   Add no-cache attribute to SRAM3.
- * @note    MPU region 7 is used if enabled.
- */
-#if !defined(STM32_NOCACHE_SRAM3) || defined(__DOXYGEN__)
-#define STM32_NOCACHE_SRAM3                 TRUE
 #endif
 
 /**
@@ -2239,25 +2212,33 @@
 #error "invalid STM32_D1HPRE value specified"
 #endif
 
+/*
+ * AHB frequency check.
+ */
+#if STM32_HCLK > STM32_HCLK_MAX
+#error "STM32_HCLK exceeding maximum frequency (STM32_HCLK_MAX)"
+#endif
+
 /**
- * @brief   Core clock.
+ * @brief   Core 1 clock.
  */
 #define STM32_CORE1_CK              STM32_SYS_D1CPRE_CK
 
 /**
- * @brief   Core clock.
+ * @brief   Core 2 clock.
  */
 #define STM32_CORE2_CK              STM32_HCLK
 
+/**
+ * @brief   Current core clock.
+ */
 #if (STM32_TARGET_CORE == 1) || defined(__DOXYGEN__)
-
 #if STM32_HAS_M7 != TRUE
 #error "Cortex-M7 not present in this device"
 #endif
 #define STM32_CORE_CK               STM32_CORE1_CK
 
 #elif STM32_TARGET_CORE == 2
-
 #if STM32_HAS_M4 != TRUE
 #error "Cortex-M4 not present in this device"
 #endif
@@ -2265,13 +2246,6 @@
 
 #else
 #error "invalid STM32_TARGET_CORE value specified"
-#endif
-
-/*
- * AHB frequency check.
- */
-#if STM32_HCLK > STM32_HCLK_MAX
-#error "STM32_HCLK exceeding maximum frequency (STM32_HCLK_MAX)"
 #endif
 
 /**
