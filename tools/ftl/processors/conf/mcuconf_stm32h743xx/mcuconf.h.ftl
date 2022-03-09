@@ -155,7 +155,7 @@
 #define STM32_CKPERSEL                      ${doc.STM32_CKPERSEL!"STM32_CKPERSEL_HSE_CK"}
 #define STM32_SDMMCSEL                      ${doc.STM32_SDMMCSEL!"STM32_SDMMCSEL_PLL1_Q_CK"}
 #define STM32_QSPISEL                       ${doc.STM32_QSPISEL!"STM32_QSPISEL_HCLK"}
-#define STM32_FMCSEL                        ${doc.STM32_FMCSEL!"STM32_QSPISEL_HCLK"}
+#define STM32_FMCSEL                        ${doc.STM32_FMCSEL!"STM32_FMCSEL_HCLK"}
 #define STM32_SWPSEL                        ${doc.STM32_SWPSEL!"STM32_SWPSEL_PCLK1"}
 #define STM32_FDCANSEL                      ${doc.STM32_FDCANSEL!"STM32_FDCANSEL_HSE_CK"}
 #define STM32_DFSDM1SEL                     ${doc.STM32_DFSDM1SEL!"STM32_DFSDM1SEL_PCLK2"}

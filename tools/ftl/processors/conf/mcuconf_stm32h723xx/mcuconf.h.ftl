@@ -95,11 +95,11 @@
 #define STM32_PLL1_Q_ENABLED                ${doc.STM32_PLL1_Q_ENABLED!"TRUE"}
 #define STM32_PLL1_R_ENABLED                ${doc.STM32_PLL1_R_ENABLED!"TRUE"}
 #define STM32_PLL1_DIVM_VALUE               ${doc.STM32_PLL1_DIVM_VALUE!"4"}
-#define STM32_PLL1_DIVN_VALUE               ${doc.STM32_PLL1_DIVN_VALUE!"520"}
+#define STM32_PLL1_DIVN_VALUE               ${doc.STM32_PLL1_DIVN_VALUE!"260"}
 #define STM32_PLL1_FRACN_VALUE              ${doc.STM32_PLL1_FRACN_VALUE!"0"}
-#define STM32_PLL1_DIVP_VALUE               ${doc.STM32_PLL1_DIVP_VALUE!"2"}
-#define STM32_PLL1_DIVQ_VALUE               ${doc.STM32_PLL1_DIVQ_VALUE!"16"}
-#define STM32_PLL1_DIVR_VALUE               ${doc.STM32_PLL1_DIVR_VALUE!"8"}
+#define STM32_PLL1_DIVP_VALUE               ${doc.STM32_PLL1_DIVP_VALUE!"1"}
+#define STM32_PLL1_DIVQ_VALUE               ${doc.STM32_PLL1_DIVQ_VALUE!"10"}
+#define STM32_PLL1_DIVR_VALUE               ${doc.STM32_PLL1_DIVR_VALUE!"4"}
 #define STM32_PLL2_ENABLED                  ${doc.STM32_PLL2_ENABLED!"TRUE"}
 #define STM32_PLL2_P_ENABLED                ${doc.STM32_PLL2_P_ENABLED!"TRUE"}
 #define STM32_PLL2_Q_ENABLED                ${doc.STM32_PLL2_Q_ENABLED!"TRUE"}
@@ -149,8 +149,8 @@
 #define STM32_RTCPRE_VALUE                  ${doc.STM32_RTCPRE_VALUE!"8"}
 #define STM32_CKPERSEL                      ${doc.STM32_CKPERSEL!"STM32_CKPERSEL_HSE_CK"}
 #define STM32_SDMMCSEL                      ${doc.STM32_SDMMCSEL!"STM32_SDMMCSEL_PLL1_Q_CK"}
-#define STM32_QSPISEL                       ${doc.STM32_QSPISEL!"STM32_QSPISEL_HCLK"}
-#define STM32_FMCSEL                        ${doc.STM32_FMCSEL!"STM32_QSPISEL_HCLK"}
+#define STM32_OCTOSPISEL                    ${doc.STM32_OCTOSPISEL!"STM32_OCTOSPISEL_HCLK"}
+#define STM32_FMCSEL                        ${doc.STM32_FMCSEL!"STM32_FMCSEL_HCLK"}
 #define STM32_SWPSEL                        ${doc.STM32_SWPSEL!"STM32_SWPSEL_PCLK1"}
 #define STM32_FDCANSEL                      ${doc.STM32_FDCANSEL!"STM32_FDCANSEL_HSE_CK"}
 #define STM32_DFSDM1SEL                     ${doc.STM32_DFSDM1SEL!"STM32_DFSDM1SEL_PCLK2"}
@@ -161,9 +161,9 @@
 #define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK1"}
 #define STM32_CECSEL                        ${doc.STM32_CECSEL!"STM32_CECSEL_LSE_CK"}
 #define STM32_USBSEL                        ${doc.STM32_USBSEL!"STM32_USBSEL_PLL1_Q_CK"}
-#define STM32_I2C123SEL                     ${doc.STM32_I2C123SEL!"STM32_I2C123SEL_PCLK1"}
+#define STM32_I2C1235SEL                    ${doc.STM32_I2C1235SEL!"STM32_I2C1235SEL_PCLK1"}
 #define STM32_RNGSEL                        ${doc.STM32_RNGSEL!"STM32_RNGSEL_HSI48_CK"}
-#define STM32_USART16SEL                    ${doc.STM32_USART16SEL!"STM32_USART16SEL_PCLK2"}
+#define STM32_USART16910SEL                 ${doc.STM32_USART16910SEL!"STM32_USART16910SEL_PCLK2"}
 #define STM32_USART234578SEL                ${doc.STM32_USART234578SEL!"STM32_USART234578SEL_PCLK1"}
 #define STM32_SPI6SEL                       ${doc.STM32_SPI6SEL!"STM32_SPI6SEL_PCLK4"}
 #define STM32_SAI4BSEL                      ${doc.STM32_SAI4BSEL!"STM32_SAI4BSEL_PLL1_Q_CK"}
@@ -224,6 +224,8 @@
 #define STM32_IRQ_USART6_PRIORITY           ${doc.STM32_IRQ_USART6_PRIORITY!"12"}
 #define STM32_IRQ_UART7_PRIORITY            ${doc.STM32_IRQ_UART7_PRIORITY!"12"}
 #define STM32_IRQ_UART8_PRIORITY            ${doc.STM32_IRQ_UART8_PRIORITY!"12"}
+#define STM32_IRQ_UART9_PRIORITY            ${doc.STM32_IRQ_UART9_PRIORITY!"12"}
+#define STM32_IRQ_USART10_PRIORITY          ${doc.STM32_IRQ_USART10_PRIORITY!"12"}
 #define STM32_IRQ_LPUART1_PRIORITY          ${doc.STM32_IRQ_LPUART1_PRIORITY!"12"}
 
 /*

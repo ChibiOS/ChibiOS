@@ -453,12 +453,12 @@
 #define STM32_RNGSEL_LSE_CK             RCC_D2CCIP2R_RNGSEL_VALUE(2U)
 #define STM32_RNGSEL_LSI_CK             RCC_D2CCIP2R_RNGSEL_VALUE(3U)
 
-#define STM32_USART16910SEL_PCLK2       RCC_D2CCIP2R_USART16910SEL_Pos(0U)
-#define STM32_USART16910SEL_PLL2_Q_CK   RCC_D2CCIP2R_USART16910SEL_Pos(1U)
-#define STM32_USART16910SEL_PLL3_Q_CK   RCC_D2CCIP2R_USART16910SEL_Pos(2U)
-#define STM32_USART16910SEL_HSI_KER_CK  RCC_D2CCIP2R_USART16910SEL_Pos(3U)
-#define STM32_USART16910SEL_CSI_KER_CK  RCC_D2CCIP2R_USART16910SEL_Pos(4U)
-#define STM32_USART16910SEL_LSE_CK      RCC_D2CCIP2R_USART16910SEL_Pos(5U)
+#define STM32_USART16910SEL_PCLK2       RCC_D2CCIP2R_USART16910SEL_VALUE(0U)
+#define STM32_USART16910SEL_PLL2_Q_CK   RCC_D2CCIP2R_USART16910SEL_VALUE(1U)
+#define STM32_USART16910SEL_PLL3_Q_CK   RCC_D2CCIP2R_USART16910SEL_VALUE(2U)
+#define STM32_USART16910SEL_HSI_KER_CK  RCC_D2CCIP2R_USART16910SEL_VALUE(3U)
+#define STM32_USART16910SEL_CSI_KER_CK  RCC_D2CCIP2R_USART16910SEL_VALUE(4U)
+#define STM32_USART16910SEL_LSE_CK      RCC_D2CCIP2R_USART16910SEL_VALUE(5U)
 
 #define STM32_USART234578SEL_PCLK1      RCC_D2CCIP2R_USART234578SEL_VALUE(0U)
 #define STM32_USART234578SEL_PLL2_Q_CK  RCC_D2CCIP2R_USART234578SEL_VALUE(1U)
@@ -671,7 +671,7 @@
  * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL1_DIVN_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL1_DIVN_VALUE               400
+#define STM32_PLL1_DIVN_VALUE               260
 #endif
 
 /**
@@ -684,10 +684,10 @@
 
 /**
  * @brief   PLL1 DIVP divider.
- * @note    The allowed values are 2..128, odd values not allowed.
+ * @note    The allowed values are 1..128, odd values not allowed.
  */
 #if !defined(STM32_PLL1_DIVP_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL1_DIVP_VALUE               2
+#define STM32_PLL1_DIVP_VALUE               1
 #endif
 
 /**
@@ -695,7 +695,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL1_DIVQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL1_DIVQ_VALUE               8
+#define STM32_PLL1_DIVQ_VALUE               4
 #endif
 
 /**
@@ -703,7 +703,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL1_DIVR_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL1_DIVR_VALUE               8
+#define STM32_PLL1_DIVR_VALUE               4
 #endif
 
 /**
@@ -1003,8 +1003,8 @@
 /**
  * @brief   QSPI clock source.
  */
-#if !defined(STM32_QSPISEL) || defined(__DOXYGEN__)
-#define STM32_QSPISEL                       STM32_QSPISEL_HCLK
+#if !defined(STM32_OCTOSPISEL) || defined(__DOXYGEN__)
+#define STM32_OCTOSPISEL                    STM32_OCTOSPISEL_HCLK
 #endif
 
 /**
@@ -1638,9 +1638,8 @@
 /**
  * @brief   PLL1 DIVP field.
  */
-#if ((STM32_PLL1_DIVP_VALUE >= 2) && (STM32_PLL1_DIVP_VALUE <= 128) &&      \
-     ((STM32_PLL1_DIVP_VALUE & 1U) == 0U)) ||                               \
-    defined(__DOXYGEN__)
+#if ((STM32_PLL1_DIVP_VALUE >= 1) && (STM32_PLL1_DIVP_VALUE <= 128) &&      \
+     (STM32_PLL1_DIVP_VALUE != 3U)) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVP             ((STM32_PLL1_DIVP_VALUE - 1U) << 9U)
 #else
 #error "invalid STM32_PLL1_DIVP_VALUE value specified"
@@ -1649,8 +1648,8 @@
 /**
  * @brief   PLL2 DIVP field.
  */
-#if ((STM32_PLL2_DIVP_VALUE >= 1) && (STM32_PLL2_DIVP_VALUE <= 128)) ||     \
-    defined(__DOXYGEN__)
+#if ((STM32_PLL2_DIVP_VALUE >= 1) && (STM32_PLL2_DIVP_VALUE <= 128) &&      \
+     (STM32_PLL2_DIVP_VALUE != 3U)) || defined(__DOXYGEN__)
 #define STM32_PLL2_DIVP             ((STM32_PLL2_DIVP_VALUE - 1U) << 9U)
 #else
 #error "invalid STM32_PLL2_DIVP_VALUE value specified"
@@ -1659,8 +1658,8 @@
 /**
  * @brief   PLL3 DIVP field.
  */
-#if ((STM32_PLL3_DIVP_VALUE >= 1) && (STM32_PLL3_DIVP_VALUE <= 128)) ||     \
-    defined(__DOXYGEN__)
+#if ((STM32_PLL3_DIVP_VALUE >= 1) && (STM32_PLL3_DIVP_VALUE <= 128) &&      \
+     (STM32_PLL3_DIVP_VALUE != 3U)) || defined(__DOXYGEN__)
 #define STM32_PLL3_DIVP             ((STM32_PLL3_DIVP_VALUE - 1U) << 9U)
 #else
 #error "invalid STM32_PLL3_DIVP_VALUE value specified"
@@ -2374,7 +2373,7 @@
 #error "invalid source selected for STM32_LPTIM345SEL clock"
 #endif
 
-#if (STM32_USART16SEL == STM32_USART16SEL_PCLK2) || defined(__DOXYGEN__)
+#if (STM32_USART16910SEL == STM32_USART16910SEL_PCLK2) || defined(__DOXYGEN__)
 /**
  * @brief   USART1 clock.
  */
@@ -2385,23 +2384,43 @@
  */
 #define STM32_USART6CLK             STM32_PCLK2
 
-#elif STM32_USART16SEL == STM32_USART16SEL_PLL2_Q_CK
+/**
+ * @brief   UART9 clock.
+ */
+#define STM32_UART9CLK              STM32_PCLK2
+
+/**
+ * @brief   USART10 clock.
+ */
+#define STM32_USART10CLK            STM32_PCLK2
+
+#elif STM32_USART16910SEL == STM32_USART16910SEL_PLL2_Q_CK
 #define STM32_USART1CLK             STM32_PLL2_Q_CK
 #define STM32_USART6CLK             STM32_PLL2_Q_CK
-#elif STM32_USART16SEL == STM32_USART16SEL_PLL3_Q_CK
+#define STM32_UART9CLK              STM32_PLL2_Q_CK
+#define STM32_USART10CLK            STM32_PLL2_Q_CK
+#elif STM32_USART16910SEL == STM32_USART16910SEL_PLL3_Q_CK
 #define STM32_USART1CLK             STM32_PLL3_Q_CK
 #define STM32_USART6CLK             STM32_PLL3_Q_CK
-#elif STM32_USART16SEL == STM32_USART16SEL_HSI_KER_CK
+#define STM32_UART9CLK              STM32_PLL3_Q_CK
+#define STM32_USART10CLK            STM32_PLL3_Q_CK
+#elif STM32_USART16910SEL == STM32_USART16910SEL_HSI_KER_CK
 #define STM32_USART1CLK             STM32_HSI_CK
 #define STM32_USART6CLK             STM32_HSI_CK
-#elif STM32_USART16SEL == STM32_USART16SEL_CSI_KER_CK
+#define STM32_UART9CLK              STM32_HSI_CK
+#define STM32_USART10CLK            STM32_HSI_CK
+#elif STM32_USART16910SEL == STM32_USART16910SEL_CSI_KER_CK
 #define STM32_USART1CLK             STM32_CSI_CK
 #define STM32_USART6CLK             STM32_CSI_CK
-#elif STM32_USART16SEL == STM32_USART16SEL_LSE_CK
+#define STM32_UART9CLK              STM32_CSI_CK
+#define STM32_USART10CLK            STM32_CSI_CK
+#elif STM32_USART16910SEL == STM32_USART16910SEL_LSE_CK
 #define STM32_USART1CLK             STM32_LSE_CK
 #define STM32_USART6CLK             STM32_LSE_CK
+#define STM32_UART9CLK              STM32_LSE_CK
+#define STM32_USART10CLK            STM32_LSE_CK
 #else
-#error "invalid source selected for STM32_USART16SEL clock"
+#error "invalid source selected for STM32_USART16910SEL clock"
 #endif
 
 #if (STM32_USART234578SEL == STM32_USART234578SEL_PCLK1) || defined(__DOXYGEN__)
@@ -2579,7 +2598,7 @@
 #error "invalid source selected for STM32_SPI6SEL clock"
 #endif
 
-#if (STM32_I2C123SEL == STM32_I2C123SEL_PCLK1) || defined(__DOXYGEN__)
+#if (STM32_I2C1235SEL == STM32_I2C1235SEL_PCLK1) || defined(__DOXYGEN__)
 /**
  * @brief   I2C1 clock.
  */
@@ -2595,20 +2614,29 @@
  */
 #define STM32_I2C2CLK               STM32_PCLK1
 
+/**
+ * @brief   I2C5 clock.
+ */
+#define STM32_I2C5CLK               STM32_PCLK1
+
 #elif STM32_I2C123SEL == STM32_I2C123SEL_PLL3_R_CK
 #define STM32_I2C1CLK               STM32_PLL3_R_CK
 #define STM32_I2C2CLK               STM32_PLL3_R_CK
 #define STM32_I2C2CLK               STM32_PLL3_R_CK
+#define STM32_I2C5CLK               STM32_PLL3_R_CK
 
 #elif STM32_I2C123SEL == STM32_I2C123SEL_HSI_KER_CK
 #define STM32_I2C1CLK               STM32_HSI_CK
 #define STM32_I2C2CLK               STM32_HSI_CK
 #define STM32_I2C2CLK               STM32_HSI_CK
+#define STM32_I2C5CLK               STM32_HSI_CK
 
 #elif STM32_I2C123SEL == STM32_I2C123SEL_CSI_KER_CK
 #define STM32_I2C1CLK               STM32_CSI_CK
 #define STM32_I2C2CLK               STM32_CSI_CK
 #define STM32_I2C2CLK               STM32_CSI_CK
+#define STM32_I2C5CLK               STM32_CSI_CK
+
 #else
 #error "invalid source selected for STM32_I2C123SEL clock"
 #endif
@@ -2717,20 +2745,20 @@
 #error "invalid source selected for STM32_SDMMCxSEL clock"
 #endif
 
-#if (STM32_QSPISEL == STM32_QSPISEL_HCLK) || defined(__DOXYGEN__)
+#if (STM32_OCTOSPISEL == STM32_OCTOSPISEL_HCLK) || defined(__DOXYGEN__)
 /**
- * @brief   QSPI frequency.
+ * @brief   OCTOSPI frequency.
  */
-#define STM32_QSPICLK               STM32_HCLK
+#define STM32_OCTOSPICLK            STM32_HCLK
 
-#elif STM32_QSPISEL == STM32_QSPISEL_PLL1_Q_CK
-#define STM32_QSPICLK               STM32_PLL1_Q_CK
-#elif STM32_QSPISEL == STM32_QSPISEL_PLL2_R_CK
-#define STM32_QSPICLK               STM32_PLL2_R_CK
-#elif STM32_QSPISEL == STM32_QSPISEL_PER_CK
-#define STM32_QSPICLK               STM32_PER_CK
+#elif STM32_OCTOSPISEL == STM32_QSPISEL_PLL1_Q_CK
+#define STM32_OCTOSPICLK            STM32_PLL1_Q_CK
+#elif STM32_OCTOSPISEL == STM32_QSPISEL_PLL2_R_CK
+#define STM32_OCTOSPICLK            STM32_PLL2_R_CK
+#elif STM32_OCTOSPISEL == STM32_QSPISEL_PER_CK
+#define STM32_OCTOSPICLK            STM32_PER_CK
 #else
-#error "invalid source selected for STM32_QSPISEL clock"
+#error "invalid source selected for STM32_OCTOSPISEL clock"
 #endif
 
 #if (STM32_FMCSEL == STM32_FMCSEL_HCLK) || defined(__DOXYGEN__)
