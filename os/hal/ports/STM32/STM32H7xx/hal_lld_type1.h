@@ -583,14 +583,6 @@
  * @{
  */
 /**
- * @brief   Target code for this HAL configuration.
- * @note    Core 1 is the Cortex-M7, core 2 is the Cortex-M4.
- */
-#if !defined(STM32_TARGET_CORE) || defined(__DOXYGEN__)
-#define STM32_TARGET_CORE                   1
-#endif
-
-/**
  * @brief   PWR CR1 initializer.
  */
 #if !defined(STM32_PWR_CR1) || defined(__DOXYGEN__)

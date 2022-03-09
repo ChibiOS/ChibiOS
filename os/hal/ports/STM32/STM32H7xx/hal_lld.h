@@ -61,6 +61,14 @@
 #endif
 
 /**
+ * @brief   Target code for this HAL configuration.
+ * @note    Core 1 is the Cortex-M7, core 2 is the Cortex-M4.
+ */
+#if !defined(STM32_TARGET_CORE) || defined(__DOXYGEN__)
+#define STM32_TARGET_CORE                   1
+#endif
+
+/**
  * @brief   MPU region to be used for no-cache RAM area.
  */
 #if !defined(STM32_NOCACHE_MPU_REGION) || defined(__DOXYGEN__)
