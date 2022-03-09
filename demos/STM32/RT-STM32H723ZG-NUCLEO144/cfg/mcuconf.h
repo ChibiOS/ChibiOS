@@ -55,10 +55,10 @@
  * very critical.
  * Register constants are taken from the ST header.
  */
-#define STM32_VOS                           STM32_VOS_SCALE1
+#define STM32_VOS                           STM32_VOS_SCALE0
 #define STM32_PWR_CR1                       (PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)
 #define STM32_PWR_CR2                       (PWR_CR2_BREN)
-#define STM32_PWR_CR3                       (PWR_CR3_SMPSEN | PWR_CR3_USB33DEN)
+#define STM32_PWR_CR3                       (PWR_CR3_LDOEN | PWR_CR3_USB33DEN)
 #define STM32_PWR_CPUCR                     0
 
 /*
@@ -84,11 +84,11 @@
 #define STM32_PLL1_Q_ENABLED                TRUE
 #define STM32_PLL1_R_ENABLED                TRUE
 #define STM32_PLL1_DIVM_VALUE               4
-#define STM32_PLL1_DIVN_VALUE               480
+#define STM32_PLL1_DIVN_VALUE               260
 #define STM32_PLL1_FRACN_VALUE              0
-#define STM32_PLL1_DIVP_VALUE               2
-#define STM32_PLL1_DIVQ_VALUE               20
-#define STM32_PLL1_DIVR_VALUE               8
+#define STM32_PLL1_DIVP_VALUE               1
+#define STM32_PLL1_DIVQ_VALUE               10
+#define STM32_PLL1_DIVR_VALUE               4
 #define STM32_PLL2_ENABLED                  TRUE
 #define STM32_PLL2_P_ENABLED                TRUE
 #define STM32_PLL2_Q_ENABLED                TRUE
@@ -139,7 +139,7 @@
 #define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL1_Q_CK
 #define STM32_OCTOSPISEL                    STM32_OCTOSPISEL_HCLK
-#define STM32_FMCSEL                        STM32_QSPISEL_HCLK /* TODO ERROR XXXXXXXXXXXXXXXXXXX */
+#define STM32_FMCSEL                        STM32_FMCSEL_HCLK
 #define STM32_SWPSEL                        STM32_SWPSEL_PCLK1
 #define STM32_FDCANSEL                      STM32_FDCANSEL_HSE_CK
 #define STM32_DFSDM1SEL                     STM32_DFSDM1SEL_PCLK2
