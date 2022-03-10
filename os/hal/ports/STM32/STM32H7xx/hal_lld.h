@@ -86,7 +86,7 @@
  * @brief   Add no-cache attribute to SRAM3.
  */
 #if !defined(STM32_NOCACHE_SRAM3) || defined(__DOXYGEN__)
-#define STM32_NOCACHE_SRAM3                 TRUE
+#define STM32_NOCACHE_SRAM3                 FALSE
 #endif
 /** @} */
 

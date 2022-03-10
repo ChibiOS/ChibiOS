@@ -173,6 +173,7 @@ void hal_lld_init(void) {
   {
     uint32_t base, size;
 
+#if defined(HAL_LLD_TYPE1_H)
 #if (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) && (STM32_NOCACHE_SRAM3 == TRUE)
     base = 0x30000000U;
     size = MPU_RASR_SIZE_512K;
@@ -184,6 +185,14 @@ void hal_lld_init(void) {
     size = MPU_RASR_SIZE_32K;
 #else
 #error "invalid constants used in mcuconf.h"
+#endif
+
+#elif defined(HAL_LLD_TYPE2_H)
+#if STM32_NOCACHE_SRAM3 == TRUE
+#error "SRAM3 not present on this device"
+#endif
+    base = 0x30000000U;
+    size = MPU_RASR_SIZE_32K;
 #endif
 
     /* The SRAM2 bank can optionally made a non cache-able area for use by

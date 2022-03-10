@@ -46,8 +46,7 @@
  * Memory attributes settings.
  */
 #define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
-#define STM32_NOCACHE_SRAM1_SRAM2           FALSE
-#define STM32_NOCACHE_SRAM3                 TRUE
+#define STM32_NOCACHE_SRAM1_SRAM2           TRUE
 
 /*
  * PWR system settings.
@@ -104,11 +103,11 @@
 #define STM32_PLL3_Q_ENABLED                TRUE
 #define STM32_PLL3_R_ENABLED                TRUE
 #define STM32_PLL3_DIVM_VALUE               4
-#define STM32_PLL3_DIVN_VALUE               400
+#define STM32_PLL3_DIVN_VALUE               240
 #define STM32_PLL3_FRACN_VALUE              0
-#define STM32_PLL3_DIVP_VALUE               8
-#define STM32_PLL3_DIVQ_VALUE               8
-#define STM32_PLL3_DIVR_VALUE               8
+#define STM32_PLL3_DIVP_VALUE               10
+#define STM32_PLL3_DIVQ_VALUE               10
+#define STM32_PLL3_DIVR_VALUE               10
 
 /*
  * Core clocks dynamic settings (can be changed at runtime).
@@ -149,7 +148,7 @@
 #define STM32_SAI1SEL                       STM32_SAI1SEL_PLL1_Q_CK
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
 #define STM32_CECSEL                        STM32_CECSEL_LSE_CK
-#define STM32_USBSEL                        STM32_USBSEL_PLL1_Q_CK
+#define STM32_USBSEL                        STM32_USBSEL_PLL3_Q_CK
 #define STM32_I2C1235SEL                    STM32_I2C1235SEL_PCLK1
 #define STM32_RNGSEL                        STM32_RNGSEL_HSI48_CK
 #define STM32_USART16910SEL                 STM32_USART16910SEL_PCLK2
