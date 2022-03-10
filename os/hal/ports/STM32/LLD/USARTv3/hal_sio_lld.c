@@ -595,7 +595,7 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
     }
 
     /* Buffer filled condition.*/
-    if (rd > n) {
+    if (rd >= n) {
       break;
     }
 
