@@ -78,10 +78,13 @@ static const SIOConfig default_config = {
 __STATIC_INLINE void uart_enable_rx_irq(SIODriver *siop) {
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->uart->UARTIMSC |= UART_UARTIMSC_RXIM;
+  siop->uart->UARTIMSC |= (UART_UARTIMSC_RXIM | UART_UARTIMSC_RTIM);
 #else
   if (siop->operation->rx_cb != NULL) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_RXIM;
+  }
+  if (siop->operation->rx_idle_cb != NULL) {
+    siop->uart->UARTIMSC |= UART_UARTIMSC_RTIM;
   }
 #endif
 }
@@ -373,7 +376,7 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
     }
 
     /* Buffer filled condition.*/
-    if (rd > n) {
+    if (rd >= n) {
       break;
     }
 
@@ -506,16 +509,16 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
      disabled instead.*/
   mis = u->UARTMIS;
 
-  /* One read on control registers.*/
+  /* Read on control registers.*/
   imsc = u->UARTIMSC;
 
   /* Enabled errors/events handling.*/
   evtmask = mis & (UART_UARTMIS_OEMIS | UART_UARTMIS_BEMIS |
                    UART_UARTMIS_PEMIS | UART_UARTMIS_FEMIS);
-  if (evtmask != 0U) {
 
+  if (evtmask != 0U) {
     /* Disabling event sources.*/
-    imsc &= ~(UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+    u->UARTIMSC = imsc & ~(UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
              UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM);
 
     /* The callback is invoked if defined.*/
@@ -523,23 +526,30 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
     /* Waiting thread woken, if any.*/
     __sio_wakeup_rx(siop, SIO_MSG_ERRORS);
+
+    /* Values could have been changed by the callback. */
+    imsc = u->UARTIMSC;
   }
 
   /* RX FIFO is non-empty.*/
-  if ((mis & UART_UARTMIS_RXMIS) != 0U) {
-
+  if (((mis & UART_UARTMIS_RXMIS) != 0U)) {
     /* Called once then the interrupt source is disabled.*/
-    imsc &= ~UART_UARTIMSC_RXIM;
+    u->UARTIMSC = imsc & ~UART_UARTIMSC_RXIM;
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx(siop);
 
     /* Waiting thread woken, if any.*/
     __sio_wakeup_rx(siop, MSG_OK);
+
+    /* Values could have been changed by the callback. */
+    imsc = u->UARTIMSC;
   }
 
   /* RX idle condition.*/
   if ((mis & UART_UARTMIS_RTMIS) != 0U) {
+    /* Called once then the interrupt source is disabled.*/
+     u->UARTIMSC = imsc & ~UART_UARTIMSC_RTIM;
 
     /* The callback is invoked if defined.*/
     __sio_callback_rx_idle(siop);
@@ -547,15 +557,14 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     /* Waiting thread woken, if any.*/
     __sio_wakeup_rx(siop, SIO_MSG_IDLE);
 
-    /* The idle flag requires clearing, it stays enabled.*/
-    u->UARTICR = UART_UARTICR_RTIC;
+    /* Values could have been changed by the callback. */
+    imsc = u->UARTIMSC;
   }
 
   /* TX FIFO is non-full.*/
   if ((mis & UART_UARTMIS_TXMIS) != 0U) {
-
     /* Called once then the interrupt source is disabled.*/
-    imsc &= ~UART_UARTIMSC_TXIM;
+    u->UARTIMSC = imsc & ~UART_UARTIMSC_TXIM;
 
     /* The callback is invoked if defined.*/
     __sio_callback_tx(siop);
@@ -563,9 +572,6 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     /* Waiting thread woken, if any.*/
     __sio_wakeup_tx(siop, MSG_OK);
   }
-
-  /* One write on control registers.*/
-  u->UARTIMSC = imsc;
 }
 
 #endif /* HAL_USE_SIO == TRUE */
