@@ -70,7 +70,7 @@ static size_t sync_write(void *ip, const uint8_t *bp, size_t n,
     i += written;
     bp += written;
   }
-  return n;
+  return i;
 }
 
 static size_t sync_read(void *ip, uint8_t *bp, size_t n,
@@ -92,7 +92,7 @@ static size_t sync_read(void *ip, uint8_t *bp, size_t n,
     i += read;
     bp += read;
   }
-  return n;
+  return i;
 }
 
 /*
@@ -465,7 +465,7 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
   while (sio_lld_is_rx_empty(siop)) {
   /*lint -restore*/
     msg = osalThreadSuspendTimeoutS(&siop->sync_rx, timeout);
-    if (msg != MSG_OK) {
+    if (msg < MSG_OK) {
       break;
     }
   }
@@ -505,7 +505,7 @@ msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
   while (sio_lld_is_tx_full(siop)) {
   /*lint -restore*/
     msg = osalThreadSuspendTimeoutS(&siop->sync_tx, timeout);
-    if (msg != MSG_OK) {
+    if (msg < MSG_OK) {
       break;
     }
   }
