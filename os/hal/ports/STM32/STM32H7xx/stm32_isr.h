@@ -215,6 +215,15 @@
 #define STM32_QUADSPI1_NUMBER               92
 
 /*
+ * OCTOSPI units.
+ */
+#define STM32_OCTOSPI1_HANDLER              Vector1B0
+#define STM32_OCTOSPI2_HANDLER              Vector298
+
+#define STM32_OCTOSPI1_NUMBER               92
+#define STM32_OCTOSPI2_NUMBER               150
+
+/*
  * SDMMC units.
  */
 #define STM32_SDMMC1_HANDLER                Vector104

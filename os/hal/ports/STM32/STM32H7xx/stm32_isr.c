@@ -70,7 +70,8 @@
 #if defined(HAL_LLD_TYPE1_H)
 #include "stm32_quadspi1.inc"
 #elif defined(HAL_LLD_TYPE2_H)
-//#include "stm32_octospi1.inc"
+#include "stm32_octospi1.inc"
+#include "stm32_octospi2.inc"
 #endif
 
 #include "stm32_sdmmc1.inc"
@@ -127,7 +128,8 @@ void irqInit(void) {
 #if defined(HAL_LLD_TYPE1_H)
   quadspi1_irq_init();
 #elif defined(HAL_LLD_TYPE2_H)
-//  octospi1_irq_init();
+  octospi1_irq_init();
+  octospi2_irq_init();
 #endif
 
   sdmmc1_irq_init();
@@ -181,7 +183,8 @@ void irqDeinit(void) {
 #if defined(HAL_LLD_TYPE1_H)
   quadspi1_irq_deinit();
 #elif defined(HAL_LLD_TYPE2_H)
-//  octospi1_irq_deinit();
+  octospi1_irq_deinit();
+  octospi2_irq_deinit();
 #endif
 
   sdmmc1_irq_deinit();

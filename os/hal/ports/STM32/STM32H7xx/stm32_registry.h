@@ -192,6 +192,7 @@
 
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  FALSE
+#define STM32_HAS_OCTOSPI2                  FALSE
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  TRUE
@@ -425,6 +426,7 @@
 
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  TRUE
+#define STM32_HAS_OCTOSPI2                  TRUE
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  FALSE
@@ -648,6 +650,7 @@
 
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  FALSE
+#define STM32_HAS_OCTOSPI2                  FALSE
 
 /* QUADSPI attributes.*/
 #define STM32_HAS_QUADSPI1                  TRUE
