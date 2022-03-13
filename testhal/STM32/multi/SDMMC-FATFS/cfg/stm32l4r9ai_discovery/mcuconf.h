@@ -388,6 +388,6 @@
 #define STM32_WSPI_OCTOSPI2_DMA_PRIORITY    1
 #define STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY 10
 #define STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY 10
-#define STM32_WSPI_DMA_ERROR_HOOK(qspip)    osalSysHalt("DMA failure")
+#define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("DMA failure")
 
 #endif /* MCUCONF_H */

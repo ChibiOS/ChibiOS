@@ -243,7 +243,7 @@ int main(void) {
       /*
        * Running the sandbox.
        */
-      ret = sbExec(&sbx1, "/bin/msh.elf",
+      ret = sbExec(&sbx1, "/bin/ls.elf",
                    waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
                    sbx1_argv, sbx1_envp);
       if (CH_RET_IS_ERROR(ret)) {

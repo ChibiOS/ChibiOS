@@ -116,7 +116,7 @@ static const sb_config_t sb_config2 = {
 sb_class_t sbx1, sbx2;
 
 static const char *sbx1_argv[] = {
-  "msh",
+  "ls",
   NULL
 };
 
@@ -128,7 +128,7 @@ static const char *sbx1_envp[] = {
 };
 
 static const char *sbx2_argv[] = {
-  "msh",
+  "ls",
   NULL
 };
 
