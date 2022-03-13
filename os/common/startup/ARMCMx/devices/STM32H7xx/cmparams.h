@@ -46,12 +46,16 @@
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
-#if !defined(STM32H742xx) && !defined(STM32H750xx) &&                       \
-    !defined(STM32H743xx) && !defined(STM32H753xx) &&                       \
-    !defined(STM32H747xx) && !defined(STM32H757xx) &&                       \
-    !defined(STM32H745xx) && !defined(STM32H755xx) &&                       \
-    !defined(STM32H7B0xx) && !defined(STM32H7B0xxQ) &&                      \
+#if !defined(STM32H723xx) && !defined(STM32H725xx)  &&                      \
+    !defined(STM32H730xx) && !defined(STM32H730xxQ) &&                      \
+    !defined(STM32H733xx) && !defined(STM32H735xx)  &&                      \
+    !defined(STM32H742xx) && !defined(STM32H743xx)  &&                      \
+    !defined(STM32H745xx) && !defined(STM32H745xG)  &&                      \
+    !defined(STM32H747xx) && !defined(STM32H747xG)  &&                      \
+    !defined(STM32H750xx) && !defined(STM32H753xx)  &&                      \
+    !defined(STM32H755xx) && !defined(STM32H757xx)  &&                      \
     !defined(STM32H7A3xx) && !defined(STM32H7A3xxQ) &&                      \
+    !defined(STM32H7B0xx) && !defined(STM32H7B0xxQ) &&                      \
     !defined(STM32H7B3xx) && !defined(STM32H7B3xxQ)
 #include "board.h"
 #endif
@@ -61,7 +65,7 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 8.
  */
-#define CORTEX_NUM_VECTORS      152
+#define CORTEX_NUM_VECTORS      168
 
 /* The following code is not processed when the file is included from an
    asm module.*/
