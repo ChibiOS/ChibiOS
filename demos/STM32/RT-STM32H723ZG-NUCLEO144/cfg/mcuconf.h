@@ -18,7 +18,7 @@
 #define MCUCONF_H
 
 /*
- * STM32H7xx drivers configuration.
+ * STM32H723/33/25/35 drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -490,12 +490,12 @@
 #define STM32_WSPI_USE_OCTOSPI2             TRUE
 #define STM32_WSPI_OCTOSPI1_PRESCALER_VALUE 1
 #define STM32_WSPI_OCTOSPI2_PRESCALER_VALUE 1
-#define STM32_WSPI_OCTOSPI1_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
-#define STM32_WSPI_OCTOSPI2_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
-#define STM32_WSPI_OCTOSPI1_DMA_PRIORITY    1
-#define STM32_WSPI_OCTOSPI2_DMA_PRIORITY    1
-#define STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY 10
-#define STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY 10
-#define STM32_WSPI_DMA_ERROR_HOOK(qspip)    osalSysHalt("DMA failure")
+#define STM32_WSPI_OCTOSPI1_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
+#define STM32_WSPI_OCTOSPI2_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
+#define STM32_WSPI_OCTOSPI1_MDMA_PRIORITY   1
+#define STM32_WSPI_OCTOSPI2_MDMA_PRIORITY   1
+#define STM32_WSPI_OCTOSPI1_MDMA_IRQ_PRIORITY 10
+#define STM32_WSPI_OCTOSPI2_MDMA_IRQ_PRIORITY 10
+#define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("MDMA failure")
 
 #endif /* MCUCONF_H */

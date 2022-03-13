@@ -120,6 +120,8 @@
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Reverted bug #1100 (backported to 20.3.5)(backported to 21.11.2).
+- FIX: Fixed missing clock disable for STM32 OCTOSPI2 (bug #1220)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed wrong condition in STM32 sio_lld_read() function (bug #1219)
        (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed clock re-initialization problem in STM32 USARTv2 and USARTv3

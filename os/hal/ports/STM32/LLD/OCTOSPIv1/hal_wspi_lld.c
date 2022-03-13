@@ -272,6 +272,12 @@ void wspi_lld_stop(WSPIDriver *wspip) {
       rccDisableOCTOSPI1();
     }
 #endif
+
+#if STM32_WSPI_USE_OCTOSPI2
+    if (&WSPID2 == wspip) {
+      rccDisableOCTOSPI2();
+    }
+#endif
   }
 }
 
