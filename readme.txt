@@ -75,6 +75,7 @@
 
 *** 21.11.2 ***
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
+- NEW: Added support for STM32H723/25/33/35.
 - FIX: Reverted bug #1100.
 - FIX: Fixed missing clock disable for STM32 OCTOSPI2 (bug #1220).
 - FIX: Fixed wrong condition in STM32 sio_lld_read() function (bug #1219).
