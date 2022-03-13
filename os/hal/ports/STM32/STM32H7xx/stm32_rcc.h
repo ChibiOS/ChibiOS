@@ -1530,6 +1530,57 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
 /** @} */
 
 /**
+ * @name    OCTOSPI peripherals specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the OCTOSPI1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOCTOSPI1(lp) rccEnableAHB3(RCC_AHB3ENR_OSPI1EN, lp)
+
+/**
+ * @brief   Disables the OCTOSPI1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableOCTOSPI1() rccDisableAHB3(RCC_AHB3ENR_OSPI1EN)
+
+/**
+ * @brief   Resets the OCTOSPI1 peripheral.
+ *
+ * @api
+ */
+#define rccResetOCTOSPI1() rccResetAHB3(RCC_AHB3RSTR_OSPI1RST)
+
+/**
+ * @brief   Enables the OCTOSPI2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOCTOSPI2(lp) rccEnableAHB3(RCC_AHB3ENR_OSPI2EN, lp)
+
+/**
+ * @brief   Disables the OCTOSPI2 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableOCTOSPI2() rccDisableAHB3(RCC_AHB3ENR_OSPI2EN)
+
+/**
+ * @brief   Resets the OCTOSPI2 peripheral.
+ *
+ * @api
+ */
+#define rccResetOCTOSPI2() rccResetAHB3(RCC_AHB3RSTR_OSPI2RST)
+/** @} */
+
+/**
  * @name    RNG peripherals specific RCC operations
  * @{
  */

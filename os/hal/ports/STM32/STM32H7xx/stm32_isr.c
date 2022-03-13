@@ -67,7 +67,12 @@
 #include "stm32_fdcan1.inc"
 #include "stm32_fdcan2.inc"
 
+#if defined(HAL_LLD_TYPE1_H)
 #include "stm32_quadspi1.inc"
+#elif defined(HAL_LLD_TYPE2_H)
+#include "stm32_octospi1.inc"
+#include "stm32_octospi2.inc"
+#endif
 
 #include "stm32_sdmmc1.inc"
 #include "stm32_sdmmc2.inc"
@@ -120,7 +125,12 @@ void irqInit(void) {
 
   mdma_irq_init();
 
+#if defined(HAL_LLD_TYPE1_H)
   quadspi1_irq_init();
+#elif defined(HAL_LLD_TYPE2_H)
+  octospi1_irq_init();
+  octospi2_irq_init();
+#endif
 
   sdmmc1_irq_init();
   sdmmc2_irq_init();
@@ -170,7 +180,12 @@ void irqDeinit(void) {
 
   mdma_irq_deinit();
 
+#if defined(HAL_LLD_TYPE1_H)
   quadspi1_irq_deinit();
+#elif defined(HAL_LLD_TYPE2_H)
+  octospi1_irq_deinit();
+  octospi2_irq_deinit();
+#endif
 
   sdmmc1_irq_deinit();
   sdmmc2_irq_deinit();

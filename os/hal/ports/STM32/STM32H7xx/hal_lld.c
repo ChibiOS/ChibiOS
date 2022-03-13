@@ -108,8 +108,10 @@ static inline void init_pwr(void) {
   PWR->CR3   = STM32_PWR_CR3;   /* Other bits, lower byte is not changed.   */
   PWR->CPUCR = STM32_PWR_CPUCR;
   PWR->D3CR  = STM32_VOS;
+#if defined(HAL_LLD_TYPE1_H)
 #if !defined(STM32_ENFORCE_H7_REV_XY)
   SYSCFG->PWRCR = STM32_ODEN;
+#endif
 #endif
   while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0)
     ; /* CHTODO timeout handling.*/
@@ -171,6 +173,7 @@ void hal_lld_init(void) {
   {
     uint32_t base, size;
 
+#if defined(HAL_LLD_TYPE1_H)
 #if (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) && (STM32_NOCACHE_SRAM3 == TRUE)
     base = 0x30000000U;
     size = MPU_RASR_SIZE_512K;
@@ -182,6 +185,14 @@ void hal_lld_init(void) {
     size = MPU_RASR_SIZE_32K;
 #else
 #error "invalid constants used in mcuconf.h"
+#endif
+
+#elif defined(HAL_LLD_TYPE2_H)
+#if STM32_NOCACHE_SRAM3 == TRUE
+#error "SRAM3 not present on this device"
+#endif
+    base = 0x30000000U;
+    size = MPU_RASR_SIZE_32K;
 #endif
 
     /* The SRAM2 bank can optionally made a non cache-able area for use by
@@ -387,17 +398,31 @@ void stm32_clock_init(void) {
   RCC->D3CFGR = STM32_D3PPRE4;
 
   /* Peripherals clocks.*/
-  RCC->D1CCIPR  = STM32_CKPERSEL  | STM32_SDMMCSEL    | STM32_QSPISEL    |
+#if defined(HAL_LLD_TYPE1_H)
+  RCC->D1CCIPR  = STM32_CKPERSEL   | STM32_SDMMCSEL    | STM32_QSPISEL       |
                   STM32_FMCSEL;
-  RCC->D2CCIP1R = STM32_SWPSEL    | STM32_FDCANSEL    | STM32_DFSDM1SEL  |
-                  STM32_SPDIFSEL  | STM32_SPDIFSEL    | STM32_SPI45SEL   |
-                  STM32_SPI123SEL | STM32_SAI23SEL    | STM32_SAI1SEL;
-  RCC->D2CCIP2R = STM32_LPTIM1SEL | STM32_CECSEL      | STM32_USBSEL     |
-                  STM32_I2C123SEL | STM32_RNGSEL      | STM32_USART16SEL |
+  RCC->D2CCIP1R = STM32_SWPSEL     | STM32_FDCANSEL    | STM32_DFSDM1SEL     |
+                  STM32_SPDIFSEL   | STM32_SPDIFSEL    | STM32_SPI45SEL      |
+                  STM32_SPI123SEL  | STM32_SAI23SEL    | STM32_SAI1SEL;
+  RCC->D2CCIP2R = STM32_LPTIM1SEL  | STM32_CECSEL      | STM32_USBSEL        |
+                  STM32_I2C123SEL  | STM32_RNGSEL      | STM32_USART16SEL    |
                   STM32_USART234578SEL;
-  RCC->D3CCIPR  = STM32_SPI6SEL   | STM32_SAI4BSEL    | STM32_SAI4ASEL   |
-                  STM32_ADCSEL    | STM32_LPTIM345SEL | STM32_LPTIM2SEL  |
-                  STM32_I2C4SEL   | STM32_LPUART1SEL;
+  RCC->D3CCIPR  = STM32_SPI6SEL    | STM32_SAI4BSEL    | STM32_SAI4ASEL      |
+                  STM32_ADCSEL     | STM32_LPTIM345SEL | STM32_LPTIM2SEL     |
+                  STM32_I2C4SEL    | STM32_LPUART1SEL;
+#elif defined(HAL_LLD_TYPE2_H)
+  RCC->D1CCIPR  = STM32_CKPERSEL   | STM32_SDMMCSEL    | STM32_OCTOSPISEL    |
+                  STM32_FMCSEL;
+  RCC->D2CCIP1R = STM32_SWPSEL     | STM32_FDCANSEL    | STM32_DFSDM1SEL     |
+                  STM32_SPDIFSEL   | STM32_SPDIFSEL    | STM32_SPI45SEL      |
+                  STM32_SPI123SEL  | STM32_SAI23SEL    | STM32_SAI1SEL;
+  RCC->D2CCIP2R = STM32_LPTIM1SEL  | STM32_CECSEL      | STM32_USBSEL        |
+                  STM32_I2C1235SEL | STM32_RNGSEL      | STM32_USART16910SEL |
+                  STM32_USART234578SEL;
+  RCC->D3CCIPR  = STM32_SPI6SEL    | STM32_SAI4BSEL    | STM32_SAI4ASEL      |
+                  STM32_ADCSEL     | STM32_LPTIM345SEL | STM32_LPTIM2SEL     |
+                  STM32_I2C4SEL    | STM32_LPUART1SEL;
+#endif
 
   /* Flash setup.*/
   FLASH->ACR = FLASH_ACR_WRHIGHFREQ_1 | FLASH_ACR_WRHIGHFREQ_0 |
@@ -427,7 +452,9 @@ void stm32_clock_init(void) {
   /* RAM1 2 and 3 clocks enabled.*/
   rccEnableSRAM1(true);
   rccEnableSRAM2(true);
+#if !defined(HAL_LLD_TYPE2_H)
   rccEnableSRAM3(true);
+#endif
 #endif /* STM32_NO_INIT */
 }
 
