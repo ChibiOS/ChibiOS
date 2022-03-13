@@ -29,7 +29,7 @@
 #define MCUCONF_H
 
 /*
- * STM32H7xx drivers configuration.
+ * STM32H723/33/25/35 drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -43,27 +43,21 @@
  */
 
 #define STM32H7xx_MCUCONF
-#define STM32H742_MCUCONF
-#define STM32H743_MCUCONF
-#define STM32H753_MCUCONF
-#define STM32H745_MCUCONF
-#define STM32H755_MCUCONF
-#define STM32H747_MCUCONF
-#define STM32H757_MCUCONF
-#define STM32H750_MCUCONF
+#define STM32H723_MCUCONF
+#define STM32H733_MCUCONF
+#define STM32H725_MCUCONF
+#define STM32H735_MCUCONF
 
 /*
  * General settings.
  */
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
-#define STM32_TARGET_CORE                   ${doc.STM32_TARGET_CORE!"1"}
 
 /*
  * Memory attributes settings.
  */
 #define STM32_NOCACHE_MPU_REGION            ${doc.STM32_NOCACHE_MPU_REGION!"MPU_REGION_6"}
-#define STM32_NOCACHE_SRAM1_SRAM2           ${doc.STM32_NOCACHE_SRAM1_SRAM2!"FALSE"}
-#define STM32_NOCACHE_SRAM3                 ${doc.STM32_NOCACHE_SRAM3!"TRUE"}
+#define STM32_NOCACHE_SRAM1_SRAM2           ${doc.STM32_NOCACHE_SRAM1_SRAM2!"TRUE"}
 
 /*
  * PWR system settings.
@@ -71,7 +65,7 @@
  * very critical.
  * Register constants are taken from the ST header.
  */
-#define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_SCALE1"}
+#define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_SCALE0"}
 #define STM32_PWR_CR1                       ${doc.STM32_PWR_CR1!"(PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)"}
 #define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(PWR_CR2_BREN)"}
 #define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_LDOEN | PWR_CR3_USB33DEN)"}
@@ -100,11 +94,11 @@
 #define STM32_PLL1_Q_ENABLED                ${doc.STM32_PLL1_Q_ENABLED!"TRUE"}
 #define STM32_PLL1_R_ENABLED                ${doc.STM32_PLL1_R_ENABLED!"TRUE"}
 #define STM32_PLL1_DIVM_VALUE               ${doc.STM32_PLL1_DIVM_VALUE!"4"}
-#define STM32_PLL1_DIVN_VALUE               ${doc.STM32_PLL1_DIVN_VALUE!"400"}
+#define STM32_PLL1_DIVN_VALUE               ${doc.STM32_PLL1_DIVN_VALUE!"260"}
 #define STM32_PLL1_FRACN_VALUE              ${doc.STM32_PLL1_FRACN_VALUE!"0"}
-#define STM32_PLL1_DIVP_VALUE               ${doc.STM32_PLL1_DIVP_VALUE!"2"}
-#define STM32_PLL1_DIVQ_VALUE               ${doc.STM32_PLL1_DIVQ_VALUE!"16"}
-#define STM32_PLL1_DIVR_VALUE               ${doc.STM32_PLL1_DIVR_VALUE!"8"}
+#define STM32_PLL1_DIVP_VALUE               ${doc.STM32_PLL1_DIVP_VALUE!"1"}
+#define STM32_PLL1_DIVQ_VALUE               ${doc.STM32_PLL1_DIVQ_VALUE!"10"}
+#define STM32_PLL1_DIVR_VALUE               ${doc.STM32_PLL1_DIVR_VALUE!"4"}
 #define STM32_PLL2_ENABLED                  ${doc.STM32_PLL2_ENABLED!"TRUE"}
 #define STM32_PLL2_P_ENABLED                ${doc.STM32_PLL2_P_ENABLED!"TRUE"}
 #define STM32_PLL2_Q_ENABLED                ${doc.STM32_PLL2_Q_ENABLED!"TRUE"}
@@ -120,11 +114,11 @@
 #define STM32_PLL3_Q_ENABLED                ${doc.STM32_PLL3_Q_ENABLED!"TRUE"}
 #define STM32_PLL3_R_ENABLED                ${doc.STM32_PLL3_R_ENABLED!"TRUE"}
 #define STM32_PLL3_DIVM_VALUE               ${doc.STM32_PLL3_DIVM_VALUE!"4"}
-#define STM32_PLL3_DIVN_VALUE               ${doc.STM32_PLL3_DIVN_VALUE!"400"}
+#define STM32_PLL3_DIVN_VALUE               ${doc.STM32_PLL3_DIVN_VALUE!"240"}
 #define STM32_PLL3_FRACN_VALUE              ${doc.STM32_PLL3_FRACN_VALUE!"0"}
-#define STM32_PLL3_DIVP_VALUE               ${doc.STM32_PLL3_DIVP_VALUE!"8"}
-#define STM32_PLL3_DIVQ_VALUE               ${doc.STM32_PLL3_DIVQ_VALUE!"8"}
-#define STM32_PLL3_DIVR_VALUE               ${doc.STM32_PLL3_DIVR_VALUE!"8"}
+#define STM32_PLL3_DIVP_VALUE               ${doc.STM32_PLL3_DIVP_VALUE!"10"}
+#define STM32_PLL3_DIVQ_VALUE               ${doc.STM32_PLL3_DIVQ_VALUE!"10"}
+#define STM32_PLL3_DIVR_VALUE               ${doc.STM32_PLL3_DIVR_VALUE!"10"}
 
 /*
  * Core clocks dynamic settings (can be changed at runtime).
@@ -154,7 +148,7 @@
 #define STM32_RTCPRE_VALUE                  ${doc.STM32_RTCPRE_VALUE!"8"}
 #define STM32_CKPERSEL                      ${doc.STM32_CKPERSEL!"STM32_CKPERSEL_HSE_CK"}
 #define STM32_SDMMCSEL                      ${doc.STM32_SDMMCSEL!"STM32_SDMMCSEL_PLL1_Q_CK"}
-#define STM32_QSPISEL                       ${doc.STM32_QSPISEL!"STM32_QSPISEL_HCLK"}
+#define STM32_OCTOSPISEL                    ${doc.STM32_OCTOSPISEL!"STM32_OCTOSPISEL_HCLK"}
 #define STM32_FMCSEL                        ${doc.STM32_FMCSEL!"STM32_FMCSEL_HCLK"}
 #define STM32_SWPSEL                        ${doc.STM32_SWPSEL!"STM32_SWPSEL_PCLK1"}
 #define STM32_FDCANSEL                      ${doc.STM32_FDCANSEL!"STM32_FDCANSEL_HSE_CK"}
@@ -162,14 +156,13 @@
 #define STM32_SPDIFSEL                      ${doc.STM32_SPDIFSEL!"STM32_SPDIFSEL_PLL1_Q_CK"}
 #define STM32_SPI45SEL                      ${doc.STM32_SPI45SEL!"STM32_SPI45SEL_PCLK2"}
 #define STM32_SPI123SEL                     ${doc.STM32_SPI123SEL!"STM32_SPI123SEL_PLL1_Q_CK"}
-#define STM32_SAI23SEL                      ${doc.STM32_SAI23SEL!"STM32_SAI23SEL_PLL1_Q_CK"}
 #define STM32_SAI1SEL                       ${doc.STM32_SAI1SEL!"STM32_SAI1SEL_PLL1_Q_CK"}
 #define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK1"}
 #define STM32_CECSEL                        ${doc.STM32_CECSEL!"STM32_CECSEL_LSE_CK"}
-#define STM32_USBSEL                        ${doc.STM32_USBSEL!"STM32_USBSEL_PLL1_Q_CK"}
-#define STM32_I2C123SEL                     ${doc.STM32_I2C123SEL!"STM32_I2C123SEL_PCLK1"}
+#define STM32_USBSEL                        ${doc.STM32_USBSEL!"STM32_USBSEL_PLL3_Q_CK"}
+#define STM32_I2C1235SEL                    ${doc.STM32_I2C1235SEL!"STM32_I2C1235SEL_PCLK1"}
 #define STM32_RNGSEL                        ${doc.STM32_RNGSEL!"STM32_RNGSEL_HSI48_CK"}
-#define STM32_USART16SEL                    ${doc.STM32_USART16SEL!"STM32_USART16SEL_PCLK2"}
+#define STM32_USART16910SEL                 ${doc.STM32_USART16910SEL!"STM32_USART16910SEL_PCLK2"}
 #define STM32_USART234578SEL                ${doc.STM32_USART234578SEL!"STM32_USART234578SEL_PCLK1"}
 #define STM32_SPI6SEL                       ${doc.STM32_SPI6SEL!"STM32_SPI6SEL_PCLK4"}
 #define STM32_SAI4BSEL                      ${doc.STM32_SAI4BSEL!"STM32_SAI4BSEL_PLL1_Q_CK"}
@@ -201,7 +194,8 @@
 
 #define STM32_IRQ_MDMA_PRIORITY             ${doc.STM32_IRQ_MDMA_PRIORITY!"9"}
 
-#define STM32_IRQ_QUADSPI1_PRIORITY         ${doc.STM32_IRQ_QUADSPI1_PRIORITY!"10"}
+#define STM32_IRQ_OCTOSPI1_PRIORITY         ${doc.STM32_IRQ_OCTOSPI1_PRIORITY!"10"}
+#define STM32_IRQ_OCTOSPI2_PRIORITY         ${doc.STM32_IRQ_OCTOSPI2_PRIORITY!"10"}
 
 #define STM32_IRQ_SDMMC1_PRIORITY           ${doc.STM32_IRQ_SDMMC1_PRIORITY!"9"}
 #define STM32_IRQ_SDMMC2_PRIORITY           ${doc.STM32_IRQ_SDMMC2_PRIORITY!"9"}
@@ -230,6 +224,8 @@
 #define STM32_IRQ_USART6_PRIORITY           ${doc.STM32_IRQ_USART6_PRIORITY!"12"}
 #define STM32_IRQ_UART7_PRIORITY            ${doc.STM32_IRQ_UART7_PRIORITY!"12"}
 #define STM32_IRQ_UART8_PRIORITY            ${doc.STM32_IRQ_UART8_PRIORITY!"12"}
+#define STM32_IRQ_UART9_PRIORITY            ${doc.STM32_IRQ_UART9_PRIORITY!"12"}
+#define STM32_IRQ_USART10_PRIORITY          ${doc.STM32_IRQ_USART10_PRIORITY!"12"}
 #define STM32_IRQ_LPUART1_PRIORITY          ${doc.STM32_IRQ_LPUART1_PRIORITY!"12"}
 
 /*
@@ -501,11 +497,16 @@
 /*
  * WSPI driver system settings.
  */
-#define STM32_WSPI_USE_QUADSPI1             ${doc.STM32_WSPI_USE_QUADSPI1!"FALSE"}
-#define STM32_WSPI_QUADSPI1_PRESCALER_VALUE ${doc.STM32_WSPI_QUADSPI1_PRESCALER_VALUE!"1"}
-#define STM32_WSPI_SET_CR_SSHIFT            ${doc.STM32_WSPI_SET_CR_SSHIFT!"TRUE"}
-#define STM32_WSPI_QUADSPI1_MDMA_CHANNEL    ${doc.STM32_WSPI_QUADSPI1_MDMA_CHANNEL!"STM32_MDMA_CHANNEL_ID_ANY"}
-#define STM32_WSPI_QUADSPI1_MDMA_PRIORITY   ${doc.STM32_WSPI_QUADSPI1_MDMA_PRIORITY!"1"}
-#define STM32_WSPI_MDMA_ERROR_HOOK(wspip)   ${doc.STM32_WSPI_MDMA_ERROR_HOOK!"osalSysHalt(\"MDMA failure\")"}
+#define STM32_WSPI_USE_OCTOSPI1             ${doc.STM32_WSPI_USE_OCTOSPI1!"FALSE"}
+#define STM32_WSPI_USE_OCTOSPI2             ${doc.STM32_WSPI_USE_OCTOSPI2!"FALSE"}
+#define STM32_WSPI_OCTOSPI1_PRESCALER_VALUE ${doc.STM32_WSPI_OCTOSPI1_PRESCALER_VALUE!"1"}
+#define STM32_WSPI_OCTOSPI2_PRESCALER_VALUE ${doc.STM32_WSPI_OCTOSPI2_PRESCALER_VALUE!"1"}
+#define STM32_WSPI_OCTOSPI1_MDMA_CHANNEL    ${doc.STM32_WSPI_OCTOSPI1_MDMA_CHANNEL!"STM32_MDMA_CHANNEL_ID_ANY"}
+#define STM32_WSPI_OCTOSPI2_MDMA_CHANNEL    ${doc.STM32_WSPI_OCTOSPI2_MDMA_CHANNEL!"STM32_MDMA_CHANNEL_ID_ANY"}
+#define STM32_WSPI_OCTOSPI1_MDMA_PRIORITY   ${doc.STM32_WSPI_OCTOSPI1_MDMA_PRIORITY!"1"}
+#define STM32_WSPI_OCTOSPI2_MDMA_PRIORITY   ${doc.STM32_WSPI_OCTOSPI2_MDMA_PRIORITY!"1"}
+#define STM32_WSPI_OCTOSPI1_MDMA_IRQ_PRIORITY ${doc.STM32_WSPI_OCTOSPI1_MDMA_IRQ_PRIORITY!"10"}
+#define STM32_WSPI_OCTOSPI2_MDMA_IRQ_PRIORITY ${doc.STM32_WSPI_OCTOSPI2_MDMA_IRQ_PRIORITY!"10"}
+#define STM32_WSPI_DMA_ERROR_HOOK(wspip)    ${doc.STM32_WSPI_DMA_ERROR_HOOK!"osalSysHalt(\"MDMA failure\")"}
 
 #endif /* MCUCONF_H */

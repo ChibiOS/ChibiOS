@@ -174,7 +174,7 @@
  * @brief   QUADSPI DMA error hook.
  */
 #if !defined(STM32_WSPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_WSPI_DMA_ERROR_HOOK(qspip)    osalSysHalt("DMA failure")
+#define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("DMA failure")
 #endif
 
 /**

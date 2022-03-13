@@ -126,52 +126,52 @@
 #endif
 
 /**
- * @brief   OCTOSPI1 interrupt priority level setting.
+ * @brief   OCTOSPI1 MDMA channel selection.
  */
-#if !defined(STM32_WSPI_OCTOSPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_WSPI_OCTOSPI1_IRQ_PRIORITY    10
+#if !defined(STM32_WSPI_OCTOSPI1_MDMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI1_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
 #endif
 
 /**
- * @brief   OCTOSPI2 interrupt priority level setting.
+ * @brief   OCTOSPI2 MDMA channel selection.
  */
-#if !defined(STM32_WSPI_OCTOSPI2_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_WSPI_OCTOSPI2_IRQ_PRIORITY    10
+#if !defined(STM32_WSPI_OCTOSPI2_MDMA_CHANNEL) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI2_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
 #endif
 
 /**
- * @brief   OCTOSPI1 DMA priority (0..3|lowest..highest).
+ * @brief   OCTOSPI1 MDMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_WSPI_OCTOSPI1_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_WSPI_OCTOSPI1_DMA_PRIORITY    1
+#if !defined(STM32_WSPI_OCTOSPI1_MDMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI1_MDMA_PRIORITY   1
 #endif
 
 /**
- * @brief   OCTOSPI2 DMA priority (0..3|lowest..highest).
+ * @brief   OCTOSPI2 MDMA priority (0..3|lowest..highest).
  */
-#if !defined(STM32_WSPI_OCTOSPI2_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_WSPI_OCTOSPI2_DMA_PRIORITY    1
+#if !defined(STM32_WSPI_OCTOSPI2_MDMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI2_MDMA_PRIORITY   1
 #endif
 
 /**
- * @brief   OCTOSPI1 DMA interrupt priority level setting.
+ * @brief   OCTOSPI1 MDMA interrupt priority level setting.
  */
-#if !defined(STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY 10
+#if !defined(STM32_WSPI_OCTOSPI1_MDMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI1_MDMA_IRQ_PRIORITY 10
 #endif
 
 /**
- * @brief   OCTOSPI2 DMA interrupt priority level setting.
+ * @brief   OCTOSPI2 MDMA interrupt priority level setting.
  */
-#if !defined(STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY 10
+#if !defined(STM32_WSPI_OCTOSPI2_MDMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI2_MDMA_IRQ_PRIORITY 10
 #endif
 
 /**
  * @brief   OCTOSPI DMA error hook.
  */
-#if !defined(STM32_WSPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("DMA failure")
+#if !defined(STM32_WSPI_MDMA_ERROR_HOOK) || defined(__DOXYGEN__)
+#define STM32_WSPI_MDMA_ERROR_HOOK(wspip)   osalSysHalt("MDMA failure")
 #endif
 /** @} */
 
@@ -179,6 +179,7 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Defaulting missing registry keys.*/
 #if !defined(STM32_HAS_OCTOSPI1)
 #define STM32_HAS_OCTOSPI1                  FALSE
 #endif
@@ -187,6 +188,7 @@
 #define STM32_HAS_OCTOSPI2                  FALSE
 #endif
 
+/* Checks on device presence.*/
 #if STM32_WSPI_USE_OCTOSPI1 && !STM32_HAS_OCTOSPI1
 #error "OCTOSPI1 not present in the selected device"
 #endif
@@ -210,60 +212,41 @@
 #error "STM32_WSPI_OCTOSPI2_PRESCALER_VALUE not within 1..256"
 #endif
 
-/* Check on IRQ priorities.*/
+/* MDMA IRQ checks.*/
 #if STM32_WSPI_USE_OCTOSPI1 &&                                              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI1_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to OCTOSPI1"
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI1_MDMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to OCTOSPI1 MDMA"
 #endif
 
 #if STM32_WSPI_USE_OCTOSPI2 &&                                              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI2_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to OCTOSPI2"
-#endif
-
-#if STM32_WSPI_USE_OCTOSPI1 &&                                              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI1_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to OCTOSPI1 DMA"
-#endif
-
-#if STM32_WSPI_USE_OCTOSPI2 &&                                              \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI2_DMA_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to OCTOSPI2 DMA"
-#endif
-
-/* Check on the presence of the DMA channels settings in mcuconf.h.*/
-#if STM32_WSPI_USE_OCTOSPI1 && !defined(STM32_WSPI_OCTOSPI1_DMA_STREAM)
-#error "OCTOSPI1 DMA stream not defined"
-#endif
-
-#if STM32_WSPI_USE_OCTOSPI2 && !defined(STM32_WSPI_OCTOSPI2_DMA_STREAM)
-#error "OCTOSPI2 DMA stream not defined"
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI2_MDMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to OCTOSPI2 MDMA"
 #endif
 
 /* Check on the validity of the assigned DMA channels.*/
 #if STM32_WSPI_USE_OCTOSPI1 &&                                              \
-    !STM32_DMA_IS_VALID_STREAM(STM32_WSPI_OCTOSPI1_DMA_STREAM)
-#error "invalid DMA stream associated to OCTOSPI1"
+    !STM32_MDMA_IS_VALID_CHANNEL(STM32_WSPI_OCTOSPI1_MDMA_CHANNEL)
+#error "invalid MDMA channel associated to OCTOSPI1"
 #endif
 
 #if STM32_WSPI_USE_OCTOSPI2 &&                                              \
-    !STM32_DMA_IS_VALID_STREAM(STM32_WSPI_OCTOSPI2_DMA_STREAM)
-#error "invalid DMA stream associated to OCTOSPI2"
+    !STM32_MDMA_IS_VALID_CHANNEL(STM32_WSPI_OCTOSPI2_MDMA_CHANNEL)
+#error "invalid MDMA channel associated to OCTOSPI2"
 #endif
 
 /* Check on DMA channels priority.*/
 #if STM32_WSPI_USE_OCTOSPI1 &&                                              \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI1_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to OCTOSPI1"
+    !STM32_MDMA_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI1_MDMA_PRIORITY)
+#error "Invalid MDMA priority assigned to OCTOSPI1"
 #endif
 
 #if STM32_WSPI_USE_OCTOSPI2 &&                                              \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI2_DMA_PRIORITY)
-#error "Invalid DMA priority assigned to OCTOSPI2"
+    !STM32_MDMA_IS_VALID_PRIORITY(STM32_WSPI_OCTOSPI2_MDMA_PRIORITY)
+#error "Invalid MDMA priority assigned to OCTOSPI2"
 #endif
 
-#if !defined(STM32_DMA_REQUIRED)
-#define STM32_DMA_REQUIRED
+#if !defined(STM32_MDMA_REQUIRED)
+#define STM32_MDMA_REQUIRED
 #endif
 
 /*===========================================================================*/
@@ -279,25 +262,23 @@
  */
 #define wspi_lld_config_fields                                              \
   /* DCR1 register initialization data.*/                                   \
-  uint32_t                  dcr1;                                           \
+  uint32_t                      dcr1;                                       \
   /* DCR2 register initialization data. The prescaler field is internally   \
      ORed to this field, leave it to zero.*/                                \
-  uint32_t                  dcr2;                                           \
+  uint32_t                      dcr2;                                       \
   /* DCR3 register initialization data.*/                                   \
-  uint32_t                  dcr3;                                           \
+  uint32_t                      dcr3;                                       \
   /* DCR4 register initialization data.*/                                   \
-  uint32_t                  dcr4
+  uint32_t                      dcr4
 
 /**
  * @brief   Low level fields of the WSPI driver structure.
  */
 #define wspi_lld_driver_fields                                              \
   /* Pointer to the OCTOSPIx registers block.*/                             \
-  OCTOSPI_TypeDef           *ospi;                                          \
-  /* OCTOSPI DMA stream.*/                                                  \
-  const stm32_dma_stream_t  *dma;                                           \
-  /* OCTOSPI DMA mode bit mask.*/                                           \
-  uint32_t                  dmamode
+  OCTOSPI_TypeDef               *ospi;                                      \
+  /* QUADSPI MDMA channel.*/                                                \
+  const stm32_mdma_channel_t    *mdma
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -327,6 +308,7 @@ extern "C" {
                           const wspi_command_t *cmdp,
                           uint8_t **addrp);
   void wspi_lld_unmap_flash(WSPIDriver *wspip);
+  void wspi_lld_serve_interrupt(WSPIDriver *wspip);
 #endif
 #ifdef __cplusplus
 }
