@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    QUADSPIv2//hal_wspi_lld.c
+ * @file    QUADSPIv2/hal_wspi_lld.c
  * @brief   STM32 WSPI subsystem low level driver source.
  *
  * @addtogroup WSPI
@@ -73,9 +73,17 @@ static void wspi_lld_serve_mdma_interrupt(WSPIDriver *wspip, uint32_t flags) {
   (void)wspip;
   (void)flags;
 
+  if (((flags & STM32_MDMA_CISR_CTCIF) != 0U) &&
+      (wspip->state == WSPI_RECEIVE)) {
+    /* Portable WSPI ISR code defined in the high level driver, note, it is
+     a macro.*/
+    _wspi_isr_code(wspip);
+
+    mdmaChannelDisableX(wspip->mdma);
+  }
   /* DMA errors handling.*/
 #if defined(STM32_WSPI_MDMA_ERROR_HOOK)
-  if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
+  else if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
     STM32_WSPI_MDMA_ERROR_HOOK(wspip);
   }
 #endif
@@ -127,8 +135,14 @@ void wspi_lld_start(WSPIDriver *wspip) {
 
   /* WSPI setup and enable.*/
   wspip->qspi->DCR = wspip->config->dcr;
+#if STM32_WSPI_SET_CR_SSHIFT
+  wspip->qspi->CR  = ((STM32_WSPI_QUADSPI1_PRESCALER_VALUE - 1U) << 24U) |
+                      QUADSPI_CR_TCIE | QUADSPI_CR_DMAEN | QUADSPI_CR_SSHIFT |
+                      QUADSPI_CR_EN;
+#else
   wspip->qspi->CR  = ((STM32_WSPI_QUADSPI1_PRESCALER_VALUE - 1U) << 24U) |
                       QUADSPI_CR_TCIE | QUADSPI_CR_DMAEN | QUADSPI_CR_EN;
+#endif
   wspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
                      QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
 }
@@ -220,15 +234,14 @@ void wspi_lld_send(WSPIDriver *wspip, const wspi_command_t *cmdp,
                   STM32_MDMA_CTCR_DINC_FIXED    |   /* Destination fixed.   */
                   STM32_MDMA_CTCR_SINC_INC;         /* Source incremented.  */
   uint32_t ccr  = STM32_MDMA_CCR_PL(STM32_WSPI_QUADSPI1_MDMA_PRIORITY) |
-                  STM32_MDMA_CCR_CTCIE          |   /* On transfer complete.*/
-                  STM32_MDMA_CCR_TCIE;              /* On transfer error.   */
+                  STM32_MDMA_CCR_TEIE;              /* On transfer error.   */
 
   /* MDMA initializations.*/
   mdmaChannelSetSourceX(wspip->mdma, txbuf);
   mdmaChannelSetDestinationX(wspip->mdma, &wspip->qspi->DR);
   mdmaChannelSetTransactionSizeX(wspip->mdma, n, 0, 0);
   mdmaChannelSetModeX(wspip->mdma, ctcr, ccr);
-  mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_QUADSPI_TC);
+  mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_QUADSPI_FIFO_TH);
 
   wspip->qspi->DLR = n - 1;
   wspip->qspi->ABR = cmdp->alt;
@@ -266,15 +279,14 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
                   STM32_MDMA_CTCR_SINC_FIXED;       /* Source fixed.        */
   uint32_t ccr  = STM32_MDMA_CCR_PL(STM32_WSPI_QUADSPI1_MDMA_PRIORITY) |
                   STM32_MDMA_CCR_CTCIE          |   /* On transfer complete.*/
-                  STM32_MDMA_CCR_TCIE;              /* On transfer error.   */
+                  STM32_MDMA_CCR_TEIE;              /* On transfer error.   */
 
   /* MDMA initializations.*/
   mdmaChannelSetSourceX(wspip->mdma, &wspip->qspi->DR);
   mdmaChannelSetDestinationX(wspip->mdma, rxbuf);
   mdmaChannelSetTransactionSizeX(wspip->mdma, n, 0, 0);
   mdmaChannelSetModeX(wspip->mdma, ctcr, ccr);
-
-  mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_QUADSPI_TC);
+  mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_QUADSPI_FIFO_TH);
 
   wspip->qspi->DLR = n - 1;
   wspip->qspi->ABR = cmdp->alt;
@@ -349,15 +361,20 @@ void wspi_lld_unmap_flash(WSPIDriver *wspip) {
  * @param[in] wspip     pointer to the @p WSPIDriver object
  */
 void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
+  uint32_t sr;
 
-  wspip->qspi->FCR = QUADSPI_FCR_CTEF | QUADSPI_FCR_CTCF |
-                     QUADSPI_FCR_CSMF | QUADSPI_FCR_CTOF;
+  sr = wspip->qspi->SR;
+  wspip->qspi->FCR = sr;
 
-  /* Portable WSPI ISR code defined in the high level driver, note, it is
+  if (((sr & QUADSPI_FCR_CTCF) != 0U) && (wspip->state == WSPI_SEND)) {
+    /* Portable WSPI ISR code defined in the high level driver, note, it is
      a macro.*/
-  _wspi_isr_code(wspip);
+    _wspi_isr_code(wspip);
 
-  mdmaChannelDisableX(wspip->mdma);
+    mdmaChannelDisableX(wspip->mdma);
+  }
+
+  /* TODO errors handling.*/
 }
 
 #endif /* HAL_USE_WSPI */

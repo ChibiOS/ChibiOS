@@ -150,6 +150,13 @@
 #endif
 
 /**
+ * @brief   QUADSPI1 CR_SSHIFT enforcing.
+ */
+#if !defined(STM32_WSPI_SET_CR_SSHIFT) || defined(__DOXYGEN__)
+#define STM32_WSPI_SET_CR_SSHIFT            TRUE
+#endif
+
+/**
  * @brief   QUADSPI1 MDMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_WSPI_QUADSPI1_MDMA_PRIORITY) || defined(__DOXYGEN__)
@@ -160,7 +167,7 @@
  * @brief   QUADSPI MDMA error hook.
  */
 #if !defined(STM32_WSPI_MDMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_WSPI_MDMA_ERROR_HOOK(qspip)   osalSysHalt("MDMA failure")
+#define STM32_WSPI_MDMA_ERROR_HOOK(wspip)   osalSysHalt("MDMA failure")
 #endif
 
 /**

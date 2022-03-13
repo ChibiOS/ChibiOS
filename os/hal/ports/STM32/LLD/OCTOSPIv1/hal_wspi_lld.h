@@ -171,7 +171,7 @@
  * @brief   OCTOSPI DMA error hook.
  */
 #if !defined(STM32_WSPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
-#define STM32_WSPI_DMA_ERROR_HOOK(qspip)    osalSysHalt("DMA failure")
+#define STM32_WSPI_DMA_ERROR_HOOK(wspip)    osalSysHalt("DMA failure")
 #endif
 /** @} */
 
@@ -203,6 +203,11 @@
 #if (STM32_WSPI_OCTOSPI1_PRESCALER_VALUE < 1) ||                            \
     (STM32_WSPI_OCTOSPI1_PRESCALER_VALUE > 256)
 #error "STM32_WSPI_OCTOSPI1_PRESCALER_VALUE not within 1..256"
+#endif
+
+#if (STM32_WSPI_OCTOSPI2_PRESCALER_VALUE < 1) ||                            \
+    (STM32_WSPI_OCTOSPI2_PRESCALER_VALUE > 256)
+#error "STM32_WSPI_OCTOSPI2_PRESCALER_VALUE not within 1..256"
 #endif
 
 /* Check on IRQ priorities.*/
