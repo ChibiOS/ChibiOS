@@ -76,7 +76,8 @@
 *** 20.3.5 ***
 - FIX: Some MISRA-related fixes.
 - FIX: Re-opened and fixed bug #1100.
-- FIX: Fixed GPIOH clock not enabled on STM32L432 (bug #1223)
+- FIX: Fixed problem in the HAL I2C fallback driver (bug #1224).
+- FIX: Fixed GPIOH clock not enabled on STM32L432 (bug #1223).
 - FIX: Fixed incorrect type cast in TIME_I2US() (bug #1221).
 - FIX: Fixed missing clock disable for STM32 OCTOSPI2 (bug #1220).
 - FIX: Fixed Virtual Timers failure in a specific condition (bug #1215).
