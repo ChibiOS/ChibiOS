@@ -32,6 +32,8 @@
 
 #define CHECK_ERROR(msg)                                                    \
   if ((msg) < (msg_t)0) {                                                   \
+    palSetLine(i2cp->config->sda);                                          \
+    palSetLine(i2cp->config->scl);                                          \
     return MSG_TIMEOUT;                                                     \
   }
 
