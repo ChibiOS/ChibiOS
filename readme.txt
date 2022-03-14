@@ -76,7 +76,7 @@
 *** 21.11.2 ***
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
 - NEW: Added support for STM32H723/25/33/35.
-- FIX: Reverted bug #1100.
+- FIX: Re-opened and fixed bug #1100.
 - FIX: Fixed invalid cumulative time stat in RT (bug #1222).
 - FIX: Fixed incorrect type cast in TIME_I2US() (bug #1221).
 - FIX: Fixed missing clock disable for STM32 OCTOSPI2 (bug #1220).
