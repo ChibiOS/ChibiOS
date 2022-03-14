@@ -102,6 +102,10 @@ static inline void __stats_object_init(kernel_stats_t *ksp) {
   ksp->n_ctxswc = (ucnt_t)0;
   chTMObjectInit(&ksp->m_crit_thd);
   chTMObjectInit(&ksp->m_crit_isr);
+
+  /* The initialization code will stop the measurement on the final call
+     to chSysUnlock().*/
+  chTMStartMeasurementX(&ksp->m_crit_thd);
 }
 
 #else /* CH_DBG_STATISTICS == FALSE */
