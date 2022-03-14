@@ -123,6 +123,8 @@
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
+- FIX: Fixed GPIOH clock not enabled on STM32L432 (bug #1223)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed invalid cumulative time stat in RT (bug #1222)
        (backported to 21.11.2).
 - FIX: Fixed incorrect type cast in TIME_I2US() (bug #1221)
