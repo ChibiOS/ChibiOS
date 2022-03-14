@@ -75,7 +75,7 @@
 
 *** 20.3.5 ***
 - FIX: Some MISRA-related fixes.
-- FIX: Reverted bug #1100.
+- FIX: Re-opened and fixed bug #1100.
 - FIX: Fixed incorrect type cast in TIME_I2US() (bug #1221).
 - FIX: Fixed missing clock disable for STM32 OCTOSPI2 (bug #1220).
 - FIX: Fixed Virtual Timers failure in a specific condition (bug #1215).

@@ -652,7 +652,11 @@ void dac_lld_start_conversion(DACDriver *dacp) {
     dmaStreamSetPeripheral(dacp->dma, &dacp->params->dac->DHR12R1 +
                                       dacp->params->dataoffset);
     dmamode = dacp->params->dmamode |
-              STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD;
+#if STM32_DMA_ADVANCED == FALSE
+              STM32_DMA_CR_PSIZE_WORD  | STM32_DMA_CR_MSIZE_HWORD;
+#else
+              STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+#endif
     break;
   case DAC_DHRM_12BIT_LEFT:
     osalDbgAssert(dacp->grpp->num_channels == 1, "invalid number of channels");
@@ -660,7 +664,11 @@ void dac_lld_start_conversion(DACDriver *dacp) {
     dmaStreamSetPeripheral(dacp->dma, &dacp->params->dac->DHR12L1 +
                                       dacp->params->dataoffset);
     dmamode = dacp->params->dmamode |
-              STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD;
+#if STM32_DMA_ADVANCED == FALSE
+              STM32_DMA_CR_PSIZE_WORD  | STM32_DMA_CR_MSIZE_HWORD;
+#else
+              STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+#endif
     break;
   case DAC_DHRM_8BIT_RIGHT:
     osalDbgAssert(dacp->grpp->num_channels == 1, "invalid number of channels");
@@ -668,7 +676,11 @@ void dac_lld_start_conversion(DACDriver *dacp) {
     dmaStreamSetPeripheral(dacp->dma, &dacp->params->dac->DHR8R1 +
                                       dacp->params->dataoffset);
     dmamode = dacp->params->dmamode |
-              STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_BYTE;
+#if STM32_DMA_ADVANCED == FALSE
+              STM32_DMA_CR_PSIZE_WORD  | STM32_DMA_CR_MSIZE_BYTE;
+#else
+              STM32_DMA_CR_MSIZE_BYTE  | STM32_DMA_CR_MSIZE_BYTE;
+#endif
 
     /* In this mode the size of the buffer is halved because two samples
        packed in a single dacsample_t element.*/
@@ -696,7 +708,11 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
     dmaStreamSetPeripheral(dacp->dma, &dacp->params->dac->DHR8RD);
     dmamode = dacp->params->dmamode |
-              STM32_DMA_CR_PSIZE_WORD | STM32_DMA_CR_MSIZE_HWORD;
+#if STM32_DMA_ADVANCED == FALSE
+              STM32_DMA_CR_PSIZE_WORD  | STM32_DMA_CR_MSIZE_HWORD;
+#else
+              STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+#endif
     n /= 2;
     break;
 #endif
