@@ -123,6 +123,10 @@
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
+- FIX: Fixed missing TIM16/17 errata handling for STM32G0xx (bug #1226)
+       (backported to 20.3.5)(backported to 21.11.2).
+- FIX: Fixed missing ADC errata handling for STM32G0xx (bug #1225)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed problem in the HAL I2C fallback driver (bug #1224)
        (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed GPIOH clock not enabled on STM32L432 (bug #1223)
