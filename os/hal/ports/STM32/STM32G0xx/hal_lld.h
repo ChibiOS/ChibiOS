@@ -1634,6 +1634,13 @@
  */
 #define STM32_TIMCLK2               hal_lld_get_clock_point(CLK_PCLKTIM)
 
+#if STM32_HAS_TIM1617_ERRATA
+/* TIM16 and TIM17 require special handling and checks on some devices, see
+   the errata: "TIM16 and TIM17 are unduly clocked by SYSCLK".*/
+#define STM32_TIM16CLK              hal_lld_get_clock_point(CLK_SYSCLK)
+#define STM32_TIM17CLK              hal_lld_get_clock_point(CLK_SYSCLK)
+#endif
+
 /**
  * @brief   FDCAN clock point.
  */

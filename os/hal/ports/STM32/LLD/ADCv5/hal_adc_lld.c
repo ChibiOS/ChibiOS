@@ -70,6 +70,28 @@ NOINLINE static void adc_lld_vreg_on(ADC_TypeDef *adc) {
 }
 
 /**
+ * @brief   Starts the ADC enable procedure.
+ *
+ * @param[in] adc       pointer to the ADC registers block
+ */
+static void adc_lld_start_enable_adc(ADC_TypeDef *adc) {
+
+  adc->CR = ADC_CR_ADEN;
+}
+
+/**
+ * @brief   Waits for the ADC enable procedure completion.
+ *
+ * @param[in] adc       pointer to the ADC registers block
+ */
+static void adc_lld_wait_enable_adc(ADC_TypeDef *adc) {
+
+  while ((adc->ISR & ADC_ISR_ADRDY) == 0U) {
+    /* Waiting for ADC to be stable.*/
+  }
+}
+
+/**
  * @brief   Stops an ongoing conversion, if any.
  *
  * @param[in] adc       pointer to the ADC registers block
@@ -81,6 +103,12 @@ static void adc_lld_stop_adc(ADC_TypeDef *adc) {
     while (adc->CR & ADC_CR_ADSTP)
       ;
     adc->IER = 0;
+  }
+
+  /* Disabling the ADC.*/
+  adc->CR |= ADC_CR_ADDIS;
+  while ((adc->CR & ADC_CR_ADDIS) != 0U) {
+    /* Waiting for ADC to be disabled.*/
   }
 }
 
@@ -214,14 +242,8 @@ void adc_lld_start(ADCDriver *adcp) {
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
-    /* Regulator enabled and stabilized before calibration.*/
+    /* Regulator enabled and stabilized.*/
     adc_lld_vreg_on(ADC1);
-
-    /* ADC initial setup, starting the analog part here in order to reduce
-       the latency when starting a conversion.*/
-    adcp->adc->CR = ADC_CR_ADEN;
-    while (!(adcp->adc->ISR & ADC_ISR_ADRDY))
-      ;
   }
 }
 
@@ -243,15 +265,7 @@ void adc_lld_stop(ADCDriver *adcp) {
     /* Restoring CCR default.*/
     ADC1_COMMON->CCR = STM32_ADC_PRESC << 18;
 
-    /* Disabling ADC.*/
-    if (adcp->adc->CR & ADC_CR_ADEN) {
-      adc_lld_stop_adc(adcp->adc);
-      adcp->adc->CR |= ADC_CR_ADDIS;
-      while (adcp->adc->CR & ADC_CR_ADDIS)
-        ;
-    }
-
-    /* Regulator and anything else off.*/
+    /* Regulator off.*/
     adcp->adc->CR = 0;
 
 #if STM32_ADC_USE_ADC1
@@ -271,6 +285,9 @@ void adc_lld_stop(ADCDriver *adcp) {
 void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t mode, cfgr1, cfgr2;
   const ADCConversionGroup *grpp = adcp->grpp;
+
+  /* Starting the ADC enable procedure.*/
+  adc_lld_start_enable_adc(adcp->adc);
 
   /* DMA setup.*/
   mode  = adcp->dmamode;
@@ -306,6 +323,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   }
   adcp->adc->SMPR   = grpp->smpr;
   adcp->adc->CHSELR = grpp->chselr;
+
+  /* Ensuring that the ADC finished the enable procedure.*/
+  adc_lld_wait_enable_adc(adcp->adc);
 
   /* ADC configuration and start.*/
   adcp->adc->CFGR1  = cfgr1;

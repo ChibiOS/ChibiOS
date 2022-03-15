@@ -106,6 +106,9 @@
 
 #if defined(STM32G070xx) || defined(__DOXYGEN__)
 
+/* Errata attributes.*/
+#define STM32_HAS_TIM1617_ERRATA            TRUE
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      FALSE
@@ -292,6 +295,9 @@
 
 #if defined(STM32G031xx) || defined(STM32G041xx)
 
+/* Errata attributes.*/
+#define STM32_HAS_TIM1617_ERRATA            TRUE
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      FALSE
@@ -471,6 +477,9 @@
 /*===========================================================================*/
 
 #if defined(STM32G071xx) || defined(STM32G081xx)
+
+/* Errata attributes.*/
+#define STM32_HAS_TIM1617_ERRATA            TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -661,6 +670,9 @@
 /*===========================================================================*/
 
 #if defined(STM32G0B1xx) || defined(STM32G0C1xx)
+
+/* Errata attributes.*/
+#define STM32_HAS_TIM1617_ERRATA            FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
