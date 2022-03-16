@@ -160,7 +160,7 @@ static void adc_lld_vreg_off(ADCDriver *adcp) {
 }
 
 /**
- * @brief   Calibrates and ADC unit.
+ * @brief   Calibrates an ADC unit.
  *
  * @param[in] adcp      pointer to the @p ADCDriver object
  */
