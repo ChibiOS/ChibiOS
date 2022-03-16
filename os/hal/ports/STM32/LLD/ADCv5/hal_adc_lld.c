@@ -70,25 +70,17 @@ NOINLINE static void adc_lld_vreg_on(ADC_TypeDef *adc) {
 }
 
 /**
- * @brief   Starts the ADC enable procedure.
+ * @brief   Calibrates an ADC unit.
  *
  * @param[in] adc       pointer to the ADC registers block
  */
-static void adc_lld_start_enable_adc(ADC_TypeDef *adc) {
+static void adc_lld_calibrate(ADC_TypeDef *adc) {
 
-  adc->CR = ADC_CR_ADEN;
-}
-
-/**
- * @brief   Waits for the ADC enable procedure completion.
- *
- * @param[in] adc       pointer to the ADC registers block
- */
-static void adc_lld_wait_enable_adc(ADC_TypeDef *adc) {
-
-  while ((adc->ISR & ADC_ISR_ADRDY) == 0U) {
-    /* Waiting for ADC to be stable.*/
+  adc->CR |= ADC_CR_ADCAL;
+  while (adc->CR & ADC_CR_ADCAL) {
+    /* Waiting for calibration end.*/
   }
+  adc->CR = 0U;
 }
 
 /**
@@ -196,21 +188,6 @@ void adc_lld_init(void) {
      disabled.*/
   nvicEnableVector(12, STM32_ADC_ADC1_IRQ_PRIORITY);
 #endif
-
-  /* Calibration procedure.*/
-  rccEnableADC1(true);
-
-  /* CCR setup.*/
-  ADC1_COMMON->CCR = STM32_ADC_PRESC << 18;
-
-  /* Regulator enabled and stabilized before calibration.*/
-  adc_lld_vreg_on(ADC1);
-
-  ADC1->CR |= ADC_CR_ADCAL;
-  while (ADC1->CR & ADC_CR_ADCAL)
-    ;
-  ADC1->CR = 0;
-  rccDisableADC1();
 }
 
 /**
@@ -224,6 +201,7 @@ void adc_lld_start(ADCDriver *adcp) {
 
   /* If in stopped state then enables the ADC and DMA clocks.*/
   if (adcp->state == ADC_STOP) {
+
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC1_DMA_STREAM,
@@ -244,6 +222,9 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* Regulator enabled and stabilized.*/
     adc_lld_vreg_on(ADC1);
+
+    /* Calibrating ADC.*/
+    adc_lld_calibrate(adcp->adc);
   }
 }
 
@@ -287,7 +268,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   const ADCConversionGroup *grpp = adcp->grpp;
 
   /* Starting the ADC enable procedure.*/
-  adc_lld_start_enable_adc(adcp->adc);
+  adcp->adc->ISR = adcp->adc->ISR;
+  adcp->adc->CR  = ADC_CR_ADEN;
 
   /* DMA setup.*/
   mode  = adcp->dmamode;
@@ -308,10 +290,14 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetMode(adcp->dmastp, mode);
   dmaStreamEnable(adcp->dmastp);
 
+  /* Ensuring that the ADC finished the enable procedure.*/
+  while ((adcp->adc->ISR & ADC_ISR_ADRDY) == 0U) {
+    /* Waiting for ADC to be stable.*/
+  }
+
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
-  adcp->adc->ISR      = adcp->adc->ISR;
-  if (grpp->error_cb != NULL) {
+   if (grpp->error_cb != NULL) {
     adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWD1IE
                                       | ADC_IER_AWD2IE
                                       | ADC_IER_AWD3IE;
@@ -323,9 +309,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   }
   adcp->adc->SMPR   = grpp->smpr;
   adcp->adc->CHSELR = grpp->chselr;
-
-  /* Ensuring that the ADC finished the enable procedure.*/
-  adc_lld_wait_enable_adc(adcp->adc);
 
   /* ADC configuration and start.*/
   adcp->adc->CFGR1  = cfgr1;
