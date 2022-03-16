@@ -77,6 +77,7 @@
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
 - NEW: Added support for STM32H723/25/33/35.
 - FIX: Re-opened and fixed bug #1100.
+- FIX: Fixed missing ADC errata handling for STM32G0xx (bug #1225).
 - FIX: Fixed problem in the HAL I2C fallback driver (bug #1224).
 - FIX: Fixed GPIOH clock not enabled on STM32L432 (bug #1223).
 - FIX: Fixed invalid cumulative time stat in RT (bug #1222).
