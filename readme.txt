@@ -76,6 +76,7 @@
 *** 20.3.5 ***
 - FIX: Some MISRA-related fixes.
 - FIX: Re-opened and fixed bug #1100.
+- FIX: Fixed missing ADC errata handling for STM32G0xx (bug #1225).
 - FIX: Fixed problem in the HAL I2C fallback driver (bug #1224).
 - FIX: Fixed GPIOH clock not enabled on STM32L432 (bug #1223).
 - FIX: Fixed incorrect type cast in TIME_I2US() (bug #1221).

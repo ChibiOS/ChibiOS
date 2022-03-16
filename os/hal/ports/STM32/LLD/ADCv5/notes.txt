@@ -1,4 +1,4 @@
-STM32 ADCv1 driver.
+STM32 ADCv5 driver.
 
 Driver capability:
 
