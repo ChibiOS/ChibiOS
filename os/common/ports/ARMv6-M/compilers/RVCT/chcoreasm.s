@@ -110,7 +110,7 @@ __port_thread_start PROC
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-.zombies        b       .zombies
+zombies         b       zombies
                 ENDP
 
 /*
@@ -133,7 +133,7 @@ __port_switch_from_isr PROC
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
-_port_exit_from_isr
+__port_exit_from_isr
                 ldr     r2, =SCB_ICSR
                 movs    r3, #128
 #if CORTEX_ALTERNATE_SWITCH
@@ -144,7 +144,7 @@ _port_exit_from_isr
                 lsls    r3, r3, #24
                 str     r3, [r2, #0]
 #endif
-.waithere       b       .waithere
+waithere        b       waithere
                 ENDP
 
                 END
