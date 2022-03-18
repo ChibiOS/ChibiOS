@@ -123,6 +123,8 @@
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
+- FIX: Fixed invalid handling of lwIP NETIF_FLAG_LINK_UP flag (bug #1227)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed missing TIM16/17 errata handling for STM32G0xx (bug #1226)
        (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed missing ADC errata handling for STM32G0xx (bug #1225)
