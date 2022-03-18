@@ -77,6 +77,7 @@
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
 - NEW: Added support for STM32H723/25/33/35.
 - FIX: Re-opened and fixed bug #1100.
+- FIX: Fixed missing chech on STM32 SPIv2 DMA settings for SPI1 (bug #1229).
 - FIX: Fixed ARMv6-M port Keil compiler fail (bug #1228).
 - FIX: Fixed invalid handling of lwIP NETIF_FLAG_LINK_UP flag (bug #1227).
 - FIX: Fixed missing TIM16/17 errata handling for STM32G0xx (bug #1226).
