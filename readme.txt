@@ -123,6 +123,8 @@
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
+- FIX: Fixed missing chech on STM32 SPIv2 DMA settings for SPI1 (bug #1229)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed ARMv6-M port Keil compiler fail (bug #1228)
        (backported to 21.11.2).
 - FIX: Fixed invalid handling of lwIP NETIF_FLAG_LINK_UP flag (bug #1227)
