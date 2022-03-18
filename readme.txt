@@ -76,6 +76,7 @@
 *** 20.3.5 ***
 - FIX: Some MISRA-related fixes.
 - FIX: Re-opened and fixed bug #1100.
+- FIX: Fixed missing chech on STM32 SPIv2 DMA settings for SPI1 (bug #1229).
 - FIX: Fixed invalid handling of lwIP NETIF_FLAG_LINK_UP flag (bug #1227).
 - FIX: Fixed missing TIM16/17 errata handling for STM32G0xx (bug #1226).
 - FIX: Fixed missing ADC errata handling for STM32G0xx (bug #1225).
