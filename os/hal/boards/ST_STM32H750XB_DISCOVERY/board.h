@@ -83,7 +83,7 @@
 
 #define GPIOB_MII_RXD2              0U
 #define GPIOB_MII_RXD3              1U
-#define GPIOB_MII_TX_ER             2U
+#define GPIOB_MII_RX_ER             2U
 #define GPIOB_SWO                   3U
 #define GPIOB_PIN4                  4U
 #define GPIOB_FDCAN2_RX             5U
@@ -266,7 +266,7 @@
 #define LINE_T_JTDI                 PAL_LINE(GPIOA, 15U)
 #define LINE_MII_RXD2               PAL_LINE(GPIOB, 0U)
 #define LINE_MII_RXD3               PAL_LINE(GPIOB, 1U)
-#define LINE_MII_TX_ER              PAL_LINE(GPIOB, 2U)
+#define LINE_MII_RX_ER              PAL_LINE(GPIOB, 2U)
 #define LINE_SWO                    PAL_LINE(GPIOB, 3U)
 #define LINE_FDCAN2_RX              PAL_LINE(GPIOB, 5U)
 #define LINE_SDIO1_D4               PAL_LINE(GPIOB, 8U)
@@ -551,7 +551,7 @@
  *
  * PB0  - MII_RXD2                  (alternate 11).
  * PB1  - MII_RXD3                  (alternate 11).
- * PB2  - MII_TX_ER                 (analog).
+ * PB2  - MII_RX_ER                 (alternate 11).
  * PB3  - SWO                       (alternate 0).
  * PB4  - PIN4                      (input floating).
  * PB5  - FDCAN2_RX                 (input floating).
@@ -568,7 +568,7 @@
  */
 #define VAL_GPIOB_MODER             (PIN_MODE_ALTERNATE(GPIOB_MII_RXD2) |   \
                                      PIN_MODE_ALTERNATE(GPIOB_MII_RXD3) |   \
-                                     PIN_MODE_ANALOG(GPIOB_MII_TX_ER) |     \
+                                     PIN_MODE_ALTERNATE(GPIOB_MII_RX_ER) |  \
                                      PIN_MODE_ALTERNATE(GPIOB_SWO) |        \
                                      PIN_MODE_INPUT(GPIOB_PIN4) |           \
                                      PIN_MODE_INPUT(GPIOB_FDCAN2_RX) |      \
@@ -584,7 +584,7 @@
                                      PIN_MODE_INPUT(GPIOB_PIN15))
 #define VAL_GPIOB_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOB_MII_RXD2) |   \
                                      PIN_OTYPE_PUSHPULL(GPIOB_MII_RXD3) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOB_MII_TX_ER) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOB_MII_RX_ER) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOB_SWO) |        \
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN4) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_FDCAN2_RX) |  \
@@ -600,7 +600,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOB_PIN15))
 #define VAL_GPIOB_OSPEEDR           (PIN_OSPEED_HIGH(GPIOB_MII_RXD2) |      \
                                      PIN_OSPEED_HIGH(GPIOB_MII_RXD3) |      \
-                                     PIN_OSPEED_HIGH(GPIOB_MII_TX_ER) |     \
+                                     PIN_OSPEED_HIGH(GPIOB_MII_RX_ER) |     \
                                      PIN_OSPEED_HIGH(GPIOB_SWO) |           \
                                      PIN_OSPEED_VERYLOW(GPIOB_PIN4) |       \
                                      PIN_OSPEED_HIGH(GPIOB_FDCAN2_RX) |     \
@@ -616,7 +616,7 @@
                                      PIN_OSPEED_VERYLOW(GPIOB_PIN15))
 #define VAL_GPIOB_PUPDR             (PIN_PUPDR_FLOATING(GPIOB_MII_RXD2) |   \
                                      PIN_PUPDR_FLOATING(GPIOB_MII_RXD3) |   \
-                                     PIN_PUPDR_FLOATING(GPIOB_MII_TX_ER) |  \
+                                     PIN_PUPDR_FLOATING(GPIOB_MII_RX_ER) |  \
                                      PIN_PUPDR_PULLUP(GPIOB_SWO) |          \
                                      PIN_PUPDR_FLOATING(GPIOB_PIN4) |       \
                                      PIN_PUPDR_FLOATING(GPIOB_FDCAN2_RX) |  \
@@ -632,7 +632,7 @@
                                      PIN_PUPDR_FLOATING(GPIOB_PIN15))
 #define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_MII_RXD2) |         \
                                      PIN_ODR_HIGH(GPIOB_MII_RXD3) |         \
-                                     PIN_ODR_HIGH(GPIOB_MII_TX_ER) |        \
+                                     PIN_ODR_HIGH(GPIOB_MII_RX_ER) |        \
                                      PIN_ODR_HIGH(GPIOB_SWO) |              \
                                      PIN_ODR_HIGH(GPIOB_PIN4) |             \
                                      PIN_ODR_HIGH(GPIOB_FDCAN2_RX) |        \
@@ -648,7 +648,7 @@
                                      PIN_ODR_HIGH(GPIOB_PIN15))
 #define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_MII_RXD2, 11U) |     \
                                      PIN_AFIO_AF(GPIOB_MII_RXD3, 11U) |     \
-                                     PIN_AFIO_AF(GPIOB_MII_TX_ER, 0U) |     \
+                                     PIN_AFIO_AF(GPIOB_MII_RX_ER, 11U) |    \
                                      PIN_AFIO_AF(GPIOB_SWO, 0U) |           \
                                      PIN_AFIO_AF(GPIOB_PIN4, 0U) |          \
                                      PIN_AFIO_AF(GPIOB_FDCAN2_RX, 9U) |     \
