@@ -160,7 +160,7 @@
 #define GPIOF_OSPI2_IO2             2U
 #define GPIOF_OSPI2_IO3             3U
 #define GPIOF_OSPI2_CLK             4U
-#define GPIOF_USD_DETECT            5U
+#define GPIOF_SD_DETECT             5U
 #define GPIOF_STMOD_1               6U
 #define GPIOF_STMOD_2               7U
 #define GPIOF_STMOD_3               8U
@@ -347,7 +347,7 @@
 #define LINE_OSPI2_IO2              PAL_LINE(GPIOF, 2U)
 #define LINE_OSPI2_IO3              PAL_LINE(GPIOF, 3U)
 #define LINE_OSPI2_CLK              PAL_LINE(GPIOF, 4U)
-#define LINE_USD_DETECT             PAL_LINE(GPIOF, 5U)
+#define LINE_SD_DETECT              PAL_LINE(GPIOF, 5U)
 #define LINE_STMOD_1                PAL_LINE(GPIOF, 6U)
 #define LINE_STMOD_2                PAL_LINE(GPIOF, 7U)
 #define LINE_STMOD_3                PAL_LINE(GPIOF, 8U)
@@ -1022,7 +1022,7 @@
  * PF2  - OSPI2_IO2                 (alternate 9).
  * PF3  - OSPI2_IO3                 (alternate 9).
  * PF4  - OSPI2_CLK                 (alternate 9).
- * PF5  - USD_DETECT                (input pullup).
+ * PF5  - SD_DETECT                 (input pullup).
  * PF6  - STMOD_1                   (input pullup).
  * PF7  - STMOD_2                   (input pullup).
  * PF8  - STMOD_3                   (input pullup).
@@ -1039,7 +1039,7 @@
                                      PIN_MODE_ALTERNATE(GPIOF_OSPI2_IO2) |  \
                                      PIN_MODE_ALTERNATE(GPIOF_OSPI2_IO3) |  \
                                      PIN_MODE_ALTERNATE(GPIOF_OSPI2_CLK) |  \
-                                     PIN_MODE_INPUT(GPIOF_USD_DETECT) |     \
+                                     PIN_MODE_INPUT(GPIOF_SD_DETECT) |      \
                                      PIN_MODE_INPUT(GPIOF_STMOD_1) |        \
                                      PIN_MODE_INPUT(GPIOF_STMOD_2) |        \
                                      PIN_MODE_INPUT(GPIOF_STMOD_3) |        \
@@ -1055,7 +1055,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOF_OSPI2_IO2) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOF_OSPI2_IO3) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOF_OSPI2_CLK) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOF_USD_DETECT) | \
+                                     PIN_OTYPE_PUSHPULL(GPIOF_SD_DETECT) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOF_STMOD_1) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOF_STMOD_2) |    \
                                      PIN_OTYPE_PUSHPULL(GPIOF_STMOD_3) |    \
@@ -1071,7 +1071,7 @@
                                      PIN_OSPEED_HIGH(GPIOF_OSPI2_IO2) |     \
                                      PIN_OSPEED_HIGH(GPIOF_OSPI2_IO3) |     \
                                      PIN_OSPEED_HIGH(GPIOF_OSPI2_CLK) |     \
-                                     PIN_OSPEED_VERYLOW(GPIOF_USD_DETECT) | \
+                                     PIN_OSPEED_VERYLOW(GPIOF_SD_DETECT) |  \
                                      PIN_OSPEED_VERYLOW(GPIOF_STMOD_1) |    \
                                      PIN_OSPEED_VERYLOW(GPIOF_STMOD_2) |    \
                                      PIN_OSPEED_VERYLOW(GPIOF_STMOD_3) |    \
@@ -1087,7 +1087,7 @@
                                      PIN_PUPDR_FLOATING(GPIOF_OSPI2_IO2) |  \
                                      PIN_PUPDR_FLOATING(GPIOF_OSPI2_IO3) |  \
                                      PIN_PUPDR_FLOATING(GPIOF_OSPI2_CLK) |  \
-                                     PIN_PUPDR_PULLUP(GPIOF_USD_DETECT) |   \
+                                     PIN_PUPDR_PULLUP(GPIOF_SD_DETECT) |    \
                                      PIN_PUPDR_PULLUP(GPIOF_STMOD_1) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_STMOD_2) |      \
                                      PIN_PUPDR_PULLUP(GPIOF_STMOD_3) |      \
@@ -1103,7 +1103,7 @@
                                      PIN_ODR_LOW(GPIOF_OSPI2_IO2) |         \
                                      PIN_ODR_LOW(GPIOF_OSPI2_IO3) |         \
                                      PIN_ODR_LOW(GPIOF_OSPI2_CLK) |         \
-                                     PIN_ODR_LOW(GPIOF_USD_DETECT) |        \
+                                     PIN_ODR_LOW(GPIOF_SD_DETECT) |         \
                                      PIN_ODR_HIGH(GPIOF_STMOD_1) |          \
                                      PIN_ODR_HIGH(GPIOF_STMOD_2) |          \
                                      PIN_ODR_HIGH(GPIOF_STMOD_3) |          \
@@ -1119,7 +1119,7 @@
                                      PIN_AFIO_AF(GPIOF_OSPI2_IO2, 9U) |     \
                                      PIN_AFIO_AF(GPIOF_OSPI2_IO3, 9U) |     \
                                      PIN_AFIO_AF(GPIOF_OSPI2_CLK, 9U) |     \
-                                     PIN_AFIO_AF(GPIOF_USD_DETECT, 0U) |    \
+                                     PIN_AFIO_AF(GPIOF_SD_DETECT, 0U) |     \
                                      PIN_AFIO_AF(GPIOF_STMOD_1, 0U) |       \
                                      PIN_AFIO_AF(GPIOF_STMOD_2, 0U))
 #define VAL_GPIOF_AFRH              (PIN_AFIO_AF(GPIOF_STMOD_3, 0U) |       \

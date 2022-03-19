@@ -722,7 +722,7 @@
         Mode="Alternate"
         Alternate="9" />
       <pin5
-        ID="USD_DETECT"
+        ID="SD_DETECT"
         Type="PushPull"
         Level="Low"
         Speed="Minimum"
