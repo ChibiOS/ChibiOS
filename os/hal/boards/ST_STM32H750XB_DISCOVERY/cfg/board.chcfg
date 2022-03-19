@@ -173,13 +173,13 @@
         Mode="Alternate"
         Alternate="11" />
       <pin2
-        ID="MII_TX_ER"
+        ID="MII_RX_ER"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Analog"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="11" />
       <pin3
         ID="SWO"
         Type="PushPull"
