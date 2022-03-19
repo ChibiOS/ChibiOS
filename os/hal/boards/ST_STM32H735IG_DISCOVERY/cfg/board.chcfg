@@ -10,7 +10,12 @@
   </configuration_settings>
   <board_name>STMicroelectronics STM32H735IG_DISCOVERY</board_name>
   <board_id>ST_STM32H735IG_DISCOVERY</board_id>
-  <board_functions></board_functions>
+  <board_functions>
+    <sdc_lld_is_card_inserted><![CDATA[
+  (void)sdcp;
+    
+  return !palReadLine(LINE_SD_DETECT);]]></sdc_lld_is_card_inserted>
+  </board_functions>
   <headers></headers>
   <ethernet_phy>
     <identifier>MII_LAN8742A_ID</identifier>
