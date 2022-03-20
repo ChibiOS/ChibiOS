@@ -27,7 +27,7 @@
 /*===========================================================================*/
 
 /*
- * Setup for STMicroelectronics STM32 Nucleo144-L4R5ZI board.
+ * Setup for STMicroelectronics STM32 Nucleo144-L4P5ZG board.
  */
 
 /*

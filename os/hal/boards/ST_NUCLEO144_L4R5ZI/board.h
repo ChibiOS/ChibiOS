@@ -42,7 +42,7 @@
  * NOTE: HSE not fitted.
  */
 #if !defined(STM32_LSECLK)
-#define STM32_LSECLK                32768U
+#define STM32_LSECLK                0U
 #endif
 
 #define STM32_LSEDRV                (3U << 3U)
