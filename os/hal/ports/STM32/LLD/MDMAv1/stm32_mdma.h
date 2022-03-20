@@ -277,7 +277,8 @@
  * @brief   STM32 MDMA ISR function type.
  *
  * @param[in] p         parameter for the registered function
- * @param[in] flags     content of the CISR register
+ * @param[in] flags     content of the CISR register in the lower 16 bits,
+ *                      content of the CESR register in the upper 16 bits
  */
 typedef void (*stm32_mdmaisr_t)(void *p, uint32_t flags);
 

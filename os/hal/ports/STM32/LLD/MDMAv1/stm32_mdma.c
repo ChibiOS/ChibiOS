@@ -66,12 +66,13 @@ static struct {
 /*===========================================================================*/
 
 static void mdma_serve_interrupt(const stm32_mdma_channel_t *mdmachp) {
-  uint32_t flags;
+  uint32_t flags, eflags;
 
   flags = mdmachp->channel->CISR;
+  eflags = mdmachp->channel->CESR;
   mdmachp->channel->CIFCR = flags;
   if (mdmachp->func != NULL) {
-    mdmachp->func(mdmachp->param, flags);
+    mdmachp->func(mdmachp->param, flags | (eflags << 16));
   }
 }
 
