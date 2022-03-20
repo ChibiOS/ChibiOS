@@ -1,8 +1,8 @@
 # List of all the board related files.
-BOARDSRC = $(CHIBIOS)/os/hal/boards/ST_NUCLEO48_WB55CG_USB/board.c
+BOARDSRC = $(CHIBIOS)/os/hal/boards/ST_STM32H735IG_DISCOVERY/board.c
 
 # Required include directories
-BOARDINC = $(CHIBIOS)/os/hal/boards/ST_NUCLEO48_WB55CG_USB
+BOARDINC = $(CHIBIOS)/os/hal/boards/ST_STM32H735IG_DISCOVERY
 
 # Shared variables
 ALLCSRC += $(BOARDSRC)
