@@ -227,6 +227,10 @@ struct SDCDriver {
    * @brief   Card RCA.
    */
   uint32_t                  rca;
+  /**
+   * @brief   Buffer of @p MMCSD_BLOCK_SIZE bytes for internal operations.
+   */
+  uint8_t                   *buf;
   /* End of the mandatory fields.*/
   /**
    * @brief   Thread waiting for I/O completion IRQ.
@@ -242,9 +246,9 @@ struct SDCDriver {
    */
   uint32_t                  clkfreq;
   /**
-   * @brief   Buffer for internal operations.
+   * @brief   Uncached word buffer for small transfers.
    */
-  uint8_t                   buf[MMCSD_BLOCK_SIZE];
+  uint32_t                  *resp;
 };
 
 /*===========================================================================*/

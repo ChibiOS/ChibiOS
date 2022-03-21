@@ -122,7 +122,7 @@ include $(CHIBIOS)/os/various/shell/shell.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32H735xG_ITCM64k.ld
+LDSCRIPT= $(STARTUPLD)/STM32H723xG_ITCM64k_AXI_NC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

@@ -319,7 +319,7 @@ static bool sdc_cmd6_check_status(sd_switch_function_t function,
 static bool sdc_detect_bus_clk(SDCDriver *sdcp, sdcbusclk_t *clk) {
   uint32_t cmdarg;
   const size_t N = 64;
-  uint8_t tmp[N];
+  uint8_t *tmp = sdcp->buf;
 
   /* Safe default.*/
   *clk = SDC_CLK_25MHz;

@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Improved cache settings in STM32H7xx mcuconf.h.
+- NEW: Modified SDMMCv2 to allow for uncached buffers.
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
 - NEW: Added demos for STM32H723ZG Nucleo144 and STM32H735ZI Discovery boards.
 - NEW: Added support for STM32H723/25/33/35.
