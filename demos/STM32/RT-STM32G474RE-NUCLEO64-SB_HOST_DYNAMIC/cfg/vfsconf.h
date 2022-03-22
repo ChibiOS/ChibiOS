@@ -142,6 +142,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Maximum number of FatFS file systems mounted.
+ */
+#if !defined(DRV_CFG_FATFS_FS_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_FATFS_FS_NUM                1
+#endif
+
+/**
  * @brief   Number of directory nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_FATFS_DIR_NODES_NUM) || defined(__DOXYGEN__)

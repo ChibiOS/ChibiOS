@@ -216,6 +216,13 @@ static struct {
   vfs_fatfs_file_node_c             file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
 } vfs_fatfs_driver_static;
 
+/**
+ * @brief   Static members of @p vfs_fatfs_driver_c (non-cached).
+ */
+static struct {
+  FATFS                             fs[DRV_CFG_FATFS_FS_NUM];
+} __nocache_vfs_fatfs_driver_static;
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -816,7 +823,7 @@ void __drv_fatfs_init(void) {
                    chCoreAllocAlignedI);
   chPoolObjectInit(&vfs_fatfs_driver_static.fs_nodes_pool,
                    sizeof (FATFS),
-                   chCoreAllocAlignedI);
+                   NULL);
 
   /* Preloading pools.*/
   chPoolLoadArray(&vfs_fatfs_driver_static.dir_nodes_pool,
@@ -825,6 +832,9 @@ void __drv_fatfs_init(void) {
   chPoolLoadArray(&vfs_fatfs_driver_static.file_nodes_pool,
                   &vfs_fatfs_driver_static.file_nodes[0],
                   DRV_CFG_FATFS_FILE_NODES_NUM);
+  chPoolLoadArray(&vfs_fatfs_driver_static.fs_nodes_pool,
+                  &__nocache_vfs_fatfs_driver_static.fs[0],
+                  DRV_CFG_FATFS_FS_NUM);
 }
 
 /**
@@ -855,6 +865,7 @@ vfs_driver_c *drvFatFSObjectInit(vfs_fatfs_driver_c *vffdp) {
  */
 msg_t drvFatFSMount(const char *name, bool mountnow) {
   FATFS *fs;
+  FRESULT res;
 
   fs = f_getfs(name);
   if (fs == NULL) {
@@ -864,7 +875,12 @@ msg_t drvFatFSMount(const char *name, bool mountnow) {
     }
   }
 
-  return translate_error(f_mount(fs, name, (BYTE)(mountnow ? 1 : 0)));
+  res = f_mount(fs, name, (BYTE)(mountnow ? 1 : 0));
+  if (res != FR_OK) {
+    chPoolFree(&vfs_fatfs_driver_static.fs_nodes_pool, (void *)fs);
+  }
+
+  return translate_error(res);
 }
 
 /**

@@ -43,6 +43,10 @@
 /*===========================================================================*/
 
 /* Configuration options checks.*/
+#if !defined(DRV_CFG_FATFS_FS_NUM)
+#error "DRV_CFG_FATFS_FS_NUM not defined in vfsconf.h"
+#endif
+
 #if !defined(DRV_CFG_FATFS_DIR_NODES_NUM)
 #error "DRV_CFG_FATFS_DIR_NODES_NUM not defined in vfsconf.h"
 #endif
