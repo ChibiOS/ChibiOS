@@ -662,16 +662,18 @@ void bus_cmd_addr_dummy_receive(BUSDriver *busp,
  * @brief   Initializes an instance.
  *
  * @param[out] devp     pointer to the @p SNORDriver object
+ * @param[in] nocache   pointer to the non-cacheable buffers
  *
  * @init
  */
-void snorObjectInit(SNORDriver *devp) {
+void snorObjectInit(SNORDriver *devp, snor_nocache_buffer_t *nocache) {
 
   osalDbgCheck(devp != NULL);
 
   devp->vmt         = &snor_vmt;
   devp->state       = FLASH_STOP;
   devp->config      = NULL;
+  devp->nocache     = nocache;
 #if SNOR_USE_MUTUAL_EXCLUSION == TRUE
   osalMutexObjectInit(&devp->mutex);
 #endif

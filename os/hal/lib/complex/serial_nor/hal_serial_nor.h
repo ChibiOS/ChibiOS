@@ -39,6 +39,11 @@
 #define SNOR_BUS_DRIVER_WSPI                1U
 /** @} */
 
+/**
+ * @brief   Size of the buffer for internal operations.
+ */
+#define SNOR_BUFFER_SIZE                    32
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -127,6 +132,13 @@ struct SNORDriverVMT {
   _snor_flash_methods
 };
 
+typedef struct snor_nocache_buffer {
+  /**
+   * @brief   Temporary buffer.
+   */
+  uint8_t                       buf[SNOR_BUFFER_SIZE];
+} snor_nocache_buffer_t;
+
 /**
  * @extends BaseFlash
  *
@@ -143,14 +155,14 @@ typedef struct {
    */
   const SNORConfig              *config;
   /**
-   * @brief   Device ID and unique ID.
+   * @brief   Non-cacheable buffer associated to this instance.
    */
-  uint8_t                       device_id[20];
+  snor_nocache_buffer_t         *nocache;
 #if (SNOR_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Mutex protecting SNOR.
    */
-  mutex_t                   mutex;
+  mutex_t                       mutex;
 #endif /* EFL_USE_MUTUAL_EXCLUSION == TRUE */
 } SNORDriver;
 
@@ -204,7 +216,7 @@ extern "C" {
                                   size_t n,
                                   uint8_t *p);
 #endif
-  void snorObjectInit(SNORDriver *devp);
+  void snorObjectInit(SNORDriver *devp, snor_nocache_buffer_t *nocache);
   void snorStart(SNORDriver *devp, const SNORConfig *config);
   void snorStop(SNORDriver *devp);
 #if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)

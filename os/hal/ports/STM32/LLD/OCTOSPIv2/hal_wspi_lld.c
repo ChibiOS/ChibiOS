@@ -419,6 +419,9 @@ void wspi_lld_unmap_flash(WSPIDriver *wspip) {
  */
 void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
 
+  wspip->ospi->FCR = OCTOSPI_FCR_CTEF | OCTOSPI_FCR_CTCF |
+                     OCTOSPI_FCR_CSMF | OCTOSPI_FCR_CTOF;
+
   /* Portable WSPI ISR code defined in the high level driver, note, it is
      a macro.*/
   _wspi_isr_code(wspip);
