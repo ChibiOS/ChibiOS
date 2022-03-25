@@ -90,6 +90,8 @@
 - FIX: Fixed incorrect type cast in TIME_I2US() (bug #1221).
 - FIX: Fixed missing clock disable for STM32 OCTOSPI2 (bug #1220).
 - FIX: Fixed wrong condition in STM32 sio_lld_read() function (bug #1219).
+- FIX: Fixed STM32 Ethernet driver causes system hang after 2^31 packets
+       sent/received (bug #1218).
 - FIX: Fixed clock re-initialization problem in STM32 USARTv2 and USARTv3
        drivers (bug #1217).
 - FIX: Fixed assertion on initialization of STM32H7xx (bug #1216).
