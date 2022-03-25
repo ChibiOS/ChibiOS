@@ -352,6 +352,11 @@ void mac_lld_start(MACDriver *macp) {
   ETH->MACCR =                  ETH_MACCR_RE | ETH_MACCR_TE;
 #endif
 
+  /* MMC configuration:
+     Disable all MMC interrupts.*/
+  ETH->MMCRIMR = ETH_MMCRIMR_RFCEM  | ETH_MMCRIMR_RFAEM   | ETH_MMCRIMR_RGUFM;
+  ETH->MMCTIMR = ETH_MMCTIMR_TGFSCM | ETH_MMCTIMR_TGFMSCM | ETH_MMCTIMR_TGFM;
+
   /* DMA configuration:
      Descriptor chains pointers.*/
   ETH->DMARDLAR = (uint32_t)__eth_rd;
