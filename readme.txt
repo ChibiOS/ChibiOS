@@ -86,6 +86,8 @@
 - FIX: Fixed GPIOH clock not enabled on STM32L432 (bug #1223).
 - FIX: Fixed incorrect type cast in TIME_I2US() (bug #1221).
 - FIX: Fixed missing clock disable for STM32 OCTOSPI2 (bug #1220).
+- FIX: Fixed STM32 Ethernet driver causes system hang after 2^31 packets
+       sent/received (bug #1218).
 - FIX: Fixed Virtual Timers failure in a specific condition (bug #1215).
 - FIX: Fixed invalid state transition in SNOR flash driver (bug #1212).
 - FIX: Fixed missing check in chobjcaches.h (bug #1210).
