@@ -452,40 +452,40 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
   /* Scanning records until there is there is not enough space left for an
      header.*/
   while (hdr_offset < end_offset - ALIGNED_DHDR_SIZE) {
-    union {
-      mfs_data_header_t     dhdr;
-      uint8_t               data8[ALIGNED_SIZEOF(mfs_data_header_t)];
-    } u;
+    mfs_data_header_t dhdr;
     uint16_t crc;
 
     /* Reading the current record header.*/
     RET_ON_ERROR(mfs_flash_read(mfsp, hdr_offset,
                                 sizeof (mfs_data_header_t),
-                                u.data8));
+                                mfsp->ncbuf->data8));
 
     /* Checking if the found header is in erased state.*/
-    if ((u.dhdr.hdr32[0] == mfsp->config->erased) &&
-        (u.dhdr.hdr32[1] == mfsp->config->erased) &&
-        (u.dhdr.hdr32[2] == mfsp->config->erased)) {
+    if ((mfsp->ncbuf->data32[0] == mfsp->config->erased) &&
+        (mfsp->ncbuf->data32[1] == mfsp->config->erased) &&
+        (mfsp->ncbuf->data32[2] == mfsp->config->erased)) {
       break;
     }
 
     /* It is not erased so checking for integrity.*/
-    if ((u.dhdr.fields.magic1 != MFS_HEADER_MAGIC_1) ||
-        (u.dhdr.fields.magic2 != MFS_HEADER_MAGIC_2) ||
-        (u.dhdr.fields.id < 1U) ||
-        (u.dhdr.fields.id > (uint32_t)MFS_CFG_MAX_RECORDS) ||
-        (u.dhdr.fields.size > end_offset - hdr_offset)) {
+    if ((mfsp->ncbuf->dhdr.fields.magic1 != MFS_HEADER_MAGIC_1) ||
+        (mfsp->ncbuf->dhdr.fields.magic2 != MFS_HEADER_MAGIC_2) ||
+        (mfsp->ncbuf->dhdr.fields.id < 1U) ||
+        (mfsp->ncbuf->dhdr.fields.id > (uint32_t)MFS_CFG_MAX_RECORDS) ||
+        (mfsp->ncbuf->dhdr.fields.size > end_offset - hdr_offset)) {
       *wflagp = true;
       break;
     }
 
+    /* Copying the non-cached buffer locally.*/
+    dhdr = mfsp->ncbuf->dhdr;
+
     /* Finally checking the CRC, we need to perform it in chunks because
        we have a limited buffer.*/
     crc = 0xFFFFU;
-    if (u.dhdr.fields.size > 0U) {
+    if (dhdr.fields.size > 0U) {
       flash_offset_t data = hdr_offset + sizeof (mfs_data_header_t);
-      uint32_t total = u.dhdr.fields.size;
+      uint32_t total = dhdr.fields.size;
 
       while (total > 0U) {
         uint32_t chunk = total > MFS_CFG_BUFFER_SIZE ? MFS_CFG_BUFFER_SIZE :
@@ -502,25 +502,25 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
         total -= chunk;
       }
     }
-    if (crc != u.dhdr.fields.crc) {
+    if (crc != dhdr.fields.crc) {
       /* If the CRC is invalid then this record is ignored but scanning
          continues because there could be more valid records afterward.*/
       *wflagp = true;
     }
     else {
       /* Zero-sized records are erase markers.*/
-      if (u.dhdr.fields.size == 0U) {
-        mfsp->descriptors[u.dhdr.fields.id - 1U].offset = 0U;
-        mfsp->descriptors[u.dhdr.fields.id - 1U].size   = 0U;
+      if (dhdr.fields.size == 0U) {
+        mfsp->descriptors[dhdr.fields.id - 1U].offset = 0U;
+        mfsp->descriptors[dhdr.fields.id - 1U].size   = 0U;
       }
       else {
-        mfsp->descriptors[u.dhdr.fields.id - 1U].offset = hdr_offset;
-        mfsp->descriptors[u.dhdr.fields.id - 1U].size   = u.dhdr.fields.size;
+        mfsp->descriptors[dhdr.fields.id - 1U].offset = hdr_offset;
+        mfsp->descriptors[dhdr.fields.id - 1U].size   = dhdr.fields.size;
       }
     }
 
     /* On the next header.*/
-    hdr_offset = hdr_offset + ALIGNED_REC_SIZE(u.dhdr.fields.size);
+    hdr_offset = hdr_offset + ALIGNED_REC_SIZE(dhdr.fields.size);
   }
 
   /* Next writable offset.*/
