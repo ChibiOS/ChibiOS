@@ -84,17 +84,9 @@ static void wspi_lld_serve_mdma_interrupt(WSPIDriver *wspip, uint32_t flags) {
   (void)wspip;
   (void)flags;
 
-  if (((flags & STM32_MDMA_CISR_CTCIF) != 0U) &&
-      (wspip->state == WSPI_RECEIVE)) {
-    /* Portable WSPI ISR code defined in the high level driver, note, it is
-     a macro.*/
-    _wspi_isr_code(wspip);
-
-    mdmaChannelDisableX(wspip->mdma);
-  }
   /* DMA errors handling.*/
 #if defined(STM32_WSPI_MDMA_ERROR_HOOK)
-  else if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
+  if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
     STM32_WSPI_MDMA_ERROR_HOOK(wspip);
   }
 #endif
@@ -323,7 +315,6 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
                   STM32_MDMA_CTCR_DINC_INC      |   /* Destination incr.    */
                   STM32_MDMA_CTCR_SINC_FIXED;       /* Source fixed.        */
   uint32_t ccr  = STM32_MDMA_CCR_PL(STM32_WSPI_OCTOSPI1_MDMA_PRIORITY) |
-                  STM32_MDMA_CCR_CTCIE          |   /* On transfer complete.*/
                   STM32_MDMA_CCR_TEIE;              /* On transfer error.   */
 
   /* MDMA initializations.*/
