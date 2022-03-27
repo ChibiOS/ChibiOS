@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Improved MFS to use explicitly non-cacheable buffers for potentially
+       DMA-accessible I/O areas.
 - NEW: FatFS now functional on STM32H7xx, added a target to the VFS demo.
 - NEW: Improved cache settings in STM32H7xx mcuconf.h.
 - NEW: Modified SDMMCv2 to allow for uncached buffers, tested on STM32H7xx.

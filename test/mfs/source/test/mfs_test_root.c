@@ -65,6 +65,7 @@ const testsuite_t mfs_test_suite = {
 
 #include "hal_mfs.h"
 
+mfs_nocache_buffer_t __nocache_mfsbuf1;
 MFSDriver mfs1;
 uint8_t mfs_buffer[512];
 

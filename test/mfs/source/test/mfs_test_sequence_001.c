@@ -69,7 +69,7 @@
  */
 
 static void mfs_test_001_001_setup(void) {
-  mfsObjectInit(&mfs1);
+  mfsObjectInit(&mfs1, &__nocache_mfsbuf1);
 }
 
 static void mfs_test_001_001_teardown(void) {
