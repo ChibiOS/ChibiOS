@@ -80,7 +80,7 @@ static void mfs_test_003_001_execute(void) {
      is expected.*/
   test_set_step(2);
   {
-    mfs_error_t err = mfsWriteRecord(&mfs1, 1, 16, mfs_buffer);
+    mfs_error_t err = mfsWriteRecord(&mfs1, 1, 16, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_INV_STATE, "mfsWriteRecord() returned wrong status");
   }
   test_end_step(2);
@@ -98,8 +98,8 @@ static void mfs_test_003_001_execute(void) {
      is expected.*/
   test_set_step(4);
   {
-    size_t size = sizeof mfs_buffer;
-    mfs_error_t err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size_t size = sizeof __nocache_mfs_buffer;
+    mfs_error_t err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_INV_STATE, "mfsReadRecord() returned wrong status");
   }
   test_end_step(4);
