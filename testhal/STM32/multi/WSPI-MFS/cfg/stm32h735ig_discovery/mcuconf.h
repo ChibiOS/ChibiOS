@@ -95,11 +95,11 @@
 #define STM32_PLL2_Q_ENABLED                TRUE
 #define STM32_PLL2_R_ENABLED                TRUE
 #define STM32_PLL2_DIVM_VALUE               10
-#define STM32_PLL2_DIVN_VALUE               200
+#define STM32_PLL2_DIVN_VALUE               160
 #define STM32_PLL2_FRACN_VALUE              0
 #define STM32_PLL2_DIVP_VALUE               40
 #define STM32_PLL2_DIVQ_VALUE               8
-#define STM32_PLL2_DIVR_VALUE               10
+#define STM32_PLL2_DIVR_VALUE               2
 #define STM32_PLL3_ENABLED                  TRUE
 #define STM32_PLL3_P_ENABLED                TRUE
 #define STM32_PLL3_Q_ENABLED                TRUE
@@ -139,7 +139,7 @@
 #define STM32_RTCPRE_VALUE                  8
 #define STM32_CKPERSEL                      STM32_CKPERSEL_HSE_CK
 #define STM32_SDMMCSEL                      STM32_SDMMCSEL_PLL2_R_CK
-#define STM32_OCTOSPISEL                    STM32_OCTOSPISEL_HCLK
+#define STM32_OCTOSPISEL                    STM32_OCTOSPISEL_PLL2_R_CK
 #define STM32_FMCSEL                        STM32_FMCSEL_HCLK
 #define STM32_SWPSEL                        STM32_SWPSEL_PCLK1
 #define STM32_FDCANSEL                      STM32_FDCANSEL_HSE_CK
@@ -490,8 +490,8 @@
  */
 #define STM32_WSPI_USE_OCTOSPI1             TRUE
 #define STM32_WSPI_USE_OCTOSPI2             TRUE
-#define STM32_WSPI_OCTOSPI1_PRESCALER_VALUE 2
-#define STM32_WSPI_OCTOSPI2_PRESCALER_VALUE 2
+#define STM32_WSPI_OCTOSPI1_PRESCALER_VALUE 4
+#define STM32_WSPI_OCTOSPI2_PRESCALER_VALUE 4
 #define STM32_WSPI_OCTOSPI1_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
 #define STM32_WSPI_OCTOSPI2_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
 #define STM32_WSPI_OCTOSPI1_MDMA_PRIORITY   1

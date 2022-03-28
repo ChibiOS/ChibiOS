@@ -1001,7 +1001,7 @@
 #endif
 
 /**
- * @brief   QSPI clock source.
+ * @brief   OCTOSPI clock source.
  */
 #if !defined(STM32_OCTOSPISEL) || defined(__DOXYGEN__)
 #define STM32_OCTOSPISEL                    STM32_OCTOSPISEL_HCLK
@@ -1011,7 +1011,7 @@
  * @brief   FMC clock source.
  */
 #if !defined(STM32_FMCSEL) || defined(__DOXYGEN__)
-#define STM32_FMCSEL                        STM32_QSPISEL_HCLK
+#define STM32_FMCSEL                        STM32_FMCSEL_HCLK
 #endif
 
 /**
@@ -2755,11 +2755,11 @@
  */
 #define STM32_OCTOSPICLK            STM32_HCLK
 
-#elif STM32_OCTOSPISEL == STM32_QSPISEL_PLL1_Q_CK
+#elif STM32_OCTOSPISEL == STM32_OCTOSPISEL_PLL1_Q_CK
 #define STM32_OCTOSPICLK            STM32_PLL1_Q_CK
-#elif STM32_OCTOSPISEL == STM32_QSPISEL_PLL2_R_CK
+#elif STM32_OCTOSPISEL == STM32_OCTOSPISEL_PLL2_R_CK
 #define STM32_OCTOSPICLK            STM32_PLL2_R_CK
-#elif STM32_OCTOSPISEL == STM32_QSPISEL_PER_CK
+#elif STM32_OCTOSPISEL == STM32_OCTOSPISEL_PER_CK
 #define STM32_OCTOSPICLK            STM32_PER_CK
 #else
 #error "invalid source selected for STM32_OCTOSPISEL clock"

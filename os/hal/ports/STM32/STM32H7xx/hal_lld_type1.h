@@ -1067,7 +1067,7 @@
  * @brief   FMC clock source.
  */
 #if !defined(STM32_FMCSEL) || defined(__DOXYGEN__)
-#define STM32_FMCSEL                        STM32_QSPISEL_HCLK
+#define STM32_FMCSEL                        STM32_FMCSEL_HCLK
 #endif
 
 /**
