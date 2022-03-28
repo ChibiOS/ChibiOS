@@ -128,6 +128,7 @@ void wspi_lld_init(void) {
  * @notapi
  */
 void wspi_lld_start(WSPIDriver *wspip) {
+  uint32_t dcr2;
 
   /* If in stopped state then full initialization.*/
   if (wspip->state == WSPI_STOP) {
@@ -139,6 +140,7 @@ void wspi_lld_start(WSPIDriver *wspip) {
       osalDbgAssert(wspip->mdma != NULL, "unable to allocate MDMA channel");
       rccEnableOCTOSPI1(true);
       mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_OCTOSPI1_FIFO_TH);
+      dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
     }
 #endif
 
@@ -150,16 +152,16 @@ void wspi_lld_start(WSPIDriver *wspip) {
       osalDbgAssert(wspip->mdma != NULL, "unable to allocate MDMA channel");
       rccEnableOCTOSPI2(true);
       mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_OCTOSPI2_FIFO_TH);
+      dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI2_PRESCALER_VALUE - 1U);
     }
 #endif
   }
 
   /* WSPI setup and enable.*/
   wspip->ospi->DCR1 = wspip->config->dcr1;
-  wspip->ospi->DCR2 = wspip->config->dcr2 |
-                      STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
+  wspip->ospi->DCR2 = wspip->config->dcr2 | dcr2;
   wspip->ospi->DCR3 = wspip->config->dcr3;
-  wspip->ospi->CR   = OCTOSPI_CR_TCIE | OCTOSPI_CR_DMAEN | OCTOSPI_CR_EN;
+  wspip->ospi->CR   = OCTOSPI_CR_TCIE  | OCTOSPI_CR_DMAEN | OCTOSPI_CR_EN;
   wspip->ospi->FCR  = OCTOSPI_FCR_CTEF | OCTOSPI_FCR_CTCF |
                       OCTOSPI_FCR_CSMF | OCTOSPI_FCR_CTOF;
 }

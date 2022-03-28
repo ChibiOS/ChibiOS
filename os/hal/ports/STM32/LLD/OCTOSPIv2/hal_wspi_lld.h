@@ -45,7 +45,8 @@
  */
 #define STM32_DCR1_CK_MODE                  (1U << 0U)
 #define STM32_DCR1_FRCK_MODE                (1U << 1U)
-#define STM32_DCR1_CSHT_MASK                (7U << 8U)
+#define STM32_DCR1_DLYBYP_MODE              (1U << 3U)
+#define STM32_DCR1_CSHT_MASK                (63U << 8U)
 #define STM32_DCR1_CSHT(n)                  ((n) << 8U)
 #define STM32_DCR1_DEVSIZE_MASK             (31U << 16U)
 #define STM32_DCR1_DEVSIZE(n)               ((n) << 16U)
@@ -68,14 +69,14 @@
  */
 #define STM32_DCR3_MAXTRAN_MASK             (255U << 0U)
 #define STM32_DCR3_MAXTRAN(n)               ((n) << 0U)
-#define STM32_DCR3_CSBOUND_MASK             (7U << 16U)
+#define STM32_DCR3_CSBOUND_MASK             (31U << 16U)
 #define STM32_DCR3_CSBOUND(n)               ((n) << 16U)
 
 /**
  * @name    DCR4 register options
  * @{
  */
-#define STM32_DCR4_REFRESH_MASK             (255U << 0U)
+#define STM32_DCR4_REFRESH_MASK             (0xFFFFFFFFU)
 #define STM32_DCR4_REFRESH(n)               ((n) << 0U)
 /** @} */
 

@@ -104,11 +104,11 @@ static const wspi_command_t mx25_cmd_read_id = {
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
   .cmd              = MX25_CMD_OPI_RDID,
   .cfg              = MX25_CFG_C16_A32_DATA_8STR,
-  .dummy            = 4U,                       /*Note: always 4 dummies.   */
+  .dummy            = 4U,                       /* Note: always 4 dummies.  */
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
   .cmd              = MX25_CMD_OPI_RDID,
   .cfg              = MX25_CFG_C16_A32_DATA_8DTR
-  .dummy            = 4U,                       /*Note: always 4 dummies.   */
+  .dummy            = 4U,                       /* Note: always 4 dummies.  */
 #endif
 #endif
   .addr             = 0,
