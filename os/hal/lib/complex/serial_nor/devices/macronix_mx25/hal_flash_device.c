@@ -281,30 +281,27 @@ static void mx25_write_cr2(SNORDriver *devp, uint32_t addr, const uint8_t *value
     .dummy            = 0
   };
 
-  const wspi_command_t cmd_write_cr2 = {
-
 #if MX25_SWITCH_WIDTH == TRUE
-    .cmd              = MX25_CMD_SPI_WRCR2,
-    .cfg              = MX25_CFG_C8_A32_DATA_SPI,
+  devp->nocache->cmd.cmd    = MX25_CMD_SPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C8_A32_DATA_SPI,
 #else
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    .cmd              = MX25_CMD_SPI_WRCR2,
-    .cfg              = MX25_CFG_C8_A32_DATA_SPI,
+  devp->nocache->cmd.cmd    = MX25_CMD_SPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C8_A32_DATA_SPI,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    .cmd              = MX25_CMD_OPI_WRCR2,
-    .cfg              = MX25_CFG_C16_A32_DATA_8STR,
+  devp->nocache->cmd.cmd    = MX25_CMD_OPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C16_A32_DATA_8STR,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    .cmd              = MX25_CMD_OPI_WRCR2,
-    .cfg              = MX25_CFG_C16_A32_DATA_8DTR,
+  devp->nocache->cmd.cmd    = MX25_CMD_OPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C16_A32_DATA_8DTR,
 #endif
 #endif
-    .addr             = addr,
-    .alt              = 0,
-    .dummy            = 0
-  };
+  devp->nocache->cmd.addr   = addr;
+  devp->nocache->cmd.alt    = 0U;
+  devp->nocache->cmd.dummy  = 0U;
 
   wspiCommand(devp->config->busp, &cmd_write_enable);
-  wspiSend(devp->config->busp, &cmd_write_cr2, 1, value);
+  wspiSend(devp->config->busp, &devp->nocache->cmd, 1, value);
 }
 #endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 

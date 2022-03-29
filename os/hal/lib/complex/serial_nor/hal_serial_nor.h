@@ -134,9 +134,13 @@ struct SNORDriverVMT {
 
 typedef struct snor_nocache_buffer {
   /**
-   * @brief   Temporary buffer.
+   * @brief   Temporary generic buffer.
    */
   uint8_t                       buf[SNOR_BUFFER_SIZE];
+  /**
+   * @brief   Temporary command buffer.
+   */
+  wspi_command_t                cmd;
 } snor_nocache_buffer_t;
 
 /**
