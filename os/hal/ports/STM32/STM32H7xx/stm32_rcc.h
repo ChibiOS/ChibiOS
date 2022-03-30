@@ -1581,6 +1581,34 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
 /** @} */
 
 /**
+ * @name    OCTOSPIM peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the OCTOSPIM peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOCTOSPIM(lp) rccEnableAHB3(RCC_AHB3ENR_IOMNGREN, lp)
+
+/**
+ * @brief   Disables the OCTOSPIM peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableOCTOSPIM() rccDisableAHB3(RCC_AHB3ENR_IOMNGREN)
+
+/**
+ * @brief   Resets the OCTOSPIM peripheral.
+ *
+ * @api
+ */
+#define rccResetOCTOSPIM() rccResetAHB3(RCC_AHB3RSTR_IOMNGRRST)
+/** @} */
+
+/**
  * @name    RNG peripherals specific RCC operations
  * @{
  */

@@ -118,6 +118,9 @@ void wspi_lld_init(void) {
   WSPID2.ospi       = OCTOSPI2;
   WSPID2.mdma       = NULL;
 #endif
+
+  /* Shared unit, enabling it here.*/
+  rccEnableOCTOSPIM(false);
 }
 
 /**
