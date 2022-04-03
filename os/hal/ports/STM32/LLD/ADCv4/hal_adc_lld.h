@@ -383,7 +383,7 @@
 #endif
 
 #if (STM32_ADC_SAMPLES_SIZE != 32) && STM32_ADC_DUAL_MODE
-#error "STM32_ADC_SAMPLES_SIZE = 32 not compatible with STM32_ADC_DUAL_MODE"
+#error "STM32_ADC_SAMPLES_SIZE != 32 not compatible with STM32_ADC_DUAL_MODE"
 #endif
 
 #if !defined(STM32_ENFORCE_H7_REV_XY)
