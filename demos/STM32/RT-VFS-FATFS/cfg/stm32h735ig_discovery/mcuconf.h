@@ -48,7 +48,7 @@
 #define STM32_NOCACHE_ENABLE                TRUE
 #define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
 #define STM32_NOCACHE_RBAR                  0x24000000U
-#define STM32_NOCACHE_RASR                  MPU_RASR_SIZE_16K
+#define STM32_NOCACHE_RASR                  0x24000000U
 
 /*
  * PWR system settings.
@@ -472,11 +472,8 @@
 /*
  * USB driver system settings.
  */
-#define STM32_USB_USE_OTG1                  FALSE
 #define STM32_USB_USE_OTG2                  FALSE
-#define STM32_USB_OTG1_IRQ_PRIORITY         14
 #define STM32_USB_OTG2_IRQ_PRIORITY         14
-#define STM32_USB_OTG1_RX_FIFO_SIZE         512
 #define STM32_USB_OTG2_RX_FIFO_SIZE         1024
 #define STM32_USB_HOST_WAKEUP_DURATION      2
 
