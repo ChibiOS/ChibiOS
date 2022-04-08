@@ -46,6 +46,7 @@ uint32_t SystemCoreClock;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+#if RP_CORE1_START == TRUE
 /* Courtesy of Pico-SDK.*/
 static void start_core1(void) {
   extern uint32_t RP_CORE1_STACK_END;
@@ -81,6 +82,7 @@ static void start_core1(void) {
     seq = cmd == response ? seq + 1U : 0U;
   } while (seq < count_of(cmd_sequence));
 }
+#endif
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
