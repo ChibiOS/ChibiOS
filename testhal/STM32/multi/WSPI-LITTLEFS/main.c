@@ -31,6 +31,7 @@ static const SNORConfig snorcfg1 = {
 };
 
 static SNORDriver snor1;
+static snor_nocache_buffer_t __nocache_snor1buf;
 
 static uint8_t __lfs_read_buffer[16];
 static uint8_t __lfs_prog_buffer[16];
@@ -106,7 +107,7 @@ int main(void) {
   sdStart(&PORTAB_SD1, NULL);
 
   /* Initializing and starting snor1 driver.*/
-  snorObjectInit(&snor1);
+  snorObjectInit(&snor1, &__nocache_snor1buf);
   snorStart(&snor1, &snorcfg1);
 
   /* Creates the blinker thread.*/
