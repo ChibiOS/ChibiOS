@@ -319,7 +319,7 @@ void snor_device_init(SNORDriver *devp) {
 #if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI
   /* Reading device ID.*/
   bus_cmd_receive(devp->config->busp, MX25_CMD_READ_ID,
-                  sizeof devp->device_id, devp->device_id);
+                  3U, &devp->nocache->buf[0]);
 
 #else /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 

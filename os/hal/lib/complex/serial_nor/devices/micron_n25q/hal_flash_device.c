@@ -309,7 +309,7 @@ void snor_device_init(SNORDriver *devp) {
 #if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI
   /* Reading device ID.*/
   bus_cmd_receive(devp->config->busp, N25Q_CMD_READ_ID,
-                  sizeof devp->device_id, devp->device_id);
+                  3U, &devp->nocache->buf[0]);
 
 #else /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
   /* Attempting a reset of the XIP mode, it could be in an unexpected state
@@ -322,17 +322,17 @@ void snor_device_init(SNORDriver *devp) {
 
   /* Reading device ID and unique ID.*/
   wspiReceive(devp->config->busp, &n25q_cmd_read_id,
-              sizeof devp->device_id, devp->device_id);
+              3U, &devp->nocache->buf[0]);
 #endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
   /* Checking if the device is white listed.*/
   osalDbgAssert(n25q_find_id(n25q_manufacturer_ids,
                              sizeof n25q_manufacturer_ids,
-                             devp->device_id[0]),
+                             devp->nocache->buf[0]),
                 "invalid manufacturer id");
   osalDbgAssert(n25q_find_id(n25q_memory_type_ids,
                              sizeof n25q_memory_type_ids,
-                             devp->device_id[1]),
+                             devp->nocache->buf[1]),
                 "invalid memory type id");
 
 #if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) && (N25Q_SWITCH_WIDTH == TRUE)
@@ -341,19 +341,20 @@ void snor_device_init(SNORDriver *devp) {
   wspiSend(devp->config->busp, &n25q_cmd_write_evconf, 1, n25q_evconf_value);
 
   {
-    uint8_t id[3];
-
     /* Reading ID again for confirmation.*/
-    bus_cmd_receive(devp->config->busp, N25Q_CMD_MULTIPLE_IO_READ_ID, 3, id);
+    bus_cmd_receive(devp->config->busp, N25Q_CMD_MULTIPLE_IO_READ_ID,
+                    3U, &devp->nocache->buf[16]);
 
     /* Checking if the device is white listed.*/
-    osalDbgAssert(memcmp(id, devp->device_id, 3) == 0,
+    osalDbgAssert(memcmp(&devp->nocache->buf[0],
+                         &devp->nocache->buf[16],
+                         3U) == 0,
                   "id confirmation failed");
   }
 #endif
 
   /* Setting up the device size.*/
-  snor_descriptor.sectors_count = (1U << (size_t)devp->device_id[2]) /
+  snor_descriptor.sectors_count = (1U << (size_t)devp->nocache->buf[2]) /
                                   SECTOR_SIZE;
   snor_descriptor.size = (size_t)snor_descriptor.sectors_count * SECTOR_SIZE;
 
