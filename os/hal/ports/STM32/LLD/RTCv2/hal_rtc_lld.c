@@ -637,7 +637,7 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   uint32_t dr, tr, cr;
   uint32_t subs;
 #if STM32_RTC_HAS_SUBSECONDS
-  uint32_t ssr;
+  uint32_t oldssr, ssr;
 #endif /* STM32_RTC_HAS_SUBSECONDS */
   syssts_t sts;
 
@@ -649,11 +649,17 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   while ((rtcp->rtc->ISR & RTC_ISR_RSF) == 0)
     ;
 #if STM32_RTC_HAS_SUBSECONDS
-  ssr = rtcp->rtc->SSR;
+  oldssr = rtcp->rtc->SSR;
+  do
 #endif /* STM32_RTC_HAS_SUBSECONDS */
-  tr  = rtcp->rtc->TR;
-  dr  = rtcp->rtc->DR;
-  cr  = rtcp->rtc->CR;
+  {
+    tr  = rtcp->rtc->TR;
+    dr  = rtcp->rtc->DR;
+    cr  = rtcp->rtc->CR;
+  }
+#if STM32_RTC_HAS_SUBSECONDS
+  while (oldssr != (ssr = rtcp->rtc->SSR));
+#endif /* STM32_RTC_HAS_SUBSECONDS */
   rtcp->rtc->ISR &= ~RTC_ISR_RSF;
 
   /* Leaving a reentrant critical zone.*/
