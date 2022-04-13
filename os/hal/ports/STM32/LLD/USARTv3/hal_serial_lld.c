@@ -128,6 +128,16 @@ SerialDriver SD7;
 SerialDriver SD8;
 #endif
 
+/** @brief UART9 serial driver identifier.*/
+#if STM32_SERIAL_USE_UART9 || defined(__DOXYGEN__)
+SerialDriver SD9;
+#endif
+
+/** @brief USART10 serial driver identifier.*/
+#if STM32_SERIAL_USE_USART10 || defined(__DOXYGEN__)
+SerialDriver SD10;
+#endif
+
 /** @brief LPUART1 serial driver identifier.*/
 #if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
 SerialDriver LPSD1;
@@ -208,6 +218,22 @@ static uint8_t sd_in_buf8[STM32_SERIAL_UART8_IN_BUF_SIZE];
 
 /** @brief Output buffer for SD8.*/
 static uint8_t sd_out_buf8[STM32_SERIAL_UART8_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_UART9 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD9.*/
+static uint8_t sd_in_buf9[STM32_SERIAL_UART9_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD9.*/
+static uint8_t sd_out_buf9[STM32_SERIAL_UART9_OUT_BUF_SIZE];
+#endif
+
+#if STM32_SERIAL_USE_USART10 || defined(__DOXYGEN__)
+/** @brief Input buffer for SD10.*/
+static uint8_t sd_in_buf10[STM32_SERIAL_USART10_IN_BUF_SIZE];
+
+/** @brief Output buffer for SD10.*/
+static uint8_t sd_out_buf10[STM32_SERIAL_USART10_OUT_BUF_SIZE];
 #endif
 
 #if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
@@ -384,6 +410,22 @@ static void notify8(io_queue_t *qp) {
 
   (void)qp;
   UART8->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
+}
+#endif
+
+#if STM32_SERIAL_USE_UART9 || defined(__DOXYGEN__)
+static void notify9(io_queue_t *qp) {
+
+  (void)qp;
+  UART9->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
+}
+#endif
+
+#if STM32_SERIAL_USE_USART10 || defined(__DOXYGEN__)
+static void notify10(io_queue_t *qp) {
+
+  (void)qp;
+  USART10->CR1 |= USART_CR1_TXEIE | USART_CR1_TCIE;
 }
 #endif
 
@@ -567,6 +609,48 @@ OSAL_IRQ_HANDLER(STM32_UART8_HANDLER) {
 #endif
 #endif
 
+#if STM32_SERIAL_USE_UART9 || defined(__DOXYGEN__)
+#if !defined(STM32_UART9_SUPPRESS_ISR)
+#if !defined(STM32_UART9_HANDLER)
+#error "STM32_UART9_HANDLER not defined"
+#endif
+/**
+ * @brief   UART9 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_UART9_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  sd_lld_serve_interrupt(&SD9);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART10 || defined(__DOXYGEN__)
+#if !defined(STM32_USART10_SUPPRESS_ISR)
+#if !defined(STM32_USART10_HANDLER)
+#error "STM32_USART10_HANDLER not defined"
+#endif
+/**
+ * @brief   USART10 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_USART10_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  sd_lld_serve_interrupt(&SD10);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+#endif
+
 #if STM32_SERIAL_USE_LPUART1 || defined(__DOXYGEN__)
 #if !defined(STM32_LPUART1_SUPPRESS_ISR)
 #if !defined(STM32_LPUART1_HANDLER)
@@ -687,6 +771,28 @@ void sd_lld_init(void) {
 #endif
 #endif
 
+#if STM32_SERIAL_USE_UART9
+  sdObjectInit(&SD9);
+  iqObjectInit(&SD9.iqueue, sd_in_buf9, sizeof sd_in_buf9, NULL, &SD8);
+  oqObjectInit(&SD9.oqueue, sd_out_buf9, sizeof sd_out_buf9, notify9, &SD8);
+  SD8.usart = UART9;
+  SD8.clock = STM32_UART9CLK;
+#if !defined(STM32_UART9_SUPPRESS_ISR) && defined(STM32_UART9_NUMBER)
+  nvicEnableVector(STM32_UART9_NUMBER, STM32_SERIAL_UART9_PRIORITY);
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART10
+  sdObjectInit(&SD10);
+  iqObjectInit(&SD10.iqueue, sd_in_buf10, sizeof sd_in_buf10, NULL, &SD10);
+  oqObjectInit(&SD10.oqueue, sd_out_buf10, sizeof sd_out_buf10, notify10, &SD10);
+  SD10.usart = USART10;
+  SD10.clock = STM32_USART10CLK;
+#if !defined(STM32_USART10_SUPPRESS_ISR) && defined(STM32_USART10_NUMBER)
+  nvicEnableVector(STM32_USART10_NUMBER, STM32_SERIAL_USART10_PRIORITY);
+#endif
+#endif
+  
 #if STM32_SERIAL_USE_LPUART1
   sdObjectInit(&LPSD1);
   iqObjectInit(&LPSD1.iqueue, sd_in_buflp1, sizeof sd_in_buflp1, NULL, &LPSD1);
@@ -753,6 +859,16 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
       rccEnableUART8(true);
+    }
+#endif
+#if STM32_SERIAL_USE_UART9
+    if (&SD9 == sdp) {
+      rccEnableUART9(true);
+    }
+#endif
+#if STM32_SERIAL_USE_USART10
+    if (&SD10 == sdp) {
+      rccEnableUSART10(true);
     }
 #endif
 #if STM32_SERIAL_USE_LPUART1
@@ -824,6 +940,18 @@ void sd_lld_stop(SerialDriver *sdp) {
 #if STM32_SERIAL_USE_UART8
     if (&SD8 == sdp) {
       rccDisableUART8();
+      return;
+    }
+#endif
+#if STM32_SERIAL_USE_UART9
+    if (&SD9 == sdp) {
+      rccDisableUART9();
+      return;
+    }
+#endif
+#if STM32_SERIAL_USE_USART10
+    if (&SD10 == sdp) {
+      rccDisableUSART10();
       return;
     }
 #endif

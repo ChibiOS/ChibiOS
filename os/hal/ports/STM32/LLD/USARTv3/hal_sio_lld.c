@@ -113,6 +113,20 @@ SIODriver SIOD8;
 #endif
 
 /**
+ * @brief   UART9 SIO driver identifier.
+ */
+#if (STM32_SIO_USE_UART9 == TRUE) || defined(__DOXYGEN__)
+SIODriver SIOD9;
+#endif
+
+/**
+ * @brief   USART10 SIO driver identifier.
+ */
+#if (STM32_SIO_USE_USART10 == TRUE) || defined(__DOXYGEN__)
+SIODriver SIOD10;
+#endif
+
+/**
  * @brief   LPUART1 SIO driver identifier.
  */
 #if (STM32_SIO_USE_LPUART1 == TRUE) || defined(__DOXYGEN__)
@@ -293,6 +307,16 @@ void sio_lld_init(void) {
   SIOD8.usart = UART8;
   SIOD8.clock = STM32_UART8CLK;
 #endif
+#if STM32_SIO_USE_UART9 == TRUE
+  sioObjectInit(&SIOD9);
+  SIOD9.usart = UART9;
+  SIOD9.clock = STM32_UART9CLK;
+#endif
+#if STM32_SIO_USE_USART10 == TRUE
+  sioObjectInit(&SIOD10);
+  SIOD10.usart = USART10;
+  SIOD10.clock = STM32_USART10CLK;
+#endif
 #if STM32_SIO_USE_LPUART1 == TRUE
   sioObjectInit(&LPSIOD1);
   LPSIOD1.usart = LPUART1;
@@ -367,6 +391,18 @@ msg_t sio_lld_start(SIODriver *siop) {
     else if (&SIOD8 == siop) {
       rccResetUART8();
       rccEnableUART8(true);
+    }
+#endif
+#if STM32_SIO_USE_UART9 == TRUE
+    else if (&SIOD9 == siop) {
+      rccResetUART9();
+      rccEnableUART9(true);
+    }
+#endif
+#if STM32_SIO_USE_USART10 == TRUE
+    else if (&SIOD10 == siop) {
+      rccResetUSART10();
+      rccEnableUSART10(true);
     }
 #endif
 #if STM32_SIO_USE_LPUART1 == TRUE
@@ -454,6 +490,18 @@ void sio_lld_stop(SIODriver *siop) {
     else if (&SIOD8 == siop) {
       rccResetUART8();
       rccDisableUART8();
+    }
+#endif
+#if STM32_SIO_USE_UART9 == TRUE
+    else if (&SIOD9 == siop) {
+      rccResetUART9();
+      rccDisableUART9();
+    }
+#endif
+#if STM32_SIO_USE_USART10 == TRUE
+    else if (&SIOD10 == siop) {
+      rccResetUSART10();
+      rccDisableUSART10();
     }
 #endif
 #if STM32_SIO_USE_LPUART1 == TRUE

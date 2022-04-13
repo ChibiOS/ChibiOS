@@ -302,6 +302,8 @@
 #define STM32_HAS_USART6                    TRUE
 #define STM32_HAS_UART7                     TRUE
 #define STM32_HAS_UART8                     TRUE
+#define STM32_HAS_UART9                     FALSE
+#define STM32_HAS_USART10                   FALSE
 #define STM32_HAS_LPUART1                   TRUE
 
 /* USB attributes.*/
@@ -537,6 +539,8 @@
 #define STM32_HAS_USART6                    TRUE
 #define STM32_HAS_UART7                     TRUE
 #define STM32_HAS_UART8                     TRUE
+#define STM32_HAS_UART9                     TRUE
+#define STM32_HAS_USART10                   TRUE
 #define STM32_HAS_LPUART1                   TRUE
 
 /* USB attributes.*/
@@ -763,6 +767,8 @@
 #define STM32_HAS_USART6                    TRUE
 #define STM32_HAS_UART7                     TRUE
 #define STM32_HAS_UART8                     TRUE
+#define STM32_HAS_UART9                     FALSE
+#define STM32_HAS_USART10                   FALSE
 #define STM32_HAS_LPUART1                   TRUE
 
 /* USB attributes.*/
