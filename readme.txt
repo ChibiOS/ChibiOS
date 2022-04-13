@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Disabled priority check on STM32 EXTI interrupts when the default
+       ISR is disabled. This allows for fast interrupts.
 - NEW: Added support for UART9 and USART10 on STM32H7.
 - NEW: Improved MFS to use explicitly non-cacheable buffers for potentially
        DMA-accessible I/O areas.

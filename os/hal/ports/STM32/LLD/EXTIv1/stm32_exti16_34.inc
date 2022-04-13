@@ -35,7 +35,8 @@
 #error "STM32_IRQ_EXTI16_34_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_34_PRIORITY)
+#if !defined(STM32_DISABLE_EXTI16_34_HANDLER) &&                            \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI16_34_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_EXTI16_34_PRIORITY"
 #endif
 
