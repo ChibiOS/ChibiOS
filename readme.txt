@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added support for UART9 and USART10 on STM32H7.
 - NEW: Improved MFS to use explicitly non-cacheable buffers for potentially
        DMA-accessible I/O areas.
 - NEW: FatFS now functional on STM32H7xx, added a target to the VFS demo.
