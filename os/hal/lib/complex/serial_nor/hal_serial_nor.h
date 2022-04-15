@@ -137,10 +137,12 @@ typedef struct snor_nocache_buffer {
    * @brief   Temporary generic buffer.
    */
   uint8_t                       buf[SNOR_BUFFER_SIZE];
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   /**
    * @brief   Temporary command buffer.
    */
   wspi_command_t                cmd;
+#endif
 } snor_nocache_buffer_t;
 
 /**
