@@ -388,9 +388,9 @@ extern "C" {
   flash_error_t  flashWaitErase(BaseFlash *devp);
   flash_offset_t flashGetSectorOffset(BaseFlash *devp, flash_sector_t sector);
   uint32_t       flashGetSectorSize(BaseFlash *devp, flash_sector_t sector);
+  flash_sector_t flashGetOffsetSector(BaseFlash *devp, flash_offset_t offset);
   void *         flashGetOffsetAddress(BaseFlash *devp, flash_offset_t offset);
   flash_offset_t flashGetAddressOffset(BaseFlash *devp, void * addr);
-  flash_sector_t flashGetOffsetSector(BaseFlash *devp, flash_offset_t offset);
 #ifdef __cplusplus
 }
 #endif
