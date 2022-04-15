@@ -729,7 +729,6 @@ error:
  */
 bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                            const uint8_t *buf, uint32_t blocks) {
-  uint32_t resp[1];
 
   osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
@@ -755,16 +754,16 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
   sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
-  if (sdc_lld_prepare_write(sdcp, startblk, blocks, resp) == true)
+  if (sdc_lld_prepare_write(sdcp, startblk, blocks, sdcp->resp) == true)
     goto error;
 
-  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
+  if (sdc_lld_wait_transaction_end(sdcp, blocks, sdcp->resp) == true)
     goto error;
 
   return HAL_SUCCESS;
 
 error:
-  sdc_lld_error_cleanup(sdcp, blocks, resp);
+  sdc_lld_error_cleanup(sdcp, blocks, sdcp->resp);
   return HAL_FAILED;
 }
 
