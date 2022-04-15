@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added dubby cycles support for SNOR using the normal SPI driver.
 - NEW: Disabled priority check on STM32 EXTI interrupts when the default
        ISR is disabled. This allows for fast interrupts.
 - NEW: Added support for UART9 and USART10 on STM32H7.

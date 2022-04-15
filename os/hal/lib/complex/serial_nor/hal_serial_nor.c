@@ -326,6 +326,28 @@ static flash_error_t snor_release_exclusive(void *instance) {
 #endif
 }
 
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI) || defined(__DOXYGEN__)
+void snor_spi_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_offset_t offset) {
+#if (SNOR_SPI_4BYTES_ADDRESS == TRUE)
+  uint8_t buf[5];
+
+  buf[1] = (uint8_t)(offset >> 24);
+  buf[2] = (uint8_t)(offset >> 16);
+  buf[3] = (uint8_t)(offset >> 8);
+  buf[4] = (uint8_t)(offset >> 0);
+  spiSend(busp, 5, buf);
+#else
+  uint8_t buf[4];
+
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
+  spiSend(busp, 4, buf);
+#endif
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -508,14 +530,8 @@ void bus_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_offset_t offset) {
   mode.dummy = 0U;
   wspiCommand(busp, &mode);
 #else
-  uint8_t buf[4];
-
   spiSelect(busp);
-  buf[0] = cmd;
-  buf[1] = (uint8_t)(offset >> 16);
-  buf[2] = (uint8_t)(offset >> 8);
-  buf[3] = (uint8_t)(offset >> 0);
-  spiSend(busp, 4, buf);
+  snor_spi_cmd_addr(busp, cmd, offset);
   spiUnselect(busp);
 #endif
 }
@@ -547,14 +563,8 @@ void bus_cmd_addr_send(BUSDriver *busp,
   mode.dummy = 0U;
   wspiSend(busp, &mode, n, p);
 #else
-  uint8_t buf[4];
-
   spiSelect(busp);
-  buf[0] = cmd;
-  buf[1] = (uint8_t)(offset >> 16);
-  buf[2] = (uint8_t)(offset >> 8);
-  buf[3] = (uint8_t)(offset >> 0);
-  spiSend(busp, 4, buf);
+  snor_spi_cmd_addr(busp, cmd, offset);
   spiSend(busp, n, p);
   spiUnselect(busp);
 #endif
@@ -587,20 +597,13 @@ void bus_cmd_addr_receive(BUSDriver *busp,
   mode.dummy = 0U;
   wspiReceive(busp, &mode, n, p);
 #else
-  uint8_t buf[4];
-
   spiSelect(busp);
-  buf[0] = cmd;
-  buf[1] = (uint8_t)(offset >> 16);
-  buf[2] = (uint8_t)(offset >> 8);
-  buf[3] = (uint8_t)(offset >> 0);
-  spiSend(busp, 4, buf);
+  snor_spi_cmd_addr(busp, cmd, offset);
   spiReceive(busp, n, p);
   spiUnselect(busp);
 #endif
 }
 
-#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
 /**
  * @brief   Sends a command followed by dummy cycles and a
  *          data receive phase.
@@ -618,6 +621,7 @@ void bus_cmd_dummy_receive(BUSDriver *busp,
                            uint32_t dummy,
                            size_t n,
                            uint8_t *p) {
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   wspi_command_t mode;
 
   mode.cmd   = cmd;
@@ -626,6 +630,18 @@ void bus_cmd_dummy_receive(BUSDriver *busp,
   mode.alt   = 0U;
   mode.dummy = dummy;
   wspiReceive(busp, &mode, n, p);
+#else
+  uint8_t buf[1];
+
+  osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  spiIgnore(busp, dummy / 8U);
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
 }
 
 /**
@@ -647,6 +663,7 @@ void bus_cmd_addr_dummy_receive(BUSDriver *busp,
                                 uint32_t dummy,
                                 size_t n,
                                 uint8_t *p) {
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   wspi_command_t mode;
 
   mode.cmd   = cmd;
@@ -655,8 +672,16 @@ void bus_cmd_addr_dummy_receive(BUSDriver *busp,
   mode.alt   = 0U;
   mode.dummy = dummy;
   wspiReceive(busp, &mode, n, p);
+#else
+  osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+  spiSelect(busp);
+  snor_spi_cmd_addr(busp, cmd, offset);
+  spiIgnore(busp, dummy / 8U);
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
 }
-#endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
 /**
  * @brief   Initializes an instance.
