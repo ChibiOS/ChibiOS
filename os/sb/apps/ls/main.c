@@ -28,6 +28,7 @@
 static char *dotp = ".";
 static void *bufp = NULL;
 
+static bool Rflg = false;
 static bool aflg = false;
 static bool dflg = false;
 static bool fflg = false;
@@ -45,6 +46,7 @@ struct afile {
 static void usage(void) {
   fprintf(stderr, "Usage: ls [<opts>] [<file>]..." NEWLINE_STR);
   fprintf(stderr, "Options:" NEWLINE_STR);
+  fprintf(stderr, "  -R                 list subdirectories recursively" NEWLINE_STR);
   fprintf(stderr, "  -a                 do not ignore entries starting with ." NEWLINE_STR);
   fprintf(stderr, "  -d                 list directories themselves, not their contents" NEWLINE_STR);
   fprintf(stderr, "  -f                 do not sort, enable -a, disable -l" NEWLINE_STR);
@@ -333,6 +335,93 @@ static int fcmp(const void *a, const void *b) {
   return strcmp(f1->fname, f2->fname);
 }
 
+static long getdir(char *dir, struct afile **pfp0, struct afile **pfplast) {
+  struct afile *fp;
+  DIR *dirp;
+  struct dirent *dp;
+  long nb, nent = 20;
+
+  dirp = opendir(dir);
+  if (dirp == NULL) {
+    *pfp0 = *pfplast = NULL;
+    printf("%s unreadable\n", dir); /* not stderr! */
+    return (0);
+  }
+  fp = *pfp0 = (struct afile*)calloc(nent, sizeof(struct afile));
+  if (fp == 0L) {
+    fprintf(stderr, "ls: out of memory\n");
+    exit(1);
+  }
+  *pfplast = *pfp0 + nent;
+  nb = 0;
+  while ((dp = readdir(dirp)) != NULL) {
+    if (dp->d_ino == 0)
+      continue;
+    if (((aflg == false) && (dp->d_name[0] == '.') && (/*(Aflg == 0)*/false)) ||
+        (dp->d_name[1] == 0) ||
+        ((dp->d_name[1] == '.') && (dp->d_name[2] == 0)))
+      continue;
+    if (gstat(fp, cat(dir, dp->d_name), /*Fflg + */Rflg/*, &nb*/))
+      continue;
+    fp->fnum = dp->d_ino;
+    fp->fname = savestr(dp->d_name);
+    fp++;
+    if (fp == *pfplast) {
+      *pfp0 = (struct afile*)realloc((char*)*pfp0,
+                                     2 * nent * sizeof(struct afile));
+      if (*pfp0 == 0) {
+        fprintf(stderr, "ls: out of memory\n");
+        exit(1);
+      }
+      fp = *pfp0 + nent;
+      *pfplast = fp + nent;
+      nent *= 2;
+    }
+  }
+  closedir(dirp);
+  *pfplast = fp;
+  return kbytes(dbtob(nb));
+}
+
+static void formatd(char *name, int title) {
+  struct afile *fp;
+  struct subdirs *dp;
+  struct afile *dfp0, *dfplast;
+  long nkb;
+
+  nkb = getdir(name, &dfp0, &dfplast);
+  if (dfp0 == 0)
+    return;
+  if (fflg == 0)
+    qsort(dfp0, dfplast - dfp0, sizeof(struct afile), fcmp);
+  if (title)
+    printf("%s:\n", name);
+  if (lflg/* || sflg*/)
+    printf("total %ld\n", nkb);
+  formatf(dfp0, dfplast);
+  if (Rflg)
+    for (fp = dfplast - 1; fp >= dfp0; fp--) {
+      if (fp->ftype != 'd' || !strcmp(fp->fname, ".")
+          || !strcmp(fp->fname, ".."))
+        continue;
+      dp = (struct subdirs*)malloc(sizeof(struct subdirs));
+      if (dp == 0L) { /*PATCH GIOV.*/
+        fprintf(stderr, "ls: out of memory\n");
+        exit(1);
+      }
+      dp->sd_name = savestr(cat(name, fp->fname));
+      dp->sd_next = subdirs;
+      subdirs = dp;
+    }
+  for (fp = dfp0; fp < dfplast; fp++) {
+    if ((fp->fflags & ISARG) == 0 && fp->fname)
+      free(fp->fname);
+    if (fp->flinkto)
+      free(fp->flinkto);
+  }
+  free((char*)dfp0);
+}
+
 /*
  * Application entry point.
  */
@@ -354,6 +443,9 @@ int main(int argc, char *argv[], char *envp[]) {
     argv[0]++;
     while (*argv[0] != '\0') {
       switch (*argv[0]) {
+      case 'R':
+        Rflg = true;
+        break;
       case 'a':
         aflg = true;
         break;
@@ -429,12 +521,12 @@ int main(int argc, char *argv[], char *envp[]) {
       }
       formatf(fp0, fp);
     }
-#if 0
 
     if (fp < fplast) {
       if (fp > fp0) {
         printf("\n");
       }
+#if 0
       for (;;) {
         formatd(fp->fname, argc > 1);
         while (subdirs) {
@@ -451,8 +543,8 @@ int main(int argc, char *argv[], char *envp[]) {
           break;
         printf("\n");
       }
-    }
 #endif
+    }
   }
 
   freeall();
