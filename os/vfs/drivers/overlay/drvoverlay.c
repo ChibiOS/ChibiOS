@@ -327,23 +327,23 @@ static msg_t open_absolute_file(vfs_overlay_driver_c *drvp,
 }
 
 static msg_t drv_set_cwd(void *instance, const char *path) {
-  char *buf;
+  vfs_shared_buffer_t *shbuf;
   msg_t ret;
 
   /* Taking a path buffer from the pool.*/
-  buf = vfs_buffer_take();
+  shbuf = vfs_buffer_take();
 
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
     vfs_directory_node_c *vdnp;
     size_t path_offset;
 
-    ret = build_absolute_path(drvp, buf, path);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, path);
     CH_BREAK_ON_ERROR(ret);
 
     /* Trying to access the directory in order to validate the
        combined path. Note, it can modify the path in the buffer.*/
-    ret = open_absolute_dir(drvp, buf, &vdnp);
+    ret = open_absolute_dir(drvp, shbuf->path.buf1, &vdnp);
     CH_BREAK_ON_ERROR(ret);
     vdnp->vmt->release((void *)vdnp);
     path_offset = (size_t)ret;
@@ -359,12 +359,12 @@ static msg_t drv_set_cwd(void *instance, const char *path) {
     }
 
     /* Copying the validated path into the CWD buffer.*/
-    strcpy(drvp->path_cwd, buf + path_offset);
+    strcpy(drvp->path_cwd, shbuf->path.buf1 + path_offset);
 
   } while (false);
 
   /* Buffer returned.*/
-  vfs_buffer_release(buf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }
@@ -381,22 +381,22 @@ static msg_t drv_get_cwd(void *instance, char *buf, size_t size) {
 }
 
 static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
+  vfs_shared_buffer_t *shbuf;
   msg_t ret;
-  char *buf;
 
   /* Taking a path buffer from the pool.*/
-  buf = vfs_buffer_take();
+  shbuf = vfs_buffer_take();
 
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
     const char *scanpath;
 
     /* Building the absolute path based on current directory.*/
-    ret = build_absolute_path(drvp, buf, path);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, path);
     CH_BREAK_ON_ERROR(ret);
 
     /* Skipping the root separator.*/
-    scanpath = buf + 1;
+    scanpath = shbuf->path.buf1 + 1;
 
     /* If it is not root checking among mounted drivers.*/
     if (*scanpath != '\0') {
@@ -417,7 +417,7 @@ static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
 
       /* Processing the prefix, if defined.*/
       if (drvp->path_prefix != NULL) {
-        if (path_prepend(buf,
+        if (path_prepend(shbuf->path.buf1,
                          drvp->path_prefix,
                          VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
           ret = CH_RET_ENAMETOOLONG;
@@ -426,7 +426,8 @@ static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
       }
 
       /* Passing the combined path to the overlaid driver.*/
-      ret = drvp->overlaid_drv->vmt->stat((void *)drvp->overlaid_drv, buf, sp);
+      ret = drvp->overlaid_drv->vmt->stat((void *)drvp->overlaid_drv,
+                                          shbuf->path.buf1, sp);
     }
     else {
       ret = CH_RET_ENOENT;
@@ -434,7 +435,7 @@ static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
   } while (false);
 
   /* Buffer returned.*/
-  vfs_buffer_release(buf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }
@@ -442,20 +443,20 @@ static msg_t drv_stat(void *instance, const char *path, vfs_stat_t *sp) {
 static msg_t drv_open_dir(void *instance,
                           const char *path,
                           vfs_directory_node_c **vdnpp) {
+  vfs_shared_buffer_t *shbuf;
   msg_t ret;
-  char *buf;
 
   /* Taking a path buffer from the pool.*/
-  buf = vfs_buffer_take();
+  shbuf = vfs_buffer_take();
 
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
 
     /* Building the absolute path based on current directory.*/
-    ret = build_absolute_path(drvp, buf, path);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, path);
     CH_BREAK_ON_ERROR(ret);
 
-    ret = open_absolute_dir(drvp, buf, vdnpp);
+    ret = open_absolute_dir(drvp, shbuf->path.buf1, vdnpp);
     CH_BREAK_ON_ERROR(ret);
 
     /* Required because the offset returned by open_absolute_dir().*/
@@ -463,7 +464,7 @@ static msg_t drv_open_dir(void *instance,
   } while (false);
 
   /* Buffer returned.*/
-  vfs_buffer_release(buf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }
@@ -472,24 +473,24 @@ static msg_t drv_open_file(void *instance,
                            const char *path,
                            int flags,
                            vfs_file_node_c **vfnpp) {
+  vfs_shared_buffer_t *shbuf;
   msg_t ret;
-  char *buf;
 
   /* Taking a path buffer from the pool.*/
-  buf = vfs_buffer_take();
+  shbuf = vfs_buffer_take();
 
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
 
     /* Building the absolute path based on current directory.*/
-    ret = build_absolute_path(drvp, buf, path);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, path);
     CH_BREAK_ON_ERROR(ret);
 
-    ret = open_absolute_file(drvp, buf, flags, vfnpp);
+    ret = open_absolute_file(drvp, shbuf->path.buf1, flags, vfnpp);
   } while (false);
 
   /* Buffer returned.*/
-  vfs_buffer_release(buf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }
@@ -526,22 +527,22 @@ static msg_t drv_overlaid_path_call(vfs_overlay_driver_c *drvp,
 }
 
 msg_t drv_unlink(void *instance, const char *path) {
+  vfs_shared_buffer_t *shbuf;
   msg_t ret;
-  char *buf;
 
   /* Taking a path buffer from the pool.*/
-  buf = vfs_buffer_take();
+  shbuf = vfs_buffer_take();
 
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
     const char *scanpath;
 
     /* Building the absolute path based on current directory.*/
-    ret = build_absolute_path(drvp, buf, path);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, path);
     CH_BREAK_ON_ERROR(ret);
 
     /* Skipping the root separator.*/
-    scanpath = buf + 1;
+    scanpath = shbuf->path.buf1 + 1;
 
     /* If it is the root.*/
     if (*scanpath == '\0') {
@@ -558,28 +559,24 @@ msg_t drv_unlink(void *instance, const char *path) {
       }
       else {
         /* Passing the request to the overlaid driver, if any.*/
-        ret = drv_overlaid_path_call(drvp, buf, drvp->overlaid_drv->vmt->unlink);
+        ret = drv_overlaid_path_call(drvp, shbuf->path.buf1,
+                                     drvp->overlaid_drv->vmt->unlink);
       }
     }
   } while (false);
 
   /* Buffer returned.*/
-  vfs_buffer_release(buf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }
 
 msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
   msg_t ret;
-  char *oldbuf, *newbuf;
+  vfs_shared_buffer_t *shbuf;
 
   /* Taking a path buffer from the pool.*/
-  oldbuf = vfs_buffer_take();
-  newbuf = vfs_buffer_alloc();
-  if (newbuf == NULL) {
-    vfs_buffer_release(oldbuf);
-    return CH_RET_ENOMEM;
-  }
+  shbuf = vfs_buffer_take();
 
   do {
     msg_t oldret, newret;
@@ -588,14 +585,14 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
     const char *op, *np;
 
     /* Building the absolute paths based on current directory.*/
-    ret = build_absolute_path(drvp, oldbuf, oldpath);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, oldpath);
     CH_BREAK_ON_ERROR(ret);
-    ret = build_absolute_path(drvp, newbuf, newpath);
+    ret = build_absolute_path(drvp, shbuf->path.buf2, newpath);
     CH_BREAK_ON_ERROR(ret);
 
     /* Skipping root separators.*/
-    op = oldbuf + 1;
-    np = newbuf + 1;
+    op = shbuf->path.buf1 + 1;
+    np = shbuf->path.buf2 + 1;
 
     /* Searching for a match among registered drivers.*/
     oldret = match_driver(drvp, &op, &olddp);
@@ -621,13 +618,13 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
 
         /* Processing the prefix, if defined.*/
         if (drvp->path_prefix != NULL) {
-          if (path_prepend(oldbuf,
+          if (path_prepend(shbuf->path.buf1,
                            drvp->path_prefix,
                            VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
             ret = CH_RET_ENAMETOOLONG;
             break;
           }
-          if (path_prepend(newbuf,
+          if (path_prepend(shbuf->path.buf2,
                            drvp->path_prefix,
                            VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
             ret = CH_RET_ENAMETOOLONG;
@@ -637,7 +634,8 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
 
         /* Passing the combined path to the overlaid driver.*/
         ret = drvp->overlaid_drv->vmt->rename((void *)drvp->overlaid_drv,
-                                              oldbuf, newbuf);
+                                              shbuf->path.buf1,
+                                              shbuf->path.buf2);
       }
     }
     else {
@@ -647,29 +645,28 @@ msg_t drv_rename(void *instance, const char *oldpath, const char *newpath) {
   } while (false);
 
   /* Buffers returned, note, in reverse order.*/
-  vfs_buffer_free(newbuf);
-  vfs_buffer_release(oldbuf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }
 
 msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
+  vfs_shared_buffer_t *shbuf;
   msg_t ret;
-  char *buf;
 
   /* Taking a path buffer from the pool.*/
-  buf = vfs_buffer_take();
+  shbuf = vfs_buffer_take();
 
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
     const char *scanpath;
 
     /* Building the absolute path based on current directory.*/
-    ret = build_absolute_path(drvp, buf, path);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, path);
     CH_BREAK_ON_ERROR(ret);
 
     /* Skipping the root separator.*/
-    scanpath = buf + 1;
+    scanpath = shbuf->path.buf1 + 1;
 
     /* If it is the root.*/
     if (*scanpath == '\0') {
@@ -691,7 +688,7 @@ msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
 
           /* Processing the prefix, if defined.*/
           if (drvp->path_prefix != NULL) {
-            if (path_prepend(buf,
+            if (path_prepend(shbuf->path.buf1,
                              drvp->path_prefix,
                              VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
               ret = CH_RET_ENAMETOOLONG;
@@ -700,7 +697,8 @@ msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
           }
 
           /* Passing the combined path to the overlaid driver.*/
-          ret = drvp->overlaid_drv->vmt->mkdir((void *)drvp->overlaid_drv, buf, mode);
+          ret = drvp->overlaid_drv->vmt->mkdir((void *)drvp->overlaid_drv,
+                                               shbuf->path.buf1, mode);
         }
         else {
           ret = CH_RET_ENOENT;
@@ -710,28 +708,28 @@ msg_t drv_mkdir(void *instance, const char *path, vfs_mode_t mode) {
   } while (false);
 
   /* Buffer returned.*/
-  vfs_buffer_release(buf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }
 
 msg_t drv_rmdir(void *instance, const char *path) {
+  vfs_shared_buffer_t *shbuf;
   msg_t ret;
-  char *buf;
 
   /* Taking a path buffer from the pool.*/
-  buf = vfs_buffer_take();
+  shbuf = vfs_buffer_take();
 
   do {
     vfs_overlay_driver_c *drvp = (vfs_overlay_driver_c *)instance;
     const char *scanpath;
 
     /* Building the absolute path based on current directory.*/
-    ret = build_absolute_path(drvp, buf, path);
+    ret = build_absolute_path(drvp, shbuf->path.buf1, path);
     CH_BREAK_ON_ERROR(ret);
 
     /* Skipping the root separator.*/
-    scanpath = buf + 1;
+    scanpath = shbuf->path.buf1 + 1;
 
     /* If it is the root.*/
     if (*scanpath == '\0') {
@@ -748,13 +746,14 @@ msg_t drv_rmdir(void *instance, const char *path) {
       }
       else {
         /* Passing the request to the overlaid driver, if any.*/
-        ret = drv_overlaid_path_call(drvp, buf, drvp->overlaid_drv->vmt->rmdir);
+        ret = drv_overlaid_path_call(drvp, shbuf->path.buf1,
+                                     drvp->overlaid_drv->vmt->rmdir);
       }
     }
   } while (false);
 
   /* Buffer returned.*/
-  vfs_buffer_release(buf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }

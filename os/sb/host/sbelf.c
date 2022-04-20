@@ -351,11 +351,13 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
 
 static msg_t reloc_section(elf_load_context_t *ctxp,
                            elf_section_info_t *esip) {
+  vfs_shared_buffer_t *shbuf;
   elf32_rel_t *rbuf;
   size_t size, done_size, remaining_size;
   msg_t ret;
 
-  rbuf = (elf32_rel_t *)(void *)vfs_buffer_take();
+  shbuf = vfs_buffer_take();
+  rbuf = (elf32_rel_t *)(void *)shbuf->bigbuf;
 
   /* Reading the relocation section data.*/
   remaining_size = esip->rel_size;
@@ -365,8 +367,8 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
 
     /* Reading relocation data using buffers in order to not make continuous
        calls to the FS which could be unbuffered.*/
-    if (remaining_size > VFS_BUFFERS_SIZE) {
-      size = VFS_BUFFERS_SIZE;
+    if (remaining_size > VFS_BUFFER_SIZE) {
+      size = VFS_BUFFER_SIZE;
     }
     else {
       size = remaining_size;
@@ -392,7 +394,7 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
     done_size      += size;
   }
 
-  vfs_buffer_release((char *)rbuf);
+  vfs_buffer_release(shbuf);
 
   return ret;
 }

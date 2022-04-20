@@ -36,7 +36,7 @@
 /**
  * @brief   Size of the shared buffers.
  */
-#define VFS_BUFFERS_SIZE        (VFS_CFG_PATHLEN_MAX + 1)
+#define VFS_BUFFER_SIZE         ((VFS_CFG_PATHLEN_MAX + 1) * 2)
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -50,6 +50,17 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a shared buffer structure.
+ */
+typedef union vfs_shared_buffer {
+  struct {
+    char                buf1[VFS_CFG_PATHLEN_MAX + 1];
+    char                buf2[VFS_CFG_PATHLEN_MAX + 1];
+  } path;
+  char                  bigbuf[VFS_BUFFER_SIZE];
+} vfs_shared_buffer_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -62,10 +73,8 @@
 extern "C" {
 #endif
   void __vfs_buffers_init(void);
-  char *vfs_buffer_take(void);
-  void vfs_buffer_release(char *buf);
-  char *vfs_buffer_alloc(void);
-  void vfs_buffer_free(char *buf);
+  vfs_shared_buffer_t *vfs_buffer_take(void);
+  void vfs_buffer_release(vfs_shared_buffer_t *shbuf);
 #ifdef __cplusplus
 }
 #endif

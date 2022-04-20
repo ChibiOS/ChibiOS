@@ -274,6 +274,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
 
 ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  vfs_shared_buffer_t *shbuf;
   vfs_direntry_info_t *dip;
   msg_t ret;
 
@@ -289,7 +290,8 @@ ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
     return (ssize_t)CH_RET_ENOTDIR;
   }
 
-  dip = (vfs_direntry_info_t *)(void *)vfs_buffer_take();
+  shbuf = vfs_buffer_take();
+  dip = (vfs_direntry_info_t *)(void *)shbuf->bigbuf;
 
   do {
     size_t n;
@@ -317,7 +319,7 @@ ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
 
   } while (false);
 
-  vfs_buffer_release((char *)dip);
+  vfs_buffer_release(shbuf);
 
   return (ssize_t)ret;
 }
