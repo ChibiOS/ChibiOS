@@ -331,6 +331,7 @@ void snor_spi_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_offset_t offset) {
 #if (SNOR_SPI_4BYTES_ADDRESS == TRUE)
   uint8_t buf[5];
 
+  buf[0] = cmd;
   buf[1] = (uint8_t)(offset >> 24);
   buf[2] = (uint8_t)(offset >> 16);
   buf[3] = (uint8_t)(offset >> 8);
@@ -639,7 +640,9 @@ void bus_cmd_dummy_receive(BUSDriver *busp,
   buf[0] = cmd;
   spiSend(busp, 1, buf);
   spiIgnore(busp, dummy / 8U);
-  spiReceive(busp, n, p);
+  if (dummy != 0U) {
+    spiReceive(busp, n, p);
+  }
   spiUnselect(busp);
 #endif
 }
@@ -723,6 +726,14 @@ void snorStart(SNORDriver *devp, const SNORConfig *config) {
 
     /* Bus acquisition.*/
     bus_acquire(devp->config->busp, devp->config->buscfg);
+
+#if SNOR_SHARED_BUS == FALSE
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
+    wspiStart(devp->config->busp, devp->config->buscfg);
+#elif SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI
+    spiStart(devp->config->busp, devp->config->buscfg);
+#endif
+#endif
 
     /* Device identification and initialization.*/
     snor_device_init(devp);
