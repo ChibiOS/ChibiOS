@@ -36,12 +36,20 @@ static bool lflg = false;
 static bool qflg = false;
 
 struct afile {
-  char          ftype;
-  short         fnlink;
-  mode_t        fflags;
-  off_t         fsize;
-  char          *fname;
+  char              ftype;
+  long              fnum;
+  short             fnlink;
+  mode_t            fflags;
+  off_t             fsize;
+  char              *fname;
 };
+
+#define ISARG   0x8000      /* extra ``mode'' */
+
+struct subdirs {
+  char              *sd_name;
+  struct  subdirs   *sd_next;
+} *subdirs;
 
 static void usage(void) {
   fprintf(stderr, "Usage: ls [<opts>] [<file>]..." NEWLINE_STR);
@@ -404,7 +412,7 @@ static void formatd(char *name, int title) {
       if (fp->ftype != 'd' || !strcmp(fp->fname, ".")
           || !strcmp(fp->fname, ".."))
         continue;
-      dp = (struct subdirs*)malloc(sizeof(struct subdirs));
+      dp = (struct subdirs *)malloc(sizeof(struct subdirs));
       if (dp == 0L) { /*PATCH GIOV.*/
         fprintf(stderr, "ls: out of memory\n");
         exit(1);
@@ -416,8 +424,8 @@ static void formatd(char *name, int title) {
   for (fp = dfp0; fp < dfplast; fp++) {
     if ((fp->fflags & ISARG) == 0 && fp->fname)
       free(fp->fname);
-    if (fp->flinkto)
-      free(fp->flinkto);
+//    if (fp->flinkto)
+//      free(fp->flinkto);
   }
   free((char*)dfp0);
 }
@@ -485,16 +493,17 @@ int main(int argc, char *argv[], char *envp[]) {
 
   /* Allocating a single big buffer for all files.*/
   bufp = calloc(argc, sizeof (struct afile));
-  fp0 = (struct afile *)bufp;
+  fp = (struct afile *)bufp;
   if (bufp == NULL) {
     error("out of memory");
   }
 
   /* Scanning all arguments and populating the array.*/
-  fp = fp0;
+  fp0 = fp;
   for (i = 0; i < argc; i++) {
       if (!gstat(fp, *argv, true)) {
           fp->fname = *argv;
+          fp->fflags |= ISARG;
           fp++;
       }
       argv++;
