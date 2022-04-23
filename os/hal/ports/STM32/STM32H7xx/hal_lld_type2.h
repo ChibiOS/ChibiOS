@@ -2614,9 +2614,9 @@
 #define STM32_I2C2CLK               STM32_PCLK1
 
 /**
- * @brief   I2C2 clock.
+ * @brief   I2C3 clock.
  */
-#define STM32_I2C2CLK               STM32_PCLK1
+#define STM32_I2C3CLK               STM32_PCLK1
 
 /**
  * @brief   I2C5 clock.

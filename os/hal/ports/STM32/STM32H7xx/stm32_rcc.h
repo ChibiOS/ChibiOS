@@ -1219,14 +1219,22 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM1EN)
+#define rccEnableSRAM1(lp) rccEnableAHB2(RCC_AHB2ENR_AHBSRAM1EN, lp)
+#else
 #define rccEnableSRAM1(lp) rccEnableAHB2(RCC_AHB2ENR_D2SRAM1EN, lp)
+#endif
 
 /**
  * @brief   Disables the SRAM1 clock.
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM1EN)
+#define rccDisableSRAM1() rccDisableAHB2(RCC_AHB2ENR_AHBSRAM1EN)
+#else
 #define rccDisableSRAM1() rccDisableAHB2(RCC_AHB2ENR_D2SRAM1EN)
+#endif
 
 /**
  * @brief   Enables the SRAM2 clock.
@@ -1235,14 +1243,22 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM2EN)
+#define rccEnableSRAM2(lp) rccEnableAHB2(RCC_AHB2ENR_AHBSRAM2EN, lp)
+#else
 #define rccEnableSRAM2(lp) rccEnableAHB2(RCC_AHB2ENR_D2SRAM2EN, lp)
+#endif
 
 /**
  * @brief   Disables the SRAM2 clock.
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM2EN)
+#define rccDisableSRAM2() rccDisableAHB2(RCC_AHB2ENR_AHBSRAM2EN)
+#else
 #define rccDisableSRAM2() rccDisableAHB2(RCC_AHB2ENR_D2SRAM2EN)
+#endif
 
 /**
  * @brief   Enables the SRAM3 clock.

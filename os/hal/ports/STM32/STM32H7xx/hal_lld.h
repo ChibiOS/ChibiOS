@@ -153,6 +153,9 @@
     defined(STM32H725xx) || defined(STM32H735xx) ||                         \
     defined(__DOXYGEN__)
 #include "hal_lld_type2.h"
+#elif defined(STM32H7A3xx)  || defined(STM32H7B3xx)  ||                     \
+      defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ)
+#include "hal_lld_type3.h"
 #else
 #include "hal_lld_type1.h"
 #endif

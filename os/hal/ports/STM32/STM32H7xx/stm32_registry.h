@@ -30,8 +30,15 @@
 /*===========================================================================*/
 
 /* Cores.*/
-#if defined(STM32H750xx) || defined(STM32H742xx) ||                         \
-    defined(STM32H743xx) || defined(STM32H753xx)
+#if defined(STM32H730xx)  ||                                                \
+    defined(STM32H750xx)  ||                                                \
+    defined(STM32H7B0xx)  ||                                                \
+    defined(STM32H723xx)  || defined(STM32H733xx)  ||                       \
+    defined(STM32H725xx)  || defined(STM32H735xx)  ||                       \
+    defined(STM32H742xx)  ||                                                \
+    defined(STM32H743xx)  || defined(STM32H753xx)  ||                       \
+    defined(STM32H7A3xx)  || defined(STM32H7B3xx)  ||                       \
+    defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ)
 #define STM32_HAS_M7                        TRUE
 #define STM32_HAS_M4                        FALSE
 #else
@@ -80,11 +87,12 @@
 /* STM32H753xx, STM32H7B3xx, STM32H755xx, STM32H757xx                        */
 /*===========================================================================*/
 
-#if defined(STM32H730xx) || defined(STM32H750xx) || \
-    defined(STM32H7B0xx) || defined(STM32H733xx) || \
-    defined(STM32H735xx) || defined(STM32H753xx) || \
-    defined(STM32H7B3xx) || defined(STM32H755xx) || \
-    defined(STM32H757xx) || \
+#if defined(STM32H730xx)  || defined(STM32H750xx)  ||                       \
+    defined(STM32H7B0xx)  ||                                                \
+    defined(STM32H733xx)  || defined(STM32H735xx)  ||                       \
+    defined(STM32H753xx)  || defined(STM32H7B3xx)  ||                       \
+                             defined(STM32H7B3xxQ) ||                       \
+    defined(STM32H755xx)  || defined(STM32H757xx)  ||                       \
     defined(__DOXYGEN__)
 
 /* HASH attributes.*/
@@ -343,8 +351,10 @@
 /*===========================================================================*/
 /* STM32H723xx, STM32H733xx, STM32H725xx, STM32H735xx.                                                 */
 /*===========================================================================*/
-#if defined(STM32H723xx) || defined(STM32H733xx) ||                         \
-    defined(STM32H725xx) || defined(STM32H735xx) ||                         \
+#if defined(STM32H723xx)  || defined(STM32H733xx)  ||                       \
+    defined(STM32H725xx)  || defined(STM32H735xx)  ||                       \
+    defined(STM32H7A3xx)  || defined(STM32H7B3xx)  ||                       \
+    defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ) ||                       \
     defined(__DOXYGEN__)
 
 /* ADC attributes.*/
@@ -580,7 +590,7 @@
 /*===========================================================================*/
 /* STM32H750xx.                                                              */
 /*===========================================================================*/
-#if defined(STM32H750xx) ||                                                 \
+#if defined(STM32H750xx) || defined(STM32H7B0xx) ||                         \
     defined(__DOXYGEN__)
 
 /* ADC attributes.*/
