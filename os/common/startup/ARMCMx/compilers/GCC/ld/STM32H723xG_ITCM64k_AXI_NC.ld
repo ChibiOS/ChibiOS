@@ -93,7 +93,7 @@ INCLUDE rules_stacks.ld
 
 /*===========================================================================*/
 /* Custom sections for STM32H7xx.                                            */
-/* SRAM3 is assumed to be marked non-cacheable using MPU.                    */
+/* 16k of AXI SRAM are assumed to be non-cacheable using MPU.                */
 /*===========================================================================*/
 
 /* RAM region to be used for nocache segment.*/

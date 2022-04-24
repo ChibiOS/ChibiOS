@@ -18,9 +18,9 @@
  * STM32H7A3xI generic setup.
  * 
  * AXI SRAM     - BSS, Data, Heap.
- * SRAM1+SRAM2  - None.
- * SRAM3        - None.
- * SRAM4        - None.
+ * SRAM1        - None.
+ * SRAM2        - Used for non-cacheable DMA buffers.
+ * SRD-RAM      - None.
  * DTCM-RAM     - Main Stack, Process Stack.
  * ITCM-RAM     - None.
  * BCKP SRAM    - None.
@@ -37,8 +37,8 @@ MEMORY
     flash7 (rx) : org = 0x00000000, len = 0
     ram0   (wx) : org = 0x24000000, len = 1M        /* AXI SRAM */
     ram1   (wx) : org = 0x30000000, len = 128k      /* AHB SRAM1+SRAM2 */
-    ram2   (wx) : org = 0x30000000, len = 0k        /* AHB SRAM1+SRAM2+SRAM3 */
-    ram3   (wx) : org = 0x30040000, len = 0k        /* AHB SRAM3 */
+    ram2   (wx) : org = 0x30000000, len = 64k       /* AHB SRAM1 */
+    ram3   (wx) : org = 0x30010000, len = 64k       /* AHB SRAM2 */
     ram4   (wx) : org = 0x38000000, len = 32k       /* SRD_SRAM */
     ram5   (wx) : org = 0x20000000, len = 128k      /* DTCM-RAM */
     ram6   (wx) : org = 0x00000000, len = 64k       /* ITCM-RAM */
@@ -91,6 +91,28 @@ REGION_ALIAS("HEAP_RAM", ram0);
 
 /* Stack rules inclusion.*/
 INCLUDE rules_stacks.ld
+
+/*===========================================================================*/
+/* Custom sections for STM32H7xx.                                            */
+/* SRAM2 is assumed to be marked non-cacheable using MPU.                    */
+/*===========================================================================*/
+
+/* RAM region to be used for nocache segment.*/
+REGION_ALIAS("NOCACHE_RAM", ram3);
+
+SECTIONS
+{
+    /* Special section for non cache-able areas.*/
+    .nocache (NOLOAD) : ALIGN(4)
+    {
+        __nocache_base__ = .;
+        *(.nocache)
+        *(.nocache.*)
+        *(.bss.__nocache_*)
+        . = ALIGN(4);
+        __nocache_end__ = .;
+    } > NOCACHE_RAM
+}
 
 /* Code rules inclusion.*/
 INCLUDE rules_code.ld
