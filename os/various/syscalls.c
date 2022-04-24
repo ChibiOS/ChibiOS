@@ -214,12 +214,10 @@ int _getpid(void) {
   abort();
 }
 
-#ifdef __cplusplus
-extern "C" {
-  void __cxa_pure_virtual(void) {
-    osalSysHalt("Pure virtual function call.");
-  }
+/***************************************************************************/
+/* Only used in C++ mode.*/
+void __cxa_pure_virtual(void) {
+  chSysHalt("pure virtual");
 }
-#endif
 
 /*** EOF ***/
