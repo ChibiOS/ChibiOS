@@ -283,6 +283,8 @@
 #define RCC_CDCCIP1R_SPDIFSEL_VALUE(n)  ((n) << RCC_CDCCIP1R_SPDIFSEL_Pos)
 #define RCC_CDCCIP1R_SPI45SEL_VALUE(n)  ((n) << RCC_CDCCIP1R_SPI45SEL_Pos)
 #define RCC_CDCCIP1R_SPI123SEL_VALUE(n) ((n) << RCC_CDCCIP1R_SPI123SEL_Pos)
+#define RCC_CDCCIP1R_SAI2BSEL_VALUE(n)  ((n) << RCC_CDCCIP1R_SAI2BSEL_Pos)
+#define RCC_CDCCIP1R_SAI2ASEL_VALUE(n)  ((n) << RCC_CDCCIP1R_SAI2ASEL_Pos)
 #define RCC_CDCCIP1R_SAI1SEL_VALUE(n)   ((n) << RCC_CDCCIP1R_SAI1SEL_Pos)
 
 #define RCC_CDCCIP2R_LPTIM1SEL_VALUE(n) ((n) << RCC_CDCCIP2R_LPTIM1SEL_Pos)
@@ -294,8 +296,6 @@
 #define RCC_CDCCIP2R_USART234578SEL_VALUE(n) ((n) << RCC_CDCCIP2R_USART234578SEL_Pos)
 
 #define RCC_SRDCCIPR_SPI6SEL_VALUE(n)   ((n) << RCC_SRDCCIPR_SPI6SEL_Pos)
-#define RCC_CDCCIP1R_SAI2BSEL_VALUE(n)  ((n) << RCC_CDCCIP1R_SAI2BSEL_Pos)
-#define RCC_CDCCIP1R_SAI2ASEL_VALUE(n)  ((n) << RCC_CDCCIP1R_SAI2ASEL_Pos)
 #define RCC_SRDCCIPR_ADCSEL_VALUE(n)    ((n) << RCC_SRDCCIPR_ADCSEL_Pos)
 #define RCC_SRDCCIPR_LPTIM3SEL_VALUE(n) ((n) << RCC_SRDCCIPR_LPTIM3SEL_Pos)
 #define RCC_SRDCCIPR_LPTIM2SEL_VALUE(n) ((n) << RCC_SRDCCIPR_LPTIM2SEL_Pos)
@@ -1052,13 +1052,6 @@
 #endif
 
 /**
- * @brief   DFSDM2 clock source.
- */
-#if !defined(STM32_DFSDM2SEL) || defined(__DOXYGEN__)
-#define STM32_DFSDM2SEL                     STM32_DFSDM2SEL_PCLK4
-#endif
-
-/**
  * @brief   SPDIF clock source.
  */
 #if !defined(STM32_SPDIFSEL) || defined(__DOXYGEN__)
@@ -1080,10 +1073,17 @@
 #endif
 
 /**
- * @brief   SAI2 clock source.
+ * @brief   SAI2BSEL clock source.
  */
-#if !defined(STM32_SAI2SEL) || defined(__DOXYGEN__)
-#define STM32_SAI2SEL                       0U /* Not present.*/
+#if !defined(STM32_SAI2BSEL) || defined(__DOXYGEN__)
+#define STM32_SAI2BSEL                      STM32_SAI2BSEL_PLL1_Q_CK
+#endif
+
+/**
+ * @brief   SAI2ASEL clock source.
+ */
+#if !defined(STM32_SAI2ASEL) || defined(__DOXYGEN__)
+#define STM32_SAI2ASEL                      STM32_SAI2ASEL_PLL1_Q_CK
 #endif
 
 /**
@@ -1150,17 +1150,10 @@
 #endif
 
 /**
- * @brief   SAI2BSEL clock source.
+ * @brief   DFSDM2 clock source.
  */
-#if !defined(STM32_SAI2BSEL) || defined(__DOXYGEN__)
-#define STM32_SAI2BSEL                      STM32_SAI2BSEL_PLL1_Q_CK
-#endif
-
-/**
- * @brief   SAI2ASEL clock source.
- */
-#if !defined(STM32_SAI2ASEL) || defined(__DOXYGEN__)
-#define STM32_SAI2ASEL                      STM32_SAI2ASEL_PLL1_Q_CK
+#if !defined(STM32_DFSDM2SEL) || defined(__DOXYGEN__)
+#define STM32_DFSDM2SEL                     STM32_DFSDM2SEL_PCLK4
 #endif
 
 /**
