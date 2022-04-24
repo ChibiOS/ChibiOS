@@ -639,10 +639,10 @@ void bus_cmd_dummy_receive(BUSDriver *busp,
   spiSelect(busp);
   buf[0] = cmd;
   spiSend(busp, 1, buf);
-  spiIgnore(busp, dummy / 8U);
   if (dummy != 0U) {
-    spiReceive(busp, n, p);
+    spiIgnore(busp, dummy / 8U);
   }
+  spiReceive(busp, n, p);
   spiUnselect(busp);
 #endif
 }
@@ -680,7 +680,9 @@ void bus_cmd_addr_dummy_receive(BUSDriver *busp,
 
   spiSelect(busp);
   snor_spi_cmd_addr(busp, cmd, offset);
-  spiIgnore(busp, dummy / 8U);
+  if (dummy != 0U) {
+    spiIgnore(busp, dummy / 8U);
+  }
   spiReceive(busp, n, p);
   spiUnselect(busp);
 #endif
