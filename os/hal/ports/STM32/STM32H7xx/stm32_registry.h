@@ -612,7 +612,7 @@
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
 #define STM32_HAS_DAC1_CH2                  TRUE
-#define STM32_HAS_DAC2_CH1                  FALSE
+#define STM32_HAS_DAC2_CH1                  TRUE
 #define STM32_HAS_DAC2_CH2                  FALSE
 
 /* BDMA attributes.*/
