@@ -986,14 +986,6 @@
 #endif
 
 /**
- * @brief   Clock domain 1 peripherals bus prescaler.
- * @note    This setting can be modified at runtime.
- */
-#if !defined(STM32_SRDPPRE) || defined(__DOXYGEN__)
-#define STM32_SRDPPRE                       STM32_SRDPPRE_DIV1
-#endif
-
-/**
  * @brief   Clock domain 2 peripherals bus 1 prescaler.
  * @note    This setting can be modified at runtime.
  */
@@ -1010,11 +1002,11 @@
 #endif
 
 /**
- * @brief   Clock domain 3 peripherals bus prescaler.
+ * @brief   Clock domain 1 peripherals bus prescaler.
  * @note    This setting can be modified at runtime.
  */
-#if !defined(STM32_D3PPRE4) || defined(__DOXYGEN__)
-#define STM32_D3PPRE4                       STM32_D3PPRE4_DIV1
+#if !defined(STM32_SRDPPRE) || defined(__DOXYGEN__)
+#define STM32_SRDPPRE                       STM32_SRDPPRE_DIV1
 #endif
 
 /**
