@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2022 Niki W. Waibel
+    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

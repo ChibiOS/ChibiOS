@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    STM32H7xx/hal_lld.h
+ * @file    STM32H7xx/hal_lld_type2.h
  * @brief   STM32H7xx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
@@ -140,19 +140,34 @@
 #define STM32_PLLIN_MAX                 16000000
 
 /**
- * @brief   Minimum PLLs VCO clock frequency.
+ * @brief   Absolute minimum PLLs VCO clock frequency.
  */
 #define STM32_PLLVCO_MIN                192000000
 
 /**
- * @brief   Threshold PLLs clock frequency.
- */
-#define STM32_PLLVCO_THRESHOLD          420000000
-
-/**
- * @brief   Maximum PLLs VCOH clock frequency.
+ * @brief   Absolute maximum PLLs VCOH clock frequency.
  */
 #define STM32_PLLVCO_MAX                836000000
+
+/**
+ * @brief   Wide range VCO minimum PLL clock frequency.
+ */
+#define STM32_PLLVCO_WIDE_MIN           192000000
+
+/**
+ * @brief   Wide range VCO maximum clock frequency.
+ */
+#define STM32_PLLVCO_WIDE_MAX           836000000
+
+/**
+ * @brief   Medium range VCO minimum PLL clock frequency.
+ */
+#define STM32_PLLVCO_MEDIUM_MIN         150000000
+
+/**
+ * @brief   Medium range VCO maximum PLL clock frequency.
+ */
+#define STM32_PLLVCO_MEDIUM_MAX         420000000
 
 /**
  * @brief   Maximum APB1 clock frequency.
@@ -1735,19 +1750,35 @@
 #define STM32_PLL1_VCO_CK           (STM32_PLL1_REF_CK * STM32_PLL1_DIVN_VALUE)
 
 /*
- * PLL1 VCO frequency range check.
+ * PLL1 frequency check.
  */
+#if STM32_PLL1_REF_CK < STM32_PLLIN_THRESHOLD1
+/* Check for medium range.*/
+#if STM32_PLL1_VCO_CK < STM32_PLLVCO_MEDIUM_MIN) || (STM32_PLL1_VCO_CK > STM32_PLLVCO_MEDIUM_MAX)
+#error "STM32_PLL1_VCO_CK outside acceptable range (STM32_PLLVCO_MEDIUM_MIN..STM32_PLLVCO_MEDIUM_MAX)"
+#endif
+
+#elif STM32_PLL1_REF_CK == STM32_PLLIN_THRESHOLD1
+/* Check for medium or wide range.*/
 #if (STM32_PLL1_VCO_CK < STM32_PLLVCO_MIN) || (STM32_PLL1_VCO_CK > STM32_PLLVCO_MAX)
 #error "STM32_PLL1_VCO_CK outside acceptable range (STM32_PLLVCO_MIN..STM32_PLLVCO_MAX)"
+#endif
+
+#elif STM32_PLL1_REF_CK > STM32_PLLIN_THRESHOLD1
+/* Check for wide range.*/
+#if (STM32_PLL1_VCO_CK < STM32_PLLVCO_WIDE_MIN) || (STM32_PLL1_VCO_CK > STM32_PLLVCO_WIDE_MAX)
+#error "STM32_PLL1_VCO_CK outside acceptable range (STM32_PLLVCO_WIDE_MIN..STM32_PLLVCO_WIDE_MAX)"
+#endif
 #endif
 
 /*
  * PLL1 VCO mode.
  */
-#if (STM32_PLL1_VCO_CK > STM32_PLLVCO_THRESHOLD) || defined(__DOXYGEN__)
-#define STM32_PLLCFGR_PLL1VCOSEL    0U
-#else
+#if ((STM32_PLL1_VCO_CK >= STM32_PLLVCO_MEDIUM_MIN) &&                      \
+     (STM32_PLL1_VCO_CK <= STM32_PLLVCO_MEDIUM_MAX)) || defined(__DOXYGEN__)
 #define STM32_PLLCFGR_PLL1VCOSEL    RCC_PLLCFGR_PLL1VCOSEL
+#else
+#define STM32_PLLCFGR_PLL1VCOSEL    0U
 #endif
 
 /**
@@ -1756,19 +1787,35 @@
 #define STM32_PLL2_VCO_CK           (STM32_PLL2_REF_CK * STM32_PLL2_DIVN_VALUE)
 
 /*
- * PLL2 VCO frequency range check.
+ * PLL2 frequency check.
  */
+#if STM32_PLL2_REF_CK < STM32_PLLIN_THRESHOLD1
+/* Check for medium range.*/
+#if STM32_PLL2_VCO_CK < STM32_PLLVCO_MEDIUM_MIN) || (STM32_PLL2_VCO_CK > STM32_PLLVCO_MEDIUM_MAX)
+#error "STM32_PLL2_VCO_CK outside acceptable range (STM32_PLLVCO_MEDIUM_MIN..STM32_PLLVCO_MEDIUM_MAX)"
+#endif
+
+#elif STM32_PLL2_REF_CK == STM32_PLLIN_THRESHOLD1
+/* Check for medium or wide range.*/
 #if (STM32_PLL2_VCO_CK < STM32_PLLVCO_MIN) || (STM32_PLL2_VCO_CK > STM32_PLLVCO_MAX)
 #error "STM32_PLL2_VCO_CK outside acceptable range (STM32_PLLVCO_MIN..STM32_PLLVCO_MAX)"
+#endif
+
+#elif STM32_PLL2_REF_CK > STM32_PLLIN_THRESHOLD1
+/* Check for wide range.*/
+#if (STM32_PLL2_VCO_CK < STM32_PLLVCO_WIDE_MIN) || (STM32_PLL2_VCO_CK > STM32_PLLVCO_WIDE_MAX)
+#error "STM32_PLL2_VCO_CK outside acceptable range (STM32_PLLVCO_WIDE_MIN..STM32_PLLVCO_WIDE_MAX)"
+#endif
 #endif
 
 /*
  * PLL2 VCO mode.
  */
-#if (STM32_PLL2_VCO_CK > STM32_PLLVCO_THRESHOLD) || defined(__DOXYGEN__)
-#define STM32_PLLCFGR_PLL2VCOSEL    0U
-#else
+#if ((STM32_PLL2_VCO_CK >= STM32_PLLVCO_MEDIUM_MIN) &&                      \
+     (STM32_PLL2_VCO_CK <= STM32_PLLVCO_MEDIUM_MAX)) || defined(__DOXYGEN__)
 #define STM32_PLLCFGR_PLL2VCOSEL    RCC_PLLCFGR_PLL2VCOSEL
+#else
+#define STM32_PLLCFGR_PLL2VCOSEL    0U
 #endif
 
 /**
@@ -1777,19 +1824,35 @@
 #define STM32_PLL3_VCO_CK           (STM32_PLL3_REF_CK * STM32_PLL3_DIVN_VALUE)
 
 /*
- * PLL3 VCO frequency range check.
+ * PLL3 frequency check.
  */
+#if STM32_PLL3_REF_CK < STM32_PLLIN_THRESHOLD1
+/* Check for medium range.*/
+#if STM32_PLL3_VCO_CK < STM32_PLLVCO_MEDIUM_MIN) || (STM32_PLL3_VCO_CK > STM32_PLLVCO_MEDIUM_MAX)
+#error "STM32_PLL3_VCO_CK outside acceptable range (STM32_PLLVCO_MEDIUM_MIN..STM32_PLLVCO_MEDIUM_MAX)"
+#endif
+
+#elif STM32_PLL3_REF_CK == STM32_PLLIN_THRESHOLD1
+/* Check for medium or wide range.*/
 #if (STM32_PLL3_VCO_CK < STM32_PLLVCO_MIN) || (STM32_PLL3_VCO_CK > STM32_PLLVCO_MAX)
 #error "STM32_PLL3_VCO_CK outside acceptable range (STM32_PLLVCO_MIN..STM32_PLLVCO_MAX)"
+#endif
+
+#elif STM32_PLL3_REF_CK > STM32_PLLIN_THRESHOLD1
+/* Check for wide range.*/
+#if (STM32_PLL3_VCO_CK < STM32_PLLVCO_WIDE_MIN) || (STM32_PLL3_VCO_CK > STM32_PLLVCO_WIDE_MAX)
+#error "STM32_PLL3_VCO_CK outside acceptable range (STM32_PLLVCO_WIDE_MIN..STM32_PLLVCO_WIDE_MAX)"
+#endif
 #endif
 
 /*
  * PLL3 VCO mode.
  */
-#if (STM32_PLL3_VCO_CK > STM32_PLLVCO_THRESHOLD) || defined(__DOXYGEN__)
-#define STM32_PLLCFGR_PLL3VCOSEL    0U
-#else
+#if ((STM32_PLL3_VCO_CK >= STM32_PLLVCO_MEDIUM_MIN) &&                      \
+     (STM32_PLL3_VCO_CK <= STM32_PLLVCO_MEDIUM_MAX)) || defined(__DOXYGEN__)
 #define STM32_PLLCFGR_PLL3VCOSEL    RCC_PLLCFGR_PLL3VCOSEL
+#else
+#define STM32_PLLCFGR_PLL3VCOSEL    0U
 #endif
 
 #if ((STM32_PLL1_ENABLED == TRUE) && (STM32_PLL1_P_ENABLED == TRUE)) ||     \
