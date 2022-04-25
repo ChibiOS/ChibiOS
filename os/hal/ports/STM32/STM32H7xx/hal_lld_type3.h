@@ -958,7 +958,7 @@
  * @note    This setting can be modified at runtime.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                            STM32_SW_PLL1_P_CK1_P_CK
+#define STM32_SW                            STM32_SW_PLL1_P_CK
 #endif
 
 /**
@@ -1211,12 +1211,12 @@
 #error "Using a wrong mcuconf.h file, STM32H7B3_MCUCONF not defined"
 #endif
 
-#if defined(STM32H7A3xxQ) && !defined(STM32H7A3xxQ_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32H7A3_MCUCONF not defined"
+#if defined(STM32H7A3xxQ) && !defined(STM32H7A3_Q_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H7A3_Q_MCUCONF not defined"
 #endif
 
-#if defined(STM32H7B3xxQ) && !defined(STM32H7B3xxQ_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32H7B3xxQ_MCUCONF not defined"
+#if defined(STM32H7B3xxQ) && !defined(STM32H7B3_Q_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H7B3_Q_MCUCONF not defined"
 #endif
 
 /*
