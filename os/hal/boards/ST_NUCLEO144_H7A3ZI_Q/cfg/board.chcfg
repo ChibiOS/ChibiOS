@@ -23,7 +23,7 @@
   <ports>
     <GPIOA>
       <pin0
-        ID="BUTTON"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -387,11 +387,11 @@
         Mode="Input"
         Alternate="0" />
       <pin13
-        ID=""
+        ID="BUTTON"
         Type="PushPull"
         Level="High"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin14

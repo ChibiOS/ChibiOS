@@ -978,6 +978,14 @@
 #endif
 
 /**
+ * @brief   Clock domain 2 peripherals bus prescaler.
+ * @note    This setting can be modified at runtime.
+ */
+#if !defined(STM32_CDPPRE) || defined(__DOXYGEN__)
+#define STM32_CDPPRE                        STM32_CDPPRE_DIV1
+#endif
+
+/**
  * @brief   Clock domain HPRE prescaler.
  * @note    This setting can be modified at runtime.
  */

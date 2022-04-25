@@ -85,7 +85,7 @@
 - NEW: Modified SDMMCv2 to allow for uncached buffers, tested on STM32H7xx.
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
 - NEW: Added demos for STM32H723ZG Nucleo144 and STM32H735ZI Discovery boards.
-- NEW: Added support for STM32H723/25/33/35.
+- NEW: Added support for STM32H723/25/33/35/A3/B3/A3Q/B3Q.
 - NEW: Updated ST Cube headers for STM32H7xx.
 - NEW: Added a Posix-favored shell named "msh" (Mini Shell). The shell is able
        to run sub-apps inside the same sandbox. The shell can either be placed
