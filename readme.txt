@@ -77,6 +77,7 @@
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
 - NEW: Added support for STM32H723/25/33/35.
 - FIX: Re-opened and fixed bug #1100.
+- FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232).
 - FIX: Fixed STM32 RTCv2 registers synchronization errata (bug #1231).
 - FIX: Fixed STM32 ADCv1 and ADCv5 do not allow prescaler divide value of 1
        (bug #1230).
