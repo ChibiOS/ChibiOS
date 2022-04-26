@@ -141,7 +141,7 @@ static size_t usb_packet_read_to_buffer(usbep_t ep, uint8_t *buf) {
      in which the next received packet will be stored, so we need to
      read the counter of the OTHER buffer, which is where the last
      received packet was stored.*/
-  if (EPR_EP_TYPE_IS_ISO(epr) && !(epr & EPR_DTOG_RX))
+  if (EPR_EP_TYPE_IS_ISO(epr) && ((epr & EPR_DTOG_RX) != 0U))
     n = (size_t)udp->RXCOUNT1 & RXCOUNT_COUNT_MASK;
   else
     n = (size_t)udp->RXCOUNT0 & RXCOUNT_COUNT_MASK;
