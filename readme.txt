@@ -133,6 +133,8 @@
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
+- FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed STM32 RTCv2 registers synchronization errata (bug #1231)
        (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed STM32 ADCv1 and ADCv5 do not allow prescaler divide value of 1
