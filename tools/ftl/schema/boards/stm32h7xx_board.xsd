@@ -14,6 +14,10 @@
                     	<xs:simpleType>
                     		<xs:restriction base="xs:string">
                     			<xs:whiteSpace value="collapse"></xs:whiteSpace>
+                                <xs:enumeration value="STM32H723xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H733xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H725xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H735xx"></xs:enumeration>
                                 <xs:enumeration value="STM32H742xx"></xs:enumeration>
                                 <xs:enumeration value="STM32H743xx"></xs:enumeration>
                                 <xs:enumeration value="STM32H753xx"></xs:enumeration>
@@ -22,6 +26,12 @@
                                 <xs:enumeration value="STM32H747xx"></xs:enumeration>
                                 <xs:enumeration value="STM32H757xx"></xs:enumeration>
                                 <xs:enumeration value="STM32H750xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H7A3xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H7A3xxQ"></xs:enumeration>
+                                <xs:enumeration value="STM32H7B0xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H7B0xxQ"></xs:enumeration>
+                                <xs:enumeration value="STM32H7B3xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H7B3xxQ"></xs:enumeration>
                     		</xs:restriction>
                     	</xs:simpleType>
                     </xs:element>
