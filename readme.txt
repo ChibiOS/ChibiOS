@@ -74,8 +74,30 @@
 *****************************************************************************
 
 *** 21.11.2 ***
+- NEW: Added dubby cycles support for SNOR using the normal SPI driver.
+- NEW: Disabled priority check on STM32 EXTI interrupts when the default
+       ISR is disabled. This allows for fast interrupts.
+- NEW: Added support for UART9 and USART10 on STM32H7.
+- NEW: Improved MFS to use explicitly non-cacheable buffers for potentially
+       DMA-accessible I/O areas.
+- NEW: FatFS now functional on STM32H7xx, added a target to the VFS demo.
+- NEW: Improved cache settings in STM32H7xx mcuconf.h.
+- NEW: Modified SDMMCv2 to allow for uncached buffers, tested on STM32H7xx.
 - NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
-- NEW: Added support for STM32H723/25/33/35.
+- NEW: Added demos for STM32H723ZG Nucleo144 and STM32H735ZI Discovery boards.
+- NEW: Added support for STM32H723/25/33/35/A3/B3/A3Q/B3Q.
+- NEW: Updated ST Cube headers for STM32H7xx.
+- NEW: Improved HAL flash interface with mutual exclusion methods, improved
+       EFL and SNOR drivers to use it.
+- NEW: Added EFL driver implementation for STM32G4xx.
+- NEW: STM32G0B1 USBv2 driver.
+- NEW: USBv1 driver optimization and removal of a potential race condition
+       (not demonstrated).
+- NEW: Added elfAcquireBus()/eflReleaseBus() functions to EFL driver.
+- NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
+       ARMv7-M and ARMv8-M-ML.
+- NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
+- NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Re-opened and fixed bug #1100.
 - FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232).
 - FIX: Fixed STM32 RTCv2 registers synchronization errata (bug #1231).
