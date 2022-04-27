@@ -15,54 +15,65 @@
 */
 
 /**
- * @file    portab.c
- * @brief   Application portability module code.
+ * @file    portab.h
+ * @brief   Application portability macros and structures.
  *
  * @addtogroup application_portability
  * @{
  */
 
-#include "hal.h"
-
-#include "portab.h"
-
-/*===========================================================================*/
-/* Module local definitions.                                                 */
-/*===========================================================================*/
+#ifndef PORTAB_H
+#define PORTAB_H
 
 /*===========================================================================*/
-/* Module exported variables.                                                */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
-const WSPIConfig WSPIcfg1 = {
-  .end_cb           = NULL,
-  .error_cb         = NULL,
-  .dcr1             = STM32_DCR1_MTYP(1U) |         /* Macronix mode.       */
-                      STM32_DCR1_DEVSIZE(25U) |     /* 64MB device.         */
-                      STM32_DCR1_CSHT(1U),          /* NCS 2 cycles delay.  */
-  .dcr2             = 0U,
-  .dcr3             = 0U,
-  .dcr4             = 0U
-};
+#define PORTAB_LINE_LED1            LINE_LED1
+#define PORTAB_LINE_LED2            LINE_LED2
+#define PORTAB_LED_OFF              PAL_LOW
+#define PORTAB_LED_ON               PAL_HIGH
+
+#define PORTAB_LINE_BUTTON          LINE_BUTTON
+#define PORTAB_BUTTON_PRESSED       PAL_HIGH
+
+#define PORTAB_SD1                  SD3
+#define PORTAB_WSPI1                WSPID1
 
 /*===========================================================================*/
-/* Module local types.                                                       */
+/* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local variables.                                                   */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local functions.                                                   */
+/* Module data structures and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module exported functions.                                                */
+/* Module macros.                                                            */
 /*===========================================================================*/
 
-void portab_setup(void) {
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
 
+extern const WSPIConfig WSPIcfg1;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void portab_setup(void);
+#ifdef __cplusplus
 }
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
+
+#endif /* PORTAB_H */
 
 /** @} */

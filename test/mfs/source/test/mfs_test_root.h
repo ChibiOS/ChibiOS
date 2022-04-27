@@ -53,9 +53,10 @@ extern "C" {
 
 #define TEST_REPORT_HOOK_HEADER test_print_mfs_info();
 
+extern mfs_nocache_buffer_t __nocache_mfsbuf1;
 extern const MFSConfig mfscfg1;
 extern MFSDriver mfs1;
-extern uint8_t mfs_buffer[512];
+extern uint8_t __nocache_mfs_buffer[512];
 extern const uint8_t mfs_pattern16[16];
 extern const uint8_t mfs_pattern32[32];
 extern const uint8_t mfs_pattern10[10];

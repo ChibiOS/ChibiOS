@@ -32,6 +32,7 @@ const SNORConfig snorcfg1 = {
 };
 
 SNORDriver snor1;
+snor_nocache_buffer_t __nocache_snor1buf;
 
 const MFSConfig mfscfg1 = {
   .flashp           = (BaseFlash *)&snor1,
@@ -52,8 +53,6 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palToggleLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
     palToggleLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
   }
@@ -81,7 +80,7 @@ int main(void) {
   sdStart(&PORTAB_SD1, NULL);
 
   /* Initializing and starting snor1 driver.*/
-  snorObjectInit(&snor1);
+  snorObjectInit(&snor1, &__nocache_snor1buf);
   snorStart(&snor1, &snorcfg1);
 #if 1
   /* Testing memory mapped mode.*/

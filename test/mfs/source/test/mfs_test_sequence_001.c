@@ -69,7 +69,7 @@
  */
 
 static void mfs_test_001_001_setup(void) {
-  mfsObjectInit(&mfs1);
+  mfsObjectInit(&mfs1, &__nocache_mfsbuf1);
 }
 
 static void mfs_test_001_001_teardown(void) {
@@ -152,8 +152,8 @@ static void mfs_test_001_002_execute(void) {
     size_t size;
 
     for (id = 1; id <= MFS_CFG_MAX_RECORDS; id++) {
-      size = sizeof mfs_buffer;
-      err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+      size = sizeof __nocache_mfs_buffer;
+      err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
       test_assert(err == MFS_ERR_NOT_FOUND,
                   "found a record that should not exists");
     }
@@ -205,8 +205,8 @@ static void mfs_test_001_003_execute(void) {
      expected.*/
   test_set_step(1);
   {
-    size = sizeof mfs_buffer;
-    mfs_error_t err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    mfs_error_t err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND , "record was already present");
   }
   test_end_step(1);
@@ -220,11 +220,11 @@ static void mfs_test_001_003_execute(void) {
 
     err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern16, mfs_pattern16);
     test_assert(err == MFS_NO_ERROR, "error creating the record");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
     test_assert(size == sizeof mfs_pattern16, "unexpected record length");
-    test_assert(memcmp(mfs_pattern16, mfs_buffer, size) == 0, "wrong record content");
+    test_assert(memcmp(mfs_pattern16, __nocache_mfs_buffer, size) == 0, "wrong record content");
   }
   test_end_step(2);
 
@@ -237,11 +237,11 @@ static void mfs_test_001_003_execute(void) {
 
     err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern32, mfs_pattern32);
     test_assert(err == MFS_NO_ERROR, "error updating the record");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
     test_assert(size == sizeof mfs_pattern32, "unexpected record length");
-    test_assert(memcmp(mfs_pattern32, mfs_buffer, size) == 0, "wrong record content");
+    test_assert(memcmp(mfs_pattern32, __nocache_mfs_buffer, size) == 0, "wrong record content");
   }
   test_end_step(3);
 
@@ -254,8 +254,8 @@ static void mfs_test_001_003_execute(void) {
 
     err = mfsEraseRecord(&mfs1, 1);
     test_assert(err == MFS_NO_ERROR, "error erasing the record");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
   }
   test_end_step(4);
@@ -316,14 +316,14 @@ static void mfs_test_001_004_execute(void) {
     mfs_error_t err;
     size_t size;
 
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 0 not present");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 2, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 1 not present");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 3, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 2 not present");
   }
   test_end_step(2);
@@ -336,14 +336,14 @@ static void mfs_test_001_004_execute(void) {
 
     err = mfsStart(&mfs1, &mfscfg1);
     test_assert(err == MFS_NO_ERROR, "re-mount failed");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 0 not present");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 2, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 1 not present");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 3, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record 2 not present");
   }
   test_end_step(3);
@@ -358,14 +358,14 @@ static void mfs_test_001_004_execute(void) {
 
     err = mfsErase(&mfs1);
     test_assert(err == MFS_NO_ERROR, "storage erase error");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record 0 still present");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 2, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 2, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record 1 still present");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 3, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 3, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record 2 still present");
   }
   test_end_step(4);
@@ -421,13 +421,13 @@ static void mfs_test_001_005_execute(void) {
 
       err = mfsWriteRecord(&mfs1, id, sizeof mfs_pattern512, mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
-      size = sizeof mfs_buffer;
-      err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+      size = sizeof __nocache_mfs_buffer;
+      err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
       test_assert(err == MFS_NO_ERROR,
                   "record not found");
       test_assert(size == sizeof mfs_pattern512,
                   "unexpected record length");
-      test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+      test_assert(memcmp(mfs_pattern512, __nocache_mfs_buffer, size) == 0,
                   "wrong record content");
     }
   }
@@ -544,13 +544,13 @@ static void mfs_test_001_006_execute(void) {
 
       err = mfsWriteRecord(&mfs1, id, sizeof mfs_pattern512, mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
-      size = sizeof mfs_buffer;
-      err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+      size = sizeof __nocache_mfs_buffer;
+      err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
       test_assert(err == MFS_NO_ERROR,
                   "record not found");
       test_assert(size == sizeof mfs_pattern512,
                   "unexpected record length");
-      test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+      test_assert(memcmp(mfs_pattern512, __nocache_mfs_buffer, size) == 0,
                   "wrong record content");
     }
   }
@@ -564,8 +564,8 @@ static void mfs_test_001_006_execute(void) {
 
     err = mfsEraseRecord(&mfs1, 1);
     test_assert(err == MFS_NO_ERROR, "error erasing the record");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
   }
   test_end_step(2);
@@ -582,11 +582,11 @@ static void mfs_test_001_006_execute(void) {
     err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern512, mfs_pattern512);
     test_assert(err == MFS_WARN_GC, "error creating the record");
     test_assert(mfs1.current_counter == 2, "not second instance");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
     test_assert(size == sizeof mfs_pattern512, "unexpected record length");
-    test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+    test_assert(memcmp(mfs_pattern512, __nocache_mfs_buffer, size) == 0,
                 "wrong record content");
     test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
     test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");
@@ -607,16 +607,16 @@ static void mfs_test_001_006_execute(void) {
       size_t size;
 
       if (id <= id_max) {
-        size = sizeof mfs_buffer;
-        err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+        size = sizeof __nocache_mfs_buffer;
+        err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
         test_assert(err == MFS_NO_ERROR, "record not found");
         test_assert(size == sizeof mfs_pattern512, "unexpected record length");
-        test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+        test_assert(memcmp(mfs_pattern512, __nocache_mfs_buffer, size) == 0,
                     "wrong record content");
       }
       else {
-        size = sizeof mfs_buffer;
-        err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+        size = sizeof __nocache_mfs_buffer;
+        err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
         test_assert(err == MFS_ERR_NOT_FOUND, "found unexpected record");
       }
     }
@@ -631,8 +631,8 @@ static void mfs_test_001_006_execute(void) {
 
     err = mfsEraseRecord(&mfs1, 1);
     test_assert(err == MFS_NO_ERROR, "error erasing the record");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
   }
   test_end_step(5);
@@ -649,11 +649,11 @@ static void mfs_test_001_006_execute(void) {
     err = mfsWriteRecord(&mfs1, 1, sizeof mfs_pattern512, mfs_pattern512);
     test_assert(err == MFS_WARN_GC, "error creating the record");
     test_assert(mfs1.current_counter == 3, "not third instance");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, 1, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, 1, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_NO_ERROR, "record not found");
     test_assert(size == sizeof mfs_pattern512, "unexpected record length");
-    test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+    test_assert(memcmp(mfs_pattern512, __nocache_mfs_buffer, size) == 0,
                 "wrong record content");
     test_assert(mfs1.current_bank == MFS_BANK_0, "unexpected bank");
     test_assert(bank_verify_erased(MFS_BANK_1) == FLASH_NO_ERROR, "bank 1 not erased");
@@ -674,16 +674,16 @@ static void mfs_test_001_006_execute(void) {
       size_t size;
 
       if (id <= id_max) {
-        size = sizeof mfs_buffer;
-        err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+        size = sizeof __nocache_mfs_buffer;
+        err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
         test_assert(err == MFS_NO_ERROR, "record not found");
         test_assert(size == sizeof mfs_pattern512, "unexpected record length");
-        test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+        test_assert(memcmp(mfs_pattern512, __nocache_mfs_buffer, size) == 0,
                     "wrong record content");
       }
       else {
-        size = sizeof mfs_buffer;
-        err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+        size = sizeof __nocache_mfs_buffer;
+        err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
         test_assert(err == MFS_ERR_NOT_FOUND, "found unexpected record");
       }
     }
@@ -741,11 +741,11 @@ static void mfs_test_001_007_execute(void) {
 
       err = mfsWriteRecord(&mfs1, id, (sizeof mfs_pattern512 / 4), mfs_pattern512);
       test_assert(err == MFS_NO_ERROR, "error creating the record");
-      size = sizeof mfs_buffer;
-      err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+      size = sizeof __nocache_mfs_buffer;
+      err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
       test_assert(err == MFS_NO_ERROR, "record not found");
       test_assert(size == (sizeof mfs_pattern512 / 4), "unexpected record length");
-      test_assert(memcmp(mfs_pattern512, mfs_buffer, size) == 0,
+      test_assert(memcmp(mfs_pattern512, __nocache_mfs_buffer, size) == 0,
                   "wrong record content");
     }
   }
@@ -767,8 +767,8 @@ static void mfs_test_001_007_execute(void) {
     for (id = 1; id <= n; id++) {
       err = mfsEraseRecord(&mfs1, id);
       test_assert(err == MFS_NO_ERROR, "error erasing the record");
-      size = sizeof mfs_buffer;
-      err = mfsReadRecord(&mfs1, id, &size, mfs_buffer);
+      size = sizeof __nocache_mfs_buffer;
+      err = mfsReadRecord(&mfs1, id, &size, __nocache_mfs_buffer);
       test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
     }
   }
@@ -789,8 +789,8 @@ static void mfs_test_001_007_execute(void) {
     err = mfsEraseRecord(&mfs1, id_max);
     test_assert(err == MFS_WARN_GC, "error erasing the record");
     test_assert(mfs1.current_counter == 2, "not second instance");
-    size = sizeof mfs_buffer;
-    err = mfsReadRecord(&mfs1, id_max, &size, mfs_buffer);
+    size = sizeof __nocache_mfs_buffer;
+    err = mfsReadRecord(&mfs1, id_max, &size, __nocache_mfs_buffer);
     test_assert(err == MFS_ERR_NOT_FOUND, "record not erased");
     test_assert(mfs1.current_bank == MFS_BANK_1, "unexpected bank");
     test_assert(bank_verify_erased(MFS_BANK_0) == FLASH_NO_ERROR, "bank 0 not erased");

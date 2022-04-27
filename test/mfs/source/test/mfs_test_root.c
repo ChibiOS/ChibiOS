@@ -65,8 +65,9 @@ const testsuite_t mfs_test_suite = {
 
 #include "hal_mfs.h"
 
+mfs_nocache_buffer_t __nocache_mfsbuf1;
 MFSDriver mfs1;
-uint8_t mfs_buffer[512];
+uint8_t __nocache_mfs_buffer[512];
 
 const uint8_t mfs_pattern16[16] = {
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
