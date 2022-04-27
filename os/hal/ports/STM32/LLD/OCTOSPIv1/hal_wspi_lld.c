@@ -203,6 +203,7 @@ void wspi_lld_init(void) {
  * @notapi
  */
 void wspi_lld_start(WSPIDriver *wspip) {
+  uint32_t dcr2;
 
   /* If in stopped state then full initialization.*/
   if (wspip->state == WSPI_STOP) {
@@ -215,7 +216,8 @@ void wspi_lld_start(WSPIDriver *wspip) {
       osalDbgAssert(wspip->dma != NULL, "unable to allocate stream");
       rccEnableOCTOSPI1(true);
       dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_OCTOSPI1);
-    }
+      dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
+   }
 #endif
 
 #if STM32_WSPI_USE_OCTOSPI2
@@ -227,6 +229,7 @@ void wspi_lld_start(WSPIDriver *wspip) {
       osalDbgAssert(wspip->dma != NULL, "unable to allocate stream");
       rccEnableOCTOSPI2(true);
       dmaSetRequestSource(wspip->dma, STM32_DMAMUX1_OCTOSPI2);
+      dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI2_PRESCALER_VALUE - 1U);
     }
 #endif
 
@@ -236,10 +239,9 @@ void wspi_lld_start(WSPIDriver *wspip) {
 
   /* WSPI setup and enable.*/
   wspip->ospi->DCR1 = wspip->config->dcr1;
-  wspip->ospi->DCR2 = wspip->config->dcr2 |
-                      STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
+  wspip->ospi->DCR2 = wspip->config->dcr2 | dcr2;
   wspip->ospi->DCR3 = wspip->config->dcr3;
-  wspip->ospi->CR   = OCTOSPI_CR_TCIE | OCTOSPI_CR_DMAEN | OCTOSPI_CR_EN;
+  wspip->ospi->CR   = OCTOSPI_CR_TCIE  | OCTOSPI_CR_DMAEN | OCTOSPI_CR_EN;
   wspip->ospi->FCR  = OCTOSPI_FCR_CTEF | OCTOSPI_FCR_CTCF |
                       OCTOSPI_FCR_CSMF | OCTOSPI_FCR_CTOF;
 }
@@ -313,9 +315,6 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->ospi->AR  = cmdp->addr;
   }
-
-  /* Waiting for the previous operation to complete.*/
-  wspi_lld_sync(wspip);
 }
 
 /**

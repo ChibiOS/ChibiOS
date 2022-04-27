@@ -48,6 +48,8 @@ static flash_error_t snor_start_erase_sector(void *instance,
 static flash_error_t snor_verify_erase(void *instance,
                                        flash_sector_t sector);
 static flash_error_t snor_query_erase(void *instance, uint32_t *msec);
+static flash_error_t snor_acquire_exclusive(void *instance);
+static flash_error_t snor_release_exclusive(void *instance);
 static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
                                     size_t n, uint8_t *rp);
 
@@ -58,8 +60,8 @@ static const struct SNORDriverVMT snor_vmt = {
   (size_t)0,
   snor_get_descriptor, snor_read, snor_program,
   snor_start_erase_all, snor_start_erase_sector,
-  snor_query_erase, snor_verify_erase,
-  snor_read_sfdp
+  snor_query_erase, snor_verify_erase, snor_acquire_exclusive,
+  snor_release_exclusive, snor_read_sfdp,
 };
 
 /*===========================================================================*/
@@ -298,6 +300,55 @@ static flash_error_t snor_read_sfdp(void *instance, flash_offset_t offset,
   return err;
 }
 
+static flash_error_t snor_acquire_exclusive(void *instance) {
+#if (SNOR_USE_MUTUAL_EXCLUSION == TRUE)
+  SNORDriver *devp = (SNORDriver *)instance;
+
+  osalMutexLock(&devp->mutex);
+  return FLASH_NO_ERROR;
+#else
+  (void)instance;
+  osalDbgAssert(false, "mutual exclusion not enabled");
+  return FLASH_ERROR_UNIMPLEMENTED;
+#endif
+}
+
+static flash_error_t snor_release_exclusive(void *instance) {
+#if (SNOR_USE_MUTUAL_EXCLUSION == TRUE)
+  SNORDriver *devp = (SNORDriver *)instance;
+
+  osalMutexUnlock(&devp->mutex);
+  return FLASH_NO_ERROR;
+#else
+  (void)instance;
+  osalDbgAssert(false, "mutual exclusion not enabled");
+  return FLASH_ERROR_UNIMPLEMENTED;
+#endif
+}
+
+#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI) || defined(__DOXYGEN__)
+void snor_spi_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_offset_t offset) {
+#if (SNOR_SPI_4BYTES_ADDRESS == TRUE)
+  uint8_t buf[5];
+
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(offset >> 24);
+  buf[2] = (uint8_t)(offset >> 16);
+  buf[3] = (uint8_t)(offset >> 8);
+  buf[4] = (uint8_t)(offset >> 0);
+  spiSend(busp, 5, buf);
+#else
+  uint8_t buf[4];
+
+  buf[0] = cmd;
+  buf[1] = (uint8_t)(offset >> 16);
+  buf[2] = (uint8_t)(offset >> 8);
+  buf[3] = (uint8_t)(offset >> 0);
+  spiSend(busp, 4, buf);
+#endif
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -480,14 +531,8 @@ void bus_cmd_addr(BUSDriver *busp, uint32_t cmd, flash_offset_t offset) {
   mode.dummy = 0U;
   wspiCommand(busp, &mode);
 #else
-  uint8_t buf[4];
-
   spiSelect(busp);
-  buf[0] = cmd;
-  buf[1] = (uint8_t)(offset >> 16);
-  buf[2] = (uint8_t)(offset >> 8);
-  buf[3] = (uint8_t)(offset >> 0);
-  spiSend(busp, 4, buf);
+  snor_spi_cmd_addr(busp, cmd, offset);
   spiUnselect(busp);
 #endif
 }
@@ -519,14 +564,8 @@ void bus_cmd_addr_send(BUSDriver *busp,
   mode.dummy = 0U;
   wspiSend(busp, &mode, n, p);
 #else
-  uint8_t buf[4];
-
   spiSelect(busp);
-  buf[0] = cmd;
-  buf[1] = (uint8_t)(offset >> 16);
-  buf[2] = (uint8_t)(offset >> 8);
-  buf[3] = (uint8_t)(offset >> 0);
-  spiSend(busp, 4, buf);
+  snor_spi_cmd_addr(busp, cmd, offset);
   spiSend(busp, n, p);
   spiUnselect(busp);
 #endif
@@ -559,20 +598,13 @@ void bus_cmd_addr_receive(BUSDriver *busp,
   mode.dummy = 0U;
   wspiReceive(busp, &mode, n, p);
 #else
-  uint8_t buf[4];
-
   spiSelect(busp);
-  buf[0] = cmd;
-  buf[1] = (uint8_t)(offset >> 16);
-  buf[2] = (uint8_t)(offset >> 8);
-  buf[3] = (uint8_t)(offset >> 0);
-  spiSend(busp, 4, buf);
+  snor_spi_cmd_addr(busp, cmd, offset);
   spiReceive(busp, n, p);
   spiUnselect(busp);
 #endif
 }
 
-#if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) || defined(__DOXYGEN__)
 /**
  * @brief   Sends a command followed by dummy cycles and a
  *          data receive phase.
@@ -590,6 +622,7 @@ void bus_cmd_dummy_receive(BUSDriver *busp,
                            uint32_t dummy,
                            size_t n,
                            uint8_t *p) {
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   wspi_command_t mode;
 
   mode.cmd   = cmd;
@@ -598,6 +631,20 @@ void bus_cmd_dummy_receive(BUSDriver *busp,
   mode.alt   = 0U;
   mode.dummy = dummy;
   wspiReceive(busp, &mode, n, p);
+#else
+  uint8_t buf[1];
+
+  osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+  spiSelect(busp);
+  buf[0] = cmd;
+  spiSend(busp, 1, buf);
+  if (dummy != 0U) {
+    spiIgnore(busp, dummy / 8U);
+  }
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
 }
 
 /**
@@ -619,6 +666,7 @@ void bus_cmd_addr_dummy_receive(BUSDriver *busp,
                                 uint32_t dummy,
                                 size_t n,
                                 uint8_t *p) {
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
   wspi_command_t mode;
 
   mode.cmd   = cmd;
@@ -627,23 +675,38 @@ void bus_cmd_addr_dummy_receive(BUSDriver *busp,
   mode.alt   = 0U;
   mode.dummy = dummy;
   wspiReceive(busp, &mode, n, p);
+#else
+  osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+  spiSelect(busp);
+  snor_spi_cmd_addr(busp, cmd, offset);
+  if (dummy != 0U) {
+    spiIgnore(busp, dummy / 8U);
+  }
+  spiReceive(busp, n, p);
+  spiUnselect(busp);
+#endif
 }
-#endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
 /**
  * @brief   Initializes an instance.
  *
  * @param[out] devp     pointer to the @p SNORDriver object
+ * @param[in] nocache   pointer to the non-cacheable buffers
  *
  * @init
  */
-void snorObjectInit(SNORDriver *devp) {
+void snorObjectInit(SNORDriver *devp, snor_nocache_buffer_t *nocache) {
 
   osalDbgCheck(devp != NULL);
 
   devp->vmt         = &snor_vmt;
   devp->state       = FLASH_STOP;
   devp->config      = NULL;
+  devp->nocache     = nocache;
+#if SNOR_USE_MUTUAL_EXCLUSION == TRUE
+  osalMutexObjectInit(&devp->mutex);
+#endif
 }
 
 /**
@@ -665,6 +728,14 @@ void snorStart(SNORDriver *devp, const SNORConfig *config) {
 
     /* Bus acquisition.*/
     bus_acquire(devp->config->busp, devp->config->buscfg);
+
+#if SNOR_SHARED_BUS == FALSE
+#if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
+    wspiStart(devp->config->busp, devp->config->buscfg);
+#elif SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI
+    spiStart(devp->config->busp, devp->config->buscfg);
+#endif
+#endif
 
     /* Device identification and initialization.*/
     snor_device_init(devp);

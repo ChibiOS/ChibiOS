@@ -1067,7 +1067,7 @@
  * @brief   FMC clock source.
  */
 #if !defined(STM32_FMCSEL) || defined(__DOXYGEN__)
-#define STM32_FMCSEL                        STM32_QSPISEL_HCLK
+#define STM32_FMCSEL                        STM32_FMCSEL_HCLK
 #endif
 
 /**
@@ -2680,9 +2680,9 @@
 #define STM32_I2C2CLK               STM32_PCLK1
 
 /**
- * @brief   I2C2 clock.
+ * @brief   I2C3 clock.
  */
-#define STM32_I2C2CLK               STM32_PCLK1
+#define STM32_I2C3CLK               STM32_PCLK1
 
 #elif STM32_I2C123SEL == STM32_I2C123SEL_PLL3_R_CK
 #define STM32_I2C1CLK               STM32_PLL3_R_CK

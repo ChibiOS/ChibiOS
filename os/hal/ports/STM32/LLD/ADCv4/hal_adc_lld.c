@@ -64,6 +64,19 @@
 #endif /* STM32_ADC_SAMPLES_SIZE == 8 */
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 
+/* I guess somewhere there is somebody proud of this, innovation at its
+   finest...*/
+#if STM32_ADC_RENAMED_REGS
+#define PCSEL           PCSEL_RES0
+#define DIFSEL          DIFSEL_RES12
+#define LTR1            LTR1_TR1
+#define HTR1            HTR1_TR2
+#define LTR2            LTR2_DIFSEL
+#define HTR2            HTR2_CALFACT
+#define LTR3            LTR3_RES10
+#define HTR3            HTR3_RES11
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -675,24 +688,24 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adcc->CCR   = (adcp->adcc->CCR &
                           (ADC_CCR_CKMODE_MASK | ADC_CCR_DAMDF_MASK | ADC_CCR_DUAL_MASK)) | ccr;
 
-    adcp->adcm->CFGR2 = grpp->cfgr2;
-    adcp->adcm->PCSEL = grpp->pcsel;
-    adcp->adcm->LTR1  = grpp->ltr1;
-    adcp->adcm->HTR1  = grpp->htr1;
+    adcp->adcm->CFGR2   = grpp->cfgr2;
+    adcp->adcm->PCSEL   = grpp->pcsel;
+    adcp->adcm->LTR1    = grpp->ltr1;
+    adcp->adcm->HTR1    = grpp->htr1;
     adcp->adcm->LTR2    = grpp->ltr2;
     adcp->adcm->HTR2    = grpp->htr2;
     adcp->adcm->LTR3    = grpp->ltr3;
     adcp->adcm->HTR3    = grpp->htr3;
     adcp->adcm->AWD2CR  = grpp->awd2cr;
     adcp->adcm->AWD3CR  = grpp->awd3cr;
-    adcp->adcm->SMPR1 = grpp->smpr[0];
-    adcp->adcm->SMPR2 = grpp->smpr[1];
-    adcp->adcm->SQR1  = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
-    adcp->adcm->SQR2  = grpp->sqr[1];
-    adcp->adcm->SQR3  = grpp->sqr[2];
-    adcp->adcm->SQR4  = grpp->sqr[3];
-    adcp->adcs->CFGR2 = grpp->cfgr2;
-    adcp->adcs->PCSEL = grpp->pcsel;
+    adcp->adcm->SMPR1   = grpp->smpr[0];
+    adcp->adcm->SMPR2   = grpp->smpr[1];
+    adcp->adcm->SQR1    = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
+    adcp->adcm->SQR2    = grpp->sqr[1];
+    adcp->adcm->SQR3    = grpp->sqr[2];
+    adcp->adcm->SQR4    = grpp->sqr[3];
+    adcp->adcs->CFGR2   = grpp->cfgr2;
+    adcp->adcs->PCSEL   = grpp->pcsel;
     adcp->adcs->LTR1    = grpp->sltr1;
     adcp->adcs->HTR1    = grpp->shtr1;
     adcp->adcs->LTR2    = grpp->sltr2;
@@ -701,12 +714,12 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adcs->HTR3    = grpp->shtr3;
     adcp->adcs->AWD2CR  = grpp->sawd2cr;
     adcp->adcs->AWD3CR  = grpp->sawd3cr;
-    adcp->adcs->SMPR1 = grpp->ssmpr[0];
-    adcp->adcs->SMPR2 = grpp->ssmpr[1];
-    adcp->adcs->SQR1  = grpp->ssqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
-    adcp->adcs->SQR2  = grpp->ssqr[1];
-    adcp->adcs->SQR3  = grpp->ssqr[2];
-    adcp->adcs->SQR4  = grpp->ssqr[3];
+    adcp->adcs->SMPR1   = grpp->ssmpr[0];
+    adcp->adcs->SMPR2   = grpp->ssmpr[1];
+    adcp->adcs->SQR1    = grpp->ssqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels / 2);
+    adcp->adcs->SQR2    = grpp->ssqr[1];
+    adcp->adcs->SQR3    = grpp->ssqr[2];
+    adcp->adcs->SQR4    = grpp->ssqr[3];
 
     /* ADC configuration.*/
     adcp->adcm->CFGR  = cfgr;
@@ -718,22 +731,22 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #if STM32_ADC_DUAL_MODE == FALSE || STM32_ADC_USE_ADC3 == TRUE
   /* Configuration for ADC3 and single mode ADC1 */
 
-    adcp->adcm->CFGR2 = grpp->cfgr2;
-    adcp->adcm->PCSEL = grpp->pcsel;
-    adcp->adcm->LTR1  = grpp->ltr1;
-    adcp->adcm->HTR1  = grpp->htr1;
+    adcp->adcm->CFGR2   = grpp->cfgr2;
+    adcp->adcm->PCSEL   = grpp->pcsel;
+    adcp->adcm->LTR1    = grpp->ltr1;
+    adcp->adcm->HTR1    = grpp->htr1;
     adcp->adcm->LTR2    = grpp->ltr2;
     adcp->adcm->HTR2    = grpp->htr2;
     adcp->adcm->LTR3    = grpp->ltr3;
     adcp->adcm->HTR3    = grpp->htr3;
     adcp->adcm->AWD2CR  = grpp->awd2cr;
     adcp->adcm->AWD3CR  = grpp->awd3cr;
-    adcp->adcm->SMPR1 = grpp->smpr[0];
-    adcp->adcm->SMPR2 = grpp->smpr[1];
-    adcp->adcm->SQR1  = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels);
-    adcp->adcm->SQR2  = grpp->sqr[1];
-    adcp->adcm->SQR3  = grpp->sqr[2];
-    adcp->adcm->SQR4  = grpp->sqr[3];
+    adcp->adcm->SMPR1   = grpp->smpr[0];
+    adcp->adcm->SMPR2   = grpp->smpr[1];
+    adcp->adcm->SQR1    = grpp->sqr[0] | ADC_SQR1_NUM_CH(grpp->num_channels);
+    adcp->adcm->SQR2    = grpp->sqr[1];
+    adcp->adcm->SQR3    = grpp->sqr[2];
+    adcp->adcm->SQR4    = grpp->sqr[3];
 
     /* ADC configuration.*/
     adcp->adcm->CFGR  = cfgr;

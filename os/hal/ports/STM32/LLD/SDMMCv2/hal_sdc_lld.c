@@ -64,6 +64,16 @@ static const SDCConfig sdc_default_cfg = {
   SDC_MODE_4BIT
 };
 
+#if STM32_SDC_USE_SDMMC1 || defined(__DOXYGEN__)
+static uint8_t __nocache_sd1_buf[MMCSD_BLOCK_SIZE];
+static uint32_t __nocache_sd1_wbuf[1];
+#endif
+
+#if STM32_SDC_USE_SDMMC2 || defined(__DOXYGEN__)
+static uint8_t __nocache_sd2_buf[MMCSD_BLOCK_SIZE];
+static uint32_t __nocache_sd2_wbuf[1];
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -317,6 +327,8 @@ void sdc_lld_init(void) {
   SDCD1.thread  = NULL;
   SDCD1.sdmmc   = SDMMC1;
   SDCD1.clkfreq = STM32_SDMMC1CLK;
+  SDCD1.buf     = __nocache_sd1_buf;
+  SDCD1.resp    = __nocache_sd1_wbuf;
 #endif
 
 #if STM32_SDC_USE_SDMMC2
@@ -324,6 +336,8 @@ void sdc_lld_init(void) {
   SDCD2.thread  = NULL;
   SDCD2.sdmmc   = SDMMC2;
   SDCD2.clkfreq = STM32_SDMMC2CLK;
+  SDCD2.buf     = __nocache_sd2_buf;
+  SDCD2.resp    = __nocache_sd2_wbuf;
 #endif
 }
 
@@ -626,22 +640,21 @@ bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  */
 bool sdc_lld_read_special(SDCDriver *sdcp, uint8_t *buf, size_t bytes,
                           uint8_t cmd, uint32_t arg) {
-  uint32_t resp[1];
 
   if (sdc_lld_prepare_read_bytes(sdcp, buf, bytes))
     goto error;
 
-  if (sdc_lld_send_cmd_short_crc(sdcp, SDMMC_CMD_CMDTRANS | cmd, arg, resp) ||
-      MMCSD_R1_ERROR(resp[0]))
+  if (sdc_lld_send_cmd_short_crc(sdcp, SDMMC_CMD_CMDTRANS | cmd, arg, sdcp->resp) ||
+      MMCSD_R1_ERROR(sdcp->resp[0]))
     goto error;
 
-  if (sdc_lld_wait_transaction_end(sdcp, 1, resp))
+  if (sdc_lld_wait_transaction_end(sdcp, 1, sdcp->resp))
     goto error;
 
   return HAL_SUCCESS;
 
 error:
-  sdc_lld_error_cleanup(sdcp, 1, resp);
+  sdc_lld_error_cleanup(sdcp, 1, sdcp->resp);
   return HAL_FAILED;
 }
 
@@ -661,7 +674,6 @@ error:
  */
 bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                           uint8_t *buf, uint32_t blocks) {
-  uint32_t resp[1];
 
   osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
@@ -688,16 +700,16 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
   sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
-  if (sdc_lld_prepare_read(sdcp, startblk, blocks, resp) == true)
+  if (sdc_lld_prepare_read(sdcp, startblk, blocks, sdcp->resp) == true)
     goto error;
 
-  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
+  if (sdc_lld_wait_transaction_end(sdcp, blocks, sdcp->resp) == true)
     goto error;
 
   return HAL_SUCCESS;
 
 error:
-  sdc_lld_error_cleanup(sdcp, blocks, resp);
+  sdc_lld_error_cleanup(sdcp, blocks, sdcp->resp);
   return HAL_FAILED;
 }
 
@@ -717,7 +729,6 @@ error:
  */
 bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                            const uint8_t *buf, uint32_t blocks) {
-  uint32_t resp[1];
 
   osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
@@ -743,16 +754,16 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
   sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
-  if (sdc_lld_prepare_write(sdcp, startblk, blocks, resp) == true)
+  if (sdc_lld_prepare_write(sdcp, startblk, blocks, sdcp->resp) == true)
     goto error;
 
-  if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
+  if (sdc_lld_wait_transaction_end(sdcp, blocks, sdcp->resp) == true)
     goto error;
 
   return HAL_SUCCESS;
 
 error:
-  sdc_lld_error_cleanup(sdcp, blocks, resp);
+  sdc_lld_error_cleanup(sdcp, blocks, sdcp->resp);
   return HAL_FAILED;
 }
 

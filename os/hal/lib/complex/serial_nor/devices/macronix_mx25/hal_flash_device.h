@@ -288,9 +288,9 @@
 
 /**
  * @brief   Device bus mode to be used.
- * #note    if @p MX25_SWITCH_WIDTH is @p FALSE then this is the bus mode
+ * @note    if @p MX25_SWITCH_WIDTH is @p FALSE then this is the bus mode
  *          that the device is expected to be using.
- * #note    if @p MX25_SWITCH_WIDTH is @p TRUE then this is the bus mode
+ * @note    if @p MX25_SWITCH_WIDTH is @p TRUE then this is the bus mode
  *          that the device will be switched in.
  * @note    This option is only valid in WSPI bus mode.
  */
@@ -316,17 +316,6 @@
 #endif
 
 /**
- * @brief   Size of the compare buffer.
- * @details This buffer is allocated in the stack frame of the function
- *          @p flashVerifyErase() and its size must be a power of two.
- *          Larger buffers lead to better verify performance but increase
- *          stack usage for that function.
- */
-#if !defined(MX25_COMPARE_BUFFER_SIZE) || defined(__DOXYGEN__)
-#define MX25_COMPARE_BUFFER_SIZE            32
-#endif
-
-/**
  * @brief   Number of dummy cycles for fast read (1..15).
  * @details This is the number of dummy cycles to be used for fast read
  *          operations.
@@ -338,10 +327,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if (MX25_COMPARE_BUFFER_SIZE & (MX25_COMPARE_BUFFER_SIZE - 1)) != 0
-#error "invalid MX25_COMPARE_BUFFER_SIZE value"
-#endif
 
 #if (MX25_READ_DUMMY_CYCLES < 6) || (MX25_READ_DUMMY_CYCLES > 20) ||        \
     ((MX25_READ_DUMMY_CYCLES & 1) != 0)

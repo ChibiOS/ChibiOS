@@ -334,6 +334,17 @@ typedef struct {
 } mfs_transaction_op_t;
 
 /**
+ * @brief   Type of an non-cacheable MFS buffer.
+ */
+typedef union mfs_nocache_buffer {
+  mfs_data_header_t       dhdr;
+  mfs_bank_header_t       bhdr;
+  uint8_t                 data8[MFS_CFG_BUFFER_SIZE];
+  uint16_t                data16[MFS_CFG_BUFFER_SIZE / sizeof (uint16_t)];
+  uint32_t                data32[MFS_CFG_BUFFER_SIZE / sizeof (uint32_t)];
+} mfs_nocache_buffer_t;
+
+/**
  * @brief   Type of an MFS instance.
  */
 typedef struct {
@@ -385,15 +396,9 @@ typedef struct {
   mfs_transaction_op_t      tr_ops[MFS_CFG_TRANSACTION_MAX];
 #endif
   /**
-   * @brief   Transient buffer.
+   * @brief   Associated non-cacheable buffer.
    */
-  union {
-    mfs_data_header_t       dhdr;
-    mfs_bank_header_t       bhdr;
-    uint8_t                 data8[MFS_CFG_BUFFER_SIZE];
-    uint16_t                data16[MFS_CFG_BUFFER_SIZE / sizeof (uint16_t)];
-    uint32_t                data32[MFS_CFG_BUFFER_SIZE / sizeof (uint32_t)];
-  } buffer;
+  mfs_nocache_buffer_t      *ncbuf;
 } MFSDriver;
 
 /*===========================================================================*/
@@ -426,7 +431,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void mfsObjectInit(MFSDriver *devp);
+  void mfsObjectInit(MFSDriver *devp, mfs_nocache_buffer_t *ncbuf);
   mfs_error_t mfsStart(MFSDriver *devp, const MFSConfig *config);
   void mfsStop(MFSDriver *devp);
   mfs_error_t mfsErase(MFSDriver *mfsp);

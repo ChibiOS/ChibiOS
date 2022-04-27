@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -55,6 +55,8 @@
  * @retval FLASH_NO_ERROR if there is no erase operation in progress.
  * @retval FLASH_ERROR_ERASE if the erase operation failed.
  * @retval FLASH_ERROR_HW_FAILURE if access to the memory failed.
+ *
+ * @api
  */
 flash_error_t flashWaitErase(BaseFlash *devp) {
 
@@ -78,8 +80,9 @@ flash_error_t flashWaitErase(BaseFlash *devp) {
  *
  * @param[in] devp      pointer to a @p BaseFlash object
  * @param[in] sector    flash sector number
+ * @return              Sector offset.
  *
- * @return the offset of the sector
+ * @api
  */
 flash_offset_t flashGetSectorOffset(BaseFlash *devp,
                                     flash_sector_t sector) {
@@ -103,8 +106,9 @@ flash_offset_t flashGetSectorOffset(BaseFlash *devp,
  *
  * @param[in] devp      pointer to a @p BaseFlash object
  * @param[in] sector    flash sector number
+ * @return              Sector size.
  *
- * @return the size of the sector
+ * @api
  */
 uint32_t flashGetSectorSize(BaseFlash *devp,
                             flash_sector_t sector) {
@@ -122,4 +126,79 @@ uint32_t flashGetSectorSize(BaseFlash *devp,
 
   return size;
 }
+
+/**
+ * @brief   Returns the sector of an offset.
+ *
+ * @param[in] devp      pointer to a @p BaseFlash object
+ * @param[in] offset    flash offset
+ * @return              Flash sector.
+ *
+ * @api
+ */
+flash_sector_t flashGetOffsetSector(BaseFlash *devp, flash_offset_t offset) {
+  flash_sector_t sector, i;
+  const flash_descriptor_t *descriptor = flashGetDescriptor(devp);
+
+  osalDbgAssert(offset < descriptor->size, "invalid offset");
+
+  if (descriptor->sectors != NULL) {
+    flash_offset_t sector_start;
+    flash_offset_t sector_end;
+    for (i = 0; i < descriptor->sectors_count; i++) {
+      sector_start = descriptor->sectors[i].offset;
+      sector_end = sector_start + descriptor->sectors[i].size - 1U;
+      if ((offset >= sector_start) && (offset <= sector_end)) {
+        sector = i;
+        return sector;
+      }
+    }
+  }
+  else {
+    sector = offset / descriptor->sectors_size;
+    return sector;
+  }
+
+  osalDbgAssert(FALSE, "invalid offset");
+
+  return 0;
+}
+
+/**
+ * @brief   Get absolute address from offset
+ *
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @param[in] offset                flash offset
+ * @return                          A pointer to the offset.
+ *
+ * @deprecated
+ */
+void *flashGetOffsetAddress(BaseFlash *devp, flash_offset_t offset) {
+  const flash_descriptor_t *descriptor = flashGetDescriptor(devp);
+
+  osalDbgAssert(offset < descriptor->size, "invalid offset");
+
+  return (void *)((flash_offset_t)descriptor->address + offset);
+}
+
+/**
+ * @brief   Get offset from absolute address
+ *
+ * @param[in] ip                    pointer to a @p BaseFlash or derived class
+ * @param[in] addr                  pointer
+ * @return                          flash offset
+ *
+ * @deprecated
+ */
+flash_offset_t flashGetAddressOffset(BaseFlash *devp, void *addr) {
+  const flash_descriptor_t *descriptor = flashGetDescriptor(devp);
+
+  osalDbgAssert(((flash_offset_t)addr >= (flash_offset_t)descriptor->address) &&
+                ((flash_offset_t)addr <= (flash_offset_t)descriptor->address +
+                                         descriptor->size),
+                "invalid address");
+
+  return (flash_offset_t)addr - (flash_offset_t)descriptor->address;
+}
+
 /** @} */

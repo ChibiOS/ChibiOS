@@ -84,17 +84,9 @@ static void wspi_lld_serve_mdma_interrupt(WSPIDriver *wspip, uint32_t flags) {
   (void)wspip;
   (void)flags;
 
-  if (((flags & STM32_MDMA_CISR_CTCIF) != 0U) &&
-      (wspip->state == WSPI_RECEIVE)) {
-    /* Portable WSPI ISR code defined in the high level driver, note, it is
-     a macro.*/
-    _wspi_isr_code(wspip);
-
-    mdmaChannelDisableX(wspip->mdma);
-  }
   /* DMA errors handling.*/
 #if defined(STM32_WSPI_MDMA_ERROR_HOOK)
-  else if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
+  if ((flags & STM32_MDMA_CISR_TEIF) != 0) {
     STM32_WSPI_MDMA_ERROR_HOOK(wspip);
   }
 #endif
@@ -126,6 +118,9 @@ void wspi_lld_init(void) {
   WSPID2.ospi       = OCTOSPI2;
   WSPID2.mdma       = NULL;
 #endif
+
+  /* Shared unit, enabling it here.*/
+  rccEnableOCTOSPIM(false);
 }
 
 /**
@@ -136,6 +131,7 @@ void wspi_lld_init(void) {
  * @notapi
  */
 void wspi_lld_start(WSPIDriver *wspip) {
+  uint32_t dcr2;
 
   /* If in stopped state then full initialization.*/
   if (wspip->state == WSPI_STOP) {
@@ -147,6 +143,7 @@ void wspi_lld_start(WSPIDriver *wspip) {
       osalDbgAssert(wspip->mdma != NULL, "unable to allocate MDMA channel");
       rccEnableOCTOSPI1(true);
       mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_OCTOSPI1_FIFO_TH);
+      dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
     }
 #endif
 
@@ -158,16 +155,17 @@ void wspi_lld_start(WSPIDriver *wspip) {
       osalDbgAssert(wspip->mdma != NULL, "unable to allocate MDMA channel");
       rccEnableOCTOSPI2(true);
       mdmaChannelSetTrigModeX(wspip->mdma, MDMA_REQUEST_OCTOSPI2_FIFO_TH);
+      dcr2 = STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI2_PRESCALER_VALUE - 1U);
     }
 #endif
   }
 
   /* WSPI setup and enable.*/
   wspip->ospi->DCR1 = wspip->config->dcr1;
-  wspip->ospi->DCR2 = wspip->config->dcr2 |
-                      STM32_DCR2_PRESCALER(STM32_WSPI_OCTOSPI1_PRESCALER_VALUE - 1U);
+  wspip->ospi->DCR2 = wspip->config->dcr2 | dcr2;
   wspip->ospi->DCR3 = wspip->config->dcr3;
-  wspip->ospi->CR   = OCTOSPI_CR_TCIE | OCTOSPI_CR_DMAEN | OCTOSPI_CR_EN;
+  wspip->ospi->DCR4 = wspip->config->dcr4;
+  wspip->ospi->CR   = OCTOSPI_CR_TCIE  | OCTOSPI_CR_DMAEN | OCTOSPI_CR_EN;
   wspip->ospi->FCR  = OCTOSPI_FCR_CTEF | OCTOSPI_FCR_CTCF |
                       OCTOSPI_FCR_CSMF | OCTOSPI_FCR_CTOF;
 }
@@ -229,9 +227,6 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->ospi->AR  = cmdp->addr;
   }
-
-  /* Waiting for the previous operation to complete.*/
-  wspi_lld_sync(wspip);
 }
 
 /**
@@ -323,7 +318,6 @@ void wspi_lld_receive(WSPIDriver *wspip, const wspi_command_t *cmdp,
                   STM32_MDMA_CTCR_DINC_INC      |   /* Destination incr.    */
                   STM32_MDMA_CTCR_SINC_FIXED;       /* Source fixed.        */
   uint32_t ccr  = STM32_MDMA_CCR_PL(STM32_WSPI_OCTOSPI1_MDMA_PRIORITY) |
-                  STM32_MDMA_CCR_CTCIE          |   /* On transfer complete.*/
                   STM32_MDMA_CCR_TEIE;              /* On transfer error.   */
 
   /* MDMA initializations.*/
@@ -418,6 +412,9 @@ void wspi_lld_unmap_flash(WSPIDriver *wspip) {
  * @param[in] wspip     pointer to the @p WSPIDriver object
  */
 void wspi_lld_serve_interrupt(WSPIDriver *wspip) {
+
+  wspip->ospi->FCR = OCTOSPI_FCR_CTEF | OCTOSPI_FCR_CTCF |
+                     OCTOSPI_FCR_CSMF | OCTOSPI_FCR_CTOF;
 
   /* Portable WSPI ISR code defined in the high level driver, note, it is
      a macro.*/

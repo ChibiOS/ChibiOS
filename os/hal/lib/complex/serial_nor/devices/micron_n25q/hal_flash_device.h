@@ -124,9 +124,9 @@
 
 /**
  * @brief   Device bus mode to be used.
- * #note    if @p N25Q_SWITCH_WIDTH is @p FALSE then this is the bus mode
+ * @note    if @p N25Q_SWITCH_WIDTH is @p FALSE then this is the bus mode
  *          that the device is expected to be using.
- * #note    if @p N25Q_SWITCH_WIDTH is @p TRUE then this is the bus mode
+ * @note    if @p N25Q_SWITCH_WIDTH is @p TRUE then this is the bus mode
  *          that the device will be switched in.
  * @note    This option is only valid in WSPI bus mode.
  */

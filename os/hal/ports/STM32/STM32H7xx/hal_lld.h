@@ -69,6 +69,13 @@
 #endif
 
 /**
+ * @brief   Enables a no-cache RAM area using the MPU.
+ */
+#if !defined(STM32_NOCACHE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_ENABLE                FALSE
+#endif
+
+/**
  * @brief   MPU region to be used for no-cache RAM area.
  */
 #if !defined(STM32_NOCACHE_MPU_REGION) || defined(__DOXYGEN__)
@@ -76,23 +83,59 @@
 #endif
 
 /**
- * @brief   Add no-cache attribute to SRAM1 and SRAM2.
+ * @brief   Base address to be used for no-cache RAM area.
  */
-#if !defined(STM32_NOCACHE_SRAM1_SRAM2) || defined(__DOXYGEN__)
-#define STM32_NOCACHE_SRAM1_SRAM2           FALSE
+#if !defined(STM32_NOCACHE_RBAR) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_RBAR                  0x24000000U
 #endif
 
 /**
- * @brief   Add no-cache attribute to SRAM3.
+ * @brief   Size to be used for no-cache RAM area.
  */
-#if !defined(STM32_NOCACHE_SRAM3) || defined(__DOXYGEN__)
-#define STM32_NOCACHE_SRAM3                 FALSE
+#if !defined(STM32_NOCACHE_RASR) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_RASR                  MPU_RASR_SIZE_16K
 #endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Various helpers.*/
+#include "nvic.h"
+#include "cache.h"
+#include "mpu_v7m.h"
+
+#if (STM32_NOCACHE_RASR != MPU_RASR_SIZE_32)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_64)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_128)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_256)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_512)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_1K)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_2K)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_4K)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_8K)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_16K)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_32K)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_64K)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_128K) &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_256K) &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_512K) &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_1M)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_2M)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_4M)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_8M)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_16M)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_32M)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_64M)  &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_128M) &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_256M) &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_512M) &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_1G)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_2G)   &&                           \
+    (STM32_NOCACHE_RASR != MPU_RASR_SIZE_4G)
+#error "invalid MPU RASR size value"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -110,14 +153,14 @@
     defined(STM32H725xx) || defined(STM32H735xx) ||                         \
     defined(__DOXYGEN__)
 #include "hal_lld_type2.h"
+#elif defined(STM32H7A3xx)  || defined(STM32H7B3xx)  ||                     \
+      defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ)
+#include "hal_lld_type3.h"
 #else
 #include "hal_lld_type1.h"
 #endif
 
 /* Various helpers.*/
-#include "nvic.h"
-#include "cache.h"
-#include "mpu_v7m.h"
 #include "stm32_isr.h"
 #include "stm32_mdma.h"
 #include "stm32_dma.h"

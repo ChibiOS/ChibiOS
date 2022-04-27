@@ -114,6 +114,24 @@
 #endif
 
 /**
+ * @brief   SIO driver 9 enable switch.
+ * @details If set to @p TRUE the support for UART9 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_UART9) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_UART9                 FALSE
+#endif
+
+/**
+ * @brief   SIO driver 10 enable switch.
+ * @details If set to @p TRUE the support for USART10 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SIO_USE_USART10) || defined(__DOXYGEN__)
+#define STM32_SIO_USE_USART10                FALSE
+#endif
+
+/**
  * @brief   SIO driver 8 enable switch.
  * @details If set to @p TRUE the support for LPUART1 is included.
  * @note    The default is @p FALSE.
@@ -163,14 +181,23 @@
 #error "UART8 not present in the selected device"
 #endif
 
+#if STM32_SIO_USE_UART9 && !STM32_HAS_UART9
+#error "UART9 not present in the selected device"
+#endif
+
+#if STM32_SIO_USE_USART10 && !STM32_HAS_USART10
+#error "USART10 not present in the selected device"
+#endif
+
 #if STM32_SIO_USE_LPUART1 && !STM32_HAS_LPUART1
 #error "LPUART1 not present in the selected device"
 #endif
 
-#if !STM32_SIO_USE_USART1 && !STM32_SIO_USE_USART2 &&                       \
-    !STM32_SIO_USE_USART3 && !STM32_SIO_USE_UART4  &&                       \
-    !STM32_SIO_USE_UART5  && !STM32_SIO_USE_USART6 &&                       \
-    !STM32_SIO_USE_UART7  && !STM32_SIO_USE_UART8  &&                       \
+#if !STM32_SIO_USE_USART1 && !STM32_SIO_USE_USART2  &&                      \
+    !STM32_SIO_USE_USART3 && !STM32_SIO_USE_UART4   &&                      \
+    !STM32_SIO_USE_UART5  && !STM32_SIO_USE_USART6  &&                      \
+    !STM32_SIO_USE_UART7  && !STM32_SIO_USE_UART8   &&                      \
+    !STM32_SIO_USE_UART9  && !STM32_SIO_USE_USART10 &&                      \
     !STM32_SIO_USE_LPUART1
 #error "SIO driver activated but no USART/UART peripheral assigned"
 #endif
@@ -240,6 +267,22 @@
 #endif
 #endif
 
+#if STM32_SIO_USE_UART9
+#if defined(STM32_UART9_IS_USED)
+#error "SIOD9 requires UART9 but it is already used"
+#else
+#define STM32_UART9_IS_USED
+#endif
+#endif
+
+#if STM32_SIO_USE_USART10
+#if defined(STM32_USART10_IS_USED)
+#error "SIOD6 requires USART10 but it is already used"
+#else
+#define STM32_USART10_IS_USED
+#endif
+#endif
+
 #if STM32_SIO_USE_LPUART1
 #if defined(STM32_LPUART1_IS_USED)
 #error "LPSIOD1 requires LPUART1 but it is already used"
@@ -266,7 +309,9 @@ typedef uint32_t sio_events_mask_t;
  */
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
-  USART_TypeDef             *usart
+  USART_TypeDef             *usart;                                         \
+  /* Clock frequency for the associated USART/UART.*/                       \
+  uint32_t                  clock
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
@@ -356,6 +401,14 @@ extern SIODriver SIOD7;
 
 #if (STM32_SIO_USE_UART8 == TRUE) && !defined(__DOXYGEN__)
 extern SIODriver SIOD8;
+#endif
+
+#if (STM32_SIO_USE_UART9 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD9;
+#endif
+
+#if (STM32_SIO_USE_USART10 == TRUE) && !defined(__DOXYGEN__)
+extern SIODriver SIOD10;
 #endif
 
 #if (STM32_SIO_USE_LPUART1 == TRUE) && !defined(__DOXYGEN__)

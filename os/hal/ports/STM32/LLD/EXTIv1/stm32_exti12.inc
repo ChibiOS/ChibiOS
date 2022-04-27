@@ -35,7 +35,8 @@
 #error "STM32_IRQ_EXTI12_PRIORITY not defined in mcuconf.h"
 #endif
 
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI12_PRIORITY)
+#if !defined(STM32_DISABLE_EXTI12_HANDLER) &&                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_EXTI12_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_EXTI12_PRIORITY"
 #endif
 

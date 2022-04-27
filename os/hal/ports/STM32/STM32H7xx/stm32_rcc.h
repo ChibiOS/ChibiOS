@@ -1219,14 +1219,22 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM1EN)
+#define rccEnableSRAM1(lp) rccEnableAHB2(RCC_AHB2ENR_AHBSRAM1EN, lp)
+#else
 #define rccEnableSRAM1(lp) rccEnableAHB2(RCC_AHB2ENR_D2SRAM1EN, lp)
+#endif
 
 /**
  * @brief   Disables the SRAM1 clock.
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM1EN)
+#define rccDisableSRAM1() rccDisableAHB2(RCC_AHB2ENR_AHBSRAM1EN)
+#else
 #define rccDisableSRAM1() rccDisableAHB2(RCC_AHB2ENR_D2SRAM1EN)
+#endif
 
 /**
  * @brief   Enables the SRAM2 clock.
@@ -1235,14 +1243,22 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM2EN)
+#define rccEnableSRAM2(lp) rccEnableAHB2(RCC_AHB2ENR_AHBSRAM2EN, lp)
+#else
 #define rccEnableSRAM2(lp) rccEnableAHB2(RCC_AHB2ENR_D2SRAM2EN, lp)
+#endif
 
 /**
  * @brief   Disables the SRAM2 clock.
  *
  * @api
  */
+#if defined(RCC_AHB2ENR_AHBSRAM2EN)
+#define rccDisableSRAM2() rccDisableAHB2(RCC_AHB2ENR_AHBSRAM2EN)
+#else
 #define rccDisableSRAM2() rccDisableAHB2(RCC_AHB2ENR_D2SRAM2EN)
+#endif
 
 /**
  * @brief   Enables the SRAM3 clock.
@@ -1578,6 +1594,34 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  * @api
  */
 #define rccResetOCTOSPI2() rccResetAHB3(RCC_AHB3RSTR_OSPI2RST)
+/** @} */
+
+/**
+ * @name    OCTOSPIM peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the OCTOSPIM peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableOCTOSPIM(lp) rccEnableAHB3(RCC_AHB3ENR_IOMNGREN, lp)
+
+/**
+ * @brief   Disables the OCTOSPIM peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableOCTOSPIM() rccDisableAHB3(RCC_AHB3ENR_IOMNGREN)
+
+/**
+ * @brief   Resets the OCTOSPIM peripheral.
+ *
+ * @api
+ */
+#define rccResetOCTOSPIM() rccResetAHB3(RCC_AHB3RSTR_IOMNGRRST)
 /** @} */
 
 /**
@@ -2316,6 +2360,52 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  * @api
  */
 #define rccResetUART8() rccResetAPB1L(RCC_APB1LRSTR_UART8RST)
+
+/**
+ * @brief   Enables the UART9 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUART9(lp) rccEnableAPB2(RCC_APB2ENR_UART9EN, lp)
+
+/**
+ * @brief   Disables the UART9 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUART9() rccDisableAPB2(RCC_APB2ENR_UART9EN)
+
+/**
+ * @brief   Resets the UART9 peripheral.
+ *
+ * @api
+ */
+#define rccResetUART9() rccResetAPB2(RCC_APB2RSTR_UART9RST)
+
+/**
+ * @brief   Enables the USART10 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSART10(lp) rccEnableAPB2(RCC_APB2ENR_USART10EN, lp)
+
+/**
+ * @brief   Disables the USART10 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUSART10() rccDisableAPB2(RCC_APB2ENR_USART10EN)
+
+/**
+ * @brief   Resets the USART10 peripheral.
+ *
+ * @api
+ */
+#define rccResetUSART10() rccResetAPB2(RCC_APB2RSTR_USART10RST)
 
 /**
  * @brief   Enables the LPUART1 peripheral clock.

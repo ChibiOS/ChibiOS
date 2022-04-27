@@ -104,11 +104,11 @@ static const wspi_command_t mx25_cmd_read_id = {
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
   .cmd              = MX25_CMD_OPI_RDID,
   .cfg              = MX25_CFG_C16_A32_DATA_8STR,
-  .dummy            = 4U,                       /*Note: always 4 dummies.   */
+  .dummy            = 4U,                       /* Note: always 4 dummies.  */
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
   .cmd              = MX25_CMD_OPI_RDID,
   .cfg              = MX25_CFG_C16_A32_DATA_8DTR
-  .dummy            = 4U,                       /*Note: always 4 dummies.   */
+  .dummy            = 4U,                       /* Note: always 4 dummies.  */
 #endif
 #endif
   .addr             = 0,
@@ -135,7 +135,6 @@ static bool mx25_find_id(const uint8_t *set, size_t size, uint8_t element) {
 }
 
 static flash_error_t mx25_poll_status(SNORDriver *devp) {
-  uint8_t sts[2], sec[2];
 
   do {
 #if MX25_NICE_WAITING == TRUE
@@ -143,21 +142,24 @@ static flash_error_t mx25_poll_status(SNORDriver *devp) {
 #endif
     /* Read status command.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U, sts);
+    bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U, devp->nocache->buf1);
 #else
     bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
-                               0U, 4U, 2U, sts);   /*Note: always 4 dummies.*/
+                               0U, 4U, 2U,
+                               devp->nocache->buf); /* Note: always 4 dummies.*/
 #endif
-  } while ((sts[0] & 1U) != 0U);
+  } while ((devp->nocache->buf[0] & 1U) != 0U);
 
   /* Reading security register and checking for errors.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1U, sec);
+  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR,
+                  1U, devp->nocache->buf1);
 #else
   bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
-                             0U, 4U, 2U, sec);     /*Note: always 4 dummies.*/
+                             0U, 4U, 2U,
+                             devp->nocache->buf); /* Note: always 4 dummies.*/
 #endif
-  if ((sec[0] & MX25_FLAGS_ALL_ERRORS) != 0U) {
+  if ((devp->nocache->buf[0] & MX25_FLAGS_ALL_ERRORS) != 0U) {
 
     return FLASH_ERROR_PROGRAM;
   }
@@ -279,30 +281,27 @@ static void mx25_write_cr2(SNORDriver *devp, uint32_t addr, const uint8_t *value
     .dummy            = 0
   };
 
-  const wspi_command_t cmd_write_cr2 = {
-
 #if MX25_SWITCH_WIDTH == TRUE
-    .cmd              = MX25_CMD_SPI_WRCR2,
-    .cfg              = MX25_CFG_C8_A32_DATA_SPI,
+  devp->nocache->cmd.cmd    = MX25_CMD_SPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C8_A32_DATA_SPI,
 #else
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    .cmd              = MX25_CMD_SPI_WRCR2,
-    .cfg              = MX25_CFG_C8_A32_DATA_SPI,
+  devp->nocache->cmd.cmd    = MX25_CMD_SPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C8_A32_DATA_SPI,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
-    .cmd              = MX25_CMD_OPI_WRCR2,
-    .cfg              = MX25_CFG_C16_A32_DATA_8STR,
+  devp->nocache->cmd.cmd    = MX25_CMD_OPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C16_A32_DATA_8STR,
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
-    .cmd              = MX25_CMD_OPI_WRCR2,
-    .cfg              = MX25_CFG_C16_A32_DATA_8DTR,
+  devp->nocache->cmd.cmd    = MX25_CMD_OPI_WRCR2,
+  devp->nocache->cmd.cfg    = MX25_CFG_C16_A32_DATA_8DTR,
 #endif
 #endif
-    .addr             = addr,
-    .alt              = 0,
-    .dummy            = 0
-  };
+  devp->nocache->cmd.addr   = addr;
+  devp->nocache->cmd.alt    = 0U;
+  devp->nocache->cmd.dummy  = 0U;
 
   wspiCommand(devp->config->busp, &cmd_write_enable);
-  wspiSend(devp->config->busp, &cmd_write_cr2, 1, value);
+  wspiSend(devp->config->busp, &devp->nocache->cmd, 1, value);
 }
 #endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
@@ -320,7 +319,7 @@ void snor_device_init(SNORDriver *devp) {
 #if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_SPI
   /* Reading device ID.*/
   bus_cmd_receive(devp->config->busp, MX25_CMD_READ_ID,
-                  sizeof devp->device_id, devp->device_id);
+                  3U, &devp->nocache->buf[0]);
 
 #else /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
@@ -338,17 +337,18 @@ void snor_device_init(SNORDriver *devp) {
 #endif
 
   /* Reading device ID and unique ID.*/
-  wspiReceive(devp->config->busp, &mx25_cmd_read_id, 3U, devp->device_id);
+  wspiReceive(devp->config->busp, &mx25_cmd_read_id, 3U,
+              &devp->nocache->buf[0]);
 #endif /* SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI */
 
   /* Checking if the device is white listed.*/
   osalDbgAssert(mx25_find_id(mx25_manufacturer_ids,
                              sizeof mx25_manufacturer_ids,
-                             devp->device_id[0]),
+                             devp->nocache->buf[0]),
                 "invalid manufacturer id");
   osalDbgAssert(mx25_find_id(mx25_memory_type_ids,
                              sizeof mx25_memory_type_ids,
-                             devp->device_id[1]),
+                             devp->nocache->buf[1]),
                 "invalid memory type id");
 
 #if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
@@ -361,7 +361,6 @@ void snor_device_init(SNORDriver *devp) {
 
 #if (SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI) && (MX25_SWITCH_WIDTH == TRUE)
   {
-    uint8_t id[8];
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
     static const uint8_t v[1] = {0x00};
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
@@ -376,25 +375,29 @@ void snor_device_init(SNORDriver *devp) {
     /* Reading ID again for confirmation, in DTR mode bytes are read twice,
        it needs adjusting.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-    bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDID, 3U, id);
+    bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDID, 3U,
+                    &devp->nocache->buf[16]);
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
     bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
-                               0U, 4U, 3U, id); /*Note: always 4 dummies.   */
+                               0U, 4U, 3U,
+                               &devp->nocache->buf[16]); /* Note: always 4 dummies.*/
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
     bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDID,
-                               0U, 4U, 6U, id); /*Note: always 4 dummies.   */
-    id[1] = id[2];
-    id[2] = id[4];
+                               0U, 4U, 6U,
+                               &devp->nocache->buf[16]); /* Note: always 4 dummies.*/
+    devp->nocache->buf[16 + 1] = devp->nocache->buf[16 + 2];
+    devp->nocache->buf[16 + 2] = devp->nocache->buf[16 + 4];
 #endif
 
     /* Checking if the device is white listed.*/
-    osalDbgAssert(memcmp(id, devp->device_id, 3) == 0,
+    osalDbgAssert(memcmp(&devp->nocache->buf[0],
+                         &devp->nocache->buf[16], 3) == 0,
                   "id confirmation failed");
   }
 #endif
 
   /* Setting up the device size.*/
-  snor_descriptor.sectors_count = (1U << ((size_t)devp->device_id[2] & 0x1FU)) /
+  snor_descriptor.sectors_count = (1U << ((size_t)devp->nocache->buf[2] & 0x1FU)) /
                                   SECTOR_SIZE;
   snor_descriptor.size = (size_t)snor_descriptor.sectors_count * SECTOR_SIZE;
 }
@@ -556,7 +559,6 @@ flash_error_t snor_device_start_erase_sector(SNORDriver *devp,
  */
 flash_error_t snor_device_verify_erase(SNORDriver *devp,
                                        flash_sector_t sector) {
-  uint8_t cmpbuf[MX25_COMPARE_BUFFER_SIZE];
   flash_offset_t offset;
   size_t n;
 
@@ -569,16 +571,16 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
 #if SNOR_BUS_DRIVER == SNOR_BUS_DRIVER_WSPI
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
     bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_SPI_FAST_READ4B,
-                               offset, 8,   /* Note, always 8 dummy cycles. */
-                               sizeof cmpbuf, cmpbuf);
+                               offset, 8,   /* Note, always 8 dummy cycles.*/
+                               SNOR_BUFFER_SIZE, devp->nocache->buf);
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_STR
    bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_8READ,
                               offset, MX25_READ_DUMMY_CYCLES,
-                              sizeof cmpbuf, cmpbuf);
+                              SNOR_BUFFER_SIZE, devp->nocache->buf);
 #elif MX25_BUS_MODE == MX25_BUS_MODE_OPI_DTR
    bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_8DTRD,
                               offset, MX25_READ_DUMMY_CYCLES,
-                              sizeof cmpbuf, cmpbuf);
+                              SNOR_BUFFER_SIZE, devp->nocache->buf);
 #endif
 #else
    /* Normal read command in SPI mode.*/
@@ -587,7 +589,7 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
 #endif
 
     /* Checking for erased state of current buffer.*/
-    for (p = cmpbuf; p < &cmpbuf[MX25_COMPARE_BUFFER_SIZE]; p++) {
+    for (p = devp->nocache->buf; p < &devp->nocache->buf[SNOR_BUFFER_SIZE]; p++) {
       if (*p != 0xFFU) {
         /* Ready state again.*/
         devp->state = FLASH_READY;
@@ -596,8 +598,8 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
       }
     }
 
-    offset += sizeof cmpbuf;
-    n -= sizeof cmpbuf;
+    offset += SNOR_BUFFER_SIZE;
+    n -= SNOR_BUFFER_SIZE;
   }
 
   return FLASH_NO_ERROR;
@@ -611,27 +613,31 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
  *                      function again
  */
 flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec) {
-  uint8_t sts[2], sec[2];
 
   /* Read status register.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U, sts);
+  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSR, 1U,
+                  &devp->nocache->buf[0]);
 #else
   bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSR,
-                             0U, 4U, 2U, sts); /*Note: always 4 dummies.   */
+                             0U, 4U, 2U,
+                             &devp->nocache->buf[0]); /* Note: always 4 dummies.*/
 #endif
 
   /* Read security register.*/
 #if MX25_BUS_MODE == MX25_BUS_MODE_SPI
-  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1U, sec);
+  bus_cmd_receive(devp->config->busp, MX25_CMD_SPI_RDSCUR, 1U,
+                  &devp->nocache->buf[16]);
 #else
   bus_cmd_addr_dummy_receive(devp->config->busp, MX25_CMD_OPI_RDSCUR,
-                             0U, 4U, 2U, sec); /*Note: always 4 dummies.   */
+                             0U, 4U, 2U,
+                             &devp->nocache->buf[16]); /* Note: always 4 dummies.*/
 #endif
 
   /* If the WIP bit is one (busy) or the flash in a suspended state then
      report that the operation is still in progress.*/
-  if (((sts[0] & 1) != 0U) || ((sec[0] & 8) != 0U)) {
+  if (((devp->nocache->buf[0] & 1) != 0U) ||
+      ((devp->nocache->buf[16] & 8) != 0U)) {
 
     /* Recommended time before polling again, this is a simplified
        implementation.*/
@@ -643,7 +649,7 @@ flash_error_t snor_device_query_erase(SNORDriver *devp, uint32_t *msec) {
   }
 
   /* Checking for errors.*/
-  if ((sec[0] & MX25_FLAGS_ALL_ERRORS) != 0U) {
+  if ((devp->nocache->buf[16] & MX25_FLAGS_ALL_ERRORS) != 0U) {
 
     /* Erase operation failed.*/
     return FLASH_ERROR_ERASE;

@@ -204,9 +204,6 @@ void wspi_lld_command(WSPIDriver *wspip, const wspi_command_t *cmdp) {
   if ((cmdp->cfg & WSPI_CFG_ADDR_MODE_MASK) != WSPI_CFG_ADDR_MODE_NONE) {
     wspip->qspi->AR  = cmdp->addr;
   }
-
-  /* Waiting for the previous operation to complete.*/
-  wspi_lld_sync(wspip);
 }
 
 /**

@@ -107,13 +107,21 @@ static inline void init_pwr(void) {
   PWR->CR2   = STM32_PWR_CR2;
   PWR->CR3   = STM32_PWR_CR3;   /* Other bits, lower byte is not changed.   */
   PWR->CPUCR = STM32_PWR_CPUCR;
+#if defined(HAL_LLD_TYPE3_H)
+  PWR->SRDCR = STM32_VOS;
+#else
   PWR->D3CR  = STM32_VOS;
+#endif
 #if defined(HAL_LLD_TYPE1_H)
 #if !defined(STM32_ENFORCE_H7_REV_XY)
   SYSCFG->PWRCR = STM32_ODEN;
 #endif
 #endif
+#if defined(HAL_LLD_TYPE3_H)
+  while ((PWR->SRDCR & PWR_SRDCR_VOSRDY) == 0)
+#else
   while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0)
+#endif
     ; /* CHTODO timeout handling.*/
 #if STM32_PWR_CR2 & PWR_CR2_BREN
 //  while ((PWR->CR2 & PWR_CR2_BRRDY) == 0)
@@ -168,41 +176,15 @@ void hal_lld_init(void) {
   /* IRQ subsystem initialization.*/
   irqInit();
 
-  /* MPU initialization.*/
-#if (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) || (STM32_NOCACHE_SRAM3 == TRUE)
+  /* MPU initialization if required.*/
+#if STM32_NOCACHE_ENABLE == TRUE
   {
-    uint32_t base, size;
-
-#if defined(HAL_LLD_TYPE1_H)
-#if (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) && (STM32_NOCACHE_SRAM3 == TRUE)
-    base = 0x30000000U;
-    size = MPU_RASR_SIZE_512K;
-#elif (STM32_NOCACHE_SRAM1_SRAM2 == TRUE) && (STM32_NOCACHE_SRAM3 == FALSE)
-    base = 0x30000000U;
-    size = MPU_RASR_SIZE_256K;
-#elif (STM32_NOCACHE_SRAM1_SRAM2 == FALSE) && (STM32_NOCACHE_SRAM3 == TRUE)
-    base = 0x30040000U;
-    size = MPU_RASR_SIZE_32K;
-#else
-#error "invalid constants used in mcuconf.h"
-#endif
-
-#elif defined(HAL_LLD_TYPE2_H)
-#if STM32_NOCACHE_SRAM3 == TRUE
-#error "SRAM3 not present on this device"
-#endif
-    base = 0x30000000U;
-    size = MPU_RASR_SIZE_32K;
-#endif
-
-    /* The SRAM2 bank can optionally made a non cache-able area for use by
-       DMA engines.*/
     mpuConfigureRegion(STM32_NOCACHE_MPU_REGION,
-                       base,
+                       STM32_NOCACHE_RBAR,
                        MPU_RASR_ATTR_AP_RW_RW |
                        MPU_RASR_ATTR_NON_CACHEABLE |
                        MPU_RASR_ATTR_S |
-                       size |
+                       STM32_NOCACHE_RASR |
                        MPU_RASR_ENABLE);
     mpuEnable(MPU_CTRL_PRIVDEFENA);
 
@@ -275,7 +257,10 @@ void stm32_clock_init(void) {
   cfgr = STM32_MCO2SEL | RCC_CFGR_MCO2PRE_VALUE(STM32_MCO2PRE_VALUE) |
          STM32_MCO1SEL | RCC_CFGR_MCO1PRE_VALUE(STM32_MCO1PRE_VALUE) |
          RCC_CFGR_RTCPRE_VALUE(STM32_RTCPRE_VALUE) |
-         STM32_HRTIMSEL | STM32_STOPKERWUCK | STM32_STOPWUCK;
+         STM32_STOPKERWUCK | STM32_STOPWUCK;
+#if !defined(HAL_LLD_TYPE3_H)
+  cfgr |= STM32_HRTIMSEL;
+#endif
 #if STM32_TIMPRE_ENABLE == TRUE
   cfgr |= RCC_CFGR_TIMPRE;
 #endif
@@ -393,9 +378,15 @@ void stm32_clock_init(void) {
 #endif /* STM32_PLL1_ENABLED || STM32_PLL2_ENABLED || STM32_PLL3_ENABLED */
 
   /* AHB and APB dividers.*/
+#if defined(HAL_LLD_TYPE3_H)
+  RCC->CDCFGR1 = STM32_CDCPRE  | STM32_CDPPRE | STM32_CDHPRE;
+  RCC->CDCFGR2 = STM32_CDPPRE2 | STM32_CDPPRE1;
+  RCC->SRDCFGR = STM32_SRDPPRE;
+#else
   RCC->D1CFGR = STM32_D1CPRE  | STM32_D1PPRE3 | STM32_D1HPRE;
   RCC->D2CFGR = STM32_D2PPRE2 | STM32_D2PPRE1;
   RCC->D3CFGR = STM32_D3PPRE4;
+#endif
 
   /* Peripherals clocks.*/
 #if defined(HAL_LLD_TYPE1_H)
@@ -422,6 +413,19 @@ void stm32_clock_init(void) {
   RCC->D3CCIPR  = STM32_SPI6SEL    | STM32_SAI4BSEL    | STM32_SAI4ASEL      |
                   STM32_ADCSEL     | STM32_LPTIM345SEL | STM32_LPTIM2SEL     |
                   STM32_I2C4SEL    | STM32_LPUART1SEL;
+#elif defined(HAL_LLD_TYPE3_H)
+  RCC->CDCCIPR  = STM32_CKPERSEL   | STM32_SDMMCSEL    | STM32_OCTOSPISEL    |
+                  STM32_FMCSEL;
+  RCC->CDCCIP1R = STM32_SWPSEL     | STM32_FDCANSEL    | STM32_DFSDM1SEL     |
+                  STM32_SPDIFSEL   | STM32_SPDIFSEL    | STM32_SPI45SEL      |
+                  STM32_SPI123SEL  | STM32_SAI2BSEL    | STM32_SAI2ASEL      |
+                  STM32_SAI1SEL;
+  RCC->CDCCIP2R = STM32_LPTIM1SEL  | STM32_CECSEL      | STM32_USBSEL        |
+                  STM32_I2C123SEL  | STM32_RNGSEL      | STM32_USART16910SEL |
+                  STM32_USART234578SEL;
+  RCC->SRDCCIPR = STM32_SPI6SEL    | STM32_DFSDM2SEL   | STM32_ADCSEL        |
+                  STM32_LPTIM3SEL  | STM32_LPTIM2SEL   | STM32_I2C4SEL       |
+                  STM32_LPUART1SEL;
 #endif
 
   /* Flash setup.*/
@@ -435,7 +439,7 @@ void stm32_clock_init(void) {
      from HSI.*/
 #if STM32_SW != STM32_SW_HSI_CK
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
-  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 3U))
+  while ((RCC->CFGR & RCC_CFGR_SWS_Msk) != (STM32_SW << RCC_CFGR_SWS_Pos))
     ;
 #endif
 
@@ -452,7 +456,7 @@ void stm32_clock_init(void) {
   /* RAM1 2 and 3 clocks enabled.*/
   rccEnableSRAM1(true);
   rccEnableSRAM2(true);
-#if !defined(HAL_LLD_TYPE2_H)
+#if !(defined(HAL_LLD_TYPE2_H) || defined(HAL_LLD_TYPE3_H))
   rccEnableSRAM3(true);
 #endif
 #endif /* STM32_NO_INIT */

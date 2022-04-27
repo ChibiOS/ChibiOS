@@ -189,7 +189,11 @@ typedef struct {
                                       flash_sector_t sector);               \
   flash_error_t (*query_erase)(void *instance, uint32_t *wait_time);        \
   /* Verify erase single sector.*/                                          \
-  flash_error_t (*verify_erase)(void *instance, flash_sector_t sector);
+  flash_error_t (*verify_erase)(void *instance, flash_sector_t sector);     \
+  /* Acquire exclusive use of flash.*/                                      \
+  flash_error_t (*acquire_exclusive)(void *instance);                       \
+  /* Release exclusive use of flash.*/                                      \
+  flash_error_t (*release_exclusive)(void *instance);
 
 /**
  * @brief   @p BaseFlash specific methods with inherited ones.
@@ -348,6 +352,30 @@ typedef struct {
  */
 #define flashVerifyErase(ip, sector)                                        \
   (ip)->vmt->verify_erase(ip, sector)
+
+/**
+ * @brief   Acquires exclusive access to flash.
+ *
+ * @param[in] ip                      pointer to a @p BaseFlash or derived class
+ * @return                            An error code.
+ * @retval FLASH_NO_ERROR             if the access is obtained.
+ * @retval FLASH_ERROR_UNIMPLEMENTED  if exclusive access not enabled
+ * @api
+ */
+#define flashAcquireExclusive(ip)                                           \
+    (ip)->vmt->acquire_exclusive(ip)
+
+/**
+ * @brief   Releases exclusive access to flash.
+ *
+ * @param[in] ip                      pointer to a @p BaseFlash or derived class
+ * @return                            An error code.
+ * @retval FLASH_NO_ERROR             if the access is released.
+ * @retval FLASH_ERROR_UNIMPLEMENTED  if exclusive access not enabled
+ * @api
+ */
+#define flashReleaseExclusive(ip)                                           \
+  (ip)->vmt->release_exclusive(ip)
 /** @} */
 
 /*===========================================================================*/
@@ -357,9 +385,12 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  flash_error_t flashWaitErase(BaseFlash *devp);
+  flash_error_t  flashWaitErase(BaseFlash *devp);
   flash_offset_t flashGetSectorOffset(BaseFlash *devp, flash_sector_t sector);
-  uint32_t flashGetSectorSize(BaseFlash *devp, flash_sector_t sector);
+  uint32_t       flashGetSectorSize(BaseFlash *devp, flash_sector_t sector);
+  flash_sector_t flashGetOffsetSector(BaseFlash *devp, flash_offset_t offset);
+  void *         flashGetOffsetAddress(BaseFlash *devp, flash_offset_t offset);
+  flash_offset_t flashGetAddressOffset(BaseFlash *devp, void * addr);
 #ifdef __cplusplus
 }
 #endif

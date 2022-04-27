@@ -35,11 +35,37 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Driver local variables and types.                                         */
+/* Driver local functions.                                                   */
 /*===========================================================================*/
 
+static flash_error_t efl_acquire_exclusive(void *instance) {
+#if (EFL_USE_MUTUAL_EXCLUSION == TRUE)
+  EFlashDriver *devp = (EFlashDriver *)instance;
+
+  osalMutexLock(&devp->mutex);
+  return FLASH_NO_ERROR;
+#else
+  (void)instance;
+  osalDbgAssert(false, "mutual exclusion not enabled");
+  return FLASH_ERROR_UNIMPLEMENTED;
+#endif
+}
+
+static flash_error_t efl_release_exclusive(void *instance) {
+#if (EFL_USE_MUTUAL_EXCLUSION == TRUE)
+  EFlashDriver *devp = (EFlashDriver *)instance;
+
+  osalMutexUnlock(&devp->mutex);
+  return FLASH_NO_ERROR;
+#else
+  (void)instance;
+  osalDbgAssert(false, "mutual exclusion not enabled");
+  return FLASH_ERROR_UNIMPLEMENTED;
+#endif
+}
+
 /*===========================================================================*/
-/* Driver local functions.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 static const struct EFlashDriverVMT vmt = {
@@ -50,7 +76,9 @@ static const struct EFlashDriverVMT vmt = {
   efl_lld_start_erase_all,
   efl_lld_start_erase_sector,
   efl_lld_query_erase,
-  efl_lld_verify_erase
+  efl_lld_verify_erase,
+  efl_acquire_exclusive,
+  efl_release_exclusive
 };
 
 /*===========================================================================*/
@@ -147,42 +175,6 @@ void eflStop(EFlashDriver *eflp) {
 
   osalSysUnlock();
 }
-
-#if (EFL_USE_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Gains exclusive access to EFL.
- * @details This function tries to gain ownership of EFL. If EFL
- *          is already being used then the invoking thread is queued.
- * @pre     In order to use this function the option @p EFL_USE_MUTUAL_EXCLUSION
- *          must be enabled.
- *
- * @param[in] eflp              pointer to the @p EFlashDriver object
- *
- * @api
- */
-void eflAcquireBus(EFlashDriver *eflp) {
-
-  osalDbgCheck(eflp != NULL);
-
-  osalMutexLock(&eflp->mutex);
-}
-
-/**
- * @brief   Releases exclusive access to EFL.
- * @pre     In order to use this function the option @p EFL_USE_MUTUAL_EXCLUSION
- *          must be enabled.
- *
- * @param[in] eflp              pointer to the @p EFlashDriver object
- *
- * @api
- */
-void eflReleaseBus(EFlashDriver *eflp) {
-
-  osalDbgCheck(eflp != NULL);
-
-  osalMutexUnlock(&eflp->mutex);
-}
-#endif /* EFL_USE_MUTUAL_EXCLUSION == TRUE */
 
 #endif /* HAL_USE_EFL == TRUE */
 

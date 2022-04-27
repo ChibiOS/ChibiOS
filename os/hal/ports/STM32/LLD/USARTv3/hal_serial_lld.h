@@ -123,6 +123,24 @@
 #endif
 
 /**
+ * @brief   UART9 driver enable switch.
+ * @details If set to @p TRUE the support for UART9 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SERIAL_USE_UART9) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USE_UART9              FALSE
+#endif
+
+/**
+ * @brief   USART10 driver enable switch.
+ * @details If set to @p TRUE the support for USART10 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_SERIAL_USE_USART10) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USE_USART10            FALSE
+#endif
+
+/**
  * @brief   LPUART1 driver enable switch.
  * @details If set to @p TRUE the support for LPUART is included.
  * @note    The default is @p FALSE.
@@ -185,6 +203,20 @@
  */
 #if !defined(STM32_SERIAL_UART8_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_SERIAL_UART8_PRIORITY         12
+#endif
+
+/**
+ * @brief   UART9 interrupt priority level setting.
+ */
+#if !defined(STM32_SERIAL_UART9_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SERIAL_UART9_PRIORITY         12
+#endif
+
+/**
+ * @brief   USART10 interrupt priority level setting.
+ */
+#if !defined(STM32_SERIAL_USART10_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USART10_PRIORITY       12
 #endif
 
 /**
@@ -307,6 +339,34 @@
 #endif
 
 /**
+ * @brief   Input buffer size for UART9.
+ */
+#if !defined(STM32_SERIAL_UART9_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define STM32_SERIAL_UART9_IN_BUF_SIZE      SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for UART9.
+ */
+#if !defined(STM32_SERIAL_UART9_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define STM32_SERIAL_UART9_OUT_BUF_SIZE     SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Input buffer size for USART10.
+ */
+#if !defined(STM32_SERIAL_USART10_IN_BUF_SIZE) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USART10_IN_BUF_SIZE    SERIAL_BUFFERS_SIZE
+#endif
+
+/**
+ * @brief   Output buffer size for USART10.
+ */
+#if !defined(STM32_SERIAL_USART10_OUT_BUF_SIZE) || defined(__DOXYGEN__)
+#define STM32_SERIAL_USART10_OUT_BUF_SIZE   SERIAL_BUFFERS_SIZE
+#endif
+
+/**
  * @brief   Input buffer size for LPUART1.
  */
 #if !defined(STM32_SERIAL_LPUART1_IN_BUF_SIZE) || defined(__DOXYGEN__)
@@ -357,14 +417,23 @@
 #error "UART8 not present in the selected device"
 #endif
 
+#if STM32_SERIAL_USE_UART9 && !STM32_HAS_UART9
+#error "UART9 not present in the selected device"
+#endif
+
+#if STM32_SERIAL_USE_USART10 && !STM32_HAS_USART10
+#error "USART10 not present in the selected device"
+#endif
+
 #if STM32_SERIAL_USE_LPUART1 && !STM32_HAS_LPUART1
 #error "LPUART1 not present in the selected device"
 #endif
 
-#if !STM32_SERIAL_USE_USART1 && !STM32_SERIAL_USE_USART2 &&                 \
-    !STM32_SERIAL_USE_USART3 && !STM32_SERIAL_USE_UART4  &&                 \
-    !STM32_SERIAL_USE_UART5  && !STM32_SERIAL_USE_USART6 &&                 \
-    !STM32_SERIAL_USE_UART7  && !STM32_SERIAL_USE_UART8  &&                 \
+#if !STM32_SERIAL_USE_USART1 && !STM32_SERIAL_USE_USART2  &&                \
+    !STM32_SERIAL_USE_USART3 && !STM32_SERIAL_USE_UART4   &&                \
+    !STM32_SERIAL_USE_UART5  && !STM32_SERIAL_USE_USART6  &&                \
+    !STM32_SERIAL_USE_UART7  && !STM32_SERIAL_USE_UART8   &&                \
+    !STM32_SERIAL_USE_UART9  && !STM32_SERIAL_USE_USART10 &&                \
     !STM32_SERIAL_USE_LPUART1
 #error "SERIAL driver activated but no USART/UART peripheral assigned"
 #endif
@@ -415,6 +484,18 @@
     STM32_SERIAL_USE_UART8 &&                                               \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_UART8_PRIORITY)
 #error "Invalid IRQ priority assigned to UART8"
+#endif
+
+#if !defined(STM32_UART9_SUPPRESS_ISR) &&                                   \
+    STM32_SERIAL_USE_UART9 &&                                               \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_UART9_PRIORITY)
+#error "Invalid IRQ priority assigned to UART9"
+#endif
+
+#if !defined(STM32_USART10_SUPPRESS_ISR) &&                                 \
+    STM32_SERIAL_USE_USART10 &&                                             \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SERIAL_USART10_PRIORITY)
+#error "Invalid IRQ priority assigned to USART10"
 #endif
 
 #if !defined(STM32_LPUART1_SUPPRESS_ISR) &&                                 \
@@ -488,6 +569,22 @@
 #endif
 #endif
 
+#if STM32_SERIAL_USE_UART9
+#if defined(STM32_UART9_IS_USED)
+#error "SD9 requires UART9 but it is already used"
+#else
+#define STM32_UART9_IS_USED
+#endif
+#endif
+
+#if STM32_SERIAL_USE_USART10
+#if defined(STM32_USART10_IS_USED)
+#error "SD10 requires USART10 but it is already used"
+#else
+#define STM32_USART10_IS_USED
+#endif
+#endif
+
 #if STM32_SERIAL_USE_LPUART1
 #if defined(STM32_LPUART1_IS_USED)
 #error "LPSD1 requires LPUART1 but it is already used"
@@ -542,6 +639,8 @@ typedef struct hal_serial_config {
   /* End of the mandatory fields.*/                                         \
   /* Pointer to the USART registers block.*/                                \
   USART_TypeDef             *usart;                                         \
+  /* Clock frequency for the associated USART/UART.*/                       \
+  uint32_t                  clock;                                          \
   /* Mask to be applied on received frames.*/                               \
   uint8_t                   rxmask;
 
@@ -576,6 +675,12 @@ extern SerialDriver SD7;
 #endif
 #if STM32_SERIAL_USE_UART8 && !defined(__DOXYGEN__)
 extern SerialDriver SD8;
+#endif
+#if STM32_SERIAL_USE_UART9 && !defined(__DOXYGEN__)
+extern SerialDriver SD9;
+#endif
+#if STM32_SERIAL_USE_USART10 && !defined(__DOXYGEN__)
+extern SerialDriver SD10;
 #endif
 #if STM32_SERIAL_USE_LPUART1 && !defined(__DOXYGEN__)
 extern SerialDriver LPSD1;

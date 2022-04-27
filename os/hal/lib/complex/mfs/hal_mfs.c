@@ -212,9 +212,9 @@ static mfs_error_t mfs_flash_write(MFSDriver *mfsp,
   while (n > 0U) {
     size_t chunk = n <= MFS_CFG_BUFFER_SIZE ? n : MFS_CFG_BUFFER_SIZE;
 
-    RET_ON_ERROR(mfs_flash_read(mfsp, offset, chunk, mfsp->buffer.data8));
+    RET_ON_ERROR(mfs_flash_read(mfsp, offset, chunk, mfsp->ncbuf->data8));
 
-    if (memcmp((void *)mfsp->buffer.data8, (void *)wp, chunk)) {
+    if (memcmp((void *)mfsp->ncbuf->data8, (void *)wp, chunk)) {
       mfsp->state = MFS_ERROR;
       return MFS_ERR_FLASH_FAILURE;
     }
@@ -255,8 +255,8 @@ static mfs_error_t mfs_flash_copy(MFSDriver *mfsp,
       chunk = n;
     }
 
-    RET_ON_ERROR(mfs_flash_read(mfsp, soffset, chunk, mfsp->buffer.data8));
-    RET_ON_ERROR(mfs_flash_write(mfsp, doffset, chunk, mfsp->buffer.data8));
+    RET_ON_ERROR(mfs_flash_read(mfsp, soffset, chunk, mfsp->ncbuf->data8));
+    RET_ON_ERROR(mfs_flash_write(mfsp, doffset, chunk, mfsp->ncbuf->data8));
 
     /* Next page.*/
     soffset += chunk;
@@ -366,7 +366,6 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
                                          mfs_bank_t bank,
                                          uint32_t cnt) {
   flash_sector_t sector;
-  mfs_bank_header_t bhdr;
 
   if (bank == MFS_BANK_0) {
     sector = mfsp->config->bank0_start;
@@ -375,17 +374,18 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
     sector = mfsp->config->bank1_start;
   }
 
-  bhdr.fields.magic1    = MFS_BANK_MAGIC_1;
-  bhdr.fields.magic2    = MFS_BANK_MAGIC_2;
-  bhdr.fields.counter   = cnt;
-  bhdr.fields.reserved1 = (uint16_t)mfsp->config->erased;
-  bhdr.fields.crc       = crc16(0xFFFFU, bhdr.hdr8,
-                                sizeof (mfs_bank_header_t) - sizeof (uint16_t));
+  mfsp->ncbuf->bhdr.fields.magic1    = MFS_BANK_MAGIC_1;
+  mfsp->ncbuf->bhdr.fields.magic2    = MFS_BANK_MAGIC_2;
+  mfsp->ncbuf->bhdr.fields.counter   = cnt;
+  mfsp->ncbuf->bhdr.fields.reserved1 = (uint16_t)mfsp->config->erased;
+  mfsp->ncbuf->bhdr.fields.crc       = crc16(0xFFFFU,
+                                             mfsp->ncbuf->bhdr.hdr8,
+                                             sizeof (mfs_bank_header_t) - sizeof (uint16_t));
 
   return mfs_flash_write(mfsp,
                          flashGetSectorOffset(mfsp->config->flashp, sector),
                          sizeof (mfs_bank_header_t),
-                         bhdr.hdr8);
+                         mfsp->ncbuf->bhdr.hdr8);
 }
 
 /**
@@ -399,25 +399,25 @@ static mfs_error_t mfs_bank_write_header(MFSDriver *mfsp,
 static mfs_bank_state_t mfs_bank_check_header(MFSDriver *mfsp) {
   uint16_t crc;
 
-  if ((mfsp->buffer.bhdr.hdr32[0] == mfsp->config->erased) &&
-      (mfsp->buffer.bhdr.hdr32[1] == mfsp->config->erased) &&
-      (mfsp->buffer.bhdr.hdr32[2] == mfsp->config->erased) &&
-      (mfsp->buffer.bhdr.hdr32[3] == mfsp->config->erased)) {
+  if ((mfsp->ncbuf->bhdr.hdr32[0] == mfsp->config->erased) &&
+      (mfsp->ncbuf->bhdr.hdr32[1] == mfsp->config->erased) &&
+      (mfsp->ncbuf->bhdr.hdr32[2] == mfsp->config->erased) &&
+      (mfsp->ncbuf->bhdr.hdr32[3] == mfsp->config->erased)) {
     return MFS_BANK_ERASED;
   }
 
   /* Checking header fields integrity.*/
-  if ((mfsp->buffer.bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
-      (mfsp->buffer.bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
-      (mfsp->buffer.bhdr.fields.counter == mfsp->config->erased) ||
-      (mfsp->buffer.bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
+  if ((mfsp->ncbuf->bhdr.fields.magic1 != MFS_BANK_MAGIC_1) ||
+      (mfsp->ncbuf->bhdr.fields.magic2 != MFS_BANK_MAGIC_2) ||
+      (mfsp->ncbuf->bhdr.fields.counter == mfsp->config->erased) ||
+      (mfsp->ncbuf->bhdr.fields.reserved1 != (uint16_t)mfsp->config->erased)) {
     return MFS_BANK_GARBAGE;
   }
 
   /* Verifying header CRC.*/
-  crc = crc16(0xFFFFU, mfsp->buffer.bhdr.hdr8,
+  crc = crc16(0xFFFFU, mfsp->ncbuf->bhdr.hdr8,
               sizeof (mfs_bank_header_t) - sizeof (uint16_t));
-  if (crc != mfsp->buffer.bhdr.fields.crc) {
+  if (crc != mfsp->ncbuf->bhdr.fields.crc) {
     return MFS_BANK_GARBAGE;
   }
 
@@ -452,75 +452,75 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
   /* Scanning records until there is there is not enough space left for an
      header.*/
   while (hdr_offset < end_offset - ALIGNED_DHDR_SIZE) {
-    union {
-      mfs_data_header_t     dhdr;
-      uint8_t               data8[ALIGNED_SIZEOF(mfs_data_header_t)];
-    } u;
+    mfs_data_header_t dhdr;
     uint16_t crc;
 
     /* Reading the current record header.*/
     RET_ON_ERROR(mfs_flash_read(mfsp, hdr_offset,
                                 sizeof (mfs_data_header_t),
-                                u.data8));
+                                mfsp->ncbuf->data8));
 
     /* Checking if the found header is in erased state.*/
-    if ((u.dhdr.hdr32[0] == mfsp->config->erased) &&
-        (u.dhdr.hdr32[1] == mfsp->config->erased) &&
-        (u.dhdr.hdr32[2] == mfsp->config->erased)) {
+    if ((mfsp->ncbuf->data32[0] == mfsp->config->erased) &&
+        (mfsp->ncbuf->data32[1] == mfsp->config->erased) &&
+        (mfsp->ncbuf->data32[2] == mfsp->config->erased)) {
       break;
     }
 
     /* It is not erased so checking for integrity.*/
-    if ((u.dhdr.fields.magic1 != MFS_HEADER_MAGIC_1) ||
-        (u.dhdr.fields.magic2 != MFS_HEADER_MAGIC_2) ||
-        (u.dhdr.fields.id < 1U) ||
-        (u.dhdr.fields.id > (uint32_t)MFS_CFG_MAX_RECORDS) ||
-        (u.dhdr.fields.size > end_offset - hdr_offset)) {
+    if ((mfsp->ncbuf->dhdr.fields.magic1 != MFS_HEADER_MAGIC_1) ||
+        (mfsp->ncbuf->dhdr.fields.magic2 != MFS_HEADER_MAGIC_2) ||
+        (mfsp->ncbuf->dhdr.fields.id < 1U) ||
+        (mfsp->ncbuf->dhdr.fields.id > (uint32_t)MFS_CFG_MAX_RECORDS) ||
+        (mfsp->ncbuf->dhdr.fields.size > end_offset - hdr_offset)) {
       *wflagp = true;
       break;
     }
 
+    /* Copying the non-cached buffer locally.*/
+    dhdr = mfsp->ncbuf->dhdr;
+
     /* Finally checking the CRC, we need to perform it in chunks because
        we have a limited buffer.*/
     crc = 0xFFFFU;
-    if (u.dhdr.fields.size > 0U) {
+    if (dhdr.fields.size > 0U) {
       flash_offset_t data = hdr_offset + sizeof (mfs_data_header_t);
-      uint32_t total = u.dhdr.fields.size;
+      uint32_t total = dhdr.fields.size;
 
       while (total > 0U) {
         uint32_t chunk = total > MFS_CFG_BUFFER_SIZE ? MFS_CFG_BUFFER_SIZE :
                                                        total;
 
         /* Reading the data chunk.*/
-        RET_ON_ERROR(mfs_flash_read(mfsp, data, chunk, mfsp->buffer.data8));
+        RET_ON_ERROR(mfs_flash_read(mfsp, data, chunk, mfsp->ncbuf->data8));
 
         /* CRC on the read data chunk.*/
-        crc = crc16(crc, &mfsp->buffer.data8[0], chunk);
+        crc = crc16(crc, &mfsp->ncbuf->data8[0], chunk);
 
         /* Next chunk.*/
         data  += chunk;
         total -= chunk;
       }
     }
-    if (crc != u.dhdr.fields.crc) {
+    if (crc != dhdr.fields.crc) {
       /* If the CRC is invalid then this record is ignored but scanning
          continues because there could be more valid records afterward.*/
       *wflagp = true;
     }
     else {
       /* Zero-sized records are erase markers.*/
-      if (u.dhdr.fields.size == 0U) {
-        mfsp->descriptors[u.dhdr.fields.id - 1U].offset = 0U;
-        mfsp->descriptors[u.dhdr.fields.id - 1U].size   = 0U;
+      if (dhdr.fields.size == 0U) {
+        mfsp->descriptors[dhdr.fields.id - 1U].offset = 0U;
+        mfsp->descriptors[dhdr.fields.id - 1U].size   = 0U;
       }
       else {
-        mfsp->descriptors[u.dhdr.fields.id - 1U].offset = hdr_offset;
-        mfsp->descriptors[u.dhdr.fields.id - 1U].size   = u.dhdr.fields.size;
+        mfsp->descriptors[dhdr.fields.id - 1U].offset = hdr_offset;
+        mfsp->descriptors[dhdr.fields.id - 1U].size   = dhdr.fields.size;
       }
     }
 
     /* On the next header.*/
-    hdr_offset = hdr_offset + ALIGNED_REC_SIZE(u.dhdr.fields.size);
+    hdr_offset = hdr_offset + ALIGNED_REC_SIZE(dhdr.fields.size);
   }
 
   /* Next writable offset.*/
@@ -554,11 +554,11 @@ static mfs_error_t mfs_bank_get_state(MFSDriver *mfsp,
   /* Reading the current bank header.*/
   RET_ON_ERROR(mfs_flash_read(mfsp, mfs_flash_get_bank_offset(mfsp, bank),
                               sizeof (mfs_bank_header_t),
-                              mfsp->buffer.data8));
+                              mfsp->ncbuf->data8));
 
   /* Getting the counter regardless of the bank state, it is only valid if
      the state is MFS_BANK_OK.*/
-  *cntp = mfsp->buffer.bhdr.fields.counter;
+  *cntp = mfsp->ncbuf->bhdr.fields.counter;
 
   /* Checking just the header.*/
   *statep = mfs_bank_check_header(mfsp);
@@ -734,7 +734,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
     /* Reading the bank header again.*/
     RET_ON_ERROR(mfs_flash_read(mfsp, mfs_flash_get_bank_offset(mfsp, bank),
                                 sizeof (mfs_bank_header_t),
-                                mfsp->buffer.data8));
+                                mfsp->ncbuf->data8));
 
     /* Checked again for extra safety.*/
     if (mfs_bank_check_header(mfsp) != MFS_BANK_OK) {
@@ -743,7 +743,7 @@ static mfs_error_t mfs_try_mount(MFSDriver *mfsp) {
 
     /* Storing the bank data.*/
     mfsp->current_bank    = bank;
-    mfsp->current_counter = mfsp->buffer.bhdr.fields.counter;
+    mfsp->current_counter = mfsp->ncbuf->bhdr.fields.counter;
 
     /* Scanning for the most recent instance of all records.*/
     RET_ON_ERROR(mfs_bank_scan_records(mfsp, bank, &w2));
@@ -818,15 +818,17 @@ mfs_error_t mfs_mount(MFSDriver *mfsp) {
  * @brief   Initializes an instance.
  *
  * @param[out] mfsp     pointer to the @p MFSDriver object
+ * @param[in] ncbuf     pointer to an @p mfs_nocache_buffer_t buffer structure
  *
  * @init
  */
-void mfsObjectInit(MFSDriver *mfsp) {
+void mfsObjectInit(MFSDriver *mfsp, mfs_nocache_buffer_t *ncbuf) {
 
   osalDbgCheck(mfsp != NULL);
 
-  mfsp->state = MFS_STOP;
+  mfsp->state  = MFS_STOP;
   mfsp->config = NULL;
+  mfsp->ncbuf  = ncbuf;
 }
 
 /**
@@ -955,7 +957,7 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
   RET_ON_ERROR(mfs_flash_read(mfsp,
                               mfsp->descriptors[id - 1U].offset,
                               sizeof (mfs_data_header_t),
-                              mfsp->buffer.data8));
+                              mfsp->ncbuf->data8));
 
   /* Data read from flash.*/
   *np = mfsp->descriptors[id - 1U].size;
@@ -966,7 +968,7 @@ mfs_error_t mfsReadRecord(MFSDriver *mfsp, mfs_id_t id,
 
   /* Checking CRC.*/
   crc = crc16(0xFFFFU, buffer, *np);
-  if (crc != mfsp->buffer.dhdr.fields.crc) {
+  if (crc != mfsp->ncbuf->dhdr.fields.crc) {
     mfsp->state = MFS_ERROR;
     return MFS_ERR_FLASH_FAILURE;
   }
@@ -1037,13 +1039,13 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
     }
 
     /* Writing the data header without the magic, it will be written last.*/
-    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size   = (uint32_t)n;
-    mfsp->buffer.dhdr.fields.crc    = crc16(0xFFFFU, buffer, n);
+    mfsp->ncbuf->dhdr.fields.id     = (uint16_t)id;
+    mfsp->ncbuf->dhdr.fields.size   = (uint32_t)n;
+    mfsp->ncbuf->dhdr.fields.crc    = crc16(0xFFFFU, buffer, n);
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  mfsp->next_offset + (sizeof (uint32_t) * 2U),
                                  sizeof (mfs_data_header_t) - (sizeof (uint32_t) * 2U),
-                                 mfsp->buffer.data8 + (sizeof (uint32_t) * 2U)));
+                                 mfsp->ncbuf->data8 + (sizeof (uint32_t) * 2U)));
 
     /* Writing the data part.*/
     RET_ON_ERROR(mfs_flash_write(mfsp,
@@ -1052,12 +1054,12 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
                                  buffer));
 
     /* Finally writing the magic number, it seals the operation.*/
-    mfsp->buffer.dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
-    mfsp->buffer.dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
+    mfsp->ncbuf->dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
+    mfsp->ncbuf->dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  mfsp->next_offset,
                                  sizeof (uint32_t) * 2U,
-                                 mfsp->buffer.data8));
+                                 mfsp->ncbuf->data8));
 
     /* The size of the old record instance, if present, must be subtracted
        to the total used size.*/
@@ -1093,13 +1095,13 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
     }
 
     /* Writing the data header without the magic, it will be written last.*/
-    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size   = (uint32_t)n;
-    mfsp->buffer.dhdr.fields.crc    = crc16(0xFFFFU, buffer, n);
+    mfsp->ncbuf->dhdr.fields.id     = (uint16_t)id;
+    mfsp->ncbuf->dhdr.fields.size   = (uint32_t)n;
+    mfsp->ncbuf->dhdr.fields.crc    = crc16(0xFFFFU, buffer, n);
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  mfsp->tr_next_offset + (sizeof (uint32_t) * 2U),
                                  sizeof (mfs_data_header_t) - (sizeof (uint32_t) * 2U),
-                                 mfsp->buffer.data8 + (sizeof (uint32_t) * 2U)));
+                                 mfsp->ncbuf->data8 + (sizeof (uint32_t) * 2U)));
 
     /* Writing the data part.*/
     RET_ON_ERROR(mfs_flash_write(mfsp,
@@ -1188,15 +1190,15 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
 
     /* Writing the data header with size set to zero, it means that the
        record is logically erased.*/
-    mfsp->buffer.dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
-    mfsp->buffer.dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
-    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size   = (uint32_t)0;
-    mfsp->buffer.dhdr.fields.crc    = (uint16_t)0xFFFF;
+    mfsp->ncbuf->dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
+    mfsp->ncbuf->dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
+    mfsp->ncbuf->dhdr.fields.id     = (uint16_t)id;
+    mfsp->ncbuf->dhdr.fields.size   = (uint32_t)0;
+    mfsp->ncbuf->dhdr.fields.crc    = (uint16_t)0xFFFF;
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  mfsp->next_offset,
                                  sizeof (mfs_data_header_t),
-                                 mfsp->buffer.data8));
+                                 mfsp->ncbuf->data8));
 
     /* Adjusting bank-related metadata.*/
     mfsp->used_space  -= ALIGNED_REC_SIZE(mfsp->descriptors[id - 1U].size);
@@ -1232,13 +1234,13 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
 
     /* Writing the data header with size set to zero, it means that the
        record is logically erased. Note, the magic number is not set.*/
-    mfsp->buffer.dhdr.fields.id     = (uint16_t)id;
-    mfsp->buffer.dhdr.fields.size   = (uint32_t)0;
-    mfsp->buffer.dhdr.fields.crc    = (uint16_t)0xFFFF;
+    mfsp->ncbuf->dhdr.fields.id     = (uint16_t)id;
+    mfsp->ncbuf->dhdr.fields.size   = (uint32_t)0;
+    mfsp->ncbuf->dhdr.fields.crc    = (uint16_t)0xFFFF;
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  mfsp->tr_next_offset + (sizeof (uint32_t) * 2U),
                                  sizeof (mfs_data_header_t) - (sizeof (uint32_t) * 2U),
-                                 mfsp->buffer.data8 + (sizeof (uint32_t) * 2U)));
+                                 mfsp->ncbuf->data8 + (sizeof (uint32_t) * 2U)));
 
     /* Adding a transaction operation record.*/
     top = &mfsp->tr_ops[mfsp->tr_nops];
@@ -1384,8 +1386,8 @@ mfs_error_t mfsCommitTransaction(MFSDriver *mfsp) {
   }
 
   /* Scanning all buffered operations in reverse order.*/
-  mfsp->buffer.dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
-  mfsp->buffer.dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
+  mfsp->ncbuf->dhdr.fields.magic1 = (uint32_t)MFS_HEADER_MAGIC_1;
+  mfsp->ncbuf->dhdr.fields.magic2 = (uint32_t)MFS_HEADER_MAGIC_2;
   top = &mfsp->tr_ops[mfsp->tr_nops];
   while (top > &mfsp->tr_ops[0]) {
     /* On the previous element.*/
@@ -1395,7 +1397,7 @@ mfs_error_t mfsCommitTransaction(MFSDriver *mfsp) {
     RET_ON_ERROR(mfs_flash_write(mfsp,
                                  top->offset,
                                  sizeof (uint32_t) * 2U,
-                                 mfsp->buffer.data8));
+                                 mfsp->ncbuf->data8));
   }
 
   /* Transaction fully committed by writing the last (first in transaction)
