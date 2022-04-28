@@ -74,19 +74,6 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Added dubby cycles support for SNOR using the normal SPI driver.
-- NEW: Disabled priority check on STM32 EXTI interrupts when the default
-       ISR is disabled. This allows for fast interrupts.
-- NEW: Added support for UART9 and USART10 on STM32H7.
-- NEW: Improved MFS to use explicitly non-cacheable buffers for potentially
-       DMA-accessible I/O areas.
-- NEW: FatFS now functional on STM32H7xx, added a target to the VFS demo.
-- NEW: Improved cache settings in STM32H7xx mcuconf.h.
-- NEW: Modified SDMMCv2 to allow for uncached buffers, tested on STM32H7xx.
-- NEW: Added OCTOSPIv2 driver using MDMA for STM32H7xx.
-- NEW: Added demos for STM32H723ZG Nucleo144 and STM32H735ZI Discovery boards.
-- NEW: Added support for STM32H723/25/33/35/A3/B3/A3Q/B3Q.
-- NEW: Updated ST Cube headers for STM32H7xx.
 - NEW: Added a Posix-favored shell named "msh" (Mini Shell). The shell is able
        to run sub-apps inside the same sandbox. The shell can either be placed
        statically in flash or loaded dynamically in RAM.
@@ -96,8 +83,6 @@
 - NEW: SBs and VFS integration. Each SB can see its own VFS instance.
 - NEW: Added integration of LittleFS on top of our flash infrastructure.
 - NEW: Added a new MEM_IS_VALID_FUNCTION() macro to RT and NIL.
-- NEW: Improved HAL flash interface with mutual exclusion methods, improved
-       EFL and SNOR drivers to use it.
 - NEW: Added a centralized errors handler under /os/common/utils. It will
        replace those in HAL and SB and will be shared among multiple subsystems.
 - NEW: Added a new OOP model under /os/common/utils. It will replace the
@@ -113,24 +98,13 @@
 - NEW: Added MEM_NATURAL_ALIGN macro to RT and NIL.
 - NEW: Added static initializer for virtual timers in RT.
 - NEW: Added new function chHeapIntegrityCheck().
-- NEW: Added EFL driver implementation for STM32G4xx.
 - NEW: Function chCoreGetStatusX() changed to return a memory region object
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
-- NEW: STM32G0B1 USBv2 driver.
-- NEW: USBv1 driver optimization and removal of a potential race condition
-       (not demonstrated).
-- NEW: Added elfAcquireBus()/eflReleaseBus() functions to EFL driver.
 - NEW: Increased stacks size in RT test suite from 128 to 192. added an
        option to override the stack size by defining THREADS_STACK_SIZE
        in the makefile.
-- NEW: Added STM32L073RZ-Nucleo64 to USB-CDC "multi" demo. Removed old demo.
-- NEW: Added an STM32 WDG "multi" demo. Removed all old WDG demos.
-- NEW: Added option to copy vectors in RAM on GCC startup for ARMv6-M,
-       ARMv7-M and ARMv8-M-ML.
-- NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
-- NEW: Added SPIv2 support also to STM32WB and STM32WL.
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232)
