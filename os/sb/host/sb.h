@@ -94,6 +94,10 @@
 #error "SB_CFG_NUM_REGIONS not defined in sbconf.h"
 #endif
 
+#if !defined(SB_CFG_ENABLE_VRQ) || defined(__DOXYGEN__)
+#error "SB_CFG_ENABLE_VRQ not defined in sbconf.h"
+#endif
+
 #if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)
 #error "SB_CFG_ENABLE_VFS not defined in sbconf.h"
 #endif
@@ -281,6 +285,7 @@ extern "C" {
 /*===========================================================================*/
 
 #include "sbsysc.h"
+#include "sbvrq.h"
 #include "sbelf.h"
 #include "sbposix.h"
 #include "sbapi.h"

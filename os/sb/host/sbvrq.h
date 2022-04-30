@@ -18,15 +18,17 @@
 */
 
 /**
- * @file    sb/host/sbapi.h
- * @brief   ARM SandBox host API macros and structures.
+ * @file    sb/host/sbvrq.h
+ * @brief   ARM SandBox host Virtual IRQs macros and structures.
  *
  * @addtogroup ARM_SANDBOX_HOSTAPI
  * @{
  */
 
-#ifndef SBAPI_H
-#define SBAPI_H
+#ifndef SBVRQ_H
+#define SBVRQ_H
+
+#if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -45,9 +47,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a syscall handler.
+ * @brief   Type of a mask of Virtual IRQs.
  */
-typedef void (*port_syscall_t)(struct port_extctx *ectx);
+typedef uint32_t sb_vrqmask_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -60,7 +62,7 @@ typedef void (*port_syscall_t)(struct port_extctx *ectx);
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  void sbVRQPendI(sb_class_t *sbp, sb_vrqmask_t vmask);
 #ifdef __cplusplus
 }
 #endif
@@ -69,6 +71,8 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* SBAPI_H */
+#endif /* SB_CFG_ENABLE_VRQ == TRUE */
+
+#endif /* SBVRQ_H */
 
 /** @} */

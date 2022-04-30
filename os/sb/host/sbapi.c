@@ -36,6 +36,20 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+static void sb_api_stdio(struct port_extctx *ectxp);
+static void sb_api_exit(struct port_extctx *ctxp);
+static void sb_api_get_systime(struct port_extctx *ctxp);
+static void sb_api_get_frequency(struct port_extctx *ctxp);
+static void sb_api_sleep(struct port_extctx *ctxp);
+static void sb_api_sleep_until_windowed(struct port_extctx *ctxp);
+static void sb_api_wait_message(struct port_extctx *ctxp);
+static void sb_api_reply_message(struct port_extctx *ctxp);
+static void sb_api_wait_one_timeout(struct port_extctx *ctxp);
+static void sb_api_wait_any_timeout(struct port_extctx *ctxp);
+static void sb_api_wait_all_timeout(struct port_extctx *ctxp);
+static void sb_api_broadcast_flags(struct port_extctx *ctxp);
+static void sb_api_loadelf(struct port_extctx *ectxp);
+
 /**
  * @name    Standard API handlers
  * @{
@@ -960,26 +974,8 @@ static void sb_cleanup(void) {
 #endif
 }
 
-/*===========================================================================*/
-/* Module exported functions.                                                */
-/*===========================================================================*/
-
-void __sb_abort(msg_t msg) {
-
-  chSysUnlock();
-
-  sb_cleanup();
-
-  chSysLock();
-#if CH_CFG_USE_EVENTS == TRUE
-  chEvtBroadcastI(&sb.termination_es);
-#endif
-  chThdExitS(msg);
-  chSysHalt("zombies");
-}
-
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-void sb_api_stdio(struct port_extctx *ectxp) {
+static void sb_api_stdio(struct port_extctx *ectxp) {
 
   switch (ectxp->r0) {
   case SB_POSIX_OPEN:
@@ -1052,7 +1048,7 @@ void sb_api_stdio(struct port_extctx *ectxp) {
 }
 #endif /* SB_CFG_ENABLE_VFS == TRUE */
 
-void sb_api_exit(struct port_extctx *ectxp) {
+static void sb_api_exit(struct port_extctx *ectxp) {
 
   sb_cleanup();
 
@@ -1067,17 +1063,17 @@ void sb_api_exit(struct port_extctx *ectxp) {
   ectxp->r0 = CH_RET_ENOSYS;
 }
 
-void sb_api_get_systime(struct port_extctx *ectxp) {
+static void sb_api_get_systime(struct port_extctx *ectxp) {
 
   ectxp->r0 = (uint32_t)chVTGetSystemTimeX();
 }
 
-void sb_api_get_frequency(struct port_extctx *ectxp) {
+static void sb_api_get_frequency(struct port_extctx *ectxp) {
 
   ectxp->r0 = (uint32_t)CH_CFG_ST_FREQUENCY;
 }
 
-void sb_api_sleep(struct port_extctx *ectxp) {
+static void sb_api_sleep(struct port_extctx *ectxp) {
   sysinterval_t interval = (sysinterval_t )ectxp->r0;
 
   if (interval != TIME_IMMEDIATE) {
@@ -1087,14 +1083,14 @@ void sb_api_sleep(struct port_extctx *ectxp) {
   ectxp->r0 = CH_RET_SUCCESS;
 }
 
-void sb_api_sleep_until_windowed(struct port_extctx *ectxp) {
+static void sb_api_sleep_until_windowed(struct port_extctx *ectxp) {
 
   chThdSleepUntilWindowed((systime_t )ectxp->r0, (systime_t )ectxp->r1);
 
   ectxp->r0 = CH_RET_SUCCESS;
 }
 
-void sb_api_wait_message(struct port_extctx *ectxp) {
+static void sb_api_wait_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
@@ -1117,7 +1113,7 @@ void sb_api_wait_message(struct port_extctx *ectxp) {
 #endif
 }
 
-void sb_api_reply_message(struct port_extctx *ectxp) {
+static void sb_api_reply_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
@@ -1139,7 +1135,7 @@ void sb_api_reply_message(struct port_extctx *ectxp) {
 #endif
 }
 
-void sb_api_wait_one_timeout(struct port_extctx *ectxp) {
+static void sb_api_wait_one_timeout(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
   ectxp->r0 = (uint32_t)chEvtWaitOneTimeout((eventmask_t )ectxp->r0,
@@ -1149,7 +1145,7 @@ void sb_api_wait_one_timeout(struct port_extctx *ectxp) {
 #endif
 }
 
-void sb_api_wait_any_timeout(struct port_extctx *ectxp) {
+static void sb_api_wait_any_timeout(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
   ectxp->r0 = (uint32_t)chEvtWaitAnyTimeout((eventmask_t )ectxp->r0,
@@ -1159,7 +1155,7 @@ void sb_api_wait_any_timeout(struct port_extctx *ectxp) {
 #endif
 }
 
-void sb_api_wait_all_timeout(struct port_extctx *ectxp) {
+static void sb_api_wait_all_timeout(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
   ectxp->r0 = (uint32_t)chEvtWaitAllTimeout((eventmask_t )ectxp->r0,
@@ -1169,7 +1165,7 @@ void sb_api_wait_all_timeout(struct port_extctx *ectxp) {
 #endif
 }
 
-void sb_api_broadcast_flags(struct port_extctx *ectxp) {
+static void sb_api_broadcast_flags(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
@@ -1180,7 +1176,7 @@ void sb_api_broadcast_flags(struct port_extctx *ectxp) {
 #endif
 }
 
-void sb_api_loadelf(struct port_extctx *ectxp) {
+static void sb_api_loadelf(struct port_extctx *ectxp) {
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   const char *fname = (const char *)ectxp->r0;
@@ -1200,6 +1196,24 @@ void sb_api_loadelf(struct port_extctx *ectxp) {
 #else
   ectxp->r0 = CH_RET_ENOSYS;
 #endif
+}
+
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
+void __sb_abort(msg_t msg) {
+
+  chSysUnlock();
+
+  sb_cleanup();
+
+  chSysLock();
+#if CH_CFG_USE_EVENTS == TRUE
+  chEvtBroadcastI(&sb.termination_es);
+#endif
+  chThdExitS(msg);
+  chSysHalt("zombies");
 }
 
 /** @} */

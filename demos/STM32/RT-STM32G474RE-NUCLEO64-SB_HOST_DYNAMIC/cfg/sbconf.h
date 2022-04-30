@@ -39,6 +39,13 @@
 #endif
 
 /**
+ * @brief   Enables support for sandbox Virtual IRQs.
+ */
+#if !defined(SB_CFG_ENABLE_VRQ) || defined(__DOXYGEN__)
+#define SB_CFG_ENABLE_VRQ                   TRUE
+#endif
+
+/**
  * @brief   Enables Posix API in sandboxes using VFS.
  */
 #if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)

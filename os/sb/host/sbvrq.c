@@ -18,57 +18,41 @@
 */
 
 /**
- * @file    sb/host/sbapi.h
- * @brief   ARM SandBox host API macros and structures.
+ * @file    sb/host/sbvrq.c
+ * @brief   ARM SandBox host Virtual IRQs code.
  *
- * @addtogroup ARM_SANDBOX_HOSTAPI
+ * @addtogroup ARM_SANDBOX_VRQ
  * @{
  */
 
-#ifndef SBAPI_H
-#define SBAPI_H
+#include "sb.h"
+
+#if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Module constants.                                                         */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module pre-compile time settings.                                         */
+/* Module local definitions.                                                 */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Derived constants and error checks.                                       */
+/* Module exported variables.                                                */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module data structures and types.                                         */
-/*===========================================================================*/
-
-/**
- * @brief   Type of a syscall handler.
- */
-typedef void (*port_syscall_t)(struct port_extctx *ectx);
-
-/*===========================================================================*/
-/* Module macros.                                                            */
+/* Module local types.                                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* External declarations.                                                    */
+/* Module local variables.                                                   */
 /*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
 /*===========================================================================*/
-/* Module inline functions.                                                  */
+/* Module local functions.                                                   */
 /*===========================================================================*/
 
-#endif /* SBAPI_H */
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
+#endif /* SB_CFG_ENABLE_VRQ == TRUE */
 
 /** @} */
