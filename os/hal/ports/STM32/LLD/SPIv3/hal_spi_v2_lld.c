@@ -1135,8 +1135,6 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
-  spi_lld_wait_complete(spip);
-
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   if (spip->is_bdma)
 #endif
@@ -1195,8 +1193,6 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
 
-  spi_lld_wait_complete(spip);
-
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   if (spip->is_bdma)
 #endif
@@ -1254,8 +1250,6 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   osalDbgAssert(n < 65536, "unsupported DMA transfer size");
-
-  spi_lld_wait_complete(spip);
 
 #if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
   if (spip->is_bdma)
@@ -1353,9 +1347,7 @@ uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
   uint32_t dsize = (spip->spi->CFG1 & SPI_CFG1_DSIZE_Msk) + 1U;
   uint32_t rxframe;
 
-  spi_lld_wait_complete(spip);
-
-  spip->spi->CR1 |= SPI_CR1_CSTART;
+  spi_lld_start_transfer(spip);
 
   /* wait for room in TX FIFO.*/
   while ((spip->spi->SR & SPI_SR_TXP) == 0U)
@@ -1390,6 +1382,8 @@ uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
   }
 
   spip->spi->CR1 |= SPI_CR1_CSUSP;
+  spi_lld_wait_complete(spip);
+  spip->spi->CR1 &= ~SPI_CR1_SPE;
 
   return rxframe;
 }

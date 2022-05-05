@@ -215,7 +215,36 @@ int main(void) {
   spiUnselect(&PORTAB_SPI1);          /* Slave Select de-assertion.       */
   cacheBufferInvalidate(&rxbuf[0],    /* Cache invalidation over the      */
                         sizeof rxbuf);/* buffer.                          */
+
+  /* Waiting button release.*/
+  while (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+    chThdSleepMilliseconds(100);
+  }
 #endif
+
+  /*
+   * Testing polled mixed with DMA transfers.
+   */
+  spiStart(&PORTAB_SPI1, &ls_spicfg); /* Setup transfer parameters.       */
+  do {
+     /* Starting synchronous master 256 frames send.*/
+     spiSelect(&PORTAB_SPI1);
+     spiPolledExchange(&PORTAB_SPI1, txbuf[0x55]);
+     spiExchange(&PORTAB_SPI1, 4,
+                 txbuf, rxbuf);
+     spiUnselect(&PORTAB_SPI1);
+
+     /* Toggle the LED, wait a little bit and repeat.*/
+ #if defined(PORTAB_LINE_LED1)
+     palToggleLine(PORTAB_LINE_LED1);
+ #endif
+     chThdSleepMilliseconds(100);
+   } while (palReadLine(PORTAB_LINE_BUTTON) != PORTAB_BUTTON_PRESSED);
+
+   /* Waiting button release.*/
+   while (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+     chThdSleepMilliseconds(100);
+   }
 
   /*
    * Starting the transmitter and receiver threads.
