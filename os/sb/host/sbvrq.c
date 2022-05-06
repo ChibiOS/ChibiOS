@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "sb.h"
 
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
@@ -52,6 +54,53 @@
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Activates VRQs on the specified sandbox.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] vmask     mask of VRQs to be activated
+ * @return              The operation status.
+ * @retval false        if the activation has succeeded.
+ * @retval true         in case of sandbox stack overflow.
+ */
+bool sbVRQSignalMaskI(sb_class_t *sbp, sb_vrqmask_t vmask) {
+  struct port_extctx *ectxp;
+  const sb_header_t *sbhp;
+
+  /* This IRQ could have preempted the sandbox itself or some other thread,
+     handling is different.*/
+  if (sbp->tp->state == CH_STATE_CURRENT) {
+    /* Sandbox case, getting the current exception frame.*/
+    ectxp = (struct port_extctx *)__get_PSP() - 1;
+
+    /* Checking if the new frame is within the sandbox else failure.*/
+    if (!sb_is_valid_write_range(sbp,
+                                 (void *)ectxp,
+                                 sizeof (struct port_extctx))) {
+      return true;
+    }
+  }
+  else {
+    ectxp = sbp->tp->ctx.sp - 1;
+
+    /* Checking if the new frame is within the sandbox else failure.*/
+    if (!sb_is_valid_write_range(sbp,
+                                 (void *)ectxp,
+                                 sizeof (struct port_extctx))) {
+      return true;
+    }
+
+    /* Preventing leakage of information, clearing all register values, those
+       would come from outside the sandbox.*/
+    memset((void *)ectxp, 0, sizeof (struct port_extctx));
+  }
+
+  /* Header location.*/
+  sbhp = (const sb_header_t *)(void *)sbp->config->regions[sbp->config->code_region].area.base;
+
+  return false;
+}
 
 #endif /* SB_CFG_ENABLE_VRQ == TRUE */
 

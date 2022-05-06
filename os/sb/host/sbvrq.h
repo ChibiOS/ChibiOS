@@ -62,7 +62,7 @@ typedef uint32_t sb_vrqmask_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sbVRQPendI(sb_class_t *sbp, sb_vrqmask_t vmask);
+  bool sbVRQSignalMaskI(sb_class_t *sbp, sb_vrqmask_t vmask);
 #ifdef __cplusplus
 }
 #endif

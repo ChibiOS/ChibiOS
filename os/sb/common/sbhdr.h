@@ -77,9 +77,13 @@ typedef struct {
    */
   uint32_t                      hdr_exit;
   /**
+   * @brief   VFQ vector.
+   */
+  uint32_t                      hdr_vfq;
+  /**
    * @brief   Used-defined parameters, defaulted to zero.
    */
-  uint32_t                      user[3];
+  uint32_t                      user[2];
 } sb_header_t;
 
 /*===========================================================================*/

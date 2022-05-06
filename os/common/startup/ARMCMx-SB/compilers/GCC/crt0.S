@@ -100,7 +100,7 @@ __sandbox:      .long       0xFE9154C0
                 .long       32
                 .long       __crt0_entry
                 .long       __crt0_exit
-                .long       0
+                .long       __crt0_vfq
                 .long       0
                 .long       0
 
@@ -118,6 +118,14 @@ environ:
                 .ds.l       1
 
                 .text
+
+                /* Default VFQ handler.*/
+                .align      2
+                .thumb_func
+                .weak       __crt0_vfq
+__crt0_vfq:
+                ldr         r0, =0xFFFFFFFF
+                /* Falls into __crt0_exit.*/
 
                 /* Default exit method, calling OS exit().*/
                 .align      2
