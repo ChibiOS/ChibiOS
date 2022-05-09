@@ -32,6 +32,8 @@
 #include "vfs.h"
 #include "errcodes.h"
 
+#include "sbhdr.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -155,6 +157,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a mask of Virtual IRQs.
+ */
+typedef uint32_t sb_vrqmask_t;
+
+/**
  * @brief   Type of a sandbox manager global structure.
  */
 typedef struct {
@@ -244,6 +251,10 @@ typedef struct {
    * @brief   Thread running in the sandbox.
    */
   thread_t                      *tp;
+  /**
+   * @brief   Pointer to the image header.
+   */
+  const sb_header_t             *sbhp;
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Thread sending a message to the sandbox.
@@ -255,6 +266,20 @@ typedef struct {
    * @brief   Sandbox events source.
    */
   event_source_t                es;
+#endif
+#if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Global virtual IRQ status register.
+   */
+  uint32_t                      vrq_isr;
+  /**
+   * @brief   Mask of enabled virtual IRQ flags.
+   */
+  sb_vrqmask_t                  vrq_enmask;
+  /**
+   * @brief   Mask of pending virtual IRQ flags.
+   */
+  sb_vrqmask_t                  vrq_wtmask;
 #endif
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   /**
@@ -289,7 +314,6 @@ extern "C" {
 #include "sbelf.h"
 #include "sbposix.h"
 #include "sbapi.h"
-#include "sbhdr.h"
 #include "sbhost.h"
 
 #endif /* SBHOST_H */

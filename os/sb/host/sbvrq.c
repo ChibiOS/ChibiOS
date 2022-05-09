@@ -51,55 +51,157 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+__STATIC_FORCEINLINE void vfq_makectx(sb_class_t *sbp,
+                                      struct port_extctx *ectxp,
+                                      uint32_t active_mask) {
+  uint32_t irqn = __CLZ(active_mask);
+  sbp->vrq_wtmask &= ~(1U << irqn);
+
+  /* Building the return context.*/
+  ectxp->r0     = irqn;
+  ectxp->pc     = sbp->sbhp->hdr_vfq; /* TODO validate or let it eventually crash? */
+  ectxp->xpsr   = 0x01000000U;
+#if CORTEX_USE_FPU == TRUE
+  ectxp->fpscr  = FPU->FPDSCR;
+#endif
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   Activates VRQs on the specified sandbox.
+ * @brief   Triggers VRQs on the specified sandbox.
+ * @note    This function must be called from IRQ context because
+ *          it manipulates exception stack frames.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] vmask     mask of VRQs to be activated
  * @return              The operation status.
  * @retval false        if the activation has succeeded.
  * @retval true         in case of sandbox stack overflow.
+ *
+ * @special
  */
-bool sbVRQSignalMaskI(sb_class_t *sbp, sb_vrqmask_t vmask) {
+bool sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
   struct port_extctx *ectxp;
-  const sb_header_t *sbhp;
 
-  /* This IRQ could have preempted the sandbox itself or some other thread,
-     handling is different.*/
-  if (sbp->tp->state == CH_STATE_CURRENT) {
-    /* Sandbox case, getting the current exception frame.*/
-    ectxp = (struct port_extctx *)__get_PSP() - 1;
+  chSysLockFromISR();
 
-    /* Checking if the new frame is within the sandbox else failure.*/
-    if (!sb_is_valid_write_range(sbp,
-                                 (void *)ectxp,
-                                 sizeof (struct port_extctx))) {
-      return true;
+  /* Adding VRQ mask to the pending mask.*/
+  sbp->vrq_wtmask |= vmask;
+
+  /* Triggering the VRQ if required.*/
+  if (sbp->vrq_isr == 0U) {
+    sb_vrqmask_t active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+
+    if (active_mask != 0U) {
+
+      /* This IRQ could have preempted the sandbox itself or some other thread,
+         handling is different.*/
+      if (sbp->tp->state == CH_STATE_CURRENT) {
+        /* Sandbox case, getting the current exception frame.*/
+        ectxp = (struct port_extctx *)__get_PSP() - 1;
+
+        /* Checking if the new frame is within the sandbox else failure.*/
+        if (!sb_is_valid_write_range(sbp,
+                                     (void *)ectxp,
+                                     sizeof (struct port_extctx))) {
+          chSysUnlockFromISR();
+
+          return true;
+        }
+      }
+      else {
+        ectxp = sbp->tp->ctx.sp - 1;
+
+        /* Checking if the new frame is within the sandbox else failure.*/
+        if (!sb_is_valid_write_range(sbp,
+                                     (void *)ectxp,
+                                     sizeof (struct port_extctx))) {
+          chSysUnlockFromISR();
+
+          return true;
+        }
+
+        /* Preventing leakage of information, clearing all register values, those
+           would come from outside the sandbox.*/
+        memset((void *)ectxp, 0, sizeof (struct port_extctx));
+      }
+
+      /* Building the return context.*/
+      vfq_makectx(sbp, ectxp, active_mask);
+    }
+  }
+
+  chSysUnlockFromISR();
+
+  return false;
+}
+
+void sb_vrq_disable(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  ectxp->r0 = sbp->vrq_isr;
+  sbp->vrq_isr |= SB_VRQ_ISR_DISABLED;
+}
+
+void sb_vrq_enable(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  ectxp->r0 = sbp->vrq_isr;
+  sbp->vrq_isr &= ~SB_VRQ_ISR_DISABLED;
+
+  /* Re-triggering the VRQ if required.*/
+  if (sbp->vrq_isr == 0U) {
+    sb_vrqmask_t active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+
+    if (active_mask != 0U) {
+      /* Creating a context for return.*/
+      ectxp--;
+
+      /* Checking if the new frame is within the sandbox else failure.*/
+      if (!sb_is_valid_write_range(sbp,
+                                   (void *)ectxp,
+                                   sizeof (struct port_extctx))) {
+        __sb_abort(CH_RET_EFAULT);
+      }
+
+      /* Building the return context.*/
+      vfq_makectx(sbp, ectxp, active_mask);
+    }
+  }
+}
+
+void sb_vrq_getisr(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  ectxp->r0 = sbp->vrq_isr;
+}
+
+void sb_vrq_return(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  if (((sbp->vrq_isr & SB_VRQ_ISR_IRQMODE) == 0U)) {
+    __sb_abort(CH_RET_EFAULT);
+  }
+
+  /* Re-triggering the VRQ if required.*/
+  if (sbp->vrq_isr == 0U) {
+    sb_vrqmask_t active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+
+    if (active_mask != 0U) {
+      /* Building the return context, reusing the current context structure.*/
+      vfq_makectx(sbp, ectxp, active_mask);
     }
   }
   else {
-    ectxp = sbp->tp->ctx.sp - 1;
+    /* Ending IRQ mode.*/
+    sbp->vrq_isr &= ~SB_VRQ_ISR_IRQMODE;
 
-    /* Checking if the new frame is within the sandbox else failure.*/
-    if (!sb_is_valid_write_range(sbp,
-                                 (void *)ectxp,
-                                 sizeof (struct port_extctx))) {
-      return true;
-    }
-
-    /* Preventing leakage of information, clearing all register values, those
-       would come from outside the sandbox.*/
-    memset((void *)ectxp, 0, sizeof (struct port_extctx));
+    /* Discarding the return current context, returning on the previous one.*/
+    ectxp++;
   }
-
-  /* Header location.*/
-  sbhp = (const sb_header_t *)(void *)sbp->config->regions[sbp->config->code_region].area.base;
-
-  return false;
 }
 
 #endif /* SB_CFG_ENABLE_VRQ == TRUE */

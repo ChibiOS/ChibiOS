@@ -60,7 +60,7 @@ typedef void (*port_syscall_t)(struct port_extctx *ectx);
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  void __sb_abort(msg_t msg);
 #ifdef __cplusplus
 }
 #endif

@@ -25,6 +25,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 #include "sb.h"
 
@@ -194,14 +196,8 @@ size_t sb_check_strings_array(sb_class_t *sbp, const char *pp[], size_t max) {
  */
 void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
 
+  memset((void *)sbp, 0, sizeof (sb_class_t));
   sbp->config = config;
-  sbp->tp     = NULL;
-#if CH_CFG_USE_MESSAGES == TRUE
-  sbp->msg_tp = NULL;
-#endif
-#if CH_CFG_USE_EVENTS == TRUE
-  chEvtObjectInit(&sbp->es);
-#endif
 }
 
 /**
@@ -221,29 +217,28 @@ thread_t *sbStartThread(sb_class_t *sbp, const char *name,
                         void *wsp, size_t size, tprio_t prio,
                         const char *argv[], const char *envp[]) {
   thread_t *utp;
-  const sb_header_t *sbhp;
   const sb_config_t *config = sbp->config;
   void *usp, *uargv, *uenvp;
   size_t envsize, argsize, parsize;
   int uargc, uenvc;
 
   /* Header location.*/
-  sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
+  sbp->sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
 
   /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
-      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
+  if ((sbp->sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbp->sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
     return NULL;
   }
 
   /* Checking header size and alignment.*/
-  if (sbhp->hdr_size != sizeof (sb_header_t)) {
+  if (sbp->sbhp->hdr_size != sizeof (sb_header_t)) {
     return NULL;
   }
 
   /* Checking header entry point.*/
   if (!chMemIsSpaceWithinX(&config->regions[config->code_region].area,
-                           (const void *)sbhp->hdr_entry,
+                           (const void *)sbp->sbhp->hdr_entry,
                            (size_t)2)) {
     return NULL;
   }
@@ -290,7 +285,7 @@ thread_t *sbStartThread(sb_class_t *sbp, const char *name,
     .wbase      = (stkalign_t *)wsp,
     .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
     .prio       = prio,
-    .u_pc       = sbhp->hdr_entry,
+    .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
     .arg        = (void *)sbp
   };
@@ -303,7 +298,7 @@ thread_t *sbStartThread(sb_class_t *sbp, const char *name,
   utp = chThdCreateUnprivileged(&utd);
 
   /* For messages exchange.*/
-  sbp->tp      = utp;
+  sbp->tp = utp;
 
   return utp;
 }
@@ -345,7 +340,6 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
              const char *argv[], const char *envp[]) {
   const sb_config_t *config = sbp->config;
   memory_area_t ma = config->regions[0].area;
-  const sb_header_t *sbhp;
   msg_t ret;
   void *usp, *uargv, *uenvp;
   size_t envsize, argsize, parsize;
@@ -396,21 +390,21 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   CH_RETURN_ON_ERROR(ret);
 
   /* Header location.*/
-  sbhp = (const sb_header_t *)(void *)ma.base;
+  sbp->sbhp = (const sb_header_t *)(void *)ma.base;
 
   /* Checking header magic numbers.*/
-  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
-      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
+  if ((sbp->sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbp->sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
     return CH_RET_ENOEXEC;
   }
 
   /* Checking header size.*/
-  if (sbhp->hdr_size != sizeof (sb_header_t)) {
+  if (sbp->sbhp->hdr_size != sizeof (sb_header_t)) {
     return CH_RET_ENOEXEC;
   }
 
   /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_entry, (size_t)2)) {
+  if (!chMemIsSpaceWithinX(&ma, (const void *)sbp->sbhp->hdr_entry, (size_t)2)) {
     return CH_RET_EFAULT;
   }
 
@@ -420,7 +414,7 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
     .wbase      = (stkalign_t *)wsp,
     .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
     .prio       = prio,
-    .u_pc       = sbhp->hdr_entry,
+    .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
     .arg        = (void *)sbp
   };

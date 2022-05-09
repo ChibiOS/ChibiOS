@@ -34,6 +34,14 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Virtual ISR register bit definitions
+ * @{
+ */
+#define SB_VRQ_ISR_DISABLED     1U
+#define SB_VRQ_ISR_IRQMODE      2U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -46,11 +54,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a mask of Virtual IRQs.
- */
-typedef uint32_t sb_vrqmask_t;
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -62,7 +65,11 @@ typedef uint32_t sb_vrqmask_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  bool sbVRQSignalMaskI(sb_class_t *sbp, sb_vrqmask_t vmask);
+  bool sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask);
+  void sb_vrq_disable(struct port_extctx *ectxp);
+  void sb_vrq_enable(struct port_extctx *ectxp);
+  void sb_vrq_getisr(struct port_extctx *ectxp);
+  void sb_vrq_return(struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

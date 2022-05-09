@@ -71,6 +71,18 @@ static void sb_api_loadelf(struct port_extctx *ectxp);
 #define SB_SVC12_HANDLER        sb_api_loadelf
 /** @} */
 
+/**
+ * @name    Standard API handlers
+ * @{
+ */
+#if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
+#define SB_SVC252_HANDLER       sb_vrq_disable
+#define SB_SVC253_HANDLER       sb_vrq_enable
+#define SB_SVC254_HANDLER       sb_vrq_getisr
+#define SB_SVC255_HANDLER       sb_vrq_return
+#endif
+/** @} */
+
 #define __SVC(x) asm volatile ("svc " #x)
 
 /*
@@ -957,7 +969,6 @@ static thread_t *sb_msg_wait_timeout_s(sysinterval_t timeout) {
 
   return tp;
 }
-
 
 static void sb_cleanup(void) {
 #if SB_CFG_ENABLE_VFS == TRUE
