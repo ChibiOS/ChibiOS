@@ -716,6 +716,48 @@ struct port_context {
   #endif
 #endif /* CH_DBG_ENABLE_STACK_CHECK == TRUE */
 
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Updates the stored user PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @param[in] addr      new address
+ */
+#define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (addr)
+
+/**
+ * @brief   Updates the stored system PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @param[in] addr      new address
+ */
+#define __port_syscall_set_s_psp(tp, addr) (tp)->ctx.syscall.u_ssp = (addr)
+
+/**
+ * @brief   Returns the user PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The user PSP value.
+ */
+#define __port_syscall_get_u_psp(tp) (tp)->ctx.syscall.u_psp
+
+/**
+ * @brief   Returns the system PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The system PSP value.
+ */
+#define __port_syscall_get_s_psp(tp) (tp)->ctx.syscall.s_psp
+
+/**
+ * @brief   Returns the syscall association pointer.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The pointer value.
+ */
+#define __port_syscall_get_pointer(tp) (tp)->ctx.syscall.p
+#endif /* PORT_USE_SYSCALL == TRUE */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

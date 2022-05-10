@@ -65,7 +65,7 @@ CC_NO_INLINE void port_syslock_noinline(void) {
 
 CC_NO_INLINE uint32_t port_get_s_psp(void) {
 
-  return (uint32_t)__sch_get_currthread()->ctx.syscall.s_psp;
+  return (uint32_t)__port_syscall_get_s_psp(__sch_get_currthread());
 }
 
 CC_WEAK void port_syscall(struct port_extctx *ctxp, uint32_t n) {
@@ -83,19 +83,19 @@ CC_WEAK void __port_do_syscall_entry(uint32_t n) {
 
   /* Caller context in unprivileged memory.*/
   u_psp = __get_PSP();
-  tp->ctx.syscall.u_psp = u_psp;
   ectxp = (struct port_extctx *)u_psp;
+  __port_syscall_set_u_psp(tp, u_psp);
 
   /* Return context for change in privileged mode.*/
-  newctxp = ((struct port_extctx *)tp->ctx.syscall.s_psp) - 1;
+  newctxp = ((struct port_extctx *)__port_syscall_get_s_psp(tp)) - 1;
 
   /* Creating context for return in privileged mode.*/
-  newctxp->r0     = (uint32_t)ectxp;
-  newctxp->r1     = n;
-  newctxp->pc     = (uint32_t)port_syscall;
-  newctxp->xpsr   = 0x01000000U;
+  newctxp->r0    = (uint32_t)ectxp;
+  newctxp->r1    = n;
+  newctxp->pc    = (uint32_t)port_syscall;
+  newctxp->xpsr  = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
-  newctxp->fpscr  = FPU->FPDSCR;
+  newctxp->fpscr = FPU->FPDSCR;
 #endif
 
   /* Switching PSP to the privileged mode PSP.*/
@@ -104,7 +104,7 @@ CC_WEAK void __port_do_syscall_entry(uint32_t n) {
 
 CC_WEAK void __port_do_syscall_return(void) {
 
-  __set_PSP(__sch_get_currthread()->ctx.syscall.u_psp);
+  __set_PSP(__port_syscall_get_u_psp(__sch_get_currthread()));
 }
 #endif /* PORT_USE_SYSCALL == TRUE */
 
