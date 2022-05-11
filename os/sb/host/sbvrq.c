@@ -52,18 +52,27 @@
 /*===========================================================================*/
 
 __STATIC_FORCEINLINE void vfq_makectx(sb_class_t *sbp,
-                                      struct port_extctx *ectxp,
+                                      struct port_extctx *newctxp,
                                       uint32_t active_mask) {
   uint32_t irqn = __CLZ(active_mask);
   sbp->vrq_wtmask &= ~(1U << irqn);
 
   /* Building the return context.*/
-  ectxp->r0     = irqn;
-  ectxp->pc     = sbp->sbhp->hdr_vfq; /* TODO validate or let it eventually crash? */
-  ectxp->xpsr   = 0x01000000U;
+  newctxp->r0     = irqn;
+  newctxp->pc     = sbp->sbhp->hdr_vfq; /* TODO validate or let it eventually crash? */
+  newctxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
-  ectxp->fpscr  = FPU->FPDSCR;
+  newctxp->fpscr  = FPU->FPDSCR;
 #endif
+}
+
+/**
+ * @brief   Used as a known privileged address.
+ */
+static void vfq_privileged_code(void) {
+
+  while (true) {
+  }
 }
 
 /*===========================================================================*/
@@ -77,14 +86,10 @@ __STATIC_FORCEINLINE void vfq_makectx(sb_class_t *sbp,
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] vmask     mask of VRQs to be activated
- * @return              The operation status.
- * @retval false        if the activation has succeeded.
- * @retval true         in case of sandbox stack overflow.
  *
  * @special
  */
-bool sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
-  struct port_extctx *ectxp;
+void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
 
   chSysLockFromISR();
 
@@ -96,47 +101,57 @@ bool sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
     sb_vrqmask_t active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
 
     if (active_mask != 0U) {
+      struct port_extctx *ectxp, *newctxp;
 
       /* This IRQ could have preempted the sandbox itself or some other thread,
          handling is different.*/
       if (sbp->tp->state == CH_STATE_CURRENT) {
         /* Sandbox case, getting the current exception frame.*/
-        ectxp = (struct port_extctx *)__get_PSP() - 1;
+        ectxp   = (struct port_extctx *)__get_PSP();
+        newctxp = ectxp - 1;
 
         /* Checking if the new frame is within the sandbox else failure.*/
         if (!sb_is_valid_write_range(sbp,
-                                     (void *)ectxp,
+                                     (void *)newctxp,
                                      sizeof (struct port_extctx))) {
+          /* Making the sandbox return on a privileged address, this
+             will cause a fault and sandbox termination.*/
           chSysUnlockFromISR();
-
-          return true;
+          ectxp->pc = (uint32_t)vfq_privileged_code;
+          return;
         }
       }
       else {
-        ectxp = sbp->tp->ctx.sp - 1;
+        /* Other thread case, getting the pointer from the context switch
+           structure.*/
+        ectxp   = sbp->tp->ctx.sp;
+        newctxp = ectxp - 1;
 
         /* Checking if the new frame is within the sandbox else failure.*/
         if (!sb_is_valid_write_range(sbp,
-                                     (void *)ectxp,
+                                     (void *)newctxp,
                                      sizeof (struct port_extctx))) {
+          /* Making the sandbox return on a privileged address, this
+             will cause a fault and sandbox termination.*/
           chSysUnlockFromISR();
-
-          return true;
+          ectxp->pc = (uint32_t)vfq_privileged_code;
+          return;
         }
 
         /* Preventing leakage of information, clearing all register values, those
            would come from outside the sandbox.*/
-        memset((void *)ectxp, 0, sizeof (struct port_extctx));
+        memset((void *)newctxp, 0, sizeof (struct port_extctx));
       }
 
       /* Building the return context.*/
-      vfq_makectx(sbp, ectxp, active_mask);
+      vfq_makectx(sbp, newctxp, active_mask);
+      __port_syscall_set_u_psp(sbp->tp, newctxp);
     }
   }
 
   chSysUnlockFromISR();
 
-  return false;
+  return;
 }
 
 void sb_vrq_disable(struct port_extctx *ectxp) {
@@ -169,6 +184,7 @@ void sb_vrq_enable(struct port_extctx *ectxp) {
 
       /* Building the return context.*/
       vfq_makectx(sbp, ectxp, active_mask);
+      __port_syscall_set_u_psp(sbp->tp, ectxp);
     }
   }
 }
@@ -202,6 +218,8 @@ void sb_vrq_return(struct port_extctx *ectxp) {
     /* Discarding the return current context, returning on the previous one.*/
     ectxp++;
   }
+
+  __port_syscall_set_u_psp(sbp->tp, ectxp);
 }
 
 #endif /* SB_CFG_ENABLE_VRQ == TRUE */

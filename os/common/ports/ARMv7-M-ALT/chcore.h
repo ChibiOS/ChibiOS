@@ -723,7 +723,7 @@ struct port_context {
  * @param[in] tp        pointer to the thread
  * @param[in] addr      new address
  */
-#define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (addr)
+#define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (uint32_t)(addr)
 
 /**
  * @brief   Updates the stored system PSP address.
@@ -731,7 +731,7 @@ struct port_context {
  * @param[in] tp        pointer to the thread
  * @param[in] addr      new address
  */
-#define __port_syscall_set_s_psp(tp, addr) (tp)->ctx.syscall.u_ssp = (addr)
+#define __port_syscall_set_s_psp(tp, addr) (tp)->ctx.syscall.s_psp = (uint32_t)(addr)
 
 /**
  * @brief   Returns the user PSP address.

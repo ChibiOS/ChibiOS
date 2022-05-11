@@ -65,7 +65,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  bool sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask);
+  void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask);
   void sb_vrq_disable(struct port_extctx *ectxp);
   void sb_vrq_enable(struct port_extctx *ectxp);
   void sb_vrq_getisr(struct port_extctx *ectxp);
