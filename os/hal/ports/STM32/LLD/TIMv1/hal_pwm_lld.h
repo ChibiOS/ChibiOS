@@ -532,9 +532,9 @@
     !STM32_PWM_USE_TIM3  && !STM32_PWM_USE_TIM4  &&                         \
     !STM32_PWM_USE_TIM5  && !STM32_PWM_USE_TIM8  &&                         \
     !STM32_PWM_USE_TIM9  && !STM32_PWM_USE_TIM10 &&                         \
-    !STM32_PWM_USE_TIM11 && !STM32_PWM_USE_TIM11 &&                         \
-    !STM32_PWM_USE_TIM13 && !STM32_PWM_USE_TIM13 &&                         \
-    !STM32_PWM_USE_TIM15 && !STM32_PWM_USE_TIM15 &&                         \
+    !STM32_PWM_USE_TIM11 && !STM32_PWM_USE_TIM12 &&                         \
+    !STM32_PWM_USE_TIM13 && !STM32_PWM_USE_TIM14 &&                         \
+    !STM32_PWM_USE_TIM15 && !STM32_PWM_USE_TIM16 &&                         \
     !STM32_PWM_USE_TIM17 && !STM32_PWM_USE_TIM20 &&                         \
     !STM32_PWM_USE_TIM21 && !STM32_PWM_USE_TIM22
 #error "PWM driver activated but no TIM peripheral assigned"
