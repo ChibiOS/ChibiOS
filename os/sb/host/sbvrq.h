@@ -39,7 +39,6 @@
  * @{
  */
 #define SB_VRQ_ISR_DISABLED     1U
-#define SB_VRQ_ISR_IRQMODE      2U
 /** @} */
 
 /*===========================================================================*/
@@ -65,11 +64,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask);
   void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask);
-  void sb_vrq_disable(struct port_extctx *ectxp);
-  void sb_vrq_enable(struct port_extctx *ectxp);
-  void sb_vrq_getisr(struct port_extctx *ectxp);
-  void sb_vrq_return(struct port_extctx *ectxp);
+  void sb_api_vrq_setwt(struct port_extctx *ectxp);
+  void sb_api_vrq_clrwt(struct port_extctx *ectxp);
+  void sb_api_vrq_seten(struct port_extctx *ectxp);
+  void sb_api_vrq_clren(struct port_extctx *ectxp);
+  void sb_api_vrq_disable(struct port_extctx *ectxp);
+  void sb_api_vrq_enable(struct port_extctx *ectxp);
+  void sb_api_vrq_getisr(struct port_extctx *ectxp);
+  void sb_api_vrq_return(struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

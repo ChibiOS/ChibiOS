@@ -48,6 +48,15 @@
 #define SB_SYSC_EVENT_WAIT_ANY  9
 #define SB_SYSC_EVENT_WAIT_ALL  10
 #define SB_SYSC_EVENT_BROADCAST 11
+#define SB_SYSC_LOADELF         12
+#define SB_SYSC_VRQ_SETWT       248
+#define SB_SYSC_VRQ_CLRWT       249
+#define SB_SYSC_VRQ_SETEN       250
+#define SB_SYSC_VRQ_CLREN       251
+#define SB_SYSC_VRQ_DISABLE     252
+#define SB_SYSC_VRQ_ENABLE      253
+#define SB_SYSC_VRQ_GETISR      254
+#define SB_SYSC_VRQ_RETURN      255
 /** @} */
 
 /**

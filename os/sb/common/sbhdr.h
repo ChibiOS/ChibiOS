@@ -77,9 +77,9 @@ typedef struct {
    */
   uint32_t                      hdr_exit;
   /**
-   * @brief   VFQ vector.
+   * @brief   VRQ vector.
    */
-  uint32_t                      hdr_vfq;
+  uint32_t                      hdr_vrq;
   /**
    * @brief   Used-defined parameters, defaulted to zero.
    */

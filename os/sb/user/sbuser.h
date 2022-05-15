@@ -836,6 +836,87 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
   sbSleep(sbTimeUS2I(usecs));
 }
 
+/**
+ * @brief   VRQ @p setwt pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_setwt(void) {
+
+  __syscall0(248);
+}
+
+/**
+ * @brief   VRQ @p clrwt pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_clrwt(void) {
+
+  __syscall0(249);
+}
+
+/**
+ * @brief   VRQ @p seten pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_seten(void) {
+
+  __syscall0(250);
+}
+
+/**
+ * @brief   VRQ @p clren pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_clren(void) {
+
+  __syscall0(251);
+}
+
+/**
+ * @brief   VRQ @p disable pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_disable(void) {
+
+  __syscall0(252);
+}
+
+/**
+ * @brief   VRQ @p enable pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_enable(void) {
+
+  __syscall0(253);
+}
+
+/**
+ * @brief   VRQ @p getisr pseudo-instruction.
+ *
+ * @api
+ */
+static inline uint32_t __sb_vrq_getisr(void) {
+
+  __syscall0r(254);
+  return r0;
+}
+
+/**
+ * @brief   VRQ return pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_return(void) {
+
+  __syscall0(255);
+}
+
 #endif /* SBUSER_H */
 
 /** @} */
