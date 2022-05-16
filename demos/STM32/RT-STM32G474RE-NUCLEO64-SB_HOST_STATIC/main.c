@@ -65,10 +65,12 @@ static const sb_config_t sb_config1 = {
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
+      .used         = true,
       .writeable    = false
     },
     [1] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
+      .used         = true,
       .writeable    = true
     }
   },
@@ -82,14 +84,34 @@ static const sb_config_t sb_config2 = {
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
+      .used         = true,
       .writeable    = false
     },
     [1] = {
       .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
+      .used         = true,
       .writeable    = true
     }
   },
 //  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+};
+
+static const char *sbx1_argv[] = {
+  "sbx1",
+  NULL
+};
+
+static const char *sbx1_envp[] = {
+  NULL
+};
+
+static const char *sbx2_argv[] = {
+  "sbx2",
+  NULL
+};
+
+static const char *sbx2_envp[] = {
+  NULL
 };
 
 /* Sandbox objects.*/
@@ -207,7 +229,7 @@ int main(void) {
   /* Starting sandboxed thread 1.*/
   utp1 = sbStartThread(&sbx1, "sbx1",
                        waUnprivileged1, sizeof (waUnprivileged1),
-                       NORMALPRIO - 1, NULL, NULL);
+                       NORMALPRIO - 1, sbx1_argv, sbx1_envp);
   if (utp1 == NULL) {
     chSysHalt("sbx1 failed");
   }
@@ -215,7 +237,7 @@ int main(void) {
   /* Starting sandboxed thread 2.*/
   utp2 = sbStartThread(&sbx2, "sbx2",
                        waUnprivileged2, sizeof (waUnprivileged2),
-                       NORMALPRIO - 1, NULL, NULL);
+                       NORMALPRIO - 1, sbx2_argv, sbx2_envp);
   if (utp1 == NULL) {
     chSysHalt("sbx2 failed");
   }
