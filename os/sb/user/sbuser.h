@@ -191,6 +191,13 @@ typedef uint32_t eventflags_t;
                                         "r" (r2), "r" (r3) : "memory")
 /** @} */
 
+/**
+ * @brief   VRQ return pseudo-instruction.
+ *
+ * @api
+ */
+#define __sb_vrq_return()   __syscall0(255)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -839,41 +846,53 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
 /**
  * @brief   VRQ @p setwt pseudo-instruction.
  *
+ * @param[in] m         VRQs mask
+ *
  * @api
  */
-static inline void __sb_vrq_setwt(void) {
+static inline uint32_t __sb_vrq_setwt(uint32_t m) {
 
-  __syscall0(248);
+  __syscall1r(248, m);
+  return r0;
 }
 
 /**
  * @brief   VRQ @p clrwt pseudo-instruction.
  *
+ * @param[in] m         VRQs mask
+ *
  * @api
  */
-static inline void __sb_vrq_clrwt(void) {
+static inline uint32_t __sb_vrq_clrwt(uint32_t m) {
 
-  __syscall0(249);
+  __syscall1r(249, m);
+  return r0;
 }
 
 /**
  * @brief   VRQ @p seten pseudo-instruction.
  *
+ * @param[in] m         VRQs mask
+ *
  * @api
  */
-static inline void __sb_vrq_seten(void) {
+static inline uint32_t __sb_vrq_seten(uint32_t m) {
 
-  __syscall0(250);
+  __syscall1r(250, m);
+  return r0;
 }
 
 /**
  * @brief   VRQ @p clren pseudo-instruction.
  *
+ * @param[in] m         VRQs mask
+ *
  * @api
  */
-static inline void __sb_vrq_clren(void) {
+static inline uint32_t __sb_vrq_clren(uint32_t m) {
 
-  __syscall0(251);
+  __syscall1r(251, m);
+  return r0;
 }
 
 /**
@@ -905,16 +924,6 @@ static inline uint32_t __sb_vrq_getisr(void) {
 
   __syscall0r(254);
   return r0;
-}
-
-/**
- * @brief   VRQ return pseudo-instruction.
- *
- * @api
- */
-static inline void __sb_vrq_return(void) {
-
-  __syscall0(255);
 }
 
 #endif /* SBUSER_H */
