@@ -18,6 +18,14 @@
 
 #include "sbuser.h"
 
+__attribute__((naked))
+void __crt0_vrq(int vrqn) {
+
+  (void)vrqn;
+
+  __sb_vrq_return();
+}
+
 /*
  * Application entry point.
  */
@@ -30,6 +38,9 @@ int main(void) {
   while (true) {
   }
 #endif
+  __sb_vrq_seten(2);
+  __sb_vrq_setwt(2);
+
   while (true) {
     msg_t msg = sbMsgWait();
     printf("#1 Hello World (%u)!!\r\n", (unsigned)msg);

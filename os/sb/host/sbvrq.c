@@ -55,6 +55,9 @@ __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
   uint32_t irqn = __CLZ(active_mask);
   sbp->vrq_wtmask &= ~(1U << irqn);
 
+  /* Disabling VRQs globally during processing.*/
+  sbp->vrq_isr |= SB_VRQ_ISR_DISABLED;
+
   /* Building the return context.*/
   newctxp->r0     = irqn;
   newctxp->pc     = sbp->sbhp->hdr_vrq;
