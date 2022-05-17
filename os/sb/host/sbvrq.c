@@ -52,7 +52,7 @@
 __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
                                       struct port_extctx *newctxp,
                                       uint32_t active_mask) {
-  uint32_t irqn = __CLZ(active_mask);
+  uint32_t irqn = 31U - __CLZ(active_mask);
   sbp->vrq_wtmask &= ~(1U << irqn);
 
   /* Disabling VRQs globally during processing.*/
