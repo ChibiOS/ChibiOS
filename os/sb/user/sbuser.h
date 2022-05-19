@@ -848,7 +848,7 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
  *
  * @api
  */
-static inline void __sb_vrq_setwt(void) {
+static inline void __sb_vrq_wait(void) {
 
   __syscall0(247);
 }
