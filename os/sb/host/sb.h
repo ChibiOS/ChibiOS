@@ -280,6 +280,10 @@ typedef struct {
    * @brief   Mask of pending virtual IRQ flags.
    */
   sb_vrqmask_t                  vrq_wtmask;
+  /**
+   * @brief   Reference to sh SB thread while waiting for VRQs.
+   */
+  thread_reference_t            vrq_trp;
 #endif
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   /**

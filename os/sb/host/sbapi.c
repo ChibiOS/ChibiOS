@@ -76,6 +76,7 @@ static void sb_api_loadelf(struct port_extctx *ectxp);
  * @{
  */
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
+#define SB_SVC247_HANDLER       sb_api_vrq_wait
 #define SB_SVC248_HANDLER       sb_api_vrq_setwt
 #define SB_SVC249_HANDLER       sb_api_vrq_clrwt
 #define SB_SVC250_HANDLER       sb_api_vrq_seten
@@ -1218,8 +1219,6 @@ static void sb_api_loadelf(struct port_extctx *ectxp) {
 /*===========================================================================*/
 
 void __sb_abort(msg_t msg) {
-
-  chSysUnlock();
 
   sb_cleanup();
 

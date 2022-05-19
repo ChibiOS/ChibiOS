@@ -52,7 +52,7 @@
 __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
                                       struct port_extctx *newctxp,
                                       uint32_t active_mask) {
-  uint32_t irqn = 31U - __CLZ(active_mask);
+  uint32_t irqn = __CLZ(__RBIT(active_mask));
   sbp->vrq_wtmask &= ~(1U << irqn);
 
   /* Disabling VRQs globally during processing.*/
@@ -67,7 +67,7 @@ __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
 #endif
 }
 
-static void vrq_check_trigger(sb_class_t *sbp, struct port_extctx *ectxp) {
+static void vrq_check_trigger_s(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   /* Triggering the VRQ if required.*/
   if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
@@ -81,6 +81,7 @@ static void vrq_check_trigger(sb_class_t *sbp, struct port_extctx *ectxp) {
       if (!sb_is_valid_write_range(sbp,
                                    (void *)ectxp,
                                    sizeof (struct port_extctx))) {
+        chSysUnlock();
         __sb_abort(CH_RET_EFAULT);
       }
 
@@ -116,6 +117,8 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask) {
 
   chDbgCheckClassS();
 
+  chDbgAssert(sbp->tp->state != CH_STATE_CURRENT, "current");
+
   /* Adding VRQ mask to the pending mask.*/
   sbp->vrq_wtmask |= vmask;
 
@@ -142,6 +145,8 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask) {
       /* Building the return context.*/
       vrq_makectx(sbp, newctxp, active_mask);
       __port_syscall_set_u_psp(sbp->tp, newctxp);
+
+      chThdResumeS(&sbp->vrq_trp, MSG_OK);
     }
   }
 }
@@ -172,9 +177,20 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
 
       /* This IRQ could have preempted the sandbox itself or some other thread,
          handling is different.*/
-      if (sbp->tp->state == CH_STATE_CURRENT) {
+      if ((sbp->tp->state == CH_STATE_CURRENT)) {
         /* Sandbox case, getting the current exception frame.*/
-        ectxp   = (struct port_extctx *)__get_PSP();
+        if ((__get_CONTROL() & 1U) == 0U) {
+          /* If preempted in privileged mode then getting the store U_PSP
+             value.*/
+          ectxp = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
+        }
+        else {
+          /* If preempted in unprivileged mode then getting the current PSP
+            value, it is U_PSP.*/
+          ectxp = (struct port_extctx *)__get_PSP();
+        }
+
+        /* Creating new context for the VRQ.*/
         newctxp = ectxp - 1;
 
         /* Checking if the new frame is within the sandbox else failure.*/
@@ -212,65 +228,107 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
     }
   }
 
+  chThdResumeI(&sbp->vrq_trp, MSG_OK);
+
   chSysUnlockFromISR();
 
   return;
+}
+
+void sb_api_vrq_wait(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_vrqmask_t active_mask;
+
+  (void)ectxp;
+
+  chSysLock();
+
+  active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+  if (active_mask != 0U) {
+    chThdSuspendS(&sbp->vrq_trp);
+  }
+
+  chSysUnlock();
 }
 
 void sb_api_vrq_setwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
+  chSysLock();
+
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_wtmask;
   sbp->vrq_wtmask |= m;
 
-  vrq_check_trigger(sbp, ectxp);
+  vrq_check_trigger_s(sbp, ectxp);
+
+  chSysUnlock();
 }
 
 void sb_api_vrq_clrwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
+  chSysLock();
+
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_wtmask;
   sbp->vrq_wtmask &= ~m;
+
+  chSysUnlock();
 }
 
 void sb_api_vrq_seten(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
+  chSysLock();
+
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_enmask;
   sbp->vrq_enmask |= m;
 
-  vrq_check_trigger(sbp, ectxp);
+  vrq_check_trigger_s(sbp, ectxp);
+
+  chSysUnlock();
 }
 
 void sb_api_vrq_clren(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
+  chSysLock();
+
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_enmask;
   sbp->vrq_enmask &= ~m;
+
+  chSysUnlock();
 }
 
 void sb_api_vrq_disable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
+  chSysLock();
+
   ectxp->r0 = sbp->vrq_isr;
   sbp->vrq_isr |= SB_VRQ_ISR_DISABLED;
+
+  chSysUnlock();
 }
 
 void sb_api_vrq_enable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
+  chSysLock();
+
   ectxp->r0 = sbp->vrq_isr;
   sbp->vrq_isr &= ~SB_VRQ_ISR_DISABLED;
 
-  vrq_check_trigger(sbp, ectxp);
+  vrq_check_trigger_s(sbp, ectxp);
+
+  chSysUnlock();
 }
 
 void sb_api_vrq_getisr(struct port_extctx *ectxp) {
@@ -282,6 +340,8 @@ void sb_api_vrq_getisr(struct port_extctx *ectxp) {
 void sb_api_vrq_return(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sb_vrqmask_t active_mask;
+
+  chSysLock();
 
   /* VRQs must be disabled on return, sanity check.*/
   if (((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U)) {
@@ -303,6 +363,8 @@ void sb_api_vrq_return(struct port_extctx *ectxp) {
   }
 
   __port_syscall_set_u_psp(sbp->tp, ectxp);
+
+  chSysUnlock();
 }
 
 #endif /* SB_CFG_ENABLE_VRQ == TRUE */

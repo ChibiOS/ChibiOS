@@ -844,6 +844,16 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
 }
 
 /**
+ * @brief   VRQ @p wait pseudo-instruction.
+ *
+ * @api
+ */
+static inline void __sb_vrq_setwt(void) {
+
+  __syscall0(247);
+}
+
+/**
  * @brief   VRQ @p setwt pseudo-instruction.
  *
  * @param[in] m         VRQs mask
