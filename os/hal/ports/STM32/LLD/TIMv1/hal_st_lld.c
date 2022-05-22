@@ -465,22 +465,22 @@ void st_lld_serve_interrupt(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 #if ST_LLD_NUM_ALARMS > 1
   if ((sr & TIM_SR_CC2IF) != 0U) {
-    if (st_callbacks[0] != NULL) {
-      st_callbacks[0](1U);
+    if (st_callbacks[1] != NULL) {
+      st_callbacks[1](1U);
     }
   }
 #endif
 #if ST_LLD_NUM_ALARMS > 2
   if ((sr & TIM_SR_CC3IF) != 0U) {
-    if (st_callbacks[1] != NULL) {
-      st_callbacks[1](2U);
+    if (st_callbacks[2] != NULL) {
+      st_callbacks[2](2U);
     }
   }
 #endif
 #if ST_LLD_NUM_ALARMS > 3
   if ((sr & TIM_SR_CC4IF) != 0U) {
-    if (st_callbacks[2] != NULL) {
-      st_callbacks[2](3U);
+    if (st_callbacks[3] != NULL) {
+      st_callbacks[3](3U);
     }
   }
 #endif
