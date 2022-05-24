@@ -844,6 +844,31 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
 }
 
 /**
+ * @brief   Sets an alarm.
+ * @note    On alarm a VRQ is triggered, the VRQ number is hard-coded in the
+ *          sandbox configuration, default is zero.
+ *
+ * @param[in] interval  the interval in system ticks
+ * @param[in] reload    specifies a periodic alarm
+ *
+ * @api
+ */
+static inline void sbSetAlarm(sysinterval_t interval, bool reload) {
+
+  __syscall2r(245, (uint32_t)interval, (uint32_t)reload);
+}
+
+/**
+ * @brief   Resets an alarm.
+ *
+ * @api
+ */
+static inline void sbResetAlarm(void) {
+
+  __syscall0(246);
+}
+
+/**
  * @brief   VRQ @p wait pseudo-instruction.
  *
  * @api

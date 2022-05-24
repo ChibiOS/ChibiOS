@@ -246,9 +246,9 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
 void sb_api_vrq_set_alarm(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sysinterval_t interval = (sysinterval_t )ectxp->r0;
-  bool continuous = (bool)ectxp->r1;
+  bool reload = (bool)ectxp->r1;
 
-  if (continuous) {
+  if (reload) {
     chVTSetContinuous(&sbp->alarm_vt, interval, delay_cb, (void *)sbp);
   }
   else {
