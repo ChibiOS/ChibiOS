@@ -101,6 +101,14 @@ static void vrq_privileged_code(void) {
   }
 }
 
+static void delay_cb(virtual_timer_t *vtp, void *arg) {
+  sb_class_t *sbp = (sb_class_t *)arg;
+
+  (void)vtp;
+
+  sbVRQTriggerFromISR(sbp, 1U << SB_CFG_ALARM_VRQ);
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -235,6 +243,31 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
   return;
 }
 
+void sb_api_vrq_set_alarm(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sysinterval_t interval = (sysinterval_t )ectxp->r0;
+  bool continuous = (bool)ectxp->r1;
+
+  if (continuous) {
+    chVTSetContinuous(&sbp->alarm_vt, interval, delay_cb, (void *)sbp);
+  }
+  else {
+    chVTSet(&sbp->alarm_vt, interval, delay_cb, (void *)sbp);
+  }
+
+  ectxp->r0 = CH_RET_SUCCESS;
+}
+
+void sb_api_vrq_reset_alarm(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  (void)ectxp;
+
+  chVTReset(&sbp->alarm_vt);
+
+  ectxp->r0 = CH_RET_SUCCESS;
+}
+
 void sb_api_vrq_wait(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sb_vrqmask_t active_mask;
@@ -249,6 +282,8 @@ void sb_api_vrq_wait(struct port_extctx *ectxp) {
   }
 
   chSysUnlock();
+
+  ectxp->r0 = CH_RET_SUCCESS;
 }
 
 void sb_api_vrq_setwt(struct port_extctx *ectxp) {

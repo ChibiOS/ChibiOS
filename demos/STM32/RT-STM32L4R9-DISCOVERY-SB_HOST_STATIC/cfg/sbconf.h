@@ -46,6 +46,13 @@
 #endif
 
 /**
+ * @brief   Virtual IRQ to be used for alarm.
+ */
+#if !defined(SB_CFG_ALARM_VRQ) || defined(__DOXYGEN__)
+#define SB_CFG_ALARM_VRQ                    0
+#endif
+
+/**
  * @brief   Enables Posix API in sandboxes using VFS.
  */
 #if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)

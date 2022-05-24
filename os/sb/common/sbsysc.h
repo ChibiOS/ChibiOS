@@ -49,6 +49,8 @@
 #define SB_SYSC_EVENT_WAIT_ALL  10
 #define SB_SYSC_EVENT_BROADCAST 11
 #define SB_SYSC_LOADELF         12
+#define SB_SYSC_VRQ_SET_ALARM   245
+#define SB_SYSC_VRQ_RESET_ALARM 246
 #define SB_SYSC_VRQ_WAIT        247
 #define SB_SYSC_VRQ_SETWT       248
 #define SB_SYSC_VRQ_CLRWT       249

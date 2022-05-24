@@ -100,6 +100,10 @@
 #error "SB_CFG_ENABLE_VRQ not defined in sbconf.h"
 #endif
 
+#if !defined(SB_CFG_ALARM_VRQ) || defined(__DOXYGEN__)
+#error "SB_CFG_ALARM_VRQ not defined in sbconf.h"
+#endif
+
 #if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)
 #error "SB_CFG_ENABLE_VFS not defined in sbconf.h"
 #endif
@@ -150,6 +154,10 @@
 #if (PORT_SWITCHED_REGIONS_NUMBER > 0) &&                                   \
     (PORT_SWITCHED_REGIONS_NUMBER != SB_CFG_NUM_REGIONS)
 #error "SB_CFG_NUM_REGIONS not matching PORT_SWITCHED_REGIONS_NUMBER"
+#endif
+
+#if (SB_CFG_ALARM_VRQ < 0) || (SB_CFG_ALARM_VRQ > 31)
+#error "invalid SB_CFG_ALARM_VRQ value"
 #endif
 
 /*===========================================================================*/
@@ -255,6 +263,10 @@ typedef struct {
    * @brief   Pointer to the image header.
    */
   const sb_header_t             *sbhp;
+  /**
+   * @brief   Virtual timer used for alarms.
+   */
+  virtual_timer_t               alarm_vt;
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Thread sending a message to the sandbox.

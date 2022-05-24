@@ -66,6 +66,8 @@ extern "C" {
 #endif
   void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask);
   void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask);
+  void sb_api_vrq_set_alarm(struct port_extctx *ectxp);
+  void sb_api_vrq_reset_alarm(struct port_extctx *ectxp);
   void sb_api_vrq_wait(struct port_extctx *ectxp);
   void sb_api_vrq_setwt(struct port_extctx *ectxp);
   void sb_api_vrq_clrwt(struct port_extctx *ectxp);

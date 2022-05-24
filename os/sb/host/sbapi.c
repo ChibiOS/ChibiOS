@@ -76,6 +76,8 @@ static void sb_api_loadelf(struct port_extctx *ectxp);
  * @{
  */
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
+#define SB_SVC245_HANDLER       sb_api_vrq_set_alarm
+#define SB_SVC246_HANDLER       sb_api_vrq_reset_alarm
 #define SB_SVC247_HANDLER       sb_api_vrq_wait
 #define SB_SVC248_HANDLER       sb_api_vrq_setwt
 #define SB_SVC249_HANDLER       sb_api_vrq_clrwt
