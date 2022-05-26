@@ -23,6 +23,8 @@ void __crt0_vrq(int vrqn) {
 
   (void)vrqn;
 
+  printf("#1 Hello World (%u)!!\r\n", (unsigned)0);
+
   __sb_vrq_return();
 }
 
@@ -38,12 +40,13 @@ int main(void) {
   while (true) {
   }
 #endif
-  __sb_vrq_seten(2);
-  __sb_vrq_setwt(2);
+  __sb_vrq_seten(1);
+//  __sb_vrq_setwt(1);
+  sbSetAlarm(sbTimeMS2I(300), true);
 
   while (true) {
     msg_t msg = sbMsgWait();
-    printf("#1 Hello World (%u)!!\r\n", (unsigned)msg);
+//    printf("#1 Hello World (%u)!!\r\n", (unsigned)msg);
 //    sbFileWrite(1U, (const uint8_t *)"#1 Hello World!!\r\n", 15U);
     sbMsgReply(msg);
 //    sbSleepMilliseconds(500);

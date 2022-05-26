@@ -188,7 +188,7 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
       if ((sbp->tp->state == CH_STATE_CURRENT)) {
         /* Sandbox case, getting the current exception frame.*/
         if ((__get_CONTROL() & 1U) == 0U) {
-          /* If preempted in privileged mode then getting the store U_PSP
+          /* If preempted in privileged mode then getting the stored U_PSP
              value.*/
           ectxp = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
         }
@@ -213,9 +213,8 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
         }
       }
       else {
-        /* Other thread case, getting the pointer from the context switch
-           structure.*/
-        ectxp   = sbp->tp->ctx.sp;
+        /* Getting the stored U_PSP value.*/
+        ectxp   = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
         newctxp = ectxp - 1;
 
         /* Checking if the new frame is within the sandbox else failure.*/
