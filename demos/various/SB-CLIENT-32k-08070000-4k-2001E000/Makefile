@@ -107,7 +107,7 @@ include $(CHIBIOS)/os/common/utils/utils.mk
 #include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 #include $(CHIBIOS)/os/rt/rt.mk
-#include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMvx-M-SB/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/os/sb/user/sbuser.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk

@@ -18,14 +18,9 @@
 
 #include "sbuser.h"
 
-__attribute__((naked))
-void __crt0_vrq(int vrqn) {
-
-  (void)vrqn;
+void Vector00(void) {
 
   printf("#1 Hello World (%u)!!\r\n", (unsigned)0);
-
-  __sb_vrq_return();
 }
 
 /*
