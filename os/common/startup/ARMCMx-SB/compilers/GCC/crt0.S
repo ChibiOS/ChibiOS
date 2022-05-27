@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    crt0.S
+ * @file    ARMCMx-SB/compilers/GCC/crt0.S
  * @brief   Generic ARMv7-M sandbox startup file for ChibiOS.
  *
  * @addtogroup ARMCMx_GCC_STARTUP_V7M_SB

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ARMCMx/GCC/vectors.S
+ * @file    ARMCMx/compilers/GCC/vectors.S
  * @brief   Interrupt vectors for Cortex-Mx devices.
  *
  * @defgroup ARMCMx_GCC_VECTORS Cortex-Mx Interrupt Vectors

@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ARMCMx/RVCT/cstartup.s
+ * @file    ARMCMx/compilers/RVCT/cstartup.s
  * @brief   Generic RVCT Cortex-Mx startup file.
  *
  * @addtogroup ARMCMx_RVCT_STARTUP
