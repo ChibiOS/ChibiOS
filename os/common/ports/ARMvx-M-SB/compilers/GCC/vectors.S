@@ -65,7 +65,20 @@ __crt0_vrq:
         mov.w       r2, #0
         str.w       r2, [r1]
 
-#if !defined(SB_VECTORS_NORTOS
+#if !defined(SB_VECTORS_NORTOS)
+#if CH_DBG_STATISTICS
+        bl          __stats_start_measure_crit_thd
+#endif
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl          __dbg_check_lock
+#endif
+//        bl          chSchPreemption
+#if CH_DBG_SYSTEM_STATE_CHECK
+        bl          __dbg_check_unlock
+#endif
+#if CH_DBG_STATISTICS
+        bl          __stats_stop_measure_crit_thd
+#endif
 #endif
 
         svc         #255
