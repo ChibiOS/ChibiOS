@@ -40,19 +40,39 @@
         .cpu    cortex-m3
         .thumb
 
+
+        .bss
+
+        .align      2
+        .globl      __sb_vectors
+__sb_in_vrq:
+        .ds.l       1
+
         .text
 
         .align      2
         .globl      __crt0_vrq
 __crt0_vrq:
-        ldr.w       r1, =__vectors
-        ldr.w       r1, [r1, r0, lsl #2]
-        blx         r1
+        ldr.w       r1, =__sb_in_vrq
+        mov.w       r2, #1
+        str.w       r2, [r1]
+
+        ldr.w       r2, =__sb_vectors
+        ldr.w       r2, [r2, r0, lsl #2]
+        blx         r2
+
+        ldr.w       r1, =__sb_in_vrq
+        mov.w       r2, #0
+        str.w       r2, [r1]
+
+#if !defined(SB_VECTORS_NORTOS
+#endif
+
         svc         #255
 
         .align      2
-        .globl      _vectors
-__vectors:
+        .globl      __sb_vectors
+__sb_vectors:
         .long       Vector00,   Vector04,   Vector08,   Vector0C
         .long       Vector10,   Vector14,   Vector18,   Vector1C
         .long       Vector20,   Vector24,   Vector28,   Vector2C

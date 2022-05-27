@@ -170,10 +170,10 @@ _ivor_exit:
         mtspr       272, r0
 
 #if CH_DBG_STATISTICS
-        e_bl        _stats_start_measure_crit_thd
+        e_bl        __stats_start_measure_crit_thd
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
-        e_bl        _dbg_check_lock
+        e_bl        __dbg_check_lock
 #endif
         e_bl        chSchIsPreemptionRequired
         e_cmpli     cr0, r3, 0
@@ -181,10 +181,10 @@ _ivor_exit:
         e_bl        chSchDoReschedule
 .noresch:
 #if CH_DBG_SYSTEM_STATE_CHECK
-        e_bl        _dbg_check_unlock
+        e_bl        __dbg_check_unlock
 #endif
 #if CH_DBG_STATISTICS
-        e_bl        _stats_stop_measure_crit_thd
+        e_bl        __stats_stop_measure_crit_thd
 #endif
 
         /* Restoring the external context.*/
