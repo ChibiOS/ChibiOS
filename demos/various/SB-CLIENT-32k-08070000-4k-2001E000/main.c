@@ -16,11 +16,22 @@
 
 #include <stdio.h>
 
-#include "sbuser.h"
+#include "ch.h"
 
-void Vector00(void) {
+/*
+ * Blinker thread, times are in milliseconds.
+ */
+static THD_WORKING_AREA(waThread1, 256);
+static THD_FUNCTION(Thread1, arg) {
 
-  printf("#1 Hello World (%u)!!\r\n", (unsigned)0);
+  (void)arg;
+
+  chRegSetThreadName("blinker");
+  while (true) {
+//    palToggleLine(LINE_LED_GREEN);
+    printf("#1 blink!!\r\n");
+    chThdSleepMilliseconds(500);
+  }
 }
 
 /*
@@ -28,22 +39,14 @@ void Vector00(void) {
  */
 int main(void) {
 
-#if 0
-  /* Test for exception on interrupt.*/
-  asm volatile ("mov r0, #64");
-  asm volatile ("mov sp, r0");
-  while (true) {
-  }
-#endif
-  __sb_vrq_seten(1);
-//  __sb_vrq_setwt(1);
-  sbSetAlarm(sbTimeMS2I(300), true);
+  chSysInit();
+
+  /*
+   * Creating a blinker thread.
+   */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
   while (true) {
-    msg_t msg = sbMsgWait();
-//    printf("#1 Hello World (%u)!!\r\n", (unsigned)msg);
-//    sbFileWrite(1U, (const uint8_t *)"#1 Hello World!!\r\n", 15U);
-    sbMsgReply(msg);
-//    sbSleepMilliseconds(500);
+    chThdSleepMilliseconds(500);
   }
 }
