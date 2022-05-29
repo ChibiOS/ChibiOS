@@ -935,9 +935,10 @@ static inline uint32_t __sb_vrq_clren(uint32_t m) {
  *
  * @api
  */
-static inline void __sb_vrq_disable(void) {
+static inline uint32_t __sb_vrq_disable(void) {
 
-  __syscall0(252);
+  __syscall0r(252);
+  return r0;
 }
 
 /**
@@ -945,9 +946,10 @@ static inline void __sb_vrq_disable(void) {
  *
  * @api
  */
-static inline void __sb_vrq_enable(void) {
+static inline uint32_t __sb_vrq_enable(void) {
 
-  __syscall0(253);
+  __syscall0r(253);
+  return r0;
 }
 
 /**

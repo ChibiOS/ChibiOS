@@ -106,7 +106,7 @@ __port_thread_start:
                 bl      __stats_stop_measure_crit_thd
 #endif
                 /* VRQs enabled.*/
-                svc     #250
+                svc     #253
 
                 mov     r0, r5
                 blx     r4

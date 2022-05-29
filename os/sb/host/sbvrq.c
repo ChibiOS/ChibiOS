@@ -87,6 +87,7 @@ static void vrq_check_trigger_s(sb_class_t *sbp, struct port_extctx *ectxp) {
 
       /* Building the return context.*/
       vrq_makectx(sbp, ectxp, active_mask);
+      chThdResumeS(&sbp->vrq_trp, MSG_OK);
       __port_syscall_set_u_psp(sbp->tp, ectxp);
     }
   }
@@ -232,10 +233,10 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
       /* Building the return context.*/
       vrq_makectx(sbp, newctxp, active_mask);
       __port_syscall_set_u_psp(sbp->tp, newctxp);
+
+      chThdResumeI(&sbp->vrq_trp, MSG_OK);
     }
   }
-
-  chThdResumeI(&sbp->vrq_trp, MSG_OK);
 
   chSysUnlockFromISR();
 
@@ -253,8 +254,6 @@ void sb_api_vrq_set_alarm(struct port_extctx *ectxp) {
   else {
     chVTSet(&sbp->alarm_vt, interval, delay_cb, (void *)sbp);
   }
-
-  ectxp->r0 = CH_RET_SUCCESS;
 }
 
 void sb_api_vrq_reset_alarm(struct port_extctx *ectxp) {
@@ -263,8 +262,6 @@ void sb_api_vrq_reset_alarm(struct port_extctx *ectxp) {
   (void)ectxp;
 
   chVTReset(&sbp->alarm_vt);
-
-  ectxp->r0 = CH_RET_SUCCESS;
 }
 
 void sb_api_vrq_wait(struct port_extctx *ectxp) {
@@ -281,8 +278,6 @@ void sb_api_vrq_wait(struct port_extctx *ectxp) {
   }
 
   chSysUnlock();
-
-  ectxp->r0 = CH_RET_SUCCESS;
 }
 
 void sb_api_vrq_setwt(struct port_extctx *ectxp) {
