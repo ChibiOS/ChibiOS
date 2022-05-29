@@ -112,7 +112,7 @@ typedef uint32_t time_secs_t;
 /**
  * @brief   Type of a message.
  */
-typedef uint32_t msg_t;
+typedef int32_t msg_t;
 
 /**
  * @brief   Type of an event mask.

@@ -28,14 +28,16 @@
 #ifndef CHCORE_H
 #define CHCORE_H
 
-/*===========================================================================*/
-/* Module constants.                                                         */
-/*===========================================================================*/
-
 /* The following code is not processed when the file is included from an
    asm module because those intrinsic macros are not necessarily defined
    by the assembler too.*/
 #if !defined(_FROM_ASM_)
+
+#include "sbuser.h"
+
+/*===========================================================================*/
+/* Module constants.                                                         */
+/*===========================================================================*/
 
 /**
  * @brief   Compiler name and version.
@@ -259,55 +261,6 @@ struct port_context {
  */
 #define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
-/* By default threads have no syscall context information.*/
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.syscall.psp = (uint32_t)(wtop);                               \
-    (tp)->ctx.syscall.p   = NULL;
-#else
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
-#endif
-
-/* By default threads have all regions disabled.*/
-#if (PORT_SWITCHED_REGIONS_NUMBER == 0) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 1) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 2) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 3) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rasr  = 0U
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 4) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[3].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[3].rasr  = 0U
-
-#else
-  /* Note, checked above.*/
-#endif
-
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
@@ -319,28 +272,19 @@ struct port_context {
   (tp)->ctx.sp->r4 = (uint32_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (uint32_t)(arg);                                       \
   (tp)->ctx.sp->lr = (uint32_t)__port_thread_start;                         \
-  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 } while (false)
 
 /**
  * @brief   Context switch area size.
  */
-#if (CORTEX_SIMPLIFIED_PRIORITY == TRUE) || defined(__DOXYGEN__)
 #define PORT_WA_CTX_SIZE (sizeof (struct port_intctx) +                     \
                           sizeof (struct port_extctx))
-#else
-#define PORT_WA_CTX_SIZE (sizeof (struct port_intctx) +                     \
-                          sizeof (struct port_extctx) +                     \
-                          sizeof (struct port_extctx))
-#endif
 
 /**
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
  */
-#define PORT_WA_SIZE(n) ((size_t)PORT_GUARD_PAGE_SIZE +                     \
-                         (size_t)PORT_WA_CTX_SIZE +                         \
+#define PORT_WA_SIZE(n) ((size_t)PORT_WA_CTX_SIZE +                         \
                          (size_t)(n) +                                      \
                          (size_t)PORT_INT_REQUIRED_STACK)
 
@@ -352,14 +296,8 @@ struct port_context {
  * @param[in] s         the name to be assigned to the stack array
  * @param[in] n         the stack size to be assigned to the thread
  */
-#if (PORT_ENABLE_GUARD_PAGES == FALSE) || defined(__DOXYGEN__)
-  #define PORT_WORKING_AREA(s, n)                                           \
-    stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
-
-#else
-  #define PORT_WORKING_AREA(s, n)                                           \
-    ALIGNED_VAR(32) stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
-#endif
+#define PORT_WORKING_AREA(s, n)                                             \
+  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
 
 /**
  * @brief   IRQ prologue code.
@@ -373,7 +311,7 @@ struct port_context {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
-#define PORT_IRQ_EPILOGUE() __port_irq_epilogue()
+#define PORT_IRQ_EPILOGUE()
 
 /**
  * @brief   IRQ handler function declaration.
@@ -413,24 +351,13 @@ struct port_context {
   #define port_switch(ntp, otp) __port_switch(ntp, otp)
 
 #else
-  #if PORT_ENABLE_GUARD_PAGES == FALSE
-    #define port_switch(ntp, otp) do {                                      \
-      struct port_intctx *r13 = (struct port_intctx *)__get_PSP();          \
-      if ((stkalign_t *)(void *)(r13 - 1) < (otp)->wabase) {                \
-        chSysHalt("stack overflow");                                        \
-      }                                                                     \
-      __port_switch(ntp, otp);                                              \
-    } while (false)
-
-  #else
-    #define port_switch(ntp, otp) do {                                      \
-      __port_switch(ntp, otp);                                              \
-                                                                            \
-      /* Setting up the guard page for the switched-in thread.*/            \
-      mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION,                        \
-                          chThdGetSelfX()->wabase);                         \
-    } while (false)
-  #endif
+  #define port_switch(ntp, otp) do {                                        \
+    struct port_intctx *r13 = (struct port_intctx *)__get_PSP();            \
+    if ((stkalign_t *)(void *)(r13 - 1) < (otp)->wabase) {                  \
+      chSysHalt("stack overflow");                                          \
+    }                                                                       \
+    __port_switch(ntp, otp);                                                \
+  } while (false)
 #endif
 
 /*===========================================================================*/
@@ -439,18 +366,14 @@ struct port_context {
 
 #if !defined(_FROM_ASM_)
 
+extern bool __sb_in_vrq;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
   void port_init(os_instance_t *oip);
-  void __port_irq_epilogue(void);
   void __port_switch(thread_t *ntp, thread_t *otp);
   void __port_thread_start(void);
-  void __port_switch_from_isr(void);
-  void __port_exit_from_isr(void);
-#if PORT_USE_SYSCALL == TRUE
-  void port_unprivileged_jump(uint32_t pc, uint32_t psp);
-#endif
 #ifdef __cplusplus
 }
 #endif
@@ -464,15 +387,9 @@ extern "C" {
  *
  * @return              The interrupts status.
  */
-__STATIC_FORCEINLINE syssts_t port_get_irq_status(void) {
-  syssts_t sts;
+static inline syssts_t port_get_irq_status(void) {
 
-#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-  sts = (syssts_t)__get_BASEPRI();
-#else /* CORTEX_SIMPLIFIED_PRIORITY */
-  sts = (syssts_t)__get_PRIMASK();
-#endif /* CORTEX_SIMPLIFIED_PRIORITY */
-  return sts;
+  return (syssts_t)__sb_vrq_getisr();
 }
 
 /**
@@ -484,13 +401,9 @@ __STATIC_FORCEINLINE syssts_t port_get_irq_status(void) {
  * @retval false        the word specified a disabled interrupts status.
  * @retval true         the word specified an enabled interrupts status.
  */
-__STATIC_FORCEINLINE bool port_irq_enabled(syssts_t sts) {
+static inline bool port_irq_enabled(syssts_t sts) {
 
-#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-  return sts == (syssts_t)CORTEX_BASEPRI_DISABLED;
-#else /* CORTEX_SIMPLIFIED_PRIORITY */
-  return (sts & (syssts_t)1) == (syssts_t)0;
-#endif /* CORTEX_SIMPLIFIED_PRIORITY */
+  return (bool)((sts & 1U) == (syssts_t)0);
 }
 
 /**
@@ -500,106 +413,70 @@ __STATIC_FORCEINLINE bool port_irq_enabled(syssts_t sts) {
  * @retval false        not running in ISR mode.
  * @retval true         running in ISR mode.
  */
-__STATIC_FORCEINLINE bool port_is_isr_context(void) {
+static inline bool port_is_isr_context(void) {
 
-  return (bool)((__get_IPSR() & 0x1FFU) != 0U);
+  return __sb_in_vrq;
 }
 
 /**
  * @brief   Kernel-lock action.
- * @details In this port this function raises the base priority to kernel
- *          level.
+ * @details Global disable in this port.
  */
-__STATIC_FORCEINLINE void port_lock(void) {
+static inline void port_lock(void) {
 
-#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-#if defined(__CM7_REV)
-#if __CM7_REV <= 1
-  __disable_irq();
-#endif
-#endif
-  __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
-#if defined(__CM7_REV)
-#if __CM7_REV <= 1
-  __enable_irq();
-#endif
-#endif
-#else /* CORTEX_SIMPLIFIED_PRIORITY */
-  __disable_irq();
-#endif /* CORTEX_SIMPLIFIED_PRIORITY */
+  __sb_vrq_disable();
 }
 
 /**
  * @brief   Kernel-unlock action.
- * @details In this port this function lowers the base priority to user
- *          level.
+ * @details Global enable in this port.
  */
-__STATIC_FORCEINLINE void port_unlock(void) {
+static inline void port_unlock(void) {
 
-#if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-  __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
-#else /* CORTEX_SIMPLIFIED_PRIORITY */
-  __enable_irq();
-#endif /* CORTEX_SIMPLIFIED_PRIORITY */
+  __sb_vrq_enable();
 }
 
 /**
  * @brief   Kernel-lock action from an interrupt handler.
- * @details In this port this function raises the base priority to kernel
- *          level.
- * @note    Same as @p port_lock() in this port.
+ * @note    Empty in this port.
  */
-__STATIC_FORCEINLINE void port_lock_from_isr(void) {
+static inline void port_lock_from_isr(void) {
 
-  port_lock();
 }
 
 /**
  * @brief   Kernel-unlock action from an interrupt handler.
- * @details In this port this function lowers the base priority to user
- *          level.
- * @note    Same as @p port_unlock() in this port.
+ * @note    Empty in this port.
  */
-__STATIC_FORCEINLINE void port_unlock_from_isr(void) {
+static inline void port_unlock_from_isr(void) {
 
-  port_unlock();
 }
 
 /**
  * @brief   Disables all the interrupt sources.
- * @note    In this port it disables all the interrupt sources by raising
- *          the priority mask to level 0.
+ * @details Global disable in this port.
  */
-__STATIC_FORCEINLINE void port_disable(void) {
+static inline void port_disable(void) {
 
-  __disable_irq();
+  __sb_vrq_disable();
 }
 
 /**
  * @brief   Disables the interrupt sources below kernel-level priority.
- * @note    Interrupt sources above kernel level remains enabled.
- * @note    In this port it raises/lowers the base priority to kernel level.
+ * @note    Same as disabling globally in this port.
  */
-__STATIC_FORCEINLINE void port_suspend(void) {
+static inline void port_suspend(void) {
 
-#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
-  __set_BASEPRI(CORTEX_BASEPRI_KERNEL);
-  __enable_irq();
-#else
-  __disable_irq();
-#endif
+  __sb_vrq_disable();
 }
 
 /**
  * @brief   Enables all the interrupt sources.
- * @note    In this port it lowers the base priority to user level.
+ * @details Global enable in this port.
  */
-__STATIC_FORCEINLINE void port_enable(void) {
+static inline void port_enable(void) {
 
-#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
-  __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
-#endif
-  __enable_irq();
+  __sb_vrq_enable();
 }
 
 /**
@@ -608,13 +485,12 @@ __STATIC_FORCEINLINE void port_enable(void) {
  *          The simplest implementation is an empty function or macro but this
  *          would not take advantage of architecture-specific power saving
  *          modes.
- * @note    Implemented as an inlined @p WFI instruction.
+ * @note    Implemented as a VRQ-wait which releases the CPU to the sandbox
+ *          host OS.
  */
-__STATIC_FORCEINLINE void port_wait_for_interrupt(void) {
+static inline void port_wait_for_interrupt(void) {
 
-#if CORTEX_ENABLE_WFI_IDLE == TRUE
-  __WFI();
-#endif
+  __sb_vrq_wait();
 }
 
 /**
@@ -622,9 +498,9 @@ __STATIC_FORCEINLINE void port_wait_for_interrupt(void) {
  *
  * @return              The realtime counter value.
  */
-__STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
+static inline rtcnt_t port_rt_get_counter_value(void) {
 
-  return DWT->CYCCNT;
+  return (rtcnt_t)sbGetSystemTime();
 }
 
 #endif /* !defined(_FROM_ASM_) */
@@ -636,7 +512,7 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 #if !defined(_FROM_ASM_)
 
 #if CH_CFG_ST_TIMEDELTA > 0
-#include "chcore_timer.h"
+#error "tickless mode not implemented in this port"
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 
 #endif /* !defined(_FROM_ASM_) */

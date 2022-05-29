@@ -220,10 +220,10 @@ int main(void) {
                      MPU_RASR_SIZE_64K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
-                     0x2001E000U,
+                     0x20018000U,
                      MPU_RASR_ATTR_AP_RW_RW |
                      MPU_RASR_ATTR_CACHEABLE_WB_WA |
-                     MPU_RASR_SIZE_8K |
+                     MPU_RASR_SIZE_32K |
                      MPU_RASR_ENABLE);
 
   /* Starting sandboxed thread 1.*/
