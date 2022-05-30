@@ -25,6 +25,20 @@
  * @{
  */
 
+#if !defined(FALSE) || defined(__DOXYGEN__)
+#define FALSE   0
+#endif
+
+#if !defined(TRUE) || defined(__DOXYGEN__)
+#define TRUE    1
+#endif
+
+#if !defined(SB_VECTORS_NORTOS)
+#define _FROM_ASM_
+#include "chlicense.h"
+#include "chconf.h"
+#endif
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -75,7 +89,7 @@ __crt0_vrq:
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          __dbg_check_lock
 #endif
-//        bl          chSchPreemption
+        bl          chSchPreemption
 #if CH_DBG_SYSTEM_STATE_CHECK
         bl          __dbg_check_unlock
 #endif

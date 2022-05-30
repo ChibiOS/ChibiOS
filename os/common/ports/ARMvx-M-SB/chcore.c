@@ -51,6 +51,18 @@
 /* Module interrupt handlers.                                                */
 /*===========================================================================*/
 
+
+CH_IRQ_HANDLER(Vector00) {
+
+  CH_IRQ_PROLOGUE();
+
+  chSysLockFromISR();
+  chSysTimerHandlerI();
+  chSysUnlockFromISR();
+
+  CH_IRQ_EPILOGUE();
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/

@@ -184,20 +184,12 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
     if (active_mask != 0U) {
       struct port_extctx *ectxp, *newctxp;
 
-      /* This IRQ could have preempted the sandbox itself or some other thread,
-         handling is different.*/
-      if ((sbp->tp->state == CH_STATE_CURRENT)) {
-        /* Sandbox case, getting the current exception frame.*/
-        if ((__get_CONTROL() & 1U) == 0U) {
-          /* If preempted in privileged mode then getting the stored U_PSP
-             value.*/
-          ectxp = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
-        }
-        else {
-          /* If preempted in unprivileged mode then getting the current PSP
-            value, it is U_PSP.*/
-          ectxp = (struct port_extctx *)__get_PSP();
-        }
+      /* A special case is when the IRQ preempted the sandbox while running
+         in unprivileged mode (not processing a syscall).*/
+      if ((sbp->tp->state == CH_STATE_CURRENT) &&
+          ((__get_CONTROL() & 1U) != 0U)) {
+        /* Getting the current PSP, it is U_PSP.*/
+        ectxp = (struct port_extctx *)__get_PSP();
 
         /* Creating new context for the VRQ.*/
         newctxp = ectxp - 1;
@@ -212,10 +204,16 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
           ectxp->pc = (uint32_t)vrq_privileged_code;
           return;
         }
+
+        /* Building the return context.*/
+        vrq_makectx(sbp, newctxp, active_mask);
+        __set_PSP((uint32_t)newctxp);
       }
       else {
         /* Getting the stored U_PSP value.*/
-        ectxp   = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
+        ectxp = (struct port_extctx *)__port_syscall_get_u_psp(sbp->tp);
+
+        /* Creating new context for the VRQ.*/
         newctxp = ectxp - 1;
 
         /* Checking if the new frame is within the sandbox else failure.*/
@@ -228,19 +226,17 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
           ectxp->pc = (uint32_t)vrq_privileged_code;
           return;
         }
+
+        /* Building the return context then waking up the sandbox thread.*/
+        vrq_makectx(sbp, newctxp, active_mask);
+        __port_syscall_set_u_psp(sbp->tp, newctxp);
+
+        chThdResumeI(&sbp->vrq_trp, MSG_OK);
       }
-
-      /* Building the return context.*/
-      vrq_makectx(sbp, newctxp, active_mask);
-      __port_syscall_set_u_psp(sbp->tp, newctxp);
-
-      chThdResumeI(&sbp->vrq_trp, MSG_OK);
     }
   }
 
   chSysUnlockFromISR();
-
-  return;
 }
 
 void sb_api_vrq_set_alarm(struct port_extctx *ectxp) {
@@ -273,7 +269,7 @@ void sb_api_vrq_wait(struct port_extctx *ectxp) {
   chSysLock();
 
   active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
-  if (active_mask != 0U) {
+  if (active_mask == 0U) {
     chThdSuspendS(&sbp->vrq_trp);
   }
 
