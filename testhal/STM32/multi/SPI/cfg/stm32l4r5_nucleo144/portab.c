@@ -114,9 +114,9 @@ void portab_setup(void) {
    */
   palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(5) |
                            PAL_STM32_OSPEED_HIGHEST);       /* SPI2 SCK.    */
-  palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(5) |
+  palSetPadMode(GPIOC, 2,  PAL_MODE_ALTERNATE(5) |
                            PAL_STM32_OSPEED_HIGHEST);       /* SPI2 MISO.   */
-  palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(5) |
+  palSetPadMode(GPIOC, 3,  PAL_MODE_ALTERNATE(5) |
                            PAL_STM32_OSPEED_HIGHEST);       /* SPI2 MOSI.   */
   palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
                            PAL_STM32_OSPEED_HIGHEST);       /* SPI2 CS.     */
