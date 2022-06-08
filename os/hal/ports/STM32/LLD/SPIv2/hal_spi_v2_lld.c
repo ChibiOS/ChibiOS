@@ -120,29 +120,39 @@ SPIDriver SPID6;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static void spi_lld_configure(SPIDriver *spip) {
-
-  /* SPI setup.*/
-  if (spip->config->slave) {
-    spip->spi->CR1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
-    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH |
-                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-  }
-  else {
-    spip->spi->CR1  = (spip->config->cr1 | SPI_CR1_MSTR) & ~SPI_CR1_SPE;
-    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE |
-                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-  }
-}
-
 /**
- * @brief   Stopping the SPI transaction.
- * @note    This is done nicely or by brutally resetting it depending on
- *          the mode and settings.
+ * @brief   Configures and enables a SPI.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
  */
-static msg_t spi_lld_stop_abort(SPIDriver *spip) {
+static void spi_lld_enable(SPIDriver *spip) {
+  uint32_t cr1, cr2;
+
+  /* SPI setup.*/
+  if (spip->config->slave) {
+    cr1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
+    cr2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  }
+  else {
+    cr1  = (spip->config->cr1 | SPI_CR1_MSTR) & ~SPI_CR1_SPE;
+    cr2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  }
+
+  spip->spi->CR1 = cr1;
+  spip->spi->CR2 = cr2;
+  spip->spi->CR1 = cr1 | SPI_CR1_SPE;
+}
+
+/**
+ * @brief   Disables a SPI.
+ * @note    This is done nicely or by brutally resetting it depending on
+ *          the mode and settings.
+ * @note    DMAs are also disabled because this is required by the correct
+ *          disable procedure.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ */
+static void spi_lld_disable(SPIDriver *spip) {
 
   if (!spip->config->slave) {
     /* Master mode, stopping gracefully.*/
@@ -153,7 +163,10 @@ static msg_t spi_lld_stop_abort(SPIDriver *spip) {
     /* Waiting for current frame completion then stop SPI.*/
     while ((spip->spi->SR & SPI_SR_BSY) != 0U) {
     }
-    spip->spi->CR1 &= ~SPI_CR1_SPE;
+
+    /* Clearing SPE and the rest.*/
+    spip->spi->CR1 = 0U;
+    spip->spi->CR2 = 0U;
 
     /* Now it is idle, stopping RX DMA channel.*/
     dmaStreamDisable(spip->dmarx);
@@ -209,12 +222,7 @@ static msg_t spi_lld_stop_abort(SPIDriver *spip) {
     else {
       osalDbgAssert(false, "invalid SPI instance");
     }
-
-    /* Reconfiguring SPI.*/
-    spi_lld_configure(spip);
   }
-
-  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -231,9 +239,9 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     /* Hook first, if defined.*/
     STM32_SPI_DMA_ERROR_HOOK(spip);
 #endif
-
-    /* Aborting the transfer.*/
-    (void) spi_lld_stop_abort(spip);
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
@@ -249,8 +257,9 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     }
   }
   else {
-    /* Stopping the transfer.*/
-    (void) spi_lld_stop_abort(spip);
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
 
     /* Operation finished interrupt.*/
     __spi_isr_complete_code(spip);
@@ -272,8 +281,9 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
     STM32_SPI_DMA_ERROR_HOOK(spip);
 #endif
 
-    /* Aborting the transfer.*/
-    (void) spi_lld_stop_abort(spip);
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
@@ -570,6 +580,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
     dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
     dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
   }
+  else {
+    /* De-activation before re-configuration.*/
+    spi_lld_disable(spip);
+  }
 
   /* Configuration-specific DMA setup.*/
   ds = spip->config->cr2 & SPI_CR2_DS;
@@ -598,7 +612,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
   }
 
   /* SPI setup.*/
-  spi_lld_configure(spip);
+  spi_lld_enable(spip);
 
   return HAL_RET_SUCCESS;
 }
@@ -616,7 +630,7 @@ void spi_lld_stop(SPIDriver *spip) {
   if (spip->state == SPI_READY) {
 
     /* Just in case this has been called uncleanly.*/
-    (void) spi_lld_stop_abort(spip);
+    spi_lld_disable(spip);
 
     /* SPI cleanup.*/
     spip->spi->CR1  = 0;
@@ -729,8 +743,6 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  spip->spi->CR1 |= SPI_CR1_SPE;
-
   return HAL_RET_SUCCESS;
 }
 
@@ -766,8 +778,6 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  spip->spi->CR1 |= SPI_CR1_SPE;
-
   return HAL_RET_SUCCESS;
 }
 
@@ -799,8 +809,6 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
-
-  spip->spi->CR1 |= SPI_CR1_SPE;
 
   return HAL_RET_SUCCESS;
 }
@@ -834,8 +842,6 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  spip->spi->CR1 |= SPI_CR1_SPE;
-
   return HAL_RET_SUCCESS;
 }
 
@@ -850,16 +856,24 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @notapi
  */
 msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
-  msg_t msg;
 
-  /* Stopping everything.*/
-  msg = spi_lld_stop_abort(spip);
+  /* Stopping TX DMA.*/
+  dmaStreamDisable(spip->dmatx);
 
+  /* Waiting for current frame completion then stop SPI.*/
+  while ((spip->spi->SR & SPI_SR_BSY) != 0U) {
+    /* Still busy.*/
+  }
+
+  /* Size of unprocessed data.*/
   if (sizep != NULL) {
     *sizep = dmaStreamGetTransactionSize(spip->dmarx);
   }
 
-  return msg;
+  /* Stopping RX DMA.*/
+  dmaStreamDisable(spip->dmarx);
+
+  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -875,9 +889,6 @@ msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
  * @return              The received data frame from the SPI bus.
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
-
-  /* Enabling SPI for the exchange.*/
-  spip->spi->CR1 |= SPI_CR1_SPE;
 
   /*
    * Data register must be accessed with the appropriate data size.
@@ -902,9 +913,6 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
     }
     frame = (uint16_t)*dr16p;
   }
-
-  /* Disabling SPI and done.*/
-  spip->spi->CR1 &= ~SPI_CR1_SPE;
 
   return frame;
 }
