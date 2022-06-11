@@ -51,7 +51,7 @@
 /**
  * @brief   ChibiOS version string.
  */
-#define CH_VERSION              "2021.11.1"
+#define CH_VERSION              "2021.11.2"
 
 /**
  * @brief   ChibiOS version release year.
@@ -66,12 +66,12 @@
 /**
  * @brief   ChibiOS version patch number.
  */
-#define CH_VERSION_PATCH        1
+#define CH_VERSION_PATCH        2
 
 /**
  * @brief   ChibiOS version nickname.
  */
-#define CH_VERSION_NICKNAME     "Nocelle"
+#define CH_VERSION_NICKNAME     "Positano"
 /** @} */
 
 /*===========================================================================*/
