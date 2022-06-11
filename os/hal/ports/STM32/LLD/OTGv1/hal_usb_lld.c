@@ -478,20 +478,17 @@ static void otg_isoc_in_failed_handler(USBDriver *usbp) {
   for (ep = 0; ep <= usbp->otgparams->num_endpoints; ep++) {
     if (((otgp->ie[ep].DIEPCTL & DIEPCTL_EPTYP_MASK) == DIEPCTL_EPTYP_ISO) &&
         ((otgp->ie[ep].DIEPCTL & DIEPCTL_EPENA) != 0)) {
-      /* Endpoint enabled -> ISOC IN transfer failed */
-      /* Disable endpoint */
+      /* Endpoint enabled -> ISOC IN transfer failed.*/
+      /* Disable endpoint.*/
       otgp->ie[ep].DIEPCTL |= (DIEPCTL_EPDIS | DIEPCTL_SNAK);
       while (otgp->ie[ep].DIEPCTL & DIEPCTL_EPENA)
         ;
 
-      /* Flush FIFO */
+      /* Flush FIFO.*/
       otg_txfifo_flush(usbp, ep);
 
-      /* Prepare data for next frame */
+      /* Prepare data for next frame.*/
       _usb_isr_invoke_in_cb(usbp, ep);
-
-      /* TX FIFO empty or emptying.*/
-      otg_txfifo_handler(usbp, ep);
     }
   }
 }
