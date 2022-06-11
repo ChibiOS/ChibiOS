@@ -80,7 +80,7 @@
 - FIX: Fixed STM32 RTCv2 registers synchronization errata (bug #1231).
 - FIX: Fixed STM32 ADCv1 and ADCv5 do not allow prescaler divide value of 1
        (bug #1230).
-- FIX: Fixed missing chech on STM32 SPIv2 DMA settings for SPI1 (bug #1229).
+- FIX: Fixed missing check on STM32 SPIv2 DMA settings for SPI1 (bug #1229).
 - FIX: Fixed invalid handling of lwIP NETIF_FLAG_LINK_UP flag (bug #1227).
 - FIX: Fixed missing TIM16/17 errata handling for STM32G0xx (bug #1226).
 - FIX: Fixed missing ADC errata handling for STM32G0xx (bug #1225).
