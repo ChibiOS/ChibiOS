@@ -167,9 +167,9 @@ flash_sector_t flashGetOffsetSector(BaseFlash *devp, flash_offset_t offset) {
 /**
  * @brief   Get absolute address from offset
  *
- * @param[in] ip                    pointer to a @p BaseFlash or derived class
- * @param[in] offset                flash offset
- * @return                          A pointer to the offset.
+ * @param[in] devp      pointer to a @p BaseFlash object
+ * @param[in] offset    flash offset
+ * @return              A pointer to the offset.
  *
  * @deprecated
  */
@@ -184,9 +184,9 @@ void *flashGetOffsetAddress(BaseFlash *devp, flash_offset_t offset) {
 /**
  * @brief   Get offset from absolute address
  *
- * @param[in] ip                    pointer to a @p BaseFlash or derived class
- * @param[in] addr                  pointer
- * @return                          flash offset
+ * @param[in] devp      pointer to a @p BaseFlash object
+ * @param[in] addr      pointer
+ * @return              flash offset
  *
  * @deprecated
  */
