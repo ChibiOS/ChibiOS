@@ -1,5 +1,6 @@
 # Required platform files.
-PLATFORMSRC := $(CHIBIOS)/os/hal/ports/sandbox/hal_lld.c
+PLATFORMSRC := $(CHIBIOS)/os/hal/ports/sandbox/hal_lld.c \
+               $(CHIBIOS)/os/hal/ports/sandbox/hal_st_lld.c
 
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/sandbox
