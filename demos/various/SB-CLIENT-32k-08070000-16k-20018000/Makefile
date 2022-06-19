@@ -103,7 +103,7 @@ include $(CHIBIOS)/os/common/utils/utils.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/sandbox/platform.mk
-#include $(CHIBIOS)/os/hal/boards/ST_STM32L476_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/boards/SB_GENERIC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
