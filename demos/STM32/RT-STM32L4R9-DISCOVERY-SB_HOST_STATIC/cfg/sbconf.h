@@ -53,6 +53,13 @@
 #endif
 
 /**
+ * @brief   Enables support for sandbox Virtual HAL.
+ */
+#if !defined(SB_CFG_ENABLE_VHAL) || defined(__DOXYGEN__)
+#define SB_CFG_ENABLE_VHAL                  TRUE
+#endif
+
+/**
  * @brief   Enables Posix API in sandboxes using VFS.
  */
 #if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)

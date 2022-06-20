@@ -104,6 +104,10 @@
 #error "SB_CFG_ALARM_VRQ not defined in sbconf.h"
 #endif
 
+#if !defined(SB_CFG_ENABLE_VHAL) || defined(__DOXYGEN__)
+#error "SB_CFG_ENABLE_VHAL not defined in sbconf.h"
+#endif
+
 #if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)
 #error "SB_CFG_ENABLE_VFS not defined in sbconf.h"
 #endif
@@ -326,7 +330,15 @@ extern "C" {
 /*===========================================================================*/
 
 #include "sbsysc.h"
+
+#if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
 #include "sbvrq.h"
+#endif
+
+#if (SB_CFG_ENABLE_VHAL == TRUE) || defined (__DOXYGEN__)
+#include "sbvhal.h"
+#endif
+
 #include "sbelf.h"
 #include "sbposix.h"
 #include "sbapi.h"
