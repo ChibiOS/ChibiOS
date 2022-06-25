@@ -74,7 +74,7 @@
 *****************************************************************************
 
 *** 21.11.3 ***
-- NEW: Added EFL driver support for STM32H401/411.
+- NEW: Added EFL driver support for STM32F401/411.
 
 *** 21.11.2 ***
 - NEW: Added dubby cycles support for SNOR using the normal SPI driver.
