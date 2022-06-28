@@ -49,6 +49,7 @@
 #define SB_SYSC_EVENT_WAIT_ALL  10
 #define SB_SYSC_EVENT_BROADCAST 11
 #define SB_SYSC_LOADELF         12
+#define SB_SYSC_VHAL_PAL        200
 #define SB_SYSC_VRQ_SET_ALARM   245
 #define SB_SYSC_VRQ_RESET_ALARM 246
 #define SB_SYSC_VRQ_WAIT        247
@@ -89,9 +90,12 @@
  * @{
  */
 #define SB_VPAL_WRITE           0
-#define SB_VPAL_READLATCH       1
-#define SB_VPAL_READ            2
-#define SB_VPAL_SETMODE         3
+#define SB_VPAL_SET             1
+#define SB_VPAL_CLEAR           2
+#define SB_VPAL_TOGGLE          3
+#define SB_VPAL_READLATCH       4
+#define SB_VPAL_READ            5
+#define SB_VPAL_SETMODE         6
 /** @} */
 
 /*===========================================================================*/

@@ -45,8 +45,7 @@
  */
 #define VPIO_PERM_WRITE         1U
 #define VPIO_PERM_READ          2U
-#define VPIO_PERM_READLATCH     4U
-#define VPIO_PERM_SETMODE       8U
+#define VPIO_PERM_SETMODE       4U
 /** @} */
 
 /*===========================================================================*/

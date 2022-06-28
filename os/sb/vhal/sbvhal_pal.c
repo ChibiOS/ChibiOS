@@ -72,14 +72,37 @@ void sb_api_vhal_pal(struct port_extctx *ectxp) {
       palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2);
     }
     break;
+  case SB_VPAL_SET:
+    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
+      uint32_t val = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
+      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2 | val);
+    }
+    break;
+  case SB_VPAL_CLEAR:
+    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
+      uint32_t val = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
+      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2 & ~val);
+    }
+    break;
+  case SB_VPAL_TOGGLE:
+    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
+      uint32_t val = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
+      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2 ^ val);
+    }
+    break;
   case SB_VPAL_READLATCH:
-    if ((vpiop->permissions & VPIO_PERM_READLATCH) != 0U) {
+    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
       ectxp->r0 = palReadGroupLatch(vpiop->port, vpiop->mask, vpiop->offset);
     }
     break;
   case SB_VPAL_READ:
     if ((vpiop->permissions & VPIO_PERM_READ) != 0U) {
       ectxp->r0 = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
+    }
+    break;
+  case SB_VPAL_SETMODE:
+    if ((vpiop->permissions & VPIO_PERM_SETMODE) != 0U) {
+      /* TODO */
     }
     break;
   default:

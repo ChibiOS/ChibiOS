@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "ch.h"
 
@@ -29,7 +29,7 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("blinker");
   while (true) {
 //    palToggleLine(LINE_LED_GREEN);
-    printf("#1 blink!!\r\n");
+//    printf("#1 blink!!\r\n");
     chThdSleepMilliseconds(500);
   }
 }

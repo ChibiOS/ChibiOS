@@ -27,6 +27,14 @@
 
 #if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
 
+#if PAL_USE_CALLBACKS
+#error "PAL_USE_CALLBACKS not supported"
+#endif
+
+#if PAL_USE_WAIT
+#error "PAL_USE_WAIT not supported"
+#endif
+
 /*===========================================================================*/
 /* Unsupported modes and specific modes                                      */
 /*===========================================================================*/
@@ -46,13 +54,13 @@
 /**
  * @brief   Width, in bits, of an I/O port.
  */
-#define PAL_IOPORTS_WIDTH           0U
+#define PAL_IOPORTS_WIDTH           32U
 
 /**
  * @brief   Whole port mask.
  * @details This macro specifies all the valid bits into a port.
  */
-#define PAL_WHOLE_PORT              ((ioportmask_t)0U)
+#define PAL_WHOLE_PORT              ((ioportmask_t)0xFFFFFFFFU)
 /** @} */
 
 /**
@@ -65,38 +73,25 @@
  *          of this type is platform-dependent.
  */
 #define PAL_LINE(port, pad)                                                 \
-  ((ioline_t)((uint32_t)(port)) | ((uint32_t)(pad)))
+  ((ioline_t)((uint32_t)(port) << 8) | ((uint32_t)(pad)))
 
 /**
  * @brief   Decodes a port identifier from a line identifier.
  */
 #define PAL_PORT(line)                                                      \
-  ((stm32_gpio_t *)(((uint32_t)(line)) & 0xFFFFFFF0U))
+  (ioportid_t)((uint32_t)(line) >> 8)
 
 /**
  * @brief   Decodes a pad identifier from a line identifier.
  */
 #define PAL_PAD(line)                                                       \
-  ((uint32_t)((uint32_t)(line) & 0x0000000FU))
+  ((iopadid_t)((uint32_t)(line) & 0x000000FFU))
 
 /**
  * @brief   Value identifying an invalid line.
  */
-#define PAL_NOLINE                      0U
+#define PAL_NOLINE                      0xFFFFFFFFU
 /** @} */
-
-/**
- * @brief   Generic I/O ports static initializer.
- * @details An instance of this structure must be passed to @p palInit() at
- *          system startup time in order to initialized the digital I/O
- *          subsystem. This represents only the initial setup, specific pads
- *          or whole ports can be reprogrammed at later time.
- * @note    Implementations may extend this structure to contain more,
- *          architecture dependent, fields.
- */
-typedef struct {
-
-} PALConfig;
 
 /**
  * @brief   Digital I/O port sized unsigned type.
@@ -131,11 +126,18 @@ typedef uint32_t iopadid_t;
 /*===========================================================================*/
 
 /**
- * @brief   First I/O port identifier.
- * @details Low level drivers can define multiple ports, it is suggested to
- *          use this naming convention.
+ * @name    Generic port identifiers.
+ * @{
  */
-#define IOPORT1         0
+#define IOPORT1         VPIO0
+#define IOPORT2         VPIO1
+#define IOPORT3         VPIO2
+#define IOPORT4         VPIO3
+#define IOPORT5         VPIO4
+#define IOPORT6         VPIO5
+#define IOPORT7         VPIO6
+#define IOPORT8         VPIO7
+/** @} */
 
 /*===========================================================================*/
 /* Implementation, some of the following macros could be implemented as      */
@@ -147,7 +149,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_init() _pal_lld_init()
+#define pal_lld_init()
 
 /**
  * @brief   Reads the physical I/O port states.
@@ -157,7 +159,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_readport(port) 0U
+#define pal_lld_readport(port) __pal_lld_readport(port)
 
 /**
  * @brief   Reads the output latch.
@@ -169,7 +171,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_readlatch(port) 0U
+#define pal_lld_readlatch(port) __pal_lld_readlatch(port)
 
 /**
  * @brief   Writes a bits mask on a I/O port.
@@ -179,11 +181,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_writeport(port, bits)                                       \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)bits;                                                             \
-  } while (false)
+#define pal_lld_writeport(port, bits) __pal_lld_writeport(port, bits)
 
 /**
  * @brief   Sets a bits mask on a I/O port.
@@ -196,11 +194,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_setport(port, bits)                                         \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)bits;                                                             \
-  } while (false)
+#define pal_lld_setport(port, bits) __pal_lld_setport(port, bits)
 
 /**
  * @brief   Clears a bits mask on a I/O port.
@@ -213,11 +207,7 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_clearport(port, bits)                                       \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)bits;                                                             \
-  } while (false)
+#define pal_lld_clearport(port, bits) __pal_lld_clearport(port, bits)
 
 /**
  * @brief   Toggles a bits mask on a I/O port.
@@ -230,212 +220,53 @@ typedef uint32_t iopadid_t;
  *
  * @notapi
  */
-#define pal_lld_toggleport(port, bits)                                      \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)bits;                                                             \
-  } while (false)
-
-/**
- * @brief   Reads a group of bits.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] mask      group mask
- * @param[in] offset    group bit offset within the port
- * @return              The group logical states.
- *
- * @notapi
- */
-#define pal_lld_readgroup(port, mask, offset) 0U
-
-/**
- * @brief   Writes a group of bits.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] mask      group mask
- * @param[in] offset    group bit offset within the port
- * @param[in] bits      bits to be written. Values exceeding the group width
- *                      are masked.
- *
- * @notapi
- */
-#define pal_lld_writegroup(port, mask, offset, bits)                        \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)mask;                                                             \
-    (void)offset;                                                           \
-    (void)bits;                                                             \
-  } while (false)
-
-/**
- * @brief   Pads group mode setup.
- * @details This function programs a pads group belonging to the same port
- *          with the specified mode.
- * @note    Programming an unknown or unsupported mode is silently ignored.
- *
- * @param[in] port      port identifier
- * @param[in] mask      group mask
- * @param[in] offset    group bit offset within the port
- * @param[in] mode      group mode
- *
- * @notapi
- */
-#define pal_lld_setgroupmode(port, mask, offset, mode)                      \
-  _pal_lld_setgroupmode(port, mask << offset, mode)
-
-/**
- * @brief   Reads a logical state from an I/O pad.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @return              The logical state.
- * @retval PAL_LOW      low logical state.
- * @retval PAL_HIGH     high logical state.
- *
- * @notapi
- */
-#define pal_lld_readpad(port, pad) PAL_LOW
-
-/**
- * @brief   Writes a logical state on an output pad.
- * @note    This function is not meant to be invoked directly by the
- *          application  code.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @param[in] bit       logical value, the value must be @p PAL_LOW or
- *                      @p PAL_HIGH
- *
- * @notapi
- */
-#define pal_lld_writepad(port, pad, bit)                                    \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)pad;                                                              \
-    (void)bit;                                                              \
-  } while (false)
-
-/**
- * @brief   Sets a pad logical state to @p PAL_HIGH.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_setpad(port, pad)                                           \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)pad;                                                              \
-  } while (false)
-
-/**
- * @brief   Clears a pad logical state to @p PAL_LOW.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_clearpad(port, pad)                                         \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)pad;                                                              \
-  } while (false)
-
-/**
- * @brief   Toggles a pad logical state.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_togglepad(port, pad)                                        \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)pad;                                                              \
-  } while (false)
-
-/**
- * @brief   Pad mode setup.
- * @details This function programs a pad with the specified mode.
- * @note    The @ref PAL provides a default software implementation of this
- *          functionality, implement this function if can optimize it by using
- *          special hardware functionalities or special coding.
- * @note    Programming an unknown or unsupported mode is silently ignored.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- * @param[in] mode      pad mode
- *
- * @notapi
- */
-#define pal_lld_setpadmode(port, pad, mode)                                 \
-  do {                                                                      \
-    (void)port;                                                             \
-    (void)pad;                                                              \
-    (void)mode;                                                             \
-  } while (false)
-
-/**
- * @brief   Returns a PAL event structure associated to a pad.
- *
- * @param[in] port      port identifier
- * @param[in] pad       pad number within the port
- *
- * @notapi
- */
-#define pal_lld_get_pad_event(port, pad)                                    \
-  &_pal_events[0]; (void)(port); (void)pad
-
-/**
- * @brief   Returns a PAL event structure associated to a line.
- *
- * @param[in] line      line identifier
- *
- * @notapi
- */
-#define pal_lld_get_line_event(line)                                        \
-  &_pal_events[0]; (void)line
-
-#if !defined(__DOXYGEN__)
-#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE)
-extern palevent_t _pal_events[1];
-#endif
-#endif
+#define pal_lld_toggleport(port, bits) __pal_lld_toggleport(port, bits)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void _pal_lld_init(void);
-  void _pal_lld_setgroupmode(ioportid_t port,
-                             ioportmask_t mask,
-                             iomode_t mode);
+
 #ifdef __cplusplus
 }
 #endif
+
+__attribute__((always_inline))
+static inline uint32_t __pal_lld_readport(ioportid_t port) {
+
+  __syscall2r(200, SB_VPAL_READ, port);
+  return (ioportmask_t)r0;
+}
+
+__attribute__((always_inline))
+static inline uint32_t __pal_lld_readlatch(ioportid_t port) {
+
+  __syscall2r(200, SB_VPAL_READLATCH, port);
+  return (ioportmask_t)r0;
+}
+
+__attribute__((always_inline))
+static inline void __pal_lld_writeport(ioportid_t port, uint32_t bits) {
+
+  __syscall3r(200, SB_VPAL_WRITE, port, bits);
+}
+
+__attribute__((always_inline))
+static inline void __pal_lld_setport(ioportid_t port, uint32_t bits) {
+
+  __syscall3r(200, SB_VPAL_SET, port, bits);
+}
+
+__attribute__((always_inline))
+static inline void __pal_lld_clearport(ioportid_t port, uint32_t bits) {
+
+  __syscall3r(200, SB_VPAL_CLEAR, port, bits);
+}
+
+__attribute__((always_inline))
+static inline void __pal_lld_toggleport(ioportid_t port, uint32_t bits) {
+
+  __syscall3r(200, SB_VPAL_TOGGLE, port, bits);
+}
 
 #endif /* HAL_USE_PAL == TRUE */
 
