@@ -54,15 +54,37 @@
 /*===========================================================================*/
 
 void sb_api_vhal_pal(struct port_extctx *ectxp) {
-  unsigned sub = (unsigned)ectxp->r0;
-  unsigned port = (unsigned)ectxp->r1;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  uint32_t sub = (unsigned)ectxp->r0;
+  uint32_t vport = (unsigned)ectxp->r1;
+  const vhal_vpio_conf_t *vpiop;
+  ectxp->r0 = 0U;
 
-  switch (sub) {
-  case 0:
-    palWriteGroup(GPIOA, 0, 0, 0);
+  if (vport >= sbp->config->vhalconf->vpalconf->n) {
+    return;
   }
 
-  ectxp->r0 = CH_RET_SUCCESS;
+  vpiop = &sbp->config->vhalconf->vpalconf->vpio[vport];
+
+  switch (sub) {
+  case SB_VPAL_WRITE:
+    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
+      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2);
+    }
+    break;
+  case SB_VPAL_READLATCH:
+    if ((vpiop->permissions & VPIO_PERM_READLATCH) != 0U) {
+      ectxp->r0 = palReadGroupLatch(vpiop->port, vpiop->mask, vpiop->offset);
+    }
+    break;
+  case SB_VPAL_READ:
+    if ((vpiop->permissions & VPIO_PERM_READ) != 0U) {
+      ectxp->r0 = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
+    }
+    break;
+  default:
+    return;
+  }
 }
 
 #endif /* SB_CFG_ENABLE_VHAL_PAL == TRUE */

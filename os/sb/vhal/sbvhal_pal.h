@@ -43,9 +43,10 @@
  * @name    VPIO permissions
  * @{
  */
-#define VPIO_PERM_READ          1U
-#define VPIO_PERM_WRITE         2U
-#define VPIO_PERM_CHANGEMODE    4U
+#define VPIO_PERM_WRITE         1U
+#define VPIO_PERM_READ          2U
+#define VPIO_PERM_READLATCH     4U
+#define VPIO_PERM_SETMODE       8U
 /** @} */
 
 /*===========================================================================*/
@@ -61,16 +62,21 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a VPIO configuration structure.
+ */
+typedef struct vhal_vpio_conf {
+  uint32_t        permissions;
+  ioportid_t      port;
+  ioportmask_t    mask;
+  uint32_t        offset;
+} vhal_vpio_conf_t;
+
+/**
  * @brief   Type of a VHAL PAL instance configuration structure.
  */
 typedef struct vhal_pal_conf {
-  uint32_t          nvpio;
-  struct {
-    uint32_t        permissions;
-    ioportid_t      port;
-    ioportmask_t    mask;
-    uint32_t        offset;
-  } vpio[];
+  uint32_t          n;
+  vhal_vpio_conf_t  vpio[];
 } vhal_pal_conf_t;
 
 /*===========================================================================*/

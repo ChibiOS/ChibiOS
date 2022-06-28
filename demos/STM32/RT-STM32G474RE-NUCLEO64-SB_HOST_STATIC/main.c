@@ -26,8 +26,12 @@
 
 #include "startup_defs.h"
 
+/*===========================================================================*/
+/* VHAL-related.                                                             */
+/*===========================================================================*/
+
 static vhal_pal_conf_t vpal_config1 = {
-  .nvpio    = 1U,
+  .n        = 1U,
   .vpio     = {
     [0]     = {
       .permissions  = VPIO_PERM_WRITE,
@@ -36,6 +40,18 @@ static vhal_pal_conf_t vpal_config1 = {
       .offset       = GPIOA_LED_GREEN
     }
   }
+};
+
+static vhal_pal_conf_t vpal_config2 = {
+  .n        = 0U
+};
+
+static vhal_conf_t vhal_config1 = {
+  .vpalconf         = &vpal_config1
+};
+
+static vhal_conf_t vhal_config2 = {
+  .vpalconf         = &vpal_config2
 };
 
 /*===========================================================================*/
@@ -87,6 +103,7 @@ static const sb_config_t sb_config1 = {
     }
   },
 //  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+  .vhalconf         = &vhal_config1
 };
 
 /* Sandbox 2 configuration.*/
@@ -106,6 +123,7 @@ static const sb_config_t sb_config2 = {
     }
   },
 //  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+  .vhalconf         = &vhal_config2
 };
 
 static const char *sbx1_argv[] = {

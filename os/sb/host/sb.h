@@ -33,6 +33,12 @@
 #include "errcodes.h"
 
 #include "sbhdr.h"
+#include "sbsysc.h"
+#include "sbconf.h"
+
+#if (SB_CFG_ENABLE_VHAL == TRUE) || defined (__DOXYGEN__)
+#include "sbvhal.h"
+#endif
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -76,8 +82,6 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
-
-#include "sbconf.h"
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -249,6 +253,12 @@ typedef struct {
    */
   vfs_driver_c                  *vfs_driver;
 #endif
+#if (SB_CFG_ENABLE_VHAL == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   VHAL configuration associated to this sandbox.
+   */
+  const vhal_conf_t             *vhalconf;
+#endif
 } sb_config_t;
 
 /**
@@ -329,14 +339,8 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#include "sbsysc.h"
-
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
 #include "sbvrq.h"
-#endif
-
-#if (SB_CFG_ENABLE_VHAL == TRUE) || defined (__DOXYGEN__)
-#include "sbvhal.h"
 #endif
 
 #include "sbelf.h"

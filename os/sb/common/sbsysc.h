@@ -84,6 +84,16 @@
 #define SB_POSIX_STAT           16
 /** @} */
 
+/**
+ * @name    VPAL syscall sub-codes
+ * @{
+ */
+#define SB_VPAL_WRITE           0
+#define SB_VPAL_READLATCH       1
+#define SB_VPAL_READ            2
+#define SB_VPAL_SETMODE         3
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
