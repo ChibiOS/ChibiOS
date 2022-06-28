@@ -14,9 +14,8 @@
     limitations under the License.
 */
 
-//#include <stdio.h>
-
 #include "ch.h"
+#include "hal.h"
 
 /*
  * Blinker thread, times are in milliseconds.
@@ -28,8 +27,7 @@ static THD_FUNCTION(Thread1, arg) {
 
   chRegSetThreadName("blinker");
   while (true) {
-//    palToggleLine(LINE_LED_GREEN);
-//    printf("#1 blink!!\r\n");
+    palTogglePad(0, 0);
     chThdSleepMilliseconds(500);
   }
 }

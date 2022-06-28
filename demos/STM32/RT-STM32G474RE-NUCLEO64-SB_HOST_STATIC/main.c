@@ -164,7 +164,7 @@ static THD_FUNCTION(Thread1, arg) {
 
   chRegSetThreadName("blinker");
   while (true) {
-    palToggleLine(LINE_LED_GREEN);
+//    palToggleLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
   }
 }
