@@ -25,8 +25,8 @@
  * @{
  */
 
-#ifndef SBVHAL_H
-#define SBVHAL_H
+#ifndef SBVHAL_PAL_H
+#define SBVHAL_PAL_H
 
 #if (SB_CFG_ENABLE_VHAL_PAL == TRUE) || defined(__DOXYGEN__)
 
@@ -38,6 +38,15 @@
  * @brief   API handler for VHAL PAL driver.
  */
 #define SB_SVC200_HANDLER       sb_api_vhal_pal
+
+/**
+ * @name    VPIO permissions
+ * @{
+ */
+#define VPIO_PERM_READ          1U
+#define VPIO_PERM_WRITE         2U
+#define VPIO_PERM_CHANGEMODE    4U
+/** @} */
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -55,6 +64,13 @@
  * @brief   Type of a VHAL PAL instance configuration structure.
  */
 typedef struct vhal_pal_conf {
+  uint32_t          nvpio;
+  struct {
+    uint32_t        permissions;
+    ioportid_t      port;
+    ioportmask_t    mask;
+    uint32_t        offset;
+  } vpio[];
 } vhal_pal_conf_t;
 
 /*===========================================================================*/
@@ -79,6 +95,6 @@ extern "C" {
 
 #endif /* SB_CFG_ENABLE_VHAL == TRUE */
 
-#endif /* SBVHAL_H */
+#endif /* SBVHAL_PAL_H */
 
 /** @} */

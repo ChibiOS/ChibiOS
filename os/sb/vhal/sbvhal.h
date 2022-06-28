@@ -57,6 +57,7 @@ typedef struct vhal_conf {
   /**
    * @brief   VPAL configuration.
    */
+  const vhal_pal_conf_t     *vpalconf;
 #endif
 } vhal_conf_t;
 

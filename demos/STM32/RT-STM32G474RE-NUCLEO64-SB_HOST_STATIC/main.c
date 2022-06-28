@@ -26,6 +26,18 @@
 
 #include "startup_defs.h"
 
+static vhal_pal_conf_t vpal_config1 = {
+  .nvpio    = 1U,
+  .vpio     = {
+    [0]     = {
+      .permissions  = VPIO_PERM_WRITE,
+      .port         = GPIOA,
+      .mask         = 1U,
+      .offset       = GPIOA_LED_GREEN
+    }
+  }
+};
+
 /*===========================================================================*/
 /* VFS-related.                                                              */
 /*===========================================================================*/

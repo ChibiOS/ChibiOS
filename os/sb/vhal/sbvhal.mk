@@ -1,5 +1,6 @@
 # List of the ChibiOS sandbox VHAL files.
-SBVHALSRC = $(CHIBIOS)/os/sb/vhal/sbvhal.c
+SBVHALSRC = $(CHIBIOS)/os/sb/vhal/sbvhal.c \
+            $(CHIBIOS)/os/sb/vhal/sbvhal_pal.c
  
 SBVHALASM =
 

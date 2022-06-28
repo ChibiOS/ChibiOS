@@ -59,7 +59,7 @@ void sb_api_vhal_pal(struct port_extctx *ectxp) {
 
   switch (sub) {
   case 0:
-    palWriteBus(bus, bits);
+    palWriteGroup(GPIOA, 0, 0, 0);
   }
 
   ectxp->r0 = CH_RET_SUCCESS;
