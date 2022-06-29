@@ -195,34 +195,9 @@ void sio_lld_stop_operation(SIODriver *siop) {
  * @notapi
  */
 sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop) {
-  sio_events_mask_t evtmask;
-  uint32_t isr;
+  sio_events_mask_t evtmask = 0U;
 
-  /* Getting and clearing all relevant ISR flags (and only those).*/
-  isr = siop->usart->ISR & (USART_ISR_PE  | USART_ISR_LBDF | USART_ISR_FE    |
-                            USART_ISR_ORE | USART_ISR_NE);
-  siop->usart->ICR = isr;
-
-  /* Status flags cleared, now the related interrupts can be enabled again.*/
-  usart_enable_rx_evt_irq(siop);
-
-  /* Translating the status flags in SIO events.*/
-  evtmask = 0U;
-  if ((isr & USART_ISR_LBDF) != 0U) {
-    evtmask |= SIO_BREAK_DETECTED;
-  }
-  if ((isr & USART_ISR_ORE) != 0U) {
-    evtmask |= SIO_OVERRUN_ERROR;
-  }
-  if ((isr & USART_ISR_NE) != 0U) {
-    evtmask |= SIO_NOISE_ERROR;
-  }
-  if ((isr & USART_ISR_FE) != 0U) {
-    evtmask |= SIO_FRAMING_ERROR;
-  }
-  if ((isr & USART_ISR_PE) != 0U) {
-    evtmask |= SIO_PARITY_ERROR;
-  }
+  (void)siop;
 
   return evtmask;
 }
