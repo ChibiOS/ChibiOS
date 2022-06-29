@@ -446,8 +446,8 @@ void sio_lld_stop(SIODriver *siop) {
     }
 #if STM32_SIO_USE_USART1 == TRUE
     else if (&SIOD1 == siop) {
-     rccResetUSART1();
-     rccDisableUSART1();
+      rccResetUSART1();
+      rccDisableUSART1();
     }
 #endif
 #if STM32_SIO_USE_USART2 == TRUE

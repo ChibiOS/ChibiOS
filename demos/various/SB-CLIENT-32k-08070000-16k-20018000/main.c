@@ -37,13 +37,19 @@ static THD_FUNCTION(Thread1, arg) {
  */
 int main(void) {
 
+  /*
+   * System initializations.
+   * - Virtual HAL initialization.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
   chSysInit();
 
-  /*
-   * Creating a blinker thread.
-   */
+  /* Creating a blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
+  /* Just sleeping in a loop.*/
   while (true) {
     chThdSleepMilliseconds(500);
   }

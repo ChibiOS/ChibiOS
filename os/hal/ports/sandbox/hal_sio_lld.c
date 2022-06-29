@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    USARTv2/hal_sio_lld.c
- * @brief   STM32 SIO subsystem low level driver source.
+ * @file    sandbox/hal_sio_lld.c
+ * @brief   Sandbox SIO subsystem low level driver source.
  *
  * @addtogroup SIO
  * @{
@@ -30,87 +30,22 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define USART_CR1_CFG_FORBIDDEN             (USART_CR1_EOBIE            |   \
-                                             USART_CR1_RTOIE            |   \
-                                             USART_CR1_CMIE             |   \
-                                             USART_CR1_PEIE             |   \
-                                             USART_CR1_TXEIE            |   \
-                                             USART_CR1_TCIE             |   \
-                                             USART_CR1_RXNEIE           |   \
-                                             USART_CR1_IDLEIE           |   \
-                                             USART_CR1_TE               |   \
-                                             USART_CR1_RE               |   \
-                                             USART_CR1_UE)
-#define USART_CR2_CFG_FORBIDDEN             (USART_CR2_LBDIE)
-#define USART_CR3_CFG_FORBIDDEN             (USART_CR3_WUFIE            |   \
-                                             USART_CR3_CTSIE            |   \
-                                             USART_CR3_EIE)
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
 /**
- * @brief   USART1 SIO driver identifier.
+ * @brief   VUART1 SIO driver identifier.
  */
-#if (STM32_SIO_USE_USART1 == TRUE) || defined(__DOXYGEN__)
+#if (SB_SIO_USE_VUART1 == TRUE) || defined(__DOXYGEN__)
 SIODriver SIOD1;
 #endif
 
 /**
- * @brief   USART2 SIO driver identifier.
+ * @brief   VUART2 SIO driver identifier.
  */
-#if (STM32_SIO_USE_USART2 == TRUE) || defined(__DOXYGEN__)
+#if (SB_SIO_USE_VUART2 == TRUE) || defined(__DOXYGEN__)
 SIODriver SIOD2;
-#endif
-
-/**
- * @brief   USART3 SIO driver identifier.
- */
-#if (STM32_SIO_USE_USART3 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD3;
-#endif
-
-/**
- * @brief   UART4 SIO driver identifier.
- */
-#if (STM32_SIO_USE_UART4 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD4;
-#endif
-
-/**
- * @brief   UART5 SIO driver identifier.
- */
-#if (STM32_SIO_USE_UART5 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD5;
-#endif
-
-/**
- * @brief   USART6 SIO driver identifier.
- */
-#if (STM32_SIO_USE_USART6 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD6;
-#endif
-
-/**
- * @brief   UART7 SIO driver identifier.
- */
-#if (STM32_SIO_USE_UART7 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD7;
-#endif
-
-/**
- * @brief   UART8 SIO driver identifier.
- */
-#if (STM32_SIO_USE_UART8 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD8;
-#endif
-
-/**
- * @brief   LPUART1 SIO driver identifier.
- */
-#if (STM32_SIO_USE_LPUART1 == TRUE) || defined(__DOXYGEN__)
-SIODriver LPSIOD1;
 #endif
 
 /*===========================================================================*/
@@ -119,114 +54,14 @@ SIODriver LPSIOD1;
 
 /**
  * @brief   Driver default configuration.
- * @note    In this implementation it is: 38400-8-N-1.
  */
 static const SIOConfig default_config = {
-  .baud  = SIO_DEFAULT_BITRATE,
-  .cr1   = USART_CR1_DATA8 | USART_CR1_OVER16,
-  .cr2   = USART_CR2_STOP1_BITS,
-  .cr3   = 0U
+  .ncfg  = 0U
 };
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
-
-__STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
-
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_RXNEIE;
-#else
-  if (siop->operation->rx_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_RXNEIE;
-  }
-#endif
-}
-
-__STATIC_INLINE void usart_enable_rx_evt_irq(SIODriver *siop) {
-
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_PEIE;
-  siop->usart->CR2 |= USART_CR2_LBDIE;
-  siop->usart->CR3 |= USART_CR3_EIE;
-#else
-  if (siop->operation->rx_evt_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_PEIE;
-    siop->usart->CR2 |= USART_CR2_LBDIE;
-    siop->usart->CR3 |= USART_CR3_EIE;
-  }
-#endif
-}
-
-__STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
-
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_TXEIE;
-#else
-  if (siop->operation->tx_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_TXEIE;
-  }
-#endif
-}
-
-__STATIC_INLINE void usart_enable_tx_end_irq(SIODriver *siop) {
-
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->usart->CR1 |= USART_CR1_TCIE;
-#else
-  if (siop->operation->tx_end_cb != NULL) {
-    siop->usart->CR1 |= USART_CR1_TCIE;
-  }
-#endif
-}
-
-/**
- * @brief   USART initialization.
- * @details This function must be invoked with interrupts disabled.
- *
- * @param[in] siop       pointer to a @p SIODriver object
- */
-__STATIC_INLINE void usart_init(SIODriver *siop) {
-  USART_TypeDef *u = siop->usart;
-  uint32_t presc, brr, clock;
-
-  /* Prescaler calculation.*/
-  static const uint32_t prescvals[] = {1, 2, 4, 6, 8, 10, 12, 16, 32, 64, 128, 256};
-  clock = siop->clock;
-  presc = prescvals[siop->config->presc];
-
- /* Baud rate setting.*/
-#if STM32_SIO_USE_LPUART1
-  if (siop == &LPSIOD1) {
-    osalDbgAssert((clock >= siop->config->baud * 3U) &&
-                  (clock <= siop->config->baud * 4096U),
-                  "invalid baud rate vs input clock");
-
-    brr = (uint32_t)(((uint64_t)(clock / presc) * (uint64_t)256) / siop->config->baud);
-
-    osalDbgAssert((brr >= 0x300) && (brr < 0x100000), "invalid BRR value");
-  }
- else
-#endif
-  {
-    brr = (uint32_t)((clock / presc) / siop->config->baud);
-
-    /* Correcting BRR value when oversampling by 8 instead of 16.
-       Fraction is still 4 bits wide, but only lower 3 bits used.
-       Mantissa is doubled, but Fraction is left the same.*/
-    if ((siop->config->cr1 & USART_CR1_OVER8) != 0U) {
-      brr = ((brr & ~7U) * 2U) | (brr & 7U);
-    }
-
-    osalDbgAssert(brr < 0x10000, "invalid BRR value");
-  }
-
-  /* Setting up USART.*/
-  u->BRR   = brr;
-  u->CR1   = siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN;
-  u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
-  u->CR3   = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
-}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -244,50 +79,13 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
 void sio_lld_init(void) {
 
   /* Driver instances initialization.*/
-#if STM32_SIO_USE_USART1 == TRUE
+#if SB_SIO_USE_VUART1 == TRUE
   sioObjectInit(&SIOD1);
-  SIOD1.usart = USART1;
-  SIOD1.clock = STM32_USART1CLK;
+  SIOD1.nvuart = 0U;
 #endif
-#if STM32_SIO_USE_USART2 == TRUE
+#if SB_SIO_USE_VUART2 == TRUE
   sioObjectInit(&SIOD2);
-  SIOD2.usart = USART2;
-  SIOD2.clock = STM32_USART2CLK;
-#endif
-#if STM32_SIO_USE_USART3 == TRUE
-  sioObjectInit(&SIOD3);
-  SIOD3.usart = USART3;
-  SIOD3.clock = STM32_USART3CLK;
-#endif
-#if STM32_SIO_USE_UART4 == TRUE
-  sioObjectInit(&SIOD4);
-  SIOD4.usart = UART4;
-  SIOD4.clock = STM32_UART4CLK;
-#endif
-#if STM32_SIO_USE_UART5 == TRUE
-  sioObjectInit(&SIOD5);
-  SIOD5.usart = UART5;
-  SIOD5.clock = STM32_UART5CLK;
-#endif
-#if STM32_SIO_USE_USART6 == TRUE
-  sioObjectInit(&SIOD6);
-  SIOD6.usart = USART6;
-  SIOD6.clock = STM32_USART6CLK;
-#endif
-#if STM32_SIO_USE_UART7 == TRUE
-  sioObjectInit(&SIOD7);
-  SIOD7.usart = UART7;
-  SIOD7.clock = STM32_UART7CLK;
-#endif
-#if STM32_SIO_USE_UART8 == TRUE
-  sioObjectInit(&SIOD8);
-  SIOD8.usart = UART8;
-  SIOD8.clock = STM32_UART8CLK;
-#endif
-#if STM32_SIO_USE_LPUART1 == TRUE
-  sioObjectInit(&LPSIOD1);
-  LPSIOD1.usart = LPUART1;
-  LPSIOD1.clock = STM32_LPUART1CLK;
+  SIOD2.nvuart = 1U;
 #endif
 }
 
@@ -312,58 +110,12 @@ msg_t sio_lld_start(SIODriver *siop) {
   /* Enables the peripheral.*/
     if (false) {
     }
-#if STM32_SIO_USE_USART1 == TRUE
+#if SB_SIO_USE_VUART1 == TRUE
     else if (&SIOD1 == siop) {
-      rccResetUSART1();
-      rccEnableUSART1(true);
     }
 #endif
-#if STM32_SIO_USE_USART2 == TRUE
+#if SB_SIO_USE_VUART2 == TRUE
     else if (&SIOD2 == siop) {
-      rccResetUSART2();
-      rccEnableUSART2(true);
-    }
-#endif
-#if STM32_SIO_USE_USART3 == TRUE
-    else if (&SIOD3 == siop) {
-      rccResetUSART3();
-      rccEnableUSART3(true);
-    }
-#endif
-#if STM32_SIO_USE_UART4 == TRUE
-    else if (&SIOD4 == siop) {
-      rccResetUART4();
-      rccEnableUART4(true);
-    }
-#endif
-#if STM32_SIO_USE_UART5 == TRUE
-    else if (&SIOD5 == siop) {
-      rccResetUART5();
-      rccEnableUART5(true);
-    }
-#endif
-#if STM32_SIO_USE_USART6 == TRUE
-    else if (&SIOD6 == siop) {
-      rccResetUSART6();
-      rccEnableUSART6(true);
-    }
-#endif
-#if STM32_SIO_USE_UART7 == TRUE
-    else if (&SIOD7 == siop) {
-      rccResetUART7();
-      rccEnableUART7(true);
-    }
-#endif
-#if STM32_SIO_USE_UART8 == TRUE
-    else if (&SIOD8 == siop) {
-      rccResetUART8();
-      rccEnableUART8(true);
-    }
-#endif
-#if STM32_SIO_USE_LPUART1 == TRUE
-    else if (&LPSIOD1 == siop) {
-      rccResetLPUART1();
-      rccEnableLPUART1(true);
     }
 #endif
     else {
@@ -377,9 +129,6 @@ msg_t sio_lld_start(SIODriver *siop) {
     siop->sync_txend   = NULL;
 #endif
   }
-
-  /* Configures the peripheral.*/
-  usart_init(siop);
 
   return HAL_RET_SUCCESS;
 }
@@ -399,58 +148,12 @@ void sio_lld_stop(SIODriver *siop) {
     /* Disables the peripheral.*/
     if (false) {
     }
-#if STM32_SIO_USE_USART1 == TRUE
+#if SB_SIO_USE_VUART1 == TRUE
     else if (&SIOD1 == siop) {
-      rccResetUSART1();
-      rccDisableUSART1();
     }
 #endif
-#if STM32_SIO_USE_USART2 == TRUE
+#if SB_SIO_USE_VUART2 == TRUE
     else if (&SIOD2 == siop) {
-      rccResetUSART2();
-      rccDisableUSART2();
-    }
-#endif
-#if STM32_SIO_USE_USART3 == TRUE
-    else if (&SIOD3 == siop) {
-      rccResetUSART3();
-      rccDisableUSART3();
-    }
-#endif
-#if STM32_SIO_USE_UART4 == TRUE
-    else if (&SIOD4 == siop) {
-      rccResetUART4();
-      rccDisableUART4();
-    }
-#endif
-#if STM32_SIO_USE_UART5 == TRUE
-    else if (&SIOD5 == siop) {
-      rccResetUART5();
-      rccDisableUART5();
-    }
-#endif
-#if STM32_SIO_USE_USART6 == TRUE
-    else if (&SIOD6 == siop) {
-      rccResetUSART6();
-      rccDisableUSART6();
-    }
-#endif
-#if STM32_SIO_USE_UART7 == TRUE
-    else if (&SIOD7 == siop) {
-      rccResetUART7();
-      rccDisableUART7();
-    }
-#endif
-#if STM32_SIO_USE_UART8 == TRUE
-    else if (&SIOD8 == siop) {
-      rccResetUART8();
-      rccDisableUART8();
-    }
-#endif
-#if STM32_SIO_USE_LPUART1 == TRUE
-    else if (&LPSIOD1 == siop) {
-      rccResetLPUART1();
-      rccDisableLPUART1();
     }
 #endif
     else {
@@ -467,43 +170,8 @@ void sio_lld_stop(SIODriver *siop) {
  * @api
  */
 void sio_lld_start_operation(SIODriver *siop) {
-  uint32_t cr1irq, cr2irq, cr3irq;
 
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  /* With synchronization all interrupts are required.*/
-  cr1irq  = USART_CR1_RXNEIE | USART_CR1_TXEIE | USART_CR1_PEIE   |
-            USART_CR1_TCIE   | USART_CR1_IDLEIE;
-  cr2irq  = USART_CR2_LBDIE;
-  cr3irq  = USART_CR3_EIE;
-#else
-  /* When using just callbacks we can select only those really required.*/
-  cr1irq  = 0U;
-  cr2irq  = 0U;
-  cr3irq  = 0U;
-  if (siop->operation->rx_cb != NULL) {
-    cr1irq |= USART_CR1_RXNEIE;
-  }
-  if (siop->operation->rx_idle_cb != NULL) {
-    cr1irq |= USART_CR1_IDLEIE;
-  }
-  if (siop->operation->tx_cb != NULL) {
-    cr1irq |= USART_CR1_TXEIE;
-  }
-  if (siop->operation->tx_end_cb != NULL) {
-    cr1irq |= USART_CR1_TCIE;
-  }
-  if (siop->operation->rx_evt_cb != NULL) {
-    cr1irq |= USART_CR1_PEIE;
-    cr2irq |= USART_CR2_LBDIE;
-    cr3irq |= USART_CR3_EIE;
-  }
-#endif
-
-  /* Setting up the operation.*/
-  siop->usart->ICR  = siop->usart->ISR;
-  siop->usart->CR2 |= cr2irq;
-  siop->usart->CR3 |= cr3irq;
-  siop->usart->CR1 |= cr1irq | USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
+  (void)siop;
 }
 
 /**
@@ -515,10 +183,7 @@ void sio_lld_start_operation(SIODriver *siop) {
  */
 void sio_lld_stop_operation(SIODriver *siop) {
 
-  /* Stop operation.*/
-  siop->usart->CR1 &= USART_CR1_CFG_FORBIDDEN;
-  siop->usart->CR2 &= USART_CR2_CFG_FORBIDDEN;
-  siop->usart->CR3 &= USART_CR3_CFG_FORBIDDEN;
+  (void)siop;
 }
 
 /**
