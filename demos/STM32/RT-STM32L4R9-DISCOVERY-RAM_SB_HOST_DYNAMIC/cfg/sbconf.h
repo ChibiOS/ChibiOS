@@ -56,7 +56,7 @@
  * @brief   Enables support for sandbox Virtual HAL.
  */
 #if !defined(SB_CFG_ENABLE_VHAL) || defined(__DOXYGEN__)
-#define SB_CFG_ENABLE_VHAL                  TRUE
+#define SB_CFG_ENABLE_VHAL                  FALSE
 #endif
 
 /**
