@@ -19,7 +19,7 @@
 
 /**
  * @file    sb/vhal/sbvio_gpio.h
- * @brief   ARM SandBox host Virtual I/O macros and structures.
+ * @brief   ARM SandBox host Virtual GPIO macros and structures.
  *
  * @addtogroup ARM_SANDBOX_HOST_VIO_GPIO
  * @{
@@ -63,20 +63,20 @@
 /**
  * @brief   Type of a VIO GPIO configuration structure.
  */
-typedef struct vio_port_conf {
+typedef struct vio_port {
   uint32_t        permissions;
   ioportid_t      port;
   ioportmask_t    mask;
   uint32_t        offset;
-} vio_port_conf_t;
+} vio_port_t;
 
 /**
  * @brief   Type of a VIO GPIOs configuration structure.
  */
-typedef struct vio_gpio_conf {
+typedef struct vio_gpio_inst {
   uint32_t          n;
-  vio_port_conf_t   ports[];
-} vio_gpio_conf_t;
+  vio_port_t        ports[];
+} vio_gpio_inst_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */

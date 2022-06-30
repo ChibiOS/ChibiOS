@@ -18,25 +18,26 @@
 */
 
 /**
- * @file    sbvio.h
- * @brief   ARM SandBox host Virtual I/O macros and structures.
+ * @file    sb/vhal/sbvio_uart.h
+ * @brief   ARM SandBox host Virtual UART macros and structures.
  *
- * @addtogroup ARM_SANDBOX_HOST_VIO
+ * @addtogroup ARM_SANDBOX_HOST_VIO_UART
  * @{
  */
 
-#ifndef SBVIO_H
-#define SBVIO_H
+#ifndef SBVIO_UART_H
+#define SBVIO_UART_H
 
-#if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
-
-#include "vioconf.h"
-#include "sbvio_gpio.h"
-#include "sbvio_uart.h"
+#if (VIO_CFG_ENABLE_UART == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   API handler for VHAL PAL driver.
+ */
+#define SB_SVC201_HANDLER       sb_api_vio_uart
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -46,40 +47,25 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Checks on configuration options.*/
-#if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)
-#error "VIO_CFG_ENABLE_GPIO not defined in vioconf.h"
-#endif
-
-#if !defined(VIO_CFG_ENABLE_UART) || defined(__DOXYGEN__)
-#error "VIO_CFG_ENABLE_UART not defined in vioconf.h"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   Type of a VIO instance configuration structure.
+ * @brief   Type of a VIO UART instances structure.
  */
-typedef struct vio_conf {
-#if (VIO_CFG_ENABLE_GPIO == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Virtual GPIO instances.
-   */
-  const vio_gpio_inst_t         *gpios;
-#endif
-#if (VIO_CFG_ENABLE_UART == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Virtual UART instances.
-   */
-  const vio_uart_inst_t         *uarts;
-  /**
-   * @brief   Virtual UART configurations.
-   */
-  const vio_uart_conf_t         *uartconfs;
-#endif
-} vio_conf_t;
+typedef struct vio_uart_inst {
+  uint32_t          n;
+
+} vio_uart_inst_t;
+
+/**
+ * @brief   Type of a VIO GPIOs configuration structure.
+ */
+typedef struct vio_uart_conf {
+  uint32_t          n;
+//  vio_port_conf_t   uarts[];
+} vio_uart_conf_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -92,6 +78,7 @@ typedef struct vio_conf {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void sb_api_vio_uart(struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif
@@ -100,8 +87,8 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* SB_CFG_ENABLE_VIO == TRUE */
+#endif /* VIO_CFG_ENABLE_UART == TRUE */
 
-#endif /* SBVIO_H */
+#endif /* SBVIO_UART_H */
 
 /** @} */
