@@ -18,70 +18,41 @@
 */
 
 /**
- * @file    sb/vhal/sbvhal.h
- * @brief   ARM SandBox host Virtual HAL macros and structures.
+ * @file    sbvio.c
+ * @brief   ARM SandBox host Virtual I/O code.
  *
- * @addtogroup ARM_SANDBOX_HOST_VHAL
+ * @addtogroup ARM_SANDBOX_HOST_VIO
  * @{
  */
 
-#ifndef SBVHAL_H
-#define SBVHAL_H
+#include "sb.h"
 
-#if (SB_CFG_ENABLE_VHAL == TRUE) || defined(__DOXYGEN__)
-
-#include "vhalconf.h"
-#include "sbvhal_pal.h"
+#if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
-/* Module constants.                                                         */
+/* Module local definitions.                                                 */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module pre-compile time settings.                                         */
+/* Module exported variables.                                                */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Derived constants and error checks.                                       */
+/* Module local types.                                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module data structures and types.                                         */
-/*===========================================================================*/
-
-/**
- * @brief   Type of a VHAL instance configuration structure.
- */
-typedef struct vhal_conf {
-#if (SB_CFG_ENABLE_VHAL_PAL == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   VPAL configuration.
-   */
-  const vhal_pal_conf_t     *vpalconf;
-#endif
-} vhal_conf_t;
-
-/*===========================================================================*/
-/* Module macros.                                                            */
+/* Module local variables.                                                   */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* External declarations.                                                    */
+/* Module local functions.                                                   */
 /*===========================================================================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#ifdef __cplusplus
-}
-#endif
-
 /*===========================================================================*/
-/* Module inline functions.                                                  */
+/* Module exported functions.                                                */
 /*===========================================================================*/
 
-#endif /* SB_CFG_ENABLE_VHAL == TRUE */
-
-#endif /* SBVHAL_H */
+#endif /* SB_CFG_ENABLE_VIO == TRUE */
 
 /** @} */

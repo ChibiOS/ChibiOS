@@ -30,11 +30,11 @@
 /* VHAL-related.                                                             */
 /*===========================================================================*/
 
-static vhal_pal_conf_t vpal_config1 = {
+static vio_gpio_conf_t gpio_config1 = {
   .n        = 1U,
-  .vpio     = {
+  .ports    = {
     [0]     = {
-      .permissions  = VPIO_PERM_WRITE,
+      .permissions  = VIO_GPIO_PERM_WRITE,
       .port         = GPIOA,
       .mask         = 1U,
       .offset       = GPIOA_LED_GREEN
@@ -42,16 +42,16 @@ static vhal_pal_conf_t vpal_config1 = {
   }
 };
 
-static vhal_pal_conf_t vpal_config2 = {
+static vio_gpio_conf_t gpio_config2 = {
   .n        = 0U
 };
 
-static vhal_conf_t vhal_config1 = {
-  .vpalconf         = &vpal_config1
+static vio_conf_t vio_config1 = {
+  .gpioconf         = &gpio_config1
 };
 
-static vhal_conf_t vhal_config2 = {
-  .vpalconf         = &vpal_config2
+static vio_conf_t vio_config2 = {
+  .gpioconf         = &gpio_config2
 };
 
 /*===========================================================================*/
@@ -103,7 +103,7 @@ static const sb_config_t sb_config1 = {
     }
   },
 //  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
-  .vhalconf         = &vhal_config1
+  .vioconf          = &vio_config1
 };
 
 /* Sandbox 2 configuration.*/
@@ -123,7 +123,7 @@ static const sb_config_t sb_config2 = {
     }
   },
 //  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
-  .vhalconf         = &vhal_config2
+  .vioconf          = &vio_config2
 };
 
 static const char *sbx1_argv[] = {

@@ -18,16 +18,16 @@
 */
 
 /**
- * @file    sb/vhal/sbvhal_pal.c
- * @brief   ARM SandBox host Virtual HAL PAL code.
+ * @file    sb/vhal/sbvio_gpio.c
+ * @brief   ARM SandBox host Virtual I/O code.
  *
- * @addtogroup ARM_SANDBOX_HOST_VHAL
+ * @addtogroup ARM_SANDBOX_HOST_VIO_GPIO
  * @{
  */
 
 #include "sb.h"
 
-#if (SB_CFG_ENABLE_VHAL_PAL == TRUE) || defined(__DOXYGEN__)
+#if (VIO_CFG_ENABLE_GPIO == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -53,55 +53,55 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void sb_api_vhal_pal(struct port_extctx *ectxp) {
+void sb_api_vio_gpio(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t sub = (unsigned)ectxp->r0;
   uint32_t vport = (unsigned)ectxp->r1;
-  const vhal_vpio_conf_t *vpiop;
+  const vio_port_conf_t *vportp;
   ectxp->r0 = 0U;
 
-  if (vport >= sbp->config->vhalconf->vpalconf->n) {
+  if (vport >= sbp->config->vioconf->gpioconf->n) {
     return;
   }
 
-  vpiop = &sbp->config->vhalconf->vpalconf->vpio[vport];
+  vportp = &sbp->config->vioconf->gpioconf->ports[vport];
 
   switch (sub) {
   case SB_VPAL_WRITE:
-    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
-      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2);
+    if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+      palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2);
     }
     break;
   case SB_VPAL_SET:
-    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
-      uint32_t val = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
-      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2 | val);
+    if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+      uint32_t val = palReadGroup(vportp->port, vportp->mask, vportp->offset);
+      palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2 | val);
     }
     break;
   case SB_VPAL_CLEAR:
-    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
-      uint32_t val = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
-      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2 & ~val);
+    if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+      uint32_t val = palReadGroup(vportp->port, vportp->mask, vportp->offset);
+      palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2 & ~val);
     }
     break;
   case SB_VPAL_TOGGLE:
-    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
-      uint32_t val = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
-      palWriteGroup(vpiop->port, vpiop->mask, vpiop->offset, ectxp->r2 ^ val);
+    if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+      uint32_t val = palReadGroup(vportp->port, vportp->mask, vportp->offset);
+      palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2 ^ val);
     }
     break;
   case SB_VPAL_READLATCH:
-    if ((vpiop->permissions & VPIO_PERM_WRITE) != 0U) {
-      ectxp->r0 = palReadGroupLatch(vpiop->port, vpiop->mask, vpiop->offset);
+    if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
+      ectxp->r0 = palReadGroupLatch(vportp->port, vportp->mask, vportp->offset);
     }
     break;
   case SB_VPAL_READ:
-    if ((vpiop->permissions & VPIO_PERM_READ) != 0U) {
-      ectxp->r0 = palReadGroup(vpiop->port, vpiop->mask, vpiop->offset);
+    if ((vportp->permissions & VIO_GPIO_PERM_READ) != 0U) {
+      ectxp->r0 = palReadGroup(vportp->port, vportp->mask, vportp->offset);
     }
     break;
   case SB_VPAL_SETMODE:
-    if ((vpiop->permissions & VPIO_PERM_SETMODE) != 0U) {
+    if ((vportp->permissions & VIO_GPIO_PERM_SETMODE) != 0U) {
       /* TODO */
     }
     break;
@@ -110,6 +110,6 @@ void sb_api_vhal_pal(struct port_extctx *ectxp) {
   }
 }
 
-#endif /* SB_CFG_ENABLE_VHAL_PAL == TRUE */
+#endif /* VIO_CFG_ENABLE_GPIO == TRUE */
 
 /** @} */

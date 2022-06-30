@@ -53,10 +53,10 @@
 #endif
 
 /**
- * @brief   Enables support for sandbox Virtual HAL.
+ * @brief   Enables support for sandbox virtualized I/O.
  */
-#if !defined(SB_CFG_ENABLE_VHAL) || defined(__DOXYGEN__)
-#define SB_CFG_ENABLE_VHAL                  FALSE
+#if !defined(SB_CFG_ENABLE_VIO) || defined(__DOXYGEN__)
+#define SB_CFG_ENABLE_VIO                   FALSE
 #endif
 
 /**

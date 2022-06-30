@@ -36,8 +36,8 @@
 #include "sbsysc.h"
 #include "sbconf.h"
 
-#if (SB_CFG_ENABLE_VHAL == TRUE) || defined (__DOXYGEN__)
-#include "sbvhal.h"
+#if (SB_CFG_ENABLE_VIO == TRUE) || defined (__DOXYGEN__)
+#include "sbvio.h"
 #endif
 
 /*===========================================================================*/
@@ -108,8 +108,8 @@
 #error "SB_CFG_ALARM_VRQ not defined in sbconf.h"
 #endif
 
-#if !defined(SB_CFG_ENABLE_VHAL) || defined(__DOXYGEN__)
-#error "SB_CFG_ENABLE_VHAL not defined in sbconf.h"
+#if !defined(SB_CFG_ENABLE_VIO) || defined(__DOXYGEN__)
+#error "SB_CFG_ENABLE_VIO not defined in sbconf.h"
 #endif
 
 #if !defined(SB_CFG_ENABLE_VFS) || defined(__DOXYGEN__)
@@ -253,11 +253,11 @@ typedef struct {
    */
   vfs_driver_c                  *vfs_driver;
 #endif
-#if (SB_CFG_ENABLE_VHAL == TRUE) || defined(__DOXYGEN__)
+#if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   VHAL configuration associated to this sandbox.
+   * @brief   VIO configuration associated to this sandbox.
    */
-  const vhal_conf_t             *vhalconf;
+  const vio_conf_t              *vioconf;
 #endif
 } sb_config_t;
 

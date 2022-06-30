@@ -15,29 +15,28 @@
 */
 
 /**
- * @file    templates/vhalconf.h
- * @brief   VHAL configuration header.
- * @details VHAL configuration file, this file allows to enable or disable the
- *          various device drivers from your application. You may also use
- *          this file in order to override the device drivers default settings.
+ * @file    templates/vioconf.h
+ * @brief   VIO configuration header.
+ * @details VIO configuration file, this file allows to enable or disable the
+ *          various virtual peripherals from your application.
  *
- * @addtogroup VHAL_CONF
+ * @addtogroup VIO_CONF
  * @{
  */
 
-#ifndef VHALCONF_H
-#define VHALCONF_H
+#ifndef VIOCONF_H
+#define VIOCONF_H
 
-#define __CHIBIOS_VHAL_CONF__
-#define __CHIBIOS_VHAL_CONF_VER_1_0__
+#define __CHIBIOS_VIO_CONF__
+#define __CHIBIOS_VIO_CONF_VER_1_0__
 
 /**
  * @brief   Enables the VPAL subsystem.
  */
-#if !defined(SB_CFG_ENABLE_VHAL_PAL) || defined(__DOXYGEN__)
-#define SB_CFG_ENABLE_VHAL_PAL              TRUE
+#if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)
+#define VIO_CFG_ENABLE_GPIO                 TRUE
 #endif
 
-#endif /* VHALCONF_H */
+#endif /* VIOCONF_H */
 
 /** @} */
