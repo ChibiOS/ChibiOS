@@ -1,10 +1,10 @@
 # List of the ChibiOS sandbox VHAL files.
-SBVHALSRC = $(CHIBIOS)/os/sb/vhal/sbvio.c \
-            $(CHIBIOS)/os/sb/vhal/sbvio_gpio.c
+SBVHALSRC = $(CHIBIOS)/os/sb/vio/sbvio.c \
+            $(CHIBIOS)/os/sb/vio/sbvio_gpio.c
  
 SBVHALASM =
 
-SBVHALINC = $(CHIBIOS)/os/sb/vhal
+SBVHALINC = $(CHIBIOS)/os/sb/vio
 
 # Shared variables
 ALLXASMSRC += $(SBVHALASM)
