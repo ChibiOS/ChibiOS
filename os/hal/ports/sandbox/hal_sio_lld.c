@@ -67,6 +67,22 @@ static const SIOConfig default_config = {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if SB_SIO_USE_VUART1 || defined(__DOXYGEN__)
+#if !defined(SB_VUART1_SUPPRESS_ISR)
+OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART1_IRQ)) {
+
+}
+#endif
+#endif
+
+#if SB_SIO_USE_VUART2 || defined(__DOXYGEN__)
+#if !defined(SB_VUART2_SUPPRESS_ISR)
+OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART2_IRQ)) {
+
+}
+#endif
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -82,10 +98,12 @@ void sio_lld_init(void) {
 #if SB_SIO_USE_VUART1 == TRUE
   sioObjectInit(&SIOD1);
   SIOD1.nvuart = 0U;
+  __sb_vrq_seten(1U << SB_SIO_VUART1_IRQ);
 #endif
 #if SB_SIO_USE_VUART2 == TRUE
   sioObjectInit(&SIOD2);
   SIOD2.nvuart = 1U;
+  __sb_vrq_seten(1U << SB_SIO_VUART2_IRQ);
 #endif
 }
 
@@ -214,27 +232,13 @@ sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop) {
  * @retval 0                if the TX FIFO is full.
  */
 size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
-  size_t rd;
+//  size_t rd;
 
-  rd = 0U;
-  while (true) {
+  (void)siop;
+  (void)buffer;
+  (void)n;
 
-    /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
-    if (sio_lld_is_rx_empty(siop)) {
-      usart_enable_rx_irq(siop);
-      break;
-    }
-
-    /* Buffer filled condition.*/
-    if (rd >= n) {
-      break;
-    }
-
-    *buffer++ = (uint8_t)siop->usart->RDR;
-    rd++;
-  }
-
-  return rd;
+  return 0;//rd;
 }
 
 /**
@@ -249,30 +253,13 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
  * @retval 0                if the TX FIFO is full.
  */
 size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
-  size_t wr;
+//  size_t wr;
 
-  wr = 0U;
-  while (true) {
+  (void)siop;
+  (void)buffer;
+  (void)n;
 
-    /* If the TX FIFO has been filled then the interrupt is enabled again.*/
-    if (sio_lld_is_tx_full(siop)) {
-      usart_enable_tx_irq(siop);
-      break;
-    }
-
-    /* Buffer emptied condition.*/
-    if (wr >= n) {
-      break;
-    }
-
-    siop->usart->TDR = (uint32_t)*buffer++;
-    wr++;
-  }
-
-  /* The transmit complete interrupt is always re-enabled on write.*/
-  usart_enable_tx_end_irq(siop);
-
-  return wr;
+  return 0;//wr;
 }
 
 /**
@@ -285,16 +272,11 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
  * @notapi
  */
 msg_t sio_lld_get(SIODriver *siop) {
-  msg_t msg;
+//  msg_t msg;
 
-  msg = (msg_t)siop->usart->RDR;
+  (void)siop;
 
-  /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
-  if (sio_lld_is_rx_empty(siop)) {
-    usart_enable_rx_irq(siop);
-  }
-
-  return msg;
+  return 0;//msg;
 }
 
 /**
@@ -308,15 +290,8 @@ msg_t sio_lld_get(SIODriver *siop) {
  */
 void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
 
-  siop->usart->TDR = data;
-
-  /* If the TX FIFO has been filled then the interrupt is enabled again.*/
-  if (sio_lld_is_tx_full(siop)) {
-    usart_enable_tx_irq(siop);
-  }
-
-  /* The transmit complete interrupt is always re-enabled on write.*/
-  usart_enable_tx_end_irq(siop);
+  (void)siop;
+  (void)data;
 }
 
 /**
@@ -350,110 +325,8 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  * @notapi
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
-  USART_TypeDef *u = siop->usart;
-  uint32_t isr, cr1, cr2, cr3, evtmask, irqmask;
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
-
-  /* Note, ISR flags are just read but not cleared, ISR sources are
-     disabled instead.*/
-  isr = u->ISR;
-
-  /* Read on control registers.*/
-  cr1 = u->CR1;
-  cr2 = u->CR2;
-  cr3 = u->CR3;
-
-  /* Enabled errors/events handling.*/
-  irqmask = ((cr1 & USART_CR1_PEIE)   != 0U ? USART_ISR_PE   : 0U) |
-            ((cr1 & USART_CR1_RXNEIE) != 0U ? USART_ISR_ORE  : 0U) |
-            ((cr2 & USART_CR2_LBDIE)  != 0U ? USART_ISR_LBDF : 0U) |
-            ((cr3 & USART_CR3_EIE)    != 0U ? USART_ISR_FE  |
-                                              USART_ISR_ORE |
-                                              USART_ISR_NE   : 0U);
-  evtmask = isr & irqmask;
-  if (evtmask != 0U) {
-
-    /* Disabling event sources until errors are recognized by the
-       application.*/
-    u->CR1 = cr1 & ~USART_CR1_PEIE;
-    u->CR2 = cr2 & ~USART_CR2_LBDIE;
-    u->CR3 = cr3 & ~USART_CR3_EIE;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_rx_evt(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_rx(siop, SIO_MSG_ERRORS);
-
-    /* Values could have been changed by the callback, CR2-CR3 no more needed.*/
-    cr1 = u->CR1;
-  }
-
-  /* RX FIFO is non-empty.*/
-  if (((cr1 & USART_CR1_RXNEIE) != 0U) &&
-      (isr & USART_ISR_RXNE) != 0U) {
-
-    /* Called once then the interrupt source is disabled.*/
-    u->CR1 = cr1 & ~USART_CR1_RXNEIE;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_rx(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_rx(siop, MSG_OK);
-
-    /* Values could have been changed by the callback, CR2-CR3 no more needed.*/
-    cr1 = u->CR1;
-  }
-
-  /* TX FIFO is non-full.*/
-  if (((cr1 & USART_CR1_TXEIE) != 0U) &&
-      (isr & USART_ISR_TXE) != 0U) {
-
-    /* Called once then the interrupt is disabled.*/
-    u->CR1 = cr1 & ~USART_CR1_TXEIE;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_tx(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_tx(siop, MSG_OK);
-
-    /* Values could have been changed by the callback, CR2-CR3 no more needed.*/
-    cr1 = u->CR1;
-  }
-
-  /* RX idle condition.*/
-  if (((cr1 & USART_CR1_IDLEIE) != 0U) &&
-      (isr & USART_ISR_IDLE) != 0U) {
-
-    /* The idle flag requires clearing, it stays enabled.*/
-    u->ICR = USART_ISR_IDLE;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_rx_idle(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_rx(siop, SIO_MSG_IDLE);
-
-    /* Values could have been changed by the callback, CR2-CR3 no more needed.*/
-    cr1 = u->CR1;
-  }
-
-  /* Physical transmission end.*/
-  if (((cr1 & USART_CR1_TCIE) != 0U) &&
-      (isr & USART_ISR_TC) != 0U) {
-
-    /* Called once then the interrupt is disabled.*/
-    u->CR1 = cr1 & ~USART_CR1_TCIE;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_tx_end(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_txend(siop, MSG_OK);
-  }
+  (void)siop;
 }
 
 #endif /* HAL_USE_SIO == TRUE */

@@ -86,16 +86,26 @@
 /** @} */
 
 /**
- * @name    VPAL syscall sub-codes
+ * @name    Virtual GPIO syscall sub-codes
  * @{
  */
-#define SB_VPAL_WRITE           0
-#define SB_VPAL_SET             1
-#define SB_VPAL_CLEAR           2
-#define SB_VPAL_TOGGLE          3
-#define SB_VPAL_READLATCH       4
-#define SB_VPAL_READ            5
-#define SB_VPAL_SETMODE         6
+#define SB_VGPIO_WRITE          0
+#define SB_VGPIO_SET            1
+#define SB_VGPIO_CLEAR          2
+#define SB_VGPIO_TOGGLE         3
+#define SB_VGPIO_READLATCH      4
+#define SB_VGPIO_READ           5
+#define SB_VGPIO_SETMODE        6
+/** @} */
+
+/**
+ * @name    Virtual UART syscall sub-codes
+ * @{
+ */
+#define SB_VUART_INIT           0
+#define SB_VUART_DEINIT         1
+#define SB_VUART_WRITE          2
+#define SB_VUART_READ           3
 /** @} */
 
 /*===========================================================================*/

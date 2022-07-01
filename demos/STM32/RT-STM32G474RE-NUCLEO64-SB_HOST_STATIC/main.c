@@ -30,7 +30,7 @@
 /* VHAL-related.                                                             */
 /*===========================================================================*/
 
-static vio_gpio_conf_t gpio_config1 = {
+static vio_gpio_inst_t gpio_inst1 = {
   .n        = 1U,
   .ports    = {
     [0]     = {
@@ -42,16 +42,16 @@ static vio_gpio_conf_t gpio_config1 = {
   }
 };
 
-static vio_gpio_conf_t gpio_config2 = {
+static vio_gpio_inst_t gpio_inst2 = {
   .n        = 0U
 };
 
 static vio_conf_t vio_config1 = {
-  .gpioconf         = &gpio_config1
+  .gpios    = &gpio_inst1
 };
 
 static vio_conf_t vio_config2 = {
-  .gpioconf         = &gpio_config2
+  .gpios    = &gpio_inst2
 };
 
 /*===========================================================================*/

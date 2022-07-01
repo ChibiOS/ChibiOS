@@ -103,89 +103,89 @@ __crt0_vrq:
         .align      2
         .globl      __sb_vectors
 __sb_vectors:
-        .long       Vector00,   Vector04,   Vector08,   Vector0C
-        .long       Vector10,   Vector14,   Vector18,   Vector1C
-        .long       Vector20,   Vector24,   Vector28,   Vector2C
-        .long       Vector30,   Vector34,   Vector38,   Vector3C
-        .long       Vector40,   Vector44,   Vector48,   Vector4C
-        .long       Vector50,   Vector54,   Vector58,   Vector5C
-        .long       Vector60,   Vector64,   Vector68,   Vector6C
-        .long       Vector70,   Vector74,   Vector78,   Vector7C
+        .long       __sb_vector0,  __sb_vector1,  __sb_vector2,  __sb_vector3
+        .long       __sb_vector4,  __sb_vector5,  __sb_vector6,  __sb_vector7
+        .long       __sb_vector8,  __sb_vector9,  __sb_vector10, __sb_vector11
+        .long       __sb_vector12, __sb_vector13, __sb_vector14, __sb_vector15
+        .long       __sb_vector16, __sb_vector17, __sb_vector18, __sb_vector19
+        .long       __sb_vector20, __sb_vector21, __sb_vector22, __sb_vector23
+        .long       __sb_vector24, __sb_vector25, __sb_vector26, __sb_vector27
+        .long       __sb_vector28, __sb_vector29, __sb_vector30, __sb_vector31
 
         .align      2
-        .weak       Vector00,   Vector04,   Vector08,   Vector0C
-        .weak       Vector10,   Vector14,   Vector18,   Vector1C
-        .weak       Vector20,   Vector24,   Vector28,   Vector2C
-        .weak       Vector30,   Vector34,   Vector38,   Vector3C
-        .weak       Vector40,   Vector44,   Vector48,   Vector4C
-        .weak       Vector50,   Vector54,   Vector58,   Vector5C
-        .weak       Vector60,   Vector64,   Vector68,   Vector6C
-        .weak       Vector70,   Vector74,   Vector78,   Vector7C
+        .weak       __sb_vector0,  __sb_vector1,  __sb_vector2,  __sb_vector3
+        .weak       __sb_vector4,  __sb_vector5,  __sb_vector6,  __sb_vector7
+        .weak       __sb_vector8,  __sb_vector9,  __sb_vector10, __sb_vector11
+        .weak       __sb_vector12, __sb_vector13, __sb_vector14, __sb_vector15
+        .weak       __sb_vector16, __sb_vector17, __sb_vector18, __sb_vector19
+        .weak       __sb_vector20, __sb_vector21, __sb_vector22, __sb_vector23
+        .weak       __sb_vector24, __sb_vector25, __sb_vector26, __sb_vector27
+        .weak       __sb_vector28, __sb_vector29, __sb_vector30, __sb_vector31
 
         .thumb_func
-Vector00:
+__sb_vector0:
         .thumb_func
-Vector04:
+__sb_vector1:
         .thumb_func
-Vector08:
+__sb_vector2:
         .thumb_func
-Vector0C:
+__sb_vector3:
         .thumb_func
-Vector10:
+__sb_vector4:
         .thumb_func
-Vector14:
+__sb_vector5:
         .thumb_func
-Vector18:
+__sb_vector6:
         .thumb_func
-Vector1C:
+__sb_vector7:
         .thumb_func
-Vector20:
+__sb_vector8:
         .thumb_func
-Vector24:
+__sb_vector9:
         .thumb_func
-Vector28:
+__sb_vector10:
         .thumb_func
-Vector2C:
+__sb_vector11:
         .thumb_func
-Vector30:
+__sb_vector12:
         .thumb_func
-Vector34:
+__sb_vector13:
         .thumb_func
-Vector38:
+__sb_vector14:
         .thumb_func
-Vector3C:
+__sb_vector15:
         .thumb_func
-Vector40:
+__sb_vector16:
         .thumb_func
-Vector44:
+__sb_vector17:
         .thumb_func
-Vector48:
+__sb_vector18:
         .thumb_func
-Vector4C:
+__sb_vector19:
         .thumb_func
-Vector50:
+__sb_vector20:
         .thumb_func
-Vector54:
+__sb_vector21:
         .thumb_func
-Vector58:
+__sb_vector22:
         .thumb_func
-Vector5C:
+__sb_vector23:
         .thumb_func
-Vector60:
+__sb_vector24:
         .thumb_func
-Vector64:
+__sb_vector25:
         .thumb_func
-Vector68:
+__sb_vector26:
         .thumb_func
-Vector6C:
+__sb_vector27:
         .thumb_func
-Vector70:
+__sb_vector28:
         .thumb_func
-Vector74:
+__sb_vector29:
         .thumb_func
-Vector78:
+__sb_vector30:
         .thumb_func
-Vector7C:
+__sb_vector31:
         bl          __unhandled_vrq
 
         .thumb_func

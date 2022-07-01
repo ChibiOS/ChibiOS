@@ -52,7 +52,7 @@
 /*===========================================================================*/
 
 
-CH_IRQ_HANDLER(Vector00) {
+CH_IRQ_HANDLER(__sb_vector0) {
 
   CH_IRQ_PROLOGUE();
 

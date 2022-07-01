@@ -31,10 +31,17 @@
 #define __CHIBIOS_VIO_CONF_VER_1_0__
 
 /**
- * @brief   Enables the VPAL subsystem.
+ * @brief   Enables the Virtual GPIO support.
  */
 #if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)
 #define VIO_CFG_ENABLE_GPIO                 TRUE
+#endif
+
+/**
+ * @brief   Enables the Virtual UART support.
+ */
+#if !defined(VIO_CFG_ENABLE_UART) || defined(__DOXYGEN__)
+#define VIO_CFG_ENABLE_UART                 TRUE
 #endif
 
 #endif /* VIOCONF_H */

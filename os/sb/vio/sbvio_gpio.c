@@ -67,40 +67,40 @@ void sb_api_vio_gpio(struct port_extctx *ectxp) {
   vportp = &sbp->config->vioconf->gpios->ports[vport];
 
   switch (sub) {
-  case SB_VPAL_WRITE:
+  case SB_VGPIO_WRITE:
     if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
       palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2);
     }
     break;
-  case SB_VPAL_SET:
+  case SB_VGPIO_SET:
     if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
       uint32_t val = palReadGroup(vportp->port, vportp->mask, vportp->offset);
       palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2 | val);
     }
     break;
-  case SB_VPAL_CLEAR:
+  case SB_VGPIO_CLEAR:
     if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
       uint32_t val = palReadGroup(vportp->port, vportp->mask, vportp->offset);
       palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2 & ~val);
     }
     break;
-  case SB_VPAL_TOGGLE:
+  case SB_VGPIO_TOGGLE:
     if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
       uint32_t val = palReadGroup(vportp->port, vportp->mask, vportp->offset);
       palWriteGroup(vportp->port, vportp->mask, vportp->offset, ectxp->r2 ^ val);
     }
     break;
-  case SB_VPAL_READLATCH:
+  case SB_VGPIO_READLATCH:
     if ((vportp->permissions & VIO_GPIO_PERM_WRITE) != 0U) {
       ectxp->r0 = palReadGroupLatch(vportp->port, vportp->mask, vportp->offset);
     }
     break;
-  case SB_VPAL_READ:
+  case SB_VGPIO_READ:
     if ((vportp->permissions & VIO_GPIO_PERM_READ) != 0U) {
       ectxp->r0 = palReadGroup(vportp->port, vportp->mask, vportp->offset);
     }
     break;
-  case SB_VPAL_SETMODE:
+  case SB_VGPIO_SETMODE:
     if ((vportp->permissions & VIO_GPIO_PERM_SETMODE) != 0U) {
       /* TODO */
     }

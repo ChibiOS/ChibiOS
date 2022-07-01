@@ -21,6 +21,14 @@
 #ifndef MCUCONF_H
 #define MCUCONF_H
 
+/*
+ * SIO driver system settings.
+ */
+#define SB_SIO_USE_VUART1                   TRUE
+#define SB_SIO_USE_VUART2                   FALSE
+#define SB_SIO_VUART1_IRQ                   8
+#define SB_SIO_VUART2_IRQ                   9
+
 #define SANDBOX_MCUCONF
 
 #endif /* MCUCONF_H */
