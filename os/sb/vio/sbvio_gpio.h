@@ -61,21 +61,21 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a VIO GPIO configuration structure.
+ * @brief   Type of a VIO GPIO unit representation.
  */
-typedef struct vio_port {
+typedef struct vio_gpio_unit {
   uint32_t        permissions;
   ioportid_t      port;
   ioportmask_t    mask;
   uint32_t        offset;
-} vio_port_t;
+} vio_gpio_unit_t;
 
 /**
  * @brief   Type of a VIO GPIOs configuration structure.
  */
 typedef struct vio_gpio_inst {
   uint32_t          n;
-  vio_port_t        ports[];
+  vio_gpio_unit_t   units[];
 } vio_gpio_inst_t;
 
 /*===========================================================================*/

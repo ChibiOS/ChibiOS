@@ -31,9 +31,9 @@
 /*===========================================================================*/
 
 static vio_gpio_inst_t gpio_inst1 = {
-  .n        = 1U,
-  .ports    = {
-    [0]     = {
+  .n            = 1U,
+  .units        = {
+    [0]         = {
       .permissions  = VIO_GPIO_PERM_WRITE,
       .port         = GPIOA,
       .mask         = 1U,
@@ -43,15 +43,19 @@ static vio_gpio_inst_t gpio_inst1 = {
 };
 
 static vio_gpio_inst_t gpio_inst2 = {
-  .n        = 0U
+  .n            = 0U
 };
 
 static vio_conf_t vio_config1 = {
-  .gpios    = &gpio_inst1
+  .gpios        = &gpio_inst1,
+  .uarts        = NULL,
+  .uartconfs    = NULL
 };
 
 static vio_conf_t vio_config2 = {
-  .gpios    = &gpio_inst2
+  .gpios        = &gpio_inst2,
+  .uarts        = NULL,
+  .uartconfs    = NULL
 };
 
 /*===========================================================================*/

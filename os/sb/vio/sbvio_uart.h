@@ -64,7 +64,7 @@ typedef struct vio_uart_inst {
  */
 typedef struct vio_uart_conf {
   uint32_t          n;
-//  vio_port_conf_t   uarts[];
+//  vio_port_conf_t   cfgs[];
 } vio_uart_conf_t;
 
 /*===========================================================================*/
