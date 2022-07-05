@@ -65,19 +65,19 @@
 typedef struct vio_conf {
 #if (VIO_CFG_ENABLE_GPIO == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Virtual GPIO instances.
+   * @brief   Virtual GPIO units.
    */
-  const vio_gpio_inst_t         *gpios;
+  const vio_gpio_units_t        *gpios;
 #endif
 #if (VIO_CFG_ENABLE_UART == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Virtual UART instances.
+   * @brief   Virtual UART units.
    */
-  const vio_uart_inst_t         *uarts;
+  const vio_uart_units_t        *uarts;
   /**
    * @brief   Virtual UART configurations.
    */
-  const vio_uart_conf_t         *uartconfs;
+  const vio_uart_configs_t      *uartconfs;
 #endif
 } vio_conf_t;
 

@@ -52,20 +52,34 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a VIO UART instances structure.
+ * @brief   Type of a VIO UART unit representation.
  */
-typedef struct vio_uart_inst {
-  uint32_t          n;
-
-} vio_uart_inst_t;
+typedef struct vio_uart_unit {
+  SIODriver         *siop;
+} vio_uart_unit_t;
 
 /**
- * @brief   Type of a VIO GPIOs configuration structure.
+ * @brief   Type of a VIO UART units structure.
  */
-typedef struct vio_uart_conf {
+typedef struct vio_uart_units {
   uint32_t          n;
-//  vio_port_conf_t   cfgs[];
-} vio_uart_conf_t;
+  vio_uart_unit_t   units[];
+} vio_uart_units_t;
+
+/**
+ * @brief   Type of a VIO UART configuration representation.
+ */
+typedef struct vio_uart_config {
+  SIOConfig         *siocfgp;
+} vio_uart_config_t;
+
+/**
+ * @brief   Type of a VIO UARTs configuration structure.
+ */
+typedef struct vio_uart_configs {
+  uint32_t          n;
+  vio_uart_config_t   cfgs[];
+} vio_uart_configs_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */

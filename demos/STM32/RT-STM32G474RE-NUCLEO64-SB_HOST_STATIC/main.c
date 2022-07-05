@@ -30,10 +30,10 @@
 /* VHAL-related.                                                             */
 /*===========================================================================*/
 
-static vio_gpio_inst_t gpio_inst1 = {
-  .n            = 1U,
-  .units        = {
-    [0]         = {
+static vio_gpio_units_t gpio_units1 = {
+  .n        = 1U,
+  .units    = {
+    [0]       = {
       .permissions  = VIO_GPIO_PERM_WRITE,
       .port         = GPIOA,
       .mask         = 1U,
@@ -42,18 +42,32 @@ static vio_gpio_inst_t gpio_inst1 = {
   }
 };
 
-static vio_gpio_inst_t gpio_inst2 = {
+static vio_uart_units_t uart_units1 = {
+  .n        = 1U,
+  .units    = {
+    [0]       = {&SIOD2}
+  }
+};
+
+static vio_uart_configs_t uart_configs1 = {
+  .n            = 1U,
+  .cfgs         = {
+    [0]         = {NULL}
+  }
+};
+
+static vio_gpio_units_t gpio_units2 = {
   .n            = 0U
 };
 
 static vio_conf_t vio_config1 = {
-  .gpios        = &gpio_inst1,
-  .uarts        = NULL,
-  .uartconfs    = NULL
+  .gpios        = &gpio_units1,
+  .uarts        = &uart_units1,
+  .uartconfs    = &uart_configs1
 };
 
 static vio_conf_t vio_config2 = {
-  .gpios        = &gpio_inst2,
+  .gpios        = &gpio_units2,
   .uarts        = NULL,
   .uartconfs    = NULL
 };

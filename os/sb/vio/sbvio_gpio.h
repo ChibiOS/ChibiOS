@@ -71,12 +71,12 @@ typedef struct vio_gpio_unit {
 } vio_gpio_unit_t;
 
 /**
- * @brief   Type of a VIO GPIOs configuration structure.
+ * @brief   Type of a VIO GPIOs unit structure.
  */
-typedef struct vio_gpio_inst {
+typedef struct vio_gpio_units {
   uint32_t          n;
   vio_gpio_unit_t   units[];
-} vio_gpio_inst_t;
+} vio_gpio_units_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
