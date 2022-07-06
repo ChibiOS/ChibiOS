@@ -309,7 +309,8 @@ void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_READY, "invalid state");
+  osalDbgAssert((siop->state == SIO_READY) ||
+                (siop->state == SIO_ACTIVE), "invalid state");
 
   /* The application can pass NULL if it is not interested in callbacks,
      attaching a default operation structure.*/
@@ -319,9 +320,11 @@ void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
   else {
     siop->operation = &default_operation;
   }
-  siop->state     = SIO_ACTIVE;
 
-  sio_lld_start_operation(siop);
+  if (siop->state == SIO_READY) {
+    sio_lld_start_operation(siop);
+    siop->state     = SIO_ACTIVE;
+  }
 
   osalSysUnlock();
 }
