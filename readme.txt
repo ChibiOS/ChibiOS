@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Made sioStopOperation() call possible in SIO_READY state.
 - NEW: Non-proprietary LLVM build support.
 - NEW: Added palReadGroupLatch() to PAL driver.
 - NEW: Added a Posix-favored shell named "msh" (Mini Shell). The shell is able

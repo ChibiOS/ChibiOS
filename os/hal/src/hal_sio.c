@@ -339,19 +339,22 @@ void sioStopOperation(SIODriver *siop) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert((siop->state == SIO_READY) ||
+                (siop->state == SIO_ACTIVE), "invalid state");
 
+  if (siop->state == SIO_ACTIVE) {
 #if SIO_USE_SYNCHRONIZATION == TRUE
-  /* Informing waiting threads, if any.*/
-  osalThreadResumeI(&siop->sync_rx, MSG_RESET);
-  osalThreadResumeI(&siop->sync_tx, MSG_RESET);
-  osalThreadResumeI(&siop->sync_txend, MSG_RESET);
+    /* Informing waiting threads, if any.*/
+    osalThreadResumeI(&siop->sync_rx, MSG_RESET);
+    osalThreadResumeI(&siop->sync_tx, MSG_RESET);
+    osalThreadResumeI(&siop->sync_txend, MSG_RESET);
 #endif
 
-  sio_lld_stop_operation(siop);
+    sio_lld_stop_operation(siop);
 
-  siop->operation = NULL;
-  siop->state     = SIO_READY;
+    siop->operation = NULL;
+    siop->state     = SIO_READY;
+  }
 
   osalSysUnlock();
 }
