@@ -56,15 +56,15 @@
 void sb_api_vio_gpio(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t sub = (unsigned)ectxp->r0;
-  uint32_t vport = (unsigned)ectxp->r1;
+  uint32_t unit = (unsigned)ectxp->r1;
   const vio_gpio_unit_t *unitp;
   ectxp->r0 = 0U;
 
-  if (vport >= sbp->config->vioconf->gpios->n) {
+  if (unit >= sbp->config->vioconf->gpios->n) {
     return;
   }
 
-  unitp = &sbp->config->vioconf->gpios->units[vport];
+  unitp = &sbp->config->vioconf->gpios->units[unit];
 
   switch (sub) {
   case SB_VGPIO_WRITE:

@@ -45,9 +45,48 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+static void vuart_rx_cb(SIODriver *siop);
+static void vuart_rx_idle_cb(SIODriver *siop);
+static void vuart_tx_cb(SIODriver *siop);
+static void vuart_tx_end_cb(SIODriver *siop);
+static void vuart_rx_evt_cb(SIODriver *siop);
+
+static const SIOOperation vuart_operation = {
+  .rx_cb        = vuart_rx_cb,
+  .rx_idle_cb   = vuart_rx_idle_cb,
+  .tx_cb        = vuart_tx_cb,
+  .tx_end_cb    = vuart_tx_end_cb,
+  .rx_evt_cb    = vuart_rx_evt_cb
+};
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
+
+static void vuart_rx_cb(SIODriver *siop) {
+
+  (void)siop;
+}
+
+static void vuart_rx_idle_cb(SIODriver *siop) {
+
+  (void)siop;
+}
+
+static void vuart_tx_cb(SIODriver *siop) {
+
+  (void)siop;
+}
+
+static void vuart_tx_end_cb(SIODriver *siop) {
+
+  (void)siop;
+}
+
+static void vuart_rx_evt_cb(SIODriver *siop) {
+
+  (void)siop;
+}
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -55,9 +94,51 @@
 
 void sb_api_vio_uart(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-  ectxp->r0 = 0U;
+  ectxp->r0 = (uint32_t)CH_RET_INNER_ERROR;
+  uint32_t sub = (unsigned)ectxp->r0;
+  uint32_t unit = (unsigned)ectxp->r1;
+  const vio_uart_unit_t *unitp;
 
-  (void)sbp;
+  if (unit >= sbp->config->vioconf->uarts->n) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+    return;
+  }
+
+  unitp = &sbp->config->vioconf->uarts->units[unit];
+
+  switch (sub) {
+  case SB_VUART_INIT:
+    {
+      uint32_t conf = sbp->config->vioconf->uartconfs->n;
+      const vio_uart_config_t *confp;
+      msg_t msg;
+
+      if (conf >= sbp->config->vioconf->uarts->n) {
+        ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+        return;
+      }
+
+      confp = &sbp->config->vioconf->uartconfs->cfgs[conf];
+
+      msg = sioStart(unitp->siop, confp->siocfgp);
+      if (msg == HAL_RET_SUCCESS) {
+        sioStartOperation(unitp->siop, &vuart_operation);
+      }
+
+      ectxp->r0 = (uint32_t)msg;
+      break;
+    }
+  case SB_VUART_DEINIT:
+    {
+      sioStopOperation(unitp->siop);
+      sioStop(unitp->siop);
+
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  default:
+    return;
+  }
 }
 
 #endif /* VIO_CFG_ENABLE_UART == TRUE */
