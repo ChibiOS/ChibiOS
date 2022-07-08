@@ -229,11 +229,6 @@ struct hal_sio_operation {
 /*===========================================================================*/
 
 /**
- * @brief   Returns the current set of flags and clears it.
- */
-#define sioGetFlagsX(siop) sio_lld_get_flags(siop)
-
-/**
  * @brief   Determines the state of the RX FIFO.
  *
  * @param[in] siop      pointer to the @p SIODriver object
