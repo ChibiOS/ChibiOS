@@ -133,7 +133,7 @@ static bool fdcan_clock_stop(CANDriver *canp) {
   canp->fdcan->CCCR |= FDCAN_CCCR_CSR;
   start = osalOsGetSystemTimeX();
   end = osalTimeAddX(start, TIME_MS2I(TIMEOUT_INIT_MS));
-  while ((canp->fdcan->CCCR & FDCAN_CCCR_CSA) != 0U) {
+  while ((canp->fdcan->CCCR & FDCAN_CCCR_CSA) == 0U) {
     if (!osalTimeIsInRangeX(osalOsGetSystemTimeX(), start, end)) {
       return true;
     }
@@ -163,7 +163,7 @@ static bool fdcan_init_mode(CANDriver *canp) {
 static bool fdcan_active_mode(CANDriver *canp) {
   systime_t start, end;
 
-  /* Going in initialization mode then waiting for it to happen.*/
+  /* Going in active mode then waiting for it to happen.*/
   canp->fdcan->CCCR &= ~FDCAN_CCCR_INIT;
   start = osalOsGetSystemTimeX();
   end = osalTimeAddX(start, TIME_MS2I(TIMEOUT_INIT_MS));
@@ -275,15 +275,21 @@ bool can_lld_start(CANDriver *canp) {
   }
 
   /* Configuration can be performed now.*/
-  canp->fdcan->CCCR   = FDCAN_CCCR_CCE;
+  canp->fdcan->CCCR   |= FDCAN_CCCR_CCE;
 
   /* Setting up operation mode except driver-controlled bits.*/
   canp->fdcan->NBTP   = canp->config->NBTP;
   canp->fdcan->DBTP   = canp->config->DBTP;
-  canp->fdcan->CCCR  |= canp->config->CCCR & ~(FDCAN_CCCR_CSR | FDCAN_CCCR_CSA |
-                                               FDCAN_CCCR_CCE | FDCAN_CCCR_INIT);
-  canp->fdcan->TEST   = canp->config->TEST;
+  canp->fdcan->CCCR  = canp->config->CCCR | FDCAN_CCCR_CCE | FDCAN_CCCR_INIT;
+  /* TEST is only writable when FDCAN_CCCR_TEST is set and FDCAN is still in
+   * configuration mode */
+  if (canp->config->CCCR & FDCAN_CCCR_TEST) {
+	  canp->fdcan->TEST = canp->config->TEST;
+  }
   canp->fdcan->RXGFC  = canp->config->RXGFC;
+
+  /* Start clock and disable configuration mode.*/
+  canp->fdcan->CCCR &= ~(FDCAN_CCCR_CSR | FDCAN_CCCR_INIT);
 
   /* Enabling interrupts, only using interrupt zero.*/
   canp->fdcan->IR     = (uint32_t)-1;
