@@ -77,40 +77,27 @@ static const SIOConfig default_config = {
 
 __STATIC_INLINE void uart_enable_rx_irq(SIODriver *siop) {
 
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->uart->UARTIMSC |= (UART_UARTIMSC_RXIM | UART_UARTIMSC_RTIM);
-#else
-  if (siop->operation->rx_cb != NULL) {
+  if ((siop->enabled & SIO_FL_RXNOTEMPY) != 0U) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_RXIM;
   }
-  if (siop->operation->rx_idle_cb != NULL) {
+  if ((siop->enabled & SIO_FL_RXIDLE) != 0U) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_RTIM;
   }
-#endif
 }
 
-__STATIC_INLINE void uart_enable_rx_evt_irq(SIODriver *siop) {
+__STATIC_INLINE void uart_enable_rx_errors_irq(SIODriver *siop) {
 
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->uart->UARTIMSC |= UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
-                          UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
-#else
-  if (siop->operation->rx_evt_cb != NULL) {
+  if ((siop->enabled & SIO_FL_ALL_ERRORS) != 0U) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
                             UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
   }
-#endif
 }
 
 __STATIC_INLINE void uart_enable_tx_irq(SIODriver *siop) {
 
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  siop->uart->UARTIMSC |= UART_UARTIMSC_TXIM;
-#else
-  if (siop->operation->tx_cb != NULL) {
+  if ((siop->enabled & SIO_FL_TXNOTFULL) != 0U) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_TXIM;
   }
-#endif
 }
 
 /**
@@ -174,12 +161,10 @@ void sio_lld_init(void) {
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The operation status.
- * @retval false        if the driver has been correctly started.
- * @retval true         if an error occurred.
  *
  * @notapi
  */
-bool sio_lld_start(SIODriver *siop) {
+msg_t sio_lld_start(SIODriver *siop) {
 
   /* Using the default configuration if the application passed a
      NULL pointer.*/
@@ -219,9 +204,8 @@ bool sio_lld_start(SIODriver *siop) {
   /* Configures the peripheral.*/
   uart_init(siop);
 
-  return false;
+  return HAL_RET_SUCCESS;
 }
-
 
 /**
  * @brief   Deactivates the SIO peripheral.
@@ -264,38 +248,9 @@ void sio_lld_stop(SIODriver *siop) {
  * @api
  */
 void sio_lld_start_operation(SIODriver *siop) {
-  uint32_t imsc;
-
-#if SIO_USE_SYNCHRONIZATION == TRUE
-  /* With synchronization all interrupts are required.*/
-  imsc = UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
-         UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM |
-         UART_UARTIMSC_RXIM | UART_UARTIMSC_RTIM |
-         UART_UARTIMSC_TXIM;
-#else
-  /* When using just callbacks we can select only those really required.*/
-  imsc = 0U;
-  if (siop->operation->rx_cb != NULL) {
-    imsc |= UART_UARTIMSC_RXIM;
-  }
-  if (siop->operation->rx_idle_cb != NULL) {
-    imsc |= UART_UARTIMSC_RTIM;
-  }
-  if (siop->operation->tx_cb != NULL) {
-    imsc |= UART_UARTIMSC_TXIM;
-  }
-  if (siop->operation->tx_end_cb != NULL) {
-    osalDbgAssert(false, "unsupported callback");
-  }
-  if (siop->operation->rx_evt_cb != NULL) {
-    imsc |= UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
-            UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
-  }
-#endif
 
   /* Setting up the operation.*/
   siop->uart->UARTICR   = siop->uart->UARTRIS;
-  siop->uart->UARTIMSC |= imsc;
   siop->uart->UARTCR    = siop->config->UARTCR |
                           UART_UARTCR_RXE | UART_UARTCR_TXE | UART_UARTCR_UARTEN;
 }
@@ -315,41 +270,95 @@ void sio_lld_stop_operation(SIODriver *siop) {
 }
 
 /**
- * @brief   Return the pending SIO events flags.
+ * @brief   Enable flags change notification.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ */
+void sio_lld_update_enable_flags(SIODriver *siop) {
+  uint32_t imsc;
+
+  osalDbgAssert((siop->enabled & SIO_FL_TXDONE) == 0U, "unsupported event");
+
+  if ((siop->enabled & SIO_FL_ALL_ERRORS) == 0U) {
+    imsc = 0U;
+  }
+  else {
+    imsc = UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+           UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
+  }
+
+  imsc |= __sio_reloc_field(siop->enabled, SIO_FL_RXNOTEMPY,  SIO_FL_RXNOTEMPY_POS,  UART_UARTIMSC_RXIM_Pos) |
+          __sio_reloc_field(siop->enabled, SIO_FL_TXNOTFULL,  SIO_FL_TXNOTFULL_POS,  UART_UARTIMSC_TXIM_Pos) |
+          __sio_reloc_field(siop->enabled, SIO_FL_RXIDLE,     SIO_FL_RXIDLE_POS,     UART_UARTIMSC_RTIM_Pos);
+
+  /* Setting up the operation.*/
+  siop->uart->UARTIMSC |= imsc;
+}
+
+/**
+ * @brief   Get and clears SIO error event flags.
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The pending event flags.
  *
  * @notapi
  */
-sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop) {
-  sio_events_mask_t evtmask;
+sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
   uint32_t ris;
+  sioevents_t errors = (sioevents_t)0;
 
-  /* Getting and clearing all relevant ISR flags (and only those).*/
-  ris = siop->uart->UARTRIS & (UART_UARTRIS_OERIS | UART_UARTRIS_BERIS |
-                               UART_UARTRIS_PERIS | UART_UARTRIS_FERIS);
+  /* Getting and clearing all relevant RIS flags (and only those).*/
+  ris = siop->uart->UARTRIS & SIO_LLD_ISR_RX_ERRORS;
   siop->uart->UARTICR = ris;
 
   /* Status flags cleared, now the related interrupts can be enabled again.*/
-  uart_enable_rx_evt_irq(siop);
+  uart_enable_rx_errors_irq(siop);
 
   /* Translating the status flags in SIO events.*/
-  evtmask = 0U;
-  if ((ris & UART_UARTRIS_BERIS) != 0U) {
-    evtmask |= SIO_BREAK_DETECTED;
-  }
-  if ((ris & UART_UARTRIS_OERIS) != 0U) {
-    evtmask |= SIO_OVERRUN_ERROR;
-  }
-  if ((ris & UART_UARTRIS_FERIS) != 0U) {
-    evtmask |= SIO_FRAMING_ERROR;
-  }
-  if ((ris & UART_UARTRIS_PERIS) != 0U) {
-    evtmask |= SIO_PARITY_ERROR;
-  }
+  errors |= __sio_reloc_field(ris, UART_UARTMIS_OEMIS_Msk, UART_UARTMIS_OEMIS_Pos, SIO_EV_OVERRUN_ERR_POS) |
+            __sio_reloc_field(ris, UART_UARTMIS_BEMIS_Msk, UART_UARTMIS_BEMIS_Pos, SIO_EV_BREAK_POS)       |
+            __sio_reloc_field(ris, UART_UARTMIS_PEMIS_Msk, UART_UARTMIS_PEMIS_Pos, SIO_EV_PARITY_ERR_POS)  |
+            __sio_reloc_field(ris, UART_UARTMIS_FEMIS_Msk, UART_UARTMIS_FEMIS_Pos, SIO_EV_FRAMING_ERR_POS);
 
-  return evtmask;
+  return errors;
+}
+
+/**
+ * @brief   Get and clears SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
+  uint32_t ris;
+  sioevents_t events = (sioevents_t)0;
+
+  /* Getting all RIS flags.*/
+  ris = siop->uart->UARTRIS & (SIO_LLD_ISR_RX_ERRORS |
+                               UART_UARTMIS_RTMIS    |
+                               UART_UARTMIS_RXMIS    |
+                               UART_UARTMIS_TXMIS);
+
+  /* Clearing captured events.*/
+  siop->uart->UARTICR = ris;
+
+  /* Status flags cleared, now the RX-related interrupts can be
+     enabled again.*/
+  uart_enable_rx_irq(siop);
+  uart_enable_rx_errors_irq(siop);
+
+  /* Translating the status flags in SIO events.*/
+  events |= __sio_reloc_field(ris, UART_UARTMIS_RXMIS_Msk, UART_UARTMIS_RXMIS_Pos, SIO_EV_RXNOTEMPY_POS)   |
+            __sio_reloc_field(ris, UART_UARTMIS_TXMIS_Msk, UART_UARTMIS_TXMIS_Pos, SIO_EV_TXNOTFULL_POS)   |
+            __sio_reloc_field(ris, UART_UARTMIS_RTMIS_Msk, UART_UARTMIS_RTMIS_Pos, SIO_EV_RXIDLE_POS)   |
+            __sio_reloc_field(ris, UART_UARTMIS_OEMIS_Msk, UART_UARTMIS_OEMIS_Pos, SIO_EV_OVERRUN_ERR_POS) |
+            __sio_reloc_field(ris, UART_UARTMIS_BEMIS_Msk, UART_UARTMIS_BEMIS_Pos, SIO_EV_BREAK_POS)       |
+            __sio_reloc_field(ris, UART_UARTMIS_PEMIS_Msk, UART_UARTMIS_PEMIS_Pos, SIO_EV_PARITY_ERR_POS)  |
+            __sio_reloc_field(ris, UART_UARTMIS_FEMIS_Msk, UART_UARTMIS_FEMIS_Pos, SIO_EV_FRAMING_ERR_POS);
+
+  return events;
 }
 
 /**
@@ -369,7 +378,8 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
   rd = 0U;
   while (true) {
 
-    /* If the RX FIFO has been emptied then the interrupt is enabled again.*/
+    /* If the RX FIFO has been emptied then the RX FIFO and IDLE interrupts
+       are enabled again.*/
     if (sio_lld_is_rx_empty(siop)) {
       uart_enable_rx_irq(siop);
       break;
@@ -501,7 +511,7 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
   UART_TypeDef *u = siop->uart;
-  uint32_t mis, imsc, evtmask;
+  uint32_t mis, imsc;
 
   osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
 
@@ -512,65 +522,77 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   /* Read on control registers.*/
   imsc = u->UARTIMSC;
 
-  /* Enabled errors/events handling.*/
-  evtmask = mis & (UART_UARTMIS_OEMIS | UART_UARTMIS_BEMIS |
-                   UART_UARTMIS_PEMIS | UART_UARTMIS_FEMIS);
+  /* Note, ISR flags are just read but not cleared, ISR sources are
+     disabled instead.*/
+  if (mis != 0U) {
 
-  if (evtmask != 0U) {
-    /* Disabling event sources.*/
-    u->UARTIMSC = imsc & ~(UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
-             UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM);
+    /* Error events handled as a group, except ORE.*/
+    if ((mis & SIO_LLD_ISR_RX_ERRORS) != 0U) {
 
-    /* The callback is invoked if defined.*/
-    __sio_callback_rx_evt(siop);
+#if SIO_USE_SYNCHRONIZATION
+      /* The idle flag is forcibly cleared when an RX error event is
+         detected.*/
+      imsc &= ~UART_UARTIMSC_RTIM;
+#endif
 
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_rx(siop, SIO_MSG_ERRORS);
+      /* Disabling event sources.*/
+      imsc &= ~(UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
+                UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM);
 
-    /* Values could have been changed by the callback. */
-    imsc = u->UARTIMSC;
+      /* Waiting thread woken, if any.*/
+      __sio_wakeup_events(siop);
+    }
+
+    /* Idle RX event.*/
+    if ((mis & UART_UARTMIS_RTMIS) != 0U) {
+
+      /* Called once then the interrupt source is disabled.*/
+       imsc &= ~UART_UARTIMSC_RTIM;
+
+       /* Workaround for RX FIFO threshold problem.*/
+       if(!sio_lld_is_rx_empty(siop)) {
+         __sio_wakeup_rx(siop);
+       }
+
+      /* Waiting thread woken, if any.*/
+      __sio_wakeup_rxidle(siop);
+    }
+
+    /* RX FIFO is non-empty.*/
+    if ((mis & UART_UARTMIS_RXMIS) != 0U) {
+
+#if SIO_USE_SYNCHRONIZATION
+      /* The idle flag is forcibly cleared when an RX data event is
+         detected.*/
+      imsc &= ~UART_UARTIMSC_RTIM;
+#endif
+
+      /* Called once then the interrupt source is disabled.*/
+      imsc &= ~UART_UARTIMSC_RXIM;
+
+      /* Waiting thread woken, if any.*/
+      __sio_wakeup_rx(siop);
+    }
+
+    /* TX FIFO is non-full.*/
+    if ((mis & UART_UARTMIS_TXMIS) != 0U) {
+
+      /* Called once then the interrupt source is disabled.*/
+      imsc &= ~UART_UARTIMSC_TXIM;
+
+      /* Waiting thread woken, if any.*/
+      __sio_wakeup_tx(siop);
+    }
+
+    /* Updating IMSC, some sources could have been disabled.*/
+    u->UARTIMSC = imsc;
+
+    /* The callback is invoked.*/
+    __sio_callback(siop);
+
   }
-
-  /* RX FIFO is non-empty.*/
-  if (((mis & UART_UARTMIS_RXMIS) != 0U)) {
-    /* Called once then the interrupt source is disabled.*/
-    u->UARTIMSC = imsc & ~UART_UARTIMSC_RXIM;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_rx(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_rx(siop, MSG_OK);
-
-    /* Values could have been changed by the callback. */
-    imsc = u->UARTIMSC;
-  }
-
-  /* RX idle condition.*/
-  if ((mis & UART_UARTMIS_RTMIS) != 0U) {
-    /* Called once then the interrupt source is disabled.*/
-     u->UARTIMSC = imsc & ~UART_UARTIMSC_RTIM;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_rx_idle(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_rx(siop, SIO_MSG_IDLE);
-
-    /* Values could have been changed by the callback. */
-    imsc = u->UARTIMSC;
-  }
-
-  /* TX FIFO is non-full.*/
-  if ((mis & UART_UARTMIS_TXMIS) != 0U) {
-    /* Called once then the interrupt source is disabled.*/
-    u->UARTIMSC = imsc & ~UART_UARTIMSC_TXIM;
-
-    /* The callback is invoked if defined.*/
-    __sio_callback_tx(siop);
-
-    /* Waiting thread woken, if any.*/
-    __sio_wakeup_tx(siop, MSG_OK);
+  else {
+    osalDbgAssert(false, "spurious interrupt");
   }
 }
 
