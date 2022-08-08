@@ -148,11 +148,22 @@
 #if !defined(SIO_USE_SYNCHRONIZATION) || defined(__DOXYGEN__)
 #define SIO_USE_SYNCHRONIZATION             TRUE
 #endif
+
+/**
+ * @brief   Support for streams interfacwe.
+ */
+#if !defined(SIO_USE_STREAMS_INTERFACE) || defined(__DOXYGEN__)
+#define SIO_USE_STREAMS_INTERFACE           SIO_USE_SYNCHRONIZATION
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (SIO_USE_STREAMS_INTERFACE == TRUE) && (SIO_USE_SYNCHRONIZATION == FALSE)
+#error "SIO_USE_STREAMS_INTERFACE requires SIO_USE_SYNCHRONIZATION"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -233,7 +244,7 @@ struct sio_driver_vmt {
  *          architecture dependent, fields.
  */
 struct hal_sio_driver {
-#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_STREAMS_INTERFACE == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Virtual Methods Table.
    */
@@ -254,12 +265,12 @@ struct hal_sio_driver {
   /**
    * @brief   Current configuration data.
    */
-  const SIOOperation       *operation;
+  const SIOOperation        *operation;
 #if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   /**
-    * @brief   Synchronization point for RX.
-    */
-   thread_reference_t        sync_rx;
+   * @brief   Synchronization point for RX.
+   */
+  thread_reference_t        sync_rx;
   /**
    * @brief   Synchronization point for RX idle.
    */
@@ -273,7 +284,7 @@ struct hal_sio_driver {
    */
   thread_reference_t        sync_txend;
 #endif /* SIO_USE_SYNCHRONIZATION == TRUE */
-#if defined(SIO_DRIVER_EXT_FIELDS)
+#if defined(SIO_DRIVER_EXT_FIELS)
   SIO_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/

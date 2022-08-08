@@ -46,7 +46,7 @@ static const SIOOperation default_operation = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
+#if (SIO_USE_STREAMS_INTERFACE == TRUE) || defined(__DOXYGEN__)
 static size_t sync_write(void *ip, const uint8_t *bp, size_t n,
                          sysinterval_t timeout) {
   SIODriver *siop = (SIODriver *)ip;
@@ -193,7 +193,7 @@ static const struct sio_driver_vmt vmt = {
   __putt,  __gett, __writet, __readt,
   __ctl
 };
-#endif
+#endif /* SIO_USE_STREAMS_INTERFACE */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -220,8 +220,10 @@ void sioInit(void) {
  */
 void sioObjectInit(SIODriver *siop) {
 
-#if SIO_USE_SYNCHRONIZATION == TRUE
+#if SIO_USE_STREAMS_INTERFACE == TRUE
   siop->vmt         = &vmt;
+#endif
+#if SIO_USE_SYNCHRONIZATION == TRUE
   siop->sync_rx     = NULL;
   siop->sync_rxidle = NULL;
   siop->sync_tx     = NULL;
