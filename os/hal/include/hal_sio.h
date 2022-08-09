@@ -95,11 +95,11 @@
 #define SIO_EV_RXNOTEMPY_POS            2   /* CHN_INPUT_AVAILABLE */
 #define SIO_EV_TXNOTFULL_POS            3   /* CHN_OUTPUT_EMPTY */
 #define SIO_EV_TXDONE_POS               4   /* CHN_TRANSMISSION_END */
-#define SIO_EV_PARITY_ERR_POS           5   /* SD_PARITY_ERROR */
-#define SIO_EV_FRAMING_ERR_POS          6   /* SD_FRAMING_ERROR */
-#define SIO_EV_OVERRUN_ERR_POS          7   /* SD_OVERRUN_ERROR */
-#define SIO_EV_NOISE_ERR_POS            8   /* SD_NOISE_ERROR */
-#define SIO_EV_BREAK_POS                9
+#define SIO_EV_PARITY_ERR_POS           5   /* CHN_PARITY_ERROR */
+#define SIO_EV_FRAMING_ERR_POS          6   /* CHN_FRAMING_ERROR */
+#define SIO_EV_OVERRUN_ERR_POS          7   /* CHN_OVERRUN_ERROR */
+#define SIO_EV_NOISE_ERR_POS            8   /* CHN_NOISE_ERROR */
+#define SIO_EV_BREAK_POS                9   /* CHN_BREAK_DETECTED */
 #define SIO_EV_RXIDLE_POS               11
 /** @} */
 

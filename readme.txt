@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Moved HAL serial error flags into asynchronous channels interface
+       definitions.
 - NEW: Reworked HAL SIO driver.
 - NEW: Non-proprietary LLVM build support.
 - NEW: Added palReadGroupLatch() to PAL driver.
