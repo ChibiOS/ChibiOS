@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ msg_t sio_lld_start(SIODriver *siop) {
     }
 #endif
     else {
-      osalDbgAssert(false, "invalid USART instance");
+      osalDbgAssert(false, "invalid SIO instance");
     }
 
     /* Driver object low level initializations.*/
@@ -175,7 +175,7 @@ void sio_lld_stop(SIODriver *siop) {
     }
 #endif
     else {
-      osalDbgAssert(false, "invalid USART instance");
+      osalDbgAssert(false, "invalid SIO instance");
     }
   }
 }
@@ -205,19 +205,45 @@ void sio_lld_stop_operation(SIODriver *siop) {
 }
 
 /**
- * @brief   Return the pending SIO events flags.
+ * @brief   Enable flags change notification.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ */
+void sio_lld_update_enable_flags(SIODriver *siop) {
+
+  (void)siop;
+}
+
+/**
+ * @brief   Get and clears SIO error event flags.
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The pending event flags.
  *
  * @notapi
  */
-sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop) {
-  sio_events_mask_t evtmask = 0U;
+sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
+  sioevents_t errors = (sioevents_t)0;
 
   (void)siop;
 
-  return evtmask;
+  return errors;
+}
+
+/**
+ * @brief   Get and clears SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
+  sioevents_t events = (sioevents_t)0;
+
+  (void)siop;
+
+  return events;
 }
 
 /**

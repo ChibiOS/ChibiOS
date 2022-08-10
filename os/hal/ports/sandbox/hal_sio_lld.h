@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -124,6 +124,32 @@ typedef uint32_t sio_events_mask_t;
 #define sio_lld_is_rx_empty(siop) true
 
 /**
+ * @brief   Determines the activity state of the receiver.
+ *(bool)(((siop)->uart->UARTFR & UART_UARTFR_RXFE) != 0U)
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX activity state.
+ * @retval false        if RX is in active state.
+ * @retval true         if RX is in idle state.
+ *
+ * @notapi
+ */
+#define sio_lld_is_rx_idle(siop) true
+
+/**
+ * @brief   Determines if RX has pending error events to be read and cleared.
+ * @note    Only error and protocol errors are handled, data events are not
+ *          considered.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX error events.
+ * @retval false        if RX has no pending events
+ * @retval true         if RX has pending events
+ *
+ * @notapi
+ */
+#define sio_lld_has_rx_errors(siop) false
+
+/**
  * @brief   Determines the state of the TX FIFO.
  *
  * @param[in] siop      pointer to the @p SIODriver object
@@ -167,7 +193,9 @@ extern "C" {
   void sio_lld_stop(SIODriver *siop);
   void sio_lld_start_operation(SIODriver *siop);
   void sio_lld_stop_operation(SIODriver *siop);
-  sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop);
+  void sio_lld_update_enable_flags(SIODriver *siop);
+  sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop);
+  sioevents_t sio_lld_get_and_clear_events(SIODriver *siop);
   size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
   size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
   msg_t sio_lld_get(SIODriver *siop);

@@ -45,45 +45,16 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-static void vuart_rx_cb(SIODriver *siop);
-static void vuart_rx_idle_cb(SIODriver *siop);
-static void vuart_tx_cb(SIODriver *siop);
-static void vuart_tx_end_cb(SIODriver *siop);
-static void vuart_rx_evt_cb(SIODriver *siop);
-
+static void vuart_cb(SIODriver *siop);
 static const SIOOperation vuart_operation = {
-  .rx_cb        = vuart_rx_cb,
-  .rx_idle_cb   = vuart_rx_idle_cb,
-  .tx_cb        = vuart_tx_cb,
-  .tx_end_cb    = vuart_tx_end_cb,
-  .rx_evt_cb    = vuart_rx_evt_cb
+  .cb = vuart_cb
 };
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static void vuart_rx_cb(SIODriver *siop) {
-
-  (void)siop;
-}
-
-static void vuart_rx_idle_cb(SIODriver *siop) {
-
-  (void)siop;
-}
-
-static void vuart_tx_cb(SIODriver *siop) {
-
-  (void)siop;
-}
-
-static void vuart_tx_end_cb(SIODriver *siop) {
-
-  (void)siop;
-}
-
-static void vuart_rx_evt_cb(SIODriver *siop) {
+static void vuart_cb(SIODriver *siop) {
 
   (void)siop;
 }
