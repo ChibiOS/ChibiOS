@@ -532,7 +532,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX error event is
          detected.*/
-      imsc &= ~UART_UARTIMSC_RTIM;
+      u->UARTICR = UART_UARTICR_RTIC;
 #endif
 
       /* Disabling event sources.*/
@@ -564,7 +564,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX data event is
          detected.*/
-      imsc &= ~UART_UARTIMSC_RTIM;
+      u->UARTICR = UART_UARTICR_RTIC;
 #endif
 
       /* Called once then the interrupt source is disabled.*/

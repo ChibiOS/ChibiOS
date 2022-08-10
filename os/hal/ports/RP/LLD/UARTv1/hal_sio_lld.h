@@ -149,7 +149,8 @@
  *
  * @notapi
  */
-#define sio_lld_is_rx_idle(siop) true
+#define sio_lld_is_rx_idle(siop)                                            \
+  (bool)(((siop)->uart->UARTRIS & UART_UARTRIS_RTRIS) != 0U)
 
 /**
  * @brief   Determines if RX has pending error events to be read and cleared.
