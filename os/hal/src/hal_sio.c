@@ -328,10 +328,8 @@ void sioStartOperationI(SIODriver *siop, const SIOOperation *operation) {
     siop->state = SIO_ACTIVE;
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
-    /* If synchronization is enabled then some events are enforced by
-       default.*/
-    sioWriteEnableFlagsI(siop,
-                         SIO_FL_ALL_DATA | SIO_FL_ALL_ERRORS | SIO_FL_ALL_PROTOCOL);
+    /* If synchronization is enabled then all events.*/
+    sioWriteEnableFlagsI(siop, SIO_FL_ALL);
 #endif
   }
 }
