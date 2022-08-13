@@ -15,6 +15,7 @@ HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
 
 HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_st.c \
+          $(CHIBIOS)/os/hal/src/hal_buffered_serial.c \
           $(CHIBIOS)/os/hal/src/hal_buffers.c \
           $(CHIBIOS)/os/hal/src/hal_queues.c \
           $(CHIBIOS)/os/hal/src/hal_flash.c \

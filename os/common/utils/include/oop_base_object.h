@@ -117,6 +117,7 @@ struct base_object {
  *
  * @param[in] ip        Pointer to a @p base_object_c structure to be
  *                      initialized.
+ * @param[in] vmt       VMT pointer for the new object.
  * @return              A new reference to the object.
  */
 CC_FORCE_INLINE

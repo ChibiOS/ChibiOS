@@ -294,6 +294,7 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 /* Shared headers.*/
 #include "hal_buffers.h"
 #include "hal_queues.h"
+#include "hal_buffered_serial.h"
 
 /* Normal drivers.*/
 #include "hal_pal.h"
