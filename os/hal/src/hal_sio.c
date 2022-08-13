@@ -304,13 +304,12 @@ void sioStop(SIODriver *siop) {
  *                          be @p NULL if callbacks are not required
  *                          encoding the operation to be performed
  *
- * @api
+ * @iclass
  */
-void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
+void sioStartOperationI(SIODriver *siop, const SIOOperation *operation) {
 
   osalDbgCheck(siop != NULL);
-
-  osalSysLock();
+  osalDbgCheckClassI();
 
   osalDbgAssert((siop->state == SIO_READY) ||
                 (siop->state == SIO_ACTIVE), "invalid state");
@@ -326,7 +325,7 @@ void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
 
   if (siop->state == SIO_READY) {
     sio_lld_start_operation(siop);
-    siop->state     = SIO_ACTIVE;
+    siop->state = SIO_ACTIVE;
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
     /* If synchronization is enabled then some events are enforced by
@@ -335,7 +334,22 @@ void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
                          SIO_FL_ALL_DATA | SIO_FL_ALL_ERRORS | SIO_FL_ALL_PROTOCOL);
 #endif
   }
+}
 
+/**
+ * @brief   Starts a SIO operation.
+ *
+ * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] operation     pointer to an @p SIOOperation structure, can
+ *                          be @p NULL if callbacks are not required
+ *                          encoding the operation to be performed
+ *
+ * @api
+ */
+void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
+
+  osalSysLock();
+  sioStartOperationI(siop, operation);
   osalSysUnlock();
 }
 
@@ -344,13 +358,12 @@ void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
  *
  * @param[in] siop      pointer to an @p SIODriver structure
  *
- * @api
+ * @iclass
  */
-void sioStopOperation(SIODriver *siop) {
+void sioStopOperationI(SIODriver *siop) {
 
   osalDbgCheck(siop != NULL);
-
-  osalSysLock();
+  osalDbgCheckClassI();
 
   osalDbgAssert((siop->state == SIO_READY) ||
                 (siop->state == SIO_ACTIVE), "invalid state");
@@ -369,7 +382,21 @@ void sioStopOperation(SIODriver *siop) {
     siop->operation = NULL;
     siop->state     = SIO_READY;
   }
+}
 
+/**
+ * @brief   Stops an ongoing SIO operation, if any.
+ *
+ * @param[in] siop      pointer to an @p SIODriver structure
+ *
+ * @api
+ */
+void sioStopOperation(SIODriver *siop) {
+
+  osalDbgCheck(siop != NULL);
+
+  osalSysLock();
+  sioStopOperationI(siop);
   osalSysUnlock();
 }
 

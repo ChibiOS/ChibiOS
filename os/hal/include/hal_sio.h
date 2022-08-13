@@ -618,7 +618,9 @@ extern "C" {
   void sioObjectInit(SIODriver *siop);
   msg_t sioStart(SIODriver *siop, const SIOConfig *config);
   void sioStop(SIODriver *siop);
+  void sioStartOperationI(SIODriver *siop, const SIOOperation *operation);
   void sioStartOperation(SIODriver *siop, const SIOOperation *operation);
+  void sioStopOperationI(SIODriver *siop);
   void sioStopOperation(SIODriver *siop);
   void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags);
   void sioSetEnableFlags(SIODriver *siop, sioflags_t flags);

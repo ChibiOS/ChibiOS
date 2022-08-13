@@ -156,7 +156,6 @@ msg_t bsdStart(BufferedSIODriver *bsdp, const BufferedSIOConfig *config) {
 
   osalDbgCheck(bsdp != NULL);
 
-  osalSysLock();
   osalDbgAssert((bsdp->state == BS_STOP) || (bsdp->state == BS_READY),
                 "invalid state");
 
@@ -167,14 +166,15 @@ msg_t bsdStart(BufferedSIODriver *bsdp, const BufferedSIOConfig *config) {
 
   msg = sioStart(bsdp->siop, config);
   if (msg == HAL_RET_SUCCESS) {
-    sioStartOperation(bsdp->siop, &bs_default_operation);
+    osalSysLock();
+    sioStartOperationI(bsdp->siop, &bs_default_operation);
+    sioWriteEnableFlagsI(bsdp->siop, SIO_FL_ALL);
     bsdp->state = BS_READY;
+    osalSysUnlock();
   }
   else {
     bsdp->state = BS_STOP;
   }
-
-  osalSysUnlock();
 
   return msg;
 }
@@ -192,8 +192,6 @@ void bsdStop(BufferedSIODriver *bsdp) {
 
   osalDbgCheck(bsdp != NULL);
 
-  osalSysLock();
-
   osalDbgAssert((bsdp->state == BS_STOP) || (bsdp->state == BS_READY),
                 "invalid state");
 
@@ -205,10 +203,10 @@ void bsdStop(BufferedSIODriver *bsdp) {
 
   bsdp->state = BS_STOP;
 
-  oqResetI(&bsdp->oqueue);
+  osalSysLock();
+  oqResetI(&bsdp->oqueue); /* TODO should go in the upper class.*/
   iqResetI(&bsdp->iqueue);
   osalOsRescheduleS();
-
   osalSysUnlock();
 }
 
