@@ -25,6 +25,8 @@
 #ifndef HAL_H
 #define HAL_H
 
+#include "ccportab.h"
+
 #include "osal.h"
 #include "board.h"
 #include "halconf.h"
