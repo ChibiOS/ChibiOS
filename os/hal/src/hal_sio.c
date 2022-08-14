@@ -223,15 +223,16 @@ void sioObjectInit(SIODriver *siop) {
 #if SIO_USE_STREAMS_INTERFACE == TRUE
   siop->vmt         = &vmt;
 #endif
+  siop->state       = SIO_STOP;
+  siop->config      = NULL;
+  siop->enabled     = (sioflags_t)0;
+  siop->arg         = NULL;
 #if SIO_USE_SYNCHRONIZATION == TRUE
   siop->sync_rx     = NULL;
   siop->sync_rxidle = NULL;
   siop->sync_tx     = NULL;
   siop->sync_txend  = NULL;
 #endif
-  siop->state       = SIO_STOP;
-  siop->config      = NULL;
-  siop->enabled     = (sioflags_t)0;
 
   /* Optional, user-defined initializer.*/
 #if defined(SIO_DRIVER_EXT_INIT_HOOK)

@@ -16,6 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "hal_buffered_sio.h"
 
 #include "portab.h"
 

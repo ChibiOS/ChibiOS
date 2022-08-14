@@ -50,8 +50,40 @@ static const SIOOperation bs_default_operation = {
 /*===========================================================================*/
 
 static void bs_default_cb(SIODriver *siop) {
+  BufferedSIODriver *bsdp = (BufferedSIODriver *)siop->arg;
+  sioevents_t events;
 
-  (void)siop;
+  osalSysLockFromISR();
+
+  /* Posting the non-data SIO events as channel event flags, the masks are
+     made to match.*/
+  events = sioGetAndClearEventsI(siop);
+  chnAddFlagsI(bsdp, (eventflags_t)(events & ~SIO_EV_ALL_DATA));
+
+  /* RX FIFO event.*/
+  if ((events & SIO_EV_RXNOTEMPY) != (sioevents_t)0) {
+    /* RX FIFO needs to be emptied or SIO will not generate more RX FIFO
+       events.*/
+    while (!sioIsRXEmptyX(siop)) {
+      bsIncomingDataI((BufferedSerial *)bsdp, sioGetX(siop));
+    }
+  }
+
+  /* TX FIFO event.*/
+  if ((events & SIO_EV_TXNOTFULL) != (sioevents_t)0) {
+    while (!sioIsTXFullX(siop)) {
+      msg_t msg;
+
+      msg = oqGetI(&bsdp->oqueue);
+      if (msg < MSG_OK) {
+        chnAddFlagsI((BufferedSerial *)bsdp, CHN_OUTPUT_EMPTY);
+        break;
+      }
+      sioPutX(siop, (uint_fast16_t)msg);
+    }
+  }
+
+  osalSysUnlockFromISR();
 }
 
 /*
@@ -138,6 +170,7 @@ void bsdObjectInit(BufferedSIODriver *bsdp, SIODriver *siop,
                                  ib, ibsize, NULL, NULL,
                                  ob, obsize, NULL, NULL);
   bsdp->siop = siop;
+  siop->arg  = (void *)bsdp;
 }
 
 /**

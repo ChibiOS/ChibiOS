@@ -109,12 +109,17 @@
  */
 #define SIO_EV_RXNOTEMPY                (1U << SIO_EV_RXNOTEMPY_POS)
 #define SIO_EV_TXNOTFULL                (1U << SIO_EV_TXNOTFULL_POS)
+#define SIO_EV_ALL_DATA                 (SIO_EV_RXNOTEMPY | SIO_EV_TXNOTFULL)
 #define SIO_EV_TXDONE                   (1U << SIO_EV_TXDONE_POS)
 #define SIO_EV_PARITY_ERR               (1U << SIO_EV_PARITY_ERR_POS)
 #define SIO_EV_FRAMING_ERR              (1U << SIO_EV_FRAMING_ERR_POS)
 #define SIO_EV_OVERRUN_ERR              (1U << SIO_EV_OVERRUN_ERR_POS)
 #define SIO_EV_NOISE_ERR                (1U << SIO_EV_NOISE_ERR_POS)
 #define SIO_EV_BREAK                    (1U << SIO_EV_BREAK_POS)
+#define SIO_EV_ALL_ERRORS               (SIO_EV_PARITY_ERR  |               \
+                                         SIO_EV_FRAMING_ERR |               \
+                                         SIO_EV_OVERRUN_ERR |               \
+                                         SIO_EV_NOISE_ERR)
 #define SIO_EV_RXIDLE                   (1U << SIO_EV_RXIDLE_POS)
 /** @} */
 
@@ -221,6 +226,9 @@ typedef enum {
 struct hal_sio_config {
   /* End of the mandatory fields.*/
   sio_lld_config_fields;
+#if defined(SIO_CONFIG_EXT_FIELS)
+  SIO_CONFIG_EXT_FIELDS
+#endif
 };
 
 /**
@@ -266,6 +274,11 @@ struct hal_sio_driver {
    * @brief   Current configuration data.
    */
   const SIOOperation        *operation;
+  /**
+   * @brief   User argument to the operation.
+   * @note    Can be retrieved through the @p siop argument of the callback.
+   */
+  void                      *arg;
 #if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   Synchronization point for RX.
@@ -300,6 +313,9 @@ struct hal_sio_operation {
    * @note    Can be @p NULL.
    */
   siocb_t                   cb;
+#if defined(SIO_OPERATION_EXT_FIELS)
+  SIO_OPERATION_EXT_FIELS
+#endif
 };
 
 /*===========================================================================*/

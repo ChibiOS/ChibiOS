@@ -103,6 +103,7 @@ include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx/platform.mk
 include $(CHIBIOS)/os/hal/boards/ST_STM32L476_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+include $(CHIBIOS)/os/hal/lib/complex/buffered_sio/hal_buffered_sio.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
