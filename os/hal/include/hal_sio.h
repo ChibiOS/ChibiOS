@@ -127,7 +127,7 @@
  * @name    Additional messages
  * @{
  */
-#define SIO_MSG_ERRORS                      1
+#define SIO_MSG_ERRORS                  1
 /** @} */
 
 /*===========================================================================*/

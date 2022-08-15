@@ -101,17 +101,16 @@ static msg_t _ctl(void *ip, unsigned int operation, void *arg) {
     osalDbgCheck(arg == NULL);
     break;
   case CHN_CTL_INVALID:
-    osalDbgAssert(false, "invalid CTL operation");
-    break;
+    return HAL_RET_UNKNOWN_CTL;
   default:
 #if defined(SD_LLD_IMPLEMENTS_CTL)
     /* Delegating to the LLD if supported.*/
     return sd_lld_control(sdp, operation, arg);
 #else
-    break;
+    return HAL_RET_UNKNOWN_CTL;
 #endif
   }
-  return MSG_OK;
+  return HAL_RET_SUCCESS;
 }
 
 static const struct SerialDriverVMT vmt = {

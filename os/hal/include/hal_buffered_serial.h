@@ -245,18 +245,12 @@ static inline msg_t __buffered_serial_ctl_impl(void *ip,
     osalDbgCheck(arg == NULL);
     break;
   case CHN_CTL_INVALID:
-    osalDbgAssert(false, "invalid CTL operation");
-    break;
+    return HAL_RET_UNKNOWN_CTL;
   default:
-#if defined(SD_LLD_IMPLEMENTS_CTL)
-    /* Delegating to the LLD if supported.*/
-    return sd_lld_control(bsp, operation, arg);
-#else
-    break;
-#endif
+    return HAL_RET_UNKNOWN_CTL;
   }
 
-  return MSG_OK;
+  return HAL_RET_SUCCESS;
 }
 /** @} */
 

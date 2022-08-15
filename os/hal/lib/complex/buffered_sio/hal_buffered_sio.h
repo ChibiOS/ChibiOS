@@ -99,7 +99,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @iclass
  */
-#define bsdPutI(bsdp, b) oqPutI(&(bsdp)->oqueue, b)
+#define bsioPutI(bsiop, b) oqPutI(&(bsiop)->oqueue, b)
 
 /**
  * @brief   Direct write to a @p BufferedSIODriver.
@@ -109,7 +109,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdPut(bsdp, b) oqPut(&(bsdp)->oqueue, b)
+#define bsioPut(bsiop, b) oqPut(&(bsiop)->oqueue, b)
 
 /**
  * @brief   Direct write to a @p BufferedSIODriver with timeout specification.
@@ -119,7 +119,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdPutTimeout(bsdp, b, t) oqPutTimeout(&(bsdp)->oqueue, b, t)
+#define bsioPutTimeout(bsiop, b, t) oqPutTimeout(&(bsiop)->oqueue, b, t)
 
 /**
  * @brief   Direct read from a @p BufferedSIODriver.
@@ -129,7 +129,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @iclass
  */
-#define bsdGetI(bsdp) iqGetI(&(bsdp)->iqueue)
+#define bsioGetI(bsiop) iqGetI(&(bsiop)->iqueue)
 
 /**
  * @brief   Direct read from a @p BufferedSIODriver.
@@ -139,7 +139,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdGet(bsdp) iqGet(&(bsdp)->iqueue)
+#define bsioGet(bsiop) iqGet(&(bsiop)->iqueue)
 
 /**
  * @brief   Direct read from a @p BufferedSIODriver with timeout specification.
@@ -149,7 +149,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdGetTimeout(bsdp, t) iqGetTimeout(&(bsdp)->iqueue, t)
+#define bsioGetTimeout(bsiop, t) iqGetTimeout(&(bsiop)->iqueue, t)
 
 /**
  * @brief   Direct blocking write to a @p BufferedSIODriver.
@@ -159,7 +159,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @iclass
  */
-#define bsdWriteI(bsdp, b, n) oqWriteI(&(bsdp)->oqueue, b, n)
+#define bsioWriteI(bsiop, b, n) oqWriteI(&(bsiop)->oqueue, b, n)
 
 /**
  * @brief   Direct blocking write to a @p BufferedSIODriver.
@@ -169,7 +169,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdWrite(bsdp, b, n) oqWriteTimeout(&(bsdp)->oqueue, b, n, TIME_INFINITE)
+#define bsioWrite(bsiop, b, n) oqWriteTimeout(&(bsiop)->oqueue, b, n, TIME_INFINITE)
 
 /**
  * @brief   Direct blocking write to a @p BufferedSIODriver with timeout
@@ -180,8 +180,8 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdWriteTimeout(bsdp, b, n, t)                                        \
-  oqWriteTimeout(&(bsdp)->oqueue, b, n, t)
+#define bsioWriteTimeout(bsiop, b, n, t)                                        \
+  oqWriteTimeout(&(bsiop)->oqueue, b, n, t)
 
 /**
  * @brief   Direct non-blocking write to a @p BufferedSIODriver.
@@ -191,8 +191,8 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdAsynchronousWrite(bsdp, b, n)                                      \
-  oqWriteTimeout(&(bsdp)->oqueue, b, n, TIME_IMMEDIATE)
+#define bsioAsynchronousWrite(bsiop, b, n)                                      \
+  oqWriteTimeout(&(bsiop)->oqueue, b, n, TIME_IMMEDIATE)
 
 /**
  * @brief   Direct blocking read from a @p BufferedSIODriver.
@@ -202,7 +202,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @iclass
  */
-#define bsdReadI(bsdp, b, n) iqReadI(&(bsdp)->iqueue, b, n, TIME_INFINITE)
+#define bsioReadI(bsiop, b, n) iqReadI(&(bsiop)->iqueue, b, n, TIME_INFINITE)
 
 /**
  * @brief   Direct blocking read from a @p BufferedSIODriver.
@@ -212,7 +212,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdRead(bsdp, b, n) iqReadTimeout(&(bsdp)->iqueue, b, n, TIME_INFINITE)
+#define bsioRead(bsiop, b, n) iqReadTimeout(&(bsiop)->iqueue, b, n, TIME_INFINITE)
 
 /**
  * @brief   Direct blocking read from a @p BufferedSIODriver with timeout
@@ -223,7 +223,7 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdReadTimeout(bsdp, b, n, t) iqReadTimeout(&(bsdp)->iqueue, b, n, t)
+#define bsioReadTimeout(bsiop, b, n, t) iqReadTimeout(&(bsiop)->iqueue, b, n, t)
 
 /**
  * @brief   Direct non-blocking read from a @p BufferedSIODriver.
@@ -233,8 +233,8 @@ typedef SIOConfig BufferedSIOConfig;
  *
  * @api
  */
-#define bsdAsynchronousRead(bsdp, b, n)                                       \
-  iqReadTimeout(&(bsdp)->iqueue, b, n, TIME_IMMEDIATE)
+#define bsioAsynchronousRead(bsiop, b, n)                                       \
+  iqReadTimeout(&(bsiop)->iqueue, b, n, TIME_IMMEDIATE)
 /** @} */
 
 /*===========================================================================*/
@@ -244,11 +244,11 @@ typedef SIOConfig BufferedSIOConfig;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void bsdObjectInit(BufferedSIODriver *bsdp, SIODriver *siop,
-                     uint8_t *ib, size_t ibsize,
-                     uint8_t *ob, size_t obsize);
-  msg_t bsdStart(BufferedSIODriver *bsdp, const BufferedSIOConfig *config);
-  void bsdStop(BufferedSIODriver *bsdp);
+  void bsioObjectInit(BufferedSIODriver *bsiop, SIODriver *siop,
+                      uint8_t *ib, size_t ibsize,
+                      uint8_t *ob, size_t obsize);
+  msg_t bsioStart(BufferedSIODriver *bsiop, const BufferedSIOConfig *config);
+  void bsioStop(BufferedSIODriver *bsiop);
 #ifdef __cplusplus
 }
 #endif

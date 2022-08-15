@@ -178,13 +178,12 @@ static msg_t __ctl(void *ip, unsigned int operation, void *arg) {
     osalDbgCheck(arg == NULL);
     break;
   case CHN_CTL_INVALID:
-    osalDbgAssert(false, "invalid CTL operation");
-    break;
+    return HAL_RET_UNKNOWN_CTL;
   default:
     /* Delegating to the LLD if supported.*/
     return sio_lld_control(siop, operation, arg);
   }
-  return MSG_OK;
+  return HAL_RET_SUCCESS;
 }
 
 static const struct sio_driver_vmt vmt = {
