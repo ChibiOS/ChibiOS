@@ -162,6 +162,20 @@ typedef struct ch_os_instance os_instance_t;
   /*lint -restore*/
 
 /**
+ * @brief Get the address of structured type from a member
+ *
+ * @param[in] e         address of the member
+ * @param[in] t         type of the owning structure
+ * @param[in] n         name of the member
+ * @return The structure address.
+ */
+#define __CH_OWNEROF(e, t, n)                                                 \
+  /*lint -save -e9005 -e9033 -e413 [11.8, 10.8, 1.3] Normal pointers
+    arithmetic, it is safe.*/                                                 \
+  (t *)((char *)e - ((size_t)((char *)&((t *)0)->n - (char *)0)));            \
+  /*lint -restore*/
+
+/**
  * @brief   Marks an expression result as used.
  *
  * @param[in] x         a valid expression

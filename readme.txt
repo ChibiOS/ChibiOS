@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added __CH_OWNEROF() macro to RT.
 - NEW; Now hal.h includes cc_portab.h by default making it mandatory.
 - NEW: Moved HAL serial error flags into asynchronous channels interface
        definitions.
