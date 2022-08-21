@@ -45,11 +45,6 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
-static void vuart_cb(SIODriver *siop);
-static const SIOOperation vuart_operation = {
-  .cb = vuart_cb
-};
-
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -93,7 +88,7 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
 
       msg = sioStart(unitp->siop, confp->siocfgp);
       if (msg == HAL_RET_SUCCESS) {
-        sioStartOperation(unitp->siop, &vuart_operation);
+        sioSetCallbackX(unitp->siop, vuart_cb);
       }
 
       ectxp->r0 = (uint32_t)msg;
@@ -101,7 +96,6 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
     }
   case SB_VUART_DEINIT:
     {
-      sioStopOperation(unitp->siop);
       sioStop(unitp->siop);
 
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;

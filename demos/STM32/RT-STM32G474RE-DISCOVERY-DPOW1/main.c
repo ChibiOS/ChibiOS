@@ -63,7 +63,6 @@ int main(void) {
    */
 //  sdStart(&LPSD3, NULL);
   sioStart(&SIOD3, NULL);
-  sioStartOperation(&SIOD3, NULL);
 
   /*
    * Creates the blinker thread.
