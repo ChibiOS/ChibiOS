@@ -270,6 +270,13 @@
  * @{
  */
 /**
+ * @brief   Resets ADC peripherals.
+ *
+ * @api
+ */
+#define rccResetADC() rccResetAPB2(RCC_APB2RSTR_ADCRST)
+
+/**
  * @brief   Enables the ADC1 peripheral clock.
  *
  * @param[in] lp        low power enable flag
@@ -284,13 +291,6 @@
  * @api
  */
 #define rccDisableADC1() rccDisableAPB2(RCC_APB2ENR_ADC1EN)
-
-/**
- * @brief   Resets the ADC1 peripheral.
- *
- * @api
- */
-#define rccResetADC1() rccResetAPB2(RCC_APB2RSTR_ADC1RST)
 
 /**
  * @brief   Enables the ADC2 peripheral clock.
@@ -309,13 +309,6 @@
 #define rccDisableADC2() rccDisableAPB2(RCC_APB2ENR_ADC2EN)
 
 /**
- * @brief   Resets the ADC2 peripheral.
- *
- * @api
- */
-#define rccResetADC2() rccResetAPB2(RCC_APB2RSTR_ADC2RST)
-
-/**
  * @brief   Enables the ADC3 peripheral clock.
  *
  * @param[in] lp        low power enable flag
@@ -330,13 +323,6 @@
  * @api
  */
 #define rccDisableADC3() rccDisableAPB2(RCC_APB2ENR_ADC3EN)
-
-/**
- * @brief   Resets the ADC3 peripheral.
- *
- * @api
- */
-#define rccResetADC3() rccResetAPB2(RCC_APB2RSTR_ADC3RST)
 /** @} */
 
 /**
