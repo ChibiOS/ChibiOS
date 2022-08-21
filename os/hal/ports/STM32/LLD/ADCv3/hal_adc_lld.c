@@ -555,30 +555,30 @@ void adc_lld_init(void) {
 #if defined(STM32F3XX)
 #if STM32_HAS_ADC1 && STM32_HAS_ADC2
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
-  rccEnableADC12(true);
   rccResetADC12();
+  rccEnableADC12(true);
   ADC1_2_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12();
 #endif
 #else
 #if STM32_ADC_USE_ADC1
-  rccEnableADC12(true);
   rccResetADC12();
+  rccEnableADC12(true);
   ADC1_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12();
 #endif
 #endif
 #if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
-  rccEnableADC34(true);
   rccResetADC34();
+  rccEnableADC34(true);
   ADC3_4_COMMON->CCR = STM32_ADC_ADC34_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC34();
 #endif
 #endif
 
 #if defined(STM32L4XX) || defined(STM32L4XXP)
-  rccEnableADC123(true);
   rccResetADC123();
+  rccEnableADC123(true);
 #if defined(ADC1_2_COMMON)
   ADC1_2_COMMON->CCR = STM32_ADC_ADC123_PRESC | STM32_ADC_ADC123_CLOCK_MODE | ADC_DMA_MDMA;
 #elif defined(ADC12_COMMON)
@@ -593,8 +593,8 @@ void adc_lld_init(void) {
 
 #if defined(STM32G4XX)
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
-  rccEnableADC12(true);
   rccResetADC12();
+  rccEnableADC12(true);
   ADC12_COMMON->CCR = STM32_ADC_ADC12_PRESC | STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12();
 #endif
@@ -608,8 +608,8 @@ void adc_lld_init(void) {
 
 #if defined(STM32WBXX)
 #if STM32_ADC_USE_ADC1
-  rccEnableADC1(true);
   rccResetADC1();
+  rccEnableADC1(true);
   ADC1_COMMON->CCR = STM32_ADC_ADC1_PRESC | STM32_ADC_ADC1_CLOCK_MODE;
   rccDisableADC1();
 #endif
