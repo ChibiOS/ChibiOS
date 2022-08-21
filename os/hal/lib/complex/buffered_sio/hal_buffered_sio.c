@@ -40,11 +40,6 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static void __bsio_default_cb(SIODriver *siop);
-static const SIOOperation __bsio_default_operation = {
-  .cb = __bsio_default_cb
-};
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -208,15 +203,10 @@ msg_t bsioStart(BufferedSIODriver *bsiop, const BufferedSIOConfig *config) {
   osalDbgAssert((bsiop->state == BS_STOP) || (bsiop->state == BS_READY),
                 "invalid state");
 
-  /* Stopping current operation, if any.*/
-  if (bsiop->siop->state == SIO_ACTIVE) {
-    sioStopOperation(bsiop->siop);
-  }
-
   msg = sioStart(bsiop->siop, config);
   if (msg == HAL_RET_SUCCESS) {
     osalSysLock();
-    sioStartOperationI(bsiop->siop, &__bsio_default_operation);
+    sioSetCallbackX(bsiop->siop, &__bsio_default_cb);
     sioWriteEnableFlagsI(bsiop->siop, SIO_FL_ALL);
     bsiop->state = BS_READY;
     osalSysUnlock();
@@ -243,9 +233,6 @@ void bsioStop(BufferedSIODriver *bsiop) {
 
   osalDbgAssert((bsiop->state == BS_STOP) || (bsiop->state == BS_READY),
                 "invalid state");
-
-  /* Stopping current operation, if any.*/
-  sioStopOperation(bsiop->siop);
 
   /* Stopping undelying SIO driver.*/
   sioStop(bsiop->siop);

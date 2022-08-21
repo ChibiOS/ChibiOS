@@ -195,11 +195,6 @@ typedef struct hal_sio_driver SIODriver;
 typedef struct hal_sio_config SIOConfig;
 
 /**
- * @brief   Type of structure representing a SIO operation.
- */
-typedef struct hal_sio_operation SIOOperation;
-
-/**
  * @brief   Generic SIO notification callback type.
  *
  * @param[in] siop     pointer to the @p SIODriver object
@@ -213,7 +208,6 @@ typedef enum {
   SIO_UNINIT = 0,                   /**< Not initialized.                   */
   SIO_STOP = 1,                     /**< Stopped.                           */
   SIO_READY = 2,                    /**< Ready.                             */
-  SIO_ACTIVE = 3                    /**< Operation ongoing.                 */
 } siostate_t;
 
 #include "hal_sio_lld.h"
@@ -271,9 +265,10 @@ struct hal_sio_driver {
    */
   sioflags_t                enabled;
   /**
-   * @brief   Current configuration data.
+   * @brief   Events callback.
+   * @note    Can be @p NULL.
    */
-  const SIOOperation        *operation;
+  siocb_t                   cb;
   /**
    * @brief   User argument to the operation.
    * @note    Can be retrieved through the @p siop argument of the callback.
@@ -304,23 +299,17 @@ struct hal_sio_driver {
   sio_lld_driver_fields;
 };
 
-/**
- * @brief   Structure representing a SIO operation.
- */
-struct hal_sio_operation {
-  /**
-   * @brief   Events callback.
-   * @note    Can be @p NULL.
-   */
-  siocb_t                   cb;
-#if defined(SIO_OPERATION_EXT_FIELS)
-  SIO_OPERATION_EXT_FIELS
-#endif
-};
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Associates a callback to te SIO instance.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] f         callback to be associated
+ */
+#define sioSetCallbackX(siop, f) (siop)->cb = (f)
 
 /**
  * @brief   Determines the state of the RX FIFO.
@@ -384,10 +373,10 @@ struct hal_sio_operation {
 #define sioIsTXOngoingX(siop) sio_lld_is_tx_ongoing(siop)
 
 /**
- * @brief   Writes the condition flags mask.
+ * @brief   Writes the enabled events mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     flags mask to be written
+ * @param[in] flags     enabled events mask to be written
  *
  * @iclass
  */
@@ -397,10 +386,10 @@ struct hal_sio_operation {
 } while (false)
 
 /**
- * @brief   Enables flags to the condition flags mask.
+ * @brief   Sets flags into the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     flags mask to be enabled
+ * @param[in] flags     enabled events mask to be set
  *
  * @iclass
  */
@@ -410,10 +399,10 @@ struct hal_sio_operation {
 } while (false)
 
 /**
- * @brief   Disables flags from the condition flags mask.
+ * @brief   Clears flags from the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     flags mask to be disabled
+ * @param[in] flags     enabled events mask to be cleared
  *
  * @iclass
  */
@@ -533,8 +522,8 @@ struct hal_sio_operation {
  * @notapi
  */
 #define __sio_callback(siop) do {                                           \
-  if ((siop)->operation->cb != NULL) {                                      \
-    (siop)->operation->cb(siop);                                            \
+  if ((siop)->cb != NULL) {                                                 \
+    (siop)->cb(siop);                                                       \
   }                                                                         \
 } while (false)
 
@@ -634,10 +623,6 @@ extern "C" {
   void sioObjectInit(SIODriver *siop);
   msg_t sioStart(SIODriver *siop, const SIOConfig *config);
   void sioStop(SIODriver *siop);
-  void sioStartOperationI(SIODriver *siop, const SIOOperation *operation);
-  void sioStartOperation(SIODriver *siop, const SIOOperation *operation);
-  void sioStopOperationI(SIODriver *siop);
-  void sioStopOperation(SIODriver *siop);
   void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags);
   void sioSetEnableFlags(SIODriver *siop, sioflags_t flags);
   void sioClearEnableFlags(SIODriver *siop, sioflags_t flags);

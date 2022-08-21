@@ -74,6 +74,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a "BufferedSIODriver" class that implements the behavior of the
+       legacy Serial driver on top of a SIO implementation (buffering, events
+       and all).
 - NEW: Added __CH_OWNEROF() macro to RT.
 - NEW; Now hal.h includes cc_portab.h by default making it mandatory.
 - NEW: Moved HAL serial error flags into asynchronous channels interface

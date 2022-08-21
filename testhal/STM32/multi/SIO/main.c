@@ -20,6 +20,73 @@
 
 #include "portab.h"
 
+#include "chprintf.h"
+#include "shell.h"
+
+static BufferedSIODriver bsio1;
+static uint8_t rxbuf[32];
+static uint8_t txbuf[32];
+
+/*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
+static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
+  static uint8_t buf[] =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: write\r\n");
+    return;
+  }
+
+  while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
+#if 1
+    /* Writing in channel mode.*/
+    chnWrite(&bsio1, buf, sizeof buf - 1);
+#else
+    /* Writing in buffer mode.*/
+    (void) obqGetEmptyBufferTimeout(&PORTAB_SDU1.obqueue, TIME_INFINITE);
+    memcpy(PORTAB_SDU1.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
+    obqPostFullBuffer(&PORTAB_SDU1.obqueue, SERIAL_USB_BUFFERS_SIZE);
+#endif
+  }
+  chprintf(chp, "\r\n\nstopped\r\n");
+}
+
+static const ShellCommand commands[] = {
+  {"write", cmd_write},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&bsio1,
+  commands
+};
+
+/*===========================================================================*/
+/* Generic code.                                                             */
+/*===========================================================================*/
+
 /*
  * RX consumer thread, times are in milliseconds.
  */
@@ -36,13 +103,19 @@ static THD_FUNCTION(Thread1, arg) {
     uint8_t buf[16];
 
     n = chnRead(&PORTAB_SIO2, buf, 16);
-    if (n > 0) {
-      chnWrite(&PORTAB_SIO1, buf, n);
+    if (n == 0U) {
+      break;
+    }
+    n = chnWrite(&PORTAB_SIO1, buf, n);
+    if (n == 0) {
+      break;
     }
     errors = sioGetAndClearErrors(&PORTAB_SIO2);
     (void) errors;
 
-    sioSynchronizeRXIdle(&PORTAB_SIO2, TIME_INFINITE);
+    if (sioSynchronizeRXIdle(&PORTAB_SIO2, TIME_INFINITE) < MSG_OK) {
+      break;
+    }
   }
 }
 
@@ -50,6 +123,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  thread_t *tp;
 
   /*
    * System initializations.
@@ -70,14 +144,13 @@ int main(void) {
    * Activates the SIO drivers using the default configuration.
    */
   sioStart(&PORTAB_SIO1, NULL);
-  sioStartOperation(&PORTAB_SIO1, NULL);
   sioStart(&PORTAB_SIO2, NULL);
-  sioStartOperation(&PORTAB_SIO2, NULL);
 
   /*
    * Creates the RX consumer thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  tp = chThdCreateStatic(waThread1, sizeof(waThread1),
+                         NORMALPRIO + 1, Thread1, NULL);
 
   /*
    * Short TX writes.
@@ -88,7 +161,7 @@ int main(void) {
     for (c = 'A'; c <= 'Z'; c++) {
       chnWrite(&PORTAB_SIO2, (const uint8_t *)&c, 1);
       sioSynchronizeTXEnd(&PORTAB_SIO2, TIME_INFINITE);
-      chThdSleepMilliseconds(100);
+      chThdSleepMilliseconds(10);
     }
   } while (palReadLine(PORTAB_LINE_BUTTON) != PORTAB_BUTTON_PRESSED);
 
@@ -112,10 +185,29 @@ int main(void) {
   }
 
   /*
-   * Normal main() thread activity, in this demo it does nothing.
+   * Stopping SIOs.
+   */
+  sioStop(&PORTAB_SIO1);
+  sioStop(&PORTAB_SIO2);
+  chThdWait(tp);
+
+  /*
+   * Starting a buffered SIO, it must behave exactly as a serial driver.
+   */
+  bsioObjectInit(&bsio1, &PORTAB_SIO1,
+                 rxbuf, sizeof rxbuf,
+                 txbuf, sizeof txbuf);
+  bsioStart(&bsio1, NULL);
+
+  /*
+   * Normal main() thread activity, spawning shells.
    */
   while (true) {
-    chThdSleepMilliseconds(500);
+    tp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                             "shell", NORMALPRIO + 1,
+                             shellThread, (void *)&shell_cfg1);
+    chThdWait(tp);               /* Waiting termination.             */
+    chThdSleepMilliseconds(1000);
   }
   return 0;
 }

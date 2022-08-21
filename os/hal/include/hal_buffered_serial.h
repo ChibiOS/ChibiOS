@@ -161,7 +161,7 @@ static inline void __buffered_serial_objinit_impl(void *ip, const void *vmt,
                                                   qnotify_t onotify, void *oarg) {
   BufferedSerial *bsp = (BufferedSerial *)ip;
 
-  bsp->vmt = (const struct BufferedSerialVMT *)&vmt;  /* TODO use new obj model.*/
+  bsp->vmt = (const struct BufferedSerialVMT *)vmt;  /* TODO use new obj model.*/
   osalEventObjectInit(&bsp->event);  /* TODO super class should do this.*/
   bsp->state = BS_STOP;
   iqObjectInit(&bsp->iqueue, ib, ibsize, inotify, iarg);

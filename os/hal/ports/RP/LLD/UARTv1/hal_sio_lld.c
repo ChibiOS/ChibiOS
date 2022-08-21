@@ -126,6 +126,11 @@ __STATIC_INLINE void uart_init(SIODriver *siop) {
   /* Registers settings, the LCR_H write also latches dividers values.*/
   siop->uart->UARTLCR_H = siop->config->UARTLCR_H & ~UART_LCRH_CFG_FORBIDDEN;
   siop->uart->UARTCR    = siop->config->UARTCR    & ~UART_CR_CFG_FORBIDDEN;
+
+  /* Setting up the operation.*/
+  siop->uart->UARTICR   = siop->uart->UARTRIS;
+  siop->uart->UARTCR    = siop->config->UARTCR |
+                          UART_UARTCR_RXE | UART_UARTCR_TXE | UART_UARTCR_UARTEN;
 }
 
 /*===========================================================================*/
@@ -238,35 +243,6 @@ void sio_lld_stop(SIODriver *siop) {
       osalDbgAssert(false, "invalid SIO instance");
     }
   }
-}
-
-/**
- * @brief   Starts a SIO operation.
- *
- * @param[in] siop          pointer to an @p SIODriver structure
- *
- * @api
- */
-void sio_lld_start_operation(SIODriver *siop) {
-
-  /* Setting up the operation.*/
-  siop->uart->UARTICR   = siop->uart->UARTRIS;
-  siop->uart->UARTCR    = siop->config->UARTCR |
-                          UART_UARTCR_RXE | UART_UARTCR_TXE | UART_UARTCR_UARTEN;
-}
-
-/**
- * @brief   Stops an ongoing SIO operation, if any.
- *
- * @param[in] siop      pointer to an @p SIODriver structure
- *
- * @api
- */
-void sio_lld_stop_operation(SIODriver *siop) {
-
-  /* Stop operation.*/
-  siop->uart->UARTIMSC = 0U;
-  siop->uart->UARTCR   = siop->config->UARTCR & ~UART_CR_CFG_FORBIDDEN;
 }
 
 /**
@@ -513,7 +489,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   UART_TypeDef *u = siop->uart;
   uint32_t mis, imsc;
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /* Note, ISR flags are just read but not cleared, ISR sources are
      disabled instead.*/
@@ -589,10 +565,9 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
     /* The callback is invoked.*/
     __sio_callback(siop);
-
   }
   else {
-    osalDbgAssert(false, "spurious interrupt");
+//    osalDbgAssert(false, "spurious interrupt");
   }
 }
 

@@ -214,6 +214,10 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   u->CR1   = siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN;
   u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
   u->CR3   = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
+
+  /* Starting operations.*/
+  u->ICR   = u->ISR;
+  u->CR1  |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 }
 
 /*===========================================================================*/
@@ -448,35 +452,6 @@ void sio_lld_stop(SIODriver *siop) {
 }
 
 /**
- * @brief   Starts a SIO operation.
- *
- * @param[in] siop          pointer to an @p SIODriver structure
- *
- * @api
- */
-void sio_lld_start_operation(SIODriver *siop) {
-
-  /* Setting up the operation.*/
-  siop->usart->ICR  = siop->usart->ISR;
-  siop->usart->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
-}
-
-/**
- * @brief   Stops an ongoing SIO operation, if any.
- *
- * @param[in] siop      pointer to an @p SIODriver structure
- *
- * @api
- */
-void sio_lld_stop_operation(SIODriver *siop) {
-
-  /* Stop operation.*/
-  siop->usart->CR1 &= ~USART_CR1_CFG_FORBIDDEN;
-  siop->usart->CR2 &= ~USART_CR2_CFG_FORBIDDEN;
-  siop->usart->CR3 &= ~USART_CR3_CFG_FORBIDDEN;
-}
-
-/**
  * @brief   Enable flags change notification.
  *
  * @param[in] siop      pointer to the @p SIODriver object
@@ -559,7 +534,7 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
                             USART_ISR_RXNE        |
                             USART_ISR_IDLE        |
                             USART_ISR_TXE         |
-							USART_ISR_TC);
+                            USART_ISR_TC);
 
   /* Clearing captured events.*/
   siop->usart->ICR = isr;
@@ -736,7 +711,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   uint32_t isr, isrmask;
   uint32_t cr1, cr2, cr3;
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /* Read on control registers.*/
   cr1 = u->CR1;
@@ -758,7 +733,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
   /* Note, ISR flags are just read but not cleared, ISR sources are
      disabled instead.*/
-  isr = u->ISR & isrmask;
+  isr = u->ISR;
+  isr = isr & isrmask;
   if (isr != 0U) {
 
     /* Error events handled as a group, except ORE.*/
@@ -768,7 +744,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX error event is
          detected.*/
-      u->ICR = USART_ISR_IDLE;
+      u->ICR = USART_ICR_IDLECF;
 #endif
 
       /* Interrupt sources disabled.*/
@@ -796,7 +772,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX data event is
          detected.*/
-      u->ICR = USART_ISR_IDLE;
+      u->ICR = USART_ICR_IDLECF;
 #endif
 
       /* Interrupt source disabled.*/
@@ -835,7 +811,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     __sio_callback(siop);
   }
   else {
-    osalDbgAssert(false, "spurious interrupt");
+//    osalDbgAssert(false, "spurious interrupt");
   }
 }
 

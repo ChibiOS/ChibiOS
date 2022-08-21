@@ -38,10 +38,6 @@
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-static const SIOOperation default_operation = {
-  .cb       = NULL
-};
-
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -59,6 +55,9 @@ static size_t sync_write(void *ip, const uint8_t *bp, size_t n,
 
     msg = sioSynchronizeTX(siop, timeout);
     if (msg != MSG_OK) {
+      if (msg != MSG_TIMEOUT) {
+        i = 0U;
+      }
       break;
     }
 
@@ -81,6 +80,9 @@ static size_t sync_read(void *ip, uint8_t *bp, size_t n,
 
     msg = sioSynchronizeRX(siop, timeout);
     if (msg != MSG_OK) {
+      if (msg != MSG_TIMEOUT) {
+        i = 0U;
+      }
       break;
     }
 
@@ -225,6 +227,7 @@ void sioObjectInit(SIODriver *siop) {
   siop->state       = SIO_STOP;
   siop->config      = NULL;
   siop->enabled     = (sioflags_t)0;
+  siop->cb          = NULL;
   siop->arg         = NULL;
 #if SIO_USE_SYNCHRONIZATION == TRUE
   siop->sync_rx     = NULL;
@@ -268,6 +271,14 @@ msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
     siop->state = SIO_STOP;
   }
 
+#if SIO_USE_SYNCHRONIZATION == TRUE
+  /* If synchronization is enabled then all events by default.*/
+  sioWriteEnableFlagsI(siop, SIO_FL_ALL);
+#else
+  /* If synchronization is disabled then no events by default.*/
+  sioWriteEnableFlagsI(siop, SIO_FL_NONE);
+#endif
+
   osalSysUnlock();
 
   return msg;
@@ -290,119 +301,28 @@ void sioStop(SIODriver *siop) {
                 "invalid state");
 
   sio_lld_stop(siop);
-  siop->config  = NULL;
   siop->state   = SIO_STOP;
+  siop->config  = NULL;
+  siop->cb      = NULL;
+  siop->arg     = NULL;
 
-  osalSysUnlock();
-}
-
-/**
- * @brief   Starts a SIO operation.
- *
- * @param[in] siop          pointer to an @p SIODriver structure
- * @param[in] operation     pointer to an @p SIOOperation structure, can
- *                          be @p NULL if callbacks are not required
- *                          encoding the operation to be performed
- *
- * @iclass
- */
-void sioStartOperationI(SIODriver *siop, const SIOOperation *operation) {
-
-  osalDbgCheck(siop != NULL);
-  osalDbgCheckClassI();
-
-  osalDbgAssert((siop->state == SIO_READY) ||
-                (siop->state == SIO_ACTIVE), "invalid state");
-
-  /* The application can pass NULL if it is not interested in callbacks,
-     attaching a default operation structure.*/
-  if (operation != NULL) {
-    siop->operation = operation;
-  }
-  else {
-    siop->operation = &default_operation;
-  }
-
-  if (siop->state == SIO_READY) {
-    sio_lld_start_operation(siop);
-    siop->state = SIO_ACTIVE;
-
-#if SIO_USE_SYNCHRONIZATION == TRUE
-    /* If synchronization is enabled then all events.*/
-    sioWriteEnableFlagsI(siop, SIO_FL_ALL);
-#endif
-  }
-}
-
-/**
- * @brief   Starts a SIO operation.
- *
- * @param[in] siop          pointer to an @p SIODriver structure
- * @param[in] operation     pointer to an @p SIOOperation structure, can
- *                          be @p NULL if callbacks are not required
- *                          encoding the operation to be performed
- *
- * @api
- */
-void sioStartOperation(SIODriver *siop, const SIOOperation *operation) {
-
-  osalSysLock();
-  sioStartOperationI(siop, operation);
-  osalSysUnlock();
-}
-
-/**
- * @brief   Stops an ongoing SIO operation, if any.
- *
- * @param[in] siop      pointer to an @p SIODriver structure
- *
- * @iclass
- */
-void sioStopOperationI(SIODriver *siop) {
-
-  osalDbgCheck(siop != NULL);
-  osalDbgCheckClassI();
-
-  osalDbgAssert((siop->state == SIO_READY) ||
-                (siop->state == SIO_ACTIVE), "invalid state");
-
-  if (siop->state == SIO_ACTIVE) {
 #if SIO_USE_SYNCHRONIZATION == TRUE
     /* Informing waiting threads, if any.*/
     osalThreadResumeI(&siop->sync_rx, MSG_RESET);
     osalThreadResumeI(&siop->sync_rxidle, MSG_RESET);
     osalThreadResumeI(&siop->sync_tx, MSG_RESET);
     osalThreadResumeI(&siop->sync_txend, MSG_RESET);
+    osalOsRescheduleS();
 #endif
 
-    sio_lld_stop_operation(siop);
-
-    siop->operation = NULL;
-    siop->state     = SIO_READY;
-  }
-}
-
-/**
- * @brief   Stops an ongoing SIO operation, if any.
- *
- * @param[in] siop      pointer to an @p SIODriver structure
- *
- * @api
- */
-void sioStopOperation(SIODriver *siop) {
-
-  osalDbgCheck(siop != NULL);
-
-  osalSysLock();
-  sioStopOperationI(siop);
   osalSysUnlock();
 }
 
 /**
- * @brief   Writes the condition flags mask.
+ * @brief   Writes the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     flags mask to be written
+ * @param[in] flags     enabled events mask to be written
  *
  * @api
  */
@@ -412,7 +332,7 @@ void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   sioWriteEnableFlagsI(siop, flags);
 
@@ -420,10 +340,10 @@ void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags) {
 }
 
 /**
- * @brief   Enables flags to the condition flags mask.
+ * @brief   Sets flags into the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     flags mask to be enabled
+ * @param[in] flags     enabled events mask to be set
  *
  * @api
  */
@@ -433,7 +353,7 @@ void sioSetEnableFlags(SIODriver *siop, sioflags_t flags) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   sioSetEnableFlagsI(siop, flags);
 
@@ -441,10 +361,10 @@ void sioSetEnableFlags(SIODriver *siop, sioflags_t flags) {
 }
 
 /**
- * @brief   Disables flags from the condition flags mask.
+ * @brief   Clears flags from the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     flags mask to be disabled
+ * @param[in] flags     enabled events mask to be cleared
  *
  * @api
  */
@@ -454,7 +374,7 @@ void sioClearEnableFlags(SIODriver *siop, sioflags_t flags) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   sioClearEnableFlagsI(siop, flags);
 
@@ -476,7 +396,7 @@ sioevents_t sioGetAndClearErrors(SIODriver *siop) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   errors = sioGetAndClearErrorsI(siop);
 
@@ -500,7 +420,7 @@ sioevents_t sioGetAndClearEvents(SIODriver *siop) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   events = sioGetAndClearEventsI(siop);
 
@@ -529,7 +449,7 @@ size_t sioAsyncRead(SIODriver *siop, uint8_t *buffer, size_t n) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   n = sioAsyncReadI(siop, buffer, n);
 
@@ -558,7 +478,7 @@ size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   n = sioAsyncWriteI(siop, buffer, n);
 
@@ -591,7 +511,7 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /* Checking for errors before going to sleep.*/
   if (((siop->enabled & SIO_FL_ALL_ERRORS) != 0U) && sioHasRXErrorsX(siop)) {
@@ -636,7 +556,7 @@ msg_t sioSynchronizeRXIdle(SIODriver *siop, sysinterval_t timeout) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /* Checking for errors before going to sleep.*/
   if (((siop->enabled & SIO_FL_ALL_ERRORS) != 0U) && sioHasRXErrorsX(siop)) {
@@ -683,7 +603,7 @@ msg_t sioSynchronizeTX(SIODriver *siop, sysinterval_t timeout) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   msg = MSG_OK;
   /*lint -save -e506 -e681 [2.1] Silencing this error because it is
@@ -721,7 +641,7 @@ msg_t sioSynchronizeTXEnd(SIODriver *siop, sysinterval_t timeout) {
 
   osalSysLock();
 
-  osalDbgAssert(siop->state == SIO_ACTIVE, "invalid state");
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /*lint -save -e506 -e774 [2.1, 14.3] Silencing this error because
     it is tested with a template implementation of sio_lld_is_tx_ongoing()
