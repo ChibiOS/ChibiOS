@@ -78,7 +78,7 @@ typedef struct vio_uart_config {
  */
 typedef struct vio_uart_configs {
   uint32_t          n;
-  vio_uart_config_t   cfgs[];
+  vio_uart_config_t cfgs[];
 } vio_uart_configs_t;
 
 /*===========================================================================*/

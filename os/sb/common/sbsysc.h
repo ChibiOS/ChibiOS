@@ -49,7 +49,8 @@
 #define SB_SYSC_EVENT_WAIT_ALL  10
 #define SB_SYSC_EVENT_BROADCAST 11
 #define SB_SYSC_LOADELF         12
-#define SB_SYSC_VHAL_PAL        200
+#define SB_SYSC_VHAL_VGPIO      200
+#define SB_SYSC_VHAL_VUART      201
 #define SB_SYSC_VRQ_SET_ALARM   245
 #define SB_SYSC_VRQ_RESET_ALARM 246
 #define SB_SYSC_VRQ_WAIT        247
@@ -104,8 +105,14 @@
  */
 #define SB_VUART_INIT           0
 #define SB_VUART_DEINIT         1
-#define SB_VUART_WRITE          2
-#define SB_VUART_READ           3
+#define SB_VUART_READ           2
+#define SB_VUART_WRITE          3
+#define SB_VUART_GET            4
+#define SB_VUART_PUT            5
+#define SB_VUART_WREN           6
+#define SB_VUART_GCERR          7
+#define SB_VUART_GCEVT          8
+#define SB_VUART_CTL            9
 /** @} */
 
 /*===========================================================================*/

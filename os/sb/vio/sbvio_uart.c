@@ -61,8 +61,9 @@ static void vuart_cb(SIODriver *siop) {
 void sb_api_vio_uart(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   ectxp->r0 = (uint32_t)CH_RET_INNER_ERROR;
-  uint32_t sub = (unsigned)ectxp->r0;
-  uint32_t unit = (unsigned)ectxp->r1;
+  ectxp->r1 = (uint32_t)0;
+  uint32_t sub = ectxp->r0;
+  uint32_t unit = ectxp->r1;
   const vio_uart_unit_t *unitp;
 
   if (unit >= sbp->config->vioconf->uarts->n) {
@@ -75,7 +76,7 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
   switch (sub) {
   case SB_VUART_INIT:
     {
-      uint32_t conf = sbp->config->vioconf->uartconfs->n;
+      uint32_t conf = ectxp->r2;
       const vio_uart_config_t *confp;
       msg_t msg;
 
@@ -101,8 +102,108 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
       break;
     }
+  case SB_VUART_READ:
+    {
+      uint8_t *buffer = (uint8_t *)ectxp->r2;
+      size_t n = (size_t)ectxp->r3;
+
+      if (unitp->siop->state != SIO_READY) {
+        ectxp->r0 = (uint32_t)CH_RET_EIO;
+        break;
+      }
+
+      if (!sb_is_valid_write_range(sbp, buffer, n)) {
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+        break;
+      }
+
+      ectxp->r1 = sioAsyncRead(unitp->siop, buffer, n);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_WRITE:
+    {
+      const uint8_t *buffer = (const uint8_t *)ectxp->r2;
+      size_t n = (size_t)ectxp->r3;
+
+      if (unitp->siop->state != SIO_READY) {
+        ectxp->r0 = (uint32_t)CH_RET_EIO;
+        break;
+      }
+
+      if (!sb_is_valid_read_range(sbp, buffer, n)) {
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+        break;
+      }
+
+      ectxp->r1 = sioAsyncWrite(unitp->siop, buffer, n);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_GET:
+    {
+      if (unitp->siop->state != SIO_READY) {
+        ectxp->r0 = (uint32_t)CH_RET_EIO;
+        break;
+      }
+
+      ectxp->r1 = sioGetX(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_PUT:
+    {
+      uint_fast16_t data = (uint_fast16_t)ectxp->r2;
+
+      if (unitp->siop->state != SIO_READY) {
+        ectxp->r0 = (uint32_t)CH_RET_EIO;
+        break;
+      }
+
+      sioPutX(unitp->siop, data);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_WREN:
+    {
+      sioflags_t flags = (sioflags_t)ectxp->r2;
+
+      if (unitp->siop->state != SIO_READY) {
+        ectxp->r0 = (uint32_t)CH_RET_EIO;
+        break;
+      }
+
+      sioWriteEnableFlags(unitp->siop, flags);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_GCERR:
+    {
+      if (unitp->siop->state != SIO_READY) {
+        ectxp->r0 = (uint32_t)CH_RET_EIO;
+        break;
+      }
+
+      ectxp->r1 = (uint32_t)sioGetAndClearErrors(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_GCEVT:
+    {
+      if (unitp->siop->state != SIO_READY) {
+        ectxp->r0 = (uint32_t)CH_RET_EIO;
+        break;
+      }
+
+      ectxp->r1 = (uint32_t)sioGetAndClearEvents(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_CTL:
+    /* falls through */
   default:
-    return;
+    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+    break;
   }
 }
 

@@ -85,6 +85,7 @@ static inline uint32_t __sio_vuart_deinit(uint32_t nvuart) {
 #if !defined(SB_VUART1_SUPPRESS_ISR)
 OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART1_IRQ)) {
 
+  sio_lld_serve_interrupt(&SIOD1);
 }
 #endif
 #endif
@@ -93,6 +94,7 @@ OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART1_IRQ)) {
 #if !defined(SB_VUART2_SUPPRESS_ISR)
 OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART2_IRQ)) {
 
+  sio_lld_serve_interrupt(&SIOD2);
 }
 #endif
 #endif
@@ -171,6 +173,7 @@ msg_t sio_lld_start(SIODriver *siop) {
  * @notapi
  */
 void sio_lld_stop(SIODriver *siop) {
+  msg_t msg = HAL_RET_SUCCESS;
 
   if (siop->state == SIO_READY) {
     /* Disables the peripheral.*/
@@ -178,18 +181,20 @@ void sio_lld_stop(SIODriver *siop) {
     }
 #if SB_SIO_USE_VUART1 == TRUE
     else if (&SIOD1 == siop) {
-      (void) __sio_vuart_deinit(siop->nvuart);
+      msg = __sio_vuart_deinit(siop->nvuart);
     }
 #endif
 #if SB_SIO_USE_VUART2 == TRUE
     else if (&SIOD2 == siop) {
-      (void) __sio_vuart_deinit(siop->nvuart);
+      msg = __sio_vuart_deinit(siop->nvuart);
     }
 #endif
     else {
       osalDbgAssert(false, "invalid SIO instance");
     }
   }
+
+  osalDbgAssert(msg = HAL_RET_SUCCESS, "unexpected failure");
 }
 
 /**
@@ -199,8 +204,9 @@ void sio_lld_stop(SIODriver *siop) {
  */
 void sio_lld_update_enable_flags(SIODriver *siop) {
 
-  (void)siop;
- }
+  __syscall3r(201, SB_VUART_WREN, siop->nvuart, siop->enabled);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+}
 
 /**
  * @brief   Get and clears SIO error event flags.
@@ -211,11 +217,11 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
  * @notapi
  */
 sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
-  sioevents_t errors = (sioevents_t)0;
 
-  (void)siop;
+  __syscall2r(201, SB_VUART_GCERR, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  return errors;
+  return (sioevents_t)r1;
 }
 
 /**
@@ -227,11 +233,11 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
  * @notapi
  */
 sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
-  sioevents_t events = (sioevents_t)0;
 
-  (void)siop;
+  __syscall2r(201, SB_VUART_GCEVT, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  return events;
+  return (sioevents_t)r1;
 }
 
 /**
@@ -246,13 +252,11 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
  * @retval 0                if the TX FIFO is full.
  */
 size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
-//  size_t rd;
 
-  (void)siop;
-  (void)buffer;
-  (void)n;
+  __syscall4rr(201, SB_VUART_READ, siop->nvuart, buffer, n);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  return 0;//rd;
+  return (size_t)r1;
 }
 
 /**
@@ -267,13 +271,11 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
  * @retval 0                if the TX FIFO is full.
  */
 size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
-//  size_t wr;
 
-  (void)siop;
-  (void)buffer;
-  (void)n;
+  __syscall4rr(201, SB_VUART_WRITE, siop->nvuart, buffer, n);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  return 0;//wr;
+  return (size_t)r1;
 }
 
 /**
@@ -286,11 +288,11 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
  * @notapi
  */
 msg_t sio_lld_get(SIODriver *siop) {
-//  msg_t msg;
 
-  (void)siop;
+  __syscall2rr(201, SB_VUART_GET, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  return 0;//msg;
+  return (size_t)r1;
 }
 
 /**
@@ -304,8 +306,8 @@ msg_t sio_lld_get(SIODriver *siop) {
  */
 void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
 
-  (void)siop;
-  (void)data;
+  __syscall3r(201, SB_VUART_PUT, siop->nvuart, data);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 }
 
 /**
@@ -324,11 +326,10 @@ void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
  */
 msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
 
-  (void)siop;
-  (void)operation;
-  (void)arg;
+  __syscall4rr(201, SB_VUART_CTL, siop->nvuart, operation, arg);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  return MSG_OK;
+  return (size_t)r1;
 }
 
 /**
@@ -340,7 +341,9 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
 
-  (void)siop;
+  /* The callback is simply invoked. Letting the driver on the host side
+     decide how to manipulate IRQ sources.*/
+  __sio_callback(siop);
 }
 
 #endif /* HAL_USE_SIO == TRUE */
