@@ -361,13 +361,6 @@ msg_t sio_lld_start(SIODriver *siop) {
     else {
       osalDbgAssert(false, "invalid SIO instance");
     }
-
-    /* Driver object low level initializations.*/
-#if SIO_USE_SYNCHRONIZATION
-    siop->sync_rx      = NULL;
-    siop->sync_tx      = NULL;
-    siop->sync_txend   = NULL;
-#endif
   }
 
   /* Configures the peripheral.*/

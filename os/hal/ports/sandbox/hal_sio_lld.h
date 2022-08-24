@@ -93,11 +93,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a SIO events mask.
- */
-typedef uint32_t sio_events_mask_t;
-
-/**
  * @brief   Low level fields of the SIO driver structure.
  */
 #define sio_lld_driver_fields                                               \
@@ -121,11 +116,11 @@ typedef uint32_t sio_events_mask_t;
  *
  * @notapi
  */
-#define sio_lld_is_rx_empty(siop) true
+#define sio_lld_is_rx_empty(siop) false
 
 /**
  * @brief   Determines the activity state of the receiver.
- *(bool)(((siop)->uart->UARTFR & UART_UARTFR_RXFE) != 0U)
+ *
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The RX activity state.
  * @retval false        if RX is in active state.
@@ -133,7 +128,7 @@ typedef uint32_t sio_events_mask_t;
  *
  * @notapi
  */
-#define sio_lld_is_rx_idle(siop) true
+#define sio_lld_is_rx_idle(siop) false
 
 /**
  * @brief   Determines if RX has pending error events to be read and cleared.
@@ -159,7 +154,7 @@ typedef uint32_t sio_events_mask_t;
  *
  * @notapi
  */
-#define sio_lld_is_tx_full(siop) true
+#define sio_lld_is_tx_full(siop) false
 
 /**
  * @brief   Determines the transmission state.
@@ -171,7 +166,7 @@ typedef uint32_t sio_events_mask_t;
  *
  * @notapi
  */
-#define sio_lld_is_tx_ongoing(siop) true
+#define sio_lld_is_tx_ongoing(siop) false
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -191,8 +186,6 @@ extern "C" {
   void sio_lld_init(void);
   msg_t  sio_lld_start(SIODriver *siop);
   void sio_lld_stop(SIODriver *siop);
-  void sio_lld_start_operation(SIODriver *siop);
-  void sio_lld_stop_operation(SIODriver *siop);
   void sio_lld_update_enable_flags(SIODriver *siop);
   sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop);
   sioevents_t sio_lld_get_and_clear_events(SIODriver *siop);

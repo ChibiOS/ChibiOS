@@ -63,6 +63,20 @@ static const SIOConfig default_config = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+__attribute__((always_inline))
+static inline uint32_t __sio_vuart_init(uint32_t nvuart, uint32_t ncfg) {
+
+  __syscall3r(201, SB_VUART_INIT, nvuart, ncfg);
+  return (uint32_t)r0;
+}
+
+__attribute__((always_inline))
+static inline uint32_t __sio_vuart_deinit(uint32_t nvuart) {
+
+  __syscall2r(201, SB_VUART_INIT, nvuart);
+  return (uint32_t)r0;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -116,6 +130,7 @@ void sio_lld_init(void) {
  * @notapi
  */
 msg_t sio_lld_start(SIODriver *siop) {
+  msg_t msg = HAL_RET_SUCCESS;
 
   /* Using the default configuration if the application passed a
      NULL pointer.*/
@@ -125,30 +140,27 @@ msg_t sio_lld_start(SIODriver *siop) {
 
   if (siop->state == SIO_STOP) {
 
-  /* Enables the peripheral.*/
+    /* Enables the peripheral.*/
     if (false) {
     }
 #if SB_SIO_USE_VUART1 == TRUE
     else if (&SIOD1 == siop) {
+      msg = (msg_t)__sio_vuart_init(siop->nvuart, siop->config->ncfg);
     }
 #endif
 #if SB_SIO_USE_VUART2 == TRUE
     else if (&SIOD2 == siop) {
+      msg = (msg_t)__sio_vuart_init(siop->nvuart, siop->config->ncfg);
     }
 #endif
     else {
       osalDbgAssert(false, "invalid SIO instance");
     }
-
-    /* Driver object low level initializations.*/
-#if SIO_USE_SYNCHRONIZATION
-    siop->sync_rx      = NULL;
-    siop->sync_tx      = NULL;
-    siop->sync_txend   = NULL;
-#endif
   }
 
-  return HAL_RET_SUCCESS;
+  /* Configures the peripheral.*/
+
+  return msg;
 }
 
 /**
@@ -161,47 +173,23 @@ msg_t sio_lld_start(SIODriver *siop) {
 void sio_lld_stop(SIODriver *siop) {
 
   if (siop->state == SIO_READY) {
-    /* Resets the peripheral.*/
-
     /* Disables the peripheral.*/
     if (false) {
     }
 #if SB_SIO_USE_VUART1 == TRUE
     else if (&SIOD1 == siop) {
+      (void) __sio_vuart_deinit(siop->nvuart);
     }
 #endif
 #if SB_SIO_USE_VUART2 == TRUE
     else if (&SIOD2 == siop) {
+      (void) __sio_vuart_deinit(siop->nvuart);
     }
 #endif
     else {
       osalDbgAssert(false, "invalid SIO instance");
     }
   }
-}
-
-/**
- * @brief   Starts a SIO operation.
- *
- * @param[in] siop          pointer to an @p SIODriver structure
- *
- * @api
- */
-void sio_lld_start_operation(SIODriver *siop) {
-
-  (void)siop;
-}
-
-/**
- * @brief   Stops an ongoing SIO operation, if any.
- *
- * @param[in] siop      pointer to an @p SIODriver structure
- *
- * @api
- */
-void sio_lld_stop_operation(SIODriver *siop) {
-
-  (void)siop;
 }
 
 /**
@@ -212,7 +200,7 @@ void sio_lld_stop_operation(SIODriver *siop) {
 void sio_lld_update_enable_flags(SIODriver *siop) {
 
   (void)siop;
-}
+ }
 
 /**
  * @brief   Get and clears SIO error event flags.
@@ -344,7 +332,7 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
 }
 
 /**
- * @brief   Serves an USART interrupt.
+ * @brief   Serves an VUART interrupt.
  *
  * @param[in] siop      pointer to the @p SIODriver object
  *
