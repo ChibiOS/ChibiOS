@@ -46,6 +46,11 @@ int main(void) {
   halInit();
   chSysInit();
 
+  /*
+   * Activates the Serial or SIO driver using the default configuration.
+   */
+  sioStart(&SIOD1, NULL);
+
   /* Creating a blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
