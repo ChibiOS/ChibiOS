@@ -198,6 +198,78 @@ void sio_lld_stop(SIODriver *siop) {
 }
 
 /**
+ * @brief   Determines the state of the RX FIFO.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX FIFO state.
+ * @retval false        if RX FIFO is not empty
+ * @retval true         if RX FIFO is empty
+ *
+ * @notapi
+ */
+bool sio_lld_is_rx_empty(SIODriver *siop) {
+
+}
+
+/**
+ * @brief   Determines the activity state of the receiver.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX activity state.
+ * @retval false        if RX is in active state.
+ * @retval true         if RX is in idle state.
+ *
+ * @notapi
+ */
+bool sio_lld_is_rx_idle(SIODriver *siop) {
+
+}
+
+/**
+ * @brief   Determines if RX has pending error events to be read and cleared.
+ * @note    Only error and protocol errors are handled, data events are not
+ *          considered.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX error events.
+ * @retval false        if RX has no pending events
+ * @retval true         if RX has pending events
+ *
+ * @notapi
+ */
+bool sio_lld_has_rx_errors(SIODriver *siop) {
+
+}
+
+/**
+ * @brief   Determines the state of the TX FIFO.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The TX FIFO state.
+ * @retval false        if TX FIFO is not full
+ * @retval true         if TX FIFO is full
+ *
+ * @notapi
+ */
+bool sio_lld_is_tx_full(SIODriver *siop) {
+
+}
+
+/**
+ * @brief   Determines the transmission state.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The TX FIFO state.
+ * @retval false        if transmission is idle
+ * @retval true         if transmission is ongoing
+ *
+ * @notapi
+ */
+bool sio_lld_is_tx_ongoing(SIODriver *siop) {
+
+}
+
+/**
  * @brief   Enable flags change notification.
  *
  * @param[in] siop      pointer to the @p SIODriver object

@@ -105,14 +105,19 @@
  */
 #define SB_VUART_INIT           0
 #define SB_VUART_DEINIT         1
-#define SB_VUART_READ           2
-#define SB_VUART_WRITE          3
-#define SB_VUART_GET            4
-#define SB_VUART_PUT            5
-#define SB_VUART_WREN           6
-#define SB_VUART_GCERR          7
-#define SB_VUART_GCEVT          8
-#define SB_VUART_CTL            9
+#define SB_VUART_ISRXE          2
+#define SB_VUART_ISRXI          3
+#define SB_VUART_ISTXF          4
+#define SB_VUART_ISTXO          5
+#define SB_VUART_HASERR         6
+#define SB_VUART_READ           7
+#define SB_VUART_WRITE          8
+#define SB_VUART_GET            9
+#define SB_VUART_PUT            10
+#define SB_VUART_WREN           11
+#define SB_VUART_GCERR          12
+#define SB_VUART_GCEVT          13
+#define SB_VUART_CTL            14
 /** @} */
 
 /*===========================================================================*/

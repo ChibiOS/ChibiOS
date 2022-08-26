@@ -17,6 +17,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#include "chprintf.h"
+
 /*
  * Blinker thread, times are in milliseconds.
  */
@@ -53,6 +55,8 @@ int main(void) {
 
   /* Creating a blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
+
+  chprintf((BaseSequentialStream *)&SIOD1, "Hello World!!\r\n");
 
   /* Just sleeping in a loop.*/
   while (true) {

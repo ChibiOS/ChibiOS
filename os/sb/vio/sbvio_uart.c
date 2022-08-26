@@ -102,6 +102,36 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
       break;
     }
+  case SB_VUART_ISRXE:
+    {
+      ectxp->r1 = (uint32_t)sioIsRXEmptyX(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_ISRXI:
+    {
+      ectxp->r1 = (uint32_t)sioIsRXIdleX(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_ISTXF:
+    {
+      ectxp->r1 = (uint32_t)sioIsTXFullX(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_ISTXO:
+    {
+      ectxp->r1 = (uint32_t)sioIsTXOngoingX(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VUART_HASERR:
+    {
+      ectxp->r1 = (uint32_t)sioHasRXErrorsX(unitp->siop);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
   case SB_VUART_READ:
     {
       uint8_t *buffer = (uint8_t *)ectxp->r2;
