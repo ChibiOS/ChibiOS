@@ -50,8 +50,9 @@
 /*===========================================================================*/
 
 static void vuart_cb(SIODriver *siop) {
+  sb_class_t *sbp = (sb_class_t *)siop->arg;
 
-  (void)siop;
+  sbVRQTriggerFromISR(sbp, 1U << SB_CFG_ALARM_VRQ);
 }
 
 /*===========================================================================*/
@@ -89,6 +90,11 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
 
       msg = sioStart(unitp->siop, confp->siocfgp);
       if (msg == HAL_RET_SUCCESS) {
+        /* Associating this SIO to the sandbox.*/
+        unitp->siop->arg = (sb_class_t *)sbp;
+
+        /* Starting with disabled events, enabling the callback.*/
+        sioWriteEnableFlags(unitp->siop, SIO_FL_NONE);
         sioSetCallbackX(unitp->siop, vuart_cb);
       }
 

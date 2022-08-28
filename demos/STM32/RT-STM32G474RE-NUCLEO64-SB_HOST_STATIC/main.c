@@ -45,7 +45,7 @@ static vio_gpio_units_t gpio_units1 = {
 static vio_uart_units_t uart_units1 = {
   .n        = 1U,
   .units    = {
-    [0]       = {&SIOD2}
+    [0]       = {&LPSIOD1}
   }
 };
 
@@ -95,7 +95,7 @@ static NullStream nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-  {"VSD1", (BaseSequentialStream *)&LPSD1},
+  {"VSD1", (BaseSequentialStream *)&SD1},
   {"null", (BaseSequentialStream *)&nullstream},
   {NULL, NULL}
 };
@@ -214,7 +214,7 @@ int main(void) {
   /*
    * Starting a serial port for I/O, initializing other streams too.
    */
-  sdStart(&LPSD1, NULL);
+  sdStart(&SD1, NULL);
   nullObjectInit(&nullstream);
 
   /*
@@ -303,19 +303,19 @@ int main(void) {
 
     /* Checking for user button, launching test suite if pressed.*/
     if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&LPSD1, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&LPSD1, &oslib_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }
 
     /* Waiting for a sandbox event or timeout.*/
     if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
 
       if (chThdTerminatedX(utp1)) {
-        chprintf((BaseSequentialStream *)&LPSD1, "SB1 terminated\r\n");
+        chprintf((BaseSequentialStream *)&SD1, "SB1 terminated\r\n");
       }
 
       if (chThdTerminatedX(utp2)) {
-        chprintf((BaseSequentialStream *)&LPSD1, "SB2 terminated\r\n");
+        chprintf((BaseSequentialStream *)&SD1, "SB2 terminated\r\n");
       }
     }
 

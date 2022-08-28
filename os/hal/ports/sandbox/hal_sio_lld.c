@@ -209,6 +209,10 @@ void sio_lld_stop(SIODriver *siop) {
  */
 bool sio_lld_is_rx_empty(SIODriver *siop) {
 
+  __syscall2rr(201, SB_VUART_ISRXE, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+
+  return (bool)r1;
 }
 
 /**
@@ -223,6 +227,10 @@ bool sio_lld_is_rx_empty(SIODriver *siop) {
  */
 bool sio_lld_is_rx_idle(SIODriver *siop) {
 
+  __syscall2rr(201, SB_VUART_ISRXI, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+
+  return (bool)r1;
 }
 
 /**
@@ -239,6 +247,10 @@ bool sio_lld_is_rx_idle(SIODriver *siop) {
  */
 bool sio_lld_has_rx_errors(SIODriver *siop) {
 
+  __syscall2rr(201, SB_VUART_HASERR, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+
+  return (bool)r1;
 }
 
 /**
@@ -253,6 +265,10 @@ bool sio_lld_has_rx_errors(SIODriver *siop) {
  */
 bool sio_lld_is_tx_full(SIODriver *siop) {
 
+  __syscall2rr(201, SB_VUART_ISTXF, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+
+  return (bool)r1;
 }
 
 /**
@@ -267,6 +283,10 @@ bool sio_lld_is_tx_full(SIODriver *siop) {
  */
 bool sio_lld_is_tx_ongoing(SIODriver *siop) {
 
+  __syscall2rr(201, SB_VUART_ISTXO, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+
+  return (bool)r1;
 }
 
 /**

@@ -270,7 +270,7 @@ struct hal_sio_driver {
    */
   siocb_t                   cb;
   /**
-   * @brief   User argument to the operation.
+   * @brief   User argument.
    * @note    Can be retrieved through the @p siop argument of the callback.
    */
   void                      *arg;
