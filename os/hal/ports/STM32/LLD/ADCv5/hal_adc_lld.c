@@ -98,7 +98,7 @@ static void adc_lld_stop_adc(ADC_TypeDef *adc) {
 
   /* Disabling the ADC.*/
   adc->CR |= ADC_CR_ADDIS;
-  while ((adc->CR & ADC_CR_ADDIS) != 0U) {
+  while ((adc->CR & ADC_CR_ADEN) != 0U) {
     /* Waiting for ADC to be disabled.*/
   }
 }
@@ -238,26 +238,28 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
-  /* If in ready state then disables the ADC clock and analog part.*/
+  /* If in ready state then disables the ADC peripheral and clock.*/
   if (adcp->state == ADC_READY) {
 
     dmaStreamFreeI(adcp->dmastp);
     adcp->dmastp = NULL;
 
+    /* Disabling the ADC.*/
+    adcp->adc->CR |= ADC_CR_ADDIS;
+    while ((adcp->adc->CR & ADC_CR_ADEN) != 0U) {
+      /* Waiting for ADC to be disabled.*/
+    }
+
     /* Regulator off.*/
 #if defined(ADC_CR_ADVREGEN)
     adcp->adc->CR &= ~ADC_CR_ADVREGEN;
 #endif
-#if STM32_ADC_USE_ADC1
-    if (&ADCD1 == adcp)
-      rccDisableADC1();
-#endif
-  }
 
-  /* Disabling the ADC.*/
-  adcp->adc->CR |= ADC_CR_ADDIS;
-  while ((adcp->adc->CR & ADC_CR_ADDIS) != 0U) {
-    /* Waiting for ADC to be disabled.*/
+#if STM32_ADC_USE_ADC1
+    if (&ADCD1 == adcp) {
+      rccDisableADC1();
+    }
+#endif
   }
 }
 
@@ -269,6 +271,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
+
   uint32_t mode, cfgr1, cfgr2;
   const ADCConversionGroup *grpp = adcp->grpp;
 
@@ -322,7 +325,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* Enable the ADC. Note: Setting ADEN must be deferred as a STM32G071 will
      reset RES[1:0] resolution bits if CFGR1 is modified with ADEN set
-     (see STM32G071xx errata ES0418 Rev 3 2.6.2). Same applies to STM32WLE.*/
+     (see STM32G071xx errata ES0418 Rev 3 2.6.2). Same applies to STM32WL.*/
   adcp->adc->CR  |= ADC_CR_ADEN;
   while ((adcp->adc->ISR & ADC_ISR_ADRDY) == 0U) {
     /* Wait for the ADC to become ready.*/
