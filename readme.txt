@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Source code convention changed from CRLF to just CR (Unix).
 - NEW: Fixed some corned cases in ADC5, added ADC reset on start().
 - NEW: Added a "BufferedSIODriver" class that implements the behavior of the
        legacy Serial driver on top of a SIO implementation (buffering, events
