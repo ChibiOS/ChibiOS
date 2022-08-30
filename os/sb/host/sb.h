@@ -36,10 +36,6 @@
 #include "sbsysc.h"
 #include "sbconf.h"
 
-#if (SB_CFG_ENABLE_VIO == TRUE) || defined (__DOXYGEN__)
-#include "sbvio.h"
-#endif
-
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -172,10 +168,24 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+
+/**
+ * @brief   Type of a sandbox object.
+ */
+typedef struct sb_class sb_class_t;
+
 /**
  * @brief   Type of a mask of Virtual IRQs.
  */
 typedef uint32_t sb_vrqmask_t;
+
+#if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
+#include "sbvrq.h"
+#endif
+
+#if (SB_CFG_ENABLE_VIO == TRUE) || defined (__DOXYGEN__)
+#include "sbvio.h"
+#endif
 
 /**
  * @brief   Type of a sandbox manager global structure.
@@ -262,9 +272,9 @@ typedef struct {
 } sb_config_t;
 
 /**
- * @brief   Type of a sandbox object.
+ * @brief   Structure representing a sandbox object.
  */
-typedef struct {
+struct sb_class {
   /**
    * @brief   Pointer to the sandbox configuration data.
    */
@@ -317,7 +327,7 @@ typedef struct {
    */
   sb_ioblock_t                  io;
 #endif
-} sb_class_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -338,10 +348,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-#if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
-#include "sbvrq.h"
-#endif
 
 #include "sbelf.h"
 #include "sbposix.h"

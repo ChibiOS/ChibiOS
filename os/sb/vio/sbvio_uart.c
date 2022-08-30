@@ -50,9 +50,9 @@
 /*===========================================================================*/
 
 static void vuart_cb(SIODriver *siop) {
-  sb_class_t *sbp = (sb_class_t *)siop->arg;
+  const vio_uart_unit_t *unitp = (const vio_uart_unit_t *)siop->arg;
 
-  sbVRQTriggerFromISR(sbp, 1U << SB_CFG_ALARM_VRQ);
+  sbVRQTriggerFromISR(unitp->vrqsb, 1U << unitp->vrqn);
 }
 
 /*===========================================================================*/
@@ -86,12 +86,14 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
         return;
       }
 
+      /* Specified VUART configuration.*/
       confp = &sbp->config->vioconf->uartconfs->cfgs[conf];
+
+      /* Associating this virtual UART to the SIO driver.*/
+      unitp->siop->arg = (void *)unitp;
 
       msg = sioStart(unitp->siop, confp->siocfgp);
       if (msg == HAL_RET_SUCCESS) {
-        /* Associating this SIO to the sandbox.*/
-        unitp->siop->arg = (sb_class_t *)sbp;
 
         /* Starting with disabled events, enabling the callback.*/
         sioWriteEnableFlags(unitp->siop, SIO_FL_NONE);

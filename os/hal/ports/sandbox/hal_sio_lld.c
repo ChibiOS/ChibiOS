@@ -432,10 +432,20 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  * @notapi
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
+  sioevents_t events;
 
-  /* The callback is simply invoked. Letting the driver on the host side
-     decide how to manipulate IRQ sources.*/
-  __sio_callback(siop);
+  __syscall2rr(201, SB_VUART_GCEVT, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+
+  /* Only processing enabled events.*/
+  events = (sioevents_t)r1;
+
+  /* Processing events, if any.*/
+  if (events != (sioevents_t)0) {
+
+    /* The callback is finally invoked.*/
+    __sio_callback(siop);
+  }
 }
 
 #endif /* HAL_USE_SIO == TRUE */

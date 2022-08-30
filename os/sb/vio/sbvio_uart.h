@@ -56,6 +56,8 @@
  */
 typedef struct vio_uart_unit {
   SIODriver         *siop;
+  sb_class_t        *vrqsb;
+  unsigned          vrqn;
 } vio_uart_unit_t;
 
 /**

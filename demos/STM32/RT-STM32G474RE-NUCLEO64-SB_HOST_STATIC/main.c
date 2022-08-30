@@ -26,6 +26,10 @@
 
 #include "startup_defs.h"
 
+
+/* Sandbox objects.*/
+sb_class_t sbx1, sbx2;
+
 /*===========================================================================*/
 /* VHAL-related.                                                             */
 /*===========================================================================*/
@@ -45,7 +49,11 @@ static vio_gpio_units_t gpio_units1 = {
 static vio_uart_units_t uart_units1 = {
   .n        = 1U,
   .units    = {
-    [0]       = {&LPSIOD1}
+    [0]       = {
+      .siop  = &LPSIOD1,
+      .vrqsb = &sbx1,
+      .vrqn  = 8
+    }
   }
 };
 
@@ -161,9 +169,6 @@ static const char *sbx2_argv[] = {
 static const char *sbx2_envp[] = {
   NULL
 };
-
-/* Sandbox objects.*/
-sb_class_t sbx1, sbx2;
 
 static THD_WORKING_AREA(waUnprivileged1, 512);
 static THD_WORKING_AREA(waUnprivileged2, 512);
