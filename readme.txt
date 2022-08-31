@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Fixed setting of SYSCLK when derived from divided HSI16
 - NEW: Mass change: Source code convention changed from CRLF to just CR (Unix).
 - NEW: Fixed some corned cases in ADC5, added ADC reset on start().
 - NEW: Added a "BufferedSIODriver" class that implements the behavior of the
