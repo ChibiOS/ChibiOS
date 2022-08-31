@@ -458,13 +458,13 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
   cr2irq = siop->usart->CR2 & ~(USART_CR2_LBDIE);
   cr3irq = siop->usart->CR3 & ~(USART_CR3_EIE);
 
-  cr1irq |= __sio_reloc_field(siop->enabled, SIO_FL_RXNOTEMPY,  SIO_FL_RXNOTEMPY_POS,  USART_CR1_RXNEIE_Pos) |
-            __sio_reloc_field(siop->enabled, SIO_FL_TXNOTFULL,  SIO_FL_TXNOTFULL_POS,  USART_CR1_TXEIE_Pos)  |
-            __sio_reloc_field(siop->enabled, SIO_FL_RXIDLE,     SIO_FL_RXIDLE_POS,     USART_CR1_IDLEIE_Pos) |
-            __sio_reloc_field(siop->enabled, SIO_FL_TXDONE,     SIO_FL_TXDONE_POS,     USART_CR1_TCIE_Pos)   |
-            __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_FL_ALL_ERRORS_POS, USART_CR1_PEIE_Pos);
-  cr2irq |= __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_FL_ALL_ERRORS_POS, USART_CR2_LBDIE_Pos);
-  cr3irq |= __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_FL_ALL_ERRORS_POS, USART_CR3_EIE_Pos);
+  cr1irq |= __sio_reloc_field(siop->enabled, SIO_FL_RXNOTEMPY,  SIO_MSK_RXNOTEMPY_POS,  USART_CR1_RXNEIE_Pos) |
+            __sio_reloc_field(siop->enabled, SIO_FL_TXNOTFULL,  SIO_MSK_TXNOTFULL_POS,  USART_CR1_TXEIE_Pos)  |
+            __sio_reloc_field(siop->enabled, SIO_FL_RXIDLE,     SIO_MSK_RXIDLE_POS,     USART_CR1_IDLEIE_Pos) |
+            __sio_reloc_field(siop->enabled, SIO_FL_TXDONE,     SIO_MSK_TXDONE_POS,     USART_CR1_TCIE_Pos)   |
+            __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_MSK_ALL_ERRORS_POS, USART_CR1_PEIE_Pos);
+  cr2irq |= __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_MSK_ALL_ERRORS_POS, USART_CR2_LBDIE_Pos);
+  cr3irq |= __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_MSK_ALL_ERRORS_POS, USART_CR3_EIE_Pos);
 
   /* Setting up the operation.*/
   siop->usart->CR1 = cr1irq;
@@ -547,6 +547,42 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
             __sio_reloc_field(isr, USART_ISR_FE_Msk,   USART_ISR_FE_Pos,   SIO_EV_FRAMING_ERR_POS) |
             __sio_reloc_field(isr, USART_ISR_NE_Msk,   USART_ISR_NE_Pos,   SIO_EV_NOISE_ERR_POS)   |
             __sio_reloc_field(isr, USART_ISR_ORE_Msk,  USART_ISR_ORE_Pos,  SIO_EV_OVERRUN_ERR_POS);
+
+  return events;
+}
+
+/**
+ * @brief   Returns the pending SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_events(SIODriver *siop) {
+  uint32_t isr;
+  sioevents_t events;
+
+  /* Getting all ISR flags.
+     NOTE: Do not trust the position of other bits in ISR/ICR because
+           some scientist decided to use different positions for some
+           of them.*/
+  isr = siop->usart->ISR & (SIO_LLD_ISR_RX_ERRORS |
+                            USART_ISR_RXNE        |
+                            USART_ISR_IDLE        |
+                            USART_ISR_TXE         |
+                            USART_ISR_TC);
+
+  /* Translating the status flags in SIO events.*/
+  events = __sio_reloc_field(isr, USART_ISR_RXNE_Msk, USART_ISR_RXNE_Pos, SIO_EV_RXNOTEMPY_POS)   |
+           __sio_reloc_field(isr, USART_ISR_TXE_Msk,  USART_ISR_TXE_Pos,  SIO_EV_TXNOTFULL_POS)   |
+           __sio_reloc_field(isr, USART_ISR_IDLE_Msk, USART_ISR_IDLE_Pos, SIO_EV_RXIDLE_POS)      |
+           __sio_reloc_field(isr, USART_ISR_TC_Msk,   USART_ISR_TC_Pos,   SIO_EV_TXDONE_POS)      |
+           __sio_reloc_field(isr, USART_ISR_LBDF_Msk, USART_ISR_LBDF_Pos, SIO_EV_BREAK_POS)       |
+           __sio_reloc_field(isr, USART_ISR_PE_Msk,   USART_ISR_PE_Pos,   SIO_EV_PARITY_ERR_POS)  |
+           __sio_reloc_field(isr, USART_ISR_FE_Msk,   USART_ISR_FE_Pos,   SIO_EV_FRAMING_ERR_POS) |
+           __sio_reloc_field(isr, USART_ISR_NE_Msk,   USART_ISR_NE_Pos,   SIO_EV_NOISE_ERR_POS)   |
+           __sio_reloc_field(isr, USART_ISR_ORE_Msk,  USART_ISR_ORE_Pos,  SIO_EV_OVERRUN_ERR_POS);
 
   return events;
 }
@@ -746,7 +782,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       cr1 &= ~USART_CR1_PEIE;
 
       /* Waiting thread woken, if any.*/
-      __sio_wakeup_events(siop);
+      __sio_wakeup_errors(siop);
     }
 
     /* Idle RX event.*/

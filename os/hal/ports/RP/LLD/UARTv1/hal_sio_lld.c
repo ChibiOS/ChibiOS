@@ -256,9 +256,9 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
            UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
   }
 
-  imsc |= __sio_reloc_field(siop->enabled, SIO_FL_RXNOTEMPY,  SIO_FL_RXNOTEMPY_POS,  UART_UARTIMSC_RXIM_Pos) |
-          __sio_reloc_field(siop->enabled, SIO_FL_TXNOTFULL,  SIO_FL_TXNOTFULL_POS,  UART_UARTIMSC_TXIM_Pos) |
-          __sio_reloc_field(siop->enabled, SIO_FL_RXIDLE,     SIO_FL_RXIDLE_POS,     UART_UARTIMSC_RTIM_Pos);
+  imsc |= __sio_reloc_field(siop->enabled, SIO_FL_RXNOTEMPY,  SIO_MSK_RXNOTEMPY_POS,  UART_UARTIMSC_RXIM_Pos) |
+          __sio_reloc_field(siop->enabled, SIO_FL_TXNOTFULL,  SIO_MSK_TXNOTFULL_POS,  UART_UARTIMSC_TXIM_Pos) |
+          __sio_reloc_field(siop->enabled, SIO_FL_RXIDLE,     SIO_MSK_RXIDLE_POS,     UART_UARTIMSC_RTIM_Pos);
 
   /* Setting up the operation.*/
   siop->uart->UARTIMSC |= imsc;
@@ -509,7 +509,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
                 UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM);
 
       /* Waiting thread woken, if any.*/
-      __sio_wakeup_events(siop);
+      __sio_wakeup_errors(siop);
     }
 
     /* Idle RX event.*/

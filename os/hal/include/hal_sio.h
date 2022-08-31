@@ -32,14 +32,19 @@
 /*===========================================================================*/
 
 /**
- * @name    Events enable flags offsets
+ * @name    SIO masks offsets
  * @{
  */
-#define SIO_FL_RXNOTEMPY_POS            1
-#define SIO_FL_TXNOTFULL_POS            2
-#define SIO_FL_RXIDLE_POS               3
-#define SIO_FL_TXDONE_POS               4
-#define SIO_FL_ALL_ERRORS_POS           5
+#define SIO_MSK_RXNOTEMPY_POS           2       /* CHN_INPUT_AVAILABLE */
+#define SIO_MSK_TXNOTFULL_POS           3       /* CHN_OUTPUT_EMPTY */
+#define SIO_MSK_TXDONE_POS              4       /* CHN_TRANSMISSION_END */
+#define SIO_MSK_ALL_ERRORS_POS          5       /* CHN all errors */
+#define SIO_MSK_PARITY_ERR_POS          5       /* CHN_PARITY_ERROR */
+#define SIO_MSK_FRAMING_ERR_POS         6       /* CHN_FRAMING_ERROR */
+#define SIO_MSK_OVERRUN_ERR_POS         7       /* CHN_OVERRUN_ERROR */
+#define SIO_MSK_NOISE_ERR_POS           8       /* CHN_NOISE_ERROR */
+#define SIO_MSK_BREAK_POS               9       /* CHN_BREAK_DETECTED */
+#define SIO_MSK_RXIDLE_POS              11      /* CHN does not define it */
 /** @} */
 
 /**
@@ -53,11 +58,11 @@
 /**
  * @brief   RX buffer not empty event.
  */
-#define SIO_FL_RXNOTEMPY                (1U << SIO_FL_RXNOTEMPY_POS)
+#define SIO_FL_RXNOTEMPY                (1U << SIO_MSK_RXNOTEMPY_POS)
 /**
  * @brief   TX buffer not full event.
  */
-#define SIO_FL_TXNOTFULL                (1U << SIO_FL_TXNOTFULL_POS)
+#define SIO_FL_TXNOTFULL                (1U << SIO_MSK_TXNOTFULL_POS)
 /**
  * @brief   All data-related events.
  */
@@ -66,11 +71,11 @@
 /**
  * @brief RX line idling event.
  */
-#define SIO_FL_RXIDLE                   (1U << SIO_FL_RXIDLE_POS)
+#define SIO_FL_RXIDLE                   (1U << SIO_MSK_RXIDLE_POS)
 /**
  * @brief   TX complete event.
  */
-#define SIO_FL_TXDONE                   (1U << SIO_FL_TXDONE_POS)
+#define SIO_FL_TXDONE                   (1U << SIO_MSK_TXDONE_POS)
 /**
  * @brief   All protocol-related events.
  */
@@ -79,7 +84,7 @@
 /**
  * @brief   All RX error events.
  */
-#define SIO_FL_ALL_ERRORS               (1U << SIO_FL_ALL_ERRORS_POS)
+#define SIO_FL_ALL_ERRORS               (1U << SIO_MSK_ALL_ERRORS_POS)
 /**
  * @brief   All events.
  */
@@ -92,9 +97,9 @@
  * @name    Event flags offsets
  * @{
  */
-#define SIO_EV_RXNOTEMPY_POS            2   /* CHN_INPUT_AVAILABLE */
-#define SIO_EV_TXNOTFULL_POS            3   /* CHN_OUTPUT_EMPTY */
-#define SIO_EV_TXDONE_POS               4   /* CHN_TRANSMISSION_END */
+#define SIO_EV_RXNOTEMPY_POS            2
+#define SIO_EV_TXNOTFULL_POS            3
+#define SIO_EV_TXDONE_POS               4
 #define SIO_EV_PARITY_ERR_POS           5   /* CHN_PARITY_ERROR */
 #define SIO_EV_FRAMING_ERR_POS          6   /* CHN_FRAMING_ERROR */
 #define SIO_EV_OVERRUN_ERR_POS          7   /* CHN_OVERRUN_ERROR */
@@ -177,7 +182,7 @@
 /**
  * @brief   Type of events enable flags.
  */
-typedef uint_least8_t sioflags_t;
+typedef eventflags_t sioflags_t;
 
 /**
  * @brief   Type of event flags.
@@ -441,6 +446,16 @@ struct hal_sio_driver {
 #define sioGetAndClearEventsI(siop) sio_lld_get_and_clear_events(siop)
 
 /**
+ * @brief   Returns the pending SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @iclass
+ */
+#define sioGetEventsI(siop) sio_lld_get_events(siop)
+
+/**
  * @brief   Returns one frame from the RX FIFO.
  * @note    If the FIFO is empty then the returned value is unpredictable.
  *
@@ -535,7 +550,7 @@ struct hal_sio_driver {
  *
  * @notapi
  */
-#define __sio_wakeup_events(siop) do {                                      \
+#define __sio_wakeup_errors(siop) do {                                      \
   osalSysLockFromISR();                                                     \
   osalThreadResumeI(&(siop)->sync_rx, SIO_MSG_ERRORS);                      \
   osalThreadResumeI(&(siop)->sync_rxidle, SIO_MSG_ERRORS);                  \
