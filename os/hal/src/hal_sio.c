@@ -55,9 +55,6 @@ static size_t sync_write(void *ip, const uint8_t *bp, size_t n,
 
     msg = sioSynchronizeTX(siop, timeout);
     if (msg != MSG_OK) {
-      if (msg != MSG_TIMEOUT) {
-        i = 0U;
-      }
       break;
     }
 
@@ -80,9 +77,6 @@ static size_t sync_read(void *ip, uint8_t *bp, size_t n,
 
     msg = sioSynchronizeRX(siop, timeout);
     if (msg != MSG_OK) {
-      if (msg != MSG_TIMEOUT) {
-        i = 0U;
-      }
       break;
     }
 
@@ -139,7 +133,7 @@ static msg_t __putt(void *ip, uint8_t b, sysinterval_t timeout) {
 
   msg = sioSynchronizeTX(siop, timeout);
   if (msg != MSG_OK) {
-    return MSG_RESET;
+    return msg;
   }
 
   sioPutX(siop, b);
@@ -152,7 +146,7 @@ static msg_t __gett(void *ip, sysinterval_t timeout) {
 
   msg = sioSynchronizeRX(siop, timeout);
   if (msg != MSG_OK) {
-    return MSG_RESET;
+    return msg;
   }
 
   return sioGetX(siop);
@@ -226,7 +220,7 @@ void sioObjectInit(SIODriver *siop) {
 #endif
   siop->state       = SIO_STOP;
   siop->config      = NULL;
-  siop->enabled     = (sioflags_t)0;
+  siop->enabled     = (sioevents_t)0;
   siop->cb          = NULL;
   siop->arg         = NULL;
 #if SIO_USE_SYNCHRONIZATION == TRUE
@@ -273,10 +267,10 @@ msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
   /* If synchronization is enabled then all events by default.*/
-  sioWriteEnableFlagsI(siop, SIO_FL_ALL);
+  sioWriteEnableFlagsI(siop, SIO_EV_ALL_EVENTS);
 #else
   /* If synchronization is disabled then no events by default.*/
-  sioWriteEnableFlagsI(siop, SIO_FL_NONE);
+  sioWriteEnableFlagsI(siop, SIO_EV_NONE);
 #endif
 
   osalSysUnlock();
@@ -322,11 +316,11 @@ void sioStop(SIODriver *siop) {
  * @brief   Writes the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     enabled events mask to be written
+ * @param[in] mask     enabled events mask to be written
  *
  * @api
  */
-void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags) {
+void sioWriteEnableFlags(SIODriver *siop, sioevents_t mask) {
 
   osalDbgCheck(siop != NULL);
 
@@ -334,7 +328,7 @@ void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags) {
 
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
-  sioWriteEnableFlagsI(siop, flags);
+  sioWriteEnableFlagsI(siop, mask);
 
   osalSysUnlock();
 }
@@ -343,11 +337,11 @@ void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags) {
  * @brief   Sets flags into the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     enabled events mask to be set
+ * @param[in] mask     enabled events mask to be set
  *
  * @api
  */
-void sioSetEnableFlags(SIODriver *siop, sioflags_t flags) {
+void sioSetEnableFlags(SIODriver *siop, sioevents_t mask) {
 
   osalDbgCheck(siop != NULL);
 
@@ -355,7 +349,7 @@ void sioSetEnableFlags(SIODriver *siop, sioflags_t flags) {
 
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
-  sioSetEnableFlagsI(siop, flags);
+  sioSetEnableFlagsI(siop, mask);
 
   osalSysUnlock();
 }
@@ -364,11 +358,11 @@ void sioSetEnableFlags(SIODriver *siop, sioflags_t flags) {
  * @brief   Clears flags from the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     enabled events mask to be cleared
+ * @param[in] mask     enabled events mask to be cleared
  *
  * @api
  */
-void sioClearEnableFlags(SIODriver *siop, sioflags_t flags) {
+void sioClearEnableFlags(SIODriver *siop, sioevents_t mask) {
 
   osalDbgCheck(siop != NULL);
 
@@ -376,7 +370,7 @@ void sioClearEnableFlags(SIODriver *siop, sioflags_t flags) {
 
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
-  sioClearEnableFlagsI(siop, flags);
+  sioClearEnableFlagsI(siop, mask);
 
   osalSysUnlock();
 }
@@ -423,6 +417,30 @@ sioevents_t sioGetAndClearEvents(SIODriver *siop) {
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   events = sioGetAndClearEventsI(siop);
+
+  osalSysUnlock();
+
+  return events;
+}
+
+/**
+ * @brief   Returns the pending SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @api
+ */
+sioevents_t sioGetEvents(SIODriver *siop) {
+  sioevents_t events;
+
+  osalDbgCheck(siop != NULL);
+
+  osalSysLock();
+
+  osalDbgAssert(siop->state == SIO_READY, "invalid state");
+
+  events = sioGetEventsI(siop);
 
   osalSysUnlock();
 
@@ -514,7 +532,7 @@ msg_t sioSynchronizeRX(SIODriver *siop, sysinterval_t timeout) {
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /* Checking for errors before going to sleep.*/
-  if (((siop->enabled & SIO_FL_ALL_ERRORS) != 0U) && sioHasRXErrorsX(siop)) {
+  if (((siop->enabled & SIO_EV_ALL_ERRORS) != 0U) && sioHasRXErrorsX(siop)) {
     osalSysUnlock();
     return SIO_MSG_ERRORS;
   }
@@ -559,7 +577,7 @@ msg_t sioSynchronizeRXIdle(SIODriver *siop, sysinterval_t timeout) {
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /* Checking for errors before going to sleep.*/
-  if (((siop->enabled & SIO_FL_ALL_ERRORS) != 0U) && sioHasRXErrorsX(siop)) {
+  if (((siop->enabled & SIO_EV_ALL_ERRORS) != 0U) && sioHasRXErrorsX(siop)) {
     osalSysUnlock();
     return SIO_MSG_ERRORS;
   }

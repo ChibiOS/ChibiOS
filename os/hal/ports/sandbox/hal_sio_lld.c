@@ -333,6 +333,22 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
 }
 
 /**
+ * @brief   Returns pending SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_events(SIODriver *siop) {
+
+  __syscall2r(201, SB_VUART_GEVT, siop->nvuart);
+  osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
+
+  return (sioevents_t)r1;
+}
+
+/**
  * @brief   Reads data from the RX FIFO.
  * @details The function is not blocking, it writes frames until there
  *          is space available without waiting.
@@ -432,12 +448,14 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  * @notapi
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
-  sioevents_t events;
+  sioevents_t events, enabled;
 
-  __syscall2rr(201, SB_VUART_GCEVT, siop->nvuart);
+#if SIO_USE_SYNCHRONIZATION == TRUE
+  __syscall2rr(201, SB_VUART_GEVT, siop->nvuart);
   osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
   /* Only processing enabled events.*/
+  enabled = siop->enabled
   events = (sioevents_t)r1;
 
   /* Processing events, if any.*/
@@ -446,6 +464,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     /* The callback is finally invoked.*/
     __sio_callback(siop);
   }
+#else
+  /* Simply invokes the callback.*/
+  __sio_callback(siop);
+#endif
 }
 
 #endif /* HAL_USE_SIO == TRUE */

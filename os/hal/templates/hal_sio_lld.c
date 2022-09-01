@@ -158,6 +158,22 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
 }
 
 /**
+ * @brief   Returns the pending SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_events(SIODriver *siop) {
+  sioevents_t events = 0U;
+
+  (void)siop;
+
+  return events;
+}
+
+/**
  * @brief   Reads data from the RX FIFO.
  * @details The function is not blocking, it writes frames until there
  *          is space available without waiting.

@@ -77,25 +77,27 @@ static const SIOConfig default_config = {
 
 __STATIC_INLINE void uart_enable_rx_irq(SIODriver *siop) {
 
-  if ((siop->enabled & SIO_FL_RXNOTEMPY) != 0U) {
+  if ((siop->enabled & SIO_EV_RXNOTEMPY) != 0U) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_RXIM;
   }
-  if ((siop->enabled & SIO_FL_RXIDLE) != 0U) {
+  if ((siop->enabled & SIO_EV_RXIDLE) != 0U) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_RTIM;
   }
 }
 
 __STATIC_INLINE void uart_enable_rx_errors_irq(SIODriver *siop) {
+  uint32_t imsc;
 
-  if ((siop->enabled & SIO_FL_ALL_ERRORS) != 0U) {
-    siop->uart->UARTIMSC |= UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
-                            UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
-  }
+  imsc = __sio_reloc_field(siop->enabled, SIO_EV_OVERRUN_ERR, SIO_EV_OVERRUN_ERR_POS, UART_UARTIMSC_OEIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_BREAK,       SIO_EV_BREAK_POS,       UART_UARTIMSC_BEIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR,  SIO_EV_PARITY_ERR_POS,  UART_UARTIMSC_PEIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_FRAMING_ERR, SIO_EV_FRAMING_ERR_POS, UART_UARTIMSC_TXIM_Pos);
+  siop->uart->UARTIMSC |= imsc;
 }
 
 __STATIC_INLINE void uart_enable_tx_irq(SIODriver *siop) {
 
-  if ((siop->enabled & SIO_FL_TXNOTFULL) != 0U) {
+  if ((siop->enabled & SIO_EV_TXNOTFULL) != 0U) {
     siop->uart->UARTIMSC |= UART_UARTIMSC_TXIM;
   }
 }
@@ -246,22 +248,18 @@ void sio_lld_stop(SIODriver *siop) {
 void sio_lld_update_enable_flags(SIODriver *siop) {
   uint32_t imsc;
 
-  osalDbgAssert((siop->enabled & SIO_FL_TXDONE) == 0U, "unsupported event");
+  osalDbgAssert((siop->enabled & SIO_EV_TXDONE) == 0U, "unsupported event");
 
-  if ((siop->enabled & SIO_FL_ALL_ERRORS) == 0U) {
-    imsc = 0U;
-  }
-  else {
-    imsc = UART_UARTIMSC_OEIM | UART_UARTIMSC_BEIM |
-           UART_UARTIMSC_PEIM | UART_UARTIMSC_FEIM;
-  }
-
-  imsc |= __sio_reloc_field(siop->enabled, SIO_FL_RXNOTEMPY,  SIO_MSK_RXNOTEMPY_POS,  UART_UARTIMSC_RXIM_Pos) |
-          __sio_reloc_field(siop->enabled, SIO_FL_TXNOTFULL,  SIO_MSK_TXNOTFULL_POS,  UART_UARTIMSC_TXIM_Pos) |
-          __sio_reloc_field(siop->enabled, SIO_FL_RXIDLE,     SIO_MSK_RXIDLE_POS,     UART_UARTIMSC_RTIM_Pos);
+  imsc = __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY,   SIO_EV_RXNOTEMPY_POS,   UART_UARTIMSC_RXIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_TXNOTFULL,   SIO_EV_TXNOTFULL_POS,   UART_UARTIMSC_TXIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_OVERRUN_ERR, SIO_EV_OVERRUN_ERR_POS, UART_UARTIMSC_OEIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_BREAK,       SIO_EV_BREAK_POS,       UART_UARTIMSC_BEIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR,  SIO_EV_PARITY_ERR_POS,  UART_UARTIMSC_PEIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_FRAMING_ERR, SIO_EV_FRAMING_ERR_POS, UART_UARTIMSC_TXIM_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_RXIDLE,      SIO_EV_RXIDLE_POS,      UART_UARTIMSC_FEIM_Pos);
 
   /* Setting up the operation.*/
-  siop->uart->UARTIMSC |= imsc;
+  siop->uart->UARTIMSC = imsc;
 }
 
 /**
@@ -317,6 +315,36 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
      enabled again.*/
   uart_enable_rx_irq(siop);
   uart_enable_rx_errors_irq(siop);
+
+  /* Translating the status flags in SIO events.*/
+  events |= __sio_reloc_field(ris, UART_UARTMIS_RXMIS_Msk, UART_UARTMIS_RXMIS_Pos, SIO_EV_RXNOTEMPY_POS)   |
+            __sio_reloc_field(ris, UART_UARTMIS_TXMIS_Msk, UART_UARTMIS_TXMIS_Pos, SIO_EV_TXNOTFULL_POS)   |
+            __sio_reloc_field(ris, UART_UARTMIS_RTMIS_Msk, UART_UARTMIS_RTMIS_Pos, SIO_EV_RXIDLE_POS)   |
+            __sio_reloc_field(ris, UART_UARTMIS_OEMIS_Msk, UART_UARTMIS_OEMIS_Pos, SIO_EV_OVERRUN_ERR_POS) |
+            __sio_reloc_field(ris, UART_UARTMIS_BEMIS_Msk, UART_UARTMIS_BEMIS_Pos, SIO_EV_BREAK_POS)       |
+            __sio_reloc_field(ris, UART_UARTMIS_PEMIS_Msk, UART_UARTMIS_PEMIS_Pos, SIO_EV_PARITY_ERR_POS)  |
+            __sio_reloc_field(ris, UART_UARTMIS_FEMIS_Msk, UART_UARTMIS_FEMIS_Pos, SIO_EV_FRAMING_ERR_POS);
+
+  return events;
+}
+
+/**
+ * @brief   Returns the pending SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_events(SIODriver *siop) {
+  uint32_t ris;
+  sioevents_t events = (sioevents_t)0;
+
+  /* Getting all RIS flags.*/
+  ris = siop->uart->UARTRIS & (SIO_LLD_ISR_RX_ERRORS |
+                               UART_UARTMIS_RTMIS    |
+                               UART_UARTMIS_RXMIS    |
+                               UART_UARTMIS_TXMIS);
 
   /* Translating the status flags in SIO events.*/
   events |= __sio_reloc_field(ris, UART_UARTMIS_RXMIS_Msk, UART_UARTMIS_RXMIS_Pos, SIO_EV_RXNOTEMPY_POS)   |

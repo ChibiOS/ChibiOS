@@ -117,7 +117,8 @@
 #define SB_VUART_WREN           11
 #define SB_VUART_GCERR          12
 #define SB_VUART_GCEVT          13
-#define SB_VUART_CTL            14
+#define SB_VUART_GEVT           14
+#define SB_VUART_CTL            15
 /** @} */
 
 /*===========================================================================*/

@@ -35,83 +35,23 @@
  * @name    SIO masks offsets
  * @{
  */
-#define SIO_MSK_RXNOTEMPY_POS           2       /* CHN_INPUT_AVAILABLE */
-#define SIO_MSK_TXNOTFULL_POS           3       /* CHN_OUTPUT_EMPTY */
-#define SIO_MSK_TXDONE_POS              4       /* CHN_TRANSMISSION_END */
-#define SIO_MSK_ALL_ERRORS_POS          5       /* CHN all errors */
-#define SIO_MSK_PARITY_ERR_POS          5       /* CHN_PARITY_ERROR */
-#define SIO_MSK_FRAMING_ERR_POS         6       /* CHN_FRAMING_ERROR */
-#define SIO_MSK_OVERRUN_ERR_POS         7       /* CHN_OVERRUN_ERROR */
-#define SIO_MSK_NOISE_ERR_POS           8       /* CHN_NOISE_ERROR */
-#define SIO_MSK_BREAK_POS               9       /* CHN_BREAK_DETECTED */
-#define SIO_MSK_RXIDLE_POS              11      /* CHN does not define it */
-/** @} */
-
-/**
- * @name    Events enable flags
- * @{
- */
-/**
- * @brief No events enabled.
- */
-#define SIO_FL_NONE                     0U
-/**
- * @brief   RX buffer not empty event.
- */
-#define SIO_FL_RXNOTEMPY                (1U << SIO_MSK_RXNOTEMPY_POS)
-/**
- * @brief   TX buffer not full event.
- */
-#define SIO_FL_TXNOTFULL                (1U << SIO_MSK_TXNOTFULL_POS)
-/**
- * @brief   All data-related events.
- */
-#define SIO_FL_ALL_DATA                 (SIO_FL_RXNOTEMPY       |           \
-                                         SIO_FL_TXNOTFULL)
-/**
- * @brief RX line idling event.
- */
-#define SIO_FL_RXIDLE                   (1U << SIO_MSK_RXIDLE_POS)
-/**
- * @brief   TX complete event.
- */
-#define SIO_FL_TXDONE                   (1U << SIO_MSK_TXDONE_POS)
-/**
- * @brief   All protocol-related events.
- */
-#define SIO_FL_ALL_PROTOCOL             (SIO_FL_RXIDLE          |           \
-                                         SIO_FL_TXDONE)
-/**
- * @brief   All RX error events.
- */
-#define SIO_FL_ALL_ERRORS               (1U << SIO_MSK_ALL_ERRORS_POS)
-/**
- * @brief   All events.
- */
-#define SIO_FL_ALL                      (SIO_FL_ALL_DATA        |           \
-                                         SIO_FL_ALL_PROTOCOL    |           \
-                                         SIO_FL_ALL_ERRORS)
-/** @} */
-
-/**
- * @name    Event flags offsets
- * @{
- */
-#define SIO_EV_RXNOTEMPY_POS            2
-#define SIO_EV_TXNOTFULL_POS            3
-#define SIO_EV_TXDONE_POS               4
-#define SIO_EV_PARITY_ERR_POS           5   /* CHN_PARITY_ERROR */
-#define SIO_EV_FRAMING_ERR_POS          6   /* CHN_FRAMING_ERROR */
-#define SIO_EV_OVERRUN_ERR_POS          7   /* CHN_OVERRUN_ERROR */
-#define SIO_EV_NOISE_ERR_POS            8   /* CHN_NOISE_ERROR */
-#define SIO_EV_BREAK_POS                9   /* CHN_BREAK_DETECTED */
-#define SIO_EV_RXIDLE_POS               11
+#define SIO_EV_RXNOTEMPY_POS            2       /* CHN_INPUT_AVAILABLE */
+#define SIO_EV_TXNOTFULL_POS            3       /* CHN_OUTPUT_EMPTY */
+#define SIO_EV_TXDONE_POS               4       /* CHN_TRANSMISSION_END */
+#define SIO_EV_ALL_ERRORS_POS           SIO_EV_PARITY_ERR_POS
+#define SIO_EV_PARITY_ERR_POS           5       /* CHN_PARITY_ERROR */
+#define SIO_EV_FRAMING_ERR_POS          6       /* CHN_FRAMING_ERROR */
+#define SIO_EV_OVERRUN_ERR_POS          7       /* CHN_OVERRUN_ERROR */
+#define SIO_EV_NOISE_ERR_POS            8       /* CHN_NOISE_ERROR */
+#define SIO_EV_BREAK_POS                9       /* CHN_BREAK_DETECTED */
+#define SIO_EV_RXIDLE_POS               11      /* CHN does not define it */
 /** @} */
 
 /**
  * @name    Event flags (compatible with channel and serial events)
  * @{
  */
+#define SIO_EV_NONE                     0U
 #define SIO_EV_RXNOTEMPY                (1U << SIO_EV_RXNOTEMPY_POS)
 #define SIO_EV_TXNOTFULL                (1U << SIO_EV_TXNOTFULL_POS)
 #define SIO_EV_ALL_DATA                 (SIO_EV_RXNOTEMPY | SIO_EV_TXNOTFULL)
@@ -124,8 +64,13 @@
 #define SIO_EV_ALL_ERRORS               (SIO_EV_PARITY_ERR  |               \
                                          SIO_EV_FRAMING_ERR |               \
                                          SIO_EV_OVERRUN_ERR |               \
-                                         SIO_EV_NOISE_ERR)
+                                         SIO_EV_NOISE_ERR   |               \
+                                         SIO_EV_BREAK)
 #define SIO_EV_RXIDLE                   (1U << SIO_EV_RXIDLE_POS)
+#define SIO_EV_ALL_EVENTS               (SIO_EV_ALL_DATA    |               \
+                                         SIO_EV_ALL_ERRORS  |               \
+                                         SIO_EV_TXDONE      |               \
+                                         SIO_EV_RXIDLE)
 /** @} */
 
 /**
@@ -178,11 +123,6 @@
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Type of events enable flags.
- */
-typedef eventflags_t sioflags_t;
 
 /**
  * @brief   Type of event flags.
@@ -260,15 +200,15 @@ struct hal_sio_driver {
   /**
    * @brief   Driver state.
    */
-  siostate_t               state;
+  siostate_t                state;
   /**
    * @brief   Current configuration data.
    */
-  const SIOConfig          *config;
+  const SIOConfig           *config;
   /**
-   * @brief   Enabled conditions flags.
+   * @brief   Enabled event flags.
    */
-  sioflags_t                enabled;
+  sioevents_t               enabled;
   /**
    * @brief   Events callback.
    * @note    Can be @p NULL.
@@ -381,12 +321,12 @@ struct hal_sio_driver {
  * @brief   Writes the enabled events mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     enabled events mask to be written
+ * @param[in] mask      enabled events mask to be written
  *
  * @iclass
  */
-#define sioWriteEnableFlagsI(siop, flags) do {                              \
-  (siop)->enabled = (flags);                                                \
+#define sioWriteEnableFlagsI(siop, mask) do {                               \
+  (siop)->enabled = (mask);                                                 \
   sio_lld_update_enable_flags(siop);                                        \
 } while (false)
 
@@ -394,12 +334,12 @@ struct hal_sio_driver {
  * @brief   Sets flags into the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     enabled events mask to be set
+ * @param[in] mask      enabled events mask to be set
  *
  * @iclass
  */
-#define sioSetEnableFlagsI(siop, flags) do {                                \
-  (siop)->enabled |= (flags);                                               \
+#define sioSetEnableFlagsI(siop, mask) do {                                 \
+  (siop)->enabled |= (mask);                                                \
   sio_lld_update_enable_flags(siop);                                        \
 } while (false)
 
@@ -411,8 +351,8 @@ struct hal_sio_driver {
  *
  * @iclass
  */
-#define sioClearEnableFlagsI(siop, flags) do {                              \
-  (siop)->enabled &= ~(flags);                                              \
+#define sioClearEnableFlagsI(siop, mask) do {                               \
+  (siop)->enabled &= ~(mask);                                               \
   sio_lld_update_enable_flags(siop);                                        \
 } while (false)
 
@@ -423,7 +363,7 @@ struct hal_sio_driver {
  *
  * @xclass
  */
-#define sioGetEnableFlagsX(siop) (siop)->eflags
+#define sioGetEnableFlagsX(siop) (siop)->enabled
 
 /**
  * @brief   Get and clears SIO error event flags.
@@ -638,11 +578,12 @@ extern "C" {
   void sioObjectInit(SIODriver *siop);
   msg_t sioStart(SIODriver *siop, const SIOConfig *config);
   void sioStop(SIODriver *siop);
-  void sioWriteEnableFlags(SIODriver *siop, sioflags_t flags);
-  void sioSetEnableFlags(SIODriver *siop, sioflags_t flags);
-  void sioClearEnableFlags(SIODriver *siop, sioflags_t flags);
-  sioevents_t sioGetAndClearErrors(SIODriver *siop) ;
+  void sioWriteEnableFlags(SIODriver *siop, sioevents_t mask);
+  void sioSetEnableFlags(SIODriver *siop, sioevents_t mask);
+  void sioClearEnableFlags(SIODriver *siop, sioevents_t mask);
+  sioevents_t sioGetAndClearErrors(SIODriver *siop);
   sioevents_t sioGetAndClearEvents(SIODriver *siop);
+  sioevents_t sioGetEvents(SIODriver *siop);
   size_t sioAsyncRead(SIODriver *siop, uint8_t *buffer, size_t n);
   size_t sioAsyncWrite(SIODriver *siop, const uint8_t *buffer, size_t n);
 #if (SIO_USE_SYNCHRONIZATION == TRUE) || defined(__DOXYGEN__)

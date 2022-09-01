@@ -136,34 +136,48 @@ __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
   uint32_t cr1;
 
   cr1 = siop->usart->CR1;
-  if ((siop->enabled & SIO_FL_RXNOTEMPY) != 0U) {
+  if ((siop->enabled & SIO_EV_RXNOTEMPY) != 0U) {
     cr1 |= USART_CR1_RXNEIE;
   }
-  if ((siop->enabled & SIO_FL_RXIDLE) != 0U) {
+  if ((siop->enabled & SIO_EV_RXIDLE) != 0U) {
     cr1 |= USART_CR1_IDLEIE;
   }
   siop->usart->CR1 = cr1;
 }
 
 __STATIC_INLINE void usart_enable_rx_errors_irq(SIODriver *siop) {
+  uint32_t cr1, cr2, cr3;
 
-  if ((siop->enabled & SIO_FL_ALL_ERRORS) != 0U) {
-    siop->usart->CR1 |= USART_CR1_PEIE;
-    siop->usart->CR2 |= USART_CR2_LBDIE;
-    siop->usart->CR3 |= USART_CR3_EIE;
+  cr1 = siop->usart->CR1;
+  cr2 = siop->usart->CR2;
+  cr3 = siop->usart->CR3;
+
+  cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
+  cr2 |= __sio_reloc_field(siop->enabled, SIO_EV_BREAK,      SIO_EV_BREAK_POS,      USART_CR2_LBDIE_Pos);
+
+  /* The following 3 are grouped.*/
+  if ((siop->enabled & (SIO_EV_FRAMING_ERR |
+                        SIO_EV_OVERRUN_ERR |
+                        SIO_EV_NOISE_ERR)) != 0U) {
+    cr3 |= USART_CR3_EIE;
   }
+
+  /* Setting up the operation.*/
+  siop->usart->CR1 = cr1;
+  siop->usart->CR2 = cr2;
+  siop->usart->CR3 = cr3;
 }
 
 __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
 
-  if ((siop->enabled & SIO_FL_TXNOTFULL) != 0U) {
+  if ((siop->enabled & SIO_EV_TXNOTFULL) != 0U) {
     siop->usart->CR1 |= USART_CR1_TXEIE;
   }
 }
 
 __STATIC_INLINE void usart_enable_tx_end_irq(SIODriver *siop) {
 
-  if ((siop->enabled & SIO_FL_TXDONE) != 0U) {
+  if ((siop->enabled & SIO_EV_TXDONE) != 0U) {
     siop->usart->CR1 |= USART_CR1_TCIE;
   }
 }
@@ -450,26 +464,32 @@ void sio_lld_stop(SIODriver *siop) {
  * @param[in] siop      pointer to the @p SIODriver object
  */
 void sio_lld_update_enable_flags(SIODriver *siop) {
-  uint32_t cr1irq, cr2irq, cr3irq;
+  uint32_t cr1, cr2, cr3;
 
-  cr1irq = siop->usart->CR1 & ~(USART_CR1_TXEIE  | USART_CR1_RXNEIE |
-                                USART_CR1_IDLEIE | USART_CR1_TCIE   |
-                                USART_CR1_PEIE);
-  cr2irq = siop->usart->CR2 & ~(USART_CR2_LBDIE);
-  cr3irq = siop->usart->CR3 & ~(USART_CR3_EIE);
+  cr1 = siop->usart->CR1 & ~(USART_CR1_TXEIE  | USART_CR1_RXNEIE |
+                             USART_CR1_IDLEIE | USART_CR1_TCIE   |
+                             USART_CR1_PEIE);
+  cr2 = siop->usart->CR2 & ~(USART_CR2_LBDIE);
+  cr3 = siop->usart->CR3 & ~(USART_CR3_EIE);
 
-  cr1irq |= __sio_reloc_field(siop->enabled, SIO_FL_RXNOTEMPY,  SIO_MSK_RXNOTEMPY_POS,  USART_CR1_RXNEIE_Pos) |
-            __sio_reloc_field(siop->enabled, SIO_FL_TXNOTFULL,  SIO_MSK_TXNOTFULL_POS,  USART_CR1_TXEIE_Pos)  |
-            __sio_reloc_field(siop->enabled, SIO_FL_RXIDLE,     SIO_MSK_RXIDLE_POS,     USART_CR1_IDLEIE_Pos) |
-            __sio_reloc_field(siop->enabled, SIO_FL_TXDONE,     SIO_MSK_TXDONE_POS,     USART_CR1_TCIE_Pos)   |
-            __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_MSK_ALL_ERRORS_POS, USART_CR1_PEIE_Pos);
-  cr2irq |= __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_MSK_ALL_ERRORS_POS, USART_CR2_LBDIE_Pos);
-  cr3irq |= __sio_reloc_field(siop->enabled, SIO_FL_ALL_ERRORS, SIO_MSK_ALL_ERRORS_POS, USART_CR3_EIE_Pos);
+  cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_RXNOTEMPY,  SIO_EV_RXNOTEMPY_POS,  USART_CR1_RXNEIE_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_TXNOTFULL,  SIO_EV_TXNOTFULL_POS,  USART_CR1_TXEIE_Pos)  |
+         __sio_reloc_field(siop->enabled, SIO_EV_RXIDLE,     SIO_EV_RXIDLE_POS,     USART_CR1_IDLEIE_Pos) |
+         __sio_reloc_field(siop->enabled, SIO_EV_TXDONE,     SIO_EV_TXDONE_POS,     USART_CR1_TCIE_Pos)   |
+         __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
+  cr2 |= __sio_reloc_field(siop->enabled, SIO_EV_BREAK,      SIO_EV_BREAK_POS,      USART_CR2_LBDIE_Pos);
+
+  /* The following 3 are grouped.*/
+  if ((siop->enabled & (SIO_EV_FRAMING_ERR |
+                        SIO_EV_OVERRUN_ERR |
+                        SIO_EV_NOISE_ERR)) != 0U) {
+    cr3 |= USART_CR3_EIE;
+  }
 
   /* Setting up the operation.*/
-  siop->usart->CR1 = cr1irq;
-  siop->usart->CR2 = cr2irq;
-  siop->usart->CR3 = cr3irq;
+  siop->usart->CR1 = cr1;
+  siop->usart->CR2 = cr2;
+  siop->usart->CR3 = cr3;
 }
 
 /**

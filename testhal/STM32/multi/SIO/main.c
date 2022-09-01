@@ -98,24 +98,11 @@ static THD_FUNCTION(Thread1, arg) {
 
   chRegSetThreadName("consumer");
 
-  while (true) {
-    sioevents_t errors;
+  while (!chThdShouldTerminateX()) {
     uint8_t buf[16];
 
-    n = chnRead(&PORTAB_SIO2, buf, 16);
-    if (n == 0U) {
-      break;
-    }
-    n = chnWrite(&PORTAB_SIO1, buf, n);
-    if (n == 0) {
-      break;
-    }
-    errors = sioGetAndClearErrors(&PORTAB_SIO2);
-    (void) errors;
-
-    if (sioSynchronizeRXIdle(&PORTAB_SIO2, TIME_INFINITE) < MSG_OK) {
-      break;
-    }
+    n = chnReadTimeout(&PORTAB_SIO2, buf, 16, TIME_MS2I(10));
+    (void) chnWriteTimeout(&PORTAB_SIO1, buf, n, TIME_MS2I(10));
   }
 }
 
@@ -187,9 +174,10 @@ int main(void) {
   /*
    * Stopping SIOs.
    */
+  chThdTerminate(tp);
+  chThdWait(tp);
   sioStop(&PORTAB_SIO1);
   sioStop(&PORTAB_SIO2);
-  chThdWait(tp);
 
   /*
    * Starting a buffered SIO, it must behave exactly as a serial driver.

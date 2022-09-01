@@ -237,6 +237,17 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
       break;
     }
+  case SB_VUART_GEVT:
+  {
+    if (unitp->siop->state != SIO_READY) {
+      ectxp->r0 = (uint32_t)CH_RET_EIO;
+      break;
+    }
+
+    ectxp->r1 = (uint32_t)sioGetEvents(unitp->siop);
+    ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+    break;
+  }
   case SB_VUART_CTL:
     /* falls through */
   default:
