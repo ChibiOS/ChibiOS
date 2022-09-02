@@ -635,10 +635,7 @@ sioevents_t sio_lld_get_events(SIODriver *siop) {
   uint32_t isr;
   sioevents_t events;
 
-  /* Getting all ISR flags.
-     NOTE: Do not trust the position of other bits in ISR/ICR because
-           some scientist decided to use different positions for some
-           of them.*/
+  /* Getting all ISR flags.*/
   isr = siop->usart->ISR & (SIO_LLD_ISR_RX_ERRORS |
                             USART_ISR_RXNE_RXFNE  |
                             USART_ISR_IDLE        |
