@@ -165,26 +165,16 @@ __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
 }
 
 __STATIC_INLINE void usart_enable_rx_errors_irq(SIODriver *siop) {
-  uint32_t cr1, cr2, cr3;
 
-  cr1 = siop->usart->CR1;
-  cr2 = siop->usart->CR2;
-  cr3 = siop->usart->CR3;
-
-  cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
-  cr2 |= __sio_reloc_field(siop->enabled, SIO_EV_BREAK,      SIO_EV_BREAK_POS,      USART_CR2_LBDIE_Pos);
+  siop->usart->CR1 |= __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
+  siop->usart->CR2 |= __sio_reloc_field(siop->enabled, SIO_EV_BREAK,      SIO_EV_BREAK_POS,      USART_CR2_LBDIE_Pos);
 
   /* The following 3 are grouped.*/
   if ((siop->enabled & (SIO_EV_FRAMING_ERR |
                         SIO_EV_OVERRUN_ERR |
                         SIO_EV_NOISE_ERR)) != 0U) {
-    cr3 |= USART_CR3_EIE;
+    siop->usart->CR3 |= USART_CR3_EIE;
   }
-
-  /* Setting up the operation.*/
-  siop->usart->CR1 = cr1;
-  siop->usart->CR2 = cr2;
-  siop->usart->CR3 = cr3;
 }
 
 __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
