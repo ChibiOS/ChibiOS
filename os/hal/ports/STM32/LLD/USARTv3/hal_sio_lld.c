@@ -565,8 +565,9 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
   /* Clearing captured events.*/
   siop->usart->ICR = isr;
 
-  /* Status flags cleared, now the RX errors-related interrupts can be
+  /* Status flags cleared, now the RX-related interrupts can be
      enabled again.*/
+  usart_enable_rx_irq(siop);
   usart_enable_rx_errors_irq(siop);
 
   /* Translating the status flags in SIO events.*/
@@ -806,7 +807,7 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
-  uint32_t isr, isrmask;
+  uint32_t isr;
   uint32_t cr1, cr2, cr3;
 
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
@@ -816,23 +817,9 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   cr2 = u->CR2;
   cr3 = u->CR3;
 
-  /* Calculating the mask of the interrupts to be processed, BTW, thanks ST
-     for placing interrupt enable bits randomly in 3 distinct registers
-     instead of a dedicated IER (ISR, ICR, see the pattern?).*/
-  isrmask = __sio_reloc_field(cr3, USART_CR3_EIE_Msk,    USART_CR3_EIE_Pos,    USART_ISR_NE_Pos)   |
-            __sio_reloc_field(cr3, USART_CR3_EIE_Msk,    USART_CR3_EIE_Pos,    USART_ISR_FE_Pos)   |
-            __sio_reloc_field(cr3, USART_CR3_EIE_Msk,    USART_CR3_EIE_Pos,    USART_ISR_ORE_Pos)  |
-            __sio_reloc_field(cr1, USART_CR1_PEIE_Msk,   USART_CR1_PEIE_Pos,   USART_ISR_PE_Pos)   |
-            __sio_reloc_field(cr2, USART_CR2_LBDIE_Msk,  USART_CR2_LBDIE_Pos,  USART_ISR_LBDF_Pos) |
-            __sio_reloc_field(cr1, USART_CR1_IDLEIE_Msk, USART_CR1_IDLEIE_Pos, USART_ISR_IDLE_Pos) |
-            __sio_reloc_field(cr3, USART_CR3_RXFTIE_Msk, USART_CR3_RXFTIE_Pos, USART_ISR_RXFT_Pos) |
-            __sio_reloc_field(cr3, USART_CR3_TXFTIE_Msk, USART_CR3_TXFTIE_Pos, USART_ISR_TXFT_Pos) |
-            __sio_reloc_field(cr1, USART_CR1_TCIE_Msk,   USART_CR1_TCIE_Pos,   USART_ISR_TC_Pos);
-
   /* Note, ISR flags are just read but not cleared, ISR sources are
      disabled instead.*/
   isr = u->ISR;
-  isr = isr & isrmask;
   if (isr != 0U) {
 
     /* Error events handled as a group, except ORE.*/
@@ -845,39 +832,41 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       u->ICR = USART_ICR_IDLECF;
 #endif
 
-      /* Interrupt sources disabled.*/
-      cr3 &= ~USART_CR3_EIE;
-      cr2 &= ~USART_CR2_LBDIE;
-      cr1 &= ~USART_CR1_PEIE;
+      /* RX-related interrupt sources akll disabled.*/
+      cr3 &= ~(USART_CR3_EIE | USART_CR3_RXFTIE);
+      cr2 &= ~(USART_CR2_LBDIE);
+      cr1 &= ~(USART_CR1_PEIE | USART_CR1_IDLEIE);
 
       /* Waiting thread woken, if any.*/
       __sio_wakeup_errors(siop);
     }
+    /* If there are no errors then we check for the other RX events.*/
+    else {
+      /* Idle RX event.*/
+      if ((isr & USART_ISR_IDLE) != 0U) {
 
-    /* Idle RX event.*/
-    if ((isr & USART_ISR_IDLE) != 0U) {
+        /* Interrupt source disabled.*/
+        cr1 &= ~USART_CR1_IDLEIE;
 
-      /* Interrupt source disabled.*/
-      cr1 &= ~USART_CR1_IDLEIE;
+        /* Waiting thread woken, if any.*/
+        __sio_wakeup_rxidle(siop);
+      }
 
-      /* Waiting thread woken, if any.*/
-      __sio_wakeup_rxidle(siop);
-    }
+      /* RX FIFO is non-empty.*/
+      if ((isr & USART_ISR_RXFT) != 0U) {
 
-    /* RX FIFO is non-empty.*/
-    if ((isr & USART_ISR_RXFT) != 0U) {
+  #if SIO_USE_SYNCHRONIZATION
+        /* The idle flag is forcibly cleared when an RX data event is
+           detected.*/
+        u->ICR = USART_ICR_IDLECF;
+  #endif
 
-#if SIO_USE_SYNCHRONIZATION
-      /* The idle flag is forcibly cleared when an RX data event is
-         detected.*/
-      u->ICR = USART_ICR_IDLECF;
-#endif
+        /* Interrupt source disabled.*/
+        cr3 &= ~USART_CR3_RXFTIE;
 
-      /* Interrupt source disabled.*/
-      cr3 &= ~USART_CR3_RXFTIE;
-
-      /* Waiting thread woken, if any.*/
-      __sio_wakeup_rx(siop);
+        /* Waiting thread woken, if any.*/
+        __sio_wakeup_rx(siop);
+      }
     }
 
     /* TX FIFO is non-full.*/
