@@ -565,9 +565,8 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
   /* Clearing captured events.*/
   siop->usart->ICR = isr;
 
-  /* Status flags cleared, now the RX-related interrupts can be
+  /* Status flags cleared, now the error-related interrupts can be
      enabled again.*/
-  usart_enable_rx_irq(siop);
   usart_enable_rx_errors_irq(siop);
 
   /* Translating the status flags in SIO events.*/
