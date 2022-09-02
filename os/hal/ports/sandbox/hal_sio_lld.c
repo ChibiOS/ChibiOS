@@ -448,14 +448,13 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  * @notapi
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
-  sioevents_t events, enabled;
+  sioevents_t events;
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
   __syscall2rr(201, SB_VUART_GEVT, siop->nvuart);
   osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
   /* Only processing enabled events.*/
-  enabled = siop->enabled
   events = (sioevents_t)r1;
 
   /* Processing events, if any.*/

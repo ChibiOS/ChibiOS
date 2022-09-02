@@ -96,7 +96,7 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
       if (msg == HAL_RET_SUCCESS) {
 
         /* Starting with disabled events, enabling the callback.*/
-        sioWriteEnableFlags(unitp->siop, SIO_FL_NONE);
+        sioWriteEnableFlags(unitp->siop, SIO_EV_NONE);
         sioSetCallbackX(unitp->siop, vuart_cb);
       }
 
@@ -204,7 +204,7 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
     }
   case SB_VUART_WREN:
     {
-      sioflags_t flags = (sioflags_t)ectxp->r2;
+      sioevents_t flags = (sioevents_t)ectxp->r2;
 
       if (unitp->siop->state != SIO_READY) {
         ectxp->r0 = (uint32_t)CH_RET_EIO;
