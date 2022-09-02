@@ -822,7 +822,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   isr = u->ISR;
   if (isr != 0U) {
 
-    /* Error events handled as a group, except ORE.*/
+    /* Error events handled as a group.*/
     if ((isr & (USART_ISR_LBDF | USART_ISR_NE | USART_ISR_FE |
                 USART_ISR_PE | USART_ISR_ORE)) != 0U) {
 
