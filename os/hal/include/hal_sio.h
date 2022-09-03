@@ -41,10 +41,10 @@
 #define SIO_EV_ALL_ERRORS_POS           SIO_EV_PARITY_ERR_POS
 #define SIO_EV_PARITY_ERR_POS           5       /* CHN_PARITY_ERROR */
 #define SIO_EV_FRAMING_ERR_POS          6       /* CHN_FRAMING_ERROR */
-#define SIO_EV_OVERRUN_ERR_POS          7       /* CHN_OVERRUN_ERROR */
-#define SIO_EV_NOISE_ERR_POS            8       /* CHN_NOISE_ERROR */
-#define SIO_EV_BREAK_POS                9       /* CHN_BREAK_DETECTED */
-#define SIO_EV_RXIDLE_POS               11      /* CHN does not define it */
+#define SIO_EV_NOISE_ERR_POS            7       /* CHN_NOISE_ERROR */
+#define SIO_EV_OVERRUN_ERR_POS          8       /* CHN_OVERRUN_ERROR */
+#define SIO_EV_RXIDLE_POS               9       /* CHN_IDLE_DETECTED */
+#define SIO_EV_RXBREAK_POS              10      /* CHN_BREAK_DETECTED */
 /** @} */
 
 /**
@@ -58,15 +58,15 @@
 #define SIO_EV_TXDONE                   (1U << SIO_EV_TXDONE_POS)
 #define SIO_EV_PARITY_ERR               (1U << SIO_EV_PARITY_ERR_POS)
 #define SIO_EV_FRAMING_ERR              (1U << SIO_EV_FRAMING_ERR_POS)
-#define SIO_EV_OVERRUN_ERR              (1U << SIO_EV_OVERRUN_ERR_POS)
 #define SIO_EV_NOISE_ERR                (1U << SIO_EV_NOISE_ERR_POS)
-#define SIO_EV_BREAK                    (1U << SIO_EV_BREAK_POS)
+#define SIO_EV_OVERRUN_ERR              (1U << SIO_EV_OVERRUN_ERR_POS)
+#define SIO_EV_RXIDLE                   (1U << SIO_EV_RXIDLE_POS)
+#define SIO_EV_RXBREAK                  (1U << SIO_EV_RXBREAK_POS)
 #define SIO_EV_ALL_ERRORS               (SIO_EV_PARITY_ERR  |               \
                                          SIO_EV_FRAMING_ERR |               \
                                          SIO_EV_OVERRUN_ERR |               \
                                          SIO_EV_NOISE_ERR   |               \
-                                         SIO_EV_BREAK)
-#define SIO_EV_RXIDLE                   (1U << SIO_EV_RXIDLE_POS)
+                                         SIO_EV_RXBREAK)
 #define SIO_EV_ALL_EVENTS               (SIO_EV_ALL_DATA    |               \
                                          SIO_EV_ALL_ERRORS  |               \
                                          SIO_EV_TXDONE      |               \

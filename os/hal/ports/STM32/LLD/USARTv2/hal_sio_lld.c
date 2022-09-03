@@ -46,6 +46,14 @@
                                              USART_CR3_CTSIE            |   \
                                              USART_CR3_EIE)
 
+/* This mask includes IDLE, ORE, NE, FE, PE bits.*/
+#define USART_ISR_IONFP_Pos     USART_ISR_PE_Pos
+#define USART_ISR_IONFP_Msk     (0x1FUL << USART_ISR_IONFP_Pos)
+
+/* This mask includes ORE, NE, FE, PE bits.*/
+#define USART_ISR_ONFP_Pos      USART_ISR_PE_Pos
+#define USART_ISR_ONFP_Msk      (0xFUL << USART_ISR_ONFP_Pos)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -146,26 +154,16 @@ __STATIC_INLINE void usart_enable_rx_irq(SIODriver *siop) {
 }
 
 __STATIC_INLINE void usart_enable_rx_errors_irq(SIODriver *siop) {
-  uint32_t cr1, cr2, cr3;
 
-  cr1 = siop->usart->CR1;
-  cr2 = siop->usart->CR2;
-  cr3 = siop->usart->CR3;
-
-  cr1 |= __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
-  cr2 |= __sio_reloc_field(siop->enabled, SIO_EV_BREAK,      SIO_EV_BREAK_POS,      USART_CR2_LBDIE_Pos);
+  siop->usart->CR1 |= __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
+  siop->usart->CR2 |= __sio_reloc_field(siop->enabled, SIO_EV_RXBREAK,    SIO_EV_RXBREAK_POS,    USART_CR2_LBDIE_Pos);
 
   /* The following 3 are grouped.*/
   if ((siop->enabled & (SIO_EV_FRAMING_ERR |
                         SIO_EV_OVERRUN_ERR |
                         SIO_EV_NOISE_ERR)) != 0U) {
-    cr3 |= USART_CR3_EIE;
+    siop->usart->CR3 |= USART_CR3_EIE;
   }
-
-  /* Setting up the operation.*/
-  siop->usart->CR1 = cr1;
-  siop->usart->CR2 = cr2;
-  siop->usart->CR3 = cr3;
 }
 
 __STATIC_INLINE void usart_enable_tx_irq(SIODriver *siop) {
@@ -477,7 +475,7 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
          __sio_reloc_field(siop->enabled, SIO_EV_RXIDLE,     SIO_EV_RXIDLE_POS,     USART_CR1_IDLEIE_Pos) |
          __sio_reloc_field(siop->enabled, SIO_EV_TXDONE,     SIO_EV_TXDONE_POS,     USART_CR1_TCIE_Pos)   |
          __sio_reloc_field(siop->enabled, SIO_EV_PARITY_ERR, SIO_EV_PARITY_ERR_POS, USART_CR1_PEIE_Pos);
-  cr2 |= __sio_reloc_field(siop->enabled, SIO_EV_BREAK,      SIO_EV_BREAK_POS,      USART_CR2_LBDIE_Pos);
+  cr2 |= __sio_reloc_field(siop->enabled, SIO_EV_RXBREAK,    SIO_EV_RXBREAK_POS,    USART_CR2_LBDIE_Pos);
 
   /* The following 3 are grouped.*/
   if ((siop->enabled & (SIO_EV_FRAMING_ERR |
@@ -502,7 +500,7 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
   uint32_t isr;
-  sioevents_t errors = (sioevents_t)0;
+  sioevents_t errors;
 
   /* Getting all error ISR flags (and only those).
      NOTE: Do not trust the position of other bits in ISR/ICR because
@@ -513,16 +511,13 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
   /* Clearing captured events.*/
   siop->usart->ICR = isr;
 
-  /* Status flags cleared, now the RX errors-related interrupts can be
+  /* Status flags cleared, now the error-related interrupts can be
      enabled again.*/
   usart_enable_rx_errors_irq(siop);
 
   /* Translating the status flags in SIO events.*/
-  errors |= __sio_reloc_field(isr, USART_ISR_LBDF_Msk, USART_ISR_LBDF_Pos, SIO_EV_BREAK_POS)       |
-            __sio_reloc_field(isr, USART_ISR_PE_Msk,   USART_ISR_PE_Pos,   SIO_EV_PARITY_ERR_POS)  |
-            __sio_reloc_field(isr, USART_ISR_FE_Msk,   USART_ISR_FE_Pos,   SIO_EV_FRAMING_ERR_POS) |
-            __sio_reloc_field(isr, USART_ISR_NE_Msk,   USART_ISR_NE_Pos,   SIO_EV_NOISE_ERR_POS)   |
-            __sio_reloc_field(isr, USART_ISR_ORE_Msk,  USART_ISR_ORE_Pos,  SIO_EV_OVERRUN_ERR_POS);
+  errors = __sio_reloc_field(isr, USART_ISR_ONFP_Msk,  USART_ISR_ONFP_Pos,  SIO_EV_ALL_ERRORS_POS) |
+           __sio_reloc_field(isr, USART_ISR_LBDF_Msk,  USART_ISR_LBDF_Pos,  SIO_EV_RXBREAK_POS);
 
   return errors;
 }
@@ -537,7 +532,7 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
   uint32_t isr;
-  sioevents_t events = (sioevents_t)0;
+  sioevents_t events;
 
   /* Getting all ISR flags.
      NOTE: Do not trust the position of other bits in ISR/ICR because
@@ -558,15 +553,11 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
   usart_enable_rx_errors_irq(siop);
 
   /* Translating the status flags in SIO events.*/
-  events |= __sio_reloc_field(isr, USART_ISR_RXNE_Msk, USART_ISR_RXNE_Pos, SIO_EV_RXNOTEMPY_POS)   |
-            __sio_reloc_field(isr, USART_ISR_TXE_Msk,  USART_ISR_TXE_Pos,  SIO_EV_TXNOTFULL_POS)   |
-            __sio_reloc_field(isr, USART_ISR_IDLE_Msk, USART_ISR_IDLE_Pos, SIO_EV_RXIDLE_POS)      |
-            __sio_reloc_field(isr, USART_ISR_TC_Msk,   USART_ISR_TC_Pos,   SIO_EV_TXDONE_POS)      |
-            __sio_reloc_field(isr, USART_ISR_LBDF_Msk, USART_ISR_LBDF_Pos, SIO_EV_BREAK_POS)       |
-            __sio_reloc_field(isr, USART_ISR_PE_Msk,   USART_ISR_PE_Pos,   SIO_EV_PARITY_ERR_POS)  |
-            __sio_reloc_field(isr, USART_ISR_FE_Msk,   USART_ISR_FE_Pos,   SIO_EV_FRAMING_ERR_POS) |
-            __sio_reloc_field(isr, USART_ISR_NE_Msk,   USART_ISR_NE_Pos,   SIO_EV_NOISE_ERR_POS)   |
-            __sio_reloc_field(isr, USART_ISR_ORE_Msk,  USART_ISR_ORE_Pos,  SIO_EV_OVERRUN_ERR_POS);
+  events = __sio_reloc_field(isr, USART_ISR_RXNE_Msk,  USART_ISR_RXNE_Pos,  SIO_EV_RXNOTEMPY_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TXE_Msk,   USART_ISR_TXE_Pos,   SIO_EV_TXNOTFULL_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TC_Msk,    USART_ISR_TC_Pos,    SIO_EV_TXDONE_POS)     |
+           __sio_reloc_field(isr, USART_ISR_IONFP_Msk, USART_ISR_IONFP_Pos, SIO_EV_ALL_ERRORS_POS) |
+           __sio_reloc_field(isr, USART_ISR_LBDF_Msk,  USART_ISR_LBDF_Pos,  SIO_EV_RXBREAK_POS);
 
   return events;
 }
@@ -583,10 +574,7 @@ sioevents_t sio_lld_get_events(SIODriver *siop) {
   uint32_t isr;
   sioevents_t events;
 
-  /* Getting all ISR flags.
-     NOTE: Do not trust the position of other bits in ISR/ICR because
-           some scientist decided to use different positions for some
-           of them.*/
+  /* Getting all ISR flags.*/
   isr = siop->usart->ISR & (SIO_LLD_ISR_RX_ERRORS |
                             USART_ISR_RXNE        |
                             USART_ISR_IDLE        |
@@ -594,15 +582,11 @@ sioevents_t sio_lld_get_events(SIODriver *siop) {
                             USART_ISR_TC);
 
   /* Translating the status flags in SIO events.*/
-  events = __sio_reloc_field(isr, USART_ISR_RXNE_Msk, USART_ISR_RXNE_Pos, SIO_EV_RXNOTEMPY_POS)   |
-           __sio_reloc_field(isr, USART_ISR_TXE_Msk,  USART_ISR_TXE_Pos,  SIO_EV_TXNOTFULL_POS)   |
-           __sio_reloc_field(isr, USART_ISR_IDLE_Msk, USART_ISR_IDLE_Pos, SIO_EV_RXIDLE_POS)      |
-           __sio_reloc_field(isr, USART_ISR_TC_Msk,   USART_ISR_TC_Pos,   SIO_EV_TXDONE_POS)      |
-           __sio_reloc_field(isr, USART_ISR_LBDF_Msk, USART_ISR_LBDF_Pos, SIO_EV_BREAK_POS)       |
-           __sio_reloc_field(isr, USART_ISR_PE_Msk,   USART_ISR_PE_Pos,   SIO_EV_PARITY_ERR_POS)  |
-           __sio_reloc_field(isr, USART_ISR_FE_Msk,   USART_ISR_FE_Pos,   SIO_EV_FRAMING_ERR_POS) |
-           __sio_reloc_field(isr, USART_ISR_NE_Msk,   USART_ISR_NE_Pos,   SIO_EV_NOISE_ERR_POS)   |
-           __sio_reloc_field(isr, USART_ISR_ORE_Msk,  USART_ISR_ORE_Pos,  SIO_EV_OVERRUN_ERR_POS);
+  events = __sio_reloc_field(isr, USART_ISR_RXNE_Msk,  USART_ISR_RXNE_Pos,  SIO_EV_RXNOTEMPY_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TXE_Msk,   USART_ISR_TXE_Pos,   SIO_EV_TXNOTFULL_POS)  |
+           __sio_reloc_field(isr, USART_ISR_TC_Msk,    USART_ISR_TC_Pos,    SIO_EV_TXDONE_POS)     |
+           __sio_reloc_field(isr, USART_ISR_IONFP_Msk, USART_ISR_IONFP_Pos, SIO_EV_ALL_ERRORS_POS) |
+           __sio_reloc_field(isr, USART_ISR_LBDF_Msk,  USART_ISR_LBDF_Pos,  SIO_EV_RXBREAK_POS);
 
   return events;
 }
@@ -757,82 +741,66 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
  */
 void sio_lld_serve_interrupt(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
-  uint32_t isr, isrmask;
-  uint32_t cr1, cr2, cr3;
+  sioevents_t events;
+  uint32_t cr1, cr3;
 
   osalDbgAssert(siop->state == SIO_READY, "invalid state");
 
   /* Read on control registers.*/
   cr1 = u->CR1;
-  cr2 = u->CR2;
   cr3 = u->CR3;
 
-  /* Calculating the mask of the interrupts to be processed, BTW, thanks ST
-     for placing interrupt enable bits randomly in 3 distinct registers
-     instead of a dedicated IER (ISR, ICR, see the pattern?).*/
-  isrmask = __sio_reloc_field(cr3, USART_CR3_EIE_Msk,    USART_CR3_EIE_Pos,    USART_ISR_NE_Pos)   |
-            __sio_reloc_field(cr3, USART_CR3_EIE_Msk,    USART_CR3_EIE_Pos,    USART_ISR_FE_Pos)   |
-            __sio_reloc_field(cr3, USART_CR3_EIE_Msk,    USART_CR3_EIE_Pos,    USART_ISR_ORE_Pos)  |
-            __sio_reloc_field(cr2, USART_CR2_LBDIE_Msk,  USART_CR2_LBDIE_Pos,  USART_ISR_LBDF_Pos) |
-            __sio_reloc_field(cr1, USART_CR1_PEIE_Msk,   USART_CR1_PEIE_Pos,   USART_ISR_PE_Pos)   |
-            __sio_reloc_field(cr1, USART_CR1_IDLEIE_Msk, USART_CR1_IDLEIE_Pos, USART_ISR_IDLE_Pos) |
-            __sio_reloc_field(cr1, USART_CR1_RXNEIE_Msk, USART_CR1_RXNEIE_Pos, USART_ISR_RXNE_Pos) |
-            __sio_reloc_field(cr1, USART_CR1_TXEIE_Msk,  USART_CR1_TXEIE_Pos,  USART_ISR_TXE_Pos)  |
-            __sio_reloc_field(cr1, USART_CR1_TCIE_Msk,   USART_CR1_TCIE_Pos,   USART_ISR_TC_Pos);
+  /* Events to be processed.*/
+  events = sio_lld_get_events(siop) & siop->enabled;
+  if (events != 0U) {
 
-  /* Note, ISR flags are just read but not cleared, ISR sources are
-     disabled instead.*/
-  isr = u->ISR;
-  isr = isr & isrmask;
-  if (isr != 0U) {
-
-    /* Error events handled as a group, except ORE.*/
-    if ((isr & (USART_ISR_LBDF | USART_ISR_NE | USART_ISR_FE |
-                USART_ISR_PE | USART_ISR_ORE)) != 0U) {
-
+    /* Error events handled as a group.*/
+    if ((events & SIO_EV_ALL_ERRORS) != 0U) {
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX error event is
          detected.*/
       u->ICR = USART_ICR_IDLECF;
 #endif
 
-      /* Interrupt sources disabled.*/
-      cr3 &= ~USART_CR3_EIE;
-      cr2 &= ~USART_CR2_LBDIE;
-      cr1 &= ~USART_CR1_PEIE;
+      /* All RX-related interrupt sources disabled.*/
+      cr3    &= ~(USART_CR3_EIE);
+      cr1    &= ~(USART_CR1_PEIE | USART_CR1_IDLEIE | USART_CR1_RXNEIE);
+      u->CR2 &= ~(USART_CR2_LBDIE);
 
       /* Waiting thread woken, if any.*/
       __sio_wakeup_errors(siop);
     }
+    /* If there are no errors then we check for the other RX events.*/
+    else {
+      /* Idle RX event.*/
+      if ((events & SIO_EV_RXIDLE) != 0U) {
 
-    /* Idle RX event.*/
-    if ((isr & USART_ISR_IDLE) != 0U) {
+        /* Interrupt source disabled.*/
+        cr1 &= ~USART_CR1_IDLEIE;
 
-      /* Interrupt source disabled.*/
-      cr1 &= ~USART_CR1_IDLEIE;
+        /* Waiting thread woken, if any.*/
+        __sio_wakeup_rxidle(siop);
+      }
 
-      /* Waiting thread woken, if any.*/
-      __sio_wakeup_rxidle(siop);
-    }
+      /* RX FIFO is non-empty.*/
+      if ((events & SIO_EV_RXNOTEMPY) != 0U) {
 
-    /* RX FIFO is non-empty.*/
-    if ((isr & USART_ISR_RXNE) != 0U) {
+  #if SIO_USE_SYNCHRONIZATION
+        /* The idle flag is forcibly cleared when an RX data event is
+           detected.*/
+        u->ICR = USART_ICR_IDLECF;
+  #endif
 
-#if SIO_USE_SYNCHRONIZATION
-      /* The idle flag is forcibly cleared when an RX data event is
-         detected.*/
-      u->ICR = USART_ICR_IDLECF;
-#endif
+        /* Interrupt source disabled.*/
+        cr1 &= ~USART_CR1_RXNEIE;
 
-      /* Interrupt source disabled.*/
-      cr1 &= ~USART_CR1_RXNEIE;
-
-      /* Waiting thread woken, if any.*/
-      __sio_wakeup_rx(siop);
+        /* Waiting thread woken, if any.*/
+        __sio_wakeup_rx(siop);
+      }
     }
 
     /* TX FIFO is non-full.*/
-    if ((isr & USART_ISR_TXE) != 0U) {
+    if ((events & SIO_EV_TXNOTFULL) != 0U) {
 
       /* Interrupt source disabled.*/
       cr1 &= ~USART_CR1_TXEIE;
@@ -842,7 +810,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
     }
 
     /* Physical transmission end.*/
-    if ((isr & USART_ISR_TC) != 0U) {
+    if ((events & SIO_EV_TXDONE) != 0U) {
 
       /* Interrupt source disabled.*/
       cr1 &= ~USART_CR1_TCIE;
@@ -853,7 +821,6 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
 
     /* Updating control registers, some sources could have been disabled.*/
     u->CR1 = cr1;
-    u->CR2 = cr2;
     u->CR3 = cr3;
 
     /* The callback is invoked.*/

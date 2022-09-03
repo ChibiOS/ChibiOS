@@ -40,6 +40,28 @@
                                          USART_ISR_PE   | USART_ISR_ORE  |  \
                                          USART_ISR_LBDF)
 
+/* Using shorter definitions of USARTv2 in order to make code more
+   similar.*/
+#if !defined(USART_ISR_RXNE_Pos)
+#define USART_ISR_RXNE_Pos      USART_ISR_RXNE_RXFNE_Pos
+#endif
+#if !defined(USART_ISR_RXNE_Msk)
+#define USART_ISR_RXNE_Msk      USART_ISR_RXNE_RXFNE_Msk
+#endif
+#if !defined(USART_ISR_RXNE)
+#define USART_ISR_RXNE          USART_ISR_RXNE_Msk
+#endif
+
+#if !defined(USART_ISR_TXE_Pos)
+#define USART_ISR_TXE_Pos       USART_ISR_TXE_TXFNF_Pos
+#endif
+#if !defined(USART_ISR_TXE_Msk)
+#define USART_ISR_TXE_Msk       USART_ISR_TXE_TXFNF_Msk
+#endif
+#if !defined(USART_ISR_TXE)
+#define USART_ISR_TXE           USART_ISR_TXE_Msk
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -341,7 +363,7 @@
  * @notapi
  */
 #define sio_lld_is_rx_empty(siop)                                           \
-  (bool)(((siop)->usart->ISR & USART_ISR_RXNE_RXFNE) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_RXNE) == 0U)
 
 /**
  * @brief   Determines the activity state of the receiver.
@@ -382,7 +404,7 @@
  * @notapi
  */
 #define sio_lld_is_tx_full(siop)                                            \
-  (bool)(((siop)->usart->ISR & USART_ISR_TXE_TXFNF) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_TXE) == 0U)
 
 /**
  * @brief   Determines the transmission state.

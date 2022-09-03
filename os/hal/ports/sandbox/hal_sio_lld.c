@@ -454,10 +454,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   __syscall2rr(201, SB_VUART_GEVT, siop->nvuart);
   osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  /* Only processing enabled events.*/
-  events = (sioevents_t)r1;
-
   /* Processing events, if any.*/
+  events = (sioevents_t)r1;
   if (events != (sioevents_t)0) {
 
     /* The callback is finally invoked.*/
