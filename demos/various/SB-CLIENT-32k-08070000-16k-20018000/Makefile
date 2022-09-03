@@ -105,6 +105,7 @@ include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/sandbox/platform.mk
 include $(CHIBIOS)/os/hal/boards/SB_GENERIC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+include $(CHIBIOS)/os/hal/lib/complex/buffered_sio/hal_buffered_sio.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMvx-M-SB/compilers/GCC/mk/port.mk
@@ -116,7 +117,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-#include $(CHIBIOS)/os/various/shell/shell.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here.
 LDSCRIPT= ./sandbox.ld
@@ -155,7 +156,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DSHELL_CMD_TEST_ENABLED=0
 
 # Define ASM defines here
 UADEFS =

@@ -85,7 +85,11 @@ static inline uint32_t __sio_vuart_deinit(uint32_t nvuart) {
 #if !defined(SB_VUART1_SUPPRESS_ISR)
 OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART1_IRQ)) {
 
+  OSAL_IRQ_PROLOGUE();
+
   sio_lld_serve_interrupt(&SIOD1);
+
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 #endif
@@ -94,7 +98,11 @@ OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART1_IRQ)) {
 #if !defined(SB_VUART2_SUPPRESS_ISR)
 OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART2_IRQ)) {
 
+  OSAL_IRQ_PROLOGUE();
+
   sio_lld_serve_interrupt(&SIOD2);
+
+  OSAL_IRQ_EPILOGUE();
 }
 #endif
 #endif
@@ -454,9 +462,47 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   __syscall2rr(201, SB_VUART_GEVT, siop->nvuart);
   osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
-  /* Processing events, if any.*/
-  events = (sioevents_t)r1;
+  /* Processing enabled events, if any.*/
+  events = (sioevents_t)r1 & siop->enabled;
   if (events != (sioevents_t)0) {
+
+    /* Error events handled as a group.*/
+    if ((events & SIO_EV_ALL_ERRORS) != 0U) {
+
+      /* Waiting thread woken, if any.*/
+      __sio_wakeup_errors(siop);
+    }
+    /* If there are no errors then we check for the other RX events.*/
+    else {
+
+      /* Idle RX event.*/
+      if ((events & SIO_EV_RXIDLE) != 0U) {
+
+        /* Waiting thread woken, if any.*/
+        __sio_wakeup_rxidle(siop);
+      }
+
+      /* RX FIFO is non-empty.*/
+      if ((events & SIO_EV_RXNOTEMPY) != 0U) {
+
+        /* Waiting thread woken, if any.*/
+        __sio_wakeup_rx(siop);
+      }
+    }
+
+    /* TX FIFO is non-full.*/
+    if ((events & SIO_EV_TXNOTFULL) != 0U) {
+
+      /* Waiting thread woken, if any.*/
+      __sio_wakeup_tx(siop);
+    }
+
+    /* Physical transmission end.*/
+    if ((events & SIO_EV_TXDONE) != 0U) {
+
+      /* Waiting thread woken, if any.*/
+      __sio_wakeup_txend(siop);
+    }
 
     /* The callback is finally invoked.*/
     __sio_callback(siop);

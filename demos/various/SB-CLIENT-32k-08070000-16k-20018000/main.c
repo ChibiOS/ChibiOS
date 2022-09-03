@@ -16,8 +16,66 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "hal_buffered_sio.h"
 
 #include "chprintf.h"
+#include "shell.h"
+
+static BufferedSIODriver bsio1;
+static uint8_t rxbuf[32];
+static uint8_t txbuf[32];
+
+/*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
+static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
+  static uint8_t buf[] =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: write\r\n");
+    return;
+  }
+
+  while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(&bsio1, buf, sizeof buf - 1);
+  }
+  chprintf(chp, "\r\n\nstopped\r\n");
+}
+
+static const ShellCommand commands[] = {
+  {"write", cmd_write},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&bsio1,
+  commands
+};
+
+/*===========================================================================*/
+/* Generic code.                                                             */
+/*===========================================================================*/
 
 /*
  * Blinker thread, times are in milliseconds.
@@ -38,6 +96,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  thread_t *tp;
 
   /*
    * System initializations.
@@ -49,17 +108,26 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the Serial or SIO driver using the default configuration.
+   * Starting a buffered SIO, it must behave exactly as a serial driver.
    */
-  sioStart(&SIOD1, NULL);
+  bsioObjectInit(&bsio1, &SIOD1,
+                 rxbuf, sizeof rxbuf,
+                 txbuf, sizeof txbuf);
+  bsioStart(&bsio1, NULL);
 
-  /* Creating a blinker thread.*/
+  /*
+   * Creating a blinker thread.
+   */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
-  chprintf((BaseSequentialStream *)&SIOD1, "Hello World!!\r\n");
-
-  /* Just sleeping in a loop.*/
+  /*
+   * Normal main() thread activity, spawning shells.
+   */
   while (true) {
-    chThdSleepMilliseconds(500);
+    tp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                             "shell", NORMALPRIO + 1,
+                             shellThread, (void *)&shell_cfg1);
+    chThdWait(tp);               /* Waiting termination.             */
+    chThdSleepMilliseconds(1000);
   }
 }
