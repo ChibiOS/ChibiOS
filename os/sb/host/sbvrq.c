@@ -268,6 +268,10 @@ void sb_api_vrq_wait(struct port_extctx *ectxp) {
     chThdSuspendS(&sbp->vrq_trp);
   }
 
+  /* VRQs cannot be disabled after suspending so no check
+     on SB_VRQ_ISR_DISABLED.*/
+//  vrq_check_trigger_s(sbp, ectxp);
+
   chSysUnlock();
 }
 
