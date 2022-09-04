@@ -68,28 +68,23 @@ __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
 }
 
 static void vrq_check_trigger_s(sb_class_t *sbp, struct port_extctx *ectxp) {
+  sb_vrqmask_t active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
 
-  /* Triggering the VRQ if required.*/
-  if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
-    sb_vrqmask_t active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+  if (active_mask != 0U) {
+    /* Creating a context for return.*/
+    ectxp--;
 
-    if (active_mask != 0U) {
-      /* Creating a context for return.*/
-      ectxp--;
-
-      /* Checking if the new frame is within the sandbox else failure.*/
-      if (!sb_is_valid_write_range(sbp,
-                                   (void *)ectxp,
-                                   sizeof (struct port_extctx))) {
-        chSysUnlock();
-        __sb_abort(CH_RET_EFAULT);
-      }
-
-      /* Building the return context.*/
-      vrq_makectx(sbp, ectxp, active_mask);
-      chThdResumeS(&sbp->vrq_trp, MSG_OK);
-      __port_syscall_set_u_psp(sbp->tp, ectxp);
+    /* Checking if the new frame is within the sandbox else failure.*/
+    if (!sb_is_valid_write_range(sbp,
+                                 (void *)ectxp,
+                                 sizeof (struct port_extctx))) {
+      chSysUnlock();
+      __sb_abort(CH_RET_EFAULT);
     }
+
+    /* Building the return context.*/
+    vrq_makectx(sbp, ectxp, active_mask);
+    __port_syscall_set_u_psp(sbp->tp, ectxp);
   }
 }
 
@@ -286,7 +281,9 @@ void sb_api_vrq_setwt(struct port_extctx *ectxp) {
   ectxp->r0 = sbp->vrq_wtmask;
   sbp->vrq_wtmask |= m;
 
-  vrq_check_trigger_s(sbp, ectxp);
+  if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
+    vrq_check_trigger_s(sbp, ectxp);
+  }
 
   chSysUnlock();
 }
@@ -314,7 +311,9 @@ void sb_api_vrq_seten(struct port_extctx *ectxp) {
   ectxp->r0 = sbp->vrq_enmask;
   sbp->vrq_enmask |= m;
 
-  vrq_check_trigger_s(sbp, ectxp);
+  if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
+    vrq_check_trigger_s(sbp, ectxp);
+  }
 
   chSysUnlock();
 }
