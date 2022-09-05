@@ -267,10 +267,10 @@ int main(void) {
    *       isolation among them.
    */
   mpuConfigureRegion(MPU_REGION_0,
-                     0x08070000U,
+                     0x08040000U,
                      MPU_RASR_ATTR_AP_RO_RO |
                      MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                     MPU_RASR_SIZE_64K |
+                     MPU_RASR_SIZE_256K |
                      MPU_RASR_ENABLE);
   mpuConfigureRegion(MPU_REGION_1,
                      0x20018000U,
