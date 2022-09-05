@@ -37,7 +37,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="SB-CLIENT-32k-08078000-16k-2001C000.null.1004513353" name="SB-CLIENT-32k-08078000-16k-2001C000"/>
+		<project id="SB-CLIENT-128k-08060000-16k-2001C000.null.1004513353" name="SB-CLIENT-128k-08060000-16k-2001C000"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -48,7 +48,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/SB-CLIENT-32k-08078000-16k-2001C000"/>
+			<resource resourceType="PROJECT" workspacePath="/SB-CLIENT-128k-08060000-16k-2001C000"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
