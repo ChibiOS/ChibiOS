@@ -290,7 +290,7 @@ int main(void) {
   /* Starting sandboxed thread 2.*/
   utp2 = sbStartThread(&sbx2, "sbx2",
                        waUnprivileged2, sizeof (waUnprivileged2),
-                       NORMALPRIO - 1, sbx2_argv, sbx2_envp);
+                       NORMALPRIO - 2, sbx2_argv, sbx2_envp);
   if (utp1 == NULL) {
     chSysHalt("sbx2 failed");
   }
