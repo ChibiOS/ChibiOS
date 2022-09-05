@@ -61,7 +61,7 @@
         .bss
 
         .align      2
-        .globl      __sb_vectors
+        .globl      __sb_in_vrq
 __sb_in_vrq:
         .ds.l       1
 

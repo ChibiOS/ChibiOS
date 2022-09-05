@@ -318,7 +318,7 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
 
-  __syscall2r(201, SB_VUART_GCERR, siop->nvuart);
+  __syscall2rr(201, SB_VUART_GCERR, siop->nvuart);
   osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
   return (sioevents_t)r1;
@@ -334,7 +334,7 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
 
-  __syscall2r(201, SB_VUART_GCEVT, siop->nvuart);
+  __syscall2rr(201, SB_VUART_GCEVT, siop->nvuart);
   osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
   return (sioevents_t)r1;
@@ -350,7 +350,7 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_events(SIODriver *siop) {
 
-  __syscall2r(201, SB_VUART_GEVT, siop->nvuart);
+  __syscall2rr(201, SB_VUART_GEVT, siop->nvuart);
   osalDbgAssert((msg_t)r0 == HAL_RET_SUCCESS, "unexpected failure");
 
   return (sioevents_t)r1;
