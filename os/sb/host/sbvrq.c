@@ -49,9 +49,18 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Used as a known privileged address.
+ */
+static void vrq_privileged_code(void) {
+
+  while (true) {
+  }
+}
+
 __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
                                       struct port_extctx *newctxp,
-                                      uint32_t active_mask) {
+                                      sb_vrqmask_t active_mask) {
   uint32_t irqn = __CLZ(__RBIT(active_mask));
   sbp->vrq_wtmask &= ~(1U << irqn);
 
@@ -67,36 +76,25 @@ __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
 #endif
 }
 
-#if 0
-static void vrq_check_trigger_s(sb_class_t *sbp, struct port_extctx *ectxp) {
-  sb_vrqmask_t active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+static struct port_extctx * vrq_pushctx(sb_class_t *sbp,
+                                        struct port_extctx *ectxp,
+                                        sb_vrqmask_t active_mask) {
 
-  if (active_mask != 0U) {
-    /* Creating a context for return.*/
+  /* Checking if the new frame is within the sandbox else failure.*/
+  if (!sb_is_valid_write_range(sbp,
+                               (void *)(ectxp - 1),
+                               sizeof (struct port_extctx))) {
+    /* Making the sandbox return on a privileged address, this
+       will cause a fault and sandbox termination.*/
+    ectxp->pc = (uint32_t)vrq_privileged_code;
+  }
+  else {
+    /* Creating a new context for return the VRQ handler.*/
     ectxp--;
-
-    /* Checking if the new frame is within the sandbox else failure.*/
-    if (!sb_is_valid_write_range(sbp,
-                                 (void *)ectxp,
-                                 sizeof (struct port_extctx))) {
-      chSysUnlock();
-      __sb_abort(CH_RET_EFAULT);
-    }
-
-    /* Building the return context.*/
     vrq_makectx(sbp, ectxp, active_mask);
-    __port_syscall_set_u_psp(sbp->tp, ectxp);
   }
-}
-#endif
 
-/**
- * @brief   Used as a known privileged address.
- */
-static void vrq_privileged_code(void) {
-
-  while (true) {
-  }
+  return ectxp;
 }
 
 static void delay_cb(virtual_timer_t *vtp, void *arg) {
@@ -142,23 +140,10 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask) {
         /* Getting the current PSP, it is U_PSP.*/
         ectxp = (struct port_extctx *)__get_PSP();
 
-        /* Checking if the new frame is within the sandbox else failure.*/
-        if (!sb_is_valid_write_range(sbp,
-                                     (void *)(ectxp - 1),
-                                     sizeof (struct port_extctx))) {
-          /* Making the sandbox return on a privileged address, this
-             will cause a fault and sandbox termination.*/
-          chSysUnlockFromISR();
-          ectxp->pc = (uint32_t)vrq_privileged_code;
-          return;
-        }
-
-        /* Creating a new context for return the VRQ handler.*/
-        ectxp--;
-        vrq_makectx(sbp, ectxp, active_mask);
+        /* Creating a return context.*/
+        ectxp = vrq_pushctx(sbp, ectxp, active_mask);
 
         __set_PSP((uint32_t)ectxp);
-
       }
     }
   }
@@ -204,21 +189,10 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
           /* Getting the current PSP, it is U_PSP.*/
           ectxp = (struct port_extctx *)__get_PSP();
 
-          /* Checking if the new frame is within the sandbox else failure.*/
-          if (!sb_is_valid_write_range(sbp,
-                                       (void *)(ectxp - 1),
-                                       sizeof (struct port_extctx))) {
-            /* Making the sandbox return on a privileged address, this
-               will cause a fault and sandbox termination.*/
-            chSysUnlockFromISR();
-            ectxp->pc = (uint32_t)vrq_privileged_code;
-            return;
-          }
+          /* Creating a return context.*/
+          ectxp = vrq_pushctx(sbp, ectxp, active_mask);
 
-          /* Creating a new context for return the VRQ handler.*/
-          ectxp--;
-          vrq_makectx(sbp, ectxp, active_mask);
-
+          /* Updating PSP position.*/
           __set_PSP((uint32_t)ectxp);
         }
         else {
@@ -238,21 +212,10 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
           /* Getting the current PSP, it is stored in the thread context.*/
           ectxp = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
 
-          /* Checking if the new frame is within the sandbox else failure.*/
-          if (!sb_is_valid_write_range(sbp,
-                                       (void *)(ectxp - 1),
-                                       sizeof (struct port_extctx))) {
-            /* Making the sandbox return on a privileged address, this
-               will cause a fault and sandbox termination.*/
-            chSysUnlockFromISR();
-            ectxp->pc = (uint32_t)vrq_privileged_code;
-            return;
-          }
+          /* Creating a return context.*/
+          ectxp = vrq_pushctx(sbp, ectxp, active_mask);
 
-          /* Creating a new context for return the VRQ handler.*/
-          ectxp--;
-          vrq_makectx(sbp, ectxp, active_mask);
-
+          /* Updating stored PSP position.*/
           sbp->tp->ctx.syscall.u_psp = (uint32_t)ectxp;
         }
         else {
@@ -421,20 +384,8 @@ void __port_do_syscall_return(void) {
     active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
     if (active_mask != 0U) {
 
-      /* Checking if there is space in the sandbox for a new frame,
-         else enforcing a sandbox failure.*/
-      if (!sb_is_valid_write_range(sbp,
-                                   (void *)(ectxp - 1),
-                                   sizeof (struct port_extctx))) {
-        /* Making the sandbox return on a privileged address, this
-           will cause a fault and sandbox termination.*/
-        ectxp->pc = (uint32_t)vrq_privileged_code;
-      }
-      else {
-        /* Creating a new context for return the VRQ handler.*/
-        ectxp--;
-        vrq_makectx(sbp, ectxp, active_mask);
-      }
+      /* Creating a return context.*/
+      ectxp = vrq_pushctx(sbp, ectxp, active_mask);
     }
   }
 
