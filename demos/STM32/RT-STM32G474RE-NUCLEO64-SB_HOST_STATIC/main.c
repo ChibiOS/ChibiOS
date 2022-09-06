@@ -64,20 +64,28 @@ static vio_uart_configs_t uart_configs1 = {
   }
 };
 
-static vio_gpio_units_t gpio_units2 = {
-  .n            = 0U
-};
-
 static vio_conf_t vio_config1 = {
   .gpios        = &gpio_units1,
   .uarts        = &uart_units1,
   .uartconfs    = &uart_configs1
 };
 
+static vio_gpio_units_t gpio_units2 = {
+  .n            = 0U
+};
+
+static vio_uart_units_t uart_units2 = {
+  .n            = 0U
+};
+
+static vio_uart_configs_t uart_configs2 = {
+  .n            = 0U
+};
+
 static vio_conf_t vio_config2 = {
   .gpios        = &gpio_units2,
-  .uarts        = NULL,
-  .uartconfs    = NULL
+  .uarts        = &uart_units2,
+  .uartconfs    = &uart_configs2
 };
 
 /*===========================================================================*/

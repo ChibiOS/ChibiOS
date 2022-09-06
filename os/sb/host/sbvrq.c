@@ -186,46 +186,83 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
   /* Adding VRQ mask to the pending mask.*/
   sbp->vrq_wtmask |= vmask;
 
-  /* A special case is when the sandbox thread is running in unprivileged mode
-     (not processing a syscall), in that case we need to push a context
-     from here.*/
-  if ((__get_CONTROL() & 1U) != 0U) {
+  /* Only doing the following if VRQs are globally enabled.*/
+  if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
+    sb_vrqmask_t active_mask;
 
-    /* Triggering the VRQ if enabled.*/
-    if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
-      sb_vrqmask_t active_mask;
+    /* Checking if there are VRQs to be served immediately.*/
+    active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+    if (active_mask != 0U) {
 
-      active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
-      if (active_mask != 0U) {
-        struct port_extctx *ectxp;
+      /* Checking if it happened to preempt this sandbox thread.*/
+      if (sbp->tp->state == CH_STATE_CURRENT) {
+        /* Checking if it is running in unprivileged mode, in this case we
+           need to build a return context in the current PSP.*/
+        if ((__get_CONTROL() & 1U) != 0U) {
+          struct port_extctx *ectxp;
 
-        /* Getting the current PSP, it is U_PSP.*/
-        ectxp = (struct port_extctx *)__get_PSP();
+          /* Getting the current PSP, it is U_PSP.*/
+          ectxp = (struct port_extctx *)__get_PSP();
 
-        /* Checking if the new frame is within the sandbox else failure.*/
-        if (!sb_is_valid_write_range(sbp,
-                                     (void *)(ectxp - 1),
-                                     sizeof (struct port_extctx))) {
-          /* Making the sandbox return on a privileged address, this
-             will cause a fault and sandbox termination.*/
-          chSysUnlockFromISR();
-          ectxp->pc = (uint32_t)vrq_privileged_code;
-          return;
+          /* Checking if the new frame is within the sandbox else failure.*/
+          if (!sb_is_valid_write_range(sbp,
+                                       (void *)(ectxp - 1),
+                                       sizeof (struct port_extctx))) {
+            /* Making the sandbox return on a privileged address, this
+               will cause a fault and sandbox termination.*/
+            chSysUnlockFromISR();
+            ectxp->pc = (uint32_t)vrq_privileged_code;
+            return;
+          }
+
+          /* Creating a new context for return the VRQ handler.*/
+          ectxp--;
+          vrq_makectx(sbp, ectxp, active_mask);
+
+          __set_PSP((uint32_t)ectxp);
         }
+        else {
+          /* It is in privileged mode so it will check for pending VRQs
+             while exiting the syscall. Just trying to wake up the thread
+             in case it is waiting for VRQs.*/
+          chThdResumeI(&sbp->vrq_trp, MSG_OK);
+        }
+      }
+      else {
+        /* We preempted some other thread. In this case the privilege
+           information is stored in the internal thread context because
+           it is switched-out.*/
+        if ((sbp->tp->ctx.regs.control & 1U) != 0U) {
+          struct port_extctx *ectxp;
 
-        /* Creating a new context for return the VRQ handler.*/
-        ectxp--;
-        vrq_makectx(sbp, ectxp, active_mask);
+          /* Getting the current PSP, it is stored in the thread context.*/
+          ectxp = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
 
-        __set_PSP((uint32_t)ectxp);
+          /* Checking if the new frame is within the sandbox else failure.*/
+          if (!sb_is_valid_write_range(sbp,
+                                       (void *)(ectxp - 1),
+                                       sizeof (struct port_extctx))) {
+            /* Making the sandbox return on a privileged address, this
+               will cause a fault and sandbox termination.*/
+            chSysUnlockFromISR();
+            ectxp->pc = (uint32_t)vrq_privileged_code;
+            return;
+          }
 
+          /* Creating a new context for return the VRQ handler.*/
+          ectxp--;
+          vrq_makectx(sbp, ectxp, active_mask);
+
+          sbp->tp->ctx.syscall.u_psp = (uint32_t)ectxp;
+        }
+        else {
+          /* It is in privileged mode so it will check for pending VRQs
+             while exiting the syscall. Just trying to wake up the thread
+             in case it is waiting for VRQs.*/
+          chThdResumeI(&sbp->vrq_trp, MSG_OK);
+        }
       }
     }
-  }
-  else {
-    /* Just waking up the sandbox thread if it is in wait-for-interrupt
-       state, it will process the VRQ on syscall exit.*/
-    chThdResumeI(&sbp->vrq_trp, MSG_OK);
   }
 
   chSysUnlockFromISR();
