@@ -77,6 +77,7 @@ extern "C" {
   void sb_api_vrq_enable(struct port_extctx *ectxp);
   void sb_api_vrq_getisr(struct port_extctx *ectxp);
   void sb_api_vrq_return(struct port_extctx *ectxp);
+  void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

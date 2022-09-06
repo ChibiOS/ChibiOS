@@ -1259,4 +1259,21 @@ void __port_do_syscall_entry(uint32_t n) {
   __set_PSP((uint32_t)newctxp);
 }
 
+/**
+ * @brief   Redefined syscall return vector with VRQ handling.
+ */
+void __port_do_syscall_return(void) {
+  thread_t *tp;
+  struct port_extctx *ectxp;
+
+  tp = __sch_get_currthread();
+  ectxp = (struct port_extctx *)__port_syscall_get_u_psp(tp);
+
+#if SB_CFG_ENABLE_VRQ == TRUE
+  __sb_vrq_check_pending((sb_class_t *)tp->ctx.syscall.p, ectxp);
+#else
+  __set_PSP((uint32_t)ectxp);
+#endif
+}
+
 /** @} */

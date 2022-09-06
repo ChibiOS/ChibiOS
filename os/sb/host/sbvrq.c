@@ -366,16 +366,14 @@ void sb_api_vrq_return(struct port_extctx *ectxp) {
 }
 
 /**
- * @brief   Redefined syscall return vector with VRQ handling.
+ * @brief   Checks for pending VRQs, creates a return context if any.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] ectxp     current return context
+ *
+ * @notapi
  */
-void __port_do_syscall_return(void) {
-  thread_t *tp;
-  struct port_extctx *ectxp;
-  sb_class_t *sbp;
-
-  tp = __sch_get_currthread();
-  ectxp = (struct port_extctx *)__port_syscall_get_u_psp(tp);
-  sbp = (sb_class_t *)tp->ctx.syscall.p;
+void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   /* Processing pending VRQs if enabled.*/
   if (((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U)) {
