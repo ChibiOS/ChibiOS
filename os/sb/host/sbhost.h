@@ -57,7 +57,6 @@ extern sb_t sb;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void port_syscall(struct port_extctx *ctxp, uint32_t n);
   size_t sb_strv_getsize(const char *v[], int *np);
   void sb_strv_copy(const char *sp[], void *dp, int n);
   bool sb_is_valid_read_range(sb_class_t *sbp, const void *start, size_t size);

@@ -230,6 +230,8 @@ SVC_Handler:
                 ldr     r3, [r2, #24]       /* PC position. */
                 ldrh    r0, [r3, #-2]       /* SVC opcode.  */
                 and     r0, #255
+//                cmp     r0, #0xF0
+//                bge     __port_do_fastcall_entry
                 b       __port_do_syscall_entry
 
 frompriv:

@@ -1232,4 +1232,31 @@ void __sb_abort(msg_t msg) {
   chSysHalt("zombies");
 }
 
+void __port_do_syscall_entry(uint32_t n) {
+  extern void __sb_dispatch_syscall(struct port_extctx *ctxp, uint32_t n);
+  thread_t *tp = __sch_get_currthread();
+  struct port_extctx *ectxp, *newctxp;
+  uint32_t u_psp;
+
+  /* Caller context in unprivileged memory.*/
+  u_psp = __get_PSP();
+  ectxp = (struct port_extctx *)u_psp;
+  __port_syscall_set_u_psp(tp, u_psp);
+
+  /* Return context for change in privileged mode.*/
+  newctxp = ((struct port_extctx *)__port_syscall_get_s_psp(tp)) - 1;
+
+  /* Creating context for return in privileged mode.*/
+  newctxp->r0    = (uint32_t)ectxp;
+  newctxp->r1    = n;
+  newctxp->pc    = (uint32_t)__sb_dispatch_syscall;
+  newctxp->xpsr  = 0x01000000U;
+#if CORTEX_USE_FPU == TRUE
+  newctxp->fpscr = FPU->FPDSCR;
+#endif
+
+  /* Switching PSP to the privileged mode PSP.*/
+  __set_PSP((uint32_t)newctxp);
+}
+
 /** @} */

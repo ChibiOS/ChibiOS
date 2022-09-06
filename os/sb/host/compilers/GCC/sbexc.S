@@ -49,8 +49,8 @@
 
                 .align      2
                 .thumb_func
-                .global     port_syscall
-port_syscall:
+                .global     __sb_dispatch_syscall
+__sb_dispatch_syscall:
                 ldr         r3, =sb_syscalls
                 ldr.w       r3, [r3, r1, lsl #2]
                 blx         r3
