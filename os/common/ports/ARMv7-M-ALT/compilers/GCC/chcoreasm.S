@@ -224,14 +224,14 @@ SVC_Handler:
                 tst     r12, #1
                 beq     frompriv
                 /* SVC called from non-privileged mode for a syscall.*/
-                bic     r12, #1
-                msr     CONTROL, r12        /* Switching to privileged. */
                 /* Note, LR already contains the return address.*/
                 ldr     r3, [r2, #24]       /* PC position. */
                 ldrh    r0, [r3, #-2]       /* SVC opcode.  */
                 and     r0, #255
-//                cmp     r0, #0xF0
-//                bge     __port_do_fastcall_entry
+                cmp     r0, #0xF0
+                bge     __port_do_fastcall_entry
+                bic     r12, #1
+                msr     CONTROL, r12        /* Switching to privileged. */
                 b       __port_do_syscall_entry
 
 frompriv:

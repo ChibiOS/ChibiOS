@@ -895,7 +895,7 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
  */
 static inline void sbSetAlarm(sysinterval_t interval, bool reload) {
 
-  __syscall2r(245, (uint32_t)interval, (uint32_t)reload);
+  __syscall2r(237, (uint32_t)interval, (uint32_t)reload);
 }
 
 /**
@@ -905,7 +905,7 @@ static inline void sbSetAlarm(sysinterval_t interval, bool reload) {
  */
 static inline void sbResetAlarm(void) {
 
-  __syscall0(246);
+  __syscall0(238);
 }
 
 /**
@@ -915,7 +915,7 @@ static inline void sbResetAlarm(void) {
  */
 static inline void __sb_vrq_wait(void) {
 
-  __syscall0(247);
+  __syscall0(239);
 }
 
 /**

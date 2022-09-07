@@ -272,97 +272,83 @@ void sb_api_vrq_setwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
-  chSysLock();
-
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_wtmask;
   sbp->vrq_wtmask |= m;
 
-  chSysUnlock();
+  __sb_vrq_check_pending(sbp, ectxp);
 }
 
 void sb_api_vrq_clrwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
-  chSysLock();
-
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_wtmask;
   sbp->vrq_wtmask &= ~m;
 
-  chSysUnlock();
+  /* No need to check for pending VRQs.*/
 }
 
 void sb_api_vrq_seten(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
-  chSysLock();
-
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_enmask;
   sbp->vrq_enmask |= m;
 
-  chSysUnlock();
+  __sb_vrq_check_pending(sbp, ectxp);
 }
 
 void sb_api_vrq_clren(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
-  chSysLock();
-
   m = ectxp->r0;
   ectxp->r0 = sbp->vrq_enmask;
   sbp->vrq_enmask &= ~m;
 
-  chSysUnlock();
+  /* No need to check for pending VRQs.*/
 }
 
 void sb_api_vrq_disable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  chSysLock();
-
   ectxp->r0 = sbp->vrq_isr;
   sbp->vrq_isr |= SB_VRQ_ISR_DISABLED;
 
-  chSysUnlock();
+  /* No need to check for pending VRQs.*/
 }
 
 void sb_api_vrq_enable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  chSysLock();
-
   ectxp->r0 = sbp->vrq_isr;
   sbp->vrq_isr &= ~SB_VRQ_ISR_DISABLED;
 
-  chSysUnlock();
+  __sb_vrq_check_pending(sbp, ectxp);
 }
 
 void sb_api_vrq_getisr(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   ectxp->r0 = sbp->vrq_isr;
+
+  /* No need to check for pending VRQs.*/
 }
 
 void sb_api_vrq_return(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  chSysLock();
-
   /* Returning from VRQ, enabling VRQs globally again.*/
   sbp->vrq_isr &= ~SB_VRQ_ISR_DISABLED;
 
   /* Discarding the return current context, returning on the previous one.
-     TODO: Check for overflows.*/
+     TODO: Check for overflows????*/
   ectxp++;
 
-  __port_syscall_set_u_psp(sbp->tp, ectxp);
-
-  chSysUnlock();
+  __sb_vrq_check_pending(sbp, ectxp);
 }
 
 /**

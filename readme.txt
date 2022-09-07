@@ -74,6 +74,12 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added a para-virtualized HAL port for use in sandboxes.
+- NEW: Added a VIO subsystem to sandboxes supporting drivers
+       para-virtualization, PAL and SIO supported so far.
+- NEW: Added and RT port for use in virtualized sandboxes.
+- NEW: Added full virtualization support to sandboxes with a virtual IRQ
+       mechanism.
 - NEW: Fixed setting of SYSCLK when derived from divided HSI16
 - NEW: Mass change: Source code convention changed from CRLF to just CR (Unix).
 - NEW: Fixed some corned cases in ADC5, added ADC reset on start().
