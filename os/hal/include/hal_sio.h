@@ -323,9 +323,9 @@ struct hal_sio_driver {
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] mask      enabled events mask to be written
  *
- * @iclass
+ * @xclass
  */
-#define sioWriteEnableFlagsI(siop, mask) do {                               \
+#define sioWriteEnableFlagsX(siop, mask) do {                               \
   (siop)->enabled = (mask);                                                 \
   sio_lld_update_enable_flags(siop);                                        \
 } while (false)
@@ -336,9 +336,9 @@ struct hal_sio_driver {
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] mask      enabled events mask to be set
  *
- * @iclass
+ * @xclass
  */
-#define sioSetEnableFlagsI(siop, mask) do {                                 \
+#define sioSetEnableFlagsX(siop, mask) do {                                 \
   (siop)->enabled |= (mask);                                                \
   sio_lld_update_enable_flags(siop);                                        \
 } while (false)
@@ -349,9 +349,9 @@ struct hal_sio_driver {
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] flags     enabled events mask to be cleared
  *
- * @iclass
+ * @xclass
  */
-#define sioClearEnableFlagsI(siop, mask) do {                               \
+#define sioClearEnableFlagsX(siop, mask) do {                               \
   (siop)->enabled &= ~(mask);                                               \
   sio_lld_update_enable_flags(siop);                                        \
 } while (false)
@@ -371,9 +371,9 @@ struct hal_sio_driver {
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The pending error event flags.
  *
- * @iclass
+ * @xclass
  */
-#define sioGetAndClearErrorsI(siop) sio_lld_get_and_clear_errors(siop)
+#define sioGetAndClearErrorsX(siop) sio_lld_get_and_clear_errors(siop)
 
 /**
  * @brief   Get and clears SIO event flags.
@@ -383,7 +383,7 @@ struct hal_sio_driver {
  *
  * @iclass
  */
-#define sioGetAndClearEventsI(siop) sio_lld_get_and_clear_events(siop)
+#define sioGetAndClearEventsX(siop) sio_lld_get_and_clear_events(siop)
 
 /**
  * @brief   Returns the pending SIO event flags.
@@ -391,9 +391,9 @@ struct hal_sio_driver {
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The pending event flags.
  *
- * @iclass
+ * @xclass
  */
-#define sioGetEventsI(siop) sio_lld_get_events(siop)
+#define sioGetEventsX(siop) sio_lld_get_events(siop)
 
 /**
  * @brief   Returns one frame from the RX FIFO.
@@ -429,9 +429,9 @@ struct hal_sio_driver {
  * @param[in] buffer    buffer for the received data
  * @return              The number of received frames.
  *
- * @iclass
+ * @xclass
  */
-#define sioAsyncReadI(siop, size, buffer) sio_lld_read(siop, size, buffer)
+#define sioAsyncReadX(siop, size, buffer) sio_lld_read(siop, size, buffer)
 
 /**
  * @brief   Writes data into the TX FIFO.
@@ -445,9 +445,9 @@ struct hal_sio_driver {
  * @param[out] buffer   buffer containing the data to be transmitted
  * @return              The number of transmitted frames.
  *
- * @iclass
+ * @xclass
  */
-#define sioAsyncWriteI(siop, size, buffer) sio_lld_write(siop, size, buffer)
+#define sioAsyncWriteX(siop, size, buffer) sio_lld_write(siop, size, buffer)
 
 /**
  * @brief   Control operation on a serial port.
