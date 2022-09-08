@@ -71,25 +71,6 @@ static void sb_api_loadelf(struct port_extctx *ectxp);
 #define SB_SVC12_HANDLER        sb_api_loadelf
 /** @} */
 
-/**
- * @name    VRQ pseudo-instructions handlers
- * @{
- */
-#if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
-#define SB_SVC125_HANDLER       sb_api_vrq_set_alarm
-#define SB_SVC126_HANDLER       sb_api_vrq_reset_alarm
-#define SB_SVC127_HANDLER       sb_api_vrq_wait
-#define SB_SVC248_HANDLER       sb_api_vrq_setwt
-#define SB_SVC249_HANDLER       sb_api_vrq_clrwt
-#define SB_SVC250_HANDLER       sb_api_vrq_seten
-#define SB_SVC251_HANDLER       sb_api_vrq_clren
-#define SB_SVC252_HANDLER       sb_api_vrq_disable
-#define SB_SVC253_HANDLER       sb_api_vrq_enable
-#define SB_SVC254_HANDLER       sb_api_vrq_getisr
-#define SB_SVC255_HANDLER       sb_api_vrq_return
-#endif
-/** @} */
-
 #define __SVC(x) asm volatile ("svc " #x)
 
 /*
