@@ -49,19 +49,25 @@
 #define SB_SYSC_EVENT_WAIT_ALL  10
 #define SB_SYSC_EVENT_BROADCAST 11
 #define SB_SYSC_LOADELF         12
-#define SB_SYSC_VHAL_VGPIO      200
-#define SB_SYSC_VHAL_VUART      201
+#define SB_SYSC_VHAL_VUART      96
 #define SB_SYSC_VRQ_SET_ALARM   125
 #define SB_SYSC_VRQ_RESET_ALARM 126
 #define SB_SYSC_VRQ_WAIT        127
-#define SB_SYSC_VRQ_SETWT       248
-#define SB_SYSC_VRQ_CLRWT       249
-#define SB_SYSC_VRQ_SETEN       250
-#define SB_SYSC_VRQ_CLREN       251
-#define SB_SYSC_VRQ_DISABLE     252
-#define SB_SYSC_VRQ_ENABLE      253
-#define SB_SYSC_VRQ_GETISR      254
-#define SB_SYSC_VRQ_RETURN      255
+/** @} */
+
+/**
+ * @name    Fastcall codes
+ * @{
+ */
+#define SB_FASTC_VHAL_VGPIO     224
+#define SB_FASTC_VRQ_SETWT      248
+#define SB_FASTC_VRQ_CLRWT      249
+#define SB_FASTC_VRQ_SETEN      250
+#define SB_FASTC_VRQ_CLREN      251
+#define SB_FASTC_VRQ_DISABLE    252
+#define SB_FASTC_VRQ_ENABLE     253
+#define SB_FASTC_VRQ_GETISR     254
+#define SB_FASTC_VRQ_RETURN     255
 /** @} */
 
 /**

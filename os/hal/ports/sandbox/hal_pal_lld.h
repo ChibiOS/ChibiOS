@@ -233,39 +233,39 @@ extern "C" {
 __attribute__((always_inline))
 static inline uint32_t __pal_lld_readport(ioportid_t port) {
 
-  __syscall2r(200, SB_VGPIO_READ, port);
+  __syscall2r(224, SB_VGPIO_READ, port);
   return (ioportmask_t)r0;
 }
 
 __attribute__((always_inline))
 static inline uint32_t __pal_lld_readlatch(ioportid_t port) {
 
-  __syscall2r(200, SB_VGPIO_READLATCH, port);
+  __syscall2r(224, SB_VGPIO_READLATCH, port);
   return (ioportmask_t)r0;
 }
 
 __attribute__((always_inline))
 static inline void __pal_lld_writeport(ioportid_t port, uint32_t bits) {
 
-  __syscall3r(200, SB_VGPIO_WRITE, port, bits);
+  __syscall3r(224, SB_VGPIO_WRITE, port, bits);
 }
 
 __attribute__((always_inline))
 static inline void __pal_lld_setport(ioportid_t port, uint32_t bits) {
 
-  __syscall3r(200, SB_VGPIO_SET, port, bits);
+  __syscall3r(224, SB_VGPIO_SET, port, bits);
 }
 
 __attribute__((always_inline))
 static inline void __pal_lld_clearport(ioportid_t port, uint32_t bits) {
 
-  __syscall3r(200, SB_VGPIO_CLEAR, port, bits);
+  __syscall3r(224, SB_VGPIO_CLEAR, port, bits);
 }
 
 __attribute__((always_inline))
 static inline void __pal_lld_toggleport(ioportid_t port, uint32_t bits) {
 
-  __syscall3r(200, SB_VGPIO_TOGGLE, port, bits);
+  __syscall3r(224, SB_VGPIO_TOGGLE, port, bits);
 }
 
 #endif /* HAL_USE_PAL == TRUE */

@@ -37,7 +37,7 @@
 /**
  * @brief   API handler for VHAL PAL driver.
  */
-#define SB_SVC200_HANDLER       sb_api_vio_gpio
+#define SB_SVC224_HANDLER       sb_api_vio_gpio
 
 /**
  * @name    VIO GPIO permissions
