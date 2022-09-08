@@ -75,6 +75,10 @@
 #define STM32_CAN2_RX0_HANDLER              Vector140
 #define STM32_CAN2_RX1_HANDLER              Vector144
 #define STM32_CAN2_SCE_HANDLER              Vector148
+#define STM32_CAN3_TX_HANDLER               Vector168
+#define STM32_CAN3_RX0_HANDLER              Vector16C
+#define STM32_CAN3_RX1_HANDLER              Vector170
+#define STM32_CAN3_SCE_HANDLER              Vector174
 
 #define STM32_CAN1_TX_NUMBER                19
 #define STM32_CAN1_RX0_NUMBER               20
@@ -84,6 +88,10 @@
 #define STM32_CAN2_RX0_NUMBER               64
 #define STM32_CAN2_RX1_NUMBER               65
 #define STM32_CAN2_SCE_NUMBER               66
+#define STM32_CAN3_TX_NUMBER                74
+#define STM32_CAN3_RX0_NUMBER               75
+#define STM32_CAN3_RX1_NUMBER               76
+#define STM32_CAN3_SCE_NUMBER               77
 
 /*
  * EXTI unit.

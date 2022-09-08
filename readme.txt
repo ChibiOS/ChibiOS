@@ -124,6 +124,7 @@
 - NEW: Increased stacks size in RT test suite from 128 to 192. added an
        option to override the stack size by defining THREADS_STACK_SIZE
        in the makefile.
+- FIX: CAN support broken on STM32F413 (bug #1232)(***********TODO*********** backported to 21.11.3).
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232)
