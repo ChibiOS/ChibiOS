@@ -51,9 +51,9 @@
 #define SB_SYSC_LOADELF         12
 #define SB_SYSC_VHAL_VGPIO      200
 #define SB_SYSC_VHAL_VUART      201
-#define SB_SYSC_VRQ_SET_ALARM   237
-#define SB_SYSC_VRQ_RESET_ALARM 238
-#define SB_SYSC_VRQ_WAIT        239
+#define SB_SYSC_VRQ_SET_ALARM   125
+#define SB_SYSC_VRQ_RESET_ALARM 126
+#define SB_SYSC_VRQ_WAIT        127
 #define SB_SYSC_VRQ_SETWT       248
 #define SB_SYSC_VRQ_CLRWT       249
 #define SB_SYSC_VRQ_SETEN       250

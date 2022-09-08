@@ -76,9 +76,9 @@ static void sb_api_loadelf(struct port_extctx *ectxp);
  * @{
  */
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
-#define SB_SVC237_HANDLER       sb_api_vrq_set_alarm
-#define SB_SVC238_HANDLER       sb_api_vrq_reset_alarm
-#define SB_SVC239_HANDLER       sb_api_vrq_wait
+#define SB_SVC125_HANDLER       sb_api_vrq_set_alarm
+#define SB_SVC126_HANDLER       sb_api_vrq_reset_alarm
+#define SB_SVC127_HANDLER       sb_api_vrq_wait
 #define SB_SVC248_HANDLER       sb_api_vrq_setwt
 #define SB_SVC249_HANDLER       sb_api_vrq_clrwt
 #define SB_SVC250_HANDLER       sb_api_vrq_seten
@@ -870,7 +870,7 @@ static void sb_api_loadelf(struct port_extctx *ectxp);
 
 static void sb_undef_handler(struct port_extctx *ectxp);
 
-const port_syscall_t sb_syscalls[240] = {
+const port_syscall_t sb_syscalls[128] = {
   SB_SVC0_HANDLER,   SB_SVC1_HANDLER,   SB_SVC2_HANDLER,   SB_SVC3_HANDLER,
   SB_SVC4_HANDLER,   SB_SVC5_HANDLER,   SB_SVC6_HANDLER,   SB_SVC7_HANDLER,
   SB_SVC8_HANDLER,   SB_SVC9_HANDLER,   SB_SVC10_HANDLER,  SB_SVC11_HANDLER,
@@ -902,7 +902,10 @@ const port_syscall_t sb_syscalls[240] = {
   SB_SVC112_HANDLER, SB_SVC113_HANDLER, SB_SVC114_HANDLER, SB_SVC115_HANDLER,
   SB_SVC116_HANDLER, SB_SVC117_HANDLER, SB_SVC118_HANDLER, SB_SVC119_HANDLER,
   SB_SVC120_HANDLER, SB_SVC121_HANDLER, SB_SVC122_HANDLER, SB_SVC123_HANDLER,
-  SB_SVC124_HANDLER, SB_SVC125_HANDLER, SB_SVC126_HANDLER, SB_SVC127_HANDLER,
+  SB_SVC124_HANDLER, SB_SVC125_HANDLER, SB_SVC126_HANDLER, SB_SVC127_HANDLER
+};
+
+const port_syscall_t sb_fastcalls[128] = {
   SB_SVC128_HANDLER, SB_SVC129_HANDLER, SB_SVC130_HANDLER, SB_SVC131_HANDLER,
   SB_SVC132_HANDLER, SB_SVC133_HANDLER, SB_SVC134_HANDLER, SB_SVC135_HANDLER,
   SB_SVC136_HANDLER, SB_SVC137_HANDLER, SB_SVC138_HANDLER, SB_SVC139_HANDLER,
@@ -930,10 +933,7 @@ const port_syscall_t sb_syscalls[240] = {
   SB_SVC224_HANDLER, SB_SVC225_HANDLER, SB_SVC226_HANDLER, SB_SVC227_HANDLER,
   SB_SVC228_HANDLER, SB_SVC229_HANDLER, SB_SVC230_HANDLER, SB_SVC231_HANDLER,
   SB_SVC232_HANDLER, SB_SVC233_HANDLER, SB_SVC234_HANDLER, SB_SVC235_HANDLER,
-  SB_SVC236_HANDLER, SB_SVC237_HANDLER, SB_SVC238_HANDLER, SB_SVC239_HANDLER
-};
-
-const port_syscall_t sb_fastcalls[16] = {
+  SB_SVC236_HANDLER, SB_SVC237_HANDLER, SB_SVC238_HANDLER, SB_SVC239_HANDLER,
   SB_SVC240_HANDLER, SB_SVC241_HANDLER, SB_SVC242_HANDLER, SB_SVC243_HANDLER,
   SB_SVC244_HANDLER, SB_SVC245_HANDLER, SB_SVC246_HANDLER, SB_SVC247_HANDLER,
   SB_SVC248_HANDLER, SB_SVC249_HANDLER, SB_SVC250_HANDLER, SB_SVC251_HANDLER,
@@ -1283,7 +1283,7 @@ void __port_do_fastcall_entry(uint32_t n) {
   struct port_extctx *ectxp;
 
   ectxp = (struct port_extctx *)__get_PSP();
-  sb_fastcalls[n - 240](ectxp);
+  sb_fastcalls[n - 128](ectxp);
 }
 
 /** @} */

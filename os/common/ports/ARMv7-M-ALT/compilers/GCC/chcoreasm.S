@@ -228,7 +228,7 @@ SVC_Handler:
                 ldr     r3, [r2, #24]       /* PC position. */
                 ldrh    r0, [r3, #-2]       /* SVC opcode.  */
                 and     r0, #255
-                cmp     r0, #0xF0
+                cmp     r0, #0x80
                 bge     __port_do_fastcall_entry
                 bic     r12, #1
                 msr     CONTROL, r12        /* Switching to privileged. */
