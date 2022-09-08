@@ -37,7 +37,12 @@
 /**
  * @brief   API handler for VHAL PAL driver.
  */
-#define SB_SVC201_HANDLER       sb_api_vio_uart
+#define SB_SVC96_HANDLER        sb_sysc_vio_uart
+
+/**
+ * @brief   Fast API handler for VHAL PAL driver.
+ */
+#define SB_SVC225_HANDLER       sb_fastc_vio_uart
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -94,7 +99,8 @@ typedef struct vio_uart_configs {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sb_api_vio_uart(struct port_extctx *ectxp);
+void sb_sysc_vio_uart(struct port_extctx *ectxp);
+void sb_fastc_vio_uart(struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

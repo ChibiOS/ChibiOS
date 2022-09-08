@@ -59,12 +59,11 @@ static void vuart_cb(SIODriver *siop) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void sb_api_vio_uart(struct port_extctx *ectxp) {
+void sb_sysc_vio_uart(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t sub  = ectxp->r0;
   uint32_t unit = ectxp->r1;
   ectxp->r0 = (uint32_t)CH_RET_INNER_ERROR;
-  ectxp->r1 = (uint32_t)0;
   const vio_uart_unit_t *unitp;
 
   if (unit >= sbp->config->vioconf->uarts->n) {
@@ -110,34 +109,57 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
       break;
     }
+  default:
+    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+    break;
+  }
+}
+
+void sb_fastc_vio_uart(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  uint32_t sub  = ectxp->r0;
+  uint32_t unit = ectxp->r1;
+  const vio_uart_unit_t *unitp;
+
+  /* Returned value in case of error or illegal sub-code.*/
+  ectxp->r0 = (uint32_t)-1;
+
+  if (unit >= sbp->config->vioconf->uarts->n) {
+    return;
+  }
+
+  unitp = &sbp->config->vioconf->uarts->units[unit];
+
+  /* We don't want assertion or errors to be caused in host, making sure
+     all functions are called in the proper state.*/
+  if (unitp->siop->state != SIO_READY) {
+    return;
+  }
+
+  switch (sub) {
   case SB_VUART_ISRXE:
     {
-      ectxp->r1 = (uint32_t)sioIsRXEmptyX(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = (uint32_t)sioIsRXEmptyX(unitp->siop);
       break;
     }
   case SB_VUART_ISRXI:
     {
-      ectxp->r1 = (uint32_t)sioIsRXIdleX(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = (uint32_t)sioIsRXIdleX(unitp->siop);
       break;
     }
   case SB_VUART_ISTXF:
     {
-      ectxp->r1 = (uint32_t)sioIsTXFullX(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = (uint32_t)sioIsTXFullX(unitp->siop);
       break;
     }
   case SB_VUART_ISTXO:
     {
-      ectxp->r1 = (uint32_t)sioIsTXOngoingX(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = (uint32_t)sioIsTXOngoingX(unitp->siop);
       break;
     }
   case SB_VUART_HASERR:
     {
-      ectxp->r1 = (uint32_t)sioHasRXErrorsX(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = (uint32_t)sioHasRXErrorsX(unitp->siop);
       break;
     }
   case SB_VUART_READ:
@@ -145,18 +167,13 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
       uint8_t *buffer = (uint8_t *)ectxp->r2;
       size_t n = (size_t)ectxp->r3;
 
-      if (unitp->siop->state != SIO_READY) {
-        ectxp->r0 = (uint32_t)CH_RET_EIO;
-        break;
-      }
-
       if (!sb_is_valid_write_range(sbp, buffer, n)) {
-        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+        ectxp->r0 = (uint32_t)0;
+        /* TODO enforce fault instead.*/
         break;
       }
 
-      ectxp->r1 = sioAsyncRead(unitp->siop, buffer, n);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = sioAsyncReadX(unitp->siop, buffer, n);
       break;
     }
   case SB_VUART_WRITE:
@@ -164,94 +181,51 @@ void sb_api_vio_uart(struct port_extctx *ectxp) {
       const uint8_t *buffer = (const uint8_t *)ectxp->r2;
       size_t n = (size_t)ectxp->r3;
 
-      if (unitp->siop->state != SIO_READY) {
-        ectxp->r0 = (uint32_t)CH_RET_EIO;
-        break;
-      }
-
       if (!sb_is_valid_read_range(sbp, buffer, n)) {
-        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+        ectxp->r0 = (uint32_t)0;
+        /* TODO enforce fault instead.*/
         break;
       }
 
-      ectxp->r1 = sioAsyncWrite(unitp->siop, buffer, n);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = sioAsyncWriteX(unitp->siop, buffer, n);
       break;
     }
   case SB_VUART_GET:
     {
-      if (unitp->siop->state != SIO_READY) {
-        ectxp->r0 = (uint32_t)CH_RET_EIO;
-        break;
-      }
-
-      ectxp->r1 = sioGetX(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = sioGetX(unitp->siop);
       break;
     }
   case SB_VUART_PUT:
     {
-      uint_fast16_t data = (uint_fast16_t)ectxp->r2;
-
-      if (unitp->siop->state != SIO_READY) {
-        ectxp->r0 = (uint32_t)CH_RET_EIO;
-        break;
-      }
-
-      sioPutX(unitp->siop, data);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      sioPutX(unitp->siop, (uint_fast16_t)ectxp->r2);
+      ectxp->r0 = (uint32_t)0;
       break;
     }
   case SB_VUART_WREN:
     {
-      sioevents_t flags = (sioevents_t)ectxp->r2;
-
-      if (unitp->siop->state != SIO_READY) {
-        ectxp->r0 = (uint32_t)CH_RET_EIO;
-        break;
-      }
-
-      sioWriteEnableFlags(unitp->siop, flags);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      sioWriteEnableFlagsX(unitp->siop, (sioevents_t)ectxp->r2);
+      ectxp->r0 = (uint32_t)0;
       break;
     }
   case SB_VUART_GCERR:
     {
-      if (unitp->siop->state != SIO_READY) {
-        ectxp->r0 = (uint32_t)CH_RET_EIO;
-        break;
-      }
-
-      ectxp->r1 = (uint32_t)sioGetAndClearErrors(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = (uint32_t)sioGetAndClearErrorsX(unitp->siop);
       break;
     }
   case SB_VUART_GCEVT:
     {
-      if (unitp->siop->state != SIO_READY) {
-        ectxp->r0 = (uint32_t)CH_RET_EIO;
-        break;
-      }
-
-      ectxp->r1 = (uint32_t)sioGetAndClearEvents(unitp->siop);
-      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      ectxp->r0 = (uint32_t)sioGetAndClearEventsX(unitp->siop);
       break;
     }
   case SB_VUART_GEVT:
-  {
-    if (unitp->siop->state != SIO_READY) {
-      ectxp->r0 = (uint32_t)CH_RET_EIO;
+    {
+      ectxp->r0 = (uint32_t)sioGetEventsX(unitp->siop);
       break;
     }
-
-    ectxp->r1 = (uint32_t)sioGetEvents(unitp->siop);
-    ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
-    break;
-  }
   case SB_VUART_CTL:
     /* falls through */
   default:
-    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+    /* Silently ignored.*/
     break;
   }
 }

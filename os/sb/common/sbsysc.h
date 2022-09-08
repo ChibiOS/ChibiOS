@@ -60,6 +60,7 @@
  * @{
  */
 #define SB_FASTC_VHAL_VGPIO     224
+#define SB_FASTC_VHAL_VUART     225
 #define SB_FASTC_VRQ_SETWT      248
 #define SB_FASTC_VRQ_CLRWT      249
 #define SB_FASTC_VRQ_SETEN      250
@@ -111,20 +112,20 @@
  */
 #define SB_VUART_INIT           0
 #define SB_VUART_DEINIT         1
-#define SB_VUART_ISRXE          2
-#define SB_VUART_ISRXI          3
-#define SB_VUART_ISTXF          4
-#define SB_VUART_ISTXO          5
-#define SB_VUART_HASERR         6
-#define SB_VUART_READ           7
-#define SB_VUART_WRITE          8
-#define SB_VUART_GET            9
-#define SB_VUART_PUT            10
-#define SB_VUART_WREN           11
-#define SB_VUART_GCERR          12
-#define SB_VUART_GCEVT          13
-#define SB_VUART_GEVT           14
-#define SB_VUART_CTL            15
+#define SB_VUART_ISRXE          0
+#define SB_VUART_ISRXI          1
+#define SB_VUART_ISTXF          2
+#define SB_VUART_ISTXO          3
+#define SB_VUART_HASERR         4
+#define SB_VUART_READ           5
+#define SB_VUART_WRITE          6
+#define SB_VUART_GET            7
+#define SB_VUART_PUT            8
+#define SB_VUART_WREN           9
+#define SB_VUART_GCERR          10
+#define SB_VUART_GCEVT          11
+#define SB_VUART_GEVT           12
+#define SB_VUART_CTL            13
 /** @} */
 
 /*===========================================================================*/

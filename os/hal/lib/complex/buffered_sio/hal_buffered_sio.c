@@ -75,7 +75,7 @@ static void __bsio_default_cb(SIODriver *siop) {
 
   /* Posting the non-data SIO events as channel event flags, the masks are
      made to match.*/
-  events = sioGetAndClearEventsI(siop);
+  events = sioGetAndClearEventsX(siop);
   chnAddFlagsI(bsiop, (eventflags_t)(events & ~SIO_EV_ALL_DATA));
 
   /* RX FIFO event.*/
@@ -207,7 +207,7 @@ msg_t bsioStart(BufferedSIODriver *bsiop, const BufferedSIOConfig *config) {
   if (msg == HAL_RET_SUCCESS) {
     osalSysLock();
     sioSetCallbackX(bsiop->siop, &__bsio_default_cb);
-    sioWriteEnableFlagsI(bsiop->siop, SIO_EV_ALL_EVENTS);
+    sioWriteEnableFlagsX(bsiop->siop, SIO_EV_ALL_EVENTS);
     bsiop->state = BS_READY;
     osalSysUnlock();
   }
