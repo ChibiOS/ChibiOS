@@ -315,7 +315,8 @@ void sb_api_vrq_clren(struct port_extctx *ectxp) {
 void sb_api_vrq_disable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  ectxp->r0 = sbp->vrq_isr;
+  (void)ectxp;
+
   sbp->vrq_isr |= SB_VRQ_ISR_DISABLED;
 
   /* No need to check for pending VRQs.*/
@@ -324,7 +325,6 @@ void sb_api_vrq_disable(struct port_extctx *ectxp) {
 void sb_api_vrq_enable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  ectxp->r0 = sbp->vrq_isr;
   sbp->vrq_isr &= ~SB_VRQ_ISR_DISABLED;
 
   __sb_vrq_check_pending(sbp, ectxp);
