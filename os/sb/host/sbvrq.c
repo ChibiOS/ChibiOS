@@ -58,14 +58,15 @@ static void vrq_privileged_code(void) {
   }
 }
 
-__STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
-                                      struct port_extctx *newctxp,
-                                      sb_vrqmask_t active_mask) {
+CC_FORCE_INLINE
+static inline void vrq_makectx(sb_class_t *sbp,
+                               struct port_extctx *newctxp,
+                               sb_vrqmask_t active_mask) {
   uint32_t irqn = __CLZ(__RBIT(active_mask));
   sbp->vrq_wtmask &= ~(1U << irqn);
 
   /* Disabling VRQs globally during processing.*/
-  sbp->vrq_isr |= SB_VRQ_ISR_DISABLED;
+  sbp->vrq_isr = SB_VRQ_ISR_DISABLED;
 
   /* Building the return context.*/
   newctxp->r0     = irqn;
@@ -76,6 +77,7 @@ __STATIC_FORCEINLINE void vrq_makectx(sb_class_t *sbp,
 #endif
 }
 
+CC_NO_INLINE
 static struct port_extctx * vrq_pushctx(sb_class_t *sbp,
                                         struct port_extctx *ectxp,
                                         sb_vrqmask_t active_mask) {
@@ -317,7 +319,7 @@ void sb_api_vrq_disable(struct port_extctx *ectxp) {
 
   (void)ectxp;
 
-  sbp->vrq_isr |= SB_VRQ_ISR_DISABLED;
+  sbp->vrq_isr = SB_VRQ_ISR_DISABLED;
 
   /* No need to check for pending VRQs.*/
 }
@@ -325,7 +327,7 @@ void sb_api_vrq_disable(struct port_extctx *ectxp) {
 void sb_api_vrq_enable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
-  sbp->vrq_isr &= ~SB_VRQ_ISR_DISABLED;
+  sbp->vrq_isr = 0U;
 
   __sb_vrq_check_pending(sbp, ectxp);
 }
@@ -342,7 +344,7 @@ void sb_api_vrq_return(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   /* Returning from VRQ, enabling VRQs globally again.*/
-  sbp->vrq_isr &= ~SB_VRQ_ISR_DISABLED;
+  sbp->vrq_isr = 0U;
 
   /* Discarding the return current context, returning on the previous one.
      TODO: Check for overflows????*/
