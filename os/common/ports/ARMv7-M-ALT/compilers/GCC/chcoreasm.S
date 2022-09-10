@@ -218,26 +218,26 @@
                 .thumb_func
                 .globl  SVC_Handler
 SVC_Handler:
-                mrs     r2, PSP
 #if PORT_USE_SYSCALL
                 mrs     r12, CONTROL
                 tst     r12, #1
                 beq     frompriv
                 /* SVC called from non-privileged mode for a syscall.*/
                 /* Note, LR already contains the return address.*/
-                ldr     r3, [r2, #24]       /* PC position. */
-                ldrh    r0, [r3, #-2]       /* SVC opcode.  */
-                and     r0, #255
-                cmp     r0, #0x80
+                mrs     r0, PSP             /* Position of the exc.frame.*/
+                ldr     r3, [r0, #24]       /* PC position.*/
+                ldrb    r1, [r3, #-2]       /* SVC parameter.*/
+                cmp     r1, #0x80
                 bge     __port_do_fastcall_entry
                 bic     r12, #1
-                msr     CONTROL, r12        /* Switching to privileged. */
+                msr     CONTROL, r12        /* Switching to privileged.*/
                 b       __port_do_syscall_entry
 
 frompriv:
                 /* SVC called from privileged mode for unprivileged return.*/
-                ldr     r3, [r2, #24]       /* PC position. */
-                ldrh    r3, [r3, #-2]       /* SVC opcode.  */
+                mrs     r2, PSP             /* Position of the exc.frame.*/
+                ldr     r3, [r2, #24]       /* PC position.*/
+                ldrh    r3, [r3, #-2]       /* SVC opcode.*/
                 ands    r3, #255
                 beq     ctxswitch
                 /* Called for non-privileged mode change.*/
@@ -247,6 +247,8 @@ frompriv:
 
 ctxswitch:
                 /* SVC called from privilege mode for context switch.*/
+#else
+                mrs     r2, PSP             /* Position of the exc.frame.*/
 #endif
                 /* Context store for old thread through R1.*/
                 adds    r1, #CONTEXT_OFFSET

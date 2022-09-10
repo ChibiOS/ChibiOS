@@ -1216,11 +1216,14 @@ void __sb_abort(msg_t msg) {
   chSysHalt("zombies");
 }
 
-void __port_do_syscall_entry(uint32_t n) {
+void __port_do_syscall_entry(struct port_extctx *ectxpxx,
+                             uint32_t n) {
   extern void __sb_dispatch_syscall(struct port_extctx *ctxp, uint32_t n);
   thread_t *tp = __sch_get_currthread();
   struct port_extctx *ectxp, *newctxp;
   uint32_t u_psp;
+
+(void)ectxpxx;
 
   /* Caller context in unprivileged memory.*/
   u_psp = __get_PSP();
@@ -1260,11 +1263,16 @@ void __port_do_syscall_return(void) {
 #endif
 }
 
-void __port_do_fastcall_entry(uint32_t n) {
+#if 0 /* Moved in asm module.*/
+void __port_do_fastcall_entry(struct port_extctx *ectxpxx,
+                              uint32_t n) {
   struct port_extctx *ectxp;
+
+  (void)ectxpxx;
 
   ectxp = (struct port_extctx *)__get_PSP();
   sb_fastcalls[n - 128](ectxp);
 }
+#endif
 
 /** @} */

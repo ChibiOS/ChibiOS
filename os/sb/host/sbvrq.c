@@ -99,6 +99,27 @@ static struct port_extctx * vrq_pushctx(sb_class_t *sbp,
   return ectxp;
 }
 
+CC_NO_INLINE
+static void vrq_pushctx2(struct port_extctx *ectxp,
+                         sb_class_t *sbp,
+                         sb_vrqmask_t active_mask) {
+
+  /* Checking if the new frame is within the sandbox else failure.*/
+  if (!sb_is_valid_write_range(sbp,
+                               (void *)(ectxp - 1),
+                               sizeof (struct port_extctx))) {
+    /* Making the sandbox return on a privileged address, this
+       will cause a fault and sandbox termination.*/
+    ectxp->pc = (uint32_t)vrq_privileged_code;
+  }
+  else {
+    /* Creating a new context for return the VRQ handler.*/
+    ectxp--;
+    vrq_makectx(sbp, ectxp, active_mask);
+    __set_PSP((uint32_t)ectxp);
+  }
+}
+
 static void delay_cb(virtual_timer_t *vtp, void *arg) {
   sb_class_t *sbp = (sb_class_t *)arg;
 
@@ -326,10 +347,18 @@ void sb_api_vrq_disable(struct port_extctx *ectxp) {
 
 void sb_api_vrq_enable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_vrqmask_t active_mask;
 
-  sbp->vrq_isr = 0U;
+  active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+  if (active_mask != 0U) {
+    sbp->vrq_isr = 0U;
 
-  __sb_vrq_check_pending(sbp, ectxp);
+    /* Creating a return context.*/
+    vrq_pushctx2(ectxp, sbp, active_mask);
+  }
+  else {
+    sbp->vrq_isr = 0U;
+  }
 }
 
 void sb_api_vrq_getisr(struct port_extctx *ectxp) {

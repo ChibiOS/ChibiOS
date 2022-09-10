@@ -68,15 +68,19 @@ CC_NO_INLINE uint32_t port_get_s_psp(void) {
   return (uint32_t)__port_syscall_get_s_psp(__sch_get_currthread());
 }
 
-CC_WEAK void __port_do_fastcall_entry(uint32_t n) {
+CC_WEAK void __port_do_fastcall_entry(struct port_extctx *ectxp,
+                                      uint32_t n) {
 
+  (void)ectxp;
   (void)n;
 
   chSysHalt("unimplemented fastcall");
 }
 
-CC_WEAK void __port_do_syscall_entry(uint32_t n) {
+CC_WEAK void __port_do_syscall_entry(struct port_extctx *ectxp,
+                                     uint32_t n) {
 
+  (void)ectxp;
   (void)n;
 
   chSysHalt("unimplemented syscall");

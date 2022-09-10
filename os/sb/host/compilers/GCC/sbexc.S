@@ -51,11 +51,22 @@
                 .thumb_func
                 .global     __sb_dispatch_syscall
 __sb_dispatch_syscall:
-                ldr         r3, =sb_syscalls
+                movw        r3, #:lower16:sb_syscalls
+                movt        r3, #:upper16:sb_syscalls
                 ldr.w       r3, [r3, r1, lsl #2]
                 blx         r3
                 svc         1
 .zombies1:      b           .zombies1
+
+                .align      2
+                .thumb_func
+                .global     __port_do_fastcall_entry
+__port_do_fastcall_entry:
+                movw        r3, #:lower16:sb_fastcalls
+                movt        r3, #:upper16:sb_fastcalls
+                subs        r1, #128
+                ldr.w       r3, [r3, r1, lsl #2]
+                bx          r3
 
                 .align      2
                 .thumb_func
