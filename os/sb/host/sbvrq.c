@@ -371,15 +371,23 @@ void sb_api_vrq_getisr(struct port_extctx *ectxp) {
 
 void sb_api_vrq_return(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-
-  /* Returning from VRQ, enabling VRQs globally again.*/
-  sbp->vrq_isr = 0U;
+  sb_vrqmask_t active_mask;
 
   /* Discarding the return current context, returning on the previous one.
      TODO: Check for overflows????*/
   ectxp++;
 
-  __sb_vrq_check_pending(sbp, ectxp);
+  active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+  if (active_mask != 0U) {
+    sbp->vrq_isr = 0U;
+
+    /* Creating a return context.*/
+    vrq_pushctx2(ectxp, sbp, active_mask);
+  }
+  else {
+    sbp->vrq_isr = 0U;
+    __set_PSP((uint32_t)ectxp);
+  }
 }
 
 /**
