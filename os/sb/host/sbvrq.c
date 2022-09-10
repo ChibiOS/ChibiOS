@@ -59,8 +59,8 @@ static void vrq_privileged_code(void) {
 }
 
 CC_FORCE_INLINE
-static inline void vrq_makectx(sb_class_t *sbp,
-                               struct port_extctx *newctxp,
+static inline void vrq_makectx(struct port_extctx *newctxp,
+                               sb_class_t *sbp,
                                sb_vrqmask_t active_mask) {
   uint32_t irqn = __CLZ(__RBIT(active_mask));
   sbp->vrq_wtmask &= ~(1U << irqn);
@@ -78,9 +78,9 @@ static inline void vrq_makectx(sb_class_t *sbp,
 }
 
 CC_NO_INLINE
-static struct port_extctx * vrq_pushctx(sb_class_t *sbp,
-                                        struct port_extctx *ectxp,
-                                        sb_vrqmask_t active_mask) {
+static struct port_extctx * vrq_writectx(struct port_extctx *ectxp,
+                                         sb_class_t *sbp,
+                                         sb_vrqmask_t active_mask) {
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp,
@@ -93,16 +93,16 @@ static struct port_extctx * vrq_pushctx(sb_class_t *sbp,
   else {
     /* Creating a new context for return the VRQ handler.*/
     ectxp--;
-    vrq_makectx(sbp, ectxp, active_mask);
+    vrq_makectx(ectxp, sbp, active_mask);
   }
 
   return ectxp;
 }
 
 CC_NO_INLINE
-static void vrq_pushctx2(struct port_extctx *ectxp,
-                         sb_class_t *sbp,
-                         sb_vrqmask_t active_mask) {
+static void vrq_pushctx(struct port_extctx *ectxp,
+                        sb_class_t *sbp,
+                        sb_vrqmask_t active_mask) {
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp,
@@ -115,7 +115,7 @@ static void vrq_pushctx2(struct port_extctx *ectxp,
   else {
     /* Creating a new context for return the VRQ handler.*/
     ectxp--;
-    vrq_makectx(sbp, ectxp, active_mask);
+    vrq_makectx(ectxp, sbp, active_mask);
     __set_PSP((uint32_t)ectxp);
   }
 }
@@ -164,7 +164,7 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask) {
         ectxp = (struct port_extctx *)__get_PSP();
 
         /* Creating a return context.*/
-        ectxp = vrq_pushctx(sbp, ectxp, active_mask);
+        ectxp = vrq_writectx(ectxp, sbp, active_mask);
 
         __set_PSP((uint32_t)ectxp);
       }
@@ -213,7 +213,7 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
           ectxp = (struct port_extctx *)__get_PSP();
 
           /* Creating a return context.*/
-          ectxp = vrq_pushctx(sbp, ectxp, active_mask);
+          ectxp = vrq_writectx(ectxp, sbp, active_mask);
 
           /* Updating PSP position.*/
           __set_PSP((uint32_t)ectxp);
@@ -236,7 +236,7 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
           ectxp = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
 
           /* Creating a return context.*/
-          ectxp = vrq_pushctx(sbp, ectxp, active_mask);
+          ectxp = vrq_writectx(ectxp, sbp, active_mask);
 
           /* Updating stored PSP position.*/
           sbp->tp->ctx.syscall.u_psp = (uint32_t)ectxp;
@@ -299,7 +299,7 @@ void sb_api_vrq_setwt(struct port_extctx *ectxp) {
   ectxp->r0 = sbp->vrq_wtmask;
   sbp->vrq_wtmask |= m;
 
-  __sb_vrq_check_pending(sbp, ectxp);
+  __sb_vrq_check_pending(ectxp, sbp);
 }
 
 void sb_api_vrq_clrwt(struct port_extctx *ectxp) {
@@ -321,7 +321,7 @@ void sb_api_vrq_seten(struct port_extctx *ectxp) {
   ectxp->r0 = sbp->vrq_enmask;
   sbp->vrq_enmask |= m;
 
-  __sb_vrq_check_pending(sbp, ectxp);
+  __sb_vrq_check_pending(ectxp, sbp);
 }
 
 void sb_api_vrq_clren(struct port_extctx *ectxp) {
@@ -354,7 +354,7 @@ void sb_api_vrq_enable(struct port_extctx *ectxp) {
     sbp->vrq_isr = 0U;
 
     /* Creating a return context.*/
-    vrq_pushctx2(ectxp, sbp, active_mask);
+    vrq_pushctx(ectxp, sbp, active_mask);
   }
   else {
     sbp->vrq_isr = 0U;
@@ -382,7 +382,7 @@ void sb_api_vrq_return(struct port_extctx *ectxp) {
     sbp->vrq_isr = 0U;
 
     /* Creating a return context.*/
-    vrq_pushctx2(ectxp, sbp, active_mask);
+    vrq_pushctx(ectxp, sbp, active_mask);
   }
   else {
     sbp->vrq_isr = 0U;
@@ -393,12 +393,12 @@ void sb_api_vrq_return(struct port_extctx *ectxp) {
 /**
  * @brief   Checks for pending VRQs, creates a return context if any.
  *
- * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] ectxp     current return context
+ * @param[in] sbp       pointer to a @p sb_class_t structure
  *
  * @notapi
  */
-void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp) {
+void __sb_vrq_check_pending(struct port_extctx *ectxp, sb_class_t *sbp) {
 
   /* Processing pending VRQs if enabled.*/
   if (((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U)) {
@@ -408,7 +408,7 @@ void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp) {
     if (active_mask != 0U) {
 
       /* Creating a return context.*/
-      ectxp = vrq_pushctx(sbp, ectxp, active_mask);
+      ectxp = vrq_writectx(ectxp, sbp, active_mask);
     }
   }
 

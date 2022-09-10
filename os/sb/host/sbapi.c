@@ -1252,7 +1252,7 @@ void __port_do_syscall_return(void) {
   ectxp = (struct port_extctx *)__port_syscall_get_u_psp(tp);
 
 #if SB_CFG_ENABLE_VRQ == TRUE
-  __sb_vrq_check_pending((sb_class_t *)tp->ctx.syscall.p, ectxp);
+  __sb_vrq_check_pending(ectxp, (sb_class_t *)tp->ctx.syscall.p);
 #else
   __set_PSP((uint32_t)ectxp);
 #endif
