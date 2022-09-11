@@ -35,14 +35,14 @@
 /*===========================================================================*/
 
 /**
- * @brief   API handler for VHAL PAL driver.
+ * @brief   Fast API handler for VHAL UART driver.
  */
-#define SB_SVC96_HANDLER        sb_sysc_vio_uart
+#define SB_SVC97_HANDLER        sb_fastc_vio_uart
 
 /**
- * @brief   Fast API handler for VHAL PAL driver.
+ * @brief   API handler for VHAL UART driver.
  */
-#define SB_SVC225_HANDLER       sb_fastc_vio_uart
+#define SB_SVC225_HANDLER       sb_sysc_vio_uart
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */

@@ -53,6 +53,7 @@
 __sb_dispatch_syscall:
                 movw        r3, #:lower16:sb_syscalls
                 movt        r3, #:upper16:sb_syscalls
+                subs        r1, #128
                 ldr.w       r3, [r3, r1, lsl #2]
                 blx         r3
                 svc         1
@@ -64,7 +65,6 @@ __sb_dispatch_syscall:
 __port_do_fastcall_entry:
                 movw        r3, #:lower16:sb_fastcalls
                 movt        r3, #:upper16:sb_fastcalls
-                subs        r1, #128
                 ldr.w       r3, [r3, r1, lsl #2]
                 bx          r3
 

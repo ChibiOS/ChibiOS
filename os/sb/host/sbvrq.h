@@ -46,17 +46,18 @@
  * @{
  */
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
-#define SB_SVC125_HANDLER       sb_api_vrq_set_alarm
-#define SB_SVC126_HANDLER       sb_api_vrq_reset_alarm
-#define SB_SVC127_HANDLER       sb_api_vrq_wait
-#define SB_SVC248_HANDLER       sb_api_vrq_setwt
-#define SB_SVC249_HANDLER       sb_api_vrq_clrwt
-#define SB_SVC250_HANDLER       sb_api_vrq_seten
-#define SB_SVC251_HANDLER       sb_api_vrq_clren
-#define SB_SVC252_HANDLER       sb_api_vrq_disable
-#define SB_SVC253_HANDLER       sb_api_vrq_enable
-#define SB_SVC254_HANDLER       sb_api_vrq_getisr
-#define SB_SVC255_HANDLER       sb_api_vrq_return
+#define SB_SVC120_HANDLER       sb_fastc_vrq_setwt
+#define SB_SVC121_HANDLER       sb_fastc_vrq_clrwt
+#define SB_SVC122_HANDLER       sb_fastc_vrq_seten
+#define SB_SVC123_HANDLER       sb_fastc_vrq_clren
+#define SB_SVC124_HANDLER       sb_fastc_vrq_disable
+#define SB_SVC125_HANDLER       sb_fastc_vrq_enable
+#define SB_SVC126_HANDLER       sb_fastc_vrq_getisr
+#define SB_SVC127_HANDLER       sb_fastc_vrq_return
+
+#define SB_SVC253_HANDLER       sb_sysc_vrq_set_alarm
+#define SB_SVC254_HANDLER       sb_sysc_vrq_reset_alarm
+#define SB_SVC255_HANDLER       sb_sysc_vrq_wait
 #endif
 /** @} */
 
@@ -85,17 +86,17 @@ extern "C" {
 #endif
   void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask);
   void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask);
-  void sb_api_vrq_set_alarm(struct port_extctx *ectxp);
-  void sb_api_vrq_reset_alarm(struct port_extctx *ectxp);
-  void sb_api_vrq_wait(struct port_extctx *ectxp);
-  void sb_api_vrq_setwt(struct port_extctx *ectxp);
-  void sb_api_vrq_clrwt(struct port_extctx *ectxp);
-  void sb_api_vrq_seten(struct port_extctx *ectxp);
-  void sb_api_vrq_clren(struct port_extctx *ectxp);
-  void sb_api_vrq_disable(struct port_extctx *ectxp);
-  void sb_api_vrq_enable(struct port_extctx *ectxp);
-  void sb_api_vrq_getisr(struct port_extctx *ectxp);
-  void sb_api_vrq_return(struct port_extctx *ectxp);
+  void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp);
+  void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp);
+  void sb_sysc_vrq_wait(struct port_extctx *ectxp);
+  void sb_fastc_vrq_setwt(struct port_extctx *ectxp);
+  void sb_fastc_vrq_clrwt(struct port_extctx *ectxp);
+  void sb_fastc_vrq_seten(struct port_extctx *ectxp);
+  void sb_fastc_vrq_clren(struct port_extctx *ectxp);
+  void sb_fastc_vrq_disable(struct port_extctx *ectxp);
+  void sb_fastc_vrq_enable(struct port_extctx *ectxp);
+  void sb_fastc_vrq_getisr(struct port_extctx *ectxp);
+  void sb_fastc_vrq_return(struct port_extctx *ectxp);
   void __sb_vrq_check_pending(struct port_extctx *ectxp, sb_class_t *sbp);
 #ifdef __cplusplus
 }

@@ -265,7 +265,7 @@ extern "C" {
  */
 static inline int sbStat(const char *pathname, struct stat *statbuf) {
 
-  __syscall3r(0, SB_POSIX_STAT, pathname, statbuf);
+  __syscall3r(128, SB_POSIX_STAT, pathname, statbuf);
   return (int)r0;
 }
 
@@ -278,7 +278,7 @@ static inline int sbStat(const char *pathname, struct stat *statbuf) {
  */
 static inline int sbOpen(const char *pathname, int flags) {
 
-  __syscall3r(0, SB_POSIX_OPEN, pathname, flags);
+  __syscall3r(128, SB_POSIX_OPEN, pathname, flags);
   return (int)r0;
 }
 
@@ -290,7 +290,7 @@ static inline int sbOpen(const char *pathname, int flags) {
  */
 static inline int sbClose(int fd) {
 
-  __syscall2r(0, SB_POSIX_CLOSE, fd);
+  __syscall2r(128, SB_POSIX_CLOSE, fd);
   return (int)r0;
 }
 
@@ -302,7 +302,7 @@ static inline int sbClose(int fd) {
  */
 static inline int sbDup(int fd) {
 
-  __syscall2r(0, SB_POSIX_DUP, fd);
+  __syscall2r(128, SB_POSIX_DUP, fd);
   return (int)r0;
 }
 
@@ -315,7 +315,7 @@ static inline int sbDup(int fd) {
  */
 static inline int sbDup2(int oldfd, int newfd) {
 
-  __syscall3r(0, SB_POSIX_DUP, oldfd, newfd);
+  __syscall3r(128, SB_POSIX_DUP, oldfd, newfd);
   return (int)r0;
 }
 
@@ -328,7 +328,7 @@ static inline int sbDup2(int oldfd, int newfd) {
  */
 static inline int sbFstat(int fd, struct stat *statbuf) {
 
-  __syscall3r(0, SB_POSIX_FSTAT, fd, statbuf);
+  __syscall3r(128, SB_POSIX_FSTAT, fd, statbuf);
   return (off_t)r0;
 }
 
@@ -342,7 +342,7 @@ static inline int sbFstat(int fd, struct stat *statbuf) {
  */
 static inline ssize_t sbRead(int fd, void *buf, size_t count) {
 
-  __syscall4r(0, SB_POSIX_READ, fd, buf, count);
+  __syscall4r(128, SB_POSIX_READ, fd, buf, count);
   return (ssize_t)r0;
 }
 
@@ -356,7 +356,7 @@ static inline ssize_t sbRead(int fd, void *buf, size_t count) {
  */
 static inline ssize_t sbWrite(int fd, const void *buf, size_t count) {
 
-  __syscall4r(0, SB_POSIX_WRITE, fd, buf, count);
+  __syscall4r(128, SB_POSIX_WRITE, fd, buf, count);
   return (ssize_t)r0;
 }
 
@@ -370,7 +370,7 @@ static inline ssize_t sbWrite(int fd, const void *buf, size_t count) {
  */
 static inline off_t sbSeek(int fd, off_t offset, int whence) {
 
-  __syscall4r(0, SB_POSIX_LSEEK, fd, offset, whence);
+  __syscall4r(128, SB_POSIX_LSEEK, fd, offset, whence);
   return (off_t)r0;
 }
 
@@ -383,7 +383,7 @@ static inline off_t sbSeek(int fd, off_t offset, int whence) {
  */
 static inline ssize_t sbGetdents(int fd, void *buf, size_t count) {
 
-  __syscall4r(0, SB_POSIX_GETDENTS, fd, buf, count);
+  __syscall4r(128, SB_POSIX_GETDENTS, fd, buf, count);
   return (ssize_t)r0;
 }
 
@@ -395,7 +395,7 @@ static inline ssize_t sbGetdents(int fd, void *buf, size_t count) {
  */
 static inline int sbChdir(const char *path) {
 
-  __syscall2r(0, SB_POSIX_CHDIR, path);
+  __syscall2r(128, SB_POSIX_CHDIR, path);
   return (int)r0;
 }
 
@@ -408,7 +408,7 @@ static inline int sbChdir(const char *path) {
  */
 static inline int sbGetcwd(char *buf, size_t size) {
 
-  __syscall3r(0, SB_POSIX_GETCWD, buf, size);
+  __syscall3r(128, SB_POSIX_GETCWD, buf, size);
   return (int)r0;
 }
 
@@ -420,7 +420,7 @@ static inline int sbGetcwd(char *buf, size_t size) {
  */
 static inline int sbUnlink(const char *path) {
 
-  __syscall2r(0, SB_POSIX_UNLINK, path);
+  __syscall2r(128, SB_POSIX_UNLINK, path);
   return (int)r0;
 }
 
@@ -433,7 +433,7 @@ static inline int sbUnlink(const char *path) {
  */
 static inline int sbRename(const char *oldpath, const char *newpath) {
 
-  __syscall3r(0, SB_POSIX_RENAME, oldpath, newpath);
+  __syscall3r(128, SB_POSIX_RENAME, oldpath, newpath);
   return (int)r0;
 }
 
@@ -446,7 +446,7 @@ static inline int sbRename(const char *oldpath, const char *newpath) {
  */
 static inline int sbMkdir(const char *path, mode_t mode) {
 
-  __syscall3r(0, SB_POSIX_MKDIR, path, mode);
+  __syscall3r(128, SB_POSIX_MKDIR, path, mode);
   return (int)r0;
 }
 
@@ -458,8 +458,30 @@ static inline int sbMkdir(const char *path, mode_t mode) {
  */
 static inline int sbRmdir(const char *path) {
 
-  __syscall2r(0, SB_POSIX_RMDIR, path);
+  __syscall2r(128, SB_POSIX_RMDIR, path);
   return (int)r0;
+}
+
+/**
+ * @brief   Returns the system time.
+ *
+ * @return              The current system time.
+ */
+static inline systime_t sbGetSystemTime(void) {
+
+  __syscall0r(1);
+  return (systime_t)r0;
+}
+
+/**
+ * @brief   Returns the system time frequency.
+ *
+ * @return              The system time frequency.
+ */
+static inline uint32_t sbGetFrequency(void) {
+
+  __syscall0r(2);
+  return (uint32_t)r0;
 }
 
 /**
@@ -471,29 +493,7 @@ static inline int sbRmdir(const char *path) {
  */
 static inline void sbExit(msg_t msg) {
 
-  __syscall1r(1, msg);
-}
-
-/**
- * @brief   Returns the system time.
- *
- * @return              The current system time.
- */
-static inline systime_t sbGetSystemTime(void) {
-
-  __syscall0r(2);
-  return (systime_t)r0;
-}
-
-/**
- * @brief   Returns the system time frequency.
- *
- * @return              The system time frequency.
- */
-static inline uint32_t sbGetFrequency(void) {
-
-  __syscall0r(3);
-  return (uint32_t)r0;
+  __syscall1r(129, msg);
 }
 
 /**
@@ -505,7 +505,7 @@ static inline uint32_t sbGetFrequency(void) {
  */
 static inline void sbSleep(sysinterval_t interval) {
 
-  __syscall1r(4, interval);
+  __syscall1r(130, interval);
 }
 
 /**
@@ -523,7 +523,7 @@ static inline void sbSleep(sysinterval_t interval) {
  */
 static inline void sbSleepUntil(systime_t prev, systime_t next) {
 
-  __syscall2r(5, prev, next);
+  __syscall2r(131, prev, next);
 }
 
 /**
@@ -533,7 +533,7 @@ static inline void sbSleepUntil(systime_t prev, systime_t next) {
  */
 static inline msg_t sbMsgWait(void) {
 
-  __syscall0r(6);
+  __syscall0r(132);
   return (uint32_t)r0;
 }
 
@@ -546,7 +546,7 @@ static inline msg_t sbMsgWait(void) {
  */
 static inline uint32_t sbMsgReply(msg_t msg) {
 
-  __syscall1r(7, msg);
+  __syscall1r(133, msg);
   return (uint32_t)r0;
 }
 
@@ -575,7 +575,7 @@ static inline uint32_t sbMsgReply(msg_t msg) {
 static inline eventmask_t sbEventWaitOneTimeout(eventmask_t events,
                                                 sysinterval_t timeout) {
 
-  __syscall2r(8, events, timeout);
+  __syscall2r(134, events, timeout);
   return (uint32_t)r0;
 }
 
@@ -600,7 +600,7 @@ static inline eventmask_t sbEventWaitOneTimeout(eventmask_t events,
 static inline eventmask_t sbEventWaitAnyTimeout(eventmask_t events,
                                                 sysinterval_t timeout) {
 
-  __syscall2r(9, events, timeout);
+  __syscall2r(135, events, timeout);
   return (uint32_t)r0;
 }
 
@@ -624,7 +624,7 @@ static inline eventmask_t sbEventWaitAnyTimeout(eventmask_t events,
 static inline eventmask_t sbEventWaitAllTimeout(eventmask_t events,
                                                 sysinterval_t timeout) {
 
-  __syscall2r(10, events, timeout);
+  __syscall2r(136, events, timeout);
   return (uint32_t)r0;
 }
 
@@ -638,7 +638,7 @@ static inline eventmask_t sbEventWaitAllTimeout(eventmask_t events,
  */
 static inline uint32_t sbEventBroadcastFlags(eventflags_t flags) {
 
-  __syscall1r(11, flags);
+  __syscall1r(137, flags);
   return (uint32_t)r0;
 }
 
@@ -655,7 +655,7 @@ static inline uint32_t sbEventBroadcastFlags(eventflags_t flags) {
  */
 static inline int sbLoadElf(const char *fname, uint8_t *buf, size_t size) {
 
-  __syscall3r(12, fname, buf, size);
+  __syscall3r(138, fname, buf, size);
   return (uint32_t)r0;
 
 }
@@ -895,7 +895,7 @@ static inline void sbSleepMicroseconds(time_usecs_t usecs) {
  */
 static inline void sbSetAlarm(sysinterval_t interval, bool reload) {
 
-  __syscall2r(125, (uint32_t)interval, (uint32_t)reload);
+  __syscall2r(253, (uint32_t)interval, (uint32_t)reload);
 }
 
 /**
@@ -905,7 +905,7 @@ static inline void sbSetAlarm(sysinterval_t interval, bool reload) {
  */
 static inline void sbResetAlarm(void) {
 
-  __syscall0(126);
+  __syscall0(254);
 }
 
 /**
@@ -915,7 +915,7 @@ static inline void sbResetAlarm(void) {
  */
 static inline void __sb_vrq_wait(void) {
 
-  __syscall0(127);
+  __syscall0(255);
 }
 
 /**
@@ -927,7 +927,7 @@ static inline void __sb_vrq_wait(void) {
  */
 static inline uint32_t __sb_vrq_setwt(uint32_t m) {
 
-  __syscall1r(248, m);
+  __syscall1r(120, m);
   return r0;
 }
 
@@ -940,7 +940,7 @@ static inline uint32_t __sb_vrq_setwt(uint32_t m) {
  */
 static inline uint32_t __sb_vrq_clrwt(uint32_t m) {
 
-  __syscall1r(249, m);
+  __syscall1r(121, m);
   return r0;
 }
 
@@ -953,7 +953,7 @@ static inline uint32_t __sb_vrq_clrwt(uint32_t m) {
  */
 static inline uint32_t __sb_vrq_seten(uint32_t m) {
 
-  __syscall1r(250, m);
+  __syscall1r(122, m);
   return r0;
 }
 
@@ -966,7 +966,7 @@ static inline uint32_t __sb_vrq_seten(uint32_t m) {
  */
 static inline uint32_t __sb_vrq_clren(uint32_t m) {
 
-  __syscall1r(251, m);
+  __syscall1r(123, m);
   return r0;
 }
 
@@ -977,7 +977,7 @@ static inline uint32_t __sb_vrq_clren(uint32_t m) {
  */
 static inline void __sb_vrq_disable(void) {
 
-  __syscall0(252);
+  __syscall0(124);
 }
 
 /**
@@ -987,7 +987,7 @@ static inline void __sb_vrq_disable(void) {
  */
 static inline void __sb_vrq_enable(void) {
 
-  __syscall0(253);
+  __syscall0(125);
 }
 
 /**
@@ -997,7 +997,7 @@ static inline void __sb_vrq_enable(void) {
  */
 static inline uint32_t __sb_vrq_getisr(void) {
 
-  __syscall0r(254);
+  __syscall0r(126);
   return r0;
 }
 

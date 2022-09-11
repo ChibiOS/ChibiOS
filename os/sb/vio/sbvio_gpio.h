@@ -35,9 +35,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   API handler for VHAL PAL driver.
+ * @brief   Fast API handler for VHAL PAL driver.
  */
-#define SB_SVC224_HANDLER       sb_api_vio_gpio
+#define SB_SVC96_HANDLER       sb_fastc_vio_gpio
 
 /**
  * @name    VIO GPIO permissions
@@ -89,7 +89,7 @@ typedef struct vio_gpio_units {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sb_api_vio_gpio(struct port_extctx *ectxp);
+  void sb_fastc_vio_gpio(struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

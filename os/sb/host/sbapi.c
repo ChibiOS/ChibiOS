@@ -36,39 +36,41 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-static void sb_api_stdio(struct port_extctx *ectxp);
-static void sb_api_exit(struct port_extctx *ctxp);
-static void sb_api_get_systime(struct port_extctx *ctxp);
-static void sb_api_get_frequency(struct port_extctx *ctxp);
-static void sb_api_sleep(struct port_extctx *ctxp);
-static void sb_api_sleep_until_windowed(struct port_extctx *ctxp);
-static void sb_api_wait_message(struct port_extctx *ctxp);
-static void sb_api_reply_message(struct port_extctx *ctxp);
-static void sb_api_wait_one_timeout(struct port_extctx *ctxp);
-static void sb_api_wait_any_timeout(struct port_extctx *ctxp);
-static void sb_api_wait_all_timeout(struct port_extctx *ctxp);
-static void sb_api_broadcast_flags(struct port_extctx *ctxp);
-static void sb_api_loadelf(struct port_extctx *ectxp);
+static void sb_fastc_get_systime(struct port_extctx *ctxp);
+static void sb_fastc_get_frequency(struct port_extctx *ctxp);
+
+static void sb_sysc_stdio(struct port_extctx *ectxp);
+static void sb_sysc_exit(struct port_extctx *ctxp);
+static void sb_sysc_sleep(struct port_extctx *ctxp);
+static void sb_sysc_sleep_until_windowed(struct port_extctx *ctxp);
+static void sb_sysc_wait_message(struct port_extctx *ctxp);
+static void sb_sysc_reply_message(struct port_extctx *ctxp);
+static void sb_sysc_wait_one_timeout(struct port_extctx *ctxp);
+static void sb_sysc_wait_any_timeout(struct port_extctx *ctxp);
+static void sb_sysc_wait_all_timeout(struct port_extctx *ctxp);
+static void sb_sysc_broadcast_flags(struct port_extctx *ctxp);
+static void sb_sysc_loadelf(struct port_extctx *ectxp);
 
 /**
  * @name    Standard API handlers
  * @{
  */
+#define SB_SVC1_HANDLER         sb_fastc_get_systime
+#define SB_SVC2_HANDLER         sb_fastc_get_frequency
+
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-#define SB_SVC0_HANDLER         sb_api_stdio
+#define SB_SVC128_HANDLER       sb_sysc_stdio
 #endif
-#define SB_SVC1_HANDLER         sb_api_exit
-#define SB_SVC2_HANDLER         sb_api_get_systime
-#define SB_SVC3_HANDLER         sb_api_get_frequency
-#define SB_SVC4_HANDLER         sb_api_sleep
-#define SB_SVC5_HANDLER         sb_api_sleep_until_windowed
-#define SB_SVC6_HANDLER         sb_api_wait_message
-#define SB_SVC7_HANDLER         sb_api_reply_message
-#define SB_SVC8_HANDLER         sb_api_wait_one_timeout
-#define SB_SVC9_HANDLER         sb_api_wait_any_timeout
-#define SB_SVC10_HANDLER        sb_api_wait_all_timeout
-#define SB_SVC11_HANDLER        sb_api_broadcast_flags
-#define SB_SVC12_HANDLER        sb_api_loadelf
+#define SB_SVC129_HANDLER       sb_sysc_exit
+#define SB_SVC130_HANDLER       sb_sysc_sleep
+#define SB_SVC131_HANDLER       sb_sysc_sleep_until_windowed
+#define SB_SVC132_HANDLER       sb_sysc_wait_message
+#define SB_SVC133_HANDLER       sb_sysc_reply_message
+#define SB_SVC134_HANDLER       sb_sysc_wait_one_timeout
+#define SB_SVC135_HANDLER       sb_sysc_wait_any_timeout
+#define SB_SVC136_HANDLER       sb_sysc_wait_all_timeout
+#define SB_SVC137_HANDLER       sb_sysc_broadcast_flags
+#define SB_SVC138_HANDLER       sb_sysc_loadelf
 /** @} */
 
 #define __SVC(x) asm volatile ("svc " #x)
@@ -851,7 +853,7 @@ static void sb_api_loadelf(struct port_extctx *ectxp);
 
 static void sb_undef_handler(struct port_extctx *ectxp);
 
-const port_syscall_t sb_syscalls[128] = {
+const port_syscall_t sb_fastcalls[128] = {
   SB_SVC0_HANDLER,   SB_SVC1_HANDLER,   SB_SVC2_HANDLER,   SB_SVC3_HANDLER,
   SB_SVC4_HANDLER,   SB_SVC5_HANDLER,   SB_SVC6_HANDLER,   SB_SVC7_HANDLER,
   SB_SVC8_HANDLER,   SB_SVC9_HANDLER,   SB_SVC10_HANDLER,  SB_SVC11_HANDLER,
@@ -886,7 +888,7 @@ const port_syscall_t sb_syscalls[128] = {
   SB_SVC124_HANDLER, SB_SVC125_HANDLER, SB_SVC126_HANDLER, SB_SVC127_HANDLER
 };
 
-const port_syscall_t sb_fastcalls[128] = {
+const port_syscall_t sb_syscalls[128] = {
   SB_SVC128_HANDLER, SB_SVC129_HANDLER, SB_SVC130_HANDLER, SB_SVC131_HANDLER,
   SB_SVC132_HANDLER, SB_SVC133_HANDLER, SB_SVC134_HANDLER, SB_SVC135_HANDLER,
   SB_SVC136_HANDLER, SB_SVC137_HANDLER, SB_SVC138_HANDLER, SB_SVC139_HANDLER,
@@ -976,8 +978,19 @@ static void sb_cleanup(void) {
 #endif
 }
 
+static void sb_fastc_get_systime(struct port_extctx *ectxp) {
+
+  ectxp->r0 = (uint32_t)chVTGetSystemTimeX();
+}
+
+static void sb_fastc_get_frequency(struct port_extctx *ectxp) {
+
+  ectxp->r0 = (uint32_t)CH_CFG_ST_FREQUENCY;
+}
+
+
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-static void sb_api_stdio(struct port_extctx *ectxp) {
+static void sb_sysc_stdio(struct port_extctx *ectxp) {
 
   switch (ectxp->r0) {
   case SB_POSIX_OPEN:
@@ -1050,7 +1063,7 @@ static void sb_api_stdio(struct port_extctx *ectxp) {
 }
 #endif /* SB_CFG_ENABLE_VFS == TRUE */
 
-static void sb_api_exit(struct port_extctx *ectxp) {
+static void sb_sysc_exit(struct port_extctx *ectxp) {
 
   sb_cleanup();
 
@@ -1065,17 +1078,7 @@ static void sb_api_exit(struct port_extctx *ectxp) {
   ectxp->r0 = CH_RET_ENOSYS;
 }
 
-static void sb_api_get_systime(struct port_extctx *ectxp) {
-
-  ectxp->r0 = (uint32_t)chVTGetSystemTimeX();
-}
-
-static void sb_api_get_frequency(struct port_extctx *ectxp) {
-
-  ectxp->r0 = (uint32_t)CH_CFG_ST_FREQUENCY;
-}
-
-static void sb_api_sleep(struct port_extctx *ectxp) {
+static void sb_sysc_sleep(struct port_extctx *ectxp) {
   sysinterval_t interval = (sysinterval_t )ectxp->r0;
 
   if (interval != TIME_IMMEDIATE) {
@@ -1085,14 +1088,14 @@ static void sb_api_sleep(struct port_extctx *ectxp) {
   ectxp->r0 = CH_RET_SUCCESS;
 }
 
-static void sb_api_sleep_until_windowed(struct port_extctx *ectxp) {
+static void sb_sysc_sleep_until_windowed(struct port_extctx *ectxp) {
 
   chThdSleepUntilWindowed((systime_t )ectxp->r0, (systime_t )ectxp->r1);
 
   ectxp->r0 = CH_RET_SUCCESS;
 }
 
-static void sb_api_wait_message(struct port_extctx *ectxp) {
+static void sb_sysc_wait_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
@@ -1115,7 +1118,7 @@ static void sb_api_wait_message(struct port_extctx *ectxp) {
 #endif
 }
 
-static void sb_api_reply_message(struct port_extctx *ectxp) {
+static void sb_sysc_reply_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
@@ -1137,7 +1140,7 @@ static void sb_api_reply_message(struct port_extctx *ectxp) {
 #endif
 }
 
-static void sb_api_wait_one_timeout(struct port_extctx *ectxp) {
+static void sb_sysc_wait_one_timeout(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
   ectxp->r0 = (uint32_t)chEvtWaitOneTimeout((eventmask_t )ectxp->r0,
@@ -1147,7 +1150,7 @@ static void sb_api_wait_one_timeout(struct port_extctx *ectxp) {
 #endif
 }
 
-static void sb_api_wait_any_timeout(struct port_extctx *ectxp) {
+static void sb_sysc_wait_any_timeout(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
   ectxp->r0 = (uint32_t)chEvtWaitAnyTimeout((eventmask_t )ectxp->r0,
@@ -1157,7 +1160,7 @@ static void sb_api_wait_any_timeout(struct port_extctx *ectxp) {
 #endif
 }
 
-static void sb_api_wait_all_timeout(struct port_extctx *ectxp) {
+static void sb_sysc_wait_all_timeout(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
   ectxp->r0 = (uint32_t)chEvtWaitAllTimeout((eventmask_t )ectxp->r0,
@@ -1167,7 +1170,7 @@ static void sb_api_wait_all_timeout(struct port_extctx *ectxp) {
 #endif
 }
 
-static void sb_api_broadcast_flags(struct port_extctx *ectxp) {
+static void sb_sysc_broadcast_flags(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
@@ -1178,7 +1181,7 @@ static void sb_api_broadcast_flags(struct port_extctx *ectxp) {
 #endif
 }
 
-static void sb_api_loadelf(struct port_extctx *ectxp) {
+static void sb_sysc_loadelf(struct port_extctx *ectxp) {
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   const char *fname = (const char *)ectxp->r0;
@@ -1266,7 +1269,7 @@ void __port_do_fastcall_entry(struct port_extctx *ectxpxx,
   (void)ectxpxx;
 
   ectxp = (struct port_extctx *)__get_PSP();
-  sb_fastcalls[n - 128](ectxp);
+  sb_fastcalls[n](ectxp);
 }
 #endif
 

@@ -254,7 +254,7 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
   chSysUnlockFromISR();
 }
 
-void sb_api_vrq_set_alarm(struct port_extctx *ectxp) {
+void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sysinterval_t interval = (sysinterval_t )ectxp->r0;
   bool reload = (bool)ectxp->r1;
@@ -267,7 +267,7 @@ void sb_api_vrq_set_alarm(struct port_extctx *ectxp) {
   }
 }
 
-void sb_api_vrq_reset_alarm(struct port_extctx *ectxp) {
+void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   (void)ectxp;
@@ -275,7 +275,7 @@ void sb_api_vrq_reset_alarm(struct port_extctx *ectxp) {
   chVTReset(&sbp->alarm_vt);
 }
 
-void sb_api_vrq_wait(struct port_extctx *ectxp) {
+void sb_sysc_vrq_wait(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sb_vrqmask_t active_mask;
 
@@ -291,7 +291,7 @@ void sb_api_vrq_wait(struct port_extctx *ectxp) {
   chSysUnlock();
 }
 
-void sb_api_vrq_setwt(struct port_extctx *ectxp) {
+void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
@@ -302,7 +302,7 @@ void sb_api_vrq_setwt(struct port_extctx *ectxp) {
   __sb_vrq_check_pending(ectxp, sbp);
 }
 
-void sb_api_vrq_clrwt(struct port_extctx *ectxp) {
+void sb_fastc_vrq_clrwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
@@ -313,7 +313,7 @@ void sb_api_vrq_clrwt(struct port_extctx *ectxp) {
   /* No need to check for pending VRQs.*/
 }
 
-void sb_api_vrq_seten(struct port_extctx *ectxp) {
+void sb_fastc_vrq_seten(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
@@ -324,7 +324,7 @@ void sb_api_vrq_seten(struct port_extctx *ectxp) {
   __sb_vrq_check_pending(ectxp, sbp);
 }
 
-void sb_api_vrq_clren(struct port_extctx *ectxp) {
+void sb_fastc_vrq_clren(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
 
@@ -335,7 +335,7 @@ void sb_api_vrq_clren(struct port_extctx *ectxp) {
   /* No need to check for pending VRQs.*/
 }
 
-void sb_api_vrq_disable(struct port_extctx *ectxp) {
+void sb_fastc_vrq_disable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   (void)ectxp;
@@ -345,7 +345,7 @@ void sb_api_vrq_disable(struct port_extctx *ectxp) {
   /* No need to check for pending VRQs.*/
 }
 
-void sb_api_vrq_enable(struct port_extctx *ectxp) {
+void sb_fastc_vrq_enable(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sb_vrqmask_t active_mask;
 
@@ -361,7 +361,7 @@ void sb_api_vrq_enable(struct port_extctx *ectxp) {
   }
 }
 
-void sb_api_vrq_getisr(struct port_extctx *ectxp) {
+void sb_fastc_vrq_getisr(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
 
   ectxp->r0 = sbp->vrq_isr;
@@ -369,7 +369,7 @@ void sb_api_vrq_getisr(struct port_extctx *ectxp) {
   /* No need to check for pending VRQs.*/
 }
 
-void sb_api_vrq_return(struct port_extctx *ectxp) {
+void sb_fastc_vrq_return(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sb_vrqmask_t active_mask;
 

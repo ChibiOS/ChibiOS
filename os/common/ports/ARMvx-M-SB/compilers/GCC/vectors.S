@@ -98,7 +98,7 @@ __crt0_vrq:
 #endif
 #endif
 
-        svc         #255
+        svc         #127    /* SB_FASTC_VRQ_RETURN */
 
         .align      2
         .globl      __sb_vectors
@@ -191,7 +191,8 @@ __sb_vector31:
         .thumb_func
         .weak       __unhandled_vrq
 __unhandled_vrq:
-        svc         #255
+        /* TODO terminate SB???*/
+        svc         #127    /* SB_FASTC_VRQ_RETURN */
 .stay:  b           .stay
 
 #endif /* !defined(__DOXYGEN__) */

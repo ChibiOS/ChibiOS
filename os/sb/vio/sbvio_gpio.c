@@ -53,7 +53,7 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void sb_api_vio_gpio(struct port_extctx *ectxp) {
+void sb_fastc_vio_gpio(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t sub = (unsigned)ectxp->r0;
   uint32_t unit = (unsigned)ectxp->r1;

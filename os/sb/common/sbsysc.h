@@ -33,42 +33,42 @@
 /*===========================================================================*/
 
 /**
- * @name    Syscall codes
- * @{
- */
-#define SB_SYSC_POSIX           0
-#define SB_SYSC_EXIT            1
-#define SB_SYSC_GET_SYSTIME     2
-#define SB_SYSC_GET_FREQUENCY   3
-#define SB_SYSC_SLEEP           4
-#define SB_SYSC_SLEEP_UNTIL     5
-#define SB_SYSC_MESSAGE_WAIT    6
-#define SB_SYSC_MESSAGE_REPLY   7
-#define SB_SYSC_EVENT_WAIT_ONE  8
-#define SB_SYSC_EVENT_WAIT_ANY  9
-#define SB_SYSC_EVENT_WAIT_ALL  10
-#define SB_SYSC_EVENT_BROADCAST 11
-#define SB_SYSC_LOADELF         12
-#define SB_SYSC_VHAL_VUART      96
-#define SB_SYSC_VRQ_SET_ALARM   125
-#define SB_SYSC_VRQ_RESET_ALARM 126
-#define SB_SYSC_VRQ_WAIT        127
-/** @} */
-
-/**
  * @name    Fastcall codes
  * @{
  */
-#define SB_FASTC_VHAL_VGPIO     224
-#define SB_FASTC_VHAL_VUART     225
-#define SB_FASTC_VRQ_SETWT      248
-#define SB_FASTC_VRQ_CLRWT      249
-#define SB_FASTC_VRQ_SETEN      250
-#define SB_FASTC_VRQ_CLREN      251
-#define SB_FASTC_VRQ_DISABLE    252
-#define SB_FASTC_VRQ_ENABLE     253
-#define SB_FASTC_VRQ_GETISR     254
-#define SB_FASTC_VRQ_RETURN     255
+#define SB_FASTC_GET_SYSTIME    1
+#define SB_FASTC_GET_FREQUENCY  2
+#define SB_FASTC_VHAL_VGPIO     96
+#define SB_FASTC_VHAL_VUART     97
+#define SB_FASTC_VRQ_SETWT      120
+#define SB_FASTC_VRQ_CLRWT      121
+#define SB_FASTC_VRQ_SETEN      122
+#define SB_FASTC_VRQ_CLREN      123
+#define SB_FASTC_VRQ_DISABLE    124
+#define SB_FASTC_VRQ_ENABLE     125
+#define SB_FASTC_VRQ_GETISR     126
+#define SB_FASTC_VRQ_RETURN     127
+/** @} */
+
+/**
+ * @name    Syscall codes
+ * @{
+ */
+#define SB_SYSC_POSIX           128
+#define SB_SYSC_EXIT            129
+#define SB_SYSC_SLEEP           130
+#define SB_SYSC_SLEEP_UNTIL     131
+#define SB_SYSC_MESSAGE_WAIT    132
+#define SB_SYSC_MESSAGE_REPLY   133
+#define SB_SYSC_EVENT_WAIT_ONE  134
+#define SB_SYSC_EVENT_WAIT_ANY  135
+#define SB_SYSC_EVENT_WAIT_ALL  136
+#define SB_SYSC_EVENT_BROADCAST 137
+#define SB_SYSC_LOADELF         138
+#define SB_SYSC_VHAL_VUART      225
+#define SB_SYSC_VRQ_SET_ALARM   253
+#define SB_SYSC_VRQ_RESET_ALARM 254
+#define SB_SYSC_VRQ_WAIT        255
 /** @} */
 
 /**

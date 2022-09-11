@@ -125,14 +125,14 @@ environ:
                 .weak       __crt0_vrq
 __crt0_vrq:
                 ldr         r0, =0xFFFFFFFF
-                svc         #1
+                svc         #129    /* SB_SYSC_EXIT */
 
                 /* Default exit method, calling OS exit().*/
                 .align      2
                 .thumb_func
                 .global     __crt0_exit
 __crt0_exit:
-                svc         #1
+                svc         #129    /* SB_SYSC_EXIT */
 .exitloop:      b           .exitloop
 
                 /* Default entry point, note, the "nop" is meant to be there

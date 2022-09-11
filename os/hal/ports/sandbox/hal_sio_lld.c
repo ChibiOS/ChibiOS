@@ -66,14 +66,14 @@ static const SIOConfig default_config = {
 __attribute__((always_inline))
 static inline uint32_t __sio_vuart_init(uint32_t nvuart, uint32_t ncfg) {
 
-  __syscall3r(96, SB_VUART_INIT, nvuart, ncfg);
+  __syscall3r(225, SB_VUART_INIT, nvuart, ncfg);
   return (uint32_t)r0;
 }
 
 __attribute__((always_inline))
 static inline uint32_t __sio_vuart_deinit(uint32_t nvuart) {
 
-  __syscall2r(96, SB_VUART_DEINIT, nvuart);
+  __syscall2r(225, SB_VUART_DEINIT, nvuart);
   return (uint32_t)r0;
 }
 
@@ -217,7 +217,7 @@ void sio_lld_stop(SIODriver *siop) {
  */
 bool sio_lld_is_rx_empty(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_ISRXE, siop->nvuart);
+  __syscall2r(97, SB_VUART_ISRXE, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (bool)r0;
@@ -235,7 +235,7 @@ bool sio_lld_is_rx_empty(SIODriver *siop) {
  */
 bool sio_lld_is_rx_idle(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_ISRXI, siop->nvuart);
+  __syscall2r(97, SB_VUART_ISRXI, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (bool)r0;
@@ -255,7 +255,7 @@ bool sio_lld_is_rx_idle(SIODriver *siop) {
  */
 bool sio_lld_has_rx_errors(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_HASERR, siop->nvuart);
+  __syscall2r(97, SB_VUART_HASERR, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (bool)r0;
@@ -273,7 +273,7 @@ bool sio_lld_has_rx_errors(SIODriver *siop) {
  */
 bool sio_lld_is_tx_full(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_ISTXF, siop->nvuart);
+  __syscall2r(97, SB_VUART_ISTXF, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (bool)r0;
@@ -291,7 +291,7 @@ bool sio_lld_is_tx_full(SIODriver *siop) {
  */
 bool sio_lld_is_tx_ongoing(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_ISTXO, siop->nvuart);
+  __syscall2r(97, SB_VUART_ISTXO, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (bool)r0;
@@ -304,7 +304,7 @@ bool sio_lld_is_tx_ongoing(SIODriver *siop) {
  */
 void sio_lld_update_enable_flags(SIODriver *siop) {
 
-  __syscall3r(225, SB_VUART_WREN, siop->nvuart, siop->enabled);
+  __syscall3r(97, SB_VUART_WREN, siop->nvuart, siop->enabled);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 }
 
@@ -318,7 +318,7 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_GCERR, siop->nvuart);
+  __syscall2r(97, SB_VUART_GCERR, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (sioevents_t)r0;
@@ -334,7 +334,7 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_GCEVT, siop->nvuart);
+  __syscall2r(97, SB_VUART_GCEVT, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (sioevents_t)r0;
@@ -350,7 +350,7 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
  */
 sioevents_t sio_lld_get_events(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_GEVT, siop->nvuart);
+  __syscall2r(97, SB_VUART_GEVT, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (sioevents_t)r0;
@@ -369,7 +369,7 @@ sioevents_t sio_lld_get_events(SIODriver *siop) {
  */
 size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
 
-  __syscall4r(225, SB_VUART_READ, siop->nvuart, buffer, n);
+  __syscall4r(97, SB_VUART_READ, siop->nvuart, buffer, n);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (size_t)r0;
@@ -388,7 +388,7 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
  */
 size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
 
-  __syscall4r(225, SB_VUART_WRITE, siop->nvuart, buffer, n);
+  __syscall4r(97, SB_VUART_WRITE, siop->nvuart, buffer, n);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (size_t)r0;
@@ -405,7 +405,7 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
  */
 msg_t sio_lld_get(SIODriver *siop) {
 
-  __syscall2r(225, SB_VUART_GET, siop->nvuart);
+  __syscall2r(97, SB_VUART_GET, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (size_t)r0;
@@ -422,7 +422,7 @@ msg_t sio_lld_get(SIODriver *siop) {
  */
 void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
 
-  __syscall3r(225, SB_VUART_PUT, siop->nvuart, data);
+  __syscall3r(97, SB_VUART_PUT, siop->nvuart, data);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 }
 
@@ -442,7 +442,7 @@ void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
  */
 msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
 
-  __syscall4r(225, SB_VUART_CTL, siop->nvuart, operation, arg);
+  __syscall4r(97, SB_VUART_CTL, siop->nvuart, operation, arg);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   return (msg_t)r0;
@@ -459,7 +459,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   sioevents_t events;
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
-  __syscall2rr(225, SB_VUART_GEVT, siop->nvuart);
+  __syscall2rr(97, SB_VUART_GEVT, siop->nvuart);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
   /* Processing enabled events, if any.*/
