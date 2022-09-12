@@ -181,6 +181,10 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
 
     /* Setting up the alarm on the next deadline.*/
     port_timer_set_alarm(chTimeAddX(now, currdelta));
+
+    /* Current time becomes the new "base" time.*/
+    now = newnow;
+    delay = currdelta;
   }
 
 #if !defined(CH_VT_RFCU_DISABLED)
