@@ -188,9 +188,9 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
  * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] nvrq      number of VRQ to be activated
  *
- * @special
+ * @iclass
  */
-void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqnum_t nvrq) {
+void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 
   chSysLockFromISR();
 

@@ -85,7 +85,7 @@
 extern "C" {
 #endif
   void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq);
-  void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqnum_t nvrq);
+  void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq);
   void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp);
   void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp);
   void sb_sysc_vrq_wait(struct port_extctx *ectxp);
@@ -105,6 +105,26 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Triggers VRQs on the specified sandbox.
+ * @note    This function must be called from IRQ context because
+ *          it manipulates exception stack frames.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] nvrq      number of VRQ to be activated
+ *
+ * @special
+ */
+CC_FORCE_INLINE
+static inline void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqnum_t nvrq) {
+
+  chSysLockFromISR();
+
+  sbVRQTriggerI(sbp, nvrq);
+
+  chSysUnlockFromISR();
+}
 
 #endif /* SB_CFG_ENABLE_VRQ == TRUE */
 
