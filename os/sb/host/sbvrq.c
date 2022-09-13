@@ -125,7 +125,7 @@ static void delay_cb(virtual_timer_t *vtp, void *arg) {
 
   (void)vtp;
 
-  sbVRQTriggerFromISR(sbp, 1U << SB_CFG_ALARM_VRQ);
+  sbVRQTriggerFromISR(sbp, SB_CFG_ALARM_VRQ);
 }
 
 /*===========================================================================*/
@@ -136,28 +136,29 @@ static void delay_cb(virtual_timer_t *vtp, void *arg) {
  * @brief   Triggers VRQs on the specified sandbox.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
- * @param[in] vmask     mask of VRQs to be activated
+ * @param[in] nvrq      number of VRQ to be activated
  *
  * @sclass
  */
-void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask) {
+void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 
   chDbgCheckClassS();
 
+  chDbgAssert(sbp->tp->state != CH_STATE_CURRENT, "it is current");
+
   /* Adding VRQ mask to the pending mask.*/
-  sbp->vrq_wtmask |= vmask;
+  sbp->vrq_wtmask |= (sb_vrqmask_t)(1U << nvrq);
 
-  /* A special case is when the sandbox thread is running in unprivileged mode
-     (not processing a syscall), in that case we need to push a context
-     from here.*/
-  if ((__get_CONTROL() & 1U) != 0U) {
+  /* Triggering the VRQ if enabled.*/
+  if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
+    sb_vrqmask_t active_mask;
 
-    /* Triggering the VRQ if enabled.*/
-    if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
-      sb_vrqmask_t active_mask;
-
-      active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
-      if (active_mask != 0U) {
+    /* Checking if there are VRQs to be served immediately.*/
+    active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+    if (active_mask != 0U) {
+      /* Checking if it is running in unprivileged mode, in this case we
+         need to build a return context in its current PSP.*/
+      if ((__get_CONTROL() & 1U) != 0U) {
         struct port_extctx *ectxp;
 
         /* Getting the current PSP, it is U_PSP.*/
@@ -166,14 +167,16 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask) {
         /* Creating a return context.*/
         ectxp = vrq_writectx(ectxp, sbp, active_mask);
 
+        /* Updating PSP position.*/
         __set_PSP((uint32_t)ectxp);
       }
+      else {
+        /* It is in privileged mode so it will check for pending VRQs
+           while exiting the syscall. Just trying to wake up the thread
+           in case it is waiting for VRQs.*/
+        chThdResumeS(&sbp->vrq_trp, MSG_OK);
+      }
     }
-  }
-  else {
-    /* Just waking up the sandbox thread if it is in wait-for-interrupt
-       state, it will process the VRQ on syscall exit.*/
-    chThdResumeS(&sbp->vrq_trp, MSG_OK);
   }
 }
 
@@ -183,16 +186,16 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask) {
  *          it manipulates exception stack frames.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
- * @param[in] vmask     mask of VRQs to be activated
+ * @param[in] nvrq      number of VRQ to be activated
  *
  * @special
  */
-void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
+void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 
   chSysLockFromISR();
 
   /* Adding VRQ mask to the pending mask.*/
-  sbp->vrq_wtmask |= vmask;
+  sbp->vrq_wtmask |= (sb_vrqmask_t)(1U << nvrq);
 
   /* Only doing the following if VRQs are globally enabled.*/
   if ((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U) {
@@ -205,7 +208,7 @@ void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask) {
       /* Checking if it happened to preempt this sandbox thread.*/
       if (sbp->tp->state == CH_STATE_CURRENT) {
         /* Checking if it is running in unprivileged mode, in this case we
-           need to build a return context in the current PSP.*/
+           need to build a return context in its current PSP.*/
         if ((__get_CONTROL() & 1U) != 0U) {
           struct port_extctx *ectxp;
 

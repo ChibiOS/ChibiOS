@@ -84,8 +84,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sbVRQTriggerS(sb_class_t *sbp, sb_vrqmask_t vmask);
-  void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqmask_t vmask);
+  void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq);
+  void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqnum_t nvrq);
   void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp);
   void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp);
   void sb_sysc_vrq_wait(struct port_extctx *ectxp);

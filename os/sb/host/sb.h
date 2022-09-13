@@ -179,6 +179,11 @@ typedef struct sb_class sb_class_t;
  */
 typedef uint32_t sb_vrqmask_t;
 
+/**
+ * @brief   Type of a Virtual IRQs.
+ */
+typedef uint32_t sb_vrqnum_t;
+
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
 #include "sbvrq.h"
 #endif

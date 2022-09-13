@@ -52,7 +52,7 @@
 static void vuart_cb(SIODriver *siop) {
   const vio_uart_unit_t *unitp = (const vio_uart_unit_t *)siop->arg;
 
-  sbVRQTriggerFromISR(unitp->vrqsb, 1U << unitp->vrqn);
+  sbVRQTriggerFromISR(unitp->vrqsb, unitp->vrqn);
 }
 
 /*===========================================================================*/
