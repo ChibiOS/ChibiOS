@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Virtual timers lockup uder rare conditions (bug #1235).
 - FIX: Some MISRA-related fixes.
 - FIX: Re-opened and fixed bug #1100.
 - FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232).
