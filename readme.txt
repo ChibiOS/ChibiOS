@@ -75,8 +75,9 @@
 
 *** 21.11.3 ***
 - NEW: Added EFL driver support for STM32F401/411.
-- FIX: Virtual timers lockup uder rare conditions (bug #1235).
-- FIX: STM32 RTCv2 locks for a second (bug #1234).
+- FIX: Fixed old bugs in serial driver header (bug #1236).
+- FIX: Fixed virtual timers lockup uder rare conditions (bug #1235).
+- FIX: Fixed STM32 RTCv2 locks for a second (bug #1234).
 
 *** 21.11.2 ***
 - NEW: Added dubby cycles support for SNOR using the normal SPI driver.
