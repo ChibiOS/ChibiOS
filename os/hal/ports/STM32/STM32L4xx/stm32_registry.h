@@ -1150,7 +1150,8 @@
                                              RCC_AHB2ENR_GPIOEEN |          \
                                              RCC_AHB2ENR_GPIOFEN |          \
                                              RCC_AHB2ENR_GPIOGEN |          \
-                                             RCC_AHB2ENR_GPIOHEN)
+                                             RCC_AHB2ENR_GPIOHEN |          \
+                                             RCC_AHB2ENR_GPIOIEN)
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE

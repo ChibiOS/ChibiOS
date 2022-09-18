@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Fixed missing clock enables for some GPIOS on some STM32L4s (bug #1237).
 - FIX: Fixed old bugs in serial driver header (bug #1236).
 - FIX: Fixed virtual timers lockup uder rare conditions (bug #1235).
 - FIX: Fixed STM32 RTCv2 locks for a second (bug #1234).
