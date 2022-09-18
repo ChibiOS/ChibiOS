@@ -195,7 +195,7 @@ struct SerialDriver {
 #define sdGetTimeout(sdp, t) iqGetTimeout(&(sdp)->iqueue, t)
 
 /**
- * @brief   Direct blocking write to a @p SerialDriver.
+ * @brief   Direct non-blocking write to a @p SerialDriver.
  * @note    This function bypasses the indirect access to the channel and
  *          writes directly to the output queue. This is faster but cannot
  *          be used to write from different channels implementations.
@@ -238,14 +238,14 @@ struct SerialDriver {
   oqWriteTimeout(&(sdp)->oqueue, b, n, TIME_IMMEDIATE)
 
 /**
- * @brief   Direct blocking read from a @p SerialDriver.
+ * @brief   Direct non-blocking read from a @p SerialDriver.
  * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
  * @iclass
  */
-#define sdReadI(sdp, b, n) iqReadI(&(sdp)->iqueue, b, n, TIME_INFINITE)
+#define sdReadI(sdp, b, n) iqReadI(&(sdp)->iqueue, b, n)
 
 /**
  * @brief   Direct blocking read from a @p SerialDriver.
