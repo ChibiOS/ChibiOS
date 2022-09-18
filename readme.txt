@@ -126,6 +126,8 @@
        in the makefile.
 - FIX: Virtual timers lockup uder rare conditions (bug #1235)
        (backported to 20.3.5)(backported to 21.11.2).
+- FIX: STM32 RTCv2 locks for a second (bug #1234)
+       (backported to 20.3.5)(backported to 21.11.2).
 - FIX: CAN support broken on STM32F413 (bug #1232)(***********TODO*********** backported to 21.11.3).
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
