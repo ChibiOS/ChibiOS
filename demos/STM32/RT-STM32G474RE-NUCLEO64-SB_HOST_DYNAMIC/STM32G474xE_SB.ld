@@ -19,17 +19,17 @@
  */
 MEMORY
 {
-    flash0 (rx) : org = 0x08000000, len = 512k - 64k    /* Host code.       */
-    flash1 (rx) : org = 0x08070000, len = 32k           /* Sandbox 1 code.  */
-    flash2 (rx) : org = 0x08078000, len = 32k           /* Sandbox 2 code.  */
+    flash0 (rx) : org = 0x08000000, len = 512k - 256k   /* Host code.       */
+    flash1 (rx) : org = 0x08040000, len = 128k          /* Sandbox 1 code.  */
+    flash2 (rx) : org = 0x08060000, len = 128k          /* Sandbox 2 code.  */
     flash3 (rx) : org = 0x00000000, len = 0
     flash4 (rx) : org = 0x00000000, len = 0
     flash5 (rx) : org = 0x00000000, len = 0
     flash6 (rx) : org = 0x00000000, len = 0
     flash7 (rx) : org = 0x00000000, len = 0
-    ram0   (wx) : org = 0x20000000, len = 128k - 8k     /* Host data.       */
-    ram1   (wx) : org = 0x2001E000, len = 4k            /* Sandbox 1 data.  */
-    ram2   (wx) : org = 0x2001F000, len = 4k            /* Sandbox 2 data.  */
+    ram0   (wx) : org = 0x20000000, len = 128k - 32k    /* Host data.       */
+    ram1   (wx) : org = 0x20018000, len = 16k           /* Sandbox 1 data.  */
+    ram2   (wx) : org = 0x2001C000, len = 16k           /* Sandbox 2 data.  */
     ram3   (wx) : org = 0x00000000, len = 0
     ram4   (wx) : org = 0x00000000, len = 0
     ram5   (wx) : org = 0x00000000, len = 0

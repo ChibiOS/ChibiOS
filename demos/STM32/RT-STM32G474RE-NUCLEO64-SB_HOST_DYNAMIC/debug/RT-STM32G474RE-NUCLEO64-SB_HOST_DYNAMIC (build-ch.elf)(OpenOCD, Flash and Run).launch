@@ -6,7 +6,7 @@
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="true"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
-    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="set remotetimeout 20&#10;monitor reset init&#10;monitor sleep 50&#10;monitor erase_address pad 0x08070000 0x00010000&#10;load /home/giovanni/Projects/ChibiStudio/chibios_trunk/demos/various/SB-CLIENT-32k-08070000-4k-2001E000/build/sb.elf&#10;load /home/giovanni/Projects/ChibiStudio/chibios_trunk/demos/various/SB-CLIENT-32k-08078000-4k-2001F000/build/sb.elf&#10;"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="set remotetimeout 20&#10;monitor reset init&#10;monitor sleep 50&#10;monitor erase_address pad 0x08040000 0x00040000&#10;load /home/giovanni/Projects/ChibiStudio/chibios_trunk/demos/various/SB-CLIENT-128k-08040000-16k-20018000/build/sb.elf&#10;load /home/giovanni/Projects/ChibiStudio/chibios_trunk/demos/various/SB-CLIENT-128k-08060000-16k-2001C000/build/sb.elf&#10;"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.jtagDeviceId" value="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDSocket"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadSymbols" value="true"/>

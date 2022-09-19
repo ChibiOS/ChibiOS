@@ -19,9 +19,6 @@
 #include "sb.h"
 #include "chprintf.h"
 
-#include "rt_test_root.h"
-#include "oslib_test_root.h"
-
 #include "nullstreams.h"
 
 #include "startup_defs.h"

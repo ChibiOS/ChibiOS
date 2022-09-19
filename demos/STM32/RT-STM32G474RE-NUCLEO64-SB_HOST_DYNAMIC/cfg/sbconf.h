@@ -56,7 +56,7 @@
  * @brief   Enables support for sandbox virtualized I/O.
  */
 #if !defined(SB_CFG_ENABLE_VIO) || defined(__DOXYGEN__)
-#define SB_CFG_ENABLE_VIO                   FALSE
+#define SB_CFG_ENABLE_VIO                   TRUE
 #endif
 
 /**
