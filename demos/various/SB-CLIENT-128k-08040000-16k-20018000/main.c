@@ -63,8 +63,41 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "\r\n\nstopped\r\n");
 }
 
+static void cmd_sbcrash(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: sbcrash\r\n");
+    return;
+  }
+
+  chprintf(chp, "\r\n\nCrashing...\r\n");
+  chThdSleepMilliseconds(10);
+
+  /* Test for exception on interrupt.*/
+  asm volatile ("mov r0, #64");
+  asm volatile ("mov sp, r0");
+  while (true) {
+  }
+}
+
+static void cmd_sbexit(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: sbexit\r\n");
+    return;
+  }
+
+  chprintf(chp, "\r\n\nExiting SandBox\r\n");
+  chThdSleepMilliseconds(10);
+  sbExit(MSG_OK);
+}
+
 static const ShellCommand commands[] = {
   {"write", cmd_write},
+  {"sbcrash", cmd_sbcrash},
+  {"sbexit", cmd_sbexit},
   {NULL, NULL}
 };
 

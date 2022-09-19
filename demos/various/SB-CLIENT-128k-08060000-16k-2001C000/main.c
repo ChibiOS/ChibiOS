@@ -23,18 +23,9 @@
  */
 int main(void) {
 
-#if 0
-  /* Test for exception on interrupt.*/
-  asm volatile ("mov r0, #64");
-  asm volatile ("mov sp, r0");
-  while (true) {
-  }
-#endif
   while (true) {
     msg_t msg = sbMsgWait();
-    printf("#2 Hello World (%u)!!\r\n", (unsigned)msg);
-//    sbFileWrite(1U, (const uint8_t *)"#2 Hello World!!\r\n", 15U);
+    printf("Hello World (%u)!!\r\n", (unsigned)msg);
     sbMsgReply(msg);
-//    sbSleepMilliseconds(500);
   }
 }

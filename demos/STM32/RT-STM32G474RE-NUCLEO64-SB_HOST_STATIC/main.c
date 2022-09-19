@@ -136,7 +136,7 @@ static const sb_config_t sb_config1 = {
       .writeable    = true
     }
   },
-//  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+  .vfs_driver       = NULL,
   .vioconf          = &vio_config1
 };
 
@@ -156,7 +156,7 @@ static const sb_config_t sb_config2 = {
       .writeable    = true
     }
   },
-//  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver
+  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver,
   .vioconf          = &vio_config2
 };
 
@@ -185,18 +185,57 @@ static THD_WORKING_AREA(waUnprivileged2, 512);
 /* Main and generic code.                                                    */
 /*===========================================================================*/
 
+static void start_sb1(void) {
+  thread_t *utp;
+
+  /* Starting sandboxed thread 1.*/
+  utp = sbStartThread(&sbx1, "sbx1",
+                      waUnprivileged1, sizeof (waUnprivileged1),
+                      NORMALPRIO - 1, sbx1_argv, sbx1_envp);
+  if (utp == NULL) {
+    chSysHalt("sbx1 failed");
+  }
+}
+
+static void start_sb2(void) {
+  thread_t *utp;
+  msg_t ret;
+  vfs_node_c *np;
+
+  /*
+   * Associating standard input, output and error to sandbox 2.*/
+  ret = vfsOpen("/dev/VSD1", 0, &np);
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  vfsClose(np);
+
+  /* Starting sandboxed thread 2.*/
+  utp = sbStartThread(&sbx2, "sbx2",
+                      waUnprivileged2, sizeof (waUnprivileged2),
+                      NORMALPRIO - 2, sbx2_argv, sbx2_envp);
+  if (utp == NULL) {
+    chSysHalt("sbx2 failed");
+  }
+}
+
 /*
- * Green LED blinker thread, times are in milliseconds.
+ * Messenger thread, times are in milliseconds.
  */
 static THD_WORKING_AREA(waThread1, 256);
 static THD_FUNCTION(Thread1, arg) {
+  unsigned i = 1U;
 
   (void)arg;
 
-  chRegSetThreadName("blinker");
+  chRegSetThreadName("messenger");
   while (true) {
-//    palToggleLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
+    sbSendMessage(&sbx2, (msg_t)i);
+    i++;
   }
 }
 
@@ -204,10 +243,8 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-  unsigned i = 1U;
-  thread_t *utp1, *utp2;
+//  unsigned i = 1U;
   event_listener_t el1;
-  vfs_node_c *np;
   msg_t ret;
 
   /*
@@ -231,7 +268,7 @@ int main(void) {
   nullObjectInit(&nullstream);
 
   /*
-   * Creating a blinker thread.
+   * Creating a messenger thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
@@ -254,22 +291,6 @@ int main(void) {
   sbObjectInit(&sbx2, &sb_config2);
 
   /*
-   * Associating standard input, output and error to sandboxes. Both sandboxes
-   * use the same serial port in this setup.
-   */
-  ret = vfsOpen("/dev/VSD1", 0, &np);
-  if (CH_RET_IS_ERROR(ret)) {
-    chSysHalt("VFS");
-  }
-  sbRegisterDescriptor(&sbx1, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx1, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
-  vfsClose(np);
-
-  /*
    * Creating **static** boxes using MPU.
    * Note: The two regions cover both sandbox 1 and 2, there is no
    *       isolation among them.
@@ -287,21 +308,9 @@ int main(void) {
                      MPU_RASR_SIZE_32K |
                      MPU_RASR_ENABLE);
 
-  /* Starting sandboxed thread 1.*/
-  utp1 = sbStartThread(&sbx1, "sbx1",
-                       waUnprivileged1, sizeof (waUnprivileged1),
-                       NORMALPRIO - 1, sbx1_argv, sbx1_envp);
-  if (utp1 == NULL) {
-    chSysHalt("sbx1 failed");
-  }
-
-  /* Starting sandboxed thread 2.*/
-  utp2 = sbStartThread(&sbx2, "sbx2",
-                       waUnprivileged2, sizeof (waUnprivileged2),
-                       NORMALPRIO - 2, sbx2_argv, sbx2_envp);
-  if (utp1 == NULL) {
-    chSysHalt("sbx2 failed");
-  }
+  /* Starting sandboxed threads.*/
+  start_sb1();
+  start_sb2();
 
   /*
    * Listening to sandbox events.
@@ -309,39 +318,24 @@ int main(void) {
   chEvtRegister(&sb.termination_es, &el1, (eventid_t)0);
 
   /*
-   * Normal main() thread activity, in this demo it monitors the user button
-   * and checks for sandboxes state.
+   * Normal main() thread activity, in this demo it checks for sandboxes state.
    */
   while (true) {
-
-    /* Checking for user button, launching test suite if pressed.*/
-    if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
-    }
 
     /* Waiting for a sandbox event or timeout.*/
     if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
 
-      if (chThdTerminatedX(utp1)) {
+      if (!sbIsThreadRunningX(&sbx1)) {
         chprintf((BaseSequentialStream *)&SD1, "SB1 terminated\r\n");
+        chThdSleepMilliseconds(100);
+        start_sb1();
       }
 
-      if (chThdTerminatedX(utp2)) {
+      if (!sbIsThreadRunningX(&sbx2)) {
         chprintf((BaseSequentialStream *)&SD1, "SB2 terminated\r\n");
+        chThdSleepMilliseconds(100);
+        start_sb2();
       }
     }
-
-    if ((i & 1) == 0U) {
-      if (!chThdTerminatedX(utp1)) {
-        (void) sbSendMessageTimeout(&sbx1, (msg_t)i, TIME_MS2I(10));
-      }
-    }
-    else {
-      if (!chThdTerminatedX(utp2)) {
-        (void) sbSendMessageTimeout(&sbx2, (msg_t)i, TIME_MS2I(10));
-      }
-    }
-    i++;
   }
 }
