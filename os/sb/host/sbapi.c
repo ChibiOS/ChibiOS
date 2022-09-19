@@ -991,69 +991,93 @@ static void sb_fastc_get_frequency(struct port_extctx *ectxp) {
 
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 static void sb_sysc_stdio(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+
+  /* VFS support could be enabled but this specific sandbox could not have
+     one associated to it.*/
+  if (sbp->config->vfs_driver == NULL) {
+    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+    return;
+  }
 
   switch (ectxp->r0) {
   case SB_POSIX_OPEN:
-    ectxp->r0 = (uint32_t)sb_posix_open((const char *)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_open(sbp,
+                                        (const char *)ectxp->r1,
                                         (int)ectxp->r2);
     break;
   case SB_POSIX_CLOSE:
-    ectxp->r0 = (uint32_t)sb_posix_close((int)ectxp->r1);
+    ectxp->r0 = (uint32_t)sb_posix_close(sbp,
+                                         (int)ectxp->r1);
     break;
   case SB_POSIX_DUP:
-    ectxp->r0 = (uint32_t)sb_posix_dup((int)ectxp->r1);
+    ectxp->r0 = (uint32_t)sb_posix_dup(sbp,
+                                       (int)ectxp->r1);
     break;
   case SB_POSIX_DUP2:
-    ectxp->r0 = (uint32_t)sb_posix_dup2((int)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_dup2(sbp,
+                                        (int)ectxp->r1,
                                         (int)ectxp->r2);
     break;
   case SB_POSIX_FSTAT:
-    ectxp->r0 = (uint32_t)sb_posix_fstat((int)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_fstat(sbp,
+                                         (int)ectxp->r1,
                                          (struct stat *)ectxp->r2);
     break;
   case SB_POSIX_READ:
-    ectxp->r0 = (uint32_t)sb_posix_read((int)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_read(sbp,
+                                        (int)ectxp->r1,
                                         (void *)ectxp->r2,
                                         (size_t)ectxp->r3);
     break;
   case SB_POSIX_WRITE:
-    ectxp->r0 = (uint32_t)sb_posix_write((int)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_write(sbp,
+                                         (int)ectxp->r1,
                                          (const void *)ectxp->r2,
                                          (size_t)ectxp->r3);
     break;
   case SB_POSIX_LSEEK:
-    ectxp->r0 = (uint32_t)sb_posix_lseek((int)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_lseek(sbp,
+                                         (int)ectxp->r1,
                                          (off_t)ectxp->r2,
                                          (int)ectxp->r3);
     break;
   case SB_POSIX_GETDENTS:
-    ectxp->r0 = (uint32_t)sb_posix_getdents((int)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_getdents(sbp,
+                                            (int)ectxp->r1,
                                             (void *)ectxp->r2,
                                             (size_t)ectxp->r3);
     break;
   case SB_POSIX_CHDIR:
-    ectxp->r0 = (uint32_t)sb_posix_chdir((const char *)ectxp->r1);
+    ectxp->r0 = (uint32_t)sb_posix_chdir(sbp,
+                                         (const char *)ectxp->r1);
     break;
   case SB_POSIX_GETCWD:
-    ectxp->r0 = (uint32_t)sb_posix_getcwd((char *)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_getcwd(sbp,
+                                          (char *)ectxp->r1,
                                           (size_t)ectxp->r2);
     break;
   case SB_POSIX_UNLINK:
-    ectxp->r0 = (uint32_t)sb_posix_unlink((const char *)ectxp->r1);
+    ectxp->r0 = (uint32_t)sb_posix_unlink(sbp,
+                                          (const char *)ectxp->r1);
     break;
   case SB_POSIX_RENAME:
-    ectxp->r0 = (uint32_t)sb_posix_rename((const char *)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_rename(sbp,
+                                          (const char *)ectxp->r1,
                                           (const char *)ectxp->r2);
     break;
   case SB_POSIX_MKDIR:
-    ectxp->r0 = (uint32_t)sb_posix_mkdir((const char *)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_mkdir(sbp,
+                                         (const char *)ectxp->r1,
                                          (mode_t)ectxp->r2);
     break;
   case SB_POSIX_RMDIR:
-    ectxp->r0 = (uint32_t)sb_posix_rmdir((const char *)ectxp->r1);
+    ectxp->r0 = (uint32_t)sb_posix_rmdir(sbp,
+                                         (const char *)ectxp->r1);
     break;
   case SB_POSIX_STAT:
-    ectxp->r0 = (uint32_t)sb_posix_stat((const char *)ectxp->r1,
+    ectxp->r0 = (uint32_t)sb_posix_stat(sbp,
+                                        (const char *)ectxp->r1,
                                         (struct stat *)ectxp->r2);
     break;
   default:

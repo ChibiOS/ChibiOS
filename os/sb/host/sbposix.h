@@ -59,22 +59,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  int sb_posix_open(const char *path, int flags);
-  int sb_posix_close(int fd);
-  int sb_posix_dup(int fd);
-  int sb_posix_dup2(int oldfd, int newfd);
-  int sb_posix_fstat(int fd, struct stat *statbuf);
-  ssize_t sb_posix_read(int fd, void *buf, size_t count);
-  ssize_t sb_posix_write(int fd, const void *buf, size_t count);
-  off_t sb_posix_lseek(int fd, off_t offset, int whence);
-  ssize_t sb_posix_getdents(int fd, void *buf, size_t count);
-  int sb_posix_chdir(const char *path);
-  int sb_posix_getcwd(char *buf, size_t size);
-  int sb_posix_unlink(const char *path);
-  int sb_posix_rename(const char *oldpath, const char *newpath);
-  int sb_posix_mkdir(const char *path, mode_t mode);
-  int sb_posix_rmdir(const char *path);
-  int sb_posix_stat(const char *path, struct stat *statbuf);
+  int sb_posix_open(sb_class_t *sbp, const char *path, int flags);
+  int sb_posix_close(sb_class_t *sbp, int fd);
+  int sb_posix_dup(sb_class_t *sbp, int fd);
+  int sb_posix_dup2(sb_class_t *sbp, int oldfd, int newfd);
+  int sb_posix_fstat(sb_class_t *sbp, int fd, struct stat *statbuf);
+  ssize_t sb_posix_read(sb_class_t *sbp, int fd, void *buf, size_t count);
+  ssize_t sb_posix_write(sb_class_t *sbp, int fd, const void *buf, size_t count);
+  off_t sb_posix_lseek(sb_class_t *sbp, int fd, off_t offset, int whence);
+  ssize_t sb_posix_getdents(sb_class_t *sbp, int fd, void *buf, size_t count);
+  int sb_posix_chdir(sb_class_t *sbp, const char *path);
+  int sb_posix_getcwd(sb_class_t *sbp, char *buf, size_t size);
+  int sb_posix_unlink(sb_class_t *sbp, const char *path);
+  int sb_posix_rename(sb_class_t *sbp, const char *oldpath, const char *newpath);
+  int sb_posix_mkdir(sb_class_t *sbp, const char *path, mode_t mode);
+  int sb_posix_rmdir(sb_class_t *sbp, const char *path);
+  int sb_posix_stat(sb_class_t *sbp, const char *path, struct stat *statbuf);
 #ifdef __cplusplus
 }
 #endif

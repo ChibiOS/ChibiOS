@@ -70,8 +70,7 @@ static msg_t create_descriptor(sb_ioblock_t *iop,
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-int sb_posix_stat(const char *path, struct stat *statbuf) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_stat(sb_class_t *sbp, const char *path, struct stat *statbuf) {
   msg_t ret;
   vfs_stat_t vstat;
 
@@ -94,8 +93,7 @@ int sb_posix_stat(const char *path, struct stat *statbuf) {
   return ret;
 }
 
-int sb_posix_open(const char *path, int flags) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_open(sb_class_t *sbp, const char *path, int flags) {
   vfs_node_c *np = NULL;
   msg_t ret;
 
@@ -120,8 +118,7 @@ int sb_posix_open(const char *path, int flags) {
   return (int)ret;
 }
 
-int sb_posix_close(int fd) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_close(sb_class_t *sbp, int fd) {
 
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
@@ -133,8 +130,7 @@ int sb_posix_close(int fd) {
   return CH_RET_SUCCESS;
 }
 
-int sb_posix_dup(int fd) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_dup(sb_class_t *sbp, int fd) {
   vfs_node_c *np;
   msg_t ret;
 
@@ -156,8 +152,7 @@ int sb_posix_dup(int fd) {
   return (int)ret;
 }
 
-int sb_posix_dup2(int oldfd, int newfd) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_dup2(sb_class_t *sbp, int oldfd, int newfd) {
 
   if (!sb_is_existing_descriptor(&sbp->io, oldfd)) {
     return CH_RET_EBADF;
@@ -180,8 +175,7 @@ int sb_posix_dup2(int oldfd, int newfd) {
   return (int)newfd;
 }
 
-int sb_posix_fstat(int fd, struct stat *statbuf) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_fstat(sb_class_t *sbp, int fd, struct stat *statbuf) {
   msg_t ret;
   vfs_stat_t vstat;
 
@@ -204,8 +198,7 @@ int sb_posix_fstat(int fd, struct stat *statbuf) {
   return ret;
 }
 
-ssize_t sb_posix_read(int fd, void *buf, size_t count) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+ssize_t sb_posix_read(sb_class_t *sbp, int fd, void *buf, size_t count) {
 
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
@@ -226,8 +219,7 @@ ssize_t sb_posix_read(int fd, void *buf, size_t count) {
   return vfsReadFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);
 }
 
-ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+ssize_t sb_posix_write(sb_class_t *sbp, int fd, const void *buf, size_t count) {
 
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
@@ -248,8 +240,7 @@ ssize_t sb_posix_write(int fd, const void *buf, size_t count) {
   return vfsWriteFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);
 }
 
-off_t sb_posix_lseek(int fd, off_t offset, int whence) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+off_t sb_posix_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
 
   if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
     return CH_RET_EINVAL;
@@ -272,8 +263,7 @@ off_t sb_posix_lseek(int fd, off_t offset, int whence) {
                             whence);;
 }
 
-ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+ssize_t sb_posix_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) {
   vfs_shared_buffer_t *shbuf;
   vfs_direntry_info_t *dip;
   msg_t ret;
@@ -324,8 +314,7 @@ ssize_t sb_posix_getdents(int fd, void *buf, size_t count) {
   return (ssize_t)ret;
 }
 
-int sb_posix_chdir(const char *path) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_chdir(sb_class_t *sbp, const char *path) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -334,8 +323,7 @@ int sb_posix_chdir(const char *path) {
   return (int)vfsDrvChangeCurrentDirectory(sbp->config->vfs_driver, path);
 }
 
-int sb_posix_getcwd(char *buf, size_t size) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_getcwd(sb_class_t *sbp, char *buf, size_t size) {
 
   if (!sb_is_valid_write_range(sbp, buf, size)) {
     return CH_RET_EFAULT;
@@ -346,8 +334,7 @@ int sb_posix_getcwd(char *buf, size_t size) {
   return vfsDrvGetCurrentDirectory(sbp->config->vfs_driver, buf, size);
 }
 
-int sb_posix_unlink(const char *path) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_unlink(sb_class_t *sbp, const char *path) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -356,8 +343,7 @@ int sb_posix_unlink(const char *path) {
   return (int)vfsDrvUnlink(sbp->config->vfs_driver, path);
 }
 
-int sb_posix_rename(const char *oldpath, const char *newpath) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_rename(sb_class_t *sbp, const char *oldpath, const char *newpath) {
 
   if (sb_check_string(sbp, (void *)oldpath, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -370,8 +356,7 @@ int sb_posix_rename(const char *oldpath, const char *newpath) {
   return (int)vfsDrvRename(sbp->config->vfs_driver, oldpath, newpath);
 }
 
-int sb_posix_mkdir(const char *path, mode_t mode) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_mkdir(sb_class_t *sbp, const char *path, mode_t mode) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -380,8 +365,7 @@ int sb_posix_mkdir(const char *path, mode_t mode) {
   return (int)vfsDrvMkdir(sbp->config->vfs_driver, path, (vfs_mode_t)mode);
 }
 
-int sb_posix_rmdir(const char *path) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+int sb_posix_rmdir(sb_class_t *sbp, const char *path) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
