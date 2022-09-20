@@ -86,7 +86,7 @@ typedef struct MACDriver MACDriver;
  * @{
  */
 /**
- * @brief   Enables the zero-copy API.
+ * @brief   Returns the driver events source.
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The pointer to the @p EventSource structure.
