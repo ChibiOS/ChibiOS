@@ -62,6 +62,33 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a structure representing a MAC driver.
+ */
+typedef struct hal_mac_driver MACDriver;
+
+/**
+ * @brief   Type of structure representing a MAC configuration.
+ */
+typedef struct hal_mac_config MACConfig;
+
+/**
+ * @brief   Type of structure representing a MAC transmit descriptor.
+ */
+typedef struct hal_mac_transmit_descriptor MACTransmitDescriptor;
+
+/**
+ * @brief   Type of structure representing a MAC receive descriptor.
+ */
+typedef struct hal_mac_receive_descriptor MACReceiveDescriptor;
+
+/**
+ * @brief   Generic ETH notification callback type.
+ *
+ * @param[in] ethp     pointer to the @p ETHDriver object
+ */
+typedef void (*maccb_t)(MACDriver *macp);
+
+/**
  * @brief   Driver state machine possible states.
  */
 typedef enum {
@@ -70,12 +97,100 @@ typedef enum {
   MAC_ACTIVE = 2                    /**< Active.                            */
 } macstate_t;
 
-/**
- * @brief   Type of a structure representing a MAC driver.
- */
-typedef struct MACDriver MACDriver;
-
 #include "hal_mac_lld.h"
+
+/**
+ * @brief   Driver configuration structure.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
+ */
+struct hal_mac_config {
+  /**
+   * @brief   MAC address.
+   */
+  uint8_t               *mac_address;
+  mac_lld_config_fields;
+#if defined(MAC_CONFIG_EXT_FIELDS)
+  MAC_CONFIG_EXT_FIELDS
+#endif
+};
+
+/**
+ * @brief   Structure representing a MAC driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
+ */
+struct hal_mac_driver {
+  /**
+   * @brief   Driver state.
+   */
+  macstate_t                state;
+  /**
+   * @brief   Current configuration data.
+   */
+  const MACConfig           *config;
+  /**
+   * @brief   Transmit threads queue.
+   */
+  threads_queue_t           tdqueue;
+  /**
+   * @brief   Receive threads queue.
+   */
+  threads_queue_t           rdqueue;
+#if MAC_USE_EVENTS || defined(__DOXYGEN__)
+  /**
+   * @brief   Receive event.
+   */
+  event_source_t            rdevent;
+#endif
+  /**
+   * @brief   Events callback.
+   * @note    Can be @p NULL.
+   */
+  maccb_t                   cb;
+  /**
+   * @brief   User argument.
+   * @note    Can be retrieved through the @p ethp argument of the callback.
+   */
+  void                      *arg;
+  /* End of the mandatory fields.*/
+  mac_lld_driver_fields;
+#if defined(MAC_DRIVER_EXT_FIELS)
+  MAC_DRIVER_EXT_FIELS
+#endif
+};
+
+/**
+ * @brief   Structure representing a MAC transmit descriptor.
+ */
+struct hal_mac_transmit_descriptor {
+  /**
+   * @brief   Current write offset.
+   */
+  size_t                    offset;
+  /**
+   * @brief   Available space size.
+   */
+  size_t                    size;
+  /* End of the mandatory fields.*/
+  mac_lld_transmit_descriptor_fields;
+};
+
+/**
+ * @brief   Structure representing a MAC receive descriptor.
+ */
+struct hal_mac_receive_descriptor {
+  /**
+   * @brief   Current read offset.
+   */
+  size_t                offset;
+  /**
+   * @brief   Available data size.
+   */
+  size_t                size;
+  /* End of the mandatory fields.*/
+  mac_lld_receive_descriptor_fields;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
