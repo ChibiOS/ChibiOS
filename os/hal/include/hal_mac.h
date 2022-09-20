@@ -181,7 +181,6 @@ extern "C" {
   void macObjectInit(MACDriver *macp);
   msg_t macStart(MACDriver *macp, const MACConfig *config);
   void macStop(MACDriver *macp);
-  void macSetAddress(MACDriver *macp, const uint8_t *p);
   msg_t macWaitTransmitDescriptor(MACDriver *macp,
                                   MACTransmitDescriptor *tdp,
                                   sysinterval_t timeout);
