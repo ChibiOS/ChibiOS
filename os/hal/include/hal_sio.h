@@ -249,7 +249,7 @@ struct hal_sio_driver {
 /*===========================================================================*/
 
 /**
- * @brief   Associates a callback to te SIO instance.
+ * @brief   Associates a callback to the SIO instance.
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @param[in] f         callback to be associated
@@ -381,7 +381,7 @@ struct hal_sio_driver {
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The pending event flags.
  *
- * @iclass
+ * @xclass
  */
 #define sioGetAndClearEventsX(siop) sio_lld_get_and_clear_events(siop)
 

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Reworked HAL MAC driver, now with callback support.
 - NEW: Added a para-virtualized HAL port for use in sandboxes.
 - NEW: Added a VIO subsystem to sandboxes supporting drivers
        para-virtualization, PAL and SIO supported so far.
