@@ -225,7 +225,7 @@ typedef struct {
   /* Link status flag.*/                                                    \
   bool                          link_up;                                    \
   /* PHY address (pre shifted).*/                                           \
-  uint32_t phyaddr;                                                         \
+  uint32_t                      phyaddr;                                    \
   /* Receive next frame pointer.*/                                          \
   stm32_eth_rx_descriptor_t     *rxptr;                                     \
   /* Transmit next frame pointer.*/                                         \

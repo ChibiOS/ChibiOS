@@ -237,34 +237,27 @@ static void mac_lld_set_address(const uint8_t *p) {
 /*===========================================================================*/
 
 OSAL_IRQ_HANDLER(STM32_ETH_HANDLER) {
-  uint32_t dmasr;
+  MACDriver *macp = &ETHD1;
+  uint32_t dmacsr;
 
   OSAL_IRQ_PROLOGUE();
 
-  dmasr = ETH->DMACSR;
+  dmacsr = ETH->DMACSR;
+  ETH->DMACSR = dmacsr; /* Clear status bits.*/
 
-  if (dmasr & ETH_DMACSR_RI) {
-    /* Data Received.*/
-    ETH->DMACSR = ETH_DMACSR_RI;
-    ETH->DMACIER &= ~ETH_DMACIER_RIE;
-    osalSysLockFromISR();
-    osalThreadDequeueAllI(&ETHD1.rdqueue, MSG_RESET);
-#if MAC_USE_EVENTS
-    osalEventBroadcastFlagsI(&ETHD1.rdevent, 0);
-#endif
-    osalSysUnlockFromISR();
+  if ((dmacsr & (ETH_DMACSR_RI | ETH_DMACSR_TI)) != 0U) {
+    if ((dmacsr & ETH_DMACSR_TI) != 0U) {
+      /* Data Transmitted.*/
+      __mac_tx_wakeup(macp);
+    }
+
+    if ((dmacsr & ETH_DMACSR_RI) != 0U) {
+      /* Data Received.*/
+      __mac_rx_wakeup(macp);
+    }
+
+    __mac_callback(macp);
   }
-
-  if (dmasr & ETH_DMACSR_TI) {
-    /* Data Transmitted.*/
-    ETH->DMACSR = ETH_DMACSR_TI;
-    osalSysLockFromISR();
-    osalThreadDequeueAllI(&ETHD1.tdqueue, MSG_RESET);
-    osalSysUnlockFromISR();
-  }
-
-  ETH->DMACSR    |= ETH_DMACSR_NIS;
-  ETH->DMACIER   = ETH_DMACIER_NIE | ETH_DMACIER_RIE | ETH_DMACIER_TIE;
 
   OSAL_IRQ_EPILOGUE();
 }
