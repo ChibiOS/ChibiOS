@@ -4,6 +4,10 @@
 
 all:
 	@echo
+	@echo === Building for STM32H735IG-Discovery =============================
+	+@make --no-print-directory -f make/stm32h735ig_discovery.make all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32F407-Olimex ==================================
 	+@make --no-print-directory -f make/stm32f407_olimex.make all
 	@echo ====================================================================
@@ -22,6 +26,8 @@ all:
 	@echo
 
 clean:
+	@echo
+	+@make --no-print-directory -f make/stm32h735ig_discovery.make clean
 	@echo
 	+@make --no-print-directory -f make/stm32f407_olimex.make clean
 	@echo

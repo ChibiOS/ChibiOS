@@ -18,7 +18,7 @@
 #include "portab.h"
 
 /* Virtual serial port over USB.*/
-SerialUSBDriver PORTAB_SDU1;
+SerialUSBDriver SDU1;
 
 /*
  * Endpoints to be used for USBD1.
@@ -265,7 +265,6 @@ static const USBEndpointConfig ep2config = {
  * Handles the USB driver global events.
  */
 static void usb_event(USBDriver *usbp, usbevent_t event) {
-  extern SerialUSBDriver PORTAB_SDU1;
 
   switch (event) {
   case USB_EVENT_ADDRESS:
@@ -280,7 +279,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     usbInitEndpointI(usbp, USB1_INTERRUPT_REQUEST_EP, &ep2config);
 
     /* Resetting the state of the CDC subsystem.*/
-    sduConfigureHookI(&PORTAB_SDU1);
+    sduConfigureHookI(&SDU1);
 
     chSysUnlockFromISR();
     return;
@@ -292,7 +291,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     chSysLockFromISR();
 
     /* Disconnection event on suspend.*/
-    sduSuspendHookI(&PORTAB_SDU1);
+    sduSuspendHookI(&SDU1);
 
     chSysUnlockFromISR();
     return;
@@ -300,7 +299,7 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     chSysLockFromISR();
 
     /* Connection event on wakeup.*/
-    sduWakeupHookI(&PORTAB_SDU1);
+    sduWakeupHookI(&SDU1);
 
     chSysUnlockFromISR();
     return;
@@ -318,7 +317,7 @@ static void sof_handler(USBDriver *usbp) {
   (void)usbp;
 
   osalSysLockFromISR();
-  sduSOFHookI(&PORTAB_SDU1);
+  sduSOFHookI(&SDU1);
   osalSysUnlockFromISR();
 }
 

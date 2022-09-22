@@ -29,13 +29,10 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-#define PORTAB_USB1                 USBD1
-
-#define PORTAB_SDU1                 SDU1
+#define PORTAB_LINE_LED1            LINE_LED
 
 #define PORTAB_SDC1                 SDCD1
-
-#define PORTAB_BLINK_LED1           LINE_LED
+#define PORTAB_USB1                 USBD1
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */

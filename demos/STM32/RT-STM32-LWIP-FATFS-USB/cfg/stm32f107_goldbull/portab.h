@@ -29,11 +29,9 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+#define PORTAB_LINE_LED1            PAL_LINE(GPIOD, GPIOD_LED3)
+
 #define PORTAB_USB1                 USBD1
-
-#define PORTAB_SDU1                 SDU1
-
-#define PORTAB_BLINK_LED1           PAL_LINE(GPIOD, GPIOD_LED3)
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
