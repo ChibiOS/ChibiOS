@@ -69,7 +69,7 @@ static const struct vfs_streams_driver_vmt driver_vmt = {
 };
 
 static void *node_dir_addref(void *instance);
-static void node_dir_release(void *instance);
+static unsigned node_dir_release(void *instance);
 static msg_t node_dir_getstat(void *instance, vfs_stat_t *sp);
 static msg_t node_dir_first(void *instance, vfs_direntry_info_t *dip);
 static msg_t node_dir_next(void *instance, vfs_direntry_info_t *dip);
@@ -83,7 +83,7 @@ static const struct vfs_streams_dir_node_vmt dir_node_vmt = {
 };
 
 static void *node_file_addref(void *instance);
-static void node_file_release(void *instance);
+static unsigned node_file_release(void *instance);
 static msg_t node_file_getstat(void *instance, vfs_stat_t *sp);
 static BaseSequentialStream *node_file_get_stream(void *instance);
 static ssize_t node_file_read(void *instance, uint8_t *buf, size_t n);
@@ -277,14 +277,19 @@ static void *node_dir_addref(void *instance) {
   return __referenced_object_addref_impl(instance);
 }
 
-static void node_dir_release(void *instance) {
+static unsigned node_dir_release(void *instance) {
   vfs_streams_dir_node_c *sdnp = (vfs_streams_dir_node_c *)instance;
+  unsigned references;
 
-  __referenced_object_release_impl(instance);
-  if (__referenced_object_getref_impl(instance) == 0U) {
+  chSysLock();
+  references = __referenced_object_release_impl(instance);
+  chSysUnlock();
+  if (references == 0U) {
 
     chPoolFree(&vfs_streams_driver_static.dir_nodes_pool, (void *)sdnp);
   }
+
+  return references;
 }
 
 static msg_t node_dir_getstat(void *instance, vfs_stat_t *sp) {
@@ -327,14 +332,19 @@ static void *node_file_addref(void *instance) {
   return __referenced_object_addref_impl(instance);
 }
 
-static void node_file_release(void *instance) {
+static unsigned node_file_release(void *instance) {
   vfs_streams_file_node_c *sfnp = (vfs_streams_file_node_c *)instance;
+  unsigned references;
 
-  __referenced_object_release_impl(instance);
-  if (__referenced_object_getref_impl(instance) == 0U) {
+  chSysLock();
+  references = __referenced_object_release_impl(instance);
+  chSysUnlock();
+  if (references == 0U) {
 
     chPoolFree(&vfs_streams_driver_static.file_nodes_pool, (void *)sfnp);
   }
+
+  return references;
 }
 
 static msg_t node_file_getstat(void *instance, vfs_stat_t *sp) {

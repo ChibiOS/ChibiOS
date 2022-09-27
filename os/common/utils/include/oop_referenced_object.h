@@ -43,7 +43,7 @@ typedef struct referenced_object referenced_object_c;
 #define __referenced_object_methods                                         \
   __base_object_methods                                                     \
   void *(*addref)(void *ip);                                                \
-  void (*release)(void *ip);
+  unsigned (*release)(void *ip);
 
 /**
  * @brief   @p referenced_object_c specific data.
@@ -138,9 +138,10 @@ static inline unsigned __referenced_object_getref_impl(void *ip) {
  * @brief   Reference release implementation.
  *
  * @param[in] ip        A reference to the object.
+ * @return              The number of references left.
  */
 CC_FORCE_INLINE
-static inline void __referenced_object_release_impl(void *ip) {
+static inline unsigned __referenced_object_release_impl(void *ip) {
   referenced_object_c *objp = (referenced_object_c *)ip;
 
   osalDbgAssert(objp->references > 0U, "zero references");
@@ -148,6 +149,8 @@ static inline void __referenced_object_release_impl(void *ip) {
   if (--objp->references == 0U) {
     __referenced_object_dispose_impl(ip);
   }
+
+  return objp->references;
 }
 /** @} */
 
@@ -168,9 +171,10 @@ static inline referenced_object_c *roAddRef(void *ip) {
  * @brief   Reference release.
  *
  * @param[in] ip        A reference to the object.
+ * @return              The number of references left.
  */
 CC_FORCE_INLINE
-static inline void roRelease(void *ip) {
+static inline unsigned roRelease(void *ip) {
   referenced_object_c *objp = (referenced_object_c *)ip;
 
   return objp->vmt->release(ip);
