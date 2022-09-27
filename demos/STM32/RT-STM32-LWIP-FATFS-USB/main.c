@@ -112,7 +112,7 @@ static void tmr_init(void *p) {
 /**
  * @brief FS object.
  */
-static FATFS SDC_FS;
+static FATFS __nocache_fs;
 
 /* FS mounted and ready.*/
 static bool fs_ready = FALSE;
@@ -215,7 +215,7 @@ static void InsertHandler(eventid_t id) {
 #endif
     return;
 
-  err = f_mount(&SDC_FS, "/", 1);
+  err = f_mount(&__nocache_fs, "/", 1);
   if (err != FR_OK) {
 #if HAL_USE_SDC
     sdcDisconnect(&PORTAB_SDC1);
