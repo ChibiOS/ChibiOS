@@ -113,10 +113,6 @@ typedef enum {
  *          architecture dependent, fields.
  */
 struct hal_mac_config {
-  /**
-   * @brief   MAC address.
-   */
-  uint8_t               *mac_address;
   mac_lld_config_fields;
 #if defined(MAC_CONFIG_EXT_FIELDS)
   MAC_CONFIG_EXT_FIELDS
