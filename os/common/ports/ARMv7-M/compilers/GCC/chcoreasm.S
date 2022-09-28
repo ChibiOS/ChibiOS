@@ -83,43 +83,6 @@ __port_switch:
                 vpush   {s16-s31}
 #endif
 
-#if PORT_SWITCHED_REGIONS_NUMBER > 0
-                /* Saving MPU context.*/
-                ldr     r2, =MPU_RBAR
-#if PORT_SWITCHED_REGIONS_NUMBER >= 1
-                mov     r3, #0
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r4, r5}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 2
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r6, r7}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 3
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r8, r9}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 4
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                ldm     r2, {r10, r11}  /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 1
-                push    {r4, r5}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 2
-                push    {r4, r5, r6, r7}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 3
-                push    {r4, r5, r6, r7, r8, r9}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 4
-                push    {r4, r5, r6, r7, r8, r9, r10, r11}
-#endif
-#endif
-
                 str     sp, [r1, #CONTEXT_OFFSET]
 #if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) &&                                \
     ((CORTEX_MODEL == 3) || (CORTEX_MODEL == 4))
@@ -129,42 +92,6 @@ __port_switch:
                 mov     sp, r3
 #else
                 ldr     sp, [r0, #CONTEXT_OFFSET]
-#endif
-
-#if PORT_SWITCHED_REGIONS_NUMBER > 0
-                /* Restoring MPU context.*/
-#if PORT_SWITCHED_REGIONS_NUMBER == 1
-                pop     {r4, r5}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 2
-                pop     {r4, r5, r6, r7}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 3
-                pop     {r4, r5, r6, r7, r8, r9}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 4
-                pop     {r4, r5, r6, r7, r8, r9, r10, r11}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 1
-                mov     r3, #0
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r4, r5}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 2
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r6, r7}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 3
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r8, r9}    /* RBAR, RASR */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 4
-                add     r3, #1
-                str     r3, [r2, #-4]   /* RNR */
-                stm     r2, {r10, r11}  /* RBAR, RASR */
-#endif
 #endif
 
 #if CORTEX_USE_FPU

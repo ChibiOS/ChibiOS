@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Removed obsolete sandbox code from ARMv7-M port. Now ARMv7-M-ALT is
+       the official port for use with sandboxes.
 - NEW: Reworked HAL MAC driver, now with callback support.
 - NEW: Added a para-virtualized HAL port for use in sandboxes.
 - NEW: Added a VIO subsystem to sandboxes supporting drivers

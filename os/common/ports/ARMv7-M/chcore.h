@@ -112,24 +112,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Implements a syscall interface on SVC.
- */
-#if !defined(PORT_USE_SYSCALL) || defined(__DOXYGEN__)
-#define PORT_USE_SYSCALL                FALSE
-#endif
-
-/**
- * @brief   Number of MPU regions to be saved/restored during context switch.
- * @note    The first region is always region zero.
- * @note    The use of this option has an overhead of 8 bytes for each
- *          region for each thread.
- * @note    Allowed values are 0..4, zero means none.
- */
-#if !defined(PORT_SWITCHED_REGIONS_NUMBER) || defined(__DOXYGEN__)
-#define PORT_SWITCHED_REGIONS_NUMBER    0
-#endif
-
-/**
  * @brief   Enables stack overflow guard pages using MPU.
  * @note    This option can only be enabled if also option
  *          @p CH_DBG_ENABLE_STACK_CHECK is enabled.
@@ -142,8 +124,6 @@
 
 /**
  * @brief   MPU region to be used to stack guards.
- * @note    Make sure this region is not included in the
- *          @p PORT_SWITCHED_REGIONS_NUMBER regions range.
  */
 #if !defined(PORT_USE_GUARD_MPU_REGION) || defined(__DOXYGEN__)
 #define PORT_USE_GUARD_MPU_REGION       MPU_REGION_7
@@ -234,10 +214,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 4)
-  #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
-#endif
 
 #if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
     (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
@@ -459,31 +435,12 @@ struct port_extctx {
 #endif /* CORTEX_USE_FPU */
 };
 
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Link context structure.
- * @details This structure is used when there is the need to save extra
- *          context information that is not part of the registers stacked
- *          in HW.
- */
-struct port_linkctx {
-  uint32_t              control;
-  struct port_extctx    *ectxp;
-};
-#endif
-
 /**
  * @brief   System saved context.
  * @details This structure represents the inner stack frame during a context
  *          switch.
  */
 struct port_intctx {
-#if (PORT_SWITCHED_REGIONS_NUMBER > 0) || defined(__DOXYGEN__)
-  struct {
-    uint32_t    rbar;
-    uint32_t    rasr;
-  } regions[PORT_SWITCHED_REGIONS_NUMBER];
-#endif
 #if CORTEX_USE_FPU
   uint32_t      s16;
   uint32_t      s17;
@@ -521,12 +478,6 @@ struct port_intctx {
  */
 struct port_context {
   struct port_intctx    *sp;
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  struct {
-    uint32_t            psp;
-    const void          *p;
-  } syscall;
-#endif
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -552,55 +503,6 @@ struct port_context {
  */
 #define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
-/* By default threads have no syscall context information.*/
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.syscall.psp = (uint32_t)(wtop);                               \
-    (tp)->ctx.syscall.p   = NULL;
-#else
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
-#endif
-
-/* By default threads have all regions disabled.*/
-#if (PORT_SWITCHED_REGIONS_NUMBER == 0) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 1) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 2) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 3) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rasr  = 0U
-
-#elif (PORT_SWITCHED_REGIONS_NUMBER == 4) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
-    (tp)->ctx.sp->regions[0].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[0].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[1].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[2].rasr  = 0U;                                    \
-    (tp)->ctx.sp->regions[3].rbar  = 0U;                                    \
-    (tp)->ctx.sp->regions[3].rasr  = 0U
-
-#else
-  /* Note, checked above.*/
-#endif
-
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  * @details This code usually setup the context switching frame represented
@@ -612,8 +514,6 @@ struct port_context {
   (tp)->ctx.sp->r4 = (uint32_t)(pf);                                        \
   (tp)->ctx.sp->r5 = (uint32_t)(arg);                                       \
   (tp)->ctx.sp->lr = (uint32_t)__port_thread_start;                         \
-  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 } while (false)
 
 /**
@@ -741,9 +641,6 @@ extern "C" {
   void __port_thread_start(void);
   void __port_switch_from_isr(void);
   void __port_exit_from_isr(void);
-#if PORT_USE_SYSCALL == TRUE
-  void port_unprivileged_jump(uint32_t pc, uint32_t psp);
-#endif
 #ifdef __cplusplus
 }
 #endif
