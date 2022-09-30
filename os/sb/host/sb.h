@@ -325,6 +325,14 @@ struct sb_class {
    * @brief   Reference to sh SB thread while waiting for VRQs.
    */
   thread_reference_t            vrq_trp;
+  /**
+   * @brief   NVIC ISER to be updated on VRQ exit or NULL.
+   */
+  uint32_t                      *vrq_nvic_iser;
+  /**
+   * @brief   NVIC ISER mask to be applied on VRQ exit.
+   */
+  uint32_t                      vrq_nvic_mask;
 #endif
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   /**

@@ -78,9 +78,9 @@ static inline void vrq_makectx(struct port_extctx *newctxp,
 }
 
 CC_NO_INLINE
-static struct port_extctx * vrq_writectx(struct port_extctx *ectxp,
-                                         sb_class_t *sbp,
-                                         sb_vrqmask_t active_mask) {
+static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
+                                        sb_class_t *sbp,
+                                        sb_vrqmask_t active_mask) {
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp,
@@ -99,6 +99,9 @@ static struct port_extctx * vrq_writectx(struct port_extctx *ectxp,
   return ectxp;
 }
 
+/* Note, this function may look an useless duplication of vrq_writectx() but
+   the included __set_PSP() makes it a viable tail-call candidate for the
+   compiler, this is a significant performance gain is several places.*/
 CC_NO_INLINE
 static void vrq_pushctx(struct port_extctx *ectxp,
                         sb_class_t *sbp,
@@ -159,16 +162,9 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
       /* Checking if it is running in unprivileged mode, in this case we
          need to build a return context in its current PSP.*/
       if ((__get_CONTROL() & 1U) != 0U) {
-        struct port_extctx *ectxp;
-
-        /* Getting the current PSP, it is U_PSP.*/
-        ectxp = (struct port_extctx *)__get_PSP();
 
         /* Creating a return context.*/
-        ectxp = vrq_writectx(ectxp, sbp, active_mask);
-
-        /* Updating PSP position.*/
-        __set_PSP((uint32_t)ectxp);
+        vrq_pushctx((struct port_extctx *)__get_PSP(), sbp, active_mask);
       }
       else {
         /* It is in privileged mode so it will check for pending VRQs
@@ -210,16 +206,9 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
         /* Checking if it is running in unprivileged mode, in this case we
            need to build a return context in its current PSP.*/
         if ((__get_CONTROL() & 1U) != 0U) {
-          struct port_extctx *ectxp;
-
-          /* Getting the current PSP, it is U_PSP.*/
-          ectxp = (struct port_extctx *)__get_PSP();
 
           /* Creating a return context.*/
-          ectxp = vrq_writectx(ectxp, sbp, active_mask);
-
-          /* Updating PSP position.*/
-          __set_PSP((uint32_t)ectxp);
+          vrq_pushctx((struct port_extctx *)__get_PSP(), sbp, active_mask);
         }
         else {
           /* It is in privileged mode so it will check for pending VRQs
@@ -376,12 +365,19 @@ void sb_fastc_vrq_return(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sb_vrqmask_t active_mask;
 
+  /* Checking if there are IRQs to be re-enabled on VRQ exit.*/
+  if (sbp->vrq_nvic_iser != NULL) {
+    *sbp->vrq_nvic_iser = sbp->vrq_nvic_mask;
+  }
+
   /* Discarding the return current context, returning on the previous one.
      TODO: Check for overflows????*/
   ectxp++;
 
   active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
   if (active_mask != 0U) {
+
+    /* Re-enabling VRQs globally.*/
     sbp->vrq_isr = 0U;
 
     /* Creating a return context.*/
