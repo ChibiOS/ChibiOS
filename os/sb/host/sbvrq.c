@@ -380,11 +380,15 @@ void sb_fastc_vrq_return(struct port_extctx *ectxp) {
     /* Re-enabling VRQs globally.*/
     sbp->vrq_isr = 0U;
 
-    /* Creating a return context.*/
+    /* Creating a new return context.*/
     vrq_pushctx(ectxp, sbp, active_mask);
   }
   else {
+
+    /* Re-enabling VRQs globally.*/
     sbp->vrq_isr = 0U;
+
+    /* Keeping the current return context.*/
     __set_PSP((uint32_t)ectxp);
   }
 }
