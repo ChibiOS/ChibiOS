@@ -1288,8 +1288,8 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  *
  * @api
  */
-#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETH1MACEN |               \
-                                       RCC_AHB1ENR_ETH1TXEN |             \
+#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETH1MACEN |              \
+                                       RCC_AHB1ENR_ETH1TXEN  |              \
                                        RCC_AHB1ENR_ETH1RXEN, lp)
 
 /**
@@ -1297,9 +1297,9 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  *
  * @api
  */
-#define rccDisableETH() rccDisableAHB1(RCC_AHB1ENR_ETH1MACEN |            \
-                                          RCC_AHB1ENR_ETH1TXEN |          \
-                                          RCC_AHB1ENR_ETH1RXEN)
+#define rccDisableETH() rccDisableAHB1(RCC_AHB1ENR_ETH1MACEN |              \
+                                       RCC_AHB1ENR_ETH1TXEN  |              \
+                                       RCC_AHB1ENR_ETH1RXEN)
 
 /**
  * @brief   Resets the ETH peripheral.
