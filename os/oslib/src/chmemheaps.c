@@ -35,6 +35,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
@@ -306,6 +308,10 @@ void chHeapFree(void *p) {
   /*lint -restore*/
   heapp = H_USED_HEAP(hp);
   qp = &heapp->header;
+
+#if CH_CFG_HARDENING_LEVEL > 0
+  memset((void *)p, 0, MEM_ALIGN_NEXT(H_USED_SIZE(hp), CH_HEAP_ALIGNMENT));
+#endif
 
   /* Size is converted in number of elementary allocation units.*/
   H_FREE_PAGES(hp) = MEM_ALIGN_NEXT(H_USED_SIZE(hp),
