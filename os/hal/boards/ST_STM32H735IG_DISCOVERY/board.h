@@ -626,8 +626,8 @@
                                      PIN_PUPDR_FLOATING(GPIOB_LCD_B7) |     \
                                      PIN_PUPDR_FLOATING(GPIOB_MII_RX_ER) |  \
                                      PIN_PUPDR_FLOATING(GPIOB_MII_TX_EN) |  \
-                                     PIN_PUPDR_PULLUP(GPIOB_RMII_TXD0) |    \
-                                     PIN_PUPDR_PULLUP(GPIOB_RMII_TXD1) |    \
+                                     PIN_PUPDR_FLOATING(GPIOB_RMII_TXD0) |  \
+                                     PIN_PUPDR_FLOATING(GPIOB_RMII_TXD1) |  \
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D1) |       \
                                      PIN_PUPDR_PULLUP(GPIOB_ARD_D0))
 #define VAL_GPIOB_ODR               (PIN_ODR_LOW(GPIOB_LCD_G1) |            \
