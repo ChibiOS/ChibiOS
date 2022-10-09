@@ -127,6 +127,7 @@
 - NEW: Increased stacks size in RT test suite from 128 to 192. added an
        option to override the stack size by defining THREADS_STACK_SIZE
        in the makefile.
+- FIX: Fixed problems with cache in STM32 SDMMC drivers (bug #1238)(***********TODO*********** backported to 21.11.3).
 - FIX: Fixed missing clock enables for some GPIOS on some STM32L4s (bug #1237)
        (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed old bugs in serial driver header (bug #1236)
