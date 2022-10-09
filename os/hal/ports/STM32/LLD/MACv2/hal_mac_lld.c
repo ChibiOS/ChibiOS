@@ -750,7 +750,6 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
     size = rdp->size - rdp->offset;
 
   if (size > 0) {
-    cacheBufferInvalidate((uint8_t *)(rdp->physdesc->rdes0) + rdp->offset, size);
     memcpy(buf, (uint8_t *)(rdp->physdesc->rdes0) + rdp->offset, size);
     rdp->offset += size;
   }
