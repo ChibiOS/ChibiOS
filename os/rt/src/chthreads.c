@@ -877,7 +877,7 @@ void chThdQueueObjectInit(threads_queue_t *tqp) {
  *
  * @dispose
  */
-void chThdObjectDispose(threads_queue_t *tqp) {
+void chThdQueueObjectDispose(threads_queue_t *tqp) {
 
   chDbgCheck(tqp != NULL);
   chDbgAssert(ch_queue_isempty(&tqp->queue),

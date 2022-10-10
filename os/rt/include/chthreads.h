@@ -317,7 +317,7 @@ extern "C" {
   void chThdResumeS(thread_reference_t *trp, msg_t msg);
   void chThdResume(thread_reference_t *trp, msg_t msg);
   void chThdQueueObjectInit(threads_queue_t *tqp);
-  void chThdObjectDispose(threads_queue_t *tqp);
+  void chThdQueueObjectDispose(threads_queue_t *tqp);
   msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout);
   void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg);
   void chThdDequeueAllI(threads_queue_t *tqp, msg_t msg);
