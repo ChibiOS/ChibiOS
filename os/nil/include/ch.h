@@ -376,6 +376,12 @@
 #define THD_IDLE_END                    NULL
 #endif
 
+/**
+ * @brief   Definition required for compatibility with OSLIB.
+ * @note    This setting is not currently supported by NIL.
+ */
+#define CH_CFG_HARDENING_LEVEL          0
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
