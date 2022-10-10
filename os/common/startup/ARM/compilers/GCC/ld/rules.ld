@@ -126,7 +126,10 @@ SECTIONS
         . = ALIGN(8);
         __stacks_base__ = .;
         __main_thread_stack_base__ = .;
-        . += __stacks_total_size__;
+        . += __sys_stack_size__;
+       . = ALIGN(8);
+        __main_thread_stack_end__ = .;
+        . += __stacks_total_size__ - __sys_stack_size__;
         . = ALIGN(8);
         __stacks_end__ = .;
     } > STACKS_RAM

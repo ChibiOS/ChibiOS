@@ -90,7 +90,7 @@ static CH_SYS_CORE1_MEMORY THD_WORKING_AREA(ch_c1_idle_thread_wa,
                                             PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
-#if CH_DBG_ENABLE_STACK_CHECK == TRUE
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
 extern stkalign_t __c1_main_thread_stack_base__, __c1_main_thread_stack_end__;
 #endif
 
