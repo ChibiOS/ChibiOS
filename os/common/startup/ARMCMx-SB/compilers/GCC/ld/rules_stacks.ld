@@ -20,8 +20,10 @@ SECTIONS
     {
         . = ALIGN(8);
         __user_psp_base__ = .;
+        __main_thread_stack_base__ = .;
         . += __process_stack_size__;
         . = ALIGN(8);
         __user_psp_end__ = .;
+        __main_thread_stack_end__ = .;
     } > DATA_SPACE
 }

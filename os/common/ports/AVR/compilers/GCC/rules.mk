@@ -131,6 +131,11 @@ MATH_LIB = -lm
 LDFLAGS = -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--gc-sections
 LDFLAGS += -Wl,-u,vfprintf -lprintf_min -Wl,-u,vfscanf -lscanf_min -lm
 
+# Linker extra options
+ifneq ($(USE_LDOPT),)
+  LDFLAGS += -Wl,$(USE_LDOPT)
+endif
+
 #
 # Makefile rules
 #
