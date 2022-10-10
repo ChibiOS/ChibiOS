@@ -190,6 +190,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   /* Stack boundary.*/
   tp->wabase = tdp->wbase;
+  tp->waend  = tdp->wend;
 #endif
 
   /* Setting up the port-dependent part of the working area.*/
@@ -359,6 +360,7 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   /* Stack boundary.*/
   tp->wabase = (stkalign_t *)wsp;
+  tp->waend  = (stkalign_t *)wsp + (size / sizeof (stkalign_t));
 #endif
 
   /* Setting up the port-dependent part of the working area.*/

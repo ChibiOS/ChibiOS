@@ -154,6 +154,7 @@ void chInstanceObjectInit(os_instance_t *oip,
 
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   oip->rlist.current->wabase = oicp->mainthread_base;
+  oip->rlist.current->waend  = oicp->mainthread_end;
 #endif
 
   /* Setting up the caller as current thread.*/

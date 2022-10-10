@@ -199,6 +199,11 @@ struct ch_thread {
    *          dynamic threading.
    */
   stkalign_t                    *wabase;
+  /**
+   * @brief   Working area end address.
+   * @note    It is the 1st address after the working area.
+   */
+  stkalign_t                    *waend;
 #endif
   /**
    * @brief   Current thread state.
