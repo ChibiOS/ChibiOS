@@ -1253,7 +1253,7 @@
   #define STM32_MCODIVCLK           0
 
 #elif STM32_MCOSEL == STM32_MCOSEL_SYSCLK
-  #define STM32_MCODIVCLK           hal_lld_get_clock_point(CLK_SYSCLK)
+  #define STM32_MCODIVCLK           STM32_SYSCLK
 
 #elif STM32_MCOSEL == STM32_MCOSEL_HSI16
   #define STM32_MCODIVCLK           STM32_HSI16CLK
@@ -1262,7 +1262,7 @@
   #define STM32_MCODIVCLK           STM32_HSECLK
 
 #elif STM32_MCOSEL == STM32_MCOSEL_PLLRCLK
-  #define STM32_MCODIVCLK           hal_lld_get_clock_point(CLK_PLLRCLK)
+  #define STM32_MCODIVCLK           STM32_PLL_R_CLKOUT
 
 #elif STM32_MCOSEL == STM32_MCOSEL_LSI
   #define STM32_MCODIVCLK           STM32_LSICLK
