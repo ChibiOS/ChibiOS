@@ -130,7 +130,7 @@
        option to override the stack size by defining THREADS_STACK_SIZE
        in the makefile.
 - FIX: Fixed invalid delay loop in STM32G0/WL ADCv5 driver (bug #1240)
-       (backported to 20.3.5)(***********TODO*********** backported to 21.11.3).
+       (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed STM32_MCOSEL setting problem (bug #1239)(***********TODO*********** backported to 21.11.3).
 - FIX: Fixed problems with cache in STM32 SDMMC drivers (bug #1238)(***********TODO*********** backported to 21.11.3).
 - FIX: Fixed missing clock enables for some GPIOS on some STM32L4s (bug #1237)
