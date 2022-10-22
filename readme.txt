@@ -75,6 +75,7 @@
 
 *** 21.11.3 ***
 - NEW: Added EFL driver support for STM32F401/411.
+- FIX: Fixed invalid delay loop in STM32G0/WL ADCv5 driver (bug #1240).
 - FIX: Fixed missing clock enables for some GPIOS on some STM32L4s (bug #1237).
 - FIX: Fixed old bugs in serial driver header (bug #1236).
 - FIX: Fixed virtual timers lockup uder rare conditions (bug #1235).
