@@ -61,7 +61,7 @@ NOINLINE static void adc_lld_vreg_on(ADC_TypeDef *adc) {
 
 #if defined(ADC_CR_ADVREGEN)
   adc->CR = ADC_CR_ADVREGEN;
-  volatile uint32_t loop = (STM32_HCLK >> 20) << 4;
+  volatile uint32_t loop = STM32_HCLK >> 16;
   do {
     loop--;
   } while (loop > 0);
