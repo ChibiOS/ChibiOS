@@ -173,7 +173,7 @@
         Mode="Alternate"
         Alternate="11" />
       <pin2
-        ID="MII_RX_ER"
+        ID="MII_TX_ER_NINT"
         Type="PushPull"
         Level="High"
         Speed="Maximum"
@@ -187,7 +187,7 @@
         Speed="Maximum"
         Resistor="PullUp"
         Mode="Alternate"
-        Alternate="0" />
+        Alternate="0" ></pin3>
       <pin4
         ID=""
         Type="PushPull"
