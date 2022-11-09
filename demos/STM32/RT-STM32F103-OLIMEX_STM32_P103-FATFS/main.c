@@ -109,12 +109,28 @@ static FATFS SDC_FS;
 static bool fs_ready = FALSE;
 
 /* Maximum speed SPI configuration (18MHz, CPHA=0, CPOL=0, MSb first).*/
-static SPIConfig hs_spicfg = {false, NULL, IOPORT2, GPIOB_SPI2NSS, 0, 0};
+static SPIConfig hs_spicfg = {
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssport           = GPIOB,
+  .sspad            = GPIOB_SPI2NSS,
+  .cr1              = 0U,
+  .cr2              = 0U
+};
 
 /* Low speed SPI configuration (281.250kHz, CPHA=0, CPOL=0, MSb first).*/
-static SPIConfig ls_spicfg = {false, NULL, IOPORT2, GPIOB_SPI2NSS,
-                              SPI_CR1_BR_2 | SPI_CR1_BR_1,
-                              0};
+static SPIConfig ls_spicfg = {
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssport           = IOPORT2,
+  .sspad            = GPIOB_SPI2NSS,
+  .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1,
+  .cr2              = 0U
+};
 
 /* MMC/SD over SPI driver configuration.*/
 static MMCConfig mmccfg = {&SPID2, &ls_spicfg, &hs_spicfg};
