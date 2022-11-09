@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "rt_test_root.h"
+//#include "rt_test_root.h"
 //#include "oslib_test_root.h"
 
 /*
@@ -67,7 +67,8 @@ int main(void) {
    */
   while (true) {
     if (!palReadLine(LINE_ARD_D3)) {
-      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
+      /* Not fitting anymore in memory, test code disabled.*/
+//      test_execute((BaseSequentialStream *)&SD1, &rt_test_suite);
 //      test_execute((BaseSequentialStream *)&SD1, &oslib_test_suite);
     }
     chThdSleepMilliseconds(500);

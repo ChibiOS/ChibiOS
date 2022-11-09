@@ -109,8 +109,8 @@ include $(CHIBIOS)/os/common/ports/ARMv6-M/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-include $(CHIBIOS)/os/test/test.mk
-include $(CHIBIOS)/test/rt/rt_test.mk
+#include $(CHIBIOS)/os/test/test.mk
+#include $(CHIBIOS)/test/rt/rt_test.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here
