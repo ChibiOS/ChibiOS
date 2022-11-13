@@ -31,10 +31,10 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-#define MMC_CMD0_RETRY              10U
-#define MMC_CMD1_RETRY              100U
-#define MMC_ACMD41_RETRY            100U
-#define MMC_WAIT_DATA               10000U
+#define MMC_CMD0_RETRY                  10U
+#define MMC_CMD1_RETRY                  100U
+#define MMC_ACMD41_RETRY                100U
+#define MMC_WAIT_DATA                   10000U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -46,14 +46,21 @@
  */
 /**
  * @brief   Delays insertions.
- * @details If enabled this options inserts delays into the MMC waiting
+ * @details If enabled this options inserts delays into the card waiting
  *          routines releasing some extra CPU time for the threads with
  *          lower priority, this may slow down the driver a bit however.
  *          This option is recommended also if the SPI driver does not
  *          use a DMA channel and heavily loads the CPU.
  */
 #if !defined(MMC_NICE_WAITING) || defined(__DOXYGEN__)
-#define MMC_NICE_WAITING            TRUE
+#define MMC_NICE_WAITING                TRUE
+#endif
+
+/**
+ * @brief   Mutual exclusion on the SPI bus.
+ */
+#if !defined(MMC_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define MMC_USE_MUTUAL_EXCLUSION        TRUE
 #endif
 /** @} */
 
@@ -65,32 +72,42 @@
 #error "MMC_SPI driver requires HAL_USE_SPI and SPI_USE_WAIT"
 #endif
 
+#if (MMC_USE_MUTUAL_EXCLUSION == TRUE) && (SPI_USE_MUTUAL_EXCLUSION == FALSE)
+#error "MMC_USE_MUTUAL_EXCLUSION requires SPI_USE_MUTUAL_EXCLUSION"
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   MMC/SD over SPI driver configuration structure.
+ * @brief   Type of a MMC/SD over SPI driver configuration structure.
  */
 typedef struct {
   /**
    * @brief SPI driver associated to this MMC driver.
    */
-  SPIDriver             *spip;
+  SPIDriver                             *spip;
   /**
    * @brief SPI low speed configuration used during initialization.
    */
-  const SPIConfig       *lscfg;
+  const SPIConfig                       *lscfg;
   /**
    * @brief SPI high speed configuration used during transfers.
    */
-  const SPIConfig       *hscfg;
-} MMCConfig;
+  const SPIConfig                       *hscfg;
+} mmc_spi_config_t;
+
+/**
+ * @brief   Legacy name for compatibility.
+ * @deprecated
+ */
+typedef mmc_spi_config_t MMCConfig;
 
 /**
  * @brief   @p MMCDriver specific methods.
  */
-#define _mmc_driver_methods                                                 \
+#define __mmc_driver_methods                                                \
   _mmcsd_block_device_methods
 
 /**
@@ -98,8 +115,8 @@ typedef struct {
  *
  * @brief   @p MMCDriver virtual methods table.
  */
-struct MMCDriverVMT {
-  _mmc_driver_methods
+struct mmc_spi_driver_vmt {
+  __mmc_driver_methods
 };
 
 /**
@@ -111,17 +128,23 @@ typedef struct {
   /**
    * @brief Virtual Methods Table.
    */
-  const struct MMCDriverVMT *vmt;
+  const struct mmc_spi_driver_vmt       *vmt;
   _mmcsd_block_device_data
   /**
    * @brief Current configuration data.
    */
-  const MMCConfig       *config;
+  const mmc_spi_config_t                *config;
   /**
    * @brief Addresses use blocks instead of bytes.
    */
-  bool                  block_addresses;
-} MMCDriver;
+  bool                                  block_addresses;
+} mmc_spi_driver_t;
+
+/**
+ * @brief   Legacy name for compatibility.
+ * @deprecated
+ */
+typedef mmc_spi_driver_t MMCDriver;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

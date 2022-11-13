@@ -52,7 +52,7 @@ static bool mmc_write(void *instance, uint32_t startblk,
 /**
  * @brief   Virtual methods table.
  */
-static const struct MMCDriverVMT mmc_vmt = {
+static const struct mmc_spi_driver_vmt mmc_vmt = {
   (size_t)0,
   (bool (*)(void *))mmc_lld_is_card_inserted,
   (bool (*)(void *))mmc_lld_is_write_protected,
