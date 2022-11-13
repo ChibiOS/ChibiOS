@@ -44,24 +44,31 @@
 /*===========================================================================*/
 
 /* Forward declarations required by mmc_vmt.*/
+static bool mmc_is_card_inserted(void *instance);
+static bool mmc_is_write_protected(void *instance);
+static bool mmc_connect(void *instance);
+static bool mmc_disconnect(void *instance);
+static bool mmc_connect(void *instance);
 static bool mmc_read(void *instance, uint32_t startblk,
                        uint8_t *buffer, uint32_t n);
 static bool mmc_write(void *instance, uint32_t startblk,
                         const uint8_t *buffer, uint32_t n);
+static bool mmc_sync(void *instance);
+static bool mmc_get_info(void *instance, BlockDeviceInfo *bdip);
 
 /**
  * @brief   Virtual methods table.
  */
 static const struct mmc_spi_driver_vmt mmc_vmt = {
   (size_t)0,
-  (bool (*)(void *))mmc_lld_is_card_inserted,
-  (bool (*)(void *))mmc_lld_is_write_protected,
-  (bool (*)(void *))mmcConnect,
-  (bool (*)(void *))mmcDisconnect,
+  mmc_is_card_inserted,
+  mmc_is_write_protected,
+  mmc_connect,
+  mmc_disconnect,
   mmc_read,
   mmc_write,
-  (bool (*)(void *))mmcSync,
-  (bool (*)(void *, BlockDeviceInfo *))mmcGetInfo
+  mmc_sync,
+  mmc_get_info
 };
 
 /**
@@ -95,6 +102,74 @@ static const uint8_t crc7_lookup_table[256] = {
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static bool mmc_is_card_inserted(void *instance) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err;
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiAcquireBus(mmcp->config->spip);
+#endif
+
+  err = mmcIsCardInserted(mmcp);
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiReleaseBus(mmcp->config->spip);
+#endif
+
+  return err;
+}
+
+static bool mmc_is_write_protected(void *instance) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err;
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiAcquireBus(mmcp->config->spip);
+#endif
+
+  err = mmcIsCardInserted(mmcp);
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiReleaseBus(mmcp->config->spip);
+#endif
+
+  return err;
+}
+
+static bool mmc_connect(void *instance) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err;
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiAcquireBus(mmcp->config->spip);
+#endif
+
+  err = mmcConnect(mmcp);
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiReleaseBus(mmcp->config->spip);
+#endif
+
+  return err;
+}
+
+static bool mmc_disconnect(void *instance) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err;
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiAcquireBus(mmcp->config->spip);
+#endif
+
+  err = mmcDisconnect(mmcp);
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiReleaseBus(mmcp->config->spip);
+#endif
+
+  return err;
+}
 
 static bool mmc_read(void *instance, uint32_t startblk,
                 uint8_t *buffer, uint32_t n) {
@@ -164,6 +239,32 @@ static bool mmc_write(void *instance, uint32_t startblk,
 #if MMC_USE_MUTUAL_EXCLUSION == TRUE
   spiReleaseBus(mmcp->config->spip);
 #endif
+
+  return err;
+}
+
+static bool mmc_sync(void *instance) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err;
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiAcquireBus(mmcp->config->spip);
+#endif
+
+  err = mmcSync(mmcp);
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiReleaseBus(mmcp->config->spip);
+#endif
+
+  return err;
+}
+
+static bool mmc_get_info(void *instance, BlockDeviceInfo *bdip) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err;
+
+  err = mmcGetInfo(mmcp, bdip);
 
   return err;
 }
