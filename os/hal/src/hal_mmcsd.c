@@ -24,8 +24,6 @@
 
 #include "hal.h"
 
-#if (HAL_USE_MMC_SPI == TRUE) || (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
-
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -325,7 +323,5 @@ void _mmcsd_unpack_csd_v20(const MMCSDBlockDevice *sdcp,
   csd20->write_bl_partial    = (uint8_t) _mmcsd_get_slice(csd, MMCSD_CSD_20_WRITE_BL_PARTIAL_SLICE);
   csd20->write_blk_misalign  = (uint8_t) _mmcsd_get_slice(csd, MMCSD_CSD_20_WRITE_BLK_MISALIGN_SLICE);
 }
-
-#endif /* (HAL_USE_MMC_SPI == TRUE) || (HAL_USE_SDC == TRUE) */
 
 /** @} */

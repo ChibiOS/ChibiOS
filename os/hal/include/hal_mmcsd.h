@@ -27,8 +27,6 @@
 #ifndef HAL_MMCSD_H
 #define HAL_MMCSD_H
 
-#if (HAL_USE_MMC_SPI == TRUE) || (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -486,8 +484,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* HAL_USE_MMC_SPI == TRUE || HAL_USE_MMC_SDC == TRUE */
 
 #endif /* HAL_MMCSD_H */
 
