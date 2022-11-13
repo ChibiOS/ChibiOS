@@ -98,44 +98,74 @@ static const uint8_t crc7_lookup_table[256] = {
 
 static bool mmc_read(void *instance, uint32_t startblk,
                 uint8_t *buffer, uint32_t n) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err = HAL_FAILED;
 
-  if (mmcStartSequentialRead((MMCDriver *)instance, startblk)) {
-    return HAL_FAILED;
-  }
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiAcquireBus(mmcp->config->spip);
+#endif
 
-  while (n > 0U) {
-    if (mmcSequentialRead((MMCDriver *)instance, buffer)) {
-      return HAL_FAILED;
+  do {
+    if (mmcStartSequentialRead(mmcp, startblk)) {
+      break;
     }
-    buffer += MMCSD_BLOCK_SIZE;
-    n--;
-  }
 
-  if (mmcStopSequentialRead((MMCDriver *)instance)) {
-    return HAL_FAILED;
-  }
-  return HAL_SUCCESS;
+    while (n > 0U) {
+      if (mmcSequentialRead(mmcp, buffer)) {
+        break;
+      }
+      buffer += MMCSD_BLOCK_SIZE;
+      n--;
+
+      if (mmcStopSequentialRead(mmcp)) {
+        break;
+      }
+    }
+
+    err = HAL_SUCCESS;
+  } while (false);
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiReleaseBus(mmcp->config->spip);
+#endif
+
+  return err;
 }
 
 static bool mmc_write(void *instance, uint32_t startblk,
                  const uint8_t *buffer, uint32_t n) {
+  MMCDriver *mmcp = (MMCDriver *)instance;
+  bool err = HAL_FAILED;
 
-  if (mmcStartSequentialWrite((MMCDriver *)instance, startblk)) {
-    return HAL_FAILED;
-  }
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiAcquireBus(mmcp->config->spip);
+#endif
 
-  while (n > 0U) {
-    if (mmcSequentialWrite((MMCDriver *)instance, buffer)) {
-      return HAL_FAILED;
+  do {
+    if (mmcStartSequentialWrite(mmcp, startblk)) {
+      break;
     }
-    buffer += MMCSD_BLOCK_SIZE;
-    n--;
-  }
 
-  if (mmcStopSequentialWrite((MMCDriver *)instance)) {
-    return HAL_FAILED;
-  }
-  return HAL_SUCCESS;
+    while (n > 0U) {
+      if (mmcSequentialWrite(mmcp, buffer)) {
+        break;
+      }
+      buffer += MMCSD_BLOCK_SIZE;
+      n--;
+    }
+
+    if (mmcStopSequentialWrite(mmcp)) {
+      break;
+    }
+
+    err = HAL_SUCCESS;
+  } while (false);
+
+#if MMC_USE_MUTUAL_EXCLUSION == TRUE
+  spiReleaseBus(mmcp->config->spip);
+#endif
+
+  return err;
 }
 
 /**
