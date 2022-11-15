@@ -121,18 +121,25 @@ SPIDriver SPID6;
 /*===========================================================================*/
 
 static void spi_lld_configure(SPIDriver *spip) {
+  uint32_t cr1, cr2;
+
+  /* Disabling SPI during (re)configuration.*/
+  spip->spi->CR1  = 0U;
+
+  /* Common CR1 and CR2 options.*/
+  cr1 = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
+  cr2 = spip->config->cr2 | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
 
   /* SPI setup.*/
-  if (spip->config->slave) {
-    spip->spi->CR1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
-    spip->spi->CR2  = spip->config->cr2 |
-                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  if (spip->config->slave == false) {
+    cr1 |= SPI_CR1_MSTR;
+    cr2 |= SPI_CR2_SSOE;
   }
-  else {
-    spip->spi->CR1  = (spip->config->cr1 | SPI_CR1_MSTR) & ~SPI_CR1_SPE;
-    spip->spi->CR2  = spip->config->cr2 | SPI_CR2_SSOE |
-                      SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
-  }
+
+  /* New configuration.*/
+  spip->spi->CR2 = cr2;
+  spip->spi->CR1 = cr1;
+  spip->spi->CR1 = cr1 | SPI_CR1_SPE;
 }
 
 /**
@@ -727,8 +734,6 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  spip->spi->CR1 |= SPI_CR1_SPE;
-
   return HAL_RET_SUCCESS;
 }
 
@@ -764,8 +769,6 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  spip->spi->CR1 |= SPI_CR1_SPE;
-
   return HAL_RET_SUCCESS;
 }
 
@@ -798,8 +801,6 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
 
-  spip->spi->CR1 |= SPI_CR1_SPE;
-
   return HAL_RET_SUCCESS;
 }
 
@@ -831,8 +832,6 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   dmaStreamEnable(spip->dmarx);
   dmaStreamEnable(spip->dmatx);
-
-  spip->spi->CR1 |= SPI_CR1_SPE;
 
   return HAL_RET_SUCCESS;
 }
@@ -874,18 +873,10 @@ msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
  */
 uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
 
-  /* Enabling SPI for the exchange.*/
-  spip->spi->CR1 |= SPI_CR1_SPE;
-
   spip->spi->DR = frame;
   while ((spip->spi->SR & SPI_SR_RXNE) == 0U)
     ;
-  frame = spip->spi->DR;
-
-  /* Disabling SPI and done.*/
-  spip->spi->CR1 &= ~SPI_CR1_SPE;
-
-  return frame;
+  return spip->spi->DR;
 }
 
 #endif /* HAL_USE_SPI */
