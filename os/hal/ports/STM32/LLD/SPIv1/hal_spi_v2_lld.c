@@ -160,7 +160,6 @@ static msg_t spi_lld_stop_abort(SPIDriver *spip) {
     /* Waiting for current frame completion then stop SPI.*/
     while ((spip->spi->SR & SPI_SR_BSY) != 0U) {
     }
-    spip->spi->CR1 &= ~SPI_CR1_SPE;
 
     /* Now it is idle, stopping RX DMA channel.*/
     dmaStreamDisable(spip->dmarx);
