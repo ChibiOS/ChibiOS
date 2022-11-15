@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    SPIv3/hal_spi_v2_lld.c
+ * @file    SPIv1/hal_spi_v2_lld.c
  * @brief   STM32 SPI (v2) subsystem low level driver source.
  *
  * @addtogroup SPI
@@ -132,7 +132,7 @@ static void spi_lld_configure(SPIDriver *spip) {
 
   /* SPI setup.*/
   if (spip->config->slave == false) {
-    cr1 |= SPI_CR1_MSTR;
+    cr1 |= SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR;
     cr2 |= SPI_CR2_SSOE;
   }
 

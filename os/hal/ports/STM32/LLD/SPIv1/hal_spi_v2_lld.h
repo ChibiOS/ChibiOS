@@ -427,8 +427,6 @@
 #define spi_lld_driver_fields                                               \
   /* Pointer to the SPIx registers block.*/                                 \
   SPI_TypeDef               *spi;                                           \
-  /** DMA type for this instance.*/                                         \
-  bool                      is_bdma;                                        \
   /* Receive DMA stream.*/                                                  \
   const stm32_dma_stream_t  *dmarx;                                         \
   /* Transmit DMA stream.*/                                                 \
