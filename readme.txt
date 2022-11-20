@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Fixed problem in STM32 gpt_lld_polled_delay() implementation (bug #1241).
 - FIX: Fixed invalid delay loop in STM32G0/WL ADCv5 driver (bug #1240).
 - FIX: Fixed missing clock enables for some GPIOS on some STM32L4s (bug #1237).
 - FIX: Fixed old bugs in serial driver header (bug #1236).
