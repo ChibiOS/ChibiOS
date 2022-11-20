@@ -1070,7 +1070,7 @@
 #if defined(STM32L496xx) || defined(STM32L4A6xx)
 
 /* Clock attributes.*/
-#define STM32_CLOCK_HAS_HSI48               FALSE
+#define STM32_CLOCK_HAS_HSI48               TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
