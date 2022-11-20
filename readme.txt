@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: PAL events for RP2040 added.
 - NEW: Added a "waend" field to the thread structure in RT for debug
        convenience.
 - NEW: Removed obsolete sandbox code from ARMv7-M port. Now ARMv7-M-ALT is
