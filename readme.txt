@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: STM32 DMA drivers now export an STM32_DMA_MAX_TRANSFER definition.
 - NEW: PAL events for RP2040 added.
 - NEW: Added a "waend" field to the thread structure in RT for debug
        convenience.

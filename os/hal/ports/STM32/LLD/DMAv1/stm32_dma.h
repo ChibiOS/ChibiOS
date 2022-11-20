@@ -39,6 +39,11 @@
 #define STM32_DMA_ADVANCED          FALSE
 
 /**
+ * @brief   Maximum number of transfers in a single operation.
+ */
+#define STM32_DMA_MAX_TRANSFER      65535
+
+/**
  * @brief   Total number of DMA streams.
  * @details This is the total number of streams among all the DMA units.
  */
