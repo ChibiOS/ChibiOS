@@ -897,7 +897,7 @@ void usb_lld_stop(USBDriver *usbp) {
       nvicDisableVector(STM32_OTG2_NUMBER);
       rccDisableOTG_HS();
 #if defined(BOARD_OTG2_USES_ULPI)
-      rccDisableOTG_HSULPI()
+      rccDisableOTG_HSULPI();
 #endif
     }
 #endif
