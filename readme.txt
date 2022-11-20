@@ -130,6 +130,8 @@
 - NEW: Increased stacks size in RT test suite from 128 to 192. added an
        option to override the stack size by defining THREADS_STACK_SIZE
        in the makefile.
+- FIX: Fixed missing semicolon in STM32 OTGv1 driver (bug #1243)
+       (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed HSI48 not enabled for STM32L496/​4A6 (bug #1242)
        (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed problem in STM32 gpt_lld_polled_delay() implementation (bug #1241)
