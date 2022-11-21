@@ -50,8 +50,52 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+void spi_error_cb(SPIDriver *spip);
+
+/*
+ * High speed SPI configuration (21.25MHz, CPHA=0, CPOL=0, MSb first).
+ */
+const SPIConfig hs_spicfg = {
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOB,
+  .sspad            = 12U,
+  .cr1              = SPI_CR1_BR_0,
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
+};
+
+/*
+ * Low speed SPI configuration (664,062kHz, CPHA=0, CPOL=0, MSb first).
+ */
+const SPIConfig ls_spicfg = {
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = spi_error_cb,
+  .ssport           = GPIOB,
+  .sspad            = 12U,
+  .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1,
+  .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
+};
+
 void portab_setup(void) {
 
+  /*
+   * SPI2 I/O pins setup.
+   */
+  palSetPad(GPIOB, 12);
+  palSetPadMode(GPIOB, 11, PAL_MODE_INPUT_PULLUP |
+                           PAL_STM32_OSPEED_HIGHEST);       /* Card Detect. */
+  palSetPadMode(GPIOB, 12, PAL_MODE_OUTPUT_PUSHPULL |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 CS.     */
+  palSetPadMode(GPIOB, 13, PAL_MODE_ALTERNATE(5) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 SCK.    */
+  palSetPadMode(GPIOB, 14, PAL_MODE_ALTERNATE(5) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 MISO.   */
+  palSetPadMode(GPIOB, 15, PAL_MODE_ALTERNATE(5) |
+                           PAL_STM32_OSPEED_HIGHEST);       /* SPI2 MOSI.   */
 }
 
 /** @} */

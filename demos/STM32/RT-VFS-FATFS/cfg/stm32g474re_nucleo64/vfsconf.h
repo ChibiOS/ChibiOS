@@ -83,7 +83,7 @@
  * @brief   Enables the VFS FatFS Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_FATFS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_FATFS            FALSE
+#define VFS_CFG_ENABLE_DRV_FATFS            TRUE
 #endif
 
 /** @} */

@@ -151,6 +151,10 @@ static ShellConfig shell_cfg1 = {
 /* Main and generic code.                                                    */
 /*===========================================================================*/
 
+#if !HAL_USE_SDC
+mmc_spi_driver_t MMCD1;
+#endif
+
 /*
  * Pointer to the shell thread, if active, else NULL.
  */
@@ -181,9 +185,9 @@ static void InsertHandler(eventid_t id) {
 #if HAL_USE_SDC
     sdcDisconnect(&PORTAB_SDCD1);
 #else
-  if (mmcDisconnect(&MMCD1)) {
+    mmcDisconnect(&MMCD1);
 #endif
-   return;
+    return;
   }
   fs_ready = true;
 #endif
@@ -267,11 +271,18 @@ int main(void) {
   nullObjectInit(&nullstream);
 
 #if VFS_CFG_ENABLE_DRV_FATFS == TRUE
+#if HAL_USE_SDC
   /* Activates the  SDC driver using default configuration.*/
   sdcStart(&PORTAB_SDCD1, NULL);
 
   /* Activates the card insertion monitor.*/
   tmr_init(&PORTAB_SDCD1);
+#else
+  /* TODO MMC_SPI */
+
+  /* Activates the card insertion monitor.*/
+  tmr_init(&MMCD1);
+#endif
 
   /* Initializing an overlay VFS object overlaying a FatFS driver. Note
      that this virtual file system can only access the "/sb1" sub-directory
