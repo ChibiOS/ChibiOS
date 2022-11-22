@@ -107,15 +107,7 @@ static bool mmc_is_card_inserted(void *instance) {
   MMCDriver *mmcp = (MMCDriver *)instance;
   bool err;
 
-#if MMC_USE_MUTUAL_EXCLUSION == TRUE
-  spiAcquireBus(mmcp->config->spip);
-#endif
-
   err = mmcIsCardInserted(mmcp);
-
-#if MMC_USE_MUTUAL_EXCLUSION == TRUE
-  spiReleaseBus(mmcp->config->spip);
-#endif
 
   return err;
 }
@@ -124,15 +116,7 @@ static bool mmc_is_write_protected(void *instance) {
   MMCDriver *mmcp = (MMCDriver *)instance;
   bool err;
 
-#if MMC_USE_MUTUAL_EXCLUSION == TRUE
-  spiAcquireBus(mmcp->config->spip);
-#endif
-
   err = mmcIsCardInserted(mmcp);
-
-#if MMC_USE_MUTUAL_EXCLUSION == TRUE
-  spiReleaseBus(mmcp->config->spip);
-#endif
 
   return err;
 }
