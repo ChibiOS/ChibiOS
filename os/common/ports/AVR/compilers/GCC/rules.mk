@@ -73,13 +73,20 @@ CPPDEFS = -DF_CPU=$(F_CPU)UL
 # Paths where to search for sources
 VPATH     = $(SRCPATHS)
 
-# Various settings
+# Various settings for C flags.
 MCFLAGS := -mmcu=$(MCU)
 CFLAGS  = $(MCFLAGS) -I. -gdwarf-2 $(CDEFS) $(OPT) -funsigned-char
 CFLAGS  += -funsigned-bitfields -fpack-struct -fshort-enums $(CWARN)
 CFLAGS  += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CFLAGS  += -std=gnu11 -mrelax -fdata-sections -ffunction-sections
 CFLAGS  += -Wundef -MMD -MP #-MF
+
+# Various settings for CPP flags.
+CPPFLAGS = $(MCFLAGS) -I. -gdwarf-2 $(CDEFS) $(OPT) -funsigned-char
+CPFLAGS  += -funsigned-bitfields -fpack-struct -fshort-enums $(CWARN)
+CPFLAGS  += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
+CPFLAGS  += -std=gnu++11 -mrelax -fdata-sections -ffunction-sections
+CPFLAGS  += -Wundef -MMD -MP #-MF
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
