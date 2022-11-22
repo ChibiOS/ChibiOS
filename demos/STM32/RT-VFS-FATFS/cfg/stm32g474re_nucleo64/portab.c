@@ -50,16 +50,19 @@
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void spi_error_cb(SPIDriver *spip);
+/* Making sure mcuconf.h setup is as expected.*/
+#if STM32_PCLK1 != 85000000
+#error "unexpected PCLK1 frequency"
+#endif
 
 /*
- * High speed SPI configuration (21.25MHz, CPHA=0, CPOL=0, MSb first).
+ * High speed SPI configuration (PCLK1/4=21.25MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig hs_spicfg = {
   .circular         = false,
   .slave            = false,
   .data_cb          = NULL,
-  .error_cb         = spi_error_cb,
+  .error_cb         = NULL,
   .ssport           = GPIOB,
   .sspad            = 12U,
   .cr1              = SPI_CR1_BR_0,
@@ -67,16 +70,16 @@ const SPIConfig hs_spicfg = {
 };
 
 /*
- * Low speed SPI configuration (664,062kHz, CPHA=0, CPOL=0, MSb first).
+ * Low speed SPI configuration (PCLK1/32=265.6250kHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig ls_spicfg = {
   .circular         = false,
   .slave            = false,
   .data_cb          = NULL,
-  .error_cb         = spi_error_cb,
+  .error_cb         = NULL,
   .ssport           = GPIOB,
   .sspad            = 12U,
-  .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1,
+  .cr1              = SPI_CR1_BR_2,
   .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 

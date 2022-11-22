@@ -153,6 +153,9 @@ static ShellConfig shell_cfg1 = {
 
 #if !HAL_USE_SDC
 mmc_spi_driver_t MMCD1;
+
+/* MMC/SD over SPI driver configuration.*/
+static MMCConfig mmccfg = {&SPID2, &ls_spicfg, &hs_spicfg};
 #endif
 
 /*
@@ -278,7 +281,8 @@ int main(void) {
   /* Activates the card insertion monitor.*/
   tmr_init(&PORTAB_SDCD1);
 #else
-  /* TODO MMC_SPI */
+  mmcObjectInit(&MMCD1);
+  mmcStart(&MMCD1, &mmccfg);
 
   /* Activates the card insertion monitor.*/
   tmr_init(&MMCD1);
