@@ -276,7 +276,7 @@ endif
 lib: $(OBJS) $(BUILDDIR)/lib$(PROJECT).a
 
 $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
-	@$(AR) -r $@ $^
+	@$(AR) $@ $^
 	@echo
 	@echo Done
 
