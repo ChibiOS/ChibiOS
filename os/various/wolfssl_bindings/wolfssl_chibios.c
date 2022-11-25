@@ -123,8 +123,16 @@ int wolfssl_send_cb(WOLFSSL* ssl, char *buf, int sz, void *ctx)
   err = netconn_write(sk->conn, buf, sz, NETCONN_COPY);
   if (err == ERR_OK)
     return sz;
+  else if (err == ERR_CLSD || err == ERR_ABRT || err == ERR_CONN)
+    return WOLFSSL_CBIO_ERR_CONN_CLOSE;
+  else if (err == ERR_RST)
+    return WOLFSSL_CBIO_ERR_CONN_RST;
+  else if (err == ERR_MEM)
+    return WOLFSSL_CBIO_ERR_GENERAL;
+  else if (err == ERR_TIMEOUT)
+    return WOLFSSL_CBIO_ERR_TIMEOUT;
   else
-    return -2;
+    return WOLFSSL_CBIO_ERR_WANT_WRITE;
 }
 
 
@@ -174,6 +182,14 @@ int wolfssl_recv_cb(WOLFSSL *ssl, char *buf, int sz, void *ctx)
         netbuf_delete(inbuf);
         return sz;
     }
+    else if (err == ERR_CLSD || err == ERR_ABRT || err == ERR_CONN)
+        return WOLFSSL_CBIO_ERR_CONN_CLOSE;
+    else if (err == ERR_RST)
+        return WOLFSSL_CBIO_ERR_CONN_RST;
+    else if (err == ERR_MEM)
+        return WOLFSSL_CBIO_ERR_GENERAL;
+    else if (err == ERR_TIMEOUT)
+        return WOLFSSL_CBIO_ERR_TIMEOUT;
     else
         return 0;
     //return WOLFSSL_CBIO_ERR_WANT_READ;
