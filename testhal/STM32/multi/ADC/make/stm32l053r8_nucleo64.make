@@ -91,7 +91,7 @@ MCU  = cortex-m0
 # Imported source files and paths.
 CHIBIOS  := ../../../..
 CONFDIR  := ./cfg/stm32l053r8_nucleo64
-BUILDDIR := ./build/stm32l063r8_nucleo64
+BUILDDIR := ./build/stm32l053r8_nucleo64
 DEPDIR   := ./.dep/stm32l053r8_nucleo64
 
 # Licensing files.
