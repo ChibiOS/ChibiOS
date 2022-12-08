@@ -75,6 +75,7 @@
 
 *** 21.11.3 ***
 - NEW: Added EFL driver support for STM32F401/411.
+- FIX: Fixed wrong DMA definitions for STM32L0xx I2C3 peripheral (bug #1245).
 - FIX: Fixed wrong path in STM32L053 ADC demo makefile (bug #1244).
 - FIX: Fixed missing semicolon in STM32 OTGv1 driver (bug #1243).
 - FIX: Fixed HSI48 not enabled for STM32L496/​4A6 (bug #1242).
