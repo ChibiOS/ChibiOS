@@ -88,11 +88,11 @@
  * @name    CFGR2 register configuration helpers
  * @{
  */
-#define STM32_ADC_CKMODE_MASK           (3U << 30U)
-#define STM32_ADC_CKMODE_ADCCLK         (0U << 30U)
-#define STM32_ADC_CKMODE_PCLK_DIV2      (1U << 30U)
-#define STM32_ADC_CKMODE_PCLK_DIV4      (2U << 30U)
-#define STM32_ADC_CKMODE_PCLK           (3U << 30U)
+#define ADC_CFGR2_CKMODE_MASK           (3U << 30U)
+#define ADC_CFGR2_CKMODE_ADCCLK         (0U << 30U)
+#define ADC_CFGR2_CKMODE_PCLK_DIV2      (1U << 30U)
+#define ADC_CFGR2_CKMODE_PCLK_DIV4      (2U << 30U)
+#define ADC_CFGR2_CKMODE_PCLK           (3U << 30U)
 
 #if (STM32_ADC_SUPPORTS_OVERSAMPLING == TRUE) || defined(__DOXYGEN__)
 #define ADC_CFGR2_OVSR_MASK             (7U << 2U)
@@ -136,10 +136,10 @@
 #endif
 
 /**
- * @brief   ADC1 clock source selection.
+ * @brief   ADC1 CRFG2 initialization.
  */
-#if !defined(STM32_ADC_ADC1_CKMODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_CKMODE               STM32_ADC_CKMODE_ADCCLK
+#if !defined(STM32_ADC_ADC1_CFGR2) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_CFGR2               ADC_CFGR2_CKMODE_ADCCLK
 #endif
 
 /**
@@ -335,28 +335,6 @@ typedef uint32_t adcerror_t;
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
-#if (STM32_ADC_SUPPORTS_OVERSAMPLING == TRUE) || defined(__DOXYGEN__)
-#define adc_lld_configuration_group_fields                                  \
-  /* ADC CFGR1 register initialization data.                                \
-     NOTE: The bits DMAEN and DMACFG are enforced internally                \
-           to the driver, keep them to zero.                                \
-     NOTE: The bits @p ADC_CFGR1_CONT or @p ADC_CFGR1_DISCEN must be        \
-           specified in continuous more or if the buffer depth is           \
-           greater than one.*/                                              \
-  uint32_t                  cfgr1;                                          \
-  /* ADC CFGR2 register initialization data.                                \
-     NOTE: CKMODE bits must not be specified in this field and left to      \
-           zero.*/                                                          \
-  uint32_t                  cfgr2;                                          \
-  /* ADC TR register initialization data.*/                                 \
-  uint32_t                  tr;                                             \
-  /* ADC SMPR register initialization data.*/                               \
-  uint32_t                  smpr;                                           \
-  /* ADC CHSELR register initialization data.                               \
-     NOTE: The number of bits at logic level one in this register must      \
-           be equal to the number in the @p num_channels field.*/           \
-  uint32_t                  chselr
-#else
 #define adc_lld_configuration_group_fields                                  \
   /* ADC CFGR1 register initialization data.                                \
      NOTE: The bits DMAEN and DMACFG are enforced internally                \
@@ -373,7 +351,6 @@ typedef uint32_t adcerror_t;
      NOTE: The number of bits at logic level one in this register must      \
            be equal to the number in the @p num_channels field.*/           \
   uint32_t                  chselr
-#endif
 
 /**
  * @brief   Changes the value of the ADC CCR register.
