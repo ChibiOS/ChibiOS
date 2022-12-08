@@ -1726,7 +1726,7 @@
  * @brief   PLL1 DIVP field.
  */
 #if ((STM32_PLL1_DIVP_VALUE >= 2) && (STM32_PLL1_DIVP_VALUE <= 128) &&      \
-    ((STM32_PLL1_DIVP_VALUE & 0x1) == 0x0)) || defined(__DOXYGEN__)
+    ((STM32_PLL1_DIVP_VALUE & 1) == 0)) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVP             ((STM32_PLL1_DIVP_VALUE - 1U) << RCC_PLL1DIVR_P1_Pos)
 #else
 #error "invalid STM32_PLL1_DIVP_VALUE value specified"
