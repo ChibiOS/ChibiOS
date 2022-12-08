@@ -53,7 +53,7 @@
 #define STM32_LSI_ENABLED                   FALSE
 #define STM32_LSIPRE                        STM32_LSIPRE_NODIV
 #define STM32_HSE32_ENABLED                 TRUE
-#define STM32_HSE32SRC                      TRUE
+#define STM32_HSE32SRC                      STM32_HSE32_XTAL
 #define STM32_LSE_ENABLED                   TRUE
 #define STM32_MSIPLL_ENABLED                TRUE
 #define STM32_MSIRANGE                      STM32_MSIRANGE_4M
@@ -128,7 +128,7 @@
  */
 #define STM32_ADC_USE_ADC1                  FALSE
 #define STM32_ADC_ADC1_CFGR2                ADC_CFGR2_CKMODE_ADCCLK
-#define STM32_ADC_ADC1_IRQ_PRIORITY         2
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
