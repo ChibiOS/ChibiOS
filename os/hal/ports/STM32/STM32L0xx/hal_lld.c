@@ -99,7 +99,7 @@ void hal_lld_init(void) {
   /* Reset of all peripherals except those on IOP.*/
   rccResetAHB(~RCC_AHBRSTR_MIFRST);
   rccResetAPB1(~RCC_APB1RSTR_PWRRST);
-  rccResetAPB2(~0);
+  rccResetAPB2(~RCC_APB2RSTR_SYSCFGRST);
 
   /* PWR clock enabled.*/
   rccEnablePWRInterface(true);

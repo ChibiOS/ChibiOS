@@ -131,6 +131,8 @@
 - NEW: Increased stacks size in RT test suite from 128 to 192. added an
        option to override the stack size by defining THREADS_STACK_SIZE
        in the makefile.
+- FIX: Fixed wrong HSI48 support on STM32L0xx (bug #1246)
+       (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed wrong DMA definitions for STM32L0xx I2C3 peripheral (bug #1245)
        (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed wrong path in STM32L053 ADC demo makefile (bug #1244)
