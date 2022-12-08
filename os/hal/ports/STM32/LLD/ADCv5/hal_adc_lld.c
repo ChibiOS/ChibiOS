@@ -216,8 +216,8 @@ void adc_lld_start(ADCDriver *adcp) {
       dmaSetRequestSource(adcp->dmastp, STM32_DMAMUX1_ADC1);
 
       /* Clock settings.*/
-      adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;
       ADC1_COMMON->CCR = STM32_ADC_PRESC << ADC_CCR_PRESC_Pos;
+      adcp->adc->CFGR2 = STM32_ADC_ADC1_CFGR2;
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -272,7 +272,7 @@ void adc_lld_stop(ADCDriver *adcp) {
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
 
-  uint32_t mode, cfgr1, cfgr2;
+  uint32_t mode, cfgr1;
   const ADCConversionGroup *grpp = adcp->grpp;
 
   /* Write back ISR bits to clear register.*/
@@ -280,7 +280,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* Get group1 configuration. Transfer the clock mode for group2.*/
   cfgr1  = grpp->cfgr1 | ADC_CFGR1_DMAEN;
-  cfgr2  = adcp->adc->CFGR2 & STM32_ADC_CKMODE_MASK;
 
   /* DMA setup.*/
   mode  = adcp->dmamode;
@@ -300,7 +299,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* Apply ADC configuration.*/
   adcp->adc->CFGR1  = cfgr1;
-  adcp->adc->CFGR2  = cfgr2 | (grpp->cfgr2 & ~STM32_ADC_CKMODE_MASK);
   adcp->adc->CHSELR = grpp->chselr;
 
   while ((adcp->adc->ISR & ADC_ISR_CCRDY) == 0U) {
