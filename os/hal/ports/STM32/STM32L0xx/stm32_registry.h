@@ -574,7 +574,6 @@
 #define STM32_HAS_CRC                       TRUE
 #define STM32_CRC_PROGRAMMABLE              TRUE
 
-
 /*===========================================================================*/
 /* STM32L052xx, STM32L062xx, STM32L053xx, STM32L063xx.                       */
 /*===========================================================================*/
@@ -853,10 +852,10 @@
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
-#define STM32_I2C3_RX_DMA_CHN               0x00E0E000
-#define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4) |\
-                                             STM32_DMA_STREAM_ID_MSK(1, 6))
-#define STM32_I2C3_TX_DMA_CHN               0x0E0E0000
+#define STM32_I2C3_RX_DMA_CHN               0x000E0E00
+#define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_I2C3_TX_DMA_CHN               0x0000E0E0
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
@@ -1071,10 +1070,10 @@
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3) |\
                                              STM32_DMA_STREAM_ID_MSK(1, 5))
-#define STM32_I2C3_RX_DMA_CHN               0x00E0E000
-#define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4) |\
-                                             STM32_DMA_STREAM_ID_MSK(1, 6))
-#define STM32_I2C3_TX_DMA_CHN               0x0E0E0000
+#define STM32_I2C3_RX_DMA_CHN               0x000E0E00
+#define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2) |\
+                                             STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_I2C3_TX_DMA_CHN               0x0000E0E0
 
 /* SDIO attributes.*/
 #define STM32_HAS_SDIO                      FALSE
