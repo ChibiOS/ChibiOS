@@ -66,7 +66,6 @@ const ADCConversionGroup portab_adcgrpcfg1 = {
   .end_cb       = NULL,
   .error_cb     = adcerrorcallback,
   .cfgr1        = ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,
-  .cfgr2        = 0,
   .tr1          = ADC_TR_DISABLED,
   .tr2          = ADC_TR_DISABLED,
   .tr3          = ADC_TR_DISABLED,
@@ -90,7 +89,6 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
                   ADC_CFGR1_RES_12BIT |
                   ADC_CFGR1_EXTEN_RISING |
                   ADC_CFGR1_EXTSEL_SRC(0),
-  .cfgr2        = 0,
   .tr1          = ADC_TR_DISABLED,
   .tr2          = ADC_TR_DISABLED,
   .tr3          = ADC_TR_DISABLED,
