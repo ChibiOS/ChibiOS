@@ -62,79 +62,29 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Driver configuration structure.
- */
-typedef struct {
-  /**
-   * @brief MAC address.
-   */
-  uint8_t               *mac_address;
-  /* End of the mandatory fields.*/
-} MACConfig;
-
-/**
- * @brief   Structure representing a MAC driver.
- */
-struct MACDriver {
-  /**
-   * @brief Driver state.
-   */
-  macstate_t            state;
-  /**
-   * @brief Current configuration data.
-   */
-  const MACConfig       *config;
-  /**
-   * @brief Transmit semaphore.
-   */
-  threads_queue_t       tdqueue;
-  /**
-   * @brief Receive semaphore.
-   */
-  threads_queue_t       rdqueue;
-#if (MAC_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief Receive event.
-   */
-  event_source_t        rdevent;
-#endif
-  /* End of the mandatory fields.*/
-};
-
-/**
- * @brief   Structure representing a transmit descriptor.
- */
-typedef struct {
-  /**
-   * @brief Current write offset.
-   */
-  size_t                    offset;
-  /**
-   * @brief Available space size.
-   */
-  size_t                    size;
-  /* End of the mandatory fields.*/
-} MACTransmitDescriptor;
-
-/**
- * @brief   Structure representing a receive descriptor.
- */
-typedef struct {
-  /**
-   * @brief Current read offset.
-   */
-  size_t                offset;
-  /**
-   * @brief Available data size.
-   */
-  size_t                size;
-  /* End of the mandatory fields.*/
-} MACReceiveDescriptor;
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the MAC driver structure.
+ */
+#define mac_lld_driver_fields
+
+/**
+ * @brief   Low level fields of the MAC configuration structure.
+ */
+#define mac_lld_config_fields
+
+/**
+ * @brief   Low level fields of the MAC transmit descriptor structure.
+ */
+#define mac_lld_transmit_descriptor_fields
+
+/**
+ * @brief   Low level fields of the MAC receive descriptor structure.
+ */
+#define mac_lld_receive_descriptor_fields
 
 /*===========================================================================*/
 /* External declarations.                                                    */
