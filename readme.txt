@@ -75,6 +75,7 @@
 
 *** 21.11.3 ***
 - NEW: Added EFL driver support for STM32F401/411.
+- FIX: Fixed broken support for STM32 UART9 and USART10 (bug #1248).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247).
 - FIX: Fixed wrong HSI48 support on STM32L0xx (bug #1246).
 - FIX: Fixed wrong DMA definitions for STM32L0xx I2C3 peripheral (bug #1245).
