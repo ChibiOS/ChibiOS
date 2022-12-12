@@ -155,7 +155,7 @@ static ShellConfig shell_cfg1 = {
 mmc_spi_driver_t MMCD1;
 
 /* MMC/SD over SPI driver configuration.*/
-static MMCConfig mmccfg = {&SPID2, &ls_spicfg, &hs_spicfg};
+static MMCConfig mmccfg = {&PORTAB_SPI1, &ls_spicfg, &hs_spicfg};
 #endif
 
 /*

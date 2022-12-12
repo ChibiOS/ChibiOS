@@ -70,7 +70,7 @@ const SPIConfig hs_spicfg = {
 };
 
 /*
- * Low speed SPI configuration (PCLK1/32=265.6250kHz, CPHA=0, CPOL=0, MSb first).
+ * Low speed SPI configuration (PCLK1/256=332.03125kHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig ls_spicfg = {
   .circular         = false,
@@ -79,7 +79,7 @@ const SPIConfig ls_spicfg = {
   .error_cb         = NULL,
   .ssport           = GPIOB,
   .sspad            = 12U,
-  .cr1              = SPI_CR1_BR_2,
+  .cr1              = SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0,
   .cr2              = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0
 };
 
