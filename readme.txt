@@ -131,6 +131,8 @@
 - NEW: Increased stacks size in RT test suite from 128 to 192. added an
        option to override the stack size by defining THREADS_STACK_SIZE
        in the makefile.
+- FIX: Fixed broken support for STM32 UART9 and USART10 (bug #1248)
+       (backported to 21.11.3).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247)
        (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed wrong HSI48 support on STM32L0xx (bug #1246)
