@@ -70,10 +70,15 @@ static void rt_test_004_001_execute(void) {
   {
     systime_t start, end;
     systimestamp_t last, now;
+    sysinterval_t duration;
 
     last = chVTGetTimeStamp();
     start = test_wait_tick();
-    end = chTimeAddX(start, TIME_MS2I(1000));
+    duration = (sysinterval_t)(TIME_MAX_SYSTIME / 2U);
+    if (duration > TIME_MS2I(1000)) {
+      duration = TIME_MS2I(1000);
+    }
+    end = chTimeAddX(start, duration);
     do {
       now = chVTGetTimeStamp();
       test_assert(last <= now, "not monotonic");
