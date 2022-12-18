@@ -4,8 +4,9 @@
 ROOT := $(realpath ../..)
 
 # Directories to store results of tests and docs
-TEST_RESULTS := $(ROOT)/test_results
+COVERAGE_RESULTS := $(ROOT)/coverage_results
 DOC_RESULTS := $(ROOT)/doc_results
+TEST_RESULTS := $(ROOT)/test_results
 
 # Directory with auxiliary scripts
 WORKFLOWS := $(ROOT)/tools/workflows
@@ -18,7 +19,7 @@ TARGETS := all clean
 USE_VENV := false
 
 # Makefile based projects
-makefile_dirs := $(addprefix $(ROOT)/,demos test testex testhal testrt)
+makefile_dirs := $(addprefix $(ROOT)/,demos test testex testhal testrt os/sb/apps)
 makefiles := $(shell $(WORKFLOWS)/find.py --makefile --make --no-overlaps \
 			   $(makefile_dirs))
 
@@ -26,7 +27,7 @@ single_makefiles := $(filter-out %.make,$(makefiles))
 multi_makefiles := $(filter %.make,$(makefiles))
 
 # External dependencies
-external := $(addprefix $(ROOT)/ext/,fatfs lwip pico-sdk wolfssl)
+external := $(addprefix $(ROOT)/ext/,fatfs lwip pico-sdk wolfssl littlefs)
 
 # Documents
 docs := $(shell find $(ROOT)/doc -type f -name Doxyfile_html)
@@ -47,7 +48,7 @@ else
     makefile_venv :=
 endif
 
-.PHONY : all makefiles external docs info lint clean venv
+.PHONY : all makefiles external docs info lint coverage clean venv
 .PHONY : $(makefiles) $(linters) $(docs)
 
 # Build makefile based projects
@@ -121,9 +122,17 @@ $(venv_activate) :
 		-r $(WORKFLOWS)/requirements.txt \
 		-c $(WORKFLOWS)/constraints.txt
 
+# Generate test coverage report
+coverage :
+	@mkdir -p $(COVERAGE_RESULTS)
+	gcovr -r $(ROOT) \
+		--use-gcov-files --gcov-ignore-parse-errors \
+		--xml-pretty --xml $(COVERAGE_RESULTS)/coverage.xml 
+
 # Clean up results of tests and docs
 clean :
 	rm -rf $(TEST_RESULTS)
+	rm -rf $(COVERAGE_RESULTS)
 	rm -rf $(DOC_RESULTS)
 	rm -rf $(external)
 	rm -rf $(venv)

@@ -7,5 +7,15 @@ demos/various/RT-ARMCM4-MAKELIB/Makefile:
   - lib
   - clean
 
+# This makefile is intended to be run manually to test all STM32WLxx related
+# testhal projects. So, there is no need to test its targets in CI.
 testhal/STM32/STM32WLxx/Makefile: []
 
+# Build different RT configuration variants and generate gcov files.
+test/rt/variant/make: []
+# TODO: Not working well in CI, disabled until it is clear how to run 
+# them properly.
+#  - all
+#  - test
+#  - gcov
+#  - clean

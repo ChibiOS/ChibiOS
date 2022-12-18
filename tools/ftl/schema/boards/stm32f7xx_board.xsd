@@ -119,7 +119,7 @@
                     </xs:element>
 					<xs:element name="ports" type="portsType"
 						maxOccurs="1" minOccurs="1">
-					</xs:element>
+					</xs:element>
 				</xs:sequence>
 
             </xs:extension>

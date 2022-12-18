@@ -64,7 +64,7 @@
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSIPRE                        ${doc.STM32_LSIPRE!"STM32_LSIPRE_NODIV"}
 #define STM32_HSE32_ENABLED                 ${doc.STM32_HSE32_ENABLED!"TRUE"}
-#define STM32_HSE32SRC                      ${doc.STM32_HSE32_ENABLED!"STM32_HSE32_XTAL"}
+#define STM32_HSE32SRC                      ${doc.STM32_HSE32SRC!"STM32_HSE32_XTAL"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"TRUE"}
 #define STM32_MSIPLL_ENABLED                ${doc.STM32_MSIPLL_ENABLED!"TRUE"}
 #define STM32_MSIRANGE                      ${doc.STM32_MSIRANGE!"STM32_MSIRANGE_4M"}
@@ -138,8 +138,8 @@
  * ADC driver system settings.
  */
 #define STM32_ADC_USE_ADC1                  ${doc.STM32_ADC_USE_ADC1!"FALSE"}
-#define STM32_ADC_ADC1_CKMODE               ${doc.STM32_ADC_ADC1_CKMODE!"STM32_ADC_CKMODE_ADCCLK"}
-#define STM32_ADC_ADC1_IRQ_PRIORITY         ${doc.STM32_ADC_ADC1_DMA_PRIORITY!"5"}
+#define STM32_ADC_ADC1_CFGR2                ${doc.STM32_ADC_ADC1_CFGR2!"ADC_CFGR2_CKMODE_ADCCLK"}
+#define STM32_ADC_ADC1_IRQ_PRIORITY         ${doc.STM32_ADC_ADC1_IRQ_PRIORITY!"5"}
 #define STM32_ADC_ADC1_DMA_PRIORITY         ${doc.STM32_ADC_ADC1_DMA_PRIORITY!"2"}
 #define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     ${doc.STM32_ADC_ADC1_DMA_IRQ_PRIORITY!"5"}
 #define STM32_ADC_ADC1_DMA_STREAM           ${doc.STM32_ADC_ADC1_DMA_STREAM!"STM32_DMA_STREAM_ID_ANY"}

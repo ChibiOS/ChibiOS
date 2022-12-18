@@ -61,7 +61,7 @@
                 <xs:whiteSpace value="collapse"></xs:whiteSpace>
               </xs:restriction>
             </xs:simpleType>
-          </xs:element>
+          </xs:element>
           <xs:element name="pre" maxOccurs="unbounded" minOccurs="0">
             <xs:annotation>
               <xs:documentation>
