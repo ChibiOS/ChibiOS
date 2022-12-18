@@ -241,7 +241,7 @@ endif
 
 # AVR programmer flags for DFU programmer.
 ifeq ($(AVR_PROGRAMMER),$(DFU_PROGRAMMER))
-DFU_WRITE_FLASH = flash --force
+DFU_WRITE_FLASH = flash
 DFU_ERASE_FLASH = erase
 DFU_RESET=reset
 endif

@@ -66,7 +66,6 @@ const ADCConversionGroup portab_adcgrpcfg1 = {
   .end_cb       = NULL,
   .error_cb     = adcerrorcallback,
   .cfgr1        = ADC_CFGR1_CONT | ADC_CFGR1_RES_12BIT,     /* CFGR1 */
-  .cfgr2        = 0,                                        /* CFGR2 */
   .tr           = ADC_TR(0, 0),                             /* TR */
   .smpr         = ADC_SMPR_SMP_1P5,                         /* SMPR */
   .chselr       = ADC_CHSELR_CHSEL10                        /* CHSELR */
@@ -86,7 +85,6 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
                   ADC_CFGR1_RES_12BIT |
                   ADC_CFGR1_EXTEN_RISING |
                   ADC_CFGR1_EXTSEL_SRC(0),                  /* CFGR1 */
-  .cfgr2        = 0,                                        /* CFGR2 */
   .tr           = ADC_TR(0, 0),                             /* TR */
   .smpr         = ADC_SMPR_SMP_39P5,                        /* SMPR */
   .chselr       = ADC_CHSELR_CHSEL10 | ADC_CHSELR_CHSEL11 |

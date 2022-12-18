@@ -88,12 +88,14 @@ static const ADCConversionGroup adcgrpcfg2 = {
  * Maximum speed SPI configuration (21MHz, CPHA=0, CPOL=0, MSb first).
  */
 static const SPIConfig hs_spicfg = {
-  false,
-  NULL,
-  GPIOB,
-  12,
-  0,
-  0
+  .circular         = false,
+  .slave            = false,
+  .data_cb          = NULL,
+  .error_cb         = NULL,
+  .ssport           = GPIOB,
+  .sspad            = 12,
+  .cr1              = 0,
+  .cr2              = 0
 };
 
 /*
