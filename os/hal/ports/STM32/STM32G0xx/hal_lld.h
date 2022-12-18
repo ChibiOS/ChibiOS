@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -221,6 +221,12 @@
 #define STM32_USART2SEL_HSI16   (2U << 2U)  /**< USART2 source is HSI16.    */
 #define STM32_USART2SEL_LSE     (3U << 2U)  /**< USART2 source is LSE.      */
 
+#define STM32_USART3SEL_MASK    (3U << 4U)  /**< USART3 mask.               */
+#define STM32_USART3SEL_PCLK    (0U << 4U)  /**< USART3 source is PCLK.     */
+#define STM32_USART3SEL_SYSCLK  (1U << 4U)  /**< USART3 source is SYSCLK.   */
+#define STM32_USART3SEL_HSI16   (2U << 4U)  /**< USART3 source is HSI16.    */
+#define STM32_USART3SEL_LSE     (3U << 4U)  /**< USART3 source is LSE.      */
+
 #define STM32_CECSEL_MASK       (1U << 6U)  /**< CEC mask.                  */
 #define STM32_CECSEL_HSI16DIV   (0U << 6U)  /**< CEC source is HSI16/448.   */
 #define STM32_CECSEL_LSE        (1U << 6U)  /**< CEC source is LSE.         */
@@ -230,6 +236,12 @@
 #define STM32_LPUART1SEL_SYSCLK (1U << 10U) /**< LPUART1 source is SYSCLK.  */
 #define STM32_LPUART1SEL_HSI16  (2U << 10U) /**< LPUART1 source is HSI16.   */
 #define STM32_LPUART1SEL_LSE    (3U << 10U) /**< LPUART1 source is LSE.     */
+
+#define STM32_LPUART2SEL_MASK   (3U << 8U)  /**< LPUART2 mask.              */
+#define STM32_LPUART2SEL_PCLK   (0U << 8U)  /**< LPUART2 source is PCLK.    */
+#define STM32_LPUART2SEL_SYSCLK (1U << 8U)  /**< LPUART2 source is SYSCLK.  */
+#define STM32_LPUART2SEL_HSI16  (2U << 8U)  /**< LPUART2 source is HSI16.   */
+#define STM32_LPUART2SEL_LSE    (3U << 8U)  /**< LPUART2 source is LSE.     */
 
 #define STM32_I2C1SEL_MASK      (3U << 12U) /**< I2C1SEL mask.              */
 #define STM32_I2C1SEL_PCLK      (0U << 12U) /**< I2C1 source is PCLK.       */
@@ -691,10 +703,24 @@
 #endif
 
 /**
+ * @brief   USART3 clock source.
+ */
+#if !defined(STM32_USART3SEL) || defined(__DOXYGEN__)
+#define STM32_USART3SEL                     STM32_USART3SEL_SYSCLK
+#endif
+
+/**
  * @brief   LPUART1 clock source.
  */
 #if !defined(STM32_LPUART1SEL) || defined(__DOXYGEN__)
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
+#endif
+
+/**
+ * @brief   LPUART2 clock source.
+ */
+#if !defined(STM32_LPUART2SEL) || defined(__DOXYGEN__)
+#define STM32_LPUART2SEL                    STM32_LPUART2SEL_SYSCLK
 #endif
 
 /**
@@ -1305,7 +1331,7 @@
   #define STM32_MCODIVCLK           0
 
 #elif STM32_MCOSEL == STM32_MCOSEL_SYSCLK
-  #define STM32_MCODIVCLK           hal_lld_get_clock_point(CLK_SYSCLK)
+  #define STM32_MCODIVCLK           STM32_SYSCLK
 
 #elif STM32_MCOSEL == STM32_MCOSEL_HSI16
   #define STM32_MCODIVCLK           STM32_HSI16CLK
@@ -1314,7 +1340,7 @@
   #define STM32_MCODIVCLK           STM32_HSECLK
 
 #elif STM32_MCOSEL == STM32_MCOSEL_PLLRCLK
-  #define STM32_MCODIVCLK           hal_lld_get_clock_point(CLK_PLLRCLK)
+  #define STM32_MCODIVCLK           STM32_PLL_R_CLKOUT
 
 #elif STM32_MCOSEL == STM32_MCOSEL_LSI
   #define STM32_MCODIVCLK           STM32_LSICLK
@@ -1415,9 +1441,27 @@
 #endif
 
 /**
- * @brief   USART3 frequency.
+ * @brief   USART3 clock frequency.
  */
-#define STM32_USART3CLK             hal_lld_get_clock_point(CLK_PCLK)
+#if defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#if (STM32_USART3SEL == STM32_USART3SEL_PCLK) || defined(__DOXYGEN__)
+  #define STM32_USART3CLK           hal_lld_get_clock_point(CLK_PCLK)
+
+#elif STM32_USART3SEL == STM32_USART3SEL_SYSCLK
+  #define STM32_USART3CLK           hal_lld_get_clock_point(CLK_SYSCLK)
+
+#elif STM32_USART3SEL == STM32_USART3SEL_HSI16
+  #define STM32_USART3CLK           STM32_HSI16CLK
+
+#elif STM32_USART3SEL == STM32_USART3SEL_LSE
+  #define STM32_USART3CLK           STM32_LSECLK
+#else
+  #error "invalid source selected for USART3 clock"
+#endif
+
+#else
+  #define STM32_USART3CLK           hal_lld_get_clock_point(CLK_PCLK)
+#endif
 
 /**
  * @brief   UART4 frequency.
@@ -1428,6 +1472,11 @@
  * @brief   UART5 frequency.
  */
 #define STM32_UART5CLK              hal_lld_get_clock_point(CLK_PCLK)
+
+/**
+ * @brief   UART6 frequency.
+ */
+#define STM32_UART6CLK              hal_lld_get_clock_point(CLK_PCLK)
 
 /**
  * @brief   LPUART1 clock frequency.
@@ -1446,6 +1495,27 @@
 
 #else
   #error "invalid source selected for LPUART1 clock"
+#endif
+
+/**
+ * @brief   LPUART2 clock frequency.
+ */
+#if defined(STM32G0B1xx) || defined(STM32G0C1xx) || defined(__DOXYGEN__)
+#if (STM32_LPUART2SEL == STM32_LPUART2SEL_PCLK) || defined(__DOXYGEN__)
+  #define STM32_LPUART2CLK          hal_lld_get_clock_point(CLK_PCLK)
+
+#elif STM32_LPUART2SEL == STM32_LPUART2SEL_SYSCLK
+  #define STM32_LPUART2CLK          hal_lld_get_clock_point(CLK_SYSCLK)
+
+#elif STM32_LPUART2SEL == STM32_LPUART2SEL_HSI16
+  #define STM32_LPUART2CLK          STM32_HSI16CLK
+
+#elif STM32_LPUART2SEL == STM32_LPUART2SEL_LSE
+  #define STM32_LPUART2CLK          STM32_LSECLK
+
+#else
+  #error "invalid source selected for LPUART2 clock"
+#endif
 #endif
 
 /**

@@ -504,6 +504,25 @@ typedef struct {
 #endif
 
 /**
+ * @brief   Reads the group latch.
+ * @note    The function can be called from any context.
+ *
+ * @param[in] port      port identifier
+ * @param[in] mask      group mask, a logic AND is performed on the input
+ *                      data
+ * @param[in] offset    group bit offset within the port
+ * @return              The group logic states.
+ *
+ * @special
+ */
+#if !defined(pal_lld_readgrouplatch) || defined(__DOXYGEN__)
+#define palReadGroupLatch(port, mask, offset)                               \
+  ((palReadLatch(port) >> (offset)) & (mask))
+#else
+#define palReadGroupLatch(port, mask, offset) pal_lld_readgrouplatch(port, mask, offset)
+#endif
+
+/**
  * @brief   Writes a group of bits.
  * @note    The operation is not guaranteed to be atomic on all the
  *          architectures, for atomicity and/or portability reasons you may

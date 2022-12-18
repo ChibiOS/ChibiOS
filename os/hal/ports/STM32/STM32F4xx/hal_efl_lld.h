@@ -80,10 +80,14 @@
  *
  */
 #define STM32_FLASH_NUMBER_OF_BANKS         1
-#define STM32_FLASH1_SIZE                   256U
+#define STM32_FLASH1_SIZE                   128U
 #define STM32_FLASH2_SIZE                   512U
-#define STM32_FLASH1_SECTORS_TOTAL          6
-#define STM32_FLASH2_SECTORS_TOTAL          8
+#define STM32_FLASH3_SIZE                   384U
+#define STM32_FLASH4_SIZE                   512U
+#define STM32_FLASH1_SECTORS_TOTAL          5
+#define STM32_FLASH2_SECTORS_TOTAL          6
+#define STM32_FLASH3_SECTORS_TOTAL          7
+#define STM32_FLASH4_SECTORS_TOTAL          8
 
 #elif defined(STM32F429_439xx) || defined(STM32F427_437xx) || \
       defined(__DOXYGEN__)

@@ -88,6 +88,7 @@ msg_t sio_lld_start(SIODriver *siop) {
     }
 #endif
   }
+
   /* Configures the peripheral.*/
 
   return HAL_RET_SUCCESS;
@@ -115,43 +116,61 @@ void sio_lld_stop(SIODriver *siop) {
 }
 
 /**
- * @brief   Starts a SIO operation.
+ * @brief   Enable flags change notification.
  *
- * @param[in] siop          pointer to an @p SIODriver structure
- *
- * @api
+ * @param[in] siop      pointer to the @p SIODriver object
  */
-void sio_lld_start_operation(SIODriver *siop) {
+void sio_lld_update_enable_flags(SIODriver *siop) {
 
   (void)siop;
-}
+ }
 
 /**
- * @brief   Stops an ongoing SIO operation, if any.
- *
- * @param[in] siop      pointer to an @p SIODriver structure
- *
- * @api
- */
-void sio_lld_stop_operation(SIODriver *siop) {
-
-  (void)siop;
-}
-
-/**
- * @brief   Return the pending SIO events flags.
+ * @brief   Get and clears SIO error event flags.
  *
  * @param[in] siop      pointer to the @p SIODriver object
  * @return              The pending event flags.
  *
  * @notapi
  */
-sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop) {
-  sio_events_mask_t evtmask = 0U;
+sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
+  sioevents_t errors = 0U;
 
   (void)siop;
 
-  return evtmask;
+  return errors;
+}
+
+/**
+ * @brief   Get and clears SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_and_clear_events(SIODriver *siop) {
+  sioevents_t events = 0U;
+
+  (void)siop;
+
+  return events;
+}
+
+/**
+ * @brief   Returns the pending SIO event flags.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The pending event flags.
+ *
+ * @notapi
+ */
+sioevents_t sio_lld_get_events(SIODriver *siop) {
+  sioevents_t events = 0U;
+
+  (void)siop;
+
+  return events;
 }
 
 /**
@@ -245,6 +264,18 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
   (void)arg;
 
   return MSG_OK;
+}
+
+/**
+ * @brief   Serves an UART interrupt.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ *
+ * @notapi
+ */
+void sio_lld_serve_interrupt(SIODriver *siop) {
+
+  (void)siop;
 }
 
 #endif /* HAL_USE_SIO == TRUE */

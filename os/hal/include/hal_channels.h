@@ -239,6 +239,20 @@ typedef struct {
 #define CHN_OUTPUT_EMPTY        (eventflags_t)8
 /** @brief Transmission end.*/
 #define CHN_TRANSMISSION_END    (eventflags_t)16
+/** @brief Parity error.*/
+#define CHN_PARITY_ERROR         (eventflags_t)32
+/** @brief Framing error.*/
+#define CHN_FRAMING_ERROR        (eventflags_t)64
+/** @brief Line noise error.*/
+#define CHN_NOISE_ERROR          (eventflags_t)128
+/** @brief Overflow error.*/
+#define CHN_OVERRUN_ERROR        (eventflags_t)256
+/** @brief RX line idle.*/
+#define CHN_IDLE_DETECTED        (eventflags_t)512
+/** @brief LIN Break.*/
+#define CHN_BREAK_DETECTED       (eventflags_t)1024
+/**< @brief RX buffer full. */
+#define CHN_BUFFER_FULL_ERROR    (eventflags_t)2048
 /** @} */
 
 /**

@@ -57,11 +57,6 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a SIO events mask.
- */
-typedef uint32_t sio_events_mask_t;
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -89,6 +84,32 @@ typedef uint32_t sio_events_mask_t;
  * @notapi
  */
 #define sio_lld_is_rx_empty(siop) false
+
+/**
+ * @brief   Determines the activity state of the receiver.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX activity state.
+ * @retval false        if RX is in active state.
+ * @retval true         if RX is in idle state.
+ *
+ * @notapi
+ */
+#define sio_lld_is_rx_idle(siop) false
+
+/**
+ * @brief   Determines if RX has pending error events to be read and cleared.
+ * @note    Only error and protocol errors are handled, data events are not
+ *          considered.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX error events.
+ * @retval false        if RX has no pending events
+ * @retval true         if RX has pending events
+ *
+ * @notapi
+ */
+#define sio_lld_has_rx_errors(siop) false
 
 /**
  * @brief   Determines the state of the TX FIFO.
@@ -125,17 +146,19 @@ extern SIODriver SIOD1;
 #ifdef __cplusplus
 extern "C" {
 #endif
-void sio_lld_init(void);
-msg_t  sio_lld_start(SIODriver *siop);
-void sio_lld_stop(SIODriver *siop);
-void sio_lld_start_operation(SIODriver *siop);
-void sio_lld_stop_operation(SIODriver *siop);
-sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop);
-size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
-size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
-msg_t sio_lld_get(SIODriver *siop);
-void sio_lld_put(SIODriver *siop, uint_fast16_t data);
-msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
+  void sio_lld_init(void);
+  msg_t  sio_lld_start(SIODriver *siop);
+  void sio_lld_stop(SIODriver *siop);
+  void sio_lld_update_enable_flags(SIODriver *siop);
+  sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop);
+  sioevents_t sio_lld_get_and_clear_events(SIODriver *siop);
+  sioevents_t sio_lld_get_events(SIODriver *siop);
+  size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
+  size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
+  msg_t sio_lld_get(SIODriver *siop);
+  void sio_lld_put(SIODriver *siop, uint_fast16_t data);
+  msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
+  void sio_lld_serve_interrupt(SIODriver *siop);
 #ifdef __cplusplus
 }
 #endif

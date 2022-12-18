@@ -237,34 +237,27 @@ static void mac_lld_set_address(const uint8_t *p) {
 /*===========================================================================*/
 
 OSAL_IRQ_HANDLER(STM32_ETH_HANDLER) {
-  uint32_t dmasr;
+  MACDriver *macp = &ETHD1;
+  uint32_t dmacsr;
 
   OSAL_IRQ_PROLOGUE();
 
-  dmasr = ETH->DMACSR;
+  dmacsr = ETH->DMACSR;
+  ETH->DMACSR = dmacsr; /* Clear status bits.*/
 
-  if (dmasr & ETH_DMACSR_RI) {
-    /* Data Received.*/
-    ETH->DMACSR = ETH_DMACSR_RI;
-    ETH->DMACIER &= ~ETH_DMACIER_RIE;
-    osalSysLockFromISR();
-    osalThreadDequeueAllI(&ETHD1.rdqueue, MSG_RESET);
-#if MAC_USE_EVENTS
-    osalEventBroadcastFlagsI(&ETHD1.rdevent, 0);
-#endif
-    osalSysUnlockFromISR();
+  if ((dmacsr & (ETH_DMACSR_RI | ETH_DMACSR_TI)) != 0U) {
+    if ((dmacsr & ETH_DMACSR_TI) != 0U) {
+      /* Data Transmitted.*/
+      __mac_tx_wakeup(macp);
+    }
+
+    if ((dmacsr & ETH_DMACSR_RI) != 0U) {
+      /* Data Received.*/
+      __mac_rx_wakeup(macp);
+    }
+
+    __mac_callback(macp);
   }
-
-  if (dmasr & ETH_DMACSR_TI) {
-    /* Data Transmitted.*/
-    ETH->DMACSR = ETH_DMACSR_TI;
-    osalSysLockFromISR();
-    osalThreadDequeueAllI(&ETHD1.tdqueue, MSG_RESET);
-    osalSysUnlockFromISR();
-  }
-
-  ETH->DMACSR    |= ETH_DMACSR_NIS;
-  ETH->DMACIER   = ETH_DMACIER_NIE | ETH_DMACIER_RIE | ETH_DMACIER_TIE;
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -279,7 +272,7 @@ OSAL_IRQ_HANDLER(STM32_ETH_HANDLER) {
  * @notapi
  */
 void mac_lld_init(void) {
-  unsigned i, j;
+  unsigned i;
 
   macObjectInit(&ETHD1);
   ETHD1.link_up = false;
@@ -291,31 +284,21 @@ void mac_lld_init(void) {
     __eth_rd[i].rdes1 = 0;
     __eth_rd[i].rdes2 = 0;
     __eth_rd[i].rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
-    for (j = 0; j < BUFFER_SIZE; j++) {
-      __eth_rb[i][j] = 825373492; /* Telltale "1234".*/
-    }
   }
   for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
     __eth_td[i].tdes0 = 0;
     __eth_td[i].tdes1 = 0;
     __eth_td[i].tdes2 = 0;
     __eth_td[i].tdes3 = 0;
-    for (j = 0; j < BUFFER_SIZE; j++) {
-      __eth_tb[i][j] = 892745528; /* Telltale "5678".*/
-    }
   }
 
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
 #if defined(STM32H7XX)
   SYSCFG->PMCR |= SYSCFG_PMCR_PA1SO;
 #if defined(BOARD_PHY_RMII)
-  SYSCFG->PMCR |= SYSCFG_PMCR_EPIS_SEL_2;
-  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_1;
-  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_0;
+  SYSCFG->PMCR = (SYSCFG->PMCR & ~SYSCFG_PMCR_EPIS_SEL_Msk) | SYSCFG_PMCR_EPIS_SEL_2;
 #else
-  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_2;
-  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_1;
-  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_0;
+  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_Msk;
 #endif
 #else
 #error "unsupported STM32 platform for MACv2 driver"
@@ -367,12 +350,14 @@ void mac_lld_start(MACDriver *macp) {
   unsigned i;
 
   /* Resets the state of all descriptors.*/
-  for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++)
+  for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++) {
     __eth_rd[i].rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
-  macp->rdindex = 0;
-  for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++)
-    __eth_td[i].tdes3 = 0;
-  macp->tdindex = 0;
+  }
+  macp->rdindex = 0U;
+  for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
+    __eth_td[i].tdes3 = 0U;
+  }
+  macp->tdindex = 0U;
 
   /* MAC clocks activation and commanded reset procedure.*/
   rccEnableETH(true);
@@ -390,11 +375,11 @@ void mac_lld_start(MACDriver *macp) {
     ;
 
   /* MAC configuration.*/
-  ETH->MACCR = ETH_MACCR_DO;
-  ETH->MACPFR    = 0;
-  ETH->MACTFCR    = 0;
-  ETH->MACRFCR    = 0;
-  ETH->MACVTR = 0;
+  ETH->MACCR   = ETH_MACCR_DO;
+  ETH->MACPFR  = 0U;
+  ETH->MACTFCR = 0U;
+  ETH->MACRFCR = 0U;
+  ETH->MACVTR  = 0U;
 
   /* MAC address setup.*/
   if (macp->config->mac_address == NULL)
@@ -413,13 +398,14 @@ void mac_lld_start(MACDriver *macp) {
 
   /* MMC configuration:
      Disable all interrupts.*/
-  ETH->MMCTIMR = (1<<27) | (1<<26) | (1<<21) | (1<<15) | (1<<14);
-  ETH->MMCRIMR = (1<<27) | (1<<26) | (1<<17) | (1<<6)  | (1<<5);
+  ETH->MMCTIMR   = (1<<27) | (1<<26) | (1<<21) | (1<<15) | (1<<14);
+  ETH->MMCRIMR   = (1<<27) | (1<<26) | (1<<17) | (1<<6)  | (1<<5);
 
   /* DMA general settings.*/
   ETH->DMASBMR   = ETH_DMASBMR_AAL;
-  ETH->DMACCR = ETH_DMACCR_DSL_0BIT;
-  ETH->DMAMR = ETH_DMAMR_INTM_0 | ETH_DMAMR_PR_8_1 | ETH_DMAMR_TXPR;  /* TX:RX 8:1 */
+  ETH->DMACCR    = ETH_DMACCR_DSL_0BIT;
+  ETH->DMAMR     = ETH_DMAMR_INTM_0 | ETH_DMAMR_PR_8_1 | ETH_DMAMR_TXPR;  /* TX:RX 8:1 */
+
   /* DMA configuration:
      Descriptor rings pointers.*/
   ETH->DMACTDLAR = (uint32_t)&__eth_td[0];
@@ -435,14 +421,14 @@ void mac_lld_start(MACDriver *macp) {
      disable flushing because the TXFIFO should be empty on macStart().*/
 #if !defined(STM32_MAC_DISABLE_TX_FLUSH)
   /* Transmit FIFO flush.*/
-  ETH->MTLTQOMR   = ETH_MTLTQOMR_FTQ;
+  ETH->MTLTQOMR  = ETH_MTLTQOMR_FTQ;
   while (ETH->MTLTQOMR & ETH_MTLTQOMR_FTQ)
     ;
 #endif
 
   /* DMA final configuration and start.*/
-  ETH->MTLRQOMR   = ETH_MTLRQOMR_DISTCPEF | ETH_MTLRQOMR_RSF;
-  ETH->MTLTQOMR   = ETH_MTLTQOMR_TSF;
+  ETH->MTLRQOMR  = ETH_MTLRQOMR_DISTCPEF | ETH_MTLRQOMR_RSF;
+  ETH->MTLTQOMR  = ETH_MTLTQOMR_TSF;
   ETH->DMACTCR   = ETH_DMACTCR_ST | ETH_DMACTCR_TPBL_1PBL;
   ETH->DMACRCR   = ETH_DMACRCR_SR | ETH_DMACRCR_RPBL_1PBL |
                    (STM32_MAC_BUFFERS_SIZE << ETH_DMACRCR_RBSZ_Pos & ETH_DMACRCR_RBSZ);
@@ -464,10 +450,10 @@ void mac_lld_stop(MACDriver *macp) {
 #endif
 
     /* MAC and DMA stopped.*/
-    ETH->MACCR    = 0;
-    ETH->MTLRQOMR   = 0;
-    ETH->DMACIER   = 0;
-    ETH->DMACSR    = ETH->DMACSR;
+    ETH->MACCR    = 0U;
+    ETH->MTLRQOMR = 0U;
+    ETH->DMACIER  = 0U;
+    ETH->DMACSR   = ETH->DMACSR;
 
     /* MAC clocks stopped.*/
     rccDisableETH();
@@ -502,7 +488,7 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
 
   /* Ensure that descriptor isn't owned by the Ethernet DMA or locked by
      another thread.*/
-  if ((tdes->tdes3 & (STM32_TDES3_OWN)) | (tdes->tdes1 > 0)) {
+  if ((tdes->tdes3 & (STM32_TDES3_OWN)) | (tdes->tdes1 > 0U)) {
     return MSG_TIMEOUT;
   }
 
@@ -514,10 +500,10 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
   /* Next TX descriptor to use.*/
   macp->tdindex++;
   if (macp->tdindex >= STM32_MAC_TRANSMIT_BUFFERS)
-    macp->tdindex = 0;
+    macp->tdindex = 0U;
 
   /* Set the buffer size and configuration.*/
-  tdp->offset   = 0;
+  tdp->offset   = 0U;
   tdp->size     = STM32_MAC_BUFFERS_SIZE;
   tdp->physdesc = tdes;
 
@@ -540,7 +526,7 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
   osalSysLock();
 
   /* Unlocks the descriptor and returns it to the DMA engine.*/
-  tdp->physdesc->tdes1  = 0;
+  tdp->physdesc->tdes1 = 0U;
   tdp->physdesc->tdes2 = STM32_TDES2_IOC | (tdp->offset & STM32_TDES2_B1L_MASK);
 #if STM32_MAC_IP_CHECKSUM_OFFLOAD
   tdp->physdesc->tdes3 = STM32_TDES3_CIC(STM32_MAC_IP_CHECKSUM_OFFLOAD) |
@@ -556,9 +542,9 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
 
   /* If the DMA engine is stalled then a restart request is issued.*/
   if ((ETH->DMADSR & ETH_DMADSR_TPS) == ETH_DMADSR_TPS_SUSPENDED) {
-    ETH->DMACSR   = ETH_DMACSR_TBU;
+    ETH->DMACSR = ETH_DMACSR_TBU;
   }
-  ETH->DMACTDTPR = 0;
+  ETH->DMACTDTPR = 0U;
 
   osalSysUnlock();
 }
@@ -591,13 +577,13 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
 #endif
         && (rdes->rdes3 & STM32_RDES3_FD) && (rdes->rdes3 & STM32_RDES3_LD)) {
       /* Found a valid one.*/
-      rdp->offset   = 0;
+      rdp->offset   = 0U;
       rdp->size     = (rdes->rdes3 & STM32_RDES3_PL_MASK) -2; /* Lose CRC.*/
       rdp->physdesc = rdes;
       /* Reposition in ring.*/
       macp->rdindex++;
       if (macp->rdindex >= STM32_MAC_RECEIVE_BUFFERS)
-        macp->rdindex = 0;
+        macp->rdindex = 0U;
 
       return MSG_OK;
     }
@@ -621,7 +607,7 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
 void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
   osalDbgAssert(!(rdp->physdesc->rdes3 & STM32_RDES3_OWN),
-              "attempt to release descriptor already owned by DMA");
+                "attempt to release descriptor already owned by DMA");
 
   osalSysLock();
 
@@ -633,9 +619,9 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
   /* If the DMA engine is stalled then a restart request is issued.*/
   if ((ETH->DMADSR & ETH_DMADSR_RPS) == ETH_DMADSR_RPS_SUSPENDED) {
-    ETH->DMACSR   = ETH_DMACSR_RBU;
+    ETH->DMACSR = ETH_DMACSR_RBU;
   }
-  ETH->DMACRDTPR = 0;
+  ETH->DMACRDTPR = 0U;
 
   osalSysUnlock();
 }
@@ -764,7 +750,6 @@ size_t mac_lld_read_receive_descriptor(MACReceiveDescriptor *rdp,
     size = rdp->size - rdp->offset;
 
   if (size > 0) {
-    cacheBufferInvalidate((uint8_t *)(rdp->physdesc->rdes0) + rdp->offset, size);
     memcpy(buf, (uint8_t *)(rdp->physdesc->rdes0) + rdp->offset, size);
     rdp->offset += size;
   }

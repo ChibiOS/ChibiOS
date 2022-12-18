@@ -325,6 +325,10 @@
 #define STM32_CDCPRE_DIV4               RCC_CDCFGR1_CDCPRE_DIV4
 #define STM32_CDCPRE_DIV8               RCC_CDCFGR1_CDCPRE_DIV8
 #define STM32_CDCPRE_DIV16              RCC_CDCFGR1_CDCPRE_DIV16
+#define STM32_CDCPRE_DIV64              RCC_CDCFGR1_CDCPRE_DIV64
+#define STM32_CDCPRE_DIV128             RCC_CDCFGR1_CDCPRE_DIV128
+#define STM32_CDCPRE_DIV256             RCC_CDCFGR1_CDCPRE_DIV256
+#define STM32_CDCPRE_DIV512             RCC_CDCFGR1_CDCPRE_DIV512
 
 #define STM32_CDHPRE_DIV1               (0U)
 #define STM32_CDHPRE_DIV2               RCC_CDCFGR1_HPRE_DIV2
@@ -708,7 +712,8 @@
 
 /**
  * @brief   PLL1 DIVP divider.
- * @note    The allowed values are 1..128. 2 after reset.
+ * @note    The allowed values are 2..128. 2 after reset.
+ * @note    Odd values not allowed.
  */
 #if !defined(STM32_PLL1_DIVP_VALUE) || defined(__DOXYGEN__)
 #define STM32_PLL1_DIVP_VALUE               2
@@ -1720,7 +1725,9 @@
 /**
  * @brief   PLL1 DIVP field.
  */
-#if ((STM32_PLL1_DIVP_VALUE >= 1) && (STM32_PLL1_DIVP_VALUE <= 128)) ||     \
+#if (STM32_PLL1_DIVP_VALUE == 1) ||                                         \
+    ((STM32_PLL1_DIVP_VALUE >= 2) && (STM32_PLL1_DIVP_VALUE <= 128) &&      \
+     ((STM32_PLL1_DIVP_VALUE & 1) == 0)) ||                                 \
     defined(__DOXYGEN__)
 #define STM32_PLL1_DIVP             ((STM32_PLL1_DIVP_VALUE - 1U) << RCC_PLL1DIVR_P1_Pos)
 #else

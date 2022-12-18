@@ -67,7 +67,7 @@
 /**
  * @brief   Systick mode required by the underlying OS.
  */
-#define OSAL_ST_MODE                        OSAL_ST_MODE_NONE
+#define OSAL_ST_MODE                        OSAL_ST_MODE_PERIODIC
 /** @} */
 
 /*===========================================================================*/

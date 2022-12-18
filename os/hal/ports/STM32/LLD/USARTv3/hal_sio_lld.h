@@ -33,6 +33,35 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Mask of RX-related errors in the ISR register.
+ */
+#define SIO_LLD_ISR_RX_ERRORS           (USART_ISR_NE   | USART_ISR_FE   |  \
+                                         USART_ISR_PE   | USART_ISR_ORE  |  \
+                                         USART_ISR_LBDF)
+
+/* Using shorter definitions of USARTv2 in order to make code more
+   similar.*/
+#if !defined(USART_ISR_RXNE_Pos)
+#define USART_ISR_RXNE_Pos      USART_ISR_RXNE_RXFNE_Pos
+#endif
+#if !defined(USART_ISR_RXNE_Msk)
+#define USART_ISR_RXNE_Msk      USART_ISR_RXNE_RXFNE_Msk
+#endif
+#if !defined(USART_ISR_RXNE)
+#define USART_ISR_RXNE          USART_ISR_RXNE_Msk
+#endif
+
+#if !defined(USART_ISR_TXE_Pos)
+#define USART_ISR_TXE_Pos       USART_ISR_TXE_TXFNF_Pos
+#endif
+#if !defined(USART_ISR_TXE_Msk)
+#define USART_ISR_TXE_Msk       USART_ISR_TXE_TXFNF_Msk
+#endif
+#if !defined(USART_ISR_TXE)
+#define USART_ISR_TXE           USART_ISR_TXE_Msk
+#endif
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -300,11 +329,6 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a SIO events mask.
- */
-typedef uint32_t sio_events_mask_t;
-
-/**
  * @brief   Low level fields of the SIO driver structure.
  */
 #define sio_lld_driver_fields                                               \
@@ -339,7 +363,35 @@ typedef uint32_t sio_events_mask_t;
  * @notapi
  */
 #define sio_lld_is_rx_empty(siop)                                           \
-  (bool)(((siop)->usart->ISR & USART_ISR_RXNE_RXFNE) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_RXNE) == 0U)
+
+/**
+ * @brief   Determines the activity state of the receiver.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX activity state.
+ * @retval false        if RX is in active state.
+ * @retval true         if RX is in idle state.
+ *
+ * @notapi
+ */
+#define sio_lld_is_rx_idle(siop)                                            \
+  (bool)(((siop)->usart->ISR & USART_ISR_IDLE) != 0U)
+
+/**
+ * @brief   Determines if RX has pending error events to be read and cleared.
+ * @note    Only error and protocol errors are handled, data events are not
+ *          considered.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @return              The RX error events.
+ * @retval false        if RX has no pending events
+ * @retval true         if RX has pending events
+ *
+ * @notapi
+ */
+#define sio_lld_has_rx_errors(siop)                                         \
+  (bool)(((siop)->usart->ISR & SIO_LLD_ISR_RX_ERRORS) != 0U)
 
 /**
  * @brief   Determines the state of the TX FIFO.
@@ -352,7 +404,7 @@ typedef uint32_t sio_events_mask_t;
  * @notapi
  */
 #define sio_lld_is_tx_full(siop)                                            \
-  (bool)(((siop)->usart->ISR & USART_ISR_TXE_TXFNF) == 0U)
+  (bool)(((siop)->usart->ISR & USART_ISR_TXE) == 0U)
 
 /**
  * @brief   Determines the transmission state.
@@ -421,9 +473,10 @@ extern "C" {
   void sio_lld_init(void);
   msg_t  sio_lld_start(SIODriver *siop);
   void sio_lld_stop(SIODriver *siop);
-  void sio_lld_start_operation(SIODriver *siop);
-  void sio_lld_stop_operation(SIODriver *siop);
-  sio_events_mask_t sio_lld_get_and_clear_events(SIODriver *siop);
+  void sio_lld_update_enable_flags(SIODriver *siop);
+  sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop);
+  sioevents_t sio_lld_get_and_clear_events(SIODriver *siop);
+  sioevents_t sio_lld_get_events(SIODriver *siop);
   size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
   size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
   msg_t sio_lld_get(SIODriver *siop);

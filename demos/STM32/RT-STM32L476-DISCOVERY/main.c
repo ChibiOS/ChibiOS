@@ -59,7 +59,6 @@ int main(void) {
    */
 //  sdStart(&SD2, NULL);
   sioStart(&SIOD2, NULL);
-  sioStartOperation(&SIOD2, NULL);
 
   /*
    * Creates the blinker thread.

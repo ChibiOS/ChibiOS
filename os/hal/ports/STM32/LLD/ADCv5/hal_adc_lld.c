@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    ADCv1/hal_adc_lld.c
+ * @file    ADCv5/hal_adc_lld.c
  * @brief   STM32 ADC subsystem low level driver source.
  *
  * @addtogroup ADC
@@ -80,7 +80,6 @@ static void adc_lld_calibrate(ADC_TypeDef *adc) {
   while (adc->CR & ADC_CR_ADCAL) {
     /* Waiting for calibration end.*/
   }
-  adc->CR = 0U;
 }
 
 /**
@@ -99,7 +98,7 @@ static void adc_lld_stop_adc(ADC_TypeDef *adc) {
 
   /* Disabling the ADC.*/
   adc->CR |= ADC_CR_ADDIS;
-  while ((adc->CR & ADC_CR_ADDIS) != 0U) {
+  while ((adc->CR & ADC_CR_ADEN) != 0U) {
     /* Waiting for ADC to be disabled.*/
   }
 }
@@ -186,7 +185,7 @@ void adc_lld_init(void) {
 
   /* The vector is initialized on driver initialization and never
      disabled.*/
-  nvicEnableVector(12, STM32_ADC_ADC1_IRQ_PRIORITY);
+  nvicEnableVector(STM32_ADC1_NUMBER, STM32_ADC_ADC1_IRQ_PRIORITY);
 #endif
 }
 
@@ -209,6 +208,7 @@ void adc_lld_start(ADCDriver *adcp) {
                                      (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
+      rccResetADC1();
       rccEnableADC1(true);
 
       /* DMA setup.*/
@@ -216,12 +216,13 @@ void adc_lld_start(ADCDriver *adcp) {
       dmaSetRequestSource(adcp->dmastp, STM32_DMAMUX1_ADC1);
 
       /* Clock settings.*/
-      adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;
+      ADC1_COMMON->CCR = STM32_ADC_PRESC << ADC_CCR_PRESC_Pos;
+      adcp->adc->CFGR2 = STM32_ADC_ADC1_CFGR2;
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
     /* Regulator enabled and stabilized.*/
-    adc_lld_vreg_on(ADC1);
+    adc_lld_vreg_on(adcp->adc);
 
     /* Calibrating ADC.*/
     adc_lld_calibrate(adcp->adc);
@@ -237,21 +238,27 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
-  /* If in ready state then disables the ADC clock and analog part.*/
+  /* If in ready state then disables the ADC peripheral and clock.*/
   if (adcp->state == ADC_READY) {
 
     dmaStreamFreeI(adcp->dmastp);
     adcp->dmastp = NULL;
 
-    /* Restoring CCR default.*/
-    ADC1_COMMON->CCR = STM32_ADC_PRESC << 18;
+    /* Disabling the ADC.*/
+    adcp->adc->CR |= ADC_CR_ADDIS;
+    while ((adcp->adc->CR & ADC_CR_ADEN) != 0U) {
+      /* Waiting for ADC to be disabled.*/
+    }
 
     /* Regulator off.*/
-    adcp->adc->CR = 0;
+#if defined(ADC_CR_ADVREGEN)
+    adcp->adc->CR &= ~ADC_CR_ADVREGEN;
+#endif
 
 #if STM32_ADC_USE_ADC1
-    if (&ADCD1 == adcp)
+    if (&ADCD1 == adcp) {
       rccDisableADC1();
+    }
 #endif
   }
 }
@@ -264,17 +271,18 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-  uint32_t mode, cfgr1, cfgr2;
+
+  uint32_t mode, cfgr1;
   const ADCConversionGroup *grpp = adcp->grpp;
 
-  /* Starting the ADC enable procedure.*/
+  /* Write back ISR bits to clear register.*/
   adcp->adc->ISR = adcp->adc->ISR;
-  adcp->adc->CR  = ADC_CR_ADEN;
+
+  /* Get group1 configuration. Transfer the clock mode for group2.*/
+  cfgr1  = grpp->cfgr1 | ADC_CFGR1_DMAEN;
 
   /* DMA setup.*/
   mode  = adcp->dmamode;
-  cfgr1 = grpp->cfgr1 | ADC_CFGR1_DMAEN;
-  cfgr2 = adcp->adc->CFGR2 & STM32_ADC_CKMODE_MASK;
   if (grpp->circular) {
     mode  |= STM32_DMA_CR_CIRC;
     cfgr1 |= ADC_CFGR1_DMACFG;
@@ -285,18 +293,23 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     }
   }
   dmaStreamSetMemory0(adcp->dmastp, adcp->samples);
-  dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
-                                            (uint32_t)adcp->depth);
+  dmaStreamSetTransactionSize(adcp->dmastp, ((uint32_t)grpp->num_channels *
+                                            (uint32_t)adcp->depth));
   dmaStreamSetMode(adcp->dmastp, mode);
-  dmaStreamEnable(adcp->dmastp);
 
-  /* Ensuring that the ADC finished the enable procedure.*/
-  while ((adcp->adc->ISR & ADC_ISR_ADRDY) == 0U) {
-    /* Waiting for ADC to be stable.*/
+  /* Apply ADC configuration.*/
+  adcp->adc->CFGR1  = cfgr1;
+  adcp->adc->CHSELR = grpp->chselr;
+
+  while ((adcp->adc->ISR & ADC_ISR_CCRDY) == 0U) {
+    /* Wait for the channel bits (or sequence), CHSEL mode and scan direction
+       to be applied.*/
   }
 
-  /* ADC setup, if it is defined a callback for the analog watch dog then it
-     is enabled.*/
+  /* Set the sample rate(s).*/
+  adcp->adc->SMPR = grpp->smpr;
+
+  /* Enable ADC interrupts if callback specified.*/
    if (grpp->error_cb != NULL) {
     adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWD1IE
                                       | ADC_IER_AWD2IE
@@ -307,12 +320,17 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adc->AWD2CR = grpp->awd2cr;
     adcp->adc->AWD3CR = grpp->awd3cr;
   }
-  adcp->adc->SMPR   = grpp->smpr;
-  adcp->adc->CHSELR = grpp->chselr;
 
-  /* ADC configuration and start.*/
-  adcp->adc->CFGR1  = cfgr1;
-  adcp->adc->CFGR2  = cfgr2 | grpp->cfgr2;
+  /* Enable the ADC. Note: Setting ADEN must be deferred as a STM32G071 will
+     reset RES[1:0] resolution bits if CFGR1 is modified with ADEN set
+     (see STM32G071xx errata ES0418 Rev 3 2.6.2). Same applies to STM32WL.*/
+  adcp->adc->CR  |= ADC_CR_ADEN;
+  while ((adcp->adc->ISR & ADC_ISR_ADRDY) == 0U) {
+    /* Wait for the ADC to become ready.*/
+  }
+
+  /* Enable DMA controller stream.*/
+  dmaStreamEnable(adcp->dmastp);
 
   /* ADC conversion start.*/
   adcp->adc->CR |= ADC_CR_ADSTART;

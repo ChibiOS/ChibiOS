@@ -48,7 +48,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/RT-STM32L4RP5ZG-NUCLEO144"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-STM32L4P5ZG-NUCLEO144"/>
 		</configuration>
 	</storageModule>
 </cproject>

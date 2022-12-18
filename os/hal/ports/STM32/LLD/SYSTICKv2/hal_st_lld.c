@@ -109,7 +109,10 @@ void st_lld_init(void) {
 
   /* Activate free running Binary mode.*/
   RTC->ICSR |= RTC_ICSR_BIN_0;
-  /* Set RTC prescaler.*/
+  /* Set RTC prescaler.
+     Setting PRER has to be done as two writes. Write Sync part first
+     then Sync + Async. */
+  RTC->PRER = STM32_ST_RTC_PRER_BITS & 0x7FFF;
   RTC->PRER = STM32_ST_RTC_PRER_BITS;
 
   /* Exit initialization mode.*/

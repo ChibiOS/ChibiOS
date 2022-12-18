@@ -262,7 +262,7 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Alternate"
         Alternate="11" />
       <pin13
@@ -270,9 +270,9 @@
         Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Alternate"
-        Alternate="11" />
+        Alternate="11" ></pin13>
       <pin14
         ID="ARD_D1"
         Type="PushPull"

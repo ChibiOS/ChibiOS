@@ -95,6 +95,14 @@
 /** @} */
 
 /**
+ * @name    RP-specific I/O event flags
+ * @{
+ */
+#define RP_PAL_EVENT_MODE_LEVEL_LOW         4U
+#define RP_PAL_EVENT_MODE_LEVEL_HIGH        8U
+/** @} */
+
+/**
  * @name    Alternate functions
  * @{
  * @param[in] n         alternate function selector
@@ -403,6 +411,99 @@ __STATIC_INLINE void __pal_lld_pad_set_mode(ioportid_t port,
   IO_BANK0->GPIO[pad].CTRL = ctrlbits;
   PADS_BANK0->GPIO[pad] = padbits;
 }
+
+
+#if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE)
+
+#if !defined(RP_PAL_EVENT_CORE_AFFINITY)
+  /** @brief Core that handles all the PAL event interrupts. */
+  #define RP_PAL_EVENT_CORE_AFFINITY        0
+#endif
+
+#if !defined(RP_IO_IRQ_BANK0_PRIORITY)
+  /** @brief IRQ priority of the external pad events. */
+  #define RP_IO_IRQ_BANK0_PRIORITY          2
+#endif
+
+#if !defined(__DOXYGEN__)
+extern palevent_t _pal_events[30];
+#endif
+
+/**
+ * @brief   Returns a PAL event structure associated to a line.
+ *
+ * @param[in] line      line identifier
+ *
+ * @notapi
+ */
+#define pal_lld_get_line_event(line)                                        \
+  &_pal_events[line]
+
+/**
+ * @brief   Returns a PAL event structure associated to a pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ *
+ * @notapi
+ */
+#define pal_lld_get_pad_event(port, pad)                                    \
+  &_pal_events[pad]; (void)(port)
+
+/**
+ * @brief   Line event enable.
+ * @note    Programming an unknown or unsupported mode is silently ignored.
+ *
+ * @param[in] line      line number
+ * @param[in] mode      line event mode
+ *
+ * @notapi
+ */
+#define pal_lld_enablelineevent(line, mode)                             \
+  _pal_lld_enablelineevent(line, mode)
+
+/**
+ * @brief   Line event disable.
+ * @details This function disables previously programmed event callbacks.
+ *
+ * @param[in] line      line identifier
+ *
+ * @notapi
+ */
+#define pal_lld_disablelineevent(line)                                  \
+  _pal_lld_disablelineevent(line)
+
+/**
+ * @brief Force a trigger event on the line.
+ * 
+ * @param[in]         line identifier
+ * 
+ * @notapi
+ */
+#define pal_lld_forcelineevent(line)                                    \
+  _pal_lld_forcelineevent(line)
+
+/**
+ * @brief Clear any previously forced trigger on the line.
+ * 
+ * @param[in]         line identifier
+ * 
+ * @notapi
+ */
+#define pal_lld_unforcelineevent(line)                                    \
+  _pal_lld_unforcelineevent(line)
+
+#endif /* (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE) */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  void _pal_lld_enablelineevent(ioline_t line, ioeventmode_t mode);
+  void _pal_lld_disablelineevent(ioline_t line);
+#ifdef __cplusplus
+}
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {

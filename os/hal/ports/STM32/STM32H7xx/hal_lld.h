@@ -151,10 +151,11 @@
 
 #if defined(STM32H723xx) || defined(STM32H733xx) ||                         \
     defined(STM32H725xx) || defined(STM32H735xx) ||                         \
-    defined(__DOXYGEN__)
+    defined(STM32H735xx) || defined(__DOXYGEN__)
 #include "hal_lld_type2.h"
 #elif defined(STM32H7A3xx)  || defined(STM32H7B3xx)  ||                     \
-      defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ)
+      defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ) ||                     \
+      defined(STM32H7B0xx)
 #include "hal_lld_type3.h"
 #else
 #include "hal_lld_type1.h"

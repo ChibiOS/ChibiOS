@@ -112,7 +112,7 @@ static void tmr_init(void *p) {
 /**
  * @brief FS object.
  */
-static FATFS SDC_FS;
+static FATFS __nocache_fs;
 
 /* FS mounted and ready.*/
 static bool fs_ready = FALSE;
@@ -188,7 +188,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&PORTAB_SDU1,
+  (BaseSequentialStream *)&SDU1,
   commands
 };
 
@@ -215,7 +215,7 @@ static void InsertHandler(eventid_t id) {
 #endif
     return;
 
-  err = f_mount(&SDC_FS, "/", 1);
+  err = f_mount(&__nocache_fs, "/", 1);
   if (err != FR_OK) {
 #if HAL_USE_SDC
     sdcDisconnect(&PORTAB_SDC1);
@@ -262,7 +262,7 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palToggleLine(PORTAB_BLINK_LED1);
+    palToggleLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(fs_ready ? 250 : 500);
   }
 }
@@ -298,8 +298,8 @@ int main(void) {
   /*
    * Initializes a serial-over-USB CDC driver.
    */
-  sduObjectInit(&PORTAB_SDU1);
-  sduStart(&PORTAB_SDU1, &serusbcfg);
+  sduObjectInit(&SDU1);
+  sduStart(&SDU1, &serusbcfg);
 
   /*
    * Activates the USB driver and then the USB bus pull-up on D+.
@@ -360,7 +360,7 @@ int main(void) {
   chEvtRegister(&removed_event, &el1, 1);
   chEvtRegister(&shell_terminated, &el2, 2);
   while (true) {
-    if (!shelltp && (PORTAB_SDU1.config->usbp->state == USB_ACTIVE)) {
+    if (!shelltp && (SDU1.config->usbp->state == USB_ACTIVE)) {
       shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
                                     "shell", NORMALPRIO + 1,
                                     shellThread, (void *)&shell_cfg1);

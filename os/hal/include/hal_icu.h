@@ -35,6 +35,10 @@
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
 
+#if !defined(ICU_USE_OVERFLOW_SCALING)
+#define ICU_USE_OVERFLOW_SCALING    FALSE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -198,6 +202,25 @@ typedef void (*icucallback_t)(ICUDriver *icup);
   (icup)->state = ICU_ACTIVE;                                               \
 } while (0)
 
+#if ICU_USE_OVERFLOW_SCALING == TRUE
+/**
+ * @brief   Common ISR code, ICU timer overflow event.
+ * @note    An overflow when in @p ICU_ACTIVE state with a callback set
+ *          executes the callback code (supports overflow scaling). Otherwise
+ *          overflow brings the driver back to the @p ICU_WAITING state.
+ *
+ * @param[in] icup      pointer to the @p ICUDriver object
+ *
+ * @notapi
+ */
+#define _icu_isr_invoke_overflow_cb(icup) do {                              \
+  if ((icup)->config->overflow_cb != NULL && (icup)->state == ICU_ACTIVE)   \
+    (icup)->config->overflow_cb(icup);                                      \
+  else                                                                      \
+    (icup)->state = ICU_WAITING;                                            \
+} while (0)
+
+#else /* ICU_USE_OVERFLOW_SCALING != TRUE */
 /**
  * @brief   Common ISR code, ICU timer overflow event.
  * @note    An overflow always brings the driver back to the @p ICU_WAITING
@@ -211,6 +234,8 @@ typedef void (*icucallback_t)(ICUDriver *icup);
   (icup)->config->overflow_cb(icup);                                        \
   (icup)->state = ICU_WAITING;                                              \
 } while (0)
+#endif /* ICU_USE_OVERFLOW_SCALING != TRUE */
+
 /** @} */
 
 /*===========================================================================*/

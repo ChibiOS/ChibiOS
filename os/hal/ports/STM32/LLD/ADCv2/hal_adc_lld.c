@@ -224,6 +224,11 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 #endif
 
+#if defined(rccResetADC)
+  /* Shared reset case.*/
+  rccResetADC();
+#endif
+
   /* The shared vector is initialized on driver initialization and never
      disabled because sharing.*/
   nvicEnableVector(STM32_ADC_NUMBER, STM32_ADC_IRQ_PRIORITY);
@@ -248,6 +253,9 @@ void adc_lld_start(ADCDriver *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC1->DR);
+#if defined(rccResetADC1)
+      rccResetADC1();
+#endif
       rccEnableADC1(true);
     }
 #endif /* STM32_ADC_USE_ADC1 */
@@ -260,6 +268,9 @@ void adc_lld_start(ADCDriver *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC2->DR);
+#if defined(rccResetADC2)
+      rccResetADC2();
+#endif
       rccEnableADC2(true);
     }
 #endif /* STM32_ADC_USE_ADC2 */
@@ -272,6 +283,9 @@ void adc_lld_start(ADCDriver *adcp) {
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
       dmaStreamSetPeripheral(adcp->dmastp, &ADC3->DR);
+#if defined(rccResetADC3)
+      rccResetADC3();
+#endif
       rccEnableADC3(true);
     }
 #endif /* STM32_ADC_USE_ADC3 */

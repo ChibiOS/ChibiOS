@@ -32,15 +32,15 @@
 /*===========================================================================*/
 
 /**
- * @name    Serial status flags
+ * @name    Serial status flags (legacy)
  * @{
  */
-#define SD_PARITY_ERROR         (eventflags_t)32    /**< @brief Parity.     */
-#define SD_FRAMING_ERROR        (eventflags_t)64    /**< @brief Framing.    */
-#define SD_OVERRUN_ERROR        (eventflags_t)128   /**< @brief Overflow.   */
-#define SD_NOISE_ERROR          (eventflags_t)256   /**< @brief Line noise. */
-#define SD_BREAK_DETECTED       (eventflags_t)512   /**< @brief LIN Break.  */
-#define SD_QUEUE_FULL_ERROR     (eventflags_t)1024  /**< @brief Queue full. */
+#define SD_PARITY_ERROR         CHN_PARITY_ERROR
+#define SD_FRAMING_ERROR        CHN_FRAMING_ERROR
+#define SD_OVERRUN_ERROR        CHN_OVERRUN_ERROR
+#define SD_NOISE_ERROR          CHN_NOISE_ERROR
+#define SD_BREAK_DETECTED       CHN_BREAK_DETECTED
+#define SD_QUEUE_FULL_ERROR     CHN_BUFFER_FULL_ERROR
 /** @} */
 
 /*===========================================================================*/

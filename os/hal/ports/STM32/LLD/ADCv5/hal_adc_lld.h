@@ -79,11 +79,11 @@
  * @name    CFGR2 register configuration helpers
  * @{
  */
-#define STM32_ADC_CKMODE_MASK           (3U << 30U)
-#define STM32_ADC_CKMODE_ADCCLK         (0U << 30U)
-#define STM32_ADC_CKMODE_PCLK_DIV2      (1U << 30U)
-#define STM32_ADC_CKMODE_PCLK_DIV4      (2U << 30U)
-#define STM32_ADC_CKMODE_PCLK           (3U << 30U)
+#define ADC_CFGR2_CKMODE_MASK           (3U << 30U)
+#define ADC_CFGR2_CKMODE_ADCCLK         (0U << 30U)
+#define ADC_CFGR2_CKMODE_PCLK_DIV2      (1U << 30U)
+#define ADC_CFGR2_CKMODE_PCLK_DIV4      (2U << 30U)
+#define ADC_CFGR2_CKMODE_PCLK           (3U << 30U)
 
 #define ADC_CFGR2_OVSR_MASK             (7U << 2U)
 #define ADC_CFGR2_OVSR_2X               (0U << 2U)
@@ -157,10 +157,10 @@
 #endif
 
 /**
- * @brief   ADC1 clock source selection.
+ * @brief   ADC1 CRFG2 initialization.
  */
-#if !defined(STM32_ADC_ADC1_CKMODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_CKMODE               STM32_ADC_CKMODE_ADCCLK
+#if !defined(STM32_ADC_ADC1_CFGR2) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC1_CFGR2               ADC_CFGR2_CKMODE_ADCCLK
 #endif
 
 /**
@@ -339,10 +339,6 @@ typedef uint32_t adcerror_t;
            specified in continuous more or if the buffer depth is           \
            greater than one.*/                                              \
   uint32_t                  cfgr1;                                          \
-  /* ADC CFGR2 register initialization data.                                \
-     NOTE: CKMODE bits must not be specified in this field and left to      \
-           zero.*/                                                          \
-  uint32_t                  cfgr2;                                          \
   /* ADC TR1 register initialization data.*/                                \
   uint32_t                  tr1;                                            \
   /* ADC TR2 register initialization data.*/                                \

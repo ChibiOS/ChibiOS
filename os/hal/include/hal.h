@@ -25,6 +25,8 @@
 #ifndef HAL_H
 #define HAL_H
 
+#include "ccportab.h"
+
 #include "osal.h"
 #include "board.h"
 #include "halconf.h"
@@ -41,7 +43,7 @@
 /**
  * @brief   Stable release flag.
  */
-#define CH_HAL_STABLE           1
+#define CH_HAL_STABLE           0
 
 /**
  * @name    ChibiOS/HAL version identification
@@ -50,7 +52,7 @@
 /**
  * @brief   HAL version string.
  */
-#define CH_HAL_VERSION          "8.3.0"
+#define CH_HAL_VERSION          "8.1.0"
 
 /**
  * @brief   HAL version major number.
@@ -60,7 +62,7 @@
 /**
  * @brief   HAL version minor number.
  */
-#define CH_HAL_MINOR            3
+#define CH_HAL_MINOR            0
 
 /**
  * @brief   HAL version patch number.
@@ -111,6 +113,10 @@
  * @details Peripheral failed, for example HW timeouts.
  */
 #define HAL_RET_HW_FAILURE      (msg_t)-19
+/**
+ * @brief   Unknown control code.
+ */
+#define HAL_RET_UNKNOWN_CTL     (msg_t)-20
 /** @} */
 
 /*===========================================================================*/
@@ -294,6 +300,7 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 /* Shared headers.*/
 #include "hal_buffers.h"
 #include "hal_queues.h"
+#include "hal_buffered_serial.h"
 
 /* Normal drivers.*/
 #include "hal_pal.h"

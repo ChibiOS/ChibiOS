@@ -27,7 +27,7 @@
  *          - STM32_VDD (as hundredths of Volt).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32H723xx, STM32H733xx very high-performance MCUs.
+ *          - STM32H723xx, STM32H733xx, STM32H730xx very high-performance MCUs.
  *          - STM32H725xx, STM32H735xx very high-performance MCUs with SMPS.
  *          .
  *
@@ -59,6 +59,9 @@
 
 #elif defined(STM32H735xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32H735 Single Core Very High Performance with DSP and FPU"
+
+#elif defined(STM32H730xx) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "STM32H730 Single Core Very High Performance with DSP and FPU"
 
 #else
 #error "STM32H7xx device not specified"
@@ -1657,9 +1660,11 @@
 /**
  * @brief   PLL1 DIVP field.
  */
-#if ((STM32_PLL1_DIVP_VALUE >= 1) && (STM32_PLL1_DIVP_VALUE <= 128) &&      \
-     (STM32_PLL1_DIVP_VALUE != 3U)) || defined(__DOXYGEN__)
-#define STM32_PLL1_DIVP             ((STM32_PLL1_DIVP_VALUE - 1U) << 9U)
+#if (STM32_PLL1_DIVP_VALUE == 1) ||                                         \
+    ((STM32_PLL1_DIVP_VALUE >= 2) && (STM32_PLL1_DIVP_VALUE <= 128) &&      \
+     ((STM32_PLL1_DIVP_VALUE & 1) == 0)) ||                                 \
+    defined(__DOXYGEN__)
+#define STM32_PLL1_DIVP             ((STM32_PLL1_DIVP_VALUE - 1U) << RCC_PLL1DIVR_P1_Pos)
 #else
 #error "invalid STM32_PLL1_DIVP_VALUE value specified"
 #endif

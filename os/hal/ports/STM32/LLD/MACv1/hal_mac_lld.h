@@ -198,119 +198,59 @@
  * @brief   Type of an STM32 Ethernet receive descriptor.
  */
 typedef struct {
-  volatile uint32_t     rdes0;
-  volatile uint32_t     rdes1;
-  volatile uint32_t     rdes2;
-  volatile uint32_t     rdes3;
+  volatile uint32_t             rdes0;
+  volatile uint32_t             rdes1;
+  volatile uint32_t             rdes2;
+  volatile uint32_t             rdes3;
 } stm32_eth_rx_descriptor_t;
 
 /**
  * @brief   Type of an STM32 Ethernet transmit descriptor.
  */
 typedef struct {
-  volatile uint32_t     tdes0;
-  volatile uint32_t     tdes1;
-  volatile uint32_t     tdes2;
-  volatile uint32_t     tdes3;
+  volatile uint32_t             tdes0;
+  volatile uint32_t             tdes1;
+  volatile uint32_t             tdes2;
+  volatile uint32_t             tdes3;
 } stm32_eth_tx_descriptor_t;
-
-/**
- * @brief   Driver configuration structure.
- */
-typedef struct {
-  /**
-   * @brief MAC address.
-   */
-  uint8_t               *mac_address;
-  /* End of the mandatory fields.*/
-} MACConfig;
-
-/**
- * @brief   Structure representing a MAC driver.
- */
-struct MACDriver {
-  /**
-   * @brief Driver state.
-   */
-  macstate_t            state;
-  /**
-   * @brief Current configuration data.
-   */
-  const MACConfig       *config;
-  /**
-   * @brief Transmit semaphore.
-   */
-  threads_queue_t       tdqueue;
-  /**
-   * @brief Receive semaphore.
-   */
-  threads_queue_t       rdqueue;
-#if MAC_USE_EVENTS || defined(__DOXYGEN__)
-  /**
-   * @brief Receive event.
-   */
-  event_source_t        rdevent;
-#endif
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Link status flag.
-   */
-  bool                  link_up;
-  /**
-   * @brief PHY address (pre shifted).
-   */
-  uint32_t phyaddr;
-  /**
-   * @brief Receive next frame pointer.
-   */
-  stm32_eth_rx_descriptor_t *rxptr;
-  /**
-   * @brief Transmit next frame pointer.
-   */
-  stm32_eth_tx_descriptor_t *txptr;
-};
-
-/**
- * @brief   Structure representing a transmit descriptor.
- */
-typedef struct {
-  /**
-   * @brief Current write offset.
-   */
-  size_t                    offset;
-  /**
-   * @brief Available space size.
-   */
-  size_t                    size;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Pointer to the physical descriptor.
-   */
-  stm32_eth_tx_descriptor_t *physdesc;
-} MACTransmitDescriptor;
-
-/**
- * @brief   Structure representing a receive descriptor.
- */
-typedef struct {
-  /**
-   * @brief Current read offset.
-   */
-  size_t                offset;
-  /**
-   * @brief Available data size.
-   */
-  size_t                size;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief Pointer to the physical descriptor.
-   */
-  stm32_eth_rx_descriptor_t *physdesc;
-} MACReceiveDescriptor;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Low level fields of the MAC driver structure.
+ */
+#define mac_lld_driver_fields                                               \
+  /* Link status flag.*/                                                    \
+  bool                          link_up;                                    \
+  /* PHY address (pre shifted).*/                                           \
+  uint32_t                      phyaddr;                                    \
+  /* Receive next frame pointer.*/                                          \
+  stm32_eth_rx_descriptor_t     *rxptr;                                     \
+  /* Transmit next frame pointer.*/                                         \
+  stm32_eth_tx_descriptor_t     *txptr
+
+/**
+ * @brief   Low level fields of the MAC configuration structure.
+ */
+#define mac_lld_config_fields                                               \
+  /* MAC address.*/                                                         \
+  uint8_t                       *mac_address
+
+/**
+ * @brief   Low level fields of the MAC transmit descriptor structure.
+ */
+#define mac_lld_transmit_descriptor_fields                                  \
+  /* Pointer to the physical descriptor.*/                                  \
+  stm32_eth_tx_descriptor_t     *physdesc
+
+/**
+ * @brief   Low level fields of the MAC receive descriptor structure.
+ */
+#define mac_lld_receive_descriptor_fields                                   \
+  /* Pointer to the physical descriptor.*/                                  \
+  stm32_eth_rx_descriptor_t     *physdesc
 
 /*===========================================================================*/
 /* External declarations.                                                    */

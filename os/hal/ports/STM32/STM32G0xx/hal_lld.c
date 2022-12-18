@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ const halclkcfg_t hal_clkcfg_reset = {
 #else
   .pwr_cr2              = 0U,
 #endif
-  .rcc_cr               = RCC_CR_HSION,
+  .rcc_cr               = RCC_CR_HSION | STM32_HSIDIV,
   .rcc_cfgr             = RCC_CFGR_SW_HSI,
   .rcc_pllcfgr          = 0U,
   .flash_acr            = STM32_FLASH_ACR_RESET
@@ -90,7 +90,7 @@ const halclkcfg_t hal_clkcfg_default = {
 #else
   .pwr_cr2              = 0U,
 #endif
-  .rcc_cr               = 0U
+  .rcc_cr               = STM32_HSIDIV
 #if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
 #endif
@@ -127,6 +127,7 @@ const halclkcfg_t hal_clkcfg_default = {
  */
 static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_SYSCLK]      = STM32_SYSCLK,
+  [CLK_HSISYSCLK]   = STM32_HSISYSCLK,
   [CLK_PLLPCLK]     = STM32_PLL_P_CLKOUT,
   [CLK_PLLQCLK]     = STM32_PLL_Q_CLKOUT,
   [CLK_PLLRCLK]     = STM32_PLL_R_CLKOUT,
@@ -266,24 +267,27 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
   /* Clock-related settings (dividers, MCO etc).*/
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE | STM32_HPRE;
 
+  /* Set HSISYS divisor.*/
+  RCC->CR |= STM32_HSIDIV;
+
 #if STM32_RCC_HAS_CCIPR2
   /* CCIPR register initialization.*/
-  RCC->CCIPR =  STM32_ADCSEL    | STM32_RNGDIV    | STM32_RNGSEL    |
-                STM32_TIM15SEL  | STM32_TIM1SEL   | STM32_LPTIM2SEL |
-                STM32_LPTIM1SEL | STM32_I2C2SEL   | STM32_I2C1SEL   |
-                STM32_CECSEL    | STM32_USART2SEL | STM32_USART1SEL |
-                STM32_LPUART1SEL;
+  RCC->CCIPR =  STM32_ADCSEL    | STM32_RNGDIV     | STM32_RNGSEL    |
+                STM32_TIM15SEL  | STM32_TIM1SEL    | STM32_LPTIM2SEL |
+                STM32_LPTIM1SEL | STM32_I2C2SEL    | STM32_I2C1SEL   |
+                STM32_CECSEL    | STM32_USART3SEL  | STM32_USART2SEL |
+                STM32_USART1SEL | STM32_LPUART2SEL | STM32_LPUART1SEL;
 
   /* CCIPR2 register initialization.*/
   RCC->CCIPR2 = STM32_USBSEL    | STM32_FDCANSEL  | STM32_I2S2SEL   |
                 STM32_I2S1SEL;
 #else
   /* CCIPR register initialization.*/
-  RCC->CCIPR =  STM32_ADCSEL    | STM32_RNGDIV    | STM32_RNGSEL    |
-                STM32_TIM15SEL  | STM32_TIM1SEL   | STM32_LPTIM2SEL |
-                STM32_LPTIM1SEL | STM32_I2S1SEL   | STM32_I2C1SEL   |
-                STM32_CECSEL    | STM32_USART2SEL | STM32_USART1SEL |
-                STM32_LPUART1SEL;
+  RCC->CCIPR =  STM32_ADCSEL    | STM32_RNGDIV     | STM32_RNGSEL    |
+                STM32_TIM15SEL  | STM32_TIM1SEL    | STM32_LPTIM2SEL |
+                STM32_LPTIM1SEL | STM32_I2S1SEL    | STM32_I2C1SEL   |
+                STM32_CECSEL    | STM32_USART3SEL  | STM32_USART2SEL |
+                STM32_USART1SEL | STM32_LPUART2SEL | STM32_LPUART1SEL;
 #endif
 }
 
@@ -325,7 +329,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* HSISYS clock.*/
-  hsidiv = 1U << ((ccp->pwr_cr1 & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos);
+  hsidiv = 1U << ((ccp->rcc_cr & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos);
   hsisysclk = hsi16clk / hsidiv;
 
   /* HSE clock.*/

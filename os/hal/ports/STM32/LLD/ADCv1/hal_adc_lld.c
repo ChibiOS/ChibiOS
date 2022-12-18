@@ -218,6 +218,7 @@ void adc_lld_start(ADCDriver *adcp) {
                                      (stm32_dmaisr_t)adc_lld_serve_rx_interrupt,
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
+      rccResetADC1();
       rccEnableADC1(true);
 
       /* DMA setup.*/
@@ -227,7 +228,7 @@ void adc_lld_start(ADCDriver *adcp) {
 #endif
 
       /* Clock settings.*/
-      adcp->adc->CFGR2 = STM32_ADC_ADC1_CKMODE;
+      adcp->adc->CFGR2 = STM32_ADC_ADC1_CFGR2;
     }
 #endif /* STM32_ADC_USE_ADC1 */
 
@@ -321,12 +322,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC configuration and start.*/
   adcp->adc->CFGR1  = cfgr1;
-#if STM32_ADC_SUPPORTS_OVERSAMPLING == TRUE
-  {
-    uint32_t cfgr2 = adcp->adc->CFGR2 & STM32_ADC_CKMODE_MASK;
-    adcp->adc->CFGR2 = cfgr2 | grpp->cfgr2;
-  }
-#endif
 
   /* ADC conversion start.*/
   adcp->adc->CR |= ADC_CR_ADSTART;

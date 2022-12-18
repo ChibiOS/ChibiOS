@@ -30,6 +30,14 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    MAC event flags
+ * @{
+ */
+#define MAC_FLAGS_TX                (1U << 0)
+#define MAC_FLAGS_RX                (1U << 1)
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -62,6 +70,33 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of a structure representing a MAC driver.
+ */
+typedef struct hal_mac_driver MACDriver;
+
+/**
+ * @brief   Type of structure representing a MAC configuration.
+ */
+typedef struct hal_mac_config MACConfig;
+
+/**
+ * @brief   Type of structure representing a MAC transmit descriptor.
+ */
+typedef struct hal_mac_transmit_descriptor MACTransmitDescriptor;
+
+/**
+ * @brief   Type of structure representing a MAC receive descriptor.
+ */
+typedef struct hal_mac_receive_descriptor MACReceiveDescriptor;
+
+/**
+ * @brief   Generic ETH notification callback type.
+ *
+ * @param[in] ethp     pointer to the @p ETHDriver object
+ */
+typedef void (*maccb_t)(MACDriver *macp);
+
+/**
  * @brief   Driver state machine possible states.
  */
 typedef enum {
@@ -70,23 +105,185 @@ typedef enum {
   MAC_ACTIVE = 2                    /**< Active.                            */
 } macstate_t;
 
-/**
- * @brief   Type of a structure representing a MAC driver.
- */
-typedef struct MACDriver MACDriver;
-
 #include "hal_mac_lld.h"
+
+/**
+ * @brief   Driver configuration structure.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
+ */
+struct hal_mac_config {
+  mac_lld_config_fields;
+#if defined(MAC_CONFIG_EXT_FIELDS)
+  MAC_CONFIG_EXT_FIELDS
+#endif
+};
+
+/**
+ * @brief   Structure representing a MAC driver.
+ * @note    Implementations may extend this structure to contain more,
+ *          architecture dependent, fields.
+ */
+struct hal_mac_driver {
+  /**
+   * @brief   Driver state.
+   */
+  macstate_t                state;
+  /**
+   * @brief   Current configuration data.
+   */
+  const MACConfig           *config;
+  /**
+   * @brief   Transmit threads queue.
+   */
+  threads_queue_t           tdqueue;
+  /**
+   * @brief   Receive threads queue.
+   */
+  threads_queue_t           rdqueue;
+#if MAC_USE_EVENTS || defined(__DOXYGEN__)
+  /**
+   * @brief   MAC events source.
+   */
+  event_source_t            es;
+#endif
+  /**
+   * @brief   Locally held event flags for callback use.
+   */
+  eventflags_t              flags;
+  /**
+   * @brief   Events callback.
+   * @note    Can be @p NULL.
+   */
+  maccb_t                   cb;
+  /**
+   * @brief   User argument.
+   * @note    Can be retrieved through the @p ethp argument of the callback.
+   */
+  void                      *arg;
+  /* End of the mandatory fields.*/
+  mac_lld_driver_fields;
+#if defined(MAC_DRIVER_EXT_FIELS)
+  MAC_DRIVER_EXT_FIELS
+#endif
+};
+
+/**
+ * @brief   Structure representing a MAC transmit descriptor.
+ */
+struct hal_mac_transmit_descriptor {
+  /**
+   * @brief   Current write offset.
+   */
+  size_t                    offset;
+  /**
+   * @brief   Available space size.
+   */
+  size_t                    size;
+  /* End of the mandatory fields.*/
+  mac_lld_transmit_descriptor_fields;
+};
+
+/**
+ * @brief   Structure representing a MAC receive descriptor.
+ */
+struct hal_mac_receive_descriptor {
+  /**
+   * @brief   Current read offset.
+   */
+  size_t                    offset;
+  /**
+   * @brief   Available data size.
+   */
+  size_t                    size;
+  /* End of the mandatory fields.*/
+  mac_lld_receive_descriptor_fields;
+};
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
 /**
+ * @name    Low level driver helper macros
+ * @{
+ */
+/**
+ * @brief   MAC callback.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
+ *
+ * @notapi
+ */
+#define __mac_callback(macp) do {                                           \
+  if ((macp)->cb != NULL) {                                                 \
+    (macp)->cb(macp);                                                       \
+  }                                                                         \
+} while (false)
+
+/**
+ * @brief   MAC TX wakeup and event.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
+ *
+ * @notapi
+ */
+#if (MAC_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+#define __mac_tx_wakeup(macp) do {                                          \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(macp)->tdqueue, MSG_OK);                          \
+  (macp)->flags |= MAC_FLAGS_TX;                                            \
+  osalEventBroadcastFlagsI(&(macp)->es, MAC_FLAGS_TX);                      \
+  osalSysUnlockFromISR();                                                   \
+} while (false)
+#else
+#define __mac_tx_event(macp) do {                                           \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(macp)->tdqueue, MSG_OK);                          \
+  (macp)->flags |= MAC_FLAGS_TX;                                            \
+  osalSysUnlockFromISR();                                                   \
+} while (false)
+#endif
+
+/**
+ * @brief   MAC RX wakeup and event.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
+ *
+ * @notapi
+ */
+#if (MAC_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+#define __mac_rx_wakeup(macp) do {                                          \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(macp)->rdqueue, MSG_OK);                          \
+  (macp)->flags |= MAC_FLAGS_RX;                                            \
+  osalEventBroadcastFlagsI(&(macp)->es, MAC_FLAGS_RX);                      \
+  osalSysUnlockFromISR();                                                   \
+} while (false)
+#else
+#define __mac_rx_event(macp) do {                                           \
+  osalSysLockFromISR();                                                     \
+  osalThreadDequeueAllI(&(macp)->rdqueue, MSG_OK);                          \
+  (macp)->flags |= MAC_FLAGS_RX;                                            \
+  osalSysUnlockFromISR();                                                   \
+} while (false)
+#endif
+/** @} */
+
+/**
  * @name    Macro Functions
  * @{
  */
 /**
- * @brief   Enables the zero-copy API.
+ * @brief   Associates a callback to the MAC instance.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
+ * @param[in] f         callback to be associated
+ */
+#define macSetCallbackX(macp, f) (siop)->cb = (f)
+
+/**
+ * @brief   Returns the driver events source.
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The pointer to the @p EventSource structure.
@@ -94,8 +291,61 @@ typedef struct MACDriver MACDriver;
  * @api
  */
 #if (MAC_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-#define macGetReceiveEventSource(macp)  (&(macp)->rdevent)
+#define macGetEventSource(macp)  (&(macp)->es)
 #endif
+
+/**
+ * @brief   Returns a transmission descriptor.
+ * @details One of the available transmission descriptors is locked and
+ *          returned.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
+ * @param[out] tdp      pointer to a @p MACTransmitDescriptor structure
+ * @return              The operation status.
+ * @retval MSG_OK       the descriptor has been obtained.
+ * @retval MSG_TIMEOUT  descriptor not available.
+ *
+ * @xclass
+ */
+#define macGetTransmitDescriptorX(macp, tdp)                                \
+  mac_lld_get_transmit_descriptor(macp, tdp)
+
+/**
+ * @brief   Releases a transmit descriptor and starts the transmission of the
+ *          enqueued data as a single frame.
+ *
+ * @param[in] tdp       the pointer to the @p MACTransmitDescriptor structure
+ *
+ * @notapi
+ */
+#define macReleaseTransmitDescriptorX(tdp)                                  \
+  mac_lld_release_transmit_descriptor(tdp)
+
+/**
+ * @brief   Returns a receive descriptor.
+ *
+ * @param[in] macp      pointer to the @p MACDriver object
+ * @param[out] rdp      pointer to a @p MACReceiveDescriptor structure
+ * @return              The operation status.
+ * @retval MSG_OK       the descriptor has been obtained.
+ * @retval MSG_TIMEOUT  descriptor not available.
+ *
+ * @xclass
+ */
+#define macGetReceiveDescriptorX(macp, rdp)                                 \
+  mac_lld_get_receive_descriptor(macp, rdp)
+
+/**
+ * @brief   Releases a receive descriptor.
+ * @details The descriptor and its buffer are made available for more incoming
+ *          frames.
+ *
+ * @param[in] rdp       the pointer to the @p MACReceiveDescriptor structure
+ *
+ * @xclass
+ */
+#define macReleaseReceiveDescriptorX(rdp)                                   \
+  mac_lld_release_receive_descriptor(rdp)
 
 /**
  * @brief   Writes to a transmit descriptor's stream.
@@ -181,7 +431,7 @@ extern "C" {
   void macObjectInit(MACDriver *macp);
   msg_t macStart(MACDriver *macp, const MACConfig *config);
   void macStop(MACDriver *macp);
-  void macSetAddress(MACDriver *macp, const uint8_t *p);
+  eventflags_t macGetAndClearEventsI(MACDriver *macp);
   msg_t macWaitTransmitDescriptor(MACDriver *macp,
                                   MACTransmitDescriptor *tdp,
                                   sysinterval_t timeout);
