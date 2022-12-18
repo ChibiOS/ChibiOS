@@ -375,6 +375,7 @@ THD_FUNCTION(shellThread, p) {
       /* Putting a delay in order to avoid an endless loop trying to read
          an unavailable stream.*/
       osalThreadSleepMilliseconds(100);
+      continue;
 #endif
     }
     lp = parse_arguments(line, &tokp);
