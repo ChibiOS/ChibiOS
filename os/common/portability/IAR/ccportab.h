@@ -105,7 +105,7 @@
  * @note    Can be implemented as an empty macro if not supported by the
  *          compiler.
  */
-#define CC_FORCE_INLINE     inline
+#define CC_FORCE_INLINE
 
 /**
  * @brief   Marks a function as non-returning.

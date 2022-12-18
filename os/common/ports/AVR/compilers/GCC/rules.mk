@@ -73,13 +73,20 @@ CPPDEFS = -DF_CPU=$(F_CPU)UL
 # Paths where to search for sources
 VPATH     = $(SRCPATHS)
 
-# Various settings
+# Various settings for C flags.
 MCFLAGS := -mmcu=$(MCU)
 CFLAGS  = $(MCFLAGS) -I. -gdwarf-2 $(CDEFS) $(OPT) -funsigned-char
 CFLAGS  += -funsigned-bitfields -fpack-struct -fshort-enums $(CWARN)
 CFLAGS  += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 CFLAGS  += -std=gnu11 -mrelax -fdata-sections -ffunction-sections
 CFLAGS  += -Wundef -MMD -MP #-MF
+
+# Various settings for CPP flags.
+CPPFLAGS = $(MCFLAGS) -I. -gdwarf-2 $(CDEFS) $(OPT) -funsigned-char
+CPFLAGS  += -funsigned-bitfields -fpack-struct -fshort-enums $(CWARN)
+CPFLAGS  += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
+CPFLAGS  += -std=gnu++11 -mrelax -fdata-sections -ffunction-sections
+CPFLAGS  += -Wundef -MMD -MP #-MF
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
@@ -130,6 +137,11 @@ MATH_LIB = -lm
 
 LDFLAGS = -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--gc-sections
 LDFLAGS += -Wl,-u,vfprintf -lprintf_min -Wl,-u,vfscanf -lscanf_min -lm
+
+# Linker extra options
+ifneq ($(USE_LDOPT),)
+  LDFLAGS += -Wl,$(USE_LDOPT)
+endif
 
 #
 # Makefile rules
@@ -264,7 +276,7 @@ endif
 lib: $(OBJS) $(BUILDDIR)/lib$(PROJECT).a
 
 $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
-	@$(AR) -r $@ $^
+	@$(AR) $@ $^
 	@echo
 	@echo Done
 

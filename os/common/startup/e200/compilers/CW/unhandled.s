@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    weak.s
+ * @file    unhandled.s
  * @brief   Unhandled IRQs.
  *
  * @addtogroup PPC_CW_CORE

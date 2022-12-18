@@ -98,14 +98,13 @@ LSTDIR    := $(BUILDDIR)/lst
 
 # Object files groups
 TCOBJS    := $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
-TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
+#TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
+TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cpp, %.o, $(filter %.cpp, $(TCPPSRC)))))
+TCCOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cc, %.o, $(filter %.cc, $(TCPPSRC)))))
 ASMOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
 ASMXOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
-OBJS      := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
-
-# Paths
-IINCDIR   := $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
-LLIBDIR   := $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+#OBJS      := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
+OBJS      := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS) $(TCCOBJS)
 
 # Macros
 DEFS      := $(DDEFS) $(UDEFS)
@@ -121,17 +120,29 @@ ASFLAGS   = $(MCFLAGS) $(OPT) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) $(OPT) $(ADEFS)
 CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) $(DEFS)
 CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) $(DEFS)
-#ASFLAGS   = $(MCFLAGS) $(OPT) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
-#ASXFLAGS  = $(MCFLAGS) $(OPT) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
-#CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
-#CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
-LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(STARTUPLD),--script=$(LDSCRIPT)$(LDOPT)
+
+ARM_CORTEXM_SYSROOT := \
+	$(shell $(GCC_CC) $(CFLAGS) -print-sysroot 2>&1)
+ARM_CORTEXM_MULTI_DIR := \
+	$(shell $(GCC_CC) $(CFLAGS) -print-multi-directory 2>&1)
+ARM_CORTEXM_BUILTINS := \
+	$(shell $(GCC_CC) $(CFLAGS) -print-libgcc-file-name 2>&1)
+
+ASFLAGS   += --target=arm-none-eabi --sysroot=$(ARM_CORTEXM_SYSROOT)
+ASXFLAGS  += --target=arm-none-eabi --sysroot=$(ARM_CORTEXM_SYSROOT)
+CFLAGS    += --target=arm-none-eabi --sysroot=$(ARM_CORTEXM_SYSROOT)
+CPPFLAGS  += --target=arm-none-eabi --sysroot=$(ARM_CORTEXM_SYSROOT)
 
 # Generate dependency information
 ASFLAGS  += -MD -MP -MF $(DEPDIR)/$(@F).d
 ASXFLAGS += -MD -MP -MF $(DEPDIR)/$(@F).d
 CFLAGS   += -MD -MP -MF $(DEPDIR)/$(@F).d
 CPPFLAGS += -MD -MP -MF $(DEPDIR)/$(@F).d
+
+# Paths
+IINCDIR   := $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
+LLIBDIR   := $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR) $(ARM_CORTEXM_SYSROOT)/lib/$(ARM_CORTEXM_MULTI_DIR))
+LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) $(ARM_CORTEXM_BUILTINS) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(STARTUPLD),--script=$(LDSCRIPT)$(LDOPT)
 
 # Paths where to search for sources
 VPATH     = $(SRCPATHS)
@@ -166,6 +177,15 @@ $(DEPDIR):
 	@mkdir -p $(DEPDIR)
 
 $(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
+	@echo
+	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
+else
+	@echo Compiling $(<F)
+	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
+endif
+
+$(TCCOBJS) : $(OBJDIR)/%.o : %.cc $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@

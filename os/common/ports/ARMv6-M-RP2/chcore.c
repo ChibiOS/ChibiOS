@@ -203,8 +203,10 @@ CH_IRQ_HANDLER(Vector80) {
  */
 void port_init(os_instance_t *oip) {
 
+#if CH_CFG_ST_TIMEDELTA > 0
   /* Activating timer for this instance.*/
   port_timer_enable(oip);
+#endif
 
 #if CH_CFG_SMP_MODE== TRUE
   /* FIFO handlers for each core.*/
