@@ -68,31 +68,22 @@ static uint8_t test_heap_buffer[HEAP_SIZE];
  *
  * <h2>Test Steps</h2>
  * - [8.1.1] Testing initial conditions, the heap must not be
- *   fragmented and one free block present, finally, integrity is
- *   checked.
+ *   fragmented and one free block present.
  * - [8.1.2] Trying to allocate an block bigger than available space,
- *   an error is expected, finally, integrity is checked.
+ *   an error is expected.
  * - [8.1.3] Single block allocation using chHeapAlloc() then the block
- *   is freed using chHeapFree(), must not fail, finally, integrity is
- *   checked.
+ *   is freed using chHeapFree(), must not fail.
  * - [8.1.4] Using chHeapStatus() to assess the heap state. There must
- *   be at least one free block of sufficient size, finally, integrity
- *   is checked.
- * - [8.1.5] Allocating then freeing in the same order, finally,
- *   integrity is checked.
- * - [8.1.6] Allocating then freeing in reverse order, finally,
- *   integrity is checked.
+ *   be at least one free block of sufficient size.
+ * - [8.1.5] Allocating then freeing in the same order.
+ * - [8.1.6] Allocating then freeing in reverse order.
  * - [8.1.7] Small fragments handling. Checking the behavior when
- *   allocating blocks with size not multiple of alignment unit,
- *   finally, integrity is checked.
+ *   allocating blocks with size not multiple of alignment unit.
  * - [8.1.8] Skipping a fragment, the first fragment in the list is too
- *   small so the allocator must pick the second one, finally,
- *   integrity is checked.
- * - [8.1.9] Allocating the whole available space, finally, integrity
- *   is checked.
+ *   small so the allocator must pick the second one.
+ * - [8.1.9] Allocating the whole available space.
  * - [8.1.10] Testing final conditions. The heap geometry must be the
- *   same than the one registered at beginning, finally, integrity is
- *   checked.
+ *   same than the one registered at beginning.
  * .
  */
 
@@ -105,40 +96,34 @@ static void oslib_test_008_001_execute(void) {
   size_t n, sz;
 
   /* [8.1.1] Testing initial conditions, the heap must not be
-     fragmented and one free block present, finally, integrity is
-     checked.*/
+     fragmented and one free block present.*/
   test_set_step(1);
   {
     test_assert(chHeapStatus(&test_heap, &sz, NULL) == 1, "heap fragmented");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(1);
 
   /* [8.1.2] Trying to allocate an block bigger than available space,
-     an error is expected, finally, integrity is checked.*/
+     an error is expected.*/
   test_set_step(2);
   {
     p1 = chHeapAlloc(&test_heap, sizeof test_heap_buffer * 2);
     test_assert(p1 == NULL, "allocation not failed");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(2);
 
   /* [8.1.3] Single block allocation using chHeapAlloc() then the block
-     is freed using chHeapFree(), must not fail, finally, integrity is
-     checked.*/
+     is freed using chHeapFree(), must not fail.*/
   test_set_step(3);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
     test_assert(p1 != NULL, "allocation failed");
     chHeapFree(p1);
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(3);
 
   /* [8.1.4] Using chHeapStatus() to assess the heap state. There must
-     be at least one free block of sufficient size, finally, integrity
-     is checked.*/
+     be at least one free block of sufficient size.*/
   test_set_step(4);
   {
     size_t total_size, largest_size;
@@ -147,12 +132,10 @@ static void oslib_test_008_001_execute(void) {
     test_assert(n == 1, "missing free block");
     test_assert(total_size >= ALLOC_SIZE, "unexpected heap state");
     test_assert(total_size == largest_size, "unexpected heap state");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(4);
 
-  /* [8.1.5] Allocating then freeing in the same order, finally,
-     integrity is checked.*/
+  /* [8.1.5] Allocating then freeing in the same order.*/
   test_set_step(5);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
@@ -162,12 +145,10 @@ static void oslib_test_008_001_execute(void) {
     chHeapFree(p2);                                 /* Merges backward.*/
     chHeapFree(p3);                                 /* Merges both sides.*/
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(5);
 
-  /* [8.1.6] Allocating then freeing in reverse order, finally,
-     integrity is checked.*/
+  /* [8.1.6] Allocating then freeing in reverse order.*/
   test_set_step(6);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
@@ -177,13 +158,11 @@ static void oslib_test_008_001_execute(void) {
     chHeapFree(p2);                                 /* Merges forward.*/
     chHeapFree(p1);                                 /* Merges forward.*/
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(6);
 
   /* [8.1.7] Small fragments handling. Checking the behavior when
-     allocating blocks with size not multiple of alignment unit,
-     finally, integrity is checked.*/
+     allocating blocks with size not multiple of alignment unit.*/
   test_set_step(7);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE + 1);
@@ -198,13 +177,11 @@ static void oslib_test_008_001_execute(void) {
     chHeapFree(p2);
     chHeapFree(p1);
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(7);
 
   /* [8.1.8] Skipping a fragment, the first fragment in the list is too
-     small so the allocator must pick the second one, finally,
-     integrity is checked.*/
+     small so the allocator must pick the second one.*/
   test_set_step(8);
   {
     p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
@@ -215,12 +192,10 @@ static void oslib_test_008_001_execute(void) {
     chHeapFree(p1);
     chHeapFree(p2);
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(8);
 
-  /* [8.1.9] Allocating the whole available space, finally, integrity
-     is checked.*/
+  /* [8.1.9] Allocating the whole available space.*/
   test_set_step(9);
   {
     (void)chHeapStatus(&test_heap, &n, NULL);
@@ -228,18 +203,15 @@ static void oslib_test_008_001_execute(void) {
     test_assert(p1 != NULL, "allocation failed");
     test_assert(chHeapStatus(&test_heap, NULL, NULL) == 0, "not empty");
     chHeapFree(p1);
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(9);
 
   /* [8.1.10] Testing final conditions. The heap geometry must be the
-     same than the one registered at beginning, finally, integrity is
-     checked.*/
+     same than the one registered at beginning.*/
   test_set_step(10);
   {
     test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
     test_assert(n == sz, "size changed");
-    test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");
   }
   test_end_step(10);
 }

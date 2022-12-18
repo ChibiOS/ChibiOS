@@ -1967,35 +1967,32 @@ size_t n, sz;]]></value>
             <step>
               <description>
                 <value>Testing initial conditions, the heap must not be
-                  fragmented and one free block present, finally, integrity is checked.</value>
+                  fragmented and one free block present.</value>
               </description>
               <tags>
                 <value />
               </tags>
               <code>
-                <value><![CDATA[test_assert(chHeapStatus(&test_heap, &sz, NULL) == 1, "heap fragmented");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+                <value><![CDATA[test_assert(chHeapStatus(&test_heap, &sz, NULL) == 1, "heap fragmented");]]></value>
               </code>
             </step>
             <step>
               <description>
                 <value>Trying to allocate an block bigger than available
-                  space, an error is expected, finally, integrity is checked.</value>
+                  space, an error is expected.</value>
               </description>
               <tags>
                 <value />
               </tags>
               <code>
                 <value><![CDATA[p1 = chHeapAlloc(&test_heap, sizeof test_heap_buffer * 2);
-test_assert(p1 == NULL, "allocation not failed");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+test_assert(p1 == NULL, "allocation not failed");]]></value>
               </code>
             </step>
             <step>
               <description>
                 <value>Single block allocation using chHeapAlloc() then
-                  the block is freed using chHeapFree(), must not fail, finally,
-                  integrity is checked.
+                  the block is freed using chHeapFree(), must not fail.
                 </value>
               </description>
               <tags>
@@ -2004,15 +2001,14 @@ test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
               <code>
                 <value><![CDATA[p1 = chHeapAlloc(&test_heap, ALLOC_SIZE);
 test_assert(p1 != NULL, "allocation failed");
-chHeapFree(p1);
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+chHeapFree(p1);]]></value>
               </code>
             </step>
             <step>
               <description>
                 <value>Using chHeapStatus() to assess the heap state.
                   There must be at least one free block of sufficient
-                  size, finally, integrity is checked.</value>
+                  size.</value>
               </description>
               <tags>
                 <value />
@@ -2023,14 +2019,12 @@ test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
 n = chHeapStatus(&test_heap, &total_size, &largest_size);
 test_assert(n == 1, "missing free block");
 test_assert(total_size >= ALLOC_SIZE, "unexpected heap state");
-test_assert(total_size == largest_size, "unexpected heap state");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+test_assert(total_size == largest_size, "unexpected heap state");]]></value>
               </code>
             </step>
             <step>
               <description>
-                <value>Allocating then freeing in the same order, finally,
-                  integrity is checked.
+                <value>Allocating then freeing in the same order.
                 </value>
               </description>
               <tags>
@@ -2043,14 +2037,12 @@ p3 = chHeapAlloc(&test_heap, ALLOC_SIZE);
 chHeapFree(p1);                                 /* Does not merge.*/
 chHeapFree(p2);                                 /* Merges backward.*/
 chHeapFree(p3);                                 /* Merges both sides.*/
-test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
               </code>
             </step>
             <step>
               <description>
-                <value>Allocating then freeing in reverse order, finally,
-                  integrity is checked.</value>
+                <value>Allocating then freeing in reverse order.</value>
               </description>
               <tags>
                 <value />
@@ -2062,15 +2054,14 @@ p3 = chHeapAlloc(&test_heap, ALLOC_SIZE);
 chHeapFree(p3);                                 /* Merges forward.*/
 chHeapFree(p2);                                 /* Merges forward.*/
 chHeapFree(p1);                                 /* Merges forward.*/
-test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
               </code>
             </step>
             <step>
               <description>
                 <value>Small fragments handling. Checking the behavior
                   when allocating blocks with size not multiple of
-                  alignment unit, finally, integrity is checked.</value>
+                  alignment unit.</value>
               </description>
               <tags>
                 <value />
@@ -2087,15 +2078,14 @@ test_assert((chHeapStatus(&test_heap, &n, NULL) == 1) ||
             (chHeapStatus(&test_heap, &n, NULL) == 2), "heap fragmented");
 chHeapFree(p2);
 chHeapFree(p1);
-test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
               </code>
             </step>
             <step>
               <description>
                 <value>Skipping a fragment, the first fragment in the
                   list is too small so the allocator must pick the
-                  second one, finally, integrity is checked.</value>
+                  second one.</value>
               </description>
               <tags>
                 <value />
@@ -2108,14 +2098,12 @@ test_assert( chHeapStatus(&test_heap, &n, NULL) == 2, "invalid state");
 p1 = chHeapAlloc(&test_heap, ALLOC_SIZE * 2); /* Skips first fragment.*/
 chHeapFree(p1);
 chHeapFree(p2);
-test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");]]></value>
               </code>
             </step>
             <step>
               <description>
-                <value>Allocating the whole available space, finally,
-                  integrity is checked.</value>
+                <value>Allocating the whole available space.</value>
               </description>
               <tags>
                 <value />
@@ -2125,15 +2113,13 @@ test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
 p1 = chHeapAlloc(&test_heap, n);
 test_assert(p1 != NULL, "allocation failed");
 test_assert(chHeapStatus(&test_heap, NULL, NULL) == 0, "not empty");
-chHeapFree(p1);
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+chHeapFree(p1);]]></value>
               </code>
             </step>
             <step>
               <description>
                 <value>Testing final conditions. The heap geometry must
-                  be the same than the one registered at beginning, finally,
-                  integrity is checked.
+                  be the same than the one registered at beginning.
                 </value>
               </description>
               <tags>
@@ -2141,8 +2127,7 @@ test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
               </tags>
               <code>
                 <value><![CDATA[test_assert(chHeapStatus(&test_heap, &n, NULL) == 1, "heap fragmented");
-test_assert(n == sz, "size changed");
-test_assert(!chHeapIntegrityCheck(&test_heap), "integrity failure");]]></value>
+test_assert(n == sz, "size changed");]]></value>
               </code>
             </step>
           </steps>
