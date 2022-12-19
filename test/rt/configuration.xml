@@ -1323,10 +1323,10 @@ test_wait_threads();]]></value>
               <code>
                 <value><![CDATA[chSysLock();
 time = chVTGetSystemTimeX();
-msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(1000));
+msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(10));
 chSysUnlock();
-test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
-                        chTimeAddX(time, TIME_MS2I(1000) + CH_CFG_ST_TIMEDELTA + 1),
+test_assert_time_window(chTimeAddX(time, TIME_MS2I(10)),
+                        chTimeAddX(time, TIME_MS2I(10) + CH_CFG_ST_TIMEDELTA + 1),
                         "out of time window");
 test_assert(NULL == tr1, "not NULL");
 test_assert(MSG_TIMEOUT == msg, "wrong returned message");]]></value>
@@ -1879,7 +1879,7 @@ static CONDVAR_DECL(c1);
  *
  * @param[in] duration      CPU pulse duration in milliseconds
  */
-void test_cpu_pulse(unsigned duration) {
+void test_cpu_pulse(time_msecs_t duration) {
   systime_t start, end, now;
 
   start = chThdGetTicksX(chThdGetSelfX());
