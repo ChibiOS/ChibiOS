@@ -74,32 +74,15 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: STM32 DMA drivers now export an STM32_DMA_MAX_TRANSFER definition.
-- NEW: PAL events for RP2040 added.
 - NEW: Added a "waend" field to the thread structure in RT for debug
        convenience.
-- NEW: Removed obsolete sandbox code from ARMv7-M port. Now ARMv7-M-ALT is
-       the official port for use with sandboxes.
-- NEW: Reworked HAL MAC driver, now with callback support.
 - NEW: Added a para-virtualized HAL port for use in sandboxes.
 - NEW: Added a VIO subsystem to sandboxes supporting drivers
        para-virtualization, PAL and SIO supported so far.
 - NEW: Added and RT port for use in virtualized sandboxes.
 - NEW: Added full virtualization support to sandboxes with a virtual IRQ
        mechanism.
-- NEW: Fixed setting of SYSCLK when derived from divided HSI16
-- NEW: Mass change: Source code convention changed from CRLF to just CR (Unix).
-- NEW: Fixed some corned cases in ADC5, added ADC reset on start().
-- NEW: Added a "BufferedSIODriver" class that implements the behavior of the
-       legacy Serial driver on top of a SIO implementation (buffering, events
-       and all).
 - NEW: Added __CH_OWNEROF() macro to RT.
-- NEW; Now hal.h includes cc_portab.h by default making it mandatory.
-- NEW: Moved HAL serial error flags into asynchronous channels interface
-       definitions.
-- NEW: Reworked HAL SIO driver.
-- NEW: Non-proprietary LLVM build support.
-- NEW: Added palReadGroupLatch() to PAL driver.
 - NEW: Added a Posix-favored shell named "msh" (Mini Shell). The shell is able
        to run sub-apps inside the same sandbox. The shell can either be placed
        statically in flash or loaded dynamically in RAM.
@@ -109,10 +92,6 @@
 - NEW: SBs and VFS integration. Each SB can see its own VFS instance.
 - NEW: Added integration of LittleFS on top of our flash infrastructure.
 - NEW: Added a new MEM_IS_VALID_FUNCTION() macro to RT and NIL.
-- NEW: Added a centralized errors handler under /os/common/utils. It will
-       replace those in HAL and SB and will be shared among multiple subsystems.
-- NEW: Added a new OOP model under /os/common/utils. It will replace the
-       one in HAL and will be shared among multiple subsystems.
 - NEW: Changed SB configuration options names to be prefixed with SB_CFG_.
 - NEW: Added a new CH_CFG_HARDENING_LEVEL option to RT.
 - NEW: Added a chXXXDispose() function to all objects in NIL.
@@ -128,9 +107,6 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
-- NEW: Increased stacks size in RT test suite from 128 to 192. added an
-       option to override the stack size by defining THREADS_STACK_SIZE
-       in the makefile.
 - FIX: Fixed broken support for STM32 UART9 and USART10 (bug #1248)
        (backported to 21.11.3).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247)
