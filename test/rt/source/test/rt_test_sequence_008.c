@@ -67,7 +67,7 @@ static CONDVAR_DECL(c1);
  *
  * @param[in] duration      CPU pulse duration in milliseconds
  */
-void test_cpu_pulse(unsigned duration) {
+void test_cpu_pulse(time_msecs_t duration) {
   systime_t start, end, now;
 
   start = chThdGetTicksX(chThdGetSelfX());

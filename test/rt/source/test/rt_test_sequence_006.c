@@ -100,10 +100,10 @@ static void rt_test_006_001_execute(void) {
   {
     chSysLock();
     time = chVTGetSystemTimeX();
-    msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(1000));
+    msg = chThdSuspendTimeoutS(&tr1, TIME_MS2I(10));
     chSysUnlock();
-    test_assert_time_window(chTimeAddX(time, TIME_MS2I(1000)),
-                            chTimeAddX(time, TIME_MS2I(1000) + CH_CFG_ST_TIMEDELTA + 1),
+    test_assert_time_window(chTimeAddX(time, TIME_MS2I(10)),
+                            chTimeAddX(time, TIME_MS2I(10) + CH_CFG_ST_TIMEDELTA + 1),
                             "out of time window");
     test_assert(NULL == tr1, "not NULL");
     test_assert(MSG_TIMEOUT == msg, "wrong returned message");
