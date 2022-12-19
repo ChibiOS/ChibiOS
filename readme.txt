@@ -74,6 +74,27 @@
 *****************************************************************************
 
 *** 21.11.3 ***
+- NEW: STM32 DMA drivers now export an STM32_DMA_MAX_TRANSFER definition.
+- NEW: PAL events for RP2040 added.
+- NEW: Removed obsolete sandbox code from ARMv7-M port. Now ARMv7-M-ALT is
+       the official port for use with sandboxes.
+- NEW: Reworked HAL MAC driver, now with callback support.
+- NEW: Fixed setting of SYSCLK when derived from divided HSI16
+- NEW: Mass change: Source code convention changed from CRLF to just CR (Unix).
+- NEW: Fixed some corner cases in ADC5, added ADC reset on start().
+- NEW: Added a "BufferedSIODriver" class that implements the behavior of the
+       legacy Serial driver on top of a SIO implementation (buffering, events
+       and all).
+- NEW; Now hal.h includes cc_portab.h by default making it mandatory.
+- NEW: Moved HAL serial error flags into asynchronous channels interface
+       definitions.
+- NEW: Reworked HAL SIO driver.
+- NEW: Non-proprietary LLVM build support.
+- NEW: Added integration of LittleFS on top of our flash infrastructure.
+- NEW: Added a centralized errors handler under /os/common/utils. It will
+       replace those in HAL and SB and will be shared among multiple subsystems.
+- NEW: Added a new OOP model under /os/common/utils. It will replace the
+       one in HAL and will be shared among multiple subsystems.
 - NEW: Added EFL driver support for STM32F401/411.
 - FIX: Fixed broken support for STM32 UART9 and USART10 (bug #1248).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247).
@@ -84,6 +105,8 @@
 - FIX: Fixed HSI48 not enabled for STM32L496/​4A6 (bug #1242).
 - FIX: Fixed problem in STM32 gpt_lld_polled_delay() implementation (bug #1241).
 - FIX: Fixed invalid delay loop in STM32G0/WL ADCv5 driver (bug #1240).
+- FIX: Fixed STM32_MCOSEL setting problem (bug #1239).
+- FIX: Fixed problems with cache in STM32 SDMMC drivers (bug #1238).
 - FIX: Fixed missing clock enables for some GPIOS on some STM32L4s (bug #1237).
 - FIX: Fixed old bugs in serial driver header (bug #1236).
 - FIX: Fixed virtual timers lockup uder rare conditions (bug #1235).
