@@ -18,7 +18,7 @@
  * @file    hal_buffered_serial.h
  * @brief   Buffered Serial Driver macros and structures.
  *
- * @addtogroup BUFFERED_SERIAL
+ * @addtogroup HAL_BUFFERED_SERIAL
  * @{
  */
 

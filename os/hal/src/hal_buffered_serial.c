@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    hal_serial.c
- * @brief   Serial Driver code.
+ * @file    hal_buffered_serial.h
+ * @brief   Buffered Serial Driver code.
  *
- * @addtogroup SERIAL
+ * @addtogroup HAL_BUFFERED_SERIAL
  * @{
  */
 
