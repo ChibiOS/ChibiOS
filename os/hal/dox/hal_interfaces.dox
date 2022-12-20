@@ -55,6 +55,11 @@
  */
 
 /**
+ * @defgroup HAL_BUFFERED_SERIAL Buffered Serial Class
+ * @ingroup HAL_INTERFACES
+ */
+
+/**
  * @defgroup HAL_BUFFERED_STREAMS Buffered Streams Class
  * @ingroup HAL_INTERFACES
  */
