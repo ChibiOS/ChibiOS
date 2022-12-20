@@ -857,6 +857,7 @@ INPUT                  = ./src \
                          ../../../os/hal/src \
                          ../../../os/hal/include \
                          ../../../os/hal/lib/streams \
+                         ../../../os/hal/lib/complex/buffered_sio \
                          ../../../os/hal/lib/complex/mfs \
                          ../../../os/hal/lib/complex/serial_nor \
                          ../../../os/hal/templates \
