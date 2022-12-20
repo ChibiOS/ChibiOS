@@ -224,10 +224,10 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
   /* ADC setup.*/
   adcp->adc->SR    = 0;
-  adcp->adc->SMPR1 = grpp->smpr1 | ADC_SQR1_NUM_CH(grpp->num_channels);
+  adcp->adc->SMPR1 = grpp->smpr1;
   adcp->adc->SMPR2 = grpp->smpr2;
   adcp->adc->SMPR3 = grpp->smpr3;
-  adcp->adc->SQR1  = grpp->sqr1;
+  adcp->adc->SQR1  = grpp->sqr1 | ADC_SQR1_NUM_CH(grpp->num_channels);
   adcp->adc->SQR2  = grpp->sqr2;
   adcp->adc->SQR3  = grpp->sqr3;
   adcp->adc->SQR4  = grpp->sqr4;
