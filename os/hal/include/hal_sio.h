@@ -347,7 +347,7 @@ struct hal_sio_driver {
  * @brief   Clears flags from the enabled events flags mask.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] flags     enabled events mask to be cleared
+ * @param[in] mask      enabled events mask to be cleared
  *
  * @xclass
  */
@@ -527,7 +527,6 @@ struct hal_sio_driver {
  * @brief   Wakes up the TX-waiting thread.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] msg       the wake up message
  *
  * @notapi
  */
@@ -541,7 +540,6 @@ struct hal_sio_driver {
  * @brief   Wakes up the TXend-waiting thread.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] msg       the wake up message
  *
  * @notapi
  */
