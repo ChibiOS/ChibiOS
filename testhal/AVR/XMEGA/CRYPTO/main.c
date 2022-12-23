@@ -20,20 +20,20 @@
 
 BaseSequentialStream *chp = (BaseSequentialStream *) &SD1;
 
-  // Key to use during the Encryption.
+  /* Key to use during the Encryption. */
   uint8_t key[AES_BLOCK_SIZE]   = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                                     0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15};
-  // Data to encrypt.
+  /* Data to encrypt. */
   uint8_t data[AES_BLOCK_SIZE]  = { 0x08, 0x04, 0x02, 0x01, 0x08, 0x04, 0x02, 0x01,
                                     0x08, 0x04, 0x12, 0x11, 0x18, 0x14, 0x12, 0x11};
   uint8_t data_encrypted[AES_BLOCK_SIZE] = {0};
   uint8_t data_decrypted[AES_BLOCK_SIZE] = {0};
   cryerror_t res;
-  uint8_t tkey = 0; // Transient key
+  uint8_t tkey = 0; /* Transient key. */
 
 static const CRYConfig cryConfig = {
   FALSE,  /* No Auto start feature. */
-  FALSE   /* No XOR feature. */
+  FALSE   /* No XOR feature.        */
 };
 
 /**
@@ -70,6 +70,9 @@ int main(void) {
   halInit();
   chSysInit();
 
+  /*
+   * Turn off the LED.
+   */
   palClearPad(IOPORT5, PORTE_LED);
 
   /*
@@ -83,47 +86,57 @@ int main(void) {
    */
   sdStart(&SD1, NULL);
 
-  chprintf(chp, "\r\nChibiOS on XMEGA 128U4A.\r\n");
-  chprintf(chp, "This program is using trunk branch of the svn repo.\r\n");
-  chprintf(chp, "AES Encryption/Decryption testhal demo.\r\n");
-  chprintf(chp, "Example started...\r\n");
+  chprintf(chp, "\r\n");
+  chprintf(chp, "***********************************************\r\n");
+  chprintf(chp, "*** ChibiOS/RT testhal/AVR/XMEGA/CRYPTO.\r\n");
+  chprintf(chp, "*** Test data Encryption/Decryption.\r\n");
 
+  chprintf(chp, "--- Start Crypto driver.\r\n");
   cryStart(&CRYD1, &cryConfig);
 
+  chprintf(chp, "--- Load transient key for encrypt/decrypt.\r\n");
   res = cryLoadAESTransientKey(&CRYD1, 16, key);
 
+  chprintf(chp, "--- Start data encryption.\r\n");
   res = cryEncryptAES(&CRYD1, tkey, data, data_encrypted);
+
   if (res != CRY_NOERROR) {
-    chprintf(chp, "Encryption of data failed.\r\n");
+    chprintf(chp, "--- Encryption failed.\r\n");
     while (true) {
       chThdSleepMilliseconds(100);
     }
   }
   else {
-    chprintf(chp, "Encryption done.\r\n");
+    chprintf(chp, "--- Encryption done.\r\n");
   }
 
+  chprintf(chp, "--- Start data decryption.\r\n");
   res = cryDecryptAES(&CRYD1, tkey, data_encrypted, data_decrypted);
   if (res != CRY_NOERROR) {
-      chprintf(chp, "Decryption of data failed.\r\n");
+      chprintf(chp, "--- Decryption failed.\r\n");
     while (true) {
       chThdSleepMilliseconds(100);
     }
   }
   else {
-    chprintf(chp, "Decryption done.\r\n");
+    chprintf(chp, "--- Decryption done.\r\n");
   }
 
-  // Check if decrypted answer is equal to plaintext.
-	for (i = 0; i < AES_BLOCK_SIZE ; i++ ) {
-		if (data[i] != data_decrypted[i]) {
-			chprintf(chp, "Decrypted data is not equal to data.\r\n");
+  chprintf(chp, "--- Compare decrypted data to original data.\r\n");
+
+  /*
+   * Check if decrypted answer is equal to plaintext.
+   */
+  for (i = 0; i < AES_BLOCK_SIZE; i++) {
+    if (data[i] != data_decrypted[i]) {
+      chprintf(chp, "--- Decrypted data is different to original data.\r\n");
       while (true) {
         chThdSleepMilliseconds(100);
       }
-		}
-	}
-  chprintf(chp, "Example ends up every thing is ok.\r\n");
+    }
+  }
+
+  chprintf(chp, "--- Decrypted data is equal to original data.\r\n");
 
   /*
    * Starts the LED blinker thread.
