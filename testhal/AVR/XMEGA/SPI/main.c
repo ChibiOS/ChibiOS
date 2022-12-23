@@ -43,7 +43,7 @@ static const SPIConfig spiCfg = {
   spiCallback,            /* SPI callback.            */
   IOPORT2,                /* SPI chip select port.    */
   7,                      /* SPI chip select pad.     */
-  SPI_PRESCALER_DIV4_gc,  /* prescaler.               */
+  SPI_PRESCALER_DIV4_gc,  /* Prescaler.               */
   SPI_MODE_0_gc,          /* SPI clock mode.          */
   true,                   /* SPI role "master/slave". */
   false,                  /* SPI data order.          */
@@ -82,7 +82,6 @@ int main(void) {
    */
   halInit();
   chSysInit();
-
 
   palClearPad(IOPORT5, PORTE_LED);
 

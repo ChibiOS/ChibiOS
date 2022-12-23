@@ -31,6 +31,11 @@
 #define AVR_ADC_USE_ADC1                   FALSE
 
 /*
+ * I2C driver system settings.
+ */
+#define AVR_CRY_USE_CRY1                   FALSE
+
+/*
  * DAC driver system settings.
  */
 #define AVR_DAC_USE_DAC1                   TRUE
@@ -102,12 +107,12 @@
 #define AVR_SERIAL_USE_USART3              FALSE  /* USARTD0. */
 #define AVR_SERIAL_USE_USART4              FALSE  /* USARTD1. */
 #define AVR_SERIAL_USE_USART5              FALSE  /* USARTE0. */
-//TODO: Define the priority if the datasheet define this parameter.
-//#define AVR_UART_USART1_IRQ_PRIORITY      12
-//#define AVR_UART_USART2_IRQ_PRIORITY      12
-//#define AVR_UART_USART3_IRQ_PRIORITY      12
-//#define AVR_UART_USART4_IRQ_PRIORITY      12
-//#define AVR_UART_USART5_IRQ_PRIORITY      12
+/* TODO: Define the priority if the datasheet define this parameter. */
+/* #define AVR_UART_USART1_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART2_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART3_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART4_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART5_IRQ_PRIORITY      12 */
 
 /*
  * UART driver system settings.
@@ -117,19 +122,18 @@
 #define AVR_UART_USE_USART3              FALSE  /* USARTD0. */
 #define AVR_UART_USE_USART4              FALSE  /* USARTD1. */
 #define AVR_UART_USE_USART5              FALSE  /* USARTE0. */
-// TODO: Definen the DMA stream like bellow
-//#define AVR_UART_USART1_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5)
-//#define AVR_UART_USART2_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5)
-//#define AVR_UART_USART3_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5)
-//#define AVR_UART_USART4_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5)
-//#define AVR_UART_USART5_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5)
-//TODO: Define the priority if the datasheet define this parameter.
-//#define AVR_UART_USART1_IRQ_PRIORITY      12
-//#define AVR_UART_USART2_IRQ_PRIORITY      12
-//#define AVR_UART_USART3_IRQ_PRIORITY      12
-//#define AVR_UART_USART4_IRQ_PRIORITY      12
-//#define AVR_UART_USART5_IRQ_PRIORITY      12
-
+/* TODO: Define the DMA stream like bellow */
+/* #define AVR_UART_USART1_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5) */
+/* #define AVR_UART_USART2_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5) */
+/* #define AVR_UART_USART3_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5) */
+/* #define AVR_UART_USART4_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5) */
+/* #define AVR_UART_USART5_RX_DMA_STREAM     AVR_DMA_STREAM_ID(2, 5) */
+/* TODO: Define the priority if the datasheet define this parameter. */
+/* #define AVR_UART_USART1_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART2_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART3_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART4_IRQ_PRIORITY      12 */
+/* #define AVR_UART_USART5_IRQ_PRIORITY      12 */
 
 /*
  * I2C driver system settings.
