@@ -36,6 +36,13 @@
 #define MMC_ACMD41_RETRY                100U
 #define MMC_WAIT_DATA                   10000U
 
+/**
+ * @brief   Size of the buffer to be supplied to the driver.
+ * @note    The buffer is meant to be non-cacheable on platforms with
+ *          data cache.
+ */
+#define MMC_BUFFER_SIZE                 16U
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -126,18 +133,22 @@ struct mmc_spi_driver_vmt {
  */
 typedef struct {
   /**
-   * @brief Virtual Methods Table.
+   * @brief   Virtual Methods Table.
    */
   const struct mmc_spi_driver_vmt       *vmt;
   _mmcsd_block_device_data
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const mmc_spi_config_t                *config;
   /**
-   * @brief Addresses use blocks instead of bytes.
+   * @brief   Addresses use blocks instead of bytes.
    */
   bool                                  block_addresses;
+  /**
+   * @brief   Pointer to an un-cacheable buffer of size @p MMC_BUFFER_SIZE.
+   */
+  uint8_t                               *buffer;
 } mmc_spi_driver_t;
 
 /**
@@ -191,7 +202,7 @@ typedef mmc_spi_driver_t MMCDriver;
 extern "C" {
 #endif
   void mmcInit(void);
-  void mmcObjectInit(MMCDriver *mmcp);
+  void mmcObjectInit(MMCDriver *mmcp, uint8_t *buffer);
   msg_t mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
   bool mmcConnect(MMCDriver *mmcp);
