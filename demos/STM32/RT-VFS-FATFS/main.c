@@ -152,6 +152,7 @@ static ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 #if !HAL_USE_SDC
+static uint8_t __nocache_mmcbuf[MMC_BUFFER_SIZE];
 mmc_spi_driver_t MMCD1;
 
 /* MMC/SD over SPI driver configuration.*/
@@ -281,7 +282,7 @@ int main(void) {
   /* Activates the card insertion monitor.*/
   tmr_init(&PORTAB_SDCD1);
 #else
-  mmcObjectInit(&MMCD1);
+  mmcObjectInit(&MMCD1, __nocache_mmcbuf);
   mmcStart(&MMCD1, &mmccfg);
 
   /* Activates the card insertion monitor.*/
