@@ -51,7 +51,7 @@
 /*===========================================================================*/
 
 /* Making sure mcuconf.h setup is as expected.*/
-#if STM32_PCLK1 != 85000000/2
+#if STM32_PCLK1 != 85000000
 #error "unexpected PCLK1 frequency"
 #endif
 
