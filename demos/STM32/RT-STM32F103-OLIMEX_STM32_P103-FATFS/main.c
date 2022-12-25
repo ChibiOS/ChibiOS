@@ -216,6 +216,7 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 static thread_t *shelltp = NULL;
+static uint8_t mmcbuf[MMC_BUFFER_SIZE];
 MMCDriver MMCD1;
 
 /*
@@ -316,7 +317,7 @@ int main(void) {
    */
   palSetPadMode(IOPORT2, GPIOB_SPI2NSS, PAL_MODE_OUTPUT_PUSHPULL);
   palSetPad(IOPORT2, GPIOB_SPI2NSS);
-  mmcObjectInit(&MMCD1);
+  mmcObjectInit(&MMCD1, mmcbuf);
   mmcStart(&MMCD1, &mmccfg);
 
   /*
