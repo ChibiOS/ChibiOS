@@ -52,7 +52,7 @@
 /**
  * @brief   HAL version string.
  */
-#define CH_HAL_VERSION          "8.1.0"
+#define CH_HAL_VERSION          "8.4.0"
 
 /**
  * @brief   HAL version major number.
@@ -62,7 +62,7 @@
 /**
  * @brief   HAL version minor number.
  */
-#define CH_HAL_MINOR            0
+#define CH_HAL_MINOR            4
 
 /**
  * @brief   HAL version patch number.
@@ -132,7 +132,7 @@
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_HAL_CONF_VER_8_0_)
+#if !defined(_CHIBIOS_HAL_CONF_VER_8_4_)
 #error "obsolete or unknown configuration file"
 #endif
 

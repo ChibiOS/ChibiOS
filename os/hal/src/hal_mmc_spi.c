@@ -281,25 +281,26 @@ static uint8_t mmc_crc7(uint8_t crc, const uint8_t *buffer, size_t len) {
  * @notapi
  */
 static bool mmc_wait_idle(MMCDriver *mmcp) {
-  int i;
+  unsigned i;
 
-  for (i = 0; i < 16; i++) {
-    spiReceive(mmcp->config->spip, 1, mmcp->buffer);
+  for (i = 0U; i < 16U; i++) {
+    spiReceive(mmcp->config->spip, 1U, mmcp->buffer);
     if (mmcp->buffer[0] == 0xFFU) {
       return HAL_SUCCESS;
     }
   }
+
   /* Looks like it is a long wait.*/
-  while (true) { /* todo timeout */
-    spiReceive(mmcp->config->spip, 1, mmcp->buffer);
+  i = 0U;
+  do {
+    spiReceive(mmcp->config->spip, 1U, mmcp->buffer);
     if (mmcp->buffer[0] == 0xFFU) {
       return HAL_SUCCESS;
     }
-#if MMC_NICE_WAITING == TRUE
+
     /* Trying to be nice with the other threads.*/
     osalThreadSleepMilliseconds(1);
-#endif
-  }
+  } while (++i < MMC_IDLE_TIMEOUT_MS);
 
   return HAL_FAILED;
 }
@@ -499,31 +500,6 @@ static bool mmc_read_CxD(MMCDriver *mmcp, uint8_t cmd, uint32_t cxd[4]) {
   spiUnselect(mmcp->config->spip);
 
   return HAL_FAILED;
-}
-
-/**
- * @brief   Waits that the card reaches an idle state.
- *
- * @param[in] mmcp      pointer to the @p MMCDriver object
- *
- * @notapi
- */
-static void mmc_wait_sync(MMCDriver *mmcp) {
-
-  spiSelect(mmcp->config->spip);
-
-  while (true) {
-    spiReceive(mmcp->config->spip, 1, mmcp->buffer);
-    if (mmcp->buffer[0] == 0xFFU) {
-      break;
-    }
-#if MMC_NICE_WAITING == TRUE
-    /* Trying to be nice with the other threads.*/
-    osalThreadSleepMilliseconds(1);
-#endif
-  }
-
-  spiUnselect(mmcp->config->spip);
 }
 
 /*===========================================================================*/
@@ -766,6 +742,7 @@ failed:
  * @api
  */
 bool mmcDisconnect(MMCDriver *mmcp) {
+  bool result;
 
   osalDbgCheck(mmcp != NULL);
 
@@ -785,12 +762,16 @@ bool mmcDisconnect(MMCDriver *mmcp) {
 
   /* Wait for the pending write operations to complete.*/
   spiStart(mmcp->config->spip, mmcp->config->hscfg);
-  mmc_wait_sync(mmcp);
+  spiSelect(mmcp->config->spip);
+
+  result = mmc_wait_idle(mmcp);
+
+  spiUnselect(mmcp->config->spip);
   spiStop(mmcp->config->spip);
 
   mmcp->state = BLK_ACTIVE;
 
-  return HAL_SUCCESS;
+  return result;
 }
 
 /**
@@ -1050,6 +1031,7 @@ bool mmcStopSequentialWrite(MMCDriver *mmcp) {
  * @api
  */
 bool mmcSync(MMCDriver *mmcp) {
+  bool result;
 
   osalDbgCheck(mmcp != NULL);
 
@@ -1061,12 +1043,16 @@ bool mmcSync(MMCDriver *mmcp) {
   mmcp->state = BLK_SYNCING;
 
   spiStart(mmcp->config->spip, mmcp->config->hscfg);
-  mmc_wait_sync(mmcp);
+  spiSelect(mmcp->config->spip);
+
+  result = mmc_wait_idle(mmcp);
+
+  spiUnselect(mmcp->config->spip);
 
   /* Synchronization operation finished.*/
   mmcp->state = BLK_READY;
 
-  return HAL_SUCCESS;
+  return result;
 }
 
 /**
