@@ -850,7 +850,7 @@ usbepstatus_t usb_lld_get_status_out(USBDriver *usbp, usbep_t ep) {
 usbepstatus_t usb_lld_get_status_in(USBDriver *usbp, usbep_t ep) {
 
   (void)usbp;
-  switch (usbp->usb->CHEPR[ep] & USB_CHEP_TX_STTX_Msk  ) {
+  switch (usbp->usb->CHEPR[ep] & USB_CHEP_TX_STTX_Msk) {
   case USB_EP_TX_DIS:
     return EP_STATUS_DISABLED;
   case USB_EP_TX_STALL:
@@ -993,8 +993,8 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
 
   /* Makes sure to not put to NAK an endpoint that is already
      transferring.*/
-  if ((usbp->usb->CHEPR[ep] & USB_CHEP_TX_STTX_Msk  ) != USB_EP_TX_VALID) {
-    CHEPR_SET_STATTX(usbp, ep, USB_EP_TX_NAK );
+  if ((usbp->usb->CHEPR[ep] & USB_CHEP_TX_STTX_Msk) != USB_EP_TX_VALID) {
+    CHEPR_SET_STATTX(usbp, ep, USB_EP_TX_NAK);
   }
 }
 

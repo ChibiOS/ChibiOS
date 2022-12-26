@@ -792,7 +792,7 @@ void sd_lld_init(void) {
   nvicEnableVector(STM32_USART10_NUMBER, STM32_SERIAL_USART10_PRIORITY);
 #endif
 #endif
-  
+
 #if STM32_SERIAL_USE_LPUART1
   sdObjectInit(&LPSD1);
   iqObjectInit(&LPSD1.iqueue, sd_in_buflp1, sizeof sd_in_buflp1, NULL, &LPSD1);
