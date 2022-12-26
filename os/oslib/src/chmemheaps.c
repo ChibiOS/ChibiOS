@@ -428,7 +428,7 @@ bool chHeapIntegrityCheck(memory_heap_t *heapp) {
 
   /* Validating heap object.*/
   if (heapp->provider != NULL) {
-    if (!chMemIsAddressExecutableX(heapp->provider)) {
+    if (!chMemIsAddressExecutableX((const void *)heapp->provider)) {
       return true;
     }
   }
