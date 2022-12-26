@@ -8,7 +8,7 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
 
 *** ChibiOS 21.11.x highlights ****
 
-- New sandboxe sybsystem 2.0.
+- New sandboxes sybsystem 2.0.
 - FatFS support for lwIP HTTPD subsystem.
 - Improved HTTPD support in MAC demo.
 - Improved STM32 HAL.
