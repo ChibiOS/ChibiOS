@@ -54,6 +54,7 @@
 /*===========================================================================*/
 
 extern const MMCConfig portab_mmccfg;
+extern uint8_t mmcbuf[MMC_BUFFER_SIZE];
 extern MMCDriver MMCD1;
 
 #ifdef __cplusplus

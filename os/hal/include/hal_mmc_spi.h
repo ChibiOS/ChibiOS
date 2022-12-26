@@ -36,6 +36,13 @@
 #define MMC_ACMD41_RETRY                100U
 #define MMC_WAIT_DATA                   10000U
 
+/**
+ * @brief   Size of the buffer to be supplied to the driver.
+ * @note    The buffer is meant to be non-cacheable on platforms with
+ *          data cache.
+ */
+#define MMC_BUFFER_SIZE                 16U
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -45,15 +52,11 @@
  * @{
  */
 /**
- * @brief   Delays insertions.
- * @details If enabled this options inserts delays into the card waiting
- *          routines releasing some extra CPU time for the threads with
- *          lower priority, this may slow down the driver a bit however.
- *          This option is recommended also if the SPI driver does not
- *          use a DMA channel and heavily loads the CPU.
+ * @brief   Timeout before assuming a failure while waiting for card idle.
+ * #note    Time is in milliseconds.
  */
-#if !defined(MMC_NICE_WAITING) || defined(__DOXYGEN__)
-#define MMC_NICE_WAITING                TRUE
+#if !defined(MMC_IDLE_TIMEOUT_MS) || defined(__DOXYGEN__)
+#define MMC_IDLE_TIMEOUT_MS             1000
 #endif
 
 /**
@@ -126,18 +129,22 @@ struct mmc_spi_driver_vmt {
  */
 typedef struct {
   /**
-   * @brief Virtual Methods Table.
+   * @brief   Virtual Methods Table.
    */
   const struct mmc_spi_driver_vmt       *vmt;
   _mmcsd_block_device_data
   /**
-   * @brief Current configuration data.
+   * @brief   Current configuration data.
    */
   const mmc_spi_config_t                *config;
   /**
-   * @brief Addresses use blocks instead of bytes.
+   * @brief   Addresses use blocks instead of bytes.
    */
   bool                                  block_addresses;
+  /**
+   * @brief   Pointer to an un-cacheable buffer of size @p MMC_BUFFER_SIZE.
+   */
+  uint8_t                               *buffer;
 } mmc_spi_driver_t;
 
 /**
@@ -191,7 +198,7 @@ typedef mmc_spi_driver_t MMCDriver;
 extern "C" {
 #endif
   void mmcInit(void);
-  void mmcObjectInit(MMCDriver *mmcp);
+  void mmcObjectInit(MMCDriver *mmcp, uint8_t *buffer);
   msg_t mmcStart(MMCDriver *mmcp, const MMCConfig *config);
   void mmcStop(MMCDriver *mmcp);
   bool mmcConnect(MMCDriver *mmcp);

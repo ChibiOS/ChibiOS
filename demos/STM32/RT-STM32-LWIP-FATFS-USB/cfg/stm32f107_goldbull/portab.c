@@ -59,6 +59,7 @@ static const SPIConfig ls_spicfg = {
 
 /* MMC/SD over SPI driver configuration.*/
 MMCConfig const portab_mmccfg = {&SPID3, &ls_spicfg, &hs_spicfg};
+uint8_t mmcbuf[MMC_BUFFER_SIZE];
 MMCDriver MMCD1;
 
 /*===========================================================================*/

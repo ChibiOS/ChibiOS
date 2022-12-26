@@ -332,7 +332,7 @@ int main(void) {
    * Initializes the MMC driver to work with SPI3.
    */
   palSetPad(IOPORT3, GPIOC_SPI3_SD_CS);
-  mmcObjectInit(&MMCD1);
+  mmcObjectInit(&MMCD1, mmcbuf);
   mmcStart(&MMCD1, &portab_mmccfg);
 
   /*
