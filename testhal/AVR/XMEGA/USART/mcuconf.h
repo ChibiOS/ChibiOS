@@ -102,7 +102,7 @@
 /*
  * SERIAL driver system settings.
  */
-#define AVR_SERIAL_USE_USART1              TRUE   /* USARTC0. */
+#define AVR_SERIAL_USE_USART1              FALSE   /* USARTC0. */
 #define AVR_SERIAL_USE_USART2              FALSE  /* USARTC1. */
 #define AVR_SERIAL_USE_USART3              FALSE  /* USARTD0. */
 #define AVR_SERIAL_USE_USART4              FALSE  /* USARTD1. */
@@ -117,7 +117,7 @@
 /*
  * UART driver system settings.
  */
-#define AVR_UART_USE_USART1              FALSE  /* USARTC0. */
+#define AVR_UART_USE_USART1              TRUE  /* USARTC0. */
 #define AVR_UART_USE_USART2              FALSE  /* USARTC1. */
 #define AVR_UART_USE_USART3              FALSE  /* USARTD0. */
 #define AVR_UART_USE_USART4              FALSE  /* USARTD1. */
