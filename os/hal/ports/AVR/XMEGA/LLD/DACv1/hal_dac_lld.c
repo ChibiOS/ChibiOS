@@ -70,10 +70,10 @@ DACDriver DACD1;
  */
 static bool dac_is_channel_data_empty(DACDriver *dacp) {
 
-  bool dacStatus = (dacp->dacblock->STATUS & 
+  bool dacStatus = (dacp->dacblock->STATUS &
   (dacp->config->ch ? DAC_CH1DRE_bm : DAC_CH0DRE_bm));
 
-	return dacStatus;
+  return dacStatus;
 }
 
 /**
@@ -110,9 +110,9 @@ static void dac_set_trigger_mode(DACDriver *dacp) {
 static void dac_set_operation_mode(DACDriver *dacp) {
 
   if (dacp->config->om == DAC_OPMODE_SINGLE)
-    dacp->dacblock->CTRLB = (dacp->dacblock->CTRLB & ~DAC_CHSEL_gm ) | DAC_CHSEL_SINGLE_gc;
+    dacp->dacblock->CTRLB = (dacp->dacblock->CTRLB & ~DAC_CHSEL_gm) | DAC_CHSEL_SINGLE_gc;
   else
-    dacp->dacblock->CTRLB = (dacp->dacblock->CTRLB & ~DAC_CHSEL_gm ) | DAC_CHSEL_DUAL_gc;
+    dacp->dacblock->CTRLB = (dacp->dacblock->CTRLB & ~DAC_CHSEL_gm) | DAC_CHSEL_DUAL_gc;
 }
 
 /**
@@ -123,7 +123,7 @@ static void dac_set_operation_mode(DACDriver *dacp) {
  */
 static void dac_set_ajusted_mode(DACDriver *dacp) {
 
-  dacp->dacblock->CTRLC = (dacp->dacblock->CTRLC & ~(DAC_LEFTADJ_bm)) | 
+  dacp->dacblock->CTRLC = (dacp->dacblock->CTRLC & ~(DAC_LEFTADJ_bm)) |
   (dacp->config->da ? DAC_LEFTADJ_bm : 0x00);
 }
 

@@ -368,7 +368,7 @@ struct USBDriver {
  * @notapi
  */
 #define usb_lld_wakeup_host(usbp)                                           \
-  do{                                                                       \
+  do {                                                                       \
   } while (true)
 
 /*==========================================================================*/

@@ -72,7 +72,7 @@ static void wdg_enable(WDGDriver *wdgp) {
   uint8_t cfg = wdgp->wdg->CTRL | WDT_ENABLE_bm | WDT_CEN_bm;
   CCP = CCP_IOREG_gc;
   wdgp->wdg->CTRL = cfg;
-  
+
   while (wdg_get_sync_busy_flag(wdgp));
 }
 
@@ -101,23 +101,6 @@ static void wdg_disable(WDGDriver *wdgp) {
   CCP = CCP_IOREG_gc;
   wdgp->wdg->CTRL = cfg;
 }
-
-/**
- * @brief   Return status of window mode enable bit.
- *
- * @param[in] wdgp      pointer to the @p WDGDriver object
- * @return              The status of the watchdog module
- * @retval    true      The WD Window Mode is enabled.
- * @retval    false     The WD Eindow Mode is not enabled.
- */
-/*static bool wdg_is_window_mode_enabled(WDGDriver *wdgp) {
-
-  if (wdgp->wdg->WINCTRL & WDT_WEN_bm)
-    return true;
-  else
-    return false;
-}
-*/
 
 /**
  * @brief Enable watchdog window mode.

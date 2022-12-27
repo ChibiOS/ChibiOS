@@ -88,28 +88,6 @@ OSAL_IRQ_HANDLER(DMA_CH3_vect) {
 /* Driver exported functions.                                               */
 /*==========================================================================*/
 
-
-
-// Optional reload of source and destination addresses at the end of each:
-// - Burst
-// - Block
-// - Tansaction
-
-// Optional interrupt at the end of transaction
-
-// Optional connection to CRC generator for CRC on DMA data
-
-// void dma_lld_set_transfer_src()  /* source.                */
-// void dma_lld_set_transfer_dst()  /* Destination.           */
-// void dma_lld_set_transfer_trg()  /* Trigger.               */
-// void dma_lld_set_transfer_siz()  /* Size. (1, 2, 4 or 8).  */
-
-// void dma_lld_read()
-// void dma_lld_write()
-// void isr_on_transfer_complate()
-// void dma_lld_set_double_buffer_mode()
-// void isr_on_error_during_tranfer()
-
 /**
  * @brief   Enable DMA controller.
  *
@@ -174,12 +152,12 @@ void dmaChannelReset(DMA_CH_t *dmacp) {
 
 }
 
-void dmaEnableSingleShot(DMA_CH_t * dmacp ) {
+void dmaEnableSingleShot(DMA_CH_t * dmacp) {
 
   dmacp->CTRLA |= DMA_CH_SINGLE_bm;
 }
 
-void dmaDisableSingleShot(DMA_CH_t * dmacp ) {
+void dmaDisableSingleShot(DMA_CH_t * dmacp) {
 
   dmacp->CTRLA &= ~DMA_CH_SINGLE_bm;
 }

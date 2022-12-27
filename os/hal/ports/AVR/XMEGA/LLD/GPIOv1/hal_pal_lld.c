@@ -189,7 +189,6 @@ void _pal_lld_enablepadevent(ioportid_t     port,
   #else
     #error The selected port dont have an EXT INTx pin.
   */
-  //}
 }
 
 /**

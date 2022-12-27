@@ -219,8 +219,8 @@ static void usart_cfg_baudrate(UARTDriver *uartp) {
   /* BSCALE = 0. */
   #define BSCALE 0
   uint16_t br = get_bsel(uartp->config->speed);
-  uartp->usart->BAUDCTRLA =(uint8_t)br;
-  uartp->usart->BAUDCTRLB =(BSCALE << USART_BSCALE0_bp) | (br >> 8);
+  uartp->usart->BAUDCTRLA = (uint8_t)br;
+  uartp->usart->BAUDCTRLB = (BSCALE << USART_BSCALE0_bp) | (br >> 8);
 }
 
 /**
@@ -232,10 +232,8 @@ static void usart_cfg_baudrate(UARTDriver *uartp) {
 static void usart_stop(UARTDriver *uartp) {
 
   /* Stops RX and TX DMA channels. */
-  /*
-  dmaStreamDisable(uartp->dmarx);
-  dmaStreamDisable(uartp->dmatx);
-  */
+  /* DmaStreamDisable(uartp->dmarx); */
+  /* DmaStreamDisable(uartp->dmatx); */
 
   /* Stops USART operations. */
   uartp->usart->CTRLB &= ~(USART_RXEN_bm); /* Disable the USART receiver.    */
@@ -256,7 +254,7 @@ static void usart_start(UARTDriver *uartp) {
   /* Resetting eventual pending status flags. */
 
   /* Starting the receiver idle loop. */
-  /*uart_enter_rx_idle_loop(uartp);*/
+  /* Uart_enter_rx_idle_loop(uartp);  */
 
   usart_cfg_mpcm(uartp);  /* Set the multi processor communication mode.    */
   usart_cfg_clk2x(uartp); /* Set the USART speed (Normal/Double).           */
@@ -266,8 +264,8 @@ static void usart_start(UARTDriver *uartp) {
   usart_cfg_pmode(uartp); /* Set the parity mode.                           */
   usart_cfg_chsize(uartp);/* Set the character size.                        */
   usart_cfg_baudrate(uartp); /* Set the baud rate.                          */
-  uartp->usart->CTRLB |= (USART_RXEN_bm); /* enable the USART receiver.     */
-  uartp->usart->CTRLB |= (USART_TXEN_bm); /* enable the USART transmitter.  */
+  uartp->usart->CTRLB |= (USART_RXEN_bm); /* Enable the USART receiver.     */
+  uartp->usart->CTRLB |= (USART_TXEN_bm); /* Enable the USART transmitter.  */
 }
 
 /*==========================================================================*/
@@ -284,7 +282,7 @@ OSAL_IRQ_HANDLER(USARTC0_TXC_vect) {
 
   OSAL_IRQ_PROLOGUE();
 
-  /*serve_usart_irq(&UARTD1);*/
+  /* @TODO serve_usart_irq(&UARTD1);*/
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -298,7 +296,7 @@ OSAL_IRQ_HANDLER(USARTC0_RXC_vect) {
 
   OSAL_IRQ_PROLOGUE();
 
-  /*serve_usart_irq(&UARTD1);*/
+  /* @TODO serve_usart_irq(&UARTD1);*/
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -312,7 +310,7 @@ OSAL_IRQ_HANDLER(USARTC0_DRE_vect) {
 
   OSAL_IRQ_PROLOGUE();
 
-  /*serve_usart_irq(&UARTD1);*/
+  /* @TODO serve_usart_irq(&UARTD1);*/
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -333,8 +331,8 @@ void uart_lld_init(void) {
   /* Driver initialization. */
   uartObjectInit(&USART1D);
   USART1D.usart = &USARTC0;
-  /*USART1D.usart->CTRLC = 0;*/
-  /*USART1D.usart->BAUDCTRLA = 0;*/
+  /* USART1D.usart->CTRLC = 0;      */
+  /* USART1D.usart->BAUDCTRLA = 0;  */
 #endif
 
 #if AVR_UART_USE_USART2 == TRUE
@@ -457,7 +455,6 @@ void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
   (void)uartp;
   (void)n;
   (void)rxbuf;
-
 }
 
 /**

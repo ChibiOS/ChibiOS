@@ -233,8 +233,8 @@ static void usart_cfg_baudrate(SerialDriver *sdp, const SerialConfig *config) {
   /* BSCALE = 0. */
   #define BSCALE 0
   uint16_t br = get_bsel(config->speed);
-  sdp->usart->BAUDCTRLA =(uint8_t)br;
-  sdp->usart->BAUDCTRLB =(BSCALE << USART_BSCALE0_bp) | (br >> 8);
+  sdp->usart->BAUDCTRLA = (uint8_t)br;
+  sdp->usart->BAUDCTRLB = (BSCALE << USART_BSCALE0_bp) | (br >> 8);
 }
 
 /**
@@ -263,7 +263,7 @@ static void usart_start(SerialDriver *sdp, const SerialConfig *config) {
   /* Resetting eventual pending status flags. */
 
   /* Starting the receiver idle loop. */
-  /*uart_enter_rx_idle_loop(uartp);*/
+  /* Uart_enter_rx_idle_loop(uartp);  */
 
   usart_cfg_mpcm(sdp, config);
   usart_cfg_clk2x(sdp, config);

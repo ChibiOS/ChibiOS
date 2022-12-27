@@ -249,7 +249,7 @@ static void usb_fifo_write(USBDriver *usbp, usbep_t ep, size_t n) {
 
   if (n > epcp->in_maxsize)
     n = epcp->in_maxsize;
-  /* i is number of bytes remaining to transmit minus 1 (to handle 256b case). */
+  /* I is number of bytes remaining to transmit minus 1 (to handle 256b case). */
   uint8_t i = n - 1;
 
   /* Must lock for entire operation to ensure nothing changes the ENUM value. */
@@ -271,7 +271,7 @@ static void usb_fifo_read(USBDriver *usbp, usbep_t ep, size_t n) {
     return;
   if (n > epcp->out_maxsize)
     n = epcp->out_maxsize;
-  /* i is number of bytes remaining to receive minus 1 (to handle 256b case). */
+  /* I is number of bytes remaining to receive minus 1 (to handle 256b case). */
   uint8_t i = n - 1;
 
   /* Must lock for entire operation to ensure nothing changes the ENUM value. */
@@ -426,7 +426,7 @@ void usb_lld_start(USBDriver *usbp) {
       /* Reset and disable all endpoints. */
       UERST = 0x7f;
       UERST = 0;
-      for (i = 0; i < USB_MAX_ENDPOINTS; ++i){
+      for (i = 0; i < USB_MAX_ENDPOINTS; ++i) {
         UENUM   = i;
         UEIENX  = 0;
         UEINTX  = 0;

@@ -39,12 +39,12 @@
 /* Driver exported variables.                                               */
 /*==========================================================================*/
 
-/** @brief USART1 UART driver identifier.*/
+/** @brief USART1 UART driver identifier. */
 #if AVR_UART_USE_USART1 || defined(__DOXYGEN__)
 UARTDriver UARTD1;
 #endif
 
-/** @brief USART2 UART driver identifier.*/
+/** @brief USART2 UART driver identifier. */
 #if AVR_UART_USE_USART2 || defined(__DOXYGEN__)
 UARTDriver UARTD2;
 #endif
@@ -78,7 +78,7 @@ static void usart_stop(UARTDriver *uartp) {
  */
 static void usart_start(UARTDriver *uartp) {
 
-  /* Defensive programming, starting from a clean state.*/
+  /* Defensive programming, starting from a clean state.  */
   usart_stop(uartp);
 
 #if AVR_UART_USE_USART1
@@ -192,10 +192,10 @@ void uart_lld_stop(UARTDriver *uartp) {
  * @notapi
  */
 void uart_lld_start_send(UARTDriver *uartp, size_t n, const uint8_t *txbuf) {
- 
+
 #if AVR_UART_USE_USART1
   if (&UARTD1  == uartp) {
-    /* Starting transfer.*/
+    /* Starting transfer. */
     while (n--) {
       while (LINSIR & (1 << LBUSY));
       LINDAT  = *txbuf;
@@ -218,7 +218,7 @@ void uart_lld_start_send(UARTDriver *uartp, size_t n, const uint8_t *txbuf) {
  */
 void uart_lld_start_receive(UARTDriver *uartp, size_t n, void *rxbuf) {
 
-  /* Stopping previous activity (idle state).*/
+  /* Stopping previous activity (idle state). */
   /* TODO: Implement  this function. */
 }
 

@@ -196,7 +196,7 @@ cryerror_t cry_lld_aes_loadkey(CRYDriver        *cryp,
   (void)cryp;
 
   if (size != AES_BLOCK_SIZE) {
-    return CRY_ERR_INV_KEY_SIZE; /* invalid size error code. */
+    return CRY_ERR_INV_KEY_SIZE; /* Invalid size error code. */
   }
 
   /* Load the Key into the AES key memory. */
@@ -249,14 +249,14 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver      *cryp,
   aes_lld_start();
 
   /* Wait the Encryption to finish or an error to occurs. */
-  do{
+  do {
   }
   while ((AES.STATUS & (AES_SRIF_bm|AES_ERROR_bm)) == 0);
 
   /* Check error. */
-  if((AES.STATUS & AES_ERROR_bm) == 0) {
+  if ((AES.STATUS & AES_ERROR_bm) == 0) {
     /* Store the result of the encryption. */
-    for(i = 0; i < AES_BLOCK_SIZE; i++) {
+    for (i = 0; i < AES_BLOCK_SIZE; i++) {
       dest[i] = AES.STATE;
     }
   }

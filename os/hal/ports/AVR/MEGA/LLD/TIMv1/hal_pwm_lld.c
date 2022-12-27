@@ -53,7 +53,7 @@ typedef struct {
   volatile uint16_t *icr;
 } timer_registers_t;
 
-static timer_registers_t regs_table[]=
+static timer_registers_t regs_table[] =
 {
 #if AVR_PWM_USE_TIM1 || defined(__DOXYGEN__)
 #if defined(OCR1C)
@@ -369,7 +369,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
          1, to keep compatibility with old code. */
       const uint8_t log_ratio_timer2[] = {0, 3, 5, 6, 7, 8, 10};
       uint8_t n;
-      for (n=0; n<sizeof(log_ratio_timer2)/sizeof(uint8_t); n++) {
+      for (n = 0; n < sizeof(log_ratio_timer2)/sizeof(uint8_t); n++) {
         if (pwmp->config->frequency == (F_CPU >> log_ratio_timer2[n])) {
               cs_value = n + 1;
               break;
@@ -395,7 +395,7 @@ void pwm_lld_start(PWMDriver *pwmp) {
        keep compatibility with old code. */
     const uint8_t log_ratio_timer1[] = {0, 3, 6, 8, 10};
     uint8_t n;
-    for (n=0; n<sizeof(log_ratio_timer1)/sizeof(uint8_t); n++) {
+    for (n = 0; n < sizeof(log_ratio_timer1)/sizeof(uint8_t); n++) {
       if (pwmp->config->frequency == (F_CPU >> log_ratio_timer1[n])) {
         cs_value = n + 1;
         break;

@@ -55,7 +55,7 @@
 /**
  * @brief   Size of one block data, always 128-bits (16 bytes).
  */
-#define AES_BLOCK_SIZE	16
+#define AES_BLOCK_SIZE  16
 
 /*==========================================================================*/
 /* Driver pre-compile time settings.                                        */
@@ -65,6 +65,7 @@
  * @name    AVR configuration options
  * @{
  */
+
 /**
  * @brief   CRY1 driver enable switch.
  * @details If set to @p TRUE the support for CRY1 is included.
@@ -98,8 +99,8 @@ typedef struct CRYDriver CRYDriver;
  * @note    It could be empty on some architectures.
  */
 typedef struct {
-  bool                      autof;  // Auto start feature
-  bool                      xorf;   // XOR feature
+  bool                      autof;  /* Auto start feature.  */
+  bool                      xorf;   /* XOR feature.         */
 } CRYConfig;
 
 /**

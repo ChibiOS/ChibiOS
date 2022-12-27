@@ -50,7 +50,7 @@ SerialDriver SD1;
     #define AVR_SD1_TX_VECT USART0_UDRE_vect
   #else
     #error "Cannot find USART to use for SD1"
-  #endif 
+  #endif
 #endif /* AVR_SERIAL_USE_USART0 */
 
 /**
@@ -160,7 +160,7 @@ static void usart0_init(const SerialConfig *config) {
   default:
     ucsr0c = (1 << UCSZ00) | (1 << UCSZ01);
   }
-  
+
 #if defined(__AVR_ATmega162__)
   UCSR0C = (1 << URSEL0) | ucsr0c;
 #else
@@ -205,7 +205,7 @@ static void usart1_init(const SerialConfig *config) {
   UCSR1B = (1 << RXEN1) | (1 << TXEN1) | (1 << RXCIE1);
   switch (config->sc_bits_per_char) {
   case USART_CHAR_SIZE_5:
-	ucsr1c = 0;
+  ucsr1c = 0;
     break;
   case USART_CHAR_SIZE_6:
     ucsr1c = (1 << UCSZ10);
@@ -221,7 +221,7 @@ static void usart1_init(const SerialConfig *config) {
   default:
     ucsr1c = (1 << UCSZ10) | (1 << UCSZ11);
   }
-  
+
 #if defined(__AVR_ATmega162__)
   UCSR1C = (1 << URSEL1) | ucsr1c;
 #else

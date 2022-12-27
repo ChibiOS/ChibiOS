@@ -112,7 +112,6 @@
   size_t                    exbytes;                                         \
   size_t                    exidx;
 
-
 /**
  * @brief   Low level fields of the SPI configuration structure.
  */

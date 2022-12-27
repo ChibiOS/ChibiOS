@@ -170,7 +170,7 @@ typedef uint8_t iopadid_t;
 typedef struct {
   ioportid_t  port; /* Line port identifier.  */
   iopadid_t   pad;  /* Line pad identifier.   */
-}ioline_t;
+} ioline_t;
 
 /**
  * @brief   Type of an event mode.
@@ -260,7 +260,7 @@ typedef uint8_t ioeventmode_t;
 
 /*==========================================================================*/
 /* Implementation, some of the following macros could be implemented as     */
-/* functions, if so please put them in hal_pal_lld.c.                       */
+/* Functions, if so please put them in hal_pal_lld.c.                       */
 /*==========================================================================*/
 
 /**

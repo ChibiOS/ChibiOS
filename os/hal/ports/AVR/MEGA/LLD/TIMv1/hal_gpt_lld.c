@@ -93,9 +93,12 @@ GPTDriver GPTD5;
 /*==========================================================================*/
 
 static uint16_t ratio_base[] = { 1024, 256, 64, 8, 1 };
-static uint8_t  clock_source_base[]= { 5, 4, 3, 2, 1 };
-//static uint16_t ratio_extended[] = { 1024, 256, 128, 64, 32, 8, 1 };
-//static uint8_t  clock_source_extended[] = { 7, 6, 5, 4, 3, 2, 1 };
+static uint8_t  clock_source_base[] = { 5, 4, 3, 2, 1 };
+
+/* Extended tables.
+ * static uint16_t ratio_extended[] = { 1024, 256, 128, 64, 32, 8, 1 };
+ * static uint8_t  clock_source_extended[] = { 7, 6, 5, 4, 3, 2, 1 };
+ */
 
 /*==========================================================================*/
 /* Driver local functions.                                                  */
@@ -334,7 +337,7 @@ void gpt_lld_start(GPTDriver *gptp) {
  */
 void gpt_lld_stop(GPTDriver *gptp) {
 
-  /* nothing to be done */
+  /* Nothing to be done */
   if (gptp->state == GPT_READY) {
     /* Clock de-activation.*/
   }
@@ -393,7 +396,7 @@ void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
 
   gptp->callback = gpt_lld_dummy_callback;
   gpt_lld_start_timer(gptp, interval);
-  //FIX
+  /* FIX */
   while (gptp->state != GPT_READY) {}
 }
 

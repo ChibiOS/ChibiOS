@@ -35,7 +35,8 @@
  * @name SPI Configuration Register
  * @{
  */
-/*#define SPI_CR_SPIE              (1 << SPIE)
+/*
+#define SPI_CR_SPIE              (1 << SPIE)
 
 #define SPI_CR_SPE               (1 << SPE)
 
@@ -54,7 +55,6 @@
 #define SPI_CR_SCK_FOSC_64       (2 << SPR0)
 #define SPI_CR_SCK_FOSC_128      (3 << SPR0)
 */
-
 
 #define SPI_SPEED_SIMPLE      0
 #define SPI_SPEED_DOUBLE      1
@@ -141,7 +141,6 @@
   size_t                    exbytes;                                         \
   size_t                    exidx;
 
-
 /**
  * @brief   Low level fields of the SPI configuration structure.
  */
@@ -223,11 +222,15 @@ extern "C" {
 void spi_lld_abort(SPIDriver *spip);
 #endif
 
-//#if AVR_SPI_USE_16BIT_POLLED_EXCHANGE
-//  uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
-//#else
+/*
+  #if AVR_SPI_USE_16BIT_POLLED_EXCHANGE
+    uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
+  #else
+*/
   uint8_t spi_lld_polled_exchange(SPIDriver *spip, uint8_t frame);
-//#endif
+/*
+  #endif
+*/
 
 #ifdef __cplusplus
 }
