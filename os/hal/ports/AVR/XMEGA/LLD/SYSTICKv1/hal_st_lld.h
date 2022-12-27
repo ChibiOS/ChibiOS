@@ -97,7 +97,7 @@ static inline systime_t st_lld_get_counter(void) {
  */
 static inline void st_lld_start_alarm(systime_t time) {
 
-  TCC0.INTCTRLA  = ( TCC0.INTCTRLA & ~TC0_OVFINTLVL_gm ) | TC_OVFINTLVL_MED_gc;
+  TCC0.INTCTRLA  = (TCC0.INTCTRLA & ~TC0_OVFINTLVL_gm) | TC_OVFINTLVL_MED_gc;
   PMIC.CTRL |= PMIC_MEDLVLEN_bm;
 }
 

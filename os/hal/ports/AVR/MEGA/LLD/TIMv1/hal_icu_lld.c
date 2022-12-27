@@ -40,7 +40,7 @@ typedef struct {
   volatile uint8_t  *timsk;
 } icu_registers_t;
 
-static icu_registers_t regs_table[]=
+static icu_registers_t regs_table[] =
 {
 #if AVR_ICU_USE_TIM1 || defined(__DOXYGEN__)
   {&TCCR1A, &TCCR1B, &TCNT1, &TIMSK1},

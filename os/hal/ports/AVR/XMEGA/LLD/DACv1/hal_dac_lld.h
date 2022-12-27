@@ -181,7 +181,7 @@ typedef struct {
  */
 typedef struct {
   dacchan_t                 ch; /* DAC channel id.                          */
-  dactrigmode_t             tm; /* register write/event trigger.            */
+  dactrigmode_t             tm; /* Register write/event trigger.            */
   dacopmode_t               om; /* DAC operation mode.                      */
   dacajustmode_t            da; /* DAC (left/rigth) ajustement.             */
   dacrefsel_t               vr; /* DAC voltage reference.                   */

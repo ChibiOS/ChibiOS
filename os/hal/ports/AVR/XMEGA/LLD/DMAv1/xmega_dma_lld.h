@@ -41,7 +41,6 @@
 /* Driver data structures and types.                                        */
 /*==========================================================================*/
 
-
 /**
  * @brief   Programmable channel priority
  */

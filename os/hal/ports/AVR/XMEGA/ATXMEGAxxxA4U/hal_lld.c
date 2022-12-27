@@ -52,10 +52,10 @@
 void hal_lld_init(void) {
 
   OSC_CTRL |= OSC_RC32MEN_bm;             /* Setup 32Mhz crystal.           */
-     
+
   while(!(OSC_STATUS & OSC_RC32MRDY_bm)); /* Wait the systeme clock to
                                               stabilize.                    */
-     
+
   CCP = CCP_IOREG_gc;                     /* Trigger protection mechanism.  */
   CLK_CTRL = CLK_SCLKSEL_RC32M_gc;        /* Enable internal  32Mhz crystal.*/
 }

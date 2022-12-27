@@ -106,7 +106,7 @@ static inline void st_lld_start_alarm(systime_t time) {
   /* Reset pending. */
   TIFR_REG = _BV(OCF1A);
 
-  /* enable interrupt */
+  /* Enable interrupt */
   TIMSK_REG = _BV(OCIE1A);
 }
 

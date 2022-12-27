@@ -157,7 +157,6 @@ struct ICUDriver {
 /* Driver macros.                                                           */
 /*==========================================================================*/
 
-
 /**
  * @brief   Returns the width of the latest pulse.
  * @details The pulse width is defined as number of ticks between the start

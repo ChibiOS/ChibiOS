@@ -68,7 +68,7 @@ static size_t getAdcChannelNumberFromMask(uint8_t mask,
     mask >>= 1;
   }
 
-  /* error, should never reach this line */
+  /* Error, should never reach this line */
   return -1;
 }
 
@@ -109,7 +109,7 @@ OSAL_IRQ_HANDLER(ADC_vect) {
     _adc_isr_full_code(&ADCD1);
   }
   else {
-    setAdcChannel(getAdcChannelNumberFromMask(ADCD1.grpp->channelsMask,currentChannel));
+    setAdcChannel(getAdcChannelNumberFromMask(ADCD1.grpp->channelsMask, currentChannel));
     ADCSRA |= 1 << ADSC;
   }
 
@@ -132,7 +132,7 @@ void adc_lld_init(void) {
   /* Prescaler 128, only value possible at 20Mhz, interrupt. */
   ADCSRA = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) | (1 << ADIE);
 
-  /* uso aref, only valid for arduino. arduino ha aref collegato. */
+  /* Uso aref, only valid for arduino. arduino ha aref collegato. */
   ADMUX = (0 << REFS1) | (0 << REFS0);
 }
 
@@ -179,9 +179,9 @@ void adc_lld_stop(ADCDriver *adcp) {
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
 
-  adcp->currentBufferPosition=0;
+  adcp->currentBufferPosition = 0;
 
-  setAdcChannel(getAdcChannelNumberFromMask(adcp->grpp->channelsMask,0));
+  setAdcChannel(getAdcChannelNumberFromMask(adcp->grpp->channelsMask, 0));
   ADCSRA |= 1 << ADSC;
 }
 
