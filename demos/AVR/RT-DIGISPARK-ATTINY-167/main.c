@@ -39,7 +39,6 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("Blinker");
   while (true) {
     palTogglePad(IOPORT2, PORTB_LED1);
-    uartStartSend(&UARTD1, 30, (const void *) "ChibiOS PORT on ATtiny-167!.\n\r");
     chThdSleepMilliseconds(1000);
   }
 }
