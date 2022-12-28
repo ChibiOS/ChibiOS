@@ -16,7 +16,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "shell.h"
 #include "usbcfg.h"
 
 /*
@@ -32,13 +31,6 @@ static THD_FUNCTION(Thread1, arg) {
     chThdSleepMilliseconds(1000);
   }
 }
-
-#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(512)
-
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
-  NULL
-};
 
 /*
  * Application entry point.
@@ -57,18 +49,6 @@ int main(void) {
   palClearPad(IOPORT4, BOARD_LED1);
 
   /*
-   * Shell manager initialization.
-   */
-  shellInit();
-
-  /* Initializes a serial-over-USB CDC driver. */
-  sduObjectInit(&SDU1);
-  sduStart(&SDU1, &serusbcfg);
-
-  /* Initialize USB */
-  usbStart(serusbcfg.usbp, &usbcfg);
-
-  /*
    * Starts the LED blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -77,12 +57,6 @@ int main(void) {
    * Normal main() thread activity.
    */
   while (true) {
-    if (SDU1.config->usbp->state == USB_ACTIVE) {
-      thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                              "shell", NORMALPRIO + 1,
-                                              shellThread, (void *)&shell_cfg1);
-      chThdWait(shelltp);               /* Waiting termination.             */
-    }
     chThdSleepMilliseconds(1000);
   }
 }
