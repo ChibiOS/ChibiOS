@@ -125,8 +125,8 @@
        (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed invalid delay loop in STM32G0/WL ADCv5 driver (bug #1240)
        (backported to 20.3.5)(backported to 21.11.3).
-- FIX: Fixed STM32_MCOSEL setting problem (bug #1239)(***********TODO*********** backported to 21.11.3).
-- FIX: Fixed problems with cache in STM32 SDMMC drivers (bug #1238)(***********TODO*********** backported to 21.11.3).
+- FIX: Fixed STM32_MCOSEL setting problem (bug #1239).
+- FIX: Fixed problems with cache in STM32 SDMMC drivers (bug #1238).
 - FIX: Fixed missing clock enables for some GPIOS on some STM32L4s (bug #1237)
        (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed old bugs in serial driver header (bug #1236)
@@ -135,7 +135,7 @@
        (backported to 20.3.5)(backported to 21.11.3).
 - FIX: Fixed STM32 RTCv2 locks for a second (bug #1234)
        (backported to 20.3.5)(backported to 21.11.3).
-- FIX: Fixed CAN support broken on STM32F413 (bug #1232)(***********TODO*********** backported to 21.11.3).
+- FIX: Fixed CAN support broken on STM32F413 (bug #1232).
 - FIX: Re-opened and fixed bug #1100
        (backported to 20.3.5)(backported to 21.11.2).
 - FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232)
