@@ -18,11 +18,11 @@
  * @file    oop_synchronized_object.h
  * @brief   Base class for objects supporting synchronization.
  * @details This header defines a base class for classes requiring a
- *          synchronization mechanism,
+ *          synchronization mechanism.
  *
  * @addtogroup OOP_SYNCHRONIZED_OBJECT
  * @details Base class for objects that require a synchronization mechanism.
- *          This class extends @p synchronized_object_c class.
+ *          This class extends @p base_object_c class.
  * @{
  */
 
@@ -42,13 +42,13 @@ typedef struct synchronized_object synchronized_object_c;
  * @note    This object defines no methods.
  */
 #define __synchronized_object_methods                                       \
-  __referenced_object_methods
+    __base_object_methods
 
 /**
  * @brief   @p synchronized_object_c specific data.
  */
 #define __synchronized_object_data                                          \
-  __referenced_object_data                                                  \
+    __base_object_data                                                      \
   mutex_t                                   mutex;
 
 
@@ -86,7 +86,7 @@ CC_FORCE_INLINE
 static inline void *__synchronized_object_objinit_impl(void *ip, const void *vmt) {
   synchronized_object_c *objp = (synchronized_object_c *)ip;
 
-  __referenced_object_objinit_impl(ip, vmt);
+  __base_object_objinit_impl(ip, vmt);
   osalMutexObjectInit(&objp->mutex);
 
   return ip;
@@ -101,7 +101,7 @@ static inline void *__synchronized_object_objinit_impl(void *ip, const void *vmt
 CC_FORCE_INLINE
 static inline void __synchronized_object_dispose_impl(void *ip) {
 
-  __referenced_object_dispose_impl(ip);
+  __base_object_dispose_impl(ip);
   /* Nothing.*/
   /* TODO add RT objects disposing when available.*/
 }

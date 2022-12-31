@@ -23,6 +23,7 @@
  * @addtogroup OOP_REFERENCED_OBJECT
  * @details Base class for objects that implement a reference counter and
  *          are disposed when the number of references reaches zero.
+ *          This class extends @p base_object_c class.
  * @{
  */
 
