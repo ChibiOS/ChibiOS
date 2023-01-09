@@ -1,0 +1,16 @@
+environments:
+  default:
+    debugTool:
+      name: "atmel-ice"
+
+    target:
+      name: "atxmega128a4u"
+      physicalInterface: "pdi"
+
+    debugServer:
+      name: "avr-gdb-rsp"
+      ipAddress: "127.0.0.1"
+      port: 1442
+
+insight:
+  enabled: true
