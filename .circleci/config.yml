@@ -17,10 +17,28 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
-
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.7.15
+    steps:
+      - checkout
+      - run:
+          name: Install apt packages
+          command: 'sudo apt install p7zip-full gcc-arm-none-eabi binutils-arm-none-eabi'
+      - run:
+          name: Build Demo
+          command: |
+            cd ext
+            7za x fatfs-0.13c_patched.7z
+            cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
+            make
+      - store_artifacts:
+          path: ./demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB/build/ch.elf
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
     jobs:
       - say-hello
+      - build
