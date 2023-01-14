@@ -29,7 +29,7 @@ jobs:
           name: Build Demo
           command: |
             cd ext
-            7za x fatfs-0.13c_patched.7z
+            7za x fatfs-0.14b_patched.7z
             cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
             make
       - store_artifacts:
