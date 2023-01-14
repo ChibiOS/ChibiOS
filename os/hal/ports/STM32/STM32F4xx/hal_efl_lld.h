@@ -69,7 +69,7 @@
 #define STM32_FLASH2_SECTORS_TOTAL          12
 
 #elif defined(STM32F401xx) || defined(STM32F411xx) ||                         \
-    defined(__DOXYGEN__)
+		defined(STM32F446xx) || defined(__DOXYGEN__)
 
 /* Flash size register. */
 #define STM32_FLASH_SIZE_REGISTER           0x1FFF7A22
