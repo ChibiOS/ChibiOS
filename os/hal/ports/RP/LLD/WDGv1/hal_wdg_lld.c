@@ -44,6 +44,26 @@ WDGDriver WDGD1;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief Calculates and sets the RP's watchdog LOAD register.
+ *
+ * @notapi
+ */
+static void set_wdg_counter(void) {
+
+  /* Set the time. */
+  uint32_t time = wdgp->config->rlr;
+
+  /* Due to a silicon bug (see errata RP2040-E1) WDG decrements at each edge.*/
+  time = ((time == 0U) ? 50 : time) * 2 * 1000;
+
+  /* Set ceiling if greater than count capability.*/
+  time = (time > WATCHDOG_CTRL_TIME) ? WATCHDOG_CTRL_TIME : time;
+
+  /* Set the interval.*/
+  wdgp->wdg->LOAD = time;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -78,17 +98,10 @@ void wdg_lld_init(void) {
  */
 void wdg_lld_start(WDGDriver *wdgp) {
 
-  /* Set the time. */
-  uint32_t time = wdgp->config->rlr;
+  /* Set the watchdog counter.*/
+  set_wdg_counter();
 
-  /* Due to a silicon bug (see errata RP2040-E1) WDG decrements at each edge. */
-  time = ((time == 0U) ? 50 : time) * 2 * 1000;
-
-  /* Set ceiling if greater than count capability. */
-  time = (time > WATCHDOG_CTRL_TIME) ? WATCHDOG_CTRL_TIME : time;
-
-  /* Set the initial interval, resets, control bits and enable WDG. */
-  wdgp->wdg->LOAD = time;
+  /* Reset, control bits and enable WDG.*/
   //PSM_SET->WDSEL = PSM_ANY_PROC1 | PSM_ANY_PROC0;
   wdgp->wdg->CTRL = WATCHDOG_CTRL_PAUSE_DBG0 |
                     WATCHDOG_CTRL_PAUSE_DBG1 |
@@ -117,7 +130,7 @@ void wdg_lld_stop(WDGDriver *wdgp) {
  */
 void wdg_lld_reset(WDGDriver * wdgp) {
 
-  wdgp->wdg->LOAD = wdgp->config->rlr;
+  set_wdg_counter();
 }
 
 #endif /* HAL_USE_WDG */
