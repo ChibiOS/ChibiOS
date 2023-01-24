@@ -49,7 +49,7 @@ WDGDriver WDGD1;
  *
  * @notapi
  */
-static void set_wdg_counter(void) {
+static void set_wdg_counter(WDGDriver *wdgp) {
 
   /* Set the time. */
   uint32_t time = wdgp->config->rlr;
@@ -99,13 +99,29 @@ void wdg_lld_init(void) {
 void wdg_lld_start(WDGDriver *wdgp) {
 
   /* Set the watchdog counter.*/
-  set_wdg_counter();
+  set_wdg_counter(wdgp);
 
-  /* Reset, control bits and enable WDG.*/
-  //PSM_SET->WDSEL = PSM_ANY_PROC1 | PSM_ANY_PROC0;
-  wdgp->wdg->CTRL = WATCHDOG_CTRL_PAUSE_DBG0 |
-                    WATCHDOG_CTRL_PAUSE_DBG1 |
-                    WATCHDOG_CTRL_PAUSE_JTAG |
+  /* When watchdog fires reset everything except ROSC and XOS.*/
+  PSM->WDSEL =  PSM_ANY_PROC1                 |
+                PSM_ANY_PROC0                 |
+                PSM_ANY_SIO                   |
+                PSM_ANY_VREG_AND_CHIP_RESET   |
+                PSM_ANY_XIP                   |
+                PSM_ANY_SRAM5                 |
+                PSM_ANY_SRAM4                 |
+                PSM_ANY_SRAM3                 |
+                PSM_ANY_SRAM2                 |
+                PSM_ANY_SRAM1                 |
+                PSM_ANY_SRAM0                 |
+                PSM_ANY_ROM                   |
+                PSM_ANY_BUSFABRIC             |
+                PSM_ANY_RESETS                |
+                PSM_ANY_CLOCKS;
+
+  /* Set control bits and enable WDG.*/
+  wdgp->wdg->CTRL = WATCHDOG_CTRL_PAUSE_DBG0  |
+                    WATCHDOG_CTRL_PAUSE_DBG1  |
+                    WATCHDOG_CTRL_PAUSE_JTAG  |
                     WATCHDOG_CTRL_ENABLE;
 }
 
@@ -130,7 +146,7 @@ void wdg_lld_stop(WDGDriver *wdgp) {
  */
 void wdg_lld_reset(WDGDriver * wdgp) {
 
-  set_wdg_counter();
+  set_wdg_counter(wdgp);
 }
 
 #endif /* HAL_USE_WDG */
