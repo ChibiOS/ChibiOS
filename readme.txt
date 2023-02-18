@@ -107,6 +107,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed SPI_MMC driver broken in 21.11.3 (bug #1249)
+       (backported to 21.11.3).
 - FIX: Fixed broken support for STM32 UART9 and USART10 (bug #1248)
        (backported to 21.11.3).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247)
