@@ -96,6 +96,7 @@
 - NEW: Added a new OOP model under /os/common/utils. It will replace the
        one in HAL and will be shared among multiple subsystems.
 - NEW: Added EFL driver support for STM32F401/411.
+- FIX: Fixed SPI_MMC driver broken in 21.11.3 (bug #1249).
 - FIX: Fixed broken support for STM32 UART9 and USART10 (bug #1248).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247).
 - FIX: Fixed wrong HSI48 support on STM32L0xx (bug #1246).

@@ -116,7 +116,7 @@ static bool mmc_is_write_protected(void *instance) {
   MMCDriver *mmcp = (MMCDriver *)instance;
   bool err;
 
-  err = mmcIsCardInserted(mmcp);
+  err = mmcIsWriteProtected(mmcp);
 
   return err;
 }
@@ -373,14 +373,12 @@ static bool mmc_recvr1(MMCDriver *mmcp, uint8_t *r1p) {
  * @notapi
  */
 static bool mmc_recvr3(MMCDriver *mmcp, uint8_t *r1p) {
+  bool ret;
 
-  if (mmc_recvr1(mmcp, r1p) == HAL_FAILED) {
-    return HAL_FAILED;
-  }
-
+  ret = mmc_recvr1(mmcp, r1p);
   spiReceive(mmcp->config->spip, 4, mmcp->buffer);
 
-  return HAL_SUCCESS;
+  return ret;
 }
 
 /**
@@ -402,13 +400,8 @@ static bool mmc_send_command_R1(MMCDriver *mmcp, uint8_t cmd,
 
   spiSelect(mmcp->config->spip);
 
-  if ((mmc_send_hdr(mmcp, cmd, arg) ) ||
-      (mmc_recvr1(mmcp, r1p) )) {
-    result = HAL_FAILED;
-  }
-  else {
-    result = HAL_SUCCESS;
-  }
+  result = mmc_send_hdr(mmcp, cmd, arg);
+  result = mmc_recvr1(mmcp, r1p) || result;
 
   spiUnselect(mmcp->config->spip);
 
@@ -434,13 +427,8 @@ static bool mmc_send_command_R3(MMCDriver *mmcp, uint8_t cmd, uint32_t arg,
 
   spiSelect(mmcp->config->spip);
 
-  if ((mmc_send_hdr(mmcp, cmd, arg) == HAL_FAILED) ||
-      (mmc_recvr3(mmcp, r1p) == HAL_FAILED)) {
-    result = HAL_FAILED;
-  }
-  else {
-    result = HAL_SUCCESS;
-  }
+  result = mmc_send_hdr(mmcp, cmd, arg);
+  result = mmc_recvr3(mmcp, r1p) || result;
 
   spiUnselect(mmcp->config->spip);
 
@@ -464,12 +452,13 @@ static bool mmc_read_CxD(MMCDriver *mmcp, uint8_t cmd, uint32_t cxd[4]) {
   unsigned i;
   uint8_t r1;
   uint8_t *bp;
+  bool result;
 
   spiSelect(mmcp->config->spip);
 
-  if ((mmc_send_hdr(mmcp, cmd, 0) == HAL_FAILED) ||
-      (mmc_recvr1(mmcp, &r1) == HAL_FAILED) ||
-      (r1 != 0x00U)) {
+  result = mmc_send_hdr(mmcp, cmd, 0);
+  result = mmc_recvr1(mmcp, &r1) || result;
+  if (result || (r1 != 0x00U)) {
 
     spiUnselect(mmcp->config->spip);
     return HAL_FAILED;
@@ -610,11 +599,8 @@ bool mmcConnect(MMCDriver *mmcp) {
   /* SPI mode selection.*/
   i = 0U;
   while (true) {
-    if (mmc_send_command_R1(mmcp, MMCSD_CMD_GO_IDLE_STATE, 0, &r1) == HAL_FAILED) {
-      goto failed;
-    }
-
-    if (r1 == 0x01U) {
+    if ((mmc_send_command_R1(mmcp, MMCSD_CMD_GO_IDLE_STATE, 0, &r1) == HAL_SUCCESS) &&
+        (r1 == 0x01U)) {
       break;
     }
 
@@ -638,25 +624,14 @@ bool mmcConnect(MMCDriver *mmcp) {
     /* Switch to SDHC mode.*/
     i = 0;
     while (true) {
-      i++;
-
-      if (mmc_send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0, &r1) == HAL_FAILED) {
-        goto failed;
-      }
-
-      if (r1 != 0x01U) {
-        continue;
-      }
-
-      if (mmc_send_command_R3(mmcp, MMCSD_CMD_APP_OP_COND, 0x400001AAU, &r1) == HAL_FAILED) {
-        goto failed;
-      }
-
-      if (r1 == 0x00U) {
+      if ((mmc_send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0, &r1) == HAL_SUCCESS) &&
+          (r1 <= 0x01U) &&
+          (mmc_send_command_R3(mmcp, MMCSD_CMD_APP_OP_COND, 0x400001AAU, &r1) == HAL_SUCCESS) &&
+          (r1 == 0x00U)) {
         break;
       }
 
-      if (i >= MMC_ACMD41_RETRY) {
+      if (++i >= MMC_ACMD41_RETRY) {
         goto failed;
       }
       osalThreadSleepMilliseconds(10);
@@ -676,9 +651,7 @@ bool mmcConnect(MMCDriver *mmcp) {
   /* Initialization.*/
   i = 0;
   while (true) {
-    if (mmc_send_command_R1(mmcp, MMCSD_CMD_INIT, 0, &r1) == HAL_FAILED) {
-      goto failed;
-    }
+    (void) mmc_send_command_R1(mmcp, MMCSD_CMD_INIT, 0, &r1);
     if (r1 == 0x00U) {
       break;
     }
@@ -1131,8 +1104,6 @@ bool mmcErase(MMCDriver *mmcp, uint32_t startblk, uint32_t endblk) {
 
   /* Command failed, state reset to BLK_READY.*/
 failed:
-  spiUnselect(mmcp->config->spip);
-
   mmcp->state = BLK_READY;
 
   return HAL_FAILED;
