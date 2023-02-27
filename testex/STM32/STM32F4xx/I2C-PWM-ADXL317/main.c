@@ -23,6 +23,8 @@
 /* ADXL317 related.                                                          */
 /*===========================================================================*/
 
+/*Before connecting the ADXL317 on the SDP-K1 move the Jumper P14 to 1.8V.*/
+
 /*
  * I2C TX and RX buffers.
  */
@@ -76,21 +78,6 @@ static ADXL317Config adxl317cfg = {
 
 static BaseSequentialStream* chp = (BaseSequentialStream*) &SD5;
 
-static THD_WORKING_AREA(waThreadBlinker, 128);
-static THD_FUNCTION(ThreadBlinker, arg) {
-
-  (void)arg;
-
-  chRegSetThreadName("blinker");
-
-  while (true) {
-    palSetLine(LINE_LED_RED);
-    chThdSleepMilliseconds(200);
-    palClearLine(LINE_LED_RED);
-    chThdSleepMilliseconds(200);
-  }
-}
-
 static PWMConfig pwmcfg = {
   .frequency = 30000000,
   .period = 10,
@@ -105,6 +92,21 @@ static PWMConfig pwmcfg = {
   .bdtr = 0,
   .dier = 0
 };
+
+static THD_WORKING_AREA(waThreadBlinker, 128);
+static THD_FUNCTION(ThreadBlinker, arg) {
+
+  (void)arg;
+
+  chRegSetThreadName("blinker");
+
+  while (true) {
+    palSetLine(LINE_LED_RED);
+    chThdSleepMilliseconds(200);
+    palClearLine(LINE_LED_RED);
+    chThdSleepMilliseconds(200);
+  }
+}
 
 /*
  * Application entry point.
