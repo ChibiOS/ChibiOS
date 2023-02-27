@@ -43,7 +43,7 @@
 /**
  * @brief   ADXL355 driver version string.
  */
-#define EX_ADXL355_VERSION                  "1.0.1"
+#define EX_ADXL355_VERSION                  "1.0.2"
 
 /**
  * @brief   ADXL355 driver version major number.
@@ -58,7 +58,7 @@
 /**
  * @brief   ADXL355 driver version patch number.
  */
-#define EX_ADXL355_PATCH                    1
+#define EX_ADXL355_PATCH                    2
 /** @} */
 
 /**
@@ -287,7 +287,7 @@
  * @brief   ADXL355 internal communication buffer sizes.
  */
 #if !defined(ADXL355_COMM_BUFF_SIZE) || defined(__DOXYGEN__)
-#define ADXL355_COMM_BUFF_SIZE              32
+#define ADXL355_COMM_BUFF_SIZE              9
 #endif
 /** @} */
 
