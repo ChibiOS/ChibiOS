@@ -15,8 +15,8 @@ to acquire data from ADXL355 using ChibiOS/EX.
 ** Board Setup **
 
 With reference to the ADI UG-1030 (EVAL-ADXL354/EVAL-ADXL355 User Guide) and
-to the Schematic of the SDP-K1) the following connection
-are need:
+to the Schematic of the SDP-K1 the following connection
+are needed:
  ---------------------------------------------
 |     EVAL-ADXL355     |        SDP-K1        |
 |---------------------------------------------|
