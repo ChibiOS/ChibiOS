@@ -27,7 +27,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ST_NUCLEO64_F401RE</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ADI_EVAL_SDP_CK1Z</locationURI>
 		</link>
 		<link>
 			<name>os</name>

@@ -26,8 +26,8 @@
 /*
  * SPI TX and RX buffers.
  */
-static uint8_t txbuf[32];
-static uint8_t rxbuf[32];
+static uint8_t txbuf[ADXL355_COMM_BUFF_SIZE];
+static uint8_t rxbuf[ADXL355_COMM_BUFF_SIZE];
 
 /* ADXL355 Driver: This object represent an ADXL355 instance */
 static ADXL355Driver ADXL355D1;
@@ -45,7 +45,7 @@ static const SPIConfig spicfg = {
   .data_cb          = NULL,
   .error_cb         = NULL,
   .ssline           = LINE_ARD_D10,
-  .cr1              = SPI_CR1_BR_1 | SPI_CR1_BR_0,
+  .cr1              = SPI_CR1_BR_2,
   .cr2              = 0U
 };
 
@@ -65,7 +65,22 @@ static ADXL355Config adxl355cfg = {
 /* Generic code.                                                             */
 /*===========================================================================*/
 
-static BaseSequentialStream* chp = (BaseSequentialStream*)&SD2;
+static BaseSequentialStream* chp = (BaseSequentialStream*) &SD5;
+
+static THD_WORKING_AREA(waThreadBlinker, 128);
+static THD_FUNCTION(ThreadBlinker, arg) {
+
+  (void)arg;
+
+  chRegSetThreadName("blinker");
+
+  while (true) {
+    palSetLine(LINE_LED_RED);
+    chThdSleepMilliseconds(200);
+    palClearLine(LINE_LED_RED);
+    chThdSleepMilliseconds(200);
+  }
+}
 
 /*
  * Application entry point.
@@ -82,12 +97,16 @@ int main(void) {
   halInit();
   chSysInit();
 
-  sdStart(&SD2, NULL);
+  sdStart(&SD5, NULL);
 
   palSetLineMode(LINE_ARD_D10, PAL_MODE_OUTPUT_PUSHPULL);
   palSetLineMode(LINE_ARD_D11, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
   palSetLineMode(LINE_ARD_D12, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
   palSetLineMode(LINE_ARD_D13, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);
+
+  /* Creating LED thread.*/
+  chThdCreateStatic(waThreadBlinker, sizeof(waThreadBlinker), NORMALPRIO + 1,
+                    ThreadBlinker, NULL);
 
   /* ADXL355 Object Initialization.*/
   adxl355ObjectInit(&ADXL355D1, txbuf, rxbuf);

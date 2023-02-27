@@ -4,7 +4,7 @@
 
 ** TARGET **
 
-The demo runs on an STM32 Nucleo64-F401RE board. It has been tested 
+The demo runs on an ADI EVAL-SDP-CK1Z board. It has been tested 
 connecting an external the EVAL-ADXL355.
 
 ** The Demo **
@@ -15,10 +15,10 @@ to acquire data from ADXL355 using ChibiOS/EX.
 ** Board Setup **
 
 With reference to the ADI UG-1030 (EVAL-ADXL354/EVAL-ADXL355 User Guide) and
-to the ST UM1724 (STM32 Nucleo64 board User Manual) the following connection
+to the Schematic of the SDP-K1) the following connection
 are need:
  ---------------------------------------------
-|     EVAL-ADXL355     |    STM32 Nucleo64    |
+|     EVAL-ADXL355     |        SDP-K1        |
 |---------------------------------------------|
 |                      |                      |
 |         P1.1         |      ARD_IOREF       |
@@ -27,8 +27,8 @@ are need:
 |                      |                      |
 |         P2.2         |       ARD_D10        |
 |         P2.4         |       ARD_D13        |
-|         P2.5         |       ARD_D11        |
-|         P2.6         |       ARD_D12        |
+|         P2.5         |       ARD_D12        |
+|         P2.6         |       ARD_D11        |
  ---------------------------------------------
 ** Build Procedure **
 
