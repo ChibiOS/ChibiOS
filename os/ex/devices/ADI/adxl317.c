@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016..2019 Simona Di Domenico
+    ChibiOS - Copyright (C) 2016..2023 Simona Di Domenico
 
     This file is part of ChibiOS.
 
