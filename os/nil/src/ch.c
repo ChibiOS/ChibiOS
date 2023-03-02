@@ -837,7 +837,7 @@ void chThdExit(msg_t msg) {
   chSysLock();
 
   /* Exit handler hook.*/
-  CH_CFG_THREAD_EXIT_HOOK(tp);
+  CH_CFG_THREAD_EXIT_HOOK(nil.current);
 
 #if CH_CFG_USE_WAITEXIT == TRUE
   {
@@ -987,7 +987,7 @@ void chThdSleepUntil(systime_t abstime) {
  * @details The caller thread is enqueued and put to sleep until it is
  *          dequeued or the specified timeouts expires.
  *
- * @param[in] tqp       pointer to the threads queue object
+ * @param[in] tqp       pointer to a @p threads_queue_t structure
  * @param[in] timeout   the timeout in system ticks, the special values are
  *                      handled as follow:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -1024,7 +1024,7 @@ msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
  *          is empty.
  * @pre     The queue must contain at least an object.
  *
- * @param[in] tqp       pointer to the threads queue object
+ * @param[in] tqp       pointer to a @p threads_queue_t structure
  * @param[in] msg       the message code
  *
  * @iclass
@@ -1046,7 +1046,7 @@ void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg) {
  * @brief   Dequeues and wakes up one thread from the threads queue object,
  *          if any.
  *
- * @param[in] tqp       pointer to the threads queue object
+ * @param[in] tqp       pointer to a @p threads_queue_t structure
  * @param[in] msg       the message code
  *
  * @iclass
@@ -1064,7 +1064,7 @@ void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 /**
  * @brief   Dequeues and wakes up all threads from the threads queue object.
  *
- * @param[in] tqp       pointer to the threads queue object
+ * @param[in] tqp       pointer to a @p threads_queue_t structure
  * @param[in] msg       the message code
  *
  * @iclass

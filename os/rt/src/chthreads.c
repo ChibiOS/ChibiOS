@@ -509,7 +509,7 @@ void chThdExitS(msg_t msg) {
   currtp->u.exitcode = msg;
 
   /* Exit handler hook.*/
-  CH_CFG_THREAD_EXIT_HOOK(tp);
+  CH_CFG_THREAD_EXIT_HOOK(currtp);
 
 #if CH_CFG_USE_WAITEXIT == TRUE
   /* Waking up any waiting thread.*/

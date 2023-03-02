@@ -73,6 +73,9 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 21.11.4 ***
+- FIX: Fixed wrong use of hooks in RT/NIL (bug #1251).
+
 *** 21.11.3 ***
 - NEW: STM32 DMA drivers now export an STM32_DMA_MAX_TRANSFER definition.
 - NEW: PAL events for RP2040 added.
