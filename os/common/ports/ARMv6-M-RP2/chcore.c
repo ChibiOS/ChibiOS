@@ -53,6 +53,7 @@
  *          does not call the port hook again.
  */
 void port_local_halt(void) {
+  const char *reason = "remote panic";
 
   port_disable();
 
@@ -60,7 +61,7 @@ void port_local_halt(void) {
   __trace_halt("remote panic");
 
   /* Pointing to the passed message.*/
-  currcore->dbg.panic_msg = "remote panic";
+  currcore->dbg.panic_msg = reason;
 
   /* Halt hook code, usually empty.*/
   CH_CFG_SYSTEM_HALT_HOOK(reason);
