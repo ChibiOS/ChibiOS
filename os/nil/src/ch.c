@@ -837,7 +837,7 @@ void chThdExit(msg_t msg) {
   chSysLock();
 
   /* Exit handler hook.*/
-  CH_CFG_THREAD_EXIT_HOOK(tp);
+  CH_CFG_THREAD_EXIT_HOOK(nil.current);
 
 #if CH_CFG_USE_WAITEXIT == TRUE
   {
