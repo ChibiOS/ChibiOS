@@ -558,6 +558,10 @@ struct USBDriver {
 #define usb_lld_wakeup_host(usbp)                                           \
   do {                                                                      \
     (usbp)->otg->DCTL |= DCTL_RWUSIG;                                       \
+    /* remote wakeup doesn't trigger the wakeup interrupt, therefore
+       we use the SOF interrupt to detect resume of the bus.*/              \
+    (usbp)->otg->GINTSTS |= GINTSTS_SOF;                                    \
+    (usbp)->otg->GINTMSK |= GINTMSK_SOFM;                                   \
     osalThreadSleepMilliseconds(STM32_USB_HOST_WAKEUP_DURATION);            \
     (usbp)->otg->DCTL &= ~DCTL_RWUSIG;                                      \
   } while (false)
