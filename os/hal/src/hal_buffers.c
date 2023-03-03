@@ -489,6 +489,7 @@ uint8_t *obqGetFullBufferI(output_buffers_queue_t *obqp,
   osalDbgCheckClassI();
 
   if (obqIsEmptyI(obqp)) {
+    *sizep = 0U;
     return NULL;
   }
 
