@@ -584,6 +584,21 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   /* SOF interrupt handling.*/
   if (sts & GINTSTS_SOF) {
+    /* SOF interrupt was used to detect resume of the USB bus after issuing a
+       remote wake up of the host, therefore we disable it again.*/
+    if (usbp->config->sof_cb == NULL) {
+      otgp->GINTMSK &= ~GINTMSK_SOFM;
+    }
+    if (usbp->state == USB_SUSPENDED) {
+      /* If clocks are gated off, turn them back on (may be the case if
+         coming out of suspend mode).*/
+      if (otgp->PCGCCTL & (PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK)) {
+        /* Set to zero to un-gate the USB core clocks.*/
+        otgp->PCGCCTL &= ~(PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK);
+      }
+      _usb_wakeup(usbp);
+    }
+
     _usb_isr_invoke_sof_cb(usbp);
   }
 
@@ -1147,7 +1162,7 @@ void usb_lld_start_out(USBDriver *usbp, usbep_t ep) {
            usbp->epc[ep]->out_maxsize;
   rxsize = (pcnt * usbp->epc[ep]->out_maxsize + 3U) & 0xFFFFFFFCU;
 
-  /*Setting up transaction parameters in DOEPTSIZ.*/
+  /* Setting up transaction parameters in DOEPTSIZ.*/
   usbp->otg->oe[ep].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_PKTCNT(pcnt) |
                                DOEPTSIZ_XFRSIZ(rxsize);
 

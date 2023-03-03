@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Fixed remote wakeup failure in STM32 OTGv1 driver (bug #1252).
 - FIX: Fixed wrong use of hooks in RT/NIL (bug #1251).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247).
 - FIX: Fixed wrong HSI48 support on STM32L0xx (bug #1246).
