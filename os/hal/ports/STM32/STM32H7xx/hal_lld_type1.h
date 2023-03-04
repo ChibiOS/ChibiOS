@@ -1705,8 +1705,8 @@
 /**
  * @brief   PLL1 DIVP field.
  */
-#if ((STM32_PLL1_DIVP_VALUE >= 1) && (STM32_PLL1_DIVP_VALUE <= 128) &&      \
-     (STM32_PLL1_DIVP_VALUE != 3U)) || defined(__DOXYGEN__)
+#if ((STM32_PLL1_DIVP_VALUE >= 1) && (STM32_PLL1_DIVP_VALUE <= 128)) &&     \
+    ((STM32_PLL1_DIVP_VALUE == 1) || ((STM32_PLL1_DIVP_VALUE & 1) == 0))
 #define STM32_PLL1_DIVP             ((STM32_PLL1_DIVP_VALUE - 1U) << 9U)
 #else
 #error "invalid STM32_PLL1_DIVP_VALUE value specified"
@@ -1715,8 +1715,8 @@
 /**
  * @brief   PLL2 DIVP field.
  */
-#if ((STM32_PLL2_DIVP_VALUE >= 1) && (STM32_PLL2_DIVP_VALUE <= 128) &&      \
-     (STM32_PLL2_DIVP_VALUE != 3U)) || defined(__DOXYGEN__)
+#if ((STM32_PLL2_DIVP_VALUE >= 1) && (STM32_PLL2_DIVP_VALUE <= 128)) ||     \
+    defined(__DOXYGEN__)
 #define STM32_PLL2_DIVP             ((STM32_PLL2_DIVP_VALUE - 1U) << 9U)
 #else
 #error "invalid STM32_PLL2_DIVP_VALUE value specified"
@@ -1725,8 +1725,8 @@
 /**
  * @brief   PLL3 DIVP field.
  */
-#if ((STM32_PLL3_DIVP_VALUE >= 1) && (STM32_PLL3_DIVP_VALUE <= 128) &&      \
-     (STM32_PLL3_DIVP_VALUE != 3U)) || defined(__DOXYGEN__)
+#if ((STM32_PLL3_DIVP_VALUE >= 1) && (STM32_PLL3_DIVP_VALUE <= 128)) ||     \
+    defined(__DOXYGEN__)
 #define STM32_PLL3_DIVP             ((STM32_PLL3_DIVP_VALUE - 1U) << 9U)
 #else
 #error "invalid STM32_PLL3_DIVP_VALUE value specified"
