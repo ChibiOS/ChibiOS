@@ -107,6 +107,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed undefined STM32_SDMMC_MAXCLK value for STM32H7 type 1 and 2
+       (bug #1254)(backported to 21.11.4).
 - FIX: Fixed invalid checks on PLLP/R/Q dividers on STM32H7 (bug #1253)
        (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed remote wakeup failure in STM32 OTGv1 driver (bug #1252)
