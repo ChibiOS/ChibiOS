@@ -141,7 +141,7 @@ void stm32_clock_init(void) {
   rccResetAPB2(~0);
 
   /* PWR clock enable.*/
-#if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
   rccEnableAPB1R1(RCC_APB1ENR1_PWREN | RCC_APB1ENR1_RTCAPBEN, false)
 #else
   rccEnableAPB1R1(RCC_APB1ENR1_PWREN, false)
