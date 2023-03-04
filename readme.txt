@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- FIX: Fixed incorrect RTC initialization on STM32G4/L4/L4+ (bug #1256).
 - FIX: Fixed syntax error in RP2040 GPIO driver (bug #1255).
 - FIX: Fixed undefined STM32_SDMMC_MAXCLK value for STM32H7 type 1 and 2
        (bug #1254).
