@@ -107,6 +107,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed incorrect RTC initialization on STM32G4/L4/L4+ (bug #1256)
+       (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed syntax error in RP2040 GPIO driver (bug #1255)
        (backported to 21.11.4).
 - FIX: Fixed undefined STM32_SDMMC_MAXCLK value for STM32H7 type 1 and 2
