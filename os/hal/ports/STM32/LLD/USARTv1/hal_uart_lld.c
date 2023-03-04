@@ -1157,10 +1157,12 @@ void uart_lld_serve_interrupt(UARTDriver *uartp) {
   uint32_t cr1 = u->CR1;
 
   sr = u->SR;   /* SR reset step 1.*/
-  (void)u->DR;  /* SR reset step 2.*/
 
   if (sr & (USART_SR_LBD | USART_SR_ORE | USART_SR_NE |
             USART_SR_FE  | USART_SR_PE)) {
+
+    (void)u->DR;  /* SR reset step 2 - clear ORE.*/
+
     u->SR = ~USART_SR_LBD;
     _uart_rx_error_isr_code(uartp, translate_errors(sr));
   }
