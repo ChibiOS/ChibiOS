@@ -68,7 +68,7 @@ OSAL_IRQ_HANDLER(RP_IO_IRQ_BANK0_HANDLER) {
     uint32_t ints = IO_BANK0->PROC[RP_PAL_EVENT_CORE_AFFINITY].INTS[i];
 
     IO_BANK0->INTR[i] = ints;
-    line = i * 8
+    line = i * 8;
     while (ints != 0U) {
       if (ints & 0x0FU) {
         _pal_isr_code(line);
