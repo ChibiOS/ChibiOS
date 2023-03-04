@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- FIX: Fixed undefined STM32_SDMMC_MAXCLK value for STM32H7 type 1 and 2
+       (bug #1254).
 - FIX: Fixed invalid checks on PLLP/R/Q dividers on STM32H7 (bug #1253).
 - FIX: Fixed remote wakeup failure in STM32 OTGv1 driver (bug #1252).
 - FIX: Fixed wrong use of hooks in RT/NIL (bug #1251).
