@@ -728,38 +728,41 @@ void _usb_reset(USBDriver *usbp) {
  * @notapi
  */
 void _usb_suspend(USBDriver *usbp) {
-  /* No state change, suspend always returns to previous state. */
 
-  /* State transition.*/
-  usbp->saved_state = usbp->state;
-  usbp->state       = USB_SUSPENDED;
+  /* It could happen that multiple suspend events are triggered.*/
+  if (usbp->state != USB_SUSPENDED) {
 
-  /* Notification of suspend event.*/
-  _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
+    /* State transition, saving the current state.*/
+    usbp->saved_state = usbp->state;
+    usbp->state       = USB_SUSPENDED;
 
-  /* Terminating all pending transactions.*/
-  usbp->transmitting  = 0;
-  usbp->receiving     = 0;
+    /* Notification of suspend event.*/
+    _usb_isr_invoke_event_cb(usbp, USB_EVENT_SUSPEND);
 
-  /* Signaling the event to threads waiting on endpoints.*/
-#if USB_USE_WAIT == TRUE
-  {
-    unsigned i;
+    /* Terminating all pending transactions.*/
+    usbp->transmitting  = 0;
+    usbp->receiving     = 0;
 
-    for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
-      if (usbp->epc[i] != NULL) {
-        osalSysLockFromISR();
-        if (usbp->epc[i]->in_state != NULL) {
-          osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
+    /* Signaling the event to threads waiting on endpoints.*/
+  #if USB_USE_WAIT == TRUE
+    {
+      unsigned i;
+
+      for (i = 0; i <= (unsigned)USB_MAX_ENDPOINTS; i++) {
+        if (usbp->epc[i] != NULL) {
+          osalSysLockFromISR();
+          if (usbp->epc[i]->in_state != NULL) {
+            osalThreadResumeI(&usbp->epc[i]->in_state->thread, MSG_RESET);
+          }
+          if (usbp->epc[i]->out_state != NULL) {
+            osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
+          }
+          osalSysUnlockFromISR();
         }
-        if (usbp->epc[i]->out_state != NULL) {
-          osalThreadResumeI(&usbp->epc[i]->out_state->thread, MSG_RESET);
-        }
-        osalSysUnlockFromISR();
       }
     }
+  #endif
   }
-#endif
 }
 
 /**
@@ -773,11 +776,15 @@ void _usb_suspend(USBDriver *usbp) {
  */
 void _usb_wakeup(USBDriver *usbp) {
 
-  /* State transition, returning to the previous state.*/
-  usbp->state = usbp->saved_state;
+  /* It could happen that multiple waakeup events are triggered.*/
+  if (usbp->state == USB_SUSPENDED) {
 
-  /* Notification of suspend event.*/
-  _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);
+    /* State transition, returning to the previous state.*/
+    usbp->state = usbp->saved_state;
+
+    /* Notification of suspend event.*/
+    _usb_isr_invoke_event_cb(usbp, USB_EVENT_WAKEUP);
+  }
 }
 
 /**
