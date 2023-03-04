@@ -32,6 +32,10 @@
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
 
+#if (OSAL_ST_RESOLUTION != 16) && (OSAL_ST_RESOLUTION != 32)
+#error "unsupported ST resolution"
+#endif
+
 #if (OSAL_ST_RESOLUTION == 32)
 #define ST_ARR_INIT                         0xFFFFFFFFU
 #else
