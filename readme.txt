@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- FIX: Fixed syntax error in RP2040 GPIO driver (bug #1255).
 - FIX: Fixed undefined STM32_SDMMC_MAXCLK value for STM32H7 type 1 and 2
        (bug #1254).
 - FIX: Fixed invalid checks on PLLP/R/Q dividers on STM32H7 (bug #1253).
