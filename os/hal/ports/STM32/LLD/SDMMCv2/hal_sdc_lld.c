@@ -39,12 +39,6 @@
    SDMMC_STA_CTIMEOUT | SDMMC_STA_DTIMEOUT |                                \
    SDMMC_STA_TXUNDERR | SDMMC_STA_RXOVERR)
 
-#define SDMMC_WRITE_TIMEOUT_TICKS(card_clk, clkdiv)                         \
-  (((card_clk / (clkdiv * 2)) / 1000) * STM32_SDC_SDMMC_WRITE_TIMEOUT)
-
-#define SDMMC_READ_TIMEOUT_TICKS(card_clk, clkdiv)                          \
-  (((card_clk / (clkdiv * 2)) / 1000) * STM32_SDC_SDMMC_READ_TIMEOUT)
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -109,6 +103,12 @@ static uint32_t sdc_lld_clkdiv(SDCDriver *sdcp, uint32_t f) {
   return sdcp->config->slowdown + ((sdcp->clkfreq + (f * 2) - 1) / (f * 2));
 }
 
+__STATIC_FORCEINLINE uint32_t sdc_lld_get_timeout(SDCDriver *sdcp,
+                                                  uint32_t ms) {
+  uint32_t clkdiv = sdcp->sdmmc->CLKCR & 0xFFU;
+  return (((sdcp->clkfreq / (clkdiv * 2)) / 1000) * ms);
+}
+
 /**
  * @brief   Prepares to handle read transaction.
  * @details Designed for read special registers from card.
@@ -127,7 +127,7 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
                                        uint8_t *buf, uint32_t bytes) {
   osalDbgCheck(bytes < 0x1000000);
 
-  sdcp->sdmmc->DTIMER = STM32_SDC_SDMMC_READ_TIMEOUT;
+  sdcp->sdmmc->DTIMER = sdc_lld_get_timeout(sdcp, STM32_SDC_SDMMC_READ_TIMEOUT);
 
   /* Checks for errors and waits for the card to be ready for reading.*/
   if (_sdc_wait_for_transfer_state(sdcp)) {
@@ -705,7 +705,7 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
-  sdcp->sdmmc->DTIMER = STM32_SDC_SDMMC_READ_TIMEOUT;
+  sdcp->sdmmc->DTIMER = sdc_lld_get_timeout(sdcp, STM32_SDC_SDMMC_READ_TIMEOUT);
 
   /* Checks for errors and waits for the card to be ready for reading.*/
   if (_sdc_wait_for_transfer_state(sdcp))
@@ -761,7 +761,7 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   osalDbgCheck(blocks < 0x1000000 / MMCSD_BLOCK_SIZE);
 
-  sdcp->sdmmc->DTIMER = STM32_SDC_SDMMC_WRITE_TIMEOUT;
+  sdcp->sdmmc->DTIMER = sdc_lld_get_timeout(sdcp, STM32_SDC_SDMMC_WRITE_TIMEOUT);
 
   /* Checks for errors and waits for the card to be ready for writing.*/
   if (_sdc_wait_for_transfer_state(sdcp))
