@@ -67,7 +67,8 @@ SDCDriver SDCD2;
  * @brief   SDIO default configuration.
  */
 static const SDCConfig sdc_default_cfg = {
-  SDC_MODE_4BIT
+  SDC_MODE_4BIT,
+  0U
 };
 
 #if STM32_SDC_USE_SDMMC1 || defined(__DOXYGEN__)
@@ -102,10 +103,10 @@ static uint32_t sdc_lld_clkdiv(SDCDriver *sdcp, uint32_t f) {
 #endif
 
   if (f >= sdcp->clkfreq) {
-    return 0;
+    return sdcp->config->slowdown;
   }
 
-  return (sdcp->clkfreq + (f * 2) - 1) / (f * 2);
+  return sdcp->config->slowdown + ((sdcp->clkfreq + (f * 2) - 1) / (f * 2));
 }
 
 /**
@@ -247,17 +248,13 @@ static bool sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
 static bool sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
                                          uint32_t *resp) {
 
-//  /* Note the mask is checked before going to sleep because the interrupt
-//     may have occurred before reaching the critical zone.*/
+  /* Note the mask is checked before going to sleep because the interrupt
+     may have occurred before reaching the critical zone.*/
   osalSysLock();
 
-  /* Starting the DMA operation.*/
-  sdcp->sdmmc->IDMACTRL = SDMMC_IDMA_IDMAEN;
-  sdcp->sdmmc->DCTRL |= SDMMC_DCTRL_DTEN;
-
-//  if (sdcp->sdmmc->MASK != 0U) {
-  (void) osalThreadSuspendS(&sdcp->thread);
-//  }
+  if (sdcp->sdmmc->MASK != 0U) {
+    (void) osalThreadSuspendS(&sdcp->thread);
+  }
 
   /* Stopping operations.*/
   sdcp->sdmmc->IDMACTRL = 0U;
@@ -270,7 +267,7 @@ static bool sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   }
 
   /* Clearing status.*/
-  sdcp->sdmmc->ICR      = SDMMC_ICR_ALL_FLAGS;
+  sdcp->sdmmc->ICR = SDMMC_ICR_ALL_FLAGS;
 
   osalSysUnlock();
 
@@ -323,7 +320,7 @@ static void sdc_lld_collect_errors(SDCDriver *sdcp, uint32_t sta) {
 static void sdc_lld_error_cleanup(SDCDriver *sdcp,
                                   uint32_t n,
                                   uint32_t *resp) {
-  uint32_t sta; // sdcp->sdmmc->STA; Double read, race condition.
+  uint32_t sta;
 
   /* Clearing status.*/
   sta = sdcp->sdmmc->STA;
@@ -730,7 +727,7 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   /* Prepares IDMA.*/
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
-//  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
+  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
   if (sdc_lld_prepare_read(sdcp, startblk, blocks, sdcp->resp) == true)
     goto error;
@@ -785,7 +782,7 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
 
   /* Prepares IDMA.*/
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
-//  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
+  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
   if (sdc_lld_prepare_write(sdcp, startblk, blocks, sdcp->resp) == true)
     goto error;

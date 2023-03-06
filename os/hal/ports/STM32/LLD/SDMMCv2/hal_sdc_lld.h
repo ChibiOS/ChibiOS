@@ -185,6 +185,12 @@ typedef struct {
    */
   sdcbusmode_t  bus_width;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Bus slowdown.
+   * @note    This values is added to the prescaler register in order to
+   *          arbitrarily reduce clock speed.
+   */
+  uint32_t      slowdown;
 } SDCConfig;
 
 /**

@@ -792,7 +792,7 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   if (_sdc_wait_for_transfer_state(sdcp))
     return HAL_FAILED;
 
-  /* Prepares the DMA channel for writing.*/
+  /* Prepares the DMA channel for reading.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
   dmaStreamSetTransactionSize(sdcp->dma,
                               (blocks * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
