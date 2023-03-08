@@ -83,7 +83,7 @@ static inline void sdmmc1_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_SDMMC1_IS_USED|| defined(__DOXYGEN__)
+#if STM32_SDMMC1_IS_USED || defined(__DOXYGEN__)
 /**
  * @brief   SDMMC1 interrupt handler.
  *
