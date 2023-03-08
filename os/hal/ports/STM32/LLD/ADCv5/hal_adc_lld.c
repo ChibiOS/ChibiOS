@@ -251,9 +251,7 @@ void adc_lld_stop(ADCDriver *adcp) {
     }
 
     /* Regulator off.*/
-#if defined(ADC_CR_ADVREGEN)
-    adcp->adc->CR &= ~ADC_CR_ADVREGEN;
-#endif
+    adcp->adc->CR = 0;
 
 #if STM32_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
@@ -271,7 +269,6 @@ void adc_lld_stop(ADCDriver *adcp) {
  * @notapi
  */
 void adc_lld_start_conversion(ADCDriver *adcp) {
-
   uint32_t mode, cfgr1;
   const ADCConversionGroup *grpp = adcp->grpp;
 
