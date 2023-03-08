@@ -81,6 +81,19 @@ NOINLINE static void adc_lld_vreg_on(ADC_TypeDef *adc) {
 }
 
 /**
+ * @brief   Calibrates an ADC unit.
+ *
+ * @param[in] adc       pointer to the ADC registers block
+ */
+static void adc_lld_calibrate(ADC_TypeDef *adc) {
+
+  adc->CR |= ADC_CR_ADCAL;
+  while (adc->CR & ADC_CR_ADCAL) {
+    /* Waiting for calibration end.*/
+  }
+}
+
+/**
  * @brief   Stops an ongoing conversion, if any.
  *
  * @param[in] adc       pointer to the ADC registers block
@@ -92,6 +105,12 @@ static void adc_lld_stop_adc(ADC_TypeDef *adc) {
     while (adc->CR & ADC_CR_ADSTP)
       ;
     adc->IER = 0;
+  }
+
+  /* Disabling the ADC.*/
+  adc->CR |= ADC_CR_ADDIS;
+  while ((adc->CR & ADC_CR_ADEN) != 0U) {
+    /* Waiting for ADC to be disabled.*/
   }
 }
 
@@ -179,25 +198,6 @@ void adc_lld_init(void) {
      disabled.*/
   nvicEnableVector(12, STM32_ADC_ADC1_IRQ_PRIORITY);
 #endif
-
-  /* Calibration procedure.*/
-  rccEnableADC1(true);
-
-  /* CCR setup.*/
-#if STM32_ADC_SUPPORTS_PRESCALER
-  ADC->CCR = STM32_ADC_PRESC << 18;
-#else
-  ADC->CCR = 0;
-#endif
-
-  /* Regulator enabled and stabilized before calibration.*/
-  adc_lld_vreg_on(ADC1);
-
-  ADC1->CR |= ADC_CR_ADCAL;
-  while (ADC1->CR & ADC_CR_ADCAL)
-    ;
-  ADC1->CR = 0;
-  rccDisableADC1();
 }
 
 /**
@@ -228,6 +228,11 @@ void adc_lld_start(ADCDriver *adcp) {
 #endif
 
       /* Clock settings.*/
+#if STM32_ADC_SUPPORTS_PRESCALER
+      ADC->CCR = STM32_ADC_PRESC << 18;
+#else
+      ADC->CCR = 0;
+#endif
       adcp->adc->CFGR2 = STM32_ADC_ADC1_CFGR2;
     }
 #endif /* STM32_ADC_USE_ADC1 */
@@ -235,11 +240,8 @@ void adc_lld_start(ADCDriver *adcp) {
     /* Regulator enabled and stabilized before calibration.*/
     adc_lld_vreg_on(ADC1);
 
-    /* ADC initial setup, starting the analog part here in order to reduce
-       the latency when starting a conversion.*/
-    adcp->adc->CR = ADC_CR_ADEN;
-    while (!(adcp->adc->ISR & ADC_ISR_ADRDY))
-      ;
+    /* Calibrating ADC.*/
+    adc_lld_calibrate(adcp->adc);
   }
 }
 
@@ -252,33 +254,25 @@ void adc_lld_start(ADCDriver *adcp) {
  */
 void adc_lld_stop(ADCDriver *adcp) {
 
-  /* If in ready state then disables the ADC clock and analog part.*/
+  /* If in ready state then disables the ADC peripheral and clock.*/
   if (adcp->state == ADC_READY) {
 
     dmaStreamFreeI(adcp->dmastp);
     adcp->dmastp = NULL;
 
-    /* Restoring CCR default.*/
-#if STM32_ADC_SUPPORTS_PRESCALER
-    ADC->CCR = STM32_ADC_PRESC << 18;
-#else
-    ADC->CCR = 0;
-#endif
-
-    /* Disabling ADC.*/
-    if (adcp->adc->CR & ADC_CR_ADEN) {
-      adc_lld_stop_adc(adcp->adc);
-      adcp->adc->CR |= ADC_CR_ADDIS;
-      while (adcp->adc->CR & ADC_CR_ADDIS)
-        ;
+    /* Disabling the ADC.*/
+    adcp->adc->CR |= ADC_CR_ADDIS;
+    while ((adcp->adc->CR & ADC_CR_ADEN) != 0U) {
+      /* Waiting for ADC to be disabled.*/
     }
 
-    /* Regulator and anything else off.*/
+    /* Regulator off.*/
     adcp->adc->CR = 0;
 
 #if STM32_ADC_USE_ADC1
-    if (&ADCD1 == adcp)
+    if (&ADCD1 == adcp) {
       rccDisableADC1();
+    }
 #endif
   }
 }
@@ -294,9 +288,14 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t mode, cfgr1;
   const ADCConversionGroup *grpp = adcp->grpp;
 
+  /* Write back ISR bits to clear register.*/
+  adcp->adc->ISR = adcp->adc->ISR;
+
+  /* Get group1 configuration. Transfer the clock mode for group2.*/
+  cfgr1  = grpp->cfgr1 | ADC_CFGR1_DMAEN;
+
   /* DMA setup.*/
   mode  = adcp->dmamode;
-  cfgr1 = grpp->cfgr1 | ADC_CFGR1_DMAEN;
   if (grpp->circular) {
     mode  |= STM32_DMA_CR_CIRC;
     cfgr1 |= ADC_CFGR1_DMACFG;
@@ -310,18 +309,31 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   dmaStreamSetTransactionSize(adcp->dmastp, (uint32_t)grpp->num_channels *
                                             (uint32_t)adcp->depth);
   dmaStreamSetMode(adcp->dmastp, mode);
-  dmaStreamEnable(adcp->dmastp);
 
-  /* ADC setup, if it is defined a callback for the analog watch dog then it
-     is enabled.*/
-  adcp->adc->ISR    = adcp->adc->ISR;
-  adcp->adc->IER    = ADC_IER_OVRIE | ADC_IER_AWD1IE;
-  adcp->adc->TR1    = grpp->tr;
-  adcp->adc->SMPR   = grpp->smpr;
+  /* Apply ADC configuration.*/
+  adcp->adc->CFGR1  = cfgr1;
   adcp->adc->CHSELR = grpp->chselr;
 
-  /* ADC configuration and start.*/
-  adcp->adc->CFGR1  = cfgr1;
+  /* Set the sample rate(s).*/
+  adcp->adc->SMPR   = grpp->smpr;
+
+  /* Enable ADC interrupts if callback specified.*/
+   if (grpp->error_cb != NULL) {
+     adcp->adc->ISR = adcp->adc->ISR;
+     adcp->adc->IER = ADC_IER_OVRIE | ADC_IER_AWD1IE;
+     adcp->adc->TR1 = grpp->tr;
+   }
+
+  /* Enable the ADC. Note: Setting ADEN must be deferred as the ADC will
+     reset RES[1:0] resolution bits if CFGR1 is modified with ADEN set.
+     See the errata sheet.*/
+  adcp->adc->CR  |= ADC_CR_ADEN;
+  while ((adcp->adc->ISR & ADC_ISR_ADRDY) == 0U) {
+    /* Wait for the ADC to become ready.*/
+  }
+
+  /* Enable DMA controller stream.*/
+  dmaStreamEnable(adcp->dmastp);
 
   /* ADC conversion start.*/
   adcp->adc->CR |= ADC_CR_ADSTART;
