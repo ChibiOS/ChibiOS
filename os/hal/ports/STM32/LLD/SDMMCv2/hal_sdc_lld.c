@@ -106,7 +106,7 @@ static uint32_t sdc_lld_clkdiv(SDCDriver *sdcp, uint32_t f) {
 __STATIC_FORCEINLINE uint32_t sdc_lld_get_timeout(SDCDriver *sdcp,
                                                   uint32_t ms) {
   uint32_t clkdiv = sdcp->sdmmc->CLKCR & 0xFFU;
-  return (((sdcp->clkfreq / (clkdiv * 2)) / 1000) * ms);
+  return (((sdcp->clkfreq / ((clkdiv + 1U) * 2U)) / 1000U) * ms);
 }
 
 /**
@@ -134,6 +134,10 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
     return HAL_FAILED;
   }
 
+  /* Prepares IDMA.*/
+  sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
+  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
+
   /* Setting up data transfer.*/
   sdcp->sdmmc->ICR   = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->MASK  = SDMMC_MASK_DCRCFAILIE |
@@ -147,10 +151,6 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
                        SDMMC_DCTRL_FIFORST |
                        SDMMC_DCTRL_DTMODE_0 |   /* Multibyte data transfer.*/
                        SDMMC_DCTRL_DTEN;
-
-  /* Prepares IDMA.*/
-  sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
-  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
   return HAL_SUCCESS;
 }
@@ -471,7 +471,8 @@ void sdc_lld_start_clk(SDCDriver *sdcp) {
 void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
 
   if (SDC_CLK_50MHz == clk) {
-    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) |
+    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & ~(SDMMC_CLKCR_PWRSAV_Msk |
+                                                 SDMMC_CLKCR_CLKDIV_Msk)) |
 #if STM32_SDC_SDMMC_PWRSAV
                          sdc_lld_clkdiv(sdcp, 50000000) | SDMMC_CLKCR_PWRSAV;
 #else
@@ -479,11 +480,11 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
 #endif
   }
   else {
+    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & ~(SDMMC_CLKCR_PWRSAV_Msk |
+                                                 SDMMC_CLKCR_CLKDIV_Msk)) |
 #if STM32_SDC_SDMMC_PWRSAV
-    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) |
                          sdc_lld_clkdiv(sdcp, 25000000) | SDMMC_CLKCR_PWRSAV;
 #else
-    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) |
                          sdc_lld_clkdiv(sdcp, 25000000);
 #endif
   }
@@ -712,6 +713,10 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   if (_sdc_wait_for_transfer_state(sdcp))
     return HAL_FAILED;
 
+  /* Prepares IDMA.*/
+  sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
+  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
+
   /* Setting up data transfer.*/
   sdcp->sdmmc->ICR   = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->MASK  = SDMMC_MASK_DCRCFAILIE |
@@ -726,10 +731,6 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_DCTRL_DBLOCKSIZE_3 |
                        SDMMC_DCTRL_DBLOCKSIZE_0 |
                        SDMMC_DCTRL_DTEN;
-
-  /* Prepares IDMA.*/
-  sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
-  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
   if (sdc_lld_prepare_read(sdcp, startblk, blocks, sdcp->resp) == true)
     goto error;
@@ -769,6 +770,10 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   if (_sdc_wait_for_transfer_state(sdcp))
     return HAL_FAILED;
 
+  /* Prepares IDMA.*/
+  sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
+  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
+
   /* Setting up data transfer.*/
   sdcp->sdmmc->ICR   = SDMMC_ICR_ALL_FLAGS;
   sdcp->sdmmc->MASK  = SDMMC_MASK_DCRCFAILIE |
@@ -782,10 +787,6 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_DCTRL_DBLOCKSIZE_3 |
                        SDMMC_DCTRL_DBLOCKSIZE_0 |
                        SDMMC_DCTRL_DTEN;
-
-  /* Prepares IDMA.*/
-  sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
-  sdcp->sdmmc->IDMACTRL  = SDMMC_IDMA_IDMAEN;
 
   if (sdc_lld_prepare_write(sdcp, startblk, blocks, sdcp->resp) == true)
     goto error;
