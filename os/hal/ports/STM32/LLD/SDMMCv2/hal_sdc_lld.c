@@ -145,7 +145,8 @@ static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
   /* Transfer modes.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_DTDIR |
                        SDMMC_DCTRL_FIFORST |
-                       SDMMC_DCTRL_DTMODE_0;    /* Multibyte data transfer.*/
+                       SDMMC_DCTRL_DTMODE_0 |   /* Multibyte data transfer.*/
+                       SDMMC_DCTRL_DTEN;
 
   /* Prepares IDMA.*/
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
@@ -723,7 +724,8 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_DTDIR |
                        SDMMC_DCTRL_FIFORST |
                        SDMMC_DCTRL_DBLOCKSIZE_3 |
-                       SDMMC_DCTRL_DBLOCKSIZE_0;
+                       SDMMC_DCTRL_DBLOCKSIZE_0 |
+                       SDMMC_DCTRL_DTEN;
 
   /* Prepares IDMA.*/
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
@@ -778,7 +780,8 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
   /* Transfer modes.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_FIFORST |
                        SDMMC_DCTRL_DBLOCKSIZE_3 |
-                       SDMMC_DCTRL_DBLOCKSIZE_0;
+                       SDMMC_DCTRL_DBLOCKSIZE_0 |
+                       SDMMC_DCTRL_DTEN;
 
   /* Prepares IDMA.*/
   sdcp->sdmmc->IDMABASE0 = (uint32_t)buf;
