@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- FIX: Fixed invalid HSIDIV in STM32Ggxx clocks initialization (bug #1257).
 - FIX: Fixed incorrect RTC initialization on STM32G4/L4/L4+ (bug #1256).
 - FIX: Fixed syntax error in RP2040 GPIO driver (bug #1255).
 - FIX: Fixed undefined STM32_SDMMC_MAXCLK value for STM32H7 type 1 and 2
@@ -81,6 +82,7 @@
 - FIX: Fixed invalid checks on PLLP/R/Q dividers on STM32H7 (bug #1253).
 - FIX: Fixed remote wakeup failure in STM32 OTGv1 driver (bug #1252).
 - FIX: Fixed wrong use of hooks in RT/NIL (bug #1251).
+- FIX: Fixed SPI_MMC driver broken in 21.11.3 (bug #1249).
 
 *** 21.11.3 ***
 - NEW: STM32 DMA drivers now export an STM32_DMA_MAX_TRANSFER definition.
@@ -105,7 +107,6 @@
 - NEW: Added a new OOP model under /os/common/utils. It will replace the
        one in HAL and will be shared among multiple subsystems.
 - NEW: Added EFL driver support for STM32F401/411.
-- FIX: Fixed SPI_MMC driver broken in 21.11.3 (bug #1249).
 - FIX: Fixed broken support for STM32 UART9 and USART10 (bug #1248).
 - FIX: Fixed wrong initialization in STM32L1xx ADC driver (bug #1247).
 - FIX: Fixed wrong HSI48 support on STM32L0xx (bug #1246).
