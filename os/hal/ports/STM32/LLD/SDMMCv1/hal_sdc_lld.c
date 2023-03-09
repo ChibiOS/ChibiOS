@@ -540,7 +540,8 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
 
 #if STM32_SDC_SDMMC_50MHZ
   if (SDC_CLK_50MHz == clk) {
-    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) |
+    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & ~(SDMMC_CLKCR_PWRSAV_Msk |
+                                                 SDMMC_CLKCR_CLKDIV_Msk)) |
 #if STM32_SDC_SDMMC_PWRSAV
                          SDMMC_CLKDIV_HS | SDMMC_CLKCR_BYPASS |
                          SDMMC_CLKCR_PWRSAV;
@@ -549,11 +550,12 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
 #endif
   }
   else {
+    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & ~(SDMMC_CLKCR_PWRSAV_Msk |
+                                                 SDMMC_CLKCR_CLKDIV_Msk)) |
 #if STM32_SDC_SDMMC_PWRSAV
-    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS |
-                         SDMMC_CLKCR_PWRSAV;
+                         SDMMC_CLKDIV_HS | SDMMC_CLKCR_PWRSAV;
 #else
-    sdcp->sdmmc->CLKCR = (sdcp->sdmmc->CLKCR & 0xFFFFFF00U) | SDMMC_CLKDIV_HS;
+                         SDMMC_CLKDIV_HS;
 #endif
   }
 #else
@@ -792,7 +794,7 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   if (_sdc_wait_for_transfer_state(sdcp))
     return HAL_FAILED;
 
-  /* Prepares the DMA channel for writing.*/
+  /* Prepares the DMA channel for reading.*/
   dmaStreamSetMemory0(sdcp->dma, buf);
   dmaStreamSetTransactionSize(sdcp->dma,
                               (blocks * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
