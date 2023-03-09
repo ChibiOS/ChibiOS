@@ -725,15 +725,15 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_MASK_DATAENDIE;
   sdcp->sdmmc->DLEN  = blocks * MMCSD_BLOCK_SIZE;
 
+  if (sdc_lld_prepare_read(sdcp, startblk, blocks, sdcp->resp) == true)
+    goto error;
+
   /* Transfer modes.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_DTDIR |
                        SDMMC_DCTRL_FIFORST |
                        SDMMC_DCTRL_DBLOCKSIZE_3 |
                        SDMMC_DCTRL_DBLOCKSIZE_0 |
                        SDMMC_DCTRL_DTEN;
-
-  if (sdc_lld_prepare_read(sdcp, startblk, blocks, sdcp->resp) == true)
-    goto error;
 
   if (sdc_lld_wait_transaction_end(sdcp, blocks, sdcp->resp) == true)
     goto error;
@@ -782,14 +782,14 @@ bool sdc_lld_write_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_MASK_DATAENDIE;
   sdcp->sdmmc->DLEN  = blocks * MMCSD_BLOCK_SIZE;
 
+  if (sdc_lld_prepare_write(sdcp, startblk, blocks, sdcp->resp) == true)
+    goto error;
+
   /* Transfer modes.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_FIFORST |
                        SDMMC_DCTRL_DBLOCKSIZE_3 |
                        SDMMC_DCTRL_DBLOCKSIZE_0 |
                        SDMMC_DCTRL_DTEN;
-
-  if (sdc_lld_prepare_write(sdcp, startblk, blocks, sdcp->resp) == true)
-    goto error;
 
   if (sdc_lld_wait_transaction_end(sdcp, blocks, sdcp->resp) == true)
     goto error;
