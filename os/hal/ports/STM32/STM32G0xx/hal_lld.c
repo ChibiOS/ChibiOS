@@ -74,7 +74,7 @@ const halclkcfg_t hal_clkcfg_reset = {
 #else
   .pwr_cr2              = 0U,
 #endif
-  .rcc_cr               = RCC_CR_HSION | STM32_HSIDIV,
+  .rcc_cr               = STM32_RCC_CR_RESET,
   .rcc_cfgr             = RCC_CFGR_SW_HSI,
   .rcc_pllcfgr          = 0U,
   .flash_acr            = STM32_FLASH_ACR_RESET
@@ -268,7 +268,7 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE | STM32_HPRE;
 
   /* Set HSISYS divisor.*/
-  RCC->CR |= STM32_HSIDIV;
+  RCC->CR = (RCC->CR & ~STM32_HSIDIV_MASK) | STM32_HSIDIV;
 
 #if STM32_RCC_HAS_CCIPR2
   /* CCIPR register initialization.*/
