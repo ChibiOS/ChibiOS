@@ -993,7 +993,7 @@ void uart_lld_start(UARTDriver *uartp) {
 #endif
     }
 #endif
-    
+
     else {
       osalDbgAssert(false, "invalid USART instance");
     }

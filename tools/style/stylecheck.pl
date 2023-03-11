@@ -91,7 +91,7 @@ foreach my $line (@c_source) {
 
   #****************************************************************************
   # Check on EOL.
-  if (not ($line =~ /$cr$lf$/)) {
+  if (not ($line =~ /$lf$/)) {
     error "detected malformed EOL";
   }
   $line =~ s/$cr//;
