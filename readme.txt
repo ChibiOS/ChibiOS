@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
+       handling, improved speed for aligned buffers.
 - NEW: Added a "waend" field to the thread structure in RT for debug
        convenience.
 - NEW: Added a para-virtualized HAL port for use in sandboxes.
