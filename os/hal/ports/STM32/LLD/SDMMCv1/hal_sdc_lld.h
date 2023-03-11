@@ -66,25 +66,17 @@
 #endif
 
 /**
- * @brief   Enable clock bypass.
- * @note    Allow clock speed up to 50 Mhz.
- */
-#if !defined(STM32_SDC_SDMMC_50MHZ) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_50MHZ               FALSE
-#endif
-
-/**
  * @brief   Write timeout in milliseconds.
  */
 #if !defined(STM32_SDC_SDMMC_WRITE_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_WRITE_TIMEOUT       1000
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       10000
 #endif
 
 /**
  * @brief   Read timeout in milliseconds.
  */
 #if !defined(STM32_SDC_SDMMC_READ_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_SDC_SDMMC_READ_TIMEOUT        1000
+#define STM32_SDC_SDMMC_READ_TIMEOUT        10000
 #endif
 
 /**
@@ -198,10 +190,6 @@
 #error "STM32_SDMMC2CLK must not exceed 48MHz"
 #endif
 
-#if defined(STM32_SDC_SDMMC_50MHZ) && STM32_SDC_SDMMC_50MHZ && !defined(STM32F7XX)
-#error "50 Mhz clock only works for STM32F7XX"
-#endif
-
 /* SDMMC IRQ priority tests.*/
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_SDC_SDMMC1_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to SDMMC1"
@@ -273,6 +261,12 @@ typedef struct {
    */
   sdcbusmode_t  bus_width;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Bus slowdown.
+   * @note    This values is added to the prescaler register in order to
+   *          arbitrarily reduce clock speed.
+   */
+  uint32_t      slowdown;
 } SDCConfig;
 
 /**
@@ -315,19 +309,15 @@ struct SDCDriver {
    * @brief Card RCA.
    */
   uint32_t                  rca;
+  /**
+   * @brief   Buffer of @p MMCSD_BLOCK_SIZE bytes for internal operations.
+   */
+  uint8_t                   *buf;
   /* End of the mandatory fields.*/
   /**
    * @brief Thread waiting for I/O completion IRQ.
    */
   thread_reference_t        thread;
-  /**
-   * @brief     DTIMER register value for read operations.
-   */
-  uint32_t                  rtmo;
-  /**
-   * @brief     DTIMER register value for write operations.
-   */
-  uint32_t                  wtmo;
   /**
    * @brief     DMA mode bit mask.
    */
@@ -342,9 +332,13 @@ struct SDCDriver {
    */
   SDMMC_TypeDef             *sdmmc;
   /**
-   * @brief   Buffer for internal operations.
+   * @brief   Input clock frequency.
    */
-  uint8_t                   buf[MMCSD_BLOCK_SIZE];
+  uint32_t                  clkfreq;
+  /**
+   * @brief   Uncached word buffer for small transfers.
+   */
+  uint32_t                  *resp;
 };
 
 /*===========================================================================*/

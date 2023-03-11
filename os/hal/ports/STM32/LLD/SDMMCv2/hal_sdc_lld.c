@@ -101,7 +101,7 @@ static uint32_t sdc_lld_clkdiv(SDCDriver *sdcp, uint32_t f) {
     return sdcp->config->slowdown;
   }
 
-  return sdcp->config->slowdown + ((sdcp->clkfreq + (f * 2) - 1) / (f * 2));
+  return sdcp->config->slowdown + ((sdcp->clkfreq + (f * 2U) - 1U) / (f * 2U));
 }
 
 /**
@@ -113,8 +113,8 @@ static uint32_t sdc_lld_clkdiv(SDCDriver *sdcp, uint32_t f) {
  */
 __STATIC_FORCEINLINE uint32_t sdc_lld_get_timeout(SDCDriver *sdcp,
                                                   uint32_t ms) {
-  uint32_t clkdiv = sdcp->sdmmc->CLKCR & 0xFFU;
-  return (((sdcp->clkfreq / ((clkdiv + 1U) * 2U)) / 1000U) * ms);
+  uint32_t div = (sdcp->sdmmc->CLKCR & SDMMC_CLKCR_CLKDIV_Msk) + 1U;
+  return (((sdcp->clkfreq / (div * 2U)) / 1000U) * ms);
 }
 
 /**
