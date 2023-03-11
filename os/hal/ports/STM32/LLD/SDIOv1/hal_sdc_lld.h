@@ -31,44 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/*
- * The following definitions are missing from some implementations, fixing
- * as zeroed masks.
- */
-#if !defined(SDIO_STA_STBITERR)
-#define SDIO_STA_STBITERR       0
-#endif
-
-#if !defined(SDIO_ICR_STBITERRC)
-#define SDIO_ICR_STBITERRC      0
-#endif
-
-#if !defined(SDIO_ICR_CEATAENDC)
-#define SDIO_ICR_CEATAENDC      0
-#endif
-
-#if !defined(SDIO_MASK_STBITERRIE)
-#define SDIO_MASK_STBITERRIE    0
-#endif
-
-/**
- * @brief Value to clear all interrupts flag at once.
- */
-#define STM32_SDIO_ICR_ALL_FLAGS (SDIO_ICR_CCRCFAILC | SDIO_ICR_DCRCFAILC | \
-                                  SDIO_ICR_CTIMEOUTC | SDIO_ICR_DTIMEOUTC | \
-                                  SDIO_ICR_TXUNDERRC | SDIO_ICR_RXOVERRC |  \
-                                  SDIO_ICR_CMDRENDC  | SDIO_ICR_CMDSENTC |  \
-                                  SDIO_ICR_DATAENDC  | SDIO_ICR_STBITERRC | \
-                                  SDIO_ICR_DBCKENDC  | SDIO_ICR_SDIOITC |   \
-                                  SDIO_ICR_CEATAENDC)
-
-/**
- * @brief Mask of error flags in STA register.
- */
-#define STM32_SDIO_STA_ERROR_MASK (SDIO_STA_CCRCFAIL | SDIO_STA_DCRCFAIL |  \
-                                   SDIO_STA_CTIMEOUT | SDIO_STA_DTIMEOUT |  \
-                                   SDIO_STA_TXUNDERR | SDIO_STA_RXOVERR)
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -92,14 +54,6 @@
 #endif
 
 /**
- * @brief   Enable clock bypass.
- * @note    Allow clock speed up to 50 Mhz.
- */
-#if !defined(STM32_SDC_SDIO_50MHZ) || defined(__DOXYGEN__)
-#define STM32_SDC_SDIO_50MHZ                FALSE
-#endif
-
-/**
  * @brief   Write timeout in milliseconds.
  */
 #if !defined(STM32_SDC_WRITE_TIMEOUT_MS) || defined(__DOXYGEN__)
@@ -111,6 +65,13 @@
  */
 #if !defined(STM32_SDC_READ_TIMEOUT_MS) || defined(__DOXYGEN__)
 #define STM32_SDC_READ_TIMEOUT_MS           1000
+#endif
+
+/**
+ * @brief   Card clock power saving enable.
+ */
+#if !defined(STM32_SDC_SDIO_PWRSAV) || defined(__DOXYGEN__)
+#define STM32_SDC_SDIO_PWRSAV               FALSE
 #endif
 
 /**
@@ -179,9 +140,6 @@
 #define STM32_SDIO_DIV_LS                   118
 #endif
 
-/**
- * @brief   SDIO data timeouts in SDIO clock cycles.
- */
 #if (defined(STM32F4XX) || defined(STM32F2XX))
 #if !STM32_CLOCK48_REQUIRED
 #error "SDIO requires STM32_CLOCK48_REQUIRED to be enabled"
@@ -190,23 +148,6 @@
 #if STM32_PLL48CLK != 48000000
 #error "invalid STM32_PLL48CLK clock value"
 #endif
-
-#define STM32_SDC_WRITE_TIMEOUT                                             \
-  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                    \
-   STM32_SDC_WRITE_TIMEOUT_MS)
-#define STM32_SDC_READ_TIMEOUT                                              \
-  (((STM32_PLL48CLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                    \
-   STM32_SDC_READ_TIMEOUT_MS)
-
-#else /* !(defined(STM32F4XX) || defined(STM32F2XX)) */
-
-#define STM32_SDC_WRITE_TIMEOUT                                             \
-  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                        \
-   STM32_SDC_WRITE_TIMEOUT_MS)
-#define STM32_SDC_READ_TIMEOUT                                              \
-  (((STM32_HCLK / (STM32_SDIO_DIV_HS + 2)) / 1000) *                        \
-   STM32_SDC_READ_TIMEOUT_MS)
-
 #endif /* !(defined(STM32F4XX) || defined(STM32F2XX)) */
 
 /*===========================================================================*/
@@ -238,6 +179,12 @@ typedef struct {
    */
   sdcbusmode_t  bus_width;
   /* End of the mandatory fields.*/
+  /**
+   * @brief   Bus slowdown.
+   * @note    This values is added to the prescaler register in order to
+   *          arbitrarily reduce clock speed.
+   */
+  uint32_t      slowdown;
 } SDCConfig;
 
 /**
