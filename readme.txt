@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Automatic removal of duplicated inclusion paths on make command lines.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
 - NEW: Added a "waend" field to the thread structure in RT for debug
