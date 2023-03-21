@@ -139,6 +139,9 @@ uint64_t __port_schedule_next(void) {
     mpuSetRegionAddress(PORT_USE_GUARD_MPU_REGION, ntp->wabase);
 #endif
 
+    __trace_switch(ntp, otp);
+    __stats_ctxswc(ntp, otp);
+
     return ((uint64_t)(uint32_t)otp << 32) | ((uint64_t)(uint32_t)ntp << 0);
   }
 

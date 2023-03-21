@@ -159,6 +159,11 @@ void chInstanceObjectInit(os_instance_t *oip,
   /* Setting up the caller as current thread.*/
   oip->rlist.current->state = CH_STATE_CURRENT;
 
+#if CH_DBG_STATISTICS == TRUE
+  /* Starting measurement for this thread.*/
+  chTMStartMeasurementX(&oip->rlist.current->stats);
+#endif
+
   /* User instance initialization hook.*/
   CH_CFG_OS_INSTANCE_INIT_HOOK(oip);
 
