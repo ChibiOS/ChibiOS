@@ -28,6 +28,10 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#define RCC_AHB1RSTR_DONOTTOUCH_Pos             (31U)
+#define RCC_AHB1RSTR_DONOTTOUCH_Msk             (0x1UL << RCC_AHB1RSTR_DONOTTOUCH_Pos)
+#define RCC_AHB1RSTR_DONOTTOUCH                 RCC_AHB1RSTR_DONOTTOUCH_Msk
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -140,7 +144,7 @@ void hal_lld_init(void) {
      have been initialized in the board initialization file (board.c).
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
-  rccResetAHB1(~0);
+  rccResetAHB1(~RCC_AHB1RSTR_DONOTTOUCH);
   rccResetAHB2(~0);
   rccResetAHB3(~(RCC_AHB3RSTR_FMCRST |
                  0x80000000U));     /* Was RCC_AHB3RSTR_CPURST in Rev-V.*/
