@@ -110,6 +110,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed unwanted reset of cache on STM32H7xx (bug #1258)
+       (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed invalid HSIDIV in STM32Ggxx clocks initialization (bug #1257)
        (backported to 21.11.4).
 - FIX: Fixed incorrect RTC initialization on STM32G4/L4/L4+ (bug #1256)
