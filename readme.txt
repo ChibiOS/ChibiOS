@@ -76,6 +76,7 @@
 *** 21.11.4 ***
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Fixed unwanted reset of cache on STM32H7xx (bug #1258).
 - FIX: Fixed invalid HSIDIV in STM32Ggxx clocks initialization (bug #1257).
 - FIX: Fixed incorrect RTC initialization on STM32G4/L4/L4+ (bug #1256).
 - FIX: Fixed syntax error in RP2040 GPIO driver (bug #1255).
