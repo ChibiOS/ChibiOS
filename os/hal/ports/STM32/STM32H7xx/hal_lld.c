@@ -163,6 +163,9 @@ void hal_lld_init(void) {
 #if defined(STM32_QSPI_NO_RESET)
                  RCC_AHB3RSTR_QSPIRST |
 #endif
+#if defined(STM32_OSPI_NO_RESET)
+                 RCC_AHB3RSTR_OSPIRST |
+#endif
                  0x80000000U));     /* Was RCC_AHB3RSTR_CPURST in Rev-V.*/
   __rccResetAHB4(~(RCC_APB4RSTR_SYSCFGRST | STM32_GPIO_EN_MASK));
   __rccResetAPB1L(~0);
