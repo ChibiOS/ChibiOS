@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: Added settings for STM32 OCTOSPIv1 and OCTOSPIv2 TCR bits SSHIFT and
+       DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
 - FIX: Fixed unwanted reset of cache on STM32H7xx (bug #1258).
