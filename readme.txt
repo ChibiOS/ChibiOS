@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added settings for STM32 OCTOSPIv1 and OCTOSPIv2 TCR bits SSHIFT and
+       DHQC.
 - NEW: Automatic removal of duplicated inclusion paths on make command lines.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
