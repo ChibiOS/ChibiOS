@@ -126,6 +126,34 @@
 #endif
 
 /**
+ * @brief   OCTOSPI1 TCR_SSHIFT enforcing.
+ */
+#if !defined(STM32_WSPI_OCTOSPI1_SSHIFT) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI1_SSHIFT            TRUE
+#endif
+
+/**
+ * @brief   OCTOSPI2 TCR_SSHIFT enforcing.
+ */
+#if !defined(STM32_WSPI_OCTOSPI2_SSHIFT) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI2_SSHIFT            TRUE
+#endif
+
+/**
+ * @brief   OCTOSPI1 TCR_DHQC enforcing.
+ */
+#if !defined(STM32_WSPI_OCTOSPI1_DHQC) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI1_DHQC              TRUE
+#endif
+
+/**
+ * @brief   OCTOSPI2 TCR_DHQC enforcing.
+ */
+#if !defined(STM32_WSPI_OCTOSPI2_DHQC) || defined(__DOXYGEN__)
+#define STM32_WSPI_OCTOSPI2_DHQC              TRUE
+#endif
+
+/**
  * @brief   OCTOSPI1 interrupt priority level setting.
  */
 #if !defined(STM32_WSPI_OCTOSPI1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -292,6 +320,8 @@
  * @brief   Low level fields of the WSPI driver structure.
  */
 #define wspi_lld_driver_fields                                              \
+  /* Extra bits for the TCR register.*/                                     \
+  uint32_t                      extra_tcr;                                  \
   /* Pointer to the OCTOSPIx registers block.*/                             \
   OCTOSPI_TypeDef           *ospi;                                          \
   /* OCTOSPI DMA stream.*/                                                  \
