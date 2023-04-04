@@ -2894,10 +2894,10 @@
 
 /* Clock tree attributes.*/
 #define STM32_HAS_RCC_PLLSAI                FALSE
-#define STM32_HAS_RCC_PLLI2S                FALSE
+#define STM32_HAS_RCC_PLLI2S                TRUE
 #define STM32_HAS_RCC_DCKCFGR               TRUE
 #define STM32_HAS_RCC_DCKCFGR2              FALSE
-#define STM32_HAS_RCC_I2SSRC                FALSE
+#define STM32_HAS_RCC_I2SSRC                TRUE
 #define STM32_HAS_RCC_I2SPLLSRC             FALSE
 #define STM32_HAS_RCC_CK48MSEL              FALSE
 #define STM32_RCC_CK48MSEL_USES_I2S         FALSE
