@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: I2C slave support in HAL high level driver.
 - NEW: Added settings for STM32 OCTOSPIv1 and OCTOSPIv2 TCR bits SSHIFT and
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
