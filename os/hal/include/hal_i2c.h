@@ -66,6 +66,11 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* For compatibility, some LLDs could not export this.*/
+#if !defined(I2C_SUPPORTS_SLAVE_MODE)
+#define I2C_SUPPORTS_SLAVE_MODE             FALSE
+#endif
+
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -154,7 +159,13 @@ extern "C" {
   void i2cAcquireBus(I2CDriver *i2cp);
   void i2cReleaseBus(I2CDriver *i2cp);
 #endif
-
+#if I2C_SUPPORTS_SLAVE_MODE == TRUE
+  msg_t i2cSlaveMatchAddress(I2CDriver *i2cp, i2caddr_t  i2cadr);
+  msg_t i2cSlaveReceiveTimeout(I2CDriver *i2cp, uint8_t *rxbuf,
+                               size_t rxbytes, sysinterval_t timeout);
+  msg_t i2cSlaveTransmitTimeout(I2CDriver *i2cp, const uint8_t *txbuf,
+                                size_t txbytes, sysinterval_t timeout);
+#endif
 #ifdef __cplusplus
 }
 #endif

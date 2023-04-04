@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: I2C slave support in HAL high level driver.
 - NEW: Added settings for STM32 OCTOSPIv1 and OCTOSPIv2 TCR bits SSHIFT and
        DHQC.
 - NEW: Automatic removal of duplicated inclusion paths on make command lines.
