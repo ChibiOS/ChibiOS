@@ -66,11 +66,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* For compatibility, some LLDs could not export this.*/
-#if !defined(I2C_SUPPORTS_SLAVE_MODE)
-#define I2C_SUPPORTS_SLAVE_MODE             FALSE
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -88,6 +83,11 @@ typedef enum {
 } i2cstate_t;
 
 #include "hal_i2c_lld.h"
+
+/* For compatibility, some LLDs could not export this.*/
+#if !defined(I2C_SUPPORTS_SLAVE_MODE)
+#define I2C_SUPPORTS_SLAVE_MODE             FALSE
+#endif
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
