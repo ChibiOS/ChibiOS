@@ -753,7 +753,7 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
 
     /* Endpoint size and address initialization.*/
     if (epcp->out_maxsize > 62U) {
-      nblocks = ((((((uint32_t)epcp->out_maxsize - 1U) | 0x1FU) + 1U) / 32U) << 26) |
+      nblocks = (((((uint32_t)epcp->out_maxsize - 1U) | 0x1FU) / 32U) << 26) |
                 0x80000000U;
     }
     else {
