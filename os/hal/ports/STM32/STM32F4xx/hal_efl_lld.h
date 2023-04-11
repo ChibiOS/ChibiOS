@@ -51,8 +51,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if defined(STM32F413xx) || defined(STM32F412xx) || defined(STM32F40_41xxx)  \
-						 || defined(__DOXYGEN__)
+#if defined(STM32F413xx) || defined(STM32F412xx) ||                         \
+    defined(STM32F40_41xxx) || defined(__DOXYGEN__)
 
 /* Flash size register. */
 #define STM32_FLASH_SIZE_REGISTER           0x1FFF7A22
@@ -67,6 +67,51 @@
 #define STM32_FLASH2_SIZE                   1024U
 #define STM32_FLASH1_SECTORS_TOTAL          16
 #define STM32_FLASH2_SECTORS_TOTAL          12
+
+#elif defined(STM32F401xx) || defined(STM32F411xx) ||                         \
+    defined(__DOXYGEN__)
+
+/* Flash size register. */
+#define STM32_FLASH_SIZE_REGISTER           0x1FFF7A22
+#define STM32_FLASH_SIZE_SCALE              1024U
+
+/*
+ * Device flash size...
+ *
+ */
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#define STM32_FLASH1_SIZE                   128U
+#define STM32_FLASH2_SIZE                   256U
+#define STM32_FLASH3_SIZE                   384U
+#define STM32_FLASH4_SIZE                   512U
+#define STM32_FLASH1_SECTORS_TOTAL          5
+#define STM32_FLASH2_SECTORS_TOTAL          6
+#define STM32_FLASH3_SECTORS_TOTAL          7
+#define STM32_FLASH4_SECTORS_TOTAL          8
+
+#elif defined(STM32F429_439xx) || defined(STM32F427_437xx) || \
+      defined(__DOXYGEN__)
+
+/* Flash size register. */
+#define STM32_FLASH_SIZE_REGISTER           0x1FFF7A22
+#define STM32_FLASH_SIZE_SCALE              1024U
+
+/*
+ * Device flash size is:
+ *  1M for STM32F4x7/4x9 suffix G devices
+ *  2M for STM32F4x7/4x9 suffix I devices.
+ *
+ * For 1M devices SBM is organised as 16K x 4 + 64K + 128K x 7 sectors.
+ * For 1M devices DBM is organised as 16K x 4 + 64K + 128K x 3 sectors per bank.
+ *
+ * For 2M devices are organised as 16K x 4 + 64K + 128K x 7 sectors per bank.
+ */
+#define STM32_FLASH_NUMBER_OF_BANKS         2
+#define STM32_FLASH_SIZE_1M                 1024U
+#define STM32_FLASH_SIZE_2M                 2048U
+#define STM32_FLASH_SECTORS_TOTAL_1M_SBM    12
+#define STM32_FLASH_SECTORS_TOTAL_1M_DBM    20
+#define STM32_FLASH_SECTORS_TOTAL_2M        24
 #else
 #error "This EFL driver does not support the selected device"
 #endif

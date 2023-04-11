@@ -48,6 +48,10 @@
 #define FLASH_SR_OPERR                      FLASH_SR_SOP
 #endif
 
+#if !defined(STM32_FLASH_DUAL_BANK_PERMANENT)
+#define STM32_FLASH_DUAL_BANK_PERMANENT     FALSE
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -61,8 +65,8 @@ EFlashDriver EFLD1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-#if defined(STM32F413xx) || defined(STM32F412xx) || defined(STM32F40_41xxx)  \
-						 || defined(__DOXYGEN__)
+#if defined(STM32F413xx) || defined(STM32F412xx) ||                         \
+    defined(STM32F40_41xxx) || defined(__DOXYGEN__)
 
 /* Sector table for 1.5M device. */
 static const flash_sector_descriptor_t efl_lld_sect1[STM32_FLASH1_SECTORS_TOTAL] = {
@@ -137,6 +141,250 @@ static const efl_lld_size_t efl_lld_flash_sizes[] = {
        .desc = efl_lld_size2
       }
 };
+#elif defined(STM32F401xx) || defined(STM32F411xx) ||                         \
+    defined(__DOXYGEN__)
+
+/* Sector table for 128k device. */
+static const flash_sector_descriptor_t efl_lld_sect1[STM32_FLASH1_SECTORS_TOTAL] = {
+  {         0,                        16384},   /* Sector  0. */
+  { 1 * 16384,                        16384},   /* Sector  1. */
+  { 2 * 16384,                        16384},   /* Sector  2. */
+  { 3 * 16384,                        16384},   /* Sector  3. */
+  { 4 * 16384,                        65536},   /* Sector  4. */
+};
+
+/* Sector table for 256k device. */
+static const flash_sector_descriptor_t efl_lld_sect2[STM32_FLASH2_SECTORS_TOTAL] = {
+  {         0,                        16384},   /* Sector  0. */
+  { 1 * 16384,                        16384},   /* Sector  1. */
+  { 2 * 16384,                        16384},   /* Sector  2. */
+  { 3 * 16384,                        16384},   /* Sector  3. */
+  { 4 * 16384,                        65536},   /* Sector  4. */
+  { 4 * 16384 + 65536,               131072},   /* Sector  5. */
+};
+
+/* Sector table for 384k device. */
+static const flash_sector_descriptor_t efl_lld_sect3[STM32_FLASH3_SECTORS_TOTAL] = {
+  {         0,                        16384},   /* Sector  0. */
+  { 1 * 16384,                        16384},   /* Sector  1. */
+  { 2 * 16384,                        16384},   /* Sector  2. */
+  { 3 * 16384,                        16384},   /* Sector  3. */
+  { 4 * 16384,                        65536},   /* Sector  4. */
+  { 4 * 16384 + 65536,               131072},   /* Sector  5. */
+  { 4 * 16384 + 65536 +  1 * 131072, 131072},   /* Sector  6. */
+};
+
+/* Sector table for 512k device. */
+static const flash_sector_descriptor_t efl_lld_sect4[STM32_FLASH4_SECTORS_TOTAL] = {
+  {         0,                        16384},   /* Sector  0. */
+  { 1 * 16384,                        16384},   /* Sector  1. */
+  { 2 * 16384,                        16384},   /* Sector  2. */
+  { 3 * 16384,                        16384},   /* Sector  3. */
+  { 4 * 16384,                        65536},   /* Sector  4. */
+  { 4 * 16384 + 65536,               131072},   /* Sector  5. */
+  { 4 * 16384 + 65536 +  1 * 131072, 131072},   /* Sector  6. */
+  { 4 * 16384 + 65536 +  2 * 131072, 131072},   /* Sector  7. */
+};
+
+/* The descriptors for 128k device. */
+static const flash_descriptor_t efl_lld_size1[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Single bank organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH1_SECTORS_TOTAL,
+       .sectors           = efl_lld_sect1,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH1_SIZE * STM32_FLASH_SIZE_SCALE
+      }
+};
+
+/* The descriptors for 256k device. */
+static const flash_descriptor_t efl_lld_size2[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Single bank organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH2_SECTORS_TOTAL,
+       .sectors           = efl_lld_sect2,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH2_SIZE * STM32_FLASH_SIZE_SCALE
+      }
+};
+
+/* The descriptors for 384k device. */
+static const flash_descriptor_t efl_lld_size3[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Single bank organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH3_SECTORS_TOTAL,
+       .sectors           = efl_lld_sect3,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH3_SIZE * STM32_FLASH_SIZE_SCALE
+      }
+};
+
+/* The descriptors for 512k device. */
+static const flash_descriptor_t efl_lld_size4[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Single bank organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH4_SECTORS_TOTAL,
+       .sectors           = efl_lld_sect4,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH4_SIZE * STM32_FLASH_SIZE_SCALE
+      }
+};
+
+/* Table describing possible flash sizes and descriptors for this device. */
+static const efl_lld_size_t efl_lld_flash_sizes[] = {
+      {
+       .desc = efl_lld_size1
+      },
+      {
+       .desc = efl_lld_size2
+      },
+      {
+       .desc = efl_lld_size3
+      },
+      {
+       .desc = efl_lld_size4
+      }
+};
+#elif defined(STM32F429_439xx) || defined(STM32F427_437xx) || \
+      defined(__DOXYGEN__)
+
+/* Sector table for 1M device in SBM. */
+static const flash_sector_descriptor_t efl_lld_sect_1m_sbm[STM32_FLASH_SECTORS_TOTAL_1M_SBM] = {
+  {         0,                            16384},    /* Sector  0. */
+  { 1 * 16384,                            16384},    /* Sector  1. */
+  { 2 * 16384,                            16384},    /* Sector  2. */
+  { 3 * 16384,                            16384},    /* Sector  3. */
+  { 4 * 16384,                            65536},    /* Sector  4. */
+  { 4 * 16384 + 1 * 65536,               131072},    /* Sector  5. */
+  { 4 * 16384 + 1 * 65536 +  1 * 131072, 131072},    /* Sector  6. */
+  { 4 * 16384 + 1 * 65536 +  2 * 131072, 131072},    /* Sector  7. */
+  { 4 * 16384 + 1 * 65536 +  3 * 131072, 131072},    /* Sector  8. */
+  { 4 * 16384 + 1 * 65536 +  4 * 131072, 131072},    /* Sector  9. */
+  { 4 * 16384 + 1 * 65536 +  5 * 131072, 131072},    /* Sector 10. */
+  { 4 * 16384 + 1 * 65536 +  6 * 131072, 131072}     /* Sector 11. */
+};
+
+/* Sector table for 1M device in DBM. */
+static const flash_sector_descriptor_t efl_lld_sect_1m_dbm[STM32_FLASH_SECTORS_TOTAL_1M_DBM] = {
+  {         0,                            16384},    /* Sector  0.  */
+  { 1 * 16384,                            16384},    /* Sector  1.  */
+  { 2 * 16384,                            16384},    /* Sector  2.  */
+  { 3 * 16384,                            16384},    /* Sector  3.  */
+  { 4 * 16384,                            65536},    /* Sector  4.  */
+  { 4 * 16384 + 1 * 65536,               131072},    /* Sector  5.  */
+  { 4 * 16384 + 1 * 65536 +  1 * 131072, 131072},    /* Sector  6.  */
+  { 4 * 16384 + 1 * 65536 +  2 * 131072, 131072},    /* Sector  7.  */
+  { 4 * 16384 + 1 * 65536 +  3 * 131072,      0},    /* Invalid.    */
+  { 4 * 16384 + 1 * 65536 +  3 * 131072,      0},    /* Invalid.    */
+  { 4 * 16384 + 1 * 65536 +  3 * 131072,      0},    /* Invalid.    */
+  { 4 * 16384 + 1 * 65536 +  3 * 131072,      0},    /* Invalid.    */
+  { 4 * 16384 + 1 * 65536 +  3 * 131072,  16384},    /* Sector  12. */
+  { 5 * 16384 + 1 * 65536 +  3 * 131072,  16384},    /* Sector  13. */
+  { 6 * 16384 + 1 * 65536 +  3 * 131072,  16384},    /* Sector  14. */
+  { 7 * 16384 + 1 * 65536 +  3 * 131072,  16384},    /* Sector  15. */
+  { 8 * 16384 + 1 * 65536 +  3 * 131072,  65536},    /* Sector  16. */
+  { 8 * 16384 + 2 * 65536 +  3 * 131072, 131072},    /* Sector  17. */
+  { 8 * 16384 + 2 * 65536 +  4 * 131072, 131072},    /* Sector  18. */
+  { 8 * 16384 + 2 * 65536 +  5 * 131072, 131072}     /* Sector  19. */
+};
+
+/* Sector table for 2M device banks. */
+static const flash_sector_descriptor_t efl_lld_sect_2m[STM32_FLASH_SECTORS_TOTAL_2M] = {
+  {         0,                            16384},    /* Sector  0. */
+  { 1 * 16384,                            16384},    /* Sector  1. */
+  { 2 * 16384,                            16384},    /* Sector  2. */
+  { 3 * 16384,                            16384},    /* Sector  3. */
+  { 4 * 16384,                            65536},    /* Sector  4. */
+  { 4 * 16384 + 1 * 65536,               131072},    /* Sector  5. */
+  { 4 * 16384 + 1 * 65536 +  1 * 131072, 131072},    /* Sector  6. */
+  { 4 * 16384 + 1 * 65536 +  2 * 131072, 131072},    /* Sector  7. */
+  { 4 * 16384 + 1 * 65536 +  3 * 131072, 131072},    /* Sector  8. */
+  { 4 * 16384 + 1 * 65536 +  4 * 131072, 131072},    /* Sector  9. */
+  { 4 * 16384 + 1 * 65536 +  5 * 131072, 131072},    /* Sector 10. */
+  { 4 * 16384 + 1 * 65536 +  6 * 131072, 131072},    /* Sector 11. */
+  { 4 * 16384 + 1 * 65536 +  7 * 131072,  16384},    /* Sector 12. */
+  { 5 * 16384 + 1 * 65536 +  7 * 131072,  16384},    /* Sector 13. */
+  { 6 * 16384 + 1 * 65536 +  7 * 131072,  16384},    /* Sector 14. */
+  { 7 * 16384 + 1 * 65536 +  7 * 131072,  16384},    /* Sector 15. */
+  { 8 * 16384 + 1 * 65536 +  7 * 131072,  65536},    /* Sector 16. */
+  { 8 * 16384 + 2 * 65536 +  7 * 131072, 131072},    /* Sector 17. */
+  { 8 * 16384 + 2 * 65536 +  8 * 131072, 131072},    /* Sector 18. */
+  { 8 * 16384 + 2 * 65536 +  9 * 131072, 131072},    /* Sector 19. */
+  { 8 * 16384 + 2 * 65536 + 10 * 131072, 131072},    /* Sector 20. */
+  { 8 * 16384 + 2 * 65536 + 11 * 131072, 131072},    /* Sector 21. */
+  { 8 * 16384 + 2 * 65536 + 12 * 131072, 131072},    /* Sector 22. */
+  { 8 * 16384 + 2 * 65536 + 13 * 131072, 131072}     /* Sector 23. */
+};
+
+/* The descriptors for 1M device. */
+static const flash_descriptor_t efl_lld_size_1m[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Bank 1 (SBM) organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH_SECTORS_TOTAL_1M_SBM,
+       .sectors           = efl_lld_sect_1m_sbm,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH_SIZE_1M * STM32_FLASH_SIZE_SCALE
+      },
+      { /* Bank 1 & 2 (DBM) organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH_SECTORS_TOTAL_1M_DBM,
+       .sectors           = efl_lld_sect_1m_dbm,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH_SIZE_1M * STM32_FLASH_SIZE_SCALE
+      }
+};
+
+/* The descriptors for 2M device. */
+static const flash_descriptor_t efl_lld_size_2m[STM32_FLASH_NUMBER_OF_BANKS] = {
+      { /* Dual bank organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH_SECTORS_TOTAL_2M,
+       .sectors           = efl_lld_sect_2m,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH_SIZE_2M * STM32_FLASH_SIZE_SCALE
+      },
+      { /* Dual bank organisation. */
+       .attributes        = FLASH_ATTR_ERASED_IS_ONE |
+                            FLASH_ATTR_MEMORY_MAPPED,
+       .page_size         = STM32_FLASH_LINE_SIZE,
+       .sectors_count     = STM32_FLASH_SECTORS_TOTAL_2M,
+       .sectors           = efl_lld_sect_2m,
+       .sectors_size      = 0,
+       .address           = (uint8_t *)FLASH_BASE,
+       .size              = STM32_FLASH_SIZE_2M * STM32_FLASH_SIZE_SCALE
+      }
+};
+
+/* Table describing possible flash sizes and descriptors for this device. */
+static const efl_lld_size_t efl_lld_flash_sizes[] = {
+      {
+       .desc = efl_lld_size_1m
+      },
+      {
+       .desc = efl_lld_size_2m
+      }
+};
 #else
 #error "This EFL driver does not support the selected device"
 #endif
@@ -190,7 +438,7 @@ static inline size_t stm32_flash_get_size(void) {
 static inline bool stm32_flash_dual_bank(EFlashDriver *eflp) {
 
 #if STM32_FLASH_NUMBER_OF_BANKS > 1
-  return ((eflp->flash->OPTCR & FLASH_OPTCR_DB1M) != 0U);
+  return ((eflp->flash->OPTCR & FLASH_OPTCR_DB1M) != 0U || STM32_FLASH_DUAL_BANK_PERMANENT);
 #endif
   (void)eflp;
   return false;
@@ -460,9 +708,10 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
 
 /**
  * @brief   Starts a whole-device erase operation.
- * @note    This function only erases bank 2 if it is present. Bank 1 is not
- *          allowed since it is normally where the primary program is located.
- *          Sectors on bank 1 can be individually erased.
+ * @note    This function only erases the unused bank if in dual bank mode. The
+ *          currently in use bank is not allowed since it is normally where the
+ *          currently running program is executing from.
+ *          Sectors on the in-use bank can be individually erased.
  *
  * @param[in] ip                    pointer to a @p EFlashDriver instance
  * @return                          An error code.
@@ -484,7 +733,7 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
     return FLASH_BUSY_ERASING;
   }
 
-#if defined(FLASH_CR_MER1)
+#if defined(FLASH_CR_MER2)
   /* If dual bank is active then mass erase bank2. */
   if (stm32_flash_dual_bank(devp)) {
 
@@ -494,7 +743,15 @@ flash_error_t efl_lld_start_erase_all(void *instance) {
     /* Clearing error status bits.*/
     stm32_flash_clear_status(devp);
 
-    devp->flash->CR |= FLASH_CR_MER1;
+    /* Erase the currently unused bank, based on Flash Bank Mode */
+    if ((SYSCFG->MEMRMP & SYSCFG_MEMRMP_UFB_MODE) != 0U) {
+        /* Bank 2 in use, erase Bank 1 */
+        devp->flash->CR |= FLASH_CR_MER;
+    }
+    else {
+        /* Bank 1 in use, erase Bank 2 */
+        devp->flash->CR |= FLASH_CR_MER2;
+    }
     devp->flash->CR |= FLASH_CR_STRT;
     return FLASH_NO_ERROR;
   }
@@ -545,6 +802,17 @@ flash_error_t efl_lld_start_erase_sector(void *instance,
   devp->flash->CR &= ~FLASH_CR_SNB;
   devp->flash->CR &= ~FLASH_CR_PSIZE;
 
+#if defined(FLASH_CR_MER2)
+  /* Adjust sector value for dual-bank devices
+   * For STM32F42x_43x devices (dual-bank), FLASH_CR_SNB values jump to 0b10000
+   * for sectors 12 and up.
+   */
+  if (sector >= 12) {
+    sector -= 12;
+    sector |= 0x10U;
+  }
+#endif
+
   /* Set sector and parallelism. */
   devp->flash->CR |= (sector << FLASH_CR_SNB_Pos) |
                      (STM32_FLASH_PSIZE << FLASH_CR_PSIZE_Pos);
@@ -582,8 +850,8 @@ flash_error_t efl_lld_query_erase(void *instance, uint32_t *msec) {
 
       /* Disabling the various erase control bits.*/
       devp->flash->CR &= ~(FLASH_CR_MER  |
-#if defined(FLASH_CR_MER1)
-                           FLASH_CR_MER1 |
+#if defined(FLASH_CR_MER2)
+                           FLASH_CR_MER2 |
 #endif
                            FLASH_CR_SER);
 
