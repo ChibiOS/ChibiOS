@@ -625,11 +625,13 @@ void usb_lld_init_endpoint(USBDriver *usbp, usbep_t ep) {
     uint16_t nblocks;
 
     /* Endpoint size and address initialization.*/
-    if (epcp->out_maxsize > 62)
-      nblocks = (((((epcp->out_maxsize - 1) | 0x1f) + 1) / 32) << 10) |
-                0x8000;
-    else
-      nblocks = ((((epcp->out_maxsize - 1) | 1) + 1) / 2) << 10;
+    if (epcp->out_maxsize > 62) {
+      nblocks = (((((uint32_t)epcp->out_maxsize - 1U) | 0x1FU) / 32U) << 10) |
+                0x8000U;
+    }
+    else {
+      nblocks = ((((uint32_t)(epcp->out_maxsize - 1U) | 1U) + 1U) / 2U) << 10;
+    }
     dp->RXCOUNT0 = nblocks;
     dp->RXADDR0  = usb_pm_alloc(usbp, epcp->out_maxsize);
 
