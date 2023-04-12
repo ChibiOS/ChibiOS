@@ -175,10 +175,10 @@ static bool mmc_read(void *instance, uint32_t startblk,
       }
       buffer += MMCSD_BLOCK_SIZE;
       n--;
+    }
 
-      if (mmcStopSequentialRead(mmcp)) {
-        break;
-      }
+    if (mmcStopSequentialRead(mmcp)) {
+      break;
     }
 
     err = HAL_SUCCESS;
