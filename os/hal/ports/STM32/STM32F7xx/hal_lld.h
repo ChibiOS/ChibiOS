@@ -465,6 +465,34 @@
 #endif
 
 /**
+ * @brief   Enables a no-cache RAM area using the MPU.
+ */
+#if !defined(STM32_NOCACHE_ENABLE) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_ENABLE                FALSE
+#endif
+
+/**
+ * @brief   MPU region to be used for no-cache RAM area.
+ */
+#if !defined(STM32_NOCACHE_MPU_REGION) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
+#endif
+
+/**
+ * @brief   Base address to be used for no-cache RAM area.
+ */
+#if !defined(STM32_NOCACHE_RBAR) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_RBAR                  0x2004C000U
+#endif
+
+/**
+ * @brief   Size to be used for no-cache RAM area.
+ */
+#if !defined(STM32_NOCACHE_RASR) || defined(__DOXYGEN__)
+#define STM32_NOCACHE_RASR                  MPU_RASR_SIZE_16K
+#endif
+
+/**
  * @brief   Enables or disables the programmable voltage detector.
  */
 #if !defined(STM32_PVD_ENABLE) || defined(__DOXYGEN__)
@@ -887,14 +915,6 @@
  */
 #if !defined(STM32_SDMMC2SEL) || defined(__DOXYGEN__)
 #define STM32_SDMMC2SEL                     STM32_SDMMC2SEL_PLL48CLK
-#endif
-
-/**
- * @brief   SRAM2 cache-ability.
- * @note    This setting uses the MPU region 7 if at @p TRUE.
- */
-#if !defined(STM32_SRAM2_NOCACHE) || defined(__DOXYGEN__)
-#define STM32_SRAM2_NOCACHE                 FALSE
 #endif
 /** @} */
 
