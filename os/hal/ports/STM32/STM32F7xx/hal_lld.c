@@ -133,20 +133,22 @@ void hal_lld_init(void) {
   /* IRQ subsystem initialization.*/
   irqInit();
 
-#if STM32_SRAM2_NOCACHE
-  /* The SRAM2 bank can optionally made a non cache-able area for use by
-     DMA engines.*/
-  mpuConfigureRegion(MPU_REGION_7,
-                     SRAM2_BASE,
-                     MPU_RASR_ATTR_AP_RW_RW |
-                     MPU_RASR_ATTR_NON_CACHEABLE |
-                     MPU_RASR_SIZE_16K |
-                     MPU_RASR_ENABLE);
-  mpuEnable(MPU_CTRL_PRIVDEFENA);
+  /* MPU initialization if required.*/
+#if STM32_NOCACHE_ENABLE == TRUE
+  {
+    mpuConfigureRegion(STM32_NOCACHE_MPU_REGION,
+                       STM32_NOCACHE_RBAR,
+                       MPU_RASR_ATTR_AP_RW_RW |
+                       MPU_RASR_ATTR_NON_CACHEABLE |
+                       MPU_RASR_ATTR_S |
+                       STM32_NOCACHE_RASR |
+                       MPU_RASR_ENABLE);
+    mpuEnable(MPU_CTRL_PRIVDEFENA);
 
-  /* Invalidating data cache to make sure that the MPU settings are taken
-     immediately.*/
-  SCB_CleanInvalidateDCache();
+    /* Invalidating data cache to make sure that the MPU settings are taken
+       immediately.*/
+    SCB_CleanInvalidateDCache();
+  }
 #endif
 
   /* Programmable voltage detector enable.*/
