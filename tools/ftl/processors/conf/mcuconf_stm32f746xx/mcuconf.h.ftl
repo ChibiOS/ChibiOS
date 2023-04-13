@@ -54,7 +54,7 @@
 /*
  * Memory attributes settings.
  */
-#define STM32_NOCACHE_ENABLE                ${doc.STM32_NOCACHE_ENABLE!"TRUE"}
+#define STM32_NOCACHE_ENABLE                ${doc.STM32_NOCACHE_ENABLE!"FALSE"}
 #define STM32_NOCACHE_MPU_REGION            ${doc.STM32_NOCACHE_MPU_REGION!"MPU_REGION_6"}
 #define STM32_NOCACHE_RBAR                  ${doc.STM32_NOCACHE_RBAR!"0x2004C000U"}
 #define STM32_NOCACHE_RASR                  ${doc.STM32_NOCACHE_RASR!"MPU_RASR_SIZE_16K"}
