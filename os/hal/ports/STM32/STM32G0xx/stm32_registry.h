@@ -515,7 +515,7 @@
 #define STM32_EXTI_SEPARATE_RF              TRUE
 #define STM32_EXTI_HAS_GROUP2               FALSE
 #define STM32_EXTI_NUM_LINES                36
-#define STM32_EXTI_IMR1_MASK                0xFFF80000U
+#define STM32_EXTI_IMR1_MASK                0xFFD00000U
 #define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU
 
 /* Flash attributes.*/
