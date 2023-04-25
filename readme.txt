@@ -80,6 +80,7 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Fixed channel 0 corruption on STM32 BDMAv1 (bug #1263).
 - FIX: Fixed wrong statistics in RT7 (bug #1262).
 - FIX: Fixed missing cache management during Cortex-M RAM initializations
        (bug #1261).
