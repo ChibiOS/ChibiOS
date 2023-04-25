@@ -256,6 +256,12 @@ void __init_ram_areas(void) {
     rap++;
   }
   while (rap < &ram_areas[CRT0_AREAS_NUMBER]);
+#if CORTEX_MODEL == 7
+  /* PM0253 - 4.8.7 Cache maintenance design hints and tips - required
+     for self-modifying code.*/
+  SCB_CleanDCache();
+  SCB_InvalidateICache();
+#endif
 #endif
 }
 
