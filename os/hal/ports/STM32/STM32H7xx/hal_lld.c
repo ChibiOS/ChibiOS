@@ -159,15 +159,19 @@ void hal_lld_init(void) {
      latest writes could be lost.*/
   __rccResetAHB1(~RCC_AHB1RSTR_DONOTTOUCH);
   __rccResetAHB2(~0);
-  __rccResetAHB3(~(RCC_AHB3RSTR_FMCRST   |
+  __rccResetAHB3(~(RCC_AHB3RSTR_FMCRST    |
 #if defined(STM32_QSPI_NO_RESET)
-                   RCC_AHB3RSTR_QSPIRST  |
+                   RCC_AHB3RSTR_QSPIRST   |
 #endif
 #if defined(STM32_OSPI1_NO_RESET)
-                   RCC_AHB3RSTR_OSPI1RST |
+                   RCC_AHB3RSTR_OSPI1RST  |
+                   RCC_AHB3RSTR_IOMNGRRST |
+                   RCC_AHB3RSTR_MDMARST   |
 #endif
 #if defined(STM32_OSPI2_NO_RESET)
-                   RCC_AHB3RSTR_OSPI2RST |
+                   RCC_AHB3RSTR_OSPI2RST  |
+                   RCC_AHB3RSTR_IOMNGRRST |
+                   RCC_AHB3RSTR_MDMARST   |
 #endif
                    0x80000000U));   /* Was RCC_AHB3RSTR_CPURST in Rev-V.*/
   __rccResetAHB4(~(RCC_APB4RSTR_SYSCFGRST | STM32_GPIO_EN_MASK));
