@@ -114,6 +114,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed channel 0 corruption on STM32 BDMAv1 (bug #1263)
+       (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed wrong statistics in RT7 (bug #1262)(backported to 21.11.4).
 - FIX: Fixed missing cache management during Cortex-M RAM initializations
        (bug #1261)(backported to 20.3.5)(backported to 21.11.4).
