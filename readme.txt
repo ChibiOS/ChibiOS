@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Fixed missing cache management during Cortex-M RAM initializations
+       (bug #1261)(backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed unwanted reset of cache on STM32H7xx (bug #1258).
 - FIX: Fixed incorrect RTC initialization on STM32G4 (bug #1256).
 - FIX: Fixed invalid checks on PLLP/R/Q dividers on STM32H7 (bug #1253).
