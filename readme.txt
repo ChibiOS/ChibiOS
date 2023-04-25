@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Fixed channel 0 corruption on STM32 BDMAv1 (bug #1263).
 - FIX: Fixed missing cache management during Cortex-M RAM initializations
        (bug #1261)(backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed unwanted reset of cache on STM32H7xx (bug #1258).
