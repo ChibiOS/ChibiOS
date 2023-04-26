@@ -408,8 +408,8 @@ void bdmaStreamFreeI(const stm32_bdma_stream_t *stp) {
   bdma.allocated_mask &= ~(1U << stp->selfindex);
 
   /* Clearing associated handler and parameter.*/
-  bdma.streams[stp->selfindex]->func  = NULL;
-  bdma.streams[stp->selfindex]->param = NULL;
+  bdma.streams[stp->selfindex].func  = NULL;
+  bdma.streams[stp->selfindex].param = NULL;
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((bdma.allocated_mask & STM32_BDMA_STREAMS_MASK) == 0U) {
