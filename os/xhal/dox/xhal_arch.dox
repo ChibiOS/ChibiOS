@@ -1,0 +1,197 @@
+/*
+    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
+              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation version 3 of the License.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * @startuml {xhal_drvsm.png} "XHAL Drivers State Machine"
+ * hide empty description
+ *
+ * state RCLOSE <<choice>>
+ * state ACLOSE <<choice>>
+ * state STOP : cnt == 0
+ * state READY : cnt > 0
+ * state ACTIVE : cnt > 0
+ * state ERROR : cnt > 0
+ * note left of ACTIVE
+ *   This state is used by drivers
+ *   implementing asynchronous
+ *   operations.
+ * end note
+ * note left of ERROR
+ *   This state is used by drivers
+ *   requiring a persistent error
+ *   condition.
+ * end note
+ *
+ * [*] -> UNINIT
+ * UNINIT --> STOP : drvObjectInit()
+ * STOP --> READY : drvOpen()\ncall start()
+ * READY --> READY : drvOpen() cnt++
+ * READY -u-> RCLOSE : drvClose() cnt--
+ * RCLOSE --> STOP : [cnt == 0]\ncall stop()
+ * RCLOSE --> READY : [cnt > 0]
+ * READY --> ACTIVE : start operation
+ * ACTIVE --> ACTIVE : drvOpen() cnt++
+ * ACTIVE -[dotted]-> READY : asynchronous\nend operation\ncallback
+ * ACTIVE --> ACLOSE : drvClose() cnt--
+ * ACLOSE --> STOP : [cnt == 0]\ncall stop()\noperation forcibly aborted
+ * ACLOSE --> ACTIVE : [cnt > 0]
+ * ACTIVE -[dotted]-> ERROR : asynchronous\noperation error\ncallback
+ * ERROR --> ERROR : drvOpen() cnt++
+ * ERROR --> READY : error cleared
+ * ERROR --> RCLOSE : drvClose()
+ *
+ * @enduml
+ *
+ * @startuml {xhal_arch.png} "XHAL Architecture"
+ * package "Base OOP Package" {
+ *   interface base_interface_i {
+ *     + {static} oopIfGetOwner()
+ *     + {static} oopIfObjectInit()
+ *   }
+ *   interface sequential_stream_i extends base_interface_i{
+ *     + {abstract} stmWrite()
+ *     + {abstract} stmRead()
+ *     + {abstract} stmPut()
+ *     + {abstract} stmGet()
+ *   }
+ *   abstract class base_object_c {
+ *     - vmt: void *
+ *     # __bo_objinit_impl()
+ *     # {abstract} __bo_dispose_impl()
+ *     + {static} oopGetOwner()
+ *     + {static} oopGetIf()
+ *     + {static} oopAssert()
+ *     + {static} oopLock()
+ *     + {static} oopUnlock()
+ *   }
+ *   abstract class referenced_object_c extends base_object_c {
+ *     - cnt: object_references_t
+ *     # __ro_objinit_impl()
+ *     # {abstract} __ro_dispose_impl()
+ *     # __ro_addref_impl()
+ *     # __ro_release_impl()
+ *     + {abstract} roAddRef()
+ *     + {abstract} roRelease()
+ *   }
+ *   abstract class synchronized_object_c extends referenced_object_c {
+ *     - mutex: mutex_t
+ *     # __so_objinit_impl()
+ *     # {abstract} __so_dispose_impl()
+ *     + soLock()
+ *     + soUnlock()
+ *   }
+ * }
+ * package "XHAL Common Classes" {
+ *   interface asynchronous_channel_i extends sequential_stream_i {
+ *     + {abstract} chnWriteTimeout()
+ *     + {abstract} chnReadTimeout()
+ *     + {abstract} chnPutTimeout()
+ *     + {abstract} chnGetTimeout()
+ *     + {abstract} chnGetAndClearFlags()
+ *     + {abstract} chnControl()
+ *   }
+ *   abstract class hal_base_driver_c extends base_object_c {
+ *     - state: driver_state_t *
+ *     - opencnt: unsigned int
+ *     - owner: void *
+ *     - mutex: mutex_t *
+ *     - id: unsigned int
+ *     - name: const char *
+ *     - regent: hal_regent_t
+ *     - {abstract} __drv_start()
+ *     - {abstract} __drv_stop()
+ *     # __drv_objinit_impl()
+ *     # {abstract} __drv_dispose_impl()
+ *     # __drv_get_state()
+ *     # __drv_set_state()
+ *     + {static} drvInit()
+ *     + {abstract} drvConfigure()
+ *     + drvOpen()
+ *     + drvClose()
+ *     + drvGetOwnerX()
+ *     + drvSetOwnerX()
+ *     + drvGetNameX()
+ *     + drvSetNameX()
+ *     + drvLock()
+ *     + drvUnlock()
+ *   }
+ *   abstract class hal_events_driver_c extends hal_base_driver_c {
+ *     - flags: driver_flags_t
+ *     - event: event_source_t
+ *     # __evd_objinit_impl()
+ *     # {abstract} __evd_dispose_impl()
+ *     # __evd_add_flags_i()
+ *     + evdGetFlagsI()
+ *     + evdGetAndClearFlagsI()
+ *   }
+ *   abstract class hal_buffered_serial_c extends hal_events_driver_c \
+ *                                        implements asynchronous_channel_i {
+ *     - iqueue: input_queue_t
+ *     - oqueue: output_queue_t
+ *     # __bs_objinit_impl()
+ *     # {abstract} __bs_dispose_impl()
+ *     # bsIncomingDataI()
+ *     # bsRequestDataI()
+ *   }
+ * }
+ * package "XHAL Drivers" {
+ *   class hal_sio_driver_c extends hal_base_driver_c \
+ *                      implements asynchronous_channel_i {
+ *     - enabled: driver_flags_t
+ *     - cb: siocb_t
+ *     - synch_rx: thread_reference_t
+ *     - synch_rxidle: thread_reference_t
+ *     - synch_tx: thread_reference_t
+ *     - synch_txend: thread_reference_t
+ *     # __sio_invoke_callback()
+ *     ~ {static} sioInit()
+ *     + sioObjectInit()
+ *     + {abstract} sioDispose()
+ *     + sioSetCallbackX()
+ *     + sioWriteEnable()
+ *     + sioSetEnable()
+ *     + sioClearEnable()
+ *     + sioGetAndClearErrorFlags()
+ *     + sioGetAndClearFlags()
+ *     + sioGetFlags()
+ *     + sioSynchronizeRX()
+ *     + sioSynchronizeRXIdle()
+ *     + sioSynchronizeTX()
+ *     + sioSynchronizeTXEnd()
+ *   }
+ *   class hal_serial_driver_c extends hal_buffered_serial_c {
+ *     ~ {static} sdInit()
+ *     + sdObjectInit()
+ *     + {abstract} sdDispose()
+ *   }
+ *   class hal_pwm_driver_c extends hal_base_driver_c {
+ *     ~ {static} pwmInit()
+ *     + pwmObjectInit()
+ *     + {abstract} pwmDispose()
+ *   }
+ * }
+ * package "XHAL Complex Drivers" {
+ *   class hal_buffered_sio_driver_c extends hal_buffered_serial_c {
+ *     + bsioObjectInit()
+ *     + {abstract} bsioDispose()
+ *   }
+ *   hal_buffered_sio_driver_c "1" o-- hal_sio_driver_c
+ * }
+ * @enduml
+ */

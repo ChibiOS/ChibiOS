@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE doc [
+  <!ENTITY hal_base_driver     SYSTEM "hal_base_driver.xml">
+  <!ENTITY hal_channels        SYSTEM "hal_channels.xml">
+  <!ENTITY hal_buffered_serial SYSTEM "hal_buffered_serial.xml">
+  <!ENTITY hal_sio             SYSTEM "hal_sio.xml">
+]>
+<instance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd">
+  <paths>
+    <path>../../common/oop/codegen</path>
+  </paths>
+  <modules>
+    &hal_base_driver;
+    &hal_channels;
+    &hal_buffered_serial;
+    &hal_sio;
+  </modules>
+</instance>

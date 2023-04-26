@@ -1,8 +1,6 @@
 [#ftl]
 [#--
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,
-              2011,2012,2013,2014,2015,2016,2017,2018,
-              2019,2020 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -25,7 +23,7 @@
   -- The license text is indented by 4 spaces.
   --]
 [#macro EmitLicenseAsText]
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

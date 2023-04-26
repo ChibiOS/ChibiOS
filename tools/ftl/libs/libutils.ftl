@@ -26,25 +26,25 @@
   -- added.
   --]
 [#function WithDot s]
-  [#local s = s?trim /]
+  [#local s = s?trim]
   [#if s == ""]
-    [#return s /]
+    [#return s]
   [/#if]
   [#if s?ends_with(".")]
-    [#return s /]
+    [#return s]
   [/#if]
-  [#return s + "." /]
+  [#return s + "."]
 [/#function]
 
 [#--
   -- Returns the trimmed text "s" making sure it is not terminated by a dot.
   --]
 [#function WithoutDot s]
-  [#local s = s?trim /]
+  [#local s = s?trim]
   [#if s?ends_with(".")]
-    [#return s?substring(0, s?length - 1) /]
+    [#return s?substring(0, s?length - 1)]
   [/#if]
-  [#return s /]
+  [#return s]
 [/#function]
 
 [#--
@@ -56,11 +56,11 @@
   -- added.
   --]
 [#function IntelligentDot s]
-  [#local s = s?trim /]
+  [#local s = s?trim]
   [#if s?contains(". ")]
-    [#return WithDot(s) /]
+    [#return WithDot(s)]
   [/#if]
-  [#return WithoutDot(s) /]
+  [#return WithoutDot(s)]
 [/#function]
 
 [#--
@@ -70,26 +70,26 @@
   -- a single space.
   --]
 [#function StringToText len1 lenn s]
-  [#local words=s?word_list /]
-  [#local line="" /]
-  [#local lines=[] /]
+  [#local words=s?word_list]
+  [#local line=""]
+  [#local lines=[]]
   [#list words as word]
     [#if lines?size == 0]
-      [#local len = len1 /]
+      [#local len = len1]
     [#else]
-      [#local len = lenn /]
+      [#local len = lenn]
     [/#if]
     [#if (line?length + word?length + 1 > len)]
-      [#local lines = lines + [line?trim] /]
-      [#local line = word + " " /]
+      [#local lines = lines + [line?trim]]
+      [#local line = word + " "]
     [#else]
-      [#local line = line + word + " " /]
+      [#local line = line + word + " "]
     [/#if]
   [/#list]
   [#if line != ""]
-    [#local lines = lines + [line?trim] /]
+    [#local lines = lines + [line?trim]]
   [/#if]
-  [#return lines /]
+  [#return lines]
 [/#function]
 
 [#--
@@ -99,7 +99,7 @@
   -- White spaces are normalized between words.
   --]
 [#macro FormatStringAsText p1 pn s len]
-  [#local lines = StringToText(len - p1?length, len - pn?length, s) /]
+  [#local lines = StringToText(len - p1?length, len - pn?length, s)]
   [#list lines as line]
     [#if line_index == 0]
 ${p1}${line}
@@ -114,7 +114,7 @@ ${pn}${line}
   -- specified tab size and line prefix.
   --]
 [#macro EmitIndentedCCode start tab ccode]
-  [#assign lines = ccode?string?split("^", "rm") /]
+  [#assign lines = ccode?string?split("^", "rm")]
   [#list lines as line]
     [#if (line_index > 0) || (line?trim?length > 0)]
       [#if line?trim?length > 0]

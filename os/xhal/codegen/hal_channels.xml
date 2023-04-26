@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_channels" descr="I/O Channels" editcode="false">
+  <brief>Sequential data streams interface.</brief>
+  <imports>
+    <import>oop_sequential_stream.xml</import>
+  </imports>
+  <public>
+    <definitions_early>
+      <group description="Default control operation codes">
+        <define name="CHN_CTL_INVALID" value="0">
+          <brief>Invalid operation code.</brief>
+        </define>
+        <define name="CHN_CTL_NOP" value="1">
+          <brief>Does nothing.</brief>
+        </define>
+        <define name="CHN_CTL_TX_WAIT" value="2">
+          <brief>Wait for TX completion.</brief>
+        </define>
+      </group>
+      <group description="Channel event flags">
+        <define name="CHN_FL_PARITY_ERR_POS" value="0" />
+        <define name="CHN_FL_PARITY_ERR"
+          value="(1U &lt;&lt; CHN_FL_PARITY_ERR_POS)" />
+        <define name="CHN_FL_FRAMING_ERR_POS" value="1" />
+        <define name="CHN_FL_FRAMING_ERR"
+          value="(1U &lt;&lt; CHN_FL_FRAMING_ERR_POS)" />
+        <define name="CHN_FL_NOISE_ERR_POS" value="2" />
+        <define name="CHN_FL_NOISE_ERR"
+          value="(1U &lt;&lt; CHN_FL_NOISE_ERR_POS)" />
+        <define name="CHN_FL_OVERRUN_ERR_POS" value="3" />
+        <define name="CHN_FL_OVERRUN_ERR"
+          value="(1U &lt;&lt; CHN_FL_OVERRUN_ERR_POS)" />
+        <define name="CHN_FL_BUFFER_FULL_ERR_POS" value="4" />
+        <define name="CHN_FL_BUFFER_FULL_ERR"
+          value="(1U &lt;&lt; CHN_FL_BUFFER_FULL_ERR_POS)" />
+        <define name="CHN_FL_FULLMASK"
+          value="(15U &lt;&lt; CHN_FL_PARITY_POS)" />
+        <define name="CHN_FL_TX_NOTFULL_POS" value="8" />
+        <define name="CHN_FL_TX_NOTFULL"
+          value="(1U &lt;&lt; CHN_FL_TX_NOTFULL_POS)" />
+        <define name="CHN_FL_RX_NOTEMPTY_POS" value="9" />
+        <define name="CHN_FL_RX_NOTEMPTY"
+          value="(1U &lt;&lt; CHN_FL_RX_NOTEMPTY_POS)" />
+        <define name="CHN_FL_TX_END_POS" value="10" />
+        <define name="CHN_FL_TX_END"
+          value="(1U &lt;&lt; CHN_FL_TX_END_POS)" />
+        <define name="CHN_FL_RX_IDLE_POS" value="11" />
+        <define name="CHN_FL_RX_IDLE"
+          value="(1U &lt;&lt; CHN_FL_RX_IDLE_POS)" />
+        <define name="CHN_FL_RX_BREAK_POS" value="12" />
+        <define name="CHN_FL_RX_BREAK"
+          value="(1U &lt;&lt; CHN_FL_RX_BREAK_POS)" />
+        <define name="CHN_FL_CONNECTED_POS" value="13" />
+        <define name="CHN_FL_CONNECTED"
+          value="(1U &lt;&lt; CHN_FL_CONNECTED_POS)" />
+        <define name="CHN_FL_DISCONNECTED_POS" value="14" />
+        <define name="CHN_FL_DISCONNECTED"
+          value="(1U &lt;&lt; CHN_FL_DISCONNECTED_POS)" />
+      </group>
+    </definitions_early>
+    <macros>
+      <group description="Replicated stream functions">
+        <macro name="chnWrite">
+          <brief>Channel blocking write.</brief>
+          <details><![CDATA[This function writes data from a buffer to
+                   a channel. If the channel is not ready to accept data
+                   then the calling thread is suspended.]]></details>
+          <param name="ip" dir="both">Pointer to a @p base_channel_c structure.
+          </param>
+          <param name="bp" dir="in">Pointer to the data buffer.</param>
+          <param name="n" dir="in">The maximum amount of data to be
+            transferred.</param>
+          <return>The number of bytes transferred.</return>
+          <implementation><![CDATA[streamWrite(ip, bp, n)]]></implementation>
+        </macro>
+        <macro name="chnRead">
+          <brief>Channel blocking read with timeout.</brief>
+          <details><![CDATA[The function reads data from a channel into
+                       a buffer. If the data is not available then the calling
+                       thread is suspended.]]></details>
+          <param name="ip" dir="both">Pointer to a @p base_channel_c structure.
+          </param>
+          <param name="bp" dir="out">Pointer to the data buffer.</param>
+          <param name="n" dir="in">The maximum amount of data to be
+            transferred.
+          </param>
+          <return>The number of bytes transferred.</return>
+          <implementation><![CDATA[streamRead(ip, bp, n)]]></implementation>
+        </macro>
+        <macro name="chnPut">
+          <brief>Channel blocking byte write with timeout.</brief>
+          <details><![CDATA[This function writes a byte value to a
+                       channel. If the channel is not ready to accept data
+                       then the calling thread is suspended.]]></details>
+          <param name="ip" dir="both">Pointer to a @p base_channel_c structure.
+          </param>
+          <param name="b" dir="in">The byte value to be written to the channel.
+          </param>
+          <return>The operation status.</return>
+          <retval value="STM_OK">If the operation succeeded."</retval>
+          <retval value="STM_RESET">If the channel was reset."</retval>
+          <implementation><![CDATA[streamPut(ip, b)]]></implementation>
+        </macro>
+        <macro name="chnGet">
+          <brief>Channel blocking byte read with timeout.</brief>
+          <details><![CDATA[This function reads a byte value from a
+                       channel. If the data is not available then the
+                       calling thread is suspended.]]></details>
+          <param name="ip" dir="both">Pointer to a @p base_channel_c structure.
+          </param>
+          <return>A byte value from the channel.</return>
+          <retval value="STM_RESET">If the channel was reset."</retval>
+          <implementation><![CDATA[streamGet(ip)]]></implementation>
+        </macro>
+      </group>
+    </macros>
+    <types>
+      <typedef name="chnflags_t">
+        <brief>Type of channel event flags.</brief>
+        <basetype ctype="eventflags_t" />
+      </typedef>
+      <interface name="asynchronous_channel" namespace="chn"
+        ancestorname="sequential_stream" descr="base I/O channel">
+        <brief>Base I/O channel interface.</brief>
+        <details><![CDATA[This header defines an abstract interface useful
+         to access generic I/O serial devices in a standardized way.]]></details>
+        <consts>
+        </consts>
+        <methods>
+          <method name="chnWriteTimeout" shortname="writet"
+            ctype="size_t">
+            <brief>Channel blocking write with timeout.</brief>
+            <details><![CDATA[This function writes data from a buffer to
+                       a channel. If the channel is not ready to accept data
+                       then the calling thread is suspended.]]></details>
+            <param name="bp" ctype="const uint8_t *" dir="in">Pointer to the
+              data buffer.
+            </param>
+            <param name="n" ctype="size_t" dir="in">The maximum amount of data
+              to be transferred.
+            </param>
+            <param name="timeout" ctype="sysinterval_t" dir="in">
+              the number of ticks before the operation timeouts, the following
+              special values are allowed:
+              <verbatim><![CDATA[
+- @a TIME_IMMEDIATE immediate timeout.
+- @a TIME_INFINITE no timeout.
+.]]></verbatim>
+            </param>
+            <return>The number of bytes transferred.</return>
+            <api />
+          </method>
+          <method name="chnReadTimeout" shortname="readt" ctype="size_t">
+            <brief>Channel blocking read with timeout.</brief>
+            <details><![CDATA[The function reads data from a channel into
+                       a buffer. If the data is not available then the calling
+                       thread is suspended.]]></details>
+            <param name="bp" ctype="uint8_t *" dir="in">Pointer to the data
+              buffer.
+            </param>
+            <param name="n" ctype="size_t" dir="in">The maximum amount of data
+              to be transferred.
+            </param>
+            <param name="timeout" ctype="sysinterval_t" dir="in">
+              the number of ticks before the operation timeouts, the following
+              special values are allowed:
+              <verbatim><![CDATA[
+- @a TIME_IMMEDIATE immediate timeout.
+- @a TIME_INFINITE no timeout.
+.]]></verbatim>
+            </param>
+            <return>The number of bytes transferred.</return>
+            <api />
+          </method>
+          <method name="chnPutTimeout" shortname="putt" ctype="msg_t">
+            <brief>Channel blocking byte write with timeout.</brief>
+            <details><![CDATA[This function writes a byte value to a
+                       channel. If the channel is not ready to accept data
+                       then the calling thread is suspended.]]></details>
+            <param name="b" ctype="uint8_t" dir="in">The byte value to be
+              written to the channel.
+            </param>
+            <param name="timeout" ctype="sysinterval_t" dir="in">
+              the number of ticks before the operation timeouts, the following
+              special values are allowed:
+              <verbatim><![CDATA[
+- @a TIME_IMMEDIATE immediate timeout.
+- @a TIME_INFINITE no timeout.
+.]]></verbatim>
+            </param>
+            <return>The operation status.</return>
+            <retval value="STM_OK">If the operation succeeded."</retval>
+            <retval value="STM_TIMEOUT">If the specified time expired."</retval>
+            <retval value="STM_RESET">If the channel was reset."</retval>
+            <api />
+          </method>
+          <method name="chnGetTimeout" shortname="gett" ctype="msg_t">
+            <brief>Channel blocking byte read with timeout.</brief>
+            <details><![CDATA[This function reads a byte value from a
+                       channel. If the data is not available then the
+                       calling thread is suspended.]]></details>
+            <param name="timeout" ctype="sysinterval_t" dir="in">
+              the number of ticks before the operation timeouts, the following
+              special values are allowed:
+              <verbatim><![CDATA[
+- @a TIME_IMMEDIATE immediate timeout.
+- @a TIME_INFINITE no timeout.
+.]]></verbatim>
+            </param>
+            <return>A byte value from the channel.</return>
+            <retval value="STM_TIMEOUT">If the specified time expired."</retval>
+            <retval value="STM_RESET">If the channel was reset."</retval>
+            <api />
+          </method>
+          <method name="chnGetAndClearFlags" shortname="getclr"
+            ctype="chnflags_t">
+            <brief>Returns and clears pending event flags.</brief>
+            <param name="mask" ctype="chnflags_t" dir="in">Mask of flags to
+              be returned and cleared.</param>
+            <return>The cleared event flags.</return>
+            <retval value="0">If no event flags were pending."</retval>
+            <api />
+          </method>
+          <method name="chnControl" shortname="ctl" ctype="msg_t">
+            <brief>Control operation on a channel.</brief>
+            <param name="operation" ctype="unsigned int" dir="in">control
+              operation code
+            </param>
+            <param name="arg" ctype="void *" dir="both">operation argument
+            </param>
+            <return>The operation status.</return>
+            <retval value="STM_OK">If the operation succeeded."</retval>
+            <retval value="STM_TIMEOUT">If the specified time expired."</retval>
+            <retval value="STM_RESET">If the channel was reset."</retval>
+            <api />
+          </method>
+        </methods>
+      </interface>
+    </types>
+  </public>
+  <private>
+  </private>
+</module>

@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_base_driver" descr="Base Driver" editcode="false">
+  <brief>Common driver base abstract class.</brief>
+  <details><![CDATA[This abstract class is the common ancestor of all HAL
+    stateful HAL drivers.]]></details>
+  <imports>
+    <import>oop_base_object.xml</import>
+  </imports>
+  <public>
+    <definitions_early>
+      <group description="Common driver states">
+        <define name="HAL_DRV_STATE_UNINIT" value="0U" />
+        <define name="HAL_DRV_STATE_STOP" value="1U" />
+        <define name="HAL_DRV_STATE_READY" value="2U" />
+        <define name="HAL_DRV_STATE_ACTIVE" value="3U" />
+        <define name="HAL_DRV_STATE_ERROR" value="4U" />
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="HAL_USE_MUTUAL_EXCLUSION" default="TRUE">
+        <brief>Enables the mutual exclusion APIs on driver instances.</brief>
+        <note>Disabling this option saves both code and data space.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="HAL_USE_REGISTRY" default="TRUE">
+        <brief>Enables the HAL registry for drivers.</brief>
+        <note>Disabling this option saves both code and data space.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+    </configs>
+    <macros></macros>
+    <types>
+      <typedef name="hal_base_driver_c">
+        <basetype ctype="struct hal_base_driver" />
+      </typedef>
+      <typedef name="driver_state_t">
+        <brief>Type of a driver state variable.</brief>
+        <basetype ctype="unsigned int" />
+      </typedef>
+      <condition check="HAL_USE_REGISTRY == TRUE">
+        <typedef name="hal_regent_t">
+          <brief>Type of a registry entry structure.</brief>
+          <basetype ctype="struct hal_regent" />
+        </typedef>
+        <struct name="hal_regent">
+          <brief>Structure representing a registry entry.</brief>
+          <fields>
+            <field name="next" ctype="hal_regent_t$I*">
+              <brief>Next entry in the drivers registry.</brief>
+            </field>
+            <field name="prev" ctype="hal_regent_t$I*">
+              <brief>Previous entry in the drivers registry.</brief>
+            </field>
+          </fields>
+        </struct>
+      </condition>
+      <class type="abstract" name="hal_base_driver" namespace="drv"
+        ancestorname="base_object" descr="HAL base driver">
+        <brief>Ancestor class of stateful HAL drivers.</brief>
+        <fields>
+          <field name="state" ctype="driver_state_t">
+            <brief>Driver state.</brief>
+          </field>
+          <field name="owner" ctype="void$I*">
+            <brief>Driver owner.</brief>
+          </field>
+          <condition check="HAL_USE_MUTUAL_EXCLUSION == TRUE">
+            <field name="mutex" ctype="mutex_t">
+              <brief>Driver mutex.</brief>
+            </field>
+          </condition>
+          <condition check="HAL_USE_REGISTRY == TRUE">
+            <field name="id" ctype="unsigned int">
+              <brief>Driver identifier.</brief>
+            </field>
+            <field name="name" ctype="const char$I*">
+              <brief>Driver name.</brief>
+            </field>
+            <field name="regent" ctype="hal_regent_t">
+              <brief>Registry link structure.</brief>
+            </field>
+          </condition>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->state   = HAL_DRV_STATE_STOP;
+self->owner   = NULL;
+osalMutexObjectInit(&self->mutex);
+#if HAL_USE_REGISTRY == TRUE
+self->id      = 0U;
+self->name    = "unk";
+drv_reg_insert(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+#if HAL_USE_REGISTRY == TRUE
+drv_reg_remove(self);
+#endif]]></implementation>
+          </dispose>
+          <virtual>
+            <method name="__drv_start" shortname="start" ctype="msg_t">
+              <brief>Low level driver start.</brief>
+              <return>The operation status.</return>
+              <notapi />
+            </method>
+            <method name="__drv_stop" shortname="stop" ctype="void">
+              <brief>Low level driver stop.</brief>
+              <notapi />
+            </method>
+            <method name="drvConfigureX" shortname="configure" ctype="msg_t">
+              <brief>Driver configure.</brief>
+              <details><![CDATA[Applies a new configuration to the driver. The
+                configuration structure is architecture-dependent.]]>
+              </details>
+              <note><![CDATA[Applying a configuration should be done while the
+                peripheral is not actively operating, this function can fail
+                depending on the driver implementation and current state.]]>
+              </note>
+              <param ctype="const void *" name="config" dir="in">
+                New driver configuration.
+              </param>
+              <api />
+            </method>
+          </virtual>
+          <regular>
+            <method name="drvStart" ctype="msg_t">
+              <brief>Driver start.</brief>
+              <details><![CDATA[Starts driver operations, on the 1st
+                call the peripheral is physically initialized using a
+                default configuration, subsequent calls are ignored.]]>
+              </details>
+              <return>The operation status.</return>
+              <retval value="HAL_RET_SUCCESS">Operation successful.</retval>
+              <api />
+              <implementation><![CDATA[
+msg_t msg = HAL_RET_SUCCESS;
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+
+osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "not initialized");
+
+if (self->state == HAL_DRV_STATE_STOP) {
+  /* Physically starting the peripheral.*/
+  msg = __drv_start(self);
+  if (msg == HAL_RET_SUCCESS) {
+    self->state = HAL_DRV_STATE_READY;
+  }
+}
+
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+            <method name="drvStop" ctype="void">
+              <brief>Driver close.</brief>
+              <details><![CDATA[Stops driver operations. The peripheral
+                is physically uninitialized.]]>
+              </details>
+              <api />
+              <implementation><![CDATA[
+
+osalDbgCheck(self != NULL);
+
+osalSysLock();
+
+osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "not initialized");
+
+if (self->state != HAL_DRV_STATE_STOP) {
+  __drv_stop(self);
+  self->state = HAL_DRV_STATE_STOP;
+}
+
+osalSysUnlock();]]></implementation>
+            </method>
+          </regular>
+          <inline>
+            <method name="drvGetStateX" ctype="driver_state_t">
+              <brief>Driver state get.</brief>
+              <return>The driver state.</return>
+              <api />
+              <implementation><![CDATA[
+
+return self->state;]]></implementation>
+            </method>
+            <method name="drvSetStateX" ctype="void">
+              <brief>Driver state set.</brief>
+              <param ctype="driver_state_t" name="state" dir="in">
+                New driver state.
+              </param>
+              <api />
+              <implementation><![CDATA[
+
+self->state = state;]]></implementation>
+            </method>
+            <method name="drvGetOwnerX" ctype="void *">
+              <brief>Driver owner get.</brief>
+              <return>The driver owner.</return>
+              <api />
+              <implementation><![CDATA[
+
+return self->owner;]]></implementation>
+            </method>
+            <method name="drvSetOwnerX" ctype="void">
+              <brief>Driver owner set.</brief>
+              <param ctype="void *" name="owner" dir="in">
+                New driver owner.
+              </param>
+              <api />
+              <implementation><![CDATA[
+
+self->owner = owner;]]></implementation>
+            </method>
+            <method name="drvGetNameX" ctype="const char *">
+              <brief>Driver name get.</brief>
+              <note>Returns "unk" if registry is disabled.</note>
+              <return>The driver name.</return>
+              <api />
+              <implementation><![CDATA[
+
+#if HAL_USE_REGISTRY == TRUE
+return self->name;
+#else
+return "unk";
+#endif]]></implementation>
+            </method>
+            <method name="drvSetNameX" ctype="void">
+              <brief>Driver name set.</brief>
+              <note>Does nothing if registry is disabled.</note>
+              <param ctype="const char *" name="name" dir="in">
+                New driver name.
+              </param>
+              <api />
+              <implementation><![CDATA[
+
+#if HAL_USE_REGISTRY == TRUE
+self->name = name;
+#else
+(void)name;
+#endif]]></implementation>
+            </method>
+            <condition check="HAL_USE_MUTUAL_EXCLUSION == TRUE">
+              <method name="drvLock" ctype="void">
+                <brief>Driver lock.</brief>
+                <api />
+                <implementation><![CDATA[
+
+osalMutexLock(&self->mutex);]]></implementation>
+              </method>
+              <method name="drvUnlock" ctype="void">
+                <brief>Driver unlock.</brief>
+                <api />
+                <implementation><![CDATA[
+
+osalMutexUnlock(&self->mutex);]]></implementation>
+              </method>
+            </condition>
+          </inline>
+        </methods>
+      </class>
+    </types>
+    <variables>
+      <condition check="HAL_USE_REGISTRY == TRUE">
+        <variable name="hal_registry" ctype="hal_regent_t">
+          <brief>List header for the HAL registry</brief>
+        </variable>
+      </condition>
+    </variables>
+    <functions>
+      <function name="drvInit" ctype="void">
+        <brief>Drivers manager initialization.</brief>
+        <init />
+        <implementation><![CDATA[
+
+#if HAL_USE_REGISTRY == TRUE
+/* Registry list initialization.*/
+hal_registry.next = &hal_registry;
+hal_registry.prev = &hal_registry;
+#endif
+]]></implementation>
+      </function>
+      <condition check="HAL_USE_REGISTRY == TRUE">
+        <function name="drvRegGetFirstX" ctype="hal_base_driver_c *">
+          <brief>Return the first driver in the HAL registry.</brief>
+          <return>A pointer to the first driver object.</return>
+          <retval value="NULL">If the registry is empty.</retval>
+          <api />
+          <implementation><![CDATA[
+hal_regent_t *rep;
+
+rep = hal_registry.next;
+if (rep == &hal_registry) {
+  return NULL;
+}
+
+return oopGetOwner(hal_base_driver_c, regent, rep);]]></implementation>
+        </function>
+        <function name="drvRegGetNextX" ctype="hal_base_driver_c *">
+          <brief>Return the next driver in the HAL registry.</brief>
+          <note>
+            This function is only available when HAL registry is enabled.
+          </note>
+          <param name="drvp" ctype="hal_base_driver_c *" dir="in">
+            Previously found driver.
+          </param>
+          <return>A pointer to the next driver object.</return>
+          <retval value="NULL">If there is no next driver.</retval>
+          <api />
+          <implementation><![CDATA[
+hal_regent_t *rep;
+
+rep = drvp->regent.next;
+if (rep == &hal_registry) {
+  return NULL;
+}
+
+return oopGetOwner(hal_base_driver_c, regent, rep);]]></implementation>
+        </function>
+        <function name="drvStartByName" ctype="hal_base_driver_c *">
+          <brief>Driver open by name.</brief>
+          <details><![CDATA[Returns a reference to the driver, on the
+                1st open the peripheral is physically initialized. An
+                implementation-dependent default configuration is used
+                for initialization.]]>
+          </details>
+          <note>
+            This function is only available when HAL registry is enabled.
+          </note>
+          <param name="name" ctype="const char *" dir="in">Driver name.</param>
+          <param name="msgp" ctype="msg_t *" dir="out">
+            Pointer to store the error code or @p NULL. Note that in case of
+            driver not found the returned code is @p HAL_RET_SUCCESS.
+          </param>
+          <return>A reference to the driver.</return>
+          <retval value="NULL">If an error occurred.</retval>
+          <api />
+          <implementation><![CDATA[
+msg_t msg = HAL_RET_SUCCESS;
+hal_base_driver_c *drvp;
+
+osalSysLock();
+
+drvp = drvRegGetFirstX();
+while (drvp != NULL) {
+  if (strcmp(drvGetNameX(drvp), name) ==0) {
+    
+    msg = drvStart(drvp);
+    if (msg != HAL_RET_SUCCESS) {
+      drvp = NULL;
+    }
+    break;
+  }
+  drvp = drvRegGetNextX(drvp);
+}
+
+if (msgp != NULL) {
+  *msgp = msg;
+}
+
+osalSysUnlock();
+
+return drvp;]]></implementation>
+        </function>
+      </condition>
+    </functions>
+  </public>
+  <private>
+    <includes>
+      <include style="angular">string.h</include>
+      <include style="regular">hal.h</include>
+    </includes>
+    <functions>
+      <condition check="HAL_USE_REGISTRY == TRUE">
+        <function name="drv_reg_insert" ctype="void">
+          <brief>Driver insertion in the HAL registry.</brief>
+          <note>
+            This function is only available when HAL registry is enabled.
+          </note>
+          <param name="drvp" ctype="hal_base_driver_c *" dir="both">
+            Pointer to the @p hal_base_driver_c instance to be inserted.
+          </param>
+          <implementation><![CDATA[
+
+drvp->regent.next       = &hal_registry;
+drvp->regent.prev       = hal_registry.prev;
+drvp->regent.prev->next = &drvp->regent;
+hal_registry.prev       = &drvp->regent;]]></implementation>
+        </function>
+        <function name="drv_reg_remove" ctype="void">
+          <brief>Driver removal from the HAL registry.</brief>
+          <param name="drvp" ctype="hal_base_driver_c *" dir="both">
+            Pointer to the @p hal_base_driver_c instance to be inserted.
+          </param>
+          <implementation><![CDATA[
+
+drvp->regent.prev->next = drvp->regent.next;
+drvp->regent.next->prev = drvp->regent.prev;
+]]></implementation>
+        </function>
+      </condition>
+    </functions>
+  </private>
+</module>
