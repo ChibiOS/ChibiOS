@@ -37,6 +37,7 @@
  * @name    SIO events
  * @{
  */
+#define SIO_EV_NONE                         CHN_FL_NONE
 #define SIO_EV_PARITY_ERR_POS               CHN_FL_PARITY_ERR_POS
 #define SIO_EV_PARITY_ERR                   CHN_FL_PARITY_ERR
 #define SIO_EV_FRAMING_ERR_POS              CHN_FL_FRAMING_ERR_POS
@@ -553,9 +554,9 @@ struct hal_sio_driver {
    */
   driver_state_t            state;
   /**
-   * @brief       Driver owner.
+   * @brief       Driver argument.
    */
-  void                      *owner;
+  void                      *arg;
 #if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Driver mutex.

@@ -63,8 +63,8 @@
           <field name="state" ctype="driver_state_t">
             <brief>Driver state.</brief>
           </field>
-          <field name="owner" ctype="void$I*">
-            <brief>Driver owner.</brief>
+          <field name="arg" ctype="void$I*">
+            <brief>Driver argument.</brief>
           </field>
           <condition check="HAL_USE_MUTUAL_EXCLUSION == TRUE">
             <field name="mutex" ctype="mutex_t">
@@ -86,12 +86,12 @@
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->state   = HAL_DRV_STATE_STOP;
-self->owner   = NULL;
+self->state = HAL_DRV_STATE_STOP;
+self->arg   = NULL;
 osalMutexObjectInit(&self->mutex);
 #if HAL_USE_REGISTRY == TRUE
-self->id      = 0U;
-self->name    = "unk";
+self->id    = 0U;
+self->name  = "unk";
 drv_reg_insert(self);
 #endif]]></implementation>
           </objinit>
@@ -198,23 +198,23 @@ return self->state;]]></implementation>
 
 self->state = state;]]></implementation>
             </method>
-            <method name="drvGetOwnerX" ctype="void *">
-              <brief>Driver owner get.</brief>
-              <return>The driver owner.</return>
+            <method name="drvGetArgumentX" ctype="void *">
+              <brief>Driver argument get.</brief>
+              <return>The driver argument.</return>
               <api />
               <implementation><![CDATA[
 
-return self->owner;]]></implementation>
+return self->arg;]]></implementation>
             </method>
-            <method name="drvSetOwnerX" ctype="void">
-              <brief>Driver owner set.</brief>
-              <param ctype="void *" name="owner" dir="in">
-                New driver owner.
+            <method name="drvSetArgumentX" ctype="void">
+              <brief>Driver argument set.</brief>
+              <param ctype="void *" name="arg" dir="in">
+                New driver argument.
               </param>
               <api />
               <implementation><![CDATA[
 
-self->owner = owner;]]></implementation>
+self->arg = arg;]]></implementation>
             </method>
             <method name="drvGetNameX" ctype="const char *">
               <brief>Driver name get.</brief>

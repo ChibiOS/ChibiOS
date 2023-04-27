@@ -10,6 +10,7 @@
   <public>
     <definitions_early>
       <group description="SIO events">
+        <define name="SIO_EV_NONE" value="CHN_FL_NONE" />
         <define name="SIO_EV_PARITY_ERR_POS" value="CHN_FL_PARITY_ERR_POS" />
         <define name="SIO_EV_PARITY_ERR" value="CHN_FL_PARITY_ERR" />
         <define name="SIO_EV_FRAMING_ERR_POS" value="CHN_FL_FRAMING_ERR_POS" />

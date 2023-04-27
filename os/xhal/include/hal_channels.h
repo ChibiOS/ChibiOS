@@ -55,6 +55,7 @@
  * @name    Channel event flags
  * @{
  */
+#define CHN_FL_NONE                         0
 #define CHN_FL_PARITY_ERR_POS               0
 #define CHN_FL_PARITY_ERR                   (1U << CHN_FL_PARITY_ERR_POS)
 #define CHN_FL_FRAMING_ERR_POS              1

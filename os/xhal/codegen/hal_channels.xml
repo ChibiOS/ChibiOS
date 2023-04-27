@@ -20,6 +20,7 @@
         </define>
       </group>
       <group description="Channel event flags">
+        <define name="CHN_FL_NONE" value="0" />
         <define name="CHN_FL_PARITY_ERR_POS" value="0" />
         <define name="CHN_FL_PARITY_ERR"
           value="(1U &lt;&lt; CHN_FL_PARITY_ERR_POS)" />

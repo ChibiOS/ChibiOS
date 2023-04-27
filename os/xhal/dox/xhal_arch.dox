@@ -21,6 +21,32 @@
  * @startuml {xhal_drvsm.png} "XHAL Drivers State Machine"
  * hide empty description
  *
+ * state UNINIT
+ * state STOP
+ * state READY
+ * state ACTIVE
+ * state ERROR
+ *
+ * [*] -> UNINIT
+ * UNINIT --> STOP : xxxObjectInit()
+ * STOP --> READY : drvStart()
+ * READY --> READY : drvStart()\nignored
+ * READY --> READY : drvConfigure()
+ * READY --> STOP : drvStop()
+ * STOP --> STOP : drvStop()\nignored
+ * READY --> ACTIVE : start operation
+ * ACTIVE -[dotted]-> READY : asynchronous\nend operation\ncallback
+ * ACTIVE --> STOP : drvStop()\nhard abort
+ * ACTIVE -[dotted]-> ERROR : asynchronous\noperation error\ncallback
+ * ERROR --> READY : drvStart()
+ * ERROR --> STOP : drvStop()
+ * ERROR --> READY : error cleared
+ *
+ * @enduml
+ *
+ * @startuml {xhal_drvsm.png} "XHAL Drivers State Machine"
+ * hide empty description
+ *
  * state RCLOSE <<choice>>
  * state ACLOSE <<choice>>
  * state STOP : cnt == 0
@@ -39,7 +65,7 @@
  * end note
  *
  * [*] -> UNINIT
- * UNINIT --> STOP : drvObjectInit()
+ * UNINIT --> STOP : xxxObjectInit()
  * STOP --> READY : drvOpen()\ncall start()
  * READY --> READY : drvOpen() cnt++
  * READY -u-> RCLOSE : drvClose() cnt--

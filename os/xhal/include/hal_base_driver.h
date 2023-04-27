@@ -159,9 +159,9 @@ struct hal_base_driver {
    */
   driver_state_t            state;
   /**
-   * @brief       Driver owner.
+   * @brief       Driver argument.
    */
-  void                      *owner;
+  void                      *arg;
 #if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Driver mutex.
@@ -323,36 +323,36 @@ static inline void drvSetStateX(void *ip, driver_state_t state) {
  * @memberof    hal_base_driver_c
  * @public
  *
- * @brief       Driver owner get.
+ * @brief       Driver argument get.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
- * @return                      The driver owner.
+ * @return                      The driver argument.
  *
  * @api
  */
 CC_FORCE_INLINE
-static inline void *drvGetOwnerX(void *ip) {
+static inline void *drvGetArgumentX(void *ip) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
 
-  return self->owner;
+  return self->arg;
 }
 
 /**
  * @memberof    hal_base_driver_c
  * @public
  *
- * @brief       Driver owner set.
+ * @brief       Driver argument set.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
- * @param[in]     owner         New driver owner.
+ * @param[in]     arg           New driver argument.
  *
  * @api
  */
 CC_FORCE_INLINE
-static inline void drvSetOwnerX(void *ip, void *owner) {
+static inline void drvSetArgumentX(void *ip, void *arg) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
 
-  self->owner = owner;
+  self->arg = arg;
 }
 
 /**

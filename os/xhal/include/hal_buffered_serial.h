@@ -91,9 +91,9 @@ struct hal_buffered_serial {
    */
   driver_state_t            state;
   /**
-   * @brief       Driver owner.
+   * @brief       Driver argument.
    */
-  void                      *owner;
+  void                      *arg;
 #if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Driver mutex.
