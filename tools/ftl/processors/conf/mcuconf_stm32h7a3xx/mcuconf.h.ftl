@@ -29,7 +29,7 @@
 #define MCUCONF_H
 
 /*
- * STM32H723/33/25/35 drivers configuration.
+ * STM32H7A3/B3 drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -43,10 +43,10 @@
  */
 
 #define STM32H7xx_MCUCONF
-#define STM32H723_MCUCONF
-#define STM32H733_MCUCONF
-#define STM32H725_MCUCONF
-#define STM32H735_MCUCONF
+#define STM32H7A3_MCUCONF
+#define STM32H7A3_Q_MCUCONF
+#define STM32H7B3_MCUCONF
+#define STM32H7B3_Q_MCUCONF
 
 /*
  * General settings.
@@ -56,10 +56,10 @@
 /*
  * Memory attributes settings.
  */
-#define STM32_NOCACHE_ENABLE                ${doc.STM32_NOCACHE_ENABLE!"FALSE"}
+#define STM32_NOCACHE_ENABLE                ${doc.STM32_NOCACHE_ENABLE!"TRUE"}
 #define STM32_NOCACHE_MPU_REGION            ${doc.STM32_NOCACHE_MPU_REGION!"MPU_REGION_6"}
-#define STM32_NOCACHE_RBAR                  ${doc.STM32_NOCACHE_RBAR!"0x24000000U"}
-#define STM32_NOCACHE_RASR                  ${doc.STM32_NOCACHE_RASR!"MPU_RASR_SIZE_16K"}
+#define STM32_NOCACHE_RBAR                  ${doc.STM32_NOCACHE_RBAR!"0x30010000U"}
+#define STM32_NOCACHE_RASR                  ${doc.STM32_NOCACHE_RASR!"MPU_RASR_SIZE_64K"}
 
 /*
  * PWR system settings.
@@ -70,7 +70,7 @@
 #define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_SCALE0"}
 #define STM32_PWR_CR1                       ${doc.STM32_PWR_CR1!"(PWR_CR1_SVOS_1 | PWR_CR1_SVOS_0)"}
 #define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(PWR_CR2_BREN)"}
-#define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_LDOEN | PWR_CR3_USB33DEN)"}
+#define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_SMPSEN | PWR_CR3_USB33DEN)"}
 #define STM32_PWR_CPUCR                     ${doc.STM32_PWR_CPUCR!"0"}
 
 /*
@@ -95,32 +95,32 @@
 #define STM32_PLL1_P_ENABLED                ${doc.STM32_PLL1_P_ENABLED!"TRUE"}
 #define STM32_PLL1_Q_ENABLED                ${doc.STM32_PLL1_Q_ENABLED!"TRUE"}
 #define STM32_PLL1_R_ENABLED                ${doc.STM32_PLL1_R_ENABLED!"TRUE"}
-#define STM32_PLL1_DIVM_VALUE               ${doc.STM32_PLL1_DIVM_VALUE!"4"}
+#define STM32_PLL1_DIVM_VALUE               ${doc.STM32_PLL1_DIVM_VALUE!"8"}
 #define STM32_PLL1_DIVN_VALUE               ${doc.STM32_PLL1_DIVN_VALUE!"260"}
 #define STM32_PLL1_FRACN_VALUE              ${doc.STM32_PLL1_FRACN_VALUE!"0"}
 #define STM32_PLL1_DIVP_VALUE               ${doc.STM32_PLL1_DIVP_VALUE!"1"}
-#define STM32_PLL1_DIVQ_VALUE               ${doc.STM32_PLL1_DIVQ_VALUE!"10"}
-#define STM32_PLL1_DIVR_VALUE               ${doc.STM32_PLL1_DIVR_VALUE!"4"}
+#define STM32_PLL1_DIVQ_VALUE               ${doc.STM32_PLL1_DIVQ_VALUE!"5"}
+#define STM32_PLL1_DIVR_VALUE               ${doc.STM32_PLL1_DIVR_VALUE!"5"}
 #define STM32_PLL2_ENABLED                  ${doc.STM32_PLL2_ENABLED!"TRUE"}
 #define STM32_PLL2_P_ENABLED                ${doc.STM32_PLL2_P_ENABLED!"TRUE"}
 #define STM32_PLL2_Q_ENABLED                ${doc.STM32_PLL2_Q_ENABLED!"TRUE"}
 #define STM32_PLL2_R_ENABLED                ${doc.STM32_PLL2_R_ENABLED!"TRUE"}
-#define STM32_PLL2_DIVM_VALUE               ${doc.STM32_PLL2_DIVM_VALUE!"4"}
+#define STM32_PLL2_DIVM_VALUE               ${doc.STM32_PLL2_DIVM_VALUE!"8"}
 #define STM32_PLL2_DIVN_VALUE               ${doc.STM32_PLL2_DIVN_VALUE!"400"}
 #define STM32_PLL2_FRACN_VALUE              ${doc.STM32_PLL2_FRACN_VALUE!"0"}
-#define STM32_PLL2_DIVP_VALUE               ${doc.STM32_PLL2_DIVP_VALUE!"40"}
-#define STM32_PLL2_DIVQ_VALUE               ${doc.STM32_PLL2_DIVQ_VALUE!"8"}
-#define STM32_PLL2_DIVR_VALUE               ${doc.STM32_PLL2_DIVR_VALUE!"8"}
+#define STM32_PLL2_DIVP_VALUE               ${doc.STM32_PLL2_DIVP_VALUE!"50"}
+#define STM32_PLL2_DIVQ_VALUE               ${doc.STM32_PLL2_DIVQ_VALUE!"4"}
+#define STM32_PLL2_DIVR_VALUE               ${doc.STM32_PLL2_DIVR_VALUE!"4"}
 #define STM32_PLL3_ENABLED                  ${doc.STM32_PLL3_ENABLED!"TRUE"}
 #define STM32_PLL3_P_ENABLED                ${doc.STM32_PLL3_P_ENABLED!"TRUE"}
 #define STM32_PLL3_Q_ENABLED                ${doc.STM32_PLL3_Q_ENABLED!"TRUE"}
 #define STM32_PLL3_R_ENABLED                ${doc.STM32_PLL3_R_ENABLED!"TRUE"}
-#define STM32_PLL3_DIVM_VALUE               ${doc.STM32_PLL3_DIVM_VALUE!"4"}
+#define STM32_PLL3_DIVM_VALUE               ${doc.STM32_PLL3_DIVM_VALUE!"8"}
 #define STM32_PLL3_DIVN_VALUE               ${doc.STM32_PLL3_DIVN_VALUE!"240"}
 #define STM32_PLL3_FRACN_VALUE              ${doc.STM32_PLL3_FRACN_VALUE!"0"}
-#define STM32_PLL3_DIVP_VALUE               ${doc.STM32_PLL3_DIVP_VALUE!"10"}
-#define STM32_PLL3_DIVQ_VALUE               ${doc.STM32_PLL3_DIVQ_VALUE!"10"}
-#define STM32_PLL3_DIVR_VALUE               ${doc.STM32_PLL3_DIVR_VALUE!"10"}
+#define STM32_PLL3_DIVP_VALUE               ${doc.STM32_PLL3_DIVP_VALUE!"5"}
+#define STM32_PLL3_DIVQ_VALUE               ${doc.STM32_PLL3_DIVQ_VALUE!"5"}
+#define STM32_PLL3_DIVR_VALUE               ${doc.STM32_PLL3_DIVR_VALUE!"5"}
 
 /*
  * Core clocks dynamic settings (can be changed at runtime).
@@ -128,12 +128,12 @@
  */
 #define STM32_SW                            ${doc.STM32_SW!"STM32_SW_PLL1_P_CK"}
 #define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"STM32_RTCSEL_LSE_CK"}
-#define STM32_D1CPRE                        ${doc.STM32_D1CPRE!"STM32_D1CPRE_DIV1"}
-#define STM32_D1HPRE                        ${doc.STM32_D1HPRE!"STM32_D1HPRE_DIV2"}
-#define STM32_D1PPRE3                       ${doc.STM32_D1PPRE3!"STM32_D1PPRE3_DIV2"}
-#define STM32_D2PPRE1                       ${doc.STM32_D2PPRE1!"STM32_D2PPRE1_DIV2"}
-#define STM32_D2PPRE2                       ${doc.STM32_D2PPRE2!"STM32_D2PPRE2_DIV2"}
-#define STM32_D3PPRE4                       ${doc.STM32_D3PPRE4!"STM32_D3PPRE4_DIV2"}
+#define STM32_CDCPRE                        ${doc.STM32_D1CPRE!"STM32_CDCPRE_DIV1"}
+#define STM32_CDPPRE                        ${doc.STM32_D1CPRE!"STM32_CDPPRE_DIV1"}
+#define STM32_CDHPRE                        ${doc.STM32_D1HPRE!"STM32_CDHPRE_DIV1"}
+#define STM32_CDPPRE1                       ${doc.STM32_D1PPRE3!"STM32_CDPPRE1_DIV1"}
+#define STM32_CDPPRE2                       ${doc.STM32_D2PPRE1!"STM32_CDPPRE2_DIV1"}
+#define STM32_SRDPPRE                       ${doc.STM32_D2PPRE2!"STM32_SRDPPRE_DIV1"}
 
 /*
  * Peripherals clocks static settings.
@@ -158,6 +158,8 @@
 #define STM32_SPDIFSEL                      ${doc.STM32_SPDIFSEL!"STM32_SPDIFSEL_PLL1_Q_CK"}
 #define STM32_SPI45SEL                      ${doc.STM32_SPI45SEL!"STM32_SPI45SEL_PCLK2"}
 #define STM32_SPI123SEL                     ${doc.STM32_SPI123SEL!"STM32_SPI123SEL_PLL1_Q_CK"}
+#define STM32_SAI2BSEL                      ${doc.STM32_SAI1SEL!"STM32_SAI2BSEL_PLL1_Q_CK"}
+#define STM32_SAI2ASEL                      ${doc.STM32_SAI1SEL!"STM32_SAI2ASEL_PLL1_Q_CK"}
 #define STM32_SAI1SEL                       ${doc.STM32_SAI1SEL!"STM32_SAI1SEL_PLL1_Q_CK"}
 #define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK1"}
 #define STM32_CECSEL                        ${doc.STM32_CECSEL!"STM32_CECSEL_LSE_CK"}
@@ -167,10 +169,9 @@
 #define STM32_USART16910SEL                 ${doc.STM32_USART16910SEL!"STM32_USART16910SEL_PCLK2"}
 #define STM32_USART234578SEL                ${doc.STM32_USART234578SEL!"STM32_USART234578SEL_PCLK1"}
 #define STM32_SPI6SEL                       ${doc.STM32_SPI6SEL!"STM32_SPI6SEL_PCLK4"}
-#define STM32_SAI4BSEL                      ${doc.STM32_SAI4BSEL!"STM32_SAI4BSEL_PLL1_Q_CK"}
-#define STM32_SAI4ASEL                      ${doc.STM32_SAI4ASEL!"STM32_SAI4ASEL_PLL1_Q_CK"}
+#define STM32_DFSDM2SEL                     ${doc.STM32_DFSDM1SEL!"STM32_DFSDM2SEL_PCLK4"}
 #define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"STM32_ADCSEL_PLL2_P_CK"}
-#define STM32_LPTIM345SEL                   ${doc.STM32_LPTIM345SEL!"STM32_LPTIM345SEL_PCLK4"}
+#define STM32_LPTIM3SEL                     ${doc.STM32_LPTIM345SEL!"STM32_LPTIM3SEL_PCLK4"}
 #define STM32_LPTIM2SEL                     ${doc.STM32_LPTIM2SEL!"STM32_LPTIM2SEL_PCLK4"}
 #define STM32_I2C4SEL                       ${doc.STM32_I2C4SEL!"STM32_I2C4SEL_PCLK4"}
 #define STM32_LPUART1SEL                    ${doc.STM32_LPUART1SEL!"STM32_LPUART1SEL_PCLK4"}
