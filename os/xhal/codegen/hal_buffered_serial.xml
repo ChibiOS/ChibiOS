@@ -36,6 +36,14 @@ return oqPutTimeout(&self->oqueue, b, TIME_INFINITE);]]></implementation>
 
 return iqGetTimeout(&self->iqueue, TIME_INFINITE);]]></implementation>
             </method>
+              <method shortname="unget">
+                <implementation><![CDATA[
+
+(void)self;
+(void)b;
+
+return STM_RESET;]]></implementation>
+              </method>
             <method shortname="writet">
               <implementation><![CDATA[
 

@@ -463,6 +463,14 @@ if (msg != MSG_OK) {
 
 return sioGetX(self);]]></implementation>
               </method>
+              <method shortname="unget">
+                <implementation><![CDATA[
+
+(void)self;
+(void)b;
+
+return STM_RESET;]]></implementation>
+              </method>
               <method shortname="writet">
                 <implementation><![CDATA[
 

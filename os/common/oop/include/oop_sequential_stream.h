@@ -37,9 +37,23 @@
  * @name    Streams return codes
  * @{
  */
-#define STM_OK                              MSG_OK
-#define STM_TIMEOUT                         MSG_TIMEOUT
-#define STM_RESET                           MSG_RESET
+/**
+ * @brief       Returned code for operation successful.
+ * @note        It is an alias of @p MSG_OK.
+ */
+#define STM_OK                              0
+
+/**
+ * @brief       Returned code for operation timeout.
+ * @note        It is an alias of @p MSG_TIMEOUT.
+ */
+#define STM_TIMEOUT                         -1
+
+/**
+ * @brief       Returned code for stream reset or End-of-File.
+ * @note        It is an alias of @p MSG_RESET.
+ */
+#define STM_RESET                           -2
 /** @} */
 
 #if (defined(OOP_USE_LEGACY)) || defined (__DOXYGEN__)
@@ -102,8 +116,9 @@ struct sequential_stream_vmt {
   /* From sequential_stream_i.*/
   size_t (*write)(void *ip, const uint8_t *bp, size_t n);
   size_t (*read)(void *ip, uint8_t *bp, size_t n);
-  msg_t (*put)(void *ip, uint8_t b);
-  msg_t (*get)(void *ip);
+  int (*put)(void *ip, uint8_t b);
+  int (*get)(void *ip);
+  int (*unget)(void *ip, int b);
 };
 
 /**
@@ -196,9 +211,11 @@ static inline size_t stmRead(void *ip, uint8_t *bp, size_t n) {
  * @param[in,out] ip            Pointer to a @p sequential_stream_i instance.
  * @param[in]     b             The byte value to be written to the stream.
  * @return                      The operation status.
+ * @retval STM_OK               If the byte has been written.
+ * @retval STM_RESET            If an end-of-file condition has been met.
  */
 CC_FORCE_INLINE
-static inline msg_t stmPut(void *ip, uint8_t b) {
+static inline int stmPut(void *ip, uint8_t b) {
   sequential_stream_i *self = (sequential_stream_i *)ip;
 
   return self->vmt->put(ip, b);
@@ -214,12 +231,35 @@ static inline msg_t stmPut(void *ip, uint8_t b) {
  *
  * @param[in,out] ip            Pointer to a @p sequential_stream_i instance.
  * @return                      A byte value from the stream.
+ * @retval STM_RESET            If an end-of-file condition has been met.
  */
 CC_FORCE_INLINE
-static inline msg_t stmGet(void *ip) {
+static inline int stmGet(void *ip) {
   sequential_stream_i *self = (sequential_stream_i *)ip;
 
   return self->vmt->get(ip);
+}
+
+/**
+ * @memberof    sequential_stream_i
+ * @public
+ *
+ * @brief       Pushes back a byte into the stream.
+ * @details     The specified byte is pushed back into the stream.
+ * @note        Implementing classes may have limited push-back buffer capacity
+ *              or not be able to push-back at all.
+ *
+ * @param[in,out] ip            Pointer to a @p sequential_stream_i instance.
+ * @param[in]     b             The byte value to be pushed back to the stream.
+ * @return                      The operation status.
+ * @retval STM_OK               If the byte has been pushed back.
+ * @retval STM_RESET            If there is no push-back capacity left.
+ */
+CC_FORCE_INLINE
+static inline int stmUnget(void *ip, int b) {
+  sequential_stream_i *self = (sequential_stream_i *)ip;
+
+  return self->vmt->unget(ip, b);
 }
 /** @} */
 

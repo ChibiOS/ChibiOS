@@ -191,8 +191,9 @@ struct asynchronous_channel_vmt {
   /* From sequential_stream_i.*/
   size_t (*write)(void *ip, const uint8_t *bp, size_t n);
   size_t (*read)(void *ip, uint8_t *bp, size_t n);
-  msg_t (*put)(void *ip, uint8_t b);
-  msg_t (*get)(void *ip);
+  int (*put)(void *ip, uint8_t b);
+  int (*get)(void *ip);
+  int (*unget)(void *ip, int b);
   /* From asynchronous_channel_i.*/
   size_t (*writet)(void *ip, const uint8_t *bp, size_t n, sysinterval_t timeout);
   size_t (*readt)(void *ip, uint8_t *bp, size_t n, sysinterval_t timeout);

@@ -171,7 +171,7 @@ static size_t __sio_chn_read_impl(void *ip, uint8_t *bp, size_t n) {
  * @param[in]     b             The byte value to be written to the stream.
  * @return                      The operation status.
  */
-static msg_t __sio_chn_put_impl(void *ip, uint8_t b) {
+static int __sio_chn_put_impl(void *ip, uint8_t b) {
   hal_sio_driver_c *self = oopIfGetOwner(hal_sio_driver_c, ip);
   msg_t msg;
 
@@ -194,7 +194,7 @@ static msg_t __sio_chn_put_impl(void *ip, uint8_t b) {
  *                              interface.
  * @return                      A byte value from the stream.
  */
-static msg_t __sio_chn_get_impl(void *ip) {
+static int __sio_chn_get_impl(void *ip) {
   hal_sio_driver_c *self = oopIfGetOwner(hal_sio_driver_c, ip);
   msg_t msg;
 
@@ -204,6 +204,26 @@ static msg_t __sio_chn_get_impl(void *ip) {
   }
 
   return sioGetX(self);
+}
+
+/**
+ * @memberof    hal_sio_driver_c
+ * @private
+ *
+ * @brief       Implementation of interface method @p stmUnget().
+ *
+ * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
+ *                              interface.
+ * @param[in]     b             The byte value to be pushed back to the stream.
+ * @return                      The operation status.
+ */
+static int __sio_chn_unget_impl(void *ip, int b) {
+  hal_sio_driver_c *self = oopIfGetOwner(hal_sio_driver_c, ip);
+
+  (void)self;
+  (void)b;
+
+  return STM_RESET;
 }
 
 /**
@@ -392,6 +412,7 @@ void *__sio_objinit_impl(void *ip, const void *vmt) {
       .read                 = __sio_chn_read_impl,
       .put                  = __sio_chn_put_impl,
       .get                  = __sio_chn_get_impl,
+      .unget                = __sio_chn_unget_impl,
       .writet               = __sio_chn_writet_impl,
       .readt                = __sio_chn_readt_impl,
       .putt                 = __sio_chn_putt_impl,

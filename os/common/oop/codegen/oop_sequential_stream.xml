@@ -12,9 +12,18 @@
     </includes>
     <definitions_early>
       <group description="Streams return codes">
-        <define name="STM_OK" value="MSG_OK" />
-        <define name="STM_TIMEOUT" value="MSG_TIMEOUT" />
-        <define name="STM_RESET" value="MSG_RESET" />
+        <define name="STM_OK" value="0" >
+          <brief>Returned code for operation successful.</brief>
+          <note>It is an alias of @p MSG_OK.</note>
+        </define>
+        <define name="STM_TIMEOUT" value="-1">
+          <brief>Returned code for operation timeout.</brief>
+          <note>It is an alias of @p MSG_TIMEOUT.</note>
+        </define>
+        <define name="STM_RESET" value="-2">
+          <brief>Returned code for stream reset or End-of-File.</brief>
+          <note>It is an alias of @p MSG_RESET.</note>
+        </define>
       </group>
       <condition check="defined(OOP_USE_LEGACY)">
         <group description="Legacy interface method names">
@@ -72,7 +81,7 @@
                     value can be less than the specified number of bytes
                     if an end-of-file condition has been met.]]></return>
           </method>
-          <method name="stmPut" shortname="put" ctype="msg_t">
+          <method name="stmPut" shortname="put" ctype="int">
             <brief>Sequential Stream blocking byte write.</brief>
             <details><![CDATA[This function writes a byte value to a stream.
                 If the stream is not ready to accept data then the calling
@@ -81,13 +90,29 @@
               be written to the stream.
             </param>
             <return>The operation status.</return>
+            <retval value="STM_OK">If the byte has been written.</retval>
+            <retval value="STM_RESET">If an end-of-file condition has been met.</retval>
           </method>
-          <method name="stmGet" shortname="get" ctype="msg_t">
+          <method name="stmGet" shortname="get" ctype="int">
             <brief>Sequential Stream blocking byte read.</brief>
             <details><![CDATA[This function reads a byte value from a stream.
                      If the data is not available then the calling thread is
                      suspended.]]></details>
             <return>A byte value from the stream.</return>
+            <retval value="STM_RESET">If an end-of-file condition has been met.</retval>
+          </method>
+          <method name="stmUnget" shortname="unget" ctype="int">
+            <brief>Pushes back a byte into the stream.</brief>
+            <details><![CDATA[The specified byte is pushed back into the
+              stream.]]></details>
+            <note><![CDATA[Implementing classes may have limited push-back buffer
+              capacity or not be able to push-back at all.]]></note>
+            <param name="b" ctype="int" dir="in">The byte value to
+              be pushed back to the stream.
+            </param>
+            <return>The operation status.</return>
+            <retval value="STM_OK">If the byte has been pushed back.</retval>
+            <retval value="STM_RESET">If there is no push-back capacity left.</retval>
           </method>
         </methods>
       </interface>
