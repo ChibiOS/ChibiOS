@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE doc [
   <!ENTITY memstreams SYSTEM "memstreams.xml">
-  <!ENTITY oop_base_interface SYSTEM "oop_base_interface.xml">
-  <!ENTITY oop_referenced_object SYSTEM "oop_referenced_object.xml">
-  <!ENTITY oop_synchronized_object SYSTEM "oop_synchronized_object.xml">
-  <!ENTITY oop_sequential_stream SYSTEM "oop_sequential_stream.xml">
+  <!ENTITY nullstreams SYSTEM "nullstreams.xml">
 ]>
 <!-- Class/interfaces definitions -->
 <instance
@@ -15,5 +12,6 @@
   </paths>
   <modules>
     &memstreams;
+    &nullstreams;
   </modules>
 </instance>

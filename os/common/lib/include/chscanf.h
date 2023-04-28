@@ -14,39 +14,45 @@
     limitations under the License.
 */
 
+/*
+    This file was contributed by Alex Lewontin.
+ */
+
 /**
- * @file    chprintf.h
- * @brief   Mini printf-like functionality.
+ * @file    chscanf.h
+ * @brief   Mini scanf-like functionality.
  *
- * @addtogroup HAL_CHPRINTF
+ * @addtogroup HAL_CHSCANF
  * @{
  */
 
-#ifndef CHPRINTF_H
-#define CHPRINTF_H
+#ifndef CHSCANF_H
+#define CHSCANF_H
 
 #include <stdarg.h>
-
-#include "oop_sequential_stream.h"
 
 /**
  * @brief   Float type support.
  */
-#if !defined(CHPRINTF_USE_FLOAT) || defined(__DOXYGEN__)
-#define CHPRINTF_USE_FLOAT          FALSE
+#if !defined(CHSCANF_USE_FLOAT) || defined(__DOXYGEN__)
+#define CHSCANF_USE_FLOAT FALSE
+#endif
+
+#if CHSCANF_USE_FLOAT
+#include <math.h>
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  int chvprintf(sequential_stream_i *stmp, const char *fmt, va_list ap);
-  int chprintf(sequential_stream_i *stmp, const char *fmt, ...);
-  int chsnprintf(char *str, size_t size, const char *fmt, ...);
-  int chvsnprintf(char *str, size_t size, const char *fmt, va_list ap);
+  int chvscanf(sequential_stream_i *stmp, const char *fmt, va_list ap);
+  int chscanf(sequential_stream_i *stmp, const char *fmt, ...);
+  int chsnscanf(char *str, size_t size, const char *fmt, ...);
+  int chvsnscanf(char *str, size_t size, const char *fmt, va_list ap);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* CHPRINTF_H */
+#endif /* CHSCANF_H */
 
 /** @} */
