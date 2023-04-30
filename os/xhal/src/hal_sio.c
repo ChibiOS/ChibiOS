@@ -95,6 +95,61 @@ static size_t sio_sync_read(hal_sio_driver_c *siop, uint8_t *bp, size_t n,
 }
 #endif /* SIO_USE_STREAMS_INTERFACE == TRUE */
 
+#if (SIO_USE_BUFFERING == TRUE) || defined (__DOXYGEN__)
+static void __bsio_push_data(hal_buffered_sio_c *bsiop) {
+
+  while (!sioIsTXFullX(bsiop->siop)) {
+    msg_t msg;
+
+    msg = oqGetI(&bsiop->oqueue);
+    if (msg < MSG_OK) {
+      bsAddFlagsI(bsiop, CHN_FL_TX_NOTFULL);
+      return;
+    }
+    sioPutX(bsiop->siop, (uint_fast16_t)msg);
+  }
+}
+
+static void __bsio_pop_data(hal_buffered_sio_c *bsiop) {
+
+  /* RX FIFO needs to be fully emptied or SIO will not generate more RX FIFO
+     events.*/
+  while (!sioIsRXEmptyX(bsiop->siop)) {
+    bsIncomingDataI(bsiop, sioGetX(bsiop->siop));
+  }
+}
+
+static void __bsio_default_cb(hal_sio_driver_c *siop) {
+  hal_buffered_sio_c *bsiop = (hal_buffered_sio_c *)siop->arg;
+  sioevents_t events;
+
+  osalSysLockFromISR();
+
+  /* Posting the non-data SIO events as channel event flags, the masks are
+     made to match.*/
+  events = sioGetAndClearEventsX(siop, SIO_EV_ALL_EVENTS);
+  bsAddFlagsI(bsiop, (eventflags_t)(events & ~SIO_EV_ALL_DATA));
+
+  /* RX FIFO event.*/
+  if ((events & SIO_EV_RX_NOTEMPTY) != (sioevents_t)0) {
+
+    __bsio_pop_data(bsiop);
+  }
+
+  /* TX FIFO event.*/
+  if ((events & SIO_EV_TX_NOTFULL) != (sioevents_t)0) {
+     __bsio_push_data(bsiop);
+  }
+
+  osalSysUnlockFromISR();
+}
+
+static void __bsio_onotify(io_queue_t *qp) {
+
+  __bsio_push_data((hal_buffered_sio_c *)qp->q_link);
+}
+#endif /* SIO_USE_BUFFERING == TRUE */
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -698,7 +753,7 @@ sioevents_t sioGetEvents(void *ip) {
  * @note        This function can only be called by a single thread at time.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
+ * @param[in]     timeout       Synchronization timeout
  * @return                      The synchronization result.
  * @retval MSG_OK               If there is data in the RX FIFO.
  * @retval MSG_TIMEOUT          If synchronization timed out.
@@ -748,7 +803,7 @@ msg_t sioSynchronizeRX(void *ip, sysinterval_t timeout) {
  * @note        This function can only be called by a single thread at time.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
+ * @param[in]     timeout       Synchronization timeout
  * @return                      The synchronization result.
  * @retval MSG_OK               If there is data in the RX FIFO.
  * @retval MSG_TIMEOUT          If synchronization timed out.
@@ -800,7 +855,7 @@ msg_t sioSynchronizeRXIdle(void *ip, sysinterval_t timeout) {
  * @note        This function can only be called by a single thread at time.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
+ * @param[in]     timeout       Synchronization timeout
  * @return                      The synchronization result.
  * @retval MSG_OK               If there is space in the TX FIFO.
  * @retval MSG_TIMEOUT          If synchronization timed out.
@@ -843,7 +898,7 @@ msg_t sioSynchronizeTX(void *ip, sysinterval_t timeout) {
  * @note        This function can only be called by a single thread at time.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
+ * @param[in]     timeout       Synchronization timeout
  * @return                      The synchronization result.
  * @retval MSG_OK               If there is space in the TX FIFO.
  * @retval MSG_TIMEOUT          If synchronization timed out.
@@ -878,6 +933,144 @@ msg_t sioSynchronizeTXEnd(void *ip, sysinterval_t timeout) {
 }
 #endif /* SIO_USE_SYNCHRONIZATION == TRUE */
 /** @} */
+
+/*===========================================================================*/
+/* Module class "hal_buffered_sio_c" methods.                                */
+/*===========================================================================*/
+
+/**
+ * @name        Methods implementations of hal_buffered_sio_c
+ * @{
+ */
+/**
+ * @memberof    hal_buffered_sio_c
+ * @protected
+ *
+ * @brief       Implementation of object creation.
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[out]    ip            Pointer to a @p hal_buffered_sio_c instance to
+ *                              be initialized.
+ * @param[in]     vmt           VMT pointer for the new object.
+ * @param[in]     siop          Pointer to the @p hal_sio_driver_c object.
+ * @param[in]     ib            Pointer to the input buffer.
+ * @param[in]     ibsize        Size of the input buffer.
+ * @param[in]     ob            Pointer to the output buffer.
+ * @param[in]     obsize        Size of the output buffer.
+ * @return                      A new reference to the object.
+ */
+void *__bsio_objinit_impl(void *ip, const void *vmt, hal_sio_driver_c *siop,
+                          uint8_t *ib, size_t ibsize, uint8_t *ob,
+                          size_t obsize) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+
+  /* Initialization code.*/
+  __bs_objinit_impl((void *)self, (const void *)&vmt,
+                    ib, ibsize, NULL, NULL,
+                    ob, obsize, __bsio_onotify, (void *)self);
+  drvSetArgumentX(siop, self);
+  self->siop = siop;
+
+  return self;
+}
+
+/**
+ * @memberof    hal_buffered_sio_c
+ * @protected
+ *
+ * @brief       Implementation of object finalization.
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance to
+ *                              be disposed.
+ */
+void __bsio_dispose_impl(void *ip) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+
+  /* No finalization code.*/
+  (void)self;
+
+  /* Finalization of the ancestors-defined parts.*/
+  __bs_dispose_impl(self);
+}
+
+/**
+ * @memberof    hal_buffered_sio_c
+ * @protected
+ *
+ * @brief       Override of method @p __drv_start().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
+ * @return                      The operation status.
+ */
+msg_t __bsio_start_impl(void *ip) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+  msg_t msg;
+
+  /* Start is a slow operation in this driver, we need to switch to the
+     HAL_DRV_STATE_STARTING state.*/
+  self->state = HAL_DRV_STATE_STARTING;
+  osalSysUnlock();
+
+  /* Starting the undelying SIO driver.*/
+  msg = drvStart(self->siop);
+  if (msg == HAL_RET_SUCCESS) {
+    sioSetCallbackX(self->siop, &__bsio_default_cb);
+    sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
+  }
+
+  /* Back into the critical section and return.*/
+  osalSysLock();
+  return msg;
+}
+
+/**
+ * @memberof    hal_buffered_sio_c
+ * @protected
+ *
+ * @brief       Override of method @p __drv_stop().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
+ */
+void __bsio_stop_impl(void *ip) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+
+  /* Start is a slow operation in this driver, we need to switch to the
+     HAL_DRV_STATE_STOPPING state.*/
+  self->state = HAL_DRV_STATE_STOPPING;
+  osalSysUnlock();
+
+  drvStop(self->siop);
+
+  /* Back into the critical section and return.*/
+  osalSysLock();
+}
+
+/**
+ * @memberof    hal_buffered_sio_c
+ * @protected
+ *
+ * @brief       Override of method @p drvConfigureX().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
+ * @param[in]     config        New driver configuration.
+ */
+msg_t __bsio_configure_impl(void *ip, const void *config) {
+  hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
+  return drvConfigureX(self->siop, config);
+}
+/** @} */
+
+/**
+ * @brief       VMT structure of buffered SIO wrapper class.
+ * @note        It is public because accessed by the inlined constructor.
+ */
+const struct hal_buffered_sio_vmt __hal_buffered_sio_vmt = {
+  .dispose                  = __bsio_dispose_impl,
+  .start                    = __bsio_start_impl,
+  .stop                     = __bsio_stop_impl,
+  .configure                = __bsio_configure_impl
+};
 
 #endif /* HAL_USE_SIO == TRUE */
 

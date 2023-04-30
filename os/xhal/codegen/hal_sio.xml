@@ -6,27 +6,36 @@
   <imports>
     <import>hal_base_driver.xml</import>
     <import>hal_channels.xml</import>
+    <import>hal_buffered_serial.xml</import>
   </imports>
   <public>
     <definitions_early>
       <group description="SIO events">
         <define name="SIO_EV_NONE" value="CHN_FL_NONE" />
-        <define name="SIO_EV_PARITY_ERR_POS" value="CHN_FL_PARITY_ERR_POS" />
+        <define name="SIO_EV_PARITY_ERR_POS"
+          value="CHN_FL_PARITY_ERR_POS" />
         <define name="SIO_EV_PARITY_ERR" value="CHN_FL_PARITY_ERR" />
-        <define name="SIO_EV_FRAMING_ERR_POS" value="CHN_FL_FRAMING_ERR_POS" />
+        <define name="SIO_EV_FRAMING_ERR_POS"
+          value="CHN_FL_FRAMING_ERR_POS" />
         <define name="SIO_EV_FRAMING_ERR" value="CHN_FL_FRAMING_ERR" />
         <define name="SIO_EV_NOISE_ERR_POS" value="CHN_FL_NOISE_ERR_POS" />
         <define name="SIO_EV_NOISE_ERR" value="CHN_FL_NOISE_ERR" />
-        <define name="SIO_EV_OVERRUN_ERR_POS" value="CHN_FL_OVERRUN_ERR_POS" />
+        <define name="SIO_EV_OVERRUN_ERR_POS"
+          value="CHN_FL_OVERRUN_ERR_POS" />
         <define name="SIO_EV_OVERRUN_ERR" value="CHN_FL_OVERRUN_ERR" />
-        <define name="SIO_EV_ALL_ERRORS_POS" value="SIO_EV_PARITY_ERR_POS" />
-        <define name="SIO_EV_ALL_ERRORS" value="(15U &lt;&lt; SIO_EV_ALL_ERRORS_POS)" />
-        <define name="SIO_EV_TX_NOTFULL_POS" value="CHN_FL_TX_NOTFULL_POS" />
+        <define name="SIO_EV_ALL_ERRORS_POS"
+          value="SIO_EV_PARITY_ERR_POS" />
+        <define name="SIO_EV_ALL_ERRORS"
+          value="(15U &lt;&lt; SIO_EV_ALL_ERRORS_POS)" />
+        <define name="SIO_EV_TX_NOTFULL_POS"
+          value="CHN_FL_TX_NOTFULL_POS" />
         <define name="SIO_EV_TX_NOTFULL" value="CHN_FL_TX_NOTFULL" />
-        <define name="SIO_EV_RX_NOTEMPTY_POS" value="CHN_FL_RX_NOTEMPTY_POS" />
+        <define name="SIO_EV_RX_NOTEMPTY_POS"
+          value="CHN_FL_RX_NOTEMPTY_POS" />
         <define name="SIO_EV_RX_NOTEMPTY" value="CHN_FL_RX_NOTEMPTY" />
         <define name="SIO_EV_ALL_DATA_POS" value="SIO_EV_TX_NOTFULL_POS" />
-        <define name="SIO_EV_ALL_DATA" value="(3U &lt;&lt; SIO_EV_ALL_DATA_POS)" />
+        <define name="SIO_EV_ALL_DATA"
+          value="(3U &lt;&lt; SIO_EV_ALL_DATA_POS)" />
         <define name="SIO_EV_TX_END_POS" value="CHN_FL_TX_END_POS" />
         <define name="SIO_EV_TX_END" value="CHN_FL_TX_END" />
         <define name="SIO_EV_RX_IDLE_POS" value="CHN_FL_RX_IDLE_POS" />
@@ -34,9 +43,11 @@
         <define name="SIO_EV_RX_BREAK_POS" value="CHN_FL_RX_BREAK_POS" />
         <define name="SIO_EV_RX_BREAK" value="CHN_FL_RX_BREAK" />
         <define name="SIO_EV_ALL_STATUS_POS" value="SIO_EV_TX_END_POS" />
-        <define name="SIO_EV_ALL_STATUS" value="(7U &lt;&lt; SIO_EV_ALL_STATUS_POS)" />
+        <define name="SIO_EV_ALL_STATUS"
+          value="(7U &lt;&lt; SIO_EV_ALL_STATUS_POS)" />
         <define name="SIO_EV_NONE_MASK" value="0U" />
-        <define name="SIO_EV_ALL_EVENTS" value="(SIO_EV_ALL_ERRORS | SIO_EV_ALL_DATA | SIO_EV_ALL_STATUS)" />
+        <define name="SIO_EV_ALL_EVENTS"
+          value="(SIO_EV_ALL_ERRORS | SIO_EV_ALL_DATA | SIO_EV_ALL_STATUS)" />
       </group>
       <group description="Additional messages">
         <define name="SIO_MSG_ERRORS" value="1" />
@@ -46,7 +57,8 @@
       <config name="SIO_DEFAULT_BITRATE" default="38400">
         <brief>Default bit rate.</brief>
         <details>Configuration parameter, this is the baud rate selected
-          for the default configuration.
+          for the
+          default configuration.
         </details>
         <assert invalid="$N &lt;= 0" />
       </config>
@@ -57,6 +69,10 @@
       <config name="SIO_USE_STREAMS_INTERFACE"
         default="SIO_USE_SYNCHRONIZATION">
         <brief>Support for streams interface.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="SIO_USE_BUFFERING" default="TRUE">
+        <brief>Support for buffering wrapper class.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
     </configs>
@@ -174,7 +190,8 @@ do {
       <macro name="sioGetAndClearErrorsX">
         <brief>Gets and clears SIO error flags.</brief>
         <param name="siop" dir="both">pointer to the @p hal_sio_driver_c
-          object</param>
+          object
+        </param>
         <return>The pending error flags.</return>
         <xclass />
         <implementation><![CDATA[sio_lld_get_and_clear_errors(siop)]]></implementation>
@@ -182,9 +199,12 @@ do {
       <macro name="sioGetAndClearEventsX">
         <brief>Gets and clears SIO event flags.</brief>
         <param name="siop" dir="both">pointer to the @p hal_sio_driver_c
-          object</param>
+          object
+        </param>
         <param name="mask" ctype="sioevents_t" dir="in">Mask of events
-          to be returned and cleared.</param>
+          to be
+          returned and cleared.
+        </param>
         <return>The pending event flags.</return>
         <xclass />
         <implementation><![CDATA[sio_lld_get_and_clear_events(siop, mask)]]></implementation>
@@ -224,10 +244,12 @@ do {
       <macro name="sioAsyncReadX">
         <brief>Reads data from the RX FIFO.</brief>
         <details>This function is non-blocking, data is read if present
-          and the effective amount is returned.
+          and the
+          effective amount is returned.
         </details>
         <note>This function can be called from any context but it is
-          meant to be called from the @p cb callback handler.
+          meant to be
+          called from the @p cb callback handler.
         </note>
         <param name="siop" dir="both">pointer to the @p hal_sio_driver_c
           object
@@ -244,10 +266,12 @@ do {
       <macro name="sioAsyncWriteX">
         <brief>Writes data into the TX FIFO.</brief>
         <details>This function is non-blocking, data is written if there
-          is space in the FIFO and the effective amount is returned.
+          is space
+          in the FIFO and the effective amount is returned.
         </details>
         <note>This function can be called from any context but it is
-          meant to be called from the @p cb callback handler.
+          meant to be
+          called from the @p cb callback handler.
         </note>
         <param name="siop" dir="both">pointer to the @p hal_sio_driver_c
           object
@@ -292,7 +316,8 @@ do {
           <macro name="__sio_wakeup_errors">
             <brief>Wakes up because RX errors.</brief>
             <param name="siop" dir="both">pointer to the @p
-              hal_sio_driver_c object
+              hal_sio_driver_c
+              object
             </param>
             <notapi />
             <implementation><![CDATA[
@@ -306,7 +331,8 @@ do {
           <macro name="__sio_wakeup_rx">
             <brief>Wakes up the RX-waiting thread.</brief>
             <param name="siop" dir="both">pointer to the @p
-              hal_sio_driver_c object
+              hal_sio_driver_c
+              object
             </param>
             <notapi />
             <implementation><![CDATA[
@@ -319,7 +345,8 @@ do {
           <macro name="__sio_wakeup_rxidle">
             <brief>Wakes up the RX-idle-waiting thread.</brief>
             <param name="siop" dir="both">pointer to the @p
-              hal_sio_driver_c object
+              hal_sio_driver_c
+              object
             </param>
             <notapi />
             <implementation><![CDATA[
@@ -332,7 +359,8 @@ do {
           <macro name="__sio_wakeup_tx">
             <brief>Wakes up the TX-waiting thread.</brief>
             <param name="siop" dir="both">pointer to the @p
-              hal_sio_driver_c object
+              hal_sio_driver_c
+              object
             </param>
             <notapi />
             <implementation><![CDATA[
@@ -345,7 +373,8 @@ do {
           <macro name="__sio_wakeup_txend">
             <brief>Wakes up the TXend-waiting thread.</brief>
             <param name="siop" dir="both">pointer to the @p
-              hal_sio_driver_c object
+              hal_sio_driver_c
+              object
             </param>
             <notapi />
             <implementation><![CDATA[
@@ -403,8 +432,7 @@ do {
       </typedef>
       <typedef name="siocb_t">
         <brief>Generic SIO notification callback type.</brief>
-        <basetype
-          ctype="void (*$N)(struct hal_sio_driver *siop)" />
+        <basetype ctype="void (*$N)(struct hal_sio_driver *siop)" />
       </typedef>
       <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
@@ -580,7 +608,8 @@ SIO_DRIVER_EXT_INIT_HOOK(self);
             <method name="sioWriteEnableFlags" ctype="void">
               <brief>Writes the enabled events flags mask.</brief>
               <param name="mask" ctype="sioevents_t">enabled events mask to be
-                written</param>
+                written
+              </param>
               <api />
               <implementation><![CDATA[
 
@@ -594,7 +623,8 @@ osalSysUnlock();]]></implementation>
             <method name="sioSetEnableFlags" ctype="void">
               <brief>Sets flags into the enabled events flags mask.</brief>
               <param name="mask" ctype="sioevents_t">enabled events mask to be
-                set</param>
+                set
+              </param>
               <api />
               <implementation><![CDATA[
 
@@ -608,7 +638,8 @@ osalSysUnlock();]]></implementation>
             <method name="sioClearEnableFlags" ctype="void">
               <brief>Clears flags from the enabled events flags mask.</brief>
               <param name="mask" ctype="sioevents_t">enabled events mask to be
-                cleared</param>
+                cleared
+              </param>
               <api />
               <implementation><![CDATA[
 
@@ -619,8 +650,7 @@ osalDbgAssert(self->state == HAL_DRV_STATE_READY, "invalid state");
 sioClearEnableFlagsX(self, mask);
 osalSysUnlock();]]></implementation>
             </method>
-            <method name="sioGetAndClearErrors"
-              ctype="sioevents_t">
+            <method name="sioGetAndClearErrors" ctype="sioevents_t">
               <brief>Get and clears SIO error event flags.</brief>
               <return>The pending error event flags.</return>
               <api />
@@ -636,11 +666,12 @@ osalSysUnlock();
 
 return errors;]]></implementation>
             </method>
-            <method name="sioGetAndClearEvents"
-              ctype="sioevents_t">
+            <method name="sioGetAndClearEvents" ctype="sioevents_t">
               <brief>Get and clears SIO event flags.</brief>
               <param name="mask" ctype="sioevents_t" dir="in">Mask of events
-                to be returned and cleared.</param>
+                to
+                be returned and cleared.
+              </param>
               <return>The pending event flags.</return>
               <api />
               <implementation><![CDATA[
@@ -675,13 +706,15 @@ return events;]]></implementation>
               <method name="sioSynchronizeRX" ctype="msg_t">
                 <brief>Synchronizes with RX FIFO data availability.</brief>
                 <note>The exact behavior depends on low level FIFO
-                  settings such as thresholds, etc.
+                  settings such
+                  as thresholds, etc.
                 </note>
                 <note>This function can only be called by a single
-                  thread at time.
+                  thread at
+                  time.
                 </note>
-                <param name="timeout" ctype="sysinterval_t"
-                  dir="in">synchronization timeout
+                <param name="timeout" ctype="sysinterval_t" dir="in">synchronization
+                  timeout
                 </param>
                 <return>The synchronization result.</return>
                 <retval value="MSG_OK">If there is data in the RX FIFO.
@@ -689,9 +722,12 @@ return events;]]></implementation>
                 <retval value="MSG_TIMEOUT">If synchronization timed out.
                 </retval>
                 <retval value="MSG_RESET">It the driver has been stopped
-                  while waiting.</retval>
+                  while
+                  waiting.
+                </retval>
                 <retval value="SIO_MSG_ERRORS">It RX errors occurred before or
-                  during wait.</retval>
+                  during wait.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -727,10 +763,11 @@ return msg;]]></implementation>
               <method name="sioSynchronizeRXIdle" ctype="msg_t">
                 <brief>Synchronizes with RX going idle.</brief>
                 <note>This function can only be called by a single
-                  thread at time.
+                  thread at
+                  time.
                 </note>
-                <param name="timeout" ctype="sysinterval_t"
-                  dir="in">synchronization timeout
+                <param name="timeout" ctype="sysinterval_t" dir="in">synchronization
+                  timeout
                 </param>
                 <return>The synchronization result.</return>
                 <retval value="MSG_OK">If there is data in the RX FIFO.
@@ -738,9 +775,12 @@ return msg;]]></implementation>
                 <retval value="MSG_TIMEOUT">If synchronization timed out.
                 </retval>
                 <retval value="MSG_RESET">It the driver has been stopped
-                  while waiting.</retval>
+                  while
+                  waiting.
+                </retval>
                 <retval value="SIO_MSG_ERRORS">It RX errors occurred before or
-                  during wait.</retval>
+                  during wait.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -776,13 +816,15 @@ return msg;]]></implementation>
               <method name="sioSynchronizeTX" ctype="msg_t">
                 <brief>Synchronizes with TX FIFO space availability.</brief>
                 <note>The exact behavior depends on low level FIFO
-                  settings such as thresholds, etc.
+                  settings such
+                  as thresholds, etc.
                 </note>
                 <note>This function can only be called by a single
-                  thread at time.
+                  thread at
+                  time.
                 </note>
-                <param name="timeout" ctype="sysinterval_t"
-                  dir="in">synchronization timeout
+                <param name="timeout" ctype="sysinterval_t" dir="in">synchronization
+                  timeout
                 </param>
                 <return>The synchronization result.</return>
                 <retval value="MSG_OK">If there is space in the TX FIFO.
@@ -790,7 +832,9 @@ return msg;]]></implementation>
                 <retval value="MSG_TIMEOUT">If synchronization timed out.
                 </retval>
                 <retval value="MSG_RESET">It the driver has been stopped
-                  while waiting.</retval>
+                  while
+                  waiting.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -820,10 +864,11 @@ return msg;]]></implementation>
               <method name="sioSynchronizeTXEnd" ctype="msg_t">
                 <brief>Synchronizes with TX completion.</brief>
                 <note>This function can only be called by a single
-                  thread at time.
+                  thread at
+                  time.
                 </note>
-                <param name="timeout" ctype="sysinterval_t"
-                  dir="in">synchronization timeout
+                <param name="timeout" ctype="sysinterval_t" dir="in">synchronization
+                  timeout
                 </param>
                 <return>The synchronization result.</return>
                 <retval value="MSG_OK">If there is space in the TX FIFO.
@@ -831,7 +876,9 @@ return msg;]]></implementation>
                 <retval value="MSG_TIMEOUT">If synchronization timed out.
                 </retval>
                 <retval value="MSG_RESET">It the driver has been stopped
-                  while waiting.</retval>
+                  while
+                  waiting.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -861,7 +908,7 @@ return msg;]]></implementation>
           </regular>
           <override>
             <method shortname="start">
-        <implementation><![CDATA[
+              <implementation><![CDATA[
 msg_t msg;
 
 msg = sio_lld_start(self);
@@ -878,7 +925,7 @@ if (msg == HAL_RET_SUCCESS) {
 return msg;]]></implementation>
             </method>
             <method shortname="stop">
-        <implementation><![CDATA[
+              <implementation><![CDATA[
 
 sio_lld_stop(self);
 self->cb      = NULL;
@@ -894,9 +941,77 @@ osalOsRescheduleS();
 #endif]]></implementation>
             </method>
             <method shortname="configure">
-        <implementation><![CDATA[
+              <implementation><![CDATA[
 
 return sio_lld_configure(self, (const hal_sio_config_t *)config);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+      <class name="hal_buffered_sio" type="regular" namespace="bsio"
+        descr="buffered SIO wrapper" ancestorname="hal_buffered_serial">
+        <brief>This class implements a buffered channel interface on top of SIO.</brief>
+        <fields>
+          <field name="siop" ctype="hal_sio_driver_c$I*">
+            <brief>Pointer to the associated @p hal_sio_driver_c instance.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="false">
+            <param name="siop" ctype="hal_sio_driver_c *" dir="in">Pointer to
+              the @p hal_sio_driver_c object.</param>
+            <param name="ib" ctype="uint8_t *" dir="in">Pointer to the input buffer.</param>
+            <param name="ibsize" ctype="size_t" dir="in">Size of the input buffer.</param>
+            <param name="ob" ctype="uint8_t *" dir="in">Pointer to the output buffer.</param>
+            <param name="obsize" ctype="size_t" dir="in">Size of the output buffer.</param>
+            <implementation><![CDATA[
+__bs_objinit_impl((void *)self, (const void *)&vmt,
+                  ib, ibsize, NULL, NULL,
+                  ob, obsize, __bsio_onotify, (void *)self);
+drvSetArgumentX(siop, self);
+self->siop = siop;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+/* Start is a slow operation in this driver, we need to switch to the
+   HAL_DRV_STATE_STARTING state.*/
+self->state = HAL_DRV_STATE_STARTING;
+osalSysUnlock();
+
+/* Starting the undelying SIO driver.*/
+msg = drvStart(self->siop);
+if (msg == HAL_RET_SUCCESS) {
+  sioSetCallbackX(self->siop, &__bsio_default_cb);
+  sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
+}
+
+/* Back into the critical section and return.*/
+osalSysLock();
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+
+/* Start is a slow operation in this driver, we need to switch to the
+   HAL_DRV_STATE_STOPPING state.*/
+self->state = HAL_DRV_STATE_STOPPING;
+osalSysUnlock();
+
+drvStop(self->siop);
+
+/* Back into the critical section and return.*/
+osalSysLock();]]></implementation>
+            </method>
+            <method shortname="configure">
+              <implementation><![CDATA[
+return drvConfigureX(self->siop, config);]]></implementation>
             </method>
           </override>
         </methods>
@@ -906,8 +1021,8 @@ return sio_lld_configure(self, (const hal_sio_config_t *)config);]]></implementa
       <function name="sioInit" ctype="void">
         <brief>SIO Driver initialization.</brief>
         <note>
-          This function is implicitly invoked by @p halInit(), there is no need
-          to explicitly initialize the driver.
+          This function is implicitly invoked by @p halInit(), there is no
+          need to explicitly initialize the driver.
         </note>
         <init />
         <implementation><![CDATA[
@@ -969,6 +1084,65 @@ while (i < n) {
   bp += read;
 }
 return i;]]></implementation>
+        </function>
+      </condition>
+      <condition check="SIO_USE_BUFFERING == TRUE">
+        <function name="__bsio_push_data" ctype="void">
+          <param name="bsiop" ctype="hal_buffered_sio_c *"></param>
+          <implementation><![CDATA[
+
+while (!sioIsTXFullX(bsiop->siop)) {
+  msg_t msg;
+
+  msg = oqGetI(&bsiop->oqueue);
+  if (msg < MSG_OK) {
+    bsAddFlagsI(bsiop, CHN_FL_TX_NOTFULL);
+    return;
+  }
+  sioPutX(bsiop->siop, (uint_fast16_t)msg);
+}]]></implementation>
+        </function>
+        <function name="__bsio_pop_data" ctype="void">
+          <param name="bsiop" ctype="hal_buffered_sio_c *"></param>
+          <implementation><![CDATA[
+
+/* RX FIFO needs to be fully emptied or SIO will not generate more RX FIFO
+   events.*/
+while (!sioIsRXEmptyX(bsiop->siop)) {
+  bsIncomingDataI(bsiop, sioGetX(bsiop->siop));
+}]]></implementation>
+        </function>
+        <function name="__bsio_default_cb" ctype="void">
+          <param name="siop" ctype="hal_sio_driver_c *"></param>
+          <implementation><![CDATA[
+hal_buffered_sio_c *bsiop = (hal_buffered_sio_c *)siop->arg;
+sioevents_t events;
+
+osalSysLockFromISR();
+
+/* Posting the non-data SIO events as channel event flags, the masks are
+   made to match.*/
+events = sioGetAndClearEventsX(siop, SIO_EV_ALL_EVENTS);
+bsAddFlagsI(bsiop, (eventflags_t)(events & ~SIO_EV_ALL_DATA));
+
+/* RX FIFO event.*/
+if ((events & SIO_EV_RX_NOTEMPTY) != (sioevents_t)0) {
+
+  __bsio_pop_data(bsiop);
+}
+
+/* TX FIFO event.*/
+if ((events & SIO_EV_TX_NOTFULL) != (sioevents_t)0) {
+   __bsio_push_data(bsiop);
+}
+
+osalSysUnlockFromISR();]]></implementation>
+        </function>
+        <function name="__bsio_onotify" ctype="void">
+          <param name="qp" ctype="io_queue_t *"></param>
+          <implementation><![CDATA[
+
+__bsio_push_data((hal_buffered_sio_c *)qp->q_link);]]></implementation>
         </function>
       </condition>
     </functions>

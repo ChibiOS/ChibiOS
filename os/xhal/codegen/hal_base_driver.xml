@@ -13,9 +13,11 @@
       <group description="Common driver states">
         <define name="HAL_DRV_STATE_UNINIT" value="0U" />
         <define name="HAL_DRV_STATE_STOP" value="1U" />
-        <define name="HAL_DRV_STATE_READY" value="2U" />
-        <define name="HAL_DRV_STATE_ACTIVE" value="3U" />
-        <define name="HAL_DRV_STATE_ERROR" value="4U" />
+        <define name="HAL_DRV_STATE_STOPPING" value="2U" />
+        <define name="HAL_DRV_STATE_STARTING" value="3U" />
+        <define name="HAL_DRV_STATE_READY" value="4U" />
+        <define name="HAL_DRV_STATE_ACTIVE" value="5U" />
+        <define name="HAL_DRV_STATE_ERROR" value="6U" />
       </group>
     </definitions_early>
     <configs>
@@ -143,7 +145,10 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 
-osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "not initialized");
+osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
+              (self->state != HAL_DRV_STATE_STOPPING) &&
+              (self->state != HAL_DRV_STATE_STARTING),
+              "invalid state");
 
 if (self->state == HAL_DRV_STATE_STOP) {
   /* Physically starting the peripheral.*/
@@ -151,6 +156,9 @@ if (self->state == HAL_DRV_STATE_STOP) {
   if (msg == HAL_RET_SUCCESS) {
     self->state = HAL_DRV_STATE_READY;
   }
+  else {
+    self->state = HAL_DRV_STATE_STOP;
+  }  
 }
 
 osalSysUnlock();
@@ -169,7 +177,9 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 
-osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "not initialized");
+osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
+              (self->state != HAL_DRV_STATE_STARTING),
+              "invalid state");
 
 if (self->state != HAL_DRV_STATE_STOP) {
   __drv_stop(self);

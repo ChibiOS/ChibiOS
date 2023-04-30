@@ -280,7 +280,10 @@ msg_t drvStart(void *ip) {
 
   osalSysLock();
 
-  osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "not initialized");
+  osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
+                (self->state != HAL_DRV_STATE_STOPPING) &&
+                (self->state != HAL_DRV_STATE_STARTING),
+                "invalid state");
 
   if (self->state == HAL_DRV_STATE_STOP) {
     /* Physically starting the peripheral.*/
@@ -288,6 +291,9 @@ msg_t drvStart(void *ip) {
     if (msg == HAL_RET_SUCCESS) {
       self->state = HAL_DRV_STATE_READY;
     }
+    else {
+      self->state = HAL_DRV_STATE_STOP;
+    }  
   }
 
   osalSysUnlock();
@@ -314,7 +320,9 @@ void drvStop(void *ip) {
 
   osalSysLock();
 
-  osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "not initialized");
+  osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
+                (self->state != HAL_DRV_STATE_STARTING),
+                "invalid state");
 
   if (self->state != HAL_DRV_STATE_STOP) {
     __drv_stop(self);

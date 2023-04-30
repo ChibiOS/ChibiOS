@@ -23,13 +23,32 @@
  *
  * state UNINIT
  * state STOP
+ * state STOPPING
+ * state STARTING
  * state READY
  * state ACTIVE
  * state ERROR
+ * note left of STOPPING
+ *   Optional state used when
+ *   stopping a driver is a
+ *   slow operation.
+ * end note
+ * note left of STARTING
+ *   Optional state used when
+ *   starting a driver is a
+ *   slow operation.
+ * end note
+ * note left of ERROR
+ *   Optional state is used by drivers
+ *   requiring a persistent error
+ *   condition.
+ * end note
  *
- * [*] -> UNINIT
+ * [*] --> UNINIT
  * UNINIT --> STOP : xxxObjectInit()
  * STOP --> READY : drvStart()
+ * STOP --> STARTING : drvStart()\nslow start
+ * STARTING -[dotted]-> READY : slow start\ncomplete
  * READY --> READY : drvStart()\nignored
  * READY --> READY : drvConfigure()
  * READY --> STOP : drvStop()
@@ -38,6 +57,8 @@
  * ACTIVE -[dotted]-> READY : asynchronous\nend operation\ncallback
  * ACTIVE --> STOP : drvStop()\nhard abort
  * ACTIVE -[dotted]-> ERROR : asynchronous\noperation error\ncallback
+ * ACTIVE --> STOPPING : drvStop()\nslow stop
+ * STOPPING -[dotted]-> STOP : slow stop\ncomplete
  * ERROR --> READY : drvStart()
  * ERROR --> STOP : drvStop()
  * ERROR --> READY : error cleared
@@ -64,7 +85,7 @@
  *   condition.
  * end note
  *
- * [*] -> UNINIT
+ * [*] --> UNINIT
  * UNINIT --> STOP : xxxObjectInit()
  * STOP --> READY : drvOpen()\ncall start()
  * READY --> READY : drvOpen() cnt++

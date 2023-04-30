@@ -103,6 +103,13 @@
 #if !defined(SIO_USE_STREAMS_INTERFACE) || defined(__DOXYGEN__)
 #define SIO_USE_STREAMS_INTERFACE           SIO_USE_SYNCHRONIZATION
 #endif
+
+/**
+ * @brief       Support for buffering wrapper class.
+ */
+#if !defined(SIO_USE_BUFFERING) || defined(__DOXYGEN__)
+#define SIO_USE_BUFFERING                   TRUE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -122,6 +129,11 @@
 /* Checks on SIO_USE_STREAMS_INTERFACE configuration.*/
 #if (SIO_USE_STREAMS_INTERFACE != FALSE) && (SIO_USE_STREAMS_INTERFACE != TRUE)
 #error "invalid SIO_USE_STREAMS_INTERFACE value"
+#endif
+
+/* Checks on SIO_USE_BUFFERING configuration.*/
+#if (SIO_USE_BUFFERING != FALSE) && (SIO_USE_BUFFERING != TRUE)
+#error "invalid SIO_USE_BUFFERING value"
 #endif
 
 /*===========================================================================*/
@@ -618,6 +630,95 @@ struct hal_sio_driver {
 };
 /** @} */
 
+/**
+ * @class       hal_buffered_sio_c
+ * @extends     base_object_c, hal_base_driver_c, hal_buffered_serial_c.
+ *
+ * @brief       This class implements a buffered channel interface on top of
+ *              SIO.
+ *
+ * @name        Class @p hal_buffered_sio_c structures
+ * @{
+ */
+
+/**
+ * @brief       Type of a buffered SIO wrapper class.
+ */
+typedef struct hal_buffered_sio hal_buffered_sio_c;
+
+/**
+ * @brief       Class @p hal_buffered_sio_c virtual methods table.
+ */
+struct hal_buffered_sio_vmt {
+  /* From base_object_c.*/
+  void (*dispose)(void *ip);
+  /* From hal_base_driver_c.*/
+  msg_t (*start)(void *ip);
+  void (*stop)(void *ip);
+  msg_t (*configure)(void *ip, const void *config);
+  /* From hal_buffered_serial_c.*/
+  /* From hal_buffered_sio_c.*/
+};
+
+/**
+ * @brief       Structure representing a buffered SIO wrapper class.
+ */
+struct hal_buffered_sio {
+  /**
+   * @brief       Virtual Methods Table.
+   */
+  const struct hal_buffered_sio_vmt *vmt;
+  /**
+   * @brief       Driver state.
+   */
+  driver_state_t            state;
+  /**
+   * @brief       Driver argument.
+   */
+  void                      *arg;
+#if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver mutex.
+   */
+  mutex_t                   mutex;
+#endif /* HAL_USE_MUTUAL_EXCLUSION == TRUE */
+#if (HAL_USE_REGISTRY == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Driver identifier.
+   */
+  unsigned int              id;
+  /**
+   * @brief       Driver name.
+   */
+  const char                *name;
+  /**
+   * @brief       Registry link structure.
+   */
+  hal_regent_t              regent;
+#endif /* HAL_USE_REGISTRY == TRUE */
+  /**
+   * @brief       Implemented interface @p asynchronous_channel_i.
+   */
+  asynchronous_channel_i    chn;
+  /**
+   * @brief       Input queue.
+   */
+  input_queue_t             iqueue;
+  /**
+   * @brief       Output queue.
+   */
+  output_queue_t            oqueue;
+  /**
+   * @brief       I/O condition event source.
+   */
+  event_source_t            event;
+  /**
+   * @brief       Pointer to the associated @p hal_sio_driver_c instance.
+   */
+  hal_sio_driver_c          *siop;
+};
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -643,6 +744,14 @@ extern "C" {
   msg_t sioSynchronizeTX(void *ip, sysinterval_t timeout);
   msg_t sioSynchronizeTXEnd(void *ip, sysinterval_t timeout);
 #endif /* SIO_USE_SYNCHRONIZATION == TRUE */
+  /* Methods of hal_buffered_sio_c.*/
+  void *__bsio_objinit_impl(void *ip, const void *vmt, hal_sio_driver_c *siop,
+                            uint8_t *ib, size_t ibsize, uint8_t *ob,
+                            size_t obsize);
+  void __bsio_dispose_impl(void *ip);
+  msg_t __bsio_start_impl(void *ip);
+  void __bsio_stop_impl(void *ip);
+  msg_t __bsio_configure_impl(void *ip, const void *config);
   /* Regular functions.*/
   void sioInit(void);
 #ifdef __cplusplus
@@ -673,6 +782,38 @@ static inline hal_sio_driver_c *sioObjectInit(hal_sio_driver_c *self) {
   extern const struct hal_sio_driver_vmt __hal_sio_driver_vmt;
 
   return __sio_objinit_impl(self, &__hal_sio_driver_vmt);
+}
+/** @} */
+
+/**
+ * @name        Default constructor of hal_buffered_sio_c
+ * @{
+ */
+/**
+ * @memberof    hal_buffered_sio_c
+ *
+ * @brief       Default initialization function of @p hal_buffered_sio_c.
+ *
+ * @param[out]    self          Pointer to a @p hal_buffered_sio_c instance to
+ *                              be initialized.
+ * @param[in]     siop          Pointer to the @p hal_sio_driver_c object.
+ * @param[in]     ib            Pointer to the input buffer.
+ * @param[in]     ibsize        Size of the input buffer.
+ * @param[in]     ob            Pointer to the output buffer.
+ * @param[in]     obsize        Size of the output buffer.
+ * @return                      Pointer to the initialized object.
+ *
+ * @objinit
+ */
+CC_FORCE_INLINE
+static inline hal_buffered_sio_c *bsioObjectInit(hal_buffered_sio_c *self,
+                                                 hal_sio_driver_c *siop,
+                                                 uint8_t *ib, size_t ibsize,
+                                                 uint8_t *ob, size_t obsize) {
+  extern const struct hal_buffered_sio_vmt __hal_buffered_sio_vmt;
+
+  return __bsio_objinit_impl(self, &__hal_buffered_sio_vmt, siop, ib, ibsize,
+                             ob, obsize);
 }
 /** @} */
 

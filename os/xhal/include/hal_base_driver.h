@@ -39,9 +39,11 @@
  */
 #define HAL_DRV_STATE_UNINIT                0U
 #define HAL_DRV_STATE_STOP                  1U
-#define HAL_DRV_STATE_READY                 2U
-#define HAL_DRV_STATE_ACTIVE                3U
-#define HAL_DRV_STATE_ERROR                 4U
+#define HAL_DRV_STATE_STOPPING              2U
+#define HAL_DRV_STATE_STARTING              3U
+#define HAL_DRV_STATE_READY                 4U
+#define HAL_DRV_STATE_ACTIVE                5U
+#define HAL_DRV_STATE_ERROR                 6U
 /** @} */
 
 /*===========================================================================*/

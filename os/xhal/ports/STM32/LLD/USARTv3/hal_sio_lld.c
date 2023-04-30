@@ -596,8 +596,8 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop, sioevents_t events) {
 
   /* Status flags cleared, now the RX-related interrupts can be
      enabled again.*/
-  usart_enable_rx_irq(siop);
-  usart_enable_rx_errors_irq(siop);
+  usart_enable_rx_irq(siop); /* TODO - not always.*/
+  usart_enable_rx_errors_irq(siop); /* TODO - not always.*/
 
   /* Translating the status flags in SIO events.*/
   return usart_isr2evt(isr);
