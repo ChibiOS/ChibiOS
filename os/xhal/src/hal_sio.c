@@ -965,7 +965,7 @@ void *__bsio_objinit_impl(void *ip, const void *vmt, hal_sio_driver_c *siop,
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
 
   /* Initialization code.*/
-  __bs_objinit_impl((void *)self, (const void *)&vmt,
+  __bs_objinit_impl((void *)self, vmt,
                     ib, ibsize, NULL, NULL,
                     ob, obsize, __bsio_onotify, (void *)self);
   drvSetArgumentX(siop, self);

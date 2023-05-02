@@ -104,12 +104,12 @@ static vfs_streams_driver_c dev_driver;
    symbol is expected.*/
 vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
 
-static NullStream nullstream;
+static null_stream_c nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-  {"VSD1", (BaseSequentialStream *)&SD1},
-  {"null", (BaseSequentialStream *)&nullstream},
+  {"VSIO1", (BaseSequentialStream *)&SIOD1.chn}, /* TODO */
+  {"null", (BaseSequentialStream *)&nullstream.stm}, /* TODO */
   {NULL, NULL}
 };
 
@@ -229,7 +229,7 @@ static void start_sb2(void) {
 
   /*
    * Associating standard input, output and error to sandbox 2.*/
-  ret = vfsOpen("/dev/VSD1", 0, &np);
+  ret = vfsOpen("/dev/VSIO1", 0, &np);
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
@@ -289,8 +289,8 @@ int main(void) {
   /*
    * Starting a serial port for I/O, initializing other streams too.
    */
-  sdStart(&SD1, NULL);
-  nullObjectInit(&nullstream);
+  drvStart(&SIOD1);
+  nullstmObjectInit(&nullstream);
 
   /*
    * Creating a messenger thread.
@@ -301,10 +301,11 @@ int main(void) {
    * Initializing an overlay VFS object as a root, no overlaid driver,
    * registering a streams VFS driver on the VFS overlay root as "/dev".
    */
-  drvOverlayObjectInit(&root_overlay_driver, NULL, NULL);
-  ret = drvOverlayRegisterDriver(&root_overlay_driver,
-                                 drvStreamsObjectInit(&dev_driver, &streams[0]),
-                                 "dev");
+  ovldrvObjectInit(&root_overlay_driver, NULL, NULL);
+  ret = ovldrvRegisterDriver(&root_overlay_driver,
+                             (vfs_driver_c *)stmdrvObjectInit(&dev_driver,
+                                                              &streams[0]),
+                             "dev");
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
@@ -333,13 +334,13 @@ int main(void) {
     if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
 
       if (!sbIsThreadRunningX(&sbx1)) {
-        chprintf((BaseSequentialStream *)&SD1, "SB1 terminated\r\n");
+        chprintf(oopGetIf(&SIOD1, chn), "SB1 terminated\r\n");
         chThdSleepMilliseconds(100);
         start_sb1();
       }
 
       if (!sbIsThreadRunningX(&sbx2)) {
-        chprintf((BaseSequentialStream *)&SD1, "SB2 terminated\r\n");
+        chprintf(oopGetIf(&SIOD1, chn), "SB2 terminated\r\n");
         chThdSleepMilliseconds(100);
         start_sb2();
       }

@@ -1,27 +1,25 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
 
-    This file is part of ChibiOS.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-    ChibiOS is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation version 3 of the License.
+        http://www.apache.org/licenses/LICENSE-2.0
 
-    ChibiOS is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 */
 
 /**
- * @file    vfs/src/vfsdrivers.c
- * @brief   VFS drivers code.
+ * @file        vfsdrivers.c
+ * @brief       Generated VFS Drivers source.
+ * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup VFS_DRIVERS
+ * @addtogroup  VFSDRIVERS
  * @{
  */
 
@@ -29,6 +27,10 @@
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* Module local macros.                                                      */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -52,20 +54,18 @@
 /*===========================================================================*/
 
 /**
- * @brief   Opens a VFS file or directory.
+ * @brief       Opens a VFS file or directory.
  *
- * @param[in] drvp      Pointer to the @p vfs_driver_c object.
- * @param[in] path      Absolute path of the node to be opened.
- * @param[in] flags     Open flags.
- * @param[out] vnpp     Pointer to the pointer to the instantiated
- *                      @p vfs_node_c object.
- * @return              The operation result.
+ * @param[in,out] drvp          Pointer to the @p vfs_driver_c object.
+ * @param[in]     path          Absolute path of the node to be opened.
+ * @param[in]     flags         Open flags.
+ * @param[out]    vnpp          Pointer to the pointer to the instantiated @p
+ *                              vfs_node_c object.
+ * @return                      The operation result.
  *
  * @api
  */
-msg_t vfsDrvOpen(vfs_driver_c *drvp,
-                 const char *path,
-                 int flags,
+msg_t vfsDrvOpen(vfs_driver_c *drvp, const char *path, int flags,
                  vfs_node_c **vnpp) {
   msg_t ret;
 
@@ -83,50 +83,254 @@ msg_t vfsDrvOpen(vfs_driver_c *drvp,
   return ret;
 }
 
-msg_t drv_stat_unimpl(void *instance, vfs_stat_t *sp) {
+/*===========================================================================*/
+/* Module class "vfs_driver_c" methods.                                      */
+/*===========================================================================*/
 
-  (void)instance;
-  (void)sp;
+/**
+ * @name        Methods implementations of vfs_driver_c
+ * @{
+ */
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of object creation.
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[out]    ip            Pointer to a @p vfs_driver_c instance to be
+ *                              initialized.
+ * @param[in]     vmt           VMT pointer for the new object.
+ * @return                      A new reference to the object.
+ */
+void *__vfsdrv_objinit_impl(void *ip, const void *vmt) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
 
-  return CH_RET_ENOSYS;
+  /* Initialization of the ancestors-defined parts.*/
+  __bo_objinit_impl(self, vmt);
+
+  /* No initialization code.*/
+
+  return self;
 }
 
-msg_t drv_unlink_unimpl(void *instance, const char *path) {
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of object finalization.
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance to be
+ *                              disposed.
+ */
+void __vfsdrv_dispose_impl(void *ip) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
 
-  (void)instance;
+  /* No finalization code.*/
+  (void)self;
+
+  /* Finalization of the ancestors-defined parts.*/
+  __bo_dispose_impl(self);
+}
+
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvChangeCurrentDirectory().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     path          Path of the new current directory.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_setcwd_impl(void *ip, const char *path) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
+
+  (void)self;
   (void)path;
 
   return CH_RET_ENOSYS;
 }
 
-msg_t drv_rename_unimpl(void *instance,
-                        const char *oldpath,
-                        const char *newpath) {
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvGetCurrentDirectory().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[out]    buf           Buffer for the path string.
+ * @param[in]     size          Size of the buffer.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_getcwd_impl(void *ip, char *buf, size_t size) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
 
-  (void)instance;
+  (void)self;
+  (void)buf;
+  (void)size;
+
+  return CH_RET_ENOSYS;
+}
+
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvStat().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     path          Absolute path of the node to be examined.
+ * @param[out]    sp            Pointer to a @p vfs_stat_t structure.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
+
+  (void)self;
+  (void)path;
+  (void)sp;
+
+  return CH_RET_ENOSYS;
+}
+
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvOpenDirectory().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     path          Absolute path of the directory to be opened.
+ * @param[out]    vdnpp         Pointer to the pointer to the instantiated @p
+ *                              vfs_directory_node_c object.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_opendir_impl(void *ip, const char *path,
+                            vfs_directory_node_c **vdnpp) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
+
+  (void)self;
+  (void)path;
+  (void)vdnpp;
+
+  return CH_RET_ENOSYS;
+}
+
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvOpenFile().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     path          Absolute path of the directory to be opened.
+ * @param[in]     flags         File open flags.
+ * @param[out]    vfnpp         Pointer to the pointer to the instantiated @p
+ *                              vfs_file_node_c object.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_openfile_impl(void *ip, const char *path, int flags,
+                             vfs_file_node_c **vfnpp) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
+
+  (void)self;
+  (void)path;
+  (void)flags;
+  (void)vfnpp;
+
+  return CH_RET_ENOSYS;
+}
+
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvUnlink().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     path          Path of the file to be unlinked.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_unlink_impl(void *ip, const char *path) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
+
+  (void)self;
+  (void)path;
+
+  return CH_RET_ENOSYS;
+}
+
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvRename().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     oldpath       Path of the node to be renamed.
+ * @param[in]     newpath       New path of the renamed node.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_rename_impl(void *ip, const char *oldpath, const char *newpath) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
+
+  (void)self;
   (void)oldpath;
   (void)newpath;
 
   return CH_RET_ENOSYS;
 }
 
-msg_t drv_mkdir_unimpl(void *instance,
-                       const char *path,
-                       vfs_mode_t mode) {
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvMkdir().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     path          Path of the directory to be created.
+ * @param[in]     mode          Mode flags for the directory.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_mkdir_impl(void *ip, const char *path, vfs_mode_t mode) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
 
-  (void)instance;
+  (void)self;
   (void)path;
   (void)mode;
 
   return CH_RET_ENOSYS;
 }
 
-msg_t drv_rmdir_unimpl(void *instance, const char *path) {
+/**
+ * @memberof    vfs_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p vfsDrvRmdir().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
+ * @param[in]     path          Path of the directory to be removed.
+ * @return                      The operation result.
+ */
+msg_t __vfsdrv_rmdir_impl(void *ip, const char *path) {
+  vfs_driver_c *self = (vfs_driver_c *)ip;
 
-  (void)instance;
+  (void)self;
   (void)path;
 
   return CH_RET_ENOSYS;
 }
+/** @} */
 
 /** @} */

@@ -50,7 +50,7 @@
 /*===========================================================================*/
 
 static void vuart_cb(SIODriver *siop) {
-  const vio_uart_unit_t *unitp = (const vio_uart_unit_t *)siop->arg;
+  const vio_uart_unit_t *unitp = (const vio_uart_unit_t *)drvGetArgumentX(siop);
 
   sbVRQTriggerFromISR(unitp->vrqsb, unitp->vrqn);
 }
@@ -76,22 +76,12 @@ void sb_sysc_vio_uart(struct port_extctx *ectxp) {
   switch (sub) {
   case SB_VUART_INIT:
     {
-      uint32_t conf = ectxp->r2;
-      const vio_uart_config_t *confp;
       msg_t msg;
 
-      if (conf >= sbp->config->vioconf->uarts->n) {
-        ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
-        return;
-      }
-
-      /* Specified VUART configuration.*/
-      confp = &sbp->config->vioconf->uartconfs->cfgs[conf];
-
       /* Associating this virtual UART to the SIO driver.*/
-      unitp->siop->arg = (void *)unitp;
+      drvSetArgumentX(unitp->siop, (void *)unitp);
 
-      msg = sioStart(unitp->siop, confp->siocfgp);
+      msg = drvStart(unitp->siop);
       if (msg == HAL_RET_SUCCESS) {
 
         /* Starting with disabled events, enabling the callback.*/
@@ -104,7 +94,7 @@ void sb_sysc_vio_uart(struct port_extctx *ectxp) {
     }
   case SB_VUART_DEINIT:
     {
-      sioStop(unitp->siop);
+      drvStop(unitp->siop);
 
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
       break;
@@ -132,11 +122,28 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
 
   /* We don't want assertion or errors to be caused in host, making sure
      all functions are called in the proper state.*/
-  if (unitp->siop->state != SIO_READY) {
+  if (unitp->siop->state != HAL_DRV_STATE_READY) {
     return;
   }
 
   switch (sub) {
+  case SB_VUART_SETCFG:
+    {
+      uint32_t conf = ectxp->r2;
+      const vio_uart_config_t *confp;
+
+      /* Check on configuration index.*/
+      if (conf >= sbp->config->vioconf->uarts->n) {
+        ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+        return;
+      }
+
+      /* Specified VUART configuration.*/
+      confp = &sbp->config->vioconf->uartconfs->cfgs[conf];
+
+      ectxp->r0 = (uint32_t)drvConfigureX(unitp->siop, confp->siocfgp);
+      break;
+    }
   case SB_VUART_ISRXE:
     {
       ectxp->r0 = (uint32_t)sioIsRXEmptyX(unitp->siop);
@@ -214,7 +221,8 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
     }
   case SB_VUART_GCEVT:
     {
-      ectxp->r0 = (uint32_t)sioGetAndClearEventsX(unitp->siop);
+      ectxp->r0 = (uint32_t)sioGetAndClearEventsX(unitp->siop,
+                                                  (sioevents_t)ectxp->r2);
       break;
     }
   case SB_VUART_GEVT:

@@ -965,7 +965,7 @@ return sio_lld_configure(self, (const hal_sio_config_t *)config);]]></implementa
             <param name="ob" ctype="uint8_t *" dir="in">Pointer to the output buffer.</param>
             <param name="obsize" ctype="size_t" dir="in">Size of the output buffer.</param>
             <implementation><![CDATA[
-__bs_objinit_impl((void *)self, (const void *)&vmt,
+__bs_objinit_impl((void *)self, vmt,
                   ib, ibsize, NULL, NULL,
                   ob, obsize, __bsio_onotify, (void *)self);
 drvSetArgumentX(siop, self);

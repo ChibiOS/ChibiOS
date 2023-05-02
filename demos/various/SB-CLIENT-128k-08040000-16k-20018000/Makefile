@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 --specs=nano.specs
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16 --specs=nano.specs
 endif
 
 # C specific options here (added to USE_OPT).
@@ -99,13 +99,14 @@ include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx-SB/compilers/GCC/mk/startup.mk
 # Common files.
-include $(CHIBIOS)/os/common/utils/utils.mk
+include $(CHIBIOS)/os/common/oop/oop.mk
+include $(CHIBIOS)/os/common/lib/lib.mk
 # HAL-OSAL files (optional).
-include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/sandbox/platform.mk
+include $(CHIBIOS)/os/xhal/hal.mk
+include $(CHIBIOS)/os/xhal/ports/vio/platform.mk
 include $(CHIBIOS)/os/hal/boards/SB_GENERIC/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
-include $(CHIBIOS)/os/hal/lib/complex/buffered_sio/hal_buffered_sio.mk
+#include $(CHIBIOS)/os/hal/lib/complex/buffered_sio/hal_buffered_sio.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMvx-M-SB/compilers/GCC/mk/port.mk
@@ -116,7 +117,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
-include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+#include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here.
@@ -156,7 +157,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DOOP_USE_LEGACY
 
 # Define ASM defines here
 UADEFS =

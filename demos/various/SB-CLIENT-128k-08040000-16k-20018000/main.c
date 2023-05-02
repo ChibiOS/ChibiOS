@@ -16,12 +16,11 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "hal_buffered_sio.h"
 
 #include "chprintf.h"
 #include "shell.h"
 
-static BufferedSIODriver bsio1;
+static hal_buffered_sio_c bsio1;
 static uint8_t rxbuf[32];
 static uint8_t txbuf[32];
 
@@ -57,7 +56,7 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
     return;
   }
 
-  while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
+  while (chnGetTimeout(chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
     chnWrite(&bsio1, buf, sizeof buf - 1);
   }
   chprintf(chp, "\r\n\nstopped\r\n");
@@ -102,7 +101,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&bsio1,
+  (BaseSequentialStream *)oopGetIf(&SIOD1, chn),
   commands
 };
 
@@ -146,7 +145,7 @@ int main(void) {
   bsioObjectInit(&bsio1, &SIOD1,
                  rxbuf, sizeof rxbuf,
                  txbuf, sizeof txbuf);
-  bsioStart(&bsio1, NULL);
+  drvStart(&bsio1);
 
   /*
    * Creating a blinker thread.

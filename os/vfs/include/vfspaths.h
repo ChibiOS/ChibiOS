@@ -18,75 +18,70 @@
 */
 
 /**
- * @file    vfs/src/vfsparser.c
- * @brief   VFS parser utilities code.
+ * @file    vfs/src/vfspaths.h
+ * @brief   VFS paths utilities header file.
  *
- * @addtogroup VFS_PARSER
+ * @addtogroup VFS_PATHS
  * @{
  */
 
-#include "vfs.h"
+#ifndef VFSPATHS_H
+#define VFSPATHS_H
 
 /*===========================================================================*/
-/* Module local definitions.                                                 */
-/*===========================================================================*/
-
-/*===========================================================================*/
-/* Module exported variables.                                                */
+/* Module constants.                                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local types.                                                       */
+/* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local variables.                                                   */
+/* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module local functions.                                                   */
+/* Module data structures and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module exported functions.                                                */
+/* Module macros.                                                            */
+/*===========================================================================*/
+
+/*===========================================================================*/
+/* External declarations.                                                    */
+/*===========================================================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  size_t vfs_path_append(char *dst, const char *src, size_t size);
+  size_t vfs_path_prepend(char *dst, const char *src, size_t size);
+  size_t vfs_path_add_separator(char *dst, size_t size);
+  size_t vfs_path_add_extension(char *dst, const char *ext, size_t size);
+  size_t vfs_path_copy_element(const char **pathp, char *dst, size_t size);
+  size_t vfs_path_get_element(const char **pathp, char *dst, size_t size);
+  size_t vfs_path_match_element(const char *path, const char *match, size_t size);
+  size_t vfs_path_normalize(char *dst, const char *src, size_t size);
+#ifdef __cplusplus
+}
+#endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
 /*===========================================================================*/
 
 /**
- * @brief   Matches a path separator.
+ * @brief   Checks for a valid path separator.
  *
- * @param[in, out]  pathp       Pointer to the path under parsing.
+ * @param[in] c                 The character to be checked.
+ * @return                      The operation result.
  */
-msg_t vfs_parse_match_separator(const char **pathp) {
-  msg_t err;
-  const char *p = *pathp;
+static inline bool vfs_path_is_separator(char c) {
 
-  if (!vfs_path_is_separator(*p++)) {
-    err = CH_RET_ENOENT;
-  }
-  else {
-    err = CH_RET_SUCCESS;
-    *pathp = p;
-  }
-
-  return err;
+  return (bool)(c == '/');
 }
 
-/**
- * @brief   Matches a string end.
- *
- * @param[in, out]  pathp       Pointer to the path under parsing.
- */
-msg_t vfs_parse_match_end(const char **pathp) {
-  msg_t err;
-
-  if (**pathp != '\0') {
-    err = CH_RET_ENOENT;
-  }
-  else {
-    err = CH_RET_SUCCESS;
-  }
-
-  return err;
-}
+#endif /* VFSPATHS_H */
 
 /** @} */

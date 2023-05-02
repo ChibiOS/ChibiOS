@@ -72,12 +72,9 @@
 /* Dependencies.*/
 #include "ch.h"
 #include "errcodes.h"
-#include "paths.h"
 #include "oop_base_object.h"
 #include "oop_referenced_object.h"
-#include "oop_synchronized_object.h"
-#include "hal_objects.h"
-#include "hal_streams.h"
+#include "oop_sequential_stream.h"
 
 /* License.*/
 #include "chlicense.h"
@@ -87,6 +84,7 @@
 #include "vfschecks.h"
 
 /* Base VFS headers.*/
+#include "vfspaths.h"
 #include "vfsparser.h"
 #include "vfsbuffers.h"
 #include "vfsnodes.h"
@@ -151,7 +149,7 @@ extern "C" {
                            vfs_offset_t offset,
                            vfs_seekmode_t whence);
   vfs_offset_t vfsGetFilePosition(vfs_file_node_c *vfnp);
-  BaseSequentialStream *vfsGetFileStream(vfs_file_node_c *vfnp);
+  sequential_stream_i *vfsGetFileStream(vfs_file_node_c *vfnp);
 #ifdef __cplusplus
 }
 #endif

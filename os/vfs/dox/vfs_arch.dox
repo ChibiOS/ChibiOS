@@ -72,7 +72,7 @@
  *     - index: unsigned
  *   }
  *   class vfs_stream_file_node_t {
- *     - stream: BaseSequentialStream *
+ *     - stream: sequential_stream_i *
  *   }
  * 
  *   vfs_driver_t <|-- vfs_streams_driver_t : extends
