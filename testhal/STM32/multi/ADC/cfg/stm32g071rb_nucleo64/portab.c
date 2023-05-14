@@ -58,7 +58,7 @@ void adcerrorcallback(ADCDriver *adcp, adcerror_t err);
 /*
  * ADC conversion group 1.
  * Mode:        Linear buffer, 1 channel, SW triggered.
- * Channels:    IN10.
+ * Channels:    IN0.
  */
 const ADCConversionGroup portab_adcgrpcfg1 = {
   .circular     = false,
@@ -71,14 +71,14 @@ const ADCConversionGroup portab_adcgrpcfg1 = {
   .tr3          = ADC_TR_DISABLED,
   .awd2cr       = 0U,
   .awd3cr       = 0U,
-  .smpr         = ADC_SMPR_SMP_1P5,
-  .chselr       = ADC_CHSELR_CHSEL10
+  .smpr         = ADC_SMPR_SMP1_1P5,
+  .chselr       = ADC_CHSELR_CHSEL0
 };
 
 /*
  * ADC conversion group2.
  * Mode:        Continuous, 4 channels, HW triggered by GPT6-TRGO.
- * Channels:    IN10, IN11, VRef, Sensor.
+ * Channels:    IN0, Vsense, Vref, Vbat.
  */
 const ADCConversionGroup portab_adcgrpcfg2 = {
   .circular     = true,
@@ -94,9 +94,9 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
   .tr3          = ADC_TR_DISABLED,
   .awd2cr       = 0U,
   .awd3cr       = 0U,
-  .smpr         = ADC_SMPR_SMP_39P5,
-  .chselr       = ADC_CHSELR_CHSEL10 | ADC_CHSELR_CHSEL11 |
-                  ADC_CHSELR_CHSEL17 | ADC_CHSELR_CHSEL18
+  .smpr         = ADC_SMPR_SMP1_39P5,
+  .chselr       = ADC_CHSELR_CHSEL0  | ADC_CHSELR_CHSEL12 |
+                  ADC_CHSELR_CHSEL13 | ADC_CHSELR_CHSEL14
 };
 
 /*===========================================================================*/
@@ -118,8 +118,7 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
 void portab_setup(void) {
 
   /* ADC inputs.*/
-  palSetGroupMode(GPIOB, PAL_PORT_BIT(2) | PAL_PORT_BIT(10),
-                  0, PAL_MODE_INPUT_ANALOG);
+  palSetGroupMode(GPIOA, PAL_PORT_BIT(0), 0, PAL_MODE_INPUT_ANALOG);
 }
 
 /** @} */
