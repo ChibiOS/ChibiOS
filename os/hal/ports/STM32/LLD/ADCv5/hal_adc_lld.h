@@ -35,68 +35,77 @@
  * @name    Possible ADC errors mask bits.
  * @{
  */
-#define ADC_ERR_DMAFAILURE      1U  /**< DMA operations failure.            */
-#define ADC_ERR_OVERFLOW        2U  /**< ADC overflow condition.            */
-#define ADC_ERR_AWD1            4U  /**< Watchdog 1 triggered.              */
-#define ADC_ERR_AWD2            8U  /**< Watchdog 2 triggered.              */
-#define ADC_ERR_AWD3            16U /**< Watchdog 3 triggered.              */
+#define ADC_ERR_DMAFAILURE              1U  /**< DMA operations failure.    */
+#define ADC_ERR_OVERFLOW                2U  /**< ADC overflow condition.    */
+#define ADC_ERR_AWD1                    4U  /**< Watchdog 1 triggered.      */
+#define ADC_ERR_AWD2                    8U  /**< Watchdog 2 triggered.      */
+#define ADC_ERR_AWD3                    16U /**< Watchdog 3 triggered.      */
 /** @} */
 
 /**
- * @name    Sampling rates
+ * @name    SMPR register configuration helpers
  * @{
  */
-#define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time   */
-#define ADC_SMPR_SMP_3P5        1U  /**< @brief 16 cycles conversion time.  */
-#define ADC_SMPR_SMP_7P5        2U  /**< @brief 20 cycles conversion time.  */
-#define ADC_SMPR_SMP_12P5       3U  /**< @brief 25 cycles conversion time.  */
-#define ADC_SMPR_SMP_19P5       4U  /**< @brief 31 cycles conversion time.  */
-#define ADC_SMPR_SMP_39P5       5U  /**< @brief 52 cycles conversion time.  */
-#define ADC_SMPR_SMP_79P5       6U  /**< @brief 92 cycles conversion time.  */
-#define ADC_SMPR_SMP_160P5      7U  /**< @brief 173 cycles conversion time. */
+#define ADC_SMPR_SMP1_1P5               (0U << 0)   /**< @brief 14 cycles.  */
+#define ADC_SMPR_SMP1_3P5               (1U << 0)   /**< @brief 16 cycles.  */
+#define ADC_SMPR_SMP1_7P5               (2U << 0)   /**< @brief 20 cycles.  */
+#define ADC_SMPR_SMP1_12P5              (3U << 0)   /**< @brief 25 cycles.  */
+#define ADC_SMPR_SMP1_19P5              (4U << 0)   /**< @brief 31 cycles.  */
+#define ADC_SMPR_SMP1_39P5              (5U << 0)   /**< @brief 52 cycles.  */
+#define ADC_SMPR_SMP1_79P5              (6U << 0)   /**< @brief 92 cycles.  */
+#define ADC_SMPR_SMP1_160P5             (7U << 0)   /**< @brief 173 cycles. */
+
+#define ADC_SMPR_SMP2_1P5               (0U << 4)   /**< @brief 14 cycles.  */
+#define ADC_SMPR_SMP2_3P5               (1U << 4)   /**< @brief 16 cycles.  */
+#define ADC_SMPR_SMP2_7P5               (2U << 4)   /**< @brief 20 cycles.  */
+#define ADC_SMPR_SMP2_12P5              (3U << 4)   /**< @brief 25 cycles.  */
+#define ADC_SMPR_SMP2_19P5              (4U << 4)   /**< @brief 31 cycles.  */
+#define ADC_SMPR_SMP2_39P5              (5U << 4)   /**< @brief 52 cycles.  */
+#define ADC_SMPR_SMP2_79P5              (6U << 4)   /**< @brief 92 cycles.  */
+#define ADC_SMPR_SMP2_160P5             (7U << 4)   /**< @brief 173 cycles. */
 /** @} */
 
 /**
  * @name    CFGR1 register configuration helpers
  * @{
  */
-#define ADC_CFGR1_RES_12BIT             (0U << 3U)
-#define ADC_CFGR1_RES_10BIT             (1U << 3U)
-#define ADC_CFGR1_RES_8BIT              (2U << 3U)
-#define ADC_CFGR1_RES_6BIT              (3U << 3U)
+#define ADC_CFGR1_RES_12BIT             (0U << 3)
+#define ADC_CFGR1_RES_10BIT             (1U << 3)
+#define ADC_CFGR1_RES_8BIT              (2U << 3)
+#define ADC_CFGR1_RES_6BIT              (3U << 3)
 
-#define ADC_CFGR1_EXTSEL_MASK           (15U << 6U)
-#define ADC_CFGR1_EXTSEL_SRC(n)         ((n) << 6U)
+#define ADC_CFGR1_EXTSEL_MASK           (15U << 6)
+#define ADC_CFGR1_EXTSEL_SRC(n)         ((n) << 6)
 
-#define ADC_CFGR1_EXTEN_MASK            (3U << 10U)
-#define ADC_CFGR1_EXTEN_DISABLED        (0U << 10U)
-#define ADC_CFGR1_EXTEN_RISING          (1U << 10U)
-#define ADC_CFGR1_EXTEN_FALLING         (2U << 10U)
-#define ADC_CFGR1_EXTEN_BOTH            (3U << 10U)
+#define ADC_CFGR1_EXTEN_MASK            (3U << 10)
+#define ADC_CFGR1_EXTEN_DISABLED        (0U << 10)
+#define ADC_CFGR1_EXTEN_RISING          (1U << 10)
+#define ADC_CFGR1_EXTEN_FALLING         (2U << 10)
+#define ADC_CFGR1_EXTEN_BOTH            (3U << 10)
 /** @} */
 
 /**
  * @name    CFGR2 register configuration helpers
  * @{
  */
-#define ADC_CFGR2_CKMODE_MASK           (3U << 30U)
-#define ADC_CFGR2_CKMODE_ADCCLK         (0U << 30U)
-#define ADC_CFGR2_CKMODE_PCLK_DIV2      (1U << 30U)
-#define ADC_CFGR2_CKMODE_PCLK_DIV4      (2U << 30U)
-#define ADC_CFGR2_CKMODE_PCLK           (3U << 30U)
+#define ADC_CFGR2_CKMODE_MASK           (3U << 30)
+#define ADC_CFGR2_CKMODE_ADCCLK         (0U << 30)
+#define ADC_CFGR2_CKMODE_PCLK_DIV2      (1U << 30)
+#define ADC_CFGR2_CKMODE_PCLK_DIV4      (2U << 30)
+#define ADC_CFGR2_CKMODE_PCLK           (3U << 30)
 
-#define ADC_CFGR2_OVSR_MASK             (7U << 2U)
-#define ADC_CFGR2_OVSR_2X               (0U << 2U)
-#define ADC_CFGR2_OVSR_4X               (1U << 2U)
-#define ADC_CFGR2_OVSR_8X               (2U << 2U)
-#define ADC_CFGR2_OVSR_16X              (3U << 2U)
-#define ADC_CFGR2_OVSR_32X              (4U << 2U)
-#define ADC_CFGR2_OVSR_64X              (5U << 2U)
-#define ADC_CFGR2_OVSR_128X             (6U << 2U)
-#define ADC_CFGR2_OVSR_256X             (7U << 2U)
+#define ADC_CFGR2_OVSR_MASK             (7U << 2)
+#define ADC_CFGR2_OVSR_2X               (0U << 2)
+#define ADC_CFGR2_OVSR_4X               (1U << 2)
+#define ADC_CFGR2_OVSR_8X               (2U << 2)
+#define ADC_CFGR2_OVSR_16X              (3U << 2)
+#define ADC_CFGR2_OVSR_32X              (4U << 2)
+#define ADC_CFGR2_OVSR_64X              (5U << 2)
+#define ADC_CFGR2_OVSR_128X             (6U << 2)
+#define ADC_CFGR2_OVSR_256X             (7U << 2)
 
-#define ADC_CFGR2_OVSS_MASK             (15 << 5U)
-#define ADC_CFGR2_OVSS_SHIFT(n)         ((n) << 5U)
+#define ADC_CFGR2_OVSS_MASK             (15 << 5)
+#define ADC_CFGR2_OVSS_SHIFT(n)         ((n) << 5)
 /** @} */
 
 /**
