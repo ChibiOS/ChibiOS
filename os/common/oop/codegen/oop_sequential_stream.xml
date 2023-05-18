@@ -11,6 +11,13 @@
       <include style="regular">oop_base_interface.h</include>
     </includes>
     <definitions_early>
+      <verbatim><![CDATA[
+/* Temporary, in order to avoid conflicts with the same definitions in old
+   HAL streams.*/
+#undef STM_OK
+#undef STM_TIMEOUT
+#undef STM_RESET
+]]></verbatim>
       <group description="Streams return codes">
         <define name="STM_OK" value="0" >
           <brief>Returned code for operation successful.</brief>

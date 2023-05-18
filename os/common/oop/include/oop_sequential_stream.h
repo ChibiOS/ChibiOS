@@ -33,6 +33,12 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/* Temporary, in order to avoid conflicts with the same definitions in old
+   HAL streams.*/
+#undef STM_OK
+#undef STM_TIMEOUT
+#undef STM_RESET
+
 /**
  * @name    Streams return codes
  * @{
