@@ -467,7 +467,7 @@ static size_t __fffile_stm_read_impl(void *ip, uint8_t *bp, size_t n) {
  * @param[in]     b             The byte value to be written to the stream.
  * @return                      The operation status.
  */
-static msg_t __fffile_stm_put_impl(void *ip, uint8_t b) {
+static int __fffile_stm_put_impl(void *ip, uint8_t b) {
   vfs_fatfs_file_node_c *self = oopIfGetOwner(vfs_fatfs_file_node_c, ip);
   msg_t msg;
 
@@ -490,7 +490,7 @@ static msg_t __fffile_stm_put_impl(void *ip, uint8_t b) {
  *                              interface.
  * @return                      A byte value from the stream.
  */
-static msg_t __fffile_stm_get_impl(void *ip) {
+static int __fffile_stm_get_impl(void *ip) {
   vfs_fatfs_file_node_c *self = oopIfGetOwner(vfs_fatfs_file_node_c, ip);
   msg_t msg;
   uint8_t b;
