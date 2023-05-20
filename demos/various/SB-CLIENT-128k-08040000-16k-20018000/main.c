@@ -101,7 +101,7 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)oopGetIf(&SIOD1, chn),
+  (BaseSequentialStream *)oopGetIf(&bsio1, chn),
   commands
 };
 
