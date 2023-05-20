@@ -99,10 +99,11 @@ include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
 # Common files.
-include $(CHIBIOS)/os/common/utils/utils.mk
+include $(CHIBIOS)/os/common/oop/oop.mk
+include $(CHIBIOS)/os/common/lib/lib.mk
 # HAL-OSAL files (optional).
-include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx/platform.mk
+include $(CHIBIOS)/os/xhal/hal.mk
+include $(CHIBIOS)/os/xhal/ports/STM32/STM32G4xx/platform.mk
 include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G474RE/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
@@ -120,7 +121,6 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
-include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 
 # Define linker script file here
 LDSCRIPT= ./STM32G474xE_SB.ld
@@ -159,7 +159,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DOOP_USE_LEGACY
 
 # Define ASM defines here
 UADEFS =

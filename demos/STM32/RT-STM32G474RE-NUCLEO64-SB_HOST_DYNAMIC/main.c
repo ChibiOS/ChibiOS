@@ -23,7 +23,6 @@
 
 #include "startup_defs.h"
 
-
 /* Sandbox objects.*/
 sb_class_t sbx1, sbx2;
 
@@ -108,8 +107,8 @@ static null_stream_c nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-  {"VSIO1", (BaseSequentialStream *)&SIOD1.chn}, /* TODO */
-  {"null", (BaseSequentialStream *)&nullstream.stm}, /* TODO */
+  {"VSIO1", (BaseSequentialStream *)oopGetIf(&SIOD1, chn)},
+  {"null", (BaseSequentialStream *)oopGetIf(&nullstream, stm)},
   {NULL, NULL}
 };
 
@@ -259,7 +258,7 @@ static THD_FUNCTION(Thread1, arg) {
   chRegSetThreadName("messenger");
   while (true) {
     chThdSleepMilliseconds(500);
- //   sbSendMessage(&sbx2, (msg_t)i);
+    sbSendMessage(&sbx2, (msg_t)i);
     i++;
   }
 }
@@ -268,7 +267,6 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-//  unsigned i = 1U;
   event_listener_t el1;
   msg_t ret;
 
