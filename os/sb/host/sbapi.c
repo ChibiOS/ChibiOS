@@ -1233,6 +1233,8 @@ static void sb_sysc_loadelf(struct port_extctx *ectxp) {
 
 void __sb_abort(msg_t msg) {
 
+  chSysUnlock();
+
   sb_cleanup();
 
   chSysLock();

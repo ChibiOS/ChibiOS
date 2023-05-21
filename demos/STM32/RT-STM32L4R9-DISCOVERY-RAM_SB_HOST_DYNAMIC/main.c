@@ -55,8 +55,8 @@ static NullStream nullstream;
 
 /* Streams to be exposed under /dev as files.*/
 static const drv_streams_element_t sb1_streams[] = {
-  {"VSD1", (BaseSequentialStream *)&SD2},
-  {"null", (BaseSequentialStream *)&nullstream},
+  {"VSD1", (sequential_stream_i *)&SD2},
+  {"null", (sequential_stream_i *)&nullstream},
   {NULL, NULL}
 };
 
@@ -191,17 +191,18 @@ int main(void) {
    * Initializing an overlay VFS object as a root on top of a FatFS driver.
    * This is accessible from kernel space and covers the whole file system.
    */
-  drvFatFSObjectInit(&fatfs_driver);
-  drvOverlayObjectInit(&root_overlay_driver, (vfs_driver_c *)&fatfs_driver, NULL);
+  ffdrvObjectInit(&fatfs_driver);
+  ovldrvObjectInit(&root_overlay_driver, (vfs_driver_c *)&fatfs_driver, NULL);
 
   /*
    * Initializing overlay drivers for the two sandbox roots. Those also use
    * the FatFS driver but are restricted to "/sb1" and "/sb2" directories.
    */
-  drvOverlayObjectInit(&sb1_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/sb1");
-  ret = drvOverlayRegisterDriver(&sb1_root_overlay_driver,
-                                 drvStreamsObjectInit(&sb1_dev_driver, &sb1_streams[0]),
-                                 "dev");
+  ovldrvObjectInit(&sb1_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/sb1");
+  ret = ovldrvRegisterDriver(&sb1_root_overlay_driver,
+                             (vfs_driver_c *)stmdrvObjectInit(&sb1_dev_driver,
+                                                              &sb1_streams[0]),
+                             "dev");
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }
@@ -243,7 +244,7 @@ int main(void) {
       /*
        * Running the sandbox.
        */
-      ret = sbExec(&sbx1, "/bin/ls.elf",
+      ret = sbExec(&sbx1, "/bin/msh.elf",
                    waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
                    sbx1_argv, sbx1_envp);
       if (CH_RET_IS_ERROR(ret)) {

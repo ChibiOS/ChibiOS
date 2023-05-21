@@ -38,6 +38,11 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+/* Some GCC versions do not define this in newlib headers.*/
+#if !defined(PATH_MAX)
+#define PATH_MAX 1024
+#endif
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/

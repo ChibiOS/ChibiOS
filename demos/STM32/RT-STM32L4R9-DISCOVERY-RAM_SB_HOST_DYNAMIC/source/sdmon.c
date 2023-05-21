@@ -123,7 +123,7 @@ void sdmonInsertHandler(eventid_t id) {
   }
 #endif
 
-  err = drvFatFSMount("0:", 1);
+  err = ffdrvMount("0:", 1);
   if (CH_RET_IS_ERROR(err)) {
 #if HAL_USE_SDC
     sdcDisconnect(&SDCD1);

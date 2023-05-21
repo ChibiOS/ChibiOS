@@ -97,7 +97,8 @@ DEPDIR   := ./.dep
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Common files.
-include $(CHIBIOS)/os/common/utils/utils.mk
+include $(CHIBIOS)/os/common/oop/oop.mk
+#include $(CHIBIOS)/os/common/lib/lib.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l4xx.mk
 # HAL-OSAL files (optional).
