@@ -56,7 +56,7 @@ __callelf:
                 str         lr, [r4, #4]
 
                 /* Setting up the call stack for the loaded module.*/
-                ldr         r5, [r0, #20]       /* Placed by runelf().      */
+                ldr         r5, [r0, #24]       /* Placed by runelf().      */
                 mov         sp, r5
                 push        {r1, r2, r3, r5}    /* argc, argv, envp, top.   */
                 ldr         r6, [r0, #12]
