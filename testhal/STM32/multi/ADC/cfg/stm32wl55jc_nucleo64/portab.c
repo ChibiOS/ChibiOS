@@ -71,7 +71,7 @@ const ADCConversionGroup portab_adcgrpcfg1 = {
   .tr3          = ADC_TR_DISABLED,
   .awd2cr       = 0U,
   .awd3cr       = 0U,
-  .smpr         = ADC_SMPR_SMP_1P5,
+  .smpr         = ADC_SMPR_SMP1_1P5,
   .chselr       = ADC_CHSELR_CHSEL10
 };
 
@@ -94,7 +94,7 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
   .tr3          = ADC_TR_DISABLED,
   .awd2cr       = 0U,
   .awd3cr       = 0U,
-  .smpr         = ADC_SMPR_SMP_39P5,
+  .smpr         = ADC_SMPR_SMP1_39P5,
   .chselr       = ADC_CHSELR_CHSEL10 | ADC_CHSELR_CHSEL11 |
                   ADC_CHSELR_CHSEL12 | ADC_CHSELR_CHSEL13
 };
