@@ -4,6 +4,14 @@
 
 all:
 	@echo
+	@echo === Building for STM32F407ZG-Olimex ================================
+	+@make --no-print-directory -f ./make/stm32f407zg_olimex.make all
+	@echo ====================================================================
+	@echo
+	@echo === Building for STM32F769ni-Discovery =============================
+	+@make --no-print-directory -f ./make/stm32f769ni_discovery.make all
+	@echo ====================================================================
+	@echo
 	@echo === Building for STM32G474RE-Nucleo64 ==============================
 	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make all
 	@echo ====================================================================
@@ -18,6 +26,10 @@ all:
 	@echo
 
 clean:
+	@echo
+	+@make --no-print-directory -f ./make/stm32f407zg_olimex.make clean
+	@echo
+	+@make --no-print-directory -f ./make/stm32f769ni_discovery.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make clean
 	@echo
