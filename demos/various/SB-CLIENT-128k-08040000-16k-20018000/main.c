@@ -57,7 +57,7 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
   while (chnGetTimeout(chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chnWrite(&bsio1, buf, sizeof buf - 1);
+    chnWrite(chp, buf, sizeof buf - 1);
   }
   chprintf(chp, "\r\n\nstopped\r\n");
 }

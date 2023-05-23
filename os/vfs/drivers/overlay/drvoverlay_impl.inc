@@ -21,7 +21,6 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-
 static msg_t match_driver(vfs_overlay_driver_c *odp,
                           const char **pathp,
                           vfs_driver_c **vdpp) {
