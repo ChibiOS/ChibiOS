@@ -63,6 +63,14 @@
 /** @} */
 
 /**
+ * @name    CLKMAN_CLK_CTRL System Source bit definition
+ * @{
+ */
+#define MAX32_SYS_SRC_SRO_DIV2  (0 << 0)    /**< The source is SRO divided by 2. */
+#define MAX32_SYS_SRC_SRO       (1 << 0)    /**< The source is SRO.              */
+/** @} */
+
+/**
  * @name    CLKMAN_SYS_CLK_CTRL_0_CM4 bit definition
  * @{
  */
@@ -93,9 +101,16 @@
 #endif
 
 /**
+ * @brief   System clock source.
+ */
+#if !defined(MAX32_SYS_SRC) || defined(__DOXYGEN__)
+#define MAX32_SYS_SRC                       MAX32_SYS_SRC_SRO
+#endif
+
+/**
  * @brief   Main Core clock divider.
  */
-#if !defined(MAX32_CM4_DIV1) || defined(__DOXYGEN__)
+#if !defined(MAX32_CM4_DIV) || defined(__DOXYGEN__)
 #define MAX32_CM4_DIV                       MAX32_CM4_DIV1
 #endif
 /** @} */
@@ -113,26 +128,37 @@
 #endif
 
 /**
+ * @brief   System clock frequency.
+ */
+#if (MAX32_SYS_SRC == MAX32_SYS_SRC_SRO) || defined(__DOXYGEN__)
+#define MAX32_SYSCLK                (MAX32_SRO / 1)
+#elif MAX32_SYS_SRC == MAX32_SYS_SRC_SRO_DIV2
+#define MAX32_SYSCLK                (MAX32_SRO / 2)
+#else
+#error "invalid clock source value specified"
+#endif
+
+/**
  * @brief   Main core frequency.
  */
 #if (MAX32_CM4_DIV == MAX32_CM4_DIV1) || defined(__DOXYGEN__)
-#define MAX32_SYSCLK                (MAX32_SRO / 1)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 1)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV2
-#define MAX32_SYSCLK                (MAX32_SRO / 2)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 2)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV4
-#define MAX32_SYSCLK                (MAX32_SRO / 4)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 4)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV8
-#define MAX32_SYSCLK                (MAX32_SRO / 8)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 8)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV16
-#define MAX32_SYSCLK                (MAX32_SRO / 16)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 16)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV32
-#define MAX32_SYSCLK                (MAX32_SRO / 32)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 32)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV64
-#define MAX32_SYSCLK                (MAX32_SRO / 64)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 64)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV128
-#define MAX32_SYSCLK                (MAX32_SRO / 128)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 128)
 #elif MAX32_CM4_DIV == MAX32_CM4_DIV256
-#define MAX32_SYSCLK                (MAX32_SRO / 256)
+#define MAX32_CM4CLK                (MAX32_SYSCLK / 256)
 #else
 #error "invalid MAX32_CM4_DIV value specified"
 #endif

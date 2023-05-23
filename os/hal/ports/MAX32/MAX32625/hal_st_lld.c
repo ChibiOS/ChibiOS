@@ -32,7 +32,7 @@
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
 
-#define SYSTICK_CK                          MAX32_SYSCLK
+#define SYSTICK_CK                          MAX32_CM4CLK
 
 #if SYSTICK_CK % OSAL_ST_FREQUENCY != 0
 #error "the selected ST frequency is not obtainable because integer rounding"

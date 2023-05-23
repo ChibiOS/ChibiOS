@@ -80,7 +80,14 @@ void hal_lld_init(void) {
 void max32_clock_init(void) {
 
 #if !MAX32_NO_INIT
+
+  /* Changing the clock source. */
+  MXC_CLKMAN->clk_ctrl &= ~MXC_F_CLKMAN_CLK_CTRL_SYSTEM_SOURCE_SELECT;
+  MXC_CLKMAN->clk_ctrl |= MAX32_SYS_SRC;
+
+  /* Applying the appropriate divider for the main core. */
   MXC_CLKMAN->sys_clk_ctrl_0_cm4 = MAX32_CM4_DIV;
+
 #endif /* !MAX32_NO_INIT */
 }
 /** @} */

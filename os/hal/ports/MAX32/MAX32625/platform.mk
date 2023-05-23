@@ -1,6 +1,7 @@
 # Required platform files.
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/MAX32/MAX32625/hal_lld.c \
+               $(CHIBIOS)/os/hal/ports/MAX32/MAX32625/hal_pal_lld.c \
                $(CHIBIOS)/os/hal/ports/MAX32/MAX32625/hal_st_lld.c \
                $(CHIBIOS)/os/hal/ports/MAX32/MAX32625/max32_isr.c
 

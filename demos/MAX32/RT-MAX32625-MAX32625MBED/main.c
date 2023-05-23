@@ -29,8 +29,22 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    //palSetLine(LINE_LED_GREEN);
+    palSetLine(LINE_LED_RED);
     chThdSleepMilliseconds(50);
+    palSetLine(LINE_LED_GREEN);
+    chThdSleepMilliseconds(50);
+    palSetLine(LINE_LED_BLUE);
+    chThdSleepMilliseconds(50);
+    palSetLine(LINE_LED_ORANGE);
+    chThdSleepMilliseconds(200);
+    palClearLine(LINE_LED_RED);
+    chThdSleepMilliseconds(50);
+    palClearLine(LINE_LED_GREEN);
+    chThdSleepMilliseconds(50);
+    palClearLine(LINE_LED_BLUE);
+    chThdSleepMilliseconds(50);
+    palClearLine(LINE_LED_ORANGE);
+    chThdSleepMilliseconds(200);
   }
 }
 

@@ -27,6 +27,7 @@
  * HAL driver system settings.
  */
 #define MAX32_NO_INIT                       FALSE
+#define MAX32_SYS_SRC                       MAX32_SYS_SRC_SRO
 #define MAX32_CM4_DIV                       MAX32_CM4_DIV1
 
 /*
