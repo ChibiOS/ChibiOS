@@ -28,7 +28,8 @@
  */
 #define MAX32_NO_INIT                       FALSE
 #define MAX32_SYS_SRC                       MAX32_SYS_SRC_SRO
-#define MAX32_CM4_DIV                       MAX32_CM4_DIV1
+#define MAX32_CM4_CLKMAN                    MAX32_CM4_DIV1
+#define MAX32_GPIO_CLKMAN                   MAX32_GPIO_DIV1
 
 /*
  * ST driver system settings.

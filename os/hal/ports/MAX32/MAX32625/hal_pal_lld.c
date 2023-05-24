@@ -56,7 +56,7 @@
  * @notapi
  */
 void _pal_lld_init(void) {
-
+  clkmanEnableGPIO();
 }
 
 /**

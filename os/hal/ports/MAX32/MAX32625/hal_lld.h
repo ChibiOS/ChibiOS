@@ -66,14 +66,15 @@
  * @name    CLKMAN_CLK_CTRL System Source bit definition
  * @{
  */
-#define MAX32_SYS_SRC_SRO_DIV2  (0 << 0)    /**< The source is SRO divided by 2. */
-#define MAX32_SYS_SRC_SRO       (1 << 0)    /**< The source is SRO.              */
+#define MAX32_SYS_SRC_SRO_DIV2  (0 << 0)    /**< The source is SRO/ 2.      */
+#define MAX32_SYS_SRC_SRO       (1 << 0)    /**< The source is SRO.         */
 /** @} */
 
 /**
  * @name    CLKMAN_SYS_CLK_CTRL_0_CM4 bit definition
  * @{
  */
+#define MAX32_CM4_DISABLED      (0 << 0)    /**< Clock disabled.            */
 #define MAX32_CM4_DIV1          (1 << 0)    /**< Clock divided by 1.        */
 #define MAX32_CM4_DIV2          (2 << 0)    /**< Clock divided by 2.        */
 #define MAX32_CM4_DIV4          (3 << 0)    /**< Clock divided by 4.        */
@@ -83,6 +84,22 @@
 #define MAX32_CM4_DIV64         (7 << 0)    /**< Clock divided by 64.       */
 #define MAX32_CM4_DIV128        (8 << 0)    /**< Clock divided by 128.      */
 #define MAX32_CM4_DIV256        (9 << 0)    /**< Clock divided by 256.      */
+/** @} */
+
+/**
+ * @name    CLKMAN_SYS_CLK_CTRL_6_GPIO bit definition
+ * @{
+ */
+#define MAX32_GPIO_DISABLED      (0 << 0)   /**< Clock disabled.            */
+#define MAX32_GPIO_DIV1          (1 << 0)   /**< Clock divided by 1.        */
+#define MAX32_GPIO_DIV2          (2 << 0)   /**< Clock divided by 2.        */
+#define MAX32_GPIO_DIV4          (3 << 0)   /**< Clock divided by 4.        */
+#define MAX32_GPIO_DIV8          (4 << 0)   /**< Clock divided by 8.        */
+#define MAX32_GPIO_DIV16         (5 << 0)   /**< Clock divided by 16.       */
+#define MAX32_GPIO_DIV32         (6 << 0)   /**< Clock divided by 32.       */
+#define MAX32_GPIO_DIV64         (7 << 0)   /**< Clock divided by 64.       */
+#define MAX32_GPIO_DIV128        (8 << 0)   /**< Clock divided by 128.      */
+#define MAX32_GPIO_DIV256        (9 << 0)   /**< Clock divided by 256.      */
 /** @} */
 
 /*===========================================================================*/
@@ -108,10 +125,18 @@
 #endif
 
 /**
- * @brief   Main Core clock divider.
+ * @brief   Main Core clock management.
  */
-#if !defined(MAX32_CM4_DIV) || defined(__DOXYGEN__)
-#define MAX32_CM4_DIV                       MAX32_CM4_DIV1
+#if !defined(MAX32_CM4_CLKMAN) || defined(__DOXYGEN__)
+#define MAX32_CM4_CLKMAN                    MAX32_CM4_DIV1
+#endif
+/** @} */
+
+/**
+ * @brief   GPIO input clock management.
+ */
+#if !defined(MAX32_GPIO_CLKMAN) || defined(__DOXYGEN__)
+#define MAX32_GPIO_CLKMAN                   MAX32_GPIO_DIV1
 #endif
 /** @} */
 /** @} */
@@ -141,23 +166,23 @@
 /**
  * @brief   Main core frequency.
  */
-#if (MAX32_CM4_DIV == MAX32_CM4_DIV1) || defined(__DOXYGEN__)
+#if (MAX32_CM4_CLKMAN == MAX32_CM4_DIV1) || defined(__DOXYGEN__)
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 1)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV2
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV2
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 2)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV4
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV4
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 4)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV8
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV8
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 8)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV16
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV16
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 16)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV32
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV32
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 32)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV64
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV64
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 64)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV128
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV128
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 128)
-#elif MAX32_CM4_DIV == MAX32_CM4_DIV256
+#elif MAX32_CM4_CLKMAN == MAX32_CM4_DIV256
 #define MAX32_CM4CLK                (MAX32_SYSCLK / 256)
 #else
 #error "invalid MAX32_CM4_DIV value specified"
@@ -179,6 +204,7 @@
 #include "nvic.h"
 #include "cache.h"
 #include "max32_isr.h"
+#include "max32_clkman.h"
 
 #ifdef __cplusplus
 extern "C" {

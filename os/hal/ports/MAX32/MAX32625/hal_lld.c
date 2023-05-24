@@ -86,7 +86,7 @@ void max32_clock_init(void) {
   MXC_CLKMAN->clk_ctrl |= MAX32_SYS_SRC;
 
   /* Applying the appropriate divider for the main core. */
-  MXC_CLKMAN->sys_clk_ctrl_0_cm4 = MAX32_CM4_DIV;
+  MXC_CLKMAN->sys_clk_ctrl_0_cm4 = MAX32_CM4_CLKMAN;
 
 #endif /* !MAX32_NO_INIT */
 }
