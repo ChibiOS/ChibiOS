@@ -84,16 +84,28 @@ void __vfs_buffers_init(void) {
  *
  * @return                      Pointer to the taken buffer.
  */
-vfs_shared_buffer_t *vfs_buffer_take(void) {
+vfs_shared_buffer_t *vfs_buffer_take_wait(void) {
 
   return (vfs_shared_buffer_t *)chGuardedPoolAllocTimeout(&vfs_buffers_static.buffers_pool,
                                                           TIME_INFINITE);
 }
 
 /**
+ * @brief   Claims a path buffer from the fixed pool without waiting.
+ *
+ * @return                      Pointer to the taken buffer.
+ * @retval NULL                 If the buffer is not available.
+ */
+vfs_shared_buffer_t *vfs_buffer_take_immediate(void) {
+
+  return (vfs_shared_buffer_t *)chGuardedPoolAllocTimeout(&vfs_buffers_static.buffers_pool,
+                                                          TIME_IMMEDIATE);
+}
+
+/**
  * @brief   Releases a path buffer into the fixed pool.
  *
- * @param[in] shbuf             Buffer to be released.
+ * @param[in] buf               Buffer to be released.
  */
 void vfs_buffer_release(vfs_shared_buffer_t *shbuf) {
 

@@ -280,8 +280,8 @@ ssize_t sb_posix_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) {
     return (ssize_t)CH_RET_ENOTDIR;
   }
 
-  shbuf = vfs_buffer_take();
-  dip = (vfs_direntry_info_t *)(void *)shbuf->bigbuf;
+  shbuf = vfs_buffer_take_wait();
+  dip = (vfs_direntry_info_t *)(void *)shbuf->buf;
 
   do {
     size_t n;

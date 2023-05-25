@@ -27,8 +27,12 @@
       <class type="regular" name="vfs_overlay_dir_node" namespace="ovldir"
         ancestorname="vfs_directory_node" descr="VFS overlay directory node">
         <fields>
-          <field name="index" ctype="unsigned"></field>
-          <field name="overlaid_root" ctype="vfs_directory_node_c$I*"></field>
+          <field name="index" ctype="unsigned">
+            <brief>Next directory entry to be read.</brief>
+          </field>
+          <field name="overlaid_root" ctype="vfs_directory_node_c$I*">
+            <brief>File system to be overlaid.</brief>
+          </field>
         </fields>
         <methods>
           <objinit callsuper="false">
@@ -70,6 +74,7 @@ self->overlaid_root = NULL;]]></implementation>
             ctype="const char$I*$N[DRV_CFG_OVERLAY_DRV_MAX]"></field>
           <field name="drivers"
             ctype="vfs_driver_c$I*$N[DRV_CFG_OVERLAY_DRV_MAX]"></field>
+          <field name="buf" ctype="char$I$N[VFS_CFG_PATHLEN_MAX + 1]"></field>
         </fields>
         <methods>
           <objinit callsuper="true">

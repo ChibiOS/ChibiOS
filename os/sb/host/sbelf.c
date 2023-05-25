@@ -356,8 +356,8 @@ static msg_t reloc_section(elf_load_context_t *ctxp,
   size_t size, done_size, remaining_size;
   msg_t ret;
 
-  shbuf = vfs_buffer_take();
-  rbuf = (elf32_rel_t *)(void *)shbuf->bigbuf;
+  shbuf = vfs_buffer_take_wait();
+  rbuf = (elf32_rel_t *)(void *)shbuf->buf;
 
   /* Reading the relocation section data.*/
   remaining_size = esip->rel_size;

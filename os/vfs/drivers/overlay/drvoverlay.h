@@ -131,7 +131,13 @@ struct vfs_overlay_dir_node {
    * @brief       Node mode information.
    */
   vfs_mode_t                mode;
+  /**
+   * @brief       Next directory entry to be read.
+   */
   unsigned                  index;
+  /**
+   * @brief       File system to be overlaid.
+   */
   vfs_directory_node_c      *overlaid_root;
 };
 /** @} */
@@ -183,6 +189,7 @@ struct vfs_overlay_driver {
   unsigned                  next_driver;
   const char                *names[DRV_CFG_OVERLAY_DRV_MAX];
   vfs_driver_c              *drivers[DRV_CFG_OVERLAY_DRV_MAX];
+  char                      buf[VFS_CFG_PATHLEN_MAX + 1];
 };
 /** @} */
 
