@@ -94,7 +94,7 @@ static char *lsalloc(sglob_t *psglob, size_t len) {
 }
 
 /* Copyright not specified so public domain code, not my thing.*/
-bool match(const char *pattern, const char *text) {
+static bool match(const char *pattern, const char *text) {
 
   if (*pattern == '\0' && *text == '\0')
     return true;
