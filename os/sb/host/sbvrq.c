@@ -365,11 +365,6 @@ void sb_fastc_vrq_return(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   sb_vrqmask_t active_mask;
 
-  /* Checking if there are IRQs to be re-enabled on VRQ exit.*/
-  if (sbp->vrq_nvic_iser != NULL) {
-    *sbp->vrq_nvic_iser = sbp->vrq_nvic_mask;
-  }
-
   /* Discarding the return current context, returning on the previous one.
      TODO: Check for overflows????*/
   ectxp++;
