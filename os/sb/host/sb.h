@@ -239,6 +239,31 @@ typedef struct {
  */
 typedef struct {
   /**
+   * @brief   Thread-related configurations.
+   */
+  struct {
+    /**
+     * @brief   Thread name.
+     */
+    const char                  *name;
+    /**
+     * @brief   Thread working area.
+     */
+    void                        *wsp;
+    /**
+     * @brief   Working area size.
+     */
+    size_t                      size;
+    /**
+     * @brief   Thread priority.
+     */
+    tprio_t                     prio;
+    /**
+     * @brief   Thread priority while serving a VRQ.
+     */
+    tprio_t                     vrq_prio;
+  } thread;
+  /**
    * @brief   Memory region for code.
    * @note    It is used to locate the startup header.
    */

@@ -27,7 +27,7 @@
 sb_class_t sbx1, sbx2;
 
 /*===========================================================================*/
-/* VHAL-related.                                                             */
+/* VIO-related.                                                              */
 /*===========================================================================*/
 
 static vio_gpio_units_t gpio_units1 = {
@@ -116,8 +116,19 @@ static const drv_streams_element_t streams[] = {
 /* SB-related.                                                               */
 /*===========================================================================*/
 
+/* Working areas for sandboxes.*/
+static THD_WORKING_AREA(waUnprivileged1, 512);
+static THD_WORKING_AREA(waUnprivileged2, 512);
+
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
+  .thread           = {
+    .name           = "sbx1",
+    .wsp            = waUnprivileged1,
+    .size           = sizeof (waUnprivileged1),
+    .prio           = NORMALPRIO - 10,
+    .vrq_prio       = NORMALPRIO - 1
+  },
   .code_region      = 0U,
   .data_region      = 1U,
   .regions          = {
@@ -138,6 +149,13 @@ static const sb_config_t sb_config1 = {
 
 /* Sandbox 2 configuration.*/
 static const sb_config_t sb_config2 = {
+  .thread           = {
+    .name           = "sbx2",
+    .wsp            = waUnprivileged2,
+    .size           = sizeof (waUnprivileged2),
+    .prio           = NORMALPRIO - 20,
+    .vrq_prio       = NORMALPRIO - 2
+  },
   .code_region      = 0U,
   .data_region      = 1U,
   .regions          = {
@@ -174,9 +192,6 @@ static const char *sbx2_envp[] = {
   NULL
 };
 
-static THD_WORKING_AREA(waUnprivileged1, 512);
-static THD_WORKING_AREA(waUnprivileged2, 512);
-
 /*===========================================================================*/
 /* Main and generic code.                                                    */
 /*===========================================================================*/
@@ -185,9 +200,7 @@ static void start_sb1(void) {
   thread_t *utp;
 
   /* Starting sandboxed thread 1.*/
-  utp = sbStartThread(&sbx1, "sbx1",
-                      waUnprivileged1, sizeof (waUnprivileged1),
-                      NORMALPRIO - 1, sbx1_argv, sbx1_envp);
+  utp = sbStartThread(&sbx1, sbx1_argv, sbx1_envp);
   if (utp == NULL) {
     chSysHalt("sbx1 failed");
   }
@@ -210,9 +223,7 @@ static void start_sb2(void) {
   vfsClose(np);
 
   /* Starting sandboxed thread 2.*/
-  utp = sbStartThread(&sbx2, "sbx2",
-                      waUnprivileged2, sizeof (waUnprivileged2),
-                      NORMALPRIO - 2, sbx2_argv, sbx2_envp);
+  utp = sbStartThread(&sbx2, sbx2_argv, sbx2_envp);
   if (utp == NULL) {
     chSysHalt("sbx2 failed");
   }

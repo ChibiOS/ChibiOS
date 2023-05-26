@@ -204,18 +204,14 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
  * @brief   Starts a sandboxed thread.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
- * @param[in] name      name to be assigned to the thread
- * @param[out] wsp      pointer to a working area dedicated to the thread stack
- * @param[in] size      size of the working area
- * @param[in] prio      the priority level for the new thread
  * @param[in] argv      array of parameters for the sandbox
  * @param[in] envp      array of environment variables for the sandbox
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
-thread_t *sbStartThread(sb_class_t *sbp, const char *name,
-                        void *wsp, size_t size, tprio_t prio,
-                        const char *argv[], const char *envp[]) {
+thread_t *sbStartThread(sb_class_t *sbp,
+                        const char *argv[],
+                        const char *envp[]) {
   thread_t *utp;
   const sb_config_t *config = sbp->config;
   void *usp, *uargv, *uenvp;
@@ -281,10 +277,11 @@ thread_t *sbStartThread(sb_class_t *sbp, const char *name,
   *((uint32_t *)usp + 0) = (uint32_t)uargc;
 
   unprivileged_thread_descriptor_t utd = {
-    .name       = name,
-    .wbase      = (stkalign_t *)wsp,
-    .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
-    .prio       = prio,
+    .name       = config->thread.name,
+    .wbase      = (stkalign_t *)config->thread.wsp,
+    .wend       = (stkalign_t *)config->thread.wsp +
+                                (config->thread.size / sizeof (stkalign_t)),
+    .prio       = config->thread.prio,
     .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
     .arg        = (void *)sbp
@@ -336,7 +333,6 @@ bool sbIsThreadRunningX(sb_class_t *sbp) {
  * @api
  */
 msg_t sbExec(sb_class_t *sbp, const char *pathname,
-             void *wsp, size_t size, tprio_t prio,
              const char *argv[], const char *envp[]) {
   const sb_config_t *config = sbp->config;
   memory_area_t ma = config->regions[0].area;
@@ -410,10 +406,11 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   unprivileged_thread_descriptor_t utd = {
-    .name       = pathname,
-    .wbase      = (stkalign_t *)wsp,
-    .wend       = (stkalign_t *)wsp + (size / sizeof (stkalign_t)),
-    .prio       = prio,
+    .name       = config->thread.name,
+    .wbase      = (stkalign_t *)config->thread.wsp,
+    .wend       = (stkalign_t *)config->thread.wsp +
+                                (config->thread.size / sizeof (stkalign_t)),
+    .prio       = config->thread.prio,
     .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
     .arg        = (void *)sbp

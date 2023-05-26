@@ -64,8 +64,21 @@ static const drv_streams_element_t sb1_streams[] = {
 /* SB-related.                                                               */
 /*===========================================================================*/
 
+/* Sandbox objects.*/
+sb_class_t sbx1;
+
+/* Working areas for sandboxes.*/
+static THD_WORKING_AREA(waUnprivileged1, 2048);
+
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
+  .thread           = {
+    .name           = "sbx1",
+    .wsp            = waUnprivileged1,
+    .size           = sizeof (waUnprivileged1),
+    .prio           = NORMALPRIO - 10,
+    .vrq_prio       = NORMALPRIO - 1
+  },
   .code_region      = 0U,
   .data_region      = 0U,
   .regions          = {
@@ -94,9 +107,6 @@ static const sb_config_t sb_config1 = {
   .vfs_driver       = (vfs_driver_c *)&sb1_root_overlay_driver
 };
 
-/* Sandbox objects.*/
-sb_class_t sbx1;
-
 static const char *sbx1_argv[] = {
   "msh",
   NULL
@@ -108,8 +118,6 @@ static const char *sbx1_envp[] = {
   "HOME=/",
   NULL
 };
-
-static THD_WORKING_AREA(waUnprivileged1, 2048);
 
 /*===========================================================================*/
 /* Main and generic code.                                                    */
@@ -244,9 +252,7 @@ int main(void) {
       /*
        * Running the sandbox.
        */
-      ret = sbExec(&sbx1, "/bin/msh.elf",
-                   waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
-                   sbx1_argv, sbx1_envp);
+      ret = sbExec(&sbx1, "/bin/msh.elf", sbx1_argv, sbx1_envp);
       if (CH_RET_IS_ERROR(ret)) {
         chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);
       }

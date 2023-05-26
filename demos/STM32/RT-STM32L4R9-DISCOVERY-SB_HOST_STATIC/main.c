@@ -74,8 +74,22 @@ static const drv_streams_element_t sb2_streams[] = {
 /* SB-related.                                                               */
 /*===========================================================================*/
 
+/* Sandbox objects.*/
+sb_class_t sbx1, sbx2;
+
+/* Working areas for sandboxes.*/
+static THD_WORKING_AREA(waUnprivileged1, 2048);
+static THD_WORKING_AREA(waUnprivileged2, 2048);
+
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
+  .thread           = {
+    .name           = "sbx1",
+    .wsp            = waUnprivileged1,
+    .size           = sizeof (waUnprivileged1),
+    .prio           = NORMALPRIO - 10,
+    .vrq_prio       = NORMALPRIO - 1
+  },
   .code_region      = 0U,
   .data_region      = 1U,
   .regions          = {
@@ -95,6 +109,13 @@ static const sb_config_t sb_config1 = {
 
 /* Sandbox 2 configuration.*/
 static const sb_config_t sb_config2 = {
+  .thread           = {
+    .name           = "sbx2",
+    .wsp            = waUnprivileged2,
+    .size           = sizeof (waUnprivileged2),
+    .prio           = NORMALPRIO - 20,
+    .vrq_prio       = NORMALPRIO - 2
+  },
   .code_region      = 0U,
   .data_region      = 1U,
   .regions          = {
@@ -111,9 +132,6 @@ static const sb_config_t sb_config2 = {
   },
   .vfs_driver       = (vfs_driver_c *)&sb2_root_overlay_driver
 };
-
-/* Sandbox objects.*/
-sb_class_t sbx1, sbx2;
 
 static const char *sbx1_argv[] = {
   "ls",
@@ -138,9 +156,6 @@ static const char *sbx2_envp[] = {
   "HOME=/",
   NULL
 };
-
-static THD_WORKING_AREA(waUnprivileged1, 2048);
-static THD_WORKING_AREA(waUnprivileged2, 2048);
 
 /*===========================================================================*/
 /* Main and generic code.                                                    */
@@ -327,17 +342,13 @@ int main(void) {
                      MPU_RASR_ENABLE);
 
   /* Starting sandboxed thread 1.*/
-  tp = sbStartThread(&sbx1, "sbx1",
-                     waUnprivileged1, sizeof (waUnprivileged1), NORMALPRIO - 1,
-                     sbx1_argv, sbx1_envp);
+  tp = sbStartThread(&sbx1, sbx1_argv, sbx1_envp);
   if (tp == NULL) {
     chSysHalt("sbx1 failed");
   }
 
   /* Starting sandboxed thread 2.*/
-  tp = sbStartThread(&sbx2, "sbx2",
-                     waUnprivileged2, sizeof (waUnprivileged2), NORMALPRIO - 1,
-                     sbx2_argv, sbx2_envp);
+  tp = sbStartThread(&sbx2, sbx2_argv, sbx2_envp);
   if (tp == NULL) {
     chSysHalt("sbx2 failed");
   }
