@@ -25,7 +25,7 @@ endif
 
 # Linker extra options here.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = -q -Wl,-zmax-page-size=512,--no-warn-rwx-segment
+  USE_LDOPT = -q -Wl,-zmax-page-size=512#,--no-warn-rwx-segment
 endif
 
 # Enable this if you want link time optimizations (LTO).
