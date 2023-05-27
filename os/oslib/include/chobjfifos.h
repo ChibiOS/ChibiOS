@@ -114,7 +114,7 @@ extern "C" {
  *          requirement.
  *
  * @param[out] ofp      pointer to a @p objects_fifo_t structure
- * @param[in] objsize   size of objects
+ * @param[in] objsize   object size
  * @param[in] objn      number of objects available
  * @param[in] objalign  required objects alignment
  * @param[in] objbuf    pointer to the buffer of objects, it must be able
@@ -142,7 +142,7 @@ static inline void chFifoObjectInitAligned(objects_fifo_t *ofp, size_t objsize,
  *          requirement.
  *
  * @param[out] ofp      pointer to a @p objects_fifo_t structure
- * @param[in] objsize   size of objects
+ * @param[in] objsize   object size
  * @param[in] objn      number of objects available
  * @param[in] objbuf    pointer to the buffer of objects, it must be able
  *                      to hold @p objn objects of @p objsize size
