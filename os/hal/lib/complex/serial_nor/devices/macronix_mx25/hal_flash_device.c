@@ -591,9 +591,6 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
     /* Checking for erased state of current buffer.*/
     for (p = devp->nocache->buf; p < &devp->nocache->buf[SNOR_BUFFER_SIZE]; p++) {
       if (*p != 0xFFU) {
-        /* Ready state again.*/
-        devp->state = FLASH_READY;
-
         return FLASH_ERROR_VERIFY;
       }
     }
