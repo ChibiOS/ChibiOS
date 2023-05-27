@@ -589,9 +589,6 @@ flash_error_t snor_device_verify_erase(SNORDriver *devp,
     /* Checking for erased state of current buffer.*/
     for (p = cmpbuf; p < &cmpbuf[MX25_COMPARE_BUFFER_SIZE]; p++) {
       if (*p != 0xFFU) {
-        /* Ready state again.*/
-        devp->state = FLASH_READY;
-
         return FLASH_ERROR_VERIFY;
       }
     }
