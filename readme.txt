@@ -116,6 +116,8 @@
 - NEW: Memory areas/pointers checker functions added to OSLIB.
 - FIX: Fixed unnecessary code in SNOR device drivers (bug #1265)
        (backported to 20.3.5)(backported to 21.11.4).
+- FIX: Fixed RP2040 HAL GPIO failed to compile (bug #1264)
+       (backported to 21.11.4).
 - FIX: Fixed channel 0 corruption on STM32 BDMAv1 (bug #1263)
        (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed wrong statistics in RT7 (bug #1262)(backported to 21.11.4).
