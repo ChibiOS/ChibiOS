@@ -215,9 +215,9 @@ static inline bool chMemIsAreaIntersectingX(const memory_area_t *map1,
 #if CH_CFG_USE_MEMCHECKS == FALSE
 /* Stub implementations for when the functionality is disabled, areas are
    always reported as valid.*/
-bool chMemIsAreaWritableX(const void *p,
-                          size_t size,
-                          unsigned align) {
+static inline bool chMemIsAreaWritableX(const void *p,
+                                        size_t size,
+                                        unsigned align) {
 
   (void)p;
   (void)size;
@@ -226,9 +226,9 @@ bool chMemIsAreaWritableX(const void *p,
   return true;
 }
 
-bool chMemIsAreaReadableX(const void *p,
-                          size_t size,
-                          unsigned align) {
+static inline bool chMemIsAreaReadableX(const void *p,
+                                        size_t size,
+                                        unsigned align) {
 
   (void)p;
   (void)size;
@@ -237,7 +237,7 @@ bool chMemIsAreaReadableX(const void *p,
   return true;
 }
 
-bool chMemIsAddressExecutableX(const void *p) {
+static inline bool chMemIsAddressExecutableX(const void *p) {
 
   (void)p;
 
