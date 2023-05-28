@@ -57,16 +57,16 @@
  * @{
  */
 #if defined(STM32F722xx) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32F722 Very High Performance with DSP and FPU"
 
 #elif defined(STM32F723xx)
-#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32F723 Very High Performance with DSP and FPU"
 
 #elif defined(STM32F732xx)
-#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32F732 Very High Performance with DSP and FPU"
 
 #elif defined(STM32F733xx)
-#define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
+#define PLATFORM_NAME           "STM32F733 Very High Performance with DSP and FPU"
 
 #elif defined(STM32F745xx)
 #define PLATFORM_NAME           "STM32F745 Very High Performance with DSP and FPU"
