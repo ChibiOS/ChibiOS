@@ -2,6 +2,7 @@
 <!DOCTYPE doc [
   <!ENTITY hal_base_driver     SYSTEM "hal_base_driver.xml">
   <!ENTITY hal_channels        SYSTEM "hal_channels.xml">
+  <!ENTITY hal_block_io        SYSTEM "hal_block_io.xml">
   <!ENTITY hal_buffered_serial SYSTEM "hal_buffered_serial.xml">
   <!ENTITY hal_sio             SYSTEM "hal_sio.xml">
 ]>
@@ -13,6 +14,7 @@
   <modules>
     &hal_base_driver;
     &hal_channels;
+    &hal_block_io;
     &hal_buffered_serial;
     &hal_sio;
   </modules>

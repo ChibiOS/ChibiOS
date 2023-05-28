@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_block_io" descr="Block I/O" editcode="false">
+  <brief>Block devices interface.</brief>
+  <imports>
+    <import>oop_base_interface.xml</import>
+  </imports>
+  <public>
+    <types>
+      <interface name="block_io" namespace="chn"
+        ancestorname="base_interface" descr="block device">
+        <brief>Base block device interface.</brief>
+        <details><![CDATA[This header defines an abstract interface useful
+         to access generic I/O block devices in a standardized way.]]></details>
+        <consts>
+        </consts>
+        <methods>
+          <method name="blkIsInserted" shortname="is_inserted" ctype="bool">
+            <brief>Removable media detection.</brief>
+            <return>The media state.</return>
+            <retval value="false">If media not inserted.</retval>
+            <retval value="true">If media is inserted.</retval>
+            <api />
+          </method>
+          <method name="blkIsWriteProtected" shortname="is_protected" ctype="bool">
+            <brief>Returns the media write protection status.</brief>
+            <return>The media state.</return>
+            <retval value="false">If media is writable.</retval>
+            <retval value="true">If media is not writable.</retval>
+            <api />
+          </method>
+        </methods>
+      </interface>
+    </types>
+  </public>
+  <private>
+  </private>
+</module>
