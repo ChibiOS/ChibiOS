@@ -102,6 +102,7 @@
 #define STM32_TIM13_HANDLER         VectorF0
 #define STM32_TIM14_HANDLER         VectorF4
 #define STM32_TIM15_HANDLER         VectorA0
+#define STM32_TIM16_HANDLER         VectorA4
 #define STM32_TIM17_HANDLER         VectorA8
 
 #define STM32_TIM1_UP_NUMBER        25
@@ -122,6 +123,7 @@
 #define STM32_TIM13_NUMBER          44
 #define STM32_TIM14_NUMBER          45
 #define STM32_TIM15_NUMBER          24
+#define STM32_TIM16_NUMBER          25
 #define STM32_TIM17_NUMBER          26
 
 /*
