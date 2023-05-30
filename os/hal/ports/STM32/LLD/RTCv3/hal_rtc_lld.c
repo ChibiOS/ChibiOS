@@ -434,7 +434,7 @@ void rtc_lld_init(void) {
 
     rtc_enter_init();
 
-    RTCD1.rtc->CR       |= (STM32_RTC_CR_INIT & STM32_RTC_CR_MASK);
+    RTCD1.rtc->CR   = (STM32_RTC_CR_INIT & STM32_RTC_CR_MASK) | RTC_CR_BYPSHAD;
     /* Setting PRER has to be done as two writes. Write Sync part first
        then Sync + Async. */
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS & 0x7FFF;
@@ -442,14 +442,11 @@ void rtc_lld_init(void) {
 
     rtc_exit_init();
   }
-  else {
-    RTCD1.rtc->ICSR &= ~RTC_ICSR_RSF;
-  }
 
   /* TAMP pointer initialization. */
   RTCD1.tamp = TAMP;
 
-  /* Initialise TAMP registers. */
+  /* Initialise TAMP registers, BYPSHAD is enforced.*/
   RTCD1.tamp->CR1   |= (STM32_TAMP_CR1_INIT & STM32_TAMP_CR1_MASK);
   RTCD1.tamp->CR2   |= (STM32_TAMP_CR2_INIT & STM32_TAMP_CR2_MASK);
   RTCD1.tamp->FLTCR |= (STM32_TAMP_FLTCR_INIT & STM32_TAMP_FLTCR_MASK);
@@ -508,27 +505,28 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
  * @notapi
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
-  uint32_t dr, tr, cr;
+  uint32_t cr, dr, tr, ssr, prev_dr, prev_tr, prev_ssr;
   uint32_t subs;
-#if STM32_RTC_HAS_SUBSECONDS
-  uint32_t ssr;
-#endif /* STM32_RTC_HAS_SUBSECONDS */
   syssts_t sts;
 
   /* Entering a reentrant critical zone.*/
   sts = osalSysGetStatusAndLockX();
 
-  /* Synchronization with the RTC and reading the registers, note
-     DR must be read last.*/
-  while ((rtcp->rtc->ICSR & RTC_ICSR_RSF) == 0)
-    ;
-#if STM32_RTC_HAS_SUBSECONDS
-  ssr = rtcp->rtc->SSR;
-#endif /* STM32_RTC_HAS_SUBSECONDS */
-  tr  = rtcp->rtc->TR;
-  dr  = rtcp->rtc->DR;
+  /* Repeated registers read until 2 matching sets are found.*/
+  ssr = 0U;
+  tr  = 0U;
+  dr  = 0U;
+  do {
+    prev_ssr = ssr;
+    prev_tr  = tr;
+    prev_dr  = dr;
+    ssr = rtcp->rtc->SSR;
+    tr  = rtcp->rtc->TR;
+    dr  = rtcp->rtc->DR;
+  } while ((ssr != prev_ssr) || (tr != prev_tr) || (dr != prev_dr));
+
+  /* DST bit is in CR, no need to poll on this one.*/
   cr  = rtcp->rtc->CR;
-  rtcp->rtc->ICSR &= ~RTC_ICSR_RSF;
 
   /* Leaving a reentrant critical zone.*/
   osalSysRestoreStatusX(sts);
@@ -537,13 +535,8 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
      the calendar" in the RTC documentation.*/
   rtc_decode_time(tr, timespec);
 
-  /* If the RTC is capable of sub-second counting then the value is
-     normalized in milliseconds and added to the time.*/
-#if STM32_RTC_HAS_SUBSECONDS
+  /* The value is normalized in milliseconds and added to the time.*/
   subs = (((STM32_RTC_PRESS_VALUE - 1U) - ssr) * 1000U) / STM32_RTC_PRESS_VALUE;
-#else
-  subs = 0;
-#endif /* STM32_RTC_HAS_SUBSECONDS */
   timespec->millisecond += subs;
 
   /* Decoding date, this concludes the atomic read sequence.*/
