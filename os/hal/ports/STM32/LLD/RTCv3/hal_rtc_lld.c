@@ -425,8 +425,8 @@ void rtc_lld_init(void) {
   RTCD1.rtc = RTC;
 
   /* Disable write protection. */
-  RTCD1.rtc->WPR = 0xCA;
-  RTCD1.rtc->WPR = 0x53;
+  RTCD1.rtc->WPR = 0xCAU;
+  RTCD1.rtc->WPR = 0x53U;
 
   /* If calendar has not been initialized yet then proceed with the
      initial setup.*/
@@ -437,7 +437,7 @@ void rtc_lld_init(void) {
     RTCD1.rtc->CR   = (STM32_RTC_CR_INIT & STM32_RTC_CR_MASK) | RTC_CR_BYPSHAD;
     /* Setting PRER has to be done as two writes. Write Sync part first
        then Sync + Async. */
-    RTCD1.rtc->PRER = STM32_RTC_PRER_BITS & 0x7FFF;
+    RTCD1.rtc->PRER = STM32_RTC_PRER_BITS & 0x7FFFU;
     RTCD1.rtc->PRER = STM32_RTC_PRER_BITS;
 
     rtc_exit_init();
