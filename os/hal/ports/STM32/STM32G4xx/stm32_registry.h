@@ -53,7 +53,7 @@
 #define STM32_RTC_TAMP_STAMP_NUMBER         2
 #define STM32_RTC_WKUP_NUMBER               3
 #define STM32_RTC_ALARM_NUMBER              41
-#define STM32_RTC_ALARM_EXTI                18
+#define STM32_RTC_ALARM_EXTI                17
 #define STM32_RTC_TAMP_STAMP_EXTI           19
 #define STM32_RTC_WKUP_EXTI                 20
 #define STM32_RTC_IRQ_ENABLE() do {                                         \
