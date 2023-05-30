@@ -553,8 +553,8 @@ void rtc_lld_init(void) {
   RTCD1.rtc = RTC;
 
   /* Disable write protection. */
-  RTCD1.rtc->WPR = 0xCA;
-  RTCD1.rtc->WPR = 0x53;
+  RTCD1.rtc->WPR = 0xCAU;
+  RTCD1.rtc->WPR = 0x53U;
 
   /* If calendar has not been initialized yet then proceed with the
      initial setup.*/
@@ -562,14 +562,14 @@ void rtc_lld_init(void) {
 
     rtc_enter_init();
 
-    RTCD1.rtc->CR       = STM32_RTC_CR_INIT;
+    RTCD1.rtc->CR       = STM32_RTC_CR_INIT | RTC_CR_BYPSHAD;
 #if defined(RTC_TAFCR_TAMP1E)
     RTCD1.rtc->TAFCR    = STM32_RTC_TAMPCR_INIT;
 #else
     RTCD1.rtc->TAMPCR   = STM32_RTC_TAMPCR_INIT;
 #endif
     RTCD1.rtc->ISR      = RTC_ISR_INIT; /* Clearing all but RTC_ISR_INIT.   */
-    RTCD1.rtc->PRER     = STM32_RTC_PRER_BITS;
+    RTCD1.rtc->PRER     = STM32_RTC_PRER_BITS & 0x7FFFU;
     RTCD1.rtc->PRER     = STM32_RTC_PRER_BITS;
 
     rtc_exit_init();
@@ -634,34 +634,42 @@ void rtc_lld_set_time(RTCDriver *rtcp, const RTCDateTime *timespec) {
  * @notapi
  */
 void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
-  uint32_t dr, tr, cr;
+  uint32_t cr, dr, tr, prev_dr, prev_tr;
   uint32_t subs;
 #if STM32_RTC_HAS_SUBSECONDS
-  uint32_t oldssr, ssr;
+  uint32_t ssr, prev_ssr;
 #endif /* STM32_RTC_HAS_SUBSECONDS */
   syssts_t sts;
 
   /* Entering a reentrant critical zone.*/
   sts = osalSysGetStatusAndLockX();
 
-  /* Synchronization with the RTC and reading the registers, note
-     DR must be read last.*/
-  while ((rtcp->rtc->ISR & RTC_ISR_RSF) == 0)
-    ;
+  /* Repeated registers read until 2 matching sets are found.*/
 #if STM32_RTC_HAS_SUBSECONDS
-  do
-#endif /* STM32_RTC_HAS_SUBSECONDS */
-  {
-    oldssr = rtcp->rtc->SSR;
-    tr = rtcp->rtc->TR;
-    dr = rtcp->rtc->DR;
-  }
-#if STM32_RTC_HAS_SUBSECONDS
-  while (oldssr != (ssr = rtcp->rtc->SSR));
-  (void) rtcp->rtc->DR;
-#endif /* STM32_RTC_HAS_SUBSECONDS */
-  cr = rtcp->rtc->CR;
-  rtcp->rtc->ISR &= ~RTC_ISR_RSF;
+  ssr = 0U;
+  tr  = 0U;
+  dr  = 0U;
+  do {
+    prev_ssr = ssr;
+    prev_tr  = tr;
+    prev_dr  = dr;
+    ssr = rtcp->rtc->SSR;
+    tr  = rtcp->rtc->TR;
+    dr  = rtcp->rtc->DR;
+  } while ((ssr != prev_ssr) || (tr != prev_tr) || (dr != prev_dr));
+#else /* !STM32_RTC_HAS_SUBSECONDS */
+  tr  = 0U;
+  dr  = 0U;
+  do {
+    prev_tr  = tr;
+    prev_dr  = dr;
+    tr  = rtcp->rtc->TR;
+    dr  = rtcp->rtc->DR;
+  } while ((tr != prev_tr) || (dr != prev_dr));
+#endif /* !STM32_RTC_HAS_SUBSECONDS */
+
+  /* DST bit is in CR, no need to poll on this one.*/
+  cr  = rtcp->rtc->CR;
 
   /* Leaving a reentrant critical zone.*/
   osalSysRestoreStatusX(sts);

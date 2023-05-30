@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: STM32 RTCv2 and RTCv3 modified to not use shadow registers.
 - NEW: Enhanced STM32F7xx MPU configuration in mcuconf.h.
 - NEW: I2C slave support in HAL high level driver.
 - NEW: Added settings for STM32 OCTOSPIv1 and OCTOSPIv2 TCR bits SSHIFT and
