@@ -6,6 +6,7 @@
   <!ENTITY hal_block_io        SYSTEM "hal_block_io.xml">
   <!ENTITY hal_buffered_serial SYSTEM "hal_buffered_serial.xml">
   <!ENTITY hal_sio             SYSTEM "hal_sio.xml">
+  <!ENTITY hal_spi             SYSTEM "hal_spi.xml">
 ]>
 <instance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd">
@@ -19,5 +20,6 @@
     &hal_block_io;
     &hal_buffered_serial;
     &hal_sio;
+    &hal_spi;
   </modules>
 </instance>

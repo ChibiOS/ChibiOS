@@ -321,7 +321,7 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 //#include "hal_serial.h"
 //#include "hal_sdc.h"
 #include "hal_sio.h"
-//#include "hal_spi.h"
+#include "hal_spi.h"
 //#include "hal_trng.h"
 //#include "hal_uart.h"
 //#include "hal_usb.h"

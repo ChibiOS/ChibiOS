@@ -17,7 +17,8 @@
         <define name="HAL_DRV_STATE_STARTING" value="3U" />
         <define name="HAL_DRV_STATE_READY" value="4U" />
         <define name="HAL_DRV_STATE_ACTIVE" value="5U" />
-        <define name="HAL_DRV_STATE_ERROR" value="6U" />
+        <define name="HAL_DRV_STATE_COMPLETE" value="6U" />
+        <define name="HAL_DRV_STATE_ERROR" value="7U" />
       </group>
     </definitions_early>
     <configs>

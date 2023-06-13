@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_spi" descr="SPI Driver" check="HAL_USE_SPI == TRUE" editcode="false">
+  <brief>SPI Driver macros and structures.</brief>
+  <imports>
+    <import>hal_cb_driver.xml</import>
+  </imports>
+  <public>
+    <definitions_early>
+      <group description="SPI CS modes">
+        <define name="SPI_SELECT_MODE_NONE" value="0" >
+          <brief>@p spiSelect() and @p spiUnselect() do nothing.</brief>
+        </define>
+        <define name="SPI_SELECT_MODE_PAD" value="1" >
+          <brief>Selection by PAL port and pad number.</brief>
+        </define>
+        <define name="SPI_SELECT_MODE_PORT" value="2" >
+          <brief>Selection by port and port mask.</brief>
+        </define>
+        <define name="SPI_SELECT_MODE_LINE" value="3" >
+          <brief>Selection by PAL line identifier.</brief>
+        </define>
+        <define name="SPI_SELECT_MODE_LLD" value="4" >
+          <brief>Selection by LLD-defined mode.</brief>
+        </define>
+      </group>
+    </definitions_early>
+    <configs>
+      <config name="SPI_USE_SYNCHRONIZATION" default="TRUE">
+        <brief>Support for thread synchronization API.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
+      <config name="SPI_SELECT_MODE"
+        default="SPI_SELECT_MODE_PAD">
+        <brief>Handling method for SPI CS line.</brief>
+        <assert invalid="($N &lt; SPI_SELECT_MODE_NONE) || ($N &gt; SPI_SELECT_MODE_LLD)" />
+      </config>
+    </configs>
+    <types>
+      <typedef name="hal_spi_config_t">
+        <brief>Type of structure representing a SPI configuration.</brief>
+        <basetype ctype="struct hal_spi_config" />
+      </typedef>
+      <typedef name="SPIConfig">
+        <brief>Type of structure representing a SPI configuration
+          (legacy).
+        </brief>
+        <basetype ctype="struct hal_spi_config" />
+      </typedef>
+      <typedef name="SPIDriver">
+        <brief>Type of structure representing a SPI driver (legacy).</brief>
+        <basetype ctype="struct hal_spi_driver" />
+      </typedef>
+      <verbatim><![CDATA[
+/* Inclusion of LLD header.*/
+#include "hal_spi_lld.h"
+
+#if !defined(SPI_SUPPORTS_CIRCULAR)
+#error "SPI_SUPPORTS_CIRCULAR not defined in SPI LLD driver"
+#endif
+
+#if !defined(SPI_SUPPORTS_SLAVE_MODE)
+#error "SPI_SUPPORTS_SLAVE_MODE not defined in SPI LLD driver"
+#endif]]></verbatim>
+      <struct name="hal_spi_config">
+        <brief>Driver configuration structure.</brief>
+        <note>Implementations may extend this structure to contain more,
+          architecture dependent, fields.
+        </note>
+        <fields>
+          <condition check="SPI_SUPPORTS_CIRCULAR == TRUE">
+            <field name="circular" ctype="bool">
+              <brief>Enables the circular buffer mode.</brief>
+            </field>
+          </condition>
+          <condition check="SPI_SUPPORTS_SLAVE_MODE == TRUE">
+            <field name="slave" ctype="bool">
+              <brief>Enables the slave mode.</brief>
+            </field>
+          </condition>
+          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE">
+            <field name="ssline" ctype="ioline_t">
+              <brief>The chip select line.</brief>
+              <note>Only used in master mode.</note>
+            </field>
+          </condition>
+          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT">
+            <field name="ssport" ctype="ioportid_t">
+              <brief>The chip select port.</brief>
+              <note>Only used in master mode.</note>
+            </field>
+            <field name="ssmask" ctype="ioportmask_t">
+              <brief>The chip select port mask.</brief>
+              <note>Only used in master mode.</note>
+            </field>
+          </condition>
+          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD">
+            <field name="ssport" ctype="ioportid_t">
+              <brief>The chip select port.</brief>
+              <note>Only used in master mode.</note>
+            </field>
+            <field name="sspad" ctype="ioportmask_t">
+              <brief>The chip select pad number.</brief>
+              <note>Only used in master mode.</note>
+            </field>
+          </condition>
+          <verbatim><![CDATA[
+/* End of the mandatory fields.*/
+spi_lld_config_fields;]]></verbatim>
+          <condition check="defined(SPI_CONFIG_EXT_FIELS)">
+            <verbatim><![CDATA[
+SPI_CONFIG_EXT_FIELDS]]></verbatim>
+          </condition>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_spi_driver" namespace="spi"
+        ancestorname="hal_cb_driver" descr="SPI driver">
+        <brief>Class of a SPI driver.</brief>
+        <fields>
+          <verbatim><![CDATA[
+#if defined(SPI_DRIVER_EXT_FIELS)
+SPI_DRIVER_EXT_FIELDS
+#endif
+/* End of the mandatory fields.*/
+spi_lld_driver_fields;]]></verbatim>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+
+/* Optional, user-defined initializer.*/
+#if defined(SPI_DRIVER_EXT_INIT_HOOK)
+SPI_DRIVER_EXT_INIT_HOOK(self);
+#endif]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+        </methods>
+      </class>
+      <class name="hal_buffered_spi" type="regular" namespace="bspi"
+        descr="buffered SPI wrapper" ancestorname="hal_buffered_serial">
+        <brief>This class implements a buffered channel interface on top of SPI.</brief>
+        <fields>
+          <field name="spip" ctype="hal_spi_driver_c$I*">
+            <brief>Pointer to the associated @p hal_spi_driver_c instance.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="false">
+            <param name="spip" ctype="hal_spi_driver_c *" dir="in">Pointer to
+              the @p hal_spi_driver_c object.</param>
+            <param name="ib" ctype="uint8_t *" dir="in">Pointer to the input buffer.</param>
+            <param name="ibsize" ctype="size_t" dir="in">Size of the input buffer.</param>
+            <param name="ob" ctype="uint8_t *" dir="in">Pointer to the output buffer.</param>
+            <param name="obsize" ctype="size_t" dir="in">Size of the output buffer.</param>
+            <implementation><![CDATA[
+__bs_objinit_impl((void *)self, vmt,
+                  ib, ibsize, NULL, NULL,
+                  ob, obsize, __bspi_onotify, (void *)self);
+drvSetArgumentX(spip, self);
+self->spip = spip;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+]]></implementation>
+          </dispose>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[
+msg_t msg;
+
+/* Start is a slow operation in this driver, we need to switch to the
+   HAL_DRV_STATE_STARTING state.*/
+self->state = HAL_DRV_STATE_STARTING;
+osalSysUnlock();
+
+/* Starting the undelying SPI driver.*/
+msg = drvStart(self->spip);
+if (msg == HAL_RET_SUCCESS) {
+  spiSetCallbackX(self->spip, &__bspi_default_cb);
+  spiWriteEnableFlagsX(self->spip, SPI_EV_ALL_EVENTS);
+}
+
+/* Back into the critical section and return.*/
+osalSysLock();
+return msg;]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[
+
+/* Start is a slow operation in this driver, we need to switch to the
+   HAL_DRV_STATE_STOPPING state.*/
+self->state = HAL_DRV_STATE_STOPPING;
+osalSysUnlock();
+
+drvStop(self->spip);
+
+/* Back into the critical section and return.*/
+osalSysLock();]]></implementation>
+            </method>
+            <method shortname="configure">
+              <implementation><![CDATA[
+return drvConfigureX(self->spip, config);]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <functions>
+      <function name="spiInit" ctype="void">
+        <brief>SPI Driver initialization.</brief>
+        <note>
+          This function is implicitly invoked by @p halInit(), there is no
+          need to explicitly initialize the driver.
+        </note>
+        <init />
+        <implementation><![CDATA[
+
+spi_lld_init();]]></implementation>
+      </function>
+    </functions>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>

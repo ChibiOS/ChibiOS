@@ -15,6 +15,7 @@ HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
 
 HALSRC := $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_base_driver.c \
+          $(CHIBIOS)/os/xhal/src/hal_cb_driver.c \
           $(CHIBIOS)/os/xhal/src/hal_st.c \
           $(CHIBIOS)/os/xhal/src/hal_buffered_serial.c \
           $(CHIBIOS)/os/xhal/src/hal_queues.c
@@ -24,6 +25,9 @@ endif
 ifneq ($(findstring HAL_USE_SIO TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/xhal/src/hal_sio.c
 endif
+ifneq ($(findstring HAL_USE_SPI TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/xhal/src/hal_spi.c
+endif
 else
 HALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
          $(CHIBIOS)/os/xhal/src/hal_base_driver.c \
@@ -31,6 +35,7 @@ HALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
          $(CHIBIOS)/os/xhal/src/hal_queues.c \
          $(CHIBIOS)/os/xhal/src/hal_pal.c \
          $(CHIBIOS)/os/xhal/src/hal_sio.c
+         $(CHIBIOS)/os/xhal/src/hal_spi.c
 endif
 
 # Required include directories
