@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_cb_driver" descr="Callback Driver" editcode="false">
+  <brief>Common ancestor of callback-based drivers</brief>
+  <imports>
+    <import>hal_base_driver.xml</import>
+  </imports>
+  <public>
+    <types>
+      <typedef name="hal_cb_t">
+        <brief>Generic HAL notification callback type.</brief>
+        <basetype ctype="void (*$N)(void *ip)" />
+      </typedef>
+      <class type="abstract" name="hal_cb_driver" namespace="cbdrv"
+        ancestorname="hal_base_driver" descr="callback driver">
+        <brief>Class of a callback-based driver.</brief>
+        <fields>
+          <field name="cb" ctype="hal_cb_t">
+            <brief>Driver callback.</brief>
+            <note>Can be @p NULL.</note>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <implementation><![CDATA[
+self->cb = NULL;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[ ]]></implementation>
+          </dispose>
+          <inline>
+            <method name="drvSetCallback" ctype="void">
+              <brief>Associates a callback to the driver instance.</brief>
+              <param name="cb" ctype="hal_cb_t">
+                Callback function to be associated. Passing @p NULL disables the
+                existing callback, if any.</param>
+              <implementation><![CDATA[
+
+self->cb = cb;]]></implementation>
+            </method>
+            <method name="drvGetCallback" ctype="hal_cb_t">
+              <brief>Returns the callback associated to the driver instance.</brief>
+              <implementation><![CDATA[
+
+return self->cb;]]></implementation>
+            </method>
+          </inline>
+        </methods>
+      </class>
+    </types>
+  </public>
+  <private>
+    <includes_always>
+      <include style="regular">hal.h</include>
+    </includes_always>
+  </private>
+</module>
