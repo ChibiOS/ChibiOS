@@ -296,7 +296,7 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 //#include "hal_streams.h"
 #include "hal_channels.h"
 //#include "hal_files.h"
-//#include "hal_ioblock.h"
+#include "hal_block_io.h"
 //#include "hal_mmcsd.h"
 //#include "hal_persistent.h"
 //#include "hal_flash.h"
