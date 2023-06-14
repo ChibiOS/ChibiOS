@@ -9,19 +9,19 @@
   <public>
     <definitions_early>
       <group description="SPI CS modes">
-        <define name="SPI_SELECT_MODE_NONE" value="0" >
+        <define name="SPI_SELECT_MODE_NONE" value="0">
           <brief>@p spiSelect() and @p spiUnselect() do nothing.</brief>
         </define>
-        <define name="SPI_SELECT_MODE_PAD" value="1" >
+        <define name="SPI_SELECT_MODE_PAD" value="1">
           <brief>Selection by PAL port and pad number.</brief>
         </define>
-        <define name="SPI_SELECT_MODE_PORT" value="2" >
+        <define name="SPI_SELECT_MODE_PORT" value="2">
           <brief>Selection by port and port mask.</brief>
         </define>
-        <define name="SPI_SELECT_MODE_LINE" value="3" >
+        <define name="SPI_SELECT_MODE_LINE" value="3">
           <brief>Selection by PAL line identifier.</brief>
         </define>
-        <define name="SPI_SELECT_MODE_LLD" value="4" >
+        <define name="SPI_SELECT_MODE_LLD" value="4">
           <brief>Selection by LLD-defined mode.</brief>
         </define>
       </group>
@@ -31,10 +31,10 @@
         <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
-      <config name="SPI_SELECT_MODE"
-        default="SPI_SELECT_MODE_PAD">
+      <config name="SPI_SELECT_MODE" default="SPI_SELECT_MODE_PAD">
         <brief>Handling method for SPI CS line.</brief>
-        <assert invalid="($N &lt; SPI_SELECT_MODE_NONE) || ($N &gt; SPI_SELECT_MODE_LLD)" />
+        <assert
+          invalid="($N &lt; SPI_SELECT_MODE_NONE) || ($N &gt; SPI_SELECT_MODE_LLD)" />
       </config>
     </configs>
     <types>
@@ -44,8 +44,7 @@
       </typedef>
       <typedef name="SPIConfig">
         <brief>Type of structure representing a SPI configuration
-          (legacy).
-        </brief>
+          (legacy).</brief>
         <basetype ctype="struct hal_spi_config" />
       </typedef>
       <typedef name="SPIDriver">
@@ -137,74 +136,58 @@ SPI_DRIVER_EXT_INIT_HOOK(self);
           <dispose>
             <implementation><![CDATA[ ]]></implementation>
           </dispose>
-        </methods>
-      </class>
-      <class name="hal_buffered_spi" type="regular" namespace="bspi"
-        descr="buffered SPI wrapper" ancestorname="hal_buffered_serial">
-        <brief>This class implements a buffered channel interface on top of SPI.</brief>
-        <fields>
-          <field name="spip" ctype="hal_spi_driver_c$I*">
-            <brief>Pointer to the associated @p hal_spi_driver_c instance.</brief>
-          </field>
-        </fields>
-        <methods>
-          <objinit callsuper="false">
-            <param name="spip" ctype="hal_spi_driver_c *" dir="in">Pointer to
-              the @p hal_spi_driver_c object.</param>
-            <param name="ib" ctype="uint8_t *" dir="in">Pointer to the input buffer.</param>
-            <param name="ibsize" ctype="size_t" dir="in">Size of the input buffer.</param>
-            <param name="ob" ctype="uint8_t *" dir="in">Pointer to the output buffer.</param>
-            <param name="obsize" ctype="size_t" dir="in">Size of the output buffer.</param>
-            <implementation><![CDATA[
-__bs_objinit_impl((void *)self, vmt,
-                  ib, ibsize, NULL, NULL,
-                  ob, obsize, __bspi_onotify, (void *)self);
-drvSetArgumentX(spip, self);
-self->spip = spip;]]></implementation>
-          </objinit>
-          <dispose>
-            <implementation><![CDATA[
-]]></implementation>
-          </dispose>
-          <override>
-            <method shortname="start">
-              <implementation><![CDATA[
-msg_t msg;
+          <inline>
+            <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LLD">
+              <method name="spiSelectX" ctype="void">
+                <brief>Asserts the slave select signal and prepares for
+                  transfers.</brief>
+                <xclass />
+                <implementation><![CDATA[
 
-/* Start is a slow operation in this driver, we need to switch to the
-   HAL_DRV_STATE_STARTING state.*/
-self->state = HAL_DRV_STATE_STARTING;
-osalSysUnlock();
+spi_lld_select(self);]]></implementation>
+              </method>
+              <method name="spiUnselectX" ctype="void">
+                <brief>Deasserts the slave select signal.</brief>
+                <xclass />
+                <implementation><![CDATA[
 
-/* Starting the undelying SPI driver.*/
-msg = drvStart(self->spip);
-if (msg == HAL_RET_SUCCESS) {
-  spiSetCallbackX(self->spip, &__bspi_default_cb);
-  spiWriteEnableFlagsX(self->spip, SPI_EV_ALL_EVENTS);
-}
+spi_lld_unselect(self);]]></implementation>
+              </method>
+              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE" />
+              <method name="spiSelectX" ctype="void">
+                <implementation><![CDATA[
 
-/* Back into the critical section and return.*/
-osalSysLock();
-return msg;]]></implementation>
-            </method>
-            <method shortname="stop">
-              <implementation><![CDATA[
+palClearLine(self->config->ssline);]]></implementation>
+              </method>
+              <method name="spiUnselectX" ctype="void">
+                <implementation><![CDATA[
 
-/* Start is a slow operation in this driver, we need to switch to the
-   HAL_DRV_STATE_STOPPING state.*/
-self->state = HAL_DRV_STATE_STOPPING;
-osalSysUnlock();
+palSetLine(self->config->ssline);]]></implementation>
+              </method>
+              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT" />
+              <method name="spiSelectX" ctype="void">
+                <implementation><![CDATA[
 
-drvStop(self->spip);
+palClearPort(self->config->ssport, (spip)->config->ssmask);]]></implementation>
+              </method>
+              <method name="spiUnselectX" ctype="void">
+                <implementation><![CDATA[
 
-/* Back into the critical section and return.*/
-osalSysLock();]]></implementation>
-            </method>
-            <method shortname="configure">
-              <implementation><![CDATA[
-return drvConfigureX(self->spip, config);]]></implementation>
-            </method>
-          </override>
+palSetPort(self->config->ssport, (spip)->config->ssmask);]]></implementation>
+              </method>
+              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD" />
+              <method name="spiSelectX" ctype="void">
+                <implementation><![CDATA[
+
+palClearPad(self->config->ssport, (spip)->config->sspad);]]></implementation>
+              </method>
+              <method name="spiUnselectX" ctype="void">
+                <implementation><![CDATA[
+
+palSetPad(self->config->ssport, (spip)->config->sspad);]]></implementation>
+              </method>
+            </condition>
+          </inline>
         </methods>
       </class>
     </types>

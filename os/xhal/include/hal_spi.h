@@ -268,95 +268,6 @@ struct hal_spi_driver {
 };
 /** @} */
 
-/**
- * @class       hal_buffered_spi_c
- * @extends     base_object_c, hal_base_driver_c, hal_buffered_serial_c.
- *
- * @brief       This class implements a buffered channel interface on top of
- *              SPI.
- *
- * @name        Class @p hal_buffered_spi_c structures
- * @{
- */
-
-/**
- * @brief       Type of a buffered SPI wrapper class.
- */
-typedef struct hal_buffered_spi hal_buffered_spi_c;
-
-/**
- * @brief       Class @p hal_buffered_spi_c virtual methods table.
- */
-struct hal_buffered_spi_vmt {
-  /* From base_object_c.*/
-  void (*dispose)(void *ip);
-  /* From hal_base_driver_c.*/
-  msg_t (*start)(void *ip);
-  void (*stop)(void *ip);
-  msg_t (*configure)(void *ip, const void *config);
-  /* From hal_buffered_serial_c.*/
-  /* From hal_buffered_spi_c.*/
-};
-
-/**
- * @brief       Structure representing a buffered SPI wrapper class.
- */
-struct hal_buffered_spi {
-  /**
-   * @brief       Virtual Methods Table.
-   */
-  const struct hal_buffered_spi_vmt *vmt;
-  /**
-   * @brief       Driver state.
-   */
-  driver_state_t            state;
-  /**
-   * @brief       Driver argument.
-   */
-  void                      *arg;
-#if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
-  /**
-   * @brief       Driver mutex.
-   */
-  mutex_t                   mutex;
-#endif /* HAL_USE_MUTUAL_EXCLUSION == TRUE */
-#if (HAL_USE_REGISTRY == TRUE) || defined (__DOXYGEN__)
-  /**
-   * @brief       Driver identifier.
-   */
-  unsigned int              id;
-  /**
-   * @brief       Driver name.
-   */
-  const char                *name;
-  /**
-   * @brief       Registry link structure.
-   */
-  hal_regent_t              regent;
-#endif /* HAL_USE_REGISTRY == TRUE */
-  /**
-   * @brief       Implemented interface @p asynchronous_channel_i.
-   */
-  asynchronous_channel_i    chn;
-  /**
-   * @brief       Input queue.
-   */
-  input_queue_t             iqueue;
-  /**
-   * @brief       Output queue.
-   */
-  output_queue_t            oqueue;
-  /**
-   * @brief       I/O condition event source.
-   */
-  event_source_t            event;
-  /**
-   * @brief       Pointer to the associated @p hal_spi_driver_c instance.
-   */
-  hal_spi_driver_c          *spip;
-};
-/** @} */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -367,14 +278,6 @@ extern "C" {
   /* Methods of hal_spi_driver_c.*/
   void *__spi_objinit_impl(void *ip, const void *vmt);
   void __spi_dispose_impl(void *ip);
-  /* Methods of hal_buffered_spi_c.*/
-  void *__bspi_objinit_impl(void *ip, const void *vmt, hal_spi_driver_c *spip,
-                            uint8_t *ib, size_t ibsize, uint8_t *ob,
-                            size_t obsize);
-  void __bspi_dispose_impl(void *ip);
-  msg_t __bspi_start_impl(void *ip);
-  void __bspi_stop_impl(void *ip);
-  msg_t __bspi_configure_impl(void *ip, const void *config);
   /* Regular functions.*/
   void spiInit(void);
 #ifdef __cplusplus
@@ -409,35 +312,89 @@ static inline hal_spi_driver_c *spiObjectInit(hal_spi_driver_c *self) {
 /** @} */
 
 /**
- * @name        Default constructor of hal_buffered_spi_c
+ * @name        Inline methods of hal_spi_driver_c
  * @{
  */
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_buffered_spi_c
+ * @memberof    hal_spi_driver_c
+ * @public
  *
- * @brief       Default initialization function of @p hal_buffered_spi_c.
+ * @brief       Asserts the slave select signal and prepares for transfers.
  *
- * @param[out]    self          Pointer to a @p hal_buffered_spi_c instance to
- *                              be initialized.
- * @param[in]     spip          Pointer to the @p hal_spi_driver_c object.
- * @param[in]     ib            Pointer to the input buffer.
- * @param[in]     ibsize        Size of the input buffer.
- * @param[in]     ob            Pointer to the output buffer.
- * @param[in]     obsize        Size of the output buffer.
- * @return                      Pointer to the initialized object.
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
  *
- * @objinit
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline hal_buffered_spi_c *bspiObjectInit(hal_buffered_spi_c *self,
-                                                 hal_spi_driver_c *spip,
-                                                 uint8_t *ib, size_t ibsize,
-                                                 uint8_t *ob, size_t obsize) {
-  extern const struct hal_buffered_spi_vmt __hal_buffered_spi_vmt;
+static inline void spiSelectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  return __bspi_objinit_impl(self, &__hal_buffered_spi_vmt, spip, ib, ibsize,
-                             ob, obsize);
+  spi_lld_select(self);
 }
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Deasserts the slave select signal.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline void spiUnselectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  spi_lld_unselect(self);
+}
+
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_LINE
+CC_FORCE_INLINE
+static inline void spiSelectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  palClearLine(self->config->ssline);
+}
+
+CC_FORCE_INLINE
+static inline void spiUnselectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  palSetLine(self->config->ssline);
+}
+
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
+CC_FORCE_INLINE
+static inline void spiSelectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  palClearPort(self->config->ssport, (spip)->config->ssmask);
+}
+
+CC_FORCE_INLINE
+static inline void spiUnselectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  palSetPort(self->config->ssport, (spip)->config->ssmask);
+}
+
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
+CC_FORCE_INLINE
+static inline void spiSelectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  palClearPad(self->config->ssport, (spip)->config->sspad);
+}
+
+CC_FORCE_INLINE
+static inline void spiUnselectX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  palSetPad(self->config->ssport, (spip)->config->sspad);
+}
+#endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LLD */
 /** @} */
 
 #endif /* HAL_USE_SPI == TRUE */
