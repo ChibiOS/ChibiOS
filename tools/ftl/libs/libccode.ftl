@@ -365,12 +365,10 @@ ${s}
  * @name    Configuration options
  * @{
  */
-    [#list configs.* as this]
-      [#if this?node_name == "config"]
-[@doxygen.EmitFullCommentFromNode "" this /]
-[@GenerateConfigFromNode this /]
-      [/#if]
-      [#if !this?is_last]
+    [#list configs.config as config]
+[@doxygen.EmitFullCommentFromNode indent="" node=config /]
+[@GenerateConfigFromNode node=config /]
+      [#if !config?is_last]
 
       [/#if]
     [/#list]
@@ -385,22 +383,30 @@ ${s}
   --]
 [#macro GenerateConfigAssertsFromNode node=[]]
   [#local configs = node]
-  [#list configs.config as config]
-    [#local name    = (config.@name[0]!"no-name")?trim]
-    [#if config.assert[0]??]
+  [#list configs.* as this]
+    [#if this?node_name == "config"]
+      [#local name    = (this.@name[0]!"no-name")?trim]
+      [#if this.assert[0]??]
 /* Checks on ${name} configuration.*/
-      [#list config.assert as assert]
-        [#local invalid = (assert.@invalid[0]!"TRUE")?replace("$N", name)
-                message = assert[0]?trim?replace("$N", name) /]
+        [#list this.assert as assert]
+          [#local invalid = (assert.@invalid[0]!"TRUE")?replace("$N", name)
+                  message = assert[0]?trim?replace("$N", name) /]
 #if ${invalid}
-        [#if message?length > 0]
+          [#if message?length > 0]
 #error "${message}"
-        [#else]
+          [#else]
 #error "invalid ${name} value"
-        [/#if]
+          [/#if]
 #endif
 
-      [/#list]
+        [/#list]
+      [/#if]
+    [#elseif this?node_name == "verbatim"]
+      [#local ccode = (this[0]!"")?trim]
+      [#if ccode?length > 0]
+[@GenerateIndentedCCode "" ccode /]
+
+      [/#if]
     [/#if]
   [/#list]
 [/#macro]

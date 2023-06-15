@@ -105,10 +105,12 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="configsType">
-    <xs:sequence>
-      <xs:element name="config" type="configType"
-        maxOccurs="unbounded" minOccurs="0"></xs:element>
-    </xs:sequence>
+    <xs:choice maxOccurs="unbounded" minOccurs="0">
+      <xs:element name="config" type="configType" maxOccurs="1"
+        minOccurs="1">
+      </xs:element>
+      <xs:element name="verbatim" type="xs:string" maxOccurs="1" minOccurs="1"></xs:element>
+    </xs:choice>
   </xs:complexType>
   <xs:complexType name="includesType">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
