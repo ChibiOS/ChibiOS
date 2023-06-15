@@ -569,10 +569,10 @@ msg_t spiIgnore(SPIDriver *spip, size_t n) {
 
   osalSysLock();
 
-    msg = spiStartIgnoreI(spip, n);
-    if (msg == MSG_OK) {
-      msg = spiSynchronizeS(spip, TIME_INFINITE);
-    }
+  msg = spiStartIgnoreI(spip, n);
+  if (msg == MSG_OK) {
+    msg = spiSynchronizeS(spip, TIME_INFINITE);
+  }
 
   osalSysUnlock();
 
