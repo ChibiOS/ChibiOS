@@ -135,6 +135,573 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .configure                = NULL /* Method not found.*/
 };
 
+/**
+ * @name        Regular methods of hal_spi_driver_c
+ * @{
+ */
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Ignores data on the SPI bus.
+ * @details     This asynchronous function starts the transmission of a series
+ *              of idle words on the SPI bus and ignores the received data.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be ignored.
+ * @return                      The operation status.
+ *
+ * @iclass
+ */
+msg_t spiStartIgnoreI(void *ip, size_t n) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheckClassI();
+
+  osalDbgCheck((self != NULL) && (n > 0U));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+  self->state = HAL_DRV_STATE_ACTIVE;
+  msg = spi_lld_ignore(self, n);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Ignores data on the SPI bus.
+ * @details     This asynchronous function starts the transmission of a series
+ *              of idle words on the SPI bus and ignores the received data.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be ignored.
+ * @return                      The operation status.
+ *
+ * @api
+ */
+msg_t spiStartIgnore(void *ip, size_t n) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+  msg = spiStartIgnoreI(self, n);
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Exchanges data on the SPI bus.
+ * @details     This asynchronous function starts a simultaneous
+ *              transmit/receive operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[in]     txbuf         Pointer to the transmit buffer.
+ * @param[out]    rxbuf         Pointer to the receive buffer.
+ * @return                      The operation status.
+ *
+ * @iclass
+ */
+msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheckClassI();
+
+  osalDbgCheck((self != NULL) && (n > 0U) &&
+               (rxbuf != NULL) && (txbuf != NULL));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+  self->state = HAL_DRV_STATE_ACTIVE;
+  msg = spi_lld_exchange(self, n, txbuf, rxbuf);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Exchanges data on the SPI bus.
+ * @details     This asynchronous function starts a simultaneous
+ *              transmit/receive operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[in]     txbuf         Pointer to the transmit buffer.
+ * @param[out]    rxbuf         Pointer to the receive buffer.
+ * @return                      The operation status.
+ *
+ * @api
+ */
+msg_t spiStartExchange(void *ip, size_t n, const void *txbuf, void *rxbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+  msg = spiStartExchangeI(self, n, txbuf, rxbuf);
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Sends data over the SPI bus.
+ * @details     This asynchronous function starts a transmit operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[in]     txbuf         Pointer to the transmit buffer.
+ * @return                      The operation status.
+ *
+ * @iclass
+ */
+msg_t spiStartSendI(void *ip, size_t n, const void *txbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheckClassI();
+
+  osalDbgCheck((self != NULL) && (n > 0U) && (txbuf != NULL));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+  self->state = HAL_DRV_STATE_ACTIVE;
+  msg = spi_lld_send(self, n, txbuf);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Sends data over the SPI bus.
+ * @details     This asynchronous function starts a transmit operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[in]     txbuf         Pointer to the transmit buffer.
+ * @return                      The operation status.
+ *
+ * @api
+ */
+msg_t spiStartSend(void *ip, size_t n, const void *txbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+  msg = spiStartSendI(self, n, txbuf);
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Receives data from the SPI bus.
+ * @details     This asynchronous function starts a receive operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[out]    rxbuf         Pointer to the receive buffer.
+ * @return                      The operation status.
+ *
+ * @iclass
+ */
+msg_t spiStartReceiveI(void *ip, size_t n, void *rxbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheckClassI();
+
+  osalDbgCheck((self != NULL) && (n > 0U) && (rxbuf != NULL));
+#if SPI_SUPPORTS_CIRCULAR
+  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+#endif
+
+  osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
+
+  self->state = HAL_DRV_STATE_ACTIVE;
+  msg = spi_lld_receive(self, n, rxbuf);
+
+#if SPI_USE_ASSERT_ON_ERROR == TRUE
+  osalDbgAssert(msg == HAL_RET_SUCCESS, "function failed");
+#endif
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Receives data from the SPI bus.
+ * @details     This asynchronous function starts a receive operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @post        At the end of the operation the callback is invoked, if
+ *              enabled.
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[out]    rxbuf         Pointer to the receive buffer.
+ * @return                      The operation status.
+ *
+ * @api
+ */
+msg_t spiStartReceive(void *ip, size_t n, void *rxbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+  msg = spiStartReceiveI(self, n, rxbuf);
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Stops the ongoing SPI operation.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[out]    np            Pointer to the counter of frames not yet
+ *                              transferred or @p NULL.
+ * @return                      The operation status.
+ *
+ * @iclass
+ */
+msg_t spiStopTransferI(void *ip, size_t *np) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheckClassI();
+
+  osalDbgCheck(self != NULL);
+
+  osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
+                (self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_COMPLETE),
+                "invalid state");
+
+  if ((self->state == HAL_DRV_STATE_ACTIVE) ||
+      (self->state == HAL_DRV_STATE_COMPLETE)) {
+
+    /* Stopping transfer at low level.*/
+    msg = spi_lld_stop_transfer(self, sizep);
+    self->state = HAL_DRV_STATE_READY;
+
+#if SPI_USE_SYNCHRONIZATION == TRUE
+    osalThreadResumeI(&self->sync_transfer, MSG_RESET);
+#endif
+  }
+  else {
+    msg = HAL_RET_SUCCESS;
+  }
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Stops the ongoing SPI operation.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[out]    np            Pointer to the counter of frames not yet
+ *                              transferred or @p NULL.
+ * @return                      The operation status.
+ *
+ * @api
+ */
+msg_t spiStopTransfer(void *ip, size_t *np) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+
+  msg = spiStopTransferI(self, sizep);
+  osalOsRescheduleS();
+
+  osalSysUnlock();
+
+  return msg;
+}
+
+#if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @note        This function can only be called by a single thread at time.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If operation completed without errors.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the transfer has been stopped.
+ *
+ * @sclass
+ */
+msg_t spiSynchronizeS(void *ip, sysinterval_t timeout) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_READY),
+                "invalid state");
+
+  if (self->state == HAL_DRV_STATE_ACTIVE) {
+    msg = osalThreadSuspendTimeoutS(&self->sync_transfer, timeout);
+  }
+  else {
+    msg = MSG_OK;
+  }
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @note        This function can only be called by a single thread at time.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     timeout       Synchronization timeout.
+ * @return                      The synchronization result.
+ * @retval MSG_OK               If operation completed without errors.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the transfer has been stopped.
+ *
+ * @api
+ */
+msg_t spiSynchronize(void *ip, sysinterval_t timeout) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+  msg = spiSynchronizeS(self, timeout);
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Ignores data on the SPI bus.
+ * @details     This synchronous function performs the transmission of a series
+ *              of idle words on the SPI bus and ignores the received data.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be ignored.
+ * @return                      The operation status.
+ * @retval MSG_OK               If operation completed without errors.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the transfer has been stopped.
+ *
+ * @api
+ */
+msg_t spiIgnore(void *ip, size_t n) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+
+  msg = spiStartIgnoreI(self, n);
+  if (msg == MSG_OK) {
+    msg = spiSynchronizeS(self, TIME_INFINITE);
+  }
+
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Exchanges data on the SPI bus.
+ * @details     This synchronous function performs a simultaneous
+ *              transmit/receive operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[in]     txbuf         Pointer to the transmit buffer.
+ * @param[out]    rxbuf         Pointer to the receive buffer.
+ * @return                      The operation status.
+ * @retval MSG_OK               If operation completed without errors.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the transfer has been stopped.
+ *
+ * @api
+ */
+msg_t spiExchange(void *ip, size_t n, const void *txbuf, void *rxbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+
+  msg = spiStartExchangeI(self, n, txbuf, rxbuf);
+  if (msg == MSG_OK) {
+    msg = spiSynchronizeS(self, TIME_INFINITE);
+  }
+
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Sends data over the SPI bus.
+ * @details     This synchronous function performs a transmit operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[in]     txbuf         Pointer to the transmit buffer.
+ * @return                      The operation status.
+ * @retval MSG_OK               If operation completed without errors.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the transfer has been stopped.
+ *
+ * @api
+ */
+msg_t spiSend(void *ip, size_t n, const void *txbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  msg = spiStartSendI(self, n, txbuf);
+  if (msg == MSG_OK) {
+    msg = spiSynchronizeS(self, TIME_INFINITE);
+  }
+
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Receives data from the SPI bus.
+ * @details     This synchronous function performs a receive operation.
+ * @pre         A slave must have been selected using @p spiSelectX().
+ * @note        Buffers are organized as uint8_t arrays for frame sizes below
+ *              or equal to 8 bits else uint16_t is used.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     n             Number of frames to be exchanged.
+ * @param[out]    rxbuf         Pointer to the receive buffer.
+ * @return                      The operation status.
+ * @retval MSG_OK               If operation completed without errors.
+ * @retval MSG_TIMEOUT          If synchronization timed out.
+ * @retval MSG_RESET            If the transfer has been stopped.
+ *
+ * @api
+ */
+msg_t spiReceive(void *ip, size_t n, void *rxbuf) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  msg_t msg;
+
+  msg = spiStartReceiveI(spip, n, rxbuf);
+  if (msg == MSG_OK) {
+    msg = spiSynchronizeS(spip, TIME_INFINITE);
+  }
+
+  osalSysUnlock();
+
+  return msg;
+}
+#endif /* SPI_USE_SYNCHRONIZATION == TRUE */
+/** @} */
+
 #endif /* HAL_USE_SPI == TRUE */
 
 /** @} */

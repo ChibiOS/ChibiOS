@@ -688,40 +688,51 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
 [#--
   -- This macro generates regular methods from an XML node.
   --]
-[#macro GenerateMethods node=[] classctype="no-ctype" modifiers=[]]
-  [#list node.* as node]
-    [#if node?node_name == "method"]
-      [#local method = node]
+[#macro GenerateMethods node=[] classctype="no-ctype" modifiers=[] nodoc=false]
+  [#list node.* as this]
+    [#if this?node_name == "method"]
+      [#local method = this]
       [#local methodname     = GetNodeName(method)
               methodsname    = GetMethodShortName(method)
               methodretctype = GetMethodCType(method)
               methodimpl     = method.implementation[0]!""]
       [#assign generated = true]
+      [#if !nodoc]
 [@doxygen.EmitFullCommentFromNode indent="" node=method
                                   extraname="ip" extradir="both"
                                   extratext="Pointer to a @p " + classctype + " instance."
                                   memberof=classctype /]
+      [/#if]
       [#if modifiers?seq_contains("static") && modifiers?seq_contains("inline")]
 CC_FORCE_INLINE
       [/#if]
 [@ccode.GeneratePrototypeFromNode modifiers = modifiers
                                   params    = ["void *ip"]
-                                  node=method /] {
+                                  node      = method /] {
   ${classctype} *self = (${classctype} *)ip;
 [@ccode.GenerateIndentedCCode indent=ccode.indentation
                               ccode=methodimpl /]
 }
-    [#elseif node?node_name == "condition"]
-      [#local condition = node]
+      [#if this?has_next]
+
+      [/#if]
+    [#elseif this?node_name == "condition"]
+      [#local condition = this]
       [#local condcheck = (condition.@check[0]!"1")?trim]
 #if (${condcheck}) || defined (__DOXYGEN__)
 [@GenerateMethods node       = condition
                   classctype = classctype
-                  modifiers  = modifiers /]
+                  modifiers  = modifiers
+                  nodoc      = nodoc /]
 #endif /* ${condcheck} */
-    [/#if]
-    [#if node?has_next]
-
+    [#elseif this?node_name == "elseif"]
+      [#local nodoc = true]
+      [#local condcheck = (this.@check[0]!"")?trim]
+      [#if condcheck?length == 0]
+#else
+      [#else]
+#elif ${condcheck}
+      [/#if]
     [/#if]
   [/#list]
 [/#macro]

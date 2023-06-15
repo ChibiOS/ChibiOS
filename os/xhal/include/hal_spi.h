@@ -278,6 +278,24 @@ extern "C" {
   /* Methods of hal_spi_driver_c.*/
   void *__spi_objinit_impl(void *ip, const void *vmt);
   void __spi_dispose_impl(void *ip);
+  msg_t spiStartIgnoreI(void *ip, size_t n);
+  msg_t spiStartIgnore(void *ip, size_t n);
+  msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf);
+  msg_t spiStartExchange(void *ip, size_t n, const void *txbuf, void *rxbuf);
+  msg_t spiStartSendI(void *ip, size_t n, const void *txbuf);
+  msg_t spiStartSend(void *ip, size_t n, const void *txbuf);
+  msg_t spiStartReceiveI(void *ip, size_t n, void *rxbuf);
+  msg_t spiStartReceive(void *ip, size_t n, void *rxbuf);
+  msg_t spiStopTransferI(void *ip, size_t *np);
+  msg_t spiStopTransfer(void *ip, size_t *np);
+#if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+  msg_t spiSynchronizeS(void *ip, sysinterval_t timeout);
+  msg_t spiSynchronize(void *ip, sysinterval_t timeout);
+  msg_t spiIgnore(void *ip, size_t n);
+  msg_t spiExchange(void *ip, size_t n, const void *txbuf, void *rxbuf);
+  msg_t spiSend(void *ip, size_t n, const void *txbuf);
+  msg_t spiReceive(void *ip, size_t n, void *rxbuf);
+#endif /* SPI_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void spiInit(void);
 #ifdef __cplusplus
@@ -370,14 +388,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearPort(self->config->ssport, (spip)->config->ssmask);
+  palClearPort(self->config->ssport, self->config->ssmask);
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetPort(self->config->ssport, (spip)->config->ssmask);
+  palSetPort(self->config->ssport, self->config->ssmask);
 }
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
@@ -385,14 +403,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearPad(self->config->ssport, (spip)->config->sspad);
+  palClearPad(self->config->ssport, self->config->sspad);
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetPad(self->config->ssport, (spip)->config->sspad);
+  palSetPad(self->config->ssport, self->config->sspad);
 }
 #endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LLD */
 /** @} */

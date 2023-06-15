@@ -568,11 +568,13 @@
   </xs:complexType>
   <xs:complexType name="conditionalRegularMethodsType">
     <xs:choice maxOccurs="unbounded" minOccurs="1">
-      <xs:element name="method" type="regularMethodType"
-        maxOccurs="1" minOccurs="1"></xs:element>
-      <xs:element name="condition"
-        type="conditionalRegularMethodsType" maxOccurs="1" minOccurs="1">
+      <xs:element name="method" type="regularMethodType" maxOccurs="1"
+        minOccurs="1">
       </xs:element>
+      <xs:element name="condition" type="conditionalRegularMethodsType"
+        maxOccurs="1" minOccurs="1">
+      </xs:element>
+      <xs:element name="elseif" type="elseifType" maxOccurs="1" minOccurs="1"></xs:element>
     </xs:choice>
     <xs:attribute name="check" type="xs:string" use="required"></xs:attribute>
   </xs:complexType>
@@ -604,14 +606,16 @@
       <xs:element name="function" type="functionType" maxOccurs="1"
         minOccurs="1">
       </xs:element>
-      <xs:element name="group" type="groupedFunctionsType"
-        maxOccurs="1" minOccurs="1">
+      <xs:element name="group" type="groupedFunctionsType" maxOccurs="1"
+        minOccurs="1">
       </xs:element>
-      <xs:element name="condition" type="conditionalFunctionsType"
-        maxOccurs="1" minOccurs="1">
+      <xs:element name="condition" type="conditionalFunctionsType" maxOccurs="1"
+        minOccurs="1">
       </xs:element>
-      <xs:element name="verbatim" type="xs:string" maxOccurs="1"
-        minOccurs="1"></xs:element>
+            <xs:element name="elseif" type="elseifType" maxOccurs="1" minOccurs="1"></xs:element>
+            <xs:element name="verbatim" type="xs:string" maxOccurs="1"
+        minOccurs="1">
+      </xs:element>
     </xs:choice>
     <xs:attribute name="check" type="xs:string" use="required"></xs:attribute>
   </xs:complexType>
