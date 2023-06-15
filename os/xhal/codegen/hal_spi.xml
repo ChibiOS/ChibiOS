@@ -36,6 +36,15 @@
         <assert
           invalid="($N &lt; SPI_SELECT_MODE_NONE) || ($N &gt; SPI_SELECT_MODE_LLD)" />
       </config>
+      <verbatim><![CDATA[
+/* Some modes have a dependency on the PAL driver, making the required
+   checks here.*/
+#if ((SPI_SELECT_MODE != SPI_SELECT_MODE_PAD)  ||                           \
+     (SPI_SELECT_MODE != SPI_SELECT_MODE_PORT) ||                           \
+     (SPI_SELECT_MODE != SPI_SELECT_MODE_LINE)) &&                          \
+    (HAL_USE_PAL != TRUE)
+#error "current SPI_SELECT_MODE requires HAL_USE_PAL"
+#endif]]></verbatim>
     </configs>
     <types>
       <typedef name="hal_spi_config_t">
