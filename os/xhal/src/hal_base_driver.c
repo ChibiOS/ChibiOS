@@ -218,12 +218,13 @@ void *__drv_objinit_impl(void *ip, const void *vmt) {
   __bo_objinit_impl(self, vmt);
 
   /* Initialization code.*/
-  self->state = HAL_DRV_STATE_STOP;
-  self->arg   = NULL;
+  self->state  = HAL_DRV_STATE_STOP;
+  self->arg    = NULL;
+  self->config = NULL;
   osalMutexObjectInit(&self->mutex);
 #if HAL_USE_REGISTRY == TRUE
-  self->id    = 0U;
-  self->name  = "unk";
+  self->id     = 0U;
+  self->name   = "unk";
   drv_reg_insert(self);
 #endif
 

@@ -91,6 +91,10 @@ struct hal_buffered_serial {
    */
   driver_state_t            state;
   /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
+  /**
    * @brief       Driver argument.
    */
   void                      *arg;

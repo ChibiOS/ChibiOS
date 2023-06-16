@@ -31,6 +31,14 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Callback-related driver states
+ * @{
+ */
+#define HAL_DRV_STATE_COMPLETE              6U
+#define HAL_DRV_STATE_ERROR                 7U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -78,6 +86,7 @@ struct hal_cb_driver_vmt {
   void (*stop)(void *ip);
   msg_t (*configure)(void *ip, const void *config);
   /* From hal_cb_driver_c.*/
+  void (*setcb)(void *ip, hal_cb_t cb);
 };
 
 /**
@@ -92,6 +101,10 @@ struct hal_cb_driver {
    * @brief       Driver state.
    */
   driver_state_t            state;
+  /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
   /**
    * @brief       Driver argument.
    */
@@ -134,6 +147,7 @@ extern "C" {
   /* Methods of hal_cb_driver_c.*/
   void *__cbdrv_objinit_impl(void *ip, const void *vmt);
   void __cbdrv_dispose_impl(void *ip);
+  void __cbdrv_setcb_impl(void *ip, hal_cb_t cb);
 #ifdef __cplusplus
 }
 #endif
@@ -143,7 +157,7 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @name        Inline methods of hal_cb_driver_c
+ * @name        Virtual methods of hal_cb_driver_c
  * @{
  */
 /**
@@ -160,9 +174,14 @@ CC_FORCE_INLINE
 static inline void drvSetCallback(void *ip, hal_cb_t cb) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
-  self->cb = cb;
+  self->vmt->setcb(ip, cb);
 }
+/** @} */
 
+/**
+ * @name        Inline methods of hal_cb_driver_c
+ * @{
+ */
 /**
  * @memberof    hal_cb_driver_c
  * @public
@@ -176,6 +195,60 @@ static inline hal_cb_t drvGetCallback(void *ip) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   return self->cb;
+}
+
+/**
+ * @memberof    hal_cb_driver_c
+ * @public
+ *
+ * @brief       Checks for @p HAL_DRV_STATE_COMPLETE state.
+ * @details     The @p HAL_DRV_STATE_COMPLETE state is used by those drivers
+ *              triggering multiple callbacks for a single asynchronous
+ *              operation, it marks the last callback in the sequence.
+ * @note        This function is meant to be called exclusively from the driver
+ *              callback.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ * @return                      The check result.
+ * @retval false                If the current state is not @p
+ *                              HAL_DRV_STATE_COMPLETE.
+ * @retval true                 If the current state is @p
+ *                              HAL_DRV_STATE_COMPLETE.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline bool drvStateIsCompleteI(void *ip) {
+  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
+
+  return (bool)(self->state == HAL_DRV_STATE_COMPLETE);
+}
+
+/**
+ * @memberof    hal_cb_driver_c
+ * @public
+ *
+ * @brief       Checks for @p HAL_DRV_STATE_ERROR state.
+ * @details     The @p HAL_DRV_STATE_ERROR state during a callback marks an
+ *              error in an asynchronous operation, the operation is implicitly
+ *              stopped and the driver is switched back to its @p
+ *              HAL_DRV_STATE_READY state.
+ * @note        This function is meant to be called exclusively from the driver
+ *              callback.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ * @return                      The check result.
+ * @retval false                If the current state is not @p
+ *                              HAL_DRV_STATE_ERROR.
+ * @retval true                 If the current state is @p HAL_DRV_STATE_ERROR.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline bool drvStateIsErrorI(void *ip) {
+  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
+
+  return (bool)(self->state == HAL_DRV_STATE_ERROR);
 }
 /** @} */
 

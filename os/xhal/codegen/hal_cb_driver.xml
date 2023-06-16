@@ -7,6 +7,12 @@
     <import>hal_base_driver.xml</import>
   </imports>
   <public>
+    <definitions_early>
+      <group description="Callback-related driver states">
+        <define name="HAL_DRV_STATE_COMPLETE" value="6U" />
+        <define name="HAL_DRV_STATE_ERROR" value="7U" />
+      </group>
+    </definitions_early>
     <types>
       <typedef name="hal_cb_t">
         <brief>Generic HAL notification callback type.</brief>
@@ -29,21 +35,58 @@ self->cb = NULL;]]></implementation>
           <dispose>
             <implementation><![CDATA[ ]]></implementation>
           </dispose>
-          <inline>
-            <method name="drvSetCallback" ctype="void">
-              <brief>Associates a callback to the driver instance.</brief>
+          <virtual>
+            <method name="drvSetCallback" ctype="void" shortname="setcb">
+              <brief>
+                Associates a callback to the driver instance.
+              </brief>
               <param name="cb" ctype="hal_cb_t">
-                Callback function to be associated. Passing @p NULL disables the
-                existing callback, if any.</param>
+                Callback function to be associated. Passing @p NULL
+                disables the existing callback, if any.
+              </param>
               <implementation><![CDATA[
 
 self->cb = cb;]]></implementation>
             </method>
+          </virtual>
+          <inline>
             <method name="drvGetCallback" ctype="hal_cb_t">
               <brief>Returns the callback associated to the driver instance.</brief>
               <implementation><![CDATA[
 
 return self->cb;]]></implementation>
+            </method>
+            <method name="drvStateIsCompleteI" ctype="bool">
+              <brief>Checks for @p HAL_DRV_STATE_COMPLETE state.</brief>
+              <details><![CDATA[The @p HAL_DRV_STATE_COMPLETE state is used by
+                those drivers triggering multiple callbacks for a single
+                asynchronous operation, it marks the last callback in the
+                sequence.]]></details>
+              <note><![CDATA[This function is meant to be called exclusively from
+                the driver callback.]]></note>
+              <return>The check result.</return>
+              <retval value="false">If the current state is not @p HAL_DRV_STATE_COMPLETE.</retval>
+              <retval value="true">If the current state is @p HAL_DRV_STATE_COMPLETE.</retval>
+              <api />
+              <implementation><![CDATA[
+
+return (bool)(self->state == HAL_DRV_STATE_COMPLETE);]]></implementation>
+            </method>
+            <method name="drvStateIsErrorI" ctype="bool">
+              <brief>Checks for @p HAL_DRV_STATE_ERROR state.</brief>
+              <details><![CDATA[The @p HAL_DRV_STATE_ERROR state during a callback
+                marks an error in an asynchronous operation, the operation is
+                implicitly stopped and the driver is switched back to its
+                @p HAL_DRV_STATE_READY state.]]></details>
+              <note><![CDATA[This function is meant to be called exclusively from
+                the driver callback.]]></note>
+              <return>The check result.</return>
+              <retval value="false">If the current state is not @p HAL_DRV_STATE_ERROR.</retval>
+              <retval value="true">If the current state is @p HAL_DRV_STATE_ERROR.</retval>
+              <api />
+              <implementation><![CDATA[
+
+return (bool)(self->state == HAL_DRV_STATE_ERROR);]]></implementation>
             </method>
           </inline>
         </methods>

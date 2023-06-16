@@ -43,8 +43,6 @@
 #define HAL_DRV_STATE_STARTING              3U
 #define HAL_DRV_STATE_READY                 4U
 #define HAL_DRV_STATE_ACTIVE                5U
-#define HAL_DRV_STATE_COMPLETE              6U
-#define HAL_DRV_STATE_ERROR                 7U
 /** @} */
 
 /*===========================================================================*/
@@ -161,6 +159,10 @@ struct hal_base_driver {
    * @brief       Driver state.
    */
   driver_state_t            state;
+  /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
   /**
    * @brief       Driver argument.
    */

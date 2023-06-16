@@ -122,6 +122,64 @@ void __spi_dispose_impl(void *ip) {
   /* Finalization of the ancestors-defined parts.*/
   __cbdrv_dispose_impl(self);
 }
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p __drv_start().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @return                      The operation status.
+ */
+msg_t __spi_start_impl(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p __drv_stop().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ */
+void __spi_stop_impl(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p drvConfigureX().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     config        New driver configuration.
+ */
+msg_t __spi_configure_impl(void *ip, const void *config) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  self->config = config;
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p drvSetCallback().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param         cb            Callback function to be associated. Passing @p
+ *                              NULL disables the existing callback, if any.
+ */
+void __spi_setcb_impl(void *ip, hal_cb_t cb) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  __cbdrv_setcb_impl(self);
+
+  spi_lld_setcb(self, cb);
+}
 /** @} */
 
 /**
@@ -130,9 +188,10 @@ void __spi_dispose_impl(void *ip) {
  */
 const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .dispose                  = __spi_dispose_impl,
-  .start                    = NULL /* Method not found.*/,
-  .stop                     = NULL /* Method not found.*/,
-  .configure                = NULL /* Method not found.*/
+  .start                    = __spi_start_impl,
+  .stop                     = __spi_stop_impl,
+  .configure                = __spi_configure_impl,
+  .setcb                    = __spi_setcb_impl
 };
 
 /**

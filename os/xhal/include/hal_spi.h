@@ -225,6 +225,7 @@ struct hal_spi_driver_vmt {
   void (*stop)(void *ip);
   msg_t (*configure)(void *ip, const void *config);
   /* From hal_cb_driver_c.*/
+  void (*setcb)(void *ip, hal_cb_t cb);
   /* From hal_spi_driver_c.*/
 };
 
@@ -240,6 +241,10 @@ struct hal_spi_driver {
    * @brief       Driver state.
    */
   driver_state_t            state;
+  /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
   /**
    * @brief       Driver argument.
    */
@@ -269,6 +274,12 @@ struct hal_spi_driver {
    * @note        Can be @p NULL.
    */
   hal_cb_t                  cb;
+#if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+  /**
+   * @brief       Synchronization point for transfer.
+   */
+  thread_reference_t        sync_transfer;
+#endif /* SPI_USE_SYNCHRONIZATION == TRUE */
 #if defined(SPI_DRIVER_EXT_FIELS)
   SPI_DRIVER_EXT_FIELDS
 #endif
@@ -287,6 +298,10 @@ extern "C" {
   /* Methods of hal_spi_driver_c.*/
   void *__spi_objinit_impl(void *ip, const void *vmt);
   void __spi_dispose_impl(void *ip);
+  msg_t __spi_start_impl(void *ip);
+  void __spi_stop_impl(void *ip);
+  msg_t __spi_configure_impl(void *ip, const void *config);
+  void __spi_setcb_impl(void *ip, hal_cb_t cb);
   msg_t spiStartIgnoreI(void *ip, size_t n);
   msg_t spiStartIgnore(void *ip, size_t n);
   msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf);
@@ -422,6 +437,74 @@ static inline void spiUnselectX(void *ip) {
   palSetPad(self->config->ssport, self->config->sspad);
 }
 #endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LLD */
+#if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Wakes up the waiting thread.
+ * @note        This function is meant to be used in the low level drivers
+ *              implementations only.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     msg           The wakeup message.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  osalSysLockFromISR();
+  osalThreadResumeI(&self->sync_transfer, MSG_OK);
+  osalSysUnlockFromISR();
+}
+
+#else
+CC_FORCE_INLINE
+static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  (void)self;
+}
+#endif /* SPI_USE_SYNCHRONIZATION == TRUE */
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Common ISR code in linear mode.
+ *              This code handles the portable part of the ISR code:
+ *                - Callback invocation.
+ *                - Waiting thread wakeup, if any.
+ *                - Driver state transitions.
+ *                .
+ * @note        This function is meant to be used in the low level drivers
+ *              implementations only.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline void __spi_isr_complete_code(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+  if (self->config->data_cb) {
+    self->state = HAL_DRV_STATE_COMPLETE;
+    self->config->data_cb(spip);
+    if (self->state == HAL_DRV_STATE_COMPLETE)
+      self->state = HAL_DRV_STATE_READY;
+  }
+  else {
+    self->state = HAL_DRV_STATE_READY;
+  }
+
+#if SPI_USE_SYNCHRONIZATION == TRUE
+  /* Thread wakeup, if any.*/
+  osalSysLockFromISR();
+  osalThreadResumeI(&self->sync_transfer, MSG_OK);
+  osalSysUnlockFromISR();
+#endif
+}
 /** @} */
 
 #endif /* HAL_USE_SPI == TRUE */

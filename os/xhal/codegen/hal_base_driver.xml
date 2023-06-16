@@ -17,8 +17,6 @@
         <define name="HAL_DRV_STATE_STARTING" value="3U" />
         <define name="HAL_DRV_STATE_READY" value="4U" />
         <define name="HAL_DRV_STATE_ACTIVE" value="5U" />
-        <define name="HAL_DRV_STATE_COMPLETE" value="6U" />
-        <define name="HAL_DRV_STATE_ERROR" value="7U" />
       </group>
     </definitions_early>
     <configs>
@@ -66,6 +64,9 @@
           <field name="state" ctype="driver_state_t">
             <brief>Driver state.</brief>
           </field>
+          <field name="config" ctype="const void$I*">
+            <brief>Associated configuration structure.</brief>
+          </field>
           <field name="arg" ctype="void$I*">
             <brief>Driver argument.</brief>
           </field>
@@ -89,12 +90,13 @@
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->state = HAL_DRV_STATE_STOP;
-self->arg   = NULL;
+self->state  = HAL_DRV_STATE_STOP;
+self->arg    = NULL;
+self->config = NULL;
 osalMutexObjectInit(&self->mutex);
 #if HAL_USE_REGISTRY == TRUE
-self->id    = 0U;
-self->name  = "unk";
+self->id     = 0U;
+self->name   = "unk";
 drv_reg_insert(self);
 #endif]]></implementation>
           </objinit>

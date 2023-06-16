@@ -104,6 +104,23 @@ void __cbdrv_dispose_impl(void *ip) {
   /* Finalization of the ancestors-defined parts.*/
   __drv_dispose_impl(self);
 }
+
+/**
+ * @memberof    hal_cb_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p drvSetCallback().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ * @param         cb            Callback function to be associated. Passing @p
+ *                              NULL disables the existing callback, if any.
+ */
+void __cbdrv_setcb_impl(void *ip, hal_cb_t cb) {
+  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
+
+  self->cb = cb;
+}
 /** @} */
 
 /** @} */

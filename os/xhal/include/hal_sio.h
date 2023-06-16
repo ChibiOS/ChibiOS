@@ -566,6 +566,10 @@ struct hal_sio_driver {
    */
   driver_state_t            state;
   /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
+  /**
    * @brief       Driver argument.
    */
   void                      *arg;
@@ -672,6 +676,10 @@ struct hal_buffered_sio {
    * @brief       Driver state.
    */
   driver_state_t            state;
+  /**
+   * @brief       Associated configuration structure.
+   */
+  const void                *config;
   /**
    * @brief       Driver argument.
    */

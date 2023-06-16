@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="hal_spi" descr="SPI Driver" check="HAL_USE_SPI == TRUE" editcode="false">
+  name="hal_spi" descr="SPI Driver" check="HAL_USE_SPI == TRUE"
+  editcode="false">
   <brief>SPI Driver macros and structures.</brief>
   <imports>
     <import>hal_cb_driver.xml</import>
@@ -31,7 +32,8 @@
         <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
-      <config name="SPI_SELECT_MODE" default="SPI_SELECT_MODE_PAD">
+      <config name="SPI_SELECT_MODE"
+        default="SPI_SELECT_MODE_PAD">
         <brief>Handling method for SPI CS line.</brief>
         <assert
           invalid="($N &lt; SPI_SELECT_MODE_NONE) || ($N &gt; SPI_SELECT_MODE_LLD)" />
@@ -53,7 +55,8 @@
       </typedef>
       <typedef name="SPIConfig">
         <brief>Type of structure representing a SPI configuration
-          (legacy).</brief>
+          (legacy).
+        </brief>
         <basetype ctype="struct hal_spi_config" />
       </typedef>
       <typedef name="SPIDriver">
@@ -87,13 +90,15 @@
               <brief>Enables the slave mode.</brief>
             </field>
           </condition>
-          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE">
+          <condition
+            check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE">
             <field name="ssline" ctype="ioline_t">
               <brief>The chip select line.</brief>
               <note>Only used in master mode.</note>
             </field>
           </condition>
-          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT">
+          <condition
+            check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT">
             <field name="ssport" ctype="ioportid_t">
               <brief>The chip select port.</brief>
               <note>Only used in master mode.</note>
@@ -103,7 +108,8 @@
               <note>Only used in master mode.</note>
             </field>
           </condition>
-          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD">
+          <condition
+            check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD">
             <field name="ssport" ctype="ioportid_t">
               <brief>The chip select port.</brief>
               <note>Only used in master mode.</note>
@@ -126,12 +132,18 @@ SPI_CONFIG_EXT_FIELDS]]></verbatim>
         ancestorname="hal_cb_driver" descr="SPI driver">
         <brief>Class of a SPI driver.</brief>
         <fields>
+          <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
+            <field name="sync_transfer" ctype="thread_reference_t">
+              <brief>Synchronization point for transfer.</brief>
+            </field>
+          </condition>
           <verbatim><![CDATA[
 #if defined(SPI_DRIVER_EXT_FIELS)
 SPI_DRIVER_EXT_FIELDS
 #endif
 /* End of the mandatory fields.*/
 spi_lld_driver_fields;]]></verbatim>
+          
         </fields>
         <methods>
           <objinit callsuper="true">
@@ -154,7 +166,8 @@ SPI_DRIVER_EXT_INIT_HOOK(self);
               <pre><![CDATA[A slave must have been selected using @p spiSelectX().]]></pre>
               <post><![CDATA[At the end of the operation the callback is invoked,
                 if enabled.]]></post>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 ignored.
               </param>
               <return>The operation status.</return>
@@ -188,7 +201,8 @@ return msg;]]></implementation>
               <pre><![CDATA[A slave must have been selected using @p spiSelectX().]]></pre>
               <post><![CDATA[At the end of the operation the callback is invoked,
                 if enabled.]]></post>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 ignored.
               </param>
               <return>The operation status.</return>
@@ -211,13 +225,16 @@ return msg;]]></implementation>
                 if enabled.]]></post>
               <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 exchanged.
               </param>
-              <param name="txbuf" ctype="const void *" dir="in">Pointer to the
+              <param name="txbuf" ctype="const void *" dir="in">Pointer
+                to the
                 transmit buffer.
               </param>
-              <param name="rxbuf" ctype="void *" dir="out">Pointer to the
+              <param name="rxbuf" ctype="void *" dir="out">Pointer to
+                the
                 receive buffer.
               </param>
               <return>The operation status.</return>
@@ -253,13 +270,16 @@ return msg;]]></implementation>
                 if enabled.]]></post>
               <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 exchanged.
               </param>
-              <param name="txbuf" ctype="const void *" dir="in">Pointer to the
+              <param name="txbuf" ctype="const void *" dir="in">Pointer
+                to the
                 transmit buffer.
               </param>
-              <param name="rxbuf" ctype="void *" dir="out">Pointer to the
+              <param name="rxbuf" ctype="void *" dir="out">Pointer to
+                the
                 receive buffer.
               </param>
               <return>The operation status.</return>
@@ -282,10 +302,12 @@ return msg;]]></implementation>
                 if enabled.]]></post>
               <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 exchanged.
               </param>
-              <param name="txbuf" ctype="const void *" dir="in">Pointer to the
+              <param name="txbuf" ctype="const void *" dir="in">Pointer
+                to the
                 transmit buffer.
               </param>
               <return>The operation status.</return>
@@ -320,10 +342,12 @@ return msg;]]></implementation>
                 if enabled.]]></post>
               <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 exchanged.
               </param>
-              <param name="txbuf" ctype="const void *" dir="in">Pointer to the
+              <param name="txbuf" ctype="const void *" dir="in">Pointer
+                to the
                 transmit buffer.
               </param>
               <return>The operation status.</return>
@@ -346,10 +370,12 @@ return msg;]]></implementation>
                 if enabled.]]></post>
               <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 exchanged.
               </param>
-              <param name="rxbuf" ctype="void *" dir="out">Pointer to the
+              <param name="rxbuf" ctype="void *" dir="out">Pointer to
+                the
                 receive buffer.
               </param>
               <return>The operation status.</return>
@@ -384,10 +410,12 @@ return msg;]]></implementation>
                 if enabled.]]></post>
               <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-              <param name="n" ctype="size_t" dir="in">Number of frames to be
+              <param name="n" ctype="size_t" dir="in">Number of frames
+                to be
                 exchanged.
               </param>
-              <param name="rxbuf" ctype="void *" dir="out">Pointer to the
+              <param name="rxbuf" ctype="void *" dir="out">Pointer to
+                the
                 receive buffer.
               </param>
               <return>The operation status.</return>
@@ -403,7 +431,8 @@ return msg;]]></implementation>
             </method>
             <method name="spiStopTransferI" ctype="msg_t">
               <brief>Stops the ongoing SPI operation.</brief>
-              <param name="np" ctype="size_t *" dir="out">Pointer to the counter
+              <param name="np" ctype="size_t *" dir="out">Pointer to the
+                counter
                 of frames not yet transferred or @p NULL.
               </param>
               <return>The operation status.</return>
@@ -439,7 +468,8 @@ return msg;]]></implementation>
             </method>
             <method name="spiStopTransfer" ctype="msg_t">
               <brief>Stops the ongoing SPI operation.</brief>
-              <param name="np" ctype="size_t *" dir="out">Pointer to the counter
+              <param name="np" ctype="size_t *" dir="out">Pointer to the
+                counter
                 of frames not yet transferred or @p NULL.
               </param>
               <return>The operation status.</return>
@@ -459,14 +489,18 @@ return msg;]]></implementation>
             <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
               <method name="spiSynchronizeS" ctype="msg_t">
                 <note><![CDATA[This function can only be called by a single thread at time.]]></note>
-                <param name="timeout" ctype="sysinterval_t" dir="in">Synchronization
+                <param name="timeout" ctype="sysinterval_t"
+                  dir="in">Synchronization
                   timeout.
                 </param>
                 <return>The synchronization result.</return>
-                <retval value="MSG_OK">If operation completed without errors.
+                <retval value="MSG_OK">If operation completed without
+                  errors.
                 </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.
+                </retval>
+                <retval value="MSG_RESET">If the transfer has been stopped.
+                </retval>
                 <sclass />
                 <implementation><![CDATA[
 msg_t msg;
@@ -487,14 +521,18 @@ return msg;]]></implementation>
               </method>
               <method name="spiSynchronize" ctype="msg_t">
                 <note><![CDATA[This function can only be called by a single thread at time.]]></note>
-                <param name="timeout" ctype="sysinterval_t" dir="in">Synchronization
+                <param name="timeout" ctype="sysinterval_t"
+                  dir="in">Synchronization
                   timeout.
                 </param>
                 <return>The synchronization result.</return>
-                <retval value="MSG_OK">If operation completed without errors.
+                <retval value="MSG_OK">If operation completed without
+                  errors.
                 </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.
+                </retval>
+                <retval value="MSG_RESET">If the transfer has been stopped.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -511,14 +549,18 @@ return msg;]]></implementation>
                 of a series of idle words on the SPI bus and ignores the received
                 data.]]></details>
                 <pre><![CDATA[A slave must have been selected using @p spiSelectX().]]></pre>
-                <param name="n" ctype="size_t" dir="in">Number of frames to be
+                <param name="n" ctype="size_t" dir="in">Number of
+                  frames to be
                   ignored.
                 </param>
                 <return>The operation status.</return>
-                <retval value="MSG_OK">If operation completed without errors.
+                <retval value="MSG_OK">If operation completed without
+                  errors.
                 </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.
+                </retval>
+                <retval value="MSG_RESET">If the transfer has been stopped.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -541,21 +583,27 @@ return msg;]]></implementation>
                 <pre><![CDATA[A slave must have been selected using @p spiSelectX().]]></pre>
                 <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-                <param name="n" ctype="size_t" dir="in">Number of frames to be
+                <param name="n" ctype="size_t" dir="in">Number of
+                  frames to be
                   exchanged.
                 </param>
-                <param name="txbuf" ctype="const void *" dir="in">Pointer to
+                <param name="txbuf" ctype="const void *" dir="in">Pointer
+                  to
                   the
                   transmit buffer.
                 </param>
-                <param name="rxbuf" ctype="void *" dir="out">Pointer to the
+                <param name="rxbuf" ctype="void *" dir="out">Pointer to
+                  the
                   receive buffer.
                 </param>
                 <return>The operation status.</return>
-                <retval value="MSG_OK">If operation completed without errors.
+                <retval value="MSG_OK">If operation completed without
+                  errors.
                 </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.
+                </retval>
+                <retval value="MSG_RESET">If the transfer has been stopped.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -578,18 +626,23 @@ return msg;]]></implementation>
                 <pre><![CDATA[A slave must have been selected using @p spiSelectX().]]></pre>
                 <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-                <param name="n" ctype="size_t" dir="in">Number of frames to be
+                <param name="n" ctype="size_t" dir="in">Number of
+                  frames to be
                   exchanged.
                 </param>
-                <param name="txbuf" ctype="const void *" dir="in">Pointer to
+                <param name="txbuf" ctype="const void *" dir="in">Pointer
+                  to
                   the
                   transmit buffer.
                 </param>
                 <return>The operation status.</return>
-                <retval value="MSG_OK">If operation completed without errors.
+                <retval value="MSG_OK">If operation completed without
+                  errors.
                 </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.
+                </retval>
+                <retval value="MSG_RESET">If the transfer has been stopped.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -610,17 +663,22 @@ return msg;]]></implementation>
                 <pre><![CDATA[A slave must have been selected using @p spiSelectX().]]></pre>
                 <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
-                <param name="n" ctype="size_t" dir="in">Number of frames to be
+                <param name="n" ctype="size_t" dir="in">Number of
+                  frames to be
                   exchanged.
                 </param>
-                <param name="rxbuf" ctype="void *" dir="out">Pointer to the
+                <param name="rxbuf" ctype="void *" dir="out">Pointer to
+                  the
                   receive buffer.
                 </param>
                 <return>The operation status.</return>
-                <retval value="MSG_OK">If operation completed without errors.
+                <retval value="MSG_OK">If operation completed without
+                  errors.
                 </retval>
-                <retval value="MSG_TIMEOUT">If synchronization timed out.</retval>
-                <retval value="MSG_RESET">If the transfer has been stopped.</retval>
+                <retval value="MSG_TIMEOUT">If synchronization timed out.
+                </retval>
+                <retval value="MSG_RESET">If the transfer has been stopped.
+                </retval>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
@@ -637,10 +695,12 @@ return msg;]]></implementation>
             </condition>
           </regular>
           <inline>
-            <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LLD">
+            <condition
+              check="SPI_SELECT_MODE == SPI_SELECT_MODE_LLD">
               <method name="spiSelectX" ctype="void">
                 <brief>Asserts the slave select signal and prepares for
-                  transfers.</brief>
+                  transfers.
+                </brief>
                 <xclass />
                 <implementation><![CDATA[
 
@@ -653,7 +713,8 @@ spi_lld_select(self);]]></implementation>
 
 spi_lld_unselect(self);]]></implementation>
               </method>
-              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE" />
+              <elseif
+                check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE" />
               <method name="spiSelectX" ctype="void">
                 <implementation><![CDATA[
 
@@ -664,7 +725,8 @@ palClearLine(self->config->ssline);]]></implementation>
 
 palSetLine(self->config->ssline);]]></implementation>
               </method>
-              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT" />
+              <elseif
+                check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT" />
               <method name="spiSelectX" ctype="void">
                 <implementation><![CDATA[
 
@@ -675,7 +737,8 @@ palClearPort(self->config->ssport, self->config->ssmask);]]></implementation>
 
 palSetPort(self->config->ssport, self->config->ssmask);]]></implementation>
               </method>
-              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD" />
+              <elseif
+                check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD" />
               <method name="spiSelectX" ctype="void">
                 <implementation><![CDATA[
 
@@ -687,17 +750,90 @@ palClearPad(self->config->ssport, self->config->sspad);]]></implementation>
 palSetPad(self->config->ssport, self->config->sspad);]]></implementation>
               </method>
             </condition>
+            <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
+              <method name="__spi_wakeup_isr" ctype="void">
+                <brief>Wakes up the waiting thread.</brief>
+                <note>This function is meant to be used in the low level
+                  drivers implementations only.
+                </note>
+                <param name="msg" ctype="msg_t" dir="in">The wakeup
+                  message.
+                </param>
+                <notapi />
+                <implementation><![CDATA[
+
+osalSysLockFromISR();
+osalThreadResumeI(&self->sync_transfer, MSG_OK);
+osalSysUnlockFromISR();]]></implementation>
+              </method>
+              <elseif />
+              <method name="__spi_wakeup_isr" ctype="void">
+                <param name="msg" ctype="msg_t" dir="in" />
+                <implementation><![CDATA[
+
+(void)self;]]></implementation>
+              </method>
+            </condition>
+            <method name="__spi_isr_complete_code" ctype="void">
+              <brief>Common ISR code in linear mode.</brief>
+              <details><verbatim><![CDATA[
+This code handles the portable part of the ISR code:
+  - Callback invocation.
+  - Waiting thread wakeup, if any.
+  - Driver state transitions.
+  .
+]]></verbatim></details>
+              <note>This function is meant to be used in the low level
+                drivers implementations only.
+              </note>
+              <notapi />
+              <implementation><![CDATA[
+if (self->config->data_cb) {
+  self->state = HAL_DRV_STATE_COMPLETE;
+  self->config->data_cb(spip);
+  if (self->state == HAL_DRV_STATE_COMPLETE)
+    self->state = HAL_DRV_STATE_READY;
+}
+else {
+  self->state = HAL_DRV_STATE_READY;
+}
+
+#if SPI_USE_SYNCHRONIZATION == TRUE
+/* Thread wakeup, if any.*/
+osalSysLockFromISR();
+osalThreadResumeI(&self->sync_transfer, MSG_OK);
+osalSysUnlockFromISR();
+#endif]]></implementation>
+            </method>
           </inline>
+          <override>
+            <method shortname="start">
+              <implementation><![CDATA[]]></implementation>
+            </method>
+            <method shortname="stop">
+              <implementation><![CDATA[]]></implementation>
+            </method>
+            <method shortname="configure">
+              <implementation><![CDATA[
+
+self->config = config;]]></implementation>
+            </method>
+            <method shortname="setcb">
+              <implementation><![CDATA[
+
+__cbdrv_setcb_impl(self);
+
+spi_lld_setcb(self, cb);]]></implementation>
+            </method>
+          </override>
         </methods>
       </class>
     </types>
     <functions>
       <function name="spiInit" ctype="void">
         <brief>SPI Driver initialization.</brief>
-        <note>
-          This function is implicitly invoked by @p halInit(), there is no
-          need to explicitly initialize the driver.
-        </note>
+        <note><![CDATA[This function is implicitly invoked by @p halInit(),
+          there is no need to explicitly initialize the driver.]]></note>
         <init />
         <implementation><![CDATA[
 
