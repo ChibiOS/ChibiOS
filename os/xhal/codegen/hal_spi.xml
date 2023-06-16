@@ -788,17 +788,10 @@ This code handles the portable part of the ISR code:
               </note>
               <notapi />
               <implementation><![CDATA[
-if (self->cb != NULL) {
-  self->state = HAL_DRV_STATE_COMPLETE;
-  self->cb(self);
-  if (self->state == HAL_DRV_STATE_COMPLETE) {
-    self->state = HAL_DRV_STATE_READY;
-  }
-}
-else {
-  self->state = HAL_DRV_STATE_READY;
-}
 
+__cbdrv_invoke_cb_with_transition(self,
+                                  HAL_DRV_STATE_COMPLETE,
+                                  HAL_DRV_STATE_READY);
 __spi_wakeup_isr(self);]]></implementation>
             </method>
             <method name="__spi_isr_half_code" ctype="void">
@@ -811,9 +804,7 @@ __spi_wakeup_isr(self);]]></implementation>
               <notapi />
               <implementation><![CDATA[
 
-if (self->cb != NULL) {
-  self->cb(self);
-}]]></implementation>
+__cbdrv_invoke_cb(self);]]></implementation>
             </method>
             <method name="__spi_isr_full_code" ctype="void">
               <brief>Full buffer filled ISR code in circular mode.</brief>
@@ -825,13 +816,9 @@ if (self->cb != NULL) {
               <notapi />
               <implementation><![CDATA[
 
-if (self->cb != NULL) {
-  self->state = HAL_DRV_STATE_COMPLETE;
-  self->cb(self);
-  if (self->state == HAL_DRV_STATE_COMPLETE) {
-    self->state = HAL_DRV_STATE_ACTIVE;
-  }
-}]]></implementation>
+__cbdrv_invoke_cb_with_transition(self,
+                                  HAL_DRV_STATE_COMPLETE,
+                                  HAL_DRV_STATE_ACTIVE);]]></implementation>
             </method>
             <method name="__spi_isr_error_code" ctype="void">
               <brief>ISR error reporting code..</brief>
@@ -844,14 +831,9 @@ if (self->cb != NULL) {
               <notapi />
               <implementation><![CDATA[
 
-if (self->cb != NULL) {
-  self->state = HAL_DRV_STATE_ERROR;
-  self->cb(self);
-  if (self->state == HAL_DRV_STATE_ERROR) {
-    self->state = HAL_DRV_STATE_READY;
-  }
-}
-
+__cbdrv_invoke_cb_with_transition(self,
+                                  HAL_DRV_STATE_ERROR,
+                                  HAL_DRV_STATE_READY);
 __spi_wakeup_isr(self, msg);]]></implementation>
             </method>
           </inline>

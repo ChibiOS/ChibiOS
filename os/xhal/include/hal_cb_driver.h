@@ -51,6 +51,48 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @name    Support macros
+ * @{
+ */
+/**
+ * @brief       Callback invocation.
+ *
+ * @param[in,out] self          Pointer to driver instance.
+ *
+ * @notapi
+ */
+#define __cbdrv_invoke_cb(self)                                             \
+  do {                                                                      \
+    if ((self)->cb != NULL) {                                               \
+      (self)->cb(self);                                                     \
+    }                                                                       \
+  } while (false)
+
+/**
+ * @brief       Callback invocation with state transitions management.
+ *
+ * @param[in,out] self          Pointer to driver instance.
+ * @param[in]     cbstate       Driver state during callback execution.
+ * @param[in]     endstate      Driver state after callback return.
+ *
+ * @notapi
+ */
+#define __cbdrv_invoke_cb_with_transition(self, cbstate, endstate)          \
+  do {                                                                      \
+    if ((self)->cb != NULL) {                                               \
+      (self)->state = (cbstate);                                            \
+      (self)->cb(self);                                                     \
+      if ((self)->state == (cbstate)) {                                     \
+        (self)->state = (endstate);                                         \
+      }                                                                     \
+    }                                                                       \
+    else {                                                                  \
+      self->state = (endstate);                                             \
+    }                                                                       \
+  } while (false)
+/** @} */
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
