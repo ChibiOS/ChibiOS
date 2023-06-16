@@ -574,9 +574,14 @@ CC_FORCE_INLINE
 static inline void __spi_isr_error_code(void *ip, msg_t msg) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  if (self->cb) {
+  if (self->cb != NULL) {
+    self->state = HAL_DRV_STATE_ERROR;
     self->cb(self);
+    if (self->state == HAL_DRV_STATE_ERROR) {
+      self->state = HAL_DRV_STATE_READY;
+    }
   }
+
   __spi_wakeup_isr(self, msg);
 }
 /** @} */

@@ -844,9 +844,14 @@ if (self->cb != NULL) {
               <notapi />
               <implementation><![CDATA[
 
-if (self->cb) {
+if (self->cb != NULL) {
+  self->state = HAL_DRV_STATE_ERROR;
   self->cb(self);
+  if (self->state == HAL_DRV_STATE_ERROR) {
+    self->state = HAL_DRV_STATE_READY;
+  }
 }
+
 __spi_wakeup_isr(self, msg);]]></implementation>
             </method>
           </inline>
