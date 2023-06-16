@@ -725,11 +725,15 @@ CC_FORCE_INLINE
                   modifiers  = modifiers
                   nodoc      = nodoc /]
 #endif /* ${condcheck} */
+      [#if this?has_next]
+
+      [/#if]
     [#elseif this?node_name == "elseif"]
       [#local nodoc = true]
       [#local condcheck = (this.@check[0]!"")?trim]
       [#if condcheck?length == 0]
 #else
+
       [#else]
 #elif ${condcheck}
       [/#if]

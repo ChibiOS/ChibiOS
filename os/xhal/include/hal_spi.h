@@ -437,6 +437,7 @@ static inline void spiUnselectX(void *ip) {
   palSetPad(self->config->ssport, self->config->sspad);
 }
 #endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LLD */
+
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**
  * @memberof    hal_spi_driver_c
@@ -461,6 +462,7 @@ static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
 }
 
 #else
+
 CC_FORCE_INLINE
 static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
@@ -468,6 +470,7 @@ static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
   (void)self;
 }
 #endif /* SPI_USE_SYNCHRONIZATION == TRUE */
+
 /**
  * @memberof    hal_spi_driver_c
  * @public
@@ -488,22 +491,93 @@ static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
 CC_FORCE_INLINE
 static inline void __spi_isr_complete_code(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-  if (self->config->data_cb) {
+  if (self->cb != NULL) {
     self->state = HAL_DRV_STATE_COMPLETE;
-    self->config->data_cb(spip);
-    if (self->state == HAL_DRV_STATE_COMPLETE)
+    self->cb(self);
+    if (self->state == HAL_DRV_STATE_COMPLETE) {
       self->state = HAL_DRV_STATE_READY;
+    }
   }
   else {
     self->state = HAL_DRV_STATE_READY;
   }
 
-#if SPI_USE_SYNCHRONIZATION == TRUE
-  /* Thread wakeup, if any.*/
-  osalSysLockFromISR();
-  osalThreadResumeI(&self->sync_transfer, MSG_OK);
-  osalSysUnlockFromISR();
-#endif
+  __spi_wakeup_isr(self);
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Half buffer filled ISR code in circular mode.
+ * @details     The callback is invoked with driver
+ *                             state set to @p HAL_DRV_STATE_ACTIVE.
+ * @note        This function is meant to be used in the low level drivers
+ *              implementations only.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline void __spi_isr_half_code(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  if (self->cb != NULL) {
+    self->cb(self);
+  }
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Full buffer filled ISR code in circular mode.
+ * @details     The callback is invoked with driver
+ *                             state set to @p HAL_DRV_STATE_COMPLETE.
+ * @note        This function is meant to be used in the low level drivers
+ *              implementations only.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline void __spi_isr_full_code(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  if (self->cb != NULL) {
+    self->state = HAL_DRV_STATE_COMPLETE;
+    self->cb(self);
+    if (self->state == HAL_DRV_STATE_COMPLETE) {
+      self->state = HAL_DRV_STATE_ACTIVE;
+    }
+  }
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       ISR error reporting code..
+ * @details     The callback is invoked with driver
+ *                             state set to @p HAL_DRV_STATE_ERROR.
+ * @note        This function is meant to be used in the low level drivers
+ *              implementations only.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     msg           The error code.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline void __spi_isr_error_code(void *ip, msg_t msg) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  if (self->cb) {
+    self->cb(self);
+  }
+  __spi_wakeup_isr(self, msg);
 }
 /** @} */
 

@@ -788,22 +788,66 @@ This code handles the portable part of the ISR code:
               </note>
               <notapi />
               <implementation><![CDATA[
-if (self->config->data_cb) {
+if (self->cb != NULL) {
   self->state = HAL_DRV_STATE_COMPLETE;
-  self->config->data_cb(spip);
-  if (self->state == HAL_DRV_STATE_COMPLETE)
+  self->cb(self);
+  if (self->state == HAL_DRV_STATE_COMPLETE) {
     self->state = HAL_DRV_STATE_READY;
+  }
 }
 else {
   self->state = HAL_DRV_STATE_READY;
 }
 
-#if SPI_USE_SYNCHRONIZATION == TRUE
-/* Thread wakeup, if any.*/
-osalSysLockFromISR();
-osalThreadResumeI(&self->sync_transfer, MSG_OK);
-osalSysUnlockFromISR();
-#endif]]></implementation>
+__spi_wakeup_isr(self);]]></implementation>
+            </method>
+            <method name="__spi_isr_half_code" ctype="void">
+              <brief>Half buffer filled ISR code in circular mode.</brief>
+             <details><verbatim><![CDATA[The callback is invoked with driver
+               state set to @p HAL_DRV_STATE_ACTIVE.]]></verbatim></details>
+              <note>This function is meant to be used in the low level
+                drivers implementations only.
+              </note>
+              <notapi />
+              <implementation><![CDATA[
+
+if (self->cb != NULL) {
+  self->cb(self);
+}]]></implementation>
+            </method>
+            <method name="__spi_isr_full_code" ctype="void">
+              <brief>Full buffer filled ISR code in circular mode.</brief>
+             <details><verbatim><![CDATA[The callback is invoked with driver
+               state set to @p HAL_DRV_STATE_COMPLETE.]]></verbatim></details>
+              <note>This function is meant to be used in the low level
+                drivers implementations only.
+              </note>
+              <notapi />
+              <implementation><![CDATA[
+
+if (self->cb != NULL) {
+  self->state = HAL_DRV_STATE_COMPLETE;
+  self->cb(self);
+  if (self->state == HAL_DRV_STATE_COMPLETE) {
+    self->state = HAL_DRV_STATE_ACTIVE;
+  }
+}]]></implementation>
+            </method>
+            <method name="__spi_isr_error_code" ctype="void">
+              <brief>ISR error reporting code..</brief>
+             <details><verbatim><![CDATA[The callback is invoked with driver
+               state set to @p HAL_DRV_STATE_ERROR.]]></verbatim></details>
+              <note>This function is meant to be used in the low level
+                drivers implementations only.
+              </note>
+              <param name="msg" ctype="msg_t" dir="in">The error code.</param>
+              <notapi />
+              <implementation><![CDATA[
+
+if (self->cb) {
+  self->cb(self);
+}
+__spi_wakeup_isr(self, msg);]]></implementation>
             </method>
           </inline>
           <override>
