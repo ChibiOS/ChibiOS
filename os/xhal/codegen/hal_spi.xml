@@ -839,10 +839,14 @@ __spi_wakeup_isr(self, msg);]]></implementation>
           </inline>
           <override>
             <method shortname="start">
-              <implementation><![CDATA[]]></implementation>
+              <implementation><![CDATA[
+
+return spi_lld_start(self);]]></implementation>
             </method>
             <method shortname="stop">
-              <implementation><![CDATA[]]></implementation>
+              <implementation><![CDATA[
+
+spi_lld_stop(self);]]></implementation>
             </method>
             <method shortname="configure">
               <implementation><![CDATA[
