@@ -92,31 +92,37 @@
  */
 #define HAL_RET_SUCCESS         MSG_OK
 /**
+ * @brief   Operation requested during invalid driver state.
+ * @details This error is returned if the driver cannot accept the request
+ *          because its internal state.
+ */
+#define HAL_RET_INV_STATE       (msg_t)-16
+/**
  * @brief   Configuration error.
  * @details An error has been detected in the driver configuration structure.
  */
-#define HAL_RET_CONFIG_ERROR    (msg_t)-16
+#define HAL_RET_CONFIG_ERROR    (msg_t)-17
 /**
  * @brief   A required resource is not available.
  * @details One of the resources required for driver operations is not
  *          available.
  */
-#define HAL_RET_NO_RESOURCE     (msg_t)-17
+#define HAL_RET_NO_RESOURCE     (msg_t)-18
 /**
  * @brief   The peripheral is busy.
  * @details The peripheral is not available or taken by some other system
  *          actor.
  */
-#define HAL_RET_HW_BUSY         (msg_t)-18
+#define HAL_RET_HW_BUSY         (msg_t)-19
 /**
  * @brief   Peripheral failure.
  * @details Peripheral failed, for example HW timeouts.
  */
-#define HAL_RET_HW_FAILURE      (msg_t)-19
+#define HAL_RET_HW_FAILURE      (msg_t)-20
 /**
  * @brief   Unknown control code.
  */
-#define HAL_RET_UNKNOWN_CTL     (msg_t)-20
+#define HAL_RET_UNKNOWN_CTL     (msg_t)-21
 /** @} */
 
 /*===========================================================================*/

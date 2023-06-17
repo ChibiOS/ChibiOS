@@ -116,7 +116,8 @@ drv_reg_remove(self);
               <brief>Low level driver stop.</brief>
               <notapi />
             </method>
-            <method name="drvConfigureX" shortname="configure" ctype="msg_t">
+            <method name="drvConfigureX" shortname="configure"
+              ctype="msg_t">
               <brief>Driver configure.</brief>
               <details><![CDATA[Applies a new configuration to the driver. The
                 configuration structure is architecture-dependent.]]>
@@ -126,7 +127,8 @@ drv_reg_remove(self);
                 depending on the driver implementation and current state.]]>
               </note>
               <param ctype="const void *" name="config" dir="in">
-                New driver configuration.
+                New driver
+                configuration.
               </param>
               <api />
             </method>
@@ -138,8 +140,23 @@ drv_reg_remove(self);
                 call the peripheral is physically initialized using a
                 default configuration, subsequent calls are ignored.]]>
               </details>
+              <note><![CDATA[The function can fail with error
+                @p HAL_RET_INV_STATE if called while the driver is already
+                being started or stopped. In case you need multiple threads
+                to perform start and stop operation on the driver then it is
+                suggested to lock/unlock the driver during such operations.]]></note>
               <return>The operation status.</return>
               <retval value="HAL_RET_SUCCESS">Operation successful.</retval>
+              <retval value="HAL_RET_INV_STATE"><![CDATA[If the driver was
+                in one of @p HAL_DRV_STATE_UNINIT, @p HAL_DRV_STATE_STARTING
+                or @p HAL_DRV_STATE_STOPPING states.]]></retval>
+              <retval value="HAL_RET_NO_RESOURCE">If a required resources
+                cannot be allocated.
+              </retval>
+              <retval value="HAL_RET_HW_BUSY">If a required HW resource is
+                already in use.
+              </retval>
+              <retval value="HAL_RET_HW_FAILURE">If an HW failure occurred.</retval>
               <api />
               <implementation><![CDATA[
 msg_t msg = HAL_RET_SUCCESS;
@@ -148,20 +165,28 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 
-osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
-              (self->state != HAL_DRV_STATE_STOPPING) &&
-              (self->state != HAL_DRV_STATE_STARTING),
-              "invalid state");
-
-if (self->state == HAL_DRV_STATE_STOP) {
+switch (self->state) {
+case HAL_DRV_STATE_UNINIT:
+  /* Falls through.*/
+case HAL_DRV_STATE_STARTING:
+  /* Falls through.*/
+case HAL_DRV_STATE_STOPPING:
+  msg = HAL_RET_INV_STATE;
+  break;
+case HAL_DRV_STATE_STOP:
   /* Physically starting the peripheral.*/
   msg = __drv_start(self);
   if (msg == HAL_RET_SUCCESS) {
     self->state = HAL_DRV_STATE_READY;
+
+    /* LLD is supposed to set a default configuration.*/
+    osalDbgAssert(self->config != NULL, "no configuration");
   }
   else {
     self->state = HAL_DRV_STATE_STOP;
-  }  
+  }
+default:
+  /* Any other state ignored, driver already started.*/
 }
 
 osalSysUnlock();
@@ -180,13 +205,13 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 
-osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
-              (self->state != HAL_DRV_STATE_STARTING),
-              "invalid state");
+osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
 
-if (self->state != HAL_DRV_STATE_STOP) {
+if ((self->state != HAL_DRV_STATE_STOP) &&
+    (self->state != HAL_DRV_STATE_STARTING)) {
   __drv_stop(self);
-  self->state = HAL_DRV_STATE_STOP;
+  self->state  = HAL_DRV_STATE_STOP;
+  self->config = NULL;
 }
 
 osalSysUnlock();]]></implementation>
@@ -204,7 +229,8 @@ return self->state;]]></implementation>
             <method name="drvSetStateX" ctype="void">
               <brief>Driver state set.</brief>
               <param ctype="driver_state_t" name="state" dir="in">
-                New driver state.
+                New driver
+                state.
               </param>
               <api />
               <implementation><![CDATA[
@@ -319,7 +345,8 @@ return oopGetOwner(hal_base_driver_c, regent, rep);]]></implementation>
             This function is only available when HAL registry is enabled.
           </note>
           <param name="drvp" ctype="hal_base_driver_c *" dir="in">
-            Previously found driver.
+            Previously
+            found driver.
           </param>
           <return>A pointer to the next driver object.</return>
           <retval value="NULL">If there is no next driver.</retval>
@@ -346,8 +373,10 @@ return oopGetOwner(hal_base_driver_c, regent, rep);]]></implementation>
           </note>
           <param name="name" ctype="const char *" dir="in">Driver name.</param>
           <param name="msgp" ctype="msg_t *" dir="out">
-            Pointer to store the error code or @p NULL. Note that in case of
-            driver not found the returned code is @p HAL_RET_SUCCESS.
+            Pointer to store the
+            error code or @p NULL. Note that in case of
+            driver not found the
+            returned code is @p HAL_RET_SUCCESS.
           </param>
           <return>A reference to the driver.</return>
           <retval value="NULL">If an error occurred.</retval>
@@ -395,7 +424,8 @@ return drvp;]]></implementation>
             This function is only available when HAL registry is enabled.
           </note>
           <param name="drvp" ctype="hal_base_driver_c *" dir="both">
-            Pointer to the @p hal_base_driver_c instance to be inserted.
+            Pointer to
+            the @p hal_base_driver_c instance to be inserted.
           </param>
           <implementation><![CDATA[
 
@@ -407,7 +437,8 @@ hal_registry.prev       = &drvp->regent;]]></implementation>
         <function name="drv_reg_remove" ctype="void">
           <brief>Driver removal from the HAL registry.</brief>
           <param name="drvp" ctype="hal_base_driver_c *" dir="both">
-            Pointer to the @p hal_base_driver_c instance to be inserted.
+            Pointer to
+            the @p hal_base_driver_c instance to be inserted.
           </param>
           <implementation><![CDATA[
 

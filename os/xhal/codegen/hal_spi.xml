@@ -851,7 +851,8 @@ spi_lld_stop(self);]]></implementation>
             <method shortname="configure">
               <implementation><![CDATA[
 
-self->config = config;]]></implementation>
+self->config = config;
+spi_lld_configure(self);]]></implementation>
             </method>
             <method shortname="setcb">
               <implementation><![CDATA[

@@ -134,6 +134,8 @@ void __spi_dispose_impl(void *ip) {
  */
 msg_t __spi_start_impl(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  return spi_lld_start(self);
 }
 
 /**
@@ -146,6 +148,8 @@ msg_t __spi_start_impl(void *ip) {
  */
 void __spi_stop_impl(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  spi_lld_stop(self);
 }
 
 /**
@@ -161,6 +165,7 @@ msg_t __spi_configure_impl(void *ip, const void *config) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
   self->config = config;
+  spi_lld_configure(self);
 }
 
 /**

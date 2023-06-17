@@ -266,10 +266,21 @@ void __drv_dispose_impl(void *ip) {
  * @details     Starts driver operations, on the 1st call the peripheral is
  *              physically initialized using a default configuration,
  *              subsequent calls are ignored.
+ * @note        The function can fail with error @p HAL_RET_INV_STATE if called
+ *              while the driver is already being started or stopped. In case
+ *              you need multiple threads performing start and stop operation
+ *              on the driver then it is suggested to lock/unlock the driver
+ *              during such operations.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
  * @return                      The operation status.
  * @retval HAL_RET_SUCCESS      Operation successful.
+ * @retval HAL_RET_INV_STATE    If the driver was in one of @p
+ *                              HAL_DRV_STATE_UNINIT, @p HAL_DRV_STATE_STARTING
+ *                              or @p HAL_DRV_STATE_STOPPING states.
+ * @retval HAL_RET_NO_RESOURCE  If a required resources cannot be allocated.
+ * @retval HAL_RET_HW_BUSY      If a required HW resource is already in use.
+ * @retval HAL_RET_HW_FAILURE   If an HW failure occurred.
  *
  * @api
  */
@@ -281,20 +292,28 @@ msg_t drvStart(void *ip) {
 
   osalSysLock();
 
-  osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
-                (self->state != HAL_DRV_STATE_STOPPING) &&
-                (self->state != HAL_DRV_STATE_STARTING),
-                "invalid state");
-
-  if (self->state == HAL_DRV_STATE_STOP) {
+  switch (self->state) {
+  case HAL_DRV_STATE_UNINIT:
+    /* Falls through.*/
+  case HAL_DRV_STATE_STARTING:
+    /* Falls through.*/
+  case HAL_DRV_STATE_STOPPING:
+    msg = HAL_RET_INV_STATE;
+    break;
+  case HAL_DRV_STATE_STOP:
     /* Physically starting the peripheral.*/
     msg = __drv_start(self);
     if (msg == HAL_RET_SUCCESS) {
       self->state = HAL_DRV_STATE_READY;
+
+      /* LLD is supposed to set a default configuration.*/
+      osalDbgAssert(self->config != NULL, "no configuration");
     }
     else {
       self->state = HAL_DRV_STATE_STOP;
-    }  
+    }
+  default:
+    /* Any other state ignored, driver already started.*/
   }
 
   osalSysUnlock();
@@ -321,13 +340,13 @@ void drvStop(void *ip) {
 
   osalSysLock();
 
-  osalDbgAssert((self->state != HAL_DRV_STATE_UNINIT) &&
-                (self->state != HAL_DRV_STATE_STARTING),
-                "invalid state");
+  osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
 
-  if (self->state != HAL_DRV_STATE_STOP) {
+  if ((self->state != HAL_DRV_STATE_STOP) &&
+      (self->state != HAL_DRV_STATE_STARTING)) {
     __drv_stop(self);
-    self->state = HAL_DRV_STATE_STOP;
+    self->state  = HAL_DRV_STATE_STOP;
+    self->config = NULL;
   }
 
   osalSysUnlock();
