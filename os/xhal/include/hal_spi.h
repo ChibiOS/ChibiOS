@@ -114,6 +114,17 @@
 /*===========================================================================*/
 
 /**
+ * @brief       Return a pointer to the configuration structure.
+ *
+ * @param         ip            Pointer to the @p hal_sio_driver_c object.
+ * @return                      A pointer to the configuration structure.
+ *
+ * @notapi
+ */
+#define __spi_getconf(ip)                                                   \
+  ((const hal_spi_config_t *)((ip)->config))
+
+/**
  * @brief       Retrieves a configuration field.
  *
  * @param         ip            Pointer to the @p hal_sio_driver_c object.
@@ -122,8 +133,8 @@
  *
  * @notapi
  */
-#define __spi_getconf(ip, field)                                            \
-  ((const hal_spi_config_t *)((ip)->config))->field
+#define __spi_getfield(ip, field)                                           \
+  (__spi_getconf(ip)->field)
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -408,14 +419,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearLine(__spi_getconf(self, ssline));
+  palClearLine(__spi_getfield(self, ssline));
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetLine(__spi_getconf(self, ssline));
+  palSetLine(__spi_getfield(self, ssline));
 }
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
@@ -423,14 +434,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearPort(__spi_getconf(self, ssport), __spi_getconf(self, ssmask));
+  palClearPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetPort(__spi_getconf(self, ssport), __spi_getconf(self, ssmask));
+  palSetPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));
 }
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
@@ -438,14 +449,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearPad(__spi_getconf(self, ssport), __spi_getconf(self, sspad));
+  palClearPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetPad(__spi_getconf(self, ssport), __spi_getconf(self, sspad));
+  palSetPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));
 }
 #endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LLD */
 

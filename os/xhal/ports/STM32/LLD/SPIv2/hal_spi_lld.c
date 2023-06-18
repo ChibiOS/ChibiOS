@@ -126,16 +126,17 @@ SPIDriver SPID6;
  * @param[in] spip      pointer to the @p SPIDriver object
  */
 static void spi_lld_enable(SPIDriver *spip) {
+  const hal_spi_config_t *config = __spi_getconf(spip);
   uint32_t cr1, cr2;
 
   /* SPI setup.*/
-  if (spip->config->slave) {
-    cr1  = spip->config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
-    cr2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+  if (config->slave) {
+    cr1  = config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
+    cr2  = config->cr2 | SPI_CR2_FRXTH | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   }
   else {
-    cr1  = (spip->config->cr1 | SPI_CR1_MSTR) & ~SPI_CR1_SPE;
-    cr2  = spip->config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
+    cr1  = (config->cr1 | SPI_CR1_MSTR) & ~SPI_CR1_SPE;
+    cr2  = config->cr2 | SPI_CR2_FRXTH | SPI_CR2_SSOE | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   }
 
   spip->spi->CR1 = cr1;
@@ -154,7 +155,7 @@ static void spi_lld_enable(SPIDriver *spip) {
  */
 static void spi_lld_disable(SPIDriver *spip) {
 
-  if (!spip->config->slave) {
+  if (!__spi_getfield(spip, slave)) {
     /* Master mode, stopping gracefully.*/
 
     /* Stopping TX DMA channel.*/
@@ -246,7 +247,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     /* Reporting the failure.*/
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
-  else if (spip->config->circular) {
+  else if (__spi_getfield(spip, circular)) {
     if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
       __spi_isr_half_code(spip);
@@ -460,7 +461,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
   spip->txsource = (uint32_t)STM32_SPI_FILLER_PATTERN;
 
   /* If in stopped state then enables the SPI and DMA clocks.*/
-  if (spip->state == SPI_STOP) {
+  if (spip->state == DRV_STATE_STOP) {
     if (false) {
     }
 
@@ -586,7 +587,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
   }
 
   /* Configuration-specific DMA setup.*/
-  ds = spip->config->cr2 & SPI_CR2_DS;
+  ds = __spi_getfield(spip, cr2) & SPI_CR2_DS;
   if (!ds || (ds <= (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0))) {
     /* Frame width is 8 bits or smaller.*/
     spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
@@ -602,7 +603,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
                       STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
   }
 
-  if (spip->config->circular) {
+  if (__spi_getfield(spip, circular)) {
     spip->rxdmamode |= (STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
     spip->txdmamode |= (STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
   }
@@ -895,9 +896,9 @@ uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame) {
    * Byte size access (uint8_t *) for transactions that are <= 8-bit.
    * Halfword size access (uint16_t) for transactions that are <= 8-bit.
    */
-  if ((spip->config->cr2 & SPI_CR2_DS) <= (SPI_CR2_DS_2 |
-                                           SPI_CR2_DS_1 |
-                                           SPI_CR2_DS_0)) {
+  if ((__spi_getfield(spip, cr2) & SPI_CR2_DS) <= (SPI_CR2_DS_2 |
+                                                   SPI_CR2_DS_1 |
+                                                   SPI_CR2_DS_0)) {
     volatile uint8_t *dr8p = (volatile uint8_t *)&spip->spi->DR;
     *dr8p = (uint8_t)frame;
     while ((spip->spi->SR & SPI_SR_RXNE) == 0U) {

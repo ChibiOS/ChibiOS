@@ -48,13 +48,19 @@
     </configs>
     <macros>
       <macro name="__spi_getconf">
+        <brief>Return a pointer to the configuration structure.</brief>
+        <param name="ip">Pointer to the @p hal_sio_driver_c object.</param>
+        <return>A pointer to the configuration structure.</return>
+        <notapi />
+        <implementation><![CDATA[((const hal_spi_config_t *)((ip)->config))]]></implementation>
+      </macro>
+      <macro name="__spi_getfield">
         <brief>Retrieves a configuration field.</brief>
         <param name="ip">Pointer to the @p hal_sio_driver_c object.</param>
         <param name="field">Configuration field to be retrieved.</param>
         <return>The field value.</return>
         <notapi />
-        <implementation><![CDATA[
-((const hal_spi_config_t *)((ip)->config))->field]]></implementation>
+        <implementation><![CDATA[(__spi_getconf(ip)->field)]]></implementation>
       </macro>
     </macros>
     <types>
@@ -184,7 +190,7 @@ osalDbgCheckClassI();
 
 osalDbgCheck((self != NULL) && (n > 0U));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -253,7 +259,7 @@ osalDbgCheckClassI();
 osalDbgCheck((self != NULL) && (n > 0U) &&
              (rxbuf != NULL) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -326,7 +332,7 @@ osalDbgCheckClassI();
 
 osalDbgCheck((self != NULL) && (n > 0U) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -395,7 +401,7 @@ osalDbgCheckClassI();
 
 osalDbgCheck((self != NULL) && (n > 0U) && (rxbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -722,34 +728,34 @@ spi_lld_unselect(self);]]></implementation>
               <method name="spiSelectX" ctype="void">
                 <implementation><![CDATA[
 
-palClearLine(__spi_getconf(self, ssline));]]></implementation>
+palClearLine(__spi_getfield(self, ssline));]]></implementation>
               </method>
               <method name="spiUnselectX" ctype="void">
                 <implementation><![CDATA[
 
-palSetLine(__spi_getconf(self, ssline));]]></implementation>
+palSetLine(__spi_getfield(self, ssline));]]></implementation>
               </method>
               <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT" />
               <method name="spiSelectX" ctype="void">
                 <implementation><![CDATA[
 
-palClearPort(__spi_getconf(self, ssport), __spi_getconf(self, ssmask));]]></implementation>
+palClearPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));]]></implementation>
               </method>
               <method name="spiUnselectX" ctype="void">
                 <implementation><![CDATA[
 
-palSetPort(__spi_getconf(self, ssport), __spi_getconf(self, ssmask));]]></implementation>
+palSetPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));]]></implementation>
               </method>
               <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD" />
               <method name="spiSelectX" ctype="void">
                 <implementation><![CDATA[
 
-palClearPad(__spi_getconf(self, ssport), __spi_getconf(self, sspad));]]></implementation>
+palClearPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));]]></implementation>
               </method>
               <method name="spiUnselectX" ctype="void">
                 <implementation><![CDATA[
 
-palSetPad(__spi_getconf(self, ssport), __spi_getconf(self, sspad));]]></implementation>
+palSetPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));]]></implementation>
               </method>
             </condition>
             <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
