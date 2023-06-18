@@ -113,6 +113,18 @@
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief       Retrieves a configuration field.
+ *
+ * @param         ip            Pointer to the @p hal_sio_driver_c object.
+ * @param         field         Configuration field to be retrieved.
+ * @return                      The field value.
+ *
+ * @notapi
+ */
+#define __spi_getconf(ip, field)                                            \
+  ((const hal_spi_config_t *)((ip)->config))->field
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -301,7 +313,6 @@ extern "C" {
   msg_t __spi_start_impl(void *ip);
   void __spi_stop_impl(void *ip);
   const void *__spi_doconf_impl(void *ip, const void *config);
-  void __spi_setcb_impl(void *ip, hal_cb_t cb);
   msg_t spiStartIgnoreI(void *ip, size_t n);
   msg_t spiStartIgnore(void *ip, size_t n);
   msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf);
@@ -397,14 +408,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearLine(self->config->ssline);
+  palClearLine(__spi_getconf(self, ssline));
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetLine(self->config->ssline);
+  palSetLine(__spi_getconf(self, ssline));
 }
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
@@ -412,14 +423,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearPort(self->config->ssport, self->config->ssmask);
+  palClearPort(__spi_getconf(self, ssport), __spi_getconf(self, ssmask));
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetPort(self->config->ssport, self->config->ssmask);
+  palSetPort(__spi_getconf(self, ssport), __spi_getconf(self, ssmask));
 }
 
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
@@ -427,14 +438,14 @@ CC_FORCE_INLINE
 static inline void spiSelectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palClearPad(self->config->ssport, self->config->sspad);
+  palClearPad(__spi_getconf(self, ssport), __spi_getconf(self, sspad));
 }
 
 CC_FORCE_INLINE
 static inline void spiUnselectX(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  palSetPad(self->config->ssport, self->config->sspad);
+  palSetPad(__spi_getconf(self, ssport), __spi_getconf(self, sspad));
 }
 #endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LLD */
 
@@ -457,7 +468,7 @@ static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
   osalSysLockFromISR();
-  osalThreadResumeI(&self->sync_transfer, MSG_OK);
+  osalThreadResumeI(&self->sync_transfer, msg);
   osalSysUnlockFromISR();
 }
 
@@ -468,6 +479,7 @@ static inline void __spi_wakeup_isr(void *ip, msg_t msg) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
   (void)self;
+  (void)msg;
 }
 #endif /* SPI_USE_SYNCHRONIZATION == TRUE */
 
@@ -495,7 +507,7 @@ static inline void __spi_isr_complete_code(void *ip) {
   __cbdrv_invoke_cb_with_transition(self,
                                     HAL_DRV_STATE_COMPLETE,
                                     HAL_DRV_STATE_READY);
-  __spi_wakeup_isr(self);
+  __spi_wakeup_isr(self, MSG_OK);
 }
 
 /**
@@ -503,7 +515,7 @@ static inline void __spi_isr_complete_code(void *ip) {
  * @public
  *
  * @brief       Half buffer filled ISR code in circular mode.
- * @details     The callback is invoked with driver
+ *              The callback is invoked with driver
  *                             state set to @p HAL_DRV_STATE_ACTIVE.
  * @note        This function is meant to be used in the low level drivers
  *              implementations only.
@@ -524,7 +536,7 @@ static inline void __spi_isr_half_code(void *ip) {
  * @public
  *
  * @brief       Full buffer filled ISR code in circular mode.
- * @details     The callback is invoked with driver
+ *              The callback is invoked with driver
  *                             state set to @p HAL_DRV_STATE_COMPLETE.
  * @note        This function is meant to be used in the low level drivers
  *              implementations only.
@@ -547,7 +559,7 @@ static inline void __spi_isr_full_code(void *ip) {
  * @public
  *
  * @brief       ISR error reporting code..
- * @details     The callback is invoked with driver
+ *              The callback is invoked with driver
  *                             state set to @p HAL_DRV_STATE_ERROR.
  * @note        This function is meant to be used in the low level drivers
  *              implementations only.

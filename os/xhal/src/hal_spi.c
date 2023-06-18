@@ -167,24 +167,6 @@ const void *__spi_doconf_impl(void *ip, const void *config) {
 
   return (const void *)spi_lld_configure(self, (const hal_spi_config_t *)config);
 }
-
-/**
- * @memberof    hal_spi_driver_c
- * @protected
- *
- * @brief       Override of method @p drvSetCallbackX().
- *
- * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
- * @param         cb            Callback function to be associated. Passing @p
- *                              NULL disables the existing callback, if any.
- */
-void __spi_setcb_impl(void *ip, hal_cb_t cb) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  __cbdrv_setcb_impl(self);
-
-  spi_lld_setcb(self, cb);
-}
 /** @} */
 
 /**
@@ -196,7 +178,7 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .start                    = __spi_start_impl,
   .stop                     = __spi_stop_impl,
   .doconf                   = __spi_doconf_impl,
-  .setcb                    = __spi_setcb_impl
+  .setcb                    = __cbdrv_setcb_impl
 };
 
 /**
@@ -228,7 +210,7 @@ msg_t spiStartIgnoreI(void *ip, size_t n) {
 
   osalDbgCheck((self != NULL) && (n > 0U));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+  osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -301,7 +283,7 @@ msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf) {
   osalDbgCheck((self != NULL) && (n > 0U) &&
                (rxbuf != NULL) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+  osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -375,7 +357,7 @@ msg_t spiStartSendI(void *ip, size_t n, const void *txbuf) {
 
   osalDbgCheck((self != NULL) && (n > 0U) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+  osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -447,7 +429,7 @@ msg_t spiStartReceiveI(void *ip, size_t n, void *rxbuf) {
 
   osalDbgCheck((self != NULL) && (n > 0U) && (rxbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((self->config->circular == false) || ((n & 1U) == 0U));
+  osalDbgCheck((__spi_getconf(self, circular) == false) || ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -522,7 +504,7 @@ msg_t spiStopTransferI(void *ip, size_t *np) {
       (self->state == HAL_DRV_STATE_COMPLETE)) {
 
     /* Stopping transfer at low level.*/
-    msg = spi_lld_stop_transfer(self, sizep);
+    msg = spi_lld_stop_transfer(self, np);
     self->state = HAL_DRV_STATE_READY;
 
 #if SPI_USE_SYNCHRONIZATION == TRUE
@@ -555,7 +537,7 @@ msg_t spiStopTransfer(void *ip, size_t *np) {
 
   osalSysLock();
 
-  msg = spiStopTransferI(self, sizep);
+  msg = spiStopTransferI(self, np);
   osalOsRescheduleS();
 
   osalSysUnlock();
@@ -754,9 +736,9 @@ msg_t spiReceive(void *ip, size_t n, void *rxbuf) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
   msg_t msg;
 
-  msg = spiStartReceiveI(spip, n, rxbuf);
+  msg = spiStartReceiveI(self, n, rxbuf);
   if (msg == MSG_OK) {
-    msg = spiSynchronizeS(spip, TIME_INFINITE);
+    msg = spiSynchronizeS(self, TIME_INFINITE);
   }
 
   osalSysUnlock();
