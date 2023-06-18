@@ -848,11 +848,10 @@ return spi_lld_start(self);]]></implementation>
 
 spi_lld_stop(self);]]></implementation>
             </method>
-            <method shortname="configure">
+            <method shortname="doconf">
               <implementation><![CDATA[
 
-self->config = config;
-spi_lld_configure(self);]]></implementation>
+return (const void *)spi_lld_configure(self, (const hal_spi_config_t *)config);]]></implementation>
             </method>
             <method shortname="setcb">
               <implementation><![CDATA[

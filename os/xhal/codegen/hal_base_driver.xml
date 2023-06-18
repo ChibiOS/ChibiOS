@@ -116,20 +116,13 @@ drv_reg_remove(self);
               <brief>Low level driver stop.</brief>
               <notapi />
             </method>
-            <method name="drvConfigureX" shortname="configure"
-              ctype="msg_t">
-              <brief>Driver configure.</brief>
-              <details><![CDATA[Applies a new configuration to the driver. The
-                configuration structure is architecture-dependent.]]>
-              </details>
-              <note><![CDATA[Applying a configuration should be done while the
-                peripheral is not actively operating, this function can fail
-                depending on the driver implementation and current state.]]>
-              </note>
-              <param ctype="const void *" name="config" dir="in">
-                New driver
-                configuration.
-              </param>
+            <method name="__drv_do_configure" shortname="doconf"
+              ctype="const void *">
+              <brief>Performs driver configuration.</brief>
+              <param ctype="const void *" name="config" dir="in">New driver
+                configuration.</param>
+              <return>The configuration pointer.</return>
+              <retval value="NULL">If the configuration has been rejected.</retval>
               <api />
             </method>
           </virtual>
@@ -216,6 +209,38 @@ if ((self->state != HAL_DRV_STATE_STOP) &&
 
 osalSysUnlock();]]></implementation>
             </method>
+            <method name="drvConfigureX" ctype="msg_t">
+              <brief>Driver configure.</brief>
+              <details><![CDATA[Applies a new configuration to the driver. The
+                configuration structure is architecture-dependent.]]>
+              </details>
+              <note><![CDATA[Applying a configuration should be done while the
+                peripheral is not actively operating, this function can fail
+                depending on the driver implementation and current state.]]>
+              </note>
+              <param ctype="const void *" name="config" dir="in">New driver
+                configuration.
+              </param>
+              <api />
+              <implementation><![CDATA[]]>
+msg_t msg;
+
+osalSysLock();
+
+osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
+
+self->config = __drv_do_configure(self, config);
+if (self->config == NULL) {
+  msg = HAL_RET_CONFIG_ERROR;
+}
+else {
+  msg = HAL_RET_SUCCESS;
+}
+
+osalSysUnlock();
+
+return msg;</implementation>
+            </method>
           </regular>
           <inline>
             <method name="drvGetStateX" ctype="driver_state_t">
@@ -228,8 +253,7 @@ return self->state;]]></implementation>
             </method>
             <method name="drvSetStateX" ctype="void">
               <brief>Driver state set.</brief>
-              <param ctype="driver_state_t" name="state" dir="in">
-                New driver
+              <param ctype="driver_state_t" name="state" dir="in">New driver
                 state.
               </param>
               <api />
@@ -247,8 +271,7 @@ return self->arg;]]></implementation>
             </method>
             <method name="drvSetArgumentX" ctype="void">
               <brief>Driver argument set.</brief>
-              <param ctype="void *" name="arg" dir="in">
-                New driver argument.
+              <param ctype="void *" name="arg" dir="in">New driver argument.
               </param>
               <api />
               <implementation><![CDATA[
@@ -299,6 +322,7 @@ osalMutexLock(&self->mutex);]]></implementation>
 osalMutexUnlock(&self->mutex);]]></implementation>
               </method>
             </condition>
+            
           </inline>
         </methods>
       </class>

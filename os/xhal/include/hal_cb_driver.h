@@ -126,7 +126,7 @@ struct hal_cb_driver_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  msg_t (*configure)(void *ip, const void *config);
+  const void * (*doconf)(void *ip, const void *config);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, hal_cb_t cb);
 };
@@ -211,9 +211,11 @@ extern "C" {
  * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
  * @param         cb            Callback function to be associated. Passing @p
  *                              NULL disables the existing callback, if any.
+ *
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline void drvSetCallback(void *ip, hal_cb_t cb) {
+static inline void drvSetCallbackX(void *ip, hal_cb_t cb) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   self->vmt->setcb(ip, cb);
@@ -231,9 +233,11 @@ static inline void drvSetCallback(void *ip, hal_cb_t cb) {
  * @brief       Returns the callback associated to the driver instance.
  *
  * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ *
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline hal_cb_t drvGetCallback(void *ip) {
+static inline hal_cb_t drvGetCallbackX(void *ip) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   return self->cb;

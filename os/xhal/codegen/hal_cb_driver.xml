@@ -70,7 +70,7 @@ self->cb = NULL;]]></implementation>
             <implementation><![CDATA[ ]]></implementation>
           </dispose>
           <virtual>
-            <method name="drvSetCallback" ctype="void" shortname="setcb">
+            <method name="drvSetCallbackX" ctype="void" shortname="setcb">
               <brief>
                 Associates a callback to the driver instance.
               </brief>
@@ -78,14 +78,16 @@ self->cb = NULL;]]></implementation>
                 Callback function to be associated. Passing @p NULL
                 disables the existing callback, if any.
               </param>
+              <xclass />
               <implementation><![CDATA[
 
 self->cb = cb;]]></implementation>
             </method>
           </virtual>
           <inline>
-            <method name="drvGetCallback" ctype="hal_cb_t">
+            <method name="drvGetCallbackX" ctype="hal_cb_t">
               <brief>Returns the callback associated to the driver instance.</brief>
+              <xclass />
               <implementation><![CDATA[
 
 return self->cb;]]></implementation>

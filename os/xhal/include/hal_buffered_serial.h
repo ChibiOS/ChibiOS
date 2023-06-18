@@ -74,7 +74,7 @@ struct hal_buffered_serial_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  msg_t (*configure)(void *ip, const void *config);
+  const void * (*doconf)(void *ip, const void *config);
   /* From hal_buffered_serial_c.*/
 };
 

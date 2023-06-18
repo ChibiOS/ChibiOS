@@ -49,7 +49,8 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static void vuart_cb(SIODriver *siop) {
+static void vuart_cb(void *ip) {
+  hal_sio_driver_c *siop = (hal_sio_driver_c *)ip;
   const vio_uart_unit_t *unitp = (const vio_uart_unit_t *)drvGetArgumentX(siop);
 
   sbVRQTriggerFromISR(unitp->vrqsb, unitp->vrqn);
@@ -86,7 +87,7 @@ void sb_sysc_vio_uart(struct port_extctx *ectxp) {
 
         /* Starting with disabled events, enabling the callback.*/
         sioWriteEnableFlags(unitp->siop, SIO_EV_NONE);
-        sioSetCallbackX(unitp->siop, vuart_cb);
+        drvSetCallbackX(unitp->siop, vuart_cb);
       }
 
       ectxp->r0 = (uint32_t)msg;

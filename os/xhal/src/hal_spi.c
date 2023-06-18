@@ -156,23 +156,23 @@ void __spi_stop_impl(void *ip) {
  * @memberof    hal_spi_driver_c
  * @protected
  *
- * @brief       Override of method @p drvConfigureX().
+ * @brief       Override of method @p __drv_do_configure().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
  * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
  */
-msg_t __spi_configure_impl(void *ip, const void *config) {
+const void *__spi_doconf_impl(void *ip, const void *config) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  self->config = config;
-  spi_lld_configure(self);
+  return (const void *)spi_lld_configure(self, (const hal_spi_config_t *)config);
 }
 
 /**
  * @memberof    hal_spi_driver_c
  * @protected
  *
- * @brief       Override of method @p drvSetCallback().
+ * @brief       Override of method @p drvSetCallbackX().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
  * @param         cb            Callback function to be associated. Passing @p
@@ -195,7 +195,7 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .dispose                  = __spi_dispose_impl,
   .start                    = __spi_start_impl,
   .stop                     = __spi_stop_impl,
-  .configure                = __spi_configure_impl,
+  .doconf                   = __spi_doconf_impl,
   .setcb                    = __spi_setcb_impl
 };
 

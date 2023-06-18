@@ -144,7 +144,7 @@ struct hal_base_driver_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  msg_t (*configure)(void *ip, const void *config);
+  const void * (*doconf)(void *ip, const void *config);
 };
 
 /**
@@ -206,6 +206,7 @@ extern "C" {
   void __drv_dispose_impl(void *ip);
   msg_t drvStart(void *ip);
   void drvStop(void *ip);
+  msg_t drvConfigureX(void *ip, const void *config);
   /* Regular functions.*/
   void drvInit(void);
 #if HAL_USE_REGISTRY == TRUE
@@ -264,23 +265,20 @@ static inline void __drv_stop(void *ip) {
  * @memberof    hal_base_driver_c
  * @public
  *
- * @brief       Driver configure.
- * @details     Applies a new configuration to the driver. The configuration
- *              structure is architecture-dependent.
- * @note        Applying a configuration should be done while the peripheral is
- *              not actively operating, this function can fail depending on the
- *              driver implementation and current state.
+ * @brief       Performs driver configuration.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
  * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
+ * @retval NULL                 If the configuration has been rejected.
  *
  * @api
  */
 CC_FORCE_INLINE
-static inline msg_t drvConfigureX(void *ip, const void *config) {
+static inline const void *__drv_do_configure(void *ip, const void *config) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
 
-  return self->vmt->configure(ip, config);
+  return self->vmt->doconf(ip, config);
 }
 /** @} */
 

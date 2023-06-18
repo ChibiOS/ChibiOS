@@ -109,7 +109,7 @@ void __cbdrv_dispose_impl(void *ip) {
  * @memberof    hal_cb_driver_c
  * @protected
  *
- * @brief       Implementation of method @p drvSetCallback().
+ * @brief       Implementation of method @p drvSetCallbackX().
  * @note        This function is meant to be used by derived classes.
  *
  * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.

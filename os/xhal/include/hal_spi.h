@@ -223,7 +223,7 @@ struct hal_spi_driver_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  msg_t (*configure)(void *ip, const void *config);
+  const void * (*doconf)(void *ip, const void *config);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, hal_cb_t cb);
   /* From hal_spi_driver_c.*/
@@ -300,7 +300,7 @@ extern "C" {
   void __spi_dispose_impl(void *ip);
   msg_t __spi_start_impl(void *ip);
   void __spi_stop_impl(void *ip);
-  msg_t __spi_configure_impl(void *ip, const void *config);
+  const void *__spi_doconf_impl(void *ip, const void *config);
   void __spi_setcb_impl(void *ip, hal_cb_t cb);
   msg_t spiStartIgnoreI(void *ip, size_t n);
   msg_t spiStartIgnore(void *ip, size_t n);

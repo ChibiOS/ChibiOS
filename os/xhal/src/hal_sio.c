@@ -119,7 +119,8 @@ static void __bsio_pop_data(hal_buffered_sio_c *bsiop) {
   }
 }
 
-static void __bsio_default_cb(hal_sio_driver_c *siop) {
+static void __bsio_default_cb(void *ip) {
+  hal_sio_driver_c *siop = (hal_sio_driver_c *)ip;
   hal_buffered_sio_c *bsiop = (hal_buffered_sio_c *)siop->arg;
   sioevents_t events;
 
@@ -456,7 +457,7 @@ void *__sio_objinit_impl(void *ip, const void *vmt) {
   hal_sio_driver_c *self = (hal_sio_driver_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
-  __drv_objinit_impl(self, vmt);
+  __cbdrv_objinit_impl(self, vmt);
 
 #if (SIO_USE_STREAMS_INTERFACE == TRUE) || defined (__DOXYGEN__)
   /* Initialization of interface asynchronous_channel_i.*/
@@ -514,7 +515,7 @@ void __sio_dispose_impl(void *ip) {
   (void)self;
 
   /* Finalization of the ancestors-defined parts.*/
-  __drv_dispose_impl(self);
+  __cbdrv_dispose_impl(self);
 }
 
 /**
@@ -573,15 +574,16 @@ void __sio_stop_impl(void *ip) {
  * @memberof    hal_sio_driver_c
  * @protected
  *
- * @brief       Override of method @p drvConfigureX().
+ * @brief       Override of method @p __drv_do_configure().
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
  * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
  */
-msg_t __sio_configure_impl(void *ip, const void *config) {
+const void *__sio_doconf_impl(void *ip, const void *config) {
   hal_sio_driver_c *self = (hal_sio_driver_c *)ip;
 
-  return sio_lld_configure(self, (const hal_sio_config_t *)config);
+  return (const void *)sio_lld_configure(self, (const hal_sio_config_t *)config);
 }
 /** @} */
 
@@ -593,7 +595,8 @@ const struct hal_sio_driver_vmt __hal_sio_driver_vmt = {
   .dispose                  = __sio_dispose_impl,
   .start                    = __sio_start_impl,
   .stop                     = __sio_stop_impl,
-  .configure                = __sio_configure_impl
+  .doconf                   = __sio_doconf_impl,
+  .setcb                    = __cbdrv_setcb_impl
 };
 
 /**
@@ -1015,7 +1018,7 @@ msg_t __bsio_start_impl(void *ip) {
   /* Starting the undelying SIO driver.*/
   msg = drvStart(self->siop);
   if (msg == HAL_RET_SUCCESS) {
-    sioSetCallbackX(self->siop, &__bsio_default_cb);
+    drvSetCallbackX(self->siop, &__bsio_default_cb);
     sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
   }
 
@@ -1050,14 +1053,17 @@ void __bsio_stop_impl(void *ip) {
  * @memberof    hal_buffered_sio_c
  * @protected
  *
- * @brief       Override of method @p drvConfigureX().
+ * @brief       Override of method @p __drv_do_configure().
  *
  * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
  * @param[in]     config        New driver configuration.
+ * @return                      The configuration pointer.
  */
-msg_t __bsio_configure_impl(void *ip, const void *config) {
+const void *__bsio_doconf_impl(void *ip, const void *config) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
-  return drvConfigureX(self->siop, config);
+
+  /* Configuring the underlying SIO driver.*/
+  return __sio_doconf_impl(self->siop, config);
 }
 /** @} */
 
@@ -1069,7 +1075,7 @@ const struct hal_buffered_sio_vmt __hal_buffered_sio_vmt = {
   .dispose                  = __bsio_dispose_impl,
   .start                    = __bsio_start_impl,
   .stop                     = __bsio_stop_impl,
-  .configure                = __bsio_configure_impl
+  .doconf                   = __bsio_doconf_impl
 };
 
 #endif /* HAL_USE_SIO == TRUE */

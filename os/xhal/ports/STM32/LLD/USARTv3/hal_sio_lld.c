@@ -460,9 +460,13 @@ void sio_lld_stop(SIODriver *siop) {
   }
 }
 
-msg_t sio_lld_configure(SIODriver *siop, const SIOConfig *config) {
+const SIOConfig *sio_lld_configure(SIODriver *siop, const SIOConfig *config) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr, clock;
+
+  if (config == NULL) {
+    config = &default_config;
+  }
 
   /* Prescaler calculation.*/
   static const uint32_t prescvals[] = {1, 2, 4, 6, 8, 10, 12, 16, 32, 64, 128, 256};
@@ -506,7 +510,7 @@ msg_t sio_lld_configure(SIODriver *siop, const SIOConfig *config) {
   u->ICR   = u->ISR;
   u->CR1  |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 
-  return HAL_RET_SUCCESS;
+  return config;
 }
 
 /**

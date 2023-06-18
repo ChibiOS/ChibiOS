@@ -167,6 +167,7 @@ msg_t sio_lld_start(SIODriver *siop) {
   }
 
   /* Configures the peripheral.*/
+  cbdrvSet
   sio_lld_configure(siop, &default_config);
 
   return msg;

@@ -4,7 +4,7 @@
   name="hal_sio" descr="SIO Driver" check="HAL_USE_SIO == TRUE" editcode="false">
   <brief>SIO Driver macros and structures.</brief>
   <imports>
-    <import>hal_base_driver.xml</import>
+    <import>hal_cb_driver.xml</import>
     <import>hal_channels.xml</import>
     <import>hal_buffered_serial.xml</import>
   </imports>
@@ -77,15 +77,6 @@
       </config>
     </configs>
     <macros>
-      <macro name="sioSetCallbackX">
-        <brief>Associates a callback to the SIO instance.</brief>
-        <param name="siop" dir="out">pointer to the @p hal_sio_driver_c
-          object
-        </param>
-        <param name="f">callback function to be associated</param>
-        <xclass />
-        <implementation><![CDATA[(siop)->cb = (f)]]></implementation>
-      </macro>
       <macro name="sioIsRXEmptyX">
         <brief>Determines the state of the RX FIFO.</brief>
         <param name="siop" dir="both">pointer to the @p hal_sio_driver_c
@@ -430,10 +421,6 @@ do {
         <brief>Type of structure representing a SIO driver (legacy).</brief>
         <basetype ctype="struct hal_sio_driver" />
       </typedef>
-      <typedef name="siocb_t">
-        <brief>Generic SIO notification callback type.</brief>
-        <basetype ctype="void (*$N)(struct hal_sio_driver *siop)" />
-      </typedef>
       <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
 #include "hal_sio_lld.h"]]></verbatim>
@@ -453,7 +440,7 @@ SIO_CONFIG_EXT_FIELDS]]></verbatim>
         </fields>
       </struct>
       <class type="regular" name="hal_sio_driver" namespace="sio"
-        ancestorname="hal_base_driver" descr="SIO driver">
+        ancestorname="hal_cb_driver" descr="SIO driver">
         <brief>Class of a SIO (Serial I/O) driver.</brief>
         <implements>
           <condition check="SIO_USE_STREAMS_INTERFACE == TRUE">
@@ -558,10 +545,6 @@ return HAL_RET_SUCCESS;]]></implementation>
         <fields>
           <field name="enabled" ctype="sioevents_t">
             <brief>Enabled event flags.</brief>
-          </field>
-          <field name="cb" ctype="siocb_t">
-            <brief>Events callback.</brief>
-            <note>Can be @p NULL.</note>
           </field>
           <condition check="HAL_USE_MUTUAL_EXCLUSION == TRUE">
             <field name="sync_rx" ctype="thread_reference_t">
@@ -940,10 +923,10 @@ osalThreadResumeI(&self->sync_txend, MSG_RESET);
 osalOsRescheduleS();
 #endif]]></implementation>
             </method>
-            <method shortname="configure">
+            <method shortname="doconf">
               <implementation><![CDATA[
 
-return sio_lld_configure(self, (const hal_sio_config_t *)config);]]></implementation>
+return (const void *)sio_lld_configure(self, (const hal_sio_config_t *)config);]]></implementation>
             </method>
           </override>
         </methods>
@@ -988,7 +971,7 @@ osalSysUnlock();
 /* Starting the undelying SIO driver.*/
 msg = drvStart(self->siop);
 if (msg == HAL_RET_SUCCESS) {
-  sioSetCallbackX(self->siop, &__bsio_default_cb);
+  drvSetCallbackX(self->siop, &__bsio_default_cb);
   sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
 }
 
@@ -1009,9 +992,11 @@ drvStop(self->siop);
 /* Back into the critical section and return.*/
 osalSysLock();]]></implementation>
             </method>
-            <method shortname="configure">
+            <method shortname="doconf">
               <implementation><![CDATA[
-return drvConfigureX(self->siop, config);]]></implementation>
+
+/* Configuring the underlying SIO driver.*/
+return __sio_doconf_impl(self->siop, config);]]></implementation>
             </method>
           </override>
         </methods>
@@ -1113,8 +1098,9 @@ while (!sioIsRXEmptyX(bsiop->siop)) {
 }]]></implementation>
         </function>
         <function name="__bsio_default_cb" ctype="void">
-          <param name="siop" ctype="hal_sio_driver_c *"></param>
+          <param name="ip" ctype="void *"></param>
           <implementation><![CDATA[
+hal_sio_driver_c *siop = (hal_sio_driver_c *)ip;
 hal_buffered_sio_c *bsiop = (hal_buffered_sio_c *)siop->arg;
 sioevents_t events;
 

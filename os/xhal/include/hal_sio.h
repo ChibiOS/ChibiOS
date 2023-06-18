@@ -141,17 +141,6 @@
 /*===========================================================================*/
 
 /**
- * @brief       Associates a callback to the SIO instance.
- *
- * @param[out]    siop          Pointer to the @p hal_sio_driver_c object
- * @param         f             Callback function to be associated.
- *
- * @xclass
- */
-#define sioSetCallbackX(siop, f)                                            \
-  (siop)->cb = (f)
-
-/**
  * @brief       Determines the state of the RX FIFO.
  *
  * @param[in,out] siop          Pointer to the @p hal_sio_driver_c object
@@ -503,11 +492,6 @@ typedef struct hal_sio_config SIOConfig;
  */
 typedef struct hal_sio_driver SIODriver;
 
-/**
- * @brief       Generic SIO notification callback type.
- */
-typedef void (*siocb_t)(struct hal_sio_driver *siop);
-
 /* Inclusion of LLD header.*/
 #include "hal_sio_lld.h"
 
@@ -526,7 +510,7 @@ struct hal_sio_config {
 
 /**
  * @class       hal_sio_driver_c
- * @extends     base_object_c, hal_base_driver_c.
+ * @extends     base_object_c, hal_base_driver_c, hal_cb_driver_c.
  * @implements  asynchronous_channel_i
  *
  * @brief       Class of a SIO (Serial I/O) driver.
@@ -549,7 +533,9 @@ struct hal_sio_driver_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  msg_t (*configure)(void *ip, const void *config);
+  const void * (*doconf)(void *ip, const void *config);
+  /* From hal_cb_driver_c.*/
+  void (*setcb)(void *ip, hal_cb_t cb);
   /* From hal_sio_driver_c.*/
 };
 
@@ -593,6 +579,11 @@ struct hal_sio_driver {
    */
   hal_regent_t              regent;
 #endif /* HAL_USE_REGISTRY == TRUE */
+  /**
+   * @brief       Driver callback.
+   * @note        Can be @p NULL.
+   */
+  hal_cb_t                  cb;
 #if (SIO_USE_STREAMS_INTERFACE == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Implemented interface @p asynchronous_channel_i.
@@ -603,11 +594,6 @@ struct hal_sio_driver {
    * @brief       Enabled event flags.
    */
   sioevents_t               enabled;
-  /**
-   * @brief       Events callback.
-   * @note        Can be @p NULL.
-   */
-  siocb_t                   cb;
 #if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Synchronization point for RX.
@@ -659,7 +645,7 @@ struct hal_buffered_sio_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  msg_t (*configure)(void *ip, const void *config);
+  const void * (*doconf)(void *ip, const void *config);
   /* From hal_buffered_serial_c.*/
   /* From hal_buffered_sio_c.*/
 };
@@ -739,7 +725,7 @@ extern "C" {
   void __sio_dispose_impl(void *ip);
   msg_t __sio_start_impl(void *ip);
   void __sio_stop_impl(void *ip);
-  msg_t __sio_configure_impl(void *ip, const void *config);
+  const void *__sio_doconf_impl(void *ip, const void *config);
   void sioWriteEnableFlags(void *ip, sioevents_t mask);
   void sioSetEnableFlags(void *ip, sioevents_t mask);
   void sioClearEnableFlags(void *ip, sioevents_t mask);
@@ -759,7 +745,7 @@ extern "C" {
   void __bsio_dispose_impl(void *ip);
   msg_t __bsio_start_impl(void *ip);
   void __bsio_stop_impl(void *ip);
-  msg_t __bsio_configure_impl(void *ip, const void *config);
+  const void *__bsio_doconf_impl(void *ip, const void *config);
   /* Regular functions.*/
   void sioInit(void);
 #ifdef __cplusplus

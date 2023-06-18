@@ -473,7 +473,7 @@ extern "C" {
   void sio_lld_init(void);
   msg_t  sio_lld_start(SIODriver *siop);
   void sio_lld_stop(SIODriver *siop);
-  msg_t sio_lld_configure(SIODriver *siop, const SIOConfig *config);
+  const SIOConfig *sio_lld_configure(SIODriver *siop, const SIOConfig *config);
   void sio_lld_update_enable_flags(SIODriver *siop);
   sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop);
   sioevents_t sio_lld_get_and_clear_events(SIODriver *siop, sioevents_t events);

@@ -268,7 +268,7 @@ void __drv_dispose_impl(void *ip) {
  *              subsequent calls are ignored.
  * @note        The function can fail with error @p HAL_RET_INV_STATE if called
  *              while the driver is already being started or stopped. In case
- *              you need multiple threads performing start and stop operation
+ *              you need multiple threads to perform start and stop operation
  *              on the driver then it is suggested to lock/unlock the driver
  *              during such operations.
  *
@@ -350,6 +350,43 @@ void drvStop(void *ip) {
   }
 
   osalSysUnlock();
+}
+
+/**
+ * @memberof    hal_base_driver_c
+ * @public
+ *
+ * @brief       Driver configure.
+ * @details     Applies a new configuration to the driver. The configuration
+ *              structure is architecture-dependent.
+ * @note        Applying a configuration should be done while the peripheral is
+ *              not actively operating, this function can fail depending on the
+ *              driver implementation and current state.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     config        New driver configuration.
+ *
+ * @api
+ */
+msg_t drvConfigureX(void *ip, const void *config) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+  msg_t msg;
+
+  osalSysLock();
+
+  osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
+
+  self->config = __drv_do_configure(self, config);
+  if (self->config == NULL) {
+    msg = HAL_RET_CONFIG_ERROR;
+  }
+  else {
+    msg = HAL_RET_SUCCESS;
+  }
+
+  osalSysUnlock();
+
+  return msg;
 }
 /** @} */
 
