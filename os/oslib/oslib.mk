@@ -1,5 +1,4 @@
-# List of all the ChibiOS/LIB files, there is no need to remove the files
-# from this list, you can disable parts of the kernel by editing chlibconf.h.
+# List of all the ChibiOS/LIB files.
 ifeq ($(USE_SMART_BUILD),yes)
 
 # Configuration files directory
@@ -13,45 +12,46 @@ endif
 
 CHLIBCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | egrep -e "\#define"))
 
-LIBSRC :=
+OSLIBSRC := $(CHIBIOS)/os/oslib/src/chmemchecks.c
 ifneq ($(findstring CH_CFG_USE_MAILBOXES TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chmboxes.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chmboxes.c
 endif
 ifneq ($(findstring CH_CFG_USE_MEMCORE TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chmemcore.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chmemcore.c
 endif
 ifneq ($(findstring CH_CFG_USE_HEAP TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chmemheaps.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chmemheaps.c
 endif
 ifneq ($(findstring CH_CFG_USE_MEMPOOLS TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chmempools.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chmempools.c
 endif
 ifneq ($(findstring CH_CFG_USE_PIPES TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chpipes.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chpipes.c
 endif
 ifneq ($(findstring CH_CFG_USE_OBJ_CACHES TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chobjcaches.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chobjcaches.c
 endif
 ifneq ($(findstring CH_CFG_USE_DELEGATES TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chdelegates.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chdelegates.c
 endif
 ifneq ($(findstring CH_CFG_USE_FACTORY TRUE,$(CHLIBCONF)),)
-LIBSRC += $(CHIBIOS)/os/oslib/src/chfactory.c
+OSLIBSRC += $(CHIBIOS)/os/oslib/src/chfactory.c
 endif
 else
-LIBSRC := $(CHIBIOS)/os/oslib/src/chmboxes.c \
-          $(CHIBIOS)/os/oslib/src/chmemcore.c \
-          $(CHIBIOS)/os/oslib/src/chmemheaps.c \
-          $(CHIBIOS)/os/oslib/src/chmempools.c \
-          $(CHIBIOS)/os/oslib/src/chpipes.c \
-          $(CHIBIOS)/os/oslib/src/chobjcaches.c \
-          $(CHIBIOS)/os/oslib/src/chdelegates.c \
-          $(CHIBIOS)/os/oslib/src/chfactory.c
+OSLIBSRC := $(CHIBIOS)/os/oslib/src/chmemchecks.c \
+            $(CHIBIOS)/os/oslib/src/chmboxes.c \
+            $(CHIBIOS)/os/oslib/src/chmemcore.c \
+            $(CHIBIOS)/os/oslib/src/chmemheaps.c \
+            $(CHIBIOS)/os/oslib/src/chmempools.c \
+            $(CHIBIOS)/os/oslib/src/chpipes.c \
+            $(CHIBIOS)/os/oslib/src/chobjcaches.c \
+            $(CHIBIOS)/os/oslib/src/chdelegates.c \
+            $(CHIBIOS)/os/oslib/src/chfactory.c
 endif
 
 # Required include directories
-LIBINC := $(CHIBIOS)/os/oslib/include
+OSLIBINC := $(CHIBIOS)/os/oslib/include
 
 # Shared variables
-ALLCSRC += $(LIBSRC)
-ALLINC  += $(LIBINC)
+ALLCSRC += $(OSLIBSRC)
+ALLINC  += $(OSLIBINC)
