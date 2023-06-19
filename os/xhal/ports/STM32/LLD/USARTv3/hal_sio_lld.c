@@ -460,6 +460,15 @@ void sio_lld_stop(SIODriver *siop) {
   }
 }
 
+/**
+ * @brief   SIO configuration.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] config    pointer to the @p SIOConfig structure
+ * @return              A pointer to the current configuration structure.
+ *
+ * @notapi
+ */
 const SIOConfig *sio_lld_configure(SIODriver *siop, const SIOConfig *config) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr, clock;

@@ -34,7 +34,7 @@ HALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
          $(CHIBIOS)/os/xhal/src/hal_st.c \
          $(CHIBIOS)/os/xhal/src/hal_queues.c \
          $(CHIBIOS)/os/xhal/src/hal_pal.c \
-         $(CHIBIOS)/os/xhal/src/hal_sio.c
+         $(CHIBIOS)/os/xhal/src/hal_sio.c \
          $(CHIBIOS)/os/xhal/src/hal_spi.c
 endif
 

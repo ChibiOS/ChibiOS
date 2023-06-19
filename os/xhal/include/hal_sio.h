@@ -478,6 +478,11 @@
 typedef chnflags_t sioevents_t;
 
 /**
+ * @brief       Type of structure representing a SIO driver.
+ */
+typedef struct hal_sio_driver hal_sio_driver_c;
+
+/**
  * @brief       Type of structure representing a SIO configuration.
  */
 typedef struct hal_sio_config hal_sio_config_t;

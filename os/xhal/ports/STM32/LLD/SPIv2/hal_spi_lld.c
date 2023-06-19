@@ -116,6 +116,25 @@ SPIDriver SPID6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+/*
+ * Default SPI configuration.
+ */
+static const hal_spi_config_t spi_default_config = {
+  .circular         = false,
+  .slave            = false,
+#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
+  .ssline           = PAL_LINE(STM32_SPI_DEFAULT_PORT, STM32_SPI_DEFAULT_PAD);
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
+  .ssport           = STM32_SPI_DEFAULT_PORT,
+  .ssport           = PAL_PORT_BIT(STM32_SPI_DEFAULT_PAD),
+#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
+  .ssport           = STM32_SPI_DEFAULT_PORT,
+  .sspad            = STM32_SPI_DEFAULT_PAD,
+#endif
+  .cr1              = STM32_SPI_DEFAULT_CR1,
+  .cr2              = STM32_SPI_DEFAULT_CR2
+};
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -454,137 +473,223 @@ void spi_lld_init(void) {
  * @notapi
  */
 msg_t spi_lld_start(SPIDriver *spip) {
-  uint32_t ds;
   msg_t msg;
 
   /* Resetting TX pattern source.*/
   spip->txsource = (uint32_t)STM32_SPI_FILLER_PATTERN;
 
-  /* If in stopped state then enables the SPI and DMA clocks.*/
-  if (spip->state == DRV_STATE_STOP) {
-    if (false) {
-    }
+  /* Activating SPI unit.*/
+  if (false) {
+  }
 
 #if STM32_SPI_USE_SPI1
-    else if (&SPID1 == spip) {
-      msg = spi_lld_get_dma(spip,
-                            STM32_SPI_SPI1_RX_DMA_STREAM,
-                            STM32_SPI_SPI1_TX_DMA_STREAM,
-                            STM32_SPI_SPI1_IRQ_PRIORITY);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccEnableSPI1(true);
-      rccResetSPI1();
-#if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI1_RX);
-      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI1_TX);
-#endif
+  else if (&SPID1 == spip) {
+    msg = spi_lld_get_dma(spip,
+                          STM32_SPI_SPI1_RX_DMA_STREAM,
+                          STM32_SPI_SPI1_TX_DMA_STREAM,
+                          STM32_SPI_SPI1_IRQ_PRIORITY);
+    if (msg != HAL_RET_SUCCESS) {
+      return msg;
     }
+    rccEnableSPI1(true);
+    rccResetSPI1();
+#if STM32_DMA_SUPPORTS_DMAMUX
+    dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI1_RX);
+    dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI1_TX);
+#endif
+  }
 #endif
 
 #if STM32_SPI_USE_SPI2
-    else if (&SPID2 == spip) {
-      msg = spi_lld_get_dma(spip,
-                            STM32_SPI_SPI2_RX_DMA_STREAM,
-                            STM32_SPI_SPI2_TX_DMA_STREAM,
-                            STM32_SPI_SPI2_IRQ_PRIORITY);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccEnableSPI2(true);
-      rccResetSPI2();
-#if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI2_RX);
-      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI2_TX);
-#endif
+  else if (&SPID2 == spip) {
+    msg = spi_lld_get_dma(spip,
+                          STM32_SPI_SPI2_RX_DMA_STREAM,
+                          STM32_SPI_SPI2_TX_DMA_STREAM,
+                          STM32_SPI_SPI2_IRQ_PRIORITY);
+    if (msg != HAL_RET_SUCCESS) {
+      return msg;
     }
+    rccEnableSPI2(true);
+    rccResetSPI2();
+#if STM32_DMA_SUPPORTS_DMAMUX
+    dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI2_RX);
+    dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI2_TX);
+#endif
+  }
 #endif
 
 #if STM32_SPI_USE_SPI3
-    else if (&SPID3 == spip) {
-      msg = spi_lld_get_dma(spip,
-                            STM32_SPI_SPI3_RX_DMA_STREAM,
-                            STM32_SPI_SPI3_TX_DMA_STREAM,
-                            STM32_SPI_SPI3_IRQ_PRIORITY);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccEnableSPI3(true);
-      rccResetSPI3();
-#if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI3_RX);
-      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI3_TX);
-#endif
+  else if (&SPID3 == spip) {
+    msg = spi_lld_get_dma(spip,
+                          STM32_SPI_SPI3_RX_DMA_STREAM,
+                          STM32_SPI_SPI3_TX_DMA_STREAM,
+                          STM32_SPI_SPI3_IRQ_PRIORITY);
+    if (msg != HAL_RET_SUCCESS) {
+      return msg;
     }
+    rccEnableSPI3(true);
+    rccResetSPI3();
+#if STM32_DMA_SUPPORTS_DMAMUX
+    dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI3_RX);
+    dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI3_TX);
+#endif
+  }
 #endif
 
 #if STM32_SPI_USE_SPI4
-    else if (&SPID4 == spip) {
-      msg = spi_lld_get_dma(spip,
-                            STM32_SPI_SPI4_RX_DMA_STREAM,
-                            STM32_SPI_SPI4_TX_DMA_STREAM,
-                            STM32_SPI_SPI4_IRQ_PRIORITY);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccEnableSPI4(true);
-      rccResetSPI4();
-#if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI4_RX);
-      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI4_TX);
-#endif
+  else if (&SPID4 == spip) {
+    msg = spi_lld_get_dma(spip,
+                          STM32_SPI_SPI4_RX_DMA_STREAM,
+                          STM32_SPI_SPI4_TX_DMA_STREAM,
+                          STM32_SPI_SPI4_IRQ_PRIORITY);
+    if (msg != HAL_RET_SUCCESS) {
+      return msg;
     }
+    rccEnableSPI4(true);
+    rccResetSPI4();
+#if STM32_DMA_SUPPORTS_DMAMUX
+    dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI4_RX);
+    dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI4_TX);
+#endif
+  }
 #endif
 
 #if STM32_SPI_USE_SPI5
-    else if (&SPID5 == spip) {
-      msg = spi_lld_get_dma(spip,
-                            STM32_SPI_SPI5_RX_DMA_STREAM,
-                            STM32_SPI_SPI5_TX_DMA_STREAM,
-                            STM32_SPI_SPI5_IRQ_PRIORITY);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccEnableSPI5(true);
-      rccResetSPI5();
-#if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI5_RX);
-      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI5_TX);
-#endif
+  else if (&SPID5 == spip) {
+    msg = spi_lld_get_dma(spip,
+                          STM32_SPI_SPI5_RX_DMA_STREAM,
+                          STM32_SPI_SPI5_TX_DMA_STREAM,
+                          STM32_SPI_SPI5_IRQ_PRIORITY);
+    if (msg != HAL_RET_SUCCESS) {
+      return msg;
     }
+    rccEnableSPI5(true);
+    rccResetSPI5();
+#if STM32_DMA_SUPPORTS_DMAMUX
+    dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI5_RX);
+    dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI5_TX);
+#endif
+  }
 #endif
 
 #if STM32_SPI_USE_SPI6
-    else if (&SPID6 == spip) {
-      msg = spi_lld_get_dma(spip,
-                            STM32_SPI_SPI6_RX_DMA_STREAM,
-                            STM32_SPI_SPI6_TX_DMA_STREAM,
-                            STM32_SPI_SPI6_IRQ_PRIORITY);
-      if (msg != HAL_RET_SUCCESS) {
-        return msg;
-      }
-      rccEnableSPI6(true);
-      rccResetSPI6();
+  else if (&SPID6 == spip) {
+    msg = spi_lld_get_dma(spip,
+                          STM32_SPI_SPI6_RX_DMA_STREAM,
+                          STM32_SPI_SPI6_TX_DMA_STREAM,
+                          STM32_SPI_SPI6_IRQ_PRIORITY);
+    if (msg != HAL_RET_SUCCESS) {
+      return msg;
+    }
+    rccEnableSPI6(true);
+    rccResetSPI6();
 #if STM32_DMA_SUPPORTS_DMAMUX
-      dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI6_RX);
-      dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI6_TX);
+    dmaSetRequestSource(spip->dmarx, STM32_DMAMUX1_SPI6_RX);
+    dmaSetRequestSource(spip->dmatx, STM32_DMAMUX1_SPI6_TX);
 #endif
-    }
-#endif
-
-    else {
-      osalDbgAssert(false, "invalid SPI instance");
-    }
-
-    /* DMA setup.*/
-    dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
-    dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
   }
+#endif
+
   else {
-    /* De-activation before re-configuration.*/
-    spi_lld_disable(spip);
+    osalDbgAssert(false, "invalid SPI instance");
   }
+
+  /* DMA setup.*/
+  dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
+  dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
+
+  /* Configures the peripheral.*/
+  spi_lld_configure(spip, &spi_default_config);
+
+  return HAL_RET_SUCCESS;
+}
+
+/**
+ * @brief   Deactivates the SPI peripheral.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+void spi_lld_stop(SPIDriver *spip) {
+
+  /* Just in case this has been called uncleanly.*/
+  spi_lld_disable(spip);
+
+  /* SPI cleanup.*/
+  spip->spi->CR1  = 0;
+  spip->spi->CR2  = 0;
+
+  /* DMA channels release.*/
+  dmaStreamFreeI(spip->dmatx);
+  dmaStreamFreeI(spip->dmarx);
+  spip->dmarx = NULL;
+  spip->dmatx = NULL;
+
+  /* Clock shutdown.*/
+  if (false) {
+  }
+
+#if STM32_SPI_USE_SPI1
+  else if (&SPID1 == spip) {
+    rccDisableSPI1();
+  }
+#endif
+
+#if STM32_SPI_USE_SPI2
+  else if (&SPID2 == spip) {
+    rccDisableSPI2();
+  }
+#endif
+
+#if STM32_SPI_USE_SPI3
+  else if (&SPID3 == spip) {
+    rccDisableSPI3();
+  }
+#endif
+
+#if STM32_SPI_USE_SPI4
+  else if (&SPID4 == spip) {
+    rccDisableSPI4();
+  }
+#endif
+
+#if STM32_SPI_USE_SPI5
+  else if (&SPID5 == spip) {
+    rccDisableSPI5();
+  }
+#endif
+
+#if STM32_SPI_USE_SPI6
+  else if (&SPID6 == spip) {
+    rccDisableSPI6();
+  }
+#endif
+
+  else {
+    osalDbgAssert(false, "invalid SPI instance");
+  }
+}
+
+/**
+ * @brief   SPI configuration.
+ *
+ * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ * @param[in] config    pointer to the @p hal_spi_config_t structure
+ * @return              A pointer to the current configuration structure.
+ *
+ * @notapi
+ */
+const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
+                                          const hal_spi_config_t *config) {
+  uint32_t ds;
+
+  if (config == NULL) {
+    config = &spi_default_config;
+  }
+
+  /* De-activation before re-configuration.*/
+  spi_lld_disable(spip);
 
   /* Configuration-specific DMA setup.*/
   ds = __spi_getfield(spip, cr2) & SPI_CR2_DS;
@@ -615,78 +720,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
   /* SPI setup.*/
   spi_lld_enable(spip);
 
-  return HAL_RET_SUCCESS;
-}
-
-/**
- * @brief   Deactivates the SPI peripheral.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-void spi_lld_stop(SPIDriver *spip) {
-
-  /* If in ready state then disables the SPI clock.*/
-  if (spip->state == SPI_READY) {
-
-    /* Just in case this has been called uncleanly.*/
-    spi_lld_disable(spip);
-
-    /* SPI cleanup.*/
-    spip->spi->CR1  = 0;
-    spip->spi->CR2  = 0;
-
-    /* DMA channels release.*/
-    dmaStreamFreeI(spip->dmatx);
-    dmaStreamFreeI(spip->dmarx);
-    spip->dmarx = NULL;
-    spip->dmatx = NULL;
-
-    /* Clock shutdown.*/
-    if (false) {
-    }
-
-#if STM32_SPI_USE_SPI1
-    else if (&SPID1 == spip) {
-      rccDisableSPI1();
-    }
-#endif
-
-#if STM32_SPI_USE_SPI2
-    else if (&SPID2 == spip) {
-      rccDisableSPI2();
-    }
-#endif
-
-#if STM32_SPI_USE_SPI3
-    else if (&SPID3 == spip) {
-      rccDisableSPI3();
-    }
-#endif
-
-#if STM32_SPI_USE_SPI4
-    else if (&SPID4 == spip) {
-      rccDisableSPI4();
-    }
-#endif
-
-#if STM32_SPI_USE_SPI5
-    else if (&SPID5 == spip) {
-      rccDisableSPI5();
-    }
-#endif
-
-#if STM32_SPI_USE_SPI6
-    else if (&SPID6 == spip) {
-      rccDisableSPI6();
-    }
-#endif
-
-    else {
-      osalDbgAssert(false, "invalid SPI instance");
-    }
-  }
+  return config;
 }
 
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)

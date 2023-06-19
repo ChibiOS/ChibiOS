@@ -64,6 +64,10 @@
       </macro>
     </macros>
     <types>
+      <typedef name="hal_spi_driver_c">
+        <brief>Type of structure representing a SPI driver.</brief>
+        <basetype ctype="struct hal_spi_driver" />
+      </typedef>
       <typedef name="hal_spi_config_t">
         <brief>Type of structure representing a SPI configuration.</brief>
         <basetype ctype="struct hal_spi_config" />

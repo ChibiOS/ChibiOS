@@ -407,6 +407,10 @@ do {
         <brief>Type of SIO event flags.</brief>
         <basetype ctype="chnflags_t" />
       </typedef>
+      <typedef name="hal_sio_driver_c">
+        <brief>Type of structure representing a SIO driver.</brief>
+        <basetype ctype="struct hal_sio_driver" />
+      </typedef>
       <typedef name="hal_sio_config_t">
         <brief>Type of structure representing a SIO configuration.</brief>
         <basetype ctype="struct hal_sio_config" />

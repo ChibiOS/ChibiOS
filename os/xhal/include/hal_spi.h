@@ -141,6 +141,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief       Type of structure representing a SPI driver.
+ */
+typedef struct hal_spi_driver hal_spi_driver_c;
+
+/**
  * @brief       Type of structure representing a SPI configuration.
  */
 typedef struct hal_spi_config hal_spi_config_t;

@@ -218,6 +218,34 @@
 #if !defined(STM32_SPI_DMA_ERROR_HOOK) || defined(__DOXYGEN__)
 #define STM32_SPI_DMA_ERROR_HOOK(spip)      osalSysHalt("DMA failure")
 #endif
+
+/**
+ * @brief   Default PAL port for Chip Select line.
+ */
+#if !defined(STM32_SPI_DEFAULT_PORT) || defined(__DOXYGEN__)
+#define STM32_SPI_DEFAULT_PORT              GPIOA
+#endif
+
+/**
+ * @brief   Default PAL pad for Chip Select line.
+ */
+#if !defined(STM32_SPI_DEFAULT_PAD) || defined(__DOXYGEN__)
+#define STM32_SPI_DEFAULT_PAD               0U
+#endif
+
+/**
+ * @brief   CR1 setting for default SPI configuration.
+ */
+#if !defined(STM32_SPI_DEFAULT_CR1) || defined(__DOXYGEN__)
+#define STM32_SPI_DEFAULT_CR1               (SPI_CR1_BR_2 | SPI_CR1_BR_1)
+#endif
+
+/**
+ * @brief   CR2 setting for default SPI configuration.
+ */
+#if !defined(STM32_SPI_DEFAULT_CR2) || defined(__DOXYGEN__)
+#define STM32_SPI_DEFAULT_CR2               (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0)
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -549,6 +577,8 @@ extern "C" {
   void spi_lld_init(void);
   msg_t spi_lld_start(SPIDriver *spip);
   void spi_lld_stop(SPIDriver *spip);
+  const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
+                                            const hal_spi_config_t *config);
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
   void spi_lld_select(SPIDriver *spip);
   void spi_lld_unselect(SPIDriver *spip);
