@@ -54,6 +54,13 @@
  * @name    Configuration options
  * @{
  */
+
+/**
+ * @brief   Global clock divisor configuration (requires FDCAN1)
+ */
+#if (defined(STM32G4XX) && !defined(STM32_CAN_CKDIV)) || defined(__DOXYGEN__)
+#define STM32_CAN_CKDIV                     0
+#endif
 /**
  * @brief   CAN1 driver enable switch.
  * @details If set to @p TRUE the support for FDCAN1 is included.
@@ -141,6 +148,10 @@
 
 #if !defined(STM32_FDCAN_TM_NBR)
 #error "STM32_FDCAN_TM_NBR not defined in registry"
+#endif
+
+#if defined(STM32G4XX) && ((STM32_CAN_CKDIV != 0) && !defined(STM32_CAN_USE_FDCAN1))
+#error "STM32_HAS_FDCAN1 is required for configuring STM32_CAN_CKDIV != 0"
 #endif
 
 /*===========================================================================*/

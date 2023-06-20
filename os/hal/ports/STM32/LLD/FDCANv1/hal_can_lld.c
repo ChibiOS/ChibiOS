@@ -217,6 +217,26 @@ void can_lld_init(void) {
   CAND3.fdcan = FDCAN3;
   CAND3.ram_base = (uint32_t *)(SRAMCAN_BASE + 2U * SRAMCAN_SIZE);
 #endif
+
+  /* Configure global CKDIV for STM32G4XX */
+#if defined(STM32G4XX) && STM32_CAN_CKDIV != 0
+  /* CAND1 needs to be put into configuration mode to allow CKDIV configuration */
+  rccEnableFDCAN(true);
+  if (fdcan_clock_stop(&CAND1)) {
+    osalDbgAssert(false, "CAN clock stop failed, check clocks and pin config");
+    return;
+  }
+  if (fdcan_init_mode(&CAND1)) {
+    osalDbgAssert(false, "CAN initialization failed, check clocks and pin config");
+    return;
+  }
+  CAND1.fdcan->CCCR |= FDCAN_CCCR_CCE;
+
+  /* Write actual configuration into CKDIV register */
+  FDCAN_CONFIG->CKDIV = STM32_CAN_CKDIV;
+
+  rccDisableFDCAN();
+#endif
 }
 
 /**
