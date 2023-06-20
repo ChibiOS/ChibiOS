@@ -250,6 +250,7 @@
 #if !defined(STM32_ADC_USE_ADC3) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_ADC3                  FALSE
 #endif
+
 /**
  * @brief   ADC4 driver enable switch.
  * @details If set to @p TRUE the support for ADC4 is included.
@@ -257,6 +258,15 @@
  */
 #if !defined(STM32_ADC_USE_ADC4) || defined(__DOXYGEN__)
 #define STM32_ADC_USE_ADC4                  FALSE
+#endif
+
+/**
+ * @brief   ADC5 driver enable switch.
+ * @details If set to @p TRUE the support for ADC5 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_ADC_USE_ADC5) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_ADC5                  FALSE
 #endif
 
 /**
@@ -288,6 +298,13 @@
 #endif
 
 /**
+ * @brief   ADC5 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_ADC_ADC5_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC5_DMA_PRIORITY         2
+#endif
+
+/**
  * @brief   ADC1/ADC2 interrupt priority level setting.
  */
 #if !defined(STM32_ADC_ADC12_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -306,6 +323,13 @@
  */
 #if !defined(STM32_ADC_ADC4_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC4_IRQ_PRIORITY         5
+#endif
+
+/**
+ * @brief   ADC5 interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_ADC5_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC5_IRQ_PRIORITY         5
 #endif
 
 /**
@@ -334,6 +358,13 @@
  */
 #if !defined(STM32_ADC_ADC4_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC4_DMA_IRQ_PRIORITY     5
+#endif
+
+/**
+ * @brief   ADC5 DMA interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_ADC5_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_ADC5_DMA_IRQ_PRIORITY     5
 #endif
 
 #if defined(STM32F3XX) || defined(__DOXYGEN__)
@@ -435,21 +466,24 @@
 
 /* Registry checks.*/
 #if !defined(STM32_HAS_ADC1) || !defined(STM32_HAS_ADC2) ||                 \
-    !defined(STM32_HAS_ADC3) || !defined(STM32_HAS_ADC4)
+    !defined(STM32_HAS_ADC3) || !defined(STM32_HAS_ADC4) ||                 \
+    !defined(STM32_HAS_ADC5)
 #error "STM32_HAS_ADCx not defined in registry"
 #endif
 
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_HANDLER)) ||                 \
     (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_HANDLER)) ||                 \
     (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_HANDLER)) ||                 \
-    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_HANDLER))
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_HANDLER)) ||                 \
+    (STM32_ADC_USE_ADC5 && !defined(STM32_ADC5_HANDLER))
 #error "STM32_ADCx_HANDLER not defined in registry"
 #endif
 
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_NUMBER)) ||                  \
     (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_NUMBER)) ||                  \
     (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_NUMBER)) ||                  \
-    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_NUMBER))
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_NUMBER)) ||                  \
+    (STM32_ADC_USE_ADC5 && !defined(STM32_ADC5_NUMBER))
 #error "STM32_ADCx_NUMBER not defined in registry"
 #endif
 
@@ -457,14 +491,16 @@
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_DMA_MSK)) ||                 \
     (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_DMA_MSK)) ||                 \
     (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_DMA_MSK)) ||                 \
-    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_DMA_MSK))
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_DMA_MSK)) ||                 \
+    (STM32_ADC_USE_ADC5 && !defined(STM32_ADC5_DMA_MSK))
 #error "STM32_ADCx_DMA_MSK not defined in registry"
 #endif
 
 #if (STM32_ADC_USE_ADC1 && !defined(STM32_ADC1_DMA_CHN)) ||                 \
     (STM32_ADC_USE_ADC2 && !defined(STM32_ADC2_DMA_CHN)) ||                 \
     (STM32_ADC_USE_ADC3 && !defined(STM32_ADC3_DMA_CHN)) ||                 \
-    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_DMA_CHN))
+    (STM32_ADC_USE_ADC4 && !defined(STM32_ADC4_DMA_CHN)) ||                 \
+    (STM32_ADC_USE_ADC5 && !defined(STM32_ADC5_DMA_CHN))
 #error "STM32_ADCx_DMA_CHN not defined in registry"
 #endif
 #endif /* !STM32_DMA_SUPPORTS_DMAMUX */
@@ -486,6 +522,10 @@
 #error "ADC4 not present in the selected device"
 #endif
 
+#if STM32_ADC_USE_ADC5 && !STM32_HAS_ADC5
+#error "ADC5 not present in the selected device"
+#endif
+
 /* Units checks related to dual mode.*/
 #if STM32_ADC_DUAL_MODE && STM32_ADC_USE_ADC1 && !STM32_HAS_ADC2
 #error "ADC2 not present in the selected device, required for dual mode"
@@ -505,7 +545,8 @@
 
 /* At least one ADC must be assigned.*/
 #if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_ADC2 &&                           \
-    !STM32_ADC_USE_ADC3 && !STM32_ADC_USE_ADC4
+    !STM32_ADC_USE_ADC3 && !STM32_ADC_USE_ADC4 &&                           \
+    !STM32_ADC_USE_ADC5
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
 
@@ -537,6 +578,11 @@
 #error "Invalid IRQ priority assigned to ADC4"
 #endif
 
+#if STM32_ADC_USE_ADC5 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC5_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC5"
+#endif
+
 /* DMA IRQ priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_IRQ_PRIORITY)
@@ -556,6 +602,11 @@
 #if STM32_ADC_USE_ADC4 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to ADC4 DMA"
+#endif
+
+#if STM32_ADC_USE_ADC5 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_ADC_ADC5_DMA_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to ADC5 DMA"
 #endif
 
 /* DMA priority tests.*/
@@ -579,6 +630,11 @@
 #error "Invalid DMA priority assigned to ADC4"
 #endif
 
+#if STM32_ADC_USE_ADC5 &&                                                   \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC5_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to ADC5"
+#endif
+
 /* Check on the presence of the DMA streams settings in mcuconf.h.*/
 #if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA_STREAM)
 #error "ADC1 DMA stream not defined"
@@ -594,6 +650,10 @@
 
 #if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_DMA_STREAM)
 #error "ADC4 DMA stream not defined"
+#endif
+
+#if STM32_ADC_USE_ADC5 && !defined(STM32_ADC_ADC5_DMA_STREAM)
+#error "ADC5 DMA stream not defined"
 #endif
 
 #if STM32_DMA_SUPPORTS_DMAMUX
@@ -619,6 +679,11 @@
 #if STM32_ADC_USE_ADC4 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC4_DMA_STREAM, STM32_ADC4_DMA_MSK)
 #error "invalid DMA stream associated to ADC4"
+#endif
+
+#if STM32_ADC_USE_ADC5 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC5_DMA_STREAM, STM32_ADC5_DMA_MSK)
+#error "invalid DMA stream associated to ADC5"
 #endif
 
 #endif /* !STM32_DMA_SUPPORTS_DMAMUX */
@@ -1068,6 +1133,10 @@ extern ADCDriver ADCD3;
 
 #if STM32_ADC_USE_ADC4 && !defined(__DOXYGEN__)
 extern ADCDriver ADCD4;
+#endif
+
+#if STM32_ADC_USE_ADC5 && !defined(__DOXYGEN__)
+extern ADCDriver ADCD5;
 #endif
 
 #ifdef __cplusplus

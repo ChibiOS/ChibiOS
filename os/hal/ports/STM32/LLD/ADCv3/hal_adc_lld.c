@@ -42,6 +42,9 @@
 #define ADC4_DMA_CHANNEL                                                    \
   STM32_DMA_GETCHANNEL(STM32_ADC_ADC4_DMA_STREAM, STM32_ADC4_DMA_CHN)
 
+#define ADC5_DMA_CHANNEL                                                    \
+  STM32_DMA_GETCHANNEL(STM32_ADC_ADC5_DMA_STREAM, STM32_ADC5_DMA_CHN)
+
 #if STM32_ADC_DUAL_MODE
 #if STM32_ADC_COMPACT_SAMPLES
 /* Compact type dual mode.*/
@@ -113,6 +116,11 @@ ADCDriver ADCD3;
 /** @brief ADC4 driver identifier.*/
 #if STM32_ADC_USE_ADC4 || defined(__DOXYGEN__)
 ADCDriver ADCD4;
+#endif
+
+/** @brief ADC5 driver identifier.*/
+#if STM32_ADC_USE_ADC5 || defined(__DOXYGEN__)
+ADCDriver ADCD5;
 #endif
 
 /*===========================================================================*/
@@ -436,6 +444,26 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
 }
 #endif /* STM32_ADC_USE_ADC4 */
 
+#if STM32_ADC_USE_ADC5 || defined(__DOXYGEN__)
+/**
+ * @brief   ADC5 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_ADC5_HANDLER) {
+  uint32_t isr;
+
+  OSAL_IRQ_PROLOGUE();
+
+  isr  = ADC5->ISR;
+  ADC5->ISR = isr;
+
+  adc_lld_serve_interrupt(&ADCD5, isr);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif /* STM32_ADC_USE_ADC5 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -533,6 +561,21 @@ void adc_lld_init(void) {
                   STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
 #endif /* STM32_ADC_USE_ADC4 */
 
+#if STM32_ADC_USE_ADC5
+  /* Driver initialization.*/
+  adcObjectInit(&ADCD5);
+#if defined(ADC345_COMMON)
+  ADCD5.adcc = ADC345_COMMON;
+#endif
+  ADCD5.adcm    = ADC5;
+  ADCD5.dmastp  = NULL;
+  ADCD5.dmamode = ADC_DMA_SIZE |
+                  STM32_DMA_CR_PL(STM32_ADC_ADC5_DMA_PRIORITY) |
+                  STM32_DMA_CR_DIR_P2M |
+                  STM32_DMA_CR_MINC        | STM32_DMA_CR_TCIE        |
+                  STM32_DMA_CR_DMEIE       | STM32_DMA_CR_TEIE;
+#endif /* STM32_ADC_USE_ADC5 */
+
   /* IRQs setup.*/
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
 #if defined(STM32_ADC_ADC1_IRQ_PRIORITY)
@@ -549,6 +592,9 @@ void adc_lld_init(void) {
 #endif
 #if STM32_ADC_USE_ADC4
   nvicEnableVector(STM32_ADC4_NUMBER, STM32_ADC_ADC4_IRQ_PRIORITY);
+#endif
+#if STM32_ADC_USE_ADC5
+  nvicEnableVector(STM32_ADC5_NUMBER, STM32_ADC_ADC5_IRQ_PRIORITY);
 #endif
 
   /* ADC units pre-initializations.*/
@@ -598,7 +644,7 @@ void adc_lld_init(void) {
   ADC12_COMMON->CCR = STM32_ADC_ADC12_PRESC | STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_MDMA;
   rccDisableADC12();
 #endif
-#if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4
+#if STM32_ADC_USE_ADC3 || STM32_ADC_USE_ADC4 || STM32_ADC_USE_ADC5
   rccEnableADC345(true);
   rccResetADC345();
   ADC345_COMMON->CCR = STM32_ADC_ADC345_PRESC | STM32_ADC_ADC345_CLOCK_MODE | ADC_DMA_MDMA;
@@ -741,6 +787,24 @@ void adc_lld_start(ADCDriver *adcp) {
     }
 #endif /* STM32_ADC_USE_ADC4 */
 
+#if STM32_ADC_USE_ADC5
+    if (&ADCD5 == adcp) {
+      adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC5_DMA_STREAM,
+                                     STM32_ADC_ADC5_DMA_IRQ_PRIORITY,
+                                     (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                     (void *)adcp);
+      osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
+
+      clkmask |= (1 << 3);
+#if defined(STM32G4XX)
+      rccEnableADC345(true);
+#endif
+#if STM32_DMA_SUPPORTS_DMAMUX
+      dmaSetRequestSource(adcp->dmastp, STM32_DMAMUX1_ADC5);
+#endif
+    }
+#endif /* STM32_ADC_USE_ADC5 */
+
     /* Setting DMA peripheral-side pointer.*/
 #if STM32_ADC_DUAL_MODE
     dmaStreamSetPeripheral(adcp->dmastp, &adcp->adcc->CDR);
@@ -813,6 +877,12 @@ void adc_lld_stop(ADCDriver *adcp) {
     }
 #endif
 
+#if STM32_ADC_USE_ADC5
+    if (&ADCD5 == adcp) {
+      clkmask &= ~(1 << 3);
+    }
+#endif
+
 #if defined(STM32F3XX)
 #if STM32_HAS_ADC1 || STM32_HAS_ADC2
     if ((clkmask & 0x3) == 0) {
@@ -846,7 +916,7 @@ void adc_lld_stop(ADCDriver *adcp) {
     }
 #endif
 
-#if STM32_HAS_ADC3 || STM32_HAS_ADC4
+#if STM32_HAS_ADC3 || STM32_HAS_ADC4 || STM32_HAS_ADC5
     if ((clkmask & 0xC) == 0) {
       rccDisableADC345();
     }
