@@ -314,6 +314,7 @@ msg_t drvStart(void *ip) {
     }
   default:
     /* Any other state ignored, driver already started.*/
+    break;
   }
 
   osalSysUnlock();

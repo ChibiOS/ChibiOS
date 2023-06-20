@@ -180,6 +180,7 @@ case HAL_DRV_STATE_STOP:
   }
 default:
   /* Any other state ignored, driver already started.*/
+  break;
 }
 
 osalSysUnlock();
