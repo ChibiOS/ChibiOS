@@ -79,6 +79,8 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 4))
 #define STM32_ADC4_DMA_CHN                  0x00000000
 
+#define STM32_HAS_ADC5                      FALSE
+
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
 #define STM32_HAS_SDADC3                    FALSE
@@ -365,6 +367,8 @@
 #define STM32_ADC4_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(2, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 4))
 #define STM32_ADC4_DMA_CHN                  0x00000000
+
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -654,6 +658,7 @@
 
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -890,6 +895,7 @@
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -1129,6 +1135,7 @@
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -1377,6 +1384,7 @@
 
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -1647,6 +1655,7 @@
 
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -1920,6 +1929,7 @@
 #define STM32_HAS_ADC2                      FALSE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -2164,6 +2174,7 @@
 
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -2403,6 +2414,7 @@
 
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -2675,6 +2687,7 @@
 
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
@@ -2927,6 +2940,8 @@
 #define STM32_ADC4_DMA_MSK                  (STM32_DMA_STREAM_ID_MSK(2, 2) |\
                                              STM32_DMA_STREAM_ID_MSK(2, 4))
 #define STM32_ADC4_DMA_CHN                  0x00000000
+
+#define STM32_HAS_ADC5                      FALSE
 
 #define STM32_HAS_SDADC1                    FALSE
 #define STM32_HAS_SDADC2                    FALSE
