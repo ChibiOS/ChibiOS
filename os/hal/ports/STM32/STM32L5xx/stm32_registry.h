@@ -109,6 +109,7 @@
 #define STM32_HAS_ADC2                      TRUE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 /* CAN attributes.*/
 #define STM32_HAS_FDCAN1                    TRUE
