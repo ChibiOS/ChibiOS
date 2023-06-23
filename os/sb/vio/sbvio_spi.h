@@ -18,26 +18,31 @@
 */
 
 /**
- * @file    sbvio.h
- * @brief   ARM SandBox host Virtual I/O macros and structures.
+ * @file    sb/vhal/sbvio_spi.h
+ * @brief   ARM SandBox host Virtual SPI macros and structures.
  *
- * @addtogroup ARM_SANDBOX_HOST_VIO
+ * @addtogroup ARM_SANDBOX_HOST_VIO_SPI
  * @{
  */
 
-#ifndef SBVIO_H
-#define SBVIO_H
+#ifndef SBVIO_SPI_H
+#define SBVIO_SPI_H
 
-#if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
-
-#include "vioconf.h"
-#include "sbvio_gpio.h"
-#include "sbvio_spi.h"
-#include "sbvio_uart.h"
+#if (VIO_CFG_ENABLE_SPI == TRUE) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Fast API handler for VHAL SPI driver.
+ */
+#define SB_SVC98_HANDLER        sb_fastc_vio_spi
+
+/**
+ * @brief   API handler for VHAL SPI driver.
+ */
+#define SB_SVC226_HANDLER       sb_sysc_vio_spi
 
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
@@ -47,54 +52,41 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Checks on configuration options.*/
-#if !defined(VIO_CFG_ENABLE_GPIO) || defined(__DOXYGEN__)
-#error "VIO_CFG_ENABLE_GPIO not defined in vioconf.h"
-#endif
-
-#if !defined(VIO_CFG_ENABLE_SPI) || defined(__DOXYGEN__)
-#error "VIO_CFG_ENABLE_SPI not defined in vioconf.h"
-#endif
-
-#if !defined(VIO_CFG_ENABLE_UART) || defined(__DOXYGEN__)
-#error "VIO_CFG_ENABLE_UART not defined in vioconf.h"
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
 /**
- * @brief   Type of a VIO instance configuration structure.
+ * @brief   Type of a VIO SPI unit representation.
  */
-typedef struct vio_conf {
-#if (VIO_CFG_ENABLE_GPIO == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Virtual GPIO units.
-   */
-  const vio_gpio_units_t        *gpios;
-#endif
-#if (VIO_CFG_ENABLE_UART == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Virtual UART units.
-   */
-  const vio_uart_units_t        *uarts;
-  /**
-   * @brief   Virtual UART configurations.
-   */
-  const vio_uart_configs_t      *uartconfs;
-#endif
-#if (VIO_CFG_ENABLE_SPI == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Virtual SPI units.
-   */
-  const vio_spi_units_t         *spis;
-  /**
-   * @brief   Virtual SPI configurations.
-   */
-  const vio_spi_configs_t       *spiconfs;
-#endif
-} vio_conf_t;
+typedef struct vio_spi_unit {
+  hal_spi_driver_c  *spip;
+  sb_class_t        *vrqsb;
+  sb_vrqnum_t       vrqn;
+} vio_spi_unit_t;
+
+/**
+ * @brief   Type of a VIO SPI units structure.
+ */
+typedef struct vio_spi_units {
+  uint32_t          n;
+  vio_spi_unit_t    units[];
+} vio_spi_units_t;
+
+/**
+ * @brief   Type of a VIO SPI configuration representation.
+ */
+typedef struct vio_spi_config {
+  SIOConfig         *spicfgp;
+} vio_spi_config_t;
+
+/**
+ * @brief   Type of a VIO SPIs configuration structure.
+ */
+typedef struct vio_spi_configs {
+  uint32_t          n;
+  vio_spi_config_t  cfgs[];
+} vio_spi_configs_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -107,6 +99,8 @@ typedef struct vio_conf {
 #ifdef __cplusplus
 extern "C" {
 #endif
+void sb_sysc_vio_spi(struct port_extctx *ectxp);
+void sb_fastc_vio_spi(struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif
@@ -115,8 +109,8 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* SB_CFG_ENABLE_VIO == TRUE */
+#endif /* VIO_CFG_ENABLE_SPI == TRUE */
 
-#endif /* SBVIO_H */
+#endif /* SBVIO_SPI_H */
 
 /** @} */

@@ -60,7 +60,7 @@
  * @brief   Type of a VIO UART unit representation.
  */
 typedef struct vio_uart_unit {
-  SIODriver         *siop;
+  hal_sio_driver_c  *siop;
   sb_class_t        *vrqsb;
   sb_vrqnum_t       vrqn;
 } vio_uart_unit_t;

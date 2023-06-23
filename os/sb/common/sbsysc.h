@@ -107,6 +107,15 @@
 /** @} */
 
 /**
+ * @name    Virtual SPI syscall sub-codes
+ * @{
+ */
+#define SB_VSPI_INIT            0
+#define SB_VSPI_DEINIT          1
+#define SB_VSPI_SETCFG          0
+/** @} */
+
+/**
  * @name    Virtual UART syscall sub-codes
  * @{
  */
