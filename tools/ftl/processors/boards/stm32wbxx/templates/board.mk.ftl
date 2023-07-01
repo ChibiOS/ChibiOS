@@ -1,6 +1,6 @@
 [#ftl]
 [#--
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -26,11 +26,7 @@
     [#assign path = path + "/"]
   [/#if]
 [#else]
-  [#if doc1.board.configuration_settings.hal_version[0]?trim == "2.6.x"]
-    [#assign path = "$(CHIBIOS)/boards/" /]
-  [#else]
-    [#assign path = "$(CHIBIOS)/os/hal/boards/" /]
-  [/#if]
+  [#assign path = "$(CHIBIOS)/os/hal/boards/" /]
 [/#if]
 # List of all the board related files.
 BOARDSRC = ${path}${doc1.board.board_id[0]}/board.c
