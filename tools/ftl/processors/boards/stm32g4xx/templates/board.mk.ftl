@@ -1,6 +1,6 @@
 [#ftl]
 [#--
-    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 

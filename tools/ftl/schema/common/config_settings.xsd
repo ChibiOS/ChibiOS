@@ -54,7 +54,7 @@
                 	</xs:restriction>
                 </xs:simpleType>
             </xs:element>
-            <xs:element name="hal_version" minOccurs="1"
+            <xs:element name="hal_version" minOccurs="0"
     			maxOccurs="1">
     			<xs:simpleType>
     				<xs:annotation>
@@ -64,6 +64,7 @@
     					</xs:documentation>
     				</xs:annotation>
     				<xs:restriction base="xs:string">
+                        <xs:enumeration value="newer"></xs:enumeration>
                         <xs:enumeration value="5.0.x"></xs:enumeration>
                         <xs:enumeration value="4.0.x"></xs:enumeration>
     				</xs:restriction>
