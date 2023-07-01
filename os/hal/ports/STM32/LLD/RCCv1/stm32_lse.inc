@@ -97,10 +97,10 @@ __STATIC_INLINE void lse_init(void) {
 #else
   /* No LSE Bypass.*/
   RCC->BDCR |= STM32_LSEDRV | RCC_BDCR_LSEON | RCC_BDCR_LSESYSEN;
-#endif
   while ((RCC->BDCR & (RCC_BDCR_LSESYSRDY | RCC_BDCR_LSERDY)) !=
          (RCC_BDCR_LSESYSRDY | RCC_BDCR_LSERDY)) {
   }
+#endif
 #endif
 }
 
