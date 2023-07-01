@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: STM32 TIM1 and TIM8 support added to SYSTICKv1 driver.
 - NEW: STM32 RTCv2 and RTCv3 modified to not use shadow registers.
 - NEW: Enhanced STM32F7xx MPU configuration in mcuconf.h.
 - NEW: I2C slave support in HAL high level driver.

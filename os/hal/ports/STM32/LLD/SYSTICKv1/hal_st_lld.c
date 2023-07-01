@@ -42,7 +42,34 @@
 #define ST_ARR_INIT                         0x0000FFFFU
 #endif
 
-#if STM32_ST_USE_TIMER == 2
+#if STM32_ST_USE_TIMER == 1
+
+#if !STM32_HAS_TIM1
+#error "TIM1 not present in the selected device"
+#endif
+
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM1_IS_32BITS
+#error "TIM1 is not a 32bits timer"
+#endif
+
+#define ST_HANDLER                          STM32_TIM1_CC_HANDLER
+#define ST_NUMBER                           STM32_TIM1_CC_NUMBER
+#define ST_CLOCK_SRC                        STM32_TIMCLK1
+#define ST_ENABLE_CLOCK()                   rccEnableTIM1(true)
+#if defined(STM32F1XX)
+#define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM1_STOP
+#elif defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX) ||    \
+      defined(STM32L5XX) || defined(STM32WBXX) || defined(STM32WLXX)
+#define ST_ENABLE_STOP()                    DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM1_STOP
+#elif defined(STM32G0XX)
+#define ST_ENABLE_STOP()                    DBG->APBFZ1 |= DBG_APB_FZ1_DBG_TIM1_STOP
+#elif defined(STM32H7XX)
+#define ST_ENABLE_STOP()                    DBGMCU->APB1LFZ1 |= DBGMCU_APB1LFZ1_DBG_TIM1
+#else
+#define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM1_STOP
+#endif
+
+#elif STM32_ST_USE_TIMER == 2
 
 #if !STM32_HAS_TIM2
 #error "TIM2 not present in the selected device"
@@ -144,6 +171,33 @@
 #define ST_ENABLE_STOP()                    DBGMCU->APB1LFZ1 |= DBGMCU_APB1LFZ1_DBG_TIM5
 #else
 #define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM5_STOP
+#endif
+
+#elif STM32_ST_USE_TIMER == 8
+
+#if !STM32_HAS_TIM8
+#error "TIM8 not present in the selected device"
+#endif
+
+#if (OSAL_ST_RESOLUTION == 32) && !STM32_TIM2_IS_32BITS
+#error "TIM8 is not a 32bits timer"
+#endif
+
+#define ST_HANDLER                          STM32_TIM8_CC_HANDLER
+#define ST_NUMBER                           STM32_TIM8_CC_NUMBER
+#define ST_CLOCK_SRC                        STM32_TIMCLK1
+#define ST_ENABLE_CLOCK()                   rccEnableTIM8(true)
+#if defined(STM32F1XX)
+#define ST_ENABLE_STOP()                    DBGMCU->CR |= DBGMCU_CR_DBG_TIM8_STOP
+#elif defined(STM32L4XX) || defined(STM32L4XXP) || defined(STM32G4XX) ||    \
+      defined(STM32L5XX) || defined(STM32WBXX) || defined(STM32WLXX)
+#define ST_ENABLE_STOP()                    DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM8_STOP
+#elif defined(STM32G0XX)
+#define ST_ENABLE_STOP()                    DBG->APBFZ1 |= DBG_APB_FZ1_DBG_TIM8_STOP
+#elif defined(STM32H7XX)
+#define ST_ENABLE_STOP()                    DBGMCU->APB1LFZ1 |= DBGMCU_APB1LFZ1_DBG_TIM8
+#else
+#define ST_ENABLE_STOP()                    DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_TIM8_STOP
 #endif
 
 #elif STM32_ST_USE_TIMER == 9
