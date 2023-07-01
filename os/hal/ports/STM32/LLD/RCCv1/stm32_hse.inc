@@ -96,10 +96,10 @@ __STATIC_INLINE void hse_enable(void) {
   RCC->CR |= RCC_CR_HSEON | RCC_CR_HSEBYP;
 #else
   RCC->CR |= RCC_CR_HSEON;
-#endif
   while ((RCC->CR & RCC_CR_HSERDY) == 0U) {
     /* Waiting for HSE activation.*/
   }
+#endif
 }
 
 __STATIC_INLINE void hse_disable(void) {
