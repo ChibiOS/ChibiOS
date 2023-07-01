@@ -80,8 +80,14 @@ endif
 # Define project name here
 PROJECT = ch
 
-# Imported source files and paths
-CHIBIOS = ../../..
+# Imported source files and paths.
+CHIBIOS  := ../../..
+CONFDIR  := .
+BUILDDIR := ./build
+DEPDIR   := ./.dep
+
+# Licensing files.
+include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/e200/compilers/GCC/mk/startup_spc560dxx.mk
 # HAL-OSAL files (optional).
@@ -100,29 +106,30 @@ include $(CHIBIOS)/test/oslib/oslib_test.mk
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/SPC560D40.ld
 
-# C sources here.
-CSRC = $(STARTUPSRC) \
-       $(KERNSRC) \
-       $(LIBSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
-       $(HALSRC) \
-       $(PLATFORMSRC) \
-       $(BOARDSRC) \
+# C sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
+CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        main.c
 
-# C++ sources here.
-CPPSRC =
+# C++ sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
+CPPSRC = $(ALLCPPSRC)
 
-# List ASM source files here
-ASMSRC =
-ASMXSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+# List ASM source files here.
+ASMSRC = $(ALLASMSRC)
 
-INCDIR = $(CHIBIOS)/os/license \
-         $(STARTUPINC) $(KERNINC) $(LIBINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(CHIBIOS)/os/various
+# List ASM with preprocessor source files here.
+ASMXSRC = $(ALLXASMSRC)
+
+# Inclusion directories.
+INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
+
+# Define C warning options here.
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+
+# Define C++ warning options here.
+CPPWARN = -Wall -Wextra -Wundef
 
 #
 # Project, sources and paths
