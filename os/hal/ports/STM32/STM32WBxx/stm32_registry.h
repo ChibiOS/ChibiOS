@@ -190,11 +190,11 @@
 
 #define STM32_HAS_TIM16                     TRUE
 #define STM32_TIM16_IS_32BITS               FALSE
-#define STM32_TIM16_CHANNELS                2
+#define STM32_TIM16_CHANNELS                1
 
 #define STM32_HAS_TIM17                     TRUE
 #define STM32_TIM17_IS_32BITS               FALSE
-#define STM32_TIM17_CHANNELS                2
+#define STM32_TIM17_CHANNELS                1
 
 #define STM32_HAS_TIM3                      FALSE
 #define STM32_HAS_TIM4                      FALSE
