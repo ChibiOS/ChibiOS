@@ -24,7 +24,7 @@ endif
 
 # Link time optimizations
 ifeq ($(USE_LTO),yes)
-  OPT += -flto
+  OPT += -flto=auto
 endif
 
 # Output directory and files
