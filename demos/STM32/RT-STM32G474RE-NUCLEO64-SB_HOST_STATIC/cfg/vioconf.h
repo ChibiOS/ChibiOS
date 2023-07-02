@@ -38,6 +38,13 @@
 #endif
 
 /**
+ * @brief   Enables the Virtual SPI support.
+ */
+#if !defined(VIO_CFG_ENABLE_SPI) || defined(__DOXYGEN__)
+#define VIO_CFG_ENABLE_SPI                  FALSE
+#endif
+
+/**
  * @brief   Enables the Virtual UART support.
  */
 #if !defined(VIO_CFG_ENABLE_UART) || defined(__DOXYGEN__)
