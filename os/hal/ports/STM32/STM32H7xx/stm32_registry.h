@@ -979,17 +979,8 @@
 #define STM32_TIM14_CHANNELS                1
 
 #define STM32_HAS_TIM15                     FALSE
-#define STM32_TIM15_IS_32BITS               FALSE
-#define STM32_TIM15_CHANNELS                2
-
 #define STM32_HAS_TIM16                     FALSE
-#define STM32_TIM16_IS_32BITS               FALSE
-#define STM32_TIM16_CHANNELS                1
-
 #define STM32_HAS_TIM17                     FALSE
-#define STM32_TIM17_IS_32BITS               FALSE
-#define STM32_TIM17_CHANNELS                1
-
 #define STM32_HAS_TIM9                      FALSE
 #define STM32_HAS_TIM10                     FALSE
 #define STM32_HAS_TIM11                     FALSE
