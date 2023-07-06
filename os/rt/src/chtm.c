@@ -152,11 +152,13 @@ NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp) {
 NOINLINE void chTMChainMeasurementToX(time_measurement_t *tmp1,
                                       time_measurement_t *tmp2) {
 
-  /* Starts new measurement.*/
-  tmp2->last = chSysGetRealtimeCounterX();
+  /* Get current time for measurement.*/
+  rtcnt_t now = chSysGetRealtimeCounterX();
 
-  /* Stops previous measurement using the same time stamp.*/
-  tm_stop(tmp1, tmp2->last, (rtcnt_t)0);
+  /* Stop previous measurement using current time. Update chained only after
+     stop since the same measurement object may be used.*/
+  tm_stop(tmp1, now, (rtcnt_t)0);
+  tmp2->last = now;
 }
 
 #endif /* CH_CFG_USE_TM == TRUE */
