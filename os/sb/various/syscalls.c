@@ -115,11 +115,10 @@ caddr_t _sbrk_r(struct _reent *r, int incr) {
 }
 
 __attribute__((used))
-int _getpid_r(struct _reent *r) {
-
-  (void)r;
+int _getpid(void) {
 
   return 1;
+  abort();
 }
 
 __attribute__((used))
