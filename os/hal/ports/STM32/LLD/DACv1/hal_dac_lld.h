@@ -39,6 +39,14 @@
  * @name    Configuration options
  * @{
  */
+
+/**
+ * @brief   DAC mode control register.
+ */
+#if !defined(STM32_DAC_HAS_MCR) || defined(__DOXYGEN__)
+#define STM32_DAC_HAS_MCR                   FALSE
+#endif
+
 /**
  * @brief   Enables the DAC dual mode.
  * @note    In dual mode DAC second channels cannot be accessed individually.
@@ -574,9 +582,11 @@ typedef enum {
 
 /**
  * @brief   Low level fields of the DAC configuration structure.
- * @note    In DUAL mode init, cr and mcr fields hold CH1 settings in their
- *          lower 16 bits and CH2 settings in the upper 16 bits.
+ * @note    In DUAL mode init, cr and mcr (if available) fields hold CH1
+ *          settings in their lower 16 bits and CH2 settings in the upper
+ *          16 bits.
  */
+#if STM32_DAC_HAS_MCR == TRUE
 #define dac_lld_config_fields                                               \
   /* Initial output on DAC channel.*/                                       \
   uint32_t                init;                                             \
@@ -586,6 +596,15 @@ typedef enum {
   uint32_t                cr;                                               \
   /* DAC mode control register.*/                                           \
   uint32_t                mcr
+#else
+#define dac_lld_config_fields                                               \
+  /* Initial output on DAC channel.*/                                       \
+  uint32_t                init;                                             \
+  /* DAC data holding register mode.*/                                      \
+  dacdhrmode_t            datamode;                                         \
+  /* DAC control register.*/                                                \
+  uint32_t                cr
+#endif /* STM32_DAC_HAS_MCR == TRUE */
 
 /**
  * @brief   Low level fields of the DAC group configuration structure.
