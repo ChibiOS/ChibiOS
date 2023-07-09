@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: Improved DAC driver, updated STM32 DACv1.
 - NEW: Removed oscillator stabilization delay on STM32 LSE and HSE when
        bypass mode is enabled.
 - NEW: STM32 TIM1 and TIM8 support added to SYSTICKv1 driver.
