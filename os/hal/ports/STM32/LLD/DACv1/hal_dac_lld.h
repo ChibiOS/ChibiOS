@@ -31,14 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    DAC trigger modes
- * @{
- */
-#define DAC_TRG_MASK                    7U
-#define DAC_TRG(n)                      (n)
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -487,7 +479,7 @@
 /**
  * @brief   Max DAC channels.
  */
-#if STM32_DAC_DUAL_MODE == FALSE
+#if STM32_DAC_DUAL_MODE == TRUE
 #define DAC_MAX_CHANNELS                    2
 #else
 #define DAC_MAX_CHANNELS                    1
@@ -571,10 +563,6 @@ typedef enum {
 #endif
 } dacdhrmode_t;
 
-/*===========================================================================*/
-/* Driver macros.                                                            */
-/*===========================================================================*/
-
 /**
  * @brief   Low level fields of the DAC driver structure.
  */
@@ -586,14 +574,18 @@ typedef enum {
 
 /**
  * @brief   Low level fields of the DAC configuration structure.
+ * @note    In DUAL mode init, cr and mcr fields hold CH1 settings in their
+ *          lower 16 bits and CH2 settings in the upper 16 bits.
  */
 #define dac_lld_config_fields                                               \
-  /* Initial output on DAC channels.*/                                      \
-  dacsample_t               init;                                           \
+  /* Initial output on DAC channel.*/                                       \
+  uint32_t                init;                                             \
   /* DAC data holding register mode.*/                                      \
-  dacdhrmode_t              datamode;                                       \
-  /* DAC control register lower 16 bits.*/                                  \
-  uint32_t                  cr
+  dacdhrmode_t            datamode;                                         \
+  /* DAC control register.*/                                                \
+  uint32_t                cr;                                               \
+  /* DAC mode control register.*/                                           \
+  uint32_t                mcr
 
 /**
  * @brief   Low level fields of the DAC group configuration structure.
@@ -603,6 +595,23 @@ typedef enum {
      to be put into the TSEL field of the DAC CR register during            \
      initialization. All other fields are handled internally.*/             \
   uint32_t                  trigger
+
+/*===========================================================================*/
+/* Driver macros.                                                            */
+/*===========================================================================*/
+
+/**
+ * @name    DAC trigger modes
+ * @{
+ */
+#define DAC_TRG_MASK                    7U
+#define DAC_TRG(n)                      (n)
+/** @} */
+
+/**
+ * @brief   Shift of initialisation value for channel 2 in dual mode.
+ */
+#define DAC_VALUE_DUAL(n) ((n) << (sizeof(dacsample_t) * 8))
 
 /*===========================================================================*/
 /* External declarations.                                                    */
