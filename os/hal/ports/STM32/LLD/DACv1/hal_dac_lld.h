@@ -604,6 +604,7 @@ typedef enum {
   dacdhrmode_t            datamode;                                         \
   /* DAC control register.*/                                                \
   uint32_t                cr
+#endif /* STM32_DAC_HAS_MCR == TRUE */
 
 /**
  * @brief   Low level fields of the DAC group configuration structure.
