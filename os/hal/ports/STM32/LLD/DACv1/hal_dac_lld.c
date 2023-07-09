@@ -776,7 +776,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
   /* DAC configuration. Mask out DMA and calibration.*/
   cr = dacp->params->dac->CR;
-  cr &= ~(DAC_CR_CEN1 | DAC_CR_CEN2 | DAC_CR_DMAEN2);
+//  cr &= ~(DAC_CR_CEN1 | DAC_CR_CEN2 | DAC_CR_DMAEN2);
 #if STM32_DAC_DUAL_MODE == FALSE
   /* Start the DMA on the single channel.*/
   cr &= dacp->params->regmask;
