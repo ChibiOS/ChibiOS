@@ -431,12 +431,11 @@ void dac_lld_start(DACDriver *dacp) {
       channel = 1;
     }
 #endif
-
+    uint32_t reg;
 #if STM32_DAC_DUAL_MODE == FALSE
     /* Enabling DAC in SW triggering mode initially, initializing data to
        configuration default.*/
     {
-      uint32_t reg;
 
       /* Operating in SINGLE mode with one channel to set. Set registers for
          specified channel from configuration. Lower half word of
@@ -774,9 +773,8 @@ void dac_lld_start_conversion(DACDriver *dacp) {
                               STM32_DMA_CR_HTIE  | STM32_DMA_CR_TCIE);
   dmaStreamEnable(dacp->dma);
 
-  /* DAC configuration. Mask out DMA enable*/
+  /* DAC configuration.*/
   cr = dacp->params->dac->CR;
-  cr &= ~(DAC_CR_DMAEN2);
 #if STM32_DAC_DUAL_MODE == FALSE
   /* Start the DMA on the single channel.*/
   cr &= dacp->params->regmask;
