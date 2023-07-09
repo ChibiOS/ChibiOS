@@ -62,6 +62,9 @@
 /* Common.                                                                   */
 /*===========================================================================*/
 
+/* DAC attributes.*/
+#define STM32_DAC_HAS_MCR                   TRUE
+
 /* RNG attributes.*/
 #define STM32_HAS_RNG1                      TRUE
 

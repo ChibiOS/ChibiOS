@@ -441,10 +441,11 @@ void dac_lld_start(DACDriver *dacp) {
       /* Operating in SINGLE mode with one channel to set. Set registers for
          specified channel from configuration. Lower half word of
          configuration specifies configuration for any channel.*/
+#if STM32_DAC_HAS_MCR == TRUE
       reg = dacp->params->dac->MCR & dacp->params->regmask;
       dacp->params->dac->MCR = reg |
         ((dacp->config->mcr & ~dacp->params->regmask) << dacp->params->regshift);
-
+#endif
       /* Enable and initialise the channel.*/
       reg = dacp->params->dac->CR;
       reg &= dacp->params->regmask;
@@ -457,8 +458,9 @@ void dac_lld_start(DACDriver *dacp) {
        both channels from configuration. Lower and upper half words specify
        configuration for channels CH1 & CH2 respectively.*/
     (void)channel;
+#if STM32_DAC_HAS_MCR == TRUE
     dacp->params->dac->MCR = dacp->config->mcr;
-
+#endif
     /* Enable and initialise both CH1 and CH2. Mask out DMA and calibrate.*/
     reg = dacp->config->cr;
     reg &= ~(DAC_CR_DMAEN1 | DAC_CR_DMAEN2 | DAC_CR_CEN1 | DAC_CR_CEN2);
@@ -810,15 +812,19 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
   /* Restore start configuration but leave DORx at current values.*/
   cr = dacp->params->dac->CR;
 #if STM32_DAC_DUAL_MODE == FALSE
+#if STM32_DAC_HAS_MCR == TRUE
   uint32_t mcr;
   mcr = dacp->params->dac->MCR & dacp->params->regmask;
   dacp->params->dac->MCR = mcr |
     ((dacp->config->mcr & dacp->params->regmask) << dacp->params->regshift);
+#endif
   cr &= dacp->params->regmask;
   cr |= (DAC_CR_EN1 | (dacp->config->cr & ~dacp->params->regmask)) <<
                                       dacp->params->regshift;
 #else
+#if STM32_DAC_HAS_MCR == TRUE
   dacp->params->dac->MCR = dacp->config->mcr;
+#endif
   cr = dacp->config->cr | DAC_CR_EN1 | DAC_CR_EN2;
 #endif
 
