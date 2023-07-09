@@ -461,9 +461,9 @@ void dac_lld_start(DACDriver *dacp) {
 #if STM32_DAC_HAS_MCR == TRUE
     dacp->params->dac->MCR = dacp->config->mcr;
 #endif
-    /* Enable and initialise both CH1 and CH2. Mask out DMA and calibrate.*/
+    /* Enable and initialise both CH1 and CH2. Mask out DMA enable.*/
     reg = dacp->config->cr;
-    reg &= ~(DAC_CR_DMAEN1 | DAC_CR_DMAEN2 | DAC_CR_CEN1 | DAC_CR_CEN2);
+    reg &= ~(DAC_CR_DMAEN1 | DAC_CR_DMAEN2);
     dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1 | reg;
     dac_lld_put_channel(dacp, 0U, (dacsample_t)dacp->config->init);
     dac_lld_put_channel(dacp, 1U, (dacsample_t)(dacp->config->init >>
@@ -774,9 +774,9 @@ void dac_lld_start_conversion(DACDriver *dacp) {
                               STM32_DMA_CR_HTIE  | STM32_DMA_CR_TCIE);
   dmaStreamEnable(dacp->dma);
 
-  /* DAC configuration. Mask out DMA and calibration.*/
+  /* DAC configuration. Mask out DMA enable*/
   cr = dacp->params->dac->CR;
-//  cr &= ~(DAC_CR_CEN1 | DAC_CR_CEN2 | DAC_CR_DMAEN2);
+  cr &= ~(DAC_CR_DMAEN2);
 #if STM32_DAC_DUAL_MODE == FALSE
   /* Start the DMA on the single channel.*/
   cr &= dacp->params->regmask;
