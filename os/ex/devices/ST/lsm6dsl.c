@@ -351,67 +351,70 @@ static msg_t acc_set_full_scale(LSM6DSLDriver *devp, lsm6dsl_acc_fs_t fs) {
   /* Computing new fullscale value.*/
   if(fs == LSM6DSL_ACC_FS_2G) {
     newfs = LSM6DSL_ACC_2G;
+    msg = MSG_OK;
   }
   else if(fs == LSM6DSL_ACC_FS_4G) {
     newfs = LSM6DSL_ACC_4G;
+    msg = MSG_OK;
   }
   else if(fs == LSM6DSL_ACC_FS_8G) {
     newfs = LSM6DSL_ACC_8G;
+    msg = MSG_OK;
   }
   else if(fs == LSM6DSL_ACC_FS_16G) {
     newfs = LSM6DSL_ACC_16G;
+    msg = MSG_OK;
   }
   else {
     msg = MSG_RESET;
-    return msg;
   }
 
-  if(newfs != devp->accfullscale) {
-    /* Computing scale value.*/
-    scale = newfs / devp->accfullscale;
-    devp->accfullscale = newfs;
+  if((msg == MSG_OK) &&
+     (newfs != devp->accfullscale)) {
+      /* Computing scale value.*/
+      scale = newfs / devp->accfullscale;
+      devp->accfullscale = newfs;
 
 #if LSM6DSL_SHARED_I2C
-		i2cAcquireBus(devp->config->i2cp);
-		i2cStart(devp->config->i2cp,
-						 devp->config->i2ccfg);
+      i2cAcquireBus(devp->config->i2cp);
+      i2cStart(devp->config->i2cp,
+               devp->config->i2ccfg);
 #endif /* LSM6DSL_SHARED_I2C */
 
-    /* Updating register.*/
-    msg = lsm6dslI2CReadRegister(devp->config->i2cp,
-                                 devp->config->slaveaddress,
-                                 LSM6DSL_AD_CTRL1_XL, &buff[1], 1);
+      /* Updating register.*/
+      msg = lsm6dslI2CReadRegister(devp->config->i2cp,
+                                   devp->config->slaveaddress,
+                                   LSM6DSL_AD_CTRL1_XL, &buff[1], 1);
 
 #if LSM6DSL_SHARED_I2C
-        i2cReleaseBus(devp->config->i2cp);
+      i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM6DSL_SHARED_I2C */
 
-    if(msg != MSG_OK)
-      return msg;
+    if(msg == MSG_OK) {
 
-    buff[1] &= ~(LSMDSL_CTRL1_XL_FS_MASK);
-    buff[1] |= fs;
-    buff[0] = LSM6DSL_AD_CTRL1_XL;
+      buff[1] &= ~(LSMDSL_CTRL1_XL_FS_MASK);
+      buff[1] |= fs;
+      buff[0] = LSM6DSL_AD_CTRL1_XL;
 
 #if LSM6DSL_SHARED_I2C
-    i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
+      i2cAcquireBus(devp->config->i2cp);
+      i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LSM6DSL_SHARED_I2C */
 
-    msg = lsm6dslI2CWriteRegister(devp->config->i2cp,
-                                  devp->config->slaveaddress, buff, 1);
+      msg = lsm6dslI2CWriteRegister(devp->config->i2cp,
+                                    devp->config->slaveaddress, buff, 1);
 
 #if LSM6DSL_SHARED_I2C
-		i2cReleaseBus(devp->config->i2cp);
+      i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM6DSL_SHARED_I2C */
+    }
+    if(msg == MSG_OK) {
 
-    if(msg != MSG_OK)
-      return msg;
-
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
-    for(i = 0; i < LSM6DSL_ACC_NUMBER_OF_AXES; i++) {
-      devp->accsensitivity[i] *= scale;
-      devp->accbias[i] *= scale;
+      /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
+      for(i = 0; i < LSM6DSL_ACC_NUMBER_OF_AXES; i++) {
+        devp->accsensitivity[i] *= scale;
+        devp->accbias[i] *= scale;
+      }
     }
   }
   return msg;

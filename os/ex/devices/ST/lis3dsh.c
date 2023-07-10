@@ -358,25 +358,30 @@ static msg_t acc_set_full_scale(LIS3DSHDriver *devp, lis3dsh_acc_fs_t fs) {
   /* Computing new fullscale value.*/
   if(fs == LIS3DSH_ACC_FS_2G) {
     newfs = LIS3DSH_ACC_2G;
+    msg = MSG_OK;
   }
   else if(fs == LIS3DSH_ACC_FS_4G) {
     newfs = LIS3DSH_ACC_4G;
+    msg = MSG_OK;
   }
   else if(fs == LIS3DSH_ACC_FS_6G) {
     newfs = LIS3DSH_ACC_6G;
+    msg = MSG_OK;
   }
   else if(fs == LIS3DSH_ACC_FS_8G) {
     newfs = LIS3DSH_ACC_8G;
+    msg = MSG_OK;
   }
   else if(fs == LIS3DSH_ACC_FS_16G) {
     newfs = LIS3DSH_ACC_16G;
+    msg = MSG_OK;
   }
   else {
     msg = MSG_RESET;
-    return msg;
   }
 
-  if(newfs != devp->accfullscale) {
+  if((msg == MSG_OK) &&
+     (newfs != devp->accfullscale)) {
     /* Computing scale value.*/
     scale = newfs / devp->accfullscale;
     devp->accfullscale = newfs;

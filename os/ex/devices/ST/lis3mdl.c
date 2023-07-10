@@ -357,22 +357,26 @@ static msg_t comp_set_full_scale(LIS3MDLDriver *devp, lis3mdl_comp_fs_t fs) {
   /* Computing new fullscale value.*/
   if(fs == LIS3MDL_COMP_FS_4GA) {
     newfs = LIS3MDL_COMP_4GA;
+    msg = MSG_OK;
   }
   else if(fs == LIS3MDL_COMP_FS_8GA) {
     newfs = LIS3MDL_COMP_8GA;
+    msg = MSG_OK;
   }
   else if(fs == LIS3MDL_COMP_FS_12GA) {
     newfs = LIS3MDL_COMP_12GA;
+    msg = MSG_OK;
   }
   else if(fs == LIS3MDL_COMP_FS_16GA) {
     newfs = LIS3MDL_COMP_16GA;
+    msg = MSG_OK;
   }
   else {
     msg = MSG_RESET;
-    return msg;
   }
 
-  if(newfs != devp->compfullscale) {
+  if((msg == MSG_OK) &&
+     (newfs != devp->compfullscale)) {
     /* Computing scale value.*/
     scale = newfs / devp->compfullscale;
     devp->compfullscale = newfs;
@@ -390,32 +394,32 @@ static msg_t comp_set_full_scale(LIS3MDLDriver *devp, lis3mdl_comp_fs_t fs) {
         i2cReleaseBus(devp->config->i2cp);
 #endif /* LIS3MDL_SHARED_I2C */
 
-    if(msg != MSG_OK)
-      return msg;
-    buff[1] &= ~(LIS3MDL_CTRL_REG2_FS_MASK);
-    buff[1] |= fs;
-    buff[0] = LIS3MDL_AD_CTRL_REG2;
+    if(msg == MSG_OK) {
+
+      buff[1] &= ~(LIS3MDL_CTRL_REG2_FS_MASK);
+      buff[1] |= fs;
+      buff[0] = LIS3MDL_AD_CTRL_REG2;
 
 #if LIS3MDL_SHARED_I2C
-    i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
+      i2cAcquireBus(devp->config->i2cp);
+      i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LIS3MDL_SHARED_I2C */
 
-    msg = lis3mdlI2CWriteRegister(devp->config->i2cp,
-                                  devp->config->slaveaddress,
-                                  buff, 1);
+      msg = lis3mdlI2CWriteRegister(devp->config->i2cp,
+                                    devp->config->slaveaddress,
+                                    buff, 1);
 
 #if LIS3MDL_SHARED_I2C
-        i2cReleaseBus(devp->config->i2cp);
+      i2cReleaseBus(devp->config->i2cp);
 #endif /* LIS3MDL_SHARED_I2C */
+    }
+    if(msg == MSG_OK) {
 
-    if(msg != MSG_OK)
-      return msg;
-
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
-    for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
-      devp->compsensitivity[i] *= scale;
-      devp->compbias[i] *= scale;
+      /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
+      for(i = 0; i < LIS3MDL_COMP_NUMBER_OF_AXES; i++) {
+        devp->compsensitivity[i] *= scale;
+        devp->compbias[i] *= scale;
+      }
     }
   }
   return msg;

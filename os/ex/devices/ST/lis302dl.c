@@ -344,16 +344,18 @@ static msg_t acc_set_full_scale(LIS302DLDriver *devp, lis302dl_acc_fs_t fs) {
   /* Computing new fullscale value.*/
   if(fs == LIS302DL_ACC_FS_2G) {
     newfs = LIS302DL_ACC_2G;
+    msg = MSG_OK;
   }
   else if(fs == LIS302DL_ACC_FS_8G) {
     newfs = LIS302DL_ACC_8G;
+    msg = MSG_OK;
   }
   else {
     msg = MSG_RESET;
-    return msg;
   }
 
-  if(newfs != devp->accfullscale) {
+  if((msg == MSG_OK) && 
+     (newfs != devp->accfullscale)) {
     /* Computing scale value.*/
     scale = newfs / devp->accfullscale;
     devp->accfullscale = newfs;

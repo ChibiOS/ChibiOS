@@ -168,6 +168,7 @@
        ARMv7-M and ARMv8-M-ML.
 - NEW: On STM32WBxx added a check on STM32_LSI_ENABLE required by IWDG.
 - NEW: Added SPIv2 support also to STM32WB and STM32WL.
+- FIX: Fixed uninitialized return message in EX subsystem (bug #1267).
 - FIX: Re-opened and fixed bug #1100.
 - FIX: Fixed wrong buffers toggling in STM32 USBv1 isochronous mode (bug #1232).
 - FIX: Fixed STM32 RTCv2 registers synchronization errata (bug #1231).

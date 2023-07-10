@@ -368,22 +368,26 @@ static msg_t acc_set_full_scale(LSM303AGRDriver *devp,
   /* Computing new fullscale value.*/
   if(fs == LSM303AGR_ACC_FS_2G) {
     newfs = LSM303AGR_ACC_2G;
+    msg = MSG_OK;
   }
   else if(fs == LSM303AGR_ACC_FS_4G) {
     newfs = LSM303AGR_ACC_4G;
+    msg = MSG_OK;
   }
   else if(fs == LSM303AGR_ACC_FS_8G) {
     newfs = LSM303AGR_ACC_8G;
+    msg = MSG_OK;
   }
   else if(fs == LSM303AGR_ACC_FS_16G) {
     newfs = LSM303AGR_ACC_16G;
+    msg = MSG_OK;
   }
   else {
     msg = MSG_RESET;
-    return msg;
   }
 
-  if(newfs != devp->accfullscale) {
+  if((msg == MSG_OK) &&
+     (newfs != devp->compfullscale)) {
     /* Computing scale value.*/
     scale = newfs / devp->accfullscale;
     devp->accfullscale = newfs;
@@ -401,35 +405,34 @@ static msg_t acc_set_full_scale(LSM303AGRDriver *devp,
                                    &buff[1], 1);
 
 #if LSM303AGR_SHARED_I2C
-        i2cReleaseBus(devp->config->i2cp);
+    i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM303AGR_SHARED_I2C */
 
-    if(msg != MSG_OK)
-      return msg;
+    if(msg == MSG_OK) {
 
-    buff[1] &= ~(LSM303AGR_CTRL_REG4_A_FS_MASK);
-    buff[1] |= fs;
-    buff[0] = LSM303AGR_AD_CTRL_REG4_A;
+      buff[1] &= ~(LSM303AGR_CTRL_REG4_A_FS_MASK);
+      buff[1] |= fs;
+      buff[0] = LSM303AGR_AD_CTRL_REG4_A;
 
 #if LSM303AGR_SHARED_I2C
-    i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
+      i2cAcquireBus(devp->config->i2cp);
+      i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LSM303AGR_SHARED_I2C */
 
-    msg = lsm303agrI2CWriteRegister(devp->config->i2cp,
-                                    LSM303AGR_SAD_ACC, buff, 1);
+      msg = lsm303agrI2CWriteRegister(devp->config->i2cp,
+                                      LSM303AGR_SAD_ACC, buff, 1);
 
 #if LSM303AGR_SHARED_I2C
-		i2cReleaseBus(devp->config->i2cp);
+      i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM303AGR_SHARED_I2C */
+    }
+    if(msg == MSG_OK) {
 
-    if(msg != MSG_OK)
-      return msg;
-
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
-    for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
-      devp->accsensitivity[i] *= scale;
-      devp->accbias[i] *= scale;
+      /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
+      for(i = 0; i < LSM303AGR_ACC_NUMBER_OF_AXES; i++) {
+        devp->accsensitivity[i] *= scale;
+        devp->accbias[i] *= scale;
+      }
     }
   }
   return msg;

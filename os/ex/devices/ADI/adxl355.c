@@ -360,19 +360,22 @@ static msg_t acc_set_full_scale(ADXL355Driver *devp, adxl355_acc_fs_t fs) {
   /* Computing new fullscale value.*/
   if(fs == ADXL355_ACC_FS_2G) {
     newfs = ADXL355_ACC_2G;
+    msg = MSG_OK;
   }
   else if(fs == ADXL355_ACC_FS_4G) {
     newfs = ADXL355_ACC_4G;
+    msg = MSG_OK;
   }
   else if(fs == ADXL355_ACC_FS_8G) {
     newfs = ADXL355_ACC_8G;
+    msg = MSG_OK;
   }
   else {
     msg = MSG_RESET;
-    return msg;
   }
 
-  if(newfs != devp->accfullscale) {
+  if((msg == MSG_OK) &&
+     (newfs != devp->accfullscale)) {
     /* Computing scale value.*/
     scale = newfs / devp->accfullscale;
     devp->accfullscale = newfs;
