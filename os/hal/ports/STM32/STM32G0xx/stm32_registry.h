@@ -498,6 +498,7 @@
 #define STM32_HAS_DAC1_CH2                  TRUE
 #define STM32_HAS_DAC2_CH1                  FALSE
 #define STM32_HAS_DAC2_CH2                  FALSE
+#define STM32_DAC_HAS_MCR                   TRUE
 
 /* DMA attributes.*/
 #define STM32_ADVANCED_DMA                  TRUE

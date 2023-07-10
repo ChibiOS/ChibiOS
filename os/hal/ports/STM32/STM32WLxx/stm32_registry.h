@@ -43,6 +43,9 @@
  * @{
  */
 
+/* DAC attributes.*/
+#define STM32_DAC_HAS_MCR                   TRUE
+
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSI16                 TRUE
 #define STM32_RCC_HAS_HSI48                 FALSE
