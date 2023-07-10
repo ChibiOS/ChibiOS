@@ -351,22 +351,26 @@ static msg_t acc_set_full_scale(LSM6DS0Driver *devp, lsm6ds0_acc_fs_t fs) {
   /* Computing new fullscale value.*/
   if(fs == LSM6DS0_ACC_FS_2G) {
     newfs = LSM6DS0_ACC_2G;
+    msg = MSG_OK;
   }
   else if(fs == LSM6DS0_ACC_FS_4G) {
     newfs = LSM6DS0_ACC_4G;
+    msg = MSG_OK;
   }
   else if(fs == LSM6DS0_ACC_FS_8G) {
     newfs = LSM6DS0_ACC_8G;
+    msg = MSG_OK;
   }
   else if(fs == LSM6DS0_ACC_FS_16G) {
     newfs = LSM6DS0_ACC_16G;
+    msg = MSG_OK;
   }
   else {
     msg = MSG_RESET;
-    return msg;
   }
 
-  if(newfs != devp->accfullscale) {
+  if((msg == MSG_OK) &&
+     (newfs != devp->accfullscale))  {
     /* Computing scale value.*/
     scale = newfs / devp->accfullscale;
     devp->accfullscale = newfs;
@@ -386,32 +390,31 @@ static msg_t acc_set_full_scale(LSM6DS0Driver *devp, lsm6ds0_acc_fs_t fs) {
         i2cReleaseBus(devp->config->i2cp);
 #endif /* LSM6DS0_SHARED_I2C */
 
-    if(msg != MSG_OK)
-      return msg;
+    if(msg != MSG_OK) {
 
-    buff[1] &= ~(LSM6DS0_CTRL_REG6_XL_FS_MASK);
-    buff[1] |= fs;
-    buff[0] = LSM6DS0_AD_CTRL_REG6_XL;
-
-#if LSM6DS0_SHARED_I2C
-    i2cAcquireBus(devp->config->i2cp);
-    i2cStart(devp->config->i2cp, devp->config->i2ccfg);
-#endif /* LSM6DS0_SHARED_I2C */
-
-    msg = lsm6ds0I2CWriteRegister(devp->config->i2cp,
-                                  devp->config->slaveaddress, buff, 1);
+      buff[1] &= ~(LSM6DS0_CTRL_REG6_XL_FS_MASK);
+      buff[1] |= fs;
+      buff[0] = LSM6DS0_AD_CTRL_REG6_XL;
 
 #if LSM6DS0_SHARED_I2C
-		i2cReleaseBus(devp->config->i2cp);
+      i2cAcquireBus(devp->config->i2cp);
+      i2cStart(devp->config->i2cp, devp->config->i2ccfg);
 #endif /* LSM6DS0_SHARED_I2C */
 
-    if(msg != MSG_OK)
-      return msg;
+      msg = lsm6ds0I2CWriteRegister(devp->config->i2cp,
+                                    devp->config->slaveaddress, buff, 1);
 
-    /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
-    for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++) {
-      devp->accsensitivity[i] *= scale;
-      devp->accbias[i] *= scale;
+#if LSM6DS0_SHARED_I2C
+      i2cReleaseBus(devp->config->i2cp);
+#endif /* LSM6DS0_SHARED_I2C */
+    }
+    if(msg != MSG_OK) {
+
+      /* Scaling sensitivity and bias. Re-calibration is suggested anyway.*/
+      for(i = 0; i < LSM6DS0_ACC_NUMBER_OF_AXES; i++) {
+        devp->accsensitivity[i] *= scale;
+        devp->accbias[i] *= scale;
+      }
     }
   }
   return msg;
