@@ -38,6 +38,9 @@
 /* Common.                                                                   */
 /*===========================================================================*/
 
+/* DAC attributes.*/
+#define STM32_DAC_HAS_MCR                   TRUE
+
 /* RNG attributes.*/
 #define STM32_HAS_RNG1                      TRUE
 
@@ -62,17 +65,14 @@
   nvicEnableVector(STM32_RTC_ALARM_NUMBER, STM32_IRQ_EXTI18_PRIORITY);      \
 } while (false)
 
-#if defined(STM32L4S5xx) || defined(STM32L4S7xx) || defined(STM32L4S9xx) || \
-    defined(__DOXYGEN__)
+/* HASH attributes.*/
 #define STM32_HAS_HASH1                     TRUE
-#define STM32_HAS_CRYP1                     TRUE
-#else
-#define STM32_HAS_HASH1                     FALSE
+
+/* CRYP attributes.*/
 #define STM32_HAS_CRYP1                     FALSE
-#endif
 
 /*===========================================================================*/
-/* STM32L4yyxx+.                                                             */
+/* STM32L552xx.                                                              */
 /*===========================================================================*/
 
 #if defined(STM32L552xx) || defined(__DOXYGEN__)
@@ -294,9 +294,7 @@
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      TRUE
 
-#endif /* defined(STM32L4R5xx) || defined(STM32L4R7xx) ||
-          defined(STM32L4R9xx) || defined(STM32L4S5xx) ||
-          defined(STM32L4S7xx) || defined(STM32L4S9xx) */
+#endif /* defined(STM32L552xx) */
 
 /** @} */
 
