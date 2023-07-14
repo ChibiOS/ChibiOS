@@ -145,6 +145,18 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
       ectxp->r0 = (uint32_t)drvConfigureX(unitp->spip, confp->spicfgp);
       break;
     }
+  case SB_VSPI_SELECT:
+    {
+      spiSelectX(unitp->spip);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VSPI_UNSELECT:
+    {
+      spiUnselectX(unitp->spip);
+      ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
   default:
     /* Silently ignored.*/
     break;

@@ -113,6 +113,8 @@
 #define SB_VSPI_INIT            0
 #define SB_VSPI_DEINIT          1
 #define SB_VSPI_SETCFG          0
+#define SB_VSPI_SELECT          1
+#define SB_VSPI_UNSELECT        2
 /** @} */
 
 /**
