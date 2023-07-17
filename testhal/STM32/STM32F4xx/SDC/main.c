@@ -26,7 +26,8 @@
  * SDIO configuration.
  */
 static const SDCConfig sdccfg = {
-  SDC_MODE_4BIT
+  .bus_width = SDC_MODE_4BIT,
+  .slowdown  = 0U
 };
 
 /*
