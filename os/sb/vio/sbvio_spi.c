@@ -85,8 +85,7 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       msg = drvStart(unitp->spip);
       if (msg == HAL_RET_SUCCESS) {
 
-        /* Starting with disabled events, enabling the callback.*/
-        sioWriteEnableFlags(unitp->spip, SIO_EV_NONE);
+        /* Enabling the callback.*/
         drvSetCallbackX(unitp->spip, vspi_cb);
       }
 
@@ -98,6 +97,122 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       drvStop(unitp->spip);
 
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VSPI_PULSES:
+    {
+      msg_t msg;
+      uint32_t n = ectxp->r1;
+
+      if (n == 0U) {
+        ectxp->r0 = CH_RET_EINVAL;
+        break;
+      }
+
+      chSysLock();
+      if (drvGetStateX(unitp->spip) != HAL_DRV_STATE_READY) {
+        msg = HAL_RET_INV_STATE;
+      }
+      else {
+        msg = spiStartIgnoreI(unitp->spip, n);
+      }
+      chSysUnlock();
+
+      ectxp->r0 = (uint32_t)msg;
+      break;
+    }
+  case SB_VSPI_RECEIVE:
+    {
+      msg_t msg;
+      uint32_t n = ectxp->r1;
+      void *rxbuf = (void *)ectxp->r2;
+
+      if (n == 0U) {
+        ectxp->r0 = CH_RET_EINVAL;
+        break;
+      }
+
+      if (!sb_is_valid_write_range(sbp, rxbuf, n)) { /* TODO frame size */
+        ectxp->r0 = (uint32_t)0;
+        /* TODO enforce fault instead.*/
+        break;
+      }
+
+      chSysLock();
+      if (drvGetStateX(unitp->spip) != HAL_DRV_STATE_READY) {
+        msg = HAL_RET_INV_STATE;
+      }
+      else {
+        msg = spiStartReceiveI(unitp->spip, n, rxbuf);
+      }
+      chSysUnlock();
+
+      ectxp->r0 = (uint32_t)msg;
+      break;
+    }
+  case SB_VSPI_SEND:
+    {
+      msg_t msg;
+      uint32_t n = ectxp->r1;
+      const void *txbuf = (const void *)ectxp->r2;
+
+      if (n == 0U) {
+        ectxp->r0 = CH_RET_EINVAL;
+        break;
+      }
+
+      if (!sb_is_valid_read_range(sbp, txbuf, n)) { /* TODO frame size */
+        ectxp->r0 = (uint32_t)0;
+        /* TODO enforce fault instead.*/
+        break;
+      }
+
+      chSysLock();
+      if (drvGetStateX(unitp->spip) != HAL_DRV_STATE_READY) {
+        msg = HAL_RET_INV_STATE;
+      }
+      else {
+        msg = spiStartSendI(unitp->spip, n, txbuf);
+      }
+      chSysUnlock();
+
+      ectxp->r0 = (uint32_t)msg;
+      break;
+    }
+  case SB_VSPI_EXCHANGE:
+    {
+      msg_t msg;
+      uint32_t n = ectxp->r1;
+      void *rxbuf = (void *)ectxp->r2;
+      const void *txbuf = (const void *)ectxp->r3;
+
+      if (n == 0U) {
+        ectxp->r0 = CH_RET_EINVAL;
+        break;
+      }
+
+      if (!sb_is_valid_write_range(sbp, rxbuf, n)) { /* TODO frame size */
+        ectxp->r0 = (uint32_t)0;
+        /* TODO enforce fault instead.*/
+        break;
+      }
+
+      if (!sb_is_valid_read_range(sbp, txbuf, n)) { /* TODO frame size */
+        ectxp->r0 = (uint32_t)0;
+        /* TODO enforce fault instead.*/
+        break;
+      }
+
+      chSysLock();
+      if (drvGetStateX(unitp->spip) != HAL_DRV_STATE_READY) {
+        msg = HAL_RET_INV_STATE;
+      }
+      else {
+        msg = spiStartExchangeI(unitp->spip, n, txbuf, rxbuf);
+      }
+      chSysUnlock();
+
+      ectxp->r0 = (uint32_t)msg;
       break;
     }
   default:
