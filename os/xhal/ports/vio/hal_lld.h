@@ -80,6 +80,15 @@ typedef unsigned halclkpt_t;
 #define __MK_VECTOR(n)      __sb_vector##n
 #define MK_VECTOR(n)        __MK_VECTOR(n)
 
+/**
+ * @brief   Builds a VIO call 1st parameter.
+ *
+ * @param[in] c         the sub-code
+ * @param[in] u         the unit identifier
+ * @return              The formatted VIO call 1st parameter.
+ */
+#define VIO_CALL(c, u) (((uint32_t)(u) << 24) | (uint32_t)(c))
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

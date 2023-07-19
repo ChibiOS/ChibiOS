@@ -62,8 +62,8 @@ static void vspi_cb(void *ip) {
 
 void sb_sysc_vio_spi(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-  uint32_t sub  = ectxp->r0;
-  uint32_t unit = ectxp->r1;
+  uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
+  uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
   ectxp->r0 = (uint32_t)CH_RET_INNER_ERROR;
   const vio_spi_unit_t *unitp;
 
@@ -108,8 +108,8 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
 
 void sb_fastc_vio_spi(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-  uint32_t sub  = ectxp->r0;
-  uint32_t unit = ectxp->r1;
+  uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
+  uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
   const vio_spi_unit_t *unitp;
 
   /* Returned value in case of error or illegal sub-code.*/
@@ -130,7 +130,7 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
   switch (sub) {
   case SB_VSPI_SETCFG:
     {
-      uint32_t conf = ectxp->r2;
+      uint32_t conf = ectxp->r1;
       const vio_spi_config_t *confp;
 
       /* Check on configuration index.*/

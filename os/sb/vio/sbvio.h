@@ -100,6 +100,22 @@ typedef struct vio_conf {
 /* Module macros.                                                            */
 /*===========================================================================*/
 
+/**
+ * @brief   Sub-code part of VIO calls 1st parameter.
+ *
+ * @param[n] n          the VIO 1st parameter
+ * @return              The VIO call sub-code.
+ */
+#define VIO_CALL_SUBCODE(n)     ((uint32_t)(n) & 0xFFU)
+
+/**
+ * @brief   Unit identifier part of VIO calls 1st parameter.
+ *
+ * @param[n] n          the VIO 1st parameter
+ * @return              The VIO call unit identifier.
+ */
+#define VIO_CALL_UNIT(n)        ((uint32_t)(n) >> 24)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

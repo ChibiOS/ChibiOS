@@ -168,7 +168,7 @@ typedef uint32_t eventflags_t;
 
 #define __syscall0rr(x)                                                     \
   register uint32_t r0 asm ("r0");                                          \
-  register uint32_t r0 asm ("r1");                                          \
+  register uint32_t r1 asm ("r1");                                          \
   asm volatile ("svc " #x : "=r" (r0), "=r" (r1) : : "memory")
 
 #define __syscall1r(x, p1)                                                  \
@@ -177,7 +177,7 @@ typedef uint32_t eventflags_t;
 
 #define __syscall1rr(x, p1)                                                 \
   register uint32_t r0 asm ("r0") = (uint32_t)(p1);                         \
-  register uint32_t r0 asm ("r1");                                          \
+  register uint32_t r1 asm ("r1");                                          \
   asm volatile ("svc " #x : "=r" (r0), "=r" (r1) :                          \
                              "r" (r0) :                                     \
                              "memory")
