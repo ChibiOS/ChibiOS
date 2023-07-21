@@ -349,6 +349,15 @@ void sb_sysc_vrq_wait(struct port_extctx *ectxp) {
   chSysUnlock();
 }
 
+void sb_fastc_vrq_gcsts(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  uint32_t sts;
+
+  sts = sbp->vrq_flags[ectxp->r0] & ectxp->r1;
+  sbp->vrq_flags[ectxp->r0] &= ~sts;
+  ectxp->r0 = sts;
+}
+
 void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;

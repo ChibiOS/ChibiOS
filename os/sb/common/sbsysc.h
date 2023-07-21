@@ -40,6 +40,7 @@
 #define SB_FASTC_GET_FREQUENCY  2
 #define SB_FASTC_VHAL_VGPIO     96
 #define SB_FASTC_VHAL_VUART     97
+#define SB_FASTC_VRQ_GCSTS      119
 #define SB_FASTC_VRQ_SETWT      120
 #define SB_FASTC_VRQ_CLRWT      121
 #define SB_FASTC_VRQ_SETEN      122

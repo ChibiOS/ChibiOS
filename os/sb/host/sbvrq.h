@@ -46,6 +46,7 @@
  * @{
  */
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
+#define SB_SVC119_HANDLER       sb_fastc_vrq_gcsts
 #define SB_SVC120_HANDLER       sb_fastc_vrq_setwt
 #define SB_SVC121_HANDLER       sb_fastc_vrq_clrwt
 #define SB_SVC122_HANDLER       sb_fastc_vrq_seten
@@ -88,6 +89,7 @@ extern "C" {
   void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq);
   void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp);
   void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp);
+  void sb_fastc_vrq_gcsts(struct port_extctx *ectxp);
   void sb_sysc_vrq_wait(struct port_extctx *ectxp);
   void sb_fastc_vrq_setwt(struct port_extctx *ectxp);
   void sb_fastc_vrq_clrwt(struct port_extctx *ectxp);

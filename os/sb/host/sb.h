@@ -350,6 +350,10 @@ struct sb_class {
    * @brief   Reference to sh SB thread while waiting for VRQs.
    */
   thread_reference_t            vrq_trp;
+  /**
+   * @brief   Status flags associated to each VRQ.
+   */
+  uint32_t                      vrq_flags[32];
 #endif
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   /**
