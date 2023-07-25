@@ -705,7 +705,7 @@
 /**
  * @brief   Maximum ADC clock frequency.
  */
-#define STM32_ADCCLK_MAX            350000000
+#define STM32_ADCCLK_MAX            35000000
 /** @} */
 
 /**
