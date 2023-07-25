@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>NIL-STM32C031D6-NUCLEO64</name>
+	<name>NIL-STM32C031C6-NUCLEO64</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -79,7 +79,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ST_STM32C031D6_NUCLEO64</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ST_STM32C031C6_NUCLEO64</locationURI>
 		</link>
 		<link>
 			<name>os</name>

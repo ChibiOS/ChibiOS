@@ -43,7 +43,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/NIL-STM32C031D6-NUCLEO64"/>
+			<resource resourceType="PROJECT" workspacePath="/NIL-STM32C031C6-NUCLEO64"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
