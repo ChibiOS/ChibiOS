@@ -79,7 +79,7 @@
 		<link>
 			<name>board</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/os/hal/boards/ST_STM32C031C6_NUCLEO64</locationURI>
+			<locationURI>CHIBIOS/os/hal/boards/ST_NUCLEO64_C031C6</locationURI>
 		</link>
 		<link>
 			<name>os</name>
