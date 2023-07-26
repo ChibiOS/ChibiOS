@@ -36,9 +36,7 @@
 /**
  * @brief   Flash ACR reset value.
  */
-#define STM32_FLASH_ACR_RESET           (FLASH_ACR_DBG_SWEN |               \
-                                         FLASH_ACR_ICEN     |               \
-                                         FLASH_ACR_LATENCY_0WS)
+#define STM32_FLASH_ACR_RESET           0x00040600U
 
 /**
  * @brief   RCC CR reset value.
