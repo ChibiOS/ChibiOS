@@ -794,6 +794,7 @@
 #if (STM32_I2C1SEL == STM32_I2C1SEL_HSI16)
 #error "HSI16 not enabled, required by STM32_I2C1SEL"
 #endif
+
 #if (STM32_I2S1SEL == STM32_I2S1SEL_HSI16)
 #error "HSI16 not enabled, required by STM32_I2S1SEL"
 #endif
