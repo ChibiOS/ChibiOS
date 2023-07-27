@@ -481,11 +481,11 @@
 #error "Using a wrong mcuconf.h file, STM32C0xx_MCUCONF not defined"
 #endif
 
-#if defined(STM32C011xx) && !defined(STM32G011_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G011_MCUCONF not defined"
+#if defined(STM32C011xx) && !defined(STM32C011_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32C011_MCUCONF not defined"
 
-#elif defined(STM32C031xx) && !defined(STM32G031_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G031_MCUCONF not defined"
+#elif defined(STM32C031xx) && !defined(STM32C031_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32C031_MCUCONF not defined"
 
 #endif
 
