@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@
 /*===========================================================================*/
 
 /*
- * Setup for STMicroelectronics STM32 Nucleo64-G071RB board.
+ * Setup for STMicroelectronics STM32 Nucleo64-C031C6 board.
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_ST_NUCLEO64_G071RB
-#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-G071RB"
+#define BOARD_ST_NUCLEO64_C031C6
+#define BOARD_NAME                  "STMicroelectronics STM32 Nucleo64-C031C6"
 
 /*
  * Board oscillators-related settings.
@@ -46,13 +46,13 @@
 #define STM32_LSEDRV                (3U << 11U)
 
 #if !defined(STM32_HSECLK)
-#define STM32_HSECLK                8000000U
+#define STM32_HSECLK                48000000U
 #endif
 
 /*
  * MCU type as defined in the ST header.
  */
-#define STM32G071xx
+#define STM32C031xx
 
 /*
  * IO pins assignments.
