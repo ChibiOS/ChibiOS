@@ -871,6 +871,11 @@
 #endif
 
 /**
+ * @brief   USART2 clock frequency.
+ */
+#define STM32_USART2CLK             hal_lld_get_clock_point(CLK_PCLK)
+
+/**
  * @brief   I2C1 clock frequency.
  */
 #if (STM32_I2C1SEL == STM32_I2C1SEL_PCLK) || defined(__DOXYGEN__)
