@@ -1,8 +1,7 @@
 # Required platform files.
 PLATFORMSRC := $(CHIBIOS)/os/hal/ports/common/ARMCMx/nvic.c \
                $(CHIBIOS)/os/hal/ports/STM32/STM32C0xx/stm32_isr.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32C0xx/hal_lld.c \
-               $(CHIBIOS)/os/hal/ports/STM32/STM32C0xx/hal_efl_lld.c
+               $(CHIBIOS)/os/hal/ports/STM32/STM32C0xx/hal_lld.c
 
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/hal/ports/common/ARMCMx \

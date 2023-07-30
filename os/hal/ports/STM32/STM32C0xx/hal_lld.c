@@ -71,7 +71,7 @@ uint32_t SystemCoreClock = STM32_HCLK;
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#include "stm32_bd.inc"
+#include "stm32_bd_v3.inc"
 
 /**
  * @brief   Safe setting of flash ACR register.

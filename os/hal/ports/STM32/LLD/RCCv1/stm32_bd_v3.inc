@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv1/stm32_hsi48.inc
- * @brief   Shared HSI48 clock handler.
+ * @file    RCCv1/stm32_bd.inc
+ * @brief   Shared backup domain handler.
  *
- * @addtogroup STM32_HSI48_HANDLER
+ * @addtogroup STM32_BD_V3_HANDLER
  * @{
  */
 
@@ -26,28 +26,9 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/**
- * @brief   HSI48 clock frequency.
- */
-#define STM32_HSI48CLK          48000000U
-
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/* Registry checks for robustness.*/
-#if !defined(STM32_RCC_HAS_HSI48)
-#error "STM32_RCC_HAS_HSI48 not defined in stm32_registry.h"
-#endif
-
-/* Checks on configurations.*/
-#if !defined(STM32_HSI48_ENABLED)
-#error "STM32_HSI48_ENABLED not defined in mcuconf.h"
-#endif
-
-#if (STM32_RCC_HAS_HSI48 == FALSE) && (STM32_HSI48_ENABLED == TRUE)
-#error "HSI48 not present on this device"
-#endif
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -61,44 +42,43 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-#if STM32_RCC_HAS_HSI48 == TRUE
-#if defined(RCC_CRRCR_HSI48ON)
-__STATIC_INLINE void hsi48_enable(void) {
+/**
+ * @brief   Initializes the backup domain.
+ */
+__STATIC_INLINE void bd_init(void) {
+  uint32_t bdcr;
 
-  RCC->CRRCR |= RCC_CRRCR_HSI48ON;
-  while ((RCC->CRRCR & RCC_CRRCR_HSI48RDY) == 0U) {
-    /* Waiting for HSI48 activation.*/
+  /* Current settings.*/
+  bdcr = RCC->CSR1;
+
+#if HAL_USE_RTC
+  /* RTC enable.*/
+  if ((bdcr & RCC_CSR1_RTCEN) == 0U) {
+    bdcr |= RCC_CSR1_RTCEN;
   }
-}
-
-__STATIC_INLINE void hsi48_disable(void) {
-
-  RCC->CRRCR &= ~RCC_CRRCR_HSI48ON;
-}
-#endif /* defined(RCC_CRRCR_HSI48ON) */
-
-#if defined(RCC_CR_HSI48ON)
-__STATIC_INLINE void hsi48_enable(void) {
-
-  RCC->CR |= RCC_CR_HSI48ON;
-  while ((RCC->CR & RCC_CR_HSI48RDY) == 0U) {
-    /* Waiting for HSI48 activation.*/
-  }
-}
-
-__STATIC_INLINE void hsi48_disable(void) {
-
-  RCC->CR &= ~RCC_CR_HSI48ON;
-}
-#endif /* defined(RCC_CR_HSI48ON) */
-#endif /* STM32_RCC_HAS_HSI48 == TRUE */
-
-__STATIC_INLINE void hsi48_init(void) {
-
-#if (defined(RCC_CRRCR_HSI48ON) || defined(RCC_CR_HSI48ON)) && STM32_HSI48_ENABLED
-  /* HSI activation.*/
-  hsi48_enable();
 #endif
+
+  /* Selectors.*/
+  bdcr &= ~(STM32_RTCSEL_MASK | STM32_LSCOSEL_MASK);
+  bdcr |= STM32_RTCSEL | STM32_LSCOSEL;
+
+  /* Final settings.*/
+  RCC->CSR1 = bdcr;
+}
+
+/**
+ * @brief   Resets the backup domain.
+ * @note    WARNING! Changing RTC clock source impossible without reset
+ *          of the whole BKP domain.
+ */
+__STATIC_INLINE void bd_reset(void) {
+
+  /* Reset BKP domain if different clock source selected.*/
+  if ((RCC->CSR1 & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
+    /* Backup domain reset.*/
+    RCC->CSR1 = RCC_CSR1_RTCRST;
+    RCC->CSR1 = 0U;
+  }
 }
 
 /*===========================================================================*/

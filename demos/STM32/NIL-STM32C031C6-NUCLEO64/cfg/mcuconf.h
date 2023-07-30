@@ -57,7 +57,7 @@
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   TRUE
-#define STM32_SW                            STM32_SW_PLLRCLK
+#define STM32_SW                            STM32_SW_HSISYS
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE                          STM32_PPRE_DIV1
 #define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
@@ -72,7 +72,7 @@
 #define STM32_USART1SEL                     STM32_USART1SEL_PCLK
 #define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK
 #define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
-#define STM32_ADCSEL                        STM32_ADCSEL_PLLPCLK
+#define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
 #define STM32_RTCSEL                        STM32_RTCSEL_NOCLOCK
 
 /*

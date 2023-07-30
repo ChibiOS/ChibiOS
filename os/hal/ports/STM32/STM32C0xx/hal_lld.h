@@ -11,7 +11,7 @@
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
-    limitations under the License.
+    limitations under the License.f
 */
 
 /**
@@ -120,26 +120,6 @@
 #define STM32_SW_HSE            (1U << 0)
 #define STM32_SW_LSI            (3U << 0)
 #define STM32_SW_LSE            (4U << 0)
-
-#define STM32_HPRE_DIV_MASK     (15U << 8)
-#define STM32_HPRE_DIV_FIELD(n) ((n) << 8)
-#define STM32_HPRE_DIV1         STM32_HPRE_DIV_FIELD(0U)
-#define STM32_HPRE_DIV2         STM32_HPRE_DIV_FIELD(8U)
-#define STM32_HPRE_DIV4         STM32_HPRE_DIV_FIELD(9U)
-#define STM32_HPRE_DIV8         STM32_HPRE_DIV_FIELD(10U)
-#define STM32_HPRE_DIV16        STM32_HPRE_DIV_FIELD(11U)
-#define STM32_HPRE_DIV64        STM32_HPRE_DIV_FIELD(12U)
-#define STM32_HPRE_DIV128       STM32_HPRE_DIV_FIELD(13U)
-#define STM32_HPRE_DIV256       STM32_HPRE_DIV_FIELD(14U)
-#define STM32_HPRE_DIV512       STM32_HPRE_DIV_FIELD(15U)
-
-#define STM32_PPRE_DIV_MASK     (15U << 12)
-#define STM32_PPRE_DIV_FIELD(n) ((n) << 12)
-#define STM32_PPRE_DIV1         STM32_PPRE_DIV_FIELD(0U)
-#define STM32_PPRE_DIV2         STM32_PPRE_DIV_FIELD(4U)
-#define STM32_PPRE_DIV4         STM32_PPRE_DIV_FIELD(5U)
-#define STM32_PPRE_DIV8         STM32_PPRE_DIV_FIELD(6U)
-#define STM32_PPRE_DIV16        STM32_PPRE_DIV_FIELD(7U)
 
 #define STM32_MCO2SEL_MASK      (7U << 16)
 #define STM32_MCO2SEL_FIELD(n)  ((n) << 16)
@@ -524,8 +504,8 @@
 /** @} */
 
 /* Clock handlers.*/
-#include "stm32_lse.inc"
-#include "stm32_lsi.inc"
+#include "stm32_lse_v3.inc"
+#include "stm32_lsi_v3.inc"
 #include "stm32_hsi48.inc"
 #include "stm32_hse.inc"
 

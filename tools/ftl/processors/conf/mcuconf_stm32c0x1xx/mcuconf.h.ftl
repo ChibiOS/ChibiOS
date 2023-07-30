@@ -68,7 +68,7 @@
 #define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
-#define STM32_SW                            ${doc.STM32_SW!"STM32_SW_HSI48"}
+#define STM32_SW                            ${doc.STM32_SW!"STM32_SW_HSISYS"}
 #define STM32_HPRE                          ${doc.STM32_HPRE!"STM32_HPRE_DIV1"}
 #define STM32_PPRE                          ${doc.STM32_PPRE!"STM32_PPRE_DIV1"}
 #define STM32_MCOSEL                        ${doc.STM32_MCOSEL!"STM32_MCOSEL_NOCLOCK"}
