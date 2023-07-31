@@ -73,7 +73,7 @@
 #define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK
 #define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
 #define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
-#define STM32_RTCSEL                        STM32_RTCSEL_NOCLOCK
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE
 
 /*
  * Shared IRQ settings.

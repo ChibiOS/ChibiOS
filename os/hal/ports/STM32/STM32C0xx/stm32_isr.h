@@ -61,6 +61,8 @@
 
 #define STM32_DMA1_CH1_NUMBER               9
 #define STM32_DMA1_CH23_NUMBER              10
+#define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
+#define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
 
 #define STM32_DMA1_CH1_CMASK                0x00000001U
 #define STM32_DMA1_CH2_CMASK                0x00000006U
