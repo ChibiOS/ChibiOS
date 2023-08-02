@@ -15,13 +15,13 @@
 */
 
 /**
- * @file    STM32L5xx/cmparams.h
- * @brief   ARM Cortex-M33 parameters for the STM32L5xx.
+ * @file    STM32H5xx/cmparams.h
+ * @brief   ARM Cortex-M33 parameters for the STM32H5xx.
  *
- * @defgroup ARMCMx_STM32L5xx STM32L5xx Specific Parameters
+ * @defgroup ARMCMx_STM32H5xx STM32H5xx Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
- * @details This file contains the Cortex-M4 specific parameters for the
- *          STM32L5xx platform.
+ * @details This file contains the Cortex-M33 specific parameters for the
+ *          STM32H5xx platform.
  * @{
  */
 
@@ -41,12 +41,13 @@
 /**
  * @brief   Number of bits in priority masks.
  */
-#define CORTEX_PRIORITY_BITS    3
+#define CORTEX_PRIORITY_BITS    4
 
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
    definition compatible with the vendor include file.*/
-#if !defined(STM32L552xx) && !defined(STM32L562xx)
+#if !defined(STM32H503xx) && !defined(STM32H562xx) &&                       \
+    !defined(STM32H563xx) && !defined(STM32H573xx)
 #include "board.h"
 #endif
 
@@ -55,7 +56,7 @@
  * @note    This number does not include the 16 system vectors and must be
  *          rounded to a multiple of 8.
  */
-#define CORTEX_NUM_VECTORS      112
+#define CORTEX_NUM_VECTORS      136
 
 /* The following code is not processed when the file is included from an
    asm module.*/
