@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Support for STM32C0xx.
 - NEW: Improved DAC driver, updated STM32 DACv1.
 - NEW: STM32 RTCv2 and RTCv3 modified to not use shadow registers.
 - NEW: Enhanced STM32F7xx MPU configuration in mcuconf.h.
