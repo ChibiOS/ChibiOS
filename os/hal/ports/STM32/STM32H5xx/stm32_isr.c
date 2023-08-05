@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    STM32G4xx/stm32_isr.c
- * @brief   STM32G4xx ISR handler code.
+ * @file    STM32H5xx/stm32_isr.c
+ * @brief   STM32H5xx ISR handler code.
  *
- * @addtogroup STM32G4xx_ISR
+ * @addtogroup STM32H5xx_ISR
  * @{
  */
 
@@ -56,29 +56,33 @@
 #include "stm32_exti2.inc"
 #include "stm32_exti3.inc"
 #include "stm32_exti4.inc"
-#include "stm32_exti5_9.inc"
-#include "stm32_exti10_15.inc"
-#include "stm32_exti16-40_41.inc"
-#include "stm32_exti17.inc"
-#include "stm32_exti18.inc"
-#include "stm32_exti19.inc"
-#include "stm32_exti20.inc"
-#include "stm32_exti21_22-29.inc"
-#include "stm32_exti30_32.inc"
-#include "stm32_exti33.inc"
-
-#include "stm32_fdcan1.inc"
-#include "stm32_fdcan2.inc"
-#include "stm32_fdcan3.inc"
+#include "stm32_exti5.inc"
+#include "stm32_exti6.inc"
+#include "stm32_exti7.inc"
+#include "stm32_exti8.inc"
+#include "stm32_exti9.inc"
+#include "stm32_exti10.inc"
+#include "stm32_exti11.inc"
+#include "stm32_exti12.inc"
+#include "stm32_exti13.inc"
+#include "stm32_exti14.inc"
+#include "stm32_exti15.inc"
 
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
 #include "stm32_uart4.inc"
 #include "stm32_uart5.inc"
+#include "stm32_usart6.inc"
+#include "stm32_uart7.inc"
+#include "stm32_uart8.inc"
+#include "stm32_uart9.inc"
+#include "stm32_usart10.inc"
+//#include "stm32_usart11.inc"
+//#include "stm32_uart12.inc"
 #include "stm32_lpuart1.inc"
 
-#include "stm32_tim1_15_16_17.inc"
+#include "stm32_tim1.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
 #include "stm32_tim4.inc"
@@ -86,7 +90,12 @@
 #include "stm32_tim6.inc"
 #include "stm32_tim7.inc"
 #include "stm32_tim8.inc"
-#include "stm32_tim20.inc"
+#include "stm32_tim12.inc"
+#include "stm32_tim13.inc"
+#include "stm32_tim14.inc"
+#include "stm32_tim15.inc"
+#include "stm32_tim16.inc"
+#include "stm32_tim17.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -104,21 +113,19 @@ void irqInit(void) {
   exti2_irq_init();
   exti3_irq_init();
   exti4_irq_init();
-  exti5_9_irq_init();
-  exti10_15_irq_init();
-  exti16_exti40_exti41_irq_init();
-  exti17_irq_init();
-  exti18_irq_init();
-  exti19_irq_init();
-  exti21_exti22_exti29_irq_init();
-  exti30_32_irq_init();
-  exti33_irq_init();
+  exti5_irq_init();
+  exti6_irq_init();
+  exti7_irq_init();
+  exti8_irq_init();
+  exti9_irq_init();
+  exti10_irq_init();
+  exti11_irq_init();
+  exti12_irq_init();
+  exti13_irq_init();
+  exti14_irq_init();
+  exti15_irq_init();
 
-  fdcan1_irq_init();
-  fdcan2_irq_init();
-  fdcan3_irq_init();
-
-  tim1_tim15_tim16_tim17_irq_init();
+  tim1_irq_init();
   tim2_irq_init();
   tim3_irq_init();
   tim4_irq_init();
@@ -126,13 +133,23 @@ void irqInit(void) {
   tim6_irq_init();
   tim7_irq_init();
   tim8_irq_init();
-  tim20_irq_init();
+  tim12_irq_init();
+  tim13_irq_init();
+  tim14_irq_init();
+  tim15_irq_init();
+  tim16_irq_init();
+  tim17_irq_init();
 
   usart1_irq_init();
   usart2_irq_init();
   usart3_irq_init();
   uart4_irq_init();
   uart5_irq_init();
+  usart6_irq_init();
+  uart7_irq_init();
+  uart8_irq_init();
+  uart9_irq_init();
+  usart10_irq_init();
   lpuart1_irq_init();
 }
 
@@ -148,21 +165,19 @@ void irqDeinit(void) {
   exti2_irq_deinit();
   exti3_irq_deinit();
   exti4_irq_deinit();
-  exti5_9_irq_deinit();
-  exti10_15_irq_deinit();
-  exti16_exti40_exti41_irq_deinit();
-  exti17_irq_deinit();
-  exti18_irq_deinit();
-  exti19_irq_deinit();
-  exti21_exti22_exti29_irq_deinit();
-  exti30_32_irq_deinit();
-  exti33_irq_deinit();
+  exti5_irq_deinit();
+  exti6_irq_deinit();
+  exti7_irq_deinit();
+  exti8_irq_deinit();
+  exti9_irq_deinit();
+  exti10_irq_deinit();
+  exti11_irq_deinit();
+  exti12_irq_deinit();
+  exti13_irq_deinit();
+  exti14_irq_deinit();
+  exti15_irq_deinit();
 
-  fdcan1_irq_deinit();
-  fdcan2_irq_deinit();
-  fdcan3_irq_deinit();
-
-  tim1_tim15_tim16_tim17_irq_deinit();
+  tim1_irq_deinit();
   tim2_irq_deinit();
   tim3_irq_deinit();
   tim4_irq_deinit();
@@ -170,13 +185,23 @@ void irqDeinit(void) {
   tim6_irq_deinit();
   tim7_irq_deinit();
   tim8_irq_deinit();
-  tim20_irq_deinit();
+  tim12_irq_deinit();
+  tim13_irq_deinit();
+  tim14_irq_deinit();
+  tim15_irq_deinit();
+  tim16_irq_deinit();
+  tim17_irq_deinit();
 
   usart1_irq_deinit();
   usart2_irq_deinit();
   usart3_irq_deinit();
   uart4_irq_deinit();
   uart5_irq_deinit();
+  usart6_irq_deinit();
+  uart7_irq_deinit();
+  uart8_irq_deinit();
+  uart9_irq_deinit();
+  usart10_irq_deinit();
   lpuart1_irq_deinit();
 }
 
