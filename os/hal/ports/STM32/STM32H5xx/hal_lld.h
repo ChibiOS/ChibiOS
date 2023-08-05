@@ -79,7 +79,7 @@
  */
 #define CLK_SYSCLK              0U
 #define CLK_PLL1PCLK            1U
-#define CLK_PLL1QCLK            2U
+#define CLK_PLL2QCLK            2U
 #define CLK_PLL1RCLK            3U
 #define CLK_PLL2PCLK            4U
 #define CLK_PLL2QCLK            5U
@@ -1619,21 +1619,21 @@
 /*
  * PLL1 enable check.
  */
-#if (STM32_SW         == STM32_SW_PLL1P)         ||                         \
-    (STM32_MCO1SEL    == STM32_MCO1SEL_PLL1P)    ||                         \
-    (STM32_MCO2SEL    == STM32_MCO2SEL_PLL1P)    ||                         \
-    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL1Q)    ||                         \
-    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL1Q)    ||                         \
-    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL1Q)    ||                         \
-    (STM32_OSPISEL    == STM32_OSPISEL_PLL1Q)    ||                         \
-    (STM32_USBSEL     == STM32_USBSEL_PLL1Q)     ||                         \
-    (STM32_SDMMC1SEL  == STM32_SDMMC1SEL_PLL1Q)  ||                         \
-    (STM32_SDMMC2SEL  == STM32_SDMMC2SEL_PLL1Q)  ||                         \
-    (STM32_RNGSEL     == STM32_RNGSEL_PLL1Q)     ||                         \
-    (STM32_CECSEL     == STM32_CECSEL_PLL1Q)     ||                         \
-    (STM32_FDCANSEL   == STM32_FDCANSEL_PLL1Q)   ||                         \
-    (STM32_SAI1SEL    == STM32_SAI1SEL_PLL1Q)    ||                         \
-    (STM32_SAI2SEL    == STM32_SAI2SEL_PLL1Q)    ||                         \
+#if (STM32_SW           == STM32_SW_PLL1P)          ||                      \
+    (STM32_MCO1SEL      == STM32_MCO1SEL_PLL1P)     ||                      \
+    (STM32_MCO2SEL      == STM32_MCO2SEL_PLL1P)     ||                      \
+    (STM32_SPI1SEL      == STM32_SPI1SEL_PLL1Q)     ||                      \
+    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL1Q)     ||                      \
+    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL1Q)     ||                      \
+    (STM32_OSPISEL      == STM32_OSPISEL_PLL1Q)     ||                      \
+    (STM32_USBSEL       == STM32_USBSEL_PLL1Q)      ||                      \
+    (STM32_SDMMC1SEL    == STM32_SDMMC1SEL_PLL1Q)   ||                      \
+    (STM32_SDMMC2SEL    == STM32_SDMMC2SEL_PLL1Q)   ||                      \
+    (STM32_RNGSEL       == STM32_RNGSEL_PLL1Q)      ||                      \
+    (STM32_CECSEL       == STM32_CECSEL_PLL1Q)      ||                      \
+    (STM32_FDCANSEL     == STM32_FDCANSEL_PLL1Q)    ||                      \
+    (STM32_SAI1SEL      == STM32_SAI1SEL_PLL1Q)     ||                      \
+    (STM32_SAI2SEL      == STM32_SAI2SEL_PLL1Q)     ||                      \
     defined(__DOXYGEN__)
   /**
    * @brief   PLL1 activation flag.
@@ -1647,39 +1647,39 @@
 /*
  * PLL2 enable check.
  */
-#if (STM32_MCO2SEL    == STM32_MCO2SEL_PLL2P)    ||                         \
-    (STM32_USART1SEL  == STM32_USART1SEL_PLL2Q)  ||                         \
-    (STM32_USART2SEL  == STM32_USART2SEL_PLL2Q)  ||                         \
-    (STM32_USART3SEL  == STM32_USART3SEL_PLL2Q)  ||                         \
-    (STM32_UART4SEL   == STM32_UART4SEL_PLL2Q)   ||                         \
-    (STM32_UART5SEL   == STM32_UART5SEL_PLL2Q)   ||                         \
-    (STM32_USART6SEL  == STM32_USART6SEL_PLL2Q)  ||                         \
-    (STM32_UART7SEL   == STM32_UART7SEL_PLL2Q)   ||                         \
-    (STM32_UART8SEL   == STM32_UART8SEL_PLL2Q)   ||                         \
-    (STM32_UART9SEL   == STM32_UART9SEL_PLL2Q)   ||                         \
-    (STM32_USART10SEL == STM32_USART10SEL_PLL2Q) ||                         \
-    (STM32_USART11SEL == STM32_USART11SEL_PLL2Q) ||                         \
-    (STM32_UART12SEL  == STM32_UART12SEL_PLL2Q)  ||                         \
-    (STM32_LPUART1SEL == STM32_LPUART1SEL_PLL2Q) ||                         \
-    (STM32_LPTIM1SEL  == STM32_LPTIM1SEL_PLL2P)  ||                         \
-    (STM32_LPTIM2SEL  == STM32_LPTIM2SEL_PLL2P)  ||                         \
-    (STM32_LPTIM3SEL  == STM32_LPTIM3SEL_PLL2P)  ||                         \
-    (STM32_LPTIM4SEL  == STM32_LPTIM4SEL_PLL2P)  ||                         \
-    (STM32_LPTIM5SEL  == STM32_LPTIM5SEL_PLL2P)  ||                         \
-    (STM32_LPTIM6SEL  == STM32_LPTIM6SEL_PLL2P)  ||                         \
-    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL2P)    ||                         \
-    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL2P)    ||                         \
-    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL2P)    ||                         \
-    (STM32_SPI4SEL    == STM32_SPI4SEL_PLL2P)    ||                         \
-    (STM32_SPI5SEL    == STM32_SPI5SEL_PLL2P)    ||                         \
-    (STM32_SPI6SEL    == STM32_SPI6SEL_PLL2P)    ||                         \
-    (STM32_OSPISEL    == STM32_OSPISEL_PLL2R )   ||                         \
-    (STM32_SDMMC1SEL  == STM32_SDMMC1SEL_PLL2R)  ||                         \
-    (STM32_SDMMC2SEL  == STM32_SDMMC2SEL_PLL2R)  ||                         \
-    (STM32_ADCDACSEL  == STM32_ADCDACSEL_PLL2R)  ||                         \
-    (STM32_FDCANSEL   == STM32_FDCANSEL_PLL2Q)   ||                         \
-    (STM32_SAI1SEL    == STM32_SAI1SEL_PLL2P)    ||                         \
-    (STM32_SAI2SEL    == STM32_SAI2SEL_PLL2P)    ||                         \
+#if (STM32_MCO2SEL      == STM32_MCO2SEL_PLL2P)     ||                      \
+    (STM32_USART1SEL    == STM32_USART1SEL_PLL2Q)   ||                      \
+    (STM32_USART2SEL    == STM32_USART2SEL_PLL2Q)   ||                      \
+    (STM32_USART3SEL    == STM32_USART3SEL_PLL2Q)   ||                      \
+    (STM32_UART4SEL     == STM32_UART4SEL_PLL2Q)    ||                      \
+    (STM32_UART5SEL     == STM32_UART5SEL_PLL2Q)    ||                      \
+    (STM32_USART6SEL    == STM32_USART6SEL_PLL2Q)   ||                      \
+    (STM32_UART7SEL     == STM32_UART7SEL_PLL2Q)    ||                      \
+    (STM32_UART8SEL     == STM32_UART8SEL_PLL2Q)    ||                      \
+    (STM32_UART9SEL     == STM32_UART9SEL_PLL2Q)    ||                      \
+    (STM32_USART10SEL   == STM32_USART10SEL_PLL2Q)  ||                      \
+    (STM32_USART11SEL   == STM32_USART11SEL_PLL2Q)  ||                      \
+    (STM32_UART12SEL    == STM32_UART12SEL_PLL2Q)   ||                      \
+    (STM32_LPUART1SEL   == STM32_LPUART1SEL_PLL2Q)  ||                      \
+    (STM32_LPTIM1SEL    == STM32_LPTIM1SEL_PLL2P)   ||                      \
+    (STM32_LPTIM2SEL    == STM32_LPTIM2SEL_PLL2P)   ||                      \
+    (STM32_LPTIM3SEL    == STM32_LPTIM3SEL_PLL2P)   ||                      \
+    (STM32_LPTIM4SEL    == STM32_LPTIM4SEL_PLL2P)   ||                      \
+    (STM32_LPTIM5SEL    == STM32_LPTIM5SEL_PLL2P)   ||                      \
+    (STM32_LPTIM6SEL    == STM32_LPTIM6SEL_PLL2P)   ||                      \
+    (STM32_SPI1SEL      == STM32_SPI1SEL_PLL2P)     ||                      \
+    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL2P)     ||                      \
+    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL2P)     ||                      \
+    (STM32_SPI4SEL      == STM32_SPI4SEL_PLL2P)     ||                      \
+    (STM32_SPI5SEL      == STM32_SPI5SEL_PLL2P)     ||                      \
+    (STM32_SPI6SEL      == STM32_SPI6SEL_PLL2P)     ||                      \
+    (STM32_OSPISEL      == STM32_OSPISEL_PLL2R )    ||                      \
+    (STM32_SDMMC1SEL    == STM32_SDMMC1SEL_PLL2R)   ||                      \
+    (STM32_SDMMC2SEL    == STM32_SDMMC2SEL_PLL2R)   ||                      \
+    (STM32_ADCDACSEL    == STM32_ADCDACSEL_PLL2R)   ||                      \
+    (STM32_FDCANSEL     == STM32_FDCANSEL_PLL2Q)    ||                      \
+    (STM32_SAI1SEL      == STM32_SAI1SEL_PLL2P)     ||                      \
+    (STM32_SAI2SEL      == STM32_SAI2SEL_PLL2P)     ||                      \
     defined(__DOXYGEN__)
   /**
    * @brief   PLL2 activation flag.
@@ -1693,44 +1693,44 @@
 /*
  * PLL3 enable check.
  */
-#if (STM32_USART1SEL  == STM32_USART1SEL_PLL3Q)  ||                         \
-    (STM32_USART2SEL  == STM32_USART2SEL_PLL3Q)  ||                         \
-    (STM32_USART3SEL  == STM32_USART3SEL_PLL3Q)  ||                         \
-    (STM32_UART4SEL   == STM32_UART4SEL_PLL3Q)   ||                         \
-    (STM32_UART5SEL   == STM32_UART5SEL_PLL3Q)   ||                         \
-    (STM32_USART6SEL  == STM32_USART6SEL_PLL3Q)  ||                         \
-    (STM32_UART7SEL   == STM32_UART7SEL_PLL3Q)   ||                         \
-    (STM32_UART8SEL   == STM32_UART8SEL_PLL3Q)   ||                         \
-    (STM32_UART9SEL   == STM32_UART9SEL_PLL3Q)   ||                         \
-    (STM32_USART10SEL == STM32_USART10SEL_PLL3Q) ||                         \
-    (STM32_USART11SEL == STM32_USART11SEL_PLL3Q) ||                         \
-    (STM32_UART12SEL  == STM32_UART12SEL_PLL3Q)  ||                         \
-    (STM32_LPUART1SEL == STM32_LPUART1SEL_PLL3Q) ||                         \
-    (STM32_LPTIM1SEL  == STM32_LPTIM1SEL_PLL3R)  ||                         \
-    (STM32_LPTIM2SEL  == STM32_LPTIM2SEL_PLL3R)  ||                         \
-    (STM32_LPTIM3SEL  == STM32_LPTIM3SEL_PLL3R)  ||                         \
-    (STM32_LPTIM4SEL  == STM32_LPTIM4SEL_PLL3R)  ||                         \
-    (STM32_LPTIM5SEL  == STM32_LPTIM5SEL_PLL3R)  ||                         \
-    (STM32_LPTIM6SEL  == STM32_LPTIM6SEL_PLL3R)  ||                         \
-    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL3P)    ||                         \
-    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL3P)    ||                         \
-    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL3P)    ||                         \
-    (STM32_SPI4SEL    == STM32_SPI4SEL_PLL3P)    ||                         \
-    (STM32_SPI5SEL    == STM32_SPI5SEL_PLL3P)    ||                         \
-    (STM32_SPI6SEL    == STM32_SPI6SEL_PLL3P)    ||                         \
-    (STM32_MCO1SEL    == STM32_MCO1SEL_PLL1P)    ||                         \
-    (STM32_MCO2SEL    == STM32_MCO2SEL_PLL1P)    ||                         \
-    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL1Q)    ||                         \
-    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL1Q)    ||                         \
-    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL1Q)    ||                         \
-    (STM32_USBSEL     == STM32_USBSEL_PLL3Q)     ||                         \
-    (STM32_I2C1SEL    == STM32_I2C1SEL_PLL3R)    ||                         \
-    (STM32_I2C2SEL    == STM32_I2C2SEL_PLL3R)    ||                         \
-    (STM32_I2C3SEL    == STM32_I2C3SEL_PLL3R)    ||                         \
-    (STM32_I2C4SEL    == STM32_I2C4SEL_PLL3R)    ||                         \
-    (STM32_I3C1SEL    == STM32_I3C1SEL_PLL3R)    ||                         \
-    (STM32_SAI1SEL    == STM32_SAI1SEL_PLL3P)    ||                         \
-    (STM32_SAI2SEL    == STM32_SAI2SEL_PLL3P)    ||                         \
+#if (STM32_USART1SEL    == STM32_USART1SEL_PLL3Q)   ||                      \
+    (STM32_USART2SEL    == STM32_USART2SEL_PLL3Q)   ||                      \
+    (STM32_USART3SEL    == STM32_USART3SEL_PLL3Q)   ||                      \
+    (STM32_UART4SEL     == STM32_UART4SEL_PLL3Q)    ||                      \
+    (STM32_UART5SEL     == STM32_UART5SEL_PLL3Q)    ||                      \
+    (STM32_USART6SEL    == STM32_USART6SEL_PLL3Q)   ||                      \
+    (STM32_UART7SEL     == STM32_UART7SEL_PLL3Q)    ||                      \
+    (STM32_UART8SEL     == STM32_UART8SEL_PLL3Q)    ||                      \
+    (STM32_UART9SEL     == STM32_UART9SEL_PLL3Q)    ||                      \
+    (STM32_USART10SEL   == STM32_USART10SEL_PLL3Q)  ||                      \
+    (STM32_USART11SEL   == STM32_USART11SEL_PLL3Q)  ||                      \
+    (STM32_UART12SEL    == STM32_UART12SEL_PLL3Q)   ||                      \
+    (STM32_LPUART1SEL   == STM32_LPUART1SEL_PLL3Q)  ||                      \
+    (STM32_LPTIM1SEL    == STM32_LPTIM1SEL_PLL3R)   ||                      \
+    (STM32_LPTIM2SEL    == STM32_LPTIM2SEL_PLL3R)   ||                      \
+    (STM32_LPTIM3SEL    == STM32_LPTIM3SEL_PLL3R)   ||                      \
+    (STM32_LPTIM4SEL    == STM32_LPTIM4SEL_PLL3R)   ||                      \
+    (STM32_LPTIM5SEL    == STM32_LPTIM5SEL_PLL3R)   ||                      \
+    (STM32_LPTIM6SEL    == STM32_LPTIM6SEL_PLL3R)   ||                      \
+    (STM32_SPI1SEL      == STM32_SPI1SEL_PLL3P)     ||                      \
+    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL3P)     ||                      \
+    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL3P)     ||                      \
+    (STM32_SPI4SEL      == STM32_SPI4SEL_PLL3P)     ||                      \
+    (STM32_SPI5SEL      == STM32_SPI5SEL_PLL3P)     ||                      \
+    (STM32_SPI6SEL      == STM32_SPI6SEL_PLL3P)     ||                      \
+    (STM32_MCO1SEL      == STM32_MCO1SEL_PLL1P)     ||                      \
+    (STM32_MCO2SEL      == STM32_MCO2SEL_PLL1P)     ||                      \
+    (STM32_SPI1SEL      == STM32_SPI1SEL_PLL1Q)     ||                      \
+    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL1Q)     ||                      \
+    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL1Q)     ||                      \
+    (STM32_USBSEL       == STM32_USBSEL_PLL3Q)      ||                      \
+    (STM32_I2C1SEL      == STM32_I2C1SEL_PLL3R)     ||                      \
+    (STM32_I2C2SEL      == STM32_I2C2SEL_PLL3R)     ||                      \
+    (STM32_I2C3SEL      == STM32_I2C3SEL_PLL3R)     ||                      \
+    (STM32_I2C4SEL      == STM32_I2C4SEL_PLL3R)     ||                      \
+    (STM32_I3C1SEL      == STM32_I3C1SEL_PLL3R)     ||                      \
+    (STM32_SAI1SEL      == STM32_SAI1SEL_PLL3P)     ||                      \
+    (STM32_SAI2SEL      == STM32_SAI2SEL_PLL3P)     ||                      \
     defined(__DOXYGEN__)
   /**
    * @brief   PLL3 activation flag.
@@ -2274,84 +2274,239 @@
 #endif /* !STM32_HSE_ENABLED */
 
 /**
- * @brief   PLL input clock frequency.
+ * @brief   PLL1 input clock frequency.
  */
-#if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
-  #define STM32_PLLCLKIN            (STM32_HSECLK / STM32_PLLM_VALUE)
+#if (STM32_PLL1SRC == STM32_PLL1SRC_HSE) || defined(__DOXYGEN__)
+  #define STM32_PLL1CLKIN           (STM32_HSECLK / STM32_PLL1M_VALUE)
 
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI
-  #define STM32_PLLCLKIN            (STM32_HSICLK / STM32_PLLM_VALUE)
+#elif STM32_PLL1SRC == STM32_PLL1SRC_CSI
+  #define STM32_PLL1CLKIN           (STM32_CSICLK / STM32_PLL1M_VALUE)
 
-#elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
-  #define STM32_PLLCLKIN            0
+#elif STM32_PLL1SRC == STM32_PLL1SRC_HSI
+  #define STM32_PLL1CLKIN           (STM32_HSICLK / STM32_PLL1M_VALUE)
+
+#elif STM32_PLL1SRC == STM32_PLL1SRC_NOCLOCK
+  #define STM32_PLL1CLKIN           0
 
 #else
-  #error "invalid STM32_PLLSRC value specified"
-#endif
-
-/*
- * PLL enable check.
- */
-#if (STM32_SW == STM32_SW_PLLRCLK) ||                                       \
-    (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
-    (STM32_ADC12SEL == STM32_ADC12SEL_PLLPCLK) ||                           \
-    (STM32_ADC345SEL == STM32_ADC345SEL_PLLPCLK) ||                         \
-    (STM32_SAI1SEL == STM32_SAI1SEL_PLLQCLK) ||                             \
-    (STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK) ||                           \
-    (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
-    (STM32_CLK48SEL == STM32_CLK48SEL_PLLQCLK) ||                           \
-    (STM32_OSPISEL == STM32_OSPISEL_PLLQCLK) ||                             \
-    defined(__DOXYGEN__)
-  /**
-   * @brief   PLL activation flag.
-   */
-  #define STM32_ACTIVATE_PLL        TRUE
-#else
-
-  #define STM32_ACTIVATE_PLL        FALSE
+  #error "invalid STM32_PLL1SRC value specified"
 #endif
 
 /**
- * @brief   STM32_PLLPEN field.
+ * @brief   PLL2 input clock frequency.
  */
-#if (STM32_ADC12SEL == STM32_ADC12SEL_PLLPCLK) ||                           \
-    (STM32_ADC345SEL == STM32_ADC345SEL_PLLPCLK) ||                         \
-    defined(__DOXYGEN__)
-  #define STM32_PLLPEN              (1 << 16)
+#if (STM32_PLL2SRC == STM32_PLL2SRC_HSE) || defined(__DOXYGEN__)
+  #define STM32_PLL2CLKIN           (STM32_HSECLK / STM32_PLL2M_VALUE)
+
+#elif STM32_PLL2SRC == STM32_PLL2SRC_CSI
+  #define STM32_PLL2CLKIN           (STM32_CSICLK / STM32_PLL2M_VALUE)
+
+#elif STM32_PLL2SRC == STM32_PLL2SRC_HSI
+  #define STM32_PLL2CLKIN           (STM32_HSICLK / STM32_PLL2M_VALUE)
+
+#elif STM32_PLL2SRC == STM32_PLL2SRC_NOCLOCK
+  #define STM32_PLL2CLKIN           0
 
 #else
-  #define STM32_PLLPEN              (0 << 16)
+  #error "invalid STM32_PLL2SRC value specified"
 #endif
 
 /**
- * @brief   STM32_PLLQEN field.
+ * @brief   PLL3 input clock frequency.
  */
-#if (STM32_OSPISEL == STM32_OSPISEL_PLLQCLK) ||                             \
-    (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
-    (STM32_CLK48SEL == STM32_CLK48SEL_PLLQCLK) ||                           \
-    (STM32_SAI1SEL == STM32_SAI1SEL_PLLQCLK) ||                             \
-    (STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK) ||                           \
-    defined(__DOXYGEN__)
-  #define STM32_PLLQEN              (1 << 20)
+#if (STM32_PLL3SRC == STM32_PLL3SRC_HSE) || defined(__DOXYGEN__)
+  #define STM32_PLL3CLKIN           (STM32_HSECLK / STM32_PLL3M_VALUE)
+
+#elif STM32_PLL3SRC == STM32_PLL3SRC_CSI
+  #define STM32_PLL3CLKIN           (STM32_CSICLK / STM32_PLL3M_VALUE)
+
+#elif STM32_PLL3SRC == STM32_PLL3SRC_HSI
+  #define STM32_PLL3CLKIN           (STM32_HSICLK / STM32_PLL3M_VALUE)
+
+#elif STM32_PLL3SRC == STM32_PLL3SRC_NOCLOCK
+  #define STM32_PLL3CLKIN           0
 
 #else
-  #define STM32_PLLQEN              (0 << 20)
+  #error "invalid STM32_PLL3SRC value specified"
 #endif
 
 /**
- * @brief   STM32_PLLREN field.
+ * @brief   STM32_PLL1PEN field.
  */
-#if (STM32_SW == STM32_SW_PLLRCLK) ||                                       \
-    (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
+#if (STM32_SW           == STM32_SW_PLL1P)          ||                      \
+    (STM32_MCO1SEL      == STM32_MCO1SEL_PLL1P)     ||                      \
+    (STM32_MCO2SEL      == STM32_MCO2SEL_PLL1P)     ||                      \
     defined(__DOXYGEN__)
-  #define STM32_PLLREN              (1 << 24)
+  #define STM32_PLL1PEN             (1U << 16)
 
 #else
-  #define STM32_PLLREN              (0 << 24)
+  #define STM32_PLL1PEN             (0U << 16)
+#endif
+
+/**
+ * @brief   STM32_PLL1QEN field.
+ */
+#if (STM32_SPI1SEL      == STM32_SPI1SEL_PLL1Q)     ||                      \
+    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL1Q)     ||                      \
+    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL1Q)     ||                      \
+    (STM32_OSPISEL      == STM32_OSPISEL_PLL1Q)     ||                      \
+    (STM32_USBSEL       == STM32_USBSEL_PLL1Q)      ||                      \
+    (STM32_SDMMC1SEL    == STM32_SDMMC1SEL_PLL1Q)   ||                      \
+    (STM32_SDMMC2SEL    == STM32_SDMMC2SEL_PLL1Q)   ||                      \
+    (STM32_RNGSEL       == STM32_RNGSEL_PLL1Q)      ||                      \
+    (STM32_CECSEL       == STM32_CECSEL_PLL1Q)      ||                      \
+    (STM32_FDCANSEL     == STM32_FDCANSEL_PLL1Q)    ||                      \
+    (STM32_SAI1SEL      == STM32_SAI1SEL_PLL1Q)     ||                      \
+    (STM32_SAI2SEL      == STM32_SAI2SEL_PLL1Q)     ||                      \
+    defined(__DOXYGEN__)
+  #define STM32_PLL1QEN             (1U << 17)
+
+#else
+  #define STM32_PLL1QEN             (0U << 17)
+#endif
+
+/**
+ * @brief   STM32_PLL1REN field.
+ */
+#if FALSE                                           ||                      \
+    defined(__DOXYGEN__)
+  #define STM32_PLL1REN             (1U << 18)
+
+#else
+  #define STM32_PLL1REN             (0U << 18)
+#endif
+
+/**
+ * @brief   STM32_PLL2PEN field.
+ */
+#if (STM32_SW           == STM32_SW_PLL2P)          ||                      \
+    (STM32_MCO2SEL      == STM32_MCO2SEL_PLL1P)     ||                      \
+    (STM32_LPTIM1SEL    == STM32_LPTIM1SEL_PLL2P)   ||                      \
+    (STM32_LPTIM2SEL    == STM32_LPTIM2SEL_PLL2P)   ||                      \
+    (STM32_LPTIM3SEL    == STM32_LPTIM3SEL_PLL2P)   ||                      \
+    (STM32_LPTIM4SEL    == STM32_LPTIM4SEL_PLL2P)   ||                      \
+    (STM32_LPTIM5SEL    == STM32_LPTIM5SEL_PLL2P)   ||                      \
+    (STM32_LPTIM6SEL    == STM32_LPTIM6SEL_PLL2P)   ||                      \
+    (STM32_SPI1SEL      == STM32_SPI1SEL_PLL2P)     ||                      \
+    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL2P)     ||                      \
+    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL2P)     ||                      \
+    (STM32_SPI4SEL      == STM32_SPI4SEL_PLL2P)     ||                      \
+    (STM32_SPI5SEL      == STM32_SPI5SEL_PLL2P)     ||                      \
+    (STM32_SPI6SEL      == STM32_SPI6SEL_PLL2P)     ||                      \
+    (STM32_SAI1SEL      == STM32_SAI1SEL_PLL2P)     ||                      \
+    (STM32_SAI2SEL      == STM32_SAI2SEL_PLL2P)     ||                      \
+    defined(__DOXYGEN__)
+  #define STM32_PLL2PEN             (1U << 16)
+
+#else
+  #define STM32_PLL2PEN             (0U << 16)
+#endif
+
+/**
+ * @brief   STM32_PLL2QEN field.
+ */
+#if (STM32_USART1SEL    == STM32_USART1SEL_PLL2Q)   ||                      \
+    (STM32_USART2SEL    == STM32_USART2SEL_PLL2Q)   ||                      \
+    (STM32_USART3SEL    == STM32_USART3SEL_PLL2Q)   ||                      \
+    (STM32_UART4SEL     == STM32_UART4SEL_PLL2Q)    ||                      \
+    (STM32_UART5SEL     == STM32_UART5SEL_PLL2Q)    ||                      \
+    (STM32_USART6SEL    == STM32_USART6SEL_PLL2Q)   ||                      \
+    (STM32_UART7SEL     == STM32_UART7SEL_PLL2Q)    ||                      \
+    (STM32_UART8SEL     == STM32_UART8SEL_PLL2Q)    ||                      \
+    (STM32_UART9SEL     == STM32_UART9SEL_PLL2Q)    ||                      \
+    (STM32_USART10SEL   == STM32_USART10SEL_PLL2Q)  ||                      \
+    (STM32_USART11SEL   == STM32_USART11SEL_PLL2Q)  ||                      \
+    (STM32_UART12SEL    == STM32_UART12SEL_PLL2Q)   ||                      \
+    (STM32_LPUART1SEL   == STM32_LPUART1SEL_PLL2Q)  ||                      \
+    (STM32_FDCANSEL     == STM32_FDCANSEL_PLL2Q)    ||                      \
+    defined(__DOXYGEN__)
+  #define STM32_PLL2QEN             (1U << 17)
+
+#else
+  #define STM32_PLL2QEN             (0U << 17)
+#endif
+
+/**
+ * @brief   STM32_PLL2REN field.
+ */
+#if (STM32_OSPISEL      == STM32_OSPISEL_PLL2R)     ||                      \
+    (STM32_SDMMC1SEL    == STM32_SDMMC1SEL_PLL2R)   ||                      \
+    (STM32_SDMMC2SEL    == STM32_SDMMC2SEL_PLL2R)   ||                      \
+    (STM32_ADCDACSEL    == STM32_ADCDACSEL_PLL2R)   ||                      \
+    defined(__DOXYGEN__)
+  #define STM32_PLL2REN             (1U << 18)
+
+#else
+  #define STM32_PLL2REN             (0U << 18)
+#endif
+
+/**
+ * @brief   STM32_PLL3PEN field.
+ */
+#if (STM32_SPI1SEL      == STM32_SPI1SEL_PLL3P)     ||                      \
+    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL3P)     ||                      \
+    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL3P)     ||                      \
+    (STM32_SPI4SEL      == STM32_SPI4SEL_PLL3P)     ||                      \
+    (STM32_SPI5SEL      == STM32_SPI5SEL_PLL3P)     ||                      \
+    (STM32_SPI6SEL      == STM32_SPI6SEL_PLL3P)     ||                      \
+    (STM32_SAI1SEL      == STM32_SAI1SEL_PLL3P)     ||                      \
+    (STM32_SAI2SEL      == STM32_SAI2SEL_PLL3P)     ||                      \
+    defined(__DOXYGEN__)
+  #define STM32_PLL3PEN             (1U << 16)
+
+#else
+  #define STM32_PLL3PEN             (0U << 16)
+#endif
+
+/**
+ * @brief   STM32_PLL3QEN field.
+ */
+#if (STM32_USART1SEL    == STM32_USART1SEL_PLL3Q)   ||                      \
+    (STM32_USART2SEL    == STM32_USART2SEL_PLL3Q)   ||                      \
+    (STM32_USART3SEL    == STM32_USART3SEL_PLL3Q)   ||                      \
+    (STM32_UART4SEL     == STM32_UART4SEL_PLL3Q)    ||                      \
+    (STM32_UART5SEL     == STM32_UART5SEL_PLL3Q)    ||                      \
+    (STM32_USART6SEL    == STM32_USART6SEL_PLL3Q)   ||                      \
+    (STM32_UART7SEL     == STM32_UART7SEL_PLL3Q)    ||                      \
+    (STM32_UART8SEL     == STM32_UART8SEL_PLL3Q)    ||                      \
+    (STM32_UART9SEL     == STM32_UART9SEL_PLL3Q)    ||                      \
+    (STM32_USART10SEL   == STM32_USART10SEL_PLL3Q)  ||                      \
+    (STM32_USART11SEL   == STM32_USART11SEL_PLL3Q)  ||                      \
+    (STM32_UART12SEL    == STM32_UART12SEL_PLL3Q)   ||                      \
+    (STM32_LPUART1SEL   == STM32_LPUART1SEL_PLL3Q)  ||                      \
+    (STM32_USBSEL       == STM32_USBSEL_PLL3Q)  ||                          \
+    defined(__DOXYGEN__)
+  #define STM32_PLL3QEN             (1U << 17)
+
+#else
+  #define STM32_PLL3QEN             (0U << 17)
+#endif
+
+/**
+ * @brief   STM32_PLL3REN field.
+ */
+#if (STM32_LPTIM1SEL    == STM32_LPTIM1SEL_PLL3P)   ||                      \
+    (STM32_LPTIM2SEL    == STM32_LPTIM2SEL_PLL3P)   ||                      \
+    (STM32_LPTIM3SEL    == STM32_LPTIM3SEL_PLL3P)   ||                      \
+    (STM32_LPTIM4SEL    == STM32_LPTIM4SEL_PLL3P)   ||                      \
+    (STM32_LPTIM5SEL    == STM32_LPTIM5SEL_PLL3P)   ||                      \
+    (STM32_LPTIM6SEL    == STM32_LPTIM6SEL_PLL3P)   ||                      \
+    (STM32_I2C1SEL      == STM32_I2C1SEL_PLL3R)     ||                      \
+    (STM32_I2C2SEL      == STM32_I2C2SEL_PLL3R)     ||                      \
+    (STM32_I2C3SEL      == STM32_I2C3SEL_PLL3R)     ||                      \
+    (STM32_I2C4SEL      == STM32_I2C4SEL_PLL3R)     ||                      \
+    (STM32_I3C1SEL      == STM32_I3C1SEL_PLL3R)     ||                      \
+    defined(__DOXYGEN__)
+  #define STM32_PLL3REN             (1U << 18)
+
+#else
+  #define STM32_PLL3REN             (0U << 18)
 #endif
 
 /* Inclusion of PLL-related checks and calculations.*/
-#include <stm32_pll.inc>
+#include <stm32_pll1.inc>
+#include <stm32_pll2.inc>
+#include <stm32_pll3.inc>
 
 /**
  * @brief   System clock source.
