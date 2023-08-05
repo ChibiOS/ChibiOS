@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    RCCv1/stm32_csi.inc
+ * @file    RCCv2/stm32_csi.inc
  * @brief   Shared CSI clock handler.
  *
  * @addtogroup STM32_CSI_HANDLER

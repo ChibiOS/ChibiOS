@@ -97,21 +97,27 @@
 #endif
 
 /* RCC attributes.*/
-#define STM32_RCC_HAS_HSI16                 TRUE
-#define STM32_RCC_HAS_HSI48                 TRUE
-#define STM32_RCC_HAS_MSI                   FALSE
 #define STM32_RCC_HAS_LSI                   TRUE
-#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_CSI                   TRUE
+#define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_HSIDIV                TRUE
 #define STM32_RCC_HAS_LSE                   TRUE
 #define STM32_RCC_HAS_HSE                   TRUE
 
-#define STM32_RCC_HAS_PLL                   TRUE
-#define STM32_RCC_PLL_HAS_P                 TRUE
-#define STM32_RCC_PLL_HAS_Q                 TRUE
-#define STM32_RCC_PLL_HAS_R                 TRUE
+#define STM32_RCC_HAS_PLL1                  TRUE
+#define STM32_RCC_PLL1_HAS_P                TRUE
+#define STM32_RCC_PLL1_HAS_Q                TRUE
+#define STM32_RCC_PLL1_HAS_R                TRUE
 
-#define STM32_RCC_HAS_PLLSAI1               FALSE
-#define STM32_RCC_HAS_PLLSAI2               FALSE
+#define STM32_RCC_HAS_PLL2                  TRUE
+#define STM32_RCC_PLL2_HAS_P                TRUE
+#define STM32_RCC_PLL2_HAS_Q                TRUE
+#define STM32_RCC_PLL2_HAS_R                TRUE
+
+#define STM32_RCC_HAS_PLL3                  TRUE
+#define STM32_RCC_PLL3_HAS_P                TRUE
+#define STM32_RCC_PLL3_HAS_Q                TRUE
+#define STM32_RCC_PLL3_HAS_R                TRUE
 
 /*===========================================================================*/
 /* STM32G473xx, STM32G4843xx, STM32G474xx, STM32G484xx.                      */

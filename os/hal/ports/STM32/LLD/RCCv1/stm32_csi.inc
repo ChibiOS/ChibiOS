@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv2/stm32_lsi.inc
- * @brief   Shared LSI clock handler.
+ * @file    RCCv1/stm32_csi.inc
+ * @brief   Shared CSI clock handler.
  *
- * @addtogroup STM32_LSI_HANDLER
+ * @addtogroup STM32_CSI_HANDLER
  * @{
  */
 
@@ -27,22 +27,22 @@
 /*===========================================================================*/
 
 /**
- * @brief   LSI clock frequency.
+ * @brief   CSI clock frequency.
  */
-#define STM32_LSICLK            32000U
+#define STM32_CSICLK            4000000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_RCC_HAS_LSI)
-#error "STM32_RCC_HAS_LSI not defined in stm32_registry.h"
+#if !defined(STM32_RCC_HAS_CSI)
+#error "STM32_RCC_HAS_CSI not defined in stm32_registry.h"
 #endif
 
 /* Checks on configurations.*/
-#if !defined(STM32_LSI_ENABLED)
-#error "STM32_LSI_ENABLED not defined in mcuconf.h"
+#if !defined(STM32_CSI_ENABLED)
+#error "STM32_CSI_ENABLED not defined in mcuconf.h"
 #endif
 
 /*===========================================================================*/
@@ -57,13 +57,24 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_FORCEINLINE void lsi_init(void) {
+__STATIC_FORCEINLINE void csi_enable(void) {
 
-#if STM32_LSI_ENABLED
-  /* LSI activation.*/
-  RCC->RDLSICR |= RCC_RDLSICR_LSION;
-  while ((RCC->RDLSICR & RCC_RDLSICR_LSIRDY) == 0U) {
+  RCC->OCENSETR = RCC_OCENSETR_CSION;
+  while ((RCC->OCRDYR & RCC_OCRDYR_CSIRDY) == 0U) {
+    /* Waiting for CSI activation.*/
   }
+}
+
+__STATIC_FORCEINLINE void csi_disable(void) {
+
+  RCC->OCENCLRR = RCC_OCENCLRR_CSION;
+}
+
+__STATIC_FORCEINLINE void csi_init(void) {
+
+#if STM32_CSI_ENABLED
+  /* HSI activation.*/
+  csi_enable();
 #endif
 }
 

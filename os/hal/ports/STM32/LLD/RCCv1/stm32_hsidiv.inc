@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    RCCv2/stm32_lsi.inc
- * @brief   Shared LSI clock handler.
+ * @file    RCCv1/stm32_hsidiv.inc
+ * @brief   Shared HSI with divider clock handler.
  *
- * @addtogroup STM32_LSI_HANDLER
+ * @addtogroup STM32_HSIDIV_HANDLER
  * @{
  */
 
@@ -27,22 +27,22 @@
 /*===========================================================================*/
 
 /**
- * @brief   LSI clock frequency.
+ * @brief   HSI16 clock frequency.
  */
-#define STM32_LSICLK            32000U
+#define STM32_HSI16CLK          16000000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_RCC_HAS_LSI)
-#error "STM32_RCC_HAS_LSI not defined in stm32_registry.h"
+#if !defined(STM32_RCC_HAS_HSI16)
+#error "STM32_RCC_HAS_HSI16 not defined in stm32_registry.h"
 #endif
 
 /* Checks on configurations.*/
-#if !defined(STM32_LSI_ENABLED)
-#error "STM32_LSI_ENABLED not defined in mcuconf.h"
+#if !defined(STM32_HSI16_ENABLED)
+#error "STM32_HSI16_ENABLED not defined in mcuconf.h"
 #endif
 
 /*===========================================================================*/
@@ -57,13 +57,36 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_FORCEINLINE void lsi_init(void) {
+__STATIC_INLINE void hsi16_enable(void) {
 
-#if STM32_LSI_ENABLED
-  /* LSI activation.*/
-  RCC->RDLSICR |= RCC_RDLSICR_LSION;
-  while ((RCC->RDLSICR & RCC_RDLSICR_LSIRDY) == 0U) {
+  RCC->CR |= RCC_CR_HSION;
+  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
+    /* Waiting for HSI16 activation.*/
   }
+}
+
+__STATIC_INLINE void hsi16_disable(void) {
+
+  RCC->CR &= ~RCC_CR_HSION;
+}
+
+__STATIC_INLINE void hsi16_reset(void) {
+
+  /* Making sure HSI is active and ready.*/
+  hsi16_enable();
+
+  /* Clocking from HSI, in case HSI was not the default source.*/
+  RCC->CFGR = RCC_CFGR_SW_HSI;
+  while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI) {
+    /* Wait until HSI is selected.*/
+  }
+}
+
+__STATIC_INLINE void hsi16_init(void) {
+
+#if STM32_HSI16_ENABLED
+  /* HSI activation.*/
+  hsi16_enable();
 #endif
 }
 

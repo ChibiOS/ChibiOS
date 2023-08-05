@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    RCCv1/stm32_hsi.inc
+ * @file    RCCv2/stm32_hsi.inc
  * @brief   Shared HSI clock handler.
  *
  * @addtogroup STM32_HSI_HANDLER
