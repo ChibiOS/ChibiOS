@@ -29,20 +29,38 @@
 /**
  * @brief   HSI16 clock frequency.
  */
-#define STM32_HSI16CLK          16000000U
+#define STM32_HSI64CLK              64000000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_RCC_HAS_HSI16)
-#error "STM32_RCC_HAS_HSI16 not defined in stm32_registry.h"
+#if !defined(STM32_RCC_HAS_HSI)
+#error "STM32_RCC_HAS_HSI not defined in stm32_registry.h"
 #endif
 
 /* Checks on configurations.*/
-#if !defined(STM32_HSI16_ENABLED)
-#error "STM32_HSI16_ENABLED not defined in mcuconf.h"
+#if !defined(STM32_HSI_ENABLED)
+#error "STM32_HSI_ENABLED not defined in mcuconf.h"
+#endif
+
+#if !defined(STM32_HSIDIV_VALUE)
+#error "STM32_HSIDIV_VALUE not defined in mcuconf.h"
+#endif
+
+#if (STM32_HSIDIV_VALUE != 1) && (STM32_HSIDIV_VALUE != 2) &&               \
+    (STM32_HSIDIV_VALUE != 4) && (STM32_HSIDIV_VALUE != 8)
+#error "invalid STM32_HSIDIV_VALUE value"
+#endif
+
+/**
+ * @brief   Divided HSI clock.
+ */
+#if STM32_HSI_ENABLED || defined(__DOXYGEN__)
+#define STM32_HSICLK                (STM32_HSI64CLK / STM32_HSIDIV_VALUE)
+#else
+#define STM32_HSICLK                0
 #endif
 
 /*===========================================================================*/
@@ -57,7 +75,7 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE void hsi16_enable(void) {
+__STATIC_INLINE void hsi_enable(void) {
 
   RCC->CR |= RCC_CR_HSION;
   while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
@@ -65,15 +83,15 @@ __STATIC_INLINE void hsi16_enable(void) {
   }
 }
 
-__STATIC_INLINE void hsi16_disable(void) {
+__STATIC_INLINE void hsi_disable(void) {
 
   RCC->CR &= ~RCC_CR_HSION;
 }
 
-__STATIC_INLINE void hsi16_reset(void) {
+__STATIC_INLINE void hsi_reset(void) {
 
   /* Making sure HSI is active and ready.*/
-  hsi16_enable();
+  hsi_enable();
 
   /* Clocking from HSI, in case HSI was not the default source.*/
   RCC->CFGR = RCC_CFGR_SW_HSI;
@@ -86,7 +104,7 @@ __STATIC_INLINE void hsi16_init(void) {
 
 #if STM32_HSI16_ENABLED
   /* HSI activation.*/
-  hsi16_enable();
+  hsi_enable();
 #endif
 }
 

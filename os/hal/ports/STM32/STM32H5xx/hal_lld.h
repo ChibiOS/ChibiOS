@@ -130,7 +130,7 @@
 #define STM32_SW_HSI            STM32_SW_FIELD(1U)
 #define STM32_SW_CSI            STM32_SW_FIELD(2U)
 #define STM32_SW_HSE            STM32_SW_FIELD(2U)
-#define STM32_SW_PLL1PCLK       STM32_SW_FIELD(3U)
+#define STM32_SW_PLL1P          STM32_SW_FIELD(3U)
 
 #define STM32_MCO1SEL_MASK      (7U << 22)
 #define STM32_MCO1PRE_FIELD(n)  ((n) << 22)
@@ -458,12 +458,12 @@
  * @name    RCC_CCIPR4 register bits definitions
  * @{
  */
-#define STM32_QSPISEL_MASK      (3U << 0)
-#define STM32_QSPISEL_FIELD(n)  ((n) << 0)
-#define STM32_QSPISEL_HCLK4     STM32_QSPISEL_FIELD(0U)
-#define STM32_QSPISEL_PLL1Q     STM32_QSPISEL_FIELD(1U)
-#define STM32_QSPISEL_PLL2R     STM32_QSPISEL_FIELD(2U)
-#define STM32_QSPISEL_PER       STM32_QSPISEL_FIELD(3U)
+#define STM32_OSPISEL_MASK      (3U << 0)
+#define STM32_OSPISEL_FIELD(n)  ((n) << 0)
+#define STM32_OSPISEL_HCLK4     STM32_OSPISEL_FIELD(0U)
+#define STM32_OSPISEL_PLL1Q     STM32_OSPISEL_FIELD(1U)
+#define STM32_OSPISEL_PLL2R     STM32_OSPISEL_FIELD(2U)
+#define STM32_OSPISEL_PER       STM32_OSPISEL_FIELD(3U)
 
 #define STM32_SYSTICKSEL_MASK   (3U << 2)
 #define STM32_SYSTICKSEL_FIELD(n) ((n) << 2)
@@ -1164,8 +1164,8 @@
 /**
  * @brief   QSPI clock source.
  */
-#if !defined(STM32_QSPISEL) || defined(__DOXYGEN__)
-#define STM32_QSPISEL                       STM32_QSPISEL_HCLK4
+#if !defined(STM32_OSPISEL) || defined(__DOXYGEN__)
+#define STM32_OSPISEL                       STM32_OSPISEL_HCLK4
 #endif
 
 /**
@@ -1617,116 +1617,129 @@
 #include "stm32_hse.inc"
 
 /*
- * HSI16 related checks.
+ * PLL1 enable check.
  */
-#if STM32_HSI16_ENABLED
-#else /* !STM32_HSI16_ENABLED */
+#if (STM32_SW         == STM32_SW_PLL1P)         ||                         \
+    (STM32_MCO1SEL    == STM32_MCO1SEL_PLL1P)    ||                         \
+    (STM32_MCO2SEL    == STM32_MCO2SEL_PLL1P)    ||                         \
+    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL1Q)    ||                         \
+    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL1Q)    ||                         \
+    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL1Q)    ||                         \
+    (STM32_OSPISEL    == STM32_OSPISEL_PLL1Q)    ||                         \
+    (STM32_USBSEL     == STM32_USBSEL_PLL1Q)     ||                         \
+    (STM32_SDMMC1SEL  == STM32_SDMMC1SEL_PLL1Q)  ||                         \
+    (STM32_SDMMC2SEL  == STM32_SDMMC2SEL_PLL1Q)  ||                         \
+    (STM32_RNGSEL     == STM32_RNGSEL_PLL1Q)     ||                         \
+    (STM32_CECSEL     == STM32_CECSEL_PLL1Q)     ||                         \
+    (STM32_FDCANSEL   == STM32_FDCANSEL_PLL1Q)   ||                         \
+    (STM32_SAI1SEL    == STM32_SAI1SEL_PLL1Q)    ||                         \
+    (STM32_SAI2SEL    == STM32_SAI2SEL_PLL1Q)    ||                         \
+    defined(__DOXYGEN__)
+  /**
+   * @brief   PLL1 activation flag.
+   */
+  #define STM32_ACTIVATE_PLL1       TRUE
+#else
 
-  #if STM32_SW == STM32_SW_HSI16
-    #error "HSI16 not enabled, required by STM32_SW"
-  #endif
-
-  #if (STM32_SW == STM32_SW_PLLRCLK) && (STM32_PLLSRC == STM32_PLLSRC_HSI16)
-    #error "HSI16 not enabled, required by STM32_SW and STM32_PLLSRC"
-  #endif
-
-  #if (STM32_MCOSEL == STM32_MCOSEL_HSI16) ||                               \
-      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
-       (STM32_PLLSRC == STM32_PLLSRC_HSI16))
-    #error "HSI16 not enabled, required by STM32_MCOSEL"
-  #endif
-
-  #if (STM32_USART1SEL == STM32_USART1SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_USART1SEL"
-  #endif
-  #if (STM32_USART2SEL == STM32_USART2SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_USART2SEL"
-  #endif
-  #if (STM32_USART3SEL == STM32_USART3SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_USART3SEL"
-  #endif
-  #if (STM32_UART4SEL == STM32_UART4SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_UART4SEL"
-  #endif
-  #if (STM32_UART5SEL == STM32_UART5SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_UART5SEL"
-  #endif
-  #if (STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_LPUART1SEL"
-  #endif
-
-  #if (STM32_I2C1SEL == STM32_I2C1SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_I2C1SEL"
-  #endif
-  #if (STM32_I2C2SEL == STM32_I2C2SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_I2C2SEL"
-  #endif
-  #if (STM32_I2C3SEL == STM32_I2C3SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_I2C3SEL"
-  #endif
-  #if (STM32_I2C4SEL == STM32_I2C4SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_I2C4SEL"
-  #endif
-
-  #if (STM32_SAI1SEL == STM32_SAI1SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_SAI1SEL"
-  #endif
-  #if (STM32_I2S23SEL == STM32_I2S23SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_I2S23SEL"
-  #endif
-
-  #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_LPTIM1SEL"
-  #endif
-
-  #if (STM32_QSPISEL == STM32_QSPISEL_HSI16)
-    #error "HSI16 not enabled, required by STM32_QSPISEL"
-  #endif
-
-#endif /* !STM32_HSI16_ENABLED */
+  #define STM32_ACTIVATE_PLL1       FALSE
+#endif
 
 /*
- * HSI48 related checks.
+ * PLL2 enable check.
  */
-#if STM32_HSI48_ENABLED
-#else /* !STM32_HSI48_ENABLED */
+#if (STM32_MCO2SEL    == STM32_MCO2SEL_PLL2P)    ||                         \
+    (STM32_USART1SEL  == STM32_USART1SEL_PLL2Q)  ||                         \
+    (STM32_USART2SEL  == STM32_USART2SEL_PLL2Q)  ||                         \
+    (STM32_USART3SEL  == STM32_USART3SEL_PLL2Q)  ||                         \
+    (STM32_UART4SEL   == STM32_UART4SEL_PLL2Q)   ||                         \
+    (STM32_UART5SEL   == STM32_UART5SEL_PLL2Q)   ||                         \
+    (STM32_USART6SEL  == STM32_USART6SEL_PLL2Q)  ||                         \
+    (STM32_UART7SEL   == STM32_UART7SEL_PLL2Q)   ||                         \
+    (STM32_UART8SEL   == STM32_UART8SEL_PLL2Q)   ||                         \
+    (STM32_UART9SEL   == STM32_UART9SEL_PLL2Q)   ||                         \
+    (STM32_USART10SEL == STM32_USART10SEL_PLL2Q) ||                         \
+    (STM32_USART11SEL == STM32_USART11SEL_PLL2Q) ||                         \
+    (STM32_UART12SEL  == STM32_UART12SEL_PLL2Q)  ||                         \
+    (STM32_LPUART1SEL == STM32_LPUART1SEL_PLL2Q) ||                         \
+    (STM32_LPTIM1SEL  == STM32_LPTIM1SEL_PLL2P)  ||                         \
+    (STM32_LPTIM2SEL  == STM32_LPTIM2SEL_PLL2P)  ||                         \
+    (STM32_LPTIM3SEL  == STM32_LPTIM3SEL_PLL2P)  ||                         \
+    (STM32_LPTIM4SEL  == STM32_LPTIM4SEL_PLL2P)  ||                         \
+    (STM32_LPTIM5SEL  == STM32_LPTIM5SEL_PLL2P)  ||                         \
+    (STM32_LPTIM6SEL  == STM32_LPTIM6SEL_PLL2P)  ||                         \
+    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL2P)    ||                         \
+    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL2P)    ||                         \
+    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL2P)    ||                         \
+    (STM32_SPI4SEL    == STM32_SPI4SEL_PLL2P)    ||                         \
+    (STM32_SPI5SEL    == STM32_SPI5SEL_PLL2P)    ||                         \
+    (STM32_SPI6SEL    == STM32_SPI6SEL_PLL2P)    ||                         \
+    (STM32_OSPISEL    == STM32_OSPISEL_PLL2R )   ||                         \
+    (STM32_SDMMC1SEL  == STM32_SDMMC1SEL_PLL2R)  ||                         \
+    (STM32_SDMMC2SEL  == STM32_SDMMC2SEL_PLL2R)  ||                         \
+    (STM32_ADCDACSEL  == STM32_ADCDACSEL_PLL2R)  ||                         \
+    (STM32_FDCANSEL   == STM32_FDCANSEL_PLL2Q)   ||                         \
+    (STM32_SAI1SEL    == STM32_SAI1SEL_PLL2P)    ||                         \
+    (STM32_SAI2SEL    == STM32_SAI2SEL_PLL2P)    ||                         \
+    defined(__DOXYGEN__)
+  /**
+   * @brief   PLL2 activation flag.
+   */
+  #define STM32_ACTIVATE_PLL2       TRUE
+#else
 
-  #if STM32_MCOSEL == STM32_MCOSEL_HSI48
-    #error "HSI48 not enabled, required by STM32_MCOSEL"
-  #endif
-
-  #if STM32_CLK48SEL == STM32_CLK48SEL_HSI48
-    #error "HSI48 not enabled, required by STM32_CLK48SEL"
-  #endif
-
-#endif /* !STM32_HSI48_ENABLED */
+  #define STM32_ACTIVATE_PLL2       FALSE
+#endif
 
 /*
- * HSE related checks.
+ * PLL3 enable check.
  */
-#if STM32_HSE_ENABLED
+#if (STM32_USART1SEL  == STM32_USART1SEL_PLL3Q)  ||                         \
+    (STM32_USART2SEL  == STM32_USART2SEL_PLL3Q)  ||                         \
+    (STM32_USART3SEL  == STM32_USART3SEL_PLL3Q)  ||                         \
+    (STM32_UART4SEL   == STM32_UART4SEL_PLL3Q)   ||                         \
+    (STM32_UART5SEL   == STM32_UART5SEL_PLL3Q)   ||                         \
+    (STM32_USART6SEL  == STM32_USART6SEL_PLL3Q)  ||                         \
+    (STM32_UART7SEL   == STM32_UART7SEL_PLL3Q)   ||                         \
+    (STM32_UART8SEL   == STM32_UART8SEL_PLL3Q)   ||                         \
+    (STM32_UART9SEL   == STM32_UART9SEL_PLL3Q)   ||                         \
+    (STM32_USART10SEL == STM32_USART10SEL_PLL3Q) ||                         \
+    (STM32_USART11SEL == STM32_USART11SEL_PLL3Q) ||                         \
+    (STM32_UART12SEL  == STM32_UART12SEL_PLL3Q)  ||                         \
+    (STM32_LPUART1SEL == STM32_LPUART1SEL_PLL3Q) ||                         \
+    (STM32_LPTIM1SEL  == STM32_LPTIM1SEL_PLL3R)  ||                         \
+    (STM32_LPTIM2SEL  == STM32_LPTIM2SEL_PLL3R)  ||                         \
+    (STM32_LPTIM3SEL  == STM32_LPTIM3SEL_PLL3R)  ||                         \
+    (STM32_LPTIM4SEL  == STM32_LPTIM4SEL_PLL3R)  ||                         \
+    (STM32_LPTIM5SEL  == STM32_LPTIM5SEL_PLL3R)  ||                         \
+    (STM32_LPTIM6SEL  == STM32_LPTIM6SEL_PLL3R)  ||                         \
+    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL3P)    ||                         \
+    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL3P)    ||                         \
+    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL3P)    ||                         \
+    (STM32_SPI4SEL    == STM32_SPI4SEL_PLL3P)    ||                         \
+    (STM32_SPI5SEL    == STM32_SPI5SEL_PLL3P)    ||                         \
+    (STM32_SPI6SEL    == STM32_SPI6SEL_PLL3P)    ||                         \
+    (STM32_MCO1SEL    == STM32_MCO1SEL_PLL1P)    ||                         \
+    (STM32_MCO2SEL    == STM32_MCO2SEL_PLL1P)    ||                         \
+    (STM32_SPI1SEL    == STM32_SPI1SEL_PLL1Q)    ||                         \
+    (STM32_SPI2SEL    == STM32_SPI2SEL_PLL1Q)    ||                         \
+    (STM32_SPI3SEL    == STM32_SPI3SEL_PLL1Q)    ||                         \
+    (STM32_USBSEL     == STM32_USBSEL_PLL3Q)     ||                         \
+    (STM32_I2C1SEL    == STM32_I2C1SEL_PLL3R)    ||                         \
+    (STM32_I2C2SEL    == STM32_I2C2SEL_PLL3R)    ||                         \
+    (STM32_I2C3SEL    == STM32_I2C3SEL_PLL3R)    ||                         \
+    (STM32_I2C4SEL    == STM32_I2C4SEL_PLL3R)    ||                         \
+    (STM32_I3C1SEL    == STM32_I3C1SEL_PLL3R)    ||                         \
+    (STM32_SAI1SEL    == STM32_SAI1SEL_PLL3P)    ||                         \
+    (STM32_SAI2SEL    == STM32_SAI2SEL_PLL3P)    ||                         \
+    defined(__DOXYGEN__)
+  /**
+   * @brief   PLL3 activation flag.
+   */
+  #define STM32_ACTIVATE_PLL3       TRUE
+#else
 
-#else /* !STM32_HSE_ENABLED */
-
-  #if STM32_SW == STM32_SW_HSE
-    #error "HSE not enabled, required by STM32_SW"
-  #endif
-
-  #if (STM32_SW == STM32_SW_PLLRCLK) && (STM32_PLLSRC == STM32_PLLSRC_HSE)
-    #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
-  #endif
-
-  #if (STM32_MCOSEL == STM32_MCOSEL_HSE) ||                                 \
-      ((STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) &&                            \
-       (STM32_PLLSRC == STM32_PLLSRC_HSE))
-    #error "HSE not enabled, required by STM32_MCOSEL"
-  #endif
-
-  #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
-    #error "HSE not enabled, required by STM32_RTCSEL"
-  #endif
-
-#endif /* !STM32_HSE_ENABLED */
+  #define STM32_ACTIVATE_PLL3       FALSE
+#endif
 
 /*
  * LSI related checks.
@@ -1734,12 +1747,47 @@
 #if STM32_LSI_ENABLED
 #else /* !STM32_LSI_ENABLED */
 
-  #if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI)
-    #error "LSI not enabled, required by STM32_RTCSEL"
+  #if STM32_MCO2SEL == STM32_MCO2SEL_LSI
+    #error "LSI not enabled, required by STM32_MCO2SEL"
   #endif
 
-  #if STM32_MCOSEL == STM32_MCOSEL_LSI
-    #error "LSI not enabled, required by STM32_MCOSEL"
+  #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI)
+    #error "HSI not enabled, required by STM32_LPTIM1SEL"
+  #endif
+  #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSI)
+    #error "HSI not enabled, required by STM32_LPTIM2SEL"
+  #endif
+  #if (STM32_LPTIM3SEL == STM32_LPTIM3SEL_LSI)
+    #error "HSI not enabled, required by STM32_LPTIM3SEL"
+  #endif
+  #if (STM32_LPTIM4SEL == STM32_LPTIM4SEL_LSI)
+    #error "HSI not enabled, required by STM32_LPTIM4SEL"
+  #endif
+  #if (STM32_LPTIM5SEL == STM32_LPTIM5SEL_LSI)
+    #error "HSI not enabled, required by STM32_LPTIM5SEL"
+  #endif
+  #if (STM32_LPTIM6SEL == STM32_LPTIM6SEL_LSI)
+    #error "HSI not enabled, required by STM32_LPTIM6SEL"
+  #endif
+
+  #if STM32_SYSTICKSEL == STM32_SYSTICKSEL_LSI
+    #error "LSI not enabled, required by STM32_SYSTICKSEL"
+  #endif
+
+  #if STM32_RNGSEL == STM32_RNGSEL_LSI
+    #error "LSI not enabled, required by STM32_RNGSEL"
+  #endif
+
+  #if STM32_DACSEL == STM32_DACSEL_LSI
+    #error "LSI not enabled, required by STM32_DACSEL"
+  #endif
+
+  #if STM32_CECSEL == STM32_CECSEL_LSI
+    #error "LSI not enabled, required by STM32_CECSEL"
+  #endif
+
+  #if HAL_USE_RTC && (STM32_RTCSEL == STM32_RTCSEL_LSI)
+    #error "LSI not enabled, required by STM32_RTCSEL"
   #endif
 
   #if STM32_LSCOSEL == STM32_LSCOSEL_LSI
@@ -1749,17 +1797,385 @@
 #endif /* !STM32_LSI_ENABLED */
 
 /*
+ * CSI related checks.
+ */
+#if STM32_CSI_ENABLED
+#else /* !STM32_CSI_ENABLED */
+
+  #if STM32_ACTIVATE_PLL1 && (STM32_PLL1SRC == STM32_PLL1SRC_CSI))
+    #error "CSI not enabled, required by STM32_PLL1SRC"
+  #endif
+  #if STM32_ACTIVATE_PLL2 && (STM32_PLL1SRC == STM32_PLL2SRC_CSI))
+    #error "CSI not enabled, required by STM32_PLL2SRC"
+  #endif
+  #if STM32_ACTIVATE_PLL3 && (STM32_PLL1SRC == STM32_PLL3SRC_CSI))
+    #error "CSI not enabled, required by STM32_PLL3SRC"
+  #endif
+
+  #if STM32_SW == STM32_SW_CSI
+    #error "CSI not enabled, required by STM32_SW"
+  #endif
+
+  #if STM32_MCO2SEL == STM32_MCO2SEL_CSI
+    #error "CSI not enabled, required by STM32_MCO2SEL"
+  #endif
+
+  #if (STM32_USART1SEL == STM32_USART1SEL_CSI)
+    #error "CSI not enabled, required by STM32_USART1SEL"
+  #endif
+  #if (STM32_USART2SEL == STM32_USART2SEL_CSI)
+    #error "CSI not enabled, required by STM32_USART2SEL"
+  #endif
+  #if (STM32_USART3SEL == STM32_USART3SEL_CSI)
+    #error "CSI not enabled, required by STM32_USART3SEL"
+  #endif
+  #if (STM32_UART4SEL == STM32_UART4SEL_CSI)
+    #error "CSI not enabled, required by STM32_UART4SEL"
+  #endif
+  #if (STM32_UART5SEL == STM32_UART5SEL_CSI)
+    #error "CSI not enabled, required by STM32_UART5SEL"
+  #endif
+  #if (STM32_USART6SEL == STM32_USART6SEL_CSI)
+    #error "CSI not enabled, required by STM32_USART6SEL"
+  #endif
+  #if (STM32_UART7SEL == STM32_UART7SEL_CSI)
+    #error "CSI not enabled, required by STM32_UART7SEL"
+  #endif
+  #if (STM32_UART8SEL == STM32_UART8SEL_CSI)
+    #error "CSI not enabled, required by STM32_UART8SEL"
+  #endif
+  #if (STM32_UART9SEL == STM32_UART9SEL_CSI)
+    #error "CSI not enabled, required by STM32_UART9SEL"
+  #endif
+  #if (STM32_USART10SEL == STM32_USART10SEL_CSI)
+    #error "CSI not enabled, required by STM32_USART10SEL"
+  #endif
+  #if (STM32_USART11SEL == STM32_USART11SEL_CSI)
+    #error "CSI not enabled, required by STM32_USART11SEL"
+  #endif
+  #if (STM32_UART12SEL == STM32_UART12SEL_CSI)
+    #error "CSI not enabled, required by STM32_UART12SEL"
+  #endif
+  #if (STM32_LPUART1SEL == STM32_LPUART1SEL_CSI)
+    #error "CSI not enabled, required by STM32_LPUART1SEL"
+  #endif
+
+  #if (STM32_SPI4SEL == STM32_SPI4SEL_CSI)
+    #error "CSI not enabled, required by STM32_SPI4SEL"
+  #endif
+  #if (STM32_SPI5SEL == STM32_SPI5SEL_CSI)
+    #error "CSI not enabled, required by STM32_SPI5SEL"
+  #endif
+  #if (STM32_SPI6SEL == STM32_SPI6SEL_CSI)
+    #error "CSI not enabled, required by STM32_SPI6SEL"
+  #endif
+
+  #if (STM32_I2C1SEL == STM32_I2C1SEL_CSI)
+    #error "CSI not enabled, required by STM32_I2C1SEL"
+  #endif
+  #if (STM32_I2C2SEL == STM32_I2C2SEL_CSI)
+    #error "CSI not enabled, required by STM32_I2C2SEL"
+  #endif
+  #if (STM32_I2C3SEL == STM32_I2C3SEL_CSI)
+    #error "CSI not enabled, required by STM32_I2C3SEL"
+  #endif
+  #if (STM32_I2C4SEL == STM32_I2C4SEL_CSI)
+    #error "CSI not enabled, required by STM32_I2C4SEL"
+  #endif
+
+  #if (STM32_ADCDACSEL == STM32_ADCDACSEL_CSI)
+    #error "CSI not enabled, required by STM32_ADCDACSEL"
+  #endif
+
+  #if STM32_PERSEL == STM32_PERSEL_CSI
+    #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PER)
+      #error "CSI not enabled, required by STM32_LPTIM1SEL"
+    #endif
+    #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_PER)
+      #error "CSI not enabled, required by STM32_LPTIM2SEL"
+    #endif
+    #if (STM32_LPTIM3SEL == STM32_LPTIM3SEL_PER)
+      #error "CSI not enabled, required by STM32_LPTIM3SEL"
+    #endif
+    #if (STM32_LPTIM4SEL == STM32_LPTIM4SEL_PER)
+      #error "CSI not enabled, required by STM32_LPTIM4SEL"
+    #endif
+    #if (STM32_LPTIM5SEL == STM32_LPTIM5SEL_PER)
+      #error "CSI not enabled, required by STM32_LPTIM5SEL"
+    #endif
+    #if (STM32_LPTIM6SEL == STM32_LPTIM6SEL_PER)
+      #error "CSI not enabled, required by STM32_LPTIM6SEL"
+    #endif
+
+    #if (STM32_SPI1SEL == STM32_SPI1SEL_PER)
+      #error "CSI not enabled, required by STM32_SPI1SEL"
+    #endif
+    #if (STM32_SPI2SEL == STM32_SPI2SEL_PER)
+      #error "CSI not enabled, required by STM32_SPI2SEL"
+    #endif
+    #if (STM32_SPI3SEL == STM32_SPI3SEL_PER)
+      #error "CSI not enabled, required by STM32_SPI3SEL"
+    #endif
+
+    #if (STM32_OSPISEL == STM32_OSPISEL_PER)
+      #error "CSI not enabled, required by STM32_OSPISEL"
+    #endif
+
+    #if (STM32_SAI1SEL == STM32_SAI1SEL_PER)
+      #error "CSI not enabled, required by STM32_SAI1SEL"
+    #endif
+    #if (STM32_SAI2SEL == STM32_SAI2SEL_PER)
+      #error "CSI not enabled, required by STM32_SAI2SEL"
+    #endif
+  #endif
+#endif /* !STM32_CSI_ENABLED */
+
+/*
+ * HSI48 related checks.
+ */
+#if STM32_HSI48_ENABLED
+#else /* !STM32_HSI48_ENABLED */
+
+  #if STM32_MCO1SEL == STM32_MCO1SEL_HSI48
+    #error "HSI48 not enabled, required by STM32_MCO1SEL"
+  #endif
+
+  #if STM32_USBSEL == STM32_USBSEL_HSI48
+    #error "HSI48 not enabled, required by STM32_USBSEL"
+  #endif
+
+  #if STM32_RNGSEL == STM32_RNGSEL_HSI48
+    #error "HSI48 not enabled, required by STM32_RNGSEL"
+  #endif
+
+  #if STM32_CECSEL == STM32_CECSEL_HSI48
+    #error "HSI48 not enabled, required by STM32_CECSEL"
+  #endif
+
+#endif /* !STM32_HSI48_ENABLED */
+
+/*
+ * HSI related checks.
+ */
+#if STM32_HSI_ENABLED
+#else /* !STM32_HSI_ENABLED */
+
+  #if STM32_ACTIVATE_PLL1 && (STM32_PLL1SRC == STM32_PLL1SRC_HSI))
+    #error "HSI not enabled, required by STM32_PLL1SRC"
+  #endif
+  #if STM32_ACTIVATE_PLL2 && (STM32_PLL1SRC == STM32_PLL2SRC_HSI))
+    #error "HSI not enabled, required by STM32_PLL2SRC"
+  #endif
+  #if STM32_ACTIVATE_PLL3 && (STM32_PLL1SRC == STM32_PLL3SRC_HSI))
+    #error "HSI not enabled, required by STM32_PLL3SRC"
+  #endif
+
+  #if STM32_SW == STM32_SW_HSI
+    #error "HSI not enabled, required by STM32_SW"
+  #endif
+
+  #if STM32_MCO1SEL == STM32_MCO1SEL_HSI
+    #error "HSI not enabled, required by STM32_MCO1SEL"
+  #endif
+
+  #if (STM32_USART1SEL == STM32_USART1SEL_HSI)
+    #error "HSI not enabled, required by STM32_USART1SEL"
+  #endif
+  #if (STM32_USART2SEL == STM32_USART2SEL_HSI)
+    #error "HSI not enabled, required by STM32_USART2SEL"
+  #endif
+  #if (STM32_USART3SEL == STM32_USART3SEL_HSI)
+    #error "HSI not enabled, required by STM32_USART3SEL"
+  #endif
+  #if (STM32_UART4SEL == STM32_UART4SEL_HSI)
+    #error "HSI not enabled, required by STM32_UART4SEL"
+  #endif
+  #if (STM32_UART5SEL == STM32_UART5SEL_HSI)
+    #error "HSI not enabled, required by STM32_UART5SEL"
+  #endif
+  #if (STM32_USART6SEL == STM32_USART6SEL_HSI)
+    #error "HSI not enabled, required by STM32_USART6SEL"
+  #endif
+  #if (STM32_UART7SEL == STM32_UART7SEL_HSI)
+    #error "HSI not enabled, required by STM32_UART7SEL"
+  #endif
+  #if (STM32_UART8SEL == STM32_UART8SEL_HSI)
+    #error "HSI not enabled, required by STM32_UART8SEL"
+  #endif
+  #if (STM32_UART9SEL == STM32_UART9SEL_HSI)
+    #error "HSI not enabled, required by STM32_UART9SEL"
+  #endif
+  #if (STM32_USART10SEL == STM32_USART10SEL_HSI)
+    #error "HSI not enabled, required by STM32_USART10SEL"
+  #endif
+  #if (STM32_USART11SEL == STM32_USART11SEL_HSI)
+    #error "HSI not enabled, required by STM32_USART11SEL"
+  #endif
+  #if (STM32_UART12SEL == STM32_UART12SEL_HSI)
+    #error "HSI not enabled, required by STM32_UART12SEL"
+  #endif
+  #if (STM32_LPUART1SEL == STM32_LPUART1SEL_HSI)
+    #error "HSI not enabled, required by STM32_LPUART1SEL"
+  #endif
+
+  #if (STM32_SPI4SEL == STM32_SPI4SEL_HSI)
+    #error "HSI not enabled, required by STM32_SPI4SEL"
+  #endif
+  #if (STM32_SPI5SEL == STM32_SPI5SEL_HSI)
+    #error "HSI not enabled, required by STM32_SPI5SEL"
+  #endif
+  #if (STM32_SPI6SEL == STM32_SPI6SEL_HSI)
+    #error "HSI not enabled, required by STM32_SPI6SEL"
+  #endif
+
+  #if (STM32_I2C1SEL == STM32_I2C1SEL_HSI)
+    #error "HSI not enabled, required by STM32_I2C1SEL"
+  #endif
+  #if (STM32_I2C2SEL == STM32_I2C2SEL_HSI)
+    #error "HSI not enabled, required by STM32_I2C2SEL"
+  #endif
+  #if (STM32_I2C3SEL == STM32_I2C3SEL_HSI)
+    #error "HSI not enabled, required by STM32_I2C3SEL"
+  #endif
+  #if (STM32_I2C4SEL == STM32_I2C4SEL_HSI)
+    #error "HSI not enabled, required by STM32_I2C4SEL"
+  #endif
+
+  #if (STM32_I3C1SEL == STM32_I3C1SEL_HSI)
+    #error "HSI not enabled, required by STM32_I3C1SEL"
+  #endif
+
+  #if (STM32_ADCDACSEL == STM32_ADCDACSEL_HSI)
+    #error "HSI not enabled, required by STM32_ADCDACSEL"
+  #endif
+
+  #if STM32_PERSEL == STM32_PERSEL_HSI
+    #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PER)
+      #error "HSI not enabled, required by STM32_LPTIM1SEL"
+    #endif
+    #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_PER)
+      #error "HSI not enabled, required by STM32_LPTIM2SEL"
+    #endif
+    #if (STM32_LPTIM3SEL == STM32_LPTIM3SEL_PER)
+      #error "HSI not enabled, required by STM32_LPTIM3SEL"
+    #endif
+    #if (STM32_LPTIM4SEL == STM32_LPTIM4SEL_PER)
+      #error "HSI not enabled, required by STM32_LPTIM4SEL"
+    #endif
+    #if (STM32_LPTIM5SEL == STM32_LPTIM5SEL_PER)
+      #error "HSI not enabled, required by STM32_LPTIM5SEL"
+    #endif
+    #if (STM32_LPTIM6SEL == STM32_LPTIM6SEL_PER)
+      #error "HSI not enabled, required by STM32_LPTIM6SEL"
+    #endif
+
+    #if (STM32_SPI1SEL == STM32_SPI1SEL_PER)
+      #error "HSI not enabled, required by STM32_SPI1SEL"
+    #endif
+    #if (STM32_SPI2SEL == STM32_SPI2SEL_PER)
+      #error "HSI not enabled, required by STM32_SPI2SEL"
+    #endif
+    #if (STM32_SPI3SEL == STM32_SPI3SEL_PER)
+      #error "HSI not enabled, required by STM32_SPI3SEL"
+    #endif
+
+    #if (STM32_OSPISEL == STM32_OSPISEL_PER)
+      #error "HSI not enabled, required by STM32_OSPISEL"
+    #endif
+
+    #if (STM32_SAI1SEL == STM32_SAI1SEL_PER)
+      #error "HSI not enabled, required by STM32_SAI1SEL"
+    #endif
+    #if (STM32_SAI2SEL == STM32_SAI2SEL_PER)
+      #error "HSI not enabled, required by STM32_SAI2SEL"
+    #endif
+  #endif
+
+#endif /* !STM32_HSI_ENABLED */
+
+/*
  * LSE related checks.
  */
 #if STM32_LSE_ENABLED
 #else /* !STM32_LSE_ENABLED */
 
-  #if STM32_RTCSEL == STM32_RTCSEL_LSE
-    #error "LSE not enabled, required by STM32_RTCSEL"
+  #if STM32_MCO1SEL == STM32_MCO1SEL_LSE
+    #error "LSE not enabled, required by STM32_MCO1SEL"
   #endif
 
-  #if STM32_MCOSEL == STM32_MCOSEL_LSE
-    #error "LSE not enabled, required by STM32_MCOSEL"
+  #if (STM32_USART1SEL == STM32_USART1SEL_LSE)
+    #error "LSE not enabled, required by STM32_USART1SEL"
+  #endif
+  #if (STM32_USART2SEL == STM32_USART2SEL_LSE)
+    #error "LSE not enabled, required by STM32_USART2SEL"
+  #endif
+  #if (STM32_USART3SEL == STM32_USART3SEL_LSE)
+    #error "LSE not enabled, required by STM32_USART3SEL"
+  #endif
+  #if (STM32_UART4SEL == STM32_UART4SEL_LSE)
+    #error "LSE not enabled, required by STM32_UART4SEL"
+  #endif
+  #if (STM32_UART5SEL == STM32_UART5SEL_LSE)
+    #error "LSE not enabled, required by STM32_UART5SEL"
+  #endif
+  #if (STM32_USART6SEL == STM32_USART6SEL_LSE)
+    #error "LSE not enabled, required by STM32_USART6SEL"
+  #endif
+  #if (STM32_UART7SEL == STM32_UART7SEL_LSE)
+    #error "LSE not enabled, required by STM32_UART7SEL"
+  #endif
+  #if (STM32_UART8SEL == STM32_UART8SEL_LSE)
+    #error "LSE not enabled, required by STM32_UART8SEL"
+  #endif
+  #if (STM32_UART9SEL == STM32_UART9SEL_LSE)
+    #error "LSE not enabled, required by STM32_UART9SEL"
+  #endif
+  #if (STM32_USART10SEL == STM32_USART10SEL_LSE)
+    #error "LSE not enabled, required by STM32_USART10SEL"
+  #endif
+  #if (STM32_USART11SEL == STM32_USART11SEL_LSE)
+    #error "LSE not enabled, required by STM32_USART11SEL"
+  #endif
+  #if (STM32_UART12SEL == STM32_UART12SEL_LSE)
+    #error "LSE not enabled, required by STM32_UART12SEL"
+  #endif
+  #if (STM32_LPUART1SEL == STM32_LPUART1SEL_LSE)
+    #error "LSE not enabled, required by STM32_LPUART1SEL"
+  #endif
+
+  #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE)
+    #error "LSE not enabled, required by STM32_LPTIM1SEL"
+  #endif
+  #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSE)
+    #error "LSE not enabled, required by STM32_LPTIM2SEL"
+  #endif
+  #if (STM32_LPTIM3SEL == STM32_LPTIM3SEL_LSE)
+    #error "LSE not enabled, required by STM32_LPTIM3SEL"
+  #endif
+  #if (STM32_LPTIM4SEL == STM32_LPTIM4SEL_LSE)
+    #error "LSE not enabled, required by STM32_LPTIM4SEL"
+  #endif
+  #if (STM32_LPTIM5SEL == STM32_LPTIM5SEL_LSE)
+    #error "LSE not enabled, required by STM32_LPTIM5SEL"
+  #endif
+  #if (STM32_LPTIM6SEL == STM32_LPTIM6SEL_LSE)
+    #error "LSE not enabled, required by STM32_LPTIM6SEL"
+  #endif
+
+  #if STM32_SYSTICKSEL == STM32_SYSTICKSEL_LSE
+    #error "LSE not enabled, required by STM32_SYSTICKSEL"
+  #endif
+
+  #if STM32_DACSEL == STM32_DACSEL_LSE
+    #error "LSE not enabled, required by STM32_DACSEL"
+  #endif
+
+  #if STM32_CECSEL == STM32_CECSEL_LSE
+    #error "LSE not enabled, required by STM32_CECSEL"
+  #endif
+
+  #if STM32_RTCSEL == STM32_RTCSEL_LSE
+    #error "LSE not enabled, required by STM32_RTCSEL"
   #endif
 
   #if STM32_LSCOSEL == STM32_LSCOSEL_LSE
@@ -1768,14 +2184,103 @@
 
 #endif /* !STM32_LSE_ENABLED */
 
+/*
+ * HSE related checks.
+ */
+#if STM32_HSE_ENABLED
+#else /* !STM32_HSE_ENABLED */
+
+  #if STM32_ACTIVATE_PLL1 && (STM32_PLL1SRC == STM32_PLL1SRC_HSE))
+    #error "HSE not enabled, required by STM32_PLL1SRC"
+  #endif
+  #if STM32_ACTIVATE_PLL2 && (STM32_PLL1SRC == STM32_PLL2SRC_HSE))
+    #error "HSE not enabled, required by STM32_PLL2SRC"
+  #endif
+  #if STM32_ACTIVATE_PLL3 && (STM32_PLL1SRC == STM32_PLL3SRC_HSE))
+    #error "HSE not enabled, required by STM32_PLL3SRC"
+  #endif
+
+  #if STM32_SW == STM32_SW_HSE
+    #error "HSE not enabled, required by STM32_SW"
+  #endif
+
+  #if STM32_MCO1SEL == STM32_MCO1SEL_HSE
+    #error "HSE not enabled, required by STM32_MCO1SEL"
+  #endif
+
+  #if STM32_MCO2SEL == STM32_MCO2SEL_HSE
+    #error "HSE not enabled, required by STM32_MCO2SEL"
+  #endif
+
+  #if (STM32_SPI4SEL == STM32_SPI4SEL_HSE)
+    #error "HSE not enabled, required by STM32_SPI4SEL"
+  #endif
+  #if (STM32_SPI5SEL == STM32_SPI5SEL_HSE)
+    #error "HSE not enabled, required by STM32_SPI5SEL"
+  #endif
+  #if (STM32_SPI6SEL == STM32_SPI6SEL_HSE)
+    #error "HSE not enabled, required by STM32_SPI6SEL"
+  #endif
+
+  #if STM32_FDCANSEL == STM32_FDCANSEL_HSE
+    #error "HSE not enabled, required by STM32_FDCANSEL"
+  #endif
+
+  #if STM32_RTCSEL == STM32_RTCSEL_HSEDIV
+    #error "HSE not enabled, required by STM32_RTCSEL"
+  #endif
+
+  #if STM32_CKPERSEL == STM32_CKPERSEL_HSE
+    #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSE)
+      #error "HSE not enabled, required by STM32_LPTIM1SEL"
+    #endif
+    #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_HSE)
+      #error "HSE not enabled, required by STM32_LPTIM2SEL"
+    #endif
+    #if (STM32_LPTIM3SEL == STM32_LPTIM3SEL_HSE)
+      #error "HSE not enabled, required by STM32_LPTIM3SEL"
+    #endif
+    #if (STM32_LPTIM4SEL == STM32_LPTIM4SEL_HSE)
+      #error "HSE not enabled, required by STM32_LPTIM4SEL"
+    #endif
+    #if (STM32_LPTIM5SEL == STM32_LPTIM5SEL_HSE)
+      #error "HSE not enabled, required by STM32_LPTIM5SEL"
+    #endif
+    #if (STM32_LPTIM6SEL == STM32_LPTIM6SEL_HSE)
+      #error "HSE not enabled, required by STM32_LPTIM6SEL"
+    #endif
+
+    #if (STM32_SPI1SEL == STM32_SPI1SEL_HSE)
+      #error "HSE not enabled, required by STM32_SPI1SEL"
+    #endif
+    #if (STM32_SPI2SEL == STM32_SPI2SEL_HSE)
+      #error "HSE not enabled, required by STM32_SPI2SEL"
+    #endif
+    #if (STM32_SPI3SEL == STM32_SPI3SEL_HSE)
+      #error "HSE not enabled, required by STM32_SPI3SEL"
+    #endif
+
+    #if (STM32_OSPISEL == STM32_OSPISEL_HSE)
+      #error "HSE not enabled, required by STM32_OSPISEL"
+    #endif
+
+    #if (STM32_SAI1SEL == STM32_SAI1SEL_HSE)
+      #error "HSE not enabled, required by STM32_SAI1SEL"
+    #endif
+    #if (STM32_SAI2SEL == STM32_SAI2SEL_HSE)
+      #error "HSE not enabled, required by STM32_SAI2SEL"
+    #endif
+  #endif
+#endif /* !STM32_HSE_ENABLED */
+
 /**
  * @brief   PLL input clock frequency.
  */
 #if (STM32_PLLSRC == STM32_PLLSRC_HSE) || defined(__DOXYGEN__)
   #define STM32_PLLCLKIN            (STM32_HSECLK / STM32_PLLM_VALUE)
 
-#elif STM32_PLLSRC == STM32_PLLSRC_HSI16
-  #define STM32_PLLCLKIN            (STM32_HSI16CLK / STM32_PLLM_VALUE)
+#elif STM32_PLLSRC == STM32_PLLSRC_HSI
+  #define STM32_PLLCLKIN            (STM32_HSICLK / STM32_PLLM_VALUE)
 
 #elif STM32_PLLSRC == STM32_PLLSRC_NOCLOCK
   #define STM32_PLLCLKIN            0
@@ -1795,7 +2300,7 @@
     (STM32_I2S23SEL == STM32_I2S23SEL_PLLQCLK) ||                           \
     (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLQCLK) ||                           \
-    (STM32_QSPISEL == STM32_QSPISEL_PLLQCLK) ||                             \
+    (STM32_OSPISEL == STM32_OSPISEL_PLLQCLK) ||                             \
     defined(__DOXYGEN__)
   /**
    * @brief   PLL activation flag.
@@ -1821,7 +2326,7 @@
 /**
  * @brief   STM32_PLLQEN field.
  */
-#if (STM32_QSPISEL == STM32_QSPISEL_PLLQCLK) ||                             \
+#if (STM32_OSPISEL == STM32_OSPISEL_PLLQCLK) ||                             \
     (STM32_FDCANSEL == STM32_FDCANSEL_PLLQCLK) ||                           \
     (STM32_CLK48SEL == STM32_CLK48SEL_PLLQCLK) ||                           \
     (STM32_SAI1SEL == STM32_SAI1SEL_PLLQCLK) ||                             \
@@ -1852,10 +2357,10 @@
  * @brief   System clock source.
  */
 #if STM32_NO_INIT || defined(__DOXYGEN__)
-  #define STM32_SYSCLK              STM32_HSI16CLK
+  #define STM32_SYSCLK              STM32_HSICLK
 
-#elif (STM32_SW == STM32_SW_HSI16)
-  #define STM32_SYSCLK              STM32_HSI16CLK
+#elif (STM32_SW == STM32_SW_HSI)
+  #define STM32_SYSCLK              STM32_HSICLK
 
 #elif (STM32_SW == STM32_SW_HSE)
   #define STM32_SYSCLK              STM32_HSECLK
@@ -1881,8 +2386,8 @@
 #elif STM32_MCOSEL == STM32_MCOSEL_SYSCLK
   #define STM32_MCODIVCLK           STM32_SYSCLK
 
-#elif STM32_MCOSEL == STM32_MCOSEL_HSI16
-  #define STM32_MCODIVCLK           STM32_HSI16CLK
+#elif STM32_MCOSEL == STM32_MCOSEL_HSI
+  #define STM32_MCODIVCLK           STM32_HSICLK
 
 #elif STM32_MCOSEL == STM32_MCOSEL_HSE
   #define STM32_MCODIVCLK           STM32_HSECLK
@@ -1953,8 +2458,8 @@
 #elif STM32_USART1SEL == STM32_USART1SEL_SYSCLK
   #define STM32_USART1CLK           hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_USART1SEL == STM32_USART1SEL_HSI16
-  #define STM32_USART1CLK           STM32_HSI16CLK
+#elif STM32_USART1SEL == STM32_USART1SEL_HSI
+  #define STM32_USART1CLK           STM32_HSICLK
 
 #elif STM32_USART1SEL == STM32_USART1SEL_LSE
   #define STM32_USART1CLK           STM32_LSECLK
@@ -1972,8 +2477,8 @@
  #elif STM32_USART2SEL == STM32_USART2SEL_SYSCLK
    #define STM32_USART2CLK           hal_lld_get_clock_point(CLK_SYSCLK)
 
- #elif STM32_USART2SEL == STM32_USART2SEL_HSI16
-   #define STM32_USART2CLK           STM32_HSI16CLK
+ #elif STM32_USART2SEL == STM32_USART2SEL_HSI
+   #define STM32_USART2CLK           STM32_HSICLK
 
  #elif STM32_USART2SEL == STM32_USART2SEL_LSE
    #define STM32_USART2CLK           STM32_LSECLK
@@ -1991,8 +2496,8 @@
  #elif STM32_USART3SEL == STM32_USART3SEL_SYSCLK
    #define STM32_USART3CLK           hal_lld_get_clock_point(CLK_SYSCLK)
 
- #elif STM32_USART3SEL == STM32_USART3SEL_HSI16
-   #define STM32_USART3CLK           STM32_HSI16CLK
+ #elif STM32_USART3SEL == STM32_USART3SEL_HSI
+   #define STM32_USART3CLK           STM32_HSICLK
 
  #elif STM32_USART3SEL == STM32_USART3SEL_LSE
    #define STM32_USART3CLK           STM32_LSECLK
@@ -2010,8 +2515,8 @@
 #elif STM32_UART4SEL == STM32_UART4SEL_SYSCLK
   #define STM32_UART4CLK           hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_UART4SEL == STM32_UART4SEL_HSI16
-  #define STM32_UART4CLK           STM32_HSI16CLK
+#elif STM32_UART4SEL == STM32_UART4SEL_HSI
+  #define STM32_UART4CLK           STM32_HSICLK
 
 #elif STM32_UART4SEL == STM32_UART4SEL_LSE
   #define STM32_UART4CLK           STM32_LSECLK
@@ -2029,8 +2534,8 @@
 #elif STM32_UART5SEL == STM32_UART5SEL_SYSCLK
   #define STM32_UART5CLK           hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_UART5SEL == STM32_UART5SEL_HSI16
-  #define STM32_UART5CLK           STM32_HSI16CLK
+#elif STM32_UART5SEL == STM32_UART5SEL_HSI
+  #define STM32_UART5CLK           STM32_HSICLK
 
 #elif STM32_UART5SEL == STM32_UART5SEL_LSE
   #define STM32_UART5CLK           STM32_LSECLK
@@ -2048,8 +2553,8 @@
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_SYSCLK
   #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16
-  #define STM32_LPUART1CLK          STM32_HSI16CLK
+#elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI
+  #define STM32_LPUART1CLK          STM32_HSICLK
 
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_LSE
   #define STM32_LPUART1CLK          STM32_LSECLK
@@ -2067,8 +2572,8 @@
 #elif STM32_I2C1SEL == STM32_I2C1SEL_SYSCLK
   #define STM32_I2C1CLK             hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2C1SEL == STM32_I2C1SEL_HSI16
-  #define STM32_I2C1CLK             STM32_HSI16CLK
+#elif STM32_I2C1SEL == STM32_I2C1SEL_HSI
+  #define STM32_I2C1CLK             STM32_HSICLK
 
 #else
   #error "invalid source selected for I2C1 clock"
@@ -2083,8 +2588,8 @@
 #elif STM32_I2C2SEL == STM32_I2C2SEL_SYSCLK
   #define STM32_I2C2CLK             hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2C2SEL == STM32_I2C2SEL_HSI16
-  #define STM32_I2C2CLK             STM32_HSI16CLK
+#elif STM32_I2C2SEL == STM32_I2C2SEL_HSI
+  #define STM32_I2C2CLK             STM32_HSICLK
 
 #else
   #error "invalid source selected for I2C1 clock"
@@ -2099,8 +2604,8 @@
 #elif STM32_I2C3SEL == STM32_I2C3SEL_SYSCLK
   #define STM32_I2C3CLK             hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2C3SEL == STM32_I2C3SEL_HSI16
-  #define STM32_I2C3CLK             STM32_HSI16CLK
+#elif STM32_I2C3SEL == STM32_I2C3SEL_HSI
+  #define STM32_I2C3CLK             STM32_HSICLK
 
 #else
   #error "invalid source selected for I2C3 clock"
@@ -2115,8 +2620,8 @@
 #elif STM32_I2C4SEL == STM32_I2C4SEL_SYSCLK
   #define STM32_I2C4CLK             hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_I2C4SEL == STM32_I2C4SEL_HSI16
-  #define STM32_I2C4CLK             STM32_HSI16CLK
+#elif STM32_I2C4SEL == STM32_I2C4SEL_HSI
+  #define STM32_I2C4CLK             STM32_HSICLK
 
 #else
   #error "invalid source selected for I2C4 clock"
@@ -2131,8 +2636,8 @@
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI
   #define STM32_LPTIM1CLK           STM32_LSICLK
 
-#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI16
-  #define STM32_LPTIM1CLK           STM32_HSI16CLK
+#elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_HSI
+  #define STM32_LPTIM1CLK           STM32_HSICLK
 
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
   #define STM32_LPTIM1CLK           STM32_LSECLK
@@ -2150,8 +2655,8 @@
 #elif STM32_SAI1SEL == STM32_SAI1SEL_PLLQCLK
   #define STM32_SAI1CLK             hal_lld_get_clock_point(CLK_PLLQCLK)
 
-#elif STM32_SAI1SEL == STM32_SAI1SEL_HSI16
-  #define STM32_SAI1CLK             STM32_HSI16CLK
+#elif STM32_SAI1SEL == STM32_SAI1SEL_HSI
+  #define STM32_SAI1CLK             STM32_HSICLK
 
 #elif STM32_SAI1SEL == STM32_SAI1SEL_CKIN
   #define STM32_SAI1CLK             0 /* Unknown, would require a board value */
@@ -2169,8 +2674,8 @@
 #elif STM32_I2S23SEL == STM32_I2S23SEL_PLLPCLK
   #define STM32_I2S23CLK            hal_lld_get_clock_point(CLK_PLLPCLK)
 
-#elif STM32_I2S23SEL == STM32_I2S23SEL_HSI16
-  #define STM32_I2S23CLK            STM32_HSI16CLK
+#elif STM32_I2S23SEL == STM32_I2S23SEL_HSI
+  #define STM32_I2S23CLK            STM32_HSICLK
 
 #elif STM32_I2S23SEL == STM32_I2S23SEL_CKIN
   #define STM32_I2S23CLK            0 /* Unknown, would require a board value */

@@ -45,7 +45,7 @@
 #define STM32_RCC_HAS_LSI                   TRUE
 #define STM32_RCC_HAS_CSI                   TRUE
 #define STM32_RCC_HAS_HSI48                 TRUE
-#define STM32_RCC_HAS_HSIDIV                TRUE
+#define STM32_RCC_HAS_HSI                   TRUE
 #define STM32_RCC_HAS_LSE                   TRUE
 #define STM32_RCC_HAS_HSE                   TRUE
 
