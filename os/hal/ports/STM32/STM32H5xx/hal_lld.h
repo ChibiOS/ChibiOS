@@ -79,7 +79,7 @@
  */
 #define CLK_SYSCLK              0U
 #define CLK_PLL1PCLK            1U
-#define CLK_PLL2QCLK            2U
+#define CLK_PLL1QCLK            2U
 #define CLK_PLL1RCLK            3U
 #define CLK_PLL2PCLK            4U
 #define CLK_PLL2QCLK            5U
@@ -2637,6 +2637,22 @@
 #endif
 
 /**
+ * @brief   LSCO clock frequency.
+ */
+#if (STM32_LSCOSEL == STM32_LSCOSEL_NOCLOCK) || defined(__DOXYGEN__)
+  #define STM32_LSCOCLK             0
+
+#elif STM32_LSCOSEL == STM32_LSCOSEL_LSI
+  #define STM32_LSCOCLK             STM32_LSICLK
+
+#elif STM32_LSCOSEL == STM32_LSCOSEL_LSE
+  #define STM32_LSCOCLK             STM32_LSECLK
+
+#else
+  #error "invalid STM32_LSCOSEL value specified"
+#endif
+
+/**
  * @brief   USART1 clock frequency.
  */
 #if (STM32_USART1SEL == STM32_USART1SEL_PCLK2) || defined(__DOXYGEN__)
@@ -3666,14 +3682,21 @@ typedef uint32_t halfreq_t;
  * @brief   Type of a clock configuration structure.
  */
 typedef struct {
-  uint32_t          pwr_cr1;
-  uint32_t          pwr_cr2;
-  uint32_t          pwr_cr5;
+  uint32_t          pwr_voscr;
+  uint32_t          pwr_vmcr;
   uint32_t          rcc_cr;
-  uint32_t          rcc_cfgr;
-  uint32_t          rcc_pllcfgr;
+  uint32_t          rcc_cfgr1;
+  uint32_t          rcc_cfgr2;
+  uint32_t          rcc_pll1cfgr;
+  uint32_t          rcc_pll2cfgr;
+  uint32_t          rcc_pll3cfgr;
+  uint32_t          rcc_pll1divr;
+  uint32_t          rcc_pll1fracr;
+  uint32_t          rcc_pll2divr;
+  uint32_t          rcc_pll2fracr;
+  uint32_t          rcc_pll3divr;
+  uint32_t          rcc_pll3fracr;
   uint32_t          flash_acr;
-  uint32_t          rcc_crrcr;
 } halclkcfg_t;
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -3693,16 +3716,25 @@ typedef struct {
  * @notapi
  */
 #define hal_lld_get_clock_point(clkpt)                                      \
-  ((clkpt) == CLK_SYSCLK   ? STM32_SYSCLK        :                          \
-   (clkpt) == CLK_PLLPCLK  ? STM32_PLL_P_CLKOUT  :                          \
-   (clkpt) == CLK_PLLQCLK  ? STM32_PLL_Q_CLKOUT  :                          \
-   (clkpt) == CLK_PLLRCLK  ? STM32_PLL_R_CLKOUT  :                          \
-   (clkpt) == CLK_HCLK     ? STM32_HCLK          :                          \
-   (clkpt) == CLK_PCLK1    ? STM32_PCLK1         :                          \
-   (clkpt) == CLK_PCLK1TIM ? STM32_TIMP1CLK      :                          \
-   (clkpt) == CLK_PCLK2    ? STM32_PCLK2         :                          \
-   (clkpt) == CLK_PCLK2TIM ? STM32_TIMP2CLK      :                          \
-   (clkpt) == CLK_MCO      ? STM32_MCOCLK        :                          \
+  ((clkpt) == CLK_SYSCLK    ? STM32_SYSCLK          :                       \
+   (clkpt) == CLK_PLL1PCLK  ? STM32_PLL1_P_CLKOUT   :                       \
+   (clkpt) == CLK_PLL1QCLK  ? STM32_PLL1_Q_CLKOUT   :                       \
+   (clkpt) == CLK_PLL1RCLK  ? STM32_PLL1_R_CLKOUT   :                       \
+   (clkpt) == CLK_PLL2PCLK  ? STM32_PLL2_P_CLKOUT   :                       \
+   (clkpt) == CLK_PLL2QCLK  ? STM32_PLL2_Q_CLKOUT   :                       \
+   (clkpt) == CLK_PLL2RCLK  ? STM32_PLL2_R_CLKOUT   :                       \
+   (clkpt) == CLK_PLL3PCLK  ? STM32_PLL3_P_CLKOUT   :                       \
+   (clkpt) == CLK_PLL3QCLK  ? STM32_PLL3_Q_CLKOUT   :                       \
+   (clkpt) == CLK_PLL3RCLK  ? STM32_PLL3_R_CLKOUT   :                       \
+   (clkpt) == CLK_HCLK      ? STM32_HCLK            :                       \
+   (clkpt) == CLK_PCLK1     ? STM32_PCLK1           :                       \
+   (clkpt) == CLK_PCLK1TIM  ? STM32_TIMP1CLK        :                       \
+   (clkpt) == CLK_PCLK2     ? STM32_PCLK2           :                       \
+   (clkpt) == CLK_PCLK2TIM  ? STM32_TIMP2CLK        :                       \
+   (clkpt) == CLK_PCLK2     ? STM32_PCLK3           :                       \
+   (clkpt) == CLK_MCO1      ? STM32_MCO1CLK         :                       \
+   (clkpt) == CLK_MCO2      ? STM32_MCO2CLK         :                       \
+   (clkpt) == CLK_LSCO      ? STM32_LSCOCLK         :                       \
    0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -3713,9 +3745,9 @@ typedef struct {
 /* Various helpers.*/
 #include "nvic.h"
 #include "cache.h"
-#include "mpu_v7m.h"
+//#include "mpu_v8m.h"
 #include "stm32_isr.h"
-#include "stm32_dma.h"
+//#include "stm32_dma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
 #include "stm32_tim.h"
