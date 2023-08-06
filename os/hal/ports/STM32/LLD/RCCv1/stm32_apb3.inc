@@ -16,9 +16,9 @@
 
 /**
  * @file    RCCv1/stm32_apb2.inc
- * @brief   Shared APB2 clock handler.
+ * @brief   Shared APB3 clock handler.
  *
- * @addtogroup STM32_APB2_HANDLER
+ * @addtogroup STM32_APB3_HANDLER
  * @{
  */
 
@@ -27,16 +27,16 @@
 /*===========================================================================*/
 
 /**
- * @name    PPRE2 field bits definitions
+ * @name    PPRE3 field bits definitions
  * @{
  */
-#define STM32_PPRE2_MASK        (7U << RCC_CFGR_PPRE2_Pos)
-#define STM32_PPRE2_FIELD(n)    ((n) << RCC_CFGR_PPRE2_Pos)
-#define STM32_PPRE2_DIV1        STM32_PPRE2_FIELD(0U)
-#define STM32_PPRE2_DIV2        STM32_PPRE2_FIELD(4U)
-#define STM32_PPRE2_DIV4        STM32_PPRE2_FIELD(5U)
-#define STM32_PPRE2_DIV8        STM32_PPRE2_FIELD(6U)
-#define STM32_PPRE2_DIV16       STM32_PPRE2_FIELD(7U)
+#define STM32_PPRE3_MASK        (7U << RCC_CFGR_PPRE3_Pos)
+#define STM32_PPRE3_FIELD(n)    ((n) << RCC_CFGR_PPRE3_Pos)
+#define STM32_PPRE3_DIV1        STM32_PPRE3_FIELD(0U)
+#define STM32_PPRE3_DIV2        STM32_PPRE3_FIELD(4U)
+#define STM32_PPRE3_DIV4        STM32_PPRE3_FIELD(5U)
+#define STM32_PPRE3_DIV8        STM32_PPRE3_FIELD(6U)
+#define STM32_PPRE3_DIV16       STM32_PPRE3_FIELD(7U)
 /** @} */
 
 /*===========================================================================*/
@@ -46,13 +46,13 @@
 /* Registry checks for robustness.*/
 
 /* Checks on configurations.*/
-#if !defined(STM32_PPRE2)
-#error "STM32_PPRE2 not defined in mcuconf.h"
+#if !defined(STM32_PPRE3)
+#error "STM32_PPRE3 not defined in mcuconf.h"
 #endif
 
 /* Input checks.*/
-#if !defined(STM32_PCLK2_MAX)
-#error "STM32_PCLK2_MAX not defined in hal_lld.h"
+#if !defined(STM32_PCLK3_MAX)
+#error "STM32_PCLK3_MAX not defined in hal_lld.h"
 #endif
 
 #if !defined(STM32_HCLK)
@@ -60,32 +60,32 @@
 #endif
 
 /**
- * @brief   APB2 frequency.
+ * @brief   APB3 frequency.
  */
-#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-#define STM32_PCLK2                 (STM32_HCLK / 1U)
+#if (STM32_PPRE3 == STM32_PPRE3_DIV1) || defined(__DOXYGEN__)
+#define STM32_PCLK3                 (STM32_HCLK / 1U)
 
-#elif STM32_PPRE2 == STM32_PPRE2_DIV2
-#define STM32_PCLK2                 (STM32_HCLK / 2U)
+#elif STM32_PPRE3 == STM32_PPRE3_DIV2
+#define STM32_PCLK3                 (STM32_HCLK / 2U)
 
-#elif STM32_PPRE2 == STM32_PPRE2_DIV4
-#define STM32_PCLK2                 (STM32_HCLK / 4U)
+#elif STM32_PPRE3 == STM32_PPRE3_DIV4
+#define STM32_PCLK3                 (STM32_HCLK / 4U)
 
-#elif STM32_PPRE2 == STM32_PPRE2_DIV8
-#define STM32_PCLK2                 (STM32_HCLK / 8U)
+#elif STM32_PPRE3 == STM32_PPRE3_DIV8
+#define STM32_PCLK3                 (STM32_HCLK / 8U)
 
-#elif STM32_PPRE2 == STM32_PPRE2_DIV16
-#define STM32_PCLK2                 (STM32_HCLK / 16U)
+#elif STM32_PPRE3 == STM32_PPRE3_DIV16
+#define STM32_PCLK3                 (STM32_HCLK / 16U)
 
 #else
-#error "invalid STM32_PPRE2 value specified"
+#error "invalid STM32_PPRE3 value specified"
 #endif
 
 /*
- * APB2 frequency check.
+ * APB3 frequency check.
  */
-#if STM32_PCLK2 > STM32_PCLK2_MAX
-#error "STM32_PCLK2 exceeding maximum frequency (STM32_PCLK2_MAX)"
+#if STM32_PCLK3 > STM32_PCLK3_MAX
+#error "STM32_PCLK3 exceeding maximum frequency (STM32_PCLK3_MAX)"
 #endif
 
 /*===========================================================================*/
