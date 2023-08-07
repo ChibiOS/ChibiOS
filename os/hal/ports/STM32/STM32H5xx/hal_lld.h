@@ -132,6 +132,25 @@
 #define STM32_SW_HSE            STM32_SW_FIELD(2U)
 #define STM32_SW_PLL1P          STM32_SW_FIELD(3U)
 
+#define STM32_STOPWUCK_MASK     (1U << 6)
+#define STM32_STOPWUCK_FIELD(n) ((n) << 6)
+#define STM32_STOPWUCK_HSI      STM32_STOPWUCK_FIELD(0U)
+#define STM32_STOPWUCK_CSI      STM32_STOPWUCK_FIELD(1U)
+
+#define STM32_STOPKERWUCK_MASK  (1U << 7)
+#define STM32_STOPKERWUCK_FIELD(n) ((n) << 7)
+#define STM32_STOPKERWUCK_HSI   STM32_STOPKERWUCK_FIELD(0U)
+#define STM32_STOPKERWUCK_CSI   STM32_STOPKERWUCK_FIELD(1U)
+
+#define STM32_RTCPRE_MASK       (63U << 8)
+#define STM32_RTCPRE_FIELD(n)   ((n) << 8)
+#define STM32_RTCPRE_NOCLOCK    STM32_RTCPRE_FIELD(0U)
+
+#define STM32_TIMPRE_MASK       (1U << 15)
+#define STM32_TIMPRE_FIELD(n)   ((n) << 15)
+#define STM32_TIMPRE_LOW        STM32_TIMPRE_FIELD(0U)
+#define STM32_TIMPRE_HIGH       STM32_TIMPRE_FIELD(1U)
+
 #define STM32_MCO1SEL_MASK      (7U << 22)
 #define STM32_MCO1PRE_FIELD(n)  ((n) << 22)
 #define STM32_MCO1SEL_HSI       STM32_MCO1PRE_FIELD(0U)
@@ -142,22 +161,7 @@
 
 #define STM32_MCO1PRE_MASK      (7U << 18)
 #define STM32_MCO1PRE_FIELD(n)  ((n) << 18)
-#define STM32_MCO1PRE_DISABLED  STM32_MCO1PRE_FIELD(0U)
-#define STM32_MCO1PRE_DIV1      STM32_MCO1PRE_FIELD(1U)
-#define STM32_MCO1PRE_DIV2      STM32_MCO1PRE_FIELD(2U)
-#define STM32_MCO1PRE_DIV3      STM32_MCO1PRE_FIELD(3U)
-#define STM32_MCO1PRE_DIV4      STM32_MCO1PRE_FIELD(4U)
-#define STM32_MCO1PRE_DIV5      STM32_MCO1PRE_FIELD(5U)
-#define STM32_MCO1PRE_DIV6      STM32_MCO1PRE_FIELD(6U)
-#define STM32_MCO1PRE_DIV7      STM32_MCO1PRE_FIELD(7U)
-#define STM32_MCO1PRE_DIV8      STM32_MCO1PRE_FIELD(8U)
-#define STM32_MCO1PRE_DIV9      STM32_MCO1PRE_FIELD(9U)
-#define STM32_MCO1PRE_DIV10     STM32_MCO1PRE_FIELD(10U)
-#define STM32_MCO1PRE_DIV11     STM32_MCO1PRE_FIELD(11U)
-#define STM32_MCO1PRE_DIV12     STM32_MCO1PRE_FIELD(12U)
-#define STM32_MCO1PRE_DIV13     STM32_MCO1PRE_FIELD(13U)
-#define STM32_MCO1PRE_DIV14     STM32_MCO1PRE_FIELD(14U)
-#define STM32_MCO1PRE_DIV15     STM32_MCO1PRE_FIELD(15U)
+#define STM32_MCO1PRE_NOCLOCK    STM32_MCO1PRE_FIELD(0U)
 
 #define STM32_MCO2SEL_MASK      (7U << 29)
 #define STM32_MCO2PRE_FIELD(n)  ((n) << 29)
@@ -170,22 +174,7 @@
 
 #define STM32_MCO2PRE_MASK      (7U << 18)
 #define STM32_MCO2PRE_FIELD(n)  ((n) << 18)
-#define STM32_MCO2PRE_DISABLED  STM32_MCO2PRE_FIELD(0U)
-#define STM32_MCO2PRE_DIV1      STM32_MCO2PRE_FIELD(1U)
-#define STM32_MCO2PRE_DIV2      STM32_MCO2PRE_FIELD(2U)
-#define STM32_MCO2PRE_DIV3      STM32_MCO2PRE_FIELD(3U)
-#define STM32_MCO2PRE_DIV4      STM32_MCO2PRE_FIELD(4U)
-#define STM32_MCO2PRE_DIV5      STM32_MCO2PRE_FIELD(5U)
-#define STM32_MCO2PRE_DIV6      STM32_MCO2PRE_FIELD(6U)
-#define STM32_MCO2PRE_DIV7      STM32_MCO2PRE_FIELD(7U)
-#define STM32_MCO2PRE_DIV8      STM32_MCO2PRE_FIELD(8U)
-#define STM32_MCO2PRE_DIV9      STM32_MCO2PRE_FIELD(9U)
-#define STM32_MCO2PRE_DIV10     STM32_MCO2PRE_FIELD(10U)
-#define STM32_MCO2PRE_DIV11     STM32_MCO2PRE_FIELD(11U)
-#define STM32_MCO2PRE_DIV12     STM32_MCO2PRE_FIELD(12U)
-#define STM32_MCO2PRE_DIV13     STM32_MCO2PRE_FIELD(13U)
-#define STM32_MCO2PRE_DIV14     STM32_MCO2PRE_FIELD(14U)
-#define STM32_MCO2PRE_DIV15     STM32_MCO2PRE_FIELD(15U)
+#define STM32_MCO2PRE_NOCLOCK    STM32_MCO2PRE_FIELD(0U)
 /** @} */
 
 /**
@@ -923,6 +912,34 @@
 #endif
 
 /**
+ * @brief   System clock source after STOP.
+ */
+#if !defined(STM32_STOPWUCK) || defined(__DOXYGEN__)
+#define STM32_STOPWUCK                      STM32_STOPWUCK_HSI
+#endif
+
+/**
+ * @brief   Kernel clock source after STOP.
+ */
+#if !defined(STM32_STOPKERWUCK) || defined(__DOXYGEN__)
+#define STM32_STOPKERWUCK                   STM32_STOPKERWUCK_HSI
+#endif
+
+/**
+ * @brief   RTC prescaler value.
+ */
+#if !defined(STM32_RTCPRE_VALUE) || defined(__DOXYGEN__)
+#define STM32_RTCPRE_VALUE                  STM32_RTCPRE_NOCLOCK
+#endif
+
+/**
+ * @brief   TIMPRE timers clocks prescaler selection.
+ */
+#if !defined(STM32_TIMPRE) || defined(__DOXYGEN__)
+#define STM32_TIMPRE                        STM32_TIMPRE_LOW
+#endif
+
+/**
  * @brief   MCO1 clock source.
  */
 #if !defined(STM32_MCO1SEL) || defined(__DOXYGEN__)
@@ -933,7 +950,7 @@
  * @brief   MCO1 divider setting.
  */
 #if !defined(STM32_MCO1PRE_VALUE) || defined(__DOXYGEN__)
-#define STM32_MCO1PRE_VALUE                 STM32_MCO1PRE_DISABLED
+#define STM32_MCO1PRE_VALUE                 STM32_MCO1PRE_NOCLOCK
 #endif
 
 /**
@@ -947,7 +964,7 @@
  * @brief   MCO1 divider setting.
  */
 #if !defined(STM32_MCO2PRE_VALUE) || defined(__DOXYGEN__)
-#define STM32_MCO2PRE_VALUE                 STM32_MCO2PRE_DISABLED
+#define STM32_MCO2PRE_VALUE                 STM32_MCO2PRE_NOCLOCK
 #endif
 
 /**
@@ -2538,6 +2555,50 @@
 #include "stm32_apb3.inc"
 
 /**
+ * @brief   STOPWUCK source clock.
+ */
+#if (STM32_STOPWUCK == STM32_STOPWUCK_HSI) || defined(__DOXYGEN__)
+
+#elif STM32_STOPWUCK == STM32_STOPWUCK_CSI
+
+#else
+  #error "invalid STM32_STOPWUCK value specified"
+#endif
+
+/**
+ * @brief   STOPKERWUCK source clock.
+ */
+#if (STM32_STOPKERWUCK == STM32_STOPKERWUCK_HSI) || defined(__DOXYGEN__)
+
+#elif STM32_STOPKERWUCK == STM32_STOPKERWUCK_CSI
+
+#else
+  #error "invalid STM32_STOPKERWUCK value specified"
+#endif
+
+/**
+ * @brief   RTCPRE clock frequency.
+ */
+#if (STM32_RTCPRE_VALUE == STM32_RTCPRE_NOCLOCK) || defined(__DOXYGEN__)
+  #define STM32_RTCPRECLK           0
+
+#elif (STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 63)
+  #define STM32_RTCPRECLK           (STM32_HSECLK / STM32_RTCPRE_VALUE)
+
+#else
+  #error "invalid STM32_RTCPRECLK_VALUE value specified"
+#endif
+
+#elif (STM32_MCO1PRE_VALUE > STM32_MCO1PRE_NOCLOCK) &&                      \
+      (STM32_MCO1PRE_VALUE < 16)
+  #define STM32_MCO1PRE             STM32_MCO1PRE_FIELD(STM32_MCO1PRE_VALUE)
+  #define STM32_MCO1CLK             (STM32_MCO1DIVCLK / STM32_MCO1PRE_VALUE)
+
+#else
+#error "invalid STM32_MCO1PRE_VALUE value specified"
+#endif
+
+/**
  * @brief   MCO1 source clock.
  */
 #if (STM32_MCO1SEL == STM32_MCO1SEL_HSI) || defined(__DOXYGEN__)
@@ -2565,10 +2626,10 @@
 /**
  * @brief   MCO1 output pin clock frequency.
  */
-#if (STM32_MCO1PRE_VALUE == STM32_MCO1PRE_DISABLED) || defined(__DOXYGEN__)
+#if (STM32_MCO1PRE_VALUE == STM32_MCO1PRE_NOCLOCK) || defined(__DOXYGEN__)
   #define STM32_MCO1CLK             0
 
-#elif (STM32_MCO1PRE_VALUE > STM32_MCO1PRE_DISABLED) &&                     \
+#elif (STM32_MCO1PRE_VALUE > STM32_MCO1PRE_NOCLOCK) &&                      \
       (STM32_MCO1PRE_VALUE < 16)
   #define STM32_MCO1PRE             STM32_MCO1PRE_FIELD(STM32_MCO1PRE_VALUE)
   #define STM32_MCO1CLK             (STM32_MCO1DIVCLK / STM32_MCO1PRE_VALUE)
@@ -2605,10 +2666,10 @@
 /**
  * @brief   MCO2 output pin clock frequency.
  */
-#if (STM32_MCO2PRE_VALUE == STM32_MCO2PRE_DISABLED) || defined(__DOXYGEN__)
+#if (STM32_MCO2PRE_VALUE == STM32_MCO2PRE_NOCLOCK) || defined(__DOXYGEN__)
   #define STM32_MCO2CLK             0
 
-#elif (STM32_MCO2PRE_VALUE > STM32_MCO2PRE_DISABLED) &&                     \
+#elif (STM32_MCO2PRE_VALUE > STM32_MCO2PRE_NOCLOCK) &&                      \
       (STM32_MCO2PRE_VALUE < 16)
   #define STM32_MCO2PRE             STM32_MCO2PRE_FIELD(STM32_MCO2PRE_VALUE)
   #define STM32_MCO2CLK             (STM32_MCO2DIVCLK / STM32_MCO2PRE_VALUE)
@@ -2630,7 +2691,7 @@
   #define STM32_RTCCLK              STM32_LSICLK
 
 #elif STM32_RTCSEL == STM32_RTCSEL_HSEDIV
-  #define STM32_RTCCLK              (STM32_HSECLK / 32)
+  #define STM32_RTCCLK              STM32_RTCPRECLK
 
 #else
   #error "invalid STM32_RTCSEL value specified"
@@ -3605,25 +3666,43 @@
   #error "invalid source selected for SAI2 clock"
 #endif
 
-/**
- * @brief   TIMP1CLK clock frequency.
- */
-#if (STM32_PPRE1 == STM32_PPRE1_DIV1) || defined(__DOXYGEN__)
-  #define STM32_TIMP1CLK            (STM32_PCLK1 * 1)
-#else
-  #define STM32_TIMP1CLK            (STM32_PCLK1 * 2)
-#endif
+#if (STM32_TIMPRE == STM32_TIMPRE_LOW) || defined(__DOXYGEN__)
+  /**
+   * @brief   TIMP1CLK clock frequency.
+   */
+  #if (STM32_PPRE1 == STM32_PPRE1_DIV1) ||                                  \
+      (STM32_PPRE1 == STM32_PPRE1_DIV2) || defined(__DOXYGEN__)
+    #define STM32_TIMP1CLK            STM32_HCLK
+  #else
+    #define STM32_TIMP1CLK            (STM32_PCLK1 * 2)
+  #endif
 
-/**
- * @brief   TIMP2CLK clock frequency.
- */
-#if (STM32_PPRE2 == STM32_PPRE2_DIV1) || defined(__DOXYGEN__)
-  #define STM32_TIMP2CLK            (STM32_PCLK2 * 1)
-#else
-  #define STM32_TIMP2CLK            (STM32_PCLK2 * 2)
-#endif
+  /**
+   * @brief   TIMP2CLK clock frequency.
+   */
+  #if (STM32_PPRE2 == STM32_PPRE2_DIV1) ||                                  \
+      (STM32_PPRE2 == STM32_PPRE2_DIV2) || defined(__DOXYGEN__)
+    #define STM32_TIMP2CLK            STM32_HCLK
+  #else
+    #define STM32_TIMP2CLK            (STM32_PCLK2 * 2)
+  #endif
 
 #else
+  #if (STM32_PPRE1 == STM32_PPRE1_DIV1) ||                                  \
+      (STM32_PPRE1 == STM32_PPRE1_DIV2) ||                                  \
+      (STM32_PPRE1 == STM32_PPRE1_DIV4) || defined(__DOXYGEN__)
+    #define STM32_TIMP1CLK            (STM32_PCLK1 * 2)
+  #else
+    #define STM32_TIMP1CLK            (STM32_PCLK1 * 4)
+  #endif
+
+  #if (STM32_PPRE2 == STM32_PPRE2_DIV1) ||                                  \
+      (STM32_PPRE2 == STM32_PPRE2_DIV2) ||                                  \
+      (STM32_PPRE2 == STM32_PPRE2_DIV4) || defined(__DOXYGEN__)
+    #define STM32_TIMP2CLK            (STM32_PCLK2 * 2)
+  #else
+    #define STM32_TIMP2CLK            (STM32_PCLK2 * 4)
+  #endif
 #endif
 
 /**
