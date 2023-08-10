@@ -32,9 +32,9 @@
 #define MCUCONF_H
 
 #define STM32H5xx_MCUCONF
-#define STM32H562xx
-#define STM32H563xx
-#define STM32H573xx
+#define STM32H562_MCUCONF
+#define STM32H563_MCUCONF
+#define STM32H573_MCUCONF
 
 /*
  * HAL driver system settings.
@@ -114,10 +114,6 @@
 #define STM32_USART11SEL                    STM32_USART11SEL_PCLK1
 #define STM32_UART12SEL                     STM32_UART12SEL_PCLK1
 #define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
-#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
-#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK1
-#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK1
-#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK1
 #define STM32_TIMICSEL                      STM32_TIMICSEL_NOCLK
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK3
 #define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK3

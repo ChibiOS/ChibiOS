@@ -62,10 +62,6 @@
 #error "STM32_PLL2N_VALUE not defined in mcuconf.h"
 #endif
 
-#if !defined(STM32_PLL2PDIV_VALUE)
-#error "STM32_PLL2PDIV_VALUE not defined in mcuconf.h"
-#endif
-
 #if STM32_RCC_PLL2_HAS_P && !defined(STM32_PLL2P_VALUE)
 #error "STM32_PLL2P_VALUE not defined in mcuconf.h"
 #endif

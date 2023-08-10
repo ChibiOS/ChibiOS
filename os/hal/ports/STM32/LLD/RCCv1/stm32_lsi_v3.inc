@@ -29,16 +29,7 @@
 /**
  * @brief   LSI clock frequency.
  */
-#define STM32_LSIRCCLK          32000U
-
-/**
- * @name    RCC_CSR2 register bits definitions
- * @{
- */
-#define STM32_LSIPRE_MASK       (1U << RCC_CSR2_LSIPRE_Pos)
-#define STM32_LSIPRE_NODIV      (0U << RCC_CSR2_LSIPRE_Pos)
-#define STM32_LSIPRE_DIV128     (1U << RCC_CSR2_LSIPRE_Pos)
-/** @} */
+#define STM32_LSICLK            32000U
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -49,36 +40,10 @@
 #error "STM32_RCC_HAS_LSI not defined in stm32_registry.h"
 #endif
 
-#if !defined(STM32_RCC_HAS_LSI_PRESCALER)
-#error "STM32_RCC_HAS_LSI_PRESCALER not defined in stm32_registry.h"
-#endif
-
 /* Checks on configurations.*/
 #if !defined(STM32_LSI_ENABLED)
 #error "STM32_LSI_ENABLED not defined in mcuconf.h"
 #endif
-
-#if STM32_RCC_HAS_LSI_PRESCALER || defined(__DOXYGEN__)
-
-#if !defined(STM32_LSIPRE)
-#error "STM32_LSIPRE not defined in mcuconf.h"
-#endif
-
-/**
- * @brief   LSI frequency.
- */
-#if (STM32_LSIPRE == STM32_LSIPRE_NODIV) || defined(__DOXYGEN__)
-#define STM32_LSICLK                (STM32_LSIRCCLK)
-#elif STM32_LSIPRE == STM32_LSIPRE_DIV128
-#define STM32_LSICLK                (STM32_LSIRCCLK / 128U)
-#else
-#error "invalid STM32_LSIPRE value specified"
-#endif
-
-#else /* !STM32_RCC_HAS_LSI_PRESCALER */
-#define STM32_LSIPRE                0U
-#define STM32_LSICLK                (STM32_LSIRCCLK)
-#endif /* !STM32_RCC_HAS_LSI_PRESCALER */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */

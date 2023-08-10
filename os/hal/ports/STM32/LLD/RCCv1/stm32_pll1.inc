@@ -62,10 +62,6 @@
 #error "STM32_PLL1N_VALUE not defined in mcuconf.h"
 #endif
 
-#if !defined(STM32_PLL1PDIV_VALUE)
-#error "STM32_PLL1PDIV_VALUE not defined in mcuconf.h"
-#endif
-
 #if STM32_RCC_PLL1_HAS_P && !defined(STM32_PLL1P_VALUE)
 #error "STM32_PLL1P_VALUE not defined in mcuconf.h"
 #endif
@@ -78,45 +74,102 @@
 #error "STM32_PLL1R_VALUE not defined in mcuconf.h"
 #endif
 
+/* Check on valid values.*/
+#if !defined(STM32_PLL1M_VALUE_MAX)
+#error "STM32_PLL1M_VALUE_MAX not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1M_VALUE_MIN)
+#error "STM32_PLL1M_VALUE_MIN not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1N_ODDVALID)
+#error "STM32_PLL1N_ODDVALID not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1N_VALUE_MAX)
+#error "STM32_PLL1N_VALUE_MAX not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1N_VALUE_MIN)
+#error "STM32_PLL1N_VALUE_MIN not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1P_ODDVALID)
+#error "STM32_PLL1P_ODDVALID not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1P_VALUE_MAX)
+#error "STM32_PLL1P_VALUE_MAX not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1P_VALUE_MIN)
+#error "STM32_PLL1P_VALUE_MIN not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1Q_ODDVALID)
+#error "STM32_PLL1Q_ODDVALID not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1Q_VALUE_MAX)
+#error "STM32_PLL1Q_VALUE_MAX not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1Q_VALUE_MIN)
+#error "STM32_PLL1Q_VALUE_MIN not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1R_ODDVALID)
+#error "STM32_PLL1R_ODDVALID not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1R_VALUE_MAX)
+#error "STM32_PLL1R_VALUE_MAX not defined in hal_lld.h"
+#endif
+
+#if !defined(STM32_PLL1R_VALUE_MIN)
+#error "STM32_PLL1R_VALUE_MIN not defined in hal_lld.h"
+#endif
+
 /* Check on limits.*/
-#if !defined(STM32_PLL1IN_MAX)
-#error "STM32_PLL1IN_MAX not defined in hal_lld.h"
+#if !defined(STM32_PLLIN_MAX)
+#error "STM32_PLLIN_MAX not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1IN_MIN)
-#error "STM32_PLL1IN_MIN not defined in hal_lld.h"
+#if !defined(STM32_PLLIN_MIN)
+#error "STM32_PLLIN_MIN not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1VCO_MAX)
-#error "STM32_PLL1VCO_MAX not defined in hal_lld.h"
+#if !defined(STM32_PLLVCO_MAX)
+#error "STM32_PLLVCO_MAX not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1VCO_MIN)
-#error "STM32_PLL1VCO_MIN not defined in hal_lld.h"
+#if !defined(STM32_PLLVCO_MIN)
+#error "STM32_PLLVCO_MIN not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1P_MAX)
-#error "STM32_PLL1P_MAX not defined in hal_lld.h"
+#if !defined(STM32_PLLP_MAX)
+#error "STM32_PLLP_MAX not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1P_MIN)
-#error "STM32_PLL1P_MIN not defined in hal_lld.h"
+#if !defined(STM32_PLLP_MIN)
+#error "STM32_PLLP_MIN not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1Q_MAX)
-#error "STM32_PLL1Q_MAX not defined in hal_lld.h"
+#if !defined(STM32_PLLQ_MAX)
+#error "STM32_PLLQ_MAX not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1Q_MIN)
-#error "STM32_PLL1Q_MIN not defined in hal_lld.h"
+#if !defined(STM32_PLLQ_MIN)
+#error "STM32_PLLQ_MIN not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1R_MAX)
-#error "STM32_PLL1R_MAX not defined in hal_lld.h"
+#if !defined(STM32_PLLR_MAX)
+#error "STM32_PLLR_MAX not defined in hal_lld.h"
 #endif
 
-#if !defined(STM32_PLL1R_MIN)
-#error "STM32_PLL1R_MIN not defined in hal_lld.h"
+#if !defined(STM32_PLLR_MIN)
+#error "STM32_PLLR_MIN not defined in hal_lld.h"
 #endif
 
 /* Input checks.*/
@@ -141,14 +194,15 @@
 #endif
 
 #if (STM32_PLL1CLKIN != 0) &&                                               \
-    ((STM32_PLL1CLKIN < STM32_PLL1IN_MIN) || (STM32_PLL1CLKIN > STM32_PLL1IN_MAX))
-#error "STM32_PLL1CLKIN outside acceptable range (STM32_PLL1IN_MIN...STM32_PLL1IN_MAX)"
+    ((STM32_PLL1CLKIN < STM32_PLLIN_MIN) || (STM32_PLL1CLKIN > STM32_PLLIN_MAX))
+#error "STM32_PLL1CLKIN outside acceptable range (STM32_PLLIN_MIN...STM32_PLLIN_MAX)"
 #endif
 
 /**
  * @brief   STM32_PLL1M field.
  */
-#if ((STM32_PLL1M_VALUE >= 1) && (STM32_PLL1M_VALUE <= 16)) ||              \
+#if ((STM32_PLL1M_VALUE >= STM32_PLL1M_VALUE_MIN) &&                        \
+     (STM32_PLL1M_VALUE <= STM32_PLL1M_VALUE_MAX)) ||                       \
     defined(__DOXYGEN__)
 #define STM32_PLL1M                 ((STM32_PLL1M_VALUE - 1U) << RCC_PLL1CFGR_PLL1M_Pos)
 
@@ -159,9 +213,10 @@
 /**
  * @brief   STM32_PLL1N field.
  */
-#if ((STM32_PLL1N_VALUE >= 8) && (STM32_PLL1N_VALUE <= 127)) ||             \
+#if ((STM32_PLL1N_VALUE >= STM32_PLL1N_VALUE_MIN) &&                        \
+     (STM32_PLL1N_VALUE <= STM32_PLL1N_VALUE_MAX)) ||                       \
     defined(__DOXYGEN__)
-#define STM32_PLL1N                 (STM32_PLL1N_VALUE << RCC_PLL1CFGR_PLL1N_Pos)
+#define STM32_PLL1N                 (STM32_PLL1N_VALUE << RCC_PLL1DIVR_PLL1N_Pos)
 
 #else
 #error "invalid STM32_PLL1N_VALUE value specified"
@@ -176,7 +231,7 @@
  * PLL1 VCO frequency range check.
  */
 #if STM32_ACTIVATE_PLL1 &&                                                  \
-    ((STM32_PLL1VCO < STM32_PLL1VCO_MIN) || (STM32_PLL1VCO > STM32_PLL1VCO_MAX))
+    ((STM32_PLL1VCO < STM32_PLLVCO_MIN) || (STM32_PLL1VCO > STM32_PLLVCO_MAX))
 #error "STM32_PLL1VCO outside acceptable range (STM32_PLL1VCO_MIN...STM32_PLL1VCO_MAX)"
 #endif
 
@@ -184,137 +239,114 @@
 /* P output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
 #if STM32_RCC_PLL1_HAS_P || defined(__DOXYGEN__)
+
+#if !STM32_PLL1P_ODDVALID && ((STM32_PLL1P_VALUE & 1) != 0)
+#error "odd STM32_PLL1P_VALUE value specified"
+#endif
+
 /**
  * @brief   STM32_PLL1P field.
  */
-#if (STM32_PLL1P_VALUE == 7) || defined(__DOXYGEN__)
-#define STM32_PLL1P                 (0U << RCC_PLL1CFGR_PLL1P_Pos)
-
-#elif STM32_PLL1P_VALUE == 17
-#define STM32_PLL1P                 (1U << RCC_PLL1CFGR_PLL1P_Pos)
-
-#else
-#error "invalid STM32_PLL1P_VALUE value specified"
-#endif
-
-/* PDIV is not present on all devices.*/
-#if defined(RCC_PLL1CFGR_PLL1PDIV_Pos) || defined(__DOXYGEN__)
-/**
- * @brief   STM32_PLL1PDIV field.
- */
-#if (STM32_PLL1PDIV_VALUE == 0) ||                                          \
-    ((STM32_PLL1PDIV_VALUE >= 2) && (STM32_PLL1PDIV_VALUE <= 31)) ||        \
+#if ((STM32_PLL1P_VALUE >= STM32_PLL1P_VALUE_MIN) &&                        \
+     (STM32_PLL1P_VALUE <= STM32_PLL1P_VALUE_MAX)) ||                       \
     defined(__DOXYGEN__)
-#define STM32_PLL1PDIV              (STM32_PLL1PDIV_VALUE << RCC_PLL1CFGR_PLL1PDIV_Pos)
+#define STM32_PLL1P                 ((STM32_PLL1P_VALUE - 1) << RCC_PLL1DIVR_PLL1P_Pos)
 #else
-#error "invalid STM32_PLL1PDIV_VALUE value specified"
+#error "out of range STM32_PLL1P_VALUE value specified"
 #endif
 
 /**
- * @brief   PLL1 P output clock frequency.
+ * @brief   PLL1P output clock frequency.
  */
-#if (STM32_PLL1PDIV_VALUE == 0) || defined(__DOXYGEN__)
 #define STM32_PLL1_P_CLKOUT         (STM32_PLL1VCO / STM32_PLL1P_VALUE)
-#else
-#define STM32_PLL1_P_CLKOUT         (STM32_PLL1VCO / STM32_PLL1PDIV_VALUE)
-#endif
-
-#else
-#define STM32_PLL1_P_CLKOUT         (STM32_PLL1VCO / STM32_PLL1P_VALUE)
-#define STM32_PLL1PDIV              0U
-#endif
 
 /*
- * PLL1-P output frequency range check.
+ * PLL1P output frequency range check.
  */
 #if STM32_ACTIVATE_PLL1 &&                                                  \
-    ((STM32_PLL1_P_CLKOUT < STM32_PLL1P_MIN) || (STM32_PLL1_P_CLKOUT > STM32_PLL1P_MAX))
-#error "STM32_PLL1_P_CLKOUT outside acceptable range (STM32_PLL1P_MIN...STM32_PLL1P_MAX)"
+    ((STM32_PLL1_P_CLKOUT < STM32_PLLP_MIN) ||                              \
+     (STM32_PLL1_P_CLKOUT > STM32_PLLP_MAX))
+#error "STM32_PLL1_P_CLKOUT outside acceptable range (STM32_PLLP_MIN...STM32_PLLP_MAX)"
 #endif
 
 #else /* !STM32_RCC_PLL1_HAS_P */
-#define STM32_PLL1P                 0U
-#define STM32_PLL1PDIV              0U
+#define STM32_PLL1P                 0
 #endif /* !STM32_RCC_PLL1_HAS_P */
 
 /*---------------------------------------------------------------------------*/
 /* Q output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
 #if STM32_RCC_PLL1_HAS_Q || defined(__DOXYGEN__)
-/**
- * @brief   STM32_PLL1Q field.
- */
-#if (STM32_PLL1Q_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLL1Q                 (0U << RCC_PLL1CFGR_PLL1Q_Pos)
 
-#elif STM32_PLL1Q_VALUE == 4
-#define STM32_PLL1Q                 (1U << RCC_PLL1CFGR_PLL1Q_Pos)
-
-#elif STM32_PLL1Q_VALUE == 6
-#define STM32_PLL1Q                 (2U << RCC_PLL1CFGR_PLL1Q_Pos)
-
-#elif STM32_PLL1Q_VALUE == 8
-#define STM32_PLL1Q                 (3U << RCC_PLL1CFGR_PLL1Q_Pos)
-
-#else
-#error "invalid STM32_PLL1Q_VALUE value specified"
+#if !STM32_PLL1Q_ODDVALID && ((STM32_PLL1Q_VALUE & 1) != 0)
+#error "odd STM32_PLL1Q_VALUE value specified"
 #endif
 
 /**
- * @brief   PLL1 Q output clock frequency.
+ * @brief   STM32_PLL1Q field.
+ */
+#if ((STM32_PLL1Q_VALUE >= STM32_PLL1Q_VALUE_MIN) &&                        \
+     (STM32_PLL1Q_VALUE <= STM32_PLL1Q_VALUE_MAX)) ||                       \
+    defined(__DOXYGEN__)
+#define STM32_PLL1Q                 ((STM32_PLL1Q_VALUE - 1) << RCC_PLL1DIVR_PLL1Q_Pos)
+#else
+#error "out of range STM32_PLL1Q_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLL1Q output clock frequency.
  */
 #define STM32_PLL1_Q_CLKOUT         (STM32_PLL1VCO / STM32_PLL1Q_VALUE)
 
 /*
- * PLL1-Q output frequency range check.
+ * PLL1P output frequency range check.
  */
 #if STM32_ACTIVATE_PLL1 &&                                                  \
-    ((STM32_PLL1_Q_CLKOUT < STM32_PLL1Q_MIN) || (STM32_PLL1_Q_CLKOUT > STM32_PLL1Q_MAX))
-#error "STM32_PLL1_Q_CLKOUT outside acceptable range (STM32_PLL1Q_MIN...STM32_PLL1Q_MAX)"
+    ((STM32_PLL1_Q_CLKOUT < STM32_PLLQ_MIN) ||                              \
+     (STM32_PLL1_Q_CLKOUT > STM32_PLLQ_MAX))
+#error "STM32_PLL1_Q_CLKOUT outside acceptable range (STM32_PLLQ_MIN...STM32_PLLQ_MAX)"
 #endif
 
 #else /* !STM32_RCC_PLL1_HAS_Q */
-#define STM32_PLL1Q                 0U
+#define STM32_PLL1Q                 0
 #endif /* !STM32_RCC_PLL1_HAS_Q */
 
 /*---------------------------------------------------------------------------*/
 /* R output, if present.                                                     */
 /*---------------------------------------------------------------------------*/
 #if STM32_RCC_PLL1_HAS_R || defined(__DOXYGEN__)
-/**
- * @brief   STM32_PLL1R field.
- */
-#if (STM32_PLL1R_VALUE == 2) || defined(__DOXYGEN__)
-#define STM32_PLL1R                 (0U << RCC_PLL1CFGR_PLL1R_Pos)
 
-#elif STM32_PLL1R_VALUE == 4
-#define STM32_PLL1R                 (1U << RCC_PLL1CFGR_PLL1R_Pos)
-
-#elif STM32_PLL1R_VALUE == 6
-#define STM32_PLL1R                 (2U << RCC_PLL1CFGR_PLL1R_Pos)
-
-#elif STM32_PLL1R_VALUE == 8
-#define STM32_PLL1R                 (3U << RCC_PLL1CFGR_PLL1R_Pos)
-
-#else
-#error "invalid STM32_PLL1R_VALUE value specified"
+#if !STM32_PLL1R_ODDVALID && ((STM32_PLL1R_VALUE & 1) != 0)
+#error "odd STM32_PLL1R_VALUE value specified"
 #endif
 
 /**
- * @brief   PLL1 R output clock frequency.
+ * @brief   STM32_PLL1R field.
+ */
+#if ((STM32_PLL1R_VALUE >= STM32_PLL1R_VALUE_MIN) &&                        \
+     (STM32_PLL1R_VALUE <= STM32_PLL1R_VALUE_MAX)) ||                       \
+    defined(__DOXYGEN__)
+#define STM32_PLL1R                 ((STM32_PLL1R_VALUE - 1) << RCC_PLL1DIVR_PLL1R_Pos)
+#else
+#error "out of range STM32_PLL1R_VALUE value specified"
+#endif
+
+/**
+ * @brief   PLL1R output clock frequency.
  */
 #define STM32_PLL1_R_CLKOUT         (STM32_PLL1VCO / STM32_PLL1R_VALUE)
 
 /*
- * PLL1-R output frequency range check.
+ * PLL1R output frequency range check.
  */
 #if STM32_ACTIVATE_PLL1 &&                                                  \
-    ((STM32_PLL1_R_CLKOUT < STM32_PLL1R_MIN) || (STM32_PLL1_R_CLKOUT > STM32_PLL1R_MAX))
-#error "STM32_PLL1_R_CLKOUT outside acceptable range (STM32_PLL1R_MIN...STM32_PLL1R_MAX)"
+    ((STM32_PLL1_R_CLKOUT < STM32_PLLR_MIN) ||                              \
+     (STM32_PLL1_R_CLKOUT > STM32_PLLR_MAX))
+#error "STM32_PLL1_R_CLKOUT outside acceptable range (STM32_PLLR_MIN...STM32_PLLR_MAX)"
 #endif
 
 #else /* !STM32_RCC_PLL1_HAS_R */
-#define STM32_PLL1R                 0U
+#define STM32_PLL1R                 0
 #endif /* !STM32_RCC_PLL1_HAS_R */
 
 /*===========================================================================*/
@@ -348,11 +380,11 @@ __STATIC_INLINE void pll1_init(void) {
 #if STM32_RCC_HAS_PLL1
 #if STM32_ACTIVATE_PLL1
   /* PLL1 activation.*/
-  RCC->PLL1CFGR = STM32_PLL1PDIV | STM32_PLL1R   |
-                  STM32_PLL1REN  | STM32_PLL1Q   |
-                  STM32_PLL1QEN  | STM32_PLL1P   |
-                  STM32_PLL1PEN  | STM32_PLL1N   |
-                  STM32_PLL1M    | STM32_PLL1SRC;
+  RCC->PLL1CFGR = STM32_PLL1REN | STM32_PLL1QEN |
+                  STM32_PLL1PEN | STM32_PLL1M   |
+                  STM32_PLL1SRC; /* TODO PLL1VCOSEL, PLL1FRACEN, PLL1RGE */
+  RCC->PLL1DIVR = STM32_PLL1R   | STM32_PLL1Q   |
+                  STM32_PLL1P   | STM32_PLL1N;
   RCC->CR |= RCC_CR_PLL1ON;
 
   pll1_wait_lock();

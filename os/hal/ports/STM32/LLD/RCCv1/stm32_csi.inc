@@ -59,15 +59,15 @@
 
 __STATIC_FORCEINLINE void csi_enable(void) {
 
-  RCC->OCENSETR = RCC_OCENSETR_CSION;
-  while ((RCC->OCRDYR & RCC_OCRDYR_CSIRDY) == 0U) {
+  RCC->CR |= RCC_CR_CSION;
+  while ((RCC->CR & RCC_CR_CSIRDY) == 0U) {
     /* Waiting for CSI activation.*/
   }
 }
 
 __STATIC_FORCEINLINE void csi_disable(void) {
 
-  RCC->OCENCLRR = RCC_OCENCLRR_CSION;
+  RCC->CR &= ~RCC_CR_CSION;
 }
 
 __STATIC_FORCEINLINE void csi_init(void) {

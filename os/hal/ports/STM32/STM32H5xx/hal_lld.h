@@ -132,6 +132,13 @@
 #define STM32_SW_HSE            STM32_SW_FIELD(2U)
 #define STM32_SW_PLL1P          STM32_SW_FIELD(3U)
 
+#define STM32_SWS_MASK          (3U << 3)
+#define STM32_SWS_FIELD(n)      ((n) << 3)
+#define STM32_SWS_HSI           STM32_SWS_FIELD(1U)
+#define STM32_SWS_CSI           STM32_SWS_FIELD(2U)
+#define STM32_SWS_HSE           STM32_SWS_FIELD(2U)
+#define STM32_SWS_PLL1P         STM32_SWS_FIELD(3U)
+
 #define STM32_STOPWUCK_MASK     (1U << 6)
 #define STM32_STOPWUCK_FIELD(n) ((n) << 6)
 #define STM32_STOPWUCK_HSI      STM32_STOPWUCK_FIELD(0U)
@@ -152,7 +159,7 @@
 #define STM32_TIMPRE_HIGH       STM32_TIMPRE_FIELD(1U)
 
 #define STM32_MCO1SEL_MASK      (7U << 22)
-#define STM32_MCO1PRE_FIELD(n)  ((n) << 22)
+#define STM32_MCO1SEL_FIELD(n)  ((n) << 22)
 #define STM32_MCO1SEL_HSI       STM32_MCO1PRE_FIELD(0U)
 #define STM32_MCO1SEL_LSE       STM32_MCO1PRE_FIELD(1U)
 #define STM32_MCO1SEL_HSE       STM32_MCO1PRE_FIELD(2U)
@@ -164,7 +171,8 @@
 #define STM32_MCO1PRE_NOCLOCK    STM32_MCO1PRE_FIELD(0U)
 
 #define STM32_MCO2SEL_MASK      (7U << 29)
-#define STM32_MCO2PRE_FIELD(n)  ((n) << 29)
+#define STM32_MCO2SEL_FIELD(n)  ((n) << 29)
+
 #define STM32_MCO2SEL_SYSCLK    STM32_MCO2PRE_FIELD(0U)
 #define STM32_MCO2SEL_PLL2P     STM32_MCO2PRE_FIELD(1U)
 #define STM32_MCO2SEL_HSE       STM32_MCO2PRE_FIELD(2U)
@@ -1073,34 +1081,6 @@
 #endif
 
 /**
- * @brief   I2C1 clock source.
- */
-#if !defined(STM32_I2C1SEL) || defined(__DOXYGEN__)
-#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
-#endif
-
-/**
- * @brief   I2C2 clock source.
- */
-#if !defined(STM32_I2C2SEL) || defined(__DOXYGEN__)
-#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK1
-#endif
-
-/**
- * @brief   I2C3 clock source.
- */
-#if !defined(STM32_I2C3SEL) || defined(__DOXYGEN__)
-#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK1
-#endif
-
-/**
- * @brief   I2C4 clock source.
- */
-#if !defined(STM32_I2C4SEL) || defined(__DOXYGEN__)
-#define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK1
-#endif
-
-/**
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
@@ -1443,7 +1423,7 @@
 #define STM32_VOS2_PLLR_MIN             1000000
 #define STM32_VOS2_PCLK1_MAX            150000000
 #define STM32_VOS2_PCLK2_MAX            150000000
-#define STM32_VOS2_PCLK2_MAX            150000000
+#define STM32_VOS2_PCLK3_MAX            150000000
 #define STM32_VOS2_ADCCLK_MAX           75000000
 
 #define STM32_VOS2_0WS_THRESHOLD        30000000
@@ -1478,7 +1458,7 @@
 #define STM32_VOS3_PLLR_MIN             1000000
 #define STM32_VOS3_PCLK1_MAX            100000000
 #define STM32_VOS3_PCLK2_MAX            100000000
-#define STM32_VOS3_PCLK2_MAX            100000000
+#define STM32_VOS3_PCLK3_MAX            100000000
 #define STM32_VOS3_ADCCLK_MAX           50000000
 
 #define STM32_VOS3_0WS_THRESHOLD        20000000
@@ -1504,6 +1484,7 @@
 #define STM32_PLLVCO_MAX                STM32_VOS0_PLLVCO_MAX
 #define STM32_PLLVCO_MIN                STM32_VOS0_PLLVCO_MIN
 #define STM32_PLLP_MAX                  STM32_VOS0_PLLP_MAX
+#define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
 #define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
 #define STM32_PLLQ_MAX                  STM32_VOS0_PLLQ_MAX
 #define STM32_PLLQ_MIN                  STM32_VOS0_PLLQ_MIN
@@ -1581,6 +1562,7 @@
 #define STM32_PLLR_MIN                  STM32_VOS2_PLLR_MIN
 #define STM32_PCLK1_MAX                 STM32_VOS2_PCLK1_MAX
 #define STM32_PCLK2_MAX                 STM32_VOS2_PCLK2_MAX
+#define STM32_PCLK3_MAX                 STM32_VOS2_PCLK3_MAX
 #define STM32_ADCCLK_MAX                STM32_VOS2_ADCCLK_MAX
 
 #define STM32_0WS_THRESHOLD             STM32_VOS2_0WS_THRESHOLD
@@ -1615,6 +1597,7 @@
 #define STM32_PLLR_MIN                  STM32_VOS3_PLLR_MIN
 #define STM32_PCLK1_MAX                 STM32_VOS3_PCLK1_MAX
 #define STM32_PCLK2_MAX                 STM32_VOS3_PCLK2_MAX
+#define STM32_PCLK3_MAX                 STM32_VOS3_PCLK3_MAX
 #define STM32_ADCCLK_MAX                STM32_VOS3_ADCCLK_MAX
 
 #define STM32_0WS_THRESHOLD             STM32_VOS3_0WS_THRESHOLD
@@ -1630,6 +1613,56 @@
 #else
 #error "invalid STM32_VOS value specified"
 #endif
+
+/**
+ * @name    PLLs dividers ranges
+ * @{
+ */
+#define STM32_PLL1M_VALUE_MAX           63
+#define STM32_PLL1M_VALUE_MIN           1
+#define STM32_PLL1N_ODDVALID            TRUE
+#define STM32_PLL1N_VALUE_MAX           512
+#define STM32_PLL1N_VALUE_MIN           4
+#define STM32_PLL1P_ODDVALID            FALSE
+#define STM32_PLL1P_VALUE_MAX           128
+#define STM32_PLL1P_VALUE_MIN           2
+#define STM32_PLL1Q_ODDVALID            TRUE
+#define STM32_PLL1Q_VALUE_MAX           128
+#define STM32_PLL1Q_VALUE_MIN           1
+#define STM32_PLL1R_ODDVALID            TRUE
+#define STM32_PLL1R_VALUE_MAX           128
+#define STM32_PLL1R_VALUE_MIN           1
+
+#define STM32_PLL2M_VALUE_MAX           63
+#define STM32_PLL2M_VALUE_MIN           1
+#define STM32_PLL2N_ODDVALID            TRUE
+#define STM32_PLL2N_VALUE_MAX           512
+#define STM32_PLL2N_VALUE_MIN           4
+#define STM32_PLL2P_ODDVALID            TRUE
+#define STM32_PLL2P_VALUE_MAX           128
+#define STM32_PLL2P_VALUE_MIN           2
+#define STM32_PLL2Q_ODDVALID            TRUE
+#define STM32_PLL2Q_VALUE_MAX           128
+#define STM32_PLL2Q_VALUE_MIN           1
+#define STM32_PLL2R_ODDVALID            TRUE
+#define STM32_PLL2R_VALUE_MAX           128
+#define STM32_PLL2R_VALUE_MIN           1
+
+#define STM32_PLL3M_VALUE_MAX           63
+#define STM32_PLL3M_VALUE_MIN           1
+#define STM32_PLL3N_ODDVALID            TRUE
+#define STM32_PLL3N_VALUE_MAX           512
+#define STM32_PLL3N_VALUE_MIN           4
+#define STM32_PLL3P_ODDVALID            TRUE
+#define STM32_PLL3P_VALUE_MAX           128
+#define STM32_PLL3P_VALUE_MIN           2
+#define STM32_PLL3Q_ODDVALID            TRUE
+#define STM32_PLL3Q_VALUE_MAX           128
+#define STM32_PLL3Q_VALUE_MIN           1
+#define STM32_PLL3R_ODDVALID            TRUE
+#define STM32_PLL3R_VALUE_MAX           128
+#define STM32_PLL3R_VALUE_MIN           1
+/** @} */
 
 /* Clock handlers.*/
 #include "stm32_lsi.inc"
