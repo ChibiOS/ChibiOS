@@ -29,6 +29,8 @@
 /**
  * @name    PLL helpers
  */
+#define STM32_PLL1VCOSEL_WIDE       (0U << RCC_PLL1CFGR_PLL1VCOSEL_Pos)
+#define STM32_PLL1VCOSEL_MEDIUM     (1U << RCC_PLL1CFGR_PLL1VCOSEL_Pos)
 #define STM32_PLL1RGE_0             (0U << RCC_PLL1CFGR_PLL1RGE_Pos)
 #define STM32_PLL1RGE_1             (1U << RCC_PLL1CFGR_PLL1RGE_Pos)
 #define STM32_PLL1RGE_2             (2U << RCC_PLL1CFGR_PLL1RGE_Pos)
@@ -223,21 +225,35 @@
  */
 #define STM32_PLL1CLKIN             (STM32_PLL1IN / STM32_PLL1M_VALUE)
 
-/**
- * @brief   PLL comparator input frequency.
- */
 #if STM32_PLL1CLKIN < STM32_PLLIN_MIN
 #error "STM32_PLL1CLKIN below acceptable range"
+
 #elif STM32_PLL1CLKIN > STM32_PLLIN_MAX
 #error "STM32_PLL1CLKIN above acceptable range"
+
 #elif (STM32_PLL1CLKIN < STM32_PLLIN_THRESHOLD1) || defined(__DOXYGEN__)
 #define STM32_PLL1RGE               STM32_PLL1RGE_0
+#define STM32_PLL1VCOSEL            STM32_PLL1VCOSEL_MEDIUM
+#define STM32_PLL1VCO_MIN           STM32_PLLVCO_MEDIUM_MIN
+#define STM32_PLL1VCO_MAX           STM32_PLLVCO_MEDIUM_MAX
+
 #elif STM32_PLL1CLKIN < STM32_PLLIN_THRESHOLD2
 #define STM32_PLL1RGE               STM32_PLL1RGE_1
+#define STM32_PLL1VCOSEL            STM32_PLL1VCOSEL_WIDE
+#define STM32_PLL1VCO_MIN           STM32_PLLVCO_WIDE_MIN
+#define STM32_PLL1VCO_MAX           STM32_PLLVCO_WIDE_MAX
+
 #elif STM32_PLL1CLKIN < STM32_PLLIN_THRESHOLD3
 #define STM32_PLL1RGE               STM32_PLL1RGE_2
+#define STM32_PLL1VCOSEL            STM32_PLL1VCOSEL_WIDE
+#define STM32_PLL1VCO_MIN           STM32_PLLVCO_WIDE_MIN
+#define STM32_PLL1VCO_MAX           STM32_PLLVCO_WIDE_MAX
+
 #else
 #define STM32_PLL1RGE               STM32_PLL1RGE_3
+#define STM32_PLL1VCOSEL            STM32_PLL1VCOSEL_WIDE
+#define STM32_PLL1VCO_MIN           STM32_PLLVCO_WIDE_MIN
+#define STM32_PLL1VCO_MAX           STM32_PLLVCO_WIDE_MAX
 #endif
 
 /**
@@ -255,13 +271,13 @@
 /**
  * @brief   PLL1 VCO frequency.
  */
-#define STM32_PLL1VCO               (STM32_PLL1IN * STM32_PLL1N_VALUE)
+#define STM32_PLL1VCO               (STM32_PLL1CLKIN * STM32_PLL1N_VALUE)
 
 /*
  * PLL1 VCO frequency range check.
  */
 #if STM32_ACTIVATE_PLL1 &&                                                  \
-    ((STM32_PLL1VCO < STM32_PLLVCO_MIN) || (STM32_PLL1VCO > STM32_PLLVCO_MAX))
+    ((STM32_PLL1VCO < STM32_PLL1VCO_MIN) || (STM32_PLL1VCO > STM32_PLL1VCO_MAX))
 #error "STM32_PLL1VCO outside acceptable range (STM32_PLL1VCO_MIN...STM32_PLL1VCO_MAX)"
 #endif
 
@@ -410,11 +426,12 @@ __STATIC_INLINE void pll1_init(void) {
 #if STM32_RCC_HAS_PLL1
 #if STM32_ACTIVATE_PLL1
   /* PLL1 activation.*/
-  RCC->PLL1CFGR = STM32_PLL1REN | STM32_PLL1QEN |
-                  STM32_PLL1PEN | STM32_PLL1M   |
-                  STM32_PLL1RGE | STM32_PLL1SRC; /* TODO PLL1VCOSEL, PLL1FRACEN */
-  RCC->PLL1DIVR = STM32_PLL1R   | STM32_PLL1Q   |
-                  STM32_PLL1P   | STM32_PLL1N;
+  RCC->PLL1CFGR = STM32_PLL1REN     | STM32_PLL1QEN     |
+                  STM32_PLL1PEN     | STM32_PLL1M       |
+                  STM32_PLL1RGE     | STM32_PLL1VCOSEL  |
+                  STM32_PLL1SRC; /* TODO PLL1FRACEN */
+  RCC->PLL1DIVR = STM32_PLL1R       | STM32_PLL1Q       |
+                  STM32_PLL1P       | STM32_PLL1N;
   RCC->CR |= RCC_CR_PLL1ON;
 
   pll1_wait_lock();

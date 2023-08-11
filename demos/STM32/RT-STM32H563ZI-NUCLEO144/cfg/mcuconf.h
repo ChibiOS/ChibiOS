@@ -40,12 +40,12 @@
  * HAL driver system settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_CLOCK_DYNAMIC                 TRUE
+#define STM32_CLOCK_DYNAMIC                 FALSE
 
 /*
  * PWR settings.
  */
-#define STM32_PWR_VOSCR                     STM32_VOS_RANGE3
+#define STM32_PWR_VOSCR                     STM32_VOS_RANGE0
 #define STM32_PWR_BDCR                      (0U)
 #define STM32_PWR_UCPDR                     (0U)
 #define STM32_PWR_SCCR                      (0U)
@@ -66,24 +66,24 @@
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   FALSE
-#define STM32_SW                            STM32_SW_PLL1PCLK
+#define STM32_SW                            STM32_SW_PLL1P
 #define STM32_PLL1SRC                       STM32_PLL1SRC_HSI
-#define STM32_PLL1M_VALUE                   4
-#define STM32_PLL1N_VALUE                   84
-#define STM32_PLL1P_VALUE                   7
-#define STM32_PLL1Q_VALUE                   8
+#define STM32_PLL1M_VALUE                   16
+#define STM32_PLL1N_VALUE                   250
+#define STM32_PLL1P_VALUE                   2
+#define STM32_PLL1Q_VALUE                   2
 #define STM32_PLL1R_VALUE                   2
 #define STM32_PLL2SRC                       STM32_PLL2SRC_HSI
-#define STM32_PLL2M_VALUE                   4
-#define STM32_PLL2N_VALUE                   84
-#define STM32_PLL2P_VALUE                   7
-#define STM32_PLL2Q_VALUE                   8
+#define STM32_PLL2M_VALUE                   16
+#define STM32_PLL2N_VALUE                   250
+#define STM32_PLL2P_VALUE                   2
+#define STM32_PLL2Q_VALUE                   2
 #define STM32_PLL2R_VALUE                   2
 #define STM32_PLL3SRC                       STM32_PLL3SRC_HSI
-#define STM32_PLL3M_VALUE                   4
-#define STM32_PLL3N_VALUE                   84
-#define STM32_PLL3P_VALUE                   7
-#define STM32_PLL3Q_VALUE                   8
+#define STM32_PLL3M_VALUE                   16
+#define STM32_PLL3N_VALUE                   250
+#define STM32_PLL3P_VALUE                   2
+#define STM32_PLL3Q_VALUE                   2
 #define STM32_PLL3R_VALUE                   2
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE1                         STM32_PPRE1_DIV1
@@ -94,7 +94,7 @@
 #define STM32_RTCPRE_VALUE                  STM32_RTCPRE_NOCLOCK
 #define STM32_MCO1SEL                       STM32_MCO1SEL_HSI
 #define STM32_MCO1PRE_VALUE                 STM32_MCO1PRE_NOCLOCK
-#define STM32_MCO2SEL                       STM32_MCO2SEL_CSI
+#define STM32_MCO2SEL                       STM32_MCO2SEL_SYSCLK
 #define STM32_MCO2PRE_VALUE                 STM32_MCO2PRE_NOCLOCK
 #define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
 
@@ -113,10 +113,10 @@
 #define STM32_USART10SEL                    STM32_USART10SEL_PCLK1
 #define STM32_USART11SEL                    STM32_USART11SEL_PCLK1
 #define STM32_UART12SEL                     STM32_UART12SEL_PCLK1
-#define STM32_LPUART1SEL                    STM32_LPUART1SEL_SYSCLK
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_PCLK3
 #define STM32_TIMICSEL                      STM32_TIMICSEL_NOCLK
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK3
-#define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK3
+#define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
 #define STM32_LPTIM3SEL                     STM32_LPTIM3SEL_PCLK3
 #define STM32_LPTIM4SEL                     STM32_LPTIM4SEL_PCLK3
 #define STM32_LPTIM5SEL                     STM32_LPTIM5SEL_PCLK3
@@ -138,10 +138,10 @@
 #define STM32_I2C4SEL                       STM32_I2C4SEL_PCLK3
 #define STM32_I3C1SEL                       STM32_I3C1SEL_PCLK1
 #define STM32_ADCDACSEL                     STM32_ADCDACSEL_HCLK
-#define STM32_DACSEL                        STM32_DACSEL_LSI
-#define STM32_RNGSEL                        STM32_RNGSEL_HSI48
-#define STM32_CECSEL                        STM32_CECSEL_LSE
-#define STM32_FDCANSEL                      STM32_FDCANSEL_HSE
+#define STM32_DACSEL                        STM32_DACSEL_IGNORE
+#define STM32_RNGSEL                        STM32_RNGSEL_IGNORE
+#define STM32_CECSEL                        STM32_CECSEL_IGNORE
+#define STM32_FDCANSEL                      STM32_FDCANSEL_IGNORE
 #define STM32_SAI1SEL                       STM32_SAI1SEL_PLL1Q
 #define STM32_SAI2SEL                       STM32_SAI2SEL_PLL1Q
 #define STM32_CKPERSEL                      STM32_CKPERSEL_HSI

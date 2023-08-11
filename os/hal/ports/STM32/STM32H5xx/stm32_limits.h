@@ -38,10 +38,6 @@
 #define STM32_VOS0_LSECLK_BYP_MAX       1000000
 #define STM32_VOS0_LSECLK_MIN           32768
 #define STM32_VOS0_LSECLK_BYP_MIN       32768
-#define STM32_VOS0_PLLIN_MAX            16000000
-#define STM32_VOS0_PLLIN_MIN            2000000
-#define STM32_VOS0_PLLVCO_MAX           560000000
-#define STM32_VOS0_PLLVCO_MIN           128000000
 #define STM32_VOS0_PLLP_MAX             250000000
 #define STM32_VOS0_PLLP_MIN             1000000
 #define STM32_VOS0_PLLQ_MAX             250000000
@@ -50,7 +46,7 @@
 #define STM32_VOS0_PLLR_MIN             1000000
 #define STM32_VOS0_PCLK1_MAX            250000000
 #define STM32_VOS0_PCLK2_MAX            250000000
-#define STM32_VOS0_PCLK2_MAX            250000000
+#define STM32_VOS0_PCLK3_MAX            250000000
 #define STM32_VOS0_ADCCLK_MAX           125000000
 
 #define STM32_VOS0_0WS_THRESHOLD        42000000
@@ -73,10 +69,6 @@
 #define STM32_VOS1_LSECLK_BYP_MAX       1000000
 #define STM32_VOS1_LSECLK_MIN           32768
 #define STM32_VOS1_LSECLK_BYP_MIN       32768
-#define STM32_VOS1_PLLIN_MAX            16000000
-#define STM32_VOS1_PLLIN_MIN            2000000
-#define STM32_VOS1_PLLVCO_MAX           560000000
-#define STM32_VOS1_PLLVCO_MIN           128000000
 #define STM32_VOS1_PLLP_MAX             200000000
 #define STM32_VOS1_PLLP_MIN             1000000
 #define STM32_VOS1_PLLQ_MAX             200000000
@@ -108,10 +100,6 @@
 #define STM32_VOS2_LSECLK_BYP_MAX       1000000
 #define STM32_VOS2_LSECLK_MIN           32768
 #define STM32_VOS2_LSECLK_BYP_MIN       32768
-#define STM32_VOS2_PLLIN_MAX            16000000
-#define STM32_VOS2_PLLIN_MIN            2000000
-#define STM32_VOS2_PLLVCO_MAX           560000000
-#define STM32_VOS2_PLLVCO_MIN           128000000
 #define STM32_VOS2_PLLP_MAX             150000000
 #define STM32_VOS2_PLLP_MIN             1000000
 #define STM32_VOS2_PLLQ_MAX             150000000
@@ -143,10 +131,6 @@
 #define STM32_VOS3_LSECLK_BYP_MAX       1000000
 #define STM32_VOS3_LSECLK_MIN           32768
 #define STM32_VOS3_LSECLK_BYP_MIN       32768
-#define STM32_VOS3_PLLIN_MAX            16000000
-#define STM32_VOS3_PLLIN_MIN            2000000
-#define STM32_VOS3_PLLVCO_MAX           560000000
-#define STM32_VOS3_PLLVCO_MIN           128000000
 #define STM32_VOS3_PLLP_MAX             100000000
 #define STM32_VOS3_PLLP_MIN             1000000
 #define STM32_VOS3_PLLQ_MAX             100000000
@@ -179,10 +163,6 @@
 #define STM32_LSECLK_BYP_MAX            STM32_VOS0_LSECLK_BYP_MAX
 #define STM32_LSECLK_MIN                STM32_VOS0_LSECLK_MIN
 #define STM32_LSECLK_BYP_MIN            STM32_VOS0_LSECLK_BYP_MIN
-#define STM32_PLLIN_MAX                 STM32_VOS0_PLLIN_MAX
-#define STM32_PLLIN_MIN                 STM32_VOS0_PLLIN_MIN
-#define STM32_PLLVCO_MAX                STM32_VOS0_PLLVCO_MAX
-#define STM32_PLLVCO_MIN                STM32_VOS0_PLLVCO_MIN
 #define STM32_PLLP_MAX                  STM32_VOS0_PLLP_MAX
 #define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
 #define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
@@ -216,10 +196,6 @@
 #define STM32_LSECLK_BYP_MAX            STM32_VOS1_LSECLK_BYP_MAX
 #define STM32_LSECLK_MIN                STM32_VOS1_LSECLK_MIN
 #define STM32_LSECLK_BYP_MIN            STM32_VOS1_LSECLK_BYP_MIN
-#define STM32_PLLIN_MAX                 STM32_VOS1_PLLIN_MAX
-#define STM32_PLLIN_MIN                 STM32_VOS1_PLLIN_MIN
-#define STM32_PLLVCO_MAX                STM32_VOS1_PLLVCO_MAX
-#define STM32_PLLVCO_MIN                STM32_VOS1_PLLVCO_MIN
 #define STM32_PLLP_MAX                  STM32_VOS1_PLLP_MAX
 #define STM32_PLLP_MIN                  STM32_VOS1_PLLP_MIN
 #define STM32_PLLQ_MAX                  STM32_VOS1_PLLQ_MAX
@@ -251,10 +227,6 @@
 #define STM32_LSECLK_BYP_MAX            STM32_VOS2_LSECLK_BYP_MAX
 #define STM32_LSECLK_MIN                STM32_VOS2_LSECLK_MIN
 #define STM32_LSECLK_BYP_MIN            STM32_VOS2_LSECLK_BYP_MIN
-#define STM32_PLLIN_MAX                 STM32_VOS2_PLLIN_MAX
-#define STM32_PLLIN_MIN                 STM32_VOS2_PLLIN_MIN
-#define STM32_PLLVCO_MAX                STM32_VOS2_PLLVCO_MAX
-#define STM32_PLLVCO_MIN                STM32_VOS2_PLLVCO_MIN
 #define STM32_PLLP_MAX                  STM32_VOS2_PLLP_MAX
 #define STM32_PLLP_MIN                  STM32_VOS2_PLLP_MIN
 #define STM32_PLLQ_MAX                  STM32_VOS2_PLLQ_MAX
@@ -286,10 +258,6 @@
 #define STM32_LSECLK_BYP_MAX            STM32_VOS3_LSECLK_BYP_MAX
 #define STM32_LSECLK_MIN                STM32_VOS3_LSECLK_MIN
 #define STM32_LSECLK_BYP_MIN            STM32_VOS3_LSECLK_BYP_MIN
-#define STM32_PLLIN_MAX                 STM32_VOS3_PLLIN_MAX
-#define STM32_PLLIN_MIN                 STM32_VOS3_PLLIN_MIN
-#define STM32_PLLVCO_MAX                STM32_VOS3_PLLVCO_MAX
-#define STM32_PLLVCO_MIN                STM32_VOS3_PLLVCO_MIN
 #define STM32_PLLP_MAX                  STM32_VOS3_PLLP_MAX
 #define STM32_PLLP_MIN                  STM32_VOS3_PLLP_MIN
 #define STM32_PLLQ_MAX                  STM32_VOS3_PLLQ_MAX
@@ -316,11 +284,24 @@
 #endif
 
 /**
- * @name    PLL input thresholds
+ * @name    PLL input ranges
  */
+#define STM32_PLLIN_MIN                 2000000
+#define STM32_PLLIN_MAX                 16000000
 #define STM32_PLLIN_THRESHOLD1          2000000
 #define STM32_PLLIN_THRESHOLD2          4000000
 #define STM32_PLLIN_THRESHOLD3          8000000
+/** @} */
+
+/**
+ * @name    PLL output ranges
+ */
+#define STM32_PLLVCO_MIN                128000000
+#define STM32_PLLVCO_MAX                560000000
+#define STM32_PLLVCO_WIDE_MIN           128000000
+#define STM32_PLLVCO_WIDE_MAX           560000000
+#define STM32_PLLVCO_MEDIUM_MIN         150000000
+#define STM32_PLLVCO_MEDIUM_MAX         420000000
 /** @} */
 
 /**
