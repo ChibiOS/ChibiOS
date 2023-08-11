@@ -61,7 +61,7 @@ __STATIC_INLINE void lsi_init(void) {
 
 #if STM32_LSI_ENABLED
   /* LSI activation.*/
-  RCC->CSR2 |= STM32_LSIPRE | RCC_CSR2_LSION;
+  RCC->CSR2 |= RCC_CSR2_LSION;
   while ((RCC->CSR2 & RCC_CSR2_LSIRDY) == 0U) {
   }
 #endif
