@@ -229,41 +229,19 @@ __STATIC_INLINE void flash_set_acr(uint32_t acr) {
 __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 
   /* PWR clock enabled.*/
-  rccEnablePWRInterface(false);
+//  rccEnablePWRInterface(false);
 
   /* Static PWR configurations.*/
-  PWR->CR3   = STM32_PWR_CR3;
-  PWR->CR4   = STM32_PWR_CR4;
-  PWR->PUCRA = STM32_PWR_PUCRA;
-  PWR->PDCRA = STM32_PWR_PDCRA;
-  PWR->PUCRB = STM32_PWR_PUCRB;
-  PWR->PDCRB = STM32_PWR_PDCRB;
-  PWR->PUCRC = STM32_PWR_PUCRC;
-  PWR->PDCRC = STM32_PWR_PDCRC;
-#if STM32_HAS_GPIOD
-  PWR->PUCRD = STM32_PWR_PUCRD;
-  PWR->PDCRD = STM32_PWR_PDCRD;
-#endif
-#if STM32_HAS_GPIOE
-  PWR->PUCRE = STM32_PWR_PUCRE;
-  PWR->PDCRE = STM32_PWR_PDCRE;
-#endif
-#if STM32_HAS_GPIOF
-  PWR->PUCRF = STM32_PWR_PUCRF;
-  PWR->PDCRF = STM32_PWR_PDCRF;
-#endif
-#if STM32_HAS_GPIOG
-  PWR->PUCRG = STM32_PWR_PUCRG;
-  PWR->PDCRG = STM32_PWR_PDCRG;
-#endif
-#if STM32_HAS_GPIOH
-  PWR->PUCRH = STM32_PWR_PUCRH;
-  PWR->PDCRH = STM32_PWR_PDCRH;
-#endif
-#if STM32_HAS_GPIOI
-  PWR->PUCRI = STM32_PWR_PUCRI;
-  PWR->PDCRI = STM32_PWR_PDCRI;
-#endif
+//  PWR->VOSCR    = STM32_PWR_VOSCR;
+  PWR->BDCR     = STM32_PWR_BDCR;
+  PWR->UCPDR    = STM32_PWR_UCPDR;
+  PWR->SCCR     = STM32_PWR_SCCR;
+  PWR->VMCR     = STM32_PWR_VMCR;
+  PWR->USBSCR   = STM32_PWR_USBSCR;
+  PWR->WUCR     = STM32_PWR_WUCR;
+  PWR->IORETR   = STM32_PWR_IORETR;
+  PWR->SECCFGR  = STM32_PWR_SECCFGR;
+  PWR->PRIVCFGR = STM32_PWR_PRIVCFGR;
 }
 
 /**
@@ -272,17 +250,37 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 
   /* Clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR   = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE2 | STM32_PPRE1 |
-                STM32_HPRE;
+  RCC->CFGR1  = STM32_MCO2SEL     | STM32_MCO2PRE     |
+                STM32_MCO1SEL     | STM32_MCO1PRE     |
+                STM32_TIMPRE      | STM32_RTCPRE      |
+                STM32_STOPWUCK    | STM32_STOPKERWUCK;
+  RCC->CFGR2  = STM32_PPRE3       | STM32_PPRE2       |
+                STM32_PPRE1       | STM32_HPRE;
 
   /* CCIPR registers initialization, note.*/
-  RCC->CCIPR  = STM32_ADC345SEL  | STM32_ADC12SEL   | STM32_CLK48SEL   |
-                STM32_FDCANSEL   | STM32_I2S23SEL   | STM32_SAI1SEL    |
-                STM32_LPTIM1SEL  | STM32_I2C3SEL    | STM32_I2C2SEL    |
-                STM32_I2C1SEL    | STM32_LPUART1SEL | STM32_UART5SEL   |
-                STM32_UART4SEL   | STM32_USART3SEL  | STM32_USART2SEL  |
-                STM32_USART1SEL;
-  RCC->CCIPR2 = STM32_QSPISEL    | STM32_I2C4SEL;
+  RCC->CCIPR1 = STM32_TIMICSEL    | STM32_USART10SEL  |
+                STM32_UART9SEL    | STM32_UART9SEL    |
+                STM32_UART8SEL    | STM32_UART7SEL    |
+                STM32_USART6SEL   | STM32_UART5SEL    |
+                STM32_UART4SEL    | STM32_USART3SEL   |
+                STM32_USART2SEL   | STM32_USART1SEL;
+  RCC->CCIPR2 = STM32_LPTIM6SEL   | STM32_LPTIM5SEL   |
+                STM32_LPTIM4SEL   | STM32_LPTIM3SEL   |
+                STM32_LPTIM2SEL   | STM32_LPTIM1SEL   |
+                STM32_UART12SEL   | STM32_USART11SEL;
+  RCC->CCIPR3 = STM32_LPUART1SEL  | STM32_SPI6SEL     |
+                STM32_SPI5SEL     | STM32_SPI4SEL     |
+                STM32_SPI3SEL     | STM32_SPI2SEL     |
+                STM32_SPI1SEL;
+  RCC->CCIPR4 = STM32_I3C1SEL     | STM32_I2C4SEL     |
+                STM32_I2C3SEL     | STM32_I2C2SEL     |
+                STM32_I2C1SEL     | STM32_SDMMC2SEL   |
+                STM32_SDMMC1SEL   | STM32_USBSEL      |
+                STM32_SYSTICKSEL  | STM32_OSPISEL;
+  RCC->CCIPR5 = STM32_CKPERSEL    | STM32_SAI2SEL     |
+                STM32_SAI1SEL     | STM32_FDCANSEL    |
+                STM32_CECSEL      | STM32_RNGSEL      |
+                STM32_DACSEL      | STM32_ADCDACSEL;
 }
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
@@ -710,14 +708,11 @@ void stm32_clock_init(void) {
      board files.*/
   rccResetAHB1(~0);
   rccResetAHB2(~STM32_GPIO_EN_MASK);
-  rccResetAHB3(~0);
-  rccResetAPB1R1(~0);
-  rccResetAPB1R2(~0);
+  rccResetAHB4(~0);
+  rccResetAPB1L(~0);
+  rccResetAPB1H(~0);
   rccResetAPB2(~0);
-
-  /* SYSCFG clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
+  rccResetAPB3(~0);
 
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
@@ -728,13 +723,14 @@ void stm32_clock_init(void) {
   hal_lld_set_static_pwr();
 
   /* Additional PWR configurations.*/
-  PWR->CR2 = STM32_PWR_CR2;
-  PWR->CR5 = STM32_CR5BITS;
+//  PWR->CR2 = STM32_PWR_CR2;
+//  PWR->CR5 = STM32_CR5BITS;
 
   /* Core voltage setup, backup domain made accessible.*/
-  PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
-  while ((PWR->SR2 & PWR_SR2_VOSF) != 0)    /* Wait until regulator is      */
-    ;                                       /* stable.                      */
+  PWR->VOSCR = STM32_PWR_VOSCR;
+  while ((PWR->VOSSR & PWR_VOSSR_ACTVOSRDY) == 0U) {
+    /* Wait until regulator is stable.*/
+  }
 
   /* Backup domain reset.*/
   bd_reset();
@@ -742,7 +738,7 @@ void stm32_clock_init(void) {
   /* Clocks setup.*/
   lse_init();
   lsi_init();
-  hsi16_init();
+  hsi_init();
   hsi48_init();
   hse_init();
 
@@ -750,21 +746,22 @@ void stm32_clock_init(void) {
   bd_init();
 
   /* PLLs activation, if required.*/
-  pll_init();
+  pll1_init();
+  pll2_init();
+  pll3_init();
 
   /* Static clocks setup.*/
   hal_lld_set_static_clocks();
 
   /* Set flash WS's for SYSCLK source.*/
-  flash_set_acr(FLASH_ACR_DBG_SWEN | FLASH_ACR_DCEN | FLASH_ACR_ICEN   |
-                FLASH_ACR_PRFTEN   | STM32_FLASHBITS);
+  flash_set_acr(FLASH_ACR_PRFTEN | STM32_FLASHBITS);
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
-#if STM32_SW != STM32_SW_HSI16
-  RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
-  /* Wait until SYSCLK is stable.*/
-  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 2))
-    ;
+#if STM32_SW != STM32_SW_HSI
+  RCC->CFGR1 |= STM32_SW;       /* Switches on the selected clock source.   */
+  while ((RCC->CFGR1 & STM32_SWS_MASK) != (STM32_SW << 3)) {
+    /* Wait until SYSCLK is stable.*/
+  }
 #endif
 
 #endif /* STM32_NO_INIT */

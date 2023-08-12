@@ -2284,7 +2284,7 @@
  * @brief   RTCPRE clock frequency.
  */
 #if (STM32_RTCPRE_VALUE == STM32_RTCPRE_NOCLOCK) || defined(__DOXYGEN__)
-  #define STM32_RTCPRECLK           0
+  #define STM32_RTCPRECLK           0U
 
 #elif (STM32_RTCPRE_VALUE >= 2) && (STM32_RTCPRE_VALUE <= 63)
   #define STM32_RTCPRECLK           (STM32_HSECLK / STM32_RTCPRE_VALUE)
@@ -2292,6 +2292,11 @@
 #else
   #error "invalid STM32_RTCPRECLK_VALUE value specified"
 #endif
+
+/**
+ * @brief   RTCPRE field.
+ */
+#define STM32_RTCPRE                STM32_RTCPRE_FIELD(STM32_RTCPRE_VALUE)
 
 /**
  * @brief   MCO1 source clock.
@@ -2322,17 +2327,20 @@
  * @brief   MCO1 output pin clock frequency.
  */
 #if (STM32_MCO1PRE_VALUE == STM32_MCO1PRE_NOCLOCK) || defined(__DOXYGEN__)
-  #define STM32_MCO1PRE             0U
   #define STM32_MCO1CLK             0U
 
 #elif (STM32_MCO1PRE_VALUE > STM32_MCO1PRE_NOCLOCK) &&                      \
       (STM32_MCO1PRE_VALUE <= 15)
-  #define STM32_MCO1PRE             STM32_MCO1PRE_FIELD(STM32_MCO1PRE_VALUE)
   #define STM32_MCO1CLK             (STM32_MCO1DIVCLK / STM32_MCO1PRE_VALUE)
 
 #else
 #error "invalid STM32_MCO1PRE_VALUE value specified"
 #endif
+
+/**
+ * @brief   MCO1PRE field.
+ */
+#define STM32_MCO1PRE               STM32_MCO1PRE_FIELD(STM32_MCO1PRE_VALUE)
 
 /**
  * @brief   MCO2 source clock.
@@ -2363,12 +2371,10 @@
  * @brief   MCO2 output pin clock frequency.
  */
 #if (STM32_MCO2PRE_VALUE == STM32_MCO2PRE_NOCLOCK) || defined(__DOXYGEN__)
-  #define STM32_MCO2PRE             0U
   #define STM32_MCO2CLK             0U
 
 #elif (STM32_MCO2PRE_VALUE > STM32_MCO2PRE_NOCLOCK) &&                      \
       (STM32_MCO2PRE_VALUE <= 15)
-  #define STM32_MCO2PRE             STM32_MCO2PRE_FIELD(STM32_MCO2PRE_VALUE)
   #define STM32_MCO2CLK             (STM32_MCO2DIVCLK / STM32_MCO2PRE_VALUE)
 
 #else
@@ -2376,10 +2382,15 @@
 #endif
 
 /**
+ * @brief   MCO2PRE field.
+ */
+#define STM32_MCO2PRE               STM32_MCO2PRE_FIELD(STM32_MCO2PRE_VALUE)
+
+/**
  * @brief   RTC clock frequency.
  */
 #if (STM32_RTCSEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
-  #define STM32_RTCCLK              0
+  #define STM32_RTCCLK              0U
 
 #elif STM32_RTCSEL == STM32_RTCSEL_LSE
   #define STM32_RTCCLK              STM32_LSECLK
@@ -2398,7 +2409,7 @@
  * @brief   LSCO clock frequency.
  */
 #if (STM32_LSCOSEL == STM32_LSCOSEL_NOCLOCK) || defined(__DOXYGEN__)
-  #define STM32_LSCOCLK             0
+  #define STM32_LSCOCLK             0U
 
 #elif STM32_LSCOSEL == STM32_LSCOSEL_LSI
   #define STM32_LSCOCLK             STM32_LSICLK
@@ -3427,22 +3438,22 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_0WS
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_0WS | 0U)
 
 #elif STM32_HCLK <= STM32_1WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_1WS
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_1WS | 0U)
 
 #elif STM32_HCLK <= STM32_2WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_2WS
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_2WS | FLASH_ACR_WRHIGHFREQ_0)
 
 #elif STM32_HCLK <= STM32_3WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_3WS
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_3WS | FLASH_ACR_WRHIGHFREQ_0)
 
 #elif STM32_HCLK <= STM32_4WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_4WS
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_4WS | FLASH_ACR_WRHIGHFREQ_1)
 
 #else
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_5WS
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_5WS | FLASH_ACR_WRHIGHFREQ_1)
 #endif
 
 /*===========================================================================*/
@@ -3531,7 +3542,7 @@ typedef struct {
 #include "stm32_isr.h"
 //#include "stm32_dma.h"
 #include "stm32_exti.h"
-//#include "stm32_rcc.h"
+#include "stm32_rcc.h"
 #include "stm32_tim.h"
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) && !defined(__DOXYGEN__)

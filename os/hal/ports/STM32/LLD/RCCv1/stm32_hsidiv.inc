@@ -100,7 +100,7 @@ __STATIC_INLINE void hsi_reset(void) {
   }
 }
 
-__STATIC_INLINE void hsi16_init(void) {
+__STATIC_INLINE void hsi_init(void) {
 
 #if STM32_HSI_ENABLED
   /* HSI activation.*/
