@@ -278,9 +278,20 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
                 STM32_SDMMC1SEL   | STM32_USBSEL      |
                 STM32_SYSTICKSEL  | STM32_OSPISEL;
   RCC->CCIPR5 = STM32_CKPERSEL    | STM32_SAI2SEL     |
-                STM32_SAI1SEL     | STM32_FDCANSEL    |
-                STM32_CECSEL      | STM32_RNGSEL      |
-                STM32_DACSEL      | STM32_ADCDACSEL;
+                STM32_SAI1SEL     |
+#if STM32_FDCANSEL != STM32_FDCANSEL_IGNORE
+                STM32_FDCANSEL    |
+#endif
+#if STM32_CECSEL != STM32_CECSEL_IGNORE
+                STM32_CECSEL      |
+#endif
+#if STM32_RNGSEL != STM32_RNGSEL_IGNORE
+                STM32_RNGSEL      |
+#endif
+#if STM32_DACSEL != STM32_DACSEL_IGNORE
+                STM32_DACSEL      |
+#endif
+                STM32_ADCDACSEL;
 }
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
@@ -722,11 +733,7 @@ void stm32_clock_init(void) {
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
-  /* Additional PWR configurations.*/
-//  PWR->CR2 = STM32_PWR_CR2;
-//  PWR->CR5 = STM32_CR5BITS;
-
-  /* Core voltage setup, backup domain made accessible.*/
+  /* PWR core voltage setup.*/
   PWR->VOSCR = STM32_PWR_VOSCR;
   while ((PWR->VOSSR & PWR_VOSSR_ACTVOSRDY) == 0U) {
     /* Wait until regulator is stable.*/
