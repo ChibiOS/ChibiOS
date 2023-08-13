@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -14,8 +14,11 @@
     limitations under the License.
 */
 
+#ifndef MCUCONF_H
+#define MCUCONF_H
+
 /*
- * STM32G4xx drivers configuration.
+ * STM32H5xx drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -27,9 +30,6 @@
  * DMA priorities:
  * 0...3        Lowest...Highest.
  */
-
-#ifndef MCUCONF_H
-#define MCUCONF_H
 
 #define STM32H5xx_MCUCONF
 #define STM32H562_MCUCONF
@@ -177,7 +177,9 @@
 #define STM32_IRQ_TIM5_PRIORITY             7
 #define STM32_IRQ_TIM6_PRIORITY             7
 #define STM32_IRQ_TIM7_PRIORITY             7
+#define STM32_IRQ_TIM8_BRK_PRIORITY         7
 #define STM32_IRQ_TIM8_UP_PRIORITY          7
+#define STM32_IRQ_TIM8_CC_PRIORITY          7
 #define STM32_IRQ_TIM8_CC_PRIORITY          7
 #define STM32_IRQ_TIM12_PRIORITY            7
 #define STM32_IRQ_TIM13_PRIORITY            7
@@ -263,7 +265,6 @@
 #define STM32_PWM_USE_TIM15                 FALSE
 #define STM32_PWM_USE_TIM16                 FALSE
 #define STM32_PWM_USE_TIM17                 FALSE
-#define STM32_PWM_USE_TIM20                 FALSE
 
 /*
  * RTC driver system settings.
