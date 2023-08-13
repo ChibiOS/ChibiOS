@@ -1,4 +1,10 @@
 <processors>
+  <processor class="board" target="STM32C0xx">
+    <name>STM32C0xx Board Configuration</name>
+    <path>resources/gencfg/processors/boards/stm32c0xx/templates</path>
+    <default>resources/gencfg/xml/stm32c0board.xml</default>
+    <basefilename>board</basefilename>
+  </processor>
   <processor class="board" target="STM32F0xx">
     <name>STM32F0xx Board Configuration</name>
     <path>resources/gencfg/processors/boards/stm32f0xx/templates</path>
@@ -33,6 +39,12 @@
     <name>STM32G4xx Board Configuration</name>
     <path>resources/gencfg/processors/boards/stm32g4xx/templates</path>
     <default>resources/gencfg/xml/stm32g4board.xml</default>
+    <basefilename>board</basefilename>
+  </processor>
+  <processor class="board" target="STM32H5xx">
+    <name>STM32H5xx Board Configuration</name>
+    <path>resources/gencfg/processors/boards/stm32h5xx/templates</path>
+    <default>resources/gencfg/xml/stm32h5board.xml</default>
     <basefilename>board</basefilename>
   </processor>
   <processor class="board" target="STM32H7xx">

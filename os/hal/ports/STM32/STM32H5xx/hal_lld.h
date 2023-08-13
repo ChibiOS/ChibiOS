@@ -92,10 +92,11 @@
 #define CLK_PCLK1TIM            12U
 #define CLK_PCLK2               13U
 #define CLK_PCLK2TIM            14U
-#define CLK_MCO1                15U
-#define CLK_MCO2                16U
-#define CLK_LSCO                17U
-#define CLK_ARRAY_SIZE          18U
+#define CLK_PCLK3               15U
+#define CLK_MCO1                16U
+#define CLK_MCO2                17U
+#define CLK_LSCO                18U
+#define CLK_ARRAY_SIZE          19U
 /** @} */
 
 /**
@@ -3524,7 +3525,7 @@ typedef struct {
    (clkpt) == CLK_PCLK1TIM  ? STM32_TIMP1CLK        :                       \
    (clkpt) == CLK_PCLK2     ? STM32_PCLK2           :                       \
    (clkpt) == CLK_PCLK2TIM  ? STM32_TIMP2CLK        :                       \
-   (clkpt) == CLK_PCLK2     ? STM32_PCLK3           :                       \
+   (clkpt) == CLK_PCLK3     ? STM32_PCLK3           :                       \
    (clkpt) == CLK_MCO1      ? STM32_MCO1CLK         :                       \
    (clkpt) == CLK_MCO2      ? STM32_MCO2CLK         :                       \
    (clkpt) == CLK_LSCO      ? STM32_LSCOCLK         :                       \
