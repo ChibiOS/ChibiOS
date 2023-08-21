@@ -167,6 +167,35 @@ const void *__spi_doconf_impl(void *ip, const void *config) {
 
   return (const void *)spi_lld_configure(self, (const hal_spi_config_t *)config);
 }
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p drvGetStatusX().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ */
+drv_status_t __spi_gsts_impl(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  return __cbdrv_gsts_impl(self);
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p drvGetAndClearStatusI().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     mask          Flags to be returned and cleared.
+ */
+drv_status_t __spi_gcsts_impl(void *ip, drv_status_t mask) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  return __cbdrv_gcsts_impl(self, mask);
+}
 /** @} */
 
 /**
@@ -178,7 +207,9 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .start                    = __spi_start_impl,
   .stop                     = __spi_stop_impl,
   .doconf                   = __spi_doconf_impl,
-  .setcb                    = __cbdrv_setcb_impl
+  .setcb                    = __cbdrv_setcb_impl,
+  .gsts                     = __spi_gsts_impl,
+  .gcsts                    = __spi_gcsts_impl
 };
 
 /**

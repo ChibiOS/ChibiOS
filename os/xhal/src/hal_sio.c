@@ -596,7 +596,9 @@ const struct hal_sio_driver_vmt __hal_sio_driver_vmt = {
   .start                    = __sio_start_impl,
   .stop                     = __sio_stop_impl,
   .doconf                   = __sio_doconf_impl,
-  .setcb                    = __cbdrv_setcb_impl
+  .setcb                    = __cbdrv_setcb_impl,
+  .gsts                     = __cbdrv_gsts_impl,
+  .gcsts                    = __cbdrv_gcsts_impl
 };
 
 /**

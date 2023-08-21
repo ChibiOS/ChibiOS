@@ -46,17 +46,22 @@ do {
   }
 } while (false)]]></implementation>
         </macro>
-      </group></macros>
+      </group>
+    </macros>
     <types>
-      <typedef name="hal_cb_t">
-        <brief>Generic HAL notification callback type.</brief>
+      <typedef name="drv_status_t">
+        <brief>Type of driver status.</brief>
+        <basetype ctype="eventflags_t" />
+      </typedef>
+      <typedef name="drv_cb_t">
+        <brief>Driver callback type.</brief>
         <basetype ctype="void (*$N)(void *ip)" />
       </typedef>
       <class type="abstract" name="hal_cb_driver" namespace="cbdrv"
         ancestorname="hal_base_driver" descr="callback driver">
         <brief>Class of a callback-based driver.</brief>
         <fields>
-          <field name="cb" ctype="hal_cb_t">
+          <field name="cb" ctype="drv_cb_t">
             <brief>Driver callback.</brief>
             <note>Can be @p NULL.</note>
           </field>
@@ -71,10 +76,8 @@ self->cb = NULL;]]></implementation>
           </dispose>
           <virtual>
             <method name="drvSetCallbackX" ctype="void" shortname="setcb">
-              <brief>
-                Associates a callback to the driver instance.
-              </brief>
-              <param name="cb" ctype="hal_cb_t">
+              <brief>Associates a callback to the driver instance.</brief>
+              <param name="cb" ctype="drv_cb_t">
                 Callback function to be associated. Passing @p NULL
                 disables the existing callback, if any.
               </param>
@@ -83,9 +86,31 @@ self->cb = NULL;]]></implementation>
 
 self->cb = cb;]]></implementation>
             </method>
+            <method name="drvGetStatusX" ctype="drv_status_t" shortname="gsts">
+              <brief>Returns all driver status flags without clearing.</brief>
+              <iclass />
+              <implementation><![CDATA[
+
+(void)self;
+
+return (drv_status_t)0;]]></implementation>
+            </method>
+            <method name="drvGetAndClearStatusI" ctype="drv_status_t" shortname="gcsts">
+              <brief>Returns the specified driver status flags and clears them.</brief>
+              <param name="mask" ctype="drv_status_t" dir="in">Flags to
+                be returned and cleared.
+              </param>
+              <xclass />
+              <implementation><![CDATA[
+
+(void)self;
+(void)mask;
+
+return (drv_status_t)0;]]></implementation>
+            </method>
           </virtual>
           <inline>
-            <method name="drvGetCallbackX" ctype="hal_cb_t">
+            <method name="drvGetCallbackX" ctype="drv_cb_t">
               <brief>Returns the callback associated to the driver instance.</brief>
               <xclass />
               <implementation><![CDATA[

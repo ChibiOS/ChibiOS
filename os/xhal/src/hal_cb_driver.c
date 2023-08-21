@@ -116,10 +116,46 @@ void __cbdrv_dispose_impl(void *ip) {
  * @param         cb            Callback function to be associated. Passing @p
  *                              NULL disables the existing callback, if any.
  */
-void __cbdrv_setcb_impl(void *ip, hal_cb_t cb) {
+void __cbdrv_setcb_impl(void *ip, drv_cb_t cb) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   self->cb = cb;
+}
+
+/**
+ * @memberof    hal_cb_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p drvGetStatusX().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ */
+drv_status_t __cbdrv_gsts_impl(void *ip) {
+  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
+
+  (void)self;
+
+  return (drv_status_t)0;
+}
+
+/**
+ * @memberof    hal_cb_driver_c
+ * @protected
+ *
+ * @brief       Implementation of method @p drvGetAndClearStatusI().
+ * @note        This function is meant to be used by derived classes.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ * @param[in]     mask          Flags to be returned and cleared.
+ */
+drv_status_t __cbdrv_gcsts_impl(void *ip, drv_status_t mask) {
+  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
+
+  (void)self;
+  (void)mask;
+
+  return (drv_status_t)0;
 }
 /** @} */
 

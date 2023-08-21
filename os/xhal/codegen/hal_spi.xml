@@ -25,6 +25,11 @@
           <brief>Selection by LLD-defined mode.</brief>
         </define>
       </group>
+      <group description="SPI status flags">
+        <define name="SPI_STS_FAILED" value="1U">
+          <brief>Last transfer failed because HW error.</brief>
+        </define>
+      </group>
     </definitions_early>
     <configs>
       <config name="SPI_USE_SYNCHRONIZATION" default="TRUE">
@@ -878,6 +883,16 @@ spi_lld_stop(self);]]></implementation>
               <implementation><![CDATA[
 
 return (const void *)spi_lld_configure(self, (const hal_spi_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="gsts">
+              <implementation><![CDATA[
+
+return __cbdrv_gsts_impl(self);]]></implementation>
+            </method>
+            <method shortname="gcsts">
+              <implementation><![CDATA[
+
+return __cbdrv_gcsts_impl(self, mask);]]></implementation>
             </method>
           </override>
         </methods>

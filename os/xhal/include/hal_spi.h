@@ -63,6 +63,16 @@
 #define SPI_SELECT_MODE_LLD                 4
 /** @} */
 
+/**
+ * @name    SPI status flags
+ * @{
+ */
+/**
+ * @brief       Last transfer failed because HW error.
+ */
+#define SPI_STS_FAILED                      1U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -253,7 +263,9 @@ struct hal_spi_driver_vmt {
   void (*stop)(void *ip);
   const void * (*doconf)(void *ip, const void *config);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, hal_cb_t cb);
+  void (*setcb)(void *ip, drv_cb_t cb);
+  drv_status_t (*gsts)(void *ip);
+  drv_status_t (*gcsts)(void *ip, drv_status_t mask);
   /* From hal_spi_driver_c.*/
 };
 
@@ -301,7 +313,7 @@ struct hal_spi_driver {
    * @brief       Driver callback.
    * @note        Can be @p NULL.
    */
-  hal_cb_t                  cb;
+  drv_cb_t                  cb;
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Synchronization point for transfer.
@@ -329,6 +341,8 @@ extern "C" {
   msg_t __spi_start_impl(void *ip);
   void __spi_stop_impl(void *ip);
   const void *__spi_doconf_impl(void *ip, const void *config);
+  drv_status_t __spi_gsts_impl(void *ip);
+  drv_status_t __spi_gcsts_impl(void *ip, drv_status_t mask);
   msg_t spiStartIgnoreI(void *ip, size_t n);
   msg_t spiStartIgnore(void *ip, size_t n);
   msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf);

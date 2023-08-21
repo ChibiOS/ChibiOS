@@ -540,7 +540,9 @@ struct hal_sio_driver_vmt {
   void (*stop)(void *ip);
   const void * (*doconf)(void *ip, const void *config);
   /* From hal_cb_driver_c.*/
-  void (*setcb)(void *ip, hal_cb_t cb);
+  void (*setcb)(void *ip, drv_cb_t cb);
+  drv_status_t (*gsts)(void *ip);
+  drv_status_t (*gcsts)(void *ip, drv_status_t mask);
   /* From hal_sio_driver_c.*/
 };
 
@@ -588,7 +590,7 @@ struct hal_sio_driver {
    * @brief       Driver callback.
    * @note        Can be @p NULL.
    */
-  hal_cb_t                  cb;
+  drv_cb_t                  cb;
 #if (SIO_USE_STREAMS_INTERFACE == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Implemented interface @p asynchronous_channel_i.

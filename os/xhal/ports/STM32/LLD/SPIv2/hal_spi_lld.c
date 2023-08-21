@@ -594,6 +594,9 @@ msg_t spi_lld_start(SPIDriver *spip) {
     osalDbgAssert(false, "invalid SPI instance");
   }
 
+  /* Status cleared.*/
+  spip->sts = (drv_status_t)0;
+
   /* DMA setup.*/
   dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
   dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
@@ -721,6 +724,36 @@ const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
   spi_lld_enable(spip);
 
   return config;
+}
+
+/**
+ * @brief       Implementation of method @p drvGetStatusX().
+ *
+ * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ *
+ * @notapi
+ */
+drv_status_t spi_lld_get_status(hal_spi_driver_c *spip) {
+
+  return spip->sts;
+}
+
+/**
+ * @brief       Implementation of method @p drvGetAndClearStatusI().
+ *
+ * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ * @param[in] mask      flags to be returned and cleared
+ *
+ * @notapi
+ */
+drv_status_t spi_lld_get_clear_status(hal_spi_driver_c *spip,
+                                      drv_status_t mask) {
+  drv_status_t sts;
+
+  sts = spip->sts;
+  spip->sts &= ~mask;
+
+  return sts;
 }
 
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
