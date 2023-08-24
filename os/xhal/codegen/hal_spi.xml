@@ -8,6 +8,26 @@
   </imports>
   <public>
     <definitions_early>
+      <group description="SPI operation modes">
+        <define name="SPI_MODE_CIRCULAR" value="1U &lt;&lt; 0">
+          <brief>Enables the circular buffer mode.</brief>
+        </define>
+        <define name="SPI_MODE_SLAVE" value="1U &lt;&lt; 1">
+          <brief>Enables the slave mode.</brief>
+        </define>
+        <define name="SPI_MODE_FSIZE_MASK" value="3U &lt;&lt; 2">
+          <brief>Memory buffers frame size.</brief>
+        </define>
+        <define name="SPI_MODE_FSIZE_8" value="0U &lt;&lt; 2">
+          <brief>Memory frame size is 8 bits</brief>
+        </define>
+        <define name="SPI_MODE_FSIZE_16" value="1U &lt;&lt; 2">
+          <brief>Memory frame size is 16 bits</brief>
+        </define>
+        <define name="SPI_MODE_FSIZE_32" value="2U &lt;&lt; 2">
+          <brief>Memory frame size is 32 bits</brief>
+        </define>
+      </group>
       <group description="SPI CS modes">
         <define name="SPI_SELECT_MODE_NONE" value="0">
           <brief>@p spiSelect() and @p spiUnselect() do nothing.</brief>
@@ -69,6 +89,10 @@
       </macro>
     </macros>
     <types>
+      <typedef name="spi_mode_t">
+        <brief>Type of SPI transfer mode options.</brief>
+        <basetype ctype="uint_fast16_t" />
+      </typedef>
       <typedef name="hal_spi_driver_c">
         <brief>Type of structure representing a SPI driver.</brief>
         <basetype ctype="struct hal_spi_driver" />
@@ -103,16 +127,9 @@
           architecture dependent, fields.
         </note>
         <fields>
-          <condition check="SPI_SUPPORTS_CIRCULAR == TRUE">
-            <field name="circular" ctype="bool">
-              <brief>Enables the circular buffer mode.</brief>
-            </field>
-          </condition>
-          <condition check="SPI_SUPPORTS_SLAVE_MODE == TRUE">
-            <field name="slave" ctype="bool">
-              <brief>Enables the slave mode.</brief>
-            </field>
-          </condition>
+          <field name="mode" ctype="spi_mode_t">
+            <brief>SPI transfer mode options.</brief>
+          </field>
           <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE">
             <field name="ssline" ctype="ioline_t">
               <brief>The chip select line.</brief>
@@ -146,6 +163,7 @@ spi_lld_config_fields;]]></verbatim>
             <verbatim><![CDATA[
 SPI_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
+          
         </fields>
       </struct>
       <class type="regular" name="hal_spi_driver" namespace="spi"
@@ -199,7 +217,8 @@ osalDbgCheckClassI();
 
 osalDbgCheck((self != NULL) && (n > 0U));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+             ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -268,7 +287,8 @@ osalDbgCheckClassI();
 osalDbgCheck((self != NULL) && (n > 0U) &&
              (rxbuf != NULL) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+             ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -341,7 +361,8 @@ osalDbgCheckClassI();
 
 osalDbgCheck((self != NULL) && (n > 0U) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+             ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -410,7 +431,8 @@ osalDbgCheckClassI();
 
 osalDbgCheck((self != NULL) && (n > 0U) && (rxbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+             ((n & 1U) == 0U));
 #endif
 
 osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");

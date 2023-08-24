@@ -241,7 +241,8 @@ msg_t spiStartIgnoreI(void *ip, size_t n) {
 
   osalDbgCheck((self != NULL) && (n > 0U));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+  osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+               ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -314,7 +315,8 @@ msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf) {
   osalDbgCheck((self != NULL) && (n > 0U) &&
                (rxbuf != NULL) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+  osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+               ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -388,7 +390,8 @@ msg_t spiStartSendI(void *ip, size_t n, const void *txbuf) {
 
   osalDbgCheck((self != NULL) && (n > 0U) && (txbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+  osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+               ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");
@@ -460,7 +463,8 @@ msg_t spiStartReceiveI(void *ip, size_t n, void *rxbuf) {
 
   osalDbgCheck((self != NULL) && (n > 0U) && (rxbuf != NULL));
 #if SPI_SUPPORTS_CIRCULAR
-  osalDbgCheck((__spi_getfield(self, circular) == false) || ((n & 1U) == 0U));
+  osalDbgCheck(((__spi_getfield(self, mode) & SPI_MODE_CIRCULAR) == 0U) ||
+               ((n & 1U) == 0U));
 #endif
 
   osalDbgAssert(self->state == HAL_DRV_STATE_READY, "not ready");

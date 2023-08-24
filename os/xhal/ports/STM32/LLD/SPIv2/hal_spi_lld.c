@@ -120,8 +120,7 @@ SPIDriver SPID6;
  * Default SPI configuration.
  */
 static const hal_spi_config_t spi_default_config = {
-  .circular         = false,
-  .slave            = false,
+  .mode             = 0U,
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
   .ssline           = PAL_LINE(STM32_SPI_DEFAULT_PORT, STM32_SPI_DEFAULT_PAD);
 #elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
@@ -149,7 +148,7 @@ static void spi_lld_enable(SPIDriver *spip) {
   uint32_t cr1, cr2;
 
   /* SPI setup.*/
-  if (config->slave) {
+  if ((config->mode & SPI_MODE_SLAVE) != 0U) {
     cr1  = config->cr1 & ~(SPI_CR1_MSTR | SPI_CR1_SPE);
     cr2  = config->cr2 | SPI_CR2_FRXTH | SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN;
   }
@@ -174,7 +173,7 @@ static void spi_lld_enable(SPIDriver *spip) {
  */
 static void spi_lld_disable(SPIDriver *spip) {
 
-  if (!__spi_getfield(spip, slave)) {
+  if ((__spi_getfield(spip, mode) & SPI_MODE_SLAVE) == 0U) {
     /* Master mode, stopping gracefully.*/
 
     /* Stopping TX DMA channel.*/
@@ -266,7 +265,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     /* Reporting the failure.*/
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
-  else if (__spi_getfield(spip, circular)) {
+  else if ((__spi_getfield(spip, mode) & SPI_MODE_CIRCULAR) != 0U) {
     if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
       __spi_isr_half_code(spip);
@@ -686,6 +685,7 @@ void spi_lld_stop(SPIDriver *spip) {
 const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
                                           const hal_spi_config_t *config) {
   uint32_t ds;
+  spi_mode_t mode = __spi_getfield(spip, mode);
 
   if (config == NULL) {
     config = &spi_default_config;
@@ -695,23 +695,46 @@ const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
   spi_lld_disable(spip);
 
   /* Configuration-specific DMA setup.*/
+  spip->rxdmamode &= ~STM32_DMA_CR_SIZE_MASK;
+  spip->txdmamode &= ~STM32_DMA_CR_SIZE_MASK;
+
+  /* Size of the peripheral port large enough to accommodate the physical
+     frame size.*/
   ds = __spi_getfield(spip, cr2) & SPI_CR2_DS;
   if (!ds || (ds <= (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0))) {
     /* Frame width is 8 bits or smaller.*/
-    spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
-    spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE;
+    spip->rxdmamode |= STM32_DMA_CR_PSIZE_BYTE;
+    spip->txdmamode |= STM32_DMA_CR_PSIZE_BYTE;
   }
   else {
     /* Frame width is larger than 8 bits.*/
-    spip->rxdmamode = (spip->rxdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
-    spip->txdmamode = (spip->txdmamode & ~STM32_DMA_CR_SIZE_MASK) |
-                      STM32_DMA_CR_PSIZE_HWORD | STM32_DMA_CR_MSIZE_HWORD;
+    spip->rxdmamode |= STM32_DMA_CR_PSIZE_HWORD;
+    spip->txdmamode |= STM32_DMA_CR_PSIZE_HWORD;
   }
 
-  if (__spi_getfield(spip, circular)) {
+  /* Size of the memory port as specified in the configuration. This may
+     result in data truncation or zero-padding if the peripheral and memory
+     port sizes differ.
+     The behavior is also different between DMAv1 and DMAv2.*/
+  switch (mode & SPI_MODE_FSIZE_MASK) {
+  case SPI_MODE_FSIZE_8:
+    spip->rxdmamode |= STM32_DMA_CR_MSIZE_BYTE;
+    spip->txdmamode |= STM32_DMA_CR_MSIZE_BYTE;
+    break;
+  case SPI_MODE_FSIZE_16:
+    spip->rxdmamode |= STM32_DMA_CR_MSIZE_HWORD;
+    spip->txdmamode |= STM32_DMA_CR_MSIZE_HWORD;
+    break;
+  case SPI_MODE_FSIZE_32:
+    spip->rxdmamode |= STM32_DMA_CR_MSIZE_WORD;
+    spip->txdmamode |= STM32_DMA_CR_MSIZE_WORD;
+    break;
+  default:
+    /* Unsupported mode.*/
+    return NULL;
+  }
+
+  if ((mode & SPI_MODE_CIRCULAR) != 0U) {
     spip->rxdmamode |= (STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
     spip->txdmamode |= (STM32_DMA_CR_CIRC | STM32_DMA_CR_HTIE);
   }

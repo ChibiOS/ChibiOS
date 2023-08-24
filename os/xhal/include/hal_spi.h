@@ -34,6 +34,41 @@
 /*===========================================================================*/
 
 /**
+ * @name    SPI operation modes
+ * @{
+ */
+/**
+ * @brief       Enables the circular buffer mode.
+ */
+#define SPI_MODE_CIRCULAR                   1U << 0
+
+/**
+ * @brief       Enables the slave mode.
+ */
+#define SPI_MODE_SLAVE                      1U << 1
+
+/**
+ * @brief       Memory buffers frame size.
+ */
+#define SPI_MODE_FSIZE_MASK                 3U << 2
+
+/**
+ * @brief       Memory frame size is 8 bits.
+ */
+#define SPI_MODE_FSIZE_8                    0U << 2
+
+/**
+ * @brief       Memory frame size is 16 bits.
+ */
+#define SPI_MODE_FSIZE_16                   1U << 2
+
+/**
+ * @brief       Memory frame size is 32 bits.
+ */
+#define SPI_MODE_FSIZE_32                   2U << 2
+/** @} */
+
+/**
  * @name    SPI CS modes
  * @{
  */
@@ -151,6 +186,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief       Type of SPI transfer mode options.
+ */
+typedef uint_fast16_t spi_mode_t;
+
+/**
  * @brief       Type of structure representing a SPI driver.
  */
 typedef struct hal_spi_driver hal_spi_driver_c;
@@ -187,18 +227,10 @@ typedef struct hal_spi_driver SPIDriver;
  *              architecture dependent, fields.
  */
 struct hal_spi_config {
-#if (SPI_SUPPORTS_CIRCULAR == TRUE) || defined (__DOXYGEN__)
   /**
-   * @brief       Enables the circular buffer mode.
+   * @brief       SPI transfer mode options.
    */
-  bool                      circular;
-#endif /* SPI_SUPPORTS_CIRCULAR == TRUE */
-#if (SPI_SUPPORTS_SLAVE_MODE == TRUE) || defined (__DOXYGEN__)
-  /**
-   * @brief       Enables the slave mode.
-   */
-  bool                      slave;
-#endif /* SPI_SUPPORTS_SLAVE_MODE == TRUE */
+  spi_mode_t                mode;
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
   /**
    * @brief       The chip select line.
