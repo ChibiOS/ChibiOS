@@ -117,9 +117,11 @@
 #define SB_VSPI_RECEIVE         3
 #define SB_VSPI_SEND            4
 #define SB_VSPI_EXCHANGE        5
+#define SB_VSPI_GETCLRSTS       6
 #define SB_VSPI_SETCFG          0
 #define SB_VSPI_SELECT          1
 #define SB_VSPI_UNSELECT        2
+#define SB_VSPI_GETSTS          3
 /** @} */
 
 /**

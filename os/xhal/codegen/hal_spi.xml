@@ -9,23 +9,29 @@
   <public>
     <definitions_early>
       <group description="SPI operation modes">
-        <define name="SPI_MODE_CIRCULAR" value="1U &lt;&lt; 0">
-          <brief>Enables the circular buffer mode.</brief>
+        <define name="SPI_MODE_FSIZE_POS" value="0U">
+          <brief>Memory buffers frame size bit position.</brief>
         </define>
-        <define name="SPI_MODE_SLAVE" value="1U &lt;&lt; 1">
-          <brief>Enables the slave mode.</brief>
+        <define name="SPI_MODE_FSIZE_MASK" value="(3U &lt;&lt; SPI_MODE_FSIZE_POS)">
+          <brief>Memory buffers frame size mask.</brief>
         </define>
-        <define name="SPI_MODE_FSIZE_MASK" value="3U &lt;&lt; 2">
-          <brief>Memory buffers frame size.</brief>
-        </define>
-        <define name="SPI_MODE_FSIZE_8" value="0U &lt;&lt; 2">
+        <define name="SPI_MODE_FSIZE_8" value="(0U &lt;&lt; SPI_MODE_FSIZE_POS)">
           <brief>Memory frame size is 8 bits</brief>
         </define>
-        <define name="SPI_MODE_FSIZE_16" value="1U &lt;&lt; 2">
+        <define name="SPI_MODE_FSIZE_16" value="(1U &lt;&lt; SPI_MODE_FSIZE_POS)">
           <brief>Memory frame size is 16 bits</brief>
         </define>
-        <define name="SPI_MODE_FSIZE_32" value="2U &lt;&lt; 2">
+        <define name="SPI_MODE_FSIZE_32" value="(2U &lt;&lt; SPI_MODE_FSIZE_POS)">
           <brief>Memory frame size is 32 bits</brief>
+        </define>
+        <define name="SPI_MODE_FSIZE_64" value="(3U &lt;&lt; SPI_MODE_FSIZE_POS)">
+          <brief>Memory frame size is 64 bits</brief>
+        </define>
+        <define name="SPI_MODE_CIRCULAR" value="(1U &lt;&lt; 2)">
+          <brief>Enables the circular buffer mode.</brief>
+        </define>
+        <define name="SPI_MODE_SLAVE" value="(1U &lt;&lt; 3)">
+          <brief>Enables the slave mode.</brief>
         </define>
       </group>
       <group description="SPI CS modes">
@@ -739,7 +745,13 @@ return msg;]]></implementation>
             </condition>
           </regular>
           <inline>
-            <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LLD">
+            <method name="spiGetFrameSizeX" ctype="size_t">
+              <brief>Returns the configured size, in bytes, of data frames.</brief>
+              <implementation><![CDATA[
+
+return (size_t)(1U << ((__spi_getfield(self, mode) & SPI_MODE_FSIZE_MASK) >> SPI_MODE_FSIZE_POS));
+]]></implementation>
+            </method><condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LLD">
               <method name="spiSelectX" ctype="void">
                 <brief>Asserts the slave select signal and prepares for
                   transfers.</brief>
@@ -889,6 +901,7 @@ __cbdrv_invoke_cb_with_transition(self,
                                   HAL_DRV_STATE_READY);
 __spi_wakeup_isr(self, msg);]]></implementation>
             </method>
+            
           </inline>
           <override>
             <method shortname="start">

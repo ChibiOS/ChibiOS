@@ -38,34 +38,44 @@
  * @{
  */
 /**
- * @brief       Enables the circular buffer mode.
+ * @brief       Memory buffers frame size bit position.
  */
-#define SPI_MODE_CIRCULAR                   1U << 0
+#define SPI_MODE_FSIZE_POS                  0U
 
 /**
- * @brief       Enables the slave mode.
+ * @brief       Memory buffers frame size mask.
  */
-#define SPI_MODE_SLAVE                      1U << 1
-
-/**
- * @brief       Memory buffers frame size.
- */
-#define SPI_MODE_FSIZE_MASK                 3U << 2
+#define SPI_MODE_FSIZE_MASK                 (3U << SPI_MODE_FSIZE_POS)
 
 /**
  * @brief       Memory frame size is 8 bits.
  */
-#define SPI_MODE_FSIZE_8                    0U << 2
+#define SPI_MODE_FSIZE_8                    (0U << SPI_MODE_FSIZE_POS)
 
 /**
  * @brief       Memory frame size is 16 bits.
  */
-#define SPI_MODE_FSIZE_16                   1U << 2
+#define SPI_MODE_FSIZE_16                   (1U << SPI_MODE_FSIZE_POS)
 
 /**
  * @brief       Memory frame size is 32 bits.
  */
-#define SPI_MODE_FSIZE_32                   2U << 2
+#define SPI_MODE_FSIZE_32                   (2U << SPI_MODE_FSIZE_POS)
+
+/**
+ * @brief       Memory frame size is 64 bits.
+ */
+#define SPI_MODE_FSIZE_64                   (3U << SPI_MODE_FSIZE_POS)
+
+/**
+ * @brief       Enables the circular buffer mode.
+ */
+#define SPI_MODE_CIRCULAR                   (1U << 2)
+
+/**
+ * @brief       Enables the slave mode.
+ */
+#define SPI_MODE_SLAVE                      (1U << 3)
 /** @} */
 
 /**
@@ -430,6 +440,21 @@ static inline hal_spi_driver_c *spiObjectInit(hal_spi_driver_c *self) {
  * @name        Inline methods of hal_spi_driver_c
  * @{
  */
+/**
+ * @memberof    hal_spi_driver_c
+ * @public
+ *
+ * @brief       Returns the configured size, in bytes, of data frames.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ */
+CC_FORCE_INLINE
+static inline size_t spiGetFrameSizeX(void *ip) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  return (size_t)(1U << ((__spi_getfield(self, mode) & SPI_MODE_FSIZE_MASK) >> SPI_MODE_FSIZE_POS));
+}
+
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined (__DOXYGEN__)
 /**
  * @memberof    hal_spi_driver_c

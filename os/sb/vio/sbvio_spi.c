@@ -126,13 +126,16 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       msg_t msg;
       uint32_t n = ectxp->r1;
       void *rxbuf = (void *)ectxp->r2;
+      size_t bufsize;
 
       if (n == 0U) {
         ectxp->r0 = CH_RET_EINVAL;
         break;
       }
 
-      if (!sb_is_valid_write_range(sbp, rxbuf, n)) { /* TODO frame size */
+      bufsize = n * spiGetFrameSizeX(unitp->spip);
+
+      if (!sb_is_valid_write_range(sbp, rxbuf, bufsize)) {
         ectxp->r0 = (uint32_t)0;
         /* TODO enforce fault instead.*/
         break;
@@ -155,13 +158,16 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       msg_t msg;
       uint32_t n = ectxp->r1;
       const void *txbuf = (const void *)ectxp->r2;
+      size_t bufsize;
 
       if (n == 0U) {
         ectxp->r0 = CH_RET_EINVAL;
         break;
       }
 
-      if (!sb_is_valid_read_range(sbp, txbuf, n)) { /* TODO frame size */
+      bufsize = n * spiGetFrameSizeX(unitp->spip);
+
+      if (!sb_is_valid_read_range(sbp, txbuf, bufsize)) {
         ectxp->r0 = (uint32_t)0;
         /* TODO enforce fault instead.*/
         break;
@@ -182,22 +188,25 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
   case SB_VSPI_EXCHANGE:
     {
       msg_t msg;
-      uint32_t n = ectxp->r1;
+      size_t n = (size_t)ectxp->r1;
       void *rxbuf = (void *)ectxp->r2;
       const void *txbuf = (const void *)ectxp->r3;
+      size_t bufsize;
 
       if (n == 0U) {
         ectxp->r0 = CH_RET_EINVAL;
         break;
       }
 
-      if (!sb_is_valid_write_range(sbp, rxbuf, n)) { /* TODO frame size */
+      bufsize = n * spiGetFrameSizeX(unitp->spip);
+
+      if (!sb_is_valid_write_range(sbp, rxbuf, bufsize)) {
         ectxp->r0 = (uint32_t)0;
         /* TODO enforce fault instead.*/
         break;
       }
 
-      if (!sb_is_valid_read_range(sbp, txbuf, n)) { /* TODO frame size */
+      if (!sb_is_valid_read_range(sbp, txbuf, bufsize)) {
         ectxp->r0 = (uint32_t)0;
         /* TODO enforce fault instead.*/
         break;
@@ -213,6 +222,18 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       chSysUnlock();
 
       ectxp->r0 = (uint32_t)msg;
+      break;
+    }
+  case SB_VSPI_GETCLRSTS:
+    {
+      drv_status_t mask = (size_t)ectxp->r1;
+      drv_status_t sts;
+
+      chSysLock();
+      sts = drvGetAndClearStatusI(unitp->spip, mask);
+      chSysUnlock();
+
+      ectxp->r0 = (uint32_t)sts;
       break;
     }
   default:
@@ -270,6 +291,11 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
     {
       spiUnselectX(unitp->spip);
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      break;
+    }
+  case SB_VSPI_GETSTS:
+    {
+      ectxp->r0 = (uint32_t)drvGetStatusX(unitp->spip);
       break;
     }
   default:
