@@ -21,14 +21,27 @@
 #ifndef MCUCONF_H
 #define MCUCONF_H
 
+#define SANDBOX_MCUCONF
+
+/*
+ * VRQ assignment.
+ * Note, assigned VRQs numbers must match assignments on the host side.
+ */
+#define VIO_VUART1_IRQ                      8
+#define VIO_VUART2_IRQ                      9
+#define VIO_VSPI1_IRQ                       6
+#define VIO_VSPI2_IRQ                       7
+
 /*
  * SIO driver system settings.
  */
 #define SB_SIO_USE_VUART1                   TRUE
 #define SB_SIO_USE_VUART2                   FALSE
-#define SB_SIO_VUART1_IRQ                   8
-#define SB_SIO_VUART2_IRQ                   9
 
-#define SANDBOX_MCUCONF
+/*
+ * SPI driver system settings.
+ */
+#define VIO_SPI_USE_VSPI1                   TRUE
+#define VIO_SPI_USE_VSPI2                   FALSE
 
 #endif /* MCUCONF_H */

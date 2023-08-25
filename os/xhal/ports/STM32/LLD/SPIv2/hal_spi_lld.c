@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    SPIv2/hal_spi_v2_lld.c
- * @brief   STM32 SPI (v2) subsystem low level driver source.
+ * @file    SPIv2/hal_spi_lld.c
+ * @brief   STM32 SPI subsystem low level driver source.
  *
  * @addtogroup SPI
  * @{
@@ -78,6 +78,14 @@
   STM32_DMA_GETCHANNEL(STM32_SPI_SPI6_TX_DMA_STREAM,                        \
                        STM32_SPI6_TX_DMA_CHN)
 
+/**
+ * @name    Low level status information
+ * @{
+ */
+#define SPI_STS_RXDMA_FAIL          (1U << 8)
+#define SPI_STS_TXDMA_FAIL          (1U << 9)
+/** @} */
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -116,8 +124,8 @@ SPIDriver SPID6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
-/*
- * Default SPI configuration.
+/**
+ * @brief   Driver default configuration.
  */
 static const hal_spi_config_t spi_default_config = {
   .mode             = 0U,
@@ -263,6 +271,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
+    spip->sts |= SPI_STS_FAILED | SPI_STS_RXDMA_FAIL;
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
   else if ((__spi_getfield(spip, mode) & SPI_MODE_CIRCULAR) != 0U) {
@@ -305,6 +314,7 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
+    spip->sts |= SPI_STS_FAILED | SPI_STS_TXDMA_FAIL;
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
 }

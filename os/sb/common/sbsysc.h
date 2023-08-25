@@ -38,8 +38,9 @@
  */
 #define SB_FASTC_GET_SYSTIME    1
 #define SB_FASTC_GET_FREQUENCY  2
-#define SB_FASTC_VHAL_VGPIO     96
-#define SB_FASTC_VHAL_VUART     97
+#define SB_FASTC_VIO_VGPIO      96
+#define SB_FASTC_VIO_VUART      97
+#define SB_FASTC_VIO_VSPI       98
 #define SB_FASTC_VRQ_GCSTS      119
 #define SB_FASTC_VRQ_SETWT      120
 #define SB_FASTC_VRQ_CLRWT      121
@@ -66,7 +67,8 @@
 #define SB_SYSC_EVENT_WAIT_ALL  136
 #define SB_SYSC_EVENT_BROADCAST 137
 #define SB_SYSC_LOADELF         138
-#define SB_SYSC_VHAL_VUART      225
+#define SB_SYSC_VIO_VUART       225
+#define SB_SYSC_VIO_VSPI        226
 #define SB_SYSC_VRQ_SET_ALARM   253
 #define SB_SYSC_VRQ_RESET_ALARM 254
 #define SB_SYSC_VRQ_WAIT        255
