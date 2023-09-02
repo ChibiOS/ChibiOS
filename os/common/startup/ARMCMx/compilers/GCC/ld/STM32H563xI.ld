@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32H573xI memory setup.
+ * STM32H563xI memory setup.
  */
 MEMORY
 {

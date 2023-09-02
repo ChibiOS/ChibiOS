@@ -49,8 +49,15 @@
 #error "STM32_HSIDIV_VALUE not defined in mcuconf.h"
 #endif
 
-#if (STM32_HSIDIV_VALUE != 1) && (STM32_HSIDIV_VALUE != 2) &&               \
-    (STM32_HSIDIV_VALUE != 4) && (STM32_HSIDIV_VALUE != 8)
+#if (STM32_HSIDIV_VALUE == 1) || defined(__DOXYGEN__)
+#define STM32_HSIDIV                (0U << RCC_CR_HSIDIV_Pos)
+#elif STM32_HSIDIV_VALUE == 2
+#define STM32_HSIDIV                (1U << RCC_CR_HSIDIV_Pos)
+#elif STM32_HSIDIV_VALUE == 4
+#define STM32_HSIDIV                (2U << RCC_CR_HSIDIV_Pos)
+#elif STM32_HSIDIV_VALUE == 8
+#define STM32_HSIDIV                (3U << RCC_CR_HSIDIV_Pos)
+#else
 #error "invalid STM32_HSIDIV_VALUE value"
 #endif
 
@@ -60,7 +67,7 @@
 #if STM32_HSI_ENABLED || defined(__DOXYGEN__)
 #define STM32_HSICLK                (STM32_HSI64CLK / STM32_HSIDIV_VALUE)
 #else
-#define STM32_HSICLK                0
+#define STM32_HSICLK                0U
 #endif
 
 /*===========================================================================*/
@@ -79,7 +86,13 @@ __STATIC_INLINE void hsi_enable(void) {
 
   RCC->CR |= RCC_CR_HSION;
   while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
-    /* Waiting for HSI16 activation.*/
+    /* Waiting for HSI activation.*/
+  }
+
+  /* Setting up the divider.*/
+  RCC->CR = (RCC->CR & ~RCC_CR_HSIDIV_Msk) | STM32_HSIDIV;
+  while ((RCC->CR & RCC_CR_HSIDIVF) == 0U) {
+    /* Waiting for HSIDIV activation.*/
   }
 }
 
