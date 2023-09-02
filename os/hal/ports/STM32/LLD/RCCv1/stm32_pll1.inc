@@ -262,7 +262,7 @@
 #if ((STM32_PLL1N_VALUE >= STM32_PLL1N_VALUE_MIN) &&                        \
      (STM32_PLL1N_VALUE <= STM32_PLL1N_VALUE_MAX)) ||                       \
     defined(__DOXYGEN__)
-#define STM32_PLL1N                 (STM32_PLL1N_VALUE << RCC_PLL1DIVR_PLL1N_Pos)
+#define STM32_PLL1N                 ((STM32_PLL1N_VALUE - 1U) << RCC_PLL1DIVR_PLL1N_Pos)
 
 #else
 #error "invalid STM32_PLL1N_VALUE value specified"
