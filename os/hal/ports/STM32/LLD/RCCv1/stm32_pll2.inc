@@ -214,7 +214,7 @@
 #if ((STM32_PLL2M_VALUE >= STM32_PLL2M_VALUE_MIN) &&                        \
      (STM32_PLL2M_VALUE <= STM32_PLL2M_VALUE_MAX)) ||                       \
     defined(__DOXYGEN__)
-#define STM32_PLL2M                 ((STM32_PLL2M_VALUE - 1U) << RCC_PLL2CFGR_PLL2M_Pos)
+#define STM32_PLL2M                 (STM32_PLL2M_VALUE << RCC_PLL2CFGR_PLL2M_Pos)
 
 #else
 #error "invalid STM32_PLL2M_VALUE value specified"

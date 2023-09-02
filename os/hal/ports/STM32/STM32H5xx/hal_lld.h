@@ -1445,11 +1445,6 @@
     (STM32_SPI4SEL      == STM32_SPI4SEL_PLL3P)     ||                      \
     (STM32_SPI5SEL      == STM32_SPI5SEL_PLL3P)     ||                      \
     (STM32_SPI6SEL      == STM32_SPI6SEL_PLL3P)     ||                      \
-    (STM32_MCO1SEL      == STM32_MCO1SEL_PLL1P)     ||                      \
-    (STM32_MCO2SEL      == STM32_MCO2SEL_PLL1P)     ||                      \
-    (STM32_SPI1SEL      == STM32_SPI1SEL_PLL1Q)     ||                      \
-    (STM32_SPI2SEL      == STM32_SPI2SEL_PLL1Q)     ||                      \
-    (STM32_SPI3SEL      == STM32_SPI3SEL_PLL1Q)     ||                      \
     (STM32_USBSEL       == STM32_USBSEL_PLL3Q)      ||                      \
     (STM32_I2C1SEL      == STM32_I2C1SEL_PLL3R)     ||                      \
     (STM32_I2C2SEL      == STM32_I2C2SEL_PLL3R)     ||                      \
