@@ -38,6 +38,9 @@
 /* Common.                                                                   */
 /*===========================================================================*/
 
+/* Cache attributes.*/
+#define STM32_HAS_ICACHE                    TRUE
+
 /* DAC attributes.*/
 #define STM32_DAC_HAS_MCR                   TRUE
 

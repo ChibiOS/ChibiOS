@@ -1336,6 +1336,9 @@
 /* Device limits.*/
 #include "stm32_limits.h"
 
+/* ICache handler.*/
+#include "stm32_icache.inc"
+
 /* Clock handlers.*/
 #include "stm32_lsi.inc"
 #include "stm32_csi.inc"

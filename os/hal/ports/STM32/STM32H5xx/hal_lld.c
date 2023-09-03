@@ -772,6 +772,9 @@ void stm32_clock_init(void) {
   }
 #endif
 
+  /* Cache enable.*/
+  icache_init();
+
 #endif /* STM32_NO_INIT */
 }
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */

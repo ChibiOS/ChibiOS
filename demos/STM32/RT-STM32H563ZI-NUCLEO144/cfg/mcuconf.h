@@ -37,10 +37,19 @@
 #define STM32H573_MCUCONF
 
 /*
- * HAL driver system settings.
+ * HAL driver general settings.
  */
 #define STM32_NO_INIT                       FALSE
 #define STM32_CLOCK_DYNAMIC                 FALSE
+
+/*
+ * ICache settings.
+ */
+#define STM32_ICACHE_CR                     (ICACHE_CR_EN)
+#define STM32_ICACHE_CRR0                   (0U)
+#define STM32_ICACHE_CRR1                   (0U)
+#define STM32_ICACHE_CRR2                   (0U)
+#define STM32_ICACHE_CRR3                   (0U)
 
 /*
  * PWR settings.
