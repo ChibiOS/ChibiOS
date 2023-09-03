@@ -88,6 +88,8 @@
  * @brief   Low level fields of the SPI driver structure.
  */
 #define spi_lld_driver_fields                                               \
+  /* Driver status.*/                                                       \
+  drv_status_t              sts;                                            \
   /* Number of the associated VSPI.*/                                       \
   uint32_t                  nvspi
 

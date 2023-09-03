@@ -80,6 +80,47 @@ static inline uint32_t __spi_vspi_setcfg(uint32_t nvuart, uint32_t ncfg) {
   return (uint32_t)r0;
 }
 
+/**
+ * @brief   Shared end-of-rx service routine.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ */
+static void sio_lld_serve_interrupt(SPIDriver *spip) {
+
+  /* DMA errors handling.*/
+  if ((flags & (STM32_DMA_ISR_TEIF | STM32_DMA_ISR_DMEIF)) != 0) {
+#if defined(STM32_SPI_DMA_ERROR_HOOK)
+    /* Hook first, if defined.*/
+    STM32_SPI_DMA_ERROR_HOOK(spip);
+#endif
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
+
+    /* Reporting the failure.*/
+    spip->sts |= SPI_STS_FAILED | SPI_STS_RXDMA_FAIL;
+    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
+  }
+  else if ((__spi_getfield(spip, mode) & SPI_MODE_CIRCULAR) != 0U) {
+    if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
+      /* Half buffer interrupt.*/
+      __spi_isr_half_code(spip);
+    }
+    if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
+      /* End buffer interrupt.*/
+      __spi_isr_full_code(spip);
+    }
+  }
+  else {
+    /* Stopping DMAs.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
+
+    /* Operation finished interrupt.*/
+    __spi_isr_complete_code(spip);
+  }
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -124,11 +165,13 @@ void spi_lld_init(void) {
   /* Driver instances initialization.*/
 #if SB_SPI_USE_VSPI1 == TRUE
   sioObjectInit(&SPID1);
+  SPID1.sts    = 0U;
   SPID1.nvuart = 0U;
   __sb_vrq_seten(1U << VIO_VSPI1_IRQ);
 #endif
 #if SB_SPI_USE_VSPI2 == TRUE
   sioObjectInit(&SPID2);
+  SPID2.sts    = 0U;
   SPID2.nvuart = 1U;
   __sb_vrq_seten(1U << VIO_VSPI2_IRQ);
 #endif
@@ -161,6 +204,9 @@ msg_t spi_lld_start(SPIDriver *spip) {
   else {
     osalDbgAssert(false, "invalid SPI instance");
   }
+
+  /* Status cleared.*/
+  spip->sts = (drv_status_t)0;
 
   /* Configures the peripheral.*/
   spi_lld_configure(spip, &default_config);
@@ -222,6 +268,10 @@ const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
  */
 drv_status_t spi_lld_get_status(hal_spi_driver_c *spip) {
 
+  __syscall1r(98, VIO_CALL(SB_VSPI_GETSTS, siop->nvuart));
+  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+
+  return (sioevents_t)r0;
 }
 
 /**
@@ -235,6 +285,10 @@ drv_status_t spi_lld_get_status(hal_spi_driver_c *spip) {
 drv_status_t spi_lld_get_clear_status(hal_spi_driver_c *spip,
                                       drv_status_t mask) {
 
+  __syscall2r(226, VIO_CALL(SB_VSPI_GETCLRSTS, spip->nvspi), mask);
+  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+
+  return (sioevents_t)r0;
 }
 
 #if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
@@ -279,6 +333,10 @@ void spi_lld_unselect(SPIDriver *spip) {
  */
 msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 
+  __syscall2r(226, VIO_CALL(SB_VSPI_PULSES, spip->nvspi), n);
+  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+
+  return (sioevents_t)r0;
 }
 
 /**
@@ -300,6 +358,10 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                        const void *txbuf, void *rxbuf) {
 
+  __syscall4r(226, VIO_CALL(SB_VSPI_EXCHANGE, spip->nvspi), n, txbuf, rxbuf);
+  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+
+  return (sioevents_t)r0;
 }
 
 /**
@@ -318,6 +380,10 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
  */
 msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
+  __syscall3r(226, VIO_CALL(SB_VSPI_SEND, spip->nvspi), n, txbuf);
+  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+
+  return (sioevents_t)r0;
 }
 
 /**
@@ -336,6 +402,10 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
+  __syscall3r(226, VIO_CALL(SB_VSPI_RECEIVE, spip->nvspi), n, rxbuf);
+  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+
+  return (sioevents_t)r0;
 }
 
 /**
@@ -350,6 +420,10 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  */
 msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
 
+  __syscall2r(226, VIO_CALL(SB_VSPI_STOP, spip->nvspi), sizep);
+  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
+
+  return (sioevents_t)r0;
 }
 
 /**

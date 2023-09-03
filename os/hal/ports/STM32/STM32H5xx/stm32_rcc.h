@@ -233,10 +233,10 @@
 #define rccEnableAHB1(mask, lp) {                                           \
   RCC->AHB1ENR |= (mask);                                                   \
   if (lp)                                                                   \
-    RCC->AHB1SMENR |= (mask);                                               \
+    RCC->AHB1LPENR |= (mask);                                               \
   else                                                                      \
-    RCC->AHB1SMENR &= ~(mask);                                              \
-  (void)RCC->AHB1SMENR;                                                     \
+    RCC->AHB1LPENR &= ~(mask);                                              \
+  (void)RCC->AHB1LPENR;                                                     \
 }
 
 /**
@@ -248,8 +248,8 @@
  */
 #define rccDisableAHB1(mask) {                                              \
   RCC->AHB1ENR &= ~(mask);                                                  \
-  RCC->AHB1SMENR &= ~(mask);                                                \
-  (void)RCC->AHB1SMENR;                                                     \
+  RCC->AHB1LPENR &= ~(mask);                                                \
+  (void)RCC->AHB1LPENR;                                                     \
 }
 
 /**
@@ -276,10 +276,10 @@
 #define rccEnableAHB2(mask, lp) {                                           \
   RCC->AHB2ENR |= (mask);                                                   \
   if (lp)                                                                   \
-    RCC->AHB2SMENR |= (mask);                                               \
+    RCC->AHB2LPENR |= (mask);                                               \
   else                                                                      \
-    RCC->AHB2SMENR &= ~(mask);                                              \
-  (void)RCC->AHB2SMENR;                                                     \
+    RCC->AHB2LPENR &= ~(mask);                                              \
+  (void)RCC->AHB2LPENR;                                                     \
 }
 
 /**
@@ -291,8 +291,8 @@
  */
 #define rccDisableAHB2(mask) {                                              \
   RCC->AHB2ENR &= ~(mask);                                                  \
-  RCC->AHB2SMENR &= ~(mask);                                                \
-  (void)RCC->AHB2SMENR;                                                     \
+  RCC->AHB2LPENR &= ~(mask);                                                \
+  (void)RCC->AHB2LPENR;                                                     \
 }
 
 /**
