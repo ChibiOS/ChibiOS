@@ -766,6 +766,7 @@ void stm32_clock_init(void) {
   /* Switching to the configured SYSCLK source if it is different from HSI.*/
 #if STM32_SW != STM32_SW_HSI
   RCC->CFGR1 |= STM32_SW;       /* Switches on the selected clock source.   */
+//  while(1);
   while ((RCC->CFGR1 & STM32_SWS_MASK) != (STM32_SW << 3)) {
     /* Wait until SYSCLK is stable.*/
   }

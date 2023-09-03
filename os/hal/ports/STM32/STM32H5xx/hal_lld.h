@@ -103,11 +103,11 @@
  * @name    VOS field definitions
  * @{
  */
-#define STM32_VOS_MASK          (3U << 14)  /**< Core voltage mask.         */
-#define STM32_VOS_RANGE3        (0U << 14)  /**< Core voltage 1 Volt.       */
-#define STM32_VOS_RANGE2        (1U << 14)  /**< Core voltage 1.1 Volts.    */
-#define STM32_VOS_RANGE1        (2U << 14)  /**< Core voltage 1.2 Volts.    */
-#define STM32_VOS_RANGE0        (3U << 14)  /**< Core voltage 1.35 Volts.   */
+#define STM32_VOS_MASK          (3U << 4)   /**< Core voltage mask.         */
+#define STM32_VOS_RANGE3        (0U << 4)   /**< Core voltage 1 Volt.       */
+#define STM32_VOS_RANGE2        (1U << 4)   /**< Core voltage 1.1 Volts.    */
+#define STM32_VOS_RANGE1        (2U << 4)   /**< Core voltage 1.2 Volts.    */
+#define STM32_VOS_RANGE0        (3U << 4)   /**< Core voltage 1.35 Volts.   */
 /** @} */
 
 /**
