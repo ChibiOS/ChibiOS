@@ -114,8 +114,9 @@
  * @name    RCC_CR register bits definitions
  * @{
  */
-#define STM32_HSIDIV_MASK       (3U << 3)
-#define STM32_HSIDIV_FIELD(n)   ((n) << 3)
+#define STM32_HSIDIV_POS        3
+#define STM32_HSIDIV_MASK       (3U << STM32_HSIDIV_POS)
+#define STM32_HSIDIV_FIELD(n)   ((n) << STM32_HSIDIV_POS)
 #define STM32_HSIDIV_DIV1       STM32_HSIDIV_FIELD(0U)
 #define STM32_HSIDIV_DIV2       STM32_HSIDIV_FIELD(1U)
 #define STM32_HSIDIV_DIV4       STM32_HSIDIV_FIELD(2U)
@@ -128,15 +129,15 @@
  */
 #define STM32_SW_MASK           (3U << 0)
 #define STM32_SW_FIELD(n)       ((n) << 0)
-#define STM32_SW_HSI            STM32_SW_FIELD(1U)
-#define STM32_SW_CSI            STM32_SW_FIELD(2U)
+#define STM32_SW_HSI            STM32_SW_FIELD(0U)
+#define STM32_SW_CSI            STM32_SW_FIELD(1U)
 #define STM32_SW_HSE            STM32_SW_FIELD(2U)
 #define STM32_SW_PLL1P          STM32_SW_FIELD(3U)
 
 #define STM32_SWS_MASK          (3U << 3)
 #define STM32_SWS_FIELD(n)      ((n) << 3)
-#define STM32_SWS_HSI           STM32_SWS_FIELD(1U)
-#define STM32_SWS_CSI           STM32_SWS_FIELD(2U)
+#define STM32_SWS_HSI           STM32_SWS_FIELD(0U)
+#define STM32_SWS_CSI           STM32_SWS_FIELD(1U)
 #define STM32_SWS_HSE           STM32_SWS_FIELD(2U)
 #define STM32_SWS_PLL1P         STM32_SWS_FIELD(3U)
 
@@ -169,7 +170,7 @@
 
 #define STM32_MCO1PRE_MASK      (7U << 18)
 #define STM32_MCO1PRE_FIELD(n)  ((n) << 18)
-#define STM32_MCO1PRE_NOCLOCK    STM32_MCO1PRE_FIELD(0U)
+#define STM32_MCO1PRE_NOCLOCK   STM32_MCO1PRE_FIELD(0U)
 
 #define STM32_MCO2SEL_MASK      (7U << 29)
 #define STM32_MCO2SEL_FIELD(n)  ((n) << 29)
@@ -183,33 +184,69 @@
 
 #define STM32_MCO2PRE_MASK      (7U << 18)
 #define STM32_MCO2PRE_FIELD(n)  ((n) << 18)
-#define STM32_MCO2PRE_NOCLOCK    STM32_MCO2PRE_FIELD(0U)
+#define STM32_MCO2PRE_NOCLOCK   STM32_MCO2PRE_FIELD(0U)
 /** @} */
 
 /**
  * @name    RCC_PLLxCFGR register bits definitions
  * @{
  */
-#define STM32_PLL1SRC_MASK       (3 << 0)
-#define STM32_PLL1SRC_FIELD(n)   ((n) << 0)
-#define STM32_PLL1SRC_NOCLOCK    STM32_PLL1SRC_FIELD(0U)
-#define STM32_PLL1SRC_HSI        STM32_PLL1SRC_FIELD(1U)
-#define STM32_PLL1SRC_CSI        STM32_PLL1SRC_FIELD(2U)
-#define STM32_PLL1SRC_HSE        STM32_PLL1SRC_FIELD(3U)
+#define STM32_PLLREN_POS        18
+#define STM32_PLLREN            (1U << STM32_PLLREN_POS)
 
-#define STM32_PLL2SRC_MASK       (3 << 0)
-#define STM32_PLL2SRC_FIELD(n)   ((n) << 0)
-#define STM32_PLL2SRC_NOCLOCK    STM32_PLL2SRC_FIELD(0U)
-#define STM32_PLL2SRC_HSI        STM32_PLL2SRC_FIELD(1U)
-#define STM32_PLL2SRC_CSI        STM32_PLL2SRC_FIELD(2U)
-#define STM32_PLL2SRC_HSE        STM32_PLL2SRC_FIELD(3U)
+#define STM32_PLLQEN_POS        17
+#define STM32_PLLQEN            (1U << STM32_PLLQEN_POS)
 
-#define STM32_PLL3SRC_MASK       (3 << 0)
-#define STM32_PLL3SRC_FIELD(n)   ((n) << 0)
-#define STM32_PLL3SRC_NOCLOCK    STM32_PLL3SRC_FIELD(0U)
-#define STM32_PLL3SRC_HSI        STM32_PLL3SRC_FIELD(1U)
-#define STM32_PLL3SRC_CSI        STM32_PLL3SRC_FIELD(2U)
-#define STM32_PLL3SRC_HSE        STM32_PLL3SRC_FIELD(3U)
+#define STM32_PLLPEN_POS        16
+#define STM32_PLLPEN            (1U << STM32_PLLPEN_POS)
+
+#define STM32_PLLM_POS          8
+#define STM32_PLLM_MASK         (0x3FU << STM32_PLLM_POS)
+#define STM32_PLLM_FIELD(n)     ((n) << STM32_PLLM_POS)
+
+#define STM32_PLLSRC_POS        0
+#define STM32_PLLSRC_MASK       (3U << STM32_PLLSRC_POS)
+#define STM32_PLLSRC_FIELD(n)   ((n) << STM32_PLLSRC_POS)
+#define STM32_PLLSRC_NOCLOCK    STM32_PLLSRC_FIELD(0U)
+#define STM32_PLLSRC_HSI        STM32_PLLSRC_FIELD(1U)
+#define STM32_PLLSRC_CSI        STM32_PLLSRC_FIELD(2U)
+#define STM32_PLLSRC_HSE        STM32_PLLSRC_FIELD(3U)
+
+#define STM32_PLL1SRC_NOCLOCK   STM32_PLLSRC_NOCLOCK
+#define STM32_PLL1SRC_HSI       STM32_PLLSRC_HSI
+#define STM32_PLL1SRC_CSI       STM32_PLLSRC_CSI
+#define STM32_PLL1SRC_HSE       STM32_PLLSRC_HSE
+
+#define STM32_PLL2SRC_NOCLOCK   STM32_PLLSRC_NOCLOCK
+#define STM32_PLL2SRC_HSI       STM32_PLLSRC_HSI
+#define STM32_PLL2SRC_CSI       STM32_PLLSRC_CSI
+#define STM32_PLL2SRC_HSE       STM32_PLLSRC_HSE
+
+#define STM32_PLL3SRC_NOCLOCK   STM32_PLLSRC_NOCLOCK
+#define STM32_PLL3SRC_HSI       STM32_PLLSRC_HSI
+#define STM32_PLL3SRC_CSI       STM32_PLLSRC_CSI
+#define STM32_PLL3SRC_HSE       STM32_PLLSRC_HSE
+/** @} */
+
+/**
+ * @name    RCC_PLLxDIVR register bits definitions
+ * @{
+ */
+#define STM32_PLLR_POS          24
+#define STM32_PLLR_MASK         (0x7FU << STM32_PLLR_POS)
+#define STM32_PLLR_FIELD(n)     ((n) << STM32_PLLR_POS)
+
+#define STM32_PLLQ_POS          16
+#define STM32_PLLQ_MASK         (0x7FU << STM32_PLLQ_POS)
+#define STM32_PLLQ_FIELD(n)     ((n) << STM32_PLLQ_POS)
+
+#define STM32_PLLP_POS          9
+#define STM32_PLLP_MASK         (0x7FU << STM32_PLLP_POS)
+#define STM32_PLLP_FIELD(n)     ((n) << STM32_PLLP_POS)
+
+#define STM32_PLLN_POS          0
+#define STM32_PLLN_MASK         (0x1FFU << STM32_PLLN_POS)
+#define STM32_PLLN_FIELD(n)     ((n) << STM32_PLLN_POS)
 /** @} */
 
 /**
@@ -3471,6 +3508,15 @@ typedef unsigned halclkpt_t;
 typedef uint32_t halfreq_t;
 
 /**
+ * @brief   Type of PLL configuration registers.
+ */
+typedef struct {
+  uint32_t          cfgr;
+  uint32_t          divr;
+  uint32_t          frac;
+} stm32_pll_regs_t;
+
+/**
  * @brief   Type of a clock configuration structure.
  */
 typedef struct {
@@ -3479,16 +3525,8 @@ typedef struct {
   uint32_t          rcc_cr;
   uint32_t          rcc_cfgr1;
   uint32_t          rcc_cfgr2;
-  uint32_t          rcc_pll1cfgr;
-  uint32_t          rcc_pll2cfgr;
-  uint32_t          rcc_pll3cfgr;
-  uint32_t          rcc_pll1divr;
-  uint32_t          rcc_pll1fracr;
-  uint32_t          rcc_pll2divr;
-  uint32_t          rcc_pll2fracr;
-  uint32_t          rcc_pll3divr;
-  uint32_t          rcc_pll3fracr;
   uint32_t          flash_acr;
+  stm32_pll_regs_t  plls[3];
 } halclkcfg_t;
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -3539,7 +3577,7 @@ typedef struct {
 #include "cache.h"
 //#include "mpu_v8m.h"
 #include "stm32_isr.h"
-//#include "stm32_dma.h"
+//#include "stm32_gpdma.h"
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
 #include "stm32_tim.h"
