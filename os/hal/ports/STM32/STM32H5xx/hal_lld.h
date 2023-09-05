@@ -95,7 +95,7 @@
 #define CLK_PCLK3               15U
 #define CLK_MCO1                16U
 #define CLK_MCO2                17U
-#define CLK_LSCO                18U
+#define CLK_HSI48               18U
 #define CLK_ARRAY_SIZE          19U
 /** @} */
 
@@ -134,8 +134,9 @@
 #define STM32_SW_HSE            STM32_SW_FIELD(2U)
 #define STM32_SW_PLL1P          STM32_SW_FIELD(3U)
 
-#define STM32_SWS_MASK          (3U << 3)
-#define STM32_SWS_FIELD(n)      ((n) << 3)
+#define STM32_SWS_POS           RCC_CFGR1_SWS_Pos
+#define STM32_SWS_MASK          RCC_CFGR1_SWS_Msk
+#define STM32_SWS_FIELD(n)      ((n) << STM32_SWS_POS)
 #define STM32_SWS_HSI           STM32_SWS_FIELD(0U)
 #define STM32_SWS_CSI           STM32_SWS_FIELD(1U)
 #define STM32_SWS_HSE           STM32_SWS_FIELD(2U)
@@ -160,21 +161,23 @@
 #define STM32_TIMPRE_LOW        STM32_TIMPRE_FIELD(0U)
 #define STM32_TIMPRE_HIGH       STM32_TIMPRE_FIELD(1U)
 
-#define STM32_MCO1SEL_MASK      (7U << 22)
-#define STM32_MCO1SEL_FIELD(n)  ((n) << 22)
+#define STM32_MCO1SEL_POS       RCC_CFGR1_MCO1SEL_Pos
+#define STM32_MCO1SEL_MASK      RCC_CFGR1_MCO1SEL_Msk
+#define STM32_MCO1SEL_FIELD(n)  ((n) << STM32_MCO1SEL_POS)
 #define STM32_MCO1SEL_HSI       STM32_MCO1PRE_FIELD(0U)
 #define STM32_MCO1SEL_LSE       STM32_MCO1PRE_FIELD(1U)
 #define STM32_MCO1SEL_HSE       STM32_MCO1PRE_FIELD(2U)
 #define STM32_MCO1SEL_PLL1P     STM32_MCO1PRE_FIELD(3U)
 #define STM32_MCO1SEL_HSI48     STM32_MCO1PRE_FIELD(4U)
 
-#define STM32_MCO1PRE_MASK      (7U << 18)
-#define STM32_MCO1PRE_FIELD(n)  ((n) << 18)
+#define STM32_MCO1PRE_POS       RCC_CFGR1_MCO1PRE_Pos
+#define STM32_MCO1PRE_MASK      RCC_CFGR1_MCO1PRE_Msk
+#define STM32_MCO1PRE_FIELD(n)  ((n) << STM32_MCO1PRE_POS)
 #define STM32_MCO1PRE_NOCLOCK   STM32_MCO1PRE_FIELD(0U)
 
-#define STM32_MCO2SEL_MASK      (7U << 29)
-#define STM32_MCO2SEL_FIELD(n)  ((n) << 29)
-
+#define STM32_MCO2PRE_POS       RCC_CFGR1_MCO2PRE_Pos
+#define STM32_MCO2SEL_MASK      RCC_CFGR1_MCO2SEL_Msk
+#define STM32_MCO2SEL_FIELD(n)  ((n) << STM32_MCO2PRE_POS)
 #define STM32_MCO2SEL_SYSCLK    STM32_MCO2PRE_FIELD(0U)
 #define STM32_MCO2SEL_PLL2P     STM32_MCO2PRE_FIELD(1U)
 #define STM32_MCO2SEL_HSE       STM32_MCO2PRE_FIELD(2U)
@@ -203,6 +206,18 @@
 #define STM32_PLLM_POS          8
 #define STM32_PLLM_MASK         (0x3FU << STM32_PLLM_POS)
 #define STM32_PLLM_FIELD(n)     ((n) << STM32_PLLM_POS)
+
+#define STM32_PLLVCOSEL_POS     5
+#define STM32_PLLVCOSEL_MASK    (1U << STM32_PLLVCOSEL_POS)
+#define STM32_PLLVCOSEL         (1U << STM32_PLLVCOSEL_POS)
+
+#define STM32_PLLFRACEN_POS     4
+#define STM32_PLLFRACEN_MASK    (1U << STM32_PLLFRACEN_POS)
+#define STM32_PLLFRACEN         (1U << STM32_PLLFRACEN_POS)
+
+#define STM32_PLLRGE_POS        2
+#define STM32_PLLRGE_MASK       (3U << STM32_PLLRGE_POS)
+#define STM32_PLLRGE_FIELD(n)   ((n) << STM32_PLLRGE_POS)
 
 #define STM32_PLLSRC_POS        0
 #define STM32_PLLSRC_MASK       (3U << STM32_PLLSRC_POS)
@@ -3564,7 +3579,7 @@ typedef struct {
    (clkpt) == CLK_PCLK3     ? STM32_PCLK3           :                       \
    (clkpt) == CLK_MCO1      ? STM32_MCO1CLK         :                       \
    (clkpt) == CLK_MCO2      ? STM32_MCO2CLK         :                       \
-   (clkpt) == CLK_LSCO      ? STM32_LSCOCLK         :                       \
+   (clkpt) == CLK_HSI48     ? STM32_HSI48CLK        :                       \
    0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 

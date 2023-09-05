@@ -120,7 +120,7 @@ const halclkcfg_t hal_clkcfg_default = {
 #if STM32_CSI_ENABLED
                         | RCC_CR_CSION
 #endif
-#if STM32_HSIDIV_ENABLED
+#if STM32_HSI_ENABLED
                         | STM32_HSIDIV | RCC_CR_HSION
 #endif
                           ,
@@ -184,7 +184,7 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_PCLK3]           = STM32_PCLK3,
   [CLK_MCO1]            = STM32_MCO2CLK,
   [CLK_MCO2]            = STM32_MCO1CLK,
-  [CLK_LSCO]            = STM32_LSCOCLK
+  [CLK_HSI48]           = STM32_HSI48CLK
 };
 
 /**
@@ -343,14 +343,13 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
   const system_limits_t *slp;
-  halfreq_t hsiclk = 0U, csiclk = 0U, hseclk = 0U;
+  uint32_t n, flashws;
+  halfreq_t hsiclk = 0U, hsi48clk = 0U, csiclk = 0U, hseclk = 0U;
   halfreq_t pll1selclk, pll2selclk, pll3selclk;
   halfreq_t pll1pclk = 0U, pll1qclk = 0U, pll1rclk = 0U;
   halfreq_t pll2pclk = 0U, pll2qclk = 0U, pll2rclk = 0U;
   halfreq_t pll3pclk = 0U, pll3qclk = 0U, pll3rclk = 0U;
-  halfreq_t sysclk, hclk, pclk1, pclk2, pclk1tim, pclk2tim, mcoclk;
-  uint32_t mcodiv, flashws;
-  uint32_t n;
+  halfreq_t sysclk, hclk, pclk1, pclk2, pclk3, pclk1tim, pclk2tim, mco1clk, mco2clk;
 
   /* System limits based on desired VOS settings.*/
   switch (ccp->pwr_voscr) {
@@ -370,6 +369,16 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     return true;
   }
 
+  /* HSE clock.*/
+  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
+    hseclk = STM32_HSECLK;
+  }
+
+  /* HSI48 clock after divider.*/
+  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
+    hsi48clk = STM32_HSI48CLK;
+  }
+
   /* HSI clock after divider.*/
   if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
     hsiclk = STM32_HSI64CLK / (1U << ((ccp->rcc_cr & STM32_HSIDIV_MASK) >> STM32_HSIDIV_POS));
@@ -378,11 +387,6 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   /* CSI clock.*/
   if ((ccp->rcc_cr & RCC_CR_CSION) != 0U) {
     csiclk = STM32_CSICLK;
-  }
-
-  /* HSE clock.*/
-  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
-    hseclk = STM32_HSECLK;
   }
 
   /* PLL1 MUX clock.*/
@@ -432,31 +436,31 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* PLL1 outputs.*/
   if ((ccp->rcc_cr & RCC_CR_PLL1ON) != 0U) {
-    uint32_t pll1mdiv, pll1ndiv, pll1pdiv, pll1qdiv, pll1rdiv;
-    halfreq_t pll1vcoclk;
+    uint32_t mdiv, ndiv;
+    halfreq_t vcoclk;
 
     /* PLL1 M divider.*/
-    pll1mdiv = (ccp->plls[0].cfgr & STM32_PLLM_MASK) >> STM32_PLLM_POS;
+    mdiv = (ccp->plls[0].cfgr & STM32_PLLM_MASK) >> STM32_PLLM_POS;
 
     /* PLL1 N divider.*/
-    pll1ndiv = ((ccp->plls[0].divr & STM32_PLLN_MASK) >> STM32_PLLN_POS) + 1U;
-    if (pll1ndiv < STM32_PLL1N_VALUE_MIN) {
+    ndiv = ((ccp->plls[0].divr & STM32_PLLN_MASK) >> STM32_PLLN_POS) + 1U;
+    if (ndiv < STM32_PLL1N_VALUE_MIN) {
       return true;
     }
 
     /* PLL1 VCO frequency.*/
-    pll1vcoclk = (pll1selclk / (halfreq_t)pll1mdiv) * (halfreq_t)pll1ndiv;
-    if ((pll1vcoclk < STM32_PLLVCO_MIN) || (pll1vcoclk > STM32_PLLVCO_MAX)) {
+    vcoclk = (pll1selclk / (halfreq_t)mdiv) * (halfreq_t)ndiv;
+    if ((vcoclk < STM32_PLLVCO_MIN) || (vcoclk > STM32_PLLVCO_MAX)) {
       return true;
     }
 
     /* PLL1 P output frequency.*/
     if ((ccp->plls[0].cfgr & STM32_PLLPEN) != 0U) {
-      pll1pdiv = ((ccp->plls[0].divr & STM32_PLLP_MASK) >> STM32_PLLP_POS) + 1U;
-      if ((pll1pdiv & 1U) != 0U) {  /* Cannot be odd, PLL1P-only.*/
+      n = ((ccp->plls[0].divr & STM32_PLLP_MASK) >> STM32_PLLP_POS) + 1U;
+      if ((n & 1U) != 0U) {  /* Cannot be odd, PLL1P-only.*/
         return true;
       }
-      pll1pclk = pll1vcoclk / pll1pdiv;
+      pll1pclk = vcoclk / n;
       if ((pll1pclk < STM32_PLLP_MIN) || (pll1pclk > STM32_PLLP_MAX)) {
         return true;
       }
@@ -464,8 +468,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
     /* PLL1 Q output frequency.*/
     if ((ccp->plls[0].cfgr & STM32_PLLQEN) != 0U) {
-      pll1qdiv = ((ccp->plls[0].divr & STM32_PLLQ_MASK) >> STM32_PLLQ_POS) + 1U;
-      pll1qclk = pll1vcoclk / pll1qdiv;
+      n = ((ccp->plls[0].divr & STM32_PLLQ_MASK) >> STM32_PLLQ_POS) + 1U;
+      pll1qclk = vcoclk / n;
       if ((pll1qclk < STM32_PLLQ_MIN) || (pll1qclk > STM32_PLLQ_MAX)) {
         return true;
       }
@@ -473,9 +477,105 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
     /* PLL1 R output frequency.*/
     if ((ccp->plls[0].cfgr & STM32_PLLREN) != 0U) {
-      pll1rdiv = ((ccp->plls[0].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
-      pll1rclk = pll1vcoclk / pll1rdiv;
+      n = ((ccp->plls[0].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
+      pll1rclk = vcoclk / n;
       if ((pll1rclk < STM32_PLLR_MIN) || (pll1qclk > STM32_PLLR_MAX)) {
+        return true;
+      }
+    }
+  }
+
+  /* PLL2 outputs.*/
+  if ((ccp->rcc_cr & RCC_CR_PLL2ON) != 0U) {
+    uint32_t mdiv, ndiv;
+    halfreq_t vcoclk;
+
+    /* PLL2 M divider.*/
+    mdiv = (ccp->plls[1].cfgr & STM32_PLLM_MASK) >> STM32_PLLM_POS;
+
+    /* PLL2 N divider.*/
+    ndiv = ((ccp->plls[1].divr & STM32_PLLN_MASK) >> STM32_PLLN_POS) + 1U;
+    if (ndiv < STM32_PLL2N_VALUE_MIN) {
+      return true;
+    }
+
+    /* PLL2 VCO frequency.*/
+    vcoclk = (pll2selclk / (halfreq_t)mdiv) * (halfreq_t)ndiv;
+    if ((vcoclk < STM32_PLLVCO_MIN) || (vcoclk > STM32_PLLVCO_MAX)) {
+      return true;
+    }
+
+    /* PLL2 P output frequency.*/
+    if ((ccp->plls[1].cfgr & STM32_PLLPEN) != 0U) {
+      n = ((ccp->plls[1].divr & STM32_PLLP_MASK) >> STM32_PLLP_POS) + 1U;
+      pll2pclk = vcoclk / n;
+      if ((pll2pclk < STM32_PLLP_MIN) || (pll2pclk > STM32_PLLP_MAX)) {
+        return true;
+      }
+    }
+
+    /* PLL2 Q output frequency.*/
+    if ((ccp->plls[1].cfgr & STM32_PLLQEN) != 0U) {
+      n = ((ccp->plls[1].divr & STM32_PLLQ_MASK) >> STM32_PLLQ_POS) + 1U;
+      pll2qclk = vcoclk / n;
+      if ((pll2qclk < STM32_PLLQ_MIN) || (pll2qclk > STM32_PLLQ_MAX)) {
+        return true;
+      }
+    }
+
+    /* PLL2 R output frequency.*/
+    if ((ccp->plls[1].cfgr & STM32_PLLREN) != 0U) {
+      n = ((ccp->plls[1].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
+      pll2rclk = vcoclk / n;
+      if ((pll2rclk < STM32_PLLR_MIN) || (pll2qclk > STM32_PLLR_MAX)) {
+        return true;
+      }
+    }
+  }
+
+  /* PLL3 outputs.*/
+  if ((ccp->rcc_cr & RCC_CR_PLL3ON) != 0U) {
+    uint32_t mdiv, ndiv;
+    halfreq_t vcoclk;
+
+    /* PLL3 M divider.*/
+    mdiv = (ccp->plls[2].cfgr & STM32_PLLM_MASK) >> STM32_PLLM_POS;
+
+    /* PLL3 N divider.*/
+    ndiv = ((ccp->plls[2].divr & STM32_PLLN_MASK) >> STM32_PLLN_POS) + 1U;
+    if (ndiv < STM32_PLL3N_VALUE_MIN) {
+      return true;
+    }
+
+    /* PLL3 VCO frequency.*/
+    vcoclk = (pll3selclk / (halfreq_t)mdiv) * (halfreq_t)ndiv;
+    if ((vcoclk < STM32_PLLVCO_MIN) || (vcoclk > STM32_PLLVCO_MAX)) {
+      return true;
+    }
+
+    /* PLL3 P output frequency.*/
+    if ((ccp->plls[2].cfgr & STM32_PLLPEN) != 0U) {
+      n = ((ccp->plls[2].divr & STM32_PLLP_MASK) >> STM32_PLLP_POS) + 1U;
+      pll3pclk = vcoclk / n;
+      if ((pll3pclk < STM32_PLLP_MIN) || (pll3pclk > STM32_PLLP_MAX)) {
+        return true;
+      }
+    }
+
+    /* PLL3 Q output frequency.*/
+    if ((ccp->plls[2].cfgr & STM32_PLLQEN) != 0U) {
+      n = ((ccp->plls[2].divr & STM32_PLLQ_MASK) >> STM32_PLLQ_POS) + 1U;
+      pll3qclk = vcoclk / n;
+      if ((pll3qclk < STM32_PLLQ_MIN) || (pll3qclk > STM32_PLLQ_MAX)) {
+        return true;
+      }
+    }
+
+    /* PLL3 R output frequency.*/
+    if ((ccp->plls[2].cfgr & STM32_PLLREN) != 0U) {
+      n = ((ccp->plls[2].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
+      pll3rclk = vcoclk / n;
+      if ((pll3rclk < STM32_PLLR_MIN) || (pll3qclk > STM32_PLLR_MAX)) {
         return true;
       }
     }
@@ -526,40 +626,64 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     pclk2tim = pclk2 * 2U;
   }
 
-  /* MCO clock.*/
-  switch (ccp->rcc_cfgr & RCC_CFGR_MCOSEL_Msk) {
-  case STM32_MCOSEL_NOCLOCK:
-    mcoclk = 0U;
+  /* PPRE3 frequency.*/
+  n = pprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_PPRE3_Msk) >> RCC_CFGR2_PPRE3_Pos];
+  pclk3 = hclk / n;
+
+  /* MCO1 clock.*/
+  switch (ccp->rcc_cfgr1 & STM32_MCO1SEL_MASK) {
+  case STM32_MCO1SEL_HSI:
+    mco1clk = hsiclk;
     break;
-  case STM32_MCOSEL_SYSCLK:
-    mcoclk = sysclk;
+  case STM32_MCO1SEL_LSE:
+    mco1clk = STM32_LSECLK;
     break;
-  case STM32_MCOSEL_HSI16:
-    mcoclk = hsi16clk;
+  case STM32_MCO1SEL_HSE:
+    mco1clk = hseclk;
     break;
-  case STM32_MCOSEL_HSE:
-    mcoclk = hseclk;
+  case STM32_MCO1SEL_PLL1P:
+    mco1clk = pll1pclk;
     break;
-  case STM32_MCOSEL_PLLRCLK:
-    mcoclk = pllrclk;
-    break;
-  case STM32_MCOSEL_LSI:
-    mcoclk = STM32_LSICLK;
-    break;
-  case STM32_MCOSEL_LSE:
-    mcoclk = STM32_LSECLK;
-    break;
-  case STM32_MCOSEL_HSI48:
-    mcoclk = STM32_HSI48CLK;
+  case STM32_MCO1SEL_HSI48:
+    mco1clk = STM32_HSI48CLK;
     break;
   default:
-    mcoclk = 0U;
+    mco1clk = 0U;
   }
-  mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCOPRE_Msk) >> RCC_CFGR_MCOPRE_Pos);
-  if (mcodiv > 16U) {
+  n = (ccp->rcc_cfgr1 & STM32_MCO1PRE_MASK) >> STM32_MCO1PRE_POS;
+  if (n == 0U) {
     return true;
   }
-  mcoclk /= mcodiv;
+  mco1clk /= n;
+
+  /* MCO2 clock.*/
+  switch (ccp->rcc_cfgr1 & STM32_MCO2SEL_MASK) {
+  case STM32_MCO2SEL_SYSCLK:
+    mco2clk = sysclk;
+    break;
+  case STM32_MCO2SEL_PLL2P:
+    mco2clk = pll2pclk;
+    break;
+  case STM32_MCO2SEL_HSE:
+    mco2clk = hseclk;
+    break;
+  case STM32_MCO2SEL_PLL1P:
+    mco2clk = pll1pclk;
+    break;
+  case STM32_MCO2SEL_CSI:
+    mco2clk = csiclk;
+    break;
+  case STM32_MCO2SEL_LSI:
+    mco2clk = STM32_LSICLK;
+    break;
+  default:
+    mco2clk = 0U;
+  }
+  n = (ccp->rcc_cfgr1 & STM32_MCO2PRE_MASK) >> STM32_MCO2PRE_POS;
+  if (n == 0U) {
+    return true;
+  }
+  mco2clk /= n;
 
   /* Flash settings.*/
   flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
@@ -572,15 +696,24 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* Writing out results.*/
   clock_points[CLK_SYSCLK]   = sysclk;
-  clock_points[CLK_PLLPCLK]  = pllpclk;
-  clock_points[CLK_PLLQCLK]  = pllqclk;
-  clock_points[CLK_PLLRCLK]  = pllrclk;
+  clock_points[CLK_PLL1PCLK] = pll1pclk;
+  clock_points[CLK_PLL1QCLK] = pll1qclk;
+  clock_points[CLK_PLL1RCLK] = pll1rclk;
+  clock_points[CLK_PLL2PCLK] = pll2pclk;
+  clock_points[CLK_PLL2QCLK] = pll2qclk;
+  clock_points[CLK_PLL2RCLK] = pll2rclk;
+  clock_points[CLK_PLL3PCLK] = pll3pclk;
+  clock_points[CLK_PLL3QCLK] = pll3qclk;
+  clock_points[CLK_PLL3RCLK] = pll3rclk;
   clock_points[CLK_HCLK]     = hclk;
   clock_points[CLK_PCLK1]    = pclk1;
   clock_points[CLK_PCLK1TIM] = pclk1tim;
   clock_points[CLK_PCLK2]    = pclk2;
   clock_points[CLK_PCLK2TIM] = pclk2tim;
-  clock_points[CLK_MCO]      = mcoclk;
+  clock_points[CLK_PCLK3]    = pclk3;
+  clock_points[CLK_MCO1]     = mco1clk;
+  clock_points[CLK_MCO2]     = mco2clk;
+  clock_points[CLK_HSI48]    = hsi48clk;
 
   return false;
 }
@@ -597,6 +730,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
  */
 static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
+#if 0
   /* Restoring default PWR settings related clocks and sleep modes.*/
   PWR->CR1 = PWR_CR1_VOS_0;
 
@@ -605,27 +739,30 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   while ((PWR->SR2 & (PWR_SR2_VOSF | PWR_SR2_REGLPF)) != 0U) {
     /* Waiting for the regulator to be ready.*/
   }
+#endif
 
-  /* If the clock source is not HSI then we switch to HSI and reset some
-     other relevant registers to their default value.*/
-  if ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI) {
-
-    /* Making sure HSI is activated and in use.*/
-    hsi16_reset();
-
-    /* Resetting flash ACR settings to the default value.*/
-    flash_set_acr(STM32_FLASH_ACR_RESET);
-
-    /* Resetting all other clock sources and PLLs.*/
-    RCC->CRRCR = 0U;
-    RCC->CR    = 0x00000063U;
-    while ((RCC->CR & RCC_CR_HSERDY) != 0U) {
-      /* Waiting for oscillators to shut down.*/
-    }
-
-    /* Disabling boost mode.*/
-    PWR->CR5 = PWR_CR5_R1MODE;
+  /* HSI could be not activated, activating it taking care to not disturb
+     other clocks yet, not touching the divider.*/
+  RCC->CR |= RCC_CR_HSION;
+  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
+    /* Waiting for HSI activation.*/
   }
+
+  /* Switching to HSI as clock source as in a post-reset situation.*/
+  RCC->CFGR1 = STM32_RCC_CFGR1_RESET;
+  RCC->CFGR2 = STM32_RCC_CFGR2_RESET;
+  while ((RCC->CFGR1 & STM32_SWS_MASK) != STM32_SWS_HSI) {
+    /* Wait until HSI is selected.*/
+  }
+
+  /* Resetting the whole RCC_CR register, shutting down everything but HSI.*/
+  RCC->CR = STM32_RCC_CR_RESET;
+  while ((RCC->CR & RCC_CR_HSIDIVF) == 0U) {
+    /* Waiting for new HSIDIV setting to be propagated.*/
+  }
+
+  /* Resetting flash ACR settings to the default value.*/
+  flash_set_acr(STM32_FLASH_ACR_RESET);
 
   /* HSE setup, if required, before starting the PLL.*/
   if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
@@ -633,15 +770,25 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   }
 
   /* HSI48 setup, if required, before starting the PLL.*/
-  if ((ccp->rcc_crrcr & RCC_CRRCR_HSI48ON) != 0U) {
+  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
     hsi48_enable();
   }
 
-  /* PLL setup.*/
-  RCC->PLLCFGR = ccp->rcc_pllcfgr;
+  /* CSI setup, if required, before starting the PLL.*/
+  if ((ccp->rcc_cr & RCC_CR_CSION) != 0U) {
+    csi_enable();
+  }
 
-  /* PLLs enabled if specified, note, HSI16 is kept running.*/
-  RCC->CR =  ccp->rcc_cr | RCC_CR_HSION;
+  /* PLLs setup.*/
+  if ((ccp->rcc_cr & RCC_CR_PLL1ON) != 0U) {
+    pll1_activate(ccp->plls[0].cfgr, ccp->plls[0].divr, 0U);
+  }
+  if ((ccp->rcc_cr & RCC_CR_PLL2ON) != 0U) {
+    pll2_activate(ccp->plls[1].cfgr, ccp->plls[1].divr, 0U);
+  }
+  if ((ccp->rcc_cr & RCC_CR_PLL3ON) != 0U) {
+    pll3_activate(ccp->plls[2].cfgr, ccp->plls[2].divr, 0U);
+  }
 
   /* PLL activation polling if required.*/
   while (true) {

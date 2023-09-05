@@ -421,19 +421,30 @@ __STATIC_INLINE void pll1_wait_lock(void) {
 
 #endif /* STM32_RCC_HAS_PLL1 */
 
+__STATIC_INLINE void pll1_activate(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
+
+  /* PLL1 activation.*/
+  RCC->PLL1CFGR  = cfgr & ~STM32_PLLFRACEN_MASK;
+  RCC->PLL1DIVR  = divr;
+  RCC->PLL1FRACR = fracr;
+  RCC->PLL1CFGR  = cfgr | STM32_PLLFRACEN_MASK;
+  RCC->CR |= RCC_CR_PLL1ON;
+
+  pll1_wait_lock();
+}
+
 __STATIC_INLINE void pll1_init(void) {
 
 #if STM32_RCC_HAS_PLL1
 #if STM32_ACTIVATE_PLL1
   /* PLL1 activation.*/
-  RCC->PLL1CFGR = STM32_PLL1REN     | STM32_PLL1QEN     |
-                  STM32_PLL1PEN     | STM32_PLL1M       |
-                  STM32_PLL1RGE     | STM32_PLL1VCOSEL  |
-                  STM32_PLL1SRC; /* TODO PLL1FRACEN */
-  RCC->PLL1DIVR = STM32_PLL1R       | STM32_PLL1Q       |
-                  STM32_PLL1P       | STM32_PLL1N;
-  RCC->CR |= RCC_CR_PLL1ON;
-
+  pll1_activate(STM32_PLL1REN     | STM32_PLL1QEN     |
+                STM32_PLL1PEN     | STM32_PLL1M       |
+                STM32_PLL1RGE     | STM32_PLL1VCOSEL  |
+                STM32_PLL1SRC,
+                STM32_PLL1R       | STM32_PLL1Q       |
+                STM32_PLL1P       | STM32_PLL1N,
+                0U); /* TODO FRACR */
   pll1_wait_lock();
 #endif
 #endif
