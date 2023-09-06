@@ -407,10 +407,20 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE bool pll2_not_locked(void) {
+__STATIC_INLINE void pll2_enable(void) {
 
-  return (bool)((RCC->CR & RCC_CR_PLL2RDY) == 0U);
+   RCC->CR |= RCC_CR_PLL2ON;
 }
+
+ __STATIC_INLINE void pll2_disable(void) {
+
+   RCC->CR &= ~RCC_CR_PLL2ON;
+ }
+
+ __STATIC_INLINE bool pll2_not_locked(void) {
+
+   return (bool)((RCC->CR & RCC_CR_PLL2RDY) == 0U);
+ }
 
 __STATIC_INLINE void pll2_wait_lock(void) {
 
@@ -421,16 +431,13 @@ __STATIC_INLINE void pll2_wait_lock(void) {
 
 #endif /* STM32_RCC_HAS_PLL2 */
 
-__STATIC_INLINE void pll2_activate(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
+__STATIC_INLINE void pll2_setup(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
 
   /* PLL2 activation.*/
   RCC->PLL2CFGR  = cfgr & ~STM32_PLLFRACEN_MASK;
   RCC->PLL2DIVR  = divr;
   RCC->PLL2FRACR = fracr;
-  RCC->PLL2CFGR  = cfgr | STM32_PLLFRACEN_MASK;
-  RCC->CR |= RCC_CR_PLL2ON;
-
-  pll2_wait_lock();
+  RCC->PLL2CFGR  = cfgr;
 }
 
 __STATIC_INLINE void pll2_init(void) {
@@ -438,13 +445,14 @@ __STATIC_INLINE void pll2_init(void) {
 #if STM32_RCC_HAS_PLL2
 #if STM32_ACTIVATE_PLL2
   /* PLL2 activation.*/
-  pll2_activate(STM32_PLL2REN     | STM32_PLL2QEN     |
-                STM32_PLL2PEN     | STM32_PLL2M       |
-                STM32_PLL2RGE     | STM32_PLL2VCOSEL  |
-                STM32_PLL2SRC,
-                STM32_PLL2R       | STM32_PLL2Q       |
-                STM32_PLL2P       | STM32_PLL2N,
-                0U); /* TODO FRACR */
+  pll2_setup(STM32_PLL2REN     | STM32_PLL2QEN     |
+             STM32_PLL2PEN     | STM32_PLL2M       |
+             STM32_PLL2RGE     | STM32_PLL2VCOSEL  |
+             STM32_PLL2SRC,
+             STM32_PLL2R       | STM32_PLL2Q       |
+             STM32_PLL2P       | STM32_PLL2N,
+             0U); /* TODO FRACR */
+  pll2_enable();
   pll2_wait_lock();
 #endif
 #endif
@@ -455,7 +463,7 @@ __STATIC_INLINE void pll2_deinit(void) {
 #if STM32_RCC_HAS_PLL2
 #if STM32_ACTIVATE_PLL2
   /* PLL2 de-activation.*/
-  RCC->CR &= ~RCC_CR_PLL2ON;
+  pll2_disable();
 #endif
 #endif
 }

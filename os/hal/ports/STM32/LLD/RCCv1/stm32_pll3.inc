@@ -407,10 +407,20 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE bool pll3_not_locked(void) {
+__STATIC_INLINE void pll3_enable(void) {
 
-  return (bool)((RCC->CR & RCC_CR_PLL3RDY) == 0U);
+   RCC->CR |= RCC_CR_PLL3ON;
 }
+
+ __STATIC_INLINE void pll3_disable(void) {
+
+   RCC->CR &= ~RCC_CR_PLL3ON;
+ }
+
+ __STATIC_INLINE bool pll3_not_locked(void) {
+
+   return (bool)((RCC->CR & RCC_CR_PLL3RDY) == 0U);
+ }
 
 __STATIC_INLINE void pll3_wait_lock(void) {
 
@@ -421,16 +431,13 @@ __STATIC_INLINE void pll3_wait_lock(void) {
 
 #endif /* STM32_RCC_HAS_PLL3 */
 
-__STATIC_INLINE void pll3_activate(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
+__STATIC_INLINE void pll3_setup(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
 
   /* PLL3 activation.*/
   RCC->PLL3CFGR  = cfgr & ~STM32_PLLFRACEN_MASK;
   RCC->PLL3DIVR  = divr;
   RCC->PLL3FRACR = fracr;
-  RCC->PLL3CFGR  = cfgr | STM32_PLLFRACEN_MASK;
-  RCC->CR |= RCC_CR_PLL3ON;
-
-  pll3_wait_lock();
+  RCC->PLL3CFGR  = cfgr;
 }
 
 __STATIC_INLINE void pll3_init(void) {
@@ -438,13 +445,14 @@ __STATIC_INLINE void pll3_init(void) {
 #if STM32_RCC_HAS_PLL3
 #if STM32_ACTIVATE_PLL3
   /* PLL3 activation.*/
-  pll3_activate(STM32_PLL3REN     | STM32_PLL3QEN     |
-                STM32_PLL3PEN     | STM32_PLL3M       |
-                STM32_PLL3RGE     | STM32_PLL3VCOSEL  |
-                STM32_PLL3SRC,
-                STM32_PLL3R       | STM32_PLL3Q       |
-                STM32_PLL3P       | STM32_PLL3N,
-                0U); /* TODO FRACR */
+  pll3_setup(STM32_PLL3REN     | STM32_PLL3QEN     |
+             STM32_PLL3PEN     | STM32_PLL3M       |
+             STM32_PLL3RGE     | STM32_PLL3VCOSEL  |
+             STM32_PLL3SRC,
+             STM32_PLL3R       | STM32_PLL3Q       |
+             STM32_PLL3P       | STM32_PLL3N,
+             0U); /* TODO FRACR */
+  pll3_enable();
   pll3_wait_lock();
 #endif
 #endif
@@ -455,7 +463,7 @@ __STATIC_INLINE void pll3_deinit(void) {
 #if STM32_RCC_HAS_PLL3
 #if STM32_ACTIVATE_PLL3
   /* PLL3 de-activation.*/
-  RCC->CR &= ~RCC_CR_PLL3ON;
+  pll3_disable();
 #endif
 #endif
 }

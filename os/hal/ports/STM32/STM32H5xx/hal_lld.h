@@ -114,8 +114,56 @@
  * @name    RCC_CR register bits definitions
  * @{
  */
-#define STM32_HSIDIV_POS        3
-#define STM32_HSIDIV_MASK       (3U << STM32_HSIDIV_POS)
+#define STM32_PLL3ON_POS        RCC_CR_PLL3ON_Pos
+#define STM32_PLL3ON_MASK       RCC_CR_PLL3ON_Msk
+#define STM32_PLL3ON            (1U << STM32_PLL3ON_POS)
+
+#define STM32_PLL2ON_POS        RCC_CR_PLL2ON_Pos
+#define STM32_PLL2ON_MASK       RCC_CR_PLL2ON_Msk
+#define STM32_PLL2ON            (1U << STM32_PLL2ON_POS)
+
+#define STM32_PLL1ON_POS        RCC_CR_PLL1ON_Pos
+#define STM32_PLL1ON_MASK       RCC_CR_PLL1ON_Msk
+#define STM32_PLL1ON            (1U << STM32_PLL1ON_POS)
+
+#define STM32_HSERDY_POS        RCC_CR_HSERDY_Pos
+#define STM32_HSERDY_MASK       RCC_CR_HSERDY_Msk
+#define STM32_HSERDY            (1U << STM32_HSERDY_POS)
+
+#define STM32_HSEON_POS         RCC_CR_HSEON_Pos
+#define STM32_HSEON_MASK        RCC_CR_HSEON_Msk
+#define STM32_HSEON             (1U << STM32_HSEON_POS)
+
+#define STM32_HSI48RDY_POS      RCC_CR_HSI48RDY_Pos
+#define STM32_HSI48RDY_MASK     RCC_CR_HSI48RDY_Msk
+#define STM32_HSI48RDY          (1U << STM32_HSI48RDY_POS)
+
+#define STM32_HSI48ON_POS       RCC_CR_HSI48ON_Pos
+#define STM32_HSI48ON_MASK      RCC_CR_HSI48ON_Msk
+#define STM32_HSI48ON           (1U << STM32_HSI48ON_POS)
+
+#define STM32_CSIRDY_POS        RCC_CR_CSIRDY_Pos
+#define STM32_CSIRDY_MASK       RCC_CR_CSIRDY_Msk
+#define STM32_CSIRDY            (1U << STM32_CSIRDY_POS)
+
+#define STM32_CSION_POS         RCC_CR_HSION_Pos
+#define STM32_CSION_MASK        RCC_CR_HSION_Msk
+#define STM32_CSION             (1U << STM32_HSION_POS)
+
+#define STM32_HSIRDY_POS        RCC_CR_HSIRDY_Pos
+#define STM32_HSIRDY_MASK       RCC_CR_HSIRDY_Msk
+#define STM32_HSIRDY            (1U << STM32_HSIRDY_POS)
+
+#define STM32_HSION_POS         RCC_CR_HSION_Pos
+#define STM32_HSION_MASK        RCC_CR_HSION_Msk
+#define STM32_HSION             (1U << STM32_HSION_POS)
+
+#define STM32_HSIDIVF_POS       RCC_CR_HSIDIVF_Pos
+#define STM32_HSIDIVF_MASK      RCC_CR_HSIDIVF_Msk
+#define STM32_HSIDIVF           (1U << STM32_HSIDIVF_POS)
+
+#define STM32_HSIDIV_POS        RCC_CR_HSIDIV_Pos
+#define STM32_HSIDIV_MASK       RCC_CR_HSIDIV_Msk
 #define STM32_HSIDIV_FIELD(n)   ((n) << STM32_HSIDIV_POS)
 #define STM32_HSIDIV_DIV1       STM32_HSIDIV_FIELD(0U)
 #define STM32_HSIDIV_DIV2       STM32_HSIDIV_FIELD(1U)
@@ -127,8 +175,9 @@
  * @name    RCC_CFGR1 register bits definitions
  * @{
  */
-#define STM32_SW_MASK           (3U << 0)
-#define STM32_SW_FIELD(n)       ((n) << 0)
+#define STM32_SW_POS            RCC_CFGR1_SW_Pos
+#define STM32_SW_MASK           RCC_CFGR1_SW_Msk
+#define STM32_SW_FIELD(n)       ((n) << STM32_SW_POS)
 #define STM32_SW_HSI            STM32_SW_FIELD(0U)
 #define STM32_SW_CSI            STM32_SW_FIELD(1U)
 #define STM32_SW_HSE            STM32_SW_FIELD(2U)
@@ -188,6 +237,31 @@
 #define STM32_MCO2PRE_MASK      (7U << 18)
 #define STM32_MCO2PRE_FIELD(n)  ((n) << 18)
 #define STM32_MCO2PRE_NOCLOCK   STM32_MCO2PRE_FIELD(0U)
+/** @} */
+
+/**
+ * @name    RCC_CFGR2 register bits definitions
+ * @{
+ */
+#define STM32_APB3DIS_POS       RCC_CFGR2_APB3DIS_Pos
+#define STM32_APB3DIS_MASK      RCC_CFGR2_APB3DIS_Msk
+#define STM32_APB3DIS           (1U << STM32_APB3DIS_POS)
+
+#define STM32_APB2DIS_POS       RCC_CFGR2_APB2DIS_Pos
+#define STM32_APB2DIS_MASK      RCC_CFGR2_APB2DIS_Msk
+#define STM32_APB2DIS           (1U << STM32_APB2DIS_POS)
+
+#define STM32_APB1DIS_POS       RCC_CFGR2_APB1DIS_Pos
+#define STM32_APB1DIS_MASK      RCC_CFGR2_APB1DIS_Msk
+#define STM32_APB1DIS           (1U << STM32_APB1DIS_POS)
+
+#define STM32_AHB2DIS_POS       RCC_CFGR2_AHB2DIS_Pos
+#define STM32_AHB2DIS_MASK      RCC_CFGR2_AHB2DIS_Msk
+#define STM32_AHB2DIS           (1U << STM32_AHB2DIS_POS)
+
+#define STM32_AHB1DIS_POS       RCC_CFGR2_AHB1DIS_Pos
+#define STM32_AHB1DIS_MASK      RCC_CFGR2_AHB1DIS_Msk
+#define STM32_AHB1DIS           (1U << STM32_AHB1DIS_POS)
 /** @} */
 
 /**

@@ -407,10 +407,20 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-__STATIC_INLINE bool pll1_not_locked(void) {
+__STATIC_INLINE void pll1_enable(void) {
 
-  return (bool)((RCC->CR & RCC_CR_PLL1RDY) == 0U);
+   RCC->CR |= RCC_CR_PLL1ON;
 }
+
+ __STATIC_INLINE void pll1_disable(void) {
+
+   RCC->CR &= ~RCC_CR_PLL1ON;
+ }
+
+ __STATIC_INLINE bool pll1_not_locked(void) {
+
+   return (bool)((RCC->CR & RCC_CR_PLL1RDY) == 0U);
+ }
 
 __STATIC_INLINE void pll1_wait_lock(void) {
 
@@ -421,16 +431,13 @@ __STATIC_INLINE void pll1_wait_lock(void) {
 
 #endif /* STM32_RCC_HAS_PLL1 */
 
-__STATIC_INLINE void pll1_activate(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
+__STATIC_INLINE void pll1_setup(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
 
   /* PLL1 activation.*/
   RCC->PLL1CFGR  = cfgr & ~STM32_PLLFRACEN_MASK;
   RCC->PLL1DIVR  = divr;
   RCC->PLL1FRACR = fracr;
-  RCC->PLL1CFGR  = cfgr | STM32_PLLFRACEN_MASK;
-  RCC->CR |= RCC_CR_PLL1ON;
-
-  pll1_wait_lock();
+  RCC->PLL1CFGR  = cfgr;
 }
 
 __STATIC_INLINE void pll1_init(void) {
@@ -438,13 +445,14 @@ __STATIC_INLINE void pll1_init(void) {
 #if STM32_RCC_HAS_PLL1
 #if STM32_ACTIVATE_PLL1
   /* PLL1 activation.*/
-  pll1_activate(STM32_PLL1REN     | STM32_PLL1QEN     |
-                STM32_PLL1PEN     | STM32_PLL1M       |
-                STM32_PLL1RGE     | STM32_PLL1VCOSEL  |
-                STM32_PLL1SRC,
-                STM32_PLL1R       | STM32_PLL1Q       |
-                STM32_PLL1P       | STM32_PLL1N,
-                0U); /* TODO FRACR */
+  pll1_setup(STM32_PLL1REN     | STM32_PLL1QEN     |
+             STM32_PLL1PEN     | STM32_PLL1M       |
+             STM32_PLL1RGE     | STM32_PLL1VCOSEL  |
+             STM32_PLL1SRC,
+             STM32_PLL1R       | STM32_PLL1Q       |
+             STM32_PLL1P       | STM32_PLL1N,
+             0U); /* TODO FRACR */
+  pll1_enable();
   pll1_wait_lock();
 #endif
 #endif
@@ -455,7 +463,7 @@ __STATIC_INLINE void pll1_deinit(void) {
 #if STM32_RCC_HAS_PLL1
 #if STM32_ACTIVATE_PLL1
   /* PLL1 de-activation.*/
-  RCC->CR &= ~RCC_CR_PLL1ON;
+  pll1_disable();
 #endif
 #endif
 }

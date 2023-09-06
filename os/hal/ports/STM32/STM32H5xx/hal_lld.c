@@ -370,22 +370,22 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* HSE clock.*/
-  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
+  if ((ccp->rcc_cr & STM32_HSEON) != 0U) {
     hseclk = STM32_HSECLK;
   }
 
   /* HSI48 clock after divider.*/
-  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
+  if ((ccp->rcc_cr & STM32_HSI48ON) != 0U) {
     hsi48clk = STM32_HSI48CLK;
   }
 
   /* HSI clock after divider.*/
-  if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
+  if ((ccp->rcc_cr & STM32_HSION) != 0U) {
     hsiclk = STM32_HSI64CLK / (1U << ((ccp->rcc_cr & STM32_HSIDIV_MASK) >> STM32_HSIDIV_POS));
   }
 
   /* CSI clock.*/
-  if ((ccp->rcc_cr & RCC_CR_CSION) != 0U) {
+  if ((ccp->rcc_cr & STM32_CSION) != 0U) {
     csiclk = STM32_CSICLK;
   }
 
@@ -435,7 +435,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PLL1 outputs.*/
-  if ((ccp->rcc_cr & RCC_CR_PLL1ON) != 0U) {
+  if ((ccp->rcc_cr & STM32_PLL1ON) != 0U) {
     uint32_t mdiv, ndiv;
     halfreq_t vcoclk;
 
@@ -486,7 +486,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PLL2 outputs.*/
-  if ((ccp->rcc_cr & RCC_CR_PLL2ON) != 0U) {
+  if ((ccp->rcc_cr & STM32_PLL2ON) != 0U) {
     uint32_t mdiv, ndiv;
     halfreq_t vcoclk;
 
@@ -534,7 +534,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PLL3 outputs.*/
-  if ((ccp->rcc_cr & RCC_CR_PLL3ON) != 0U) {
+  if ((ccp->rcc_cr & STM32_PLL3ON) != 0U) {
     uint32_t mdiv, ndiv;
     halfreq_t vcoclk;
 
@@ -604,10 +604,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* HCLK frequency.*/
-  hclk = sysclk / hprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_HPRE_Msk) >> RCC_CFGR2_HPRE_Pos];
+  hclk = sysclk / hprediv[(ccp->rcc_cfgr2 & STM32_HPRE_MASK) >> STM32_HPRE_POS];
 
   /* PPRE1 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_PPRE1_Msk) >> RCC_CFGR2_PPRE1_Pos];
+  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE1_MASK) >> STM32_PPRE1_POS];
   pclk1 = hclk / n;
   if (n < 2) {
     pclk1tim = pclk1;
@@ -617,7 +617,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PPRE2 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_PPRE2_Msk) >> RCC_CFGR2_PPRE2_Pos];
+  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE2_MASK) >> STM32_PPRE2_POS];
   pclk2 = hclk / n;
   if (n < 2) {
     pclk2tim = pclk2;
@@ -627,7 +627,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PPRE3 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_PPRE3_Msk) >> RCC_CFGR2_PPRE3_Pos];
+  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE3_MASK) >> STM32_PPRE3_POS];
   pclk3 = hclk / n;
 
   /* MCO1 clock.*/
@@ -729,6 +729,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
  * @notapi
  */
 static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
+  uint32_t cr, mask;
 
 #if 0
   /* Restoring default PWR settings related clocks and sleep modes.*/
@@ -741,99 +742,82 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   }
 #endif
 
+  /* Setting flash ACR to the safest value while we play with clocks.*/
+  flash_set_acr(FLASH_ACR_LATENCY_5WS);
+
   /* HSI could be not activated, activating it taking care to not disturb
      other clocks yet, not touching the divider.*/
-  RCC->CR |= RCC_CR_HSION;
-  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
+  RCC->CR |= STM32_HSION;
+  while ((RCC->CR & STM32_HSIRDY) == 0U) {
     /* Waiting for HSI activation.*/
   }
 
-  /* Switching to HSI as clock source as in a post-reset situation.*/
+  /* Switching to HSI as clock source as in a post-reset situation.
+     Resetting up all dividers and MCOs.*/
   RCC->CFGR1 = STM32_RCC_CFGR1_RESET;
   RCC->CFGR2 = STM32_RCC_CFGR2_RESET;
   while ((RCC->CFGR1 & STM32_SWS_MASK) != STM32_SWS_HSI) {
     /* Wait until HSI is selected.*/
   }
 
-  /* Resetting the whole RCC_CR register, shutting down everything but HSI.*/
-  RCC->CR = STM32_RCC_CR_RESET;
-  while ((RCC->CR & RCC_CR_HSIDIVF) == 0U) {
+  /* Resetting the whole RCC_CR register, basically shutting down everything
+     except HSI.*/
+  cr = STM32_RCC_CR_RESET;
+  RCC->CR = cr;
+  while ((RCC->CR & STM32_HSIDIVF) == 0U) {
     /* Waiting for new HSIDIV setting to be propagated.*/
   }
 
   /* Resetting flash ACR settings to the default value.*/
   flash_set_acr(STM32_FLASH_ACR_RESET);
 
-  /* HSE setup, if required, before starting the PLL.*/
-  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
-    hse_enable();
-  }
+  /* Setting up all clocks while keeping the rest untouched at reset value.*/
+  cr |= ccp->rcc_cr & (STM32_HSEON | STM32_HSI48ON | STM32_CSION);
+  RCC->CR = cr;
 
-  /* HSI48 setup, if required, before starting the PLL.*/
-  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
-    hsi48_enable();
-  }
-
-  /* CSI setup, if required, before starting the PLL.*/
-  if ((ccp->rcc_cr & RCC_CR_CSION) != 0U) {
-    csi_enable();
+  /* Waiting for all enabled clocks to become stable.*/
+  mask = (ccp->rcc_cr & (STM32_HSEON | STM32_HSI48ON | STM32_CSION)) << 1;
+  while ((RCC->CR & mask) != mask) {
+    /* Waiting.*/
+    /* TODO timeout and failure.*/
   }
 
   /* PLLs setup.*/
-  if ((ccp->rcc_cr & RCC_CR_PLL1ON) != 0U) {
-    pll1_activate(ccp->plls[0].cfgr, ccp->plls[0].divr, 0U);
-  }
-  if ((ccp->rcc_cr & RCC_CR_PLL2ON) != 0U) {
-    pll2_activate(ccp->plls[1].cfgr, ccp->plls[1].divr, 0U);
-  }
-  if ((ccp->rcc_cr & RCC_CR_PLL3ON) != 0U) {
-    pll3_activate(ccp->plls[2].cfgr, ccp->plls[2].divr, 0U);
-  }
+  pll1_setup(ccp->plls[0].cfgr, ccp->plls[0].divr, ccp->plls[0].frac);
+  pll2_setup(ccp->plls[1].cfgr, ccp->plls[1].divr, ccp->plls[1].frac);
+  pll3_setup(ccp->plls[2].cfgr, ccp->plls[2].divr, ccp->plls[2].frac);
 
-  /* PLL activation polling if required.*/
-  while (true) {
-    if (((ccp->rcc_cr & RCC_CR_PLLON) != 0U) && pll_not_locked()) {
-      continue;
-    }
-    break;
-  }
+  /* Activating enabled PLLs together.*/
+  cr |= ccp->rcc_cr & (STM32_PLL3ON | STM32_PLL2ON | STM32_PLL1ON);
+  RCC->CR = cr;
 
-  /* MCO and bus dividers first.*/
-  RCC->CFGR = (RCC->CFGR & RCC_CFGR_SW_Msk) | (ccp->rcc_cfgr & ~RCC_CFGR_SW_Msk);
+  /* Waiting for all enabled PLLs to become stable.*/
+  mask = (ccp->rcc_cr & (STM32_PLL3ON | STM32_PLL2ON | STM32_PLL1ON)) << 1;
+  while ((RCC->CR & mask) != mask) {
+    /* Waiting.*/
+    /* TODO timeout and failure.*/
+  }
 
   /* Final flash ACR settings.*/
   flash_set_acr(ccp->flash_acr);
 
   /* Final PWR modes.*/
-  PWR->CR1 = ccp->pwr_cr1;
-  PWR->CR2 = ccp->pwr_cr2;
-  PWR->CR5 = ccp->pwr_cr5;
-
-  /* Waiting for the correct regulator state.*/
-  if ((ccp->pwr_cr1 & PWR_CR1_LPR) == 0U) {
-    /* Main mode selected.*/
-
-    while ((PWR->SR2 & PWR_SR2_REGLPF) != 0U) {
-      /* Waiting for the regulator to be in main mode.*/
-    }
+  PWR->VOSCR = ccp->pwr_voscr;
+  while ((PWR->VOSSR & PWR_VOSSR_ACTVOSRDY) == 0U) {
+    /* Wait until regulator is stable.*/
   }
-  else {
-    /* Low power mode selected.*/
-
-    while ((PWR->SR2 & PWR_SR2_REGLPF) == 0U) {
-      /* Waiting for the regulator to be in low power mode.*/
-    }
-  }
+  PWR->VMCR  = ccp->pwr_vmcr;
 
   /* Switching to the final clock source.*/
-  RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_SW_Msk) | (ccp->rcc_cfgr & RCC_CFGR_SW_Msk);
-  while ((RCC->CFGR & RCC_CFGR_SWS) != ((ccp->rcc_cfgr & RCC_CFGR_SW_Msk) << RCC_CFGR_SWS_Pos)) {
-    /* Waiting for clock switch.*/
+  RCC->CFGR1 = ccp->rcc_cfgr1;
+  RCC->CFGR2 = ccp->rcc_cfgr2;
+  while ((RCC->CFGR1 & STM32_SWS_MASK) != (ccp->rcc_cfgr1 & STM32_SWS_MASK)) {
+    /* Wait until SYSCLK is stable.*/
   }
 
-  /* If HSI16 is not in configuration then it is finally shut down.*/
-  if ((ccp->rcc_cr & RCC_CR_HSION) == 0U) {
-    hsi16_disable();
+  /* If HSI is not in configuration then it is finally shut down.*/
+  if ((ccp->rcc_cr & STM32_HSION) == 0U) {
+    hsi_disable();
   }
 
   return false;
@@ -883,14 +867,11 @@ void stm32_clock_init(void) {
      board files.*/
   rccResetAHB1(~0);
   rccResetAHB2(~STM32_GPIO_EN_MASK);
-  rccResetAHB3(~0);
-  rccResetAPB1R1(~0);
-  rccResetAPB1R2(~0);
+  rccResetAHB4(~0);
+  rccResetAPB1L(~0);
+  rccResetAPB1H(~0);
   rccResetAPB2(~0);
-
-  /* SYSCFG clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
+  rccResetAPB3(~0);
 
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
@@ -899,9 +880,6 @@ void stm32_clock_init(void) {
 
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
-
-  /* Backup domain made accessible.*/
-  PWR->CR1 |= PWR_CR1_DBP;
 
   /* Backup domain reset.*/
   bd_reset();
