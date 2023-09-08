@@ -124,6 +124,13 @@ const halclkcfg_t hal_clkcfg_default = {
                         | STM32_HSIDIV | RCC_CR_HSION
 #endif
                           ,
+  .rcc_cfgr1            = STM32_MCO2SEL     | STM32_MCO2PRE     |
+                          STM32_MCO1SEL     | STM32_MCO1PRE     |
+                          STM32_TIMPRE      | STM32_RTCPRE      |
+                          STM32_STOPKERWUCK | STM32_STOPWUCK    |
+                          STM32_SW,
+  .rcc_cfgr2            = STM32_PPRE3       | STM32_PPRE2       |
+                          STM32_PPRE1       | STM32_HPRE,
   .flash_acr            = FLASH_ACR_PRFTEN  | STM32_FLASHBITS,
   .plls = {
     [0] = {
@@ -286,7 +293,7 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
   RCC->CFGR1  = STM32_MCO2SEL     | STM32_MCO2PRE     |
                 STM32_MCO1SEL     | STM32_MCO1PRE     |
                 STM32_TIMPRE      | STM32_RTCPRE      |
-                STM32_STOPWUCK    | STM32_STOPKERWUCK;
+                STM32_STOPKERWUCK | STM32_STOPWUCK;
   RCC->CFGR2  = STM32_PPRE3       | STM32_PPRE2       |
                 STM32_PPRE1       | STM32_HPRE;
 
@@ -811,7 +818,7 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* Switching to the final clock source.*/
   RCC->CFGR1 = ccp->rcc_cfgr1;
   RCC->CFGR2 = ccp->rcc_cfgr2;
-  while ((RCC->CFGR1 & STM32_SWS_MASK) != (ccp->rcc_cfgr1 & STM32_SWS_MASK)) {
+  while ((RCC->CFGR1 & STM32_SWS_MASK) != ((ccp->rcc_cfgr1 & STM32_SW_MASK) << STM32_SWS_POS)) {
     /* Wait until SYSCLK is stable.*/
   }
 
