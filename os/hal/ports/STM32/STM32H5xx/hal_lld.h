@@ -146,9 +146,9 @@
 #define STM32_CSIRDY_MASK       RCC_CR_CSIRDY_Msk
 #define STM32_CSIRDY            (1U << STM32_CSIRDY_POS)
 
-#define STM32_CSION_POS         RCC_CR_HSION_Pos
-#define STM32_CSION_MASK        RCC_CR_HSION_Msk
-#define STM32_CSION             (1U << STM32_HSION_POS)
+#define STM32_CSION_POS         RCC_CR_CSION_Pos
+#define STM32_CSION_MASK        RCC_CR_CSION_Msk
+#define STM32_CSION             (1U << STM32_CSION_POS)
 
 #define STM32_HSIRDY_POS        RCC_CR_HSIRDY_Pos
 #define STM32_HSIRDY_MASK       RCC_CR_HSIRDY_Msk

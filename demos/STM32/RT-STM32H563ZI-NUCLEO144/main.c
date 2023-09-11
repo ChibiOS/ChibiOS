@@ -14,10 +14,164 @@
     limitations under the License.
 */
 
+#include <string.h>
+
 #include "ch.h"
 #include "hal.h"
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
+
+#include "shell.h"
+#include "chprintf.h"
+
+/*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
+static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
+  static uint8_t buf[] =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: write\r\n");
+    return;
+  }
+
+  while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
+#if 1
+    /* Writing in channel mode.*/
+    chnWrite(chp, buf, sizeof buf - 1);
+#else
+    /* Writing in buffer mode.*/
+    (void) obqGetEmptyBufferTimeout(&PORTAB_SDU1.obqueue, TIME_INFINITE);
+    memcpy(PORTAB_SDU1.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
+    obqPostFullBuffer(&PORTAB_SDU1.obqueue, SERIAL_USB_BUFFERS_SIZE);
+#endif
+  }
+  chprintf(chp, "\r\n\nstopped\r\n");
+}
+
+#if STM32_CLOCK_DYNAMIC == TRUE
+static void cmd_clock(BaseSequentialStream *chp, int argc, char *argv[]) {
+  bool result;
+  const halclkcfg_t *ccp;
+  static const char usage[] = "Usage: clock [reset|default]\r\n";
+
+  (void)argv;
+  if (argc != 1) {
+    chprintf(chp, usage);
+    return;
+  }
+
+  if (strcmp(argv[0], "reset") == 0) {
+    chprintf(chp, "\r\nSwitching to post-reset clocks: ");
+    ccp = &hal_clkcfg_reset;
+  }
+  else if (strcmp(argv[0], "default") == 0) {
+    chprintf(chp, "\r\nSwitching to default mcuconf.h clocks: ");
+    ccp = &hal_clkcfg_default;
+  }
+  else {
+    chprintf(chp, usage);
+    return;
+  }
+
+  /* Switching clocks.*/
+  result = halClockSwitchMode(ccp);
+
+  /* Time for allowing serial buffers to be flushed.*/
+  chThdSleepMilliseconds(10);
+
+  /* Reconfiguring the peripherals because clocks frequencies could have changed.*/
+  sioStart(&SIOD3, NULL);
+
+  /* Printing result.*/
+  if (result) {
+    chprintf(chp, "failed\r\n");
+  }
+  else {
+    chprintf(chp, "done\r\n");
+  }
+}
+#endif
+
+static void cmd_clocks(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: clocks\r\n");
+    return;
+  }
+
+#if STM32_SW == STM32_SW_HSI
+  chprintf(chp, "SYSCLK is HSI\r\n");
+#elif STM32_SW == STM32_SW_CSI
+  chprintf(chp, "SYSCLK is CSI\r\n");
+#elif STM32_SW == STM32_SW_HSE
+  chprintf(chp, "SYSCLK is HSE\r\n");
+#elif STM32_SW == STM32_SW_PLL1P
+  chprintf(chp, "SYSCLK is PLL1P\r\n");
+#else
+  #error "invalid STM32_SW value specified"
+#endif
+
+  chprintf(chp, "SYSCLK:   %10u\r\n", halClockGetPointX(CLK_SYSCLK));
+  chprintf(chp, "PLL1PCLK: %10u\r\n", halClockGetPointX(CLK_PLL1PCLK));
+  chprintf(chp, "PLL1RCLK: %10u\r\n", halClockGetPointX(CLK_PLL1RCLK));
+  chprintf(chp, "PLL1QCLK: %10u\r\n", halClockGetPointX(CLK_PLL1QCLK));
+  chprintf(chp, "PLL2PCLK: %10u\r\n", halClockGetPointX(CLK_PLL2PCLK));
+  chprintf(chp, "PLL2RCLK: %10u\r\n", halClockGetPointX(CLK_PLL2RCLK));
+  chprintf(chp, "PLL2QCLK: %10u\r\n", halClockGetPointX(CLK_PLL2QCLK));
+  chprintf(chp, "PLL3PCLK: %10u\r\n", halClockGetPointX(CLK_PLL3PCLK));
+  chprintf(chp, "PLL3RCLK: %10u\r\n", halClockGetPointX(CLK_PLL3RCLK));
+  chprintf(chp, "PLL3QCLK: %10u\r\n", halClockGetPointX(CLK_PLL3QCLK));
+  chprintf(chp, "HCLK:     %10u\r\n", halClockGetPointX(CLK_HCLK));
+  chprintf(chp, "PCLK1:    %10u\r\n", halClockGetPointX(CLK_PCLK1));
+  chprintf(chp, "PCLK1TIM: %10u\r\n", halClockGetPointX(CLK_PCLK1TIM));
+  chprintf(chp, "PCLK2:    %10u\r\n", halClockGetPointX(CLK_PCLK2));
+  chprintf(chp, "PCLK2TIM: %10u\r\n", halClockGetPointX(CLK_PCLK2TIM));
+  chprintf(chp, "PCLK3:    %10u\r\n", halClockGetPointX(CLK_PCLK3));
+  chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
+  chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
+  chprintf(chp, "HSI48:    %10u\r\n", halClockGetPointX(CLK_HSI48));
+}
+
+static const ShellCommand commands[] = {
+  {"write", cmd_write},
+#if STM32_CLOCK_DYNAMIC == TRUE
+  {"clock", cmd_clock},
+#endif
+  {"clocks", cmd_clocks},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SIOD3,
+  commands
+};
+
+/*===========================================================================*/
+/* Generic code.                                                             */
+/*===========================================================================*/
 
 /*
  * Green LED blinker thread, times are in milliseconds.
@@ -73,10 +227,16 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-   if (palReadLine(LINE_BUTTON)) {
+    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                            "shell", NORMALPRIO + 1,
+                                            shellThread, (void *)&shell_cfg1);
+    chThdWait(shelltp);               /* Waiting termination.             */
+#if 0
+    if (palReadLine(LINE_BUTTON)) {
       test_execute((BaseSequentialStream *)&SIOD3, &rt_test_suite);
       test_execute((BaseSequentialStream *)&SIOD3, &oslib_test_suite);
     }
+#endif
     chThdSleepMilliseconds(500);
   }
 }

@@ -659,9 +659,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
   n = (ccp->rcc_cfgr1 & STM32_MCO1PRE_MASK) >> STM32_MCO1PRE_POS;
   if (n == 0U) {
-    return true;
+    mco1clk = 0U;
   }
-  mco1clk /= n;
+  else {
+    mco1clk /= n;
+  }
 
   /* MCO2 clock.*/
   switch (ccp->rcc_cfgr1 & STM32_MCO2SEL_MASK) {
@@ -688,9 +690,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
   n = (ccp->rcc_cfgr1 & STM32_MCO2PRE_MASK) >> STM32_MCO2PRE_POS;
   if (n == 0U) {
-    return true;
+    mco2clk = 0U;
   }
-  mco2clk /= n;
+  else {
+    mco2clk /= n;
+  }
 
   /* Flash settings.*/
   flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
