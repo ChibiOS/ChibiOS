@@ -31,7 +31,7 @@
 /**
  * @brief   Number of thresholds in the wait states array.
  */
-#define STM32_WS_THRESHOLDS             5
+#define STM32_WS_THRESHOLDS             6
 
 /**
  * @name    Registers reset values
@@ -209,7 +209,7 @@ static const system_limits_t vos_range0 = {
   .sysclk_max           = STM32_VOS0_SYSCLK_MAX,
   .flash_thresholds     = {STM32_VOS0_0WS_THRESHOLD, STM32_VOS0_1WS_THRESHOLD,
                            STM32_VOS0_2WS_THRESHOLD, STM32_VOS0_3WS_THRESHOLD,
-                           STM32_VOS0_4WS_THRESHOLD}
+                           STM32_VOS0_4WS_THRESHOLD, STM32_VOS0_5WS_THRESHOLD}
 };
 
 /**
@@ -219,7 +219,7 @@ static const system_limits_t vos_range1 = {
   .sysclk_max           = STM32_VOS1_SYSCLK_MAX,
   .flash_thresholds     = {STM32_VOS1_0WS_THRESHOLD, STM32_VOS1_1WS_THRESHOLD,
                            STM32_VOS1_2WS_THRESHOLD, STM32_VOS1_3WS_THRESHOLD,
-                           STM32_VOS1_4WS_THRESHOLD}
+                           STM32_VOS1_4WS_THRESHOLD, STM32_VOS0_5WS_THRESHOLD}
 };
 
 /**
@@ -229,7 +229,7 @@ static const system_limits_t vos_range2 = {
   .sysclk_max           = STM32_VOS2_SYSCLK_MAX,
   .flash_thresholds     = {STM32_VOS2_0WS_THRESHOLD, STM32_VOS2_1WS_THRESHOLD,
                            STM32_VOS2_2WS_THRESHOLD, STM32_VOS2_3WS_THRESHOLD,
-                           STM32_VOS2_4WS_THRESHOLD}
+                           STM32_VOS2_4WS_THRESHOLD, STM32_VOS0_5WS_THRESHOLD}
 };
 
 /**
@@ -239,7 +239,7 @@ static const system_limits_t vos_range3 = {
   .sysclk_max           = STM32_VOS3_SYSCLK_MAX,
   .flash_thresholds     = {STM32_VOS3_0WS_THRESHOLD, STM32_VOS3_1WS_THRESHOLD,
                            STM32_VOS3_2WS_THRESHOLD, STM32_VOS3_3WS_THRESHOLD,
-                           STM32_VOS3_4WS_THRESHOLD}
+                           STM32_VOS3_4WS_THRESHOLD, STM32_VOS0_5WS_THRESHOLD}
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 

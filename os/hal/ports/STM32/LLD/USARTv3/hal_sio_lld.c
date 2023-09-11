@@ -209,9 +209,70 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr, clock;
 
+  /*Clock input frequency, it could be dynamic.*/
+  if (false) {
+  }
+#if STM32_SIO_USE_USART1 == TRUE
+  else if (&SIOD1 == siop) {
+    clock = STM32_USART1CLK;
+  }
+#endif
+#if STM32_SIO_USE_USART2 == TRUE
+  else if (&SIOD2 == siop) {
+    clock = STM32_USART2CLK;
+  }
+#endif
+#if STM32_SIO_USE_USART3 == TRUE
+  else if (&SIOD3 == siop) {
+    clock = STM32_USART3CLK;
+  }
+#endif
+#if STM32_SIO_USE_UART4 == TRUE
+  else if (&SIOD4 == siop) {
+    clock = STM32_UART4CLK;
+  }
+#endif
+#if STM32_SIO_USE_UART5 == TRUE
+  else if (&SIOD5 == siop) {
+    clock = STM32_UART5CLK;
+  }
+#endif
+#if STM32_SIO_USE_USART6 == TRUE
+  else if (&SIOD6 == siop) {
+    clock = STM32_USART6CLK;
+  }
+#endif
+#if STM32_SIO_USE_UART7 == TRUE
+  else if (&SIOD7 == siop) {
+    clock = STM32_UART7CLK;
+  }
+#endif
+#if STM32_SIO_USE_UART8 == TRUE
+  else if (&SIOD8 == siop) {
+    clock = STM32_UART8CLK;
+  }
+#endif
+#if STM32_SIO_USE_UART9 == TRUE
+  else if (&SIOD9 == siop) {
+    clock = STM32_UART9CLK;
+  }
+#endif
+#if STM32_SIO_USE_USART10 == TRUE
+  else if (&SIOD10 == siop) {
+    clock = STM32_USART10CLK;
+  }
+#endif
+#if STM32_SIO_USE_LPUART1 == TRUE
+  else if (&LPSIOD1 == siop) {
+    clock = STM32_LPUART1CLK;
+  }
+#endif
+  else {
+    osalDbgAssert(false, "invalid SIO instance");
+  }
+
   /* Prescaler calculation.*/
   static const uint32_t prescvals[] = {1, 2, 4, 6, 8, 10, 12, 16, 32, 64, 128, 256};
-  clock = siop->clock;
   presc = prescvals[siop->config->presc];
 
  /* Baud rate setting.*/
@@ -271,57 +332,46 @@ void sio_lld_init(void) {
 #if STM32_SIO_USE_USART1 == TRUE
   sioObjectInit(&SIOD1);
   SIOD1.usart       = USART1;
-  SIOD1.clock       = STM32_USART1CLK;
 #endif
 #if STM32_SIO_USE_USART2 == TRUE
   sioObjectInit(&SIOD2);
   SIOD2.usart       = USART2;
-  SIOD2.clock       = STM32_USART2CLK;
 #endif
 #if STM32_SIO_USE_USART3 == TRUE
   sioObjectInit(&SIOD3);
   SIOD3.usart       = USART3;
-  SIOD3.clock       = STM32_USART3CLK;
 #endif
 #if STM32_SIO_USE_UART4 == TRUE
   sioObjectInit(&SIOD4);
   SIOD4.usart       = UART4;
-  SIOD4.clock       = STM32_UART4CLK;
 #endif
 #if STM32_SIO_USE_UART5 == TRUE
   sioObjectInit(&SIOD5);
   SIOD5.usart       = UART5;
-  SIOD5.clock       = STM32_UART5CLK;
 #endif
 #if STM32_SIO_USE_USART6 == TRUE
   sioObjectInit(&SIOD6);
   SIOD6.usart       = USART6;
-  SIOD6.clock       = STM32_USART6CLK;
 #endif
 #if STM32_SIO_USE_UART7 == TRUE
   sioObjectInit(&SIOD7);
   SIOD7.usart       = UART7;
-  SIOD7.clock       = STM32_UART7CLK;
 #endif
 #if STM32_SIO_USE_UART8 == TRUE
   sioObjectInit(&SIOD8);
   SIOD8.usart       = UART8;
-  SIOD8.clock       = STM32_UART8CLK;
 #endif
 #if STM32_SIO_USE_UART9 == TRUE
   sioObjectInit(&SIOD9);
   SIOD9.usart       = UART9;
-  SIOD9.clock       = STM32_UART9CLK;
 #endif
 #if STM32_SIO_USE_USART10 == TRUE
   sioObjectInit(&SIOD10);
   SIOD10.usart      = USART10;
-  SIOD10.clock      = STM32_USART10CLK;
 #endif
 #if STM32_SIO_USE_LPUART1 == TRUE
   sioObjectInit(&LPSIOD1);
   LPSIOD1.usart     = LPUART1;
-  LPSIOD1.clock     = STM32_LPUART1CLK;
 #endif
 }
 
@@ -343,7 +393,7 @@ msg_t sio_lld_start(SIODriver *siop) {
 
   if (siop->state == SIO_STOP) {
 
-  /* Enables the peripheral.*/
+    /* Enables the peripheral.*/
     if (false) {
     }
 #if STM32_SIO_USE_USART1 == TRUE

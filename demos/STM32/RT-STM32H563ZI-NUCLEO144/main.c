@@ -95,11 +95,11 @@ static void cmd_clock(BaseSequentialStream *chp, int argc, char *argv[]) {
     return;
   }
 
+  /* Time for the serial TX buffer to flush.*/
+  chThdSleepMilliseconds(100);
+
   /* Switching clocks.*/
   result = halClockSwitchMode(ccp);
-
-  /* Time for allowing serial buffers to be flushed.*/
-  chThdSleepMilliseconds(10);
 
   /* Reconfiguring the peripherals because clocks frequencies could have changed.*/
   sioStart(&SIOD3, NULL);
