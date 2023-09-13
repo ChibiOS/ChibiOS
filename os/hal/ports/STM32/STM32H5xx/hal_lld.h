@@ -77,26 +77,29 @@
  * @name   Clock points names
  * @{
  */
-#define CLK_SYSCLK              0U
-#define CLK_PLL1PCLK            1U
-#define CLK_PLL1QCLK            2U
-#define CLK_PLL1RCLK            3U
-#define CLK_PLL2PCLK            4U
-#define CLK_PLL2QCLK            5U
-#define CLK_PLL2RCLK            6U
-#define CLK_PLL3PCLK            7U
-#define CLK_PLL3QCLK            8U
-#define CLK_PLL3RCLK            9U
-#define CLK_HCLK                10U
-#define CLK_PCLK1               11U
-#define CLK_PCLK1TIM            12U
-#define CLK_PCLK2               13U
-#define CLK_PCLK2TIM            14U
-#define CLK_PCLK3               15U
-#define CLK_MCO1                16U
-#define CLK_MCO2                17U
-#define CLK_HSI48               18U
-#define CLK_ARRAY_SIZE          19U
+#define CLK_HSI                 0U
+#define CLK_CSI                 1U
+#define CLK_HSI48               2U
+#define CLK_HSE                 3U
+#define CLK_SYSCLK              4U
+#define CLK_PLL1PCLK            5U
+#define CLK_PLL1QCLK            6U
+#define CLK_PLL1RCLK            7U
+#define CLK_PLL2PCLK            8U
+#define CLK_PLL2QCLK            9U
+#define CLK_PLL2RCLK            10U
+#define CLK_PLL3PCLK            11U
+#define CLK_PLL3QCLK            12U
+#define CLK_PLL3RCLK            13U
+#define CLK_HCLK                14U
+#define CLK_PCLK1               15U
+#define CLK_PCLK1TIM            16U
+#define CLK_PCLK2               17U
+#define CLK_PCLK2TIM            18U
+#define CLK_PCLK3               19U
+#define CLK_MCO1                20U
+#define CLK_MCO2                21U
+#define CLK_ARRAY_SIZE          22U
 /** @} */
 
 /**

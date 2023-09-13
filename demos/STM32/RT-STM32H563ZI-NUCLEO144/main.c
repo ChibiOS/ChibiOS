@@ -115,6 +115,7 @@ static void cmd_clock(BaseSequentialStream *chp, int argc, char *argv[]) {
 #endif
 
 static void cmd_clocks(BaseSequentialStream *chp, int argc, char *argv[]) {
+  const char *swp;
 
   (void)argv;
   if (argc > 0) {
@@ -123,18 +124,22 @@ static void cmd_clocks(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 
 #if STM32_SW == STM32_SW_HSI
-  chprintf(chp, "SYSCLK is HSI\r\n");
+  swp = "HSI";
 #elif STM32_SW == STM32_SW_CSI
-  chprintf(chp, "SYSCLK is CSI\r\n");
+  swp = "CSI";
 #elif STM32_SW == STM32_SW_HSE
-  chprintf(chp, "SYSCLK is HSE\r\n");
+  swp = "HSE";
 #elif STM32_SW == STM32_SW_PLL1P
-  chprintf(chp, "SYSCLK is PLL1P\r\n");
+  swp = "PLL1P";
 #else
   #error "invalid STM32_SW value specified"
 #endif
 
-  chprintf(chp, "SYSCLK:   %10u\r\n", halClockGetPointX(CLK_SYSCLK));
+  chprintf(chp, "HSI:      %10u\r\n", halClockGetPointX(CLK_HSI));
+  chprintf(chp, "CSI:      %10u\r\n", halClockGetPointX(CLK_CSI));
+  chprintf(chp, "HSI48:    %10u\r\n", halClockGetPointX(CLK_HSI48));
+  chprintf(chp, "HSE:      %10u\r\n", halClockGetPointX(CLK_HSE));
+  chprintf(chp, "SYSCLK:   %10u (%s)\r\n", halClockGetPointX(CLK_SYSCLK), swp);
   chprintf(chp, "PLL1PCLK: %10u\r\n", halClockGetPointX(CLK_PLL1PCLK));
   chprintf(chp, "PLL1RCLK: %10u\r\n", halClockGetPointX(CLK_PLL1RCLK));
   chprintf(chp, "PLL1QCLK: %10u\r\n", halClockGetPointX(CLK_PLL1QCLK));
@@ -152,7 +157,6 @@ static void cmd_clocks(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "PCLK3:    %10u\r\n", halClockGetPointX(CLK_PCLK3));
   chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
   chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
-  chprintf(chp, "HSI48:    %10u\r\n", halClockGetPointX(CLK_HSI48));
 }
 
 static const ShellCommand commands[] = {

@@ -167,12 +167,36 @@ const halclkcfg_t hal_clkcfg_default = {
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
+#define CLK_HSI                 0U
+#define CLK_CSI                 1U
+#define CLK_HSI48               2U
+#define CLK_HSE                 3U
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Dynamic clock points for this device.
  */
 static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
+#if STM32_HSI_ENABLED
+  [CLK_HSI]             = STM32_HSICLK,
+#else
+  [CLK_HSI]             = 0U,
+#endif
+#if STM32_CSI_ENABLED
+  [CLK_CSI]             = STM32_CSICLK,
+#else
+  [CLK_CSI]             = 0U,
+#endif
+#if STM32_HSI48_ENABLED
+  [CLK_HSI48]           = STM32_HSI48CLK,
+#else
+  [CLK_HSI48]           = 0U,
+#endif
+#if STM32_HSE_ENABLED
+  [CLK_HSE]             = STM32_HSECLK,
+#else
+  [CLK_HSE]             = 0U,
+#endif
   [CLK_SYSCLK]          = STM32_SYSCLK,
   [CLK_PLL1PCLK]        = STM32_PLL1_P_CLKOUT,
   [CLK_PLL1QCLK]        = STM32_PLL1_Q_CLKOUT,
@@ -190,8 +214,7 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_PCLK2TIM]        = STM32_TIMP2CLK,
   [CLK_PCLK3]           = STM32_PCLK3,
   [CLK_MCO1]            = STM32_MCO2CLK,
-  [CLK_MCO2]            = STM32_MCO1CLK,
-  [CLK_HSI48]           = STM32_HSI48CLK
+  [CLK_MCO2]            = STM32_MCO1CLK
 };
 
 /**
@@ -706,6 +729,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* Writing out results.*/
+  clock_points[CLK_HSI]      = hsiclk;
+  clock_points[CLK_CSI]      = csiclk;
+  clock_points[CLK_HSI48]    = hsi48clk;
+  clock_points[CLK_HSE]      = hseclk;
   clock_points[CLK_SYSCLK]   = sysclk;
   clock_points[CLK_PLL1PCLK] = pll1pclk;
   clock_points[CLK_PLL1QCLK] = pll1qclk;
@@ -724,7 +751,6 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   clock_points[CLK_PCLK3]    = pclk3;
   clock_points[CLK_MCO1]     = mco1clk;
   clock_points[CLK_MCO2]     = mco2clk;
-  clock_points[CLK_HSI48]    = hsi48clk;
 
   return false;
 }
