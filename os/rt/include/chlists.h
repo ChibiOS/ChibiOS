@@ -124,7 +124,67 @@ struct ch_delta_list {
  * @param[in] name      the name of the queue variable
  */
 #define CH_QUEUE_DECL(name)                                                 \
-    ch_queue_t name = __CH_QUEUE_DATA(name)
+  ch_queue_t name = __CH_QUEUE_DATA(name)
+
+/**
+ * @brief   Iterate over a queue list forwards
+ *
+ * @param[in] pos  pointer to @p ch_queue_t object to use as a loop cursor
+ * @param[in] head pointer to @p ch_queue_t head of queue
+ *
+ * @notapi
+ */
+#define ch_queue_for_each(pos, head)                                        \
+  for (pos = (head)->next; pos != (head); pos = pos->next)
+
+/**
+ * @brief   Iterate over a queue list backwards
+ *
+ * @param[in] pos   pointer to @p ch_queue_t object to use as a loop cursor
+ * @param[in] head  pointer to @p ch_queue_t head of queue
+ *
+ * @notapi
+ */
+#define ch_queue_for_each_reverse(pos, head)                                \
+  for (pos = (head)->prev; pos != (head); pos = pos->prev)
+
+/**
+ * @brief   Get the enclosing object of a queue object
+ *
+ * @param[in] ptr       pointer to the member @p ch_queue_t object
+ * @param[in] type      the type of the enclosing object
+ * @param[in] member    the name of the @p ch_queue_t object
+ *
+ * @notapi
+ */
+#define ch_queue_get_owner(ptr, type, member)                               \
+  __CH_OWNEROF(ptr, type, member)
+
+/**
+ * @brief   Get the first entry of a queue
+ * @note    The queue is assumed to be not empty
+ *
+ * @param[in] head      pointer to @p ch_queue_t head of queue
+ * @param[in] type      the type of the enclosing object
+ * @param[in] member    the name of the @p ch_queue_t object
+ *
+ * @notapi
+ */
+#define ch_queue_first_owner(head, type, member)                            \
+  __CH_OWNEROF((head)->next, type, member)
+
+/**
+ * @brief   Get the last entry of a queue
+ * @note    The queue is assumed to be not empty
+ *
+ * @param[in] head      pointer to @p ch_queue_t head of queue
+ * @param[in] type      the type of the enclosing object
+ * @param[in] member    the name of the @p ch_queue_t object
+ *
+ * @notapi
+ */
+#define ch_queue_last_owner(head, type, member)                             \
+  __CH_OWNEROF((head)->prev, type, member)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
