@@ -222,6 +222,11 @@ int main(void) {
   sioStart(&SIOD3, NULL);
 
   /*
+   * Shell manager initialization.
+   */
+  shellInit();
+
+  /*
    * Creates the blinker thread.
    */
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -235,12 +240,6 @@ int main(void) {
                                             "shell", NORMALPRIO + 1,
                                             shellThread, (void *)&shell_cfg1);
     chThdWait(shelltp);               /* Waiting termination.             */
-#if 0
-    if (palReadLine(LINE_BUTTON)) {
-      test_execute((BaseSequentialStream *)&SIOD3, &rt_test_suite);
-      test_execute((BaseSequentialStream *)&SIOD3, &oslib_test_suite);
-    }
-#endif
     chThdSleepMilliseconds(500);
   }
 }

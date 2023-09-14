@@ -89,17 +89,20 @@
  * @name   Clock points names
  * @{
  */
-#define CLK_SYSCLK              0U
-#define CLK_PLLPCLK             1U
-#define CLK_PLLQCLK             2U
-#define CLK_PLLRCLK             3U
-#define CLK_HCLK                4U
-#define CLK_PCLK1               5U
-#define CLK_PCLK1TIM            6U
-#define CLK_PCLK2               7U
-#define CLK_PCLK2TIM            8U
-#define CLK_MCO                 9U
-#define CLK_ARRAY_SIZE          10U
+#define CLK_HSI16               0U
+#define CLK_HSI48               1U
+#define CLK_HSE                 2U
+#define CLK_SYSCLK              3U
+#define CLK_PLLP                4U
+#define CLK_PLLQ                5U
+#define CLK_PLLR                6U
+#define CLK_HCLK                7U
+#define CLK_PCLK1               8U
+#define CLK_PCLK1TIM            9U
+#define CLK_PCLK2               10U
+#define CLK_PCLK2TIM            11U
+#define CLK_MCO                 12U
+#define CLK_ARRAY_SIZE          13U
 /** @} */
 
 /**
