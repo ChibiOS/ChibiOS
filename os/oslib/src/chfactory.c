@@ -1,6 +1,6 @@
 /*
     ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+              2015,2016,2017,2018,2019,2020,2021,2022,2023 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -164,17 +164,20 @@ static dyn_element_t *dyn_create_object_heap(const char *name,
   return dep;
 }
 
-static void dyn_release_object_heap(dyn_element_t *dep,
-                                    dyn_list_t *dlp) {
+static ucnt_t dyn_release_object_heap(dyn_element_t *dep,
+                                      dyn_list_t *dlp) {
+  ucnt_t refs;
 
   chDbgCheck(dep != NULL);
   chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
 
-  dep->refs--;
-  if (dep->refs == (ucnt_t)0) {
+  refs = --dep->refs;
+  if (refs == (ucnt_t)0) {
     dep = dyn_list_unlink(dep, dlp);
     chHeapFree((void *)dep);
   }
+
+  return refs;
 }
 #endif /* CH_FACTORY_REQUIRES_HEAP */
 
@@ -209,18 +212,21 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
   return dep;
 }
 
-static void dyn_release_object_pool(dyn_element_t *dep,
-                                    dyn_list_t *dlp,
-                                    memory_pool_t *mp) {
+static ucnt_t dyn_release_object_pool(dyn_element_t *dep,
+                                      dyn_list_t *dlp,
+                                      memory_pool_t *mp) {
+  ucnt_t refs;
 
   chDbgCheck(dep != NULL);
   chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
 
-  dep->refs--;
-  if (dep->refs == (ucnt_t)0) {
+  refs = --dep->refs;
+  if (refs == (ucnt_t)0) {
     dep = dyn_list_unlink(dep, dlp);
     chPoolFree(mp, (void *)dep);
   }
+
+  return refs;
 }
 #endif /* CH_FACTORY_REQUIRES_POOLS */
 
@@ -376,26 +382,33 @@ registered_object_t *chFactoryFindObjectByPointer(void *objp) {
 }
 
 /**
- * @brief   Releases a registered object.
+ * @brief   Releases a registered object and report subsequent reference count.
  * @details The reference counter of the registered object is decreased
- *          by one, if reaches zero then the registered object memory
- *          is freed.
- * @note    The object itself is not freed, it could be static, only the
- *          allocated list element is freed.
+ *          by one. If the count reaches zero then the containing list element
+ *          is returned to the free pool. The reference count is returned so
+ *          that caller can take action based on references becoming zero.
+ * @note    The registered object itself is not freed since it could be static.
+ *          Only the containing list element is freed.
  *
  * @param[in] rop       registered object reference
+ * @return 		        The reference count of registered object subsequent to
+ *                      release.
+ * @retval 0		    if the object has been released.
  *
  * @api
  */
-void chFactoryReleaseObject(registered_object_t *rop) {
+ucnt_t chFactoryReleaseObject(registered_object_t *rop) {
+  ucnt_t refs;
 
   FACTORY_LOCK();
 
-  dyn_release_object_pool(&rop->element,
-                          &ch_factory.obj_list,
-                          &ch_factory.obj_pool);
+  refs = dyn_release_object_pool(&rop->element,
+                                 &ch_factory.obj_list,
+                                 &ch_factory.obj_pool);
 
   FACTORY_UNLOCK();
+
+  return refs;
 }
 #endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE */
 
@@ -466,16 +479,22 @@ dyn_buffer_t *chFactoryFindBuffer(const char *name) {
  *          is freed.
  *
  * @param[in] dbp       dynamic buffer object reference
+ * @return              The reference count of registered object subsequent to
+ *                      release.
+ * @retval 0            if the object has been released.
  *
  * @api
  */
-void chFactoryReleaseBuffer(dyn_buffer_t *dbp) {
+ucnt_t chFactoryReleaseBuffer(dyn_buffer_t *dbp) {
+  ucnt_t refs;
 
   FACTORY_LOCK();
 
-  dyn_release_object_heap(&dbp->element, &ch_factory.buf_list);
+  refs = dyn_release_object_heap(&dbp->element, &ch_factory.buf_list);
 
   FACTORY_UNLOCK();
+
+  return refs;
 }
 #endif /* CH_CFG_FACTORY_GENERIC_BUFFERS = TRUE */
 
@@ -545,18 +564,24 @@ dyn_semaphore_t *chFactoryFindSemaphore(const char *name) {
  *          is freed.
  *
  * @param[in] dsp       dynamic semaphore object reference
+ * @return              The reference count of registered object subsequent to
+ *                      release.
+ * @retval 0            if the object has been released.
  *
  * @api
  */
-void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
+ucnt_t chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
+  ucnt_t refs;
 
   FACTORY_LOCK();
 
-  dyn_release_object_pool(&dsp->element,
-                          &ch_factory.sem_list,
-                          &ch_factory.sem_pool);
+  refs = dyn_release_object_pool(&dsp->element,
+                                 &ch_factory.sem_list,
+                                 &ch_factory.sem_pool);
 
   FACTORY_UNLOCK();
+
+  return refs;
 }
 #endif /* CH_CFG_FACTORY_SEMAPHORES = TRUE */
 
@@ -628,16 +653,22 @@ dyn_mailbox_t *chFactoryFindMailbox(const char *name) {
  *          is freed.
  *
  * @param[in] dmp       dynamic mailbox object reference
+ * @return              The reference count of registered object subsequent to
+ *                      release.
+ * @retval 0            if the object has been released.
  *
  * @api
  */
-void chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
+ucnt_t chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
+  ucnt_t refs;
 
   FACTORY_LOCK();
 
-  dyn_release_object_heap(&dmp->element, &ch_factory.mbx_list);
+  refs = dyn_release_object_heap(&dmp->element, &ch_factory.mbx_list);
 
   FACTORY_UNLOCK();
+
+  return refs;
 }
 #endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
 
@@ -728,16 +759,22 @@ dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name) {
  *          object memory is freed.
  *
  * @param[in] dofp      dynamic "objects FIFO" object reference
+ * @return              The reference count of registered object subsequent to
+ *                      release.
+ * @retval 0            if the object has been released.
  *
  * @api
  */
-void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
+ucnt_t chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
+  ucnt_t refs;
 
   FACTORY_LOCK();
 
-  dyn_release_object_heap(&dofp->element, &ch_factory.fifo_list);
+  refs = dyn_release_object_heap(&dofp->element, &ch_factory.fifo_list);
 
   FACTORY_UNLOCK();
+
+  return refs;
 }
 #endif /* CH_CFG_FACTORY_OBJ_FIFOS = TRUE */
 
@@ -811,16 +848,22 @@ dyn_pipe_t *chFactoryFindPipe(const char *name) {
  *          object memory is freed.
  *
  * @param[in] dpp       dynamic pipe object reference
+ * @return              The reference count of registered object subsequent to
+ *                      release.
+ * @retval 0            if the object has been released.
  *
  * @api
  */
-void chFactoryReleasePipe(dyn_pipe_t *dpp) {
+ucnt_t chFactoryReleasePipe(dyn_pipe_t *dpp) {
+  ucnt_t refs;
 
   FACTORY_LOCK();
 
-  dyn_release_object_heap(&dpp->element, &ch_factory.pipe_list);
+  refs = dyn_release_object_heap(&dpp->element, &ch_factory.pipe_list);
 
   FACTORY_UNLOCK();
+
+  return refs;
 }
 #endif /* CH_CFG_FACTORY_PIPES = TRUE */
 

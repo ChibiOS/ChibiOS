@@ -1,6 +1,6 @@
 /*
     ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+              2015,2016,2017,2018,2019,2020,2021,2022,2023 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -359,22 +359,22 @@ extern "C" {
                                                void *objp);
   registered_object_t *chFactoryFindObject(const char *name);
   registered_object_t *chFactoryFindObjectByPointer(void *objp);
-  void chFactoryReleaseObject(registered_object_t *rop);
+  ucnt_t chFactoryReleaseObject(registered_object_t *rop);
 #endif
 #if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
   dyn_buffer_t *chFactoryCreateBuffer(const char *name, size_t size);
   dyn_buffer_t *chFactoryFindBuffer(const char *name);
-  void chFactoryReleaseBuffer(dyn_buffer_t *dbp);
+  ucnt_t chFactoryReleaseBuffer(dyn_buffer_t *dbp);
 #endif
 #if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
   dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n);
   dyn_semaphore_t *chFactoryFindSemaphore(const char *name);
-  void chFactoryReleaseSemaphore(dyn_semaphore_t *dsp);
+  ucnt_t chFactoryReleaseSemaphore(dyn_semaphore_t *dsp);
 #endif
 #if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
   dyn_mailbox_t *chFactoryCreateMailbox(const char *name, size_t n);
   dyn_mailbox_t *chFactoryFindMailbox(const char *name);
-  void chFactoryReleaseMailbox(dyn_mailbox_t *dmp);
+  ucnt_t chFactoryReleaseMailbox(dyn_mailbox_t *dmp);
 #endif
 #if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
   dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
@@ -382,12 +382,12 @@ extern "C" {
                                                  size_t objn,
                                                  unsigned objalign);
   dyn_objects_fifo_t *chFactoryFindObjectsFIFO(const char *name);
-  void chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp);
+  ucnt_t chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp);
 #endif
 #if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
   dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size);
   dyn_pipe_t *chFactoryFindPipe(const char *name);
-  void chFactoryReleasePipe(dyn_pipe_t *dpp);
+  ucnt_t chFactoryReleasePipe(dyn_pipe_t *dpp);
 #endif
 #ifdef __cplusplus
 }
@@ -415,7 +415,7 @@ static inline dyn_element_t *chFactoryDuplicateReference(dyn_element_t *dep) {
 
 #if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Returns the pointer to the inner registered object.
+ * @brief   Returns the pointer of the inner registered object.
  *
  * @param[in] rop       registered object reference
  * @return              The pointer to the registered object.
