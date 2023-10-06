@@ -68,6 +68,16 @@
 #define STM32_RCC_PLL3_HAS_Q                TRUE
 #define STM32_RCC_PLL3_HAS_R                TRUE
 
+/* GPDMA attributes.*/
+#define STM32_GPDMA1_NUM_CHANNELS           8U
+#define STM32_GPDMA1_MASK_FIFO2             0x0000000FU
+#define STM32_GPDMA1_MASK_FIFO4             0x00000030U
+#define STM32_GPDMA1_MASK_FIFO4_2D          0x000000C0U
+#define STM32_GPDMA2_NUM_CHANNELS           8U
+#define STM32_GPDMA2_MASK_FIFO2             0x00000F00U
+#define STM32_GPDMA2_MASK_FIFO4             0x00003000U
+#define STM32_GPDMA2_MASK_FIFO4_2D          0x0000C000U
+
 /*===========================================================================*/
 /* STM32H562xx, STM32H563xx, STM32H573xx.                                    */
 /*===========================================================================*/
