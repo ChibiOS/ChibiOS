@@ -31,9 +31,9 @@
 
 #include "hal.h"
 
-/* The following macro is only defined if some driver requiring DMA services
+/* The following macro is only defined if some driver requiring GPDMA services
    has been enabled.*/
-#if defined(STM32_DMA_REQUIRED) || defined(__DOXYGEN__)
+#if defined(STM32_GPDMA_REQUIRED) || defined(__DOXYGEN__)
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -50,54 +50,54 @@
  * @note    Don't use this array directly, use the appropriate wrapper macros
  *          instead: @p STM32_DMA1_CHANNEL1, @p STM32_DMA1_CHANNEL2 etc.
  */
-const stm32_dma_channel_t _stm32_dma_channels[STM32_GPDMA_CHANNELS] = {
-#if STM32_DMA1_NUM_CHANNELS > 0
-  {DMA1, DMA1_Channel1, STM32_DMA1_CH1_CMASK, DMA1_CH1_VARIANT,  0, 0, STM32_DMA1_CH1_NUMBER},
+const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_CHANNELS] = {
+#if STM32_GPDMA1_NUM_CHANNELS > 0
+  {GPDMA1_Channel0},
 #endif
-#if STM32_DMA1_NUM_CHANNELS > 1
-  {DMA1, DMA1_Channel2, STM32_DMA1_CH2_CMASK, DMA1_CH2_VARIANT,  4, 1, STM32_DMA1_CH2_NUMBER},
+#if STM32_GPDMA1_NUM_CHANNELS > 1
+  {GPDMA1_Channel1},
 #endif
-#if STM32_DMA1_NUM_CHANNELS > 2
-  {DMA1, DMA1_Channel3, STM32_DMA1_CH3_CMASK, DMA1_CH3_VARIANT,  8, 2, STM32_DMA1_CH3_NUMBER},
+#if STM32_GPDMA1_NUM_CHANNELS > 2
+  {GPDMA1_Channel2},
 #endif
-#if STM32_DMA1_NUM_CHANNELS > 3
-  {DMA1, DMA1_Channel4, STM32_DMA1_CH4_CMASK, DMA1_CH4_VARIANT, 12, 3, STM32_DMA1_CH4_NUMBER},
+#if STM32_GPDMA1_NUM_CHANNELS > 3
+  {GPDMA1_Channel3},
 #endif
-#if STM32_DMA1_NUM_CHANNELS > 4
-  {DMA1, DMA1_Channel5, STM32_DMA1_CH5_CMASK, DMA1_CH5_VARIANT, 16, 4, STM32_DMA1_CH5_NUMBER},
+#if STM32_GPDMA1_NUM_CHANNELS > 4
+  {GPDMA1_Channel4},
 #endif
-#if STM32_DMA1_NUM_CHANNELS > 5
-  {DMA1, DMA1_Channel6, STM32_DMA1_CH6_CMASK, DMA1_CH6_VARIANT, 20, 5, STM32_DMA1_CH6_NUMBER},
+#if STM32_GPDMA1_NUM_CHANNELS > 5
+  {GPDMA1_Channel5},
 #endif
-#if STM32_DMA1_NUM_CHANNELS > 6
-  {DMA1, DMA1_Channel7, STM32_DMA1_CH7_CMASK, DMA1_CH7_VARIANT, 24, 6, STM32_DMA1_CH7_NUMBER},
+#if STM32_GPDMA1_NUM_CHANNELS > 6
+  {GPDMA1_Channel6},
 #endif
-#if STM32_DMA1_NUM_CHANNELS > 7
-  {DMA1, DMA1_Channel8, STM32_DMA1_CH8_CMASK, DMA1_CH8_VARIANT, 28, 7, STM32_DMA1_CH8_NUMBER},
+#if STM32_GPDMA1_NUM_CHANNELS > 7
+  {GPDMA1_Channel7},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 0
-  {DMA2, DMA2_Channel1, STM32_DMA2_CH1_CMASK, DMA2_CH1_VARIANT,  0, 0 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH1_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 0
+  {GPDMA2_Channel0},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 1
-  {DMA2, DMA2_Channel2, STM32_DMA2_CH2_CMASK, DMA2_CH2_VARIANT,  4, 1 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH2_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 1
+  {GPDMA2_Channel1},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 2
-  {DMA2, DMA2_Channel3, STM32_DMA2_CH3_CMASK, DMA2_CH3_VARIANT,  8, 2 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH3_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 2
+  {GPDMA2_Channel2},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 3
-  {DMA2, DMA2_Channel4, STM32_DMA2_CH4_CMASK, DMA2_CH4_VARIANT, 12, 3 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH4_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 3
+  {GPDMA2_Channel3},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 4
-  {DMA2, DMA2_Channel5, STM32_DMA2_CH5_CMASK, DMA2_CH5_VARIANT, 16, 4 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH5_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 4
+  {GPDMA2_Channel4},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 5
-  {DMA2, DMA2_Channel6, STM32_DMA2_CH6_CMASK, DMA2_CH6_VARIANT, 20, 5 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH6_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 5
+  {GPDMA2_Channel5},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 6
-  {DMA2, DMA2_Channel7, STM32_DMA2_CH7_CMASK, DMA2_CH7_VARIANT, 24, 6 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH7_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 6
+  {GPDMA2_Channel6},
 #endif
-#if STM32_DMA2_NUM_CHANNELS > 7
-  {DMA2, DMA2_Channel8, STM32_DMA2_CH8_CMASK, DMA2_CH8_VARIANT, 28, 7 + STM32_DMA1_NUM_CHANNELS, STM32_DMA2_CH8_NUMBER},
+#if STM32_GPDMA2_NUM_CHANNELS > 7
+  {GPDMA2_Channel7},
 #endif
 };
 
@@ -112,11 +112,7 @@ static struct {
   /**
    * @brief   Mask of the allocated channels.
    */
-  uint32_t          allocated_mask;
-  /**
-   * @brief   Mask of the enabled channels ISRs.
-   */
-  uint32_t          isr_mask;
+  uint32_t              allocated_mask;
   /**
    * @brief   DMA IRQ redirectors.
    */
@@ -124,13 +120,13 @@ static struct {
     /**
      * @brief   DMA callback function.
      */
-    stm32_dmaisr_t    func;
+    stm32_gpdmaisr_t    func;
     /**
      * @brief   DMA callback parameter.
      */
-    void              *param;
+    void                *param;
   } channels[STM32_GPDMA_CHANNELS];
-} dma;
+} gpdma;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -150,17 +146,14 @@ static struct {
  * @init
  */
 void dmaInit(void) {
-  int i;
+  unsigned i;
 
-  dma.allocated_mask = 0U;
-  dma.isr_mask       = 0U;
-  for (i = 0; i < STM32_DMA_CHANNELS; i++) {
-    _stm32_dma_channels[i].channel->CCR = STM32_DMA_CCR_RESET_VALUE;
-    dma.channels[i].func = NULL;
+  gpdma.allocated_mask = 0U;
+  for (i = 0; i < STM32_GPDMA_CHANNELS; i++) {
+    __stm32_gpdma_channels[i].channel->CCR = 0U;
+    gpdma.channels[i].func = NULL;
   }
-  DMA1->IFCR = 0xFFFFFFFFU;
-#if STM32_DMA2_NUM_CHANNELS > 0
-  DMA2->IFCR = 0xFFFFFFFFU;
+#if STM32_GPDMA2_NUM_CHANNELS > 0
 #endif
 }
 
@@ -180,42 +173,23 @@ void dmaInit(void) {
  *
  * @iclass
  */
-const stm32_dma_channel_t *dmaStreamAllocI(uint32_t id,
-                                          uint32_t priority,
-                                          stm32_dmaisr_t func,
-                                          void *param) {
-  uint32_t i, startid, endid;
+const stm32_gpdma_channel_t *dmaChannelAllocI(uint32_t cmask,
+                                              uint32_t irqprio,
+                                              stm32_gpdmaisr_t func,
+                                              void *param) {
+  unsigned i;
+  uint32_t available;
 
   osalDbgCheckClassI();
 
-  if (id < STM32_DMA_CHANNELS) {
-    startid = id;
-    endid   = id;
-  }
-#if STM32_DMA_SUPPORTS_DMAMUX == TRUE
-  else if (id == STM32_DMA_CHANNEL_ID_ANY) {
-    startid = 0U;
-    endid   = STM32_DMA_CHANNELS - 1U;
-  }
-  else if (id == STM32_DMA_CHANNEL_ID_ANY_DMA1) {
-    startid = 0U;
-    endid   = STM32_DMA1_NUM_CHANNELS - 1U;
-  }
-#if STM32_DMA2_NUM_CHANNELS > 0
-  else if (id == STM32_DMA_CHANNEL_ID_ANY_DMA2) {
-    startid = STM32_DMA1_NUM_CHANNELS;
-    endid   = STM32_DMA_CHANNELS - 1U;
-  }
-#endif
-#endif
-  else {
-    osalDbgCheck(false);
-    return NULL;
-  }
+  /* Mask of the available channels within the specified channels.*/
+  available = gpdma.allocated_mask & cmask;
 
-  for (i = startid; i <= endid; i++) {
-    uint32_t mask = (1U << i);
-    if ((dma.allocated_mask & mask) == 0U) {
+  /* Searching for a free channel.*/
+  for (i = 0U; i <= STM32_GPDMA_CHANNELS; i++) {
+    uint32_t mask = (uint32_t)(1U << i);
+    if ((available & mask) == 0U) {
+      /* Channel found.*/
       const stm32_dma_channel_t *dmachp = STM32_DMA_CHANNEL(i);
 
       /* Installs the DMA handler.*/
@@ -227,7 +201,7 @@ const stm32_dma_channel_t *dmaStreamAllocI(uint32_t id,
       if ((STM32_DMA1_CHANNELS_MASK & mask) != 0U) {
         rccEnableDMA1(true);
       }
-#if STM32_DMA2_NUM_CHANNELS > 0
+#if STM32_GPDMA2_NUM_CHANNELS > 0
       if ((STM32_DMA2_CHANNELS_MASK & mask) != 0U) {
         rccEnableDMA2(true);
       }
@@ -325,7 +299,7 @@ void dmaStreamFreeI(const stm32_dma_channel_t *dmachp) {
   if ((dma.allocated_mask & STM32_DMA1_CHANNELS_MASK) == 0U) {
     rccDisableDMA1();
   }
-#if STM32_DMA2_NUM_CHANNELS > 0
+#if STM32_GPDMA2_NUM_CHANNELS > 0
   if ((dma.allocated_mask & STM32_DMA2_CHANNELS_MASK) == 0U) {
     rccDisableDMA2();
   }
@@ -375,5 +349,7 @@ void dmaServeInterrupt(const stm32_dma_channel_t *dmachp) {
     }
   }
 }
+
+#endif /* defined(STM32_GPDMA_REQUIRED) */
 
 /** @} */

@@ -25,6 +25,8 @@
 #ifndef STM32_GPDMA_H
 #define STM32_GPDMA_H
 
+#if defined(STM32_GPDMA_REQUIRED) || defined(__DOXYGEN__)
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -252,19 +254,9 @@ typedef struct {
  *
  * @special
  */
-#if STM32_DMA_SUPPORTS_CSELR || defined(__DOXYGEN__)
-#define dmaStreamSetMode(dmastp, mode) {                                    \
-  uint32_t cselr = *(dmastp)->cselr;                                        \
-  cselr &= ~(0x0000000FU << (dmastp)->shift);                               \
-  cselr |=  (((uint32_t)(mode) >> 16U) << (dmastp)->shift);                 \
-  *(dmastp)->cselr = cselr;                                                 \
-  (dmastp)->channel->CCR  = (uint32_t)(mode);                               \
-}
-#else
 #define dmaStreamSetMode(dmastp, mode) {                                    \
   (dmastp)->channel->CCR  = (uint32_t)(mode);                               \
 }
-#endif
 
 /**
  * @brief   DMA channel enable.
@@ -370,11 +362,11 @@ extern "C" {
   void dmaInit(void);
   const stm32_gpdma_channel_t *dmaChannelAllocI(uint32_t cmask,
                                                 uint32_t irqprio,
-                                                stm32_dmaisr_t func,
+                                                stm32_gpdmaisr_t func,
                                                 void *param);
   const stm32_gpdma_channel_t *dmaChannelAlloc(uint32_t cmask,
                                                uint32_t irqprio,
-                                               stm32_dmaisr_t func,
+                                               stm32_gpdmaisr_t func,
                                                void *param);
   void dmaChannelFreeI(const stm32_gpdma_channel_t *dmachp);
   void dmaChannelFree(const stm32_gpdma_channel_t *dmachp);
@@ -382,6 +374,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* defined(STM32_GPDMA_REQUIRED) */
 
 #endif /* STM32_GPDMA_H */
 
