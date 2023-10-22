@@ -34,7 +34,7 @@
 /**
  * @brief   Maximum number of transfers in a single operation.
  */
-#define STM32_DMA_MAX_TRANSFER      65535
+#define STM32_GPDMA_MAX_TRANSFER      65535
 
 /**
  * @brief   Checks if a GPDMA priority is within the valid range.
@@ -44,7 +44,7 @@
  * @retval false        invalid GPDMA priority.
  * @retval true         correct GPDMA priority.
  */
-#define STM32_DMA_IS_VALID_PRIORITY(prio)                                   \
+#define STM32_GPDMA_IS_VALID_PRIORITY(prio)                                 \
   (((prio) >= 0U) && ((prio) <= 3U))
 
 /**
@@ -54,7 +54,7 @@
  * @param[in] ch        the channel number
  * @return              An unique numeric channel identifier.
  */
-#define STM32_DMA_CHANNEL_ID(dma, ch)                                       \
+#define STM32_GPDMA_CHANNEL_ID(dma, ch)                                     \
   ((((dma) - 1U) * STM32_GPDMA1_NUM_CHANNELS) + (ch))
 
 /**
@@ -65,8 +65,8 @@
  * @param[in] ch        the channel number
  * @return              A channel mask.
  */
-#define STM32_DMA_CHANNEL_ID_MSK(dma, ch)                                   \
-  (1U << STM32_DMA_CHANNEL_ID(dma, ch))
+#define STM32_GPDMA_CHANNEL_ID_MSK(dma, ch)                                 \
+  (1U << STM32_GPDMA_CHANNEL_ID(dma, ch))
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -175,6 +175,7 @@ typedef void (*stm32_gpdmaisr_t)(void *p, uint32_t csr);
  */
 typedef struct {
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated channel.     */
+  uint8_t               vector;         /**< @brief Associated IRQ vector.  */
 } stm32_gpdma_channel_t;
 
 /*===========================================================================*/
@@ -269,7 +270,7 @@ typedef struct {
  * @special
  */
 #define dmaStreamEnable(dmastp) {                                           \
-  (dmastp)->channel->CCR |= STM32_DMA_CR_EN;                                \
+  (dmastp)->channel->CCR |= STM32_GPDMA_CR_EN;                              \
 }
 
 /**
@@ -287,8 +288,8 @@ typedef struct {
  * @special
  */
 #define dmaStreamDisable(dmastp) {                                          \
-  (dmastp)->channel->CCR &= ~(STM32_DMA_CR_TCIE | STM32_DMA_CR_HTIE |       \
-                              STM32_DMA_CR_TEIE | STM32_DMA_CR_EN);         \
+  (dmastp)->channel->CCR &= ~(STM32_GPDMA_CR_TCIE | STM32_GPDMA_CR_HTIE |   \
+                              STM32_GPDMA_CR_TEIE | STM32_GPDMA_CR_EN);     \
   dmaStreamClearInterrupt(dmastp);                                          \
 }
 
@@ -303,7 +304,7 @@ typedef struct {
  * @special
  */
 #define dmaStreamClearInterrupt(dmastp) {                                   \
-  (dmastp)->dma->IFCR = STM32_DMA_ISR_MASK << (dmastp)->shift;              \
+  (dmastp)->dma->IFCR = STM32_GPDMA_ISR_MASK << (dmastp)->shift;            \
 }
 
 /**
@@ -316,10 +317,10 @@ typedef struct {
  * @param[in] dmastp    pointer to a stm32_gpdma_channel_t structure
  * @param[in] mode      value to be written in the CCR register, this value
  *                      is implicitly ORed with:
- *                      - @p STM32_DMA_CR_MINC
- *                      - @p STM32_DMA_CR_PINC
- *                      - @p STM32_DMA_CR_DIR_M2M
- *                      - @p STM32_DMA_CR_EN
+ *                      - @p STM32_GPDMA_CR_MINC
+ *                      - @p STM32_GPDMA_CR_PINC
+ *                      - @p STM32_GPDMA_CR_DIR_M2M
+ *                      - @p STM32_GPDMA_CR_EN
  *                      .
  * @param[in] src       source address
  * @param[in] dst       destination address
@@ -330,8 +331,8 @@ typedef struct {
   dmaStreamSetMemory0(dmastp, dst);                                         \
   dmaStreamSetTransactionSize(dmastp, n);                                   \
   dmaStreamSetMode(dmastp, (mode) |                                         \
-                           STM32_DMA_CR_MINC | STM32_DMA_CR_PINC |          \
-                           STM32_DMA_CR_DIR_M2M | STM32_DMA_CR_EN);         \
+                           STM32_GPDMA_CR_MINC | STM32_GPDMA_CR_PINC |      \
+                           STM32_GPDMA_CR_DIR_M2M | STM32_GPDMA_CR_EN);     \
 }
 
 /**
@@ -360,17 +361,17 @@ extern const stm32_gpdma_channel_t _stm32_gpdma_channels[STM32_GPDMA_CHANNELS];
 extern "C" {
 #endif
   void dmaInit(void);
-  const stm32_gpdma_channel_t *dmaChannelAllocI(uint32_t cmask,
-                                                uint32_t irqprio,
-                                                stm32_gpdmaisr_t func,
-                                                void *param);
-  const stm32_gpdma_channel_t *dmaChannelAlloc(uint32_t cmask,
-                                               uint32_t irqprio,
-                                               stm32_gpdmaisr_t func,
-                                               void *param);
-  void dmaChannelFreeI(const stm32_gpdma_channel_t *dmachp);
-  void dmaChannelFree(const stm32_gpdma_channel_t *dmachp);
-  void dmaServeInterrupt(const stm32_gpdma_channel_t *dmachp);
+  const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
+                                                  uint32_t irqprio,
+                                                  stm32_gpdmaisr_t func,
+                                                  void *param);
+  const stm32_gpdma_channel_t *gpdmaChannelAlloc(uint32_t cmask,
+                                                 uint32_t irqprio,
+                                                 stm32_gpdmaisr_t func,
+                                                 void *param);
+  void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp);
+  void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp);
+  void gpdmaServeInterrupt(const stm32_gpdma_channel_t *dmachp);
 #ifdef __cplusplus
 }
 #endif

@@ -75,6 +75,43 @@
 #define STM32_ADC1_NUMBER                   37
 
 /*
+ * DMA unit.
+ */
+#define STM32_GPDMA1_CH0_HANDLER            VectorAC
+#define STM32_GPDMA1_CH1_HANDLER            VectorB0
+#define STM32_GPDMA1_CH2_HANDLER            VectorB4
+#define STM32_GPDMA1_CH3_HANDLER            VectorB8
+#define STM32_GPDMA1_CH4_HANDLER            VectorBC
+#define STM32_GPDMA1_CH5_HANDLER            VectorC0
+#define STM32_GPDMA1_CH6_HANDLER            VectorC4
+#define STM32_GPDMA1_CH7_HANDLER            VectorC8
+#define STM32_GPDMA2_CH0_HANDLER            Vector190
+#define STM32_GPDMA2_CH1_HANDLER            Vector194
+#define STM32_GPDMA2_CH2_HANDLER            Vector198
+#define STM32_GPDMA2_CH3_HANDLER            Vector19C
+#define STM32_GPDMA2_CH4_HANDLER            Vector1A0
+#define STM32_GPDMA2_CH5_HANDLER            Vector1A4
+#define STM32_GPDMA2_CH6_HANDLER            Vector1A8
+#define STM32_GPDMA2_CH7_HANDLER            Vector1AC
+
+#define STM32_GPDMA1_CH0_NUMBER             27
+#define STM32_GPDMA1_CH1_NUMBER             28
+#define STM32_GPDMA1_CH2_NUMBER             29
+#define STM32_GPDMA1_CH3_NUMBER             30
+#define STM32_GPDMA1_CH4_NUMBER             31
+#define STM32_GPDMA1_CH5_NUMBER             32
+#define STM32_GPDMA1_CH6_NUMBER             33
+#define STM32_GPDMA1_CH7_NUMBER             34
+#define STM32_GPDMA2_CH0_NUMBER             90
+#define STM32_GPDMA2_CH1_NUMBER             91
+#define STM32_GPDMA2_CH2_NUMBER             92
+#define STM32_GPDMA2_CH3_NUMBER             93
+#define STM32_GPDMA2_CH4_NUMBER             94
+#define STM32_GPDMA2_CH5_NUMBER             95
+#define STM32_GPDMA2_CH6_NUMBER             96
+#define STM32_GPDMA2_CH7_NUMBER             97
+
+/*
  * EXTI unit.
  */
 #define STM32_EXTI0_HANDLER                 Vector6C

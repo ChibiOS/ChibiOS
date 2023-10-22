@@ -48,56 +48,56 @@
  * @details This table keeps the association between an unique channel
  *          identifier and the involved physical registers.
  * @note    Don't use this array directly, use the appropriate wrapper macros
- *          instead: @p STM32_DMA1_CHANNEL1, @p STM32_DMA1_CHANNEL2 etc.
+ *          instead: @p STM32_GPDMA1_CHANNEL1, @p STM32_GPDMA1_CHANNEL2 etc.
  */
 const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_CHANNELS] = {
 #if STM32_GPDMA1_NUM_CHANNELS > 0
-  {GPDMA1_Channel0},
+  {GPDMA1_Channel0, STM32_GPDMA1_CH0_NUMBER},
 #endif
 #if STM32_GPDMA1_NUM_CHANNELS > 1
-  {GPDMA1_Channel1},
+  {GPDMA1_Channel1, STM32_GPDMA1_CH1_NUMBER},
 #endif
 #if STM32_GPDMA1_NUM_CHANNELS > 2
-  {GPDMA1_Channel2},
+  {GPDMA1_Channel2, STM32_GPDMA1_CH2_NUMBER},
 #endif
 #if STM32_GPDMA1_NUM_CHANNELS > 3
-  {GPDMA1_Channel3},
+  {GPDMA1_Channel3, STM32_GPDMA1_CH3_NUMBER},
 #endif
 #if STM32_GPDMA1_NUM_CHANNELS > 4
-  {GPDMA1_Channel4},
+  {GPDMA1_Channel4, STM32_GPDMA1_CH4_NUMBER},
 #endif
 #if STM32_GPDMA1_NUM_CHANNELS > 5
-  {GPDMA1_Channel5},
+  {GPDMA1_Channel5, STM32_GPDMA1_CH5_NUMBER},
 #endif
 #if STM32_GPDMA1_NUM_CHANNELS > 6
-  {GPDMA1_Channel6},
+  {GPDMA1_Channel6, STM32_GPDMA1_CH6_NUMBER},
 #endif
 #if STM32_GPDMA1_NUM_CHANNELS > 7
-  {GPDMA1_Channel7},
+  {GPDMA1_Channel7, STM32_GPDMA1_CH7_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 0
-  {GPDMA2_Channel0},
+  {GPDMA2_Channel0, STM32_GPDMA2_CH0_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 1
-  {GPDMA2_Channel1},
+  {GPDMA2_Channel1, STM32_GPDMA2_CH1_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 2
-  {GPDMA2_Channel2},
+  {GPDMA2_Channel2, STM32_GPDMA2_CH2_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 3
-  {GPDMA2_Channel3},
+  {GPDMA2_Channel3, STM32_GPDMA2_CH3_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 4
-  {GPDMA2_Channel4},
+  {GPDMA2_Channel4, STM32_GPDMA2_CH4_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 5
-  {GPDMA2_Channel5},
+  {GPDMA2_Channel5, STM32_GPDMA2_CH5_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 6
-  {GPDMA2_Channel6},
+  {GPDMA2_Channel6, STM32_GPDMA2_CH6_NUMBER},
 #endif
 #if STM32_GPDMA2_NUM_CHANNELS > 7
-  {GPDMA2_Channel7},
+  {GPDMA2_Channel7, STM32_GPDMA2_CH7_NUMBER},
 #endif
 };
 
@@ -173,10 +173,10 @@ void dmaInit(void) {
  *
  * @iclass
  */
-const stm32_gpdma_channel_t *dmaChannelAllocI(uint32_t cmask,
-                                              uint32_t irqprio,
-                                              stm32_gpdmaisr_t func,
-                                              void *param) {
+const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
+                                                uint32_t irqprio,
+                                                stm32_gpdmaisr_t func,
+                                                void *param) {
   unsigned i;
   uint32_t available;
 
@@ -190,42 +190,33 @@ const stm32_gpdma_channel_t *dmaChannelAllocI(uint32_t cmask,
     uint32_t mask = (uint32_t)(1U << i);
     if ((available & mask) == 0U) {
       /* Channel found.*/
-      const stm32_dma_channel_t *dmachp = STM32_DMA_CHANNEL(i);
+      const stm32_gpdma_channel_t *dmachp = STM32_GPDMA_CHANNEL(i);
 
       /* Installs the DMA handler.*/
-      dma.channels[i].func  = func;
-      dma.channels[i].param = param;
-      dma.allocated_mask  |= mask;
+      gpdma.channels[i].func  = func;
+      gpdma.channels[i].param = param;
+      gpdma.allocated_mask  |= mask;
 
       /* Enabling DMA clocks required by the current channels set.*/
-      if ((STM32_DMA1_CHANNELS_MASK & mask) != 0U) {
+      if ((STM32_GPDMA1_MASK_ANY & mask) != 0U) {
         rccEnableDMA1(true);
       }
 #if STM32_GPDMA2_NUM_CHANNELS > 0
-      if ((STM32_DMA2_CHANNELS_MASK & mask) != 0U) {
+      if ((STM32_GPDMA2_MASK_ANY & mask) != 0U) {
         rccEnableDMA2(true);
-      }
-#endif
-
-#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) && defined(rccEnableDMAMUX)
-      /* Enabling DMAMUX if present.*/
-      if (dma.allocated_mask != 0U) {
-        rccEnableDMAMUX(true);
       }
 #endif
 
       /* Enables the associated IRQ vector if not already enabled and if a
          callback is defined.*/
       if (func != NULL) {
-        if ((dma.isr_mask & dmachp->cmask) == 0U) {
-          nvicEnableVector(dmachp->vector, priority);
-        }
-        dma.isr_mask |= mask;
+        /* Could be already enabled but no problem.*/
+        nvicEnableVector(dmachp->vector, irqprio);
       }
 
       /* Putting the channel in a known state.*/
-      dmaStreamDisable(dmachp);
-      dmachp->channel->CCR = STM32_DMA_CCR_RESET_VALUE;
+      gpdmaStreamDisable(dmachp);
+      dmachp->channel->CCR = 0U;
 
       return dmachp;
     }
@@ -250,14 +241,14 @@ const stm32_gpdma_channel_t *dmaChannelAllocI(uint32_t cmask,
  *
  * @api
  */
-const stm32_dma_channel_t *dmaStreamAlloc(uint32_t id,
-                                         uint32_t priority,
-                                         stm32_dmaisr_t func,
-                                         void *param) {
-  const stm32_dma_channel_t *dmachp;
+const stm32_gpdma_channel_t *gpdmaChannelAlloc(uint32_t cmask,
+                                               uint32_t irqprio,
+                                               stm32_gpdmaisr_t func,
+                                               void *param) {
+  const stm32_gpdma_channel_t *dmachp;
 
   osalSysLock();
-  dmachp = dmaStreamAllocI(id, priority, func, param);
+  dmachp = gpdmaChannelAllocI(cmask, irqprio, func, param);
   osalSysUnlock();
 
   return dmachp;
@@ -273,42 +264,32 @@ const stm32_dma_channel_t *dmaStreamAlloc(uint32_t id,
  *
  * @iclass
  */
-void dmaStreamFreeI(const stm32_dma_channel_t *dmachp) {
-  uint32_t selfindex = (uint32_t)dmachp->selfindex;
+void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp) {
+  uint32_t selfindex = (uint32_t)(dmachp - __stm32_gpdma_channels);
 
   osalDbgCheck(dmachp != NULL);
 
   /* Check if the channels is not taken.*/
-  osalDbgAssert((dma.allocated_mask & (1 << selfindex)) != 0U,
+  osalDbgAssert((gpdma.allocated_mask & (1U << selfindex)) != 0U,
                 "not allocated");
 
   /* Marks the channel as not allocated.*/
-  dma.allocated_mask &= ~(1U << selfindex);
-  dma.isr_mask &= ~(1U << selfindex);
+  gpdma.allocated_mask &= ~(1U << selfindex);
 
   /* Disables the associated IRQ vector if it is no more in use.*/
-  if ((dma.isr_mask & dmachp->cmask) == 0U) {
-    nvicDisableVector(dmachp->vector);
-  }
+  nvicDisableVector(dmachp->vector);
 
   /* Removes the DMA handler.*/
-  dma.channels[selfindex].func  = NULL;
-  dma.channels[selfindex].param = NULL;
+  gpdma.channels[selfindex].func  = NULL;
+  gpdma.channels[selfindex].param = NULL;
 
   /* Shutting down clocks that are no more required, if any.*/
-  if ((dma.allocated_mask & STM32_DMA1_CHANNELS_MASK) == 0U) {
+  if ((gpdma.allocated_mask & STM32_GPDMA1_MASK_ANY) == 0U) {
     rccDisableDMA1();
   }
 #if STM32_GPDMA2_NUM_CHANNELS > 0
-  if ((dma.allocated_mask & STM32_DMA2_CHANNELS_MASK) == 0U) {
+  if ((gpdma.allocated_mask & STM32_GPDMA2_MASK_ANY) == 0U) {
     rccDisableDMA2();
-  }
-#endif
-
-#if (STM32_DMA_SUPPORTS_DMAMUX == TRUE) && defined(rccDisableDMAMUX)
-  /* Shutting down DMAMUX if present.*/
-  if (dma.allocated_mask == 0U) {
-    rccDisableDMAMUX();
   }
 #endif
 }
@@ -323,7 +304,7 @@ void dmaStreamFreeI(const stm32_dma_channel_t *dmachp) {
  *
  * @api
  */
-void dmaStreamFree(const stm32_dma_channel_t *dmachp) {
+void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp) {
 
   osalSysLock();
   dmaStreamFreeI(dmachp);
@@ -341,7 +322,7 @@ void dmaServeInterrupt(const stm32_dma_channel_t *dmachp) {
   uint32_t flags;
   uint32_t selfindex = (uint32_t)dmachp->selfindex;
 
-  flags = (dmachp->dma->ISR >> dmachp->shift) & STM32_DMA_ISR_MASK;
+  flags = (dmachp->dma->ISR >> dmachp->shift) & STM32_GPDMA_ISR_MASK;
   if (flags & dmachp->channel->CCR) {
     dmachp->dma->IFCR = flags << dmachp->shift;
     if (dma.channels[selfindex].func) {
