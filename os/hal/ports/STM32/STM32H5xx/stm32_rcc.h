@@ -501,82 +501,54 @@
 /** @} */
 
 /**
- * @name    DMA peripheral specific RCC operations
+ * @name    GPDMA peripheral specific RCC operations
  * @{
  */
 /**
- * @brief   Enables the DMA1 peripheral clock.
+ * @brief   Enables the GPDMA1 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableDMA1(lp) rccEnableAHB1(RCC_AHB1ENR_DMA1EN, lp)
+#define rccEnableGPDMA1(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA1EN, lp)
 
 /**
- * @brief   Disables the DMA1 peripheral clock.
+ * @brief   Disables the GPDMA1 peripheral clock.
  *
  * @api
  */
-#define rccDisableDMA1() rccDisableAHB1(RCC_AHB1ENR_DMA1EN)
+#define rccDisableGPDMA1() rccDisableGPAHB1(RCC_AHB1ENR_GPDMA1EN)
 
 /**
- * @brief   Resets the DMA1 peripheral.
+ * @brief   Resets the GPDMA1 peripheral.
  *
  * @api
  */
-#define rccResetDMA1() rccResetAHB1(RCC_AHB1RSTR_DMA1RST)
+#define rccResetGPDMA1() rccResetAHB1(RCC_AHB1RSTR_GPDMA1RST)
 
 /**
- * @brief   Enables the DMA2 peripheral clock.
+ * @brief   Enables the GPDMA2 peripheral clock.
  *
  * @param[in] lp        low power enable flag
  *
  * @api
  */
-#define rccEnableDMA2(lp) rccEnableAHB1(RCC_AHB1ENR_DMA2EN, lp)
+#define rccEnableGPDMA2(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA2EN, lp)
 
 /**
- * @brief   Disables the DMA2 peripheral clock.
+ * @brief   Disables the GPDMA2 peripheral clock.
  *
  * @api
  */
-#define rccDisableDMA2() rccDisableAHB1(RCC_AHB1ENR_DMA2EN)
+#define rccDisableGPDMA2() rccDisableAHB1(RCC_AHB1ENR_GPDMA2EN)
 
 /**
- * @brief   Resets the DMA2 peripheral.
+ * @brief   Resets the GPDMA2 peripheral.
  *
  * @api
  */
-#define rccResetDMA2() rccResetAHB1(RCC_AHB1RSTR_DMA2RST)
-/** @} */
-
-/**
- * @name    DMAMUX peripheral specific RCC operations
- * @{
- */
-/**
- * @brief   Enables the DMAMUX peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccEnableDMAMUX(lp) rccEnableAHB1(RCC_AHB1ENR_DMAMUX1EN, lp)
-
-/**
- * @brief   Disables the DMAMUX peripheral clock.
- *
- * @api
- */
-#define rccDisableDMAMUX() rccDisableAHB1(RCC_AHB1ENR_DMAMUX1EN)
-
-/**
- * @brief   Resets the DMAMUX peripheral.
- *
- * @api
- */
-#define rccResetDMAMUX() rccResetAHB1(RCC_AHB1RSTR_DMAMUX1RST)
+#define rccResetGPDMA2() rccResetAHB1(RCC_AHB1RSTR_GPDMA2RST)
 /** @} */
 
 /**

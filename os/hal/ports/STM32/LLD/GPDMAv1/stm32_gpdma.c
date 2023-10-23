@@ -199,11 +199,11 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
 
       /* Enabling DMA clocks required by the current channels set.*/
       if ((STM32_GPDMA1_MASK_ANY & mask) != 0U) {
-        rccEnableDMA1(true);
+        rccEnableGPDMA1(true);
       }
 #if STM32_GPDMA2_NUM_CHANNELS > 0
       if ((STM32_GPDMA2_MASK_ANY & mask) != 0U) {
-        rccEnableDMA2(true);
+        rccEnableGPDMA2(true);
       }
 #endif
 
@@ -260,7 +260,7 @@ const stm32_gpdma_channel_t *gpdmaChannelAlloc(uint32_t cmask,
  *          Trying to release a unallocated channel is an illegal operation
  *          and is trapped if assertions are enabled.
  *
- * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
+ * @param[in] dmachp    pointer to a @p stm32_dma_channel_t structure
  *
  * @iclass
  */
@@ -285,11 +285,11 @@ void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp) {
 
   /* Shutting down clocks that are no more required, if any.*/
   if ((gpdma.allocated_mask & STM32_GPDMA1_MASK_ANY) == 0U) {
-    rccDisableDMA1();
+    rccDisableGPDMA1();
   }
 #if STM32_GPDMA2_NUM_CHANNELS > 0
   if ((gpdma.allocated_mask & STM32_GPDMA2_MASK_ANY) == 0U) {
-    rccDisableDMA2();
+    rccDisableGPDMA2();
   }
 #endif
 }
@@ -300,33 +300,33 @@ void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp) {
  *          Trying to release a unallocated channel is an illegal operation
  *          and is trapped if assertions are enabled.
  *
- * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
+ * @param[in] dmachp    pointer to a @p stm32_dma_channel_t structure
  *
  * @api
  */
 void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp) {
 
   osalSysLock();
-  dmaStreamFreeI(dmachp);
+  gpdmaStreamFreeI(dmachp);
   osalSysUnlock();
 }
 
 /**
  * @brief   Serves a DMA IRQ.
  *
- * @param[in] dmachp    pointer to a stm32_dma_channel_t structure
+ * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  *
  * @special
  */
-void dmaServeInterrupt(const stm32_dma_channel_t *dmachp) {
-  uint32_t flags;
-  uint32_t selfindex = (uint32_t)dmachp->selfindex;
+void gpdmaServeInterrupt(const stm32_gpdma_channel_t *dmachp) {
+  uint32_t csr;
+  uint32_t selfindex = (uint32_t)(dmachp - __stm32_gpdma_channels);
 
-  flags = (dmachp->dma->ISR >> dmachp->shift) & STM32_GPDMA_ISR_MASK;
-  if (flags & dmachp->channel->CCR) {
-    dmachp->dma->IFCR = flags << dmachp->shift;
-    if (dma.channels[selfindex].func) {
-      dma.channels[selfindex].func(dma.channels[selfindex].param, flags);
+  csr = dmachp->channel->CSR;
+  dmachp->channel->CFCR = csr;
+  if (csr & dmachp->channel->CCR) {
+    if (gpdma.channels[selfindex].func) {
+      gpdma.channels[selfindex].func(gpdma.channels[selfindex].param, csr);
     }
   }
 }
