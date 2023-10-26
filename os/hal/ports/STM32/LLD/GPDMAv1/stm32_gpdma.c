@@ -19,11 +19,11 @@
  * @brief   GPDMA helper driver code.
  *
  * @addtogroup STM32_GPDMA
- * @details GPDMA sharing helper driver. In the STM32 the DMA channels are a
- *          shared resource, this driver allows to allocate and free DMA
+ * @details GPDMA sharing helper driver. In the STM32 the GPDMA channels are a
+ *          shared resource, this driver allows to allocate and free GPDMA
  *          channels at runtime in order to allow all the other device
  *          drivers to coordinate the access to the resource.
- * @note    The DMA ISR handlers are all declared into this module because
+ * @note    The GPDMA ISR handlers are all declared into this module because
  *          sharing, the various device drivers can associate a callback to
  *          ISRs when allocating channels.
  * @{
@@ -106,7 +106,7 @@ const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_CHANNELS] = {
 /*===========================================================================*/
 
 /**
- * @brief   Global DMA-related data structures.
+ * @brief   Global GPDMA-related data structures.
  */
 static struct {
   /**
@@ -114,15 +114,15 @@ static struct {
    */
   uint32_t              allocated_mask;
   /**
-   * @brief   DMA IRQ redirectors.
+   * @brief   GPDMA IRQ redirectors.
    */
   struct {
     /**
-     * @brief   DMA callback function.
+     * @brief   GPDMA callback function.
      */
     stm32_gpdmaisr_t    func;
     /**
-     * @brief   DMA callback parameter.
+     * @brief   GPDMA callback parameter.
      */
     void                *param;
   } channels[STM32_GPDMA_CHANNELS];
@@ -141,7 +141,7 @@ static struct {
 /*===========================================================================*/
 
 /**
- * @brief   STM32 DMA helper initialization.
+ * @brief   STM32 GPDMA helper initialization.
  *
  * @init
  */
@@ -158,13 +158,13 @@ void dmaInit(void) {
 }
 
 /**
- * @brief   Allocates a DMA channel.
- * @details The channel is allocated and, if required, the DMA clock enabled.
+ * @brief   Allocates a GPDMA channel.
+ * @details The channel is allocated and, if required, the GPDMA clock enabled.
  *          The function also enables the IRQ vector associated to the channel
  *          and initializes its priority.
  *
  * @param[in] cmask     channels mask where to search for an available chennel
- * @param[in] irqprio   IRQ priority for the DMA channel
+ * @param[in] irqprio   IRQ priority for the GPDMA channel
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              Pointer to the allocated @p stm32_dma_channel_t
@@ -192,12 +192,12 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
       /* Channel found.*/
       const stm32_gpdma_channel_t *dmachp = STM32_GPDMA_CHANNEL(i);
 
-      /* Installs the DMA handler.*/
+      /* Installs the GPDMA handler.*/
       gpdma.channels[i].func  = func;
       gpdma.channels[i].param = param;
       gpdma.allocated_mask  |= mask;
 
-      /* Enabling DMA clocks required by the current channels set.*/
+      /* Enabling GPDMA clocks required by the current channels set.*/
       if ((STM32_GPDMA1_MASK_ANY & mask) != 0U) {
         rccEnableGPDMA1(true);
       }
@@ -215,7 +215,7 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
       }
 
       /* Putting the channel in a known state.*/
-      gpdmaStreamDisable(dmachp);
+      gpdmaChannelDisable(dmachp);
       dmachp->channel->CCR = 0U;
 
       return dmachp;
@@ -226,13 +226,13 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
 }
 
 /**
- * @brief   Allocates a DMA channel.
- * @details The channel is allocated and, if required, the DMA clock enabled.
+ * @brief   Allocates a GPDMA channel.
+ * @details The channel is allocated and, if required, the GPDMA clock enabled.
  *          The function also enables the IRQ vector associated to the channel
  *          and initializes its priority.
  *
  * @param[in] cmask     channels mask where to search for an available chennel
- * @param[in] irqprio   IRQ priority for the DMA channel
+ * @param[in] irqprio   IRQ priority for the GPDMA channel
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
  * @return              Pointer to the allocated @p stm32_dma_channel_t
@@ -255,8 +255,8 @@ const stm32_gpdma_channel_t *gpdmaChannelAlloc(uint32_t cmask,
 }
 
 /**
- * @brief   Releases a DMA channel.
- * @details The channel is freed and, if required, the DMA clock disabled.
+ * @brief   Releases a GPDMA channel.
+ * @details The channel is freed and, if required, the GPDMA clock disabled.
  *          Trying to release a unallocated channel is an illegal operation
  *          and is trapped if assertions are enabled.
  *
@@ -279,7 +279,7 @@ void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp) {
   /* Disables the associated IRQ vector if it is no more in use.*/
   nvicDisableVector(dmachp->vector);
 
-  /* Removes the DMA handler.*/
+  /* Removes the GPDMA handler.*/
   gpdma.channels[selfindex].func  = NULL;
   gpdma.channels[selfindex].param = NULL;
 
@@ -295,8 +295,8 @@ void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp) {
 }
 
 /**
- * @brief   Releases a DMA channel.
- * @details The channel is freed and, if required, the DMA clock disabled.
+ * @brief   Releases a GPDMA channel.
+ * @details The channel is freed and, if required, the GPDMA clock disabled.
  *          Trying to release a unallocated channel is an illegal operation
  *          and is trapped if assertions are enabled.
  *
@@ -307,12 +307,74 @@ void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp) {
 void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp) {
 
   osalSysLock();
-  gpdmaStreamFreeI(dmachp);
+  gpdmaChannelFreeI(dmachp);
   osalSysUnlock();
 }
 
+
 /**
- * @brief   Serves a DMA IRQ.
+ * @brief   GPDMA channel suspend.
+ * @note    This function can be invoked in both ISR or thread context.
+ * @pre     The channel must have been allocated using @p dmaChannelAlloc().
+ * @post    After use the channel can be released using @p dmaChannelRelease().
+ *
+ * @param[in] dmastp    pointer to a @p stm32_gpdma_channel_t structure
+ *
+ * @special
+ */
+void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmastp) {
+
+  osalDbgAssert((dmastp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U,
+                "not enabled");
+
+  dmastp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
+  while ((dmastp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
+    /* Wait completion.*/
+  }
+  dmastp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
+}
+
+/**
+ * @brief   GPDMA channel disable.
+ * @details The function disables the specified channel and then clears any
+ *          pending interrupt.
+ * @note    This function can be invoked in both ISR or thread context.
+ * @note    Interrupts enabling flags are set to zero after this call, see
+ *          bug 3607518.
+ * @pre     The channel must have been allocated using @p dmaChannelAlloc().
+ * @post    After use the channel can be released using @p dmaChannelRelease().
+ *
+ * @param[in] dmastp    pointer to a @p stm32_gpdma_channel_t structure
+ *
+ * @special
+ */
+void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmastp) {
+
+  /* Suspending channel, note, we don't know if it is still active at this
+     point because the EN bit can be reset in HW.*/
+  dmastp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
+
+  /* If the channel was actually active.*/
+  if ((dmastp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U) {
+
+    /* Waiting for completion if suspend operation then resetting the
+       completion flag.*/
+    while ((dmastp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
+      /* Wait completion.*/
+    }
+    dmastp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
+  }
+
+  /* Now resetting the channel.*/
+  dmastp->channel->CCR |= STM32_GPDMA_CCR_RESET;
+  dmastp->channel->CCR  = 0U;
+
+  /* Clearing all interrupts.*/
+  dmastp->channel->CFCR = STM32_GPDMA_CFCR_ALL;
+}
+
+/**
+ * @brief   Serves a GPDMA IRQ.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  *

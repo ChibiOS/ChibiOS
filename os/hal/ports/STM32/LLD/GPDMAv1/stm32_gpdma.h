@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    GPDMAv1/stm32_gpdma.h
+ * @file    DMAv1/stm32_gpdma.h
  * @brief   GPDMA helper driver header.
  *
  * @addtogroup STM32_GPDMA
@@ -32,7 +32,7 @@
 /*===========================================================================*/
 
 /**
- * @name    GPDMA registers helpers
+ * @name    DMA registers helpers
  * @{
  */
 #define STM32_GPDMA_CLBAR_LBA_POS       DMA_CLBAR_LBA_Pos
@@ -46,6 +46,10 @@
 #define STM32_GPDMA_CFCR_DTEF           DMA_CFCR_DTEF
 #define STM32_GPDMA_CFCR_HTF            DMA_CFCR_HTF
 #define STM32_GPDMA_CFCR_TCF            DMA_CFCR_TCF
+#define STM32_GPDMA_CFCR_ALL            (DMA_CFCR_TOF  | DMA_CFCR_SUSPF |   \
+                                         DMA_CFCR_USEF | DMA_CFCR_ULEF  |   \
+                                         DMA_CFCR_DTEF | DMA_CFCR_HTF   |   \
+                                         DMA_CFCR_TCF)
 
 #define STM32_GPDMA_CSR_FIFOL_POS       DMA_CSR_FIFOL_Pos
 #define STM32_GPDMA_CSR_FIFOL_MASK      (0x7FU << STM32_GPDMA_CSR_FIFOL_POS)
@@ -63,21 +67,21 @@
                                          DMA_CSR_DTEF  | DMA_CSR_HTF   |    \
                                          DMA_CSR_TCF)
 
-#define STM32_GPDMA_CR_PRIO_POS         DMA_CCR_PRIO_Pos
-#define STM32_GPDMA_CR_PRIO_MASK        (3U << STM32_GPDMA_CR_PRIO_POS)
-#define STM32_GPDMA_CR_PRIO(n)          ((n) << STM32_GPDMA_CR_PRIO_POS)
-#define STM32_GPDMA_CR_LAP              DMA_CCR_LAP
-#define STM32_GPDMA_CR_LSM              DMA_CCR_LSM
-#define STM32_GPDMA_CR_TOIE             DMA_CCR_TOIE
-#define STM32_GPDMA_CR_SUSPIE           DMA_CCR_SUSPIE
-#define STM32_GPDMA_CR_USEIE            DMA_CCR_USEIE
-#define STM32_GPDMA_CR_ULEIE            DMA_CCR_ULEIE
-#define STM32_GPDMA_CR_DTEIE            DMA_CCR_DTEIE
-#define STM32_GPDMA_CR_HTIE             DMA_CCR_HTIE
-#define STM32_GPDMA_CR_TCIE             DMA_CCR_TCIE
-#define STM32_GPDMA_CR_SUSP             DMA_CCR_SUSP
-#define STM32_GPDMA_CR_RESET            DMA_CCR_RESET
-#define STM32_GPDMA_CR_EN               DMA_CCR_EN
+#define STM32_GPDMA_CCR_PRIO_POS        DMA_CCR_PRIO_Pos
+#define STM32_GPDMA_CCR_PRIO_MASK       (3U << STM32_GPDMA_CR_PRIO_POS)
+#define STM32_GPDMA_CCR_PRIO(n)         ((n) << STM32_GPDMA_CR_PRIO_POS)
+#define STM32_GPDMA_CCR_LAP             DMA_CCR_LAP
+#define STM32_GPDMA_CCR_LSM             DMA_CCR_LSM
+#define STM32_GPDMA_CCR_TOIE            DMA_CCR_TOIE
+#define STM32_GPDMA_CCR_SUSPIE          DMA_CCR_SUSPIE
+#define STM32_GPDMA_CCR_USEIE           DMA_CCR_USEIE
+#define STM32_GPDMA_CCR_ULEIE           DMA_CCR_ULEIE
+#define STM32_GPDMA_CCR_DTEIE           DMA_CCR_DTEIE
+#define STM32_GPDMA_CCR_HTIE            DMA_CCR_HTIE
+#define STM32_GPDMA_CCR_TCIE            DMA_CCR_TCIE
+#define STM32_GPDMA_CCR_SUSP            DMA_CCR_SUSP
+#define STM32_GPDMA_CCR_RESET           DMA_CCR_RESET
+#define STM32_GPDMA_CCR_EN              DMA_CCR_EN
 
 #define STM32_GPDMA_CTR1_DSEC           DMA_CTR1_DSEC
 #define STM32_GPDMA_CTR1_DAP            DMA_CTR1_DAP
@@ -143,6 +147,31 @@
 #define STM32_GPDMA_CBR1_BNDT_MASK      (3U << STM32_GPDMA_CBR1_BNDT_POS)
 #define STM32_GPDMA_CBR1_BNDT(n)        ((n) << STM32_GPDMA_CBR1_BNDT_POS)
 
+#define STM32_GPDMA_CTR3_DAO_POS        DMA_CTR3_DAO_Pos
+#define STM32_GPDMA_CTR3_DAO_MASK       (0x1FFFU << STM32_GPDMA_CTR3_DAO_POS)
+#define STM32_GPDMA_CTR3_DAO(n)         ((n) << STM32_GPDMA_CTR3_DAO_POS)
+#define STM32_GPDMA_CTR3_SAO_POS        DMA_CTR3_SAO_Pos
+#define STM32_GPDMA_CTR3_SAO_MASK       (0x1FFFU << STM32_GPDMA_CTR3_SAO_POS)
+#define STM32_GPDMA_CTR3_SAO(n)         ((n) << STM32_GPDMA_CTR3_SAO_POS)
+
+#define STM32_GPDMA_CBR2_BRDAO_POS      DMA_CBR2_BRDAO_Pos
+#define STM32_GPDMA_CBR2_BRDAO_MASK     (0xFFFFU << STM32_GPDMA_CBR2_BRDAO_POS)
+#define STM32_GPDMA_CBR2_BRDAO(n)       ((n) << STM32_GPDMA_CBR2_BRDAO_POS)
+#define STM32_GPDMA_CBR2_BRSAO_POS      DMA_CBR2_BRSAO_Pos
+#define STM32_GPDMA_CBR2_BRSAO_MASK     (0xFFFFU << STM32_GPDMA_CBR2_BRSAO_POS)
+#define STM32_GPDMA_CBR2_BRSAO(n)       ((n) << STM32_GPDMA_CBR2_BRSAO_POS)
+
+#define STM32_GPDMA_CLLR_UT1            DMA_CLLR_UT1
+#define STM32_GPDMA_CLLR_UT2            DMA_CLLR_UT2
+#define STM32_GPDMA_CLLR_UB1            DMA_CLLR_UB1
+#define STM32_GPDMA_CLLR_USA            DMA_CLLR_USA
+#define STM32_GPDMA_CLLR_UDA            DMA_CLLR_UDA
+#define STM32_GPDMA_CLLR_UT3            DMA_CLLR_UT3
+#define STM32_GPDMA_CLLR_UB2            DMA_CLLR_UB2
+#define STM32_GPDMA_CLLR_ULL            DMA_CLLR_ULL
+#define STM32_GPDMA_CLLR_LA_POS         DMA_CLLR_LA_Pos
+#define STM32_GPDMA_CLLR_LA_MASK        (0xFFFCU << STM32_GPDMA_CLLR_LA_POS)
+#define STM32_GPDMA_CLLR_LA(n)          ((n) << STM32_GPDMA_CLLR_LA_POS)
 /** @< */
 
 /**
@@ -156,7 +185,7 @@
 
 /**
  * @brief   Checks if a GPDMA priority is within the valid range.
- * @param[in] prio      GPDMA priority
+ * @param[in] prio      DMA priority
  *
  * @retval              The check result.
  * @retval false        invalid GPDMA priority.
@@ -187,7 +216,7 @@
   (1U << STM32_GPDMA_CHANNEL_ID(dma, ch))
 
 /**
- * @name    GPDMA channels identifiers
+ * @name    DMA channels identifiers
  * @{
  */
 /**
@@ -315,12 +344,12 @@
  * @brief   Type of a GPDMA callback.
  *
  * @param[in] p         parameter for the registered function
- * @param[in] v       content of the CxSR register
+ * @param[in] csr       content of the CxSR register
  */
 typedef void (*stm32_gpdmaisr_t)(void *p, uint32_t csr);
 
 /**
- * @brief   STM32 DMA channel descriptor structure.
+ * @brief   STM32 GPDMA channel descriptor structure.
  */
 typedef struct {
   DMA_Channel_TypeDef   *channel;       /**< @brief Associated channel.     */
@@ -336,7 +365,7 @@ typedef struct {
  * @{
  */
 /**
- * @brief   Associates a peripheral data register to a DMA channel.
+ * @brief   Associates a peripheral data register to a GPDMA channel.
  * @note    This function can be invoked in both ISR or thread context.
  * @pre     The channel must have been allocated using @p dmaStreamAlloc().
  * @post    After use the channel can be released using @p dmaStreamRelease().
@@ -351,7 +380,7 @@ typedef struct {
 }
 
 /**
- * @brief   Associates a memory destination to a DMA channel.
+ * @brief   Associates a memory destination to a GPDMA channel.
  * @note    This function can be invoked in both ISR or thread context.
  * @pre     The channel must have been allocated using @p dmaStreamAlloc().
  * @post    After use the channel can be released using @p dmaStreamRelease().
@@ -409,7 +438,7 @@ typedef struct {
 }
 
 /**
- * @brief   DMA channel enable.
+ * @brief   GPDMA channel enable.
  * @note    This function can be invoked in both ISR or thread context.
  * @pre     The channel must have been allocated using @p dmaStreamAlloc().
  * @post    After use the channel can be released using @p dmaStreamRelease().
@@ -423,7 +452,7 @@ typedef struct {
 }
 
 /**
- * @brief   DMA channel disable.
+ * @brief   GPDMA channel disable.
  * @details The function disables the specified channel and then clears any
  *          pending interrupt.
  * @note    This function can be invoked in both ISR or thread context.
@@ -436,14 +465,14 @@ typedef struct {
  *
  * @special
  */
-#define gpdmaStreamDisable(dmastp) {                                        \
+#define ______gpdmaStreamDisable(dmastp) {                                        \
   (dmastp)->channel->CCR &= ~(STM32_GPDMA_CR_TCIE | STM32_GPDMA_CR_HTIE |   \
                               STM32_GPDMA_CR_TEIE | STM32_GPDMA_CR_EN);     \
   dmaStreamClearInterrupt(dmastp);                                          \
 }
 
 /**
- * @brief   DMA channel interrupt sources clear.
+ * @brief   GPDMA channel interrupt sources clear.
  * @note    This function can be invoked in both ISR or thread context.
  * @pre     The channel must have been allocated using @p dmaStreamAlloc().
  * @post    After use the channel can be released using @p dmaStreamRelease().
@@ -485,7 +514,7 @@ typedef struct {
 }
 
 /**
- * @brief   Polled wait for DMA transfer end.
+ * @brief   Polled wait for GPDMA transfer end.
  * @pre     The channel must have been allocated using @p dmaStreamAlloc().
  * @post    After use the channel can be released using @p dmaStreamRelease().
  *
@@ -520,6 +549,8 @@ extern "C" {
                                                  void *param);
   void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp);
   void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp);
+  void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmastp);
+  void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmastp);
   void gpdmaServeInterrupt(const stm32_gpdma_channel_t *dmachp);
 #ifdef __cplusplus
 }

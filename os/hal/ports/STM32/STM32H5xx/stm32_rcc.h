@@ -518,7 +518,7 @@
  *
  * @api
  */
-#define rccDisableGPDMA1() rccDisableGPAHB1(RCC_AHB1ENR_GPDMA1EN)
+#define rccDisableGPDMA1() rccDisableAHB1(RCC_AHB1ENR_GPDMA1EN)
 
 /**
  * @brief   Resets the GPDMA1 peripheral.
