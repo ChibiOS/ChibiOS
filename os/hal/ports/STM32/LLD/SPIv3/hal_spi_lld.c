@@ -599,12 +599,12 @@ void spi_lld_start(SPIDriver *spip) {
                                       STM32_SPI_SPI6_IRQ_PRIORITY,
                                       (stm32_dmaisr_t)spi_lld_serve_bdma_rx_interrupt,
                                       (void *)spip);
-      osalDbgAssert(spip->rx.dma != NULL, "unable to allocate stream");
+      osalDbgAssert(spip->rx.bdma != NULL, "unable to allocate stream");
       spip->tx.bdma = bdmaStreamAllocI(STM32_SPI_SPI6_TX_BDMA_STREAM,
                                       STM32_SPI_SPI6_IRQ_PRIORITY,
                                       (stm32_dmaisr_t)spi_lld_serve_bdma_tx_interrupt,
                                       (void *)spip);
-      osalDbgAssert(spip->tx.dma != NULL, "unable to allocate stream");
+      osalDbgAssert(spip->tx.bdma != NULL, "unable to allocate stream");
       rccEnableSPI6(true);
       bdmaSetRequestSource(spip->rx.bdma, STM32_DMAMUX2_SPI6_RX);
       bdmaSetRequestSource(spip->tx.bdma, STM32_DMAMUX2_SPI6_TX);
