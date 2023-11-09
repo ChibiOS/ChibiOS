@@ -69,6 +69,8 @@
 #define STM32_RCC_PLL3_HAS_R                TRUE
 
 /* GPDMA attributes.*/
+#define STM32_GPDMA_MEMORY_PORT             0U
+#define STM32_GPDMA_PERIPHERAL_PORT         1U
 #define STM32_GPDMA1_NUM_CHANNELS           8U
 #define STM32_GPDMA1_MASK_FIFO2             0x0000000FU
 #define STM32_GPDMA1_MASK_FIFO4             0x00000030U

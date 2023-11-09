@@ -85,14 +85,14 @@
 #define STM32_GPDMA1_CH5_HANDLER            VectorC0
 #define STM32_GPDMA1_CH6_HANDLER            VectorC4
 #define STM32_GPDMA1_CH7_HANDLER            VectorC8
-#define STM32_GPDMA2_CH0_HANDLER            Vector190
-#define STM32_GPDMA2_CH1_HANDLER            Vector194
-#define STM32_GPDMA2_CH2_HANDLER            Vector198
-#define STM32_GPDMA2_CH3_HANDLER            Vector19C
-#define STM32_GPDMA2_CH4_HANDLER            Vector1A0
-#define STM32_GPDMA2_CH5_HANDLER            Vector1A4
-#define STM32_GPDMA2_CH6_HANDLER            Vector1A8
-#define STM32_GPDMA2_CH7_HANDLER            Vector1AC
+#define STM32_GPDMA2_CH0_HANDLER            Vector1A8
+#define STM32_GPDMA2_CH1_HANDLER            Vector1AC
+#define STM32_GPDMA2_CH2_HANDLER            Vector1B0
+#define STM32_GPDMA2_CH3_HANDLER            Vector1B4
+#define STM32_GPDMA2_CH4_HANDLER            Vector1B8
+#define STM32_GPDMA2_CH5_HANDLER            Vector1BC
+#define STM32_GPDMA2_CH6_HANDLER            Vector1C0
+#define STM32_GPDMA2_CH7_HANDLER            Vector1C4
 
 #define STM32_GPDMA1_CH0_NUMBER             27
 #define STM32_GPDMA1_CH1_NUMBER             28
@@ -201,13 +201,13 @@
 #define STM32_USART3_HANDLER                Vector130
 #define STM32_UART4_HANDLER                 Vector134
 #define STM32_UART5_HANDLER                 Vector138
-#define STM32_USART6_HANDLER                Vector17C
-#define STM32_UART7_HANDLER                 VectorB0
-#define STM32_UART8_HANDLER                 VectorB4
-#define STM32_UART9_HANDLER                 VectorB8
-#define STM32_USART10_HANDLER               Vector180
-#define STM32_USART11_HANDLER               Vector184
-#define STM32_UART12_HANDLER                VectorBC
+#define STM32_USART6_HANDLER                Vector194
+#define STM32_UART7_HANDLER                 Vector1C8
+#define STM32_UART8_HANDLER                 Vector1CC
+#define STM32_UART9_HANDLER                 Vector1D0
+#define STM32_USART10_HANDLER               Vector198
+#define STM32_USART11_HANDLER               Vector19C
+#define STM32_UART12_HANDLER                Vector1D4
 #define STM32_LPUART1_HANDLER               Vector13C
 
 #define STM32_USART1_NUMBER                 58

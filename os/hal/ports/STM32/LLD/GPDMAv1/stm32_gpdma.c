@@ -136,6 +136,262 @@ static struct {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+#if defined(STM32_GPDMA1_CH0_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 0 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH0_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL0);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA1_CH1_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 1 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL1);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA1_CH2_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH2_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL2);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA1_CH3_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 3 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH3_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA1_CH4_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 4 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH4_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL4);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA1_CH5_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 5 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH5_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL5);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA1_CH6_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 6 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH6_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL6);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA1_CH7_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 7 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA1_CH7_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA1_CHANNEL7);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH0_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA2 channel 0 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH0_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL0);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH1_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA1 channel 2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH1_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL1);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH2_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA2 channel 2 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH2_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL2);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH3_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA2 channel 3 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH3_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL3);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH4_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA2 channel 4 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH4_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL4);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH5_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA2 channel 5 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH5_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL5);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH6_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA2 channel 6 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH6_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL6);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
+#if defined(STM32_GPDMA2_CH7_HANDLER) || defined(__DOXYGEN__)
+/**
+ * @brief   GPDMA2 channel 7 interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_GPDMA2_CH7_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  gpdmaServeInterrupt(STM32_GPDMA2_CHANNEL7);
+
+  OSAL_IRQ_EPILOGUE();
+}
+#endif
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -318,20 +574,20 @@ void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp) {
  * @pre     The channel must have been allocated using @p dmaChannelAlloc().
  * @post    After use the channel can be released using @p dmaChannelRelease().
  *
- * @param[in] dmastp    pointer to a @p stm32_gpdma_channel_t structure
+ * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  *
  * @special
  */
-void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmastp) {
+void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmachp) {
 
-  osalDbgAssert((dmastp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U,
+  osalDbgAssert((dmachp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U,
                 "not enabled");
 
-  dmastp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
-  while ((dmastp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
+  dmachp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
+  while ((dmachp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
     /* Wait completion.*/
   }
-  dmastp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
+  dmachp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
 }
 
 /**
@@ -344,33 +600,33 @@ void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmastp) {
  * @pre     The channel must have been allocated using @p dmaChannelAlloc().
  * @post    After use the channel can be released using @p dmaChannelRelease().
  *
- * @param[in] dmastp    pointer to a @p stm32_gpdma_channel_t structure
+ * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  *
  * @special
  */
-void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmastp) {
+void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp) {
 
   /* Suspending channel, note, we don't know if it is still active at this
      point because the EN bit can be reset in HW.*/
-  dmastp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
+  dmachp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
 
   /* If the channel was actually active.*/
-  if ((dmastp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U) {
+  if ((dmachp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U) {
 
     /* Waiting for completion if suspend operation then resetting the
        completion flag.*/
-    while ((dmastp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
+    while ((dmachp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
       /* Wait completion.*/
     }
-    dmastp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
+    dmachp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
   }
 
   /* Now resetting the channel.*/
-  dmastp->channel->CCR |= STM32_GPDMA_CCR_RESET;
-  dmastp->channel->CCR  = 0U;
+  dmachp->channel->CCR |= STM32_GPDMA_CCR_RESET;
+  dmachp->channel->CCR  = 0U;
 
   /* Clearing all interrupts.*/
-  dmastp->channel->CFCR = STM32_GPDMA_CFCR_ALL;
+  dmachp->channel->CFCR = STM32_GPDMA_CFCR_ALL;
 }
 
 /**
