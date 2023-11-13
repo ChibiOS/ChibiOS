@@ -62,6 +62,8 @@
 #define STM32_GPDMA_CSR_HTF             DMA_CSR_HTF
 #define STM32_GPDMA_CSR_TCF             DMA_CSR_TCF
 #define STM32_GPDMA_CSR_IDLEF           DMA_CSR_IDLEF
+#define STM32_GPDMA_CSR_ERRORS          (DMA_CSR_TOF   |  DMA_CSR_USEF |    \
+                                         DMA_CSR_ULEF  |  DMA_CSR_DTEF)
 #define STM32_GPDMA_CSR_ALL             (DMA_CSR_TOF   | DMA_CSR_SUSPF |    \
                                          DMA_CSR_USEF  | DMA_CSR_ULEF  |    \
                                          DMA_CSR_DTEF  | DMA_CSR_HTF   |    \
@@ -84,7 +86,11 @@
 #define STM32_GPDMA_CCR_EN              DMA_CCR_EN
 
 #define STM32_GPDMA_CTR1_DSEC           DMA_CTR1_DSEC
-#define STM32_GPDMA_CTR1_DAP            DMA_CTR1_DAP
+#define STM32_GPDMA_CTR1_DAP_POS        DMA_CTR1_DAP_Pos
+#define STM32_GPDMA_CTR1_DAP_MASK       (1U << STM32_GPDMA_CTR1_DAP_POS)
+#define STM32_GPDMA_CTR1_DAP(n)         ((n) << STM32_GPDMA_CTR1_DAP_POS)
+#define STM32_GPDMA_CTR1_DAP_MEM        STM32_GPDMA_CTR1_DAP(STM32_GPDMA_MEMORY_PORT)
+#define STM32_GPDMA_CTR1_DAP_PER        STM32_GPDMA_CTR1_DAP(STM32_GPDMA_PERIPHERAL_PORT)
 #define STM32_GPDMA_CTR1_DHX            DMA_CTR1_DHX
 #define STM32_GPDMA_CTR1_DBX            DMA_CTR1_DBX
 #define STM32_GPDMA_CTR1_DBL_POS        DMA_CTR1_DBL_1_Pos
@@ -94,11 +100,15 @@
 #define STM32_GPDMA_CTR1_DDW_LOG2_POS   DMA_CTR1_DDW_LOG2_Pos
 #define STM32_GPDMA_CTR1_DDW_LOG2_MASK  (3U << STM32_GPDMA_CTR1_DDW_LOG2_POS)
 #define STM32_GPDMA_CTR1_DDW_LOG2(n)    ((n) << STM32_GPDMA_CTR1_DDW_LOG2_POS)
-#define STM32_GPDMA_CTR1_DDW_BYTE(n)    STM32_GPDMA_CTR1_DDW_LOG2(0U)
-#define STM32_GPDMA_CTR1_DDW_HALF(n)    STM32_GPDMA_CTR1_DDW_LOG2(1U)
-#define STM32_GPDMA_CTR1_DDW_WORD(n)    STM32_GPDMA_CTR1_DDW_LOG2(2U)
+#define STM32_GPDMA_CTR1_DDW_BYTE       STM32_GPDMA_CTR1_DDW_LOG2(0U)
+#define STM32_GPDMA_CTR1_DDW_HALF       STM32_GPDMA_CTR1_DDW_LOG2(1U)
+#define STM32_GPDMA_CTR1_DDW_WORD       STM32_GPDMA_CTR1_DDW_LOG2(2U)
 #define STM32_GPDMA_CTR1_SSEC           DMA_CTR1_SSEC
-#define STM32_GPDMA_CTR1_SAP            DMA_CTR1_SAP
+#define STM32_GPDMA_CTR1_SAP_POS        DMA_CTR1_SAP_Pos
+#define STM32_GPDMA_CTR1_SAP_MASK       (1U << STM32_GPDMA_CTR1_SAP_POS)
+#define STM32_GPDMA_CTR1_SAP(n)         ((n) << STM32_GPDMA_CTR1_SAP_POS)
+#define STM32_GPDMA_CTR1_SAP_MEM        STM32_GPDMA_CTR1_SAP(STM32_GPDMA_MEMORY_PORT)
+#define STM32_GPDMA_CTR1_SAP_PER        STM32_GPDMA_CTR1_SAP(STM32_GPDMA_PERIPHERAL_PORT)
 #define STM32_GPDMA_CTR1_SBX            DMA_CTR1_SBX
 #define STM32_GPDMA_CTR1_PAM_POS        DMA_CTR1_PAM_Pos
 #define STM32_GPDMA_CTR1_PAM_MASK       (3U << STM32_GPDMA_CTR1_PAM_POS)
@@ -131,6 +141,7 @@
 #define STM32_GPDMA_CTR2_TRIGM(n)       ((n) << STM32_GPDMA_CTR2_TRIGM_POS)
 #define STM32_GPDMA_CTR2_PFREQ          DMA_CTR2_PFREQ
 #define STM32_GPDMA_CTR2_BREQ           DMA_CTR2_BREQ
+#define STM32_GPDMA_CTR2_DREQ           DMA_CTR2_DREQ
 #define STM32_GPDMA_CTR2_SWREQ          DMA_CTR2_SWREQ
 #define STM32_GPDMA_CTR2_REQSEL_POS     DMA_CTR2_REQSEL_Pos
 #define STM32_GPDMA_CTR2_REQSEL_MASK    (0xFFU << STM32_GPDMA_CTR2_REQSEL_POS)
@@ -193,6 +204,17 @@
  */
 #define STM32_GPDMA_IS_VALID_PRIORITY(prio)                                 \
   (((prio) >= 0U) && ((prio) <= 3U))
+
+/**
+ * @brief   Checks if a GPDMA channel id is within the valid range.
+ *
+ * @param[in] id        GPDMA channel id
+ * @retval              The check result.
+ * @retval false        invalid GPDMA channel.
+ * @retval true         correct GPDMA channel.
+ */
+#define STM32_GPDMA_IS_VALID_CHANNEL(id) (((id) >= 0U) &&                   \
+                                          ((id) <= STM32_GPDMA_NUM_CHANNELS))
 
 /**
  * @brief   Returns an unique numeric identifier for a GPDMA channel.
@@ -273,7 +295,7 @@
 /**
  * @brief   Total number of channels among all GPDMAs.
  */
-#define STM32_GPDMA_CHANNELS                                                \
+#define STM32_GPDMA_NUM_CHANNELS                                            \
   (STM32_GPDMA1_NUM_CHANNELS + STM32_GPDMA2_NUM_CHANNELS)
 
 #if STM32_GPDMA1_NUM_CHANNELS > 0
@@ -532,7 +554,7 @@ typedef struct {
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-extern const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_CHANNELS];
+extern const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_NUM_CHANNELS];
 #endif
 
 #ifdef __cplusplus

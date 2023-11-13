@@ -50,7 +50,7 @@
  * @note    Don't use this array directly, use the appropriate wrapper macros
  *          instead: @p STM32_GPDMA1_CHANNEL1, @p STM32_GPDMA1_CHANNEL2 etc.
  */
-const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_CHANNELS] = {
+const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_NUM_CHANNELS] = {
 #if STM32_GPDMA1_NUM_CHANNELS > 0
   {GPDMA1_Channel0, STM32_GPDMA1_CH0_NUMBER},
 #endif
@@ -125,7 +125,7 @@ static struct {
      * @brief   GPDMA callback parameter.
      */
     void                *param;
-  } channels[STM32_GPDMA_CHANNELS];
+  } channels[STM32_GPDMA_NUM_CHANNELS];
 } gpdma;
 
 /*===========================================================================*/
@@ -405,7 +405,7 @@ void dmaInit(void) {
   unsigned i;
 
   gpdma.allocated_mask = 0U;
-  for (i = 0; i < STM32_GPDMA_CHANNELS; i++) {
+  for (i = 0; i < STM32_GPDMA_NUM_CHANNELS; i++) {
     __stm32_gpdma_channels[i].channel->CCR = 0U;
     gpdma.channels[i].func = NULL;
   }
@@ -442,7 +442,7 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
   available = gpdma.allocated_mask & cmask;
 
   /* Searching for a free channel.*/
-  for (i = 0U; i <= STM32_GPDMA_CHANNELS; i++) {
+  for (i = 0U; i <= STM32_GPDMA_NUM_CHANNELS; i++) {
     uint32_t mask = (uint32_t)(1U << i);
     if ((available & mask) == 0U) {
       /* Channel found.*/
