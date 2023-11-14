@@ -149,6 +149,23 @@
 #define STM32_EXTI15_NUMBER                 26
 
 /*
+ * SPI units.
+ */
+#define STM32_SPI1_HANDLER                  Vector11C
+#define STM32_SPI2_HANDLER                  Vector120
+#define STM32_SPI3_HANDLER                  Vector124
+#define STM32_SPI4_HANDLER                  Vector188
+#define STM32_SPI5_HANDLER                  Vector18C
+#define STM32_SPI6_HANDLER                  Vector190
+
+#define STM32_SPI1_NUMBER                   55
+#define STM32_SPI2_NUMBER                   56
+#define STM32_SPI3_NUMBER                   57
+#define STM32_SPI4_NUMBER                   82
+#define STM32_SPI5_NUMBER                   83
+#define STM32_SPI6_NUMBER                   84
+
+/*
  * TIM units.
  */
 #define STM32_TIM1_BRK_TERR_IERR_HANDLER    VectorE4
