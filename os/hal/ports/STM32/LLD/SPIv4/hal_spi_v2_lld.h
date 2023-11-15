@@ -395,12 +395,12 @@
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI6_RX_BGPDMA_CHANNEL)
+    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI6_RX_GPDMA_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI6 RX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI6_TX_BGPDMA_CHANNEL)
+    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI6_TX_GPDMA_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI6 TX"
 #endif
 

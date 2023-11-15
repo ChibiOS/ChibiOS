@@ -320,12 +320,12 @@
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  FALSE
-#define STM32_SPI_USE_SPI2                  FALSE
-#define STM32_SPI_USE_SPI3                  FALSE
-#define STM32_SPI_USE_SPI4                  FALSE
-#define STM32_SPI_USE_SPI5                  FALSE
-#define STM32_SPI_USE_SPI6                  FALSE
+#define STM32_SPI_USE_SPI1                  TRUE
+#define STM32_SPI_USE_SPI2                  TRUE
+#define STM32_SPI_USE_SPI3                  TRUE
+#define STM32_SPI_USE_SPI4                  TRUE
+#define STM32_SPI_USE_SPI5                  TRUE
+#define STM32_SPI_USE_SPI6                  TRUE
 #define STM32_SPI_SPI1_RX_GPDMA_CHANNEL     STM32_GPDMA1_MASK_FIFO2
 #define STM32_SPI_SPI1_TX_GPDMA_CHANNEL     STM32_GPDMA1_MASK_FIFO2
 #define STM32_SPI_SPI2_RX_GPDMA_CHANNEL     STM32_GPDMA2_MASK_FIFO2
