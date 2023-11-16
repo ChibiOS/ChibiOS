@@ -567,29 +567,6 @@ void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp) {
   osalSysUnlock();
 }
 
-
-/**
- * @brief   GPDMA channel suspend.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaChannelAlloc().
- * @post    After use the channel can be released using @p dmaChannelRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- *
- * @special
- */
-void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmachp) {
-
-  osalDbgAssert((dmachp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U,
-                "not enabled");
-
-  dmachp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
-  while ((dmachp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
-    /* Wait completion.*/
-  }
-  dmachp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
-}
-
 /**
  * @brief   GPDMA channel disable.
  * @details The function disables the specified channel and then clears any
@@ -606,26 +583,15 @@ void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmachp) {
  */
 void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp) {
 
-  /* Suspending channel, note, we don't know if it is still active at this
-     point because the EN bit can be reset in HW.*/
-  dmachp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
-
-  /* If the channel was actually active.*/
-  if ((dmachp->channel->CCR & STM32_GPDMA_CCR_EN) != 0U) {
-
-    /* Waiting for completion if suspend operation then resetting the
-       completion flag.*/
-    while ((dmachp->channel->CSR & STM32_GPDMA_CSR_SUSPF) != 0U) {
-      /* Wait completion.*/
-    }
-    dmachp->channel->CFCR = STM32_GPDMA_CFCR_SUSPF;
-  }
+  /* Suspending the channel, it needs to be in idle.*/
+  gpdmaChannelSuspend(dmachp);
+  gpdmaChannelWaitIdle(dmachp);
 
   /* Now resetting the channel.*/
-  dmachp->channel->CCR |= STM32_GPDMA_CCR_RESET;
-  dmachp->channel->CCR  = 0U;
+  gpdmaChannelReset(dmachp);
 
-  /* Clearing all interrupts.*/
+  /* Resetting all sources and clearing interrupts.*/
+  dmachp->channel->CCR  = 0U;
   dmachp->channel->CFCR = STM32_GPDMA_CFCR_ALL;
 }
 

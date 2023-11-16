@@ -569,7 +569,6 @@ extern "C" {
                                                  void *param);
   void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp);
   void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp);
-  void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmachp);
   void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp);
   void gpdmaServeInterrupt(const stm32_gpdma_channel_t *dmachp);
 #ifdef __cplusplus
@@ -616,6 +615,7 @@ void gpdmaChannelInit(const stm32_gpdma_channel_t *dmachp,
 
 /**
  * @brief   Prepares a GPDMA channel for transfer.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  * @param[in] tr1       CTR1 register initialization value
@@ -645,6 +645,7 @@ void gpdmaChannelSetupTransfer(const stm32_gpdma_channel_t *dmachp,
 /**
  * @brief   Prepares a GPDMA channel for a 2D transfer.
  * @note    The channel must have 2D capability.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  * @param[in] tr1       CTR1 register initialization value
@@ -677,6 +678,7 @@ void gpdmaChannelSetupTransfer2D(const stm32_gpdma_channel_t *dmachp,
 
 /**
  * @brief   Channel enable.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  *
@@ -684,13 +686,57 @@ void gpdmaChannelSetupTransfer2D(const stm32_gpdma_channel_t *dmachp,
  */
 __STATIC_FORCEINLINE
 void gpdmaChannelEnable(const stm32_gpdma_channel_t *dmachp) {
-  DMA_Channel_TypeDef *chp = dmachp->channel;
 
-  chp->CCR |= STM32_GPDMA_CCR_EN;
+  dmachp->channel->CCR |= STM32_GPDMA_CCR_EN;
+}
+
+/**
+ * @brief   GPDMA channel reset.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ *
+ * @special
+ */
+__STATIC_FORCEINLINE
+void gpdmaChannelReset(const stm32_gpdma_channel_t *dmachp) {
+
+  dmachp->channel->CCR |= STM32_GPDMA_CCR_RESET;
+}
+
+/**
+ * @brief   GPDMA channel suspend.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ *
+ * @special
+ */
+__STATIC_FORCEINLINE
+void gpdmaChannelSuspend(const stm32_gpdma_channel_t *dmachp) {
+
+  dmachp->channel->CCR |= STM32_GPDMA_CCR_SUSP;
+}
+
+/**
+ * @brief   GPDMA channel wait for idle state.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ *
+ * @special
+ */
+__STATIC_FORCEINLINE
+void gpdmaChannelWaitIdle(const stm32_gpdma_channel_t *dmachp) {
+
+  while ((dmachp->channel->CSR & STM32_GPDMA_CSR_IDLEF) == 0U) {
+    /* Wait completion.*/
+  }
 }
 
 /**
  * @brief   Set channel source pointer.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  * @param[in] s         source pointer
@@ -700,13 +746,13 @@ void gpdmaChannelEnable(const stm32_gpdma_channel_t *dmachp) {
 __STATIC_FORCEINLINE
 void gpdmaChannelSetSource(const stm32_gpdma_channel_t *dmachp,
                            volatile const void *s) {
-  DMA_Channel_TypeDef *chp = dmachp->channel;
 
-  chp->CSAR = (uint32_t)s;
+  dmachp->channel->CSAR = (uint32_t)s;
 }
 
 /**
  * @brief   Set channel destination pointer.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  * @param[in] d         destination pointer
@@ -716,13 +762,13 @@ void gpdmaChannelSetSource(const stm32_gpdma_channel_t *dmachp,
 __STATIC_FORCEINLINE
 void gpdmaChannelSetDestination(const stm32_gpdma_channel_t *dmachp,
                                 volatile const void *d) {
-  DMA_Channel_TypeDef *chp = dmachp->channel;
 
-  chp->CDAR = (uint32_t)d;
+  dmachp->channel->CDAR = (uint32_t)d;
 }
 
 /**
  * @brief   Set channel transfer modes and triggers.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  * @param[in] tr1       CTR1 register initialization value
@@ -743,6 +789,7 @@ void gpdmaChannelSetMode(const stm32_gpdma_channel_t *dmachp,
 
 /**
  * @brief   Set channel counters.
+ * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  * @param[in] n         transaction size
@@ -752,9 +799,8 @@ void gpdmaChannelSetMode(const stm32_gpdma_channel_t *dmachp,
 __STATIC_FORCEINLINE
 void gpdmaChannelTransactionSize(const stm32_gpdma_channel_t *dmachp,
                                  size_t n) {
-  DMA_Channel_TypeDef *chp = dmachp->channel;
 
-  chp->CBR1 = (uint32_t)n;
+  dmachp->channel->CBR1 = (uint32_t)n;
 }
 
 #endif /* STM32_GPDMA_H */
