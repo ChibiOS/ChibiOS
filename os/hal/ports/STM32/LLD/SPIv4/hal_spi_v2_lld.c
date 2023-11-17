@@ -68,6 +68,30 @@ SPIDriver SPID6;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+#if STM32_SPI_USE_SPI1 || defined(__DOXYGEN__)
+static spi_dmabuf_t __gpdma_spi1;
+#endif
+
+#if STM32_SPI_USE_SPI2 || defined(__DOXYGEN__)
+static spi_dmabuf_t __gpdma_spi2;
+#endif
+
+#if STM32_SPI_USE_SPI3 || defined(__DOXYGEN__)
+static spi_dmabuf_t __gpdma_spi3;
+#endif
+
+#if STM32_SPI_USE_SPI4 || defined(__DOXYGEN__)
+static spi_dmabuf_t __gpdma_spi4;
+#endif
+
+#if STM32_SPI_USE_SPI5 || defined(__DOXYGEN__)
+static spi_dmabuf_t __gpdma_spi5;
+#endif
+
+#if STM32_SPI_USE_SPI6 || defined(__DOXYGEN__)
+static spi_dmabuf_t __gpdma_spi6;
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -455,6 +479,7 @@ void spi_lld_init(void) {
   SPID1.dreqrx = STM32_GPDMA_REQ_SPI1_RX;
   SPID1.dreqtx = STM32_GPDMA_REQ_SPI1_TX;
   SPID1.dprio  = STM32_SPI_SPI1_DMA_PRIORITY;
+  SPID1.dbuf   = &__gpdma_spi1;
 #if !defined(STM32_SPI1_SUPPRESS_ISR)
   nvicEnableVector(STM32_SPI1_NUMBER, STM32_SPI_SPI1_IRQ_PRIORITY);
 #endif
@@ -468,6 +493,7 @@ void spi_lld_init(void) {
   SPID2.dreqrx = STM32_GPDMA_REQ_SPI2_RX;
   SPID2.dreqtx = STM32_GPDMA_REQ_SPI2_TX;
   SPID2.dprio  = STM32_SPI_SPI2_DMA_PRIORITY;
+  SPID2.dbuf   = &__gpdma_spi2;
 #if !defined(STM32_SPI2_SUPPRESS_ISR)
   nvicEnableVector(STM32_SPI2_NUMBER, STM32_SPI_SPI2_IRQ_PRIORITY);
 #endif
@@ -481,6 +507,7 @@ void spi_lld_init(void) {
   SPID3.dreqrx = STM32_GPDMA_REQ_SPI3_RX;
   SPID3.dreqtx = STM32_GPDMA_REQ_SPI3_TX;
   SPID3.dprio  = STM32_SPI_SPI3_DMA_PRIORITY;
+  SPID3.dbuf   = &__gpdma_spi3;
 #if !defined(STM32_SPI3_SUPPRESS_ISR)
   nvicEnableVector(STM32_SPI3_NUMBER, STM32_SPI_SPI3_IRQ_PRIORITY);
 #endif
@@ -494,6 +521,7 @@ void spi_lld_init(void) {
   SPID4.dreqrx = STM32_GPDMA_REQ_SPI4_RX;
   SPID4.dreqtx = STM32_GPDMA_REQ_SPI4_TX;
   SPID4.dprio  = STM32_SPI_SPI4_DMA_PRIORITY;
+  SPID4.dbuf   = &__gpdma_spi4;
 #if !defined(STM32_SPI4_SUPPRESS_ISR)
   nvicEnableVector(STM32_SPI4_NUMBER, STM32_SPI_SPI4_IRQ_PRIORITY);
 #endif
@@ -507,6 +535,7 @@ void spi_lld_init(void) {
   SPID5.dreqrx = STM32_GPDMA_REQ_SPI5_RX;
   SPID5.dreqtx = STM32_GPDMA_REQ_SPI5_TX;
   SPID5.dprio  = STM32_SPI_SPI5_DMA_PRIORITY;
+  SPID5.dbuf   = &__gpdma_spi5;
 #if !defined(STM32_SPI5_SUPPRESS_ISR)
   nvicEnableVector(STM32_SPI5_NUMBER, STM32_SPI_SPI5_IRQ_PRIORITY);
 #endif
@@ -520,6 +549,7 @@ void spi_lld_init(void) {
   SPID6.dreqrx = STM32_GPDMA_REQ_SPI6_RX;
   SPID6.dreqtx = STM32_GPDMA_REQ_SPI6_TX;
   SPID6.dprio  = STM32_SPI_SPI6_DMA_PRIORITY;
+  SPID6.dbuf   = &__gpdma_spi6;
 #if !defined(STM32_SPI6_SUPPRESS_ISR)
   nvicEnableVector(STM32_SPI6_NUMBER, STM32_SPI_SPI6_IRQ_PRIORITY);
 #endif
@@ -538,8 +568,9 @@ msg_t spi_lld_start(SPIDriver *spip) {
   uint32_t dsize, dmaccr, dmalbar;
   msg_t msg;
 
-  /* Resetting TX pattern source.*/
-  spip->txsource = (uint32_t)STM32_SPI_FILLER_PATTERN;
+  /* Resetting TX pattern source, clearing RX sink.*/
+  spip->dbuf->rxsink   = 0U;
+  spip->dbuf->txsource = (uint32_t)STM32_SPI_FILLER_PATTERN;
 
   /* If in stopped state then enables the SPI and GPDMA clocks.*/
   if (spip->state == SPI_STOP) {
@@ -642,16 +673,23 @@ msg_t spi_lld_start(SPIDriver *spip) {
   }
 
   /* Configuration-specific GPDMA setup.*/
-  dmalbar = 0U;
   dmaccr  = STM32_GPDMA_CCR_PRIO((uint32_t)spip->dprio) |
             STM32_GPDMA_CCR_TOIE  |
             STM32_GPDMA_CCR_USEIE |
             STM32_GPDMA_CCR_ULEIE |
             STM32_GPDMA_CCR_DTEIE |
             STM32_GPDMA_CCR_TCIE;
-//  if (spip->config->circular) {
-//    dmaccr |= STM32_GPDMA_CCR_HTIE;
-//  }
+#if SPI_SUPPORTS_CIRCULAR
+  dmalbar = (uint32_t)&__gpdma_base__;
+
+  osalDbgAssert((dmalbar &0xFFFFU) == 0U, "unaligned LBAR");
+
+  if (spip->config->circular) {
+    dmaccr |= STM32_GPDMA_CCR_HTIE;
+  }
+#else
+  dmalbar = 0U;
+#endif
   gpdmaChannelInit(spip->dmarx, dmalbar, dmaccr);
   gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelInit(spip->dmatx, dmalbar, dmaccr);
@@ -809,7 +847,7 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
   osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
 
   /* Setting up RX DMA channel.*/
-  gpdmaChannelSetDestination(spip->dmarx, &spip->rxsink);
+  gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       (spip->config->dtr1rx |
@@ -820,7 +858,7 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
   gpdmaChannelEnable(spip->dmarx);
 
   /* Setting up TX DMA channel.*/
-  gpdmaChannelSetSource(spip->dmatx, &spip->txsource);
+  gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       (spip->config->dtr1tx |
@@ -854,11 +892,33 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
  */
 msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                        const void *txbuf, void *rxbuf) {
+  uint32_t llrrx, llrtx;
 
   osalDbgAssert(n <= STM32_GPDMA_CCR_PRIO_POS, "unsupported GPDMA transfer size");
 
-  /* Setting up RX DMA channel.*/
+#if SPI_SUPPORTS_CIRCULAR
+  if (spip->config->circular) {
+    /* It is a circular operation, using the linking mechanism to reload
+       source/destination pointers.*/
+    llrrx = STM32_GPDMA_CLLR_UDA | (((uint32_t)&spip->dbuf->rxdar) & 0xFFFFU);
+    spip->dbuf->rxdar = (uint32_t)rxbuf;
+    llrtx = STM32_GPDMA_CLLR_USA | (((uint32_t)&spip->dbuf->txsar) & 0xFFFFU);
+    spip->dbuf->txsar = (uint32_t)txbuf;
+  }
+  else {
+    llrrx = 0U;
+    llrtx = 0U;
+    gpdmaChannelSetDestination(spip->dmarx, rxbuf);
+    gpdmaChannelSetSource(spip->dmatx, txbuf);
+  }
+#else
+  llrrx = 0U;
+  llrtx = 0U;
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
+  gpdmaChannelSetSource(spip->dmatx, txbuf);
+#endif
+
+  /* Setting up RX DMA channel.*/
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       (spip->config->dtr1rx |
@@ -866,11 +926,10 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                        STM32_GPDMA_CTR1_DINC),
                       (spip->config->dtr2rx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqrx)),
-                      0U);
+                       llrrx);
   gpdmaChannelEnable(spip->dmarx);
 
   /* Setting up TX DMA channel.*/
-  gpdmaChannelSetSource(spip->dmatx, txbuf);
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       (spip->config->dtr1tx |
@@ -879,7 +938,7 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                       (spip->config->dtr2tx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqtx) |
                        STM32_GPDMA_CTR2_DREQ),
-                      0U);
+                       llrtx);
   gpdmaChannelEnable(spip->dmatx);
 
   spi_lld_resume(spip);
@@ -906,7 +965,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   osalDbgAssert(n <= STM32_GPDMA_CCR_PRIO_POS, "unsupported GPDMA transfer size");
 
   /* Setting up RX DMA channel.*/
-  gpdmaChannelSetDestination(spip->dmarx, &spip->rxsink);
+  gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       (spip->config->dtr1rx |
@@ -966,7 +1025,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   gpdmaChannelEnable(spip->dmarx);
 
   /* Setting up TX DMA channel.*/
-  gpdmaChannelSetSource(spip->dmatx, &spip->txsource);
+  gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       (spip->config->dtr1tx |

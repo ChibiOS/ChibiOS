@@ -81,5 +81,22 @@ REGION_ALIAS("BSS_RAM", ram0);
 /* RAM region to be used for the default heap.*/
 REGION_ALIAS("HEAP_RAM", ram0);
 
+/* RAM region to be used for GPDMA link structures.*/
+REGION_ALIAS("GPDMA_RAM", ram0);
+
+SECTIONS
+{
+    /* Special section for GPDMA links, it must not exceed 64kB in size.*/
+    .gpdma (NOLOAD) : ALIGN(16)
+    {
+        __gpdma_base__ = .;
+        *(.gpdma)
+        *(.gpdma.*)
+        *(.bss.__gpdma_*)
+        . = ALIGN(4);
+        __gpdma_end__ = .;
+    } > GPDMA_RAM
+}
+
 /* Generic rules inclusion.*/
 INCLUDE rules.ld

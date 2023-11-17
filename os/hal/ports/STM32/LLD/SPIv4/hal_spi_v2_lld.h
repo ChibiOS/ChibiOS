@@ -31,15 +31,23 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#if !defined(__SPI_DISABLE_CIRCULAR)
 /**
  * @brief   Circular mode support flag.
  */
+#define SPI_SUPPORTS_CIRCULAR           TRUE
+#else
 #define SPI_SUPPORTS_CIRCULAR           FALSE
+#endif
 
+#if !defined(__SPI_DISABLE_SLAVE)
 /**
  * @brief   Slave mode support flag.
  */
 #define SPI_SUPPORTS_SLAVE_MODE         TRUE
+#else
+#define SPI_SUPPORTS_SLAVE_MODE         FALSE
+#endif
 
 /**
  * @name    Register helpers not found in ST headers
@@ -449,6 +457,30 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a structure containin DMA-accessible driver fields.
+ */
+typedef struct spi_dmabuf {
+  /**
+   * @brief   Sink for discarded data.
+   */
+  uint32_t                          rxsink;
+  /**
+   * @brief   Source for default TX pattern.
+   */
+  uint32_t                          txsource;
+#if SPI_SUPPORTS_CIRCULAR || defined(__DOXYGEN__)
+  /**
+   * @brief   GPDMA link structure for circular mode RX channel.
+   */
+  uint32_t                          rxdar;
+  /**
+   * @brief   GPDMA link structure for circular mode TX channel.
+   */
+  uint32_t                          txsar;
+#endif
+} spi_dmabuf_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -470,10 +502,8 @@
   uint32_t                          dtr1rx;                                 \
   /* DMA TX settings.*/                                                     \
   uint32_t                          dtr1tx;                                 \
-  /* Sink for discarded data.*/                                             \
-  uint32_t                          rxsink;                                 \
-  /* Source for default TX pattern.*/                                       \
-  uint32_t                          txsource
+  /* DMA buffers.*/                                                         \
+  spi_dmabuf_t                      *dbuf
 
 /**
  * @brief   Low level fields of the SPI configuration structure.

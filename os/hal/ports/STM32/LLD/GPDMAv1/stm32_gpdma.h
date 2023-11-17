@@ -380,173 +380,6 @@ typedef struct {
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
-/**
- * @name    Macro Functions
- * @{
- */
-/**
- * @brief   Associates a peripheral data register to a GPDMA channel.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @param[in] addr      value to be written in the CPAR register
- *
- * @special
- */
-#define gpdmaStreamSetPeripheral(dmachp, addr) {                            \
-  (dmachp)->channel->CPAR = (uint32_t)(addr);                               \
-}
-
-/**
- * @brief   Associates a memory destination to a GPDMA channel.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @param[in] addr      value to be written in the CMAR register
- *
- * @special
- */
-#define gpdmaStreamSetMemory0(dmachp, addr) {                               \
-  (dmachp)->channel->CMAR = (uint32_t)(addr);                               \
-}
-
-/**
- * @brief   Sets the number of transfers to be performed.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @param[in] size      value to be written in the CNDTR register
- *
- * @special
- */
-#define gpdmaStreamSetTransactionSize(dmachp, size) {                       \
-  (dmachp)->channel->CNDTR = (uint32_t)(size);                              \
-}
-
-/**
- * @brief   Returns the number of transfers to be performed.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @return              The number of transfers to be performed.
- *
- * @special
- */
-#define gpdmaStreamGetTransactionSize(dmachp) ((size_t)((dmachp)->channel->CNDTR))
-
-/**
- * @brief   Programs the channel mode settings.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @param[in] mode      value to be written in the CCR register
- *
- * @special
- */
-#define gpdmaStreamSetMode(dmachp, mode) {                                  \
-  (dmachp)->channel->CCR  = (uint32_t)(mode);                               \
-}
-
-/**
- * @brief   GPDMA channel enable.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- *
- * @special
- */
-#define gpdmaStreamEnable(dmachp) {                                         \
-  (dmachp)->channel->CCR |= STM32_GPDMA_CR_EN;                              \
-}
-
-/**
- * @brief   GPDMA channel disable.
- * @details The function disables the specified channel and then clears any
- *          pending interrupt.
- * @note    This function can be invoked in both ISR or thread context.
- * @note    Interrupts enabling flags are set to zero after this call, see
- *          bug 3607518.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- *
- * @special
- */
-#define ______gpdmaStreamDisable(dmachp) {                                        \
-  (dmachp)->channel->CCR &= ~(STM32_GPDMA_CR_TCIE | STM32_GPDMA_CR_HTIE |   \
-                              STM32_GPDMA_CR_TEIE | STM32_GPDMA_CR_EN);     \
-  dmaStreamClearInterrupt(dmachp);                                          \
-}
-
-/**
- * @brief   GPDMA channel interrupt sources clear.
- * @note    This function can be invoked in both ISR or thread context.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- *
- * @special
- */
-#define gpdmaStreamClearInterrupt(dmachp) {                                 \
-  (dmachp)->dma->IFCR = STM32_GPDMA_ISR_MASK << (dmachp)->shift;            \
-}
-
-/**
- * @brief   Starts a memory to memory operation using the specified channel.
- * @note    The default transfer data mode is "byte to byte" but it can be
- *          changed by specifying extra options in the @p mode parameter.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @param[in] mode      value to be written in the CCR register, this value
- *                      is implicitly ORed with:
- *                      - @p STM32_GPDMA_CR_MINC
- *                      - @p STM32_GPDMA_CR_PINC
- *                      - @p STM32_GPDMA_CR_DIR_M2M
- *                      - @p STM32_GPDMA_CR_EN
- *                      .
- * @param[in] src       source address
- * @param[in] dst       destination address
- * @param[in] n         number of data units to copy
- */
-#define gpdmaStartMemCopy(dmachp, mode, src, dst, n) {                      \
-  dmaStreamSetPeripheral(dmachp, src);                                      \
-  dmaStreamSetMemory0(dmachp, dst);                                         \
-  dmaStreamSetTransactionSize(dmachp, n);                                   \
-  dmaStreamSetMode(dmachp, (mode) |                                         \
-                           STM32_GPDMA_CR_MINC | STM32_GPDMA_CR_PINC |      \
-                           STM32_GPDMA_CR_DIR_M2M | STM32_GPDMA_CR_EN);     \
-}
-
-/**
- * @brief   Polled wait for GPDMA transfer end.
- * @pre     The channel must have been allocated using @p dmaStreamAlloc().
- * @post    After use the channel can be released using @p dmaStreamRelease().
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- */
-#define gpdmaWaitCompletion(dmachp) {                                       \
-  while ((dmachp)->channel->CNDTR > 0U)                                     \
-    ;                                                                       \
-  dmaStreamDisable(dmachp);                                                 \
-}
-/** @} */
-
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -554,6 +387,13 @@ typedef struct {
 #if !defined(__DOXYGEN__)
 extern const stm32_gpdma_channel_t __stm32_gpdma_channels[STM32_GPDMA_NUM_CHANNELS];
 #endif
+
+/* The linker needs to export this symbol if the link mode of GPDMA is required,
+   the symbol needs to be aligned to a 64k boundary and marks the base of an
+   area where all symbols with names starting with __gpdma_ are collected.
+   On devices with data cache this area shall be placed at beginning of a
+   non-cachable area.*/
+extern uint32_t __gpdma_base__;
 
 #ifdef __cplusplus
 extern "C" {

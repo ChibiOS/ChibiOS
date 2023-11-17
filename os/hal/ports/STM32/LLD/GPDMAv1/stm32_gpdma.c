@@ -572,10 +572,6 @@ void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp) {
  * @details The function disables the specified channel and then clears any
  *          pending interrupt.
  * @note    This function can be invoked in both ISR or thread context.
- * @note    Interrupts enabling flags are set to zero after this call, see
- *          bug 3607518.
- * @pre     The channel must have been allocated using @p dmaChannelAlloc().
- * @post    After use the channel can be released using @p dmaChannelRelease().
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
  *
