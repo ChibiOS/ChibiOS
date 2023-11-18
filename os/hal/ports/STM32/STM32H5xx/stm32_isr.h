@@ -77,14 +77,14 @@
 /*
  * DMA unit.
  */
-#define STM32_GPDMA1_CH0_HANDLER            VectorAC
-#define STM32_GPDMA1_CH1_HANDLER            VectorB0
-#define STM32_GPDMA1_CH2_HANDLER            VectorB4
-#define STM32_GPDMA1_CH3_HANDLER            VectorB8
-#define STM32_GPDMA1_CH4_HANDLER            VectorBC
-#define STM32_GPDMA1_CH5_HANDLER            VectorC0
-#define STM32_GPDMA1_CH6_HANDLER            VectorC4
-#define STM32_GPDMA1_CH7_HANDLER            VectorC8
+#define STM32_GPDMA1_CH0_HANDLER            VectorA8
+#define STM32_GPDMA1_CH1_HANDLER            VectorAC
+#define STM32_GPDMA1_CH2_HANDLER            VectorB0
+#define STM32_GPDMA1_CH3_HANDLER            VectorB4
+#define STM32_GPDMA1_CH4_HANDLER            VectorB8
+#define STM32_GPDMA1_CH5_HANDLER            VectorBC
+#define STM32_GPDMA1_CH6_HANDLER            VectorC0
+#define STM32_GPDMA1_CH7_HANDLER            VectorC4
 #define STM32_GPDMA2_CH0_HANDLER            Vector1A8
 #define STM32_GPDMA2_CH1_HANDLER            Vector1AC
 #define STM32_GPDMA2_CH2_HANDLER            Vector1B0

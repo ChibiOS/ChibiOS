@@ -674,10 +674,11 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
   /* Configuration-specific GPDMA setup.*/
   dmaccr  = STM32_GPDMA_CCR_PRIO((uint32_t)spip->dprio) |
-            STM32_GPDMA_CCR_TOIE  |
-            STM32_GPDMA_CCR_USEIE |
-            STM32_GPDMA_CCR_ULEIE |
-            STM32_GPDMA_CCR_DTEIE |
+            STM32_GPDMA_CCR_LAP_MEM |
+            STM32_GPDMA_CCR_TOIE    |
+            STM32_GPDMA_CCR_USEIE   |
+            STM32_GPDMA_CCR_ULEIE   |
+            STM32_GPDMA_CCR_DTEIE   |
             STM32_GPDMA_CCR_TCIE;
 #if SPI_SUPPORTS_CIRCULAR
   dmalbar = (uint32_t)&__gpdma_base__;
@@ -894,7 +895,7 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                        const void *txbuf, void *rxbuf) {
   uint32_t llrrx, llrtx;
 
-  osalDbgAssert(n <= STM32_GPDMA_CCR_PRIO_POS, "unsupported GPDMA transfer size");
+  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
 
 #if SPI_SUPPORTS_CIRCULAR
   if (spip->config->circular) {
@@ -962,15 +963,14 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
  */
 msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
-  osalDbgAssert(n <= STM32_GPDMA_CCR_PRIO_POS, "unsupported GPDMA transfer size");
+  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       (spip->config->dtr1rx |
-                       spip->dtr1rx |
-                       STM32_GPDMA_CTR1_DINC),
+                       spip->dtr1rx),
                       (spip->config->dtr2rx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqrx)),
                       0U);
@@ -1010,7 +1010,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  */
 msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
-  osalDbgAssert(n <= STM32_GPDMA_CCR_PRIO_POS, "unsupported GPDMA transfer size");
+  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
@@ -1029,8 +1029,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       (spip->config->dtr1tx |
-                       spip->dtr1tx |
-                       STM32_GPDMA_CTR1_SINC),
+                       spip->dtr1tx),
                       (spip->config->dtr2tx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqtx) |
                        STM32_GPDMA_CTR2_DREQ),
