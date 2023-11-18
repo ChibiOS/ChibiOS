@@ -672,7 +672,15 @@ msg_t spi_lld_start(SPIDriver *spip) {
     }
   }
 
-  /* Configuration-specific GPDMA setup.*/
+#if SPI_SUPPORTS_CIRCULAR
+  dmalbar = (uint32_t)&__gpdma_base__;
+
+  osalDbgAssert((dmalbar &0xFFFFU) == 0U, "unaligned LBAR");
+#else
+  dmalbar = 0U;
+#endif
+
+  /* RX GPDMA setup.*/
   dmaccr  = STM32_GPDMA_CCR_PRIO((uint32_t)spip->dprio) |
             STM32_GPDMA_CCR_LAP_MEM |
             STM32_GPDMA_CCR_TOIE    |
@@ -680,19 +688,19 @@ msg_t spi_lld_start(SPIDriver *spip) {
             STM32_GPDMA_CCR_ULEIE   |
             STM32_GPDMA_CCR_DTEIE   |
             STM32_GPDMA_CCR_TCIE;
-#if SPI_SUPPORTS_CIRCULAR
-  dmalbar = (uint32_t)&__gpdma_base__;
-
-  osalDbgAssert((dmalbar &0xFFFFU) == 0U, "unaligned LBAR");
-
   if (spip->config->circular) {
     dmaccr |= STM32_GPDMA_CCR_HTIE;
   }
-#else
-  dmalbar = 0U;
-#endif
   gpdmaChannelInit(spip->dmarx, dmalbar, dmaccr);
   gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
+
+  /* TX GPDMA setup.*/
+  dmaccr  = STM32_GPDMA_CCR_PRIO((uint32_t)spip->dprio) |
+            STM32_GPDMA_CCR_LAP_MEM |
+            STM32_GPDMA_CCR_TOIE    |
+            STM32_GPDMA_CCR_USEIE   |
+            STM32_GPDMA_CCR_ULEIE   |
+            STM32_GPDMA_CCR_DTEIE;
   gpdmaChannelInit(spip->dmatx, dmalbar, dmaccr);
   gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 

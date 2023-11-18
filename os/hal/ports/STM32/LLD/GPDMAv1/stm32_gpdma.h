@@ -62,7 +62,7 @@
 #define STM32_GPDMA_CSR_IDLEF           DMA_CSR_IDLEF
 #define STM32_GPDMA_CSR_ERRORS          (DMA_CSR_TOF   |  DMA_CSR_USEF |    \
                                          DMA_CSR_ULEF  |  DMA_CSR_DTEF)
-#define STM32_GPDMA_CSR_ALL             (DMA_CSR_TOF   | DMA_CSR_SUSPF |    \
+#define STM32_GPDMA_CSR_ALL_FLAGS       (DMA_CSR_TOF   | DMA_CSR_SUSPF |    \
                                          DMA_CSR_USEF  | DMA_CSR_ULEF  |    \
                                          DMA_CSR_DTEF  | DMA_CSR_HTF   |    \
                                          DMA_CSR_TCF)

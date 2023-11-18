@@ -602,9 +602,9 @@ void gpdmaServeInterrupt(const stm32_gpdma_channel_t *dmachp) {
   uint32_t csr;
   uint32_t selfindex = (uint32_t)(dmachp - __stm32_gpdma_channels);
 
-  csr = dmachp->channel->CSR;
+  csr = dmachp->channel->CSR ;
   dmachp->channel->CFCR = csr;
-  if (csr & dmachp->channel->CCR) {
+  if ((csr & dmachp->channel->CCR & STM32_GPDMA_CSR_ALL_FLAGS) != 0U) {
     if (gpdma.channels[selfindex].func) {
       gpdma.channels[selfindex].func(gpdma.channels[selfindex].param, csr);
     }
