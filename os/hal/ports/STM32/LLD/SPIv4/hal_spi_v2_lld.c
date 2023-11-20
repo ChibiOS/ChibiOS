@@ -236,25 +236,23 @@ static void spi_lld_serve_dma_rx_interrupt(SPIDriver *spip, uint32_t csr) {
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
 
-#if 0
   if (spip->config->circular) {
-    if ((flags & STM32_GPDMA_CSR_HTF) != 0U) {
+    if ((csr & STM32_GPDMA_CSR_HTF) != 0U) {
       /* Half buffer interrupt.*/
       __spi_isr_half_code(spip);
     }
-    if ((flags & STM32_GPDMA_CSR_TCF) != 0U) {
+    if ((csr & STM32_GPDMA_CSR_TCF) != 0U) {
       /* End buffer interrupt.*/
       __spi_isr_full_code(spip);
     }
   }
   else {
-#endif
     /* Stopping the transfer.*/
     (void) spi_lld_stop_nicely(spip);
 
     /* Operation finished interrupt.*/
     __spi_isr_complete_code(spip);
-//  }
+  }
 }
 
 /**
