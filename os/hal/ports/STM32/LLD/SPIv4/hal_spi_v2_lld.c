@@ -30,6 +30,15 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* Common GPDMA CR settings.*/
+#define SPI_GPDMA_CR_COMMON(spip)                                           \
+  (STM32_GPDMA_CCR_PRIO((uint32_t)(spip)->dprio)  |                         \
+   STM32_GPDMA_CCR_LAP_MEM                      |                           \
+   STM32_GPDMA_CCR_TOIE                         |                           \
+   STM32_GPDMA_CCR_USEIE                        |                           \
+   STM32_GPDMA_CCR_ULEIE                        |                           \
+   STM32_GPDMA_CCR_DTEIE)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -563,7 +572,7 @@ void spi_lld_init(void) {
  * @notapi
  */
 msg_t spi_lld_start(SPIDriver *spip) {
-  uint32_t dsize, dmaccr, dmalbar;
+  uint32_t dsize;
   msg_t msg;
 
   /* Resetting TX pattern source, clearing RX sink.*/
@@ -670,36 +679,8 @@ msg_t spi_lld_start(SPIDriver *spip) {
     }
   }
 
-#if SPI_SUPPORTS_CIRCULAR
-  dmalbar = (uint32_t)&__gpdma_base__;
-
-  osalDbgAssert((dmalbar &0xFFFFU) == 0U, "unaligned LBAR");
-#else
-  dmalbar = 0U;
-#endif
-
-  /* RX GPDMA setup.*/
-  dmaccr  = STM32_GPDMA_CCR_PRIO((uint32_t)spip->dprio) |
-            STM32_GPDMA_CCR_LAP_MEM |
-            STM32_GPDMA_CCR_TOIE    |
-            STM32_GPDMA_CCR_USEIE   |
-            STM32_GPDMA_CCR_ULEIE   |
-            STM32_GPDMA_CCR_DTEIE   |
-            STM32_GPDMA_CCR_TCIE;
-  if (spip->config->circular) {
-    dmaccr |= STM32_GPDMA_CCR_HTIE;
-  }
-  gpdmaChannelInit(spip->dmarx, dmalbar, dmaccr);
+  /* GPDMA peripheral pointers never change, done here.*/
   gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
-
-  /* TX GPDMA setup.*/
-  dmaccr  = STM32_GPDMA_CCR_PRIO((uint32_t)spip->dprio) |
-            STM32_GPDMA_CCR_LAP_MEM |
-            STM32_GPDMA_CCR_TOIE    |
-            STM32_GPDMA_CCR_USEIE   |
-            STM32_GPDMA_CCR_ULEIE   |
-            STM32_GPDMA_CCR_DTEIE;
-  gpdmaChannelInit(spip->dmatx, dmalbar, dmaccr);
   gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 
   /* GPDMA transfer settings depending on frame size.*/
@@ -850,30 +831,59 @@ void spi_lld_unselect(SPIDriver *spip) {
  * @notapi
  */
 msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
+  uint32_t crrx, llrrx, llrtx;
 
   osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
+
+#if SPI_SUPPORTS_CIRCULAR
+  if (spip->config->circular) {
+    /* GPDMA CR settings in circular mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_HTIE         |
+           STM32_GPDMA_CCR_TCIE;
+
+    /* It is a circular operation, using the linking mechanism to reload
+       source/destination pointers.*/
+    llrrx = STM32_GPDMA_CLLR_UDA | (((uint32_t)&spip->dbuf->rxdar) & 0xFFFFU);
+    spip->dbuf->rxdar = (uint32_t)&spip->dbuf->rxsink;
+    llrtx = STM32_GPDMA_CLLR_USA | (((uint32_t)&spip->dbuf->txsar) & 0xFFFFU);
+    spip->dbuf->txsar = (uint32_t)&spip->dbuf->txsource;
+  }
+  else
+#endif
+  {
+    /* GPDMA CR settings in linear mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_TCIE;
+
+    /* No linking required.*/
+    llrrx = 0U;
+    llrtx = 0U;
+  }
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
-                      (spip->config->dtr1rx |
+                      crrx,
+                      (spip->config->dtr1rx                         |
                        spip->dtr1rx),
-                      (spip->config->dtr2rx |
+                      (spip->config->dtr2rx                         |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqrx)),
-                      0U);
+                      llrrx);
   gpdmaChannelEnable(spip->dmarx);
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
+                      SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
                        spip->dtr1tx),
                       (spip->config->dtr2tx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqtx) |
                        STM32_GPDMA_CTR2_DREQ),
-                      0U);
+                      llrtx);
   gpdmaChannelEnable(spip->dmatx);
 
   spi_lld_resume(spip);
@@ -899,12 +909,17 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
  */
 msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                        const void *txbuf, void *rxbuf) {
-  uint32_t llrrx, llrtx;
+  uint32_t crrx, llrrx, llrtx;
 
   osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
 
 #if SPI_SUPPORTS_CIRCULAR
   if (spip->config->circular) {
+    /* GPDMA CR settings in circular mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_HTIE         |
+           STM32_GPDMA_CCR_TCIE;
+
     /* It is a circular operation, using the linking mechanism to reload
        source/destination pointers.*/
     llrrx = STM32_GPDMA_CLLR_UDA | (((uint32_t)&spip->dbuf->rxdar) & 0xFFFFU);
@@ -912,22 +927,23 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
     llrtx = STM32_GPDMA_CLLR_USA | (((uint32_t)&spip->dbuf->txsar) & 0xFFFFU);
     spip->dbuf->txsar = (uint32_t)txbuf;
   }
-  else {
+  else
+#endif
+  {
+    /* GPDMA CR settings in linear mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_TCIE;
+
+    /* No linking required.*/
     llrrx = 0U;
     llrtx = 0U;
-    gpdmaChannelSetDestination(spip->dmarx, rxbuf);
-    gpdmaChannelSetSource(spip->dmatx, txbuf);
   }
-#else
-  llrrx = 0U;
-  llrtx = 0U;
-  gpdmaChannelSetDestination(spip->dmarx, rxbuf);
-  gpdmaChannelSetSource(spip->dmatx, txbuf);
-#endif
 
   /* Setting up RX DMA channel.*/
+  gpdmaChannelSetDestination(spip->dmarx, rxbuf);
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
+                      crrx,
                       (spip->config->dtr1rx |
                        spip->dtr1rx |
                        STM32_GPDMA_CTR1_DINC),
@@ -937,8 +953,10 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
   gpdmaChannelEnable(spip->dmarx);
 
   /* Setting up TX DMA channel.*/
+  gpdmaChannelSetSource(spip->dmatx, txbuf);
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
+                      SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
                        spip->dtr1tx |
                        STM32_GPDMA_CTR1_SINC),
@@ -968,31 +986,60 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
  * @notapi
  */
 msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
+  uint32_t crrx, llrrx, llrtx;
 
   osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
+
+#if SPI_SUPPORTS_CIRCULAR
+  if (spip->config->circular) {
+    /* GPDMA CR settings in circular mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_HTIE         |
+           STM32_GPDMA_CCR_TCIE;
+
+    /* It is a circular operation, using the linking mechanism to reload
+       source/destination pointers.*/
+    llrrx = STM32_GPDMA_CLLR_UDA | (((uint32_t)&spip->dbuf->rxdar) & 0xFFFFU);
+    spip->dbuf->rxdar = (uint32_t)&spip->dbuf->rxsink;
+    llrtx = STM32_GPDMA_CLLR_USA | (((uint32_t)&spip->dbuf->txsar) & 0xFFFFU);
+    spip->dbuf->txsar = (uint32_t)txbuf;
+  }
+  else
+#endif
+  {
+    /* GPDMA CR settings in linear mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_TCIE;
+
+    /* No linking required.*/
+    llrrx = 0U;
+    llrtx = 0U;
+  }
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
+                      crrx,
                       (spip->config->dtr1rx |
                        spip->dtr1rx),
                       (spip->config->dtr2rx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqrx)),
-                      0U);
+                       llrrx);
   gpdmaChannelEnable(spip->dmarx);
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, txbuf);
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
+                      SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
                        spip->dtr1tx |
                        STM32_GPDMA_CTR1_SINC),
                       (spip->config->dtr2tx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqtx) |
                        STM32_GPDMA_CTR2_DREQ),
-                      0U);
+                       llrtx);
   gpdmaChannelEnable(spip->dmatx);
 
   spi_lld_resume(spip);
@@ -1015,31 +1062,60 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
  * @notapi
  */
 msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
+  uint32_t crrx, llrrx, llrtx;
 
   osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
+
+#if SPI_SUPPORTS_CIRCULAR
+  if (spip->config->circular) {
+    /* GPDMA CR settings in circular mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_HTIE         |
+           STM32_GPDMA_CCR_TCIE;
+
+    /* It is a circular operation, using the linking mechanism to reload
+       source/destination pointers.*/
+    llrrx = STM32_GPDMA_CLLR_UDA | (((uint32_t)&spip->dbuf->rxdar) & 0xFFFFU);
+    spip->dbuf->rxdar = (uint32_t)rxbuf;
+    llrtx = STM32_GPDMA_CLLR_USA | (((uint32_t)&spip->dbuf->txsar) & 0xFFFFU);
+    spip->dbuf->txsar = (uint32_t)&spip->dbuf->txsource;
+  }
+  else
+#endif
+  {
+    /* GPDMA CR settings in linear mode.*/
+    crrx = SPI_GPDMA_CR_COMMON(spip)    |
+           STM32_GPDMA_CCR_TCIE;
+
+    /* No linking required.*/
+    llrrx = 0U;
+    llrtx = 0U;
+  }
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
   gpdmaChannelTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
+                      crrx,
                       (spip->config->dtr1rx |
                        spip->dtr1rx |
                        STM32_GPDMA_CTR1_DINC),
                       (spip->config->dtr2rx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqrx)),
-                      0U);
+                       llrrx);
   gpdmaChannelEnable(spip->dmarx);
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
   gpdmaChannelTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
+                      SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
                        spip->dtr1tx),
                       (spip->config->dtr2tx |
                        STM32_GPDMA_CTR2_REQSEL(spip->dreqtx) |
                        STM32_GPDMA_CTR2_DREQ),
-                      0U);
+                       llrtx);
   gpdmaChannelEnable(spip->dmatx);
 
   spi_lld_resume(spip);

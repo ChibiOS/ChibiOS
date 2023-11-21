@@ -447,6 +447,7 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
     if ((available & mask) == 0U) {
       /* Channel found.*/
       const stm32_gpdma_channel_t *dmachp = STM32_GPDMA_CHANNEL(i);
+      DMA_Channel_TypeDef *chp = dmachp->channel;
 
       /* Installs the GPDMA handler.*/
       gpdma.channels[i].func  = func;
@@ -471,8 +472,17 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
       }
 
       /* Putting the channel in a known state.*/
-      gpdmaChannelDisable(dmachp);
-      dmachp->channel->CCR = 0U;
+      chp->CLBAR = (uint32_t)&__gpdma_base__;
+      chp->CFCR  = STM32_GPDMA_CFCR_ALL_FLAGS;
+      chp->CCR   = 0U;
+      chp->CTR1  = 0U;
+      chp->CTR2  = 0U;
+      chp->CBR1  = 0U;
+      chp->CSAR  = 0U;
+      chp->CDAR  = 0U;
+      chp->CTR3  = 0U;
+      chp->CBR2  = 0U;
+      chp->CLLR  = 0U;
 
       return dmachp;
     }
@@ -528,6 +538,9 @@ void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp) {
   /* Check if the channels is not taken.*/
   osalDbgAssert((gpdma.allocated_mask & (1U << selfindex)) != 0U,
                 "not allocated");
+
+  /* Putting the channel in a known state.*/
+  gpdmaChannelDisable(dmachp);
 
   /* Marks the channel as not allocated.*/
   gpdma.allocated_mask &= ~(1U << selfindex);
@@ -588,7 +601,7 @@ void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp) {
 
   /* Resetting all sources and clearing interrupts.*/
   dmachp->channel->CCR  = 0U;
-  dmachp->channel->CFCR = STM32_GPDMA_CFCR_ALL;
+  dmachp->channel->CFCR = STM32_GPDMA_CFCR_ALL_FLAGS;
 }
 
 /**

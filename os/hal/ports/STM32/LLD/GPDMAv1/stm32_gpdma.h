@@ -44,7 +44,7 @@
 #define STM32_GPDMA_CFCR_DTEF           DMA_CFCR_DTEF
 #define STM32_GPDMA_CFCR_HTF            DMA_CFCR_HTF
 #define STM32_GPDMA_CFCR_TCF            DMA_CFCR_TCF
-#define STM32_GPDMA_CFCR_ALL            (DMA_CFCR_TOF  | DMA_CFCR_SUSPF |   \
+#define STM32_GPDMA_CFCR_ALL_FLAGS      (DMA_CFCR_TOF  | DMA_CFCR_SUSPF |   \
                                          DMA_CFCR_USEF | DMA_CFCR_ULEF  |   \
                                          DMA_CFCR_DTEF | DMA_CFCR_HTF   |   \
                                          DMA_CFCR_TCF)
@@ -424,44 +424,11 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @brief   Channel (re)initialization.
- * @note    CCR and CLBAR are initialized, all other registers are cleared.
- *
- * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @param[in] lbar      CLBAR register initialization value
- * @param[in] cr        CCR register initialization value
- *
- * @api
- */
-__STATIC_FORCEINLINE
-void gpdmaChannelInit(const stm32_gpdma_channel_t *dmachp,
-                      uint32_t lbar, uint32_t cr) {
-  DMA_Channel_TypeDef *chp;
-
-  /* Associated physical channel.*/
-  chp = dmachp->channel;
-
-  chp->CLBAR = lbar;
-  chp->CCR   = cr;
-  chp->CSR   = STM32_GPDMA_CSR_TOF   | STM32_GPDMA_CSR_SUSPF |
-               STM32_GPDMA_CSR_USEF  | STM32_GPDMA_CSR_ULEF  |
-               STM32_GPDMA_CSR_DTEF  | STM32_GPDMA_CSR_HTF   |
-               STM32_GPDMA_CSR_TCF;
-  chp->CTR1 = 0U;
-  chp->CTR2 = 0U;
-  chp->CBR1 = 0U;
-  chp->CSAR = 0U;
-  chp->CDAR = 0U;
-  chp->CTR3 = 0U;
-  chp->CBR2 = 0U;
-  chp->CLLR = 0U;
-}
-
-/**
  * @brief   Prepares a GPDMA channel for transfer.
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ * @param[in] cr        CCR register initialization value
  * @param[in] tr1       CTR1 register initialization value
  * @param[in] tr2       CTR2 register initialization value
  * @param[in] br1       CBR1 register initialization value
@@ -473,11 +440,13 @@ void gpdmaChannelInit(const stm32_gpdma_channel_t *dmachp,
  */
 __STATIC_FORCEINLINE
 void gpdmaChannelSetupTransfer(const stm32_gpdma_channel_t *dmachp,
-                               uint32_t tr1, uint32_t tr2, uint32_t br1,
+                               uint32_t cr, uint32_t tr1,
+                               uint32_t tr2, uint32_t br1,
                                volatile const void *sar, volatile void *dar,
                                uint32_t llr) {
   DMA_Channel_TypeDef *chp = dmachp->channel;
 
+  chp->CCR  = cr;
   chp->CTR1 = tr1;
   chp->CTR2 = tr2;
   chp->CBR1 = br1;
@@ -492,6 +461,7 @@ void gpdmaChannelSetupTransfer(const stm32_gpdma_channel_t *dmachp,
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ * @param[in] cr        CCR register initialization value
  * @param[in] tr1       CTR1 register initialization value
  * @param[in] tr2       CTR2 register initialization value
  * @param[in] br1       CBR1 register initialization value
@@ -505,11 +475,13 @@ void gpdmaChannelSetupTransfer(const stm32_gpdma_channel_t *dmachp,
  */
 __STATIC_FORCEINLINE
 void gpdmaChannelSetupTransfer2D(const stm32_gpdma_channel_t *dmachp,
-                                 uint32_t tr1, uint32_t tr2, uint32_t br1,
+                                 uint32_t cr, uint32_t tr1,
+                                 uint32_t tr2, uint32_t br1,
                                  volatile const void *sar, volatile void *dar,
                                  uint32_t tr3, uint32_t br2, uint32_t llr) {
   DMA_Channel_TypeDef *chp = dmachp->channel;
 
+  chp->CCR  = cr;
   chp->CTR1 = tr1;
   chp->CTR2 = tr2;
   chp->CBR1 = br1;
@@ -615,6 +587,7 @@ void gpdmaChannelSetDestination(const stm32_gpdma_channel_t *dmachp,
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ * @param[in] cr        CCR register initialization value
  * @param[in] tr1       CTR1 register initialization value
  * @param[in] tr2       CTR2 register initialization value
  * @param[in] llr       CLLR register initialization value
@@ -623,9 +596,11 @@ void gpdmaChannelSetDestination(const stm32_gpdma_channel_t *dmachp,
  */
 __STATIC_FORCEINLINE
 void gpdmaChannelSetMode(const stm32_gpdma_channel_t *dmachp,
-                         uint32_t tr1, uint32_t tr2, uint32_t llr) {
+                         uint32_t cr, uint32_t tr1,
+                         uint32_t tr2, uint32_t llr) {
   DMA_Channel_TypeDef *chp = dmachp->channel;
 
+  chp->CCR  = cr;
   chp->CTR1 = tr1;
   chp->CTR2 = tr2;
   chp->CLLR = llr;
