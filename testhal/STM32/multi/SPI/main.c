@@ -30,11 +30,12 @@ CC_ALIGN_DATA(32) static uint8_t rxbuf[512];
  * SPI callback for circular operations.
  */
 void spi_circular_cb(SPIDriver *spip) {
+  size_t n;
 
 #if SPI_SUPPORTS_CIRCULAR == TRUE
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
       osalSysLockFromISR();
-      spiAbortI(&PORTAB_SPI1);
+      spiStopTransferI(&PORTAB_SPI1, &n);
       osalSysUnlockFromISR();
     }
 #endif

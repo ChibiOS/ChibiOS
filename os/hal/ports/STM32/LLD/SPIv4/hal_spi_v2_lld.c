@@ -1140,16 +1140,16 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
  * @notapi
  */
 msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
-  msg_t msg;
+  size_t n;
 
   /* Stopping everything.*/
-  msg = spi_lld_stop_nicely(spip);
+  n = spi_lld_stop_nicely(spip);
 
   if (sizep != NULL) {
-    *sizep = gpdmaChannelGetTransactionSize(spip->dmarx);
+    *sizep = n;
   }
 
-  return msg;
+  return HAL_RET_SUCCESS;
 }
 
 /**
