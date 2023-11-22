@@ -143,12 +143,14 @@ static void spi_lld_suspend(SPIDriver *spip) {
 
 /**
  * @brief   Stopping the SPI transaction quick and dirty.
+ * @return              The number of frames not transferred.
  */
-static void spi_lld_stop_abort(SPIDriver *spip) {
+static size_t spi_lld_stop_abort(SPIDriver *spip) {
+  size_t n;
 
   /* Stopping DMAs and waiting for FIFOs to be empty.*/
-  gpdmaChannelDisable(spip->dmatx);
-  gpdmaChannelDisable(spip->dmarx);
+  (void) gpdmaChannelDisable(spip->dmatx);
+  n = gpdmaChannelDisable(spip->dmarx);
 
   /* Resetting SPI, this will stop it for sure and leave it
      in a clean state.*/
@@ -197,31 +199,35 @@ static void spi_lld_stop_abort(SPIDriver *spip) {
 
   /* Reconfiguring SPI.*/
   spi_lld_configure(spip);
+
+  return n;
 }
 
 /**
  * @brief   Stopping the SPI transaction in the nicest possible way.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
+ * @return              The number of frames not transferred.
  */
-static msg_t spi_lld_stop_nicely(SPIDriver *spip) {
+static size_t spi_lld_stop_nicely(SPIDriver *spip) {
+  size_t n;
 
   /* No nice way to do this in slave mode.*/
   if (spip->config->slave) {
 
-    spi_lld_stop_abort(spip);
+    n = spi_lld_stop_abort(spip);
 
-    return HAL_RET_SUCCESS;
+    return n;
   }
 
   /* Stopping DMAs and waiting for FIFOs to be empty.*/
-  gpdmaChannelDisable(spip->dmatx);
-  gpdmaChannelDisable(spip->dmarx);
+  (void) gpdmaChannelDisable(spip->dmatx);
+  n = gpdmaChannelDisable(spip->dmarx);
 
   /* Stopping SPI.*/
   spi_lld_suspend(spip);
 
-  return HAL_RET_SUCCESS;
+  return n;
 }
 
 /**
@@ -863,7 +869,7 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
-  gpdmaChannelTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx                         |
@@ -875,7 +881,7 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
-  gpdmaChannelTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
@@ -941,7 +947,7 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
-  gpdmaChannelTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx |
@@ -954,7 +960,7 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, txbuf);
-  gpdmaChannelTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
@@ -1018,7 +1024,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
-  gpdmaChannelTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx |
@@ -1030,7 +1036,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, txbuf);
-  gpdmaChannelTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
@@ -1094,7 +1100,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
-  gpdmaChannelTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx |
@@ -1107,7 +1113,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
-  gpdmaChannelTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
@@ -1140,22 +1146,7 @@ msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
   msg = spi_lld_stop_nicely(spip);
 
   if (sizep != NULL) {
-#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-    if (spip->is_bdma)
-#endif
-#if defined(STM32_SPI_BDMA_REQUIRED)
-    {
-      *sizep = bdmaStreamGetTransactionSize(spip->rx.bdma);
-    }
-#endif
-#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-    else
-#endif
-#if defined(STM32_SPI_DMA_REQUIRED)
-    {
-      *sizep = dmaStreamGetTransactionSize(spip->dmarx);
-    }
-#endif
+    *sizep = gpdmaChannelGetTransactionSize(spip->dmarx);
   }
 
   return msg;

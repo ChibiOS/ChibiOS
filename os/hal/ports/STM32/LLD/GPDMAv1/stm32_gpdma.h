@@ -413,7 +413,7 @@ extern "C" {
                                                  void *param);
   void gpdmaChannelFreeI(const stm32_gpdma_channel_t *dmachp);
   void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp);
-  void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp);
+  size_t gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp);
   void gpdmaServeInterrupt(const stm32_gpdma_channel_t *dmachp);
 #ifdef __cplusplus
 }
@@ -611,15 +611,30 @@ void gpdmaChannelSetMode(const stm32_gpdma_channel_t *dmachp,
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
- * @param[in] n         transaction size
+ * @param[in] br1       transaction size
  *
  * @api
  */
 __STATIC_FORCEINLINE
-void gpdmaChannelTransactionSize(const stm32_gpdma_channel_t *dmachp,
-                                 size_t n) {
+void gpdmaChannelSetTransactionSize(const stm32_gpdma_channel_t *dmachp,
+                                    size_t br1) {
 
-  dmachp->channel->CBR1 = (uint32_t)n;
+  dmachp->channel->CBR1 = (uint32_t)br1;
+}
+
+/**
+ * @brief   Get channel counters.
+ * @note    This function can be invoked in both ISR or thread context.
+ *
+ * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ * @return              Value of the @p BR1.BNDT field.
+ *
+ * @api
+ */
+__STATIC_FORCEINLINE
+size_t gpdmaChannelGetTransactionSize(const stm32_gpdma_channel_t *dmachp) {
+
+  return (size_t)(dmachp->channel->CBR1 & STM32_GPDMA_CBR1_BNDT_MASK);
 }
 
 #endif /* STM32_GPDMA_H */

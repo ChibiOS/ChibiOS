@@ -41,7 +41,7 @@ void spi_error_cb(SPIDriver *spip);
  * Circular SPI configuration (25MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig c_spicfg = {
-//  .circular         = true,
+  .circular         = true,
   .data_cb          = spi_circular_cb,
   .error_cb         = spi_error_cb,
   .ssport           = GPIOA,
@@ -58,7 +58,7 @@ const SPIConfig c_spicfg = {
  * Maximum speed SPI configuration (25MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig hs_spicfg = {
-//  .circular         = false,
+  .circular         = false,
   .data_cb          = NULL,
   .error_cb         = spi_error_cb,
   .ssport           = GPIOA,
@@ -75,7 +75,7 @@ const SPIConfig hs_spicfg = {
  * Low speed SPI configuration (1.5625MHz, CPHA=0, CPOL=0, MSb first).
  */
 const SPIConfig ls_spicfg = {
-//  .circular         = false,
+  .circular         = false,
   .data_cb          = NULL,
   .error_cb         = spi_error_cb,
   .ssport           = GPIOA,

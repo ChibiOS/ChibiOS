@@ -587,14 +587,19 @@ void gpdmaChannelFree(const stm32_gpdma_channel_t *dmachp) {
  * @note    This function can be invoked in both ISR or thread context.
  *
  * @param[in] dmachp    pointer to a @p stm32_gpdma_channel_t structure
+ * @return              Remaining data do be transferred.
  *
  * @special
  */
-void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp) {
+size_t gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp) {
+  size_t n;
 
   /* Suspending the channel, it needs to be in idle.*/
   gpdmaChannelSuspend(dmachp);
   gpdmaChannelWaitIdle(dmachp);
+
+  /* Getting remaining transfer size.*/
+  n = gpdmaChannelGetTransactionSize(dmachp);
 
   /* Now resetting the channel.*/
   gpdmaChannelReset(dmachp);
@@ -602,6 +607,8 @@ void gpdmaChannelDisable(const stm32_gpdma_channel_t *dmachp) {
   /* Resetting all sources and clearing interrupts.*/
   dmachp->channel->CCR  = 0U;
   dmachp->channel->CFCR = STM32_GPDMA_CFCR_ALL_FLAGS;
+
+  return n;
 }
 
 /**
