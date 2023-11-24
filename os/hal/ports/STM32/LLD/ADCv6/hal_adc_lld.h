@@ -321,7 +321,7 @@
 /*===========================================================================*/
 
 /* Supported devices checks.*/
-#if !defined(STM32H5XX
+#if !defined(STM32H5XX)
 #error "ADCv6 only supports H5 STM32 devices"
 #endif
 
@@ -429,22 +429,22 @@
 
 /* DMA priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC1"
 #endif
 
 #if STM32_ADC_USE_ADC2 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC2"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC3"
 #endif
 
 #if STM32_ADC_USE_ADC4 &&                                                   \
-    !STM32_DMA_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC4"
 #endif
 
@@ -463,10 +463,6 @@
 
 #if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_GPDMA_CHANNEL)
 #error "ADC4 DMA stream not defined"
-#endif
-
-#if STM32_ADC_USE_ADC5 && !defined(STM32_ADC_ADC5_GPDMA_CHANNEL)
-#error "ADC5 DMA stream not defined"
 #endif
 
 /* ADC clock prescaler checks.*/
@@ -557,9 +553,7 @@ typedef uint32_t adcerror_t;
    /* Pointer to the common ADCx_y registers block.*/                       \
   ADC_Common_TypeDef        *adcc;                                          \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_dma_stream_t  *dmastp;                                        \
-  /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  const stm32_gpdma_channel_t *dmastp
 #else
 #define adc_lld_driver_fields                                               \
   /* Pointer to the master ADCx registers block.*/                          \
@@ -567,9 +561,7 @@ typedef uint32_t adcerror_t;
   /* Pointer to the slave ADCx registers block.*/                           \
   ADC_Common_TypeDef        *adcc;                                          \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_dma_stream_t  *dmastp;                                        \
-  /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  const stm32_gpdma_channel_t *dmastp
 #endif
 
 /**

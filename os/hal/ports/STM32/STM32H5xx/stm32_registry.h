@@ -226,10 +226,9 @@
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
-#define STM32_HAS_ADC2                      FALSE
+#define STM32_HAS_ADC2                      TRUE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
-#define STM32_HAS_ADC5                      FALSE
 
 /* EXTI attributes.*/
 #define STM32_EXTI_HAS_CR                   TRUE

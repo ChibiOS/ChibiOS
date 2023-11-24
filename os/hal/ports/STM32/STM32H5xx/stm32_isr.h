@@ -71,8 +71,10 @@
  * ADC unit.
  */
 #define STM32_ADC1_HANDLER                  VectorD4
+#define STM32_ADC2_HANDLER                  Vector154
 
 #define STM32_ADC1_NUMBER                   37
+#define STM32_ADC2_NUMBER                   69
 
 /*
  * DMA unit.
