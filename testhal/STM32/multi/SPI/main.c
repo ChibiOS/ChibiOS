@@ -233,6 +233,8 @@ int main(void) {
      spiPolledExchange(&PORTAB_SPI1, txbuf[0x55]);
      spiExchange(&PORTAB_SPI1, 4,
                  txbuf, rxbuf);
+     spiExchange(&PORTAB_SPI1, 3,
+                 txbuf+8, rxbuf);
      spiUnselect(&PORTAB_SPI1);
 
      /* Toggle the LED, wait a little bit and repeat.*/
