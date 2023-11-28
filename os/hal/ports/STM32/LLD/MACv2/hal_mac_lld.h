@@ -129,6 +129,15 @@
 #define STM32_TDES3_FL              0x00007FFF
 /** @} */
 
+/**
+ * @name    Link types
+ * @{
+ */
+#define MAC_LINK_DYNAMIC            0
+#define MAC_LINK_100_FULLDUPLEX     1
+#define MACLINK_10_FULLDUPLEX       2
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -199,6 +208,13 @@
  */
 #if !defined(STM32_MAC_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
 #define STM32_MAC_IP_CHECKSUM_OFFLOAD       0
+#endif
+
+/**
+ * @brief   Link connection type.
+ */
+#if !defined(STM32_MAC_PHY_LINK_TYPE) || defined(__DOXYGEN__)
+#define STM32_MAC_PHY_LINK_TYPE             MAC_LINK_DYNAMIC
 #endif
 /** @} */
 

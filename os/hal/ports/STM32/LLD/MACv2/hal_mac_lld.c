@@ -637,6 +637,7 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  * @notapi
  */
 bool mac_lld_poll_link_status(MACDriver *macp) {
+#if STM32_MAC_PHY_LINK_TYPE == MAC_LINK_DYNAMIC
   uint32_t maccr, bmsr, bmcr;
 
   maccr = ETH->MACCR;
@@ -687,6 +688,21 @@ bool mac_lld_poll_link_status(MACDriver *macp) {
     else
       maccr &= ~ETH_MACCR_DM;
   }
+
+#elif STM32_MAC_PHY_LINK_TYPE == MAC_LINK_100_FULLDUPLEX
+  uint32_t maccr = ETH->MACCR;
+
+  maccr |= ETH_MACCR_FES;
+  maccr |= ETH_MACCR_DM;
+
+#elif STM32_MAC_PHY_LINK_TYPE == MACLINK_10_FULLDUPLEX
+  uint32_t maccr = ETH->MACCR;
+
+  maccr &= ~ETH_MACCR_FES;
+  maccr |= ETH_MACCR_DM;
+#else
+#error "invalid STM32_MAC_PHY_LINK_TYPE"
+#endif
 
   /* Changes the mode in the MAC.*/
   ETH->MACCR = maccr;
