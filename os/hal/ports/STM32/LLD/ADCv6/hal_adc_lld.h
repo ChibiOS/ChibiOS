@@ -537,6 +537,16 @@ typedef uint16_t adc_channels_num_t;
  */
 typedef uint32_t adcerror_t;
 
+/**
+ * @brief   Type of a structure containing DMA-accessible driver fields.
+ */
+typedef struct adc_dmabuf {
+  /**
+   * @brief   GPDMA link structure for circular mode RX channel.
+   */
+  uint32_t                          rxdar;
+} adc_dmabuf_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -547,21 +557,26 @@ typedef uint32_t adcerror_t;
 #if (STM32_ADC_DUAL_MODE == TRUE) || defined(__DOXYGEN__)
 #define adc_lld_driver_fields                                               \
   /* Pointer to the master ADCx registers block.*/                          \
-  ADC_TypeDef               *adcm;                                          \
+  ADC_TypeDef                       *adcm;                                  \
   /* Pointer to the slave ADCx registers block.*/                           \
-  ADC_TypeDef               *adcs;                                          \
+  ADC_TypeDef                       *adcs;                                  \
    /* Pointer to the common ADCx_y registers block.*/                       \
-  ADC_Common_TypeDef        *adcc;                                          \
+  ADC_Common_TypeDef                *adcc;                                  \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_gpdma_channel_t *dmastp
+  const stm32_gpdma_channel_t       *dmastp;                                \
+  /* DMA buffers.*/                                                         \
+  adc_dmabuf_t                      *dbuf
 #else
 #define adc_lld_driver_fields                                               \
   /* Pointer to the master ADCx registers block.*/                          \
-  ADC_TypeDef               *adcm;                                          \
+  ADC_TypeDef                       *adcm;                                  \
   /* Pointer to the slave ADCx registers block.*/                           \
-  ADC_Common_TypeDef        *adcc;                                          \
+  ADC_Common_TypeDef                *adcc;                                  \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_gpdma_channel_t *dmastp
+  const stm32_gpdma_channel_t       *dmastp;                                \
+  /* DMA buffers.*/                                                         \
+    adc_dmabuf_t                    *dbuf
+
 #endif
 
 /**
@@ -569,7 +584,7 @@ typedef uint32_t adcerror_t;
  */
 #define adc_lld_config_fields                                               \
   /* ADC DIFSEL register initialization data.*/                             \
-  uint32_t                  difsel
+  uint32_t                          difsel
 
 /**
  * @brief   Low level fields of the ADC group configuration structure.
@@ -582,43 +597,43 @@ typedef uint32_t adcerror_t;
      NOTE: The bits @p ADC_CFGR_CONT or @p ADC_CFGR_DISCEN must be          \
            specified in continuous mode or if the buffer depth is           \
            greater than one.*/                                              \
-  uint32_t                  cfgr;                                           \
+  uint32_t                          cfgr;                                   \
   /* ADC CFGR2 register initialization data.*/                              \
-  uint32_t                  cfgr2;                                          \
+  uint32_t                          cfgr2;                                  \
   /* ADC TR1 register initialization data.*/                                \
-  uint32_t                  tr1;                                            \
+  uint32_t                          tr1;                                    \
   /* ADC TR2 register initialization data.*/                                \
-  uint32_t                  tr2;                                            \
+  uint32_t                          tr2;                                    \
   /* ADC TR3 register initialization data.*/                                \
-  uint32_t                  tr3;                                            \
+  uint32_t                          tr3;                                    \
   /* ADC AWD2CR register initialization data.*/                             \
-  uint32_t                  awd2cr;                                         \
+  uint32_t                          awd2cr;                                 \
   /* ADC AWD3CR register initialization data.*/                             \
-  uint32_t                  awd3cr;                                         \
+  uint32_t                          awd3cr;                                 \
   /* ADC CCR register initialization data.                                  \
      NOTE: Put this field to zero if not using oversampling.*/              \
-  uint32_t                  ccr;                                            \
+  uint32_t                          ccr;                                    \
   /* ADC SMPRx registers initialization data.*/                             \
-  uint32_t                  smpr[2];                                        \
+  uint32_t                          smpr[2];                                \
   /* ADC SQRx register initialization data.*/                               \
-  uint32_t                  sqr[4];                                         \
+  uint32_t                          sqr[4];                                 \
   /* Slave ADC SMPRx registers initialization data.                         \
      NOTE: This field is only present in dual mode.*/                       \
-  uint32_t                  ssmpr[2];                                       \
+  uint32_t                          ssmpr[2];                               \
   /* Slave ADC SQRx register initialization data.                           \
      NOTE: This field is only present in dual mode.*/                       \
-  uint32_t                  ssqr[4]
+  uint32_t                          ssqr[4]
 #else /* STM32_ADC_DUAL_MODE == FALSE */
 #define adc_lld_configuration_group_fields                                  \
-  uint32_t                  cfgr;                                           \
-  uint32_t                  cfgr2;                                          \
-  uint32_t                  tr1;                                            \
-  uint32_t                  tr2;                                            \
-  uint32_t                  tr3;                                            \
-  uint32_t                  awd2cr;                                         \
-  uint32_t                  awd3cr;                                         \
-  uint32_t                  smpr[2];                                        \
-  uint32_t                  sqr[4]
+  uint32_t                          cfgr;                                   \
+  uint32_t                          cfgr2;                                  \
+  uint32_t                          tr1;                                    \
+  uint32_t                          tr2;                                    \
+  uint32_t                          tr3;                                    \
+  uint32_t                          awd2cr;                                 \
+  uint32_t                          awd3cr;                                 \
+  uint32_t                          smpr[2];                                \
+  uint32_t                          sqr[4]
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 
 /**

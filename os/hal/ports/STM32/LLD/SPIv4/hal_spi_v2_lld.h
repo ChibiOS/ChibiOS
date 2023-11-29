@@ -458,7 +458,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a structure containin DMA-accessible driver fields.
+ * @brief   Type of a structure containing DMA-accessible driver fields.
  */
 typedef struct spi_dmabuf {
   /**

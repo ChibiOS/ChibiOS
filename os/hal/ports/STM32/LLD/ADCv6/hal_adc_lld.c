@@ -89,6 +89,22 @@ static const ADCConfig default_config = {
 
 static uint32_t clkmask;
 
+#if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
+static adc_dmabuf_t __gpdma_adc1;
+#endif
+
+#if STM32_ADC_USE_ADC2 || defined(__DOXYGEN__)
+static adc_dmabuf_t __gpdma_adc2;
+#endif
+
+#if STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)
+static adc_dmabuf_t __gpdma_adc3;
+#endif
+
+#if STM32_ADC_USE_ADC4 || defined(__DOXYGEN__)
+static adc_dmabuf_t __gpdma_adc4;
+#endif
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -437,6 +453,7 @@ void adc_lld_init(void) {
   ADCD1.adcs    = ADC2;
 #endif
   ADCD1.dmastp  = NULL;
+  ADCD1.dbuf   = &__gpdma_adc1;
 #endif /* STM32_ADC_USE_ADC1 */
 
 #if STM32_ADC_USE_ADC2
@@ -445,6 +462,7 @@ void adc_lld_init(void) {
   ADCD2.adcc    = ADC12_COMMON;
   ADCD2.adcm    = ADC2;
   ADCD2.dmastp  = NULL;
+  ADCD2.dbuf   = &__gpdma_adc2;
 #endif /* STM32_ADC_USE_ADC2 */
 
 #if STM32_ADC_USE_ADC3
@@ -456,6 +474,7 @@ void adc_lld_init(void) {
   ADCD3.adcs    = ADC4;
 #endif
   ADCD3.dmastp  = NULL;
+  ADCD3.dbuf   = &__gpdma_adc3;
 #endif /* STM32_ADC_USE_ADC3 */
 
 #if STM32_ADC_USE_ADC4
@@ -464,6 +483,7 @@ void adc_lld_init(void) {
   ADCD4.adcc    = ADC34_COMMON;
   ADCD4.adcm    = ADC4;
   ADCD4.dmastp  = NULL;
+  ADCD4.dbuf   = &__gpdma_adc4;
 #endif /* STM32_ADC_USE_ADC4 */
 
   /* IRQs setup.*/
