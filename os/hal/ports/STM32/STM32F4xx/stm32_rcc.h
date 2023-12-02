@@ -1478,7 +1478,7 @@
  *
  * @api
  */
-#define rccDisableUART9() rccDisableAPB2(RCC_APB2ENR_UART9EN, lp)
+#define rccDisableUART9() rccDisableAPB2(RCC_APB2ENR_UART9EN)
 
 /**
  * @brief   Resets the UART9 peripheral.
@@ -1503,7 +1503,7 @@
  *
  * @api
  */
-#define rccDisableUART10(lp) rccDisableAPB2(RCC_APB2ENR_UART10EN, lp)
+#define rccDisableUART10(lp) rccDisableAPB2(RCC_APB2ENR_UART10EN)
 
 /**
  * @brief   Resets the UART10 peripheral.
