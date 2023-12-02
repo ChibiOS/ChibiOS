@@ -220,7 +220,7 @@ static size_t spi_lld_stop_nicely(SPIDriver *spip) {
     return n;
   }
 
-  /* Stopping DMAs and waiting for FIFOs to be empty.*/
+  /* Waiting for FIFOs to be empty then stopping DMAs.*/
   (void) gpdmaChannelDisable(spip->dmatx);
   n = gpdmaChannelDisable(spip->dmarx);
 
@@ -1188,15 +1188,20 @@ msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep) {
  */
 uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
   uint32_t dsize = (spip->spi->CFG1 & SPI_CFG1_DSIZE_Msk) + 1U;
-  uint32_t rxframe;
+  uint32_t rxframe, cr1, cfg1;
 
   osalDbgAssert((spip->spi->SR & SPI_SR_RXPLVL_Msk) == 0U, "RX FIFO not empty");
 
-  spi_lld_resume(spip);
+  /* Workaround for apparent "buffering" of DMA requests even while the DMA
+     channels are disabled.
+     Without this subsequent SPI+DMA operation would fail.*/
+  cr1  = spip->spi->CR1;
+  cfg1 = spip->spi->CFG1;
+  spip->spi->CR1  = cr1 & ~SPI_CR1_SPE;
+  spip->spi->CFG1 = cfg1 & ~(SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN);
+  spip->spi->CR1  = cr1;
 
-  /* wait for room in TX FIFO.*/
-  while ((spip->spi->SR & SPI_SR_TXP) == 0U)
-    ;
+  spi_lld_resume(spip);
 
   /* Data register must be accessed with the appropriate data size.
      Byte size access (uint8_t *) for transactions that are <= 8-bit etc.*/
@@ -1227,6 +1232,12 @@ uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
   }
 
   spi_lld_suspend(spip);
+
+  spip->spi->CR1  = cr1 & ~SPI_CR1_SPE;
+  spip->spi->CFG1 = cfg1;
+  spip->spi->CR1  = cr1;
+//  spip->spi->CFG1 |= SPI_CFG1_RXDMAEN | SPI_CFG1_TXDMAEN;
+//  spip->spi->CR1 |= SPI_CR1_SPE;
 
   return rxframe;
 }

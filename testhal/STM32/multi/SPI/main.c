@@ -216,7 +216,7 @@ int main(void) {
      spiIgnore(&PORTAB_SPI1, 1);
      spiExchange(&PORTAB_SPI1, 4, txbuf, rxbuf);
      spiSend(&PORTAB_SPI1, 7, txbuf+3);
-     spiReceive(&PORTAB_SPI1, 16, txbuf+3);
+     spiReceive(&PORTAB_SPI1, 16, rxbuf);
      spiUnselect(&PORTAB_SPI1);
 
      /* Toggle the LED, wait a little bit and repeat.*/
@@ -256,10 +256,11 @@ int main(void) {
      /* Starting synchronous master 256 frames send.*/
      spiSelect(&PORTAB_SPI1);
      spiPolledExchange(&PORTAB_SPI1, txbuf[0x55]);
-     spiExchange(&PORTAB_SPI1, 4,
-                 txbuf, rxbuf);
-     spiExchange(&PORTAB_SPI1, 3,
-                 txbuf+8, rxbuf);
+     spiPolledExchange(&PORTAB_SPI1, txbuf[0xAA]);
+     spiPolledExchange(&PORTAB_SPI1, txbuf[0x33]);
+     spiPolledExchange(&PORTAB_SPI1, txbuf[0xCC]);
+     spiExchange(&PORTAB_SPI1, 4, txbuf, rxbuf);
+     spiExchange(&PORTAB_SPI1, 3, txbuf+8, rxbuf);
      spiUnselect(&PORTAB_SPI1);
 
      /* Toggle the LED, wait a little bit and repeat.*/
