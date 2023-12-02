@@ -868,6 +868,10 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
     llrtx = 0U;
   }
 
+  /* GPDMA peripheral pointers never change, done here.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
+
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelSetTransactionSize(spip->dmarx, n);
@@ -947,6 +951,10 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
     llrtx = 0U;
   }
 
+  /* GPDMA peripheral pointers never change, done here.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
+
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
   gpdmaChannelSetTransactionSize(spip->dmarx, n);
@@ -1025,6 +1033,10 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
     llrtx = 0U;
   }
 
+  /* GPDMA peripheral pointers never change, done here.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
+
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelSetTransactionSize(spip->dmarx, n);
@@ -1101,6 +1113,10 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
     llrrx = 0U;
     llrtx = 0U;
   }
+
+  /* GPDMA peripheral pointers never change, done here.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
