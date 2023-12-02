@@ -206,6 +206,31 @@ int main(void) {
   }
 #endif
 
+  /*
+   * Tranfers of various sizes.
+   */
+  spiStart(&PORTAB_SPI1, &ls_spicfg); /* Setup transfer parameters.       */
+  do {
+     /* Starting synchronous master 256 frames send.*/
+     spiSelect(&PORTAB_SPI1);
+     spiIgnore(&PORTAB_SPI1, 1);
+     spiExchange(&PORTAB_SPI1, 4, txbuf, rxbuf);
+     spiSend(&PORTAB_SPI1, 7, txbuf+3);
+     spiReceive(&PORTAB_SPI1, 16, txbuf+3);
+     spiUnselect(&PORTAB_SPI1);
+
+     /* Toggle the LED, wait a little bit and repeat.*/
+ #if defined(PORTAB_LINE_LED1)
+     palToggleLine(PORTAB_LINE_LED1);
+ #endif
+     chThdSleepMilliseconds(50);
+   } while (palReadLine(PORTAB_LINE_BUTTON) != PORTAB_BUTTON_PRESSED);
+
+   /* Waiting button release.*/
+   while (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+     chThdSleepMilliseconds(100);
+   }
+
 #if SPI_SUPPORTS_CIRCULAR == TRUE
   /*
    * Starting a continuous operation for test.
