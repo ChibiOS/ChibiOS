@@ -32,11 +32,11 @@
 
 /* Common GPDMA CR settings.*/
 #define SPI_GPDMA_CR_COMMON(spip)                                           \
-  (STM32_GPDMA_CCR_PRIO((uint32_t)(spip)->dprio)  |                         \
-   STM32_GPDMA_CCR_LAP_MEM                      |                           \
-   STM32_GPDMA_CCR_TOIE                         |                           \
-   STM32_GPDMA_CCR_USEIE                        |                           \
-   STM32_GPDMA_CCR_ULEIE                        |                           \
+  (STM32_GPDMA_CCR_PRIO((uint32_t)(spip)->dprio)    |                       \
+   STM32_GPDMA_CCR_LAP_MEM                          |                       \
+   STM32_GPDMA_CCR_TOIE                             |                       \
+   STM32_GPDMA_CCR_USEIE                            |                       \
+   STM32_GPDMA_CCR_ULEIE                            |                       \
    STM32_GPDMA_CCR_DTEIE)
 
 /*===========================================================================*/

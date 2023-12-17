@@ -564,6 +564,10 @@ typedef struct adc_dmabuf {
   ADC_Common_TypeDef                *adcc;                                  \
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_gpdma_channel_t       *dmastp;                                \
+  /* DMA priority.*/                                                        \
+  uint8_t                           dprio;                                  \
+  /* DMA request line.*/                                                    \
+  uint8_t                           dreq;                                   \
   /* DMA buffers.*/                                                         \
   adc_dmabuf_t                      *dbuf
 #else
@@ -573,9 +577,13 @@ typedef struct adc_dmabuf {
   /* Pointer to the slave ADCx registers block.*/                           \
   ADC_Common_TypeDef                *adcc;                                  \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_gpdma_channel_t       *dmastp;                                \
+  const stm32_gpdma_channel_t       *dmachp;                                \
+  /* DMA priority.*/                                                        \
+  uint8_t                           dprio;                                  \
+  /* DMA request line.*/                                                    \
+  uint8_t                           dreq;                                   \
   /* DMA buffers.*/                                                         \
-    adc_dmabuf_t                    *dbuf
+  adc_dmabuf_t                      *dbuf
 
 #endif
 
@@ -584,7 +592,11 @@ typedef struct adc_dmabuf {
  */
 #define adc_lld_config_fields                                               \
   /* ADC DIFSEL register initialization data.*/                             \
-  uint32_t                          difsel
+  uint32_t                          difsel;                                 \
+  /* DMA extra TR1 settings.*/                                              \
+  uint32_t                          dtr1;                                   \
+  /* DMA extra TR2 settings.*/                                              \
+  uint32_t                          dtr2
 
 /**
  * @brief   Low level fields of the ADC group configuration structure.
