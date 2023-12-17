@@ -27,6 +27,8 @@
 
 #include <stdarg.h>
 
+#include "hal.h"
+
 /**
  * @brief   Float type support.
  */
