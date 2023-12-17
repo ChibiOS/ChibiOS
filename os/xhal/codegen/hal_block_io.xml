@@ -55,7 +55,7 @@
             <retval value="true">If the operation failed.</retval>
             <api />
           </method>
-          <method name="blkDisonnect" shortname="disconnect"
+          <method name="blkDisconnect" shortname="disconnect"
             ctype="bool">
             <brief>Disconnection from the block device.</brief>
             <return>The operation status.</return>

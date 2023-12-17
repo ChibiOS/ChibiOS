@@ -206,7 +206,7 @@ static inline bool blkConnect(void *ip) {
  * @api
  */
 CC_FORCE_INLINE
-static inline bool blkDisonnect(void *ip) {
+static inline bool blkDisconnect(void *ip) {
   block_io_i *self = (block_io_i *)ip;
 
   return self->vmt->disconnect(ip);
