@@ -732,24 +732,9 @@ void spi_lld_stop(SPIDriver *spip) {
     /* Just in case this has been called uncleanly.*/
     (void) spi_lld_stop_abort(spip);
 
-#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-    if (spip->is_bdma)
-#endif
-#if defined(STM32_SPI_BDMA_REQUIRED)
-    {
-      bdmaStreamFreeI(spip->rx.bdma);
-      bdmaStreamFreeI(spip->tx.bdma);
-    }
-#endif
-#if defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
-    else
-#endif
-#if defined(STM32_SPI_DMA_REQUIRED)
-    {
-      dmaStreamFreeI(spip->dmarx);
-      dmaStreamFreeI(spip->dmatx);
-    }
-#endif
+    /* Releasing DMA channels.*/
+    gpdmaChannelFreeI(spip->dmarx);
+    gpdmaChannelFreeI(spip->dmatx);
 
     /* Clock shutdown.*/
     if (false) {
