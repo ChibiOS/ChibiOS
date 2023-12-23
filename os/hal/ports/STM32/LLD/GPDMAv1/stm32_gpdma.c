@@ -439,12 +439,12 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
   osalDbgCheckClassI();
 
   /* Mask of the available channels within the specified channels.*/
-  available = gpdma.allocated_mask & cmask;
+  available = ~gpdma.allocated_mask & cmask;
 
   /* Searching for a free channel.*/
   for (i = 0U; i <= STM32_GPDMA_NUM_CHANNELS; i++) {
     uint32_t mask = (uint32_t)(1U << i);
-    if ((available & mask) == 0U) {
+    if ((available & mask) != 0U) {
       /* Channel found.*/
       const stm32_gpdma_channel_t *dmachp = STM32_GPDMA_CHANNEL(i);
       DMA_Channel_TypeDef *chp = dmachp->channel;
