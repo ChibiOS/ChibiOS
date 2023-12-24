@@ -118,8 +118,10 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
-- FIX: Fixed ace condition caused by chGuardedPoolAllocI() (bug #1277)
+- FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277)
        (backported to 20.3.5)(backported to 21.11.4).
+- FIX: Fixed avoid shadowing with build-in pow10 function in chprintf.c
+       (bug #1274)(backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed enabling PWM on TIM1, 3, 4 causes compile errors in
        RT-STM32G0B1RE-NUCLEO64 (bug #1273)(backported to 21.11.4).
 - FIX: Wrong assertion in STM32 SPIv3 on SPI6 start.
