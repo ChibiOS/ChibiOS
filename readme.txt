@@ -85,7 +85,9 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
-- FIX: Fixed ace condition caused by chGuardedPoolAllocI() (bug #1277).
+- FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277).
+- FIX: Fixed avoid shadowing with build-in pow10 function in chprintf.c
+       (bug #1274).
 - FIX: Fixed enabling PWM on TIM1, 3, 4 causes compile errors in
        RT-STM32G0B1RE-NUCLEO64 (bug #1273).
 - FIX: Fixed unnecessary code in SNOR device drivers (bug #1265).
