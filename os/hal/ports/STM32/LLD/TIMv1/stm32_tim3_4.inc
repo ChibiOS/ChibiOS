@@ -104,15 +104,15 @@
 static inline void tim3_tim4_irq_init(void) {
 
 #if defined(STM32_TIM3_IS_USED) || defined(STM32_TIM4_IS_USED)
-  nvicEnableVector(STM32_TIM3_TIM4_NUMBER,
-                   STM32_IRQ_TIM3_TIM4_PRIORITY);
+  nvicEnableVector(STM32_TIM3_4_NUMBER,
+                   STM32_IRQ_TIM3_4_PRIORITY);
 #endif
 }
 
 static inline void tim3_tim4_irq_deinit(void) {
 
 #if defined(STM32_TIM3_IS_USED) || defined(STM32_TIM4_IS_USED)
-  nvicDisableVector(STM32_TIM3_TIM4_NUMBER);
+  nvicDisableVector(STM32_TIM3_4_NUMBER);
 #endif
 }
 

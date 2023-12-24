@@ -86,6 +86,8 @@
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
 - FIX: Fixed ace condition caused by chGuardedPoolAllocI() (bug #1277).
+- FIX: Fixed enabling PWM on TIM1, 3, 4 causes compile errors in
+       RT-STM32G0B1RE-NUCLEO64 (bug #1273).
 - FIX: Fixed unnecessary code in SNOR device drivers (bug #1265).
 - FIX: Fixed RP2040 HAL GPIO failed to compile (bug #1264).
 - FIX: Fixed channel 0 corruption on STM32 BDMAv1 (bug #1263).
