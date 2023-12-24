@@ -74,7 +74,9 @@
 *****************************************************************************
 
 *** 20.3.5 ***
-- FIX: Fixed ace condition caused by chGuardedPoolAllocI() (bug #1277).
+- FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277).
+- FIX: Fixed avoid shadowing with build-in pow10 function in chprintf.c
+       (bug #1274).
 - FIX: Fixed STM32/LLD/RTCv2/hal_rtc_lld.c does not compile with
        STM32_RTC_HAS_SUBSECONDS = FALSE (bug #1269).
 - FIX: Fixed unnecessary code in SNOR device drivers (bug #1265).
