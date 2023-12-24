@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Fixed ace condition caused by chGuardedPoolAllocI() (bug #1277).
 - FIX: Fixed unnecessary code in SNOR device drivers (bug #1265).
 - FIX: Fixed channel 0 corruption on STM32 BDMAv1 (bug #1263).
 - FIX: Fixed missing cache management during Cortex-M RAM initializations
