@@ -118,6 +118,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed ace condition caused by chGuardedPoolAllocI() (bug #1277)
+       (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Wrong assertion in STM32 SPIv3 on SPI6 start.
 - FIX: Fixed problems related to TIM3, TIM4 and TIM16 on STM32G0.
 - FIX: Fixed uninitialized return message in EX subsystem (bug #1267)

@@ -275,12 +275,15 @@ static inline cnt_t chGuardedPoolGetCounterI(guarded_memory_pool_t *gmp) {
 static inline void *chGuardedPoolAllocI(guarded_memory_pool_t *gmp) {
   void *p;
 
-  p = chPoolAllocI(&gmp->pool);
-  if (p != NULL) {
+  if (chSemGetCounterI(&gmp->sem) > (cnt_t)0) {
+
     chSemFastWaitI(&gmp->sem);
-    chDbgAssert(chSemGetCounterI(&gmp->sem) >= (cnt_t)0,
-                "semaphore out of sync");
+    p = chPoolAllocI(&gmp->pool);
   }
+  else {
+    p = NULL;
+  }
+
   return p;
 }
 
