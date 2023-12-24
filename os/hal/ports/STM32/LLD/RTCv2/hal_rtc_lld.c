@@ -652,7 +652,9 @@ void rtc_lld_get_time(RTCDriver *rtcp, RTCDateTime *timespec) {
   do
 #endif /* STM32_RTC_HAS_SUBSECONDS */
   {
+#if STM32_RTC_HAS_SUBSECONDS
     oldssr = rtcp->rtc->SSR;
+#endif /* STM32_RTC_HAS_SUBSECONDS */
     tr = rtcp->rtc->TR;
     dr = rtcp->rtc->DR;
   }
