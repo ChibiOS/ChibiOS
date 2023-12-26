@@ -118,6 +118,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed interrupts not enabled for STM32H735 TIM15, TIM16 and TIM17
+       (bug #1280)(backported to 21.11.4).
 - FIX: Fixed wrong STM32 LSI activation check (bug #1279)
        (backported to 21.11.4).
 - FIX: Fixed STM32 HAL UART ISR flaw (bug #1278)(backported to 21.11.4).
