@@ -97,6 +97,9 @@
 #include "stm32_tim6.inc"
 #include "stm32_tim7.inc"
 #include "stm32_tim8_12_13_14.inc"
+#include "stm32_tim15.inc"
+#include "stm32_tim16.inc"
+#include "stm32_tim17.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -145,6 +148,9 @@ void irqInit(void) {
   tim6_irq_init();
   tim7_irq_init();
   tim8_tim12_tim13_tim14_irq_init();
+  tim15_irq_init();
+  tim16_irq_init();
+  tim17_irq_init();
 
   usart1_irq_init();
   usart2_irq_init();
@@ -202,6 +208,9 @@ void irqDeinit(void) {
   tim6_irq_deinit();
   tim7_irq_deinit();
   tim8_tim12_tim13_tim14_irq_deinit();
+  tim15_irq_deinit();
+  tim16_irq_deinit();
+  tim17_irq_deinit();
 
   usart1_irq_deinit();
   usart2_irq_deinit();

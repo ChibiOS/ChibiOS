@@ -85,6 +85,8 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Fixed interrupts not enabled for STM32H735 TIM15, TIM16 and TIM17
+       (bug #1280).
 - FIX: Fixed wrong STM32 LSI activation check (bug #1279).
 - FIX: Fixed STM32 HAL UART ISR flaw (bug #1278).
 - FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277).
