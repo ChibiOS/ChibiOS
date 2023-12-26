@@ -103,7 +103,7 @@ __STATIC_INLINE void lsi_init(void) {
 #elif defined(RCC_BDCR_LSION)
   /* LSI activation.*/
   RCC->BDCR |= STM32_LSIPRE | RCC_BDCR_LSION;
-  while ((RCC->CSR & RCC_BDCR_LSIRDY) == 0U) {
+  while ((RCC->BDCR & RCC_BDCR_LSIRDY) == 0U) {
   }
 #else
 #error "unknown register name"
