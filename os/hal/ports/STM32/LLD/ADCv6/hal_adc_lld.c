@@ -768,6 +768,11 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #else
     cfgr |= ADC_CFGR_DMACFG_CIRCULAR;
 #endif
+    if (adcp->depth > 1U) {
+      /* If circular buffer depth > 1, then the half transfer interrupt
+         is enabled in order to allow streaming processing.*/
+      dmaccr |= STM32_GPDMA_CCR_HTIE;
+    }
   }
 
   /* DMA setup.*/
