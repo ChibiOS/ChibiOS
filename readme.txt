@@ -85,6 +85,7 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Fixed wrong STM32 LSI activation check (bug #1279).
 - FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277).
 - FIX: Fixed avoid shadowing with build-in pow10 function in chprintf.c
        (bug #1274).
