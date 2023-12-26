@@ -843,7 +843,7 @@ void sd_lld_stop(SerialDriver *sdp) {
  */
 void sd_lld_serve_interrupt(SerialDriver *sdp) {
   USART_TypeDef *u = sdp->usart;
-  uint32_t cr1 = u->CR1;
+  uint32_t cr1;
   uint32_t isr;
 
   /* Reading and clearing status.*/
@@ -874,6 +874,9 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
     isr = u->ISR;
   }
 
+  /* Caching CR1.*/
+  cr1 = u->CR1;
+
   /* Transmission buffer empty, note it is a while in order to handle two
      situations:
      1) The data registers has been emptied immediately after writing it, this
@@ -888,7 +891,7 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
       b = oqGetI(&sdp->oqueue);
       if (b < MSG_OK) {
         chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
-        u->CR1 = cr1 & ~USART_CR1_TXEIE;
+        cr1 &= ~USART_CR1_TXEIE;
         osalSysUnlockFromISR();
         break;
       }
@@ -904,10 +907,13 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
     osalSysLockFromISR();
     if (oqIsEmptyI(&sdp->oqueue)) {
       chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-      u->CR1 = cr1 & ~USART_CR1_TCIE;
+      cr1 &= ~USART_CR1_TCIE;
     }
     osalSysUnlockFromISR();
   }
+
+  /* Writing CR1 once.*/
+  u->CR1 = cr1;
 }
 
 #endif /* HAL_USE_SERIAL */

@@ -120,6 +120,7 @@
 - NEW: Memory areas/pointers checker functions added to OSLIB.
 - FIX: Fixed wrong STM32 LSI activation check (bug #1279)
        (backported to 21.11.4).
+- FIX: Fixed STM32 HAL UART ISR flaw (bug #1278)(backported to 21.11.4).
 - FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277)
        (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed avoid shadowing with build-in pow10 function in chprintf.c

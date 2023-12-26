@@ -728,7 +728,7 @@ void sd_lld_stop(SerialDriver *sdp) {
  */
 void sd_lld_serve_interrupt(SerialDriver *sdp) {
   USART_TypeDef *u = sdp->usart;
-  uint16_t cr1 = u->CR1;
+  uint16_t cr1;
   uint16_t sr = u->SR;
 
   /* Special case, LIN break detection.*/
@@ -755,6 +755,9 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
   }
   osalSysUnlockFromISR();
 
+  /* Caching CR1.*/
+  cr1 = u->CR1;
+
   /* Transmission buffer empty.*/
   if ((cr1 & USART_CR1_TXEIE) && (sr & USART_SR_TXE)) {
     msg_t b;
@@ -762,7 +765,7 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
     b = oqGetI(&sdp->oqueue);
     if (b < MSG_OK) {
       chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
-      u->CR1 = cr1 & ~USART_CR1_TXEIE;
+      cr1 &= ~USART_CR1_TXEIE;
     }
     else
       u->DR = b;
@@ -774,10 +777,13 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
     osalSysLockFromISR();
     if (oqIsEmptyI(&sdp->oqueue)) {
       chnAddFlagsI(sdp, CHN_TRANSMISSION_END);
-      u->CR1 = cr1 & ~USART_CR1_TCIE;
+      cr1 &= ~USART_CR1_TCIE;
     }
     osalSysUnlockFromISR();
   }
+
+  /* Writing CR1 once.*/
+  u->CR1 = cr1;
 }
 
 #endif /* HAL_USE_SERIAL */
