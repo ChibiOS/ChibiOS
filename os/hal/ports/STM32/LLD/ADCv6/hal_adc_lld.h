@@ -542,9 +542,9 @@ typedef uint32_t adcerror_t;
  */
 typedef struct adc_dmabuf {
   /**
-   * @brief   GPDMA link structure for circular mode RX channel.
+   * @brief   GPDMA link structure for circular mode.
    */
-  uint32_t                          rxdar;
+  uint32_t                          cdar;
 } adc_dmabuf_t;
 
 /*===========================================================================*/
@@ -593,10 +593,10 @@ typedef struct adc_dmabuf {
 #define adc_lld_config_fields                                               \
   /* ADC DIFSEL register initialization data.*/                             \
   uint32_t                          difsel;                                 \
-  /* DMA extra TR1 settings.*/                                              \
-  uint32_t                          dtr1;                                   \
-  /* DMA extra TR2 settings.*/                                              \
-  uint32_t                          dtr2
+  /* DMA extra CTR1 settings.*/                                             \
+  uint32_t                          dmactr1;                                \
+  /* DMA extra CTR2 settings.*/                                             \
+  uint32_t                          dmactr2
 
 /**
  * @brief   Low level fields of the ADC group configuration structure.

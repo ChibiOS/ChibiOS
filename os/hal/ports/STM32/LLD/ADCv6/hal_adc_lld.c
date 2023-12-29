@@ -30,15 +30,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-/* Common GPDMA CR settings.*/
-#define ADC_GPDMA_CCR_COMMON(adcp)                                          \
-  (STM32_GPDMA_CCR_PRIO((uint32_t)(adcp)->dprio)    |                       \
-   STM32_GPDMA_CCR_LAP_MEM                          |                       \
-   STM32_GPDMA_CCR_TOIE                             |                       \
-   STM32_GPDMA_CCR_USEIE                            |                       \
-   STM32_GPDMA_CCR_ULEIE                            |                       \
-   STM32_GPDMA_CCR_DTEIE)
-
 #if STM32_ADC_DUAL_MODE
 #if STM32_ADC_COMPACT_SAMPLES
 /* Compact type dual mode.*/
@@ -759,8 +750,12 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif
 
   /* Calculating control registers values.*/
-  dmallr = 0U;
-  dmaccr = ADC_GPDMA_CCR_COMMON(adcp);
+  dmaccr = STM32_GPDMA_CCR_PRIO((uint32_t)adcp->dprio)  |
+           STM32_GPDMA_CCR_LAP_MEM                      |
+           STM32_GPDMA_CCR_TOIE                         |
+           STM32_GPDMA_CCR_USEIE                        |
+           STM32_GPDMA_CCR_ULEIE                        |
+           STM32_GPDMA_CCR_DTEIE;
   cfgr    = grpp->cfgr | ADC_CFGR_DMAEN;
   if (grpp->circular) {
 #if STM32_ADC_DUAL_MODE
@@ -768,11 +763,19 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #else
     cfgr |= ADC_CFGR_DMACFG_CIRCULAR;
 #endif
+    /* It is a circular operation, using the linking mechanism to reload
+       source/destination pointers.*/
+    dmallr = STM32_GPDMA_CLLR_UDA | (((uint32_t)&adcp->dbuf->cdar) & 0xFFFFU);
+    adcp->dbuf->cdar = (uint32_t)adcp->samples;
+
     if (adcp->depth > 1U) {
       /* If circular buffer depth > 1, then the half transfer interrupt
          is enabled in order to allow streaming processing.*/
       dmaccr |= STM32_GPDMA_CCR_HTIE;
     }
+  }
+  else {
+    dmallr = 0U;
   }
 
   /* DMA setup.*/
@@ -786,11 +789,12 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif
   gpdmaChannelSetMode(adcp->dmachp,
                       dmaccr,
-                      (adcp->config->dtr1                           |
+                      (adcp->config->dmactr1                        |
                        STM32_GPDMA_CTR1_DAP_MEM                     |
+                       STM32_GPDMA_CTR1_DINC                        |
                        STM32_GPDMA_CTR1_SAP_PER                     |
                        ADC_GPDMA_CTR1_SIZE),
-                      (adcp->config->dtr2                           |
+                      (adcp->config->dmactr2                        |
                        STM32_GPDMA_CTR2_REQSEL(adcp->dreq)),
                        dmallr);
   gpdmaChannelEnable(adcp->dmachp);
