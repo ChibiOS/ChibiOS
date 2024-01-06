@@ -712,10 +712,6 @@ msg_t spi_lld_start(SPIDriver *spip) {
     }
   }
 
-  /* GPDMA peripheral pointers never change, done here.*/
-//  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
-//  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
-
   /* GPDMA transfer settings depending on frame size.*/
   spip->dtr1rx = STM32_GPDMA_CTR1_DAP_MEM  |
                  STM32_GPDMA_CTR1_SAP_PER;
@@ -882,11 +878,8 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers.*/
-  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
-  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
-
   /* Setting up RX DMA channel.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
@@ -900,6 +893,7 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
   gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
@@ -965,11 +959,8 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers.*/
-  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
-  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
-
   /* Setting up RX DMA channel.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
   gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
@@ -984,6 +975,7 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, txbuf);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
   gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
@@ -1047,11 +1039,8 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers.*/
-  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
-  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
-
   /* Setting up RX DMA channel.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
   gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
@@ -1065,6 +1054,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, txbuf);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
   gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
@@ -1128,11 +1118,8 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers.*/
-  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
-  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
-
   /* Setting up RX DMA channel.*/
+  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
   gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
@@ -1147,6 +1134,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
+  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
   gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
