@@ -849,7 +849,8 @@ void spi_lld_unselect(SPIDriver *spip) {
 msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
   uint32_t crrx, llrrx, llrtx;
 
-  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
+  osalDbgAssert((n << spip->dnshift) <= STM32_GPDMA_MAX_TRANSFER,
+                "unsupported GPDMA transfer size");
   osalDbgAssert((spip->spi->SR & SPI_SR_RXPLVL_Msk) == 0U, "RX FIFO not empty");
 
 #if SPI_SUPPORTS_CIRCULAR
@@ -930,7 +931,8 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                        const void *txbuf, void *rxbuf) {
   uint32_t crrx, llrrx, llrtx;
 
-  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
+  osalDbgAssert((n << spip->dnshift) <= STM32_GPDMA_MAX_TRANSFER,
+                "unsupported GPDMA transfer size");
   osalDbgAssert((spip->spi->SR & SPI_SR_RXPLVL_Msk) == 0U, "RX FIFO not empty");
 
 #if SPI_SUPPORTS_CIRCULAR
@@ -1010,7 +1012,8 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
 msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
   uint32_t crrx, llrrx, llrtx;
 
-  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
+  osalDbgAssert((n << spip->dnshift) <= STM32_GPDMA_MAX_TRANSFER,
+                "unsupported GPDMA transfer size");
   osalDbgAssert((spip->spi->SR & SPI_SR_RXPLVL_Msk) == 0U, "RX FIFO not empty");
 
 #if SPI_SUPPORTS_CIRCULAR
@@ -1089,7 +1092,8 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
   uint32_t crrx, llrrx, llrtx;
 
-  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER, "unsupported GPDMA transfer size");
+  osalDbgAssert((n << spip->dnshift) <= STM32_GPDMA_MAX_TRANSFER,
+                "unsupported GPDMA transfer size");
   osalDbgAssert((spip->spi->SR & SPI_SR_RXPLVL_Msk) == 0U, "RX FIFO not empty");
 
 #if SPI_SUPPORTS_CIRCULAR
