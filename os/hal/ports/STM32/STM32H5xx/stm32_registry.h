@@ -265,22 +265,22 @@
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
-#define STM32_SPI1_SUPPORTS_I2S             TRUE
+#define STM32_SPI1_FULL_FEATURE             TRUE
 
 #define STM32_HAS_SPI2                      TRUE
-#define STM32_SPI2_SUPPORTS_I2S             TRUE
+#define STM32_SPI2_FULL_FEATURE             TRUE
 
 #define STM32_HAS_SPI3                      TRUE
-#define STM32_SPI3_SUPPORTS_I2S             TRUE
+#define STM32_SPI3_FULL_FEATURE             TRUE
 
 #define STM32_HAS_SPI4                      TRUE
-#define STM32_SPI4_SUPPORTS_I2S             FALSE
+#define STM32_SPI4_FULL_FEATURE             FALSE
 
 #define STM32_HAS_SPI5                      TRUE
-#define STM32_SPI5_SUPPORTS_I2S             FALSE
+#define STM32_SPI5_FULL_FEATURE             FALSE
 
 #define STM32_HAS_SPI6                      TRUE
-#define STM32_SPI5_SUPPORTS_I2S             FALSE
+#define STM32_SPI6_FULL_FEATURE             FALSE
 
 /* TIM attributes.*/
 #define STM32_TIM_MAX_CHANNELS              6

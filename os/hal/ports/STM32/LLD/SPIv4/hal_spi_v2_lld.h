@@ -66,7 +66,9 @@
 #define SPI_CFG1_UDRDET_VALUE(n)        ((n) << SPI_CFG1_UDRDET_Pos)
 #define SPI_CFG1_UDRCFG_VALUE(n)        ((n) << SPI_CFG1_UDRCFG_Pos)
 #define SPI_CFG1_FTHLV_VALUE(n)         ((n) << SPI_CFG1_FTHLV_Pos)
-#define SPI_CFG1_DSIZE_VALUE(n)         ((n) << SPI_CFG1_DSIZE_Pos)
+#define SPI_CFG1_DSIZE_MASK             (0x1FU << SPI_CFG1_DSIZE_Pos)
+#define SPI_CFG1_DSIZE_POS              SPI_CFG1_DSIZE_Pos
+#define SPI_CFG1_DSIZE_VALUE(n)         ((n) << SPI_CFG1_DSIZE_POS)
 #define SPI_CFG1_DSIZE_4BITS            SPI_CFG1_DSIZE_VALUE(3U)
 #define SPI_CFG1_DSIZE_5BITS            SPI_CFG1_DSIZE_VALUE(4U)
 #define SPI_CFG1_DSIZE_6BITS            SPI_CFG1_DSIZE_VALUE(5U)
@@ -289,6 +291,40 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+/* Registry checks.*/
+#if !defined(STM32_HAS_SPI1) || !defined(STM32_HAS_SPI2) ||                 \
+    !defined(STM32_HAS_SPI3) || !defined(STM32_HAS_SPI4) ||                 \
+    !defined(STM32_HAS_SPI5) || !defined(STM32_HAS_SPI6)
+#error "STM32_HAS_SPIx not defined in registry"
+#endif
+
+#if (STM32_SPI_USE_SPI1 && !defined(STM32_SPI1_HANDLER)) ||                 \
+    (STM32_SPI_USE_SPI2 && !defined(STM32_SPI2_HANDLER)) ||                 \
+    (STM32_SPI_USE_SPI3 && !defined(STM32_SPI3_HANDLER)) ||                 \
+    (STM32_SPI_USE_SPI4 && !defined(STM32_SPI4_HANDLER)) ||                 \
+    (STM32_SPI_USE_SPI5 && !defined(STM32_SPI5_HANDLER)) ||                 \
+    (STM32_SPI_USE_SPI6 && !defined(STM32_SPI6_HANDLER))
+#error "STM32_SPIx_HANDLER not defined in registry"
+#endif
+
+#if (STM32_SPI_USE_SPI1 && !defined(STM32_SPI1_NUMBER)) ||                  \
+    (STM32_SPI_USE_SPI2 && !defined(STM32_SPI2_NUMBER)) ||                  \
+    (STM32_SPI_USE_SPI3 && !defined(STM32_SPI3_NUMBER)) ||                  \
+    (STM32_SPI_USE_SPI4 && !defined(STM32_SPI4_NUMBER)) ||                  \
+    (STM32_SPI_USE_SPI5 && !defined(STM32_SPI5_NUMBER)) ||                  \
+    (STM32_SPI_USE_SPI6 && !defined(STM32_SPI6_NUMBER))
+#error "STM32_SPIx_NUMBER not defined in registry"
+#endif
+
+#if (STM32_SPI_USE_SPI1 && !defined(STM32_SPI1_FULL_FEATURE)) ||            \
+    (STM32_SPI_USE_SPI2 && !defined(STM32_SPI2_FULL_FEATURE)) ||            \
+    (STM32_SPI_USE_SPI3 && !defined(STM32_SPI3_FULL_FEATURE)) ||            \
+    (STM32_SPI_USE_SPI4 && !defined(STM32_SPI4_FULL_FEATURE)) ||            \
+    (STM32_SPI_USE_SPI5 && !defined(STM32_SPI5_FULL_FEATURE)) ||            \
+    (STM32_SPI_USE_SPI6 && !defined(STM32_SPI6_FULL_FEATURE))
+#error "STM32_SPI4_FULL_FEATURE not defined in registry"
+#endif
 
 #if STM32_SPI_USE_SPI1 && !STM32_HAS_SPI1
 #error "SPI1 not present in the selected device"
@@ -521,6 +557,8 @@ typedef struct spi_dmabuf {
   const stm32_gpdma_channel_t       *dmarx;                                 \
   /* Transmit GPDMA channel.*/                                              \
   const stm32_gpdma_channel_t       *dmatx;                                 \
+  /* DMA BNDT shift value.*/                                                \
+  uint8_t                           dnshift;                                \
   /* DMA request line for RX.*/                                             \
   uint8_t                           dreqrx;                                 \
   /* DMA request line for TX.*/                                             \

@@ -585,6 +585,9 @@ msg_t spi_lld_start(SPIDriver *spip) {
   spip->dbuf->rxsink   = 0U;
   spip->dbuf->txsource = (uint32_t)STM32_SPI_FILLER_PATTERN;
 
+  /* Configured frame size.*/
+  dsize = (spip->config->cfg1 & SPI_CFG1_DSIZE_MASK) + 1U;
+
   /* If in stopped state then enables the SPI and GPDMA clocks.*/
   if (spip->state == SPI_STOP) {
     if (false) {
@@ -602,6 +605,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
       rccEnableSPI1(true);
       rccResetSPI1();
+
+#if STM32_SPI1_FULL_FEATURE == FALSE
+      osalDbgAssert((dsize == 8U) || (dsize ==16U), "invalid frame size");
+#endif
     }
 #endif
 
@@ -617,6 +624,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
       rccEnableSPI2(true);
       rccResetSPI2();
+
+#if STM32_SPI2_FULL_FEATURE == FALSE
+      osalDbgAssert((dsize == 8U) || (dsize ==16U), "invalid frame size");
+#endif
 }
 #endif
 
@@ -632,6 +643,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
       rccEnableSPI3(true);
       rccResetSPI3();
+
+#if STM32_SPI3_FULL_FEATURE == FALSE
+      osalDbgAssert((dsize == 8U) || (dsize ==16U), "invalid frame size");
+#endif
     }
 #endif
 
@@ -647,6 +662,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
       rccEnableSPI4(true);
       rccResetSPI4();
+
+#if STM32_SPI4_FULL_FEATURE == FALSE
+      osalDbgAssert((dsize == 8U) || (dsize ==16U), "invalid frame size");
+#endif
     }
 #endif
 
@@ -662,6 +681,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
       rccEnableSPI5(true);
       rccResetSPI5();
+
+#if STM32_SPI5_FULL_FEATURE == FALSE
+      osalDbgAssert((dsize == 8U) || (dsize ==16U), "invalid frame size");
+#endif
     }
 #endif
 
@@ -677,6 +700,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
 
       rccEnableSPI6(true);
       rccResetSPI6();
+
+#if STM32_SPI6_FULL_FEATURE == FALSE
+      osalDbgAssert((dsize == 8U) || (dsize ==16U), "invalid frame size");
+#endif
     }
 #endif
 
@@ -686,11 +713,10 @@ msg_t spi_lld_start(SPIDriver *spip) {
   }
 
   /* GPDMA peripheral pointers never change, done here.*/
-  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
-  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
+//  gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
+//  gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 
   /* GPDMA transfer settings depending on frame size.*/
-  dsize = (spip->config->cfg1 & SPI_CFG1_DSIZE_Msk) + 1U;
   spip->dtr1rx = STM32_GPDMA_CTR1_DAP_MEM  |
                  STM32_GPDMA_CTR1_SAP_PER;
   spip->dtr1tx = STM32_GPDMA_CTR1_DAP_PER  |
@@ -699,16 +725,19 @@ msg_t spi_lld_start(SPIDriver *spip) {
     /* Frame width is between 4 and 8 bits.*/
     spip->dtr1rx |= STM32_GPDMA_CTR1_DDW_BYTE | STM32_GPDMA_CTR1_SDW_BYTE;
     spip->dtr1tx |= STM32_GPDMA_CTR1_DDW_BYTE | STM32_GPDMA_CTR1_SDW_BYTE;
+    spip->dnshift = 0U;
   }
   else if (dsize <= 16U) {
     /* Frame width is between 9 and 16 bits.*/
     spip->dtr1rx |= STM32_GPDMA_CTR1_DDW_HALF | STM32_GPDMA_CTR1_SDW_HALF;
     spip->dtr1tx |= STM32_GPDMA_CTR1_DDW_HALF | STM32_GPDMA_CTR1_SDW_HALF;
+    spip->dnshift = 1U;
   }
   else {
     /* Frame width is between 16 and 32 bits.*/
     spip->dtr1rx |= STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_WORD;
     spip->dtr1tx |= STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_WORD;
+    spip->dnshift = 2U;
   }
 
   /* SPI setup and enable.*/
@@ -853,13 +882,13 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers never change, done here.*/
+  /* GPDMA peripheral pointers.*/
   gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
-  gpdmaChannelSetTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx                         |
@@ -871,7 +900,7 @@ msg_t spi_lld_ignore(SPIDriver *spip, size_t n) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
-  gpdmaChannelSetTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
@@ -936,13 +965,13 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers never change, done here.*/
+  /* GPDMA peripheral pointers.*/
   gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
-  gpdmaChannelSetTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx |
@@ -955,7 +984,7 @@ msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, txbuf);
-  gpdmaChannelSetTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
@@ -1018,13 +1047,13 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers never change, done here.*/
+  /* GPDMA peripheral pointers.*/
   gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, &spip->dbuf->rxsink);
-  gpdmaChannelSetTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx |
@@ -1036,7 +1065,7 @@ msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, txbuf);
-  gpdmaChannelSetTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
@@ -1099,13 +1128,13 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
     llrtx = 0U;
   }
 
-  /* GPDMA peripheral pointers never change, done here.*/
+  /* GPDMA peripheral pointers.*/
   gpdmaChannelSetSource(spip->dmarx, &spip->spi->RXDR);
   gpdmaChannelSetDestination(spip->dmatx, &spip->spi->TXDR);
 
   /* Setting up RX DMA channel.*/
   gpdmaChannelSetDestination(spip->dmarx, rxbuf);
-  gpdmaChannelSetTransactionSize(spip->dmarx, n);
+  gpdmaChannelSetTransactionSize(spip->dmarx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmarx,
                       crrx,
                       (spip->config->dtr1rx |
@@ -1118,7 +1147,7 @@ msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf) {
 
   /* Setting up TX DMA channel.*/
   gpdmaChannelSetSource(spip->dmatx, &spip->dbuf->txsource);
-  gpdmaChannelSetTransactionSize(spip->dmatx, n);
+  gpdmaChannelSetTransactionSize(spip->dmatx, n << spip->dnshift);
   gpdmaChannelSetMode(spip->dmatx,
                       SPI_GPDMA_CR_COMMON(spip),
                       (spip->config->dtr1tx |
