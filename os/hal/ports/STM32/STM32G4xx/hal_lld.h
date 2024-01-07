@@ -93,9 +93,9 @@
 #define CLK_HSI48               1U
 #define CLK_HSE                 2U
 #define CLK_SYSCLK              3U
-#define CLK_PLLP                4U
-#define CLK_PLLQ                5U
-#define CLK_PLLR                6U
+#define CLK_PLLPCLK             4U
+#define CLK_PLLQCLK             5U
+#define CLK_PLLRCLK             6U
 #define CLK_HCLK                7U
 #define CLK_PCLK1               8U
 #define CLK_PCLK1TIM            9U
