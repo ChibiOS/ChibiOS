@@ -126,15 +126,18 @@
 #define ADC_CCR_DMACFG_ONESHOT          (0U << ADC_CCR_DMACFG_Pos)
 #define ADC_CCR_DMACFG_CIRCULAR         (1U << ADC_CCR_DMACFG_Pos)
 
+#define ADC_CCR_MDMA_MASK               ADC_CCR_MDMA_Msk
 #define ADC_CCR_MDMA_DISABLED           (0U << ADC_CCR_MDMA_Pos)
 #define ADC_CCR_MDMA_WORD               (2U << ADC_CCR_MDMA_Pos)
 #define ADC_CCR_MDMA_HWORD              (3U << ADC_CCR_MDMA_Pos)
 
+#define ADC_CCR_CKMODE_MASK             ADC_CCR_CKMODE_Msk
 #define ADC_CCR_CKMODE_ADCCK            (0U << ADC_CCR_CKMODE_Pos)
 #define ADC_CCR_CKMODE_AHB_DIV1         (1U << ADC_CCR_CKMODE_Pos)
 #define ADC_CCR_CKMODE_AHB_DIV2         (2U << ADC_CCR_CKMODE_Pos)
 #define ADC_CCR_CKMODE_AHB_DIV4         (3U << ADC_CCR_CKMODE_Pos)
 
+#define ADC_CCR_PRESC_MASK              ADC_CCR_PRESC_Msk
 #define ADC_CCR_PRESC_NOCLOCK           (0U << ADC_CCR_PRESC_Pos)
 #define ADC_CCR_PRESC_DIV2              (1U << ADC_CCR_PRESC_Pos)
 #define ADC_CCR_PRESC_DIV4              (2U << ADC_CCR_PRESC_Pos)

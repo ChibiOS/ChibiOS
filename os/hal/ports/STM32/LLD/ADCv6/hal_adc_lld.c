@@ -36,12 +36,14 @@
 #define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_HALF |                \
                                  STM32_GPDMA_CTR1_SDW_HALF)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_HWORD
+#define ADC_SAMPLE_MULTIPLIER   2U
 
 #else /* !STM32_ADC_COMPACT_SAMPLES */
 /* Large type dual mode.*/
 #define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_WORD |                \
                                  STM32_GPDMA_CTR1_SDW_WORD)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_WORD
+#define ADC_SAMPLE_MULTIPLIER   4U
 #endif /* !STM32_ADC_COMPACT_SAMPLES */
 
 #else /* !STM32_ADC_DUAL_MODE */
@@ -50,12 +52,14 @@
 #define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_BYTE |                \
                                  STM32_GPDMA_CTR1_SDW_BYTE)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_DISABLED
+#define ADC_SAMPLE_MULTIPLIER   1U
 
 #else /* !STM32_ADC_COMPACT_SAMPLES */
 /* Large type single mode.*/
 #define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_HALF |                \
                                  STM32_GPDMA_CTR1_SDW_HALF)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_DISABLED
+#define ADC_SAMPLE_MULTIPLIER   2U
 #endif /* !STM32_ADC_COMPACT_SAMPLES */
 #endif /* !STM32_ADC_DUAL_MODE */
 
@@ -469,7 +473,7 @@ void adc_lld_init(void) {
   ADCD2.adcm    = ADC2;
   ADCD2.dmachp  = NULL;
   ADCD2.dprio   = STM32_ADC_ADC2_DMA_PRIORITY;
-  ADCD2.dreq    = STM32_GPDMA_REQ_ADC1;
+  ADCD2.dreq    = STM32_GPDMA_REQ_ADC2;
   ADCD2.dbuf    = &__gpdma_adc2;
 #endif /* STM32_ADC_USE_ADC2 */
 
@@ -626,9 +630,9 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* Setting DMA peripheral-side pointer.*/
 #if STM32_ADC_DUAL_MODE
-    gpdmaChannelSetSource(adcp->dmachp, &adcp->adcc->CDR);
+//    gpdmaChannelSetSource(adcp->dmachp, &adcp->adcc->CDR);
 #else
-    gpdmaChannelSetSource(adcp->dmachp, &adcp->adcm->DR);
+//    gpdmaChannelSetSource(adcp->dmachp, &adcp->adcm->DR);
 #endif
 
     /* Differential channels setting.*/
@@ -755,7 +759,8 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
            STM32_GPDMA_CCR_TOIE                         |
            STM32_GPDMA_CCR_USEIE                        |
            STM32_GPDMA_CCR_ULEIE                        |
-           STM32_GPDMA_CCR_DTEIE;
+           STM32_GPDMA_CCR_DTEIE                        |
+           STM32_GPDMA_CCR_TCIE;
   cfgr    = grpp->cfgr | ADC_CFGR_DMAEN;
   if (grpp->circular) {
 #if STM32_ADC_DUAL_MODE
@@ -781,11 +786,13 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   /* DMA setup.*/
   gpdmaChannelSetDestination(adcp->dmachp, adcp->samples);
 #if STM32_ADC_DUAL_MODE
-  gpdmaChannelSetTransactionSize(adcp->dmachp, ((uint32_t)grpp->num_channels/2) *
-                                               (uint32_t)adcp->depth);
+  gpdmaChannelSetSource(adcp->dmachp, &adcp->adcc->CDR);
+  gpdmaChannelSetTransactionSize(adcp->dmachp, (((uint32_t)grpp->num_channels / 2) *
+                                                (uint32_t)adcp->depth) * ADC_SAMPLE_MULTIPLIER);
 #else
-  gpdmaChannelSetTransactionSize(adcp->dmachp, (uint32_t)grpp->num_channels *
-                                               (uint32_t)adcp->depth);
+  gpdmaChannelSetSource(adcp->dmachp, &adcp->adcm->DR);
+  gpdmaChannelSetTransactionSize(adcp->dmachp, ((uint32_t)grpp->num_channels *
+                                                (uint32_t)adcp->depth) * ADC_SAMPLE_MULTIPLIER);
 #endif
   gpdmaChannelSetMode(adcp->dmachp,
                       dmaccr,
