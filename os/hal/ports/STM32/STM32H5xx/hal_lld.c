@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32G4xx/hal_lld.c
- * @brief   STM32G4xx HAL subsystem low level driver source.
+ * @file    STM32H5xx/hal_lld.c
+ * @brief   STM32H5xx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{

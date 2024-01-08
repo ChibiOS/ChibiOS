@@ -1194,7 +1194,7 @@
 #endif
 
 /**
- * @brief   USART10 clock source.
+ * @brief   USART11 clock source.
  */
 #if !defined(STM32_USART11SEL) || defined(__DOXYGEN__)
 #define STM32_USART11SEL                    STM32_USART11SEL_PCLK1
