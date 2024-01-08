@@ -410,8 +410,7 @@ struct port_context {
  * @brief   Initialization of FPU part of thread context.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-  #define PORT_SETUP_CONTEXT_FPU(tp)                                        \
-    (tp)->ctx.sp->fpscr = (uint32_t)0
+  #define PORT_SETUP_CONTEXT_FPU(tp)
 #else
   #define PORT_SETUP_CONTEXT_FPU(tp)
 #endif
