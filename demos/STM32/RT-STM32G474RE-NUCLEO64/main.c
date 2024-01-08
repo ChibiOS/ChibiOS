@@ -138,9 +138,9 @@ static void cmd_clocks(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "HSI48:    %10u\r\n", halClockGetPointX(CLK_HSI48));
   chprintf(chp, "HSE:      %10u\r\n", halClockGetPointX(CLK_HSE));
   chprintf(chp, "SYSCLK:   %10u (%s)\r\n", halClockGetPointX(CLK_SYSCLK), swp);
-  chprintf(chp, "PLLPCLK:  %10u\r\n", halClockGetPointX(CLK_PLLP));
-  chprintf(chp, "PLLRCLK:  %10u\r\n", halClockGetPointX(CLK_PLLR));
-  chprintf(chp, "PLLQCLK:  %10u\r\n", halClockGetPointX(CLK_PLLQ));
+  chprintf(chp, "PLLPCLK:  %10u\r\n", halClockGetPointX(CLK_PLLPCLK));
+  chprintf(chp, "PLLRCLK:  %10u\r\n", halClockGetPointX(CLK_PLLRCLK));
+  chprintf(chp, "PLLQCLK:  %10u\r\n", halClockGetPointX(CLK_PLLQCLK));
   chprintf(chp, "HCLK:     %10u\r\n", halClockGetPointX(CLK_HCLK));
   chprintf(chp, "PCLK1:    %10u\r\n", halClockGetPointX(CLK_PCLK1));
   chprintf(chp, "PCLK1TIM: %10u\r\n", halClockGetPointX(CLK_PCLK1TIM));

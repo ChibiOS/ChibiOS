@@ -128,9 +128,9 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_HSE]             = 0U,
 #endif
   [CLK_SYSCLK]          = STM32_SYSCLK,
-  [CLK_PLLP]            = STM32_PLL_P_CLKOUT,
-  [CLK_PLLQ]            = STM32_PLL_Q_CLKOUT,
-  [CLK_PLLR]            = STM32_PLL_R_CLKOUT,
+  [CLK_PLLPCLK]         = STM32_PLL_P_CLKOUT,
+  [CLK_PLLQCLK]         = STM32_PLL_Q_CLKOUT,
+  [CLK_PLLRCLK]         = STM32_PLL_R_CLKOUT,
   [CLK_HCLK]            = STM32_HCLK,
   [CLK_PCLK1]           = STM32_PCLK1,
   [CLK_PCLK1TIM]        = STM32_TIMP1CLK,
@@ -519,9 +519,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   clock_points[CLK_HSI48]    = hsi48clk;
   clock_points[CLK_HSE]      = hseclk;
   clock_points[CLK_SYSCLK]   = sysclk;
-  clock_points[CLK_PLLP]     = pllpclk;
-  clock_points[CLK_PLLQ]     = pllqclk;
-  clock_points[CLK_PLLR]     = pllrclk;
+  clock_points[CLK_PLLPCLK]  = pllpclk;
+  clock_points[CLK_PLLQCLK]  = pllqclk;
+  clock_points[CLK_PLLRCLK]  = pllrclk;
   clock_points[CLK_HCLK]     = hclk;
   clock_points[CLK_PCLK1]    = pclk1;
   clock_points[CLK_PCLK1TIM] = pclk1tim;
