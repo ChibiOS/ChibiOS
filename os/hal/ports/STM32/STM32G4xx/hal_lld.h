@@ -1732,9 +1732,9 @@ typedef struct {
  */
 #define hal_lld_get_clock_point(clkpt)                                      \
   ((clkpt) == CLK_SYSCLK   ? STM32_SYSCLK        :                          \
-   (clkpt) == CLK_PLLP     ? STM32_PLL_P_CLKOUT  :                          \
-   (clkpt) == CLK_PLLQ     ? STM32_PLL_Q_CLKOUT  :                          \
-   (clkpt) == CLK_PLLR     ? STM32_PLL_R_CLKOUT  :                          \
+   (clkpt) == CLK_PLLPCLK  ? STM32_PLL_P_CLKOUT  :                          \
+   (clkpt) == CLK_PLLQCLK  ? STM32_PLL_Q_CLKOUT  :                          \
+   (clkpt) == CLK_PLLRCLK  ? STM32_PLL_R_CLKOUT  :                          \
    (clkpt) == CLK_HCLK     ? STM32_HCLK          :                          \
    (clkpt) == CLK_PCLK1    ? STM32_PCLK1         :                          \
    (clkpt) == CLK_PCLK1TIM ? STM32_TIMP1CLK      :                          \
