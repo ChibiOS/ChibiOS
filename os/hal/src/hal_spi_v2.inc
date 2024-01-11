@@ -475,7 +475,7 @@ msg_t spiStopTransferI(SPIDriver *spip, size_t *sizep) {
  * @brief   Stops the ongoing SPI operation, if any.
  *
  * @param[in] spip              pointer to the @p SPIDriver object
- * @param[out sizep             pointer to the counter of frames not yet
+ * @param[out] sizep            pointer to the counter of frames not yet
  *                              transferred or @p NULL
  * @return                      The operation status.
  *
