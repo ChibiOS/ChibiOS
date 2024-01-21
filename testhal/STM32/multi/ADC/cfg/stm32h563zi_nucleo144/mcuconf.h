@@ -214,10 +214,10 @@
 /*
  * ADC driver system settings.
  */
-#define STM32_ADC_DUAL_MODE                 FALSE
-#define STM32_ADC_COMPACT_SAMPLES           FALSE
 #define STM32_ADC_USE_ADC1                  TRUE
 #define STM32_ADC_USE_ADC2                  TRUE
+#define STM32_ADC_DUAL_MODE                 FALSE
+#define STM32_ADC_COMPACT_SAMPLES           FALSE
 #define STM32_ADC_ADC1_GPDMA_CHANNEL        STM32_GPDMA1_MASK_FIFO2
 #define STM32_ADC_ADC2_GPDMA_CHANNEL        STM32_GPDMA2_MASK_FIFO2
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
@@ -317,29 +317,29 @@
 /*
  * SIO driver system settings.
  */
-#define STM32_SIO_USE_USART1                TRUE
-#define STM32_SIO_USE_USART2                TRUE
-#define STM32_SIO_USE_USART3                TRUE
-#define STM32_SIO_USE_UART4                 TRUE
-#define STM32_SIO_USE_UART5                 TRUE
-#define STM32_SIO_USE_USART6                TRUE
-#define STM32_SIO_USE_UART7                 TRUE
-#define STM32_SIO_USE_UART8                 TRUE
-#define STM32_SIO_USE_UART9                 TRUE
-#define STM32_SIO_USE_USART10               TRUE
-#define STM32_SIO_USE_USART11               TRUE
-#define STM32_SIO_USE_UART12                TRUE
-#define STM32_SIO_USE_LPUART1               TRUE
+#define STM32_SIO_USE_USART1                FALSE
+#define STM32_SIO_USE_USART2                FALSE
+#define STM32_SIO_USE_USART3                FALSE
+#define STM32_SIO_USE_UART4                 FALSE
+#define STM32_SIO_USE_UART5                 FALSE
+#define STM32_SIO_USE_USART6                FALSE
+#define STM32_SIO_USE_UART7                 FALSE
+#define STM32_SIO_USE_UART8                 FALSE
+#define STM32_SIO_USE_UART9                 FALSE
+#define STM32_SIO_USE_USART10               FALSE
+#define STM32_SIO_USE_USART11               FALSE
+#define STM32_SIO_USE_UART12                FALSE
+#define STM32_SIO_USE_LPUART1               FALSE
 
 /*
  * SPI driver system settings.
  */
-#define STM32_SPI_USE_SPI1                  TRUE
-#define STM32_SPI_USE_SPI2                  TRUE
-#define STM32_SPI_USE_SPI3                  TRUE
-#define STM32_SPI_USE_SPI4                  TRUE
-#define STM32_SPI_USE_SPI5                  TRUE
-#define STM32_SPI_USE_SPI6                  TRUE
+#define STM32_SPI_USE_SPI1                  FALSE
+#define STM32_SPI_USE_SPI2                  FALSE
+#define STM32_SPI_USE_SPI3                  FALSE
+#define STM32_SPI_USE_SPI4                  FALSE
+#define STM32_SPI_USE_SPI5                  FALSE
+#define STM32_SPI_USE_SPI6                  FALSE
 #define STM32_SPI_SPI1_RX_GPDMA_CHANNEL     STM32_GPDMA1_MASK_FIFO2
 #define STM32_SPI_SPI1_TX_GPDMA_CHANNEL     STM32_GPDMA1_MASK_FIFO2
 #define STM32_SPI_SPI2_RX_GPDMA_CHANNEL     STM32_GPDMA2_MASK_FIFO2

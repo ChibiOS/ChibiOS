@@ -214,6 +214,20 @@
 /*
  * ADC driver system settings.
  */
+#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_USE_ADC2                  FALSE
+#define STM32_ADC_DUAL_MODE                 FALSE
+#define STM32_ADC_COMPACT_SAMPLES           FALSE
+#define STM32_ADC_ADC1_GPDMA_CHANNEL        STM32_GPDMA1_MASK_FIFO2
+#define STM32_ADC_ADC2_GPDMA_CHANNEL        STM32_GPDMA2_MASK_FIFO2
+#define STM32_ADC_ADC1_DMA_PRIORITY         2
+#define STM32_ADC_ADC2_DMA_PRIORITY         2
+#define STM32_ADC_ADC1_IRQ_PRIORITY         5
+#define STM32_ADC_ADC2_IRQ_PRIORITY         5
+#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC2_DMA_IRQ_PRIORITY     5
+#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
+#define STM32_ADC_ADC12_PRESC               ADC_CCR_PRESC_DIV2
 
 /*
  * CAN driver system settings.
@@ -303,19 +317,19 @@
 /*
  * SIO driver system settings.
  */
-#define STM32_SIO_USE_USART1                TRUE
-#define STM32_SIO_USE_USART2                TRUE
-#define STM32_SIO_USE_USART3                TRUE
-#define STM32_SIO_USE_UART4                 TRUE
-#define STM32_SIO_USE_UART5                 TRUE
-#define STM32_SIO_USE_USART6                TRUE
-#define STM32_SIO_USE_UART7                 TRUE
-#define STM32_SIO_USE_UART8                 TRUE
-#define STM32_SIO_USE_UART9                 TRUE
-#define STM32_SIO_USE_USART10               TRUE
-#define STM32_SIO_USE_USART11               TRUE
-#define STM32_SIO_USE_UART12                TRUE
-#define STM32_SIO_USE_LPUART1               TRUE
+#define STM32_SIO_USE_USART1                FALSE
+#define STM32_SIO_USE_USART2                FALSE
+#define STM32_SIO_USE_USART3                FALSE
+#define STM32_SIO_USE_UART4                 FALSE
+#define STM32_SIO_USE_UART5                 FALSE
+#define STM32_SIO_USE_USART6                FALSE
+#define STM32_SIO_USE_UART7                 FALSE
+#define STM32_SIO_USE_UART8                 FALSE
+#define STM32_SIO_USE_UART9                 FALSE
+#define STM32_SIO_USE_USART10               FALSE
+#define STM32_SIO_USE_USART11               FALSE
+#define STM32_SIO_USE_UART12                FALSE
+#define STM32_SIO_USE_LPUART1               FALSE
 
 /*
  * SPI driver system settings.
