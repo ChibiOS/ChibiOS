@@ -961,6 +961,36 @@ void adcSTM32DisableVBAT(ADCDriver *adcp) {
   adcp->adcc->CCR &= ~ADC_CCR_VBATEN;
 }
 
+/**
+ * @brief   Enables the OP0 bit.
+ * @details The OP0 bit is required in order to sample the VCORE channel.
+ * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+void adcSTM32EnableVCORE(ADCDriver *adcp) {
+
+  adcp->adcm->OR |= ADC_OR_OP0;
+}
+
+/**
+ * @brief   Disables the OP0 bit.
+ * @details The OP0 bit is required in order to sample the VCORE channel.
+ * @note    This is an STM32-only functionality.
+ * @note    This function is meant to be called after @p adcStart().
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object
+ *
+ * @notapi
+ */
+void adcSTM32DisableVCORE(ADCDriver *adcp) {
+
+  adcp->adcm->OR &= ~ADC_OR_OP0;
+}
+
 #endif /* HAL_USE_ADC */
 
 /** @} */

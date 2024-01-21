@@ -750,6 +750,8 @@ extern "C" {
   void adcSTM32DisableTS(ADCDriver *adcp);
   void adcSTM32EnableVBAT(ADCDriver *adcp);
   void adcSTM32DisableVBAT(ADCDriver *adcp);
+  void adcSTM32EnableVCORE(ADCDriver *adcp);
+  void adcSTM32DisableVCORE(ADCDriver *adcp);
 #ifdef __cplusplus
 }
 #endif
