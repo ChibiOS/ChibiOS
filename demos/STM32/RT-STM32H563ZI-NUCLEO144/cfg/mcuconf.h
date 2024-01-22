@@ -319,7 +319,7 @@
  */
 #define STM32_SIO_USE_USART1                FALSE
 #define STM32_SIO_USE_USART2                FALSE
-#define STM32_SIO_USE_USART3                FALSE
+#define STM32_SIO_USE_USART3                TRUE
 #define STM32_SIO_USE_UART4                 FALSE
 #define STM32_SIO_USE_UART5                 FALSE
 #define STM32_SIO_USE_USART6                FALSE

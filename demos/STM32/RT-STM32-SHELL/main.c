@@ -28,6 +28,19 @@
 
 #define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
 
+static void cmd_halt(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  (void)argv;
+  if (argc > 0) {
+    chprintf(chp, "Usage: halt\r\n");
+    return;
+  }
+
+  chprintf(chp, "\r\nhalted");
+  chThdSleepMilliseconds(10);
+  chSysHalt("shell halt");
+}
+
 /* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
 static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   static uint8_t buf[] =
@@ -62,6 +75,7 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static const ShellCommand commands[] = {
+  {"halt", cmd_halt},
   {"write", cmd_write},
   {NULL, NULL}
 };
