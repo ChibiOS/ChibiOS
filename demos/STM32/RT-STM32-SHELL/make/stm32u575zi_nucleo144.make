@@ -86,44 +86,44 @@ endif
 PROJECT = ch
 
 # Target settings.
-MCU  = cortex-m4
+MCU  = cortex-m33
 
 # Imported source files and paths.
 CHIBIOS  := ../../..
-CONFDIR  := ./cfg/stm32g474re_nucleo64
-BUILDDIR := ./build/stm32g474re_nucleo64
-DEPDIR   := ./.dep/stm32g474re_nucleo64
+CONFDIR  := ./cfg/stm32u575zi_nucleo144
+BUILDDIR := ./build/stm32u575zi_nucleo144
+DEPDIR   := ./.dep/stm32u575zi_nucleo144
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32u5xx.mk
 # HAL-OSAL files (optional).
-include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_G474RE/board.mk
-include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+#include $(CHIBIOS)/os/hal/hal.mk
+#include $(CHIBIOS)/os/hal/ports/STM32/STM32H5xx/platform.mk
+#include $(CHIBIOS)/os/hal/boards/ST_NUCLEO144_H563ZI/board.mk
+#include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
-include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
+#include $(CHIBIOS)/os/rt/rt.mk
+#include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-include $(CHIBIOS)/os/test/test.mk
-include $(CHIBIOS)/test/rt/rt_test.mk
-include $(CHIBIOS)/test/oslib/oslib_test.mk
-include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/various/shell/shell.mk
+#include $(CHIBIOS)/os/test/test.mk
+#include $(CHIBIOS)/test/rt/rt_test.mk
+#include $(CHIBIOS)/test/oslib/oslib_test.mk
+#include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+#include $(CHIBIOS)/os/various/shell/shell.mk
 
 # Define linker script file here.
-LDSCRIPT= $(STARTUPLD)/STM32G474xE.ld
+LDSCRIPT= $(STARTUPLD)/STM32U575xI.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       $(CONFDIR)/portab.c \
-       main.c
+       main_naked.c
+#       $(CONFDIR)/portab.c \
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -139,7 +139,7 @@ ASMXSRC = $(ALLXASMSRC)
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
 # Define C warning options here.
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Wcast-align=strict
 
 # Define C++ warning options here.
 CPPWARN = -Wall -Wextra -Wundef
@@ -153,10 +153,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DSTM32U575xx
 
 # Define ASM defines here
-UADEFS =
+UADEFS = -DSTM32U575xx
 
 # List all user directories here
 UINCDIR =
