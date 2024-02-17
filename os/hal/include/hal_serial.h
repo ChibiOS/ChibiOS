@@ -258,6 +258,12 @@ struct hal_serial_driver {
  *          writes directly to the output queue. This is faster but cannot
  *          be used to write from different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
+ *
  * @api
  */
 #define sdWrite(sdp, b, n) oqWriteTimeout(&(sdp)->oqueue, b, n, TIME_INFINITE)
