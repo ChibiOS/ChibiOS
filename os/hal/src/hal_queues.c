@@ -251,7 +251,6 @@ msg_t iqPutI(input_queue_t *iqp, uint8_t b) {
  * @param[in] iqp       pointer to an @p input_queue_t structure
  * @return              A byte value from the queue.
  * @retval MSG_TIMEOUT  if the queue is empty.
- * @retval MSG_RESET    if the queue has been reset.
  *
  * @iclass
  */
@@ -487,7 +486,6 @@ void oqResetI(output_queue_t *oqp) {
  * @return              The operation status.
  * @retval MSG_OK       if the operation succeeded.
  * @retval MSG_TIMEOUT  if the queue is full.
- * @retval MSG_RESET    if the queue has been reset.
  *
  * @iclass
  */
