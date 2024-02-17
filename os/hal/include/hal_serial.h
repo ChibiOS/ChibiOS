@@ -140,6 +140,12 @@ struct hal_serial_driver {
  *          writes directly on the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         the byte value to be written in the output queue
+ * @return              The operation status.
+ * @retval MSG_OK       if the operation succeeded.
+ * @retval MSG_TIMEOUT  if the queue is full.
+ *
  * @iclass
  */
 #define sdPutI(sdp, b) oqPutI(&(sdp)->oqueue, b)
@@ -149,6 +155,12 @@ struct hal_serial_driver {
  * @note    This function bypasses the indirect access to the channel and
  *          writes directly on the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         the byte value to be written in the output queue
+ * @return              The operation status.
+ * @retval MSG_OK       if the operation succeeded.
+ * @retval MSG_RESET    if the @p SerialDriver has been stopped.
  *
  * @api
  */
@@ -160,6 +172,18 @@ struct hal_serial_driver {
  *          writes directly on the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         the byte value to be written in the output queue
+ * @param[in] t         the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval MSG_OK       if the operation succeeded.
+ * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_RESET    if the @p SerialDriver has been stopped.
+ *
  * @api
  */
 #define sdPutTimeout(sdp, b, t) oqPutTimeout(&(sdp)->oqueue, b, t)
@@ -169,6 +193,10 @@ struct hal_serial_driver {
  * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @return              A byte value from the input queue.
+ * @retval MSG_TIMEOUT  if the queue is empty.
  *
  * @iclass
  */
@@ -180,6 +208,10 @@ struct hal_serial_driver {
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @return              A byte value from the input queue.
+ * @retval MSG_RESET    if the @p SerialDriver has been stopped.
+ *
  * @api
  */
 #define sdGet(sdp) iqGet(&(sdp)->iqueue)
@@ -190,6 +222,16 @@ struct hal_serial_driver {
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] t         the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              A byte value from the input queue.
+ * @retval MSG_TIMEOUT  if the specified time expired.
+ * @retval MSG_RESET    if the @p SerialDriver has been stopped.
+ *
  * @api
  */
 #define sdGetTimeout(sdp, t) iqGetTimeout(&(sdp)->iqueue, t)
@@ -199,6 +241,12 @@ struct hal_serial_driver {
  * @note    This function bypasses the indirect access to the channel and
  *          writes directly to the output queue. This is faster but cannot
  *          be used to write from different channels implementations.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
  *
  * @iclass
  */
@@ -221,6 +269,17 @@ struct hal_serial_driver {
  *          writes directly to the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @param[in] t         the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The number of bytes effectively transferred.
+ *
  * @api
  */
 #define sdWriteTimeout(sdp, b, n, t)                                        \
@@ -231,6 +290,11 @@ struct hal_serial_driver {
  * @note    This function bypasses the indirect access to the channel and
  *          writes directly to the output queue. This is faster but cannot
  *          be used to write to different channels implementations.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
  *
  * @api
  */
@@ -243,6 +307,12 @@ struct hal_serial_driver {
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
+ *
  * @iclass
  */
 #define sdReadI(sdp, b, n) iqReadI(&(sdp)->iqueue, b, n)
@@ -252,6 +322,12 @@ struct hal_serial_driver {
  * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
  *
  * @api
  */
@@ -264,6 +340,17 @@ struct hal_serial_driver {
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
  *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @param[in] t         the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_IMMEDIATE immediate timeout.
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The number of bytes effectively transferred.
+ *
  * @api
  */
 #define sdReadTimeout(sdp, b, n, t) iqReadTimeout(&(sdp)->iqueue, b, n, t)
@@ -273,6 +360,12 @@ struct hal_serial_driver {
  * @note    This function bypasses the indirect access to the channel and
  *          reads directly from the input queue. This is faster but cannot
  *          be used to read from different channels implementations.
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ * @param[in] b         pointer to the data buffer
+ * @param[in] n         the maximum amount of data to be transferred, the
+ *                      value 0 is reserved
+ * @return              The number of bytes effectively transferred.
  *
  * @api
  */
