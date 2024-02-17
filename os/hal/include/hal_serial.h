@@ -262,7 +262,6 @@ struct hal_serial_driver {
  * @param[in] b         pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
- * @return              The number of bytes effectively transferred.
  *
  * @api
  */
@@ -333,7 +332,6 @@ struct hal_serial_driver {
  * @param[in] b         pointer to the data buffer
  * @param[in] n         the maximum amount of data to be transferred, the
  *                      value 0 is reserved
- * @return              The number of bytes effectively transferred.
  *
  * @api
  */
