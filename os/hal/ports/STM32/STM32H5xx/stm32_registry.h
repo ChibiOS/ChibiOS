@@ -230,6 +230,12 @@
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
 
+/* DAC attributes.*/
+#define STM32_HAS_DAC1_CH1                  TRUE
+#define STM32_HAS_DAC1_CH2                  TRUE
+#define STM32_HAS_DAC2_CH1                  FALSE
+#define STM32_HAS_DAC2_CH2                  FALSE
+
 /* EXTI attributes.*/
 #define STM32_EXTI_HAS_CR                   TRUE
 #define STM32_EXTI_SEPARATE_RF              TRUE

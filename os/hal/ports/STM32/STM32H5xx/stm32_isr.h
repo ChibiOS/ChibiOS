@@ -77,6 +77,13 @@
 #define STM32_ADC2_NUMBER                   69
 
 /*
+ * DAC unit.
+ */
+#define STM32_DAC1_HANDLER                  VectorD8
+
+#define STM32_DAC1_NUMBER                   38
+
+/*
  * DMA unit.
  */
 #define STM32_GPDMA1_CH0_HANDLER            VectorAC
