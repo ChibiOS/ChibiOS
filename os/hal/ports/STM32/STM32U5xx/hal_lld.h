@@ -117,7 +117,7 @@
 #define STM32_VOS_RANGE2        (2U << STM32_VOS_POS)   /**< 1.15 Volts.    */
 #define STM32_VOS_RANGE1        (3U << STM32_VOS_POS)   /**< 1.27 Volts.    */
 /** @} */
-
+/*-------------------------------------------------------------------------------*/
 /**
  * @name    RCC_CR register bits definitions
  * @{

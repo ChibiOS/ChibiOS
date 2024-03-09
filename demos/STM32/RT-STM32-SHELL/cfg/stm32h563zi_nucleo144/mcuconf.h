@@ -72,12 +72,12 @@
 #define STM32_HSIDIV_VALUE                  2
 #define STM32_HSI48_ENABLED                 FALSE
 #define STM32_CSI_ENABLED                   FALSE
-#define STM32_HSE_ENABLED                   FALSE
+#define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSI_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   FALSE
 #define STM32_SW                            STM32_SW_PLL1P
-#define STM32_PLL1SRC                       STM32_PLL1SRC_HSI
-#define STM32_PLL1M_VALUE                   16
+#define STM32_PLL1SRC                       STM32_PLL1SRC_HSE
+#define STM32_PLL1M_VALUE                   4
 #define STM32_PLL1N_VALUE                   250
 #define STM32_PLL1P_VALUE                   2
 #define STM32_PLL1Q_VALUE                   2
@@ -138,7 +138,7 @@
 #define STM32_SPI6SEL                       STM32_SPI6SEL_PCLK2
 #define STM32_OSPISEL                       STM32_OSPISEL_HCLK4
 #define STM32_SYSTICKSEL                    STM32_SYSTICKSEL_HCLKDIV8
-#define STM32_USBSEL                        STM32_USBSEL_NOCLOCK
+#define STM32_USBSEL                        STM32_USBSEL_PLL3Q
 #define STM32_SDMMC1SEL                     STM32_SDMMC1SEL_PLL1Q
 #define STM32_SDMMC2SEL                     STM32_SDMMC2SEL_PLL1Q
 #define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
@@ -383,6 +383,10 @@
 /*
  * USB driver system settings.
  */
+#define STM32_USB_USE_USB1                  TRUE
+#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
 
 /*
  * WDG driver system settings.
