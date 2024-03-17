@@ -37,6 +37,7 @@
 
 #define BYTE_SINGLE_SAMPLE_MULTIPLIER 1U
 #define HALF_SINGLE_SAMPLE_MULTIPLIER 2U
+#define WORD_SINGLE_SAMPLE_MULTIPLIER 4U
 #define HALF_DUAL_SAMPLE_MULTIPLIER   2U
 #define WORD_DUAL_SAMPLE_MULTIPLIER   4U
 
@@ -889,7 +890,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
     gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR12R1 +
                                       dacp->params->dataoffset);
-    dmamode = (STM32_GPDMA_CTR1_DDW_HALF | STM32_GPDMA_CTR1_SDW_HALF);
+    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
 
     /* Set initial value of channel.*/
     dac_lld_put_channel(dacp, channel, *dacp->samples);
@@ -914,7 +915,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
     gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR12L1 +
                                       dacp->params->dataoffset);
-    dmamode = (STM32_GPDMA_CTR1_DDW_HALF | STM32_GPDMA_CTR1_SDW_HALF);
+    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
 
     /* Set initial value of channel.*/
     dac_lld_put_channel(dacp, channel, *dacp->samples);
@@ -939,7 +940,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
     gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR8R1 +
                                       dacp->params->dataoffset);
-    dmamode = (STM32_GPDMA_CTR1_DDW_BYTE | STM32_GPDMA_CTR1_SDW_BYTE);
+    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_BYTE);
 
     /* Set initial value of channel.*/
     dac_lld_put_channel(dacp, channel, *dacp->samples &0xFF);
@@ -994,7 +995,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
     osalDbgAssert(dacp->grpp->num_channels == 1, "invalid number of channels");
 
     gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR8RD);
-    dmamode = (STM32_GPDMA_CTR1_DDW_HALF | STM32_GPDMA_CTR1_SDW_HALF);
+    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
 
     dac_lld_put_channel(dacp, 0U, *dacp->samples) & 0xFF;
     dac_lld_put_channel(dacp, 1U, *(dacp->samples) >> 8;
@@ -1026,7 +1027,7 @@ void dac_lld_start_conversion(DACDriver *dacp) {
   /* DAC uses a circular operation. Use the GPDMA linking mechanism to reload
      source pointer and count for subsequent cycles.*/
   dmallr = STM32_GPDMA_CLLR_USA | STM32_GPDMA_CLLR_UB1 |
-              (((uint32_t)&dacp->dbuf->csar) & 0xFFFFU);
+              (((uint32_t)dacp->dbuf) & 0xFFFFU);
   dacp->dbuf->cb1r = n;
   dacp->dbuf->csar = (uint32_t)dacp->samples;
 
