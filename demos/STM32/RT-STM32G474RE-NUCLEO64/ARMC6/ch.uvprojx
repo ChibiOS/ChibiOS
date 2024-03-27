@@ -826,26 +826,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>os_osal</GroupName>
-          <Files>
-            <File>
-              <FileName>chcore_timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\osal\rt-nil\chcore_timer.h</FilePath>
-            </File>
-            <File>
-              <FileName>osal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\hal\osal\rt-nil\osal.c</FilePath>
-            </File>
-            <File>
-              <FileName>osal.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\hal\osal\rt-nil\osal.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>os_hal</GroupName>
           <Files>
             <File>
@@ -1217,6 +1197,26 @@
               <FileName>hal_wspi.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\hal\include\hal_wspi.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>os_hal_osal</GroupName>
+          <Files>
+            <File>
+              <FileName>chcore_timer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\osal\rt-nil\chcore_timer.h</FilePath>
+            </File>
+            <File>
+              <FileName>osal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\hal\osal\rt-nil\osal.c</FilePath>
+            </File>
+            <File>
+              <FileName>osal.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\hal\osal\rt-nil\osal.h</FilePath>
             </File>
           </Files>
         </Group>
