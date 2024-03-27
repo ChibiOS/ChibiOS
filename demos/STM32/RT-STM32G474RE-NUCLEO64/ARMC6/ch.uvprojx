@@ -211,7 +211,7 @@
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
             <Im1Chk>1</Im1Chk>
-            <Im2Chk>0</Im2Chk>
+            <Im2Chk>1</Im2Chk>
             <OnChipMemories>
               <Ocm1>
                 <Type>0</Type>
@@ -305,8 +305,8 @@
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x20020000</StartAddress>
+                <Size>0x1</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>CORTEX_USE_FPU=0 TEST_CFG_SIZE_REPORT=0 SHELL_CMD_TEST_ENABLED=0 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM1$$$$Limit</Define>
+              <Define>CORTEX_USE_FPU=0 TEST_CFG_SIZE_REPORT=0 SHELL_CMD_TEST_ENABLED=0 __heap_base__=Image$$$$RW_IRAM1$$$$ZI$$$$Limit __heap_end__=Image$$$$RW_IRAM2$$$$Base</Define>
               <Undefine></Undefine>
               <IncludePath>..;..\cfg;..\..\..\..\os\common\ext\ARM\CMSIS\Core\Include;..\..\..\..\os\common\ext\ST\STM32G4xx;..\..\..\..\os\license;..\..\..\..\os\common\portability\ARMC6;..\..\..\..\os\common\startup\ARMCMx\devices\STM32G4xx;..\..\..\..\os\rt\include;..\..\..\..\os\oslib\include;..\..\..\..\os\common\ports\ARM-common;..\..\..\..\os\common\ports\ARMv7-M;..\..\..\..\os\hal\osal\rt-nil;..\..\..\..\os\hal\include;..\..\..\..\os\hal\lib\streams;..\..\..\..\os\hal\boards\ST_NUCLEO64_G474RE;..\..\..\..\os\hal\ports\common\ARMCMx;..\..\..\..\os\hal\ports\STM32\STM32G4xx;..\..\..\..\os\hal\ports\STM32\LLD\DMAv1;..\..\..\..\os\hal\ports\STM32\LLD\EXTIv1;..\..\..\..\os\hal\ports\STM32\LLD\FDCANv1;..\..\..\..\os\hal\ports\STM32\LLD\GPIOv2;..\..\..\..\os\hal\ports\STM32\LLD\RCCv1;..\..\..\..\os\hal\ports\STM32\LLD\SYSTICKv1;..\..\..\..\os\hal\ports\STM32\LLD\TIMv1;..\..\..\..\os\hal\ports\STM32\LLD\USART;..\..\..\..\os\hal\ports\STM32\LLD\USARTv3;..\..\..\..\os\various\shell;..\..\..\..\os\test\include;..\..\..\..\test\rt\source\test;..\..\..\..\test\oslib\source\test</IncludePath>
             </VariousControls>
