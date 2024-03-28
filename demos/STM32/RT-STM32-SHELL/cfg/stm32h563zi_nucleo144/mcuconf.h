@@ -59,7 +59,7 @@
 #define STM32_PWR_UCPDR                     (0U)
 #define STM32_PWR_SCCR                      (0U)
 #define STM32_PWR_VMCR                      (0U)
-#define STM32_PWR_USBSCR                    (0U)
+#define STM32_PWR_USBSCR                    (PWR_USBSCR_USB33SV | PWR_USBSCR_USB33DEN)
 #define STM32_PWR_WUCR                      (0U)
 #define STM32_PWR_IORETR                    (0U)
 #define STM32_PWR_SECCFGR                   (0U)
