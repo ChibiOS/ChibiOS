@@ -54,6 +54,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32H7A3xxQ
 #define STM32H7A3xxQ
 
 /*

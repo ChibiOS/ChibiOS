@@ -58,6 +58,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32L4R9xx
 #define STM32L4R9xx
 
 /*

@@ -55,6 +55,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32F091xC
 #define STM32F091xC
 
 /*

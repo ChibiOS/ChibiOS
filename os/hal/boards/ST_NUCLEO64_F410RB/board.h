@@ -59,6 +59,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32F410Rx
 #define STM32F410Rx
 
 /*

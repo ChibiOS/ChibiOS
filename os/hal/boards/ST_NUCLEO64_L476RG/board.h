@@ -60,6 +60,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32L476xx
 #define STM32L476xx
 
 /*

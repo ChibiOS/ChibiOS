@@ -56,6 +56,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32F051x8
 #define STM32F051x8
 
 /*

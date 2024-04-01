@@ -60,6 +60,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32F722xx
 #define STM32F722xx
 
 /*

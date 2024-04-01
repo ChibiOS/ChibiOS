@@ -52,6 +52,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32L152xE
 #define STM32L152xE
 
 /*
