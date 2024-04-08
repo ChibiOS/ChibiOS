@@ -68,9 +68,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   Initializes a @p condition_variable_t structure.
+ * @brief   Initializes a @p condition_variable_t object.
  *
- * @param[out] cp       pointer to a @p condition_variable_t structure
+ * @param[out] cp       pointer to a @p condition_variable_t object
  *
  * @init
  */
@@ -92,7 +92,7 @@ void chCondObjectInit(condition_variable_t *cp) {
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  *
  * @dispose
  */
@@ -110,7 +110,7 @@ void chCondObjectDispose(condition_variable_t *cp) {
 /**
  * @brief   Signals one thread that is waiting on the condition variable.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  *
  * @api
  */
@@ -132,7 +132,7 @@ void chCondSignal(condition_variable_t *cp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  *
  * @iclass
  */
@@ -151,7 +151,7 @@ void chCondSignalI(condition_variable_t *cp) {
 /**
  * @brief   Signals all threads that are waiting on the condition variable.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  *
  * @api
  */
@@ -170,7 +170,7 @@ void chCondBroadcast(condition_variable_t *cp) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  *
  * @iclass
  */
@@ -194,7 +194,7 @@ void chCondBroadcastI(condition_variable_t *cp) {
  *          is performed atomically.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
  * @retval MSG_OK       if the condition variable has been signaled using
@@ -220,7 +220,7 @@ msg_t chCondWait(condition_variable_t *cp) {
  *          is performed atomically.
  * @pre     The invoking thread <b>must</b> have at least one owned mutex.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
  * @retval MSG_OK       if the condition variable has been signaled using
@@ -265,7 +265,7 @@ msg_t chCondWaitS(condition_variable_t *cp) {
  * @post    Exiting the function because a timeout does not re-acquire the
  *          mutex, the mutex ownership is lost.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  * @param[in] timeout   the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.
@@ -303,7 +303,7 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, sysinterval_t timeout) {
  * @post    Exiting the function because a timeout does not re-acquire the
  *          mutex, the mutex ownership is lost.
  *
- * @param[in] cp        pointer to a @p condition_variable_t structure
+ * @param[in] cp        pointer to a @p condition_variable_t object
  * @param[in] timeout   the number of ticks before the operation timeouts, the
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.

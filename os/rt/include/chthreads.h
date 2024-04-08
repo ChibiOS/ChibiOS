@@ -456,7 +456,7 @@ static inline void chThdSleepS(sysinterval_t ticks) {
 /**
  * @brief   Evaluates to @p true if the specified queue is empty.
  *
- * @param[out] tqp      pointer to a @p threads_queue_t structure
+ * @param[out] tqp      pointer to a @p threads_queue_t object
  * @return              The queue status.
  * @retval false        if the queue is not empty.
  * @retval true         if the queue is empty.
@@ -476,7 +476,7 @@ static inline bool chThdQueueIsEmptyI(threads_queue_t *tqp) {
  *          is empty.
  * @pre     The queue must contain at least an object.
  *
- * @param[in] tqp       pointer to a @p threads_queue_t structure
+ * @param[in] tqp       pointer to a @p threads_queue_t object
  * @param[in] msg       the message code
  *
  * @iclass

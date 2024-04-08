@@ -157,6 +157,7 @@ extern "C" {
 #endif
   void __heap_init(void);
   void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size);
+  void chHeapObjectDispose(memory_heap_t *heapp);
   void *chHeapAllocAligned(memory_heap_t *heapp, size_t size, unsigned align);
   void chHeapFree(void *p);
   size_t chHeapStatus(memory_heap_t *heapp, size_t *totalp, size_t *largestp);

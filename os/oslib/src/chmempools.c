@@ -36,6 +36,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
@@ -63,7 +65,7 @@
 /**
  * @brief   Initializes an empty memory pool.
  *
- * @param[out] mp       pointer to a @p memory_pool_t structure
+ * @param[out] mp       pointer to a @p memory_pool_t object
  * @param[in] size      the size of the objects contained in this memory pool,
  *                      the minimum accepted size is the size of a pointer to
  *                      void.
@@ -89,6 +91,30 @@ void chPoolObjectInitAligned(memory_pool_t *mp, size_t size,
 }
 
 /**
+ * @brief   Disposes a memory pool object.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_HARDENING_LEVEL is greater than zero then
+ *          the object is also cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
+ *
+ * @param[in] mp        pointer to a @p memory_pool_t object
+ *
+ * @dispose
+ */
+void chPoolObjectDispose(memory_pool_t *mp) {
+
+  chDbgCheck(mp != NULL);
+
+#if CH_CFG_HARDENING_LEVEL > 0
+  memset((void *)mp, 0, sizeof (memory_pool_t));
+#endif
+}
+
+/**
  * @brief   Loads a memory pool with an array of static objects.
  * @pre     The memory pool must already be initialized.
  * @pre     The array elements must be of the right size for the specified
@@ -97,7 +123,7 @@ void chPoolObjectInitAligned(memory_pool_t *mp, size_t size,
  *          requirement for the pool.
  * @post    The memory pool contains the elements of the input array.
  *
- * @param[in] mp        pointer to a @p memory_pool_t structure
+ * @param[in] mp        pointer to a @p memory_pool_t object
  * @param[in] p         pointer to the array first element
  * @param[in] n         number of elements in the array
  *
@@ -120,7 +146,7 @@ void chPoolLoadArray(memory_pool_t *mp, void *p, size_t n) {
  * @brief   Allocates an object from a memory pool.
  * @pre     The memory pool must already be initialized.
  *
- * @param[in] mp        pointer to a @p memory_pool_t structure
+ * @param[in] mp        pointer to a @p memory_pool_t object
  * @return              The pointer to the allocated object.
  * @retval NULL         if pool is empty.
  *
@@ -152,7 +178,7 @@ void *chPoolAllocI(memory_pool_t *mp) {
  * @brief   Allocates an object from a memory pool.
  * @pre     The memory pool must already be initialized.
  *
- * @param[in] mp        pointer to a @p memory_pool_t structure
+ * @param[in] mp        pointer to a @p memory_pool_t object
  * @return              The pointer to the allocated object.
  * @retval NULL         if pool is empty.
  *
@@ -175,7 +201,7 @@ void *chPoolAlloc(memory_pool_t *mp) {
  *          memory pool.
  * @pre     The added object must be properly aligned.
  *
- * @param[in] mp        pointer to a @p memory_pool_t structure
+ * @param[in] mp        pointer to a @p memory_pool_t object
  * @param[in] objp      the pointer to the object to be released
  *
  * @iclass
@@ -199,7 +225,7 @@ void chPoolFreeI(memory_pool_t *mp, void *objp) {
  *          memory pool.
  * @pre     The added object must be properly aligned.
  *
- * @param[in] mp        pointer to a @p memory_pool_t structure
+ * @param[in] mp        pointer to a @p memory_pool_t object
  * @param[in] objp      the pointer to the object to be released
  *
  * @api
@@ -215,7 +241,7 @@ void chPoolFree(memory_pool_t *mp, void *objp) {
 /**
  * @brief   Initializes an empty guarded memory pool.
  *
- * @param[out] gmp      pointer to a @p guarded_memory_pool_t structure
+ * @param[out] gmp      pointer to a @p guarded_memory_pool_t object
  * @param[in] size      the size of the objects contained in this guarded
  *                      memory pool, the minimum accepted size is the size
  *                      of a pointer to void.
@@ -232,13 +258,36 @@ void chGuardedPoolObjectInitAligned(guarded_memory_pool_t *gmp,
 }
 
 /**
+ * @brief   Disposes a guarded memory pool object.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_HARDENING_LEVEL is greater than zero then
+ *          the object is also cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
+ *
+ * @param[in] gmp       pointer to a @p guarded_memory_pool_t object
+ *
+ * @dispose
+ */
+void chGuardedPoolObjectDispose(guarded_memory_pool_t *gmp) {
+
+  chDbgCheck(gmp != NULL);
+
+  chPoolObjectDispose(&gmp->pool);
+  chSemObjectDispose(&gmp->sem);
+}
+
+/**
  * @brief   Loads a guarded memory pool with an array of static objects.
  * @pre     The guarded memory pool must already be initialized.
  * @pre     The array elements must be of the right size for the specified
  *          guarded memory pool.
  * @post    The guarded memory pool contains the elements of the input array.
  *
- * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
+ * @param[in] gmp       pointer to a @p guarded_memory_pool_t object
  * @param[in] p         pointer to the array first element
  * @param[in] n         number of elements in the array
  *
@@ -261,7 +310,7 @@ void chGuardedPoolLoadArray(guarded_memory_pool_t *gmp, void *p, size_t n) {
  * @brief   Allocates an object from a guarded memory pool.
  * @pre     The guarded memory pool must already be initialized.
  *
- * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
+ * @param[in] gmp       pointer to a @p guarded_memory_pool_t object
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -288,7 +337,7 @@ void *chGuardedPoolAllocTimeoutS(guarded_memory_pool_t *gmp,
  * @brief   Allocates an object from a guarded memory pool.
  * @pre     The guarded memory pool must already be initialized.
  *
- * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
+ * @param[in] gmp       pointer to a @p guarded_memory_pool_t object
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -317,7 +366,7 @@ void *chGuardedPoolAllocTimeout(guarded_memory_pool_t *gmp,
  *          guarded memory pool.
  * @pre     The added object must be properly aligned.
  *
- * @param[in] gmp       pointer to a @p guarded_memory_pool_t structure
+ * @param[in] gmp       pointer to a @p guarded_memory_pool_t object
  * @param[in] objp      the pointer to the object to be released
  *
  * @api

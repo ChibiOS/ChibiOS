@@ -54,7 +54,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   condition_variable_t structure.
+ * @brief   Type of a Condition Variable object.
  */
 typedef struct condition_variable {
   ch_queue_t            queue;              /**< @brief Condition variable

@@ -72,9 +72,9 @@ static inline void tm_stop(time_measurement_t *tmp,
 /*===========================================================================*/
 
 /**
- * @brief   Initializes a @p TimeMeasurement object.
+ * @brief   Initializes a @p time_measurement_t object.
  *
- * @param[out] tmp      pointer to a @p TimeMeasurement structure
+ * @param[out] tmp      pointer to a @p time_measurement_t object
  *
  * @init
  */
@@ -88,7 +88,7 @@ void chTMObjectInit(time_measurement_t *tmp) {
 }
 
 /**
- * @brief   Disposes a @p TimeMeasurement object.
+ * @brief   Disposes a @p time_measurement_t object.
  * @note    Objects disposing does not involve freeing memory but just
  *          performing checks that make sure that the object is in a
  *          state compatible with operations stop.
@@ -98,7 +98,7 @@ void chTMObjectInit(time_measurement_t *tmp) {
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
  *
- * @param[in] sp        pointer to a @p time_measurement_t structure
+ * @param[in] sp        pointer to a @p time_measurement_t object
  *
  * @dispose
  */
@@ -113,9 +113,9 @@ void chTMObjectDispose(time_measurement_t *tmp) {
 
 /**
  * @brief   Starts a measurement.
- * @pre     The @p time_measurement_t structure must be initialized.
+ * @pre     The @p time_measurement_t object must be initialized.
  *
- * @param[in,out] tmp   pointer to a @p TimeMeasurement structure
+ * @param[in,out] tmp   pointer to a @p time_measurement_t object
  *
  * @xclass
  */
@@ -126,9 +126,9 @@ NOINLINE void chTMStartMeasurementX(time_measurement_t *tmp) {
 
 /**
  * @brief   Stops a measurement.
- * @pre     The @p time_measurement_t structure must be initialized.
+ * @pre     The @p time_measurement_t object must be initialized.
  *
- * @param[in,out] tmp   pointer to a @p time_measurement_t structure
+ * @param[in,out] tmp   pointer to a @p time_measurement_t object
  *
  * @xclass
  */
@@ -141,9 +141,9 @@ NOINLINE void chTMStopMeasurementX(time_measurement_t *tmp) {
  * @brief   Stops a measurement and chains to the next one using the same time
  *          stamp.
  *
- * @param[in,out] tmp1  pointer to the @p time_measurement_t structure to be
+ * @param[in,out] tmp1  pointer to the @p time_measurement_t object to be
  *                      stopped
- * @param[in,out] tmp2  pointer to the @p time_measurement_t structure to be
+ * @param[in,out] tmp2  pointer to the @p time_measurement_t object to be
  *                      started
  *
  *

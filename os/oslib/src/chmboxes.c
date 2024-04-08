@@ -50,6 +50,8 @@
  * @{
  */
 
+#include <string.h>
+
 #include "ch.h"
 
 #if (CH_CFG_USE_MAILBOXES == TRUE) || defined(__DOXYGEN__)
@@ -88,14 +90,41 @@ void chMBObjectInit(mailbox_t *mbp, msg_t *buf, size_t n) {
 
   chDbgCheck((mbp != NULL) && (buf != NULL) && (n > (size_t)0));
 
-  mbp->buffer = buf;
-  mbp->rdptr  = buf;
-  mbp->wrptr  = buf;
-  mbp->top    = &buf[n];
-  mbp->cnt    = (size_t)0;
-  mbp->reset  = false;
+  mbp->mb.base  = buf;
+  mbp->mb.top   = &buf[n];
+  mbp->mb.rdptr = buf;
+  mbp->mb.wrptr = buf;
+  mbp->mb.cnt   = (size_t)0;
+  mbp->mb.reset = false;
   chThdQueueObjectInit(&mbp->qw);
   chThdQueueObjectInit(&mbp->qr);
+}
+
+/**
+ * @brief   Disposes a @p mailbox_t object.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_HARDENING_LEVEL is greater than zero then
+ *          the object is also cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
+ *
+ * @param[in] gmp       pointer to a @p mailbox_t object
+ *
+ * @dispose
+ */
+void chMBObjectDispose(mailbox_t *mbp) {
+
+  chDbgCheck(mbp != NULL);
+
+  chThdQueueObjectDispose(&mbp->qr);
+  chThdQueueObjectDispose(&mbp->qw);
+
+#if CH_CFG_HARDENING_LEVEL > 0
+  memset((void *)mbp, 0, sizeof mbp->mb);
+#endif
 }
 
 /**
@@ -135,10 +164,10 @@ void chMBResetI(mailbox_t *mbp) {
   chDbgCheckClassI();
   chDbgCheck(mbp != NULL);
 
-  mbp->wrptr = mbp->buffer;
-  mbp->rdptr = mbp->buffer;
-  mbp->cnt   = (size_t)0;
-  mbp->reset = true;
+  mbp->mb.wrptr = mbp->mb.base;
+  mbp->mb.rdptr = mbp->mb.base;
+  mbp->mb.cnt   = (size_t)0;
+  mbp->mb.reset = true;
   chThdDequeueAllI(&mbp->qw, MSG_RESET);
   chThdDequeueAllI(&mbp->qr, MSG_RESET);
 }
@@ -199,17 +228,17 @@ msg_t chMBPostTimeoutS(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
 
   do {
     /* If the mailbox is in reset state then returns immediately.*/
-    if (mbp->reset) {
+    if (mbp->mb.reset) {
       return MSG_RESET;
     }
 
     /* Is there a free message slot in queue? if so then post.*/
     if (chMBGetFreeCountI(mbp) > (size_t)0) {
-      *mbp->wrptr++ = msg;
-      if (mbp->wrptr >= mbp->top) {
-        mbp->wrptr = mbp->buffer;
+      *mbp->mb.wrptr++ = msg;
+      if (mbp->mb.wrptr >= mbp->mb.top) {
+        mbp->mb.wrptr = mbp->mb.base;
       }
-      mbp->cnt++;
+      mbp->mb.cnt++;
 
       /* If there is a reader waiting then makes it ready.*/
       chThdDequeueNextI(&mbp->qr, MSG_OK);
@@ -246,17 +275,17 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
   chDbgCheck(mbp != NULL);
 
   /* If the mailbox is in reset state then returns immediately.*/
-  if (mbp->reset) {
+  if (mbp->mb.reset) {
     return MSG_RESET;
   }
 
   /* Is there a free message slot in queue? if so then post.*/
   if (chMBGetFreeCountI(mbp) > (size_t)0) {
-    *mbp->wrptr++ = msg;
-    if (mbp->wrptr >= mbp->top) {
-      mbp->wrptr = mbp->buffer;
+    *mbp->mb.wrptr++ = msg;
+    if (mbp->mb.wrptr >= mbp->mb.top) {
+      mbp->mb.wrptr = mbp->mb.base;
     }
-    mbp->cnt++;
+    mbp->mb.cnt++;
 
     /* If there is a reader waiting then makes it ready.*/
     chThdDequeueNextI(&mbp->qr, MSG_OK);
@@ -324,17 +353,17 @@ msg_t chMBPostAheadTimeoutS(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
 
   do {
     /* If the mailbox is in reset state then returns immediately.*/
-    if (mbp->reset) {
+    if (mbp->mb.reset) {
       return MSG_RESET;
     }
 
     /* Is there a free message slot in queue? if so then post.*/
     if (chMBGetFreeCountI(mbp) > (size_t)0) {
-      if (--mbp->rdptr < mbp->buffer) {
-        mbp->rdptr = mbp->top - 1;
+      if (--mbp->mb.rdptr < mbp->mb.base) {
+        mbp->mb.rdptr = mbp->mb.top - 1;
       }
-      *mbp->rdptr = msg;
-      mbp->cnt++;
+      *mbp->mb.rdptr = msg;
+      mbp->mb.cnt++;
 
       /* If there is a reader waiting then makes it ready.*/
       chThdDequeueNextI(&mbp->qr, MSG_OK);
@@ -371,17 +400,17 @@ msg_t chMBPostAheadI(mailbox_t *mbp, msg_t msg) {
   chDbgCheck(mbp != NULL);
 
   /* If the mailbox is in reset state then returns immediately.*/
-  if (mbp->reset) {
+  if (mbp->mb.reset) {
     return MSG_RESET;
   }
 
   /* Is there a free message slot in queue? if so then post.*/
   if (chMBGetFreeCountI(mbp) > (size_t)0) {
-    if (--mbp->rdptr < mbp->buffer) {
-      mbp->rdptr = mbp->top - 1;
+    if (--mbp->mb.rdptr < mbp->mb.base) {
+      mbp->mb.rdptr = mbp->mb.top - 1;
     }
-    *mbp->rdptr = msg;
-    mbp->cnt++;
+    *mbp->mb.rdptr = msg;
+    mbp->mb.cnt++;
 
     /* If there is a reader waiting then makes it ready.*/
     chThdDequeueNextI(&mbp->qr, MSG_OK);
@@ -449,17 +478,17 @@ msg_t chMBFetchTimeoutS(mailbox_t *mbp, msg_t *msgp, sysinterval_t timeout) {
 
   do {
     /* If the mailbox is in reset state then returns immediately.*/
-    if (mbp->reset) {
+    if (mbp->mb.reset) {
       return MSG_RESET;
     }
 
     /* Is there a message in queue? if so then fetch.*/
     if (chMBGetUsedCountI(mbp) > (size_t)0) {
-      *msgp = *mbp->rdptr++;
-      if (mbp->rdptr >= mbp->top) {
-        mbp->rdptr = mbp->buffer;
+      *msgp = *mbp->mb.rdptr++;
+      if (mbp->mb.rdptr >= mbp->mb.top) {
+        mbp->mb.rdptr = mbp->mb.base;
       }
-      mbp->cnt--;
+      mbp->mb.cnt--;
 
       /* If there is a writer waiting then makes it ready.*/
       chThdDequeueNextI(&mbp->qw, MSG_OK);
@@ -496,17 +525,17 @@ msg_t chMBFetchI(mailbox_t *mbp, msg_t *msgp) {
   chDbgCheck((mbp != NULL) && (msgp != NULL));
 
   /* If the mailbox is in reset state then returns immediately.*/
-  if (mbp->reset) {
+  if (mbp->mb.reset) {
     return MSG_RESET;
   }
 
   /* Is there a message in queue? if so then fetch.*/
   if (chMBGetUsedCountI(mbp) > (size_t)0) {
-    *msgp = *mbp->rdptr++;
-    if (mbp->rdptr >= mbp->top) {
-      mbp->rdptr = mbp->buffer;
+    *msgp = *mbp->mb.rdptr++;
+    if (mbp->mb.rdptr >= mbp->mb.top) {
+      mbp->mb.rdptr = mbp->mb.base;
     }
-    mbp->cnt--;
+    mbp->mb.cnt--;
 
     /* If there is a writer waiting then makes it ready.*/
     chThdDequeueNextI(&mbp->qw, MSG_OK);

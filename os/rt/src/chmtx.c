@@ -96,9 +96,9 @@
 /*===========================================================================*/
 
 /**
- * @brief   Initializes s @p mutex_t structure.
+ * @brief   Initializes s @p mutex_t object.
  *
- * @param[out] mp       pointer to a @p mutex_t structure
+ * @param[out] mp       pointer to a @p mutex_t object
  *
  * @init
  */
@@ -124,7 +124,7 @@ void chMtxObjectInit(mutex_t *mp) {
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
  *
- * @param[in] mp       pointer to a @p mutex_t structure
+ * @param[in] mp       pointer to a @p mutex_t object
  *
  * @dispose
  */
@@ -147,7 +147,7 @@ void chMtxObjectDispose(mutex_t *mp) {
  * @post    The mutex is locked and inserted in the per-thread stack of owned
  *          mutexes.
  *
- * @param[in] mp        pointer to the @p mutex_t structure
+ * @param[in] mp        pointer to a @p mutex_t object
  *
  * @api
  */
@@ -163,7 +163,7 @@ void chMtxLock(mutex_t *mp) {
  * @post    The mutex is locked and inserted in the per-thread stack of owned
  *          mutexes.
  *
- * @param[in] mp        pointer to the @p mutex_t structure
+ * @param[in] mp        pointer to a @p mutex_t object
  *
  * @sclass
  */
@@ -278,7 +278,7 @@ void chMtxLockS(mutex_t *mp) {
  *          priority inheritance mechanism because it does not try to
  *          enter a sleep state.
  *
- * @param[in] mp        pointer to the @p mutex_t structure
+ * @param[in] mp        pointer to a @p mutex_t object
  * @return              The operation status.
  * @retval true         if the mutex has been successfully acquired
  * @retval false        if the lock attempt failed.
@@ -305,7 +305,7 @@ bool chMtxTryLock(mutex_t *mp) {
  *          priority inheritance mechanism because it does not try to
  *          enter a sleep state.
  *
- * @param[in] mp        pointer to the @p mutex_t structure
+ * @param[in] mp        pointer to a @p mutex_t object
  * @return              The operation status.
  * @retval true         if the mutex has been successfully acquired
  * @retval false        if the lock attempt failed.
@@ -350,7 +350,7 @@ bool chMtxTryLockS(mutex_t *mp) {
  * @post    The mutex is unlocked and removed from the per-thread stack of
  *          owned mutexes.
  *
- * @param[in] mp        pointer to the @p mutex_t structure
+ * @param[in] mp        pointer to a @p mutex_t object
  *
  * @api
  */
@@ -437,7 +437,7 @@ void chMtxUnlock(mutex_t *mp) {
  * @post    This function does not reschedule so a call to a rescheduling
  *          function must be performed before unlocking the kernel.
  *
- * @param[in] mp        pointer to the @p mutex_t structure
+ * @param[in] mp        pointer to a @p mutex_t object
  *
  * @sclass
  */

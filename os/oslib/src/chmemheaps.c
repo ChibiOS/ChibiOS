@@ -160,6 +160,30 @@ void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
 }
 
 /**
+ * @brief   Disposes a memory heap object.
+ * @note    Objects disposing does not involve freeing memory but just
+ *          performing checks that make sure that the object is in a
+ *          state compatible with operations stop.
+ * @note    If the option @p CH_CFG_HARDENING_LEVEL is greater than zero then
+ *          the object is also cleared, attempts to use the object would likely
+ *          result in a clean memory access violation because dereferencing
+ *          of @p NULL pointers rather than dereferencing previously valid
+ *          pointers.
+ *
+ * @param[in] heapp     pointer to a @p memory_heap_t object
+ *
+ * @dispose
+ */
+void chHeapObjectDispose(memory_heap_t *heapp) {
+
+  chDbgCheck(heapp != NULL);
+
+#if CH_CFG_HARDENING_LEVEL > 0
+  memset((void *)heapp, 0, sizeof (memory_heap_t));
+#endif
+}
+
+/**
  * @brief   Allocates a block of memory from the heap by using the first-fit
  *          algorithm.
  * @details The allocated block is guaranteed to be properly aligned to the

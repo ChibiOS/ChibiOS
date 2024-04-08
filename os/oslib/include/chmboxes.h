@@ -50,14 +50,19 @@
  * @brief   Structure representing a mailbox object.
  */
 typedef struct {
-  msg_t                 *buffer;        /**< @brief Pointer to the mailbox
-                                                    buffer.                 */
-  msg_t                 *top;           /**< @brief Pointer to the location
-                                                    after the buffer.       */
-  msg_t                 *wrptr;         /**< @brief Write pointer.          */
-  msg_t                 *rdptr;         /**< @brief Read pointer.           */
-  size_t                cnt;            /**< @brief Messages in queue.      */
-  bool                  reset;          /**< @brief True in reset state.    */
+  /**
+   * @brief   Mailbox representation.
+   */
+  struct {
+    msg_t               *base;          /**< @brief Pointer to the mailbox
+                                                    buffer base.            */
+    msg_t               *top;           /**< @brief Pointer to the mailbox
+                                                    buffer top..            */
+    msg_t               *wrptr;         /**< @brief Write pointer.          */
+    msg_t               *rdptr;         /**< @brief Read pointer.           */
+    size_t              cnt;            /**< @brief Messages in queue.      */
+    bool                reset;          /**< @brief True in reset state.    */
+  } mb;
   threads_queue_t       qw;             /**< @brief Queued writers.         */
   threads_queue_t       qr;             /**< @brief Queued readers.         */
 } mailbox_t;
@@ -106,6 +111,7 @@ typedef struct {
 extern "C" {
 #endif
   void chMBObjectInit(mailbox_t *mbp, msg_t *buf, size_t n);
+  void chMBObjectDispose(mailbox_t *mbp);
   void chMBReset(mailbox_t *mbp);
   void chMBResetI(mailbox_t *mbp);
   msg_t chMBPostTimeout(mailbox_t *mbp, msg_t msg, sysinterval_t timeout);
@@ -137,7 +143,7 @@ static inline size_t chMBGetSizeI(const mailbox_t *mbp) {
 
   /*lint -save -e9033 [10.8] Perfectly safe pointers
     arithmetic.*/
-  return (size_t)(mbp->top - mbp->buffer);
+  return (size_t)(mbp->mb.top - mbp->mb.base);
   /*lint -restore*/
 }
 
@@ -153,7 +159,7 @@ static inline size_t chMBGetUsedCountI(const mailbox_t *mbp) {
 
   chDbgCheckClassI();
 
-  return mbp->cnt;
+  return mbp->mb.cnt;
 }
 
 /**
@@ -187,7 +193,7 @@ static inline msg_t chMBPeekI(const mailbox_t *mbp) {
 
   chDbgCheckClassI();
 
-  return *mbp->rdptr;
+  return *mbp->mb.rdptr;
 }
 
 /**
@@ -199,7 +205,7 @@ static inline msg_t chMBPeekI(const mailbox_t *mbp) {
  */
 static inline void chMBResumeX(mailbox_t *mbp) {
 
-  mbp->reset = false;
+  mbp->mb.reset = false;
 }
 
 #endif /* CH_CFG_USE_MAILBOXES == TRUE */

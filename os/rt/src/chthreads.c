@@ -851,7 +851,7 @@ void chThdResume(thread_reference_t *trp, msg_t msg) {
 /**
  * @brief   Initializes a threads queue object.
  *
- * @param[out] tqp      pointer to a @p threads_queue_t structure
+ * @param[out] tqp      pointer to a @p threads_queue_t object
  *
  * @init
  */
@@ -873,7 +873,7 @@ void chThdQueueObjectInit(threads_queue_t *tqp) {
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
  *
- * @param[in] tqp       pointer to a @p threads_queue_t structure
+ * @param[in] tqp       pointer to a @p threads_queue_t object
  *
  * @dispose
  */
@@ -893,7 +893,7 @@ void chThdQueueObjectDispose(threads_queue_t *tqp) {
  * @details The caller thread is enqueued and put to sleep until it is
  *          dequeued or the specified timeouts expires.
  *
- * @param[in] tqp       pointer to a @p threads_queue_t structure
+ * @param[in] tqp       pointer to a @p threads_queue_t object
  * @param[in] timeout   the timeout in system ticks, the special values are
  *                      handled as follow:
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
@@ -927,7 +927,7 @@ msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout) {
  * @brief   Dequeues and wakes up one thread from the threads queue object,
  *          if any.
  *
- * @param[in] tqp       pointer to a @p threads_queue_t structure
+ * @param[in] tqp       pointer to a @p threads_queue_t object
  * @param[in] msg       the message code
  *
  * @iclass
@@ -942,7 +942,7 @@ void chThdDequeueNextI(threads_queue_t *tqp, msg_t msg) {
 /**
  * @brief   Dequeues and wakes up all threads from the threads queue object.
  *
- * @param[in] tqp       pointer to a @p threads_queue_t structure
+ * @param[in] tqp       pointer to a @p threads_queue_t object
  * @param[in] msg       the message code
  *
  * @iclass

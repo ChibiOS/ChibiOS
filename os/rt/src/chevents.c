@@ -90,9 +90,9 @@
 /**
  * @brief   Initializes an Event Source.
  * @note    This function can be invoked before the kernel is initialized
- *          because it just prepares a @p event_source_t structure.
+ *          because it just prepares a @p event_source_t object.
  *
- * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t object
  *
  * @init
  */
@@ -114,7 +114,7 @@ void chEvtObjectInit(event_source_t *esp) {
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
  *
- * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t object
  *
  * @dispose
  */
@@ -135,7 +135,7 @@ void chEvtObjectDispose(event_source_t *esp) {
  * @note    Multiple Event Listeners can specify the same bits to be ORed to
  *          different threads.
  *
- * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t object
  * @param[in] elp       pointer to an @p event_listener_t structure
  * @param[in] events    events to be ORed to the thread when
  *                      the event source is broadcasted
@@ -167,7 +167,7 @@ void chEvtRegisterMaskWithFlagsI(event_source_t *esp,
  * @note    Multiple Event Listeners can specify the same bits to be ORed to
  *          different threads.
  *
- * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t object
  * @param[in] elp       pointer to an @p event_listener_t structure
  * @param[in] events    events to be ORed to the thread when
  *                      the event source is broadcasted
@@ -193,7 +193,7 @@ void chEvtRegisterMaskWithFlags(event_source_t *esp,
  *          operations in inverse order of the register operations (elements
  *          are found on top of the list).
  *
- * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t object
  * @param[in] elp       pointer to an @p event_listener_t structure
  *
  * @api
@@ -381,7 +381,7 @@ void chEvtSignal(thread_t *tp, eventmask_t events) {
  *          interrupt handlers always reschedule on exit so an explicit
  *          reschedule must not be performed in ISRs.
  *
- * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t object
  * @param[in] flags     the flags set to be added to the listener flags mask
  *
  * @iclass
@@ -415,7 +415,7 @@ void chEvtBroadcastFlagsI(event_source_t *esp, eventflags_t flags) {
  *          event flags specified by the threads themselves in the
  *          @p event_listener_t objects.
  *
- * @param[in] esp       pointer to an @p event_source_t structure
+ * @param[in] esp       pointer to an @p event_source_t object
  * @param[in] flags     the flags set to be added to the listener flags mask
  *
  * @api

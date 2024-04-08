@@ -113,7 +113,7 @@ extern "C" {
  * @brief   Time measurement initialization.
  * @note    Internal use only.
  *
- * @param[out] tcp      pointer to the @p tm_calibration_t structure
+ * @param[out] tcp      pointer to a @p tm_calibration_t object
  *
  * @notapi
  */

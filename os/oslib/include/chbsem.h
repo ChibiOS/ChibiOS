@@ -70,7 +70,7 @@
 /**
  * @extends semaphore_t
  *
- * @brief   Binary semaphore type.
+ * @brief   Type of a Binary Semaphore object.
  */
 typedef struct ch_binary_semaphore {
   semaphore_t           sem;
@@ -113,7 +113,7 @@ typedef struct ch_binary_semaphore {
 /**
  * @brief   Initializes a binary semaphore.
  *
- * @param[out] bsp      pointer to a @p binary_semaphore_t structure
+ * @param[out] bsp      pointer to a @p binary_semaphore_t object
  * @param[in] taken     initial state of the binary semaphore:
  *                      - @a false, the initial state is not taken.
  *                      - @a true, the initial state is taken.
@@ -129,7 +129,7 @@ static inline void chBSemObjectInit(binary_semaphore_t *bsp, bool taken) {
 /**
  * @brief   Wait operation on the binary semaphore.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
@@ -146,7 +146,7 @@ static inline msg_t chBSemWait(binary_semaphore_t *bsp) {
 /**
  * @brief   Wait operation on the binary semaphore.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
@@ -165,7 +165,7 @@ static inline msg_t chBSemWaitS(binary_semaphore_t *bsp) {
 /**
  * @brief   Wait operation on the binary semaphore.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -192,7 +192,7 @@ static inline msg_t chBSemWaitTimeoutS(binary_semaphore_t *bsp,
 /**
  * @brief   Wait operation on the binary semaphore.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
@@ -221,7 +221,7 @@ static inline msg_t chBSemWaitTimeout(binary_semaphore_t *bsp,
  *          @p MSG_RESET instead of @p MSG_OK.
  * @note    This function does not reschedule.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  * @param[in] taken     new state of the binary semaphore
  *                      - @a false, the new state is not taken.
  *                      - @a true, the new state is taken.
@@ -242,7 +242,7 @@ static inline void chBSemResetI(binary_semaphore_t *bsp, bool taken) {
  *          rather than a signal because the @p bsemWait() will return
  *          @p MSG_RESET instead of @p MSG_OK.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  * @param[in] taken     new state of the binary semaphore
  *                      - @a false, the new state is not taken.
  *                      - @a true, the new state is taken.
@@ -259,7 +259,7 @@ static inline void chBSemReset(binary_semaphore_t *bsp, bool taken) {
  * @brief   Performs a signal operation on a binary semaphore.
  * @note    This function does not reschedule.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  *
  * @iclass
  */
@@ -275,7 +275,7 @@ static inline void chBSemSignalI(binary_semaphore_t *bsp) {
 /**
  * @brief   Performs a signal operation on a binary semaphore.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  *
  * @api
  */
@@ -290,7 +290,7 @@ static inline void chBSemSignal(binary_semaphore_t *bsp) {
 /**
  * @brief   Returns the binary semaphore current state.
  *
- * @param[in] bsp       pointer to a @p binary_semaphore_t structure
+ * @param[in] bsp       pointer to a @p binary_semaphore_t object
  * @return              The binary semaphore current state.
  * @retval false        if the binary semaphore is not taken.
  * @retval true         if the binary semaphore is taken.
