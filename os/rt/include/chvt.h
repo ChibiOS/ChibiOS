@@ -512,6 +512,25 @@ static inline void chVTResetTimeStamp(void) {
 #endif /* CH_CFG_USE_TIMESTAMP == TRUE */
 
 /**
+ * @brief   Return the current delta parameter.
+ * @note    This value is initially set to @p CH_CFG_ST_TIMEDELTA but can
+ *          be increased if the timers subsystem experiences skips, the
+ *          condition is also reported in the RFCU.
+ *
+ * @return              The current delta setting.
+ */
+static inline sysinterval_t chVTGetCurrentDelta(void) {
+
+#if CH_CFG_ST_TIMEDELTA == 0
+  return (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+#else
+  virtual_timers_list_t *vtlp = &currcore->vtlist;
+
+  return vtlp->lastdelta;
+#endif
+}
+
+/**
  * @brief   Virtual Timers instance initialization.
  * @note    Internal use only.
  *
@@ -526,6 +545,7 @@ static inline void __vt_object_init(virtual_timers_list_t *vtlp) {
   vtlp->systime = (systime_t)0;
 #else /* CH_CFG_ST_TIMEDELTA > 0 */
   vtlp->lasttime = (systime_t)0;
+  vtlp->lastdelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 #if CH_CFG_USE_TIMESTAMP == TRUE
   vtlp->laststamp = (systimestamp_t)chVTGetSystemTimeX();

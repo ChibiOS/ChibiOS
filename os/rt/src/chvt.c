@@ -63,14 +63,17 @@
  *          <tt>(now + delay)</tt>, the deadline is skipped forward
  *          in order to compensate for the event.
  *
+ * @param[in] vtlp      pointer to a @p virtual_timers_list_t structure
  * @param[in] now       last known system time
  * @param[in] delay     delay over @p now
  */
-static void vt_set_alarm(systime_t now, sysinterval_t delay) {
+static void vt_set_alarm(virtual_timers_list_t *vtlp,
+                         systime_t now,
+                         sysinterval_t delay) {
   sysinterval_t currdelta;
 
   /* Initial delta is what is configured statically.*/
-  currdelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+  currdelta = vtlp->lastdelta;
 
   if (delay < currdelta) {
     /* We need to avoid that the system time goes past the alarm we are
@@ -115,7 +118,8 @@ static void vt_set_alarm(systime_t now, sysinterval_t delay) {
 
 #if !defined(CH_VT_RFCU_DISABLED)
   /* Checking if a skip occurred.*/
-  if (currdelta > CH_CFG_ST_TIMEDELTA) {
+  if (currdelta > vtlp->lastdelta) {
+    vtlp->lastdelta = currdelta;
     chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
   }
 #else
@@ -127,6 +131,11 @@ static void vt_set_alarm(systime_t now, sysinterval_t delay) {
 /**
  * @brief   Inserts a timer as first element in a delta list.
  * @note    This is the special case when the delta list is initially empty.
+ *
+ * @param[in] vtlp      pointer to a @p virtual_timers_list_t structure
+ * @param[in] vtp       pointer to a @p virtual_timer_t structure
+ * @param[in] now       last known system time
+ * @param[in] delay     delay over @p now
  */
 static void vt_insert_first(virtual_timers_list_t *vtlp,
                             virtual_timer_t *vtp,
@@ -140,7 +149,7 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
   ch_dlist_insert_after(&vtlp->dlist, &vtp->dlist, delay);
 
   /* Initial delta is what is configured statically.*/
-  currdelta = (sysinterval_t)CH_CFG_ST_TIMEDELTA;
+  currdelta = vtlp->lastdelta;
 
   /* If the requested delay is lower than the minimum safe delta then it
      is raised to the minimum safe value.*/
@@ -189,7 +198,8 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
 
 #if !defined(CH_VT_RFCU_DISABLED)
   /* Checking if a skip occurred.*/
-  if (currdelta > CH_CFG_ST_TIMEDELTA) {
+  if (currdelta > vtlp->lastdelta) {
+    vtlp->lastdelta = currdelta;
     chRFCUCollectFaultsI(CH_RFCU_VT_INSUFFICIENT_DELTA);
   }
 #else
@@ -201,6 +211,10 @@ static void vt_insert_first(virtual_timers_list_t *vtlp,
 
 /**
  * @brief   Enqueues a virtual timer in a virtual timers list.
+ *
+ * @param[in] vtlp      pointer to a @p virtual_timers_list_t structure
+ * @param[in] vtp       pointer to a @p virtual_timer_t structure
+ * @param[in] delay     delay over current system time
  */
 static void vt_enqueue(virtual_timers_list_t *vtlp,
                        virtual_timer_t *vtp,
@@ -236,7 +250,7 @@ static void vt_enqueue(virtual_timers_list_t *vtlp,
        requires changing the current alarm setting.*/
     if (delta < vtlp->dlist.next->delta) {
 
-      vt_set_alarm(now, delay);
+      vt_set_alarm(vtlp, now, delay);
     }
   }
 #else /* CH_CFG_ST_TIMEDELTA == 0 */
@@ -449,7 +463,7 @@ void chVTDoResetI(virtual_timer_t *vtp) {
   delta = vtlp->dlist.next->delta - nowdelta;
 
   /* Setting up the alarm.*/
-  vt_set_alarm(now, delta);
+  vt_set_alarm(vtlp, now, delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 
@@ -644,7 +658,7 @@ void chVTDoTickI(void) {
   vtp->dlist.delta -= nowdelta;
 
   /* Update alarm time to next timer.*/
-  vt_set_alarm(now, vtp->dlist.delta);
+  vt_set_alarm(vtlp, now, vtp->dlist.delta);
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
 }
 

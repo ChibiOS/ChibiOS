@@ -113,6 +113,14 @@ typedef struct ch_virtual_timers_list {
    * @brief   System time of the last tick event.
    */
   systime_t                     lasttime;
+  /**
+   * @brief   Current delta parameter.
+   * @note    This value is initially set to @p CH_CFG_ST_TIMEDELTA and,
+   *          in case of insufficient margins, it is increased at runtime
+   *          in order to compensate. Such a condition is reported in
+   *          RFCU as a warning.
+   */
+  sysinterval_t                 lastdelta;
 #endif
 #if (CH_CFG_USE_TIMESTAMP == TRUE) || defined(__DOXYGEN__)
   /**

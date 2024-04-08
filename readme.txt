@@ -74,6 +74,11 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Now RT virtual timers can recalculate the value of CH_CFG_ST_TIMEDELTA
+       at runtime and continue using the recalculated value. This has two
+       consequences: 1) The value is recalculated once 2) it is possible
+       to use the new API chVTGetCurrentDelta() and update the static
+       setting in order to avoid recalculation.
 - NEW: OSLIB release methods now return the value of the reference counter.
 - NEW: Support for STM32C0xx.
 - NEW: Improved DAC driver, updated STM32 DACv1.
