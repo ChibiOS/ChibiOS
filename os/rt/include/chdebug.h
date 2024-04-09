@@ -185,7 +185,7 @@ extern "C" {
  * @brief   Debug support initialization.
  * @note    Internal use only.
  *
- * @param[out] sdp      pointer to the @p system_debug_t structure
+ * @param[out] sdp      pointer to a @p system_debug_t object
  *
  * @notapi
  */

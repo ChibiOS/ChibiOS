@@ -97,7 +97,7 @@ extern "C" {
  * @brief   Runtime Faults Collection Unit initialization.
  * @note    Internal use only.
  *
- * @param[out] rfcup    pointer to the @p rfcu_t structure
+ * @param[out] rfcup    pointer to a @p rfcu_t object
  *
  * @notapi
  */
