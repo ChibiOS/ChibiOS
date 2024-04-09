@@ -164,7 +164,7 @@ void __thd_stackfill(uint8_t *startp, uint8_t *endp) {
  *          @p CH_DBG_FILL_THREADS debug option because it would keep
  *          the kernel locked for too much time.
  *
- * @param[out] tdp      pointer to the thread descriptor
+ * @param[in] tdp       pointer to the thread descriptor
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread into the working space area.
  *
@@ -220,7 +220,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
- * @param[out] tdp      pointer to the thread descriptor
+ * @param[in] tdp       pointer to the thread descriptor
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread into the working space area.
  *
@@ -261,7 +261,7 @@ thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
  *          @p CH_DBG_FILL_THREADS debug option because it would keep
  *          the kernel locked for too much time.
  *
- * @param[out] tdp      pointer to the thread descriptor
+ * @param[in] tdp       pointer to the thread descriptor
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread into the working space area.
  *
@@ -282,7 +282,7 @@ thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  *
- * @param[out] tdp      pointer to the thread descriptor
+ * @param[in] tdp       pointer to the thread descriptor
  * @return              The pointer to the @p thread_t structure allocated for
  *                      the thread into the working space area.
  *
