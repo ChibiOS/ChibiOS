@@ -50,19 +50,14 @@
  * @brief   Structure representing a mailbox object.
  */
 typedef struct {
-  /**
-   * @brief   Mailbox representation.
-   */
-  struct {
-    msg_t               *base;          /**< @brief Pointer to the mailbox
+  msg_t                 *buffer;        /**< @brief Pointer to the mailbox
                                                     buffer base.            */
-    msg_t               *top;           /**< @brief Pointer to the mailbox
+  msg_t                 *top;           /**< @brief Pointer to the mailbox
                                                     buffer top..            */
-    msg_t               *wrptr;         /**< @brief Write pointer.          */
-    msg_t               *rdptr;         /**< @brief Read pointer.           */
-    size_t              cnt;            /**< @brief Messages in queue.      */
-    bool                reset;          /**< @brief True in reset state.    */
-  } mb;
+  msg_t                 *wrptr;         /**< @brief Write pointer.          */
+  msg_t                 *rdptr;         /**< @brief Read pointer.           */
+  size_t                cnt;            /**< @brief Messages in queue.      */
+  bool                  reset;          /**< @brief True in reset state.    */
   threads_queue_t       qw;             /**< @brief Queued writers.         */
   threads_queue_t       qr;             /**< @brief Queued readers.         */
 } mailbox_t;
@@ -143,7 +138,7 @@ static inline size_t chMBGetSizeI(const mailbox_t *mbp) {
 
   /*lint -save -e9033 [10.8] Perfectly safe pointers
     arithmetic.*/
-  return (size_t)(mbp->mb.top - mbp->mb.base);
+  return (size_t)(mbp->top - mbp->buffer);
   /*lint -restore*/
 }
 
@@ -159,7 +154,7 @@ static inline size_t chMBGetUsedCountI(const mailbox_t *mbp) {
 
   chDbgCheckClassI();
 
-  return mbp->mb.cnt;
+  return mbp->cnt;
 }
 
 /**
@@ -193,7 +188,7 @@ static inline msg_t chMBPeekI(const mailbox_t *mbp) {
 
   chDbgCheckClassI();
 
-  return *mbp->mb.rdptr;
+  return *mbp->rdptr;
 }
 
 /**
@@ -205,7 +200,7 @@ static inline msg_t chMBPeekI(const mailbox_t *mbp) {
  */
 static inline void chMBResumeX(mailbox_t *mbp) {
 
-  mbp->mb.reset = false;
+  mbp->reset = false;
 }
 
 #endif /* CH_CFG_USE_MAILBOXES == TRUE */
