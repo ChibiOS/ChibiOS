@@ -1258,7 +1258,7 @@ struct nil_os_instance {
  *
  * @dispose
  */
-#define chThdObjectDispose(tqp) ((void) tqp)
+#define chThdQueueObjectDispose(tqp) ((void) tqp)
 
 /**
  * @brief   Evaluates to @p true if the specified queue is empty.

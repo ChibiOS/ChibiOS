@@ -99,7 +99,7 @@
  *
  * @dispose
  */
-#define chSemObjectDispose(sp, n) ((void) sp)
+#define chSemObjectDispose(sp) ((void) sp)
 
 /**
  * @brief   Performs a reset operation on the semaphore.

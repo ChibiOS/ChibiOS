@@ -72,7 +72,7 @@
 #define STM32_HSIDIV_VALUE                  2
 #define STM32_HSI48_ENABLED                 FALSE
 #define STM32_CSI_ENABLED                   FALSE
-#define STM32_HSE_ENABLED                   FALSE
+#define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSI_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   FALSE
 #define STM32_SW                            STM32_SW_PLL1P
