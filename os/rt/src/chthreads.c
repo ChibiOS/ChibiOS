@@ -148,7 +148,7 @@ void __thd_stackfill(uint8_t *startp, uint8_t *endp) {
 #endif /* CH_DBG_FILL_THREADS */
 
 /**
- * @brief   Creates a new thread into a static memory area.
+ * @brief   Creates a new thread.
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p CH_STATE_WTSTART.
  * @post    The created thread has a reference counter set to one, it is
@@ -207,7 +207,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
 }
 
 /**
- * @brief   Creates a new thread into a static memory area.
+ * @brief   Creates a new thread.
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p CH_STATE_WTSTART.
  * @post    The created thread has a reference counter set to one, it is
@@ -246,15 +246,12 @@ thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
 }
 
 /**
- * @brief   Creates a new thread into a static memory area.
+ * @brief   Creates a new thread.
  * @details The new thread is initialized and make ready to execute.
  * @post    The created thread has a reference counter set to one, it is
  *          caller responsibility to call @p chThdRelease() or @p chthdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
- * @post    The initialized thread can be subsequently started by invoking
- *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
- *          depending on the execution context.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
  * @note    Threads created using this function do not obey to the
@@ -273,7 +270,7 @@ thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
 }
 
 /**
- * @brief   Creates a new thread into a static memory area.
+ * @brief   Creates a new thread.
  * @details The new thread is initialized and make ready to execute.
  * @post    The created thread has a reference counter set to one, it is
  *          caller responsibility to call @p chThdRelease() or @p chthdWait()
@@ -310,7 +307,7 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
 }
 
 /**
- * @brief   Creates a new thread into a static memory area.
+ * @brief   Creates a new thread.
  * @post    The created thread has a reference counter set to one, it is
  *          caller responsibility to call @p chThdRelease() or @p chthdWait()
  *          in order to release the reference. The thread persists in the
@@ -320,8 +317,8 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
  *
  * @param[out] wsp      pointer to a working area dedicated to the thread stack
  * @param[in] size      size of the working area
- * @param[in] prio      the priority level for the new thread
- * @param[in] pf        the thread function
+ * @param[in] prio      priority level for the new thread
+ * @param[in] pf        thread function
  * @param[in] arg       an argument passed to the thread function. It can be
  *                      @p NULL.
  * @return              The pointer to the @p thread_t structure allocated for
@@ -376,11 +373,10 @@ thread_t *chThdCreateStatic(void *wsp, size_t size,
 }
 
 /**
- * @brief   Resumes a thread created with @p chThdCreateI().
+ * @brief   Starts a thread created with @p chThdCreateSuspended().
  *
  * @param[in] tp        pointer to the thread
- * @return              The pointer to the @p thread_t structure allocated for
- *                      the thread into the working space area.
+ * @return              Thread to be started.
  *
  * @api
  */
