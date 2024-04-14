@@ -31,6 +31,8 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+#define DAC_LLD_ENHANCED_API
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -302,8 +304,8 @@
 /*===========================================================================*/
 
 /* Supported devices checks.*/
-#if !defined(STM32H5XX)
-#error "DACv2 only supports H5 STM32 devices"
+#if !defined(STM32H5XX) && !defined(STM32U5XX)
+#error "DACv2 supports STM32 H5 and U5 devices only"
 #endif
 
 /* Handling missing registry keys.*/
@@ -366,7 +368,7 @@
 
 #if (STM32_DAC_USE_DAC1_CH2 || STM32_DAC_USE_DAC2_CH2 ||                    \
      STM32_DAC_USE_DAC3_CH2 || STM32_DAC_USE_DAC4_CH2) && STM32_DAC_DUAL_MODE
-#error "DACx CH2 cannot be used independently in dual mode"
+#error "DACx CH2 not available as an independent driver in dual mode"
 #endif
 
 #if !STM32_DAC_USE_DAC1_CH1 && !STM32_DAC_USE_DAC1_CH2 &&                   \
@@ -644,7 +646,7 @@ typedef enum {
  * @name    DAC trigger modes
  * @{
  */
-#define DAC_TRG_MASK                    7U
+#define DAC_TRG_MASK                    0xFU
 #define DAC_TRG(n)                      (n)
 /** @} */
 
@@ -692,14 +694,14 @@ extern DACDriver DACD8;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void dac_lld_init(void);
-  void dac_lld_start(DACDriver *dacp);
-  void dac_lld_stop(DACDriver *dacp);
-  void dac_lld_put_channel(DACDriver *dacp,
+  void  dac_lld_init(void);
+  msg_t dac_lld_start(DACDriver *dacp);
+  void  dac_lld_stop(DACDriver *dacp);
+  msg_t dac_lld_put_channel(DACDriver *dacp,
                            dacchannel_t channel,
                            dacsample_t sample);
-  void dac_lld_start_conversion(DACDriver *dacp);
-  void dac_lld_stop_conversion(DACDriver *dacp);
+  msg_t dac_lld_start_conversion(DACDriver *dacp);
+  void  dac_lld_stop_conversion(DACDriver *dacp);
 #ifdef __cplusplus
 }
 #endif

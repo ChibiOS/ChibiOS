@@ -41,6 +41,8 @@
 #define BYTE_DUAL_SAMPLE_MULTIPLIER   2U
 #define HALF_DUAL_SAMPLE_MULTIPLIER   4U
 
+#define HF_SEL_AHB_GT_80MHZ           80000000U
+#define HF_SEL_AHB_GT_160MHZ          160000000U
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -262,6 +264,8 @@ static dac_dmabuf_t __gpdma_dac4_ch2;
  *
  * @param[in] p         parameter for the registered function
  * @param[in] flags     content of the CxSR register
+ *
+ * @isr
  */
 static void dac_lld_serve_dma_interrupt(void *p, uint32_t flags) {
   DACDriver *dacp = (DACDriver *)p;
@@ -291,6 +295,8 @@ static void dac_lld_serve_dma_interrupt(void *p, uint32_t flags) {
  *
  * @param[in] dacp      pointer to the @p DACDriver object
  * @param[in] isr       content of the ISR register
+ *
+ * @isr
  */
 static void dac_lld_serve_interrupt(DACDriver *dacp, uint32_t isr) {
 
@@ -306,82 +312,80 @@ static void dac_lld_serve_interrupt(DACDriver *dacp, uint32_t isr) {
 
 /**
  * @brief   Outputs a value directly on a DAC channel.
- * @note    While a group is active in DUAL mode on CH1 only then CH2
- *          is available for normal output (put) operations.
+ * @note    The value may be 8 bit or 12 bit for setting DOR.
+ *          The value will contain the shifted value for DORB when
+ *          double DMA mode is enabled.
  *
  * @param[in] dacp      pointer to the @p DACDriver object
  * @param[in] channel   DAC channel number
- * @param[in] sample    value to be output
+ * @param[in] value     value to be output to the DAC holding register
  *
- * @api
+ * @notapi
  */
-static void put_channel(DACDriver *dacp,
+static msg_t put_channel(DACDriver *dacp,
                          dacchannel_t channel,
-                         dacsample_t sample) {
+                         uint32_t value) {
 
-#if defined(DAC_SR_DAC1RDY)
-  /* Wait for DAC ready.*/
-  while ((dacp->params->dac->SR & (DAC_SR_DAC1RDY << dacp->params->regshift)) == 0);
-#endif
   switch (dacp->config->datamode) {
-  case DAC_DHRM_12BIT_RIGHT:
+    case DAC_DHRM_12BIT_RIGHT:
 #if STM32_DAC_DUAL_MODE
-  case DAC_DHRM_12BIT_RIGHT_DUAL:
+    case DAC_DHRM_12BIT_RIGHT_DUAL:
 #endif
-    if (channel == 0U) {
+      if (channel == 0U) {
 #if STM32_DAC_DUAL_MODE
-      dacp->params->dac->DHR12R1 = sample;
+        dacp->params->dac->DHR12R1 = value;
 #else
-      *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = sample;
+        *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = value;
 #endif
-    }
+      }
 #if (STM32_HAS_DAC1_CH2 || STM32_HAS_DAC2_CH2 ||                            \
-     STM32_HAS_DAC3_CH2 || STM32_HAS_DAC4_CH2)
-    else {
-      dacp->params->dac->DHR12R2 = sample;
-    }
+    STM32_HAS_DAC3_CH2 || STM32_HAS_DAC4_CH2)
+      else {
+        dacp->params->dac->DHR12R2 = value;
+      }
 #endif
-    break;
-  case DAC_DHRM_12BIT_LEFT:
+      break;
+    case DAC_DHRM_12BIT_LEFT:
 #if STM32_DAC_DUAL_MODE
-  case DAC_DHRM_12BIT_LEFT_DUAL:
+    case DAC_DHRM_12BIT_LEFT_DUAL:
 #endif
-    if (channel == 0U) {
+      if (channel == 0U) {
 #if STM32_DAC_DUAL_MODE
-      dacp->params->dac->DHR12L1 = sample;
+        dacp->params->dac->DHR12L1 = value;
 #else
-      *(&dacp->params->dac->DHR12L1 + dacp->params->dataoffset) = sample;
+        *(&dacp->params->dac->DHR12L1 + dacp->params->dataoffset) = value;
 #endif
-    }
+      }
 #if (STM32_HAS_DAC1_CH2 || STM32_HAS_DAC2_CH2 ||                            \
-     STM32_HAS_DAC3_CH2 || STM32_HAS_DAC4_CH2)
-    else {
-      dacp->params->dac->DHR12L2 = sample;
-    }
+    STM32_HAS_DAC3_CH2 || STM32_HAS_DAC4_CH2)
+      else {
+        dacp->params->dac->DHR12L2 = value;
+      }
 #endif
-    break;
-  case DAC_DHRM_8BIT_RIGHT:
+      break;
+    case DAC_DHRM_8BIT_RIGHT:
 #if STM32_DAC_DUAL_MODE
-  case DAC_DHRM_8BIT_RIGHT_DUAL:
+    case DAC_DHRM_8BIT_RIGHT_DUAL:
 #endif
-    if (channel == 0U) {
+      if (channel == 0U) {
 #if STM32_DAC_DUAL_MODE
-      dacp->params->dac->DHR8R1 = sample;
+        dacp->params->dac->DHR8R1 = value;
 #else
-      *(&dacp->params->dac->DHR8R1 + dacp->params->dataoffset) = (uint8_t)sample;
+        *(&dacp->params->dac->DHR8R1 + dacp->params->dataoffset) = (uint8_t)value;
 #endif
-    }
+      }
 #if (STM32_HAS_DAC1_CH2 || STM32_HAS_DAC2_CH2 ||                            \
-     STM32_HAS_DAC3_CH2 || STM32_HAS_DAC4_CH2)
-    else {
-      dacp->params->dac->DHR8R2 = (uint8_t)sample;
-    }
+    STM32_HAS_DAC3_CH2 || STM32_HAS_DAC4_CH2)
+      else {
+        dacp->params->dac->DHR8R2 = (uint8_t)value;
+      }
 #endif
-    break;
-  default:
-    osalDbgAssert(false, "unexpected DAC mode");
-    break;
+      break;
+    default:
+      osalDbgAssert(false, "unknown DAC mode");
+      return HAL_RET_CONFIG_ERROR;
   }
+  return HAL_RET_SUCCESS;
 }
 
 /*===========================================================================*/
@@ -569,7 +573,6 @@ void dac_lld_init(void) {
   DACD2.dbuf    = &__gpdma_dac4_ch2;
 #endif
 
-
   /* Reset DAC H/W then setup IRQs. The IRQs are used to capture DMA underrun
      errors only.*/
 #if STM32_DAC_USE_DAC1_CH1 || STM32_DAC_USE_DAC1_CH2
@@ -609,7 +612,7 @@ void dac_lld_init(void) {
  *
  * @notapi
  */
-void dac_lld_start(DACDriver *dacp) {
+msg_t dac_lld_start(DACDriver *dacp) {
 
   /* If the driver is in DAC_STOP state then a full initialization is
      required.*/
@@ -674,7 +677,8 @@ void dac_lld_start(DACDriver *dacp) {
 #endif
 
     else {
-      osalDbgAssert(false, "invalid DAC instance");
+      osalDbgAssert(false, "unknown DAC instance");
+      return HAL_RET_NO_RESOURCE;
     }
 
     /* Enabling DAC in SW triggering mode initially, initializing data to
@@ -685,53 +689,59 @@ void dac_lld_start(DACDriver *dacp) {
     /* Operating in SINGLE mode. Setup registers for specified channel from
        configuration. Lower half word of configuration specifies configuration
        for either channel 1 or 2.*/
-#if STM32_DAC_HAS_MCR == TRUE
-    reg = dacp->params->dac->MCR & dacp->params->regmask;
-#if defined(STM32H5XX)
+    reg = (dacp->params->dac->MCR & dacp->params->regmask);
+
     /* Handle HFSEL setting based on DAC clock.*/
-    if (STM32_ADCDACCLK > 160000000) {
+    reg &= ~(DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+    if (STM32_ADCDACCLK > HF_SEL_AHB_GT_160MHZ) {
       reg |= DAC_MCR_HFSEL_1;
     }
-    else if (STM32_ADCDACCLK > 80000000) {
+    else if (STM32_ADCDACCLK > HF_SEL_AHB_GT_80MHZ) {
       reg |= DAC_MCR_HFSEL_0;
     }
-#endif
+
+    /* Disable double DMA setting so DOR is updated.*/
+    reg &= ~(DAC_MCR_DMADOUBLE1 << dacp->params->regshift);
     dacp->params->dac->MCR = reg |
       ((dacp->config->mcr & ~dacp->params->regmask) << dacp->params->regshift);
-#endif
+
     /* Enable and initialise the channel.*/
     reg = dacp->params->dac->CR;
     reg &= dacp->params->regmask;
     reg |= (DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
     dacp->params->dac->CR = reg;
-    put_channel(dacp, channel, (dacsample_t)dacp->config->init);
+    (void) put_channel(dacp, channel, (dacsample_t)dacp->config->init);
 #else /* STM32_DAC_DUAL_MODE != FALSE */
     /* Operating in DUAL mode with two channels to setup. Set registers for
        both channels from configuration. Lower and upper half words specify
        configuration for channels 1 & 2 respectively.*/
     (void)channel;
-#if STM32_DAC_HAS_MCR == TRUE
-#if defined(STM32H5XX)
+    reg = (dacp->params->dac->MCR & dacp->params->regmask);
+
     /* Handle HFSEL setting based on DAC clock.*/
-    reg = dacp->params->dac->MCR;
-    if (STM32_ADCDACCLK > 80000000) {
-      reg |= DAC_MCR_HFSEL_0;
-    }
-    else if (STM32_ADCDACCLK > 160000000) {
+    reg = (dacp->params->dac->MCR | dacp->config->mcr) &
+                      ~(DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+    if (STM32_ADCDACCLK > HF_SEL_AHB_GT_160MHZ) {
       reg |= DAC_MCR_HFSEL_1;
     }
+    else if (STM32_ADCDACCLK > HF_SEL_AHB_GT_80MHZ) {
+      reg |= DAC_MCR_HFSEL_0;
+    }
+
+    /* Disable double DMA setting so DOR is updated.*/
+    reg &= ~(DAC_MCR_DMADOUBLE1 << dacp->params->regshift);
     dacp->params->dac->MCR = reg;
-#endif
-#endif /* STM32_DAC_HAS_MCR == TRUE */
+
     /* Enable and initialise both channels 1 and 2. Mask out DMA enable.*/
     reg = dacp->config->cr;
     reg &= ~(DAC_CR_DMAEN1 | DAC_CR_DMAEN2);
     dacp->params->dac->CR = DAC_CR_EN2 | DAC_CR_EN1 | reg;
-    put_channel(dacp, 0U, (dacsample_t)dacp->config->init);
-    put_channel(dacp, 1U, (dacsample_t)(dacp->config->init >>
-                                               (sizeof(dacsample_t) * 8)));
+    (void) put_channel(dacp, 0U, (dacsample_t)dacp->config->init);
+    (void) put_channel(dacp, 1U, (dacsample_t)(dacp->config->init >>
+                                                CHANNEL_REGISTER_SHIFT));
 #endif /* STM32_DAC_DUAL_MODE == FALSE */
   }
+  return HAL_RET_SUCCESS;
 }
 
 /**
@@ -844,21 +854,29 @@ void dac_lld_stop(DACDriver *dacp) {
  * @param[in] channel   DAC channel number
  * @param[in] sample    value to be output
  *
- * @api
+ * @return              The operation status.
+ *
+ * @notapi
  */
-void dac_lld_put_channel(DACDriver *dacp,
+msg_t dac_lld_put_channel(DACDriver *dacp,
                          dacchannel_t channel,
                          dacsample_t sample) {
 
 #if STM32_DAC_DUAL_MODE
   if (dacp->state == DAC_ACTIVE &&
       dacp->grpp->num_channels == 2 && channel == 0) {
-    osalDbgAssert(false, "channel busy");
-    return;
+    osalDbgCheck(false);
+    return HAL_RET_HW_BUSY;
   }
 #endif /* STM32_DAC_DUAL_MODE */
 
-  put_channel(dacp, channel, sample);
+  /* Check if channel enabled.*/
+  if ((dacp->params->dac->SR &
+                  (DAC_SR_DAC1RDY << dacp->params->regshift)) == 0) {
+    return HAL_RET_NO_RESOURCE;
+  }
+
+  return put_channel(dacp, channel, (uint32_t)sample);
 
 }
 
@@ -866,12 +884,11 @@ void dac_lld_put_channel(DACDriver *dacp,
  * @brief   Starts a DAC conversion.
  * @details Starts an asynchronous conversion operation.
  * @note    In @p DAC_DHRM_8BIT_RIGHT mode two samples are packed in a single
- *          dacsample_t element. DMA does byte to byte transfer.
+ *          dacsample_t element. DMA does byte read.
  * @note    In @p DAC_DHRM_8BIT_RIGHT_DUAL mode two samples are treated
  *          as a single 16 bits sample and packed into a single dacsample_t
  *          element. The num_channels must be set to one in the group
- *          conversion configuration structure. DMA does half to half transfer.
- *          translation.
+ *          conversion configuration structure. DMA does half word read.
  * @note    If using DUAL mode with a single channel conversion then channel 2
  *          is enabled for manual (put_channel) for non DMA triggered use. The
  *          the data format for put operations is specified in the upper half
@@ -880,191 +897,173 @@ void dac_lld_put_channel(DACDriver *dacp,
  *
  * @param[in] dacp      pointer to the @p DACDriver object
  *
+ * @return              The operation status.
+ *
  * @notapi
  */
-void dac_lld_start_conversion(DACDriver *dacp) {
-  uint32_t n, ni, cr, dmamode, dmaccr, dmallr;
+msg_t dac_lld_start_conversion(DACDriver *dacp) {
+  uint32_t n, ni, nch, cr, dmamode, dmaccr, dmallr, chx, ch2;
+  volatile const void *dacreg;
   uint8_t *si;
+  uint8_t mult;
+  bool dacddma = false;
 
-  osalDbgAssert(dacp->grpp->num_channels > 0, "invalid number of channels");
+  if (dacp->grpp->num_channels < 1) {
+    osalDbgAssert(false, "invalid number of channels");
+    return HAL_RET_CONFIG_ERROR;
+  }
 
-  /* Determine channel for setting initial value.*/
-  dacchannel_t channel = dacp->params->regshift == 0 ? 0U : 1U;
+  /* Determine double DMA mode.*/
+  dacddma = ((((dacp->config->mcr & ~dacp->params->regmask)
+      >> dacp->params->regshift) & DAC_MCR_DMADOUBLE1) != 0);
 
-  /* Allocate DMA channel.*/
+  /* DMA settings depend on the chosen DAC mode. If not in dual mode then each
+     channel of a DAC operates independently. The DAC DMA update request of DHR
+     happens after the DAC does DHR to DOR transfer. Thus the first sample must
+     be loaded into DHR prior to conversion start. The initial DMA count and
+     source address are adjusted accordingly for first DMA cycle and then set
+     for subsequent conversion cycles using the GPDMA LLR. All DMA to DAC is
+     32 bit since DAC is on AHB.*/
+  switch (dacp->config->datamode) {
+
+    case DAC_DHRM_12BIT_RIGHT:
+
+      /* One channel where data is a 16 bit (dacsample_t). GPDMA count is 2 bytes
+       per transfer.*/
+      nch = 1U;
+      dacreg = &dacp->params->dac->DHR12R1 + dacp->params->dataoffset;
+      dmamode = STM32_GPDMA_CTR1_DDW_WORD;
+      dmamode |= dacddma ? STM32_GPDMA_CTR1_SDW_WORD : STM32_GPDMA_CTR1_SDW_HALF;
+      mult = HALF_SINGLE_SAMPLE_MULTIPLIER;
+
+      /* Set initial value of channel holding register(s).*/
+      chx = *(uint32_t *)dacp->samples;
+      break;
+
+    case DAC_DHRM_12BIT_LEFT:
+
+      /* One channel where data is a 16 bit (dacsample_t). GPDMA count is 2 bytes
+       per transfer.*/
+      nch = 1U;
+      dacreg = &dacp->params->dac->DHR12L1 + dacp->params->dataoffset;
+      dmamode = STM32_GPDMA_CTR1_DDW_WORD;
+      dmamode |= dacddma ? STM32_GPDMA_CTR1_SDW_WORD : STM32_GPDMA_CTR1_SDW_HALF;
+      mult = HALF_SINGLE_SAMPLE_MULTIPLIER;
+
+      /* Get initial value of channel holding register(s).*/
+      chx = *(uint32_t *)dacp->samples;
+      break;
+
+    case DAC_DHRM_8BIT_RIGHT:
+
+      /* One channel where data is in bytes. GPDMA count is 1 byte per transfer.*/
+      nch = 1U;
+      dacreg = &dacp->params->dac->DHR8R1 + dacp->params->dataoffset;
+      dmamode = STM32_GPDMA_CTR1_DDW_WORD;
+      dmamode |= dacddma ? STM32_GPDMA_CTR1_SDW_HALF : STM32_GPDMA_CTR1_SDW_BYTE;
+      mult = BYTE_SINGLE_SAMPLE_MULTIPLIER;
+
+      /* Get initial value of channel holding register(s).*/
+      chx = (uint32_t)*(uint16_t *)dacp->samples;
+      break;
+
+#if STM32_DAC_DUAL_MODE == TRUE
+    case DAC_DHRM_12BIT_RIGHT_DUAL:
+
+      /* Two channels as 2 x dacsample_t in a word. GPDMA count is 4 bytes per
+       transfer.*/
+      nch = 2U;
+      dacreg = &dacp->params->dac->DHR12RD;
+      dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
+      mult = HALF_DUAL_SAMPLE_MULTIPLIER;
+
+      /* Get initial value of channels.*/
+      chx = (dacsample_t)*dacp->samples;
+      ch2 = (dacsample_t)*(dacp->samples + 2);
+      break;
+
+    case DAC_DHRM_12BIT_LEFT_DUAL:
+
+      /* Two channels as 2 x dacsample_t per word. GPDMA count is 4 bytes per
+       transfer.*/
+      nch = 2U;
+      dacreg = &dacp->params->dac->DHR12LD;
+      dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
+      mult = HALF_DUAL_SAMPLE_MULTIPLIER;
+
+      /* Get initial value of channels.*/
+      chx = (dacsample_t)*dacp->samples;
+      ch2 = (dacsample_t)*(dacp->samples + 2);
+      break;
+
+    case DAC_DHRM_8BIT_RIGHT_DUAL:
+
+      /* Two channels packed as two bytes in a single dacsample_t. GPDMA count
+       is 2 bytes per transfer.*/
+      nch = 2U;
+      dacreg = &dacp->params->dac->DHR8RD;
+      dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_BYTE);
+      mult = BYTE_DUAL_SAMPLE_MULTIPLIER;
+
+      /* Get initial value of channels.*/
+      chx = (dacsample_t)(*dacp->samples & 0xFF);
+      ch2 = (dacsample_t)(*(dacp->samples) >> 8);
+      break;
+
+#endif /* STM32_DAC_DUAL_MODE == TRUE */
+    default:
+      osalDbgAssert(false, "dual mode not enabled or invalid register identity");
+      return HAL_RET_CONFIG_ERROR;
+  } /* End switch.*/
+
+  /* Check configuration and setup DMA.*/
+  if (dacp->grpp->num_channels != nch) {
+    osalDbgAssert(false, "invalid number of channels");
+    return HAL_RET_CONFIG_ERROR;
+  }
+
+  /* Double DMA is supported on single channel only in dual mode.*/
+  if (dacddma && nch == 2) {
+    osalDbgAssert(false, "double DMA mode not supported in 2 channel dual mode");
+    return HAL_RET_CONFIG_ERROR;
+  }
+
+  /* Calculate count of GPDMA byte transfers.*/
+  n = dacp->depth * mult;
+
+  /* Adjust multiplier for double DMA mode.*/
+  mult *= dacddma ? 2 : 1;
+
+  /* A depth of one just repeats one sample. Otherwise Adjust count and
+     source address for first cycle of DMA.*/
+  if (dacp->depth == 1) {
+    ni = n;
+    si = (uint8_t *)dacp->samples;
+  }
+  else {
+    ni = n - mult;
+    si = (uint8_t *)dacp->samples + mult;
+  }
+
+  if (n > STM32_GPDMA_MAX_TRANSFER) {
+    osalDbgAssert(false, "unsupported GPDMA transfer size");
+    return HAL_RET_CONFIG_ERROR;
+  }
+
+  /* Allocate GPDMA channel.*/
   dacp->dmachp = gpdmaChannelAllocI(dacp->params->dmach,
                                     dacp->params->dmaprio,
                                     dac_lld_serve_dma_interrupt,
                                     (void *)dacp);
-  osalDbgAssert(dacp->dmachp != NULL, "unable to allocate DMA channel");
 
-  /* DMA settings depend on the chosen DAC mode. If not dual mode then each
-     channel of a DAC operates independently. The DAC DMA update request of DHR
-     happens after the DAC does DHR to DOR transfer. Thus the first sample must
-     be loaded into DHR prior to conversion start. The initial DMA count and
-     source address must be adjusted accordingly for first DMA cycle and then
-     restored from then on using DMA LLR.*/
-  switch (dacp->config->datamode) {
-
-  /* Sets the DAC data register */
-  case DAC_DHRM_12BIT_RIGHT:
-    osalDbgAssert(dacp->grpp->num_channels == 1, "invalid number of channels");
-
-    gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR12R1 +
-                                      dacp->params->dataoffset);
-    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
-
-    /* Set initial value of channel.*/
-    put_channel(dacp, channel, *dacp->samples);
-
-    /* One channel where data is a 16 bit (dacsample_t). GPDMA count is 2 bytes
-       per transfer. Adjust count and source address for first cycle.*/
-    n = dacp->depth * HALF_SINGLE_SAMPLE_MULTIPLIER;
-
-    /* A depth of one just repeats one sample.*/
-    if (dacp->depth == 1) {
-      ni = n;
-      si = (uint8_t *)dacp->samples;
-    }
-    else {
-      ni = n - HALF_SINGLE_SAMPLE_MULTIPLIER;
-      si = (uint8_t *)dacp->samples + HALF_SINGLE_SAMPLE_MULTIPLIER;
-    }
-    break;
-
-  case DAC_DHRM_12BIT_LEFT:
-    osalDbgAssert(dacp->grpp->num_channels == 1, "invalid number of channels");
-
-    gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR12L1 +
-                                      dacp->params->dataoffset);
-    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
-
-    /* Set initial value of channel.*/
-    put_channel(dacp, channel, *dacp->samples);
-
-    /* One channel where data is a 16 bit (dacsample_t). GPDMA count is 2 bytes
-       per transfer. Adjust count and source address for first cycle.*/
-    n = dacp->depth * HALF_SINGLE_SAMPLE_MULTIPLIER;
-
-    /* A depth of one just repeats one sample.*/
-    if (dacp->depth == 1) {
-      ni = n;
-      si = (uint8_t *)dacp->samples;
-    }
-    else {
-      ni = n - HALF_SINGLE_SAMPLE_MULTIPLIER;
-      si = (uint8_t *)dacp->samples + HALF_SINGLE_SAMPLE_MULTIPLIER;
-    }
-    break;
-
-  case DAC_DHRM_8BIT_RIGHT:
-    osalDbgAssert(dacp->grpp->num_channels == 1, "invalid number of channels");
-
-    gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR8R1 +
-                                      dacp->params->dataoffset);
-    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_BYTE);
-
-    /* Set initial value of channel.*/
-    put_channel(dacp, channel, *dacp->samples &0xFF);
-
-    /* One channel where data is in bytes. GPDMA count is 1 byte per transfer.
-       Adjust count and source address for first cycle.*/
-    n = dacp->depth * BYTE_SINGLE_SAMPLE_MULTIPLIER;
-
-    /* A depth of one just repeats one sample.*/
-    if (dacp->depth == 1) {
-      ni = n;
-      si = (uint8_t *)dacp->samples;
-    }
-    else {
-      ni = n - BYTE_SINGLE_SAMPLE_MULTIPLIER;
-      si = (uint8_t *)dacp->samples + BYTE_SINGLE_SAMPLE_MULTIPLIER;
-    }
-    break;
-
-#if STM32_DAC_DUAL_MODE == TRUE
-  case DAC_DHRM_12BIT_RIGHT_DUAL:
-    osalDbgAssert(dacp->grpp->num_channels == 2, "invalid number of channels");
-
-    gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR12RD);
-    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_WORD);
-
-    /* Set initial value of channels.*/
-    put_channel(dacp, 0U, *dacp->samples);
-    put_channel(dacp, 1U, *(dacp->samples + 2));
-
-    /* Two channels as 2 x dacsample_t in a word. GPDMA count is 4 bytes per
-       transfer.*/
-    n = dacp->depth * HALF_DUAL_SAMPLE_MULTIPLIER;
-
-    /* A depth of one just repeats one sample on each channel.*/
-    if (dacp->depth == 1) {
-      ni = n;
-      si = (uint8_t *)dacp->samples;
-    }
-    else {
-      ni = n - HALF_DUAL_SAMPLE_MULTIPLIER;
-      si = (uint8_t *)dacp->samples + HALF_DUAL_SAMPLE_MULTIPLIER;
-    }
-    break;
-
-  case DAC_DHRM_12BIT_LEFT_DUAL:
-    osalDbgAssert(dacp->grpp->num_channels == 2, "invalid number of channels");
-
-    gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR12LD);
-    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_WORD);
-
-    put_channel(dacp, 0U, *dacp->samples);
-    put_channel(dacp, 1U, *(dacp->samples + 2));
-    /* Two channels as 2 x dacsample_t per word. GPDMA count is 4 bytes per
-       transfer.*/
-    n = dacp->depth * HALF_DUAL_SAMPLE_MULTIPLIER;
-
-    /* A depth of one just repeats one sample on each channel.*/
-    if (dacp->depth == 1) {
-      ni = n;
-      si = (uint8_t *)dacp->samples;
-    }
-    else {
-      ni = n - HALF_DUAL_SAMPLE_MULTIPLIER;
-      si = (uint8_t *)dacp->samples + HALF_DUAL_SAMPLE_MULTIPLIER;
-    }
-    break;
-
-  case DAC_DHRM_8BIT_RIGHT_DUAL:
-    osalDbgAssert(dacp->grpp->num_channels == 2, "invalid number of channels");
-
-    gpdmaChannelSetDestination(dacp->dmachp, &dacp->params->dac->DHR8RD);
-    dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
-
-    put_channel(dacp, 0U, *dacp->samples & 0xFF);
-    put_channel(dacp, 1U, *(dacp->samples) >> 8);
-
-    /* Two channels packed as two bytes in a single dacsample_t. GPDMA count
-       is 2 bytes per transfer.*/
-    n = dacp->depth * BYTE_DUAL_SAMPLE_MULTIPLIER;
-
-    /* A depth of one just repeats one sample on each channel.*/
-    if (dacp->depth == 1) {
-      ni = n;
-      si = (uint8_t *)dacp->samples;
-    }
-    else {
-      ni = n - BYTE_DUAL_SAMPLE_MULTIPLIER;
-      si = (uint8_t *)dacp->samples + BYTE_DUAL_SAMPLE_MULTIPLIER;
-    }
-    break;
-
-#endif
-  default:
-    osalDbgAssert(false, "unexpected DAC mode");
-    return;
+  if (dacp->dmachp == NULL) {
+    return HAL_RET_NO_RESOURCE;
   }
 
-  osalDbgAssert(n <= STM32_GPDMA_MAX_TRANSFER,
-                                "unsupported GPDMA transfer size");
+  /* Set DAC target register for GPDMA.*/
+  gpdmaChannelSetDestination(dacp->dmachp, dacreg);
 
-  /* Setup control registers values.*/
+  /* Setup DMA control registers values.*/
   dmaccr = STM32_GPDMA_CCR_PRIO((uint32_t)dacp->params->dmaprio) |
            STM32_GPDMA_CCR_LAP_MEM                               |
            STM32_GPDMA_CCR_TOIE                                  |
@@ -1080,14 +1079,13 @@ void dac_lld_start_conversion(DACDriver *dacp) {
   dacp->dbuf->cb1r = n;
   dacp->dbuf->csar = (uint32_t)dacp->samples;
 
-
   if (n > 1U) {
     /* If circular buffer depth > 1, then the half transfer interrupt
        is enabled in order to allow streaming processing.*/
     dmaccr |= STM32_GPDMA_CCR_HTIE;
   }
 
-  /* Configure and enable DMA controller with initial transfer settings.*/
+  /* Configure and enable GPDMA controller with initial transfer settings.*/
   gpdmaChannelSetSource(dacp->dmachp, si);
   gpdmaChannelSetTransactionSize(dacp->dmachp, ni);
   gpdmaChannelSetMode(dacp->dmachp,
@@ -1104,28 +1102,69 @@ void dac_lld_start_conversion(DACDriver *dacp) {
 
   /* DAC configuration.*/
   cr = dacp->params->dac->CR;
-#if STM32_DAC_DUAL_MODE == FALSE
-  cr &= dacp->params->regmask;
 
-  /* Enable DMA and trigger on the specified channel. Clear underrun status.*/
-  dacp->params->dac->SR = (DAC_SR_DMAUDR1 << dacp->params->regshift);
+
+#if STM32_DAC_DUAL_MODE == FALSE
+  (void) ch2;
+
+  /* Operating in single mode. Disable channel.*/
+  dacp->params->dac->CR &= ~(DAC_CR_EN1 << dacp->params->regshift);
+
+  /* Wait for channel to disable.*/
+  while ((dacp->params->dac->SR &
+                  (DAC_SR_DAC1RDY << dacp->params->regshift)) != 0);
+
+  if (dacddma) {
+    /* Enable DMA double mode now so DORB values will be written.*/
+    dacp->params->dac->MCR |= DAC_MCR_DMADOUBLE1 << dacp->params->regshift;
+  }
+
+  /* Set initial value of channel holding register(s).*/
+  dacchannel_t ch_num = dacp->params->regshift == 0 ? 0U : 1U;
+  (void) put_channel(dacp, ch_num, chx);
+
+  /* Enable DMA and trigger on the specified channel. Clear under-run status.*/
+  cr &= dacp->params->regmask;
   cr |= (DAC_CR_DMAEN1 | (dacp->grpp->trigger << DAC_CR_TSEL1_Pos) |
-         DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
+         DAC_CR_TEN1 | dacp->config->cr) << dacp->params->regshift;
+  dacp->params->dac->SR = (DAC_SR_DMAUDR1 << dacp->params->regshift);
+
+  /* Setup trigger and DMA.*/
+  dacp->params->dac->CR = cr;
+  cr |= DAC_CR_EN1 << dacp->params->regshift;
+
 #else /* !STM32_DAC_DUAL_MODE == FALSE */
-  /* Enable DMA to trigger on CH1. Clear underrun status.*/
+
+  /* Operating in dual mode. Disable CH1.*/
+  dacp->params->dac->CR &= ~DAC_CR_EN1;
+
+  /* Wait for channel to disable.*/
+  while ((dacp->params->dac->SR & DAC_SR_DAC1RDY) != 0);
+
+  if (dacddma) {
+    /* Enable DMA double mode now so DORB values will be written.*/
+    dacp->params->dac->MCR |= DAC_MCR_DMADOUBLE1;
+  }
+
+  /* Set initial value of DHR/DHRB register(s).*/
+  (void) put_channel(dacp, 0U, chx);
+  if (nch == 2) {
+    (void) put_channel(dacp,1U, ch2);
+  }
+
+  /* Set trigger for CH1 group.*/
+  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << DAC_CR_TSEL1_Pos) |
+       DAC_CR_TEN1 | dacp->config->cr;
   dacp->params->dac->SR = DAC_SR_DMAUDR1;
 
-  cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << DAC_CR_TSEL1_Pos) |
-       DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr;
-
-  /* Enable CH2 if specified.*/
-  if (dacp->grpp->num_channels == 2) {
-    cr |= DAC_CR_EN2;
-  }
+  /* Setup trigger and DMA.*/
+  dacp->params->dac->CR = cr;
+  cr |= DAC_CR_EN1 | DAC_CR_EN2;
 #endif
 
   /* Start continuous conversion.*/
   dacp->params->dac->CR = cr;
+  return HAL_RET_SUCCESS;
 
 }
 
@@ -1140,32 +1179,76 @@ void dac_lld_start_conversion(DACDriver *dacp) {
  * @iclass
  */
 void dac_lld_stop_conversion(DACDriver *dacp) {
-  uint32_t cr;
+  uint32_t cr, mcr;
 
-  /* DMA channel disabled and released.*/
+  /* GPDMA channel disabled and released.*/
   gpdmaChannelDisable(dacp->dmachp);
   gpdmaChannelFreeI(dacp->dmachp);
   dacp->dmachp = NULL;
 
-  /* Restore start configuration but leave DORx at current values.*/
+  /* Get current CR and SR.*/
   cr = dacp->params->dac->CR;
 #if STM32_DAC_DUAL_MODE == FALSE
-#if STM32_DAC_HAS_MCR == TRUE
-  uint32_t mcr;
-  mcr = dacp->params->dac->MCR & dacp->params->regmask;
-  dacp->params->dac->MCR = mcr |
-    ((dacp->config->mcr & dacp->params->regmask) << dacp->params->regshift);
-#endif
-  cr &= dacp->params->regmask;
-  cr |= (DAC_CR_EN1 | (dacp->config->cr & ~dacp->params->regmask)) <<
-                                      dacp->params->regshift;
-#else /* !STM32_DAC_DUAL_MODE == FALSE */
-#if STM32_DAC_HAS_MCR == TRUE
-  dacp->params->dac->MCR = dacp->config->mcr;
-#endif
-  cr = dacp->config->cr | DAC_CR_EN1 | DAC_CR_EN2;
-#endif
 
+  /* Operating in single mode. Disable channel.*/
+  dacp->params->dac->CR &= ~(DAC_CR_EN1 << dacp->params->regshift);
+
+  /* Wait for channel to disable.*/
+  while ((dacp->params->dac->SR &
+                  (DAC_SR_DAC1RDY << dacp->params->regshift)) != 0);
+
+  /* Reset MCR of this channel, restore config mode and retain HFSEL.*/
+  mcr = dacp->params->dac->MCR &
+              (dacp->params->regmask | DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+  mcr |= ((dacp->config->mcr & dacp->params->regmask) << dacp->params->regshift);
+
+  /* Disable double DMA setting so DOR is update target.*/
+  mcr &= ~(DAC_MCR_DMADOUBLE1 << dacp->params->regshift);
+
+  dacp->params->dac->MCR = mcr;
+
+  /* Restore CR start settings before re-enabling channel.*/
+  cr &= dacp->params->regmask;
+  cr |= (dacp->config->cr & ~dacp->params->regmask) << dacp->params->regshift;
+
+  /* Mask out enable then write CR start settings.*/
+  cr &= ~(DAC_CR_EN1 << dacp->params->regshift);
+  dacp->params->dac->CR = cr;
+
+  /* Setup enable.*/
+  cr |= DAC_CR_EN1 << dacp->params->regshift;
+
+#else /* !STM32_DAC_DUAL_MODE == FALSE */
+
+  /* Operating in dual mode. Disable CH1.*/
+  dacp->params->dac->CR &= ~DAC_CR_EN1;
+
+  /* Wait for channel to disable.*/
+  while ((dacp->params->dac->SR & DAC_SR_DAC1RDY) != 0);
+
+  /* Reset MCR of CH1, restore config mode and retain HFSEL.*/
+  mcr = dacp->params->dac->MCR &
+              (dacp->params->regmask | DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+  mcr |= (dacp->config->mcr & dacp->params->regmask);
+
+  /* Disable double DMA setting so DOR is update target.*/
+  mcr &= ~DAC_MCR_DMADOUBLE1;
+  dacp->params->dac->MCR = mcr;
+
+  /* Restore CR start settings before enabling channel.*/
+  cr &= dacp->params->regmask;
+  cr |= (dacp->config->cr & ~dacp->params->regmask);
+
+  /* Mask out enable then write CR start settings.*/
+  cr &= ~(DAC_CR_EN1);
+  dacp->params->dac->CR = cr;
+
+  /* Setup enable.*/
+  cr |= DAC_CR_EN1;
+
+#endif /* STM32_DAC_DUAL_MODE == FALSE */
+
+  /* Re-enable channel.*/
   dacp->params->dac->CR = cr;
 }
 

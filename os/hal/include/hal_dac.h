@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -351,19 +351,19 @@ struct hal_dac_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void dacInit(void);
-  void dacObjectInit(DACDriver *dacp);
+  void  dacInit(void);
+  void  dacObjectInit(DACDriver *dacp);
   msg_t dacStart(DACDriver *dacp, const DACConfig *config);
-  void dacStop(DACDriver *dacp);
-  void dacPutChannelX(DACDriver *dacp,
+  void  dacStop(DACDriver *dacp);
+  msg_t dacPutChannelX(DACDriver *dacp,
                       dacchannel_t channel,
                       dacsample_t sample);
-  void dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
+  msg_t dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
                           dacsample_t *samples, size_t depth);
-  void dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,
+  msg_t dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,
                            dacsample_t *samples, size_t depth);
-  void dacStopConversion(DACDriver *dacp);
-  void dacStopConversionI(DACDriver *dacp);
+  void  dacStopConversion(DACDriver *dacp);
+  void  dacStopConversionI(DACDriver *dacp);
 #if DAC_USE_SYNCHRONIZATION
   msg_t dacConvert(DACDriver *dacp, const DACConversionGroup *grpp,
                    dacsample_t *samples, size_t depth);
@@ -371,8 +371,8 @@ extern "C" {
   msg_t dacSynchronize(DACDriver *dacp, sysinterval_t timeout);
 #endif /* DAC_USE_SYNCHRONIZATION */
 #if DAC_USE_MUTUAL_EXCLUSION
-  void dacAcquireBus(DACDriver *dacp);
-  void dacReleaseBus(DACDriver *dacp);
+  void  dacAcquireBus(DACDriver *dacp);
+  void  dacReleaseBus(DACDriver *dacp);
 #endif
 #ifdef __cplusplus
 }
