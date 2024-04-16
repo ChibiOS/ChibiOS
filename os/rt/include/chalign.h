@@ -45,9 +45,50 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a memory area.
+ */
+typedef struct {
+  /**
+   * @brief   Memory area base.
+   * @note    Value -1 is reserved as end-on-array marker.
+   */
+  uint8_t                       *base;
+  /**
+   * @brief   Memory area size.
+   * @note    Value 0 represents the whole address space and is only valid
+   *          when @p base is also zero.
+   */
+  size_t                        size;
+} memory_area_new_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Data part of a static memory area initializer.
+ * @details This macro should be used when statically initializing a memory area
+ *          that is part of a bigger structure.
+ *
+ * @param[in] name      name of the memory area variable
+ * @param[in] mb        memory area base
+ * @param[in] ms        memory area size
+ */
+#define __MEM_AREA_DATA(name, mb, ms) {                                     \
+  .base         = (void *)(mb),                                             \
+  .size         = (size_t)(ms)                                              \
+}
+
+/**
+ * @brief   Static memory area initializer.
+ *
+ * @param[in] name      the name of the memory area variable
+ * @param[in] mb        memory area base
+ * @param[in] ms        memory area size
+ */
+#define MEM_AREA_DECL(name, mb, ms)                                         \
+  memory_area_new_t name = __MEM_AREA_DATA(name, mb, ms)
 
 /**
  * @name    Memory alignment support macros

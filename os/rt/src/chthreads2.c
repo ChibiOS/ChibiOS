@@ -88,15 +88,15 @@
  * @init
  */
 thread_t *chThdObjectInit(thread_t *tp,
-                          const thread_descriptor_t *tdp) {
+                          const thread_descriptor_new_t *tdp) {
 
   chDbgCheck(tp != NULL);
   chDbgCheck(tdp != NULL);
 
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE)
   /* Stack boundary.*/
-  tp->wabase = tdp->wbase;
-  tp->waend  = tdp->wend;
+  tp->wabase = (void *)tdp->wa.base;
+  tp->waend  = (void *)(tdp->wa.base + tdp->wa.size);
 #endif
 
   /* Setting up the port-dependent part of the working area.*/
@@ -107,11 +107,12 @@ thread_t *chThdObjectInit(thread_t *tp,
   tp->hdr.pqueue.prio   = tdp->prio;
   tp->state             = CH_STATE_WTSTART;
   tp->flags             = CH_FLAG_MODE_STATIC;
-#if CH_CFG_SMP_MODE != FALSE
-  tp->owner             = tdp->instance;
-#else
-  tp->owner             = currcore;
-#endif
+  if (tdp->owner != NULL) {
+    tp->owner           = tdp->owner;
+  }
+  else {
+    tp->owner           = currcore;
+  }
 #if CH_CFG_TIME_QUANTUM > 0
   tp->ticks             = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
@@ -138,7 +139,7 @@ thread_t *chThdObjectInit(thread_t *tp,
   /* Registry-related fields.*/
 #if CH_CFG_USE_REGISTRY == TRUE
   tp->refs              = (trefs_t)1;
-  tp->name              = tdp->name;
+  tp->name              = tdp->tname;
 //  REG_INSERT(tp->owner, tp);
 #else
   (void)name;
@@ -209,7 +210,7 @@ void chThdObjectDispose(thread_t *tp) {
  * @api
  */
 thread_t *chThdCreateSuspended2I(thread_t *tp,
-                                 const thread_descriptor_t *tdp) {
+                                 const thread_descriptor_new_t *tdp) {
 
   chDbgCheck(tp != NULL);
   chDbgCheck(tdp != NULL);
@@ -246,15 +247,15 @@ thread_t *chThdCreateSuspended2I(thread_t *tp,
  * @api
  */
 thread_t *chThdCreateSuspended2(thread_t *tp,
-                                const thread_descriptor_t *tdp) {
+                                const thread_descriptor_new_t *tdp) {
 
 #if CH_CFG_USE_REGISTRY == TRUE
-  chDbgAssert(chRegFindThreadByWorkingArea(tdp->wbase) == NULL,
+  chDbgAssert(chRegFindThreadByWorkingArea((void *)tdp->wa.base) == NULL,
               "working area in use");
 #endif
 
 #if CH_DBG_FILL_THREADS == TRUE
-  __thd_stackfill((uint8_t *)tdp->wbase, (uint8_t *)tdp->wend);
+  memset((void *)tdp->wa.base, CH_DBG_STACK_FILL_VALUE, tdp->wa.size);
 #endif
 
   chSysLock();
@@ -300,7 +301,7 @@ void chThdStart2(thread_t *tp) {
  *
  * @iclass
  */
-thread_t *chThdCreate2I(thread_t *tp, const thread_descriptor_t *tdp) {
+thread_t *chThdCreate2I(thread_t *tp, const thread_descriptor_new_t *tdp) {
 
   return chSchReadyI(chThdCreateSuspended2I(tp, tdp));
 }
@@ -321,21 +322,93 @@ thread_t *chThdCreate2I(thread_t *tp, const thread_descriptor_t *tdp) {
  *
  * @iclass
  */
-thread_t *chThdCreate2(thread_t *tp, const thread_descriptor_t *tdp) {
+thread_t *chThdCreate2(thread_t *tp, const thread_descriptor_new_t *tdp) {
 
 #if (CH_CFG_USE_REGISTRY == TRUE) &&                                        \
     ((CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE))
-  chDbgAssert(chRegFindThreadByWorkingArea(tdp->wbase) == NULL,
+  chDbgAssert(chRegFindThreadByWorkingArea((void *)tdp->wa.base) == NULL,
               "working area in use");
 #endif
 
 #if CH_DBG_FILL_THREADS == TRUE
-  __thd_stackfill((uint8_t *)tdp->wbase, (uint8_t *)tdp->wend);
+  memset((void *)tdp->wa.base, CH_DBG_STACK_FILL_VALUE, tdp->wa.size);
 #endif
 
   chSysLock();
   tp = chThdCreateSuspended2I(tp, tdp);
   chSchWakeupS(tp, MSG_OK);
+  chSysUnlock();
+
+  return tp;
+}
+
+/**
+ * @brief   Creates a new thread.
+ * @post    The created thread has a reference counter set to one, it is
+ *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          in order to release the reference. The thread persists in the
+ *          registry until its reference counter reaches zero.
+ * @note    A thread can terminate by calling @p chThdExit() or by simply
+ *          returning from its main function.
+ * @warning This function allocates @p sizeof(thread_t) space into the
+ *          working area for the thread structure. This space is not accounted
+ *          for by the @p THD_WORKING_AREA() macro so it must be explicitly
+ *          added to the working area size. This behavior is different from
+ *          previous functions where the extra size was implicitly accounted
+ *          for. This incompatibility is the cause of making this function
+ *          deprecated, it is recommended to use the new thread creation API.
+ *
+ * @param[in] base      working area base
+ * @param[in] size      working area size
+ * @param[in] prio      priority level
+ * @param[in] fp        thread function pointer
+ * @param[in] arg       an argument passed to the thread function. It can be
+ *                      @p NULL.
+ * @return              The pointer to the @p thread_t structure allocated for
+ *                      the thread into the working space area.
+ *
+ * @api
+ * @deprecated
+ */
+thread_t *chThdCreateStatic2(void *base, size_t size,
+                             tprio_t prio, tfunc_t fp, void *arg) {
+  thread_t *tp;
+  size_t tsize = MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN);
+
+  chDbgCheck((base != NULL) &&
+             MEM_IS_ALIGNED(base, PORT_WORKING_AREA_ALIGN) &&
+             MEM_IS_ALIGNED(size, PORT_STACK_ALIGN) &&
+             (size >= THD_WORKING_AREA_SIZE(0) + tsize) &&
+             (prio <= HIGHPRIO) && (fp != NULL));
+
+#if (CH_CFG_USE_REGISTRY == TRUE) &&                                        \
+    ((CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE))
+  chDbgAssert(chRegFindThreadByWorkingArea(base) == NULL,
+              "working area in use");
+#endif
+
+#if CH_DBG_FILL_THREADS == TRUE
+  memset((void *)wsp, CH_DBG_STACK_FILL_VALUE, size);
+#endif
+
+  /* Creating a descriptor from the parameters.*/
+  THD_DESC_DECL(tmp_desc, "noname", base, size - tsize, prio, fp, arg, NULL);
+
+  chSysLock();
+
+  /* The thread structure is laid out in the upper part of the thread
+     workspace. The thread position structure is aligned to the required
+     stack alignment because it represents the stack top.*/
+  tp = threadref(((uint8_t *)tmp_desc.wa.base + tmp_desc.wa.size - tsize));
+
+  /* Setting up the port-dependent part of the working area.*/
+  PORT_SETUP_CONTEXT(tp, tmp_desc.wa.base, tp, tmp_desc.funcp, tmp_desc.arg);
+
+  tp = chThdObjectInit(tp, &tmp_desc);
+
+  /* Starting the thread immediately.*/
+  chSchWakeupS(tp, MSG_OK);
+
   chSysUnlock();
 
   return tp;
