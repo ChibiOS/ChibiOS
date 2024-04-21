@@ -419,7 +419,7 @@ void dmaInit(void) {
  *          The function also enables the IRQ vector associated to the channel
  *          and initializes its priority.
  *
- * @param[in] cmask     channels mask where to search for an available chennel
+ * @param[in] cmask     channels mask where to search for an available channel
  * @param[in] irqprio   IRQ priority for the GPDMA channel
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
@@ -497,7 +497,7 @@ const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
  *          The function also enables the IRQ vector associated to the channel
  *          and initializes its priority.
  *
- * @param[in] cmask     channels mask where to search for an available chennel
+ * @param[in] cmask     channels mask where to search for an available channel
  * @param[in] irqprio   IRQ priority for the GPDMA channel
  * @param[in] func      handling function pointer, can be @p NULL
  * @param[in] param     a parameter to be passed to the handling function
