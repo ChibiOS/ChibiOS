@@ -863,8 +863,8 @@ msg_t dac_lld_put_channel(DACDriver *dacp,
                          dacsample_t sample) {
 
 #if STM32_DAC_DUAL_MODE
-  if (dacp->state == DAC_ACTIVE &&
-      dacp->grpp->num_channels == 2 && channel == 0) {
+  if ((dacp->state == DAC_ACTIVE || dacp->state == DAC_COMPLETE) &&
+       dacp->grpp->num_channels == 2 && channel == 0) {
     osalDbgCheck(false);
     return HAL_RET_HW_BUSY;
   }

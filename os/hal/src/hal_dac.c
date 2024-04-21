@@ -159,8 +159,9 @@ void dacStop(DACDriver *dacp) {
 msg_t dacPutChannelX(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
 
   osalDbgCheck(channel < (dacchannel_t)DAC_MAX_CHANNELS);
-  osalDbgAssert(dacp->state == DAC_READY || dacp->state == DAC_ACTIVE,
-                                            "invalid state");
+  osalDbgAssert(dacp->state == DAC_READY  ||
+                dacp->state == DAC_ACTIVE ||
+                dacp->state == DAC_COMPLETE, "invalid state");
   msg_t msg;
 #if defined(DAC_LLD_ENHANCED_API)
   msg = dac_lld_put_channel(dacp, channel, sample);
