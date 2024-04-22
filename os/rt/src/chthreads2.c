@@ -388,7 +388,7 @@ thread_t *chThdCreateStatic2(void *base, size_t size,
 #endif
 
 #if CH_DBG_FILL_THREADS == TRUE
-  memset((void *)wsp, CH_DBG_STACK_FILL_VALUE, size);
+  memset((void *)base, CH_DBG_STACK_FILL_VALUE, size);
 #endif
 
   /* Creating a descriptor from the parameters.*/
