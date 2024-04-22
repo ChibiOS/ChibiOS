@@ -206,7 +206,6 @@ static inline job_descriptor_t *chJobGetI(jobs_queue_t *jqp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The pointer to the allocated job object.
  * @retval NULL         if a job object is not available within the specified
  *                      timeout.
@@ -227,7 +226,6 @@ static inline job_descriptor_t *chJobGetTimeoutS(jobs_queue_t *jqp,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The pointer to the allocated job object.
  * @retval NULL         if a job object is not available within the specified
  *                      timeout.
@@ -379,7 +377,6 @@ static inline msg_t chJobDispatch(jobs_queue_t *jqp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The function outcome.
  * @retval MSG_OK       if a job has been executed.
  * @retval MSG_TIMEOUT  if a timeout occurred.

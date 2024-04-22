@@ -368,10 +368,9 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
  *            the LRU tail.
  *          - @p OC_FLAG_LAZYWRITE is ignored and kept, a write will occur
  *            when the object is removed from the LRU list (lazy write).
- *          .
  *
  * @param[in] ocp       pointer to the @p objects_cache_t object
- * @param[in] objp      pointer to the @p oc_object_t structure
+ * @param[in] objp      pointer to the @p oc_object_t object
  *
  * @iclass
  */
@@ -434,7 +433,7 @@ void chCacheReleaseObjectI(objects_cache_t *ocp,
  *          reported by this function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t object
- * @param[in] objp      pointer to the @p oc_object_t structure
+ * @param[in] objp      pointer to the @p oc_object_t object
  * @param[in] async     requests an asynchronous operation if supported, the
  *                      function is then responsible for releasing the
  *                      object
@@ -463,7 +462,7 @@ bool chCacheReadObject(objects_cache_t *ocp,
  *          reported by this function.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t object
- * @param[in] objp      pointer to the @p oc_object_t structure
+ * @param[in] objp      pointer to the @p oc_object_t object
  * @param[in] async     requests an asynchronous operation if supported, the
  *                      called function is then responsible for releasing the
  *                      object

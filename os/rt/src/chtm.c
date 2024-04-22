@@ -98,7 +98,7 @@ void chTMObjectInit(time_measurement_t *tmp) {
  *          of @p NULL pointers rather than dereferencing previously valid
  *          pointers.
  *
- * @param[in] sp        pointer to a @p time_measurement_t object
+ * @param[in] tmp       pointer to a @p time_measurement_t object
  *
  * @dispose
  */

@@ -178,11 +178,10 @@ static inline void *chFifoTakeObjectI(objects_fifo_t *ofp) {
  * @brief   Allocates a free object.
  *
  * @param[in] ofp       pointer to a @p objects_fifo_t object
- * @param[in] timeout   the number of ticks before the operation timeouts,
+ * @param[in] timeout   number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The pointer to the allocated object.
  * @retval NULL         if an object is not available within the specified
  *                      timeout.
@@ -199,11 +198,10 @@ static inline void *chFifoTakeObjectTimeoutS(objects_fifo_t *ofp,
  * @brief   Allocates a free object.
  *
  * @param[in] ofp       pointer to a @p objects_fifo_t object
- * @param[in] timeout   the number of ticks before the operation timeouts,
+ * @param[in] timeout   number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The pointer to the allocated object.
  * @retval NULL         if an object is not available within the specified
  *                      timeout.
@@ -382,11 +380,10 @@ static inline msg_t chFifoReceiveObjectI(objects_fifo_t *ofp,
  *
  * @param[in] ofp       pointer to a @p objects_fifo_t object
  * @param[in] objpp     pointer to the fetched object reference
- * @param[in] timeout   the number of ticks before the operation timeouts,
+ * @param[in] timeout   number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       if an object has been correctly fetched.
  * @retval MSG_TIMEOUT  if the operation has timed out.
@@ -405,11 +402,10 @@ static inline msg_t chFifoReceiveObjectTimeoutS(objects_fifo_t *ofp,
  *
  * @param[in] ofp       pointer to a @p objects_fifo_t object
  * @param[in] objpp     pointer to the fetched object reference
- * @param[in] timeout   the number of ticks before the operation timeouts,
+ * @param[in] timeout   number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       if an object has been correctly fetched.
  * @retval MSG_TIMEOUT  if the operation has timed out.

@@ -650,7 +650,6 @@ void chThdTerminate(thread_t *tp) {
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  *
  * @api
  */
@@ -761,7 +760,6 @@ msg_t chThdSuspendS(thread_reference_t *trp) {
  *                      - @a TIME_IMMEDIATE the thread is not suspended and
  *                        the function returns @p MSG_TIMEOUT as if a timeout
  *                        occurred.
- *                      .
  * @return              The wake up message.
  * @retval MSG_TIMEOUT  if the operation timed out.
  *
@@ -897,7 +895,6 @@ void chThdQueueObjectDispose(threads_queue_t *tqp) {
  *                      - @a TIME_IMMEDIATE the thread is not enqueued and
  *                        the function returns @p MSG_TIMEOUT as if a timeout
  *                        occurred.
- *                      .
  * @return              The message from @p osalQueueWakeupOneI() or
  *                      @p osalQueueWakeupAllI() functions.
  * @retval MSG_TIMEOUT  if the thread has not been dequeued within the

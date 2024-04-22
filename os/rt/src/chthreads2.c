@@ -81,7 +81,7 @@
  * @note    This function does not create a fully initialized thread, do
  *          not use directly.
  *
- * @param[in] tp        pointer to a @p thread_t object
+ * @param[out] tp       pointer to a @p thread_t object
  * @param[in] tdp       pointer to the thread descriptor
  * @return              The same thread pointer passed as parameter.
  *

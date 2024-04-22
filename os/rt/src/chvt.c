@@ -320,7 +320,6 @@ void chVTObjectDispose(virtual_timer_t *vtp) {
  *                      - @a TIME_INFINITE is allowed but interpreted as a
  *                        normal time specification.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  * @param[in] vtfunc    the timer callback function. After invoking the
  *                      callback the timer is disabled and the structure can
  *                      be disposed or reused.
@@ -358,7 +357,6 @@ void chVTDoSetI(virtual_timer_t *vtp, sysinterval_t delay,
  *                      - @a TIME_INFINITE is allowed but interpreted as a
  *                        normal time specification.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  * @param[in] vtfunc    the timer callback function. After invoking the
  *                      callback the timer is restarted.
  * @param[in] par       a parameter that will be passed to the callback

@@ -350,7 +350,6 @@ void chSchGoSleepS(tstate_t newstate) {
  *                        state, this is equivalent to invoking
  *                        @p chSchGoSleepS() but, of course, less efficient.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  * @return              The wakeup message.
  * @retval MSG_TIMEOUT  if a timeout occurs.
  *

@@ -262,13 +262,12 @@ void chPipeReset(pipe_t *pp) {
  *
  * @param[in] pp        pointer to an initialized @p pipe_t object
  * @param[in] bp        pointer to the data buffer
- * @param[in] n         the number of bytes to be written, the value 0 is
+ * @param[in] n         number of bytes to be written, the value 0 is
  *                      reserved
- * @param[in] timeout   the number of ticks before the operation timeouts,
+ * @param[in] timeout   number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred. A number
  *                      lower than @p n means that a timeout occurred or the
  *                      pipe went in reset state.
@@ -327,13 +326,12 @@ size_t chPipeWriteTimeout(pipe_t *pp, const uint8_t *bp,
  *
  * @param[in] pp        pointer to an initialized @p pipe_t object
  * @param[out] bp       pointer to the data buffer
- * @param[in] n         the number of bytes to be read, the value 0 is
+ * @param[in] n         number of bytes to be read, the value 0 is
  *                      reserved
- * @param[in] timeout   the number of ticks before the operation timeouts,
+ * @param[in] timeout   number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred. A number
  *                      lower than @p n means that a timeout occurred or the
  *                      pipe went in reset state.

@@ -162,7 +162,7 @@ size_t chMemIsPointersArrayWithinX(const memory_area_t *map,
  * @details Checks if specified memory space belongs to one of the specified
  *          areas.
  *
- * @param[in] map       array of valid areas terminated with an end
+ * @param[in] areas     array of valid areas terminated with an end
  *                      marker (base=-1)
  * @param[in] p         pointer to the memory space to be checked
  * @param[in] size      size of the memory space to be checked, zero is

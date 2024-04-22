@@ -270,7 +270,6 @@ msg_t chCondWaitS(condition_variable_t *cp) {
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
  * @retval MSG_OK       if the condition variable has been signaled using
@@ -308,7 +307,6 @@ msg_t chCondWaitTimeout(condition_variable_t *cp, sysinterval_t timeout) {
  *                      special values are handled as follow:
  *                      - @a TIME_INFINITE no timeout.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the condition variable.
  * @retval MSG_OK       if the condition variable has been signaled using

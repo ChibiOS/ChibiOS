@@ -515,7 +515,6 @@ static inline thread_t *chThdStartI(thread_t *tp) {
  *                      - @a TIME_INFINITE the thread enters an infinite sleep
  *                        state.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  *
  * @sclass
  */

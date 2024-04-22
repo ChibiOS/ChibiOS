@@ -117,7 +117,6 @@ typedef struct ch_binary_semaphore {
  * @param[in] taken     initial state of the binary semaphore:
  *                      - @a false, the initial state is not taken.
  *                      - @a true, the initial state is taken.
- *                      .
  *
  * @init
  */
@@ -170,7 +169,6 @@ static inline msg_t chBSemWaitS(binary_semaphore_t *bsp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
@@ -197,7 +195,6 @@ static inline msg_t chBSemWaitTimeoutS(binary_semaphore_t *bsp,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A message specifying how the invoking thread has been
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
@@ -225,7 +222,6 @@ static inline msg_t chBSemWaitTimeout(binary_semaphore_t *bsp,
  * @param[in] taken     new state of the binary semaphore
  *                      - @a false, the new state is not taken.
  *                      - @a true, the new state is taken.
- *                      .
  *
  * @iclass
  */
@@ -246,7 +242,6 @@ static inline void chBSemResetI(binary_semaphore_t *bsp, bool taken) {
  * @param[in] taken     new state of the binary semaphore
  *                      - @a false, the new state is not taken.
  *                      - @a true, the new state is taken.
- *                      .
  *
  * @api
  */
