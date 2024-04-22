@@ -124,7 +124,6 @@ thread_t *chMsgWait(void) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A pointer to the thread carrying the message.
  * @retval NULL         if a timeout occurred.
  *
@@ -156,7 +155,6 @@ thread_t *chMsgWaitTimeout(sysinterval_t timeout) {
  * @param[in] timeout   the number of ticks before the operation timeouts,
  *                      the following special values are allowed:
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A pointer to the thread carrying the message.
  * @retval NULL         if a timeout occurred.
  *

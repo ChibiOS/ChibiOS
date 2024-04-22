@@ -654,7 +654,6 @@ void chSchRescheduleS(void) {
  * @param[in] timeout   the number of ticks before the operation timeouts.
  *                      the following special values are allowed:
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The wakeup message.
  * @retval MSG_TIMEOUT  if a timeout occurred.
  *
@@ -896,7 +895,6 @@ msg_t chThdWait(thread_t *tp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The wake up message.
  *
  * @sclass
@@ -992,7 +990,6 @@ void chThdSleepUntil(systime_t abstime) {
  *                      handled as follow:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The message from @p osalQueueWakeupOneI() or
  *                      @p osalQueueWakeupAllI() functions.
  * @retval MSG_TIMEOUT  if the thread has not been dequeued within the
