@@ -92,7 +92,7 @@ typedef struct hal_mac_receive_descriptor MACReceiveDescriptor;
 /**
  * @brief   Generic ETH notification callback type.
  *
- * @param[in] ethp     pointer to the @p ETHDriver object
+ * @param[in] macp     pointer to the @p MACDriver object
  */
 typedef void (*maccb_t)(MACDriver *macp);
 

@@ -65,7 +65,7 @@ typedef struct io_buffers_queue io_buffers_queue_t;
 /**
  * @brief   Double buffer notification callback type.
  *
- * @param[in] iodbp     the buffers queue pointer
+ * @param[in] bqp       the buffers queue pointer
  */
 typedef void (*bqnotify_t)(io_buffers_queue_t *bqp);
 

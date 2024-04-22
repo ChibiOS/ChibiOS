@@ -540,7 +540,6 @@ static mfs_error_t mfs_bank_scan_records(MFSDriver *mfsp,
  *                      - MFS_BANK_ERASED
  *                      - MFS_BANK_GARBAGE
  *                      - MFS_BANK_OK
- *                      .
  * @param[out] cntp     bank counter
  * @return              The operation status.
  *
@@ -1302,7 +1301,6 @@ mfs_error_t mfsPerformGarbageCollection(MFSDriver *mfsp) {
  *          - There must be enough compacted storage to accommodate the whole
  *            transaction. If the required space is available but it is not
  *            compacted then a garbage collect operation is performed.
- *          .
  *
  * @param[in] mfsp      pointer to the @p MFSDriver object
  * @param[in] size      estimated total size of written records in transaction,

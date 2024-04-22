@@ -54,7 +54,6 @@
  *          - The programmed data size must be a multiple of the write
  *            page size.
  *          - Programmed pages cannot be re-programmed.
- *          .
  */
 #define FLASH_ATTR_ECC_CAPABLE              0x00000008U
 /**

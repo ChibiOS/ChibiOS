@@ -177,7 +177,6 @@ eventflags_t macGetAndClearEventsI(MACDriver *macp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       the descriptor was obtained.
  * @retval MSG_TIMEOUT  the operation timed out, descriptor not initialized.
@@ -218,7 +217,6 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       the descriptor was obtained.
  * @retval MSG_TIMEOUT  the operation timed out, descriptor not initialized.
