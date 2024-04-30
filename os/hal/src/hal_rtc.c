@@ -231,7 +231,7 @@ void rtcConvertDateTimeToStructTm(const RTCDateTime *timespec,
   timp->tm_mon   = (int)timespec->month - 1;
   timp->tm_mday  = (int)timespec->day;
   timp->tm_isdst = (int)timespec->dstflag;
-  timp->tm_wday  = (int)timespec->dayofweek - 1;
+  timp->tm_wday  = (int)timespec->dayofweek % 7;
 
   sec = (int)timespec->millisecond / 1000;
   timp->tm_hour = sec / 3600;
@@ -270,7 +270,8 @@ void rtcConvertStructTmToDateTime(const struct tm *timp,
   timespec->year      = (uint32_t)timp->tm_year - (RTC_BASE_YEAR - 1900U);
   timespec->month     = (uint32_t)timp->tm_mon + 1U;
   timespec->day       = (uint32_t)timp->tm_mday;
-  timespec->dayofweek = (uint32_t)timp->tm_wday + 1U;
+  timespec->dayofweek = (((uint32_t)timp->tm_wday + 6) % 7) + 1U;
+
   if (-1 == timp->tm_isdst) {
     timespec->dstflag = 0U;  /* Set zero if dst is unknown.*/
   }
