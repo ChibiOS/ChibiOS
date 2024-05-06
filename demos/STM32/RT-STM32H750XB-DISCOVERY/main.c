@@ -29,13 +29,13 @@ static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (true) {
-    palSetLine(LINE_LED_GREEN);
-    chThdSleepMilliseconds(50);
-    palSetLine(LINE_LED_RED);
-    chThdSleepMilliseconds(200);
     palClearLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(50);
     palClearLine(LINE_LED_RED);
+    chThdSleepMilliseconds(200);
+    palSetLine(LINE_LED_GREEN);
+    chThdSleepMilliseconds(50);
+    palSetLine(LINE_LED_RED);
     chThdSleepMilliseconds(200);
   }
 }
@@ -56,7 +56,7 @@ int main(void) {
   chSysInit();
 
   /*
-   * Activates the serial driver 1 using the driver default configuration.
+   * Activates the serial driver 3 using the driver default configuration.
    */
   sdStart(&SD3, NULL);
 
