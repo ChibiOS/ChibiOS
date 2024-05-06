@@ -89,32 +89,32 @@
 #define STM32_PLL1_P_ENABLED                TRUE
 #define STM32_PLL1_Q_ENABLED                TRUE
 #define STM32_PLL1_R_ENABLED                TRUE
-#define STM32_PLL1_DIVM_VALUE               2
-#define STM32_PLL1_DIVN_VALUE               38
+#define STM32_PLL1_DIVM_VALUE               5
+#define STM32_PLL1_DIVN_VALUE               192
 #define STM32_PLL1_FRACN_VALUE              0
 #define STM32_PLL1_DIVP_VALUE               2
-#define STM32_PLL1_DIVQ_VALUE               16
-#define STM32_PLL1_DIVR_VALUE               8
+#define STM32_PLL1_DIVQ_VALUE               15
+#define STM32_PLL1_DIVR_VALUE               2
 #define STM32_PLL2_ENABLED                  TRUE
 #define STM32_PLL2_P_ENABLED                TRUE
 #define STM32_PLL2_Q_ENABLED                TRUE
 #define STM32_PLL2_R_ENABLED                TRUE
 #define STM32_PLL2_DIVM_VALUE               2
-#define STM32_PLL2_DIVN_VALUE               38
+#define STM32_PLL2_DIVN_VALUE               12
 #define STM32_PLL2_FRACN_VALUE              0
-#define STM32_PLL2_DIVP_VALUE               40
-#define STM32_PLL2_DIVQ_VALUE               8
-#define STM32_PLL2_DIVR_VALUE               8
+#define STM32_PLL2_DIVP_VALUE               2
+#define STM32_PLL2_DIVQ_VALUE               2
+#define STM32_PLL2_DIVR_VALUE               2
 #define STM32_PLL3_ENABLED                  TRUE
 #define STM32_PLL3_P_ENABLED                TRUE
 #define STM32_PLL3_Q_ENABLED                TRUE
 #define STM32_PLL3_R_ENABLED                TRUE
 #define STM32_PLL3_DIVM_VALUE               2
-#define STM32_PLL3_DIVN_VALUE               38
+#define STM32_PLL3_DIVN_VALUE               12
 #define STM32_PLL3_FRACN_VALUE              0
-#define STM32_PLL3_DIVP_VALUE               8
-#define STM32_PLL3_DIVQ_VALUE               8
-#define STM32_PLL3_DIVR_VALUE               8
+#define STM32_PLL3_DIVP_VALUE               2
+#define STM32_PLL3_DIVQ_VALUE               2
+#define STM32_PLL3_DIVR_VALUE               1
 
 /*
  * Core clocks dynamic settings (can be changed at runtime).
@@ -147,7 +147,7 @@
 #define STM32_QSPISEL                       STM32_QSPISEL_HCLK
 #define STM32_FMCSEL                        STM32_FMCSEL_HCLK
 #define STM32_SWPSEL                        STM32_SWPSEL_PCLK1
-#define STM32_FDCANSEL                      STM32_FDCANSEL_HSE_CK
+#define STM32_FDCANSEL                      STM32_FDCANSEL_PLL1_Q_CK
 #define STM32_DFSDM1SEL                     STM32_DFSDM1SEL_PCLK2
 #define STM32_SPDIFSEL                      STM32_SPDIFSEL_PLL1_Q_CK
 #define STM32_SPI45SEL                      STM32_SPI45SEL_PCLK2
@@ -156,7 +156,7 @@
 #define STM32_SAI1SEL                       STM32_SAI1SEL_PLL1_Q_CK
 #define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK1
 #define STM32_CECSEL                        STM32_CECSEL_LSE_CK
-#define STM32_USBSEL                        STM32_USBSEL_PLL1_Q_CK
+#define STM32_USBSEL                        STM32_USBSEL_HSI48_CK
 #define STM32_I2C123SEL                     STM32_I2C123SEL_PCLK1
 #define STM32_RNGSEL                        STM32_RNGSEL_HSI48_CK
 #define STM32_USART16SEL                    STM32_USART16SEL_PCLK2
@@ -302,6 +302,32 @@
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
 
 /*
+ * I2S driver system settings.
+ */
+#define STM32_I2S_USE_SPI1                  FALSE
+#define STM32_I2S_USE_SPI2                  FALSE
+#define STM32_I2S_USE_SPI3                  FALSE
+#define STM32_I2S_SPI1_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#define STM32_I2S_SPI2_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#define STM32_I2S_SPI3_MODE                 (STM32_I2S_MODE_MASTER |        \
+                                             STM32_I2S_MODE_RX)
+#define STM32_I2S_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
+#define STM32_I2S_SPI1_DMA_PRIORITY         1
+#define STM32_I2S_SPI2_DMA_PRIORITY         1
+#define STM32_I2S_SPI3_DMA_PRIORITY         1
+#define STM32_I2S_SPI1_IRQ_PRIORITY         10
+#define STM32_I2S_SPI2_IRQ_PRIORITY         10
+#define STM32_I2S_SPI3_IRQ_PRIORITY         10
+#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      osalSysHalt("DMA failure")
+
+/*
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM1                  FALSE
@@ -355,7 +381,7 @@
 /*
  * SDC driver system settings.
  */
-#define STM32_SDC_USE_SDMMC1                TRUE
+#define STM32_SDC_USE_SDMMC1                FALSE
 #define STM32_SDC_USE_SDMMC2                FALSE
 #define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   TRUE
 #define STM32_SDC_SDMMC_WRITE_TIMEOUT       10000
