@@ -368,15 +368,39 @@
 /* CAN attributes.*/
 #define STM32_HAS_FDCAN1                    TRUE
 #define STM32_HAS_FDCAN2                    TRUE
-#define STM32_HAS_FDCAN3                    FALSE
-#define STM32_FDCAN_FLS_NBR                 128U
-#define STM32_FDCAN_FLE_NBR                 128U
-#define STM32_FDCAN_RF0_NBR                 64U
-#define STM32_FDCAN_RF1_NBR                 64U
-#define STM32_FDCAN_RB_NBR                  64U
-#define STM32_FDCAN_TEF_NBR                 32U
+#define STM32_HAS_FDCAN3                    TRUE
+#if (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2 && STM32_CAN_USE_FDCAN3)
+#define STM32_FDCAN_FLS_NBR                 21U
+#define STM32_FDCAN_FLE_NBR                 10U
+#define STM32_FDCAN_RF0_NBR                 10U
+#define STM32_FDCAN_RF1_NBR                 10U
+#define STM32_FDCAN_RB_NBR                  10U
+#define STM32_FDCAN_TEF_NBR                 5U
+#define STM32_FDCAN_TB_NBR                  10U
+#define STM32_FDCAN_TM_NBR                  10U
+#elif ((STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2 && !STM32_CAN_USE_FDCAN3) || \
+      (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN3 && !STM32_CAN_USE_FDCAN2) || \
+      (STM32_CAN_USE_FDCAN2 && STM32_CAN_USE_FDCAN3 && !STM32_CAN_USE_FDCAN1))
+#define STM32_FDCAN_FLS_NBR                 32U
+#define STM32_FDCAN_FLE_NBR                 16U
+#define STM32_FDCAN_RF0_NBR                 16U
+#define STM32_FDCAN_RF1_NBR                 16U
+#define STM32_FDCAN_RB_NBR                  16U
+#define STM32_FDCAN_TEF_NBR                 8U
+#define STM32_FDCAN_TB_NBR                  16U
+#define STM32_FDCAN_TM_NBR                  16U
+#elif ((STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN2 && !STM32_CAN_USE_FDCAN3) || \
+       (STM32_CAN_USE_FDCAN2 && !STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN3) || \
+       (STM32_CAN_USE_FDCAN3 && !STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN2))
+#define STM32_FDCAN_FLS_NBR                 64U
+#define STM32_FDCAN_FLE_NBR                 32U
+#define STM32_FDCAN_RF0_NBR                 32U
+#define STM32_FDCAN_RF1_NBR                 32U
+#define STM32_FDCAN_RB_NBR                  32U
+#define STM32_FDCAN_TEF_NBR                 16U
 #define STM32_FDCAN_TB_NBR                  32U
-#define STM32_FDCAN_TM_NBR                  64U
+#define STM32_FDCAN_TM_NBR                  32U
+#endif
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
@@ -841,6 +865,27 @@
 /* CAN attributes.*/
 #define STM32_HAS_FDCAN1                    TRUE
 #define STM32_HAS_FDCAN2                    TRUE
+#define STM32_HAS_FDCAN3                    FALSE
+
+#if (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2)
+#define STM32_FDCAN_FLS_NBR                 32U
+#define STM32_FDCAN_FLE_NBR                 16U
+#define STM32_FDCAN_RF0_NBR                 16U
+#define STM32_FDCAN_RF1_NBR                 16U
+#define STM32_FDCAN_RB_NBR                  16U
+#define STM32_FDCAN_TEF_NBR                 8U
+#define STM32_FDCAN_TB_NBR                  16U
+#define STM32_FDCAN_TM_NBR                  16U
+#else
+#define STM32_FDCAN_FLS_NBR                 64U
+#define STM32_FDCAN_FLE_NBR                 32U
+#define STM32_FDCAN_RF0_NBR                 32U
+#define STM32_FDCAN_RF1_NBR                 32U
+#define STM32_FDCAN_RB_NBR                  32U
+#define STM32_FDCAN_TEF_NBR                 16U
+#define STM32_FDCAN_TB_NBR                  32U
+#define STM32_FDCAN_TM_NBR                  32U
+#endif
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE

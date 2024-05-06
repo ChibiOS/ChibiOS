@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added STM32 FDCANv2 for STM32H7xx
 - NEW: Now RT virtual timers can recalculate the value of CH_CFG_ST_TIMEDELTA
        at runtime and continue using the recalculated value. This has two
        consequences: 1) The value is recalculated once 2) it is possible
