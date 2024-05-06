@@ -66,6 +66,7 @@
 
 #include "stm32_fdcan1.inc"
 #include "stm32_fdcan2.inc"
+#include "stm32_fdcan3.inc"
 
 #if defined(HAL_LLD_TYPE1_H)
 #include "stm32_quadspi1.inc"
@@ -127,6 +128,7 @@ void irqInit(void) {
 
   fdcan1_irq_init();
   fdcan2_irq_init();
+  fdcan3_irq_init();
 
   mdma_irq_init();
 
@@ -187,6 +189,7 @@ void irqDeinit(void) {
 
   fdcan1_irq_deinit();
   fdcan2_irq_deinit();
+  fdcan3_irq_deinit();
 
   mdma_irq_deinit();
 

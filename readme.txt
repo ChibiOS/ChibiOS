@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: Added STM32 FDCANv2 for STM32H7xx
 - NEW: Improved DAC driver, updated STM32 DACv1.
 - NEW: Removed oscillator stabilization delay on STM32 LSE and HSE when
        bypass mode is enabled.

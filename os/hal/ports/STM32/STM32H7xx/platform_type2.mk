@@ -31,7 +31,7 @@ include $(CHIBIOS)/os/hal/ports/STM32/LLD/CRYPv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/DACv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/DMAv2/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/EXTIv1/driver.mk
-include $(CHIBIOS)/os/hal/ports/STM32/LLD/FDCANv1/driver.mk
+include $(CHIBIOS)/os/hal/ports/STM32/LLD/FDCANv2/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/GPIOv2/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/I2Cv3/driver.mk
 include $(CHIBIOS)/os/hal/ports/STM32/LLD/MACv2/driver.mk
