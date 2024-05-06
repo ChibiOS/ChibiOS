@@ -202,7 +202,7 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
+        Mode="Alternate"
         Alternate="9" />
       <pin6
         ID=""
@@ -1171,11 +1171,11 @@
         Mode="Alternate"
         Alternate="14" />
       <pin13
-        ID="LED_GREEN"
+        ID="LED_RED"
         Type="PushPull"
-        Level="Low"
+        Level="High"
         Speed="Maximum"
-        Resistor="PullDown"
+        Resistor="PullUp"
         Mode="Output"
         Alternate="0" />
       <pin14
@@ -1213,11 +1213,11 @@
         Mode="Alternate"
         Alternate="14" />
       <pin2
-        ID="LED_RED"
+        ID="LED_GREEN"
         Type="PushPull"
-        Level="Low"
+        Level="High"
         Speed="Maximum"
-        Resistor="PullDown"
+        Resistor="PullUp"
         Mode="Output"
         Alternate="0" />
       <pin3
