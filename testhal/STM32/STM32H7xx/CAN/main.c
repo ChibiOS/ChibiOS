@@ -82,6 +82,7 @@ static THD_FUNCTION(can_rx, p) {
  */
 static THD_WORKING_AREA(can_tx_wa, 512);
 static THD_FUNCTION(can_tx, p) {
+
   CANTxFrame txmsg1;
 
   (void)p;
