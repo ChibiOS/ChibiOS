@@ -477,16 +477,19 @@ static inline void chSysUnlockFromISR(void) {
   port_unlock_from_isr();
 }
 
+#if defined(port_get_lock_status) || defined(__DOXYGEN__)
 /**
  * @brief   Unconditionally enters the kernel lock state.
  * @note    Can be called without previous knowledge of the current lock state.
  *          The final state is "s-locked".
+ * @note    This function is only available if the underlying port supports
+ *          @p port_get_lock_status() and @p port_is_locked().
  *
  * @special
  */
 static inline void chSysUnconditionalLock(void) {
 
-  if (port_irq_enabled(port_get_irq_status())) {
+  if (!port_is_locked(port_get_lock_status())) {
     chSysLock();
   }
 }
@@ -495,15 +498,18 @@ static inline void chSysUnconditionalLock(void) {
  * @brief   Unconditionally leaves the kernel lock state.
  * @note    Can be called without previous knowledge of the current lock state.
  *          The final state is "normal".
+ * @note    This function is only available if the underlying port supports
+ *          @p port_get_lock_status() and @p port_is_locked().
  *
  * @special
  */
 static inline void chSysUnconditionalUnlock(void) {
 
-  if (!port_irq_enabled(port_get_irq_status())) {
+  if (port_is_locked(port_get_lock_status())) {
     chSysUnlock();
   }
 }
+#endif /* defined(port_get_lock_status) */
 
 #if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
 /**
