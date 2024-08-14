@@ -286,6 +286,23 @@ struct port_context {
 }
 #endif
 
+/**
+ * @brief   Returns a word representing a critical section status.
+ *
+ * @return              The critical section status.
+ */
+#define port_get_lock_status() 0U
+
+/**
+ * @brief   Determines if in a critical section.
+ *
+ * @param[in] sts       status word returned by @p port_get_lock_status()
+ * @return              The current status.
+ * @retval false        if running outside a critical section.
+ * @retval true         if running within a critical section.
+ */
+#define port_is_locked(sts) ((sts) != 0U)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -312,32 +329,6 @@ extern "C" {
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)
-
-/**
- * @brief   Returns a word encoding the current interrupts status.
- *
- * @return              The interrupts status.
- */
-static inline syssts_t port_get_irq_status(void) {
-
-  return 0;
-}
-
-/**
- * @brief   Checks the interrupt status.
- *
- * @param[in] sts       the interrupt status word
- *
- * @return              The interrupt status.
- * @retval false        the word specified a disabled interrupts status.
- * @retval true         the word specified an enabled interrupts status.
- */
-static inline bool port_irq_enabled(syssts_t sts) {
-
-  (void)sts;
-
-  return false;
-}
 
 /**
  * @brief   Determines the current execution context.

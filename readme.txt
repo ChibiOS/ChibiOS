@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- FIX: Fixed problem in recursive locks functions (bug #1288).
 - FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277).
 - FIX: Fixed avoid shadowing with build-in pow10 function in chprintf.c
        (bug #1274).
