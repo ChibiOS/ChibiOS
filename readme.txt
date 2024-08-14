@@ -86,6 +86,7 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Fixed problem in recursive locks functions (bug #1288).
 - FIX: Fixed ARMv8-M-ML port compile fail when FPU is enabled (bug #1281).
 - FIX: Fixed interrupts not enabled for STM32H735 TIM15, TIM16 and TIM17
        (bug #1280).
