@@ -422,6 +422,23 @@ struct port_context {
   } while (false)
 #endif
 
+/**
+ * @brief   Returns a word representing a critical section status.
+ *
+ * @return              The critical section status.
+ */
+#define port_get_lock_status() __port_get_irq_status()
+
+/**
+ * @brief   Determines if in a critical section.
+ *
+ * @param[in] sts       status word returned by @p port_get_lock_status()
+ * @return              The current status.
+ * @retval false        if running outside a critical section.
+ * @retval true         if running within a critical section.
+ */
+#define port_is_locked(sts) !__port_irq_enabled(sts)
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -448,7 +465,7 @@ extern "C" {
  *
  * @return              The interrupts status.
  */
-static inline syssts_t port_get_irq_status(void) {
+static inline syssts_t __port_get_irq_status(void) {
 
   return (syssts_t)__get_PRIMASK();
 }
@@ -462,7 +479,7 @@ static inline syssts_t port_get_irq_status(void) {
  * @retval false        the word specified a disabled interrupts status.
  * @retval true         the word specified an enabled interrupts status.
  */
-static inline bool port_irq_enabled(syssts_t sts) {
+static inline bool __port_irq_enabled(syssts_t sts) {
 
   return (sts & (syssts_t)1) == (syssts_t)0;
 }

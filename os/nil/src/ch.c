@@ -448,6 +448,7 @@ void chSysTimerHandlerI(void) {
 #endif
 }
 
+#if defined(port_get_lock_status) || defined(__DOXYGEN__)
 /**
  * @brief   Unconditionally enters the kernel lock state.
  * @note    Can be called without previous knowledge of the current lock state.
@@ -457,7 +458,7 @@ void chSysTimerHandlerI(void) {
  */
 void chSysUnconditionalLock(void) {
 
-  if (port_irq_enabled(port_get_irq_status())) {
+  if (!port_is_locked(port_get_lock_status())) {
     chSysLock();
   }
 }
@@ -471,7 +472,7 @@ void chSysUnconditionalLock(void) {
  */
 void chSysUnconditionalUnlock(void) {
 
-  if (!port_irq_enabled(port_get_irq_status())) {
+  if (port_is_locked(port_get_lock_status())) {
     chSysUnlock();
   }
 }
@@ -483,16 +484,18 @@ void chSysUnconditionalUnlock(void) {
  *          than @p chSysLock() which is preferable when the calling context
  *          is known.
  * @post    The system is in a critical zone.
+ * @note    This function is only available if the underlying port supports
+ *          @p port_get_lock_status() and @p port_is_locked().
  *
  * @return              The previous system status, the encoding of this
  *                      status word is architecture-dependent and opaque.
  *
  * @xclass
  */
-syssts_t chSysGetStatusAndLockX(void)  {
+syssts_t chSysGetStatusAndLockX(void) {
 
-  syssts_t sts = port_get_irq_status();
-  if (port_irq_enabled(sts)) {
+  syssts_t sts = port_get_lock_status();
+  if (!port_is_locked(sts)) {
     if (port_is_isr_context()) {
       chSysLockFromISR();
     }
@@ -507,6 +510,8 @@ syssts_t chSysGetStatusAndLockX(void)  {
  * @brief   Restores the specified execution status and leaves a critical zone.
  * @note    A call to @p chSchRescheduleS() is automatically performed
  *          if exiting the critical zone and if not in ISR context.
+ * @note    This function is only available if the underlying port supports
+ *          @p port_get_lock_status() and @p port_is_locked().
  *
  * @param[in] sts       the system status to be restored.
  *
@@ -514,7 +519,7 @@ syssts_t chSysGetStatusAndLockX(void)  {
  */
 void chSysRestoreStatusX(syssts_t sts) {
 
-  if (port_irq_enabled(sts)) {
+  if (!port_is_locked(sts)) {
     if (port_is_isr_context()) {
       chSysUnlockFromISR();
     }
@@ -524,6 +529,7 @@ void chSysRestoreStatusX(syssts_t sts) {
     }
   }
 }
+#endif /* defined(port_get_lock_status) */
 
 #if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
 /**
