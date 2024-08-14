@@ -124,6 +124,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed problem in recursive locks functions (bug #1288)
+       (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed ARMv8-M-ML port compile fail when FPU is enabled (bug #1281)
        (backported to 21.11.4).
 - FIX: Fixed interrupts not enabled for STM32H735 TIM15, TIM16 and TIM17
