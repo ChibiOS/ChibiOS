@@ -52,7 +52,7 @@
 /**
  * @brief   HAL version string.
  */
-#define CH_HAL_VERSION          "8.4.0"
+#define CH_HAL_VERSION          "8.4.1"
 
 /**
  * @brief   HAL version major number.
@@ -67,7 +67,7 @@
 /**
  * @brief   HAL version patch number.
  */
-#define CH_HAL_PATCH            0
+#define CH_HAL_PATCH            1
 /** @} */
 
 /**
