@@ -29,6 +29,137 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+
+/*===========================================================================*/
+/* STM32H723xx, STM32H733xx, STM32H725xx, STM32H735xx, STM32H730xx.          */
+/*===========================================================================*/
+#if defined(STM32H723xx) || defined(STM32H733xx) ||                         \
+    defined(STM32H725xx) || defined(STM32H735xx) ||                         \
+    defined(STM32H730xx) ||                                                 \
+    defined(__DOXYGEN__)
+
+#if (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2 && STM32_CAN_USE_FDCAN3)
+#define STM32_FDCAN_FLS_NBR                 21U
+#define STM32_FDCAN_FLE_NBR                 10U
+#define STM32_FDCAN_RF0_NBR                 10U
+#define STM32_FDCAN_RF1_NBR                 10U
+#define STM32_FDCAN_RB_NBR                  10U
+#define STM32_FDCAN_TEF_NBR                 5U
+#define STM32_FDCAN_TB_NBR                  10U
+#define STM32_FDCAN_TM_NBR                  10U
+#elif ((STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2 && !STM32_CAN_USE_FDCAN3) || \
+      (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN3 && !STM32_CAN_USE_FDCAN2) || \
+      (STM32_CAN_USE_FDCAN2 && STM32_CAN_USE_FDCAN3 && !STM32_CAN_USE_FDCAN1))
+#define STM32_FDCAN_FLS_NBR                 32U
+#define STM32_FDCAN_FLE_NBR                 16U
+#define STM32_FDCAN_RF0_NBR                 16U
+#define STM32_FDCAN_RF1_NBR                 16U
+#define STM32_FDCAN_RB_NBR                  16U
+#define STM32_FDCAN_TEF_NBR                 8U
+#define STM32_FDCAN_TB_NBR                  16U
+#define STM32_FDCAN_TM_NBR                  16U
+#elif ((STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN2 && !STM32_CAN_USE_FDCAN3) || \
+       (STM32_CAN_USE_FDCAN2 && !STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN3) || \
+       (STM32_CAN_USE_FDCAN3 && !STM32_CAN_USE_FDCAN1 && !STM32_CAN_USE_FDCAN2))
+#define STM32_FDCAN_FLS_NBR                 64U
+#define STM32_FDCAN_FLE_NBR                 32U
+#define STM32_FDCAN_RF0_NBR                 32U
+#define STM32_FDCAN_RF1_NBR                 32U
+#define STM32_FDCAN_RB_NBR                  32U
+#define STM32_FDCAN_TEF_NBR                 16U
+#define STM32_FDCAN_TB_NBR                  32U
+#define STM32_FDCAN_TM_NBR                  32U
+#endif
+#endif /* defined(STM32H723xx) || defined(STM32H733xx) ||
+          defined(STM32H725xx) || defined(STM32H735xx) ||
+          defined(STM32H730xx) */
+
+/*===========================================================================*/
+/* STM32H750xx.                                                              */
+/*===========================================================================*/
+#if defined(STM32H750xx) || defined(STM32H7B0xx) ||                         \
+    defined(__DOXYGEN__)
+
+#if (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2)
+#define STM32_FDCAN_FLS_NBR                 32U
+#define STM32_FDCAN_FLE_NBR                 16U
+#define STM32_FDCAN_RF0_NBR                 16U
+#define STM32_FDCAN_RF1_NBR                 16U
+#define STM32_FDCAN_RB_NBR                  16U
+#define STM32_FDCAN_TEF_NBR                 8U
+#define STM32_FDCAN_TB_NBR                  16U
+#define STM32_FDCAN_TM_NBR                  16U
+#else
+#define STM32_FDCAN_FLS_NBR                 64U
+#define STM32_FDCAN_FLE_NBR                 32U
+#define STM32_FDCAN_RF0_NBR                 32U
+#define STM32_FDCAN_RF1_NBR                 32U
+#define STM32_FDCAN_RB_NBR                  32U
+#define STM32_FDCAN_TEF_NBR                 16U
+#define STM32_FDCAN_TB_NBR                  32U
+#define STM32_FDCAN_TM_NBR                  32U
+#endif
+#endif /* defined(STM32H750xx) */
+
+/*===========================================================================*/
+/* STM32H743xx, STM32H753xx, STM32H745xx, STM32H755xx, STM32H747xx,          */
+/* STM32H757xx.                                                              */
+/*===========================================================================*/
+#if defined(STM32H743xx) || defined(STM32H753xx) ||                         \
+    defined(STM32H745xx) || defined(STM32H755xx) ||                         \
+    defined(STM32H747xx) || defined(STM32H757xx) ||                         \
+    defined(__DOXYGEN__)
+
+#if (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2)
+#define STM32_FDCAN_FLS_NBR                 32U
+#define STM32_FDCAN_FLE_NBR                 16U
+#define STM32_FDCAN_RF0_NBR                 16U
+#define STM32_FDCAN_RF1_NBR                 16U
+#define STM32_FDCAN_RB_NBR                  16U
+#define STM32_FDCAN_TEF_NBR                 8U
+#define STM32_FDCAN_TB_NBR                  16U
+#define STM32_FDCAN_TM_NBR                  16U
+#else
+#define STM32_FDCAN_FLS_NBR                 64U
+#define STM32_FDCAN_FLE_NBR                 32U
+#define STM32_FDCAN_RF0_NBR                 32U
+#define STM32_FDCAN_RF1_NBR                 32U
+#define STM32_FDCAN_RB_NBR                  32U
+#define STM32_FDCAN_TEF_NBR                 16U
+#define STM32_FDCAN_TB_NBR                  32U
+#define STM32_FDCAN_TM_NBR                  32U
+#endif
+#endif /* defined(STM32H743xx) || defined(STM32H753xx) */
+
+/*===========================================================================*/
+/* STM32H7A3xx, STM32H7B3xx, STM32H7A3xxQ, STM32H7B3xxQ.                     */
+/*===========================================================================*/
+#if defined(STM32H7A3xx)  || defined(STM32H7B3xx)  ||                       \
+    defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ) ||                       \
+    defined(__DOXYGEN__)
+
+#if (STM32_CAN_USE_FDCAN1 && STM32_CAN_USE_FDCAN2)
+#define STM32_FDCAN_FLS_NBR                 32U
+#define STM32_FDCAN_FLE_NBR                 16U
+#define STM32_FDCAN_RF0_NBR                 16U
+#define STM32_FDCAN_RF1_NBR                 16U
+#define STM32_FDCAN_RB_NBR                  16U
+#define STM32_FDCAN_TEF_NBR                 8U
+#define STM32_FDCAN_TB_NBR                  16U
+#define STM32_FDCAN_TM_NBR                  16U
+#else
+#define STM32_FDCAN_FLS_NBR                 64U
+#define STM32_FDCAN_FLE_NBR                 32U
+#define STM32_FDCAN_RF0_NBR                 32U
+#define STM32_FDCAN_RF1_NBR                 32U
+#define STM32_FDCAN_RB_NBR                  32U
+#define STM32_FDCAN_TEF_NBR                 16U
+#define STM32_FDCAN_TB_NBR                  32U
+#define STM32_FDCAN_TM_NBR                  32U
+#endif
+#endif /* defined(STM32H7A3xx)  || defined(STM32H7B3xx) ||
+          defined(STM32H7A3xxQ) || defined(STM32H7B3xxQ) */
+
 /* Size of element size (RAM words) */
 #define CAN_SIZE_RAM_WORDS              (4U)
 #define FDCAN_SIZE_RAM_WORDS            (18U)

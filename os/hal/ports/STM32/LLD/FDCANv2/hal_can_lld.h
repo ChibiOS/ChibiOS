@@ -154,38 +154,6 @@
 #error "CAN driver activated but no FDCAN peripheral assigned"
 #endif
 
-#if !defined(STM32_FDCAN_FLS_NBR)
-#error "STM32_FDCAN_FLS_NBR not defined in registry"
-#endif
-
-#if !defined(STM32_FDCAN_FLE_NBR)
-#error "STM32_FDCAN_FLE_NBR not defined in registry"
-#endif
-
-#if !defined(STM32_FDCAN_RF0_NBR)
-#error "STM32_FDCAN_RF0_NBR not defined in registry"
-#endif
-
-#if !defined(STM32_FDCAN_RF1_NBR)
-#error "STM32_FDCAN_RF1_NBR not defined in registry"
-#endif
-
-#if !defined(STM32_FDCAN_RB_NBR)
-#error "STM32_FDCAN_RB_NBR not defined in registry"
-#endif
-
-#if !defined(STM32_FDCAN_TEF_NBR)
-#error "STM32_FDCAN_TEF_NBR not defined in registry"
-#endif
-
-#if !defined(STM32_FDCAN_TB_NBR)
-#error "STM32_FDCAN_TB_NBR not defined in registry"
-#endif
-
-#if !defined(STM32_FDCAN_TM_NBR)
-#error "STM32_FDCAN_TM_NBR not defined in registry"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
