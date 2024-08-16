@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Recursive locks in RT and NIL made optional, only enabled if the
+       underlying port supports the capability.
 - NEW: Added STM32 FDCANv2 for STM32H7xx
 - NEW: Now RT virtual timers can recalculate the value of CH_CFG_ST_TIMEDELTA
        at runtime and continue using the recalculated value. This has two

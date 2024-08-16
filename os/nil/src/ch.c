@@ -448,7 +448,7 @@ void chSysTimerHandlerI(void) {
 #endif
 }
 
-#if defined(port_get_lock_status) || defined(__DOXYGEN__)
+#if (CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Unconditionally enters the kernel lock state.
  * @note    Can be called without previous knowledge of the current lock state.
@@ -529,7 +529,7 @@ void chSysRestoreStatusX(syssts_t sts) {
     }
   }
 }
-#endif /* defined(port_get_lock_status) */
+#endif /* CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE */
 
 #if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
 /**
