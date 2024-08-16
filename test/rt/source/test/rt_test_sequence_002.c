@@ -131,11 +131,18 @@ static const testcase_t rt_test_002_001 = {
   rt_test_002_001_execute
 };
 
+#if (CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @page rt_test_002_002 [2.2] Critical zones functionality
  *
  * <h2>Description</h2>
  * The critical zones API is invoked for coverage.
+ *
+ * <h2>Conditions</h2>
+ * This test is only executed if the following preprocessor condition
+ * evaluates to true:
+ * - CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE
+ * .
  *
  * <h2>Test Steps</h2>
  * - [2.2.1] Testing chSysGetStatusAndLockX() and
@@ -208,6 +215,7 @@ static const testcase_t rt_test_002_002 = {
   NULL,
   rt_test_002_002_execute
 };
+#endif /* CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE */
 
 /**
  * @page rt_test_002_003 [2.3] Interrupts handling functionality
@@ -250,7 +258,9 @@ static const testcase_t rt_test_002_003 = {
  */
 const testcase_t * const rt_test_sequence_002_array[] = {
   &rt_test_002_001,
+#if (CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE) || defined(__DOXYGEN__)
   &rt_test_002_002,
+#endif
   &rt_test_002_003,
   NULL
 };

@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: Recursive locks in RT and NIL made optional, only enabled if the
+       underlying port supports the capability.
 - NEW: Added STM32 FDCANv2 for STM32H7xx
 - NEW: Improved DAC driver, updated STM32 DACv1.
 - NEW: Removed oscillator stabilization delay on STM32 LSE and HSE when

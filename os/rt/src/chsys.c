@@ -404,7 +404,7 @@ void chSysTimerHandlerI(void) {
   CH_CFG_SYSTEM_TICK_HOOK();
 }
 
-#if defined(port_get_lock_status) || defined(__DOXYGEN__)
+#if (CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Returns the execution status and enters a critical zone.
  * @details This functions enters into a critical zone and can be called
@@ -457,7 +457,7 @@ void chSysRestoreStatusX(syssts_t sts) {
     }
   }
 }
-#endif /* defined(port_get_lock_status) */
+#endif /* CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE */
 
 #if (PORT_SUPPORTS_RT == TRUE) || defined(__DOXYGEN__)
 /**
