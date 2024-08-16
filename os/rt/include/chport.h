@@ -136,7 +136,7 @@
 #endif
 #endif
 
-* Recursive locks port capability assessed.*/
+/* Recursive locks port capability assessed.*/
 #if defined(port_get_lock_status) && defined(port_is_locked)
 #define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    TRUE
 #else
