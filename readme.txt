@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** 20.3.5 ***
+- NEW: Recursive locks in RT and NIL made optional, only enabled if the
+       underlying port supports the capability.
 - FIX: Fixed problem in recursive locks functions (bug #1288).
 - FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277).
 - FIX: Fixed avoid shadowing with build-in pow10 function in chprintf.c

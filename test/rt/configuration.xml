@@ -515,7 +515,7 @@ test_assert(result == false, "port layer check failed");]]></value>
                   <value>The critical zones API is invoked for coverage.</value>
                 </description>
                 <condition>
-                  <value />
+                  <value >CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE</value>
                 </condition>
                 <various_code>
                   <setup_code>

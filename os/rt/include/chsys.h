@@ -52,6 +52,13 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Recursive locks port capability assessed.*/
+#if defined(port_get_lock_status) && defined(port_is_locked)
+#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    TRUE
+#else
+#define CH_PORT_SUPPORTS_RECURSIVE_LOCKS    FALSE
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -419,7 +426,7 @@ static inline void chSysUnlockFromISR(void) {
   port_unlock_from_isr();
 }
 
-#if defined(port_get_lock_status) || defined(__DOXYGEN__)
+#if (CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Unconditionally enters the kernel lock state.
  * @note    Can be called without previous knowledge of the current lock state.
@@ -451,7 +458,7 @@ static inline void chSysUnconditionalUnlock(void) {
     chSysUnlock();
   }
 }
-#endif /* defined(port_get_lock_status) */
+#endif /* CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE */
 
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
 /**
