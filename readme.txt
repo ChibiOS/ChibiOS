@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: ADCv4 now can use regular DMA also for ADC3 unit.
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
        underlying port supports the capability.
 - NEW: Added STM32 FDCANv2 for STM32H7xx
