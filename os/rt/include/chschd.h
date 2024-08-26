@@ -95,15 +95,8 @@
  * @name    Thread flags and attributes
  * @{
  */
-#define CH_FLAG_MODE_MASK   (tmode_t)3U     /**< @brief Thread memory mode
-                                                 mask.                      */
-#define CH_FLAG_MODE_STATIC (tmode_t)0U     /**< @brief Static thread.      */
-#define CH_FLAG_MODE_HEAP   (tmode_t)1U     /**< @brief Thread allocated
-                                                 from a Memory Heap.        */
-#define CH_FLAG_MODE_MPOOL  (tmode_t)2U     /**< @brief Thread allocated
-                                                 from a Memory Pool.        */
-#define CH_FLAG_TERMINATE   (tmode_t)4U     /**< @brief Termination requested
-                                                 flag.                      */
+#define CH_FLAGS_USER_MASK  (tmode_t)127U   /**< @brief Unused flags.       */
+#define CH_FLAGS_TERMINATE  (tmode_t)128U   /**< @brief Termination flag.   */
 /** @} */
 
 /*===========================================================================*/

@@ -44,7 +44,7 @@
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_RT_CONF_VER_7_0_)
+#if !defined(_CHIBIOS_RT_CONF_VER_8_0_)
 #error "obsolete or unknown configuration file"
 #endif
 
