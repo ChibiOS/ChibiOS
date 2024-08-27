@@ -773,8 +773,8 @@ void sd_lld_init(void) {
 
 #if STM32_SERIAL_USE_UART9
   sdObjectInit(&SD9);
-  iqObjectInit(&SD9.iqueue, sd_in_buf9, sizeof sd_in_buf9, NULL, &SD8);
-  oqObjectInit(&SD9.oqueue, sd_out_buf9, sizeof sd_out_buf9, notify9, &SD8);
+  iqObjectInit(&SD9.iqueue, sd_in_buf9, sizeof sd_in_buf9, NULL, &SD9);
+  oqObjectInit(&SD9.oqueue, sd_out_buf9, sizeof sd_out_buf9, notify9, &SD9);
   SD8.usart = UART9;
   SD8.clock = STM32_UART9CLK;
 #if !defined(STM32_UART9_SUPPRESS_ISR) && defined(STM32_UART9_NUMBER)
