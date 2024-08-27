@@ -245,7 +245,7 @@ void chThdObjectDispose(thread_t *tp) {
  * @api
  */
 thread_t *chThdSpawnSuspendedI(thread_t *tp,
-                                const thread_descriptor_t *tdp) {
+                               const thread_descriptor_t *tdp) {
 
   chDbgCheck(tp != NULL);
   chDbgCheck(tdp != NULL);
