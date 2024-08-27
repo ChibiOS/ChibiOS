@@ -640,7 +640,7 @@ void chThdRelease(thread_t *tp) {
 
 #if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
     /* Calling thread dispose function, if any.*/
-    if (tp->dispose == NULL) {
+    if (tp->dispose != NULL) {
       tp->dispose(tp);
     }
 #endif
