@@ -290,19 +290,3 @@ u32_t sys_now(void) {
 }
 #endif
 
-
-
-#if 0
-u32_t sys_now(void) {
-
-#if OSAL_ST_FREQUENCY == 1000
-  return (u32_t)chVTGetSystemTimeX();
-#elif (OSAL_ST_FREQUENCY / 1000) >= 1 && (OSAL_ST_FREQUENCY % 1000) == 0
-  return ((u32_t)chVTGetSystemTimeX() - 1) / (OSAL_ST_FREQUENCY / 1000) + 1;
-#elif (1000 / OSAL_ST_FREQUENCY) >= 1 && (1000 % OSAL_ST_FREQUENCY) == 0
-  return ((u32_t)chVTGetSystemTimeX() - 1) * (1000 / OSAL_ST_FREQUENCY) + 1;
-#else
-  return (u32_t)(((u64_t)(chVTGetSystemTimeX() - 1) * 1000) / OSAL_ST_FREQUENCY) + 1;
-#endif
-}
-#endif
