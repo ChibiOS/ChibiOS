@@ -225,15 +225,34 @@ void sys_arch_unprotect(sys_prot_t pval) {
   chSysRestoreStatusX((syssts_t)pval);
 }
 
-u32_t sys_now(void) {
-
-#if OSAL_ST_FREQUENCY == 1000
-  return (u32_t)chVTGetSystemTimeX();
-#elif (OSAL_ST_FREQUENCY / 1000) >= 1 && (OSAL_ST_FREQUENCY % 1000) == 0
-  return ((u32_t)chVTGetSystemTimeX() - 1) / (OSAL_ST_FREQUENCY / 1000) + 1;
-#elif (1000 / OSAL_ST_FREQUENCY) >= 1 && (1000 % OSAL_ST_FREQUENCY) == 0
-  return ((u32_t)chVTGetSystemTimeX() - 1) * (1000 / OSAL_ST_FREQUENCY) + 1;
-#else
-  return (u32_t)(((u64_t)(chVTGetSystemTimeX() - 1) * 1000) / OSAL_ST_FREQUENCY) + 1;
+#if (OSAL_ST_FREQUENCY < 1000) || ((OSAL_ST_FREQUENCY % 1000) != 0)
+#error "LWIP requires a systick frequency that is a multiple of 1000"
 #endif
+
+#if (OSAL_ST_RESOLUTION >= 32) && (OSAL_ST_FREQUENCY == 1000)
+u32_t sys_now(void) {return (u32_t)osalOsGetSystemTimeX();}
+
+#else
+u32_t sys_now(void) {
+  static struct {
+    systime_t   last_system_time;
+    u32_t       last_ms;
+    u32_t       last_unprocessed;
+  } persistent = {0, 0, 0};
+  u32_t delta;
+  systime_t now_time;
+
+  /* Calculating delta, in ticks, from the last acquired system time.*/
+  now_time = osalOsGetSystemTimeX();
+  delta = (u32_t)osalTimeDiffX(persistent.last_system_time, now_time) +
+          persistent.last_unprocessed;
+  persistent.last_system_time = now_time;
+
+  /* Storing this milliseconds time and eventual remainder.*/
+  persistent.last_ms          += delta / (OSAL_ST_FREQUENCY / 1000U);
+  persistent.last_unprocessed  = delta % (OSAL_ST_FREQUENCY / 1000U);
+
+  return persistent.last_ms;
 }
+#endif
+
