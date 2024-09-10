@@ -547,7 +547,7 @@ thread_t *chThdCreateStatic(void *wbase, size_t wsize,
   tp = threadref(wend - MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN));
 
   /* Initializing the thread_t structure using the passed parameters.*/
-  THD_DESC_DECL(desc, "noname", wbase, wend, prio, func, arg, currcore, 0);
+  THD_DESC_DECL(desc, "noname", wbase, wend, prio, func, arg, currcore, NULL);
   tp = chThdObjectInit(tp, &desc);
 
   /* Setting up the port-dependent part of the working area.*/
