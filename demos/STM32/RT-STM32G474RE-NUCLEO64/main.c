@@ -168,13 +168,13 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 /*
- * Green LED blinker thread, times are in milliseconds.
+ * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker");
+
   while (true) {
     palClearLine(LINE_LED_GREEN);
     chThdSleepMilliseconds(500);
@@ -204,14 +204,17 @@ int main(void) {
   sioStart(&LPSIOD1, NULL);
 
   /*
+   * Spawning a blinker thread.
+   */
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack, NORMALPRIO,
+                               thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
+
+  /*
    * Shell manager initialization.
    */
   shellInit();
-
-  /*
-   * Creates the blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

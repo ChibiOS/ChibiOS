@@ -67,8 +67,8 @@ const os_instance_config_t ch_core0_cfg = {
   .cstack_base      = &__main_thread_stack_base__,
   .cstack_end       = &__main_thread_stack_end__,
 #if CH_CFG_NO_IDLE_THREAD == FALSE
-  .idlestack_base   = THD_WORKING_AREA_BASE(ch_c0_idle_thread_wa),
-  .idlestack_end    = THD_WORKING_AREA_END(ch_c0_idle_thread_wa)
+  .idlestack_base   = THD_STACK_BASE(ch_c0_idle_thread_wa),
+  .idlestack_end    = THD_STACK_END(ch_c0_idle_thread_wa)
 #endif
 };
 
@@ -96,8 +96,8 @@ const os_instance_config_t ch_core1_cfg = {
   .cstack_base      = &__c1_main_thread_stack_base__,
   .cstack_end       = &__c1_main_thread_stack_end__,
 #if CH_CFG_NO_IDLE_THREAD == FALSE
-  .idlestack_base   = THD_WORKING_AREA_BASE(ch_c1_idle_thread_wa),
-  .idlestack_end    = THD_WORKING_AREA_END(ch_c1_idle_thread_wa)
+  .idlestack_base   = THD_STACK_BASE(ch_c1_idle_thread_wa),
+  .idlestack_end    = THD_STACK_END(ch_c1_idle_thread_wa)
 #endif
 };
 #endif /* PORT_CORES_NUMBER > 1 */

@@ -74,6 +74,12 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: New RT threads spawning API decoupling the thread stack from the
+       thread_t structure as required in NUMA multicore devices. Old
+       "create" API is still present and supported, long term it could be
+       removed.
+- NEW: Added capability to associate a "dispose" functions to threads,
+       dynamic API modified to use this mechanism.
 - NEW: ADCv4 now can use regular DMA also for ADC3 unit.
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
        underlying port supports the capability.

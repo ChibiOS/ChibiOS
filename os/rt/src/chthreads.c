@@ -246,6 +246,13 @@ thread_t *chThdSpawnSuspendedI(thread_t *tp,
   chDbgCheck(tp != NULL);
   chDbgCheck(tdp != NULL);
 
+  /* Checks related to the working area geometry.*/
+  chDbgCheck((tdp != NULL) &&
+             MEM_IS_ALIGNED(tdp->wbase, PORT_WORKING_AREA_ALIGN) &&
+             MEM_IS_ALIGNED(tdp->wend, PORT_STACK_ALIGN) &&
+             (tdp->wend > tdp->wbase) &&
+             (((size_t)tdp->wend - (size_t)tdp->wbase) >= THD_STACK_SIZE(0)));
+
   /* Thread object initialization.*/
   tp = chThdObjectInit(tp, tdp);
 
@@ -373,7 +380,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
   chDbgCheckClassI();
 
   /* Checks related to the working area geometry.*/
-  chDbgCheck((tdp != NULL)&&
+  chDbgCheck((tdp != NULL) &&
              MEM_IS_ALIGNED(tdp->wbase, PORT_WORKING_AREA_ALIGN) &&
              MEM_IS_ALIGNED(tdp->wend, PORT_STACK_ALIGN) &&
              (tdp->wend > tdp->wbase) &&

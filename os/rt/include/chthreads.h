@@ -153,6 +153,23 @@ typedef struct {
   stkalign_t s[THD_STACK_SIZE(n) / sizeof (stkalign_t)]
 
 /**
+ * @brief   Base of a thread Working Area casted to the correct type.
+ * @note    Equivalent to @p THD_WORKING_AREA_BASE().
+ *
+ * @param[in] s         name of the working area
+ */
+#define THD_STACK_BASE(s) ((stkalign_t *)(s))
+
+/**
+ * @brief   End of a thread Working Area casted to the correct type.
+ * @note    Equivalent to @p THD_WORKING_AREA_END().
+ *
+ * @param[in] s         name of the working area
+ */
+#define THD_STACK_END(s) (THD_STACK_BASE(s) +                               \
+                          (sizeof (s) / sizeof (stkalign_t)))
+
+/**
  * @brief   Calculates the thread Working Area size.
  * @note    This macro calculates a working area size for those
  *          thread-creation functions that allocate the @p thread_t
