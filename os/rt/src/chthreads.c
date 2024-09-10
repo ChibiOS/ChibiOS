@@ -123,10 +123,6 @@ thread_t *chThdObjectInit(thread_t *tp,
   tp->wabase = (void *)tdp->wbase;
   tp->waend  = (void *)tdp->wend;
 
-  /* Setting up the port-dependent part of the working area.*/
-  /* TODO: Remove redundant parameters.*/
-  PORT_SETUP_CONTEXT(tp, tp->wabase, tp->waend, tdp->funcp, tdp->arg);
-
   /* Thread-related fields.*/
   tp->hdr.pqueue.prio   = tdp->prio;
   tp->state             = CH_STATE_WTSTART;
@@ -252,6 +248,9 @@ thread_t *chThdSpawnSuspendedI(thread_t *tp,
 
   /* Thread object initialization.*/
   tp = chThdObjectInit(tp, tdp);
+
+  /* Setting up the port-dependent part of the working area.*/
+  PORT_SETUP_CONTEXT(tp, tp->wabase, tp->waend, tdp->funcp, tdp->arg);
 
   /* Registry-related fields.*/
 #if CH_CFG_USE_REGISTRY == TRUE
