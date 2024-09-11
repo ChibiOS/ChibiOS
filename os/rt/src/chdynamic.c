@@ -60,7 +60,7 @@ static void thd_heapfree(thread_t * tp) {
 #if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
 static void thd_poolfree(thread_t * tp) {
 
-  chPoolFree((memory_pool_t *)tp->mpool, (void *)tp->wabase);
+  chPoolFree((memory_pool_t *)tp->object, (void *)tp->wabase);
 }
 #endif /* CH_CFG_USE_MEMPOOLS == TRUE */
 
@@ -170,7 +170,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
 
   chSysLock();
   tp = chThdCreateSuspendedI(&td);
-  tp->mpool = mp;
+  tp->object = (void *)mp;
   chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
 

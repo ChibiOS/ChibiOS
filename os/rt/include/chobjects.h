@@ -230,12 +230,12 @@ struct ch_thread {
    * @brief   Pointer to a thread dispose function or @p NULL.
    */
   thread_dispose_t              dispose;
-#if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Memory Pool where the thread workspace is returned.
+   * @brief   Thread controller object or @p NULL.
+   * @note    This field can be used to associate an user object to the
+   *          thread.
    */
-  void                          *mpool;
-#endif
+  void                          *object;
 #endif
 #if (CH_CFG_TIME_QUANTUM > 0) || defined(__DOXYGEN__)
   /**

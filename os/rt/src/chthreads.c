@@ -135,9 +135,7 @@ thread_t *chThdObjectInit(thread_t *tp,
   }
 #if CH_CFG_USE_DYNAMIC == TRUE
   tp->dispose           = tdp->dispose;
-#if CH_CFG_USE_MEMPOOLS == TRUE
-  tp->mpool             = NULL;
-#endif
+  tp->object            = NULL;
 #endif
 #if CH_CFG_TIME_QUANTUM > 0
   tp->ticks             = (tslices_t)CH_CFG_TIME_QUANTUM;
