@@ -232,8 +232,9 @@ extern "C" {
                         const xshell_manager_config_t *config);
   thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp);
   void xshellGarbageCollect(xshell_manager_t *smp);
-  void xshellExit(msg_t msg);
-  bool xshellGetLine(xshell_manager_t *smp, char *line, unsigned size);
+  void xshellExit(xshell_manager_t *smp, msg_t msg);
+  bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stp,
+                     char *line, size_t size);
 #ifdef __cplusplus
 }
 #endif

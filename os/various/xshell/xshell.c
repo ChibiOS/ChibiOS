@@ -38,11 +38,6 @@
 /* Module exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   Shell termination event source.
- */
-event_source_t shell_terminated;
-
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
@@ -88,20 +83,21 @@ static char *parse_arguments(char *str, char **saveptr) {
   return *p != '\0' ? p : NULL;
 }
 
-static void list_commands(BaseSequentialStream *chp, const ShellCommand *scp) {
+static void list_commands(BaseSequentialStream *chp, const xshell_command_t *scp) {
 
-  while (scp->sc_name != NULL) {
-    chprintf(chp, "%s ", scp->sc_name);
+  while (scp->name != NULL) {
+    chprintf(chp, "%s ", scp->name);
     scp++;
   }
 }
 
-static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
+static bool cmdexec(xshell_manager_t *smp, const xshell_command_t *scp,
+                    BaseSequentialStream *chp,
                     char *name, int argc, char *argv[]) {
 
-  while (scp->sc_name != NULL) {
-    if (strcmp(scp->sc_name, name) == 0) {
-      scp->sc_function(chp, argc, argv);
+  while (scp->name != NULL) {
+    if (strcmp(scp->name, name) == 0) {
+      scp->fn(smp, chp, argc, argv);
       return false;
     }
     scp++;
@@ -116,26 +112,26 @@ static bool cmdexec(const ShellCommand *scp, BaseSequentialStream *chp,
  */
 static THD_FUNCTION(xshell_thread, p) {
   int n;
-  ShellConfig *scfg = p;
-  BaseSequentialStream *chp = scfg->sc_channel;
-  const ShellCommand *scp = scfg->sc_commands;
-  char *lp, *cmd, *tokp, line[SHELL_MAX_LINE_LENGTH];
-  char *args[SHELL_MAX_ARGUMENTS + 1];
+  xshell_manager_t *smp = chThdGetSelfX()->object;
+  BaseSequentialStream *chp = p;
+  const xshell_command_t *scp = smp->config->commands;
+  char *lp, *cmd, *tokp, line[XSHELL_LINE_LENGTH];
+  char *args[XSHELL_MAX_ARGUMENTS + 2];
 
-  chprintf(chp, "ChibiOS/RT Shell");
+  chprintf(chp, smp->config->banner);
   while (!chThdShouldTerminateX()) {
-    chprintf(chp, SHELL_PROMPT_STR);
+    chprintf(chp, smp->config->prompt);
     if (shellGetLine(scfg, line, sizeof(line), shp)) {
-      chprintf(chp, SHELL_NEWLINE_STR);
-      chprintf(chp, "logout");
+//      chprintf(chp, smp->config->newline);
+//      chprintf(chp, "logout");
       break;
     }
     lp = parse_arguments(line, &tokp);
     cmd = lp;
     n = 0;
     while ((lp = parse_arguments(NULL, &tokp)) != NULL) {
-      if (n >= SHELL_MAX_ARGUMENTS) {
-        chprintf(chp, "too many arguments" SHELL_NEWLINE_STR);
+      if (n >= XSHELL_MAX_ARGUMENTS) {
+        chprintf(chp, "too many arguments%s", smp->config->newline);
         cmd = NULL;
         break;
       }
@@ -145,23 +141,23 @@ static THD_FUNCTION(xshell_thread, p) {
     if (cmd != NULL) {
       if (strcmp(cmd, "help") == 0) {
         if (n > 0) {
-          shellUsage(chp, "help");
+          xshellUsage(chp, "help");
           continue;
         }
         chprintf(chp, "Commands: help ");
         list_commands(chp, shell_local_commands);
         if (scp != NULL)
           list_commands(chp, scp);
-        chprintf(chp, SHELL_NEWLINE_STR);
+        chprintf(chp, smp->config->newline);
       }
-      else if (cmdexec(shell_local_commands, chp, cmd, n, args) &&
-          ((scp == NULL) || cmdexec(scp, chp, cmd, n, args))) {
-        chprintf(chp, "%s", cmd);
-        chprintf(chp, " ?" SHELL_NEWLINE_STR);
+      else if (cmdexec(smp, shell_local_commands, chp, cmd, n, args) &&
+               ((scp == NULL) || cmdexec(smp, scp, chp, cmd, n, args))) {
+        chprintf(chp, "%s?%s", cmd, smp->config->newline);
       }
     }
   }
-  shellExit(MSG_OK);
+
+  xshellExit(smp, MSG_OK);
 }
 
 static void xshell_free(thread_t *tp) {
@@ -241,16 +237,17 @@ thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
  * @note    Must be invoked from the command handlers.
  * @note    Does not return.
  *
- * @param[in] msg       shell exit code
+ * @param[in,out] smp           pointer to the @p xshell_manager_t object
+ * @param[in] msg               shell exit code
  *
  * @api
  */
-void shellExit(msg_t msg) {
+void xshellExit(xshell_manager_t *smp, msg_t msg) {
 
   /* Atomically broadcasting the event source and terminating the thread,
      there is not a chSysUnlock() because the thread terminates upon return.*/
   chSysLock();
-  chEvtBroadcastI(&shell_terminated);
+  chEvtBroadcastI(&smp->events);
   chThdExitS(msg);
 }
 
@@ -259,52 +256,53 @@ void shellExit(msg_t msg) {
  * @note    Input chars are echoed on the same stream object with the
  *          following exceptions:
  *          - DEL and BS are echoed as BS-SPACE-BS.
- *          - CR is echoed as CR-LF.
+ *          - CR is echoed as the configured new line sequence.
  *          - 0x4 is echoed as "^D".
  *          - Other values below 0x20 are not echoed.
  *          .
  *
- * @param[in] scfg      pointer to a @p ShellConfig object
- * @param[in] line      pointer to the line buffer
- * @param[in] size      buffer maximum length
- * @param[in] shp       pointer to a @p ShellHistory object or NULL
- * @return              The operation status.
- * @retval true         the channel was reset or CTRL-D pressed.
- * @retval false        operation successful.
+ * @param[in,out] smp           pointer to the @p xshell_manager_t object
+ * @param[in] stp               pointer to a stream interface
+ * @param[in] line              pointer to the line buffer
+ * @param[in] size              buffer maximum length
+ * @return                      The operation status.
+ * @retval true                 if the channel was reset or CTRL-D pressed.
+ * @retval false                if operation successful.
  *
  * @api
  */
-bool shellGetLine(ShellConfig *scfg, char *line, unsigned size) {
+bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stp,
+                   char *line, size_t size) {
   char *p = line;
-  BaseSequentialStream *chp = scfg->sc_channel;
 
   while (true) {
     char c;
 
-    if (streamRead(chp, (uint8_t *)&c, 1) == 0)
+    if (streamRead(stp, (uint8_t *)&c, 1) == 0)
       return true;
     if (c == 4) {
-      chprintf(chp, "^D");
+      chprintf(stp, "^D");
       return true;
     }
     if ((c == 8) || (c == 127)) {
       if (p != line) {
-        streamPut(chp, 0x08);
-        streamPut(chp, 0x20);
-        streamPut(chp, 0x08);
+        streamWrite(stp, (const uint8_t *)"\010 \010", 3);
+//        streamPut(stp, 0x08);
+//        streamPut(stp, 0x20);
+//        streamPut(stp, 0x08);
         p--;
       }
       continue;
     }
     if (c == '\r') {
-      chprintf(chp, SHELL_NEWLINE_STR);
+      chprintf(stp, smp->config->newline);
       *p = 0;
       return false;
     }
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      streamPut(chp, c);
+      streamPut(stp, c);
       *p++ = (char)c;
     }
   }
