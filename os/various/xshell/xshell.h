@@ -87,12 +87,7 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a command handler function.
- */
-typedef void (*xshellcmd_t)(xshell_manager_t *smp, BaseSequentialStream *chp,
-                            int argc, char *argv[]);
-
+#if 0
 /**
  * @brief   Type of a shell configuration structure.
  */
@@ -102,6 +97,30 @@ typedef struct xshell_config {
    */
   BaseSequentialStream          *channel;
 } xshell_config_t;
+#endif
+
+/* Forward.*/
+typedef struct xshell_manager xshell_manager_t;
+
+/**
+ * @brief   Type of a command handler function.
+ */
+typedef void (*xshellcmd_t)(xshell_manager_t *smp, BaseSequentialStream *chp,
+                            int argc, char *argv[]);
+
+/**
+ * @brief   Type of a shell custom command structure.
+ */
+typedef struct xshell_command {
+  /**
+   * @brief   Command name.
+   */
+  const char                    *name;
+  /**
+   * @brief   Command function.
+   */
+  xshellcmd_t                   fn;
+} xshell_command_t;
 
 /**
  * @brief   Type of a XShell manager configuration structure.
@@ -144,7 +163,7 @@ typedef struct xshell_manager {
   /**
    * @brief   Associated configuration.
    */
-  const xshell_config_t         *config;
+  const xshell_manager_config_t *config;
   /**
    * @brief   Shell events;
    */

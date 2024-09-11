@@ -51,14 +51,14 @@
 /*===========================================================================*/
 
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
-static void thd_heapfree(thread_t * tp) {
+static void thd_heapfree(thread_t *tp) {
 
   chHeapFree((void *)tp->wabase);
 }
 #endif /* CH_CFG_USE_HEAP == TRUE */
 
 #if (CH_CFG_USE_MEMPOOLS == TRUE) || defined(__DOXYGEN__)
-static void thd_poolfree(thread_t * tp) {
+static void thd_poolfree(thread_t *tp) {
 
   chPoolFree((memory_pool_t *)tp->object, (void *)tp->wabase);
 }

@@ -164,6 +164,13 @@ static THD_FUNCTION(xshell_thread, p) {
   shellExit(MSG_OK);
 }
 
+static void xshell_free(thread_t *tp) {
+  xshell_manager_t *smp = (xshell_manager_t *)tp->object;
+
+  chPoolFree(smp->config->stacks_pool, (void *)tp->wabase);
+  chPoolFree(smp->config->threads_pool, (void *)tp);
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -188,6 +195,45 @@ void xshellObjectInit(xshell_manager_t *smp,
 
 #if XSHELL_HISTORY_DEPTH > 0
 #endif
+}
+
+/**
+ * @brief   Spawns a new shell using the specified stream for I/O.
+ *
+ * @param[in,out] smp           pointer to the @p xshell_manager_t object
+ * @param[in] stp               pointer to a stream interface
+ *
+ * @api
+ */
+thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
+  thread_t *tp;
+
+  /* Getting a thread structure from the pool.*/
+  tp = chPoolAlloc(smp->config->threads_pool);
+  if (tp != NULL) {
+
+    /* Getting a stack area from this manager.*/
+    void *sbase = chPoolAlloc(smp->config->stacks_pool);
+    if (sbase != NULL) {
+      void *send = (void *)((uint8_t *)sbase +
+                            smp->config->stacks_pool->object_size);
+
+      thread_descriptor_t td = __THD_DECL_DATA(smp->config->thread_name,
+                                               sbase, send, NORMALPRIO,
+                                               xshell_thread, (void *)stp,
+                                               NULL, xshell_free);
+      tp = chThdSpawnSuspended(tp, &td);
+      tp->object = (void *)smp;
+      tp = chThdStart(tp);
+
+    }
+    else {
+      chPoolFree(smp->config->threads_pool, (void *)tp);
+      return NULL;
+    }
+  }
+
+  return tp;
 }
 
 /**
