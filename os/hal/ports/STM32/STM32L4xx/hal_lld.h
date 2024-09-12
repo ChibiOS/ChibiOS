@@ -1179,10 +1179,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_MSICLK
-
-#elif (STM32_SW == STM32_SW_MSI)
+#if (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
 
 #elif (STM32_SW == STM32_SW_HSI16)
