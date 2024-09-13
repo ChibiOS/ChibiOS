@@ -18,7 +18,7 @@
 #include "hal.h"
 
 #include "chprintf.h"
-#include "shell.h"
+#include "xshell.h"
 
 #include "portab.h"
 
@@ -26,23 +26,27 @@
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-#define SHELL_WA_SIZE       THD_WORKING_AREA_SIZE(2048)
+#define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
 
-static void cmd_halt(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_halt(xshell_manager_t *smp, BaseSequentialStream *stream,
+                     int argc, char *argv[]) {
 
+  (void)smp;
   (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: halt\r\n");
+
+  if (argc != 1) {
+    xshellUsage(stream, "halt");
     return;
   }
 
-  chprintf(chp, "\r\nhalted");
+  chprintf(stream, XSHELL_NEWLINE_STR "halted");
   chThdSleepMilliseconds(10);
   chSysHalt("shell halt");
 }
 
 /* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
+                      int argc, char *argv[]) {
   static uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -61,28 +65,33 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+  (void)smp;
   (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: write\r\n");
+
+  if (argc != 1) {
+    xshellUsage(stream, "write");
     return;
   }
 
-  /* Any key press causes the write to stop, the character is consumed.*/
-  while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == STM_TIMEOUT) {
-    chnWrite(chp, buf, sizeof buf - 1);
+  while (chnGetTimeout((BaseChannel *)stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(stream, buf, sizeof buf - 1);
   }
-  chprintf(chp, "\r\n\nstopped\r\n");
+  chprintf(stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
 }
 
-static const ShellCommand commands[] = {
+static const xshell_command_t commands[] = {
   {"halt", cmd_halt},
   {"write", cmd_write},
   {NULL, NULL}
 };
 
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&PORTAB_SIOD1,
-  commands
+static const xshell_manager_config_t cfg1 = {
+  .thread_name      = "shell",
+  .banner           = XSHELL_DEFAULT_BANNER_STR,
+  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
+  .commands         = commands,
+  .use_heap         = true,
+  .stack.size       = SHELL_WA_SIZE
 };
 
 /*===========================================================================*/
@@ -90,14 +99,13 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 /*
- * This is a periodic thread that does absolutely nothing except flashing
- * a LED attached to TP1.
+ * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker");
+
   while (true) {
     palSetLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
@@ -110,6 +118,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  xshell_manager_t sm1;
 
   /*
    * System initializations.
@@ -125,9 +134,17 @@ int main(void) {
   portab_setup();
 
   /*
+   * Spawning a blinker thread.
+   */
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack, NORMALPRIO,
+                               thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
+
+  /*
    * Shell manager initialization.
    */
-  shellInit();
+  xshellObjectInit(&sm1, &cfg1);
 
   /*
    * Activates the SIO driver using the driver default configuration.
@@ -135,20 +152,12 @@ int main(void) {
   sioStart(&PORTAB_SIOD1, NULL);
 
   /*
-   * Creates the example thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-
-  /*
-   * Normal main() thread activity, if the button is pressed then the
-   * conversion is stopped.
+   * Normal main() thread activity, spawning shells.
    */
   while (true) {
-    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                            "shell", NORMALPRIO + 1,
-                                            shellThread, (void *)&shell_cfg1);
+    thread_t *shelltp = xshellSpawn(&sm1, (BaseSequentialStream *)&PORTAB_SIOD1);
     chThdWait(shelltp);               /* Waiting termination.             */
-    chThdSleepMilliseconds(1000);
+    chThdSleepMilliseconds(500);
   }
 
   return 0;

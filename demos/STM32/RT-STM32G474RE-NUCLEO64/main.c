@@ -222,8 +222,7 @@ int main(void) {
   xshellObjectInit(&sm1, &cfg1);
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * Normal main() thread activity, spawning shells.
    */
   while (true) {
     thread_t *shelltp = xshellSpawn(&sm1, (BaseSequentialStream *)&LPSIOD1);

@@ -263,7 +263,7 @@ thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
 #if CH_CFG_USE_HEAP == TRUE
     if (smp->config->use_heap) {
       /* Using heap allocator.*/
-      sbase = chHeapAllocAligned(NULL, 000000000, PORT_WORKING_AREA_ALIGN);
+      sbase = chHeapAllocAligned(NULL, smp->config->stack.size, PORT_WORKING_AREA_ALIGN);
     }
     else {
 #endif
