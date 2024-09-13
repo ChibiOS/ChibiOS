@@ -30,6 +30,8 @@
 #include "xshell_cmd.h"
 #include "chprintf.h"
 
+static void *alloc_thread(size_t size, unsigned align);
+
 /*===========================================================================*/
 /* Module local definitions.                                                 */
 /*===========================================================================*/
@@ -46,41 +48,52 @@
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+/* Shared pool of thread structures, all shell managers share the same pool.*/
+static MEMORYPOOL_DECL(threads_pool, sizeof (thread_t),
+                       MEM_NATURAL_ALIGN, alloc_thread);
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static char *parse_arguments(char *str, char **saveptr) {
-  char *p;
+static void *alloc_thread(size_t size, unsigned align) {
 
-  if (str != NULL)
-    *saveptr = str;
+  return chCoreAllocFromTopI(size, align, 0U);
+}
 
-  p = *saveptr;
-  if (!p) {
-    return NULL;
-  }
+static char *fetch_argument(char **pp) {
+  char *p, *ap;
 
   /* Skipping white space.*/
-  p += strspn(p, " \t");
+  ap = *pp;
+  ap += strspn(ap, " \t");
 
-  if (*p == '"') {
+  if (*ap == '\0') {
+    return  NULL;
+  }
+
+  if (*ap == '"') {
     /* If an argument starts with a double quote then its delimiter is another
        quote.*/
-    p++;
-    *saveptr = strpbrk(p, "\"");
+    ap++;
+    p = strpbrk(ap, "\"");
   }
   else {
     /* The delimiter is white space.*/
-    *saveptr = strpbrk(p, " \t");
+    p = strpbrk(ap, " \t");
   }
 
-  /* Replacing the delimiter with a zero.*/
-  if (*saveptr != NULL) {
-    *(*saveptr)++ = '\0';
+  if (p != NULL) {
+    /* Replacing the delimiter with a zero.*/
+    *p++ = '\0';
   }
+  else {
+    /* Final one, pointing on the final zero.*/
+    p = ap + strlen(ap);
+  }
+  *pp = p;
 
-  return *p != '\0' ? p : NULL;
+  return ap;
 }
 
 static void list_commands(BaseSequentialStream *chp, const xshell_command_t *scp) {
@@ -113,47 +126,75 @@ static bool cmdexec(xshell_manager_t *smp, const xshell_command_t *scp,
 static THD_FUNCTION(xshell_thread, p) {
   int n;
   xshell_manager_t *smp = chThdGetSelfX()->object;
-  BaseSequentialStream *chp = p;
-  const xshell_command_t *scp = smp->config->commands;
-  char *lp, *cmd, *tokp, line[XSHELL_LINE_LENGTH];
+  BaseSequentialStream *stream = p;
+  char *ap, *tokp, line[XSHELL_LINE_LENGTH];
   char *args[XSHELL_MAX_ARGUMENTS + 2];
 
-  chprintf(chp, smp->config->banner);
+  /* Shell banner, if defined.*/
+  if (smp->config->banner != NULL) {
+    chprintf(stream, smp->config->banner);
+  }
+
+  /* Shell command loop.*/
   while (!chThdShouldTerminateX()) {
-    chprintf(chp, smp->config->prompt);
-    if (shellGetLine(scfg, line, sizeof(line), shp)) {
-//      chprintf(chp, smp->config->newline);
-//      chprintf(chp, "logout");
+
+    /* Shell prompt.*/
+    chprintf(stream, smp->config->prompt);
+
+    /* Getting input line.*/
+    if (xshellGetLine(smp, stream, line, sizeof line)) {
       break;
     }
-    lp = parse_arguments(line, &tokp);
-    cmd = lp;
+
+    /* Fetching arguments.*/
+    tokp = line;
     n = 0;
-    while ((lp = parse_arguments(NULL, &tokp)) != NULL) {
-      if (n >= XSHELL_MAX_ARGUMENTS) {
-        chprintf(chp, "too many arguments%s", smp->config->newline);
-        cmd = NULL;
+    while ((ap = fetch_argument(&tokp)) != NULL) {
+      if (n < XSHELL_MAX_ARGUMENTS) {
+        args[n++] = ap;
+      }
+      else {
+        n = 0;
+        chprintf(stream, "too many arguments" XSHELL_NEWLINE_STR);
         break;
       }
-      args[n++] = lp;
     }
     args[n] = NULL;
-    if (cmd != NULL) {
-      if (strcmp(cmd, "help") == 0) {
-        if (n > 0) {
-          xshellUsage(chp, "help");
-          continue;
+
+    /* Special case for empty lines.*/
+    if (n == 0) {
+      continue;
+    }
+
+    /* Built-in commands, just "help" currently.*/
+    if (strcmp(args[0], "help") == 0) {
+      if (n > 1) {
+        xshellUsage(stream, "help");
+        continue;
+      }
+
+      /* Printing the commands list.*/
+      chprintf(stream, "Commands: help ");
+      list_commands(stream, xshell_local_commands);
+      if (smp->config->commands != NULL) {
+        list_commands(stream, smp->config->commands);
+      }
+      chprintf(stream, XSHELL_NEWLINE_STR);
+    }
+    else {
+      /* Trying local commands.*/
+      if (cmdexec(smp, xshell_local_commands, stream, args[0], n, args)) {
+
+        /* Failed, trying user commands (if defined).*/
+        if ((smp->config->commands == NULL) ||
+            cmdexec(smp, smp->config->commands, stream, args[0], n, args)) {
+
+          /* Failed, command not found.*/
+          chprintf(stream, "%s?" XSHELL_NEWLINE_STR, args[0]);
         }
-        chprintf(chp, "Commands: help ");
-        list_commands(chp, shell_local_commands);
-        if (scp != NULL)
-          list_commands(chp, scp);
-        chprintf(chp, smp->config->newline);
       }
-      else if (cmdexec(smp, shell_local_commands, chp, cmd, n, args) &&
-               ((scp == NULL) || cmdexec(smp, scp, chp, cmd, n, args))) {
-        chprintf(chp, "%s?%s", cmd, smp->config->newline);
-      }
+
+      /* Command executed.*/
     }
   }
 
@@ -163,8 +204,17 @@ static THD_FUNCTION(xshell_thread, p) {
 static void xshell_free(thread_t *tp) {
   xshell_manager_t *smp = (xshell_manager_t *)tp->object;
 
-  chPoolFree(smp->config->stacks_pool, (void *)tp->wabase);
-  chPoolFree(smp->config->threads_pool, (void *)tp);
+#if CH_CFG_USE_HEAP == TRUE
+  if (smp->config->use_heap) {
+    chHeapFree((void *)tp->wabase);
+  }
+  else {
+#endif
+    chPoolFree(smp->config->stack.pool, (void *)tp->wabase);
+#if CH_CFG_USE_HEAP == TRUE
+  }
+#endif
+  chPoolFree(&threads_pool, (void *)tp);
 }
 
 /*===========================================================================*/
@@ -205,14 +255,36 @@ thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
   thread_t *tp;
 
   /* Getting a thread structure from the pool.*/
-  tp = chPoolAlloc(smp->config->threads_pool);
+  tp = chPoolAlloc(&threads_pool);
   if (tp != NULL) {
+    void *sbase;
 
     /* Getting a stack area from this manager.*/
-    void *sbase = chPoolAlloc(smp->config->stacks_pool);
+#if CH_CFG_USE_HEAP == TRUE
+    if (smp->config->use_heap) {
+      /* Using heap allocator.*/
+      sbase = chHeapAllocAligned(NULL, 000000000, PORT_WORKING_AREA_ALIGN);
+    }
+    else {
+#endif
+      /* Using pool allocator.*/
+      sbase = chPoolAlloc(smp->config->stack.pool);
+#if CH_CFG_USE_HEAP == TRUE
+    }
+#endif
     if (sbase != NULL) {
-      void *send = (void *)((uint8_t *)sbase +
-                            smp->config->stacks_pool->object_size);
+      size_t size;
+#if CH_CFG_USE_HEAP == TRUE
+      if (smp->config->use_heap) {
+        size = smp->config->stack.size;
+      }
+      else {
+#endif
+        size = smp->config->stack.pool->object_size;
+#if CH_CFG_USE_HEAP == TRUE
+      }
+#endif
+      void *send = (void *)((uint8_t *)sbase + size);
 
       thread_descriptor_t td = __THD_DECL_DATA(smp->config->thread_name,
                                                sbase, send, NORMALPRIO,
@@ -224,7 +296,7 @@ thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
 
     }
     else {
-      chPoolFree(smp->config->threads_pool, (void *)tp);
+      chPoolFree(&threads_pool, (void *)tp);
       return NULL;
     }
   }
@@ -273,8 +345,11 @@ void xshellExit(xshell_manager_t *smp, msg_t msg) {
  */
 bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stp,
                    char *line, size_t size) {
-  char *p = line;
+  char *p;
 
+  (void)smp;
+
+  p = line;
   while (true) {
     char c;
 
@@ -287,15 +362,12 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stp,
     if ((c == 8) || (c == 127)) {
       if (p != line) {
         streamWrite(stp, (const uint8_t *)"\010 \010", 3);
-//        streamPut(stp, 0x08);
-//        streamPut(stp, 0x20);
-//        streamPut(stp, 0x08);
         p--;
       }
       continue;
     }
     if (c == '\r') {
-      chprintf(stp, smp->config->newline);
+      chprintf(stp, XSHELL_NEWLINE_STR);
       *p = 0;
       return false;
     }

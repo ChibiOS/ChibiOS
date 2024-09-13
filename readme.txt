@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: New XShell specific for the new RT, it leverages the new thread
+       dispose feature.
 - NEW: New RT threads spawning API decoupling the thread stack from the
        thread_t structure as required in NUMA multicore devices. Old
        "create" API is still present and supported, long term it could be

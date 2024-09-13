@@ -59,17 +59,17 @@
 #endif
 
 /**
+ * @brief   Newline string.
+ */
+#if !defined(XSHELL_NEWLINE_STR) || defined(__DOXYGEN__)
+#define XSHELL_NEWLINE_STR                  "\r\n"
+#endif
+
+/**
  * @brief   Prompt string.
  */
 #if !defined(XSHELL_DEFAULT_PROMPT_STR) || defined(__DOXYGEN__)
 #define XSHELL_DEFAULT_PROMPT_STR           "ch> "
-#endif
-
-/**
- * @brief   Newline string.
- */
-#if !defined(XSHELL_DEFAULT_NEWLINE_STR) || defined(__DOXYGEN__)
-#define XSHELL_DEFAULT_NEWLINE_STR          "\r\n"
 #endif
 
 /**
@@ -86,18 +86,6 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
-
-#if 0
-/**
- * @brief   Type of a shell configuration structure.
- */
-typedef struct xshell_config {
-  /**
-   * @brief   Channel for shell input and output.
-   */
-  BaseSequentialStream          *channel;
-} xshell_config_t;
-#endif
 
 /* Forward.*/
 typedef struct xshell_manager xshell_manager_t;
@@ -139,21 +127,27 @@ typedef struct xshell_manager_config {
    */
   const char                    *prompt;
   /**
-   * @brief   Shells new line string.
-   */
-  const char                    *newline;
-  /**
    * @brief   List of the associated shell commands.
    */
   const xshell_command_t        *commands;
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Pool of shell @p thread_t structures.
+   * @brief   Uses heap allocator instead of memory pools for stacks.
    */
-  memory_pool_t                 *threads_pool;
-  /**
-   * @brief   Pool of shell stack areas.
-   */
-  memory_pool_t                 *stacks_pool;
+  bool                          use_heap;
+#endif
+  union {
+    /**
+     * @brief   Pool of shell stack areas.
+     */
+    memory_pool_t               *pool;
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
+    /**
+     * @brief   Stack size for shells.
+     */
+    size_t                      size;
+#endif
+  } stack;
 } xshell_manager_config_t;
 
 /**
@@ -213,13 +207,13 @@ typedef struct xshell_manager {
 /**
  * @brief   Prints out usage message
  *
- * @param[in] stream    pointer to a @p BaseSequentialStream object
- * @param[in] message   pointer to message string
+ * @param[in] stream            pointer to a stream interface
+ * @param[in] message           pointer to message string
  *
  * @api
  */
 #define xshellUsage(stream, message)                                        \
-  chprintf(stream, "Usage: %s" SHELL_NEWLINE_STR, message)
+  chprintf(stream, "Usage: %s" XSHELL_NEWLINE_STR, message)
 
 /*===========================================================================*/
 /* External declarations.                                                    */

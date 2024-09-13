@@ -15,15 +15,15 @@
 */
 
 /**
- * @file    shell_cmd.h
- * @brief   Simple CLI shell common commands header.
+ * @file    xshell_cmd.h
+ * @brief   Extended CLI shell common commands header.
  *
- * @addtogroup SHELL
+ * @addtogroup XSHELL
  * @{
  */
 
-#ifndef SHELLCMD_H
-#define SHELLCMD_H
+#ifndef XSHELLCMD_H
+#define XSHELLCMD_H
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -33,60 +33,60 @@
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
 
-#if !defined(SHELL_CMD_EXIT_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_EXIT_ENABLED              TRUE
+#if !defined(XSHELL_CMD_EXIT_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_EXIT_ENABLED             TRUE
 #endif
 
-#if !defined(SHELL_CMD_INFO_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_INFO_ENABLED              TRUE
+#if !defined(XSHELL_CMD_INFO_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_INFO_ENABLED             TRUE
 #endif
 
-#if !defined(SHELL_CMD_ECHO_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_ECHO_ENABLED              TRUE
+#if !defined(XSHELL_CMD_ECHO_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_ECHO_ENABLED             TRUE
 #endif
 
-#if !defined(SHELL_CMD_SYSTIME_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_SYSTIME_ENABLED           TRUE
+#if !defined(XSHELL_CMD_SYSTIME_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_SYSTIME_ENABLED          TRUE
 #endif
 
-#if !defined(SHELL_CMD_MEM_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_MEM_ENABLED               TRUE
+#if !defined(XSHELL_CMD_MEM_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_MEM_ENABLED              TRUE
 #endif
 
-#if !defined(SHELL_CMD_THREADS_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_THREADS_ENABLED           TRUE
+#if !defined(XSHELL_CMD_THREADS_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_THREADS_ENABLED          TRUE
 #endif
 
-#if !defined(SHELL_CMD_TEST_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_TEST_ENABLED              TRUE
+#if !defined(XSHELL_CMD_TEST_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_TEST_ENABLED             TRUE
 #endif
 
-#if !defined(SHELL_CMD_FILES_ENABLED) || defined(__DOXYGEN__)
-#define SHELL_CMD_FILES_ENABLED             FALSE
+#if !defined(XSHELL_CMD_FILES_ENABLED) || defined(__DOXYGEN__)
+#define XSHELL_CMD_FILES_ENABLED            FALSE
 #endif
 
-#if !defined(SHELL_CMD_TEST_WA_SIZE) || defined(__DOXYGEN__)
-#define SHELL_CMD_TEST_WA_SIZE              THD_WORKING_AREA_SIZE(512)
+#if !defined(XSHELL_CMD_TEST_WA_SIZE) || defined(__DOXYGEN__)
+#define XSHELL_CMD_TEST_WA_SIZE             THD_WORKING_AREA_SIZE(512)
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (SHELL_CMD_MEM_ENABLED == TRUE) && (CH_CFG_USE_MEMCORE == FALSE)
-#error "SHELL_CMD_MEM_ENABLED requires CH_CFG_USE_MEMCORE"
+#if (XSHELL_CMD_MEM_ENABLED == TRUE) && (CH_CFG_USE_MEMCORE == FALSE)
+#error "XSHELL_CMD_MEM_ENABLED requires CH_CFG_USE_MEMCORE"
 #endif
 
-#if (SHELL_CMD_MEM_ENABLED == TRUE) && (CH_CFG_USE_HEAP == FALSE)
-#error "SHELL_CMD_MEM_ENABLED requires CH_CFG_USE_HEAP"
+#if (XSHELL_CMD_MEM_ENABLED == TRUE) && (CH_CFG_USE_HEAP == FALSE)
+#error "XSHELL_CMD_MEM_ENABLED requires CH_CFG_USE_HEAP"
 #endif
 
-#if (SHELL_CMD_THREADS_ENABLED == TRUE) && (CH_CFG_USE_REGISTRY == FALSE)
-#error "SHELL_CMD_THREADS_ENABLED requires CH_CFG_USE_REGISTRY"
+#if (XSHELL_CMD_THREADS_ENABLED == TRUE) && (CH_CFG_USE_REGISTRY == FALSE)
+#error "XSHELL_CMD_THREADS_ENABLED requires CH_CFG_USE_REGISTRY"
 #endif
 
-#if (SHELL_CMD_FILES_ENABLED == TRUE) && (CH_CFG_USE_HEAP == FALSE)
-#error "SHELL_CMD_FILES_ENABLED requires CH_CFG_USE_HEAP"
+#if (XSHELL_CMD_FILES_ENABLED == TRUE) && (CH_CFG_USE_HEAP == FALSE)
+#error "XSHELL_CMD_FILES_ENABLED requires CH_CFG_USE_HEAP"
 #endif
 
 /*===========================================================================*/
@@ -102,7 +102,7 @@
 /*===========================================================================*/
 
 #if !defined(__DOXYGEN__)
-extern const ShellCommand shell_local_commands[];
+extern const xshell_command_t xshell_local_commands[];
 #endif
 
 #ifdef __cplusplus
@@ -117,6 +117,6 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#endif /* SHELLCMD_H */
+#endif /* XSHELLCMD_H */
 
 /** @} */
