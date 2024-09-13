@@ -75,7 +75,7 @@ static void cmd_clock(xshell_manager_t *smp, BaseSequentialStream *stream,
   (void)argv;
 
   if (argc != 2) {
-    chprintf(stream, "clock reset|default");
+    xshellUsage(stream, "clock reset|default");
     return;
   }
 
