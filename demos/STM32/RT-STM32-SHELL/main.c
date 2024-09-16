@@ -137,8 +137,8 @@ int main(void) {
    * Spawning a blinker thread.
    */
   static thread_t thd1;
-  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack, NORMALPRIO,
-                               thd1_func, NULL, NULL);
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
+                               NORMALPRIO + 10, thd1_func, NULL, NULL);
   chThdSpawnRunning(&thd1, &thd1_desc);
 
   /*
@@ -155,7 +155,9 @@ int main(void) {
    * Normal main() thread activity, spawning shells.
    */
   while (true) {
-    thread_t *shelltp = xshellSpawn(&sm1, (BaseSequentialStream *)&PORTAB_SIOD1);
+    thread_t *shelltp = xshellSpawn(&sm1,
+                                    (BaseSequentialStream *)&PORTAB_SIOD1,
+                                    NORMALPRIO + 1);
     chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(500);
   }
