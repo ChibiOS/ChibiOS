@@ -106,7 +106,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
   wend = (void *)((uint8_t *)wbase + size);
 
   thread_descriptor_t td = __THD_DECL_DATA(name, wbase, wend, prio,
-                                           pf, arg, NULL, thd_heapfree);
+                                           pf, arg, NULL);
 
 #if CH_DBG_FILL_THREADS == TRUE
   __thd_stackfill((uint8_t *)wbase, (uint8_t *)wend);
@@ -114,6 +114,7 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
 
   chSysLock();
   tp = chThdCreateSuspendedI(&td);
+  chThdSetCallbackX(tp, thd_heapfree, NULL);
   chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
 
@@ -162,7 +163,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
   wend = (void *)((uint8_t *)wbase + mp->object_size);
 
   thread_descriptor_t td = __THD_DECL_DATA(name, wbase, wend, prio,
-                                           pf, arg, NULL, thd_poolfree);
+                                           pf, arg, NULL);
 
 #if CH_DBG_FILL_THREADS == TRUE
   __thd_stackfill((uint8_t *)wbase, (uint8_t *)wend);
@@ -170,7 +171,7 @@ thread_t *chThdCreateFromMemoryPool(memory_pool_t *mp, const char *name,
 
   chSysLock();
   tp = chThdCreateSuspendedI(&td);
-  tp->object = (void *)mp;
+  chThdSetCallbackX(tp, thd_poolfree, (void *)mp);
   chSchWakeupS(tp, MSG_OK);
   chSysUnlock();
 

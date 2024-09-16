@@ -143,14 +143,14 @@ void chInstanceObjectInit(os_instance_t *oip,
 #if CH_CFG_NO_IDLE_THREAD == FALSE
     const THD_DECL(main_thd_desc,
                    "main", oicp->cstack_base, oicp->cstack_end,
-                   NORMALPRIO, NULL, NULL, oip,  NULL
+                   NORMALPRIO, NULL, NULL, oip
     );
 
     oip->rlist.current = chThdObjectInit(&oip->mainthread, &main_thd_desc);
 #else
     const THD_DECL(idle_thd_desc,
                    "idle", oicp->cstack_base, oicp->cstack_end,
-                   IDLEPRIO, NULL, NULL, oip, NULL
+                   IDLEPRIO, NULL, NULL, oip
     );
 
     oip->rlist.current = chThdObjectInit(&oip->idlethread, &idle_thd_desc);
@@ -176,7 +176,7 @@ void chInstanceObjectInit(os_instance_t *oip,
   {
     const THD_DECL(idle_thd_desc,
                    "idle", oicp->idlestack_base, oicp->idlestack_end,
-                   IDLEPRIO, __idle_thread, NULL, oip, NULL
+                   IDLEPRIO, __idle_thread, NULL, oip
     );
 
 #if CH_DBG_FILL_THREADS == TRUE

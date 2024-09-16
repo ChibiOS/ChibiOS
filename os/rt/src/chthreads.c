@@ -134,7 +134,7 @@ thread_t *chThdObjectInit(thread_t *tp,
     tp->owner           = currcore;
   }
 #if CH_CFG_USE_DYNAMIC == TRUE
-  tp->dispose           = tdp->dispose;
+  tp->dispose           = NULL;
   tp->object            = NULL;
 #endif
 #if CH_CFG_TIME_QUANTUM > 0

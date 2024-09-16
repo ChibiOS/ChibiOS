@@ -289,9 +289,9 @@ thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
       thread_descriptor_t td = __THD_DECL_DATA(smp->config->thread_name,
                                                sbase, send, NORMALPRIO,
                                                xshell_thread, (void *)stp,
-                                               NULL, xshell_free);
+                                               NULL);
       tp = chThdSpawnSuspended(tp, &td);
-      tp->object = (void *)smp;
+      chThdSetCallbackX(tp, xshell_free, (void *)smp);
       tp = chThdStart(tp);
 
     }
