@@ -224,7 +224,9 @@ extern "C" {
 #endif
   void xshellObjectInit(xshell_manager_t *smp,
                         const xshell_manager_config_t *config);
-  thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp);
+  thread_t *xshellSpawn(xshell_manager_t *smp,
+                        BaseSequentialStream *stp,
+                        tprio_t prio);
   void xshellGarbageCollect(xshell_manager_t *smp);
   void xshellExit(xshell_manager_t *smp, msg_t msg);
   bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stp,

@@ -248,10 +248,13 @@ void xshellObjectInit(xshell_manager_t *smp,
  *
  * @param[in,out] smp           pointer to the @p xshell_manager_t object
  * @param[in] stp               pointer to a stream interface
+ * @param[in] prio              shell priority
  *
  * @api
  */
-thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
+thread_t *xshellSpawn(xshell_manager_t *smp,
+                      BaseSequentialStream *stp,
+                      tprio_t prio) {
   thread_t *tp;
 
   /* Getting a thread structure from the pool.*/
@@ -287,7 +290,7 @@ thread_t *xshellSpawn(xshell_manager_t *smp, BaseSequentialStream *stp) {
       void *send = (void *)((uint8_t *)sbase + size);
 
       thread_descriptor_t td = __THD_DECL_DATA(smp->config->thread_name,
-                                               sbase, send, NORMALPRIO,
+                                               sbase, send, prio,
                                                xshell_thread, (void *)stp,
                                                NULL);
       tp = chThdSpawnSuspended(tp, &td);
