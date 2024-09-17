@@ -48,7 +48,7 @@
  * @brief   History buffer depth, zero disables history.
  */
 #if !defined(XSHELL_HISTORY_DEPTH) || defined(__DOXYGEN__)
-#define XSHELL_HISTORY_DEPTH                0
+#define XSHELL_HISTORY_DEPTH                4
 #endif
 
 /**
@@ -172,6 +172,10 @@ typedef struct xshell_manager {
    */
   char                          *history_head;
   /**
+   * @brief   Current position in history circular buffer.
+   */
+  char                          *history_current;
+  /**
    * @brief   History buffer.
    */
   char                          history_buffer[XSHELL_HISTORY_DEPTH][XSHELL_LINE_LENGTH];
@@ -225,11 +229,11 @@ extern "C" {
   void xshellObjectInit(xshell_manager_t *smp,
                         const xshell_manager_config_t *config);
   thread_t *xshellSpawn(xshell_manager_t *smp,
-                        BaseSequentialStream *stp,
+                        BaseSequentialStream *stream,
                         tprio_t prio);
   void xshellGarbageCollect(xshell_manager_t *smp);
   void xshellExit(xshell_manager_t *smp, msg_t msg);
-  bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stp,
+  bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
                      char *line, size_t size);
 #ifdef __cplusplus
 }

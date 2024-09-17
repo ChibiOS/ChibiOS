@@ -217,6 +217,69 @@ static void xshell_free(thread_t *tp) {
   chPoolFree(&threads_pool, (void *)tp);
 }
 
+#if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)
+static void xshell_save_history(xshell_manager_t *smp, char *line) {
+
+  chMtxLock(&smp->history_mutex);
+
+  strcpy(smp->history_head, line);
+  smp->history_head += XSHELL_LINE_LENGTH;
+  if (smp->history_head >= &smp->history_buffer[XSHELL_HISTORY_DEPTH][XSHELL_LINE_LENGTH]) {
+    smp->history_head = smp->history_buffer[0];
+  }
+
+  chMtxUnlock(&smp->history_mutex);
+}
+
+static size_t xshell_get_history_prev(xshell_manager_t *smp, char *line) {
+  size_t len;
+  char *p;
+
+  chMtxLock(&smp->history_mutex);
+
+  p = smp->history_current - XSHELL_LINE_LENGTH;
+  if (p < &smp->history_buffer[0][0]) {
+    p = &smp->history_buffer[XSHELL_HISTORY_DEPTH - 1][XSHELL_LINE_LENGTH];
+  }
+  if ((len = strlen(p)) > (size_t)0) {
+    smp->history_current = p;
+  }
+  strcpy(line, p);
+
+  chMtxUnlock(&smp->history_mutex);
+
+  return len;
+}
+
+static size_t xshell_get_history_next(xshell_manager_t *smp, char *line) {
+  size_t len;
+  char *p;
+
+  chMtxLock(&smp->history_mutex);
+
+  p = smp->history_current + XSHELL_LINE_LENGTH;
+  if (p > &smp->history_buffer[XSHELL_HISTORY_DEPTH - 1][XSHELL_LINE_LENGTH]) {
+    p = &smp->history_buffer[0][0];
+  }
+  if ((len = strlen(p)) > (size_t)0) {
+    smp->history_current = p;
+  }
+  strcpy(line, p);
+
+  chMtxUnlock(&smp->history_mutex);
+
+  return len;
+}
+
+static void xshell_reset_line(xshell_manager_t *smp,
+                              BaseSequentialStream *stream) {
+
+  chprintf(stream, "\033[%dD%s\033[K",
+           XSHELL_LINE_LENGTH + strlen(smp->config->prompt) + 2,
+           smp->config->prompt);
+}
+#endif
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -240,6 +303,9 @@ void xshellObjectInit(xshell_manager_t *smp,
   chEvtObjectInit(&smp->events);
 
 #if XSHELL_HISTORY_DEPTH > 0
+  chMtxObjectInit(&smp->history_mutex);
+  smp->history_head = smp->history_buffer[0];
+  memset(smp->history_buffer, 0, sizeof smp->history_buffer);
 #endif
 }
 
@@ -253,7 +319,7 @@ void xshellObjectInit(xshell_manager_t *smp,
  * @api
  */
 thread_t *xshellSpawn(xshell_manager_t *smp,
-                      BaseSequentialStream *stp,
+                      BaseSequentialStream *stream,
                       tprio_t prio) {
   thread_t *tp;
 
@@ -291,7 +357,7 @@ thread_t *xshellSpawn(xshell_manager_t *smp,
 
       thread_descriptor_t td = __THD_DECL_DATA(smp->config->thread_name,
                                                sbase, send, prio,
-                                               xshell_thread, (void *)stp,
+                                               xshell_thread, (void *)stream,
                                                NULL);
       tp = chThdSpawnSuspended(tp, &td);
       chThdSetCallbackX(tp, xshell_free, (void *)smp);
@@ -337,7 +403,7 @@ void xshellExit(xshell_manager_t *smp, msg_t msg) {
  *          .
  *
  * @param[in,out] smp           pointer to the @p xshell_manager_t object
- * @param[in] stp               pointer to a stream interface
+ * @param[in] stream            pointer to a stream interface
  * @param[in] line              pointer to the line buffer
  * @param[in] size              buffer maximum length
  * @return                      The operation status.
@@ -346,38 +412,88 @@ void xshellExit(xshell_manager_t *smp, msg_t msg) {
  *
  * @api
  */
-bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stp,
+bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
                    char *line, size_t size) {
   char *p;
+#if XSHELL_HISTORY_DEPTH > 0
+  bool escape = false;
+  bool bracket = false;
+
+  smp->history_current = smp->history_head;
+#else
 
   (void)smp;
+#endif
 
   p = line;
   while (true) {
     char c;
 
-    if (streamRead(stp, (uint8_t *)&c, 1) == 0)
+    if (streamRead(stream, (uint8_t *)&c, 1) == 0)
       return true;
+#if XSHELL_HISTORY_DEPTH > 0
+    /* Escape sequences decoding.*/
+    if (c == 27) {
+      escape = true;
+      continue;
+    }
+    if (escape) {
+      if (c == '[') {
+        bracket = true;
+        continue;
+      }
+      else {
+        escape = false;
+      }
+      if (bracket) {
+        escape = false;
+        bracket = false;
+        if (c == 'A') {
+          size_t len = xshell_get_history_prev(smp, line);
+
+          if (len > (size_t)0) {
+            xshell_reset_line(smp, stream);
+            chprintf(stream, "%s", line);
+            p = line + len;
+          }
+          continue;
+        }
+        if (c == 'B') {
+          size_t len = xshell_get_history_next(smp, line);
+
+          if (len > (size_t)0) {
+            xshell_reset_line(smp, stream);
+            chprintf(stream, "%s", line);
+            p = line + len;
+          }
+          continue;
+        }
+      }
+    }
+#endif
     if (c == 4) {
-      chprintf(stp, "^D");
+      chprintf(stream, "^D");
       return true;
     }
     if ((c == 8) || (c == 127)) {
       if (p != line) {
-        streamWrite(stp, (const uint8_t *)"\010 \010", 3);
+        streamWrite(stream, (const uint8_t *)"\010 \010", 3);
         p--;
       }
       continue;
     }
     if (c == '\r') {
-      chprintf(stp, XSHELL_NEWLINE_STR);
+      chprintf(stream, XSHELL_NEWLINE_STR);
       *p = 0;
+#if XSHELL_HISTORY_DEPTH > 0
+      xshell_save_history(smp, line);
+#endif
       return false;
     }
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      streamPut(stp, c);
+      streamPut(stream, c);
       *p++ = (char)c;
     }
   }
