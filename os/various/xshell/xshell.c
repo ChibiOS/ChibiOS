@@ -36,6 +36,8 @@ static void *alloc_thread(size_t size, unsigned align);
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
+#define CTRL(c) (char)((c) - 0x40)
+
 /*===========================================================================*/
 /* Module exported variables.                                                */
 /*===========================================================================*/
@@ -278,6 +280,18 @@ static void xshell_reset_line(xshell_manager_t *smp,
            XSHELL_LINE_LENGTH + strlen(smp->config->prompt) + 2,
            smp->config->prompt);
 }
+
+static bool xshell_is_line_empty(const char *str) {
+
+  while (*str != '\0') {
+    if (*str != ' ') {
+      return false;
+    }
+    str++;
+  }
+
+  return true;
+}
 #endif
 
 /*===========================================================================*/
@@ -470,12 +484,17 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
         }
       }
     }
+    if (c == CTRL('U')) {
+      smp->history_current = smp->history_head;
+      p = line;
+      xshell_reset_line(smp, stream);
+      continue;
+    }
 #endif
-    if (c == 4) {
-      chprintf(stream, "^D");
+    if (c == CTRL('D')) {
       return true;
     }
-    if ((c == 8) || (c == 127)) {
+    if ((c == CTRL('H')) || (c == 127)) {
       if (p != line) {
         streamWrite(stream, (const uint8_t *)"\010 \010", 3);
         p--;
@@ -486,7 +505,9 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
       chprintf(stream, XSHELL_NEWLINE_STR);
       *p = 0;
 #if XSHELL_HISTORY_DEPTH > 0
-      xshell_save_history(smp, line);
+      if (!xshell_is_line_empty(line)) {
+        xshell_save_history(smp, line);
+      }
 #endif
       return false;
     }
