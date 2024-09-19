@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_snor_base" descr="SNOR Base Driver" editcode="true">
+  <brief>SNOR abstract driver.</brief>
+  <details><![CDATA[Base class for SNOR flash devices.]]></details>
+  <imports>
+    <import>oop_base_object.xml</import>
+  </imports>
+  <public>
+    <definitions_early>
+    </definitions_early>
+    <configs>
+    </configs>
+    <macros></macros>
+    <types>
+      <struct name="snor_nocache_t">
+        <brief>SNOR driver configuration.</brief>
+        <fields>
+          <field name="databuf" ctype="uint8_t$I$N[SNOR_BUFFER_SIZE]">
+            <brief>Non-cacheable data buffer.</brief>
+          </field>
+          <field name="cmdbuf" ctype="wspi_command_t">
+            <brief>Non-cacheable WSPI command buffer.</brief>
+          </field>
+        </fields>
+      </struct>
+      <struct name="snor_config_t">
+        <brief>SNOR driver configuration.</brief>
+        <fields>
+          <field name="wspi" ctype="WSPIDriver$I*$N">
+            <brief>WSPI driver to be used for physical communication.</brief>
+          </field>
+          <field name="wspiconfig" ctype="const WSPIConfig$I*$N">
+            <brief>WSPI driver configuration.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class name="hal_snor_base" type="abstract" namespace="snorbase"
+        descr="SNOR base driver" ancestorname="base_object">
+        <brief>Base class of all SNOR drivers.</brief>
+        <fields>
+          <field name="state" ctype="flash_state_t">
+            <brief>Driver state.</brief></field>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <param name="nocache" ctype="snor_nocache_t *" dir="in">Pointer to a non-cacheable buffer.</param>
+            <implementation><![CDATA[self->nocache = nocache;]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[;]]></implementation>
+          </dispose>
+        </methods>
+      </class>      
+    </types>
+    <variables></variables>
+    <functions></functions>
+  </public>
+  <private>
+    <includes>
+      <include style="regular">hal.h</include>
+      <include style="regular">hal_snor_base.h</include>
+    </includes>
+    <functions></functions>
+  </private>
+</module>
