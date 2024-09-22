@@ -9,13 +9,28 @@
     <import>hal_flash_interface.xml</import>
   </imports>
   <public>
+    <includes>
+      <include style="regular">oop_base_object.h</include>
+      <include style="regular">oop_base_interface.h</include>
+      <include style="regular">hal_flash_interface.h</include>
+    </includes>
     <definitions_early>
     </definitions_early>
     <configs>
+      <config name="SNOR_BUFFER_SIZE" default="32">
+        <brief>Non-cacheable operations buffer.</brief></config>
     </configs>
     <macros></macros>
     <types>
-      <struct name="snor_nocache_t">
+      <typedef name="snor_nocache_t">
+        <brief>Type of a non-cacheable buffer.</brief>
+        <basetype ctype="struct snor_nocache" />
+      </typedef>
+      <typedef name="snor_config_t">
+        <brief>Type of a SNOR configuration structure.</brief>
+        <basetype ctype="struct snor_config" />
+      </typedef>
+      <struct name="snor_nocache">
         <brief>SNOR driver configuration.</brief>
         <fields>
           <field name="databuf" ctype="uint8_t$I$N[SNOR_BUFFER_SIZE]">
@@ -26,7 +41,7 @@
           </field>
         </fields>
       </struct>
-      <struct name="snor_config_t">
+      <struct name="snor_config">
         <brief>SNOR driver configuration.</brief>
         <fields>
           <field name="wspi" ctype="WSPIDriver$I*$N">
@@ -45,7 +60,7 @@
             <method shortname="get_descriptor">
               <implementation><![CDATA[
 
-return snor_get_descriptor(self);]]></implementation>
+return snor_device_get_descriptor(self);]]></implementation>
             </method>
             <method shortname="read">
               <implementation><![CDATA[
@@ -60,7 +75,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->wspi);
+wspiAcquireBus(self->config->wspi);
 
 /* FLASH_READY state while the operation is performed.*/
 self->state = FLASH_READ;
@@ -72,7 +87,7 @@ err = snor_device_read(self, offset, n, rp);
 self->state = FLASH_READY;
 
 /* Bus released.*/
-wspiReleaseBus(self->wspi);
+wspiReleaseBus(self->config->wspi);
 
 return err;]]></implementation>
             </method>
@@ -89,7 +104,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->wspi);
+wspiAcquireBus(self->config->wspi);
 
 /* FLASH_PGM state while the operation is performed.*/
 self->state = FLASH_PGM;
@@ -101,7 +116,7 @@ err = snor_device_program(self, offset, n, pp);
 self->state = FLASH_READY;
 
 /* Bus released.*/
-wspiReleaseBus(self->wspi);
+wspiReleaseBus(self->config->wspi);
 
 return err;]]></implementation>
             </method>
@@ -118,7 +133,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->wspi);
+wspiAcquireBus(self->config->wspi);
 
 /* FLASH_ERASE state while the operation is performed.*/
 self->state = FLASH_ERASE;
@@ -127,7 +142,7 @@ self->state = FLASH_ERASE;
 err = snor_device_start_erase_all(self);
 
 /* Bus released.*/
-wspiReleaseBus(self->wspi);
+wspiReleaseBus(self->config->wspi);
 
 return err;]]></implementation>
             </method>
@@ -144,7 +159,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->wspi);
+wspiAcquireBus(self->config->wspi);
 
 /* FLASH_ERASE state while the operation is performed.*/
 self->state = FLASH_ERASE;
@@ -153,7 +168,7 @@ self->state = FLASH_ERASE;
 err = snor_device_start_erase_sector(self, sector);
 
 /* Bus released.*/
-wspiReleaseBus(self->wspi);
+wspiReleaseBus(self->config->wspi);
 
 return err;]]></implementation>
             </method>
@@ -169,7 +184,7 @@ osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
 if (self->state == FLASH_ERASE) {
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->wspi);
+  wspiAcquireBus(self->config->wspi);
 
   /* Actual query erase implementation.*/
   err = snor_device_query_erase(self, msec);
@@ -180,7 +195,7 @@ if (self->state == FLASH_ERASE) {
   }
 
   /* Bus released.*/
-  wspiReleaseBus(self->wspi);
+  wspiReleaseBus(self->config->wspi);
 }
 else {
   err = FLASH_NO_ERROR;
@@ -201,7 +216,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->wspi);
+wspiAcquireBus(self->config->wspi);
 
 /* FLASH_READY state while the operation is performed.*/
 self->state = FLASH_READ;
@@ -213,7 +228,7 @@ err = snor_device_verify_erase(self, sector);
 self->state = FLASH_READY;
 
 /* Bus released.*/
-wspiReleaseBus(self->wspi);
+wspiReleaseBus(self->config->wspi);
 
 return err;]]></implementation>
             </method>
@@ -235,25 +250,25 @@ return FLASH_NO_ERROR;
         <fields>
           <field name="state" ctype="flash_state_t">
             <brief>Driver state.</brief></field>
+          <field name="config" ctype="const snor_config_t$I*$N">
+            <brief>Driver configuration.</brief></field>
           <field name="mutex" ctype="mutex_t">
             <brief>Flash access mutex.</brief></field>
         </fields>
         <methods>
           <objinit callsuper="true">
-            <param name="nocache" ctype="snor_nocache_t *" dir="in">Pointer to a non-cacheable buffer.</param>
             <implementation><![CDATA[
-self->nocache = nocache;
 self->state = FLASH_UNINIT;
-osalMtxObjectInit(&self->mutex);]]></implementation>
+osalMutexObjectInit(&self->mutex);]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[;]]></implementation>
           </dispose>
           <virtual>
-            <method shortname="get_descriptor" name="snor_get_descriptor" ctype="const flash_descriptor_t *">
+            <method shortname="get_descriptor" name="snor_device_get_descriptor" ctype="const flash_descriptor_t *">
               <notapi />
             </method>
-            <method shortname="read" name="snor_read" ctype="flash_error_t">
+            <method shortname="read" name="snor_device_read" ctype="flash_error_t">
               <brief>Read operation.</brief>
               <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
               <param name="n" ctype="size_t" dir="in">number of bytes to be read</param>
@@ -264,7 +279,7 @@ osalMtxObjectInit(&self->mutex);]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="program" name="snor_program" ctype="flash_error_t">
+            <method shortname="program" name="snor_device_program" ctype="flash_error_t">
               <brief>Program operation.</brief>
               <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
               <param name="n" ctype="size_t" dir="in">number of bytes to be programmed</param>
@@ -275,14 +290,14 @@ osalMtxObjectInit(&self->mutex);]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="start_erase_all" name="snor_start_erase_all" ctype="flash_error_t">
+            <method shortname="start_erase_all" name="snor_device_start_erase_all" ctype="flash_error_t">
               <brief>Starts a whole-device erase operation.</brief>
               <return>An error code.</return>
               <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="start_erase_sector" name="snor_start_erase_sector" ctype="flash_error_t">
+            <method shortname="start_erase_sector" name="snor_device_start_erase_sector" ctype="flash_error_t">
               <brief>Starts an sector erase operation.</brief>
               <param name="sector" ctype="const flash_sector_t *" dir="in">sector to be erased</param>
               <return>An error code.</return>
@@ -290,12 +305,21 @@ osalMtxObjectInit(&self->mutex);]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="query_erase" name="snor_query_erase" ctype="flash_error_t">
+            <method shortname="query_erase" name="snor_device_query_erase" ctype="flash_error_t">
               <brief>Queries the driver for erase operation progress.</brief>
               <param name="msec" ctype="unsigned *" dir="out">recommended time, in milliseconds,
                that should be spent before calling this function again, can be @p NULL</param>
               <return>An error code.</return>
               <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+              <notapi />
+            </method>
+            <method shortname="verify_erase" name="snor_device_verify_erase" ctype="flash_error_t">
+              <brief>Returns the erase state of a sector.</brief>
+              <param name="sector" ctype="const flash_sector_t *" dir="in">sector to be verified</param>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_ERROR_VERIFY">If the verify operation failed.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>

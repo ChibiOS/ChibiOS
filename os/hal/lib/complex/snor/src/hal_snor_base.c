@@ -75,7 +75,7 @@
 static const flash_descriptor_t *__snorbase_fls_get_descriptor_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
-  return snor_get_descriptor(self);
+  return snor_device_get_descriptor(self);
 }
 
 /**
@@ -105,7 +105,7 @@ static flash_error_t __snorbase_fls_read_impl(void *ip, flash_offset_t offset,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->wspi);
+  wspiAcquireBus(self->config->wspi);
 
   /* FLASH_READY state while the operation is performed.*/
   self->state = FLASH_READ;
@@ -117,7 +117,7 @@ static flash_error_t __snorbase_fls_read_impl(void *ip, flash_offset_t offset,
   self->state = FLASH_READY;
 
   /* Bus released.*/
-  wspiReleaseBus(self->wspi);
+  wspiReleaseBus(self->config->wspi);
 
   return err;
 }
@@ -150,7 +150,7 @@ static flash_error_t __snorbase_fls_program_impl(void *ip,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->wspi);
+  wspiAcquireBus(self->config->wspi);
 
   /* FLASH_PGM state while the operation is performed.*/
   self->state = FLASH_PGM;
@@ -162,7 +162,7 @@ static flash_error_t __snorbase_fls_program_impl(void *ip,
   self->state = FLASH_READY;
 
   /* Bus released.*/
-  wspiReleaseBus(self->wspi);
+  wspiReleaseBus(self->config->wspi);
 
   return err;
 }
@@ -190,7 +190,7 @@ static flash_error_t __snorbase_fls_start_erase_all_impl(void *ip) {
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->wspi);
+  wspiAcquireBus(self->config->wspi);
 
   /* FLASH_ERASE state while the operation is performed.*/
   self->state = FLASH_ERASE;
@@ -199,7 +199,7 @@ static flash_error_t __snorbase_fls_start_erase_all_impl(void *ip) {
   err = snor_device_start_erase_all(self);
 
   /* Bus released.*/
-  wspiReleaseBus(self->wspi);
+  wspiReleaseBus(self->config->wspi);
 
   return err;
 }
@@ -229,7 +229,7 @@ static flash_error_t __snorbase_fls_start_erase_sector_impl(void *ip,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->wspi);
+  wspiAcquireBus(self->config->wspi);
 
   /* FLASH_ERASE state while the operation is performed.*/
   self->state = FLASH_ERASE;
@@ -238,7 +238,7 @@ static flash_error_t __snorbase_fls_start_erase_sector_impl(void *ip,
   err = snor_device_start_erase_sector(self, sector);
 
   /* Bus released.*/
-  wspiReleaseBus(self->wspi);
+  wspiReleaseBus(self->config->wspi);
 
   return err;
 }
@@ -268,7 +268,7 @@ static flash_error_t __snorbase_fls_query_erase_impl(void *ip, unsigned *msec) {
   if (self->state == FLASH_ERASE) {
 
     /* Bus acquired.*/
-    wspiAcquireBus(self->wspi);
+    wspiAcquireBus(self->config->wspi);
 
     /* Actual query erase implementation.*/
     err = snor_device_query_erase(self, msec);
@@ -279,7 +279,7 @@ static flash_error_t __snorbase_fls_query_erase_impl(void *ip, unsigned *msec) {
     }
 
     /* Bus released.*/
-    wspiReleaseBus(self->wspi);
+    wspiReleaseBus(self->config->wspi);
   }
   else {
     err = FLASH_NO_ERROR;
@@ -313,7 +313,7 @@ static flash_error_t __snorbase_fls_verify_erase_impl(void *ip,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->wspi);
+  wspiAcquireBus(self->config->wspi);
 
   /* FLASH_READY state while the operation is performed.*/
   self->state = FLASH_READ;
@@ -325,7 +325,7 @@ static flash_error_t __snorbase_fls_verify_erase_impl(void *ip,
   self->state = FLASH_READY;
 
   /* Bus released.*/
-  wspiReleaseBus(self->wspi);
+  wspiReleaseBus(self->config->wspi);
 
   return err;
 }
@@ -379,11 +379,9 @@ static flash_error_t __snorbase_fls_release_exclusive_impl(void *ip) {
  * @param[out]    ip            Pointer to a @p hal_snor_base_c instance to be
  *                              initialized.
  * @param[in]     vmt           VMT pointer for the new object.
- * @param[in]     nocache       Pointer to a non-cacheable buffer.
  * @return                      A new reference to the object.
  */
-void *__snorbase_objinit_impl(void *ip, const void *vmt,
-                              snor_nocache_t *nocache) {
+void *__snorbase_objinit_impl(void *ip, const void *vmt) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
@@ -407,9 +405,8 @@ void *__snorbase_objinit_impl(void *ip, const void *vmt,
   }
 
   /* Initialization code.*/
-  self->nocache = nocache;
   self->state = FLASH_UNINIT;
-  osalMtxObjectInit(&self->mutex);
+  osalMutexObjectInit(&self->mutex);
 
   return self;
 }

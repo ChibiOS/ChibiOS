@@ -28,6 +28,10 @@
 #ifndef HAL_SNOR_BASE_H
 #define HAL_SNOR_BASE_H
 
+#include "oop_base_object.h"
+#include "oop_base_interface.h"
+#include "hal_flash_interface.h"
+
 /*===========================================================================*/
 /* Module constants.                                                         */
 /*===========================================================================*/
@@ -35,6 +39,18 @@
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief       Non-cacheable operations buffer.
+ */
+#if !defined(SNOR_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define SNOR_BUFFER_SIZE                    32
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -49,9 +65,19 @@
 /*===========================================================================*/
 
 /**
+ * @brief       Type of a non-cacheable buffer.
+ */
+typedef struct snor_nocache snor_nocache_t;
+
+/**
+ * @brief       Type of a SNOR configuration structure.
+ */
+typedef struct snor_config snor_config_t;
+
+/**
  * @brief       SNOR driver configuration.
  */
-struct snor_nocache_t {
+struct snor_nocache {
   /**
    * @brief       Non-cacheable data buffer.
    */
@@ -65,7 +91,7 @@ struct snor_nocache_t {
 /**
  * @brief       SNOR driver configuration.
  */
-struct snor_config_t {
+struct snor_config {
   /**
    * @brief       WSPI driver to be used for physical communication.
    */
@@ -105,6 +131,7 @@ struct hal_snor_base_vmt {
   flash_error_t (*start_erase_all)(void *ip);
   flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
+  flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
 };
 
 /**
@@ -124,6 +151,10 @@ struct hal_snor_base {
    */
   flash_state_t             state;
   /**
+   * @brief       Driver configuration.
+   */
+  const snor_config_t       *config;
+  /**
    * @brief       Flash access mutex.
    */
   mutex_t                   mutex;
@@ -138,8 +169,7 @@ struct hal_snor_base {
 extern "C" {
 #endif
   /* Methods of hal_snor_base_c.*/
-  void *__snorbase_objinit_impl(void *ip, const void *vmt,
-                                snor_nocache_t *nocache);
+  void *__snorbase_objinit_impl(void *ip, const void *vmt);
   void __snorbase_dispose_impl(void *ip);
   /* Regular functions.*/
 #ifdef __cplusplus
@@ -164,7 +194,7 @@ extern "C" {
  * @notapi
  */
 CC_FORCE_INLINE
-static inline const flash_descriptor_t *snor_get_descriptor(void *ip) {
+static inline const flash_descriptor_t *snor_device_get_descriptor(void *ip) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->get_descriptor(ip);
@@ -188,8 +218,8 @@ static inline const flash_descriptor_t *snor_get_descriptor(void *ip) {
  * @notapi
  */
 CC_FORCE_INLINE
-static inline flash_error_t snor_read(void *ip, flash_offset_t offset,
-                                      size_t n, uint8_t *rp) {
+static inline flash_error_t snor_device_read(void *ip, flash_offset_t offset,
+                                             size_t n, uint8_t *rp) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->read(ip, offset, n, rp);
@@ -213,8 +243,9 @@ static inline flash_error_t snor_read(void *ip, flash_offset_t offset,
  * @notapi
  */
 CC_FORCE_INLINE
-static inline flash_error_t snor_program(void *ip, flash_offset_t offset,
-                                         size_t n, const uint8_t *pp) {
+static inline flash_error_t snor_device_program(void *ip,
+                                                flash_offset_t offset,
+                                                size_t n, const uint8_t *pp) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->program(ip, offset, n, pp);
@@ -234,7 +265,7 @@ static inline flash_error_t snor_program(void *ip, flash_offset_t offset,
  * @notapi
  */
 CC_FORCE_INLINE
-static inline flash_error_t snor_start_erase_all(void *ip) {
+static inline flash_error_t snor_device_start_erase_all(void *ip) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->start_erase_all(ip);
@@ -255,8 +286,8 @@ static inline flash_error_t snor_start_erase_all(void *ip) {
  * @notapi
  */
 CC_FORCE_INLINE
-static inline flash_error_t snor_start_erase_sector(void *ip,
-                                                    const flash_sector_t *sector) {
+static inline flash_error_t snor_device_start_erase_sector(void *ip,
+                                                           const flash_sector_t *sector) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->start_erase_sector(ip, sector);
@@ -279,10 +310,33 @@ static inline flash_error_t snor_start_erase_sector(void *ip,
  * @notapi
  */
 CC_FORCE_INLINE
-static inline flash_error_t snor_query_erase(void *ip, unsigned *msec) {
+static inline flash_error_t snor_device_query_erase(void *ip, unsigned *msec) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->query_erase(ip, msec);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Returns the erase state of a sector.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     sector        Sector to be verified.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_ERROR_VERIFY   If the verify operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_device_verify_erase(void *ip,
+                                                     const flash_sector_t *sector) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->verify_erase(ip, sector);
 }
 /** @} */
 
