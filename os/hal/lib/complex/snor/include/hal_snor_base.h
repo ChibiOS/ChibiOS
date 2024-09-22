@@ -100,6 +100,11 @@ struct hal_snor_base_vmt {
   void (*dispose)(void *ip);
   /* From hal_snor_base_c.*/
   const flash_descriptor_t * (*get_descriptor)(void *ip);
+  flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
+  flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
+  flash_error_t (*start_erase_all)(void *ip);
+  flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*query_erase)(void *ip, unsigned *msec);
 };
 
 /**
@@ -113,7 +118,7 @@ struct hal_snor_base {
   /**
    * @brief       Implemented interface @p flash_interface_i.
    */
-  flash_interface_i         flash;
+  flash_interface_i         fls;
   /**
    * @brief       Driver state.
    */
@@ -163,6 +168,121 @@ static inline const flash_descriptor_t *snor_get_descriptor(void *ip) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->get_descriptor(ip);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Read operation.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     offset        Flash offset.
+ * @param[in]     n             Number of bytes to be read.
+ * @param[out]    rp            Pointer to the data buffer.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_ERROR_READ     If the read operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_read(void *ip, flash_offset_t offset,
+                                      size_t n, uint8_t *rp) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->read(ip, offset, n, rp);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Program operation.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     offset        Flash offset.
+ * @param[in]     n             Number of bytes to be programmed.
+ * @param[in]     pp            Pointer to the data buffer.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_ERROR_PROGRAM  If the program operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_program(void *ip, flash_offset_t offset,
+                                         size_t n, const uint8_t *pp) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->program(ip, offset, n, pp);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Starts a whole-device erase operation.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_start_erase_all(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->start_erase_all(ip);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Starts an sector erase operation.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     sector        Sector to be erased.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_start_erase_sector(void *ip,
+                                                    const flash_sector_t *sector) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->start_erase_sector(ip, sector);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Queries the driver for erase operation progress.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[out]    msec          Recommended time, in milliseconds, that should
+ *                              be spent before calling this function again,
+ *                              can be @p NULL
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_query_erase(void *ip, unsigned *msec) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->query_erase(ip, msec);
 }
 /** @} */
 

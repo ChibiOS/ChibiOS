@@ -76,6 +76,7 @@ struct flash_interface_vmt {
   flash_error_t (*start_erase_all)(void *ip);
   flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
+  flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
   flash_error_t (*acquire_exclusive)(void *ip);
   flash_error_t (*release_exclusive)(void *ip);
 };
@@ -120,7 +121,7 @@ extern "C" {
  * @return                      A flash device descriptor.
  */
 CC_FORCE_INLINE
-static inline const flash_descriptor_t *flashGetDescriptor(void *ip) {
+static inline const flash_descriptor_t *flsGetDescriptor(void *ip) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->get_descriptor(ip);
@@ -143,8 +144,8 @@ static inline const flash_descriptor_t *flashGetDescriptor(void *ip) {
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flashRead(void *ip, flash_offset_t offset,
-                                      size_t n, uint8_t *rp) {
+static inline flash_error_t flsRead(void *ip, flash_offset_t offset, size_t n,
+                                    uint8_t *rp) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->read(ip, offset, n, rp);
@@ -167,8 +168,8 @@ static inline flash_error_t flashRead(void *ip, flash_offset_t offset,
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flashProgram(void *ip, flash_offset_t offset,
-                                         size_t n, const uint8_t *pp) {
+static inline flash_error_t flsProgram(void *ip, flash_offset_t offset,
+                                       size_t n, const uint8_t *pp) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->program(ip, offset, n, pp);
@@ -187,7 +188,7 @@ static inline flash_error_t flashProgram(void *ip, flash_offset_t offset,
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flashStartEraseAll(void *ip) {
+static inline flash_error_t flsStartEraseAll(void *ip) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->start_erase_all(ip);
@@ -207,8 +208,8 @@ static inline flash_error_t flashStartEraseAll(void *ip) {
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flashStartEraseSector(void *ip,
-                                                  const flash_sector_t *sector) {
+static inline flash_error_t flsStartEraseSector(void *ip,
+                                                const flash_sector_t *sector) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->start_erase_sector(ip, sector);
@@ -230,10 +231,32 @@ static inline flash_error_t flashStartEraseSector(void *ip,
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flashQueryErase(void *ip, unsigned *msec) {
+static inline flash_error_t flsQueryErase(void *ip, unsigned *msec) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->query_erase(ip, msec);
+}
+
+/**
+ * @memberof    flash_interface_i
+ * @public
+ *
+ * @brief       Returns the erase state of a sector.
+ *
+ * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
+ * @param[in]     sector        Sector to be verified.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_BUSY_ERASING   If there is an erase operation in progress.
+ * @retval FLASH_ERROR_VERIFY   If the verify operation failed.
+ * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
+ */
+CC_FORCE_INLINE
+static inline flash_error_t flsVerifyErase(void *ip,
+                                           const flash_sector_t *sector) {
+  flash_interface_i *self = (flash_interface_i *)ip;
+
+  return self->vmt->verify_erase(ip, sector);
 }
 
 /**
@@ -249,7 +272,7 @@ static inline flash_error_t flashQueryErase(void *ip, unsigned *msec) {
  *                              enabled.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flashAcquireExclusive(void *ip) {
+static inline flash_error_t flsAcquireExclusive(void *ip) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->acquire_exclusive(ip);
@@ -268,7 +291,7 @@ static inline flash_error_t flashAcquireExclusive(void *ip) {
  *                              enabled.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flashReleaseExclusive(void *ip) {
+static inline flash_error_t flsReleaseExclusive(void *ip) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->release_exclusive(ip);

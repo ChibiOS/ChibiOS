@@ -66,13 +66,13 @@
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashGetDescriptor().
+ * @brief       Implementation of interface method @p flsGetDescriptor().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
  * @return                      A flash device descriptor.
  */
-static const flash_descriptor_t *__snorbase_flash_get_descriptor_impl(void *ip) {
+static const flash_descriptor_t *__snorbase_fls_get_descriptor_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
   return snor_get_descriptor(self);
@@ -82,7 +82,7 @@ static const flash_descriptor_t *__snorbase_flash_get_descriptor_impl(void *ip) 
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashRead().
+ * @brief       Implementation of interface method @p flsRead().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
@@ -91,15 +91,12 @@ static const flash_descriptor_t *__snorbase_flash_get_descriptor_impl(void *ip) 
  * @param[out]    rp            Pointer to the data buffer.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_flash_read_impl(void *ip,
-                                                flash_offset_t offset,
-                                                size_t n, uint8_t *rp) {
+static flash_error_t __snorbase_fls_read_impl(void *ip, flash_offset_t offset,
+                                              size_t n, uint8_t *rp) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
   osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
-  //osalDbgCheck((size_t)offset + n <= (size_t)snor_descriptor.sectors_count *
-  //                                   (size_t)snor_descriptor.sectors_size);
   osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
                 "invalid state");
 
@@ -108,19 +105,19 @@ static flash_error_t __snorbase_flash_read_impl(void *ip,
   }
 
   /* Bus acquired.*/
-  wspiBusAcquire(self->wspi);
+  wspiAcquireBus(self->wspi);
 
   /* FLASH_READY state while the operation is performed.*/
   self->state = FLASH_READ;
 
   /* Actual read implementation.*/
-  //err = snor_device_read(devp, offset, n, rp);
+  err = snor_device_read(self, offset, n, rp);
 
   /* Ready state again.*/
   self->state = FLASH_READY;
 
   /* Bus released.*/
-  wspiBusRelease(self->wspi);
+  wspiReleaseBus(self->wspi);
 
   return err;
 }
@@ -129,7 +126,7 @@ static flash_error_t __snorbase_flash_read_impl(void *ip,
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashProgram().
+ * @brief       Implementation of interface method @p flsProgram().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
@@ -138,50 +135,119 @@ static flash_error_t __snorbase_flash_read_impl(void *ip,
  * @param[in]     pp            Pointer to the data buffer.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_flash_program_impl(void *ip,
-                                                   flash_offset_t offset,
-                                                   size_t n, const uint8_t *pp) {
+static flash_error_t __snorbase_fls_program_impl(void *ip,
+                                                 flash_offset_t offset,
+                                                 size_t n, const uint8_t *pp) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
-  ;
+  flash_error_t err;
+
+  osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
+  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+                "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  wspiAcquireBus(self->wspi);
+
+  /* FLASH_PGM state while the operation is performed.*/
+  self->state = FLASH_PGM;
+
+  /* Actual program implementation.*/
+  err = snor_device_program(self, offset, n, pp);
+
+  /* Ready state again.*/
+  self->state = FLASH_READY;
+
+  /* Bus released.*/
+  wspiReleaseBus(self->wspi);
+
+  return err;
 }
 
 /**
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashStartEraseAll().
+ * @brief       Implementation of interface method @p flsStartEraseAll().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_flash_start_erase_all_impl(void *ip) {
+static flash_error_t __snorbase_fls_start_erase_all_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
-  ;
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+                "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  wspiAcquireBus(self->wspi);
+
+  /* FLASH_ERASE state while the operation is performed.*/
+  self->state = FLASH_ERASE;
+
+  /* Actual erase implementation.*/
+  err = snor_device_start_erase_all(self);
+
+  /* Bus released.*/
+  wspiReleaseBus(self->wspi);
+
+  return err;
 }
 
 /**
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashStartEraseSector().
+ * @brief       Implementation of interface method @p flsStartEraseSector().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
  * @param[in]     sector        Sector to be erased.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_flash_start_erase_sector_impl(void *ip,
-                                                              const flash_sector_t *sector) {
+static flash_error_t __snorbase_fls_start_erase_sector_impl(void *ip,
+                                                            const flash_sector_t *sector) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
-  ;
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+                "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  wspiAcquireBus(self->wspi);
+
+  /* FLASH_ERASE state while the operation is performed.*/
+  self->state = FLASH_ERASE;
+
+  /* Actual erase implementation.*/
+  err = snor_device_start_erase_sector(self, sector);
+
+  /* Bus released.*/
+  wspiReleaseBus(self->wspi);
+
+  return err;
 }
 
 /**
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashQueryErase().
+ * @brief       Implementation of interface method @p flsQueryErase().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
@@ -190,23 +256,91 @@ static flash_error_t __snorbase_flash_start_erase_sector_impl(void *ip,
  *                              can be @p NULL
  * @return                      An error code.
  */
-static flash_error_t __snorbase_flash_query_erase_impl(void *ip,
-                                                       unsigned *msec) {
+static flash_error_t __snorbase_fls_query_erase_impl(void *ip, unsigned *msec) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
-  ;
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+                "invalid state");
+
+  /* If there is an erase in progress then the device must be checked.*/
+  if (self->state == FLASH_ERASE) {
+
+    /* Bus acquired.*/
+    wspiAcquireBus(self->wspi);
+
+    /* Actual query erase implementation.*/
+    err = snor_device_query_erase(self, msec);
+
+    /* The device is ready to accept commands.*/
+    if (err == FLASH_NO_ERROR) {
+      self->state = FLASH_READY;
+    }
+
+    /* Bus released.*/
+    wspiReleaseBus(self->wspi);
+  }
+  else {
+    err = FLASH_NO_ERROR;
+  }
+
+  return err;
 }
 
 /**
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashAcquireExclusive().
+ * @brief       Implementation of interface method @p flsVerifyErase().
+ *
+ * @param[in,out] ip            Pointer to the @p flash_interface_i class
+ *                              interface.
+ * @param[in]     sector        Sector to be verified.
+ * @return                      An error code.
+ */
+static flash_error_t __snorbase_fls_verify_erase_impl(void *ip,
+                                                      const flash_sector_t *sector) {
+  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  flash_error_t err;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+                "invalid state");
+
+  if (self->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Bus acquired.*/
+  wspiAcquireBus(self->wspi);
+
+  /* FLASH_READY state while the operation is performed.*/
+  self->state = FLASH_READ;
+
+  /* Actual verify erase implementation.*/
+  err = snor_device_verify_erase(self, sector);
+
+  /* Ready state again.*/
+  self->state = FLASH_READY;
+
+  /* Bus released.*/
+  wspiReleaseBus(self->wspi);
+
+  return err;
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @private
+ *
+ * @brief       Implementation of interface method @p flsAcquireExclusive().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_flash_acquire_exclusive_impl(void *ip) {
+static flash_error_t __snorbase_fls_acquire_exclusive_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
   osalMutexLock(&self->mutex);
@@ -217,13 +351,13 @@ static flash_error_t __snorbase_flash_acquire_exclusive_impl(void *ip) {
  * @memberof    hal_snor_base_c
  * @private
  *
- * @brief       Implementation of interface method @p flashReleaseExclusive().
+ * @brief       Implementation of interface method @p flsReleaseExclusive().
  *
  * @param[in,out] ip            Pointer to the @p flash_interface_i class
  *                              interface.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_flash_release_exclusive_impl(void *ip) {
+static flash_error_t __snorbase_fls_release_exclusive_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
   osalMutexUnlock(&self->mutex);
@@ -257,18 +391,19 @@ void *__snorbase_objinit_impl(void *ip, const void *vmt,
 
   /* Initialization of interface flash_interface_i.*/
   {
-    static const struct flash_interface_vmt snorbase_flash_vmt = {
-      .instance_offset      = offsetof(hal_snor_base_c, flash),
-      .get_descriptor       = __snorbase_flash_get_descriptor_impl,
-      .read                 = __snorbase_flash_read_impl,
-      .program              = __snorbase_flash_program_impl,
-      .start_erase_all      = __snorbase_flash_start_erase_all_impl,
-      .start_erase_sector   = __snorbase_flash_start_erase_sector_impl,
-      .query_erase          = __snorbase_flash_query_erase_impl,
-      .acquire_exclusive    = __snorbase_flash_acquire_exclusive_impl,
-      .release_exclusive    = __snorbase_flash_release_exclusive_impl
+    static const struct flash_interface_vmt snorbase_fls_vmt = {
+      .instance_offset      = offsetof(hal_snor_base_c, fls),
+      .get_descriptor       = __snorbase_fls_get_descriptor_impl,
+      .read                 = __snorbase_fls_read_impl,
+      .program              = __snorbase_fls_program_impl,
+      .start_erase_all      = __snorbase_fls_start_erase_all_impl,
+      .start_erase_sector   = __snorbase_fls_start_erase_sector_impl,
+      .query_erase          = __snorbase_fls_query_erase_impl,
+      .verify_erase         = __snorbase_fls_verify_erase_impl,
+      .acquire_exclusive    = __snorbase_fls_acquire_exclusive_impl,
+      .release_exclusive    = __snorbase_fls_release_exclusive_impl
     };
-    oopIfObjectInit(&self->flash, &snorbase_flash_vmt);
+    oopIfObjectInit(&self->fls, &snorbase_fls_vmt);
   }
 
   /* Initialization code.*/

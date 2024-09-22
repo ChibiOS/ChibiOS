@@ -52,8 +52,6 @@ return snor_get_descriptor(self);]]></implementation>
 flash_error_t err;
 
 osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
-//osalDbgCheck((size_t)offset + n <= (size_t)snor_descriptor.sectors_count *
-//                                   (size_t)snor_descriptor.sectors_size);
 osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
               "invalid state");
 
@@ -62,37 +60,162 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiBusAcquire(self->wspi);
+wspiAcquireBus(self->wspi);
 
 /* FLASH_READY state while the operation is performed.*/
 self->state = FLASH_READ;
 
 /* Actual read implementation.*/
-//err = snor_device_read(devp, offset, n, rp);
+err = snor_device_read(self, offset, n, rp);
 
 /* Ready state again.*/
 self->state = FLASH_READY;
 
 /* Bus released.*/
-wspiBusRelease(self->wspi);
+wspiReleaseBus(self->wspi);
 
 return err;]]></implementation>
             </method>
             <method shortname="program">
               <implementation><![CDATA[
-;]]></implementation>
+flash_error_t err;
+
+osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+/* Bus acquired.*/
+wspiAcquireBus(self->wspi);
+
+/* FLASH_PGM state while the operation is performed.*/
+self->state = FLASH_PGM;
+
+/* Actual program implementation.*/
+err = snor_device_program(self, offset, n, pp);
+
+/* Ready state again.*/
+self->state = FLASH_READY;
+
+/* Bus released.*/
+wspiReleaseBus(self->wspi);
+
+return err;]]></implementation>
             </method>
             <method shortname="start_erase_all">
               <implementation><![CDATA[
-;]]></implementation>
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+/* Bus acquired.*/
+wspiAcquireBus(self->wspi);
+
+/* FLASH_ERASE state while the operation is performed.*/
+self->state = FLASH_ERASE;
+
+/* Actual erase implementation.*/
+err = snor_device_start_erase_all(self);
+
+/* Bus released.*/
+wspiReleaseBus(self->wspi);
+
+return err;]]></implementation>
             </method>
             <method shortname="start_erase_sector">
               <implementation><![CDATA[
-;]]></implementation>
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+/* Bus acquired.*/
+wspiAcquireBus(self->wspi);
+
+/* FLASH_ERASE state while the operation is performed.*/
+self->state = FLASH_ERASE;
+
+/* Actual erase implementation.*/
+err = snor_device_start_erase_sector(self, sector);
+
+/* Bus released.*/
+wspiReleaseBus(self->wspi);
+
+return err;]]></implementation>
             </method>
             <method shortname="query_erase">
               <implementation><![CDATA[
-;]]></implementation>
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+/* If there is an erase in progress then the device must be checked.*/
+if (self->state == FLASH_ERASE) {
+
+  /* Bus acquired.*/
+  wspiAcquireBus(self->wspi);
+
+  /* Actual query erase implementation.*/
+  err = snor_device_query_erase(self, msec);
+
+  /* The device is ready to accept commands.*/
+  if (err == FLASH_NO_ERROR) {
+    self->state = FLASH_READY;
+  }
+
+  /* Bus released.*/
+  wspiReleaseBus(self->wspi);
+}
+else {
+  err = FLASH_NO_ERROR;
+}
+
+return err;]]></implementation>
+            </method>
+            <method shortname="verify_erase">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+/* Bus acquired.*/
+wspiAcquireBus(self->wspi);
+
+/* FLASH_READY state while the operation is performed.*/
+self->state = FLASH_READ;
+
+/* Actual verify erase implementation.*/
+err = snor_device_verify_erase(self, sector);
+
+/* Ready state again.*/
+self->state = FLASH_READY;
+
+/* Bus released.*/
+wspiReleaseBus(self->wspi);
+
+return err;]]></implementation>
             </method>
             <method shortname="acquire_exclusive">
               <implementation><![CDATA[
@@ -128,6 +251,52 @@ osalMtxObjectInit(&self->mutex);]]></implementation>
           </dispose>
           <virtual>
             <method shortname="get_descriptor" name="snor_get_descriptor" ctype="const flash_descriptor_t *">
+              <notapi />
+            </method>
+            <method shortname="read" name="snor_read" ctype="flash_error_t">
+              <brief>Read operation.</brief>
+              <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+              <param name="n" ctype="size_t" dir="in">number of bytes to be read</param>
+              <param name="rp" ctype="uint8_t *" dir="out">pointer to the data buffer</param>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_ERROR_READ">If the read operation failed.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+              <notapi />
+            </method>
+            <method shortname="program" name="snor_program" ctype="flash_error_t">
+              <brief>Program operation.</brief>
+              <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+              <param name="n" ctype="size_t" dir="in">number of bytes to be programmed</param>
+              <param name="pp" ctype="const uint8_t *" dir="in">pointer to the data buffer</param>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_ERROR_PROGRAM">If the program operation failed.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+              <notapi />
+            </method>
+            <method shortname="start_erase_all" name="snor_start_erase_all" ctype="flash_error_t">
+              <brief>Starts a whole-device erase operation.</brief>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+              <notapi />
+            </method>
+            <method shortname="start_erase_sector" name="snor_start_erase_sector" ctype="flash_error_t">
+              <brief>Starts an sector erase operation.</brief>
+              <param name="sector" ctype="const flash_sector_t *" dir="in">sector to be erased</param>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
+              <notapi />
+            </method>
+            <method shortname="query_erase" name="snor_query_erase" ctype="flash_error_t">
+              <brief>Queries the driver for erase operation progress.</brief>
+              <param name="msec" ctype="unsigned *" dir="out">recommended time, in milliseconds,
+               that should be spent before calling this function again, can be @p NULL</param>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
           </virtual>
