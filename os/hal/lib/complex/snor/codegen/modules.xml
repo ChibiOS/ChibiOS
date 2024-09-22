@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE doc [
+  <!ENTITY hal_flash_interface SYSTEM "hal_flash_interface.xml">
   <!ENTITY hal_snor_base       SYSTEM "hal_snor_base.xml">
 ]>
 <instance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,6 +9,7 @@
     <path>../../../../../common/oop/codegen</path>
   </paths>
   <modules>
+    &hal_flash_interface;
     &hal_snor_base;
   </modules>
 </instance>

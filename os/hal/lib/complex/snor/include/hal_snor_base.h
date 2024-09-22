@@ -79,6 +79,7 @@ struct snor_config_t {
 /**
  * @class       hal_snor_base_c
  * @extends     base_object_c.
+ * @implements  flash_interface_i
  *
  * @brief       Base class of all SNOR drivers.
  *
@@ -98,6 +99,7 @@ struct hal_snor_base_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_snor_base_c.*/
+  const flash_descriptor_t * (*get_descriptor)(void *ip);
 };
 
 /**
@@ -109,9 +111,17 @@ struct hal_snor_base {
    */
   const struct hal_snor_base_vmt *vmt;
   /**
+   * @brief       Implemented interface @p flash_interface_i.
+   */
+  flash_interface_i         flash;
+  /**
    * @brief       Driver state.
    */
   flash_state_t             state;
+  /**
+   * @brief       Flash access mutex.
+   */
+  mutex_t                   mutex;
 };
 /** @} */
 
@@ -134,6 +144,27 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @name        Virtual methods of hal_snor_base_c
+ * @{
+ */
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline const flash_descriptor_t *snor_get_descriptor(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->get_descriptor(ip);
+}
+/** @} */
 
 #endif /* HAL_SNOR_BASE_H */
 

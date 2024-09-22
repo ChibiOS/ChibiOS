@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="hal_snor_base" descr="SNOR Base Driver" editcode="true">
+  name="hal_snor_base" descr="SNOR Base Driver" editcode="false">
   <brief>SNOR abstract driver.</brief>
   <details><![CDATA[Base class for SNOR flash devices.]]></details>
   <imports>
     <import>oop_base_object.xml</import>
+    <import>hal_flash_interface.xml</import>
   </imports>
   <public>
     <definitions_early>
@@ -39,20 +40,99 @@
       <class name="hal_snor_base" type="abstract" namespace="snorbase"
         descr="SNOR base driver" ancestorname="base_object">
         <brief>Base class of all SNOR drivers.</brief>
+        <implements>
+          <if name="flash_interface">
+            <method shortname="get_descriptor">
+              <implementation><![CDATA[
+
+return snor_get_descriptor(self);]]></implementation>
+            </method>
+            <method shortname="read">
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
+//osalDbgCheck((size_t)offset + n <= (size_t)snor_descriptor.sectors_count *
+//                                   (size_t)snor_descriptor.sectors_size);
+osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
+              "invalid state");
+
+if (self->state == FLASH_ERASE) {
+  return FLASH_BUSY_ERASING;
+}
+
+/* Bus acquired.*/
+wspiBusAcquire(self->wspi);
+
+/* FLASH_READY state while the operation is performed.*/
+self->state = FLASH_READ;
+
+/* Actual read implementation.*/
+//err = snor_device_read(devp, offset, n, rp);
+
+/* Ready state again.*/
+self->state = FLASH_READY;
+
+/* Bus released.*/
+wspiBusRelease(self->wspi);
+
+return err;]]></implementation>
+            </method>
+            <method shortname="program">
+              <implementation><![CDATA[
+;]]></implementation>
+            </method>
+            <method shortname="start_erase_all">
+              <implementation><![CDATA[
+;]]></implementation>
+            </method>
+            <method shortname="start_erase_sector">
+              <implementation><![CDATA[
+;]]></implementation>
+            </method>
+            <method shortname="query_erase">
+              <implementation><![CDATA[
+;]]></implementation>
+            </method>
+            <method shortname="acquire_exclusive">
+              <implementation><![CDATA[
+
+osalMutexLock(&self->mutex);
+return FLASH_NO_ERROR;
+]]></implementation>
+            </method>
+            <method shortname="release_exclusive">
+              <implementation><![CDATA[
+
+osalMutexUnlock(&self->mutex);
+return FLASH_NO_ERROR;
+]]></implementation>
+            </method>
+          </if></implements>
         <fields>
           <field name="state" ctype="flash_state_t">
             <brief>Driver state.</brief></field>
+          <field name="mutex" ctype="mutex_t">
+            <brief>Flash access mutex.</brief></field>
         </fields>
         <methods>
           <objinit callsuper="true">
             <param name="nocache" ctype="snor_nocache_t *" dir="in">Pointer to a non-cacheable buffer.</param>
-            <implementation><![CDATA[self->nocache = nocache;]]></implementation>
+            <implementation><![CDATA[
+self->nocache = nocache;
+self->state = FLASH_UNINIT;
+osalMtxObjectInit(&self->mutex);]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[;]]></implementation>
           </dispose>
+          <virtual>
+            <method shortname="get_descriptor" name="snor_get_descriptor" ctype="const flash_descriptor_t *">
+              <notapi />
+            </method>
+          </virtual>
         </methods>
-      </class>      
+      </class>
     </types>
     <variables></variables>
     <functions></functions>
