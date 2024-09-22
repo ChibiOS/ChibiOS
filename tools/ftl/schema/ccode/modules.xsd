@@ -792,7 +792,7 @@
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:minLength value="1"></xs:minLength>
-      <xs:maxLength value="16"></xs:maxLength>
+      <xs:maxLength value="20"></xs:maxLength>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="namespaceType">
