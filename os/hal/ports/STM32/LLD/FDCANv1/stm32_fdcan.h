@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    FDCANv2/stm32_fdcan.h
+ * @file    FDCANv1/stm32_fdcan.h
  * @brief   STM32 FDCAN helpers header.
  *
  * @addtogroup STM32_
@@ -72,7 +72,6 @@
  */
 #define FDCAN_CONFIG_CCCR_DAR            (1u << 6)
 #define FDCAN_CONFIG_CCCR_TEST_MODE      (1u << 7)
-#define FDCAN_CONFIG_CCCR_CAN_MODE       (0u << 8)
 #define FDCAN_CONFIG_CCCR_FDCAN_MODE     (1u << 8)
 #define FDCAN_CONFIG_CCCR_BRSE           (1u << 9)
 #define FDCAN_CONFIG_CCCR_NISO           (1u << 15)
@@ -90,135 +89,63 @@
 /** @} */
 
 /**
- * @name    GFC register additional macros
+ * @name    RXGFC) register additional macros
  * @{
  */
-#define FDCAN_CONFIG_GFC_RRFE            (1u << 0)
-#define FDCAN_CONFIG_GFC_RRFS            (1u << 1)
-#define FDCAN_CONFIG_GFC_ANFE_Pos        (2)
-#define FDCAN_CONFIG_GFC_ANFE_Msk        (0x3u << FDCAN_CONFIG_GFC_ANFE_Pos)
-#define FDCAN_CONFIG_GFC_ANFE(n)         ((FDCAN_CONFIG_GFC_ANFE_Msk & ((n) << FDCAN_CONFIG_GFC_ANFE_Pos)))
-#define   FDCAN_CONFIG_GFC_ANFE_RX_0     (0x0u << 2)
-#define   FDCAN_CONFIG_GFC_ANFE_RX_1     (0x1u << 2)
-#define   FDCAN_CONFIG_GFC_ANFE_REJECT   (0x2u << 2)
-#define FDCAN_CONFIG_GFC_ANFS_Pos        (4)
-#define FDCAN_CONFIG_GFC_ANFS_Msk        (0x3u << FDCAN_CONFIG_GFC_ANFS_Pos)
-#define FDCAN_CONFIG_GFC_ANFS(n)         ((FDCAN_CONFIG_GFC_ANFS_Msk & ((n) << FDCAN_CONFIG_GFC_ANFS_Pos)))
-#define   FDCAN_CONFIG_GFC_ANFS_RX_0     (0x0u << 4)
-#define   FDCAN_CONFIG_GFC_ANFS_RX_1     (0x1u << 4)
-#define   FDCAN_CONFIG_GFC_ANFS_REJECT   (0x2u << 4)
-/** @} */
-
-/**
- * @name    SIDFC register additional macros
- * @{
- */
-#define FDCAN_CONFIG_SIDFC_FLSSA_Pos     (2)
-#define FDCAN_CONFIG_SIDFC_FLSSA_Msk     (0x3FFFu << FDCAN_CONFIG_SIDFC_FLSSA_Pos)
-#define FDCAN_CONFIG_SIDFC_FLSSA(n)      ((FDCAN_CONFIG_SIDFC_FLSSA_Msk & ((n) << FDCAN_CONFIG_SIDFC_FLSSA_Pos)))
-#define FDCAN_CONFIG_SIDFC_LSS_Pos       (16)
-#define FDCAN_CONFIG_SIDFC_LSS_Msk       (0xFFu << FDCAN_CONFIG_SIDFC_LSS_Pos)
-#define FDCAN_CONFIG_SIDFC_LSS(n)        ((FDCAN_CONFIG_SIDFC_LSS_Msk & ((n) << FDCAN_CONFIG_SIDFC_LSS_Pos)))
-/** @} */
-
-/**
- * @name    XIDFC register additional macros
- * @{
- */
-#define FDCAN_CONFIG_XIDFC_FLESA_Pos     (2)
-#define FDCAN_CONFIG_XIDFC_FLESA_Msk     (0x3FFFu << FDCAN_CONFIG_XIDFC_FLESA_Pos)
-#define FDCAN_CONFIG_XIDFC_FLESA(n)      ((FDCAN_CONFIG_XIDFC_FLESA_Msk & ((n) << FDCAN_CONFIG_XIDFC_FLESA_Pos)))
-#define FDCAN_CONFIG_XIDFC_LSE_Pos       (16)
-#define FDCAN_CONFIG_XIDFC_LSE_Msk       (0x7Fu << FDCAN_CONFIG_XIDFC_LSE_Pos)
-#define FDCAN_CONFIG_XIDFC_LSE(n)        ((FDCAN_CONFIG_XIDFC_LSE_Msk & ((n) << FDCAN_CONFIG_XIDFC_LSE_Pos)))
-/** @} */
-
-/**
- * @name    RXF0C register additional macros
- * @{
- */
-#define FDCAN_CONFIG_RXF0C_F0SA_Pos      (2)
-#define FDCAN_CONFIG_RXF0C_F0SA_Msk      (0x3FFFu << FDCAN_CONFIG_RXF0C_F0SA_Pos)
-#define FDCAN_CONFIG_RXF0C_F0SA(n)       ((FDCAN_CONFIG_RXF0C_F0SA_Msk & ((n) << FDCAN_CONFIG_RXF0C_F0SA_Pos)))
-#define FDCAN_CONFIG_RXF0C_F0S_Pos       (16)
-#define FDCAN_CONFIG_RXF0C_F0S_Msk       (0x7Fu << FDCAN_CONFIG_RXF0C_F0S_Pos)
-#define FDCAN_CONFIG_RXF0C_F0S(n)        ((FDCAN_CONFIG_RXF0C_F0S_Msk & ((n) << FDCAN_CONFIG_RXF0C_F0S_Pos)))
-/** @} */
-
-/**
- * @name    RXF1C register additional macros
- * @{
- */
-#define FDCAN_CONFIG_RXF1C_F1SA_Pos      (2)
-#define FDCAN_CONFIG_RXF1C_F1SA_Msk      (0x3FFFu << FDCAN_CONFIG_RXF1C_F1SA_Pos)
-#define FDCAN_CONFIG_RXF1C_F1SA(n)       ((FDCAN_CONFIG_RXF1C_F1SA_Msk & ((n) << FDCAN_CONFIG_RXF1C_F1SA_Pos)))
-#define FDCAN_CONFIG_RXF1C_F1S_Pos       (16)
-#define FDCAN_CONFIG_RXF1C_F1S_Msk       (0x7Fu << FDCAN_CONFIG_RXF1C_F1S_Pos)
-#define FDCAN_CONFIG_RXF1C_F1S(n)        ((FDCAN_CONFIG_RXF1C_F1S_Msk & ((n) << FDCAN_CONFIG_RXF1C_F1S_Pos)))
-/** @} */
-
-/**
- * @name    RXBC register additional macros
- * @{
- */
-#define FDCAN_CONFIG_RXBC_RBSA_Pos       (2)
-#define FDCAN_CONFIG_RXBC_RBSA_Msk       (0x3FFFu << FDCAN_CONFIG_RXBC_RBSA_Pos)
-#define FDCAN_CONFIG_RXBC_RBSA(n)        ((FDCAN_CONFIG_RXBC_RBSA_Msk & ((n) << FDCAN_CONFIG_RXBC_RBSA_Pos)))
-/** @} */
-
-/**
- * @name    TXEFC register additional macros
- * @{
- */
-#define FDCAN_CONFIG_TXEFC_EFSA_Pos       (2)
-#define FDCAN_CONFIG_TXEFC_EFSA_Msk       (0x3FFFu << FDCAN_CONFIG_TXEFC_EFSA_Pos)
-#define FDCAN_CONFIG_TXEFC_EFSA(n)        ((FDCAN_CONFIG_TXEFC_EFSA_Msk & ((n) << FDCAN_CONFIG_TXEFC_EFSA_Pos)))
-#define FDCAN_CONFIG_TXEFC_EFS_Pos        (16)
-#define FDCAN_CONFIG_TXEFC_EFS_Msk        (0x3Fu << FDCAN_CONFIG_TXEFC_EFS_Pos)
-#define FDCAN_CONFIG_TXEFC_EFS(n)         ((FDCAN_CONFIG_TXEFC_EFS_Msk & ((n) << FDCAN_CONFIG_TXEFC_EFS_Pos)))
+#define FDCAN_CONFIG_RXGFC_RRFE            (1u << 0)
+#define FDCAN_CONFIG_RXGFC_RRFS            (1u << 1)
+#define FDCAN_CONFIG_RXGFC_ANFE_Pos        (2)
+#define FDCAN_CONFIG_RXGFC_ANFE_Msk        (0x3u << FDCAN_CONFIG_RXGFC_ANFE_Pos)
+#define FDCAN_CONFIG_RXGFC_ANFE(n)         ((FDCAN_CONFIG_RXGFC_ANFE_Msk & ((n) << FDCAN_CONFIG_RXGFC_ANFE_Pos)))
+#define   FDCAN_CONFIG_RXGFC_ANFE_RX_0     (0x0u << 2)
+#define   FDCAN_CONFIG_RXGFC_ANFE_RX_1     (0x1u << 2)
+#define   FDCAN_CONFIG_RXGFC_ANFE_REJECT   (0x2u << 2)
+#define FDCAN_CONFIG_RXGFC_ANFS_Pos        (4)
+#define FDCAN_CONFIG_RXGFC_ANFS_Msk        (0x3u << FDCAN_CONFIG_RXGFC_ANFS_Pos)
+#define FDCAN_CONFIG_RXGFC_ANFS(n)         ((FDCAN_CONFIG_RXGFC_ANFS_Msk & ((n) << FDCAN_CONFIG_RXGFC_ANFS_Pos)))
+#define   FDCAN_CONFIG_RXGFC_ANFS_RX_0     (0x0u << 4)
+#define   FDCAN_CONFIG_RXGFC_ANFS_RX_1     (0x1u << 4)
+#define   FDCAN_CONFIG_RXGFC_ANFS_REJECT   (0x2u << 4)
+#define FDCAN_CONFIG_RXGFC_F1OM            (1u << 8)
+#define FDCAN_CONFIG_RXGFC_F0OM            (1u << 9)
+#define FDCAN_CONFIG_RXGFC_LSS_Pos         (16)
+#define FDCAN_CONFIG_RXGFC_LSS_Msk         (0x1Fu << FDCAN_CONFIG_RXGFC_LSS_Pos)
+#define FDCAN_CONFIG_RXGFC_LSS(n)          ((FDCAN_CONFIG_RXGFC_LSS_Msk & ((n) << FDCAN_CONFIG_RXGFC_LSS_Pos)))
+#define FDCAN_CONFIG_RXGFC_LSE_Pos         (24)
+#define FDCAN_CONFIG_RXGFC_LSE_Msk         (0xFu << FDCAN_CONFIG_RXGFC_LSE_Pos)
+#define FDCAN_CONFIG_RXGFC_LSE(n)          ((FDCAN_CONFIG_RXGFC_LSE_Msk & ((n) << FDCAN_CONFIG_RXGFC_LSE_Pos)))
 /** @} */
 
 /**
  * @name    TXBC register additional macros
  * @{
  */
-#define FDCAN_CONFIG_TXBC_TBSA_Pos        (2)
-#define FDCAN_CONFIG_TXBC_TBSA_Msk        (0x3FFFu << FDCAN_CONFIG_TXBC_TBSA_Pos)
-#define FDCAN_CONFIG_TXBC_TBSA(n)         ((FDCAN_CONFIG_TXBC_TBSA_Msk & ((n) << FDCAN_CONFIG_TXBC_TBSA_Pos)))
-#define FDCAN_CONFIG_TXBC_TFQS_Pos        (24)
-#define FDCAN_CONFIG_TXBC_TFQS_Msk        (0x3Fu << FDCAN_CONFIG_TXBC_TFQS_Pos)
-#define FDCAN_CONFIG_TXBC_TFQS(n)         ((FDCAN_CONFIG_TXBC_TFQS_Msk & ((n) << FDCAN_CONFIG_TXBC_TFQS_Pos)))
-
-/**
- * @name    TXESC register additional macros
- * @{
- */
-#define FDCAN_CONFIG_TXESC_TBDS_Pos        (0)
-#define FDCAN_CONFIG_TXESC_TBDS_Msk        (0x7u << FDCAN_CONFIG_TXESC_TBDS_Pos)
-#define FDCAN_CONFIG_TXESC_TBDS(n)         ((FDCAN_CONFIG_TXESC_TBDS_Msk & ((n) << FDCAN_CONFIG_TXESC_TBDS_Pos)))
-#define   FDCAN_CONFIG_TXESC_TBDS_8BDF     (0x0u << 0)
-#define   FDCAN_CONFIG_TXESC_TBDS_64BDF    (0x7u << 0)
+#define FDCAN_CONFIG_TXBC_TFQM            (1u << 24)
 /** @} */
 
 /**
- * @name    RXESC register additional macros
+ * @name    TXBC register additional macros
  * @{
  */
-#define FDCAN_CONFIG_RXESC_F0DS_Pos        (0)
-#define FDCAN_CONFIG_RXESC_F0DS_Msk        (0x7u << FDCAN_CONFIG_RXESC_F0DS_Pos)
-#define FDCAN_CONFIG_RXESC_F0DS(n)         ((FDCAN_CONFIG_RXESC_F0DS_Msk & ((n) << FDCAN_CONFIG_RXESC_F0DS_Pos)))
-#define   FDCAN_CONFIG_RXESC_F0DS_8BDF     (0x0u << 0)
-#define   FDCAN_CONFIG_RXESC_F0DS_64BDF    (0x7u << 0)
-#define FDCAN_CONFIG_RXESC_F1DS_Pos        (4)
-#define FDCAN_CONFIG_RXESC_F1DS_Msk        (0x7u << FDCAN_CONFIG_RXESC_F1DS_Pos)
-#define FDCAN_CONFIG_RXESC_F1DS(n)         ((FDCAN_CONFIG_RXESC_F1DS_Msk & ((n) << FDCAN_CONFIG_RXESC_F1DS_Pos)))
-#define   FDCAN_CONFIG_RXESC_F1DS_8BDF     (0x0u << 4)
-#define   FDCAN_CONFIG_RXESC_F1DS_64BDF    (0x7u << 4)
-#define FDCAN_CONFIG_RXESC_RBDS_Pos        (8)
-#define FDCAN_CONFIG_RXESC_RBDS_Msk        (0x7u << FDCAN_CONFIG_RXESC_RBDS_Pos)
-#define FDCAN_CONFIG_RXESC_RBDS(n)         ((FDCAN_CONFIG_RXESC_RBDS_Msk & ((n) << FDCAN_CONFIG_RXESC_RBDS_Pos)))
-#define   FDCAN_CONFIG_RXESC_RBDS_8BDF     (0x0u << 8)
-#define   FDCAN_CONFIG_RXESC_RBDS_64BDF    (0x7u << 8)
+#define FDCAN_CONFIG_CKDIV_PDIV_Pos        (0)
+#define FDCAN_CONFIG_CKDIV_PDIV_Msk        (0xFu << FDCAN_CONFIG_CKDIV_PDIV_Pos)
+#define FDCAN_CONFIG_CKDIV_PDIV(n)         ((FDCAN_CONFIG_CKDIV_PDIV_Msk & ((n) << FDCAN_CONFIG_CKDIV_PDIV_Pos)))
+#define   FDCAN_CONFIG_CKDIV_PDIV_1        (0x0u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_2        (0x1u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_4        (0x2u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_6        (0x3u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_8        (0x4u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_10       (0x5u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_12       (0x6u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_14       (0x7u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_16       (0x8u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_18       (0x9u << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_20       (0xAu << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_22       (0xBu << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_24       (0xCu << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_26       (0xDu << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_28       (0xEu << 0)
+#define   FDCAN_CONFIG_CKDIV_PDIV_30       (0xFu << 0)
 /** @} */
 
 /**

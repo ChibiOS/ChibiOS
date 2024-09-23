@@ -26,6 +26,13 @@
 
 #if HAL_USE_CAN || defined(__DOXYGEN__)
 
+/*
+ * TODO
+ * The message received are stored only in RX FIFO 0 and RX FIFO 1, it depends on the configuration (GFC and SFEC/EFEC).
+ * With this revision of driver, the filter is always active (es. FDCAN_SIDFC.LSS > 0).
+ * The management of interrupt RX BUFFER (FDCAN_IR.DRX) is not implemented.
+ * */
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -784,6 +791,84 @@ void can_lld_serve_interrupt(CANDriver *canp) {
     flags |= 1U;
     _can_tx_empty_isr(canp, flags);
   }
+}
+
+/**
+ * @brief   Programs the filters.
+ * @note    This is an STM32-specific API.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] num       number of entries in the filters array
+ * @param[in] cfp       pointer to the filters array
+ *
+ * @notapi
+ */
+void can_lld_set_filters(CANDriver *canp, uint8_t num, const CANFilter *cfp) {
+
+  uint8_t i;
+  uint8_t num_std_filter = 0;
+  uint8_t num_ext_filter = 0;
+
+  CANRxStandardFilter *filter_std;
+  CANRxExtendedFilter *filter_ext;
+
+  /* Check number of filters. */
+  for (i = 0; i < num; i++) {
+    if ((cfp[i].filter_type) == CAN_FILTER_TYPE_STD) {
+      num_std_filter++;
+    }
+    else {
+      num_ext_filter++;
+    }
+  }
+
+  osalDbgAssert(((num_std_filter <= STM32_FDCAN_FLS_NBR) &&
+                 (num_ext_filter <= STM32_FDCAN_FLE_NBR)),
+                "out of range of filters supported");
+
+  /* Base address of standard filter. */
+  filter_std = (CANRxStandardFilter *)(canp->ram_base + SRAMCAN_FLSSA);
+  /* Base address of extended filter. */
+  filter_ext = (CANRxExtendedFilter *)(canp->ram_base + SRAMCAN_FLESA);
+
+  /* Scanning the filters array. */
+  for (i = 0; i < num; i++) {
+    /* Standard filter configuration */
+    if ((cfp[i].filter_type) == CAN_FILTER_TYPE_STD) {
+      /* Configure */
+      filter_std->data32 = (FDCAN_STD_FILTER_SFID2(cfp[i].identifier2) |
+                            FDCAN_STD_FILTER_SFID1(cfp[i].identifier1) |
+                            FDCAN_STD_FILTER_SFEC(cfp[i].filter_cfg) |
+                            FDCAN_STD_FILTER_SFT(cfp[i].filter_mode));
+      filter_std++;
+    }
+    /* Extended filter configuration */
+    else {
+
+      /* Configure */
+      filter_ext->data32[0] = (FDCAN_EXT_FILTER_EFID1(cfp[i].identifier1) |
+                               FDCAN_EXT_FILTER_EFEC(cfp[i].filter_cfg));
+      filter_ext->data32[1] = (FDCAN_EXT_FILTER_EFID2(cfp[i].identifier2) |
+                               FDCAN_EXT_FILTER_EFT(cfp[i].filter_mode));
+      filter_ext++;
+    }
+  }
+}
+/**
+ * @brief   Programs the filters.
+ * @note    This is an STM32-specific API.
+ *
+ * @param[in] canp      pointer to the @p CANDriver object
+ * @param[in] num       number of entries in the filters array
+ * @param[in] cfp       pointer to the filters array
+ *
+ * @api
+ */
+void canSTM32SetFilters(CANDriver *canp, uint8_t num, const CANFilter *cfp) {
+
+  osalDbgAssert(canp->state == CAN_READY, "invalid state");
+
+  can_lld_set_filters(canp, num, cfp);
 }
 
 #endif /* HAL_USE_CAN */

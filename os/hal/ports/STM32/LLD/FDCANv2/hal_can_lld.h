@@ -357,6 +357,78 @@ typedef struct {
 } CANRxExtendedFilter;
 
 /**
+ * @brief   Filter type element.
+ */
+typedef enum {
+  CAN_FILTER_TYPE_STD = 0x00,         /**< Standard filter */
+  CAN_FILTER_TYPE_EXT = 0x01          /**< Extended filter */
+} filter_type_t;
+
+/**
+ * @brief   Filter mode.
+ */
+typedef enum {
+  CAN_FILTER_MODE_RANGE = 0x00,       /**< Range filter from SFID1 to SFID2 */
+  CAN_FILTER_MODE_DUAL = 0x01,        /**< Dual ID filter for SFID1 or SFID2 */
+  CAN_FILTER_MODE_CLASSIC = 0x02      /**< Classic filter: SFID1 = filter, SFID2 = mask */
+} filter_mode_t;
+
+/**
+ * @brief   Filter configuration.
+ */
+typedef enum {
+  CAN_FILTER_CFG_FIFO_0 = 0x01,       /**< Store in Rx FIFO 0 if filter matches */
+  CAN_FILTER_CFG_FIFO_1 = 0x02,       /**< Store in Rx FIFO 1 if filter matches */
+  CAN_FILTER_CFG_REJECT = 0x03        /**< Reject ID if filter matches in range FID1-FID2 */
+} filter_cfg_t;
+
+/**
+ * @brief   CAN filter configuration.
+ * @note    Refer to the STM32 reference manual for info about filters.
+ */
+typedef struct {
+  /**
+   * @brief   Filter type;
+   * @note    Standard filter
+   *          Extended filter
+   */
+  filter_type_t             filter_type;
+
+  /**
+   * @brief   Filter mode;
+   * @note    Field SFT / EFT;
+   * @note    Range filter from SFID1 to SFID2
+   *          Dual ID filter for SFID1 or SFID2
+   *          Classic filter: SFID1 = filter, SFID2 = mask
+   */
+  filter_mode_t             filter_mode;
+
+  /**
+   * @brief   Filter configuration;
+   * @note    Field SFEC / EFEC;
+   * @note    Store in Rx FIFO 0 if filter matches
+   *          Store in Rx FIFO 1 if filter matches
+   *          Reject ID if filter matches in range FID1-FID2
+   */
+  filter_cfg_t              filter_cfg;
+
+  /**
+   * @brief   Message address to filter.
+   * @note    29-bit Extended identifier.
+   *          11-bit Standard identifier.
+   */
+  uint32_t                  identifier1;
+
+  /**
+   * @brief   Message address to filter.
+   * @note    29-bit Extended identifier.
+   *          11-bit Standard identifier.
+   */
+  uint32_t                  identifier2;
+
+} CANFilter;
+
+/**
  * @brief   Type of a CAN configuration structure.
  */
 typedef struct hal_can_config {
@@ -531,6 +603,7 @@ extern "C" {
   void can_lld_wakeup(CANDriver *canp);
 #endif /* CAN_USE_SLEEP_MODE */
   void can_lld_serve_interrupt(CANDriver *canp);
+  void canSTM32SetFilters(CANDriver *canp, uint8_t num, const CANFilter *cfp);
 #ifdef __cplusplus
 }
 #endif
