@@ -3,6 +3,7 @@
   <!ENTITY hal_flash_interface      SYSTEM "hal_flash_interface.xml">
   <!ENTITY hal_snor_base            SYSTEM "hal_snor_base.xml">
   <!ENTITY hal_snor_device_template SYSTEM "hal_snor_device_template.xml">
+  <!ENTITY hal_snor_micron_n25q     SYSTEM "hal_snor_micron_n25q.xml">
 ]>
 <instance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd">
@@ -13,5 +14,6 @@
     &hal_flash_interface;
     &hal_snor_base;
     &hal_snor_device_template;
+    &hal_snor_micron_n25q;
   </modules>
 </instance>

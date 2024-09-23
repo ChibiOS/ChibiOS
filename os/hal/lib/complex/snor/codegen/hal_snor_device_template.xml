@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="hal_snor_device_template" descr="SNOR Device Template" editcode="false">
+  name="hal_snor_device_template" descr="SNOR Device Template" editcode="false"
+  sourcepath="devices/template" headerpath="devices/template">
   <brief>SNOR device template driver.</brief>
   <details><![CDATA[Template module for SNOR flash devices. Can be used by duplicating
 the XML file or working directly on cloned source files.]]></details>
