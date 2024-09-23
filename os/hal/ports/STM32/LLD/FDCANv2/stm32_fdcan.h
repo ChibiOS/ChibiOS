@@ -221,6 +221,42 @@
 #define   FDCAN_CONFIG_RXESC_RBDS_64BDF    (0x7u << 8)
 /** @} */
 
+/**
+ * @name    FDCAN standard message ID filter element help macros.
+ * @{
+ */
+#define FDCAN_STD_FILTER_SFID2_Pos         (0)
+#define FDCAN_STD_FILTER_SFID2_Msk         (0x7FFu << FDCAN_STD_FILTER_SFID2_Pos)
+#define FDCAN_STD_FILTER_SFID2(n)          ((FDCAN_STD_FILTER_SFID2_Msk & ((n) << FDCAN_STD_FILTER_SFID2_Pos)))
+#define FDCAN_STD_FILTER_SFID1_Pos         (16)
+#define FDCAN_STD_FILTER_SFID1_Msk         (0x7FFu << FDCAN_STD_FILTER_SFID1_Pos)
+#define FDCAN_STD_FILTER_SFID1(n)          ((FDCAN_STD_FILTER_SFID1_Msk & ((n) << FDCAN_STD_FILTER_SFID1_Pos)))
+#define FDCAN_STD_FILTER_SFEC_Pos          (27)
+#define FDCAN_STD_FILTER_SFEC_Msk          (0x7u << FDCAN_STD_FILTER_SFEC_Pos)
+#define FDCAN_STD_FILTER_SFEC(n)           ((FDCAN_STD_FILTER_SFEC_Msk & ((n) << FDCAN_STD_FILTER_SFEC_Pos)))
+#define FDCAN_STD_FILTER_SFT_Pos           (30)
+#define FDCAN_STD_FILTER_SFT_Msk           (0x3u << FDCAN_STD_FILTER_SFT_Pos)
+#define FDCAN_STD_FILTER_SFT(n)            ((FDCAN_STD_FILTER_SFT_Msk & ((n) << FDCAN_STD_FILTER_SFT_Pos)))
+/** @} */
+
+/**
+ * @name    FDCAN Extended message ID filter element help macros.
+ * @{
+ */
+#define FDCAN_EXT_FILTER_EFID1_Pos         (0)
+#define FDCAN_EXT_FILTER_EFID1_Msk         (0x1FFFFFFFu << FDCAN_EXT_FILTER_EFID1_Pos)
+#define FDCAN_EXT_FILTER_EFID1(n)          ((FDCAN_EXT_FILTER_EFID1_Msk & ((n) << FDCAN_EXT_FILTER_EFID1_Pos)))
+#define FDCAN_EXT_FILTER_EFEC_Pos          (29)
+#define FDCAN_EXT_FILTER_EFEC_Msk          (0x7u << FDCAN_EXT_FILTER_EFEC_Pos)
+#define FDCAN_EXT_FILTER_EFEC(n)           ((FDCAN_EXT_FILTER_EFEC_Msk & ((n) << FDCAN_EXT_FILTER_EFEC_Pos)))
+#define FDCAN_EXT_FILTER_EFID2_Pos         (0)
+#define FDCAN_EXT_FILTER_EFID2_Msk         (0x1FFFFFFFu << FDCAN_EXT_FILTER_EFID2_Pos)
+#define FDCAN_EXT_FILTER_EFID2(n)          ((FDCAN_EXT_FILTER_EFID2_Msk & ((n) << FDCAN_EXT_FILTER_EFID2_Pos)))
+#define FDCAN_EXT_FILTER_EFT_Pos           (30)
+#define FDCAN_EXT_FILTER_EFT_Msk           (0x2u << FDCAN_EXT_FILTER_EFT_Pos)
+#define FDCAN_EXT_FILTER_EFT(n)            ((FDCAN_EXT_FILTER_EFT_Msk & ((n) << FDCAN_EXT_FILTER_EFT_Pos)))
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
