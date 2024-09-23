@@ -406,6 +406,7 @@ void *__snorbase_objinit_impl(void *ip, const void *vmt) {
 
   /* Initialization code.*/
   self->state = FLASH_UNINIT;
+  self->config = NULL;
   osalMutexObjectInit(&self->mutex);
 
   return self;
@@ -430,6 +431,125 @@ void __snorbase_dispose_impl(void *ip) {
   /* Finalization of the ancestors-defined parts.*/
   __bo_dispose_impl(self);
 }
+/** @} */
+
+/**
+ * @name        Regular methods of hal_snor_base_c
+ * @{
+ */
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Configures and activates a SNOR driver.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     config        Pointer to the configuration.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       Operation successful.
+ * @retval FLASH_ERROR_HW_FAILURE If initialization failed.
+ *
+ * @api
+ */
+flash_error_t xsnorStart(void *ip, const snor_config_t *config) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  flash_error_t err;
+
+  osalDbgCheck((self != NULL) && (config != NULL));
+  osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
+
+  self->config = config;
+
+  if (self->state == FLASH_STOP) {
+
+    /* Bus acquisition.*/
+    wspiAcquireBus(self->config->wspi);
+
+    wspiStart(self->config->wspi, self->config->wspicfg);
+
+    /* Device identification and initialization.*/
+    err = snor_device_init(self);
+    if (err == FLASH_NO_ERROR) {
+      /* Driver in ready state.*/
+      self->state = FLASH_READY;
+    }
+
+    /* Bus release.*/
+    wspiReleaseBus(self->config->wspi);
+  }
+
+  return err;
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Deactivates a SNOR driver.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ *
+ * @api
+ */
+void xsnorStop(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  osalDbgCheck(self != NULL);
+  osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
+
+  if (self->state != FLASH_STOP) {
+
+    /* Stopping bus device.*/
+    wspiStop(self->config->wspi);
+
+    /* Driver stopped.*/
+    self->state = FLASH_STOP;
+
+    /* Deleting current configuration.*/
+    self->config = NULL;
+  }
+}
+
+#if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Enters the memory mapped mode.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[out]    addrp         Pointer to the memory mapped memory or @p NULL
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       Operation successful.
+ * @retval FLASH_ERROR_HW_FAILURE If memory mapped mode failed.
+ *
+ * @api
+ */
+flash_error_t xsnorMemoryMap(void *ip, uint8_t **addrp) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  flash_error_t err;
+
+  /* Activating XIP mode in the device.*/
+  err = snor_device_mmap_on(self, addrp);
+
+  return err;
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Leaves the memory mapped mode.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ *
+ * @api
+ */
+void xsnorMemoryUnmap(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  snor_device_mmap_off(self);
+}
+#endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
 /** @} */
 
 /** @} */

@@ -67,7 +67,7 @@
 /**
  * @brief       Type of a non-cacheable buffer.
  */
-typedef struct snor_nocache snor_nocache_t;
+typedef struct snor_buffers snor_buffers_t;
 
 /**
  * @brief       Type of a SNOR configuration structure.
@@ -77,15 +77,15 @@ typedef struct snor_config snor_config_t;
 /**
  * @brief       SNOR driver configuration.
  */
-struct snor_nocache {
-  /**
-   * @brief       Non-cacheable data buffer.
-   */
-  uint8_t                   databuf[SNOR_BUFFER_SIZE];
+struct snor_buffers {
   /**
    * @brief       Non-cacheable WSPI command buffer.
    */
   wspi_command_t            cmdbuf;
+  /**
+   * @brief       Non-cacheable data buffer.
+   */
+  uint8_t                   databuf[SNOR_BUFFER_SIZE];
 };
 
 /**
@@ -99,7 +99,11 @@ struct snor_config {
   /**
    * @brief       WSPI driver configuration.
    */
-  const WSPIConfig          *wspiconfig;
+  const WSPIConfig          *wspicfg;
+  /**
+   * @brief       Pointer to the non-cacheable buffers.
+   */
+  struct snor_buffers_t     *buffers;
 };
 
 /**
@@ -125,6 +129,7 @@ struct hal_snor_base_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_snor_base_c.*/
+  flash_error_t (*init)(void *ip);
   const flash_descriptor_t * (*get_descriptor)(void *ip);
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
@@ -132,6 +137,8 @@ struct hal_snor_base_vmt {
   flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
   flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*mmap_on)(void *ip, uint8_t **addrp);
+  void (*mmap_off)(void *ip);
 };
 
 /**
@@ -171,6 +178,12 @@ extern "C" {
   /* Methods of hal_snor_base_c.*/
   void *__snorbase_objinit_impl(void *ip, const void *vmt);
   void __snorbase_dispose_impl(void *ip);
+  flash_error_t xsnorStart(void *ip, const snor_config_t *config);
+  void xsnorStop(void *ip);
+#if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)
+  flash_error_t xsnorMemoryMap(void *ip, uint8_t **addrp);
+  void xsnorMemoryUnmap(void *ip);
+#endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
   /* Regular functions.*/
 #ifdef __cplusplus
 }
@@ -184,6 +197,25 @@ extern "C" {
  * @name        Virtual methods of hal_snor_base_c
  * @{
  */
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       Initialization successful.
+ * @retval FLASH_ERROR_HW_FAILURE Initialization failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_device_init(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->init(ip);
+}
+
 /**
  * @memberof    hal_snor_base_c
  * @public
@@ -211,7 +243,7 @@ static inline const flash_descriptor_t *snor_device_get_descriptor(void *ip) {
  * @param[in]     n             Number of bytes to be read.
  * @param[out]    rp            Pointer to the data buffer.
  * @return                      An error code.
- * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_NO_ERROR       Operation successful.
  * @retval FLASH_ERROR_READ     If the read operation failed.
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  *
@@ -236,7 +268,7 @@ static inline flash_error_t snor_device_read(void *ip, flash_offset_t offset,
  * @param[in]     n             Number of bytes to be programmed.
  * @param[in]     pp            Pointer to the data buffer.
  * @return                      An error code.
- * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_NO_ERROR       Operation successful.
  * @retval FLASH_ERROR_PROGRAM  If the program operation failed.
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  *
@@ -259,7 +291,7 @@ static inline flash_error_t snor_device_program(void *ip,
  *
  * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
  * @return                      An error code.
- * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_NO_ERROR       Operation successful.
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  *
  * @notapi
@@ -280,7 +312,7 @@ static inline flash_error_t snor_device_start_erase_all(void *ip) {
  * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
  * @param[in]     sector        Sector to be erased.
  * @return                      An error code.
- * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_NO_ERROR       Operation successful.
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  *
  * @notapi
@@ -325,7 +357,7 @@ static inline flash_error_t snor_device_query_erase(void *ip, unsigned *msec) {
  * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
  * @param[in]     sector        Sector to be verified.
  * @return                      An error code.
- * @retval FLASH_NO_ERROR       If there is no erase operation in progress.
+ * @retval FLASH_NO_ERROR       Operation successful.
  * @retval FLASH_ERROR_VERIFY   If the verify operation failed.
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  *
@@ -337,6 +369,42 @@ static inline flash_error_t snor_device_verify_erase(void *ip,
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->verify_erase(ip, sector);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[out]    addrp         Pointer to the memory mapped memory or @p NULL
+ * @return                      An error code.
+ * @retval FLASH_NO_ERROR       Memory map mode successful.
+ * @retval FLASH_ERROR_HW_FAILURE Memory map mode failed.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline flash_error_t snor_device_mmap_on(void *ip, uint8_t **addrp) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  return self->vmt->mmap_on(ip, addrp);
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ *
+ * @notapi
+ */
+CC_FORCE_INLINE
+static inline void snor_device_mmap_off(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+  self->vmt->mmap_off(ip);
 }
 /** @} */
 

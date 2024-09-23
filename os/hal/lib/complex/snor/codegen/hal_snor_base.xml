@@ -22,22 +22,22 @@
     </configs>
     <macros></macros>
     <types>
-      <typedef name="snor_nocache_t">
+      <typedef name="snor_buffers_t">
         <brief>Type of a non-cacheable buffer.</brief>
-        <basetype ctype="struct snor_nocache" />
+        <basetype ctype="struct snor_buffers" />
       </typedef>
       <typedef name="snor_config_t">
         <brief>Type of a SNOR configuration structure.</brief>
         <basetype ctype="struct snor_config" />
       </typedef>
-      <struct name="snor_nocache">
+      <struct name="snor_buffers">
         <brief>SNOR driver configuration.</brief>
         <fields>
-          <field name="databuf" ctype="uint8_t$I$N[SNOR_BUFFER_SIZE]">
-            <brief>Non-cacheable data buffer.</brief>
-          </field>
           <field name="cmdbuf" ctype="wspi_command_t">
             <brief>Non-cacheable WSPI command buffer.</brief>
+          </field>
+          <field name="databuf" ctype="uint8_t$I$N[SNOR_BUFFER_SIZE]">
+            <brief>Non-cacheable data buffer.</brief>
           </field>
         </fields>
       </struct>
@@ -47,8 +47,11 @@
           <field name="wspi" ctype="WSPIDriver$I*$N">
             <brief>WSPI driver to be used for physical communication.</brief>
           </field>
-          <field name="wspiconfig" ctype="const WSPIConfig$I*$N">
+          <field name="wspicfg" ctype="const WSPIConfig$I*$N">
             <brief>WSPI driver configuration.</brief>
+          </field>
+          <field name="buffers" ctype="struct snor_buffers_t$I*$N">
+            <brief>Pointer to the non-cacheable buffers.</brief>
           </field>
         </fields>
       </struct>
@@ -259,12 +262,19 @@ return FLASH_NO_ERROR;
           <objinit callsuper="true">
             <implementation><![CDATA[
 self->state = FLASH_UNINIT;
+self->config = NULL;
 osalMutexObjectInit(&self->mutex);]]></implementation>
           </objinit>
           <dispose>
             <implementation><![CDATA[;]]></implementation>
           </dispose>
           <virtual>
+            <method shortname="init" name="snor_device_init" ctype="flash_error_t">
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">Initialization successful.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">Initialization failed.</retval>
+              <notapi />
+            </method>
             <method shortname="get_descriptor" name="snor_device_get_descriptor" ctype="const flash_descriptor_t *">
               <notapi />
             </method>
@@ -274,7 +284,7 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
               <param name="n" ctype="size_t" dir="in">number of bytes to be read</param>
               <param name="rp" ctype="uint8_t *" dir="out">pointer to the data buffer</param>
               <return>An error code.</return>
-              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_NO_ERROR">Operation successful.</retval>
               <retval value="FLASH_ERROR_READ">If the read operation failed.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
@@ -285,7 +295,7 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
               <param name="n" ctype="size_t" dir="in">number of bytes to be programmed</param>
               <param name="pp" ctype="const uint8_t *" dir="in">pointer to the data buffer</param>
               <return>An error code.</return>
-              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_NO_ERROR">Operation successful.</retval>
               <retval value="FLASH_ERROR_PROGRAM">If the program operation failed.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
@@ -293,7 +303,7 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
             <method shortname="start_erase_all" name="snor_device_start_erase_all" ctype="flash_error_t">
               <brief>Starts a whole-device erase operation.</brief>
               <return>An error code.</return>
-              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_NO_ERROR">Operation successful.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
@@ -301,7 +311,7 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
               <brief>Starts an sector erase operation.</brief>
               <param name="sector" ctype="const flash_sector_t *" dir="in">sector to be erased</param>
               <return>An error code.</return>
-              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_NO_ERROR">Operation successful.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
@@ -318,12 +328,104 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
               <brief>Returns the erase state of a sector.</brief>
               <param name="sector" ctype="const flash_sector_t *" dir="in">sector to be verified</param>
               <return>An error code.</return>
-              <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
+              <retval value="FLASH_NO_ERROR">Operation successful.</retval>
               <retval value="FLASH_ERROR_VERIFY">If the verify operation failed.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
+            <method shortname="mmap_on" name="snor_device_mmap_on" ctype="flash_error_t">
+              <param name="addrp" ctype="uint8_t **" dir="out">pointer to the
+               memory mapped memory or @p NULL</param>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">Memory map mode successful.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">Memory map mode failed.</retval>
+              <notapi />
+            </method>
+            <method shortname="mmap_off" name="snor_device_mmap_off" ctype="void">
+              <notapi />
+            </method>
           </virtual>
+          <regular>
+            <method name="xsnorStart" ctype="flash_error_t">
+              <brief>Configures and activates a SNOR driver.</brief>
+              <param name="config" ctype="const snor_config_t *" dir="in">pointer to the configuration</param>
+              <return>An error code.</return>
+              <retval value="FLASH_NO_ERROR">Operation successful.</retval>
+              <retval value="FLASH_ERROR_HW_FAILURE">If initialization failed.</retval>
+              <api />
+              <implementation><![CDATA[
+flash_error_t err;
+
+osalDbgCheck((self != NULL) && (config != NULL));
+osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
+
+self->config = config;
+
+if (self->state == FLASH_STOP) {
+
+  /* Bus acquisition.*/
+  wspiAcquireBus(self->config->wspi);
+
+  wspiStart(self->config->wspi, self->config->wspicfg);
+
+  /* Device identification and initialization.*/
+  err = snor_device_init(self);
+  if (err == FLASH_NO_ERROR) {
+    /* Driver in ready state.*/
+    self->state = FLASH_READY;
+  }
+
+  /* Bus release.*/
+  wspiReleaseBus(self->config->wspi);
+}
+
+return err;]]></implementation>
+            </method>
+            <method name="xsnorStop" ctype="void">
+              <brief>Deactivates a SNOR driver.</brief>
+              <api />
+              <implementation><![CDATA[
+osalDbgCheck(self != NULL);
+osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
+
+if (self->state != FLASH_STOP) {
+
+  /* Stopping bus device.*/
+  wspiStop(self->config->wspi);
+
+  /* Driver stopped.*/
+  self->state = FLASH_STOP;
+
+  /* Deleting current configuration.*/
+  self->config = NULL;
+}]]></implementation>
+            </method>
+            <condition check="WSPI_SUPPORTS_MEMMAP == TRUE">
+              <method name="xsnorMemoryMap" ctype="flash_error_t">
+                <brief>Enters the memory mapped mode.</brief>
+                <param name="addrp" ctype="uint8_t **" dir="out">pointer to the
+                 memory mapped memory or @p NULL</param>
+                <return>An error code.</return>
+                <retval value="FLASH_NO_ERROR">Operation successful.</retval>
+                <retval value="FLASH_ERROR_HW_FAILURE">If memory mapped mode failed.</retval>
+                <api />
+                <implementation>
+flash_error_t err;
+
+/* Activating XIP mode in the device.*/
+err = snor_device_mmap_on(self, addrp);
+
+return err;</implementation>
+              </method>
+              <method name="xsnorMemoryUnmap" ctype="void">
+                <brief>Leaves the memory mapped mode.</brief>
+                <api />
+                <implementation>
+
+snor_device_mmap_off(self);</implementation>
+              </method>
+            </condition>
+          </regular>
         </methods>
       </class>
     </types>
