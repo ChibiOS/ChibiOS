@@ -43,6 +43,15 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/**
+ * @name    Bus width options
+ * @{
+ */
+#define N25Q_BUS_MODE_1LINE                 0U
+#define N25Q_BUS_MODE_2LINES                1U
+#define N25Q_BUS_MODE_4LINES                2U
+/** @} */
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -50,6 +59,33 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief       Type of a N25Q command configuration structure.
+ */
+typedef struct n25q_commands n25q_commands_t;
+
+/**
+ * @brief       N25Q command configuration structure.
+ */
+struct n25q_commands {
+  /**
+   * @brief       Command only.
+   */
+  uint32_t                  cmd;
+  /**
+   * @brief       Command and address.
+   */
+  uint32_t                  cmd_addr;
+  /**
+   * @brief       Command and data.
+   */
+  uint32_t                  cmd_data;
+  /**
+   * @brief       Command, address and data.
+   */
+  uint32_t                  cmd_addr_data;
+};
 
 /**
  * @class       hal_snor_micron_n25q_c
@@ -109,6 +145,10 @@ struct hal_snor_micron_n25q {
    * @brief       Flash access mutex.
    */
   mutex_t                   mutex;
+  /**
+   * @brief       Current commands configuration.
+   */
+  const n25q_commands_t     *commands;
 };
 /** @} */
 
@@ -120,7 +160,7 @@ struct hal_snor_micron_n25q {
 extern "C" {
 #endif
   /* Methods of hal_snor_micron_n25q_c.*/
-  void *__n25q_objinit_impl(void *ip, const void *vmt);
+  void *__n25q_objinit_impl(void *ip, const void *vmt, unsigned bus_width);
   void __n25q_dispose_impl(void *ip);
   flash_error_t __n25q_init_impl(void *ip);
   const flash_descriptor_t *__n25q_get_descriptor_impl(void *ip);
@@ -156,15 +196,17 @@ extern "C" {
  *
  * @param[out]    self          Pointer to a @p hal_snor_micron_n25q_c instance
  *                              to be initialized.
+ * @param[out]    bus_width     Bus width.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
  */
 CC_FORCE_INLINE
-static inline hal_snor_micron_n25q_c *n25qObjectInit(hal_snor_micron_n25q_c *self) {
+static inline hal_snor_micron_n25q_c *n25qObjectInit(hal_snor_micron_n25q_c *self,
+                                                     unsigned bus_width) {
   extern const struct hal_snor_micron_n25q_vmt __hal_snor_micron_n25q_vmt;
 
-  return __n25q_objinit_impl(self, &__hal_snor_micron_n25q_vmt);
+  return __n25q_objinit_impl(self, &__hal_snor_micron_n25q_vmt, bus_width);
 }
 /** @} */
 

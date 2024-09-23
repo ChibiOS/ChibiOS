@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_snor_micron_n25q" descr="SNOR Micron N25Q" editcode="true"
+  sourcepath="devices/micron_n25q" headerpath="devices/micron_n25q">
+  <brief>SNOR Micron N25Q driver.</brief>
+  <details><![CDATA[Module for SNOR Micron N25Q flash devices.]]></details>
+  <imports>
+    <import>oop_base_object.xml</import>
+    <import>hal_snor_base.xml</import>
+  </imports>
+  <public>
+    <includes>
+      <include style="regular">oop_base_object.h</include>
+      <include style="regular">hal_snor_base.h</include>
+    </includes>
+    <configs>
+    </configs>
+    <definitions_late>
+      <group description="Bus width options">
+        <define name="N25Q_BUS_MODE_1LINE" value="0U" />
+        <define name="N25Q_BUS_MODE_2LINES" value="1U" />
+        <define name="N25Q_BUS_MODE_4LINES" value="2U" />
+      </group>
+    </definitions_late>
+    <macros></macros>
+    <types>
+      <typedef name="n25q_commands_t">
+        <brief>Type of a N25Q command configuration structure.</brief>
+        <basetype ctype="struct n25q_commands" />
+      </typedef>
+      <struct name="n25q_commands">
+        <brief>N25Q command configuration structure</brief>
+        <fields>
+          <field name="cmd" ctype="uint32_t">
+            <brief>Command only.</brief>
+          </field>
+          <field name="cmd_addr" ctype="uint32_t">
+            <brief>Command and address.</brief>
+          </field>
+          <field name="cmd_data" ctype="uint32_t">
+            <brief>Command and data.</brief>
+          </field>
+          <field name="cmd_addr_data" ctype="uint32_t">
+            <brief>Command, address and data.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class name="hal_snor_micron_n25q" type="regular" namespace="n25q"
+             descr="SNOR Micron N25Q driver" ancestorname="hal_snor_base">
+        <fields>
+          <field name="commands" ctype="const n25q_commands_t$I*$N">
+            <brief>Current commands configuration.</brief>
+          </field>
+        </fields>
+        <methods>
+          <objinit callsuper="true">
+            <param name="bus_width" ctype="unsigned" dir="out">Bus width.</param>
+            <implementation><![CDATA[
+/* Implementation.*/]]></implementation>
+          </objinit>
+          <dispose>
+            <implementation><![CDATA[
+/* Implementation.*/]]></implementation>
+          </dispose>
+          <override>
+            <method shortname="init">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="get_descriptor">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+
+return NULL;]]></implementation>
+            </method>
+            <method shortname="read">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+(void)offset;
+(void)n;
+(void)rp;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="program">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+(void)offset;
+(void)n;
+(void)pp;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="start_erase_all">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="start_erase_sector">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+(void)sector;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="query_erase">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+(void)msec;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="verify_erase">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+(void)sector;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="mmap_on">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;
+(void)addrp;
+
+return FLASH_NO_ERROR;]]></implementation>
+            </method>
+            <method shortname="mmap_off">
+              <implementation><![CDATA[
+
+/* Implementation.*/
+(void)self;]]></implementation>
+            </method>
+          </override>
+        </methods>
+      </class>
+    </types>
+    <variables></variables>
+    <functions></functions>
+  </public>
+  <private>
+    <includes>
+      <include style="regular">hal.h</include>
+      <include style="regular">hal_snor_micron_n25q.h</include>
+    </includes>
+    <functions></functions>
+  </private>
+</module>
