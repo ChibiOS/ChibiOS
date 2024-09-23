@@ -159,16 +159,30 @@ static const n25q_commands_t cmd4l = {
  * @param[out]    ip            Pointer to a @p hal_snor_micron_n25q_c instance
  *                              to be initialized.
  * @param[in]     vmt           VMT pointer for the new object.
+ * @param[out]    bus_width     Bus width.
  * @return                      A new reference to the object.
  */
-void *__n25q_objinit_impl(void *ip, const void *vmt) {
+void *__n25q_objinit_impl(void *ip, const void *vmt, unsigned bus_width) {
   hal_snor_micron_n25q_c *self = (hal_snor_micron_n25q_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
   __snorbase_objinit_impl(self, vmt);
 
   /* Initialization code.*/
-  /* Implementation.*/
+  switch (bus_width) {
+  case N25Q_BUS_MODE_1LINE:
+    self->commands = &cmd1l;
+    break;
+  case N25Q_BUS_MODE_2LINES:
+    self->commands = &cmd2l;
+    break;
+  case N25Q_BUS_MODE_4LINES:
+    self->commands = &cmd4l;
+    break;
+  default:
+    osalDbgAssert(false, "bad bus width");
+    self->commands = NULL;
+  }
 
   return self;
 }
