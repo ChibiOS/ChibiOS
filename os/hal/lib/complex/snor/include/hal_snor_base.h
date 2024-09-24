@@ -352,6 +352,7 @@ extern "C" {
 #endif /* XSNOR_SHARED_BUS == TRUE */
   void __xsnor_bus_cmd(void *ip, uint32_t cmd);
   void __xsnor_bus_cmd_send(void *ip, uint32_t cmd, size_t n, const uint8_t *p);
+  void __xsnor_bus_cmd_receive(void *ip, uint32_t cmd, size_t n, uint8_t *p);
   flash_error_t xsnorStart(void *ip, const snor_config_t *config);
   void xsnorStop(void *ip);
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)
