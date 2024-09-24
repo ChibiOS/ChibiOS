@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -108,7 +108,9 @@ extern const xshell_command_t xshell_local_commands[];
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+#if XSHELL_PROMPT_STR_LENGTH > 0
+  bool xshellSetPrompt(xshell_manager_t *smp, const char *str);
+#endif
 #ifdef __cplusplus
 }
 #endif

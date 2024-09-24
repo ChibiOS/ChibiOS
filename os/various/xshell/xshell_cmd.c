@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -66,13 +66,14 @@ static void cmd_exit(xshell_manager_t *smp, BaseSequentialStream *stream,
                      int argc, char *argv[]) {
 
   (void)argv;
+  (void)smp;
 
   if (argc > 1) {
     xshellUsage(stream, "exit");
     return;
   }
-
-  xshellExit(smp, MSG_OK);
+  
+  chThdTerminate(chThdGetSelfX());
 }
 #endif
 
@@ -234,6 +235,22 @@ static void cmd_test(xshell_manager_t *smp, BaseSequentialStream *stream,
     xshellUsage(stream, "test rt|oslib");
     return;
   }
+}
+#endif
+
+#if (XSHELL_PROMPT_STR_LENGTH > 0)  || defined(__DOXYGEN__)
+static void cmd_prompt(xshell_manager_t *smp, BaseSequentialStream *stream,
+                            int argc, char *argv[]) {
+  if (argc != 2) {
+    xshellUsage(stream, "prompt \"string\"");
+    return;
+  }
+  if (strlen(argv[1]) > XSHELL_PROMPT_STR_LENGTH) {
+    xshellUsage(stream, "prompt string too long");
+    return;
+  }
+  strncpy(smp->prompt, argv[1], XSHELL_PROMPT_STR_LENGTH);
+  smp->prompt[XSHELL_PROMPT_STR_LENGTH - 1] = '\0';
 }
 #endif
 
@@ -522,6 +539,29 @@ static void cmd_stat(xshell_manager_t *smp, BaseSequentialStream *stream,
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
+#if XSHELL_PROMPT_STR_LENGTH > 0
+/**
+ * @brief   Sets the prompt.
+ *
+ * @param[in,out] smp           pointer to the @p xshell_manager_t object
+ * @param[in]     str           pointer to a prompt string
+ *
+ * @return  status
+ * @retval  true on success else false
+ *
+ * @api
+ */
+bool xshellSetPrompt(xshell_manager_t *smp, const char *str) {
+
+  if (strlen(str) > XSHELL_PROMPT_STR_LENGTH) {
+    return false;
+  }
+  strncpy(smp->prompt, str, XSHELL_PROMPT_STR_LENGTH);
+  smp->prompt[XSHELL_PROMPT_STR_LENGTH - 1] = '\0';
+
+  return true;
+}
+#endif
 /**
  * @brief   Array of the default commands.
  */
@@ -558,6 +598,9 @@ const xshell_command_t xshell_local_commands[] = {
 #endif
 #if XSHELL_CMD_TEST_ENABLED == TRUE
   {"test",      cmd_test},
+#endif
+#if XSHELL_PROMPT_STR_LENGTH > 0
+  {"prompt",    cmd_prompt},
 #endif
   {NULL, NULL}
 };

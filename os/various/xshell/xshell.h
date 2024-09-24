@@ -66,10 +66,17 @@
 #endif
 
 /**
- * @brief   Prompt string.
+ * @brief   Default prompt string.
  */
 #if !defined(XSHELL_DEFAULT_PROMPT_STR) || defined(__DOXYGEN__)
 #define XSHELL_DEFAULT_PROMPT_STR           "ch> "
+#endif
+
+/**
+ * @brief   Set prompt string length.
+ */
+#if !defined(XSHELL_PROMPT_STR_LENGTH) || defined(__DOXYGEN__)
+#define XSHELL_PROMPT_STR_LENGTH            20
 #endif
 
 /**
@@ -77,6 +84,20 @@
  */
 #if !defined(XSHELL_DEFAULT_BANNER_STR) || defined(__DOXYGEN__)
 #define XSHELL_DEFAULT_BANNER_STR           "\r\nChibiOS/RT XShell\r\n"
+#endif
+
+/**
+ * @brief   Command line terminator character (any one of string).
+ */
+#if !defined(XSHELL_EXECUTE_CHARS) || defined(__DOXYGEN__)
+#define XSHELL_EXECUTE_CHARS                "\r\n"
+#endif
+
+/**
+ * @brief   Logout string.
+ */
+#if !defined(XSHELL_LOGOUT_STR) || defined(__DOXYGEN__)
+#define XSHELL_LOGOUT_STR                   "\r\n"
 #endif
 
 /*===========================================================================*/
@@ -123,7 +144,7 @@ typedef struct xshell_manager_config {
    */
   const char                    *banner;
   /**
-   * @brief   Shells prompt string.
+   * @brief   Shells default prompt string.
    */
   const char                    *prompt;
   /**
@@ -158,6 +179,10 @@ typedef struct xshell_manager {
    * @brief   Associated configuration.
    */
   const xshell_manager_config_t *config;
+  /**
+   * @brief   Shells current prompt string.
+   */
+  char                          prompt[XSHELL_PROMPT_STR_LENGTH + 1];
   /**
    * @brief   Shell events;
    */
@@ -232,7 +257,6 @@ extern "C" {
                         BaseSequentialStream *stream,
                         tprio_t prio);
   void xshellGarbageCollect(xshell_manager_t *smp);
-  void xshellExit(xshell_manager_t *smp, msg_t msg);
   bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
                      char *line, size_t size);
 #ifdef __cplusplus

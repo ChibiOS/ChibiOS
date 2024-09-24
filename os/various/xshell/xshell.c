@@ -134,17 +134,24 @@ static THD_FUNCTION(xshell_thread, p) {
 
   /* Shell banner, if defined.*/
   if (smp->config->banner != NULL) {
-    chprintf(stream, smp->config->banner);
+    chprintf(stream, "%s", smp->config->banner);
   }
 
   /* Shell command loop.*/
   while (!chThdShouldTerminateX()) {
 
     /* Shell prompt.*/
-    chprintf(stream, smp->config->prompt);
+#if XSHELL_PROMPT_STR_LENGTH > 0
+    chprintf(stream, "%s", smp->prompt);
+#else
+    chprintf(stream, "%s", smp->config->prompt);
+#endif
 
     /* Getting input line.*/
     if (xshellGetLine(smp, stream, line, sizeof line)) {
+
+      /* Logout.*/
+      chprintf(stream, "%s", XSHELL_LOGOUT_STR);
       break;
     }
 
@@ -200,7 +207,11 @@ static THD_FUNCTION(xshell_thread, p) {
     }
   }
 
-  xshellExit(smp, MSG_OK);
+  /* Atomically broadcasting the event source and terminating the thread,
+     there is not a chSysUnlock() because the thread terminates upon return.*/
+  chSysLock();
+  chEvtBroadcastI(&smp->events);
+  chThdExitS(MSG_OK);
 }
 
 static void xshell_free(thread_t *tp) {
@@ -226,7 +237,7 @@ static void xshell_save_history(xshell_manager_t *smp, char *line) {
 
   strcpy(smp->history_head, line);
   smp->history_head += XSHELL_LINE_LENGTH;
-  if (smp->history_head >= &smp->history_buffer[XSHELL_HISTORY_DEPTH][XSHELL_LINE_LENGTH]) {
+  if (smp->history_head >= smp->history_buffer[XSHELL_HISTORY_DEPTH]) {
     smp->history_head = smp->history_buffer[0];
   }
 
@@ -240,8 +251,8 @@ static size_t xshell_get_history_prev(xshell_manager_t *smp, char *line) {
   chMtxLock(&smp->history_mutex);
 
   p = smp->history_current - XSHELL_LINE_LENGTH;
-  if (p < &smp->history_buffer[0][0]) {
-    p = &smp->history_buffer[XSHELL_HISTORY_DEPTH - 1][XSHELL_LINE_LENGTH];
+    if (p < smp->history_buffer[0]) {
+    p = smp->history_buffer[XSHELL_HISTORY_DEPTH - 1];
   }
   if ((len = strlen(p)) > (size_t)0) {
     smp->history_current = p;
@@ -260,8 +271,8 @@ static size_t xshell_get_history_next(xshell_manager_t *smp, char *line) {
   chMtxLock(&smp->history_mutex);
 
   p = smp->history_current + XSHELL_LINE_LENGTH;
-  if (p > &smp->history_buffer[XSHELL_HISTORY_DEPTH - 1][XSHELL_LINE_LENGTH]) {
-    p = &smp->history_buffer[0][0];
+    if (p > smp->history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
+    p = smp->history_buffer[0];
   }
   if ((len = strlen(p)) > (size_t)0) {
     smp->history_current = p;
@@ -275,10 +286,15 @@ static size_t xshell_get_history_next(xshell_manager_t *smp, char *line) {
 
 static void xshell_reset_line(xshell_manager_t *smp,
                               BaseSequentialStream *stream) {
-
+#if XSHELL_PROMPT_STR_LENGTH > 0
+  chprintf(stream, "\033[%dD%s\033[K",
+           XSHELL_LINE_LENGTH + strlen(smp->prompt) + 2,
+           smp->prompt);
+#else
   chprintf(stream, "\033[%dD%s\033[K",
            XSHELL_LINE_LENGTH + strlen(smp->config->prompt) + 2,
            smp->config->prompt);
+#endif
 }
 
 static bool xshell_is_line_empty(const char *str) {
@@ -313,6 +329,12 @@ void xshellObjectInit(xshell_manager_t *smp,
   /* Keeping association with configuration data, it needs to be persistent.*/
   smp->config = config;
 
+#if XSHELL_PROMPT_STR_LENGTH > 0
+  /* Set the default prompt.*/
+  smp->prompt[XSHELL_PROMPT_STR_LENGTH - 1] = '\0';
+  strncpy(smp->prompt, config->prompt, XSHELL_PROMPT_STR_LENGTH);
+#endif
+  
   /* Shell events.*/
   chEvtObjectInit(&smp->events);
 
@@ -385,25 +407,6 @@ thread_t *xshellSpawn(xshell_manager_t *smp,
   }
 
   return tp;
-}
-
-/**
- * @brief   Terminates the shell.
- * @note    Must be invoked from the command handlers.
- * @note    Does not return.
- *
- * @param[in,out] smp           pointer to the @p xshell_manager_t object
- * @param[in] msg               shell exit code
- *
- * @api
- */
-void xshellExit(xshell_manager_t *smp, msg_t msg) {
-
-  /* Atomically broadcasting the event source and terminating the thread,
-     there is not a chSysUnlock() because the thread terminates upon return.*/
-  chSysLock();
-  chEvtBroadcastI(&smp->events);
-  chThdExitS(msg);
 }
 
 /**
@@ -501,7 +504,7 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
       }
       continue;
     }
-    if (c == '\r') {
+    if (strchr(XSHELL_EXECUTE_CHARS, c) != NULL) {
       chprintf(stream, XSHELL_NEWLINE_STR);
       *p = 0;
 #if XSHELL_HISTORY_DEPTH > 0
