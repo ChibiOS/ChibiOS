@@ -166,7 +166,7 @@ void *__n25q_objinit_impl(void *ip, const void *vmt, unsigned bus_width) {
   hal_snor_micron_n25q_c *self = (hal_snor_micron_n25q_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
-  __snorbase_objinit_impl(self, vmt);
+  __xsnor_objinit_impl(self, vmt);
 
   /* Initialization code.*/
   switch (bus_width) {
@@ -204,7 +204,7 @@ void __n25q_dispose_impl(void *ip) {
   /* Implementation.*/
 
   /* Finalization of the ancestors-defined parts.*/
-  __snorbase_dispose_impl(self);
+  __xsnor_dispose_impl(self);
 }
 
 /**

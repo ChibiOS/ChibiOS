@@ -78,7 +78,7 @@ void *__tmpl_objinit_impl(void *ip, const void *vmt) {
   hal_device_template_c *self = (hal_device_template_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
-  __snorbase_objinit_impl(self, vmt);
+  __xsnor_objinit_impl(self, vmt);
 
   /* Initialization code.*/
   /* Implementation.*/
@@ -103,7 +103,7 @@ void __tmpl_dispose_impl(void *ip) {
   /* Implementation.*/
 
   /* Finalization of the ancestors-defined parts.*/
-  __snorbase_dispose_impl(self);
+  __xsnor_dispose_impl(self);
 }
 
 /**

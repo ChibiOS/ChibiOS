@@ -72,7 +72,7 @@
  *                              interface.
  * @return                      A flash device descriptor.
  */
-static const flash_descriptor_t *__snorbase_fls_get_descriptor_impl(void *ip) {
+static const flash_descriptor_t *__xsnor_fls_get_descriptor_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
   return snor_device_get_descriptor(self);
@@ -91,8 +91,8 @@ static const flash_descriptor_t *__snorbase_fls_get_descriptor_impl(void *ip) {
  * @param[out]    rp            Pointer to the data buffer.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_read_impl(void *ip, flash_offset_t offset,
-                                              size_t n, uint8_t *rp) {
+static flash_error_t __xsnor_fls_read_impl(void *ip, flash_offset_t offset,
+                                           size_t n, uint8_t *rp) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
@@ -105,7 +105,7 @@ static flash_error_t __snorbase_fls_read_impl(void *ip, flash_offset_t offset,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->config->wspi);
+  __xsnor_bus_acquire(self);
 
   /* FLASH_READY state while the operation is performed.*/
   self->state = FLASH_READ;
@@ -117,7 +117,7 @@ static flash_error_t __snorbase_fls_read_impl(void *ip, flash_offset_t offset,
   self->state = FLASH_READY;
 
   /* Bus released.*/
-  wspiReleaseBus(self->config->wspi);
+  __xsnor_bus_release(self);
 
   return err;
 }
@@ -135,9 +135,8 @@ static flash_error_t __snorbase_fls_read_impl(void *ip, flash_offset_t offset,
  * @param[in]     pp            Pointer to the data buffer.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_program_impl(void *ip,
-                                                 flash_offset_t offset,
-                                                 size_t n, const uint8_t *pp) {
+static flash_error_t __xsnor_fls_program_impl(void *ip, flash_offset_t offset,
+                                              size_t n, const uint8_t *pp) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
@@ -150,7 +149,7 @@ static flash_error_t __snorbase_fls_program_impl(void *ip,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->config->wspi);
+  __xsnor_bus_acquire(self);
 
   /* FLASH_PGM state while the operation is performed.*/
   self->state = FLASH_PGM;
@@ -162,7 +161,7 @@ static flash_error_t __snorbase_fls_program_impl(void *ip,
   self->state = FLASH_READY;
 
   /* Bus released.*/
-  wspiReleaseBus(self->config->wspi);
+  __xsnor_bus_release(self);
 
   return err;
 }
@@ -177,7 +176,7 @@ static flash_error_t __snorbase_fls_program_impl(void *ip,
  *                              interface.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_start_erase_all_impl(void *ip) {
+static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
@@ -190,7 +189,7 @@ static flash_error_t __snorbase_fls_start_erase_all_impl(void *ip) {
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->config->wspi);
+  __xsnor_bus_acquire(self);
 
   /* FLASH_ERASE state while the operation is performed.*/
   self->state = FLASH_ERASE;
@@ -199,7 +198,7 @@ static flash_error_t __snorbase_fls_start_erase_all_impl(void *ip) {
   err = snor_device_start_erase_all(self);
 
   /* Bus released.*/
-  wspiReleaseBus(self->config->wspi);
+  __xsnor_bus_release(self);
 
   return err;
 }
@@ -215,8 +214,8 @@ static flash_error_t __snorbase_fls_start_erase_all_impl(void *ip) {
  * @param[in]     sector        Sector to be erased.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_start_erase_sector_impl(void *ip,
-                                                            const flash_sector_t *sector) {
+static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
+                                                         const flash_sector_t *sector) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
@@ -229,7 +228,7 @@ static flash_error_t __snorbase_fls_start_erase_sector_impl(void *ip,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->config->wspi);
+  __xsnor_bus_acquire(self);
 
   /* FLASH_ERASE state while the operation is performed.*/
   self->state = FLASH_ERASE;
@@ -238,7 +237,7 @@ static flash_error_t __snorbase_fls_start_erase_sector_impl(void *ip,
   err = snor_device_start_erase_sector(self, sector);
 
   /* Bus released.*/
-  wspiReleaseBus(self->config->wspi);
+  __xsnor_bus_release(self);
 
   return err;
 }
@@ -256,7 +255,7 @@ static flash_error_t __snorbase_fls_start_erase_sector_impl(void *ip,
  *                              can be @p NULL
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_query_erase_impl(void *ip, unsigned *msec) {
+static flash_error_t __xsnor_fls_query_erase_impl(void *ip, unsigned *msec) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
@@ -268,7 +267,7 @@ static flash_error_t __snorbase_fls_query_erase_impl(void *ip, unsigned *msec) {
   if (self->state == FLASH_ERASE) {
 
     /* Bus acquired.*/
-    wspiAcquireBus(self->config->wspi);
+    __xsnor_bus_acquire(self);
 
     /* Actual query erase implementation.*/
     err = snor_device_query_erase(self, msec);
@@ -279,7 +278,7 @@ static flash_error_t __snorbase_fls_query_erase_impl(void *ip, unsigned *msec) {
     }
 
     /* Bus released.*/
-    wspiReleaseBus(self->config->wspi);
+    __xsnor_bus_release(self);
   }
   else {
     err = FLASH_NO_ERROR;
@@ -299,8 +298,8 @@ static flash_error_t __snorbase_fls_query_erase_impl(void *ip, unsigned *msec) {
  * @param[in]     sector        Sector to be verified.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_verify_erase_impl(void *ip,
-                                                      const flash_sector_t *sector) {
+static flash_error_t __xsnor_fls_verify_erase_impl(void *ip,
+                                                   const flash_sector_t *sector) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
@@ -313,7 +312,7 @@ static flash_error_t __snorbase_fls_verify_erase_impl(void *ip,
   }
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->config->wspi);
+  __xsnor_bus_acquire(self);
 
   /* FLASH_READY state while the operation is performed.*/
   self->state = FLASH_READ;
@@ -325,7 +324,7 @@ static flash_error_t __snorbase_fls_verify_erase_impl(void *ip,
   self->state = FLASH_READY;
 
   /* Bus released.*/
-  wspiReleaseBus(self->config->wspi);
+  __xsnor_bus_release(self);
 
   return err;
 }
@@ -340,7 +339,7 @@ static flash_error_t __snorbase_fls_verify_erase_impl(void *ip,
  *                              interface.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_acquire_exclusive_impl(void *ip) {
+static flash_error_t __xsnor_fls_acquire_exclusive_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
   osalMutexLock(&self->mutex);
@@ -357,7 +356,7 @@ static flash_error_t __snorbase_fls_acquire_exclusive_impl(void *ip) {
  *                              interface.
  * @return                      An error code.
  */
-static flash_error_t __snorbase_fls_release_exclusive_impl(void *ip) {
+static flash_error_t __xsnor_fls_release_exclusive_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
   osalMutexUnlock(&self->mutex);
@@ -381,7 +380,7 @@ static flash_error_t __snorbase_fls_release_exclusive_impl(void *ip) {
  * @param[in]     vmt           VMT pointer for the new object.
  * @return                      A new reference to the object.
  */
-void *__snorbase_objinit_impl(void *ip, const void *vmt) {
+void *__xsnor_objinit_impl(void *ip, const void *vmt) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
@@ -389,19 +388,19 @@ void *__snorbase_objinit_impl(void *ip, const void *vmt) {
 
   /* Initialization of interface flash_interface_i.*/
   {
-    static const struct flash_interface_vmt snorbase_fls_vmt = {
+    static const struct flash_interface_vmt xsnor_fls_vmt = {
       .instance_offset      = offsetof(hal_snor_base_c, fls),
-      .get_descriptor       = __snorbase_fls_get_descriptor_impl,
-      .read                 = __snorbase_fls_read_impl,
-      .program              = __snorbase_fls_program_impl,
-      .start_erase_all      = __snorbase_fls_start_erase_all_impl,
-      .start_erase_sector   = __snorbase_fls_start_erase_sector_impl,
-      .query_erase          = __snorbase_fls_query_erase_impl,
-      .verify_erase         = __snorbase_fls_verify_erase_impl,
-      .acquire_exclusive    = __snorbase_fls_acquire_exclusive_impl,
-      .release_exclusive    = __snorbase_fls_release_exclusive_impl
+      .get_descriptor       = __xsnor_fls_get_descriptor_impl,
+      .read                 = __xsnor_fls_read_impl,
+      .program              = __xsnor_fls_program_impl,
+      .start_erase_all      = __xsnor_fls_start_erase_all_impl,
+      .start_erase_sector   = __xsnor_fls_start_erase_sector_impl,
+      .query_erase          = __xsnor_fls_query_erase_impl,
+      .verify_erase         = __xsnor_fls_verify_erase_impl,
+      .acquire_exclusive    = __xsnor_fls_acquire_exclusive_impl,
+      .release_exclusive    = __xsnor_fls_release_exclusive_impl
     };
-    oopIfObjectInit(&self->fls, &snorbase_fls_vmt);
+    oopIfObjectInit(&self->fls, &xsnor_fls_vmt);
   }
 
   /* Initialization code.*/
@@ -422,7 +421,7 @@ void *__snorbase_objinit_impl(void *ip, const void *vmt) {
  * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance to be
  *                              disposed.
  */
-void __snorbase_dispose_impl(void *ip) {
+void __xsnor_dispose_impl(void *ip) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   /* Finalization code.*/
@@ -437,6 +436,72 @@ void __snorbase_dispose_impl(void *ip) {
  * @name        Regular methods of hal_snor_base_c
  * @{
  */
+#if (XSNOR_SHARED_BUS == TRUE) || defined (__DOXYGEN__)
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Bus acquisition and lock.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ */
+void __xsnor_bus_acquire(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspiAcquireBus(self->config->bus.wspi.drv);
+    if (self->config->bus.wspi.cfg != self->config->bus.wspi.drv->config) {
+      wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.drv->config);
+    }
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+    spiAcquireBus(self->config->bus.spi.drv);
+    if (self->config->bus.spi.cfg != self->config->bus.spi.drv->config) {
+      spiStart(self->config->bus.spi.drv, self->config->bus.spi.drv->config);
+    }
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Bus release and unlock.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ */
+void __xsnor_bus_release(void *ip) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspiReleaseBus(self->config->bus.wspi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+    spiReleaseBus(self->config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+#endif /* XSNOR_SHARED_BUS == TRUE */
+
 /**
  * @memberof    hal_snor_base_c
  * @public
@@ -463,9 +528,20 @@ flash_error_t xsnorStart(void *ip, const snor_config_t *config) {
   if (self->state == FLASH_STOP) {
 
     /* Bus acquisition.*/
-    wspiAcquireBus(self->config->wspi);
+    __xsnor_bus_acquire(self);
 
-    wspiStart(self->config->wspi, self->config->wspicfg);
+#if XSNOR_USE_BOTH == TRUE
+    if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+      wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
+#if XSNOR_USE_BOTH == TRUE
+    }
+  else {
+#endif
+      spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+#if XSNOR_USE_BOTH == TRUE
+    }
+#endif
 
     /* Device identification and initialization.*/
     err = snor_device_init(self);
@@ -475,7 +551,7 @@ flash_error_t xsnorStart(void *ip, const snor_config_t *config) {
     }
 
     /* Bus release.*/
-    wspiReleaseBus(self->config->wspi);
+    __xsnor_bus_release(self);
   }
 
   return err;
@@ -499,7 +575,18 @@ void xsnorStop(void *ip) {
   if (self->state != FLASH_STOP) {
 
     /* Stopping bus device.*/
-    wspiStop(self->config->wspi);
+#if XSNOR_USE_BOTH == TRUE
+    if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+      wspiStop(self->config->bus.wspi.drv);
+#if XSNOR_USE_BOTH == TRUE
+    }
+  else {
+#endif
+      spiStop(self->config->bus.spi.drv);
+#if XSNOR_USE_BOTH == TRUE
+    }
+#endif
 
     /* Driver stopped.*/
     self->state = FLASH_STOP;

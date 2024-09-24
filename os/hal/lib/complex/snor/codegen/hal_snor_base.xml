@@ -15,12 +15,66 @@
       <include style="regular">hal_flash_interface.h</include>
     </includes>
     <definitions_early>
+      <group description="Bus types">
+        <define name="XSNOR_BUS_TYPE_WSPI" value="0">
+          <brief>Bus type is WSPI.</brief>
+        </define>
+        <define name="XSNOR_BUS_TYPE_SPI" value="1">
+          <brief>Bus type is SPI.</brief>
+        </define>
+      </group>
     </definitions_early>
     <configs>
-      <config name="SNOR_BUFFER_SIZE" default="32">
-        <brief>Non-cacheable operations buffer.</brief></config>
+      <config name="XSNOR_BUFFER_SIZE" default="32">
+        <brief>Non-cacheable operations buffer.</brief>
+        <assert invalid="$N &lt; 32">XSNOR_BUFFER_SIZE minimum is 32</assert>
+      </config>
+      <config name="XSNOR_USE_SPI" default="TRUE">
+        <brief>SPI support enable switch.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)">
+         XSNOR_USE_SPI invalid value</assert>
+      </config>
+      <config name="XSNOR_USE_WSPI" default="TRUE">
+        <brief>WSPI support enable switch.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)">
+         XSNOR_USE_WSPI invalid value</assert>
+      </config>
+      <config name="XSNOR_SHARED_BUS" default="TRUE">
+        <brief>Bus share support enable switch.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)">
+         XSNOR_SHARED_BUS invalid value</assert>
+      </config>
+      <verbatim><![CDATA[
+/* Other consistency checks.*/
+#if (XSNOR_USE_SPI == FALSE) && (XSNOR_USE_WSPI == FALSE)
+#error "XSNOR_USE_SPI or XSNOR_USE_WSPI must be enabled"
+#endif
+#if (XSNOR_USE_SPI == TRUE) && (HAL_USE_SPI == FALSE)
+#error "XSNOR_USE_SPI requires HAL_USE_SPI"
+#endif
+#if (XSNOR_USE_WSPI == TRUE) && (HAL_USE_WSPI == FALSE)
+#error "XSNOR_USE_WSPI requires HAL_USE_WSPI"
+#endif
+]]></verbatim>
     </configs>
-    <macros></macros>
+    <definitions_late>
+      <define name="XSNOR_USE_BOTH" value="((XSNOR_USE_SPI == TRUE) &amp;&amp; (XSNOR_USE_WSPI == TRUE))">
+        <brief>This switch is @p TRUE if both SPI and WSPI are in use.</brief></define>
+    </definitions_late>
+    <macros>
+      <condition check="XSNOR_SHARED_BUS == FALSE">
+        <group description="Bus mutex macros when sharing is disabled">
+          <macro name="__xsnor_bus_acquire">
+            <param name="self"></param>
+            <implementation></implementation>
+          </macro>
+          <macro name="__xsnor_bus_release">
+            <param name="self"></param>
+            <implementation></implementation>
+          </macro>
+        </group>
+      </condition>
+    </macros>
     <types>
       <typedef name="snor_buffers_t">
         <brief>Type of a non-cacheable buffer.</brief>
@@ -33,21 +87,67 @@
       <struct name="snor_buffers">
         <brief>SNOR driver configuration.</brief>
         <fields>
-          <field name="cmdbuf" ctype="wspi_command_t">
-            <brief>Non-cacheable WSPI command buffer.</brief>
-          </field>
-          <field name="databuf" ctype="uint8_t$I$N[SNOR_BUFFER_SIZE]">
+          <field name="databuf" ctype="uint8_t$I$N[XSNOR_BUFFER_SIZE]">
             <brief>Non-cacheable data buffer.</brief>
           </field>
+          <condition check="XSNOR_USE_WSPI">
+            <field name="cmdbuf" ctype="wspi_command_t">
+              <brief>Non-cacheable WSPI command buffer.</brief>
+            </field>
+          </condition>
+          <condition check="XSNOR_USE_SPI">
+            <field name="spibuf" ctype="uint8_t$I$N[8]">
+              <brief>Non-cacheable SPI buffer.</brief>
+            </field>
+          </condition>
         </fields>
       </struct>
+      <condition check="XSNOR_USE_WSPI == TRUE">
+        <struct name="snor_bus_wspi">
+          <brief>WSPI-specific configuration fields.</brief>
+          <fields>
+            <field name="drv" ctype="WSPIDriver$I*$N">
+              <brief>WSPI driver to be used for physical communication.</brief>
+            </field>
+            <field name="cfg" ctype="const WSPIConfig$I*$N">
+              <brief>WSPI driver configuration.</brief>
+            </field>
+          </fields>
+        </struct>
+      </condition>
+      <condition check="XSNOR_USE_SPI == TRUE">
+        <struct name="snor_bus_spi">
+          <brief>SPI-specific configuration fields.</brief>
+          <fields>
+            <field name="drv" ctype="SPIDriver$I*$N">
+              <brief>SPI driver to be used for physical communication.</brief>
+            </field>
+            <field name="cfg" ctype="const SPIConfig$I*$N">
+              <brief>SPI driver configuration.</brief>
+            </field>
+          </fields>
+        </struct>
+      </condition>
+      <union name="snor_bus_configs">
+        <brief>Union of possible bus configurations.</brief>
+        <fields>
+          <condition check="XSNOR_USE_WSPI == TRUE">
+            <field name="wspi" ctype="struct snor_bus_wspi" />
+          </condition>
+          <condition check="XSNOR_USE_SPI == TRUE">
+            <field name="spi" ctype="struct snor_bus_spi" />
+          </condition>
+        </fields>
+      </union>
       <struct name="snor_config">
         <brief>SNOR driver configuration.</brief>
         <fields>
-          <field name="wspi" ctype="WSPIDriver$I*$N">
-            <brief>WSPI driver to be used for physical communication.</brief>
-          </field>
-          <field name="wspicfg" ctype="const WSPIConfig$I*$N">
+          <condition check="XSNOR_USE_BOTH == TRUE">
+            <field name="bus_type" ctype="int">
+              <brief>Bus type selection switch.</brief>
+            </field>
+          </condition>
+          <field name="bus" ctype="union snor_bus_configs">
             <brief>WSPI driver configuration.</brief>
           </field>
           <field name="buffers" ctype="struct snor_buffers_t$I*$N">
@@ -55,7 +155,7 @@
           </field>
         </fields>
       </struct>
-      <class name="hal_snor_base" type="abstract" namespace="snorbase"
+      <class name="hal_snor_base" type="abstract" namespace="xsnor"
         descr="SNOR base driver" ancestorname="base_object">
         <brief>Base class of all SNOR drivers.</brief>
         <implements>
@@ -78,7 +178,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->config->wspi);
+__xsnor_bus_acquire(self);
 
 /* FLASH_READY state while the operation is performed.*/
 self->state = FLASH_READ;
@@ -90,7 +190,7 @@ err = snor_device_read(self, offset, n, rp);
 self->state = FLASH_READY;
 
 /* Bus released.*/
-wspiReleaseBus(self->config->wspi);
+__xsnor_bus_release(self);
 
 return err;]]></implementation>
             </method>
@@ -107,7 +207,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->config->wspi);
+__xsnor_bus_acquire(self);
 
 /* FLASH_PGM state while the operation is performed.*/
 self->state = FLASH_PGM;
@@ -119,7 +219,7 @@ err = snor_device_program(self, offset, n, pp);
 self->state = FLASH_READY;
 
 /* Bus released.*/
-wspiReleaseBus(self->config->wspi);
+__xsnor_bus_release(self);
 
 return err;]]></implementation>
             </method>
@@ -136,7 +236,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->config->wspi);
+__xsnor_bus_acquire(self);
 
 /* FLASH_ERASE state while the operation is performed.*/
 self->state = FLASH_ERASE;
@@ -145,7 +245,7 @@ self->state = FLASH_ERASE;
 err = snor_device_start_erase_all(self);
 
 /* Bus released.*/
-wspiReleaseBus(self->config->wspi);
+__xsnor_bus_release(self);
 
 return err;]]></implementation>
             </method>
@@ -162,7 +262,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->config->wspi);
+__xsnor_bus_acquire(self);
 
 /* FLASH_ERASE state while the operation is performed.*/
 self->state = FLASH_ERASE;
@@ -171,7 +271,7 @@ self->state = FLASH_ERASE;
 err = snor_device_start_erase_sector(self, sector);
 
 /* Bus released.*/
-wspiReleaseBus(self->config->wspi);
+__xsnor_bus_release(self);
 
 return err;]]></implementation>
             </method>
@@ -187,7 +287,7 @@ osalDbgAssert((self->state == FLASH_READY) || (self->state == FLASH_ERASE),
 if (self->state == FLASH_ERASE) {
 
   /* Bus acquired.*/
-  wspiAcquireBus(self->config->wspi);
+  __xsnor_bus_acquire(self);
 
   /* Actual query erase implementation.*/
   err = snor_device_query_erase(self, msec);
@@ -198,7 +298,7 @@ if (self->state == FLASH_ERASE) {
   }
 
   /* Bus released.*/
-  wspiReleaseBus(self->config->wspi);
+  __xsnor_bus_release(self);
 }
 else {
   err = FLASH_NO_ERROR;
@@ -219,7 +319,7 @@ if (self->state == FLASH_ERASE) {
 }
 
 /* Bus acquired.*/
-wspiAcquireBus(self->config->wspi);
+__xsnor_bus_acquire(self);
 
 /* FLASH_READY state while the operation is performed.*/
 self->state = FLASH_READ;
@@ -231,7 +331,7 @@ err = snor_device_verify_erase(self, sector);
 self->state = FLASH_READY;
 
 /* Bus released.*/
-wspiReleaseBus(self->config->wspi);
+__xsnor_bus_release(self);
 
 return err;]]></implementation>
             </method>
@@ -346,6 +446,56 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
             </method>
           </virtual>
           <regular>
+            <condition check="XSNOR_SHARED_BUS == TRUE">
+              <method name="__xsnor_bus_acquire" ctype="void">
+                <brief>Bus acquisition and lock.</brief>
+                <implementation><![CDATA[
+
+#if XSNOR_USE_BOTH == TRUE
+if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspiAcquireBus(self->config->bus.wspi.drv);
+  if (self->config->bus.wspi.cfg != self->config->bus.wspi.drv->config) {
+    wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.drv->config);
+  }
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+  spiAcquireBus(self->config->bus.spi.drv);
+  if (self->config->bus.spi.cfg != self->config->bus.spi.drv->config) {
+    spiStart(self->config->bus.spi.drv, self->config->bus.spi.drv->config);
+  }
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+              </method>
+              <method name="__xsnor_bus_release" ctype="void">
+                <brief>Bus release and unlock.</brief>
+                <implementation><![CDATA[
+
+#if XSNOR_USE_BOTH == TRUE
+if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspiReleaseBus(self->config->bus.wspi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+  spiReleaseBus(self->config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+              </method>
+            </condition>
             <method name="xsnorStart" ctype="flash_error_t">
               <brief>Configures and activates a SNOR driver.</brief>
               <param name="config" ctype="const snor_config_t *" dir="in">pointer to the configuration</param>
@@ -364,9 +514,20 @@ self->config = config;
 if (self->state == FLASH_STOP) {
 
   /* Bus acquisition.*/
-  wspiAcquireBus(self->config->wspi);
+  __xsnor_bus_acquire(self);
 
-  wspiStart(self->config->wspi, self->config->wspicfg);
+#if XSNOR_USE_BOTH == TRUE
+  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+    wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
+#if XSNOR_USE_BOTH == TRUE
+  }
+else {
+#endif
+    spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
 
   /* Device identification and initialization.*/
   err = snor_device_init(self);
@@ -376,7 +537,7 @@ if (self->state == FLASH_STOP) {
   }
 
   /* Bus release.*/
-  wspiReleaseBus(self->config->wspi);
+  __xsnor_bus_release(self);
 }
 
 return err;]]></implementation>
@@ -391,7 +552,18 @@ osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
 if (self->state != FLASH_STOP) {
 
   /* Stopping bus device.*/
-  wspiStop(self->config->wspi);
+#if XSNOR_USE_BOTH == TRUE
+  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+    wspiStop(self->config->bus.wspi.drv);
+#if XSNOR_USE_BOTH == TRUE
+  }
+else {
+#endif
+    spiStop(self->config->bus.spi.drv);
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
 
   /* Driver stopped.*/
   self->state = FLASH_STOP;
@@ -425,9 +597,11 @@ return err;</implementation>
 snor_device_mmap_off(self);</implementation>
               </method>
             </condition>
+            
           </regular>
         </methods>
       </class>
+      
     </types>
     <variables></variables>
     <functions></functions>

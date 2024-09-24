@@ -36,6 +36,21 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Bus types
+ * @{
+ */
+/**
+ * @brief       Bus type is WSPI.
+ */
+#define XSNOR_BUS_TYPE_WSPI                 0
+
+/**
+ * @brief       Bus type is SPI.
+ */
+#define XSNOR_BUS_TYPE_SPI                  1
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -47,8 +62,29 @@
 /**
  * @brief       Non-cacheable operations buffer.
  */
-#if !defined(SNOR_BUFFER_SIZE) || defined(__DOXYGEN__)
-#define SNOR_BUFFER_SIZE                    32
+#if !defined(XSNOR_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define XSNOR_BUFFER_SIZE                   32
+#endif
+
+/**
+ * @brief       SPI support enable switch.
+ */
+#if !defined(XSNOR_USE_SPI) || defined(__DOXYGEN__)
+#define XSNOR_USE_SPI                       TRUE
+#endif
+
+/**
+ * @brief       WSPI support enable switch.
+ */
+#if !defined(XSNOR_USE_WSPI) || defined(__DOXYGEN__)
+#define XSNOR_USE_WSPI                      TRUE
+#endif
+
+/**
+ * @brief       Bus share support enable switch.
+ */
+#if !defined(XSNOR_SHARED_BUS) || defined(__DOXYGEN__)
+#define XSNOR_SHARED_BUS                    TRUE
 #endif
 /** @} */
 
@@ -56,9 +92,55 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Checks on XSNOR_BUFFER_SIZE configuration.*/
+#if XSNOR_BUFFER_SIZE < 32
+#error "XSNOR_BUFFER_SIZE minimum is 32"
+#endif
+
+/* Checks on XSNOR_USE_SPI configuration.*/
+#if (XSNOR_USE_SPI != FALSE) && (XSNOR_USE_SPI != TRUE)
+#error "XSNOR_USE_SPI invalid value"
+#endif
+
+/* Checks on XSNOR_USE_WSPI configuration.*/
+#if (XSNOR_USE_WSPI != FALSE) && (XSNOR_USE_WSPI != TRUE)
+#error "XSNOR_USE_WSPI invalid value"
+#endif
+
+/* Checks on XSNOR_SHARED_BUS configuration.*/
+#if (XSNOR_SHARED_BUS != FALSE) && (XSNOR_SHARED_BUS != TRUE)
+#error "XSNOR_SHARED_BUS invalid value"
+#endif
+
+/* Other consistency checks.*/
+#if (XSNOR_USE_SPI == FALSE) && (XSNOR_USE_WSPI == FALSE)
+#error "XSNOR_USE_SPI or XSNOR_USE_WSPI must be enabled"
+#endif
+#if (XSNOR_USE_SPI == TRUE) && (HAL_USE_SPI == FALSE)
+#error "XSNOR_USE_SPI requires HAL_USE_SPI"
+#endif
+#if (XSNOR_USE_WSPI == TRUE) && (HAL_USE_WSPI == FALSE)
+#error "XSNOR_USE_WSPI requires HAL_USE_WSPI"
+#endif
+
+/**
+ * @brief       This switch is @p TRUE if both SPI and WSPI are in use.
+ */
+#define XSNOR_USE_BOTH                      ((XSNOR_USE_SPI == TRUE) && (XSNOR_USE_WSPI == TRUE))
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+#if (XSNOR_SHARED_BUS == FALSE) || defined (__DOXYGEN__)
+/**
+ * @name    Bus mutex macros when sharing is disabled
+ * @{
+ */
+#define __xsnor_bus_acquire(self)
+#define __xsnor_bus_release(self)
+/** @} */
+#endif /* XSNOR_SHARED_BUS == FALSE */
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
@@ -79,27 +161,81 @@ typedef struct snor_config snor_config_t;
  */
 struct snor_buffers {
   /**
+   * @brief       Non-cacheable data buffer.
+   */
+  uint8_t                   databuf[XSNOR_BUFFER_SIZE];
+#if (XSNOR_USE_WSPI) || defined (__DOXYGEN__)
+  /**
    * @brief       Non-cacheable WSPI command buffer.
    */
   wspi_command_t            cmdbuf;
+#endif /* XSNOR_USE_WSPI */
+#if (XSNOR_USE_SPI) || defined (__DOXYGEN__)
   /**
-   * @brief       Non-cacheable data buffer.
+   * @brief       Non-cacheable SPI buffer.
    */
-  uint8_t                   databuf[SNOR_BUFFER_SIZE];
+  uint8_t                   spibuf[8];
+#endif /* XSNOR_USE_SPI */
+};
+
+#if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       WSPI-specific configuration fields.
+ */
+struct snor_bus_wspi {
+  /**
+   * @brief       WSPI driver to be used for physical communication.
+   */
+  WSPIDriver                *drv;
+  /**
+   * @brief       WSPI driver configuration.
+   */
+  const WSPIConfig          *cfg;
+};
+#endif /* XSNOR_USE_WSPI == TRUE */
+
+#if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       SPI-specific configuration fields.
+ */
+struct snor_bus_spi {
+  /**
+   * @brief       SPI driver to be used for physical communication.
+   */
+  SPIDriver                 *drv;
+  /**
+   * @brief       SPI driver configuration.
+   */
+  const SPIConfig           *cfg;
+};
+#endif /* XSNOR_USE_SPI == TRUE */
+
+/**
+ * @brief       Union of possible bus configurations.
+ */
+union snor_bus_configs {
+#if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
+  struct snor_bus_wspi      wspi;
+#endif /* XSNOR_USE_WSPI == TRUE */
+#if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
+  struct snor_bus_spi       spi;
+#endif /* XSNOR_USE_SPI == TRUE */
 };
 
 /**
  * @brief       SNOR driver configuration.
  */
 struct snor_config {
+#if (XSNOR_USE_BOTH == TRUE) || defined (__DOXYGEN__)
   /**
-   * @brief       WSPI driver to be used for physical communication.
+   * @brief       Bus type selection switch.
    */
-  WSPIDriver                *wspi;
+  int                       bus_type;
+#endif /* XSNOR_USE_BOTH == TRUE */
   /**
    * @brief       WSPI driver configuration.
    */
-  const WSPIConfig          *wspicfg;
+  union snor_bus_configs    bus;
   /**
    * @brief       Pointer to the non-cacheable buffers.
    */
@@ -176,8 +312,12 @@ struct hal_snor_base {
 extern "C" {
 #endif
   /* Methods of hal_snor_base_c.*/
-  void *__snorbase_objinit_impl(void *ip, const void *vmt);
-  void __snorbase_dispose_impl(void *ip);
+  void *__xsnor_objinit_impl(void *ip, const void *vmt);
+  void __xsnor_dispose_impl(void *ip);
+#if (XSNOR_SHARED_BUS == TRUE) || defined (__DOXYGEN__)
+  void __xsnor_bus_acquire(void *ip);
+  void __xsnor_bus_release(void *ip);
+#endif /* XSNOR_SHARED_BUS == TRUE */
   flash_error_t xsnorStart(void *ip, const snor_config_t *config);
   void xsnorStop(void *ip);
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)
