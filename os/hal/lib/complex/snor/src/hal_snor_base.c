@@ -506,6 +506,93 @@ void __xsnor_bus_release(void *ip) {
  * @memberof    hal_snor_base_c
  * @public
  *
+ * @brief       Sends a naked command.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ */
+void __xsnor_bus_cmd(void *ip, uint32_t cmd) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspi_command_t mode;
+
+    mode.cmd   = cmd;
+    mode.cfg   = self->commands->cmd;
+    mode.addr  = 0U;
+    mode.alt   = 0U;
+    mode.dummy = 0U;
+    wspiCommand(config->bus.wspi.drv, &mode);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+    spiSelect(config->bus.spi.drv);
+    config->buffers->spibuf[0] = cmd;
+    spiSend(config->bus.spi.drv, 1, config->buffers->spibuf);
+    spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Sends a command followed by a data transmit phase.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ * @param[in]     n             Number of bytes to receive.
+ * @param[out]    p             Data buffer.
+ */
+void __xsnor_bus_cmd_send(void *ip, uint32_t cmd, size_t n, const uint8_t *p) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspi_command_t mode;
+
+    mode.cmd   = cmd;
+    mode.cfg   = self->commands->cmd_data;
+    mode.addr  = 0U;
+    mode.alt   = 0U;
+    mode.dummy = 0U;
+    wspiSend(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+    spiSelect(config->bus.spi.drv);
+    config->buffers->spibuf[0] = cmd;
+    spiSend(config->bus.spi.drv, 1, config->buffers->spibuf);
+    spiSend(config->bus.spi.drv, n, p);
+    spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
  * @brief       Configures and activates a SNOR driver.
  *
  * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.

@@ -157,6 +157,11 @@ typedef struct snor_buffers snor_buffers_t;
 typedef struct snor_config snor_config_t;
 
 /**
+ * @brief       Type of a commands configuration structure.
+ */
+typedef struct snor_commands snor_commands_t;
+
+/**
  * @brief       SNOR driver configuration.
  */
 struct snor_buffers {
@@ -164,18 +169,40 @@ struct snor_buffers {
    * @brief       Non-cacheable data buffer.
    */
   uint8_t                   databuf[XSNOR_BUFFER_SIZE];
-#if (XSNOR_USE_WSPI) || defined (__DOXYGEN__)
+#if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Non-cacheable WSPI command buffer.
    */
   wspi_command_t            cmdbuf;
-#endif /* XSNOR_USE_WSPI */
-#if (XSNOR_USE_SPI) || defined (__DOXYGEN__)
+#endif /* XSNOR_USE_WSPI == TRUE */
+#if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Non-cacheable SPI buffer.
    */
   uint8_t                   spibuf[8];
-#endif /* XSNOR_USE_SPI */
+#endif /* XSNOR_USE_SPI == TRUE */
+};
+
+/**
+ * @brief       SNOR command configuration structure.
+ */
+struct snor_commands {
+  /**
+   * @brief       Command only.
+   */
+  uint32_t                  cmd;
+  /**
+   * @brief       Command and address.
+   */
+  uint32_t                  cmd_addr;
+  /**
+   * @brief       Command and data.
+   */
+  uint32_t                  cmd_data;
+  /**
+   * @brief       Command, address and data.
+   */
+  uint32_t                  cmd_addr_data;
 };
 
 #if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
@@ -239,7 +266,7 @@ struct snor_config {
   /**
    * @brief       Pointer to the non-cacheable buffers.
    */
-  struct snor_buffers_t     *buffers;
+  snor_buffers_t            *buffers;
 };
 
 /**
@@ -298,6 +325,11 @@ struct hal_snor_base {
    */
   const snor_config_t       *config;
   /**
+   * @brief       Current commands configuration.
+   * @note        This field is initialized in subclasses.
+   */
+  const snor_commands_t     *commands;
+  /**
    * @brief       Flash access mutex.
    */
   mutex_t                   mutex;
@@ -318,6 +350,8 @@ extern "C" {
   void __xsnor_bus_acquire(void *ip);
   void __xsnor_bus_release(void *ip);
 #endif /* XSNOR_SHARED_BUS == TRUE */
+  void __xsnor_bus_cmd(void *ip, uint32_t cmd);
+  void __xsnor_bus_cmd_send(void *ip, uint32_t cmd, size_t n, const uint8_t *p);
   flash_error_t xsnorStart(void *ip, const snor_config_t *config);
   void xsnorStop(void *ip);
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)

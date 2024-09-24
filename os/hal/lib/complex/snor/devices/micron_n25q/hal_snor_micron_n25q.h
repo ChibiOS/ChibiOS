@@ -61,33 +61,6 @@
 /*===========================================================================*/
 
 /**
- * @brief       Type of a N25Q command configuration structure.
- */
-typedef struct n25q_commands n25q_commands_t;
-
-/**
- * @brief       N25Q command configuration structure.
- */
-struct n25q_commands {
-  /**
-   * @brief       Command only.
-   */
-  uint32_t                  cmd;
-  /**
-   * @brief       Command and address.
-   */
-  uint32_t                  cmd_addr;
-  /**
-   * @brief       Command and data.
-   */
-  uint32_t                  cmd_data;
-  /**
-   * @brief       Command, address and data.
-   */
-  uint32_t                  cmd_addr_data;
-};
-
-/**
  * @class       hal_snor_micron_n25q_c
  * @extends     base_object_c, hal_snor_base_c.
  *
@@ -142,13 +115,14 @@ struct hal_snor_micron_n25q {
    */
   const snor_config_t       *config;
   /**
+   * @brief       Current commands configuration.
+   * @note        This field is initialized in subclasses.
+   */
+  const snor_commands_t     *commands;
+  /**
    * @brief       Flash access mutex.
    */
   mutex_t                   mutex;
-  /**
-   * @brief       Current commands configuration.
-   */
-  const n25q_commands_t     *commands;
 };
 /** @} */
 

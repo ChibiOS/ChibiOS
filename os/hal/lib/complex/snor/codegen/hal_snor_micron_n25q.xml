@@ -25,33 +25,9 @@
     </definitions_late>
     <macros></macros>
     <types>
-      <typedef name="n25q_commands_t">
-        <brief>Type of a N25Q command configuration structure.</brief>
-        <basetype ctype="struct n25q_commands" />
-      </typedef>
-      <struct name="n25q_commands">
-        <brief>N25Q command configuration structure</brief>
-        <fields>
-          <field name="cmd" ctype="uint32_t">
-            <brief>Command only.</brief>
-          </field>
-          <field name="cmd_addr" ctype="uint32_t">
-            <brief>Command and address.</brief>
-          </field>
-          <field name="cmd_data" ctype="uint32_t">
-            <brief>Command and data.</brief>
-          </field>
-          <field name="cmd_addr_data" ctype="uint32_t">
-            <brief>Command, address and data.</brief>
-          </field>
-        </fields>
-      </struct>
       <class name="hal_snor_micron_n25q" type="regular" namespace="n25q"
              descr="SNOR Micron N25Q driver" ancestorname="hal_snor_base">
         <fields>
-          <field name="commands" ctype="const n25q_commands_t$I*$N">
-            <brief>Current commands configuration.</brief>
-          </field>
         </fields>
         <methods>
           <objinit callsuper="true">

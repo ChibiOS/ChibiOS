@@ -52,7 +52,7 @@
 #define CMD_PROGRAM_OTP_ARRAY                       0x42
 /** @} */
 
-static const n25q_commands_t cmd1l = {
+static const snor_commands_t cmd1l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_ONE_LINE       |
                            WSPI_CFG_ADDR_MODE_NONE          |
                            WSPI_CFG_ALT_MODE_NONE           |
@@ -79,7 +79,7 @@ static const n25q_commands_t cmd1l = {
                            WSPI_CFG_ADDR_SIZE_24)
 };
 
-static const n25q_commands_t cmd2l = {
+static const snor_commands_t cmd2l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_TWO_LINES      |
                            WSPI_CFG_ADDR_MODE_NONE          |
                            WSPI_CFG_ALT_MODE_NONE           |
@@ -106,7 +106,7 @@ static const n25q_commands_t cmd2l = {
                            WSPI_CFG_ADDR_SIZE_24)
 };
 
-static const n25q_commands_t cmd4l = {
+static const snor_commands_t cmd4l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_FOUR_LINES     |
                            WSPI_CFG_ADDR_MODE_NONE          |
                            WSPI_CFG_ALT_MODE_NONE           |

@@ -108,6 +108,11 @@ struct hal_device_template {
    */
   const snor_config_t       *config;
   /**
+   * @brief       Current commands configuration.
+   * @note        This field is initialized in subclasses.
+   */
+  const snor_commands_t     *commands;
+  /**
    * @brief       Flash access mutex.
    */
   mutex_t                   mutex;

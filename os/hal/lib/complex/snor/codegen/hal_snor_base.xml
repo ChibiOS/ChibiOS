@@ -84,22 +84,43 @@
         <brief>Type of a SNOR configuration structure.</brief>
         <basetype ctype="struct snor_config" />
       </typedef>
+      <typedef name="snor_commands_t">
+        <brief>Type of a commands configuration structure.</brief>
+        <basetype ctype="struct snor_commands" />
+      </typedef>
       <struct name="snor_buffers">
         <brief>SNOR driver configuration.</brief>
         <fields>
           <field name="databuf" ctype="uint8_t$I$N[XSNOR_BUFFER_SIZE]">
             <brief>Non-cacheable data buffer.</brief>
           </field>
-          <condition check="XSNOR_USE_WSPI">
+          <condition check="XSNOR_USE_WSPI == TRUE">
             <field name="cmdbuf" ctype="wspi_command_t">
               <brief>Non-cacheable WSPI command buffer.</brief>
             </field>
           </condition>
-          <condition check="XSNOR_USE_SPI">
+          <condition check="XSNOR_USE_SPI == TRUE">
             <field name="spibuf" ctype="uint8_t$I$N[8]">
               <brief>Non-cacheable SPI buffer.</brief>
             </field>
           </condition>
+        </fields>
+      </struct>
+      <struct name="snor_commands">
+        <brief>SNOR command configuration structure.</brief>
+        <fields>
+          <field name="cmd" ctype="uint32_t">
+            <brief>Command only.</brief>
+          </field>
+          <field name="cmd_addr" ctype="uint32_t">
+            <brief>Command and address.</brief>
+          </field>
+          <field name="cmd_data" ctype="uint32_t">
+            <brief>Command and data.</brief>
+          </field>
+          <field name="cmd_addr_data" ctype="uint32_t">
+            <brief>Command, address and data.</brief>
+          </field>
         </fields>
       </struct>
       <condition check="XSNOR_USE_WSPI == TRUE">
@@ -150,7 +171,7 @@
           <field name="bus" ctype="union snor_bus_configs">
             <brief>WSPI driver configuration.</brief>
           </field>
-          <field name="buffers" ctype="struct snor_buffers_t$I*$N">
+          <field name="buffers" ctype="snor_buffers_t$I*$N">
             <brief>Pointer to the non-cacheable buffers.</brief>
           </field>
         </fields>
@@ -355,6 +376,10 @@ return FLASH_NO_ERROR;
             <brief>Driver state.</brief></field>
           <field name="config" ctype="const snor_config_t$I*$N">
             <brief>Driver configuration.</brief></field>
+          <field name="commands" ctype="const snor_commands_t$I*$N">
+            <brief>Current commands configuration.</brief>
+            <note>This field is initialized in subclasses.</note>
+          </field>
           <field name="mutex" ctype="mutex_t">
             <brief>Flash access mutex.</brief></field>
         </fields>
@@ -496,6 +521,77 @@ else {
 #endif]]></implementation>
               </method>
             </condition>
+            <method name="__xsnor_bus_cmd" ctype="void">
+              <brief>Sends a naked command.</brief>
+              <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+              <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = self->commands->cmd;
+  mode.addr  = 0U;
+  mode.alt   = 0U;
+  mode.dummy = 0U;
+  wspiCommand(config->bus.wspi.drv, &mode);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+  spiSelect(config->bus.spi.drv);
+  config->buffers->spibuf[0] = cmd;
+  spiSend(config->bus.spi.drv, 1, config->buffers->spibuf);
+  spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
+            <method name="__xsnor_bus_cmd_send" ctype="void">
+              <brief>Sends a command followed by a data transmit phase.</brief>
+              <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+              <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
+              <param name="p" ctype="const uint8_t *" dir="out">data buffer</param>
+              <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = self->commands->cmd_data;
+  mode.addr  = 0U;
+  mode.alt   = 0U;
+  mode.dummy = 0U;
+  wspiSend(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+  spiSelect(config->bus.spi.drv);
+  config->buffers->spibuf[0] = cmd;
+  spiSend(config->bus.spi.drv, 1, config->buffers->spibuf);
+  spiSend(config->bus.spi.drv, n, p);
+  spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
             <method name="xsnorStart" ctype="flash_error_t">
               <brief>Configures and activates a SNOR driver.</brief>
               <param name="config" ctype="const snor_config_t *" dir="in">pointer to the configuration</param>
