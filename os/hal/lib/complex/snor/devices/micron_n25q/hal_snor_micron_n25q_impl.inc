@@ -133,9 +133,24 @@ static const snor_commands_t cmd4l = {
                            WSPI_CFG_ADDR_SIZE_24)
 };
 
+/* Device identifiers.*/
+static const uint8_t n25q_manufacturer_ids[] = {0x20};
+static const uint8_t n25q_memory_type_ids[] = {0xBA, 0xBB};
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
+
+static bool n25q_find_id(const uint8_t *set, size_t size, uint8_t element) {
+  size_t i;
+
+  for (i = 0; i < size; i++) {
+    if (set[i] == element) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -226,6 +241,40 @@ flash_error_t __n25q_init_impl(void *ip) {
     return FLASH_ERROR_HW_FAILURE;
   }
 #endif
+
+#if XSNOR_USE_BOTH == TRUE
+  if (self->config->bus_type == XSNOR_BUS_MODE_SPI)
+#endif
+  {
+    /* Initialization procedure in the SPI case.
+       Reading device ID.*/
+    __xsnor_bus_cmd_receive(self->config->bus.spi.drv, CMD_READ_ID,
+                            3U, &self->config->buffers->databuf[0]);
+
+    /* Manufacturer identifier.*/
+    if (!n25q_find_id(n25q_manufacturer_ids,
+                      sizeof n25q_manufacturer_ids,
+                      self->config->buffers->databuf[0])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+
+    /* Memory identifier.*/
+    if (!n25q_find_id(n25q_memory_type_ids,
+                      sizeof n25q_memory_type_ids,
+                      self->config->buffers->databuf[1])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+
+    /* Setting up the device size.*/
+//    self->descriptor.sectors_count = (1U << (size_t)devp->nocache->buf[2]) / SECTOR_SIZE;
+//    self->descriptor.size = (size_t)snor_descriptor.sectors_count * SECTOR_SIZE;
+  }
+#if XSNOR_USE_BOTH == TRUE
+  else
+#endif
+  {
+    spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+  }
 
   return FLASH_NO_ERROR;
 }
