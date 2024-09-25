@@ -451,7 +451,7 @@ void bus_cmd(BUSDriver *busp, uint32_t cmd) {
  *
  * @param[in] busp      pointer to the bus driver
  * @param[in] cmd       instruction code
- * @param[in] n         number of bytes to receive
+ * @param[in] n         number of bytes to transmit
  * @param[in] p         data buffer
  *
  * @notapi
