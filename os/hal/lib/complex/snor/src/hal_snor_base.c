@@ -404,8 +404,11 @@ void *__xsnor_objinit_impl(void *ip, const void *vmt) {
   }
 
   /* Initialization code.*/
-  self->state = FLASH_UNINIT;
-  self->config = NULL;
+  self->state    = FLASH_UNINIT;
+  self->config   = NULL;
+#if XSNOR_USE_WSPI == TRUE
+  self->commands = NULL;
+#endif
   osalMutexObjectInit(&self->mutex);
 
   return self;
@@ -472,7 +475,7 @@ void __xsnor_bus_acquire(void *ip) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspiAcquireBus(self->config->bus.wspi.drv);
@@ -507,7 +510,7 @@ void __xsnor_bus_release(void *ip) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspiReleaseBus(self->config->bus.wspi.drv);
@@ -539,7 +542,7 @@ void __xsnor_bus_cmd(void *ip, uint32_t cmd) {
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -583,7 +586,7 @@ void __xsnor_bus_cmd_send(void *ip, uint32_t cmd, size_t n, const uint8_t *p) {
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -628,7 +631,7 @@ void __xsnor_bus_cmd_receive(void *ip, uint32_t cmd, size_t n, uint8_t *p) {
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -672,7 +675,7 @@ void __xsnor_bus_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -718,7 +721,7 @@ void __xsnor_bus_cmd_addr_send(void *ip, uint32_t cmd, flash_offset_t offset,
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -765,7 +768,7 @@ void __xsnor_bus_cmd_addr_receive(void *ip, uint32_t cmd,
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -812,7 +815,7 @@ void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -865,7 +868,7 @@ void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
   const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
     wspi_command_t mode;
@@ -926,7 +929,7 @@ flash_error_t xsnorStart(void *ip, const snor_config_t *config) {
     __xsnor_bus_acquire(self);
 
 #if XSNOR_USE_BOTH == TRUE
-    if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+    if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
       wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
 #if XSNOR_USE_BOTH == TRUE
@@ -971,7 +974,7 @@ void xsnorStop(void *ip) {
 
     /* Stopping bus device.*/
 #if XSNOR_USE_BOTH == TRUE
-    if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+    if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
       wspiStop(self->config->bus.wspi.drv);
 #if XSNOR_USE_BOTH == TRUE

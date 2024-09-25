@@ -37,18 +37,14 @@
 /*===========================================================================*/
 
 /**
- * @name    Bus types
+ * @name    Bus type and width options
  * @{
  */
-/**
- * @brief       Bus type is WSPI.
- */
-#define XSNOR_BUS_TYPE_WSPI                 0
-
-/**
- * @brief       Bus type is SPI.
- */
-#define XSNOR_BUS_TYPE_SPI                  1
+#define XSNOR_BUS_MODE_SPI                  0U
+#define XSNOR_BUS_MODE_WSPI_1LINE           1U
+#define XSNOR_BUS_MODE_WSPI_2LINES          2U
+#define XSNOR_BUS_MODE_WSPI_4LINES          3U
+#define XSNOR_BUS_MODE_WSPI_8LINES          4U
 /** @} */
 
 /*===========================================================================*/
@@ -324,11 +320,13 @@ struct hal_snor_base {
    * @brief       Driver configuration.
    */
   const snor_config_t       *config;
+#if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.
    * @note        This field is initialized in subclasses.
    */
   const snor_commands_t     *commands;
+#endif /* XSNOR_USE_WSPI == TRUE */
   /**
    * @brief       Flash access mutex.
    */

@@ -15,13 +15,12 @@
       <include style="regular">hal_flash_interface.h</include>
     </includes>
     <definitions_early>
-      <group description="Bus types">
-        <define name="XSNOR_BUS_TYPE_WSPI" value="0">
-          <brief>Bus type is WSPI.</brief>
-        </define>
-        <define name="XSNOR_BUS_TYPE_SPI" value="1">
-          <brief>Bus type is SPI.</brief>
-        </define>
+      <group description="Bus type and width options">
+        <define name="XSNOR_BUS_MODE_SPI" value="0U" />
+        <define name="XSNOR_BUS_MODE_WSPI_1LINE" value="1U" />
+        <define name="XSNOR_BUS_MODE_WSPI_2LINES" value="2U" />
+        <define name="XSNOR_BUS_MODE_WSPI_4LINES" value="3U" />
+        <define name="XSNOR_BUS_MODE_WSPI_8LINES" value="4U" />
       </group>
     </definitions_early>
     <configs>
@@ -376,18 +375,23 @@ return FLASH_NO_ERROR;
             <brief>Driver state.</brief></field>
           <field name="config" ctype="const snor_config_t$I*$N">
             <brief>Driver configuration.</brief></field>
-          <field name="commands" ctype="const snor_commands_t$I*$N">
-            <brief>Current commands configuration.</brief>
-            <note>This field is initialized in subclasses.</note>
-          </field>
+          <condition check="XSNOR_USE_WSPI == TRUE">
+            <field name="commands" ctype="const snor_commands_t$I*$N">
+              <brief>Current commands configuration.</brief>
+              <note>This field is initialized in subclasses.</note>
+            </field>
+          </condition>
           <field name="mutex" ctype="mutex_t">
             <brief>Flash access mutex.</brief></field>
         </fields>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->state = FLASH_UNINIT;
-self->config = NULL;
+self->state    = FLASH_UNINIT;
+self->config   = NULL;
+#if XSNOR_USE_WSPI == TRUE
+self->commands = NULL;
+#endif
 osalMutexObjectInit(&self->mutex);]]></implementation>
           </objinit>
           <dispose>
@@ -493,7 +497,7 @@ spiSend(config->bus.spi.drv, 4, config->buffers->spibuf);
                 <implementation><![CDATA[
 
 #if XSNOR_USE_BOTH == TRUE
-if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspiAcquireBus(self->config->bus.wspi.drv);
@@ -520,7 +524,7 @@ else {
                 <implementation><![CDATA[
 
 #if XSNOR_USE_BOTH == TRUE
-if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspiReleaseBus(self->config->bus.wspi.drv);
@@ -544,7 +548,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -580,7 +584,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -617,7 +621,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -653,7 +657,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -689,7 +693,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -726,7 +730,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -763,7 +767,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -806,7 +810,7 @@ else {
 const snor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
-if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+if (config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
 #if XSNOR_USE_WSPI == TRUE
   wspi_command_t mode;
@@ -858,7 +862,7 @@ if (self->state == FLASH_STOP) {
   __xsnor_bus_acquire(self);
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
     wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
 #if XSNOR_USE_BOTH == TRUE
@@ -894,7 +898,7 @@ if (self->state != FLASH_STOP) {
 
   /* Stopping bus device.*/
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+  if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
     wspiStop(self->config->bus.wspi.drv);
 #if XSNOR_USE_BOTH == TRUE

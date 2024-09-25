@@ -114,11 +114,13 @@ struct hal_snor_micron_n25q {
    * @brief       Driver configuration.
    */
   const snor_config_t       *config;
+#if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.
    * @note        This field is initialized in subclasses.
    */
   const snor_commands_t     *commands;
+#endif /* XSNOR_USE_WSPI == TRUE */
   /**
    * @brief       Flash access mutex.
    */
@@ -134,7 +136,7 @@ struct hal_snor_micron_n25q {
 extern "C" {
 #endif
   /* Methods of hal_snor_micron_n25q_c.*/
-  void *__n25q_objinit_impl(void *ip, const void *vmt, unsigned bus_width);
+  void *__n25q_objinit_impl(void *ip, const void *vmt);
   void __n25q_dispose_impl(void *ip);
   flash_error_t __n25q_init_impl(void *ip);
   const flash_descriptor_t *__n25q_get_descriptor_impl(void *ip);
@@ -170,17 +172,15 @@ extern "C" {
  *
  * @param[out]    self          Pointer to a @p hal_snor_micron_n25q_c instance
  *                              to be initialized.
- * @param[out]    bus_width     Bus width.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
  */
 CC_FORCE_INLINE
-static inline hal_snor_micron_n25q_c *n25qObjectInit(hal_snor_micron_n25q_c *self,
-                                                     unsigned bus_width) {
+static inline hal_snor_micron_n25q_c *n25qObjectInit(hal_snor_micron_n25q_c *self) {
   extern const struct hal_snor_micron_n25q_vmt __hal_snor_micron_n25q_vmt;
 
-  return __n25q_objinit_impl(self, &__hal_snor_micron_n25q_vmt, bus_width);
+  return __n25q_objinit_impl(self, &__hal_snor_micron_n25q_vmt);
 }
 /** @} */
 

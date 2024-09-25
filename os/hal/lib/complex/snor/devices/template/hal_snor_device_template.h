@@ -107,11 +107,13 @@ struct hal_device_template {
    * @brief       Driver configuration.
    */
   const snor_config_t       *config;
+#if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.
    * @note        This field is initialized in subclasses.
    */
   const snor_commands_t     *commands;
+#endif /* XSNOR_USE_WSPI == TRUE */
   /**
    * @brief       Flash access mutex.
    */

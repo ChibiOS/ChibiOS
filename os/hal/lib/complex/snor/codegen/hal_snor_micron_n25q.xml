@@ -31,7 +31,6 @@
         </fields>
         <methods>
           <objinit callsuper="true">
-            <param name="bus_width" ctype="unsigned" dir="out">Bus width.</param>
             <implementation><![CDATA[
 /* Implementation.*/]]></implementation>
           </objinit>
