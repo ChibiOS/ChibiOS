@@ -471,6 +471,22 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
             </method>
           </virtual>
           <regular>
+            <condition check="XSNOR_USE_SPI == TRUE">
+              <method name="__xsnor_spi_cmd_addr" ctype="void">
+                <brief>Sends command and address over SPI.</brief>
+                <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+                <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+                <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+config->buffers->spibuf[0] = cmd;
+config->buffers->spibuf[1] = (uint8_t)(offset >> 16);
+config->buffers->spibuf[2] = (uint8_t)(offset >> 8);
+config->buffers->spibuf[3] = (uint8_t)(offset >> 0);
+spiSend(config->bus.spi.drv, 4, config->buffers->spibuf);
+]]></implementation>
+              </method>
+            </condition>
             <condition check="XSNOR_SHARED_BUS == TRUE">
               <method name="__xsnor_bus_acquire" ctype="void">
                 <brief>Bus acquisition and lock.</brief>
@@ -629,6 +645,198 @@ else {
 }
 #endif]]></implementation>
             </method>
+            <method name="__xsnor_bus_cmd_addr" ctype="void">
+              <brief>Sends a command followed by a flash address.</brief>
+              <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+              <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+              <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = self->commands->cmd_addr;
+  mode.addr  = offset;
+  mode.alt   = 0U;
+  mode.dummy = 0U;
+  wspiCommand(config->bus.wspi.drv, &mode);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+  spiSelect(config->bus.spi.drv);
+  __xsnor_spi_cmd_addr(self, cmd, offset);
+  spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
+            <method name="__xsnor_bus_cmd_addr_send" ctype="void">
+              <brief>Sends a command followed by a flash address and a data transmit phase.</brief>
+              <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+              <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+              <param name="n" ctype="size_t" dir="in">number of bytes to transmit</param>
+              <param name="p" ctype="const uint8_t *" dir="in">data buffer</param>
+              <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = self->commands->cmd_addr_data;
+  mode.addr  = offset;
+  mode.alt   = 0U;
+  mode.dummy = 0U;
+  wspiSend(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+  spiSelect(config->bus.spi.drv);
+  __xsnor_spi_cmd_addr(self, cmd, offset);
+  spiSend(config->bus.spi.drv, n, p);
+  spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
+            <method name="__xsnor_bus_cmd_addr_receive" ctype="void">
+              <brief>Sends a command followed by a flash address and a data receive phase.</brief>
+              <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+              <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+              <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
+              <param name="p" ctype="uint8_t *" dir="in">data buffer</param>
+              <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = self->commands->cmd_addr_data;
+  mode.addr  = offset;
+  mode.alt   = 0U;
+  mode.dummy = 0U;
+  wspiReceive(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+  spiSelect(config->bus.spi.drv);
+  __xsnor_spi_cmd_addr(self, cmd, offset);
+  spiReceive(config->bus.spi.drv, n, p);
+  spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
+            <method name="__xsnor_bus_cmd_dummy_receive" ctype="void">
+              <brief>Sends a command followed by dummy cycles and a data receive phase.</brief>
+              <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+              <param name="dummy" ctype="uint32_t" dir="in">number of dummy cycles</param>
+              <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
+              <param name="p" ctype="uint8_t *" dir="out">data buffer</param>
+              <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = self->commands->cmd_data;
+  mode.addr  = 0U;
+  mode.alt   = 0U;
+  mode.dummy = dummy;
+  wspiReceive(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+  osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+  spiSelect(config->bus.spi.drv);
+  config->buffers->spibuf[0] = cmd;
+  spiSend(config->bus.spi.drv, 1, config->buffers->spibuf);
+  if (dummy != 0U) {
+    spiIgnore(config->bus.spi.drv, dummy / 8U);
+  }
+  spiReceive(config->bus.spi.drv, n, p);
+  spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
+            <method name="__xsnor_bus_cmd_addr_dummy_receive" ctype="void">
+              <brief>Sends a complete header followed by a data receive phase.</brief>
+              <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
+              <param name="dummy" ctype="uint32_t" dir="in">number of dummy cycles</param>
+              <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+              <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
+              <param name="p" ctype="uint8_t *" dir="out">data buffer</param>
+              <implementation><![CDATA[
+const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  wspi_command_t mode;
+
+  mode.cmd   = cmd;
+  mode.cfg   = self->commands->cmd_addr_data;
+  mode.addr  = offset;
+  mode.alt   = 0U;
+  mode.dummy = dummy;
+  wspiReceive(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+  osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+  spiSelect(config->bus.spi.drv);
+  __xsnor_spi_cmd_addr(self, cmd, offset);
+  if (dummy != 0U) {
+    spiIgnore(config->bus.spi.drv, dummy / 8U);
+  }
+  spiReceive(config->bus.spi.drv, n, p);
+  spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+}
+#endif]]></implementation>
+            </method>
             <method name="xsnorStart" ctype="flash_error_t">
               <brief>Configures and activates a SNOR driver.</brief>
               <param name="config" ctype="const snor_config_t *" dir="in">pointer to the configuration</param>
@@ -730,7 +938,6 @@ return err;</implementation>
 snor_device_mmap_off(self);</implementation>
               </method>
             </condition>
-            
           </regular>
         </methods>
       </class>
@@ -744,6 +951,5 @@ snor_device_mmap_off(self);</implementation>
       <include style="regular">hal.h</include>
       <include style="regular">hal_snor_base.h</include>
     </includes>
-    <functions></functions>
   </private>
 </module>

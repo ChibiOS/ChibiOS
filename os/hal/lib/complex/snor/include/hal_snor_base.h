@@ -346,6 +346,9 @@ extern "C" {
   /* Methods of hal_snor_base_c.*/
   void *__xsnor_objinit_impl(void *ip, const void *vmt);
   void __xsnor_dispose_impl(void *ip);
+#if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
+  void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset);
+#endif /* XSNOR_USE_SPI == TRUE */
 #if (XSNOR_SHARED_BUS == TRUE) || defined (__DOXYGEN__)
   void __xsnor_bus_acquire(void *ip);
   void __xsnor_bus_release(void *ip);
@@ -353,6 +356,18 @@ extern "C" {
   void __xsnor_bus_cmd(void *ip, uint32_t cmd);
   void __xsnor_bus_cmd_send(void *ip, uint32_t cmd, size_t n, const uint8_t *p);
   void __xsnor_bus_cmd_receive(void *ip, uint32_t cmd, size_t n, uint8_t *p);
+  void __xsnor_bus_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset);
+  void __xsnor_bus_cmd_addr_send(void *ip, uint32_t cmd, flash_offset_t offset,
+                                 size_t n, const uint8_t *p);
+  void __xsnor_bus_cmd_addr_receive(void *ip, uint32_t cmd,
+                                    flash_offset_t offset, size_t n,
+                                    uint8_t *p);
+  void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
+                                     size_t n, uint8_t *p);
+  void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
+                                          uint32_t dummy,
+                                          flash_offset_t offset, size_t n,
+                                          uint8_t *p);
   flash_error_t xsnorStart(void *ip, const snor_config_t *config);
   void xsnorStop(void *ip);
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)

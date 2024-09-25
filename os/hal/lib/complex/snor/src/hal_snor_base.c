@@ -436,6 +436,29 @@ void __xsnor_dispose_impl(void *ip) {
  * @name        Regular methods of hal_snor_base_c
  * @{
  */
+#if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Sends command and address over SPI.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ * @param[in]     offset        Flash offset.
+ */
+void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+  config->buffers->spibuf[0] = cmd;
+  config->buffers->spibuf[1] = (uint8_t)(offset >> 16);
+  config->buffers->spibuf[2] = (uint8_t)(offset >> 8);
+  config->buffers->spibuf[3] = (uint8_t)(offset >> 0);
+  spiSend(config->bus.spi.drv, 4, config->buffers->spibuf);
+}
+#endif /* XSNOR_USE_SPI == TRUE */
+
 #if (XSNOR_SHARED_BUS == TRUE) || defined (__DOXYGEN__)
 /**
  * @memberof    hal_snor_base_c
@@ -626,6 +649,246 @@ void __xsnor_bus_cmd_receive(void *ip, uint32_t cmd, size_t n, uint8_t *p) {
     spiSelect(config->bus.spi.drv);
     config->buffers->spibuf[0] = cmd;
     spiSend(config->bus.spi.drv, 1, config->buffers->spibuf);
+    spiReceive(config->bus.spi.drv, n, p);
+    spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Sends a command followed by a flash address.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ * @param[in]     offset        Flash offset.
+ */
+void __xsnor_bus_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspi_command_t mode;
+
+    mode.cmd   = cmd;
+    mode.cfg   = self->commands->cmd_addr;
+    mode.addr  = offset;
+    mode.alt   = 0U;
+    mode.dummy = 0U;
+    wspiCommand(config->bus.wspi.drv, &mode);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+    spiSelect(config->bus.spi.drv);
+    __xsnor_spi_cmd_addr(self, cmd, offset);
+    spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Sends a command followed by a flash address and a data transmit
+ *              phase.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ * @param[in]     offset        Flash offset.
+ * @param[in]     n             Number of bytes to transmit.
+ * @param[in]     p             Data buffer.
+ */
+void __xsnor_bus_cmd_addr_send(void *ip, uint32_t cmd, flash_offset_t offset,
+                               size_t n, const uint8_t *p) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspi_command_t mode;
+
+    mode.cmd   = cmd;
+    mode.cfg   = self->commands->cmd_addr_data;
+    mode.addr  = offset;
+    mode.alt   = 0U;
+    mode.dummy = 0U;
+    wspiSend(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+    spiSelect(config->bus.spi.drv);
+    __xsnor_spi_cmd_addr(self, cmd, offset);
+    spiSend(config->bus.spi.drv, n, p);
+    spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Sends a command followed by a flash address and a data receive
+ *              phase.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ * @param[in]     offset        Flash offset.
+ * @param[in]     n             Number of bytes to receive.
+ * @param[in]     p             Data buffer.
+ */
+void __xsnor_bus_cmd_addr_receive(void *ip, uint32_t cmd,
+                                  flash_offset_t offset, size_t n, uint8_t *p) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspi_command_t mode;
+
+    mode.cmd   = cmd;
+    mode.cfg   = self->commands->cmd_addr_data;
+    mode.addr  = offset;
+    mode.alt   = 0U;
+    mode.dummy = 0U;
+    wspiReceive(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+
+    spiSelect(config->bus.spi.drv);
+    __xsnor_spi_cmd_addr(self, cmd, offset);
+    spiReceive(config->bus.spi.drv, n, p);
+    spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Sends a command followed by dummy cycles and a data receive
+ *              phase.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ * @param[in]     dummy         Number of dummy cycles.
+ * @param[in]     n             Number of bytes to receive.
+ * @param[out]    p             Data buffer.
+ */
+void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
+                                   size_t n, uint8_t *p) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspi_command_t mode;
+
+    mode.cmd   = cmd;
+    mode.cfg   = self->commands->cmd_data;
+    mode.addr  = 0U;
+    mode.alt   = 0U;
+    mode.dummy = dummy;
+    wspiReceive(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+    osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+    spiSelect(config->bus.spi.drv);
+    config->buffers->spibuf[0] = cmd;
+    spiSend(config->bus.spi.drv, 1, config->buffers->spibuf);
+    if (dummy != 0U) {
+      spiIgnore(config->bus.spi.drv, dummy / 8U);
+    }
+    spiReceive(config->bus.spi.drv, n, p);
+    spiUnselect(config->bus.spi.drv);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+#endif
+}
+
+/**
+ * @memberof    hal_snor_base_c
+ * @public
+ *
+ * @brief       Sends a complete header followed by a data receive phase.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in]     cmd           Instruction code.
+ * @param[in]     dummy         Number of dummy cycles.
+ * @param[in]     offset        Flash offset.
+ * @param[in]     n             Number of bytes to receive.
+ * @param[out]    p             Data buffer.
+ */
+void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
+                                        flash_offset_t offset, size_t n,
+                                        uint8_t *p) {
+  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  const snor_config_t *config = self->config;
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_TYPE_WSPI) {
+#endif
+#if XSNOR_USE_WSPI == TRUE
+    wspi_command_t mode;
+
+    mode.cmd   = cmd;
+    mode.cfg   = self->commands->cmd_addr_data;
+    mode.addr  = offset;
+    mode.alt   = 0U;
+    mode.dummy = dummy;
+    wspiReceive(config->bus.wspi.drv, &mode, n, p);
+#endif
+#if XSNOR_USE_BOTH == TRUE
+  }
+  else {
+#endif
+#if XSNOR_USE_SPI == TRUE
+    osalDbgAssert((dummy & 7) == 0U, "multiple of 8 dummy cycles");
+
+    spiSelect(config->bus.spi.drv);
+    __xsnor_spi_cmd_addr(self, cmd, offset);
+    if (dummy != 0U) {
+      spiIgnore(config->bus.spi.drv, dummy / 8U);
+    }
     spiReceive(config->bus.spi.drv, n, p);
     spiUnselect(config->bus.spi.drv);
 #endif
