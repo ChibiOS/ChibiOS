@@ -277,14 +277,42 @@ flash_error_t __n25q_init_impl(void *ip) {
     }
 
     /* Setting up the device size.*/
-//    self->descriptor.sectors_count = (1U << (size_t)devp->nocache->buf[2]) / SECTOR_SIZE;
-//    self->descriptor.size = (size_t)snor_descriptor.sectors_count * SECTOR_SIZE;
+    self->descriptor.sectors_count = (1U << (size_t)self->config->buffers->databuf[2]) / self->descriptor.sectors_size;
+    self->descriptor.size = (size_t)self->descriptor.sectors_count * self->descriptor.sectors_size;
   }
 #if XSNOR_USE_BOTH == TRUE
   else
 #endif
   {
-    spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+    /* Attempting a reset of the XIP mode, it could be in an unexpected state
+       because a CPU reset does not reset the memory too.*/
+//    n25q_reset_xip(self);
+
+    /* Attempting a reset of the device, it could be in an unexpected state
+       because a CPU reset does not reset the memory too.*/
+//    n25q_reset_memory(self);
+
+    /* Reading device ID and unique ID.*/
+//    wspiReceive(self->config->bus.wspi.drv, &n25q_cmd_read_id,
+//                3U, &self->config->buffers->databuf[0]);
+
+    /* Manufacturer identifier.*/
+    if (!n25q_find_id(n25q_manufacturer_ids,
+                      sizeof n25q_manufacturer_ids,
+                      self->config->buffers->databuf[0])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+
+    /* Memory identifier.*/
+    if (!n25q_find_id(n25q_memory_type_ids,
+                      sizeof n25q_memory_type_ids,
+                      self->config->buffers->databuf[1])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+
+    /* Setting up final bus width.*/
+//    wspiCommand(self->config->bus.wspi.drv, &n25q_cmd_write_enable);
+//    wspiSend(self->config->bus.wspi.drv, &n25q_cmd_write_evconf, 1, n25q_evconf_value);
   }
 
   return FLASH_NO_ERROR;
