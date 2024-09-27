@@ -183,6 +183,17 @@ void *__n25q_objinit_impl(void *ip, const void *vmt) {
   __xsnor_objinit_impl(self, vmt);
 
   /* Initialization code.*/
+  self->descriptor.page_size     = 256U;
+  self->descriptor.sectors_count = 0U; /* Overwritten.*/
+  self->descriptor.sectors       = NULL;
+  if ((self->config->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
+    self->descriptor.sectors_size = 0x00001000U;
+  }
+  else {
+    self->descriptor.sectors_size = 0x00010000U;
+  }
+  self->descriptor.address       = 0U;
+  self->descriptor.size          = 0U; /* Overwritten.*/
 
   return self;
 }
@@ -291,10 +302,7 @@ flash_error_t __n25q_init_impl(void *ip) {
 const flash_descriptor_t *__n25q_get_descriptor_impl(void *ip) {
   hal_snor_micron_n25q_c *self = (hal_snor_micron_n25q_c *)ip;
 
-  /* Implementation.*/
-  (void)self;
-
-  return NULL;
+  return &self->descriptor;
 }
 
 /**

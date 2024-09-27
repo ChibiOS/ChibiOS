@@ -173,6 +173,9 @@
           <field name="buffers" ctype="snor_buffers_t$I*$N">
             <brief>Pointer to the non-cacheable buffers.</brief>
           </field>
+          <field name="options" ctype="int">
+            <brief>Device-dependent options, used by subclasses only.</brief>
+          </field>
         </fields>
       </struct>
       <class name="hal_snor_base" type="abstract" namespace="xsnor"

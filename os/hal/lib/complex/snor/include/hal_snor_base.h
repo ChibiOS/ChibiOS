@@ -263,6 +263,10 @@ struct snor_config {
    * @brief       Pointer to the non-cacheable buffers.
    */
   snor_buffers_t            *buffers;
+  /**
+   * @brief       Device-dependent options, used by subclasses only.
+   */
+  int                       options;
 };
 
 /**

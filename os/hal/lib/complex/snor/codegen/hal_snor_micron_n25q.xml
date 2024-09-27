@@ -17,10 +17,24 @@
     <configs>
     </configs>
     <definitions_late>
-      <group description="Bus width options">
-        <define name="N25Q_BUS_MODE_1LINE" value="0U" />
-        <define name="N25Q_BUS_MODE_2LINES" value="1U" />
-        <define name="N25Q_BUS_MODE_4LINES" value="2U" />
+      <group description="Device options">
+        <define name="N25Q_OPT_NO_WIDTH_SWITCH" value="1U" >
+          <brief>Switch bus width on initialization.</brief>
+          <details><![CDATA[If @p N25Q_OPT_NO_WIDTH_SWITCH is specified then this
+is the bus mode that the device is expected to be using else this is the bus
+mode that the device will be switched in.]]>
+          </details>
+          <note>This option is only valid in WSPI bus mode.</note>
+        </define>
+        <define name="N25Q_OPT_USE_SUBSECTORS" value="2U" >
+          <brief>Use 4kB sub-sectors rather than 64kB sectors.</brief>
+        </define>
+        <define name="N25Q_OPT_NICE_WAITING" value="4U">
+          <brief>Delays insertion.</brief>
+          <details><![CDATA[If enabled this options inserts delays into the
+flash waiting routines releasing some extra CPU time for threads with lower
+priority, this may slow down the driver a bit however.]]></details>
+        </define>
       </group>
     </definitions_late>
     <macros></macros>
@@ -28,6 +42,9 @@
       <class name="hal_snor_micron_n25q" type="regular" namespace="n25q"
              descr="SNOR Micron N25Q driver" ancestorname="hal_snor_base">
         <fields>
+          <field name="descriptor" ctype="flash_descriptor_t">
+            <brief>Flash descriptor.</brief>
+          </field>
         </fields>
         <methods>
           <objinit callsuper="true">

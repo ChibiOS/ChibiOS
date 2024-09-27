@@ -44,12 +44,30 @@
 /*===========================================================================*/
 
 /**
- * @name    Bus width options
+ * @name    Device options
  * @{
  */
-#define N25Q_BUS_MODE_1LINE                 0U
-#define N25Q_BUS_MODE_2LINES                1U
-#define N25Q_BUS_MODE_4LINES                2U
+/**
+ * @brief       Switch bus width on initialization.
+ * @details     If @p N25Q_OPT_NO_WIDTH_SWITCH is specified then this is the
+ *              bus mode that the device is expected to be using else this is
+ *              the bus mode that the device will be switched in.
+ * @note        This option is only valid in WSPI bus mode.
+ */
+#define N25Q_OPT_NO_WIDTH_SWITCH            1U
+
+/**
+ * @brief       Use 4kB sub-sectors rather than 64kB sectors.
+ */
+#define N25Q_OPT_USE_SUBSECTORS             2U
+
+/**
+ * @brief       Delays insertion.
+ * @details     If enabled this options inserts delays into the flash waiting
+ *              routines releasing some extra CPU time for threads with lower
+ *              priority, this may slow down the driver a bit however.
+ */
+#define N25Q_OPT_NICE_WAITING               4U
 /** @} */
 
 /*===========================================================================*/
@@ -125,6 +143,10 @@ struct hal_snor_micron_n25q {
    * @brief       Flash access mutex.
    */
   mutex_t                   mutex;
+  /**
+   * @brief       Flash descriptor.
+   */
+  flash_descriptor_t        descriptor;
 };
 /** @} */
 
