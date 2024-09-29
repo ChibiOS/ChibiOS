@@ -297,9 +297,9 @@ struct hal_snor_base_vmt {
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
   flash_error_t (*start_erase_all)(void *ip);
-  flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*start_erase_sector)(void *ip, flash_sector_t sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
-  flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*verify_erase)(void *ip, flash_sector_t sector);
   flash_error_t (*mmap_on)(void *ip, uint8_t **addrp);
   void (*mmap_off)(void *ip);
 };
@@ -511,7 +511,7 @@ static inline flash_error_t snor_device_start_erase_all(void *ip) {
  */
 CC_FORCE_INLINE
 static inline flash_error_t snor_device_start_erase_sector(void *ip,
-                                                           const flash_sector_t *sector) {
+                                                           flash_sector_t sector) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->start_erase_sector(ip, sector);
@@ -557,7 +557,7 @@ static inline flash_error_t snor_device_query_erase(void *ip, unsigned *msec) {
  */
 CC_FORCE_INLINE
 static inline flash_error_t snor_device_verify_erase(void *ip,
-                                                     const flash_sector_t *sector) {
+                                                     flash_sector_t sector) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   return self->vmt->verify_erase(ip, sector);

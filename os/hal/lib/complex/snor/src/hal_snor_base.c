@@ -215,7 +215,7 @@ static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
  * @return                      An error code.
  */
 static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
-                                                         const flash_sector_t *sector) {
+                                                         flash_sector_t sector) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 

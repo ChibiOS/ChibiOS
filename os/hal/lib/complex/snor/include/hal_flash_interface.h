@@ -74,7 +74,7 @@ struct flash_interface_vmt {
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
   flash_error_t (*start_erase_all)(void *ip);
-  flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*start_erase_sector)(void *ip, flash_sector_t sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
   flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
   flash_error_t (*acquire_exclusive)(void *ip);
@@ -209,7 +209,7 @@ static inline flash_error_t flsStartEraseAll(void *ip) {
  */
 CC_FORCE_INLINE
 static inline flash_error_t flsStartEraseSector(void *ip,
-                                                const flash_sector_t *sector) {
+                                                flash_sector_t sector) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->start_erase_sector(ip, sector);

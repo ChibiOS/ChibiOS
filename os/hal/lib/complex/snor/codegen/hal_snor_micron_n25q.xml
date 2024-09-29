@@ -18,7 +18,14 @@
     </configs>
     <definitions_late>
       <group description="Device options">
-        <define name="N25Q_OPT_NO_WIDTH_SWITCH" value="1U" >
+        <define name="N25Q_OPT_DUMMY_CYCLES_MASK" value="(15U &lt;&lt; 0)" >
+          <brief>Mask of the dummy cycles field.</brief>
+        </define>
+        <define name="N25Q_OPT_DUMMY_CYCLES" value="((n) &lt;&lt; 0)" >
+          <brief>Number of dummy cycles.</brief>
+          <param name="n">number of dummy cycles (2..15)</param>
+        </define>
+        <define name="N25Q_OPT_NO_WIDTH_SWITCH" value="(1U &lt;&lt; 4)" >
           <brief>Switch bus width on initialization.</brief>
           <details><![CDATA[If @p N25Q_OPT_NO_WIDTH_SWITCH is specified then this
 is the bus mode that the device is expected to be using else this is the bus
@@ -26,10 +33,10 @@ mode that the device will be switched in.]]>
           </details>
           <note>This option is only valid in WSPI bus mode.</note>
         </define>
-        <define name="N25Q_OPT_USE_SUBSECTORS" value="2U" >
+        <define name="N25Q_OPT_USE_SUBSECTORS" value="(1U &lt;&lt; 5)" >
           <brief>Use 4kB sub-sectors rather than 64kB sectors.</brief>
         </define>
-        <define name="N25Q_OPT_NICE_WAITING" value="4U">
+        <define name="N25Q_OPT_NICE_WAITING" value="(1U &lt;&lt; 6)">
           <brief>Delays insertion.</brief>
           <details><![CDATA[If enabled this options inserts delays into the
 flash waiting routines releasing some extra CPU time for threads with lower

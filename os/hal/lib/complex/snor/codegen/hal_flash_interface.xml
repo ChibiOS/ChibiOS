@@ -48,7 +48,7 @@
           </method>
           <method shortname="start_erase_sector" name="flsStartEraseSector" ctype="flash_error_t">
             <brief>Starts an sector erase operation.</brief>
-            <param name="sector" ctype="const flash_sector_t *" dir="in">sector to be erased</param>
+            <param name="sector" ctype="flash_sector_t" dir="in">sector to be erased</param>
             <return>An error code.</return>
             <retval value="FLASH_NO_ERROR">If there is no erase operation in progress.</retval>
             <retval value="FLASH_BUSY_ERASING">If there is an erase operation in progress.</retval>

@@ -48,18 +48,30 @@
  * @{
  */
 /**
+ * @brief       Mask of the dummy cycles field.
+ */
+#define N25Q_OPT_DUMMY_CYCLES_MASK          (15U << 0)
+
+/**
+ * @brief       Number of dummy cycles.
+ *
+ * @param         n             Number of dummy cycles (2..15)
+ */
+#define N25Q_OPT_DUMMY_CYCLES(n)            ((n) << 0)
+
+/**
  * @brief       Switch bus width on initialization.
  * @details     If @p N25Q_OPT_NO_WIDTH_SWITCH is specified then this is the
  *              bus mode that the device is expected to be using else this is
  *              the bus mode that the device will be switched in.
  * @note        This option is only valid in WSPI bus mode.
  */
-#define N25Q_OPT_NO_WIDTH_SWITCH            1U
+#define N25Q_OPT_NO_WIDTH_SWITCH            (1U << 4)
 
 /**
  * @brief       Use 4kB sub-sectors rather than 64kB sectors.
  */
-#define N25Q_OPT_USE_SUBSECTORS             2U
+#define N25Q_OPT_USE_SUBSECTORS             (1U << 5)
 
 /**
  * @brief       Delays insertion.
@@ -67,7 +79,7 @@
  *              routines releasing some extra CPU time for threads with lower
  *              priority, this may slow down the driver a bit however.
  */
-#define N25Q_OPT_NICE_WAITING               4U
+#define N25Q_OPT_NICE_WAITING               (1U << 6)
 /** @} */
 
 /*===========================================================================*/
@@ -104,9 +116,9 @@ struct hal_snor_micron_n25q_vmt {
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
   flash_error_t (*start_erase_all)(void *ip);
-  flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*start_erase_sector)(void *ip, flash_sector_t sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
-  flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*verify_erase)(void *ip, flash_sector_t sector);
   flash_error_t (*mmap_on)(void *ip, uint8_t **addrp);
   void (*mmap_off)(void *ip);
   /* From hal_snor_micron_n25q_c.*/
@@ -167,11 +179,9 @@ extern "C" {
   flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,
                                     const uint8_t *pp);
   flash_error_t __n25q_start_erase_all_impl(void *ip);
-  flash_error_t __n25q_start_erase_sector_impl(void *ip,
-                                               const flash_sector_t *sector);
+  flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector);
   flash_error_t __n25q_query_erase_impl(void *ip, unsigned *msec);
-  flash_error_t __n25q_verify_erase_impl(void *ip,
-                                         const flash_sector_t *sector);
+  flash_error_t __n25q_verify_erase_impl(void *ip, flash_sector_t sector);
   flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp);
   void __n25q_mmap_off_impl(void *ip);
   /* Regular functions.*/

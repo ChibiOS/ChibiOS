@@ -219,8 +219,7 @@ flash_error_t __tmpl_start_erase_all_impl(void *ip) {
  * @param[in]     sector        Sector to be erased.
  * @return                      An error code.
  */
-flash_error_t __tmpl_start_erase_sector_impl(void *ip,
-                                             const flash_sector_t *sector) {
+flash_error_t __tmpl_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   hal_device_template_c *self = (hal_device_template_c *)ip;
 
   /* Implementation.*/
@@ -262,7 +261,7 @@ flash_error_t __tmpl_query_erase_impl(void *ip, unsigned *msec) {
  * @param[in]     sector        Sector to be verified.
  * @return                      An error code.
  */
-flash_error_t __tmpl_verify_erase_impl(void *ip, const flash_sector_t *sector) {
+flash_error_t __tmpl_verify_erase_impl(void *ip, flash_sector_t sector) {
   hal_device_template_c *self = (hal_device_template_c *)ip;
 
   /* Implementation.*/

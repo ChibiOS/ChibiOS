@@ -79,9 +79,9 @@ struct hal_device_template_vmt {
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
   flash_error_t (*start_erase_all)(void *ip);
-  flash_error_t (*start_erase_sector)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*start_erase_sector)(void *ip, flash_sector_t sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
-  flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*verify_erase)(void *ip, flash_sector_t sector);
   flash_error_t (*mmap_on)(void *ip, uint8_t **addrp);
   void (*mmap_off)(void *ip);
   /* From hal_device_template_c.*/
@@ -138,11 +138,9 @@ extern "C" {
   flash_error_t __tmpl_program_impl(void *ip, flash_offset_t offset, size_t n,
                                     const uint8_t *pp);
   flash_error_t __tmpl_start_erase_all_impl(void *ip);
-  flash_error_t __tmpl_start_erase_sector_impl(void *ip,
-                                               const flash_sector_t *sector);
+  flash_error_t __tmpl_start_erase_sector_impl(void *ip, flash_sector_t sector);
   flash_error_t __tmpl_query_erase_impl(void *ip, unsigned *msec);
-  flash_error_t __tmpl_verify_erase_impl(void *ip,
-                                         const flash_sector_t *sector);
+  flash_error_t __tmpl_verify_erase_impl(void *ip, flash_sector_t sector);
   flash_error_t __tmpl_mmap_on_impl(void *ip, uint8_t **addrp);
   void __tmpl_mmap_off_impl(void *ip);
   /* Regular functions.*/
