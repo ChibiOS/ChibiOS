@@ -27,6 +27,7 @@
       <config name="XSNOR_BUFFER_SIZE" default="32">
         <brief>Non-cacheable operations buffer.</brief>
         <assert invalid="$N &lt; 32">XSNOR_BUFFER_SIZE minimum is 32</assert>
+        <assert invalid="($N &amp; ($N - 1)) != 0">XSNOR_BUFFER_SIZE must be a power of 2</assert>
       </config>
       <config name="XSNOR_USE_SPI" default="TRUE">
         <brief>SPI support enable switch.</brief>

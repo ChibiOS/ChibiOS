@@ -93,6 +93,10 @@
 #error "XSNOR_BUFFER_SIZE minimum is 32"
 #endif
 
+#if (XSNOR_BUFFER_SIZE & (XSNOR_BUFFER_SIZE - 1)) != 0
+#error "XSNOR_BUFFER_SIZE must be a power of 2"
+#endif
+
 /* Checks on XSNOR_USE_SPI configuration.*/
 #if (XSNOR_USE_SPI != FALSE) && (XSNOR_USE_SPI != TRUE)
 #error "XSNOR_USE_SPI invalid value"

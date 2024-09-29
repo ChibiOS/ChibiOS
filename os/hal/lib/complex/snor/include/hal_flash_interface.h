@@ -76,7 +76,7 @@ struct flash_interface_vmt {
   flash_error_t (*start_erase_all)(void *ip);
   flash_error_t (*start_erase_sector)(void *ip, flash_sector_t sector);
   flash_error_t (*query_erase)(void *ip, unsigned *msec);
-  flash_error_t (*verify_erase)(void *ip, const flash_sector_t *sector);
+  flash_error_t (*verify_erase)(void *ip, flash_sector_t sector);
   flash_error_t (*acquire_exclusive)(void *ip);
   flash_error_t (*release_exclusive)(void *ip);
 };
@@ -252,8 +252,7 @@ static inline flash_error_t flsQueryErase(void *ip, unsigned *msec) {
  * @retval FLASH_ERROR_HW_FAILURE If access to the memory failed.
  */
 CC_FORCE_INLINE
-static inline flash_error_t flsVerifyErase(void *ip,
-                                           const flash_sector_t *sector) {
+static inline flash_error_t flsVerifyErase(void *ip, flash_sector_t sector) {
   flash_interface_i *self = (flash_interface_i *)ip;
 
   return self->vmt->verify_erase(ip, sector);

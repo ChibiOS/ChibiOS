@@ -299,7 +299,7 @@ static flash_error_t __xsnor_fls_query_erase_impl(void *ip, unsigned *msec) {
  * @return                      An error code.
  */
 static flash_error_t __xsnor_fls_verify_erase_impl(void *ip,
-                                                   const flash_sector_t *sector) {
+                                                   flash_sector_t sector) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
   flash_error_t err;
 
