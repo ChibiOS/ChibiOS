@@ -47,6 +47,12 @@
 #define XSNOR_BUS_MODE_WSPI_8LINES          4U
 /** @} */
 
+/**
+ * @brief       Hint to use 4 bytes addresses in SPI protocol.
+ * @note        TODO: To be moved into the flash interface module.
+ */
+#define FLASH_ATTR_SPI_4BYTES_ADDR_HINT     0x00008000U
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/

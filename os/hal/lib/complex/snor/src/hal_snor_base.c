@@ -455,10 +455,19 @@ void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
   const snor_config_t *config = self->config;
 
   config->buffers->spibuf[0] = cmd;
-  config->buffers->spibuf[1] = (uint8_t)(offset >> 16);
-  config->buffers->spibuf[2] = (uint8_t)(offset >> 8);
-  config->buffers->spibuf[3] = (uint8_t)(offset >> 0);
-  spiSend(config->bus.spi.drv, 4, config->buffers->spibuf);
+  if ((self->descriptor.attributes & FLASH_ATTR_SPI_4BYTES_ADDR_HINT) != 0U) {
+    config->buffers->spibuf[1] = (uint8_t)(offset >> 24);
+    config->buffers->spibuf[2] = (uint8_t)(offset >> 16);
+    config->buffers->spibuf[3] = (uint8_t)(offset >> 8);
+    config->buffers->spibuf[4] = (uint8_t)(offset >> 0);
+    spiSend(config->bus.spi.drv, 5, config->buffers->spibuf);
+  }
+  else {
+    config->buffers->spibuf[1] = (uint8_t)(offset >> 16);
+    config->buffers->spibuf[2] = (uint8_t)(offset >> 8);
+    config->buffers->spibuf[3] = (uint8_t)(offset >> 0);
+    spiSend(config->bus.spi.drv, 4, config->buffers->spibuf);
+  }
 }
 #endif /* XSNOR_USE_SPI == TRUE */
 
