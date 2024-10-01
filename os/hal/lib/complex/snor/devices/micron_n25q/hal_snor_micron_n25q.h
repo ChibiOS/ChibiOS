@@ -112,7 +112,6 @@ struct hal_snor_micron_n25q_vmt {
   void (*dispose)(void *ip);
   /* From hal_snor_base_c.*/
   flash_error_t (*init)(void *ip);
-  const flash_descriptor_t * (*get_descriptor)(void *ip);
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
   flash_error_t (*start_erase_all)(void *ip);
@@ -147,7 +146,8 @@ struct hal_snor_micron_n25q {
 #if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.
-   * @note        This field is initialized in subclasses.
+   * @note        This field is meant to be initialized by subclasses on object
+   *              creation.
    */
   const snor_commands_t     *commands;
 #endif /* XSNOR_USE_WSPI == TRUE */
@@ -157,6 +157,8 @@ struct hal_snor_micron_n25q {
   mutex_t                   mutex;
   /**
    * @brief       Flash descriptor.
+   * @note        This field is meant to be initialized by subclasses on memory
+   *              initialization.
    */
   flash_descriptor_t        descriptor;
 };
@@ -173,7 +175,6 @@ extern "C" {
   void *__n25q_objinit_impl(void *ip, const void *vmt);
   void __n25q_dispose_impl(void *ip);
   flash_error_t __n25q_init_impl(void *ip);
-  const flash_descriptor_t *__n25q_get_descriptor_impl(void *ip);
   flash_error_t __n25q_read_impl(void *ip, flash_offset_t offset, size_t n,
                                  uint8_t *rp);
   flash_error_t __n25q_program_impl(void *ip, flash_offset_t offset, size_t n,

@@ -49,9 +49,6 @@ priority, this may slow down the driver a bit however.]]></details>
       <class name="hal_snor_micron_n25q" type="regular" namespace="n25q"
              descr="SNOR Micron N25Q driver" ancestorname="hal_snor_base">
         <fields>
-          <field name="descriptor" ctype="flash_descriptor_t">
-            <brief>Flash descriptor.</brief>
-          </field>
         </fields>
         <methods>
           <objinit callsuper="true">
@@ -70,14 +67,6 @@ priority, this may slow down the driver a bit however.]]></details>
 (void)self;
 
 return FLASH_NO_ERROR;]]></implementation>
-            </method>
-            <method shortname="get_descriptor">
-              <implementation><![CDATA[
-
-/* Implementation.*/
-(void)self;
-
-return NULL;]]></implementation>
             </method>
             <method shortname="read">
               <implementation><![CDATA[

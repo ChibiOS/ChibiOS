@@ -42,14 +42,6 @@ the XML file or working directly on cloned source files.]]></details>
 
 return FLASH_NO_ERROR;]]></implementation>
             </method>
-            <method shortname="get_descriptor">
-              <implementation><![CDATA[
-
-/* Implementation.*/
-(void)self;
-
-return NULL;]]></implementation>
-            </method>
             <method shortname="read">
               <implementation><![CDATA[
 

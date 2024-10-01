@@ -187,7 +187,7 @@
             <method shortname="get_descriptor">
               <implementation><![CDATA[
 
-return snor_device_get_descriptor(self);]]></implementation>
+return &self->descriptor;]]></implementation>
             </method>
             <method shortname="read">
               <implementation><![CDATA[
@@ -382,11 +382,18 @@ return FLASH_NO_ERROR;
           <condition check="XSNOR_USE_WSPI == TRUE">
             <field name="commands" ctype="const snor_commands_t$I*$N">
               <brief>Current commands configuration.</brief>
-              <note>This field is initialized in subclasses.</note>
+              <note>This field is meant to be initialized by subclasses on
+object creation.</note>
             </field>
           </condition>
           <field name="mutex" ctype="mutex_t">
-            <brief>Flash access mutex.</brief></field>
+            <brief>Flash access mutex.</brief>
+          </field>
+          <field name="descriptor" ctype="flash_descriptor_t">
+            <brief>Flash descriptor.</brief>
+            <note>This field is meant to be initialized by subclasses on
+memory initialization.</note>
+          </field>
         </fields>
         <methods>
           <objinit callsuper="true">
@@ -406,9 +413,6 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
               <return>An error code.</return>
               <retval value="FLASH_NO_ERROR">Initialization successful.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">Initialization failed.</retval>
-              <notapi />
-            </method>
-            <method shortname="get_descriptor" name="snor_device_get_descriptor" ctype="const flash_descriptor_t *">
               <notapi />
             </method>
             <method shortname="read" name="snor_device_read" ctype="flash_error_t">

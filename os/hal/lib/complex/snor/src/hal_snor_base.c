@@ -75,7 +75,7 @@
 static const flash_descriptor_t *__xsnor_fls_get_descriptor_impl(void *ip) {
   hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
 
-  return snor_device_get_descriptor(self);
+  return &self->descriptor;
 }
 
 /**

@@ -569,21 +569,6 @@ flash_error_t __n25q_init_impl(void *ip) {
  * @memberof    hal_snor_micron_n25q_c
  * @protected
  *
- * @brief       Override of method @p snor_device_get_descriptor().
- *
- * @param[in,out] ip            Pointer to a @p hal_snor_micron_n25q_c
- *                              instance.
- */
-const flash_descriptor_t *__n25q_get_descriptor_impl(void *ip) {
-  hal_snor_micron_n25q_c *self = (hal_snor_micron_n25q_c *)ip;
-
-  return &self->descriptor;
-}
-
-/**
- * @memberof    hal_snor_micron_n25q_c
- * @protected
- *
  * @brief       Override of method @p snor_device_read().
  *
  * @param[in,out] ip            Pointer to a @p hal_snor_micron_n25q_c
@@ -812,10 +797,11 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
   if (self->config->bus_type == XSNOR_BUS_MODE_SPI) {
     return FLASH_ERROR_UNIMPLEMENTED;
   }
+#endif
 
 #if XSNOR_USE_WSPI == FALSE
   return FLASH_ERROR_UNIMPLEMENTED;
-#else /* XSNOR_USE_WSPI == TRUE
+#else /* XSNOR_USE_WSPI == TRUE */
   {
     wspi_command_t cmd;
 
@@ -864,8 +850,6 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
 
     return FLASH_NO_ERROR;
   }
-#else
-  return FLASH_ERROR_UNIMPLEMENTED;
 #endif
 }
 
@@ -903,7 +887,6 @@ void __n25q_mmap_off_impl(void *ip) {
 const struct hal_snor_micron_n25q_vmt __hal_snor_micron_n25q_vmt = {
   .dispose                  = __n25q_dispose_impl,
   .init                     = __n25q_init_impl,
-  .get_descriptor           = __n25q_get_descriptor_impl,
   .read                     = __n25q_read_impl,
   .program                  = __n25q_program_impl,
   .start_erase_all          = __n25q_start_erase_all_impl,

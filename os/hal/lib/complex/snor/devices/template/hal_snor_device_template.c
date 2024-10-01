@@ -128,23 +128,6 @@ flash_error_t __tmpl_init_impl(void *ip) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_get_descriptor().
- *
- * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
- */
-const flash_descriptor_t *__tmpl_get_descriptor_impl(void *ip) {
-  hal_device_template_c *self = (hal_device_template_c *)ip;
-
-  /* Implementation.*/
-  (void)self;
-
-  return NULL;
-}
-
-/**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p snor_device_read().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -314,7 +297,6 @@ void __tmpl_mmap_off_impl(void *ip) {
 const struct hal_device_template_vmt __hal_device_template_vmt = {
   .dispose                  = __tmpl_dispose_impl,
   .init                     = __tmpl_init_impl,
-  .get_descriptor           = __tmpl_get_descriptor_impl,
   .read                     = __tmpl_read_impl,
   .program                  = __tmpl_program_impl,
   .start_erase_all          = __tmpl_start_erase_all_impl,
