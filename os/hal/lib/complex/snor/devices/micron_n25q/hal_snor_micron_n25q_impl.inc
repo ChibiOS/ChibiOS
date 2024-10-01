@@ -447,10 +447,11 @@ void __n25q_dispose_impl(void *ip) {
  */
 flash_error_t __n25q_init_impl(void *ip) {
   hal_snor_micron_n25q_c *self = (hal_snor_micron_n25q_c *)ip;
+  const snor_config_t *config = self->config;
 
   /* Bus type and width setup, only necessary if WSPI is in use.*/
 #if XSNOR_USE_WSPI == TRUE
-  switch (self->config->bus_type) {
+  switch (config->bus_type) {
   case XSNOR_BUS_MODE_SPI:
     self->commands = NULL;
     break;
@@ -471,30 +472,30 @@ flash_error_t __n25q_init_impl(void *ip) {
 #endif
 
 #if XSNOR_USE_BOTH == TRUE
-  if (self->config->bus_type == XSNOR_BUS_MODE_SPI)
+  if (config->bus_type == XSNOR_BUS_MODE_SPI)
 #endif
   {
     /* Initialization procedure in the SPI case.
        Reading device ID.*/
-    __xsnor_bus_cmd_receive(self->config->bus.spi.drv, CMD_READ_ID,
-                            3U, &self->config->buffers->databuf[0]);
+    __xsnor_bus_cmd_receive(config->bus.spi.drv, CMD_READ_ID,
+                            3U, &config->buffers->databuf[0]);
 
     /* Manufacturer identifier.*/
     if (!n25q_find_id(n25q_manufacturer_ids,
                       sizeof n25q_manufacturer_ids,
-                      self->config->buffers->databuf[0])) {
+                      config->buffers->databuf[0])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Memory identifier.*/
     if (!n25q_find_id(n25q_memory_type_ids,
                       sizeof n25q_memory_type_ids,
-                      self->config->buffers->databuf[1])) {
+                      config->buffers->databuf[1])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Setting up the device size.*/
-    self->descriptor.sectors_count = (1U << (size_t)self->config->buffers->databuf[2]) / self->descriptor.sectors_size;
+    self->descriptor.sectors_count = (1U << (size_t)config->buffers->databuf[2]) / self->descriptor.sectors_size;
     self->descriptor.size = (size_t)self->descriptor.sectors_count * self->descriptor.sectors_size;
   }
 #if XSNOR_USE_BOTH == TRUE
@@ -510,24 +511,24 @@ flash_error_t __n25q_init_impl(void *ip) {
     n25q_reset_memory(self);
 
     /* Reading device ID and unique ID.*/
-    n25q_read_id(self, &self->config->buffers->databuf[0]);
+    n25q_read_id(self, &config->buffers->databuf[0]);
 
     /* Manufacturer identifier.*/
     if (!n25q_find_id(n25q_manufacturer_ids,
                       sizeof n25q_manufacturer_ids,
-                      self->config->buffers->databuf[0])) {
+                      config->buffers->databuf[0])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Memory identifier.*/
     if (!n25q_find_id(n25q_memory_type_ids,
                       sizeof n25q_memory_type_ids,
-                      self->config->buffers->databuf[1])) {
+                      config->buffers->databuf[1])) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
     /* Setting up final bus width.*/
-    if ((self->config->options & N25Q_OPT_NO_WIDTH_SWITCH) == 0U) {
+    if ((config->options & N25Q_OPT_NO_WIDTH_SWITCH) == 0U) {
       wspi_command_t cmd;
 
       /* Write enable in 1 line mode.*/
@@ -536,30 +537,36 @@ flash_error_t __n25q_init_impl(void *ip) {
       cmd.addr  = 0U;
       cmd.alt   = 0U;
       cmd.dummy = 0U;
-      wspiCommand(self->config->bus.wspi.drv, &cmd);
+      wspiCommand(config->bus.wspi.drv, &cmd);
 
-      /* Final configuration.*/
+      /* Bus width configuration.*/
       cmd.cfg   = WSPI_CFG_CMD_MODE_ONE_LINE;
       cmd.cmd   = CMD_WRITE_ENHANCED_V_CONF_REGISTER;
       cmd.addr  = 0U;
       cmd.alt   = 0U;
       cmd.dummy = 0U;
-      switch (self->config->bus_type) {
+      switch (config->bus_type) {
       case XSNOR_BUS_MODE_WSPI_1LINE:
-        self->config->buffers->databuf[0] = 0xCFU;
+        config->buffers->databuf[0] = 0xCFU;
         break;
       case XSNOR_BUS_MODE_WSPI_2LINES:
-        self->config->buffers->databuf[0] = 0x8FU;
+        config->buffers->databuf[0] = 0x8FU;
         break;
       case XSNOR_BUS_MODE_WSPI_4LINES:
-        self->config->buffers->databuf[0] = 0x4FU;
+        config->buffers->databuf[0] = 0x4FU;
         break;
       default:
-        self->config->buffers->databuf[0] = 0xCFU;
+        config->buffers->databuf[0] = 0xCFU;
       }
-      wspiSend(self->config->bus.wspi.drv, &cmd,
-               1, &self->config->buffers->databuf[0]);
+      wspiSend(config->bus.wspi.drv, &cmd,
+               1, &config->buffers->databuf[0]);
     }
+
+    /* Dummy cycles configuration.*/
+    __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
+    config->buffers->databuf[0] = ((config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
+    __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
+                         1, &config->buffers->databuf[0]);
   }
 
   return FLASH_NO_ERROR;
