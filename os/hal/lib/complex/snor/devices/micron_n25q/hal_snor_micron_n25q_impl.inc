@@ -365,7 +365,7 @@ static void n25q_read_id(hal_snor_micron_n25q_c *self, uint8_t *buf) {
     cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
   }
 
-  wspiReceive(self->config->bus.wspi.drv, &cmd, 3U, buf);
+  wspiReceive(self->config->bus.wspi.drv, &cmd, 2U, buf);
 }
 #endif /* XSNOR_USE_WSPI == TRUE */
 
@@ -541,30 +541,44 @@ flash_error_t __n25q_init_impl(void *ip) {
       wspiCommand(config->bus.wspi.drv, &cmd);
 
       /* Bus width configuration.*/
-      cmd.cfg   = WSPI_CFG_CMD_MODE_ONE_LINE;
+      cmd.cfg   = WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
       cmd.cmd   = CMD_WRITE_ENHANCED_V_CONF_REGISTER;
       cmd.addr  = 0U;
       cmd.alt   = 0U;
       cmd.dummy = 0U;
       switch (config->bus_type) {
       case XSNOR_BUS_MODE_WSPI_1LINE:
-        cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE;
         config->buffers->databuf[0] = 0xCFU;
         break;
       case XSNOR_BUS_MODE_WSPI_2LINES:
-        cmd.cfg |= WSPI_CFG_DATA_MODE_TWO_LINES;
         config->buffers->databuf[0] = 0x8FU;
         break;
       case XSNOR_BUS_MODE_WSPI_4LINES:
-        cmd.cfg |= WSPI_CFG_DATA_MODE_FOUR_LINES;
         config->buffers->databuf[0] = 0x4FU;
         break;
       default:
-        cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE;
         config->buffers->databuf[0] = 0xCFU;
       }
       wspiSend(config->bus.wspi.drv, &cmd,
                1, &config->buffers->databuf[0]);
+
+      /* Reading again the memory ID using final settings for confirmation that
+         bus switch actually occurred.*/
+      __xsnor_bus_cmd_receive(self, CMD_MULTIPLE_IO_READ_ID, 2U, &config->buffers->databuf[0]);
+
+      /* Manufacturer identifier.*/
+      if (!n25q_find_id(n25q_manufacturer_ids,
+                        sizeof n25q_manufacturer_ids,
+                        config->buffers->databuf[0])) {
+        return FLASH_ERROR_HW_FAILURE;
+      }
+
+      /* Memory identifier.*/
+      if (!n25q_find_id(n25q_memory_type_ids,
+                        sizeof n25q_memory_type_ids,
+                        config->buffers->databuf[1])) {
+        return FLASH_ERROR_HW_FAILURE;
+      }
     }
     else {
       /* No need to switch.*/
