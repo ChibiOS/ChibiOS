@@ -692,7 +692,12 @@ flash_error_t __n25q_start_erase_sector_impl(void *ip, flash_sector_t sector) {
   __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
 
   /* Sector erase command.*/
-  __xsnor_bus_cmd_addr(self, CMD_SECTOR_ERASE, offset);
+  if ((self->config->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
+    __xsnor_bus_cmd_addr(self, CMD_SUBSECTOR_ERASE, offset);
+  }
+  else {
+    __xsnor_bus_cmd_addr(self, CMD_SECTOR_ERASE, offset);
+  }
 
   return FLASH_NO_ERROR;
 }
