@@ -402,7 +402,7 @@ memory initialization.</note>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->state    = FLASH_UNINIT;
+self->state    = FLASH_STOP;
 self->config   = NULL;
 #if XSNOR_USE_WSPI == TRUE
 self->commands = NULL;
@@ -410,7 +410,8 @@ self->commands = NULL;
 osalMutexObjectInit(&self->mutex);]]></implementation>
           </objinit>
           <dispose>
-            <implementation><![CDATA[;]]></implementation>
+            <implementation><![CDATA[
+self->state = FLASH_UNINIT;]]></implementation>
           </dispose>
           <virtual>
             <method shortname="init" name="snor_device_init" ctype="flash_error_t">
@@ -523,7 +524,7 @@ if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #if XSNOR_USE_WSPI == TRUE
   wspiAcquireBus(self->config->bus.wspi.drv);
   if (self->config->bus.wspi.cfg != self->config->bus.wspi.drv->config) {
-    wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.drv->config);
+    wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
   }
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -533,7 +534,7 @@ else {
 #if XSNOR_USE_SPI == TRUE
   spiAcquireBus(self->config->bus.spi.drv);
   if (self->config->bus.spi.cfg != self->config->bus.spi.drv->config) {
-    spiStart(self->config->bus.spi.drv, self->config->bus.spi.drv->config);
+    spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
   }
 #endif
 #if XSNOR_USE_BOTH == TRUE

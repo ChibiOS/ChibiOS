@@ -404,7 +404,7 @@ void *__xsnor_objinit_impl(void *ip, const void *vmt) {
   }
 
   /* Initialization code.*/
-  self->state    = FLASH_UNINIT;
+  self->state    = FLASH_STOP;
   self->config   = NULL;
 #if XSNOR_USE_WSPI == TRUE
   self->commands = NULL;
@@ -428,7 +428,7 @@ void __xsnor_dispose_impl(void *ip) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
 
   /* Finalization code.*/
-  ;
+  self->state = FLASH_UNINIT;
 
   /* Finalization of the ancestors-defined parts.*/
   __bo_dispose_impl(self);
@@ -489,7 +489,7 @@ void __xsnor_bus_acquire(void *ip) {
 #if XSNOR_USE_WSPI == TRUE
     wspiAcquireBus(self->config->bus.wspi.drv);
     if (self->config->bus.wspi.cfg != self->config->bus.wspi.drv->config) {
-      wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.drv->config);
+      wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
     }
 #endif
 #if XSNOR_USE_BOTH == TRUE
@@ -499,7 +499,7 @@ void __xsnor_bus_acquire(void *ip) {
 #if XSNOR_USE_SPI == TRUE
     spiAcquireBus(self->config->bus.spi.drv);
     if (self->config->bus.spi.cfg != self->config->bus.spi.drv->config) {
-      spiStart(self->config->bus.spi.drv, self->config->bus.spi.drv->config);
+      spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
     }
 #endif
 #if XSNOR_USE_BOTH == TRUE
