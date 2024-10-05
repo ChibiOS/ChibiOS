@@ -865,14 +865,14 @@ void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
  *
  * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
  * @param[in]     cmd           Instruction code.
- * @param[in]     dummy         Number of dummy cycles.
  * @param[in]     offset        Flash offset.
+ * @param[in]     dummy         Number of dummy cycles.
  * @param[in]     n             Number of bytes to receive.
  * @param[out]    p             Data buffer.
  */
-void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
-                                        flash_offset_t offset, size_t n,
-                                        uint8_t *p) {
+void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
+                                        flash_offset_t offset, uint32_t dummy,
+                                        size_t n, uint8_t *p) {
   hal_snor_base_c *self = (hal_snor_base_c *)ip;
   const snor_config_t *config = self->config;
 

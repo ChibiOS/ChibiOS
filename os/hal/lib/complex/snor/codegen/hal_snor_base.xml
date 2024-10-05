@@ -824,8 +824,8 @@ else {
             <method name="__xsnor_bus_cmd_addr_dummy_receive" ctype="void">
               <brief>Sends a complete header followed by a data receive phase.</brief>
               <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
-              <param name="dummy" ctype="uint32_t" dir="in">number of dummy cycles</param>
               <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
+              <param name="dummy" ctype="uint32_t" dir="in">number of dummy cycles</param>
               <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
               <param name="p" ctype="uint8_t *" dir="out">data buffer</param>
               <implementation><![CDATA[

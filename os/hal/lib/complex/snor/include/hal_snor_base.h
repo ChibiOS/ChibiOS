@@ -383,9 +383,8 @@ extern "C" {
   void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
                                      size_t n, uint8_t *p);
   void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
-                                          uint32_t dummy,
-                                          flash_offset_t offset, size_t n,
-                                          uint8_t *p);
+                                          flash_offset_t offset,
+                                          uint32_t dummy, size_t n, uint8_t *p);
   flash_error_t xsnorStart(void *ip, const snor_config_t *config);
   void xsnorStop(void *ip);
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)

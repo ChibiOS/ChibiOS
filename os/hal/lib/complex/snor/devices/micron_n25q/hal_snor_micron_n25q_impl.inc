@@ -337,35 +337,13 @@ static void n25q_reset_memory(hal_snor_micron_n25q_c *self) {
 static void n25q_read_id(hal_snor_micron_n25q_c *self, uint8_t *buf) {
   wspi_command_t cmd;
 
-  cmd.cfg   = 0U;
+  /* This command is always one line.*/
+  cmd.cfg   = WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
   cmd.cmd   = CMD_READ_ID;
   cmd.addr  = 0U;
   cmd.alt   = 0U;
   cmd.dummy = 0U;
-
-  /* Variant part of the command configuration.*/
-  if ((self->config->options & N25Q_OPT_NO_WIDTH_SWITCH) != 0U) {
-    /* Memory is in the specified bus mode.*/
-    switch (self->config->bus_type) {
-    case XSNOR_BUS_MODE_WSPI_1LINE:
-      cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
-      break;
-    case XSNOR_BUS_MODE_WSPI_2LINES:
-      cmd.cfg |= WSPI_CFG_CMD_MODE_TWO_LINES | WSPI_CFG_DATA_MODE_TWO_LINES;
-      break;
-    case XSNOR_BUS_MODE_WSPI_4LINES:
-      cmd.cfg |= WSPI_CFG_CMD_MODE_FOUR_LINES | WSPI_CFG_DATA_MODE_FOUR_LINES;
-      break;
-    default:
-      cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
-    }
-  }
-  else {
-    /* Assuming it is in one line mode.*/
-    cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
-  }
-
-  wspiReceive(self->config->bus.wspi.drv, &cmd, 2U, buf);
+  wspiReceive(self->config->bus.wspi.drv, &cmd, 3U, buf);
 }
 #endif /* XSNOR_USE_WSPI == TRUE */
 
@@ -493,10 +471,6 @@ flash_error_t __n25q_init_impl(void *ip) {
                       config->buffers->databuf[1])) {
       return FLASH_ERROR_HW_FAILURE;
     }
-
-    /* Setting up the device size.*/
-    self->descriptor.sectors_count = (1U << (size_t)config->buffers->databuf[2]) / self->descriptor.sectors_size;
-    self->descriptor.size = (size_t)self->descriptor.sectors_count * self->descriptor.sectors_size;
   }
 #if XSNOR_USE_BOTH == TRUE
   else
@@ -562,9 +536,15 @@ flash_error_t __n25q_init_impl(void *ip) {
       wspiSend(config->bus.wspi.drv, &cmd,
                1, &config->buffers->databuf[0]);
 
+    /* Dummy cycles configuration.*/
+    __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
+    config->buffers->databuf[0] = ((config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
+    __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
+                         1, &config->buffers->databuf[0]);
+
       /* Reading again the memory ID using final settings for confirmation that
          bus switch actually occurred.*/
-      __xsnor_bus_cmd_receive(self, CMD_MULTIPLE_IO_READ_ID, 2U, &config->buffers->databuf[0]);
+      __xsnor_bus_cmd_receive(self, CMD_MULTIPLE_IO_READ_ID, 3U, &config->buffers->databuf[0]);
 
       /* Manufacturer identifier.*/
       if (!n25q_find_id(n25q_manufacturer_ids,
@@ -583,13 +563,11 @@ flash_error_t __n25q_init_impl(void *ip) {
     else {
       /* No need to switch.*/
     }
-
-    /* Dummy cycles configuration.*/
-    __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
-    config->buffers->databuf[0] = ((config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
-    __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
-                         1, &config->buffers->databuf[0]);
   }
+
+  /* Variable parts of the descriptor.*/
+  self->descriptor.sectors_count = (1U << (size_t)config->buffers->databuf[2]) / self->descriptor.sectors_size;
+  self->descriptor.size = (size_t)self->descriptor.sectors_count * self->descriptor.sectors_size;
 
   return FLASH_NO_ERROR;
 }
