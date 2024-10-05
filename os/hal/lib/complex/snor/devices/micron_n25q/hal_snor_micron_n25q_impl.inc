@@ -261,8 +261,8 @@ static void n25q_activate_xip(hal_snor_micron_n25q_c *self) {
   self->config->buffers->databuf[0] = ((self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x07U;
 
   /* Activating XIP mode in the device.*/
-  __xsnor_bus_cmd(self->config->bus.spi.drv, CMD_WRITE_ENABLE);
-  __xsnor_bus_cmd_send(self->config->bus.spi.drv, CMD_WRITE_V_CONF_REGISTER,
+  __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
+  __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
                        1, &self->config->buffers->databuf[0]);
 }
 
@@ -301,13 +301,13 @@ static void n25q_reset_xip(hal_snor_micron_n25q_c *self) {
               1, &self->config->buffers->databuf[0]);
 
   /* Enabling write operation.*/
-  __xsnor_bus_cmd(self->config->bus.wspi.drv, CMD_WRITE_ENABLE);
+  __xsnor_bus_cmd(self, CMD_WRITE_ENABLE);
 
   /* Configuration to be written.*/
   self->config->buffers->databuf[0] = ((self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) << 4U) | 0x0FU;
 
   /* Rewriting volatile configuration register.*/
-  __xsnor_bus_cmd_send(self->config->bus.wspi.drv, CMD_WRITE_V_CONF_REGISTER,
+  __xsnor_bus_cmd_send(self, CMD_WRITE_V_CONF_REGISTER,
                        1, &self->config->buffers->databuf[0]);
 }
 
@@ -477,7 +477,7 @@ flash_error_t __n25q_init_impl(void *ip) {
   {
     /* Initialization procedure in the SPI case.
        Reading device ID.*/
-    __xsnor_bus_cmd_receive(config->bus.spi.drv, CMD_READ_ID,
+    __xsnor_bus_cmd_receive(self, CMD_READ_ID,
                             3U, &config->buffers->databuf[0]);
 
     /* Manufacturer identifier.*/
@@ -531,7 +531,8 @@ flash_error_t __n25q_init_impl(void *ip) {
     if ((config->options & N25Q_OPT_NO_WIDTH_SWITCH) == 0U) {
       wspi_command_t cmd;
 
-      /* Write enable in 1 line mode.*/
+      /* We need to switch in the volatile register, write enable in one
+         line mode.*/
       cmd.cfg   = WSPI_CFG_CMD_MODE_ONE_LINE;
       cmd.cmd   = CMD_WRITE_ENABLE;
       cmd.addr  = 0U;
@@ -547,19 +548,26 @@ flash_error_t __n25q_init_impl(void *ip) {
       cmd.dummy = 0U;
       switch (config->bus_type) {
       case XSNOR_BUS_MODE_WSPI_1LINE:
+        cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE;
         config->buffers->databuf[0] = 0xCFU;
         break;
       case XSNOR_BUS_MODE_WSPI_2LINES:
+        cmd.cfg |= WSPI_CFG_DATA_MODE_TWO_LINES;
         config->buffers->databuf[0] = 0x8FU;
         break;
       case XSNOR_BUS_MODE_WSPI_4LINES:
+        cmd.cfg |= WSPI_CFG_DATA_MODE_FOUR_LINES;
         config->buffers->databuf[0] = 0x4FU;
         break;
       default:
+        cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE;
         config->buffers->databuf[0] = 0xCFU;
       }
       wspiSend(config->bus.wspi.drv, &cmd,
                1, &config->buffers->databuf[0]);
+    }
+    else {
+      /* No need to switch.*/
     }
 
     /* Dummy cycles configuration.*/
