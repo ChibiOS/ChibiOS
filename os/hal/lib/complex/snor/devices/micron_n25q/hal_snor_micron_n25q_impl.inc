@@ -75,7 +75,7 @@
 /** @} */
 
 #if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
-static const snor_commands_t cmd1l = {
+static const xsnor_commands_t cmd1l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_ONE_LINE       |
                            WSPI_CFG_ADDR_MODE_NONE          |
                            WSPI_CFG_ALT_MODE_NONE           |
@@ -102,7 +102,7 @@ static const snor_commands_t cmd1l = {
                            WSPI_CFG_ADDR_SIZE_24)
 };
 
-static const snor_commands_t cmd2l = {
+static const xsnor_commands_t cmd2l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_TWO_LINES      |
                            WSPI_CFG_ADDR_MODE_NONE          |
                            WSPI_CFG_ALT_MODE_NONE           |
@@ -129,7 +129,7 @@ static const snor_commands_t cmd2l = {
                            WSPI_CFG_ADDR_SIZE_24)
 };
 
-static const snor_commands_t cmd4l = {
+static const xsnor_commands_t cmd4l = {
   .cmd                  = (WSPI_CFG_CMD_MODE_FOUR_LINES     |
                            WSPI_CFG_ADDR_MODE_NONE          |
                            WSPI_CFG_ALT_MODE_NONE           |
@@ -425,7 +425,7 @@ void __n25q_dispose_impl(void *ip) {
  */
 flash_error_t __n25q_init_impl(void *ip) {
   hal_snor_micron_n25q_c *self = (hal_snor_micron_n25q_c *)ip;
-  const snor_config_t *config = self->config;
+  const xsnor_config_t *config = self->config;
 
   /* Bus type and width setup, only necessary if WSPI is in use.*/
 #if XSNOR_USE_WSPI == TRUE

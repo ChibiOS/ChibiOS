@@ -15,20 +15,18 @@
 */
 
 /**
- * @file        hal_snor_device_template.h
- * @brief       Generated SNOR Device Template header.
+ * @file        hal_snor_macronix_mx25.h
+ * @brief       Generated SNOR Macronix MX25 header.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_DEVICE_TEMPLATE
- * @brief       SNOR device template driver.
- * @details     Template module for SNOR flash devices. Can be used by
- *              duplicating the XML file or working directly on cloned source
- *              files.
+ * @addtogroup  HAL_SNOR_MACRONIX_MX25
+ * @brief       SNOR Macronix MX25 driver.
+ * @details     Module for SNOR Macronix MX25 flash devices.
  * @{
  */
 
-#ifndef HAL_SNOR_DEVICE_TEMPLATE_H
-#define HAL_SNOR_DEVICE_TEMPLATE_H
+#ifndef HAL_SNOR_MACRONIX_MX25_H
+#define HAL_SNOR_MACRONIX_MX25_H
 
 #include "oop_base_object.h"
 #include "hal_snor_base.h"
@@ -45,6 +43,45 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/**
+ * @name    Device options
+ * @{
+ */
+/**
+ * @brief       Mask of the dummy cycles field.
+ */
+#define MX25_OPT_DUMMY_CYCLES_MASK          (15U << 0)
+
+/**
+ * @brief       Number of dummy cycles.
+ *
+ * @param         n             Number of dummy cycles (2..15)
+ */
+#define MX25_OPT_DUMMY_CYCLES(n)            ((n) << 0)
+
+/**
+ * @brief       Switch bus width on initialization.
+ * @details     If @p MX25_OPT_NO_WIDTH_SWITCH is specified then this is the
+ *              bus mode that the device is expected to be using else this is
+ *              the bus mode that the device will be switched in.
+ * @note        This option is only valid in WSPI bus mode.
+ */
+#define MX25_OPT_NO_WIDTH_SWITCH            (1U << 4)
+
+/**
+ * @brief       Use 4kB sub-sectors rather than 64kB sectors.
+ */
+#define MX25_OPT_USE_SUBSECTORS             (1U << 5)
+
+/**
+ * @brief       Delays insertion.
+ * @details     If enabled this options inserts delays into the flash waiting
+ *              routines releasing some extra CPU time for threads with lower
+ *              priority, this may slow down the driver a bit however.
+ */
+#define MX25_OPT_NICE_WAITING               (1U << 6)
+/** @} */
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -54,23 +91,23 @@
 /*===========================================================================*/
 
 /**
- * @class       hal_device_template_c
+ * @class       hal_snor_macronix_mx25_c
  * @extends     base_object_c, hal_xsnor_base_c.
  *
  *
- * @name        Class @p hal_device_template_c structures
+ * @name        Class @p hal_snor_macronix_mx25_c structures
  * @{
  */
 
 /**
- * @brief       Type of a SNOR device template driver class.
+ * @brief       Type of a SNOR Macronix MX25 driver class.
  */
-typedef struct hal_device_template hal_device_template_c;
+typedef struct hal_snor_macronix_mx25 hal_snor_macronix_mx25_c;
 
 /**
- * @brief       Class @p hal_device_template_c virtual methods table.
+ * @brief       Class @p hal_snor_macronix_mx25_c virtual methods table.
  */
-struct hal_device_template_vmt {
+struct hal_snor_macronix_mx25_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_xsnor_base_c.*/
@@ -83,17 +120,17 @@ struct hal_device_template_vmt {
   flash_error_t (*verify_erase)(void *ip, flash_sector_t sector);
   flash_error_t (*mmap_on)(void *ip, uint8_t **addrp);
   void (*mmap_off)(void *ip);
-  /* From hal_device_template_c.*/
+  /* From hal_snor_macronix_mx25_c.*/
 };
 
 /**
- * @brief       Structure representing a SNOR device template driver class.
+ * @brief       Structure representing a SNOR Macronix MX25 driver class.
  */
-struct hal_device_template {
+struct hal_snor_macronix_mx25 {
   /**
    * @brief       Virtual Methods Table.
    */
-  const struct hal_device_template_vmt *vmt;
+  const struct hal_snor_macronix_mx25_vmt *vmt;
   /**
    * @brief       Implemented interface @p flash_interface_i.
    */
@@ -134,20 +171,20 @@ struct hal_device_template {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  /* Methods of hal_device_template_c.*/
-  void *__tmpl_objinit_impl(void *ip, const void *vmt);
-  void __tmpl_dispose_impl(void *ip);
-  flash_error_t __tmpl_init_impl(void *ip);
-  flash_error_t __tmpl_read_impl(void *ip, flash_offset_t offset, size_t n,
+  /* Methods of hal_snor_macronix_mx25_c.*/
+  void *__mx25_objinit_impl(void *ip, const void *vmt);
+  void __mx25_dispose_impl(void *ip);
+  flash_error_t __mx25_init_impl(void *ip);
+  flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
                                  uint8_t *rp);
-  flash_error_t __tmpl_program_impl(void *ip, flash_offset_t offset, size_t n,
+  flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
                                     const uint8_t *pp);
-  flash_error_t __tmpl_start_erase_all_impl(void *ip);
-  flash_error_t __tmpl_start_erase_sector_impl(void *ip, flash_sector_t sector);
-  flash_error_t __tmpl_query_erase_impl(void *ip, unsigned *msec);
-  flash_error_t __tmpl_verify_erase_impl(void *ip, flash_sector_t sector);
-  flash_error_t __tmpl_mmap_on_impl(void *ip, uint8_t **addrp);
-  void __tmpl_mmap_off_impl(void *ip);
+  flash_error_t __mx25_start_erase_all_impl(void *ip);
+  flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector);
+  flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec);
+  flash_error_t __mx25_verify_erase_impl(void *ip, flash_sector_t sector);
+  flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp);
+  void __mx25_mmap_off_impl(void *ip);
   /* Regular functions.*/
 #ifdef __cplusplus
 }
@@ -158,28 +195,28 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @name        Default constructor of hal_device_template_c
+ * @name        Default constructor of hal_snor_macronix_mx25_c
  * @{
  */
 /**
- * @memberof    hal_device_template_c
+ * @memberof    hal_snor_macronix_mx25_c
  *
- * @brief       Default initialization function of @p hal_device_template_c.
+ * @brief       Default initialization function of @p hal_snor_macronix_mx25_c.
  *
- * @param[out]    self          Pointer to a @p hal_device_template_c instance
- *                              to be initialized.
+ * @param[out]    self          Pointer to a @p hal_snor_macronix_mx25_c
+ *                              instance to be initialized.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
  */
 CC_FORCE_INLINE
-static inline hal_device_template_c *tmplObjectInit(hal_device_template_c *self) {
-  extern const struct hal_device_template_vmt __hal_device_template_vmt;
+static inline hal_snor_macronix_mx25_c *mx25ObjectInit(hal_snor_macronix_mx25_c *self) {
+  extern const struct hal_snor_macronix_mx25_vmt __hal_snor_macronix_mx25_vmt;
 
-  return __tmpl_objinit_impl(self, &__hal_device_template_vmt);
+  return __mx25_objinit_impl(self, &__hal_snor_macronix_mx25_vmt);
 }
 /** @} */
 
-#endif /* HAL_SNOR_DEVICE_TEMPLATE_H */
+#endif /* HAL_SNOR_MACRONIX_MX25_H */
 
 /** @} */

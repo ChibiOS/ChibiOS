@@ -110,7 +110,7 @@ void __tmpl_dispose_impl(void *ip) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_init().
+ * @brief       Override of method @p xsnor_device_init().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @return                      An error code.
@@ -128,7 +128,7 @@ flash_error_t __tmpl_init_impl(void *ip) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_read().
+ * @brief       Override of method @p xsnor_device_read().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @param[in]     offset        Flash offset.
@@ -153,7 +153,7 @@ flash_error_t __tmpl_read_impl(void *ip, flash_offset_t offset, size_t n,
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_program().
+ * @brief       Override of method @p xsnor_device_program().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @param[in]     offset        Flash offset.
@@ -178,7 +178,7 @@ flash_error_t __tmpl_program_impl(void *ip, flash_offset_t offset, size_t n,
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_start_erase_all().
+ * @brief       Override of method @p xsnor_device_start_erase_all().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @return                      An error code.
@@ -196,7 +196,7 @@ flash_error_t __tmpl_start_erase_all_impl(void *ip) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_start_erase_sector().
+ * @brief       Override of method @p xsnor_device_start_erase_sector().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @param[in]     sector        Sector to be erased.
@@ -216,7 +216,7 @@ flash_error_t __tmpl_start_erase_sector_impl(void *ip, flash_sector_t sector) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_query_erase().
+ * @brief       Override of method @p xsnor_device_query_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @param[out]    msec          Recommended time, in milliseconds, that should
@@ -238,7 +238,7 @@ flash_error_t __tmpl_query_erase_impl(void *ip, unsigned *msec) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_verify_erase().
+ * @brief       Override of method @p xsnor_device_verify_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @param[in]     sector        Sector to be verified.
@@ -258,7 +258,7 @@ flash_error_t __tmpl_verify_erase_impl(void *ip, flash_sector_t sector) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_mmap_on().
+ * @brief       Override of method @p xsnor_device_mmap_on().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  * @param[out]    addrp         Pointer to the memory mapped memory or @p NULL
@@ -278,7 +278,7 @@ flash_error_t __tmpl_mmap_on_impl(void *ip, uint8_t **addrp) {
  * @memberof    hal_device_template_c
  * @protected
  *
- * @brief       Override of method @p snor_device_mmap_off().
+ * @brief       Override of method @p xsnor_device_mmap_off().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
  */

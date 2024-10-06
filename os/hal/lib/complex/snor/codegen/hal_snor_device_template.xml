@@ -22,7 +22,7 @@ the XML file or working directly on cloned source files.]]></details>
     <macros></macros>
     <types>
       <class name="hal_device_template" type="regular" namespace="tmpl"
-             descr="SNOR device template driver" ancestorname="hal_snor_base">
+             descr="SNOR device template driver" ancestorname="hal_xsnor_base">
         <fields></fields>
         <methods>
           <objinit callsuper="true">

@@ -55,15 +55,15 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module class "hal_snor_base_c" methods.                                   */
+/* Module class "hal_xsnor_base_c" methods.                                  */
 /*===========================================================================*/
 
 /**
- * @name        Interfaces implementation of hal_snor_base_c
+ * @name        Interfaces implementation of hal_xsnor_base_c
  * @{
  */
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsGetDescriptor().
@@ -73,13 +73,13 @@
  * @return                      A flash device descriptor.
  */
 static const flash_descriptor_t *__xsnor_fls_get_descriptor_impl(void *ip) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
 
   return &self->descriptor;
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsRead().
@@ -93,7 +93,7 @@ static const flash_descriptor_t *__xsnor_fls_get_descriptor_impl(void *ip) {
  */
 static flash_error_t __xsnor_fls_read_impl(void *ip, flash_offset_t offset,
                                            size_t n, uint8_t *rp) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
   flash_error_t err;
 
   osalDbgCheck((self != NULL) && (rp != NULL) && (n > 0U));
@@ -111,7 +111,7 @@ static flash_error_t __xsnor_fls_read_impl(void *ip, flash_offset_t offset,
   self->state = FLASH_READ;
 
   /* Actual read implementation.*/
-  err = snor_device_read(self, offset, n, rp);
+  err = xsnor_device_read(self, offset, n, rp);
 
   /* Ready state again.*/
   self->state = FLASH_READY;
@@ -123,7 +123,7 @@ static flash_error_t __xsnor_fls_read_impl(void *ip, flash_offset_t offset,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsProgram().
@@ -137,7 +137,7 @@ static flash_error_t __xsnor_fls_read_impl(void *ip, flash_offset_t offset,
  */
 static flash_error_t __xsnor_fls_program_impl(void *ip, flash_offset_t offset,
                                               size_t n, const uint8_t *pp) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
   flash_error_t err;
 
   osalDbgCheck((self != NULL) && (pp != NULL) && (n > 0U));
@@ -155,7 +155,7 @@ static flash_error_t __xsnor_fls_program_impl(void *ip, flash_offset_t offset,
   self->state = FLASH_PGM;
 
   /* Actual program implementation.*/
-  err = snor_device_program(self, offset, n, pp);
+  err = xsnor_device_program(self, offset, n, pp);
 
   /* Ready state again.*/
   self->state = FLASH_READY;
@@ -167,7 +167,7 @@ static flash_error_t __xsnor_fls_program_impl(void *ip, flash_offset_t offset,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsStartEraseAll().
@@ -177,7 +177,7 @@ static flash_error_t __xsnor_fls_program_impl(void *ip, flash_offset_t offset,
  * @return                      An error code.
  */
 static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
@@ -195,7 +195,7 @@ static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
   self->state = FLASH_ERASE;
 
   /* Actual erase implementation.*/
-  err = snor_device_start_erase_all(self);
+  err = xsnor_device_start_erase_all(self);
 
   /* Bus released.*/
   __xsnor_bus_release(self);
@@ -204,7 +204,7 @@ static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsStartEraseSector().
@@ -216,7 +216,7 @@ static flash_error_t __xsnor_fls_start_erase_all_impl(void *ip) {
  */
 static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
                                                          flash_sector_t sector) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
@@ -234,7 +234,7 @@ static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
   self->state = FLASH_ERASE;
 
   /* Actual erase implementation.*/
-  err = snor_device_start_erase_sector(self, sector);
+  err = xsnor_device_start_erase_sector(self, sector);
 
   /* Bus released.*/
   __xsnor_bus_release(self);
@@ -243,7 +243,7 @@ static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsQueryErase().
@@ -256,7 +256,7 @@ static flash_error_t __xsnor_fls_start_erase_sector_impl(void *ip,
  * @return                      An error code.
  */
 static flash_error_t __xsnor_fls_query_erase_impl(void *ip, unsigned *msec) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
@@ -270,7 +270,7 @@ static flash_error_t __xsnor_fls_query_erase_impl(void *ip, unsigned *msec) {
     __xsnor_bus_acquire(self);
 
     /* Actual query erase implementation.*/
-    err = snor_device_query_erase(self, msec);
+    err = xsnor_device_query_erase(self, msec);
 
     /* The device is ready to accept commands.*/
     if (err == FLASH_NO_ERROR) {
@@ -288,7 +288,7 @@ static flash_error_t __xsnor_fls_query_erase_impl(void *ip, unsigned *msec) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsVerifyErase().
@@ -300,7 +300,7 @@ static flash_error_t __xsnor_fls_query_erase_impl(void *ip, unsigned *msec) {
  */
 static flash_error_t __xsnor_fls_verify_erase_impl(void *ip,
                                                    flash_sector_t sector) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
   flash_error_t err;
 
   osalDbgCheck(self != NULL);
@@ -318,7 +318,7 @@ static flash_error_t __xsnor_fls_verify_erase_impl(void *ip,
   self->state = FLASH_READ;
 
   /* Actual verify erase implementation.*/
-  err = snor_device_verify_erase(self, sector);
+  err = xsnor_device_verify_erase(self, sector);
 
   /* Ready state again.*/
   self->state = FLASH_READY;
@@ -330,7 +330,7 @@ static flash_error_t __xsnor_fls_verify_erase_impl(void *ip,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsAcquireExclusive().
@@ -340,14 +340,14 @@ static flash_error_t __xsnor_fls_verify_erase_impl(void *ip,
  * @return                      An error code.
  */
 static flash_error_t __xsnor_fls_acquire_exclusive_impl(void *ip) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
 
   osalMutexLock(&self->mutex);
   return FLASH_NO_ERROR;
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @private
  *
  * @brief       Implementation of interface method @p flsReleaseExclusive().
@@ -357,7 +357,7 @@ static flash_error_t __xsnor_fls_acquire_exclusive_impl(void *ip) {
  * @return                      An error code.
  */
 static flash_error_t __xsnor_fls_release_exclusive_impl(void *ip) {
-  hal_snor_base_c *self = oopIfGetOwner(hal_snor_base_c, ip);
+  hal_xsnor_base_c *self = oopIfGetOwner(hal_xsnor_base_c, ip);
 
   osalMutexUnlock(&self->mutex);
   return FLASH_NO_ERROR;
@@ -365,23 +365,23 @@ static flash_error_t __xsnor_fls_release_exclusive_impl(void *ip) {
 /** @} */
 
 /**
- * @name        Methods implementations of hal_snor_base_c
+ * @name        Methods implementations of hal_xsnor_base_c
  * @{
  */
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @protected
  *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
- * @param[out]    ip            Pointer to a @p hal_snor_base_c instance to be
+ * @param[out]    ip            Pointer to a @p hal_xsnor_base_c instance to be
  *                              initialized.
  * @param[in]     vmt           VMT pointer for the new object.
  * @return                      A new reference to the object.
  */
 void *__xsnor_objinit_impl(void *ip, const void *vmt) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
   __bo_objinit_impl(self, vmt);
@@ -389,7 +389,7 @@ void *__xsnor_objinit_impl(void *ip, const void *vmt) {
   /* Initialization of interface flash_interface_i.*/
   {
     static const struct flash_interface_vmt xsnor_fls_vmt = {
-      .instance_offset      = offsetof(hal_snor_base_c, fls),
+      .instance_offset      = offsetof(hal_xsnor_base_c, fls),
       .get_descriptor       = __xsnor_fls_get_descriptor_impl,
       .read                 = __xsnor_fls_read_impl,
       .program              = __xsnor_fls_program_impl,
@@ -415,17 +415,17 @@ void *__xsnor_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @protected
  *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance to be
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance to be
  *                              disposed.
  */
 void __xsnor_dispose_impl(void *ip) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
 
   /* Finalization code.*/
   self->state = FLASH_UNINIT;
@@ -436,23 +436,23 @@ void __xsnor_dispose_impl(void *ip) {
 /** @} */
 
 /**
- * @name        Regular methods of hal_snor_base_c
+ * @name        Regular methods of hal_xsnor_base_c
  * @{
  */
 #if (XSNOR_USE_SPI == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends command and address over SPI.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     offset        Flash offset.
  */
 void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
   config->buffers->spibuf[0] = cmd;
   if ((self->descriptor.attributes & FLASH_ATTR_SPI_4BYTES_ADDR_HINT) != 0U) {
@@ -473,15 +473,15 @@ void __xsnor_spi_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
 
 #if (XSNOR_SHARED_BUS == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Bus acquisition and lock.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  */
 void __xsnor_bus_acquire(void *ip) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
 
 #if XSNOR_USE_BOTH == TRUE
   if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -508,15 +508,15 @@ void __xsnor_bus_acquire(void *ip) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Bus release and unlock.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  */
 void __xsnor_bus_release(void *ip) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
 
 #if XSNOR_USE_BOTH == TRUE
   if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -538,17 +538,17 @@ void __xsnor_bus_release(void *ip) {
 #endif /* XSNOR_SHARED_BUS == TRUE */
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a naked command.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  */
 void __xsnor_bus_cmd(void *ip, uint32_t cmd) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -580,19 +580,19 @@ void __xsnor_bus_cmd(void *ip, uint32_t cmd) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a command followed by a data transmit phase.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     n             Number of bytes to transmit.
  * @param[in]     p             Data buffer.
  */
 void __xsnor_bus_cmd_send(void *ip, uint32_t cmd, size_t n, const uint8_t *p) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -625,19 +625,19 @@ void __xsnor_bus_cmd_send(void *ip, uint32_t cmd, size_t n, const uint8_t *p) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a command followed by a data receive phase.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     n             Number of bytes to receive.
  * @param[out]    p             Data buffer.
  */
 void __xsnor_bus_cmd_receive(void *ip, uint32_t cmd, size_t n, uint8_t *p) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -670,18 +670,18 @@ void __xsnor_bus_cmd_receive(void *ip, uint32_t cmd, size_t n, uint8_t *p) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a command followed by a flash address.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     offset        Flash offset.
  */
 void __xsnor_bus_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -712,13 +712,13 @@ void __xsnor_bus_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a command followed by a flash address and a data transmit
  *              phase.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     offset        Flash offset.
  * @param[in]     n             Number of bytes to transmit.
@@ -726,8 +726,8 @@ void __xsnor_bus_cmd_addr(void *ip, uint32_t cmd, flash_offset_t offset) {
  */
 void __xsnor_bus_cmd_addr_send(void *ip, uint32_t cmd, flash_offset_t offset,
                                size_t n, const uint8_t *p) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -759,13 +759,13 @@ void __xsnor_bus_cmd_addr_send(void *ip, uint32_t cmd, flash_offset_t offset,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a command followed by a flash address and a data receive
  *              phase.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     offset        Flash offset.
  * @param[in]     n             Number of bytes to receive.
@@ -773,8 +773,8 @@ void __xsnor_bus_cmd_addr_send(void *ip, uint32_t cmd, flash_offset_t offset,
  */
 void __xsnor_bus_cmd_addr_receive(void *ip, uint32_t cmd,
                                   flash_offset_t offset, size_t n, uint8_t *p) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -806,13 +806,13 @@ void __xsnor_bus_cmd_addr_receive(void *ip, uint32_t cmd,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a command followed by dummy cycles and a data receive
  *              phase.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     dummy         Number of dummy cycles.
  * @param[in]     n             Number of bytes to receive.
@@ -820,8 +820,8 @@ void __xsnor_bus_cmd_addr_receive(void *ip, uint32_t cmd,
  */
 void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
                                    size_t n, uint8_t *p) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -858,12 +858,12 @@ void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Sends a complete header followed by a data receive phase.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     cmd           Instruction code.
  * @param[in]     offset        Flash offset.
  * @param[in]     dummy         Number of dummy cycles.
@@ -873,8 +873,8 @@ void __xsnor_bus_cmd_dummy_receive(void *ip, uint32_t cmd, uint32_t dummy,
 void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
                                         flash_offset_t offset, uint32_t dummy,
                                         size_t n, uint8_t *p) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
-  const snor_config_t *config = self->config;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
+  const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -910,12 +910,12 @@ void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Configures and activates a SNOR driver.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     config        Pointer to the configuration.
  * @return                      An error code.
  * @retval FLASH_NO_ERROR       Operation successful.
@@ -923,8 +923,8 @@ void __xsnor_bus_cmd_addr_dummy_receive(void *ip, uint32_t cmd,
  *
  * @api
  */
-flash_error_t xsnorStart(void *ip, const snor_config_t *config) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+flash_error_t xsnorStart(void *ip, const xsnor_config_t *config) {
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   flash_error_t err;
 
   osalDbgCheck((self != NULL) && (config != NULL));
@@ -951,7 +951,7 @@ flash_error_t xsnorStart(void *ip, const snor_config_t *config) {
 #endif
 
     /* Device identification and initialization.*/
-    err = snor_device_init(self);
+    err = xsnor_device_init(self);
     if (err == FLASH_NO_ERROR) {
       /* Driver in ready state.*/
       self->state = FLASH_READY;
@@ -965,17 +965,17 @@ flash_error_t xsnorStart(void *ip, const snor_config_t *config) {
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Deactivates a SNOR driver.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  *
  * @api
  */
 void xsnorStop(void *ip) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   osalDbgCheck(self != NULL);
   osalDbgAssert(self->state != FLASH_UNINIT, "invalid state");
 
@@ -1005,12 +1005,12 @@ void xsnorStop(void *ip) {
 
 #if (WSPI_SUPPORTS_MEMMAP == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Enters the memory mapped mode.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[out]    addrp         Pointer to the memory mapped memory or @p NULL
  * @return                      An error code.
  * @retval FLASH_NO_ERROR       Operation successful.
@@ -1019,29 +1019,29 @@ void xsnorStop(void *ip) {
  * @api
  */
 flash_error_t xsnorMemoryMap(void *ip, uint8_t **addrp) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
   flash_error_t err;
 
   /* Activating XIP mode in the device.*/
-  err = snor_device_mmap_on(self, addrp);
+  err = xsnor_device_mmap_on(self, addrp);
 
   return err;
 }
 
 /**
- * @memberof    hal_snor_base_c
+ * @memberof    hal_xsnor_base_c
  * @public
  *
  * @brief       Leaves the memory mapped mode.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_base_c instance.
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  *
  * @api
  */
 void xsnorMemoryUnmap(void *ip) {
-  hal_snor_base_c *self = (hal_snor_base_c *)ip;
+  hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
 
-  snor_device_mmap_off(self);
+  xsnor_device_mmap_off(self);
 }
 #endif /* WSPI_SUPPORTS_MEMMAP == TRUE */
 /** @} */

@@ -4,6 +4,7 @@
   <!ENTITY hal_snor_base            SYSTEM "hal_snor_base.xml">
   <!ENTITY hal_snor_device_template SYSTEM "hal_snor_device_template.xml">
   <!ENTITY hal_snor_micron_n25q     SYSTEM "hal_snor_micron_n25q.xml">
+  <!ENTITY hal_snor_macronix_mx25   SYSTEM "hal_snor_macronix_mx25.xml">
 ]>
 <instance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd">
@@ -15,5 +16,6 @@
     &hal_snor_base;
     &hal_snor_device_template;
     &hal_snor_micron_n25q;
+    &hal_snor_macronix_mx25;
   </modules>
 </instance>

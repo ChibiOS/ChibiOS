@@ -92,7 +92,7 @@
 
 /**
  * @class       hal_snor_micron_n25q_c
- * @extends     base_object_c, hal_snor_base_c.
+ * @extends     base_object_c, hal_xsnor_base_c.
  *
  *
  * @name        Class @p hal_snor_micron_n25q_c structures
@@ -110,7 +110,7 @@ typedef struct hal_snor_micron_n25q hal_snor_micron_n25q_c;
 struct hal_snor_micron_n25q_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
-  /* From hal_snor_base_c.*/
+  /* From hal_xsnor_base_c.*/
   flash_error_t (*init)(void *ip);
   flash_error_t (*read)(void *ip, flash_offset_t offset, size_t n, uint8_t *rp);
   flash_error_t (*program)(void *ip, flash_offset_t offset, size_t n, const uint8_t *pp);
@@ -142,14 +142,14 @@ struct hal_snor_micron_n25q {
   /**
    * @brief       Driver configuration.
    */
-  const snor_config_t       *config;
+  const xsnor_config_t      *config;
 #if (XSNOR_USE_WSPI == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Current commands configuration.
    * @note        This field is meant to be initialized by subclasses on object
    *              creation.
    */
-  const snor_commands_t     *commands;
+  const xsnor_commands_t    *commands;
 #endif /* XSNOR_USE_WSPI == TRUE */
   /**
    * @brief       Flash access mutex.

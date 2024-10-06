@@ -80,19 +80,19 @@
       </condition>
     </macros>
     <types>
-      <typedef name="snor_buffers_t">
+      <typedef name="xsnor_buffers_t">
         <brief>Type of a non-cacheable buffer.</brief>
-        <basetype ctype="struct snor_buffers" />
+        <basetype ctype="struct xsnor_buffers" />
       </typedef>
-      <typedef name="snor_config_t">
+      <typedef name="xsnor_config_t">
         <brief>Type of a SNOR configuration structure.</brief>
-        <basetype ctype="struct snor_config" />
+        <basetype ctype="struct xsnor_config" />
       </typedef>
-      <typedef name="snor_commands_t">
+      <typedef name="xsnor_commands_t">
         <brief>Type of a commands configuration structure.</brief>
-        <basetype ctype="struct snor_commands" />
+        <basetype ctype="struct xsnor_commands" />
       </typedef>
-      <struct name="snor_buffers">
+      <struct name="xsnor_buffers">
         <brief>SNOR driver configuration.</brief>
         <fields>
           <field name="databuf" ctype="uint8_t$I$N[XSNOR_BUFFER_SIZE]">
@@ -110,7 +110,7 @@
           </condition>
         </fields>
       </struct>
-      <struct name="snor_commands">
+      <struct name="xsnor_commands">
         <brief>SNOR command configuration structure.</brief>
         <fields>
           <field name="cmd" ctype="uint32_t">
@@ -128,7 +128,7 @@
         </fields>
       </struct>
       <condition check="XSNOR_USE_WSPI == TRUE">
-        <struct name="snor_bus_wspi">
+        <struct name="xsnor_bus_wspi">
           <brief>WSPI-specific configuration fields.</brief>
           <fields>
             <field name="drv" ctype="WSPIDriver$I*$N">
@@ -141,7 +141,7 @@
         </struct>
       </condition>
       <condition check="XSNOR_USE_SPI == TRUE">
-        <struct name="snor_bus_spi">
+        <struct name="xsnor_bus_spi">
           <brief>SPI-specific configuration fields.</brief>
           <fields>
             <field name="drv" ctype="SPIDriver$I*$N">
@@ -153,18 +153,18 @@
           </fields>
         </struct>
       </condition>
-      <union name="snor_bus_configs">
+      <union name="xsnor_bus_configs">
         <brief>Union of possible bus configurations.</brief>
         <fields>
           <condition check="XSNOR_USE_WSPI == TRUE">
-            <field name="wspi" ctype="struct snor_bus_wspi" />
+            <field name="wspi" ctype="struct xsnor_bus_wspi" />
           </condition>
           <condition check="XSNOR_USE_SPI == TRUE">
-            <field name="spi" ctype="struct snor_bus_spi" />
+            <field name="spi" ctype="struct xsnor_bus_spi" />
           </condition>
         </fields>
       </union>
-      <struct name="snor_config">
+      <struct name="xsnor_config">
         <brief>SNOR driver configuration.</brief>
         <fields>
           <condition check="XSNOR_USE_BOTH == TRUE">
@@ -172,10 +172,10 @@
               <brief>Bus type selection switch.</brief>
             </field>
           </condition>
-          <field name="bus" ctype="union snor_bus_configs">
+          <field name="bus" ctype="union xsnor_bus_configs">
             <brief>WSPI driver configuration.</brief>
           </field>
-          <field name="buffers" ctype="snor_buffers_t$I*$N">
+          <field name="buffers" ctype="xsnor_buffers_t$I*$N">
             <brief>Pointer to the non-cacheable buffers.</brief>
           </field>
           <field name="options" ctype="int">
@@ -183,8 +183,8 @@
           </field>
         </fields>
       </struct>
-      <class name="hal_snor_base" type="abstract" namespace="xsnor"
-        descr="SNOR base driver" ancestorname="base_object">
+      <class name="hal_xsnor_base" type="abstract" namespace="xsnor"
+        descr="XSNOR base driver" ancestorname="base_object">
         <brief>Base class of all SNOR drivers.</brief>
         <implements>
           <if name="flash_interface">
@@ -212,7 +212,7 @@ __xsnor_bus_acquire(self);
 self->state = FLASH_READ;
 
 /* Actual read implementation.*/
-err = snor_device_read(self, offset, n, rp);
+err = xsnor_device_read(self, offset, n, rp);
 
 /* Ready state again.*/
 self->state = FLASH_READY;
@@ -241,7 +241,7 @@ __xsnor_bus_acquire(self);
 self->state = FLASH_PGM;
 
 /* Actual program implementation.*/
-err = snor_device_program(self, offset, n, pp);
+err = xsnor_device_program(self, offset, n, pp);
 
 /* Ready state again.*/
 self->state = FLASH_READY;
@@ -270,7 +270,7 @@ __xsnor_bus_acquire(self);
 self->state = FLASH_ERASE;
 
 /* Actual erase implementation.*/
-err = snor_device_start_erase_all(self);
+err = xsnor_device_start_erase_all(self);
 
 /* Bus released.*/
 __xsnor_bus_release(self);
@@ -296,7 +296,7 @@ __xsnor_bus_acquire(self);
 self->state = FLASH_ERASE;
 
 /* Actual erase implementation.*/
-err = snor_device_start_erase_sector(self, sector);
+err = xsnor_device_start_erase_sector(self, sector);
 
 /* Bus released.*/
 __xsnor_bus_release(self);
@@ -318,7 +318,7 @@ if (self->state == FLASH_ERASE) {
   __xsnor_bus_acquire(self);
 
   /* Actual query erase implementation.*/
-  err = snor_device_query_erase(self, msec);
+  err = xsnor_device_query_erase(self, msec);
 
   /* The device is ready to accept commands.*/
   if (err == FLASH_NO_ERROR) {
@@ -353,7 +353,7 @@ __xsnor_bus_acquire(self);
 self->state = FLASH_READ;
 
 /* Actual verify erase implementation.*/
-err = snor_device_verify_erase(self, sector);
+err = xsnor_device_verify_erase(self, sector);
 
 /* Ready state again.*/
 self->state = FLASH_READY;
@@ -381,10 +381,10 @@ return FLASH_NO_ERROR;
         <fields>
           <field name="state" ctype="flash_state_t">
             <brief>Driver state.</brief></field>
-          <field name="config" ctype="const snor_config_t$I*$N">
+          <field name="config" ctype="const xsnor_config_t$I*$N">
             <brief>Driver configuration.</brief></field>
           <condition check="XSNOR_USE_WSPI == TRUE">
-            <field name="commands" ctype="const snor_commands_t$I*$N">
+            <field name="commands" ctype="const xsnor_commands_t$I*$N">
               <brief>Current commands configuration.</brief>
               <note>This field is meant to be initialized by subclasses on
 object creation.</note>
@@ -414,13 +414,13 @@ osalMutexObjectInit(&self->mutex);]]></implementation>
 self->state = FLASH_UNINIT;]]></implementation>
           </dispose>
           <virtual>
-            <method shortname="init" name="snor_device_init" ctype="flash_error_t">
+            <method shortname="init" name="xsnor_device_init" ctype="flash_error_t">
               <return>An error code.</return>
               <retval value="FLASH_NO_ERROR">Initialization successful.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">Initialization failed.</retval>
               <notapi />
             </method>
-            <method shortname="read" name="snor_device_read" ctype="flash_error_t">
+            <method shortname="read" name="xsnor_device_read" ctype="flash_error_t">
               <brief>Read operation.</brief>
               <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
               <param name="n" ctype="size_t" dir="in">number of bytes to be read</param>
@@ -431,7 +431,7 @@ self->state = FLASH_UNINIT;]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="program" name="snor_device_program" ctype="flash_error_t">
+            <method shortname="program" name="xsnor_device_program" ctype="flash_error_t">
               <brief>Program operation.</brief>
               <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
               <param name="n" ctype="size_t" dir="in">number of bytes to be programmed</param>
@@ -442,14 +442,14 @@ self->state = FLASH_UNINIT;]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="start_erase_all" name="snor_device_start_erase_all" ctype="flash_error_t">
+            <method shortname="start_erase_all" name="xsnor_device_start_erase_all" ctype="flash_error_t">
               <brief>Starts a whole-device erase operation.</brief>
               <return>An error code.</return>
               <retval value="FLASH_NO_ERROR">Operation successful.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="start_erase_sector" name="snor_device_start_erase_sector" ctype="flash_error_t">
+            <method shortname="start_erase_sector" name="xsnor_device_start_erase_sector" ctype="flash_error_t">
               <brief>Starts an sector erase operation.</brief>
               <param name="sector" ctype="flash_sector_t" dir="in">sector to be erased</param>
               <return>An error code.</return>
@@ -457,7 +457,7 @@ self->state = FLASH_UNINIT;]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="query_erase" name="snor_device_query_erase" ctype="flash_error_t">
+            <method shortname="query_erase" name="xsnor_device_query_erase" ctype="flash_error_t">
               <brief>Queries the driver for erase operation progress.</brief>
               <param name="msec" ctype="unsigned *" dir="out">recommended time, in milliseconds,
                that should be spent before calling this function again, can be @p NULL</param>
@@ -466,7 +466,7 @@ self->state = FLASH_UNINIT;]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="verify_erase" name="snor_device_verify_erase" ctype="flash_error_t">
+            <method shortname="verify_erase" name="xsnor_device_verify_erase" ctype="flash_error_t">
               <brief>Returns the erase state of a sector.</brief>
               <param name="sector" ctype="flash_sector_t" dir="in">sector to be verified</param>
               <return>An error code.</return>
@@ -475,7 +475,7 @@ self->state = FLASH_UNINIT;]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">If access to the memory failed.</retval>
               <notapi />
             </method>
-            <method shortname="mmap_on" name="snor_device_mmap_on" ctype="flash_error_t">
+            <method shortname="mmap_on" name="xsnor_device_mmap_on" ctype="flash_error_t">
               <param name="addrp" ctype="uint8_t **" dir="out">pointer to the
                memory mapped memory or @p NULL</param>
               <return>An error code.</return>
@@ -483,7 +483,7 @@ self->state = FLASH_UNINIT;]]></implementation>
               <retval value="FLASH_ERROR_HW_FAILURE">Memory map mode failed.</retval>
               <notapi />
             </method>
-            <method shortname="mmap_off" name="snor_device_mmap_off" ctype="void">
+            <method shortname="mmap_off" name="xsnor_device_mmap_off" ctype="void">
               <notapi />
             </method>
           </virtual>
@@ -494,7 +494,7 @@ self->state = FLASH_UNINIT;]]></implementation>
                 <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
                 <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
                 <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 config->buffers->spibuf[0] = cmd;
 if ((self->descriptor.attributes & FLASH_ATTR_SPI_4BYTES_ADDR_HINT) != 0U) {
@@ -567,7 +567,7 @@ else {
               <brief>Sends a naked command.</brief>
               <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -603,7 +603,7 @@ else {
               <param name="n" ctype="size_t" dir="in">number of bytes to transmit</param>
               <param name="p" ctype="const uint8_t *" dir="in">data buffer</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -640,7 +640,7 @@ else {
               <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
               <param name="p" ctype="uint8_t *" dir="out">data buffer</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -676,7 +676,7 @@ else {
               <param name="cmd" ctype="uint32_t" dir="in">instruction code</param>
               <param name="offset" ctype="flash_offset_t" dir="in">flash offset</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -712,7 +712,7 @@ else {
               <param name="n" ctype="size_t" dir="in">number of bytes to transmit</param>
               <param name="p" ctype="const uint8_t *" dir="in">data buffer</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -749,7 +749,7 @@ else {
               <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
               <param name="p" ctype="uint8_t *" dir="in">data buffer</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -786,7 +786,7 @@ else {
               <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
               <param name="p" ctype="uint8_t *" dir="out">data buffer</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -829,7 +829,7 @@ else {
               <param name="n" ctype="size_t" dir="in">number of bytes to receive</param>
               <param name="p" ctype="uint8_t *" dir="out">data buffer</param>
               <implementation><![CDATA[
-const snor_config_t *config = self->config;
+const xsnor_config_t *config = self->config;
 
 #if XSNOR_USE_BOTH == TRUE
 if (config->bus_type != XSNOR_BUS_MODE_SPI) {
@@ -865,7 +865,7 @@ else {
             </method>
             <method name="xsnorStart" ctype="flash_error_t">
               <brief>Configures and activates a SNOR driver.</brief>
-              <param name="config" ctype="const snor_config_t *" dir="in">pointer to the configuration</param>
+              <param name="config" ctype="const xsnor_config_t *" dir="in">pointer to the configuration</param>
               <return>An error code.</return>
               <retval value="FLASH_NO_ERROR">Operation successful.</retval>
               <retval value="FLASH_ERROR_HW_FAILURE">If initialization failed.</retval>
@@ -897,7 +897,7 @@ else {
 #endif
 
   /* Device identification and initialization.*/
-  err = snor_device_init(self);
+  err = xsnor_device_init(self);
   if (err == FLASH_NO_ERROR) {
     /* Driver in ready state.*/
     self->state = FLASH_READY;
@@ -952,7 +952,7 @@ else {
 flash_error_t err;
 
 /* Activating XIP mode in the device.*/
-err = snor_device_mmap_on(self, addrp);
+err = xsnor_device_mmap_on(self, addrp);
 
 return err;</implementation>
               </method>
@@ -961,7 +961,7 @@ return err;</implementation>
                 <api />
                 <implementation>
 
-snor_device_mmap_off(self);</implementation>
+xsnor_device_mmap_off(self);</implementation>
               </method>
             </condition>
           </regular>
