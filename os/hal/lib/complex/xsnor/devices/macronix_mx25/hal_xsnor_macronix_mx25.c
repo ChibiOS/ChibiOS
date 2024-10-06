@@ -15,16 +15,16 @@
 */
 
 /**
- * @file        hal_snor_macronix_mx25.c
+ * @file        hal_xsnor_macronix_mx25.c
  * @brief       Generated SNOR Macronix MX25 source.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_MACRONIX_MX25
+ * @addtogroup  HAL_XSNOR_MACRONIX_MX25
  * @{
  */
 
 #include "hal.h"
-#include "hal_snor_macronix_mx25.h"
+#include "hal_xsnor_macronix_mx25.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -48,6 +48,6 @@
 
 /* Module code has been generated into an hand-editable file and included
    here.*/
-#include "hal_snor_macronix_mx25_impl.inc"
+#include "hal_xsnor_macronix_mx25_impl.inc"
 
 /** @} */

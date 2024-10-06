@@ -15,18 +15,18 @@
 */
 
 /**
- * @file        hal_snor_base.h
+ * @file        hal_xsnor_base.h
  * @brief       Generated SNOR Base Driver header.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_BASE
+ * @addtogroup  HAL_XSNOR_BASE
  * @brief       SNOR abstract driver.
  * @details     Base class for SNOR flash devices.
  * @{
  */
 
-#ifndef HAL_SNOR_BASE_H
-#define HAL_SNOR_BASE_H
+#ifndef HAL_XSNOR_BASE_H
+#define HAL_XSNOR_BASE_H
 
 #include "oop_base_object.h"
 #include "oop_base_interface.h"
@@ -599,6 +599,6 @@ static inline void xsnor_device_mmap_off(void *ip) {
 }
 /** @} */
 
-#endif /* HAL_SNOR_BASE_H */
+#endif /* HAL_XSNOR_BASE_H */
 
 /** @} */

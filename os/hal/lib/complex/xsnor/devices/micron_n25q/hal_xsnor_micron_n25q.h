@@ -15,21 +15,21 @@
 */
 
 /**
- * @file        hal_snor_micron_n25q.h
+ * @file        hal_xsnor_micron_n25q.h
  * @brief       Generated SNOR Micron N25Q header.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_MICRON_N25Q
+ * @addtogroup  HAL_XSNOR_MICRON_N25Q
  * @brief       SNOR Micron N25Q driver.
  * @details     Module for SNOR Micron N25Q flash devices.
  * @{
  */
 
-#ifndef HAL_SNOR_MICRON_N25Q_H
-#define HAL_SNOR_MICRON_N25Q_H
+#ifndef HAL_XSNOR_MICRON_N25Q_H
+#define HAL_XSNOR_MICRON_N25Q_H
 
 #include "oop_base_object.h"
-#include "hal_snor_base.h"
+#include "hal_xsnor_base.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -91,23 +91,23 @@
 /*===========================================================================*/
 
 /**
- * @class       hal_snor_micron_n25q_c
+ * @class       hal_xsnor_micron_n25q_c
  * @extends     base_object_c, hal_xsnor_base_c.
  *
  *
- * @name        Class @p hal_snor_micron_n25q_c structures
+ * @name        Class @p hal_xsnor_micron_n25q_c structures
  * @{
  */
 
 /**
  * @brief       Type of a SNOR Micron N25Q driver class.
  */
-typedef struct hal_snor_micron_n25q hal_snor_micron_n25q_c;
+typedef struct hal_xsnor_micron_n25q hal_xsnor_micron_n25q_c;
 
 /**
- * @brief       Class @p hal_snor_micron_n25q_c virtual methods table.
+ * @brief       Class @p hal_xsnor_micron_n25q_c virtual methods table.
  */
-struct hal_snor_micron_n25q_vmt {
+struct hal_xsnor_micron_n25q_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_xsnor_base_c.*/
@@ -120,17 +120,17 @@ struct hal_snor_micron_n25q_vmt {
   flash_error_t (*verify_erase)(void *ip, flash_sector_t sector);
   flash_error_t (*mmap_on)(void *ip, uint8_t **addrp);
   void (*mmap_off)(void *ip);
-  /* From hal_snor_micron_n25q_c.*/
+  /* From hal_xsnor_micron_n25q_c.*/
 };
 
 /**
  * @brief       Structure representing a SNOR Micron N25Q driver class.
  */
-struct hal_snor_micron_n25q {
+struct hal_xsnor_micron_n25q {
   /**
    * @brief       Virtual Methods Table.
    */
-  const struct hal_snor_micron_n25q_vmt *vmt;
+  const struct hal_xsnor_micron_n25q_vmt *vmt;
   /**
    * @brief       Implemented interface @p flash_interface_i.
    */
@@ -171,7 +171,7 @@ struct hal_snor_micron_n25q {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  /* Methods of hal_snor_micron_n25q_c.*/
+  /* Methods of hal_xsnor_micron_n25q_c.*/
   void *__n25q_objinit_impl(void *ip, const void *vmt);
   void __n25q_dispose_impl(void *ip);
   flash_error_t __n25q_init_impl(void *ip);
@@ -195,28 +195,28 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @name        Default constructor of hal_snor_micron_n25q_c
+ * @name        Default constructor of hal_xsnor_micron_n25q_c
  * @{
  */
 /**
- * @memberof    hal_snor_micron_n25q_c
+ * @memberof    hal_xsnor_micron_n25q_c
  *
- * @brief       Default initialization function of @p hal_snor_micron_n25q_c.
+ * @brief       Default initialization function of @p hal_xsnor_micron_n25q_c.
  *
- * @param[out]    self          Pointer to a @p hal_snor_micron_n25q_c instance
- *                              to be initialized.
+ * @param[out]    self          Pointer to a @p hal_xsnor_micron_n25q_c
+ *                              instance to be initialized.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
  */
 CC_FORCE_INLINE
-static inline hal_snor_micron_n25q_c *n25qObjectInit(hal_snor_micron_n25q_c *self) {
-  extern const struct hal_snor_micron_n25q_vmt __hal_snor_micron_n25q_vmt;
+static inline hal_xsnor_micron_n25q_c *n25qObjectInit(hal_xsnor_micron_n25q_c *self) {
+  extern const struct hal_xsnor_micron_n25q_vmt __hal_xsnor_micron_n25q_vmt;
 
-  return __n25q_objinit_impl(self, &__hal_snor_micron_n25q_vmt);
+  return __n25q_objinit_impl(self, &__hal_xsnor_micron_n25q_vmt);
 }
 /** @} */
 
-#endif /* HAL_SNOR_MICRON_N25Q_H */
+#endif /* HAL_XSNOR_MICRON_N25Q_H */
 
 /** @} */

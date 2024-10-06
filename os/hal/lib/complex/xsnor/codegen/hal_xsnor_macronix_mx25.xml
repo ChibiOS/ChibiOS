@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="hal_snor_macronix_mx25" descr="SNOR Macronix MX25" editcode="true"
+  name="hal_xsnor_macronix_mx25" descr="SNOR Macronix MX25" editcode="true"
   sourcepath="devices/macronix_mx25" headerpath="devices/macronix_mx25">
   <brief>SNOR Macronix MX25 driver.</brief>
   <details><![CDATA[Module for SNOR Macronix MX25 flash devices.]]></details>
   <imports>
     <import>oop_base_object.xml</import>
-    <import>hal_snor_base.xml</import>
+    <import>hal_xsnor_base.xml</import>
   </imports>
   <public>
     <includes>
       <include style="regular">oop_base_object.h</include>
-      <include style="regular">hal_snor_base.h</include>
+      <include style="regular">hal_xsnor_base.h</include>
     </includes>
     <configs>
     </configs>
@@ -46,7 +46,7 @@ priority, this may slow down the driver a bit however.]]></details>
     </definitions_late>
     <macros></macros>
     <types>
-      <class name="hal_snor_macronix_mx25" type="regular" namespace="mx25"
+      <class name="hal_xsnor_macronix_mx25" type="regular" namespace="mx25"
              descr="SNOR Macronix MX25 driver" ancestorname="hal_xsnor_base">
         <fields>
         </fields>
@@ -150,7 +150,7 @@ return FLASH_NO_ERROR;]]></implementation>
   <private>
     <includes>
       <include style="regular">hal.h</include>
-      <include style="regular">hal_snor_macronix_mx25.h</include>
+      <include style="regular">hal_xsnor_macronix_mx25.h</include>
     </includes>
     <functions></functions>
   </private>

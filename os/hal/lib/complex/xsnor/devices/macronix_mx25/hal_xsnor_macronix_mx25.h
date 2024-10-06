@@ -15,21 +15,21 @@
 */
 
 /**
- * @file        hal_snor_macronix_mx25.h
+ * @file        hal_xsnor_macronix_mx25.h
  * @brief       Generated SNOR Macronix MX25 header.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_MACRONIX_MX25
+ * @addtogroup  HAL_XSNOR_MACRONIX_MX25
  * @brief       SNOR Macronix MX25 driver.
  * @details     Module for SNOR Macronix MX25 flash devices.
  * @{
  */
 
-#ifndef HAL_SNOR_MACRONIX_MX25_H
-#define HAL_SNOR_MACRONIX_MX25_H
+#ifndef HAL_XSNOR_MACRONIX_MX25_H
+#define HAL_XSNOR_MACRONIX_MX25_H
 
 #include "oop_base_object.h"
-#include "hal_snor_base.h"
+#include "hal_xsnor_base.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -91,23 +91,23 @@
 /*===========================================================================*/
 
 /**
- * @class       hal_snor_macronix_mx25_c
+ * @class       hal_xsnor_macronix_mx25_c
  * @extends     base_object_c, hal_xsnor_base_c.
  *
  *
- * @name        Class @p hal_snor_macronix_mx25_c structures
+ * @name        Class @p hal_xsnor_macronix_mx25_c structures
  * @{
  */
 
 /**
  * @brief       Type of a SNOR Macronix MX25 driver class.
  */
-typedef struct hal_snor_macronix_mx25 hal_snor_macronix_mx25_c;
+typedef struct hal_xsnor_macronix_mx25 hal_xsnor_macronix_mx25_c;
 
 /**
- * @brief       Class @p hal_snor_macronix_mx25_c virtual methods table.
+ * @brief       Class @p hal_xsnor_macronix_mx25_c virtual methods table.
  */
-struct hal_snor_macronix_mx25_vmt {
+struct hal_xsnor_macronix_mx25_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From hal_xsnor_base_c.*/
@@ -120,17 +120,17 @@ struct hal_snor_macronix_mx25_vmt {
   flash_error_t (*verify_erase)(void *ip, flash_sector_t sector);
   flash_error_t (*mmap_on)(void *ip, uint8_t **addrp);
   void (*mmap_off)(void *ip);
-  /* From hal_snor_macronix_mx25_c.*/
+  /* From hal_xsnor_macronix_mx25_c.*/
 };
 
 /**
  * @brief       Structure representing a SNOR Macronix MX25 driver class.
  */
-struct hal_snor_macronix_mx25 {
+struct hal_xsnor_macronix_mx25 {
   /**
    * @brief       Virtual Methods Table.
    */
-  const struct hal_snor_macronix_mx25_vmt *vmt;
+  const struct hal_xsnor_macronix_mx25_vmt *vmt;
   /**
    * @brief       Implemented interface @p flash_interface_i.
    */
@@ -171,7 +171,7 @@ struct hal_snor_macronix_mx25 {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  /* Methods of hal_snor_macronix_mx25_c.*/
+  /* Methods of hal_xsnor_macronix_mx25_c.*/
   void *__mx25_objinit_impl(void *ip, const void *vmt);
   void __mx25_dispose_impl(void *ip);
   flash_error_t __mx25_init_impl(void *ip);
@@ -195,28 +195,29 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @name        Default constructor of hal_snor_macronix_mx25_c
+ * @name        Default constructor of hal_xsnor_macronix_mx25_c
  * @{
  */
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  *
- * @brief       Default initialization function of @p hal_snor_macronix_mx25_c.
+ * @brief       Default initialization function of @p
+ *              hal_xsnor_macronix_mx25_c.
  *
- * @param[out]    self          Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[out]    self          Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance to be initialized.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
  */
 CC_FORCE_INLINE
-static inline hal_snor_macronix_mx25_c *mx25ObjectInit(hal_snor_macronix_mx25_c *self) {
-  extern const struct hal_snor_macronix_mx25_vmt __hal_snor_macronix_mx25_vmt;
+static inline hal_xsnor_macronix_mx25_c *mx25ObjectInit(hal_xsnor_macronix_mx25_c *self) {
+  extern const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt;
 
-  return __mx25_objinit_impl(self, &__hal_snor_macronix_mx25_vmt);
+  return __mx25_objinit_impl(self, &__hal_xsnor_macronix_mx25_vmt);
 }
 /** @} */
 
-#endif /* HAL_SNOR_MACRONIX_MX25_H */
+#endif /* HAL_XSNOR_MACRONIX_MX25_H */
 
 /** @} */

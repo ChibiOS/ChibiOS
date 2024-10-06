@@ -26,27 +26,27 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
-/* Module class "hal_snor_macronix_mx25_c" methods.                          */
+/* Module class "hal_xsnor_macronix_mx25_c" methods.                         */
 /*===========================================================================*/
 
 /**
- * @name        Methods implementations of hal_snor_macronix_mx25_c
+ * @name        Methods implementations of hal_xsnor_macronix_mx25_c
  * @{
  */
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
- * @param[out]    ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[out]    ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance to be initialized.
  * @param[in]     vmt           VMT pointer for the new object.
  * @return                      A new reference to the object.
  */
 void *__mx25_objinit_impl(void *ip, const void *vmt) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/
   __xsnor_objinit_impl(self, vmt);
@@ -58,17 +58,17 @@ void *__mx25_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance to be disposed.
  */
 void __mx25_dispose_impl(void *ip) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Finalization code.*/
   /* Implementation.*/
@@ -78,17 +78,17 @@ void __mx25_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_init().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @return                      An error code.
  */
 flash_error_t __mx25_init_impl(void *ip) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -97,12 +97,12 @@ flash_error_t __mx25_init_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_read().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @param[in]     offset        Flash offset.
  * @param[in]     n             Number of bytes to be read.
@@ -111,7 +111,7 @@ flash_error_t __mx25_init_impl(void *ip) {
  */
 flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
                                uint8_t *rp) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -123,12 +123,12 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_program().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @param[in]     offset        Flash offset.
  * @param[in]     n             Number of bytes to be programmed.
@@ -137,7 +137,7 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
  */
 flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
                                   const uint8_t *pp) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -149,17 +149,17 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_start_erase_all().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @return                      An error code.
  */
 flash_error_t __mx25_start_erase_all_impl(void *ip) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -168,18 +168,18 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_start_erase_sector().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @param[in]     sector        Sector to be erased.
  * @return                      An error code.
  */
 flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -189,12 +189,12 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_query_erase().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @param[out]    msec          Recommended time, in milliseconds, that should
  *                              be spent before calling this function again,
@@ -202,7 +202,7 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
  * @return                      An error code.
  */
 flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -212,18 +212,18 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_verify_erase().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @param[in]     sector        Sector to be verified.
  * @return                      An error code.
  */
 flash_error_t __mx25_verify_erase_impl(void *ip, flash_sector_t sector) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -233,18 +233,18 @@ flash_error_t __mx25_verify_erase_impl(void *ip, flash_sector_t sector) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_mmap_on().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  * @param[out]    addrp         Pointer to the memory mapped memory or @p NULL
  * @return                      An error code.
  */
 flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -254,16 +254,16 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
 }
 
 /**
- * @memberof    hal_snor_macronix_mx25_c
+ * @memberof    hal_xsnor_macronix_mx25_c
  * @protected
  *
  * @brief       Override of method @p snor_device_mmap_off().
  *
- * @param[in,out] ip            Pointer to a @p hal_snor_macronix_mx25_c
+ * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
  */
 void __mx25_mmap_off_impl(void *ip) {
-  hal_snor_macronix_mx25_c *self = (hal_snor_macronix_mx25_c *)ip;
+  hal_xsnor_macronix_mx25_c *self = (hal_xsnor_macronix_mx25_c *)ip;
 
   /* Implementation.*/
   (void)self;
@@ -274,7 +274,7 @@ void __mx25_mmap_off_impl(void *ip) {
  * @brief       VMT structure of SNOR Macronix MX25 driver class.
  * @note        It is public because accessed by the inlined constructor.
  */
-const struct hal_snor_macronix_mx25_vmt __hal_snor_macronix_mx25_vmt = {
+const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt = {
   .dispose                  = __mx25_dispose_impl,
   .init                     = __mx25_init_impl,
   .read                     = __mx25_read_impl,

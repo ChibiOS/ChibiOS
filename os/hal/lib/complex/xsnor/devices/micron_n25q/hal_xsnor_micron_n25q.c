@@ -15,16 +15,16 @@
 */
 
 /**
- * @file        hal_snor_micron_n25q.c
+ * @file        hal_xsnor_micron_n25q.c
  * @brief       Generated SNOR Micron N25Q source.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_MICRON_N25Q
+ * @addtogroup  HAL_XSNOR_MICRON_N25Q
  * @{
  */
 
 #include "hal.h"
-#include "hal_snor_micron_n25q.h"
+#include "hal_xsnor_micron_n25q.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -48,6 +48,6 @@
 
 /* Module code has been generated into an hand-editable file and included
    here.*/
-#include "hal_snor_micron_n25q_impl.inc"
+#include "hal_xsnor_micron_n25q_impl.inc"
 
 /** @} */

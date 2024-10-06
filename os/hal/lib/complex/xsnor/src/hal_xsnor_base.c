@@ -15,16 +15,16 @@
 */
 
 /**
- * @file        hal_snor_base.c
+ * @file        hal_xsnor_base.c
  * @brief       Generated SNOR Base Driver source.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_BASE
+ * @addtogroup  HAL_XSNOR_BASE
  * @{
  */
 
 #include "hal.h"
-#include "hal_snor_base.h"
+#include "hal_xsnor_base.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
