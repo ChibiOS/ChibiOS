@@ -135,90 +135,218 @@
 #define FLAGS_ALL_ERRORS                            (FLAGS_E_FAIL | FLAGS_P_FAIL)
 /** @} */
 
+/**
+ * @name    MX25-required transfer modes
+ * @{
+ */
+#define CFG_C8_SPI                      (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE)
+
+#define CFG_C16_8STR                    (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE)
+
+#define CFG_C16_8DTR                    (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE        |   \
+                                         WSPI_CFG_ALL_DTR)
+
+#define CFG_C8_A32_SPI                  (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_ONE_LINE    |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE)
+
+#define CFG_C16_A32_8STR                (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE)
+
+#define CFG_C16_A32_8DTR                (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_NONE        |   \
+                                         WSPI_CFG_ALL_DTR)
+
+#define CFG_C8_DATA_SPI                 (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_ONE_LINE)
+
+#define CFG_C16_DATA_8STR               (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES)
+
+#define CFG_C16_DATA_8DTR               (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_NONE        |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ALL_DTR               |   \
+                                         WSPI_CFG_DQS_ENABLE)
+
+#define CFG_C8_A32_DATA_SPI             (WSPI_CFG_CMD_SIZE_8            |   \
+                                         WSPI_CFG_CMD_MODE_ONE_LINE     |   \
+                                         WSPI_CFG_ADDR_MODE_ONE_LINE    |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_ONE_LINE)
+
+#define CFG_C16_A32_DATA_8STR           (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES)
+
+#define CFG_C16_A32_DATA_8DTR           (WSPI_CFG_CMD_SIZE_16           |   \
+                                         WSPI_CFG_CMD_MODE_EIGHT_LINES  |   \
+                                         WSPI_CFG_ADDR_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ADDR_SIZE_32          |   \
+                                         WSPI_CFG_ALT_MODE_NONE         |   \
+                                         WSPI_CFG_DATA_MODE_EIGHT_LINES |   \
+                                         WSPI_CFG_ALL_DTR               |   \
+                                         WSPI_CFG_DQS_ENABLE)
+/** @} */
+
 #if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
 static const xsnor_commands_t cmd_spi = {
-  .cmd                  = (WSPI_CFG_CMD_SIZE_8              |
-                           WSPI_CFG_CMD_MODE_ONE_LINE       |
-                           WSPI_CFG_ADDR_MODE_NONE          |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_NONE),
-  .cmd_addr             = (WSPI_CFG_CMD_SIZE_8              |
-                           WSPI_CFG_ADDR_SIZE_32            |
-                           WSPI_CFG_CMD_MODE_ONE_LINE       |
-                           WSPI_CFG_ADDR_MODE_ONE_LINE      |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_NONE),
-  .cmd_data             = (WSPI_CFG_CMD_SIZE_8              |
-                           WSPI_CFG_CMD_MODE_ONE_LINE       |
-                           WSPI_CFG_ADDR_MODE_NONE          |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_ONE_LINE),
-  .cmd_addr_data        = (WSPI_CFG_CMD_SIZE_8              |
-                           WSPI_CFG_ADDR_SIZE_32            |
-                           WSPI_CFG_CMD_MODE_ONE_LINE       |
-                           WSPI_CFG_ADDR_MODE_ONE_LINE      |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_ONE_LINE)
+  .cmd                  = CFG_C8_SPI,
+  .cmd_addr             = CFG_C8_A32_SPI,
+  .cmd_data             = CFG_C8_DATA_SPI,
+  .cmd_addr_data        = CFG_C8_A32_DATA_SPI
 };
 
 static const xsnor_commands_t cmd_8str = {
-  .cmd                  = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_NONE          |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_NONE),
-  .cmd_addr             = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_ADDR_SIZE_32            |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_EIGHT_LINES   |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_NONE),
-  .cmd_data             = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_NONE          |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_EIGHT_LINES),
-  .cmd_addr_data        = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_ADDR_SIZE_32            |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_EIGHT_LINES   |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_EIGHT_LINES)
+  .cmd                  = CFG_C16_8STR,
+  .cmd_addr             = CFG_C16_A32_8STR,
+  .cmd_data             = CFG_C16_DATA_8STR,
+  .cmd_addr_data        = CFG_C16_A32_DATA_8STR
 };
 
 static const xsnor_commands_t cmd_8dtr = {
-  .cmd                  = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_NONE          |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_NONE          |
-                           WSPI_CFG_ALL_DTR),
-  .cmd_addr             = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_ADDR_SIZE_32            |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_EIGHT_LINES   |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_NONE          |
-                           WSPI_CFG_ALL_DTR),
-  .cmd_data             = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_NONE          |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_EIGHT_LINES          |
-                           WSPI_CFG_ALL_DTR),
-  .cmd_addr_data        = (WSPI_CFG_CMD_SIZE_16             |
-                           WSPI_CFG_ADDR_SIZE_32            |
-                           WSPI_CFG_CMD_MODE_EIGHT_LINES    |
-                           WSPI_CFG_ADDR_MODE_EIGHT_LINES   |
-                           WSPI_CFG_ALT_MODE_NONE           |
-                           WSPI_CFG_DATA_MODE_EIGHT_LINES          |
-                           WSPI_CFG_ALL_DTR)
+  .cmd                  = CFG_C16_8DTR,
+  .cmd_addr             = CFG_C16_A32_8DTR,
+  .cmd_data             = CFG_C16_DATA_8DTR,
+  .cmd_addr_data        = CFG_C16_A32_DATA_8DTR
+};
+
+/* 1x MX25_CMD_SPI_RSTEN command.*/
+static const wspi_command_t cmd_reset_enable_spi = {
+  .cmd              = CMD_SPI_RSTEN,
+  .cfg              = CFG_C8_SPI,
+  .addr             = 0,
+  .alt              = 0,
+  .dummy            = 0
+};
+
+/* 1x MX25_CMD_SPI_RST command.*/
+static const wspi_command_t cmd_reset_memory_spi = {
+  .cmd              = CMD_SPI_RST,
+  .cfg              = CFG_C8_SPI,
+  .addr             = 0,
+  .alt              = 0,
+  .dummy            = 0
+};
+
+/* 8xSTR MX25_CMD_OPI_RSTEN command.*/
+static const wspi_command_t cmd_reset_enable_8str = {
+  .cmd              = CMD_OPI_RSTEN,
+  .cfg              = CFG_C16_8STR,
+  .addr             = 0,
+  .alt              = 0,
+  .dummy            = 0
+};
+
+/* 8xSTR MX25_CMD_OPI_RST command.*/
+static const wspi_command_t cmd_reset_memory_8str = {
+  .cmd              = CMD_OPI_RST,
+  .cfg              = CFG_C16_8STR,
+  .addr             = 0,
+  .alt              = 0,
+  .dummy            = 0
+};
+
+/* 8xDTR MX25_CMD_OPI_RSTEN command.*/
+static const wspi_command_t cmd_reset_enable_8dtr = {
+  .cmd              = CMD_OPI_RSTEN,
+  .cfg              = CFG_C16_8DTR,
+  .addr             = 0,
+  .alt              = 0,
+  .dummy            = 0
+};
+
+/* 8xDTR MX25_CMD_OPI_RST command.*/
+static const wspi_command_t cmd_reset_memory_8dtr = {
+  .cmd              = CMD_OPI_RST,
+  .cfg              = CFG_C16_8DTR,
+  .addr             = 0,
+  .alt              = 0,
+  .dummy            = 0
 };
 #endif /* XSNOR_USE_WSPI == TRUE */
+
+/* Device identifiers.*/
+static const uint8_t mx25_manufacturer_ids[] = {0xC2};
+static const uint8_t mx25_memory_type_ids[] = {0x85};
 
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
+
+static bool mx25_find_id(const uint8_t *set, size_t size, uint8_t element) {
+  size_t i;
+
+  for (i = 0; i < size; i++) {
+    if (set[i] == element) {
+      return true;
+    }
+  }
+  return false;
+}
+
+#if (XSNOR_USE_WSPI == TRUE) || defined(__DOXYGEN__)
+static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
+
+  /* If the device is in one bit mode then the following commands are
+     rejected because shorter than 8 bits. If the device is in multiple
+     bits mode then the commands are accepted and the device is reset to
+     one bit mode.*/
+  if ((self->config->options &MX25_OPT_USE_DTR) != 0U) {
+    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_8dtr);
+    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_8dtr);
+  }
+  else {
+    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_8str);
+    wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_8str);
+  }
+
+  /* Now the device should be in one bit mode for sure and we perform a
+     device reset.*/
+  wspiCommand(self->config->bus.wspi.drv, &cmd_reset_enable_spi);
+  wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_spi);
+
+  /* The device requires at least 10uS to recover after a reset, it could
+     need up to 100mS in cause a reset occurred during a chip erase, 50uS
+     covers most cases.*/
+  osalThreadSleepMicroseconds(50);
+}
+#endif /* XSNOR_USE_WSPI == TRUE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -323,6 +451,66 @@ flash_error_t __mx25_init_impl(void *ip) {
     return FLASH_ERROR_HW_FAILURE;
   }
 #endif
+
+#if XSNOR_USE_BOTH == TRUE
+  if (config->bus_type == XSNOR_BUS_MODE_SPI)
+#endif
+#if XSNOR_USE_SPI == TRUE
+  {
+    /* Initialization procedure in the SPI case.
+       Reading device ID.*/
+    __xsnor_bus_cmd_receive(self, CMD_SPI_RDID,
+                            3U, &config->buffers->databuf[0]);
+
+    /* Manufacturer identifier.*/
+    if (!mx25_find_id(mx25_manufacturer_ids,
+                      sizeof mx25_manufacturer_ids,
+                      config->buffers->databuf[0])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+
+    /* Memory identifier.*/
+    if (!mx25_find_id(mx25_memory_type_ids,
+                      sizeof mx25_memory_type_ids,
+                      config->buffers->databuf[1])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+  }
+#endif /* XSNOR_USE_SPI == TRUE */
+#if XSNOR_USE_BOTH == TRUE
+  else
+#endif
+#if XSNOR_USE_WSPI == TRUE
+  {
+    /* Attempting a reset of the device, it could be in an unexpected state
+       because a CPU reset does not reset the memory too.*/
+    mx25_reset_memory(self);
+
+    /* Reading device ID and unique ID.*/
+    mx25_read_id(self, &config->buffers->databuf[0]);
+
+    /* Manufacturer identifier.*/
+    if (!mx25_find_id(mx25_manufacturer_ids,
+                      sizeof mx25_manufacturer_ids,
+                      config->buffers->databuf[0])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+
+    /* Memory identifier.*/
+    if (!mx25_find_id(mx25_memory_type_ids,
+                      sizeof mx25_memory_type_ids,
+                      config->buffers->databuf[1])) {
+      return FLASH_ERROR_HW_FAILURE;
+    }
+
+
+
+  }
+#endif /* XSNOR_USE_WSPI == TRUE */
+
+  /* Variable parts of the descriptor.*/
+  self->descriptor.sectors_count = (1U << (size_t)config->buffers->databuf[2]) / self->descriptor.sectors_size;
+  self->descriptor.size = (size_t)self->descriptor.sectors_count * self->descriptor.sectors_size;
 
   return FLASH_NO_ERROR;
 }

@@ -454,6 +454,7 @@ flash_error_t __n25q_init_impl(void *ip) {
 #if XSNOR_USE_BOTH == TRUE
   if (config->bus_type == XSNOR_BUS_MODE_SPI)
 #endif
+#if XSNOR_USE_SPI == TRUE
   {
     /* Initialization procedure in the SPI case.
        Reading device ID.*/
@@ -474,9 +475,11 @@ flash_error_t __n25q_init_impl(void *ip) {
       return FLASH_ERROR_HW_FAILURE;
     }
   }
+#endif /* XSNOR_USE_SPI == TRUE */
 #if XSNOR_USE_BOTH == TRUE
   else
 #endif
+#if XSNOR_USE_WSPI == TRUE
   {
     /* Attempting a reset of the XIP mode, it could be in an unexpected state
        because a CPU reset does not reset the memory too.*/
@@ -566,6 +569,7 @@ flash_error_t __n25q_init_impl(void *ip) {
       /* No need to switch.*/
     }
   }
+#endif /* XSNOR_USE_WSPI == TRUE */
 
   /* Variable parts of the descriptor.*/
   self->descriptor.sectors_count = (1U << (size_t)config->buffers->databuf[2]) / self->descriptor.sectors_size;
