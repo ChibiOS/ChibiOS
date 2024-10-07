@@ -80,6 +80,11 @@
  *              priority, this may slow down the driver a bit however.
  */
 #define MX25_OPT_NICE_WAITING               (1U << 6)
+
+/**
+ * @brief       Enables DTR in 8 lines mode.
+ */
+#define MX25_OPT_USE_DTR                    (1U << 7)
 /** @} */
 
 /*===========================================================================*/

@@ -17,7 +17,6 @@
 /* This is an, automatically generated, implementation file that can be
    manually edited, it is not re-generated if already present.*/
 
-
 #define PAGE_SIZE                                   256U
 #define PAGE_MASK                                   (PAGE_SIZE - 1U)
 
@@ -378,6 +377,9 @@ void *__n25q_objinit_impl(void *ip, const void *vmt) {
   __xsnor_objinit_impl(self, vmt);
 
   /* Initialization code.*/
+  self->descriptor.attributes    = FLASH_ATTR_ERASED_IS_ONE |
+                                   FLASH_ATTR_REWRITABLE |
+                                   FLASH_ATTR_SUSPEND_ERASE_CAPABLE;
   self->descriptor.page_size     = 256U;
   self->descriptor.sectors_count = 0U; /* Overwritten.*/
   self->descriptor.sectors       = NULL;

@@ -4,13 +4,13 @@
 include $(CHIBIOS)/os/common/oop/oop.mk
 
 # Required files.
-ifeq ($(XSNORSRC),)
+ifndef XSNORSRC
   XSNORSRC := $(CHIBIOS)/os/hal/lib/complex/xsnor/src/hal_xsnor_base.c
   ALLCSRC += $(XSNORSRC)
 endif
 
 # Required include directories
-ifeq ($(XSNORINC),)
+ifndef XSNORINC
   XSNORINC := $(CHIBIOS)/os/hal/lib/complex/xsnor/include
   ALLINC += $(XSNORINC)
 endif
