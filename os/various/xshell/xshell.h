@@ -100,6 +100,13 @@
 #define XSHELL_LOGOUT_STR                   "\r\n"
 #endif
 
+/**
+ * @brief   Muti-command mode.
+ */
+#if !defined(XSHELL_MULTI_COMMAND_LINE) || defined(__DOXYGEN__)
+#define XSHELL_MULTI_COMMAND_LINE           TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

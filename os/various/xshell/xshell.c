@@ -71,6 +71,8 @@ static char *fetch_argument(char **pp) {
   ap += strspn(ap, " \t");
 
   if (*ap == '\0') {
+
+    /* Argument is empty.*/
     return  NULL;
   }
 
@@ -79,20 +81,39 @@ static char *fetch_argument(char **pp) {
        quote.*/
     ap++;
     p = strpbrk(ap, "\"");
+#if XSHELL_MULTI_COMMAND_LINE == TRUE
+    if (p != NULL) {
+
+      /* If the string is quoted terminate the string and point at the
+         next delimiter.*/
+      *p++ = '\0';
+    }
+#endif
   }
   else {
-    /* The delimiter is white space.*/
+
+
+#if XSHELL_MULTI_COMMAND_LINE == TRUE
+    /* Look for white space delimiter or separator.*/
+    p = strpbrk(ap, " \t;");
+#else
+    /* Look for white space delimiter.*/
     p = strpbrk(ap, " \t");
+#endif
   }
 
   if (p != NULL) {
-    /* Replacing the delimiter with a zero.*/
+#if XSHELL_MULTI_COMMAND_LINE != TRUE
+    /* Replace the delimiter with a string terminator.*/
     *p++ = '\0';
+#endif
   }
   else {
     /* Final one, pointing on the final zero.*/
     p = ap + strlen(ap);
   }
+
+  /* Update the token pointer.*/
   *pp = p;
 
   return ap;
@@ -157,54 +178,73 @@ static THD_FUNCTION(xshell_thread, p) {
 
     /* Fetching arguments.*/
     tokp = line;
-    n = 0;
-    while ((ap = fetch_argument(&tokp)) != NULL) {
-      if (n < XSHELL_MAX_ARGUMENTS) {
-        args[n++] = ap;
-      }
-      else {
-        n = 0;
-        chprintf(stream, "too many arguments" XSHELL_NEWLINE_STR);
-        break;
-      }
-    }
-    args[n] = NULL;
+#if XSHELL_MULTI_COMMAND_LINE == TRUE
+    char delim = '\0';
+    do {
+#endif
+      n = 0;
+      while ((ap = fetch_argument(&tokp)) != NULL) {
+        if (n < XSHELL_MAX_ARGUMENTS) {
+          args[n++] = ap;
+#if XSHELL_MULTI_COMMAND_LINE == TRUE
+          delim = *tokp;
 
-    /* Special case for empty lines.*/
-    if (n == 0) {
-      continue;
-    }
+          /* Terminate the argument string.*/
+          *tokp++ = '\0';
+          if (delim == ';' || delim == '\0') {
 
-    /* Built-in commands, just "help" currently.*/
-    if (strcmp(args[0], "help") == 0) {
-      if (n > 1) {
-        xshellUsage(stream, "help");
-        continue;
-      }
-
-      /* Printing the commands list.*/
-      chprintf(stream, "Commands: help ");
-      list_commands(stream, xshell_local_commands);
-      if (smp->config->commands != NULL) {
-        list_commands(stream, smp->config->commands);
-      }
-      chprintf(stream, XSHELL_NEWLINE_STR);
-    }
-    else {
-      /* Trying local commands.*/
-      if (cmdexec(smp, xshell_local_commands, stream, args[0], n, args)) {
-
-        /* Failed, trying user commands (if defined).*/
-        if ((smp->config->commands == NULL) ||
-            cmdexec(smp, smp->config->commands, stream, args[0], n, args)) {
-
-          /* Failed, command not found.*/
-          chprintf(stream, "%s?" XSHELL_NEWLINE_STR, args[0]);
+            /* End of command arguments.*/
+            break;
+          }
+#endif
+        }
+        else {
+          n = 0;
+          chprintf(stream, "%s: too many arguments" XSHELL_NEWLINE_STR, args[0]);
+          break;
         }
       }
 
-      /* Command executed.*/
-    }
+      /* End of arguments.*/
+      args[n] = NULL;
+
+      /* Process command if parsed.*/
+      if (n > 0) {
+
+        /* Built-in commands, just "help" currently.*/
+        if (strcmp(args[0], "help") == 0) {
+          if (n > 1) {
+            xshellUsage(stream, "help");
+            continue;
+          }
+
+          /* Printing the commands list.*/
+          chprintf(stream, "Commands: help ");
+          list_commands(stream, xshell_local_commands);
+          if (smp->config->commands != NULL) {
+            list_commands(stream, smp->config->commands);
+          }
+          chprintf(stream, XSHELL_NEWLINE_STR);
+        }
+        else {
+          /* Trying local commands.*/
+          if (cmdexec(smp, xshell_local_commands, stream, args[0], n, args)) {
+
+            /* Failed, trying user commands (if defined).*/
+            if ((smp->config->commands == NULL) ||
+                cmdexec(smp, smp->config->commands, stream, args[0], n, args)) {
+
+              /* Failed, command not found.*/
+              chprintf(stream, "%s?" XSHELL_NEWLINE_STR, args[0]);
+            }
+          }
+          /* Command executed.*/
+        }
+      }
+#if XSHELL_MULTI_COMMAND_LINE == TRUE
+      /* If arg parsing OK process next ommand.*/
+    } while (n != 0 && delim == ';');
+#endif
   }
 
   /* Atomically broadcasting the event source and terminating the thread,
@@ -493,7 +533,7 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
       xshell_reset_line(smp, stream);
       continue;
     }
-#endif
+#endif /* XSHELL_HISTORY_DEPTH > 0 */
     if (c == CTRL('D')) {
       return true;
     }
