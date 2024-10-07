@@ -293,7 +293,7 @@ static void n25q_reset_xip(hal_xsnor_micron_n25q_c *self) {
     cmd.cfg |= WSPI_CFG_ADDR_MODE_FOUR_LINES | WSPI_CFG_DATA_MODE_FOUR_LINES;
     break;
   default:
-    cmd.cfg |= WSPI_CFG_ADDR_MODE_ONE_LINE | WSPI_CFG_DATA_MODE_ONE_LINE;
+    osalDbgAssert(false, "invalid bus type");
   }
 
   /* Resetting XIP.*/
@@ -531,7 +531,7 @@ flash_error_t __n25q_init_impl(void *ip) {
         config->buffers->databuf[0] = 0x4FU;
         break;
       default:
-        config->buffers->databuf[0] = 0xCFU;
+        osalDbgAssert(false, "invalid bus type");
       }
       wspiSend(config->bus.wspi.drv, &cmd,
                1, &config->buffers->databuf[0]);
@@ -828,7 +828,7 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
                 WSPI_CFG_ALT_MODE_FOUR_LINES |  /* Always 4 lines, note.*/
                 WSPI_CFG_ALT_SIZE_8 |
                 WSPI_CFG_SIOO;
-    cmd.cmd   = 0U;
+    cmd.cmd   = CMD_FAST_READ;
     cmd.addr  = 0U;
     cmd.alt   = 0U;
     cmd.dummy = (self->config->options & N25Q_OPT_DUMMY_CYCLES_MASK) - 2U;
@@ -851,9 +851,7 @@ flash_error_t __n25q_mmap_on_impl(void *ip, uint8_t **addrp) {
                  WSPI_CFG_DATA_MODE_FOUR_LINES;
       break;
     default:
-      cmd.cfg |= WSPI_CFG_CMD_MODE_ONE_LINE |
-                 WSPI_CFG_ADDR_MODE_ONE_LINE |
-                 WSPI_CFG_DATA_MODE_ONE_LINE;
+      osalDbgAssert(false, "invalid bus type");
     }
     wspiMapFlash(self->config->bus.wspi.drv, &cmd, addrp);
 
