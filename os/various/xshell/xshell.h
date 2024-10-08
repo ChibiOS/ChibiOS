@@ -107,6 +107,13 @@
 #define XSHELL_MULTI_COMMAND_LINE           TRUE
 #endif
 
+/**
+ * @brief   Line editing mode.
+ */
+#if !defined(XSHELL_LINE_EDITING) || defined(__DOXYGEN__)
+#define XSHELL_LINE_EDITING                 TRUE
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/

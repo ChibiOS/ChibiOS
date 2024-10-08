@@ -29,6 +29,7 @@
 #include "xshell.h"
 #include "xshell_cmd.h"
 #include "chprintf.h"
+#include <stdlib.h>
 
 static void *alloc_thread(size_t size, unsigned align);
 
@@ -242,7 +243,7 @@ static THD_FUNCTION(xshell_thread, p) {
         }
       }
 #if XSHELL_MULTI_COMMAND_LINE == TRUE
-      /* If arg parsing OK process next ommand.*/
+      /* If argument parsing OK then process next command.*/
     } while (n != 0 && delim == ';');
 #endif
   }
@@ -292,7 +293,7 @@ static size_t xshell_get_history_prev(xshell_manager_t *smp, char *line) {
 
   p = smp->history_current - XSHELL_LINE_LENGTH;
     if (p < smp->history_buffer[0]) {
-    p = smp->history_buffer[XSHELL_HISTORY_DEPTH - 1];
+      p = smp->history_buffer[0];
   }
   if ((len = strlen(p)) > (size_t)0) {
     smp->history_current = p;
@@ -312,7 +313,7 @@ static size_t xshell_get_history_next(xshell_manager_t *smp, char *line) {
 
   p = smp->history_current + XSHELL_LINE_LENGTH;
     if (p > smp->history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
-    p = smp->history_buffer[0];
+      p = smp->history_buffer[XSHELL_HISTORY_DEPTH - 1];
   }
   if ((len = strlen(p)) > (size_t)0) {
     smp->history_current = p;
@@ -322,19 +323,6 @@ static size_t xshell_get_history_next(xshell_manager_t *smp, char *line) {
   chMtxUnlock(&smp->history_mutex);
 
   return len;
-}
-
-static void xshell_reset_line(xshell_manager_t *smp,
-                              BaseSequentialStream *stream) {
-#if XSHELL_PROMPT_STR_LENGTH > 0
-  chprintf(stream, "\033[%dD%s\033[K",
-           XSHELL_LINE_LENGTH + strlen(smp->prompt) + 2,
-           smp->prompt);
-#else
-  chprintf(stream, "\033[%dD%s\033[K",
-           XSHELL_LINE_LENGTH + strlen(smp->config->prompt) + 2,
-           smp->config->prompt);
-#endif
 }
 
 static bool xshell_is_line_empty(const char *str) {
@@ -348,7 +336,37 @@ static bool xshell_is_line_empty(const char *str) {
 
   return true;
 }
+#endif /* (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__) */
+
+#if (XSHELL_LINE_EDITING == TRUE) || (XSHELL_HISTORY_DEPTH > 0) ||            \
+                                      defined(__DOXYGEN__)
+static void xshell_reset_line(xshell_manager_t *smp,
+                              BaseSequentialStream *stream) {
+#if XSHELL_PROMPT_STR_LENGTH > 0
+  chprintf(stream, "\033[%dD%s\033[K",
+           XSHELL_LINE_LENGTH + strlen(smp->prompt) + 2,
+           smp->prompt);
+#else
+  chprintf(stream, "\033[%dD%s\033[K",
+           XSHELL_LINE_LENGTH + strlen(smp->config->prompt) + 2,
+           smp->config->prompt);
 #endif
+}
+#endif /* (XSHELL_LINE_EDITING == TRUE) || (XSHELL_HISTORY_DEPTH > 0) ||
+                                    defined(__DOXYGEN__) */
+
+#if (XSHELL_LINE_EDITING == TRUE)  || defined(__DOXYGEN__)
+static void xshell_move_cursor(BaseSequentialStream *stream, int pos) {
+
+  if (pos < 0) {
+    pos = abs(pos);
+    chprintf(stream, "\033[%dD", pos);
+  }
+  else if (pos > 0) {
+    chprintf(stream, "\033[%dC", pos);
+  }
+}
+#endif /* (XSHELL_LINE_EDITING == TRUE)  || defined(__DOXYGEN__) */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -408,7 +426,8 @@ thread_t *xshellSpawn(xshell_manager_t *smp,
 #if CH_CFG_USE_HEAP == TRUE
     if (smp->config->use_heap) {
       /* Using heap allocator.*/
-      sbase = chHeapAllocAligned(NULL, smp->config->stack.size, PORT_WORKING_AREA_ALIGN);
+      sbase = chHeapAllocAligned(NULL, smp->config->stack.size,
+                                                    PORT_WORKING_AREA_ALIGN);
     }
     else {
 #endif
@@ -472,23 +491,93 @@ thread_t *xshellSpawn(xshell_manager_t *smp,
 bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
                    char *line, size_t size) {
   char *p;
-#if XSHELL_HISTORY_DEPTH > 0
+
+#if (XSHELL_LINE_EDITING == TRUE) || (XSHELL_HISTORY_DEPTH > 0)
   bool escape = false;
   bool bracket = false;
 
+#if XSHELL_LINE_EDITING == TRUE
+  bool vt      = false;
+#endif
+#if XSHELL_HISTORY_DEPTH > 0
   smp->history_current = smp->history_head;
+#endif
 #else
 
   (void)smp;
 #endif
 
+  memset(line, '\0', size);
   p = line;
   while (true) {
     char c;
 
     if (streamRead(stream, (uint8_t *)&c, 1) == 0)
       return true;
-#if XSHELL_HISTORY_DEPTH > 0
+#if (XSHELL_LINE_EDITING == TRUE) && (XSHELL_HISTORY_DEPTH == 0)
+    /* Escape sequences decoding.*/
+    if (c == 27) {
+      escape = true;
+      continue;
+    }
+    if (escape) {
+      if (c == '[') {
+        bracket = true;
+        continue;
+      }
+      else {
+        escape = false;
+      }
+      if (bracket) {
+        escape = false;
+        bracket = false;
+        if (c == 'D') {
+          /* Cursor back.*/
+          if (p != line) {
+            xshell_move_cursor(stream, (int)-1);
+            p--;
+          }
+          continue;
+        }
+        if (c == 'C') {
+          /* Cursor forward. Check if already at end of input.*/
+          if (*p != '\0') {
+
+            /* Not already at current end of input.*/
+            xshell_move_cursor(stream, (int)1);
+            p++;
+          }
+          continue;
+        }
+        if (c == '3') {
+          /* VT sequence. Followed by ~ for delete.*/
+          vt = true;
+          continue;
+        }
+      }
+    }
+    if (c == '~' && vt == true) {
+      /* Do delete at cursor. TODO: Add support INSERT/OVERWRITE mode.*/
+      vt = false;
+      memmove(p, p + 1, strlen(p + 1) + 1);
+      xshell_reset_line(smp, stream);
+      chprintf(stream, "%s", line);
+      xshell_move_cursor(stream, (int)(-strlen(p)));
+      continue;
+    }
+    vt = false;
+    if ((c == CTRL('H')) || (c == 127)) {
+      if (p != line) {
+        p--;
+        memmove(p, p + 1, strlen(p) + 1);
+        xshell_reset_line(smp, stream);
+        chprintf(stream, "%s", line);
+        xshell_move_cursor(stream, (int)(-strlen(p)));
+      }
+      continue;
+    }
+#endif /* (XSHELL_LINE_EDITING == TRUE) && (XSHELL_HISTORY_DEPTH == 0) */
+#if (XSHELL_LINE_EDITING == TRUE) && (XSHELL_HISTORY_DEPTH > 0)
     /* Escape sequences decoding.*/
     if (c == 27) {
       escape = true;
@@ -506,6 +595,7 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
         escape = false;
         bracket = false;
         if (c == 'A') {
+          /* Cursor up.*/
           size_t len = xshell_get_history_prev(smp, line);
 
           if (len > (size_t)0) {
@@ -516,6 +606,98 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
           continue;
         }
         if (c == 'B') {
+          /* Cursor down.*/
+          size_t len = xshell_get_history_next(smp, line);
+
+          if (len > (size_t)0) {
+            xshell_reset_line(smp, stream);
+            chprintf(stream, "%s", line);
+            p = line + len;
+          }
+          continue;
+        }
+        if (c == 'C') {
+          /* Cursor forward. Check if already at end of input.*/
+          if (*p != '\0') {
+
+            /* Not already at current end of input.*/
+            xshell_move_cursor(stream, (int)1);
+            p++;
+          }
+          continue;
+        }
+        if (c == 'D') {
+          /* Cursor back.*/
+          if (p != line) {
+            xshell_move_cursor(stream, (int)-1);
+            p--;
+          }
+          continue;
+        }
+        if (c == '3') {
+          /* VT sequence. Followed by ~ for delete.*/
+          vt = true;
+          continue;
+        }
+      }
+    }
+    if (c == '~' && vt == true) {
+      /* Do delete at cursor. TODO: Add support INSERT/OVERWRITE mode.*/
+      vt = false;
+      memmove(p, p + 1, strlen(p + 1) + 1);
+      xshell_reset_line(smp, stream);
+      chprintf(stream, "%s", line);
+      xshell_move_cursor(stream, (int)(-strlen(p)));
+      continue;
+    }
+    vt = false;
+    if (c == CTRL('U')) {
+      smp->history_current = smp->history_head;
+      p = line;
+      xshell_reset_line(smp, stream);
+      continue;
+    }
+    if ((c == CTRL('H')) || (c == 127)) {
+      if (p != line) {
+        p--;
+        memmove(p, p + 1, strlen(p) + 1);
+        xshell_reset_line(smp, stream);
+        chprintf(stream, "%s", line);
+        xshell_move_cursor(stream, (int)(-strlen(p)));
+      }
+      continue;
+    }
+#endif /* (XSHELL_LINE_EDITING == TRUE) && (XSHELL_HISTORY_DEPTH > 0) */
+#if (XSHELL_HISTORY_DEPTH > 0) && (XSHELL_LINE_EDITING == FALSE)
+    /* Escape sequences decoding.*/
+    if (c == 27) {
+      escape = true;
+      continue;
+    }
+    if (escape) {
+      if (c == '[') {
+        bracket = true;
+        continue;
+      }
+      else {
+        escape = false;
+      }
+      if (bracket) {
+        escape = false;
+        bracket = false;
+        if (c == 'A') {
+          /* Cursor up.*/
+          size_t len = xshell_get_history_prev(smp, line);
+
+          if (len > (size_t)0) {
+            xshell_reset_line(smp, stream);
+            chprintf(stream, "%s", line);
+            p = line + len;
+          }
+          continue;
+        }
+        if (c == 'B') {
+          /* Cursor down.*/
           size_t len = xshell_get_history_next(smp, line);
 
           if (len > (size_t)0) {
@@ -533,10 +715,6 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
       xshell_reset_line(smp, stream);
       continue;
     }
-#endif /* XSHELL_HISTORY_DEPTH > 0 */
-    if (c == CTRL('D')) {
-      return true;
-    }
     if ((c == CTRL('H')) || (c == 127)) {
       if (p != line) {
         streamWrite(stream, (const uint8_t *)"\010 \010", 3);
@@ -544,9 +722,29 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
       }
       continue;
     }
+#endif /* (XSHELL_HISTORY_DEPTH > 0) && (XSHELL_LINE_EDITING == FALSE) */
+#if (XSHELL_HISTORY_DEPTH == 0) && (XSHELL_LINE_EDITING == FALSE)
+    if ((c == CTRL('H')) || (c == 127)) {
+      if (p != line) {
+        streamWrite(stream, (const uint8_t *)"\010 \010", 3);
+        p--;
+      }
+      continue;
+    }
+#endif /* (XSHELL_HISTORY_DEPTH == 0) && (XSHELL_LINE_EDITING == FALSE) */
+
+    /* Check for session close.*/
+    if (c == CTRL('D')) {
+      return true;
+    }
+    /* Check for execute line.*/
     if (strchr(XSHELL_EXECUTE_CHARS, c) != NULL) {
+#if XSHELL_LINE_EDITING == TRUE
+      /* Redraw the input line.*/
+      xshell_reset_line(smp, stream);
+      chprintf(stream, "%s", line);
+#endif
       chprintf(stream, XSHELL_NEWLINE_STR);
-      *p = 0;
 #if XSHELL_HISTORY_DEPTH > 0
       if (!xshell_is_line_empty(line)) {
         xshell_save_history(smp, line);
@@ -556,10 +754,37 @@ bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
     }
     if (c < 0x20)
       continue;
+#if XSHELL_LINE_EDITING == TRUE
+    if (p < line + size - 1) {
+
+      /* Check if cursor at current EOL.*/
+      if (*p != '\0') {
+
+        /* This is an insert so move line data and insert new character.*/
+        memmove(p + 1, p, strlen(p) + 1);
+        *p = (char)c;
+
+        /* Redraw line. Cursor will be at end of output.*/
+        xshell_reset_line(smp, stream);
+        chprintf(stream, "%s", line);
+
+        /* Restore cursor position.*/
+        xshell_move_cursor(stream, -strlen(p) + 1);
+      }
+      else {
+
+        /* At end of line so just output and store character.*/
+        streamPut(stream, c);
+        *p = (char)c;
+      }
+      p++;
+    }
+#else
     if (p < line + size - 1) {
       streamPut(stream, c);
       *p++ = (char)c;
     }
+#endif
   }
 }
 
