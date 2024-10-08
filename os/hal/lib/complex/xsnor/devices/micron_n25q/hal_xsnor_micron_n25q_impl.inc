@@ -238,7 +238,7 @@ static flash_error_t n25q_poll_status(hal_xsnor_micron_n25q_c *self) {
 
     /* Read status command.*/
     __xsnor_bus_cmd_receive(self, CMD_READ_FLAG_STATUS_REGISTER,
-                            1, &self->config->buffers->databuf[0]);
+                            1U, &self->config->buffers->databuf[0]);
   } while ((self->config->buffers->databuf[0] & FLAGS_PROGRAM_ERASE) == 0U);
 
   /* Checking for errors.*/
