@@ -37,9 +37,14 @@ static uint8_t __lfs_read_buffer[16];
 static uint8_t __lfs_prog_buffer[16];
 static uint8_t __lfs_lookahead_buffer[16];
 
+static const hal_lfs_binding_t binding1 = {
+  .base                 = 16,
+  .flp                  = (BaseFlash *)&snor1
+};
+
 static const struct lfs_config lfscfg = {
     /* Link to the flash device driver.*/
-    .context            = &snor1,
+    .context            = (void *)&binding1,
 
     /* Block device operations.*/
     .read               = __lfs_read,
