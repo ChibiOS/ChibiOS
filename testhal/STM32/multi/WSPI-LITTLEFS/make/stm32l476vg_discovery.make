@@ -90,9 +90,9 @@ MCU  = cortex-m4
 
 # Imported source files and paths.
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg/stm32l4r9ai_discovery
-BUILDDIR := ./build/stm32l4r9ai_discovery
-DEPDIR   := ./.dep/stm32l4r9ai_discovery
+CONFDIR  := ./cfg/stm32l476vg_discovery
+BUILDDIR := ./build/stm32l476vg_discovery
+DEPDIR   := ./.dep/stm32l476vg_discovery
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -100,8 +100,8 @@ include $(CHIBIOS)/os/license/license.mk
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l4xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx+/platform.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32L4R9I_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_STM32L476_DISCOVERY/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
@@ -119,7 +119,7 @@ include $(CHIBIOS)/os/hal/lib/complex/xsnor/devices/macronix_mx25/hal_xsnor_macr
 include $(CHIBIOS)/os/various/littlefs_bindings/littlefs.mk
 
 # Define linker script file here.
-LDSCRIPT= $(STARTUPLD)/STM32L4R9xI.ld
+LDSCRIPT= $(STARTUPLD)/STM32L476xG.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

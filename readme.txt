@@ -74,6 +74,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Improved LFS support, not it is possible to make an LFS file system
+       at arbitrary positions in flash.
 - NEW: New XSNOR framework replacing the old serial_nor. It allows multiple
        device types on multiple interfaces and devices auto-detection.
        STM32-WSPI-MFS demo modified to showcase the new capabilities.
