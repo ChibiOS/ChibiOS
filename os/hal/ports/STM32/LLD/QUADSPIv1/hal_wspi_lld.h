@@ -58,21 +58,24 @@
 #define WSPI_CFG_CMD_MODE_ONE_LINE          (1U << 8)
 #define WSPI_CFG_CMD_MODE_TWO_LINES         (2U << 8)
 #define WSPI_CFG_CMD_MODE_FOUR_LINES        (3U << 8)
-#define WSPI_CFG_CMD_MODE_EIGHT_LINES       0U
+#define WSPI_CFG_CMD_MODE_EIGHT_LINES       0U          /* Fake.*/
 
-#define WSPI_CFG_CMD_DDR                    (1U << 31)
+#define WSPI_CFG_CMD_DTR                    (1U << 31)
 
 #define WSPI_CFG_CMD_SIZE_MASK              0U
 #define WSPI_CFG_CMD_SIZE_8                 0U
+#define WSPI_CFG_CMD_SIZE_16                0U          /* Fake.*/
+#define WSPI_CFG_CMD_SIZE_24                0U          /* Fake.*/
+#define WSPI_CFG_CMD_SIZE_32                0U          /* Fake.*/
 
 #define WSPI_CFG_ADDR_MODE_MASK             (3U << 10)
 #define WSPI_CFG_ADDR_MODE_NONE             (0U << 10)
 #define WSPI_CFG_ADDR_MODE_ONE_LINE         (1U << 10)
 #define WSPI_CFG_ADDR_MODE_TWO_LINES        (2U << 10)
 #define WSPI_CFG_ADDR_MODE_FOUR_LINES       (3U << 10)
-#define WSPI_CFG_ADDR_MODE_EIGHT_LINES      0U
+#define WSPI_CFG_ADDR_MODE_EIGHT_LINES      0U          /* Fake.*/
 
-#define WSPI_CFG_ADDR_DDR                   (1U << 31)
+#define WSPI_CFG_ADDR_DTR                   (1U << 31)
 
 #define WSPI_CFG_ADDR_SIZE_MASK             (3U << 12)
 #define WSPI_CFG_ADDR_SIZE_8                (0U << 12)
@@ -85,9 +88,9 @@
 #define WSPI_CFG_ALT_MODE_ONE_LINE          (1U << 14)
 #define WSPI_CFG_ALT_MODE_TWO_LINES         (2U << 14)
 #define WSPI_CFG_ALT_MODE_FOUR_LINES        (3U << 14)
-#define WSPI_CFG_ALT_MODE_EIGHT_LINES       0U
+#define WSPI_CFG_ALT_MODE_EIGHT_LINES       0U          /* Fake.*/
 
-#define WSPI_CFG_ALT_DDR                    (1U << 31)
+#define WSPI_CFG_ALT_DTR                    (1U << 31)
 
 #define WSPI_CFG_ALT_SIZE_MASK              (3U << 16)
 #define WSPI_CFG_ALT_SIZE_8                 (0U << 16)
@@ -100,11 +103,18 @@
 #define WSPI_CFG_DATA_MODE_ONE_LINE         (1U << 24)
 #define WSPI_CFG_DATA_MODE_TWO_LINES        (2U << 24)
 #define WSPI_CFG_DATA_MODE_FOUR_LINES       (3U << 24)
-#define WSPI_CFG_DATA_MODE_EIGHT_LINES      0U
+#define WSPI_CFG_DATA_MODE_EIGHT_LINES      0U          /* Fake.*/
 
-#define WSPI_CFG_DATA_DDR                   (1U << 31)
+#define WSPI_CFG_DATA_DTR                   (1U << 31)
+
+#define WSPI_CFG_DQS_ENABLE                 0U          /* Fake.*/
 
 #define WSPI_CFG_SIOO                       (1U << 28)
+
+#define WSPI_CFG_ALL_DTR                    (WSPI_CFG_CMD_DTR   |           \
+                                             WSPI_CFG_ADDR_DTR  |           \
+                                             WSPI_CFG_ALT_DTR   |           \
+                                             WSPI_CFG_DATA_DTR)
 /** @} */
 
 /**
