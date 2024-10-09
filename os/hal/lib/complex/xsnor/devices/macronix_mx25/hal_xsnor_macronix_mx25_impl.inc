@@ -648,6 +648,10 @@ flash_error_t __mx25_init_impl(void *ip) {
       return FLASH_ERROR_HW_FAILURE;
     }
 
+    /* Setting up dummy cycles, note this is a volatile-only setting.*/
+    config->buffers->databuf[4] = ~(((self->config->options & MX25_OPT_DUMMY_CYCLES_MASK) - 6U) / 2U) & 7U;
+    mx25_write_cr2(self, 0x00000300U, &config->buffers->databuf[4]);
+
     /* Checking if the bus switch is needed, there are extra steps in
        that case.*/
     if ((self->config->options & MX25_OPT_NO_WIDTH_SWITCH) == 0U) {
@@ -695,10 +699,8 @@ flash_error_t __mx25_init_impl(void *ip) {
 #endif /* XSNOR_USE_WSPI == TRUE */
 
   /* Variable parts of the descriptor.*/
-  self->descriptor.sectors_count = (1U << ((size_t)config->buffers->databuf[2]) & 0x1FU) /
-                                   self->descriptor.sectors_size;
-  self->descriptor.size = (size_t)self->descriptor.sectors_count *
-                          self->descriptor.sectors_size;
+  self->descriptor.size = (uint32_t)(1U << ((size_t)config->buffers->databuf[2] & 0x1FU));
+  self->descriptor.sectors_count = self->descriptor.size / self->descriptor.sectors_size;
 
   return FLASH_NO_ERROR;
 }
