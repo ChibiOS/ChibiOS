@@ -75,10 +75,10 @@
 #endif
 
 /*===========================================================================*/
-/* STM32L432xx.                                                              */
+/* STM32L431xx, STM32L432xx.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32L432xx) || defined(__DOXYGEN__)
+#if defined(STM32L431xx) || defined(STM32L432xx) || defined(__DOXYGEN__)
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSI16                 TRUE
@@ -182,13 +182,22 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 7))
 #define STM32_I2C1_TX_DMA_CHN               0x05300000
 
+#if defined(STM32L431xx) || defined(__DOXYGEN__)
+#define STM32_HAS_I2C2                      TRUE
+#define STM32_I2C2_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5))
+#define STM32_I2C2_RX_DMA_CHN               0x00030000
+#define STM32_I2C2_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_I2C2_TX_DMA_CHN               0x00003000
+#else
+#define STM32_HAS_I2C2                      FALSE
+#endif /* defined(STM32L431xx) */
+
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_I2C3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 3))
 #define STM32_I2C3_RX_DMA_CHN               0x00000300
 #define STM32_I2C3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 2))
 #define STM32_I2C3_TX_DMA_CHN               0x00000030
 
-#define STM32_HAS_I2C2                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
 /* QUADSPI attributes.*/
@@ -211,6 +220,17 @@
                                              STM32_DMA_STREAM_ID_MSK(2, 4))
 #define STM32_SPI1_TX_DMA_CHN               0x00004100
 
+#if defined(STM32L431xx) || defined(__DOXYGEN__)
+#define STM32_HAS_SPI2                      TRUE
+#define STM32_SPI2_SUPPORTS_I2S             FALSE
+#define STM32_SPI2_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 4))
+#define STM32_SPI2_RX_DMA_CHN               0x00001000
+#define STM32_SPI2_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(1, 5))
+#define STM32_SPI2_TX_DMA_CHN               0x00010000
+#else
+#define STM32_HAS_SPI2                      FALSE
+#endif /* defined(STM32L431xx) */
+
 #define STM32_HAS_SPI3                      TRUE
 #define STM32_SPI3_SUPPORTS_I2S             FALSE
 #define STM32_SPI3_RX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 1))
@@ -218,7 +238,6 @@
 #define STM32_SPI3_TX_DMA_MSK               (STM32_DMA_STREAM_ID_MSK(2, 2))
 #define STM32_SPI3_TX_DMA_CHN               0x00000030
 
-#define STM32_HAS_SPI2                      FALSE
 #define STM32_HAS_SPI4                      FALSE
 #define STM32_HAS_SPI5                      FALSE
 #define STM32_HAS_SPI6                      FALSE
@@ -282,9 +301,18 @@
 #define STM32_USART2_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 7))
 #define STM32_USART2_TX_DMA_CHN             0x02000000
 
+#if defined(STM32L431xx) || defined(__DOXYGEN__)
+#define STM32_HAS_USART3                    TRUE
+#define STM32_USART3_RX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 3))
+#define STM32_USART3_RX_DMA_CHN             0x00000200
+#define STM32_USART3_TX_DMA_MSK             (STM32_DMA_STREAM_ID_MSK(1, 2))
+#define STM32_USART3_TX_DMA_CHN             0x00000020
+#else
+#define STM32_HAS_USART3                    FALSE
+#endif /* defined(STM32L431xx) */
+
 #define STM32_HAS_LPUART1                   TRUE
 
-#define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
@@ -292,10 +320,14 @@
 #define STM32_HAS_UART8                     FALSE
 
 /* USB attributes.*/
+#if defined(STM32L431xx) || defined(__DOXYGEN__)
+#define STM32_HAS_USB                       FALSE
+#else
 #define STM32_HAS_USB                       TRUE
 #define STM32_USB_ACCESS_SCHEME_2x16        TRUE
 #define STM32_USB_PMA_SIZE                  1024
 #define STM32_USB_HAS_BCDR                  TRUE
+#endif /* defined(STM32L431xx) */
 
 #define STM32_HAS_OTG1                      FALSE
 #define STM32_HAS_OTG2                      FALSE
