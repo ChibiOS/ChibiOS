@@ -259,12 +259,10 @@ union xsnor_bus_configs {
  * @brief       SNOR driver configuration.
  */
 struct xsnor_config {
-#if (XSNOR_USE_BOTH == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Bus type selection switch.
    */
   int                       bus_type;
-#endif /* XSNOR_USE_BOTH == TRUE */
   /**
    * @brief       WSPI driver configuration.
    */

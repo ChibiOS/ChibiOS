@@ -116,9 +116,10 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/mfs/mfs_test.mk
-include $(CHIBIOS)/os/hal/lib/complex/serial_nor/devices/macronix_mx25/hal_flash_device.mk
 include $(CHIBIOS)/os/hal/lib/complex/mfs/hal_mfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/hal/lib/complex/xsnor/devices/micron_n25q/hal_xsnor_micron_n25q.mk
+include $(CHIBIOS)/os/hal/lib/complex/xsnor/devices/macronix_mx25/hal_xsnor_macronix_mx25.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32H735xG_ITCM64k_AXI_NC.ld
@@ -158,7 +159,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCORE_CM7 -DSHELL_CMD_FILES_ENABLED=1
+UDEFS =  -DXSNOR_USE_SPI=FALSE -DCORE_CM7
 
 # Define ASM defines here
 UADEFS =

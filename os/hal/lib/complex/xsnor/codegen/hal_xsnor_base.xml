@@ -167,11 +167,9 @@
       <struct name="xsnor_config">
         <brief>SNOR driver configuration.</brief>
         <fields>
-          <condition check="XSNOR_USE_BOTH == TRUE">
-            <field name="bus_type" ctype="int">
-              <brief>Bus type selection switch.</brief>
-            </field>
-          </condition>
+          <field name="bus_type" ctype="int">
+            <brief>Bus type selection switch.</brief>
+          </field>
           <field name="bus" ctype="union xsnor_bus_configs">
             <brief>WSPI driver configuration.</brief>
           </field>
@@ -886,12 +884,16 @@ if (self->state == FLASH_STOP) {
 #if XSNOR_USE_BOTH == TRUE
   if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
+#if XSNOR_USE_WSPI == TRUE
     wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
+#endif
 #if XSNOR_USE_BOTH == TRUE
   }
 else {
 #endif
+#if XSNOR_USE_SPI == TRUE
     spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+#endif
 #if XSNOR_USE_BOTH == TRUE
   }
 #endif
@@ -922,12 +924,16 @@ if (self->state != FLASH_STOP) {
 #if XSNOR_USE_BOTH == TRUE
   if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
+#if XSNOR_USE_WSPI == TRUE
     wspiStop(self->config->bus.wspi.drv);
+#endif
 #if XSNOR_USE_BOTH == TRUE
   }
 else {
 #endif
+#if XSNOR_USE_SPI == TRUE
     spiStop(self->config->bus.spi.drv);
+#endif
 #if XSNOR_USE_BOTH == TRUE
   }
 #endif

@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -gdwarf-3 -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -Og -gdwarf-3 -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -113,9 +113,10 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/mfs/mfs_test.mk
-include $(CHIBIOS)/os/hal/lib/complex/serial_nor/devices/micron_n25q/hal_flash_device.mk
 include $(CHIBIOS)/os/hal/lib/complex/mfs/hal_mfs.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/hal/lib/complex/xsnor/devices/micron_n25q/hal_xsnor_micron_n25q.mk
+include $(CHIBIOS)/os/hal/lib/complex/xsnor/devices/macronix_mx25/hal_xsnor_macronix_mx25.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32L476xG.ld
@@ -166,7 +167,7 @@ INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DXSNOR_USE_SPI=FALSE
 
 # Define ASM defines here
 UADEFS =

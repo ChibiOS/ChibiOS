@@ -940,12 +940,16 @@ flash_error_t xsnorStart(void *ip, const xsnor_config_t *config) {
 #if XSNOR_USE_BOTH == TRUE
     if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
+#if XSNOR_USE_WSPI == TRUE
       wspiStart(self->config->bus.wspi.drv, self->config->bus.wspi.cfg);
+#endif
 #if XSNOR_USE_BOTH == TRUE
     }
   else {
 #endif
+#if XSNOR_USE_SPI == TRUE
       spiStart(self->config->bus.spi.drv, self->config->bus.spi.cfg);
+#endif
 #if XSNOR_USE_BOTH == TRUE
     }
 #endif
@@ -985,12 +989,16 @@ void xsnorStop(void *ip) {
 #if XSNOR_USE_BOTH == TRUE
     if (self->config->bus_type != XSNOR_BUS_MODE_SPI) {
 #endif
+#if XSNOR_USE_WSPI == TRUE
       wspiStop(self->config->bus.wspi.drv);
+#endif
 #if XSNOR_USE_BOTH == TRUE
     }
   else {
 #endif
+#if XSNOR_USE_SPI == TRUE
       spiStop(self->config->bus.spi.drv);
+#endif
 #if XSNOR_USE_BOTH == TRUE
     }
 #endif

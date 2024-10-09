@@ -74,6 +74,10 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: New XSNOR framework replacing the old serial_nor. It allows multiple
+       device types on multiple interfaces and devices auto-detection.
+       STM32-WSPI-MFS demo modified to showcase the new capabilities.
+       The old serial_nor is still available but no more developed.
 - NEW: New XShell specific for the new RT, it leverages the new thread
        dispose feature.
 - NEW: New RT threads spawning API decoupling the thread stack from the
