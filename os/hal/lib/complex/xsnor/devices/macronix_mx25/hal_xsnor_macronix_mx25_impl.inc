@@ -465,7 +465,7 @@ static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
     switch (self->config->bus_type) {
     case XSNOR_BUS_MODE_SPI:
       cmd.cfg = CFG_C8_A32_DATA_SPI;
-      cmd.cmd = CMD_SPI_WREN;
+      cmd.cmd = CMD_SPI_WRCR2;
       break;
     case XSNOR_BUS_MODE_WSPI_8LINES:
       if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
@@ -474,7 +474,7 @@ static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
       else {
         cmd.cfg = CFG_C16_A32_DATA_8STR;
       }
-      cmd.cmd = CMD_OPI_WREN;
+      cmd.cmd = CMD_OPI_WRCR2;
       break;
     default:
       osalDbgAssert(false, "invalid bus type");
@@ -484,7 +484,7 @@ static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
   else {
     /* It is post-reset, before going to switch, assuming SPI.*/
     cmd.cfg = CFG_C8_A32_DATA_SPI;
-    cmd.cmd = CMD_SPI_WREN;
+    cmd.cmd = CMD_SPI_WRCR2;
   }
   cmd.addr  = addr;
   cmd.alt   = 0U;
@@ -584,10 +584,10 @@ flash_error_t __mx25_init_impl(void *ip) {
     break;
   case XSNOR_BUS_MODE_WSPI_8LINES:
     if ((self->config->options &MX25_OPT_USE_DTR) != 0U) {
-      self->commands = &cmd_8str;
+      self->commands = &cmd_8dtr;
     }
     else {
-      self->commands = &cmd_8dtr;
+      self->commands = &cmd_8str;
     }
     break;
   default:
