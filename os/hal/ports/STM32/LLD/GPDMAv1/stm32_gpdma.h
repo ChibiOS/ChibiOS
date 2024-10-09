@@ -402,7 +402,7 @@ extern uint32_t __gpdma_base__;
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void dmaInit(void);
+  void gpdmaInit(void);
   const stm32_gpdma_channel_t *gpdmaChannelAllocI(uint32_t cmask,
                                                   uint32_t irqprio,
                                                   stm32_gpdmaisr_t func,
