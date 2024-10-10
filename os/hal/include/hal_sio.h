@@ -165,7 +165,7 @@ typedef enum {
 struct hal_sio_config {
   /* End of the mandatory fields.*/
   sio_lld_config_fields;
-#if defined(SIO_CONFIG_EXT_FIELS)
+#if defined(SIO_CONFIG_EXT_FIELDS)
   SIO_CONFIG_EXT_FIELDS
 #endif
 };
