@@ -1,0 +1,10 @@
+*.origin
+*.swp
+*~
+.dep
+build
+*.vpwhistuxml
+*.vpwhistu
+*.vtg
+*.jdebug
+*.jdebug.user
