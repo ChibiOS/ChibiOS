@@ -101,10 +101,10 @@
 #endif
 
 /**
- * @brief   Muti-command mode.
+ * @brief   Multi-command line mode.
  */
 #if !defined(XSHELL_MULTI_COMMAND_LINE) || defined(__DOXYGEN__)
-#define XSHELL_MULTI_COMMAND_LINE           TRUE
+#define XSHELL_MULTI_COMMAND_LINE           FALSE
 #endif
 
 /**
@@ -183,6 +183,10 @@ typedef struct xshell_manager_config {
     size_t                      size;
 #endif
   } stack;
+#if defined(XSHELL_CONFIG_EXTRA_FIELDS)
+  /* Extra fields defined in xshellconf.h.*/
+  XSHELL_CONFIG_EXTRA_FIELDS
+#endif
 } xshell_manager_config_t;
 
 /**
@@ -193,10 +197,12 @@ typedef struct xshell_manager {
    * @brief   Associated configuration.
    */
   const xshell_manager_config_t *config;
+#if XSHELL_PROMPT_STR_LENGTH > 0
   /**
    * @brief   Shells current prompt string.
    */
   char                          prompt[XSHELL_PROMPT_STR_LENGTH + 1];
+#endif
   /**
    * @brief   Shell events;
    */
@@ -218,6 +224,10 @@ typedef struct xshell_manager {
    * @brief   History buffer.
    */
   char                          history_buffer[XSHELL_HISTORY_DEPTH][XSHELL_LINE_LENGTH];
+#endif
+#if defined(XSHELL_MGR_EXTRA_FIELDS)
+  /* Extra fields defined in xshellconf.h.*/
+  XSHELL_MGR_EXTRA_FIELDS
 #endif
 } xshell_manager_t;
 

@@ -212,6 +212,7 @@ static THD_FUNCTION(xshell_thread, p) {
       /* Process command if parsed.*/
       if (n > 0) {
 
+        bool exec = false;
         /* Built-in commands, just "help" currently.*/
         if (strcmp(args[0], "help") == 0) {
           if (n > 1) {
@@ -228,19 +229,25 @@ static THD_FUNCTION(xshell_thread, p) {
           chprintf(stream, XSHELL_NEWLINE_STR);
         }
         else {
+
           /* Trying local commands.*/
-          if (cmdexec(smp, xshell_local_commands, stream, args[0], n, args)) {
+          if ((exec = cmdexec(smp, xshell_local_commands, stream, args[0],
+                                                                  n, args))) {
 
             /* Failed, trying user commands (if defined).*/
             if ((smp->config->commands == NULL) ||
-                cmdexec(smp, smp->config->commands, stream, args[0], n, args)) {
+                (exec = cmdexec(smp, smp->config->commands, stream, args[0],
+                                                                  n, args))) {
 
               /* Failed, command not found.*/
               chprintf(stream, "%s?" XSHELL_NEWLINE_STR, args[0]);
             }
           }
-          /* Command executed.*/
         }
+        /* Shell execution hook.*/
+#if defined(XSHELL_EXEC_HOOK)
+        XSHELL_EXEC_HOOK(smp, stream, exec, n, args);
+#endif
       }
 #if XSHELL_MULTI_COMMAND_LINE == TRUE
       /* If argument parsing OK then process next command.*/
@@ -293,7 +300,7 @@ static size_t xshell_get_history_prev(xshell_manager_t *smp, char *line) {
 
   p = smp->history_current - XSHELL_LINE_LENGTH;
     if (p < smp->history_buffer[0]) {
-      p = smp->history_buffer[0];
+      p = smp->history_buffer[XSHELL_HISTORY_DEPTH - 1];
   }
   if ((len = strlen(p)) > (size_t)0) {
     smp->history_current = p;
@@ -313,7 +320,7 @@ static size_t xshell_get_history_next(xshell_manager_t *smp, char *line) {
 
   p = smp->history_current + XSHELL_LINE_LENGTH;
     if (p > smp->history_buffer[XSHELL_HISTORY_DEPTH - 1]) {
-      p = smp->history_buffer[XSHELL_HISTORY_DEPTH - 1];
+      p = smp->history_buffer[0];
   }
   if ((len = strlen(p)) > (size_t)0) {
     smp->history_current = p;
@@ -388,7 +395,7 @@ void xshellObjectInit(xshell_manager_t *smp,
   smp->config = config;
 
 #if XSHELL_PROMPT_STR_LENGTH > 0
-  /* Set the default prompt.*/
+  /* Set the default prompt from config.*/
   smp->prompt[XSHELL_PROMPT_STR_LENGTH - 1] = '\0';
   strncpy(smp->prompt, config->prompt, XSHELL_PROMPT_STR_LENGTH);
 #endif
@@ -400,6 +407,11 @@ void xshellObjectInit(xshell_manager_t *smp,
   chMtxObjectInit(&smp->history_mutex);
   smp->history_head = smp->history_buffer[0];
   memset(smp->history_buffer, 0, sizeof smp->history_buffer);
+#endif
+
+  /* Shell initialization hook.*/
+#if defined(XSHELL_INIT_HOOK)
+  XSHELL_INIT_HOOK(smp);
 #endif
 }
 
