@@ -32,7 +32,8 @@
   |  |  +--lib/                 - HAL libraries.
   |  |  |  +--complex/          - HAL collection of complex drivers.
   |  |  |  |  +--mfs/           - HAL managed flash storage driver.
-  |  |  |  |  +--serial_nor/    - HAL managed flash storage driver.
+  |  |  |  |  +--serial_nor/    - HAL legacy SNOR stack.
+  |  |  |  |  +--xsnor/         - HAL improved SNOR stack.
   |  |  |  +--fallback/         - HAL fall back software drivers.
   |  |  |  +--peripherals/      - HAL peripherals interfaces.
   |  |  |  +--streams/          - HAL streams.
@@ -74,7 +75,7 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Improved LFS support, not it is possible to make an LFS file system
+- NEW: Improved LFS support, now it is possible to make an LFS file system
        at arbitrary positions in flash.
 - NEW: New XSNOR framework replacing the old serial_nor. It allows multiple
        device types on multiple interfaces and devices auto-detection.
