@@ -113,16 +113,14 @@ static dyn_element_t *dyn_list_find(const char *name, dyn_list_t *dlp) {
   return NULL;
 }
 
-static dyn_element_t *dyn_list_unlink(dyn_element_t *element,
+static dyn_element_t *dyn_list_find_prev(dyn_element_t *element,
                                       dyn_list_t *dlp) {
   dyn_element_t *prev = (dyn_element_t *)dlp;
 
   /* Scanning the list.*/
   while (prev->next != (dyn_element_t *)dlp) {
     if (prev->next == element) {
-      /* Found.*/
-      prev->next = element->next;
-      return element;
+      return prev;
     }
 
     /* Next element in the list.*/
@@ -130,6 +128,14 @@ static dyn_element_t *dyn_list_unlink(dyn_element_t *element,
   }
 
   return NULL;
+}
+
+static dyn_element_t *dyn_list_unlink(dyn_element_t *prev) {
+  dyn_element_t *element = prev->next;
+
+  prev->next = element->next;
+
+  return element;
 }
 
 #if CH_FACTORY_REQUIRES_HEAP || defined(__DOXYGEN__)
@@ -165,15 +171,25 @@ static dyn_element_t *dyn_create_object_heap(const char *name,
 }
 
 static void dyn_release_object_heap(dyn_element_t *dep,
-                                    dyn_list_t *dlp) {
+                                      dyn_list_t *dlp) {
+  dyn_element_t *prev;
+  ucnt_t refs;
 
   chDbgCheck(dep != NULL);
-  chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
 
-  dep->refs--;
-  if (dep->refs == (ucnt_t)0) {
-    dep = dyn_list_unlink(dep, dlp);
-    chHeapFree((void *)dep);
+  /* Checking 1st if the object is in the list.*/
+  prev = dyn_list_find_prev(dep, dlp);
+  if (prev != NULL) {
+
+    chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
+
+    refs = --dep->refs;
+    if (refs == (ucnt_t)0) {
+      chHeapFree((void *)dyn_list_unlink(prev));
+    }
+  }
+  else {
+    chDbgAssert(false, "unknown object");
   }
 }
 #endif /* CH_FACTORY_REQUIRES_HEAP */
@@ -210,16 +226,26 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
 }
 
 static void dyn_release_object_pool(dyn_element_t *dep,
-                                    dyn_list_t *dlp,
-                                    memory_pool_t *mp) {
+                                      dyn_list_t *dlp,
+                                      memory_pool_t *mp) {
+  dyn_element_t *prev;
+  ucnt_t refs;
 
   chDbgCheck(dep != NULL);
-  chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
 
-  dep->refs--;
-  if (dep->refs == (ucnt_t)0) {
-    dep = dyn_list_unlink(dep, dlp);
-    chPoolFree(mp, (void *)dep);
+  /* Checking 1st if the object is in the list.*/
+  prev = dyn_list_find_prev(dep, dlp);
+  if (prev != NULL) {
+
+    chDbgAssert(dep->refs > (ucnt_t)0, "invalid references number");
+
+    refs = --dep->refs;
+    if (refs == (ucnt_t)0) {
+      chPoolFree(mp, (void *)dyn_list_unlink(prev));
+    }
+  }
+  else {
+    chDbgAssert(false, "unknown object");
   }
 }
 #endif /* CH_FACTORY_REQUIRES_POOLS */
