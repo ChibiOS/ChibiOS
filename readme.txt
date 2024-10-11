@@ -89,6 +89,7 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Fixed missing assertion in OSLIB factory module (bug 1292).
 - FIX: Fixed problem in FDCANv1 driver for G4 (bug #1291).
 - FIX: Fixed problem in recursive locks functions (bug #1288).
 - FIX: Fixed ARMv8-M-ML port compile fail when FPU is enabled (bug #1281).
