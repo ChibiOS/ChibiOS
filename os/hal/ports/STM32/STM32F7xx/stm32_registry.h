@@ -745,7 +745,7 @@
 
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
-#define STM32_CRC_PROGRAMMABLE              FALSE
+#define STM32_CRC_PROGRAMMABLE              TRUE
 
 #endif /* defined(STM32F745xx) || defined(STM32F746xx) || defined(STM32F756xx) */
 
@@ -1096,7 +1096,7 @@
 
 /* CRC attributes.*/
 #define STM32_HAS_CRC                       TRUE
-#define STM32_CRC_PROGRAMMABLE              FALSE
+#define STM32_CRC_PROGRAMMABLE              TRUE
 
 #endif /* defined(STM32F765xx) || defined(STM32F767xx) || defined(STM32F769xx) ||
           defined(STM32F777xx) || defined(STM32F779xx) */
