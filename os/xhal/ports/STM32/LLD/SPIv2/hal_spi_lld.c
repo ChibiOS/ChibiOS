@@ -271,16 +271,18 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
-    spip->sts |= SPI_STS_FAILED | SPI_STS_RXDMA_FAIL;
+    spip->sts |= SPI_STS_FAILED;
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
   else if ((__spi_getfield(spip, mode) & SPI_MODE_CIRCULAR) != 0U) {
     if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
+      spip->sts |= SPI_STS_HALF;
       __spi_isr_half_code(spip);
     }
     if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
       /* End buffer interrupt.*/
+      spip->sts |= SPI_STS_FULL;
       __spi_isr_full_code(spip);
     }
   }
@@ -290,6 +292,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Operation finished interrupt.*/
+    spip->sts |= SPI_STS_COMPLETED | SPI_STS_FULL;
     __spi_isr_complete_code(spip);
   }
 }

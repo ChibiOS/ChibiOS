@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -113,9 +113,24 @@
  * @{
  */
 /**
- * @brief       Last transfer failed because HW error.
+ * @brief       Last transfer completed successfully.
  */
-#define SPI_STS_FAILED                      1U
+#define SPI_STS_COMPLETED                   1U
+
+/**
+ * @brief       Last transfer completed with error.
+ */
+#define SPI_STS_FAILED                      2U
+
+/**
+ * @brief       Half transfer flag.
+ */
+#define SPI_STS_HALF                        4U
+
+/**
+ * @brief       Full transfer flag.
+ */
+#define SPI_STS_FULL                        8U
 /** @} */
 
 /*===========================================================================*/

@@ -52,8 +52,17 @@
         </define>
       </group>
       <group description="SPI status flags">
-        <define name="SPI_STS_FAILED" value="1U">
-          <brief>Last transfer failed because HW error.</brief>
+        <define name="SPI_STS_COMPLETED" value="1U">
+          <brief>Last transfer completed successfully.</brief>
+        </define>
+        <define name="SPI_STS_FAILED" value="2U">
+          <brief>Last transfer completed with error.</brief>
+        </define>
+        <define name="SPI_STS_HALF" value="4U">
+          <brief>Half transfer flag.</brief>
+        </define>
+        <define name="SPI_STS_FULL" value="8U">
+          <brief>Full transfer flag.</brief>
         </define>
       </group>
     </definitions_early>
