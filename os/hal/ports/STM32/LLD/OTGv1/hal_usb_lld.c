@@ -38,6 +38,19 @@
 #define EP0_MAX_INSIZE          64
 #define EP0_MAX_OUTSIZE         64
 
+/** @brief Enables delay in ULPI timing during device chirp.*/
+#define USB_OTG_DCFG_XCVRDLY    (1U << 14)
+
+/** 
+  * @brief some ULPI chip need additional delay for initial handshake, 
+  *        namely microchip 334x series.
+  */
+#if defined(BOARD_OTG2_ULPI_ACTIVATE_CHIRP_DELAY)
+#define BOARD_OTG2_ULPI_CHIRP_DELAY_MASK USB_OTG_DCFG_XCVRDLY
+#else
+#define BOARD_OTG2_ULPI_CHIRP_DELAY_MASK 0
+#endif
+
 #if STM32_OTG_STEPPING == 1
 #if defined(BOARD_OTG_NOVBUSSENS)
 #define GCCFG_INIT_VALUE        (GCCFG_NOVBUSSENS | GCCFG_PWRDWN)
@@ -812,7 +825,7 @@ void usb_lld_start(USBDriver *usbp) {
 #if defined(BOARD_OTG2_USES_ULPI)
 #if STM32_USE_USB_OTG2_HS
       /* USB 2.0 High Speed PHY in HS mode.*/
-      otgp->DCFG = 0x02200000 | DCFG_DSPD_HS;
+      otgp->DCFG = 0x02200000 | DCFG_DSPD_HS | BOARD_OTG2_ULPI_CHIRP_DELAY_MASK;
 #else
       /* USB 2.0 High Speed PHY in FS mode.*/
       otgp->DCFG = 0x02200000 | DCFG_DSPD_HS_FS;
@@ -952,7 +965,7 @@ void usb_lld_reset(USBDriver *usbp) {
   otg_rxfifo_flush(usbp);
 
   /* Resets the device address to zero.*/
-  otgp->DCFG = (otgp->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(0);
+  otgp->DCFG = (otgp->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(0) | BOARD_OTG2_ULPI_CHIRP_DELAY_MASK;
 
   /* Enables also EP-related interrupt sources.*/
   otgp->GINTMSK  |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
