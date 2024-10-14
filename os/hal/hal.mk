@@ -11,7 +11,7 @@ ifeq ($(HALCONFDIR),)
   endif
 endif
 
-HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
+HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | grep -E "\#define"))
 
 HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_st.c \

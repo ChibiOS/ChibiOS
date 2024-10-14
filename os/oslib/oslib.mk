@@ -10,7 +10,7 @@ ifeq ($(CHCONFDIR),)
   endif
 endif
 
-CHLIBCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | egrep -e "\#define"))
+CHLIBCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | grep -E "\#define"))
 
 OSLIBSRC := $(CHIBIOS)/os/oslib/src/chmemchecks.c
 ifneq ($(findstring CH_CFG_USE_MAILBOXES TRUE,$(CHLIBCONF)),)

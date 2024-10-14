@@ -11,7 +11,7 @@ ifeq ($(CHCONFDIR),)
   endif
 endif
 
-CHCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | egrep -e "\#define"))
+CHCONF := $(strip $(shell cat $(CHCONFDIR)/chconf.h | grep -E "\#define"))
 
 KERNSRC := ${CHIBIOS}/os/nil/src/ch.c
 ifneq ($(findstring CH_CFG_USE_EVENTS TRUE,$(CHCONF)),)
