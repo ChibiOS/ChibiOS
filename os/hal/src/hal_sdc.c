@@ -950,7 +950,7 @@ bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
   sdcp->state = BLK_WRITING;
 
   /* Handling command differences between HC and normal cards.*/
-  if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) != 0U) {
+  if ((sdcp->cardmode & SDC_MODE_HIGH_CAPACITY) == 0U) {
     startblk *= MMCSD_BLOCK_SIZE;
     endblk *= MMCSD_BLOCK_SIZE;
   }
