@@ -82,13 +82,12 @@ uint32_t lfs_crc(uint32_t crc, const void *buffer, size_t size) {
 
 void *lfs_malloc(size_t size) {
 
-  (void)size;
-  return NULL;
+  return chHeapAlloc(NULL, size);
 }
 
 void lfs_free(void *p) {
 
-  (void)p;
+  chHeapFree(p);
 }
 
 int __lfs_read(const struct lfs_config *c, lfs_block_t block,
