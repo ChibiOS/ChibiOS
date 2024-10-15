@@ -75,7 +75,7 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Added Xshell support for change prompt, multi-command per line, line 
+- NEW: Added XShell support for change prompt, multi-command per line, line 
        editing, user definable extra fields, init and execution hooks.
 - NEW: Improved LFS support, now it is possible to make an LFS file system
        at arbitrary positions in flash.
