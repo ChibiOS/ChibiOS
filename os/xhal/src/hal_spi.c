@@ -94,6 +94,10 @@ void *__spi_objinit_impl(void *ip, const void *vmt) {
   __cbdrv_objinit_impl(self, vmt);
 
   /* Initialization code.*/
+  self->sts = (drv_status_t)0;
+#if SPI_USE_SYNCHRONIZATION == TRUE
+  self->sync_transfer = NULL;
+#endif
 
   /* Optional, user-defined initializer.*/
 #if defined(SPI_DRIVER_EXT_INIT_HOOK)

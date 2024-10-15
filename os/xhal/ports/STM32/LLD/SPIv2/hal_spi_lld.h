@@ -521,8 +521,6 @@
 #define spi_lld_driver_fields                                               \
   /* Pointer to the SPIx registers block.*/                                 \
   SPI_TypeDef               *spi;                                           \
-  /* Driver status.*/                                                       \
-  drv_status_t              sts;                                            \
   /* Receive DMA stream.*/                                                  \
   const stm32_dma_stream_t  *dmarx;                                         \
   /* Transmit DMA stream.*/                                                 \

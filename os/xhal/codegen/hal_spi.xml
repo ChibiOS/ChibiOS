@@ -185,6 +185,9 @@ SPI_CONFIG_EXT_FIELDS]]></verbatim>
         ancestorname="hal_cb_driver" descr="SPI driver">
         <brief>Class of a SPI driver.</brief>
         <fields>
+          <field name="sts" ctype="drv_status_t">
+            <brief>Driver status.</brief>
+          </field>
           <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
             <field name="sync_transfer" ctype="thread_reference_t">
               <brief>Synchronization point for transfer.</brief>
@@ -201,6 +204,10 @@ spi_lld_driver_fields;]]></verbatim>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
+self->sts = (drv_status_t)0;
+#if SPI_USE_SYNCHRONIZATION == TRUE
+self->sync_transfer = NULL;
+#endif
 
 /* Optional, user-defined initializer.*/
 #if defined(SPI_DRIVER_EXT_INIT_HOOK)
@@ -854,6 +861,7 @@ This code handles the portable part of the ISR code:
               <notapi />
               <implementation><![CDATA[
 
+self->sts |= SPI_STS_COMPLETED;
 __cbdrv_invoke_cb_with_transition(self,
                                   HAL_DRV_STATE_COMPLETE,
                                   HAL_DRV_STATE_READY);
@@ -872,6 +880,7 @@ __spi_wakeup_isr(self, MSG_OK);]]></implementation>
               <notapi />
               <implementation><![CDATA[
 
+self->sts |= SPI_STS_HALF;
 __cbdrv_invoke_cb(self);]]></implementation>
             </method>
             <method name="__spi_isr_full_code" ctype="void">
@@ -887,6 +896,7 @@ __cbdrv_invoke_cb(self);]]></implementation>
               <notapi />
               <implementation><![CDATA[
 
+self->sts |= SPI_STS_FULL;
 __cbdrv_invoke_cb_with_transition(self,
                                   HAL_DRV_STATE_COMPLETE,
                                   HAL_DRV_STATE_ACTIVE);]]></implementation>
@@ -905,6 +915,7 @@ __cbdrv_invoke_cb_with_transition(self,
               <notapi />
               <implementation><![CDATA[
 
+self->sts |= SPI_STS_FAILED;
 __cbdrv_invoke_cb_with_transition(self,
                                   HAL_DRV_STATE_ERROR,
                                   HAL_DRV_STATE_READY);

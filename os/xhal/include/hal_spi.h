@@ -371,6 +371,10 @@ struct hal_spi_driver {
    * @note        Can be @p NULL.
    */
   drv_cb_t                  cb;
+  /**
+   * @brief       Driver status.
+   */
+  drv_status_t              sts;
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Synchronization point for transfer.
@@ -606,6 +610,7 @@ CC_FORCE_INLINE
 static inline void __spi_isr_complete_code(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
+  self->sts |= SPI_STS_COMPLETED;
   __cbdrv_invoke_cb_with_transition(self,
                                     HAL_DRV_STATE_COMPLETE,
                                     HAL_DRV_STATE_READY);
@@ -630,6 +635,7 @@ CC_FORCE_INLINE
 static inline void __spi_isr_half_code(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
+  self->sts |= SPI_STS_HALF;
   __cbdrv_invoke_cb(self);
 }
 
@@ -651,6 +657,7 @@ CC_FORCE_INLINE
 static inline void __spi_isr_full_code(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
+  self->sts |= SPI_STS_FULL;
   __cbdrv_invoke_cb_with_transition(self,
                                     HAL_DRV_STATE_COMPLETE,
                                     HAL_DRV_STATE_ACTIVE);
@@ -675,6 +682,7 @@ CC_FORCE_INLINE
 static inline void __spi_isr_error_code(void *ip, msg_t msg) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
+  self->sts |= SPI_STS_FAILED;
   __cbdrv_invoke_cb_with_transition(self,
                                     HAL_DRV_STATE_ERROR,
                                     HAL_DRV_STATE_READY);
