@@ -964,24 +964,8 @@ return (const void *)spi_lld_setcfg(self, (const hal_spi_config_t *)config);]]><
             </method>
             <method shortname="selcfg">
               <implementation><![CDATA[
-#if SPI_USE_CONFIGURATIONS == TRUE
-extern const spi_configurations_t spi_configurations;
 
-if (cfgnum > spi_configurations.cfgsnum) {
-  return NULL;
-}
-
-if (cfgnum > 0U) {
-  return (const void *)spi_lld_setcfg(self, &spi_configurations.cfgs[cfgnum - 1]);
-}
-#else
-
-if (cfgnum > 0U){
-  return NULL;
-}
-#endif
-
-return (const void *)spi_lld_setcfg(self, NULL);]]></implementation>
+return (const void *)spi_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
             <method shortname="gsts">
               <implementation><![CDATA[

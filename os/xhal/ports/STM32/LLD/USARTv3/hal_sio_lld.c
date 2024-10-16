@@ -523,6 +523,38 @@ const SIOConfig *sio_lld_setcfg(SIODriver *siop, const SIOConfig *config) {
 }
 
 /**
+ * @brief       Selects one of the pre-defined SPI configurations.
+ *
+ * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ * @param[in] cfgnum    driver configuration number
+ * @return              The configuration pointer.
+ *
+ * @notapi
+ */
+const hal_sio_config_t *sio_lld_selcfg(SIODriver *siop,
+                                       unsigned cfgnum) {
+
+#if SIO_USE_CONFIGURATIONS == TRUE
+  extern const sio_configurations_t sio_configurations;
+
+  if (cfgnum > sio_configurations.cfgsnum) {
+    return NULL;
+  }
+
+  if (cfgnum > 0U) {
+    return (const void *)sip_lld_setcfg(siop, &sio_configurations.cfgs[cfgnum - 1]);
+  }
+#else
+
+  if (cfgnum > 0U){
+    return NULL;
+  }
+#endif
+
+  return (const void *)sio_lld_setcfg(siop, NULL);
+}
+
+/**
  * @brief   Enable flags change notification.
  *
  * @param[in] siop      pointer to the @p SIODriver object

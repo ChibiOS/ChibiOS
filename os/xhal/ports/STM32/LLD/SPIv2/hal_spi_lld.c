@@ -759,13 +759,45 @@ const hal_spi_config_t *spi_lld_setcfg(hal_spi_driver_c *spip,
 }
 
 /**
- * @brief       Implementation of method @p drvGetStatusX().
+ * @brief       Selects one of the pre-defined SPI configurations.
  *
- * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ * @param[in] spip      pointer to the @p SPIDriver object
+ * @param[in] cfgnum    driver configuration number
+ * @return              The configuration pointer.
  *
  * @notapi
  */
-drv_status_t spi_lld_get_status(hal_spi_driver_c *spip) {
+const hal_spi_config_t *spi_lld_selcfg(SPIDriver *spip,
+                                       unsigned cfgnum) {
+
+#if SPI_USE_CONFIGURATIONS == TRUE
+  extern const spi_configurations_t spi_configurations;
+
+  if (cfgnum > spi_configurations.cfgsnum) {
+    return NULL;
+  }
+
+  if (cfgnum > 0U) {
+    return (const void *)spi_lld_setcfg(spip, &spi_configurations.cfgs[cfgnum - 1]);
+  }
+#else
+
+  if (cfgnum > 0U){
+    return NULL;
+  }
+#endif
+
+  return (const void *)spi_lld_setcfg(spip, NULL);
+}
+
+/**
+ * @brief       Implementation of method @p drvGetStatusX().
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+drv_status_t spi_lld_get_status(SPIDriver *spip) {
 
   return spip->sts;
 }
@@ -773,12 +805,12 @@ drv_status_t spi_lld_get_status(hal_spi_driver_c *spip) {
 /**
  * @brief       Implementation of method @p drvGetAndClearStatusI().
  *
- * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ * @param[in] spip      pointer to the @p SPIDriver object
  * @param[in] mask      flags to be returned and cleared
  *
  * @notapi
  */
-drv_status_t spi_lld_get_clear_status(hal_spi_driver_c *spip,
+drv_status_t spi_lld_get_clear_status(SPIDriver *spip,
                                       drv_status_t mask) {
   drv_status_t sts;
 

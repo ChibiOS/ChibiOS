@@ -957,24 +957,8 @@ return (const void *)sio_lld_setcfg(self, (const hal_sio_config_t *)config);]]><
             </method>
             <method shortname="selcfg">
               <implementation><![CDATA[
-#if SIO_USE_CONFIGURATIONS == TRUE
-extern const sio_configurations_t sio_configurations;
 
-if (cfgnum > sio_configurations.cfgsnum) {
-  return NULL;
-}
-
-if (cfgnum > 0U) {
-  return (const void *)sio_lld_setcfg(self, &sio_configurations.cfgs[cfgnum - 1]);
-}
-#else
-
-if (cfgnum > 0U){
-  return NULL;
-}
-#endif
-
-return (const void *)sio_lld_setcfg(self, NULL);]]></implementation>
+return (const void *)sio_lld_selcfg(self, cfgnum);]]></implementation>
             </method>
           </override>
         </methods>
