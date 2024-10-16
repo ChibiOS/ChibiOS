@@ -927,10 +927,19 @@ osalThreadResumeI(&self->sync_txend, MSG_RESET);
 osalOsRescheduleS();
 #endif]]></implementation>
             </method>
-            <method shortname="doconf">
+            <method shortname="setcfg">
               <implementation><![CDATA[
 
-return (const void *)sio_lld_configure(self, (const hal_sio_config_t *)config);]]></implementation>
+return (const void *)sio_lld_setcfg(self, (const hal_sio_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+
+if (cfgnum > 0U){
+  return NULL;
+}
+
+return (const void *)sio_lld_setcfg(self, NULL);]]></implementation>
             </method>
           </override>
         </methods>
@@ -996,11 +1005,11 @@ drvStop(self->siop);
 /* Back into the critical section and return.*/
 osalSysLock();]]></implementation>
             </method>
-            <method shortname="doconf">
+            <method shortname="setcfg">
               <implementation><![CDATA[
 
 /* Configuring the underlying SIO driver.*/
-return __sio_doconf_impl(self->siop, config);]]></implementation>
+return __sio_setcfg_impl(self->siop, config);]]></implementation>
             </method>
           </override>
         </methods>

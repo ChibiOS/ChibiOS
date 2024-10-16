@@ -610,7 +610,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
   dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
 
   /* Configures the peripheral.*/
-  spi_lld_configure(spip, &spi_default_config);
+  spi_lld_setcfg(spip, &spi_default_config);
 
   return HAL_RET_SUCCESS;
 }
@@ -691,8 +691,8 @@ void spi_lld_stop(SPIDriver *spip) {
  *
  * @notapi
  */
-const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
-                                          const hal_spi_config_t *config) {
+const hal_spi_config_t *spi_lld_setcfg(hal_spi_driver_c *spip,
+                                       const hal_spi_config_t *config) {
   uint32_t ds;
   spi_mode_t mode = __spi_getfield(spip, mode);
 

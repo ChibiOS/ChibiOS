@@ -372,7 +372,7 @@ msg_t sio_lld_start(SIODriver *siop) {
   }
 
   /* Configures the peripheral.*/
-  sio_lld_configure(siop, &default_config);
+  sio_lld_setcfg(siop, &default_config);
 
   return HAL_RET_SUCCESS;
 }
@@ -469,7 +469,7 @@ void sio_lld_stop(SIODriver *siop) {
  *
  * @notapi
  */
-const SIOConfig *sio_lld_configure(SIODriver *siop, const SIOConfig *config) {
+const SIOConfig *sio_lld_setcfg(SIODriver *siop, const SIOConfig *config) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr, clock;
 

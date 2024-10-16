@@ -538,7 +538,8 @@ struct hal_sio_driver_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  const void * (*doconf)(void *ip, const void *config);
+  const void * (*setcfg)(void *ip, const void *config);
+  const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
   drv_status_t (*gsts)(void *ip);
@@ -652,7 +653,8 @@ struct hal_buffered_sio_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  const void * (*doconf)(void *ip, const void *config);
+  const void * (*setcfg)(void *ip, const void *config);
+  const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_buffered_serial_c.*/
   /* From hal_buffered_sio_c.*/
 };
@@ -732,7 +734,8 @@ extern "C" {
   void __sio_dispose_impl(void *ip);
   msg_t __sio_start_impl(void *ip);
   void __sio_stop_impl(void *ip);
-  const void *__sio_doconf_impl(void *ip, const void *config);
+  const void *__sio_setcfg_impl(void *ip, const void *config);
+  const void *__sio_selcfg_impl(void *ip, unsigned cfgnum);
   void sioWriteEnableFlags(void *ip, sioevents_t mask);
   void sioSetEnableFlags(void *ip, sioevents_t mask);
   void sioClearEnableFlags(void *ip, sioevents_t mask);
@@ -752,7 +755,7 @@ extern "C" {
   void __bsio_dispose_impl(void *ip);
   msg_t __bsio_start_impl(void *ip);
   void __bsio_stop_impl(void *ip);
-  const void *__bsio_doconf_impl(void *ip, const void *config);
+  const void *__bsio_setcfg_impl(void *ip, const void *config);
   /* Regular functions.*/
   void sioInit(void);
 #ifdef __cplusplus

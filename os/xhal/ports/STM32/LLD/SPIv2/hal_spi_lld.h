@@ -577,8 +577,8 @@ extern "C" {
   void spi_lld_init(void);
   msg_t spi_lld_start(SPIDriver *spip);
   void spi_lld_stop(SPIDriver *spip);
-  const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
-                                            const hal_spi_config_t *config);
+  const hal_spi_config_t *spi_lld_setcfg(hal_spi_driver_c *spip,
+                                         const hal_spi_config_t *config);
   drv_status_t spi_lld_get_status(hal_spi_driver_c *spip);
   drv_status_t spi_lld_get_clear_status(hal_spi_driver_c *spip,
                                         drv_status_t mask);

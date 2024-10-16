@@ -160,16 +160,36 @@ void __spi_stop_impl(void *ip) {
  * @memberof    hal_spi_driver_c
  * @protected
  *
- * @brief       Override of method @p __drv_do_configure().
+ * @brief       Override of method @p __drv_set_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
  * @param[in]     config        New driver configuration.
  * @return                      The configuration pointer.
  */
-const void *__spi_doconf_impl(void *ip, const void *config) {
+const void *__spi_setcfg_impl(void *ip, const void *config) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  return (const void *)spi_lld_configure(self, (const hal_spi_config_t *)config);
+  return (const void *)spi_lld_setcfg(self, (const hal_spi_config_t *)config);
+}
+
+/**
+ * @memberof    hal_spi_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p __drv_sel_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
+ * @param[in]     cfgnum        Driver configuration number.
+ * @return                      The configuration pointer.
+ */
+const void *__spi_selcfg_impl(void *ip, unsigned cfgnum) {
+  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+
+  if (cfgnum > 0U){
+    return NULL;
+  }
+
+  return (const void *)spi_lld_setcfg(self, NULL);
 }
 
 /**
@@ -210,7 +230,8 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .dispose                  = __spi_dispose_impl,
   .start                    = __spi_start_impl,
   .stop                     = __spi_stop_impl,
-  .doconf                   = __spi_doconf_impl,
+  .setcfg                   = __spi_setcfg_impl,
+  .selcfg                   = __spi_selcfg_impl,
   .setcb                    = __cbdrv_setcb_impl,
   .gsts                     = __spi_gsts_impl,
   .gcsts                    = __spi_gcsts_impl

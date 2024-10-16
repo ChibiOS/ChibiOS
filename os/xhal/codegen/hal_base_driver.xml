@@ -116,13 +116,23 @@ drv_reg_remove(self);
               <brief>Low level driver stop.</brief>
               <notapi />
             </method>
-            <method name="__drv_do_configure" shortname="doconf"
+            <method name="__drv_set_cfg" shortname="setcfg"
               ctype="const void *">
-              <brief>Performs driver configuration.</brief>
+              <brief>Configures the driver with a specified configuration.</brief>
               <param ctype="const void *" name="config" dir="in">New driver
                 configuration.</param>
               <return>The configuration pointer.</return>
               <retval value="NULL">If the configuration has been rejected.</retval>
+              <api />
+            </method>
+            <method name="__drv_sel_cfg" shortname="selcfg"
+              ctype="const void *">
+              <brief>Selects one of the pre-defined configurations.</brief>
+              <note>Only configuration zero is guaranteed to exists, it is the
+                driver default configuration.</note>
+              <param ctype="unsigned" name="cfgnum" dir="in">Driver configuration number.</param>
+              <return>The configuration pointer.</return>
+              <retval value="NULL">If the selected configuration does not exist.</retval>
               <api />
             </method>
           </virtual>
@@ -210,7 +220,7 @@ if ((self->state != HAL_DRV_STATE_STOP) &&
 
 osalSysUnlock();]]></implementation>
             </method>
-            <method name="drvConfigureX" ctype="msg_t">
+            <method name="drvSetCfgX" ctype="msg_t">
               <brief>Driver configure.</brief>
               <details><![CDATA[Applies a new configuration to the driver. The
                 configuration structure is architecture-dependent.]]>
@@ -222,6 +232,10 @@ osalSysUnlock();]]></implementation>
               <param ctype="const void *" name="config" dir="in">New driver
                 configuration.
               </param>
+              <return>The operation status.</return>
+              <retval value="HAL_RET_SUCCESS">Operation successful.</retval>
+              <retval value="HAL_RET_CONFIG_ERROR"><![CDATA[If the configuration
+                is invalid and has been rejected.]]></retval>
               <api />
               <implementation><![CDATA[]]>
 msg_t msg;
@@ -230,7 +244,7 @@ osalSysLock();
 
 osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
 
-self->config = __drv_do_configure(self, config);
+self->config = __drv_set_cfg(self, config);
 if (self->config == NULL) {
   msg = HAL_RET_CONFIG_ERROR;
 }
@@ -241,6 +255,32 @@ else {
 osalSysUnlock();
 
 return msg;</implementation>
+            </method>
+            <method name="drvSelectCfgX" ctype="const void *">
+              <brief>Selects one of the pre-defined driver configurations.</brief>
+              <note>Only configuration zero is guaranteed to exists, it is the
+                driver default configuration.</note>
+              <note><![CDATA[Applying a configuration should be done while the
+                peripheral is not actively operating, this function can fail
+                depending on the driver implementation and current state.]]>
+              </note>
+              <param ctype="unsigned" name="cfgnum" dir="in">Driver configuration
+                index to be applied.</param>
+              <return>Pointer to the selected configuration.</return>
+              <retval value="NULL"><![CDATA[If the configuration
+                is invalid and has been rejected.]]></retval>
+              <api />
+              <implementation><![CDATA[]]>
+
+osalSysLock();
+
+osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
+
+self->config = __drv_sel_cfg(self, cfgnum);
+
+osalSysUnlock();
+
+return self->config;</implementation>
             </method>
           </regular>
           <inline>

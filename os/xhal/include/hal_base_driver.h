@@ -144,7 +144,8 @@ struct hal_base_driver_vmt {
   /* From hal_base_driver_c.*/
   msg_t (*start)(void *ip);
   void (*stop)(void *ip);
-  const void * (*doconf)(void *ip, const void *config);
+  const void * (*setcfg)(void *ip, const void *config);
+  const void * (*selcfg)(void *ip, unsigned cfgnum);
 };
 
 /**
@@ -206,7 +207,8 @@ extern "C" {
   void __drv_dispose_impl(void *ip);
   msg_t drvStart(void *ip);
   void drvStop(void *ip);
-  msg_t drvConfigureX(void *ip, const void *config);
+  msg_t drvSetCfgX(void *ip, const void *config);
+  const void *drvSelectCfgX(void *ip, unsigned cfgnum);
   /* Regular functions.*/
   void drvInit(void);
 #if HAL_USE_REGISTRY == TRUE
@@ -265,7 +267,7 @@ static inline void __drv_stop(void *ip) {
  * @memberof    hal_base_driver_c
  * @public
  *
- * @brief       Performs driver configuration.
+ * @brief       Configures the driver with a specified configuration.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
  * @param[in]     config        New driver configuration.
@@ -275,10 +277,32 @@ static inline void __drv_stop(void *ip) {
  * @api
  */
 CC_FORCE_INLINE
-static inline const void *__drv_do_configure(void *ip, const void *config) {
+static inline const void *__drv_set_cfg(void *ip, const void *config) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
 
-  return self->vmt->doconf(ip, config);
+  return self->vmt->setcfg(ip, config);
+}
+
+/**
+ * @memberof    hal_base_driver_c
+ * @public
+ *
+ * @brief       Selects one of the pre-defined configurations.
+ * @note        Only configuration zero is guaranteed to exists, it is the
+ *              driver default configuration.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     cfgnum        Driver configuration number.
+ * @return                      The configuration pointer.
+ * @retval NULL                 If the selected configuration does not exist.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline const void *__drv_sel_cfg(void *ip, unsigned cfgnum) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+
+  return self->vmt->selcfg(ip, cfgnum);
 }
 /** @} */
 

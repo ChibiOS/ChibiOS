@@ -366,10 +366,14 @@ void drvStop(void *ip) {
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
  * @param[in]     config        New driver configuration.
+ * @return                      The operation status.
+ * @retval HAL_RET_SUCCESS      Operation successful.
+ * @retval HAL_RET_CONFIG_ERROR If the configuration is invalid and has been
+ *                              rejected.
  *
  * @api
  */
-msg_t drvConfigureX(void *ip, const void *config) {
+msg_t drvSetCfgX(void *ip, const void *config) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
   msg_t msg;
 
@@ -377,7 +381,7 @@ msg_t drvConfigureX(void *ip, const void *config) {
 
   osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
 
-  self->config = __drv_do_configure(self, config);
+  self->config = __drv_set_cfg(self, config);
   if (self->config == NULL) {
     msg = HAL_RET_CONFIG_ERROR;
   }
@@ -388,6 +392,39 @@ msg_t drvConfigureX(void *ip, const void *config) {
   osalSysUnlock();
 
   return msg;
+}
+
+/**
+ * @memberof    hal_base_driver_c
+ * @public
+ *
+ * @brief       Selects one of the pre-defined driver configurations.
+ * @note        Only configuration zero is guaranteed to exists, it is the
+ *              driver default configuration.
+ * @note        Applying a configuration should be done while the peripheral is
+ *              not actively operating, this function can fail depending on the
+ *              driver implementation and current state.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @param[in]     cfgnum        Driver configuration index to be applied.
+ * @return                      Pointer to the selected configuration.
+ * @retval NULL                 If the configuration is invalid and has been
+ *                              rejected.
+ *
+ * @api
+ */
+const void *drvSelectCfgX(void *ip, unsigned cfgnum) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+
+  osalSysLock();
+
+  osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
+
+  self->config = __drv_sel_cfg(self, cfgnum);
+
+  osalSysUnlock();
+
+  return self->config;
 }
 /** @} */
 

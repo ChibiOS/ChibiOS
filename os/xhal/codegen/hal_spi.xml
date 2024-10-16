@@ -934,10 +934,19 @@ return spi_lld_start(self);]]></implementation>
 
 spi_lld_stop(self);]]></implementation>
             </method>
-            <method shortname="doconf">
+            <method shortname="setcfg">
               <implementation><![CDATA[
 
-return (const void *)spi_lld_configure(self, (const hal_spi_config_t *)config);]]></implementation>
+return (const void *)spi_lld_setcfg(self, (const hal_spi_config_t *)config);]]></implementation>
+            </method>
+            <method shortname="selcfg">
+              <implementation><![CDATA[
+
+if (cfgnum > 0U){
+  return NULL;
+}
+
+return (const void *)spi_lld_setcfg(self, NULL);]]></implementation>
             </method>
             <method shortname="gsts">
               <implementation><![CDATA[

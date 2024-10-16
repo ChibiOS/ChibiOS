@@ -574,16 +574,36 @@ void __sio_stop_impl(void *ip) {
  * @memberof    hal_sio_driver_c
  * @protected
  *
- * @brief       Override of method @p __drv_do_configure().
+ * @brief       Override of method @p __drv_set_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
  * @param[in]     config        New driver configuration.
  * @return                      The configuration pointer.
  */
-const void *__sio_doconf_impl(void *ip, const void *config) {
+const void *__sio_setcfg_impl(void *ip, const void *config) {
   hal_sio_driver_c *self = (hal_sio_driver_c *)ip;
 
-  return (const void *)sio_lld_configure(self, (const hal_sio_config_t *)config);
+  return (const void *)sio_lld_setcfg(self, (const hal_sio_config_t *)config);
+}
+
+/**
+ * @memberof    hal_sio_driver_c
+ * @protected
+ *
+ * @brief       Override of method @p __drv_sel_cfg().
+ *
+ * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
+ * @param[in]     cfgnum        Driver configuration number.
+ * @return                      The configuration pointer.
+ */
+const void *__sio_selcfg_impl(void *ip, unsigned cfgnum) {
+  hal_sio_driver_c *self = (hal_sio_driver_c *)ip;
+
+  if (cfgnum > 0U){
+    return NULL;
+  }
+
+  return (const void *)sio_lld_setcfg(self, NULL);
 }
 /** @} */
 
@@ -595,7 +615,8 @@ const struct hal_sio_driver_vmt __hal_sio_driver_vmt = {
   .dispose                  = __sio_dispose_impl,
   .start                    = __sio_start_impl,
   .stop                     = __sio_stop_impl,
-  .doconf                   = __sio_doconf_impl,
+  .setcfg                   = __sio_setcfg_impl,
+  .selcfg                   = __sio_selcfg_impl,
   .setcb                    = __cbdrv_setcb_impl,
   .gsts                     = __cbdrv_gsts_impl,
   .gcsts                    = __cbdrv_gcsts_impl
@@ -1055,17 +1076,17 @@ void __bsio_stop_impl(void *ip) {
  * @memberof    hal_buffered_sio_c
  * @protected
  *
- * @brief       Override of method @p __drv_do_configure().
+ * @brief       Override of method @p __drv_set_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
  * @param[in]     config        New driver configuration.
  * @return                      The configuration pointer.
  */
-const void *__bsio_doconf_impl(void *ip, const void *config) {
+const void *__bsio_setcfg_impl(void *ip, const void *config) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
 
   /* Configuring the underlying SIO driver.*/
-  return __sio_doconf_impl(self->siop, config);
+  return __sio_setcfg_impl(self->siop, config);
 }
 /** @} */
 
@@ -1077,7 +1098,8 @@ const struct hal_buffered_sio_vmt __hal_buffered_sio_vmt = {
   .dispose                  = __bsio_dispose_impl,
   .start                    = __bsio_start_impl,
   .stop                     = __bsio_stop_impl,
-  .doconf                   = __bsio_doconf_impl
+  .setcfg                   = __bsio_setcfg_impl,
+  .selcfg                   = NULL /* Method not found.*/
 };
 
 #endif /* HAL_USE_SIO == TRUE */
