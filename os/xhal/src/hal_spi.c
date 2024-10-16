@@ -184,10 +184,22 @@ const void *__spi_setcfg_impl(void *ip, const void *config) {
  */
 const void *__spi_selcfg_impl(void *ip, unsigned cfgnum) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
+#if SPI_USE_CONFIGURATIONS == TRUE
+  extern const spi_configurations_t spi_configurations;
+
+  if (cfgnum > spi_configurations.cfgsnum) {
+    return NULL;
+  }
+
+  if (cfgnum > 0U) {
+    return (const void *)spi_lld_setcfg(self, &spi_configurations.cfgs[cfgnum - 1]);
+  }
+#else
 
   if (cfgnum > 0U){
     return NULL;
   }
+#endif
 
   return (const void *)spi_lld_setcfg(self, NULL);
 }

@@ -154,6 +154,15 @@
 #if !defined(SPI_SELECT_MODE) || defined(__DOXYGEN__)
 #define SPI_SELECT_MODE                     SPI_SELECT_MODE_PAD
 #endif
+
+/**
+ * @brief       Support for SPI user configurations.
+ * @note        When enabled the user must provide a variable named @p
+ *              sio_configurations of type @p sio_configurations_t.
+ */
+#if !defined(SPI_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
+#define SPI_USE_CONFIGURATIONS              FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -177,6 +186,11 @@
      (SPI_SELECT_MODE != SPI_SELECT_MODE_LINE)) &&                          \
     (HAL_USE_PAL != TRUE)
 #error "current SPI_SELECT_MODE requires HAL_USE_PAL"
+#endif
+
+/* Checks on SPI_USE_CONFIGURATIONS configuration.*/
+#if (SPI_USE_CONFIGURATIONS != FALSE) && (SPI_USE_CONFIGURATIONS != TRUE)
+#error "invalid SPI_USE_CONFIGURATIONS value"
 #endif
 
 /*===========================================================================*/
@@ -234,6 +248,27 @@ typedef struct hal_spi_config SPIConfig;
  * @brief       Type of structure representing a SPI driver (legacy).
  */
 typedef struct hal_spi_driver SPIDriver;
+
+#if (SPI_USE_CONFIGURATIONS == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       Type of user-provided SPI configurations.
+ */
+typedef struct spi_configurations spi_configurations_t;
+
+/**
+ * @brief       Structure representing user-provided SPI configurations.
+ */
+struct spi_configurations {
+  /**
+   * @brief       Number of configurations in the open array.
+   */
+  unsigned                  cfgsnum;
+  /**
+   * @brief       User SPI configurations.
+   */
+  hal_spi_config_t          cfgs[];
+};
+#endif /* SPI_USE_CONFIGURATIONS == TRUE */
 
 /* Inclusion of LLD header.*/
 #include "hal_spi_lld.h"

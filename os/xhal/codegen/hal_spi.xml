@@ -85,6 +85,12 @@
     (HAL_USE_PAL != TRUE)
 #error "current SPI_SELECT_MODE requires HAL_USE_PAL"
 #endif]]></verbatim>
+      <config name="SPI_USE_CONFIGURATIONS" default="FALSE">
+        <brief>Support for SPI user configurations.</brief>
+        <note>When enabled the user must provide a variable named
+          @p sio_configurations of type @p sio_configurations_t.</note>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
     </configs>
     <macros>
       <macro name="__spi_getconf">
@@ -125,6 +131,23 @@
         <brief>Type of structure representing a SPI driver (legacy).</brief>
         <basetype ctype="struct hal_spi_driver" />
       </typedef>
+      <condition check="SPI_USE_CONFIGURATIONS == TRUE">
+        <typedef name="spi_configurations_t">
+          <brief>Type of user-provided SPI configurations.</brief>
+          <basetype ctype="struct spi_configurations" />
+        </typedef>
+        <struct name="spi_configurations">
+          <brief>Structure representing user-provided SPI configurations.</brief>
+          <fields>
+            <field name="cfgsnum" ctype="unsigned">
+              <brief>Number of configurations in the open array.</brief>
+            </field>
+            <field name="cfgs" ctype="hal_spi_config_t$I$N[]">
+              <brief>User SPI configurations.</brief>
+            </field>
+          </fields>
+        </struct>
+      </condition>
       <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
 #include "hal_spi_lld.h"
@@ -941,10 +964,22 @@ return (const void *)spi_lld_setcfg(self, (const hal_spi_config_t *)config);]]><
             </method>
             <method shortname="selcfg">
               <implementation><![CDATA[
+#if SPI_USE_CONFIGURATIONS == TRUE
+extern const spi_configurations_t spi_configurations;
+
+if (cfgnum > spi_configurations.cfgsnum) {
+  return NULL;
+}
+
+if (cfgnum > 0U) {
+  return (const void *)spi_lld_setcfg(self, &spi_configurations.cfgs[cfgnum - 1]);
+}
+#else
 
 if (cfgnum > 0U){
   return NULL;
 }
+#endif
 
 return (const void *)spi_lld_setcfg(self, NULL);]]></implementation>
             </method>

@@ -598,10 +598,22 @@ const void *__sio_setcfg_impl(void *ip, const void *config) {
  */
 const void *__sio_selcfg_impl(void *ip, unsigned cfgnum) {
   hal_sio_driver_c *self = (hal_sio_driver_c *)ip;
+#if SIO_USE_CONFIGURATIONS == TRUE
+  extern const sio_configurations_t sio_configurations;
+
+  if (cfgnum > sio_configurations.cfgsnum) {
+    return NULL;
+  }
+
+  if (cfgnum > 0U) {
+    return (const void *)sio_lld_setcfg(self, &sio_configurations.cfgs[cfgnum - 1]);
+  }
+#else
 
   if (cfgnum > 0U){
     return NULL;
   }
+#endif
 
   return (const void *)sio_lld_setcfg(self, NULL);
 }

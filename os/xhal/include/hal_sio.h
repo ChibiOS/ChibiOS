@@ -110,6 +110,15 @@
 #if !defined(SIO_USE_BUFFERING) || defined(__DOXYGEN__)
 #define SIO_USE_BUFFERING                   TRUE
 #endif
+
+/**
+ * @brief       Support for SIO user configurations.
+ * @note        When enabled the user must provide a variable named @p
+ *              sio_configurations of type @p sio_configurations_t.
+ */
+#if !defined(SIO_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
+#define SIO_USE_CONFIGURATIONS              FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -134,6 +143,11 @@
 /* Checks on SIO_USE_BUFFERING configuration.*/
 #if (SIO_USE_BUFFERING != FALSE) && (SIO_USE_BUFFERING != TRUE)
 #error "invalid SIO_USE_BUFFERING value"
+#endif
+
+/* Checks on SIO_USE_CONFIGURATIONS configuration.*/
+#if (SIO_USE_CONFIGURATIONS != FALSE) && (SIO_USE_CONFIGURATIONS != TRUE)
+#error "invalid SIO_USE_CONFIGURATIONS value"
 #endif
 
 /*===========================================================================*/
@@ -496,6 +510,27 @@ typedef struct hal_sio_config SIOConfig;
  * @brief       Type of structure representing a SIO driver (legacy).
  */
 typedef struct hal_sio_driver SIODriver;
+
+#if (SIO_USE_CONFIGURATIONS == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       Type of user-provided SIO configurations.
+ */
+typedef struct sio_configurations sio_configurations_t;
+
+/**
+ * @brief       Structure representing user-provided SIO configurations.
+ */
+struct sio_configurations {
+  /**
+   * @brief       Number of configurations in the open array.
+   */
+  unsigned                  cfgsnum;
+  /**
+   * @brief       User SIO configurations.
+   */
+  hal_sio_config_t          cfgs[];
+};
+#endif /* SIO_USE_CONFIGURATIONS == TRUE */
 
 /* Inclusion of LLD header.*/
 #include "hal_sio_lld.h"
