@@ -264,7 +264,7 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
   }
 
   switch (sub) {
-  case SB_VSPI_SETCFG:
+  case SB_VSPI_SELCFG:
     {
       uint32_t conf = ectxp->r1;
       const vio_spi_config_t *confp;
@@ -278,7 +278,7 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
       /* Specified VSPI configuration.*/
       confp = &sbp->config->vioconf->spiconfs->cfgs[conf];
 
-      ectxp->r0 = (uint32_t)drvConfigureX(unitp->spip, confp->spicfgp);
+      ectxp->r0 = (uint32_t)drvSetCfgX(unitp->spip, confp->spicfgp);
       break;
     }
   case SB_VSPI_SELECT:

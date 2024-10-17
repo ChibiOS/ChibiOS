@@ -124,7 +124,8 @@ extern "C" {
   void sio_lld_init(void);
   msg_t  sio_lld_start(SIODriver *siop);
   void sio_lld_stop(SIODriver *siop);
-  msg_t sio_lld_configure(SIODriver *siop, const SIOConfig *config);
+  msg_t sio_lld_setcfg(SIODriver *siop, const SIOConfig *config);
+  msg_t sio_lld_selcfg(SIODriver *siop, unsigned cfgnum);
   bool sio_lld_is_rx_empty(SIODriver *siop);
   bool sio_lld_is_rx_idle(SIODriver *siop);
   bool sio_lld_has_rx_errors(SIODriver *siop);

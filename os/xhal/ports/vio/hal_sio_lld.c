@@ -80,7 +80,7 @@ static inline uint32_t __sio_vuart_deinit(uint32_t nvuart) {
 CC_FORCE_INLINE
 static inline uint32_t __sio_vuart_setcfg(uint32_t nvuart, uint32_t ncfg) {
 
-  __syscall2r(225, VIO_CALL(SB_VUART_SETCFG, nvuart), ncfg);
+  __syscall2r(225, VIO_CALL(SB_VUART_SELCFG, nvuart), ncfg);
   return (uint32_t)r0;
 }
 
@@ -167,7 +167,7 @@ msg_t sio_lld_start(SIODriver *siop) {
   }
 
   /* Configures the peripheral.*/
-  sio_lld_configure(siop, &default_config);
+  sio_lld_setcfg(siop, &default_config);
 
   return msg;
 }
@@ -202,9 +202,32 @@ void sio_lld_stop(SIODriver *siop) {
   osalDbgAssert(msg = HAL_RET_SUCCESS, "unexpected failure");
 }
 
-msg_t sio_lld_configure(SIODriver *siop, const SIOConfig *config) {
+/**
+ * @brief   SIO configuration.
+ *
+ * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] config    pointer to the @p SIOConfig structure
+ * @return              A pointer to the current configuration structure.
+ *
+ * @notapi
+ */
+msg_t sio_lld_setcfg(SIODriver *siop, const SIOConfig *config) {
 
   return __sio_vuart_setcfg(siop->nvuart, config->ncfg);
+}
+
+/**
+ * @brief       Selects one of the pre-defined SPI configurations.
+ *
+ * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ * @param[in] cfgnum    driver configuration number
+ * @return              The configuration pointer.
+ *
+ * @notapi
+ */
+msg_t sio_lld_selcfg(SIODriver *siop, unsigned cfgnum) {
+
+  return __sio_vuart_setcfg(siop->nvuart, cfgnum);
 }
 
 /**

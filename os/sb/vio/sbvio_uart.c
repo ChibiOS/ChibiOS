@@ -128,7 +128,7 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
   }
 
   switch (sub) {
-  case SB_VUART_SETCFG:
+  case SB_VUART_SELCFG:
     {
       uint32_t conf = ectxp->r1;
       const vio_uart_config_t *confp;
@@ -142,7 +142,7 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
       /* Specified VUART configuration.*/
       confp = &sbp->config->vioconf->uartconfs->cfgs[conf];
 
-      ectxp->r0 = (uint32_t)drvConfigureX(unitp->siop, confp->siocfgp);
+      ectxp->r0 = (uint32_t)drvSetCfgX(unitp->siop, confp->siocfgp);
       break;
     }
   case SB_VUART_ISRXE:
