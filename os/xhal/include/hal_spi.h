@@ -149,13 +149,6 @@
 #endif
 
 /**
- * @brief       Handling method for SPI CS line.
- */
-#if !defined(SPI_SELECT_MODE) || defined(__DOXYGEN__)
-#define SPI_SELECT_MODE                     SPI_SELECT_MODE_PAD
-#endif
-
-/**
  * @brief       Support for SPI user configurations.
  * @note        When enabled the user must provide a variable named @p
  *              sio_configurations of type @p sio_configurations_t.
@@ -172,20 +165,6 @@
 /* Checks on SPI_USE_SYNCHRONIZATION configuration.*/
 #if (SPI_USE_SYNCHRONIZATION != FALSE) && (SPI_USE_SYNCHRONIZATION != TRUE)
 #error "invalid SPI_USE_SYNCHRONIZATION value"
-#endif
-
-/* Checks on SPI_SELECT_MODE configuration.*/
-#if (SPI_SELECT_MODE < SPI_SELECT_MODE_NONE) || (SPI_SELECT_MODE > SPI_SELECT_MODE_LLD)
-#error "invalid SPI_SELECT_MODE value"
-#endif
-
-/* Some modes have a dependency on the PAL driver, making the required
-   checks here.*/
-#if ((SPI_SELECT_MODE != SPI_SELECT_MODE_PAD)  ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_PORT) ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_LINE)) &&                          \
-    (HAL_USE_PAL != TRUE)
-#error "current SPI_SELECT_MODE requires HAL_USE_PAL"
 #endif
 
 /* Checks on SPI_USE_CONFIGURATIONS configuration.*/
@@ -291,37 +270,6 @@ struct hal_spi_config {
    * @brief       SPI transfer mode options.
    */
   spi_mode_t                mode;
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
-  /**
-   * @brief       The chip select line.
-   * @note        Only used in master mode.
-   */
-  ioline_t                  ssline;
-#endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LINE */
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) || defined (__DOXYGEN__)
-  /**
-   * @brief       The chip select port.
-   * @note        Only used in master mode.
-   */
-  ioportid_t                ssport;
-  /**
-   * @brief       The chip select port mask.
-   * @note        Only used in master mode.
-   */
-  ioportmask_t              ssmask;
-#endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_PORT */
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_PAD) || defined (__DOXYGEN__)
-  /**
-   * @brief       The chip select port.
-   * @note        Only used in master mode.
-   */
-  ioportid_t                ssport;
-  /**
-   * @brief       The chip select pad number.
-   * @note        Only used in master mode.
-   */
-  ioportmask_t              sspad;
-#endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_PAD */
   /* End of the mandatory fields.*/
   spi_lld_config_fields;
 #if (defined(SPI_CONFIG_EXT_FIELS)) || defined (__DOXYGEN__)
@@ -511,7 +459,6 @@ static inline size_t spiGetFrameSizeX(void *ip) {
   return (size_t)(1U << ((__spi_getfield(self, mode) & SPI_MODE_FSIZE_MASK) >> SPI_MODE_FSIZE_POS));
 }
 
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined (__DOXYGEN__)
 /**
  * @memberof    hal_spi_driver_c
  * @public
@@ -545,52 +492,6 @@ static inline void spiUnselectX(void *ip) {
 
   spi_lld_unselect(self);
 }
-
-#elif SPI_SELECT_MODE == SPI_SELECT_MODE_LINE
-CC_FORCE_INLINE
-static inline void spiSelectX(void *ip) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  palClearLine(__spi_getfield(self, ssline));
-}
-
-CC_FORCE_INLINE
-static inline void spiUnselectX(void *ip) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  palSetLine(__spi_getfield(self, ssline));
-}
-
-#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
-CC_FORCE_INLINE
-static inline void spiSelectX(void *ip) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  palClearPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));
-}
-
-CC_FORCE_INLINE
-static inline void spiUnselectX(void *ip) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  palSetPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));
-}
-
-#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
-CC_FORCE_INLINE
-static inline void spiSelectX(void *ip) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  palClearPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));
-}
-
-CC_FORCE_INLINE
-static inline void spiUnselectX(void *ip) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  palSetPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));
-}
-#endif /* SPI_SELECT_MODE == SPI_SELECT_MODE_LLD */
 
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**

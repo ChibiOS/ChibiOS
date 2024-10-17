@@ -1,0 +1,34 @@
+XHAL is the successor to HAL building on its strengths and removing known
+weak points.
+
+Assumptions:
+- While XHAL is similar to HAL strict compatibility is not a requirement. API
+  is similar when there is no impact in functionality.
+
+General improvements:
+- Common source files now generated using an XML-based code generator for
+  quality, consistency and improved code style.
+- SIO, SPI drivers reworked.
+- LLDs are quite "traditional" for easy porting from legacy HAL, few changes
+  are required.
+- Fully object oriented, there is a base driver class common to all drivers
+  and several subclasses for each driver type.
+- A special subclass is defined for drivers that support a callback, only
+  a single callback is possible for each driver instance. A "status" concept
+  is introduced that allows to discriminate the reason for the callback. Now
+  it is possible to change callback on the fly.
+- Drivers registry, it allows to start drivers by name and stop all drivers
+  in one go (todo). Drivers can be enumerated.
+- Driver states are standardized and defined in the base class, not all drivers
+  need to implement all states.
+- Driver start behavior improved, now it is no more associated to a
+  configuration, each driver must be able to start using a generic
+  default configuration. Separate drvSetCfgX() and drvSelectCfgX() APIs are
+  provided for changing configuration after the driver has been started.
+- Configurations can now be selected by index and be hidden to the application
+  logic using drvSelectCfgX(), this improves portability of applications based
+  on XHAL.
+- Driver stop behavior improved, drivers can be stopped in any state, LLDs are
+  now required to handle this cleanly.
+- Many functions that used to return void in HAL now return error codes, this
+  is especially true for communication functions.

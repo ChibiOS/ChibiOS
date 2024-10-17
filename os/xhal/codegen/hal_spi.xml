@@ -71,20 +71,6 @@
         <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
-      <config name="SPI_SELECT_MODE" default="SPI_SELECT_MODE_PAD">
-        <brief>Handling method for SPI CS line.</brief>
-        <assert
-          invalid="($N &lt; SPI_SELECT_MODE_NONE) || ($N &gt; SPI_SELECT_MODE_LLD)" />
-      </config>
-      <verbatim><![CDATA[
-/* Some modes have a dependency on the PAL driver, making the required
-   checks here.*/
-#if ((SPI_SELECT_MODE != SPI_SELECT_MODE_PAD)  ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_PORT) ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_LINE)) &&                          \
-    (HAL_USE_PAL != TRUE)
-#error "current SPI_SELECT_MODE requires HAL_USE_PAL"
-#endif]]></verbatim>
       <config name="SPI_USE_CONFIGURATIONS" default="FALSE">
         <brief>Support for SPI user configurations.</brief>
         <note>When enabled the user must provide a variable named
@@ -168,32 +154,6 @@
           <field name="mode" ctype="spi_mode_t">
             <brief>SPI transfer mode options.</brief>
           </field>
-          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE">
-            <field name="ssline" ctype="ioline_t">
-              <brief>The chip select line.</brief>
-              <note>Only used in master mode.</note>
-            </field>
-          </condition>
-          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT">
-            <field name="ssport" ctype="ioportid_t">
-              <brief>The chip select port.</brief>
-              <note>Only used in master mode.</note>
-            </field>
-            <field name="ssmask" ctype="ioportmask_t">
-              <brief>The chip select port mask.</brief>
-              <note>Only used in master mode.</note>
-            </field>
-          </condition>
-          <condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD">
-            <field name="ssport" ctype="ioportid_t">
-              <brief>The chip select port.</brief>
-              <note>Only used in master mode.</note>
-            </field>
-            <field name="sspad" ctype="ioportmask_t">
-              <brief>The chip select pad number.</brief>
-              <note>Only used in master mode.</note>
-            </field>
-          </condition>
           <verbatim><![CDATA[
 /* End of the mandatory fields.*/
 spi_lld_config_fields;]]></verbatim>
@@ -790,56 +750,22 @@ return msg;]]></implementation>
 
 return (size_t)(1U << ((__spi_getfield(self, mode) & SPI_MODE_FSIZE_MASK) >> SPI_MODE_FSIZE_POS));
 ]]></implementation>
-            </method><condition check="SPI_SELECT_MODE == SPI_SELECT_MODE_LLD">
-              <method name="spiSelectX" ctype="void">
-                <brief>Asserts the slave select signal and prepares for
-                  transfers.</brief>
-                <xclass />
-                <implementation><![CDATA[
+            </method>
+            <method name="spiSelectX" ctype="void">
+              <brief>Asserts the slave select signal and prepares for
+                transfers.</brief>
+              <xclass />
+              <implementation><![CDATA[
 
 spi_lld_select(self);]]></implementation>
-              </method>
-              <method name="spiUnselectX" ctype="void">
-                <brief>Deasserts the slave select signal.</brief>
-                <xclass />
-                <implementation><![CDATA[
+            </method>
+            <method name="spiUnselectX" ctype="void">
+              <brief>Deasserts the slave select signal.</brief>
+              <xclass />
+              <implementation><![CDATA[
 
 spi_lld_unselect(self);]]></implementation>
-              </method>
-              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_LINE" />
-              <method name="spiSelectX" ctype="void">
-                <implementation><![CDATA[
-
-palClearLine(__spi_getfield(self, ssline));]]></implementation>
-              </method>
-              <method name="spiUnselectX" ctype="void">
-                <implementation><![CDATA[
-
-palSetLine(__spi_getfield(self, ssline));]]></implementation>
-              </method>
-              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PORT" />
-              <method name="spiSelectX" ctype="void">
-                <implementation><![CDATA[
-
-palClearPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));]]></implementation>
-              </method>
-              <method name="spiUnselectX" ctype="void">
-                <implementation><![CDATA[
-
-palSetPort(__spi_getfield(self, ssport), __spi_getfield(self, ssmask));]]></implementation>
-              </method>
-              <elseif check="SPI_SELECT_MODE == SPI_SELECT_MODE_PAD" />
-              <method name="spiSelectX" ctype="void">
-                <implementation><![CDATA[
-
-palClearPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));]]></implementation>
-              </method>
-              <method name="spiUnselectX" ctype="void">
-                <implementation><![CDATA[
-
-palSetPad(__spi_getfield(self, ssport), __spi_getfield(self, sspad));]]></implementation>
-              </method>
-            </condition>
+            </method>
             <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
               <method name="__spi_wakeup_isr" ctype="void">
                 <brief>Wakes up the waiting thread.</brief>

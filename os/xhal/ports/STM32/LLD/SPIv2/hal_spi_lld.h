@@ -34,12 +34,27 @@
 /**
  * @brief   Circular mode support flag.
  */
-#define SPI_SUPPORTS_CIRCULAR           TRUE
+#define SPI_SUPPORTS_CIRCULAR               TRUE
 
 /**
  * @brief   Slave mode support flag.
  */
-#define SPI_SUPPORTS_SLAVE_MODE         TRUE
+#define SPI_SUPPORTS_SLAVE_MODE             TRUE
+
+/**
+ * @name    SPI CS modes
+ * @{
+ */
+/**
+ * @brief       Selection by PAL line identifier.
+ */
+#define STM32_SPI_SELECT_MODE_LINE          0
+
+/**
+ * @brief       Selection by PAL port and pad number.
+ */
+#define STM32_SPI_SELECT_MODE_PAD           1
+/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
@@ -102,6 +117,14 @@
 #if !defined(STM32_SPI_USE_SPI6) || defined(__DOXYGEN__)
 #define STM32_SPI_USE_SPI6                  FALSE
 #endif
+
+/**
+ * @brief   Handling method for SPI CS line.
+ */
+#if !defined(STM32_SPI_SELECT_MODE) || defined(__DOXYGEN__)
+#define STM32_SPI_SELECT_MODE               STM32_SPI_SELECT_MODE_LINE
+#endif
+
 
 /**
  * @brief   Filler pattern used when there is nothing to transmit.
@@ -279,6 +302,15 @@
 #if !STM32_SPI_USE_SPI1 && !STM32_SPI_USE_SPI2 && !STM32_SPI_USE_SPI3 &&    \
     !STM32_SPI_USE_SPI4 && !STM32_SPI_USE_SPI5 && !STM32_SPI_USE_SPI6
 #error "SPI driver activated but no SPI peripheral assigned"
+#endif
+
+#if (STM32_SPI_SELECT_MODE != STM32_SPI_SELECT_MODE_LINE) &&                \
+    (STM32_SPI_SELECT_MODE != STM32_SPI_SELECT_MODE_PAD)
+#error "invalid STM32_SPI_SELECT_MODE value"
+#endif
+
+#if HAL_USE_PAL != TRUE
+#error "HAL_USE_SPI requires HAL_USE_PAL"
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \
@@ -537,11 +569,63 @@
 /**
  * @brief   Low level fields of the SPI configuration structure.
  */
+#if STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_LINE
 #define spi_lld_config_fields                                               \
+  /* The chip select line.*/                                                \
+  ioline_t                  ssline;                                         \
   /* SPI CR1 register initialization data.*/                                \
   uint16_t                  cr1;                                            \
   /* SPI CR2 register initialization data.*/                                \
   uint16_t                  cr2
+#elif STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_PAD
+#define spi_lld_config_fields                                               \
+  /* The chip select port.*/                                                \
+  ioportid_t                ssport;                                         \
+  /* The chip select pad number.*/                                          \
+  uint_fast8_t              sspad;                                          \
+  /* SPI CR1 register initialization data.*/                                \
+  uint16_t                  cr1;                                            \
+  /* SPI CR2 register initialization data.*/                                \
+  uint16_t                  cr2
+#endif
+
+#if (STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_LINE) || defined(__DOXYGEN__)
+/**
+ * @brief   Asserts the slave select signal and prepares for transfers.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define spi_lld_select(spip) do {                                           \
+                                                                            \
+  palClearLine(__spi_getfield(spip, ssline));                               \
+} while (0)
+
+/**
+ * @brief   Deasserts the slave select signal.
+ * @details The previously selected peripheral is unselected.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+#define spi_lld_unselect(spip) do {                                         \
+                                                                            \
+  palSetLine(__spi_getfield(spip, ssline));                                 \
+} while (0)
+
+#elif STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_PAD
+#define spi_lld_select(spip) do {                                           \
+                                                                            \
+  palClearPad(__spi_getfield(spip, ssport), __spi_getfield(spip, sspad));   \
+} while (0)
+
+#define spi_lld_unselect(spip) do {                                         \
+                                                                            \
+  palSetPad(__spi_getfield(spip, ssport), __spi_getfield(spip, sspad));     \
+} while (0)
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -584,10 +668,6 @@ extern "C" {
   drv_status_t spi_lld_get_status(SPIDriver *spip);
   drv_status_t spi_lld_get_clear_status(SPIDriver *spip,
                                         drv_status_t mask);
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
-  void spi_lld_select(SPIDriver *spip);
-  void spi_lld_unselect(SPIDriver *spip);
-#endif
   msg_t spi_lld_ignore(SPIDriver *spip, size_t n);
   msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                          const void *txbuf, void *rxbuf);
@@ -598,6 +678,10 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+/*===========================================================================*/
+/* Module inline functions.                                                  */
+/*===========================================================================*/
 
 #endif /* HAL_USE_SPI */
 

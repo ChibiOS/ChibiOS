@@ -129,12 +129,9 @@ SPIDriver SPID6;
  */
 static const hal_spi_config_t spi_default_config = {
   .mode             = 0U,
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
-  .ssline           = PAL_LINE(STM32_SPI_DEFAULT_PORT, STM32_SPI_DEFAULT_PAD);
-#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PORT
-  .ssport           = STM32_SPI_DEFAULT_PORT,
-  .ssport           = PAL_PORT_BIT(STM32_SPI_DEFAULT_PAD),
-#elif SPI_SELECT_MODE == SPI_SELECT_MODE_PAD
+#if (STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
+  .ssline           = PAL_LINE(STM32_SPI_DEFAULT_PORT, STM32_SPI_DEFAULT_PAD),
+#elif STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_PAD
   .ssport           = STM32_SPI_DEFAULT_PORT,
   .sspad            = STM32_SPI_DEFAULT_PAD,
 #endif
@@ -819,33 +816,6 @@ drv_status_t spi_lld_get_clear_status(SPIDriver *spip,
 
   return sts;
 }
-
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
-/**
- * @brief   Asserts the slave select signal and prepares for transfers.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-void spi_lld_select(SPIDriver *spip) {
-
-  /* No implementation on STM32.*/
-}
-
-/**
- * @brief   Deasserts the slave select signal.
- * @details The previously selected peripheral is unselected.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-void spi_lld_unselect(SPIDriver *spip) {
-
-  /* No implementation on STM32.*/
-}
-#endif
 
 /**
  * @brief   Ignores data on the SPI bus.
