@@ -397,7 +397,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
   tp = chThdObjectInit(tp, tdp);
 
   /* Setting up the port-dependent part of the working area.*/
-  PORT_SETUP_CONTEXT(tp, tdp->wabase, tp, tdp->funcp, tdp->arg);
+  PORT_SETUP_CONTEXT(tp, tdp->wbase, tp, tdp->funcp, tdp->arg);
 
 #if CH_CFG_USE_REGISTRY == TRUE
   REG_INSERT(tp->owner, tp);
