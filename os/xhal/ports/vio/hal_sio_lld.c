@@ -38,26 +38,19 @@
  * @brief   VUART1 SIO driver identifier.
  */
 #if (SB_SIO_USE_VUART1 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD1;
+hal_sio_driver_c SIOD1;
 #endif
 
 /**
  * @brief   VUART2 SIO driver identifier.
  */
 #if (SB_SIO_USE_VUART2 == TRUE) || defined(__DOXYGEN__)
-SIODriver SIOD2;
+hal_sio_driver_c SIOD2;
 #endif
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
-
-/**
- * @brief   Driver default configuration.
- */
-static const SIOConfig default_config = {
-  .ncfg  = 0U
-};
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -78,9 +71,10 @@ static inline uint32_t __sio_vuart_deinit(uint32_t nvuart) {
 }
 
 CC_FORCE_INLINE
-static inline uint32_t __sio_vuart_setcfg(uint32_t nvuart, uint32_t ncfg) {
+static inline uint32_t __sio_vuart_selcfg(uint32_t nvuart, uint32_t ncfg,
+                                          size_t n, void *p) {
 
-  __syscall2r(225, VIO_CALL(SB_VUART_SELCFG, nvuart), ncfg);
+  __syscall4r(225, VIO_CALL(SB_VUART_SELCFG, nvuart), ncfg, n, p);
   return (uint32_t)r0;
 }
 
@@ -141,12 +135,12 @@ void sio_lld_init(void) {
 /**
  * @brief   Configures and activates the SIO peripheral.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The operation status.
  *
  * @notapi
  */
-msg_t sio_lld_start(SIODriver *siop) {
+msg_t sio_lld_start(hal_sio_driver_c *siop) {
   msg_t msg = HAL_RET_SUCCESS;
 
   /* Enables the peripheral.*/
@@ -166,20 +160,17 @@ msg_t sio_lld_start(SIODriver *siop) {
     osalDbgAssert(false, "invalid SIO instance");
   }
 
-  /* Configures the peripheral.*/
-  sio_lld_setcfg(siop, &default_config);
-
   return msg;
 }
 
 /**
  * @brief   Deactivates the SIO peripheral.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  *
  * @notapi
  */
-void sio_lld_stop(SIODriver *siop) {
+void sio_lld_stop(hal_sio_driver_c *siop) {
   msg_t msg = HAL_RET_SUCCESS;
 
   /* Disables the peripheral.*/
@@ -205,15 +196,18 @@ void sio_lld_stop(SIODriver *siop) {
 /**
  * @brief   SIO configuration.
  *
- * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] config    pointer to the @p SIOConfig structure
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
+ * @param[in] config    pointer to the @p hal_sio_config_t structure
  * @return              A pointer to the current configuration structure.
  *
  * @notapi
  */
-msg_t sio_lld_setcfg(SIODriver *siop, const SIOConfig *config) {
+const hal_sio_config_t *sio_lld_setcfg(hal_sio_driver_c *siop, const hal_sio_config_t *config) {
 
-  return __sio_vuart_setcfg(siop->nvuart, config->ncfg);
+  (void)siop;
+  (void)config;
+
+  return NULL;
 }
 
 /**
@@ -225,22 +219,30 @@ msg_t sio_lld_setcfg(SIODriver *siop, const SIOConfig *config) {
  *
  * @notapi
  */
-msg_t sio_lld_selcfg(SIODriver *siop, unsigned cfgnum) {
+const hal_sio_config_t *sio_lld_selcfg(hal_sio_driver_c *siop, unsigned cfgnum) {
+  msg_t msg;
 
-  return __sio_vuart_setcfg(siop->nvuart, cfgnum);
+  msg = __sio_vuart_selcfg(siop->nvuart, cfgnum,
+                           sizeof (hal_sio_config_t), &siop->cfgbuf);
+  if (msg == HAL_RET_SUCCESS) {
+
+    return &siop->cfgbuf;
+  }
+
+  return NULL;
 }
 
 /**
  * @brief   Determines the state of the RX FIFO.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The RX FIFO state.
  * @retval false        if RX FIFO is not empty
  * @retval true         if RX FIFO is empty
  *
  * @notapi
  */
-bool sio_lld_is_rx_empty(SIODriver *siop) {
+bool sio_lld_is_rx_empty(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_ISRXE, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -251,14 +253,14 @@ bool sio_lld_is_rx_empty(SIODriver *siop) {
 /**
  * @brief   Determines the activity state of the receiver.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The RX activity state.
  * @retval false        if RX is in active state.
  * @retval true         if RX is in idle state.
  *
  * @notapi
  */
-bool sio_lld_is_rx_idle(SIODriver *siop) {
+bool sio_lld_is_rx_idle(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_ISRXI, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -271,14 +273,14 @@ bool sio_lld_is_rx_idle(SIODriver *siop) {
  * @note    Only error and protocol errors are handled, data events are not
  *          considered.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The RX error events.
  * @retval false        if RX has no pending events
  * @retval true         if RX has pending events
  *
  * @notapi
  */
-bool sio_lld_has_rx_errors(SIODriver *siop) {
+bool sio_lld_has_rx_errors(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_HASERR, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -289,14 +291,14 @@ bool sio_lld_has_rx_errors(SIODriver *siop) {
 /**
  * @brief   Determines the state of the TX FIFO.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The TX FIFO state.
  * @retval false        if TX FIFO is not full
  * @retval true         if TX FIFO is full
  *
  * @notapi
  */
-bool sio_lld_is_tx_full(SIODriver *siop) {
+bool sio_lld_is_tx_full(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_ISTXF, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -307,14 +309,14 @@ bool sio_lld_is_tx_full(SIODriver *siop) {
 /**
  * @brief   Determines the transmission state.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The TX FIFO state.
  * @retval false        if transmission is idle
  * @retval true         if transmission is ongoing
  *
  * @notapi
  */
-bool sio_lld_is_tx_ongoing(SIODriver *siop) {
+bool sio_lld_is_tx_ongoing(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_ISTXO, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -325,9 +327,9 @@ bool sio_lld_is_tx_ongoing(SIODriver *siop) {
 /**
  * @brief   Enable flags change notification.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  */
-void sio_lld_update_enable_flags(SIODriver *siop) {
+void sio_lld_update_enable_flags(hal_sio_driver_c *siop) {
 
   __syscall2r(97, VIO_CALL(SB_VUART_WREN, siop->nvuart), siop->enabled);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -336,12 +338,12 @@ void sio_lld_update_enable_flags(SIODriver *siop) {
 /**
  * @brief   Get and clears SIO error event flags.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The pending event flags.
  *
  * @notapi
  */
-sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
+sioevents_t sio_lld_get_and_clear_errors(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_GCERR, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -352,13 +354,13 @@ sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop) {
 /**
  * @brief   Get and clears SIO event flags.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @param[in] events    events to be returned and cleared
  * @return              The pending event flags.
  *
  * @notapi
  */
-sioevents_t sio_lld_get_and_clear_events(SIODriver *siop, sioevents_t events) {
+sioevents_t sio_lld_get_and_clear_events(hal_sio_driver_c *siop, sioevents_t events) {
 
   __syscall2r(97, VIO_CALL(SB_VUART_GCEVT, siop->nvuart), events);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -369,12 +371,12 @@ sioevents_t sio_lld_get_and_clear_events(SIODriver *siop, sioevents_t events) {
 /**
  * @brief   Returns pending SIO event flags.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The pending event flags.
  *
  * @notapi
  */
-sioevents_t sio_lld_get_events(SIODriver *siop) {
+sioevents_t sio_lld_get_events(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_GEVT, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -387,13 +389,13 @@ sioevents_t sio_lld_get_events(SIODriver *siop) {
  * @details The function is not blocking, it writes frames until there
  *          is space available without waiting.
  *
- * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] siop          pointer to an @p hal_sio_driver_c structure
  * @param[in] buffer        pointer to the buffer for read frames
  * @param[in] n             maximum number of frames to be read
  * @return                  The number of frames copied from the buffer.
  * @retval 0                if the TX FIFO is full.
  */
-size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
+size_t sio_lld_read(hal_sio_driver_c *siop, uint8_t *buffer, size_t n) {
 
   __syscall3r(97, VIO_CALL(SB_VUART_READ, siop->nvuart), buffer, n);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -406,13 +408,13 @@ size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n) {
  * @details The function is not blocking, it writes frames until there
  *          is space available without waiting.
  *
- * @param[in] siop          pointer to an @p SIODriver structure
+ * @param[in] siop          pointer to an @p hal_sio_driver_c structure
  * @param[in] buffer        pointer to the buffer for read frames
  * @param[in] n             maximum number of frames to be written
  * @return                  The number of frames copied from the buffer.
  * @retval 0                if the TX FIFO is full.
  */
-size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
+size_t sio_lld_write(hal_sio_driver_c *siop, const uint8_t *buffer, size_t n) {
 
   __syscall3r(97, VIO_CALL(SB_VUART_WRITE, siop->nvuart), buffer, n);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -424,12 +426,12 @@ size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n) {
  * @brief   Returns one frame from the RX FIFO.
  * @note    If the FIFO is empty then the returned value is unpredictable.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @return              The frame from RX FIFO.
  *
  * @notapi
  */
-msg_t sio_lld_get(SIODriver *siop) {
+msg_t sio_lld_get(hal_sio_driver_c *siop) {
 
   __syscall1r(97, VIO_CALL(SB_VUART_GET, siop->nvuart));
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -441,12 +443,12 @@ msg_t sio_lld_get(SIODriver *siop) {
  * @brief   Pushes one frame into the TX FIFO.
  * @note    If the FIFO is full then the behavior is unpredictable.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @param[in] data      frame to be written
  *
  * @notapi
  */
-void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
+void sio_lld_put(hal_sio_driver_c *siop, uint_fast16_t data) {
 
   __syscall2r(97, VIO_CALL(SB_VUART_PUT, siop->nvuart), data);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -455,7 +457,7 @@ void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
 /**
  * @brief   Control operation on a serial port.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @param[in] operation control operation code
  * @param[in,out] arg   operation argument
  *
@@ -466,7 +468,7 @@ void sio_lld_put(SIODriver *siop, uint_fast16_t data) {
  *
  * @notapi
  */
-msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
+msg_t sio_lld_control(hal_sio_driver_c *siop, unsigned int operation, void *arg) {
 
   __syscall3r(97, VIO_CALL(SB_VUART_CTL, siop->nvuart), operation, arg);
   osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
@@ -477,11 +479,11 @@ msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg) {
 /**
  * @brief   Serves an VUART interrupt.
  *
- * @param[in] siop      pointer to the @p SIODriver object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  *
  * @notapi
  */
-void sio_lld_serve_interrupt(SIODriver *siop) {
+void sio_lld_serve_interrupt(hal_sio_driver_c *siop) {
   sioevents_t events;
 
 #if SIO_USE_SYNCHRONIZATION == TRUE

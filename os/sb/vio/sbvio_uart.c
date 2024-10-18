@@ -111,6 +111,7 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
   uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
   uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
   const vio_uart_unit_t *unitp;
+  msg_t msg;
 
   /* Returned value in case of error or illegal sub-code.*/
   ectxp->r0 = (uint32_t)-1;
@@ -131,6 +132,8 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
   case SB_VUART_SELCFG:
     {
       uint32_t conf = ectxp->r1;
+      size_t n = ectxp->r2;
+      void *p = (void *)ectxp->r3;
       const vio_uart_config_t *confp;
 
       /* Check on configuration index.*/
@@ -139,10 +142,30 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
         return;
       }
 
+      /* Check on configuration buffer size.*/
+      if (n > sizeof (hal_sio_config_t)) {
+        ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+        return;
+      }
+
+      /* Check on configuration buffer area.*/
+      if (!sb_is_valid_write_range(sbp, p, n)) {
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+        /* TODO enforce fault instead.*/
+        break;
+      }
+
       /* Specified VUART configuration.*/
       confp = &sbp->config->vioconf->uartconfs->cfgs[conf];
+      msg = (uint32_t)drvSetCfgX(unitp->siop, confp->siocfgp);
 
-      ectxp->r0 = (uint32_t)drvSetCfgX(unitp->siop, confp->siocfgp);
+      /* Copying the standard part of the configuration into the sandbox
+         space in the specified position.*/
+      if (msg == HAL_RET_SUCCESS) {
+        memcpy(p, confp, n);
+      }
+
+      ectxp->r0 = msg;
       break;
     }
   case SB_VUART_ISRXE:
@@ -176,7 +199,7 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
       size_t n = (size_t)ectxp->r2;
 
       if (!sb_is_valid_write_range(sbp, buffer, n)) {
-        ectxp->r0 = (uint32_t)0;
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
         /* TODO enforce fault instead.*/
         break;
       }
@@ -190,7 +213,7 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
       size_t n = (size_t)ectxp->r2;
 
       if (!sb_is_valid_read_range(sbp, buffer, n)) {
-        ectxp->r0 = (uint32_t)0;
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
         /* TODO enforce fault instead.*/
         break;
       }

@@ -97,50 +97,52 @@
  */
 #define sio_lld_driver_fields                                               \
   /* Number of the associated VUART.*/                                      \
-  uint32_t                  nvuart
+  uint32_t                  nvuart;                                         \
+  /* Buffer for the local copy of the driver configuration.*/               \
+  hal_sio_config_t          cfgbuf
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
  */
-#define sio_lld_config_fields                                               \
-  /* Predefined configuration index.*/                                      \
-  uint32_t                  ncfg
+#define sio_lld_config_fields
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
 #if (SB_SIO_USE_VUART1 == TRUE) && !defined(__DOXYGEN__)
-extern SIODriver SIOD1;
+extern hal_sio_driver_c SIOD1;
 #endif
 
 #if (SB_SIO_USE_VUART2 == TRUE) && !defined(__DOXYGEN__)
-extern SIODriver SIOD2;
+extern hal_sio_driver_c SIOD2;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void sio_lld_init(void);
-  msg_t  sio_lld_start(SIODriver *siop);
-  void sio_lld_stop(SIODriver *siop);
-  msg_t sio_lld_setcfg(SIODriver *siop, const SIOConfig *config);
-  msg_t sio_lld_selcfg(SIODriver *siop, unsigned cfgnum);
-  bool sio_lld_is_rx_empty(SIODriver *siop);
-  bool sio_lld_is_rx_idle(SIODriver *siop);
-  bool sio_lld_has_rx_errors(SIODriver *siop);
-  bool sio_lld_is_tx_full(SIODriver *siop);
-  bool sio_lld_is_tx_ongoing(SIODriver *siop);
-  void sio_lld_update_enable_flags(SIODriver *siop);
-  sioevents_t sio_lld_get_and_clear_errors(SIODriver *siop);
-  sioevents_t sio_lld_get_and_clear_events(SIODriver *siop, sioevents_t events);
-  sioevents_t sio_lld_get_events(SIODriver *siop);
-  size_t sio_lld_read(SIODriver *siop, uint8_t *buffer, size_t n);
-  size_t sio_lld_write(SIODriver *siop, const uint8_t *buffer, size_t n);
-  msg_t sio_lld_get(SIODriver *siop);
-  void sio_lld_put(SIODriver *siop, uint_fast16_t data);
-  msg_t sio_lld_control(SIODriver *siop, unsigned int operation, void *arg);
-  void sio_lld_serve_interrupt(SIODriver *siop);
+  msg_t  sio_lld_start(hal_sio_driver_c *siop);
+  void sio_lld_stop(hal_sio_driver_c *siop);
+  const hal_sio_config_t *sio_lld_setcfg(hal_sio_driver_c *siop,
+                                         const hal_sio_config_t *config);
+  const hal_sio_config_t *sio_lld_selcfg(hal_sio_driver_c *siop, unsigned cfgnum);
+  bool sio_lld_is_rx_empty(hal_sio_driver_c *siop);
+  bool sio_lld_is_rx_idle(hal_sio_driver_c *siop);
+  bool sio_lld_has_rx_errors(hal_sio_driver_c *siop);
+  bool sio_lld_is_tx_full(hal_sio_driver_c *siop);
+  bool sio_lld_is_tx_ongoing(hal_sio_driver_c *siop);
+  void sio_lld_update_enable_flags(hal_sio_driver_c *siop);
+  sioevents_t sio_lld_get_and_clear_errors(hal_sio_driver_c *siop);
+  sioevents_t sio_lld_get_and_clear_events(hal_sio_driver_c *siop,
+                                           sioevents_t events);
+  sioevents_t sio_lld_get_events(hal_sio_driver_c *siop);
+  size_t sio_lld_read(hal_sio_driver_c *siop, uint8_t *buffer, size_t n);
+  size_t sio_lld_write(hal_sio_driver_c *siop, const uint8_t *buffer, size_t n);
+  msg_t sio_lld_get(hal_sio_driver_c *siop);
+  void sio_lld_put(hal_sio_driver_c *siop, uint_fast16_t data);
+  msg_t sio_lld_control(hal_sio_driver_c *siop, unsigned int operation, void *arg);
+  void sio_lld_serve_interrupt(hal_sio_driver_c *siop);
 #ifdef __cplusplus
 }
 #endif
