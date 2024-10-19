@@ -125,14 +125,30 @@ self->cb = cb;]]></implementation>
 
 return self->cb;]]></implementation>
             </method>
+            <method name="drvStateIsHalfI" ctype="bool">
+              <brief>Checks for @p HAL_DRV_STATE_HALF state.</brief>
+              <details><![CDATA[The @p HAL_DRV_STATE_HALF state is used by
+                those drivers triggering multiple callbacks for a single
+                asynchronous operation, it marks the filling of the first
+                half of the tranfer buffer.]]></details>
+              <note><![CDATA[This function is meant to be called exclusively
+                from the driver callback.]]></note>
+              <return>The check result.</return>
+              <retval value="false">If the current state is not @p HAL_DRV_STATE_HALF.</retval>
+              <retval value="true">If the current state is @p HAL_DRV_STATE_HALF.</retval>
+              <api />
+              <implementation><![CDATA[
+
+return (bool)(self->state == HAL_DRV_STATE_HALF);]]></implementation>
+            </method>
             <method name="drvStateIsCompleteI" ctype="bool">
               <brief>Checks for @p HAL_DRV_STATE_COMPLETE state.</brief>
               <details><![CDATA[The @p HAL_DRV_STATE_COMPLETE state is used by
                 those drivers triggering multiple callbacks for a single
-                asynchronous operation, it marks the last callback in the
-                sequence.]]></details>
-              <note><![CDATA[This function is meant to be called exclusively from
-                the driver callback.]]></note>
+                asynchronous operation, it marks the complete filling of the
+                tranfer buffer.]]></details>
+              <note><![CDATA[This function is meant to be called exclusively
+                from the driver callback.]]></note>
               <return>The check result.</return>
               <retval value="false">If the current state is not @p HAL_DRV_STATE_COMPLETE.</retval>
               <retval value="true">If the current state is @p HAL_DRV_STATE_COMPLETE.</retval>

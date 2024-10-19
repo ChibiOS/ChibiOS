@@ -293,10 +293,37 @@ static inline drv_cb_t drvGetCallbackX(void *ip) {
  * @memberof    hal_cb_driver_c
  * @public
  *
+ * @brief       Checks for @p HAL_DRV_STATE_HALF state.
+ * @details     The @p HAL_DRV_STATE_HALF state is used by those drivers
+ *              triggering multiple callbacks for a single asynchronous
+ *              operation, it marks the filling of the first half of the
+ *              tranfer buffer.
+ * @note        This function is meant to be called exclusively from the driver
+ *              callback.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
+ * @return                      The check result.
+ * @retval false                If the current state is not @p
+ *                              HAL_DRV_STATE_HALF.
+ * @retval true                 If the current state is @p HAL_DRV_STATE_HALF.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline bool drvStateIsHalfI(void *ip) {
+  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
+
+  return (bool)(self->state == HAL_DRV_STATE_HALF);
+}
+
+/**
+ * @memberof    hal_cb_driver_c
+ * @public
+ *
  * @brief       Checks for @p HAL_DRV_STATE_COMPLETE state.
  * @details     The @p HAL_DRV_STATE_COMPLETE state is used by those drivers
  *              triggering multiple callbacks for a single asynchronous
- *              operation, it marks the last callback in the sequence.
+ *              operation, it marks the complete filling of the tranfer buffer.
  * @note        This function is meant to be called exclusively from the driver
  *              callback.
  *
