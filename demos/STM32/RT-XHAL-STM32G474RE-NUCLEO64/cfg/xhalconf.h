@@ -15,23 +15,23 @@
 */
 
 /**
- * @file    templates/halconf.h
+ * @file    templates/xhalconf.h
  * @brief   HAL configuration header.
  * @details HAL configuration file, this file allows to enable or disable the
  *          various device drivers from your application. You may also use
  *          this file in order to override the device drivers default settings.
  *
- * @addtogroup HAL_CONF
+ * @addtogroup XHAL_CONF
  * @{
  */
 
-#ifndef HALCONF_H
-#define HALCONF_H
+#ifndef XHALCONF_H
+#define XHALCONF_H
 
-#define __CHIBIOS_HAL_CONF__
-#define __CHIBIOS_HAL_CONF_VER_9_0__
+#define __CHIBIOS_XHAL_CONF__
+#define __CHIBIOS_XHAL_CONF_VER_1_0__
 
-#include "mcuconf.h"
+#include "xmcuconf.h"
 
 /*===========================================================================*/
 /* HAL general settings.                                                     */
@@ -67,6 +67,6 @@
 #define SPI_USE_ASSERT_ON_ERROR             FALSE
 #define SPI_USE_CONFIGURATIONS              FALSE
 
-#endif /* HALCONF_H */
+#endif /* XHALCONF_H */
 
 /** @} */

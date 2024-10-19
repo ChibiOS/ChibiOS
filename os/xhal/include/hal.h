@@ -29,7 +29,7 @@
 
 #include "osal.h"
 #include "board.h"
-#include "halconf.h"
+#include "xhalconf.h"
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -134,11 +134,11 @@
 /*===========================================================================*/
 
 /* Configuration file checks.*/
-#if !defined(__CHIBIOS_HAL_CONF__)
+#if !defined(__CHIBIOS_XHAL_CONF__)
 #error "invalid configuration file"
 #endif
 
-#if !defined(__CHIBIOS_HAL_CONF_VER_9_0__)
+#if !defined(__CHIBIOS_XHAL_CONF_VER_1_0__)
 #error "obsolete or unknown configuration file"
 #endif
 

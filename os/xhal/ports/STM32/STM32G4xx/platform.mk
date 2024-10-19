@@ -19,7 +19,7 @@ ifeq ($(HALCONFDIR),)
   endif
 endif
 
-HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
+HALCONF := $(strip $(shell cat $(HALCONFDIR)/xhalconf.h | grep -E "\#define"))
 
 else
 endif

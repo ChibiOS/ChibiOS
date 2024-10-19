@@ -28,8 +28,8 @@
  * 0...3        Lowest...Highest.
  */
 
-#ifndef MCUCONF_H
-#define MCUCONF_H
+#ifndef XMCUCONF_H
+#define XMCUCONF_H
 
 #define __STM32G4xx_MCUCONF__
 #define __STM32G473_MCUCONF__
@@ -402,4 +402,4 @@
 #define STM32_WSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
 #define STM32_WSPI_QUADSPI1_PRESCALER_VALUE 1
 
-#endif /* MCUCONF_H */
+#endif /* XMCUCONF_H */
