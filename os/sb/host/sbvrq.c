@@ -102,7 +102,7 @@ static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
 
 /* Note, this function may look an useless duplication of vrq_writectx() but
    the included __set_PSP() makes it a viable tail-call candidate for the
-   compiler, this is a significant performance gain is several places.*/
+   compiler, this is a significant performance gain in several places.*/
 CC_NO_INLINE
 static void vrq_pushctx(struct port_extctx *ectxp,
                         sb_class_t *sbp,
@@ -167,7 +167,7 @@ static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
 
 /* Note, this function may look an useless duplication of vrq_writectx() but
    the included __set_PSP() makes it a viable tail-call candidate for the
-   compiler, this is a significant performance gain is several places.*/
+   compiler, this is a significant performance gain in several places.*/
 CC_NO_INLINE
 static void vrq_pushctx(struct port_extctx *ectxp,
                         sb_class_t *sbp,
@@ -254,8 +254,6 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
  */
 void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 
-  chSysLockFromISR();
-
   /* Adding VRQ mask to the pending mask.*/
   sbp->vrq_wtmask |= (sb_vrqmask_t)(1U << nvrq);
 
@@ -308,8 +306,6 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
       }
     }
   }
-
-  chSysUnlockFromISR();
 }
 
 void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp) {
