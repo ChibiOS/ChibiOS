@@ -548,10 +548,7 @@ CC_FORCE_INLINE
 static inline void __spi_isr_complete_code(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  self->sts |= SPI_STS_COMPLETED;
-  __cbdrv_invoke_cb_with_transition(self,
-                                    HAL_DRV_STATE_COMPLETE,
-                                    HAL_DRV_STATE_READY);
+  __cbdrv_invoke_complete_cb(self);
   __spi_wakeup_isr(self, MSG_OK);
 }
 
@@ -573,8 +570,7 @@ CC_FORCE_INLINE
 static inline void __spi_isr_half_code(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  self->sts |= SPI_STS_HALF;
-  __cbdrv_invoke_cb(self);
+  __cbdrv_invoke_half_cb(self);
 }
 
 /**
@@ -595,17 +591,14 @@ CC_FORCE_INLINE
 static inline void __spi_isr_full_code(void *ip) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  self->sts |= SPI_STS_FULL;
-  __cbdrv_invoke_cb_with_transition(self,
-                                    HAL_DRV_STATE_COMPLETE,
-                                    HAL_DRV_STATE_ACTIVE);
+  __cbdrv_invoke_complete_cb(self);
 }
 
 /**
  * @memberof    hal_spi_driver_c
  * @public
  *
- * @brief       ISR error reporting code..
+ * @brief       ISR error reporting code.
  *              The callback is invoked with driver
  *                             state set to @p HAL_DRV_STATE_ERROR.
  * @note        This function is meant to be used in the low level drivers
@@ -620,10 +613,7 @@ CC_FORCE_INLINE
 static inline void __spi_isr_error_code(void *ip, msg_t msg) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
 
-  self->sts |= SPI_STS_FAILED;
-  __cbdrv_invoke_cb_with_transition(self,
-                                    HAL_DRV_STATE_ERROR,
-                                    HAL_DRV_STATE_READY);
+  __cbdrv_invoke_error_cb(self);
   __spi_wakeup_isr(self, msg);
 }
 /** @} */

@@ -35,8 +35,9 @@
  * @name    Callback-related driver states
  * @{
  */
-#define HAL_DRV_STATE_COMPLETE              6U
-#define HAL_DRV_STATE_ERROR                 7U
+#define HAL_DRV_STATE_HALF                  6U
+#define HAL_DRV_STATE_COMPLETE              7U
+#define HAL_DRV_STATE_ERROR                 8U
 /** @} */
 
 /*===========================================================================*/
@@ -91,6 +92,50 @@
       self->state = (endstate);                                             \
     }                                                                       \
   } while (false)
+
+/**
+ * @brief       Callback invocation with @p HAL_DRV_STATE_HALF transient state.
+ * @note        After invoking the callback the driver is returned to the @p
+ *              HAL_DRV_STATE_ACTIVE state.
+ *
+ * @param[in,out] self          Pointer to driver instance.
+ *
+ * @notapi
+ */
+#define __cbdrv_invoke_half_cb(self)                                        \
+  __cbdrv_invoke_cb_with_transition(self,                                   \
+                                    HAL_DRV_STATE_HALF,                     \
+                                    HAL_DRV_STATE_ACTIVE);
+
+/**
+ * @brief       Callback invocation with @p HAL_DRV_STATE_COMPLETE transient
+ *              state.
+ * @note        After invoking the callback the driver is returned to the @p
+ *              HAL_DRV_STATE_ACTIVE state.
+ *
+ * @param[in,out] self          Pointer to driver instance.
+ *
+ * @notapi
+ */
+#define __cbdrv_invoke_complete_cb(self)                                    \
+  __cbdrv_invoke_cb_with_transition(self,                                   \
+                                    HAL_DRV_STATE_COMPLETE,                 \
+                                    HAL_DRV_STATE_ACTIVE);
+
+/**
+ * @brief       Callback invocation with @p HAL_DRV_STATE_ERROR transient
+ *              state.
+ * @note        After invoking the callback the driver is returned to the @p
+ *              HAL_DRV_STATE_ACTIVE state.
+ *
+ * @param[in,out] self          Pointer to driver instance.
+ *
+ * @notapi
+ */
+#define __cbdrv_invoke_error_cb(self)                                       \
+  __cbdrv_invoke_cb_with_transition(self,                                   \
+                                    HAL_DRV_STATE_ERROR,                    \
+                                    HAL_DRV_STATE_ACTIVE);
 /** @} */
 
 /*===========================================================================*/

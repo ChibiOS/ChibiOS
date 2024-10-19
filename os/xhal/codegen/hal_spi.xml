@@ -810,10 +810,7 @@ This code handles the portable part of the ISR code:
               <notapi />
               <implementation><![CDATA[
 
-self->sts |= SPI_STS_COMPLETED;
-__cbdrv_invoke_cb_with_transition(self,
-                                  HAL_DRV_STATE_COMPLETE,
-                                  HAL_DRV_STATE_READY);
+__cbdrv_invoke_complete_cb(self);
 __spi_wakeup_isr(self, MSG_OK);]]></implementation>
             </method>
             <method name="__spi_isr_half_code" ctype="void">
@@ -829,8 +826,7 @@ __spi_wakeup_isr(self, MSG_OK);]]></implementation>
               <notapi />
               <implementation><![CDATA[
 
-self->sts |= SPI_STS_HALF;
-__cbdrv_invoke_cb(self);]]></implementation>
+__cbdrv_invoke_half_cb(self);]]></implementation>
             </method>
             <method name="__spi_isr_full_code" ctype="void">
               <brief>Full buffer filled ISR code in circular mode.</brief>
@@ -845,13 +841,10 @@ __cbdrv_invoke_cb(self);]]></implementation>
               <notapi />
               <implementation><![CDATA[
 
-self->sts |= SPI_STS_FULL;
-__cbdrv_invoke_cb_with_transition(self,
-                                  HAL_DRV_STATE_COMPLETE,
-                                  HAL_DRV_STATE_ACTIVE);]]></implementation>
+__cbdrv_invoke_complete_cb(self);]]></implementation>
             </method>
             <method name="__spi_isr_error_code" ctype="void">
-              <brief>ISR error reporting code..</brief>
+              <brief>ISR error reporting code.</brief>
               <details>
                 <verbatim><![CDATA[The callback is invoked with driver
                state set to @p HAL_DRV_STATE_ERROR.]]></verbatim>
@@ -864,10 +857,7 @@ __cbdrv_invoke_cb_with_transition(self,
               <notapi />
               <implementation><![CDATA[
 
-self->sts |= SPI_STS_FAILED;
-__cbdrv_invoke_cb_with_transition(self,
-                                  HAL_DRV_STATE_ERROR,
-                                  HAL_DRV_STATE_READY);
+__cbdrv_invoke_error_cb(self);
 __spi_wakeup_isr(self, msg);]]></implementation>
             </method>
             
