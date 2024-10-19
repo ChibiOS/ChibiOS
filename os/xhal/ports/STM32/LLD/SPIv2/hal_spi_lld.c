@@ -268,16 +268,17 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
-    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
+    __cbdrv_invoke_error_cb(spip);
+    __spi_wakeup_isr(spip, HAL_RET_HW_FAILURE);
   }
   else if ((__spi_getfield(spip, mode) & SPI_MODE_CIRCULAR) != 0U) {
     if ((flags & STM32_DMA_ISR_HTIF) != 0U) {
       /* Half buffer interrupt.*/
-      __spi_isr_half_code(spip);
+      __cbdrv_invoke_half_cb(spip);
     }
     if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
       /* End buffer interrupt.*/
-      __spi_isr_full_code(spip);
+      __cbdrv_invoke_complete_cb(spip);
     }
   }
   else {
@@ -286,7 +287,8 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Operation finished interrupt.*/
-    __spi_isr_complete_code(spip);
+    __cbdrv_invoke_complete_cb(spip);
+    __spi_wakeup_isr(spip, MSG_OK);
   }
 }
 
@@ -310,7 +312,8 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
-    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
+    __cbdrv_invoke_error_cb(spip);
+    __spi_wakeup_isr(spip, HAL_RET_HW_FAILURE);
   }
 }
 
