@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@
 #ifndef MCUCONF_H
 #define MCUCONF_H
 
-#define STM32G4xx_MCUCONF
-#define STM32G473_MCUCONF
-#define STM32G483_MCUCONF
-#define STM32G474_MCUCONF
-#define STM32G484_MCUCONF
+#define __STM32G4xx_MCUCONF__
+#define __STM32G473_MCUCONF__
+#define __STM32G483_MCUCONF__
+#define __STM32G474_MCUCONF__
+#define __STM32G484_MCUCONF__
 
 /*
  * HAL driver system settings.

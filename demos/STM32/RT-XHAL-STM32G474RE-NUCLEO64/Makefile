@@ -98,9 +98,6 @@ DEPDIR   := ./.dep
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
-# Common files.
-include $(CHIBIOS)/os/common/oop/oop.mk
-include $(CHIBIOS)/os/common/lib/lib.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/xhal/hal.mk
 include $(CHIBIOS)/os/xhal/ports/STM32/STM32G4xx/platform.mk
