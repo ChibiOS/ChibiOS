@@ -71,6 +71,10 @@
         <brief>Support for thread synchronization API.</brief>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
+      <config name="SPI_USE_ASSERT_ON_ERROR" default="FALSE">
+        <brief>Assertions on SPI errors return.</brief>
+        <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
+      </config>
       <config name="SPI_USE_CONFIGURATIONS" default="FALSE">
         <brief>Support for SPI user configurations.</brief>
         <note>When enabled the user must provide a variable named

@@ -65,12 +65,9 @@ void halInit(void) {
   hal_lld_init();
 
 #if (HAL_USE_PAL == TRUE) || defined(__DOXYGEN__)
-#if defined(PAL_NEW_INIT)
   palInit();
-#else
-  palInit(&pal_default_config);
 #endif
-#endif
+#if 0
 #if (HAL_USE_ADC == TRUE) || defined(__DOXYGEN__)
   adcInit();
 #endif
@@ -110,12 +107,14 @@ void halInit(void) {
 #if (HAL_USE_SDC == TRUE) || defined(__DOXYGEN__)
   sdcInit();
 #endif
+#endif
 #if (HAL_USE_SIO == TRUE) || defined(__DOXYGEN__)
   sioInit();
 #endif
 #if (HAL_USE_SPI == TRUE) || defined(__DOXYGEN__)
   spiInit();
 #endif
+#if 0
 #if (HAL_USE_TRNG == TRUE) || defined(__DOXYGEN__)
   trngInit();
 #endif
@@ -139,6 +138,7 @@ void halInit(void) {
 #endif
 #if (HAL_USE_WSPI == TRUE) || defined(__DOXYGEN__)
   wspiInit();
+#endif
 #endif
 
   /* Community driver overlay initialization.*/

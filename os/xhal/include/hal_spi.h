@@ -149,6 +149,13 @@
 #endif
 
 /**
+ * @brief       Assertions on SPI errors return.
+ */
+#if !defined(SPI_USE_ASSERT_ON_ERROR) || defined(__DOXYGEN__)
+#define SPI_USE_ASSERT_ON_ERROR             FALSE
+#endif
+
+/**
  * @brief       Support for SPI user configurations.
  * @note        When enabled the user must provide a variable named @p
  *              sio_configurations of type @p sio_configurations_t.
@@ -165,6 +172,11 @@
 /* Checks on SPI_USE_SYNCHRONIZATION configuration.*/
 #if (SPI_USE_SYNCHRONIZATION != FALSE) && (SPI_USE_SYNCHRONIZATION != TRUE)
 #error "invalid SPI_USE_SYNCHRONIZATION value"
+#endif
+
+/* Checks on SPI_USE_ASSERT_ON_ERROR configuration.*/
+#if (SPI_USE_ASSERT_ON_ERROR != FALSE) && (SPI_USE_ASSERT_ON_ERROR != TRUE)
+#error "invalid SPI_USE_ASSERT_ON_ERROR value"
 #endif
 
 /* Checks on SPI_USE_CONFIGURATIONS configuration.*/

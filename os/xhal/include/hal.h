@@ -134,11 +134,11 @@
 /*===========================================================================*/
 
 /* Configuration file checks.*/
-#if !defined(_CHIBIOS_HAL_CONF_)
+#if !defined(__CHIBIOS_HAL_CONF__)
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_HAL_CONF_VER_8_4_)
+#if !defined(__CHIBIOS_HAL_CONF_VER_9_0__)
 #error "obsolete or unknown configuration file"
 #endif
 

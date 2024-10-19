@@ -1,5 +1,8 @@
-# List of all the ChibiOS/HAL files, there is no need to remove the files
-# from this list, you can disable parts of the HAL by editing halconf.h.
+# XHAL subsystem build.
+
+# Dependencies.
+include $(CHIBIOS)/os/common/oop/oop.mk
+
 ifeq ($(USE_SMART_BUILD),yes)
 
 # Configuration files directory

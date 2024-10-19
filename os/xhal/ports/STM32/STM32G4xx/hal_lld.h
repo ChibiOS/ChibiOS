@@ -738,36 +738,36 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(STM32G4xx_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G4xx_MCUCONF not defined"
+#if !defined(__STM32G4xx_MCUCONF__)
+#error "Using a wrong mcuconf.h file, __STM32G4xx_MCUCONF__ not defined"
 #endif
 
-#if defined(STM32G431xx) && !defined(STM32G431_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G431_MCUCONF not defined"
+#if defined(__STM32G431xx) && !defined(__STM32G431_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G431_MCUCONF__ not defined"
 
-#elif defined(STM32G441xx) && !defined(STM32G441_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G441_MCUCONF not defined"
+#elif defined(__STM32G441xx) && !defined(__STM32G441_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G441_MCUCONF__ not defined"
 
-#elif defined(STM32G471xx) && !defined(STM32G471_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G471_MCUCONF not defined"
+#elif defined(__STM32G471xx) && !defined(__STM32G471_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G471_MCUCONF__ not defined"
 
-#elif defined(STM32G473xx) && !defined(STM32G473_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G473_MCUCONF not defined"
+#elif defined(__STM32G473xx) && !defined(__STM32G473_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G473_MCUCONF__ not defined"
 
-#elif defined(STM32G483xx) && !defined(STM32G473_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G483_MCUCONF not defined"
+#elif defined(__STM32G483xx) && !defined(__STM32G473_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G483_MCUCONF__ not defined"
 
-#elif defined(STM32G474xx) && !defined(STM32G474_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G474_MCUCONF not defined"
+#elif defined(__STM32G474xx) && !defined(__STM32G474_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G474_MCUCONF__ not defined"
 
-#elif defined(STM32G484xx) && !defined(STM32G484_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G484_MCUCONF not defined"
+#elif defined(__STM32G484xx) && !defined(__STM32G484_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G484_MCUCONF__ not defined"
 
-#elif defined(STM32GBK1CB) && !defined(STM32GBK1CB_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32GBK1CB_MCUCONF not defined"
+#elif defined(__STM32GBK1CB) && !defined(__STM32GBK1CB_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32GBK1CB_MCUCONF__ not defined"
 
-#elif defined(STM32G491xx) && !defined(STM32G491_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G491_MCUCONF not defined"
+#elif defined(__STM32G491xx) && !defined(__STM32G491_MCUCONF__)
+#error "Using a wrong mcuconf.h file, STM32G491_MCUCONF__ not defined"
 
 #endif
 

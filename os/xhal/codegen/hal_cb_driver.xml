@@ -125,7 +125,7 @@ self->cb = cb;]]></implementation>
 
 return self->cb;]]></implementation>
             </method>
-            <method name="drvStateIsHalfI" ctype="bool">
+            <method name="drvStateIsHalfX" ctype="bool">
               <brief>Checks for @p HAL_DRV_STATE_HALF state.</brief>
               <details><![CDATA[The @p HAL_DRV_STATE_HALF state is used by
                 those drivers triggering multiple callbacks for a single
@@ -136,12 +136,12 @@ return self->cb;]]></implementation>
               <return>The check result.</return>
               <retval value="false">If the current state is not @p HAL_DRV_STATE_HALF.</retval>
               <retval value="true">If the current state is @p HAL_DRV_STATE_HALF.</retval>
-              <api />
+              <xclass />
               <implementation><![CDATA[
 
 return (bool)(self->state == HAL_DRV_STATE_HALF);]]></implementation>
             </method>
-            <method name="drvStateIsCompleteI" ctype="bool">
+            <method name="drvStateIsCompleteX" ctype="bool">
               <brief>Checks for @p HAL_DRV_STATE_COMPLETE state.</brief>
               <details><![CDATA[The @p HAL_DRV_STATE_COMPLETE state is used by
                 those drivers triggering multiple callbacks for a single
@@ -152,12 +152,12 @@ return (bool)(self->state == HAL_DRV_STATE_HALF);]]></implementation>
               <return>The check result.</return>
               <retval value="false">If the current state is not @p HAL_DRV_STATE_COMPLETE.</retval>
               <retval value="true">If the current state is @p HAL_DRV_STATE_COMPLETE.</retval>
-              <api />
+              <xclass />
               <implementation><![CDATA[
 
 return (bool)(self->state == HAL_DRV_STATE_COMPLETE);]]></implementation>
             </method>
-            <method name="drvStateIsErrorI" ctype="bool">
+            <method name="drvStateIsErrorX" ctype="bool">
               <brief>Checks for @p HAL_DRV_STATE_ERROR state.</brief>
               <details><![CDATA[The @p HAL_DRV_STATE_ERROR state during a callback
                 marks an error in an asynchronous operation, the operation is
@@ -168,7 +168,7 @@ return (bool)(self->state == HAL_DRV_STATE_COMPLETE);]]></implementation>
               <return>The check result.</return>
               <retval value="false">If the current state is not @p HAL_DRV_STATE_ERROR.</retval>
               <retval value="true">If the current state is @p HAL_DRV_STATE_ERROR.</retval>
-              <api />
+              <xclass />
               <implementation><![CDATA[
 
 return (bool)(self->state == HAL_DRV_STATE_ERROR);]]></implementation>

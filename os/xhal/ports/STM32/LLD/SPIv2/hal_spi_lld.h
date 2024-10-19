@@ -535,10 +535,6 @@
 #define STM32_DMA_REQUIRED
 #endif
 
-#if SPI_SELECT_MODE == SPI_SELECT_MODE_LLD
-#error "SPI_SELECT_MODE_LLD not supported by this driver"
-#endif
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/

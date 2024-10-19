@@ -307,10 +307,10 @@ static inline drv_cb_t drvGetCallbackX(void *ip) {
  *                              HAL_DRV_STATE_HALF.
  * @retval true                 If the current state is @p HAL_DRV_STATE_HALF.
  *
- * @api
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline bool drvStateIsHalfI(void *ip) {
+static inline bool drvStateIsHalfX(void *ip) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   return (bool)(self->state == HAL_DRV_STATE_HALF);
@@ -334,10 +334,10 @@ static inline bool drvStateIsHalfI(void *ip) {
  * @retval true                 If the current state is @p
  *                              HAL_DRV_STATE_COMPLETE.
  *
- * @api
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline bool drvStateIsCompleteI(void *ip) {
+static inline bool drvStateIsCompleteX(void *ip) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   return (bool)(self->state == HAL_DRV_STATE_COMPLETE);
@@ -361,10 +361,10 @@ static inline bool drvStateIsCompleteI(void *ip) {
  *                              HAL_DRV_STATE_ERROR.
  * @retval true                 If the current state is @p HAL_DRV_STATE_ERROR.
  *
- * @api
+ * @xclass
  */
 CC_FORCE_INLINE
-static inline bool drvStateIsErrorI(void *ip) {
+static inline bool drvStateIsErrorX(void *ip) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   return (bool)(self->state == HAL_DRV_STATE_ERROR);
