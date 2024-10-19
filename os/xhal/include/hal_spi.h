@@ -240,27 +240,6 @@ typedef struct hal_spi_config SPIConfig;
  */
 typedef struct hal_spi_driver SPIDriver;
 
-#if (SPI_USE_CONFIGURATIONS == TRUE) || defined (__DOXYGEN__)
-/**
- * @brief       Type of user-provided SPI configurations.
- */
-typedef struct spi_configurations spi_configurations_t;
-
-/**
- * @brief       Structure representing user-provided SPI configurations.
- */
-struct spi_configurations {
-  /**
-   * @brief       Number of configurations in the open array.
-   */
-  unsigned                  cfgsnum;
-  /**
-   * @brief       User SPI configurations.
-   */
-  hal_spi_config_t          cfgs[];
-};
-#endif /* SPI_USE_CONFIGURATIONS == TRUE */
-
 /* Inclusion of LLD header.*/
 #include "hal_spi_lld.h"
 
@@ -288,6 +267,27 @@ struct hal_spi_config {
   SPI_CONFIG_EXT_FIELDS
 #endif /* defined(SPI_CONFIG_EXT_FIELS) */
 };
+
+#if (SPI_USE_CONFIGURATIONS == TRUE) || defined (__DOXYGEN__)
+/**
+ * @brief       Type of user-provided SPI configurations.
+ */
+typedef struct spi_configurations spi_configurations_t;
+
+/**
+ * @brief       Structure representing user-provided SPI configurations.
+ */
+struct spi_configurations {
+  /**
+   * @brief       Number of configurations in the open array.
+   */
+  unsigned                  cfgsnum;
+  /**
+   * @brief       User SPI configurations.
+   */
+  hal_spi_config_t          cfgs[];
+};
+#endif /* SPI_USE_CONFIGURATIONS == TRUE */
 
 /**
  * @class       hal_spi_driver_c
