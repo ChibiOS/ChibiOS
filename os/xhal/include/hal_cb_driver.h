@@ -143,11 +143,6 @@
 /*===========================================================================*/
 
 /**
- * @brief       Type of driver status.
- */
-typedef eventflags_t drv_status_t;
-
-/**
  * @brief       Driver callback type.
  */
 typedef void (*drv_cb_t)(void *ip);
@@ -180,8 +175,6 @@ struct hal_cb_driver_vmt {
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
-  drv_status_t (*gsts)(void *ip);
-  drv_status_t (*gcsts)(void *ip, drv_status_t mask);
 };
 
 /**
@@ -243,8 +236,6 @@ extern "C" {
   void *__cbdrv_objinit_impl(void *ip, const void *vmt);
   void __cbdrv_dispose_impl(void *ip);
   void __cbdrv_setcb_impl(void *ip, drv_cb_t cb);
-  drv_status_t __cbdrv_gsts_impl(void *ip);
-  drv_status_t __cbdrv_gcsts_impl(void *ip, drv_status_t mask);
 #ifdef __cplusplus
 }
 #endif
@@ -274,41 +265,6 @@ static inline void drvSetCallbackX(void *ip, drv_cb_t cb) {
   hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
 
   self->vmt->setcb(ip, cb);
-}
-
-/**
- * @memberof    hal_cb_driver_c
- * @public
- *
- * @brief       Returns all driver status flags without clearing.
- *
- * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
- *
- * @iclass
- */
-CC_FORCE_INLINE
-static inline drv_status_t drvGetStatusX(void *ip) {
-  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
-
-  return self->vmt->gsts(ip);
-}
-
-/**
- * @memberof    hal_cb_driver_c
- * @public
- *
- * @brief       Returns the specified driver status flags and clears them.
- *
- * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
- * @param[in]     mask          Flags to be returned and cleared.
- *
- * @xclass
- */
-CC_FORCE_INLINE
-static inline drv_status_t drvGetAndClearStatusI(void *ip, drv_status_t mask) {
-  hal_cb_driver_c *self = (hal_cb_driver_c *)ip;
-
-  return self->vmt->gcsts(ip, mask);
 }
 /** @} */
 

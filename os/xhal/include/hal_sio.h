@@ -577,8 +577,6 @@ struct hal_sio_driver_vmt {
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
-  drv_status_t (*gsts)(void *ip);
-  drv_status_t (*gcsts)(void *ip, drv_status_t mask);
   /* From hal_sio_driver_c.*/
 };
 

@@ -310,7 +310,6 @@ static void spi_lld_serve_tx_interrupt(SPIDriver *spip, uint32_t flags) {
     dmaStreamDisable(spip->dmarx);
 
     /* Reporting the failure.*/
-    spip->sts |= SPI_STS_FAILED | SPI_STS_TXDMA_FAIL;
     __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
   }
 }
@@ -599,9 +598,6 @@ msg_t spi_lld_start(SPIDriver *spip) {
     osalDbgAssert(false, "invalid SPI instance");
   }
 
-  /* Status cleared.*/
-  spip->sts = (drv_status_t)0;
-
   /* DMA setup.*/
   dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
   dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
@@ -785,36 +781,6 @@ const hal_spi_config_t *spi_lld_selcfg(SPIDriver *spip,
 #endif
 
   return (const void *)spi_lld_setcfg(spip, NULL);
-}
-
-/**
- * @brief       Implementation of method @p drvGetStatusX().
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- *
- * @notapi
- */
-drv_status_t spi_lld_get_status(SPIDriver *spip) {
-
-  return spip->sts;
-}
-
-/**
- * @brief       Implementation of method @p drvGetAndClearStatusI().
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- * @param[in] mask      flags to be returned and cleared
- *
- * @notapi
- */
-drv_status_t spi_lld_get_clear_status(SPIDriver *spip,
-                                      drv_status_t mask) {
-  drv_status_t sts;
-
-  sts = spip->sts;
-  spip->sts &= ~mask;
-
-  return sts;
 }
 
 /**

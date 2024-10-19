@@ -305,8 +305,6 @@ struct hal_spi_driver_vmt {
   const void * (*selcfg)(void *ip, unsigned cfgnum);
   /* From hal_cb_driver_c.*/
   void (*setcb)(void *ip, drv_cb_t cb);
-  drv_status_t (*gsts)(void *ip);
-  drv_status_t (*gcsts)(void *ip, drv_status_t mask);
   /* From hal_spi_driver_c.*/
 };
 
@@ -355,10 +353,6 @@ struct hal_spi_driver {
    * @note        Can be @p NULL.
    */
   drv_cb_t                  cb;
-  /**
-   * @brief       Driver status.
-   */
-  drv_status_t              sts;
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   /**
    * @brief       Synchronization point for transfer.
@@ -387,8 +381,6 @@ extern "C" {
   void __spi_stop_impl(void *ip);
   const void *__spi_setcfg_impl(void *ip, const void *config);
   const void *__spi_selcfg_impl(void *ip, unsigned cfgnum);
-  drv_status_t __spi_gsts_impl(void *ip);
-  drv_status_t __spi_gcsts_impl(void *ip, drv_status_t mask);
   msg_t spiStartIgnoreI(void *ip, size_t n);
   msg_t spiStartIgnore(void *ip, size_t n);
   msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf);

@@ -94,7 +94,6 @@ void *__spi_objinit_impl(void *ip, const void *vmt) {
   __cbdrv_objinit_impl(self, vmt);
 
   /* Initialization code.*/
-  self->sts = (drv_status_t)0;
 #if SPI_USE_SYNCHRONIZATION == TRUE
   self->sync_transfer = NULL;
 #endif
@@ -187,35 +186,6 @@ const void *__spi_selcfg_impl(void *ip, unsigned cfgnum) {
 
   return (const void *)spi_lld_selcfg(self, cfgnum);
 }
-
-/**
- * @memberof    hal_spi_driver_c
- * @protected
- *
- * @brief       Override of method @p drvGetStatusX().
- *
- * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
- */
-drv_status_t __spi_gsts_impl(void *ip) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  return __cbdrv_gsts_impl(self);
-}
-
-/**
- * @memberof    hal_spi_driver_c
- * @protected
- *
- * @brief       Override of method @p drvGetAndClearStatusI().
- *
- * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
- * @param[in]     mask          Flags to be returned and cleared.
- */
-drv_status_t __spi_gcsts_impl(void *ip, drv_status_t mask) {
-  hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
-
-  return __cbdrv_gcsts_impl(self, mask);
-}
 /** @} */
 
 /**
@@ -228,9 +198,7 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
   .stop                     = __spi_stop_impl,
   .setcfg                   = __spi_setcfg_impl,
   .selcfg                   = __spi_selcfg_impl,
-  .setcb                    = __cbdrv_setcb_impl,
-  .gsts                     = __spi_gsts_impl,
-  .gcsts                    = __spi_gcsts_impl
+  .setcb                    = __cbdrv_setcb_impl
 };
 
 /**

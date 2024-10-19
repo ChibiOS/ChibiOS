@@ -83,10 +83,6 @@ __cbdrv_invoke_cb_with_transition(self,
       </group>
     </macros>
     <types>
-      <typedef name="drv_status_t">
-        <brief>Type of driver status.</brief>
-        <basetype ctype="eventflags_t" />
-      </typedef>
       <typedef name="drv_cb_t">
         <brief>Driver callback type.</brief>
         <basetype ctype="void (*$N)(void *ip)" />
@@ -119,28 +115,6 @@ self->cb = NULL;]]></implementation>
               <implementation><![CDATA[
 
 self->cb = cb;]]></implementation>
-            </method>
-            <method name="drvGetStatusX" ctype="drv_status_t" shortname="gsts">
-              <brief>Returns all driver status flags without clearing.</brief>
-              <iclass />
-              <implementation><![CDATA[
-
-(void)self;
-
-return (drv_status_t)0;]]></implementation>
-            </method>
-            <method name="drvGetAndClearStatusI" ctype="drv_status_t" shortname="gcsts">
-              <brief>Returns the specified driver status flags and clears them.</brief>
-              <param name="mask" ctype="drv_status_t" dir="in">Flags to
-                be returned and cleared.
-              </param>
-              <xclass />
-              <implementation><![CDATA[
-
-(void)self;
-(void)mask;
-
-return (drv_status_t)0;]]></implementation>
             </method>
           </virtual>
           <inline>

@@ -168,9 +168,6 @@ SPI_CONFIG_EXT_FIELDS]]></verbatim>
         ancestorname="hal_cb_driver" descr="SPI driver">
         <brief>Class of a SPI driver.</brief>
         <fields>
-          <field name="sts" ctype="drv_status_t">
-            <brief>Driver status.</brief>
-          </field>
           <condition check="SPI_USE_SYNCHRONIZATION == TRUE">
             <field name="sync_transfer" ctype="thread_reference_t">
               <brief>Synchronization point for transfer.</brief>
@@ -187,7 +184,6 @@ spi_lld_driver_fields;]]></verbatim>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-self->sts = (drv_status_t)0;
 #if SPI_USE_SYNCHRONIZATION == TRUE
 self->sync_transfer = NULL;
 #endif
@@ -882,16 +878,6 @@ return (const void *)spi_lld_setcfg(self, (const hal_spi_config_t *)config);]]><
               <implementation><![CDATA[
 
 return (const void *)spi_lld_selcfg(self, cfgnum);]]></implementation>
-            </method>
-            <method shortname="gsts">
-              <implementation><![CDATA[
-
-return __cbdrv_gsts_impl(self);]]></implementation>
-            </method>
-            <method shortname="gcsts">
-              <implementation><![CDATA[
-
-return __cbdrv_gcsts_impl(self, mask);]]></implementation>
             </method>
           </override>
         </methods>

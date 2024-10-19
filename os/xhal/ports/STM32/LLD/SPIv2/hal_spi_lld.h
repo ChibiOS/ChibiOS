@@ -665,9 +665,6 @@ extern "C" {
                                          const SPIConfig *config);
   const hal_spi_config_t *spi_lld_selcfg(SPIDriver *spip,
                                          unsigned cfgnum);
-  drv_status_t spi_lld_get_status(SPIDriver *spip);
-  drv_status_t spi_lld_get_clear_status(SPIDriver *spip,
-                                        drv_status_t mask);
   msg_t spi_lld_ignore(SPIDriver *spip, size_t n);
   msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
                          const void *txbuf, void *rxbuf);
