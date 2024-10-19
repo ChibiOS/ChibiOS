@@ -46,7 +46,6 @@
  * @{
  */
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
-#define SB_SVC119_HANDLER       sb_fastc_vrq_gcsts
 #define SB_SVC120_HANDLER       sb_fastc_vrq_setwt
 #define SB_SVC121_HANDLER       sb_fastc_vrq_clrwt
 #define SB_SVC122_HANDLER       sb_fastc_vrq_seten
@@ -85,11 +84,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void sbVRQSetFlagsI(sb_class_t *sbp, sb_vrqnum_t nvrq, uint32_t flags);
   void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq);
   void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq);
   void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp);
   void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp);
-  void sb_fastc_vrq_gcsts(struct port_extctx *ectxp);
   void sb_sysc_vrq_wait(struct port_extctx *ectxp);
   void sb_fastc_vrq_setwt(struct port_extctx *ectxp);
   void sb_fastc_vrq_clrwt(struct port_extctx *ectxp);
@@ -118,7 +117,6 @@ extern "C" {
  *
  * @special
  */
-CC_FORCE_INLINE
 static inline void sbVRQTriggerFromISR(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 
   chSysLockFromISR();

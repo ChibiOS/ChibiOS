@@ -70,17 +70,17 @@ __sb_in_vrq:
         .align      2
         .globl      __crt0_vrq
 __crt0_vrq:
-        ldr.w       r1, =__sb_in_vrq
+        ldr.w       r3, =__sb_in_vrq
         mov.w       r2, #1
-        str.w       r2, [r1]
+        str.w       r2, [r3]
 
         ldr.w       r2, =__sb_vectors
         ldr.w       r2, [r2, r0, lsl #2]
         blx         r2
 
-        ldr.w       r1, =__sb_in_vrq
+        ldr.w       r3, =__sb_in_vrq
         mov.w       r2, #0
-        str.w       r2, [r1]
+        str.w       r2, [r3]
 
 #if !defined(SB_VECTORS_NORTOS)
 #if CH_DBG_STATISTICS

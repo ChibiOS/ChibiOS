@@ -58,19 +58,22 @@ static void vrq_privileged_code(void) {
   }
 }
 
-#if 0
 CC_FORCE_INLINE
 static inline void vrq_makectx(struct port_extctx *newctxp,
                                sb_class_t *sbp,
-                               sb_vrqmask_t active_mask) {
-  uint32_t irqn = __CLZ(__RBIT(active_mask));
-  sbp->vrq_wtmask &= ~(1U << irqn);
+                               sb_vrqnum_t nvrq) {
+  uint32_t flags = sbp->vrq_flags[nvrq];
+  sbp->vrq_wtmask &= ~(1U << nvrq);
+
+  /* Clearing VRQ flags.*/
+  sbp->vrq_flags[nvrq] = 0U;
 
   /* Disabling VRQs globally during processing.*/
   sbp->vrq_isr = SB_VRQ_ISR_DISABLED;
 
   /* Building the return context.*/
-  newctxp->r0     = irqn;
+  newctxp->r0     = nvrq;
+  newctxp->r1     = flags;
   newctxp->pc     = sbp->sbhp->hdr_vrq;
   newctxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
@@ -81,7 +84,7 @@ static inline void vrq_makectx(struct port_extctx *newctxp,
 CC_NO_INLINE
 static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
                                         sb_class_t *sbp,
-                                        sb_vrqmask_t active_mask) {
+                                        sb_vrqnum_t nvrq) {
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp,
@@ -94,7 +97,7 @@ static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
   else {
     /* Creating a new context for return the VRQ handler.*/
     ectxp--;
-    vrq_makectx(ectxp, sbp, active_mask);
+    vrq_makectx(ectxp, sbp, nvrq);
   }
 
   return ectxp;
@@ -106,7 +109,7 @@ static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
 CC_NO_INLINE
 static void vrq_pushctx(struct port_extctx *ectxp,
                         sb_class_t *sbp,
-                        sb_vrqmask_t active_mask) {
+                        sb_vrqnum_t nvrq) {
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp,
@@ -119,72 +122,7 @@ static void vrq_pushctx(struct port_extctx *ectxp,
   else {
     /* Creating a new context for return the VRQ handler.*/
     ectxp--;
-    vrq_makectx(ectxp, sbp, active_mask);
-    __set_PSP((uint32_t)ectxp);
-  }
-}
-#endif
-
-CC_FORCE_INLINE
-static inline void vrq_makectx(struct port_extctx *newctxp,
-                               sb_class_t *sbp,
-                               uint32_t irqn) {
-  sbp->vrq_wtmask &= ~(1U << irqn);
-
-  /* Disabling VRQs globally during processing.*/
-  sbp->vrq_isr = SB_VRQ_ISR_DISABLED;
-
-  /* Building the return context.*/
-  newctxp->r0     = irqn;
-  newctxp->pc     = sbp->sbhp->hdr_vrq;
-  newctxp->xpsr   = 0x01000000U;
-#if CORTEX_USE_FPU == TRUE
-  newctxp->fpscr  = FPU->FPDSCR;
-#endif
-}
-
-CC_NO_INLINE
-static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
-                                        sb_class_t *sbp,
-                                        uint32_t irqn) {
-
-  /* Checking if the new frame is within the sandbox else failure.*/
-  if (!sb_is_valid_write_range(sbp,
-                               (void *)(ectxp - 1),
-                               sizeof (struct port_extctx))) {
-    /* Making the sandbox return on a privileged address, this
-       will cause a fault and sandbox termination.*/
-    ectxp->pc = (uint32_t)vrq_privileged_code;
-  }
-  else {
-    /* Creating a new context for return the VRQ handler.*/
-    ectxp--;
-    vrq_makectx(ectxp, sbp, irqn);
-  }
-
-  return ectxp;
-}
-
-/* Note, this function may look an useless duplication of vrq_writectx() but
-   the included __set_PSP() makes it a viable tail-call candidate for the
-   compiler, this is a significant performance gain in several places.*/
-CC_NO_INLINE
-static void vrq_pushctx(struct port_extctx *ectxp,
-                        sb_class_t *sbp,
-                        uint32_t irqn) {
-
-  /* Checking if the new frame is within the sandbox else failure.*/
-  if (!sb_is_valid_write_range(sbp,
-                               (void *)(ectxp - 1),
-                               sizeof (struct port_extctx))) {
-    /* Making the sandbox return on a privileged address, this
-       will cause a fault and sandbox termination.*/
-    ectxp->pc = (uint32_t)vrq_privileged_code;
-  }
-  else {
-    /* Creating a new context for return the VRQ handler.*/
-    ectxp--;
-    vrq_makectx(ectxp, sbp, irqn);
+    vrq_makectx(ectxp, sbp, nvrq);
     __set_PSP((uint32_t)ectxp);
   }
 }
@@ -200,6 +138,24 @@ static void delay_cb(virtual_timer_t *vtp, void *arg) {
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Add flags to a VRQ.
+ * @details Flags are sent in the VRQ context and cleared, it is a fast way
+ *          to transmit a (virtual) peripheral status information when a
+ *          VRQ is triggered.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] nvrq      number of VRQ to be activated
+ * @param[in] flags     flags to be added to the VRQ
+ *
+ * @iclass
+ */
+
+void sbVRQSetFlagsI(sb_class_t *sbp, sb_vrqnum_t nvrq, uint32_t flags) {
+
+  sbp->vrq_flags[nvrq] |= flags;
+}
 
 /**
  * @brief   Triggers VRQs on the specified sandbox.
@@ -345,15 +301,6 @@ void sb_sysc_vrq_wait(struct port_extctx *ectxp) {
   chSysUnlock();
 }
 
-void sb_fastc_vrq_gcsts(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-  uint32_t sts;
-
-  sts = sbp->vrq_flags[ectxp->r0] & ectxp->r1;
-  sbp->vrq_flags[ectxp->r0] &= ~sts;
-  ectxp->r0 = sts;
-}
-
 void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {
   sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
   uint32_t m;
@@ -467,6 +414,7 @@ void sb_fastc_vrq_return(struct port_extctx *ectxp) {
  *
  * @notapi
  */
+CC_NO_INLINE
 void __sb_vrq_check_pending(struct port_extctx *ectxp, sb_class_t *sbp) {
 
   /* Processing pending VRQs if enabled.*/
@@ -477,10 +425,13 @@ void __sb_vrq_check_pending(struct port_extctx *ectxp, sb_class_t *sbp) {
     if (active_mask != 0U) {
 
       /* Creating a return context.*/
-      ectxp = vrq_writectx(ectxp, sbp, __CLZ(__RBIT(active_mask)));
+      vrq_pushctx(ectxp, sbp, __CLZ(__RBIT(active_mask)));
+      return;
     }
   }
 
+  /* Note, setting the PSP here is redundant for fast calls, it could be
+     worth duplicating this function for efficiency.*/
   __set_PSP((uint32_t)ectxp);
 }
 

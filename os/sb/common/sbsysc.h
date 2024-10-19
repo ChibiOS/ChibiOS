@@ -41,7 +41,6 @@
 #define SB_FASTC_VIO_VGPIO      96
 #define SB_FASTC_VIO_VUART      97
 #define SB_FASTC_VIO_VSPI       98
-#define SB_FASTC_VRQ_GCSTS      119
 #define SB_FASTC_VRQ_SETWT      120
 #define SB_FASTC_VRQ_CLRWT      121
 #define SB_FASTC_VRQ_SETEN      122
