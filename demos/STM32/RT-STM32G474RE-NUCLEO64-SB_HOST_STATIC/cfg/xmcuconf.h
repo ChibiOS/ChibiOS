@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,14 +28,14 @@
  * 0...3        Lowest...Highest.
  */
 
-#ifndef MCUCONF_H
-#define MCUCONF_H
+#ifndef XMCUCONF_H
+#define XMCUCONF_H
 
-#define STM32G4xx_MCUCONF
-#define STM32G473_MCUCONF
-#define STM32G483_MCUCONF
-#define STM32G474_MCUCONF
-#define STM32G484_MCUCONF
+#define __STM32G4xx_MCUCONF__
+#define __STM32G473_MCUCONF__
+#define __STM32G483_MCUCONF__
+#define __STM32G474_MCUCONF__
+#define __STM32G484_MCUCONF__
 
 /*
  * HAL driver system settings.
@@ -325,7 +325,7 @@
  * SPI driver system settings.
  */
 #define STM32_SPI_USE_SPI1                  FALSE
-#define STM32_SPI_USE_SPI2                  FALSE
+#define STM32_SPI_USE_SPI2                  TRUE
 #define STM32_SPI_USE_SPI3                  FALSE
 #define STM32_SPI_USE_SPI4                  FALSE
 #define STM32_SPI_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
@@ -402,4 +402,4 @@
 #define STM32_WSPI_QUADSPI1_DMA_STREAM      STM32_DMA_STREAM_ID_ANY
 #define STM32_WSPI_QUADSPI1_PRESCALER_VALUE 1
 
-#endif /* MCUCONF_H */
+#endif /* XMCUCONF_H */

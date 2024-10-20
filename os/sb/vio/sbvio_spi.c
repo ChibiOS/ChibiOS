@@ -53,7 +53,12 @@ static void vspi_cb(void *ip) {
   hal_sio_driver_c *siop = (hal_sio_driver_c *)ip;
   const vio_spi_unit_t *unitp = (const vio_spi_unit_t *)drvGetArgumentX(siop);
 
-  sbVRQTriggerFromISR(unitp->vrqsb, unitp->vrqn);
+  chSysLockFromISR();
+
+  sbVRQSetFlagsI(unitp->vrqsb, unitp->vrqn, 0U); // TODO
+  sbVRQTriggerI(unitp->vrqsb, unitp->vrqn);
+
+  chSysUnlockFromISR();
 }
 
 /*===========================================================================*/
@@ -136,7 +141,7 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       bufsize = n * spiGetFrameSizeX(unitp->spip);
 
       if (!sb_is_valid_write_range(sbp, rxbuf, bufsize)) {
-        ectxp->r0 = (uint32_t)0;
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
         /* TODO enforce fault instead.*/
         break;
       }
@@ -168,7 +173,7 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       bufsize = n * spiGetFrameSizeX(unitp->spip);
 
       if (!sb_is_valid_read_range(sbp, txbuf, bufsize)) {
-        ectxp->r0 = (uint32_t)0;
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
         /* TODO enforce fault instead.*/
         break;
       }
@@ -201,13 +206,13 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       bufsize = n * spiGetFrameSizeX(unitp->spip);
 
       if (!sb_is_valid_write_range(sbp, rxbuf, bufsize)) {
-        ectxp->r0 = (uint32_t)0;
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
         /* TODO enforce fault instead.*/
         break;
       }
 
       if (!sb_is_valid_read_range(sbp, txbuf, bufsize)) {
-        ectxp->r0 = (uint32_t)0;
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
         /* TODO enforce fault instead.*/
         break;
       }
@@ -222,18 +227,6 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       chSysUnlock();
 
       ectxp->r0 = (uint32_t)msg;
-      break;
-    }
-  case SB_VSPI_GETCLRSTS:
-    {
-      drv_status_t mask = (size_t)ectxp->r1;
-      drv_status_t sts;
-
-      chSysLock();
-      sts = drvGetAndClearStatusI(unitp->spip, mask);
-      chSysUnlock();
-
-      ectxp->r0 = (uint32_t)sts;
       break;
     }
   default:
@@ -267,7 +260,10 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
   case SB_VSPI_SELCFG:
     {
       uint32_t conf = ectxp->r1;
+      size_t n = ectxp->r2;
+      void *p = (void *)ectxp->r3;
       const vio_spi_config_t *confp;
+      msg_t msg;
 
       /* Check on configuration index.*/
       if (conf >= sbp->config->vioconf->spis->n) {
@@ -275,10 +271,30 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
         return;
       }
 
+      /* Check on configuration buffer size.*/
+      if (n > sizeof (hal_spi_config_t)) {
+        ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
+        return;
+      }
+
+      /* Check on configuration buffer area.*/
+      if (!sb_is_valid_write_range(sbp, p, n)) {
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+        /* TODO enforce fault instead.*/
+        break;
+      }
+
       /* Specified VSPI configuration.*/
       confp = &sbp->config->vioconf->spiconfs->cfgs[conf];
+      msg = (uint32_t)drvSetCfgX(unitp->spip, confp->spicfgp);
 
-      ectxp->r0 = (uint32_t)drvSetCfgX(unitp->spip, confp->spicfgp);
+      /* Copying the standard part of the configuration into the sandbox
+         space in the specified position.*/
+      if (msg == HAL_RET_SUCCESS) {
+        memcpy(p, confp, n);
+      }
+
+      ectxp->r0 = msg;
       break;
     }
   case SB_VSPI_SELECT:
@@ -291,11 +307,6 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
     {
       spiUnselectX(unitp->spip);
       ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
-      break;
-    }
-  case SB_VSPI_GETSTS:
-    {
-      ectxp->r0 = (uint32_t)drvGetStatusX(unitp->spip);
       break;
     }
   default:

@@ -41,7 +41,7 @@
  * @brief   Enables the Virtual SPI support.
  */
 #if !defined(VIO_CFG_ENABLE_SPI) || defined(__DOXYGEN__)
-#define VIO_CFG_ENABLE_SPI                  FALSE
+#define VIO_CFG_ENABLE_SPI                  TRUE
 #endif
 
 /**

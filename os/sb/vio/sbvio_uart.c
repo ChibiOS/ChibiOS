@@ -111,7 +111,6 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
   uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
   uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
   const vio_uart_unit_t *unitp;
-  msg_t msg;
 
   /* Returned value in case of error or illegal sub-code.*/
   ectxp->r0 = (uint32_t)-1;
@@ -135,6 +134,7 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
       size_t n = ectxp->r2;
       void *p = (void *)ectxp->r3;
       const vio_uart_config_t *confp;
+      msg_t msg;
 
       /* Check on configuration index.*/
       if (conf >= sbp->config->vioconf->uarts->n) {
