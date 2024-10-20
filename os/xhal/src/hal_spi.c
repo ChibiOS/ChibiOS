@@ -521,11 +521,12 @@ msg_t spiStopTransferI(void *ip, size_t *np) {
 
   osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
                 (self->state == HAL_DRV_STATE_ACTIVE) ||
+                (self->state == HAL_DRV_STATE_HALF) ||
+                (self->state == HAL_DRV_STATE_FULL) ||
                 (self->state == HAL_DRV_STATE_COMPLETE),
                 "invalid state");
 
-  if ((self->state == HAL_DRV_STATE_ACTIVE) ||
-      (self->state == HAL_DRV_STATE_COMPLETE)) {
+  if (self->state != HAL_DRV_STATE_READY) {
 
     /* Stopping transfer at low level.*/
     msg = spi_lld_stop_transfer(self, np);
@@ -726,6 +727,8 @@ msg_t spiSend(void *ip, size_t n, const void *txbuf) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
   msg_t msg;
 
+  osalSysLock();
+
   msg = spiStartSendI(self, n, txbuf);
   if (msg == MSG_OK) {
     msg = spiSynchronizeS(self, TIME_INFINITE);
@@ -759,6 +762,8 @@ msg_t spiSend(void *ip, size_t n, const void *txbuf) {
 msg_t spiReceive(void *ip, size_t n, void *rxbuf) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
   msg_t msg;
+
+  osalSysLock();
 
   msg = spiStartReceiveI(self, n, rxbuf);
   if (msg == MSG_OK) {

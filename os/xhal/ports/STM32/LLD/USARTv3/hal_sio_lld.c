@@ -372,7 +372,8 @@ msg_t sio_lld_start(SIODriver *siop) {
   }
 
   /* Configures the peripheral.*/
-  sio_lld_setcfg(siop, &default_config);
+  siop->config = sio_lld_setcfg(siop, &default_config);
+  osalDbgAssert(siop->config != NULL, "default configuration failed");
 
   return HAL_RET_SUCCESS;
 }
@@ -533,25 +534,22 @@ const SIOConfig *sio_lld_setcfg(SIODriver *siop, const SIOConfig *config) {
  */
 const hal_sio_config_t *sio_lld_selcfg(SIODriver *siop,
                                        unsigned cfgnum) {
-
 #if SIO_USE_CONFIGURATIONS == TRUE
   extern const sio_configurations_t sio_configurations;
 
-  if (cfgnum > sio_configurations.cfgsnum) {
+  if (cfgnum >= sio_configurations.cfgsnum) {
     return NULL;
   }
 
-  if (cfgnum > 0U) {
-    return (const void *)sip_lld_setcfg(siop, &sio_configurations.cfgs[cfgnum - 1]);
-  }
+  return (const void *)sio_lld_setcfg(siop, &sio_configurations.cfgs[cfgnum]);
 #else
 
   if (cfgnum > 0U){
     return NULL;
   }
-#endif
 
   return (const void *)sio_lld_setcfg(siop, NULL);
+#endif
 }
 
 /**

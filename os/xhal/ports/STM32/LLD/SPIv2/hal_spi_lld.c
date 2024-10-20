@@ -278,7 +278,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
     }
     if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
       /* End buffer interrupt.*/
-      __cbdrv_invoke_complete_cb(spip);
+      __cbdrv_invoke_full_cb(spip);
     }
   }
   else {
@@ -605,8 +605,9 @@ msg_t spi_lld_start(SPIDriver *spip) {
   dmaStreamSetPeripheral(spip->dmarx, &spip->spi->DR);
   dmaStreamSetPeripheral(spip->dmatx, &spip->spi->DR);
 
-  /* Configures the peripheral.*/
-  spi_lld_setcfg(spip, &spi_default_config);
+  /* Configures the peripheral, it is not supposed to fail.*/
+  spip->config = spi_lld_setcfg(spip, &spi_default_config);
+  osalDbgAssert(spip->config != NULL, "default configuration failed");
 
   return HAL_RET_SUCCESS;
 }
@@ -765,25 +766,22 @@ const hal_spi_config_t *spi_lld_setcfg(hal_spi_driver_c *spip,
  */
 const hal_spi_config_t *spi_lld_selcfg(SPIDriver *spip,
                                        unsigned cfgnum) {
-
 #if SPI_USE_CONFIGURATIONS == TRUE
   extern const spi_configurations_t spi_configurations;
 
-  if (cfgnum > spi_configurations.cfgsnum) {
+  if (cfgnum >= spi_configurations.cfgsnum) {
     return NULL;
   }
 
-  if (cfgnum > 0U) {
-    return (const void *)spi_lld_setcfg(spip, &spi_configurations.cfgs[cfgnum - 1]);
-  }
+  return (const void *)spi_lld_setcfg(spip, &spi_configurations.cfgs[cfgnum]);
 #else
 
   if (cfgnum > 0U){
     return NULL;
   }
-#endif
 
   return (const void *)spi_lld_setcfg(spip, NULL);
+#endif
 }
 
 /**

@@ -36,8 +36,9 @@
  * @{
  */
 #define HAL_DRV_STATE_HALF                  6U
-#define HAL_DRV_STATE_COMPLETE              7U
-#define HAL_DRV_STATE_ERROR                 8U
+#define HAL_DRV_STATE_FULL                  7U
+#define HAL_DRV_STATE_COMPLETE              8U
+#define HAL_DRV_STATE_ERROR                 9U
 /** @} */
 
 /*===========================================================================*/
@@ -108,10 +109,24 @@
                                     HAL_DRV_STATE_ACTIVE);
 
 /**
+ * @brief       Callback invocation with @p HAL_DRV_STATE_FULL transient state.
+ * @note        After invoking the callback the driver is returned to the @p
+ *              HAL_DRV_STATE_ACTIVE state.
+ *
+ * @param[in,out] self          Pointer to driver instance.
+ *
+ * @notapi
+ */
+#define __cbdrv_invoke_full_cb(self)                                        \
+  __cbdrv_invoke_cb_with_transition(self,                                   \
+                                    HAL_DRV_STATE_FULL,                     \
+                                    HAL_DRV_STATE_ACTIVE);
+
+/**
  * @brief       Callback invocation with @p HAL_DRV_STATE_COMPLETE transient
  *              state.
  * @note        After invoking the callback the driver is returned to the @p
- *              HAL_DRV_STATE_ACTIVE state.
+ *              HAL_DRV_STATE_READY state.
  *
  * @param[in,out] self          Pointer to driver instance.
  *
@@ -120,7 +135,7 @@
 #define __cbdrv_invoke_complete_cb(self)                                    \
   __cbdrv_invoke_cb_with_transition(self,                                   \
                                     HAL_DRV_STATE_COMPLETE,                 \
-                                    HAL_DRV_STATE_ACTIVE);
+                                    HAL_DRV_STATE_READY);
 
 /**
  * @brief       Callback invocation with @p HAL_DRV_STATE_ERROR transient

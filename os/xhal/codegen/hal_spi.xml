@@ -34,37 +34,6 @@
           <brief>Enables the slave mode.</brief>
         </define>
       </group>
-      <group description="SPI CS modes">
-        <define name="SPI_SELECT_MODE_NONE" value="0">
-          <brief>@p spiSelect() and @p spiUnselect() do nothing.</brief>
-        </define>
-        <define name="SPI_SELECT_MODE_PAD" value="1">
-          <brief>Selection by PAL port and pad number.</brief>
-        </define>
-        <define name="SPI_SELECT_MODE_PORT" value="2">
-          <brief>Selection by port and port mask.</brief>
-        </define>
-        <define name="SPI_SELECT_MODE_LINE" value="3">
-          <brief>Selection by PAL line identifier.</brief>
-        </define>
-        <define name="SPI_SELECT_MODE_LLD" value="4">
-          <brief>Selection by LLD-defined mode.</brief>
-        </define>
-      </group>
-      <group description="SPI status flags">
-        <define name="SPI_STS_COMPLETED" value="1U">
-          <brief>Last transfer completed successfully.</brief>
-        </define>
-        <define name="SPI_STS_FAILED" value="2U">
-          <brief>Last transfer completed with error.</brief>
-        </define>
-        <define name="SPI_STS_HALF" value="4U">
-          <brief>Half transfer flag.</brief>
-        </define>
-        <define name="SPI_STS_FULL" value="8U">
-          <brief>Full transfer flag.</brief>
-        </define>
-      </group>
     </definitions_early>
     <configs>
       <config name="SPI_USE_SYNCHRONIZATION" default="TRUE">
@@ -496,11 +465,12 @@ osalDbgCheck(self != NULL);
 
 osalDbgAssert((self->state == HAL_DRV_STATE_READY) ||
               (self->state == HAL_DRV_STATE_ACTIVE) ||
+              (self->state == HAL_DRV_STATE_HALF) ||
+              (self->state == HAL_DRV_STATE_FULL) ||
               (self->state == HAL_DRV_STATE_COMPLETE),
               "invalid state");
 
-if ((self->state == HAL_DRV_STATE_ACTIVE) ||
-    (self->state == HAL_DRV_STATE_COMPLETE)) {
+if (self->state != HAL_DRV_STATE_READY) {
 
   /* Stopping transfer at low level.*/
   msg = spi_lld_stop_transfer(self, np);
@@ -675,14 +645,9 @@ return msg;]]></implementation>
                 <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
                 <param name="n" ctype="size_t" dir="in">Number of
-                  frames to be
-                  exchanged.
-                </param>
+                  frames to be exchanged.</param>
                 <param name="txbuf" ctype="const void *" dir="in">Pointer
-                  to
-                  the
-                  transmit buffer.
-                </param>
+                  to the transmit buffer.</param>
                 <return>The operation status.</return>
                 <retval value="MSG_OK">If operation completed without
                   errors.
@@ -694,6 +659,8 @@ return msg;]]></implementation>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
+
+osalSysLock();
 
 msg = spiStartSendI(self, n, txbuf);
 if (msg == MSG_OK) {
@@ -712,9 +679,7 @@ return msg;]]></implementation>
                 <note><![CDATA[Buffers are organized as uint8_t arrays for frame
                 sizes below or equal to 8 bits else uint16_t is used.]]></note>
                 <param name="n" ctype="size_t" dir="in">Number of
-                  frames to be
-                  exchanged.
-                </param>
+                  frames to be exchanged.</param>
                 <param name="rxbuf" ctype="void *" dir="out">Pointer to
                   the
                   receive buffer.
@@ -730,6 +695,8 @@ return msg;]]></implementation>
                 <api />
                 <implementation><![CDATA[
 msg_t msg;
+
+osalSysLock();
 
 msg = spiStartReceiveI(self, n, rxbuf);
 if (msg == MSG_OK) {
@@ -769,9 +736,7 @@ spi_lld_unselect(self);]]></implementation>
               <method name="__spi_wakeup_isr" ctype="void">
                 <brief>Wakes up the waiting thread.</brief>
                 <note>This function is meant to be used in the low level
-                  drivers
-                  implementations only.
-                </note>
+                  drivers implementations only.</note>
                 <param name="msg" ctype="msg_t" dir="in">The wakeup
                   message.
                 </param>

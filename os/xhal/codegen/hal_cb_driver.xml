@@ -10,8 +10,9 @@
     <definitions_early>
       <group description="Callback-related driver states">
         <define name="HAL_DRV_STATE_HALF" value="6U" />
-        <define name="HAL_DRV_STATE_COMPLETE" value="7U" />
-        <define name="HAL_DRV_STATE_ERROR" value="8U" />
+        <define name="HAL_DRV_STATE_FULL" value="7U" />
+        <define name="HAL_DRV_STATE_COMPLETE" value="8U" />
+        <define name="HAL_DRV_STATE_ERROR" value="9U" />
       </group>
     </definitions_early>
     <macros>
@@ -58,16 +59,27 @@ __cbdrv_invoke_cb_with_transition(self,
                                   HAL_DRV_STATE_HALF,
                                   HAL_DRV_STATE_ACTIVE);]]></implementation>
         </macro>
-        <macro name="__cbdrv_invoke_complete_cb">
-          <brief>Callback invocation with @p HAL_DRV_STATE_COMPLETE transient state.</brief>
+        <macro name="__cbdrv_invoke_full_cb">
+          <brief>Callback invocation with @p HAL_DRV_STATE_FULL transient state.</brief>
           <note>After invoking the callback the driver is returned to the
             @p HAL_DRV_STATE_ACTIVE state.</note>
           <param name="self" dir="both">Pointer to driver instance.</param>
           <notapi />
           <implementation><![CDATA[
 __cbdrv_invoke_cb_with_transition(self,
-                                  HAL_DRV_STATE_COMPLETE,
+                                  HAL_DRV_STATE_FULL,
                                   HAL_DRV_STATE_ACTIVE);]]></implementation>
+        </macro>
+        <macro name="__cbdrv_invoke_complete_cb">
+          <brief>Callback invocation with @p HAL_DRV_STATE_COMPLETE transient state.</brief>
+          <note>After invoking the callback the driver is returned to the
+            @p HAL_DRV_STATE_READY state.</note>
+          <param name="self" dir="both">Pointer to driver instance.</param>
+          <notapi />
+          <implementation><![CDATA[
+__cbdrv_invoke_cb_with_transition(self,
+                                  HAL_DRV_STATE_COMPLETE,
+                                  HAL_DRV_STATE_READY);]]></implementation>
         </macro>
         <macro name="__cbdrv_invoke_error_cb">
           <brief>Callback invocation with @p HAL_DRV_STATE_ERROR transient state.</brief>

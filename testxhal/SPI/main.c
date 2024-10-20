@@ -29,33 +29,38 @@ CC_ALIGN_DATA(32) static uint8_t rxbuf[512];
 /*
  * SPI callback for circular operations.
  */
-void spi_circular_cb(hal_spi_driver_c *spip) {
+void spi_circular_cb(void *ip) {
+  hal_spi_driver_c *spip = (hal_spi_driver_c *)ip;
   size_t n;
 
-#if SPI_SUPPORTS_CIRCULAR == TRUE
   /* Stopping circular transfer on button press.*/
   if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
     osalSysLockFromISR();
     spiStopTransferI(&PORTAB_SPI1, &n);
     osalSysUnlockFromISR();
   }
-#endif
 
-  /* Possible reasons for the callback.*/
-  if (drvStateIsHalfX(spip)) {
+  switch (drvGetStateX(spip)) {
+  case HAL_DRV_STATE_HALF:
     /* 1st half buffer filled.*/
 #if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_ON);
 #endif
-  }
-  else if (drvStateIsCompleteX(spip)) {
+    break;
+
+  case HAL_DRV_STATE_FULL:
     /* 2nd half buffer filled.*/
 #if defined(PORTAB_LINE_LED1)
     palWriteLine(PORTAB_LINE_LED1, PORTAB_LED_OFF);
 #endif
-  }
-  else {
-    /* Must be error.*/
+    break;
+
+  case HAL_DRV_STATE_COMPLETE:
+    /* Transfer completed.*/
+    break;
+
+  default:
+    /* Must be HAL_DRV_STATE_ERROR.*/
     chSysHalt("SPI error");
   }
 }
@@ -209,7 +214,7 @@ int main(void) {
 #endif
 
   /*
-   * Tranfers of various sizes.
+   * Transfers of various sizes.
    */
   drvStart(&PORTAB_SPI1);
   drvSelectCfgX(&PORTAB_SPI1, SPI_CFG_LOW_SPEED);
@@ -238,6 +243,7 @@ int main(void) {
   /*
    * Starting a continuous operation for test.
    */
+  drvSetCallbackX(&PORTAB_SPI1, spi_circular_cb);
   drvStart(&PORTAB_SPI1);
   drvSelectCfgX(&PORTAB_SPI1, SPI_CFG_CIRCULAR);
   spiSelectX(&PORTAB_SPI1);           /* Slave Select assertion.          */

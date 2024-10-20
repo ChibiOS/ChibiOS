@@ -78,61 +78,6 @@
 #define SPI_MODE_SLAVE                      (1U << 3)
 /** @} */
 
-/**
- * @name    SPI CS modes
- * @{
- */
-/**
- * @brief       @p spiSelect() and @p spiUnselect() do nothing.
- */
-#define SPI_SELECT_MODE_NONE                0
-
-/**
- * @brief       Selection by PAL port and pad number.
- */
-#define SPI_SELECT_MODE_PAD                 1
-
-/**
- * @brief       Selection by port and port mask.
- */
-#define SPI_SELECT_MODE_PORT                2
-
-/**
- * @brief       Selection by PAL line identifier.
- */
-#define SPI_SELECT_MODE_LINE                3
-
-/**
- * @brief       Selection by LLD-defined mode.
- */
-#define SPI_SELECT_MODE_LLD                 4
-/** @} */
-
-/**
- * @name    SPI status flags
- * @{
- */
-/**
- * @brief       Last transfer completed successfully.
- */
-#define SPI_STS_COMPLETED                   1U
-
-/**
- * @brief       Last transfer completed with error.
- */
-#define SPI_STS_FAILED                      2U
-
-/**
- * @brief       Half transfer flag.
- */
-#define SPI_STS_HALF                        4U
-
-/**
- * @brief       Full transfer flag.
- */
-#define SPI_STS_FULL                        8U
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
