@@ -50,12 +50,13 @@
 /*===========================================================================*/
 
 static void vspi_cb(void *ip) {
-  hal_sio_driver_c *siop = (hal_sio_driver_c *)ip;
-  const vio_spi_unit_t *unitp = (const vio_spi_unit_t *)drvGetArgumentX(siop);
+  hal_spi_driver_c *spip = (hal_spi_driver_c *)ip;
+  const vio_spi_unit_t *unitp = (const vio_spi_unit_t *)drvGetArgumentX(spip);
 
   chSysLockFromISR();
 
-  sbVRQSetFlagsI(unitp->vrqsb, unitp->vrqn, 0U); // TODO
+  /* Need to send the state as a flags mask.*/
+  sbVRQSetFlagsI(unitp->vrqsb, unitp->vrqn, 1U << drvGetStateX(spip));
   sbVRQTriggerI(unitp->vrqsb, unitp->vrqn);
 
   chSysUnlockFromISR();
