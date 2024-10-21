@@ -82,7 +82,7 @@ typedef struct vio_conf {
   /**
    * @brief   Virtual UART configurations.
    */
-  const vio_uart_configs_t      *uartconfs;
+  const sio_configurations_t    *uartconfs;
 #endif
 #if (VIO_CFG_ENABLE_SPI == TRUE) || defined(__DOXYGEN__)
   /**
@@ -92,7 +92,7 @@ typedef struct vio_conf {
   /**
    * @brief   Virtual SPI configurations.
    */
-  const vio_spi_configs_t       *spiconfs;
+  const spi_configurations_t    *spiconfs;
 #endif
 } vio_conf_t;
 

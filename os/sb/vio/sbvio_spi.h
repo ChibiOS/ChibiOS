@@ -73,21 +73,6 @@ typedef struct vio_spi_units {
   vio_spi_unit_t    units[];
 } vio_spi_units_t;
 
-/**
- * @brief   Type of a VIO SPI configuration representation.
- */
-typedef struct vio_spi_config {
-  SIOConfig         *spicfgp;
-} vio_spi_config_t;
-
-/**
- * @brief   Type of a VIO SPIs configuration structure.
- */
-typedef struct vio_spi_configs {
-  uint32_t          n;
-  vio_spi_config_t  cfgs[];
-} vio_spi_configs_t;
-
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/

@@ -174,6 +174,15 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#define SIO_DEFAULT_CONFIGURATION                                           \
+{                                                                           \
+  .baud  = SIO_DEFAULT_BITRATE,                                             \
+  .presc = USART_PRESC1,                                                    \
+  .cr1   = USART_CR1_DATA8 | USART_CR1_OVER16,                              \
+  .cr2   = USART_CR2_STOP1_BITS,                                            \
+  .cr3   = USART_CR3_TXFTCFG_NONFULL | USART_CR3_RXFTCFG_NONEMPTY           \
+}
+
 #if !defined(USART_CR1_FIFOEN)
 #error "FIFO mode not supported in this device"
 #endif

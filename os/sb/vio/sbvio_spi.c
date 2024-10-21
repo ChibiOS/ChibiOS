@@ -232,7 +232,7 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
   case SB_VSPI_STOP:
     {
       msg_t msg;
-      size_t *np = (const void *)ectxp->r1;
+      size_t *np = (size_t *)ectxp->r1;
 
       if (!sb_is_valid_write_range(sbp, np, sizeof (size_t))) {
         ectxp->r0 = (uint32_t)CH_RET_EFAULT;
@@ -282,14 +282,13 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
   switch (sub) {
   case SB_VSPI_SELCFG:
     {
-      uint32_t conf = ectxp->r1;
+      uint32_t cfgnum = ectxp->r1;
       size_t n = ectxp->r2;
       void *p = (void *)ectxp->r3;
-      const vio_spi_config_t *confp;
-      msg_t msg;
+      const void *confp;
 
       /* Check on configuration index.*/
-      if (conf >= sbp->config->vioconf->spis->n) {
+      if (cfgnum >= sbp->config->vioconf->spiconfs->cfgsnum) {
         ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
         return;
       }
@@ -308,16 +307,18 @@ void sb_fastc_vio_spi(struct port_extctx *ectxp) {
       }
 
       /* Specified VSPI configuration.*/
-      confp = &sbp->config->vioconf->spiconfs->cfgs[conf];
-      msg = (uint32_t)drvSetCfgX(unitp->spip, confp->spicfgp);
+      confp = drvSelectCfgX(unitp->spip, cfgnum);
 
       /* Copying the standard part of the configuration into the sandbox
          space in the specified position.*/
-      if (msg == HAL_RET_SUCCESS) {
+      if (confp != NULL) {
         memcpy(p, confp, n);
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      }
+      else {
+        ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
       }
 
-      ectxp->r0 = msg;
       break;
     }
   case SB_VSPI_SELECT:

@@ -146,13 +146,7 @@ SIODriver LPSIOD1;
  * @note    In this implementation it is: 38400-8-N-1, RX and TX FIFO
  *          thresholds set to 50%.
  */
-static const SIOConfig default_config = {
-  .baud  = SIO_DEFAULT_BITRATE,
-  .presc = USART_PRESC1,
-  .cr1   = USART_CR1_DATA8 | USART_CR1_OVER16,
-  .cr2   = USART_CR2_STOP1_BITS,
-  .cr3   = USART_CR3_TXFTCFG_NONFULL | USART_CR3_RXFTCFG_NONEMPTY
-};
+static const SIOConfig default_config = SIO_DEFAULT_CONFIGURATION;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */

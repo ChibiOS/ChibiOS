@@ -130,14 +130,13 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
   switch (sub) {
   case SB_VUART_SELCFG:
     {
-      uint32_t conf = ectxp->r1;
+      uint32_t cfgnum = ectxp->r1;
       size_t n = ectxp->r2;
       void *p = (void *)ectxp->r3;
-      const vio_uart_config_t *confp;
-      msg_t msg;
+      const void *confp;
 
       /* Check on configuration index.*/
-      if (conf >= sbp->config->vioconf->uarts->n) {
+      if (cfgnum >= sbp->config->vioconf->uartconfs->cfgsnum) {
         ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
         return;
       }
@@ -156,16 +155,18 @@ void sb_fastc_vio_uart(struct port_extctx *ectxp) {
       }
 
       /* Specified VUART configuration.*/
-      confp = &sbp->config->vioconf->uartconfs->cfgs[conf];
-      msg = (uint32_t)drvSetCfgX(unitp->siop, confp->siocfgp);
+      confp = drvSelectCfgX(unitp->siop, cfgnum);
 
       /* Copying the standard part of the configuration into the sandbox
          space in the specified position.*/
-      if (msg == HAL_RET_SUCCESS) {
+      if (confp != NULL) {
         memcpy(p, confp, n);
+        ectxp->r0 = (uint32_t)HAL_RET_SUCCESS;
+      }
+      else {
+        ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
       }
 
-      ectxp->r0 = msg;
       break;
     }
   case SB_VUART_ISRXE:

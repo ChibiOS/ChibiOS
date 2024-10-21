@@ -275,6 +275,24 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if (STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
+#define SPI_DEFAULT_CONFIGURATION                                           \
+{                                                                           \
+  .mode             = 0U,                                                   \
+  .ssline           = PAL_LINE(STM32_SPI_DEFAULT_PORT, STM32_SPI_DEFAULT_PAD),\
+  .cr1              = STM32_SPI_DEFAULT_CR1,                                \
+  .cr2              = STM32_SPI_DEFAULT_CR2                                 \
+}
+#elif STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_PAD
+{                                                                           \
+  .mode             = 0U,                                                   \
+  .ssport           = STM32_SPI_DEFAULT_PORT,                               \
+  .sspad            = STM32_SPI_DEFAULT_PAD,                                \
+  .cr1              = STM32_SPI_DEFAULT_CR1,                                \
+  .cr2              = STM32_SPI_DEFAULT_CR2                                 \
+}
+#endif
+
 #if STM32_SPI_USE_SPI1 && !STM32_HAS_SPI1
 #error "SPI1 not present in the selected device"
 #endif

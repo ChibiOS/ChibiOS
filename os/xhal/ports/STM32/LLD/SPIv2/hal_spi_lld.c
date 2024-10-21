@@ -127,17 +127,7 @@ SPIDriver SPID6;
 /**
  * @brief   Driver default configuration.
  */
-static const hal_spi_config_t spi_default_config = {
-  .mode             = 0U,
-#if (STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_LINE) || defined (__DOXYGEN__)
-  .ssline           = PAL_LINE(STM32_SPI_DEFAULT_PORT, STM32_SPI_DEFAULT_PAD),
-#elif STM32_SPI_SELECT_MODE == STM32_SPI_SELECT_MODE_PAD
-  .ssport           = STM32_SPI_DEFAULT_PORT,
-  .sspad            = STM32_SPI_DEFAULT_PAD,
-#endif
-  .cr1              = STM32_SPI_DEFAULT_CR1,
-  .cr2              = STM32_SPI_DEFAULT_CR2
-};
+static const hal_spi_config_t spi_default_config = SPI_DEFAULT_CONFIGURATION;
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
