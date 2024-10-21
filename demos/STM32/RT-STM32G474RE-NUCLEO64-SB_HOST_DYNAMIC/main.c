@@ -53,10 +53,10 @@ static vio_uart_units_t uart_units1 = {
   }
 };
 
-static vio_uart_configs_t uart_configs1 = {
-  .n            = 1U,
+static sio_configurations_t uart_configs1 = {
+  .cfgsnum      = 1U,
   .cfgs         = {
-    [0]         = {NULL}
+    [0]         = SIO_DEFAULT_CONFIGURATION
   }
 };
 
@@ -74,8 +74,8 @@ static vio_uart_units_t uart_units2 = {
   .n            = 0U
 };
 
-static vio_uart_configs_t uart_configs2 = {
-  .n            = 0U
+static sio_configurations_t uart_configs2 = {
+  .cfgsnum      = 0U
 };
 
 static vio_conf_t vio_config2 = {
