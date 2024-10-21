@@ -311,6 +311,9 @@ msg_t drvStart(void *ip) {
     }
     else {
       self->state = HAL_DRV_STATE_STOP;
+
+      /* LLD is supposed to not have a configuration.*/
+      osalDbgAssert(self->config == NULL, "configuration");
     }
   default:
     /* Any other state ignored, driver already started.*/
