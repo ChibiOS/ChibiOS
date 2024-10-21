@@ -211,9 +211,9 @@ const hal_sio_config_t *sio_lld_setcfg(hal_sio_driver_c *siop, const hal_sio_con
 }
 
 /**
- * @brief       Selects one of the pre-defined SPI configurations.
+ * @brief       Selects one of the pre-defined SIO configurations.
  *
- * @param[in] spip      pointer to the @p hal_spi_driver_c object
+ * @param[in] siop      pointer to the @p hal_sio_driver_c object
  * @param[in] cfgnum    driver configuration number
  * @return              The configuration pointer.
  *

@@ -277,7 +277,7 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
       __cbdrv_invoke_half_cb(spip);
     }
     if ((flags & STM32_DMA_ISR_TCIF) != 0U) {
-      /* End buffer interrupt.*/
+      /* Full buffer interrupt.*/
       __cbdrv_invoke_full_cb(spip);
     }
   }

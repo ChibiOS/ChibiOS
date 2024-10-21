@@ -120,23 +120,22 @@ SPI_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
         </fields>
       </struct>
-      <condition check="SPI_USE_CONFIGURATIONS == TRUE">
-        <typedef name="spi_configurations_t">
-          <brief>Type of user-provided SPI configurations.</brief>
-          <basetype ctype="struct spi_configurations" />
-        </typedef>
-        <struct name="spi_configurations">
-          <brief>Structure representing user-provided SPI configurations.</brief>
-          <fields>
-            <field name="cfgsnum" ctype="unsigned">
-              <brief>Number of configurations in the open array.</brief>
-            </field>
-            <field name="cfgs" ctype="hal_spi_config_t$I$N[]">
-              <brief>User SPI configurations.</brief>
-            </field>
-          </fields>
-        </struct>
-      </condition><class type="regular" name="hal_spi_driver" namespace="spi"
+      <typedef name="spi_configurations_t">
+        <brief>Type of user-provided SPI configurations.</brief>
+        <basetype ctype="struct spi_configurations" />
+      </typedef>
+      <struct name="spi_configurations">
+        <brief>Structure representing user-provided SPI configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_spi_config_t$I$N[]">
+            <brief>User SPI configurations.</brief>
+          </field>
+        </fields>
+      </struct>
+      <class type="regular" name="hal_spi_driver" namespace="spi"
         ancestorname="hal_cb_driver" descr="SPI driver">
         <brief>Class of a SPI driver.</brief>
         <fields>

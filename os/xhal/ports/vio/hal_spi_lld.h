@@ -88,52 +88,47 @@
  * @brief   Low level fields of the SPI driver structure.
  */
 #define spi_lld_driver_fields                                               \
-  /* Driver status.*/                                                       \
-  drv_status_t              sts;                                            \
   /* Number of the associated VSPI.*/                                       \
-  uint32_t                  nvspi
+  uint32_t                  nvspi;                                          \
+  /* Buffer for the local copy of the driver configuration.*/               \
+  hal_spi_config_t          cfgbuf
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
  */
-#define spi_lld_config_fields                                               \
-  /* Predefined configuration index.*/                                      \
-  uint32_t                  ncfg
+#define spi_lld_config_fields
 
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
 #if VIO_SPI_USE_VSPI1 && !defined(__DOXYGEN__)
-extern SPIDriver SPID1;
+extern hal_spi_driver_c SPID1;
 #endif
 
 #if VIO_SPI_USE_VSPI2 && !defined(__DOXYGEN__)
-extern SPIDriver SPID2;
+extern hal_spi_driver_c SPID2;
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   void spi_lld_init(void);
-  msg_t spi_lld_start(SPIDriver *spip);
-  void spi_lld_stop(SPIDriver *spip);
-  const hal_spi_config_t *spi_lld_configure(hal_spi_driver_c *spip,
-                                            const hal_spi_config_t *config);
-  drv_status_t spi_lld_get_status(hal_spi_driver_c *spip);
-  drv_status_t spi_lld_get_clear_status(hal_spi_driver_c *spip,
-                                        drv_status_t mask);
-#if (SPI_SELECT_MODE == SPI_SELECT_MODE_LLD) || defined(__DOXYGEN__)
-  void spi_lld_select(SPIDriver *spip);
-  void spi_lld_unselect(SPIDriver *spip);
-#endif
-  msg_t spi_lld_ignore(SPIDriver *spip, size_t n);
-  msg_t spi_lld_exchange(SPIDriver *spip, size_t n,
+  msg_t spi_lld_start(hal_spi_driver_c *spip);
+  void spi_lld_stop(hal_spi_driver_c *spip);
+  const hal_spi_config_t *spi_lld_setcfg(hal_spi_driver_c *spip,
+                                         const hal_spi_config_t *config);
+  const hal_spi_config_t *spi_lld_selcfg(hal_spi_driver_c *spip,
+                                         unsigned cfgnum);
+  void spi_lld_select(hal_spi_driver_c *spip);
+  void spi_lld_unselect(hal_spi_driver_c *spip);
+  msg_t spi_lld_ignore(hal_spi_driver_c *spip, size_t n);
+  msg_t spi_lld_exchange(hal_spi_driver_c *spip, size_t n,
                          const void *txbuf, void *rxbuf);
-  msg_t spi_lld_send(SPIDriver *spip, size_t n, const void *txbuf);
-  msg_t spi_lld_receive(SPIDriver *spip, size_t n, void *rxbuf);
-  msg_t spi_lld_stop_transfer(SPIDriver *spip, size_t *sizep);
-  uint16_t spi_lld_polled_exchange(SPIDriver *spip, uint16_t frame);
+  msg_t spi_lld_send(hal_spi_driver_c *spip, size_t n, const void *txbuf);
+  msg_t spi_lld_receive(hal_spi_driver_c *spip, size_t n, void *rxbuf);
+  msg_t spi_lld_stop_transfer(hal_spi_driver_c *spip, size_t *sizep);
+  uint16_t spi_lld_polled_exchange(hal_spi_driver_c *spip, uint16_t frame);
 #ifdef __cplusplus
 }
 #endif

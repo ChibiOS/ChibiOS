@@ -2,7 +2,8 @@
 PLATFORMSRC := $(CHIBIOS)/os/xhal/ports/vio/hal_lld.c \
                $(CHIBIOS)/os/xhal/ports/vio/hal_st_lld.c \
                $(CHIBIOS)/os/xhal/ports/vio/hal_pal_lld.c \
-               $(CHIBIOS)/os/xhal/ports/vio/hal_sio_lld.c
+               $(CHIBIOS)/os/xhal/ports/vio/hal_sio_lld.c \
+               $(CHIBIOS)/os/xhal/ports/vio/hal_spi_lld.c
 
 # Required include directories.
 PLATFORMINC := $(CHIBIOS)/os/xhal/ports/vio
@@ -19,7 +20,7 @@ ifeq ($(HALCONFDIR),)
   endif
 endif
 
-HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
+HALCONF := $(strip $(shell cat $(HALCONFDIR)/xhalconf.h | grep -E "\#define"))
 
 else
 endif

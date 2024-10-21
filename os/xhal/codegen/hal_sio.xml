@@ -431,23 +431,6 @@ do {
         <brief>Type of structure representing a SIO driver (legacy).</brief>
         <basetype ctype="struct hal_sio_driver" />
       </typedef>
-      <condition check="SIO_USE_CONFIGURATIONS == TRUE">
-        <typedef name="sio_configurations_t">
-          <brief>Type of user-provided SIO configurations.</brief>
-          <basetype ctype="struct sio_configurations" />
-        </typedef>
-        <struct name="sio_configurations">
-          <brief>Structure representing user-provided SIO configurations.</brief>
-          <fields>
-            <field name="cfgsnum" ctype="unsigned">
-              <brief>Number of configurations in the open array.</brief>
-            </field>
-            <field name="cfgs" ctype="hal_sio_config_t$I$N[]">
-              <brief>User SIO configurations.</brief>
-            </field>
-          </fields>
-        </struct>
-      </condition>
       <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
 #include "hal_sio_lld.h"]]></verbatim>
@@ -464,6 +447,21 @@ sio_lld_config_fields;]]></verbatim>
             <verbatim><![CDATA[
 SIO_CONFIG_EXT_FIELDS]]></verbatim>
           </condition>
+        </fields>
+      </struct>
+      <typedef name="sio_configurations_t">
+        <brief>Type of user-provided SIO configurations.</brief>
+        <basetype ctype="struct sio_configurations" />
+      </typedef>
+      <struct name="sio_configurations">
+        <brief>Structure representing user-provided SIO configurations.</brief>
+        <fields>
+          <field name="cfgsnum" ctype="unsigned">
+            <brief>Number of configurations in the open array.</brief>
+          </field>
+          <field name="cfgs" ctype="hal_sio_config_t$I$N[]">
+            <brief>User SIO configurations.</brief>
+          </field>
         </fields>
       </struct>
       <class type="regular" name="hal_sio_driver" namespace="sio"

@@ -62,18 +62,20 @@ CC_FORCE_INLINE
 static inline void vrq_makectx(struct port_extctx *newctxp,
                                sb_class_t *sbp,
                                sb_vrqnum_t nvrq) {
-  uint32_t flags = sbp->vrq_flags[nvrq];
   sbp->vrq_wtmask &= ~(1U << nvrq);
-
-  /* Clearing VRQ flags.*/
-  sbp->vrq_flags[nvrq] = 0U;
 
   /* Disabling VRQs globally during processing.*/
   sbp->vrq_isr = SB_VRQ_ISR_DISABLED;
 
   /* Building the return context.*/
   newctxp->r0     = nvrq;
-  newctxp->r1     = flags;
+#if 0
+  newctxp->r1     = 0U;
+  newctxp->r2     = 0U;
+  newctxp->r3     = 0U;
+  newctxp->r12    = 0U;
+  newctxp->lr_thd = 0U;
+#endif
   newctxp->pc     = sbp->sbhp->hdr_vrq;
   newctxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
@@ -299,6 +301,17 @@ void sb_sysc_vrq_wait(struct port_extctx *ectxp) {
   }
 
   chSysUnlock();
+}
+
+void sb_fastc_vrq_gcsts(struct port_extctx *ectxp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  uint32_t nvrq = ectxp->r0;
+
+  /* Cast because vrq_flags[] could be configured to be a smaller type.*/
+  ectxp->r0 = (uint32_t)sbp->vrq_flags[nvrq];
+  sbp->vrq_flags[nvrq] = 0U;
+
+  __sb_vrq_check_pending(ectxp, sbp);
 }
 
 void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {

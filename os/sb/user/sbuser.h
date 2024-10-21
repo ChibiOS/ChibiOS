@@ -828,6 +828,7 @@ static inline sysinterval_t sbTimeDiffX(systime_t start, systime_t end) {
  * @param[in] time      the time to be verified
  * @param[in] start     the start of the time window (inclusive)
  * @param[in] end       the end of the time window (non inclusive)
+ * @return              The time range check result.
  * @retval true         current time within the specified time window.
  * @retval false        current time not within the specified time window.
  *
@@ -919,9 +920,24 @@ static inline void __sb_vrq_wait(void) {
 }
 
 /**
+ * @brief   VRQ @p gcsts pseudo-instruction.
+ *
+ * @param[in] n         VRQ number
+ * @return              The associated VRQ flags.
+ *
+ * @api
+ */
+static inline uint32_t __sb_vrq_gcsts(uint32_t nvrq) {
+
+  __syscall1r(120, nvrq);
+  return r0;
+}
+
+/**
  * @brief   VRQ @p setwt pseudo-instruction.
  *
  * @param[in] m         VRQs mask
+ * @return              The mask of pending interrupts.
  *
  * @api
  */
@@ -935,6 +951,7 @@ static inline uint32_t __sb_vrq_setwt(uint32_t m) {
  * @brief   VRQ @p clrwt pseudo-instruction.
  *
  * @param[in] m         VRQs mask
+ * @return              The mask of pending interrupts.
  *
  * @api
  */
@@ -948,6 +965,7 @@ static inline uint32_t __sb_vrq_clrwt(uint32_t m) {
  * @brief   VRQ @p seten pseudo-instruction.
  *
  * @param[in] m         VRQs mask
+ * @return              The mask of enabled interrupts.
  *
  * @api
  */
@@ -961,6 +979,7 @@ static inline uint32_t __sb_vrq_seten(uint32_t m) {
  * @brief   VRQ @p clren pseudo-instruction.
  *
  * @param[in] m         VRQs mask
+ * @return              The mask of enabled interrupts.
  *
  * @api
  */
@@ -992,6 +1011,8 @@ static inline void __sb_vrq_enable(void) {
 
 /**
  * @brief   VRQ @p getisr pseudo-instruction.
+ *
+ * @return              The interrupts status register value.
  *
  * @api
  */

@@ -41,6 +41,7 @@
 #define SB_FASTC_VIO_VGPIO      96
 #define SB_FASTC_VIO_VUART      97
 #define SB_FASTC_VIO_VSPI       98
+#define SB_FASTC_VRQ_GCSTS      119
 #define SB_FASTC_VRQ_SETWT      120
 #define SB_FASTC_VRQ_CLRWT      121
 #define SB_FASTC_VRQ_SETEN      122
@@ -118,6 +119,7 @@
 #define SB_VSPI_RECEIVE         3
 #define SB_VSPI_SEND            4
 #define SB_VSPI_EXCHANGE        5
+#define SB_VSPI_STOP            6
 #define SB_VSPI_SELCFG          0
 #define SB_VSPI_SELECT          1
 #define SB_VSPI_UNSELECT        2

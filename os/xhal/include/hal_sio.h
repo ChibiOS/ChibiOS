@@ -511,7 +511,22 @@ typedef struct hal_sio_config SIOConfig;
  */
 typedef struct hal_sio_driver SIODriver;
 
-#if (SIO_USE_CONFIGURATIONS == TRUE) || defined (__DOXYGEN__)
+/* Inclusion of LLD header.*/
+#include "hal_sio_lld.h"
+
+/**
+ * @brief       Driver configuration structure.
+ * @note        Implementations may extend this structure to contain more,
+ *              architecture dependent, fields.
+ */
+struct hal_sio_config {
+  /* End of the mandatory fields.*/
+  sio_lld_config_fields;
+#if (defined(SIO_CONFIG_EXT_FIELS)) || defined (__DOXYGEN__)
+  SIO_CONFIG_EXT_FIELDS
+#endif /* defined(SIO_CONFIG_EXT_FIELS) */
+};
+
 /**
  * @brief       Type of user-provided SIO configurations.
  */
@@ -529,23 +544,6 @@ struct sio_configurations {
    * @brief       User SIO configurations.
    */
   hal_sio_config_t          cfgs[];
-};
-#endif /* SIO_USE_CONFIGURATIONS == TRUE */
-
-/* Inclusion of LLD header.*/
-#include "hal_sio_lld.h"
-
-/**
- * @brief       Driver configuration structure.
- * @note        Implementations may extend this structure to contain more,
- *              architecture dependent, fields.
- */
-struct hal_sio_config {
-  /* End of the mandatory fields.*/
-  sio_lld_config_fields;
-#if (defined(SIO_CONFIG_EXT_FIELS)) || defined (__DOXYGEN__)
-  SIO_CONFIG_EXT_FIELDS
-#endif /* defined(SIO_CONFIG_EXT_FIELS) */
 };
 
 /**

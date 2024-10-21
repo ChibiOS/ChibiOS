@@ -213,7 +213,6 @@ struct hal_spi_config {
 #endif /* defined(SPI_CONFIG_EXT_FIELS) */
 };
 
-#if (SPI_USE_CONFIGURATIONS == TRUE) || defined (__DOXYGEN__)
 /**
  * @brief       Type of user-provided SPI configurations.
  */
@@ -232,7 +231,6 @@ struct spi_configurations {
    */
   hal_spi_config_t          cfgs[];
 };
-#endif /* SPI_USE_CONFIGURATIONS == TRUE */
 
 /**
  * @class       hal_spi_driver_c
