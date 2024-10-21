@@ -229,6 +229,29 @@ void sb_sysc_vio_spi(struct port_extctx *ectxp) {
       ectxp->r0 = (uint32_t)msg;
       break;
     }
+  case SB_VSPI_STOP:
+    {
+      msg_t msg;
+      size_t *np = (const void *)ectxp->r1;
+
+      if (!sb_is_valid_write_range(sbp, np, sizeof (size_t))) {
+        ectxp->r0 = (uint32_t)CH_RET_EFAULT;
+        /* TODO enforce fault instead.*/
+        break;
+      }
+
+      chSysLock();
+      if (drvGetStateX(unitp->spip) == HAL_DRV_STATE_STOP) {
+        msg = HAL_RET_INV_STATE;
+      }
+      else {
+        msg = spiStopTransferI(unitp->spip, np);
+      }
+      chSysUnlock();
+
+      ectxp->r0 = (uint32_t)msg;
+      break;
+    }
   default:
     ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
     break;
