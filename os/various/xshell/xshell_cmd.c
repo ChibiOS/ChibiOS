@@ -378,7 +378,7 @@ static void cmd_cd(xshell_manager_t *smp, BaseSequentialStream *stream,
 
     ret = vfsChangeCurrentDirectory(argv[1]);
     if (CH_RET_IS_ERROR(ret)) {
-      chprintf(stream, "failed (%d)" XSHELL_NEWLINE_STR, ret);
+      chprintf(stream, "failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
     }
   }
   while (false);
@@ -405,7 +405,7 @@ static void cmd_ls(xshell_manager_t *smp, BaseSequentialStream *stream,
     }
 
     /* Opening the (un)specified directory.*/
-    ret = vfsOpenDirectory(argc == 1 ? argv[1] : ".", &dirp);
+    ret = vfsOpenDirectory(argc == 2 ? argv[1] : ".", &dirp);
     if (!CH_RET_IS_ERROR(ret)) {
 
       while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
@@ -415,7 +415,7 @@ static void cmd_ls(xshell_manager_t *smp, BaseSequentialStream *stream,
       vfsClose((vfs_node_c *)dirp);
     }
     else {
-      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, ret);
+      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
     }
 
   } while (false);
@@ -437,7 +437,7 @@ static void cmd_mkdir(xshell_manager_t *smp, BaseSequentialStream *stream,
 
   ret = vfsMkdir(argv[1], 0777U);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, ret);
+    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
@@ -453,7 +453,7 @@ static void cmd_mv(xshell_manager_t *smp, BaseSequentialStream *stream,
 
   ret = vfsRename(argv[1], argv[2]);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, ret);
+    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
@@ -480,7 +480,7 @@ static void cmd_pwd(xshell_manager_t *smp, BaseSequentialStream *stream,
 
     ret = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
     if (CH_RET_IS_ERROR(ret)) {
-      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, ret);
+      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
     }
     else {
       chprintf(stream, "%s" XSHELL_NEWLINE_STR, buf);
@@ -505,7 +505,7 @@ static void cmd_rm(xshell_manager_t *smp, BaseSequentialStream *stream,
 
   ret = vfsUnlink(argv[1]);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, ret);
+    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
@@ -521,7 +521,7 @@ static void cmd_rmdir(xshell_manager_t *smp, BaseSequentialStream *stream,
 
   ret = vfsRmdir(argv[1]);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, ret);
+    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
@@ -538,10 +538,11 @@ static void cmd_stat(xshell_manager_t *smp, BaseSequentialStream *stream,
 
   ret = vfsStat(argv[1], &statbuf);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, ret);
+    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 
-  chprintf(stream, "Mode 0x%04lx Size %d" XSHELL_NEWLINE_STR, statbuf.mode, statbuf.size);
+  chprintf(stream, "Mode 0x%04lx Size %d" XSHELL_NEWLINE_STR, statbuf.mode,
+                                                              statbuf.size);
 }
 #endif
 
