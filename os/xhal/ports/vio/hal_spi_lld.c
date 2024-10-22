@@ -304,9 +304,8 @@ void spi_lld_unselect(hal_spi_driver_c *spip) {
 msg_t spi_lld_ignore(hal_spi_driver_c *spip, size_t n) {
 
   __syscall2r(226, VIO_CALL(SB_VSPI_PULSES, spip->nvspi), n);
-  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
-  return HAL_RET_SUCCESS;
+  return (msg_t)r0;
 }
 
 /**
@@ -329,9 +328,8 @@ msg_t spi_lld_exchange(hal_spi_driver_c *spip, size_t n,
                        const void *txbuf, void *rxbuf) {
 
   __syscall4r(226, VIO_CALL(SB_VSPI_EXCHANGE, spip->nvspi), n, txbuf, rxbuf);
-  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
-  return HAL_RET_SUCCESS;
+  return (msg_t)r0;
 }
 
 /**
@@ -351,9 +349,8 @@ msg_t spi_lld_exchange(hal_spi_driver_c *spip, size_t n,
 msg_t spi_lld_send(hal_spi_driver_c *spip, size_t n, const void *txbuf) {
 
   __syscall3r(226, VIO_CALL(SB_VSPI_SEND, spip->nvspi), n, txbuf);
-  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
-  return HAL_RET_SUCCESS;
+  return (msg_t)r0;
 }
 
 /**
@@ -373,9 +370,8 @@ msg_t spi_lld_send(hal_spi_driver_c *spip, size_t n, const void *txbuf) {
 msg_t spi_lld_receive(hal_spi_driver_c *spip, size_t n, void *rxbuf) {
 
   __syscall3r(226, VIO_CALL(SB_VSPI_RECEIVE, spip->nvspi), n, rxbuf);
-  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
-  return HAL_RET_SUCCESS;
+  return (msg_t)r0;
 }
 
 /**
@@ -391,9 +387,8 @@ msg_t spi_lld_receive(hal_spi_driver_c *spip, size_t n, void *rxbuf) {
 msg_t spi_lld_stop_transfer(hal_spi_driver_c *spip, size_t *sizep) {
 
   __syscall2r(226, VIO_CALL(SB_VSPI_STOP, spip->nvspi), sizep);
-  osalDbgAssert(r0 != (uint32_t)-1, "unexpected failure");
 
-  return HAL_RET_SUCCESS;
+  return (msg_t)r0;
 }
 
 /**
