@@ -15,18 +15,18 @@
 */
 
 /**
- * @file        drvfatfs.h
- * @brief       Generated VFS FatFS Driver header.
+ * @file        drvlittlefs.h
+ * @brief       Generated VFS Little Driver header.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  DRVFATFS
+ * @addtogroup  DRVLITTLEFS
  * @{
  */
 
-#ifndef DRVFATFS_H
-#define DRVFATFS_H
+#ifndef DRVLITTLEFS_H
+#define DRVLITTLEFS_H
 
-#if (VFS_CFG_ENABLE_DRV_FATFS == TRUE) || defined(__DOXYGEN__)
+#if (VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE) || defined(__DOXYGEN__)
 
 #include "oop_sequential_stream.h"
 
@@ -43,24 +43,24 @@
  * @{
  */
 /**
- * @brief       Maximum number of FatFS file systems mounted.
+ * @brief       Maximum number of LittleFS file systems mounted.
  */
-#if !defined(DRV_CFG_FATFS_FS_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_FATFS_FS_NUM                1
+#if !defined(DRV_CFG_LITTLEFS_FS_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_FS_NUM             1
 #endif
 
 /**
  * @brief       Number of directory nodes pre-allocated in the pool.
  */
-#if !defined(DRV_CFG_FATFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_FATFS_DIR_NODES_NUM         1
+#if !defined(DRV_CFG_LITTLEFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      1
 #endif
 
 /**
  * @brief       Number of file nodes pre-allocated in the pool.
  */
-#if !defined(DRV_CFG_FATFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_FATFS_FILE_NODES_NUM        1
+#if !defined(DRV_CFG_LITTLEFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     1
 #endif
 /** @} */
 
@@ -68,19 +68,19 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Checks on DRV_CFG_FATFS_FS_NUM configuration.*/
-#if DRV_CFG_FATFS_FS_NUM < 1
-#error "invalid DRV_CFG_FATFS_FS_NUM value"
+/* Checks on DRV_CFG_LITTLEFS_FS_NUM configuration.*/
+#if DRV_CFG_LITTLEFS_FS_NUM < 1
+#error "invalid DRV_CFG_LITTLEFS_FS_NUM value"
 #endif
 
-/* Checks on DRV_CFG_FATFS_DIR_NODES_NUM configuration.*/
-#if DRV_CFG_FATFS_DIR_NODES_NUM < 1
-#error "invalid DRV_CFG_FATFS_DIR_NODES_NUM value"
+/* Checks on DRV_CFG_LITTLEFS_DIR_NODES_NUM configuration.*/
+#if DRV_CFG_LITTLEFS_DIR_NODES_NUM < 1
+#error "invalid DRV_CFG_LITTLEFS_DIR_NODES_NUM value"
 #endif
 
-/* Checks on DRV_CFG_FATFS_FILE_NODES_NUM configuration.*/
-#if DRV_CFG_FATFS_FILE_NODES_NUM < 1
-#error "invalid DRV_CFG_FATFS_FILE_NODES_NUM value"
+/* Checks on DRV_CFG_LITTLEFS_FILE_NODES_NUM configuration.*/
+#if DRV_CFG_LITTLEFS_FILE_NODES_NUM < 1
+#error "invalid DRV_CFG_LITTLEFS_FILE_NODES_NUM value"
 #endif
 
 /*===========================================================================*/
@@ -92,23 +92,23 @@
 /*===========================================================================*/
 
 /**
- * @class       vfs_fatfs_driver_c
+ * @class       vfs_littlefs_driver_c
  * @extends     base_object_c, vfs_driver_c.
  *
  *
- * @name        Class @p vfs_fatfs_driver_c structures
+ * @name        Class @p vfs_littlefs_driver_c structures
  * @{
  */
 
 /**
- * @brief       Type of a VFS fatfs driver class.
+ * @brief       Type of a VFS littlefs driver class.
  */
-typedef struct vfs_fatfs_driver vfs_fatfs_driver_c;
+typedef struct vfs_littlefs_driver vfs_littlefs_driver_c;
 
 /**
- * @brief       Class @p vfs_fatfs_driver_c virtual methods table.
+ * @brief       Class @p vfs_littlefs_driver_c virtual methods table.
  */
-struct vfs_fatfs_driver_vmt {
+struct vfs_littlefs_driver_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From vfs_driver_c.*/
@@ -121,17 +121,17 @@ struct vfs_fatfs_driver_vmt {
   msg_t (*rename)(void *ip, const char *oldpath, const char *newpath);
   msg_t (*mkdir)(void *ip, const char *path, vfs_mode_t mode);
   msg_t (*rmdir)(void *ip, const char *path);
-  /* From vfs_fatfs_driver_c.*/
+  /* From vfs_littlefs_driver_c.*/
 };
 
 /**
- * @brief       Structure representing a VFS fatfs driver class.
+ * @brief       Structure representing a VFS littlefs driver class.
  */
-struct vfs_fatfs_driver {
+struct vfs_littlefs_driver {
   /**
    * @brief       Virtual Methods Table.
    */
-  const struct vfs_fatfs_driver_vmt *vmt;
+  const struct vfs_littlefs_driver_vmt *vmt;
 };
 /** @} */
 
@@ -139,30 +139,30 @@ struct vfs_fatfs_driver {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-extern struct vfs_fatfs_driver_static_struct vfs_fatfs_driver_static;
-extern struct vfs_fatfs_driver_static_nc_struct __nocache_vfs_fatfs_driver_static;
+extern struct vfs_littlefs_driver_static_struct vfs_littlefs_driver_static;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  /* Methods of vfs_fatfs_driver_c.*/
-  void *__ffdrv_objinit_impl(void *ip, const void *vmt);
-  void __ffdrv_dispose_impl(void *ip);
-  msg_t __ffdrv_setcwd_impl(void *ip, const char *path);
-  msg_t __ffdrv_getcwd_impl(void *ip, char *buf, size_t size);
-  msg_t __ffdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp);
-  msg_t __ffdrv_opendir_impl(void *ip, const char *path,
-                             vfs_directory_node_c **vdnpp);
-  msg_t __ffdrv_openfile_impl(void *ip, const char *path, int flags,
-                              vfs_file_node_c **vfnpp);
-  msg_t __ffdrv_unlink_impl(void *ip, const char *path);
-  msg_t __ffdrv_rename_impl(void *ip, const char *oldpath, const char *newpath);
-  msg_t __ffdrv_mkdir_impl(void *ip, const char *path, vfs_mode_t mode);
-  msg_t __ffdrv_rmdir_impl(void *ip, const char *path);
+  /* Methods of vfs_littlefs_driver_c.*/
+  void *__lfsdrv_objinit_impl(void *ip, const void *vmt);
+  void __lfsdrv_dispose_impl(void *ip);
+  msg_t __lfsdrv_setcwd_impl(void *ip, const char *path);
+  msg_t __lfsdrv_getcwd_impl(void *ip, char *buf, size_t size);
+  msg_t __lfsdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp);
+  msg_t __lfsdrv_opendir_impl(void *ip, const char *path,
+                              vfs_directory_node_c **vdnpp);
+  msg_t __lfsdrv_openfile_impl(void *ip, const char *path, int flags,
+                               vfs_file_node_c **vfnpp);
+  msg_t __lfsdrv_unlink_impl(void *ip, const char *path);
+  msg_t __lfsdrv_rename_impl(void *ip, const char *oldpath,
+                             const char *newpath);
+  msg_t __lfsdrv_mkdir_impl(void *ip, const char *path, vfs_mode_t mode);
+  msg_t __lfsdrv_rmdir_impl(void *ip, const char *path);
   /* Regular functions.*/
-  void __drv_fatfs_init(void);
-  msg_t ffdrvMount(const char *name, bool mountnow);
-  msg_t ffdrvUnmount(const char *name);
+  void __drv_littlefs_init(void);
+  msg_t lfsdrvMount(const char *name, bool mountnow);
+  msg_t lfsdrvUnmount(const char *name);
 #ifdef __cplusplus
 }
 #endif
@@ -172,30 +172,30 @@ extern "C" {
 /*===========================================================================*/
 
 /**
- * @name        Default constructor of vfs_fatfs_driver_c
+ * @name        Default constructor of vfs_littlefs_driver_c
  * @{
  */
 /**
- * @memberof    vfs_fatfs_driver_c
+ * @memberof    vfs_littlefs_driver_c
  *
- * @brief       Default initialization function of @p vfs_fatfs_driver_c.
+ * @brief       Default initialization function of @p vfs_littlefs_driver_c.
  *
- * @param[out]    self          Pointer to a @p vfs_fatfs_driver_c instance to
- *                              be initialized.
+ * @param[out]    self          Pointer to a @p vfs_littlefs_driver_c instance
+ *                              to be initialized.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
  */
 CC_FORCE_INLINE
-static inline vfs_fatfs_driver_c *ffdrvObjectInit(vfs_fatfs_driver_c *self) {
-  extern const struct vfs_fatfs_driver_vmt __vfs_fatfs_driver_vmt;
+static inline vfs_littlefs_driver_c *lfsdrvObjectInit(vfs_littlefs_driver_c *self) {
+  extern const struct vfs_littlefs_driver_vmt __vfs_littlefs_driver_vmt;
 
-  return __ffdrv_objinit_impl(self, &__vfs_fatfs_driver_vmt);
+  return __lfsdrv_objinit_impl(self, &__vfs_littlefs_driver_vmt);
 }
 /** @} */
 
-#endif /* VFS_CFG_ENABLE_DRV_FATFS == TRUE */
+#endif /* VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE */
 
-#endif /* DRVFATFS_H */
+#endif /* DRVLITTLEFS_H */
 
 /** @} */

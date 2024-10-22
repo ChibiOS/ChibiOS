@@ -104,6 +104,15 @@
 #endif
 
 /* TODO temporary */
+#define VFS_CFG_ENABLE_DRV_LITTLEFS         FALSE
+#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      1
+#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     1
+#define DRV_CFG_LITTLEFS_FS_NUM             1
+#if VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE
+#include "drvlittlefs.h"
+#endif
+
+/* TODO temporary */
 #define VFS_CFG_ENABLE_DRV_SFS              FALSE
 #define DRV_CFG_SFS_DIR_NODES_NUM           1
 #define DRV_CFG_SFS_FILE_NODES_NUM          1

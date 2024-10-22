@@ -15,17 +15,17 @@
 */
 
 /**
- * @file        drvfatfs.c
- * @brief       Generated VFS FatFS Driver source.
+ * @file        drvlittlefs.c
+ * @brief       Generated VFS Little Driver source.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  DRVFATFS
+ * @addtogroup  DRVLITTLEFS
  * @{
  */
 
 #include "vfs.h"
 
-#if (VFS_CFG_ENABLE_DRV_FATFS == TRUE) || defined(__DOXYGEN__)
+#if (VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE) || defined(__DOXYGEN__)
 
 #include "ff.h"
 
@@ -42,38 +42,33 @@
 /*===========================================================================*/
 
 /**
- * @brief       Global state of @p vfs_fatfs_driver_c.
+ * @brief       Global state of @p vfs_littlefs_driver_c.
  */
-struct vfs_fatfs_driver_static_struct vfs_fatfs_driver_static;
-
-/**
- * @brief       Global state of @p vfs_fatfs_driver_c.
- */
-struct vfs_fatfs_driver_static_nc_struct __nocache_vfs_fatfs_driver_static;
+struct vfs_littlefs_driver_static_struct vfs_littlefs_driver_static;
 
 /*===========================================================================*/
 /* Module local types.                                                       */
 /*===========================================================================*/
 
 /**
- * @class       vfs_fatfs_dir_node_c
+ * @class       vfs_littlefs_dir_node_c
  * @extends     base_object_c, referenced_object_c, vfs_node_c,
  *              vfs_directory_node_c.
  *
  *
- * @name        Class @p vfs_fatfs_dir_node_c structures
+ * @name        Class @p vfs_littlefs_dir_node_c structures
  * @{
  */
 
 /**
- * @brief       Type of a VFS fatfs directory node class.
+ * @brief       Type of a VFS littlefs directory node class.
  */
-typedef struct vfs_fatfs_dir_node vfs_fatfs_dir_node_c;
+typedef struct vfs_littlefs_dir_node vfs_littlefs_dir_node_c;
 
 /**
- * @brief       Class @p vfs_fatfs_dir_node_c virtual methods table.
+ * @brief       Class @p vfs_littlefs_dir_node_c virtual methods table.
  */
-struct vfs_fatfs_dir_node_vmt {
+struct vfs_littlefs_dir_node_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From referenced_object_c.*/
@@ -84,17 +79,17 @@ struct vfs_fatfs_dir_node_vmt {
   /* From vfs_directory_node_c.*/
   msg_t (*first)(void *ip, vfs_direntry_info_t *dip);
   msg_t (*next)(void *ip, vfs_direntry_info_t *dip);
-  /* From vfs_fatfs_dir_node_c.*/
+  /* From vfs_littlefs_dir_node_c.*/
 };
 
 /**
- * @brief       Structure representing a VFS fatfs directory node class.
+ * @brief       Structure representing a VFS littlefs directory node class.
  */
-struct vfs_fatfs_dir_node {
+struct vfs_littlefs_dir_node {
   /**
    * @brief       Virtual Methods Table.
    */
-  const struct vfs_fatfs_dir_node_vmt *vmt;
+  const struct vfs_littlefs_dir_node_vmt *vmt;
   /**
    * @brief       Number of references to the object.
    */
@@ -108,32 +103,32 @@ struct vfs_fatfs_dir_node {
    */
   vfs_mode_t                mode;
   /**
-   * @brief       FatFS inner @p DIR structure.
+   * @brief       LittleFS inner @p lfs_dir_t structure.
    */
-  DIR                       dir;
+  lfs_dir_t                 dir;
 };
 /** @} */
 
 /**
- * @class       vfs_fatfs_file_node_c
+ * @class       vfs_littlefs_file_node_c
  * @extends     base_object_c, referenced_object_c, vfs_node_c,
  *              vfs_file_node_c.
  * @implements  sequential_stream_i
  *
  *
- * @name        Class @p vfs_fatfs_file_node_c structures
+ * @name        Class @p vfs_littlefs_file_node_c structures
  * @{
  */
 
 /**
- * @brief       Type of a VFS fatfs file node class.
+ * @brief       Type of a VFS littlefs file node class.
  */
-typedef struct vfs_fatfs_file_node vfs_fatfs_file_node_c;
+typedef struct vfs_littlefs_file_node vfs_littlefs_file_node_c;
 
 /**
- * @brief       Class @p vfs_fatfs_file_node_c virtual methods table.
+ * @brief       Class @p vfs_littlefs_file_node_c virtual methods table.
  */
-struct vfs_fatfs_file_node_vmt {
+struct vfs_littlefs_file_node_vmt {
   /* From base_object_c.*/
   void (*dispose)(void *ip);
   /* From referenced_object_c.*/
@@ -147,17 +142,17 @@ struct vfs_fatfs_file_node_vmt {
   msg_t (*setpos)(void *ip, vfs_offset_t offset, vfs_seekmode_t whence);
   vfs_offset_t (*getpos)(void *ip);
   sequential_stream_i * (*getstream)(void *ip);
-  /* From vfs_fatfs_file_node_c.*/
+  /* From vfs_littlefs_file_node_c.*/
 };
 
 /**
- * @brief       Structure representing a VFS fatfs file node class.
+ * @brief       Structure representing a VFS littlefs file node class.
  */
-struct vfs_fatfs_file_node {
+struct vfs_littlefs_file_node {
   /**
    * @brief       Virtual Methods Table.
    */
-  const struct vfs_fatfs_file_node_vmt *vmt;
+  const struct vfs_littlefs_file_node_vmt *vmt;
   /**
    * @brief       Number of references to the object.
    */
@@ -175,20 +170,20 @@ struct vfs_fatfs_file_node {
    */
   sequential_stream_i       stm;
   /**
-   * @brief       FatFS inner @p FIL structure.
+   * @brief       LittleFS inner @p lfs_file_t structure.
    */
-  FIL                       file;
+  lfs_file_t                file;
 };
 /** @} */
 
 /**
- * @brief       Global state of @p vfs_fatfs_driver_c.
+ * @brief       Global state of @p vfs_littlefs_driver_c.
  */
-struct vfs_fatfs_driver_static_struct {
+struct vfs_littlefs_driver_static_struct {
   /**
    * @brief       Pool of file system objects.
    */
-  memory_pool_t             fs_nodes_pool;
+  memory_pool_t             fs_pool;
   /**
    * @brief       Pool of file info objects.
    */
@@ -202,23 +197,17 @@ struct vfs_fatfs_driver_static_struct {
    */
   memory_pool_t             file_nodes_pool;
   /**
+   * @brief       Pool of file system objects.
+   */
+  lfs_t                     fs[DRV_CFG_LITTLEFS_FS_NUM];
+  /**
    * @brief       Static storage of directory nodes.
    */
-  vfs_fatfs_dir_node_c      dir_nodes[DRV_CFG_FATFS_DIR_NODES_NUM];
+  vfs_littlefs_dir_node_c   dir_nodes[DRV_CFG_LITTLEFS_DIR_NODES_NUM];
   /**
    * @brief       Static storage of file nodes.
    */
-  vfs_fatfs_file_node_c     file_nodes[DRV_CFG_FATFS_FILE_NODES_NUM];
-};
-
-/**
- * @brief       Global state of @p vfs_fatfs_driver_c (non-cached part).
- */
-struct vfs_fatfs_driver_static_nc_struct {
-  /**
-   * @brief       Pool of file system objects.
-   */
-  FATFS                     fs[DRV_CFG_FATFS_FS_NUM];
+  vfs_littlefs_file_node_c  file_nodes[DRV_CFG_LITTLEFS_FILE_NODES_NUM];
 };
 
 /*===========================================================================*/
@@ -227,8 +216,8 @@ struct vfs_fatfs_driver_static_nc_struct {
 
 /* Module code has been generated into an hand-editable file and included
    here.*/
-#include "drvfatfs_impl.inc"
+#include "drvlittlefs_impl.inc"
 
-#endif /* VFS_CFG_ENABLE_DRV_FATFS == TRUE */
+#endif /* VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE */
 
 /** @} */
