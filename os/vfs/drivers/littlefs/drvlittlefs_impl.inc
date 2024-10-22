@@ -64,12 +64,12 @@ void __drv_littlefs_init(void) {
  * @param[in]     name          Name to be assigned to the volume, see LittleFS
  *                              @p f_mount() documentation because there are
  *                              several options.
- * @param[in]     mountnow      Immediate mount option.
+ * @param[in]     config        LFS configuration for the mounted file system.
  * @return                      The operation result.
  *
  * @api
  */
-msg_t lfsdrvMount(const char *name, bool mountnow) {
+msg_t lfsdrvMount(const char *name, const struct lfsdrvMount *config) {
 }
 
 /**

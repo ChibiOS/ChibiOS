@@ -112,8 +112,8 @@
         <param name="name" ctype="const char *" dir="in"><![CDATA[Name to
                 be assigned to the volume, see LittleFS @p f_mount() documentation
                 because there are several options.]]></param>
-        <param name="mountnow" ctype="bool" dir="in"> Immediate mount option.
-        </param>
+        <param name="config" ctype="const struct lfsdrvMount *" dir="in">
+          LFS configuration for the mounted file system.</param>
         <return>The operation result.</return>
         <api />
         <implementation><![CDATA[
@@ -121,9 +121,8 @@
       </function>
       <function name="lfsdrvUnmount" ctype="msg_t">
         <brief>Unmounts a LittleFS volume.</brief>
-        <param name="name" ctype="const char *" dir="in"> Name of the volume to
-          be unmounted.
-        </param>
+        <param name="name" ctype="const char *" dir="in">Name of the volume to
+          be unmounted.</param>
         <return>The operation result.</return>
         <api />
         <implementation><![CDATA[
@@ -199,10 +198,10 @@ self = __vfsdir_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></impleme
         </fields>
         <methods>
           <objinit callsuper="false">
-            <param name="driver" ctype="vfs_driver_c *" dir="in"> Pointer to
+            <param name="driver" ctype="vfs_driver_c *" dir="in">Pointer to
               the controlling driver.
             </param>
-            <param name="mode" ctype="vfs_mode_t" dir="in"> Node mode flags.
+            <param name="mode" ctype="vfs_mode_t" dir="in">Node mode flags.
             </param>
             <implementation><![CDATA[
 self = __vfsfile_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></implementation>

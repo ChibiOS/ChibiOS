@@ -161,7 +161,7 @@ extern "C" {
   msg_t __lfsdrv_rmdir_impl(void *ip, const char *path);
   /* Regular functions.*/
   void __drv_littlefs_init(void);
-  msg_t lfsdrvMount(const char *name, bool mountnow);
+  msg_t lfsdrvMount(const char *name, const struct lfsdrvMount *config);
   msg_t lfsdrvUnmount(const char *name);
 #ifdef __cplusplus
 }
