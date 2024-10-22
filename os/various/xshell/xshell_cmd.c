@@ -539,6 +539,7 @@ static void cmd_stat(xshell_manager_t *smp, BaseSequentialStream *stream,
   ret = vfsStat(argv[1], &statbuf);
   if (CH_RET_IS_ERROR(ret)) {
     chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+    return;
   }
 
   chprintf(stream, "Mode 0x%04lx Size %d" XSHELL_NEWLINE_STR, statbuf.mode,
