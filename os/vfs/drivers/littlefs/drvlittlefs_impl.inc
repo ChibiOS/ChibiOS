@@ -105,8 +105,8 @@ msg_t lfsdrvUnmount(const char *name) {
  * @param[in]     mode          Node mode flags.
  * @return                      A new reference to the object.
  */
-static void *__ffdir_objinit_impl(void *ip, const void *vmt,
-                                  vfs_driver_c *driver, vfs_mode_t mode) {
+static void *__lfsdir_objinit_impl(void *ip, const void *vmt,
+                                   vfs_driver_c *driver, vfs_mode_t mode) {
   vfs_littlefs_dir_node_c *self = (vfs_littlefs_dir_node_c *)ip;
 
   /* Initialization code.*/
@@ -125,7 +125,7 @@ static void *__ffdir_objinit_impl(void *ip, const void *vmt,
  * @param[in,out] ip            Pointer to a @p vfs_littlefs_dir_node_c
  *                              instance to be disposed.
  */
-static void __ffdir_dispose_impl(void *ip) {
+static void __lfsdir_dispose_impl(void *ip) {
   vfs_littlefs_dir_node_c *self = (vfs_littlefs_dir_node_c *)ip;
 
   /* No finalization code.*/
@@ -146,7 +146,7 @@ static void __ffdir_dispose_impl(void *ip) {
  * @param[out]    sp            Pointer to a @p vfs_stat_t structure.
  * @return                      The operation result.
  */
-static msg_t __ffdir_stat_impl(void *ip, vfs_stat_t *sp) {
+static msg_t __lfsdir_stat_impl(void *ip, vfs_stat_t *sp) {
   vfs_littlefs_dir_node_c *self = (vfs_littlefs_dir_node_c *)ip;
 }
 
@@ -161,7 +161,7 @@ static msg_t __ffdir_stat_impl(void *ip, vfs_stat_t *sp) {
  * @param[out]    dip           Pointer to a @p vfs_direntry_info_t structure.
  * @return                      The operation result.
  */
-static msg_t __ffdir_first_impl(void *ip, vfs_direntry_info_t *dip) {
+static msg_t __lfsdir_first_impl(void *ip, vfs_direntry_info_t *dip) {
   vfs_littlefs_dir_node_c *self = (vfs_littlefs_dir_node_c *)ip;
 }
 
@@ -176,7 +176,7 @@ static msg_t __ffdir_first_impl(void *ip, vfs_direntry_info_t *dip) {
  * @param[out]    dip           Pointer to a @p vfs_direntry_info_t structure.
  * @return                      The operation result.
  */
-static msg_t __ffdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
+static msg_t __lfsdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
   vfs_littlefs_dir_node_c *self = (vfs_littlefs_dir_node_c *)ip;
 }
 /** @} */
@@ -186,12 +186,12 @@ static msg_t __ffdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
  * @note        It is public because accessed by the inlined constructor.
  */
 static const struct vfs_littlefs_dir_node_vmt __vfs_littlefs_dir_node_vmt = {
-  .dispose                  = __ffdir_dispose_impl,
+  .dispose                  = __lfsdir_dispose_impl,
   .addref                   = __ro_addref_impl,
   .release                  = __ro_release_impl,
-  .stat                     = __ffdir_stat_impl,
-  .first                    = __ffdir_first_impl,
-  .next                     = __ffdir_next_impl
+  .stat                     = __lfsdir_stat_impl,
+  .first                    = __lfsdir_first_impl,
+  .next                     = __lfsdir_next_impl
 };
 
 /**
@@ -211,11 +211,12 @@ static const struct vfs_littlefs_dir_node_vmt __vfs_littlefs_dir_node_vmt = {
  *
  * @objinit
  */
-static vfs_littlefs_dir_node_c *ffdirObjectInit(vfs_littlefs_dir_node_c *self,
-                                                vfs_driver_c *driver,
-                                                vfs_mode_t mode) {
+static vfs_littlefs_dir_node_c *lfsdirObjectInit(vfs_littlefs_dir_node_c *self,
+                                                 vfs_driver_c *driver,
+                                                 vfs_mode_t mode) {
 
-  return __ffdir_objinit_impl(self, &__vfs_littlefs_dir_node_vmt, driver, mode);
+  return __lfsdir_objinit_impl(self, &__vfs_littlefs_dir_node_vmt, driver,
+                               mode);
 }
 /** @} */
 
@@ -241,7 +242,7 @@ static vfs_littlefs_dir_node_c *ffdirObjectInit(vfs_littlefs_dir_node_c *self,
  *                              value can be less than the specified number of
  *                              bytes if an end-of-file condition has been met.
  */
-static size_t __fffile_stm_write_impl(void *ip, const uint8_t *bp, size_t n) {
+static size_t __lfsfile_stm_write_impl(void *ip, const uint8_t *bp, size_t n) {
   vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
 }
 
@@ -259,7 +260,7 @@ static size_t __fffile_stm_write_impl(void *ip, const uint8_t *bp, size_t n) {
  *                              value can be less than the specified number of
  *                              bytes if an end-of-file condition has been met.
  */
-static size_t __fffile_stm_read_impl(void *ip, uint8_t *bp, size_t n) {
+static size_t __lfsfile_stm_read_impl(void *ip, uint8_t *bp, size_t n) {
   vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
 }
 
@@ -274,7 +275,7 @@ static size_t __fffile_stm_read_impl(void *ip, uint8_t *bp, size_t n) {
  * @param[in]     b             The byte value to be written to the stream.
  * @return                      The operation status.
  */
-static int __fffile_stm_put_impl(void *ip, uint8_t b) {
+static int __lfsfile_stm_put_impl(void *ip, uint8_t b) {
   vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
 }
 
@@ -288,7 +289,7 @@ static int __fffile_stm_put_impl(void *ip, uint8_t b) {
  *                              interface.
  * @return                      A byte value from the stream.
  */
-static int __fffile_stm_get_impl(void *ip) {
+static int __lfsfile_stm_get_impl(void *ip) {
   vfs_littlefs_file_node_c *self = oopIfGetOwner(vfs_littlefs_file_node_c, ip);
 }
 /** @} */
@@ -311,21 +312,21 @@ static int __fffile_stm_get_impl(void *ip) {
  * @param[in]     mode          Node mode flags.
  * @return                      A new reference to the object.
  */
-static void *__fffile_objinit_impl(void *ip, const void *vmt,
-                                   vfs_driver_c *driver, vfs_mode_t mode) {
+static void *__lfsfile_objinit_impl(void *ip, const void *vmt,
+                                    vfs_driver_c *driver, vfs_mode_t mode) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 
   /* Initialization of interface sequential_stream_i.*/
   {
-    static const struct sequential_stream_vmt fffile_stm_vmt = {
+    static const struct sequential_stream_vmt lfsfile_stm_vmt = {
       .instance_offset      = offsetof(vfs_littlefs_file_node_c, stm),
-      .write                = __fffile_stm_write_impl,
-      .read                 = __fffile_stm_read_impl,
-      .put                  = __fffile_stm_put_impl,
-      .get                  = __fffile_stm_get_impl,
+      .write                = __lfsfile_stm_write_impl,
+      .read                 = __lfsfile_stm_read_impl,
+      .put                  = __lfsfile_stm_put_impl,
+      .get                  = __lfsfile_stm_get_impl,
       .unget                = NULL /* Missing implementation.*/
     };
-    oopIfObjectInit(&self->stm, &fffile_stm_vmt);
+    oopIfObjectInit(&self->stm, &lfsfile_stm_vmt);
   }
 
   /* Initialization code.*/
@@ -344,7 +345,7 @@ static void *__fffile_objinit_impl(void *ip, const void *vmt,
  * @param[in,out] ip            Pointer to a @p vfs_littlefs_file_node_c
  *                              instance to be disposed.
  */
-static void __fffile_dispose_impl(void *ip) {
+static void __lfsfile_dispose_impl(void *ip) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 
   /* No finalization code.*/
@@ -365,7 +366,7 @@ static void __fffile_dispose_impl(void *ip) {
  * @param[out]    sp            Pointer to a @p vfs_stat_t structure.
  * @return                      The operation result.
  */
-static msg_t __fffile_stat_impl(void *ip, vfs_stat_t *sp) {
+static msg_t __lfsfile_stat_impl(void *ip, vfs_stat_t *sp) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 }
 
@@ -381,7 +382,7 @@ static msg_t __fffile_stat_impl(void *ip, vfs_stat_t *sp) {
  * @param[in]     n             Maximum amount of data to be transferred.
  * @return                      The transferred number of bytes or an error.
  */
-static ssize_t __fffile_read_impl(void *ip, uint8_t *buf, size_t n) {
+static ssize_t __lfsfile_read_impl(void *ip, uint8_t *buf, size_t n) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 }
 
@@ -397,7 +398,7 @@ static ssize_t __fffile_read_impl(void *ip, uint8_t *buf, size_t n) {
  * @param[in]     n             Maximum amount of data to be transferred.
  * @return                      The transferred number of bytes or an error.
  */
-static ssize_t __fffile_write_impl(void *ip, const uint8_t *buf, size_t n) {
+static ssize_t __lfsfile_write_impl(void *ip, const uint8_t *buf, size_t n) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 }
 
@@ -413,8 +414,8 @@ static ssize_t __fffile_write_impl(void *ip, const uint8_t *buf, size_t n) {
  * @param[in]     whence        Seek mode to be used.
  * @return                      The operation result.
  */
-static msg_t __fffile_setpos_impl(void *ip, vfs_offset_t offset,
-                                  vfs_seekmode_t whence) {
+static msg_t __lfsfile_setpos_impl(void *ip, vfs_offset_t offset,
+                                   vfs_seekmode_t whence) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 }
 
@@ -428,7 +429,7 @@ static msg_t __fffile_setpos_impl(void *ip, vfs_offset_t offset,
  *                              instance.
  * @return                      The current file position.
  */
-static vfs_offset_t __fffile_getpos_impl(void *ip) {
+static vfs_offset_t __lfsfile_getpos_impl(void *ip) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 }
 
@@ -442,7 +443,7 @@ static vfs_offset_t __fffile_getpos_impl(void *ip) {
  *                              instance.
  * @return                      Pointer to the HAL stream interface.
  */
-static sequential_stream_i *__fffile_getstream_impl(void *ip) {
+static sequential_stream_i *__lfsfile_getstream_impl(void *ip) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
 }
 /** @} */
@@ -452,15 +453,15 @@ static sequential_stream_i *__fffile_getstream_impl(void *ip) {
  * @note        It is public because accessed by the inlined constructor.
  */
 static const struct vfs_littlefs_file_node_vmt __vfs_littlefs_file_node_vmt = {
-  .dispose                  = __fffile_dispose_impl,
+  .dispose                  = __lfsfile_dispose_impl,
   .addref                   = __ro_addref_impl,
   .release                  = __ro_release_impl,
-  .stat                     = __fffile_stat_impl,
-  .read                     = __fffile_read_impl,
-  .write                    = __fffile_write_impl,
-  .setpos                   = __fffile_setpos_impl,
-  .getpos                   = __fffile_getpos_impl,
-  .getstream                = __fffile_getstream_impl
+  .stat                     = __lfsfile_stat_impl,
+  .read                     = __lfsfile_read_impl,
+  .write                    = __lfsfile_write_impl,
+  .setpos                   = __lfsfile_setpos_impl,
+  .getpos                   = __lfsfile_getpos_impl,
+  .getstream                = __lfsfile_getstream_impl
 };
 
 /**
@@ -480,12 +481,12 @@ static const struct vfs_littlefs_file_node_vmt __vfs_littlefs_file_node_vmt = {
  *
  * @objinit
  */
-static vfs_littlefs_file_node_c *fffileObjectInit(vfs_littlefs_file_node_c *self,
-                                                  vfs_driver_c *driver,
-                                                  vfs_mode_t mode) {
+static vfs_littlefs_file_node_c *lfsfileObjectInit(vfs_littlefs_file_node_c *self,
+                                                   vfs_driver_c *driver,
+                                                   vfs_mode_t mode) {
 
-  return __fffile_objinit_impl(self, &__vfs_littlefs_file_node_vmt, driver,
-                               mode);
+  return __lfsfile_objinit_impl(self, &__vfs_littlefs_file_node_vmt, driver,
+                                mode);
 }
 /** @} */
 

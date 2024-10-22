@@ -138,7 +138,7 @@
       <include style="regular">ff.h</include>
     </includes>
     <types>
-      <class type="regular" name="vfs_littlefs_dir_node" namespace="ffdir"
+      <class type="regular" name="vfs_littlefs_dir_node" namespace="lfsdir"
         ancestorname="vfs_directory_node" descr="VFS littlefs directory node">
         <fields>
           <field name="dir" ctype="lfs_dir_t">
@@ -169,7 +169,7 @@ self = __vfsdir_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></impleme
           </override>
         </methods>
       </class>
-      <class type="regular" name="vfs_littlefs_file_node" namespace="fffile"
+      <class type="regular" name="vfs_littlefs_file_node" namespace="lfsfile"
         ancestorname="vfs_file_node" descr="VFS littlefs file node">
         <implements>
           <if name="sequential_stream">
