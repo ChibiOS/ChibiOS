@@ -16,8 +16,8 @@
 
 /**
  * @file    templates/xhalconf.h
- * @brief   HAL configuration header.
- * @details HAL configuration file, this file allows to enable or disable the
+ * @brief   XHAL configuration header.
+ * @details XHAL configuration file, this file allows to enable or disable the
  *          various device drivers from your application. You may also use
  *          this file in order to override the device drivers default settings.
  *
