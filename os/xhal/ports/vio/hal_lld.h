@@ -60,8 +60,8 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(SANDBOX_MCUCONF)
-#error "Using a wrong mcuconf.h file, SANDBOX_MCUCONF not defined"
+#if !defined(__VIO_XMCUCONF__)
+#error "Using a wrong xmcuconf.h file, __VIO_XMCUCONF__ not defined"
 #endif
 
 /*===========================================================================*/

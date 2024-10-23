@@ -37,14 +37,14 @@
 /**
  * @brief   VUART1 SIO driver identifier.
  */
-#if (SB_SIO_USE_VUART1 == TRUE) || defined(__DOXYGEN__)
+#if (VIO_SIO_USE_VUART1 == TRUE) || defined(__DOXYGEN__)
 hal_sio_driver_c SIOD1;
 #endif
 
 /**
  * @brief   VUART2 SIO driver identifier.
  */
-#if (SB_SIO_USE_VUART2 == TRUE) || defined(__DOXYGEN__)
+#if (VIO_SIO_USE_VUART2 == TRUE) || defined(__DOXYGEN__)
 hal_sio_driver_c SIOD2;
 #endif
 
@@ -82,9 +82,9 @@ static inline uint32_t __sio_vuart_selcfg(uint32_t nvuart, uint32_t ncfg,
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if SB_SIO_USE_VUART1 || defined(__DOXYGEN__)
+#if VIO_SIO_USE_VUART1 || defined(__DOXYGEN__)
 #if !defined(SB_VUART1_SUPPRESS_ISR)
-OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART1_IRQ)) {
+OSAL_IRQ_HANDLER(MK_VECTOR(VIO_SIO_VUART1_IRQ)) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -95,9 +95,9 @@ OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART1_IRQ)) {
 #endif
 #endif
 
-#if SB_SIO_USE_VUART2 || defined(__DOXYGEN__)
+#if VIO_SIO_USE_VUART2 || defined(__DOXYGEN__)
 #if !defined(SB_VUART2_SUPPRESS_ISR)
-OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART2_IRQ)) {
+OSAL_IRQ_HANDLER(MK_VECTOR(VIO_SIO_VUART2_IRQ)) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -120,15 +120,15 @@ OSAL_IRQ_HANDLER(MK_VECTOR(SB_SIO_VUART2_IRQ)) {
 void sio_lld_init(void) {
 
   /* Driver instances initialization.*/
-#if SB_SIO_USE_VUART1 == TRUE
+#if VIO_SIO_USE_VUART1 == TRUE
   sioObjectInit(&SIOD1);
   SIOD1.nvuart = 0U;
-  __sb_vrq_seten(1U << SB_SIO_VUART1_IRQ);
+  __sb_vrq_seten(1U << VIO_SIO_VUART1_IRQ);
 #endif
-#if SB_SIO_USE_VUART2 == TRUE
+#if VIO_SIO_USE_VUART2 == TRUE
   sioObjectInit(&SIOD2);
   SIOD2.nvuart = 1U;
-  __sb_vrq_seten(1U << SB_SIO_VUART2_IRQ);
+  __sb_vrq_seten(1U << VIO_SIO_VUART2_IRQ);
 #endif
 }
 
@@ -146,12 +146,12 @@ msg_t sio_lld_start(hal_sio_driver_c *siop) {
   /* Enables the peripheral.*/
   if (false) {
   }
-#if SB_SIO_USE_VUART1 == TRUE
+#if VIO_SIO_USE_VUART1 == TRUE
   else if (&SIOD1 == siop) {
     msg = (msg_t)__sio_vuart_init(siop->nvuart);
   }
 #endif
-#if SB_SIO_USE_VUART2 == TRUE
+#if VIO_SIO_USE_VUART2 == TRUE
   else if (&SIOD2 == siop) {
     msg = (msg_t)__sio_vuart_init(siop->nvuart);
   }
@@ -176,12 +176,12 @@ void sio_lld_stop(hal_sio_driver_c *siop) {
   /* Disables the peripheral.*/
   if (false) {
   }
-#if SB_SIO_USE_VUART1 == TRUE
+#if VIO_SIO_USE_VUART1 == TRUE
   else if (&SIOD1 == siop) {
     msg = __sio_vuart_deinit(siop->nvuart);
   }
 #endif
-#if SB_SIO_USE_VUART2 == TRUE
+#if VIO_SIO_USE_VUART2 == TRUE
   else if (&SIOD2 == siop) {
     msg = __sio_vuart_deinit(siop->nvuart);
   }

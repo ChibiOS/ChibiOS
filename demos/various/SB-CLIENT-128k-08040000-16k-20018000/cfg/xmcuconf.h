@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
 */
 
 /*
- * Sandbox drivers configuration.
+ * VIO drivers configuration.
  */
 
-#ifndef MCUCONF_H
-#define MCUCONF_H
+#ifndef XMCUCONF_H
+#define XMCUCONF_H
 
-#define SANDBOX_MCUCONF
+#define __VIO_XMCUCONF__
 
 /*
  * VRQ assignment.
@@ -35,8 +35,8 @@
 /*
  * SIO driver system settings.
  */
-#define SB_SIO_USE_VUART1                   TRUE
-#define SB_SIO_USE_VUART2                   FALSE
+#define VIO_SIO_USE_VUART1                  TRUE
+#define VIO_SIO_USE_VUART2                  FALSE
 
 /*
  * SPI driver system settings.
@@ -44,4 +44,4 @@
 #define VIO_SPI_USE_VSPI1                   TRUE
 #define VIO_SPI_USE_VSPI2                   FALSE
 
-#endif /* MCUCONF_H */
+#endif /* XMCUCONF_H */
