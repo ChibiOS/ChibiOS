@@ -297,7 +297,7 @@
     #error "ChibiOS Cortex-M4 port not licensed"
   #endif
 
-  #define PORT_ARCHITECTURE_ARM_v7ME
+  #define PORT_ARCHITECTURE_ARM_V7ME
   #define PORT_ARCHITECTURE_NAME        "ARMv7E-M"
   #if CORTEX_USE_FPU
     #if PORT_ENABLE_GUARD_PAGES == FALSE
@@ -323,7 +323,7 @@
     #error "ChibiOS Cortex-M7 port not licensed"
   #endif
 
-  #define PORT_ARCHITECTURE_ARM_v7ME
+  #define PORT_ARCHITECTURE_ARM_V7ME
   #define PORT_ARCHITECTURE_NAME        "ARMv7E-M"
   #if CORTEX_USE_FPU
     #if PORT_ENABLE_GUARD_PAGES == FALSE

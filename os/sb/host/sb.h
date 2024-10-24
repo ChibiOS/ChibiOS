@@ -157,6 +157,12 @@
 #error "SandBox requires CH_CFG_USE_MEMCHECKS == TRUE"
 #endif
 
+#if (!defined(PORT_ARCHITECTURE_ARM_V7M) &&                                 \
+     !defined(PORT_ARCHITECTURE_ARM_V7ME)) ||                               \
+    !defined(PORT_USE_SYSCALL)
+#error "unsupported port"
+#endif
+
 #if PORT_USE_SYSCALL == FALSE
 #error "SandBox requires PORT_USE_SYSCALL == TRUE"
 #endif
