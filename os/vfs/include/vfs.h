@@ -125,7 +125,7 @@
 #define DRV_CFG_TEMPLATE_DIR_NODES_NUM      1
 #define DRV_CFG_TEMPLATE_FILE_NODES_NUM     1
 #if VFS_CFG_ENABLE_DRV_TEMPLATE == TRUE
-#include "drvtemplate.h"
+#include "drvtmplfs.h"
 #endif
 
 /* Application code is supposed to export this symbol, it is expected to

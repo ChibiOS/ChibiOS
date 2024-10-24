@@ -18,7 +18,7 @@
   <modules>
     &vfs_drivers;
     &vfs_nodes;
-<!--     &vfs_driver_template; -->
+    &vfs_driver_template;
     &vfs_driver_overlay;
     &vfs_driver_fatfs;
     &vfs_driver_littlefs;
