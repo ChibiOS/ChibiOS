@@ -64,6 +64,19 @@ sb_t sb;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {
+  const sb_memory_region_t *rp = &sbp->config->regions[0];
+
+  do {
+    if (sb_reg_is_used(rp) && sb_reg_is_writable(rp)) {
+      return rp;
+    }
+    rp++;
+  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
+
+  return NULL;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -111,7 +124,7 @@ bool sb_is_valid_read_range(sb_class_t *sbp, const void *start, size_t size) {
   const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
-    if (rp->used && chMemIsSpaceWithinX(&rp->area, start, size)) {
+    if (sb_reg_is_used(rp) && chMemIsSpaceWithinX(&rp->area, start, size)) {
       return true;
     }
     rp++;
@@ -124,8 +137,8 @@ bool sb_is_valid_write_range(sb_class_t *sbp, void *start, size_t size) {
   const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
-    if (rp->used && chMemIsSpaceWithinX(&rp->area, start, size)) {
-      return rp->writeable;
+    if (sb_reg_is_used(rp) && chMemIsSpaceWithinX(&rp->area, start, size)) {
+      return sb_reg_is_writable(rp);
     }
     rp++;
   } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
@@ -137,7 +150,7 @@ size_t sb_check_string(sb_class_t *sbp, const char *s, size_t max) {
   const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
-    if (rp->used) {
+    if (sb_reg_is_used(rp)) {
       size_t n = chMemIsStringWithinX(&rp->area, s, max);
       if (n > (size_t)0) {
         return n;
@@ -153,7 +166,7 @@ size_t sb_check_pointers_array(sb_class_t *sbp, const void *pp[], size_t max) {
   const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
-    if (rp->used) {
+    if (sb_reg_is_used(rp)) {
       size_t an = chMemIsPointersArrayWithinX(&rp->area, pp, max);
       if (an > (size_t)0) {
         return an;
@@ -217,9 +230,11 @@ thread_t *sbStartThread(sb_class_t *sbp,
   void *usp, *uargv, *uenvp;
   size_t envsize, argsize, parsize;
   int uargc, uenvc;
+  const sb_memory_region_t *codereg, *datareg;
 
-  /* Header location.*/
-  sbp->sbhp = (const sb_header_t *)(void *)config->regions[config->code_region].area.base;
+  /* Region zero is assumed to be executable and contain the start header.*/
+  codereg = &config->regions[0];
+  sbp->sbhp = (const sb_header_t *)(void *)codereg->area.base;
 
   /* Checking header magic numbers.*/
   if ((sbp->sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
@@ -233,15 +248,20 @@ thread_t *sbStartThread(sb_class_t *sbp,
   }
 
   /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(&config->regions[config->code_region].area,
+  if (!chMemIsSpaceWithinX(&codereg->area,
                            (const void *)sbp->sbhp->hdr_entry,
                            (size_t)2)) {
     return NULL;
   }
 
+  /* Locating region for data, it could be also region zero.*/
+  datareg = sb_locate_data_region(sbp);
+  if (datareg == NULL) {
+    return NULL;
+  }
+
   /* Setting up an initial stack for the sandbox.*/
-  usp = (config->regions[config->data_region].area.base +
-         config->regions[config->data_region].area.size);
+  usp = (datareg->area.base + datareg->area.size);
 
   /* Allocating space for environment variables.*/
   envsize = sb_strv_getsize(envp, &uenvc);
@@ -263,8 +283,7 @@ thread_t *sbStartThread(sb_class_t *sbp,
   PUSHSPACE(usp, parsize);
 
   /* Checking stack allocation.*/
-  if (!chMemIsSpaceWithinX(&config->regions[config->data_region].area,
-                           usp, envsize + argsize + parsize)) {
+  if (!chMemIsSpaceWithinX(&datareg->area, usp, envsize + argsize + parsize)) {
     return NULL;
   }
 

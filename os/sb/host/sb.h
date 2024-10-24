@@ -75,6 +75,16 @@
 #define CH_SB_PATCH             0
 /** @} */
 
+/**
+ * @name    Memory regions attributes
+ * @{
+ */
+#define SB_REG_USED             (1U << 0)
+#define SB_REG_WRITABLE         (1U << 1)
+#define SB_REG_EXECUTABLE       (1U << 2)
+#define SB_REG_UNCACHEABLE      (1U << 3)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -168,7 +178,6 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
-
 /**
  * @brief   Type of a sandbox object.
  */
@@ -213,13 +222,9 @@ typedef struct {
    */
   memory_area_t                 area;
   /**
-   * @brief   Memory region in use.
+   * @brief   Region attributes.
    */
-  bool                          used;
-  /**
-   * @brief   Writable memory range.
-   */
-  bool                          writeable;
+  uint32_t                      attributes;
 } sb_memory_region_t;
 
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
@@ -258,25 +263,12 @@ typedef struct {
      * @brief   Thread priority.
      */
     tprio_t                     prio;
-    /**
-     * @brief   Thread priority while serving a VRQ.
-     */
-    tprio_t                     vrq_prio;
   } thread;
   /**
-   * @brief   Memory region for code.
-   * @note    It is used to locate the startup header.
-   */
-  uint32_t                      code_region;
-  /**
-   * @brief   Memory region for data and stack.
-   * @note    It is used for initial PSP placement.
-   */
-  uint32_t                      data_region;
-  /**
    * @brief   SandBox regions.
-   * @note    The following memory regions are used only for pointers
-   *          validation, not for MPU setup.
+   * @note    Region zero is always used for code execution. The data
+   *          region is assumed to be the first region in the list with
+   *          attribute @p SB_REG_WRITABLE.
    */
   sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
 #if (PORT_SWITCHED_REGIONS_NUMBER == SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
@@ -366,6 +358,16 @@ struct sb_class {
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @name    Memory regions attributes checks
+ * @{
+ */
+#define sb_reg_is_used(r)       (bool)(((r)->attributes & SB_REG_USED) != 0U)
+#define sb_reg_is_writable(r)   (bool)(((r)->attributes & SB_REG_WRITABLE) != 0U)
+#define sb_reg_is_executable(r) (bool)(((r)->attributes & SB_REG_EXECUTABLE) != 0U)
+#define sb_reg_is_uncached(r)   (bool)(((r)->attributes & SB_REG_UNCACHED) != 0U)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -88,20 +88,15 @@ static const sb_config_t sb_config1 = {
     .wsp            = waUnprivileged1,
     .size           = sizeof (waUnprivileged1),
     .prio           = NORMALPRIO - 10,
-    .vrq_prio       = NORMALPRIO - 1
   },
-  .code_region      = 0U,
-  .data_region      = 1U,
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
-      .used         = true,
-      .writeable    = false
+      .attributes   = SB_REG_USED | SB_REG_EXECUTABLE
     },
     [1] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .used         = true,
-      .writeable    = true
+      .attributes   = SB_REG_USED | SB_REG_WRITABLE
     }
   },
   .vfs_driver       = (vfs_driver_c *)&sb1_root_overlay_driver
@@ -114,20 +109,15 @@ static const sb_config_t sb_config2 = {
     .wsp            = waUnprivileged2,
     .size           = sizeof (waUnprivileged2),
     .prio           = NORMALPRIO - 20,
-    .vrq_prio       = NORMALPRIO - 2
   },
-  .code_region      = 0U,
-  .data_region      = 1U,
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
-      .used         = true,
-      .writeable    = false
+      .attributes   = SB_REG_USED | SB_REG_EXECUTABLE
     },
     [1] = {
       .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
-      .used         = true,
-      .writeable    = true
+      .attributes   = SB_REG_USED | SB_REG_WRITABLE
     }
   },
   .vfs_driver       = (vfs_driver_c *)&sb2_root_overlay_driver
@@ -307,7 +297,7 @@ int main(void) {
   vfsClose(np);
 
   /*
-   * Associating standard input, output and error to sandbox 1.
+   * Associating standard input, output and error to sandbox 2.
    */
   ret = vfsDrvOpen((vfs_driver_c *)&sb2_root_overlay_driver,
                    "/dev/VSD1", VO_RDWR, &np);

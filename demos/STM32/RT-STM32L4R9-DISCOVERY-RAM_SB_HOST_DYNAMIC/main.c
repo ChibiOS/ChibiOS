@@ -77,20 +77,15 @@ static const sb_config_t sb_config1 = {
     .wsp            = waUnprivileged1,
     .size           = sizeof (waUnprivileged1),
     .prio           = NORMALPRIO - 10,
-    .vrq_prio       = NORMALPRIO - 1
   },
-  .code_region      = 0U,
-  .data_region      = 0U,
   .regions          = {
     [0] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .used         = true,
-      .writeable    = true
+      .attributes   = SB_REG_USED | SB_REG_WRITABLE | SB_REG_EXECUTABLE
     },
     [1] = {
       .area         = {NULL,                (size_t)0},
-      .used         = false,
-      .writeable    = false,
+      .attributes   = 0U
     }
   },
   .mpuregs          = {
