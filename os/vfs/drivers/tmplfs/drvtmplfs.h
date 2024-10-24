@@ -45,15 +45,15 @@
 /**
  * @brief       Number of directory nodes pre-allocated in the pool.
  */
-#if !defined(DRV_CFG_TMPLFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_TMPLFS_DIR_NODES_NUM        1
+#if !defined(DRV_CFG_TMPL_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_TMPL_DIR_NODES_NUM          1
 #endif
 
 /**
  * @brief       Number of file nodes pre-allocated in the pool.
  */
-#if !defined(DRV_CFG_TMPLFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_TMPLFS_FILE_NODES_NUM       1
+#if !defined(DRV_CFG_TMPL_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_TMPL_FILE_NODES_NUM         1
 #endif
 /** @} */
 
@@ -61,14 +61,14 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/* Checks on DRV_CFG_TMPLFS_DIR_NODES_NUM configuration.*/
-#if DRV_CFG_TMPLFS_DIR_NODES_NUM < 1
-#error "invalid DRV_CFG_TMPLFS_DIR_NODES_NUM value"
+/* Checks on DRV_CFG_TMPL_DIR_NODES_NUM configuration.*/
+#if DRV_CFG_TMPL_DIR_NODES_NUM < 1
+#error "invalid DRV_CFG_TMPL_DIR_NODES_NUM value"
 #endif
 
-/* Checks on DRV_CFG_TMPLFS_FILE_NODES_NUM configuration.*/
-#if DRV_CFG_TMPLFS_FILE_NODES_NUM < 1
-#error "invalid DRV_CFG_TMPLFS_FILE_NODES_NUM value"
+/* Checks on DRV_CFG_TMPL_FILE_NODES_NUM configuration.*/
+#if DRV_CFG_TMPL_FILE_NODES_NUM < 1
+#error "invalid DRV_CFG_TMPL_FILE_NODES_NUM value"
 #endif
 
 /*===========================================================================*/
@@ -89,7 +89,7 @@
  */
 
 /**
- * @brief       Type of a VFS TmplFS driver class.
+ * @brief       Type of a VFS Tmpl driver class.
  */
 typedef struct vfs_tmpl_driver vfs_tmpl_driver_c;
 
@@ -113,7 +113,7 @@ struct vfs_tmpl_driver_vmt {
 };
 
 /**
- * @brief       Structure representing a VFS TmplFS driver class.
+ * @brief       Structure representing a VFS Tmpl driver class.
  */
 struct vfs_tmpl_driver {
   /**

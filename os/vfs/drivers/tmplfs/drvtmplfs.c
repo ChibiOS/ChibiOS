@@ -61,7 +61,7 @@ struct vfs_tmpl_driver_static_struct vfs_tmpl_driver_static;
  */
 
 /**
- * @brief       Type of a VFS TmplFS directory node class.
+ * @brief       Type of a VFS Tmpl directory node class.
  */
 typedef struct vfs_tmpl_dir_node vfs_tmpl_dir_node_c;
 
@@ -83,7 +83,7 @@ struct vfs_tmpl_dir_node_vmt {
 };
 
 /**
- * @brief       Structure representing a VFS TmplFS directory node class.
+ * @brief       Structure representing a VFS Tmpl directory node class.
  */
 struct vfs_tmpl_dir_node {
   /**
@@ -117,7 +117,7 @@ struct vfs_tmpl_dir_node {
  */
 
 /**
- * @brief       Type of a VFS TmplFS file node class.
+ * @brief       Type of a VFS Tmpl file node class.
  */
 typedef struct vfs_tmpl_file_node vfs_tmpl_file_node_c;
 
@@ -142,7 +142,7 @@ struct vfs_tmpl_file_node_vmt {
 };
 
 /**
- * @brief       Structure representing a VFS TmplFS file node class.
+ * @brief       Structure representing a VFS Tmpl file node class.
  */
 struct vfs_tmpl_file_node {
   /**
@@ -183,11 +183,11 @@ struct vfs_tmpl_driver_static_struct {
   /**
    * @brief       Static storage of directory nodes.
    */
-  vfs_tmpl_dir_node_c       dir_nodes[DRV_CFG_TMPLFS_DIR_NODES_NUM];
+  vfs_tmpl_dir_node_c       dir_nodes[DRV_CFG_TMPL_DIR_NODES_NUM];
   /**
    * @brief       Static storage of file nodes.
    */
-  vfs_tmpl_file_node_c      file_nodes[DRV_CFG_TMPLFS_FILE_NODES_NUM];
+  vfs_tmpl_file_node_c      file_nodes[DRV_CFG_TMPL_FILE_NODES_NUM];
 };
 
 /*===========================================================================*/

@@ -43,10 +43,10 @@ void __drv_tmpl_init(void) {
     /* Preloading pools.*/
     chPoolLoadArray(&vfs_tmpl_driver_static.dir_nodes_pool,
                     &vfs_tmpl_driver_static.dir_nodes[0],
-                    DRV_CFG_TMPLFS_DIR_NODES_NUM);
+                    DRV_CFG_TMPL_DIR_NODES_NUM);
     chPoolLoadArray(&vfs_tmpl_driver_static.file_nodes_pool,
                     &vfs_tmpl_driver_static.file_nodes[0],
-                    DRV_CFG_TMPLFS_FILE_NODES_NUM);
+                    DRV_CFG_TMPL_FILE_NODES_NUM);
 }
 
 /*===========================================================================*/
@@ -160,7 +160,7 @@ static msg_t __tmpldir_next_impl(void *ip, vfs_direntry_info_t *dip) {
 /** @} */
 
 /**
- * @brief       VMT structure of VFS TmplFS directory node class.
+ * @brief       VMT structure of VFS Tmpl directory node class.
  * @note        It is public because accessed by the inlined constructor.
  */
 static const struct vfs_tmpl_dir_node_vmt __vfs_tmpl_dir_node_vmt = {
@@ -472,7 +472,7 @@ static sequential_stream_i *__tmplfile_getstream_impl(void *ip) {
 /** @} */
 
 /**
- * @brief       VMT structure of VFS TmplFS file node class.
+ * @brief       VMT structure of VFS Tmpl file node class.
  * @note        It is public because accessed by the inlined constructor.
  */
 static const struct vfs_tmpl_file_node_vmt __vfs_tmpl_file_node_vmt = {
@@ -754,7 +754,7 @@ msg_t __tmpldrv_rmdir_impl(void *ip, const char *path) {
 /** @} */
 
 /**
- * @brief       VMT structure of VFS TmplFS driver class.
+ * @brief       VMT structure of VFS Tmpl driver class.
  * @note        It is public because accessed by the inlined constructor.
  */
 const struct vfs_tmpl_driver_vmt __vfs_tmpl_driver_vmt = {
@@ -778,10 +778,9 @@ const struct vfs_tmpl_driver_vmt __vfs_tmpl_driver_vmt = {
  * @memberof    vfs_tmpl_driver_c
  * @public
  *
- * @brief       Mounts a TmplFS volume.
+ * @brief       Mounts a Tmpl volume.
  *
  * @param[in,out] ip            Pointer to a @p vfs_tmpl_driver_c instance.
-
  * @param[in]     config        Configuration for the mounted file system.
  * @return                      The operation result.
  *
@@ -800,7 +799,7 @@ msg_t tmpldrvMount(void *ip, const void *config) {
  * @memberof    vfs_tmpl_driver_c
  * @public
  *
- * @brief       Unmounts a TmplFS volume.
+ * @brief       Unmounts a Tmpl volume.
  *
  * @param[in,out] ip            Pointer to a @p vfs_tmpl_driver_c instance.
  * @return                      The operation result.

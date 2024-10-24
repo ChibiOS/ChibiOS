@@ -14,18 +14,18 @@
       <include style="regular">oop_sequential_stream.h</include>
     </includes>
     <configs>
-      <config name="DRV_CFG_TMPLFS_DIR_NODES_NUM" default="1">
+      <config name="DRV_CFG_TMPL_DIR_NODES_NUM" default="1">
         <brief>Number of directory nodes pre-allocated in the pool.</brief>
         <assert invalid="$N &lt; 1" />
       </config>
-      <config name="DRV_CFG_TMPLFS_FILE_NODES_NUM" default="1">
+      <config name="DRV_CFG_TMPL_FILE_NODES_NUM" default="1">
         <brief>Number of file nodes pre-allocated in the pool.</brief>
         <assert invalid="$N &lt; 1" />
       </config>
     </configs>
     <types>
       <class type="regular" name="vfs_tmpl_driver" namespace="tmpldrv"
-        ancestorname="vfs_driver" descr="VFS TmplFS driver">
+        ancestorname="vfs_driver" descr="VFS Tmpl driver">
         <fields></fields>
         <methods>
           <objinit callsuper="true">
@@ -36,7 +36,7 @@
           </dispose>
           <regular>
             <method name="tmpldrvMount" ctype="msg_t">
-              <brief>Mounts a TmplFS volume.</brief>
+              <brief>Mounts a Tmpl volume.</brief>
               <param name="config" ctype="const void *" dir="in">
                 Configuration for the mounted file system.</param>
               <return>The operation result.</return>
@@ -45,7 +45,7 @@
 ]]></implementation>
             </method>
             <method name="tmpldrvUnmount" ctype="msg_t">
-              <brief>Unmounts a TmplFS volume.</brief>
+              <brief>Unmounts a Tmpl volume.</brief>
               <return>The operation result.</return>
               <api />
               <implementation><![CDATA[
@@ -107,10 +107,10 @@
   /* Preloading pools.*/
   chPoolLoadArray(&vfs_tmpl_driver_static.dir_nodes_pool,
                   &vfs_tmpl_driver_static.dir_nodes[0],
-                  DRV_CFG_TMPLFS_DIR_NODES_NUM);
+                  DRV_CFG_TMPL_DIR_NODES_NUM);
   chPoolLoadArray(&vfs_tmpl_driver_static.file_nodes_pool,
                   &vfs_tmpl_driver_static.file_nodes[0],
-                  DRV_CFG_TMPLFS_FILE_NODES_NUM);]]></implementation>
+                  DRV_CFG_TMPL_FILE_NODES_NUM);]]></implementation>
       </function>
     </functions>
   </public>
@@ -123,10 +123,10 @@
     </includes>
     <types>
       <class type="regular" name="vfs_tmpl_dir_node" namespace="tmpldir"
-        ancestorname="vfs_directory_node" descr="VFS TmplFS directory node">
+        ancestorname="vfs_directory_node" descr="VFS Tmpl directory node">
         <fields>
 <!--          <field name="dir" ctype="tmpl_dir_t">
-            <brief>TmplFS inner @p tmpl_dir_t structure.</brief>
+            <brief>Tmpl inner @p tmpl_dir_t structure.</brief>
           </field> -->
         </fields>
         <methods>
@@ -154,7 +154,7 @@ self = __vfsdir_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></impleme
         </methods>
       </class>
       <class type="regular" name="vfs_tmpl_file_node" namespace="tmplfile"
-        ancestorname="vfs_file_node" descr="VFS TmplFS file node">
+        ancestorname="vfs_file_node" descr="VFS Tmpl file node">
         <implements>
           <if name="sequential_stream">
             <method shortname="write">
@@ -177,7 +177,7 @@ self = __vfsdir_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></impleme
         </implements>
         <fields>
 <!--          <field name="file" ctype="tmpl_file_t">
-            <brief>TmplFS inner @p tmpl_file_t structure.</brief>
+            <brief>Tmpl inner @p tmpl_file_t structure.</brief>
           </field> -->
         </fields>
         <methods>
@@ -231,11 +231,11 @@ self = __vfsfile_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></implem
             <brief>Pool of file nodes.</brief>
           </field>
           <field name="dir_nodes"
-            ctype="vfs_tmpl_dir_node_c$I$N[DRV_CFG_TMPLFS_DIR_NODES_NUM]">
+            ctype="vfs_tmpl_dir_node_c$I$N[DRV_CFG_TMPL_DIR_NODES_NUM]">
             <brief>Static storage of directory nodes.</brief>
           </field>
           <field name="file_nodes"
-            ctype="vfs_tmpl_file_node_c$I$N[DRV_CFG_TMPLFS_FILE_NODES_NUM]">
+            ctype="vfs_tmpl_file_node_c$I$N[DRV_CFG_TMPL_FILE_NODES_NUM]">
             <brief>Static storage of file nodes.</brief>
           </field>
         </fields>
