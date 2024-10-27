@@ -32,8 +32,8 @@ sb_class_t sbx1, sbx2;
 
 static vio_gpio_units_t gpio_units1 = {
   .n        = 1U,
-  .units    = {
-    [0]       = {
+  .units = {
+    [0] = {
       .permissions  = VIO_GPIO_PERM_WRITE,
       .port         = GPIOA,
       .mask         = 1U,
@@ -44,8 +44,8 @@ static vio_gpio_units_t gpio_units1 = {
 
 static vio_uart_units_t uart_units1 = {
   .n        = 1U,
-  .units    = {
-    [0]       = {
+  .units = {
+    [0] = {
       .siop  = &LPSIOD1,
       .vrqsb = &sbx1,
       .vrqn  = 8
@@ -55,7 +55,7 @@ static vio_uart_units_t uart_units1 = {
 
 static sio_configurations_t uart_configs1 = {
   .cfgsnum      = 1U,
-  .cfgs         = {
+  .cfgs = {
     [0]         = SIO_DEFAULT_CONFIGURATION
   }
 };
@@ -122,34 +122,20 @@ static THD_WORKING_AREA(waUnprivileged2, 512);
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
-  .thread           = {
+  .thread = {
     .name           = "sbx1",
     .wsp            = waUnprivileged1,
     .size           = sizeof (waUnprivileged1),
     .prio           = NORMALPRIO - 10,
   },
-  .regions          = {
+  .regions = {
     [0] = {
       .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_EXECUTABLE
+      .attributes   = SB_REG_IS_CODE
     },
     [1] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_WRITABLE
-    }
-  },
-  .mpuregs          = {
-    [0] = {
-      (uint32_t)STARTUP_FLASH1_BASE, MPU_RASR_ATTR_AP_RO_RO |
-                                     MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                                     MPU_RASR_SIZE_128K |
-                                     MPU_RASR_ENABLE
-    },
-    [1] = {
-      (uint32_t)STARTUP_RAM1_BASE,   MPU_RASR_ATTR_AP_RW_RW |
-                                     MPU_RASR_ATTR_CACHEABLE_WB_WA |
-                                     MPU_RASR_SIZE_16K |
-                                     MPU_RASR_ENABLE
+      .attributes   = SB_REG_IS_DATA
     }
   },
   .vfs_driver       = NULL,
@@ -158,34 +144,20 @@ static const sb_config_t sb_config1 = {
 
 /* Sandbox 2 configuration.*/
 static const sb_config_t sb_config2 = {
-  .thread           = {
+  .thread = {
     .name           = "sbx2",
     .wsp            = waUnprivileged2,
     .size           = sizeof (waUnprivileged2),
     .prio           = NORMALPRIO - 20,
   },
-  .regions          = {
+  .regions = {
     [0] = {
       .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_EXECUTABLE
+      .attributes   = SB_REG_IS_CODE
     },
     [1] = {
       .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_WRITABLE
-    }
-  },
-  .mpuregs          = {
-    [0] = {
-      (uint32_t)STARTUP_FLASH2_BASE, MPU_RASR_ATTR_AP_RO_RO |
-                                     MPU_RASR_ATTR_CACHEABLE_WT_NWA |
-                                     MPU_RASR_SIZE_128K |
-                                     MPU_RASR_ENABLE
-    },
-    [1] = {
-      (uint32_t)STARTUP_RAM2_BASE,   MPU_RASR_ATTR_AP_RW_RW |
-                                     MPU_RASR_ATTR_CACHEABLE_WB_WA |
-                                     MPU_RASR_SIZE_16K |
-                                     MPU_RASR_ENABLE
+      .attributes   = SB_REG_IS_DATA
     }
   },
   .vfs_driver       = (vfs_driver_c *)&root_overlay_driver,

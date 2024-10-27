@@ -81,22 +81,11 @@ static const sb_config_t sb_config1 = {
   .regions          = {
     [0] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_WRITABLE | SB_REG_EXECUTABLE
+      .attributes   = SB_REG_IS_CODE_AND_DATA
     },
     [1] = {
       .area         = {NULL,                (size_t)0},
-      .attributes   = 0U
-    }
-  },
-  .mpuregs          = {
-    [0] = {
-      (uint32_t)STARTUP_RAM1_BASE,   MPU_RASR_ATTR_AP_RW_RW |
-                                     MPU_RASR_ATTR_CACHEABLE_WB_WA |
-                                     MPU_RASR_SIZE_128K |
-                                     MPU_RASR_ENABLE
-    },
-    [1] = {
-      (uint32_t)0,                   (uint32_t)0
+      .attributes   = SB_REG_TYPE_UNUSED
     }
   },
   .vfs_driver       = (vfs_driver_c *)&sb1_root_overlay_driver

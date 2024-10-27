@@ -75,16 +75,6 @@
 #define CH_SB_PATCH             0
 /** @} */
 
-/**
- * @name    Memory regions attributes
- * @{
- */
-#define SB_REG_USED             (1U << 0)
-#define SB_REG_WRITABLE         (1U << 1)
-#define SB_REG_EXECUTABLE       (1U << 2)
-#define SB_REG_UNCACHEABLE      (1U << 3)
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -277,6 +267,7 @@ typedef struct {
    *          attribute @p SB_REG_WRITABLE.
    */
   sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
+#if 0
 #if (PORT_SWITCHED_REGIONS_NUMBER == SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
   /**
    * @brief   MPU regions initialization values.
@@ -284,6 +275,7 @@ typedef struct {
    *          consistent with the values in the "regions" field.
    */
   mpureg_t                      mpuregs[SB_CFG_NUM_REGIONS];
+#endif
 #endif
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   /**
@@ -364,16 +356,6 @@ struct sb_class {
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @name    Memory regions attributes checks
- * @{
- */
-#define sb_reg_is_used(r)       (bool)(((r)->attributes & SB_REG_USED) != 0U)
-#define sb_reg_is_writable(r)   (bool)(((r)->attributes & SB_REG_WRITABLE) != 0U)
-#define sb_reg_is_executable(r) (bool)(((r)->attributes & SB_REG_EXECUTABLE) != 0U)
-#define sb_reg_is_uncached(r)   (bool)(((r)->attributes & SB_REG_UNCACHED) != 0U)
-/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -32,6 +32,33 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Memory regions types
+ * @{
+ */
+#define SB_REG_TYPE_MASK        3U
+#define SB_REG_TYPE_UNUSED      0U
+#define SB_REG_TYPE_DEVICE      1U
+#define SB_REG_TYPE_MEMORY      2U
+
+#define SB_REG_ATTR_WRITABLE    (1U << 8)
+#define SB_REG_ATTR_EXECUTABLE  (1U << 9)
+#define SB_REG_ATTR_CACHEABLE   (1U << 10)
+
+#define SB_REG_IS_CODE          (SB_REG_TYPE_MEMORY |                       \
+                                 SB_REG_ATTR_CACHEABLE |                    \
+                                 SB_REG_ATTR_EXECUTABLE)
+#define SB_REG_IS_DATA          (SB_REG_TYPE_MEMORY |                       \
+                                 SB_REG_ATTR_CACHEABLE |                    \
+                                 SB_REG_ATTR_WRITABLE)
+#define SB_REG_IS_NOCACHE_DATA  (SB_REG_TYPE_MEMORY |                       \
+                                 SB_REG_ATTR_WRITABLE)
+#define SB_REG_IS_CODE_AND_DATA (SB_REG_TYPE_MEMORY |                       \
+                                 SB_REG_ATTR_CACHEABLE |                    \
+                                 SB_REG_ATTR_EXECUTABLE |                   \
+                                 SB_REG_ATTR_WRITABLE)
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -47,6 +74,19 @@
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @name    Memory regions attributes checks
+ * @{
+ */
+#define sb_reg_get_type(r)      ((r)->attributes & SB_REG_TYPE_MASK)
+#define sb_reg_is_unused(r)     (bool)(sb_reg_get_type(r) == SB_REG_TYPE_UNUSED)
+#define sb_reg_is_device(r)     (bool)(sb_reg_get_type(r) == SB_REG_TYPE_DEVICE)
+#define sb_reg_is_memory(r)     (bool)(sb_reg_get_type(r) == SB_REG_TYPE_MEMORY)
+#define sb_reg_is_writable(r)   (bool)(((r)->attributes & SB_REG_ATTR_WRITABLE) != 0U)
+#define sb_reg_is_executable(r) (bool)(((r)->attributes & SB_REG_ATTR_EXECUTABLE) != 0U)
+#define sb_reg_is_cacheable(r)     (bool)(((r)->attributes & SB_REG_ATTR_CACHEABLE) != 0U)
+/** @} */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

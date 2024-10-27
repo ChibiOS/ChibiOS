@@ -131,11 +131,11 @@ static const sb_config_t sb_config1 = {
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_EXECUTABLE
+      .attributes   = SB_REG_TYPE_MEMORY | SB_REG_ATTR_EXECUTABLE
     },
     [1] = {
       .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_WRITABLE
+      .attributes   = SB_REG_TYPE_MEMORY | SB_REG_ATTR_WRITABLE
     }
   },
   .vfs_driver       = NULL,
@@ -153,11 +153,11 @@ static const sb_config_t sb_config2 = {
   .regions          = {
     [0] = {
       .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_EXECUTABLE
+      .attributes   = SB_REG_TYPE_MEMORY | SB_REG_ATTR_EXECUTABLE
     },
     [1] = {
       .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
-      .attributes   = SB_REG_USED | SB_REG_WRITABLE
+      .attributes   = SB_REG_TYPE_MEMORY | SB_REG_ATTR_WRITABLE
     }
   },
   .vfs_driver       = (vfs_driver_c *)&root_overlay_driver,

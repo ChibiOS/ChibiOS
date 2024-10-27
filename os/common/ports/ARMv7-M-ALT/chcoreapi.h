@@ -88,7 +88,7 @@ typedef struct {
   /**
    * @brief   MPU regions to be initialized.
    */
-  mpureg_t          regions [PORT_SWITCHED_REGIONS_NUMBER];
+  mpureg_t          regions[PORT_SWITCHED_REGIONS_NUMBER];
 } unprivileged_thread_descriptor_t;
 
 /*===========================================================================*/
