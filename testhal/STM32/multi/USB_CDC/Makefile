@@ -12,8 +12,8 @@ all:
 	+@make --no-print-directory -f ./make/stm32l476_discovery.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32L4R5-Nucleo144 ===============================
-	+@make --no-print-directory -f ./make/stm32l4r5_nucleo144.make all
+	@echo === Building for STM32L4R5ZI-Nucleo144 =============================
+	+@make --no-print-directory -f ./make/stm32l4r5zi_nucleo144.make all
 	@echo ====================================================================
 	@echo
 	@echo === Building for STM32F303-Discovery ===============================
@@ -40,19 +40,19 @@ all:
 	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32H563ZI-Nucleo144 ===============================
+	@echo === Building for STM32H563ZI-Nucleo144 =============================
 	+@make --no-print-directory -f ./make/stm32h563zi_nucleo144.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32H723ZG-Nucleo144 ===============================
+	@echo === Building for STM32H723ZG-Nucleo144 =============================
 	+@make --no-print-directory -f ./make/stm32h723zg_nucleo144.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32H743-Nucleo144 ===============================
-	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make all
+	@echo === Building for STM32H743ZI-Nucleo144 =============================
+	+@make --no-print-directory -f ./make/stm32h743zi_nucleo144.make all
 	@echo ====================================================================
 	@echo
-	@echo === Building for STM32H755ZI-Nucleo144 ===============================
+	@echo === Building for STM32H755ZI-Nucleo144 =============================
 	+@make --no-print-directory -f ./make/stm32h755zi_nucleo144.make all
 	@echo ====================================================================
 	@echo
@@ -71,7 +71,7 @@ clean:
 	@echo
 	+@make --no-print-directory -f ./make/stm32l476_discovery.make clean
 	@echo
-	+@make --no-print-directory -f ./make/stm32l4r5_nucleo144.make clean
+	+@make --no-print-directory -f ./make/stm32l4r5zi_nucleo144.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32f303_discovery.make clean
 	@echo
@@ -89,7 +89,7 @@ clean:
 	@echo
 	+@make --no-print-directory -f ./make/stm32h723zg_nucleo144.make clean
 	@echo
-	+@make --no-print-directory -f ./make/stm32h743_nucleo144.make clean
+	+@make --no-print-directory -f ./make/stm32h743zi_nucleo144.make clean
 	@echo
 	+@make --no-print-directory -f ./make/stm32h755zi_nucleo144.make clean
 	@echo

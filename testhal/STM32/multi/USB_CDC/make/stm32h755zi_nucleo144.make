@@ -90,9 +90,9 @@ MCU  = cortex-m7
 
 # Imported source files and paths.
 CHIBIOS  := ../../../..
-CONFDIR  := ./cfg/stm32h743_nucleo144
-BUILDDIR := ./build/stm32h743_nucleo144
-DEPDIR   := ./.dep/stm32h743_nucleo144
+CONFDIR  := ./cfg/stm32h755zi_nucleo144
+BUILDDIR := ./build/stm32h755zi_nucleo144
+DEPDIR   := ./.dep/stm32h755zi_nucleo144
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
