@@ -38,13 +38,14 @@
  */
 #define SB_REG_TYPE_MASK        3U
 #define SB_REG_TYPE_UNUSED      0U
-#define SB_REG_TYPE_DEVICE      1U
-#define SB_REG_TYPE_MEMORY      2U
+#define SB_REG_TYPE_MEMORY      1U
+#define SB_REG_TYPE_DEVICE      2U
 
 #define SB_REG_ATTR_WRITABLE    (1U << 8)
 #define SB_REG_ATTR_EXECUTABLE  (1U << 9)
 #define SB_REG_ATTR_CACHEABLE   (1U << 10)
 
+#define SB_REG_IS_UNUSED        (SB_REG_TYPE_UNUSED)
 #define SB_REG_IS_CODE          (SB_REG_TYPE_MEMORY |                       \
                                  SB_REG_ATTR_CACHEABLE |                    \
                                  SB_REG_ATTR_EXECUTABLE)
@@ -56,6 +57,8 @@
 #define SB_REG_IS_CODE_AND_DATA (SB_REG_TYPE_MEMORY |                       \
                                  SB_REG_ATTR_CACHEABLE |                    \
                                  SB_REG_ATTR_EXECUTABLE |                   \
+                                 SB_REG_ATTR_WRITABLE)
+#define SB_REG_IS_DEVICE        (SB_REG_TYPE_DEVICE |                       \
                                  SB_REG_ATTR_WRITABLE)
 /** @} */
 
