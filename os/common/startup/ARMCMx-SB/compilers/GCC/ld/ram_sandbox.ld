@@ -93,6 +93,13 @@ SECTIONS
         . += __process_stack_size__;
         . = ALIGN(8);
         __user_psp_end__ = .;
+    }
+    
+    .heap (NOLOAD) : ALIGN(4)
+    {
         __heap_base__ = .;
+        __heap_rsvd_base__ = .;
+        *(.heap_rsvd)
+        __heap_rsvd_end__ = .;
     }
 }

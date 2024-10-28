@@ -80,6 +80,16 @@
 #define CRT0_CALL_DESTRUCTORS               TRUE
 #endif
 
+/**
+ * @brief   Reserve heap space.
+ * @brief   This option can be used for programs dynamically loaded in
+ *          RAM in order to reserve a minimum space for the heap (sbrK()
+ *          guaranteed growing area).
+ */
+#if !defined(CRT0_RESERVE_HEAP) || defined(__DOXYGEN__)
+#define CRT0_RESERVE_HEAP                   0
+#endif
+
 /*===========================================================================*/
 /* Code section.                                                             */
 /*===========================================================================*/
@@ -103,6 +113,12 @@ __sandbox:      .long       0xFE9154C0
                 .long       __crt0_vrq
                 .long       0
                 .long       0
+
+                .section    .heap_rsvd, "aw"
+
+#if CRT0_RESERVE_HEAP > 0
+                .ds.b       CRT0_RESERVE_HEAP
+#endif
 
                 .bss
 
