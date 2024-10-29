@@ -113,7 +113,6 @@
 
 /**
  * @brief   Implements a syscall interface on SVC.
- * @TODO
  */
 #if !defined(PORT_USE_SYSCALL) || defined(__DOXYGEN__)
 #define PORT_USE_SYSCALL                FALSE
@@ -205,6 +204,7 @@
  * @brief   NVIC PRIGROUP initialization expression.
  * @details The default assigns all available priority bits as preemption
  *          priority with no sub-priority.
+ * @note    Changing this value is not recommended.
  */
 #if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
 #define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
