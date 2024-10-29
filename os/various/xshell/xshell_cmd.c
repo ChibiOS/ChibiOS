@@ -351,7 +351,7 @@ static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
       break;
     }
 
-    while ((n = read(fd, buf, sizeof (2048))) > 0) {
+    while ((n = read(fd, buf, 2048)) > 0) {
       streamWrite(stream, (const uint8_t *)buf, n);
     }
     chprintf(stream, XSHELL_NEWLINE_STR);
