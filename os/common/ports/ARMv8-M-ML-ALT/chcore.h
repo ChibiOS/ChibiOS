@@ -412,7 +412,7 @@ struct port_extctx {
  *          switch.
  */
 struct port_intctx {
-  uint32_t              basepri;
+  /* Integer registers context.*/
   uint32_t              r4;
   uint32_t              r5;
   uint32_t              r6;
@@ -421,12 +421,15 @@ struct port_intctx {
   uint32_t              r9;
   uint32_t              r10;
   uint32_t              r11;
+  uint32_t              lr_exc;
+  /* Special registers context.*/
   uint32_t              splim;
+  uint32_t              basepri;
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   uint32_t              control;
 #endif
-  uint32_t              lr_exc;
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  /* Floating point registers context.*/
   uint32_t              s16;
   uint32_t              s17;
   uint32_t              s18;

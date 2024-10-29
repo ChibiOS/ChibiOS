@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -18,10 +17,10 @@
 */
 
 /**
- * @file    ARMv8-M-ML-TZ/chcore.c
- * @brief   ARMv8-M MainLine port code.
+ * @file    ARMv8-M-ML-ALT/chcore.c
+ * @brief   ARMv8-M MainLine (alt) port code.
  *
- * @addtogroup ARMV8M_ML_TZ_CORE
+ * @addtogroup ARMV8M_ML_ALT_CORE
  * @{
  */
 
