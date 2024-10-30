@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,19 +15,15 @@
 */
 
 /**
- * @file    ARMv7-M/mpu.h
- * @brief   ARMv7-M MPU support macros and structures.
+ * @file    ARMv8-M/mpu.h
+ * @brief   ARMv8-M MPU support macros and structures.
  *
- * @addtogroup ARMV7M_MPU
+ * @addtogroup ARMV8M_MPU
  * @{
  */
 
-#ifndef MPU_H
-#define MPU_H
-
-/* Other layers may include another header named mpu_v7m.h which is perfectly
-   compatible, doing a check here to avoid name conflicts.*/
-#ifndef MPUV7M_H
+#ifndef MPU_V8M_H
+#define MPU_V8M_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -37,92 +33,112 @@
  * @name    MPU registers definitions
  * @{
  */
-#define MPU_TYPE_SEPARATED                  (1U << 0U)
-#define MPU_TYPE_DREGION(n)                 (((n) >> 8U) & 255U)
-#define MPU_TYPE_IREGION(n)                 (((n) >> 16U) & 255U)
+#define MPU_TYPE_SEPARATED                  (1U << 0)
+#define MPU_TYPE_DREGION(n)                 (((n) >> 8) & 255U)
 
-#define MPU_CTRL_ENABLE                     (1U << 0U)
-#define MPU_CTRL_HFNMIENA                   (1U << 1U)
-#define MPU_CTRL_PRIVDEFENA                 (1U << 2U)
+#define MPU_CTRL_ENABLE                     (1U << 0)
+#define MPU_CTRL_HFNMIENA                   (1U << 1)
+#define MPU_CTRL_PRIVDEFENA                 (1U << 2)
 
-#define MPU_RNR_REGION_MASK                 (255U << 0U)
-#define MPU_RNR_REGION(n)                   ((n) << 0U)
+#define MPU_RNR_REGION_MASK                 (255U << 0)
+#define MPU_RNR_REGION(n)                   ((n) << 0)
 
-#define MPU_RBAR_REGION_MASK                (15U << 0U)
-#define MPU_RBAR_REGION(n)                  ((n) << 0U)
-#define MPU_RBAR_VALID                      (1U << 4U)
-#define MPU_RBAR_ADDR_MASK                  0xFFFFFFE0U
-#define MPU_RBAR_ADDR(n)                    ((n) << 5U)
+#define MPU_RBAR_XN                         (1U << 0)
+#define MPU_RBAR_AP_MASK                    (3U << 1)
+#define MPU_RBAR_AP(n)                      ((n) << 1)
+#define MPU_RBAR_AP_RW_RO                   MPU_RBAR_AP(0U)
+#define MPU_RBAR_AP_RW_RW                   MPU_RBAR_AP(1U)
+#define MPU_RBAR_AP_RO_NA                   MPU_RBAR_AP(2U)
+#define MPU_RBAR_AP_RO_RO                   MPU_RBAR_AP(3U)
+#define MPU_RBAR_SH_MASK                    (3U << 3)
+#define MPU_RBAR_SH(n)                      ((n) << 1)
+#define MPU_RBAR_SH_NO                      MPU_RBAR_SH(0U)
+#define MPU_RBAR_SH_OUTER                   MPU_RBAR_SH(1U)
+#define MPU_RBAR_SH_INNER                   MPU_RBAR_SH(2U)
+#define MPU_RBAR_BASE_MASK                  0xFFFFFFE0U
+#define MPU_RBAR_BASE(n)                    ((n) << 5)
 
-#define MPU_RASR_ENABLE                     (1U << 0U)
-#define MPU_RASR_SIZE_MASK                  (31U << 1U)
-#define MPU_RASR_SIZE(n)                    ((n) << 1U)
-#define MPU_RASR_SIZE_32                    MPU_RASR_SIZE(4U)
-#define MPU_RASR_SIZE_64                    MPU_RASR_SIZE(5U)
-#define MPU_RASR_SIZE_128                   MPU_RASR_SIZE(6U)
-#define MPU_RASR_SIZE_256                   MPU_RASR_SIZE(7U)
-#define MPU_RASR_SIZE_512                   MPU_RASR_SIZE(8U)
-#define MPU_RASR_SIZE_1K                    MPU_RASR_SIZE(9U)
-#define MPU_RASR_SIZE_2K                    MPU_RASR_SIZE(10U)
-#define MPU_RASR_SIZE_4K                    MPU_RASR_SIZE(11U)
-#define MPU_RASR_SIZE_8K                    MPU_RASR_SIZE(12U)
-#define MPU_RASR_SIZE_16K                   MPU_RASR_SIZE(13U)
-#define MPU_RASR_SIZE_32K                   MPU_RASR_SIZE(14U)
-#define MPU_RASR_SIZE_64K                   MPU_RASR_SIZE(15U)
-#define MPU_RASR_SIZE_128K                  MPU_RASR_SIZE(16U)
-#define MPU_RASR_SIZE_256K                  MPU_RASR_SIZE(17U)
-#define MPU_RASR_SIZE_512K                  MPU_RASR_SIZE(18U)
-#define MPU_RASR_SIZE_1M                    MPU_RASR_SIZE(19U)
-#define MPU_RASR_SIZE_2M                    MPU_RASR_SIZE(20U)
-#define MPU_RASR_SIZE_4M                    MPU_RASR_SIZE(21U)
-#define MPU_RASR_SIZE_8M                    MPU_RASR_SIZE(22U)
-#define MPU_RASR_SIZE_16M                   MPU_RASR_SIZE(23U)
-#define MPU_RASR_SIZE_32M                   MPU_RASR_SIZE(24U)
-#define MPU_RASR_SIZE_64M                   MPU_RASR_SIZE(25U)
-#define MPU_RASR_SIZE_128M                  MPU_RASR_SIZE(26U)
-#define MPU_RASR_SIZE_256M                  MPU_RASR_SIZE(27U)
-#define MPU_RASR_SIZE_512M                  MPU_RASR_SIZE(28U)
-#define MPU_RASR_SIZE_1G                    MPU_RASR_SIZE(29U)
-#define MPU_RASR_SIZE_2G                    MPU_RASR_SIZE(30U)
-#define MPU_RASR_SIZE_4G                    MPU_RASR_SIZE(31U)
-#define MPU_RASR_SRD_MASK                   (255U << 8U)
-#define MPU_RASR_SRD(n)                     ((n) << 8U)
-#define MPU_RASR_SRD_ALL                    (0U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB0           (1U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB1           (2U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB2           (4U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB3           (8U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB4           (16U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB5           (32U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB6           (64U << 8U)
-#define MPU_RASR_SRD_DISABLE_SUB7           (128U << 8U)
-#define MPU_RASR_ATTR_B                     (1U << 16U)
-#define MPU_RASR_ATTR_C                     (1U << 17U)
-#define MPU_RASR_ATTR_S                     (1U << 18U)
-#define MPU_RASR_ATTR_TEX_MASK              (7U << 19U)
-#define MPU_RASR_ATTR_TEX(n)                ((n) << 19U)
-#define MPU_RASR_ATTR_AP_MASK               (7U << 24U)
-#define MPU_RASR_ATTR_AP(n)                 ((n) << 24U)
-#define MPU_RASR_ATTR_AP_NA_NA              (0U << 24U)
-#define MPU_RASR_ATTR_AP_RW_NA              (1U << 24U)
-#define MPU_RASR_ATTR_AP_RW_RO              (2U << 24U)
-#define MPU_RASR_ATTR_AP_RW_RW              (3U << 24U)
-#define MPU_RASR_ATTR_AP_RO_NA              (5U << 24U)
-#define MPU_RASR_ATTR_AP_RO_RO              (6U << 24U)
-#define MPU_RASR_ATTR_XN                    (1U << 28U)
+#define MPU_RLAR_ENABLE                     (1U << 0)
+#define MPU_RLAR_ATTRINDX_MASK              (7U << 1)
+#define MPU_RLAR_ATTRINDX(n)                ((n) << 1)
+#define MPU_RLAR_LIMIT_MASK                 (0x0EFFFFFFU << 5)
+#define MPU_RLAR_LIMIT(n)                   ((n) << 5)
+
+#define MPU_MAIR0_ATTR0_MASK                (0xFFU << 0)
+#define MPU_MAIR0_ATTR0(n)                  ((n) << 0)
+#define MPU_MAIR0_ATTR1_MASK                (0xFFU << 8)
+#define MPU_MAIR0_ATTR1(n)                  ((n) << 8)
+#define MPU_MAIR0_ATTR2_MASK                (0xFFU << 16)
+#define MPU_MAIR0_ATTR2(n)                  ((n) << 16)
+#define MPU_MAIR0_ATTR3_MASK                (0xFFU << 24)
+#define MPU_MAIR0_ATTR3(n)                  ((n) << 24)
+
+#define MPU_MAIR1_ATTR4_MASK                (0xFFU << 0)
+#define MPU_MAIR1_ATTR4(n)                  ((n) << 0)
+#define MPU_MAIR1_ATTR5_MASK                (0xFFU << 8)
+#define MPU_MAIR1_ATTR5(n)                  ((n) << 8)
+#define MPU_MAIR1_ATTR6_MASK                (0xFFU << 16)
+#define MPU_MAIR1_ATTR6(n)                  ((n) << 16)
+#define MPU_MAIR1_ATTR7_MASK                (0xFFU << 24)
+#define MPU_MAIR1_ATTR7(n)                  ((n) << 24)
 /** @} */
 
 /**
- * @name    Region attributes
+ * @name    Attributes in MAIR registers
  * @{
  */
-#define MPU_RASR_ATTR_STRONGLY_ORDERED      (MPU_RASR_ATTR_TEX(0))
-#define MPU_RASR_ATTR_SHARED_DEVICE         (MPU_RASR_ATTR_TEX(0) | MPU_RASR_ATTR_B)
-#define MPU_RASR_ATTR_CACHEABLE_WT_NWA      (MPU_RASR_ATTR_TEX(0) | MPU_RASR_ATTR_C)
-#define MPU_RASR_ATTR_CACHEABLE_WB_NWA      (MPU_RASR_ATTR_TEX(0) | MPU_RASR_ATTR_B | MPU_RASR_ATTR_C)
-#define MPU_RASR_ATTR_NON_CACHEABLE         (MPU_RASR_ATTR_TEX(1))
-#define MPU_RASR_ATTR_CACHEABLE_WB_WA       (MPU_RASR_ATTR_TEX(1) | MPU_RASR_ATTR_B | MPU_RASR_ATTR_C)
-#define MPU_RASR_ATTR_NON_SHARED_DEVICE     (MPU_RASR_ATTR_TEX(2))
+#define MPU_MAIR_DEVICE_nGnRnE              0x00U
+#define MPU_MAIR_DEVICE_nGnRE               0x04U
+#define MPU_MAIR_DEVICE_nGRE                0x08U
+#define MPU_MAIR_DEVICE_GRE                 0x0CU
+
+#define MPU_MAIR_MEM_OUTER_TRANSIENT        0x00U
+#define MPU_MAIR_MEM_OUTER_NON_TRANSIENT    0x80U
+#define MPU_MAIR_MEM_OUTER_WRITE_THROUGH    0x00U
+#define MPU_MAIR_MEM_OUTER_WRITE_BACK       0x40U
+#define MPU_MAIR_MEM_OUTER_R_ALLOCATE       0x20U
+#define MPU_MAIR_MEM_OUTER_W_ALLOCATE       0x10U
+#define MPU_MAIR_MEM_OUTER_RW_ALLOCATE      0x30U
+
+#define MPU_MAIR_MEM_INNER_TRANSIENT        0x00U
+#define MPU_MAIR_MEM_INNER_NON_TRANSIENT    0x08U
+#define MPU_MAIR_MEM_INNER_WRITE_THROUGH    0x00U
+#define MPU_MAIR_MEM_INNER_WRITE_BACK       0x04U
+#define MPU_MAIR_MEM_INNER_R_ALLOCATE       0x02U
+#define MPU_MAIR_MEM_INNER_W_ALLOCATE       0x01U
+#define MPU_MAIR_MEM_INNER_RW_ALLOCATE      0x03U
+
+#define MPU_MAIR_MEM_OUTER_WT_T_WA          0x10U
+#define MPU_MAIR_MEM_OUTER_WT_T_RA          0x20U
+#define MPU_MAIR_MEM_OUTER_WT_T_RWA         0x30U
+#define MPU_MAIR_MEM_OUTER_NC               0x40U
+#define MPU_MAIR_MEM_OUTER_WB_T_WA          0x50U
+#define MPU_MAIR_MEM_OUTER_WB_T_RA          0x60U
+#define MPU_MAIR_MEM_OUTER_WB_T_RWA         0x70U
+#define MPU_MAIR_MEM_OUTER_RESVD1           0x80U
+#define MPU_MAIR_MEM_OUTER_WT_NT_WA         0x90U
+#define MPU_MAIR_MEM_OUTER_WT_NT_RA         0xA0U
+#define MPU_MAIR_MEM_OUTER_WT_NT_RWA        0xB0U
+#define MPU_MAIR_MEM_OUTER_RESVD2           0xC0U
+#define MPU_MAIR_MEM_OUTER_WB_NT_WA         0xD0U
+#define MPU_MAIR_MEM_OUTER_WB_NT_RA         0xE0U
+#define MPU_MAIR_MEM_OUTER_WB_NT_RWA        0xF0U
+
+#define MPU_MAIR_MEM_INNER_WT_T_WA          0x01U
+#define MPU_MAIR_MEM_INNER_WT_T_RA          0x02U
+#define MPU_MAIR_MEM_INNER_WT_T_RWA         0x03U
+#define MPU_MAIR_MEM_INNER_NC               0x04U
+#define MPU_MAIR_MEM_INNER_WB_T_WA          0x05U
+#define MPU_MAIR_MEM_INNER_WB_T_RA          0x06U
+#define MPU_MAIR_MEM_INNER_WB_T_RWA         0x07U
+#define MPU_MAIR_MEM_INNER_RESVD1           0x08U
+#define MPU_MAIR_MEM_INNER_WT_NT_WA         0x09U
+#define MPU_MAIR_MEM_INNER_WT_NT_RA         0x0AU
+#define MPU_MAIR_MEM_INNER_WT_NT_RWA        0x0BU
+#define MPU_MAIR_MEM_INNER_RESVD2           0x0CU
+#define MPU_MAIR_MEM_INNER_WB_NT_WA         0x0DU
+#define MPU_MAIR_MEM_INNER_WB_NT_RA         0x0EU
+#define MPU_MAIR_MEM_INNER_WB_NT_RWA        0x0FU
 /** @} */
 
 /**
@@ -137,6 +153,14 @@
 #define MPU_REGION_5                        5U
 #define MPU_REGION_6                        6U
 #define MPU_REGION_7                        7U
+#define MPU_REGION_8                        7U
+#define MPU_REGION_9                        7U
+#define MPU_REGION_10                       7U
+#define MPU_REGION_11                       7U
+#define MPU_REGION_12                       7U
+#define MPU_REGION_13                       7U
+#define MPU_REGION_14                       7U
+#define MPU_REGION_15                       7U
 /** @} */
 
 /*===========================================================================*/
@@ -166,7 +190,6 @@
  */
 #define mpuEnable(ctrl) {                                                   \
   MPU->CTRL = ((uint32_t)ctrl) | MPU_CTRL_ENABLE;                           \
-  SCB->SHCSR |= SCB_SHCSR_MEMFAULTENA_Msk;                                  \
 }
 
 /**
@@ -177,37 +200,35 @@
  */
 #define mpuDisable() {                                                      \
   SCB->SHCSR &= ~SCB_SHCSR_MEMFAULTENA_Msk;                                 \
-  MPU->CTRL = 0;                                                            \
 }
 
 /**
  * @brief   Configures an MPU region.
  *
  * @param[in] region    the region number
- * @param[in] address   start address of the region, note, there are alignment
- *                      constraints
- * @param[in] attribs   attributes mask as defined in @p MPU_RASR register
+ * @param[in] rbar      RBAR register initialization value
+ * @param[in] rlar      RAR register initialization value
  *
  * @api
  */
-#define mpuConfigureRegion(region, addr, attribs) {                         \
+#define mpuConfigureRegion(region, rbar, rlar) {                            \
   MPU->RNR  = ((uint32_t)region);                                           \
-  MPU->RBAR = ((uint32_t)addr);                                             \
-  MPU->RASR = ((uint32_t)attribs);                                          \
+  MPU->RBAR = ((uint32_t)rbar);                                             \
+  MPU->RLAR = ((uint32_t)rlar);                                             \
 }
 
 /**
- * @brief   Changes an MPU region base address.
+ * @brief   Changes an MPU region base address only.
  *
  * @param[in] region    the region number
- * @param[in] address   start address of the region, note, there are alignment
- *                      constraints
+ * @param[in] address   new start address of the region
  *
  * @api
  */
 #define mpuSetRegionAddress(region, addr) {                                 \
   MPU->RNR  = ((uint32_t)region);                                           \
-  MPU->RBAR = ((uint32_t)addr);                                             \
+  MPU->RBAR = (MPU->RBAR & ~MPU_RBAR_BASE_MASK) |                           \
+              ((uint32_t)addr & MPU_RBAR_BASE_MASK);                                             \
 }
 
 /*===========================================================================*/
@@ -221,8 +242,6 @@ extern "C" {
 }
 #endif
 
-#endif /* MPUV7M_H */
-
-#endif /* MPU_H */
+#endif /* MPU_V8M_H */
 
 /** @} */
