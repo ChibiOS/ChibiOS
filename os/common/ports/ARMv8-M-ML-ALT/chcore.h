@@ -709,6 +709,32 @@ struct port_context {
  */
 #define port_is_locked(sts) !__port_irq_enabled(sts)
 
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Updates the stored alternate PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @param[in] addr      new address
+ */
+#define __port_syscall_set_x_psp(tp, addr) (tp)->ctx.syscall.x_psp = (uint32_t)(addr)
+
+/**
+ * @brief   Returns the alternate PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The alternate PSP value.
+ */
+#define __port_syscall_get_x_psp(tp) (tp)->ctx.syscall.x_psp
+
+/**
+ * @brief   Returns the syscall association pointer.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The pointer value.
+ */
+#define __port_syscall_get_pointer(tp) (tp)->ctx.syscall.p
+#endif /* PORT_USE_SYSCALL == TRUE */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

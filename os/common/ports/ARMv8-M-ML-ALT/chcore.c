@@ -47,8 +47,49 @@
 /*===========================================================================*/
 
 /*===========================================================================*/
+/* Module interrupt handlers.                                                */
+/*===========================================================================*/
+
+/*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+CC_NO_INLINE void port_syslock_noinline(void) {
+
+  port_lock();
+  __stats_start_measure_crit_thd();
+  __dbg_check_lock();
+}
+
+CC_NO_INLINE uint32_t port_get_x_psp(void) {
+
+  return (uint32_t)__port_syscall_get_x_psp(__sch_get_currthread());
+}
+
+CC_WEAK void __port_do_fastcall_entry(struct port_extctx *ectxp,
+                                      uint32_t n) {
+
+  (void)ectxp;
+  (void)n;
+
+  chSysHalt("unimplemented fastcall");
+}
+
+CC_WEAK void __port_do_syscall_entry(struct port_extctx *ectxp,
+                                     uint32_t n) {
+
+  (void)ectxp;
+  (void)n;
+
+  chSysHalt("unimplemented syscall");
+}
+
+CC_WEAK void __port_do_syscall_return(void) {
+
+  __set_PSP(__port_syscall_get_x_psp(__sch_get_currthread()));
+}
+#endif /* PORT_USE_SYSCALL == TRUE */
 
 /**
  * @brief   Tail ISR context switch code.
@@ -104,7 +145,7 @@ void port_init(os_instance_t *oip) {
 
 #if PORT_USE_SYSCALL == TRUE
   /* MPU is enabled.*/
-  mpuEnable(MPU_CTRL_PRIVDEFENA);
+//  mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif
 }
 
