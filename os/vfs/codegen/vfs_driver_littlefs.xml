@@ -2,7 +2,7 @@
 <!-- C module definition -->
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="drvlittlefs" descr="VFS Little Driver"
+  name="drvlittlefs" descr="VFS LittleFS Driver"
   check="VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE" sourcepath="drivers/littlefs"
   headerpath="drivers/littlefs" editcode="true">
   <imports>
@@ -12,25 +12,41 @@
   <public>
     <includes>
       <include style="regular">oop_sequential_stream.h</include>
+      <include style="regular">lfs.h</include>
     </includes>
     <configs>
       <config name="DRV_CFG_LITTLEFS_FS_NUM" default="1">
         <brief>Maximum number of LittleFS file systems mounted.</brief>
         <assert invalid="$N &lt; 1" />
       </config>
-      <config name="DRV_CFG_LITTLEFS_DIR_NODES_NUM" default="1">
+      <config name="DRV_CFG_LITTLEFS_DIR_NODES_NUM" default="2">
         <brief>Number of directory nodes pre-allocated in the pool.</brief>
+        <assert invalid="$N &lt; 2" />
+      </config>
+      <config name="DRV_CFG_LITTLEFS_FILE_NODES_NUM" default="2">
+        <brief>Number of file nodes pre-allocated in the pool.</brief>
         <assert invalid="$N &lt; 1" />
       </config>
-      <config name="DRV_CFG_LITTLEFS_FILE_NODES_NUM" default="1">
-        <brief>Number of file nodes pre-allocated in the pool.</brief>
+      <config name="DRV_CFG_LITTLEFS_INFO_NODES_NUM" default="1">
+        <brief>Number of info nodes pre-allocated in the pool.</brief>
         <assert invalid="$N &lt; 1" />
       </config>
     </configs>
     <types>
       <class type="regular" name="vfs_littlefs_driver" namespace="lfsdrv"
-        ancestorname="vfs_driver" descr="VFS littlefs driver">
-        <fields></fields>
+        ancestorname="vfs_driver" descr="VFS LittleFS driver">
+        <fields>
+          <field name="lfs" ctype="lfs_t"></field>
+          	<brief>LittleFS driver structure.</brief>
+          <field name="name" ctype="const char$I*"></field>
+            <brief>Volume name.</brief>
+          <field name="cwd" ctype="struct vfs_littlefs_dir_node$I*"></field>
+            <brief>Current working directory node.</brief>
+          <field name="path_cwd" ctype='"char$I$N[LFS_NAME_MAX]"'></field>
+            <brief>Current working directory path.</brief>
+          <field name="scratch" ctype='"char$I$N[LFS_NAME_MAX]"'></field>
+            <brief>Path scratch pad.</brief>
+        </fields>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[]]></implementation>
@@ -109,23 +125,72 @@
       </function>
       <function name="lfsdrvMount" ctype="msg_t">
         <brief>Mounts a LittleFS volume.</brief>
-        <param name="name" ctype="const char *" dir="in"><![CDATA[Name to
-                be assigned to the volume, see LittleFS @p f_mount() documentation
-                because there are several options.]]></param>
-        <param name="config" ctype="const struct lfsdrvMount *" dir="in">
-          LFS configuration for the mounted file system.</param>
+        <param name="name" ctype="const char *" dir="in"><![CDATA[Name to be assigned to the volume.]]></param>
+        <param name="cfgp" ctype="const struct lfs_config *cfgp" dir="in"><![CDATA[Pointer to @p lfs_config configuration.]]></param>
+        <param name="objp" ctype="vfs_driver_c **objp" dir="in,out"><![CDATA[Pointer to pointer @p vfs_driver_c configuration.]]></param>
         <return>The operation result.</return>
         <api />
         <implementation><![CDATA[
+  osalDbgAssert(cfgp != NULL, "null config");
+  osalDbgAssert(name != NULL, "null volume name");
+  osalDbgAssert(*name != '\0', "blank volume name");
+
+  vfs_littlefs_driver_c *fs;
+  int i;
+
+  /* Check the volume name is not already in use.*/
+  for (i = 0; i < DRV_CFG_LITTLEFS_FS_NUM; i++) {
+    if (vfs_littlefs_driver_static.fs[i].name != NULL) {
+      if (strcmp(vfs_littlefs_driver_static.fs[i].name, name) == 0) {
+        return CH_RET_EEXIST;
+      }
+    }
+  }
+
+  /* Allocate a drive object.*/
+  fs = (vfs_littlefs_driver_c *)chPoolAlloc(&vfs_littlefs_driver_static.fs_pool);
+  if (fs == NULL) {
+    return CH_RET_ENOMEM;
+  }
+
+  /* Initialise and mount the drive.*/
+  if (lfsdrvObjectInit(fs, cfgp) != NULL) {
+
+    /* Set the volume name and the returned object reference on success.*/
+    fs->name = name;
+    *obj = fs;
+    return CH_RET_SUCCESS;
+  }
+
+  chPoolFree(&vfs_littlefs_driver_static.fs_pool, (void *)fs);
+  return CH_RET_EIO;
 ]]></implementation>
       </function>
       <function name="lfsdrvUnmount" ctype="msg_t">
         <brief>Unmounts a LittleFS volume.</brief>
-        <param name="name" ctype="const char *" dir="in">Name of the volume to
-          be unmounted.</param>
+        <param name="name" ctype="const char *" dir="in"><![CDATA[Name of volume to be unmounted.]]></param>
         <return>The operation result.</return>
         <api />
         <implementation><![CDATA[
+  osalDbgAssert(name != NULL, "null volume name");
+  osalDbgAssert(*name != '\0', "blank volume name");
+
+  int res;
+  int i;
+
+  for (i = 0; i < DRV_CFG_LITTLEFS_FS_NUM; i++) {
+    if (strcmp(vfs_littlefs_driver_static.fs[i].name, name) == 0) {
+
+      /* Unmount from LFS.*/
+      res = lfs_unmount(&vfs_littlefs_driver_static.fs[i].lfs);
+
+      /* Dispose the driver object.*/
+      __lfsdrv_dispose_impl(&vfs_littlefs_driver_static.fs[i]);
+      return translate_error(res);
+    }
+  }
+
+  return CH_RET_EINVAL;
 ]]></implementation>
       </function>
     </functions>
@@ -135,11 +200,11 @@
       <include style="regular">vfs.h</include>
     </includes_always>
     <includes>
-      <include style="regular">ff.h</include>
+    	<include style="regular">lfs.h</include>
     </includes>
     <types>
       <class type="regular" name="vfs_littlefs_dir_node" namespace="lfsdir"
-        ancestorname="vfs_directory_node" descr="VFS littlefs directory node">
+        ancestorname="vfs_directory_node" descr="VFS LittleFS directory node">
         <fields>
           <field name="dir" ctype="lfs_dir_t">
             <brief>LittleFS inner @p lfs_dir_t structure.</brief>
@@ -170,7 +235,7 @@ self = __vfsdir_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></impleme
         </methods>
       </class>
       <class type="regular" name="vfs_littlefs_file_node" namespace="lfsfile"
-        ancestorname="vfs_file_node" descr="VFS littlefs file node">
+        ancestorname="vfs_file_node" descr="VFS LittleFS file node">
         <implements>
           <if name="sequential_stream">
             <method shortname="write">
@@ -254,6 +319,10 @@ self = __vfsfile_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></implem
           </field>
           <field name="fs" ctype="lfs_t$I$N[DRV_CFG_LITTLEFS_FS_NUM]">
             <brief>Pool of file system objects.</brief>
+          </field>
+          <field name="info_nodes"
+            ctype="vfs_littlefs_info_node_c$I$N[DRV_CFG_LITTLEFS_INFO_NODES_NUM]">
+            <brief>Static storage of info nodes.</brief>
           </field>
           <field name="dir_nodes"
             ctype="vfs_littlefs_dir_node_c$I$N[DRV_CFG_LITTLEFS_DIR_NODES_NUM]">

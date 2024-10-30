@@ -16,7 +16,7 @@
 
 /**
  * @file        drvlittlefs.h
- * @brief       Generated VFS Little Driver header.
+ * @brief       Generated VFS LittleFS Driver header.
  * @note        This is a generated file, do not edit directly.
  *
  * @addtogroup  DRVLITTLEFS
@@ -29,6 +29,7 @@
 #if (VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE) || defined(__DOXYGEN__)
 
 #include "oop_sequential_stream.h"
+#include "lfs.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -53,14 +54,21 @@
  * @brief       Number of directory nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_LITTLEFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      1
+#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      2
 #endif
 
 /**
  * @brief       Number of file nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_LITTLEFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     1
+#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     2
+#endif
+
+/**
+ * @brief       Number of info nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_LITTLEFS_INFO_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_INFO_NODES_NUM     1
 #endif
 /** @} */
 
@@ -74,13 +82,18 @@
 #endif
 
 /* Checks on DRV_CFG_LITTLEFS_DIR_NODES_NUM configuration.*/
-#if DRV_CFG_LITTLEFS_DIR_NODES_NUM < 1
+#if DRV_CFG_LITTLEFS_DIR_NODES_NUM < 2
 #error "invalid DRV_CFG_LITTLEFS_DIR_NODES_NUM value"
 #endif
 
 /* Checks on DRV_CFG_LITTLEFS_FILE_NODES_NUM configuration.*/
 #if DRV_CFG_LITTLEFS_FILE_NODES_NUM < 1
 #error "invalid DRV_CFG_LITTLEFS_FILE_NODES_NUM value"
+#endif
+
+/* Checks on DRV_CFG_LITTLEFS_INFO_NODES_NUM configuration.*/
+#if DRV_CFG_LITTLEFS_INFO_NODES_NUM < 1
+#error "invalid DRV_CFG_LITTLEFS_INFO_NODES_NUM value"
 #endif
 
 /*===========================================================================*/
@@ -101,7 +114,7 @@
  */
 
 /**
- * @brief       Type of a VFS littlefs driver class.
+ * @brief       Type of a VFS LittleFS driver class.
  */
 typedef struct vfs_littlefs_driver vfs_littlefs_driver_c;
 
@@ -125,13 +138,33 @@ struct vfs_littlefs_driver_vmt {
 };
 
 /**
- * @brief       Structure representing a VFS littlefs driver class.
+ * @brief       Structure representing a VFS LittleFS driver class.
  */
 struct vfs_littlefs_driver {
   /**
    * @brief       Virtual Methods Table.
    */
-  const struct vfs_littlefs_driver_vmt *vmt;
+  const struct vfs_littlefs_driver_vmt  *vmt;
+  /**
+   * @brief       File system object.
+   */
+  lfs_t                                 lfs;
+  /**
+   * @brief       File system volume name.
+   */
+  const char                            *name;
+  /**
+   * @brief       File system directory node.
+   */
+  struct vfs_littlefs_dir_node          *cwd;
+  /**
+   * @brief       File system current directory path.
+   */
+  char                                  path_cwd[LFS_NAME_MAX];
+  /**
+   * @brief       Path name scratch pad.
+   */
+  char                                  scratch[LFS_NAME_MAX];
 };
 /** @} */
 
@@ -161,7 +194,8 @@ extern "C" {
   msg_t __lfsdrv_rmdir_impl(void *ip, const char *path);
   /* Regular functions.*/
   void __drv_littlefs_init(void);
-  msg_t lfsdrvMount(const char *name, const struct lfsdrvMount *config);
+  msg_t lfsdrvMount(const char *name, const struct lfs_config *cfgp,
+                                                vfs_littlefs_driver_c **obj);
   msg_t lfsdrvUnmount(const char *name);
 #ifdef __cplusplus
 }
@@ -182,15 +216,32 @@ extern "C" {
  *
  * @param[out]    self          Pointer to a @p vfs_littlefs_driver_c instance
  *                              to be initialized.
+ * @param[in]     cfgp          Pointer to @p lfs_config configuration.
  * @return                      Pointer to the initialized object.
+ * @retval                      NULL if initialisation failed.
  *
  * @objinit
  */
 CC_FORCE_INLINE
-static inline vfs_littlefs_driver_c *lfsdrvObjectInit(vfs_littlefs_driver_c *self) {
+static inline vfs_littlefs_driver_c *lfsdrvObjectInit(vfs_littlefs_driver_c *self,
+                                      const struct lfs_config *cfgp) {
   extern const struct vfs_littlefs_driver_vmt __vfs_littlefs_driver_vmt;
+  {
+    vfs_littlefs_driver_c *obj = __lfsdrv_objinit_impl(self,
+                                          &__vfs_littlefs_driver_vmt);
 
-  return __lfsdrv_objinit_impl(self, &__vfs_littlefs_driver_vmt);
+    /* Mount the drive using the supplied configuration.*/
+    if (lfs_mount(&obj->lfs, cfgp) == LFS_ERR_OK) {
+
+      /* Check drive is functional. Open root directory as current.*/
+      if (__lfsdrv_setcwd_impl(self, "/") == CH_RET_SUCCESS) {
+        return obj;
+      }
+      (void) lfs_unmount(&self->lfs);
+    }
+
+    return NULL;
+  }
 }
 /** @} */
 

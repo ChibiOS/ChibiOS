@@ -16,7 +16,7 @@
 
 /**
  * @file        drvlittlefs.c
- * @brief       Generated VFS Little Driver source.
+ * @brief       Generated VFS LittleFS Driver source.
  * @note        This is a generated file, do not edit directly.
  *
  * @addtogroup  DRVLITTLEFS
@@ -27,7 +27,7 @@
 
 #if (VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE) || defined(__DOXYGEN__)
 
-#include "ff.h"
+#include "lfs.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -61,7 +61,7 @@ struct vfs_littlefs_driver_static_struct vfs_littlefs_driver_static;
  */
 
 /**
- * @brief       Type of a VFS littlefs directory node class.
+ * @brief       Type of a VFS LittleFS directory node class.
  */
 typedef struct vfs_littlefs_dir_node vfs_littlefs_dir_node_c;
 
@@ -83,7 +83,7 @@ struct vfs_littlefs_dir_node_vmt {
 };
 
 /**
- * @brief       Structure representing a VFS littlefs directory node class.
+ * @brief       Structure representing a VFS LittleFS directory node class.
  */
 struct vfs_littlefs_dir_node {
   /**
@@ -103,9 +103,17 @@ struct vfs_littlefs_dir_node {
    */
   vfs_mode_t                mode;
   /**
+   * @brief       LittleFS file system object.
+   */
+  lfs_t                     *lfs;
+  /**
    * @brief       LittleFS inner @p lfs_dir_t structure.
    */
   lfs_dir_t                 dir;
+  /**
+   * @brief       LittleFS directory path.
+   */
+  char                      path[LFS_NAME_MAX];
 };
 /** @} */
 
@@ -121,7 +129,7 @@ struct vfs_littlefs_dir_node {
  */
 
 /**
- * @brief       Type of a VFS littlefs file node class.
+ * @brief       Type of a VFS LittleFS file node class.
  */
 typedef struct vfs_littlefs_file_node vfs_littlefs_file_node_c;
 
@@ -170,9 +178,17 @@ struct vfs_littlefs_file_node {
    */
   sequential_stream_i       stm;
   /**
+   * @brief       LittleFS file system object.
+   */
+  lfs_t                     *lfs;
+  /**
    * @brief       LittleFS inner @p lfs_file_t structure.
    */
   lfs_file_t                file;
+  /**
+   * @brief       LittleFS file path.
+   */
+  char                      path[LFS_NAME_MAX];
 };
 /** @} */
 
@@ -197,9 +213,13 @@ struct vfs_littlefs_driver_static_struct {
    */
   memory_pool_t             file_nodes_pool;
   /**
-   * @brief       Pool of file system objects.
+   * @brief       File system volume objects.
    */
-  lfs_t                     fs[DRV_CFG_LITTLEFS_FS_NUM];
+  vfs_littlefs_driver_c     fs[DRV_CFG_LITTLEFS_FS_NUM];
+  /**
+   * @brief       Static storage of info nodes.
+   */
+  struct lfs_info           info_nodes[DRV_CFG_LITTLEFS_INFO_NODES_NUM];
   /**
    * @brief       Static storage of directory nodes.
    */
