@@ -30,7 +30,7 @@
 
 /* Inclusion of the Cortex-Mx implementation specific parameters.*/
 #include "cmparams.h"
-#include "mpu.h"
+#include "mpu_v7m.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */

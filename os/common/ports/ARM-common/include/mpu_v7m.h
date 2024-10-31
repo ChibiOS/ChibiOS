@@ -15,19 +15,15 @@
 */
 
 /**
- * @file    ARMv7-M/mpu.h
+ * @file    ARM-common/mpu_v7m.h
  * @brief   ARMv7-M MPU support macros and structures.
  *
  * @addtogroup ARMV7M_MPU
  * @{
  */
 
-#ifndef MPU_H
-#define MPU_H
-
-/* Other layers may include another header named mpu_v7m.h which is perfectly
-   compatible, doing a check here to avoid name conflicts.*/
 #ifndef MPUV7M_H
+#define MPUV7M_H
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -222,7 +218,5 @@ extern "C" {
 #endif
 
 #endif /* MPUV7M_H */
-
-#endif /* MPU_H */
 
 /** @} */
