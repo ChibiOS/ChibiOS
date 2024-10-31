@@ -131,87 +131,78 @@
 
                 /* Store MPU context through R1.*/
                 .macro  PORT_STORE_MPU_CONTEXT
-#if PORT_SWITCHED_REGIONS_NUMBER == 1
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
                 ldr     r2, =MPU_RBAR
+#if PORT_SWITCHED_REGIONS_NUMBER == 1
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
                 stmia   r1!, {r4-r5}
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 2
-                ldr     r2, =MPU_RBAR
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
-                mov     r3, #1
+                add     r3, #1
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r6, r7}        /* RBAR1, RLAR1 */
                 stmia   r1!, {r4-r7}
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 3
-                ldr     r2, =MPU_RBAR
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
-                mov     r3, #1
+                add     r3, #1
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r6, r7}        /* RBAR1, RLAR1 */
-                mov     r3, #2
+                add     r3, #1
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r8, r9}        /* RBAR2, RLAR2 */
                 stmia   r1!, {r4-r9}
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 4
-                ldr     r2, =MPU_RBAR
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
-                mov     r3, #1
+                add     r3, #1
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r6, r7}        /* RBAR1, RLAR1 */
-                mov     r3, #2
+                add     r3, #1
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r8, r9}        /* RBAR2, RLAR2 */
-                mov     r3, #3
+                add     r3, #1
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r10, r11}      /* RBAR3, RLAR3 */
                 stmia   r1!, {r4-r11}
 #endif
+#endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
                 .endm
 
                 /* Load MPU context through R0.*/
                 .macro  PORT_LOAD_MPU_CONTEXT
-#if PORT_SWITCHED_REGIONS_NUMBER >= 1
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
                 ldr     r2, =MPU_RNR
                 mov     r1, #0
+#if PORT_SWITCHED_REGIONS_NUMBER >= 1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RLAR0 */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER >= 2
-                mov     r1, #1
+                add     r1, #1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RLAR1 */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER >= 3
-                mov     r1, #2
+                add     r1, #1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR2, RLAR2 */
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER >= 4
-                mov     r1, #3
+                add     r1, #1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR3, RLAR3 */
 #endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 5
-                mov     r1, #4
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR3, RLAR3 */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 6
-                mov     r1, #5
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR3, RLAR3 */
-#endif
+#endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
                 .endm
 
 /*--------------------------------------------------------------------------*
