@@ -118,15 +118,15 @@
 
                 /* Store MPU context through R1.*/
                 .macro  PORT_STORE_MPU_CONTEXT
-#if PORT_SWITCHED_REGIONS_NUMBER == 1
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
                 ldr     r2, =MPU_RBAR
+#if PORT_SWITCHED_REGIONS_NUMBER == 1
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
                 stmia   r1!, {r4-r5}
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 2
-                ldr     r2, =MPU_RBAR
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
@@ -136,7 +136,6 @@
                 stmia   r1!, {r4-r7}
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 3
-                ldr     r2, =MPU_RBAR
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
@@ -149,7 +148,6 @@
                 stmia   r1!, {r4-r9}
 #endif
 #if PORT_SWITCHED_REGIONS_NUMBER == 4
-                ldr     r2, =MPU_RBAR
                 mov     r3, #0
                 str     r3, [r2, #-4]       /* RNR */
                 ldm     r2, {r4, r5}        /* RBAR0, RASR0 */
@@ -164,52 +162,34 @@
                 ldm     r2, {r10, r11}      /* RBAR3, RASR3 */
                 stmia   r1!, {r4-r11}
 #endif
+#endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
                 .endm
 
                 /* Load MPU context through R0.*/
                 .macro  PORT_LOAD_MPU_CONTEXT
-#if PORT_SWITCHED_REGIONS_NUMBER == 1
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
                 ldr     r2, =MPU_RNR
                 mov     r1, #0
+#if PORT_SWITCHED_REGIONS_NUMBER >= 1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
 #endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 2
-                ldr     r2, =MPU_RNR
-                mov     r1, #0
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
-                mov     r1, #1
+#if PORT_SWITCHED_REGIONS_NUMBER >= 2
+                add     r1, #1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RASR1 */
 #endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 3
-                ldr     r2, =MPU_RNR
-                mov     r3, #0
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
-                mov     r1, #1
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RASR1 */
-                mov     r1, #2
+#if PORT_SWITCHED_REGIONS_NUMBER >= 3
+                add     r1, #1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR2, RASR2 */
 #endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 4
-                ldr     r2, =MPU_RNR
-                mov     r3, #0
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RASR0 */
-                mov     r1, #1
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RASR1 */
-                mov     r1, #2
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR2, RASR2 */
-                mov     r1, #3
+#if PORT_SWITCHED_REGIONS_NUMBER >= 4
+                add     r1, #1
                 ldmia   r0!, {r3, r12}
                 stm     r2, {r1, r3, r12}   /* RNR, RBAR3, RASR3 */
 #endif
+#endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
                 .endm
 
 /*--------------------------------------------------------------------------*
@@ -275,7 +255,6 @@ ctxswitch:
                 bl      __stats_stop_measure_crit_thd
 #endif
                 mov     r0, r4
-1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
                 PORT_LOAD_INTEGER_CONTEXT
@@ -327,7 +306,6 @@ PendSV_Handler:
                 bl      __stats_stop_measure_crit_thd
 #endif
                 mov     r0, r4
-1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
                 PORT_LOAD_INTEGER_CONTEXT

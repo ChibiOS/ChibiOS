@@ -437,6 +437,7 @@ struct port_extctx {
  *          switch.
  */
 struct port_intctx {
+  /* Integer and special  registers context.*/
   uint32_t              basepri;
   uint32_t              r4;
   uint32_t              r5;
@@ -451,6 +452,7 @@ struct port_intctx {
 #endif
   uint32_t              lr_exc;
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  /* Floating point registers context.*/
   uint32_t              s16;
   uint32_t              s17;
   uint32_t              s18;
