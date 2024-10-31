@@ -602,7 +602,7 @@ msg_t __ovldrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
       /* Searching for a match among registered overlays.*/
       ret = match_driver(self, &scanpath, &dp);
       if (!CH_RET_IS_ERROR(ret)) {
-        /* Delegating directory creation to a registered driver.*/
+        /* Delegating information request to a registered driver.*/
         ret = vfsDrvStat((void *)dp, scanpath, sp);
         break;
       }
