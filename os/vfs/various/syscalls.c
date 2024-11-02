@@ -85,8 +85,9 @@ int _read_r(struct _reent *r, int file, char *ptr, int len) {
     return -1;
   }
 
-  if (!VFS_MODE_S_ISREG(fds[file]->mode)) {
-    return EISDIR;
+  if (VFS_MODE_S_ISDIR(fds[file]->mode)) {
+    __errno_r(r) = EISDIR;
+    return -1;
   }
 
   nr = vfsReadFile((vfs_file_node_c *)fds[file], (uint8_t *)ptr, (size_t)len);
@@ -109,8 +110,9 @@ int _write_r(struct _reent *r, int file, const char *ptr, int len) {
     return -1;
   }
 
-  if (!VFS_MODE_S_ISREG(fds[file]->mode)) {
-    return EISDIR;
+  if (VFS_MODE_S_ISDIR(fds[file]->mode)) {
+    __errno_r(r) = EISDIR;
+    return -1;
   }
 
   nw = vfsWriteFile((vfs_file_node_c *)fds[file], (const uint8_t *)ptr, (size_t)len);
