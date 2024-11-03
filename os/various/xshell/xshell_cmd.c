@@ -345,6 +345,19 @@ static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
      break;
     }
 
+    vfs_stat_t stat;
+    msg_t ret;
+    ret = vfsStat(argv[1], &stat);
+    if (CH_RET_IS_ERROR(ret)) {
+      chprintf(stream, "stat failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+      break;
+    }
+
+    if ((stat.mode & (VFS_MODE_S_IFREG | VFS_MODE_S_IFCHR | VFS_MODE_S_IFIFO)) == 0) {
+      chprintf(stream, "Not a file type" XSHELL_NEWLINE_STR);
+      break;
+    }
+
     fd = open(argv[1], O_RDONLY);
     if(fd == -1) {
       chprintf(stream, "Cannot open file" XSHELL_NEWLINE_STR);
@@ -353,6 +366,9 @@ static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
 
     while ((n = read(fd, buf, 2048)) > 0) {
       streamWrite(stream, (const uint8_t *)buf, n);
+      if (chnGetTimeout((BaseChannel*)stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
+        break;
+      }
     }
     chprintf(stream, XSHELL_NEWLINE_STR);
 
