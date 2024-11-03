@@ -21,7 +21,7 @@
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
 
-#include "shell.h"
+#include "xshell.h"
 #include "chprintf.h"
 
 /*===========================================================================*/
@@ -31,7 +31,8 @@
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
 /* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_write(struct xshell_manager *smp, BaseSequentialStream *chp,
+                      int argc, char *argv[]) {
   static uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -50,8 +51,10 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+  (void)smp;
   (void)argv;
-  if (argc > 0) {
+
+  if (argc > 1) {
     chprintf(chp, "Usage: write\r\n");
     return;
   }
@@ -71,22 +74,24 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 #if STM32_CLOCK_DYNAMIC == TRUE
-static void cmd_clock(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_clock(struct xshell_manager *smp, BaseSequentialStream *chp,
+                      int argc, char *argv[]) {
   bool result;
   const halclkcfg_t *ccp;
   static const char usage[] = "Usage: clock [reset|default]\r\n";
 
-  (void)argv;
-  if (argc != 1) {
+  (void)smp;
+
+  if (argc != 2) {
     chprintf(chp, usage);
     return;
   }
 
-  if (strcmp(argv[0], "reset") == 0) {
+  if (strcmp(argv[1], "reset") == 0) {
     chprintf(chp, "\r\nSwitching to post-reset clocks: ");
     ccp = &hal_clkcfg_reset;
   }
-  else if (strcmp(argv[0], "default") == 0) {
+  else if (strcmp(argv[1], "default") == 0) {
     chprintf(chp, "\r\nSwitching to default mcuconf.h clocks: ");
     ccp = &hal_clkcfg_default;
   }
@@ -114,11 +119,14 @@ static void cmd_clock(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 #endif
 
-static void cmd_clocks(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_clocks(struct xshell_manager *smp,
+                       BaseSequentialStream *chp, int argc, char *argv[]) {
   const char *swp;
 
+  (void)smp;
   (void)argv;
-  if (argc > 0) {
+
+  if (argc > 1) {
     chprintf(chp, "Usage: clocks\r\n");
     return;
   }
@@ -159,7 +167,7 @@ static void cmd_clocks(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
 }
 
-static const ShellCommand commands[] = {
+static const xshell_command_t commands[] = {
   {"write", cmd_write},
 #if STM32_CLOCK_DYNAMIC == TRUE
   {"clock", cmd_clock},
@@ -168,9 +176,13 @@ static const ShellCommand commands[] = {
   {NULL, NULL}
 };
 
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SIOD3,
-  commands
+static const xshell_manager_config_t cfg1 = {
+  .thread_name      = "shell",
+  .banner           = XSHELL_DEFAULT_BANNER_STR,
+  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
+  .commands         = commands,
+  .use_heap         = true,
+  .stack.size       = SHELL_WA_SIZE
 };
 
 /*===========================================================================*/
@@ -178,13 +190,13 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 /*
- * Green LED blinker thread, times are in milliseconds.
+ * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 256);
-static THD_FUNCTION(Thread1, arg) {
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker");
+
   while (true) {
     palSetLine(LINE_LED1);
     chThdSleepMilliseconds(50);
@@ -205,6 +217,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  xshell_manager_t sm1;
 
   /*
    * System initializations.
@@ -222,23 +235,26 @@ int main(void) {
   sioStart(&SIOD3, NULL);
 
   /*
-   * Shell manager initialization.
+   * Spawning a blinker thread.
    */
-  shellInit();
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
+                               NORMALPRIO + 10, thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
 
   /*
-   * Creates the blinker thread.
+   * Shell manager initialization.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  xshellObjectInit(&sm1, &cfg1);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                            "shell", NORMALPRIO + 1,
-                                            shellThread, (void *)&shell_cfg1);
+    thread_t *shelltp = xshellSpawn(&sm1,
+                                    (BaseSequentialStream *)&SIOD3,
+                                    NORMALPRIO + 1);
     chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(500);
   }
