@@ -130,7 +130,7 @@ __port_thread_start:
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-.zombies:       b       .zombies
+1:              b       1b
 
 /*--------------------------------------------------------------------------*
  * Post-IRQ switch code.
@@ -164,7 +164,7 @@ __port_exit_from_isr:
 #else /* !CORTEX_SIMPLIFIED_PRIORITY */
                 svc     #0
 #endif /* !CORTEX_SIMPLIFIED_PRIORITY */
-.L1:            b       .L1
+1:              b       1b
 
 #endif /* !defined(__DOXYGEN__) */
 
