@@ -75,40 +75,56 @@
  *--------------------------------------------------------------------------*/
 
                 /* Store integer context through R1.
-                   On entry R2=PSP.*/
+                   On entry R2=PSP, R3=BASEPRI.*/
                 .macro  PORT_STORE_INTEGER_CONTEXT
-                stmia   r1!, {r2,r4-r11,lr}
+                stmia   r1!, {r2-r11,lr}
                 .endm
 
                 /* Load integer context through R0.*/
                 .macro  PORT_LOAD_INTEGER_CONTEXT
-                ldmia   r0!, {r2,r4-r11,lr}
+                ldmia   r0!, {r2-r11,lr}
                 msr     PSP, r2
+                msr     BASEPRI, r3
                 .endm
 
                 /* Store special registers context through R1.
-                   On entry R3=BASEPRI, R12=CONTROL.*/
+                   On entry R12=CONTROL.*/
                 .macro  PORT_STORE_SPECIAL_CONTEXT
+#if CH_DBG_ENABLE_STACK_CHECK
                 mrs     r2, PSPLIM
 #if PORT_USE_SYSCALL
-                stmia   r1!, {r2-r3,r12}
+                stmia   r1!, {r2, r12}
 #else
-                stmia   r1!, {r2-r3}
+                stmia   r1!, {r2}
 #endif
+#else /* !CH_DBG_ENABLE_STACK_CHECK */
+#if PORT_USE_SYSCALL
+                stmia   r1!, {r12}
+#else
+                /* Nothing.*/
+#endif
+#endif /* !CH_DBG_ENABLE_STACK_CHECK */
                 .endm
 
                 /* Load special context through R0.*/
                 .macro  PORT_LOAD_SPECIAL_CONTEXT
+#if CH_DBG_ENABLE_STACK_CHECK
 #if PORT_USE_SYSCALL
-                ldmia   r0!, {r2-r3,r12}
+                ldmia   r0!, {r2, r12}
                 msr     PSPLIM, r2
-                msr     BASEPRI, r3
                 msr     CONTROL, r12
 #else
-                ldmia   r0!, {r2-r3}
+                ldmia   r0!, {r2}
                 msr     PSPLIM, r2
-                msr     BASEPRI, r3
 #endif
+#else /* !CH_DBG_ENABLE_STACK_CHECK */
+#if PORT_USE_SYSCALL
+                ldmia   r0!, {r12}
+                msr     CONTROL, r12
+#else
+                /* Nothing.*/
+#endif
+#endif /* !CH_DBG_ENABLE_STACK_CHECK */
                 .endm
 
 #if CORTEX_USE_FPU

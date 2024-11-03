@@ -244,7 +244,7 @@
 /*===========================================================================*/
 
 #if CH_DBG_ENABLE_STACK_CHECK == FALSE
-#error "CH_DBG_ENABLE_STACK_CHECK must be always TRUE in this architecture"
+//#error "CH_DBG_ENABLE_STACK_CHECK must be always TRUE in this architecture"
 #endif
 
 #if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 8)
@@ -413,6 +413,7 @@ struct port_extctx {
  */
 struct port_intctx {
   /* Integer registers context.*/
+  uint32_t              basepri;
   uint32_t              r4;
   uint32_t              r5;
   uint32_t              r6;
@@ -423,8 +424,9 @@ struct port_intctx {
   uint32_t              r11;
   uint32_t              lr_exc;
   /* Special registers context.*/
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
   uint32_t              splim;
-  uint32_t              basepri;
+#endif
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   uint32_t              control;
 #endif
@@ -512,6 +514,16 @@ struct port_context {
     (tp)->ctx.syscall.p             = NULL;
 #else
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
+#endif
+
+/**
+ * @brief   Initialization of stack check part of thread context.
+ */
+#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+#define __PORT_SETUP_CONTEXT_SPLIM(tp, wbase)                               \
+    (tp)->ctx.regs.splim = (uint32_t)(wbase)
+#else
+#define __PORT_SETUP_CONTEXT_SPLIM(tp, wbase)
 #endif
 
 /**
@@ -638,13 +650,13 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
                    ((uint8_t *)(wtop) - sizeof (struct port_extctx));       \
+  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
+  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
+  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
   (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
   (tp)->ctx.regs.lr_exc     = (uint32_t)PORT_EXC_RETURN;                    \
-  (tp)->ctx.regs.splim      = (uint32_t)(wbase);                            \
-  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
-  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
-  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
+  __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
