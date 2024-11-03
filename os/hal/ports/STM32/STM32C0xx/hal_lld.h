@@ -979,7 +979,7 @@ typedef unsigned halclkpt_t;
 #define hal_lld_get_clock_point(clkpt)                                      \
   ((clkpt) == CLK_SYSCLK    ? STM32_SYSCLK        :                         \
    (clkpt) == CLK_HSISYSCLK ? STM32_HSISYSCLK     :                         \
-   (clkpt) == CLK_HSISYSCLK ? STM32_HSIKERCLK     :                         \
+   (clkpt) == CLK_HSIKERCLK ? STM32_HSIKERCLK     :                         \
    (clkpt) == CLK_HCLK      ? STM32_HCLK          :                         \
    (clkpt) == CLK_PCLK      ? STM32_PCLK          :                         \
    (clkpt) == CLK_PCLKTIM   ? STM32_TIMPCLK       :                         \
