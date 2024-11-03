@@ -1015,20 +1015,20 @@ msg_t __lfsdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
     int res;
     struct lfs_info *lfsip;
 
+    /* Check for no path.*/
+    if (vfs_parse_match_end(&path) == CH_RET_SUCCESS) {
+
+      /* If no path then report on the file system usage.*/
+      lfs_ssize_t blocks = lfs_fs_size(&self->lfs);
+      if (blocks >= 0) {
+        sp->size = (vfs_offset_t)blocks;
+        sp->mode = VFS_MODE_S_IFBLK;
+      }
+      break;
+    }
+
     lfsip = (struct lfs_info *)chPoolAlloc(&vfs_littlefs_driver_static.info_nodes_pool);
     if (lfsip != NULL) {
-
-      /* Check for no path.*/
-      if (vfs_parse_match_end(&path) == CH_RET_SUCCESS) {
-
-        /* If no path then report on the file system usage.*/
-        lfs_ssize_t blocks = lfs_fs_size(&self->lfs);
-        if (blocks >= 0) {
-          sp->size = (vfs_offset_t)blocks;
-          sp->mode = VFS_MODE_S_IFBLK;
-        }
-        break;
-      }
 
       /* Build the path for the directory or file.*/
       ret = build_absolute_path(self, self->scratch, path);
