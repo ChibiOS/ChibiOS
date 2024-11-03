@@ -139,7 +139,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="RT-STM32-SHELL.null.1829068891" name="RT-STM32-SHELL"/>
+		<project id="RT-STM32-XSHELL.null.1829068891" name="RT-STM32-XSHELL"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
@@ -148,17 +148,17 @@
 		<configuration configurationName="Build for STM32G474ZI-Nucleo144"/>
 		<configuration configurationName="Build for STM32H563ZI-Nucleo144"/>
 		<configuration configurationName="Build for STM32H743ZI-Nucleo144">
-			<resource resourceType="PROJECT" workspacePath="/RT-STM32-SHELL"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-STM32-XSHELL"/>
 		</configuration>
 		<configuration configurationName="Build for STM32G474ZI-Nucleo64"/>
 		<configuration configurationName="Build for STM32G071RB-Nucleo64"/>
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/RT-STM32-SHELL"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-STM32-XSHELL"/>
 		</configuration>
 		<configuration configurationName="Build for STM32H743-Nucleo144"/>
 		<configuration configurationName="Build for STM32L476-Discovery"/>
 		<configuration configurationName="Build for STM32L053R8-Nucleo64">
-			<resource resourceType="PROJECT" workspacePath="/RT-STM32-SHELL"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-STM32-XSHELL"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
