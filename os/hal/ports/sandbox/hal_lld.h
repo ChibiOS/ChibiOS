@@ -68,17 +68,24 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a clock point identifier.
- */
-typedef unsigned halclkpt_t;
-
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
 
 #define __MK_VECTOR(n)      __sb_vector##n
 #define MK_VECTOR(n)        __MK_VECTOR(n)
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#define hal_lld_get_clock_point(clkpt) 0U
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -229,6 +229,16 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a clock point identifier.
+ */
+typedef unsigned halclkpt_t;
+
+/**
+ * @brief   Type of a clock point frequency in Hz.
+ */
+typedef uint32_t halfreq_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -252,6 +262,22 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @xclass
+ */
+static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
+
+  (void)clkpt;  /* LLD macro could not use it.*/
+
+  return hal_lld_get_clock_point(clkpt);
+}
+
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Switches to a different clock configuration
@@ -266,20 +292,6 @@ extern "C" {
 static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 
   return hal_lld_clock_switch_mode(ccp);
-}
-
-/**
- * @brief   Returns the frequency of a clock point in Hz.
- *
- * @param[in] clkpt     clock point to be returned
- * @return              The clock point frequency in Hz or zero if the
- *                      frequency is unknown.
- *
- * @xclass
- */
-static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
-
-  return hal_lld_get_clock_point(clkpt);
 }
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 

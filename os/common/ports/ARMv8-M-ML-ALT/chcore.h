@@ -505,13 +505,13 @@ struct port_context {
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp)                                  \
+  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
     (tp)->ctx.regs.control          = (uint32_t)__get_CONTROL() &           \
                                       CONTROL_FPCA_Pos;                     \
     (tp)->ctx.syscall.x_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.p             = NULL;
 #else
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp)
+  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
 #endif
 
 /**
@@ -611,7 +611,7 @@ struct port_context {
   (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp);                                         \
+  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 } while (false)
 
 /**
