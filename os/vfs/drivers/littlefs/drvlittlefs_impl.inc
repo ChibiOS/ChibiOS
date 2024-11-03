@@ -1023,7 +1023,10 @@ msg_t __lfsdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
       if (blocks >= 0) {
         sp->size = (vfs_offset_t)blocks;
         sp->mode = VFS_MODE_S_IFBLK;
+        ret = CH_RET_SUCCESS;
+        break;
       }
+      ret = translate_error((int)blocks);
       break;
     }
 
