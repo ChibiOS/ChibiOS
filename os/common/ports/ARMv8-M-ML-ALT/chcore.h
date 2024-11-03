@@ -173,7 +173,7 @@
  * @note    The first region is always region zero.
  * @note    The use of this option has an overhead of 8 bytes for each
  *          region for each thread.
- * @note    Allowed values are 0..6, zero means none.
+ * @note    Allowed values are 0..8, zero means none.
  */
 #if !defined(PORT_SWITCHED_REGIONS_NUMBER) || defined(__DOXYGEN__)
 #define PORT_SWITCHED_REGIONS_NUMBER    0
@@ -247,7 +247,7 @@
 #error "CH_DBG_ENABLE_STACK_CHECK must be always TRUE in this architecture"
 #endif
 
-#if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 6)
+#if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 8)
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif
 
@@ -264,7 +264,7 @@
 /**
  * @brief   EXC_RETURN to be used when starting a thread.
  */
-#define PORT_EXC_RETURN                 0xFFFFFFFD
+#define PORT_EXC_RETURN                 0xFFFFFFBC
 
 /**
  * @brief   Context save area for each thread.
@@ -589,6 +589,42 @@ struct port_context {
     (tp)->ctx.regions[4].rlar   = 0U;                                       \
     (tp)->ctx.regions[5].rbar   = 0U;                                       \
     (tp)->ctx.regions[5].rlar   = 0U
+
+#elif (PORT_SWITCHED_REGIONS_NUMBER == 7) || defined(__DOXYGEN__)
+  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
+    (tp)->ctx.regions[0].rbar   = 0U;                                       \
+    (tp)->ctx.regions[0].rlar   = 0U;                                       \
+    (tp)->ctx.regions[1].rbar   = 0U;                                       \
+    (tp)->ctx.regions[1].rlar   = 0U;                                       \
+    (tp)->ctx.regions[2].rbar   = 0U;                                       \
+    (tp)->ctx.regions[2].rlar   = 0U;                                       \
+    (tp)->ctx.regions[3].rbar   = 0U;                                       \
+    (tp)->ctx.regions[3].rlar   = 0U;                                       \
+    (tp)->ctx.regions[4].rbar   = 0U;                                       \
+    (tp)->ctx.regions[4].rlar   = 0U;                                       \
+    (tp)->ctx.regions[5].rbar   = 0U;                                       \
+    (tp)->ctx.regions[5].rlar   = 0U;                                       \
+    (tp)->ctx.regions[6].rbar   = 0U;                                       \
+    (tp)->ctx.regions[6].rlar   = 0U
+
+#elif (PORT_SWITCHED_REGIONS_NUMBER == 8) || defined(__DOXYGEN__)
+  #define __PORT_SETUP_CONTEXT_MPU(tp)                                      \
+    (tp)->ctx.regions[0].rbar   = 0U;                                       \
+    (tp)->ctx.regions[0].rlar   = 0U;                                       \
+    (tp)->ctx.regions[1].rbar   = 0U;                                       \
+    (tp)->ctx.regions[1].rlar   = 0U;                                       \
+    (tp)->ctx.regions[2].rbar   = 0U;                                       \
+    (tp)->ctx.regions[2].rlar   = 0U;                                       \
+    (tp)->ctx.regions[3].rbar   = 0U;                                       \
+    (tp)->ctx.regions[3].rlar   = 0U;                                       \
+    (tp)->ctx.regions[4].rbar   = 0U;                                       \
+    (tp)->ctx.regions[4].rlar   = 0U;                                       \
+    (tp)->ctx.regions[5].rbar   = 0U;                                       \
+    (tp)->ctx.regions[5].rlar   = 0U;                                       \
+    (tp)->ctx.regions[6].rbar   = 0U;                                       \
+    (tp)->ctx.regions[6].rlar   = 0U;                                       \
+    (tp)->ctx.regions[7].rbar   = 0U;                                       \
+    (tp)->ctx.regions[7].rlar   = 0U
 
 #else
   /* Note, checked above.*/
