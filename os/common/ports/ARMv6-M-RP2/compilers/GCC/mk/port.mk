@@ -1,7 +1,7 @@
 # List of the ChibiOS/RT RP2 port files.
 
 # Dependencies.
-include $(CHIBIOS)/os/common/ports/ARM-common/armcommon.mk
+include $(CHIBIOS)/os/common/ports/ARM-common/arm-common.mk
 
 PORTSRC = $(CHIBIOS)/os/common/ports/ARMv6-M-RP2/chcore.c
           
