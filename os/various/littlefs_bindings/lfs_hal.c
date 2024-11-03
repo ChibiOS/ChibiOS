@@ -87,7 +87,9 @@ void *lfs_malloc(size_t size) {
 
 void lfs_free(void *p) {
 
-  chHeapFree(p);
+  if (p != NULL) {
+    chHeapFree(p);
+  }
 }
 
 int __lfs_read(const struct lfs_config *c, lfs_block_t block,
