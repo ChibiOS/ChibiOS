@@ -288,6 +288,18 @@ msg_t lfsdrvUnmount(const char *name) {
   return CH_RET_EINVAL;
 }
 
+/**
+ * @brief       Gets name of LittleFS volume.
+ *
+ * @param[in]     drvp          Pointer to driver object.
+ * @return                      pointer to driver volume name.
+ *
+ * @api
+ */
+const char *lfsdrvGetName(vfs_littlefs_driver_c *drvp) {
+  return drvp->name;
+}
+
 /*===========================================================================*/
 /* Module class "vfs_littlefs_dir_node_c" methods.                           */
 /*===========================================================================*/
@@ -942,9 +954,7 @@ msg_t __lfsdrv_setcwd_impl(void *ip, const char *path) {
 
   /* Build the path for the directory.*/
   ret = build_absolute_path(self, self->path_cwd, path);
-  if (ret != CH_RET_SUCCESS) {
-    return ret;
-  }
+  CH_RETURN_ON_ERROR(ret);
 
   /* Open the new directory.*/
   vfs_directory_node_c *vdnp;
@@ -976,9 +986,7 @@ msg_t __lfsdrv_getcwd_impl(void *ip, char *buf, size_t size) {
 
   if (self->cwd == NULL) {
     ret = __lfsdrv_setcwd_impl(self, "/");
-    if (ret != CH_RET_SUCCESS) {
-      return ret;
-    }
+    CH_RETURN_ON_ERROR(ret);
   }
 
   /* Copy out the directory name.*/
@@ -1009,6 +1017,18 @@ msg_t __lfsdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
 
     lfsip = (struct lfs_info *)chPoolAlloc(&vfs_littlefs_driver_static.info_nodes_pool);
     if (lfsip != NULL) {
+
+      /* Check for no path.*/
+      if (vfs_parse_match_end(&path) == CH_RET_SUCCESS) {
+
+        /* If no path then report on the file system usage.*/
+        lfs_ssize_t blocks = lfs_fs_size(&self->lfs);
+        if (blocks >= 0) {
+          sp->size = (vfs_offset_t)blocks;
+          sp->mode = VFS_MODE_S_IFBLK;
+        }
+        break;
+      }
 
       /* Build the path for the directory or file.*/
       ret = build_absolute_path(self, self->scratch, path);
@@ -1132,16 +1152,13 @@ msg_t __lfsdrv_openfile_impl(void *ip, const char *path, int flags,
 
       /* Build the path for the directory.*/
       ret = build_absolute_path(self, lfsfnp->path, path);
-      if (ret != CH_RET_SUCCESS) {
-        return ret;
+      if (ret == CH_RET_SUCCESS) {
+        res = lfs_file_open(&self->lfs, &lfsfnp->file, lfsfnp->path, mode);
+        if (res == LFS_ERR_OK) {
+          *vfnpp = (vfs_file_node_c *)lfsfnp;
+          return CH_RET_SUCCESS;
+        }
       }
-
-      res = lfs_file_open(&self->lfs, &lfsfnp->file, lfsfnp->path, mode);
-      if (res == LFS_ERR_OK) {
-        *vfnpp = (vfs_file_node_c *)lfsfnp;
-        return CH_RET_SUCCESS;
-      }
-
       ret = translate_error(res);
       chPoolFree(&vfs_littlefs_driver_static.file_nodes_pool, (void *)lfsfnp);
       break;
@@ -1171,8 +1188,11 @@ msg_t __lfsdrv_unlink_impl(void *ip, const char *path) {
 
   /* Build the path for the directory.*/
   ret = build_absolute_path(self, self->scratch, path);
-  if (ret != CH_RET_SUCCESS) {
-    return ret;
+  CH_RETURN_ON_ERROR(ret);
+
+  /* Check if it is the root.*/
+  if (self->scratch[1] == '\0') {
+    ret = CH_RET_EISDIR;
   }
 
   res = lfs_remove(&self->lfs, self->scratch);

@@ -197,6 +197,7 @@ extern "C" {
   msg_t lfsdrvMount(const char *name, const struct lfs_config *cfgp,
                                                 vfs_littlefs_driver_c **obj);
   msg_t lfsdrvUnmount(const char *name);
+  const char *lfsdrvGetName(vfs_littlefs_driver_c *drvp);
 #ifdef __cplusplus
 }
 #endif

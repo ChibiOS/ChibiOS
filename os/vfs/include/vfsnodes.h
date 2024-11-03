@@ -37,6 +37,7 @@
  * @name    Node types
  * @{
  */
+#define VFS_MODE_S_IFBLK                    S_IFBLK
 #define VFS_MODE_S_IFMT                     S_IFMT
 #define VFS_MODE_S_IFREG                    S_IFREG
 #define VFS_MODE_S_IFDIR                    S_IFDIR
@@ -58,6 +59,7 @@
  * @name    Node helpers
  * @{
  */
+#define VFS_MODE_S_ISBLK(mode)              S_ISBLK(mode)
 #define VFS_MODE_S_ISREG(mode)              S_ISREG(mode)
 #define VFS_MODE_S_ISDIR(mode)              S_ISDIR(mode)
 #define VFS_MODE_S_ISCHR(mode)              S_ISCHR(mode)
