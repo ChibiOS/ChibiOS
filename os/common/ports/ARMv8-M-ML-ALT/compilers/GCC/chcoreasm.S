@@ -89,8 +89,8 @@
                 /* Store special registers context through R1.
                    On entry R3=BASEPRI, R12=CONTROL.*/
                 .macro  PORT_STORE_SPECIAL_CONTEXT
-#if PORT_USE_SYSCALL
                 mrs     r2, PSPLIM
+#if PORT_USE_SYSCALL
                 stmia   r1!, {r2-r3,r12}
 #else
                 stmia   r1!, {r2-r3}
@@ -322,7 +322,6 @@ PendSV_Handler:
                 bl      __stats_stop_measure_crit_thd
 #endif
                 mov     r0, r4
-1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
                 PORT_LOAD_INTEGER_CONTEXT

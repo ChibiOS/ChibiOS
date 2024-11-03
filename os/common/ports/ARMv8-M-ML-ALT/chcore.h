@@ -508,6 +508,7 @@ struct port_context {
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp)                                  \
     (tp)->ctx.regs.control          = (uint32_t)__get_CONTROL() &           \
                                       CONTROL_FPCA_Pos;                     \
+    (tp)->ctx.syscall.x_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.p             = NULL;
 #else
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp)
@@ -601,11 +602,11 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
                    ((uint8_t *)(wtop) - sizeof (struct port_extctx));       \
-  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
   (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
-  (tp)->ctx.regs.splim      = (uint32_t)(wbase);                            \
   (tp)->ctx.regs.lr_exc     = (uint32_t)PORT_EXC_RETURN;                    \
+  (tp)->ctx.regs.splim      = (uint32_t)(wbase);                            \
+  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
   (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
   (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \

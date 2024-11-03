@@ -145,7 +145,7 @@ void port_init(os_instance_t *oip) {
 
 #if PORT_USE_SYSCALL == TRUE
   /* MPU is enabled.*/
-//  mpuEnable(MPU_CTRL_PRIVDEFENA);
+  mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif
 }
 
