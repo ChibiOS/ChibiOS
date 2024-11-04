@@ -371,6 +371,23 @@
 #if !defined(_FROM_ASM_)
 
 /**
+ * @brief   Short external context.
+ * @details This structure is used for thread stack and only includes the
+ *          integer part of the @p port_extctx structure. This allows for
+ *          faster thread execution.
+ */
+struct port_short_extctx {
+  uint32_t              r0;
+  uint32_t              r1;
+  uint32_t              r2;
+  uint32_t              r3;
+  uint32_t              r12;
+  uint32_t              lr_thd;
+  uint32_t              pc;
+  uint32_t              xpsr;
+};
+
+/**
  * @brief   Interrupt saved context.
  * @details This structure represents the stack frame saved during a
  *          preemption-capable interrupt handler.
@@ -527,16 +544,6 @@ struct port_context {
 #endif
 
 /**
- * @brief   Initialization of FPU part of thread context.
- */
-#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-#define __PORT_SETUP_CONTEXT_FPU(tp)                                        \
-  (tp)->ctx.sp->fpscr = (uint32_t)0
-#else
-#define __PORT_SETUP_CONTEXT_FPU(tp)
-#endif
-
-/**
  * @brief   Initialization of MPU part of thread context.
  */
 #if (PORT_SWITCHED_REGIONS_NUMBER == 0) || defined(__DOXYGEN__)
@@ -649,7 +656,7 @@ struct port_context {
  */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
-                   ((uint8_t *)(wtop) - sizeof (struct port_extctx));       \
+                 ((uint8_t *)(wtop) - sizeof (struct port_short_extctx));   \
   (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
   (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
@@ -657,7 +664,6 @@ struct port_context {
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
   (tp)->ctx.regs.lr_exc     = (uint32_t)PORT_EXC_RETURN;                    \
   __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
-  __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 } while (false)

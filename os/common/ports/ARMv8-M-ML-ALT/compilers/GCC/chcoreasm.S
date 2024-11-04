@@ -360,8 +360,10 @@ PendSV_Handler:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
-#if PORT_ENABLE_GUARD_PAGES
-                bl      __port_set_region
+#if CORTEX_USE_FPU
+                /* FPU FPSCR initially cleared.*/
+                mov     r0, #0
+                vmsr    FPSCR, r0
 #endif
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      __dbg_check_unlock
