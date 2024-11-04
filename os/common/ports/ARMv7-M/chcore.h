@@ -543,23 +543,6 @@ struct port_context {
                          (size_t)PORT_INT_REQUIRED_STACK)
 
 /**
- * @brief   Static working area allocation.
- * @details This macro is used to allocate a static thread working area
- *          aligned as both position and size.
- *
- * @param[in] s         the name to be assigned to the stack array
- * @param[in] n         the stack size to be assigned to the thread
- */
-#if (PORT_ENABLE_GUARD_PAGES == FALSE) || defined(__DOXYGEN__)
-  #define PORT_WORKING_AREA(s, n)                                           \
-    stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
-
-#else
-  #define PORT_WORKING_AREA(s, n)                                           \
-    ALIGNED_VAR(32) stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
-#endif
-
-/**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.
@@ -614,7 +597,7 @@ struct port_context {
   #if PORT_ENABLE_GUARD_PAGES == FALSE
     #define port_switch(ntp, otp) do {                                      \
       struct port_intctx *r13 = (struct port_intctx *)__get_PSP();          \
-      if ((stkalign_t *)(void *)(r13 - 1) < (otp)->wabase) {                \
+      if ((stkline_t *)(void *)(r13 - 1) < (otp)->wabase) {                 \
         chSysHalt("stack overflow");                                        \
       }                                                                     \
       __port_switch(ntp, otp);                                              \

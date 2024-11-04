@@ -411,9 +411,9 @@ thread_t *sbStartThread(sb_class_t *sbp,
 
   unprivileged_thread_descriptor_t utd = {
     .name       = config->thread.name,
-    .wbase      = (stkalign_t *)config->thread.wsp,
-    .wend       = (stkalign_t *)config->thread.wsp +
-                                (config->thread.size / sizeof (stkalign_t)),
+    .wbase      = (stkline_t *)config->thread.wsp,
+    .wend       = (stkline_t *)config->thread.wsp +
+                    (config->thread.size / sizeof (stkline_t)),
     .prio       = config->thread.prio,
     .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
@@ -545,9 +545,9 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   unprivileged_thread_descriptor_t utd = {
     .name       = config->thread.name,
-    .wbase      = (stkalign_t *)config->thread.wsp,
-    .wend       = (stkalign_t *)config->thread.wsp +
-                                (config->thread.size / sizeof (stkalign_t)),
+    .wbase      = (stkline_t *)config->thread.wsp,
+    .wend       = (stkline_t *)config->thread.wsp +
+                    (config->thread.size / sizeof (stkline_t)),
     .prio       = config->thread.prio,
     .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
