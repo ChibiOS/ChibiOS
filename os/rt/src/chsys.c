@@ -57,7 +57,7 @@ static CH_SYS_CORE0_MEMORY THD_STACK(ch_c0_idle_thread_wa,
                                      PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
-extern stkalign_t __main_thread_stack_base__, __main_thread_stack_end__;
+extern stkline_t __main_thread_stack_base__, __main_thread_stack_end__;
 
 /**
  * @brief   Core 0 OS instance configuration.
@@ -86,7 +86,7 @@ static CH_SYS_CORE1_MEMORY THD_STACK(ch_c1_idle_thread_wa,
                                      PORT_IDLE_THREAD_STACK_SIZE);
 #endif
 
-extern stkalign_t __c1_main_thread_stack_base__, __c1_main_thread_stack_end__;
+extern stkline_t __c1_main_thread_stack_base__, __c1_main_thread_stack_end__;
 
 /**
  * @brief   Core 1 OS instance configuration.

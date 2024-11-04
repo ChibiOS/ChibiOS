@@ -53,7 +53,7 @@ extern bool __avr_in_isr;
 #define PORT_NATURAL_ALIGN              1U
 
 /**
- * @brief   Stack alignment constant.
+ * @brief   Stack initial alignment constant.
  * @note    It is the alignment required for the stack pointer.
  */
 #define PORT_STACK_ALIGN                1U

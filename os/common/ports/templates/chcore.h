@@ -50,16 +50,16 @@
 #define PORT_NATURAL_ALIGN              sizeof (void *)
 
 /**
- * @brief   Stack alignment constant.
+ * @brief   Stack initial alignment constant.
  * @note    It is the alignment required for the stack pointer.
  */
-#define PORT_STACK_ALIGN                sizeof (stkalign_t)
+#define PORT_STACK_ALIGN                1U
 
 /**
  * @brief   Working Areas alignment constant.
  * @note    It is the alignment to be enforced for thread working areas.
  */
-#define PORT_WORKING_AREA_ALIGN         sizeof (stkalign_t)
+#define PORT_WORKING_AREA_ALIGN         1U
 /** @} */
 
 /**
@@ -124,7 +124,7 @@
  * @brief   Enables a "wait for interrupt" instruction in the idle loop.
  */
 #if !defined(PORT_XXX_WFI_SLEEP_IDLE) || defined(__DOXYGEN__)
-#define PORT_XXX_ENABLE_WFI_IDLE      FALSE
+#define PORT_ENABLE_WFI_IDLE        FALSE
 #endif
 
 /*===========================================================================*/
@@ -401,7 +401,7 @@ static inline void port_enable(void) {
  */
 static inline void port_wait_for_interrupt(void) {
 
-#if PORT_XXX_ENABLE_WFI_IDLE
+#if PORT_ENABLE_WFI_IDLE
 #endif
 }
 

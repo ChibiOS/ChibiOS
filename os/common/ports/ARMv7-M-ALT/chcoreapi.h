@@ -64,11 +64,11 @@ typedef struct {
   /**
    * @brief   Pointer to the working area base.
    */
-  stkalign_t        *wbase;
+  stkline_t         *wbase;
   /**
    * @brief   Pointer to the working area end.
    */
-  stkalign_t        *wend;
+  stkline_t         *wend;
   /**
    * @brief   Thread priority.
    */

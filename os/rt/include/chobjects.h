@@ -197,12 +197,12 @@ struct ch_thread {
    * @note    This pointer is used for stack overflow checks and for
    *          dynamic threading.
    */
-  stkalign_t                    *wabase;
+  stkline_t                     *wabase;
   /**
    * @brief   Working area end address.
    * @note    It is the 1st address after the working area.
    */
-  stkalign_t                    *waend;
+  stkline_t                    *waend;
   /**
    * @brief   Current thread state.
    */
@@ -384,20 +384,20 @@ typedef struct ch_os_instance_config {
   /**
    * @brief   Lower limit of the C runtime default stack.
    */
-  stkalign_t                    *cstack_base;
+  stkline_t                     *cstack_base;
   /**
    * @brief   Upper limit of the C runtime default stack.
    */
-  stkalign_t                    *cstack_end;
+  stkline_t                     *cstack_end;
 #if (CH_CFG_NO_IDLE_THREAD == FALSE) || defined(__DOXYGEN__)
   /**
    * @brief   Lower limit of the dedicated idle thread stack.
    */
-  stkalign_t                    *idlestack_base;
+  stkline_t                     *idlestack_base;
   /**
    * @brief   Upper limit of the dedicated idle thread stack.
    */
-  stkalign_t                    *idlestack_end;
+  stkline_t                     *idlestack_end;
 #endif
 } os_instance_config_t;
 

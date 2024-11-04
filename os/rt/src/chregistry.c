@@ -283,7 +283,7 @@ thread_t *chRegFindThreadByPointer(thread_t *tp) {
  *
  * @api
  */
-thread_t *chRegFindThreadByWorkingArea(stkalign_t *wa) {
+thread_t *chRegFindThreadByWorkingArea(stkline_t *wa) {
   thread_t *ctp;
 
   /* Scanning registry.*/

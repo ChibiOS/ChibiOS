@@ -62,11 +62,11 @@ typedef struct {
   /**
    * @brief   Pointer to the working area base.
    */
-  stkalign_t                    *wbase;
+  stkline_t                     *wbase;
   /**
    * @brief   Pointer to the working area end.
    */
-  stkalign_t                    *wend;
+  stkline_t                     *wend;
   /**
    * @brief   Thread priority.
    */
@@ -144,7 +144,7 @@ typedef struct {
  */
 #define THD_STACK(s, n)                                                     \
   CC_ALIGN_DATA(PORT_WORKING_AREA_ALIGN)                                    \
-  stkalign_t s[THD_STACK_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_STACK_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   Base of a thread Working Area casted to the correct type.
@@ -152,7 +152,7 @@ typedef struct {
  *
  * @param[in] s         name of the working area
  */
-#define THD_STACK_BASE(s) ((stkalign_t *)(s))
+#define THD_STACK_BASE(s) ((stkline_t *)(s))
 
 /**
  * @brief   End of a thread Working Area casted to the correct type.
@@ -161,7 +161,7 @@ typedef struct {
  * @param[in] s         name of the working area
  */
 #define THD_STACK_END(s) (THD_STACK_BASE(s) +                               \
-                          (sizeof (s) / sizeof (stkalign_t)))
+                          (sizeof (s) / sizeof (stkline_t)))
 
 /**
  * @brief   Calculates the thread Working Area size.
@@ -177,8 +177,8 @@ typedef struct {
  * @api
  */
 #define THD_WORKING_AREA_SIZE(n)                                            \
-  MEM_ALIGN_NEXT(MEM_ALIGN_NEXT(sizeof(thread_t), PORT_STACK_ALIGN) +       \
-                 PORT_WA_SIZE(n), PORT_STACK_ALIGN)
+  (MEM_ALIGN_NEXT(PORT_WA_SIZE(n), PORT_STACK_ALIGN) +                      \
+   MEM_ALIGN_NEXT(sizeof(thread_t), sizeof (stkline_t)))
 
 /**
  * @brief   Static thread Working Area allocation.
@@ -195,14 +195,14 @@ typedef struct {
  */
 #define THD_WORKING_AREA(s, n)                                              \
   CC_ALIGN_DATA(PORT_WORKING_AREA_ALIGN)                                    \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   Base of a thread Working Area casted to the correct type.
  *
  * @param[in] s         name of the working area
  */
-#define THD_WORKING_AREA_BASE(s) ((stkalign_t *)(s))
+#define THD_WORKING_AREA_BASE(s) ((stkline_t *)(s))
 
 /**
  * @brief   End of a thread Working Area casted to the correct type.
@@ -210,7 +210,7 @@ typedef struct {
  * @param[in] s         name of the working area
  */
 #define THD_WORKING_AREA_END(s) (THD_WORKING_AREA_BASE(s) +                 \
-                                 (sizeof (s) / sizeof (stkalign_t)))
+                                 (sizeof (s) / sizeof (stkline_t)))
 /** @} */
 
 /**
@@ -244,8 +244,8 @@ typedef struct {
  */
 #define __THD_DECL_DATA(tname, twbase, twend, tprio, tfunc, targ, towner) { \
   .name         = (tname),                                                  \
-  .wbase        = (stkalign_t *)(void *)(twbase),                           \
-  .wend         = (stkalign_t *)(void *)(twend),                            \
+  .wbase        = (stkline_t *)(void *)(twbase),                            \
+  .wend         = (stkline_t *)(void *)(twend),                             \
   .prio         = (tprio),                                                  \
   .funcp        = (tfunc),                                                  \
   .arg          = (targ),                                                   \
@@ -311,8 +311,8 @@ typedef struct {
 #define __THD_DESC_DATA(tname, twbase, twend, tprio,                        \
                         tfunc, targ, towner, tdispose) {                    \
   .name         = (tname),                                                  \
-  .wbase        = (stkalign_t *)(void *)(twbase),                           \
-  .wend         = (stkalign_t *)(void *)(twend),                            \
+  .wbase        = (stkline_t *)(void *)(twbase),                            \
+  .wend         = (stkline_t *)(void *)(twend),                             \
   .prio         = (tprio),                                                  \
   .funcp        = (tfunc),                                                  \
   .arg          = (targ),                                                   \
@@ -556,7 +556,7 @@ static inline systime_t chThdGetTicksX(thread_t *tp) {
  *
  * @xclass
  */
-static inline stkalign_t *chThdGetWorkingAreaX(thread_t *tp) {
+static inline stkline_t *chThdGetWorkingAreaX(thread_t *tp) {
 
   return tp->wabase;
 }
