@@ -255,6 +255,7 @@ SVC_Handler:
                 bl      __stats_stop_measure_crit_thd
 #endif
                 mov     r0, r4
+1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
                 PORT_LOAD_INTEGER_CONTEXT
