@@ -74,14 +74,14 @@
 /**
  * @brief   Stack initial alignment constant.
  * @note    It is the alignment required for the initial stack pointer,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  */
 #define PORT_STACK_ALIGN                8U
 
 /**
  * @brief   Working Areas alignment constant.
  * @note    It is the alignment required for the initial stack pointer,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  */
 #define PORT_WORKING_AREA_ALIGN         8U
 /** @} */
@@ -355,7 +355,7 @@ struct port_context {
  * @param[in] n         the stack size to be assigned to the thread
  */
 #define PORT_WORKING_AREA(s, n)                                             \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   IRQ prologue code.
@@ -417,7 +417,7 @@ struct port_context {
 #else
   #define port_switch(ntp, otp) do {                                        \
     struct port_intctx *r13 = (struct port_intctx *)__get_PSP();            \
-    if ((stkalign_t *)(void *)(r13 - 1) < (otp)->wabase) {                  \
+    if ((stkline_t *)(void *)(r13 - 1) < (otp)->wabase) {                   \
       chSysHalt("stack overflow");                                          \
     }                                                                       \
     __port_switch(ntp, otp);                                                \

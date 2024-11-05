@@ -144,7 +144,7 @@ void port_init(os_instance_t *oip) {
 
 #if PORT_ENABLE_GUARD_PAGES == TRUE
   {
-    extern stkalign_t __main_thread_stack_base__;
+    extern stkline_t __main_thread_stack_base__;
 
     /* Setting up the guard page on the main() function stack base
        initially.*/

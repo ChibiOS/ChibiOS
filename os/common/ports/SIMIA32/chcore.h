@@ -134,7 +134,7 @@
  */
 typedef struct {
   uint8_t a[16];
-} stkalign_t __attribute__((aligned(16)));
+} stkline_t __attribute__((aligned(16)));
 
 /**
  * @brief   Type of a generic x86 register.
@@ -231,7 +231,7 @@ struct port_context {
  * @param[in] n         the stack size to be assigned to the thread
  */
 #define PORT_WORKING_AREA(s, n)                                             \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   Priority level verification macro.

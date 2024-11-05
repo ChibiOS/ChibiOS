@@ -151,7 +151,7 @@ extern bool __avr_in_isr;
  * @brief   Type of stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 8 bits.
  */
-typedef uint8_t stkalign_t;
+typedef uint8_t stkline_t;
 
 /**
  * @brief   Interrupt saved context.
@@ -281,7 +281,7 @@ struct port_context {
  * @param[in] n         the stack size to be assigned to the thread
  */
 #define PORT_WORKING_AREA(s, n)                                             \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   Priority level verification macro.

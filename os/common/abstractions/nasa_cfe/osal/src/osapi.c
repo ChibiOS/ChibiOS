@@ -1792,7 +1792,7 @@ int32 OS_TaskCreate(uint32 *task_id,
   /* Checking alignment of stack base and size, it is application
      responsibility to pass correct values.*/
   if (!MEM_IS_ALIGNED(stack_pointer, PORT_WORKING_AREA_ALIGN) ||
-      !MEM_IS_ALIGNED(stack_size, sizeof (stkalign_t))) {
+      !MEM_IS_ALIGNED(stack_size, sizeof (stkline_t))) {
     return OS_ERROR_ADDRESS_MISALIGNED;
   }
 
@@ -1814,7 +1814,7 @@ int32 OS_TaskCreate(uint32 *task_id,
   /* Checking if this working area is already in use by some thread, the
      error code is not very appropriate but this case seems to not be
      coveded by the specification.*/
-  tp = chRegFindThreadByWorkingArea((stkalign_t *)stack_pointer);
+  tp = chRegFindThreadByWorkingArea((stkline_t *)stack_pointer);
   if (tp != NULL) {
     /* Releasing the thread reference.*/
     chThdRelease(tp);
@@ -1836,8 +1836,8 @@ int32 OS_TaskCreate(uint32 *task_id,
 
   thread_descriptor_t td = {
     task_name,
-    (stkalign_t *)stack_pointer,
-    (stkalign_t *)((uint8_t *)stack_pointer + stack_size),
+    (stkline_t *)stack_pointer,
+    (stkline_t *)((uint8_t *)stack_pointer + stack_size),
     rt_prio,
     (tfunc_t)(void *)function_pointer,
     NULL

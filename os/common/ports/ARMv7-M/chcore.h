@@ -238,7 +238,7 @@
 /**
  * @brief   Stack initial alignment constant.
  * @note    It is the alignment required for the initial stack pointer,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  * @note    It is set to 32 in this architecture in order to have stacks
  *          initially aligned with cache lines.
  */
@@ -247,7 +247,7 @@
 /**
  * @brief   Working Areas alignment constant.
  * @note    It is the alignment to be enforced for thread working areas,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  * @note    It is set to 32 in this architecture in order to have working
  *          areas aligned with cache lines and MPU guard pages.
  */

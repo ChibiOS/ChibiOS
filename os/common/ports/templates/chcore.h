@@ -206,7 +206,7 @@ struct port_context {
  * @param[in] n         the stack size to be assigned to the thread
  */
 #define PORT_WORKING_AREA(s, n)                                             \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   Priority level verification macro.
@@ -269,7 +269,7 @@ struct port_context {
 #else
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *sp asm ("%r1");                              \
-  if ((stkalign_t *)(sp - 1) < otp->wabase)                                 \
+  if ((stkline_t *)(sp - 1) < otp->wabase)                                  \
     chSysHalt("stack overflow");                                            \
   _port_switch(ntp, otp);                                                   \
 }

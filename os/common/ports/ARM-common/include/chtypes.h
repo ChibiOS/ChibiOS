@@ -69,7 +69,7 @@ typedef uint32_t            port_syssts_t;
  *          32 bits alignment is supported by hardware but deprecated by ARM,
  *          the implementation choice is to not offer the option.
  */
-typedef uint64_t            port_stkalign_t;
+typedef uint64_t            port_stkline_t;
 /** @} */
 
 /**

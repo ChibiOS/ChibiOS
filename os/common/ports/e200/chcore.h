@@ -56,14 +56,14 @@
 /**
  * @brief   Stack initial alignment constant.
  * @note    It is the alignment required for the initial stack pointer,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  */
 #define PORT_STACK_ALIGN                8U
 
 /**
  * @brief   Working Areas alignment constant.
  * @note    It is the alignment to be enforced for thread working areas,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  */
 #define PORT_WORKING_AREA_ALIGN         8U
 /** @} */
@@ -249,7 +249,7 @@
  * @brief   Type of stack and memory alignment enforcement.
  * @note    In this architecture the stack alignment is enforced to 64 bits.
  */
-typedef uint64_t stkalign_t;
+typedef uint64_t stkline_t;
 
 /**
  * @brief   Generic PPC register.
@@ -374,7 +374,7 @@ struct port_context {
  * @param[in] n         the stack size to be assigned to the thread
  */
 #define PORT_WORKING_AREA(s, n)                                             \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   IRQ prologue code.
@@ -439,7 +439,7 @@ struct port_context {
 #else
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *sp asm ("%r1");                              \
-  if ((stkalign_t *)(void *)(sp - 1) < otp->wabase)                         \
+  if ((stkline_t *)(void *)(sp - 1) < otp->wabase)                          \
     chSysHalt("stack overflow");                                            \
   _port_switch(ntp, otp);                                                   \
 }

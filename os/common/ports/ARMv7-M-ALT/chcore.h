@@ -241,7 +241,7 @@
 /**
  * @brief   Stack initial alignment constant.
  * @note    It is the alignment required for the initial stack pointer,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  * @note    It is set to 32 in this architecture in order to have stacks
  *          initially aligned with cache lines.
  */
@@ -250,7 +250,7 @@
 /**
  * @brief   Working Areas alignment constant.
  * @note    It is the alignment to be enforced for thread working areas,
- *          must be a multiple of sizeof (port_stkalign_t).
+ *          must be a multiple of sizeof (port_stkline_t).
  * @note    It is set to 32 in this architecture in order to have working
  *          areas aligned with cache lines and MPU guard pages.
  */
@@ -637,11 +637,11 @@ struct port_context {
  */
 #if (PORT_ENABLE_GUARD_PAGES == FALSE) || defined(__DOXYGEN__)
   #define PORT_WORKING_AREA(s, n)                                           \
-    stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+    stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 #else
   #define PORT_WORKING_AREA(s, n)                                           \
-    ALIGNED_VAR(32) stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+    ALIGNED_VAR(32) stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 #endif
 
 /**
@@ -713,7 +713,7 @@ struct port_context {
   #if PORT_ENABLE_GUARD_PAGES == FALSE
     #define port_switch(ntp, otp) do {                                      \
       struct port_extctx *r13 = (struct port_extctx *)__get_PSP();          \
-      if ((stkalign_t *)(void *)(r13 - 1) < (otp)->wabase) {                \
+      if ((stkline_t *)(void *)(r13 - 1) < (otp)->wabase) {                 \
         chSysHalt("stack overflow");                                        \
       }                                                                     \
       __port_switch(ntp, otp);                                              \

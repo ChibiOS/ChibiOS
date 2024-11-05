@@ -302,7 +302,7 @@ struct port_context {
  * @param[in] n         the stack size to be assigned to the thread
  */
 #define PORT_WORKING_AREA(s, n)                                             \
-  stkalign_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkalign_t)]
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 
 /**
  * @brief   Priority level verification macro.
@@ -359,9 +359,9 @@ struct port_context {
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *r13 asm ("r13");                             \
-  if ((stkalign_t *)(r13 - 1) < otp->wabase)                                \
+  if ((stkline_t *)(r13 - 1) < otp->wabase)                                 \
     chSysHalt("stack overflow");                                            \
-  __port_switch_thumb(ntp, otp);                                             \
+  __port_switch_thumb(ntp, otp);                                            \
 }
 #else
 #define port_switch(ntp, otp) __port_switch_thumb(ntp, otp)
@@ -372,9 +372,9 @@ struct port_context {
 #if CH_DBG_ENABLE_STACK_CHECK == TRUE
 #define port_switch(ntp, otp) {                                             \
   register struct port_intctx *r13 asm ("r13");                             \
-  if ((stkalign_t *)(r13 - 1) < otp->wabase)                                \
+  if ((stkline_t *)(r13 - 1) < otp->wabase)                                 \
   chSysHalt("stack overflow");                                              \
-  __port_switch_arm(ntp, otp);                                               \
+  __port_switch_arm(ntp, otp);                                              \
 }
 #else
 #define port_switch(ntp, otp) __port_switch_arm(ntp, otp)

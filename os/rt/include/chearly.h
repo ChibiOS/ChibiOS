@@ -77,7 +77,7 @@
 typedef port_rtcnt_t    rtcnt_t;            /**< Realtime counter.          */
 typedef port_rttime_t   rttime_t;           /**< Realtime accumulator.      */
 typedef port_syssts_t   syssts_t;           /**< System status word.        */
-typedef port_stkalign_t stkline_t;          /**< Stack alignment type.      */
+typedef port_stkline_t  stkline_t;          /**< Stack alignment type.      */
 
 #if (PORT_ARCH_REGISTERS_WIDTH == 32) || defined(__DOXYGEN__)
 typedef uint8_t         tmode_t;            /**< Thread flags.              */
