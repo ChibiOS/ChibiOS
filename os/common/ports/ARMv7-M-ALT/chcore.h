@@ -255,11 +255,6 @@
  *          areas aligned with cache lines and MPU guard pages.
  */
 #define PORT_WORKING_AREA_ALIGN         32U
-
-/**
- * @brief   EXC_RETURN to be used when starting a thread.
- */
-#define PORT_EXC_RETURN                 0xFFFFFFED
 /** @} */
 
 /**
@@ -540,12 +535,22 @@ struct port_context {
 #define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
+ * @brief   Initialization value of CONTROL register.
+ */
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+#define CORTEX_CONTROL_INIT             (CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk)
+#define CORTEX_EXC_RETURN               0xFFFFFFED
+#else
+#define CORTEX_CONTROL_INIT             CONTROL_SPSEL_Msk
+#define CORTEX_EXC_RETURN               0xFFFFFFFD
+#endif
+
+/**
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.regs.control          = (uint32_t)__get_CONTROL() &           \
-                                      CONTROL_FPCA_Pos;                     \
+    (tp)->ctx.regs.control          = CORTEX_CONTROL_INIT;                  \
     (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.p             = NULL;
 #else
@@ -613,7 +618,7 @@ struct port_context {
   (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
   (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
-  (tp)->ctx.regs.lr_exc     = (uint32_t)PORT_EXC_RETURN;                    \
+  (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
   (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
   (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \

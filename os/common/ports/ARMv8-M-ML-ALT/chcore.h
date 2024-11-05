@@ -268,11 +268,6 @@
 
 #if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
 /**
- * @brief   EXC_RETURN to be used when starting a thread.
- */
-#define PORT_EXC_RETURN                 0xFFFFFFBC
-
-/**
  * @brief   Context save area for each thread.
  */
 #define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
@@ -300,7 +295,6 @@
 #define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
 
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-#define PORT_EXC_RETURN                 0xFFFFFFBC
 #define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
 #define PORT_INFO                       "Non-secure guest mode"
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
@@ -524,12 +518,31 @@ struct port_context {
 #define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
+ * @brief   Initialization value of CONTROL register and EXC_RETURN
+ *          for thread creation.
+ */
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+#define CORTEX_CONTROL_INIT             (CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk)
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
+#define CORTEX_EXC_RETURN               0xFFFFFFAC
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+#define CORTEX_EXC_RETURN               0xFFFFFFAC
+#endif
+#else
+#define CORTEX_CONTROL_INIT             CONTROL_SPSEL_Msk
+#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
+#define CORTEX_EXC_RETURN               0xFFFFFFBC
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+#define CORTEX_EXC_RETURN               0xFFFFFFBC
+#endif
+#endif
+
+/**
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.regs.control          = (uint32_t)__get_CONTROL() &           \
-                                      CONTROL_FPCA_Pos;                     \
+    (tp)->ctx.regs.control          = CORTEX_CONTROL_INIT;                  \
     (tp)->ctx.syscall.x_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.p             = NULL;
 #else
@@ -675,7 +688,7 @@ struct port_context {
   (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
   (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
-  (tp)->ctx.regs.lr_exc     = (uint32_t)PORT_EXC_RETURN;                    \
+  (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
   __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
