@@ -65,6 +65,10 @@
 #define XSHELL_CMD_FILES_ENABLED            FALSE
 #endif
 
+#if !defined(XSHELL_CMD_FILES_BUFFER_SIZE)  || defined(__DOXYGEN__)
+#define XSHELL_CMD_FILES_BUFFER_SIZE        2048U
+#endif
+
 #if !defined(XSHELL_CMD_TEST_WA_SIZE) || defined(__DOXYGEN__)
 #define XSHELL_CMD_TEST_WA_SIZE             THD_WORKING_AREA_SIZE(512)
 #endif

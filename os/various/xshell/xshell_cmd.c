@@ -274,7 +274,6 @@ static void scan_nodes(BaseSequentialStream *stream,
       }
 
       fn = dip->name;
-//      if (dip->attr & VFS_NODE_ATTR_ISDIR) {
       if (VFS_MODE_S_ISDIR(dip->mode)) {
         strcpy(path + i, fn);
         strcat(path + i, "/");
@@ -332,14 +331,14 @@ static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
   char *buf = NULL;
 
   if (argc != 2) {
-    chprintf(stream, "Usage: cat <filename>" XSHELL_NEWLINE_STR);
+    chprintf(stream, "Usage: cat <source>" XSHELL_NEWLINE_STR);
     return;
   }
 
   do {
     int fd, n;
 
-    buf = (char *)chHeapAlloc(NULL, 2048);
+    buf = (char *)chHeapAlloc(NULL, XSHELL_CMD_FILES_BUFFER_SIZE);
     if (buf == NULL) {
       chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
      break;
@@ -354,17 +353,17 @@ static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
     }
 
     if ((stat.mode & (VFS_MODE_S_IFREG | VFS_MODE_S_IFCHR | VFS_MODE_S_IFIFO)) == 0) {
-      chprintf(stream, "Not a file type" XSHELL_NEWLINE_STR);
+      chprintf(stream, "Not a valid source type" XSHELL_NEWLINE_STR);
       break;
     }
 
     fd = open(argv[1], O_RDONLY);
-    if(fd == -1) {
-      chprintf(stream, "Cannot open file" XSHELL_NEWLINE_STR);
+    if (fd == -1) {
+      chprintf(stream, "Cannot open source" XSHELL_NEWLINE_STR);
       break;
     }
 
-    while ((n = read(fd, buf, 2048)) > 0) {
+    while ((n = read(fd, buf, XSHELL_CMD_FILES_BUFFER_SIZE)) > 0) {
       streamWrite(stream, (const uint8_t *)buf, n);
       if (chnGetTimeout((BaseChannel*)stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
         break;
@@ -373,6 +372,73 @@ static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
     chprintf(stream, XSHELL_NEWLINE_STR);
 
     (void) close(fd);
+  }
+  while (false);
+
+  if (buf != NULL) {
+    chHeapFree((void *)buf);
+  }
+}
+
+static void cmd_cp(xshell_manager_t *smp, BaseSequentialStream *stream,
+                    int argc, char *argv[]) {
+  (void)smp;
+  char *buf = NULL;
+
+  if (argc != 3) {
+    chprintf(stream, "Usage: cp <source file> <destination file>" XSHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    int fd_in, fd_out, n;
+
+    buf = (char *)chHeapAlloc(NULL, XSHELL_CMD_FILES_BUFFER_SIZE);
+    if (buf == NULL) {
+      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
+     break;
+    }
+
+    vfs_stat_t stat;
+    msg_t ret;
+    ret = vfsStat(argv[1], &stat);
+    if (CH_RET_IS_ERROR(ret)) {
+      chprintf(stream, "stat failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+      break;
+    }
+
+    if ((stat.mode & VFS_MODE_S_IFREG) == 0) {
+      chprintf(stream, "Not a file type" XSHELL_NEWLINE_STR);
+      break;
+    }
+
+    fd_in = open(argv[1], O_RDONLY);
+    if (fd_in == -1) {
+      chprintf(stream, "Cannot open source file" XSHELL_NEWLINE_STR);
+      break;
+    }
+
+    fd_out = open(argv[2], O_CREAT | O_WRONLY);
+    if (fd_out == -1) {
+      (void) close(fd_in);
+      chprintf(stream, "Cannot open destination file" XSHELL_NEWLINE_STR);
+      break;
+    }
+
+    while ((n = read(fd_in, buf, XSHELL_CMD_FILES_BUFFER_SIZE)) > 0) {
+      if (write(fd_out, buf, n) < 0) {
+        chprintf(stream, "Error writing destination file" XSHELL_NEWLINE_STR);
+        break;
+      }
+
+      /* Check for abort.*/
+      if (chnGetTimeout((BaseChannel*)stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
+        break;
+      }
+    }
+    chprintf(stream, XSHELL_NEWLINE_STR);
+    (void) close(fd_out);
+    (void) close(fd_in);
   }
   while (false);
 
@@ -623,6 +689,7 @@ const xshell_command_t xshell_local_commands[] = {
   {"rmdir",     cmd_rmdir},
   {"stat",      cmd_stat},
   {"tree",      cmd_tree},
+  {"cp",        cmd_cp},
 #endif
 #if XSHELL_CMD_TEST_ENABLED == TRUE
   {"test",      cmd_test},
