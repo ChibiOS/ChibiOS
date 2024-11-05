@@ -377,10 +377,7 @@
 #if !defined(_FROM_ASM_)
 
 /**
- * @brief   Short external context.
- * @details This structure is used for thread stack and only includes the
- *          integer part of the @p port_extctx structure. This allows for
- *          faster thread execution.
+ * @brief   Integer-only external context.
  */
 struct port_short_extctx {
   uint32_t              r0;
@@ -550,6 +547,16 @@ struct port_context {
 #endif
 
 /**
+ * @brief   Initialization of FPU part of thread context.
+ */
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+#define __PORT_SETUP_CONTEXT_FPU(tp)                                        \
+  (tp)->ctx.sp->fpscr               = (uint32_t)0
+#else
+#define __PORT_SETUP_CONTEXT_FPU(tp)
+#endif
+
+/**
  * @brief   Initialization of MPU part of thread context.
  */
 #if (PORT_SWITCHED_REGIONS_NUMBER == 0) || defined(__DOXYGEN__)
@@ -670,8 +677,9 @@ struct port_context {
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
   (tp)->ctx.regs.lr_exc     = (uint32_t)PORT_EXC_RETURN;                    \
   __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
-  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
+  __PORT_SETUP_CONTEXT_FPU(tp);                                             \
+  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
 } while (false)
 
 /**
