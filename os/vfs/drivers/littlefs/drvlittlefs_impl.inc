@@ -757,7 +757,7 @@ static ssize_t __lfsfile_write_impl(void *ip, const uint8_t *buf, size_t n) {
   bw = lfs_file_write(self->lfs, &self->file, (const void *)buf, (lfs_ssize_t)n);
   if (bw < 0) {
 
-    return translate_error(bw);
+    return (ssize_t)translate_error(bw);
   }
 
   return (ssize_t)bw;
