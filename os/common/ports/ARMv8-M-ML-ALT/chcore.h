@@ -682,7 +682,7 @@ struct port_context {
  */
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
-                 ((uint8_t *)(wtop) - sizeof (struct port_short_extctx));   \
+                 ((uint8_t *)(wtop) - sizeof (struct port_extctx));         \
   (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
   (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
