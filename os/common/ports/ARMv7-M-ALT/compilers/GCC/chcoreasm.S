@@ -101,12 +101,24 @@
 #if CORTEX_USE_FPU
                 /* Store float context through R1.*/
                 .macro  PORT_STORE_FLOAT_CONTEXT
+#if CORTEX_USE_FPU_FAST_SWITCHING > 1
+                tst     lr, #2
+                it      eq
+                vstmiaeq r1!, {s16-s31}
+#else
                 vstmia  r1!, {s16-s31}
+#endif
                 .endm
 
                 /* Load float context through R0.*/
                 .macro  PORT_LOAD_FLOAT_CONTEXT
+#if CORTEX_USE_FPU_FAST_SWITCHING > 1
+                tst     lr, #2
+                it      eq
+                vldmiaeq r0!, {s16-s31}
+#else
                 vldmia  r0!, {s16-s31}
+#endif
                 .endm
 #else
                 .macro  PORT_STORE_FLOAT_CONTEXT
@@ -327,6 +339,13 @@ PendSV_Handler:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
+#if (CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING > 0)
+                /* Switch optimizations are enabled, starting the thread
+                   with FPCA disabled.*/
+                mov     r0, #0x2
+                msr     CONTROL, r0
+                isb
+#endif
 #if PORT_ENABLE_GUARD_PAGES
                 bl      __port_set_region
 #endif

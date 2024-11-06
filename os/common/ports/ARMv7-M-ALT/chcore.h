@@ -201,6 +201,23 @@
 #endif
 
 /**
+ * @brief   Partial context switching.
+ * @details This option skips saving FPU registers for those threads that
+ *          do not use FPU. This can make context switch faster but can
+ *          leak information among threads through uninitialized FPU
+ *          registers, possible values:
+ *          - 0: Always full switching.
+ *          - 1: Uses short exception context when possible.
+ *          - 2: Uses short exception context and also omits saving s16-s31
+ *            when possible. It is a bit slower than 1: in short-to-short
+ *            switching because the extra check.
+ *          .
+ */
+#if !defined(CORTEX_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
+#define CORTEX_USE_FPU_FAST_SWITCHING   1
+#endif
+
+/**
  * @brief   NVIC PRIGROUP initialization expression.
  * @details The default assigns all available priority bits as preemption
  *          priority with no sub-priority.
@@ -535,22 +552,27 @@ struct port_context {
 #define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
- * @brief   Initialization value of CONTROL register.
+ * @brief   Exception return value for threads creation.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-#define CORTEX_CONTROL_INIT             (CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk)
-#define CORTEX_EXC_RETURN               0xFFFFFFED
-#else
-#define CORTEX_CONTROL_INIT             CONTROL_SPSEL_Msk
-#define CORTEX_EXC_RETURN               0xFFFFFFFD
-#endif
+  #if (CORTEX_USE_FPU_FAST_SWITCHING == 0) || defined(__DOXYGEN__)
+    /* FPU enabled, start using a long context.*/
+    #define CORTEX_EXC_RETURN           0xFFFFFFED
+  #else
+    /* FPU enabled with fast switching, start using a short context.*/
+    #define CORTEX_EXC_RETURN           0xFFFFFFFD
+  #endif
+#else /* CORTEX_USE_FPU == FALSE */
+  /* Integer-only, always short context.*/
+  #define CORTEX_EXC_RETURN             0xFFFFFFFD
+#endif /* CORTEX_USE_FPU == FALSE */
 
 /**
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.regs.control          = CORTEX_CONTROL_INIT;                  \
+    (tp)->ctx.regs.control          = 0U;                                   \
     (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.p             = NULL;
 #else
@@ -560,12 +582,8 @@ struct port_context {
 /**
  * @brief   Initialization of FPU part of thread context.
  */
-#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
 #define __PORT_SETUP_CONTEXT_FPU(tp)                                        \
   (tp)->ctx.sp->fpscr               = (uint32_t)0
-#else
-#define __PORT_SETUP_CONTEXT_FPU(tp)
-#endif
 
 /**
  * @brief   Initialization of MPU part of thread context.
@@ -612,6 +630,8 @@ struct port_context {
 /**
  * @brief   Platform dependent part of the @p chThdCreateI() API.
  */
+#if (CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING == 0) ||     \
+    defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
                  ((uint8_t *)(wtop) - sizeof (struct port_extctx));         \
@@ -625,6 +645,21 @@ struct port_context {
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 } while (false)
+
+#else
+#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
+  (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
+                 ((uint8_t *)(wtop) - sizeof (struct port_short_extctx));   \
+  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
+  (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
+  (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
+  (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
+  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
+  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
+  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
+  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
+} while (false)
+#endif
 
 /**
  * @brief   Context switch area size.
