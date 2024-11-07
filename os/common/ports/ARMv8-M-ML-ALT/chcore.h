@@ -236,6 +236,23 @@
 #endif
 
 /**
+ * @brief   Partial context switching.
+ * @details This option skips saving FPU registers for those threads that
+ *          do not use FPU. This can make context switch faster but can
+ *          leak information among threads through uninitialized FPU
+ *          registers, possible values:
+ *          - 0: Always full switching.
+ *          - 1: Uses short exception context when possible.
+ *          - 2: Uses short exception context and also omits saving s16-s31
+ *            when possible. It is a bit slower than 1: in long-to-long
+ *            switching because the extra checks.
+ *          .
+ */
+#if !defined(CORTEX_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
+#define CORTEX_USE_FPU_FAST_SWITCHING   2
+#endif
+
+/**
  * @brief   NVIC PRIGROUP initialization expression.
  * @details The default assigns all available priority bits as preemption
  *          priority with no sub-priority.
@@ -262,8 +279,18 @@
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
 #endif
 
+#if (PORT_KERNEL_MODE != PORT_KERNEL_MODE_NORMAL) &&                        \
+    (PORT_KERNEL_MODE != PORT_KERNEL_MODE_HOST) &&                          \
+    (PORT_KERNEL_MODE != PORT_KERNEL_MODE_GUEST)
+#error "invalid PORT_KERNEL_MODE value specified"
+#endif
+
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
-#error "PORT_KERNEL_MODE_HOST not supported"
+#error "invalid CORTEX_FAST_PRIORITIES value specified"
+#endif
+
+#if (CORTEX_USE_FPU_FAST_SWITCHING < 0) || (CORTEX_USE_FPU_FAST_SWITCHING > 2)
+#error "invalid CORTEX_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
 #if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
@@ -522,27 +549,36 @@ struct port_context {
  *          for thread creation.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-#define CORTEX_CONTROL_INIT             (CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk)
-#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
-#define CORTEX_EXC_RETURN               0xFFFFFFAC
-#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-#define CORTEX_EXC_RETURN               0xFFFFFFAC
-#endif
-#else
-#define CORTEX_CONTROL_INIT             CONTROL_SPSEL_Msk
-#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
-#define CORTEX_EXC_RETURN               0xFFFFFFBC
-#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-#define CORTEX_EXC_RETURN               0xFFFFFFBC
-#endif
-#endif
+  #if (CORTEX_USE_FPU_FAST_SWITCHING == 0) || defined(__DOXYGEN__)
+    /* FPU enabled, start using a long context.*/
+    #if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
+      #define CORTEX_EXC_RETURN         0xFFFFFFAC
+    #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+      #define CORTEX_EXC_RETURN         0xFFFFFFAC
+    #endif
+  #else
+    /* FPU enabled with fast switching, start using a short context.*/
+    #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
+      #define CORTEX_EXC_RETURN         0xFFFFFFBC
+    #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+      #define CORTEX_EXC_RETURN         0xFFFFFFBC
+    #endif
+  #endif
+#else /* CORTEX_USE_FPU == FALSE */
+  /* Integer-only, always short context.*/
+  #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
+    #define CORTEX_EXC_RETURN           0xFFFFFFBC
+  #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+    #define CORTEX_EXC_RETURN           0xFFFFFFBC
+  #endif
+#endif /* CORTEX_USE_FPU == FALSE */
 
 /**
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.regs.control          = CORTEX_CONTROL_INIT;                  \
+    (tp)->ctx.regs.control          = 0U;                                   \
     (tp)->ctx.syscall.x_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.p             = NULL;
 #else
@@ -680,6 +716,8 @@ struct port_context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
+#if (CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING == 0) ||     \
+    defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
                  ((uint8_t *)(wtop) - sizeof (struct port_extctx));         \
@@ -694,6 +732,22 @@ struct port_context {
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
 } while (false)
+
+#else
+#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
+  (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
+                 ((uint8_t *)(wtop) - sizeof (struct port_short_extctx));   \
+  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
+  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
+  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
+  (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
+  (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
+  (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
+  __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
+  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
+  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
+} while (false)
+#endif
 
 /**
  * @brief   Computes the thread working area global size.
@@ -817,9 +871,6 @@ extern "C" {
 #endif
   void port_init(os_instance_t *oip);
   void __port_thread_start(void);
-#if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
-  void __port_ns_boot(void *vtor);
-#endif
 #ifdef __cplusplus
 }
 #endif

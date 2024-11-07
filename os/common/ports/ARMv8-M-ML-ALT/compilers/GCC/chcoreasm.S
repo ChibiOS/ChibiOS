@@ -127,23 +127,31 @@
 #endif /* !CH_DBG_ENABLE_STACK_CHECK */
                 .endm
 
-#if CORTEX_USE_FPU
                 /* Store float context through R1.*/
                 .macro  PORT_STORE_FLOAT_CONTEXT
+#if CORTEX_USE_FPU
+#if CORTEX_USE_FPU_FAST_SWITCHING > 1
+                tst     lr, #4
+                it      eq
+                vstmiaeq r1!, {s16-s31}
+#else
                 vstmia  r1!, {s16-s31}
+#endif
+#endif
                 .endm
 
                 /* Load float context through R0.*/
                 .macro  PORT_LOAD_FLOAT_CONTEXT
-                vldmia  r0!, {s16-s31}
-                .endm
+#if CORTEX_USE_FPU
+#if CORTEX_USE_FPU_FAST_SWITCHING > 1
+                tst     lr, #4
+                it      eq
+                vldmiaeq r0!, {s16-s31}
 #else
-                .macro  PORT_STORE_FLOAT_CONTEXT
-                .endm
-
-                .macro  PORT_LOAD_FLOAT_CONTEXT
-                .endm
+                vldmia  r0!, {s16-s31}
 #endif
+#endif
+                .endm
 
                 /* Store MPU context through R1.*/
                 .macro  PORT_STORE_MPU_CONTEXT

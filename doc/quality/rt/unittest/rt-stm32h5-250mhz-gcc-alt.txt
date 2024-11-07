@@ -1,13 +1,13 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Nov  3 2024 - 11:29:20
+*** Compiled:     Nov  7 2024 - 11:23:07
 *** Platform:     STM32H5 High-performance
 *** Test Board:   STMicroelectronics STM32 Nucleo144-H563ZI
 ***
-*** Text size:    50396 bytes
-*** RO data size: 11404 bytes
-*** Data size:    1248 bytes
+*** Text size:    51852 bytes
+*** RO data size: 11524 bytes
+*** Data size:    1264 bytes
 *** BSS size:     5280 bytes
 
 ============================================================================
@@ -62,7 +62,7 @@
 --- CH_DBG_ENABLE_ASSERTS:              0
 --- CH_DBG_TRACE_MASK:                  255
 --- CH_DBG_TRACE_BUFFER_SIZE:           128
---- CH_DBG_ENABLE_STACK_CHECK:          1
+--- CH_DBG_ENABLE_STACK_CHECK:          0
 --- CH_DBG_FILL_THREADS:                0
 --- CH_DBG_THREADS_PROFILING:           0
 --- Result: SUCCESS
@@ -189,52 +189,52 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 1282049 msgs/S, 2564098 ctxswc/S
+--- Score : 1336878 msgs/S, 2673756 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 1184832 msgs/S, 2369664 ctxswc/S
+--- Score : 1231509 msgs/S, 2463018 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 1184832 msgs/S, 2369664 ctxswc/S
+--- Score : 1231509 msgs/S, 2463018 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 3058104 ctxswc/S
+--- Score : 3215384 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 718380 threads/S
+--- Score : 657883 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 859105 threads/S
+--- Score : 836106 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 369822 reschedules/S, 2218932 ctxswc/S
+--- Score : 382842 reschedules/S, 2297052 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 2207460 ctxswc/S
+--- Score : 2288300 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 2109882 timers/S
+--- Score : 2174472 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 14492728 wait+signal/S
+--- Score : 14492512 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 4651156 lock+unlock/S
+--- Score : 4651076 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
---- OS    : 320 bytes
---- Thread: 124 bytes
+--- OS    : 312 bytes
+--- Thread: 120 bytes
 --- Timer : 24 bytes
 --- Semaph: 12 bytes
 --- Mutex : 16 bytes
@@ -249,13 +249,13 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Nov  3 2024 - 11:29:20
+*** Compiled:     Nov  7 2024 - 11:23:07
 *** Platform:     STM32H5 High-performance
 *** Test Board:   STMicroelectronics STM32 Nucleo144-H563ZI
 ***
-*** Text size:    50396 bytes
-*** RO data size: 11404 bytes
-*** Data size:    1248 bytes
+*** Text size:    51852 bytes
+*** RO data size: 11524 bytes
+*** Data size:    1264 bytes
 *** BSS size:     5280 bytes
 
 ============================================================================
