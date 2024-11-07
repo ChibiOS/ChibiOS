@@ -98,9 +98,9 @@
 #endif
                 .endm
 
-#if CORTEX_USE_FPU
                 /* Store float context through R1.*/
                 .macro  PORT_STORE_FLOAT_CONTEXT
+#if CORTEX_USE_FPU
 #if CORTEX_USE_FPU_FAST_SWITCHING > 1
                 tst     lr, #2
                 it      eq
@@ -108,10 +108,12 @@
 #else
                 vstmia  r1!, {s16-s31}
 #endif
+#endif
                 .endm
 
                 /* Load float context through R0.*/
                 .macro  PORT_LOAD_FLOAT_CONTEXT
+#if CORTEX_USE_FPU
 #if CORTEX_USE_FPU_FAST_SWITCHING > 1
                 tst     lr, #2
                 it      eq
@@ -119,14 +121,8 @@
 #else
                 vldmia  r0!, {s16-s31}
 #endif
-                .endm
-#else
-                .macro  PORT_STORE_FLOAT_CONTEXT
-                .endm
-
-                .macro  PORT_LOAD_FLOAT_CONTEXT
-                .endm
 #endif
+                .endm
 
                 /* Store MPU context through R1.*/
                 .macro  PORT_STORE_MPU_CONTEXT

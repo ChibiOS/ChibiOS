@@ -178,7 +178,7 @@ typedef struct {
  */
 #define THD_WORKING_AREA_SIZE(n)                                            \
   (MEM_ALIGN_NEXT(PORT_WA_SIZE(n), PORT_STACK_ALIGN) +                      \
-   MEM_ALIGN_NEXT(sizeof(thread_t), sizeof (stkline_t)))
+   MEM_ALIGN_NEXT(sizeof (thread_t), PORT_NATURAL_ALIGN))
 
 /**
  * @brief   Static thread Working Area allocation.
@@ -449,7 +449,7 @@ extern "C" {
   thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp);
   thread_t *chThdCreateI(const thread_descriptor_t *tdp);
   thread_t *chThdCreate(const thread_descriptor_t *tdp);
-  thread_t *chThdCreateStatic(void *wsp, size_t size,
+  thread_t *chThdCreateStatic(stkline_t *wbase, size_t size,
                               tprio_t prio, tfunc_t pf, void *arg);
   thread_t *chThdStart(thread_t *tp);
 #if CH_CFG_USE_REGISTRY == TRUE

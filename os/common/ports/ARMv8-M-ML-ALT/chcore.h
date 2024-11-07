@@ -704,17 +704,6 @@ struct port_context {
                          (size_t)PORT_INT_REQUIRED_STACK)
 
 /**
- * @brief   Static working area allocation.
- * @details This macro is used to allocate a static thread working area
- *          aligned as both position and size.
- *
- * @param[in] s         the name to be assigned to the stack array
- * @param[in] n         the stack size to be assigned to the thread
- */
-#define PORT_WORKING_AREA(s, n)                                             \
-  ALIGNED_VAR(32) stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
-
-/**
  * @brief   IRQ prologue code.
  * @details This macro must be inserted at the start of all IRQ handlers
  *          enabled to invoke system APIs.

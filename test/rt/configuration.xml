@@ -65,10 +65,10 @@
 /*
  * Working Area size of test threads.
  */
-#define WA_SIZE MEM_ALIGN_NEXT(THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),	\
-                               PORT_WORKING_AREA_ALIGN)
+#define WA_SIZE                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE)
+#define TEST_BUFFER_SIZE        MEM_ALIGN_NEXT(WA_SIZE, PORT_WORKING_AREA_ALIGN)
 
-extern uint8_t test_buffer[WA_SIZE * 5];
+extern uint8_t test_buffer[TEST_BUFFER_SIZE * 5];
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 
@@ -81,7 +81,7 @@ systime_t test_wait_tick(void);]]></value>
       <value><![CDATA[/*
  * Global test buffer holding 5 working areas.
  */
-ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[WA_SIZE * 5];
+ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[TEST_BUFFER_SIZE * 5];
 
 /*
  * Pointers to the spawned threads.
@@ -91,11 +91,11 @@ thread_t *threads[MAX_THREADS];
 /*
  * Pointers to the working areas.
  */
-void * ROMCONST wa[5] = {test_buffer + (WA_SIZE * 0),
-                         test_buffer + (WA_SIZE * 1),
-                         test_buffer + (WA_SIZE * 2),
-                         test_buffer + (WA_SIZE * 3),
-                         test_buffer + (WA_SIZE * 4)};
+void * ROMCONST wa[5] = {test_buffer + (TEST_BUFFER_SIZE * 0),
+                         test_buffer + (TEST_BUFFER_SIZE * 1),
+                         test_buffer + (TEST_BUFFER_SIZE * 2),
+                         test_buffer + (TEST_BUFFER_SIZE * 3),
+                         test_buffer + (TEST_BUFFER_SIZE * 4)};
 
 /*
  * Sets a termination request in all the test-spawned threads.
