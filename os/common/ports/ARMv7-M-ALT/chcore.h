@@ -214,7 +214,7 @@
  *          .
  */
 #if !defined(CORTEX_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
-#define CORTEX_USE_FPU_FAST_SWITCHING   1
+#define CORTEX_USE_FPU_FAST_SWITCHING   2
 #endif
 
 /**
