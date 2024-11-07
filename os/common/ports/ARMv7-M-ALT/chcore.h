@@ -209,8 +209,8 @@
  *          - 0: Always full switching.
  *          - 1: Uses short exception context when possible.
  *          - 2: Uses short exception context and also omits saving s16-s31
- *            when possible. It is a bit slower than 1: in short-to-short
- *            switching because the extra check.
+ *            when possible. It is a bit slower than 1: in long-to-long
+ *            switching because the extra checks.
  *          .
  */
 #if !defined(CORTEX_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
@@ -238,6 +238,10 @@
 #if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
     (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
+#endif
+
+#if (CORTEX_USE_FPU_FAST_SWITCHING < 0) || (CORTEX_USE_FPU_FAST_SWITCHING > 2)
+#error "invalid CORTEX_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
 /**

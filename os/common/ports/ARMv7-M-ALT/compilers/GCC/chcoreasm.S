@@ -102,7 +102,7 @@
                 .macro  PORT_STORE_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
 #if CORTEX_USE_FPU_FAST_SWITCHING > 1
-                tst     lr, #2
+                tst     lr, #4
                 it      eq
                 vstmiaeq r1!, {s16-s31}
 #else
@@ -115,7 +115,7 @@
                 .macro  PORT_LOAD_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
 #if CORTEX_USE_FPU_FAST_SWITCHING > 1
-                tst     lr, #2
+                tst     lr, #4
                 it      eq
                 vldmiaeq r0!, {s16-s31}
 #else
