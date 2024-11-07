@@ -244,15 +244,10 @@ _crt0_entry:
                 movw    r1, #SCB_FPDSCR & 0xFFFF
                 movt    r1, #SCB_FPDSCR >> 16
                 str     r0, [r1]
-
-                /* Enforcing FPCA bit in the CONTROL register.*/
-                movs    r0, #CRT0_CONTROL_INIT | CONTROL_FPCA
-
-#else
-                movs    r0, #CRT0_CONTROL_INIT
 #endif
 
                 /* CONTROL register initialization as configured.*/
+                movs    r0, #CRT0_CONTROL_INIT
                 msr     CONTROL, r0
                 isb
 
