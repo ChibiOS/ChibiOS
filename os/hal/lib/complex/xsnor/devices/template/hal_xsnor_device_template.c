@@ -15,16 +15,16 @@
 */
 
 /**
- * @file        hal_snor_device_template.c
+ * @file        hal_xsnor_device_template.c
  * @brief       Generated SNOR Device Template source.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_DEVICE_TEMPLATE
+ * @addtogroup  HAL_XSNOR_DEVICE_TEMPLATE
  * @{
  */
 
 #include "hal.h"
-#include "hal_snor_device_template.h"
+#include "hal_xsnor_device_template.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */

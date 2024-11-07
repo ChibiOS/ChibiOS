@@ -15,11 +15,11 @@
 */
 
 /**
- * @file        hal_snor_device_template.h
+ * @file        hal_xsnor_device_template.h
  * @brief       Generated SNOR Device Template header.
  * @note        This is a generated file, do not edit directly.
  *
- * @addtogroup  HAL_SNOR_DEVICE_TEMPLATE
+ * @addtogroup  HAL_XSNOR_DEVICE_TEMPLATE
  * @brief       SNOR device template driver.
  * @details     Template module for SNOR flash devices. Can be used by
  *              duplicating the XML file or working directly on cloned source
@@ -27,11 +27,11 @@
  * @{
  */
 
-#ifndef HAL_SNOR_DEVICE_TEMPLATE_H
-#define HAL_SNOR_DEVICE_TEMPLATE_H
+#ifndef HAL_XSNOR_DEVICE_TEMPLATE_H
+#define HAL_XSNOR_DEVICE_TEMPLATE_H
 
 #include "oop_base_object.h"
-#include "hal_snor_base.h"
+#include "hal_xsnor_base.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -180,6 +180,6 @@ static inline hal_device_template_c *tmplObjectInit(hal_device_template_c *self)
 }
 /** @} */
 
-#endif /* HAL_SNOR_DEVICE_TEMPLATE_H */
+#endif /* HAL_XSNOR_DEVICE_TEMPLATE_H */
 
 /** @} */

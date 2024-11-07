@@ -112,34 +112,49 @@ const halclkcfg_t hal_clkcfg_default = {
  * @brief   Dynamic clock points for this device.
  */
 static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
-  [CLK_SYSCLK]      = STM32_SYSCLK,
-  [CLK_PLLPCLK]     = STM32_PLL_P_CLKOUT,
-  [CLK_PLLQCLK]     = STM32_PLL_Q_CLKOUT,
-  [CLK_PLLRCLK]     = STM32_PLL_R_CLKOUT,
-  [CLK_HCLK]        = STM32_HCLK,
-  [CLK_PCLK1]       = STM32_PCLK1,
-  [CLK_PCLK1TIM]    = STM32_TIMP1CLK,
-  [CLK_PCLK2]       = STM32_PCLK2,
-  [CLK_PCLK2TIM]    = STM32_TIMP2CLK,
-  [CLK_MCO]         = STM32_MCOCLK,
+#if STM32_HSI16_ENABLED
+  [CLK_HSI16]           = STM32_HSI16CLK,
+#else
+  [CLK_HSI16]           = 0U,
+#endif
+#if STM32_HSI48_ENABLED
+  [CLK_HSI48]           = STM32_HSI48CLK,
+#else
+  [CLK_HSI48]           = 0U,
+#endif
+#if STM32_HSE_ENABLED
+  [CLK_HSE]             = STM32_HSECLK,
+#else
+  [CLK_HSE]             = 0U,
+#endif
+  [CLK_SYSCLK]          = STM32_SYSCLK,
+  [CLK_PLLPCLK]         = STM32_PLL_P_CLKOUT,
+  [CLK_PLLQCLK]         = STM32_PLL_Q_CLKOUT,
+  [CLK_PLLRCLK]         = STM32_PLL_R_CLKOUT,
+  [CLK_HCLK]            = STM32_HCLK,
+  [CLK_PCLK1]           = STM32_PCLK1,
+  [CLK_PCLK1TIM]        = STM32_TIMP1CLK,
+  [CLK_PCLK2]           = STM32_PCLK2,
+  [CLK_PCLK2TIM]        = STM32_TIMP2CLK,
+  [CLK_MCO]             = STM32_MCOCLK,
 };
 
 /**
  * @brief   Type of a structure representing system limits.
  */
 typedef struct {
-  halfreq_t     sysclk_max;
-  halfreq_t     pllin_max;
-  halfreq_t     pllin_min;
-  halfreq_t     pllvco_max;
-  halfreq_t     pllvco_min;
-  halfreq_t     pllp_max;
-  halfreq_t     pllp_min;
-  halfreq_t     pllq_max;
-  halfreq_t     pllq_min;
-  halfreq_t     pllr_max;
-  halfreq_t     pllr_min;
-  halfreq_t     flash_thresholds[STM32_WS_THRESHOLDS];
+  halfreq_t             sysclk_max;
+  halfreq_t             pllin_max;
+  halfreq_t             pllin_min;
+  halfreq_t             pllvco_max;
+  halfreq_t             pllvco_min;
+  halfreq_t             pllp_max;
+  halfreq_t             pllp_min;
+  halfreq_t             pllq_max;
+  halfreq_t             pllq_min;
+  halfreq_t             pllr_max;
+  halfreq_t             pllr_min;
+  halfreq_t             flash_thresholds[STM32_WS_THRESHOLDS];
 } system_limits_t;
 
 /**
@@ -301,7 +316,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
   const system_limits_t *slp;
-  halfreq_t hsi16clk = 0U, hseclk = 0U, pllselclk;
+  halfreq_t hsi16clk = 0U, hsi48clk = 0U, hseclk = 0U, pllselclk;
   halfreq_t pllpclk = 0U, pllqclk = 0U, pllrclk = 0U;
   halfreq_t sysclk, hclk, pclk1, pclk2, pclk1tim, pclk2tim, mcoclk;
   uint32_t mcodiv, flashws;
@@ -328,6 +343,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   /* HSI16 clock.*/
   if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
     hsi16clk = STM32_HSI16CLK;
+  }
+
+  /* HSI48 clock after divider.*/
+  if ((ccp->rcc_crrcr & RCC_CRRCR_HSI48ON) != 0U) {
+    hsi48clk = STM32_HSI48CLK;
   }
 
   /* HSE clock.*/
@@ -495,6 +515,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* Writing out results.*/
+  clock_points[CLK_HSI16]    = hsi16clk;
+  clock_points[CLK_HSI48]    = hsi48clk;
+  clock_points[CLK_HSE]      = hseclk;
   clock_points[CLK_SYSCLK]   = sysclk;
   clock_points[CLK_PLLPCLK]  = pllpclk;
   clock_points[CLK_PLLQCLK]  = pllqclk;
@@ -670,7 +693,7 @@ void stm32_clock_init(void) {
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
 
   /* RTC APB clock enable.*/
-#if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
   rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
 #endif
 
@@ -720,7 +743,7 @@ void stm32_clock_init(void) {
   rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, false);
 
   /* RTC APB clock enable.*/
-#if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
   rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
 #endif
 

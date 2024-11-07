@@ -38,12 +38,14 @@
 /* Common.                                                                   */
 /*===========================================================================*/
 
+/* DAC attributes.*/
+#define STM32_DAC_HAS_MCR                   TRUE
+
 /* RNG attributes.*/
 #define STM32_HAS_RNG1                      TRUE
 
 /* RTC attributes.*/
 #define STM32_HAS_RTC                       TRUE
-#define STM32_RTC_HAS_SUBSECONDS            TRUE
 #define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
 #define STM32_RTC_NUM_ALARMS                2
 #define STM32_RTC_STORAGE_SIZE              128
@@ -53,7 +55,7 @@
 #define STM32_RTC_TAMP_STAMP_NUMBER         2
 #define STM32_RTC_WKUP_NUMBER               3
 #define STM32_RTC_ALARM_NUMBER              41
-#define STM32_RTC_ALARM_EXTI                18
+#define STM32_RTC_ALARM_EXTI                17
 #define STM32_RTC_TAMP_STAMP_EXTI           19
 #define STM32_RTC_WKUP_EXTI                 20
 #define STM32_RTC_IRQ_ENABLE() do {                                         \
@@ -130,14 +132,6 @@
 #define STM32_HAS_FDCAN1                    TRUE
 #define STM32_HAS_FDCAN2                    TRUE
 #define STM32_HAS_FDCAN3                    TRUE
-#define STM32_FDCAN_FLS_NBR                 28U
-#define STM32_FDCAN_FLE_NBR                 8U
-#define STM32_FDCAN_RF0_NBR                 3U
-#define STM32_FDCAN_RF1_NBR                 3U
-#define STM32_FDCAN_RB_NBR                  0U
-#define STM32_FDCAN_TEF_NBR                 3U
-#define STM32_FDCAN_TB_NBR                  3U
-#define STM32_FDCAN_TM_NBR                  0U
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
@@ -349,14 +343,6 @@
 #define STM32_HAS_FDCAN1                    TRUE
 #define STM32_HAS_FDCAN2                    TRUE
 #define STM32_HAS_FDCAN3                    FALSE
-#define STM32_FDCAN_FLS_NBR                 28U
-#define STM32_FDCAN_FLE_NBR                 8U
-#define STM32_FDCAN_RF0_NBR                 3U
-#define STM32_FDCAN_RF1_NBR                 3U
-#define STM32_FDCAN_RB_NBR                  0U
-#define STM32_FDCAN_TEF_NBR                 3U
-#define STM32_FDCAN_TB_NBR                  3U
-#define STM32_FDCAN_TM_NBR                  0U
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
@@ -568,14 +554,6 @@
 #define STM32_HAS_FDCAN1                    TRUE
 #define STM32_HAS_FDCAN2                    FALSE
 #define STM32_HAS_FDCAN3                    FALSE
-#define STM32_FDCAN_FLS_NBR                 28U
-#define STM32_FDCAN_FLE_NBR                 8U
-#define STM32_FDCAN_RF0_NBR                 3U
-#define STM32_FDCAN_RF1_NBR                 3U
-#define STM32_FDCAN_RB_NBR                  0U
-#define STM32_FDCAN_TEF_NBR                 3U
-#define STM32_FDCAN_TB_NBR                  3U
-#define STM32_FDCAN_TM_NBR                  0U
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE
