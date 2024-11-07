@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Nov  6 2021 - 20:24:06
+*** Compiled:     Nov  7 2024 - 09:06:41
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    49364 bytes
-*** RO data size: 10044 bytes
-*** Data size:    220 bytes
-*** BSS size:     5448 bytes
+*** Text size:    56204 bytes
+*** RO data size: 11908 bytes
+*** Data size:    1316 bytes
+*** BSS size:     6416 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,20 +16,20 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M4
---- Compiler:                           GCC 10.3.1 20210621 (release)
+--- Compiler:                           GCC 11.3.1 20220712
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
---- Stack alignment:                    8
---- Working area alignment:             8
+--- Stack alignment:                    32
+--- Working area alignment:             32
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/RT
 --- Stable Flag:                        0
---- Version String:                     7.0.1
---- Major Number:                       7
+--- Version String:                     8.0.0
+--- Major Number:                       8
 --- Minor Number:                       0
---- Patch Number:                       1
+--- Patch Number:                       0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
@@ -189,52 +189,52 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 1062492 msgs/S, 2124984 ctxswc/S
+--- Score : 1062491 msgs/S, 2124982 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 923906 msgs/S, 1847812 ctxswc/S
+--- Score : 923905 msgs/S, 1847810 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 923906 msgs/S, 1847812 ctxswc/S
+--- Score : 923905 msgs/S, 1847810 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 2943712 ctxswc/S
+--- Score : 2943704 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 524686 threads/S
+--- Score : 537969 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 658912 threads/S
+--- Score : 679994 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 290102 reschedules/S, 1740612 ctxswc/S
+--- Score : 290100 reschedules/S, 1740600 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 1761640 ctxswc/S
+--- Score : 1766220 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 1231926 timers/S
+--- Score : 1180624 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 7391276 wait+signal/S
+--- Score : 7555492 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 2377616 lock+unlock/S
+--- Score : 2377604 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
---- OS    : 136 bytes
---- Thread: 72 bytes
+--- OS    : 232 bytes
+--- Thread: 80 bytes
 --- Timer : 24 bytes
 --- Semaph: 12 bytes
 --- Mutex : 16 bytes
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Nov  6 2021 - 20:24:06
+*** Compiled:     Nov  7 2024 - 09:06:41
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    49364 bytes
-*** RO data size: 10044 bytes
-*** Data size:    220 bytes
-*** BSS size:     5448 bytes
+*** Text size:    56204 bytes
+*** RO data size: 11908 bytes
+*** Data size:    1316 bytes
+*** BSS size:     6416 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -264,19 +264,19 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M4
---- Compiler:                           GCC 10.3.1 20210621 (release)
+--- Compiler:                           GCC 11.3.1 20220712
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
---- Stack alignment:                    8
---- Working area alignment:             8
+--- Stack alignment:                    32
+--- Working area alignment:             32
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (OS Library Info)
 --- Product:                            ChibiOS/LIB
 --- Stable Flag:                        0
---- Version String:                     1.3.0
+--- Version String:                     1.4.0
 --- Major Number:                       1
---- Minor Number:                       3
+--- Minor Number:                       4
 --- Patch Number:                       0
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
@@ -374,5 +374,4 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
-
 

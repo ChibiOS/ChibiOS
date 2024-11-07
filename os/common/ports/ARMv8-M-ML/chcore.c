@@ -129,8 +129,18 @@ void port_init(os_instance_t *oip) {
   (void)oip;
 
   /* Starting in a known IRQ configuration.*/
-  __set_BASEPRI(CORTEX_BASEPRI_DISABLED);
-  __enable_irq();
+  port_suspend();
+
+#if CORTEX_USE_FPU == TRUE
+  /* Making sure to use the correct settings for FPU-related exception
+     handling, better do not rely on startup settings.*/
+  FPU->FPCCR  = FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
+  FPU->FPDSCR = 0U;
+  __set_FPSCR(0U);
+  /* Enforcing CONTROL.FPCA and CONTROL.SPSEL.*/
+  __set_CONTROL(CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk);
+  __ISB();
+#endif
 
   /* Initializing priority grouping.*/
   NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
