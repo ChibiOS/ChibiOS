@@ -148,7 +148,8 @@
 #endif
 
 #if (!defined(PORT_ARCHITECTURE_ARM_V7M) &&                                 \
-     !defined(PORT_ARCHITECTURE_ARM_V7ME)) ||                               \
+     !defined(PORT_ARCHITECTURE_ARM_V7ME) &&                                \
+     !defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)) ||                       \
      !defined(PORT_USE_SYSCALL)
 #error "unsupported port"
 #endif

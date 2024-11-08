@@ -4,7 +4,8 @@
 include $(CHIBIOS)/os/common/portability/GCC/ccportab.mk
 include $(CHIBIOS)/os/common/ports/ARM-common/arm-common.mk
 
-PORTSRC = $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/chcore.c
+PORTSRC = $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/chcore.c \
+          $(CHIBIOS)/os/common/ports/ARMv8-M-ALT/chcoreapi.c
           
 PORTASM = $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/chcoreasm.S
 

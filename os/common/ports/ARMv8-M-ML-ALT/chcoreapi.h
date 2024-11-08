@@ -45,6 +45,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of an MPU region registers structure.
+ *
+ */
+typedef struct {
+  uint32_t        rbar;
+  uint32_t        rlar;
+} mpureg_t;
+
+/**
  * @brief   Type of an unprivileged thread descriptor.
  */
 typedef struct {

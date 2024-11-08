@@ -418,6 +418,15 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Type of an MPU region registers structure.
+ *
+ */
+typedef struct {
+  uint32_t              rbar;
+  uint32_t              rasr;
+} port_mpureg_t;
+
+/**
  * @brief   Integer-only external context.
  */
 struct port_short_extctx {
@@ -518,10 +527,7 @@ struct port_context {
   struct port_extctx    *sp;
   struct port_intctx    regs;
 #if (PORT_SWITCHED_REGIONS_NUMBER > 0) || defined(__DOXYGEN__)
-  struct {
-    uint32_t            rbar;
-    uint32_t            rasr;
-  } regions[PORT_SWITCHED_REGIONS_NUMBER];
+  port_mpureg_t         regions[PORT_SWITCHED_REGIONS_NUMBER];
 #endif
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {

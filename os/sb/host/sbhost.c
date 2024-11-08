@@ -81,7 +81,7 @@ static inline uint32_t get_next_po2(uint32_t v) {
  * alignments).
  */
 static bool get_mpu_settings(const sb_memory_region_t *mrp,
-                             mpureg_t *mpur) {
+                             port_mpureg_t *mpur) {
   uint32_t region_base, region_size, subregion_size;
   uint32_t area_base, area_size, area_end;
   uint32_t srd;
@@ -421,7 +421,7 @@ thread_t *sbStartThread(sb_class_t *sbp,
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
   for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
-    mpureg_t mpureg;
+    port_mpureg_t mpureg;
 
     if (get_mpu_settings(&sbp->config->regions[i], &mpureg)) {
       return NULL;
@@ -555,7 +555,7 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
   for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
-    mpureg_t mpureg;
+    port_mpureg_t mpureg;
 
     if (get_mpu_settings(&sbp->config->regions[i], &mpureg)) {
       return CH_RET_ENOMEM;

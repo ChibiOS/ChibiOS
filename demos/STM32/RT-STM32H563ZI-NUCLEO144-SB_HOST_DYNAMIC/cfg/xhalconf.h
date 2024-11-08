@@ -40,7 +40,7 @@
 #define HAL_USE_PAL                         TRUE
 #define HAL_USE_MMC_SPI                     FALSE
 #define HAL_USE_SIO                         TRUE
-#define HAL_USE_SPI                         TRUE
+#define HAL_USE_SPI                         FALSE
 
 /*===========================================================================*/
 /* PAL driver settings.                                                      */

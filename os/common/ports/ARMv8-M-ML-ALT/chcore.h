@@ -398,6 +398,15 @@
 #if !defined(_FROM_ASM_)
 
 /**
+ * @brief   Type of an MPU region registers structure.
+ *
+ */
+typedef struct {
+  uint32_t              rbar;
+  uint32_t              rlar;
+} port_mpureg_t;
+
+/**
  * @brief   Integer-only external context.
  */
 struct port_short_extctx {
@@ -502,10 +511,7 @@ struct port_context {
   struct port_extctx    *sp;
   struct port_intctx    regs;
 #if (PORT_SWITCHED_REGIONS_NUMBER > 0) || defined(__DOXYGEN__)
-  struct {
-    uint32_t            rbar;
-    uint32_t            rlar;
-  } regions[PORT_SWITCHED_REGIONS_NUMBER];
+  port_mpureg_t         regions[PORT_SWITCHED_REGIONS_NUMBER];
 #endif
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
@@ -1026,6 +1032,7 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 #if CH_CFG_ST_TIMEDELTA > 0
 #include "chcore_timer.h"
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
+#include "chcoreapi.h"
 
 #endif /* !defined(_FROM_ASM_) */
 
