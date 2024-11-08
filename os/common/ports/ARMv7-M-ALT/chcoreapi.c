@@ -51,13 +51,8 @@
 
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
 static THD_FUNCTION(unprivileged_handler, arg) {
-  thread_t *utp = chThdGetSelfX();
 
   (void)arg;
-
-  /* Storing the current PSP position in the thread context, this position
-     will be used for system calls processing,*/
-  utp->ctx.syscall.s_psp = __get_PSP();
 
   /* Jump with no return to the context saved at "u_psp". */
   asm volatile ("svc     #1");
