@@ -238,7 +238,7 @@ SVC_Handler:
 #if PORT_USE_SYSCALL
                 mrs     r12, CONTROL
                 tst     r12, #1
-                beq     .frompriv
+                beq     .Lfrompriv
                 /* SVC called from non-privileged mode for a syscall.*/
                 /* Note, LR already contains the return address.*/
                 mrs     r0, PSP             /* Position of the exc.frame.*/
@@ -250,24 +250,25 @@ SVC_Handler:
                 msr     CONTROL, r12        /* Switching to privileged.*/
                 b       __port_do_syscall_entry
 
-.frompriv:
+.Lfrompriv:
                 /* SVC called from privileged mode for unprivileged return.*/
                 mrs     r2, PSP             /* Position of the exc.frame.*/
                 ldr     r3, [r2, #24]       /* PC position.*/
                 ldrh    r3, [r3, #-2]       /* SVC opcode.*/
                 ands    r3, #255
-                beq     .ctxswitch
+                beq     .Lctxswitch
                 /* Called for non-privileged mode change.*/
                 orr     r12, #1
                 msr     CONTROL, r12        /* Switching to non-privileged. */
                 b       __port_do_syscall_return
 
-.ctxswitch:
+.Lctxswitch:
                 /* SVC called from privilege mode for context switch.*/
 #else
                 mrs     r2, PSP             /* Position of the exc.frame.*/
 #endif
                 /* Context store for old thread through R1.*/
+                ldr     r1, [r2, #4]        /* R1 on SVC context (otp) */
                 adds    r1, #CONTEXT_OFFSET
 
                 mrs     r3, BASEPRI
@@ -277,6 +278,7 @@ SVC_Handler:
                 PORT_STORE_MPU_CONTEXT
 
                 /* Context load for new thread through R0.*/
+                ldr     r0, [r2, #0]        /* R0 on SVC context (ntp) */
                 adds    r0, #CONTEXT_OFFSET
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
@@ -380,7 +382,7 @@ __port_thread_start:
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-.zombies:       b       .zombies
+1:              b       1b
 
 #endif /* !defined(__DOXYGEN__) */
 

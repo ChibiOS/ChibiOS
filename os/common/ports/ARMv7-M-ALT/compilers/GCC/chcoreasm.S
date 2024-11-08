@@ -239,6 +239,7 @@ SVC_Handler:
                 mrs     r2, PSP             /* Position of the exc.frame.*/
 #endif
                 /* Context store for old thread through R1.*/
+                ldr     r1, [r2, #4]        /* R1 on SVC context (otp) */
                 adds    r1, #CONTEXT_OFFSET
 
                 mrs     r3, BASEPRI
@@ -247,6 +248,7 @@ SVC_Handler:
                 PORT_STORE_MPU_CONTEXT
 
                 /* Context load for new thread through R0.*/
+                ldr     r0, [r2, #0]        /* R0 on SVC context (ntp) */
                 adds    r0, #CONTEXT_OFFSET
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
