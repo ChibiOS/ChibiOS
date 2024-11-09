@@ -130,7 +130,7 @@
                 /* Store float context through R1.*/
                 .macro  PORT_STORE_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
-#if CORTEX_USE_FPU_FAST_SWITCHING > 1
+#if CORTEX_USE_FPU_FAST_SWITCHING > 2
                 tst     lr, #16
                 it      eq
                 vstmiaeq r1!, {s16-s31}
@@ -143,7 +143,7 @@
                 /* Load float context through R0.*/
                 .macro  PORT_LOAD_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
-#if CORTEX_USE_FPU_FAST_SWITCHING > 1
+#if CORTEX_USE_FPU_FAST_SWITCHING > 2
                 tst     lr, #16
                 it      eq
                 vldmiaeq r0!, {s16-s31}
@@ -274,7 +274,9 @@ SVC_Handler:
                 mrs     r3, BASEPRI
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_SPECIAL_CONTEXT
-                PORT_STORE_FLOAT_CONTEXT
+                tst     lr, #16
+                it      eq
+                vstmiaeq r1!, {s16-s31}
                 PORT_STORE_MPU_CONTEXT
 
                 /* Context load for new thread through R0.*/
@@ -300,7 +302,9 @@ SVC_Handler:
 
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_SPECIAL_CONTEXT
-                PORT_LOAD_FLOAT_CONTEXT
+                tst     lr, #16
+                it      eq
+                vldmiaeq r0!, {s16-s31}
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
@@ -329,7 +333,9 @@ PendSV_Handler:
 #endif
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_SPECIAL_CONTEXT
-                PORT_STORE_FLOAT_CONTEXT
+                tst     lr, #16
+                it      eq
+                vstmiaeq r1!, {s16-s31}
                 PORT_STORE_MPU_CONTEXT
 
                 /* Context load for new thread through R0.*/
@@ -354,7 +360,9 @@ PendSV_Handler:
 
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_SPECIAL_CONTEXT
-                PORT_LOAD_FLOAT_CONTEXT
+                tst     lr, #16
+                it      eq
+                vldmiaeq r0!, {s16-s31}
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr

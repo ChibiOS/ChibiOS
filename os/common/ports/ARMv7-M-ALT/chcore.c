@@ -149,22 +149,30 @@ void port_init(os_instance_t *oip) {
   port_suspend();
 
 #if CORTEX_USE_FPU == TRUE
-  /* Making sure to use the correct settings for FPU-related exception
-     handling, better do not rely on startup settings.*/
-  FPU->FPCCR  = FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
-  FPU->FPDSCR = 0U;
-  __set_FPSCR(0U);
+  {
+    uint32_t control;
+
+    /* Making sure to use the correct settings for FPU-related exception
+       handling, better do not rely on startup settings.*/
+    FPU->FPDSCR = 0U;
+    __set_FPSCR(0U);
 #if CORTEX_USE_FPU_FAST_SWITCHING == 0
-  /* Enforcing CONTROL.FPCA and CONTROL.SPSEL.*/
-  __set_CONTROL(CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk);
-  __ISB();
-#else
-  /* Enforcing CONTROL.SPSEL only, leveraging automatic
-     CONTROL.FPCA handling.*/
-  __set_CONTROL(CONTROL_SPSEL_Msk);
-  __ISB();
+    /* No lazy context saving, always long exception context.*/
+    control = CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk;
+    FPU->FPCCR = 0U;
+#elif CORTEX_USE_FPU_FAST_SWITCHING == 1
+    /* Lazy context saving enabled, always long exception context.*/
+    control = CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk;
+    FPU->FPCCR = FPU_FPCCR_LSPEN_Msk;
+#else /*CORTEX_USE_FPU_FAST_SWITCHING >= 2 */
+    /* Lazy context saving enabled, automatic FPCA control.*/
+    control = CONTROL_SPSEL_Msk;
+    FPU->FPCCR = FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
 #endif
-#endif
+    __set_CONTROL(control);
+    __ISB();
+  }
+#endif /* CORTEX_USE_FPU == TRUE */
 
   /* Initializing priority grouping.*/
   NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);

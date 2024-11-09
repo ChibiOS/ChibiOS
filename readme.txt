@@ -75,6 +75,11 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added faster context switch modes to ARMv7-M and ARMv8-M ports. The
+       new modes allow to avoid saving FP context for threads that do not
+       use the FPU.
+- NEW: Added new ARMv8-M port aligned with features of then ARMv7-M port for
+       sandboxing.
 - NEW: Added XShell support for change prompt, multi-command per line, line 
        editing, user definable extra fields, init and execution hooks.
 - NEW: Improved LFS support, now it is possible to make an LFS file system

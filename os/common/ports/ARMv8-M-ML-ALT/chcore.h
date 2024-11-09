@@ -241,15 +241,17 @@
  *          do not use FPU. This can make context switch faster but can
  *          leak information among threads through uninitialized FPU
  *          registers, possible values:
- *          - 0: Always full switching.
- *          - 1: Uses short exception context when possible.
- *          - 2: Uses short exception context and also omits saving s16-s31
- *            when possible. It is a bit slower than 1: in long-to-long
- *            switching because the extra checks.
- *          .
+ *          - 0: Always full and immediate switching (CONTROL_FPCA enforced).
+ *          - 1: Activate lazy FPU registers stacking (CONTROL_FPCA enforced,
+ *               FPU_FPCCR_LSPEN enabled).
+ *          - 2: Uses short exception context when possible (FPU_FPCCR_ASPEN,
+ *               FPU_FPCCR_LSPEN enabled).
+ *          - 3: Uses short exception context when possible and also omits
+ *               saving s16-s31 when it is not needed (FPU_FPCCR_ASPEN,
+ *               FPU_FPCCR_LSPEN enabled and extra SW checks) .
  */
 #if !defined(CORTEX_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
-#define CORTEX_USE_FPU_FAST_SWITCHING   2
+#define CORTEX_USE_FPU_FAST_SWITCHING   3
 #endif
 
 /**
@@ -289,7 +291,7 @@
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
 #endif
 
-#if (CORTEX_USE_FPU_FAST_SWITCHING < 0) || (CORTEX_USE_FPU_FAST_SWITCHING > 2)
+#if (CORTEX_USE_FPU_FAST_SWITCHING < 0) || (CORTEX_USE_FPU_FAST_SWITCHING > 3)
 #error "invalid CORTEX_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
@@ -555,8 +557,8 @@ struct port_context {
  *          for thread creation.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-  #if (CORTEX_USE_FPU_FAST_SWITCHING == 0) || defined(__DOXYGEN__)
-    /* FPU enabled, start using a long context.*/
+  #if (CORTEX_USE_FPU_FAST_SWITCHING < 2) || defined(__DOXYGEN__)
+    /* FPU enabled without FPU_FPCCR_ASPEN, start using a long context.*/
     #if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
       #define CORTEX_EXC_RETURN         0xFFFFFFAC
     #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
@@ -722,7 +724,7 @@ struct port_context {
  * @details This code usually setup the context switching frame represented
  *          by an @p port_intctx structure.
  */
-#if (CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING == 0) ||     \
+#if (CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING < 2) ||      \
     defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
