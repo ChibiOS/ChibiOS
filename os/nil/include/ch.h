@@ -746,8 +746,8 @@ struct nil_os_instance {
  *
  * @api
  */
-#define THD_WORKING_AREA_SIZE(n) MEM_ALIGN_NEXT(PORT_WA_SIZE(n),            \
-                                                PORT_STACK_ALIGN)
+#define THD_WORKING_AREA_SIZE(n)                                            \
+  MEM_ALIGN_NEXT(PORT_WA_SIZE(n), PORT_STACK_ALIGN)
 
 /**
  * @brief   Static working area allocation.
@@ -759,7 +759,9 @@ struct nil_os_instance {
  *
  * @api
  */
-#define THD_WORKING_AREA(s, n) PORT_WORKING_AREA(s, n)
+#define THD_WORKING_AREA(s, n)                                              \
+  CC_ALIGN_DATA(PORT_WORKING_AREA_ALIGN)                                    \
+  stkline_t s[THD_WORKING_AREA_SIZE(n) / sizeof (stkline_t)]
 /** @} */
 
 /**
