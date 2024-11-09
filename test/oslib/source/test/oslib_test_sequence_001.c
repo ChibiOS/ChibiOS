@@ -165,8 +165,14 @@ static void oslib_test_001_003_execute(void) {
     test_print("--- CH_CFG_USE_MAILBOXES:               ");
     test_printn(CH_CFG_USE_MAILBOXES);
     test_println("");
+    test_print("--- CH_CFG_USE_MEMCHECKS:               ");
+    test_printn(CH_CFG_USE_MEMCHECKS);
+    test_println("");
     test_print("--- CH_CFG_USE_MEMCORE:                 ");
     test_printn(CH_CFG_USE_MEMCORE);
+    test_println("");
+    test_print("--- CH_CFG_MEMCORE_SIZE:                ");
+    test_printn(CH_CFG_MEMCORE_SIZE);
     test_println("");
     test_print("--- CH_CFG_USE_HEAP:                    ");
     test_printn(CH_CFG_USE_HEAP);

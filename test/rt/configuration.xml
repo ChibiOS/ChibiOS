@@ -296,7 +296,13 @@ test_println("");]]></value>
                 <value />
               </tags>
               <code>
-                <value><![CDATA[test_print("--- CH_CFG_ST_RESOLUTION:               ");
+                <value><![CDATA[test_print("--- CH_CFG_SMP_MODE:                    ");
+test_printn(CH_CFG_SMP_MODE);
+test_println("");
+test_print("--- CH_CFG_HARDENING_LEVEL:             ");
+test_printn(CH_CFG_HARDENING_LEVEL);
+test_println("");
+test_print("--- CH_CFG_ST_RESOLUTION:               ");
 test_printn(CH_CFG_ST_RESOLUTION);
 test_println("");
 test_print("--- CH_CFG_ST_FREQUENCY:                ");
@@ -314,9 +320,6 @@ test_println("");
 test_print("--- CH_CFG_TIME_QUANTUM:                ");
 test_printn(CH_CFG_TIME_QUANTUM);
 test_println("");
-test_print("--- CH_CFG_MEMCORE_SIZE:                ");
-test_printn(CH_CFG_MEMCORE_SIZE);
-test_println("");
 test_print("--- CH_CFG_NO_IDLE_THREAD:              ");
 test_printn(CH_CFG_NO_IDLE_THREAD);
 test_println("");
@@ -325,6 +328,9 @@ test_printn(CH_CFG_OPTIMIZE_SPEED);
 test_println("");
 test_print("--- CH_CFG_USE_TM:                      ");
 test_printn(CH_CFG_USE_TM);
+test_println("");
+test_print("--- CH_CFG_USE_TIMESTAMP:               ");
+test_printn(CH_CFG_USE_TIMESTAMP);
 test_println("");
 test_print("--- CH_CFG_USE_REGISTRY:                ");
 test_printn(CH_CFG_USE_REGISTRY);
