@@ -25,7 +25,7 @@ endif
 # Link time optimizations
 ifneq ($(USE_LTO),no)
   ifeq ($(USE_LTO),yes)
-    OPT += -flto
+    OPT += -flto=auto
   else
     OPT += -flto=$(USE_LTO)
   endif

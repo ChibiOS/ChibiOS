@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Nov  7 2024 - 11:07:08
+*** Compiled:     Nov  9 2024 - 11:29:56
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    56640 bytes
+*** Text size:    56776 bytes
 *** RO data size: 11916 bytes
-*** Data size:    1316 bytes
-*** BSS size:     6872 bytes
+*** Data size:    1320 bytes
+*** BSS size:     6860 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M (alt)
 --- Core Variant:                       Cortex-M4F
---- Compiler:                           GCC 11.3.1 20220712
+--- Compiler:                           GCC 13.3.1 20240614
 --- Port Info:                          In-exception switch mode
 --- Natural alignment:                  4
 --- Stack alignment:                    32
@@ -189,23 +189,23 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 752206 msgs/S, 1504412 ctxswc/S
+--- Score : 732752 msgs/S, 1465504 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 691050 msgs/S, 1382100 ctxswc/S
+--- Score : 674597 msgs/S, 1349194 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 691050 msgs/S, 1382100 ctxswc/S
+--- Score : 674597 msgs/S, 1349194 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 1863000 ctxswc/S
+--- Score : 1803704 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 438140 threads/S
+--- Score : 440410 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
@@ -213,23 +213,23 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 221930 reschedules/S, 1331580 ctxswc/S
+--- Score : 216835 reschedules/S, 1301010 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 1346520 ctxswc/S
+--- Score : 1315264 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 1180624 timers/S
+--- Score : 1240948 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 7391240 wait+signal/S
+--- Score : 7727208 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 2556368 lock+unlock/S
+--- Score : 2481728 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Nov  7 2024 - 11:07:08
+*** Compiled:     Nov  9 2024 - 11:29:56
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    56640 bytes
+*** Text size:    56776 bytes
 *** RO data size: 11916 bytes
-*** Data size:    1316 bytes
-*** BSS size:     6872 bytes
+*** Data size:    1320 bytes
+*** BSS size:     6860 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -264,7 +264,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M (alt)
 --- Core Variant:                       Cortex-M4F
---- Compiler:                           GCC 11.3.1 20220712
+--- Compiler:                           GCC 13.3.1 20240614
 --- Port Info:                          In-exception switch mode
 --- Natural alignment:                  4
 --- Stack alignment:                    32
