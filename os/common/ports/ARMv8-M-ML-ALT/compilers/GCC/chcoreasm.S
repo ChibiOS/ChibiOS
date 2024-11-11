@@ -274,9 +274,7 @@ SVC_Handler:
                 mrs     r3, BASEPRI
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_SPECIAL_CONTEXT
-                tst     lr, #16
-                it      eq
-                vstmiaeq r1!, {s16-s31}
+                PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
                 /* Context load for new thread through R0.*/
@@ -302,9 +300,7 @@ SVC_Handler:
 
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_SPECIAL_CONTEXT
-                tst     lr, #16
-                it      eq
-                vldmiaeq r0!, {s16-s31}
+                PORT_LOAD_FLOAT_CONTEXT
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
@@ -333,9 +329,7 @@ PendSV_Handler:
 #endif
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_SPECIAL_CONTEXT
-                tst     lr, #16
-                it      eq
-                vstmiaeq r1!, {s16-s31}
+                PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
                 /* Context load for new thread through R0.*/
@@ -360,9 +354,7 @@ PendSV_Handler:
 
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_SPECIAL_CONTEXT
-                tst     lr, #16
-                it      eq
-                vldmiaeq r0!, {s16-s31}
+                PORT_LOAD_FLOAT_CONTEXT
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
