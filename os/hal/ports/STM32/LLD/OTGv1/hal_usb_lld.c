@@ -68,6 +68,8 @@
 
 #endif
 
+#define IRQ_RETRY_MASK (GINTSTS_NPTXFE | GINTSTS_PTXFE | GINTSTS_RXFLVL)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -543,6 +545,9 @@ static void otg_isoc_out_failed_handler(USBDriver *usbp) {
 static void usb_lld_serve_interrupt(USBDriver *usbp) {
   stm32_otg_t *otgp = usbp->otg;
   uint32_t sts, src;
+  unsigned retry = 8U;
+
+irq_retry:
 
   sts  = otgp->GINTSTS;
   sts &= otgp->GINTMSK;
@@ -692,6 +697,9 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
       otg_epin_handler(usbp, 8);
 #endif
   }
+
+  if ((sts & IRQ_RETRY_MASK) && (--retry > 0U))
+    goto irq_retry;
 }
 
 /*===========================================================================*/
