@@ -73,28 +73,48 @@ static msg_t build_absolute_path(vfs_littlefs_driver_c *drvp,
 
 static enum lfs_open_flags translate_oflag(int oflag) {
 
-  switch (oflag & VO_SUPPORTED_FLAGS_MASK) {
-  case VO_RDONLY:                                   /* r */
-    return LFS_O_RDONLY;
-  case VO_RDWR:                                     /* r+ */
-    return LFS_O_RDWR;
-  case VO_CREAT | VO_APPEND | VO_WRONLY:            /* a */
-    return LFS_O_CREAT | LFS_O_APPEND | LFS_O_WRONLY;
-  case VO_CREAT | VO_APPEND | VO_RDWR:              /* a+ */
-    return LFS_O_CREAT | LFS_O_APPEND | LFS_O_RDWR;
-  case VO_CREAT | VO_WRONLY:                        /* w */
-    return LFS_O_CREAT | LFS_O_WRONLY;
-  case VO_CREAT | VO_RDWR:                          /* w+ */
-    return LFS_O_CREAT | LFS_O_RDWR;
-  case VO_CREAT | VO_EXCL | VO_WRONLY:              /* wx */
-    return LFS_O_CREAT | LFS_O_EXCL | LFS_O_WRONLY;
-  case VO_CREAT | VO_EXCL | VO_RDWR:                /* w+x */
-    return LFS_O_CREAT | LFS_O_EXCL | LFS_O_RDWR;
-  default:
-    break;
+  enum lfs_open_flags flags = 0;;
+  switch (oflag & (VO_SUPPORTED_FLAGS_MASK & ~VO_TRUNC)) {
+    case VO_RDONLY:                                   /* r */
+      return LFS_O_RDONLY;
+
+    case VO_RDWR:                                     /* r+ */
+      flags = LFS_O_RDWR;
+      break;
+
+    case VO_CREAT | VO_APPEND | VO_WRONLY:            /* a */
+      flags = LFS_O_CREAT | LFS_O_APPEND | LFS_O_WRONLY;
+      break;
+
+    case VO_CREAT | VO_APPEND | VO_RDWR:              /* a+ */
+      flags = LFS_O_CREAT | LFS_O_APPEND | LFS_O_RDWR;
+      break;
+
+    case VO_CREAT | VO_WRONLY:                        /* w */
+      flags = LFS_O_CREAT | LFS_O_WRONLY;
+      break;
+
+    case VO_CREAT | VO_RDWR:                          /* w+ */
+      flags = LFS_O_CREAT | LFS_O_RDWR;
+      break;
+
+    case VO_CREAT | VO_EXCL | VO_WRONLY:              /* wx */
+      flags = LFS_O_CREAT | LFS_O_EXCL | LFS_O_WRONLY;
+      break;
+
+    case VO_CREAT | VO_EXCL | VO_RDWR:                /* w+x */
+      flags = LFS_O_CREAT | LFS_O_EXCL | LFS_O_RDWR;
+      break;
+
+    default:
+      break;
   }
 
-  return 0;
+  if (flags != 0 && oflag & VO_TRUNC) {
+    flags |= LFS_O_TRUNC;
+  }
+
+  return flags;
 }
 
 static vfs_mode_t translate_mode(enum lfs_open_flags fattrib) {

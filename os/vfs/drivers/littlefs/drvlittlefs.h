@@ -227,22 +227,20 @@ CC_FORCE_INLINE
 static inline vfs_littlefs_driver_c *lfsdrvObjectInit(vfs_littlefs_driver_c *self,
                                       const struct lfs_config *cfgp) {
   extern const struct vfs_littlefs_driver_vmt __vfs_littlefs_driver_vmt;
-  {
-    vfs_littlefs_driver_c *obj = __lfsdrv_objinit_impl(self,
-                                          &__vfs_littlefs_driver_vmt);
+  vfs_littlefs_driver_c *obj = __lfsdrv_objinit_impl(self,
+                                        &__vfs_littlefs_driver_vmt);
 
-    /* Mount the drive using the supplied configuration.*/
-    if (lfs_mount(&obj->lfs, cfgp) == LFS_ERR_OK) {
+  /* Mount the drive using the supplied configuration.*/
+  if (lfs_mount(&obj->lfs, cfgp) == LFS_ERR_OK) {
 
-      /* Check drive is functional. Open root directory as current.*/
-      if (__lfsdrv_setcwd_impl(self, "/") == CH_RET_SUCCESS) {
-        return obj;
-      }
-      (void) lfs_unmount(&self->lfs);
+    /* Check drive is functional. Open root directory as current.*/
+    if (__lfsdrv_setcwd_impl(self, "/") == CH_RET_SUCCESS) {
+      return obj;
     }
-
-    return NULL;
+    (void) lfs_unmount(&self->lfs);
   }
+
+  return NULL;
 }
 /** @} */
 
