@@ -279,6 +279,8 @@ extern "C" {
  */
 static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 
+  (void)clkpt;  /* LLD macro could not use it.*/
+
   return hal_lld_get_clock_point(clkpt);
 }
 
