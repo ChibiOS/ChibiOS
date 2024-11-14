@@ -238,18 +238,18 @@ SVC_Handler:
 #else
                 mrs     r2, PSP             /* Position of the exc.frame.*/
 #endif
-                /* Context store for old thread through R1.*/
+                /* Retrieving pointers to old and new context from the
+                   saved stack frame.*/
                 ldr     r1, [r2, #4]        /* R1 on SVC context (otp) */
                 adds    r1, #CONTEXT_OFFSET
+                ldr     r0, [r2, #0]        /* R0 on SVC context (ntp) */
+                adds    r0, #CONTEXT_OFFSET
 
+                /* Context store for old thread through R1.*/
                 mrs     r3, BASEPRI
                 PORT_STORE_INTEGER_CONTEXT
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
-
-                /* Context load for new thread through R0.*/
-                ldr     r0, [r2, #0]        /* R0 on SVC context (ntp) */
-                adds    r0, #CONTEXT_OFFSET
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
                 ldr     r3, [r0, #4]        /* BASEPRI offset */
@@ -268,6 +268,7 @@ SVC_Handler:
 1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
+                /* Context load for new thread through R0.*/
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_FLOAT_CONTEXT
                 PORT_LOAD_MPU_CONTEXT
