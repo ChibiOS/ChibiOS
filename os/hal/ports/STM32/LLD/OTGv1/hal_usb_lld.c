@@ -297,30 +297,36 @@ static void otg_fifo_read_to_buffer(volatile uint32_t *fifop,
  * @notapi
  */
 static void otg_rxfifo_handler(USBDriver *usbp) {
-  uint32_t sts, cnt, ep;
+  uint32_t sts, ep;
+  size_t n, max;
 
   /* Popping the event word out of the RX FIFO.*/
   sts = usbp->otg->GRXSTSP;
 
   /* Event details.*/
-  cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
-  ep  = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
+  n  = (size_t)((sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF);
+  ep = (sts & GRXSTSP_EPNUM_MASK) >> GRXSTSP_EPNUM_OFF;
 
   switch (sts & GRXSTSP_PKTSTS_MASK) {
   case GRXSTSP_SETUP_DATA:
     otg_fifo_read_to_buffer(usbp->otg->FIFO[0], usbp->epc[ep]->setup_buf,
-                            cnt, 8);
+                            n, 8);
     break;
   case GRXSTSP_SETUP_COMP:
     break;
   case GRXSTSP_OUT_DATA:
+    max = usbp->epc[ep]->out_state->rxsize - usbp->epc[ep]->out_state->rxcnt;
     otg_fifo_read_to_buffer(usbp->otg->FIFO[0],
                             usbp->epc[ep]->out_state->rxbuf,
-                            cnt,
-                            usbp->epc[ep]->out_state->rxsize -
-                            usbp->epc[ep]->out_state->rxcnt);
-    usbp->epc[ep]->out_state->rxbuf += cnt;
-    usbp->epc[ep]->out_state->rxcnt += cnt;
+                            n, max);
+    if (n < max) {
+      usbp->epc[ep]->out_state->rxbuf += n;
+      usbp->epc[ep]->out_state->rxcnt += n;
+    }
+    else {
+      usbp->epc[ep]->out_state->rxbuf += max;
+      usbp->epc[ep]->out_state->rxcnt += max;
+    }
     break;
   case GRXSTSP_OUT_COMP:
     break;
@@ -629,12 +635,6 @@ irq_retry:
     otg_isoc_out_failed_handler(usbp);
   }
 
-  /* Performing the whole FIFO emptying in the ISR, it is advised to keep
-     this IRQ at a very low priority level.*/
-  if ((sts & GINTSTS_RXFLVL) != 0U) {
-    otg_rxfifo_handler(usbp);
-  }
-
   /* IN/OUT endpoints event handling.*/
   src = otgp->DAINT;
   if (sts & GINTSTS_OEPINT) {
@@ -696,6 +696,12 @@ irq_retry:
     if (src & (1 << 8))
       otg_epin_handler(usbp, 8);
 #endif
+  }
+
+  /* Performing the whole FIFO emptying in the ISR, it is advised to keep
+     this IRQ at a very low priority level.*/
+  if ((sts & GINTSTS_RXFLVL) != 0U) {
+    otg_rxfifo_handler(usbp);
   }
 
   if ((sts & IRQ_RETRY_MASK) && (--retry > 0U))
