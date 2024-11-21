@@ -458,6 +458,14 @@ void usbDisableEndpointsI(USBDriver *usbp) {
  * @note    This function is meant to be called from ISR context outside
  *          critical zones because there is a potentially slow operation
  *          inside.
+ * @note    The transaction terminates when one of the following conditions
+ *          has been met:
+ *          - The specified amount of data has been received.
+ *          - A short packet has been received.
+ *          - A zero-lenght packet has been received.
+ *          - The USB has been reset by host or the driver went into
+ *            @p USB_SUSPENDED state.
+ *          .
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
@@ -535,6 +543,13 @@ void usbStartTransmitI(USBDriver *usbp, usbep_t ep,
 #if (USB_USE_WAIT == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Performs a receive transaction on an OUT endpoint.
+ * @note    The transaction terminates when one of the following conditions
+ *          has been met:
+ *          - The specified amount of data has been received.
+ *          - A short packet has been received.
+ *          - A zero-lenght packet has been received.
+ *          - The USB has been reset by host or the driver went into
+ *            @p USB_SUSPENDED state.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
  * @param[in] ep        endpoint number
