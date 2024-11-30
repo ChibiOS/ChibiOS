@@ -149,6 +149,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed STM32 OTGv1 driver does not re-enables endpoints on wakeup
+       (bug 1293)(backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed missing assertion in OSLIB factory module (bug 1292)
        (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed problem in recursive locks functions (bug #1288)
