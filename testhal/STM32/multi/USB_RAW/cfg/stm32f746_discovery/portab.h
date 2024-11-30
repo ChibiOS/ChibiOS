@@ -35,6 +35,9 @@
 
 #define PORTAB_BLINK_LED1           LINE_ARD_D13
 
+#define PORTAB_LINE_BUTTON          LINE_BUTTON_USER
+#define PORTAB_BUTTON_PRESSED       PAL_HIGH
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/

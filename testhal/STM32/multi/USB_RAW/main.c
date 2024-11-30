@@ -24,22 +24,22 @@
 #include "usbcfg.h"
 
 static const uint8_t txbuf[] =
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde\n"
+    "123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n"
+    "23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0\n"
+    "3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01\n"
+    "456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012\n"
+    "56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123\n"
+    "6789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234\n"
+    "789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345\n"
+    "89abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456\n"
+    "9abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567\n"
+    "abcdef0123456789abcdef0123456789abcdef0123456789abcdef012345678\n"
+    "bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789\n"
+    "cdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a\n"
+    "def0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab\n"
+    "ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abc\n"
+    "f0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd\n";
 
 static uint8_t rxbuf[1024 + 1];
 
@@ -54,10 +54,15 @@ static THD_FUNCTION(Writer, arg) {
   (void)arg;
   chRegSetThreadName("writer");
   while (true) {
-    msg_t msg = usbTransmit(&PORTAB_USB1, USBD2_DATA_REQUEST_EP,
-                            txbuf, sizeof (txbuf));
-    if (msg == MSG_RESET)
-      chThdSleepMilliseconds(500);
+    if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+      msg_t msg = usbTransmit(&PORTAB_USB1, USBD2_DATA_REQUEST_EP,
+                              txbuf, sizeof (txbuf));
+      if (msg == MSG_RESET)
+        chThdSleepMilliseconds(500);
+    }
+    else {
+      chThdSleepMilliseconds(50);
+    }
   }
 }
 
@@ -76,6 +81,8 @@ static THD_FUNCTION(Reader, arg) {
                            rxbuf, sizeof (rxbuf));
     if (msg == MSG_RESET)
       chThdSleepMilliseconds(500);
+    else
+      asm volatile ("nop");
   }
 }
 

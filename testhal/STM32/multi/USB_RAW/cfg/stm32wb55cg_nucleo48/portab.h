@@ -35,6 +35,9 @@
 
 #define PORTAB_BLINK_LED1           LINE_LED_GREEN
 
+#define PORTAB_LINE_BUTTON          LINE_BUTTON
+#define PORTAB_BUTTON_PRESSED       PAL_LOW
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
