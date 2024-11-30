@@ -76,6 +76,8 @@
 *** 20.3.5 ***
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
        underlying port supports the capability.
+- FIX: Fixed STM32 OTGv1 driver does not re-enables endpoints on wakeup
+       (bug 1293).
 - FIX: Fixed missing assertion in OSLIB factory module (bug 1292).
 - FIX: Fixed problem in recursive locks functions (bug #1288).
 - FIX: Fixed race condition caused by chGuardedPoolAllocI() (bug #1277).
