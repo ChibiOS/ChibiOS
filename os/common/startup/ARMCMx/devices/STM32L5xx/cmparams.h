@@ -57,6 +57,16 @@
  */
 #define CORTEX_NUM_VECTORS      112
 
+/**
+ * @brief   Number of MPU regions.
+ */
+#define CORTEX_MPU_REGIONS      8
+
+/**
+ * @brief   Number of secure MPU regions.
+ */
+#define CORTEX_MPU_S_REGIONS    8
+
 /* The following code is not processed when the file is included from an
    asm module.*/
 #if !defined(_FROM_ASM_)

@@ -14,202 +14,233 @@
     limitations under the License.
 */
 
-#include <string.h>
-
 #include "ch.h"
 #include "hal.h"
-#include "rt_test_root.h"
-#include "oslib_test_root.h"
-
-#include "xshell.h"
+#include "sb.h"
 #include "chprintf.h"
 
+#include "nullstreams.h"
+
+#include "startup_defs.h"
+
+/* Sandbox objects.*/
+sb_class_t sbx1, sbx2;
+
 /*===========================================================================*/
-/* Command line related.                                                     */
+/* VIO-related.                                                              */
 /*===========================================================================*/
 
-#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
-
-/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(struct xshell_manager *smp, BaseSequentialStream *chp,
-                      int argc, char *argv[]) {
-  static uint8_t buf[] =
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-
-  (void)smp;
-  (void)argv;
-
-  if (argc > 1) {
-    chprintf(chp, "Usage: write\r\n");
-    return;
+static vio_gpio_units_t gpio_units1 = {
+  .n        = 1U,
+  .units = {
+    [0] = {
+      .permissions  = VIO_GPIO_PERM_WRITE,
+      .port         = GPIOB,
+      .mask         = 1U,
+      .offset       = GPIOB_LED1
+    }
   }
+};
 
-  while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-#if 1
-    /* Writing in channel mode.*/
-    chnWrite(chp, buf, sizeof buf - 1);
-#else
-    /* Writing in buffer mode.*/
-    (void) obqGetEmptyBufferTimeout(&PORTAB_SDU1.obqueue, TIME_INFINITE);
-    memcpy(PORTAB_SDU1.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
-    obqPostFullBuffer(&PORTAB_SDU1.obqueue, SERIAL_USB_BUFFERS_SIZE);
-#endif
+static vio_uart_units_t uart_units1 = {
+  .n        = 1U,
+  .units = {
+    [0] = {
+      .siop  = &SIOD3,
+      .vrqsb = &sbx1,
+      .vrqn  = 8
+    }
   }
-  chprintf(chp, "\r\n\nstopped\r\n");
-}
+};
 
-#if STM32_CLOCK_DYNAMIC == TRUE
-static void cmd_clock(struct xshell_manager *smp, BaseSequentialStream *chp,
-                      int argc, char *argv[]) {
-  bool result;
-  const halclkcfg_t *ccp;
-  static const char usage[] = "Usage: clock [reset|default]\r\n";
-
-  (void)smp;
-
-  if (argc != 2) {
-    chprintf(chp, usage);
-    return;
+static sio_configurations_t uart_configs1 = {
+  .cfgsnum      = 1U,
+  .cfgs = {
+    [0]         = SIO_DEFAULT_CONFIGURATION
   }
+};
 
-  if (strcmp(argv[1], "reset") == 0) {
-    chprintf(chp, "\r\nSwitching to post-reset clocks: ");
-    ccp = &hal_clkcfg_reset;
-  }
-  else if (strcmp(argv[1], "default") == 0) {
-    chprintf(chp, "\r\nSwitching to default mcuconf.h clocks: ");
-    ccp = &hal_clkcfg_default;
-  }
-  else {
-    chprintf(chp, usage);
-    return;
-  }
+static vio_conf_t vio_config1 = {
+  .gpios        = &gpio_units1,
+  .uarts        = &uart_units1,
+  .uartconfs    = &uart_configs1
+};
 
-  /* Time for the serial TX buffer to flush.*/
-  chThdSleepMilliseconds(100);
-
-  /* Switching clocks.*/
-  result = halClockSwitchMode(ccp);
-
-  /* Reconfiguring the peripherals because clocks frequencies could have changed.*/
-  sioStart(&SIOD3, NULL);
-
-  /* Printing result.*/
-  if (result) {
-    chprintf(chp, "failed\r\n");
+static vio_gpio_units_t gpio_units2 = {
+  .n        = 1U,
+  .units = {
+    [0] = {
+      .permissions  = VIO_GPIO_PERM_WRITE,
+      .port         = GPIOF,
+      .mask         = 1U,
+      .offset       = GPIOF_LED2
+    }
   }
-  else {
-    chprintf(chp, "done\r\n");
-  }
-}
+};
+
+static vio_uart_units_t uart_units2 = {
+  .n            = 0U
+};
+
+static sio_configurations_t uart_configs2 = {
+  .cfgsnum      = 0U
+};
+
+static vio_conf_t vio_config2 = {
+  .gpios        = &gpio_units2,
+  .uarts        = &uart_units2,
+  .uartconfs    = &uart_configs2
+};
+
+/*===========================================================================*/
+/* VFS-related.                                                              */
+/*===========================================================================*/
+
+#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
+/* VFS FatFS driver object representing the root directory.*/
+static vfs_fatfs_driver_c root_driver;
 #endif
 
-static void cmd_clocks(struct xshell_manager *smp,
-                       BaseSequentialStream *chp, int argc, char *argv[]) {
-  const char *swp;
+/* VFS overlay driver object representing the root directory.*/
+static vfs_overlay_driver_c root_overlay_driver;
 
-  (void)smp;
-  (void)argv;
+/* VFS streams driver object representing the /dev directory.*/
+static vfs_streams_driver_c dev_driver;
 
-  if (argc > 1) {
-    chprintf(chp, "Usage: clocks\r\n");
-    return;
-  }
+/* VFS API will use this object as implicit root, defining this
+   symbol is expected.*/
+vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
 
-#if STM32_SW == STM32_SW_HSI
-  swp = "HSI";
-#elif STM32_SW == STM32_SW_CSI
-  swp = "CSI";
-#elif STM32_SW == STM32_SW_HSE
-  swp = "HSE";
-#elif STM32_SW == STM32_SW_PLL1P
-  swp = "PLL1P";
-#else
-  #error "invalid STM32_SW value specified"
-#endif
+static null_stream_c nullstream;
 
-  chprintf(chp, "HSI:      %10u\r\n", halClockGetPointX(CLK_HSI));
-  chprintf(chp, "CSI:      %10u\r\n", halClockGetPointX(CLK_CSI));
-  chprintf(chp, "HSI48:    %10u\r\n", halClockGetPointX(CLK_HSI48));
-  chprintf(chp, "HSE:      %10u\r\n", halClockGetPointX(CLK_HSE));
-  chprintf(chp, "SYSCLK:   %10u (%s)\r\n", halClockGetPointX(CLK_SYSCLK), swp);
-  chprintf(chp, "PLL1PCLK: %10u\r\n", halClockGetPointX(CLK_PLL1PCLK));
-  chprintf(chp, "PLL1RCLK: %10u\r\n", halClockGetPointX(CLK_PLL1RCLK));
-  chprintf(chp, "PLL1QCLK: %10u\r\n", halClockGetPointX(CLK_PLL1QCLK));
-  chprintf(chp, "PLL2PCLK: %10u\r\n", halClockGetPointX(CLK_PLL2PCLK));
-  chprintf(chp, "PLL2RCLK: %10u\r\n", halClockGetPointX(CLK_PLL2RCLK));
-  chprintf(chp, "PLL2QCLK: %10u\r\n", halClockGetPointX(CLK_PLL2QCLK));
-  chprintf(chp, "PLL3PCLK: %10u\r\n", halClockGetPointX(CLK_PLL3PCLK));
-  chprintf(chp, "PLL3RCLK: %10u\r\n", halClockGetPointX(CLK_PLL3RCLK));
-  chprintf(chp, "PLL3QCLK: %10u\r\n", halClockGetPointX(CLK_PLL3QCLK));
-  chprintf(chp, "HCLK:     %10u\r\n", halClockGetPointX(CLK_HCLK));
-  chprintf(chp, "PCLK1:    %10u\r\n", halClockGetPointX(CLK_PCLK1));
-  chprintf(chp, "PCLK1TIM: %10u\r\n", halClockGetPointX(CLK_PCLK1TIM));
-  chprintf(chp, "PCLK2:    %10u\r\n", halClockGetPointX(CLK_PCLK2));
-  chprintf(chp, "PCLK2TIM: %10u\r\n", halClockGetPointX(CLK_PCLK2TIM));
-  chprintf(chp, "PCLK3:    %10u\r\n", halClockGetPointX(CLK_PCLK3));
-  chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
-  chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
-}
-
-static const xshell_command_t commands[] = {
-  {"write", cmd_write},
-#if STM32_CLOCK_DYNAMIC == TRUE
-  {"clock", cmd_clock},
-#endif
-  {"clocks", cmd_clocks},
+/* Stream to be exposed under /dev as files.*/
+static const drv_streams_element_t streams[] = {
+  {"VSIO1", (BaseSequentialStream *)oopGetIf(&SIOD3, chn)},
+  {"null", (BaseSequentialStream *)oopGetIf(&nullstream, stm)},
   {NULL, NULL}
 };
 
-static const xshell_manager_config_t cfg1 = {
-  .thread_name      = "shell",
-  .banner           = XSHELL_DEFAULT_BANNER_STR,
-  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
-  .commands         = commands,
-  .use_heap         = true,
-  .stack.size       = SHELL_WA_SIZE
+/*===========================================================================*/
+/* SB-related.                                                               */
+/*===========================================================================*/
+
+/* Working areas for sandboxes.*/
+static THD_WORKING_AREA(waUnprivileged1, 512);
+static THD_WORKING_AREA(waUnprivileged2, 512);
+
+/* Sandbox 1 configuration.*/
+static const sb_config_t sb_config1 = {
+  .thread = {
+    .name           = "sbx1",
+    .wsp            = waUnprivileged1,
+    .size           = sizeof (waUnprivileged1),
+    .prio           = NORMALPRIO - 10,
+  },
+  .regions = {
+    [0] = {
+      .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
+      .attributes   = SB_REG_IS_CODE
+    },
+    [1] = {
+      .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
+      .attributes   = SB_REG_IS_DATA
+    }
+  },
+  .vfs_driver       = NULL,
+  .vioconf          = &vio_config1
+};
+
+/* Sandbox 2 configuration.*/
+static const sb_config_t sb_config2 = {
+  .thread = {
+    .name           = "sbx2",
+    .wsp            = waUnprivileged2,
+    .size           = sizeof (waUnprivileged2),
+    .prio           = NORMALPRIO - 20,
+  },
+  .regions = {
+    [0] = {
+      .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
+      .attributes   = SB_REG_IS_CODE
+    },
+    [1] = {
+      .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
+      .attributes   = SB_REG_IS_DATA
+    }
+  },
+  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver,
+  .vioconf          = &vio_config2
+};
+
+static const char *sbx1_argv[] = {
+  "sbx1",
+  NULL
+};
+
+static const char *sbx1_envp[] = {
+  NULL
+};
+
+static const char *sbx2_argv[] = {
+  "sbx2",
+  NULL
+};
+
+static const char *sbx2_envp[] = {
+  NULL
 };
 
 /*===========================================================================*/
-/* Generic code.                                                             */
+/* Main and generic code.                                                    */
 /*===========================================================================*/
 
+static void start_sb1(void) {
+  thread_t *utp;
+
+  /* Starting sandboxed thread 1.*/
+  utp = sbStartThread(&sbx1, sbx1_argv, sbx1_envp);
+  if (utp == NULL) {
+    chSysHalt("sbx1 failed");
+  }
+}
+
+static void start_sb2(void) {
+  thread_t *utp;
+  msg_t ret;
+  vfs_node_c *np;
+
+  /*
+   * Associating standard input, output and error to sandbox 2.*/
+  ret = vfsOpen("/dev/VSIO1", 0, &np);
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  vfsClose(np);
+
+  /* Starting sandboxed thread 2.*/
+  utp = sbStartThread(&sbx2, sbx2_argv, sbx2_envp);
+  if (utp == NULL) {
+    chSysHalt("sbx2 failed");
+  }
+}
+
 /*
- * LED blinker thread, times are in milliseconds.
+ * Messenger thread, times are in milliseconds.
  */
-static THD_STACK(thd1_stack, 256);
-static THD_FUNCTION(thd1_func, arg) {
+static THD_WORKING_AREA(waThread1, 256);
+static THD_FUNCTION(Thread1, arg) {
+  unsigned i = 1U;
 
   (void)arg;
 
+  chRegSetThreadName("messenger");
   while (true) {
-    palSetLine(LINE_LED1);
-    chThdSleepMilliseconds(50);
-    palSetLine(LINE_LED2);
-    chThdSleepMilliseconds(50);
-    palSetLine(LINE_LED3);
-    chThdSleepMilliseconds(200);
-    palClearLine(LINE_LED1);
-    chThdSleepMilliseconds(50);
-    palClearLine(LINE_LED2);
-    chThdSleepMilliseconds(50);
-    palClearLine(LINE_LED3);
-    chThdSleepMilliseconds(200);
+    chThdSleepMilliseconds(500);
+    sbSendMessage(&sbx2, (msg_t)i);
+    i++;
   }
 }
 
@@ -217,7 +248,8 @@ static THD_FUNCTION(thd1_func, arg) {
  * Application entry point.
  */
 int main(void) {
-  xshell_manager_t sm1;
+  event_listener_t el1;
+  msg_t ret;
 
   /*
    * System initializations.
@@ -225,37 +257,72 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   * - Virtual File System initialization.
+   * - SandBox manager initialization.
    */
   halInit();
   chSysInit();
+  vfsInit();
+  sbHostInit();
 
   /*
-   * Activates the Serial or SIO driver using the default configuration.
+   * Starting a serial port for I/O, initializing other streams too.
    */
-  sioStart(&SIOD3, NULL);
+  drvStart(&SIOD3);
+  nullstmObjectInit(&nullstream);
 
   /*
-   * Spawning a blinker thread.
+   * Creating a messenger thread.
    */
-  static thread_t thd1;
-  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
-                               NORMALPRIO + 10, thd1_func, NULL, NULL);
-  chThdSpawnRunning(&thd1, &thd1_desc);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
   /*
-   * Shell manager initialization.
+   * Initializing an overlay VFS object as a root, no overlaid driver,
+   * registering a streams VFS driver on the VFS overlay root as "/dev".
    */
-  xshellObjectInit(&sm1, &cfg1);
+  ovldrvObjectInit(&root_overlay_driver, NULL, NULL);
+  ret = ovldrvRegisterDriver(&root_overlay_driver,
+                             (vfs_driver_c *)stmdrvObjectInit(&dev_driver,
+                                                              &streams[0]),
+                             "dev");
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
 
   /*
-   * Normal main() thread activity, in this demo it does nothing except
-   * sleeping in a loop and check the button state.
+   * Sandbox objects initialization.
+   */
+  sbObjectInit(&sbx1, &sb_config1);
+  sbObjectInit(&sbx2, &sb_config2);
+
+  /* Starting sandboxed threads.*/
+  start_sb1();
+  start_sb2();
+
+  /*
+   * Listening to sandbox events.
+   */
+  chEvtRegister(&sb.termination_es, &el1, (eventid_t)0);
+
+  /*
+   * Normal main() thread activity, in this demo it checks for sandboxes state.
    */
   while (true) {
-    thread_t *shelltp = xshellSpawn(&sm1,
-                                    (BaseSequentialStream *)&SIOD3,
-                                    NORMALPRIO + 1);
-    chThdWait(shelltp);               /* Waiting termination.             */
-    chThdSleepMilliseconds(500);
+
+    /* Waiting for a sandbox event or timeout.*/
+    if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
+
+      if (!sbIsThreadRunningX(&sbx1)) {
+        chprintf(oopGetIf(&SIOD3, chn), "SB1 terminated\r\n");
+        chThdSleepMilliseconds(100);
+        start_sb1();
+      }
+
+      if (!sbIsThreadRunningX(&sbx2)) {
+        chprintf(oopGetIf(&SIOD3, chn), "SB2 terminated\r\n");
+        chThdSleepMilliseconds(100);
+        start_sb2();
+      }
+    }
   }
 }

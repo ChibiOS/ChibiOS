@@ -46,6 +46,21 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+#if (PORT_MPU_ENABLED == TRUE) || defined(__DOXYGEN__)
+static void port_init_regions(const uint32_t *src, volatile uint32_t *dst) {
+
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+}
+#endif
+
 /*===========================================================================*/
 /* Module interrupt handlers.                                                */
 /*===========================================================================*/
@@ -62,9 +77,9 @@ CC_NO_INLINE void port_syslock_noinline(void) {
   __dbg_check_lock();
 }
 
-CC_NO_INLINE uint32_t port_get_x_psp(void) {
+CC_NO_INLINE uint32_t port_get_s_psp(void) {
 
-  return (uint32_t)__port_syscall_get_x_psp(__sch_get_currthread());
+  return (uint32_t)__port_syscall_get_s_psp(__sch_get_currthread());
 }
 
 CC_WEAK void __port_do_fastcall_entry(struct port_extctx *ectxp,
@@ -87,7 +102,7 @@ CC_WEAK void __port_do_syscall_entry(struct port_extctx *ectxp,
 
 CC_WEAK void __port_do_syscall_return(void) {
 
-  __set_PSP(__port_syscall_get_x_psp(__sch_get_currthread()));
+  __set_PSP(__port_syscall_get_u_psp(__sch_get_currthread()));
 }
 #endif /* PORT_USE_SYSCALL == TRUE */
 
@@ -169,7 +184,48 @@ void port_init(os_instance_t *oip) {
   NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
 
-#if PORT_USE_SYSCALL == TRUE
+#if PORT_MPU_ENABLED == TRUE
+  /* MPU initialization as specified in port options.*/
+  {
+    MPU->MAIR0 = PORT_MPU_MAIR0_INIT;
+    MPU->MAIR1 = PORT_MPU_MAIR1_INIT;
+
+    static const uint32_t regs0[]  = {MPU_RNR_REGION(0U),
+                                      PORT_MPU_RBAR0_INIT, PORT_MPU_RLAR0_INIT,
+                                      PORT_MPU_RBAR1_INIT, PORT_MPU_RLAR1_INIT,
+                                      PORT_MPU_RBAR2_INIT, PORT_MPU_RLAR2_INIT,
+                                      PORT_MPU_RBAR3_INIT, PORT_MPU_RLAR3_INIT};
+    port_init_regions(regs0, &MPU->RNR);
+
+#if CORTEX_MPU_REGIONS > 4
+    static const uint32_t regs4[]  = {MPU_RNR_REGION(4U),
+                                      PORT_MPU_RBAR4_INIT, PORT_MPU_RLAR4_INIT,
+                                      PORT_MPU_RBAR5_INIT, PORT_MPU_RLAR5_INIT,
+                                      PORT_MPU_RBAR6_INIT, PORT_MPU_RLAR6_INIT,
+                                      PORT_MPU_RBAR7_INIT, PORT_MPU_RLAR7_INIT};
+    port_init_regions(regs4, &MPU->RNR);
+
+#if CORTEX_MPU_REGIONS > 8
+    static const uint32_t regs8[]  = {MPU_RNR_REGION(8U),
+                                      PORT_MPU_RBAR8_INIT, PORT_MPU_RLAR8_INIT,
+                                      PORT_MPU_RBAR9_INIT, PORT_MPU_RLAR9_INIT,
+                                      PORT_MPU_RBAR10_INIT, PORT_MPU_RLAR10_INIT,
+                                      PORT_MPU_RBAR11_INIT, PORT_MPU_RLAR11_INIT};
+    port_init_regions(regs8, &MPU->RNR);
+
+#if CORTEX_MPU_REGIONS > 12
+    static const uint32_t regs12[] = {MPU_RNR_REGION(12U),
+                                      PORT_MPU_RBAR12_INIT, PORT_MPU_RLAR12_INIT,
+                                      PORT_MPU_RBAR13_INIT, PORT_MPU_RLAR13_INIT,
+                                      PORT_MPU_RBAR14_INIT, PORT_MPU_RLAR14_INIT,
+                                      PORT_MPU_RBAR15_INIT, PORT_MPU_RLAR15_INIT};
+    port_init_regions(regs12, &MPU->RNR);
+#endif
+#endif
+#endif
+  }
+#endif
+#if (PORT_MPU_ENABLED == TRUE) || (PORT_USE_SYSCALL == TRUE)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif

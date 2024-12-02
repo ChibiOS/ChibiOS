@@ -264,6 +264,300 @@
 #define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
 #endif
 
+/**
+ * @brief   Enables MPU on RTOS initialization.
+ */
+#if !defined(PORT_MPU_ENABLED) || defined(__DOXYGEN__)
+#define PORT_MPU_ENABLED               TRUE
+#endif
+
+/**
+ * @brief   MAIR0 register initialization.
+ * @note    Default values of ATTR0...ATTR2 fields are those expected by the
+ *          SB subsystem, do not change if using SB.
+ *          - ATTR0 is cacheable memory.
+ *          - ATTR1 is non-cacheable memory.
+ *          - ATTR2 is device space.
+ *          - ATTR3 is available.
+ *          .
+ */
+#if !defined(PORT_MPU_MAIR0_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_MAIR0_INIT                                                 \
+  (MPU_MAIR0_ATTR0(MPU_MAIR_MEM_OUTER_WB_NT_RWA     |                       \
+                   MPU_MAIR_MEM_INNER_WB_NT_RWA)    |                       \
+   MPU_MAIR0_ATTR1(MPU_MAIR_MEM_OUTER_NC            |                       \
+                   MPU_MAIR_MEM_INNER_NC)           |                       \
+   MPU_MAIR0_ATTR2(MPU_MAIR_DEVICE_nGnRE)           |                       \
+   MPU_MAIR0_ATTR3(0U))
+#endif
+
+/**
+ * @brief   MAIR1 register initialization.
+ */
+#if !defined(PORT_MPU_MAIR1_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_MAIR1_INIT                                                 \
+  (MPU_MAIR1_ATTR0(0U)                              |                       \
+   MPU_MAIR1_ATTR1(0U)                              |                       \
+   MPU_MAIR1_ATTR2(0U)                              |                       \
+   MPU_MAIR1_ATTR3(0U))
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 0.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR0_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR0_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 0.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR0_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR0_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 1.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR1_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR1_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 1.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR1_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR1_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 2.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR2_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR2_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 2.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR2_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR2_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 3.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR3_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR3_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 3.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR3_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR3_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 4.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR4_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR4_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 4.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR4_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR4_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 5.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR5_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR5_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 5.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR5_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR5_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 6.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR6_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR6_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 6.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR6_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR6_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 7.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR7_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR7_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 7.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR7_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR7_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 8.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR8_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR8_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 8.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR8_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR8_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 9.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR9_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR9_INIT             0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 9.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR9_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR9_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 10.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR10_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR10_INIT            0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 10.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR10_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR10_INIT            0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 11.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR11_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR11_INIT            0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 11.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR11_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR11_INIT            0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 12.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR12_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR12_INIT            0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 12.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR12_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR12_INIT            0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 13.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR13_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR13_INIT            0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 13.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR13_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR13_INIT            0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 14.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR14_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR14_INIT            0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 14.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR14_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR14_INIT            0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 15.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR15_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR15_INIT            0U
+#endif
+
+/**
+ * @brief   RLAR register initialization for region 15.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RLAR15_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RLAR15_INIT            0U
+#endif
+
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
@@ -517,8 +811,10 @@ struct port_context {
 #endif
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
-    uint32_t            x_psp;
-    uint32_t            x_psplim;
+    uint32_t            u_psp;
+    uint32_t            u_psplim;
+    uint32_t            s_psp;
+    uint32_t            s_psplim;
     const void          *p;
   } syscall;
 #endif
@@ -585,12 +881,13 @@ struct port_context {
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
+  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop)                     \
     (tp)->ctx.regs.control          = 0U;                                   \
-    (tp)->ctx.syscall.x_psp         = (uint32_t)(wtop);                     \
-    (tp)->ctx.syscall.p             = NULL;
+    (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
+    (tp)->ctx.syscall.s_psplim      = (uint32_t)(wbase);                    \
+    (tp)->ctx.syscall.p             = NULL
 #else
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
+  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop)
 #endif
 
 /**
@@ -736,7 +1033,7 @@ struct port_context {
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
   (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
   __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
+  __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop);                            \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
 } while (false)
@@ -752,7 +1049,7 @@ struct port_context {
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
   (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
   __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
+  __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop);                            \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
 } while (false)
 #endif
@@ -844,20 +1141,36 @@ struct port_context {
 
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Updates the stored alternate PSP address.
+ * @brief   Updates the stored user PSP address.
  *
  * @param[in] tp        pointer to the thread
  * @param[in] addr      new address
  */
-#define __port_syscall_set_x_psp(tp, addr) (tp)->ctx.syscall.x_psp = (uint32_t)(addr)
+#define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (uint32_t)(addr)
 
 /**
- * @brief   Returns the alternate PSP address.
+ * @brief   Updates the stored system PSP address.
  *
  * @param[in] tp        pointer to the thread
- * @return              The alternate PSP value.
+ * @param[in] addr      new address
  */
-#define __port_syscall_get_x_psp(tp) (tp)->ctx.syscall.x_psp
+#define __port_syscall_set_s_psp(tp, addr) (tp)->ctx.syscall.s_psp = (uint32_t)(addr)
+
+/**
+ * @brief   Returns the user PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The user PSP value.
+ */
+#define __port_syscall_get_u_psp(tp) (tp)->ctx.syscall.u_psp
+
+/**
+ * @brief   Returns the system PSP address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The system PSP value.
+ */
+#define __port_syscall_get_s_psp(tp) (tp)->ctx.syscall.s_psp
 
 /**
  * @brief   Returns the syscall association pointer.

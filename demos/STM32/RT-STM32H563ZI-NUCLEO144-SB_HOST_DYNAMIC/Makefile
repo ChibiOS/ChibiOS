@@ -98,6 +98,8 @@ DEPDIR   := ./.dep
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32h5xx.mk
+# Common files.
+include $(CHIBIOS)/os/common/lib/lib.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/xhal/xhal.mk
 include $(CHIBIOS)/os/xhal/ports/STM32/STM32H5xx/platform.mk
@@ -111,7 +113,6 @@ include $(CHIBIOS)/os/sb/vio/sbvio.mk
 # VFS files (optional).
 include $(CHIBIOS)/os/vfs/vfs.mk
 #include $(CHIBIOS)/os/vfs/vfs_syscalls.mk
-#include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
@@ -157,7 +158,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DOOP_USE_LEGACY
 
 # Define ASM defines here
 UADEFS =

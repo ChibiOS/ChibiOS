@@ -65,6 +65,7 @@ sb_t sb;
 /*===========================================================================*/
 
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
+#if defined(PORT_ARCHITECTURE_ARM_V7M)
 static inline uint32_t get_alignment(uint32_t v) {
 
   return 1U << __CLZ(__RBIT(v));
@@ -176,6 +177,114 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 
   return false;
 }
+
+#elif defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
+static bool get_mpu_settings(const sb_memory_region_t *mrp,
+                             port_mpureg_t *mpur) {
+  uint32_t area_base, area_size, area_end;
+
+  /* Unused regions handling, MPU region is not enabled.*/
+  if (sb_reg_is_unused(mrp)) {
+    mpur->rbar = mpur->rlar = 0U;
+    return false;
+  }
+
+  /* Area boundaries.*/
+  area_base = (uint32_t)mrp->area.base;
+  area_size = (uint32_t)mrp->area.size;
+  area_end = area_base + area_size;
+
+  if (!MEM_IS_ALIGNED(area_base, 32U) || !MEM_IS_ALIGNED(area_end, 32U)) {
+    return true;
+  }
+
+
+  /* MPU registers settings.*/
+  mpur->rbar = area_base;
+  mpur->rlar = area_end | MPU_RLAR_ENABLE;
+
+#if 0
+  /* Calculating the smallest region containing the requested area.
+     The region size is the area size aligned to the next power of 2,
+     region base is the area base aligned to the region size.*/
+  region_size = get_next_po2(area_size);
+  region_base = MEM_ALIGN_PREV(area_base, region_size);
+
+  /* Checking if the area fits entirely in the calculated region, if not then
+     region size is doubled.*/
+  if (area_end <= region_base + region_size) {
+    /* The area fits entirely in the region, calculating the sub-regions
+       size.*/
+    subregion_size = region_size / 8U;
+  }
+  else {
+    /* It does not fit, doubling the region size, re-basing the region.*/
+    region_size *= 2U;
+    region_base = MEM_ALIGN_PREV(area_base, region_size);
+    subregion_size = region_size / 8U;
+  }
+
+  /* Constraint, the area base address must be aligned to a sub-region
+     boundary.*/
+  if (!MEM_IS_ALIGNED(area_base, subregion_size)) {
+    return true;
+  }
+
+  /* Constraint, the area size must also be aligned to a sub-region
+     size.*/
+  if (!MEM_IS_ALIGNED(area_size, subregion_size)) {
+    return true;
+  }
+
+  /* Calculating the sub-regions disable mask.*/
+  static const uint8_t srd_lower[] = {0x00U, 0x01U, 0x03U, 0x07U,
+                                      0x0FU, 0x1FU, 0x3FU, 0x7FU};
+  static const uint8_t srd_upper[] = {0x00U, 0x80U, 0xC0U, 0xE0U,
+                                      0xF0U, 0xF8U, 0xFCU, 0xFEU};
+  srd = (uint32_t)srd_lower[(area_base - region_base) / subregion_size] |
+        (uint32_t)srd_upper[(region_base + region_size - area_end) / subregion_size];
+
+  /* MPU registers settings.*/
+  mpur->rbar = region_base;
+  mpur->rasr = (srd << 8) | (__CLZ(__RBIT(region_size)) << 1) | MPU_RASR_ENABLE;
+
+  /* Region attributes.*/
+  if (sb_reg_is_writable(mrp)) {
+    mpur->rasr |= MPU_RASR_ATTR_AP_RW_RW;
+  }
+  else {
+    mpur->rasr |= MPU_RASR_ATTR_AP_RW_RO;
+  }
+  switch (sb_reg_get_type(mrp)) {
+  case SB_REG_TYPE_DEVICE:
+    /* Device type, execute and cached ignored.*/
+    mpur->rasr |= MPU_RASR_ATTR_SHARED_DEVICE | MPU_RASR_ATTR_S;
+    break;
+  case SB_REG_TYPE_MEMORY:
+    /* Memory type, there are various kinds.*/
+    if (sb_reg_is_cacheable(mrp)) {
+      if (sb_reg_is_writable(mrp)) {
+        mpur->rasr |= MPU_RASR_ATTR_CACHEABLE_WB_WA | MPU_RASR_ATTR_S;
+      }
+      else {
+        mpur->rasr |= MPU_RASR_ATTR_CACHEABLE_WT_NWA | MPU_RASR_ATTR_S;
+      }
+    }
+    else {
+      mpur->rasr |= MPU_RASR_ATTR_NON_CACHEABLE | MPU_RASR_ATTR_S;
+    }
+    if (!sb_reg_is_executable(mrp)) {
+      mpur->rasr |= MPU_RASR_ATTR_XN;
+    }
+    break;
+  default:
+    return true;
+  }
+#endif
+
+  return false;
+}
+#endif /* defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE) */
 #endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
 
 const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {

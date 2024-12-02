@@ -586,7 +586,7 @@ struct port_context {
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
     (tp)->ctx.regs.control          = 0U;                                   \
     (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
-    (tp)->ctx.syscall.p             = NULL;
+    (tp)->ctx.syscall.p             = NULL
 #else
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
 #endif

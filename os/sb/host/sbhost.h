@@ -41,10 +41,12 @@
 #define SB_REG_TYPE_MEMORY      1U
 #define SB_REG_TYPE_DEVICE      2U
 
+/* Extra attributes regions.*/
 #define SB_REG_ATTR_WRITABLE    (1U << 8)
-#define SB_REG_ATTR_EXECUTABLE  (1U << 9)
-#define SB_REG_ATTR_CACHEABLE   (1U << 10)
+#define SB_REG_ATTR_EXECUTABLE  (1U << 9)   /* Only for SB_REG_TYPE_MEMORY.*/
+#define SB_REG_ATTR_CACHEABLE   (1U << 10)  /* Only for SB_REG_TYPE_MEMORY.*/
 
+/* Derived region types.*/
 #define SB_REG_IS_UNUSED        (SB_REG_TYPE_UNUSED)
 #define SB_REG_IS_CODE          (SB_REG_TYPE_MEMORY |                       \
                                  SB_REG_ATTR_CACHEABLE |                    \
