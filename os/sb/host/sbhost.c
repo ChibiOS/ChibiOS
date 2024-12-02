@@ -199,9 +199,42 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
   }
 
 
-  /* MPU registers settings.*/
-  mpur->rbar = area_base;
+  /* MPU registers base settings.*/
+  mpur->rbar = area_base | MPU_RBAR_SH_OUTER;
   mpur->rlar = area_end | MPU_RLAR_ENABLE;
+
+  /* Region attributes.*/
+  if (sb_reg_is_writable(mrp)) {
+    mpur->rbar |= MPU_RBAR_AP_RW_RW;
+  }
+  else {
+    mpur->rbar |= MPU_RBAR_AP_RW_RO;
+  }
+  switch (sb_reg_get_type(mrp)) {
+  case SB_REG_TYPE_DEVICE:
+    /* Device type, execute and cached ignored.*/
+    mpur->rlar |= MPU_RLAR_ATTRINDX(3U);
+    break;
+  case SB_REG_TYPE_MEMORY:
+    /* Memory type, there are various kinds.*/
+    if (sb_reg_is_cacheable(mrp)) {
+      if (sb_reg_is_writable(mrp)) {
+        mpur->rlar |= MPU_RLAR_ATTRINDX(0U);
+      }
+      else {
+        mpur->rlar |= MPU_RLAR_ATTRINDX(1U);
+      }
+    }
+    else {
+      mpur->rlar |= MPU_RLAR_ATTRINDX(2U);
+    }
+    if (!sb_reg_is_executable(mrp)) {
+      mpur->rbar |= MPU_RBAR_XN;
+    }
+    break;
+  default:
+    return true;
+  }
 
 #if 0
   /* Calculating the smallest region containing the requested area.

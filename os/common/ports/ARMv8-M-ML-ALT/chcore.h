@@ -273,22 +273,23 @@
 
 /**
  * @brief   MAIR0 register initialization.
- * @note    Default values of ATTR0...ATTR2 fields are those expected by the
+ * @note    Default values of ATTR0...ATTR3 fields are those expected by the
  *          SB subsystem, do not change if using SB.
- *          - ATTR0 is cacheable memory.
- *          - ATTR1 is non-cacheable memory.
- *          - ATTR2 is device space.
- *          - ATTR3 is available.
+ *          - ATTR0 is write-back cacheable memory.
+ *          - ATTR1 is write-through cacheable memory.
+ *          - ATTR2 is non-cacheable memory.
+ *          - ATTR3 is device space.
  *          .
  */
 #if !defined(PORT_MPU_MAIR0_INIT) || defined(__DOXYGEN__)
 #define PORT_MPU_MAIR0_INIT                                                 \
   (MPU_MAIR0_ATTR0(MPU_MAIR_MEM_OUTER_WB_NT_RWA     |                       \
                    MPU_MAIR_MEM_INNER_WB_NT_RWA)    |                       \
-   MPU_MAIR0_ATTR1(MPU_MAIR_MEM_OUTER_NC            |                       \
+   MPU_MAIR0_ATTR1(MPU_MAIR_MEM_OUTER_WT_NT_RWA     |                       \
+                   MPU_MAIR_MEM_INNER_WT_NT_RWA)    |                       \
+   MPU_MAIR0_ATTR2(MPU_MAIR_MEM_OUTER_NC            |                       \
                    MPU_MAIR_MEM_INNER_NC)           |                       \
-   MPU_MAIR0_ATTR2(MPU_MAIR_DEVICE_nGnRE)           |                       \
-   MPU_MAIR0_ATTR3(0U))
+   MPU_MAIR0_ATTR3(MPU_MAIR_DEVICE_nGnRE))
 #endif
 
 /**
@@ -296,10 +297,10 @@
  */
 #if !defined(PORT_MPU_MAIR1_INIT) || defined(__DOXYGEN__)
 #define PORT_MPU_MAIR1_INIT                                                 \
-  (MPU_MAIR1_ATTR0(0U)                              |                       \
-   MPU_MAIR1_ATTR1(0U)                              |                       \
-   MPU_MAIR1_ATTR2(0U)                              |                       \
-   MPU_MAIR1_ATTR3(0U))
+  (MPU_MAIR1_ATTR4(0U)                              |                       \
+   MPU_MAIR1_ATTR5(0U)                              |                       \
+   MPU_MAIR1_ATTR6(0U)                              |                       \
+   MPU_MAIR1_ATTR7(0U))
 #endif
 
 /**
