@@ -59,9 +59,15 @@ static void vrq_privileged_code(void) {
 }
 
 CC_FORCE_INLINE
-static inline void vrq_makectx(struct port_extctx *newctxp,
-                               sb_class_t *sbp,
-                               sb_vrqnum_t nvrq) {
+static inline struct port_extctx *vrq_makectx(struct port_extctx *ectxp,
+                                              sb_class_t *sbp,
+                                              sb_vrqnum_t nvrq) {
+  struct port_extctx *newctxp = ectxp - 1;  /* TODO: Test FPCA, it could be short or long.*/
+
+  /* Creating a stack frame for the VRQ.*/
+  newctxp = ectxp - 1;
+
+  /* Clearing served VRQ.*/
   sbp->vrq_wtmask &= ~(1U << nvrq);
 
   /* Disabling VRQs globally during processing.*/
@@ -81,6 +87,8 @@ static inline void vrq_makectx(struct port_extctx *newctxp,
 #if CORTEX_USE_FPU == TRUE
   newctxp->fpscr  = FPU->FPDSCR;
 #endif
+
+  return newctxp;
 }
 
 CC_NO_INLINE
@@ -98,8 +106,7 @@ static struct port_extctx *vrq_writectx(struct port_extctx *ectxp,
   }
   else {
     /* Creating a new context for return the VRQ handler.*/
-    ectxp--;
-    vrq_makectx(ectxp, sbp, nvrq);
+    ectxp = vrq_makectx(ectxp, sbp, nvrq);
   }
 
   return ectxp;
@@ -123,9 +130,24 @@ static void vrq_pushctx(struct port_extctx *ectxp,
   }
   else {
     /* Creating a new context for return the VRQ handler.*/
-    ectxp--;
-    vrq_makectx(ectxp, sbp, nvrq);
+    ectxp = vrq_makectx(ectxp, sbp, nvrq);
     __set_PSP((uint32_t)ectxp);
+  }
+}
+
+CC_NO_INLINE
+static void vrq_fastc_check_pending(struct port_extctx *ectxp, sb_class_t *sbp) {
+
+  /* Processing pending VRQs if enabled.*/
+  if (((sbp->vrq_isr & SB_VRQ_ISR_DISABLED) == 0U)) {
+    sb_vrqmask_t active_mask;
+
+    active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
+    if (active_mask != 0U) {
+
+      /* Creating a return context.*/
+      vrq_pushctx(ectxp, sbp, __CLZ(__RBIT(active_mask)));
+    }
   }
 }
 
@@ -311,7 +333,7 @@ void sb_fastc_vrq_gcsts(struct port_extctx *ectxp) {
   ectxp->r0 = (uint32_t)sbp->vrq_flags[nvrq];
   sbp->vrq_flags[nvrq] = 0U;
 
-  __sb_vrq_check_pending(ectxp, sbp);
+  /* No need to check for pending VRQs.*/
 }
 
 void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {
@@ -322,7 +344,7 @@ void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {
   ectxp->r0 = sbp->vrq_wtmask;
   sbp->vrq_wtmask |= m;
 
-  __sb_vrq_check_pending(ectxp, sbp);
+  vrq_fastc_check_pending(ectxp, sbp);
 }
 
 void sb_fastc_vrq_clrwt(struct port_extctx *ectxp) {
@@ -344,7 +366,7 @@ void sb_fastc_vrq_seten(struct port_extctx *ectxp) {
   ectxp->r0 = sbp->vrq_enmask;
   sbp->vrq_enmask |= m;
 
-  __sb_vrq_check_pending(ectxp, sbp);
+  vrq_fastc_check_pending(ectxp, sbp);
 }
 
 void sb_fastc_vrq_clren(struct port_extctx *ectxp) {
@@ -404,7 +426,7 @@ void sb_fastc_vrq_return(struct port_extctx *ectxp) {
   if (active_mask != 0U) {
 
     /* Re-enabling VRQs globally.*/
-    sbp->vrq_isr = 0U;
+    sbp->vrq_isr = 0U; /* TODO interrupts should not be re-enabled, we are chaining here.*/
 
     /* Creating a new return context.*/
     vrq_pushctx(ectxp, sbp, __CLZ(__RBIT(active_mask)));
@@ -427,7 +449,6 @@ void sb_fastc_vrq_return(struct port_extctx *ectxp) {
  *
  * @notapi
  */
-CC_NO_INLINE
 void __sb_vrq_check_pending(struct port_extctx *ectxp, sb_class_t *sbp) {
 
   /* Processing pending VRQs if enabled.*/
@@ -443,8 +464,6 @@ void __sb_vrq_check_pending(struct port_extctx *ectxp, sb_class_t *sbp) {
     }
   }
 
-  /* Note, setting the PSP here is redundant for fast calls, it could be
-     worth duplicating this function for efficiency.*/
   __set_PSP((uint32_t)ectxp);
 }
 
