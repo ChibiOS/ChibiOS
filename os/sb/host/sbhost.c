@@ -65,7 +65,7 @@ sb_t sb;
 /*===========================================================================*/
 
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
-#if defined(PORT_ARCHITECTURE_ARM_V7M)
+#if defined(PORT_ARCHITECTURE_ARM_V7M) || defined(PORT_ARCHITECTURE_ARM_V7ME)
 static inline uint32_t get_alignment(uint32_t v) {
 
   return 1U << __CLZ(__RBIT(v));
