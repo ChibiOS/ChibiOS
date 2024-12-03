@@ -1145,7 +1145,7 @@ struct port_context {
  * @brief   Updates the stored user PSP address.
  *
  * @param[in] tp        pointer to the thread
- * @param[in] addr      new address
+ * @param[in] addr      new user PSP address
  */
 #define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (uint32_t)(addr)
 
@@ -1153,7 +1153,7 @@ struct port_context {
  * @brief   Updates the stored system PSP address.
  *
  * @param[in] tp        pointer to the thread
- * @param[in] addr      new address
+ * @param[in] addr      new system PSP address
  */
 #define __port_syscall_set_s_psp(tp, addr) (tp)->ctx.syscall.s_psp = (uint32_t)(addr)
 
@@ -1161,7 +1161,7 @@ struct port_context {
  * @brief   Returns the user PSP address.
  *
  * @param[in] tp        pointer to the thread
- * @return              The user PSP value.
+ * @return              The user PSP address.
  */
 #define __port_syscall_get_u_psp(tp) (tp)->ctx.syscall.u_psp
 
@@ -1169,9 +1169,41 @@ struct port_context {
  * @brief   Returns the system PSP address.
  *
  * @param[in] tp        pointer to the thread
- * @return              The system PSP value.
+ * @return              The system PSP address.
  */
 #define __port_syscall_get_s_psp(tp) (tp)->ctx.syscall.s_psp
+
+/**
+ * @brief   Updates the stored user PSPLIM address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @param[in] addr      new user PSPLIM address
+ */
+#define __port_syscall_set_u_psplim(tp, addr) (tp)->ctx.syscall.u_psplim = (uint32_t)(addr)
+
+/**
+ * @brief   Updates the stored system PSPLIM address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @param[in] addr      new system PSPLIM address
+ */
+#define __port_syscall_set_s_psplim(tp, addr) (tp)->ctx.syscall.s_psplim = (uint32_t)(addr)
+
+/**
+ * @brief   Returns the system PSPLIM address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The system PSPLIM address.
+ */
+#define __port_syscall_get_s_psplim(tp) (tp)->ctx.syscall.s_psplim
+
+/**
+ * @brief   Returns the user PSPLIM address.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              The user PSPLIM address.
+ */
+#define __port_syscall_get_u_psplim(tp) (tp)->ctx.syscall.u_psplim
 
 /**
  * @brief   Returns the syscall association pointer.

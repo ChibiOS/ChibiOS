@@ -82,6 +82,10 @@ typedef struct {
    */
   uint32_t          u_psp;
   /**
+   * @brief   Initial unprivileged PSPLIM value.
+   */
+  uint32_t          u_psplim;
+  /**
    * @brief   Thread argument.
    */
   void              *arg;

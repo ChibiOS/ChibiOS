@@ -559,6 +559,9 @@ thread_t *sbStartThread(sb_class_t *sbp,
     .prio       = config->thread.prio,
     .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
+    .u_psplim   = (uint32_t)datareg->area.base,
+#endif
     .arg        = (void *)sbp
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
@@ -693,6 +696,9 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
     .prio       = config->thread.prio,
     .u_pc       = sbp->sbhp->hdr_entry,
     .u_psp      = (uint32_t)usp,
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
+    .u_psplim   = (uint32_t)config->regions[0].area.base,
+#endif
     .arg        = (void *)sbp
   };
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
