@@ -309,8 +309,8 @@ bool can_lld_start(CANDriver *canp) {
 
   /* Enabling interrupts, only using interrupt zero.*/
   canp->fdcan->IR     = (uint32_t)-1;
-  canp->fdcan->IE     = FDCAN_IE_RF1FE | FDCAN_IE_RF1LE |
-                        FDCAN_IE_RF0FE | FDCAN_IE_RF0LE |
+  canp->fdcan->IE     = FDCAN_IE_RF1NE | FDCAN_IE_RF1LE |
+                        FDCAN_IE_RF0NE | FDCAN_IE_RF0LE |
                         FDCAN_IE_TCE;
   canp->fdcan->TXBTIE = FDCAN_TXBTIE_TIE;
   canp->fdcan->ILE    = FDCAN_ILE_EINT0;
@@ -412,8 +412,8 @@ void can_lld_transmit(CANDriver *canp, canmbx_t mailbox, const CANTxFrame *ctfp)
  * @param[in] mailbox   mailbox number, @p CAN_ANY_MAILBOX for any mailbox
  *
  * @return              The queue space availability.
- * @retval false        no space in the transmit queue.
- * @retval true         transmit slot available.
+ * @retval false        no new messages available.
+ * @retval true         new messages available.
  *
  * @notapi
  */
@@ -487,8 +487,8 @@ void can_lld_receive(CANDriver *canp, canmbx_t mailbox, CANRxFrame *crfp) {
     canp->fdcan->RXF0A = rxf0a;
 
     if (!can_lld_is_rx_nonempty(canp, mailbox)) {
-      canp->fdcan->IR |= FDCAN_IR_RF0F;
-      canp->fdcan->IE |= FDCAN_IE_RF0FE;
+      canp->fdcan->IR |= FDCAN_IR_RF0N;
+      canp->fdcan->IE |= FDCAN_IE_RF0NE;
     }
   }
   else {
@@ -498,8 +498,8 @@ void can_lld_receive(CANDriver *canp, canmbx_t mailbox, CANRxFrame *crfp) {
     canp->fdcan->RXF1A = rxf1a;
 
     if (!can_lld_is_rx_nonempty(canp, mailbox)) {
-      canp->fdcan->IR |= FDCAN_IR_RF1F;
-      canp->fdcan->IE |= FDCAN_IE_RF1FE;
+      canp->fdcan->IR |= FDCAN_IR_RF1N;
+      canp->fdcan->IE |= FDCAN_IE_RF1NE;
     }
   }
 }
@@ -553,20 +553,22 @@ void can_lld_wakeup(CANDriver *canp) {
  */
 void can_lld_serve_interrupt(CANDriver *canp) {
   uint32_t ir = 0;
+  uint32_t ie = 0;
 
   /* Getting and clearing active IRQs.*/
   ir = canp->fdcan->IR;
+  ie = canp->fdcan->IE;
   canp->fdcan->IR = ir;
 
   /* RX events.*/
-  if ((ir & FDCAN_IR_RF0F) != 0U) {
+  if (((ir & FDCAN_IR_RF0N) != 0U) && ((ie & FDCAN_IE_RF0NE) != 0)) {
     /* Disabling this source until the queue is emptied.*/
-    canp->fdcan->IE &= ~FDCAN_IE_RF0FE;
+    canp->fdcan->IE &= ~FDCAN_IE_RF0NE;
     _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(1U));
   }
-  if ((ir & FDCAN_IR_RF1F) != 0U) {
+  if (((ir & FDCAN_IR_RF1N) != 0U) && ((ie & FDCAN_IE_RF1NE) != 0)) {
     /* Disabling this source until the queue is emptied.*/
-    canp->fdcan->IE &= ~FDCAN_IE_RF1FE;
+    canp->fdcan->IE &= ~FDCAN_IE_RF1NE;
     _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(2U));
   }
 
@@ -579,7 +581,7 @@ void can_lld_serve_interrupt(CANDriver *canp) {
   if ((ir & FDCAN_IR_TC) != 0U) {
     eventflags_t flags = 0U;
 
-    flags |= 1U;
+    flags |= CAN_MAILBOX_TO_MASK(1U);
     _can_tx_empty_isr(canp, flags);
   }
 }
