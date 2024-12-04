@@ -1,0 +1,2 @@
+PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/GPDMAv1/stm32_gpdma.c
+PLATFORMINC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/GPDMAv1
