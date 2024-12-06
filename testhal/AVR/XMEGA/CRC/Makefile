@@ -91,6 +91,9 @@ PROJECT = ch
 
 # Imported source files and paths
 CHIBIOS = ../../../..
+CONFDIR  := ./cfg
+BUILDDIR := ./build
+DEPDIR   := ./.dep
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -116,7 +119,7 @@ CSRC =  $(ALLCSRC) \
 CPPSRC = $(ALLCPPSRC)
 
 # Header files here.
-INCDIR =  $(ALLINC)
+INCDIR =  $(ALLINC) $(CONFDIR)
 
 #
 # Project, sources and paths.
