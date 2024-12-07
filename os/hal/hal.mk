@@ -18,8 +18,10 @@ HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_buffered_serial.c \
           $(CHIBIOS)/os/hal/src/hal_buffers.c \
           $(CHIBIOS)/os/hal/src/hal_queues.c \
-          $(CHIBIOS)/os/hal/src/hal_flash.c \
           $(CHIBIOS)/os/hal/src/hal_mmcsd.c
+ifneq ($(EXLUDE_FLASH),yes)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_flash.c
+endif
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_adc.c
 endif
