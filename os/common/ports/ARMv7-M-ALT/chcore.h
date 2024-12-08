@@ -61,6 +61,40 @@
 /** @} */
 
 /**
+ * @name    Port Capabilities and Constants
+ * @{
+ */
+/**
+ * @brief   This port supports a realtime counter.
+ */
+#define PORT_SUPPORTS_RT                TRUE
+
+/**
+ * @brief   Natural alignment constant.
+ * @note    It is the minimum alignment for pointer-size variables.
+ */
+#define PORT_NATURAL_ALIGN              sizeof (void *)
+
+/**
+ * @brief   Stack initial alignment constant.
+ * @note    It is the alignment required for the initial stack pointer,
+ *          must be a multiple of sizeof (port_stkline_t).
+ * @note    It is set to 32 in this architecture in order to have stacks
+ *          initially aligned with cache lines.
+ */
+#define PORT_STACK_ALIGN                32U
+
+/**
+ * @brief   Working Areas alignment constant.
+ * @note    It is the alignment to be enforced for thread working areas,
+ *          must be a multiple of sizeof (port_stkline_t).
+ * @note    It is set to 32 in this architecture in order to have working
+ *          areas aligned with cache lines and MPU guard pages.
+ */
+#define PORT_WORKING_AREA_ALIGN         32U
+/** @} */
+
+/**
  * @name    Priority Ranges
  * @{
  */
@@ -246,39 +280,22 @@
 #error "invalid CORTEX_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
+#if (PORT_USE_SYSCALL == TRUE) ||                                           \
+    ((CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING >= 2)) ||   \
+    defined(__DOXYGEN__)
 /**
- * @name    Port Capabilities and Constants
- * @{
+ * @brief   CONTROL as part of the saved thread context.
+ * @note    Saving control is only required when:
+ *          - PORT_USE_SYSCALL is enabled because support for unprivileged
+ *            mode.
+ *          - PORT_USE_FPU is enabled with CORTEX_USE_FPU_FAST_SWITCHING
+ *            modes 2 or 3 because CONTROL.FPCA needs to be handled for
+ *            each thread.
  */
-/**
- * @brief   This port supports a realtime counter.
- */
-#define PORT_SUPPORTS_RT                TRUE
-
-/**
- * @brief   Natural alignment constant.
- * @note    It is the minimum alignment for pointer-size variables.
- */
-#define PORT_NATURAL_ALIGN              sizeof (void *)
-
-/**
- * @brief   Stack initial alignment constant.
- * @note    It is the alignment required for the initial stack pointer,
- *          must be a multiple of sizeof (port_stkline_t).
- * @note    It is set to 32 in this architecture in order to have stacks
- *          initially aligned with cache lines.
- */
-#define PORT_STACK_ALIGN                32U
-
-/**
- * @brief   Working Areas alignment constant.
- * @note    It is the alignment to be enforced for thread working areas,
- *          must be a multiple of sizeof (port_stkline_t).
- * @note    It is set to 32 in this architecture in order to have working
- *          areas aligned with cache lines and MPU guard pages.
- */
-#define PORT_WORKING_AREA_ALIGN         32U
-/** @} */
+#define PORT_SAVE_CONTROL               TRUE
+#else
+#define PORT_SAVE_CONTROL               FALSE
+#endif
 
 /**
  * @name    Architecture
@@ -494,7 +511,7 @@ struct port_intctx {
   uint32_t              r9;
   uint32_t              r10;
   uint32_t              r11;
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+#if (PORT_SAVE_CONTROL == TRUE) || defined(__DOXYGEN__)
   uint32_t              control;
 #endif
   uint32_t              lr_exc;
@@ -565,26 +582,20 @@ struct port_context {
 
 /**
  * @brief   Exception return value for threads creation.
+ * @note    Enforcing a long context when FPU is enabled else using a
+ *          short context.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-  #if (CORTEX_USE_FPU_FAST_SWITCHING < 2) || defined(__DOXYGEN__)
-    /* FPU enabled, start using a long context.*/
-    #define CORTEX_EXC_RETURN           0xFFFFFFED
-  #else
-    /* FPU enabled with fast switching, start using a short context.*/
-    #define CORTEX_EXC_RETURN           0xFFFFFFFD
-  #endif
-#else /* CORTEX_USE_FPU == FALSE */
-  /* Integer-only, always short context.*/
-  #define CORTEX_EXC_RETURN             0xFFFFFFFD
-#endif /* CORTEX_USE_FPU == FALSE */
+  #define CORTEX_EXC_RETURN         0xFFFFFFED
+#else
+  #define CORTEX_EXC_RETURN         0xFFFFFFFD
+#endif
 
 /**
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.regs.control          = 0U;                                   \
     (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.p             = NULL
 #else
@@ -592,10 +603,30 @@ struct port_context {
 #endif
 
 /**
- * @brief   Initialization of FPU part of thread context.
+ * @brief   Initialization of CONTROL part of thread context.
  */
-#define __PORT_SETUP_CONTEXT_FPU(tp)                                        \
-  (tp)->ctx.sp->fpscr               = (uint32_t)0
+#if (PORT_SAVE_CONTROL == TRUE) || defined(__DOXYGEN__)
+  #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+    #define __PORT_SETUP_CONTEXT_CONTROL(tp)                                \
+      (tp)->ctx.regs.control          = CONTROL_FPCA_Msk
+  #else
+    #define __PORT_SETUP_CONTEXT_CONTROL(tp)                                \
+      (tp)->ctx.regs.control          = 0U
+  #endif
+#else
+  #define __PORT_SETUP_CONTEXT_CONTROL(tp)
+#endif
+
+/**
+ * @brief   Initialization of FPU part of thread context.
+ * @note    The value of FPDSCR is used, it is meant to be the default.
+ */
+#if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+  #define __PORT_SETUP_CONTEXT_FPU(tp)                                      \
+    (tp)->ctx.sp->fpscr               = FPU->FPDSCR
+#else
+  #define __PORT_SETUP_CONTEXT_FPU(tp)
+#endif
 
 /**
  * @brief   Initialization of MPU part of thread context.
@@ -640,10 +671,8 @@ struct port_context {
 #endif
 
 /**
- * @brief   Platform dependent part of the @p chThdCreateI() API.
+ * @brief   Platform dependent part of the thread creation API.
  */
-#if (CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING < 2) ||      \
-    defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
                  ((uint8_t *)(wtop) - sizeof (struct port_extctx));         \
@@ -653,25 +682,11 @@ struct port_context {
   (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
   (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
   (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
+  __PORT_SETUP_CONTEXT_CONTROL(tp);                                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
   __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 } while (false)
-
-#else
-#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
-  (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
-                 ((uint8_t *)(wtop) - sizeof (struct port_short_extctx));   \
-  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
-  (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
-  (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
-  (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
-  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
-  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
-  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
-} while (false)
-#endif
 
 /**
  * @brief   Context switch area size.

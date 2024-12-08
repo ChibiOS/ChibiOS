@@ -1251,7 +1251,11 @@ void __port_do_syscall_entry(struct port_extctx *ectxp,
   thread_t *tp = __sch_get_currthread();
   struct port_extctx *newctxp;
 
-  /* Return context for change in privileged mode.*/
+  /* Caller context in unprivileged memory.*/
+  __port_syscall_set_u_psp(tp, (uint32_t)ectxp);
+
+  /* Return context for change in privileged mode, it is created on the
+     privileged PSP so no need to check for overflows.*/
   newctxp = ((struct port_extctx *)__port_syscall_get_s_psp(tp)) - 1;
 
   /* Creating context for return in privileged mode.*/
@@ -1260,11 +1264,9 @@ void __port_do_syscall_entry(struct port_extctx *ectxp,
   newctxp->pc    = (uint32_t)__sb_dispatch_syscall;
   newctxp->xpsr  = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
+  /* TODO enforce lazy FPU context save.*/
   newctxp->fpscr = FPU->FPDSCR;
 #endif
-
-  /* Caller context in unprivileged memory.*/
-  __port_syscall_set_u_psp(tp, (uint32_t)ectxp);
 
   /* Switching PSP to the privileged mode PSP.*/
   __set_PSP((uint32_t)newctxp);

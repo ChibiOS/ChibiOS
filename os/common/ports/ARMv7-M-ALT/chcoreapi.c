@@ -109,7 +109,7 @@ thread_t *chThdCreateUnprivileged(const unprivileged_thread_descriptor_t *utdp) 
   ectxp->pc    = utdp->u_pc;
   ectxp->xpsr  = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
-  ectxp->fpscr = __get_FPSCR();
+  ectxp->fpscr = FPU->FPDSCR;
 #endif
 
   /* Starting the thread.*/

@@ -1,12 +1,12 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Nov  9 2024 - 11:29:56
+*** Compiled:     Dec  8 2024 - 10:00:19
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    56776 bytes
-*** RO data size: 11916 bytes
+*** Text size:    57064 bytes
+*** RO data size: 12092 bytes
 *** Data size:    1320 bytes
 *** BSS size:     6860 bytes
 
@@ -33,16 +33,18 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
+--- CH_CFG_SMP_MODE:                    0
+--- CH_CFG_HARDENING_LEVEL:             0
 --- CH_CFG_ST_RESOLUTION:               32
 --- CH_CFG_ST_FREQUENCY:                10000
 --- CH_CFG_INTERVALS_SIZE:              32
 --- CH_CFG_TIME_TYPES_SIZE:             32
 --- CH_CFG_ST_TIMEDELTA:                2
 --- CH_CFG_TIME_QUANTUM:                0
---- CH_CFG_MEMCORE_SIZE:                0
 --- CH_CFG_NO_IDLE_THREAD:              0
 --- CH_CFG_OPTIMIZE_SPEED:              1
 --- CH_CFG_USE_TM:                      1
+--- CH_CFG_USE_TIMESTAMP:               1
 --- CH_CFG_USE_REGISTRY:                1
 --- CH_CFG_USE_WAITEXIT:                1
 --- CH_CFG_USE_SEMAPHORES:              1
@@ -189,35 +191,35 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 732752 msgs/S, 1465504 ctxswc/S
+--- Score : 714279 msgs/S, 1428558 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 674597 msgs/S, 1349194 ctxswc/S
+--- Score : 658908 msgs/S, 1317816 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 674597 msgs/S, 1349194 ctxswc/S
+--- Score : 658908 msgs/S, 1317816 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 1803704 ctxswc/S
+--- Score : 1748056 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 440410 threads/S
+--- Score : 388124 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 521467 threads/S
+--- Score : 452123 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 216835 reschedules/S, 1301010 ctxswc/S
+--- Score : 211968 reschedules/S, 1271808 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 1315264 ctxswc/S
+--- Score : 1285432 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
@@ -225,7 +227,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 7727208 wait+signal/S
+--- Score : 7727204 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
@@ -233,8 +235,8 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
---- OS    : 440 bytes
---- Thread: 184 bytes
+--- OS    : 448 bytes
+--- Thread: 188 bytes
 --- Timer : 24 bytes
 --- Semaph: 12 bytes
 --- Mutex : 16 bytes
@@ -249,12 +251,12 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Nov  9 2024 - 11:29:56
+*** Compiled:     Dec  8 2024 - 10:00:19
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    56776 bytes
-*** RO data size: 11916 bytes
+*** Text size:    57064 bytes
+*** RO data size: 12092 bytes
 *** Data size:    1320 bytes
 *** BSS size:     6860 bytes
 
@@ -282,7 +284,9 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (OS Library Settings)
 --- CH_CFG_USE_MAILBOXES:               1
+--- CH_CFG_USE_MEMCHECKS:               1
 --- CH_CFG_USE_MEMCORE:                 1
+--- CH_CFG_MEMCORE_SIZE:                0
 --- CH_CFG_USE_HEAP:                    1
 --- CH_CFG_USE_MEMPOOLS:                1
 --- CH_CFG_USE_OBJ_FIFOS:               1

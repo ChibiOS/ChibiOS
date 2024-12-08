@@ -77,25 +77,23 @@
                 /* Store integer context through R1.
                    On entry R2=PSP, R3=BASEPRI, R12=CONTROL.*/
                 .macro  PORT_STORE_INTEGER_CONTEXT
-#if PORT_USE_SYSCALL
+#if PORT_SAVE_CONTROL
                 stmia   r1!, {r2-r12,lr}
 #else
                 stmia   r1!, {r2-r11,lr}
 #endif
                 .endm
 
-                /* Load integer context through R0.*/
+                /* Load integer context through R0.
+                   On exit R12=CONTROL.*/
                 .macro  PORT_LOAD_INTEGER_CONTEXT
-#if PORT_USE_SYSCALL
+#if PORT_SAVE_CONTROL
                 ldmia   r0!, {r2-r12, lr}
-                msr     PSP, r2
-                msr     BASEPRI, r3
-                msr     CONTROL, r12
 #else
                 ldmia   r0!, {r2-r11, lr}
+#endif
                 msr     PSP, r2
                 msr     BASEPRI, r3
-#endif
                 .endm
 
                 /* Store float context through R1.*/
@@ -237,6 +235,9 @@ SVC_Handler:
                 /* SVC called from privilege mode for context switch.*/
 #else
                 mrs     r2, PSP             /* Position of the exc.frame.*/
+#if PORT_SAVE_CONTROL
+                mrs     r12, CONTROL
+#endif
 #endif
                 /* Retrieving pointers to old and new context from the
                    saved stack frame.*/
@@ -271,6 +272,9 @@ SVC_Handler:
                 /* Context load for new thread through R0.*/
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_FLOAT_CONTEXT
+#if PORT_SAVE_CONTROL
+                msr     CONTROL, r12        /* Note, after touching FPU regs.*/
+#endif
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
@@ -294,7 +298,7 @@ PendSV_Handler:
                 adds    r1, #CONTEXT_OFFSET
 
                 mrs     r2, PSP
-#if PORT_USE_SYSCALL
+#if PORT_SAVE_CONTROL
                 mrs     r12, CONTROL
 #endif
                 PORT_STORE_INTEGER_CONTEXT
@@ -323,6 +327,9 @@ PendSV_Handler:
 
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_FLOAT_CONTEXT
+#if PORT_SAVE_CONTROL
+                msr     CONTROL, r12        /* Note, after touching FPU regs.*/
+#endif
                 PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
@@ -338,6 +345,12 @@ PendSV_Handler:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
+#if CORTEX_USE_FPU && (CORTEX_USE_FPU_FAST_SWITCHING >= 2)
+                /* Clearing FPCA for the new thread, it is initially set
+                   because a long context is used for starting it.*/
+                mov     r0, #2
+                msr     CONTROL, r0
+#endif
 #if PORT_ENABLE_GUARD_PAGES
                 bl      __port_set_region
 #endif
