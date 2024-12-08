@@ -19,9 +19,6 @@ HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_buffers.c \
           $(CHIBIOS)/os/hal/src/hal_queues.c \
           $(CHIBIOS)/os/hal/src/hal_mmcsd.c
-ifneq ($(EXLUDE_FLASH),yes)
-HALSRC += $(CHIBIOS)/os/hal/src/hal_flash.c
-endif
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_adc.c
 endif
@@ -99,7 +96,6 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_st.c \
          $(CHIBIOS)/os/hal/src/hal_buffers.c \
          $(CHIBIOS)/os/hal/src/hal_queues.c \
-         $(CHIBIOS)/os/hal/src/hal_flash.c \
          $(CHIBIOS)/os/hal/src/hal_mmcsd.c \
          $(CHIBIOS)/os/hal/src/hal_adc.c \
          $(CHIBIOS)/os/hal/src/hal_can.c \
@@ -125,6 +121,10 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_usb.c \
          $(CHIBIOS)/os/hal/src/hal_wdg.c \
          $(CHIBIOS)/os/hal/src/hal_wspi.c
+endif
+
+ifneq ($(EXCLUDE_FLASH),yes)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_flash.c
 endif
 
 # Required include directories
