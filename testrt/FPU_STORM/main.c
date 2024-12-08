@@ -22,6 +22,22 @@
 #include "portab.h"
 
 /*
+ * LED blinker thread, times are in milliseconds.
+ */
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
+
+  (void)arg;
+
+  while (true) {
+    palClearLine(LINE_LED_GREEN);
+    chThdSleepMilliseconds(500);
+    palSetLine(LINE_LED_GREEN);
+    chThdSleepMilliseconds(500);
+  }
+}
+
+/*
  * Application entry point.
  */
 int main(void) {
@@ -35,6 +51,14 @@ int main(void) {
    */
   halInit();
   chSysInit();
+
+  /*
+   * Spawning a blinker thread.
+   */
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
+                               NORMALPRIO + 10, thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
 
   /* Serial Driver for output.*/
   sdStart(&PORTAB_SD1, NULL);
