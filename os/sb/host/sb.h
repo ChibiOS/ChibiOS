@@ -301,6 +301,10 @@ struct sb_class {
    */
   const sb_config_t             *config;
   /**
+   * @brief   Saved unprivileged PSP position.
+   */
+  uint32_t                      u_psp;
+  /**
    * @brief   Thread running in the sandbox.
    */
   thread_t                      thread;

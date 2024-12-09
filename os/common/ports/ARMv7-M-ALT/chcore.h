@@ -547,11 +547,6 @@ struct port_context {
 #if (PORT_SWITCHED_REGIONS_NUMBER > 0) || defined(__DOXYGEN__)
   port_mpureg_t         regions[PORT_SWITCHED_REGIONS_NUMBER];
 #endif
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  struct {
-    uint32_t            u_psp;
-  } syscall;
-#endif
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -789,32 +784,6 @@ struct port_context {
  * @retval true         if running within a critical section.
  */
 #define port_is_locked(sts) !__port_irq_enabled(sts)
-
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Updates the stored user PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @param[in] addr      new address
- */
-#define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (uint32_t)(addr)
-
-/**
- * @brief   Returns the user PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @return              The user PSP value.
- */
-#define __port_syscall_get_u_psp(tp) (tp)->ctx.syscall.u_psp
-
-/**
- * @brief   Returns the syscall association pointer.
- *
- * @param[in] tp        pointer to the thread
- * @return              The pointer value.
- */
-#define __port_syscall_get_pointer(tp) (tp)->ctx.syscall.p
-#endif /* PORT_USE_SYSCALL == TRUE */
 
 /*===========================================================================*/
 /* External declarations.                                                    */

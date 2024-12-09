@@ -303,7 +303,7 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
 
   /* Creating entry frame.*/
   u_psp = (uint32_t)(u->base + u->size) - sizeof (struct port_extctx); /* TODO */
-  utp->ctx.syscall.u_psp = u_psp;
+  sbp->u_psp = u_psp;
   ectxp = (struct port_extctx *)u_psp;
 
   /* Initializing the unprivileged mode entry context, clearing

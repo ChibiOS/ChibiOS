@@ -269,13 +269,13 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
           struct port_extctx *ectxp;
 
           /* Getting the current PSP, it is stored in the thread context.*/
-          ectxp = (struct port_extctx *)sbp->thread.ctx.syscall.u_psp;
+          ectxp = (struct port_extctx *)sbp->u_psp;
 
           /* Creating a return context.*/
           ectxp = vrq_writectx(ectxp, sbp, __CLZ(__RBIT(active_mask)));
 
           /* Updating stored PSP position.*/
-          sbp->thread.ctx.syscall.u_psp = (uint32_t)ectxp;
+          sbp->u_psp = (uint32_t)ectxp;
         }
         else {
           /* It is in privileged mode so it will check for pending VRQs

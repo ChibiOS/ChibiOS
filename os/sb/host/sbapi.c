@@ -1249,10 +1249,11 @@ void __port_do_syscall_entry(struct port_extctx *ectxp,
                              uint32_t n) {
   extern void __sb_dispatch_syscall(struct port_extctx *ctxp, uint32_t n);
   thread_t *tp = __sch_get_currthread();
+  sb_class_t *sbp = (sb_class_t *)tp->object;
   struct port_extctx *newctxp;
 
   /* Caller context in unprivileged memory.*/
-  __port_syscall_set_u_psp(tp, (uint32_t)ectxp);
+  sbp->u_psp = (uint32_t)ectxp;
 
   /* Return context for change in privileged mode, it is created on the
      privileged PSP so no need to check for overflows.*/
@@ -1277,13 +1278,15 @@ void __port_do_syscall_entry(struct port_extctx *ectxp,
  */
 void __port_do_syscall_return(void) {
   thread_t *tp;
+  sb_class_t *sbp;
   struct port_extctx *ectxp;
 
   tp = __sch_get_currthread();
-  ectxp = (struct port_extctx *)__port_syscall_get_u_psp(tp);
+  sbp = (sb_class_t *)tp->object;
+  ectxp = (struct port_extctx *)sbp->u_psp;
 
 #if SB_CFG_ENABLE_VRQ == TRUE
-  __sb_vrq_check_pending(ectxp, (sb_class_t *)tp->object);
+  __sb_vrq_check_pending(ectxp, sbp);
 #else
   __set_PSP((uint32_t)ectxp);
 #endif
