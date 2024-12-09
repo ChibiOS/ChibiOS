@@ -20,7 +20,7 @@
 [@pp.dropOutputFile /]
 [#import "/@lib/libutils.ftl" as utils /]
 [#import "/@lib/liblicense.ftl" as license /]
-[@pp.changeOutputFile name="halconf.h" /]
+[@pp.changeOutputFile name="sbconf.h" /]
 /*
 [@license.EmitLicenseAsText /]
 */

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -30,6 +30,13 @@
 
 #define __CHIBIOS_SB_CONF__
 #define __CHIBIOS_SB_CONF_VER_3_0__
+
+/**
+ * @brief   Sandboxes privileged stack size.
+ */
+#if !defined(SB_CFG_PRIVILEGED_STACK_SIZE) || defined(__DOXYGEN__)
+#define SB_CFG_PRIVILEGED_STACK_SIZE        512
+#endif
 
 /**
  * @brief   Number of memory regions for each sandbox.
