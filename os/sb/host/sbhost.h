@@ -111,11 +111,12 @@ extern "C" {
   size_t sb_check_strings_array(sb_class_t *sbp, const char *pp[], size_t max);
   void sbObjectInit(sb_class_t *sbp, const sb_config_t *config);
   thread_t *sbStartThread(sb_class_t *sbp,
+                          stkline_t *stkbase,
                           const char *argv[],
                           const char *envp[]);
   bool sbIsThreadRunningX(sb_class_t *sbp);
 #if SB_CFG_ENABLE_VFS == TRUE
-  msg_t sbExec(sb_class_t *sbp, const char *pathname,
+  msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
                const char *argv[], const char *envp[]);
   void sbRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np);
 #endif

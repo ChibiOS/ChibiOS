@@ -459,12 +459,15 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
  * @brief   Starts a sandboxed thread.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] stkbase   base of the privileged stack area, the size is assumed
+ *                      to be @p SB_CFG_PRIVILEGED_STACK_SIZE
  * @param[in] argv      array of parameters for the sandbox
  * @param[in] envp      array of environment variables for the sandbox
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
 thread_t *sbStartThread(sb_class_t *sbp,
+                        stkline_t *stkbase,
                         const char *argv[],
                         const char *envp[]) {
   const sb_config_t *config = sbp->config;
@@ -538,8 +541,8 @@ thread_t *sbStartThread(sb_class_t *sbp,
   *((uint32_t *)usp + 0) = (uint32_t)uargc;
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  s.base = config->thread.wsp;
-  s.size = config->thread.size;
+  s.base = (uint8_t *)(void *)stkbase;
+  s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
   sbp->tp = sb_start_unprivileged(sbp, &s, &datareg->area, sbp->sbhp->hdr_entry);
 
   return sbp->tp;
@@ -577,7 +580,7 @@ bool sbIsThreadRunningX(sb_class_t *sbp) {
  *
  * @api
  */
-msg_t sbExec(sb_class_t *sbp, const char *pathname,
+msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
              const char *argv[], const char *envp[]) {
   const sb_config_t *config = sbp->config;
   memory_area_t ma = config->regions[0].area;
@@ -651,8 +654,8 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  s.base = config->thread.wsp;
-  s.size = config->thread.size;
+  s.base = (uint8_t *)(void *)stkbase;
+  s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
   sbp->tp = sb_start_unprivileged(sbp, &s, &config->regions[0].area, sbp->sbhp->hdr_entry);
   if (sbp->tp == NULL) {
     return CH_RET_ENOMEM;

@@ -117,15 +117,13 @@ static const drv_streams_element_t streams[] = {
 /*===========================================================================*/
 
 /* Working areas for sandboxes.*/
-static THD_WORKING_AREA(waUnprivileged1, 512);
-static THD_WORKING_AREA(waUnprivileged2, 512);
+static THD_WORKING_AREA(sbx1stk, SB_CFG_PRIVILEGED_STACK_SIZE);
+static THD_WORKING_AREA(sbx2stk, SB_CFG_PRIVILEGED_STACK_SIZE);
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
   .thread = {
     .name           = "sbx1",
-    .wsp            = waUnprivileged1,
-    .size           = sizeof (waUnprivileged1),
     .prio           = NORMALPRIO - 10,
   },
   .regions = {
@@ -146,8 +144,6 @@ static const sb_config_t sb_config1 = {
 static const sb_config_t sb_config2 = {
   .thread = {
     .name           = "sbx2",
-    .wsp            = waUnprivileged2,
-    .size           = sizeof (waUnprivileged2),
     .prio           = NORMALPRIO - 20,
   },
   .regions = {
@@ -190,7 +186,7 @@ static void start_sb1(void) {
   thread_t *utp;
 
   /* Starting sandboxed thread 1.*/
-  utp = sbStartThread(&sbx1, sbx1_argv, sbx1_envp);
+  utp = sbStartThread(&sbx1, sbx1stk, sbx1_argv, sbx1_envp);
   if (utp == NULL) {
     chSysHalt("sbx1 failed");
   }
@@ -213,7 +209,7 @@ static void start_sb2(void) {
   vfsClose(np);
 
   /* Starting sandboxed thread 2.*/
-  utp = sbStartThread(&sbx2, sbx2_argv, sbx2_envp);
+  utp = sbStartThread(&sbx2, sbx2stk, sbx2_argv, sbx2_envp);
   if (utp == NULL) {
     chSysHalt("sbx2 failed");
   }

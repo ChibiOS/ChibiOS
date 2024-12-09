@@ -253,14 +253,6 @@ typedef struct {
      */
     const char                  *name;
     /**
-     * @brief   Thread working area.
-     */
-    void                        *wsp;
-    /**
-     * @brief   Working area size.
-     */
-    size_t                      size;
-    /**
      * @brief   Thread priority.
      */
     tprio_t                     prio;

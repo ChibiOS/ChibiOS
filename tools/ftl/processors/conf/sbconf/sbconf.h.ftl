@@ -46,7 +46,7 @@
  * @brief   Sandboxes privileged stack size.
  */
 #if !defined(SB_CFG_PRIVILEGED_STACK_SIZE) || defined(__DOXYGEN__)
-#define SB_CFG_PRIVILEGED_STACK_SIZE        ${doc.SB_CFG_PRIVILEGED_STACK_SIZE!"1024"}
+#define SB_CFG_PRIVILEGED_STACK_SIZE        ${doc.SB_CFG_PRIVILEGED_STACK_SIZE!"512"}
 #endif
 
 /**
