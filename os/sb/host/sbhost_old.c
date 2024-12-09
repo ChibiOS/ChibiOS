@@ -236,6 +236,85 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
     return true;
   }
 
+#if 0
+  /* Calculating the smallest region containing the requested area.
+     The region size is the area size aligned to the next power of 2,
+     region base is the area base aligned to the region size.*/
+  region_size = get_next_po2(area_size);
+  region_base = MEM_ALIGN_PREV(area_base, region_size);
+
+  /* Checking if the area fits entirely in the calculated region, if not then
+     region size is doubled.*/
+  if (area_end <= region_base + region_size) {
+    /* The area fits entirely in the region, calculating the sub-regions
+       size.*/
+    subregion_size = region_size / 8U;
+  }
+  else {
+    /* It does not fit, doubling the region size, re-basing the region.*/
+    region_size *= 2U;
+    region_base = MEM_ALIGN_PREV(area_base, region_size);
+    subregion_size = region_size / 8U;
+  }
+
+  /* Constraint, the area base address must be aligned to a sub-region
+     boundary.*/
+  if (!MEM_IS_ALIGNED(area_base, subregion_size)) {
+    return true;
+  }
+
+  /* Constraint, the area size must also be aligned to a sub-region
+     size.*/
+  if (!MEM_IS_ALIGNED(area_size, subregion_size)) {
+    return true;
+  }
+
+  /* Calculating the sub-regions disable mask.*/
+  static const uint8_t srd_lower[] = {0x00U, 0x01U, 0x03U, 0x07U,
+                                      0x0FU, 0x1FU, 0x3FU, 0x7FU};
+  static const uint8_t srd_upper[] = {0x00U, 0x80U, 0xC0U, 0xE0U,
+                                      0xF0U, 0xF8U, 0xFCU, 0xFEU};
+  srd = (uint32_t)srd_lower[(area_base - region_base) / subregion_size] |
+        (uint32_t)srd_upper[(region_base + region_size - area_end) / subregion_size];
+
+  /* MPU registers settings.*/
+  mpur->rbar = region_base;
+  mpur->rasr = (srd << 8) | (__CLZ(__RBIT(region_size)) << 1) | MPU_RASR_ENABLE;
+
+  /* Region attributes.*/
+  if (sb_reg_is_writable(mrp)) {
+    mpur->rasr |= MPU_RASR_ATTR_AP_RW_RW;
+  }
+  else {
+    mpur->rasr |= MPU_RASR_ATTR_AP_RW_RO;
+  }
+  switch (sb_reg_get_type(mrp)) {
+  case SB_REG_TYPE_DEVICE:
+    /* Device type, execute and cached ignored.*/
+    mpur->rasr |= MPU_RASR_ATTR_SHARED_DEVICE | MPU_RASR_ATTR_S;
+    break;
+  case SB_REG_TYPE_MEMORY:
+    /* Memory type, there are various kinds.*/
+    if (sb_reg_is_cacheable(mrp)) {
+      if (sb_reg_is_writable(mrp)) {
+        mpur->rasr |= MPU_RASR_ATTR_CACHEABLE_WB_WA | MPU_RASR_ATTR_S;
+      }
+      else {
+        mpur->rasr |= MPU_RASR_ATTR_CACHEABLE_WT_NWA | MPU_RASR_ATTR_S;
+      }
+    }
+    else {
+      mpur->rasr |= MPU_RASR_ATTR_NON_CACHEABLE | MPU_RASR_ATTR_S;
+    }
+    if (!sb_reg_is_executable(mrp)) {
+      mpur->rasr |= MPU_RASR_ATTR_XN;
+    }
+    break;
+  default:
+    return true;
+  }
+#endif
+
   return false;
 }
 #endif /* defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE) */
@@ -252,71 +331,6 @@ const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {
   } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
 
   return NULL;
-}
-
-static THD_FUNCTION(sb_unprivileged_trampoline, arg) {
-
-  (void)arg;
-
-  /* Jump with no return to the context saved at "u_psp". */
-  asm volatile ("svc     #1");
-  chSysHalt("svc");
-}
-
-static thread_t *sb_start_unprivileged(sb_class_t *sbp,
-                                       const memory_area_t *s,
-                                       const memory_area_t *u,
-                                       uint32_t u_pc) {
-  thread_t *utp;
-  uint32_t u_psp;
-  struct port_extctx *ectxp;
-
-  /* Creating a thread on the unprivileged handler.*/
-  thread_descriptor_t td = {
-    .name       = sbp->config->thread.name,
-    .wbase      = (stkline_t *)(void *)s->base,
-    .wend       = (stkline_t *)(void *)(s->base + s->size),
-    .prio       = sbp->config->thread.prio,
-    .funcp      = sb_unprivileged_trampoline,
-    .arg        = NULL,
-#if CH_CFG_SMP_MODE != FALSE
-    .instance   = NULL
-#endif
-  };
-  utp = chThdCreateSuspended(&td);
-
-  /* The sandbox is the thread controller.*/
-  utp->ctx.syscall.p = sbp;
-
-#if PORT_SWITCHED_REGIONS_NUMBER > 0
-  /* Regions for the unprivileged thread, will be set up on switch-in.*/
-  for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
-    port_mpureg_t mpureg;
-
-    if (get_mpu_settings(&sbp->config->regions[i], &mpureg)) {
-      return NULL;
-    }
-    utp->ctx.regions[i] = mpureg;
-
-  }
-#endif
-
-  /* Creating entry frame.*/
-  u_psp = (uint32_t)(u->base + u->size) - sizeof (struct port_extctx); /* TODO */
-  utp->ctx.syscall.u_psp = u_psp;
-  ectxp = (struct port_extctx *)u_psp;
-
-  /* Initializing the unprivileged mode entry context, clearing
-     all registers.*/
-  memset((void *)ectxp, 0, sizeof (struct port_extctx));
-  ectxp->pc    = u_pc;
-  ectxp->xpsr  = 0x01000000U;
-#if CORTEX_USE_FPU == TRUE
-  ectxp->fpscr = FPU->FPDSCR;
-#endif
-
-  /* Starting the thread.*/
-  return chThdStart(utp);
 }
 
 /*===========================================================================*/
@@ -467,12 +481,12 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
 thread_t *sbStartThread(sb_class_t *sbp,
                         const char *argv[],
                         const char *envp[]) {
+  thread_t *utp;
   const sb_config_t *config = sbp->config;
   void *usp, *uargv, *uenvp;
   size_t envsize, argsize, parsize;
   int uargc, uenvc;
   const sb_memory_region_t *codereg, *datareg;
-  memory_area_t s;
 
   /* Region zero is assumed to be executable and contain the start header.*/
   codereg = &config->regions[0];
@@ -537,12 +551,36 @@ thread_t *sbStartThread(sb_class_t *sbp,
   *((uint32_t *)usp + 1) = (uint32_t)uargv;
   *((uint32_t *)usp + 0) = (uint32_t)uargc;
 
-  /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  s.base = config->thread.wsp;
-  s.size = config->thread.size;
-  sbp->tp = sb_start_unprivileged(sbp, &s, &datareg->area, sbp->sbhp->hdr_entry);
+  unprivileged_thread_descriptor_t utd = {
+    .name       = config->thread.name,
+    .wbase      = (stkline_t *)config->thread.wsp,
+    .wend       = (stkline_t *)config->thread.wsp +
+                    (config->thread.size / sizeof (stkline_t)),
+    .prio       = config->thread.prio,
+    .u_pc       = sbp->sbhp->hdr_entry,
+    .u_psp      = (uint32_t)usp,
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
+    .u_psplim   = (uint32_t)datareg->area.base,
+#endif
+    .arg        = (void *)sbp
+  };
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
+  for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
+    port_mpureg_t mpureg;
 
-  return sbp->tp;
+    if (get_mpu_settings(&sbp->config->regions[i], &mpureg)) {
+      return NULL;
+    }
+    utd.regions[i] = mpureg;
+  }
+#endif
+
+  utp = chThdCreateUnprivileged(&utd);
+
+  /* For messages exchange.*/
+  sbp->tp = utp;
+
+  return utp;
 }
 
 /**
@@ -585,7 +623,6 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   void *usp, *uargv, *uenvp;
   size_t envsize, argsize, parsize;
   int uargc, uenvc;
-  memory_area_t s;
 
   /* Setting up an initial stack for the sandbox.*/
   usp = (void *)(config->regions[0].area.base + config->regions[0].area.size);
@@ -651,9 +688,32 @@ msg_t sbExec(sb_class_t *sbp, const char *pathname,
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  s.base = config->thread.wsp;
-  s.size = config->thread.size;
-  sbp->tp = sb_start_unprivileged(sbp, &s, &config->regions[0].area, sbp->sbhp->hdr_entry);
+  unprivileged_thread_descriptor_t utd = {
+    .name       = config->thread.name,
+    .wbase      = (stkline_t *)config->thread.wsp,
+    .wend       = (stkline_t *)config->thread.wsp +
+                    (config->thread.size / sizeof (stkline_t)),
+    .prio       = config->thread.prio,
+    .u_pc       = sbp->sbhp->hdr_entry,
+    .u_psp      = (uint32_t)usp,
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
+    .u_psplim   = (uint32_t)config->regions[0].area.base,
+#endif
+    .arg        = (void *)sbp
+  };
+#if PORT_SWITCHED_REGIONS_NUMBER > 0
+  for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
+    port_mpureg_t mpureg;
+
+    if (get_mpu_settings(&sbp->config->regions[i], &mpureg)) {
+      return CH_RET_ENOMEM;
+    }
+    utd.regions[i] = mpureg;
+  }
+#endif
+
+  sbp->tp = chThdCreateUnprivileged(&utd);
+
   if (sbp->tp == NULL) {
     return CH_RET_ENOMEM;
   }

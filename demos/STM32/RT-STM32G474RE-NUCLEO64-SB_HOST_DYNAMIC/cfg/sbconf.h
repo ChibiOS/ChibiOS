@@ -32,6 +32,13 @@
 #define __CHIBIOS_SB_CONF_VER_3_0__
 
 /**
+ * @brief   Sandboxes privileged stack size.
+ */
+#if !defined(SB_CFG_PRIVILEGED_STACK_SIZE) || defined(__DOXYGEN__)
+#define SB_CFG_PRIVILEGED_STACK_SIZE        1024
+#endif
+
+/**
  * @brief   Number of memory regions for each sandbox.
  */
 #if !defined(SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)

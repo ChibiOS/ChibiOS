@@ -93,53 +93,6 @@
 #define PORT_WORKING_AREA_ALIGN         32U
 /** @} */
 
-/**
- * @name    Priority Ranges
- * @{
- */
-/**
- * @brief   Disabled value for BASEPRI register.
- */
-#define CORTEX_BASEPRI_DISABLED         0
-
-/**
- * @brief   Total priority levels.
- */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
-
-/**
- * @brief   Minimum priority level.
- * @details This minimum priority level is calculated from the number of
- *          priority bits supported by the specific Cortex-Mx implementation.
- */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
-
-/**
- * @brief   Maximum priority level.
- * @details The maximum allowed priority level is always zero.
- */
-#define CORTEX_MAXIMUM_PRIORITY         0
-
-/**
- * @brief   SVCALL handler priority.
- */
-#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
-                                         CORTEX_FAST_PRIORITIES)
-
-/**
- * @brief   PendSV priority level.
- * @note    This priority is enforced to be equal to
- *          @p CORTEX_MAX_KERNEL_PRIORITY, this handler always have the
- *          highest priority that cannot preempt the kernel.
- */
-#define CORTEX_PRIORITY_PENDSV          CORTEX_MINIMUM_PRIORITY
-
-/**
- * @brief   Priority level to priority mask conversion macro.
- */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -209,16 +162,16 @@
 /**
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
-#if !defined(CORTEX_ENABLE_WFI_IDLE)
-#define CORTEX_ENABLE_WFI_IDLE          FALSE
+#if !defined(PORT_ENABLE_WFI_IDLE)
+#define PORT_ENABLE_WFI_IDLE            FALSE
 #endif
 
 /**
  * @brief   Number of upper priority levels reserved as fast interrupts.
  * @note    The default reserves priorities 0 and 1 for fast interrupts.
  */
-#if !defined(CORTEX_FAST_PRIORITIES)
-#define CORTEX_FAST_PRIORITIES          2
+#if !defined(PORT_FAST_PRIORITIES)
+#define PORT_FAST_PRIORITIES            2
 #endif
 
 /**
@@ -248,8 +201,8 @@
  *               saving s16-s31 when it is not needed (FPU_FPCCR_ASPEN,
  *               FPU_FPCCR_LSPEN enabled and extra SW checks) .
  */
-#if !defined(CORTEX_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
-#define CORTEX_USE_FPU_FAST_SWITCHING   3
+#if !defined(PORT_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
+#define PORT_USE_FPU_FAST_SWITCHING     3
 #endif
 
 /**
@@ -258,8 +211,8 @@
  *          priority with no sub-priority.
  * @note    Changing this value is not recommended.
  */
-#if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
+#if !defined(PORT_PRIGROUP_INIT) || defined(__DOXYGEN__)
+#define PORT_PRIGROUP_INIT              (7 - CORTEX_PRIORITY_BITS)
 #endif
 
 /*===========================================================================*/
@@ -270,24 +223,19 @@
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif
 
-#if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
-    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
-#error "invalid CORTEX_FAST_PRIORITIES value specified"
-#endif
-
-#if (CORTEX_USE_FPU_FAST_SWITCHING < 0) || (CORTEX_USE_FPU_FAST_SWITCHING > 3)
-#error "invalid CORTEX_USE_FPU_FAST_SWITCHING value specified"
+#if (PORT_USE_FPU_FAST_SWITCHING < 0) || (PORT_USE_FPU_FAST_SWITCHING > 3)
+#error "invalid PORT_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
 #if (PORT_USE_SYSCALL == TRUE) ||                                           \
-    ((CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING >= 2)) ||   \
+    ((CORTEX_USE_FPU == TRUE) && (PORT_USE_FPU_FAST_SWITCHING >= 2)) ||     \
     defined(__DOXYGEN__)
 /**
  * @brief   CONTROL as part of the saved thread context.
  * @note    Saving control is only required when:
  *          - PORT_USE_SYSCALL is enabled because support for unprivileged
  *            mode.
- *          - PORT_USE_FPU is enabled with CORTEX_USE_FPU_FAST_SWITCHING
+ *          - PORT_USE_FPU is enabled with @p PORT_USE_FPU_FAST_SWITCHING
  *            modes 2 or 3 because CONTROL.FPCA needs to be handled for
  *            each thread.
  */
@@ -397,6 +345,52 @@
 /** @} */
 
 /**
+ * @name    Priority Ranges
+ * @{
+ */
+/**
+ * @brief   Disabled value for BASEPRI register.
+ */
+#define CORTEX_BASEPRI_DISABLED         0
+
+/**
+ * @brief   Total priority levels.
+ */
+#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+
+/**
+ * @brief   Minimum priority level.
+ * @details This minimum priority level is calculated from the number of
+ *          priority bits supported by the specific Cortex-Mx implementation.
+ */
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+
+/**
+ * @brief   Maximum priority level.
+ * @details The maximum allowed priority level is always zero.
+ */
+#define CORTEX_MAXIMUM_PRIORITY         0
+
+/**
+ * @brief   SVCALL handler priority.
+ */
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
+                                         PORT_FAST_PRIORITIES)
+
+/**
+ * @brief   PendSV priority level.
+ * @note    This priority is enforced to be equal to
+ *          @p CORTEX_MAX_KERNEL_PRIORITY, this handler always have the
+ *          highest priority that cannot preempt the kernel.
+ */
+#define CORTEX_PRIORITY_PENDSV          CORTEX_MINIMUM_PRIORITY
+
+/**
+ * @brief   Priority level to priority mask conversion macro.
+ */
+#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
+
+/**
  * @brief   Maximum usable priority for normal ISRs.
  */
 #define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
@@ -411,10 +405,12 @@
  */
 #define CORTEX_BASEPRI_KERNEL                                               \
   CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
+/** @} */
 
-/* The following code is not processed when the file is included from an
-   asm module.*/
-#if !defined(_FROM_ASM_)
+#if (PORT_FAST_PRIORITIES < 0) ||                                           \
+    (PORT_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
+#error "invalid PORT_FAST_PRIORITIES value specified"
+#endif
 
 /**
  * @brief   MPU guard page size.
@@ -434,6 +430,10 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
 
 /**
  * @brief   Type of an MPU region registers structure.
@@ -994,7 +994,7 @@ __STATIC_FORCEINLINE void port_enable(void) {
  */
 __STATIC_FORCEINLINE void port_wait_for_interrupt(void) {
 
-#if CORTEX_ENABLE_WFI_IDLE == TRUE
+#if PORT_ENABLE_WFI_IDLE == TRUE
   __WFI();
 #endif
 }

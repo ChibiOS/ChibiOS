@@ -98,7 +98,7 @@
                 /* Store float context through R1.*/
                 .macro  PORT_STORE_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
-#if CORTEX_USE_FPU_FAST_SWITCHING > 2
+#if PORT_USE_FPU_FAST_SWITCHING > 2
                 tst     lr, #16
                 it      eq
                 vstmiaeq r1!, {s16-s31}
@@ -111,7 +111,7 @@
                 /* Load float context through R0.*/
                 .macro  PORT_LOAD_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
-#if CORTEX_USE_FPU_FAST_SWITCHING > 2
+#if PORT_USE_FPU_FAST_SWITCHING > 2
                 tst     lr, #16
                 it      eq
                 vldmiaeq r0!, {s16-s31}
@@ -344,7 +344,7 @@ PendSV_Handler:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
-#if CORTEX_USE_FPU && (CORTEX_USE_FPU_FAST_SWITCHING >= 2)
+#if CORTEX_USE_FPU && (PORT_USE_FPU_FAST_SWITCHING >= 2)
                 /* Clearing FPCA for the new thread, it is initially set
                    because a long context is used for starting it.*/
                 mov     r0, #2

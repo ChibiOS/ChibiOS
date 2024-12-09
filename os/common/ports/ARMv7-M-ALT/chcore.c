@@ -155,15 +155,15 @@ void port_init(os_instance_t *oip) {
        handling, better do not rely on startup settings.*/
     FPU->FPDSCR = 0U;
     __set_FPSCR(0U);
-#if CORTEX_USE_FPU_FAST_SWITCHING == 0
+#if PORT_USE_FPU_FAST_SWITCHING == 0
     /* No lazy context saving, always long exception context.*/
     control = CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk;
     FPU->FPCCR = 0U;
-#elif CORTEX_USE_FPU_FAST_SWITCHING == 1
+#elif PORT_USE_FPU_FAST_SWITCHING == 1
     /* Lazy context saving enabled, always long exception context.*/
     control = CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk;
     FPU->FPCCR = FPU_FPCCR_LSPEN_Msk;
-#else /*CORTEX_USE_FPU_FAST_SWITCHING >= 2 */
+#else /*PORT_USE_FPU_FAST_SWITCHING >= 2 */
     /* Lazy context saving enabled, automatic FPCA control.*/
     control = CONTROL_SPSEL_Msk;
     FPU->FPCCR = FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
@@ -174,7 +174,7 @@ void port_init(os_instance_t *oip) {
 #endif /* CORTEX_USE_FPU == TRUE */
 
   /* Initializing priority grouping.*/
-  NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
+  NVIC_SetPriorityGrouping(PORT_PRIGROUP_INIT);
 
   /* DWT cycle counter enable.*/
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;

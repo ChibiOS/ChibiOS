@@ -92,6 +92,11 @@
 #endif
 
 /* Checks on configuration options.*/
+
+#if !defined(SB_CFG_PRIVILEGED_STACK_SIZE) || defined(__DOXYGEN__)
+#error "SB_CFG_PRIVILEGED_STACK_SIZE not defined in sbconf.h"
+#endif
+
 #if !defined(SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
 #error "SB_CFG_NUM_REGIONS not defined in sbconf.h"
 #endif
@@ -158,13 +163,12 @@
 #error "SandBox requires PORT_USE_SYSCALL == TRUE"
 #endif
 
-#if (SB_CFG_NUM_REGIONS < 1) || (SB_CFG_NUM_REGIONS > 4)
-#error "invalid SB_CFG_NUM_REGIONS value"
+#if (SB_CFG_PRIVILEGED_STACK_SIZE < 64)
+#error "invalid SB_CFG_PRIVILEGED_STACK_SIZE value"
 #endif
 
-#if (PORT_SWITCHED_REGIONS_NUMBER > 0) &&                                   \
-    (PORT_SWITCHED_REGIONS_NUMBER != SB_CFG_NUM_REGIONS)
-#error "SB_CFG_NUM_REGIONS not matching PORT_SWITCHED_REGIONS_NUMBER"
+#if (SB_CFG_NUM_REGIONS < 1) || (SB_CFG_NUM_REGIONS > 4)
+#error "invalid SB_CFG_NUM_REGIONS value"
 #endif
 
 #if (SB_CFG_ALARM_VRQ < 0) || (SB_CFG_ALARM_VRQ > 31)
