@@ -64,7 +64,7 @@ CC_NO_INLINE void port_syslock_noinline(void) {
 
 CC_NO_INLINE uint32_t port_get_s_psp(void) {
 
-  return (uint32_t)__port_syscall_get_s_psp(__sch_get_currthread());
+  return (uint32_t)__sch_get_currthread()->waend;
 }
 
 CC_WEAK void __port_do_fastcall_entry(struct port_extctx *ectxp,

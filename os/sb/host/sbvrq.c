@@ -289,7 +289,7 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 }
 
 void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   sysinterval_t interval = (sysinterval_t )ectxp->r0;
   bool reload = (bool)ectxp->r1;
 
@@ -302,7 +302,7 @@ void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp) {
 }
 
 void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
 
   (void)ectxp;
 
@@ -310,7 +310,7 @@ void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp) {
 }
 
 void sb_sysc_vrq_wait(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   sb_vrqmask_t active_mask;
 
   (void)ectxp;
@@ -326,7 +326,7 @@ void sb_sysc_vrq_wait(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_gcsts(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   uint32_t nvrq = ectxp->r0;
 
   /* Cast because vrq_flags[] could be configured to be a smaller type.*/
@@ -337,7 +337,7 @@ void sb_fastc_vrq_gcsts(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   uint32_t m;
 
   m = ectxp->r0;
@@ -348,7 +348,7 @@ void sb_fastc_vrq_setwt(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_clrwt(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   uint32_t m;
 
   m = ectxp->r0;
@@ -359,7 +359,7 @@ void sb_fastc_vrq_clrwt(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_seten(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   uint32_t m;
 
   m = ectxp->r0;
@@ -370,7 +370,7 @@ void sb_fastc_vrq_seten(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_clren(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   uint32_t m;
 
   m = ectxp->r0;
@@ -381,7 +381,7 @@ void sb_fastc_vrq_clren(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_disable(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
 
   (void)ectxp;
 
@@ -391,7 +391,7 @@ void sb_fastc_vrq_disable(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_enable(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   sb_vrqmask_t active_mask;
 
   active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
@@ -407,7 +407,7 @@ void sb_fastc_vrq_enable(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_getisr(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
 
   ectxp->r0 = sbp->vrq_isr;
 
@@ -415,7 +415,7 @@ void sb_fastc_vrq_getisr(struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_return(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   sb_vrqmask_t active_mask;
 
   /* Discarding the return current context, returning on the previous one.

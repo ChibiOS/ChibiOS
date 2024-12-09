@@ -286,7 +286,7 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
   utp = chThdSpawnSuspended(&sbp->thread, &td);
 
   /* The sandbox is the thread controller.*/
-  utp->ctx.syscall.p = sbp;
+  utp->object = sbp;
 
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
   /* Regions for the unprivileged thread, will be set up on switch-in.*/

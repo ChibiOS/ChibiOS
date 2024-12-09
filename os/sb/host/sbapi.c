@@ -965,7 +965,7 @@ static thread_t *sb_msg_wait_timeout_s(sysinterval_t timeout) {
 
 static void sb_cleanup(void) {
 #if SB_CFG_ENABLE_VFS == TRUE
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   unsigned fd;
 
   /* Closing all file descriptors.*/
@@ -991,7 +991,7 @@ static void sb_fastc_get_frequency(struct port_extctx *ectxp) {
 
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
 static void sb_sysc_stdio(struct port_extctx *ectxp) {
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
 
   /* VFS support could be enabled but this specific sandbox could not have
      one associated to it.*/
@@ -1121,7 +1121,7 @@ static void sb_sysc_sleep_until_windowed(struct port_extctx *ectxp) {
 
 static void sb_sysc_wait_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
 
   chSysLock();
 
@@ -1144,7 +1144,7 @@ static void sb_sysc_wait_message(struct port_extctx *ectxp) {
 
 static void sb_sysc_reply_message(struct port_extctx *ectxp) {
 #if CH_CFG_USE_MESSAGES == TRUE
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
 
   chSysLock();
 
@@ -1196,7 +1196,7 @@ static void sb_sysc_wait_all_timeout(struct port_extctx *ectxp) {
 
 static void sb_sysc_broadcast_flags(struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
 
   chEvtBroadcastFlags(&sbp->es, (eventflags_t )ectxp->r0);
   ectxp->r0 = CH_RET_SUCCESS;
@@ -1207,7 +1207,7 @@ static void sb_sysc_broadcast_flags(struct port_extctx *ectxp) {
 
 static void sb_sysc_loadelf(struct port_extctx *ectxp) {
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
+  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
   const char *fname = (const char *)ectxp->r0;
   uint8_t *buf = (uint8_t *)ectxp->r1;
   size_t size = (size_t)ectxp->r2;
@@ -1256,13 +1256,13 @@ void __port_do_syscall_entry(struct port_extctx *ectxp,
 
   /* Return context for change in privileged mode, it is created on the
      privileged PSP so no need to check for overflows.*/
-  newctxp = ((struct port_extctx *)__port_syscall_get_s_psp(tp)) - 1;
+  newctxp = ((struct port_extctx *)tp->waend) - 1;
 
   /* Creating context for return in privileged mode.*/
   newctxp->r0    = (uint32_t)ectxp;
   newctxp->r1    = n;
   newctxp->pc    = (uint32_t)__sb_dispatch_syscall;
-  newctxp->xpsr  = 0x01000000U;
+  newctxp->xpsr  = (uint32_t)0x01000000;
 #if CORTEX_USE_FPU == TRUE
   /* TODO enforce lazy FPU context save.*/
   newctxp->fpscr = FPU->FPDSCR;
@@ -1283,7 +1283,7 @@ void __port_do_syscall_return(void) {
   ectxp = (struct port_extctx *)__port_syscall_get_u_psp(tp);
 
 #if SB_CFG_ENABLE_VRQ == TRUE
-  __sb_vrq_check_pending(ectxp, (sb_class_t *)tp->ctx.syscall.p);
+  __sb_vrq_check_pending(ectxp, (sb_class_t *)tp->object);
 #else
   __set_PSP((uint32_t)ectxp);
 #endif

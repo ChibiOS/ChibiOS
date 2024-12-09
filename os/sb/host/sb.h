@@ -140,6 +140,10 @@
 #error "ChibiOS/SB insufficient features level"
 #endif
 
+#if CH_CFG_USE_DYNAMIC != TRUE
+#error "SandBox requires CH_CFG_USE_DYNAMIC == TRUE"
+#endif
+
 #if CH_CFG_ST_RESOLUTION != 32
 #error "SandBox requires CH_CFG_ST_RESOLUTION == 32"
 #endif

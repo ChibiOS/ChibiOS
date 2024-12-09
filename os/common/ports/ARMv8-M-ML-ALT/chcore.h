@@ -590,6 +590,23 @@
 #error "invalid CORTEX_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
+#if (PORT_USE_SYSCALL == TRUE) ||                                           \
+    ((CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING >= 2)) ||   \
+    defined(__DOXYGEN__)
+/**
+ * @brief   CONTROL as part of the saved thread context.
+ * @note    Saving control is only required when:
+ *          - PORT_USE_SYSCALL is enabled because support for unprivileged
+ *            mode.
+ *          - PORT_USE_FPU is enabled with CORTEX_USE_FPU_FAST_SWITCHING
+ *            modes 2 or 3 because CONTROL.FPCA needs to be handled for
+ *            each thread.
+ */
+#define PORT_SAVE_CONTROL               TRUE
+#else
+#define PORT_SAVE_CONTROL               FALSE
+#endif
+
 #if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
 /**
  * @brief   Context save area for each thread.
@@ -618,6 +635,11 @@
  */
 #define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
 
+/**
+ * @brief   Minimum usable priority for normal ISRs.
+ */
+#define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1)
+
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
 #define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
 #define PORT_INFO                       "Non-secure guest mode"
@@ -625,6 +647,7 @@
                                          CORTEX_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY & 0xFFFFFFFE)
 #define CORTEX_MAX_KERNEL_PRIORITY      ((CORTEX_PRIORITY_SVCALL | 1) + 1)
+#define CORTEX_MIN_KERNEL_PRIORITY      ((CORTEX_PRIORITY_PENDSV - 1) & 0xFFFFFFFE)
 
 #else
 #error "invalid kernel security mode"
@@ -774,7 +797,7 @@ struct port_intctx {
 #if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
   uint32_t              splim;
 #endif
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
+#if (PORT_SAVE_CONTROL == TRUE) || defined(__DOXYGEN__)
   uint32_t              control;
 #endif
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
@@ -842,7 +865,7 @@ struct port_context {
  * @brief   Priority level verification macro.
  */
 #define PORT_IRQ_IS_VALID_KERNEL_PRIORITY(n)                                \
-  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) <= CORTEX_PRIORITY_PENDSV))
+  (((n) >= CORTEX_MAX_KERNEL_PRIORITY) && ((n) <= CORTEX_MIN_KERNEL_PRIORITY))
 
 /**
  * @brief   Optimized thread function declaration macro.
@@ -850,45 +873,41 @@ struct port_context {
 #define PORT_THD_FUNCTION(tname, arg) void tname(void *arg)
 
 /**
- * @brief   Initialization value of CONTROL register and EXC_RETURN
- *          for thread creation.
+ * @brief   Exception return value for threads creation.
+ * @note    Enforcing a long context when FPU is enabled else using a
+ *          short context.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-  #if (CORTEX_USE_FPU_FAST_SWITCHING < 2) || defined(__DOXYGEN__)
-    /* FPU enabled without FPU_FPCCR_ASPEN, start using a long context.*/
-    #if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
-      #define CORTEX_EXC_RETURN         0xFFFFFFAC
-    #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-      #define CORTEX_EXC_RETURN         0xFFFFFFAC
-    #endif
-  #else
-    /* FPU enabled with fast switching, start using a short context.*/
-    #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
-      #define CORTEX_EXC_RETURN         0xFFFFFFBC
-    #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-      #define CORTEX_EXC_RETURN         0xFFFFFFBC
-    #endif
-  #endif
-#else /* CORTEX_USE_FPU == FALSE */
-  /* Integer-only, always short context.*/
-  #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL
-    #define CORTEX_EXC_RETURN           0xFFFFFFBC
-  #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-    #define CORTEX_EXC_RETURN           0xFFFFFFBC
-  #endif
-#endif /* CORTEX_USE_FPU == FALSE */
+  #define CORTEX_EXC_RETURN         0xFFFFFFAC
+#else
+  #define CORTEX_EXC_RETURN         0xFFFFFFBC
+#endif
 
 /**
  * @brief   Initialization of SYSCALL part of thread context.
  */
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop)                     \
-    (tp)->ctx.regs.control          = 0U;                                   \
     (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
     (tp)->ctx.syscall.s_psplim      = (uint32_t)(wbase);                    \
     (tp)->ctx.syscall.p             = NULL
 #else
   #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop)
+#endif
+
+/**
+ * @brief   Initialization of CONTROL part of thread context.
+ */
+#if (PORT_SAVE_CONTROL == TRUE) || defined(__DOXYGEN__)
+  #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
+    #define __PORT_SETUP_CONTEXT_CONTROL(tp)                                \
+      (tp)->ctx.regs.control          = CONTROL_FPCA_Msk
+  #else
+    #define __PORT_SETUP_CONTEXT_CONTROL(tp)                                \
+      (tp)->ctx.regs.control          = 0U
+  #endif
+#else
+  #define __PORT_SETUP_CONTEXT_CONTROL(tp)
 #endif
 
 /**
@@ -903,12 +922,13 @@ struct port_context {
 
 /**
  * @brief   Initialization of FPU part of thread context.
+ * @note    The value of FPDSCR is used, it is meant to be the default.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-#define __PORT_SETUP_CONTEXT_FPU(tp)                                        \
-  (tp)->ctx.sp->fpscr               = (uint32_t)0
+  #define __PORT_SETUP_CONTEXT_FPU(tp)                                      \
+    (tp)->ctx.sp->fpscr               = FPU->FPDSCR
 #else
-#define __PORT_SETUP_CONTEXT_FPU(tp)
+  #define __PORT_SETUP_CONTEXT_FPU(tp)
 #endif
 
 /**
@@ -1018,12 +1038,8 @@ struct port_context {
 #endif
 
 /**
- * @brief   Platform dependent part of the @p chThdCreateI() API.
- * @details This code usually setup the context switching frame represented
- *          by an @p port_intctx structure.
+ * @brief   Platform dependent part of the thread creation API.
  */
-#if (CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING < 2) ||      \
-    defined(__DOXYGEN__)
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
                  ((uint8_t *)(wtop) - sizeof (struct port_extctx));         \
@@ -1038,22 +1054,6 @@ struct port_context {
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
 } while (false)
-
-#else
-#define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
-  (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
-                 ((uint8_t *)(wtop) - sizeof (struct port_short_extctx));   \
-  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
-  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
-  (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
-  (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
-  (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
-  (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
-  __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop);                            \
-  __PORT_SETUP_CONTEXT_MPU(tp);                                             \
-} while (false)
-#endif
 
 /**
  * @brief   Computes the thread working area global size.

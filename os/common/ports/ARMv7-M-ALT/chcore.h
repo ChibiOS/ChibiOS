@@ -549,9 +549,7 @@ struct port_context {
 #endif
 #if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
   struct {
-    uint32_t            s_psp;
     uint32_t            u_psp;
-    const void          *p;
   } syscall;
 #endif
 };
@@ -588,17 +586,6 @@ struct port_context {
   #define CORTEX_EXC_RETURN         0xFFFFFFED
 #else
   #define CORTEX_EXC_RETURN         0xFFFFFFFD
-#endif
-
-/**
- * @brief   Initialization of SYSCALL part of thread context.
- */
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)                            \
-    (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
-    (tp)->ctx.syscall.p             = NULL
-#else
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop)
 #endif
 
 /**
@@ -684,7 +671,6 @@ struct port_context {
   __PORT_SETUP_CONTEXT_CONTROL(tp);                                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wtop);                                   \
 } while (false)
 
 /**
@@ -814,28 +800,12 @@ struct port_context {
 #define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (uint32_t)(addr)
 
 /**
- * @brief   Updates the stored system PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @param[in] addr      new address
- */
-#define __port_syscall_set_s_psp(tp, addr) (tp)->ctx.syscall.s_psp = (uint32_t)(addr)
-
-/**
  * @brief   Returns the user PSP address.
  *
  * @param[in] tp        pointer to the thread
  * @return              The user PSP value.
  */
 #define __port_syscall_get_u_psp(tp) (tp)->ctx.syscall.u_psp
-
-/**
- * @brief   Returns the system PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @return              The system PSP value.
- */
-#define __port_syscall_get_s_psp(tp) (tp)->ctx.syscall.s_psp
 
 /**
  * @brief   Returns the syscall association pointer.
@@ -1020,7 +990,6 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 #if CH_CFG_ST_TIMEDELTA > 0
 #include "chcore_timer.h"
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
-#include "chcoreapi.h"
 
 #endif /* !defined(_FROM_ASM_) */
 
