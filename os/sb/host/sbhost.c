@@ -283,7 +283,7 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
     .instance   = NULL
 #endif
   };
-  utp = chThdCreateSuspended(&td);
+  utp = chThdSpawnSuspended(&sbp->thread, &td);
 
   /* The sandbox is the thread controller.*/
   utp->ctx.syscall.p = sbp;
@@ -453,6 +453,7 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
 
   memset((void *)sbp, 0, sizeof (sb_class_t));
   sbp->config = config;
+  sbp->thread.state = CH_STATE_FINAL;
 }
 
 /**
@@ -543,9 +544,7 @@ thread_t *sbStartThread(sb_class_t *sbp,
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   s.base = (uint8_t *)(void *)stkbase;
   s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
-  sbp->tp = sb_start_unprivileged(sbp, &s, &datareg->area, sbp->sbhp->hdr_entry);
-
-  return sbp->tp;
+  return sb_start_unprivileged(sbp, &s, &datareg->area, sbp->sbhp->hdr_entry);
 }
 
 /**
@@ -558,11 +557,7 @@ thread_t *sbStartThread(sb_class_t *sbp,
  */
 bool sbIsThreadRunningX(sb_class_t *sbp) {
 
-  if (sbp->tp == NULL) {
-    return false;
-  }
-
-  return !chThdTerminatedX(sbp->tp);
+  return !chThdTerminatedX(&sbp->thread);
 }
 
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
@@ -656,8 +651,9 @@ msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   s.base = (uint8_t *)(void *)stkbase;
   s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
-  sbp->tp = sb_start_unprivileged(sbp, &s, &config->regions[0].area, sbp->sbhp->hdr_entry);
-  if (sbp->tp == NULL) {
+  if (sb_start_unprivileged(sbp, &s,
+                            &config->regions[0].area,
+                            sbp->sbhp->hdr_entry) == NULL) {
     return CH_RET_ENOMEM;
   }
 
@@ -697,12 +693,11 @@ void sbRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np) {
 msg_t sbWaitThread(sb_class_t *sbp) {
   msg_t msg;
 
-  if (sbp->tp == NULL) {
+  if (sbp->thread.state == CH_STATE_FINAL) {
     return MSG_RESET;
   }
 
-  msg = chThdWait(sbp->tp);
-  sbp->tp = NULL;
+  msg = chThdWait(&sbp->thread);
 
   return msg;
 }
@@ -736,9 +731,9 @@ msg_t sbSendMessageTimeout(sb_class_t *sbp,
 
   /* Sending the message.*/
   ctp->u.sentmsg = msg;
-  __ch_msg_insert(&sbp->tp->msgqueue, ctp);
-  if (sbp->tp->state == CH_STATE_WTMSG) {
-    (void) chSchReadyI(sbp->tp);
+  __ch_msg_insert(&sbp->thread.msgqueue, ctp);
+  if (sbp->thread.state == CH_STATE_WTMSG) {
+    (void) chSchReadyI(&sbp->thread);
   }
   msg = chSchGoSleepTimeoutS(CH_STATE_SNDMSGQ, timeout);
 

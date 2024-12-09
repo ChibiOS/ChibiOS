@@ -299,7 +299,7 @@ struct sb_class {
   /**
    * @brief   Thread running in the sandbox.
    */
-  thread_t                      *tp;
+  thread_t                      thread;
   /**
    * @brief   Pointer to the image header.
    */

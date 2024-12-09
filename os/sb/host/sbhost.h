@@ -81,6 +81,13 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Sandbox stack area declaration.
+ *
+ * @param[in] name      name of the sandbox stack area
+ */
+#define SB_STACK(name) THD_STACK(name, SB_CFG_PRIVILEGED_STACK_SIZE);
+
+/**
  * @name    Memory regions attributes checks
  * @{
  */
@@ -177,7 +184,7 @@ static inline msg_t sbSendMessage(sb_class_t *sbp, msg_t msg) {
  */
 static inline void sbEvtSignalI(sb_class_t *sbp, eventmask_t events) {
 
-  chEvtSignalI(sbp->tp, events);
+  chEvtSignalI(&sbp->thread, events);
 }
 
 /**
@@ -190,7 +197,7 @@ static inline void sbEvtSignalI(sb_class_t *sbp, eventmask_t events) {
  */
 static inline void sbEvtSignal(sb_class_t *sbp, eventmask_t events) {
 
-  chEvtSignal(sbp->tp, events);
+  chEvtSignal(&sbp->thread, events);
 }
 
 /**

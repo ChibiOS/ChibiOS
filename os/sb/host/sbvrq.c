@@ -193,7 +193,7 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 
   chDbgCheckClassS();
 
-  chDbgAssert(sbp->tp->state != CH_STATE_CURRENT, "it is current");
+  chDbgAssert(sbp->thread.state != CH_STATE_CURRENT, "it is current");
 
   /* Adding VRQ mask to the pending mask.*/
   sbp->vrq_wtmask |= (sb_vrqmask_t)(1U << nvrq);
@@ -246,7 +246,7 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
     if (active_mask != 0U) {
 
       /* Checking if it happened to preempt this sandbox thread.*/
-      if (sbp->tp->state == CH_STATE_CURRENT) {
+      if (sbp->thread.state == CH_STATE_CURRENT) {
         /* Checking if it is running in unprivileged mode, in this case we
            need to build a return context in its current PSP.*/
         if ((__get_CONTROL() & 1U) != 0U) {
@@ -265,17 +265,17 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
         /* We preempted some other thread. In this case the privilege
            information is stored in the internal thread context because
            it is switched-out.*/
-        if ((sbp->tp->ctx.regs.control & 1U) != 0U) {
+        if ((sbp->thread.ctx.regs.control & 1U) != 0U) {
           struct port_extctx *ectxp;
 
           /* Getting the current PSP, it is stored in the thread context.*/
-          ectxp = (struct port_extctx *)sbp->tp->ctx.syscall.u_psp;
+          ectxp = (struct port_extctx *)sbp->thread.ctx.syscall.u_psp;
 
           /* Creating a return context.*/
           ectxp = vrq_writectx(ectxp, sbp, __CLZ(__RBIT(active_mask)));
 
           /* Updating stored PSP position.*/
-          sbp->tp->ctx.syscall.u_psp = (uint32_t)ectxp;
+          sbp->thread.ctx.syscall.u_psp = (uint32_t)ectxp;
         }
         else {
           /* It is in privileged mode so it will check for pending VRQs

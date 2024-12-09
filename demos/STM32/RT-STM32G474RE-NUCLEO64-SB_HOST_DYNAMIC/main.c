@@ -116,9 +116,9 @@ static const drv_streams_element_t streams[] = {
 /* SB-related.                                                               */
 /*===========================================================================*/
 
-/* Working areas for sandboxes.*/
-static THD_WORKING_AREA(sbx1stk, SB_CFG_PRIVILEGED_STACK_SIZE);
-static THD_WORKING_AREA(sbx2stk, SB_CFG_PRIVILEGED_STACK_SIZE);
+/* Privileged stacks for sandboxes.*/
+static SB_STACK(sbx1stk);
+static SB_STACK(sbx2stk);
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
