@@ -84,8 +84,8 @@ typedef struct vio_uart_units {
 #ifdef __cplusplus
 extern "C" {
 #endif
-void sb_sysc_vio_uart(struct port_extctx *ectxp);
-void sb_fastc_vio_uart(struct port_extctx *ectxp);
+void sb_sysc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp);
+void sb_fastc_vio_uart(sb_class_t *sbp, struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

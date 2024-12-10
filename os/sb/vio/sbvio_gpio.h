@@ -89,7 +89,7 @@ typedef struct vio_gpio_units {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void sb_fastc_vio_gpio(struct port_extctx *ectxp);
+  void sb_fastc_vio_gpio(sb_class_t *sbp, struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

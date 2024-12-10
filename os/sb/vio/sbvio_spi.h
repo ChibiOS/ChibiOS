@@ -84,8 +84,8 @@ typedef struct vio_spi_units {
 #ifdef __cplusplus
 extern "C" {
 #endif
-void sb_sysc_vio_spi(struct port_extctx *ectxp);
-void sb_fastc_vio_spi(struct port_extctx *ectxp);
+void sb_sysc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp);
+void sb_fastc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif

@@ -1,21 +1,19 @@
 *** SB-related notes and ideas ***
 
-* Move u_psp and s_psp fields from the thread context to the sandbox object.
+x Move u_psp and s_psp fields from the thread context to the sandbox object.
   + Reducing size for threads not associated to sandboxes.
   + Move the unprivileged thread creation code from port to sb is more
     architecturally elegant.
   + Can pass "sbp" from call to return handlers through system stack, faster.
   - Creating a strong assumption for one-thread-per-sandbox.
 
-* Remove the "p" pointer from the thread context and use the "object" pointer
+x Remove the "p" pointer from the thread context and use the "object" pointer
   already present in the thread_t structure.
   + SB is a "controller" so it makes sense and saves space.
 
-* The pointer to the SB object could be passed by the dispatcher to the
+x The pointer to the SB object could be passed by the dispatcher to the
   syscalls avoiding this code in all functions.
     sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-
-* Make syscall and fastcall functions different types.
 
 * Use und#xxx instruction for syscall instead of svc#xxx.
   + Faster context switch.
@@ -28,4 +26,4 @@
   to use the FPU and cause FPCA setting.
 
 NOTE: CONTROL is required in context also for FPU modes 2 and 3 because
-      the FPCA bit needs to be preserved for each thread.
+      the FPCA bit needs to be preserved for each thread (done).

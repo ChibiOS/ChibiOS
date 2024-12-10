@@ -88,19 +88,19 @@ extern "C" {
   void sbVRQSetFlagsI(sb_class_t *sbp, sb_vrqnum_t nvrq, uint32_t flags);
   void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq);
   void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq);
-  void sb_sysc_vrq_set_alarm(struct port_extctx *ectxp);
-  void sb_sysc_vrq_reset_alarm(struct port_extctx *ectxp);
-  void sb_sysc_vrq_wait(struct port_extctx *ectxp);
-  void sb_fastc_vrq_gcsts(struct port_extctx *ectxp);
-  void sb_fastc_vrq_setwt(struct port_extctx *ectxp);
-  void sb_fastc_vrq_clrwt(struct port_extctx *ectxp);
-  void sb_fastc_vrq_seten(struct port_extctx *ectxp);
-  void sb_fastc_vrq_clren(struct port_extctx *ectxp);
-  void sb_fastc_vrq_disable(struct port_extctx *ectxp);
-  void sb_fastc_vrq_enable(struct port_extctx *ectxp);
-  void sb_fastc_vrq_getisr(struct port_extctx *ectxp);
-  void sb_fastc_vrq_return(struct port_extctx *ectxp);
-  void __sb_vrq_check_pending(struct port_extctx *ectxp, sb_class_t *sbp);
+  void sb_sysc_vrq_set_alarm(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_sysc_vrq_reset_alarm(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_sysc_vrq_wait(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_gcsts(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_setwt(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_clrwt(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_seten(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_clren(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_disable(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_enable(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_getisr(sb_class_t *sbp, struct port_extctx *ectxp);
+  void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp);
+  void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp);
 #ifdef __cplusplus
 }
 #endif
