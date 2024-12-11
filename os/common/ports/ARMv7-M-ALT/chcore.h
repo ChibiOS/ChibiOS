@@ -90,7 +90,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Implements a syscall interface on SVC.
+ * @brief   Implements a syscall interface on SVCALL.
  */
 #if !defined(PORT_USE_SYSCALL) || defined(__DOXYGEN__)
 #define PORT_USE_SYSCALL                FALSE
@@ -205,6 +205,13 @@
  */
 #if !defined(PORT_PRIGROUP_INIT) || defined(__DOXYGEN__)
 #define PORT_PRIGROUP_INIT              (7 - CORTEX_PRIORITY_BITS)
+#endif
+
+/**
+ * @brief   Enables MPU on RTOS initialization.
+ */
+#if !defined(PORT_MPU_ENABLED) || defined(__DOXYGEN__)
+#define PORT_MPU_ENABLED                TRUE
 #endif
 
 /*===========================================================================*/
@@ -337,13 +344,23 @@
 /** @} */
 
 /**
- * @name    Priority Ranges
+ * @name    Priorities
  * @{
  */
 /**
+ * @brief   Priority level to priority mask conversion macro.
+ */
+#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
+
+/**
  * @brief   Disabled value for BASEPRI register.
  */
-#define CORTEX_BASEPRI_DISABLED         0
+#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
+
+/**
+ * @brief   BASEPRI level within kernel lock.
+ */
+#define CORTEX_BASEPRI_KERNEL           CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 
 /**
  * @brief   Total priority levels.
@@ -378,11 +395,6 @@
 #define CORTEX_PRIORITY_PENDSV          CORTEX_MINIMUM_PRIORITY
 
 /**
- * @brief   Priority level to priority mask conversion macro.
- */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
-
-/**
  * @brief   Maximum usable priority for normal ISRs.
  */
 #define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
@@ -391,12 +403,6 @@
  * @brief   Minimum usable priority for normal ISRs.
  */
 #define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1)
-
-/**
- * @brief   BASEPRI level within kernel lock.
- */
-#define CORTEX_BASEPRI_KERNEL                                               \
-  CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 /** @} */
 
 #if (PORT_FAST_PRIORITIES < 0) ||                                           \
@@ -686,9 +692,19 @@ struct port_context {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
+#if 0
+#define PORT_IRQ_EPILOGUE() do {                                            \
+  port_lock_from_isr();                                                     \
+  if (chSchIsPreemptionRequired()) {                                        \
+    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;                                     \
+  }                                                                         \
+  port_unlock_from_isr();                                                   \
+} while (false)
+#else
 #define PORT_IRQ_EPILOGUE() do {                                            \
   SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;                                       \
 } while (false)
+#endif
 
 /**
  * @brief   IRQ handler function declaration.

@@ -79,7 +79,7 @@ CC_NO_INLINE void port_syslock_noinline(void) {
 
 CC_NO_INLINE uint32_t port_get_s_psp(void) {
 
-  return (uint32_t)__port_syscall_get_s_psp(__sch_get_currthread());
+  return (uint32_t)__sch_get_currthread()->waend;
 }
 
 CC_WEAK void __port_do_fastcall_entry(struct port_extctx *ectxp,
@@ -102,7 +102,7 @@ CC_WEAK void __port_do_syscall_entry(struct port_extctx *ectxp,
 
 CC_WEAK void __port_do_syscall_return(void) {
 
-  __set_PSP(__port_syscall_get_u_psp(__sch_get_currthread()));
+  chSysHalt("unimplemented syscall return");
 }
 #endif /* PORT_USE_SYSCALL == TRUE */
 
@@ -225,7 +225,8 @@ void port_init(os_instance_t *oip) {
 #endif
   }
 #endif
-#if (PORT_MPU_ENABLED == TRUE) || (PORT_USE_SYSCALL == TRUE)
+
+#if (PORT_MPU_ENABLED == TRUE) || (PORT_SWITCHED_REGIONS_NUMBER > 0)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif

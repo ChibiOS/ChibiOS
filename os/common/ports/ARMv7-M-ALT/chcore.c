@@ -87,7 +87,7 @@ CC_WEAK void __port_do_syscall_entry(struct port_extctx *ectxp,
 
 CC_WEAK void __port_do_syscall_return(void) {
 
-  chSysHalt("unimplemented syscall");
+  chSysHalt("unimplemented syscall return");
 }
 #endif /* PORT_USE_SYSCALL == TRUE */
 
@@ -202,7 +202,8 @@ void port_init(os_instance_t *oip) {
   }
 #endif
 
-#if (PORT_ENABLE_GUARD_PAGES == TRUE) || (PORT_SWITCHED_REGIONS_NUMBER > 0)
+#if (PORT_MPU_ENABLED == TRUE) || (PORT_SWITCHED_REGIONS_NUMBER > 0) ||     \
+    (PORT_ENABLE_GUARD_PAGES == TRUE)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif

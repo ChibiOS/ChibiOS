@@ -109,29 +109,6 @@
 #define PORT_KERNEL_MODE_GUEST          2U
 /** @} */
 
-/**
- * @name    Priority boundaries
- * @{
- */
-/**
- * @brief   Total priority levels.
- */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
-
-/**
- * @brief   Maximum priority level.
- * @details The maximum allowed priority level is always zero.
- */
-#define CORTEX_MAXIMUM_PRIORITY         0
-
-/**
- * @brief   Minimum priority level.
- * @details This minimum priority level is calculated from the number of
- *          priority bits supported by the specific Cortex-Mx implementation.
- */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -144,7 +121,7 @@
 #endif
 
 /**
- * @brief   Implements a syscall interface on SVC.
+ * @brief   Implements a syscall interface on SVCALL.
  */
 #if !defined(PORT_USE_SYSCALL) || defined(__DOXYGEN__)
 #define PORT_USE_SYSCALL                FALSE
@@ -543,9 +520,8 @@
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif
 
-#if (PORT_FAST_PRIORITIES < 0) ||                                           \
-    (PORT_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 8))
-#error "invalid PORT_FAST_PRIORITIES value specified"
+#if (PORT_USE_FPU_FAST_SWITCHING < 0) || (PORT_USE_FPU_FAST_SWITCHING > 3)
+#error "invalid PORT_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
 #if (PORT_KERNEL_MODE != PORT_KERNEL_MODE_NORMAL) &&                        \
@@ -555,11 +531,7 @@
 #endif
 
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
-#error "invalid PORT_FAST_PRIORITIES value specified"
-#endif
-
-#if (PORT_USE_FPU_FAST_SWITCHING < 0) || (PORT_USE_FPU_FAST_SWITCHING > 3)
-#error "invalid PORT_USE_FPU_FAST_SWITCHING value specified"
+#error "PORT_KERNEL_MODE_HOST not supported"
 #endif
 
 #if (PORT_USE_SYSCALL == TRUE) ||                                           \
@@ -597,62 +569,7 @@
  * @brief   Name of the implemented architecture.
  */
 #define PORT_ARCHITECTURE_NAME          "ARMv8-M Mainline"
-/** @} */
 
-#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
-/**
- * @brief   Port-specific information string.
- */
-#define PORT_INFO                       "Normal mode"
-
-/**
- * @brief   SVCALL handler priority.
- */
-#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
-                                         PORT_FAST_PRIORITIES)
-
-/**
- * @brief   PENDSV handler priority.
- */
-#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY)
-
-/**
- * @brief   Maximum usable priority for normal ISRs.
- * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
- */
-#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
-
-/**
- * @brief   Minimum usable priority for normal ISRs.
- */
-#define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1)
-
-#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-#define PORT_INFO                       "Non-secure guest mode"
-#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
-                                         PORT_FAST_PRIORITIES)
-#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY & 0xFFFFFFFE)
-#define CORTEX_MAX_KERNEL_PRIORITY      ((CORTEX_PRIORITY_SVCALL | 1) + 1)
-#define CORTEX_MIN_KERNEL_PRIORITY      ((CORTEX_PRIORITY_PENDSV - 1) & 0xFFFFFFFE)
-
-#else
-#error "invalid kernel security mode"
-#endif
-
-/**
- * @brief   Disabled value for BASEPRI register.
- */
-#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
-
-/**
- * @brief   BASEPRI level within kernel lock.
- */
-#define CORTEX_BASEPRI_KERNEL           CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
-
-/**
- * @name    Port information
- * @{
- */
 #if (CORTEX_MODEL == 33) || defined(__DOXYGEN__)
 
 #if !defined(CH_CUSTOMER_LIC_PORT_CM33)
@@ -693,6 +610,94 @@
 
 #else
 #error "unknown ARMv8-M core variant"
+#endif
+
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
+/**
+ * @brief   Port-specific information string.
+ */
+#define PORT_INFO                       "Normal mode without TZ"
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+#define PORT_INFO                       "TZ guest mode"
+#else
+#error "invalid kernel security mode"
+#endif
+/** @} */
+
+/**
+ * @name    Priorities
+ * @{
+ */
+/**
+ * @brief   Priority level to priority mask conversion macro.
+ */
+#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
+
+/**
+ * @brief   Disabled value for BASEPRI register.
+ */
+#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
+
+/**
+ * @brief   BASEPRI level within kernel lock.
+ */
+#define CORTEX_BASEPRI_KERNEL           CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
+
+/**
+ * @brief   Total priority levels.
+ */
+#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+
+/**
+ * @brief   Minimum priority level.
+ * @details This minimum priority level is calculated from the number of
+ *          priority bits supported by the specific Cortex-Mx implementation.
+ */
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+
+/**
+ * @brief   Maximum priority level.
+ * @details The maximum allowed priority level is always zero.
+ */
+#define CORTEX_MAXIMUM_PRIORITY         0
+
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
+/**
+ * @brief   SVCALL handler priority.
+ */
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
+                                         PORT_FAST_PRIORITIES)
+
+/**
+ * @brief   PENDSV handler priority.
+ */
+#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY)
+
+/**
+ * @brief   Maximum usable priority for normal ISRs.
+ * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
+ */
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+
+/**
+ * @brief   Minimum usable priority for normal ISRs.
+ */
+#define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1)
+
+#elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
+#define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
+                                         PORT_FAST_PRIORITIES)
+#define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY & 0xFFFFFFFE)
+#define CORTEX_MAX_KERNEL_PRIORITY      ((CORTEX_PRIORITY_SVCALL | 1) + 1)
+#define CORTEX_MIN_KERNEL_PRIORITY      ((CORTEX_PRIORITY_PENDSV - 1) & 0xFFFFFFFE)
+#else
+  /* Note, checked above.*/
+#endif
+/** @} */
+
+#if (PORT_FAST_PRIORITIES < 0) ||                                           \
+    (PORT_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
+#error "invalid PORT_FAST_PRIORITIES value specified"
 #endif
 
 /*===========================================================================*/
@@ -819,15 +824,6 @@ struct port_context {
 #if (PORT_SWITCHED_REGIONS_NUMBER > 0) || defined(__DOXYGEN__)
   port_mpureg_t         regions[PORT_SWITCHED_REGIONS_NUMBER];
 #endif
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  struct {
-    uint32_t            u_psp;
-    uint32_t            u_psplim;
-    uint32_t            s_psp;
-    uint32_t            s_psplim;
-    const void          *p;
-  } syscall;
-#endif
 };
 
 #endif /* !defined(_FROM_ASM_) */
@@ -835,11 +831,6 @@ struct port_context {
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
-
-/**
- * @brief   Priority level to priority mask conversion macro.
- */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
 
 /**
  * @brief   Priority level verification macro.
@@ -867,18 +858,6 @@ struct port_context {
   #define CORTEX_EXC_RETURN         0xFFFFFFAC
 #else
   #define CORTEX_EXC_RETURN         0xFFFFFFBC
-#endif
-
-/**
- * @brief   Initialization of SYSCALL part of thread context.
- */
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop)                     \
-    (tp)->ctx.syscall.s_psp         = (uint32_t)(wtop);                     \
-    (tp)->ctx.syscall.s_psplim      = (uint32_t)(wbase);                    \
-    (tp)->ctx.syscall.p             = NULL
-#else
-  #define __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop)
 #endif
 
 /**
@@ -1036,7 +1015,7 @@ struct port_context {
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
   (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
   __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
-  __PORT_SETUP_CONTEXT_SYSCALL(tp, wbase, wtop);                            \
+  __PORT_SETUP_CONTEXT_CONTROL(tp);                                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
   __PORT_SETUP_CONTEXT_MPU(tp);                                             \
 } while (false)
@@ -1066,6 +1045,7 @@ struct port_context {
  * @details This macro must be inserted at the end of all IRQ handlers
  *          enabled to invoke system APIs.
  */
+#if 0
 #define PORT_IRQ_EPILOGUE() do {                                            \
   port_lock_from_isr();                                                     \
   if (chSchIsPreemptionRequired()) {                                        \
@@ -1073,6 +1053,11 @@ struct port_context {
   }                                                                         \
   port_unlock_from_isr();                                                   \
 } while (false)
+#else
+#define PORT_IRQ_EPILOGUE() do {                                            \
+  SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;                                       \
+} while (false)
+#endif
 
 /**
  * @brief   IRQ handler function declaration.
@@ -1130,80 +1115,6 @@ struct port_context {
  * @retval true         if running within a critical section.
  */
 #define port_is_locked(sts) !__port_irq_enabled(sts)
-
-#if (PORT_USE_SYSCALL == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Updates the stored user PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @param[in] addr      new user PSP address
- */
-#define __port_syscall_set_u_psp(tp, addr) (tp)->ctx.syscall.u_psp = (uint32_t)(addr)
-
-/**
- * @brief   Updates the stored system PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @param[in] addr      new system PSP address
- */
-#define __port_syscall_set_s_psp(tp, addr) (tp)->ctx.syscall.s_psp = (uint32_t)(addr)
-
-/**
- * @brief   Returns the user PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @return              The user PSP address.
- */
-#define __port_syscall_get_u_psp(tp) (tp)->ctx.syscall.u_psp
-
-/**
- * @brief   Returns the system PSP address.
- *
- * @param[in] tp        pointer to the thread
- * @return              The system PSP address.
- */
-#define __port_syscall_get_s_psp(tp) (tp)->ctx.syscall.s_psp
-
-/**
- * @brief   Updates the stored user PSPLIM address.
- *
- * @param[in] tp        pointer to the thread
- * @param[in] addr      new user PSPLIM address
- */
-#define __port_syscall_set_u_psplim(tp, addr) (tp)->ctx.syscall.u_psplim = (uint32_t)(addr)
-
-/**
- * @brief   Updates the stored system PSPLIM address.
- *
- * @param[in] tp        pointer to the thread
- * @param[in] addr      new system PSPLIM address
- */
-#define __port_syscall_set_s_psplim(tp, addr) (tp)->ctx.syscall.s_psplim = (uint32_t)(addr)
-
-/**
- * @brief   Returns the system PSPLIM address.
- *
- * @param[in] tp        pointer to the thread
- * @return              The system PSPLIM address.
- */
-#define __port_syscall_get_s_psplim(tp) (tp)->ctx.syscall.s_psplim
-
-/**
- * @brief   Returns the user PSPLIM address.
- *
- * @param[in] tp        pointer to the thread
- * @return              The user PSPLIM address.
- */
-#define __port_syscall_get_u_psplim(tp) (tp)->ctx.syscall.u_psplim
-
-/**
- * @brief   Returns the syscall association pointer.
- *
- * @param[in] tp        pointer to the thread
- * @return              The pointer value.
- */
-#define __port_syscall_get_pointer(tp) (tp)->ctx.syscall.p
-#endif /* PORT_USE_SYSCALL == TRUE */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -1371,7 +1282,6 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 #if CH_CFG_ST_TIMEDELTA > 0
 #include "chcore_timer.h"
 #endif /* CH_CFG_ST_TIMEDELTA > 0 */
-#include "chcoreapi.h"
 
 #endif /* !defined(_FROM_ASM_) */
 
