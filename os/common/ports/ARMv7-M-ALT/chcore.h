@@ -35,11 +35,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/* The following code is not processed when the file is included from an
-   asm module because those intrinsic macros are not necessarily defined
-   by the assembler too.*/
-#if !defined(_FROM_ASM_)
-
 /**
  * @brief   Compiler name and version.
  */
@@ -55,9 +50,6 @@
 #else
 #error "unsupported compiler"
 #endif
-
-#endif /* !defined(_FROM_ASM_) */
-/** @} */
 
 /**
  * @name    Port Capabilities and Constants
@@ -199,7 +191,7 @@
  *               FPU_FPCCR_LSPEN enabled).
  *          - 3: Uses short exception context when possible and also omits
  *               saving s16-s31 when it is not needed (FPU_FPCCR_ASPEN,
- *               FPU_FPCCR_LSPEN enabled and extra SW checks) .
+ *               FPU_FPCCR_LSPEN enabled and extra SW checks).
  */
 #if !defined(PORT_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
 #define PORT_USE_FPU_FAST_SWITCHING     3

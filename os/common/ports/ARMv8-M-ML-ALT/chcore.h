@@ -36,14 +36,8 @@
 /*===========================================================================*/
 
 /**
- * @name    Architecture and Compiler
- * @{
+ * @brief   Compiler name and version.
  */
-/* The following code is not processed when the file is included from an
-   asm module because those intrinsic macros are not necessarily defined
-   by the assembler too.*/
-#if !defined(_FROM_ASM_)
-
 #if defined(__GNUC__) || defined(__DOXYGEN__)
 #define PORT_COMPILER_NAME              "GCC " __VERSION__
 
@@ -56,24 +50,6 @@
 #else
 #error "unsupported compiler"
 #endif
-
-/**
- * @brief   Macro defining a generic ARM architecture.
- */
-#define PORT_ARCHITECTURE_ARM
-
-/**
- * @brief   Macro defining the specific ARM architecture.
- */
-#define PORT_ARCHITECTURE_ARM_V8M_MAINLINE
-
-/**
- * @brief   Name of the implemented architecture.
- */
-#define PORT_ARCHITECTURE_NAME          "ARMv8-M Mainline"
-
-#endif /* !defined(_FROM_ASM_) */
-/** @} */
 
 /**
  * @name    Port Capabilities and Constants
@@ -211,16 +187,16 @@
 /**
  * @brief   Enables the use of the WFI instruction in the idle thread loop.
  */
-#if !defined(CORTEX_ENABLE_WFI_IDLE)
-#define CORTEX_ENABLE_WFI_IDLE          FALSE
+#if !defined(PORT_ENABLE_WFI_IDLE)
+#define PORT_ENABLE_WFI_IDLE            FALSE
 #endif
 
 /**
  * @brief   Number of upper priority levels reserved as fast interrupts.
  * @note    The default reserves no priority levels for fast interrupts.
  */
-#if !defined(CORTEX_FAST_PRIORITIES)
-#define CORTEX_FAST_PRIORITIES          0
+#if !defined(PORT_FAST_PRIORITIES)
+#define PORT_FAST_PRIORITIES            0
 #endif
 
 /**
@@ -248,10 +224,10 @@
  *               FPU_FPCCR_LSPEN enabled).
  *          - 3: Uses short exception context when possible and also omits
  *               saving s16-s31 when it is not needed (FPU_FPCCR_ASPEN,
- *               FPU_FPCCR_LSPEN enabled and extra SW checks) .
+ *               FPU_FPCCR_LSPEN enabled and extra SW checks).
  */
-#if !defined(CORTEX_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
-#define CORTEX_USE_FPU_FAST_SWITCHING   3
+#if !defined(PORT_USE_FPU_FAST_SWITCHING) || defined(__DOXYGEN__)
+#define PORT_USE_FPU_FAST_SWITCHING     3
 #endif
 
 /**
@@ -260,15 +236,15 @@
  *          priority with no sub-priority.
  * @note    Changing this value is not recommended.
  */
-#if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
+#if !defined(PORT_PRIGROUP_INIT) || defined(__DOXYGEN__)
+#define PORT_PRIGROUP_INIT              (7 - CORTEX_PRIORITY_BITS)
 #endif
 
 /**
  * @brief   Enables MPU on RTOS initialization.
  */
 #if !defined(PORT_MPU_ENABLED) || defined(__DOXYGEN__)
-#define PORT_MPU_ENABLED               TRUE
+#define PORT_MPU_ENABLED                TRUE
 #endif
 
 /**
@@ -563,17 +539,13 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if CH_DBG_ENABLE_STACK_CHECK == FALSE
-//#error "CH_DBG_ENABLE_STACK_CHECK must be always TRUE in this architecture"
-#endif
-
 #if (PORT_SWITCHED_REGIONS_NUMBER < 0) || (PORT_SWITCHED_REGIONS_NUMBER > 8)
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif
 
-#if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
-    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 8))
-#error "invalid CORTEX_FAST_PRIORITIES value specified"
+#if (PORT_FAST_PRIORITIES < 0) ||                                           \
+    (PORT_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 8))
+#error "invalid PORT_FAST_PRIORITIES value specified"
 #endif
 
 #if (PORT_KERNEL_MODE != PORT_KERNEL_MODE_NORMAL) &&                        \
@@ -583,22 +555,22 @@
 #endif
 
 #if PORT_KERNEL_MODE == PORT_KERNEL_MODE_HOST
-#error "invalid CORTEX_FAST_PRIORITIES value specified"
+#error "invalid PORT_FAST_PRIORITIES value specified"
 #endif
 
-#if (CORTEX_USE_FPU_FAST_SWITCHING < 0) || (CORTEX_USE_FPU_FAST_SWITCHING > 3)
-#error "invalid CORTEX_USE_FPU_FAST_SWITCHING value specified"
+#if (PORT_USE_FPU_FAST_SWITCHING < 0) || (PORT_USE_FPU_FAST_SWITCHING > 3)
+#error "invalid PORT_USE_FPU_FAST_SWITCHING value specified"
 #endif
 
 #if (PORT_USE_SYSCALL == TRUE) ||                                           \
-    ((CORTEX_USE_FPU == TRUE) && (CORTEX_USE_FPU_FAST_SWITCHING >= 2)) ||   \
+    ((CORTEX_USE_FPU == TRUE) && (PORT_USE_FPU_FAST_SWITCHING >= 2)) ||     \
     defined(__DOXYGEN__)
 /**
  * @brief   CONTROL as part of the saved thread context.
  * @note    Saving control is only required when:
  *          - PORT_USE_SYSCALL is enabled because support for unprivileged
  *            mode.
- *          - PORT_USE_FPU is enabled with CORTEX_USE_FPU_FAST_SWITCHING
+ *          - PORT_USE_FPU is enabled with PORT_USE_FPU_FAST_SWITCHING
  *            modes 2 or 3 because CONTROL.FPCA needs to be handled for
  *            each thread.
  */
@@ -607,12 +579,27 @@
 #define PORT_SAVE_CONTROL               FALSE
 #endif
 
-#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
 /**
- * @brief   Context save area for each thread.
+ * @name    Architecture
+ * @{
  */
-#define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
+/**
+ * @brief   Macro defining a generic ARM architecture.
+ */
+#define PORT_ARCHITECTURE_ARM
 
+/**
+ * @brief   Macro defining the specific ARM architecture.
+ */
+#define PORT_ARCHITECTURE_ARM_V8M_MAINLINE
+
+/**
+ * @brief   Name of the implemented architecture.
+ */
+#define PORT_ARCHITECTURE_NAME          "ARMv8-M Mainline"
+/** @} */
+
+#if (PORT_KERNEL_MODE == PORT_KERNEL_MODE_NORMAL) || defined (__DOXYGEN__)
 /**
  * @brief   Port-specific information string.
  */
@@ -622,7 +609,7 @@
  * @brief   SVCALL handler priority.
  */
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
-                                         CORTEX_FAST_PRIORITIES)
+                                         PORT_FAST_PRIORITIES)
 
 /**
  * @brief   PENDSV handler priority.
@@ -641,10 +628,9 @@
 #define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1)
 
 #elif PORT_KERNEL_MODE == PORT_KERNEL_MODE_GUEST
-#define PORT_CONTEXT_RESERVED_SIZE      (sizeof (struct port_intctx))
 #define PORT_INFO                       "Non-secure guest mode"
 #define CORTEX_PRIORITY_SVCALL          (CORTEX_MAXIMUM_PRIORITY +          \
-                                         CORTEX_FAST_PRIORITIES)
+                                         PORT_FAST_PRIORITIES)
 #define CORTEX_PRIORITY_PENDSV          (CORTEX_MINIMUM_PRIORITY & 0xFFFFFFFE)
 #define CORTEX_MAX_KERNEL_PRIORITY      ((CORTEX_PRIORITY_SVCALL | 1) + 1)
 #define CORTEX_MIN_KERNEL_PRIORITY      ((CORTEX_PRIORITY_PENDSV - 1) & 0xFFFFFFFE)
@@ -1056,12 +1042,17 @@ struct port_context {
 } while (false)
 
 /**
+ * @brief   Context switch area size.
+ */
+#define PORT_WA_CTX_SIZE    sizeof (struct port_extctx)
+
+/**
  * @brief   Computes the thread working area global size.
  * @note    There is no need to perform alignments in this macro.
  */
-#define PORT_WA_SIZE(n) (PORT_CONTEXT_RESERVED_SIZE +                       \
-                         (size_t)(n) +                                      \
-                         (size_t)PORT_INT_REQUIRED_STACK)
+#define PORT_WA_SIZE(n)     ((size_t)PORT_WA_CTX_SIZE +                     \
+                             (size_t)(n) +                                  \
+                             (size_t)PORT_INT_REQUIRED_STACK)
 
 /**
  * @brief   IRQ prologue code.
@@ -1354,7 +1345,7 @@ __STATIC_FORCEINLINE void port_enable(void) {
  */
 __STATIC_FORCEINLINE void port_wait_for_interrupt(void) {
 
-#if CORTEX_ENABLE_WFI_IDLE == TRUE
+#if PORT_ENABLE_WFI_IDLE == TRUE
   __WFI();
 #endif
 }

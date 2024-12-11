@@ -130,7 +130,7 @@
                 /* Store float context through R1.*/
                 .macro  PORT_STORE_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
-#if CORTEX_USE_FPU_FAST_SWITCHING > 2
+#if PORT_USE_FPU_FAST_SWITCHING > 2
                 tst     lr, #16
                 it      eq
                 vstmiaeq r1!, {s16-s31}
@@ -143,7 +143,7 @@
                 /* Load float context through R0.*/
                 .macro  PORT_LOAD_FLOAT_CONTEXT
 #if CORTEX_USE_FPU
-#if CORTEX_USE_FPU_FAST_SWITCHING > 2
+#if PORT_USE_FPU_FAST_SWITCHING > 2
                 tst     lr, #16
                 it      eq
                 vldmiaeq r0!, {s16-s31}
