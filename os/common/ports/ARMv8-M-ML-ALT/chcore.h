@@ -155,9 +155,10 @@
  * @brief   Per-thread stack overhead for interrupts servicing.
  * @details This constant is used in the calculation of the correct working
  *          area size.
- * @note    This port requires no extra stack space for interrupt handling.
+ * @note    This port requires no extra stack space for interrupt handling
+ *          because switch is performed in an exception handler.
  */
-#if !defined(PORT_INT_REQUIRED_STACK)
+#if !defined(PORT_INT_REQUIRED_STACK) || defined(__DOXYGEN__)
 #define PORT_INT_REQUIRED_STACK         0
 #endif
 
@@ -542,7 +543,7 @@
  * @note    Saving control is only required when:
  *          - PORT_USE_SYSCALL is enabled because support for unprivileged
  *            mode.
- *          - PORT_USE_FPU is enabled with PORT_USE_FPU_FAST_SWITCHING
+ *          - PORT_USE_FPU is enabled with @p PORT_USE_FPU_FAST_SWITCHING
  *            modes 2 or 3 because CONTROL.FPCA needs to be handled for
  *            each thread.
  */
@@ -769,11 +770,11 @@ struct port_extctx {
 
 /**
  * @brief   System saved context.
- * @details This structure represents the inner stack frame during a context
+ * @details This structure represents the inner context during a context
  *          switch.
  */
 struct port_intctx {
-  /* Integer registers context.*/
+  /* Integer and special  registers context.*/
   uint32_t              basepri;
   uint32_t              r4;
   uint32_t              r5;
@@ -836,7 +837,7 @@ struct port_context {
  * @brief   Priority level verification macro.
  */
 #define PORT_IRQ_IS_VALID_PRIORITY(n)                                       \
-  (((n) >= 0) && ((n) < CORTEX_PRIORITY_LEVELS))
+  (((n) >= 0U) && ((n) < CORTEX_PRIORITY_LEVELS))
 
 /**
  * @brief   Priority level verification macro.
@@ -1008,12 +1009,12 @@ struct port_context {
 #define PORT_SETUP_CONTEXT(tp, wbase, wtop, pf, arg) do {                   \
   (tp)->ctx.sp = (struct port_extctx *)(void *)                             \
                  ((uint8_t *)(wtop) - sizeof (struct port_extctx));         \
-  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
-  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   (tp)->ctx.regs.basepri    = CORTEX_BASEPRI_KERNEL;                        \
   (tp)->ctx.regs.r4         = (uint32_t)(pf);                               \
   (tp)->ctx.regs.r5         = (uint32_t)(arg);                              \
   (tp)->ctx.regs.lr_exc     = (uint32_t)CORTEX_EXC_RETURN;                  \
+  (tp)->ctx.sp->pc          = (uint32_t)__port_thread_start;                \
+  (tp)->ctx.sp->xpsr        = (uint32_t)0x01000000;                         \
   __PORT_SETUP_CONTEXT_SPLIM(tp, wbase);                                    \
   __PORT_SETUP_CONTEXT_CONTROL(tp);                                         \
   __PORT_SETUP_CONTEXT_FPU(tp);                                             \
@@ -1065,9 +1066,10 @@ struct port_context {
  *          port implementation.
  */
 #ifdef __cplusplus
-#define PORT_IRQ_HANDLER(id) extern "C" void id(void)
+  #define PORT_IRQ_HANDLER(id) extern "C" void id(void)
+
 #else
-#define PORT_IRQ_HANDLER(id) void id(void)
+  #define PORT_IRQ_HANDLER(id) void id(void)
 #endif
 
 /**
@@ -1076,9 +1078,10 @@ struct port_context {
  *          port implementation.
  */
 #ifdef __cplusplus
-#define PORT_FAST_IRQ_HANDLER(id) extern "C" void id(void)
+  #define PORT_FAST_IRQ_HANDLER(id) extern "C" void id(void)
+
 #else
-#define PORT_FAST_IRQ_HANDLER(id) void id(void)
+  #define PORT_FAST_IRQ_HANDLER(id) void id(void)
 #endif
 
 /**
@@ -1141,10 +1144,8 @@ extern "C" {
  * @return              The interrupts status.
  */
 __STATIC_FORCEINLINE syssts_t __port_get_irq_status(void) {
-  syssts_t sts;
 
-  sts = (syssts_t)__get_BASEPRI();
-  return sts;
+  return (syssts_t)__get_BASEPRI();
 }
 
 /**
@@ -1158,7 +1159,7 @@ __STATIC_FORCEINLINE syssts_t __port_get_irq_status(void) {
  */
 __STATIC_FORCEINLINE bool __port_irq_enabled(syssts_t sts) {
 
-  return sts == (syssts_t)CORTEX_BASEPRI_DISABLED;
+  return (bool)(sts == (syssts_t)CORTEX_BASEPRI_DISABLED);
 }
 
 /**
