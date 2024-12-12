@@ -241,7 +241,7 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 #endif /* defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE) */
 #endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
 
-const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {
+static const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {
   const sb_memory_region_t *rp = &sbp->config->regions[0];
 
   do {
