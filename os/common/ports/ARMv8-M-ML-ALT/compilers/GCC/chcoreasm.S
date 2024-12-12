@@ -90,26 +90,26 @@
                 /* Store special registers context through R1.
                    On entry R12=CONTROL.*/
                 .macro  PORT_STORE_SPECIAL_CONTEXT
-#if CH_DBG_ENABLE_STACK_CHECK
+#if PORT_SAVE_SPLIM
                 mrs     r2, PSPLIM
-#if PORT_USE_SYSCALL
+#if PORT_SAVE_CONTROL
                 stmia   r1!, {r2, r12}
 #else
                 stmia   r1!, {r2}
 #endif
-#else /* !CH_DBG_ENABLE_STACK_CHECK */
-#if PORT_USE_SYSCALL
+#else /* !PORT_SAVE_SPLIM */
+#if PORT_SAVE_CONTROL
                 stmia   r1!, {r12}
 #else
                 /* Nothing.*/
 #endif
-#endif /* !CH_DBG_ENABLE_STACK_CHECK */
+#endif /* !PORT_SAVE_SPLIM */
                 .endm
 
                 /* Load special context through R0.*/
                 .macro  PORT_LOAD_SPECIAL_CONTEXT
-#if CH_DBG_ENABLE_STACK_CHECK
-#if PORT_USE_SYSCALL
+#if PORT_SAVE_SPLIM
+#if PORT_SAVE_CONTROL
                 ldmia   r0!, {r2, r12}
                 msr     PSPLIM, r2
                 msr     CONTROL, r12
@@ -117,14 +117,14 @@
                 ldmia   r0!, {r2}
                 msr     PSPLIM, r2
 #endif
-#else /* !CH_DBG_ENABLE_STACK_CHECK */
-#if PORT_USE_SYSCALL
+#else /* !PORT_SAVE_SPLIM */
+#if PORT_SAVE_CONTROL
                 ldmia   r0!, {r12}
                 msr     CONTROL, r12
 #else
                 /* Nothing.*/
 #endif
-#endif /* !CH_DBG_ENABLE_STACK_CHECK */
+#endif /* !PORT_SAVE_SPLIM */
                 .endm
 
                 /* Store float context through R1.*/
@@ -328,7 +328,7 @@ PendSV_Handler:
                 adds    r1, #CONTEXT_OFFSET
 
                 mrs     r2, PSP
-#if PORT_USE_SYSCALL
+#if PORT_SAVE_CONTROL
                 mrs     r12, CONTROL
 #endif
                 PORT_STORE_INTEGER_CONTEXT
