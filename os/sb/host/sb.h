@@ -384,10 +384,11 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
-#include "sbelf.h"
-#include "sbposix.h"
-#include "sbapi.h"
 #include "sbhost.h"
+#include "sbsyscall.h"
+#include "sbapi.h"
+#include "sbposix.h"
+#include "sbelf.h"
 
 #endif /* SBHOST_H */
 
