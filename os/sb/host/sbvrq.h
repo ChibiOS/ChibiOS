@@ -45,7 +45,6 @@
  * @name    VRQ pseudo-instructions handlers
  * @{
  */
-#if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
 #define SB_SVC119_HANDLER       sb_fastc_vrq_gcsts
 #define SB_SVC120_HANDLER       sb_fastc_vrq_setwt
 #define SB_SVC121_HANDLER       sb_fastc_vrq_clrwt
@@ -59,7 +58,6 @@
 #define SB_SVC253_HANDLER       sb_sysc_vrq_set_alarm
 #define SB_SVC254_HANDLER       sb_sysc_vrq_reset_alarm
 #define SB_SVC255_HANDLER       sb_sysc_vrq_wait
-#endif
 /** @} */
 
 /*===========================================================================*/

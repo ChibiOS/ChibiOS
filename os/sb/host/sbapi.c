@@ -39,7 +39,6 @@
 static void sb_fastc_get_systime(sb_class_t *sbp, struct port_extctx *ctxp);
 static void sb_fastc_get_frequency(sb_class_t *sbp, struct port_extctx *ctxp);
 
-static void sb_sysc_stdio(sb_class_t *sbp, struct port_extctx *ectxp);
 static void sb_sysc_exit(sb_class_t *sbp, struct port_extctx *ctxp);
 static void sb_sysc_sleep(sb_class_t *sbp, struct port_extctx *ctxp);
 static void sb_sysc_sleep_until_windowed(sb_class_t *sbp, struct port_extctx *ctxp);
@@ -58,9 +57,6 @@ static void sb_sysc_loadelf(sb_class_t *sbp, struct port_extctx *ectxp);
 #define SB_SVC1_HANDLER         sb_fastc_get_systime
 #define SB_SVC2_HANDLER         sb_fastc_get_frequency
 
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-#define SB_SVC128_HANDLER       sb_sysc_stdio
-#endif
 #define SB_SVC129_HANDLER       sb_sysc_exit
 #define SB_SVC130_HANDLER       sb_sysc_sleep
 #define SB_SVC131_HANDLER       sb_sysc_sleep_until_windowed
@@ -993,104 +989,6 @@ static void sb_fastc_get_frequency(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   ectxp->r0 = (uint32_t)CH_CFG_ST_FREQUENCY;
 }
-
-
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-static void sb_sysc_stdio(sb_class_t *sbp, struct port_extctx *ectxp) {
-
-  /* VFS support could be enabled but this specific sandbox could not have
-     one associated to it.*/
-  if (sbp->config->vfs_driver == NULL) {
-    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
-    return;
-  }
-
-  switch (ectxp->r0) {
-  case SB_POSIX_OPEN:
-    ectxp->r0 = (uint32_t)sb_posix_open(sbp,
-                                        (const char *)ectxp->r1,
-                                        (int)ectxp->r2);
-    break;
-  case SB_POSIX_CLOSE:
-    ectxp->r0 = (uint32_t)sb_posix_close(sbp,
-                                         (int)ectxp->r1);
-    break;
-  case SB_POSIX_DUP:
-    ectxp->r0 = (uint32_t)sb_posix_dup(sbp,
-                                       (int)ectxp->r1);
-    break;
-  case SB_POSIX_DUP2:
-    ectxp->r0 = (uint32_t)sb_posix_dup2(sbp,
-                                        (int)ectxp->r1,
-                                        (int)ectxp->r2);
-    break;
-  case SB_POSIX_FSTAT:
-    ectxp->r0 = (uint32_t)sb_posix_fstat(sbp,
-                                         (int)ectxp->r1,
-                                         (struct stat *)ectxp->r2);
-    break;
-  case SB_POSIX_READ:
-    ectxp->r0 = (uint32_t)sb_posix_read(sbp,
-                                        (int)ectxp->r1,
-                                        (void *)ectxp->r2,
-                                        (size_t)ectxp->r3);
-    break;
-  case SB_POSIX_WRITE:
-    ectxp->r0 = (uint32_t)sb_posix_write(sbp,
-                                         (int)ectxp->r1,
-                                         (const void *)ectxp->r2,
-                                         (size_t)ectxp->r3);
-    break;
-  case SB_POSIX_LSEEK:
-    ectxp->r0 = (uint32_t)sb_posix_lseek(sbp,
-                                         (int)ectxp->r1,
-                                         (off_t)ectxp->r2,
-                                         (int)ectxp->r3);
-    break;
-  case SB_POSIX_GETDENTS:
-    ectxp->r0 = (uint32_t)sb_posix_getdents(sbp,
-                                            (int)ectxp->r1,
-                                            (void *)ectxp->r2,
-                                            (size_t)ectxp->r3);
-    break;
-  case SB_POSIX_CHDIR:
-    ectxp->r0 = (uint32_t)sb_posix_chdir(sbp,
-                                         (const char *)ectxp->r1);
-    break;
-  case SB_POSIX_GETCWD:
-    ectxp->r0 = (uint32_t)sb_posix_getcwd(sbp,
-                                          (char *)ectxp->r1,
-                                          (size_t)ectxp->r2);
-    break;
-  case SB_POSIX_UNLINK:
-    ectxp->r0 = (uint32_t)sb_posix_unlink(sbp,
-                                          (const char *)ectxp->r1);
-    break;
-  case SB_POSIX_RENAME:
-    ectxp->r0 = (uint32_t)sb_posix_rename(sbp,
-                                          (const char *)ectxp->r1,
-                                          (const char *)ectxp->r2);
-    break;
-  case SB_POSIX_MKDIR:
-    ectxp->r0 = (uint32_t)sb_posix_mkdir(sbp,
-                                         (const char *)ectxp->r1,
-                                         (mode_t)ectxp->r2);
-    break;
-  case SB_POSIX_RMDIR:
-    ectxp->r0 = (uint32_t)sb_posix_rmdir(sbp,
-                                         (const char *)ectxp->r1);
-    break;
-  case SB_POSIX_STAT:
-    ectxp->r0 = (uint32_t)sb_posix_stat(sbp,
-                                        (const char *)ectxp->r1,
-                                        (struct stat *)ectxp->r2);
-    break;
-  default:
-    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
-    break;
-  }
-}
-#endif /* SB_CFG_ENABLE_VFS == TRUE */
 
 static void sb_sysc_exit(sb_class_t *sbp, struct port_extctx *ectxp) {
 

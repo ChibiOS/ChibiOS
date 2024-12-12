@@ -66,11 +66,7 @@ static msg_t create_descriptor(sb_ioblock_t *iop,
   return CH_RET_EMFILE;
 }
 
-/*===========================================================================*/
-/* Module exported functions.                                                */
-/*===========================================================================*/
-
-int sb_posix_stat(sb_class_t *sbp, const char *path, struct stat *statbuf) {
+static int sb_posix_stat(sb_class_t *sbp, const char *path, struct stat *statbuf) {
   msg_t ret;
   vfs_stat_t vstat;
 
@@ -93,7 +89,7 @@ int sb_posix_stat(sb_class_t *sbp, const char *path, struct stat *statbuf) {
   return ret;
 }
 
-int sb_posix_open(sb_class_t *sbp, const char *path, int flags) {
+static int sb_posix_open(sb_class_t *sbp, const char *path, int flags) {
   vfs_node_c *np = NULL;
   msg_t ret;
 
@@ -118,7 +114,7 @@ int sb_posix_open(sb_class_t *sbp, const char *path, int flags) {
   return (int)ret;
 }
 
-int sb_posix_close(sb_class_t *sbp, int fd) {
+static int sb_posix_close(sb_class_t *sbp, int fd) {
 
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
@@ -130,7 +126,7 @@ int sb_posix_close(sb_class_t *sbp, int fd) {
   return CH_RET_SUCCESS;
 }
 
-int sb_posix_dup(sb_class_t *sbp, int fd) {
+static int sb_posix_dup(sb_class_t *sbp, int fd) {
   vfs_node_c *np;
   msg_t ret;
 
@@ -152,7 +148,7 @@ int sb_posix_dup(sb_class_t *sbp, int fd) {
   return (int)ret;
 }
 
-int sb_posix_dup2(sb_class_t *sbp, int oldfd, int newfd) {
+static int sb_posix_dup2(sb_class_t *sbp, int oldfd, int newfd) {
 
   if (!sb_is_existing_descriptor(&sbp->io, oldfd)) {
     return CH_RET_EBADF;
@@ -175,7 +171,7 @@ int sb_posix_dup2(sb_class_t *sbp, int oldfd, int newfd) {
   return (int)newfd;
 }
 
-int sb_posix_fstat(sb_class_t *sbp, int fd, struct stat *statbuf) {
+static int sb_posix_fstat(sb_class_t *sbp, int fd, struct stat *statbuf) {
   msg_t ret;
   vfs_stat_t vstat;
 
@@ -198,7 +194,7 @@ int sb_posix_fstat(sb_class_t *sbp, int fd, struct stat *statbuf) {
   return ret;
 }
 
-ssize_t sb_posix_read(sb_class_t *sbp, int fd, void *buf, size_t count) {
+static ssize_t sb_posix_read(sb_class_t *sbp, int fd, void *buf, size_t count) {
 
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
@@ -219,7 +215,7 @@ ssize_t sb_posix_read(sb_class_t *sbp, int fd, void *buf, size_t count) {
   return vfsReadFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);
 }
 
-ssize_t sb_posix_write(sb_class_t *sbp, int fd, const void *buf, size_t count) {
+static ssize_t sb_posix_write(sb_class_t *sbp, int fd, const void *buf, size_t count) {
 
   if (!sb_is_existing_descriptor(&sbp->io, fd)) {
     return CH_RET_EBADF;
@@ -240,7 +236,7 @@ ssize_t sb_posix_write(sb_class_t *sbp, int fd, const void *buf, size_t count) {
   return vfsWriteFile((vfs_file_node_c *)sbp->io.vfs_nodes[fd], buf, count);
 }
 
-off_t sb_posix_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
+static off_t sb_posix_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
 
   if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
     return CH_RET_EINVAL;
@@ -263,7 +259,7 @@ off_t sb_posix_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
                             whence);;
 }
 
-ssize_t sb_posix_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) {
+static ssize_t sb_posix_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) {
   vfs_shared_buffer_t *shbuf;
   vfs_direntry_info_t *dip;
   msg_t ret;
@@ -314,7 +310,7 @@ ssize_t sb_posix_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) {
   return (ssize_t)ret;
 }
 
-int sb_posix_chdir(sb_class_t *sbp, const char *path) {
+static int sb_posix_chdir(sb_class_t *sbp, const char *path) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -323,7 +319,7 @@ int sb_posix_chdir(sb_class_t *sbp, const char *path) {
   return (int)vfsDrvChangeCurrentDirectory(sbp->config->vfs_driver, path);
 }
 
-int sb_posix_getcwd(sb_class_t *sbp, char *buf, size_t size) {
+static int sb_posix_getcwd(sb_class_t *sbp, char *buf, size_t size) {
 
   if (!sb_is_valid_write_range(sbp, buf, size)) {
     return CH_RET_EFAULT;
@@ -334,7 +330,7 @@ int sb_posix_getcwd(sb_class_t *sbp, char *buf, size_t size) {
   return vfsDrvGetCurrentDirectory(sbp->config->vfs_driver, buf, size);
 }
 
-int sb_posix_unlink(sb_class_t *sbp, const char *path) {
+static int sb_posix_unlink(sb_class_t *sbp, const char *path) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -343,7 +339,7 @@ int sb_posix_unlink(sb_class_t *sbp, const char *path) {
   return (int)vfsDrvUnlink(sbp->config->vfs_driver, path);
 }
 
-int sb_posix_rename(sb_class_t *sbp, const char *oldpath, const char *newpath) {
+static int sb_posix_rename(sb_class_t *sbp, const char *oldpath, const char *newpath) {
 
   if (sb_check_string(sbp, (void *)oldpath, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -356,7 +352,7 @@ int sb_posix_rename(sb_class_t *sbp, const char *oldpath, const char *newpath) {
   return (int)vfsDrvRename(sbp->config->vfs_driver, oldpath, newpath);
 }
 
-int sb_posix_mkdir(sb_class_t *sbp, const char *path, mode_t mode) {
+static int sb_posix_mkdir(sb_class_t *sbp, const char *path, mode_t mode) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -365,7 +361,7 @@ int sb_posix_mkdir(sb_class_t *sbp, const char *path, mode_t mode) {
   return (int)vfsDrvMkdir(sbp->config->vfs_driver, path, (vfs_mode_t)mode);
 }
 
-int sb_posix_rmdir(sb_class_t *sbp, const char *path) {
+static int sb_posix_rmdir(sb_class_t *sbp, const char *path) {
 
   if (sb_check_string(sbp, (void *)path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
     return CH_RET_EFAULT;
@@ -374,6 +370,105 @@ int sb_posix_rmdir(sb_class_t *sbp, const char *path) {
   return (int)vfsDrvRmdir(sbp->config->vfs_driver, path);
 }
 
-#endif
+/*===========================================================================*/
+/* Module exported functions.                                                */
+/*===========================================================================*/
+
+void sb_sysc_stdio(sb_class_t *sbp, struct port_extctx *ectxp) {
+
+  /* VFS support could be enabled but this specific sandbox could not have
+     one associated to it.*/
+  if (sbp->config->vfs_driver == NULL) {
+    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+    return;
+  }
+
+  switch (ectxp->r0) {
+  case SB_POSIX_OPEN:
+    ectxp->r0 = (uint32_t)sb_posix_open(sbp,
+                                        (const char *)ectxp->r1,
+                                        (int)ectxp->r2);
+    break;
+  case SB_POSIX_CLOSE:
+    ectxp->r0 = (uint32_t)sb_posix_close(sbp,
+                                         (int)ectxp->r1);
+    break;
+  case SB_POSIX_DUP:
+    ectxp->r0 = (uint32_t)sb_posix_dup(sbp,
+                                       (int)ectxp->r1);
+    break;
+  case SB_POSIX_DUP2:
+    ectxp->r0 = (uint32_t)sb_posix_dup2(sbp,
+                                        (int)ectxp->r1,
+                                        (int)ectxp->r2);
+    break;
+  case SB_POSIX_FSTAT:
+    ectxp->r0 = (uint32_t)sb_posix_fstat(sbp,
+                                         (int)ectxp->r1,
+                                         (struct stat *)ectxp->r2);
+    break;
+  case SB_POSIX_READ:
+    ectxp->r0 = (uint32_t)sb_posix_read(sbp,
+                                        (int)ectxp->r1,
+                                        (void *)ectxp->r2,
+                                        (size_t)ectxp->r3);
+    break;
+  case SB_POSIX_WRITE:
+    ectxp->r0 = (uint32_t)sb_posix_write(sbp,
+                                         (int)ectxp->r1,
+                                         (const void *)ectxp->r2,
+                                         (size_t)ectxp->r3);
+    break;
+  case SB_POSIX_LSEEK:
+    ectxp->r0 = (uint32_t)sb_posix_lseek(sbp,
+                                         (int)ectxp->r1,
+                                         (off_t)ectxp->r2,
+                                         (int)ectxp->r3);
+    break;
+  case SB_POSIX_GETDENTS:
+    ectxp->r0 = (uint32_t)sb_posix_getdents(sbp,
+                                            (int)ectxp->r1,
+                                            (void *)ectxp->r2,
+                                            (size_t)ectxp->r3);
+    break;
+  case SB_POSIX_CHDIR:
+    ectxp->r0 = (uint32_t)sb_posix_chdir(sbp,
+                                         (const char *)ectxp->r1);
+    break;
+  case SB_POSIX_GETCWD:
+    ectxp->r0 = (uint32_t)sb_posix_getcwd(sbp,
+                                          (char *)ectxp->r1,
+                                          (size_t)ectxp->r2);
+    break;
+  case SB_POSIX_UNLINK:
+    ectxp->r0 = (uint32_t)sb_posix_unlink(sbp,
+                                          (const char *)ectxp->r1);
+    break;
+  case SB_POSIX_RENAME:
+    ectxp->r0 = (uint32_t)sb_posix_rename(sbp,
+                                          (const char *)ectxp->r1,
+                                          (const char *)ectxp->r2);
+    break;
+  case SB_POSIX_MKDIR:
+    ectxp->r0 = (uint32_t)sb_posix_mkdir(sbp,
+                                         (const char *)ectxp->r1,
+                                         (mode_t)ectxp->r2);
+    break;
+  case SB_POSIX_RMDIR:
+    ectxp->r0 = (uint32_t)sb_posix_rmdir(sbp,
+                                         (const char *)ectxp->r1);
+    break;
+  case SB_POSIX_STAT:
+    ectxp->r0 = (uint32_t)sb_posix_stat(sbp,
+                                        (const char *)ectxp->r1,
+                                        (struct stat *)ectxp->r2);
+    break;
+  default:
+    ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
+    break;
+  }
+}
+
+#endif /* SB_CFG_ENABLE_VFS == TRUE */
 
 /** @} */
