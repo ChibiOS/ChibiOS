@@ -117,8 +117,7 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
-#include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/various/shell/shell.mk
+include $(CHIBIOS)/os/various/xshell/xshell.mk
 
 # Define linker script file here.
 LDSCRIPT= ./ld/128k-08040000-16k-20018000.ld

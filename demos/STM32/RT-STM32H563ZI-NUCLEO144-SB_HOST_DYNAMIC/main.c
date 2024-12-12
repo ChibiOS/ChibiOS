@@ -31,7 +31,7 @@ sb_class_t sbx1, sbx2;
 /*===========================================================================*/
 
 static vio_gpio_units_t gpio_units1 = {
-  .n        = 1U,
+  .n = 1U,
   .units = {
     [0] = {
       .permissions  = VIO_GPIO_PERM_WRITE,
@@ -43,27 +43,27 @@ static vio_gpio_units_t gpio_units1 = {
 };
 
 static vio_uart_units_t uart_units1 = {
-  .n        = 1U,
+  .n = 1U,
   .units = {
     [0] = {
-      .siop  = &SIOD3,
-      .vrqsb = &sbx1,
-      .vrqn  = 8
+      .siop         = &SIOD3,
+      .vrqsb        = &sbx1,
+      .vrqn         = 8
     }
   }
 };
 
 static sio_configurations_t uart_configs1 = {
-  .cfgsnum      = 1U,
+  .cfgsnum = 1U,
   .cfgs = {
-    [0]         = SIO_DEFAULT_CONFIGURATION
+    [0]             = SIO_DEFAULT_CONFIGURATION
   }
 };
 
 static vio_conf_t vio_config1 = {
-  .gpios        = &gpio_units1,
-  .uarts        = &uart_units1,
-  .uartconfs    = &uart_configs1
+  .gpios            = &gpio_units1,
+  .uarts            = &uart_units1,
+  .uartconfs        = &uart_configs1
 };
 
 static vio_gpio_units_t gpio_units2 = {
@@ -79,17 +79,17 @@ static vio_gpio_units_t gpio_units2 = {
 };
 
 static vio_uart_units_t uart_units2 = {
-  .n            = 0U
+  .n                = 0U
 };
 
 static sio_configurations_t uart_configs2 = {
-  .cfgsnum      = 0U
+  .cfgsnum          = 0U
 };
 
 static vio_conf_t vio_config2 = {
-  .gpios        = &gpio_units2,
-  .uarts        = &uart_units2,
-  .uartconfs    = &uart_configs2
+  .gpios            = &gpio_units2,
+  .uarts            = &uart_units2,
+  .uartconfs        = &uart_configs2
 };
 
 /*===========================================================================*/
@@ -124,16 +124,14 @@ static const drv_streams_element_t streams[] = {
 /* SB-related.                                                               */
 /*===========================================================================*/
 
-/* Working areas for sandboxes.*/
-static THD_WORKING_AREA(waUnprivileged1, 512);
-static THD_WORKING_AREA(waUnprivileged2, 512);
+/* Privileged stacks for sandboxes.*/
+static SB_STACK(sbx1stk);
+static SB_STACK(sbx2stk);
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
   .thread = {
     .name           = "sbx1",
-    .wsp            = waUnprivileged1,
-    .size           = sizeof (waUnprivileged1),
     .prio           = NORMALPRIO - 10,
   },
   .regions = {
@@ -154,8 +152,6 @@ static const sb_config_t sb_config1 = {
 static const sb_config_t sb_config2 = {
   .thread = {
     .name           = "sbx2",
-    .wsp            = waUnprivileged2,
-    .size           = sizeof (waUnprivileged2),
     .prio           = NORMALPRIO - 20,
   },
   .regions = {
@@ -198,7 +194,7 @@ static void start_sb1(void) {
   thread_t *utp;
 
   /* Starting sandboxed thread 1.*/
-  utp = sbStartThread(&sbx1, sbx1_argv, sbx1_envp);
+  utp = sbStartThread(&sbx1, sbx1stk, sbx1_argv, sbx1_envp);
   if (utp == NULL) {
     chSysHalt("sbx1 failed");
   }
@@ -221,7 +217,7 @@ static void start_sb2(void) {
   vfsClose(np);
 
   /* Starting sandboxed thread 2.*/
-  utp = sbStartThread(&sbx2, sbx2_argv, sbx2_envp);
+  utp = sbStartThread(&sbx2, sbx2stk, sbx2_argv, sbx2_envp);
   if (utp == NULL) {
     chSysHalt("sbx2 failed");
   }

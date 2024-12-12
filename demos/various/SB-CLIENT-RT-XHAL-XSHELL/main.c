@@ -18,7 +18,7 @@
 #include "hal.h"
 
 #include "chprintf.h"
-#include "shell.h"
+#include "xshell.h"
 
 static hal_buffered_sio_c bsio1;
 static uint8_t rxbuf[32];
@@ -28,10 +28,27 @@ static uint8_t txbuf[32];
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+#define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
+
+static void cmd_halt(xshell_manager_t *smp, BaseSequentialStream *stream,
+                     int argc, char *argv[]) {
+
+  (void)smp;
+  (void)argv;
+
+  if (argc != 1) {
+    xshellUsage(stream, "halt");
+    return;
+  }
+
+  chprintf(stream, XSHELL_NEWLINE_STR "halted");
+  chThdSleepMilliseconds(10);
+  chSysHalt("shell halt");
+}
 
 /* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
+                      int argc, char *argv[]) {
   static uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -50,27 +67,32 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[]) {
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+  (void)smp;
   (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: write\r\n");
+
+  if (argc != 1) {
+    xshellUsage(stream, "write");
     return;
   }
 
-  while (chnGetTimeout(chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chnWrite(chp, buf, sizeof buf - 1);
+  while (chnGetTimeout((asynchronous_channel_i *)stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(stream, buf, sizeof buf - 1);
   }
-  chprintf(chp, "\r\n\nstopped\r\n");
+  chprintf(stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
 }
 
-static void cmd_sbcrash(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_sbcrash(xshell_manager_t *smp, BaseSequentialStream *stream,
+                        int argc, char *argv[]) {
 
+  (void)smp;
   (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: sbcrash\r\n");
+
+  if (argc > 1) {
+    xshellUsage(stream, "sbcrash");
     return;
   }
 
-  chprintf(chp, "\r\n\nCrashing...\r\n");
+  chprintf(stream, "\r\n\nCrashing...\r\n");
   chThdSleepMilliseconds(10);
 
   /* Test for exception on interrupt.*/
@@ -80,29 +102,37 @@ static void cmd_sbcrash(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 }
 
-static void cmd_sbexit(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_sbexit(xshell_manager_t *smp, BaseSequentialStream *stream,
+                       int argc, char *argv[]) {
 
+  (void)smp;
   (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: sbexit\r\n");
+
+  if (argc > 1) {
+    xshellUsage(stream, "sbexit");
     return;
   }
 
-  chprintf(chp, "\r\n\nExiting SandBox\r\n");
+  chprintf(stream, "\r\n\nExiting SandBox\r\n");
   chThdSleepMilliseconds(10);
   sbExit(MSG_OK);
 }
 
-static const ShellCommand commands[] = {
+static const xshell_command_t commands[] = {
+  {"halt", cmd_halt},
   {"write", cmd_write},
   {"sbcrash", cmd_sbcrash},
   {"sbexit", cmd_sbexit},
   {NULL, NULL}
 };
 
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)oopGetIf(&bsio1, chn),
-  commands
+static const xshell_manager_config_t cfg1 = {
+  .thread_name      = "shell",
+  .banner           = XSHELL_DEFAULT_BANNER_STR,
+  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
+  .commands         = commands,
+  .use_heap         = true,
+  .stack.size       = SHELL_WA_SIZE
 };
 
 /*===========================================================================*/
@@ -110,10 +140,10 @@ static const ShellConfig shell_cfg1 = {
 /*===========================================================================*/
 
 /*
- * Blinker thread, times are in milliseconds.
+ * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 256);
-static THD_FUNCTION(Thread1, arg) {
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
 
   (void)arg;
 
@@ -128,7 +158,7 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
-  thread_t *tp;
+  xshell_manager_t sm1;
 
   /*
    * System initializations.
@@ -140,6 +170,19 @@ int main(void) {
   chSysInit();
 
   /*
+   * Spawning a blinker thread.
+   */
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
+                               NORMALPRIO + 10, thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
+
+  /*
+   * Shell manager initialization.
+   */
+  xshellObjectInit(&sm1, &cfg1);
+
+  /*
    * Starting a buffered SIO, it must behave exactly as a serial driver.
    */
   bsioObjectInit(&bsio1, &SIOD1,
@@ -148,18 +191,13 @@ int main(void) {
   drvStart(&bsio1);
 
   /*
-   * Creating a blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
-
-  /*
    * Normal main() thread activity, spawning shells.
    */
   while (true) {
-    tp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                             "shell", NORMALPRIO + 1,
-                             shellThread, (void *)&shell_cfg1);
-    chThdWait(tp);               /* Waiting termination.             */
-    chThdSleepMilliseconds(1000);
+    thread_t *shelltp = xshellSpawn(&sm1,
+                                    (BaseSequentialStream *)oopGetIf(&bsio1, chn),
+                                    NORMALPRIO + 1);
+    chThdWait(shelltp);               /* Waiting termination.             */
+    chThdSleepMilliseconds(500);
   }
 }
