@@ -244,10 +244,9 @@
 #endif
 
 /**
- * @brief   SPLIM as part of the saved thread context.
- *
+ * @brief   PSPLIM as part of the saved thread context.
  */
-#define PORT_SAVE_SPLIM                 FALSE
+#define PORT_SAVE_PSPLIM                FALSE
 
 /**
  * @name    Architecture

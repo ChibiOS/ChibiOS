@@ -304,6 +304,12 @@ struct sb_class {
    * @brief   Saved unprivileged PSP position.
    */
   uint32_t                      u_psp;
+#if (PORT_SAVE_PSPLIM == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Saved unprivileged PSPLIM position.
+   */
+  uint32_t                      u_psplim;
+#endif
   /**
    * @brief   Thread running in the sandbox.
    */

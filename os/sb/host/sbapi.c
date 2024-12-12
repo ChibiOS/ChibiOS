@@ -1301,6 +1301,9 @@ void __port_do_syscall_entry(struct port_extctx *ectxp,
 
   /* Switching PSP to the privileged mode PSP.*/
   __set_PSP((uint32_t)newctxp);
+#if PORT_SAVE_PSPLIM
+  __set_PSPLIM((uint32_t)sbp->thread.wabase);
+#endif
 }
 
 /**
@@ -1319,6 +1322,9 @@ void __port_do_syscall_return(void) {
   __sb_vrq_check_pending(sbp, ectxp);
 #else
   __set_PSP((uint32_t)ectxp);
+#if PORT_SAVE_PSPLIM
+  __set_PSPLIM(sbp->u_psplim);
+#endif
 #endif
 }
 

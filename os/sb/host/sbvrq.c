@@ -132,6 +132,9 @@ static void vrq_pushctx(sb_class_t *sbp,
     /* Creating a new context for return the VRQ handler.*/
     ectxp = vrq_makectx(sbp, ectxp, nvrq);
     __set_PSP((uint32_t)ectxp);
+#if PORT_SAVE_PSPLIM
+    __set_PSPLIM(sbp->u_psplim);
+#endif
   }
 }
 
@@ -426,6 +429,9 @@ void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
 
     /* Keeping the current return context.*/
     __set_PSP((uint32_t)ectxp);
+#if PORT_SAVE_PSPLIM
+    __set_PSPLIM(sbp->u_psplim);
+#endif
   }
 }
 
@@ -453,6 +459,9 @@ void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp) {
   }
 
   __set_PSP((uint32_t)ectxp);
+#if PORT_SAVE_PSPLIM
+  __set_PSPLIM(sbp->u_psplim);
+#endif
 }
 
 #endif /* SB_CFG_ENABLE_VRQ == TRUE */

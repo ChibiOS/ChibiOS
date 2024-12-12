@@ -552,13 +552,14 @@
 #define PORT_SAVE_CONTROL               FALSE
 #endif
 
-#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || defined(__DOXYGEN__)
+#if (PORT_USE_SYSCALL == TRUE) || (CH_DBG_ENABLE_STACK_CHECK == TRUE) ||    \
+    defined(__DOXYGEN__)
 /**
- * @brief   SPLIM as part of the saved thread context.
+ * @brief   PSPLIM as part of the saved thread context.
  */
-#define PORT_SAVE_SPLIM                 TRUE
+#define PORT_SAVE_PSPLIM                TRUE
 #else
-#define PORT_SAVE_SPLIM                 FALSE
+#define PORT_SAVE_PSPLIM                FALSE
 #endif
 
 /**
@@ -795,7 +796,7 @@ struct port_intctx {
   uint32_t              r11;
   uint32_t              lr_exc;
   /* Special registers context.*/
-#if (PORT_SAVE_SPLIM == TRUE) || defined(__DOXYGEN__)
+#if (PORT_SAVE_PSPLIM == TRUE) || defined(__DOXYGEN__)
   uint32_t              splim;
 #endif
 #if (PORT_SAVE_CONTROL == TRUE) || defined(__DOXYGEN__)
@@ -888,7 +889,7 @@ struct port_context {
 /**
  * @brief   Initialization of stack check part of thread context.
  */
-#if (PORT_SAVE_SPLIM == TRUE) || defined(__DOXYGEN__)
+#if (PORT_SAVE_PSPLIM == TRUE) || defined(__DOXYGEN__)
 #define __PORT_SETUP_CONTEXT_SPLIM(tp, wbase)                               \
     (tp)->ctx.regs.splim = (uint32_t)(wbase)
 #else

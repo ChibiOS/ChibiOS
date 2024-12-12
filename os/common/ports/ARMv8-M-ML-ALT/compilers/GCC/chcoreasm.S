@@ -90,25 +90,25 @@
                 /* Store special registers context through R1.
                    On entry R12=CONTROL.*/
                 .macro  PORT_STORE_SPECIAL_CONTEXT
-#if PORT_SAVE_SPLIM
+#if PORT_SAVE_PSPLIM
                 mrs     r2, PSPLIM
 #if PORT_SAVE_CONTROL
                 stmia   r1!, {r2, r12}
 #else
                 stmia   r1!, {r2}
 #endif
-#else /* !PORT_SAVE_SPLIM */
+#else /* !PORT_SAVE_PSPLIM */
 #if PORT_SAVE_CONTROL
                 stmia   r1!, {r12}
 #else
                 /* Nothing.*/
 #endif
-#endif /* !PORT_SAVE_SPLIM */
+#endif /* !PORT_SAVE_PSPLIM */
                 .endm
 
                 /* Load special context through R0.*/
                 .macro  PORT_LOAD_SPECIAL_CONTEXT
-#if PORT_SAVE_SPLIM
+#if PORT_SAVE_PSPLIM
 #if PORT_SAVE_CONTROL
                 ldmia   r0!, {r2, r12}
                 msr     PSPLIM, r2
@@ -117,14 +117,14 @@
                 ldmia   r0!, {r2}
                 msr     PSPLIM, r2
 #endif
-#else /* !PORT_SAVE_SPLIM */
+#else /* !PORT_SAVE_PSPLIM */
 #if PORT_SAVE_CONTROL
                 ldmia   r0!, {r12}
                 msr     CONTROL, r12
 #else
                 /* Nothing.*/
 #endif
-#endif /* !PORT_SAVE_SPLIM */
+#endif /* !PORT_SAVE_PSPLIM */
                 .endm
 
                 /* Store float context through R1.*/
