@@ -1027,10 +1027,6 @@ msg_t __bsio_start_impl(void *ip) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
   msg_t msg;
 
-  /* Start is a slow operation in this driver, we need to switch to the
-     HAL_DRV_STATE_STARTING state.*/
-  self->state = HAL_DRV_STATE_STARTING;
-
   /* Starting the undelying SIO driver.*/
   msg = drvStartS(self->siop);
   if (msg == HAL_RET_SUCCESS) {
@@ -1051,10 +1047,6 @@ msg_t __bsio_start_impl(void *ip) {
  */
 void __bsio_stop_impl(void *ip) {
   hal_buffered_sio_c *self = (hal_buffered_sio_c *)ip;
-
-  /* Start is a slow operation in this driver, we need to switch to the
-     HAL_DRV_STATE_STOPPING state.*/
-  self->state = HAL_DRV_STATE_STOPPING;
 
   drvStopS(self->siop);
 }

@@ -993,10 +993,6 @@ self->siop = siop;]]></implementation>
               <implementation><![CDATA[
 msg_t msg;
 
-/* Start is a slow operation in this driver, we need to switch to the
-   HAL_DRV_STATE_STARTING state.*/
-self->state = HAL_DRV_STATE_STARTING;
-
 /* Starting the undelying SIO driver.*/
 msg = drvStartS(self->siop);
 if (msg == HAL_RET_SUCCESS) {
@@ -1008,10 +1004,6 @@ return msg;]]></implementation>
             </method>
             <method shortname="stop">
               <implementation><![CDATA[
-
-/* Start is a slow operation in this driver, we need to switch to the
-   HAL_DRV_STATE_STOPPING state.*/
-self->state = HAL_DRV_STATE_STOPPING;
 
 drvStopS(self->siop);]]></implementation>
             </method>
