@@ -333,10 +333,6 @@ struct sb_class {
 #endif
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   Global virtual IRQ status register.
-   */
-  uint32_t                      vrq_isr;
-  /**
    * @brief   Mask of enabled virtual IRQ flags.
    */
   sb_vrqmask_t                  vrq_enmask;
@@ -344,6 +340,10 @@ struct sb_class {
    * @brief   Mask of pending virtual IRQ flags.
    */
   sb_vrqmask_t                  vrq_wtmask;
+  /**
+   * @brief   Global virtual IRQ status register.
+   */
+  uint32_t                      vrq_isr;
   /**
    * @brief   Reference to sh SB thread while waiting for VRQs.
    */

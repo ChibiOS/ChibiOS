@@ -387,15 +387,13 @@ void sb_fastc_vrq_disable(sb_class_t *sbp, struct port_extctx *ectxp) {
 void sb_fastc_vrq_enable(sb_class_t *sbp, struct port_extctx *ectxp) {
   sb_vrqmask_t active_mask;
 
-  active_mask = sbp->vrq_wtmask & sbp->vrq_enmask;
-  if (active_mask != 0U) {
-    sbp->vrq_isr = 0U;
+  sbp->vrq_isr = 0U;
+  asm ("" : : : "memory");
+  active_mask = sbp->vrq_enmask & sbp->vrq_wtmask;
+  if (unlikely(active_mask != 0U)) {
 
     /* Creating a return context.*/
     vrq_pushctx(sbp, ectxp, __CLZ(__RBIT(active_mask)));
-  }
-  else {
-    sbp->vrq_isr = 0U;
   }
 }
 
