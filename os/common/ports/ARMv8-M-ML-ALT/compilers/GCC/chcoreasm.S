@@ -241,10 +241,10 @@ SVC_Handler:
                 beq     .Lfrompriv
                 /* SVC called from non-privileged mode for a syscall.*/
                 /* Note, LR already contains the return address.*/
-                mrs     r0, PSP             /* Position of the exc.frame.*/
-                ldr     r3, [r0, #24]       /* PC position.*/
-                ldrb    r1, [r3, #-2]       /* SVC parameter.*/
-                cmp     r1, #0x80
+                mrs     r1, PSP             /* Position of the exc.frame.*/
+                ldr     r3, [r1, #24]       /* PC position.*/
+                ldrb    r0, [r3, #-2]       /* SVC parameter.*/
+                cmp     r0, #0x80
                 blt     __port_do_fastcall_entry
                 bic     r12, #1
                 msr     CONTROL, r12        /* Switching to privileged.*/

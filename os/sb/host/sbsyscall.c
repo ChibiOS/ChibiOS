@@ -932,8 +932,7 @@ void __sb_abort(msg_t msg) {
   chSysHalt("zombies");
 }
 
-void __port_do_syscall_entry(struct port_extctx *ectxp,
-                             uint32_t n) {
+void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
   extern void __sb_dispatch_syscall(sb_class_t *sbp,
                                     struct port_extctx *ectxp,
                                     uint32_t n);
@@ -988,8 +987,7 @@ void __port_do_syscall_return(void) {
 #endif
 }
 
-void __port_do_fastcall_entry(struct port_extctx *ectxp,
-                              uint32_t n) {
+void __port_do_fastcall_entry(uint32_t n, struct port_extctx *ectxp) {
   thread_t *tp = __sch_get_currthread();
   sb_class_t *sbp = (sb_class_t *)tp->object;
 

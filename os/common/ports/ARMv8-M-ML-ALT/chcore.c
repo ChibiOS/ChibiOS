@@ -92,8 +92,7 @@ CC_NO_INLINE uint32_t port_get_s_psp(void) {
 }
 #endif
 
-CC_WEAK void __port_do_fastcall_entry(struct port_extctx *ectxp,
-                                      uint32_t n) {
+CC_WEAK void __port_do_fastcall_entry(uint32_t n, struct port_extctx *ectxp) {
 
   (void)ectxp;
   (void)n;
@@ -101,8 +100,7 @@ CC_WEAK void __port_do_fastcall_entry(struct port_extctx *ectxp,
   chSysHalt("unimplemented fastcall");
 }
 
-CC_WEAK void __port_do_syscall_entry(struct port_extctx *ectxp,
-                                     uint32_t n) {
+CC_WEAK void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
 
   (void)ectxp;
   (void)n;
