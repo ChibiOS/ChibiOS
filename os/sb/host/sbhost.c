@@ -505,7 +505,11 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
 }
 
 /**
- * @brief   Starts a sandboxed thread.
+ * @brief   Starts a static sandbox.
+ * @details Region zero is assumed to be the code region and contain a correct
+ *          sandbox header. The data region is searched into the sandbox
+ *          configuration regions list, the fist memory writable region is
+ *          selected for stack initialization.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] stkbase   base of the privileged stack area, the size is assumed
@@ -515,10 +519,8 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
-thread_t *sbStartThread(sb_class_t *sbp,
-                        stkline_t *stkbase,
-                        const char *argv[],
-                        const char *envp[]) {
+thread_t *sbStart(sb_class_t *sbp, stkline_t *stkbase,
+                  const char *argv[], const char *envp[]) {
   const sb_config_t *config = sbp->config;
   const sb_memory_region_t *codereg, *datareg;
 

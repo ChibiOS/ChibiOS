@@ -186,7 +186,7 @@ static void start_sb1(void) {
   thread_t *utp;
 
   /* Starting sandboxed thread 1.*/
-  utp = sbStartThread(&sbx1, sbx1stk, sbx1_argv, sbx1_envp);
+  utp = sbStart(&sbx1, sbx1stk, sbx1_argv, sbx1_envp);
   if (utp == NULL) {
     chSysHalt("sbx1 failed");
   }
@@ -209,7 +209,7 @@ static void start_sb2(void) {
   vfsClose(np);
 
   /* Starting sandboxed thread 2.*/
-  utp = sbStartThread(&sbx2, sbx2stk, sbx2_argv, sbx2_envp);
+  utp = sbStart(&sbx2, sbx2stk, sbx2_argv, sbx2_envp);
   if (utp == NULL) {
     chSysHalt("sbx2 failed");
   }
