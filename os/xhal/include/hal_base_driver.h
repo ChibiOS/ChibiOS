@@ -206,7 +206,9 @@ extern "C" {
   void *__drv_objinit_impl(void *ip, const void *vmt);
   void __drv_dispose_impl(void *ip);
   msg_t drvStart(void *ip);
+  msg_t drvStartS(void *ip);
   void drvStop(void *ip);
+  void drvStopS(void *ip);
   msg_t drvSetCfgX(void *ip, const void *config);
   const void *drvSelectCfgX(void *ip, unsigned cfgnum);
   /* Regular functions.*/

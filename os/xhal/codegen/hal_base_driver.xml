@@ -162,11 +162,47 @@ drv_reg_remove(self);
               <retval value="HAL_RET_HW_FAILURE">If an HW failure occurred.</retval>
               <api />
               <implementation><![CDATA[
-msg_t msg = HAL_RET_SUCCESS;
+msg_t msg;
 
 osalDbgCheck(self != NULL);
 
 osalSysLock();
+
+msg = drvStartS(self);
+
+osalSysUnlock();
+
+return msg;]]></implementation>
+            </method>
+            <method name="drvStartS" ctype="msg_t">
+              <brief>Driver start.</brief>
+              <details><![CDATA[Starts driver operations, on the 1st
+                call the peripheral is physically initialized using a
+                default configuration, subsequent calls are ignored.]]>
+              </details>
+              <note><![CDATA[The function can fail with error
+                @p HAL_RET_INV_STATE if called while the driver is already
+                being started or stopped. In case you need multiple threads
+                to perform start and stop operation on the driver then it is
+                suggested to lock/unlock the driver during such operations.]]></note>
+              <return>The operation status.</return>
+              <retval value="HAL_RET_SUCCESS">Operation successful.</retval>
+              <retval value="HAL_RET_INV_STATE"><![CDATA[If the driver was
+                in one of @p HAL_DRV_STATE_UNINIT, @p HAL_DRV_STATE_STARTING
+                or @p HAL_DRV_STATE_STOPPING states.]]></retval>
+              <retval value="HAL_RET_NO_RESOURCE">If a required resources
+                cannot be allocated.
+              </retval>
+              <retval value="HAL_RET_HW_BUSY">If a required HW resource is
+                already in use.
+              </retval>
+              <retval value="HAL_RET_HW_FAILURE">If an HW failure occurred.</retval>
+              <sclass />
+              <implementation><![CDATA[
+msg_t msg = HAL_RET_SUCCESS;
+
+osalDbgCheck(self != NULL);
+osalDbgCheckClassS();
 
 switch (self->state) {
 case HAL_DRV_STATE_UNINIT:
@@ -196,8 +232,6 @@ default:
   break;
 }
 
-osalSysUnlock();
-
 return msg;]]></implementation>
             </method>
             <method name="drvStop" ctype="void">
@@ -212,6 +246,19 @@ osalDbgCheck(self != NULL);
 
 osalSysLock();
 
+drvStopS(self);
+
+osalSysUnlock();]]></implementation>
+            </method>
+            <method name="drvStopS" ctype="void">
+              <brief>Driver close.</brief>
+              <details><![CDATA[Stops driver operations. The peripheral
+                is physically uninitialized.]]>
+              </details>
+              <sclass />
+              <implementation><![CDATA[
+
+osalDbgCheck(self != NULL);
 osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
 
 if ((self->state != HAL_DRV_STATE_STOP) &&
@@ -219,9 +266,7 @@ if ((self->state != HAL_DRV_STATE_STOP) &&
   __drv_stop(self);
   self->state  = HAL_DRV_STATE_STOP;
   self->config = NULL;
-}
-
-osalSysUnlock();]]></implementation>
+}]]></implementation>
             </method>
             <method name="drvSetCfgX" ctype="msg_t">
               <brief>Driver configure.</brief>

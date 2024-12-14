@@ -286,11 +286,51 @@ void __drv_dispose_impl(void *ip) {
  */
 msg_t drvStart(void *ip) {
   hal_base_driver_c *self = (hal_base_driver_c *)ip;
-  msg_t msg = HAL_RET_SUCCESS;
+  msg_t msg;
 
   osalDbgCheck(self != NULL);
 
   osalSysLock();
+
+  msg = drvStartS(self);
+
+  osalSysUnlock();
+
+  return msg;
+}
+
+/**
+ * @memberof    hal_base_driver_c
+ * @public
+ *
+ * @brief       Driver start.
+ * @details     Starts driver operations, on the 1st call the peripheral is
+ *              physically initialized using a default configuration,
+ *              subsequent calls are ignored.
+ * @note        The function can fail with error @p HAL_RET_INV_STATE if called
+ *              while the driver is already being started or stopped. In case
+ *              you need multiple threads to perform start and stop operation
+ *              on the driver then it is suggested to lock/unlock the driver
+ *              during such operations.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ * @return                      The operation status.
+ * @retval HAL_RET_SUCCESS      Operation successful.
+ * @retval HAL_RET_INV_STATE    If the driver was in one of @p
+ *                              HAL_DRV_STATE_UNINIT, @p HAL_DRV_STATE_STARTING
+ *                              or @p HAL_DRV_STATE_STOPPING states.
+ * @retval HAL_RET_NO_RESOURCE  If a required resources cannot be allocated.
+ * @retval HAL_RET_HW_BUSY      If a required HW resource is already in use.
+ * @retval HAL_RET_HW_FAILURE   If an HW failure occurred.
+ *
+ * @sclass
+ */
+msg_t drvStartS(void *ip) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+  msg_t msg = HAL_RET_SUCCESS;
+
+  osalDbgCheck(self != NULL);
+  osalDbgCheckClassS();
 
   switch (self->state) {
   case HAL_DRV_STATE_UNINIT:
@@ -320,8 +360,6 @@ msg_t drvStart(void *ip) {
     break;
   }
 
-  osalSysUnlock();
-
   return msg;
 }
 
@@ -344,6 +382,27 @@ void drvStop(void *ip) {
 
   osalSysLock();
 
+  drvStopS(self);
+
+  osalSysUnlock();
+}
+
+/**
+ * @memberof    hal_base_driver_c
+ * @public
+ *
+ * @brief       Driver close.
+ * @details     Stops driver operations. The peripheral is physically
+ *              uninitialized.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
+ *
+ * @sclass
+ */
+void drvStopS(void *ip) {
+  hal_base_driver_c *self = (hal_base_driver_c *)ip;
+
+  osalDbgCheck(self != NULL);
   osalDbgAssert(self->state != HAL_DRV_STATE_UNINIT, "invalid state");
 
   if ((self->state != HAL_DRV_STATE_STOP) &&
@@ -352,8 +411,6 @@ void drvStop(void *ip) {
     self->state  = HAL_DRV_STATE_STOP;
     self->config = NULL;
   }
-
-  osalSysUnlock();
 }
 
 /**

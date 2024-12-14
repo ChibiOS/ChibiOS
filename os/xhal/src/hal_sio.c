@@ -1030,17 +1030,14 @@ msg_t __bsio_start_impl(void *ip) {
   /* Start is a slow operation in this driver, we need to switch to the
      HAL_DRV_STATE_STARTING state.*/
   self->state = HAL_DRV_STATE_STARTING;
-  osalSysUnlock();
 
   /* Starting the undelying SIO driver.*/
-  msg = drvStart(self->siop);
+  msg = drvStartS(self->siop);
   if (msg == HAL_RET_SUCCESS) {
     drvSetCallbackX(self->siop, &__bsio_default_cb);
     sioWriteEnableFlagsX(self->siop, SIO_EV_ALL_EVENTS);
   }
 
-  /* Back into the critical section and return.*/
-  osalSysLock();
   return msg;
 }
 
@@ -1058,12 +1055,8 @@ void __bsio_stop_impl(void *ip) {
   /* Start is a slow operation in this driver, we need to switch to the
      HAL_DRV_STATE_STOPPING state.*/
   self->state = HAL_DRV_STATE_STOPPING;
-  osalSysUnlock();
 
-  drvStop(self->siop);
-
-  /* Back into the critical section and return.*/
-  osalSysLock();
+  drvStopS(self->siop);
 }
 
 /**
