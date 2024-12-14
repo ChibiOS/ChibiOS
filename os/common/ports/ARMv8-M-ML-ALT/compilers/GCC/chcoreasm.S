@@ -281,9 +281,6 @@ SVC_Handler:
                 PORT_STORE_FLOAT_CONTEXT
                 PORT_STORE_MPU_CONTEXT
 
-                ldr     r0, [r2, #0]        /* R0 on SVC context (ntp) */
-                adds    r0, #CONTEXT_OFFSET
-
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
                 ldr     r3, [r0, #4]        /* BASEPRI offset */
                 cmp     r3, #CORTEX_BASEPRI_DISABLED

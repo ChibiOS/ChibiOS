@@ -260,11 +260,6 @@ int main(void) {
   nullstmObjectInit(&nullstream);
 
   /*
-   * Creating a messenger thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
-
-  /*
    * Initializing an overlay VFS object as a root, no overlaid driver,
    * registering a streams VFS driver on the VFS overlay root as "/dev".
    */
@@ -286,6 +281,11 @@ int main(void) {
   /* Starting sandboxed threads.*/
   start_sb1();
   start_sb2();
+
+  /*
+   * Creating a messenger thread.
+   */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
 
   /*
    * Listening to sandbox events.
