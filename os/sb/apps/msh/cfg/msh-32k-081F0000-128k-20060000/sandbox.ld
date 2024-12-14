@@ -28,6 +28,7 @@ REGION_ALIAS("CODE_SPACE", flash0);
 
 /* RAM region to be used for data.*/
 REGION_ALIAS("DATA_SPACE", ram0);
+REGION_ALIAS("DATA_SPACE_LMA", flash0);
 
 /* Generic rules inclusion.*/
 INCLUDE rules.ld

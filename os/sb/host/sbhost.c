@@ -265,10 +265,8 @@ static THD_FUNCTION(sb_unprivileged_trampoline, arg) {
 
 static thread_t *sb_start_unprivileged(sb_class_t *sbp,
                                        const memory_area_t *s,
-                                       const memory_area_t *u,
                                        uint32_t u_pc) {
   thread_t *utp;
-  uint32_t u_psp;
   struct port_extctx *ectxp;
 
   /* Creating a thread on the unprivileged handler.*/
@@ -279,9 +277,7 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
     .prio       = sbp->config->thread.prio,
     .funcp      = sb_unprivileged_trampoline,
     .arg        = NULL,
-#if CH_CFG_SMP_MODE != FALSE
-    .instance   = NULL
-#endif
+    .owner      = NULL
   };
   utp = chThdSpawnSuspended(&sbp->thread, &td);
 
@@ -302,9 +298,8 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
 #endif
 
   /* Creating entry frame.*/
-  u_psp = (uint32_t)(u->base + u->size) - sizeof (struct port_extctx); /* TODO */
-  sbp->u_psp = u_psp;
-  ectxp = (struct port_extctx *)u_psp;
+  sbp->u_psp -= sizeof (struct port_extctx); /* TODO */
+  ectxp = (struct port_extctx *)sbp->u_psp;
 
   /* Initializing the unprivileged mode entry context, clearing
      all registers.*/
@@ -536,15 +531,19 @@ thread_t *sbStartThread(sb_class_t *sbp,
   /* Initializing stack.*/
   sb_strv_copy(envp, uenvp, uenvc);
   sb_strv_copy(argv, uargv, uargc);
-  *((uint32_t *)usp + 4) = (uint32_t)0x55555555;
+  *((uint32_t *)usp + 3) = (uint32_t)0x55555555;
   *((uint32_t *)usp + 2) = (uint32_t)uenvp;
   *((uint32_t *)usp + 1) = (uint32_t)uargv;
   *((uint32_t *)usp + 0) = (uint32_t)uargc;
+  sbp->u_psp    = (uint32_t)usp;
+#if PORT_SAVE_PSPLIM == TRUE
+  sbp->u_psplim = (uint32_t)datareg->area.base;
+#endif
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   s.base = (uint8_t *)(void *)stkbase;
   s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
-  return sb_start_unprivileged(sbp, &s, &datareg->area, sbp->sbhp->hdr_entry);
+  return sb_start_unprivileged(sbp, &s, sbp->sbhp->hdr_entry);
 }
 
 /**
@@ -624,6 +623,10 @@ msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
   *((uint32_t *)usp + 2) = (uint32_t)uenvp;
   *((uint32_t *)usp + 1) = (uint32_t)uargv;
   *((uint32_t *)usp + 0) = (uint32_t)uargc;
+  sbp->u_psp    = (uint32_t)usp;
+#if PORT_SAVE_PSPLIM == TRUE
+  sbp->u_psplim = (uint32_t)config->regions[0].area.base;
+#endif
 
   /* Loading sandbox code into the specified memory area.*/
   ret = sbElfLoadFile(config->vfs_driver, pathname, &ma);
@@ -651,9 +654,7 @@ msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   s.base = (uint8_t *)(void *)stkbase;
   s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
-  if (sb_start_unprivileged(sbp, &s,
-                            &config->regions[0].area,
-                            sbp->sbhp->hdr_entry) == NULL) {
+  if (sb_start_unprivileged(sbp, &s, sbp->sbhp->hdr_entry) == NULL) {
     return CH_RET_ENOMEM;
   }
 

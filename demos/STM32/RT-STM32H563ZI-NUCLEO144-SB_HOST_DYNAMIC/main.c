@@ -192,6 +192,19 @@ static const char *sbx2_envp[] = {
 
 static void start_sb1(void) {
   thread_t *utp;
+  msg_t ret;
+  vfs_node_c *np;
+
+  /*
+   * Associating standard input, output and error to sandbox 1.*/
+  ret = vfsOpen("/dev/VSIO1", 0, &np);
+  if (CH_RET_IS_ERROR(ret)) {
+    chSysHalt("VFS");
+  }
+  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
+  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
+  vfsClose(np);
 
   /* Starting sandboxed thread 1.*/
   utp = sbStartThread(&sbx1, sbx1stk, sbx1_argv, sbx1_envp);
@@ -207,7 +220,7 @@ static void start_sb2(void) {
 
   /*
    * Associating standard input, output and error to sandbox 2.*/
-  ret = vfsOpen("/dev/VSIO1", 0, &np);
+  ret = vfsOpen("/dev/null", 0, &np);
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }

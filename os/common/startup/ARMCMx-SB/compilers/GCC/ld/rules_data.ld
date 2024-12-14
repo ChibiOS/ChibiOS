@@ -28,7 +28,7 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(_edata = .);
         __data_end__ = .;
-    } > DATA_SPACE
+    } > DATA_SPACE AT > DATA_SPACE_LMA
 
     .bss (NOLOAD) : ALIGN(4)
     {
