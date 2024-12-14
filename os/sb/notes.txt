@@ -19,7 +19,7 @@ x The pointer to the SB object could be passed by the dispatcher to the
   + Faster context switch.
   + Requires to enable USBFAULTENA and give UsageFault a priority.
     + Enable all other vectors and make a proper handler finally.
-  - Syscall code would disturb fast interrupts because higher handler priority.
+  - Needs to deal with the CFSR multiple status bits.
 
 * EXCRETURN of syscall-return SVC can be expected to be the same of syscall SVC
   because it is the same thread doing it and the syscall code is not supposed

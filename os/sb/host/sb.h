@@ -312,10 +312,6 @@ struct sb_class {
   uint32_t                      u_psplim;
 #endif
   /**
-   * @brief   Thread running in the sandbox.
-   */
-  thread_t                      thread;
-  /**
    * @brief   Pointer to the image header.
    */
   const sb_header_t             *sbhp;
@@ -363,6 +359,10 @@ struct sb_class {
    */
   sb_ioblock_t                  io;
 #endif
+  /**
+   * @brief   Thread running in the sandbox.
+   */
+  thread_t                      thread;
 };
 
 /*===========================================================================*/
