@@ -115,7 +115,7 @@ static null_stream_c nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-  {"VSIO1", (BaseSequentialStream *)oopGetIf(&SIOD3, chn)},
+//  {"VSIO1", (BaseSequentialStream *)oopGetIf(&SIOD3, chn)},
   {"null", (BaseSequentialStream *)oopGetIf(&nullstream, stm)},
   {NULL, NULL}
 };
@@ -192,19 +192,6 @@ static const char *sbx2_envp[] = {
 
 static void start_sb1(void) {
   thread_t *utp;
-  msg_t ret;
-  vfs_node_c *np;
-
-  /*
-   * Associating standard input, output and error to sandbox 1.*/
-  ret = vfsOpen("/dev/VSIO1", 0, &np);
-  if (CH_RET_IS_ERROR(ret)) {
-    chSysHalt("VFS");
-  }
-  sbRegisterDescriptor(&sbx2, STDIN_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx2, STDOUT_FILENO, (vfs_node_c *)roAddRef(np));
-  sbRegisterDescriptor(&sbx2, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
-  vfsClose(np);
 
   /* Starting sandboxed thread 1.*/
   utp = sbStartThread(&sbx1, sbx1stk, sbx1_argv, sbx1_envp);

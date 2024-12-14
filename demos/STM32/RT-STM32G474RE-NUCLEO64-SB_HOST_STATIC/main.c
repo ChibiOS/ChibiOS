@@ -107,7 +107,7 @@ static null_stream_c nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-  {"VSIO1", (BaseSequentialStream *)oopGetIf(&SIOD1, chn)},
+//  {"VSIO1", (BaseSequentialStream *)oopGetIf(&SIOD1, chn)},
   {"null", (BaseSequentialStream *)oopGetIf(&nullstream, stm)},
   {NULL, NULL}
 };
@@ -199,7 +199,7 @@ static void start_sb2(void) {
 
   /*
    * Associating standard input, output and error to sandbox 2.*/
-  ret = vfsOpen("/dev/VSIO1", 0, &np);
+  ret = vfsOpen("/dev/null", 0, &np);
   if (CH_RET_IS_ERROR(ret)) {
     chSysHalt("VFS");
   }

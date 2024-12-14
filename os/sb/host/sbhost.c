@@ -254,6 +254,59 @@ static const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {
   return NULL;
 }
 
+static size_t sb_init_environment(sb_class_t *sbp, const memory_area_t *up,
+                                  const char *argv[], const char *envp[]) {
+  void *usp, *uargv, *uenvp;
+  size_t totsize, envsize, argsize, parsize;
+  int uargc, uenvc;
+
+  /* Setting up an initial stack for the sandbox.*/
+  usp = (up->base + up->size);
+
+  /* Allocating space for environment variables.*/
+  envsize = sb_strv_getsize(envp, &uenvc);
+  PUSHSPACE(usp, envsize);
+  uenvp = usp;
+
+  /* Allocating space for arguments.*/
+  argsize = sb_strv_getsize(argv, &uargc);
+  PUSHSPACE(usp, argsize);
+  uargv = usp;
+
+  /* Allocating space for parameters.*/
+  if (MEM_IS_ALIGNED(usp, PORT_STACK_ALIGN)) {
+    parsize = sizeof (uint32_t) * 4;
+  }
+  else {
+    parsize = sizeof (uint32_t) * 5;
+  }
+  PUSHSPACE(usp, parsize);
+
+  /* Total pushed data size.*/
+  totsize = envsize + argsize + parsize;
+
+  /* Checking stack allocation.*/
+  if (!chMemIsSpaceWithinX(up, usp, envsize + argsize + parsize)) {
+    return (size_t)0;
+  }
+
+  /* Initializing stack.*/
+  sb_strv_copy(envp, uenvp, uenvc);
+  sb_strv_copy(argv, uargv, uargc);
+  *((uint32_t *)usp + 3) = (uint32_t)0x55555555;
+  *((uint32_t *)usp + 2) = (uint32_t)uenvp;
+  *((uint32_t *)usp + 1) = (uint32_t)uargv;
+  *((uint32_t *)usp + 0) = (uint32_t)uargc;
+
+  /* Initial stack pointer is placed just below the environment data.*/
+  sbp->u_psp    = (uint32_t)usp;
+#if PORT_SAVE_PSPLIM == TRUE
+  sbp->u_psplim = (uint32_t)up->base;
+#endif
+
+  return totsize;
+}
+
 static THD_FUNCTION(sb_unprivileged_trampoline, arg) {
 
   (void)arg;
@@ -264,7 +317,7 @@ static THD_FUNCTION(sb_unprivileged_trampoline, arg) {
 }
 
 static thread_t *sb_start_unprivileged(sb_class_t *sbp,
-                                       const memory_area_t *s,
+                                       stkline_t *stkbase,
                                        uint32_t u_pc) {
   thread_t *utp;
   struct port_extctx *ectxp;
@@ -272,8 +325,8 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
   /* Creating a thread on the unprivileged handler.*/
   thread_descriptor_t td = {
     .name       = sbp->config->thread.name,
-    .wbase      = (stkline_t *)(void *)s->base,
-    .wend       = (stkline_t *)(void *)(s->base + s->size),
+    .wbase      = stkbase,
+    .wend       = stkbase + (SB_CFG_PRIVILEGED_STACK_SIZE / sizeof (stkline_t)),
     .prio       = sbp->config->thread.prio,
     .funcp      = sb_unprivileged_trampoline,
     .arg        = NULL,
@@ -467,11 +520,7 @@ thread_t *sbStartThread(sb_class_t *sbp,
                         const char *argv[],
                         const char *envp[]) {
   const sb_config_t *config = sbp->config;
-  void *usp, *uargv, *uenvp;
-  size_t envsize, argsize, parsize;
-  int uargc, uenvc;
   const sb_memory_region_t *codereg, *datareg;
-  memory_area_t s;
 
   /* Region zero is assumed to be executable and contain the start header.*/
   codereg = &config->regions[0];
@@ -501,49 +550,14 @@ thread_t *sbStartThread(sb_class_t *sbp,
     return NULL;
   }
 
-  /* Setting up an initial stack for the sandbox.*/
-  usp = (datareg->area.base + datareg->area.size);
-
-  /* Allocating space for environment variables.*/
-  envsize = sb_strv_getsize(envp, &uenvc);
-  PUSHSPACE(usp, envsize);
-  uenvp = usp;
-
-  /* Allocating space for arguments.*/
-  argsize = sb_strv_getsize(argv, &uargc);
-  PUSHSPACE(usp, argsize);
-  uargv = usp;
-
-  /* Allocating space for parameters.*/
-  if (MEM_IS_ALIGNED(usp, PORT_STACK_ALIGN)) {
-    parsize = sizeof (uint32_t) * 4;
-  }
-  else {
-    parsize = sizeof (uint32_t) * 5;
-  }
-  PUSHSPACE(usp, parsize);
-
-  /* Checking stack allocation.*/
-  if (!chMemIsSpaceWithinX(&datareg->area, usp, envsize + argsize + parsize)) {
+  /* Pushing arguments, environment variables and other startup information
+     at the top of the data memory area.*/
+  if (sb_init_environment(sbp, &datareg->area, argv, envp) == (size_t)0) {
     return NULL;
   }
 
-  /* Initializing stack.*/
-  sb_strv_copy(envp, uenvp, uenvc);
-  sb_strv_copy(argv, uargv, uargc);
-  *((uint32_t *)usp + 3) = (uint32_t)0x55555555;
-  *((uint32_t *)usp + 2) = (uint32_t)uenvp;
-  *((uint32_t *)usp + 1) = (uint32_t)uargv;
-  *((uint32_t *)usp + 0) = (uint32_t)uargc;
-  sbp->u_psp    = (uint32_t)usp;
-#if PORT_SAVE_PSPLIM == TRUE
-  sbp->u_psplim = (uint32_t)datareg->area.base;
-#endif
-
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  s.base = (uint8_t *)(void *)stkbase;
-  s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
-  return sb_start_unprivileged(sbp, &s, sbp->sbhp->hdr_entry);
+  return sb_start_unprivileged(sbp, stkbase, sbp->sbhp->hdr_entry);
 }
 
 /**
@@ -578,55 +592,19 @@ msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
              const char *argv[], const char *envp[]) {
   const sb_config_t *config = sbp->config;
   memory_area_t ma = config->regions[0].area;
+  size_t totsize;
   msg_t ret;
-  void *usp, *uargv, *uenvp;
-  size_t envsize, argsize, parsize;
-  int uargc, uenvc;
-  memory_area_t s;
 
-  /* Setting up an initial stack for the sandbox.*/
-  usp = (void *)(config->regions[0].area.base + config->regions[0].area.size);
-
-  /* Allocating space for environment variables.*/
-  envsize = sb_strv_getsize(envp, &uenvc);
-  PUSHSPACE(usp, envsize);
-  uenvp = usp;
-
-  /* Allocating space for arguments.*/
-  argsize = sb_strv_getsize(argv, &uargc);
-  PUSHSPACE(usp, argsize);
-  uargv = usp;
-
-  /* Allocating space for parameters.*/
-  if (MEM_IS_ALIGNED(usp, PORT_STACK_ALIGN)) {
-    parsize = sizeof (uint32_t) * 4;
-  }
-  else {
-    parsize = sizeof (uint32_t) * 5;
-  }
-  PUSHSPACE(usp, parsize);
-
-  /* Checking stack allocation.*/
-  if (!chMemIsSpaceWithinX(&config->regions[0].area,
-                           usp, envsize + argsize + parsize)) {
+  /* Pushing arguments, environment variables and other startup information
+     at the top of the data memory area.*/
+  totsize = sb_init_environment(sbp, &config->regions[0].area, argv, envp);
+  if (totsize == (size_t)0) {
     return CH_RET_ENOMEM;
   }
 
   /* Adjusting the size of the memory area object, we don't want the loaded
-     elf file to overwrite the initialized stack.*/
-  ma.size -= envsize + argsize + parsize;
-
-  /* Initializing stack.*/
-  sb_strv_copy(envp, uenvp, uenvc);
-  sb_strv_copy(argv, uargv, uargc);
-  *((uint32_t *)usp + 4) = (uint32_t)0x55555555;
-  *((uint32_t *)usp + 2) = (uint32_t)uenvp;
-  *((uint32_t *)usp + 1) = (uint32_t)uargv;
-  *((uint32_t *)usp + 0) = (uint32_t)uargc;
-  sbp->u_psp    = (uint32_t)usp;
-#if PORT_SAVE_PSPLIM == TRUE
-  sbp->u_psplim = (uint32_t)config->regions[0].area.base;
-#endif
+     elf file to overwrite the environment data.*/
+  ma.size -= totsize;
 
   /* Loading sandbox code into the specified memory area.*/
   ret = sbElfLoadFile(config->vfs_driver, pathname, &ma);
@@ -652,9 +630,7 @@ msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  s.base = (uint8_t *)(void *)stkbase;
-  s.size = (size_t)SB_CFG_PRIVILEGED_STACK_SIZE;
-  if (sb_start_unprivileged(sbp, &s, sbp->sbhp->hdr_entry) == NULL) {
+  if (sb_start_unprivileged(sbp, stkbase, sbp->sbhp->hdr_entry) == NULL) {
     return CH_RET_ENOMEM;
   }
 

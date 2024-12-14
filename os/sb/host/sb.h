@@ -167,7 +167,8 @@
 #error "SandBox requires PORT_USE_SYSCALL == TRUE"
 #endif
 
-#if (SB_CFG_PRIVILEGED_STACK_SIZE < 64)
+#if (SB_CFG_PRIVILEGED_STACK_SIZE < 64) ||                                  \
+    ((SB_CFG_PRIVILEGED_STACK_SIZE % PORT_STACK_ALIGN) != 0)
 #error "invalid SB_CFG_PRIVILEGED_STACK_SIZE value"
 #endif
 
