@@ -630,14 +630,13 @@ irq_retry:
       otgp->GINTMSK &= ~GINTMSK_SOFM;
     }
     if (usbp->state == USB_SUSPENDED) {
-      /* If clocks are gated off, turn them back on (may be the case if
-         coming out of suspend mode).*/
-      if (otgp->PCGCCTL & (PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK)) {
-        /* Set to zero to un-gate the USB core clocks.*/
-        otgp->PCGCCTL &= ~(PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK);
-      }
+      /* Set to zero to un-gate the USB core clocks.*/
+      otgp->PCGCCTL &= ~(PCGCCTL_STPPCLK | PCGCCTL_GATEHCLK);
       _usb_wakeup(usbp);
     }
+
+    /* Re-enable endpoint irqs if they have been disabled by suspend before.*/
+    otg_enable_ep(usbp);
 
     _usb_isr_invoke_sof_cb(usbp);
   }
