@@ -1,29 +1,25 @@
 *** SB-related notes and ideas ***
 
-x Move u_psp and s_psp fields from the thread context to the sandbox object.
-  + Reducing size for threads not associated to sandboxes.
-  + Move the unprivileged thread creation code from port to sb is more
-    architecturally elegant.
-  + Can pass "sbp" from call to return handlers through system stack, faster.
-  - Creating a strong assumption for one-thread-per-sandbox.
-
-x Remove the "p" pointer from the thread context and use the "object" pointer
-  already present in the thread_t structure.
-  + SB is a "controller" so it makes sense and saves space.
-
-x The pointer to the SB object could be passed by the dispatcher to the
-  syscalls avoiding this code in all functions.
-    sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->ctx.syscall.p;
-
 * Use und#xxx instruction for syscall instead of svc#xxx.
   + Faster context switch.
-  + Requires to enable USBFAULTENA and give UsageFault a priority.
+  * Requires to enable USBFAULTENA and give UsageFault a priority.
     + Enable all other vectors and make a proper handler finally.
-  - Needs to deal with the CFSR multiple status bits.
+  - Needs to deal with the CFSR multiple status bits, probably slower than
+    doing syscalls through SVCALL.
 
 * EXCRETURN of syscall-return SVC can be expected to be the same of syscall SVC
   because it is the same thread doing it and the syscall code is not supposed
   to use the FPU and cause FPCA setting.
 
-NOTE: CONTROL is required in context also for FPU modes 2 and 3 because
-      the FPCA bit needs to be preserved for each thread (done).
+* Dynamic sandbox allocation and execution.
+  ? Need a way to get the SB required size from the elf file.
+    ? Sum of the ALLOC regions sizes.
+      ? MSH needs extra space to load-call un applications, how is that
+        decided?
+  * Fork/exec API to allow SBs to spawn other SBs.
+    + No separate fork and exec, single API doing both for simplicity.
+    + VFS settings and file handles would be inherited.
+    + VIO settings would not be inherited.
+    + Environment variables would be inherited.
+    + MSH could spawn separate SBs instead of load-call.
+      + Could do both, 2 different ways to launch applications.
