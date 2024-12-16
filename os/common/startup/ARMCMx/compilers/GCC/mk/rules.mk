@@ -90,24 +90,20 @@ ifdef SREC
 endif
 
 # Source files groups and paths
-TCSRC     += $(CSRC)
-TCPPSRC   += $(CPPSRC)
-TSRC      := $(TCSRC) $(TCPPSRC)
-SRCPATHS  := $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(TSRC)))
+SRC      := $(CSRC) $(CPPSRC)
+SRCPATHS += $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(SRC)))
 
 # Various directories
 OBJDIR    := $(BUILDDIR)/obj
 LSTDIR    := $(BUILDDIR)/lst
 
 # Object files groups
-TCOBJS    := $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
-#TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
-TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cpp, %.o, $(filter %.cpp, $(TCPPSRC)))))
-TCCOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cc, %.o, $(filter %.cc, $(TCPPSRC)))))
-ASMOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
-ASMXOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
-#OBJS      := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
-OBJS      := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS) $(TCCOBJS)
+COBJS    := $(addprefix $(OBJDIR)/, $(notdir $(CSRC:.c=.o)))
+CPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cpp, %.o, $(filter %.cpp, $(CPPSRC)))))
+CCOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cc, %.o, $(filter %.cc, $(CPPSRC)))))
+ASMOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
+ASMXOBJS := $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
+OBJS     += $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS) $(CCOBJS)
 
 # Paths
 IINCDIR   := $(sort $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR)))
@@ -172,7 +168,7 @@ $(LSTDIR):
 $(DEPDIR):
 	@mkdir -p $(DEPDIR)
 
-$(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
+$(CPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
@@ -181,7 +177,7 @@ else
 	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCCOBJS) : $(OBJDIR)/%.o : %.cc $(MAKEFILE_LIST)
+$(CCOBJS) : $(OBJDIR)/%.o : %.cc $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
@@ -190,7 +186,7 @@ else
 	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCOBJS) : $(OBJDIR)/%.o : %.c $(MAKEFILE_LIST)
+$(COBJS) : $(OBJDIR)/%.o : %.c $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) -I. $(IINCDIR) $< -o $@
