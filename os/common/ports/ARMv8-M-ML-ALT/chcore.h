@@ -219,16 +219,19 @@
 #endif
 
 /**
- * @brief   Enables MPU on RTOS initialization.
+ * @brief   Enables MPU static initialization.
+ * @details The initialization is performed according to the various
+ *          @p PORT_MPU_MAIRx_INIT, @p PORT_MPU_RBARx_INIT and
+ *          @p PORT_MPU_RLARx_INIT settings.
  */
-#if !defined(PORT_MPU_ENABLED) || defined(__DOXYGEN__)
-#define PORT_MPU_ENABLED                TRUE
+#if !defined(PORT_MPU_INITIALIZE) || defined(__DOXYGEN__)
+#define PORT_MPU_INITIALIZE             TRUE
 #endif
 
 /**
  * @brief   MAIR0 register initialization.
  * @note    Default values of ATTR0...ATTR3 fields are those expected by the
- *          SB subsystem, do not change if using SB.
+ *          SB subsystem, do not change this setting if using SB.
  *          - ATTR0 is write-back cacheable memory.
  *          - ATTR1 is write-through cacheable memory.
  *          - ATTR2 is non-cacheable memory.

@@ -46,7 +46,7 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if (PORT_MPU_ENABLED == TRUE) || defined(__DOXYGEN__)
+#if (PORT_MPU_INITIALIZE == TRUE) || defined(__DOXYGEN__)
 static void port_init_regions(const uint32_t *src, volatile uint32_t *dst) {
 
   *dst++ = *src++;
@@ -192,7 +192,7 @@ void port_init(os_instance_t *oip) {
   NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
 
-#if PORT_MPU_ENABLED == TRUE
+#if PORT_MPU_INITIALIZE == TRUE
   /* MPU initialization as specified in port options.*/
   {
     MPU->MAIR0 = PORT_MPU_MAIR0_INIT;
@@ -234,7 +234,7 @@ void port_init(os_instance_t *oip) {
   }
 #endif
 
-#if (PORT_MPU_ENABLED == TRUE) || (PORT_SWITCHED_REGIONS_NUMBER > 0)
+#if (PORT_MPU_INITIALIZE == TRUE) || (PORT_SWITCHED_REGIONS_NUMBER > 0)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
 #endif
