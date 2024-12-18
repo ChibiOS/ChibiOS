@@ -316,16 +316,18 @@ int main(void) {
   while (true) {
 
     /* Waiting for a sandbox event or timeout.*/
-    if (chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
+    if (chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(500)) != (eventmask_t)0) {
 
       if (!sbIsThreadRunningX(&sbx1)) {
-        chprintf(oopGetIf(&SIOD1, chn), "SB1 terminated\r\n");
+        msg_t msg = sbWait(&sbx1);
+        chprintf(oopGetIf(&SIOD1, chn), "SB1 terminated: 0x%08x\r\n", msg);
         chThdSleepMilliseconds(100);
         start_sb1();
       }
 
       if (!sbIsThreadRunningX(&sbx2)) {
-        chprintf(oopGetIf(&SIOD1, chn), "SB2 terminated\r\n");
+        msg_t msg = sbWait(&sbx2);
+        chprintf(oopGetIf(&SIOD1, chn), "SB2 terminated: 0x%08x\r\n", msg);
         chThdSleepMilliseconds(100);
         start_sb2();
       }
