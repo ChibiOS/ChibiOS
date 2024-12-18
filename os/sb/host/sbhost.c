@@ -322,6 +322,13 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
   thread_t *utp;
   struct port_extctx *ectxp;
 
+#if SB_CFG_ENABLE_VRQ == TRUE
+  /* Clearing VRQ-related information that could be leftovers of previous
+     sandbox executions.*/
+  memset((void *)&sbp->vrq, 0, sizeof sbp->vrq);
+  sbp->vrq.isr = SB_VRQ_ISR_DISABLED;
+#endif
+
   /* Creating a thread on the unprivileged handler.*/
   thread_descriptor_t td = {
     .name       = sbp->config->thread.name,
