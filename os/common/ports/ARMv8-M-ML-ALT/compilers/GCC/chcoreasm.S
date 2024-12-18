@@ -59,6 +59,26 @@
 #define MPU_RBAR        0xE000ED9C
 #define MPU_RLAR        0xE000EDA0
 
+/* Calculating the MPU regions array offset within the port_context
+   structure.*/
+#if CORTEX_USE_FPU
+  #if PORT_SAVE_PSPLIM && PORT_SAVE_CONTROL
+    #define MPU_OFFSET  116
+  #elif PORT_SAVE_PSPLIM || PORT_SAVE_CONTROL
+    #define MPU_OFFSET  112
+  #else
+    #define MPU_OFFSET  108
+  #endif
+#else
+  #if PORT_SAVE_PSPLIM && PORT_SAVE_CONTROL
+    #define MPU_OFFSET  52
+  #elif PORT_SAVE_PSPLIM || PORT_SAVE_CONTROL
+    #define MPU_OFFSET  48
+  #else
+    #define MPU_OFFSET  44
+  #endif
+#endif
+
                 .syntax unified
                 .cpu    cortex-m33
 #if CORTEX_USE_FPU
@@ -157,76 +177,77 @@
                 .macro  PORT_STORE_MPU_CONTEXT
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
                 ldr     r2, =MPU_RBAR
+                mov     r3, #0
+                str     r3, [r2, #-4]       /* RNR */
 #if PORT_SWITCHED_REGIONS_NUMBER == 1
-                mov     r3, #0
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
+                ldm     r2, {r4-r5}         /* RBAR0, RLAR0 */
                 stmia   r1!, {r4-r5}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 2
-                mov     r3, #0
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
-                add     r3, #1
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r6, r7}        /* RBAR1, RLAR1 */
-                stmia   r1!, {r4-r7}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 3
-                mov     r3, #0
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
-                add     r3, #1
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r6, r7}        /* RBAR1, RLAR1 */
-                add     r3, #1
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r8, r9}        /* RBAR2, RLAR2 */
-                stmia   r1!, {r4-r9}
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER == 4
-                mov     r3, #0
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r4, r5}        /* RBAR0, RLAR0 */
-                add     r3, #1
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r6, r7}        /* RBAR1, RLAR1 */
-                add     r3, #1
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r8, r9}        /* RBAR2, RLAR2 */
-                add     r3, #1
-                str     r3, [r2, #-4]       /* RNR */
-                ldm     r2, {r10, r11}      /* RBAR3, RLAR3 */
-                stmia   r1!, {r4-r11}
+#elif PORT_SWITCHED_REGIONS_NUMBER == 2
+                ldm     r2, {r4-r7}         /* RBAR0, RLAR0 ... RBAR1, RLAR1 */
+                stmia   r1!, {r4-r7}        /* RBAR0, RLAR0 ... RBAR1, RLAR1 */
+#elif PORT_SWITCHED_REGIONS_NUMBER == 3
+                ldm     r2, {r4-r9}         /* RBAR0, RLAR0 ... RBAR2, RLAR2 */
+                stmia   r1!, {r4-r9}        /* RBAR0, RLAR0 ... RBAR2, RLAR2 */
+#else
+                ldm     r2, {r4-r11}        /* RBAR0, RLAR0 ... RBAR3, RLAR3 */
+                stmia   r1!, {r4-r11}       /* RBAR0, RLAR0 ... RBAR3, RLAR3 */
 #endif
 #endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
+#if PORT_SWITCHED_REGIONS_NUMBER > 4
+                mov     r3, #4
+                str     r3, [r2, #-4]       /* RNR */
+#if PORT_SWITCHED_REGIONS_NUMBER == 5
+                ldm     r2, {r4-r5}         /* RBAR4, RLAR4 */
+                stmia   r1!, {r4-r5}
+#elif PORT_SWITCHED_REGIONS_NUMBER == 6
+                ldm     r2, {r4-r7}         /* RBAR4, RLAR4 ... RBAR5, RLAR5 */
+                stmia   r1!, {r4-r7}        /* RBAR4, RLAR4 ... RBAR5, RLAR5 */
+#elif PORT_SWITCHED_REGIONS_NUMBER == 7
+                ldm     r2, {r4-r9}         /* RBAR4, RLAR4 ... RBAR6, RLAR6 */
+                stmia   r1!, {r4-r9}        /* RBAR4, RLAR4 ... RBAR6, RLAR6 */
+#else
+                ldm     r2, {r4-r11}        /* RBAR4, RLAR4 ... RBAR7, RLAR7 */
+                stmia   r1!, {r4-r11}       /* RBAR4, RLAR4 ... RBAR7, RLAR7 */
+#endif
+#endif /* PORT_SWITCHED_REGIONS_NUMBER > 4 */
                 .endm
 
                 /* Load MPU context through R0.*/
                 .macro  PORT_LOAD_MPU_CONTEXT
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
+                add     r1, r0, #MPU_OFFSET
                 ldr     r2, =MPU_RNR
-                mov     r1, #0
-#if PORT_SWITCHED_REGIONS_NUMBER >= 1
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR0, RLAR0 */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 2
-                add     r1, #1
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR1, RLAR1 */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 3
-                add     r1, #1
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR2, RLAR2 */
-#endif
-#if PORT_SWITCHED_REGIONS_NUMBER >= 4
-                add     r1, #1
-                ldmia   r0!, {r3, r12}
-                stm     r2, {r1, r3, r12}   /* RNR, RBAR3, RLAR3 */
+                mov     r3, #0
+#if PORT_SWITCHED_REGIONS_NUMBER == 1
+                ldmia   r1!, {r4-r5}        /*      RBAR0, RLAR0 */
+                stm     r2, {r3-r5}         /* RNR, RBAR0, RLAR0 */
+#elif PORT_SWITCHED_REGIONS_NUMBER == 2
+                ldmia   r1!, {r4-r7}        /*      RBAR0, RLAR0 ... RBAR1, RLAR1 */
+                stm     r2, {r3-r7}         /* RNR, RBAR0, RLAR0 ... RBAR1, RLAR1 */
+#elif PORT_SWITCHED_REGIONS_NUMBER == 3
+                ldmia   r1!, {r4-r9}        /*      RBAR0, RLAR0 ... RBAR2, RLAR2 */
+                stm     r2, {r3-r9}         /* RNR, RBAR0, RLAR0 ... RBAR2, RLAR2 */
+#else
+                ldmia   r1!, {r4-r11}       /*      RBAR0, RLAR0 ... RBAR3, RLAR3 */
+                stm     r2, {r3-r11}        /* RNR, RBAR0, RLAR0 ... RBAR3, RLAR3 */
 #endif
 #endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
+#if PORT_SWITCHED_REGIONS_NUMBER > 4
+                mov     r3, #4
+#if PORT_SWITCHED_REGIONS_NUMBER == 5
+                ldmia   r1!, {r4-r5}        /*      RBAR4, RLAR4 */
+                stm     r2, {r3-r5}         /* RNR, RBAR4, RLAR4 */
+#elif PORT_SWITCHED_REGIONS_NUMBER == 6
+                ldmia   r1!, {r4-r7}        /*      RBAR4, RLAR4 ... RBAR5, RLAR5 */
+                stm     r2, {r3-r7}         /* RNR, RBAR4, RLAR4 ... RBAR5, RLAR5 */
+#elif PORT_SWITCHED_REGIONS_NUMBER == 7
+                ldmia   r1!, {r4-r9}        /*      RBAR4, RLAR4 ... RBAR6, RLAR6 */
+                stm     r2, {r3-r9}         /* RNR, RBAR4, RLAR4 ... RBAR6, RLAR6 */
+#else
+                ldmia   r1!, {r4-r11}       /*      RBAR4, RLAR4 ... RBAR7, RLAR7 */
+                stm     r2, {r3-r11}        /* RNR, RBAR4, RLAR4 ... RBAR7, RLAR7 */
+#endif
+#endif /* PORT_SWITCHED_REGIONS_NUMBER > 4 */
                 .endm
 
 /*--------------------------------------------------------------------------*
@@ -299,10 +320,10 @@ SVC_Handler:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
                 /* Context load for new thread through R0.*/
+                PORT_LOAD_MPU_CONTEXT
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_SPECIAL_CONTEXT
                 PORT_LOAD_FLOAT_CONTEXT
-                PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
 
@@ -353,10 +374,10 @@ PendSV_Handler:
 1:
 #endif /* CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS */
 
+                PORT_LOAD_MPU_CONTEXT
                 PORT_LOAD_INTEGER_CONTEXT
                 PORT_LOAD_SPECIAL_CONTEXT
                 PORT_LOAD_FLOAT_CONTEXT
-                PORT_LOAD_MPU_CONTEXT
 
                 bx      lr
 
