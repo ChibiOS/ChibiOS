@@ -320,7 +320,6 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
                                        stkline_t *stkbase,
                                        uint32_t u_pc) {
   thread_t *utp;
-  struct port_extctx *ectxp;
 
 #if SB_CFG_ENABLE_VRQ == TRUE
   /* Clearing VRQ-related information that could be leftovers of previous
@@ -357,17 +356,38 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
   }
 #endif
 
-  /* Creating entry frame.*/
-  sbp->u_psp -= sizeof (struct port_extctx); /* TODO */
-  ectxp = (struct port_extctx *)sbp->u_psp;
+#if ((CORTEX_USE_FPU == TRUE) && (PORT_USE_FPU_FAST_SWITCHING <= 1))
+  /* Starting with a long frame, FPCA is set on thread start.*/
+  {
+    struct port_extctx *ectxp;
 
-  /* Initializing the unprivileged mode entry context, clearing
-     all registers.*/
-  memset((void *)ectxp, 0, sizeof (struct port_extctx));
-  ectxp->pc    = u_pc;
-  ectxp->xpsr  = 0x01000000U;
-#if CORTEX_USE_FPU == TRUE
-  ectxp->fpscr = FPU->FPDSCR;
+    /* Creating entry frame.*/
+    sbp->u_psp -= sizeof (struct port_extctx);
+    ectxp = (struct port_extctx *)sbp->u_psp;
+
+    /* Initializing the unprivileged mode entry context, clearing
+       all registers.*/
+    memset((void *)ectxp, 0, sizeof (struct port_extctx));
+    ectxp->pc    = u_pc;
+    ectxp->xpsr  = 0x01000000U;
+    ectxp->fpscr = FPU->FPDSCR;
+  }
+#else
+  /* Starting with a short frame, FPU disabled or FPCA cleared
+     on thread start.*/
+  {
+    struct port_short_extctx *ectxp;
+
+    /* Creating entry frame.*/
+    sbp->u_psp -= sizeof (struct port_short_extctx);
+    ectxp = (struct port_short_extctx *)sbp->u_psp;
+
+    /* Initializing the unprivileged mode entry context, clearing
+       all registers.*/
+    memset((void *)ectxp, 0, sizeof (struct port_short_extctx));
+    ectxp->pc    = u_pc;
+    ectxp->xpsr  = 0x01000000U;
+  }
 #endif
 
   /* Starting the thread.*/

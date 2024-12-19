@@ -128,7 +128,7 @@ static void SBHandler(eventid_t id) {
   (void)id;
 
   if (!sbIsThreadRunningX(&sbx1)) {
-    msg_t msg = sbWaitThread(&sbx1);
+    msg_t msg = sbWait(&sbx1);
 
     chprintf((BaseSequentialStream *)&SD2, "SB1 terminated (%08lx)\r\n", msg);
   }
