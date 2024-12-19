@@ -528,7 +528,6 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
 
   memset((void *)sbp, 0, sizeof (sb_class_t));
   sbp->config = config;
-  sbp->thread.state = CH_STATE_FINAL;
 }
 
 /**
