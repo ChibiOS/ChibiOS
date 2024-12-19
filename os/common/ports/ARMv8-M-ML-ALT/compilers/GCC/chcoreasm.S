@@ -392,6 +392,12 @@ PendSV_Handler:
                 .thumb_func
                 .globl  __port_thread_start
 __port_thread_start:
+#if CORTEX_USE_FPU && (PORT_USE_FPU_FAST_SWITCHING >= 2)
+                /* Clearing FPCA for the new thread, it is initially set
+                   because a long context is used for starting it.*/
+                mov     r0, #2
+                msr     CONTROL, r0
+#endif
 #if CH_DBG_SYSTEM_STATE_CHECK
                 bl      __dbg_check_unlock
 #endif
