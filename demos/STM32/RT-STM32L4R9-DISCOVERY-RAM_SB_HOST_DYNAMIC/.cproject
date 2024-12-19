@@ -38,7 +38,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="RT-STM32L4R9-DISCOVERY-RAM_SB_HOST_DYNAMIC.null.1004513353" name="RT-STM32L4R9-DISCOVERY-RAM_SB_HOST_DYNAMIC"/>
+		<project id="RT-STM32L4R9-DISCOVERY-SB_HOST_DYNAMIC_RAMBOX.null.1004513353" name="RT-STM32L4R9-DISCOVERY-SB_HOST_DYNAMIC_RAMBOX"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -49,7 +49,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/RT-STM32L4R9-DISCOVERY-RAM_SB_HOST_DYNAMIC"/>
+			<resource resourceType="PROJECT" workspacePath="/RT-STM32L4R9-DISCOVERY-SB_HOST_DYNAMIC_RAMBOX"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
