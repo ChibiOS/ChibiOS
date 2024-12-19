@@ -67,15 +67,13 @@ static const drv_streams_element_t sb1_streams[] = {
 /* Sandbox objects.*/
 sb_class_t sbx1;
 
-/* Working areas for sandboxes.*/
-static THD_WORKING_AREA(waUnprivileged1, 2048);
+/* Privileged stacks for sandboxes.*/
+static SB_STACK(sbx1stk);
 
 /* Sandbox 1 configuration.*/
 static const sb_config_t sb_config1 = {
   .thread           = {
     .name           = "sbx1",
-    .wsp            = waUnprivileged1,
-    .size           = sizeof (waUnprivileged1),
     .prio           = NORMALPRIO - 10,
   },
   .regions          = {
@@ -217,6 +215,8 @@ int main(void) {
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
 
     if (sdmon_ready && !sbIsThreadRunningX(&sbx1)) {
+
+      /* Small delay before relaunching.*/
       chThdSleepMilliseconds(1000);
 
       /*
@@ -236,7 +236,7 @@ int main(void) {
       /*
        * Running the sandbox.
        */
-      ret = sbExec(&sbx1, "/bin/msh.elf", sbx1_argv, sbx1_envp);
+      ret = sbExec(&sbx1, sbx1stk, "/bin/msh.elf", sbx1_argv, sbx1_envp);
       if (CH_RET_IS_ERROR(ret)) {
         chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);
       }
