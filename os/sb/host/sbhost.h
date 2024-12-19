@@ -153,6 +153,28 @@ static inline void sbHostInit(void) {
 #endif
 }
 
+#if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Blocks the execution of the invoking thread until the specified
+ *          sandbox thread terminates then the exit code is returned.
+ * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
+ *          order to use this function.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @return              The exit code from the terminated sandbox thread.
+ * @retval MSG_RESET    Sandbox thread not started.
+ *
+ * @api
+ */
+static inline msg_t sbWait(sb_class_t *sbp) {
+  msg_t msg;
+
+  msg = chThdWait(&sbp->thread);
+
+  return msg;
+}
+#endif
+
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Sends a message to a sandboxed thread.

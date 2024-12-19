@@ -414,10 +414,7 @@ void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
   active_mask = sbp->vrq.wtmask & sbp->vrq.enmask;
   if (active_mask != 0U) {
 
-    /* Re-enabling VRQs globally.*/
-//    sbp->vrq.isr = 0U; /* TODO interrupts should not be re-enabled, we are chaining here.*/
-
-    /* Creating a new return context.*/
+    /* VRQ chaining scenario, creating a new return context.*/ /* TODO could be optimized.*/
     vrq_pushctx(sbp, ectxp, __CLZ(__RBIT(active_mask)));
   }
   else {
