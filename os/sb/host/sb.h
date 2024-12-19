@@ -167,6 +167,13 @@
 #error "SandBox requires PORT_USE_SYSCALL == TRUE"
 #endif
 
+#if defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE) &&                          \
+    (PORT_MPU_INITIALIZE == FALSE)
+/* Because MPU_MAIRx registers are initialized by the port layer in this
+   architecture.*/
+#error "SandBox requires PORT_MPU_INITIALIZE == TRUE"
+#endif
+
 #if (SB_CFG_PRIVILEGED_STACK_SIZE < 64) ||                                  \
     ((SB_CFG_PRIVILEGED_STACK_SIZE % PORT_STACK_ALIGN) != 0)
 #error "invalid SB_CFG_PRIVILEGED_STACK_SIZE value"
