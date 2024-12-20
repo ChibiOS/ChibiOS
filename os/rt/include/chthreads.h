@@ -546,8 +546,6 @@ static inline systime_t chThdGetTicksX(thread_t *tp) {
 }
 #endif
 
-#if (CH_DBG_ENABLE_STACK_CHECK == TRUE) || (CH_CFG_USE_DYNAMIC == TRUE) ||  \
-    defined(__DOXYGEN__)
 /**
  * @brief   Returns the working area base of the specified thread.
  *
@@ -560,7 +558,6 @@ static inline stkline_t *chThdGetWorkingAreaX(thread_t *tp) {
 
   return tp->wabase;
 }
-#endif /* CH_DBG_ENABLE_STACK_CHECK == TRUE */
 
 /**
  * @brief   Verifies if the specified thread is in the @p CH_STATE_FINAL state.

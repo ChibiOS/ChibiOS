@@ -164,9 +164,6 @@ thread_t *chThdObjectInit(thread_t *tp,
 #if CH_CFG_USE_REGISTRY == TRUE
   tp->refs              = (trefs_t)1;
   tp->name              = tdp->name;
-//  REG_INSERT(tp->owner, tp);
-#else
-  (void)name;
 #endif
 
   /* Messages-related fields.*/
@@ -534,10 +531,12 @@ thread_t *chThdCreateStatic(stkline_t *wbase, size_t wsize,
   /* Other checks.*/
   chDbgCheck((prio <= HIGHPRIO) && (func != NULL));
 
+#if CH_CFG_USE_REGISTRY == TRUE
   /* Special situation where the working area is already in use by an
      active thread.*/
   chDbgAssert(chRegFindThreadByWorkingArea(wbase) == NULL,
               "working area in use");
+#endif
 
   /* Working area end address.*/
   wend = (uint8_t *)wbase + wsize;
