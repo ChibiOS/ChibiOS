@@ -405,15 +405,16 @@ void sb_fastc_vrq_getisr(sb_class_t *sbp, struct port_extctx *ectxp) {
 }
 
 void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
-  sb_vrqmask_t active_mask;
+  register sb_vrqmask_t active_mask;
 
   active_mask = sbp->vrq.wtmask & sbp->vrq.enmask;
   if (active_mask != 0U) {
+    sb_vrqnum_t nvrq = __CLZ(__RBIT(active_mask));
 
-    sbp->vrq.wtmask = active_mask & (active_mask - 1U);
+    sbp->vrq.wtmask &= ~(1U << nvrq);
 
     /* Building the return context.*/
-    ectxp->r0     = __CLZ(__RBIT(active_mask));
+    ectxp->r0     = nvrq;
 #if 0
     ectxp->r1     = 0U;
     ectxp->r2     = 0U;
