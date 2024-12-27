@@ -407,17 +407,34 @@ void sb_fastc_vrq_getisr(sb_class_t *sbp, struct port_extctx *ectxp) {
 void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
   sb_vrqmask_t active_mask;
 
-  /* Discarding the return current context, returning on the previous one.
-     TODO: Check for overflows????*/
-  ectxp++;
-
   active_mask = sbp->vrq.wtmask & sbp->vrq.enmask;
   if (active_mask != 0U) {
 
-    /* VRQ chaining scenario, creating a new return context.*/ /* TODO could be optimized.*/
-    vrq_pushctx(sbp, ectxp, __CLZ(__RBIT(active_mask)));
+    sbp->vrq.wtmask = active_mask & (active_mask - 1U);
+
+    /* Building the return context.*/
+    ectxp->r0     = __CLZ(__RBIT(active_mask));
+#if 0
+    ectxp->r1     = 0U;
+    ectxp->r2     = 0U;
+    ectxp->r3     = 0U;
+    ectxp->r12    = 0U;
+    ectxp->lr_thd = 0U;
+#endif
+    ectxp->pc     = sbp->sbhp->hdr_vrq;
+    ectxp->xpsr   = 0x01000000U;
+#if CORTEX_USE_FPU == TRUE
+    if ((exc_return & 0x00000010U) == 0U) {
+      /* Bit 4 (~FPCA) is 0 so it is a long frame.*/
+      ectxp->fpscr  = FPU->FPDSCR;
+    }
+#endif
   }
   else {
+
+    /* Discarding the return current context, returning on the previous one.
+       TODO: Check for overflows????*/
+    ectxp++;
 
     /* Re-enabling VRQs globally.*/
     sbp->vrq.isr = 0U;

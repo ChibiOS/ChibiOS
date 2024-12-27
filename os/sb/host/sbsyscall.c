@@ -932,6 +932,12 @@ void __sb_abort(msg_t msg) {
   chSysHalt("zombies");
 }
 
+/**
+ * @brief   Redefined syscall entry vector.
+ * @note    When FPU is enabled there is the assumption that the syscall
+ *          code does not change the FPCA state or __port_do_syscall_return()
+ *          would try to return using the wrong frame type.
+ */
 void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
   extern void __sb_dispatch_syscall(sb_class_t *sbp,
                                     struct port_extctx *ectxp,
@@ -945,18 +951,31 @@ void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
 
   /* Return context for change in privileged mode, it is created on the
      privileged PSP so no need to check for overflows.*/
-  newctxp = ((struct port_extctx *)tp->waend) - 1;
+#if CORTEX_USE_FPU == FALSE
+  newctxp = (struct port_extctx *)(void *)((uint8_t *)tp->waend -
+                                           sizeof (struct port_extctx));
+#else
+  /* With FPU enabled the frame size depends on the EXC_RETURN value.*/
+  uint32_t exc_return = __builtin_return_address(0);
+  if ((exc_return & 0x00000010U) == 0U) {
+    /* Bit 4 (~FPCA) is 0 so it is a long frame.*/
+    newctxp = (struct port_extctx *)(void *)((uint8_t *)tp->waend -
+                                             sizeof (struct port_extctx));
+    newctxp->fpscr = _FPU->FPDSCR();
+  }
+  else {
+    /* Bit 4 (~FPCA) is 1 so it is a short frame.*/
+    newctxp = (struct port_extctx *)(void *)((uint8_t *)tp->waend -
+                                             sizeof (struct port_short_extctx));
+  }
+#endif
 
   /* Creating context for return in privileged mode.*/
-  newctxp->r0    = (uint32_t)sbp;
-  newctxp->r1    = (uint32_t)ectxp;
-  newctxp->r2    = n;
-  newctxp->pc    = (uint32_t)__sb_dispatch_syscall;
-  newctxp->xpsr  = (uint32_t)0x01000000;
-#if CORTEX_USE_FPU == TRUE
-  /* TODO enforce lazy FPU context save.*/
-  newctxp->fpscr = FPU->FPDSCR;
-#endif
+  newctxp->r0   = (uint32_t)sbp;
+  newctxp->r1   = (uint32_t)ectxp;
+  newctxp->r2   = n;
+  newctxp->pc   = (uint32_t)__sb_dispatch_syscall;
+  newctxp->xpsr = (uint32_t)0x01000000;
 
   /* Switching PSP to the privileged mode PSP.*/
   __set_PSP((uint32_t)newctxp);
@@ -967,6 +986,9 @@ void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
 
 /**
  * @brief   Redefined syscall return vector with VRQ handling.
+ * @note    When FPU is enabled there is the assumption that the syscall
+ *          code does not change the FPCA state or this code would try to
+ *          return using the wrong frame type.
  */
 void __port_do_syscall_return(void) {
   thread_t *tp;
