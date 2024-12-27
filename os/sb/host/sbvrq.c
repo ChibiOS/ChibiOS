@@ -59,7 +59,7 @@ static void vrq_privileged_code(void) {
 }
 
 CC_FORCE_INLINE
-static inline struct port_extctx *vrq_makectx(sb_class_t *sbp,
+static inline struct port_extctx *vrq_pushctx(sb_class_t *sbp,
                                               struct port_extctx *ectxp,
                                               sb_vrqnum_t nvrq) {
   struct port_extctx *newctxp = ectxp - 1;  /* TODO: Test FPCA, it could be short or long.*/
@@ -91,10 +91,10 @@ static inline struct port_extctx *vrq_makectx(sb_class_t *sbp,
   return newctxp;
 }
 
+/* Encouraging a tail call on this function.*/
 CC_NO_INLINE
-static struct port_extctx *vrq_writectx(sb_class_t *sbp,
-                                        struct port_extctx *ectxp,
-                                        sb_vrqnum_t nvrq) {
+static void vrq_pushctx_other(sb_class_t *sbp, sb_vrqnum_t nvrq) {
+  struct port_extctx *ectxp = (struct port_extctx *)sbp->u_psp;
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp,
@@ -105,20 +105,18 @@ static struct port_extctx *vrq_writectx(sb_class_t *sbp,
     ectxp->pc = (uint32_t)vrq_privileged_code;
   }
   else {
-    /* Creating a new context for return the VRQ handler.*/
-    ectxp = vrq_makectx(sbp, ectxp, nvrq);
+    /* Creating a new context for the VRQ handler return.*/
+    ectxp = vrq_pushctx(sbp, ectxp, nvrq);
   }
 
-  return ectxp;
+  sbp->u_psp = (uint32_t)ectxp;
 }
 
-/* Note, this function may look an useless duplication of vrq_writectx() but
-   the included __set_PSP() makes it a viable tail-call candidate for the
-   compiler, this is a significant performance gain in several places.*/
+/* Encouraging a tail call on this function.*/
 CC_NO_INLINE
-static void vrq_pushctx(sb_class_t *sbp,
-                        struct port_extctx *ectxp,
-                        sb_vrqnum_t nvrq) {
+static void vrq_pushctx_this(sb_class_t *sbp,
+                             struct port_extctx *ectxp,
+                             sb_vrqnum_t nvrq) {
 
   /* Checking if the new frame is within the sandbox else failure.*/
   if (!sb_is_valid_write_range(sbp,
@@ -129,8 +127,8 @@ static void vrq_pushctx(sb_class_t *sbp,
     ectxp->pc = (uint32_t)vrq_privileged_code;
   }
   else {
-    /* Creating a new context for return the VRQ handler.*/
-    ectxp = vrq_makectx(sbp, ectxp, nvrq);
+    /* Creating a new context for the VRQ handler return.*/
+    ectxp = vrq_pushctx(sbp, ectxp, nvrq);
     __set_PSP((uint32_t)ectxp);
 #if PORT_SAVE_PSPLIM
     __set_PSPLIM(sbp->u_psplim);
@@ -149,7 +147,7 @@ static void vrq_fastc_check_pending(struct port_extctx *ectxp, sb_class_t *sbp) 
     if (active_mask != 0U) {
 
       /* Creating a return context.*/
-      vrq_pushctx(sbp, ectxp, __CLZ(__RBIT(active_mask)));
+      vrq_pushctx_this(sbp, ectxp, __CLZ(__RBIT(active_mask)));
     }
   }
 }
@@ -213,7 +211,7 @@ void sbVRQTriggerS(sb_class_t *sbp, sb_vrqnum_t nvrq) {
       if ((__get_CONTROL() & 1U) != 0U) {
 
         /* Creating a return context.*/
-        vrq_pushctx(sbp, (struct port_extctx *)__get_PSP(), __CLZ(__RBIT(active_mask)));
+        vrq_pushctx_this(sbp, (struct port_extctx *)__get_PSP(), __CLZ(__RBIT(active_mask)));
       }
       else {
         /* It is in privileged mode so it will check for pending VRQs
@@ -255,7 +253,7 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
         if ((__get_CONTROL() & 1U) != 0U) {
 
           /* Creating a return context.*/
-          vrq_pushctx(sbp, (struct port_extctx *)__get_PSP(), __CLZ(__RBIT(active_mask)));
+          vrq_pushctx_this(sbp, (struct port_extctx *)__get_PSP(), __CLZ(__RBIT(active_mask)));
         }
         else {
           /* It is in privileged mode so it will check for pending VRQs
@@ -266,19 +264,12 @@ void sbVRQTriggerI(sb_class_t *sbp, sb_vrqnum_t nvrq) {
       }
       else {
         /* We preempted some other thread. In this case the privilege
-           information is stored in the internal thread context because
-           it is switched-out.*/
+           information is stored in the internal sandbox thread context
+           because it is switched-out.*/
         if ((sbp->thread.ctx.regs.control & 1U) != 0U) {
-          struct port_extctx *ectxp;
 
-          /* Getting the current PSP, it is stored in the thread context.*/
-          ectxp = (struct port_extctx *)sbp->u_psp;
-
-          /* Creating a return context.*/
-          ectxp = vrq_writectx(sbp, ectxp, __CLZ(__RBIT(active_mask)));
-
-          /* Updating stored PSP position.*/
-          sbp->u_psp = (uint32_t)ectxp;
+          /* Creating a return context on the sandbox thread.*/
+          vrq_pushctx_other(sbp, __CLZ(__RBIT(active_mask)));
         }
         else {
           /* It is in privileged mode so it will check for pending VRQs
@@ -393,7 +384,7 @@ void sb_fastc_vrq_enable(sb_class_t *sbp, struct port_extctx *ectxp) {
   if (unlikely(active_mask != 0U)) {
 
     /* Creating a return context.*/
-    vrq_pushctx(sbp, ectxp, __CLZ(__RBIT(active_mask)));
+    vrq_pushctx_this(sbp, ectxp, __CLZ(__RBIT(active_mask)));
   }
 }
 
@@ -466,7 +457,7 @@ void __sb_vrq_check_pending(sb_class_t *sbp, struct port_extctx *ectxp) {
     if (active_mask != 0U) {
 
       /* Creating a return context.*/
-      vrq_pushctx(sbp, ectxp, __CLZ(__RBIT(active_mask)));
+      vrq_pushctx_this(sbp, ectxp, __CLZ(__RBIT(active_mask)));
       return;
     }
   }
