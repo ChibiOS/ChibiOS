@@ -89,17 +89,15 @@ static inline void vrq_initctx(sb_class_t *sbp,
 CC_NO_INLINE
 static void vrq_pushctx_other(sb_class_t *sbp, sb_vrqnum_t nvrq) {
   struct port_extctx *ectxp;
-  size_t ectxsize;
 
   /* Current stack frame position.*/
   ectxp = (struct port_extctx *)sbp->u_psp;
 
   /* Position of the new stack frame, it depends on FPU settings and state.*/
-  ectxsize = sizeof (struct port_extctx);
-  ectxp = (struct port_extctx *)(sbp->u_psp - ectxsize);
+  ectxp = (struct port_extctx *)(sbp->u_psp - sizeof (struct port_extctx));
 
   /* Checking if the new frame is within the sandbox else failure.*/
-  if (!sb_is_valid_write_range(sbp, (void *)ectxp, ectxsize)) {
+  if (!sb_is_valid_write_range(sbp, (void *)ectxp, sizeof (struct port_extctx))) {
     /* Making the sandbox return on a privileged address, this
        will cause a fault and sandbox termination.*/
     ectxp->pc = (uint32_t)vrq_privileged_code;
@@ -116,14 +114,12 @@ static void vrq_pushctx_other(sb_class_t *sbp, sb_vrqnum_t nvrq) {
 CC_NO_INLINE
 static void vrq_pushctx_this(sb_class_t *sbp, uint32_t psp, sb_vrqnum_t nvrq) {
   struct port_extctx *ectxp;
-  size_t ectxsize;
 
   /* Position of the new stack frame, it depends on FPU settings and state.*/
-  ectxsize = sizeof (struct port_extctx);
-  ectxp = (struct port_extctx *)(psp - ectxsize);
+  ectxp = (struct port_extctx *)(psp - sizeof (struct port_extctx));
 
   /* Checking if the new frame is within the sandbox else failure.*/
-  if (!sb_is_valid_write_range(sbp, (void *)ectxp, ectxsize)) {
+  if (!sb_is_valid_write_range(sbp, (void *)ectxp, sizeof (struct port_extctx))) {
     /* Making the sandbox return on a privileged address, this
        will cause a fault and sandbox termination.*/
     ectxp->pc = (uint32_t)vrq_privileged_code;
@@ -438,10 +434,7 @@ void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
     ectxp->pc     = sbp->sbhp->hdr_vrq;
     ectxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
-    if ((exc_return & 0x00000010U) == 0U) {
-      /* Bit 4 (~FPCA) is 0 so it is a long frame.*/
-      ectxp->fpscr  = FPU->FPDSCR;
-    }
+    ectxp->fpscr  = FPU->FPDSCR;
 #endif
   }
   else {

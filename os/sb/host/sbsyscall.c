@@ -951,24 +951,8 @@ void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
 
   /* Return context for change in privileged mode, it is created on the
      privileged PSP so no need to check for overflows.*/
-#if CORTEX_USE_FPU == FALSE
   newctxp = (struct port_extctx *)(void *)((uint8_t *)tp->waend -
                                            sizeof (struct port_extctx));
-#else
-  /* With FPU enabled the frame size depends on the EXC_RETURN value.*/
-  uint32_t exc_return = __builtin_return_address(0);
-  if ((exc_return & 0x00000010U) == 0U) {
-    /* Bit 4 (~FPCA) is 0 so it is a long frame.*/
-    newctxp = (struct port_extctx *)(void *)((uint8_t *)tp->waend -
-                                             sizeof (struct port_extctx));
-    newctxp->fpscr = _FPU->FPDSCR();
-  }
-  else {
-    /* Bit 4 (~FPCA) is 1 so it is a short frame.*/
-    newctxp = (struct port_extctx *)(void *)((uint8_t *)tp->waend -
-                                             sizeof (struct port_short_extctx));
-  }
-#endif
 
   /* Creating context for return in privileged mode.*/
   newctxp->r0   = (uint32_t)sbp;
@@ -976,6 +960,9 @@ void __port_do_syscall_entry(uint32_t n, struct port_extctx *ectxp) {
   newctxp->r2   = n;
   newctxp->pc   = (uint32_t)__sb_dispatch_syscall;
   newctxp->xpsr = (uint32_t)0x01000000;
+#if CORTEX_USE_FPU == TRUE
+  newctxp->fpscr = FPU->FPDSCR;
+#endif
 
   /* Switching PSP to the privileged mode PSP.*/
   __set_PSP((uint32_t)newctxp);

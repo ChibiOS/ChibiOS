@@ -311,8 +311,16 @@ static THD_FUNCTION(sb_unprivileged_trampoline, arg) {
 
   (void)arg;
 
-  /* Jump with no return to the context saved at "u_psp". */
+#if (CORTEX_USE_FPU == TRUE) && (PORT_USE_FPU_FAST_SWITCHING >= 2)
+  /* Enforcing FPCA active for this thread by reading the FPSCR, this is
+     actually simpler than trying to handle all possible cases in syscalls
+     handling via SVC.*/
+  (void) __get_FPSCR();
+#endif
+
   asm volatile ("svc     #1");
+
+  /* Jump with no return to the context saved at "u_psp". */
   chSysHalt("svc");
 }
 
