@@ -212,7 +212,7 @@ __STATIC_INLINE void usart_enable_tx_end_irq(SIODriver *siop) {
  */
 __STATIC_INLINE void usart_init(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
-  uint32_t presc, brr, clock;
+  uint32_t presc, brr, clock, cr3;
 
   /*Clock input frequency, it could be dynamic.*/
   if (false) {
@@ -309,7 +309,12 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   /* Setting up USART, FIFO mode enforced.*/
   u->CR1   = (siop->config->cr1 & ~USART_CR1_CFG_FORBIDDEN) | USART_CR1_FIFOEN;
   u->CR2   = siop->config->cr2 & ~USART_CR2_CFG_FORBIDDEN;
-  u->CR3   = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
+  cr3      = siop->config->cr3 & ~USART_CR3_CFG_FORBIDDEN;
+  if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
+  /* If single character mode specified by config mask off threshold setting.*/
+    cr3 &= ~USART_CR3_RXFTCFG_Msk;
+  }
+  u->CR3   = cr3;
   u->PRESC = siop->config->presc;
   u->BRR   = brr;
 
@@ -912,8 +917,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
            This is required where a USART FIFO threshold set at minimum may be
            greater than one character thus a threshold interrupt will not be
            triggered at the next character. Any configuration setting other
-           than minimum will be handled according the specified threshold.*/
-        if ((siop->config->cr3 & USART_CR3_RXFTCFG) == USART_CR3_RXFTCFG_NONEMPTY) {
+           than non-empty will be handled according the specified threshold.*/
+        if ((siop->config->cr3 & USART_CR3_RXFTCFG_Msk) == USART_CR3_RXFTCFG_NONEMPTY) {
           cr1 |= USART_CR1_RXNEIE_RXFNEIE;
         }
         else {
@@ -933,8 +938,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
         u->ICR = USART_ICR_IDLECF;
 #endif
 
-        /* Interrupt sources disabled. The RX interrupts are disabled now. The
-           woken thread will read the received character.*/
+        /* Interrupt source disabled.*/
         cr3 &= ~USART_CR3_RXFTIE;
         cr1 &= ~USART_CR1_RXNEIE_RXFNEIE;
 
@@ -943,7 +947,7 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       }
     }
 
-    /* TX FIFO is non-full.*/
+    /* TX FIFO is below threshold.*/
     if ((isr & USART_ISR_TXE) != 0U) {
 
       /* Interrupt source disabled.*/
