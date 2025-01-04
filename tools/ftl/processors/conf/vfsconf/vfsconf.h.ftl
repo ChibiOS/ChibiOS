@@ -1,17 +1,28 @@
+[#ftl]
+[#--
+    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+
+    This file is part of ChibiOS.
+
+    ChibiOS is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    ChibiOS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  --]
+[@pp.dropOutputFile /]
+[#import "/@lib/libutils.ftl" as utils /]
+[#import "/@lib/liblicense.ftl" as license /]
+[@pp.changeOutputFile name="vfsconf.h" /]
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+[@license.EmitLicenseAsText /]
 */
 
 /**
@@ -39,21 +50,21 @@
  * @brief   Maximum filename length.
  */
 #if !defined(VFS_CFG_NAMELEN_MAX) || defined(__DOXYGEN__)
-#define VFS_CFG_NAMELEN_MAX                 15
+#define VFS_CFG_NAMELEN_MAX                 ${doc.VFS_CFG_NAMELEN_MAX!"15"}
 #endif
 
 /**
  * @brief   Maximum paths length.
  */
 #if !defined(VFS_CFG_PATHLEN_MAX) || defined(__DOXYGEN__)
-#define VFS_CFG_PATHLEN_MAX                 1023
+#define VFS_CFG_PATHLEN_MAX                 ${doc.VFS_CFG_PATHLEN_MAX!"1023"}
 #endif
 
 /**
  * @brief   Number of shared path buffers.
  */
 #if !defined(VFS_CFG_PATHBUFS_NUM) || defined(__DOXYGEN__)
-#define VFS_CFG_PATHBUFS_NUM                1
+#define VFS_CFG_PATHBUFS_NUM                ${doc.VFS_CFG_PATHBUFS_NUM!"1"}
 #endif
 
 /** @} */
@@ -69,28 +80,28 @@
  * @brief   Enables the VFS Overlay Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_OVERLAY) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_OVERLAY          TRUE
+#define VFS_CFG_ENABLE_DRV_OVERLAY          ${doc.VFS_CFG_ENABLE_DRV_OVERLAY!"TRUE"}
 #endif
 
 /**
  * @brief   Enables the VFS Streams Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_STREAMS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_STREAMS          TRUE
+#define VFS_CFG_ENABLE_DRV_STREAMS          ${doc.VFS_CFG_ENABLE_DRV_STREAMS!"TRUE"}
 #endif
 
 /**
  * @brief   Enables the VFS FatFS Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_FATFS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_FATFS            TRUE
+#define VFS_CFG_ENABLE_DRV_FATFS            ${doc.VFS_CFG_ENABLE_DRV_FATFS!"TRUE"}
 #endif
 
 /**
  * @brief   Enables the VFS LittleFS Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_LITTLEFS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_LITTLEFS         TRUE
+#define VFS_CFG_ENABLE_DRV_LITTLEFS         ${doc.VFS_CFG_ENABLE_DRV_LITTLEFS!"TRUE"}
 #endif
 
 /** @} */
@@ -182,21 +193,21 @@
  * @brief   Number of shared path buffers.
  */
 #if !defined(DRV_CFG_LITTLEFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      2
+#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      ${doc.DRV_CFG_LITTLEFS_DIR_NODES_NUM!"2"}
 #endif
 
 /**
  * @brief   Number of file nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_LITTLEFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     2
+#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     ${doc.DRV_CFG_LITTLEFS_FILE_NODES_NUM!"2"}
 #endif
 
 /**
  * @brief   Number of info nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_LITTLEFS_INFO_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_LITTLEFS_INFO_NODES_NUM     1
+#define DRV_CFG_LITTLEFS_INFO_NODES_NUM     ${doc.DRV_CFG_LITTLEFS_INFO_NODES_NUM!"1"}
 #endif
 
 /** @} */

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -86,6 +86,13 @@
 #define VFS_CFG_ENABLE_DRV_FATFS            FALSE
 #endif
 
+/**
+ * @brief   Enables the VFS LittleFS Driver.
+ */
+#if !defined(VFS_CFG_ENABLE_DRV_LITTLEFS) || defined(__DOXYGEN__)
+#define VFS_CFG_ENABLE_DRV_LITTLEFS         TRUE
+#endif
+
 /** @} */
 
 /*===========================================================================*/
@@ -160,6 +167,36 @@
  */
 #if !defined(DRV_CFG_FATFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
 #define DRV_CFG_FATFS_FILE_NODES_NUM        2
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name LittleFS driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Number of shared path buffers.
+ */
+#if !defined(DRV_CFG_LITTLEFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      2
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_LITTLEFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     2
+#endif
+
+/**
+ * @brief   Number of info nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_LITTLEFS_INFO_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_LITTLEFS_INFO_NODES_NUM     1
 #endif
 
 /** @} */
