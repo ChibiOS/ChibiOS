@@ -13,6 +13,7 @@
     </includes>
     <definitions_early>
       <group description="Node types">
+        <define name="VFS_MODE_S_IFBLK" value="S_IFBLK" />
         <define name="VFS_MODE_S_IFMT" value="S_IFMT" />
         <define name="VFS_MODE_S_IFREG" value="S_IFREG" />
         <define name="VFS_MODE_S_IFDIR" value="S_IFDIR" />
@@ -26,6 +27,9 @@
         <define name="VFS_MODE_S_IXUSR" value="S_IXUSR" />
       </group>
       <group description="Node helpers">
+        <define name="VFS_MODE_S_ISBLK" value="S_ISBLK(mode)">
+          <param name="mode" />
+        </define>
         <define name="VFS_MODE_S_ISREG" value="S_ISREG(mode)">
           <param name="mode" />
         </define>
