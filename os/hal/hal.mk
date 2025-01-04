@@ -1,6 +1,8 @@
-# List of all the ChibiOS/HAL files, there is no need to remove the files
-# from this list, you can disable parts of the HAL by editing halconf.h.
+# HAL subsystem build.
 ifeq ($(USE_SMART_BUILD),yes)
+
+# Dependencies.
+include $(CHIBIOS)/os/common/oop/oop.mk
 
 # Configuration files directory
 ifeq ($(HALCONFDIR),)
@@ -13,6 +15,7 @@ endif
 
 HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | grep -E "\#define"))
 
+# Required files.
 HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_st.c \
           $(CHIBIOS)/os/hal/src/hal_buffered_serial.c \

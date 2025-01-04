@@ -16,6 +16,7 @@ endif
 
 XHALCONF := $(strip $(shell cat $(XHALCONFDIR)/xhalconf.h | grep -E "\#define"))
 
+# Required files.
 XHALSRC := $(CHIBIOS)/os/xhal/src/hal.c \
            $(CHIBIOS)/os/xhal/src/hal_base_driver.c \
            $(CHIBIOS)/os/xhal/src/hal_cb_driver.c \

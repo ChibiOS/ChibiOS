@@ -1,4 +1,9 @@
-# List of all the ChibiOS/VFS files.
+# VFS subsystem build.
+
+# Dependencies.
+include $(CHIBIOS)/os/common/oop/oop.mk
+
+# Required files.
 VFSSRC := $(CHIBIOS)/os/vfs/src/vfspaths.c \
           $(CHIBIOS)/os/vfs/src/vfsparser.c \
           $(CHIBIOS)/os/vfs/src/vfsbuffers.c \
