@@ -46,20 +46,20 @@ static msg_t build_absolute_path(vfs_littlefs_driver_c *drvp,
     if (!vfs_path_is_separator(*path)) {
       if (vfs_path_append(buf,
                           get_current_directory(drvp),
-                          VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+                          LFS_NAME_MAX + 1) == (size_t)0) {
         ret = CH_RET_ENAMETOOLONG;
         break;
       }
     }
 
     /* Adding the specified path.*/
-    if (vfs_path_append(buf, path, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    if (vfs_path_append(buf, path, LFS_NAME_MAX + 1) == (size_t)0) {
       ret = CH_RET_ENAMETOOLONG;
       break;
     }
 
     /* Normalization of the absolute path.*/
-    if (vfs_path_normalize(buf, buf, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) {
+    if (vfs_path_normalize(buf, buf, LFS_NAME_MAX + 1) == (size_t)0) {
       ret = CH_RET_ENAMETOOLONG;
       break;
     }

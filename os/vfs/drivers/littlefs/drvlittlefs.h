@@ -72,6 +72,11 @@
 #error "invalid DRV_CFG_LITTLEFS_FILE_NODES_NUM value"
 #endif
 
+/* Check on paths lenght settings.*/
+#if VFS_CFG_PATHLEN_MAX < LFS_NAME_MAX
+#error "VFS_CFG_PATHLEN_MAX is lower than LFS_NAME_MAX"
+#endif
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
@@ -140,11 +145,11 @@ struct vfs_littlefs_driver {
   /**
    * @brief       Current working directory path.
    */
-  char                      path_cwd[VFS_CFG_PATHLEN_MAX + 1];
+  char                      path_cwd[LFS_NAME_MAX + 1];
   /**
    * @brief       Path scratch pad.
    */
-  char                      scratch[VFS_CFG_PATHLEN_MAX + 1];
+  char                      scratch[LFS_NAME_MAX + 1];
 };
 /** @} */
 

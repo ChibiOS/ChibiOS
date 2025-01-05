@@ -23,6 +23,11 @@
         <brief>Number of file nodes pre-allocated in the pool.</brief>
         <assert invalid="$N &lt; 1" />
       </config>
+      <verbatim><![CDATA[
+/* Check on paths lenght settings.*/
+#if VFS_CFG_PATHLEN_MAX < LFS_NAME_MAX
+#error "VFS_CFG_PATHLEN_MAX is lower than LFS_NAME_MAX"
+#endif]]></verbatim>
     </configs>
     <types>
       <class type="regular" name="vfs_littlefs_driver" namespace="lfsdrv"
@@ -40,10 +45,10 @@
           <field name="cwd" ctype="struct vfs_littlefs_dir_node$I*">
             <brief>Current working directory node.</brief>
           </field>
-          <field name="path_cwd" ctype="char$I$N[VFS_CFG_PATHLEN_MAX + 1]">
+          <field name="path_cwd" ctype="char$I$N[LFS_NAME_MAX + 1]">
             <brief>Current working directory path.</brief>
           </field>
-          <field name="scratch" ctype="char$I$N[VFS_CFG_PATHLEN_MAX + 1]">
+          <field name="scratch" ctype="char$I$N[LFS_NAME_MAX + 1]">
             <brief>Path scratch pad.</brief>
           </field>
         </fields>
