@@ -63,6 +63,8 @@ extern "C" {
   size_t vfs_path_get_element(const char **pathp, char *dst, size_t size);
   size_t vfs_path_match_element(const char *path, const char *match, size_t size);
   size_t vfs_path_normalize(char *dst, const char *src, size_t size);
+  size_t vfs_path_make_absolute(char *dst, const char *src,
+                                size_t size, const char *cwd);
 #ifdef __cplusplus
 }
 #endif
