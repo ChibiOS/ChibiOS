@@ -27,6 +27,10 @@
 
 #include "portab.h"
 
+/*===========================================================================*/
+/* XSNOR-related.                                                            */
+/*===========================================================================*/
+
 /* XSNOR configuration.*/
 static union {
   hal_xsnor_micron_n25q_c           n25q;
@@ -54,6 +58,10 @@ static const xsnor_config_t snorcfg_mx25 = {
                       MX25_OPT_USE_SUBSECTORS |
                       MX25_OPT_NICE_WAITING
 };
+
+/*===========================================================================*/
+/* LittleFS-related.                                                         */
+/*===========================================================================*/
 
 /* LFS configuration.*/
 static uint8_t __nocache_lfs_read_buffer[16];
@@ -94,9 +102,17 @@ static const struct lfs_config lfscfg = {
     .metadata_max       = 0
 };
 
+/*===========================================================================*/
+/* VFS-related.                                                              */
+/*===========================================================================*/
+
 /* LFS driver static instance as VFS root.*/
 static vfs_littlefs_driver_c lfsdrv;
 vfs_driver_c *vfs_root = (vfs_driver_c *)&lfsdrv;
+
+/*===========================================================================*/
+/* Main and generic code.                                                    */
+/*===========================================================================*/
 
 /*
  * LED blinker thread, times are in milliseconds.
