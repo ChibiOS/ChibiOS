@@ -72,7 +72,7 @@
 #error "invalid DRV_CFG_LITTLEFS_FILE_NODES_NUM value"
 #endif
 
-/* Check on paths lenght settings.*/
+/* Check on paths length settings.*/
 #if VFS_CFG_PATHLEN_MAX < LFS_NAME_MAX
 #error "VFS_CFG_PATHLEN_MAX is lower than LFS_NAME_MAX"
 #endif

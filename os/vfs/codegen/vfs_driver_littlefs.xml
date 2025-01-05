@@ -24,7 +24,7 @@
         <assert invalid="$N &lt; 1" />
       </config>
       <verbatim><![CDATA[
-/* Check on paths lenght settings.*/
+/* Check on paths length settings.*/
 #if VFS_CFG_PATHLEN_MAX < LFS_NAME_MAX
 #error "VFS_CFG_PATHLEN_MAX is lower than LFS_NAME_MAX"
 #endif]]></verbatim>
