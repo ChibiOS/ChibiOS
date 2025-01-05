@@ -40,10 +40,10 @@
           <field name="cwd" ctype="struct vfs_littlefs_dir_node$I*">
             <brief>Current working directory node.</brief>
           </field>
-          <field name="path_cwd" ctype="char$I$N[LFS_NAME_MAX]">
+          <field name="path_cwd" ctype="char$I$N[VFS_CFG_PATHLEN_MAX + 1]">
             <brief>Current working directory path.</brief>
           </field>
-          <field name="scratch" ctype="char$I$N[LFS_NAME_MAX]">
+          <field name="scratch" ctype="char$I$N[VFS_CFG_PATHLEN_MAX + 1]">
             <brief>Path scratch pad.</brief>
           </field>
         </fields>

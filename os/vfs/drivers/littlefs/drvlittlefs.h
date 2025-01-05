@@ -140,11 +140,11 @@ struct vfs_littlefs_driver {
   /**
    * @brief       Current working directory path.
    */
-  char                      path_cwd[LFS_NAME_MAX];
+  char                      path_cwd[VFS_CFG_PATHLEN_MAX + 1];
   /**
    * @brief       Path scratch pad.
    */
-  char                      scratch[LFS_NAME_MAX];
+  char                      scratch[VFS_CFG_PATHLEN_MAX + 1];
 };
 /** @} */
 

@@ -206,7 +206,6 @@ static THD_FUNCTION(thd1_func, arg) {
   }
 }
 
-
 /*
  * Application entry point.
  */
