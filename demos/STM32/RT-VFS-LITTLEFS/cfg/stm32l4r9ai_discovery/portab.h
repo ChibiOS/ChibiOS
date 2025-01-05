@@ -37,7 +37,7 @@
 #define PORTAB_LINE_BUTTON          LINE_BUTTON
 #define PORTAB_BUTTON_PRESSED       PAL_HIGH
 
-#define PORTAB_SD1                  SD2
+#define PORTAB_SIOD1                SIOD2
 #define PORTAB_WSPI1                WSPID2
 
 /*===========================================================================*/

@@ -142,7 +142,7 @@
  * @brief   Enables the SERIAL subsystem.
  */
 #if !defined(HAL_USE_SERIAL) || defined(__DOXYGEN__)
-#define HAL_USE_SERIAL                      TRUE
+#define HAL_USE_SERIAL                      FALSE
 #endif
 
 /**
@@ -156,7 +156,7 @@
  * @brief   Enables the SIO subsystem.
  */
 #if !defined(HAL_USE_SIO) || defined(__DOXYGEN__)
-#define HAL_USE_SIO                         FALSE
+#define HAL_USE_SIO                         TRUE
 #endif
 
 /**

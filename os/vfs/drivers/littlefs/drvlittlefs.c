@@ -103,17 +103,9 @@ struct vfs_littlefs_dir_node {
    */
   vfs_mode_t                mode;
   /**
-   * @brief       LittleFS file system object.
-   */
-  lfs_t                     *lfs;
-  /**
    * @brief       LittleFS inner @p lfs_dir_t structure.
    */
   lfs_dir_t                 dir;
-  /**
-   * @brief       LittleFS directory path.
-   */
-  char                      path[LFS_NAME_MAX];
 };
 /** @} */
 
@@ -154,7 +146,7 @@ struct vfs_littlefs_file_node_vmt {
 };
 
 /**
- * @brief       Structure representing a VFS littlefs file node class.
+ * @brief       Structure representing a VFS LittleFS file node class.
  */
 struct vfs_littlefs_file_node {
   /**
@@ -178,17 +170,9 @@ struct vfs_littlefs_file_node {
    */
   sequential_stream_i       stm;
   /**
-   * @brief       LittleFS file system object.
-   */
-  lfs_t                     *lfs;
-  /**
    * @brief       LittleFS inner @p lfs_file_t structure.
    */
   lfs_file_t                file;
-  /**
-   * @brief       LittleFS file path.
-   */
-  char                      path[LFS_NAME_MAX];
 };
 /** @} */
 
@@ -196,10 +180,6 @@ struct vfs_littlefs_file_node {
  * @brief       Global state of @p vfs_littlefs_driver_c.
  */
 struct vfs_littlefs_driver_static_struct {
-  /**
-   * @brief       Pool of file system objects.
-   */
-  memory_pool_t             fs_pool;
   /**
    * @brief       Pool of file info objects.
    */
@@ -212,14 +192,6 @@ struct vfs_littlefs_driver_static_struct {
    * @brief       Pool of file nodes.
    */
   memory_pool_t             file_nodes_pool;
-  /**
-   * @brief       File system volume objects.
-   */
-  vfs_littlefs_driver_c     fs[DRV_CFG_LITTLEFS_FS_NUM];
-  /**
-   * @brief       Static storage of info nodes.
-   */
-  struct lfs_info           info_nodes[DRV_CFG_LITTLEFS_INFO_NODES_NUM];
   /**
    * @brief       Static storage of directory nodes.
    */

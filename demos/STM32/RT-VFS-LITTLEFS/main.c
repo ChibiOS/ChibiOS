@@ -19,6 +19,10 @@
 #include "ch.h"
 #include "hal.h"
 #include "vfs.h"
+
+#include "chprintf.h"
+#include "xshell.h"
+
 #include "lfs.h"
 #include "lfs_hal.h"
 
@@ -111,29 +115,103 @@ static vfs_littlefs_driver_c lfsdrv;
 vfs_driver_c *vfs_root = (vfs_driver_c *)&lfsdrv;
 
 /*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+#define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
+
+static void cmd_halt(xshell_manager_t *smp, BaseSequentialStream *stream,
+                     int argc, char *argv[]) {
+
+  (void)smp;
+  (void)argv;
+
+  if (argc != 1) {
+    xshellUsage(stream, "halt");
+    return;
+  }
+
+  chprintf(stream, XSHELL_NEWLINE_STR "halted");
+  chThdSleepMilliseconds(10);
+  chSysHalt("shell halt");
+}
+
+/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
+static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
+                      int argc, char *argv[]) {
+  static uint8_t buf[] =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+  (void)smp;
+  (void)argv;
+
+  if (argc != 1) {
+    xshellUsage(stream, "write");
+    return;
+  }
+
+  while (chnGetTimeout((BaseChannel *)stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(stream, buf, sizeof buf - 1);
+  }
+  chprintf(stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
+}
+
+static const xshell_command_t commands[] = {
+  {"halt", cmd_halt},
+  {"write", cmd_write},
+  {NULL, NULL}
+};
+
+static const xshell_manager_config_t cfg1 = {
+  .thread_name      = "shell",
+  .banner           = XSHELL_DEFAULT_BANNER_STR,
+  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
+  .commands         = commands,
+  .use_heap         = true,
+  .stack.size       = SHELL_WA_SIZE
+};
+
+/*===========================================================================*/
 /* Main and generic code.                                                    */
 /*===========================================================================*/
 
 /*
  * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker");
+
   while (true) {
-    palToggleLine(PORTAB_LINE_LED1);
+    palSetLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
-    palToggleLine(PORTAB_LINE_LED1);
+    palClearLine(PORTAB_LINE_LED1);
     chThdSleepMilliseconds(500);
   }
 }
+
 
 /*
  * Application entry point.
  */
 int main(void) {
+  xshell_manager_t sm1;
   msg_t msg;
 
   /*
@@ -145,12 +223,23 @@ int main(void) {
    */
   halInit();
   chSysInit();
+  vfsInit();
 
   /* Board-dependent GPIO setup code.*/
   portab_setup();
 
-  /* Starting a serial port for test report output.*/
-  sdStart(&PORTAB_SD1, NULL);
+  /*
+   * Spawning a blinker thread.
+   */
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
+                               NORMALPRIO + 10, thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
+
+  /*
+   * Activates the SIO driver using the driver default configuration.
+   */
+  sioStart(&PORTAB_SIOD1, NULL);
 
   /* Trying N25Q.*/
   n25qObjectInit(&snor1.n25q);
@@ -163,8 +252,10 @@ int main(void) {
     }
   }
 
-  /* Creates the blinker thread.*/
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  /*
+   * Shell manager initialization.
+   */
+  xshellObjectInit(&sm1, &cfg1);
 
   /* Initialization of the VFS LFS driver objuect.*/
   lfsdrvObjectInit(&lfsdrv, &lfscfg);
@@ -182,11 +273,16 @@ int main(void) {
       }
   }
 
-  /* Normal main() thread activity, in this demo it does nothing.*/
+  /*
+   * Normal main() thread activity, spawning shells.
+   */
   while (true) {
-    if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
-    }
+    thread_t *shelltp = xshellSpawn(&sm1,
+                                    (BaseSequentialStream *)&PORTAB_SIOD1,
+                                    NORMALPRIO + 1);
+    chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(500);
   }
+
   return 0;
 }
