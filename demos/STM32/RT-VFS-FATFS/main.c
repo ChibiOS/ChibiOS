@@ -14,19 +14,15 @@
     limitations under the License.
 */
 
-#include <stdio.h>
 #include <string.h>
 
 #include "ch.h"
 #include "hal.h"
 #include "vfs.h"
 
-#include "rt_test_root.h"
-#include "oslib_test_root.h"
-
-#include "nullstreams.h"
 #include "chprintf.h"
-#include "shell.h"
+#include "nullstreams.h"
+#include "xshell.h"
 
 #include "portab.h"
 
@@ -39,7 +35,6 @@
  */
 static event_source_t inserted_event, removed_event;
 
-#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
 #define POLLING_INTERVAL                10
 #define POLLING_DELAY                   10
 
@@ -99,7 +94,6 @@ static void tmr_init(void *p) {
   chVTSetI(&tmr, TIME_MS2I(POLLING_DELAY), tmrfunc, p);
   chSysUnlock();
 }
-#endif
 
 /*===========================================================================*/
 /* FatFS related.                                                            */
@@ -112,21 +106,19 @@ static bool fs_ready = false;
 /* VFS related.                                                              */
 /*===========================================================================*/
 
-#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
-/* VFS FatFS driver object representing the root directory.*/
-static vfs_fatfs_driver_c root_driver;
-#endif
+/* VFS FatFS driver object to be mounted as /.*/
+static vfs_fatfs_driver_c ffs_driver;
+
+/* VFS streams driver object to be mounted as /dev.*/
+static vfs_streams_driver_c dev_driver;
 
 /* VFS overlay driver object representing the root directory.*/
 static vfs_overlay_driver_c root_overlay_driver;
 
-/* VFS streams driver object representing the /dev directory.*/
-static vfs_streams_driver_c dev_driver;
-
-/* VFS API will use this object as implicit root, defining this
-   symbol is expected.*/
+/* Global pointer to the root VFS driver.*/
 vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
 
+/* A null stream object.*/
 static NullStream nullstream;
 
 /* Stream to be exposed under /dev as files.*/
@@ -140,11 +132,72 @@ static const drv_streams_element_t streams[] = {
 /* Command line related.                                                     */
 /*===========================================================================*/
 
-#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+#define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
 
-static ShellConfig shell_cfg1 = {
-  NULL,
-  NULL
+static void cmd_halt(xshell_manager_t *smp, BaseSequentialStream *stream,
+                     int argc, char *argv[]) {
+
+  (void)smp;
+  (void)argv;
+
+  if (argc != 1) {
+    xshellUsage(stream, "halt");
+    return;
+  }
+
+  chprintf(stream, XSHELL_NEWLINE_STR "halted");
+  chThdSleepMilliseconds(10);
+  chSysHalt("shell halt");
+}
+
+/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
+static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
+                      int argc, char *argv[]) {
+  static uint8_t buf[] =
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+  (void)smp;
+  (void)argv;
+
+  if (argc != 1) {
+    xshellUsage(stream, "write");
+    return;
+  }
+
+  while (chnGetTimeout((BaseChannel *)stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(stream, buf, sizeof buf - 1);
+  }
+  chprintf(stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
+}
+
+static const xshell_command_t commands[] = {
+  {"halt", cmd_halt},
+  {"write", cmd_write},
+  {NULL, NULL}
+};
+
+static const xshell_manager_config_t cfg1 = {
+  .thread_name      = "shell",
+  .banner           = XSHELL_DEFAULT_BANNER_STR,
+  .prompt           = XSHELL_DEFAULT_PROMPT_STR,
+  .commands         = commands,
+  .use_heap         = true,
+  .stack.size       = SHELL_WA_SIZE
 };
 
 /*===========================================================================*/
@@ -160,19 +213,12 @@ static MMCConfig mmccfg = {&PORTAB_SPI1, &ls_spicfg, &hs_spicfg};
 #endif
 
 /*
- * Pointer to the shell thread, if active, else NULL.
- */
-static thread_t *shelltp = NULL;
-
-/*
  * Card insertion event.
  */
 static void InsertHandler(eventid_t id) {
+  msg_t err;
 
   (void)id;
-
-#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
-  msg_t err;
 
 #if HAL_USE_SDC
   if (sdcConnect(&PORTAB_SDCD1)) {
@@ -194,7 +240,6 @@ static void InsertHandler(eventid_t id) {
     return;
   }
   fs_ready = true;
-#endif
 }
 
 /*
@@ -204,14 +249,12 @@ static void RemoveHandler(eventid_t id) {
 
   (void)id;
 
-#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
 #if HAL_USE_SDC
-    sdcDisconnect(&PORTAB_SDCD1);
+  sdcDisconnect(&PORTAB_SDCD1);
 #else
-    mmcDisconnect(&MMCD1);
+  mmcDisconnect(&MMCD1);
 #endif
-    fs_ready = false;
-#endif
+  fs_ready = false;
 }
 
 /*
@@ -220,23 +263,28 @@ static void RemoveHandler(eventid_t id) {
 static void ShellHandler(eventid_t id) {
 
   (void)id;
-  if (chThdTerminatedX(shelltp)) {
-    chThdRelease(shelltp);
-    shelltp = NULL;
-  }
+
+//  xshellGarbageCollect();
+//  if (chThdTerminatedX(shelltp)) {
+//    chThdRelease(shelltp);
+//    shelltp = NULL;
+//  }
 }
+
 
 /*
  * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 128);
-static THD_FUNCTION(Thread1, arg) {
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
 
   (void)arg;
-  chRegSetThreadName("blinker");
+
   while (true) {
-    palToggleLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(fs_ready ? 250 : 500);
+    palSetLine(PORTAB_LINE_LED1);
+    chThdSleepMilliseconds(500);
+    palClearLine(PORTAB_LINE_LED1);
+    chThdSleepMilliseconds(500);
   }
 }
 
@@ -244,14 +292,16 @@ static THD_FUNCTION(Thread1, arg) {
  * Application entry point.
  */
 int main(void) {
+  thread_t *shelltp;
+  xshell_manager_t sm1;
+  vfs_file_node_c *file1;
   msg_t msg;
-  vfs_file_node_c *file;
+  event_listener_t el0, el1, el2;
   static const evhandler_t evhndl[] = {
     InsertHandler,
     RemoveHandler,
     ShellHandler
   };
-  event_listener_t el0, el1, el2;
 
   /*
    * System initializations.
@@ -260,28 +310,30 @@ int main(void) {
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
    * - Virtual File System initialization.
-   * - Shell manager initialization.
    */
   halInit();
   chSysInit();
   vfsInit();
-  shellInit();
 
   /* Board-dependent setup code.*/
   portab_setup();
 
-  /* Starting a serial port for the shell, initializing other streams too.*/
-  sdStart(&PORTAB_SD1, NULL);
-  nullObjectInit(&nullstream);
+  /*
+   * Spawning a blinker thread.
+   */
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
+                               NORMALPRIO + 10, thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
 
-#if VFS_CFG_ENABLE_DRV_FATFS == TRUE
 #if HAL_USE_SDC
-  /* Activates the  SDC driver using default configuration.*/
+  /* Activates the SDC driver using default configuration.*/
   sdcStart(&PORTAB_SDCD1, NULL);
 
   /* Activates the card insertion monitor.*/
   tmr_init(&PORTAB_SDCD1);
 #else
+  /* Activates the MMC_SPI driver.*/
   mmcObjectInit(&MMCD1, __nocache_mmcbuf);
   mmcStart(&MMCD1, &mmccfg);
 
@@ -289,45 +341,45 @@ int main(void) {
   tmr_init(&MMCD1);
 #endif
 
-  /* Initializing an overlay VFS object overlaying a FatFS driver. Note
-     that this virtual file system can only access the "/sb1" sub-directory
-     on the physical FatFS volume.*/
-  ovldrvObjectInit(&root_overlay_driver,
-                   (vfs_driver_c *)ffdrvObjectInit(&root_driver),
-                   "/sb1");
-#else
-  /* Initializing an overlay VFS object as a root, no overlaid driver.*/
-  ovldrvObjectInit(&root_overlay_driver, NULL, NULL);
-#endif
+  /* Activates the SIO driver and a null stream.*/
+  sdStart(&PORTAB_SD1, NULL);
+  nullObjectInit(&nullstream);
 
-  /* Registering a streams VFS driver on the VFS overlay root as "/dev".*/
-  msg = ovldrvRegisterDriver(&root_overlay_driver,
-                             (vfs_driver_c *)stmdrvObjectInit(&dev_driver, &streams[0]),
-                             "dev");
+  /* Initialization of the VFS FatFS driver object.*/
+  ffdrvObjectInit(&ffs_driver);
+
+  /* Initialization of the VFS stream driver object.*/
+  stmdrvObjectInit(&dev_driver, &streams[0]);
+
+  /* Initializing an overlay VFS object overlaying the LittleFS driver.*/
+  ovldrvObjectInit(&root_overlay_driver, (vfs_driver_c *)&ffs_driver, NULL);
+
+  /* Registering the streams VFS driver on the VFS overlay root as "/dev".*/
+  msg = ovldrvRegisterDriver(&root_overlay_driver, (vfs_driver_c *)&dev_driver, "dev");
   if (CH_RET_IS_ERROR(msg)) {
     chSysHalt("VFS");
   }
 
   /* Opening a file for shell I/O.*/
-  msg = vfsOpenFile("/dev/VSD1", VO_RDWR, &file);
+  msg = vfsOpenFile("/dev/VSD1", VO_RDWR, &file1);
   if (CH_RET_IS_ERROR(msg)) {
     chSysHalt("VFS");
   }
-  shell_cfg1.sc_channel = (BaseSequentialStream *)vfsGetFileStream(file);
 
-  /* Creates the blinker thread.*/
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  /* Shell manager initialization.*/
+  xshellObjectInit(&sm1, &cfg1);
 
-  /* Normal main() thread activity, handling shell start/exit.*/
+  /* Normal main() thread activity, spawning shells.*/
   chEvtRegister(&inserted_event, &el0, 0);
   chEvtRegister(&removed_event, &el1, 1);
-  chEvtRegister(&shell_terminated, &el2, 2);
+  chEvtRegister(&sm1.events, &el2, 2);
+  shelltp = NULL;
   while (true) {
     if (shelltp == NULL) {
       /* Spawning a shell.*/
-      shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                    "shell", NORMALPRIO + 1,
-                                    shellThread, (void *)&shell_cfg1);
+      shelltp = xshellSpawn(&sm1,
+                           (BaseSequentialStream *)vfsGetFileStream(file1),
+                           NORMALPRIO + 1);
     }
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
   }
