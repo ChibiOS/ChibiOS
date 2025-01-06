@@ -118,6 +118,14 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+#if CH_CFG_USE_DYNAMIC == FALSE
+#error "XSHELL requires CH_CFG_USE_DYNAMIC"
+#endif
+
+#if CH_CFG_USE_MEMPOOLS == FALSE
+#error "XSHELL requires CH_CFG_USE_MEMPOOLS"
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -280,7 +288,6 @@ extern "C" {
   thread_t *xshellSpawn(xshell_manager_t *smp,
                         BaseSequentialStream *stream,
                         tprio_t prio);
-  void xshellGarbageCollect(xshell_manager_t *smp);
   bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
                      char *line, size_t size);
 #ifdef __cplusplus

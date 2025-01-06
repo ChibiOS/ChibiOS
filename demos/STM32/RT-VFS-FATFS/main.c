@@ -200,6 +200,8 @@ static const xshell_manager_config_t cfg1 = {
   .stack.size       = SHELL_WA_SIZE
 };
 
+static xshell_manager_t sm1;
+
 /*===========================================================================*/
 /* Main and generic code.                                                    */
 /*===========================================================================*/
@@ -264,11 +266,8 @@ static void ShellHandler(eventid_t id) {
 
   (void)id;
 
-//  xshellGarbageCollect();
-//  if (chThdTerminatedX(shelltp)) {
-//    chThdRelease(shelltp);
-//    shelltp = NULL;
-//  }
+  /* Releasing all shells belonging to "sm1".*/
+  chRegGarbageCollect(&sm1);
 }
 
 
@@ -293,7 +292,6 @@ static THD_FUNCTION(thd1_func, arg) {
  */
 int main(void) {
   thread_t *shelltp;
-  xshell_manager_t sm1;
   vfs_file_node_c *file1;
   msg_t msg;
   event_listener_t el0, el1, el2;

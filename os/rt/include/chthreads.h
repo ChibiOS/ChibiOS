@@ -487,7 +487,7 @@ extern "C" {
 
 #if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief  Associates a dispose callback and an object to a thread.
+ * @brief   Associates a dispose callback and an object to a thread.
  *
  * @param[in] tp        pointer to the thread
  * @param[in] dispose   callback to be associated to the thread or @p NULL
@@ -501,6 +501,19 @@ static inline void chThdSetCallbackX(thread_t *tp,
 
   tp->dispose = dispose;
   tp->object  = object;
+}
+
+/**
+ * @brief   Return the object associated to the thread, if any.
+ *
+ * @param[in] tp        pointer to the thread
+ * @return              A pointer to the associated object.
+ *
+ * @xclass
+ */
+static inline void *chThdGetObjectX(thread_t *tp) {
+
+  return tp->object;
 }
 #endif
 

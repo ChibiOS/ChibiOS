@@ -75,6 +75,9 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added chRegGarbageCollect() function to registry for simplified
+       dynamic threads management.
+- NEW: Added integration demos for VFS+LittleFS/FatFS+XSHELL.
 - NEW: Added faster context switch modes to ARMv7-M and ARMv8-M ports. The
        new modes allow to avoid saving FP context for threads that do not
        use the FPU.
