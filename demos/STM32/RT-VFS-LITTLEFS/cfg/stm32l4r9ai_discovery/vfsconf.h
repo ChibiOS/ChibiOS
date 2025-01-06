@@ -69,14 +69,14 @@
  * @brief   Enables the VFS Overlay Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_OVERLAY) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_OVERLAY          FALSE
+#define VFS_CFG_ENABLE_DRV_OVERLAY          TRUE
 #endif
 
 /**
  * @brief   Enables the VFS Streams Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_STREAMS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_STREAMS          FALSE
+#define VFS_CFG_ENABLE_DRV_STREAMS          TRUE
 #endif
 
 /**

@@ -90,7 +90,7 @@
  * @brief   Enables the VFS LittleFS Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_LITTLEFS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_LITTLEFS         TRUE
+#define VFS_CFG_ENABLE_DRV_LITTLEFS         FALSE
 #endif
 
 /** @} */

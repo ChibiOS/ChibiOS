@@ -21,6 +21,7 @@
 #include "vfs.h"
 
 #include "chprintf.h"
+#include "nullstreams.h"
 #include "xshell.h"
 
 #include "lfs.h"
@@ -110,9 +111,27 @@ static const struct lfs_config lfscfg = {
 /* VFS-related.                                                              */
 /*===========================================================================*/
 
-/* LFS driver static instance as VFS root.*/
-static vfs_littlefs_driver_c lfsdrv;
-vfs_driver_c *vfs_root = (vfs_driver_c *)&lfsdrv;
+/* VFS LFS driver object to be mounted as /.*/
+static vfs_littlefs_driver_c lfs_driver;
+
+/* VFS streams driver object to be mounted as /dev.*/
+static vfs_streams_driver_c dev_driver;
+
+/* VFS overlay driver object representing the root directory.*/
+static vfs_overlay_driver_c root_overlay_driver;
+
+/* Global pointer to the root VFS driver.*/
+vfs_driver_c *vfs_root = (vfs_driver_c *)&root_overlay_driver;
+
+/* A null stream object.*/
+static NullStream nullstream;
+
+/* Stream to be exposed under /dev as files.*/
+static const drv_streams_element_t streams[] = {
+  {"VSIOD1", (sequential_stream_i *)&PORTAB_SIOD1},
+  {"null", (sequential_stream_i *)&nullstream},
+  {NULL, NULL}
+};
 
 /*===========================================================================*/
 /* Command line related.                                                     */
@@ -211,6 +230,7 @@ static THD_FUNCTION(thd1_func, arg) {
  */
 int main(void) {
   xshell_manager_t sm1;
+  vfs_file_node_c *file1;
   msg_t msg;
 
   /*
@@ -235,11 +255,6 @@ int main(void) {
                                NORMALPRIO + 10, thd1_func, NULL, NULL);
   chThdSpawnRunning(&thd1, &thd1_desc);
 
-  /*
-   * Activates the SIO driver using the driver default configuration.
-   */
-  sioStart(&PORTAB_SIOD1, NULL);
-
   /* Trying N25Q.*/
   n25qObjectInit(&snor1.n25q);
   if (xsnorStart(&snor1.n25q, &snorcfg_n25q) != FLASH_NO_ERROR) {
@@ -252,32 +267,56 @@ int main(void) {
   }
 
   /*
-   * Shell manager initialization.
+   * Activates the SIO driver and a null stream.
    */
-  xshellObjectInit(&sm1, &cfg1);
+  sioStart(&PORTAB_SIOD1, NULL);
+  nullObjectInit(&nullstream);
 
-  /* Initialization of the VFS LFS driver objuect.*/
-  lfsdrvObjectInit(&lfsdrv, &lfscfg);
+  /* Initialization of the VFS LFS driver object.*/
+  lfsdrvObjectInit(&lfs_driver, &lfscfg);
+
+  /* Initialization of the VFS stream driver object.*/
+  stmdrvObjectInit(&dev_driver, &streams[0]);
 
   /* Mounting the file system, if it fails then formatting and retrying.*/
-  msg = lfsdrvMount(&lfsdrv);
+  msg = lfsdrvMount(&lfs_driver);
   if (CH_RET_IS_ERROR(msg)) {
-      msg = lfsdrvFormat(&lfsdrv);
+      msg = lfsdrvFormat(&lfs_driver);
       if (CH_RET_IS_ERROR(msg)) {
         chSysHalt("LFS format failed");
       }
-      msg = lfsdrvMount(&lfsdrv);
+      msg = lfsdrvMount(&lfs_driver);
       if (CH_RET_IS_ERROR(msg)) {
         chSysHalt("LFS mount failed");
       }
   }
+
+  /* Initializing an overlay VFS object overlaying a LittleFS driver.*/
+  ovldrvObjectInit(&root_overlay_driver, (vfs_driver_c *)&lfs_driver, NULL);
+
+  /* Registering the streams VFS driver on the VFS overlay root as "/dev".*/
+  msg = ovldrvRegisterDriver(&root_overlay_driver, (vfs_driver_c *)&dev_driver, "dev");
+  if (CH_RET_IS_ERROR(msg)) {
+    chSysHalt("VFS");
+  }
+
+  /* Opening a file for shell I/O.*/
+  msg = vfsOpenFile("/dev/VSIOD1", VO_RDWR, &file1);
+  if (CH_RET_IS_ERROR(msg)) {
+    chSysHalt("VFS");
+  }
+
+  /*
+   * Shell manager initialization.
+   */
+  xshellObjectInit(&sm1, &cfg1);
 
   /*
    * Normal main() thread activity, spawning shells.
    */
   while (true) {
     thread_t *shelltp = xshellSpawn(&sm1,
-                                    (BaseSequentialStream *)&PORTAB_SIOD1,
+                                    (BaseSequentialStream *)vfsGetFileStream(file1),
                                     NORMALPRIO + 1);
     chThdWait(shelltp);               /* Waiting termination.             */
     chThdSleepMilliseconds(500);
