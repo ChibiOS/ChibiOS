@@ -37,6 +37,9 @@
           <field name="stm" ctype="sequential_stream_i$I*">
             <brief>Pointer to the stream.</brief>
           </field>
+          <field name="mode" ctype="vfs_mode_t">
+            <brief>Stream mode.</brief>
+          </field>
         </fields>
       </struct>
       <class type="regular" name="vfs_streams_dir_node" namespace="stmdir"

@@ -383,12 +383,7 @@ void *__n25q_objinit_impl(void *ip, const void *vmt) {
   self->descriptor.page_size     = 256U;
   self->descriptor.sectors_count = 0U; /* Overwritten.*/
   self->descriptor.sectors       = NULL;
-  if ((self->config->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
-    self->descriptor.sectors_size = 0x00001000U;
-  }
-  else {
-    self->descriptor.sectors_size = 0x00010000U;
-  }
+  self->descriptor.sectors_size  = 0U;
   self->descriptor.address       = 0U;
   self->descriptor.size          = 0U; /* Overwritten.*/
 
@@ -572,6 +567,12 @@ flash_error_t __n25q_init_impl(void *ip) {
 #endif /* XSNOR_USE_WSPI == TRUE */
 
   /* Variable parts of the descriptor.*/
+  if ((self->config->options & N25Q_OPT_USE_SUBSECTORS) != 0U) {
+    self->descriptor.sectors_size = 0x00001000U;
+  }
+  else {
+    self->descriptor.sectors_size = 0x00010000U;
+  }
   self->descriptor.sectors_count = (1U << (size_t)config->buffers->databuf[2]) / self->descriptor.sectors_size;
   self->descriptor.size = (size_t)self->descriptor.sectors_count * self->descriptor.sectors_size;
 
