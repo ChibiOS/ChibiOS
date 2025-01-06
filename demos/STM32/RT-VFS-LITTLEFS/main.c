@@ -239,6 +239,7 @@ int main(void) {
    *   and performs the board-specific initializations.
    * - Kernel initialization, the main() function becomes a thread and the
    *   RTOS is active.
+   * - Virtual File System initialization.
    */
   halInit();
   chSysInit();
@@ -266,9 +267,7 @@ int main(void) {
     }
   }
 
-  /*
-   * Activates the SIO driver and a null stream.
-   */
+  /* Activates the SIO driver and a null stream.*/
   sioStart(&PORTAB_SIOD1, NULL);
   nullObjectInit(&nullstream);
 
@@ -291,7 +290,7 @@ int main(void) {
       }
   }
 
-  /* Initializing an overlay VFS object overlaying a LittleFS driver.*/
+  /* Initializing an overlay VFS object overlaying the LittleFS driver.*/
   ovldrvObjectInit(&root_overlay_driver, (vfs_driver_c *)&lfs_driver, NULL);
 
   /* Registering the streams VFS driver on the VFS overlay root as "/dev".*/
@@ -306,14 +305,10 @@ int main(void) {
     chSysHalt("VFS");
   }
 
-  /*
-   * Shell manager initialization.
-   */
+  /* Shell manager initialization.*/
   xshellObjectInit(&sm1, &cfg1);
 
-  /*
-   * Normal main() thread activity, spawning shells.
-   */
+  /* Normal main() thread activity, spawning shells.*/
   while (true) {
     thread_t *shelltp = xshellSpawn(&sm1,
                                     (BaseSequentialStream *)vfsGetFileStream(file1),
