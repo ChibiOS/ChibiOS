@@ -240,6 +240,7 @@ extern "C" {
   msg_t __ovldrv_mkdir_impl(void *ip, const char *path, vfs_mode_t mode);
   msg_t __ovldrv_rmdir_impl(void *ip, const char *path);
   msg_t ovldrvRegisterDriver(void *ip, vfs_driver_c *vdp, const char *name);
+  msg_t ovldrvUnregisterDriver(void *ip, const char *name);
   /* Regular functions.*/
   void __drv_overlay_init(void);
 #ifdef __cplusplus

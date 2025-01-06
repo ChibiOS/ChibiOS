@@ -89,17 +89,31 @@ self->path_cwd     = NULL;
 self->next_driver  = 0U;]]></implementation>
           </objinit>
           <dispose>
-            <implementation><![CDATA[]]></implementation>
+            <implementation><![CDATA[
+unsigned i;
+
+/* Releasing all registered drivers.*/
+i = 0U;
+while (i < self->next_driver) {
+  roRelease(self->drivers[i]);
+  i++;
+}]]></implementation>
           </dispose>
           <regular>
             <method name="ovldrvRegisterDriver" ctype="msg_t">
               <brief>Registers a VFS driver as an overlay.</brief>
-              <param name="vdp" ctype="vfs_driver_c *" dir="in"></param>
-              <param name="name" ctype="const char *" dir="in"></param>
+              <note><![CDATA[The overlay becomes the owner of the registered driver,
+                the reference is released when dre driver is unregistered or when
+                the whole overlay object is disposed.]]></note>
+              <param name="vdp" ctype="vfs_driver_c *" dir="in"><![CDATA[Driver object reference to be registered.]]></param>
+              <param name="name" ctype="const char *" dir="in"><![CDATA[Name for the
+                new overlay directory, must be alphanumeric.]]></param>
               <return>The operation result.</return>
               <api />
               <implementation><![CDATA[
 msg_t ret;
+
+chSysLock();
 
 if (self->next_driver >= DRV_CFG_OVERLAY_DRV_MAX) {
   ret = CH_RET_ENOMEM;
@@ -111,7 +125,51 @@ else {
   ret = CH_RET_SUCCESS;
 }
 
+chSysUnlock();
+
 return ret;]]></implementation>
+            </method>
+            <method name="ovldrvUnregisterDriver" ctype="msg_t">
+              <brief>Unregisters a VFS driver.</brief>
+              <note>The reference to the registered driver is released.</note>
+              <param name="name" ctype="const char *" dir="in"><![CDATA[Name of the
+                overlay directory to be unregistered.]]></param>
+              <return>The operation result.</return>
+              <api />
+              <implementation><![CDATA[
+unsigned i;
+
+chSysLock();
+
+i = 0U;
+while (i < self->next_driver) {
+
+  /* Is name matching?*/
+  if (strcmp(self->names[i], name) == 0) {
+    vfs_driver_c *vdp = self->drivers[i];
+
+    /* Found match, move following entries down, if any.*/
+    while (i < self->next_driver - 1) {
+      self->drivers[i] = self->drivers[i + 1];
+      self->names[i] = self->names[i + 1];
+      i++;
+    }
+    self->next_driver--;
+
+    chSysUnlock();
+
+    /* Releasing the unregistered object.*/
+    roRelease(vdp);
+
+    return CH_RET_SUCCESS;
+  }
+
+  i++;
+}
+
+chSysUnlock();
+
+return CH_RET_ENOENT;]]></implementation>
             </method>
           </regular>
           <override>
