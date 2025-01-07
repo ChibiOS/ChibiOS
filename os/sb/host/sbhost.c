@@ -730,8 +730,8 @@ msg_t sbSendMessageTimeout(sb_class_t *sbp,
   /* If a timeout occurred while the boxed thread already received the message
      then this thread needs to "unregister" as sender, the boxed error will
      get SB_ERR_EBUSY when/if trying to reply.*/
-  if ((msg == MSG_TIMEOUT) && (sbp->msg_tp == ctp)) {
-    sbp->msg_tp = NULL;
+  if ((msg == MSG_TIMEOUT) && (sbp->base.msg_tp == ctp)) {
+    sbp->base.msg_tp = NULL;
   }
 
   chSysUnlock();

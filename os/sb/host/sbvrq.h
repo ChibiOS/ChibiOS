@@ -85,12 +85,12 @@ typedef uint32_t sb_vrqnum_t;
 /**
  * @brief   Type of a structure representing a VRQ handling block.
  */
-typedef struct vrqblock vrqblock_t;
+typedef struct sb_vrqblock sb_vrqblock_t;
 
 /**
  * @brief   Structure representing a VRQ handling block.
  */
-typedef struct sb_vrqblock {
+struct sb_vrqblock {
   /**
    * @brief   Mask of enabled virtual IRQ flags.
    */
@@ -108,10 +108,14 @@ typedef struct sb_vrqblock {
    */
   thread_reference_t            trp;
   /**
+   * @brief   Virtual timer used for alarms.
+   */
+  virtual_timer_t               alarm_vt;
+  /**
    * @brief   Status flags associated to each VRQ.
    */
   uint32_t                      flags[32];
-} sb_vrqblock_t;
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */

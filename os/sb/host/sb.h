@@ -196,6 +196,8 @@
  */
 typedef struct sb_class sb_class_t;
 
+#include "sbapi.h"
+
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
 #include "sbvrq.h"
 #endif
@@ -295,21 +297,9 @@ struct sb_class {
    */
   const sb_header_t             *sbhp;
   /**
-   * @brief   Virtual timer used for alarms.
+   * @brief   Base API-related fields.
    */
-  virtual_timer_t               alarm_vt;
-#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Thread sending a message to the sandbox.
-   */
-  thread_t                      *msg_tp;
-#endif
-#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Sandbox events source.
-   */
-  event_source_t                es;
-#endif
+  sb_apiblock_t                 base;
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   VRQ-related fields.
@@ -350,8 +340,6 @@ extern "C" {
 
 #include "sbhost.h"
 #include "sbsyscall.h"
-#include "sbapi.h"
-#include "sbposix.h"
 #include "sbelf.h"
 
 #endif /* SBHOST_H */

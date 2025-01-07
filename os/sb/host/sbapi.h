@@ -64,9 +64,27 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a syscall handler.
+ * @brief   Type of a structure representing a VRQ handling block.
  */
-typedef void (*port_syscall_t)(sb_class_t *sbp, struct port_extctx *ectx);
+typedef struct sb_apiblock sb_apiblock_t;
+
+/**
+ * @brief   Structure representing a VRQ handling block.
+ */
+struct sb_apiblock {
+#if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Thread sending a message to the sandbox.
+   */
+  thread_t                      *msg_tp;
+#endif
+#if (CH_CFG_USE_EVENTS == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   Sandbox events source.
+   */
+  event_source_t                es;
+#endif
+};
 
 /*===========================================================================*/
 /* Module macros.                                                            */

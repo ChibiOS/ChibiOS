@@ -305,10 +305,10 @@ void sb_sysc_vrq_set_alarm(sb_class_t *sbp, struct port_extctx *ectxp) {
   bool reload = (bool)ectxp->r1;
 
   if (reload) {
-    chVTSetContinuous(&sbp->alarm_vt, interval, delay_cb, (void *)sbp);
+    chVTSetContinuous(&sbp->vrq.alarm_vt, interval, delay_cb, (void *)sbp);
   }
   else {
-    chVTSet(&sbp->alarm_vt, interval, delay_cb, (void *)sbp);
+    chVTSet(&sbp->vrq.alarm_vt, interval, delay_cb, (void *)sbp);
   }
 }
 
@@ -316,7 +316,7 @@ void sb_sysc_vrq_reset_alarm(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   (void)ectxp;
 
-  chVTReset(&sbp->alarm_vt);
+  chVTReset(&sbp->vrq.alarm_vt);
 }
 
 void sb_sysc_vrq_wait(sb_class_t *sbp, struct port_extctx *ectxp) {

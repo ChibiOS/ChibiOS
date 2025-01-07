@@ -230,7 +230,7 @@ static inline void sbEvtSignal(sb_class_t *sbp, eventmask_t events) {
  */
 static inline event_source_t *sbGetEventSourceX(sb_class_t *sbp) {
 
-  return &sbp->es;
+  return &sbp->base.es;
 }
 #endif /* CH_CFG_USE_EVENTS == TRUE */
 

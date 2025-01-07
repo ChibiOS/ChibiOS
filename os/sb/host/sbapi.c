@@ -136,13 +136,13 @@ void sb_sysc_wait_message(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   chSysLock();
 
-  if (sbp->msg_tp == NULL) {
-    sbp->msg_tp = sb_msg_wait_timeout_s(TIME_INFINITE);
-    ectxp->r0 = (uint32_t)chMsgGet(sbp->msg_tp);
+  if (sbp->base.msg_tp == NULL) {
+    sbp->base.msg_tp = sb_msg_wait_timeout_s(TIME_INFINITE);
+    ectxp->r0 = (uint32_t)chMsgGet(sbp->base.msg_tp);
   }
   else {
-    thread_t *tp = sbp->msg_tp;
-    sbp->msg_tp = NULL;
+    thread_t *tp = sbp->base.msg_tp;
+    sbp->base.msg_tp = NULL;
     chMsgReleaseS(tp, MSG_RESET);
     ectxp->r0 = MSG_RESET;
   }
@@ -160,9 +160,9 @@ void sb_sysc_reply_message(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   chSysLock();
 
-  if (sbp->msg_tp != NULL) {
-    thread_t *tp = sbp->msg_tp;
-    sbp->msg_tp = NULL;
+  if (sbp->base.msg_tp != NULL) {
+    thread_t *tp = sbp->base.msg_tp;
+    sbp->base.msg_tp = NULL;
     chMsgReleaseS(tp, (msg_t )ectxp->r0);
     ectxp->r0 = CH_RET_SUCCESS;
   }
@@ -223,7 +223,7 @@ void sb_sysc_wait_all_timeout(sb_class_t *sbp, struct port_extctx *ectxp) {
 void sb_sysc_broadcast_flags(sb_class_t *sbp, struct port_extctx *ectxp) {
 #if CH_CFG_USE_EVENTS == TRUE
 
-  chEvtBroadcastFlags(&sbp->es, (eventflags_t )ectxp->r0);
+  chEvtBroadcastFlags(&sbp->base.es, (eventflags_t )ectxp->r0);
   ectxp->r0 = CH_RET_SUCCESS;
 #else
   (void)sbp;
