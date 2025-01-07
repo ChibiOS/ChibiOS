@@ -615,8 +615,11 @@ bool sbIsThreadRunningX(sb_class_t *sbp) {
  * @note    The file is loaded into region zero of the sandbox which is
  *          assumed to be used for both code and data, extra regions are
  *          not touched by this function.
+ * @note    The size of the privileged stack is assumed to be always
+ *          @p SB_CFG_PRIVILEGED_STACK_SIZE.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] stkbase   base of the privileged stack for the sandbox
  * @param[in] pathname  file to be executed
  * @param[in] argv      arguments to be passed to the sandbox
  * @param[in] envp      environment variables to be passed to the sandbox

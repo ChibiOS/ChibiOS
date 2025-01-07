@@ -196,22 +196,16 @@
  */
 typedef struct sb_class sb_class_t;
 
-/**
- * @brief   Type of a mask of Virtual IRQs.
- */
-typedef uint32_t sb_vrqmask_t;
-
-/**
- * @brief   Type of a Virtual IRQs.
- */
-typedef uint32_t sb_vrqnum_t;
-
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
 #include "sbvrq.h"
 #endif
 
 #if (SB_CFG_ENABLE_VIO == TRUE) || defined (__DOXYGEN__)
 #include "sbvio.h"
+#endif
+
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+#include "sbposix.h"
 #endif
 
 /**
@@ -240,18 +234,6 @@ typedef struct {
   uint32_t                      attributes;
 } sb_memory_region_t;
 
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-/**
- * @brief   Type of a sandbox I/O structure.
- */
-typedef struct {
-  /**
-   * @brief   VFS nodes associated to file descriptors.
-   */
-  vfs_node_c                    *vfs_nodes[SB_CFG_FD_NUM];
-} sb_ioblock_t;
-#endif
-
 /**
  * @brief   Type of a sandbox configuration structure.
  */
@@ -276,16 +258,6 @@ typedef struct {
    *          attribute @p SB_REG_WRITABLE.
    */
   sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
-#if 0
-#if (PORT_SWITCHED_REGIONS_NUMBER == SB_CFG_NUM_REGIONS) || defined(__DOXYGEN__)
-  /**
-   * @brief   MPU regions initialization values.
-   * @note    Regions initialization values must be chosen to be
-   *          consistent with the values in the "regions" field.
-   */
-  mpureg_t                      mpuregs[SB_CFG_NUM_REGIONS];
-#endif
-#endif
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   VFS driver associated to the sandbox as root.
@@ -342,32 +314,11 @@ struct sb_class {
   /**
    * @brief   VRQ-related fields.
    */
-  struct {
-    /**
-     * @brief   Mask of enabled virtual IRQ flags.
-     */
-    sb_vrqmask_t                enmask;
-    /**
-     * @brief   Mask of pending virtual IRQ flags.
-     */
-    sb_vrqmask_t                wtmask;
-    /**
-     * @brief   Global virtual IRQ status register.
-     */
-    uint32_t                    isr;
-    /**
-     * @brief   Reference to sh SB thread while waiting for VRQs.
-     */
-    thread_reference_t          trp;
-    /**
-     * @brief   Status flags associated to each VRQ.
-     */
-    uint32_t                    flags[32];
-  } vrq;
+  sb_vrqblock_t                 vrq;
 #endif
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
   /**
-   * @brief   VFS bindings for Posix API.
+   * @brief   Posix IO-related fields.
    */
   sb_ioblock_t                  io;
 #endif

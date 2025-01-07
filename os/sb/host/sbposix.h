@@ -53,6 +53,18 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a sandbox I/O structure.
+ */
+typedef struct {
+  /**
+   * @brief   VFS nodes associated to file descriptors.
+   */
+  vfs_node_c                    *vfs_nodes[SB_CFG_FD_NUM];
+} sb_ioblock_t;
+#endif
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/

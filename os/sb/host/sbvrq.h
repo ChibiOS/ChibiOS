@@ -72,6 +72,47 @@
 /* Module data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a mask of Virtual IRQs.
+ */
+typedef uint32_t sb_vrqmask_t;
+
+/**
+ * @brief   Type of a Virtual IRQs.
+ */
+typedef uint32_t sb_vrqnum_t;
+
+/**
+ * @brief   Type of a structure representing a VRQ handling block.
+ */
+typedef struct vrqblock vrqblock_t;
+
+/**
+ * @brief   Structure representing a VRQ handling block.
+ */
+typedef struct sb_vrqblock {
+  /**
+   * @brief   Mask of enabled virtual IRQ flags.
+   */
+  sb_vrqmask_t                  enmask;
+  /**
+   * @brief   Mask of pending virtual IRQ flags.
+   */
+  sb_vrqmask_t                  wtmask;
+  /**
+   * @brief   Global virtual IRQ status register.
+   */
+  uint32_t                      isr;
+  /**
+   * @brief   Reference to sh SB thread while waiting for VRQs.
+   */
+  thread_reference_t            trp;
+  /**
+   * @brief   Status flags associated to each VRQ.
+   */
+  uint32_t                      flags[32];
+} sb_vrqblock_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
