@@ -206,6 +206,8 @@ static xshell_manager_t sm1;
 /* Main and generic code.                                                    */
 /*===========================================================================*/
 
+static thread_t *shelltp = NULL;
+
 #if !HAL_USE_SDC
 static uint8_t __nocache_mmcbuf[MMC_BUFFER_SIZE];
 mmc_spi_driver_t MMCD1;
@@ -266,8 +268,8 @@ static void ShellHandler(eventid_t id) {
 
   (void)id;
 
-  /* Releasing all shells belonging to "sm1".*/
-  chRegGarbageCollect(&sm1);
+  (void) chThdWait(shelltp);
+  shelltp = NULL;
 }
 
 
@@ -289,7 +291,6 @@ static THD_FUNCTION(thd1_func, arg) {
  * Application entry point.
  */
 int main(void) {
-  thread_t *shelltp;
   vfs_file_node_c *file1;
   msg_t msg;
   event_listener_t el0, el1, el2;
@@ -369,7 +370,6 @@ int main(void) {
   chEvtRegister(&inserted_event, &el0, 0);
   chEvtRegister(&removed_event, &el1, 1);
   chEvtRegister(&sm1.events, &el2, 2);
-  shelltp = NULL;
   while (true) {
     if (shelltp == NULL) {
       /* Spawning a shell.*/
