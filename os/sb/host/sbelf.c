@@ -160,6 +160,11 @@ typedef struct {
 /* Module local variables.                                                   */
 /*===========================================================================*/
 
+static const uint8_t elf32_header[16] = {
+  0x7f, 0x45, 0x4c, 0x46, 0x01, 0x01, 0x01, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
 /*===========================================================================*/
 /* Module local functions.                                                   */
 /*===========================================================================*/
@@ -418,11 +423,6 @@ msg_t sbElfLoad(vfs_file_node_c *fnp, const memory_area_t *map) {
 
   /* Load context initialization.*/
   {
-    static const uint8_t elf32_header[16] = {
-      0x7f, 0x45, 0x4c, 0x46, 0x01, 0x01, 0x01, 0x00,
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    };
-
     /* Context fully cleared.*/
     memset((void *)&ctx, 0, sizeof (elf_load_context_t));
 
@@ -544,6 +544,121 @@ msg_t sbElfLoadFile(vfs_driver_c *drvp,
 
   do {
     ret = sbElfLoad(fnp, map);
+    CH_BREAK_ON_ERROR(ret);
+
+  } while (false);
+
+  vfsClose((vfs_node_c *)fnp);
+
+  return ret;
+}
+
+msg_t sbElfGetAllocation(vfs_file_node_c *fnp, memory_area_t *map) {
+  msg_t ret;
+  bool zerofound = false;
+
+  /* The file is assumed to be loaded at address zero, one of the loadable
+     sections must start at zero.*/
+  map->base = (uint8_t *)0;
+
+  /* Large structures not used at same time, the compiler could optimize it
+     but it is still a problem when running the code without optimizations for
+     debug.*/
+  union {
+    elf32_header_t h;
+    elf32_section_header_t sh;
+  } u;
+
+  /* Load context initialization.*/
+  {
+    /* Reading the main ELF header.*/
+    ret = vfsSetFilePosition(fnp, (vfs_offset_t)0, VFS_SEEK_SET);
+    CH_RETURN_ON_ERROR(ret);
+    ret = vfsReadFile(fnp, (void *)&u.h, sizeof (elf32_header_t));
+    CH_RETURN_ON_ERROR(ret);
+
+    /* Checking for the expected header.*/
+    if (memcmp(u.h.e_ident, elf32_header, 16) != 0) {
+      return CH_RET_ENOEXEC;
+    }
+
+    /* Accepting executable files only.*/
+    if (u.h.e_type != ET_EXEC) {
+      return CH_RET_ENOEXEC;
+    }
+
+    /* TODO more consistency checks.*/
+  }
+
+  /* Loading phase, scanning section headers.*/
+  {
+    elf_secnum_t i, sections_num;
+    vfs_offset_t sections_off;
+
+    sections_num = (elf_secnum_t)u.h.e_shnum;
+    sections_off = (vfs_offset_t)u.h.e_shoff;
+    for (i = 0U; i < sections_num; i++) {
+
+      /* Reading the header.*/
+      ret = vfsSetFilePosition(fnp,
+                               sections_off + ((vfs_offset_t)i *
+                                               (vfs_offset_t)sizeof (elf32_section_header_t)),
+                               VFS_SEEK_SET);
+      CH_RETURN_ON_ERROR(ret);
+      ret = vfsReadFile(fnp, (void *)&u.sh, sizeof (elf32_section_header_t));
+      CH_RETURN_ON_ERROR(ret);
+
+      /* Empty sections are not processed.*/
+      if (u.sh.sh_size == 0U) {
+        continue;
+      }
+
+      /* Deciding what to do with the section depending on type.*/
+      switch (u.sh.sh_type) {
+      case SHT_PROGBITS:
+        if (u.sh.sh_addr == 0U) {
+          zerofound = true;
+        }
+        /* Falls through.*/
+      case SHT_NOBITS:
+        /* Allocatable section type, needs to be loaded.*/
+        if ((u.sh.sh_flags & SHF_ALLOC) != 0U) {
+          size_t top;
+
+          top = (size_t)u.sh.sh_addr + (size_t)u.sh.sh_size;
+          if (top > map->size) {
+            map->size = top;
+          }
+        }
+        break;
+
+      default:
+        /* Ignoring other section types.*/
+        break;
+      }
+    }
+  }
+
+  /* Consistency check, it is expected that one of the loadable sections
+     starts from virtual address zero.*/
+  if (!zerofound) {
+    ret = CH_RET_ENOEXEC;
+  }
+
+  return ret;
+}
+
+msg_t sbElfGetAllocationFromFile(vfs_driver_c *drvp,
+                                 const char *path,
+                                 memory_area_t *map) {
+  vfs_file_node_c *fnp;
+  msg_t ret;
+
+  ret = vfsDrvOpenFile(drvp, path, VO_RDONLY, &fnp);
+  CH_RETURN_ON_ERROR(ret);
+
+  do {
+    ret = sbElfGetAllocation(fnp, map);
     CH_BREAK_ON_ERROR(ret);
 
   } while (false);
