@@ -280,10 +280,8 @@ static THD_FUNCTION(thd1_func, arg) {
   (void)arg;
 
   while (true) {
-    palSetLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
-    palClearLine(PORTAB_LINE_LED1);
-    chThdSleepMilliseconds(500);
+    palToggleLine(PORTAB_LINE_LED1);
+    chThdSleepMilliseconds(fs_ready ? 100 : 500);
   }
 }
 
