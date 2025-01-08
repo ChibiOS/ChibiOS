@@ -464,6 +464,19 @@ void sbObjectInit(sb_class_t *sbp) {
 }
 
 /**
+ * @brief   Verifies if the sandbox thread is running.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @return              The thread status.
+ *
+ * @api
+ */
+bool sbIsThreadRunningX(sb_class_t *sbp) {
+
+  return !chThdTerminatedX(&sbp->thread);
+}
+
+/**
  * @brief   Starts a static sandbox.
  * @details Region zero is assumed to be the code region and contain a correct
  *          sandbox header. The data region is searched into the sandbox
@@ -520,19 +533,6 @@ thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   return sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry);
-}
-
-/**
- * @brief   Verifies if the sandbox thread is running.
- *
- * @param[in] sbp       pointer to a @p sb_class_t structure
- * @return              The thread status.
- *
- * @api
- */
-bool sbIsThreadRunningX(sb_class_t *sbp) {
-
-  return !chThdTerminatedX(&sbp->thread);
 }
 
 #if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
@@ -608,22 +608,73 @@ msg_t sbExec(sb_class_t *sbp, tprio_t prio,
   return CH_RET_SUCCESS;
 }
 
+#if 0 && (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 /**
- * @brief   Registers a file descriptor on a sandbox.
+ * @brief   Execute an elf file within a dynamic sandbox.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
- * @param[in] fd        file descriptor to be assigned
- * @param[in] np        VFS node to be registered on the file descriptor
+ * @param[in] prio      sandbox thread priority
+ * @param[in] pathname  file to be executed
+ * @param[in] argv      arguments to be passed to the sandbox
+ * @param[in] envp      environment variables to be passed to the sandbox
+ * @return              The operation result.
  *
  * @api
  */
-void sbRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np) {
+msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
+                    const char *pathname,const char *argv[], const char *envp[]) {
+  memory_area_t ma = sbp->regions[0].area;
+  const sb_header_t *sbhp;
+  size_t totsize;
+  msg_t ret;
 
-  chDbgAssert(sb_is_available_descriptor(&sbp->io, fd), "invalid file descriptor");
+  /* Pushing arguments, environment variables and other startup information
+     at the top of the data memory area.*/
+  totsize = sb_init_environment(sbp, &sbp->regions[0].area, argv, envp);
+  if (totsize == (size_t)0) {
+    return CH_RET_ENOMEM;
+  }
 
-  sbp->io.vfs_nodes[fd]  = np;
-}
+  /* Adjusting the size of the memory area object, we don't want the loaded
+     elf file to overwrite the environment data.*/
+  ma.size -= totsize;
+
+  /* Loading sandbox code into the specified memory area.*/
+  ret = sbElfLoadFile(sbp->io.vfs_driver, pathname, &ma);
+  CH_RETURN_ON_ERROR(ret);
+
+  /* Header location.*/
+  sbhp = (const sb_header_t *)(void *)ma.base;
+
+  /* Checking header magic numbers.*/
+  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Checking header size.*/
+  if (sbhp->hdr_size != sizeof (sb_header_t)) {
+    return CH_RET_ENOEXEC;
+  }
+
+  /* Checking header entry point.*/
+  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_entry, (size_t)2)) {
+    return CH_RET_EFAULT;
+  }
+
+#if SB_CFG_EXEC_DEBUG == TRUE
+  *((uint16_t *)(sbhp->hdr_entry & ~(unit32_t)1)) = 0xBE00U;
 #endif
+
+  /* Everything OK, starting the unprivileged thread inside the sandbox.*/
+  if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
+    return CH_RET_ENOMEM;
+  }
+
+  return CH_RET_SUCCESS;
+}
+#endif /* CH_CFG_USE_HEAP == TRUE */
+#endif /* SB_CFG_ENABLE_VFS == TRUE */
 
 #if (CH_CFG_USE_MESSAGES == TRUE) || defined(__DOXYGEN__)
 /**
