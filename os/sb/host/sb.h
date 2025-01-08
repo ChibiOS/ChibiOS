@@ -196,6 +196,7 @@
  */
 typedef struct sb_class sb_class_t;
 
+#include "sbregions.h"
 #include "sbapi.h"
 
 #if (SB_CFG_ENABLE_VRQ == TRUE) || defined (__DOXYGEN__)
@@ -221,20 +222,6 @@ typedef struct {
   event_source_t                termination_es;
 #endif
 } sb_t;
-
-/**
- * @brief   Type of a sandbox memory region.
- */
-typedef struct {
-  /**
-   * @brief   Associated memory area.
-   */
-  memory_area_t                 area;
-  /**
-   * @brief   Region attributes.
-   */
-  uint32_t                      attributes;
-} sb_memory_region_t;
 
 /**
  * @brief   Type of a sandbox configuration structure.
