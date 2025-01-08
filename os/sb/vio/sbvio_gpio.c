@@ -57,13 +57,20 @@ void sb_fastc_vio_gpio(sb_class_t *sbp, struct port_extctx *ectxp) {
   uint32_t sub  = VIO_CALL_SUBCODE(ectxp->r0);
   uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
   const vio_gpio_unit_t *unitp;
-  ectxp->r0 = 0U;
 
-  if (unit >= sbp->config->vioconf->gpios->n) {
+  /* VIO not associated.*/
+  if (sbp->vioconf == NULL) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
     return;
   }
 
-  unitp = &sbp->config->vioconf->gpios->units[unit];
+  ectxp->r0 = 0U;
+
+  if (unit >= sbp->vioconf->gpios->n) {
+    return;
+  }
+
+  unitp = &sbp->vioconf->gpios->units[unit];
 
   switch (sub) {
   case SB_VGPIO_WRITE:

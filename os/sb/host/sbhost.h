@@ -66,12 +66,14 @@ extern "C" {
 #endif
   size_t sb_strv_getsize(const char *v[], int *np);
   void sb_strv_copy(const char *sp[], void *dp, int n);
-  void sbObjectInit(sb_class_t *sbp, const sb_config_t *config);
-  thread_t *sbStart(sb_class_t *sbp, stkline_t *stkbase,
+  void sbObjectInit(sb_class_t *sbp);
+  thread_t *sbStart(sb_class_t *sbp, const char *name,
+                    tprio_t prio, stkline_t *stkbase,
                     const char *argv[], const char *envp[]);
   bool sbIsThreadRunningX(sb_class_t *sbp);
 #if SB_CFG_ENABLE_VFS == TRUE
-  msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
+  msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
+               stkline_t *stkbase, const char *pathname,
                const char *argv[], const char *envp[]);
   void sbRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np);
 #endif
@@ -102,6 +104,60 @@ static inline void sbHostInit(void) {
   chEvtObjectInit(&sb.termination_es);
 #endif
 }
+
+/**
+ * @brief   Associates a memory area to a sandbox region.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] region    region number in range 0..SB_CFG_NUM_REGIONS-1
+ * @param[in] base      memory area base
+ * @param[in] size      memory area size
+ * @param[in] attr      memory area attributes
+ *
+ * @api
+ */
+static inline void sbSetRegion(sb_class_t *sbp, unsigned region,
+                               uint8_t *base, size_t size,
+                               uint32_t attr) {
+  sb_memory_region_t *mrp;
+
+  chDbgCheck((region <= SB_CFG_NUM_REGIONS-1));
+
+  mrp = &sbp->regions[region];
+  mrp->area.base = base;
+  mrp->area.size = size;
+  mrp->attributes = attr;
+}
+
+#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Associates a VFS file system to a sandbox as root.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] drvp      pointer to a @p vfs_driver_c structure or @p NULL
+ *
+ * @api
+ */
+static inline void sbSetFileSystem(sb_class_t *sbp, vfs_driver_c *drvp) {
+
+  sbp->io.vfs_driver = drvp;
+}
+#endif
+
+#if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Associates a VIO configuration to a sandbox.
+ *
+ * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] vioconf   pointer to a VIO configuration or @p NULL
+ *
+ * @api
+ */
+static inline void sbSetVirtualIO(sb_class_t *sbp, const vio_conf_t *vioconf) {
+
+  sbp->vioconf = vioconf;
+}
+#endif
 
 #if (CH_CFG_USE_WAITEXIT == TRUE) || defined(__DOXYGEN__)
 /**

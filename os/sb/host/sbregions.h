@@ -81,13 +81,13 @@
  */
 typedef struct {
   /**
-   * @brief   Region attributes.
-   */
-  uint32_t                      attributes;
-  /**
    * @brief   Associated memory area.
    */
   memory_area_t                 area;
+  /**
+   * @brief   Region attributes.
+   */
+  uint32_t                      attributes;
 } sb_memory_region_t;
 
 /*===========================================================================*/

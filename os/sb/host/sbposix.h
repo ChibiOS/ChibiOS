@@ -59,6 +59,10 @@
  */
 typedef struct {
   /**
+   * @brief   VFS driver associated to the sandbox as root.
+   */
+  vfs_driver_c                  *vfs_driver;
+  /**
    * @brief   VFS nodes associated to file descriptors.
    */
   vfs_node_c                    *vfs_nodes[SB_CFG_FD_NUM];

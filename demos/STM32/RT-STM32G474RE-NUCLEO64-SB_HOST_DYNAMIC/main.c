@@ -107,7 +107,6 @@ static null_stream_c nullstream;
 
 /* Stream to be exposed under /dev as files.*/
 static const drv_streams_element_t streams[] = {
-//  {"VSIO1", (BaseSequentialStream *)oopGetIf(&SIOD1, chn)},
   {"null", (BaseSequentialStream *)oopGetIf(&nullstream, stm)},
   {NULL, NULL}
 };
@@ -120,46 +119,7 @@ static const drv_streams_element_t streams[] = {
 static SB_STACK(sbx1stk);
 static SB_STACK(sbx2stk);
 
-/* Sandbox 1 configuration.*/
-static const sb_config_t sb_config1 = {
-  .thread = {
-    .name           = "sbx1",
-    .prio           = NORMALPRIO - 10,
-  },
-  .regions = {
-    [0] = {
-      .area         = {STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE},
-      .attributes   = SB_REG_IS_CODE
-    },
-    [1] = {
-      .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .attributes   = SB_REG_IS_DATA
-    }
-  },
-  .vfs_driver       = NULL,
-  .vioconf          = &vio_config1
-};
-
-/* Sandbox 2 configuration.*/
-static const sb_config_t sb_config2 = {
-  .thread = {
-    .name           = "sbx2",
-    .prio           = NORMALPRIO - 20,
-  },
-  .regions = {
-    [0] = {
-      .area         = {STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE},
-      .attributes   = SB_REG_IS_CODE
-    },
-    [1] = {
-      .area         = {STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE},
-      .attributes   = SB_REG_IS_DATA
-    }
-  },
-  .vfs_driver       = (vfs_driver_c *)&root_overlay_driver,
-  .vioconf          = &vio_config2
-};
-
+/* Arguments and environments for SB1.*/
 static const char *sbx1_argv[] = {
   "sbx1",
   NULL
@@ -169,6 +129,7 @@ static const char *sbx1_envp[] = {
   NULL
 };
 
+/* Arguments and environments for SB2.*/
 static const char *sbx2_argv[] = {
   "sbx2",
   NULL
@@ -186,7 +147,7 @@ static void start_sb1(void) {
   thread_t *utp;
 
   /* Starting sandboxed thread 1.*/
-  utp = sbStart(&sbx1, sbx1stk, sbx1_argv, sbx1_envp);
+  utp = sbStart(&sbx1, "sbx1", NORMALPRIO-10, sbx1stk, sbx1_argv, sbx1_envp);
   if (utp == NULL) {
     chSysHalt("sbx1 failed");
   }
@@ -209,7 +170,7 @@ static void start_sb2(void) {
   vfsClose(np);
 
   /* Starting sandboxed thread 2.*/
-  utp = sbStart(&sbx2, sbx2stk, sbx2_argv, sbx2_envp);
+  utp = sbStart(&sbx2, "sbx2", NORMALPRIO-20, sbx2stk, sbx2_argv, sbx2_envp);
   if (utp == NULL) {
     chSysHalt("sbx2 failed");
   }
@@ -273,10 +234,18 @@ int main(void) {
   }
 
   /*
-   * Sandbox objects initialization.
+   * Sandbox objects initialization, regions are statically assigned.
    */
-  sbObjectInit(&sbx1, &sb_config1);
-  sbObjectInit(&sbx2, &sb_config2);
+  sbObjectInit(&sbx1);
+  sbSetRegion(&sbx1, 0, STARTUP_FLASH1_BASE, STARTUP_FLASH1_SIZE, SB_REG_IS_CODE);
+  sbSetRegion(&sbx1, 1, STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE, SB_REG_IS_DATA);
+  sbSetVirtualIO(&sbx1, &vio_config1);
+
+  sbObjectInit(&sbx2);
+  sbSetRegion(&sbx2, 0, STARTUP_FLASH2_BASE, STARTUP_FLASH2_SIZE, SB_REG_IS_CODE);
+  sbSetRegion(&sbx2, 1, STARTUP_RAM2_BASE,   STARTUP_RAM2_SIZE, SB_REG_IS_DATA);
+  sbSetVirtualIO(&sbx2, &vio_config2);
+  sbSetFileSystem(&sbx2, (vfs_driver_c *)&root_overlay_driver);
 
   /* Starting sandboxed threads.*/
   start_sb1();

@@ -72,12 +72,18 @@ void sb_sysc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
   ectxp->r0 = (uint32_t)CH_RET_INNER_ERROR;
   const vio_spi_unit_t *unitp;
 
-  if (unit >= sbp->config->vioconf->spis->n) {
+  /* VIO not associated.*/
+  if (sbp->vioconf == NULL) {
     ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
     return;
   }
 
-  unitp = &sbp->config->vioconf->spis->units[unit];
+  if (unit >= sbp->vioconf->spis->n) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
+    return;
+  }
+
+  unitp = &sbp->vioconf->spis->units[unit];
 
   switch (sub) {
   case SB_VSPI_INIT:
@@ -263,14 +269,20 @@ void sb_fastc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
   uint32_t unit = VIO_CALL_UNIT(ectxp->r0);
   const vio_spi_unit_t *unitp;
 
-  /* Returned value in case of error or illegal sub-code.*/
-  ectxp->r0 = (uint32_t)-1;
-
-  if (unit >= sbp->config->vioconf->spis->n) {
+  /* VIO not associated.*/
+  if (sbp->vioconf == NULL) {
+    ectxp->r0 = (uint32_t)HAL_RET_NO_RESOURCE;
     return;
   }
 
-  unitp = &sbp->config->vioconf->spis->units[unit];
+  /* Returned value in case of error or illegal sub-code.*/
+  ectxp->r0 = (uint32_t)-1;
+
+  if (unit >= sbp->vioconf->spis->n) {
+    return;
+  }
+
+  unitp = &sbp->vioconf->spis->units[unit];
 
   /* We don't want assertion or errors to be caused in host, making sure
      all functions are called in the proper state.*/
@@ -287,7 +299,7 @@ void sb_fastc_vio_spi(sb_class_t *sbp, struct port_extctx *ectxp) {
       const void *confp;
 
       /* Check on configuration index.*/
-      if (cfgnum >= sbp->config->vioconf->spiconfs->cfgsnum) {
+      if (cfgnum >= sbp->vioconf->spiconfs->cfgsnum) {
         ectxp->r0 = (uint32_t)HAL_RET_CONFIG_ERROR;
         return;
       }

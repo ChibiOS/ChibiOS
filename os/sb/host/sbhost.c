@@ -242,14 +242,14 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 #endif /* PORT_SWITCHED_REGIONS_NUMBER > 0 */
 
 static const sb_memory_region_t *sb_locate_data_region(sb_class_t *sbp) {
-  const sb_memory_region_t *rp = &sbp->config->regions[0];
+  const sb_memory_region_t *rp = &sbp->regions[0];
 
   do {
     if (sb_reg_is_memory(rp) && sb_reg_is_writable(rp)) {
       return rp;
     }
     rp++;
-  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->regions[SB_CFG_NUM_REGIONS]);
 
   return NULL;
 }
@@ -325,6 +325,8 @@ static THD_FUNCTION(sb_unprivileged_trampoline, arg) {
 }
 
 static thread_t *sb_start_unprivileged(sb_class_t *sbp,
+                                       const char *name,
+                                       tprio_t prio,
                                        stkline_t *stkbase,
                                        uint32_t u_pc) {
   thread_t *utp;
@@ -338,10 +340,10 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
 
   /* Creating a thread on the unprivileged handler.*/
   thread_descriptor_t td = {
-    .name       = sbp->config->thread.name,
+    .name       = name,
     .wbase      = stkbase,
     .wend       = stkbase + (SB_CFG_PRIVILEGED_STACK_SIZE / sizeof (stkline_t)),
-    .prio       = sbp->config->thread.prio,
+    .prio       = prio,
     .funcp      = sb_unprivileged_trampoline,
     .arg        = NULL,
     .owner      = NULL
@@ -356,7 +358,7 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
   for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
     port_mpureg_t mpureg;
 
-    if (get_mpu_settings(&sbp->config->regions[i], &mpureg)) {
+    if (get_mpu_settings(&sbp->regions[i], &mpureg)) {
       return NULL;
     }
     utp->ctx.regions[i] = mpureg;
@@ -449,14 +451,12 @@ void sb_strv_copy(const char *sp[], void *dp, int n) {
  * @brief   Sandbox object initialization.
  *
  * @param[out] sbp      pointer to the sandbox object
- * @param[in] config    pointer to the sandbox configuration
  *
  * @init
  */
-void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
+void sbObjectInit(sb_class_t *sbp) {
 
   memset((void *)sbp, 0, sizeof (sb_class_t));
-  sbp->config = config;
 }
 
 /**
@@ -474,13 +474,13 @@ void sbObjectInit(sb_class_t *sbp, const sb_config_t *config) {
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
-thread_t *sbStart(sb_class_t *sbp, stkline_t *stkbase,
+thread_t *sbStart(sb_class_t *sbp, const char *name,
+                  tprio_t prio, stkline_t *stkbase,
                   const char *argv[], const char *envp[]) {
-  const sb_config_t *config = sbp->config;
   const sb_memory_region_t *codereg, *datareg;
 
   /* Region zero is assumed to be executable and contain the start header.*/
-  codereg = &config->regions[0];
+  codereg = &sbp->regions[0];
   sbp->sbhp = (const sb_header_t *)(void *)codereg->area.base;
 
   /* Checking header magic numbers.*/
@@ -514,7 +514,7 @@ thread_t *sbStart(sb_class_t *sbp, stkline_t *stkbase,
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  return sb_start_unprivileged(sbp, stkbase, sbp->sbhp->hdr_entry);
+  return sb_start_unprivileged(sbp, name, prio, stkbase, sbp->sbhp->hdr_entry);
 }
 
 /**
@@ -548,16 +548,16 @@ bool sbIsThreadRunningX(sb_class_t *sbp) {
  *
  * @api
  */
-msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
+msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
+             stkline_t *stkbase, const char *pathname,
              const char *argv[], const char *envp[]) {
-  const sb_config_t *config = sbp->config;
-  memory_area_t ma = config->regions[0].area;
+  memory_area_t ma = sbp->regions[0].area;
   size_t totsize;
   msg_t ret;
 
   /* Pushing arguments, environment variables and other startup information
      at the top of the data memory area.*/
-  totsize = sb_init_environment(sbp, &config->regions[0].area, argv, envp);
+  totsize = sb_init_environment(sbp, &sbp->regions[0].area, argv, envp);
   if (totsize == (size_t)0) {
     return CH_RET_ENOMEM;
   }
@@ -567,7 +567,7 @@ msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
   ma.size -= totsize;
 
   /* Loading sandbox code into the specified memory area.*/
-  ret = sbElfLoadFile(config->vfs_driver, pathname, &ma);
+  ret = sbElfLoadFile(sbp->io.vfs_driver, pathname, &ma);
   CH_RETURN_ON_ERROR(ret);
 
   /* Header location.*/
@@ -590,7 +590,7 @@ msg_t sbExec(sb_class_t *sbp, stkline_t *stkbase, const char *pathname,
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  if (sb_start_unprivileged(sbp, stkbase, sbp->sbhp->hdr_entry) == NULL) {
+  if (sb_start_unprivileged(sbp, name, prio, stkbase, sbp->sbhp->hdr_entry) == NULL) {
     return CH_RET_ENOMEM;
   }
 

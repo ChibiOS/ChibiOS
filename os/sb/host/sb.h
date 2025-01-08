@@ -224,22 +224,9 @@ typedef struct {
 } sb_t;
 
 /**
- * @brief   Type of a sandbox configuration structure.
+ * @brief   Structure representing a sandbox object.
  */
-typedef struct {
-  /**
-   * @brief   Thread-related configurations.
-   */
-  struct {
-    /**
-     * @brief   Thread name.
-     */
-    const char                  *name;
-    /**
-     * @brief   Thread priority.
-     */
-    tprio_t                     prio;
-  } thread;
+struct sb_class {
   /**
    * @brief   SandBox regions.
    * @note    Region zero is always used for code execution. The data
@@ -247,28 +234,6 @@ typedef struct {
    *          attribute @p SB_REG_WRITABLE.
    */
   sb_memory_region_t            regions[SB_CFG_NUM_REGIONS];
-#if (SB_CFG_ENABLE_VFS == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   VFS driver associated to the sandbox as root.
-   */
-  vfs_driver_c                  *vfs_driver;
-#endif
-#if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   VIO configuration associated to this sandbox.
-   */
-  const vio_conf_t              *vioconf;
-#endif
-} sb_config_t;
-
-/**
- * @brief   Structure representing a sandbox object.
- */
-struct sb_class {
-  /**
-   * @brief   Pointer to the sandbox configuration data.
-   */
-  const sb_config_t             *config;
   /**
    * @brief   Saved unprivileged PSP position.
    */
@@ -281,8 +246,15 @@ struct sb_class {
 #endif
   /**
    * @brief   Pointer to the image header.
+   * TODO REMOVE
    */
   const sb_header_t             *sbhp;
+#if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
+  /**
+   * @brief   VIO configuration associated to this sandbox.
+   */
+  const vio_conf_t              *vioconf;
+#endif
   /**
    * @brief   Base API-related fields.
    */

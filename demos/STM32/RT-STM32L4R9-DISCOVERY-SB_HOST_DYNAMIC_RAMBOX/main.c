@@ -70,25 +70,7 @@ sb_class_t sbx1;
 /* Privileged stacks for sandboxes.*/
 static SB_STACK(sbx1stk);
 
-/* Sandbox 1 configuration.*/
-static const sb_config_t sb_config1 = {
-  .thread           = {
-    .name           = "sbx1",
-    .prio           = NORMALPRIO - 10,
-  },
-  .regions          = {
-    [0] = {
-      .area         = {STARTUP_RAM1_BASE,   STARTUP_RAM1_SIZE},
-      .attributes   = SB_REG_IS_CODE_AND_DATA
-    },
-    [1] = {
-      .area         = {NULL,                (size_t)0},
-      .attributes   = SB_REG_TYPE_UNUSED
-    }
-  },
-  .vfs_driver       = (vfs_driver_c *)&sb1_root_overlay_driver
-};
-
+/* Arguments and environments for SB1.*/
 static const char *sbx1_argv[] = {
   "msh",
   NULL
@@ -200,7 +182,9 @@ int main(void) {
   /*
    * Sandbox objects initialization.
    */
-  sbObjectInit(&sbx1, &sb_config1);
+  sbObjectInit(&sbx1);
+  sbSetRegion(&sbx1, 0, STARTUP_RAM1_BASE, STARTUP_RAM1_SIZE, SB_REG_IS_CODE_AND_DATA);
+  sbSetFileSystem(&sbx1, (vfs_driver_c *)&sb1_root_overlay_driver);
 
   /*
    * Listening to sandbox events.
@@ -236,7 +220,8 @@ int main(void) {
       /*
        * Running the sandbox.
        */
-      ret = sbExec(&sbx1, sbx1stk, "/bin/msh.elf", sbx1_argv, sbx1_envp);
+      ret = sbExec(&sbx1, "sbx1", NORMALPRIO-10, sbx1stk,
+                   "/bin/msh.elf", sbx1_argv, sbx1_envp);
       if (CH_RET_IS_ERROR(ret)) {
         chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);
       }

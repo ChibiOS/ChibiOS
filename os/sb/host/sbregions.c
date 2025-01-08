@@ -54,33 +54,33 @@
 /*===========================================================================*/
 
 bool sb_is_valid_read_range(sb_class_t *sbp, const void *start, size_t size) {
-  const sb_memory_region_t *rp = &sbp->config->regions[0];
+  const sb_memory_region_t *rp = &sbp->regions[0];
 
   do {
     if (sb_reg_is_memory(rp) && chMemIsSpaceWithinX(&rp->area, start, size)) {
       return true;
     }
     rp++;
-  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->regions[SB_CFG_NUM_REGIONS]);
 
   return false;
 }
 
 bool sb_is_valid_write_range(sb_class_t *sbp, void *start, size_t size) {
-  const sb_memory_region_t *rp = &sbp->config->regions[0];
+  const sb_memory_region_t *rp = &sbp->regions[0];
 
   do {
     if (sb_reg_is_memory(rp) && chMemIsSpaceWithinX(&rp->area, start, size)) {
       return sb_reg_is_writable(rp);
     }
     rp++;
-  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->regions[SB_CFG_NUM_REGIONS]);
 
   return false;
 }
 
 size_t sb_check_string(sb_class_t *sbp, const char *s, size_t max) {
-  const sb_memory_region_t *rp = &sbp->config->regions[0];
+  const sb_memory_region_t *rp = &sbp->regions[0];
 
   do {
     if (sb_reg_is_memory(rp)) {
@@ -90,13 +90,13 @@ size_t sb_check_string(sb_class_t *sbp, const char *s, size_t max) {
       }
     }
     rp++;
-  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->regions[SB_CFG_NUM_REGIONS]);
 
   return (size_t)0;
 }
 
 size_t sb_check_pointers_array(sb_class_t *sbp, const void *pp[], size_t max) {
-  const sb_memory_region_t *rp = &sbp->config->regions[0];
+  const sb_memory_region_t *rp = &sbp->regions[0];
 
   do {
     if (sb_reg_is_memory(rp)) {
@@ -106,7 +106,7 @@ size_t sb_check_pointers_array(sb_class_t *sbp, const void *pp[], size_t max) {
       }
     }
     rp++;
-  } while (rp < &sbp->config->regions[SB_CFG_NUM_REGIONS]);
+  } while (rp < &sbp->regions[SB_CFG_NUM_REGIONS]);
 
   return (size_t)0;
 }

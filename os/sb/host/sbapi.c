@@ -246,7 +246,7 @@ void sb_sysc_loadelf(sb_class_t *sbp, struct port_extctx *ectxp) {
   }
   else {
     memory_area_t ma = {buf, size};
-    ectxp->r0 = (uint32_t)sbElfLoadFile(sbp->config->vfs_driver, fname, &ma);
+    ectxp->r0 = (uint32_t)sbElfLoadFile(sbp->io.vfs_driver, fname, &ma);
   }
 #else
   (void)sbp;

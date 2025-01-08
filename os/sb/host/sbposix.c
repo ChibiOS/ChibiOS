@@ -78,7 +78,7 @@ static int sb_posix_stat(sb_class_t *sbp, const char *path, struct stat *statbuf
     return CH_RET_EFAULT;
   }
 
-  ret = (int)vfsDrvStat(sbp->config->vfs_driver, path, &vstat);
+  ret = (int)vfsDrvStat(sbp->io.vfs_driver, path, &vstat);
   if (!CH_RET_IS_ERROR(ret)) {
     memset((void *)statbuf, 0, sizeof (struct stat));
     statbuf->st_mode  = (mode_t)vstat.mode;
@@ -98,7 +98,7 @@ static int sb_posix_open(sb_class_t *sbp, const char *path, int flags) {
   }
 
   do {
-    ret = vfsDrvOpen(sbp->config->vfs_driver, path, (unsigned)flags, &np);
+    ret = vfsDrvOpen(sbp->io.vfs_driver, path, (unsigned)flags, &np);
     CH_BREAK_ON_ERROR(ret);
 
     ret = create_descriptor(&sbp->io, np);
@@ -316,7 +316,7 @@ static int sb_posix_chdir(sb_class_t *sbp, const char *path) {
     return CH_RET_EFAULT;
   }
 
-  return (int)vfsDrvChangeCurrentDirectory(sbp->config->vfs_driver, path);
+  return (int)vfsDrvChangeCurrentDirectory(sbp->io.vfs_driver, path);
 }
 
 static int sb_posix_getcwd(sb_class_t *sbp, char *buf, size_t size) {
@@ -327,7 +327,7 @@ static int sb_posix_getcwd(sb_class_t *sbp, char *buf, size_t size) {
 
   /* Note, it does not return a pointer to the buffer as required by Posix,
      this has to be handled on the user-side library.*/
-  return vfsDrvGetCurrentDirectory(sbp->config->vfs_driver, buf, size);
+  return vfsDrvGetCurrentDirectory(sbp->io.vfs_driver, buf, size);
 }
 
 static int sb_posix_unlink(sb_class_t *sbp, const char *path) {
@@ -336,7 +336,7 @@ static int sb_posix_unlink(sb_class_t *sbp, const char *path) {
     return CH_RET_EFAULT;
   }
 
-  return (int)vfsDrvUnlink(sbp->config->vfs_driver, path);
+  return (int)vfsDrvUnlink(sbp->io.vfs_driver, path);
 }
 
 static int sb_posix_rename(sb_class_t *sbp, const char *oldpath, const char *newpath) {
@@ -349,7 +349,7 @@ static int sb_posix_rename(sb_class_t *sbp, const char *oldpath, const char *new
     return CH_RET_EFAULT;
   }
 
-  return (int)vfsDrvRename(sbp->config->vfs_driver, oldpath, newpath);
+  return (int)vfsDrvRename(sbp->io.vfs_driver, oldpath, newpath);
 }
 
 static int sb_posix_mkdir(sb_class_t *sbp, const char *path, mode_t mode) {
@@ -358,7 +358,7 @@ static int sb_posix_mkdir(sb_class_t *sbp, const char *path, mode_t mode) {
     return CH_RET_EFAULT;
   }
 
-  return (int)vfsDrvMkdir(sbp->config->vfs_driver, path, (vfs_mode_t)mode);
+  return (int)vfsDrvMkdir(sbp->io.vfs_driver, path, (vfs_mode_t)mode);
 }
 
 static int sb_posix_rmdir(sb_class_t *sbp, const char *path) {
@@ -367,7 +367,7 @@ static int sb_posix_rmdir(sb_class_t *sbp, const char *path) {
     return CH_RET_EFAULT;
   }
 
-  return (int)vfsDrvRmdir(sbp->config->vfs_driver, path);
+  return (int)vfsDrvRmdir(sbp->io.vfs_driver, path);
 }
 
 /*===========================================================================*/
@@ -378,7 +378,7 @@ void sb_sysc_stdio(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   /* VFS support could be enabled but this specific sandbox could not have
      one associated to it.*/
-  if (sbp->config->vfs_driver == NULL) {
+  if (sbp->io.vfs_driver == NULL) {
     ectxp->r0 = (uint32_t)CH_RET_ENOSYS;
     return;
   }
