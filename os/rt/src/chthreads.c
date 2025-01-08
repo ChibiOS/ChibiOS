@@ -546,7 +546,7 @@ thread_t *chThdCreateStatic(stkline_t *wbase, size_t wsize,
      workspace. The thread position structure must be aligned to the required
      stack alignment because it represents the stack top.*/
   stkbase = (uint8_t *)wbase;
-  stktop  = wend - MEM_ALIGN_NEXT(sizeof (thread_t), PORT_NATURAL_ALIGN);
+  stktop  = wend - MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN);
   chDbgCheck(MEM_IS_ALIGNED(stkbase, PORT_WORKING_AREA_ALIGN) &&
              MEM_IS_ALIGNED(stktop, PORT_STACK_ALIGN));
 
