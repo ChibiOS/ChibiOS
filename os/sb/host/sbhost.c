@@ -457,6 +457,10 @@ void sb_strv_copy(const char *sp[], void *dp, int n) {
 void sbObjectInit(sb_class_t *sbp) {
 
   memset((void *)sbp, 0, sizeof (sb_class_t));
+
+  /* Marking the thread as terminated in order to make sbIsThreadRunningX()
+     behave correctly.*/
+  sbp->thread.state = CH_STATE_FINAL;
 }
 
 /**
