@@ -595,6 +595,10 @@ msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
     return CH_RET_EFAULT;
   }
 
+#if SB_CFG_EXEC_DEBUG == TRUE
+  *((uint16_t *)(sbhp->hdr_entry & 0xFFFFFFFEU)) = 0xBE00U;
+#endif
+
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   if (sb_start_unprivileged(sbp, name, prio, stkbase, sbhp->hdr_entry) == NULL) {
     return CH_RET_ENOMEM;

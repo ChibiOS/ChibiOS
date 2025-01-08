@@ -80,6 +80,15 @@
 #define SB_CFG_FD_NUM                       12
 #endif
 
+/**
+ * @brief   Enables a breakpoint in RAM-executed programs.
+ * @note    This option is only usable during development with an attached
+ *          debug, it causes a crash in stand-alone systems.
+ */
+#if !defined(SB_CFG_EXEC_DEBUG) || defined(__DOXYGEN__)
+#define SB_CFG_EXEC_DEBUG                   FALSE
+#endif
+
 #endif  /* SBCONF_H */
 
 /** @} */
