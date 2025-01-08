@@ -482,25 +482,26 @@ thread_t *sbStart(sb_class_t *sbp, const char *name,
                   tprio_t prio, stkline_t *stkbase,
                   const char *argv[], const char *envp[]) {
   const sb_memory_region_t *codereg, *datareg;
+  const sb_header_t *sbhp;
 
   /* Region zero is assumed to be executable and contain the start header.*/
   codereg = &sbp->regions[0];
-  sbp->sbhp = (const sb_header_t *)(void *)codereg->area.base;
+  sbhp = (const sb_header_t *)(void *)codereg->area.base;
 
   /* Checking header magic numbers.*/
-  if ((sbp->sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
-      (sbp->sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
+  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
     return NULL;
   }
 
   /* Checking header size and alignment.*/
-  if (sbp->sbhp->hdr_size != sizeof (sb_header_t)) {
+  if (sbhp->hdr_size != sizeof (sb_header_t)) {
     return NULL;
   }
 
   /* Checking header entry point.*/
   if (!chMemIsSpaceWithinX(&codereg->area,
-                           (const void *)sbp->sbhp->hdr_entry,
+                           (const void *)sbhp->hdr_entry,
                            (size_t)2)) {
     return NULL;
   }
@@ -518,7 +519,7 @@ thread_t *sbStart(sb_class_t *sbp, const char *name,
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  return sb_start_unprivileged(sbp, name, prio, stkbase, sbp->sbhp->hdr_entry);
+  return sb_start_unprivileged(sbp, name, prio, stkbase, sbhp->hdr_entry);
 }
 
 /**
@@ -556,6 +557,7 @@ msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
              stkline_t *stkbase, const char *pathname,
              const char *argv[], const char *envp[]) {
   memory_area_t ma = sbp->regions[0].area;
+  const sb_header_t *sbhp;
   size_t totsize;
   msg_t ret;
 
@@ -575,26 +577,26 @@ msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
   CH_RETURN_ON_ERROR(ret);
 
   /* Header location.*/
-  sbp->sbhp = (const sb_header_t *)(void *)ma.base;
+  sbhp = (const sb_header_t *)(void *)ma.base;
 
   /* Checking header magic numbers.*/
-  if ((sbp->sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
-      (sbp->sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
+  if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
+      (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
     return CH_RET_ENOEXEC;
   }
 
   /* Checking header size.*/
-  if (sbp->sbhp->hdr_size != sizeof (sb_header_t)) {
+  if (sbhp->hdr_size != sizeof (sb_header_t)) {
     return CH_RET_ENOEXEC;
   }
 
   /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(&ma, (const void *)sbp->sbhp->hdr_entry, (size_t)2)) {
+  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_entry, (size_t)2)) {
     return CH_RET_EFAULT;
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  if (sb_start_unprivileged(sbp, name, prio, stkbase, sbp->sbhp->hdr_entry) == NULL) {
+  if (sb_start_unprivileged(sbp, name, prio, stkbase, sbhp->hdr_entry) == NULL) {
     return CH_RET_ENOMEM;
   }
 

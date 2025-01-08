@@ -78,7 +78,7 @@ static inline void vrq_initctx(sb_class_t *sbp,
   ectxp->r12    = 0U;
   ectxp->lr_thd = 0U;
 #endif
-  ectxp->pc     = sbp->sbhp->hdr_vrq;
+  ectxp->pc     = ((const sb_header_t *)(void *)sbp->regions[0].area.base)->hdr_vrq;
   ectxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
   ectxp->fpscr  = FPU->FPDSCR;
@@ -431,7 +431,7 @@ void sb_fastc_vrq_return(sb_class_t *sbp, struct port_extctx *ectxp) {
     ectxp->r12    = 0U;
     ectxp->lr_thd = 0U;
 #endif
-    ectxp->pc     = sbp->sbhp->hdr_vrq;
+    ectxp->pc     = ((const sb_header_t *)(void *)sbp->regions[0].area.base)->hdr_vrq;
     ectxp->xpsr   = 0x01000000U;
 #if CORTEX_USE_FPU == TRUE
     ectxp->fpscr  = FPU->FPDSCR;

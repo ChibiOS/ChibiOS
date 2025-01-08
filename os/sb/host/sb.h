@@ -248,7 +248,7 @@ struct sb_class {
    * @brief   Pointer to the image header.
    * TODO REMOVE
    */
-  const sb_header_t             *sbhp;
+//  const sb_header_t             *sbhp;
 #if (SB_CFG_ENABLE_VIO == TRUE) || defined(__DOXYGEN__)
   /**
    * @brief   VIO configuration associated to this sandbox.
