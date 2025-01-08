@@ -67,12 +67,11 @@ extern "C" {
   size_t sb_strv_getsize(const char *v[], int *np);
   void sb_strv_copy(const char *sp[], void *dp, int n);
   void sbObjectInit(sb_class_t *sbp);
-  thread_t *sbStart(sb_class_t *sbp, const char *name,
-                    tprio_t prio, stkline_t *stkbase,
+  thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
                     const char *argv[], const char *envp[]);
   bool sbIsThreadRunningX(sb_class_t *sbp);
 #if SB_CFG_ENABLE_VFS == TRUE
-  msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
+  msg_t sbExec(sb_class_t *sbp, tprio_t prio,
                stkline_t *stkbase, const char *pathname,
                const char *argv[], const char *envp[]);
   void sbRegisterDescriptor(sb_class_t *sbp, int fd, vfs_node_c *np);

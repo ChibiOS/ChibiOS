@@ -220,7 +220,7 @@ int main(void) {
       /*
        * Running the sandbox.
        */
-      ret = sbExec(&sbx1, "sbx1", NORMALPRIO-10, sbx1stk,
+      ret = sbExec(&sbx1, NORMALPRIO-10, sbx1stk,
                    "/bin/msh.elf", sbx1_argv, sbx1_envp);
       if (CH_RET_IS_ERROR(ret)) {
         chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);

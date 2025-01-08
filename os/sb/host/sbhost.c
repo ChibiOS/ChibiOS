@@ -471,6 +471,7 @@ void sbObjectInit(sb_class_t *sbp) {
  *          selected for stack initialization.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] prio      sandbox thread priority
  * @param[in] stkbase   base of the privileged stack area, the size is assumed
  *                      to be @p SB_CFG_PRIVILEGED_STACK_SIZE
  * @param[in] argv      array of parameters for the sandbox
@@ -478,8 +479,7 @@ void sbObjectInit(sb_class_t *sbp) {
  * @return              The thread pointer.
  * @retval NULL         if the sandbox thread creation failed.
  */
-thread_t *sbStart(sb_class_t *sbp, const char *name,
-                  tprio_t prio, stkline_t *stkbase,
+thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
                   const char *argv[], const char *envp[]) {
   const sb_memory_region_t *codereg, *datareg;
   const sb_header_t *sbhp;
@@ -519,7 +519,7 @@ thread_t *sbStart(sb_class_t *sbp, const char *name,
   }
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  return sb_start_unprivileged(sbp, name, prio, stkbase, sbhp->hdr_entry);
+  return sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry);
 }
 
 /**
@@ -545,6 +545,7 @@ bool sbIsThreadRunningX(sb_class_t *sbp) {
  *          @p SB_CFG_PRIVILEGED_STACK_SIZE.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
+ * @param[in] prio      sandbox thread priority
  * @param[in] stkbase   base of the privileged stack for the sandbox
  * @param[in] pathname  file to be executed
  * @param[in] argv      arguments to be passed to the sandbox
@@ -553,7 +554,7 @@ bool sbIsThreadRunningX(sb_class_t *sbp) {
  *
  * @api
  */
-msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
+msg_t sbExec(sb_class_t *sbp, tprio_t prio,
              stkline_t *stkbase, const char *pathname,
              const char *argv[], const char *envp[]) {
   memory_area_t ma = sbp->regions[0].area;
@@ -596,11 +597,11 @@ msg_t sbExec(sb_class_t *sbp, const char *name, tprio_t prio,
   }
 
 #if SB_CFG_EXEC_DEBUG == TRUE
-  *((uint16_t *)(sbhp->hdr_entry & 0xFFFFFFFEU)) = 0xBE00U;
+  *((uint16_t *)(sbhp->hdr_entry & ~(unit32_t)1)) = 0xBE00U;
 #endif
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  if (sb_start_unprivileged(sbp, name, prio, stkbase, sbhp->hdr_entry) == NULL) {
+  if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
     return CH_RET_ENOMEM;
   }
 
