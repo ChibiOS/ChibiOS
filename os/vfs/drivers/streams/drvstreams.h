@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -96,6 +96,10 @@ struct drv_streams_element {
    * @brief       Pointer to the stream.
    */
   sequential_stream_i       *stm;
+  /**
+   * @brief       Stream mode.
+   */
+  vfs_mode_t                mode;
 };
 
 /**

@@ -76,6 +76,13 @@ static inline uint32_t get_next_po2(uint32_t v) {
   return 0x80000000U >> __CLZ(v);
 }
 
+static size_t get_mpu_alignment(size_t size) {
+
+  (void)size;
+
+  return 0;
+}
+
 /*
  * Translates generic SB regions in actual MPU settings, returns true if
  * the translation is not possible for some reason (usually required
@@ -179,6 +186,13 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 }
 
 #elif defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
+static size_t get_mpu_alignment(size_t size) {
+
+  (void)size;
+
+  return 32U;
+}
+
 static bool get_mpu_settings(const sb_memory_region_t *mrp,
                              port_mpureg_t *mpur) {
   uint32_t area_base, area_size, area_end;
@@ -261,7 +275,7 @@ static size_t sb_init_environment(sb_class_t *sbp, const memory_area_t *up,
   int uargc, uenvc;
 
   /* Setting up an initial stack for the sandbox.*/
-  usp = (up->base + up->size);
+  usp = up->base + up->size;
 
   /* Allocating space for environment variables.*/
   envsize = sb_strv_getsize(envp, &uenvc);
@@ -547,7 +561,7 @@ thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
  * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] prio      sandbox thread priority
  * @param[in] stkbase   base of the privileged stack for the sandbox
- * @param[in] pathname  file to be executed
+ * @param[in] path      file to be executed
  * @param[in] argv      arguments to be passed to the sandbox
  * @param[in] envp      environment variables to be passed to the sandbox
  * @return              The operation result.
@@ -555,7 +569,7 @@ thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
  * @api
  */
 msg_t sbExec(sb_class_t *sbp, tprio_t prio,
-             stkline_t *stkbase, const char *pathname,
+             stkline_t *stkbase, const char *path,
              const char *argv[], const char *envp[]) {
   memory_area_t ma = sbp->regions[0].area;
   const sb_header_t *sbhp;
@@ -574,7 +588,7 @@ msg_t sbExec(sb_class_t *sbp, tprio_t prio,
   ma.size -= totsize;
 
   /* Loading sandbox code into the specified memory area.*/
-  ret = sbElfLoadFile(sbp->io.vfs_driver, pathname, &ma);
+  ret = sbElfLoadFile(sbp->io.vfs_driver, path, &ma);
   CH_RETURN_ON_ERROR(ret);
 
   /* Header location.*/
@@ -608,13 +622,13 @@ msg_t sbExec(sb_class_t *sbp, tprio_t prio,
   return CH_RET_SUCCESS;
 }
 
-#if 0 && (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
+#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Execute an elf file within a dynamic sandbox.
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] prio      sandbox thread priority
- * @param[in] pathname  file to be executed
+ * @param[in] path      file to be executed
  * @param[in] argv      arguments to be passed to the sandbox
  * @param[in] envp      environment variables to be passed to the sandbox
  * @return              The operation result.
@@ -622,44 +636,83 @@ msg_t sbExec(sb_class_t *sbp, tprio_t prio,
  * @api
  */
 msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
-                    const char *pathname,const char *argv[], const char *envp[]) {
-  memory_area_t ma = sbp->regions[0].area;
+                    const char *path, const char *argv[], const char *envp[]) {
+  memory_area_t *umap = &sbp->regions[0].area;
   const sb_header_t *sbhp;
-  size_t totsize;
+  vfs_file_node_c *fnp;
+  stkline_t *stkbase;
+  size_t size, align;
   msg_t ret;
+
+  ret = vfsDrvOpenFile(sbp->io.vfs_driver, path, VO_RDONLY, &fnp);
+  CH_RETURN_ON_ERROR(ret);
+
+  /* Calculating space required for the elf file.*/
+  ret = sbElfGetAllocation(fnp, umap);
+  if (CH_RET_IS_ERROR(ret)) {
+    goto skip1;
+  }
+
+  /* Adding space for arguments, environment variables and parameters.*/
+  size += sb_strv_getsize(envp, NULL) +   /* Space for environment.   */
+          sb_strv_getsize(argv, NULL) +   /* Space for arguments.     */
+          (sizeof (uint32_t) * 4);        /* Space for parameters.    */
+  umap->size += MEM_ALIGN_NEXT(size, PORT_STACK_ALIGN);
+
+  /* Alignment of the memory area, it depends on the architecture because
+     MPU-related restrictions. Note: there is the assumption that this
+     alignment is greater than the alignment required for stacks.*/
+  align = get_mpu_alignment(umap->size);
+  umap->size = MEM_ALIGN_NEXT(umap->size, align);
+
+  /* Allocating the memory area required for this dynamic sandbox.*/
+  umap->base = chHeapAllocAligned(NULL, umap->size, align);
+  if (umap->base == NULL) {
+    ret = CH_RET_ENOMEM;
+    goto skip1;
+  }
+
+  /* Allocating an area for the privileged stack.*/
+  stkbase = chHeapAllocAligned(NULL, SB_CFG_PRIVILEGED_STACK_SIZE, PORT_STACK_ALIGN);
+  if (stkbase == NULL) {
+    ret = CH_RET_ENOMEM;
+    goto skip2;
+  }
 
   /* Pushing arguments, environment variables and other startup information
      at the top of the data memory area.*/
-  totsize = sb_init_environment(sbp, &sbp->regions[0].area, argv, envp);
-  if (totsize == (size_t)0) {
-    return CH_RET_ENOMEM;
+  size = sb_init_environment(sbp, umap, argv, envp);
+  if (size == (size_t)0) {
+    goto skip3;
   }
 
   /* Adjusting the size of the memory area object, we don't want the loaded
      elf file to overwrite the environment data.*/
-  ma.size -= totsize;
+  umap->size -= size;
 
   /* Loading sandbox code into the specified memory area.*/
-  ret = sbElfLoadFile(sbp->io.vfs_driver, pathname, &ma);
-  CH_RETURN_ON_ERROR(ret);
+  ret = sbElfLoad(fnp, umap);
+  if (CH_RET_IS_ERROR(ret)) {
+    goto skip3;
+  }
 
   /* Header location.*/
-  sbhp = (const sb_header_t *)(void *)ma.base;
+  sbhp = (const sb_header_t *)(void *)umap->base;
 
   /* Checking header magic numbers.*/
   if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
       (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
-    return CH_RET_ENOEXEC;
+    goto skip3;
   }
 
   /* Checking header size.*/
   if (sbhp->hdr_size != sizeof (sb_header_t)) {
-    return CH_RET_ENOEXEC;
+    goto skip3;
   }
 
   /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(&ma, (const void *)sbhp->hdr_entry, (size_t)2)) {
-    return CH_RET_EFAULT;
+  if (!chMemIsSpaceWithinX(umap, (const void *)sbhp->hdr_entry, (size_t)2)) {
+    goto skip3;
   }
 
 #if SB_CFG_EXEC_DEBUG == TRUE
@@ -668,10 +721,22 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
-    return CH_RET_ENOMEM;
+    goto skip3;
   }
 
+  /* File closed.*/
+  vfsClose((vfs_node_c *)fnp);
+
   return CH_RET_SUCCESS;
+
+  /* Error exit points with resource freeing.*/
+skip3:
+  chHeapFree(stkbase);
+skip2:
+  chHeapFree(umap->base);
+skip1:
+  vfsClose((vfs_node_c *)fnp);
+  return ret;
 }
 #endif /* CH_CFG_USE_HEAP == TRUE */
 #endif /* SB_CFG_ENABLE_VFS == TRUE */

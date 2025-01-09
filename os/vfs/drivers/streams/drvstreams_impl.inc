@@ -153,7 +153,8 @@ msg_t __stmdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
 
   if (vsdp->streams[self->index].name != NULL) {
 
-    dip->mode = VFS_MODE_S_IFIFO | VFS_MODE_S_IRUSR | VFS_MODE_S_IWUSR;
+    dip->mode = (vsdp->streams[self->index].mode & VFS_MODE_S_IFMT) |
+                VFS_MODE_S_IRUSR | VFS_MODE_S_IWUSR;
     dip->size = (vfs_offset_t)0;
     strcpy(dip->name, vsdp->streams[self->index].name);
 
@@ -447,21 +448,41 @@ msg_t __stmdrv_getcwd_impl(void *ip, char *buf, size_t size) {
  * @return                      The operation result.
  */
 msg_t __stmdrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
+  vfs_streams_driver_c *self = (vfs_streams_driver_c *)ip;
+  const drv_streams_element_t *dsep;
   msg_t ret;
 
-  (void)ip;
-
   do {
+    char fname[VFS_CFG_NAMELEN_MAX + 1];
+    sp->size = (vfs_offset_t)0;
+    sp->mode = (vfs_mode_t)0;
+
+    /* If end this is a directory.*/
+    ret = vfs_parse_match_end(&path);
+    if (CH_RET_IS_SUCCESS(ret)) {
+      sp->mode = VFS_MODE_S_IFDIR;
+      break;
+    }
+
+    /* Check for and skip over separator.*/
     ret = vfs_parse_match_separator(&path);
     CH_BREAK_ON_ERROR(ret);
 
-    ret = vfs_parse_match_end(&path);
-    CH_BREAK_ON_ERROR(ret);
+    /* Get the stream identity (name).*/
+    ret = (msg_t)vfs_path_get_element(&path, fname, VFS_CFG_NAMELEN_MAX + 1);
+    dsep = &self->streams[0];
+    while (dsep->name != NULL) {
+      if (strncmp(fname, dsep->name, VFS_CFG_NAMELEN_MAX) == 0) {
 
-    sp->mode = VFS_MODE_S_IFDIR;
-    sp->size = (vfs_offset_t)0;
+        /* Mask for file type only.*/
+        sp->mode = dsep->mode & VFS_MODE_S_IFMT;
+        return CH_RET_SUCCESS;
+      }
 
-    ret = CH_RET_SUCCESS;
+      dsep++;
+    }
+
+    ret = CH_RET_ENOENT;
   }
   while (false);
 
@@ -564,7 +585,10 @@ msg_t __stmdrv_openfile_impl(void *ip, const char *path, int flags,
           /* Node object initialization.*/
           (void) stmfileObjectInit(sfnp,
                                    (vfs_driver_c *)self,
-                                   VFS_MODE_S_IFIFO | VFS_MODE_S_IRUSR | VFS_MODE_S_IWUSR,
+                                   (dsep->mode & VFS_MODE_S_IFMT) |
+                                       VFS_MODE_S_IFIFO |
+                                       VFS_MODE_S_IRUSR |
+                                       VFS_MODE_S_IWUSR,
                                    dsep->stm);
 
           *vfnpp = (vfs_file_node_c *)sfnp;

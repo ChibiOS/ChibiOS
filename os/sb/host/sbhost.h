@@ -72,11 +72,11 @@ extern "C" {
                     const char *argv[], const char *envp[]);
 #if SB_CFG_ENABLE_VFS == TRUE
   msg_t sbExec(sb_class_t *sbp, tprio_t prio,
-               stkline_t *stkbase, const char *pathname,
+               stkline_t *stkbase, const char *path,
                const char *argv[], const char *envp[]);
 #if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
   msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
-                      const char *pathname,const char *argv[], const char *envp[]);
+                      const char *path, const char *argv[], const char *envp[]);
 #endif
 #endif
 #if CH_CFG_USE_MESSAGES == TRUE

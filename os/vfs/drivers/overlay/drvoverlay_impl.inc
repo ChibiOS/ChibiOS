@@ -633,7 +633,10 @@ msg_t __ovldrv_stat_impl(void *ip, const char *path, vfs_stat_t *sp) {
       ret = vfsDrvStat((void *)self->overlaid_drv, self->buf, sp);
     }
     else {
-      ret = CH_RET_ENOENT;
+      /* This is the root directory.*/
+      sp->size = 0;
+      sp->mode = VFS_MODE_S_IFDIR;
+      ret = CH_RET_SUCCESS;
     }
   } while (false);
 
