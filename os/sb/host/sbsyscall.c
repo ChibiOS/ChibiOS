@@ -903,28 +903,14 @@ static void sb_undef_handler(sb_class_t *sbp, struct port_extctx *ectxp) {
 /* Module exported functions.                                                */
 /*===========================================================================*/
 
-void __sb_cleanup(void) {
-#if SB_CFG_ENABLE_VFS == TRUE
-  sb_class_t *sbp = (sb_class_t *)chThdGetSelfX()->object;
-  unsigned fd;
-
-  /* Closing all file descriptors.*/
-  for (fd = 0U; fd < SB_CFG_FD_NUM; fd++) {
-    if (sbp->io.vfs_nodes[fd] != NULL) {
-      sbp->io.vfs_nodes[fd]->vmt->release(sbp->io.vfs_nodes[fd]);
-      sbp->io.vfs_nodes[fd] = NULL;
-    }
-  }
-#endif
-}
-
 void __sb_abort(msg_t msg) {
 
+#if SB_CFG_ENABLE_VFS == TRUE
   chSysUnlock();
-
-  __sb_cleanup();
-
+  __sb_io_cleanup((sb_class_t *)chThdGetSelfX()->object);
   chSysLock();
+#endif
+
 #if CH_CFG_USE_EVENTS == TRUE
   chEvtBroadcastI(&sb.termination_es);
 #endif

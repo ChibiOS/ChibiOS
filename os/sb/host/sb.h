@@ -232,6 +232,10 @@ typedef struct {
  */
 struct sb_class {
   /**
+   * @brief   Indicates that the sandbox is dynamically allocated from heap.
+   */
+  bool                          is_dynamic;
+  /**
    * @brief   SandBox regions.
    * @note    Region zero is always used for code execution. The data
    *          region is assumed to be the first region in the list with

@@ -97,7 +97,9 @@ void sb_sysc_exit(sb_class_t *sbp, struct port_extctx *ectxp) {
 
   (void)sbp;
 
-  __sb_cleanup();
+#if SB_CFG_ENABLE_VFS == TRUE
+  __sb_io_cleanup(sbp);
+#endif
 
   chSysLock();
 #if CH_CFG_USE_EVENTS == TRUE

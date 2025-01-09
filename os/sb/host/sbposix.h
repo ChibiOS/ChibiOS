@@ -80,6 +80,7 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void __sb_io_cleanup(sb_class_t *sbp);
   void sb_sysc_stdio(sb_class_t *sbp, struct port_extctx *ectxp);
 #ifdef __cplusplus
 }

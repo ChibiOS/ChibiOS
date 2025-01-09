@@ -338,6 +338,19 @@ static THD_FUNCTION(sb_unprivileged_trampoline, arg) {
   chSysHalt("svc");
 }
 
+static void sb_release_memory(thread_t *tp) {
+  sb_class_t *sbp = (sb_class_t *)chThdGetObjectX(tp);
+
+  (void)sbp;
+
+#if (PORT_SWITCHED_REGIONS_NUMBER > 0) && (CH_CFG_USE_HEAP == TRUE)
+  if (sbp->is_dynamic) {
+    chHeapFree(sbp->thread.wabase);
+    chHeapFree(sbp->regions[0].area.base);
+  }
+#endif
+}
+
 static thread_t *sb_start_unprivileged(sb_class_t *sbp,
                                        const char *name,
                                        tprio_t prio,
@@ -365,7 +378,7 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
   utp = chThdSpawnSuspended(&sbp->thread, &td);
 
   /* The sandbox is the thread controller.*/
-  utp->object = sbp;
+  chThdSetCallbackX(utp, sb_release_memory, sbp);
 
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
   /* Regions for the unprivileged thread, will be set up on switch-in.*/
@@ -545,6 +558,9 @@ thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
     return NULL;
   }
 
+  /* No memory release.*/
+  sbp->is_dynamic = false;
+
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   return sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry);
 }
@@ -613,6 +629,9 @@ msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
 #if SB_CFG_EXEC_DEBUG == TRUE
   *((uint16_t *)(sbhp->hdr_entry & ~(unit32_t)1)) = 0xBE00U;
 #endif
+
+  /* No memory release.*/
+  sbp->is_dynamic = false;
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
@@ -723,6 +742,9 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
   if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
     goto skip3;
   }
+
+  /* Marks for memory release.*/
+  sbp->is_dynamic = true;
 
   /* File closed.*/
   vfsClose((vfs_node_c *)fnp);
