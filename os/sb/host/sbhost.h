@@ -71,10 +71,10 @@ extern "C" {
   thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
                     const char *argv[], const char *envp[]);
 #if SB_CFG_ENABLE_VFS == TRUE
-  msg_t sbExec(sb_class_t *sbp, tprio_t prio,
-               stkline_t *stkbase, const char *path,
-               const char *argv[], const char *envp[]);
-#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
+  msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
+                     stkline_t *stkbase, const char *path,
+                     const char *argv[], const char *envp[]);
+#if (PORT_SWITCHED_REGIONS_NUMBER > 0) && (CH_CFG_USE_HEAP == TRUE)
   msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
                       const char *path, const char *argv[], const char *envp[]);
 #endif

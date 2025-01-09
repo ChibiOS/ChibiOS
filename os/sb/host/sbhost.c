@@ -568,9 +568,9 @@ thread_t *sbStart(sb_class_t *sbp, tprio_t prio, stkline_t *stkbase,
  *
  * @api
  */
-msg_t sbExec(sb_class_t *sbp, tprio_t prio,
-             stkline_t *stkbase, const char *path,
-             const char *argv[], const char *envp[]) {
+msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
+                   stkline_t *stkbase, const char *path,
+                   const char *argv[], const char *envp[]) {
   memory_area_t ma = sbp->regions[0].area;
   const sb_header_t *sbhp;
   size_t totsize;
@@ -622,7 +622,7 @@ msg_t sbExec(sb_class_t *sbp, tprio_t prio,
   return CH_RET_SUCCESS;
 }
 
-#if (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
+#if (PORT_SWITCHED_REGIONS_NUMBER > 0) && (CH_CFG_USE_HEAP == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Execute an elf file within a dynamic sandbox.
  *
