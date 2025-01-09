@@ -616,12 +616,16 @@ static void *__lfsfile_objinit_impl(void *ip, const void *vmt,
  */
 static void __lfsfile_dispose_impl(void *ip) {
   vfs_littlefs_file_node_c *self = (vfs_littlefs_file_node_c *)ip;
+  vfs_littlefs_driver_c *drvp = (vfs_littlefs_driver_c *)self->driver;
 
-  /* No finalization code.*/
-  (void)self;
+  /* Closing file.*/
+  (void) lfs_file_close(&drvp->lfs, &self->file);
 
   /* Finalization of the ancestors-defined parts.*/
   __vfsfile_dispose_impl(self);
+
+  /* Last because it corrupts the object.*/
+  chPoolFree(&vfs_littlefs_driver_static.file_nodes_pool, ip);
 }
 
 /**
