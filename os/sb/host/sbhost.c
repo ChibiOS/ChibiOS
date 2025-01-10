@@ -150,7 +150,7 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 
   /* MPU registers settings.*/
   mpur->rbar = region_base;
-  mpur->rasr = (srd << 8) | (__CLZ(__RBIT(region_size)) << 1) | MPU_RASR_ENABLE;
+  mpur->rasr = (srd << 8) | ((__CLZ(__RBIT(region_size)) -1U) << 1) | MPU_RASR_ENABLE;
 
   /* Region attributes.*/
   if (sb_reg_is_writable(mrp)) {
@@ -392,7 +392,6 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
       return NULL;
     }
     utp->ctx.regions[i] = mpureg;
-
   }
 #endif
 
