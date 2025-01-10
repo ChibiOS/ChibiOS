@@ -553,14 +553,13 @@ msg_t sbElfLoadFile(vfs_driver_c *drvp,
   return ret;
 }
 
-msg_t sbElfGetAllocation(vfs_file_node_c *fnp, memory_area_t *map) {
+msg_t sbElfGetAllocation(vfs_file_node_c *fnp, size_t *sizep) {
   msg_t ret;
   bool zerofound = false;
 
   /* The file is assumed to be loaded at address zero, one of the loadable
      sections must start at zero.*/
-  map->base = (uint8_t *)0;
-  map->size = (size_t)0;
+  *sizep = (size_t)0;
 
   /* Large structures not used at same time, the compiler could optimize it
      but it is still a problem when running the code without optimizations for
@@ -627,8 +626,8 @@ msg_t sbElfGetAllocation(vfs_file_node_c *fnp, memory_area_t *map) {
           size_t top;
 
           top = (size_t)u.sh.sh_addr + (size_t)u.sh.sh_size;
-          if (top > map->size) {
-            map->size = top;
+          if (top > *sizep) {
+            *sizep = top;
           }
         }
         break;
@@ -645,26 +644,6 @@ msg_t sbElfGetAllocation(vfs_file_node_c *fnp, memory_area_t *map) {
   if (!zerofound) {
     ret = CH_RET_ENOEXEC;
   }
-
-  return ret;
-}
-
-msg_t sbElfGetAllocationFromFile(vfs_driver_c *drvp,
-                                 const char *path,
-                                 memory_area_t *map) {
-  vfs_file_node_c *fnp;
-  msg_t ret;
-
-  ret = vfsDrvOpenFile(drvp, path, VO_RDONLY, &fnp);
-  CH_RETURN_ON_ERROR(ret);
-
-  do {
-    ret = sbElfGetAllocation(fnp, map);
-    CH_BREAK_ON_ERROR(ret);
-
-  } while (false);
-
-  vfsClose((vfs_node_c *)fnp);
 
   return ret;
 }

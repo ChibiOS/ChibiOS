@@ -671,7 +671,7 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio, size_t heapsize,
   CH_RETURN_ON_ERROR(ret);
 
   /* Calculating bare-minimum space required by the elf file.*/
-  ret = sbElfGetAllocation(fnp, umap);
+  ret = sbElfGetAllocation(fnp, &umap->size);
   if (CH_RET_IS_ERROR(ret)) {
     goto skip1;
   }
@@ -749,6 +749,7 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio, size_t heapsize,
 
   /* Marks for memory release.*/
   sbp->is_dynamic = true;
+  sbp->regions[0].attributes = SB_REG_IS_CODE_AND_DATA;
 
   /* Everything OK, starting the unprivileged thread inside the sandbox.*/
   if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
