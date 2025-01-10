@@ -126,7 +126,7 @@ include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
 # Define linker script file here
-LDSCRIPT= ./STM32L4R9xI_SB.ld
+LDSCRIPT= $(STARTUPLD)/STM32L4R9xI.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

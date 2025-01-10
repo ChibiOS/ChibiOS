@@ -272,7 +272,6 @@ static void ShellHandler(eventid_t id) {
   shelltp = NULL;
 }
 
-
 /*
  * LED blinker thread, times are in milliseconds.
  */
@@ -315,9 +314,7 @@ int main(void) {
   /* Board-dependent setup code.*/
   portab_setup();
 
-  /*
-   * Spawning a blinker thread.
-   */
+  /* Spawning a blinker thread.*/
   static thread_t thd1;
   static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
                                NORMALPRIO + 10, thd1_func, NULL, NULL);

@@ -17,15 +17,11 @@
 #include "ch.h"
 #include "hal.h"
 #include "sb.h"
+
 #include "chprintf.h"
-
-//#include "rt_test_root.h"
-//#include "oslib_test_root.h"
-
 #include "nullstreams.h"
 
 #include "startup_defs.h"
-
 #include "sdmon.h"
 
 /*===========================================================================*/
@@ -67,9 +63,6 @@ static const drv_streams_element_t sb1_streams[] = {
 /* Sandbox objects.*/
 sb_class_t sbx1;
 
-/* Privileged stacks for sandboxes.*/
-static SB_STACK(sbx1stk);
-
 /* Arguments and environments for SB1.*/
 static const char *sbx1_argv[] = {
   "msh",
@@ -88,17 +81,16 @@ static const char *sbx1_envp[] = {
 /*===========================================================================*/
 
 /*
- * Green LED blinker thread, times are in milliseconds.
+ * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 256);
-static THD_FUNCTION(Thread1, arg) {
+static THD_STACK(thd1_stack, 256);
+static THD_FUNCTION(thd1_func, arg) {
 
   (void)arg;
 
-  chRegSetThreadName("blinker");
   while (true) {
     palToggleLine(LINE_LED_GREEN);
-    chThdSleepMilliseconds(sdmon_ready ? 250 : 500);
+    chThdSleepMilliseconds(sdmon_ready ? 100 : 500);
   }
 }
 
@@ -112,7 +104,7 @@ static void SBHandler(eventid_t id) {
   if (!sbIsThreadRunningX(&sbx1)) {
     msg_t msg = sbWait(&sbx1);
 
-    chprintf((BaseSequentialStream *)&SD2, "SB1 terminated (%08lx)\r\n", msg);
+    chprintf((BaseSequentialStream *)&SD2, "SBX1 terminated (%08lx)\r\n", msg);
   }
 }
 
@@ -143,33 +135,26 @@ int main(void) {
   vfsInit();
   sbHostInit();
 
-  /*
-   * Starting a serial ports for I/O, initializing other streams too.
-   */
+  /* Starting a serial ports for I/O, initializing other streams too.*/
   sdStart(&SD2, NULL);
   nullObjectInit(&nullstream);
 
-  /*
-   * Activates the card insertion monitor.
-   */
+  /* Activating the card insertion monitor.*/
   sdmonInit();
 
-  /*
-   * Creating a blinker thread.
-   */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO+10, Thread1, NULL);
+  /* Spawning a blinker thread.*/
+  static thread_t thd1;
+  static const THD_DECL_STATIC(thd1_desc, "blinker", thd1_stack,
+                               NORMALPRIO + 10, thd1_func, NULL, NULL);
+  chThdSpawnRunning(&thd1, &thd1_desc);
 
-  /*
-   * Initializing an overlay VFS object as a root on top of a FatFS driver.
-   * This is accessible from kernel space and covers the whole file system.
-   */
+  /* Initializing an overlay VFS object as a root on top of a FatFS driver.
+     This is accessible from kernel space and covers the whole file system.*/
   ffdrvObjectInit(&fatfs_driver);
   ovldrvObjectInit(&root_overlay_driver, (vfs_driver_c *)&fatfs_driver, NULL);
 
-  /*
-   * Initializing overlay drivers for the two sandbox roots. Those also use
-   * the FatFS driver but are restricted to "/sb1" and "/sb2" directories.
-   */
+  /* Initializing overlay drivers for the two sandbox roots. Those also use
+     the FatFS driver but are restricted to "/sb1" and "/sb2" directories.*/
   ovldrvObjectInit(&sb1_root_overlay_driver, (vfs_driver_c *)&fatfs_driver, "/sb1");
   ret = ovldrvRegisterDriver(&sb1_root_overlay_driver,
                              (vfs_driver_c *)stmdrvObjectInit(&sb1_dev_driver,
@@ -179,33 +164,23 @@ int main(void) {
     chSysHalt("VFS");
   }
 
-  /*
-   * Sandbox objects initialization.
-   */
+  /* Sandbox object initialization.*/
   sbObjectInit(&sbx1);
-  sbSetRegion(&sbx1, 0, STARTUP_RAM1_BASE, STARTUP_RAM1_SIZE, SB_REG_IS_CODE_AND_DATA);
   sbSetFileSystem(&sbx1, (vfs_driver_c *)&sb1_root_overlay_driver);
 
-  /*
-   * Listening to sandbox events.
-   */
+  /* Listening to sandbox events.*/
   chEvtRegister(&sb.termination_es, &elsb, (eventid_t)2);
 
-  /*
-   * Normal main() thread activity, in this demo it monitors the user button
-   * and checks for sandboxes state.
-   */
+  /* Normal main() thread activity, (re)spawning sandboxed application.*/
   while (true) {
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
 
     if (sdmon_ready && !sbIsThreadRunningX(&sbx1)) {
 
       /* Small delay before relaunching.*/
-      chThdSleepMilliseconds(1000);
+      chThdSleepMilliseconds(500);
 
-      /*
-       * Associating standard input, output and error to sandbox 1.
-       */
+      /* Associating standard input, output and error to sandbox 1.*/
       ret = vfsDrvOpen((vfs_driver_c *)&sb1_root_overlay_driver,
                        "/dev/VSD1", VO_RDWR, &np);
       if (CH_RET_IS_ERROR(ret)) {
@@ -217,10 +192,8 @@ int main(void) {
       sbRegisterDescriptor(&sbx1, STDERR_FILENO, (vfs_node_c *)roAddRef(np));
       vfsClose(np);
 
-      /*
-       * Running the sandbox.
-       */
-      ret = sbExecDynamic(&sbx1, NORMALPRIO-10, 8192,
+      /* Running the sandbox with 56kB of extra heap space.*/
+      ret = sbExecDynamic(&sbx1, NORMALPRIO-10, 56*1024,
                           "/bin/msh.elf", sbx1_argv, sbx1_envp);
       if (CH_RET_IS_ERROR(ret)) {
         chprintf((BaseSequentialStream *)&SD2, "SBX1 launch failed (%08lx)\r\n", ret);
