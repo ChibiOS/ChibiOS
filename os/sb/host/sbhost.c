@@ -649,6 +649,7 @@ msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
  *
  * @param[in] sbp       pointer to a @p sb_class_t structure
  * @param[in] prio      sandbox thread priority
+ * @param[in] heapsize  extra heap space for the launched application
  * @param[in] path      file to be executed
  * @param[in] argv      arguments to be passed to the sandbox
  * @param[in] envp      environment variables to be passed to the sandbox
@@ -656,7 +657,7 @@ msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
  *
  * @api
  */
-msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
+msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio, size_t heapsize,
                     const char *path, const char *argv[], const char *envp[]) {
   memory_area_t *umap = &sbp->regions[0].area;
   memory_area_t elfma;
@@ -669,11 +670,14 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
   ret = vfsDrvOpenFile(sbp->io.vfs_driver, path, VO_RDONLY, &fnp);
   CH_RETURN_ON_ERROR(ret);
 
-  /* Calculating space required for the elf file.*/
+  /* Calculating bare-minimum space required by the elf file.*/
   ret = sbElfGetAllocation(fnp, umap);
   if (CH_RET_IS_ERROR(ret)) {
     goto skip1;
   }
+
+  /* Adding the specified extra heap space.*/
+  umap->size += heapsize;
 
   /* Adding space for arguments, environment variables and parameters.*/
   size += sb_strv_getsize(envp, NULL) +   /* Space for environment.   */
