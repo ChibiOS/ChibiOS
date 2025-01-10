@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@
 #include "sbuser.h"
 #include "paths.h"
 
+#include "dirent.h"
 #include "sglob.h"
 
 #define SHELL_MAX_LINE_LENGTH       128
@@ -209,6 +210,79 @@ static void cmd_exit(int argc, char *argv[]) {
   _exit(msg);
 }
 
+static void cmd_dir(int argc, char *argv[]) {
+  DIR *dirp;
+  struct dirent *dep;
+
+  if (argc > 2) {
+    shell_usage("dir [path]");
+    return;
+  }
+
+  if (argc == 1) {
+    dirp = opendir(".");
+  }
+  else {
+    dirp = opendir(argv[1]);
+  }
+  if (dirp == NULL) {
+    shell_error(argv[1]);
+    shell_error(": No such file or directory" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  while ((dep = readdir(dirp)) != NULL) {
+    shell_write(dep->d_name);
+    shell_write(" ");
+  }
+  shell_write(SHELL_NEWLINE_STR);
+
+  closedir(dirp);
+}
+
+#if 0
+static void cmd_ls(xshell_manager_t *smp, BaseSequentialStream *stream,
+                   int argc, char *argv[]) {
+  (void)smp;
+  vfs_direntry_info_t *dip = NULL;
+
+  if (argc > 2) {
+    chprintf(stream, "Usage: ls [<dirpath>]" XSHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    msg_t ret;
+    vfs_directory_node_c *dirp;
+
+    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
+    if (dip == NULL) {
+      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
+     break;
+    }
+
+    /* Opening the (un)specified directory.*/
+    ret = vfsOpenDirectory(argc == 2 ? argv[1] : ".", &dirp);
+    if (!CH_RET_IS_ERROR(ret)) {
+
+      while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
+        chprintf(stream, "%s" XSHELL_NEWLINE_STR, dip->name);
+      }
+
+      vfsClose((vfs_node_c *)dirp);
+    }
+    else {
+      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+    }
+
+  } while (false);
+
+  if (dip != NULL) {
+    chHeapFree((void *)dip);
+  }
+}
+#endif
+
 static void cmd_mkdir(int argc, char *argv[]) {
   int ret;
 
@@ -286,27 +360,49 @@ static void cmd_rmdir(int argc, char *argv[]) {
   }
 }
 
+static void cmd_help(int argc, char *argv[]);
+
+static const struct builtins {
+  const char *name;
+  void (*cmdf)(int argc, char *argv[]);
+} builtins[] = {
+  {"cd",      cmd_cd},
+  {"dir",     cmd_dir},
+  {"echo",    cmd_echo},
+  {"env",     cmd_env},
+  {"exit",    cmd_exit},
+  {"help",    cmd_help},
+  {"mkdir",   cmd_mkdir},
+  {"mv",      cmd_mv},
+  {"path",    cmd_path},
+  {"pwd",     cmd_pwd},
+  {"rm",      cmd_rm},
+  {"rmdir",   cmd_rmdir},
+  {NULL,      NULL}
+};
+
+static void cmd_help(int argc, char *argv[]) {
+  const struct builtins *bip = builtins;
+
+  (void)argv;
+
+  if (argc != 1) {
+    shell_usage("help");
+    return;
+  }
+
+  while (bip->name != NULL) {
+    shell_write(bip->name);
+    shell_write(" ");
+    bip++;
+  }
+  shell_write(SHELL_NEWLINE_STR);
+}
+
 static bool shell_execute(int argc, char *argv[]) {
   extern int runelf(int argc, char *argv[], char *envp[]);
   char *fname = argv[0];
   int i, ret;
-
-  static const struct {
-    const char *name;
-    void (*cmdf)(int argc, char *argv[]);
-  } builtins[] = {
-    {"cd",      cmd_cd},
-    {"echo",    cmd_echo},
-    {"env",     cmd_env},
-    {"exit",    cmd_exit},
-    {"mkdir",   cmd_mkdir},
-    {"mv",      cmd_mv},
-    {"path",    cmd_path},
-    {"pwd",     cmd_pwd},
-    {"rm",      cmd_rm},
-    {"rmdir",   cmd_rmdir},
-    {NULL,      NULL}
-  };
 
   i = 0;
   while (builtins[i].name != NULL) {
