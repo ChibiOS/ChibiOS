@@ -560,6 +560,7 @@ msg_t sbElfGetAllocation(vfs_file_node_c *fnp, memory_area_t *map) {
   /* The file is assumed to be loaded at address zero, one of the loadable
      sections must start at zero.*/
   map->base = (uint8_t *)0;
+  map->size = (size_t)0;
 
   /* Large structures not used at same time, the compiler could optimize it
      but it is still a problem when running the code without optimizations for

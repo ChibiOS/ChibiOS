@@ -73,14 +73,17 @@ static inline uint32_t get_alignment(uint32_t v) {
 
 static inline uint32_t get_next_po2(uint32_t v) {
 
-  return 0x80000000U >> __CLZ(v);
+  return 0x80000000U >> (__CLZ(v) - 1);
 }
 
-static size_t get_mpu_alignment(size_t size) {
+static size_t get_mpu_alignment(memory_area_t *map) {
+  size_t basealign, sizealign;
 
-  (void)size;
+  sizealign = get_next_po2(map->size) / 4U;
+  map->size = MEM_ALIGN_NEXT(map->size, sizealign);
+  basealign = get_next_po2(map->size);
 
-  return 0;
+  return basealign;
 }
 
 /*
@@ -186,9 +189,9 @@ static bool get_mpu_settings(const sb_memory_region_t *mrp,
 }
 
 #elif defined(PORT_ARCHITECTURE_ARM_V8M_MAINLINE)
-static size_t get_mpu_alignment(size_t size) {
+static size_t get_mpu_alignment(memory_area_t *map) {
 
-  (void)size;
+  map->size = MEM_ALIGN_NEXT(map->size, 32U);
 
   return 32U;
 }
@@ -657,10 +660,11 @@ msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
 msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
                     const char *path, const char *argv[], const char *envp[]) {
   memory_area_t *umap = &sbp->regions[0].area;
+  memory_area_t elfma;
   const sb_header_t *sbhp;
   vfs_file_node_c *fnp;
   stkline_t *stkbase;
-  size_t size, align;
+  size_t size, basealign;
   msg_t ret;
 
   ret = vfsDrvOpenFile(sbp->io.vfs_driver, path, VO_RDONLY, &fnp);
@@ -681,11 +685,10 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
   /* Alignment of the memory area, it depends on the architecture because
      MPU-related restrictions. Note: there is the assumption that this
      alignment is greater than the alignment required for stacks.*/
-  align = get_mpu_alignment(umap->size);
-  umap->size = MEM_ALIGN_NEXT(umap->size, align);
+  basealign = get_mpu_alignment(umap);
 
   /* Allocating the memory area required for this dynamic sandbox.*/
-  umap->base = chHeapAllocAligned(NULL, umap->size, align);
+  umap->base = chHeapAllocAligned(NULL, umap->size, basealign);
   if (umap->base == NULL) {
     ret = CH_RET_ENOMEM;
     goto skip1;
@@ -705,12 +708,12 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
     goto skip3;
   }
 
-  /* Adjusting the size of the memory area object, we don't want the loaded
-     elf file to overwrite the environment data.*/
-  umap->size -= size;
+  /* We don't want the loaded elf file to overwrite the environment data.*/
+  elfma = *umap;
+  elfma.size -= size;
 
   /* Loading sandbox code into the specified memory area.*/
-  ret = sbElfLoad(fnp, umap);
+  ret = sbElfLoad(fnp, &elfma);
   if (CH_RET_IS_ERROR(ret)) {
     goto skip3;
   }
@@ -721,16 +724,19 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
   /* Checking header magic numbers.*/
   if ((sbhp->hdr_magic1 != SB_HDR_MAGIC1) ||
       (sbhp->hdr_magic2 != SB_HDR_MAGIC2)) {
+    ret = CH_RET_ENOEXEC;
     goto skip3;
   }
 
   /* Checking header size.*/
   if (sbhp->hdr_size != sizeof (sb_header_t)) {
+    ret = CH_RET_ENOEXEC;
     goto skip3;
   }
 
   /* Checking header entry point.*/
-  if (!chMemIsSpaceWithinX(umap, (const void *)sbhp->hdr_entry, (size_t)2)) {
+  if (!chMemIsSpaceWithinX(&elfma, (const void *)sbhp->hdr_entry, (size_t)2)) {
+    ret = CH_RET_EFAULT;
     goto skip3;
   }
 
@@ -738,13 +744,14 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio,
   *((uint16_t *)(sbhp->hdr_entry & ~(unit32_t)1)) = 0xBE00U;
 #endif
 
-  /* Everything OK, starting the unprivileged thread inside the sandbox.*/
-  if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
-    goto skip3;
-  }
-
   /* Marks for memory release.*/
   sbp->is_dynamic = true;
+
+  /* Everything OK, starting the unprivileged thread inside the sandbox.*/
+  if (sb_start_unprivileged(sbp, argv[0], prio, stkbase, sbhp->hdr_entry) == NULL) {
+    ret = CH_RET_ENOMEM;
+    goto skip3;
+  }
 
   /* File closed.*/
   vfsClose((vfs_node_c *)fnp);
