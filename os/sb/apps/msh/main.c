@@ -210,6 +210,7 @@ static void cmd_exit(int argc, char *argv[]) {
   _exit(msg);
 }
 
+#if 0
 static void cmd_dir(int argc, char *argv[]) {
   DIR *dirp;
   struct dirent *dep;
@@ -238,48 +239,6 @@ static void cmd_dir(int argc, char *argv[]) {
   shell_write(SHELL_NEWLINE_STR);
 
   closedir(dirp);
-}
-
-#if 0
-static void cmd_ls(xshell_manager_t *smp, BaseSequentialStream *stream,
-                   int argc, char *argv[]) {
-  (void)smp;
-  vfs_direntry_info_t *dip = NULL;
-
-  if (argc > 2) {
-    chprintf(stream, "Usage: ls [<dirpath>]" XSHELL_NEWLINE_STR);
-    return;
-  }
-
-  do {
-    msg_t ret;
-    vfs_directory_node_c *dirp;
-
-    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
-    if (dip == NULL) {
-      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
-     break;
-    }
-
-    /* Opening the (un)specified directory.*/
-    ret = vfsOpenDirectory(argc == 2 ? argv[1] : ".", &dirp);
-    if (!CH_RET_IS_ERROR(ret)) {
-
-      while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
-        chprintf(stream, "%s" XSHELL_NEWLINE_STR, dip->name);
-      }
-
-      vfsClose((vfs_node_c *)dirp);
-    }
-    else {
-      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
-    }
-
-  } while (false);
-
-  if (dip != NULL) {
-    chHeapFree((void *)dip);
-  }
 }
 #endif
 
@@ -367,7 +326,7 @@ static const struct builtins {
   void (*cmdf)(int argc, char *argv[]);
 } builtins[] = {
   {"cd",      cmd_cd},
-  {"dir",     cmd_dir},
+//  {"dir",     cmd_dir},
   {"echo",    cmd_echo},
   {"env",     cmd_env},
   {"exit",    cmd_exit},

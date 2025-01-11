@@ -21,6 +21,8 @@
 #include <dirent.h>
 
 #define NEWLINE_STR         "\r\n"
+#define COLUMNS             6
+#define COLUMN_SIZE         "11"
 
 /*
  * Application entry point.
@@ -29,6 +31,7 @@ int main(int argc, char *argv[], char *envp[]) {
   const char *path;
   DIR *dirp;
   struct dirent *dep;
+  int i;
 
   (void)envp;
 
@@ -50,12 +53,20 @@ int main(int argc, char *argv[], char *envp[]) {
     return 1;
   }
 
+  i = COLUMNS;
   while ((dep = readdir(dirp)) != NULL) {
-    printf("%s" NEWLINE_STR, dep->d_name);
+    printf(" %-"COLUMN_SIZE"."COLUMN_SIZE"s", dep->d_name);
+    if (--i == 0) {
+      printf(NEWLINE_STR);
+      i = COLUMNS;
+    }
   }
+  if (i > 0) {
+    printf(NEWLINE_STR);
+  }
+  fflush(NULL);
 
   closedir(dirp);
 
   return 0;
 }
-
