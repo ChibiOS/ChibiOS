@@ -629,7 +629,7 @@ msg_t sbExecStatic(sb_class_t *sbp, tprio_t prio,
   }
 
 #if SB_CFG_EXEC_DEBUG == TRUE
-  *((uint16_t *)(sbhp->hdr_entry & ~(unit32_t)1)) = 0xBE00U;
+  *((uint16_t *)(sbhp->hdr_entry & ~(uint32_t)1)) = 0xBE00U;
 #endif
 
   /* No memory release.*/
@@ -744,7 +744,7 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio, size_t heapsize,
   }
 
 #if SB_CFG_EXEC_DEBUG == TRUE
-  *((uint16_t *)(sbhp->hdr_entry & ~(unit32_t)1)) = 0xBE00U;
+  *((uint16_t *)(sbhp->hdr_entry & ~(uint32_t)1)) = 0xBE00U;
 #endif
 
   /* Marks for memory release.*/

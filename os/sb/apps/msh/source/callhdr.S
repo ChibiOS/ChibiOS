@@ -51,6 +51,7 @@ __callelf_data:
                 .thumb_func
                 .global     __callelf
 __callelf:
+                push        {r5-r11}
                 ldr         r4, =__callelf_data
                 str         sp, [r4, #0]
                 str         lr, [r4, #4]
@@ -68,9 +69,10 @@ __callelf:
                 .global     __returnelf
 __returnelf:
                 ldr         r4, =__callelf_data
-                ldmia       r4, {r5, r6}
-                mov         sp, r5
-                bx          r6
+                ldmia       r4, {r2, r3}
+                mov         sp, r2
+                pop         {r5-r11}
+                bx          r3
 
 #endif /* !defined(__DOXYGEN__) */
 
