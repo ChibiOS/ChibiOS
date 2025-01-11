@@ -380,20 +380,23 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
   };
   utp = chThdSpawnSuspended(&sbp->thread, &td);
 
-  /* The sandbox is the thread controller.*/
-  chThdSetCallbackX(utp, sb_release_memory, sbp);
-
 #if PORT_SWITCHED_REGIONS_NUMBER > 0
   /* Regions for the unprivileged thread, will be set up on switch-in.*/
   for (unsigned i = 0U; i < PORT_SWITCHED_REGIONS_NUMBER; i++) {
     port_mpureg_t mpureg;
 
     if (get_mpu_settings(&sbp->regions[i], &mpureg)) {
+      utp->state = CH_STATE_FINAL;
+      chThdRelease(utp);
       return NULL;
     }
     utp->ctx.regions[i] = mpureg;
   }
 #endif
+
+  /* The sandbox is the thread controller, note that it is done after
+     calling chThdRelease() on error.*/
+  chThdSetCallbackX(utp, sb_release_memory, sbp);
 
 #if ((CORTEX_USE_FPU == TRUE) && (PORT_USE_FPU_FAST_SWITCHING <= 1))
   /* Starting with a long frame, FPCA is set on thread start.*/
