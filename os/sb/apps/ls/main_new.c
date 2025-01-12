@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,18 +22,10 @@
 #include <errno.h>
 #include <dirent.h>
 
+#include <sys/stat.h>
+
 #define NEWLINE_STR         "\r\n"
 #define TWIDTH              80
-
-static char *dotp = ".";
-static void *bufp = NULL;
-
-static bool Rflg = false;
-static bool aflg = false;
-static bool dflg = false;
-static bool fflg = false;
-static bool lflg = false;
-static bool qflg = false;
 
 struct afile {
   char              ftype;
@@ -44,7 +36,22 @@ struct afile {
   char              *fname;
 };
 
-#define ISARG   0x8000      /* extra ``mode'' */
+static char *dotp = ".";
+static struct afile *bufp = NULL;
+
+/* Option flags, all false initially.*/
+struct {
+  bool                      Rflg;
+  bool                      aflg;
+  bool                      dflg;
+  bool                      fflg;
+  bool                      lflg;
+  bool                      qflg;
+} options;
+
+#define ISARG               0x8000      /* extra ``mode'' */
+#define dbtob(n)            ((n) * 512)
+#define kbytes(size)        (((size) + 1023L) / 1024L)
 
 struct subdirs {
   char              *sd_name;
@@ -62,37 +69,41 @@ static void usage(void) {
   fprintf(stderr, "  -q                 print ? instead of nongraphic characters" NEWLINE_STR);
 }
 
-static void freeall(void) {
-
-  if (bufp != NULL) {
-    free(bufp);
-  }
-}
-
 static void error(const char *s) {
 
   fprintf(stderr, "ls: %s" NEWLINE_STR, s);
   exit(1);
 }
 
-static bool gstat(struct afile *fp, const char *file, bool flag) {
+static int fcmp(const void *a, const void *b) {
+  const struct afile *f1 = a, *f2 = b;
 
-  memset(fp, 0, sizeof (struct afile));
+  /* Directories first then alphabetic order.*/
+  if ((f1->ftype == 'd') && (f2->ftype != 'd')) {
+    return -1;
+  }
+  if ((f1->ftype != 'd') && (f2->ftype == 'd')) {
+    return 1;
+  }
+
+  return strcmp(f1->fname, f2->fname);
+}
+
+bool gstat(struct afile *fp, char *file, bool statarg) {
+  static struct afile azerofile;
+
+  *fp = azerofile;
+  fp->fflags = 0;
+  fp->fnum = 0;
   fp->ftype = '-';
-
-  if (flag || lflg) {
-    int ret;
+  if (statarg || options.lflg) {
     struct stat stb;
 
-    ret = stat(file, &stb);
-    if (ret < 0) {
-      fprintf(stderr, "%s not found\n", file);
-      return true;
+    if (stat(file, &stb) < 0) {
+      fprintf(stderr, "%s not found" NEWLINE_STR, file);
+      return false;
     }
-
-    fp->fsize  = stb.st_size;
-    fp->fflags = stb.st_mode & ~S_IFMT;
-    fp->fnlink = stb.st_nlink;
+    fp->fsize = stb.st_size;
     switch (stb.st_mode & S_IFMT) {
     case S_IFDIR:
       fp->ftype = 'd';
@@ -110,9 +121,10 @@ static bool gstat(struct afile *fp, const char *file, bool flag) {
       fp->fsize = 0;
       break;
     }
+    fp->fnum = stb.st_ino;
+    fp->fflags = stb.st_mode & ~S_IFMT;
   }
-
-  return false;
+  return true;
 }
 
 static char *fmtmode(char *p, mode_t flags) {
@@ -213,11 +225,11 @@ static char *fmtentry(const struct afile *fp) {
   (void) snprintf(fmtres, TWIDTH, "%s%s%s",
                   /*iflg ? fmtinum(fp) :*/ "",
                   /*sflg ? fmtsize(fp) :*/ "",
-                  lflg ? fmtlstuff(fp) : "");
+                  options.lflg ? fmtlstuff(fp) : "");
 
   dp = &fmtres[strlen(fmtres)];
   for (cp = fp->fname; *cp; cp++) {
-    if (qflg && ((*cp < ' ') || (*cp >= 0x7F))) {
+    if (options.qflg && ((*cp < ' ') || (*cp >= 0x7F))) {
       *dp++ = '?';
     }
     else {
@@ -238,7 +250,7 @@ static void formatf(const struct afile *fp0, const struct afile *fplast) {
     int i, j, columns, lines, width;
 
     /* Determining number and size of columns.*/
-    if (lflg) {
+    if (options.lflg) {
       columns = 1;
     }
     else {
@@ -279,68 +291,39 @@ static void formatf(const struct afile *fp0, const struct afile *fplast) {
       }
     }
   }
-
-#if 0
-    register struct afile *fp;
-    long width = 0, w, nentry = fplast - fp0;
-    int i, j, columns, lines;
-    char *cp;
-
-    if (fp0 == fplast)
-        return;
-    if (lflg || Cflg == 0)
-        columns = 1;
-    else {
-        for (fp = fp0; fp < fplast; fp++) {
-            long len = strlen(fmtentry(fp));
-
-            if (len > width)
-                width = len;
-        }
-        if (usetabs)
-            width = (width + 8) &~ 7;
-        else
-            width += 2;
-        columns = twidth / (int)width;
-        if (columns == 0)
-            columns = 1;
-    }
-    lines = ((int)nentry + columns - 1) / columns;
-    for (i = 0; i < lines; i++) {
-        for (j = 0; j < columns; j++) {
-            fp = fp0 + j * lines + i;
-            cp = fmtentry(fp);
-            printf("%s", cp);
-            if (fp + lines >= fplast) {
-                printf("\n");
-                break;
-            }
-            w = strlen(cp);
-            while (w < width)
-                if (usetabs) {
-                    w = (w + 8) &~ 7;
-                    putchar('\t');
-                } else {
-                    w++;
-                    putchar(' ');
-                }
-        }
-    }
-#endif
 }
 
-static int fcmp(const void *a, const void *b) {
-  const struct afile *f1 = a, *f2 = b;
+static char* cat(char *dir, char *file) {
+  static char dfile[BUFSIZ];
 
-  /* Directories first then alphabetic order.*/
-  if ((f1->ftype == 'd') && (f2->ftype != 'd')) {
-    return -1;
-  }
-  if ((f1->ftype != 'd') && (f2->ftype == 'd')) {
-    return 1;
+  if (strlen(dir) + 1 + strlen(file) + 1 > BUFSIZ) {
+    error("filename too long");
   }
 
-  return strcmp(f1->fname, f2->fname);
+  if (!strcmp(dir, "") || !strcmp(dir, ".")) {
+    (void)strcpy(dfile, file);
+    return dfile;
+  }
+
+  (void)strcpy(dfile, dir);
+  if (dir[strlen(dir) - 1] != '/' && *file != '/') {
+    (void)strcat(dfile, "/");
+  }
+
+  (void)strcat(dfile, file);
+
+  return dfile;
+}
+
+static char *savestr(char *str) {
+  char *cp = malloc(strlen(str) + 1);
+
+  if (cp == NULL) {
+    error("out of memory");
+  }
+
+  (void)strcpy(cp, str);
+  return cp;
 }
 
 static long getdir(char *dir, struct afile **pfp0, struct afile **pfplast) {
@@ -352,34 +335,41 @@ static long getdir(char *dir, struct afile **pfp0, struct afile **pfplast) {
   dirp = opendir(dir);
   if (dirp == NULL) {
     *pfp0 = *pfplast = NULL;
-    printf("%s unreadable\n", dir); /* not stderr! */
-    return (0);
+    printf("%s unreadable" NEWLINE_STR, dir); /* not stderr! */
+    return 0;
   }
+
   fp = *pfp0 = (struct afile*)calloc(nent, sizeof(struct afile));
-  if (fp == 0L) {
-    fprintf(stderr, "ls: out of memory\n");
-    exit(1);
+  if (fp == NULL) {
+    error("out of memory");
   }
   *pfplast = *pfp0 + nent;
+
   nb = 0;
   while ((dp = readdir(dirp)) != NULL) {
-    if (dp->d_ino == 0)
+    if (dp->d_ino == 0) {
       continue;
-    if (((aflg == false) && (dp->d_name[0] == '.') && (/*(Aflg == 0)*/false)) ||
-        (dp->d_name[1] == 0) ||
-        ((dp->d_name[1] == '.') && (dp->d_name[2] == 0)))
+    }
+
+    if ((options.aflg == false) &&
+        (dp->d_name[0] == '.') &&
+        ((dp->d_name[1] == 0) || ((dp->d_name[1] == '.') &&
+                                  (dp->d_name[2] == 0)))) {
+        continue;
+    }
+
+    if (gstat(fp, cat(dir, dp->d_name), /*Fflg + */options.Rflg/*, &nb*/)) {
       continue;
-    if (gstat(fp, cat(dir, dp->d_name), /*Fflg + */Rflg/*, &nb*/))
-      continue;
+    }
+
     fp->fnum = dp->d_ino;
     fp->fname = savestr(dp->d_name);
     fp++;
     if (fp == *pfplast) {
       *pfp0 = (struct afile*)realloc((char*)*pfp0,
                                      2 * nent * sizeof(struct afile));
-      if (*pfp0 == 0) {
-        fprintf(stderr, "ls: out of memory\n");
-        exit(1);
+      if (*pfp0 == NULL) {
+        error("out of memory");
       }
       fp = *pfp0 + nent;
       *pfplast = fp + nent;
@@ -388,6 +378,7 @@ static long getdir(char *dir, struct afile **pfp0, struct afile **pfplast) {
   }
   closedir(dirp);
   *pfplast = fp;
+
   return kbytes(dbtob(nb));
 }
 
@@ -398,34 +389,44 @@ static void formatd(char *name, int title) {
   long nkb;
 
   nkb = getdir(name, &dfp0, &dfplast);
-  if (dfp0 == 0)
+  if (dfp0 == NULL) {
     return;
-  if (fflg == 0)
+  }
+
+  if (options.fflg == 0) {
     qsort(dfp0, dfplast - dfp0, sizeof(struct afile), fcmp);
-  if (title)
-    printf("%s:\n", name);
-  if (lflg/* || sflg*/)
-    printf("total %ld\n", nkb);
+  }
+
+  if (title) {
+    printf("%s:" NEWLINE_STR, name);
+  }
+
+  if (options.lflg/* || sflg*/) {
+    printf("total %ld" NEWLINE_STR, nkb);
+  }
+
   formatf(dfp0, dfplast);
-  if (Rflg)
+  if (options.Rflg)
     for (fp = dfplast - 1; fp >= dfp0; fp--) {
-      if (fp->ftype != 'd' || !strcmp(fp->fname, ".")
-          || !strcmp(fp->fname, ".."))
+      if (fp->ftype != 'd' || !strcmp(fp->fname, ".") || !strcmp(fp->fname, "..")) {
         continue;
-      dp = (struct subdirs *)malloc(sizeof(struct subdirs));
-      if (dp == 0L) { /*PATCH GIOV.*/
-        fprintf(stderr, "ls: out of memory\n");
-        exit(1);
       }
+
+      dp = (struct subdirs *)malloc(sizeof(struct subdirs));
+      if (dp == NULL) { /*PATCH GIOV.*/
+        error("out of memory");
+      }
+
       dp->sd_name = savestr(cat(name, fp->fname));
       dp->sd_next = subdirs;
       subdirs = dp;
     }
   for (fp = dfp0; fp < dfplast; fp++) {
-    if ((fp->fflags & ISARG) == 0 && fp->fname)
+    if ((fp->fflags & ISARG) == 0 && fp->fname) {
       free(fp->fname);
 //    if (fp->flinkto)
 //      free(fp->flinkto);
+    }
   }
   free((char*)dfp0);
 }
@@ -439,11 +440,6 @@ int main(int argc, char *argv[], char *envp[]) {
 
   (void)envp;
 
-#if 1
-  /* Enable for RAM debug.*/
-  asm volatile ("bkpt");
-#endif
-
   /* Parsing arguments.*/
   argv++;
   argc--;
@@ -452,22 +448,22 @@ int main(int argc, char *argv[], char *envp[]) {
     while (*argv[0] != '\0') {
       switch (*argv[0]) {
       case 'R':
-        Rflg = true;
+        options.Rflg = true;
         break;
       case 'a':
-        aflg = true;
+        options.aflg = true;
         break;
       case 'd':
-        dflg = true;
+        options.dflg = true;
         break;
       case 'f':
-        fflg = true;
+        options.fflg = true;
         break;
       case 'l':
-        lflg = true;
+        options.lflg = true;
         break;
       case 'q':
-        qflg = true;
+        options.qflg = true;
         break;
       default:
         usage();
@@ -478,11 +474,11 @@ int main(int argc, char *argv[], char *envp[]) {
   }
 
   /* The "f" flag has side effects.*/
-  if (fflg) {
-    aflg = true;
-    lflg = false;
-    /*sflg = false;*/
-    /*tflg = false*/;
+  if (options.fflg) {
+    options.aflg = true;
+    options.lflg = false;
+    /*options.sflg = false;*/
+    /*options.tflg = false*/;
   }
 
   /* Case where no paths are specified.*/
@@ -493,94 +489,58 @@ int main(int argc, char *argv[], char *envp[]) {
 
   /* Allocating a single big buffer for all files.*/
   bufp = calloc(argc, sizeof (struct afile));
-  fp = (struct afile *)bufp;
   if (bufp == NULL) {
     error("out of memory");
   }
 
   /* Scanning all arguments and populating the array.*/
-  fp0 = fp;
+  fp0 = fp = bufp;
   for (i = 0; i < argc; i++) {
-      if (!gstat(fp, *argv, true)) {
-          fp->fname = *argv;
-          fp->fflags |= ISARG;
-          fp++;
-      }
-      argv++;
+    if (!gstat(fp, *argv, true)) {
+      fp->fname = *argv;
+      fp->fflags |= ISARG;
+      fp++;
+    }
+    argv++;
   }
   fplast = fp;
 
   /* Sorting the array, if not disabled.*/
-  if (!fflg) {
+  if (!options.fflg) {
     qsort(fp0, fplast - fp0, sizeof (struct afile), fcmp);
   }
 
-  if (dflg) {
-    /* Not entering directories.*/
-    formatf(fp0, fplast);
+  if (options.fflg) {
+    fp = fp0;
   }
   else {
-    /* Entering directories. TODO */
-    if (fflg) {
-      fp = fp0;
-    }
-    else {
-      /* Skipping directories.*/
-      for (fp = fp0; fp < fplast && fp->ftype != 'd'; fp++) {
-      }
-      formatf(fp0, fp);
-    }
+    for (fp = fp0; fp < fplast && fp->ftype != 'd'; fp++)
+      continue;
+    formatf(fp0, fp);
+  }
 
-    if (fp < fplast) {
-      if (fp > fp0) {
-        printf("\n");
-      }
-#if 0
-      for (;;) {
-        formatd(fp->fname, argc > 1);
-        while (subdirs) {
-          struct subdirs *t;
+  if (fp < fplast) {
+    if (fp > fp0) {
+      printf(NEWLINE_STR);
+    }
+    for (;;) {
+      formatd(fp->fname, argc > 1);
+      while (subdirs) {
+        struct subdirs *t;
 
-          t = subdirs;
-          subdirs = t->sd_next;
-          printf("\n");
-          formatd(t->sd_name, 1);
-          free((void *)t->sd_name);
-          free((void *)t);
-        }
-        if (++fp == fplast)
-          break;
-        printf("\n");
+        t = subdirs;
+        subdirs = t->sd_next;
+        printf(NEWLINE_STR);
+        formatd(t->sd_name, 1);
+        free(t->sd_name);
+        free(t);
       }
-#endif
+      if (++fp == fplast) {
+        break;
+      }
+      printf(NEWLINE_STR);
     }
   }
 
-  freeall();
   return 0;
-#if 0
-  if (argc > 2) {
-    fprintf(stderr, "Usage: ls [<dirpath>]" NEWLINE_STR);
-    return 1;
-  }
-
-  if (argc == 1) {
-    path = ".";
-  }
-  else {
-    path = argv[1];
-  }
-
-  dirp = opendir(path);
-  if (dirp == NULL) {
-    fprintf(stderr, "ls: %s" NEWLINE_STR, strerror(errno));
-    return 1;
-  }
-
-  while ((dep = readdir(dirp)) != NULL) {
-    printf("%s" NEWLINE_STR, dep->d_name);
-  }
-
-  closedir(dirp);
-#endif
 }

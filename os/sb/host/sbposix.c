@@ -84,6 +84,7 @@ static int sb_io_stat(sb_class_t *sbp, const char *path, struct stat *statbuf) {
     statbuf->st_mode  = (mode_t)vstat.mode;
     statbuf->st_size  = (off_t)vstat.size;
     statbuf->st_nlink = 1;
+    /* TODO st_blocks, st_blksize, st_ino, timespecs.*/
   }
 
   return ret;
