@@ -110,8 +110,12 @@ const halclkcfg_t hal_clkcfg_default = {
                           STM32_PLLP    | STM32_PLLPEN  |
                           STM32_PLLN    | STM32_PLLM    |
                           STM32_PLLSRC,
+#if defined(FLASH_ACR_DBG_SWEN)
   .flash_acr            = FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN |
                           FLASH_ACR_PRFTEN   | STM32_FLASHBITS
+#else
+  .flash_acr            = FLASH_ACR_ICEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS
+#endif
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -753,8 +757,12 @@ void stm32_clock_init(void) {
   hal_lld_set_static_clocks();
 
   /* Set flash WS's for SYSCLK source.*/
+#if defined(FLASH_ACR_DBG_SWEN)
   flash_set_acr(FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
                 STM32_FLASHBITS);
+#else
+  flash_set_acr(FLASH_ACR_ICEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS);
+#endif
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
 #if STM32_SW != STM32_SW_HSISYS

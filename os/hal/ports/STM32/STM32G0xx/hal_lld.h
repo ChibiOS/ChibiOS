@@ -69,7 +69,7 @@
 #elif defined(STM32G081xx)
 #define PLATFORM_NAME           "STM32G0 Entry-level with Crypto"
 
-#elif defined(STM32G0B1xx)
+#elif defined(STM32G0B1xx) || defined(STM32G0B0xx)
 #define PLATFORM_NAME           "STM32G0 Extended Flash"
 
 #elif defined(STM32G0C1xx)
@@ -848,6 +848,9 @@
 
 #elif defined(STM32G0B1xx) && !defined(STM32G0B1_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G0B1_MCUCONF not defined"
+
+#elif defined(STM32G0B0xx) && !defined(STM32G0B0_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32G0B0_MCUCONF not defined"
 
 #elif defined(STM32G0C1xx) && !defined(STM32G0C1_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G0C1_MCUCONF not defined"

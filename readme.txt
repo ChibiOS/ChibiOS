@@ -75,6 +75,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Support for STM32G0B0xx.
 - NEW: Added chRegGarbageCollect() function to registry for simplified
        dynamic threads management.
 - NEW: Added integration demos for VFS+LittleFS/FatFS+XSHELL.
