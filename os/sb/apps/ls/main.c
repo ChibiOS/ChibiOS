@@ -59,7 +59,7 @@ static void usage(void) {
 
 static void error(const char *s) {
 
-  fprintf(stderr, "ls: %s" NEWLINE_STR, s);
+  fprintf(stderr, "ls: fatal error; %s" NEWLINE_STR, s);
   exit(1);
 }
 
@@ -142,12 +142,42 @@ memfail:
   return NULL;
 }
 
-static void dostat(struct diritem *dip) {
+static bool dostat(struct diritem *dip) {
+  struct stat stb;
 
-  (void) dip;
+  if (stat(dip->fname, &stb) < 0) {
+    fprintf(stderr, "ls: cannot access '%s': %s" NEWLINE_STR, dip->fname, strerror(errno));
+    return false;
+  }
+
+  dip->fnum = stb.st_ino;
+  dip->fflags = stb.st_mode & ~S_IFMT;
+  dip->fsize = stb.st_size;
+  switch (stb.st_mode & S_IFMT) {
+  case S_IFDIR:
+    dip->ftype = 'd';
+    break;
+  case S_IFBLK:
+    dip->ftype = 'b';
+    dip->fsize = 0; //stb.st_rdev;
+    break;
+  case S_IFCHR:
+    dip->ftype = 'c';
+    dip->fsize = 0; //stb.st_rdev;
+    break;
+  case S_IFSOCK:
+    dip->ftype = 's';
+    dip->fsize = 0;
+    break;
+  default:
+    dip->ftype = '-';
+    dip->fsize = 0;
+  }
+
+  return true;
 }
 
-static void build_list(const char *path, struct dirlist *dlp) {
+static void build_list_from_path(const char *path, struct dirlist *dlp) {
   DIR *dirp;
   struct dirent *dep;
 
@@ -158,7 +188,9 @@ static void build_list(const char *path, struct dirlist *dlp) {
 
    while ((dep = readdir(dirp)) != NULL) {
      struct diritem *dip = dirlist_add(&dlp, dep->d_name);
-     dostat(dip);
+     if (!dostat(dip)) {
+       dlp->n--;
+     }
    }
 
    closedir(dirp);
@@ -205,7 +237,9 @@ int main(int argc, char *argv[], char *envp[]) {
     /* Scanning all arguments and populating the array.*/
     for (i = 0; i < argc; i++) {
       struct diritem *dip = dirlist_add(&toplist, *argv++);
-      dostat(dip);
+      if (!dostat(dip)) {
+        toplist->n--;
+      }
     }
   }
   else {
@@ -215,7 +249,7 @@ int main(int argc, char *argv[], char *envp[]) {
       error("out of memory");
     }
 
-    build_list(".", toplist);
+    build_list_from_path(".", toplist);
   }
 
   /* Printing the top level.*/
