@@ -46,7 +46,11 @@
  * @name    File types
  * @{
  */
+#define DT_UNKNOWN          0
+#define DT_SOCK             IFTODT(S_IFSOCK)
+#define DT_LNK              IFTODT(S_IFLNK)
 #define DT_REG              IFTODT(S_IFREG)
+#define DT_BLK              IFTODT(S_IFBLK)
 #define DT_DIR              IFTODT(S_IFDIR)
 #define DT_CHR              IFTODT(S_IFCHR)
 #define DT_FIFO             IFTODT(S_IFIFO)

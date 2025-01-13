@@ -33,7 +33,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "errcodes.h"
 #include "dirent.h"
 #include "sbsysc.h"
 

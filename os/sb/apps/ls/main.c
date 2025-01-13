@@ -22,19 +22,24 @@
 #include <errno.h>
 #include <dirent.h>
 
+#include <sys/stat.h>
+
 #define NEWLINE_STR         "\r\n"
+#define TERMWIDTH           80
 #define COLUMNS             6
 #define COLUMN_SIZE         "11"
 
 /* Option flags, all false initially.*/
 struct {
+  bool              aflg;
+  bool              fflg;
   bool              lflg;
 } options;
 
 struct diritem {
   char              ftype;
   ino_t             fnum;
-  nlink_t           fnlink;
+//  nlink_t           fnlink;
   mode_t            fflags;
   off_t             fsize;
   char              *fname;
@@ -53,6 +58,8 @@ static struct dirlist *toplist;
 static void usage(void) {
   fprintf(stderr, "Usage: ls [<opts>] [<file>]..." NEWLINE_STR);
   fprintf(stderr, "Options:" NEWLINE_STR);
+  fprintf(stderr, "  -a                 do not ignore entries starting with ." NEWLINE_STR);
+  fprintf(stderr, "  -f                 do not sort, enable -a, disable -l" NEWLINE_STR);
   fprintf(stderr, "  -l                 use a long listing format" NEWLINE_STR);
   exit(1);
 }
@@ -142,6 +149,11 @@ memfail:
   return NULL;
 }
 
+static void dirlist_undo(struct dirlist *dlp) {
+
+  dlp->n--;
+}
+
 static bool dostat(struct diritem *dip) {
   struct stat stb;
 
@@ -154,19 +166,32 @@ static bool dostat(struct diritem *dip) {
   dip->fflags = stb.st_mode & ~S_IFMT;
   dip->fsize = stb.st_size;
   switch (stb.st_mode & S_IFMT) {
-  case S_IFDIR:
-    dip->ftype = 'd';
+#ifndef __MINGW32__
+  case S_IFSOCK:
+    dip->ftype = 's';
+    dip->fsize = 0;
+    break;
+  case S_IFLNK:
+    dip->ftype = 'l';
+    dip->fsize = 0;
+    break;
+#endif
+  case S_IFREG:
+    dip->ftype = 'r';
     break;
   case S_IFBLK:
     dip->ftype = 'b';
     dip->fsize = 0; //stb.st_rdev;
     break;
+  case S_IFDIR:
+    dip->ftype = 'd';
+    break;
   case S_IFCHR:
     dip->ftype = 'c';
     dip->fsize = 0; //stb.st_rdev;
     break;
-  case S_IFSOCK:
-    dip->ftype = 's';
+  case S_IFIFO:
+    dip->ftype = 'f';
     dip->fsize = 0;
     break;
   default:
@@ -177,30 +202,107 @@ static bool dostat(struct diritem *dip) {
   return true;
 }
 
+static int fcmp(const void *a, const void *b) {
+  const struct diritem *f1 = a, *f2 = b;
+
+  /* Directories first then alphabetic order.*/
+  if ((f1->ftype == 'd') && (f2->ftype != 'd')) {
+    return -1;
+  }
+  if ((f1->ftype != 'd') && (f2->ftype == 'd')) {
+    return 1;
+  }
+
+  return strcmp(f1->fname, f2->fname);
+}
+
 static void build_list_from_path(const char *path, struct dirlist *dlp) {
   DIR *dirp;
   struct dirent *dep;
 
   dirp = opendir(path);
-   if (dirp == NULL) {
-     error(strerror(errno));
-   }
+  if (dirp == NULL) {
+    error(strerror(errno));
+  }
 
-   while ((dep = readdir(dirp)) != NULL) {
-     struct diritem *dip = dirlist_add(&dlp, dep->d_name);
-     if (!dostat(dip)) {
-       dlp->n--;
+  while ((dep = readdir(dirp)) != NULL) {
+    struct diritem *dip = dirlist_add(&dlp, dep->d_name);
+
+    if ((options.aflg == false) &&
+        (dep->d_name[0] == '.') &&
+        ((dep->d_name[1] == 0) || ((dep->d_name[1] == '.') &&
+                                    (dep->d_name[2] == 0)))) {
+      dirlist_undo(dlp);
+      continue;
+    }
+
+#ifndef __MINGW32__
+     /* If the -l option is set or the readdir() is unable to return the
+        file type a stat() is needed.*/
+     if ((options.lflg == true) || (dep->d_type == DT_UNKNOWN))  {
+       if (!dostat(dip)) {
+         dirlist_undo(dlp);
+       }
      }
-   }
+     else{
+       switch (dep->d_type) {
+       case DT_LNK:
+         dip->ftype = 'l';
+         break;
+       case DT_REG:
+         dip->ftype = 'r';
+         break;
+       case DT_BLK:
+         dip->ftype = 'b';
+         break;
+       case DT_DIR:
+         dip->ftype = 'd';
+         break;
+       case DT_CHR:
+         dip->ftype = 'c';
+         break;
+       case DT_FIFO:
+         dip->ftype = 'f';
+         break;
+       default:
+         dip->ftype = '-';
+       }
+     }
+#else
+    if (!dostat(dip)) {
+      dirlist_undo(dlp);
+    }
+#endif
+  }
 
-   closedir(dirp);
+  closedir(dirp);
+
+  if (options.fflg == false) {
+    qsort(&dlp->items[0], dlp->n, sizeof(struct diritem), fcmp);
+  }
+}
+
+static void printlist(struct dirlist *dlp) {
+  int i, j, cols, col;
+
+  col = dlp->maxlen + 1;
+  cols = TERMWIDTH / col;
+  i = 0;
+  while (i < dlp->n) {
+    j = 0;
+    while ((j < cols) && (i < dlp->n)) {
+      printf(" %-*.*s", col, col, dlp->items[i].fname);
+      j++, i++;
+    }
+    printf(NEWLINE_STR);
+  }
 }
 
 /*
  * Application entry point.
  */
 int main(int argc, char *argv[], char *envp[]) {
-  int i, col;
+  int i; //, col;
 
   (void)envp;
 
@@ -211,6 +313,12 @@ int main(int argc, char *argv[], char *envp[]) {
     argv[0]++;
     while (*argv[0] != '\0') {
       switch (*argv[0]) {
+      case 'a':
+        options.aflg = true;
+        break;
+      case 'f':
+        options.fflg = true;
+        break;
       case 'l':
         options.lflg = true;
         break;
@@ -221,11 +329,11 @@ int main(int argc, char *argv[], char *envp[]) {
     argv[0]++;
   }
 
-  /* Case where no paths are specified.*/
-//  if (argc == 0) {
-//    argc++;
-//    argv = &dotp;
-//  }
+  /* The "f" flag has side effects.*/
+  if (options.fflg) {
+    options.aflg = true;
+    options.lflg = false;
+  }
 
   if (argc > 0) {
     /* Allocating the top level list.*/
@@ -253,17 +361,7 @@ int main(int argc, char *argv[], char *envp[]) {
   }
 
   /* Printing the top level.*/
-  col = COLUMNS;
-  for (i = 0; i < toplist->n; i++) {
-    printf(" %-"COLUMN_SIZE"."COLUMN_SIZE"s", toplist->items[i].fname);
-    if (--col <= 0) {
-      printf(NEWLINE_STR);
-      col = COLUMNS;
-    }
-  }
-  if (col > 0) {
-    printf(NEWLINE_STR);
-  }
+  printlist(toplist);
 
   /* Flushing the standard files.*/
   fflush(NULL);
@@ -273,52 +371,3 @@ int main(int argc, char *argv[], char *envp[]) {
 
   exit(0);
 }
-
-#if 0
-/*
- * Application entry point.
- */
-int main(int argc, char *argv[], char *envp[]) {
-  const char *path;
-  DIR *dirp;
-  struct dirent *dep;
-  int i;
-
-  (void)envp;
-
-  if (argc > 2) {
-    fprintf(stderr, "Usage: ls [<dirpath>]" NEWLINE_STR);
-    return 1;
-  }
-
-  if (argc == 1) {
-    path = ".";
-  }
-  else {
-    path = argv[1];
-  }
-
-  dirp = opendir(path);
-  if (dirp == NULL) {
-    fprintf(stderr, "ls: %s" NEWLINE_STR, strerror(errno));
-    return 1;
-  }
-
-  i = COLUMNS;
-  while ((dep = readdir(dirp)) != NULL) {
-    printf(" %-"COLUMN_SIZE"."COLUMN_SIZE"s", dep->d_name);
-    if (--i == 0) {
-      printf(NEWLINE_STR);
-      i = COLUMNS;
-    }
-  }
-  if (i > 0) {
-    printf(NEWLINE_STR);
-  }
-  fflush(NULL);
-
-  closedir(dirp);
-
-  return 0;
-}
-#endif
