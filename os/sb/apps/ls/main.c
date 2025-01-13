@@ -48,6 +48,7 @@ struct diritem {
 };
 
 struct dirlist {
+  char              *path;
   bool              free_items;
   size_t            maxlen;
   int               max;
@@ -85,6 +86,7 @@ static struct dirlist *dirlist_new(unsigned max, bool free_items) {
     error("out of memory");
   }
 
+  dlp->path = "";
   dlp->free_items = free_items;
   dlp->maxlen = (size_t)0;
   dlp->max = max;
@@ -242,9 +244,28 @@ static int fcmp(const void *a, const void *b) {
   return strcmp(f1->fname, f2->fname);
 }
 
-static void build_list_from_path(const char *path, struct dirlist *dlp) {
+static void build_list_from_args(char *argv[], struct dirlist *dlp) {
+
+  dlp->path = ".";
+
+  while (*argv != NULL) {
+    struct diritem *dip = dirlist_add(&toplist, *argv++);
+    if (!dostat(dip)) {
+      toplist->n--;
+    }
+    argv++;
+  }
+
+  if (options.fflg == false) {
+    qsort(&dlp->items[0], dlp->n, sizeof(struct diritem), fcmp);
+  }
+}
+
+static void build_list_from_path(char *path, struct dirlist *dlp) {
   DIR *dirp;
   struct dirent *dep;
+
+  dlp->path = path;
 
   dirp = opendir(path);
   if (dirp == NULL) {
@@ -319,11 +340,13 @@ static void printlist(struct dirlist *dlp, bool listdirs) {
     while ((j < cols) && (i < dlp->n)) {
       struct diritem *dip = &dlp->items[i];
       if (dip->ftype == 'd') {
-        if (0 /*listdirs*/) {
-#if 0
+        if (listdirs) {
+          char *path = cat(dlp->path, dip->fname);
+#if 1
           /* Printing subdir.*/
           struct dirlist *sdlp = dirlist_new(8, true);
-          build_list_from_path(dip->fname, sdlp);
+          build_list_from_path(path, sdlp);
+          printf(NEWLINE_STR "%s:" NEWLINE_STR, path);
           printlist(sdlp, false);
           dirlist_free(sdlp);
 #endif
@@ -331,15 +354,15 @@ static void printlist(struct dirlist *dlp, bool listdirs) {
         else {
           /* Printing dir name only.*/
           if (options.yflg == false) {
-            printf(" \033[1m%-*.*s\033[0m", col, col, dip->fname);
+            printf("\033[1m%-*.*s\033[0m ", col, col, dip->fname);
           }
           else  {
-            printf(" %-*.*s", col, col, dip->fname);
+            printf("%-*.*s ", col, col, dip->fname);
           }
         }
       }
       else {
-        printf(" %-*.*s", col, col, dip->fname);
+        printf("%-*.*s ", col, col, dip->fname);
       }
       j++, i++;
     }
@@ -351,7 +374,6 @@ static void printlist(struct dirlist *dlp, bool listdirs) {
  * Application entry point.
  */
 int main(int argc, char *argv[], char *envp[]) {
-  int i;
 
   (void)envp;
 
@@ -399,13 +421,7 @@ int main(int argc, char *argv[], char *envp[]) {
       error("out of memory");
     }
 
-    /* Scanning all arguments and populating the array.*/
-    for (i = 0; i < argc; i++) {
-      struct diritem *dip = dirlist_add(&toplist, *argv++);
-      if (!dostat(dip)) {
-        toplist->n--;
-      }
-    }
+    build_list_from_args(argv, toplist);
   }
   else {
     /* Allocating the top level list.*/
