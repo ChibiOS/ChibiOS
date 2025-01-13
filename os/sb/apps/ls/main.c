@@ -32,8 +32,10 @@
 /* Option flags, all false initially.*/
 struct {
   bool              aflg;
+  bool              dflg;
   bool              fflg;
   bool              lflg;
+  bool              yflg;
 } options;
 
 struct diritem {
@@ -59,8 +61,10 @@ static void usage(void) {
   fprintf(stderr, "Usage: ls [<opts>] [<file>]..." NEWLINE_STR);
   fprintf(stderr, "Options:" NEWLINE_STR);
   fprintf(stderr, "  -a                 do not ignore entries starting with ." NEWLINE_STR);
+  fprintf(stderr, "  -d                 list directories themselves, not their contents" NEWLINE_STR);
   fprintf(stderr, "  -f                 do not sort, enable -a, disable -l" NEWLINE_STR);
   fprintf(stderr, "  -l                 use a long listing format" NEWLINE_STR);
+  fprintf(stderr, "  -y                 enforce plain text output (non standard option)" NEWLINE_STR);
   exit(1);
 }
 
@@ -202,6 +206,28 @@ static bool dostat(struct diritem *dip) {
   return true;
 }
 
+static char* cat(char *dir, char *file) {
+  static char dfile[BUFSIZ];
+
+  if (strlen(dir) + 1 + strlen(file) + 1 > BUFSIZ) {
+    error("filename too long");
+  }
+
+  if (!strcmp(dir, "") || !strcmp(dir, ".")) {
+    (void)strcpy(dfile, file);
+    return dfile;
+  }
+
+  (void)strcpy(dfile, dir);
+  if (dir[strlen(dir) - 1] != '/' && *file != '/') {
+    (void)strcat(dfile, "/");
+  }
+
+  (void)strcat(dfile, file);
+
+  return dfile;
+}
+
 static int fcmp(const void *a, const void *b) {
   const struct diritem *f1 = a, *f2 = b;
 
@@ -282,7 +308,7 @@ static void build_list_from_path(const char *path, struct dirlist *dlp) {
   }
 }
 
-static void printlist(struct dirlist *dlp) {
+static void printlist(struct dirlist *dlp, bool listdirs) {
   int i, j, cols, col;
 
   col = dlp->maxlen + 1;
@@ -291,7 +317,30 @@ static void printlist(struct dirlist *dlp) {
   while (i < dlp->n) {
     j = 0;
     while ((j < cols) && (i < dlp->n)) {
-      printf(" %-*.*s", col, col, dlp->items[i].fname);
+      struct diritem *dip = &dlp->items[i];
+      if (dip->ftype == 'd') {
+        if (0 /*listdirs*/) {
+#if 0
+          /* Printing subdir.*/
+          struct dirlist *sdlp = dirlist_new(8, true);
+          build_list_from_path(dip->fname, sdlp);
+          printlist(sdlp, false);
+          dirlist_free(sdlp);
+#endif
+        }
+        else {
+          /* Printing dir name only.*/
+          if (options.yflg == false) {
+            printf(" \033[1m%-*.*s\033[0m", col, col, dip->fname);
+          }
+          else  {
+            printf(" %-*.*s", col, col, dip->fname);
+          }
+        }
+      }
+      else {
+        printf(" %-*.*s", col, col, dip->fname);
+      }
       j++, i++;
     }
     printf(NEWLINE_STR);
@@ -302,7 +351,7 @@ static void printlist(struct dirlist *dlp) {
  * Application entry point.
  */
 int main(int argc, char *argv[], char *envp[]) {
-  int i; //, col;
+  int i;
 
   (void)envp;
 
@@ -316,17 +365,25 @@ int main(int argc, char *argv[], char *envp[]) {
       case 'a':
         options.aflg = true;
         break;
+      case 'd':
+        options.dflg = true;
+        break;
       case 'f':
         options.fflg = true;
         break;
       case 'l':
         options.lflg = true;
         break;
+      case 'y':
+        options.yflg = true;
+        break;
       default:
         usage();
       }
+      argv[0]++;
     }
-    argv[0]++;
+    argv++;
+    argc--;
   }
 
   /* The "f" flag has side effects.*/
@@ -361,7 +418,7 @@ int main(int argc, char *argv[], char *envp[]) {
   }
 
   /* Printing the top level.*/
-  printlist(toplist);
+  printlist(toplist, !options.dflg);
 
   /* Flushing the standard files.*/
   fflush(NULL);
