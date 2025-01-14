@@ -63,7 +63,7 @@ static void usage(void) {
   fprintf(stderr, "Options:" NEWLINE_STR);
   fprintf(stderr, "  -a                 do not ignore entries starting with ." NEWLINE_STR);
   fprintf(stderr, "  -d                 list directories themselves, not their contents" NEWLINE_STR);
-  fprintf(stderr, "  -f                 do not sort, enable -a, disable -l" NEWLINE_STR);
+  fprintf(stderr, "  -f                 do not sort, enable -a and -d, disable -l" NEWLINE_STR);
   fprintf(stderr, "  -l                 use a long listing format" NEWLINE_STR);
   fprintf(stderr, "  -y                 enforce plain text output (non standard option)" NEWLINE_STR);
   exit(1);
@@ -73,6 +73,11 @@ static void error(const char *s) {
 
   fprintf(stderr, "ls: fatal error; %s" NEWLINE_STR, s);
   exit(1);
+}
+
+static void newline(void) {
+
+  printf(NEWLINE_STR);
 }
 
 static struct dirlist *dirlist_new(unsigned max, bool free_items) {
@@ -86,7 +91,7 @@ static struct dirlist *dirlist_new(unsigned max, bool free_items) {
     error("out of memory");
   }
 
-  dlp->path = "";
+  dlp->path = NULL;
   dlp->free_items = free_items;
   dlp->maxlen = (size_t)0;
   dlp->max = max;
@@ -104,6 +109,11 @@ static void dirlist_free(struct dirlist *dlp) {
       free((void *)dlp->items[i].fname);
     }
   }
+
+  if (dlp->path != NULL) {
+    free(dlp->path);
+  }
+
   free(dlp);
 }
 
@@ -155,18 +165,62 @@ memfail:
   return NULL;
 }
 
-static void dirlist_undo(struct dirlist *dlp) {
+static void dirlist_undo(struct dirlist **dlpp) {
 
-  dlp->n--;
+  (*dlpp)->n--;
 }
 
-static bool dostat(struct diritem *dip) {
-  struct stat stb;
+static char *new_append_path(char *dir, char *file) {
+  char *p;
+  size_t ld, lf;
 
-  if (stat(dip->fname, &stb) < 0) {
+  ld = strlen(dir);
+  lf = strlen(file);
+  p = malloc(ld + 1 + lf + 1);
+  if (p == NULL) {
+    error("out of memory");
+  }
+
+  if (!strcmp(dir, "") || !strcmp(dir, ".")) {
+    strcpy(p, file);
+  }
+  else {
+    strcpy(p, dir);
+    if ((dir[ld - 1] != '/') && (file[0] != '/')) {
+      strcat(p, "/");
+    }
+    strcat(p, file);
+  }
+
+  return p;
+}
+
+static char *new_path(char *path) {
+  char *p;
+  size_t l;
+
+  l = strlen(path);
+  p = malloc(l + 1);
+  if (p == NULL) {
+    error("out of memory");
+  }
+  strcpy(p, path);
+
+  return p;
+}
+
+static bool dostat( struct dirlist *dlp, struct diritem *dip) {
+  struct stat stb;
+  char *path;
+
+  path = new_append_path(dlp->path, dip->fname);
+  if (stat(path, &stb) < 0) {
+    free(path);
     fprintf(stderr, "ls: cannot access '%s': %s" NEWLINE_STR, dip->fname, strerror(errno));
     return false;
   }
+
+  free(path);
 
   dip->fnum = stb.st_ino;
   dip->fflags = stb.st_mode & ~S_IFMT;
@@ -208,28 +262,6 @@ static bool dostat(struct diritem *dip) {
   return true;
 }
 
-static char* cat(char *dir, char *file) {
-  static char dfile[BUFSIZ];
-
-  if (strlen(dir) + 1 + strlen(file) + 1 > BUFSIZ) {
-    error("filename too long");
-  }
-
-  if (!strcmp(dir, "") || !strcmp(dir, ".")) {
-    (void)strcpy(dfile, file);
-    return dfile;
-  }
-
-  (void)strcpy(dfile, dir);
-  if (dir[strlen(dir) - 1] != '/' && *file != '/') {
-    (void)strcat(dfile, "/");
-  }
-
-  (void)strcat(dfile, file);
-
-  return dfile;
-}
-
 static int fcmp(const void *a, const void *b) {
   const struct diritem *f1 = a, *f2 = b;
 
@@ -244,28 +276,52 @@ static int fcmp(const void *a, const void *b) {
   return strcmp(f1->fname, f2->fname);
 }
 
-static void build_list_from_args(char *argv[], struct dirlist *dlp) {
+static bool ignore_item(char *p) {
 
-  dlp->path = ".";
+  if (p[0] == '.') {
+    /* . and .. always ignored.*/
+    if ((p[1] == '\0') || ((p[1] == '.') && (p[2] == '\0'))) {
+      return true;
+    }
+
+    /* Anything starting with . is ignore unless the -a option is specified.*/
+    if (options.aflg == false) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static void build_list_from_args(char *argv[], struct dirlist **dlpp) {
+
+  (*dlpp)->path = new_path(".");
 
   while (*argv != NULL) {
-    struct diritem *dip = dirlist_add(&toplist, *argv++);
-    if (!dostat(dip)) {
-      toplist->n--;
+    char *p = *argv++;
+    struct diritem *dip = dirlist_add(dlpp,p);
+
+    if (ignore_item(p)) {
+      dirlist_undo(dlpp);
+      continue;
     }
-    argv++;
+
+    if (!dostat(*dlpp, dip)) {
+      dirlist_undo(dlpp);
+    }
   }
 
   if (options.fflg == false) {
+    struct dirlist *dlp = *dlpp;
     qsort(&dlp->items[0], dlp->n, sizeof(struct diritem), fcmp);
   }
 }
 
-static void build_list_from_path(char *path, struct dirlist *dlp) {
+static void build_list_from_path(char *path, struct dirlist **dlpp) {
   DIR *dirp;
   struct dirent *dep;
 
-  dlp->path = path;
+  (*dlpp)->path = path;
 
   dirp = opendir(path);
   if (dirp == NULL) {
@@ -273,51 +329,48 @@ static void build_list_from_path(char *path, struct dirlist *dlp) {
   }
 
   while ((dep = readdir(dirp)) != NULL) {
-    struct diritem *dip = dirlist_add(&dlp, dep->d_name);
+    struct diritem *dip = dirlist_add(dlpp, dep->d_name);
 
-    if ((options.aflg == false) &&
-        (dep->d_name[0] == '.') &&
-        ((dep->d_name[1] == 0) || ((dep->d_name[1] == '.') &&
-                                    (dep->d_name[2] == 0)))) {
-      dirlist_undo(dlp);
+    if (ignore_item(dep->d_name)) {
+      dirlist_undo(dlpp);
       continue;
     }
 
 #ifndef __MINGW32__
-     /* If the -l option is set or the readdir() is unable to return the
-        file type a stat() is needed.*/
-     if ((options.lflg == true) || (dep->d_type == DT_UNKNOWN))  {
-       if (!dostat(dip)) {
-         dirlist_undo(dlp);
-       }
-     }
-     else{
-       switch (dep->d_type) {
-       case DT_LNK:
-         dip->ftype = 'l';
-         break;
-       case DT_REG:
-         dip->ftype = 'r';
-         break;
-       case DT_BLK:
-         dip->ftype = 'b';
-         break;
-       case DT_DIR:
-         dip->ftype = 'd';
-         break;
-       case DT_CHR:
-         dip->ftype = 'c';
-         break;
-       case DT_FIFO:
-         dip->ftype = 'f';
-         break;
-       default:
-         dip->ftype = '-';
-       }
-     }
+    /* If the -l option is set or the readdir() is unable to return the
+       file type a stat() is needed.*/
+    if ((options.lflg == true) || (dep->d_type == DT_UNKNOWN))  {
+      if (!dostat(*dlpp, dip)) {
+        dirlist_undo(dlpp);
+      }
+    }
+    else{
+      switch (dep->d_type) {
+      case DT_LNK:
+        dip->ftype = 'l';
+        break;
+      case DT_REG:
+        dip->ftype = 'r';
+        break;
+      case DT_BLK:
+        dip->ftype = 'b';
+        break;
+      case DT_DIR:
+        dip->ftype = 'd';
+        break;
+      case DT_CHR:
+        dip->ftype = 'c';
+        break;
+      case DT_FIFO:
+        dip->ftype = 'f';
+        break;
+      default:
+        dip->ftype = '-';
+      }
+    }
 #else
-    if (!dostat(dip)) {
-      dirlist_undo(dlp);
+    if (!dostat(*dlpp, dip)) {
+      dirlist_undo(dlpp);
     }
 #endif
   }
@@ -325,6 +378,7 @@ static void build_list_from_path(char *path, struct dirlist *dlp) {
   closedir(dirp);
 
   if (options.fflg == false) {
+    struct dirlist *dlp = *dlpp;
     qsort(&dlp->items[0], dlp->n, sizeof(struct diritem), fcmp);
   }
 }
@@ -341,15 +395,19 @@ static void printlist(struct dirlist *dlp, bool listdirs) {
       struct diritem *dip = &dlp->items[i];
       if (dip->ftype == 'd') {
         if (listdirs) {
-          char *path = cat(dlp->path, dip->fname);
-#if 1
           /* Printing subdir.*/
-          struct dirlist *sdlp = dirlist_new(8, true);
-          build_list_from_path(path, sdlp);
-          printf(NEWLINE_STR "%s:" NEWLINE_STR, path);
+          struct dirlist *sdlp;
+
+          sdlp = dirlist_new(8, true);
+          build_list_from_path(new_append_path(dlp->path, dip->fname), &sdlp);
+
+          printf("%s:" NEWLINE_STR, dip->fname);
           printlist(sdlp, false);
+          newline();
           dirlist_free(sdlp);
-#endif
+          i++;
+          j = 0;
+          continue;
         }
         else {
           /* Printing dir name only.*/
@@ -366,7 +424,7 @@ static void printlist(struct dirlist *dlp, bool listdirs) {
       }
       j++, i++;
     }
-    printf(NEWLINE_STR);
+    newline();
   }
 }
 
@@ -411,6 +469,7 @@ int main(int argc, char *argv[], char *envp[]) {
   /* The "f" flag has side effects.*/
   if (options.fflg) {
     options.aflg = true;
+    options.dflg = true;
     options.lflg = false;
   }
 
@@ -421,7 +480,7 @@ int main(int argc, char *argv[], char *envp[]) {
       error("out of memory");
     }
 
-    build_list_from_args(argv, toplist);
+    build_list_from_args(argv, &toplist);
   }
   else {
     /* Allocating the top level list.*/
@@ -430,7 +489,8 @@ int main(int argc, char *argv[], char *envp[]) {
       error("out of memory");
     }
 
-    build_list_from_path(".", toplist);
+    build_list_from_path(new_path("."), &toplist);
+    options.dflg = true;
   }
 
   /* Printing the top level.*/
