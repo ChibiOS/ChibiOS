@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer --specs=nano.specs
+  USE_OPT = -Os -ggdb -fomit-frame-pointer --specs=nano.specs
 endif
 
 # C specific options here (added to USE_OPT).
@@ -142,7 +142,7 @@ CPPWARN = -Wall -Wextra -Wundef
 UDEFS =
 
 # Define ASM defines here
-UADEFS = -DCRT0_INIT_DATA=0
+UADEFS = -DCRT0_INIT_DATA=0 -DCRT0_RESERVE_HEAP=4096
 
 # List all user directories here
 UINCDIR =

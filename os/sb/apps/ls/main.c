@@ -26,8 +26,6 @@
 
 #define NEWLINE_STR         "\r\n"
 #define TERMWIDTH           80
-#define COLUMNS             6
-#define COLUMN_SIZE         "11"
 
 /* Option flags, all false initially.*/
 struct {
@@ -383,7 +381,7 @@ static void build_list_from_path(char *path, struct dirlist **dlpp) {
   }
 }
 
-static void printlist(struct dirlist *dlp, bool listdirs) {
+static void printnames(struct dirlist *dlp, bool listdirs) {
   int i, j, cols, col;
 
   col = dlp->maxlen + 1;
@@ -402,7 +400,7 @@ static void printlist(struct dirlist *dlp, bool listdirs) {
           build_list_from_path(new_append_path(dlp->path, dip->fname), &sdlp);
 
           printf("%s:" NEWLINE_STR, dip->fname);
-          printlist(sdlp, false);
+          printnames(sdlp, false);
           newline();
           dirlist_free(sdlp);
           i++;
@@ -425,6 +423,116 @@ static void printlist(struct dirlist *dlp, bool listdirs) {
       j++, i++;
     }
     newline();
+  }
+}
+
+static void printlist(struct dirlist *dlp, bool listdirs) {
+  int i;
+
+  (void)listdirs; /* Always disabled in current implementation.*/
+
+  i = 0;
+  while (i < dlp->n) {
+    struct diritem *dip = &dlp->items[i];
+
+    /* Type char.*/
+    if (dip->ftype != 'r') {
+      putchar(dip->ftype);
+    }
+    else {
+      putchar('-');
+    }
+
+    /* Modes.*/
+    if ((dip->fflags & S_IRUSR) != (mode_t)0) {
+      putchar('r');
+    }
+    else {
+      putchar('-');
+    }
+    if ((dip->fflags & S_IWUSR) != (mode_t)0) {
+      putchar('w');
+    }
+    else {
+      putchar('-');
+    }
+#ifndef __MINGW32__
+    if ((dip->fflags & S_IXUSR) != (mode_t)0) {
+      putchar(((dip->fflags & S_ISUID) == (mode_t)0) ? 'x' : 's');
+    }
+    else {
+      putchar('-');
+    }
+    if ((dip->fflags & S_IRGRP) != (mode_t)0) {
+      putchar('r');
+    }
+    else {
+      putchar('-');
+    }
+    if ((dip->fflags & S_IWGRP) != (mode_t)0) {
+      putchar('w');
+    }
+    else {
+      putchar('-');
+    }
+    if ((dip->fflags & S_IXGRP) != (mode_t)0) {
+      putchar(((dip->fflags & S_ISGID) == (mode_t)0) ? 'x' : 's');
+    }
+    else {
+      putchar('-');
+    }
+    if ((dip->fflags & S_IROTH) != (mode_t)0) {
+      putchar('r');
+    }
+    else {
+      putchar('-');
+    }
+    if ((dip->fflags & S_IWOTH) != (mode_t)0) {
+      putchar('w');
+    }
+    else {
+      putchar('-');
+    }
+    if ((dip->fflags & S_IXOTH) != (mode_t)0) {
+      putchar('x');
+    }
+    else {
+      putchar('-');
+    }
+#else
+    printf("-------");
+#endif
+
+    /* Links.*/
+//    printf("%3d ", 1);
+
+    /* User and group.*/
+//    printf("root root ");
+
+    /* Size field.*/
+    if ((dip->ftype) == 'b' || (dip->ftype == 'c')) {
+      printf("  %3u,%4u ", /*major(p->fsize)*/0, /*minor(p->fsize)*/0);
+    }
+    else if (dip->ftype == 's') {
+      printf("%9u ", 0);
+    }
+    else {
+      printf("%9u ", (unsigned)dip->fsize);
+    }
+
+    /* File name.*/
+    if (options.yflg == false) {
+      if (dip->ftype == 'd') {
+        printf("\033[1m%s\033[0m" NEWLINE_STR, dip->fname);
+      }
+      else {
+        printf("%s" NEWLINE_STR, dip->fname);
+      }
+    }
+    else {
+      printf("%s" NEWLINE_STR, dip->fname);
+    }
+    i++;
   }
 }
 
@@ -473,6 +581,11 @@ int main(int argc, char *argv[], char *envp[]) {
     options.lflg = false;
   }
 
+  /* The "l" flag also implies "d" for simplicity.*/
+  if (options.lflg) {
+    options.dflg = true;
+  }
+
   if (argc > 0) {
     /* Allocating the top level list.*/
     toplist = dirlist_new(8, false);
@@ -494,7 +607,12 @@ int main(int argc, char *argv[], char *envp[]) {
   }
 
   /* Printing the top level.*/
-  printlist(toplist, !options.dflg);
+  if (options.lflg) {
+    printlist(toplist, !options.dflg);
+  }
+  else {
+    printnames(toplist, !options.dflg);
+  }
 
   /* Flushing the standard files.*/
   fflush(NULL);
