@@ -11,7 +11,7 @@ VFSSRC := $(CHIBIOS)/os/vfs/src/vfspaths.c \
           $(CHIBIOS)/os/vfs/src/vfsnodes.c \
           $(CHIBIOS)/os/vfs/src/vfs.c \
           $(CHIBIOS)/os/vfs/drivers/tmplfs/drvtmplfs.c \
-          $(CHIBIOS)/os/vfs/drivers/sfs/drvsfs.c \
+          $(CHIBIOS)/os/vfs/drivers/chfs/drvchfs.c \
           $(CHIBIOS)/os/vfs/drivers/fatfs/drvfatfs.c \
           $(CHIBIOS)/os/vfs/drivers/littlefs/drvlittlefs.c \
           $(CHIBIOS)/os/vfs/drivers/overlay/drvoverlay.c \
@@ -21,7 +21,7 @@ VFSSRC := $(CHIBIOS)/os/vfs/src/vfspaths.c \
 VFSINC := $(CHIBIOS)/os/common/include \
           $(CHIBIOS)/os/vfs/include \
           $(CHIBIOS)/os/vfs/drivers/tmplfs \
-          $(CHIBIOS)/os/vfs/drivers/sfs \
+          $(CHIBIOS)/os/vfs/drivers/chfs \
           $(CHIBIOS)/os/vfs/drivers/fatfs \
           $(CHIBIOS)/os/vfs/drivers/littlefs \
           $(CHIBIOS)/os/vfs/drivers/overlay \

@@ -99,20 +99,20 @@
 #include "drvstreams.h"
 #endif
 
+/* TODO temporary */
+#define VFS_CFG_ENABLE_DRV_CHFS             TRUE
+#define DRV_CFG_CHFS_DIR_NODES_NUM          2
+#define DRV_CFG_CHFS_FILE_NODES_NUM         1
+#if VFS_CFG_ENABLE_DRV_CHFS == TRUE
+#include "drvchfs.h"
+#endif
+
 #if VFS_CFG_ENABLE_DRV_FATFS == TRUE
 #include "drvfatfs.h"
 #endif
 
 #if VFS_CFG_ENABLE_DRV_LITTLEFS == TRUE
 #include "drvlittlefs.h"
-#endif
-
-/* TODO temporary */
-#define VFS_CFG_ENABLE_DRV_SFS              FALSE
-#define DRV_CFG_SFS_DIR_NODES_NUM           1
-#define DRV_CFG_SFS_FILE_NODES_NUM          1
-#if VFS_CFG_ENABLE_DRV_SFS == TRUE
-#include "drvsfs.h"
 #endif
 
 /* Only for testing, not a real driver.*/
