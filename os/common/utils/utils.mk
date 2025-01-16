@@ -1,8 +1,13 @@
-# List of the ChibiOS OOP module.
-UTILSSRC = ${CHIBIOS}/os/common/utils/src/paths.c
- 
-UTILSINC = ${CHIBIOS}/os/common/utils/include
+# Utils subsystem build.
 
-# Shared variables
-ALLCSRC += $(UTILSSRC)
-ALLINC  += $(UTILSINC)
+# Required files.
+ifndef UTILSSRC
+  UTILSSRC = ${CHIBIOS}/os/common/utils/src/paths.c
+  ALLCSRC += $(UTILSSRC)
+endif
+ 
+# Required include directories
+ifndef UTILSINC
+  UTILSINC = ${CHIBIOS}/os/common/utils/include
+  ALLINC += $(UTILSINC)
+endif

@@ -94,27 +94,13 @@ CONFDIR  := ./cfg/msh-ram
 BUILDDIR := ./build/msh-ram
 DEPDIR   := ./.dep/msh-ram
 
-# Licensing files.
-include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx-SB/compilers/GCC/mk/startup.mk
 # Common files.
 include $(CHIBIOS)/os/common/utils/utils.mk
-# HAL-OSAL files (optional).
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx/platform.mk
-#include $(CHIBIOS)/os/hal/boards/ST_STM32L476_DISCOVERY/board.mk
-#include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
-# RTOS files (optional).
-#include $(CHIBIOS)/os/rt/rt.mk
-#include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/os/sb/user/sbuser.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
-# Other files (optional).
-#include $(CHIBIOS)/os/test/test.mk
-#include $(CHIBIOS)/test/rt/rt_test.mk
-#include $(CHIBIOS)/test/oslib/oslib_test.mk
 
 # Define linker script file here.
 LDSCRIPT= $(STARTUPLD)/ram_sandbox.ld
