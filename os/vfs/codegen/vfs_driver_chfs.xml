@@ -12,6 +12,7 @@
   <public>
     <includes>
       <include style="regular">oop_sequential_stream.h</include>
+      <include style="regular">hal.h</include>
     </includes>
     <configs>
       <config name="DRV_CFG_CHFS_DIR_NODES_NUM" default="2">
@@ -24,6 +25,17 @@
       </config>
     </configs>
     <types>
+      <typedef name="chfs_config_t">
+        <brief>Type of a ChibiFS configuration structure.</brief>
+        <basetype ctype="struct chfs_config" />
+      </typedef><struct name="chfs_config">
+      	<brief>Structure representing a ChibiFS configuration.</brief>
+      	<fields>
+          <field name="blk" ctype="const BaseBlockDevice$I*">
+            <brief>Block device associated to this ChibiFS instance.</brief>
+          </field>
+      </fields>
+      </struct>
       <class type="regular" name="vfs_chfs_driver" namespace="chfsdrv"
         ancestorname="vfs_driver" descr="VFS ChibiFS driver">
         <fields>
@@ -39,13 +51,11 @@
           <field name="path_cwd" ctype="char$I$N[VFS_CFG_PATHLEN_MAX + 1]">
             <brief>Current working directory path.</brief>
           </field>
-          <field name="scratch" ctype="char$I$N[VFS_CFG_PATHLEN_MAX + 1]">
-            <brief>Path scratch pad.</brief>
-          </field>
         </fields>
         <methods>
           <objinit callsuper="true">
-            <param name="cfgp" ctype="const struct chfs_config *" dir="in"><![CDATA[Pointer to @p chfs_config configuration.]]></param>
+            <param name="cfgp" ctype="const chfs_config_t *" dir="in"><![CDATA[Pointer
+              to @p chfs_config_t configuration.]]></param>
             <implementation><![CDATA[
 self->cfgp = cfgp;
 self->cwd  = NULL;
@@ -108,6 +118,7 @@ self->path_cwd[0] = '\0';]]></implementation>
           </override>
         </methods>
       </class>
+      
     </types>
     <variables>
       <variable name="vfs_chfs_driver_static"

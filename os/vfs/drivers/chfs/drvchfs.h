@@ -29,6 +29,7 @@
 #if (VFS_CFG_ENABLE_DRV_CHFS == TRUE) || defined(__DOXYGEN__)
 
 #include "oop_sequential_stream.h"
+#include "hal.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -78,6 +79,21 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief       Type of a ChibiFS configuration structure.
+ */
+typedef struct chfs_config chfs_config_t;
+
+/**
+ * @brief       Structure representing a ChibiFS configuration.
+ */
+struct chfs_config {
+  /**
+   * @brief       Block device associated to this ChibiFS instance.
+   */
+  const BaseBlockDevice     *blk;
+};
 
 /**
  * @class       vfs_chfs_driver_c
@@ -136,10 +152,6 @@ struct vfs_chfs_driver {
    * @brief       Current working directory path.
    */
   char                      path_cwd[VFS_CFG_PATHLEN_MAX + 1];
-  /**
-   * @brief       Path scratch pad.
-   */
-  char                      scratch[VFS_CFG_PATHLEN_MAX + 1];
 };
 /** @} */
 
@@ -154,7 +166,7 @@ extern "C" {
 #endif
   /* Methods of vfs_chfs_driver_c.*/
   void *__chfsdrv_objinit_impl(void *ip, const void *vmt,
-                               const struct chfs_config *cfgp);
+                               const chfs_config_t *cfgp);
   void __chfsdrv_dispose_impl(void *ip);
   msg_t __chfsdrv_setcwd_impl(void *ip, const char *path);
   msg_t __chfsdrv_getcwd_impl(void *ip, char *buf, size_t size);
@@ -192,14 +204,14 @@ extern "C" {
  *
  * @param[out]    self          Pointer to a @p vfs_chfs_driver_c instance to
  *                              be initialized.
- * @param[in]     cfgp          Pointer to @p chfs_config configuration.
+ * @param[in]     cfgp          Pointer to @p chfs_config_t configuration.
  * @return                      Pointer to the initialized object.
  *
  * @objinit
  */
 CC_FORCE_INLINE
 static inline vfs_chfs_driver_c *chfsdrvObjectInit(vfs_chfs_driver_c *self,
-                                                   const struct chfs_config *cfgp) {
+                                                   const chfs_config_t *cfgp) {
   extern const struct vfs_chfs_driver_vmt __vfs_chfs_driver_vmt;
 
   return __chfsdrv_objinit_impl(self, &__vfs_chfs_driver_vmt, cfgp);

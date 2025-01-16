@@ -34,20 +34,5 @@
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>
 		</link>
-		<link>
-			<name>test</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>test/oslib</name>
-			<type>2</type>
-			<locationURI>CHIBIOS/test/oslib</locationURI>
-		</link>
-		<link>
-			<name>test/rt</name>
-			<type>2</type>
-			<locationURI>CHIBIOS/test/rt</locationURI>
-		</link>
 	</linkedResources>
 </projectDescription>

@@ -530,11 +530,11 @@ static vfs_chfs_file_node_c *chfsfileObjectInit(vfs_chfs_file_node_c *self,
  * @param[out]    ip            Pointer to a @p vfs_chfs_driver_c instance to
  *                              be initialized.
  * @param[in]     vmt           VMT pointer for the new object.
- * @param[in]     cfgp          Pointer to @p chfs_config configuration.
+ * @param[in]     cfgp          Pointer to @p chfs_config_t configuration.
  * @return                      A new reference to the object.
  */
 void *__chfsdrv_objinit_impl(void *ip, const void *vmt,
-                             const struct chfs_config *cfgp) {
+                             const chfs_config_t *cfgp) {
   vfs_chfs_driver_c *self = (vfs_chfs_driver_c *)ip;
 
   /* Initialization of the ancestors-defined parts.*/

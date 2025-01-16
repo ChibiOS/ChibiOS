@@ -87,14 +87,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>test/lib</name>
+			<name>test/oslib</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/test/lib</locationURI>
+			<locationURI>CHIBIOS/test/oslib</locationURI>
 		</link>
 		<link>
-			<name>test/mfs</name>
+			<name>test/rt</name>
 			<type>2</type>
-			<locationURI>CHIBIOS/test/mfs</locationURI>
+			<locationURI>CHIBIOS/test/rt</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
