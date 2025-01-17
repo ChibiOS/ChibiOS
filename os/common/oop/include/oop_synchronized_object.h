@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -41,10 +41,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-#if defined(OOP_USE_NOTHING)
-#error "OOP_USE_NOTHING specified, not compatible"
-#endif
 
 /*===========================================================================*/
 /* Module macros.                                                            */
@@ -96,10 +92,12 @@ struct synchronized_object {
    * @brief       Number of references to the object.
    */
   object_references_t       references;
+#if (!defined(OOP_USE_NOTHING)) || defined (__DOXYGEN__)
   /**
    * @brief       Embedded synchronization mutex.
    */
   mutex_t                   mutex;
+#endif /* !defined(OOP_USE_NOTHING) */
 };
 /** @} */
 

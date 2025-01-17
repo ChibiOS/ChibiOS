@@ -40,6 +40,11 @@
 			<locationURI>CHIBIOS/os/common/startup/ARMCMx-SB/compilers/GCC</locationURI>
 		</link>
 		<link>
+			<name>imports/oop</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/os/common/oop</locationURI>
+		</link>
+		<link>
 			<name>imports/sb_common</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os/sb/common</locationURI>

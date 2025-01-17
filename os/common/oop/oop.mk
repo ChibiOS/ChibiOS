@@ -3,7 +3,8 @@
 # Required files.
 ifndef OOPSRC
   OOPSRC = ${CHIBIOS}/os/common/oop/src/oop_base_object.c \
-           ${CHIBIOS}/os/common/oop/src/oop_referenced_object.c
+           ${CHIBIOS}/os/common/oop/src/oop_referenced_object.c \
+           ${CHIBIOS}/os/common/oop/src/oop_synchronized_object.c
   ALLCSRC += $(OOPSRC)
 endif
 

@@ -10,13 +10,6 @@
     <includes>
       <include style="regular">oop_referenced_object.h</include>
     </includes>
-    <definitions_late>
-      <verbatim><![CDATA[
-#if defined(OOP_USE_NOTHING)
-#error "OOP_USE_NOTHING specified, not compatible"
-#endif
-]]></verbatim>
-    </definitions_late>
     <types>
       <class type="abstract" name="synchronized_object" namespace="so"
         ancestorname="referenced_object" descr="synchronized object">
@@ -24,14 +17,18 @@
         <details><![CDATA[Base class for objects that require a synchronization mechanism.
           This class extends @p referenced_object_c class.]]></details>
         <fields>
-          <field name="mutex" ctype="mutex_t">
-            <brief>Embedded synchronization mutex.</brief>
-          </field>
+          <condition check="!defined(OOP_USE_NOTHING)">
+            <field name="mutex" ctype="mutex_t">
+              <brief>Embedded synchronization mutex.</brief>
+            </field>
+          </condition>
         </fields>
         <methods>
           <objinit callsuper="true">
             <implementation><![CDATA[
-#if defined(OOP_USE_CHIBIOS)
+#if defined(OOP_USE_NOTHING)
+/* Synchronization not implemented in this case.*/
+#elif defined(OOP_USE_CHIBIOS)
 chMtxObjectInit(&self->mutex);
 #else
 osalMutexObjectInit(&self->mutex);
@@ -45,7 +42,9 @@ osalMutexObjectInit(&self->mutex);
               <brief>Object lock.</brief>
               <implementation><![CDATA[
 
-#if defined(OOP_USE_CHIBIOS)
+#if defined(OOP_USE_NOTHING)
+/* Synchronization not implemented in this case.*/
+#elif defined(OOP_USE_CHIBIOS)
 chMtxLock(&self->mutex);
 #else
 osalMutexLock(&self->mutex);
@@ -55,7 +54,9 @@ osalMutexLock(&self->mutex);
               <brief>Object unlock.</brief>
               <implementation><![CDATA[
 
-#if defined(OOP_USE_CHIBIOS)
+#if defined(OOP_USE_NOTHING)
+/* Synchronization not implemented in this case.*/
+#elif defined(OOP_USE_CHIBIOS)
 chMtxUnlock(&self->mutex);
 #else
 osalMutexUnlock(&self->mutex);

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -80,7 +80,9 @@ void *__so_objinit_impl(void *ip, const void *vmt) {
   __ro_objinit_impl(self, vmt);
 
   /* Initialization code.*/
-#if defined(OOP_USE_CHIBIOS)
+#if defined(OOP_USE_NOTHING)
+  /* Synchronization not implemented in this case.*/
+#elif defined(OOP_USE_CHIBIOS)
   chMtxObjectInit(&self->mutex);
 #else
   osalMutexObjectInit(&self->mutex);
@@ -125,7 +127,9 @@ void __so_dispose_impl(void *ip) {
 void soLock(void *ip) {
   synchronized_object_c *self = (synchronized_object_c *)ip;
 
-#if defined(OOP_USE_CHIBIOS)
+#if defined(OOP_USE_NOTHING)
+  /* Synchronization not implemented in this case.*/
+#elif defined(OOP_USE_CHIBIOS)
   chMtxLock(&self->mutex);
 #else
   osalMutexLock(&self->mutex);
@@ -143,7 +147,9 @@ void soLock(void *ip) {
 void soUnlock(void *ip) {
   synchronized_object_c *self = (synchronized_object_c *)ip;
 
-#if defined(OOP_USE_CHIBIOS)
+#if defined(OOP_USE_NOTHING)
+  /* Synchronization not implemented in this case.*/
+#elif defined(OOP_USE_CHIBIOS)
   chMtxUnlock(&self->mutex);
 #else
   osalMutexUnlock(&self->mutex);
