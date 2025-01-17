@@ -25,14 +25,14 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>imports</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>os</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os</locationURI>
-		</link>
-		<link>
-			<name>sb</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>startup</name>
@@ -40,12 +40,12 @@
 			<locationURI>CHIBIOS/os/common/startup/ARMCMx-SB/compilers/GCC</locationURI>
 		</link>
 		<link>
-			<name>sb/common</name>
+			<name>imports/sb_common</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os/sb/common</locationURI>
 		</link>
 		<link>
-			<name>sb/user</name>
+			<name>imports/sb_user</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os/sb/user</locationURI>
 		</link>
