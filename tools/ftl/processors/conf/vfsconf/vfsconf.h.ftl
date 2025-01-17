@@ -80,28 +80,35 @@
  * @brief   Enables the VFS Overlay Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_OVERLAY) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_OVERLAY          ${doc.VFS_CFG_ENABLE_DRV_OVERLAY!"TRUE"}
+#define VFS_CFG_ENABLE_DRV_OVERLAY          ${doc.VFS_CFG_ENABLE_DRV_OVERLAY!"FALSE"}
 #endif
 
 /**
  * @brief   Enables the VFS Streams Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_STREAMS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_STREAMS          ${doc.VFS_CFG_ENABLE_DRV_STREAMS!"TRUE"}
+#define VFS_CFG_ENABLE_DRV_STREAMS          ${doc.VFS_CFG_ENABLE_DRV_STREAMS!"FALSE"}
+#endif
+
+/**
+ * @brief   Enables the VFS ChibiFS Driver.
+ */
+#if !defined(VFS_CFG_ENABLE_DRV_CHFS) || defined(__DOXYGEN__)
+#define VFS_CFG_ENABLE_DRV_CHFS             ${doc.VFS_CFG_ENABLE_DRV_CHFS!"FALSE"}
 #endif
 
 /**
  * @brief   Enables the VFS FatFS Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_FATFS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_FATFS            ${doc.VFS_CFG_ENABLE_DRV_FATFS!"TRUE"}
+#define VFS_CFG_ENABLE_DRV_FATFS            ${doc.VFS_CFG_ENABLE_DRV_FATFS!"FALSE"}
 #endif
 
 /**
  * @brief   Enables the VFS LittleFS Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_LITTLEFS) || defined(__DOXYGEN__)
-#define VFS_CFG_ENABLE_DRV_LITTLEFS         ${doc.VFS_CFG_ENABLE_DRV_LITTLEFS!"TRUE"}
+#define VFS_CFG_ENABLE_DRV_LITTLEFS         ${doc.VFS_CFG_ENABLE_DRV_LITTLEFS!"FALSE"}
 #endif
 
 /** @} */
@@ -117,14 +124,14 @@
  * @brief   Maximum number of overlay directories.
  */
 #if !defined(DRV_CFG_OVERLAY_DRV_MAX) || defined(__DOXYGEN__)
-#define DRV_CFG_OVERLAY_DRV_MAX             2
+#define DRV_CFG_OVERLAY_DRV_MAX             ${doc.DRV_CFG_OVERLAY_DRV_MAX!"1"}
 #endif
 
 /**
  * @brief   Number of directory nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_OVERLAY_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_OVERLAY_DIR_NODES_NUM       1
+#define DRV_CFG_OVERLAY_DIR_NODES_NUM       ${doc.DRV_CFG_OVERLAY_DIR_NODES_NUM!"1"}
 #endif
 
 /** @} */
@@ -140,14 +147,37 @@
  * @brief   Number of directory nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_STREAMS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_STREAMS_DIR_NODES_NUM       1
+#define DRV_CFG_STREAMS_DIR_NODES_NUM       ${doc.DRV_CFG_STREAMS_DIR_NODES_NUM!"1"}
 #endif
 
 /**
  * @brief   Number of file nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_STREAMS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_STREAMS_FILE_NODES_NUM      2
+#define DRV_CFG_STREAMS_FILE_NODES_NUM      ${doc.DRV_CFG_STREAMS_FILE_NODES_NUM!"1"}
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name ChibiFS driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_CHFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_CHFS_DIR_NODES_NUM          ${doc.DRV_CFG_CHFS_DIR_NODES_NUM!"1"}
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_CHFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_CHFS_FILE_NODES_NUM         ${doc.DRV_CFG_CHFS_FILE_NODES_NUM!"1"}
 #endif
 
 /** @} */
@@ -163,21 +193,21 @@
  * @brief   Maximum number of FatFS file systems mounted.
  */
 #if !defined(DRV_CFG_FATFS_FS_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_FATFS_FS_NUM                1
+#define DRV_CFG_FATFS_FS_NUM                ${doc.DRV_CFG_FATFS_FS_NUM!"1"}
 #endif
 
 /**
  * @brief   Number of directory nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_FATFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_FATFS_DIR_NODES_NUM         1
+#define DRV_CFG_FATFS_DIR_NODES_NUM         ${doc.DRV_CFG_FATFS_DIR_NODES_NUM!"1"}
 #endif
 
 /**
  * @brief   Number of file nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_FATFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_FATFS_FILE_NODES_NUM        2
+#define DRV_CFG_FATFS_FILE_NODES_NUM        ${doc.DRV_CFG_FATFS_FILE_NODES_NUM!"1"}
 #endif
 
 /** @} */
@@ -193,14 +223,14 @@
  * @brief   Number of shared path buffers.
  */
 #if !defined(DRV_CFG_LITTLEFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      ${doc.DRV_CFG_LITTLEFS_DIR_NODES_NUM!"2"}
+#define DRV_CFG_LITTLEFS_DIR_NODES_NUM      ${doc.DRV_CFG_LITTLEFS_DIR_NODES_NUM!"1"}
 #endif
 
 /**
  * @brief   Number of file nodes pre-allocated in the pool.
  */
 #if !defined(DRV_CFG_LITTLEFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
-#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     ${doc.DRV_CFG_LITTLEFS_FILE_NODES_NUM!"2"}
+#define DRV_CFG_LITTLEFS_FILE_NODES_NUM     ${doc.DRV_CFG_LITTLEFS_FILE_NODES_NUM!"1"}
 #endif
 
 /**

@@ -63,7 +63,7 @@
 /*===========================================================================*/
 
 /* Checks on DRV_CFG_CHFS_DIR_NODES_NUM configuration.*/
-#if DRV_CFG_CHFS_DIR_NODES_NUM < 2
+#if DRV_CFG_CHFS_DIR_NODES_NUM < 1
 #error "invalid DRV_CFG_CHFS_DIR_NODES_NUM value"
 #endif
 

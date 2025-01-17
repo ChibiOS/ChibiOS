@@ -99,10 +99,6 @@
 #include "drvstreams.h"
 #endif
 
-/* TODO temporary */
-#define VFS_CFG_ENABLE_DRV_CHFS             FALSE
-#define DRV_CFG_CHFS_DIR_NODES_NUM          2
-#define DRV_CFG_CHFS_FILE_NODES_NUM         1
 #if VFS_CFG_ENABLE_DRV_CHFS == TRUE
 #include "drvchfs.h"
 #endif

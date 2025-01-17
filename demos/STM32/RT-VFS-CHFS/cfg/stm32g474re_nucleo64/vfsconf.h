@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -80,6 +80,13 @@
 #endif
 
 /**
+ * @brief   Enables the VFS ChibiFS Driver.
+ */
+#if !defined(VFS_CFG_ENABLE_DRV_CHFS) || defined(__DOXYGEN__)
+#define VFS_CFG_ENABLE_DRV_CHFS             TRUE
+#endif
+
+/**
  * @brief   Enables the VFS FatFS Driver.
  */
 #if !defined(VFS_CFG_ENABLE_DRV_FATFS) || defined(__DOXYGEN__)
@@ -137,6 +144,29 @@
  */
 #if !defined(DRV_CFG_STREAMS_FILE_NODES_NUM) || defined(__DOXYGEN__)
 #define DRV_CFG_STREAMS_FILE_NODES_NUM      2
+#endif
+
+/** @} */
+
+/*===========================================================================*/
+/**
+ * @name ChibiFS driver settings
+ * @{
+ */
+/*===========================================================================*/
+
+/**
+ * @brief   Number of directory nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_CHFS_DIR_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_CHFS_DIR_NODES_NUM          1
+#endif
+
+/**
+ * @brief   Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_CHFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_CHFS_FILE_NODES_NUM         1
 #endif
 
 /** @} */
