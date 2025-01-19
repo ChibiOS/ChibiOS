@@ -94,6 +94,9 @@ CONFDIR  := ./cfg/msh-ram
 BUILDDIR := ./build/msh-ram
 DEPDIR   := ./.dep/msh-ram
 
+# Required modules.
+UTILSSELECT := paths sglob
+
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx-SB/compilers/GCC/mk/startup.mk
 # Common files.
