@@ -17,7 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "chprintf.h"
+#include "oop_chprintf.h"
 #include "xshell.h"
 
 static hal_buffered_sio_c bsio1;

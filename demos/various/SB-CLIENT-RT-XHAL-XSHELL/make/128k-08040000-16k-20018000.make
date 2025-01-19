@@ -94,13 +94,17 @@ CONFDIR  := ./cfg
 BUILDDIR := ./build/128k-08040000-16k-20018000
 DEPDIR   := ./.dep/128k-08040000-16k-20018000
 
+# Required modules.
+OOPSELECT := base chprintf
+UTILSSELECT :=
+
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx-SB/compilers/GCC/mk/startup.mk
 # Common files.
 include $(CHIBIOS)/os/common/oop/oop.mk
-include $(CHIBIOS)/os/common/lib/lib.mk
+include $(CHIBIOS)/os/common/utils/utils.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/xhal/xhal.mk
 include $(CHIBIOS)/os/xhal/ports/vio/platform.mk
