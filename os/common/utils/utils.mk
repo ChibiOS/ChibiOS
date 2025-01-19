@@ -3,9 +3,7 @@
 # Required files.
 ifndef UTILSSRC
   ifndef UTILSSELECT
-    # If none is specified then all of them.
-    UTILSSRC = ${CHIBIOS}/os/common/utils/src/paths.c \
-               ${CHIBIOS}/os/common/utils/src/sglob.c
+    # None specified, doing nothing.
   else
     ifneq ($(filter paths,$(UTILSSELECT)),)
       UTILSSRC += ${CHIBIOS}/os/common/utils/src/paths.c

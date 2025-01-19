@@ -3,10 +3,8 @@
 # Required files.
 ifndef OOPSRC
   ifndef OOPSELECT
-    # If none is specified then all of them.
-    OOPSRC = ${CHIBIOS}/os/common/oop/src/oop_base_object.c \
-             ${CHIBIOS}/os/common/oop/src/oop_referenced_object.c \
-             ${CHIBIOS}/os/common/oop/src/oop_synchronized_object.c
+    # If none is specified then including only oop_base_object.c by default.
+    OOPSRC = ${CHIBIOS}/os/common/oop/src/oop_base_object.c
   else
     ifneq ($(filter base,$(OOPSELECT)),)
       OOPSRC += ${CHIBIOS}/os/common/oop/src/oop_base_object.c
