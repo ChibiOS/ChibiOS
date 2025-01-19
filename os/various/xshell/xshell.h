@@ -25,6 +25,12 @@
 #ifndef XSHELL_H
 #define XSHELL_H
 
+#if CH_HAL_MAJOR >= 10
+#include "oop_chprintf.h"
+#else
+#include "chprintf.h"
+#endif
+
 #if defined(XSHELL_CONFIG_FILE)
 #include "xshellconf.h"
 #endif
@@ -127,9 +133,9 @@
 #endif
 
 #if CH_HAL_MAJOR < 10
-#define shell_stream_i                      sequential_stream_i
-#else
 #define shell_stream_i                      BaseSequentialStream
+#else
+#define shell_stream_i                      sequential_stream_i
 #endif
 
 /*===========================================================================*/

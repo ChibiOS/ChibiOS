@@ -23,17 +23,13 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "ch.h"
 #include "hal.h"
+
 #include "xshell.h"
 #include "xshell_cmd.h"
-#if CH_HAL_MAJOR >= 10
-#include "oop_chprintf.h"
-#else
-#include "chprintf.h"
-#endif
-#include <stdlib.h>
 
 static void *alloc_thread(size_t size, unsigned align);
 

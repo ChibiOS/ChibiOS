@@ -26,9 +26,9 @@
 
 #include "ch.h"
 #include "hal.h"
+
 #include "xshell.h"
 #include "xshell_cmd.h"
-#include "oop_chprintf.h"
 
 #if (XSHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
 #include <fcntl.h>
