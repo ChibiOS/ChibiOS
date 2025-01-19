@@ -126,6 +126,12 @@
 #error "XSHELL requires CH_CFG_USE_MEMPOOLS"
 #endif
 
+#if CH_HAL_MAJOR < 10
+#define shell_stream_i                      sequential_stream_i
+#else
+#define shell_stream_i                      BaseSequentialStream
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -136,7 +142,7 @@ typedef struct xshell_manager xshell_manager_t;
 /**
  * @brief   Type of a command handler function.
  */
-typedef void (*xshellcmd_t)(xshell_manager_t *smp, BaseSequentialStream *chp,
+typedef void (*xshellcmd_t)(xshell_manager_t *smp, shell_stream_i *chp,
                             int argc, char *argv[]);
 
 /**
@@ -247,7 +253,7 @@ typedef struct xshell_manager {
 /**
  * @brief   Send escape codes to move cursor to the beginning of the line
  *
- * @param[in] stream    pointer to a @p BaseSequentialStream object
+ * @param[in] stream    pointer to a @p shell_stream_i object
  *
  * @notapi
  */
@@ -259,7 +265,7 @@ typedef struct xshell_manager {
 /**
  * @brief   Send escape codes to clear the rest of the line
  *
- * @param[in] stream    pointer to a @p BaseSequentialStream object
+ * @param[in] stream    pointer to a @p shell_stream_i object
  *
  * @notapi
  */
@@ -286,9 +292,9 @@ extern "C" {
   void xshellObjectInit(xshell_manager_t *smp,
                         const xshell_manager_config_t *config);
   thread_t *xshellSpawn(xshell_manager_t *smp,
-                        BaseSequentialStream *stream,
+                        shell_stream_i *stream,
                         tprio_t prio);
-  bool xshellGetLine(xshell_manager_t *smp, BaseSequentialStream *stream,
+  bool xshellGetLine(xshell_manager_t *smp, shell_stream_i *stream,
                      char *line, size_t size);
 #ifdef __cplusplus
 }

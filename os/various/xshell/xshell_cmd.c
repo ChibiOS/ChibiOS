@@ -28,7 +28,7 @@
 #include "hal.h"
 #include "xshell.h"
 #include "xshell_cmd.h"
-#include "chprintf.h"
+#include "oop_chprintf.h"
 
 #if (XSHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
 #include <fcntl.h>
@@ -62,7 +62,7 @@
 
 #if ((XSHELL_CMD_EXIT_ENABLED == TRUE) && !defined(__CHIBIOS_NIL__)) ||     \
     defined(__DOXYGEN__)
-static void cmd_exit(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_exit(xshell_manager_t *smp, shell_stream_i *stream,
                      int argc, char *argv[]) {
 
   (void)argv;
@@ -78,7 +78,7 @@ static void cmd_exit(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_CMD_INFO_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_info(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_info(xshell_manager_t *smp, shell_stream_i *stream,
                      int argc, char *argv[]) {
 
   (void)smp;
@@ -115,7 +115,7 @@ static void cmd_info(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_CMD_ECHO_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_echo(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_echo(xshell_manager_t *smp, shell_stream_i *stream,
                      int argc, char *argv[]) {
 
   (void)smp;
@@ -131,7 +131,7 @@ static void cmd_echo(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_CMD_SYSTIME_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_systime(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_systime(xshell_manager_t *smp, shell_stream_i *stream,
                         int argc, char *argv[]) {
 
   (void)smp;
@@ -147,7 +147,7 @@ static void cmd_systime(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_CMD_MEM_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_mem(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_mem(xshell_manager_t *smp, shell_stream_i *stream,
                     int argc, char *argv[]) {
   size_t n, total, largest;
   memory_area_t area;
@@ -169,7 +169,7 @@ static void cmd_mem(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_CMD_THREADS_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_threads(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_threads(xshell_manager_t *smp, shell_stream_i *stream,
                         int argc, char *argv[]) {
   static const char *states[] = {CH_STATE_NAMES};
   thread_t *tp;
@@ -211,7 +211,7 @@ static void cmd_threads(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_CMD_TEST_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_test(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_test(xshell_manager_t *smp, shell_stream_i *stream,
                      int argc, char *argv[]) {
 
   (void)smp;
@@ -239,7 +239,7 @@ static void cmd_test(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_PROMPT_STR_LENGTH > 0)  || defined(__DOXYGEN__)
-static void cmd_prompt(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_prompt(xshell_manager_t *smp, shell_stream_i *stream,
                             int argc, char *argv[]) {
   if (argc != 2) {
     xshellUsage(stream, "prompt \"string\"");
@@ -255,7 +255,7 @@ static void cmd_prompt(xshell_manager_t *smp, BaseSequentialStream *stream,
 #endif
 
 #if (XSHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void scan_nodes(BaseSequentialStream *stream,
+static void scan_nodes(shell_stream_i *stream,
                        char *path,
                        vfs_direntry_info_t *dip) {
   msg_t res;
@@ -289,7 +289,7 @@ static void scan_nodes(BaseSequentialStream *stream,
   }
 }
 
-static void cmd_tree(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_tree(xshell_manager_t *smp, shell_stream_i *stream,
                      int argc, char *argv[]) {
 
   (void)smp;
@@ -325,7 +325,7 @@ static void cmd_tree(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_cat(xshell_manager_t *smp, shell_stream_i *stream,
                     int argc, char *argv[]) {
   (void)smp;
   char *buf = NULL;
@@ -380,7 +380,7 @@ static void cmd_cat(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_cp(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_cp(xshell_manager_t *smp, shell_stream_i *stream,
                     int argc, char *argv[]) {
   (void)smp;
   char *buf = NULL;
@@ -447,7 +447,7 @@ static void cmd_cp(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_cd(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_cd(xshell_manager_t *smp, shell_stream_i *stream,
                    int argc, char *argv[]) {
   (void)smp;
   if (argc != 2) {
@@ -466,7 +466,7 @@ static void cmd_cd(xshell_manager_t *smp, BaseSequentialStream *stream,
   while (false);
 }
 
-static void cmd_ls(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_ls(xshell_manager_t *smp, shell_stream_i *stream,
                    int argc, char *argv[]) {
   (void)smp;
   vfs_direntry_info_t *dip = NULL;
@@ -507,7 +507,7 @@ static void cmd_ls(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_mkdir(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_mkdir(xshell_manager_t *smp, shell_stream_i *stream,
                       int argc, char *argv[]) {
   (void)smp;
   msg_t ret;
@@ -523,7 +523,7 @@ static void cmd_mkdir(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_mv(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_mv(xshell_manager_t *smp, shell_stream_i *stream,
                    int argc, char *argv[]) {
   (void)smp;
   msg_t ret;
@@ -539,7 +539,7 @@ static void cmd_mv(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_pwd(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_pwd(xshell_manager_t *smp, shell_stream_i *stream,
                     int argc, char *argv[]) {
   (void)smp;
   char *buf = NULL;
@@ -575,7 +575,7 @@ static void cmd_pwd(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_rm(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_rm(xshell_manager_t *smp, shell_stream_i *stream,
                    int argc, char *argv[]) {
   (void)smp;
   msg_t ret;
@@ -591,7 +591,7 @@ static void cmd_rm(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_rmdir(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_rmdir(xshell_manager_t *smp, shell_stream_i *stream,
                       int argc, char *argv[]) {
   (void)smp;
   msg_t ret;
@@ -607,7 +607,7 @@ static void cmd_rmdir(xshell_manager_t *smp, BaseSequentialStream *stream,
   }
 }
 
-static void cmd_stat(xshell_manager_t *smp, BaseSequentialStream *stream,
+static void cmd_stat(xshell_manager_t *smp, shell_stream_i *stream,
                      int argc, char *argv[]) {
   (void)smp;
   msg_t ret;
