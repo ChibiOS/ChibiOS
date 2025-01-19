@@ -19,8 +19,10 @@
   |  |  |  +--cmsis_os/         - CMSIS OS emulation layer for RT.
   |  |  |  +--nasa_osal/        - NASA Operating System Abstraction Layer.
   |  |  +--ext/                 - Vendor files used by the OS.
+  |  |  +--oop/                 - Object-oriented framework.
   |  |  +--ports/               - RTOS ports usable by both RT and NIL.
   |  |  +--startup/             - Startup support.
+  |  |  +--utils/               - Generic and portable C modules.
   |  +--ex/                     - EX component.
   |  |  +--dox/                 - EX documentation resources.
   |  |  +--include/             - EX header files.
