@@ -52,12 +52,12 @@
 /**
  * @brief   HAL version string.
  */
-#define CH_HAL_VERSION          "9.0.0"
+#define CH_HAL_VERSION          "10.0.0"
 
 /**
  * @brief   HAL version major number.
  */
-#define CH_HAL_MAJOR            9
+#define CH_HAL_MAJOR            10
 
 /**
  * @brief   HAL version minor number.
