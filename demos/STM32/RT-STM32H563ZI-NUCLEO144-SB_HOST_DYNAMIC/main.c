@@ -18,8 +18,8 @@
 #include "hal.h"
 #include "sb.h"
 
-#include "chprintf.h"
-#include "nullstreams.h"
+#include "oop_chprintf.h"
+#include "oop_nullstreams.h"
 
 #include "startup_defs.h"
 

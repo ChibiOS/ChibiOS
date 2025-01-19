@@ -94,12 +94,17 @@ CONFDIR  := ./cfg/stm32l4r9ai_discovery
 BUILDDIR := ./build/stm32l4r9ai_discovery
 DEPDIR   := ./.dep/stm32l4r9ai_discovery
 
+# Required modules.
+OOPSELECT := base referenced
+UTILSSELECT :=
+
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
-# Common files.
-include $(CHIBIOS)/os/common/oop/oop.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32l4xx.mk
+# Common files.
+include $(CHIBIOS)/os/common/oop/oop.mk
+include $(CHIBIOS)/os/common/utils/utils.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32L4xx+/platform.mk

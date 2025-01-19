@@ -94,12 +94,17 @@ CONFDIR  := ./cfg/stm32h735ig_discovery
 BUILDDIR := ./build/stm32h735ig_discovery
 DEPDIR   := ./.dep/stm32h735ig_discovery
 
+# Required modules.
+OOPSELECT := base referenced
+UTILSSELECT :=
+
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
-# Common files.
-include $(CHIBIOS)/os/common/oop/oop.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32h7xx.mk
+# Common files.
+include $(CHIBIOS)/os/common/oop/oop.mk
+include $(CHIBIOS)/os/common/utils/utils.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32H7xx/platform_type2.mk

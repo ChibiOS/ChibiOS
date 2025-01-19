@@ -15,6 +15,18 @@ ifndef OOPSRC
     ifneq ($(filter synchronized,$(OOPSELECT)),)
       OOPSRC += ${CHIBIOS}/os/common/oop/src/oop_synchronized_object.c
     endif
+    ifneq ($(filter memstreams,$(OOPSELECT)),)
+      OOPSRC += ${CHIBIOS}/os/common/oop/final/src/oop_memstreams.c
+    endif
+    ifneq ($(filter nullstreams,$(OOPSELECT)),)
+      OOPSRC += ${CHIBIOS}/os/common/oop/final/src/oop_nullstreams.c
+    endif
+    ifneq ($(filter chprintf,$(OOPSELECT)),)
+      OOPSRC += ${CHIBIOS}/os/common/oop/final/src/oop_chprintf.c
+    endif
+    ifneq ($(filter chscanf,$(OOPSELECT)),)
+      OOPSRC += ${CHIBIOS}/os/common/oop/final/src/oop_chscanf.c
+    endif
   endif
   ALLCSRC += $(OOPSRC)
 endif

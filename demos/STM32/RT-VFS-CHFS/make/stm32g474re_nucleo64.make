@@ -94,12 +94,17 @@ CONFDIR  := ./cfg/stm32g474re_nucleo64
 BUILDDIR := ./build/stm32g474re_nucleo64
 DEPDIR   := ./.dep/stm32g474re_nucleo64
 
+# Required modules.
+OOPSELECT := base referenced
+UTILSSELECT :=
+
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
-# Common files.
-include $(CHIBIOS)/os/common/oop/oop.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32g4xx.mk
+# Common files.
+include $(CHIBIOS)/os/common/oop/oop.mk
+include $(CHIBIOS)/os/common/utils/utils.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/hal/ports/STM32/STM32G4xx/platform.mk

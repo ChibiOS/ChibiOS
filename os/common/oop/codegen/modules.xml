@@ -5,6 +5,8 @@
   <!ENTITY oop_referenced_object SYSTEM "oop_referenced_object.xml">
   <!ENTITY oop_synchronized_object SYSTEM "oop_synchronized_object.xml">
   <!ENTITY oop_sequential_stream SYSTEM "oop_sequential_stream.xml">
+  <!ENTITY oop_memstreams SYSTEM "oop_memstreams.xml">
+  <!ENTITY oop_nullstreams SYSTEM "oop_nullstreams.xml">
 ]>
 <!-- Class/interfaces definitions -->
 <instance
@@ -16,5 +18,7 @@
     &oop_referenced_object;
     &oop_synchronized_object;
     &oop_sequential_stream;
+    &oop_memstreams;
+    &oop_nullstreams;
   </modules>
 </instance>
