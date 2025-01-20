@@ -29,7 +29,6 @@
 #if (VFS_CFG_ENABLE_DRV_CHFS == TRUE) || defined(__DOXYGEN__)
 
 #include "oop_sequential_stream.h"
-#include "hal.h"
 
 /*===========================================================================*/
 /* Module constants.                                                         */
@@ -92,7 +91,7 @@ struct chfs_config {
   /**
    * @brief       Block device associated to this ChibiFS instance.
    */
-  const BaseBlockDevice     *blk;
+  const void                *blk;
 };
 
 /**

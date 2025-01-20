@@ -69,6 +69,10 @@ void vfsInit(void) {
   __drv_streams_init();
 #endif
 
+#if VFS_CFG_ENABLE_DRV_CHFS == TRUE
+  __drv_chfs_init();
+#endif
+
 #if VFS_CFG_ENABLE_DRV_FATFS == TRUE
   __drv_fatfs_init();
 #endif

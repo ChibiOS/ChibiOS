@@ -12,12 +12,11 @@
   <public>
     <includes>
       <include style="regular">oop_sequential_stream.h</include>
-      <include style="regular">hal.h</include>
     </includes>
     <configs>
       <config name="DRV_CFG_CHFS_DIR_NODES_NUM" default="2">
         <brief>Number of directory nodes pre-allocated in the pool.</brief>
-        <assert invalid="$N &lt; 2" />
+        <assert invalid="$N &lt; 1" />
       </config>
       <config name="DRV_CFG_CHFS_FILE_NODES_NUM" default="2">
         <brief>Number of file nodes pre-allocated in the pool.</brief>
@@ -28,10 +27,11 @@
       <typedef name="chfs_config_t">
         <brief>Type of a ChibiFS configuration structure.</brief>
         <basetype ctype="struct chfs_config" />
-      </typedef><struct name="chfs_config">
+      </typedef>
+      <struct name="chfs_config">
       	<brief>Structure representing a ChibiFS configuration.</brief>
       	<fields>
-          <field name="blk" ctype="const BaseBlockDevice$I*">
+          <field name="blkdev" ctype="const void$I*">
             <brief>Block device associated to this ChibiFS instance.</brief>
           </field>
       </fields>
