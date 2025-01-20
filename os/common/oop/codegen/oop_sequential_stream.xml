@@ -38,7 +38,7 @@
           <define name="streamRead" value="stmRead" />
           <define name="streamPut" value="stmPut" />
           <define name="streamGet" value="stmGet" />
-      </group>
+        </group>
       </condition>
     </definitions_early>
     <types>
