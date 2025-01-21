@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb
+  USE_OPT = -Og -ggdb
 endif
 
 # C specific options here (added to USE_OPT).
