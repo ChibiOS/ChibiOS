@@ -56,6 +56,7 @@
 
 /* Supported relocation types.*/
 #define R_ARM_ABS32             2U
+#define R_ARM_REL32             3U
 #define R_ARM_THM_PC22          10U
 #define R_ARM_THM_JUMP24        30U
 #define R_ARM_PREL31            42U
@@ -304,7 +305,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
   }
 
   /* Handling the various relocation point types.*/
-  switch (ELF32_R_TYPE(rp->r_info)) {
+  switch (ELF32_R_TYPE(ELF32_R_TYPE(rp->r_info))) {
   case R_ARM_ABS32:
     *((uint32_t *)relocation_address) += (uint32_t)ctxp->map->base;
     break;
@@ -341,6 +342,7 @@ static msg_t reloc_entry(elf_load_context_t *ctxp,
 
     ctxp->rel_movw_found = false;
     break;
+  case R_ARM_REL32: /* ?? */
   case R_ARM_THM_PC22:
   case R_ARM_THM_JUMP24:
   case R_ARM_PREL31:

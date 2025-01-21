@@ -683,9 +683,9 @@ msg_t sbExecDynamic(sb_class_t *sbp, tprio_t prio, size_t heapsize,
   umap->size += heapsize;
 
   /* Adding space for arguments, environment variables and parameters.*/
-  size += sb_strv_getsize(envp, NULL) +   /* Space for environment.   */
-          sb_strv_getsize(argv, NULL) +   /* Space for arguments.     */
-          (sizeof (uint32_t) * 4);        /* Space for parameters.    */
+  size = sb_strv_getsize(envp, NULL) +   /* Space for environment.   */
+         sb_strv_getsize(argv, NULL) +   /* Space for arguments.     */
+         (sizeof (uint32_t) * 4);        /* Space for parameters.    */
   umap->size += MEM_ALIGN_NEXT(size, PORT_STACK_ALIGN);
 
   /* Alignment of the memory area, it depends on the architecture because
