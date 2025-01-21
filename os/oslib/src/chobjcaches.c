@@ -61,46 +61,46 @@
 
 /* Default hash function.*/
 #if !defined(OC_HASH_FUNCTION) || defined(__DOXYGEN__)
-#define OC_HASH_FUNCTION(ocp, group, key)                                   \
-  (((unsigned)(group) + (unsigned)(key)) & ((unsigned)(ocp)->hashn - 1U))
+#define OC_HASH_FUNCTION(ocp, owner, key)                                   \
+  (((unsigned)(owner) + (unsigned)(key)) & ((unsigned)(ocp)->hashn - 1U))
 #endif
 
 /* Insertion into an hash slot list.*/
 #define HASH_INSERT(ocp, objp, group, key) {                                \
-  oc_hash_header_t *hhp;                                                    \
-  (hhp) = &(ocp)->hashp[OC_HASH_FUNCTION(ocp, group, key)];                 \
-  (objp)->hash_next = (hhp)->hash_next;                                     \
-  (objp)->hash_prev = (oc_object_t *)(hhp);                                 \
-  (hhp)->hash_next->hash_prev = (objp);                                     \
-  (hhp)->hash_next = (objp);                                                \
+  oc_hash_element_t *hep;                                                   \
+  hep = &(ocp)->hashp[OC_HASH_FUNCTION(ocp, group, key)];                   \
+  (objp)->list.h.next = hep->next;                                          \
+  (objp)->list.h.prev = hep;                                                \
+  hep->next->prev = &(objp)->list.h;                                        \
+  hep->next = &(objp)->list.h;                                              \
 }
 
 /* Removal of an object from the hash.*/
 #define HASH_REMOVE(objp) {                                                 \
-  (objp)->hash_prev->hash_next = (objp)->hash_next;                         \
-  (objp)->hash_next->hash_prev = (objp)->hash_prev;                         \
+  (objp)->list.h.prev->next = (objp)->list.h.next;                          \
+  (objp)->list.h.next->prev = (objp)->list.h.prev;                          \
 }
 
 /* Insertion on LRU list head (newer objects).*/
 #define LRU_INSERT_HEAD(ocp, objp) {                                        \
-  (objp)->lru_next = (ocp)->lru.lru_next;                                   \
-  (objp)->lru_prev = (oc_object_t *)&(ocp)->lru;                            \
-  (ocp)->lru.lru_next->lru_prev = (objp);                                   \
-  (ocp)->lru.lru_next = (objp);                                             \
+  (objp)->list.next = (ocp)->list.next;                                     \
+  (objp)->list.prev = &(ocp)->list;                                         \
+  (ocp)->list.next->prev = &(objp)->list;                                   \
+  (ocp)->list.next = &(objp)->list;                                         \
 }
 
 /* Insertion on LRU list head (newer objects).*/
 #define LRU_INSERT_TAIL(ocp, objp) {                                        \
-  (objp)->lru_prev = (ocp)->lru.lru_prev;                                   \
-  (objp)->lru_next = (oc_object_t *)&(ocp)->lru;                            \
-  (ocp)->lru.lru_prev->lru_next = (objp);                                   \
-  (ocp)->lru.lru_prev = (objp);                                             \
+  (objp)->list.prev = (ocp)->list.prev;                                     \
+  (objp)->list.next = &(ocp)->list;                                         \
+  (ocp)->list.prev->next = &(objp)->list;                                   \
+  (ocp)->list.prev = &(objp)->list;                                         \
 }
 
 /* Removal of an object from the LRU list.*/
 #define LRU_REMOVE(objp) {                                                  \
-  (objp)->lru_prev->lru_next = (objp)->lru_next;                            \
-  (objp)->lru_next->lru_prev = (objp)->lru_prev;                            \
+  (objp)->list.prev->next = (objp)->list.next;                              \
+  (objp)->list.next->prev = (objp)->list.prev;                              \
 }
 
 /*===========================================================================*/
@@ -123,7 +123,7 @@
  * @brief   Returns an object pointer from the cache, if present.
  *
  * @param[out] ocp      pointer to the @p objects_cache_t object to be
- * @param[in] group     object group identifier
+ * @param[in] owner     object owner pointer
  * @param[in] key       object identifier within the group
  *                      initialized
  * @return              The pointer to the retrieved object.
@@ -132,23 +132,23 @@
  * @notapi
  */
 static oc_object_t *hash_get_s(objects_cache_t *ocp,
-                               uint32_t group,
+                               void *owner,
                                uint32_t key) {
-  oc_hash_header_t *hhp;
-  oc_object_t *objp;
+  oc_hash_element_t *hep, *p;
 
   /* Hash slot where to search for an hit.*/
-  hhp  = &ocp->hashp[OC_HASH_FUNCTION(ocp, group, key)];
-  objp = hhp->hash_next;
+  hep  = &ocp->hashp[OC_HASH_FUNCTION(ocp, owner, key)];
 
   /* Scanning the siblings collision list.*/
-  while (objp != (oc_object_t *)hhp) {
-    if ((objp->obj_key == key) && (objp->obj_group == group)) {
+  p = hep->next;
+  while (p != hep) {
+    oc_object_t *objp = (oc_object_t *)(void *)p;
+    if ((objp->obj_owner == owner) && (objp->obj_key == key)) {
 
       /* Cache hit.*/
       return objp;
     }
-    objp = objp->hash_next;
+    p = p->next;
   }
 
   return NULL;
@@ -171,7 +171,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
 
     /* Now an object buffer is in the LRU for sure, taking it from the
        LRU tail.*/
-    objp = ocp->lru.lru_prev;
+    objp = (oc_object_t *)(void *)ocp->list.prev;
 
     chDbgAssert((objp->obj_flags & OC_FLAG_INLRU) == OC_FLAG_INLRU,
                 "not in LRU");
@@ -226,7 +226,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
  * @param[in] hashn     number of elements in the hash table array, must be
  *                      a power of two and not lower than @p objn
  * @param[in] hashp     pointer to the hash table as an array of
- *                      @p oc_hash_header_t
+ *                      @p oc_hash_element_t
  * @param[in] objn      number of elements in the objects table array
  * @param[in] objsz     size of elements in the objects table array, the
  *                      minimum value is <tt>sizeof (oc_object_t)</tt>.
@@ -239,7 +239,7 @@ static oc_object_t *lru_get_last_s(objects_cache_t *ocp) {
  */
 void chCacheObjectInit(objects_cache_t *ocp,
                        ucnt_t hashn,
-                       oc_hash_header_t *hashp,
+                       oc_hash_element_t *hashp,
                        ucnt_t objn,
                        size_t objsz,
                        void *objvp,
@@ -260,15 +260,15 @@ void chCacheObjectInit(objects_cache_t *ocp,
   ocp->objvp            = objvp;
   ocp->readf            = readf;
   ocp->writef           = writef;
-  ocp->lru.hash_next    = NULL;
-  ocp->lru.hash_prev    = NULL;
-  ocp->lru.lru_next     = (oc_object_t *)&ocp->lru;
-  ocp->lru.lru_prev     = (oc_object_t *)&ocp->lru;
+  ocp->list.h.next      = NULL;
+  ocp->list.h.prev      = NULL;
+  ocp->list.next        = &ocp->list;
+  ocp->list.prev        = &ocp->list;
 
   /* Hash headers initialization.*/
   do {
-    hashp->hash_next = (oc_object_t *)hashp;
-    hashp->hash_prev = (oc_object_t *)hashp;
+    hashp->next = hashp;
+    hashp->prev = hashp;
     hashp++;
   } while (hashp < &ocp->hashp[ocp->hashn]);
 
@@ -278,7 +278,7 @@ void chCacheObjectInit(objects_cache_t *ocp,
 
     chSemObjectInit(&objp->obj_sem, (cnt_t)1);
     LRU_INSERT_HEAD(ocp, objp);
-    objp->obj_group = 0U;
+    objp->obj_owner = NULL;
     objp->obj_key   = 0U;
     objp->obj_flags = OC_FLAG_INLRU;
     objp->dptr      = NULL;
@@ -294,14 +294,14 @@ void chCacheObjectInit(objects_cache_t *ocp,
  *          must be initialized.
  *
  * @param[in] ocp       pointer to the @p objects_cache_t object
- * @param[in] group     object group identifier
+ * @param[in] owner     object owner pointer
  * @param[in] key       object identifier within the group
  * @return              The pointer to the retrieved object.
  *
  * @api
  */
 oc_object_t *chCacheGetObject(objects_cache_t *ocp,
-                              uint32_t group,
+                              void *owner,
                               uint32_t key) {
   oc_object_t *objp;
 
@@ -309,7 +309,7 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
   chSysLock();
 
   /* Checking the cache for a hit.*/
-  objp = hash_get_s(ocp, group, key);
+  objp = hash_get_s(ocp, owner, key);
   if (objp != NULL) {
 
     chDbgAssert((objp->obj_flags & OC_FLAG_INHASH) == OC_FLAG_INHASH,
@@ -346,10 +346,10 @@ oc_object_t *chCacheGetObject(objects_cache_t *ocp,
     objp = lru_get_last_s(ocp);
 
     /* Naming this object and publishing it in the hash table.*/
-    objp->obj_group = group;
+    objp->obj_owner = owner;
     objp->obj_key   = key;
     objp->obj_flags = OC_FLAG_INHASH | OC_FLAG_NOTSYNC;
-    HASH_INSERT(ocp, objp, group, key);
+    HASH_INSERT(ocp, objp, owner, key);
   }
 
   /* Out of critical section and returning the object.*/
@@ -401,7 +401,7 @@ void chCacheReleaseObjectI(objects_cache_t *ocp,
   if ((objp->obj_flags & OC_FLAG_NOTSYNC) != 0U) {
     HASH_REMOVE(objp);
     LRU_INSERT_TAIL(ocp, objp);
-    objp->obj_group = 0U;
+    objp->obj_owner = NULL;
     objp->obj_key   = 0U;
     objp->obj_flags = OC_FLAG_INLRU;
   }

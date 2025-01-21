@@ -70,22 +70,22 @@ typedef uint32_t oc_flags_t;
 /**
  * @brief   Type of an hash element header.
  */
-typedef struct ch_oc_hash_header oc_hash_header_t;
+typedef struct oc_hash_element oc_hash_element_t;
 
 /**
- * @brief   Type of an LRU element header.
+ * @brief   Type of an object element.
  */
-typedef struct ch_oc_lru_header oc_lru_header_t;
+typedef struct oc_lru_element oc_lru_element_t;
 
 /**
  * @brief   Type of a cached object.
  */
-typedef struct ch_oc_object oc_object_t;
+typedef struct oc_object oc_object_t;
 
 /**
  * @brief   Type of a cache object.
  */
-typedef struct ch_objects_cache objects_cache_t;
+typedef struct objects_cache objects_cache_t;
 
 /**
  * @brief   Object read function.
@@ -116,63 +116,47 @@ typedef bool (*oc_writef_t)(objects_cache_t *ocp,
 /**
  * @brief   Structure representing an hash table element.
  */
-struct ch_oc_hash_header {
+struct oc_hash_element {
   /**
    * @brief   Next in the collisions list.
    */
-  oc_object_t           *hash_next;
+  oc_hash_element_t     *next;
   /**
    * @brief   Previous in the collisions list.
    */
-  oc_object_t           *hash_prev;
+  oc_hash_element_t     *prev;
 };
 
 /**
- * @brief   Structure representing an hash table element.
+ * @brief   Structure representing an LRU list element.
  */
-struct ch_oc_lru_header {
+struct oc_lru_element {
   /**
-   * @brief   Next in the collisions list.
+   * @brief   Hash collision list element
    */
-  oc_object_t           *hash_next;
-  /**
-   * @brief   Previous in the collisions list.
-   */
-  oc_object_t           *hash_prev;
+  oc_hash_element_t     h;
   /**
    * @brief   Next in the LRU list.
    */
-  oc_object_t           *lru_next;
+  oc_lru_element_t    *next;
   /**
    * @brief   Previous in the LRU list.
    */
-  oc_object_t           *lru_prev;
+  oc_lru_element_t    *prev;
 };
 
 /**
  * @brief   Structure representing a cached object.
  */
-struct ch_oc_object {
+struct oc_object {
   /**
-   * @brief   Next in the collisions list.
+   * @brief   Hash and LRU links.
    */
-  oc_object_t           *hash_next;
+  oc_lru_element_t      list;
   /**
-   * @brief   Previous in the collisions list.
+   * @brief   Object pointer to the owner.
    */
-  oc_object_t           *hash_prev;
-  /**
-   * @brief   Next in the LRU list.
-   */
-  oc_object_t           *lru_next;
-  /**
-   * @brief   Previous in the LRU list.
-   */
-  oc_object_t           *lru_prev;
-  /**
-   * @brief   Object group.
-   */
-  uint32_t              obj_group;
+  void                  *obj_owner;
   /**
    * @brief   Object key.
    */
@@ -196,7 +180,7 @@ struct ch_oc_object {
 /**
  * @brief   Structure representing a cache object.
  */
-struct ch_objects_cache {
+struct objects_cache {
   /**
    * @brief   Number of elements in the hash table.
    */
@@ -204,7 +188,7 @@ struct ch_objects_cache {
   /**
    * @brief   Pointer to the hash table.
    */
-  oc_hash_header_t      *hashp;
+  oc_hash_element_t  *hashp;
   /**
    * @brief   Number of elements in the objects table.
    */
@@ -220,7 +204,7 @@ struct ch_objects_cache {
   /**
    * @brief   LRU list header.
    */
-  oc_lru_header_t       lru;
+  oc_lru_element_t      list;
   /**
    * @brief   Semaphore for cache access.
    */
@@ -252,14 +236,14 @@ extern "C" {
 #endif
   void chCacheObjectInit(objects_cache_t *ocp,
                          ucnt_t hashn,
-                         oc_hash_header_t *hashp,
+                         oc_hash_element_t *hashp,
                          ucnt_t objn,
                          size_t objsz,
                          void *objvp,
                          oc_readf_t readf,
                          oc_writef_t writef);
   oc_object_t *chCacheGetObject(objects_cache_t *ocp,
-                                uint32_t group,
+                                void *owner,
                                 uint32_t key);
   void chCacheReleaseObjectI(objects_cache_t *ocp,
                              oc_object_t *objp);
