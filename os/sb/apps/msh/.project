@@ -35,11 +35,6 @@
 			<locationURI>CHIBIOS/os</locationURI>
 		</link>
 		<link>
-			<name>startup</name>
-			<type>2</type>
-			<locationURI>CHIBIOS/os/common/startup/ARMCMx-SB/compilers/GCC</locationURI>
-		</link>
-		<link>
 			<name>imports/sb_common</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os/sb/common</locationURI>
@@ -48,6 +43,11 @@
 			<name>imports/sb_user</name>
 			<type>2</type>
 			<locationURI>CHIBIOS/os/sb/user</locationURI>
+		</link>
+		<link>
+			<name>imports/startup</name>
+			<type>2</type>
+			<locationURI>CHIBIOS/os/common/startup/ARMCMx-SB/compilers/GCC</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
