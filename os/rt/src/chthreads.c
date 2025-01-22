@@ -389,7 +389,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
      stack alignment because it represents the stack top.*/
   stkbase = (uint8_t *)tdp->wbase;
   stktop  = (uint8_t *)tdp->wend -
-            MEM_ALIGN_NEXT(sizeof (thread_t), PORT_NATURAL_ALIGN);
+            MEM_ALIGN_NEXT(sizeof (thread_t), PORT_STACK_ALIGN);
   chDbgCheck(MEM_IS_ALIGNED(stkbase, PORT_WORKING_AREA_ALIGN) &&
              MEM_IS_ALIGNED(stktop, PORT_STACK_ALIGN));
 

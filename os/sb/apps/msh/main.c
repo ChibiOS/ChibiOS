@@ -200,7 +200,7 @@ static bool shell_getline(char *line, size_t size) {
     if (c == '\r') {
       shell_write(SHELL_NEWLINE_STR);
       *p = 0;
-      if (strlen(line) == 0) {
+      if (strlen(line) != 0) {
         shell_save_history(line);
       }
       return false;
