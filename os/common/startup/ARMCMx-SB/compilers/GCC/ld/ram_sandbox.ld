@@ -22,10 +22,15 @@ ENTRY(__crt0_entry)
 
 SECTIONS
 {
+    /* Not elegant but a single section named ".text" makes it easier to debug
+       a file that has been loaded and relocated, see the documentation of the
+       GDB command "add-symbol-file".*/
     .text 0x00000000 : ALIGN(4)
     {
-       KEEP(*(.sandbox))
-       
+        /* Making sure startup segment is first.*/
+        KEEP(*(.sandbox))
+
+        /* Text segment.*/
         __text_base__ = .;
         *(.text)
         *(.text.*)
@@ -33,15 +38,15 @@ SECTIONS
         *(.glue_7)
         *(.gcc*)
         __text_end__ = .;
-    }
-    
-    .rodata : ALIGN(4) ONLY_IF_RO
-    {
-        __rodata_base__ = .;
+
+        /* Read-only data segment.*/
+        . = ALIGN(4);
+       __rodata_base__ = .;
         *(.rodata)
         *(.rodata.*)
         __rodata_end__ = .;
 
+        /* constructors and destructors segment.*/
         __init_array_base__ = .;
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
@@ -51,52 +56,46 @@ SECTIONS
         KEEP(*(SORT(.fini_array.*)))
         __fini_array_end__ = .;
 
+        /* ARM-specific segments.*/
         *(.eh_frame*)
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    }
 
-    .ARM.exidx : ALIGN(4)
-    {
-        __exidx_base__ = .;
+        . = ALIGN(4);
+         __exidx_base__ = .;
         __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
         __exidx_end__ = .;
         __exidx_end = .;
-     }
 
-    .data : ALIGN(4)
-    {
-        PROVIDE(_data = .);
+        /* Data segment.*/
+        . = ALIGN(4);
+         PROVIDE(_data = .);
        __data_base__ = .;
         *(.data)
         *(.data.*)
         . = ALIGN(4);
         PROVIDE(_edata = .);
         __data_end__ = .;
-    }
 
-    .bss (NOLOAD) : ALIGN(4)
-    {
-        __bss_base__ = .;
+        /* BSS segment.*/
+        . = ALIGN(4);
+         __bss_base__ = .;
         *(.bss)
         *(.bss.*)
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
         PROVIDE(end = .);
-    }
-    
-    .stack (NOLOAD) : ALIGN(8)
-    {
+
+        /* Stack segment.*/
         . = ALIGN(8);
         __user_psp_base__ = .;
         . += __process_stack_size__;
         . = ALIGN(8);
         __user_psp_end__ = .;
-    }
-    
-    .heap (NOLOAD) : ALIGN(4)
-    {
+
+        /* Reserved heap segment.*/
+        . = ALIGN(4);
         __heap_base__ = .;
         __heap_rsvd_base__ = .;
         *(.heap_rsvd)
