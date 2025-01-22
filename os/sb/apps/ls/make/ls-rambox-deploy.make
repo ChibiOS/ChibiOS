@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -Og -ggdb -m32
+  USE_OPT = -Og -ggdb -fomit-frame-pointer --specs=nano.specs
 endif
 
 # C specific options here (added to USE_OPT).
@@ -20,17 +20,17 @@ endif
 
 # Enable this if you want the linker to remove unused code and data.
 ifeq ($(USE_LINK_GC),)
-  USE_LINK_GC = yes
+  USE_LINK_GC = no
 endif
 
 # Linker extra options here.
 ifeq ($(USE_LDOPT),)
-  USE_LDOPT = --defsym=__main_thread_stack_base__=0,--defsym=__main_thread_stack_end__=0
+  USE_LDOPT = -q -Wl,-zmax-page-size=512,--no-warn-rwx-segment
 endif
 
 # Enable this if you want link time optimizations (LTO).
 ifeq ($(USE_LTO),)
-  USE_LTO = no
+  USE_LTO = yes
 endif
 
 # Enable this if you want to see the full log while compiling.
@@ -52,47 +52,86 @@ endif
 # Architecture or project specific options
 #
 
+# Stack size to be allocated to the Cortex-M process stack. This stack is
+# the stack used by the main() thread.
+ifeq ($(USE_PROCESS_STACKSIZE),)
+  USE_PROCESS_STACKSIZE = 0x400
+endif
+
+# Stack size to the allocated to the Cortex-M main/exceptions stack. This
+# stack is used for processing interrupts and exceptions.
+ifeq ($(USE_EXCEPTIONS_STACKSIZE),)
+  USE_EXCEPTIONS_STACKSIZE = 0x400
+endif
+
+# Enables the use of FPU (no, softfp, hard).
+ifeq ($(USE_FPU),)
+  USE_FPU = no
+endif
+
+# FPU-related options.
+ifeq ($(USE_FPU_OPT),)
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16
+endif
+
 #
 # Architecture or project specific options
 ##############################################################################
 
 ##############################################################################
-# Project, sources and paths
+# Project, target, sources and paths
 #
 
 # Define project name here
 PROJECT = ls
 
-# Imported source files and paths
-CHIBIOS = ../../../..
-CONFDIR  := ./cfg/posix
-BUILDDIR := ./build/posix
-DEPDIR   := ./.dep/posix
+# Target settings.
+MCU  = cortex-m4
+
+# Imported source files and paths.
+CHIBIOS  := ../../../..
+CONFDIR  := ./cfg/ls-rambox-deploy
+BUILDDIR := ./build/ls-rambox-deploy
+DEPDIR   := ./.dep/ls-rambox-deploy
 
 # Startup files.
-#include $(CHIBIOS)/os/common/startup/ARMCMx-SB/compilers/GCC/mk/startup.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx-SB/compilers/GCC/mk/startup.mk
 # Common files.
-#include $(CHIBIOS)/os/common/utils/utils.mk
-#include $(CHIBIOS)/os/sb/user/sbuser.mk
+include $(CHIBIOS)/os/common/utils/utils.mk
+include $(CHIBIOS)/os/sb/user/sbuser.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 
-# C sources here.
+# Define linker script file here.
+LDSCRIPT= $(STARTUPLD)/ram_sandbox.ld
+
+# C sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        main.c
 
-# C++ sources here.
+# C++ sources that can be compiled in ARM or THUMB mode depending on the global
+# setting.
 CPPSRC = $(ALLCPPSRC)
 
 # List ASM source files here.
 ASMSRC = $(ALLASMSRC)
+
+# List ASM with preprocessor source files here.
 ASMXSRC = $(ALLXASMSRC)
 
+# Inclusion directories.
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 
+# Define C warning options here.
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+
+# Define C++ warning options here.
+CPPWARN = -Wall -Wextra -Wundef
+
 #
-# Project, sources and paths
+# Project, target, sources and paths
 ##############################################################################
 
 ##############################################################################
@@ -103,7 +142,7 @@ INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC)
 UDEFS =
 
 # Define ASM defines here
-UADEFS =
+UADEFS = -DCRT0_INIT_DATA=0 -DCRT0_RESERVE_HEAP=4096
 
 # List all user directories here
 UINCDIR =
@@ -115,39 +154,29 @@ ULIBDIR =
 ULIBS =
 
 #
-# End of user defines
+# End of user section
 ##############################################################################
 
 ##############################################################################
-# Compiler settings
+# Common rules
 #
 
-TRGT = 
-CC   = $(TRGT)gcc
-CPPC = $(TRGT)g++
-# Enable loading with g++ only if you need C++ runtime support.
-# NOTE: You can use C++ even without C++ support if you are careful. C++
-#       runtime support makes code size explode.
-LD   = $(TRGT)gcc
-#LD   = $(TRGT)g++
-CP   = $(TRGT)objcopy
-AS   = $(TRGT)gcc -x assembler-with-cpp
-AR   = $(TRGT)ar
-OD   = $(TRGT)objdump
-SZ   = $(TRGT)size
-HEX  = $(CP) -O ihex
-BIN  = $(CP) -O binary
-COV  = gcov
-
-# Define C warning options here
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
-
-# Define C++ warning options here
-CPPWARN = -Wall -Wextra -Wundef
-
-#
-# Compiler settings
-##############################################################################
-
-RULESPATH = $(CHIBIOS)/os/common/startup/SIMIA32/compilers/GCC
+RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk
+include $(RULESPATH)/arm-none-eabi.mk
 include $(RULESPATH)/rules.mk
+
+#
+# Common rules
+##############################################################################
+
+##############################################################################
+# Custom rules
+#
+
+read:
+	@echo "Reading elf..."
+	@$(TRGT)readelf -atSlnr $(BUILDDIR)/$(PROJECT).elf > $(BUILDDIR)/$(PROJECT).read
+
+#
+# Custom rules
+##############################################################################
