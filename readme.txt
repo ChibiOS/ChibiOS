@@ -76,6 +76,7 @@
 *** 20.3.5 ***
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
        underlying port supports the capability.
+- FIX: Fixed DMA2 not firing on STM32G431 (bug 1295).
 - FIX: Fixed wrong STM32 ADCv2 stop method (bug 1294).
 - FIX: Fixed STM32 OTGv1 driver does not re-enables endpoints on wakeup
        (bug 1293).
