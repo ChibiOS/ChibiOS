@@ -55,6 +55,13 @@
 #if !defined(DRV_CFG_CHFS_FILE_NODES_NUM) || defined(__DOXYGEN__)
 #define DRV_CFG_CHFS_FILE_NODES_NUM         2
 #endif
+
+/**
+ * @brief       Number of file nodes pre-allocated in the pool.
+ */
+#if !defined(DRV_CFG_CHFS_CACHE_BUFFERS_NUM) || defined(__DOXYGEN__)
+#define DRV_CFG_CHFS_CACHE_BUFFERS_NUM      2
+#endif
 /** @} */
 
 /*===========================================================================*/
@@ -69,6 +76,15 @@
 /* Checks on DRV_CFG_CHFS_FILE_NODES_NUM configuration.*/
 #if DRV_CFG_CHFS_FILE_NODES_NUM < 1
 #error "invalid DRV_CFG_CHFS_FILE_NODES_NUM value"
+#endif
+
+/* Checks on DRV_CFG_CHFS_CACHE_BUFFERS_NUM configuration.*/
+#if DRV_CFG_CHFS_CACHE_BUFFERS_NUM < 2
+#error "invalid DRV_CFG_CHFS_CACHE_BUFFERS_NUM value"
+#endif
+
+#if CH_CFG_USE_OBJ_CACHES != TRUE
+#error "VFS CHFS driver requires CH_CFG_USE_OBJ_CACHES"
 #endif
 
 /*===========================================================================*/
@@ -91,7 +107,7 @@ struct chfs_config {
   /**
    * @brief       Block device associated to this ChibiFS instance.
    */
-  const void                *blk;
+  const void                *blkdev;
 };
 
 /**
