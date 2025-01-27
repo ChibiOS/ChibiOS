@@ -31,16 +31,16 @@
 /* Module local definitions.                                                 */
 /*===========================================================================*/
 
-/*===========================================================================*/
-/* Module local macros.                                                      */
-/*===========================================================================*/
-
 #define b2(x)       (   (x) | (   (x) >> 1))
 #define b4(x)       ( b2(x) | ( b2(x) >> 2))
 #define b8(x)       ( b4(x) | ( b4(x) >> 4))
 #define b16(x)      ( b8(x) | ( b8(x) >> 8))
 #define b32(x)      (b16(x) | (b16(x) >>16))
 #define np2(x)      (b32(x-1) + 1)
+
+/*===========================================================================*/
+/* Module local macros.                                                      */
+/*===========================================================================*/
 
 /*===========================================================================*/
 /* Module exported variables.                                                */
@@ -197,6 +197,18 @@ struct vfs_chfs_driver_static_struct {
    * @brief       Static storage of file nodes.
    */
   vfs_chfs_file_node_c      file_nodes[DRV_CFG_CHFS_FILE_NODES_NUM];
+  /**
+   * @brief       Unified buffers cache.
+   */
+  objects_cache_t           cache;
+  /**
+   * @brief       Array of hash table headers.
+   */
+  oc_hash_element_t         cache_headers[np2(DRV_CFG_CHFS_CACHE_BUFFERS_NUM * 2)];
+  /**
+   * @brief       Array of cached objects.
+   */
+  oc_object_t               cache_objects[DRV_CFG_CHFS_CACHE_BUFFERS_NUM];
 };
 
 /*===========================================================================*/

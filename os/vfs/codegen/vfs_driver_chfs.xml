@@ -140,21 +140,31 @@ self->path_cwd[0] = '\0';]]></implementation>
         <init />
         <implementation><![CDATA[
 
-  /* Initializing pools.*/
-  chPoolObjectInit(&vfs_chfs_driver_static.dir_nodes_pool,
-                   sizeof (vfs_chfs_dir_node_c),
-                   chCoreAllocAlignedI);
-  chPoolObjectInit(&vfs_chfs_driver_static.file_nodes_pool,
-                   sizeof (vfs_chfs_file_node_c),
-                   chCoreAllocAlignedI);
+/* Initializing pools.*/
+chPoolObjectInit(&vfs_chfs_driver_static.dir_nodes_pool,
+                 sizeof (vfs_chfs_dir_node_c),
+                 chCoreAllocAlignedI);
+chPoolObjectInit(&vfs_chfs_driver_static.file_nodes_pool,
+                 sizeof (vfs_chfs_file_node_c),
+                 chCoreAllocAlignedI);
 
-  /* Preloading pools.*/
-  chPoolLoadArray(&vfs_chfs_driver_static.dir_nodes_pool,
-                  &vfs_chfs_driver_static.dir_nodes[0],
-                  DRV_CFG_CHFS_DIR_NODES_NUM);
-  chPoolLoadArray(&vfs_chfs_driver_static.file_nodes_pool,
-                  &vfs_chfs_driver_static.file_nodes[0],
-                  DRV_CFG_CHFS_FILE_NODES_NUM);]]></implementation>
+/* Preloading pools.*/
+chPoolLoadArray(&vfs_chfs_driver_static.dir_nodes_pool,
+                &vfs_chfs_driver_static.dir_nodes[0],
+                DRV_CFG_CHFS_DIR_NODES_NUM);
+chPoolLoadArray(&vfs_chfs_driver_static.file_nodes_pool,
+                &vfs_chfs_driver_static.file_nodes[0],
+                DRV_CFG_CHFS_FILE_NODES_NUM);
+
+/* Initializing cache.*/
+chCacheObjectInit(&vfs_chfs_driver_static.cache,
+                  sizeof (vfs_chfs_driver_static.cache_headers) / sizeof (vfs_chfs_driver_static.cache_headers[0]),
+                  &vfs_chfs_driver_static.cache_headers[0],
+                  sizeof (vfs_chfs_driver_static.cache_objects) / sizeof (vfs_chfs_driver_static.cache_objects[0]),
+                  sizeof (oc_object_t),
+                  &vfs_chfs_driver_static.cache_objects[0],
+                  buf_read,
+                  buf_write);]]></implementation>
       </function>
     </functions>
   </public>
@@ -162,6 +172,15 @@ self->path_cwd[0] = '\0';]]></implementation>
     <includes_always>
       <include style="regular">vfs.h</include>
     </includes_always>
+    <definitions>
+      <verbatim><![CDATA[
+#define b2(x)       (   (x) | (   (x) >> 1))
+#define b4(x)       ( b2(x) | ( b2(x) >> 2))
+#define b8(x)       ( b4(x) | ( b4(x) >> 4))
+#define b16(x)      ( b8(x) | ( b8(x) >> 8))
+#define b32(x)      (b16(x) | (b16(x) >>16))
+#define np2(x)      (b32(x-1) + 1)]]></verbatim>
+    </definitions>
     <types>
       <class type="regular" name="vfs_chfs_dir_node" namespace="chfsdir"
         ancestorname="vfs_directory_node" descr="VFS ChibiFS directory node">
@@ -275,8 +294,48 @@ self = __vfsfile_objinit_impl(ip, vmt, (vfs_driver_c *)driver, mode);]]></implem
             ctype="vfs_chfs_file_node_c$I$N[DRV_CFG_CHFS_FILE_NODES_NUM]">
             <brief>Static storage of file nodes.</brief>
           </field>
+          <field name="cache"
+            ctype="objects_cache_t$I$N">
+            <brief>Unified buffers cache.</brief>
+          </field>
+          <field name="cache_headers"
+            ctype="oc_hash_element_t$I$N[np2(DRV_CFG_CHFS_CACHE_BUFFERS_NUM * 2)]">
+            <brief>Array of hash table headers.</brief>
+          </field>
+          <field name="cache_objects"
+            ctype="oc_object_t$I$N[DRV_CFG_CHFS_CACHE_BUFFERS_NUM]">
+            <brief>Array of cached objects.</brief>
+          </field>
         </fields>
       </struct>
     </types>
+    <functions>
+      <function name="buf_read" ctype="bool">
+        <param name="ocp" ctype="objects_cache_t *"></param>
+        <param name="objp" ctype="oc_object_t *"></param>
+        <param name="async" ctype="bool"></param>
+        <implementation><![CDATA[
+
+objp->obj_flags &= ~OC_FLAG_NOTSYNC;
+
+if (async) {
+  chCacheReleaseObject(ocp, objp);
+}
+
+return false;]]></implementation>
+      </function>
+      <function name="buf_write" ctype="bool">
+        <param name="ocp" ctype="objects_cache_t *"></param>
+        <param name="objp" ctype="oc_object_t *"></param>
+        <param name="async" ctype="bool"></param>
+        <implementation><![CDATA[
+
+if (async) {
+  chCacheReleaseObject(ocp, objp);
+}
+
+return false;]]></implementation>
+      </function>
+    </functions>
   </private>
 </module>

@@ -21,6 +21,26 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static bool buf_read(objects_cache_t *ocp, oc_object_t *objp, bool async) {
+
+  objp->obj_flags &= ~OC_FLAG_NOTSYNC;
+
+  if (async) {
+    chCacheReleaseObject(ocp, objp);
+  }
+
+  return false;
+}
+
+static bool buf_write(objects_cache_t *ocp, oc_object_t *objp, bool async) {
+
+  if (async) {
+    chCacheReleaseObject(ocp, objp);
+  }
+
+  return false;
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -32,21 +52,31 @@
  */
 void __drv_chfs_init(void) {
 
-    /* Initializing pools.*/
-    chPoolObjectInit(&vfs_chfs_driver_static.dir_nodes_pool,
-                     sizeof (vfs_chfs_dir_node_c),
-                     chCoreAllocAlignedI);
-    chPoolObjectInit(&vfs_chfs_driver_static.file_nodes_pool,
-                     sizeof (vfs_chfs_file_node_c),
-                     chCoreAllocAlignedI);
+  /* Initializing pools.*/
+  chPoolObjectInit(&vfs_chfs_driver_static.dir_nodes_pool,
+                   sizeof (vfs_chfs_dir_node_c),
+                   chCoreAllocAlignedI);
+  chPoolObjectInit(&vfs_chfs_driver_static.file_nodes_pool,
+                   sizeof (vfs_chfs_file_node_c),
+                   chCoreAllocAlignedI);
 
-    /* Preloading pools.*/
-    chPoolLoadArray(&vfs_chfs_driver_static.dir_nodes_pool,
-                    &vfs_chfs_driver_static.dir_nodes[0],
-                    DRV_CFG_CHFS_DIR_NODES_NUM);
-    chPoolLoadArray(&vfs_chfs_driver_static.file_nodes_pool,
-                    &vfs_chfs_driver_static.file_nodes[0],
-                    DRV_CFG_CHFS_FILE_NODES_NUM);
+  /* Preloading pools.*/
+  chPoolLoadArray(&vfs_chfs_driver_static.dir_nodes_pool,
+                  &vfs_chfs_driver_static.dir_nodes[0],
+                  DRV_CFG_CHFS_DIR_NODES_NUM);
+  chPoolLoadArray(&vfs_chfs_driver_static.file_nodes_pool,
+                  &vfs_chfs_driver_static.file_nodes[0],
+                  DRV_CFG_CHFS_FILE_NODES_NUM);
+
+  /* Initializing cache.*/
+  chCacheObjectInit(&vfs_chfs_driver_static.cache,
+                    sizeof (vfs_chfs_driver_static.cache_headers) / sizeof (vfs_chfs_driver_static.cache_headers[0]),
+                    &vfs_chfs_driver_static.cache_headers[0],
+                    sizeof (vfs_chfs_driver_static.cache_objects) / sizeof (vfs_chfs_driver_static.cache_objects[0]),
+                    sizeof (oc_object_t),
+                    &vfs_chfs_driver_static.cache_objects[0],
+                    buf_read,
+                    buf_write);
 }
 
 /*===========================================================================*/
