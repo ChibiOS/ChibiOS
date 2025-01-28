@@ -211,8 +211,10 @@ void can_lld_init(void) {
   /* Configuration Change Enable */
   CAND1.fdcan->CCCR |= FDCAN_CCCR_CCE;
 
+  /* The clock divider configuration must only be done with FDCAN1 enabled and started. */
+  /* The clock divider is applied to all enabled CAN peripherals. */
   /* CKDIV configuration */
-  FDCAN_CONFIG->CKDIV = STM32_CAN_FDCAN_CKDIV;
+  FDCAN_CONFIG->CKDIV = STM32_CAN_FDCAN_PRESC;
 
   /* Disable FDCAN.*/
   rccDisableFDCAN();
@@ -286,6 +288,7 @@ bool can_lld_start(CANDriver *canp) {
   /* Setting up operation mode except driver-controlled bits.*/
   canp->fdcan->NBTP = canp->config->NBTP;
   canp->fdcan->DBTP = canp->config->DBTP;
+  canp->fdcan->TDCR = canp->config->TDCR;
   canp->fdcan->CCCR |= canp->config->CCCR;
 
   /* TEST is only writable when FDCAN_CCCR_TEST is set and FDCAN is still in
@@ -311,7 +314,7 @@ bool can_lld_start(CANDriver *canp) {
   canp->fdcan->IR     = (uint32_t)-1;
   canp->fdcan->IE     = FDCAN_IE_RF1NE | FDCAN_IE_RF1LE |
                         FDCAN_IE_RF0NE | FDCAN_IE_RF0LE |
-                        FDCAN_IE_TCE;
+                        FDCAN_IE_TCE | FDCAN_IE_BOE;
   canp->fdcan->TXBTIE = FDCAN_TXBTIE_TIE;
   canp->fdcan->ILE    = FDCAN_ILE_EINT0;
 
@@ -577,6 +580,10 @@ void can_lld_serve_interrupt(CANDriver *canp) {
     _can_error_isr(canp, CAN_OVERFLOW_ERROR);
   }
 
+  /* Bus_off events.*/
+  if ((ir & FDCAN_IR_BO) != 0U)  {
+    _can_error_isr(canp, CAN_BUS_OFF_ERROR);
+  }
   /* TX events.*/
   if ((ir & FDCAN_IR_TC) != 0U) {
     eventflags_t flags = 0U;

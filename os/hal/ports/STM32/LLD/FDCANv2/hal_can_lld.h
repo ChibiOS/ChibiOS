@@ -445,6 +445,10 @@ typedef struct hal_can_config {
    */
   uint32_t                  DBTP;
   /**
+   * @brief   Data delay compensation register.
+   */
+  uint32_t                  TDCR;
+ /**
    * @brief   CC control register.
    */
   uint32_t                  CCCR;

@@ -51,6 +51,7 @@ static const CANConfig cancfg = {
   FDCAN_CONFIG_DBTP_DSJW(3U) |
   FDCAN_CONFIG_DBTP_DTSEG2(3U) |
   FDCAN_CONFIG_DBTP_DTSEG1(10U), /* DBTP */
+  0,          /* TDCR */
   0,          /* CCCR */
   0,          /* TEST */
   0           /* RXGFC */

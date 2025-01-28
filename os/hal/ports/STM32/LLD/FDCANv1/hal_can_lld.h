@@ -124,8 +124,8 @@
 /**
  * @brief   Global clock divisor configuration FDCAN.
  */
-#if !defined(STM32_CAN_FDCAN_CKDIV) || defined(__DOXYGEN__)
-#define STM32_CAN_FDCAN_CKDIV               FDCAN_CONFIG_CKDIV_PDIV_1
+#if !defined(STM32_CAN_FDCAN_PRESC) || defined(__DOXYGEN__)
+#define STM32_CAN_FDCAN_PRESC               FDCAN_CONFIG_CKDIV_PDIV_1
 #endif
 
 /** @} */
@@ -166,7 +166,7 @@
  * @brief   Configuration of CKDIV is only possible with FDCAN1 enabled.
  * @note    CAN instances share the same clock.
  */
-#if (STM32_CAN_FDCAN_CKDIV != 0) && (!STM32_CAN_USE_FDCAN1)
+#if (STM32_CAN_FDCAN_PRESC != 0) && (!STM32_CAN_USE_FDCAN1)
 #error "STM32_CAN_USE_FDCAN1 is required for configuring STM32_CAN_CKDIV != 0"
 #endif
 
@@ -460,6 +460,10 @@ typedef struct hal_can_config {
    * @brief   Data bit timing and prescaler register.
    */
   uint32_t                  DBTP;
+  /**
+   * @brief   Data delay compensation register.
+   */
+  uint32_t                  TDCR;
   /**
    * @brief   CC control register.
    */
