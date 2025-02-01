@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -71,7 +71,7 @@ endif
 
 # FPU-related options.
 ifeq ($(USE_FPU_OPT),)
-  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv5-d16
+  USE_FPU_OPT = -mfloat-abi=$(USE_FPU) -mfpu=fpv4-sp-d16
 endif
 
 #
@@ -86,45 +86,39 @@ endif
 PROJECT = ch
 
 # Target settings.
-MCU  = cortex-m7
+MCU  = cortex-m33
 
 # Imported source files and paths.
 CHIBIOS  := ../../..
-CONFDIR  := ./cfg/stm32h735ig_discovery
-BUILDDIR := ./build/stm32h735ig_discovery
-DEPDIR   := ./.dep/stm32h735ig_discovery
+CONFDIR  := ./cfg/stm32h563zi_nucleo144
+BUILDDIR := ./build/stm32h563zi_nucleo144
+DEPDIR   := ./.dep/stm32h563zi_nucleo144
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
-# Common files.
-include $(CHIBIOS)/os/common/utils/utils.mk
 # Startup files.
-include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32h7xx.mk
+include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32h5xx.mk
 # HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32H7xx/platform_type2.mk
-include $(CHIBIOS)/os/hal/boards/ST_STM32H735IG_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32H5xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO144_H563ZI/board.mk
 include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
-include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
-# VFS files (optional).
-#include $(CHIBIOS)/os/vfs/vfs.mk
-#include $(CHIBIOS)/os/vfs/vfs_syscalls.mk
+#include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-include $(CHIBIOS)/os/test/test.mk
-include $(CHIBIOS)/test/rt/rt_test.mk
-include $(CHIBIOS)/test/oslib/oslib_test.mk
-include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/various/shell/shell.mk
-include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
+#include $(CHIBIOS)/os/test/test.mk
+#include $(CHIBIOS)/test/rt/rt_test.mk
+#include $(CHIBIOS)/test/oslib/oslib_test.mk
+#include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+#include $(CHIBIOS)/os/various/xshell/xshell.mk
 include $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
-include $(CHIBIOS)/os/various/httpd_fatfs_bindings/httpd_fatfs.mk
 
-# Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32H723xG_ITCM64k_AXI_NC.ld
+# Define linker script file here.
+LDSCRIPT= $(STARTUPLD)/STM32H563xI.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -148,7 +142,7 @@ ASMXSRC = $(ALLXASMSRC)
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC) ./cfg
 
 # Define C warning options here.
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Wcast-align=strict
 
 # Define C++ warning options here.
 CPPWARN = -Wall -Wextra -Wundef
@@ -162,7 +156,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCORE_CM7
+UDEFS =
 
 # Define ASM defines here
 UADEFS =
