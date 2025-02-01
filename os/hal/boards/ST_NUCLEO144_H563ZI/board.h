@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -321,7 +321,7 @@
  * PA7  - RMII_CRS_DV               (alternate 11).
  * PA8  - PIN8                      (input pullup).
  * PA9  - UCPD_DBn                  (input pullup).
- * PA10 - PIN10                     (analog).
+ * PA10 - PIN10                     (input floating).
  * PA11 - USB_DM                    (alternate 10).
  * PA12 - USB_DP                    (alternate 10).
  * PA13 - SWDIO                     (alternate 0).
@@ -338,7 +338,7 @@
                                      PIN_MODE_ALTERNATE(GPIOA_RMII_CRS_DV) |\
                                      PIN_MODE_INPUT(GPIOA_PIN8) |           \
                                      PIN_MODE_INPUT(GPIOA_UCPD_DBn) |       \
-                                     PIN_MODE_ANALOG(GPIOA_PIN10) |         \
+                                     PIN_MODE_INPUT(GPIOA_PIN10) |          \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_DM) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_USB_DP) |     \
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
@@ -346,7 +346,7 @@
                                      PIN_MODE_ALTERNATE(GPIOA_T_JTDI))
 #define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_PIN0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_RMII_REF_CLK) |\
-                                     PIN_OTYPE_PUSHPULL(GPIOA_RMII_MDIO) |  \
+                                     PIN_OTYPE_OPENDRAIN(GPIOA_RMII_MDIO) | \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN3) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOA_VBUS_SENSE) | \
                                      PIN_OTYPE_PUSHPULL(GPIOA_PIN5) |       \

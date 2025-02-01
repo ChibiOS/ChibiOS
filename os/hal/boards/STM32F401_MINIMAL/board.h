@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -56,13 +56,8 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef STM32F401xE
 #define STM32F401xE
-
-/*
- * USB NOVBUSSENS
- * @note This board has not pull up on D+
- */
-#define BOARD_OTG_NOVBUSSENS
 
 /*
  * IO pins assignments.
@@ -601,7 +596,7 @@
                                      PIN_ODR_HIGH(GPIOC_PIN10) |            \
                                      PIN_ODR_HIGH(GPIOC_PIN11) |            \
                                      PIN_ODR_HIGH(GPIOC_PIN12) |            \
-                                     PIN_ODR_HIGH(GPIOC_LED) |              \
+                                     PIN_ODR_LOW(GPIOC_LED) |               \
                                      PIN_ODR_HIGH(GPIOC_OSC32_IN) |         \
                                      PIN_ODR_HIGH(GPIOC_OSC32_OUT))
 #define VAL_GPIOC_AFRL              (PIN_AFIO_AF(GPIOC_PIN0, 0U) |          \
