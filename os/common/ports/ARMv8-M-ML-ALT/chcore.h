@@ -1108,11 +1108,9 @@ struct port_context {
  * @param[in] otp       the thread to be switched out
  */
 #define port_switch(ntp, otp) do {                                          \
-  __dbg_check_lock();                                                       \
   register thread_t *_ntp asm ("r0") = (ntp);                               \
   register thread_t *_otp asm ("r1") = (otp);                               \
   asm volatile ("svc     #0" : : "r" (_otp), "r" (_ntp) : "memory");        \
-  __dbg_check_unlock();                                                     \
 } while (false)
 
 /**
