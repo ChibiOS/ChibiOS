@@ -285,6 +285,17 @@
 #define STM32_ICU_USE_TIM17                 ${doc.STM32_ICU_USE_TIM17!"FALSE"}
 
 /*
+ * MAC driver system settings.
+ */
+#define STM32_MAC_TRANSMIT_BUFFERS          ${doc.STM32_MAC_TRANSMIT_BUFFERS!"2"}
+#define STM32_MAC_RECEIVE_BUFFERS           ${doc.STM32_MAC_RECEIVE_BUFFERS!"4"}
+#define STM32_MAC_BUFFERS_SIZE              ${doc.STM32_MAC_BUFFERS_SIZE!"1522"}
+#define STM32_MAC_PHY_TIMEOUT               ${doc.STM32_MAC_PHY_TIMEOUT!"100"}
+#define STM32_MAC_ETH1_CHANGE_PHY_STATE     ${doc.STM32_MAC_ETH1_CHANGE_PHY_STATE!"TRUE"}
+#define STM32_MAC_ETH1_IRQ_PRIORITY         ${doc.STM32_MAC_ETH1_IRQ_PRIORITY!"13"}
+#define STM32_MAC_IP_CHECKSUM_OFFLOAD       ${doc.STM32_MAC_IP_CHECKSUM_OFFLOAD!"FALSE"}
+
+/*
  * PWM driver system settings.
  */
 #define STM32_PWM_USE_TIM1                  ${doc.STM32_PWM_USE_TIM1!"FALSE"}

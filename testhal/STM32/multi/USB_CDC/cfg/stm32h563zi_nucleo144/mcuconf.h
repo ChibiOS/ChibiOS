@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -274,6 +274,17 @@
 #define STM32_ICU_USE_TIM17                 FALSE
 
 /*
+ * MAC driver system settings.
+ */
+#define STM32_MAC_TRANSMIT_BUFFERS          2
+#define STM32_MAC_RECEIVE_BUFFERS           4
+#define STM32_MAC_BUFFERS_SIZE              1522
+#define STM32_MAC_PHY_TIMEOUT               100
+#define STM32_MAC_ETH1_CHANGE_PHY_STATE     TRUE
+#define STM32_MAC_ETH1_IRQ_PRIORITY         13
+#define STM32_MAC_IP_CHECKSUM_OFFLOAD       FALSE
+
+/*
  * PWM driver system settings.
  */
 #define STM32_PWM_USE_TIM1                  FALSE
@@ -383,10 +394,6 @@
 /*
  * USB driver system settings.
  */
-#define STM32_USB_USE_USB1                  TRUE
-#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
 
 /*
  * WDG driver system settings.
