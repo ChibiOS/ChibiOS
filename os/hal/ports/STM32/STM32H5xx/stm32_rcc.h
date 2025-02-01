@@ -478,6 +478,38 @@
 /** @} */
 
 /**
+ * @name    ETH peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the ETH peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETHEN |                  \
+                                       RCC_AHB1ENR_ETHTXEN  |               \
+                                       RCC_AHB1ENR_ETHRXEN, lp)
+
+/**
+ * @brief   Disables the ETH peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableETH() rccDisableAHB1(RCC_AHB1ENR_ETHEN |                  \
+                                       RCC_AHB1ENR_ETHTXEN  |               \
+                                       RCC_AHB1ENR_ETHRXEN)
+
+/**
+ * @brief   Resets the ETH peripheral.
+ *
+ * @api
+ */
+#define rccResetETH() rccResetAHB1(RCC_AHB1RSTR_ETHRST)
+/** @} */
+
+/**
  * @name    GPDMA peripheral specific RCC operations
  * @{
  */

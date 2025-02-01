@@ -158,6 +158,13 @@
 #define STM32_EXTI15_NUMBER                 26
 
 /*
+ * ETH units.
+ */
+#define STM32_ETH_HANDLER                   Vector1E8
+
+#define STM32_ETH_NUMBER                    106
+
+/*
  * SPI units.
  */
 #define STM32_SPI1_HANDLER                  Vector11C

@@ -294,12 +294,23 @@ void mac_lld_init(void) {
 
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
 #if defined(STM32H7XX)
-  SYSCFG->PMCR |= SYSCFG_PMCR_PA1SO;
+  {
+    uint32_t pmcr = SYSCFG->PMCR & ~SBS_PMCR_ETH_SEL_PHY_Msk;
 #if defined(BOARD_PHY_RMII)
-  SYSCFG->PMCR = (SYSCFG->PMCR & ~SYSCFG_PMCR_EPIS_SEL_Msk) | SYSCFG_PMCR_EPIS_SEL_2;
-#else
-  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_Msk;
+  pmcr |= SYSCFG_PMCR_EPIS_SEL_2;
 #endif
+  SYSCFG->PMCR = pmcr;
+}
+
+#elif defined(STM32H5XX)
+  {
+    uint32_t pmcr = SBS->PMCR & ~SBS_PMCR_ETH_SEL_PHY_Msk;
+#if defined(BOARD_PHY_RMII)
+    pmcr |= SBS_PMCR_ETH_SEL_PHY_2;
+#endif
+    SBS->PMCR = pmcr;
+  }
+
 #else
 #error "unsupported STM32 platform for MACv2 driver"
 #endif
