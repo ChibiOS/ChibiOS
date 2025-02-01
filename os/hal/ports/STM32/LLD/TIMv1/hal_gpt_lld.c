@@ -1071,6 +1071,7 @@ void gpt_lld_stop(GPTDriver *gptp) {
 
 /**
  * @brief   Starts the timer in continuous mode.
+ * @note    Interval values 0 and 1 are invalid on this architecture.
  *
  * @param[in] gptp      pointer to the @p GPTDriver object
  * @param[in] interval  period in ticks
@@ -1078,6 +1079,8 @@ void gpt_lld_stop(GPTDriver *gptp) {
  * @notapi
  */
 void gpt_lld_start_timer(GPTDriver *gptp, gptcnt_t interval) {
+
+  osalDbgAssert(interval > (gptcnt_t)0, "invalid interval");
 
   gptp->tim->ARR = (uint32_t)(interval - 1U);   /* Time constant.           */
   gptp->tim->EGR = STM32_TIM_EGR_UG;            /* Update event.            */
@@ -1113,6 +1116,7 @@ void gpt_lld_stop_timer(GPTDriver *gptp) {
  * @details This function specifically polls the timer waiting for completion
  *          in order to not have extra delays caused by interrupt servicing,
  *          this function is only recommended for short delays.
+ * @note    Interval values 0 and 1 are invalid on this architecture.
  *
  * @param[in] gptp      pointer to the @p GPTDriver object
  * @param[in] interval  time interval in ticks
@@ -1120,6 +1124,8 @@ void gpt_lld_stop_timer(GPTDriver *gptp) {
  * @notapi
  */
 void gpt_lld_polled_delay(GPTDriver *gptp, gptcnt_t interval) {
+
+  osalDbgAssert(interval > (gptcnt_t)0, "invalid interval");
 
   gptp->tim->CR1 = STM32_TIM_CR1_UDIS;          /* Immediate update.        */
   gptp->tim->ARR = (uint32_t)(interval - 1U);   /* Time constant.           */
