@@ -6,7 +6,7 @@
 	<xs:include schemaLocation="../common/stm32/stm32_gpiov2_port.xsd" />
 	<xs:include schemaLocation="abstract_board.xsd" />
 
-	<xs:complexType name="STM32H7xxBoardType">
+	<xs:complexType name="STM32H5xxBoardType">
 		<xs:complexContent>
             <xs:extension base="AbstractBoardType">
 				<xs:sequence>
@@ -147,16 +147,10 @@
     	<xs:element name="GPIOI" type="STM32GPIOv2PortType"
     		maxOccurs="1" minOccurs="1">
     	</xs:element>
-    	<xs:element name="GPIOJ" type="STM32GPIOv2PortType"
-    		maxOccurs="1" minOccurs="1">
-    	</xs:element>
-    	<xs:element name="GPIOK" type="STM32GPIOv2PortType"
-            maxOccurs="1" minOccurs="1">
-        </xs:element>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="board" type="STM32H7xxBoardType"></xs:element>
+  <xs:element name="board" type="STM32H5xxBoardType"></xs:element>
 
 
   <xs:simpleType name="LSEDriveType">
