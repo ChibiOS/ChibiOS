@@ -937,7 +937,7 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
       mult = HALF_SINGLE_SAMPLE_MULTIPLIER;
 
       /* Set initial value of channel holding register(s).*/
-      chx = *(uint32_t *)dacp->samples;
+      chx = *(uint32_t *)(void *)dacp->samples;
       break;
 
     case DAC_DHRM_12BIT_LEFT:
@@ -951,7 +951,7 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
       mult = HALF_SINGLE_SAMPLE_MULTIPLIER;
 
       /* Get initial value of channel holding register(s).*/
-      chx = *(uint32_t *)dacp->samples;
+      chx = *(uint32_t *)(void *)dacp->samples;
       break;
 
     case DAC_DHRM_8BIT_RIGHT:

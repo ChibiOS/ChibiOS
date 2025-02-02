@@ -420,35 +420,35 @@
 
 /* Check on the presence of the DMA channel settings in mcuconf.h.*/
 #if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_GPDMA_CHANNEL)
-#error "DAC1 CH1 DMA stream not defined"
+#error "DAC1 STM32_DAC_DAC1_CH1_GPDMA_CHANNEL not defined"
 #endif
 
 #if STM32_DAC_USE_DAC1_CH2 && !defined(STM32_DAC_DAC1_CH2_GPDMA_CHANNEL)
-#error "DAC1 CH2 DMA stream not defined"
+#error "STM32_DAC_DAC1_CH2_GPDMA_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC_DAC2_CH1_DMA_STREAM)
-#error "DAC2 CH1 DMA stream not defined"
+#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC_DAC2_CH1_GPDMA_CHANNEL)
+#error "STM32_DAC_DAC2_CH1_GPDMA_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC_DAC2_CH2_DMA_STREAM)
-#error "DAC2 CH2 DMA stream not defined"
+#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC_DAC2_CH2_GPDMA_CHANNEL)
+#error "STM32_DAC_DAC2_CH2_GPDMA_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC3_CH1 && !defined(STM32_DAC_DAC3_CH1_DMA_STREAM)
-#error "DAC3 CH1 DMA stream not defined"
+#if STM32_DAC_USE_DAC3_CH1 && !defined(STM32_DAC_DAC3_CH1_GPDMA_CHANNEL)
+#error "STM32_DAC_DAC3_CH1_GPDMA_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC3_CH2 && !defined(STM32_DAC_DAC3_CH2_DMA_STREAM)
-#error "DAC3 CH2 DMA stream not defined"
+#if STM32_DAC_USE_DAC3_CH2 && !defined(STM32_DAC_DAC3_CH2_GPDMA_CHANNEL)
+#error "STM32_DAC_DAC3_CH2_GPDMA_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC4_CH1 && !defined(STM32_DAC_DAC4_CH1_DMA_STREAM)
-#error "DAC4 CH1 DMA stream not defined"
+#if STM32_DAC_USE_DAC4_CH1 && !defined(STM32_DAC_DAC4_CH1_GPDMA_CHANNEL)
+#error "STM32_DAC_DAC4_CH1_GPDMA_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC4_CH2 && !defined(STM32_DAC_DAC4_CH2_DMA_STREAM)
-#error "DAC4 CH2 DMA stream not defined"
+#if STM32_DAC_USE_DAC4_CH2 && !defined(STM32_DAC_DAC4_CH2_GPDMA_CHANNEL)
+#error "DSTM32_DAC_DAC4_CH2_GPDMA_CHANNEL not defined"
 #endif
 
 #if STM32_DAC_USE_DAC1_CH1 &&                                               \
@@ -651,7 +651,7 @@ typedef enum {
 /** @} */
 
 /**
- * @brief   Shift of initialisation value for channel 2 in dual mode.
+ * @brief   Shift of initialization value for channel 2 in dual mode.
  */
 #define DAC_VALUE_DUAL(n) ((n) << (sizeof(dacsample_t) * 8))
 
