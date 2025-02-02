@@ -325,6 +325,24 @@
 #endif
 
 /**
+ * @brief   Any FIFO2 channel on any GPDMA.
+ */
+#define STM32_GPDMA_MASK_FIFO2                                              \
+  (STM32_GPDMA1_MASK_FIFO2 | STM32_GPDMA2_MASK_FIFO2)
+
+/**
+ * @brief   Any FIFO4 channel on any GPDMA.
+ */
+#define STM32_GPDMA_MASK_FIFO4                                              \
+  (STM32_GPDMA1_MASK_FIFO4 | STM32_GPDMA2_MASK_FIFO4)
+
+/**
+ * @brief   Any FIFO4_2D channel on any GPDMA.
+ */
+#define STM32_GPDMAX_MASK_FIFO4_2D                                          \
+  (STM32_GPDMA1_MASK_FIFO4_2D | STM32_GPDMA2_MASK_FIFO4_2D)
+
+/**
  * @brief   Any non-2D channel on GPDMA1.
  */
 #define STM32_GPDMA1_MASK_FIFOX                                             \
