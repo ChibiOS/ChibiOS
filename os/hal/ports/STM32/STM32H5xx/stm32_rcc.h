@@ -571,21 +571,21 @@
  *
  * @api
  */
-#define rccEnableFDCAN(lp) rccEnableAPB1L(RCC_APB1LENR_FDCANEN, lp)
+#define rccEnableFDCAN(lp) rccEnableAPB1H(RCC_APB1HENR_FDCANEN, lp)
 
 /**
  * @brief   Disables the FDCAN peripheral clock.
  *
  * @api
  */
-#define rccDisableFDCAN() rccDisableAPB1L(RCC_APB1LENR_FDCANEN)
+#define rccDisableFDCAN() rccDisableAPB1H(RCC_APB1HENR_FDCANEN)
 
 /**
  * @brief   Resets the FDCAN peripheral.
  *
  * @api
  */
-#define rccResetFDCAN() rccResetAPB1L(RCC_APB1LRSTR_FDCANRST)
+#define rccResetFDCAN() rccResetAPB1H(RCC_APB1HRSTR_FDCANRST)
 /** @} */
 
 /**
