@@ -165,6 +165,22 @@
 #define STM32_ETH_NUMBER                    106
 
 /*
+ * OCTOSPI units.
+ */
+#define STM32_OCTOSPI1_HANDLER              Vector178
+
+#define STM32_OCTOSPI1_NUMBER               78
+
+/*
+ * SDMMC units.
+ */
+#define STM32_SDMMC1_HANDLER                Vector17C
+#define STM32_SDMMC2_HANDLER                Vector1D8
+
+#define STM32_SDMMC1_NUMBER                 79
+#define STM32_SDMMC2_NUMBER                 102
+
+/*
  * SPI units.
  */
 #define STM32_SPI1_HANDLER                  Vector11C

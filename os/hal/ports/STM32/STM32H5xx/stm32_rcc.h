@@ -742,6 +742,57 @@
 /** @} */
 
 /**
+ * @name    SDMMC peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the SDMMC1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDMMC1(lp) rccEnableAHB4(RCC_AHB4ENR_SDMMC1EN, lp)
+
+/**
+ * @brief   Disables the SDMMC1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableSDMMC1() rccDisableAHB4(RCC_AHB4ENR_SDMMC1EN)
+
+/**
+ * @brief   Resets the SDMMC1 peripheral.
+ *
+ * @api
+ */
+#define rccResetSDMMC1() rccResetAHB4(RCC_AHB4RSTR_SDMMC1RST)
+
+/**
+ * @brief   Enables the SDMMC2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDMMC2(lp) rccEnableAHB4(RCC_AHB4ENR_SDMMC2EN, lp)
+
+/**
+ * @brief   Disables the SDMMC2 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableSDMMC2() rccDisableAHB4(RCC_AHB4ENR_SDMMC2EN)
+
+/**
+ * @brief   Resets the SDMMC2 peripheral.
+ *
+ * @api
+ */
+#define rccResetSDMMC2() rccResetAHB4(RCC_AHB4RSTR_SDMMC2RST)
+/** @} */
+
+/**
  * @name    SPI peripherals specific RCC operations
  * @{
  */

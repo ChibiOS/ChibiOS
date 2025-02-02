@@ -91,7 +91,7 @@
 #define STM32_PLL1M_VALUE                   ${doc.STM32_PLL1M_VALUE!"16"}
 #define STM32_PLL1N_VALUE                   ${doc.STM32_PLL1N_VALUE!"250"}
 #define STM32_PLL1P_VALUE                   ${doc.STM32_PLL1P_VALUE!"2"}
-#define STM32_PLL1Q_VALUE                   ${doc.STM32_PLL1Q_VALUE!"2"}
+#define STM32_PLL1Q_VALUE                   ${doc.STM32_PLL1Q_VALUE!"4"}
 #define STM32_PLL1R_VALUE                   ${doc.STM32_PLL1R_VALUE!"2"}
 #define STM32_PLL2SRC                       ${doc.STM32_PLL2SRC!"STM32_PLL2SRC_HSI"}
 #define STM32_PLL2M_VALUE                   ${doc.STM32_PLL2M_VALUE!"16"}
@@ -243,6 +243,8 @@
 /*
  * CAN driver system settings.
  */
+#define STM32_CAN_USE_FDCAN1                ${doc.STM32_CAN_USE_FDCAN1!"FALSE"}
+#define STM32_CAN_USE_FDCAN2                ${doc.STM32_CAN_USE_FDCAN2!"FALSE"}
 
 /*
  * DAC driver system settings.
@@ -318,6 +320,13 @@
 /*
  * SDC driver system settings.
  */
+#define STM32_SDC_USE_SDMMC1                ${doc.STM32_SDC_USE_SDMMC1!"FALSE"}
+#define STM32_SDC_USE_SDMMC2                ${doc.STM32_SDC_USE_SDMMC2!"FALSE"}
+#define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   ${doc.STM32_SDC_SDMMC_UNALIGNED_SUPPORT!"TRUE"}
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       ${doc.STM32_SDC_SDMMC_WRITE_TIMEOUT!"10000"}
+#define STM32_SDC_SDMMC_READ_TIMEOUT        ${doc.STM32_SDC_SDMMC_READ_TIMEOUT!"10000"}
+#define STM32_SDC_SDMMC_CLOCK_DELAY         ${doc.STM32_SDC_SDMMC_CLOCK_DELAY!"10"}
+#define STM32_SDC_SDMMC_PWRSAV              ${doc.STM32_SDC_SDMMC_PWRSAV!"TRUE"}
 
 /*
  * SERIAL driver system settings.
@@ -397,6 +406,7 @@
 /*
  * TRNG driver system settings.
  */
+#define STM32_TRNG_USE_RNG1                 ${doc.STM32_TRNG_USE_RNG1!"FALSE"}
 
 /*
  * UART driver system settings.
@@ -405,6 +415,10 @@
 /*
  * USB driver system settings.
  */
+#define STM32_USB_USE_USB1                  ${doc.STM32_USB_USE_USB1!"FALSE"}
+#define STM32_USB_LOW_POWER_ON_SUSPEND      ${doc.STM32_USB_LOW_POWER_ON_SUSPEND!"FALSE"}
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_HP_IRQ_PRIORITY!"13"}
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_LP_IRQ_PRIORITY!"14"}
 
 /*
  * WDG driver system settings.

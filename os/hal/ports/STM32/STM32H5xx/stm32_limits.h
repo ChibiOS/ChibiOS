@@ -358,6 +358,13 @@
 #define STM32_PLL3R_VALUE_MIN           1
 /** @} */
 
+/**
+ * @name    Peripherals limits
+ * @{
+ */
+#define STM32_SDMMC_MAXCLK              130000000U
+/** @} */
+
 #endif /* STM32_LIMITS_H */
 
 /** @} */

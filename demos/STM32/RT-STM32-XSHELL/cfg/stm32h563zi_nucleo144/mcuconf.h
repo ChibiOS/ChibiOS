@@ -232,6 +232,8 @@
 /*
  * CAN driver system settings.
  */
+#define STM32_CAN_USE_FDCAN1                FALSE
+#define STM32_CAN_USE_FDCAN2                FALSE
 
 /*
  * DAC driver system settings.
@@ -307,6 +309,13 @@
 /*
  * SDC driver system settings.
  */
+#define STM32_SDC_USE_SDMMC1                FALSE
+#define STM32_SDC_USE_SDMMC2                FALSE
+#define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   TRUE
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       10000
+#define STM32_SDC_SDMMC_READ_TIMEOUT        10000
+#define STM32_SDC_SDMMC_CLOCK_DELAY         10
+#define STM32_SDC_SDMMC_PWRSAV              TRUE
 
 /*
  * SERIAL driver system settings.
@@ -386,6 +395,7 @@
 /*
  * TRNG driver system settings.
  */
+#define STM32_TRNG_USE_RNG1                 FALSE
 
 /*
  * UART driver system settings.
@@ -394,6 +404,10 @@
 /*
  * USB driver system settings.
  */
+#define STM32_USB_USE_USB1                  FALSE
+#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
+#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
 
 /*
  * WDG driver system settings.
