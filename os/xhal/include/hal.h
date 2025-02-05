@@ -25,6 +25,8 @@
 #ifndef HAL_H
 #define HAL_H
 
+#include <sys/types.h>
+
 #include "ccportab.h"
 
 #include "osal.h"
@@ -313,6 +315,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 #include "hal_cb_driver.h"
 #include "hal_channels.h"
 #include "hal_block_io.h"
+#include "hal_frame_io.h"
 //#include "hal_mmcsd.h"
 //#include "hal_persistent.h"
 //#include "hal_flash.h"

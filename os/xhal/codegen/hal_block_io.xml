@@ -23,7 +23,7 @@
           </field>
         </fields>
       </struct>
-      <interface name="block_io" namespace="chn"
+      <interface name="block_io" namespace="blk"
         ancestorname="base_interface" descr="block device">
         <brief>Base block device interface.</brief>
         <details><![CDATA[This header defines an abstract interface useful

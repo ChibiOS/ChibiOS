@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
+  name="hal_frame_io" descr="Frames I/O" editcode="false">
+  <brief>Frames-exchange devices definitions and interfaces.</brief>
+  <public>
+    <includes>
+      <include style="angular">string.h</include>
+    </includes>
+    <types>
+      <interface name="frame_io" namespace="frm"
+        ancestorname="base_interface" descr="frame device">
+        <brief>Frames-exchange device interface.</brief>
+        <details><![CDATA[This header defines an abstract interface useful
+         to access generic frames-based block devices in a standardized way.]]></details>
+        <consts>
+        </consts>
+        <methods>
+          <method shortname="get_rxh" name="frmGetReceiveHandle" ctype="msg_t">
+            <brief><![CDATA[Queries for a received frame handle.]]></brief>
+            <return><![CDATA[The receive handle.]]></return>
+            <retval value="MSG_TIMEOUT">If a received frame is not available.</retval>
+          </method>
+          <method shortname="get_txh" name="frmGetTransmitHandle" ctype="msg_t">
+            <brief><![CDATA[Queries for a transmit frame handle.]]></brief>
+            <return><![CDATA[The transmit handle.]]></return>
+            <retval value="MSG_TIMEOUT">If an empty transmit frame is not available.</retval>
+          </method>
+          <method shortname="release_rxh" name="frmReleaseReceiveHandle" ctype="void">
+            <brief><![CDATA[Releases a received frame.]]></brief>
+            <param name="rxh" ctype="unsigned" dir="in"><![CDATA[Receive handle.]]></param>
+          </method>
+          <method shortname="release_txh" name="frmReleaseTransmitHandle" ctype="void">
+            <brief><![CDATA[Releases and transmits a frame.]]></brief>
+            <param name="txh" ctype="unsigned" dir="in"><![CDATA[Transmit handle.]]></param>
+          </method>
+          <method shortname="read_rxh" name="frmReadReceiveHandle" ctype="ssize_t">
+            <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
+            <param name="rxh" ctype="unsigned" dir="in"><![CDATA[Receive handle.]]></param>
+            <param name="bp" ctype="uint8_t *" dir="out"><![CDATA[Received data buffer pointer.]]></param>
+            <param name="n" ctype="size_t" dir="in"><![CDATA[Number of bytes to read.]]></param>
+            <return><![CDATA[The number of bytes read from the handle buffer,
+                             this value can be less than the amount specified in the
+                             parameter @p size if there are no more bytes to read.]]></return>
+          </method>
+          <method shortname="write_txh" name="frmWriteTransmitHandle" ctype="ssize_t">
+            <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
+            <param name="txh" ctype="unsigned" dir="in"><![CDATA[Transmit handle.]]></param>
+            <param name="bp" ctype="const uint8_t *" dir="in"><![CDATA[Transmit data buffer pointer.]]></param>
+            <param name="n" ctype="size_t" dir="in"><![CDATA[Number of bytes to write.]]></param>
+            <return><![CDATA[The number of bytes written into the handle buffer
+                             this value can be less than the amount specified in the
+                             parameter @p size if the maximum frame size is reached.]]></return>
+          </method>
+          <method shortname="get_rxh_buffer" name="frmGetReceiveBuffer" ctype="const uint8_t *">
+            <brief><![CDATA[Direct access to the receive handle buffer.]]></brief>
+            <param name="rxh" ctype="unsigned" dir="in"><![CDATA[Receive handle.]]></param>
+            <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Size of the
+              received frame.]]></param>
+            <return><![CDATA[Pointer to the received frame buffer or @p NULL if the driver does
+                             not support memory-mapped direct access.]]></return>
+          </method>
+          <method shortname="get_txh_buffer" name="frmGetTransmitBuffer" ctype="uint8_t *">
+            <brief><![CDATA[Direct access to the transmit handle buffer.]]></brief>
+            <param name="txh" ctype="unsigned" dir="in"><![CDATA[Transmit handle.]]></param>
+            <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Maximum size of the
+              transmit buffer.]]></param>
+            <return><![CDATA[Pointer to the transmit frame buffer or @p NULL if the driver does
+                             not support memory-mapped direct access.]]></return>
+          </method>
+        </methods>
+      </interface>
+    </types>
+  </public>
+  <private>
+  </private>
+</module>
