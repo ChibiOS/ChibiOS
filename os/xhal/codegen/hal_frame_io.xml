@@ -16,23 +16,27 @@
         <consts>
         </consts>
         <methods>
-          <method shortname="get_rxh" name="frmGetReceiveHandle" ctype="msg_t">
+          <method shortname="get_rxh" name="frmGetReceiveHandleI" ctype="msg_t">
             <brief><![CDATA[Queries for a received frame handle.]]></brief>
             <return><![CDATA[The receive handle.]]></return>
             <retval value="MSG_TIMEOUT">If a received frame is not available.</retval>
+            <iclass />
           </method>
-          <method shortname="get_txh" name="frmGetTransmitHandle" ctype="msg_t">
+          <method shortname="get_txh" name="frmGetTransmitHandleI" ctype="msg_t">
             <brief><![CDATA[Queries for a transmit frame handle.]]></brief>
             <return><![CDATA[The transmit handle.]]></return>
             <retval value="MSG_TIMEOUT">If an empty transmit frame is not available.</retval>
+            <iclass />
           </method>
-          <method shortname="release_rxh" name="frmReleaseReceiveHandle" ctype="void">
+          <method shortname="release_rxh" name="frmReleaseReceiveHandleI" ctype="void">
             <brief><![CDATA[Releases a received frame.]]></brief>
             <param name="rxh" ctype="unsigned" dir="in"><![CDATA[Receive handle.]]></param>
+            <iclass />
           </method>
-          <method shortname="release_txh" name="frmReleaseTransmitHandle" ctype="void">
+          <method shortname="release_txh" name="frmReleaseTransmitHandleI" ctype="void">
             <brief><![CDATA[Releases and transmits a frame.]]></brief>
             <param name="txh" ctype="unsigned" dir="in"><![CDATA[Transmit handle.]]></param>
+            <iclass />
           </method>
           <method shortname="read_rxh" name="frmReadReceiveHandle" ctype="ssize_t">
             <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
@@ -42,6 +46,7 @@
             <return><![CDATA[The number of bytes read from the handle buffer,
                              this value can be less than the amount specified in the
                              parameter @p size if there are no more bytes to read.]]></return>
+            <api />
           </method>
           <method shortname="write_txh" name="frmWriteTransmitHandle" ctype="ssize_t">
             <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
@@ -51,6 +56,7 @@
             <return><![CDATA[The number of bytes written into the handle buffer
                              this value can be less than the amount specified in the
                              parameter @p size if the maximum frame size is reached.]]></return>
+            <api />
           </method>
           <method shortname="get_rxh_buffer" name="frmGetReceiveBuffer" ctype="const uint8_t *">
             <brief><![CDATA[Direct access to the receive handle buffer.]]></brief>

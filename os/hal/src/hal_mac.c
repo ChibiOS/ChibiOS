@@ -149,7 +149,7 @@ void macStop(MACDriver *macp) {
 }
 
 /**
- * @brief   Get and clears SIO event flags.
+ * @brief   Get and clears MAC event flags.
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The pending event flags.
