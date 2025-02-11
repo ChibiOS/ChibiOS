@@ -302,8 +302,8 @@ extern "C" {
                                  size_t *sizep);
   bool ethPollLinkStatus(void *ip);
 #if (ETH_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
-  msg_t ethSynchronizeReceive(void *ip);
-  msg_t ethSynchronizeTransmit(void *ip);
+  etc_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout);
+  etc_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout);
 #endif /* ETH_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void ethInit(void);

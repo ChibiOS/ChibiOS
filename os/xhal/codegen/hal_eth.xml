@@ -240,14 +240,59 @@ osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
 return eth_lld_poll_link_status(self);]]></implementation>
             </method>
             <condition check="ETH_USE_SYNCHRONIZATION == TRUE">
-              <method name="ethSynchronizeReceive" ctype="msg_t">
-                <brief><![CDATA[Synchronizes with frame reception.]]></brief>
+              <method name="ethWaitReceiveHandle" ctype="etc_receive_handle_t">
+                <brief><![CDATA[Waits for a received frame availability.]]></brief>
+                <param name="timeout" ctype="sysinterval_t" dir="in"><![CDATA[Receive
+                  timeout.]]></param>
+                <return><![CDATA[A receive handle.]]></return>
+                <retval value="NULL"><![CDATA[If a received frame is not available
+                  within the specified timeout.]]></retval>
                 <implementation><![CDATA[
-]]></implementation>
+etc_receive_handle_t rxh;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+
+osalSysLock();
+
+while (((rxh = ethGetReceiveHandleI(self)) == NULL)) {
+  msg_t msg = osalThreadEnqueueTimeoutS(&self->rxqueue, timeout);
+  if (msg == MSG_TIMEOUT) {
+    rxh = NULL;
+    break;
+  }
+}
+
+osalSysUnlock();
+
+return rxh;]]></implementation>
               </method>
-              <method name="ethSynchronizeTransmit" ctype="msg_t">
-                <brief><![CDATA[Synchronizes with frame transmission.]]></brief>
-                <implementation><![CDATA[]]></implementation>
+              <method name="ethWaitTransmitHandle" ctype="etc_transmit_handle_t">
+                <brief><![CDATA[Waits for a transmit frame availability.]]></brief>
+                <param name="timeout" ctype="sysinterval_t" dir="in"><![CDATA[Transmit
+                  timeout.]]></param>
+                <return><![CDATA[A transmit handle.]]></return>
+                <retval value="NULL"><![CDATA[If a transmit frame is not available
+                  within the specified timeout.]]></retval>
+                <implementation><![CDATA[
+etc_transmit_handle_t txh;
+
+osalDbgCheck(self != NULL);
+osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+
+osalSysLock();
+
+while (((txh = ethGetTransmitHandleI(self)) == NULL)) {
+  msg_t msg = osalThreadEnqueueTimeoutS(&self->txqueue, timeout);
+  if (msg == MSG_TIMEOUT) {
+    txh = NULL;
+    break;
+  }
+}
+
+osalSysUnlock();
+
+return txh;]]></implementation>
               </method>
             </condition>
           </regular>

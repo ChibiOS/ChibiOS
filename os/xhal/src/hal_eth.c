@@ -403,24 +403,68 @@ bool ethPollLinkStatus(void *ip) {
  * @memberof    hal_eth_driver_c
  * @public
  *
- * @brief       Synchronizes with frame reception.
+ * @brief       Waits for a received frame availability.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     timeout       Receive timeout.
+ * @return                      A receive handle.
+ * @retval NULL                 If a received frame is not available within the
+ *                              specified timeout.
  */
-msg_t ethSynchronizeReceive(void *ip) {
+etc_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+  etc_receive_handle_t rxh;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+
+  osalSysLock();
+
+  while (((rxh = ethGetReceiveHandleI(self)) == NULL)) {
+    msg_t msg = osalThreadEnqueueTimeoutS(&self->rxqueue, timeout);
+    if (msg == MSG_TIMEOUT) {
+      rxh = NULL;
+      break;
+    }
+  }
+
+  osalSysUnlock();
+
+  return rxh;
 }
 
 /**
  * @memberof    hal_eth_driver_c
  * @public
  *
- * @brief       Synchronizes with frame transmission.
+ * @brief       Waits for a transmit frame availability.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     timeout       Transmit timeout.
+ * @return                      A transmit handle.
+ * @retval NULL                 If a transmit frame is not available within the
+ *                              specified timeout.
  */
-msg_t ethSynchronizeTransmit(void *ip) {
+etc_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+  etc_transmit_handle_t txh;
+
+  osalDbgCheck(self != NULL);
+  osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+
+  osalSysLock();
+
+  while (((txh = ethGetTransmitHandleI(self)) == NULL)) {
+    msg_t msg = osalThreadEnqueueTimeoutS(&self->txqueue, timeout);
+    if (msg == MSG_TIMEOUT) {
+      txh = NULL;
+      break;
+    }
+  }
+
+  osalSysUnlock();
+
+  return txh;
 }
 #endif /* ETH_USE_SYNCHRONIZATION == TRUE */
 /** @} */
