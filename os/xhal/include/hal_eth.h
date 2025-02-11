@@ -288,18 +288,6 @@ extern "C" {
   void __eth_stop_impl(void *ip);
   const void *__eth_setcfg_impl(void *ip, const void *config);
   const void *__eth_selcfg_impl(void *ip, unsigned cfgnum);
-  etc_receive_handle_t ethGetReceiveHandleI(void *ip);
-  etc_transmit_handle_t ethGetTransmitHandleI(void *ip);
-  void ethReleaseReceiveHandle(void *ip, etc_receive_handle_t rxh);
-  void ethReleaseTransmitHandle(void *ip, etc_transmit_handle_t txh);
-  size_t ethReadReceiveHandle(void *ip, etc_receive_handle_t rxh, uint8_t *bp,
-                              size_t n);
-  size_t ethWriteTransmitHandle(void *ip, etc_transmit_handle_t txh,
-                                const uint8_t *bp, size_t n);
-  const uint8_t *ethGetReceiveBufferX(void *ip, etc_receive_handle_t rxh,
-                                      size_t *sizep);
-  uint8_t *ethGetTransmitBufferX(void *ip, etc_transmit_handle_t txh,
-                                 size_t *sizep);
   bool ethPollLinkStatus(void *ip);
 #if (ETH_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
   etc_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout);
@@ -335,6 +323,185 @@ static inline hal_eth_driver_c *ethObjectInit(hal_eth_driver_c *self) {
   extern const struct hal_eth_driver_vmt __hal_eth_driver_vmt;
 
   return __eth_objinit_impl(self, &__hal_eth_driver_vmt);
+}
+/** @} */
+
+/**
+ * @name        Inline methods of hal_eth_driver_c
+ * @{
+ */
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Queries for a received frame handle.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @return                      The receive handle.
+ * @retval NULL                 If a received frame is not available.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline etc_receive_handle_t ethGetReceiveHandleI(void *ip) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_get_receive_handle(self);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Queries for a transmit frame handle.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @return                      The transmit handle.
+ * @retval NULL                 If an empty transmit frame is not available.
+ *
+ * @iclass
+ */
+CC_FORCE_INLINE
+static inline etc_transmit_handle_t ethGetTransmitHandleI(void *ip) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_get_transmit_handle(self);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Releases a received frame.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     rxh           Receive handle.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline void ethReleaseReceiveHandle(void *ip, etc_receive_handle_t rxh) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  eth_lld_release_receive_handle(self, rxh);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Releases and transmits a frame.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     txh           Transmi] handle.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline void ethReleaseTransmitHandle(void *ip,
+                                            etc_transmit_handle_t txh) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  eth_lld_release_transmit_handle(self, txh);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Direct access to the receive handle buffer.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     rxh           Receive handle.
+ * @param[out]    sizep         Size of the received frame.
+ * @return                      Pointer to the received frame buffer or @p NULL
+ *                              if the driver does not support memory-mapped
+ *                              direct access.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline const uint8_t *ethGetReceiveBufferX(void *ip,
+                                                  etc_receive_handle_t rxh,
+                                                  size_t *sizep) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_get_receive_buffer(self, rxh, sizep);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Direct access to the transmit handle buffer.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     txh           Transmit handle.
+ * @param[out]    sizep         Maximum size of the transmit buffer.
+ * @return                      Pointer to the transmit frame buffer or @p NULL
+ *                              if the driver does not support memory-mapped
+ *                              direct access.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline uint8_t *ethGetTransmitBufferX(void *ip,
+                                             etc_transmit_handle_t txh,
+                                             size_t *sizep) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_get_transmit_buffer(self, txh, sizep);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Reads data sequentially from a received frame.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     rxh           Receive handle.
+ * @param[out]    bp            Received data buffer pointer.
+ * @param[in]     n             Number of bytes to read.
+ * @return                      The number of bytes read from the handle
+ *                              buffer, this value can be less than the amount
+ *                              specified in the parameter @p size if there are
+ *                              no more bytes to read.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline size_t ethReadReceiveHandle(void *ip, etc_receive_handle_t rxh,
+                                          uint8_t *bp, size_t n) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_read_receive_handle(self, rxh, bp, n);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Reads data sequentially from a received frame.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     txh           Transmit handle.
+ * @param[in]     bp            Transmit data buffer pointer.
+ * @param[in]     n             Number of bytes to write.
+ * @return                      The number of bytes written into the handle
+ *                              buffer this value can be less than the amount
+ *                              specified in the parameter @p size if the
+ *                              maximum frame size is reached.
+ *
+ * @api
+ */
+CC_FORCE_INLINE
+static inline size_t ethWriteTransmitHandle(void *ip,
+                                            etc_transmit_handle_t txh,
+                                            const uint8_t *bp, size_t n) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_write_transmit_handle(self, txh, bp, n);
 }
 /** @} */
 

@@ -214,188 +214,24 @@ const struct hal_eth_driver_vmt __hal_eth_driver_vmt = {
  * @memberof    hal_eth_driver_c
  * @public
  *
- * @brief       Queries for a received frame handle.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @return                      The receive handle.
- * @retval NULL                 If a received frame is not available.
- *
- * @iclass
- */
-etc_receive_handle_t ethGetReceiveHandleI(void *ip) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  osalDbgCheckClassI();
-
-  return eth_lld_get_receive_handle(self);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Queries for a transmit frame handle.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @return                      The transmit handle.
- * @retval NULL                 If an empty transmit frame is not available.
- *
- * @iclass
- */
-etc_transmit_handle_t ethGetTransmitHandleI(void *ip) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  osalDbgCheckClassI();
-
-  return eth_lld_get_transmit_handle(self);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Releases a received frame.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     rxh           Receive handle.
- *
- * @api
- */
-void ethReleaseReceiveHandle(void *ip, etc_receive_handle_t rxh) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  eth_lld_release_receive_handle(self, rxh);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Releases and transmits a frame.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     txh           Transmi] handle.
- *
- * @api
- */
-void ethReleaseTransmitHandle(void *ip, etc_transmit_handle_t txh) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  eth_lld_release_transmit_handle(self, txh);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Reads data sequentially from a received frame.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     rxh           Receive handle.
- * @param[out]    bp            Received data buffer pointer.
- * @param[in]     n             Number of bytes to read.
- * @return                      The number of bytes read from the handle
- *                              buffer, this value can be less than the amount
- *                              specified in the parameter @p size if there are
- *                              no more bytes to read.
- *
- * @api
- */
-size_t ethReadReceiveHandle(void *ip, etc_receive_handle_t rxh, uint8_t *bp,
-                            size_t n) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  return eth_lld_read_receive_handle(self, rxh, bp, n);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Reads data sequentially from a received frame.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     txh           Transmit handle.
- * @param[in]     bp            Transmit data buffer pointer.
- * @param[in]     n             Number of bytes to write.
- * @return                      The number of bytes written into the handle
- *                              buffer this value can be less than the amount
- *                              specified in the parameter @p size if the
- *                              maximum frame size is reached.
- *
- * @api
- */
-size_t ethWriteTransmitHandle(void *ip, etc_transmit_handle_t txh,
-                              const uint8_t *bp, size_t n) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  return eth_lld_write_transmit_handle(self, txh, bp, n);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Direct access to the receive handle buffer.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     rxh           Receive handle.
- * @param[out]    sizep         Size of the received frame.
- * @return                      Pointer to the received frame buffer or @p NULL
- *                              if the driver does not support memory-mapped
- *                              direct access.
- *
- * @xclass
- */
-const uint8_t *ethGetReceiveBufferX(void *ip, etc_receive_handle_t rxh,
-                                    size_t *sizep) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  return eth_lld_get_receive_buffer(self, rxh, sizep);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Direct access to the transmit handle buffer.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     txh           Transmit handle.
- * @param[out]    sizep         Maximum size of the transmit buffer.
- * @return                      Pointer to the transmit frame buffer or @p NULL
- *                              if the driver does not support memory-mapped
- *                              direct access.
- *
- * @xclass
- */
-uint8_t *ethGetTransmitBufferX(void *ip, etc_transmit_handle_t txh,
-                               size_t *sizep) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  return eth_lld_get_transmit_buffer(self, txh, sizep);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Returns the link status.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
  * @return                      The link status,
  * @retval false                If the link is active.
- * @retval true                 If the link is down.
+ * @retval true                 If the link is down or the driver is not in
+ *                              active state.
  *
  * @api
  */
 bool ethPollLinkStatus(void *ip) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
-  osalDbgCheck(self != NULL);
-  osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
+  if (drvGetStateX(self) == HAL_DRV_STATE_ACTIVE) {
+    return eth_lld_poll_link_status(self);
+  }
 
-  return eth_lld_poll_link_status(self);
+  return true;
 }
 
 #if (ETH_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
