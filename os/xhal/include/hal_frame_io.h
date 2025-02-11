@@ -124,9 +124,11 @@ extern "C" {
  * @param[in,out] ip            Pointer to a @p frame_io_i instance.
  * @return                      The receive handle.
  * @retval MSG_TIMEOUT          If a received frame is not available.
+ *
+ * @iclass
  */
 CC_FORCE_INLINE
-static inline msg_t frmGetReceiveHandle(void *ip) {
+static inline msg_t frmGetReceiveHandleI(void *ip) {
   frame_io_i *self = (frame_io_i *)ip;
 
   return self->vmt->get_rxh(ip);
@@ -141,9 +143,11 @@ static inline msg_t frmGetReceiveHandle(void *ip) {
  * @param[in,out] ip            Pointer to a @p frame_io_i instance.
  * @return                      The transmit handle.
  * @retval MSG_TIMEOUT          If an empty transmit frame is not available.
+ *
+ * @iclass
  */
 CC_FORCE_INLINE
-static inline msg_t frmGetTransmitHandle(void *ip) {
+static inline msg_t frmGetTransmitHandleI(void *ip) {
   frame_io_i *self = (frame_io_i *)ip;
 
   return self->vmt->get_txh(ip);
@@ -157,9 +161,11 @@ static inline msg_t frmGetTransmitHandle(void *ip) {
  *
  * @param[in,out] ip            Pointer to a @p frame_io_i instance.
  * @param[in]     rxh           Receive handle.
+ *
+ * @iclass
  */
 CC_FORCE_INLINE
-static inline void frmReleaseReceiveHandle(void *ip, unsigned rxh) {
+static inline void frmReleaseReceiveHandleI(void *ip, unsigned rxh) {
   frame_io_i *self = (frame_io_i *)ip;
 
   self->vmt->release_rxh(ip, rxh);
@@ -173,9 +179,11 @@ static inline void frmReleaseReceiveHandle(void *ip, unsigned rxh) {
  *
  * @param[in,out] ip            Pointer to a @p frame_io_i instance.
  * @param[in]     txh           Transmit handle.
+ *
+ * @iclass
  */
 CC_FORCE_INLINE
-static inline void frmReleaseTransmitHandle(void *ip, unsigned txh) {
+static inline void frmReleaseTransmitHandleI(void *ip, unsigned txh) {
   frame_io_i *self = (frame_io_i *)ip;
 
   self->vmt->release_txh(ip, txh);
@@ -195,6 +203,8 @@ static inline void frmReleaseTransmitHandle(void *ip, unsigned txh) {
  *                              buffer, this value can be less than the amount
  *                              specified in the parameter @p size if there are
  *                              no more bytes to read.
+ *
+ * @api
  */
 CC_FORCE_INLINE
 static inline ssize_t frmReadReceiveHandle(void *ip, unsigned rxh, uint8_t *bp,
@@ -218,6 +228,8 @@ static inline ssize_t frmReadReceiveHandle(void *ip, unsigned rxh, uint8_t *bp,
  *                              buffer this value can be less than the amount
  *                              specified in the parameter @p size if the
  *                              maximum frame size is reached.
+ *
+ * @api
  */
 CC_FORCE_INLINE
 static inline ssize_t frmWriteTransmitHandle(void *ip, unsigned txh,

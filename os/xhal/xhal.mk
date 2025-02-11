@@ -23,6 +23,9 @@ XHALSRC := $(CHIBIOS)/os/xhal/src/hal.c \
            $(CHIBIOS)/os/xhal/src/hal_st.c \
            $(CHIBIOS)/os/xhal/src/hal_buffered_serial.c \
            $(CHIBIOS)/os/xhal/src/hal_queues.c
+ifneq ($(findstring HAL_USE_ETH TRUE,$(XHALCONF)),)
+XHALSRC += $(CHIBIOS)/os/xhal/src/hal_eth.c
+endif
 ifneq ($(findstring HAL_USE_PAL TRUE,$(XHALCONF)),)
 XHALSRC += $(CHIBIOS)/os/xhal/src/hal_pal.c
 endif
@@ -37,6 +40,7 @@ XHALSRC = $(CHIBIOS)/os/xhal/src/hal.c \
           $(CHIBIOS)/os/xhal/src/hal_base_driver.c \
           $(CHIBIOS)/os/xhal/src/hal_st.c \
           $(CHIBIOS)/os/xhal/src/hal_queues.c \
+          $(CHIBIOS)/os/xhal/src/hal_eth.c \
           $(CHIBIOS)/os/xhal/src/hal_pal.c \
           $(CHIBIOS)/os/xhal/src/hal_sio.c \
           $(CHIBIOS)/os/xhal/src/hal_spi.c

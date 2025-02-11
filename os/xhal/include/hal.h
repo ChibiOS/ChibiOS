@@ -169,6 +169,10 @@
 #define HAL_USE_EFL                         FALSE
 #endif
 
+#if !defined(HAL_USE_ETH)
+#define HAL_USE_ETH                         FALSE
+#endif
+
 #if !defined(HAL_USE_GPT)
 #define HAL_USE_GPT                         FALSE
 #endif
@@ -183,10 +187,6 @@
 
 #if !defined(HAL_USE_ICU)
 #define HAL_USE_ICU                         FALSE
-#endif
-
-#if !defined(HAL_USE_MAC)
-#define HAL_USE_MAC                         FALSE
 #endif
 
 #if !defined(HAL_USE_PWM)
@@ -315,7 +315,6 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 #include "hal_cb_driver.h"
 #include "hal_channels.h"
 #include "hal_block_io.h"
-#include "hal_frame_io.h"
 //#include "hal_mmcsd.h"
 //#include "hal_persistent.h"
 //#include "hal_flash.h"
@@ -332,11 +331,11 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 //#include "hal_crypto.h"
 //#include "hal_dac.h"
 //#include "hal_efl.h"
+#include "hal_eth.h"
 //#include "hal_gpt.h"
 //#include "hal_i2c.h"
 //#include "hal_i2s.h"
 //#include "hal_icu.h"
-//#include "hal_mac.h"
 //#include "hal_pwm.h"
 //#include "hal_rtc.h"
 //#include "hal_serial.h"
