@@ -135,7 +135,7 @@
  */
 #define MAC_LINK_DYNAMIC            0
 #define MAC_LINK_100_FULLDUPLEX     1
-#define MACLINK_10_FULLDUPLEX       2
+#define MAC_LINK_10_FULLDUPLEX      2
 /** @} */
 
 /*===========================================================================*/

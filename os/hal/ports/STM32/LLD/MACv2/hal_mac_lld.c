@@ -706,7 +706,7 @@ bool mac_lld_poll_link_status(MACDriver *macp) {
   maccr |= ETH_MACCR_FES;
   maccr |= ETH_MACCR_DM;
 
-#elif STM32_MAC_PHY_LINK_TYPE == MACLINK_10_FULLDUPLEX
+#elif STM32_MAC_PHY_LINK_TYPE == MAC_LINK_10_FULLDUPLEX
   uint32_t maccr = ETH->MACCR;
 
   maccr &= ~ETH_MACCR_FES;
