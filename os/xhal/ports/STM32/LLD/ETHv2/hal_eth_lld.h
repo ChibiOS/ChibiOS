@@ -34,9 +34,144 @@
 /* Supports zero-copy API.*/
 #define ETH_SUPPORTS_ZERO_COPY              TRUE
 
+/**
+ * @name    RDES1 constants
+ * @{
+ */
+#define STM32_RDES1_OPC_MASK        0xFFFF0000
+#define STM32_RDES1_TD              0x00008000
+#define STM32_RDES1_TSA             0x00004000
+#define STM32_RDES1_PV              0x00002000
+#define STM32_RDES1_PFT             0x00001000
+#define STM32_RDES1_PMT_MASK        0x00000F00
+#define STM32_RDES1_IPCE            0x00000080
+#define STM32_RDES1_IPCB            0x00000040
+#define STM32_RDES1_IPV6            0x00000020
+#define STM32_RDES1_IPV4            0x00000010
+#define STM32_RDES1_IPHE            0x00000008
+#define STM32_RDES1_PT_MASK         0x00000007
+/** @} */
+
+/**
+ * @name    RDES2 constants
+ * @{
+ */
+#define STM32_RDES2_L3L4FM_MASK     0xE0000000
+#define STM32_RDES2_L4FM            0x01000000
+#define STM32_RDES2_L3FM            0x00800000
+#define STM32_RDES2_MADRM_MASK      0x007F8000
+#define STM32_RDES2_HF              0x00004000
+#define STM32_RDES2_DAF             0x00002000
+#define STM32_RDES2_SAF             0x00001000
+#define STM32_RDES2_VF              0x00000800
+#define STM32_RDES2_RES1            0x00000780
+#define STM32_RDES2_ARPNR           0x00000040
+#define STM32_RDES2_RES2            0x0000003F
+/** @} */
+
+/**
+ * @name    RDES3 constants
+ * @{
+ */
+#define STM32_RDES3_OWN             0x80000000
+#define STM32_RDES3_IOC             0x40000000 /* Read */
+#define STM32_RDES3_CTXT            0x40000000 /* Write */
+#define STM32_RDES3_FD              0x20000000
+#define STM32_RDES3_LD              0x10000000
+#define STM32_RDES3_RS2V            0x08000000
+#define STM32_RDES3_RS1V            0x04000000
+#define STM32_RDES3_BUF2V           0x02000000 /* Read */
+#define STM32_RDES3_RS0V            0x02000000 /* Write */
+#define STM32_RDES3_BUF1V           0x01000000 /* Read */
+#define STM32_RDES3_CE              0x01000000 /* Write */
+#define STM32_RDES3_GP              0x00800000
+#define STM32_RDES3_RWT             0x00400000
+#define STM32_RDES3_OE              0x00200000
+#define STM32_RDES3_RE              0x00100000
+#define STM32_RDES3_DE              0x00080000
+#define STM32_RDES3_LT_MASK         0x00070000
+#define STM32_RDES3_ES              0x00008000
+#define STM32_RDES3_PL_MASK         0x00007FFF
+/** @} */
+
+/**
+ * @name    TDES2 constants
+ * @{
+ */
+#define STM32_TDES2_IOC             0x80000000
+#define STM32_TDES2_TTSE            0x40000000
+#define STM32_TDES2_B2L_MASK        0x3FFF0000
+#define STM32_TDES2_VTIR_MASK       0x0000C000
+#define STM32_TDES2_VTIR(n)         ((n) << 14)
+#define STM32_TDES2_B1L_MASK        0x00003FFF
+/** @} */
+
+/**
+ * @name    TDES3 constants
+ * @{
+ */
+#define STM32_TDES3_OWN             0x80000000
+#define STM32_TDES3_CTXT            0x40000000
+#define STM32_TDES3_FD              0x20000000
+#define STM32_TDES3_LD              0x10000000
+#define STM32_TDES3_CPC_MASK        0x0C000000
+#define STM32_TDES3_CPC(n)          ((n) << 26)
+#define STM32_TDES3_SAIC_MASK       0x03800000
+#define STM32_TDES3_SAIC(n)         ((n) << 23)
+#define STM32_TDES3_THL_MASK        0x00780000
+#define STM32_TDES3_THL(n)          ((n) << 19)
+#define STM32_TDES3_TSE             0x00040000
+#define STM32_TDES3_CIC_MASK        0x00030000
+#define STM32_TDES3_CIC(n)          ((n) << 16)
+#define STM32_TDES3_TPL             0x00008000
+#define STM32_TDES3_FL              0x00007FFF
+/** @} */
+
+/**
+ * @name    Link types
+ * @{
+ */
+#define MAC_LINK_DYNAMIC            0
+#define MAC_LINK_100_FULLDUPLEX     1
+#define MAC_LINK_10_FULLDUPLEX      2
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   Number of available transmit buffers.
+ */
+#if !defined(STM32_ETH_TRANSMIT_BUFFERS) || defined(__DOXYGEN__)
+#define STM32_ETH_TRANSMIT_BUFFERS          4
+#endif
+
+/**
+ * @brief   Number of available receive buffers.
+ */
+#if !defined(STM32_ETH_RECEIVE_BUFFERS) || defined(__DOXYGEN__)
+#define STM32_ETH_RECEIVE_BUFFERS           4
+#endif
+
+/**
+ * @brief   ETHD1 interrupt priority level setting.
+ */
+#if !defined(STM32_ETH_ETH1_DEFAULT_MAC_ADDRESS) || defined(__DOXYGEN__)
+#define STM32_ETH_ETH1_DEFAULT_MAC_ADDRESS  {0xAA, 0x55, 0x13, 0x37, 0x01, 0x10}
+#endif
+
+/**
+ * @brief   Maximum supported frame size.
+ */
+#if !defined(STM32_ETH_BUFFERS_SIZE) || defined(__DOXYGEN__)
+#define STM32_ETH_BUFFERS_SIZE              1524
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -46,6 +181,34 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of an STM32 Ethernet receive descriptor.
+ * @note    The structure contains custom fields rdes4 and rdes5 used by
+ *          the driver.
+ */
+typedef struct {
+  volatile uint32_t     rdes0;
+  volatile uint32_t     rdes1;
+  volatile uint32_t     rdes2;
+  volatile uint32_t     rdes3;
+  volatile uint32_t     rdes4;
+  volatile uint32_t     rdes5;
+} stm32_eth_rx_descriptor_t;
+
+/**
+ * @brief   Type of an STM32 Ethernet transmit descriptor.
+ * @note    The structure contains custom fields tdes4 and tdes5 used by
+ *          the driver.
+ */
+typedef struct {
+  volatile uint32_t     tdes0;
+  volatile uint32_t     tdes1;
+  volatile uint32_t     tdes2;
+  volatile uint32_t     tdes3;
+  volatile uint32_t     tdes4;
+  volatile uint32_t     tdes5;
+} stm32_eth_tx_descriptor_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -53,12 +216,25 @@
 /**
  * @brief   Low level fields of the MAC driver structure.
  */
-#define eth_lld_driver_fields
+#define eth_lld_driver_fields                                               \
+  /* Link status flag.*/                                                    \
+  bool                  link_up;                                            \
+  /* PHY address (pre shifted).*/                                           \
+  uint32_t              phyaddr;                                            \
+  /* Receive next frame index.*/                                            \
+  uint32_t              rdindex;                                            \
+  /* Transmit next frame index.*/                                           \
+  uint32_t              tdindex
 
 /**
  * @brief   Low level fields of the MAC configuration structure.
+ * @note    Fill with care, knowledge of the ETH IP is mandatory.
  */
-#define eth_lld_config_fields
+#define eth_lld_config_fields                                               \
+  struct {                                                                  \
+    uint32_t            dmamr;                                              \
+    uint32_t            dmasbmr;                                            \
+  } regs
 
 /*===========================================================================*/
 /* External declarations.                                                    */

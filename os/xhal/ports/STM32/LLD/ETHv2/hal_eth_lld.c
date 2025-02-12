@@ -32,6 +32,48 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* Frame buffers size in words.*/
+#define BUFFER_SIZE ((((STM32_ETH_BUFFERS_SIZE - 1) | 3) + 1) / 4)
+
+/* Fixing inconsistencies in ST headers.*/
+#if !defined(ETH_MACMDIOAR_CR_Div124) && defined(ETH_MACMDIOAR_CR_DIV124)
+#define ETH_MACMDIOAR_CR_Div124     ETH_MACMDIOAR_CR_DIV124
+#endif
+#if !defined(ETH_MACMDIOAR_CR_Div102) && defined(ETH_MACMDIOAR_CR_DIV102)
+#define ETH_MACMDIOAR_CR_Div102     ETH_MACMDIOAR_CR_DIV102
+#endif
+#if !defined(ETH_MACMDIOAR_CR_Div62) && defined(ETH_MACMDIOAR_CR_DIV62)
+#define ETH_MACMDIOAR_CR_Div62      ETH_MACMDIOAR_CR_DIV62
+#endif
+#if !defined(ETH_MACMDIOAR_CR_Div42) && defined(ETH_MACMDIOAR_CR_DIV42)
+#define ETH_MACMDIOAR_CR_Div42      ETH_MACMDIOAR_CR_DIV42
+#endif
+#if !defined(ETH_MACMDIOAR_CR_Div26) && defined(ETH_MACMDIOAR_CR_DIV26)
+#define ETH_MACMDIOAR_CR_Div26      ETH_MACMDIOAR_CR_DIV26
+#endif
+#if !defined(ETH_MACMDIOAR_CR_Div16) && defined(ETH_MACMDIOAR_CR_DIV16)
+#define ETH_MACMDIOAR_CR_Div16      ETH_MACMDIOAR_CR_DIV16
+#endif
+
+/* MII divider optimal value.*/
+#if (STM32_HCLK > 300000000)
+#error "STM32_HCLK above maximum frequency for ETH operations (300MHz)"
+#elif (STM32_HCLK >= 250000000)
+#define MACMDIODR_CR                ETH_MACMDIOAR_CR_Div124
+#elif (STM32_HCLK >= 150000000)
+#define MACMDIODR_CR                ETH_MACMDIOAR_CR_Div102
+#elif (STM32_HCLK >= 100000000)
+#define MACMDIODR_CR                ETH_MACMDIOAR_CR_Div62
+#elif (STM32_HCLK >= 60000000)
+#define MACMDIODR_CR                ETH_MACMDIOAR_CR_Div42
+#elif (STM32_HCLK >= 35000000)
+#define MACMDIODR_CR                ETH_MACMDIOAR_CR_Div26
+#elif (STM32_HCLK >= 20000000)
+#define MACMDIODR_CR                ETH_MACMDIOAR_CR_Div16
+#else
+#error "STM32_HCLK below minimum frequency for ETH operations (20MHz)"
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -45,9 +87,90 @@ hal_eth_driver_c ETHD1;
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+static const uint8_t default_mac_address[] = STM32_ETH_ETH1_DEFAULT_MAC_ADDRESS;
+
+/* Integration note, the linker script must place variables prefixed with
+   __eth_private_ into a cache-coherent memory (only accessible by privileged
+   threads if required by sandboxes).*/
+static stm32_eth_rx_descriptor_t __eth_private_rd[STM32_ETH_RECEIVE_BUFFERS];
+static stm32_eth_tx_descriptor_t __eth_private_td[STM32_ETH_TRANSMIT_BUFFERS];
+
+/* Integration note, the linker script must place variables prefixed with
+   __eth_shared_ into a cache-coherent memory (also accessible by non-privileged
+   threads if required by sandboxes).*/
+static uint32_t __eth_shared_rb[STM32_ETH_RECEIVE_BUFFERS][BUFFER_SIZE];
+static uint32_t __eth_shared_tb[STM32_ETH_TRANSMIT_BUFFERS][BUFFER_SIZE];
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
+
+static void eth_init_descriptors(void) {
+  unsigned i;
+
+  /* Descriptor tables are initialized in ring mode.*/
+  for (i = 0; i < STM32_ETH_RECEIVE_BUFFERS; i++) {
+    __eth_private_rd[i].rdes0 = (uint32_t)__eth_shared_rb[i];
+    __eth_private_rd[i].rdes1 = 0U;
+    __eth_private_rd[i].rdes2 = 0U;
+    __eth_private_rd[i].rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
+    __eth_private_rd[i].rdes4 = 0U;
+    __eth_private_rd[i].rdes5 = 0U;
+  }
+  for (i = 0; i < STM32_ETH_TRANSMIT_BUFFERS; i++) {
+    __eth_private_td[i].tdes0 = (uint32_t)__eth_shared_tb[i];
+    __eth_private_td[i].tdes1 = 0U;
+    __eth_private_td[i].tdes2 = 0U;
+    __eth_private_td[i].tdes3 = 0U;
+    __eth_private_td[i].tdes4 = 0U;
+    __eth_private_td[i].tdes5 = 0U;
+  }
+}
+
+void mii_write(hal_eth_driver_c *ethp, uint32_t reg, uint32_t value) {
+
+  ETH->MACMDIODR = value;
+  ETH->MACMDIOAR = ethp->phyaddr | (reg << ETH_MACMDIOAR_RDA_Pos) |
+                   MACMDIODR_CR | ETH_MACMDIOAR_MOC_WR | ETH_MACMDIOAR_MB;
+  while ((ETH->MACMDIOAR & ETH_MACMDIOAR_MB) != 0U) {
+  }
+}
+
+uint32_t mii_read(hal_eth_driver_c *ethp, uint32_t reg) {
+
+  ETH->MACMDIOAR = ethp->phyaddr | (reg << ETH_MACMDIOAR_RDA_Pos) |
+                   MACMDIODR_CR | ETH_MACMDIOAR_MOC_RD | ETH_MACMDIOAR_MB;
+  while ((ETH->MACMDIOAR & ETH_MACMDIOAR_MB) != 0U) {
+  }
+
+  return ETH->MACMDIODR;
+}
+
+#if !defined(BOARD_PHY_ADDRESS)
+static void mii_find_phy(hal_eth_driver_c *ethp) {
+  uint32_t i;
+
+#if STM32_ETH_PHY_TIMEOUT > 0
+  unsigned n = STM32_MAC_PHY_TIMEOUT;
+ do {
+#endif
+    for (i = 0U; i <= 31U; i++) {
+      ethp->phyaddr = i << ETH_MACMDIOAR_PA_Pos;
+      ETH->MACMDIOAR = (i << ETH_MACMDIOAR_RDA_Pos) | MACMDIODR_CR;
+      ETH->MACMDIODR = (i << ETH_MACMDIODR_RA_Pos) | MACMDIODR_CR;
+      if ((mii_read(ethp, MII_PHYSID1) == (BOARD_PHY_ID >> 16U)) &&
+          ((mii_read(ethp, MII_PHYSID2) & 0xFFF0U) == (BOARD_PHY_ID & 0xFFF0U))) {
+        return;
+      }
+    }
+#if STM32_ETH_PHY_TIMEOUT > 0
+    n--;
+  } while (n > 0U);
+#endif
+  /* Wrong or defective board.*/
+  osalSysHalt("ETH failure");
+}
+#endif
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -63,7 +186,66 @@ hal_eth_driver_c ETHD1;
  * @init
  */
 void eth_lld_init(void) {
+  hal_eth_driver_c *ethp = &ETHD1;
 
+  ethObjectInit(ethp);
+  ethp->link_up = false;
+
+
+  /* Selection of the RMII or MII mode based on info exported by board.h.*/
+#if defined(STM32H7XX)
+  {
+    uint32_t pmcr = SYSCFG->PMCR & ~SBS_PMCR_ETH_SEL_PHY_Msk;
+#if defined(BOARD_PHY_RMII)
+  pmcr |= SYSCFG_PMCR_EPIS_SEL_2;
+#endif
+  SYSCFG->PMCR = pmcr;
+}
+
+#elif defined(STM32H5XX)
+  {
+    uint32_t pmcr = SBS->PMCR & ~SBS_PMCR_ETH_SEL_PHY_Msk;
+#if defined(BOARD_PHY_RMII)
+    pmcr |= SBS_PMCR_ETH_SEL_PHY_2;
+#endif
+    SBS->PMCR = pmcr;
+  }
+
+#else
+#error "unsupported STM32 platform for MACv2 driver"
+#endif
+
+  /* Reset of the MAC core then enabling clocks.*/
+  rccResetETH();
+  rccEnableETH(true);
+
+  /* PHY address setup.*/
+#if defined(BOARD_PHY_ADDRESS)
+  ethp->phyaddr = BOARD_PHY_ADDRESS << 11;
+#else
+  mii_find_phy(ethp);
+#endif
+
+#if defined(BOARD_PHY_RESET)
+  /* PHY board-specific reset procedure.*/
+  BOARD_PHY_RESET();
+#else
+  /* PHY soft reset procedure.*/
+  mii_write(ethp, MII_BMCR, BMCR_RESET);
+#if defined(BOARD_PHY_RESET_DELAY)
+  osalSysPolledDelayX(BOARD_PHY_RESET_DELAY);
+#endif
+  while (mii_read(ethp, MII_BMCR) & BMCR_RESET)
+    ;
+#endif
+
+#if STM32_MAC_ETH1_CHANGE_PHY_STATE
+  /* PHY in power down mode until the driver will be started.*/
+  mii_write(ethp, MII_BMCR, mii_read(ethp, MII_BMCR) | BMCR_PDOWN);
+#endif
+
+  /* MAC clocks stopped again.*/
+  rccDisableETH();
 }
 
 /**
