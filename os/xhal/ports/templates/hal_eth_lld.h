@@ -31,6 +31,9 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/* Supports zero-copy API.*/
+#define ETH_SUPPORTS_ZERO_COPY              TRUE
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -87,13 +90,15 @@ extern "C" {
   size_t eth_lld_write_transmit_handle(hal_eth_driver_c *ethp,
                                        etc_transmit_handle_t txh,
                                        const uint8_t *bp, size_t n);
+  bool eth_lld_poll_link_status(hal_eth_driver_c *ethp);
+#if (ETH_SUPPORTS_ZERO_COPY == TRUE) || defined(__DOXYGEN__)
   const uint8_t *eth_lld_get_receive_buffer(hal_eth_driver_c *ethp,
                                             etc_receive_handle_t rxh,
                                             size_t *np);
   uint8_t *eth_lld_get_transmit_buffer(hal_eth_driver_c *ethp,
                                        etc_transmit_handle_t txh,
                                        size_t *sizep);
-  bool eth_lld_poll_link_status(hal_eth_driver_c *ethp);
+#endif
 #ifdef __cplusplus
 }
 #endif

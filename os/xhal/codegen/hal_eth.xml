@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.chibios.org/xml/schema/ccode/modules.xsd"
-  name="hal_eth" descr="ETH Driver" check="HAL_USE_ETH == TRUE" editcode="false">
+  name="hal_eth" descr="ETH Driver" check="HAL_USE_ETH == TRUE"
+  editcode="false">
   <brief>ETH Driver macros and structures.</brief>
   <imports>
     <import>hal_cb_driver.xml</import>
@@ -19,21 +20,25 @@
       <config name="ETH_USE_CONFIGURATIONS" default="FALSE">
         <brief>Support for ETH user configurations.</brief>
         <note>When enabled the user must provide a variable named
-          @p sio_configurations of type @p sio_configurations_t.</note>
+          @p
+          sio_configurations of type @p sio_configurations_t.
+        </note>
         <assert invalid="($N != FALSE) &amp;&amp; ($N != TRUE)" />
       </config>
     </configs>
     <macros>
       <macro name="__eth_getconf">
         <brief>Return a pointer to the configuration structure.</brief>
-        <param name="ip">Pointer to the @p hal_sio_driver_c object.</param>
+        <param name="ip">Pointer to the @p hal_sio_driver_c object.
+        </param>
         <return>A pointer to the configuration structure.</return>
         <notapi />
         <implementation><![CDATA[((const hal_eth_config_t *)((ip)->config))]]></implementation>
       </macro>
       <macro name="__eth_getfield">
         <brief>Retrieves a configuration field.</brief>
-        <param name="ip">Pointer to the @p hal_sio_driver_c object.</param>
+        <param name="ip">Pointer to the @p hal_sio_driver_c object.
+        </param>
         <param name="field">Configuration field to be retrieved.</param>
         <return>The field value.</return>
         <notapi />
@@ -59,7 +64,15 @@
       </typedef>
       <verbatim><![CDATA[
 /* Inclusion of LLD header.*/
-#include "hal_eth_lld.h"]]></verbatim>
+#include "hal_eth_lld.h"
+
+/* Checks on the zero-copy capability of the LLD.*/
+#if !defined(ETH_SUPPORTS_ZERO_COPY)
+#error "ETH_SUPPORTS_ZERO_COPY not defined in LLD"
+#endif
+#if (ETH_SUPPORTS_ZERO_COPY != FALSE) && (ETH_SUPPORTS_ZERO_COPY != TRUE)
+#error "invalid ETH_SUPPORTS_ZERO_COPY value"
+#endif]]></verbatim>
       <struct name="hal_eth_config">
         <brief>Driver configuration structure.</brief>
         <note>Implementations may extend this structure to contain more,
@@ -138,8 +151,8 @@ ETH_DRIVER_EXT_INIT_HOOK(self);
             <implementation><![CDATA[ ]]></implementation>
           </dispose>
           <regular>
-            
-            
+
+
             <method name="ethPollLinkStatus" ctype="bool">
               <brief><![CDATA[Returns the link status.]]></brief>
               <return><![CDATA[The link status,]]></return>
@@ -156,9 +169,11 @@ if (drvGetStateX(self) == HAL_DRV_STATE_ACTIVE) {
 return true;]]></implementation>
             </method>
             <condition check="ETH_USE_SYNCHRONIZATION == TRUE">
-              <method name="ethWaitReceiveHandle" ctype="etc_receive_handle_t">
+              <method name="ethWaitReceiveHandle"
+                ctype="etc_receive_handle_t">
                 <brief><![CDATA[Waits for a received frame availability.]]></brief>
-                <param name="timeout" ctype="sysinterval_t" dir="in"><![CDATA[Receive
+                <param name="timeout" ctype="sysinterval_t"
+                  dir="in"><![CDATA[Receive
                   timeout.]]></param>
                 <return><![CDATA[A receive handle.]]></return>
                 <retval value="NULL"><![CDATA[If a received frame is not available
@@ -183,9 +198,11 @@ osalSysUnlock();
 
 return rxh;]]></implementation>
               </method>
-              <method name="ethWaitTransmitHandle" ctype="etc_transmit_handle_t">
+              <method name="ethWaitTransmitHandle"
+                ctype="etc_transmit_handle_t">
                 <brief><![CDATA[Waits for a transmit frame availability.]]></brief>
-                <param name="timeout" ctype="sysinterval_t" dir="in"><![CDATA[Transmit
+                <param name="timeout" ctype="sysinterval_t"
+                  dir="in"><![CDATA[Transmit
                   timeout.]]></param>
                 <return><![CDATA[A transmit handle.]]></return>
                 <retval value="NULL"><![CDATA[If a transmit frame is not available
@@ -212,61 +229,52 @@ return txh;]]></implementation>
               </method>
             </condition>
           </regular>
-          <inline><method name="ethGetReceiveHandleI" ctype="etc_receive_handle_t">
+          <inline>
+            <method name="ethGetReceiveHandleI"
+              ctype="etc_receive_handle_t">
               <brief><![CDATA[Queries for a received frame handle.]]></brief>
               <return><![CDATA[The receive handle.]]></return>
-              <retval value="NULL">If a received frame is not available.</retval>
+              <retval value="NULL">If a received frame is not available.
+              </retval>
               <iclass />
               <implementation><![CDATA[
 
 return eth_lld_get_receive_handle(self);]]></implementation>
-            </method><method name="ethGetTransmitHandleI" ctype="etc_transmit_handle_t">
+            </method>
+            <method name="ethGetTransmitHandleI"
+              ctype="etc_transmit_handle_t">
               <brief><![CDATA[Queries for a transmit frame handle.]]></brief>
               <return><![CDATA[The transmit handle.]]></return>
-              <retval value="NULL">If an empty transmit frame is not available.</retval>
+              <retval value="NULL">If an empty transmit frame is not
+                available.
+              </retval>
               <iclass />
               <implementation><![CDATA[
 
 return eth_lld_get_transmit_handle(self);]]></implementation>
-            </method><method name="ethReleaseReceiveHandle" ctype="void">
+            </method>
+            <method name="ethReleaseReceiveHandle" ctype="void">
               <brief><![CDATA[Releases a received frame.]]></brief>
-              <param name="rxh" ctype="etc_receive_handle_t" dir="in"><![CDATA[Receive handle.]]></param>
+              <param name="rxh" ctype="etc_receive_handle_t"
+                dir="in"><![CDATA[Receive handle.]]></param>
               <api />
-                <implementation><![CDATA[
+              <implementation><![CDATA[
 
 eth_lld_release_receive_handle(self, rxh);]]></implementation>
-            </method><method name="ethReleaseTransmitHandle" ctype="void">
+            </method>
+            <method name="ethReleaseTransmitHandle" ctype="void">
               <brief><![CDATA[Releases and transmits a frame.]]></brief>
-              <param name="txh" ctype="etc_transmit_handle_t" dir="in"><![CDATA[Transmi] handle.]]></param>
+              <param name="txh" ctype="etc_transmit_handle_t"
+                dir="in"><![CDATA[Transmi] handle.]]></param>
               <api />
               <implementation><![CDATA[
 
 eth_lld_release_transmit_handle(self, txh);]]></implementation>
-            </method><method name="ethGetReceiveBufferX" ctype="const uint8_t *">
-              <brief><![CDATA[Direct access to the receive handle buffer.]]></brief>
-              <param name="rxh" ctype="etc_receive_handle_t" dir="in"><![CDATA[Receive handle.]]></param>
-              <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Size of the
-                received frame.]]></param>
-              <return><![CDATA[Pointer to the received frame buffer or @p NULL if the driver does
-                               not support memory-mapped direct access.]]></return>
-              <xclass />
-              <implementation><![CDATA[
-
-return eth_lld_get_receive_buffer(self, rxh, sizep);]]></implementation>
-            </method><method name="ethGetTransmitBufferX" ctype="uint8_t *">
-              <brief><![CDATA[Direct access to the transmit handle buffer.]]></brief>
-              <param name="txh" ctype="etc_transmit_handle_t" dir="in"><![CDATA[Transmit handle.]]></param>
-              <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Maximum size of the
-                transmit buffer.]]></param>
-              <return><![CDATA[Pointer to the transmit frame buffer or @p NULL if the driver does
-                               not support memory-mapped direct access.]]></return>
-              <xclass />
-              <implementation><![CDATA[
-
-return eth_lld_get_transmit_buffer(self, txh, sizep);]]></implementation>
-            </method><method name="ethReadReceiveHandle" ctype="size_t">
+            </method>
+            <method name="ethReadReceiveHandle" ctype="size_t">
               <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
-              <param name="rxh" ctype="etc_receive_handle_t" dir="in"><![CDATA[Receive handle.]]></param>
+              <param name="rxh" ctype="etc_receive_handle_t"
+                dir="in"><![CDATA[Receive handle.]]></param>
               <param name="bp" ctype="uint8_t *" dir="out"><![CDATA[Received data buffer pointer.]]></param>
               <param name="n" ctype="size_t" dir="in"><![CDATA[Number of bytes to read.]]></param>
               <return><![CDATA[The number of bytes read from the handle buffer,
@@ -276,10 +284,13 @@ return eth_lld_get_transmit_buffer(self, txh, sizep);]]></implementation>
               <implementation><![CDATA[
 
 return eth_lld_read_receive_handle(self, rxh, bp, n);]]></implementation>
-            </method><method name="ethWriteTransmitHandle" ctype="size_t">
+            </method>
+            <method name="ethWriteTransmitHandle" ctype="size_t">
               <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
-              <param name="txh" ctype="etc_transmit_handle_t" dir="in"><![CDATA[Transmit handle.]]></param>
-              <param name="bp" ctype="const uint8_t *" dir="in"><![CDATA[Transmit data buffer pointer.]]></param>
+              <param name="txh" ctype="etc_transmit_handle_t"
+                dir="in"><![CDATA[Transmit handle.]]></param>
+              <param name="bp" ctype="const uint8_t *" dir="in"><![CDATA[Transmit data
+                 buffer pointer.]]></param>
               <param name="n" ctype="size_t" dir="in"><![CDATA[Number of bytes to write.]]></param>
               <return><![CDATA[The number of bytes written into the handle buffer
                                this value can be less than the amount specified in the
@@ -288,7 +299,38 @@ return eth_lld_read_receive_handle(self, rxh, bp, n);]]></implementation>
               <implementation><![CDATA[
 
 return eth_lld_write_transmit_handle(self, txh, bp, n);]]></implementation>
-            </method></inline>
+            </method>
+            <condition check="ETH_SUPPORTS_ZERO_COPY == TRUE">
+              <method name="ethGetReceiveBufferX"
+                ctype="const uint8_t *">
+                <brief><![CDATA[Direct access to the receive handle buffer.]]></brief>
+                <param name="rxh" ctype="etc_receive_handle_t"
+                  dir="in"><![CDATA[Receive handle.]]></param>
+                <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Size of the
+                received frame.]]></param>
+                <return><![CDATA[Pointer to the received frame buffer or @p NULL if the
+                                 driver does not support memory-mapped direct access.]]></return>
+                <xclass />
+                <implementation><![CDATA[
+
+return eth_lld_get_receive_buffer(self, rxh, sizep);]]></implementation>
+              </method>
+              <method name="ethGetTransmitBufferX"
+                ctype="uint8_t *">
+                <brief><![CDATA[Direct access to the transmit handle buffer.]]></brief>
+                <param name="txh" ctype="etc_transmit_handle_t"
+                  dir="in"><![CDATA[Transmit handle.]]></param>
+                <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Maximum size of the
+                  transmit buffer.]]></param>
+                <return><![CDATA[Pointer to the transmit frame buffer or @p NULL if the driver does
+                                 not support memory-mapped direct access.]]></return>
+                <xclass />
+                <implementation><![CDATA[
+
+return eth_lld_get_transmit_buffer(self, txh, sizep);]]></implementation>
+              </method>
+            </condition>
+          </inline>
           <override>
             <method shortname="start">
               <implementation><![CDATA[

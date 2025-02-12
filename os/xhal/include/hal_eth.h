@@ -138,6 +138,14 @@ typedef struct hal_eth_config hal_eth_config_t;
 /* Inclusion of LLD header.*/
 #include "hal_eth_lld.h"
 
+/* Checks on the zero-copy capability of the LLD.*/
+#if !defined(ETH_SUPPORTS_ZERO_COPY)
+#error "ETH_SUPPORTS_ZERO_COPY not defined in LLD"
+#endif
+#if (ETH_SUPPORTS_ZERO_COPY != FALSE) && (ETH_SUPPORTS_ZERO_COPY != TRUE)
+#error "invalid ETH_SUPPORTS_ZERO_COPY value"
+#endif
+
 /**
  * @brief       Driver configuration structure.
  * @note        Implementations may extend this structure to contain more,
@@ -409,54 +417,6 @@ static inline void ethReleaseTransmitHandle(void *ip,
  * @memberof    hal_eth_driver_c
  * @public
  *
- * @brief       Direct access to the receive handle buffer.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     rxh           Receive handle.
- * @param[out]    sizep         Size of the received frame.
- * @return                      Pointer to the received frame buffer or @p NULL
- *                              if the driver does not support memory-mapped
- *                              direct access.
- *
- * @xclass
- */
-CC_FORCE_INLINE
-static inline const uint8_t *ethGetReceiveBufferX(void *ip,
-                                                  etc_receive_handle_t rxh,
-                                                  size_t *sizep) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  return eth_lld_get_receive_buffer(self, rxh, sizep);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
- * @brief       Direct access to the transmit handle buffer.
- *
- * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
- * @param[in]     txh           Transmit handle.
- * @param[out]    sizep         Maximum size of the transmit buffer.
- * @return                      Pointer to the transmit frame buffer or @p NULL
- *                              if the driver does not support memory-mapped
- *                              direct access.
- *
- * @xclass
- */
-CC_FORCE_INLINE
-static inline uint8_t *ethGetTransmitBufferX(void *ip,
-                                             etc_transmit_handle_t txh,
-                                             size_t *sizep) {
-  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-
-  return eth_lld_get_transmit_buffer(self, txh, sizep);
-}
-
-/**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Reads data sequentially from a received frame.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -503,6 +463,56 @@ static inline size_t ethWriteTransmitHandle(void *ip,
 
   return eth_lld_write_transmit_handle(self, txh, bp, n);
 }
+
+#if (ETH_SUPPORTS_ZERO_COPY == TRUE) || defined (__DOXYGEN__)
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Direct access to the receive handle buffer.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     rxh           Receive handle.
+ * @param[out]    sizep         Size of the received frame.
+ * @return                      Pointer to the received frame buffer or @p NULL
+ *                              if the driver does not support memory-mapped
+ *                              direct access.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline const uint8_t *ethGetReceiveBufferX(void *ip,
+                                                  etc_receive_handle_t rxh,
+                                                  size_t *sizep) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_get_receive_buffer(self, rxh, sizep);
+}
+
+/**
+ * @memberof    hal_eth_driver_c
+ * @public
+ *
+ * @brief       Direct access to the transmit handle buffer.
+ *
+ * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
+ * @param[in]     txh           Transmit handle.
+ * @param[out]    sizep         Maximum size of the transmit buffer.
+ * @return                      Pointer to the transmit frame buffer or @p NULL
+ *                              if the driver does not support memory-mapped
+ *                              direct access.
+ *
+ * @xclass
+ */
+CC_FORCE_INLINE
+static inline uint8_t *ethGetTransmitBufferX(void *ip,
+                                             etc_transmit_handle_t txh,
+                                             size_t *sizep) {
+  hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
+
+  return eth_lld_get_transmit_buffer(self, txh, sizep);
+}
+#endif /* ETH_SUPPORTS_ZERO_COPY == TRUE */
 /** @} */
 
 #endif /* HAL_USE_ETH == TRUE */
