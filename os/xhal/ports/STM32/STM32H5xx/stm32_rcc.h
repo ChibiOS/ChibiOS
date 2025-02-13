@@ -478,6 +478,38 @@
 /** @} */
 
 /**
+ * @name    ETH peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the ETH peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableETH(lp) rccEnableAHB1(RCC_AHB1ENR_ETHEN |                  \
+                                       RCC_AHB1ENR_ETHTXEN  |               \
+                                       RCC_AHB1ENR_ETHRXEN, lp)
+
+/**
+ * @brief   Disables the ETH peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableETH() rccDisableAHB1(RCC_AHB1ENR_ETHEN |                  \
+                                       RCC_AHB1ENR_ETHTXEN  |               \
+                                       RCC_AHB1ENR_ETHRXEN)
+
+/**
+ * @brief   Resets the ETH peripheral.
+ *
+ * @api
+ */
+#define rccResetETH() rccResetAHB1(RCC_AHB1RSTR_ETHRST)
+/** @} */
+
+/**
  * @name    GPDMA peripheral specific RCC operations
  * @{
  */
@@ -539,21 +571,21 @@
  *
  * @api
  */
-#define rccEnableFDCAN(lp) rccEnableAPB1L(RCC_APB1LENR_FDCANEN, lp)
+#define rccEnableFDCAN(lp) rccEnableAPB1H(RCC_APB1HENR_FDCANEN, lp)
 
 /**
  * @brief   Disables the FDCAN peripheral clock.
  *
  * @api
  */
-#define rccDisableFDCAN() rccDisableAPB1L(RCC_APB1LENR_FDCANEN)
+#define rccDisableFDCAN() rccDisableAPB1H(RCC_APB1HENR_FDCANEN)
 
 /**
  * @brief   Resets the FDCAN peripheral.
  *
  * @api
  */
-#define rccResetFDCAN() rccResetAPB1L(RCC_APB1LRSTR_FDCANRST)
+#define rccResetFDCAN() rccResetAPB1H(RCC_APB1HRSTR_FDCANRST)
 /** @} */
 
 /**
@@ -707,6 +739,57 @@
  * @api
  */
 #define rccResetRNG() rccResetAHB2(RCC_AHB2RSTR_RNGRST)
+/** @} */
+
+/**
+ * @name    SDMMC peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the SDMMC1 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDMMC1(lp) rccEnableAHB4(RCC_AHB4ENR_SDMMC1EN, lp)
+
+/**
+ * @brief   Disables the SDMMC1 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableSDMMC1() rccDisableAHB4(RCC_AHB4ENR_SDMMC1EN)
+
+/**
+ * @brief   Resets the SDMMC1 peripheral.
+ *
+ * @api
+ */
+#define rccResetSDMMC1() rccResetAHB4(RCC_AHB4RSTR_SDMMC1RST)
+
+/**
+ * @brief   Enables the SDMMC2 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableSDMMC2(lp) rccEnableAHB4(RCC_AHB4ENR_SDMMC2EN, lp)
+
+/**
+ * @brief   Disables the SDMMC2 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableSDMMC2() rccDisableAHB4(RCC_AHB4ENR_SDMMC2EN)
+
+/**
+ * @brief   Resets the SDMMC2 peripheral.
+ *
+ * @api
+ */
+#define rccResetSDMMC2() rccResetAHB4(RCC_AHB4RSTR_SDMMC2RST)
 /** @} */
 
 /**

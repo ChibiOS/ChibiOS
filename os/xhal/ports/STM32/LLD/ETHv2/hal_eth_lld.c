@@ -28,6 +28,8 @@
 
 #if HAL_USE_ETH || defined(__DOXYGEN__)
 
+#include "hal_mii.h"
+
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
@@ -151,7 +153,7 @@ static void mii_find_phy(hal_eth_driver_c *ethp) {
   uint32_t i;
 
 #if STM32_ETH_PHY_TIMEOUT > 0
-  unsigned n = STM32_MAC_PHY_TIMEOUT;
+  unsigned n = STM32_ETH_PHY_TIMEOUT;
  do {
 #endif
     for (i = 0U; i <= 31U; i++) {
@@ -191,7 +193,6 @@ void eth_lld_init(void) {
   ethObjectInit(ethp);
   ethp->link_up = false;
 
-
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
 #if defined(STM32H7XX)
   {
@@ -212,7 +213,7 @@ void eth_lld_init(void) {
   }
 
 #else
-#error "unsupported STM32 platform for MACv2 driver"
+#error "unsupported STM32 platform for ETHv2 driver"
 #endif
 
   /* Reset of the MAC core then enabling clocks.*/

@@ -217,6 +217,9 @@
 #define STM32_GPDMA_REQ_LPTIM6_IC2          134U
 #define STM32_GPDMA_REQ_LPTIM6_UE           135U
 
+/* RNG attributes.*/
+#define STM32_HAS_RNG1                      TRUE
+
 /*===========================================================================*/
 /* STM32H562xx, STM32H563xx, STM32H573xx.                                    */
 /*===========================================================================*/
@@ -229,6 +232,11 @@
 #define STM32_HAS_ADC2                      TRUE
 #define STM32_HAS_ADC3                      FALSE
 #define STM32_HAS_ADC4                      FALSE
+
+/* CAN attributes.*/
+#define STM32_HAS_FDCAN1                    TRUE
+#define STM32_HAS_FDCAN2                    TRUE
+#define STM32_HAS_FDCAN3                    FALSE
 
 /* DAC attributes.*/
 #define STM32_HAS_DAC1_CH1                  TRUE

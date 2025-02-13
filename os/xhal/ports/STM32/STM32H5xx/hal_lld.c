@@ -910,6 +910,10 @@ void stm32_clock_init(void) {
   rccResetAPB2(~0);
   rccResetAPB3(~0);
 
+  /* SBS clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB3(RCC_APB3ENR_SBSEN, true);
+
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
   rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
@@ -953,6 +957,10 @@ void stm32_clock_init(void) {
   rccResetAPB1H(~0);
   rccResetAPB2(~0);
   rccResetAPB3(~0);
+
+  /* SBS clock enabled here because it is a multi-functional unit shared
+     among multiple drivers.*/
+  rccEnableAPB3(RCC_APB3ENR_SBSEN, true);
 
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)

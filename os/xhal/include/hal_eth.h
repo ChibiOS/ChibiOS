@@ -63,6 +63,18 @@
 #if !defined(ETH_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
 #define ETH_USE_CONFIGURATIONS              FALSE
 #endif
+
+/**
+ * @brief   PHY detection timeout.
+ * @details Timeout for PHY address detection, the scan for a PHY is performed
+ *          the specified number of times before invoking the failure handler.
+ *          This setting applies only if the PHY address is not explicitly
+ *          set in the board header file using @p BOARD_PHY_ADDRESS. A zero
+ *          value disables the timeout and a single search is performed.
+ */
+#if !defined(STM32_ETH_PHY_TIMEOUT) || defined(__DOXYGEN__)
+#define STM32_ETH_PHY_TIMEOUT               100
+#endif
 /** @} */
 
 /*===========================================================================*/
