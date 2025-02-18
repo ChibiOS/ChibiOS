@@ -63,18 +63,6 @@
 #if !defined(ETH_USE_CONFIGURATIONS) || defined(__DOXYGEN__)
 #define ETH_USE_CONFIGURATIONS              FALSE
 #endif
-
-/**
- * @brief   PHY detection timeout.
- * @details Timeout for PHY address detection, the scan for a PHY is performed
- *          the specified number of times before invoking the failure handler.
- *          This setting applies only if the PHY address is not explicitly
- *          set in the board header file using @p BOARD_PHY_ADDRESS. A zero
- *          value disables the timeout and a single search is performed.
- */
-#if !defined(STM32_ETH_PHY_TIMEOUT) || defined(__DOXYGEN__)
-#define STM32_ETH_PHY_TIMEOUT               100
-#endif
 /** @} */
 
 /*===========================================================================*/
@@ -130,12 +118,12 @@
 /**
  * @brief       Type of a receive handle.
  */
-typedef void * etc_receive_handle_t;
+typedef void * eth_receive_handle_t;
 
 /**
  * @brief       Type of a transmit handle.
  */
-typedef void * etc_transmit_handle_t;
+typedef void * eth_transmit_handle_t;
 
 /**
  * @brief       Type of structure representing a ETH driver.
@@ -310,8 +298,8 @@ extern "C" {
   const void *__eth_selcfg_impl(void *ip, unsigned cfgnum);
   bool ethPollLinkStatus(void *ip);
 #if (ETH_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
-  etc_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout);
-  etc_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout);
+  eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout);
+  eth_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout);
 #endif /* ETH_USE_SYNCHRONIZATION == TRUE */
   /* Regular functions.*/
   void ethInit(void);
@@ -363,7 +351,7 @@ static inline hal_eth_driver_c *ethObjectInit(hal_eth_driver_c *self) {
  * @iclass
  */
 CC_FORCE_INLINE
-static inline etc_receive_handle_t ethGetReceiveHandleI(void *ip) {
+static inline eth_receive_handle_t ethGetReceiveHandleI(void *ip) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
   return eth_lld_get_receive_handle(self);
@@ -382,7 +370,7 @@ static inline etc_receive_handle_t ethGetReceiveHandleI(void *ip) {
  * @iclass
  */
 CC_FORCE_INLINE
-static inline etc_transmit_handle_t ethGetTransmitHandleI(void *ip) {
+static inline eth_transmit_handle_t ethGetTransmitHandleI(void *ip) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
   return eth_lld_get_transmit_handle(self);
@@ -400,7 +388,7 @@ static inline etc_transmit_handle_t ethGetTransmitHandleI(void *ip) {
  * @api
  */
 CC_FORCE_INLINE
-static inline void ethReleaseReceiveHandle(void *ip, etc_receive_handle_t rxh) {
+static inline void ethReleaseReceiveHandle(void *ip, eth_receive_handle_t rxh) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
   eth_lld_release_receive_handle(self, rxh);
@@ -419,7 +407,7 @@ static inline void ethReleaseReceiveHandle(void *ip, etc_receive_handle_t rxh) {
  */
 CC_FORCE_INLINE
 static inline void ethReleaseTransmitHandle(void *ip,
-                                            etc_transmit_handle_t txh) {
+                                            eth_transmit_handle_t txh) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
   eth_lld_release_transmit_handle(self, txh);
@@ -443,7 +431,7 @@ static inline void ethReleaseTransmitHandle(void *ip,
  * @api
  */
 CC_FORCE_INLINE
-static inline size_t ethReadReceiveHandle(void *ip, etc_receive_handle_t rxh,
+static inline size_t ethReadReceiveHandle(void *ip, eth_receive_handle_t rxh,
                                           uint8_t *bp, size_t n) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
@@ -469,7 +457,7 @@ static inline size_t ethReadReceiveHandle(void *ip, etc_receive_handle_t rxh,
  */
 CC_FORCE_INLINE
 static inline size_t ethWriteTransmitHandle(void *ip,
-                                            etc_transmit_handle_t txh,
+                                            eth_transmit_handle_t txh,
                                             const uint8_t *bp, size_t n) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
@@ -494,7 +482,7 @@ static inline size_t ethWriteTransmitHandle(void *ip,
  */
 CC_FORCE_INLINE
 static inline const uint8_t *ethGetReceiveBufferX(void *ip,
-                                                  etc_receive_handle_t rxh,
+                                                  eth_receive_handle_t rxh,
                                                   size_t *sizep) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 
@@ -518,7 +506,7 @@ static inline const uint8_t *ethGetReceiveBufferX(void *ip,
  */
 CC_FORCE_INLINE
 static inline uint8_t *ethGetTransmitBufferX(void *ip,
-                                             etc_transmit_handle_t txh,
+                                             eth_transmit_handle_t txh,
                                              size_t *sizep) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
 

@@ -95,6 +95,13 @@
 /** @} */
 
 /**
+ * @name    TDES1 constants
+ * @{
+ */
+#define STM32_TDES1_LOCKED          0x01000000 /* NOTE: Pseudo flag.        */
+/** @} */
+
+/**
  * @name    TDES2 constants
  * @{
  */
@@ -171,11 +178,43 @@
 #if !defined(STM32_ETH_BUFFERS_SIZE) || defined(__DOXYGEN__)
 #define STM32_ETH_BUFFERS_SIZE              1524
 #endif
+
+/**
+ * @brief   Change the PHY power state inside the driver.
+ */
+#if !defined(STM32_ETH_ETH1_CHANGE_PHY_STATE) || defined(__DOXYGEN__)
+#define STM32_ETH_ETH1_CHANGE_PHY_STATE     TRUE
+#endif
+
+/**
+ * @brief   IP checksum offload.
+ * @details The following modes are available:
+ *          - 0 Function disabled.
+ *          - 1 Only IP header checksum calculation and insertion are enabled.
+ *          - 2 IP header checksum and payload checksum calculation and
+ *              insertion are enabled, but pseudo-header checksum is not
+ *              calculated in hardware.
+ *          - 3 IP Header checksum and payload checksum calculation and
+ *              insertion are enabled, and pseudo-header checksum is
+ *              calculated in hardware.
+ *          .
+ */
+#if !defined(STM32_ETH_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
+#define STM32_ETH_IP_CHECKSUM_OFFLOAD       0
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (STM32_ETH_IP_CHECKSUM_OFFLOAD < 0) || (STM32_ETH_IP_CHECKSUM_OFFLOAD > 3)
+#error "invalid STM32_ETH_IP_CHECKSUM_OFFLOAD value"
+#endif
+
+#if STM32_ETH_PHY_TIMEOUT < 0
+#error "invalid STM32_ETH_PHY_TIMEOUT value"
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -187,12 +226,12 @@
  *          the driver.
  */
 typedef struct {
-  volatile uint32_t     rdes0;
-  volatile uint32_t     rdes1;
-  volatile uint32_t     rdes2;
-  volatile uint32_t     rdes3;
-  volatile uint32_t     rdes4;
-  volatile uint32_t     rdes5;
+  volatile uint32_t         rdes0;
+  volatile uint32_t         rdes1;
+  volatile uint32_t         rdes2;
+  volatile uint32_t         rdes3;
+  volatile uint32_t         offset;
+  volatile uint32_t         size;
 } stm32_eth_rx_descriptor_t;
 
 /**
@@ -201,12 +240,12 @@ typedef struct {
  *          the driver.
  */
 typedef struct {
-  volatile uint32_t     tdes0;
-  volatile uint32_t     tdes1;
-  volatile uint32_t     tdes2;
-  volatile uint32_t     tdes3;
-  volatile uint32_t     tdes4;
-  volatile uint32_t     tdes5;
+  volatile uint32_t         tdes0;
+  volatile uint32_t         tdes1;
+  volatile uint32_t         tdes2;
+  volatile uint32_t         tdes3;
+  volatile uint32_t         offset;
+  volatile uint32_t         size;
 } stm32_eth_tx_descriptor_t;
 
 /*===========================================================================*/
@@ -218,13 +257,13 @@ typedef struct {
  */
 #define eth_lld_driver_fields                                               \
   /* Link status flag.*/                                                    \
-  bool                  link_up;                                            \
+  bool                      link_up;                                        \
   /* PHY address (pre shifted).*/                                           \
-  uint32_t              phyaddr;                                            \
+  uint32_t                  phyaddr;                                        \
   /* Receive next frame index.*/                                            \
-  uint32_t              rdindex;                                            \
+  stm32_eth_rx_descriptor_t *rdp;                                           \
   /* Transmit next frame index.*/                                           \
-  uint32_t              tdindex
+  stm32_eth_tx_descriptor_t *tdp
 
 /**
  * @brief   Low level fields of the MAC configuration structure.
@@ -232,8 +271,8 @@ typedef struct {
  */
 #define eth_lld_config_fields                                               \
   struct {                                                                  \
-    uint32_t            dmamr;                                              \
-    uint32_t            dmasbmr;                                            \
+    uint32_t                dmamr;                                          \
+    uint32_t                dmasbmr;                                        \
   } regs
 
 /*===========================================================================*/
@@ -254,25 +293,25 @@ extern "C" {
                                          const hal_eth_config_t *config);
   const hal_eth_config_t *eth_lld_selcfg(hal_eth_driver_c *ethp,
                                          unsigned cfgnum);
-  etc_receive_handle_t eth_lld_get_receive_handle(hal_eth_driver_c *ethp);
-  etc_transmit_handle_t eth_lld_get_transmit_handle(hal_eth_driver_c *ethp);
+  eth_receive_handle_t eth_lld_get_receive_handle(hal_eth_driver_c *ethp);
+  eth_transmit_handle_t eth_lld_get_transmit_handle(hal_eth_driver_c *ethp);
   void eth_lld_release_receive_handle(hal_eth_driver_c *ethp,
-                                      etc_receive_handle_t rxh);
+                                      eth_receive_handle_t rxh);
   void eth_lld_release_transmit_handle(hal_eth_driver_c *ethp,
-                                       etc_transmit_handle_t txh);
+                                       eth_transmit_handle_t txh);
   size_t eth_lld_read_receive_handle(hal_eth_driver_c *ethp,
-                                     etc_receive_handle_t rxh,
+                                     eth_receive_handle_t rxh,
                                      uint8_t *bp, size_t n);
   size_t eth_lld_write_transmit_handle(hal_eth_driver_c *ethp,
-                                       etc_transmit_handle_t txh,
+                                       eth_transmit_handle_t txh,
                                        const uint8_t *bp, size_t n);
   bool eth_lld_poll_link_status(hal_eth_driver_c *ethp);
 #if (ETH_SUPPORTS_ZERO_COPY == TRUE) || defined(__DOXYGEN__)
   const uint8_t *eth_lld_get_receive_buffer(hal_eth_driver_c *ethp,
-                                            etc_receive_handle_t rxh,
+                                            eth_receive_handle_t rxh,
                                             size_t *np);
   uint8_t *eth_lld_get_transmit_buffer(hal_eth_driver_c *ethp,
-                                       etc_transmit_handle_t txh,
+                                       eth_transmit_handle_t txh,
                                        size_t *sizep);
 #endif
 #ifdef __cplusplus

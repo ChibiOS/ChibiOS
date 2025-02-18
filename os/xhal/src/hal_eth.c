@@ -247,9 +247,9 @@ bool ethPollLinkStatus(void *ip) {
  * @retval NULL                 If a received frame is not available within the
  *                              specified timeout.
  */
-etc_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
+eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-  etc_receive_handle_t rxh;
+  eth_receive_handle_t rxh;
 
   osalDbgCheck(self != NULL);
   osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
@@ -281,9 +281,9 @@ etc_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
  * @retval NULL                 If a transmit frame is not available within the
  *                              specified timeout.
  */
-etc_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout) {
+eth_transmit_handle_t ethWaitTransmitHandle(void *ip, sysinterval_t timeout) {
   hal_eth_driver_c *self = (hal_eth_driver_c *)ip;
-  etc_transmit_handle_t txh;
+  eth_transmit_handle_t txh;
 
   osalDbgCheck(self != NULL);
   osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");

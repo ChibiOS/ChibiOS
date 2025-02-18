@@ -46,11 +46,11 @@
       </macro>
     </macros>
     <types>
-      <typedef name="etc_receive_handle_t">
+      <typedef name="eth_receive_handle_t">
         <brief>Type of a receive handle.</brief>
         <basetype ctype="void *" />
       </typedef>
-      <typedef name="etc_transmit_handle_t">
+      <typedef name="eth_transmit_handle_t">
         <brief>Type of a transmit handle.</brief>
         <basetype ctype="void *" />
       </typedef>
@@ -170,7 +170,7 @@ return true;]]></implementation>
             </method>
             <condition check="ETH_USE_SYNCHRONIZATION == TRUE">
               <method name="ethWaitReceiveHandle"
-                ctype="etc_receive_handle_t">
+                ctype="eth_receive_handle_t">
                 <brief><![CDATA[Waits for a received frame availability.]]></brief>
                 <param name="timeout" ctype="sysinterval_t"
                   dir="in"><![CDATA[Receive
@@ -179,7 +179,7 @@ return true;]]></implementation>
                 <retval value="NULL"><![CDATA[If a received frame is not available
                   within the specified timeout.]]></retval>
                 <implementation><![CDATA[
-etc_receive_handle_t rxh;
+eth_receive_handle_t rxh;
 
 osalDbgCheck(self != NULL);
 osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
@@ -199,7 +199,7 @@ osalSysUnlock();
 return rxh;]]></implementation>
               </method>
               <method name="ethWaitTransmitHandle"
-                ctype="etc_transmit_handle_t">
+                ctype="eth_transmit_handle_t">
                 <brief><![CDATA[Waits for a transmit frame availability.]]></brief>
                 <param name="timeout" ctype="sysinterval_t"
                   dir="in"><![CDATA[Transmit
@@ -208,7 +208,7 @@ return rxh;]]></implementation>
                 <retval value="NULL"><![CDATA[If a transmit frame is not available
                   within the specified timeout.]]></retval>
                 <implementation><![CDATA[
-etc_transmit_handle_t txh;
+eth_transmit_handle_t txh;
 
 osalDbgCheck(self != NULL);
 osalDbgAssert(drvGetStateX(self) == HAL_DRV_STATE_ACTIVE, "not active");
@@ -231,7 +231,7 @@ return txh;]]></implementation>
           </regular>
           <inline>
             <method name="ethGetReceiveHandleI"
-              ctype="etc_receive_handle_t">
+              ctype="eth_receive_handle_t">
               <brief><![CDATA[Queries for a received frame handle.]]></brief>
               <return><![CDATA[The receive handle.]]></return>
               <retval value="NULL">If a received frame is not available.
@@ -242,7 +242,7 @@ return txh;]]></implementation>
 return eth_lld_get_receive_handle(self);]]></implementation>
             </method>
             <method name="ethGetTransmitHandleI"
-              ctype="etc_transmit_handle_t">
+              ctype="eth_transmit_handle_t">
               <brief><![CDATA[Queries for a transmit frame handle.]]></brief>
               <return><![CDATA[The transmit handle.]]></return>
               <retval value="NULL">If an empty transmit frame is not
@@ -255,7 +255,7 @@ return eth_lld_get_transmit_handle(self);]]></implementation>
             </method>
             <method name="ethReleaseReceiveHandle" ctype="void">
               <brief><![CDATA[Releases a received frame.]]></brief>
-              <param name="rxh" ctype="etc_receive_handle_t"
+              <param name="rxh" ctype="eth_receive_handle_t"
                 dir="in"><![CDATA[Receive handle.]]></param>
               <api />
               <implementation><![CDATA[
@@ -264,7 +264,7 @@ eth_lld_release_receive_handle(self, rxh);]]></implementation>
             </method>
             <method name="ethReleaseTransmitHandle" ctype="void">
               <brief><![CDATA[Releases and transmits a frame.]]></brief>
-              <param name="txh" ctype="etc_transmit_handle_t"
+              <param name="txh" ctype="eth_transmit_handle_t"
                 dir="in"><![CDATA[Transmi] handle.]]></param>
               <api />
               <implementation><![CDATA[
@@ -273,7 +273,7 @@ eth_lld_release_transmit_handle(self, txh);]]></implementation>
             </method>
             <method name="ethReadReceiveHandle" ctype="size_t">
               <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
-              <param name="rxh" ctype="etc_receive_handle_t"
+              <param name="rxh" ctype="eth_receive_handle_t"
                 dir="in"><![CDATA[Receive handle.]]></param>
               <param name="bp" ctype="uint8_t *" dir="out"><![CDATA[Received data buffer pointer.]]></param>
               <param name="n" ctype="size_t" dir="in"><![CDATA[Number of bytes to read.]]></param>
@@ -287,7 +287,7 @@ return eth_lld_read_receive_handle(self, rxh, bp, n);]]></implementation>
             </method>
             <method name="ethWriteTransmitHandle" ctype="size_t">
               <brief><![CDATA[Reads data sequentially from a received frame.]]></brief>
-              <param name="txh" ctype="etc_transmit_handle_t"
+              <param name="txh" ctype="eth_transmit_handle_t"
                 dir="in"><![CDATA[Transmit handle.]]></param>
               <param name="bp" ctype="const uint8_t *" dir="in"><![CDATA[Transmit data
                  buffer pointer.]]></param>
@@ -304,7 +304,7 @@ return eth_lld_write_transmit_handle(self, txh, bp, n);]]></implementation>
               <method name="ethGetReceiveBufferX"
                 ctype="const uint8_t *">
                 <brief><![CDATA[Direct access to the receive handle buffer.]]></brief>
-                <param name="rxh" ctype="etc_receive_handle_t"
+                <param name="rxh" ctype="eth_receive_handle_t"
                   dir="in"><![CDATA[Receive handle.]]></param>
                 <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Size of the
                 received frame.]]></param>
@@ -318,7 +318,7 @@ return eth_lld_get_receive_buffer(self, rxh, sizep);]]></implementation>
               <method name="ethGetTransmitBufferX"
                 ctype="uint8_t *">
                 <brief><![CDATA[Direct access to the transmit handle buffer.]]></brief>
-                <param name="txh" ctype="etc_transmit_handle_t"
+                <param name="txh" ctype="eth_transmit_handle_t"
                   dir="in"><![CDATA[Transmit handle.]]></param>
                 <param name="sizep" ctype="size_t *" dir="out"><![CDATA[Maximum size of the
                   transmit buffer.]]></param>
