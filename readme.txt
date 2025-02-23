@@ -155,6 +155,8 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Wrong .ld used in STM32G071 ADC testhal project.
+- FIX: Fixed ADCv5 wait for CCRDY after setting CHSELR.
 - FIX: Fixed DMA2 not firing on STM32G431 (bug 1295)
        (backported to 20.3.5)(backported to 21.11.4).
 - FIX: Fixed wrong STM32 ADCv2 stop method (bug 1294)
