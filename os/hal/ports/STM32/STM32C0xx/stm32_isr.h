@@ -34,6 +34,7 @@
  * @{
  */
 #define STM32_TIM1_SUPPRESS_ISR
+#define STM32_TIM2_SUPPRESS_ISR
 #define STM32_TIM3_SUPPRESS_ISR
 #define STM32_TIM14_SUPPRESS_ISR
 #define STM32_TIM16_SUPPRESS_ISR
@@ -58,15 +59,25 @@
  */
 #define STM32_DMA1_CH1_HANDLER              Vector64
 #define STM32_DMA1_CH23_HANDLER             Vector68
+#define STM32_DMA1_CH4567_HANDLER           Vector6C
 
 #define STM32_DMA1_CH1_NUMBER               9
 #define STM32_DMA1_CH23_NUMBER              10
+#define STM32_DMA1_CH4567_NUMBER            11
 #define STM32_DMA1_CH2_NUMBER               STM32_DMA1_CH23_NUMBER
 #define STM32_DMA1_CH3_NUMBER               STM32_DMA1_CH23_NUMBER
+#define STM32_DMA1_CH4_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH5_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH6_NUMBER               STM32_DMA1_CH4567_NUMBER
+#define STM32_DMA1_CH7_NUMBER               STM32_DMA1_CH4567_NUMBER
 
 #define STM32_DMA1_CH1_CMASK                0x00000001U
 #define STM32_DMA1_CH2_CMASK                0x00000006U
 #define STM32_DMA1_CH3_CMASK                0x00000006U
+#define STM32_DMA1_CH4_CMASK                0x00000078U
+#define STM32_DMA1_CH5_CMASK                0x00000078U
+#define STM32_DMA1_CH6_CMASK                0x00000078U
+#define STM32_DMA1_CH7_CMASK                0x00000078U
 
 /*
  * EXTI unit.
@@ -83,14 +94,17 @@
  * I2C units.
  */
 #define STM32_I2C1_GLOBAL_HANDLER           Vector9C
+#define STM32_I2C2_GLOBAL_HANDLER           VectorA0
 
 #define STM32_I2C1_GLOBAL_NUMBER            23
+#define STM32_I2C2_GLOBAL_NUMBER            24
 
 /*
  * TIM units.
  */
 #define STM32_TIM1_UP_HANDLER               Vector74
 #define STM32_TIM1_CC_HANDLER               Vector78
+#define STM32_TIM2_HANDLER                  Vector7C
 #define STM32_TIM3_HANDLER                  Vector80
 #define STM32_TIM14_HANDLER                 Vector8C
 #define STM32_TIM16_HANDLER                 Vector94
@@ -98,6 +112,7 @@
 
 #define STM32_TIM1_UP_NUMBER                13
 #define STM32_TIM1_CC_NUMBER                14
+#define STM32_TIM2_NUMBER                   15
 #define STM32_TIM3_NUMBER                   16
 #define STM32_TIM14_NUMBER                  19
 #define STM32_TIM16_NUMBER                  21

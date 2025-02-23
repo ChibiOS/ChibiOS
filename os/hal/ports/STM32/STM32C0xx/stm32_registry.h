@@ -286,7 +286,7 @@
 #define STM32_HAS_SPI2                      TRUE
 
 #define STM32_SPI1_SUPPORTS_I2S             TRUE
-#define STM32_SPI1_SUPPORTS_I2S             FALSE
+#define STM32_SPI2_SUPPORTS_I2S             FALSE
 
 #define STM32_HAS_SPI3                      FALSE
 #define STM32_HAS_SPI4                      FALSE
@@ -301,7 +301,7 @@
 #define STM32_TIM1_CHANNELS                 6
 
 #define STM32_HAS_TIM2                      TRUE
-#define STM32_TIM2_IS_32BITS                FALSE
+#define STM32_TIM2_IS_32BITS                TRUE
 #define STM32_TIM2_CHANNELS                 4
 
 #define STM32_HAS_TIM3                      TRUE
@@ -422,12 +422,21 @@
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
+/* OTG/USB attributes.*/
+#define STM32_HAS_OTG1                      FALSE
+#define STM32_HAS_OTG2                      FALSE
+
+#define STM32_HAS_USB                       TRUE
+#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
+#define STM32_USB_PMA_SIZE                  1024
+#define STM32_USB_HAS_BCDR                  TRUE
+
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
 #define STM32_HAS_SPI2                      TRUE
 
 #define STM32_SPI1_SUPPORTS_I2S             TRUE
-#define STM32_SPI1_SUPPORTS_I2S             FALSE
+#define STM32_SPI2_SUPPORTS_I2S             FALSE
 
 #define STM32_HAS_SPI3                      FALSE
 #define STM32_HAS_SPI4                      FALSE
@@ -442,7 +451,7 @@
 #define STM32_TIM1_CHANNELS                 6
 
 #define STM32_HAS_TIM2                      TRUE
-#define STM32_TIM2_IS_32BITS                FALSE
+#define STM32_TIM2_IS_32BITS                TRUE
 #define STM32_TIM2_CHANNELS                 4
 
 #define STM32_HAS_TIM3                      TRUE
@@ -501,7 +510,7 @@
 /* STM32C091xx, STM32C092xx.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32C071xx) || defined(STM32C092xx) || defined(__DOXYGEN__)
+#if defined(STM32C091xx) || defined(STM32C092xx) || defined(__DOXYGEN__)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -568,7 +577,7 @@
 #define STM32_HAS_SPI2                      TRUE
 
 #define STM32_SPI1_SUPPORTS_I2S             TRUE
-#define STM32_SPI1_SUPPORTS_I2S             FALSE
+#define STM32_SPI2_SUPPORTS_I2S             FALSE
 
 #define STM32_HAS_SPI3                      FALSE
 #define STM32_HAS_SPI4                      FALSE
@@ -583,7 +592,7 @@
 #define STM32_TIM1_CHANNELS                 6
 
 #define STM32_HAS_TIM2                      TRUE
-#define STM32_TIM2_IS_32BITS                FALSE
+#define STM32_TIM2_IS_32BITS                TRUE
 #define STM32_TIM2_CHANNELS                 4
 
 #define STM32_HAS_TIM3                      TRUE
@@ -636,7 +645,7 @@
 #define STM32_HAS_IWDG                      TRUE
 #define STM32_IWDG_IS_WINDOWED              TRUE
 
-#endif /* defined(STM32C071xx) || defined(STM32C092xx) */
+#endif /* defined(STM32C091xx) || defined(STM32C092xx) */
 
 #endif /* STM32_REGISTRY_H */
 

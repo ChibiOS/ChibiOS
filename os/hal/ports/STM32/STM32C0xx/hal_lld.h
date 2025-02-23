@@ -57,6 +57,18 @@
 #elif defined(STM32C031xx)
 #define PLATFORM_NAME           "STM32C0 Entry-level Mainstream MCU"
 
+#elif defined(STM32C051xx)
+#define PLATFORM_NAME           "STM32C0 Entry-level Mainstream MCU"
+
+#elif defined(STM32C071xx)
+#define PLATFORM_NAME           "STM32C0 Entry-level Mainstream MCU with USB"
+
+#elif defined(STM32C091xx)
+#define PLATFORM_NAME           "STM32C0 Entry-level Mainstream MCU with FDCAN"
+
+#elif defined(STM32C092xx)
+#define PLATFORM_NAME           "STM32C0 Entry-level Mainstream MCU with FDCAN"
+
 #else
 #error "STM32C0 device not specified"
 #endif
@@ -466,6 +478,18 @@
 
 #elif defined(STM32C031xx) && !defined(STM32C031_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32C031_MCUCONF not defined"
+
+#elif defined(STM32C051xx) && !defined(STM32C051_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32C051_MCUCONF not defined"
+
+#elif defined(STM32C071xx) && !defined(STM32C071_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32C071_MCUCONF not defined"
+
+#elif defined(STM32C091xx) && !defined(STM32C091_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32C091_MCUCONF not defined"
+
+#elif defined(STM32C092xx) && !defined(STM32C092_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32C092_MCUCONF not defined"
 
 #endif
 
