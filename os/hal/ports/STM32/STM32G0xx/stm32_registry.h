@@ -234,6 +234,9 @@
 #define STM32_TIM17_IS_32BITS               FALSE
 #define STM32_TIM17_CHANNELS                1
 
+#define STM32_HAS_LPTIM1                    TRUE
+#define STM32_HAS_LPTIM2                    TRUE
+
 #define STM32_HAS_TIM2                      FALSE
 #define STM32_HAS_TIM4                      FALSE
 #define STM32_HAS_TIM5                      FALSE
@@ -415,6 +418,9 @@
 #define STM32_HAS_TIM17                     TRUE
 #define STM32_TIM17_IS_32BITS               FALSE
 #define STM32_TIM17_CHANNELS                1
+
+#define STM32_HAS_LPTIM1                    TRUE
+#define STM32_HAS_LPTIM2                    TRUE
 
 #define STM32_HAS_TIM4                      FALSE
 #define STM32_HAS_TIM5                      FALSE
@@ -611,6 +617,9 @@
 #define STM32_HAS_TIM17                     TRUE
 #define STM32_TIM17_IS_32BITS               FALSE
 #define STM32_TIM17_CHANNELS                1
+
+#define STM32_HAS_LPTIM1                    TRUE
+#define STM32_HAS_LPTIM2                    TRUE
 
 #define STM32_HAS_TIM4                      FALSE
 #define STM32_HAS_TIM5                      FALSE
@@ -811,6 +820,9 @@
 #define STM32_HAS_TIM17                     TRUE
 #define STM32_TIM17_IS_32BITS               FALSE
 #define STM32_TIM17_CHANNELS                1
+
+#define STM32_HAS_LPTIM1                    TRUE
+#define STM32_HAS_LPTIM2                    TRUE
 
 #define STM32_HAS_TIM5                      FALSE
 #define STM32_HAS_TIM8                      FALSE
@@ -1022,6 +1034,8 @@
 #define STM32_HAS_TIM20                     FALSE
 #define STM32_HAS_TIM21                     FALSE
 #define STM32_HAS_TIM22                     FALSE
+#define STM32_HAS_LPTIM1                    FALSE
+#define STM32_HAS_LPTIM2                    FALSE
 
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
@@ -1030,9 +1044,9 @@
 #define STM32_HAS_UART4                     TRUE
 #define STM32_HAS_UART5                     TRUE
 #define STM32_HAS_USART6                    TRUE
+
 #define STM32_HAS_LPUART1                   FALSE
 #define STM32_HAS_LPUART2                   FALSE
-
 #define STM32_HAS_UART7                     FALSE
 #define STM32_HAS_UART8                     FALSE
 
@@ -1062,7 +1076,7 @@
 /* DCMI attributes.*/
 #define STM32_HAS_DCMI                      FALSE
 
-#endif /* defined(STM32G0B1xx) || defined(STM32G0C1xx) */
+#endif /* defined(STM32G0B0xx) */
 
 /** @} */
 

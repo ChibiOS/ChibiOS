@@ -139,6 +139,8 @@ void irqInit(void) {
   usart3_usart4_usart5_usart6_lpuart1_irq_init();
 #elif STM32_HAS_USART3 && STM32_HAS_UART4 && STM32_HAS_LPUART1
   usart3_usart4_lpuart1_irq_init();
+#elif STM32_HAS_USART3 && STM32_HAS_UART4 && STM32_HAS_UART5 && STM32_HAS_USART6
+  usart3_usart4_usart5_usart6_irq_init();
 #elif STM32_HAS_LPUART1
   lpuart1_irq_init();
 #endif
