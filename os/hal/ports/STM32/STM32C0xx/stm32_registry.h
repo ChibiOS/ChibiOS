@@ -145,6 +145,11 @@
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
 
+/* OTG/USB attributes.*/
+#define STM32_HAS_OTG1                      FALSE
+#define STM32_HAS_OTG2                      FALSE
+#define STM32_HAS_USB                       FALSE
+
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
 #define STM32_SPI1_SUPPORTS_I2S             TRUE
@@ -154,6 +159,11 @@
 #define STM32_HAS_SPI4                      FALSE
 #define STM32_HAS_SPI5                      FALSE
 #define STM32_HAS_SPI6                      FALSE
+
+/* OTG/USB attributes.*/
+#define STM32_HAS_OTG1                      FALSE
+#define STM32_HAS_OTG2                      FALSE
+#define STM32_HAS_USB                       FALSE
 
 /* TIM attributes.*/
 #define STM32_TIM_MAX_CHANNELS              6
@@ -280,6 +290,11 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
+
+/* OTG/USB attributes.*/
+#define STM32_HAS_OTG1                      FALSE
+#define STM32_HAS_OTG2                      FALSE
+#define STM32_HAS_USB                       FALSE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
@@ -428,7 +443,7 @@
 
 #define STM32_HAS_USB                       TRUE
 #define STM32_USB_ACCESS_SCHEME_2x16        TRUE
-#define STM32_USB_PMA_SIZE                  1024
+#define STM32_USB_PMA_SIZE                  2048
 #define STM32_USB_HAS_BCDR                  TRUE
 
 /* SPI attributes.*/
@@ -571,6 +586,11 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
+
+/* OTG/USB attributes.*/
+#define STM32_HAS_OTG1                      FALSE
+#define STM32_HAS_OTG2                      FALSE
+#define STM32_HAS_USB                       FALSE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
