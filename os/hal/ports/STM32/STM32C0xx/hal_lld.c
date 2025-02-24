@@ -146,7 +146,12 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 
   /* CCIPR register initialization.*/
   RCC->CCIPR =  STM32_ADCSEL    | STM32_I2S1SEL    | STM32_I2C1SEL   |
-                STM32_USART1SEL;
+                STM32_FDCAN1SEL | STM32_USART1SEL;
+
+#if STM32_HAS_USB
+  /* CCIPR2 register initialization.*/
+  RCC->CCIPR2 =  STM32_USBSEL;
+#endif
 }
 
 
@@ -210,6 +215,7 @@ void stm32_clock_init(void) {
   lse_init();
   lsi_init();
   hsi48_init();
+  hsiusb48_init();
   hse_init();
 
   /* Backup domain initializations.*/
