@@ -188,10 +188,10 @@
 #define STM32_USART1SEL_HSIKER  (2U << 0)
 #define STM32_USART1SEL_LSE     (3U << 0)
 
-#define STM32_FSCAN1SEL_MASK    (3U << 8)
-#define STM32_FSCAN1SEL_PCLK    (0U << 8)
-#define STM32_FSCAN1SEL_HSIKER  (0U << 8)
-#define STM32_FSCAN1SEL_HSE     (0U << 8)
+#define STM32_FDCAN1SEL_MASK    (3U << 8)
+#define STM32_FDCAN1SEL_PCLK    (0U << 8)
+#define STM32_FDCAN1SEL_HSIKER  (0U << 8)
+#define STM32_FDCAN1SEL_HSE     (0U << 8)
 
 #define STM32_I2C1SEL_MASK      (3U << 12)
 #define STM32_I2C1SEL_PCLK      (0U << 12)
@@ -461,8 +461,8 @@
 /**
  * @brief   FDCAN1 clock source.
  */
-#if !defined(STM32_FSCAN1SEL) || defined(__DOXYGEN__)
-#define STM32_FSCAN1SEL                     STM32_FSCAN1SEL_PCLK
+#if !defined(STM32_FDCAN1SEL) || defined(__DOXYGEN__)
+#define STM32_FDCAN1SEL                     STM32_FDCAN1SEL_PCLK
 #endif
 
 /**

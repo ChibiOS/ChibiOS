@@ -62,7 +62,7 @@
 /*===========================================================================*/
 
 #if STM32_RCC_HAS_HSIUSB48 == TRUE
-__STATIC_INLINE void hsi48_enable(void) {
+__STATIC_INLINE void hsiusb48_enable(void) {
 
   RCC->CR |= RCC_CR_HSIUSB48ON;
   while ((RCC->CR & RCC_CR_HSIUSB48RDY) == 0U) {
@@ -70,19 +70,19 @@ __STATIC_INLINE void hsi48_enable(void) {
   }
 }
 
-__STATIC_INLINE void hsi48_disable(void) {
+__STATIC_INLINE void hsiusb48_disable(void) {
 
   RCC->CR &= ~RCC_CR_HSIUSB48ON;
 }
+#endif /* STM32_RCC_HAS_HSIUSB48 == TRUE */
 
-__STATIC_INLINE void hsi48_init(void) {
+__STATIC_INLINE void hsiusb48_init(void) {
 
-#if STM32_HSI48_ENABLED
+#if (STM32_RCC_HAS_HSIUSB48 == TRUE) && (STM32_HSI48_ENABLED == TRUE)
   /* HSI activation.*/
-  hsi48_enable();
+  hsiusb48_enable();
 #endif
 }
-#endif /* STM32_RCC_HAS_HSIUSB48 == TRUE */
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
