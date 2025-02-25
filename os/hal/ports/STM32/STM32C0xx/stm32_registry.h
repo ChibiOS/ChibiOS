@@ -125,7 +125,7 @@
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
 #define STM32_HAS_GPIOC                     TRUE
-#define STM32_HAS_GPIOD                     TRUE
+#define STM32_HAS_GPIOD                     FALSE
 #define STM32_HAS_GPIOE                     FALSE
 #define STM32_HAS_GPIOF                     TRUE
 #define STM32_HAS_GPIOG                     FALSE
@@ -541,7 +541,11 @@
 #define STM32_HAS_CAN1                      FALSE
 #define STM32_HAS_CAN2                      FALSE
 #define STM32_HAS_CAN3                      FALSE
+#if defined(STM32C091xx)
+#define STM32_HAS_FDCAN1                    FALSE
+#else
 #define STM32_HAS_FDCAN1                    TRUE
+#endif
 #define STM32_HAS_FDCAN2                    FALSE
 
 /* DAC attributes.*/
@@ -658,9 +662,9 @@
 /* USART attributes.*/
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
+#define STM32_HAS_USART3                    TRUE
+#define STM32_HAS_UART4                     TRUE
 
-#define STM32_HAS_USART3                    FALSE
-#define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
 #define STM32_HAS_UART7                     FALSE
