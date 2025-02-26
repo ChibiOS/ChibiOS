@@ -64,7 +64,7 @@
 #define STM32_HSIDIV_VALUE                  ${doc.STM32_HSIDIV_VALUE!"4"}
 #define STM32_HSIKER_VALUE                  ${doc.STM32_HSIDIV_VALUE!"3"}
 #define STM32_HSI48_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
-#define STM32_HSIUSB48_ENABLED              ${doc.STM32_HSI16_ENABLED!"FALSE"}
+#define STM32_HSIUSB48_ENABLED              ${doc.STM32_HSI16_ENABLED!"TRUE"}
 #define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}

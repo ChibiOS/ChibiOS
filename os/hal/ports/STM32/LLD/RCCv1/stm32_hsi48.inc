@@ -45,7 +45,7 @@
 #error "STM32_HSI48_ENABLED not defined in mcuconf.h"
 #endif
 
-#if (STM32_RCC_HAS_HSI48 != FALSE) && (STM32_HSI48_ENABLED != TRUE)
+#if (STM32_RCC_HAS_HSI48 == FALSE) && (STM32_HSI48_ENABLED == TRUE)
 #error "HSI48 not present on this device"
 #endif
 

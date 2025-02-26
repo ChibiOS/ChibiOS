@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 /*
- * STM32C0xx drivers configuration.
+ * STM32C071 drivers configuration.
  * The following settings override the default settings present in
  * the various device driver implementation headers.
  * Note that the settings for each driver only have effect if the whole
@@ -53,6 +53,7 @@
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSIKER_VALUE                  1
 #define STM32_HSI48_ENABLED                 TRUE
+#define STM32_HSIUSB48_ENABLED              TRUE
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   TRUE
@@ -68,10 +69,12 @@
 /*
  * Peripherals clocks and sources.
  */
-#define STM32_USART1SEL                     STM32_USART1SEL_PCLK
+#define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
+#define STM32_FSCAN1SEL                     STM32_I2C1SEL_PCLK
 #define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK
 #define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
-#define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
+#define STM32_USART1SEL                     STM32_USART1SEL_PCLK
+#define STM32_USBSEL                        STM32_USBSEL_HSIUSB48
 #define STM32_RTCSEL                        STM32_RTCSEL_LSE
 
 /*
@@ -180,6 +183,16 @@
 #define STM32_UART_USART1_DMA_PRIORITY      0
 #define STM32_UART_USART2_DMA_PRIORITY      0
 #define STM32_UART_DMA_ERROR_HOOK(uartp)    osalSysHalt("DMA failure")
+
+/*
+ * USB driver system settings.
+ */
+#define STM32_USB_USE_USB1                  FALSE
+#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
+#define STM32_USB_USE_ISOCHRONOUS           FALSE
+#define STM32_USB_USE_FAST_COPY             FALSE
+#define STM32_USB_HOST_WAKEUP_DURATION      2
+#define STM32_USB_48MHZ_DELTA               0
 
 /*
  * WDG driver system settings.
