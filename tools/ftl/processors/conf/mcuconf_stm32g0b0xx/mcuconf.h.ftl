@@ -43,8 +43,7 @@
 #define MCUCONF_H
 
 #define STM32G0xx_MCUCONF
-#define STM32G0B1_MCUCONF
-#define STM32G0C1_MCUCONF
+#define STM32G0B0_MCUCONF
 
 /*
  * HAL driver system settings.
@@ -52,7 +51,6 @@
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
 #define STM32_CLOCK_DYNAMIC                 ${doc.STM32_CLOCK_DYNAMIC!"FALSE"}
 #define STM32_VOS                           ${doc.STM32_VOS!"STM32_VOS_RANGE1"}
-#define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(STM32_PVDRT_LEV0 | STM32_PVDFT_LEV0 | STM32_PVDE_DISABLED)"}
 #define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_EIWUL)"}
 #define STM32_PWR_CR4                       ${doc.STM32_PWR_CR4!"(0U)"}
 #define STM32_PWR_PUCRA                     ${doc.STM32_PWR_PUCRA!"(0U)"}
@@ -69,7 +67,6 @@
 #define STM32_PWR_PDCRF                     ${doc.STM32_PWR_PDCRF!"(0U)"}
 #define STM32_HSIDIV_VALUE                  ${doc.STM32_HSIDIV_VALUE!"1"}
 #define STM32_HSI16_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
-#define STM32_HSI48_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
 #define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
@@ -91,24 +88,17 @@
 /*
  * Peripherals clocks and sources.
  */
-#define STM32_FDCANSEL                      ${doc.STM32_FDCANSEL!"STM32_FDCANSEL_PCLK"}
 #define STM32_USBSEL                        ${doc.STM32_USBSEL!"STM32_USBSEL_PLLQCLK"}
 #define STM32_USART1SEL                     ${doc.STM32_USART1SEL!"STM32_USART1SEL_SYSCLK"}
 #define STM32_USART2SEL                     ${doc.STM32_USART2SEL!"STM32_USART2SEL_SYSCLK"}
 #define STM32_USART3SEL                     ${doc.STM32_USART3SEL!"STM32_USART3SEL_SYSCLK"}
-#define STM32_LPUART1SEL                    ${doc.STM32_LPUART1SEL!"STM32_LPUART1SEL_SYSCLK"}
-#define STM32_LPUART2SEL                    ${doc.STM32_LPUART2SEL!"STM32_LPUART2SEL_SYSCLK"}
 #define STM32_CECSEL                        ${doc.STM32_CECSEL!"STM32_CECSEL_HSI16DIV"}
 #define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"STM32_I2C1SEL_PCLK"}
 #define STM32_I2C2SEL                       ${doc.STM32_I2C2SEL!"STM32_I2C2SEL_PCLK"}
 #define STM32_I2S1SEL                       ${doc.STM32_I2S1SEL!"STM32_I2S1SEL_SYSCLK"}
 #define STM32_I2S2SEL                       ${doc.STM32_I2S22SEL!"STM32_I2S2SEL_SYSCLK"}
-#define STM32_LPTIM1SEL                     ${doc.STM32_LPTIM1SEL!"STM32_LPTIM1SEL_PCLK"}
-#define STM32_LPTIM2SEL                     ${doc.STM32_LPTIM2SEL!"STM32_LPTIM2SEL_PCLK"}
 #define STM32_TIM1SEL                       ${doc.STM32_TIM1SEL!"STM32_TIM1SEL_TIMPCLK"}
 #define STM32_TIM15SEL                      ${doc.STM32_TIM15SEL!"STM32_TIM15SEL_TIMPCLK"}
-#define STM32_RNGSEL                        ${doc.STM32_RNGSEL!"STM32_RNGSEL_HSI16"}
-#define STM32_RNGDIV_VALUE                  ${doc.STM32_RNGDIV_VALUE!"1"}
 #define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"STM32_ADCSEL_PLLPCLK"}
 #define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"STM32_RTCSEL_NOCLOCK"}
 
@@ -122,11 +112,10 @@
 
 #define STM32_IRQ_USART1_PRIORITY           ${doc.STM32_IRQ_USART1_PRIORITY!"2"}
 #define STM32_IRQ_USART2_LP2_PRIORITY       ${doc.STM32_IRQ_USART2_LP2_PRIORITY!"2"}
-#define STM32_IRQ_USART3_4_5_6_LP1_PRIORITY ${doc.STM32_IRQ_USART3_4_5_6_LP1_PRIORITY!"2"}
+#define STM32_IRQ_USART3_4_5_6_PRIORITY     ${doc.STM32_IRQ_USART3_4_5_6_PRIORITY!"2"}
 
 #define STM32_IRQ_TIM1_UP_PRIORITY          ${doc.STM32_IRQ_TIM1_UP_PRIORITY!"1"}
 #define STM32_IRQ_TIM1_CC_PRIORITY          ${doc.STM32_IRQ_TIM1_CC_PRIORITY!"1"}
-#define STM32_IRQ_TIM2_PRIORITY             ${doc.STM32_IRQ_TIM2_PRIORITY!"1"}
 #define STM32_IRQ_TIM3_4_PRIORITY           ${doc.STM32_IRQ_TIM3_4_PRIORITY!"1"}
 #define STM32_IRQ_TIM6_PRIORITY             ${doc.STM32_IRQ_TIM6_PRIORITY!"1"}
 #define STM32_IRQ_TIM7_PRIORITY             ${doc.STM32_IRQ_TIM7_PRIORITY!"1"}
@@ -146,23 +135,9 @@
 #define STM32_ADC_PRESCALER_VALUE           ${doc.STM32_ADC_PRESCALER_VALUE!"2"}
 
 /*
- * DAC driver system settings.
- */
-#define STM32_DAC_DUAL_MODE                 ${doc.STM32_DAC_DUAL_MODE!"FALSE"}
-#define STM32_DAC_USE_DAC1_CH1              ${doc.STM32_DAC_USE_DAC1_CH1!"FALSE"}
-#define STM32_DAC_USE_DAC1_CH2              ${doc.STM32_DAC_USE_DAC1_CH2!"FALSE"}
-#define STM32_DAC_DAC1_CH1_IRQ_PRIORITY     ${doc.STM32_DAC_DAC1_CH1_IRQ_PRIORITY!"3"}
-#define STM32_DAC_DAC1_CH2_IRQ_PRIORITY     ${doc.STM32_DAC_DAC1_CH2_IRQ_PRIORITY!"3"}
-#define STM32_DAC_DAC1_CH1_DMA_PRIORITY     ${doc.STM32_DAC_DAC1_CH1_DMA_PRIORITY!"2"}
-#define STM32_DAC_DAC1_CH2_DMA_PRIORITY     ${doc.STM32_DAC_DAC1_CH2_DMA_PRIORITY!"2"}
-#define STM32_DAC_DAC1_CH1_DMA_STREAM       ${doc.STM32_DAC_DAC1_CH1_DMA_STREAM!"STM32_DMA_STREAM_ID_ANY"}
-#define STM32_DAC_DAC1_CH2_DMA_STREAM       ${doc.STM32_DAC_DAC1_CH2_DMA_STREAM!"STM32_DMA_STREAM_ID_ANY"}
-
-/*
  * GPT driver system settings.
  */
 #define STM32_GPT_USE_TIM1                  ${doc.STM32_GPT_USE_TIM1!"FALSE"}
-#define STM32_GPT_USE_TIM2                  ${doc.STM32_GPT_USE_TIM2!"FALSE"}
 #define STM32_GPT_USE_TIM3                  ${doc.STM32_GPT_USE_TIM3!"FALSE"}
 #define STM32_GPT_USE_TIM4                  ${doc.STM32_GPT_USE_TIM4!"FALSE"}
 #define STM32_GPT_USE_TIM6                  ${doc.STM32_GPT_USE_TIM6!"FALSE"}
@@ -195,7 +170,6 @@
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM1                  ${doc.STM32_ICU_USE_TIM1!"FALSE"}
-#define STM32_ICU_USE_TIM2                  ${doc.STM32_ICU_USE_TIM2!"FALSE"}
 #define STM32_ICU_USE_TIM3                  ${doc.STM32_ICU_USE_TIM3!"FALSE"}
 #define STM32_ICU_USE_TIM4                  ${doc.STM32_ICU_USE_TIM4!"FALSE"}
 #define STM32_ICU_USE_TIM15                 ${doc.STM32_ICU_USE_TIM15!"FALSE"}
@@ -204,7 +178,6 @@
  * PWM driver system settings.
  */
 #define STM32_PWM_USE_TIM1                  ${doc.STM32_PWM_USE_TIM1!"FALSE"}
-#define STM32_PWM_USE_TIM2                  ${doc.STM32_PWM_USE_TIM2!"FALSE"}
 #define STM32_PWM_USE_TIM3                  ${doc.STM32_PWM_USE_TIM3!"FALSE"}
 #define STM32_PWM_USE_TIM4                  ${doc.STM32_PWM_USE_TIM4!"FALSE"}
 #define STM32_PWM_USE_TIM14                 ${doc.STM32_PWM_USE_TIM14!"FALSE"}
@@ -229,8 +202,6 @@
 #define STM32_SERIAL_USE_UART4              ${doc.STM32_SERIAL_USE_UART4!"FALSE"}
 #define STM32_SERIAL_USE_UART5              ${doc.STM32_SERIAL_USE_UART5!"FALSE"}
 #define STM32_SERIAL_USE_USART6             ${doc.STM32_SERIAL_USE_USART6!"FALSE"}
-#define STM32_SERIAL_USE_LPUART1            ${doc.STM32_SERIAL_USE_LPUART1!"FALSE"}
-#define STM32_SERIAL_USE_LPUART2            ${doc.STM32_SERIAL_USE_LPUART2!"FALSE"}
 
 /*
  * SIO driver system settings.
@@ -241,8 +212,6 @@
 #define STM32_SIO_USE_UART4                 ${doc.STM32_SIO_USE_UART4!"FALSE"}
 #define STM32_SIO_USE_UART5                 ${doc.STM32_SIO_USE_UART5!"FALSE"}
 #define STM32_SIO_USE_USART6                ${doc.STM32_SIO_USE_USART6!"FALSE"}
-#define STM32_SIO_USE_LPUART1               ${doc.STM32_SIO_USE_LPUART1!"FALSE"}
-#define STM32_SIO_USE_LPUART2               ${doc.STM32_SIO_USE_LPUART2!"FALSE"}
 
 /*
  * SPI driver system settings.
@@ -268,13 +237,7 @@
  * ST driver system settings.
  */
 #define STM32_ST_IRQ_PRIORITY               ${doc.STM32_ST_IRQ_PRIORITY!"2"}
-#define STM32_ST_USE_TIMER                  ${doc.STM32_ST_USE_TIMER!"2"}
-
-/*
- * TRNG driver system settings.
- * NOTE: STM32G0C1 only.
- */
-#define STM32_TRNG_USE_RNG1                 ${doc.STM32_TRNG_USE_RNG1!"FALSE"}
+#define STM32_ST_USE_TIMER                  ${doc.STM32_ST_USE_TIMER!"14"}
 
 /*
  * UART driver system settings.
