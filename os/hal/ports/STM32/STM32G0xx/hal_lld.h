@@ -368,8 +368,8 @@
 
 #define STM32_USBSEL_MASK       (3U << 12U) /**< USBSEL mask.               */
 #define STM32_USBSEL_HSI48      (0U << 12U) /**< USBSEL source is HSI48.    */
-#define STM32_USBSEL_PLLQCLK    (1U << 12U) /**< USBSEL source is PLLQCLK.  */
-#define STM32_USBSEL_HSE        (2U << 12U) /**< USBSEL source is HSE.      */
+#define STM32_USBSEL_HSE        (1U << 12U) /**< USBSEL source is HSE.      */
+#define STM32_USBSEL_PLLQCLK    (2U << 12U) /**< USBSEL source is PLLQCLK.  */
 /** @} */
 
 /**
