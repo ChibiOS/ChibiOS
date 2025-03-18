@@ -155,6 +155,7 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Fixed ADCv4 common registers reset at start (bug 1296).
 - FIX: Fixed incorrect RCC clock selection defines for STM32G0 USB.
 - FIX: Wrong .ld used in STM32G071 ADC testhal project.
 - FIX: Fixed ADCv5 wait for CCRDY after setting CHSELR.
