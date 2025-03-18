@@ -426,7 +426,7 @@ void adc_lld_init(void) {
 #if STM32_ADC_USE_ADC12 == TRUE
   rccEnableADC12(true);
   rccResetADC12();
-  ADC12_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF | ADC12_CCR_DUAL;
+  ADC12_COMMON->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF;
   rccDisableADC12();
 #endif
 #if STM32_ADC_USE_ADC3 == TRUE
@@ -466,7 +466,6 @@ msg_t adc_lld_start(ADCDriver *adcp) {
       }
 
       rccEnableADC12(true);
-      rccResetADC12();
 
       dmaSetRequestSource(adcp->data.dma, STM32_DMAMUX1_ADC1);
 
@@ -498,7 +497,6 @@ msg_t adc_lld_start(ADCDriver *adcp) {
       }
 
       rccEnableADC3(true);
-      rccResetADC3();
 
       bdmaSetRequestSource(adcp->data.bdma, STM32_DMAMUX2_ADC3_REQ);
 
@@ -513,6 +511,10 @@ msg_t adc_lld_start(ADCDriver *adcp) {
     /* Master ADC calibration.*/
     adc_lld_vreg_on(adcp);
     adc_lld_calibrate(adcp);
+
+#if STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC12 == TRUE
+    ADC12_COMMON->CCR |= ADC12_CCR_DUAL;
+#endif
 
     /* Configure the ADC boost. */
 #if STM32_ADC_USE_ADC12 == TRUE
@@ -564,7 +566,7 @@ void adc_lld_stop(ADCDriver *adcp) {
       adcp->data.dma = NULL;
 
       /* Resetting CCR options except default ones.*/
-      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF | ADC12_CCR_DUAL;
+      adcp->adcc->CCR = STM32_ADC_ADC12_CLOCK_MODE | ADC_DMA_DAMDF;
       rccDisableADC12();
     }
 #endif
@@ -681,7 +683,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     adcp->adcs->IER   = ADC_IER_OVRIE | ADC_IER_AWD1IE |
                                         ADC_IER_AWD2IE |
                                         ADC_IER_AWD3IE;
-
+    }
     /* Configuring the CCR register with the user-specified settings
       in the conversion group configuration structure, static settings are
       preserved.*/
@@ -724,7 +726,6 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     /* ADC configuration.*/
     adcp->adcm->CFGR  = cfgr;
     adcp->adcs->CFGR  = cfgr;
-  }
 }
 #endif /* STM32_ADC_DUAL_MODE == TRUE && STM32_ADC_USE_ADC12 == TRUE */
 

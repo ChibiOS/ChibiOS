@@ -89,6 +89,7 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Fixed ADCv4 common registers reset at start (bug 1296).
 - FIX: Fixed DMA2 not firing on STM32G431 (bug 1295).
 - FIX: Fixed wrong STM32 ADCv2 stop method (bug 1294).
 - FIX: Fixed STM32 OTGv1 driver does not re-enables endpoints on wakeup
