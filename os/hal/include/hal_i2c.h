@@ -59,7 +59,12 @@
  * @brief   Enables the mutual exclusion APIs on the I2C bus.
  */
 #if !defined(I2C_USE_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
-#define I2C_USE_MUTUAL_EXCLUSION    TRUE
+#define I2C_USE_MUTUAL_EXCLUSION            TRUE
+#endif
+
+/* For compatibility, some LLDs could not export this.*/
+#if !defined(I2C_SUPPORTS_SLAVE_MODE)
+#define I2C_SUPPORTS_SLAVE_MODE             FALSE
 #endif
 
 /*===========================================================================*/
@@ -83,11 +88,6 @@ typedef enum {
 } i2cstate_t;
 
 #include "hal_i2c_lld.h"
-
-/* For compatibility, some LLDs could not export this.*/
-#if !defined(I2C_SUPPORTS_SLAVE_MODE)
-#define I2C_SUPPORTS_SLAVE_MODE             FALSE
-#endif
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -133,6 +133,25 @@ typedef enum {
  */
 #define i2cMasterReceive(i2cp, addr, rxbuf, rxbytes)                        \
   (i2cMasterReceiveTimeout(i2cp, addr, rxbuf, rxbytes, TIME_INFINITE))
+
+#if I2C_SUPPORTS_SLAVE_MODE == TRUE
+/**
+ * @name    Macro Functions
+ * @{
+ */
+/**
+ * @brief   Answer required.
+ * @note    This function is meant to be called after slave receive only.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @return              Slave answer required.
+ * @retval              false if the slave must not answer.
+ * @retval              true if the slave must answer.
+ *
+ * @special
+ */
+#define i2cSlaveIsAnswerRequired(i2cp) (((i2cp)->reply_required))
+#endif
 
 /*===========================================================================*/
 /* External declarations.                                                    */

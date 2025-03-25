@@ -234,12 +234,29 @@ static void i2c_lld_abort_operation(I2CDriver *i2cp) {
 static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
   I2C_TypeDef *dp = i2cp->i2c;
 
+#if (STM32_I2C_USE_DMA == FALSE) || (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+  uint32_t cr1 = dp->CR1;
+#endif
+
   /* Special case of a received NACK, the transfer is aborted.*/
   if ((isr & I2C_ISR_NACKF) != 0U) {
+
 #if STM32_I2C_USE_DMA == TRUE
     /* Stops the associated DMA streams.*/
     dmaStreamDisable(i2cp->dmatx);
     dmaStreamDisable(i2cp->dmarx);
+#endif
+
+#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+    /* If master is done reading data and indicates this to the slave through a NACK. */
+    if (!i2cp->isMaster) {
+      if (i2cp->state == I2C_ACTIVE_TX) {
+        if (((isr & I2C_ISR_DIR) != 0U) && ((isr & I2C_ISR_TXIS) != 0U)) {
+          /* Next interrupt is STOP. */
+          return ;
+        }
+      }
+    }
 #endif
 
     /* Error flag.*/
@@ -257,11 +274,88 @@ static void i2c_lld_serve_interrupt(I2CDriver *i2cp, uint32_t isr) {
     return;
   }
 
+#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+  if (!i2cp->isMaster) {
+    /* Handling I2C Slave */
+    /* Note: (isr & I2C_ISR_TC) is not supported in slave mode. */
+
+    /* Communication completed. */
+    if (isr & I2C_ISR_STOPF) {
+
+      dp->CR1 &= ~I2C_CR1_TXIE;
+      dp->CR1 &= ~I2C_CR1_RXIE;
+#if STM32_I2C_USE_DMA == TRUE
+      /* Disabling TX/RX DMA channel */
+      dmaStreamDisable(i2cp->dmatx);
+      dmaStreamDisable(i2cp->dmarx);
+#endif /* STM32_I2C_USE_DMA == TRUE */
+
+      /* Normal transaction end.*/
+      _i2c_wakeup_isr(i2cp);
+
+      return;
+    }
+
+    /* Check slave address match */
+    if (isr & I2C_ISR_ADDR) {
+      /* Check direction */
+      if (isr & I2C_ISR_DIR) {
+        /* Reply required */
+        i2cp->reply_required = true;
+
+        if (i2cp->state == I2C_ACTIVE_RX) {
+          /* Disable interrupt on RX */
+          dp->CR1 &= ~I2C_CR1_RXIE;
+#if STM32_I2C_USE_DMA == TRUE
+          dmaStreamDisable(i2cp->dmarx);
+#endif /* STM32_I2C_USE_DMA == TRUE */
+          _i2c_wakeup_isr(i2cp);
+        }
+      }
+      return;
+    }
+
+    if (i2cp->state == I2C_ACTIVE_TX) {
+      /* Transmission phase.*/
+      if (((cr1 & I2C_CR1_TXIE) != 0U) && ((isr & I2C_ISR_TXIS) != 0U)) {
+#if STM32_I2C_USE_DMA == FALSE
+        /* Handling of data transfer if the DMA mode is disabled.*/
+        dp->TXDR = (uint32_t)*i2cp->txptr;
+        i2cp->txptr++;
+        i2cp->txbytes--;
+        if (i2cp->txbytes == 0U) {
+          dp->CR1 &= ~I2C_CR1_TXIE;
+        }
+#else
+        /* Enabling TX DMA.*/
+        dmaStreamEnable(i2cp->dmatx);
+#endif /* STM32_I2C_USE_DMA == FALSE */
+      }
+    }
+    else {
+      /* Receive phase.*/
+      if (((cr1 & I2C_CR1_RXIE) != 0U) && ((isr & I2C_ISR_RXNE) != 0U)) {
+#if STM32_I2C_USE_DMA == FALSE
+        *i2cp->rxptr = (uint8_t)dp->RXDR;
+        i2cp->rxptr++;
+        i2cp->rxbytes--;
+        if (i2cp->rxbytes == 0U) {
+          dp->CR1 &= ~I2C_CR1_RXIE;
+        }
+#else
+        /* Enabling RX DMA.*/
+        dmaStreamEnable(i2cp->dmarx);
+#endif /* STM32_I2C_USE_DMA == FALSE */
+      }
+    }
+
+    return;
+  }
+#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+
 #if STM32_I2C_USE_DMA == FALSE
   /* Handling of data transfer if the DMA mode is disabled.*/
   {
-    uint32_t cr1 = dp->CR1;
-
     if (i2cp->state == I2C_ACTIVE_TX) {
       /* Transmission phase.*/
       if (((cr1 &I2C_CR1_TXIE) != 0U) && ((isr & I2C_ISR_TXIS) != 0U)) {
@@ -976,6 +1070,10 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
 
+#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+  i2cp->isMaster = true;
+#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2C_NO_ERROR;
 
@@ -1082,6 +1180,10 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
 
+#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+  i2cp->isMaster = true;
+#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2C_NO_ERROR;
 
@@ -1163,6 +1265,135 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   return msg;
 }
+
+#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+/**
+ * @brief   Listen I2C bus for address match.
+ * @details Use 7 bit address.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] addr      slave device address
+ *                      .
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ *
+ * @notapi
+ */
+msg_t i2c_lld_match_address(I2CDriver *i2cp, i2caddr_t addr) {
+  I2C_TypeDef *dp = i2cp->i2c;
+
+  i2cp->isMaster = false;
+
+  /* Check 7 bit address. */
+  if ((addr >> 7) == 0) {
+    /* Clean register */
+    dp->OAR1 = 0;
+    /* OA1 bits can be written only when OA1EN=0. */
+    /* Configure and enable own address 1 */
+    dp->OAR1 = (addr << 1) | I2C_OAR1_OA1EN;
+  }
+  else {
+    /* cannot add this address to set of those matched */
+    return MSG_RESET;
+  }
+
+  return MSG_OK;
+}
+
+/**
+ * @brief   Receive data via the I2C bus as slave and call handler.
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[out] rxbuf    pointer to the receive buffer
+ * @param[in] rxbytes   size of receive buffer
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end. <b>After a
+ *                      timeout the driver must be stopped and restarted
+ *                      because the bus is in an uncertain state</b>.
+ *
+ * @notapi
+ */
+msg_t i2c_lld_slave_receive_timeout(I2CDriver *i2cp, uint8_t *rxbuf, size_t rxbytes, sysinterval_t timeout) {
+  I2C_TypeDef *dp = i2cp->i2c;
+
+  i2cp->isMaster = false;
+
+  /* Reset Reply flag */
+  i2cp->reply_required = false;
+
+#if STM32_I2C_USE_DMA == TRUE
+  /* RX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
+  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
+  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
+#else
+  i2cp->rxptr   = rxbuf;
+  i2cp->rxbytes = rxbytes;
+#endif
+
+  /* Address match, RX and STOP interrupts enabled.*/
+  dp->CR1 |= I2C_CR1_ADDRIE | I2C_CR1_RXIE | I2C_CR1_STOPIE;
+
+  /* Waits for the operation completion or a timeout.*/
+  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+}
+
+/**
+ * @brief   Transmits data via the I2C bus as slave.
+ * @details Call this function when Master request data (in request handler)
+ *
+ * @param[in] i2cp      pointer to the @p I2CDriver object
+ * @param[in] txbuf     pointer to the transmit buffer
+ * @param[in] txbytes   number of bytes to be transmitted
+ * @param[in] timeout   the number of ticks before the operation timeouts,
+ *                      the following special values are allowed:
+ *                      - @a TIME_INFINITE no timeout.
+ *                      .
+ * @return              The operation status.
+ * @retval MSG_OK       if the function succeeded.
+ * @retval MSG_RESET    if one or more I2C errors occurred, the errors can
+ *                      be retrieved using @p i2cGetErrors().
+ * @retval MSG_TIMEOUT  if a timeout occurred before operation end. <b>After a
+ *                      timeout the driver must be stopped and restarted
+ *                      because the bus is in an uncertain state</b>.
+ *
+ * @notapi
+ */
+msg_t i2c_lld_slave_transmit_timeout(I2CDriver *i2cp,
+                                     const uint8_t *txbuf,
+                                     size_t txbytes,
+                                     sysinterval_t timeout) {
+  I2C_TypeDef *dp = i2cp->i2c;
+
+  i2cp->isMaster = false;
+
+#if STM32_I2C_USE_DMA == TRUE
+  /* TX DMA setup.*/
+  dmaStreamSetMode(i2cp->dmatx, i2cp->txdmamode);
+  dmaStreamSetMemory0(i2cp->dmatx, txbuf);
+  dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
+#else
+  i2cp->txptr   = txbuf;
+  i2cp->txbytes = txbytes;
+#endif
+
+  /* Address match, TX and STOP interrupts enabled.*/
+  dp->CR1 |= I2C_CR1_ADDRIE | I2C_CR1_TXIE | I2C_CR1_STOPIE;
+
+  /* Waits for the operation completion or a timeout.*/
+  return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
+}
+
+#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
 
 #endif /* HAL_USE_I2C */
 

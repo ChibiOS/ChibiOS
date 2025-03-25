@@ -77,6 +77,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: I2C slave support in ST low level drivers.
 - NEW: Support for STM32G0B0xx.
 - NEW: Added chRegGarbageCollect() function to registry for simplified
        dynamic threads management.
