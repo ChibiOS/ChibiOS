@@ -77,6 +77,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added missing con text switch hook in ARMv7-M-ALT and ARMv8-M-ML-ALT
+       ports.
 - NEW: I2C slave support in ST low level drivers.
 - NEW: Support for STM32G0B0xx.
 - NEW: Added chRegGarbageCollect() function to registry for simplified
