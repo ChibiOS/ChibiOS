@@ -77,6 +77,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Improved interrupts processing in ARMv7-M-ALT and ARMv8-M-ML-ALT
+       ports. Specifically, saved few cycles on the context switch code path.
 - NEW: Added missing con text switch hook in ARMv7-M-ALT and ARMv8-M-ML-ALT
        ports.
 - NEW: I2C slave support in ST low level drivers.

@@ -102,15 +102,14 @@ void __port_set_region(void) {
 
 /**
  * @brief   Tail ISR context switch code.
- *
- * @return              The threads pointers encoded in a single 64 bits value.
  */
-uint64_t __port_schedule_next(void) {
+void PendSV_Handler(void) {
 
   /* Note, not an error, we are outside the ISR already.*/
   chSysLock();
 
   if (likely(chSchIsPreemptionRequired())) {
+    extern void port_pendsv_tail(thread_t *ntp, thread_t *otp);
     thread_t *otp, *ntp;
 
     otp = chThdGetSelfX();
@@ -124,12 +123,11 @@ uint64_t __port_schedule_next(void) {
     __stats_ctxswc(ntp, otp);
     CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);
 
-    return ((uint64_t)(uint32_t)otp << 32) | ((uint64_t)(uint32_t)ntp << 0);
+    port_pendsv_tail(ntp, otp);
+    return;
   }
 
   chSysUnlock();
-
-  return (uint64_t)0;
 }
 
 /**

@@ -282,21 +282,13 @@ SVC_Handler:
  * Tail preemption check using PENDSV.
  *--------------------------------------------------------------------------*/
                 .thumb_func
-                .globl  PendSV_Handler
-PendSV_Handler:
-                mrs     r3, BASEPRI
-                push    {r3, lr}
-
-                bl      __port_schedule_next
-                cmp     r0, #0
-                it      eq
-                popeq   {r3, pc}
-                pop     {r3, lr}
-
+                .globl  port_pendsv_tail
+port_pendsv_tail:
                 /* Context store for old thread through R1.*/
                 adds    r1, #CONTEXT_OFFSET
 
                 mrs     r2, PSP
+                mov		r3, #CORTEX_BASEPRI_DISABLED
 #if PORT_SAVE_CONTROL
                 mrs     r12, CONTROL
 #endif
