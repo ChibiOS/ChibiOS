@@ -141,6 +141,7 @@ uint64_t __port_schedule_next(void) {
 
     __trace_switch(ntp, otp);
     __stats_ctxswc(ntp, otp);
+    CH_CFG_CONTEXT_SWITCH_HOOK(ntp, otp);
 
     return ((uint64_t)(uint32_t)otp << 32) | ((uint64_t)(uint32_t)ntp << 0);
   }

@@ -74,6 +74,7 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: Added missing con text switch hook in ARMv7-M-ALT port.
 - NEW: FDCANv1 and FDCANv2 filter enabled.
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
        underlying port supports the capability.
