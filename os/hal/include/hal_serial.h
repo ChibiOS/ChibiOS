@@ -332,7 +332,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdRead(sdp, b, n) iqReadTimeout(&(sdp)->iqueue, b, n, TIME_INFINITE)
+#define sdRead(sdp, b, n) (sdp)->vmt->readt(sdp, b, n, TIME_INFINITE)
 
 /**
  * @brief   Direct blocking read from a @p SerialDriver with timeout
@@ -353,7 +353,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdReadTimeout(sdp, b, n, t) iqReadTimeout(&(sdp)->iqueue, b, n, t)
+#define sdReadTimeout(sdp, b, n, t) (sdp)->vmt->readt(sdp, b, n, t)
 
 /**
  * @brief   Direct non-blocking read from a @p SerialDriver.
@@ -370,7 +370,7 @@ struct hal_serial_driver {
  * @api
  */
 #define sdAsynchronousRead(sdp, b, n)                                       \
-  iqReadTimeout(&(sdp)->iqueue, b, n, TIME_IMMEDIATE)
+  (sdp)->vmt->readt(sdp, b, n, TIME_IMMEDIATE)
 /** @} */
 
 /*===========================================================================*/
@@ -394,6 +394,7 @@ extern "C" {
   bool sdPutWouldBlock(SerialDriver *sdp);
   bool sdGetWouldBlock(SerialDriver *sdp);
   msg_t sdControl(SerialDriver *sdp, unsigned int operation, void *arg);
+  void sdCheckEnableRXInterrupt(SerialDriver *sdp);
 #ifdef __cplusplus
 }
 #endif

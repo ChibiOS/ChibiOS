@@ -54,7 +54,7 @@ static size_t _write(void *ip, const uint8_t *bp, size_t n) {
 }
 
 static size_t _read(void *ip, uint8_t *bp, size_t n) {
-
+  sdCheckEnableRXInterrupt((SerialDriver *)ip);
   return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp,
                        n, TIME_INFINITE);
 }
@@ -87,7 +87,7 @@ static size_t _writet(void *ip, const uint8_t *bp, size_t n,
 
 static size_t _readt(void *ip, uint8_t *bp, size_t n,
                      sysinterval_t timeout) {
-
+  sdCheckEnableRXInterrupt((SerialDriver *)ip);
   return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, timeout);
 }
 
@@ -357,6 +357,24 @@ bool sdGetWouldBlock(SerialDriver *sdp) {
 msg_t sdControl(SerialDriver *sdp, unsigned int operation, void *arg) {
 
   return _ctl((void *)sdp, operation, arg);
+}
+
+/**
+ * @brief   Enable RX interrupt when there is space in the input que
+ *          if hardware flow control is enabled
+ *
+ * @param[in] sdp       pointer to a @p SerialDriver object
+ */
+void sdCheckEnableRXInterrupt(SerialDriver *sdp)
+{
+  USART_TypeDef *u = sdp->usart;
+  const input_queue_t *iq = &sdp->iqueue;
+
+  if ((u->CR3 & USART_CR3_RTSE) && (u->CR3 & USART_CR3_CTSE)) {
+    if (qSpaceI(iq) != qSizeX(iq)) {
+	u->CR1 |= USART_CR1_RXNEIE;
+    }
+  }
 }
 
 #endif /* HAL_USE_SERIAL == TRUE */
