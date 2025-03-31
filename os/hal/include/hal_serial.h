@@ -394,7 +394,6 @@ extern "C" {
   bool sdPutWouldBlock(SerialDriver *sdp);
   bool sdGetWouldBlock(SerialDriver *sdp);
   msg_t sdControl(SerialDriver *sdp, unsigned int operation, void *arg);
-  void sdCheckEnableRXInterrupt(SerialDriver *sdp);
 #ifdef __cplusplus
 }
 #endif
