@@ -52,11 +52,13 @@ void _CheckEnableRXInterrupt(SerialDriver *sdp)
   USART_TypeDef *u = sdp->usart;
   const input_queue_t *iq = &sdp->iqueue;
 
+  chSysLock();
   if ((u->CR3 & USART_CR3_RTSE) && (u->CR3 & USART_CR3_CTSE)) {
     if (qSpaceI(iq) != qSizeX(iq)) {
 	u->CR1 |= USART_CR1_RXNEIE;
     }
   }
+  chSysUnlock();
 }
 
 static size_t _write(void *ip, const uint8_t *bp, size_t n) {
@@ -66,9 +68,10 @@ static size_t _write(void *ip, const uint8_t *bp, size_t n) {
 }
 
 static size_t _read(void *ip, uint8_t *bp, size_t n) {
+  size_t ret = iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp,
+                             n, TIME_INFINITE);
   _CheckEnableRXInterrupt((SerialDriver *)ip);
-  return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp,
-                       n, TIME_INFINITE);
+  return ret;
 }
 
 static msg_t _put(void *ip, uint8_t b) {
@@ -77,8 +80,9 @@ static msg_t _put(void *ip, uint8_t b) {
 }
 
 static msg_t _get(void *ip) {
-
-  return iqGetTimeout(&((SerialDriver *)ip)->iqueue, TIME_INFINITE);
+  msg_t ret = iqGetTimeout(&((SerialDriver *)ip)->iqueue, TIME_INFINITE);
+  _CheckEnableRXInterrupt((SerialDriver *)ip);
+  return ret;
 }
 
 static msg_t _putt(void *ip, uint8_t b, sysinterval_t timeout) {
@@ -87,8 +91,9 @@ static msg_t _putt(void *ip, uint8_t b, sysinterval_t timeout) {
 }
 
 static msg_t _gett(void *ip, sysinterval_t timeout) {
-
-  return iqGetTimeout(&((SerialDriver *)ip)->iqueue, timeout);
+  msg_t ret = iqGetTimeout(&((SerialDriver *)ip)->iqueue, timeout);
+  _CheckEnableRXInterrupt((SerialDriver *)ip);
+  return ret;
 }
 
 static size_t _writet(void *ip, const uint8_t *bp, size_t n,
@@ -99,8 +104,9 @@ static size_t _writet(void *ip, const uint8_t *bp, size_t n,
 
 static size_t _readt(void *ip, uint8_t *bp, size_t n,
                      sysinterval_t timeout) {
+  size_t ret = iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, timeout);
   _CheckEnableRXInterrupt((SerialDriver *)ip);
-  return iqReadTimeout(&((SerialDriver *)ip)->iqueue, bp, n, timeout);
+  return ret;
 }
 
 static msg_t _ctl(void *ip, unsigned int operation, void *arg) {

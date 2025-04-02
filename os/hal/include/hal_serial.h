@@ -213,7 +213,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdGet(sdp) iqGet(&(sdp)->iqueue)
+#define sdGet(sdp) (sdp)->vmt->gett(sdp, TIME_INFINITE)
 
 /**
  * @brief   Direct read from a @p SerialDriver with timeout specification.
@@ -232,7 +232,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdGetTimeout(sdp, t) iqGetTimeout(&(sdp)->iqueue, t)
+#define sdGetTimeout(sdp, t) (sdp)->vmt->gett(sdp, t)
 
 /**
  * @brief   Direct non-blocking write to a @p SerialDriver.

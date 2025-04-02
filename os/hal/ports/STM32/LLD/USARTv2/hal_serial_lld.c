@@ -867,15 +867,16 @@ void sd_lld_serve_interrupt(SerialDriver *sdp) {
      2) FIFO mode is enabled on devices that support it, we need to empty
         the FIFO.*/
   while (isr & USART_ISR_RXNE) {
-    if (u->CR3 & USART_CR3_RTSE && u->CR3 & USART_CR3_CTSE) {
+    if (u->CR3 & USART_CR3_RTSE) {
+      osalSysLockFromISR();
       if (!iqIsFullI(&sdp->iqueue)) {
-        osalSysLockFromISR();
         sdIncomingDataI(sdp, (uint8_t)u->RDR & sdp->rxmask);
-        osalSysUnlockFromISR();
       } else {
         u->CR1 &= ~(USART_CR1_RXNEIE);
+        osalSysUnlockFromISR();
         break;
       }
+      osalSysUnlockFromISR();
     } else {
       osalSysLockFromISR();
       sdIncomingDataI(sdp, (uint8_t)u->RDR & sdp->rxmask);
