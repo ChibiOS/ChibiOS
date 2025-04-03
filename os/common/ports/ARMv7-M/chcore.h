@@ -117,6 +117,9 @@
  *          @p CH_DBG_ENABLE_STACK_CHECK is enabled.
  * @note    The use of this option has an overhead of 32 bytes for each
  *          thread.
+ * @note    The MPU region used for guard pages overrides initialization
+ *          values of @p PORT_MPU_RBARx_INIT and @p PORT_MPU_RASRx_INIT
+ *          settings.
  */
 #if !defined(PORT_ENABLE_GUARD_PAGES) || defined(__DOXYGEN__)
 #define PORT_ENABLE_GUARD_PAGES         FALSE
@@ -124,6 +127,9 @@
 
 /**
  * @brief   MPU region to be used to stack guards.
+ * @note    The MPU region used for guard pages overrides initialization
+ *          values of @p PORT_MPU_RBARx_INIT and @p PORT_MPU_RASRx_INIT
+ *          settings.
  */
 #if !defined(PORT_USE_GUARD_MPU_REGION) || defined(__DOXYGEN__)
 #define PORT_USE_GUARD_MPU_REGION       MPU_REGION_7
@@ -209,6 +215,143 @@
  */
 #if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
 #define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
+#endif
+
+/**
+ * @brief   Enables MPU static initialization.
+ * @details The initialization is performed according to the various
+ *          @p PORT_MPU_RBARx_INIT and @p PORT_MPU_RASRx_INIT settings.
+ */
+#if !defined(PORT_MPU_INITIALIZE) || defined(__DOXYGEN__)
+#define PORT_MPU_INITIALIZE             TRUE
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 0.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR0_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR0_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 0.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR0_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR0_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 1.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR1_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR1_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 1.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR1_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR1_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 2.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR2_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR2_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 2.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR2_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR2_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 3.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR3_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR3_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 3.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR3_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR3_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 4.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR4_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR4_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 4.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR4_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR4_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 5.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR5_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR5_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 5.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR5_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR5_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 6.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR6_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR6_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 6.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR6_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR6_INIT             0U
+#endif
+
+/**
+ * @brief   RBAR register initialization for region 7.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RBAR7_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RBAR7_INIT             0U
+#endif
+
+/**
+ * @brief   RASR register initialization for region 7.
+ * @note    Memory regions must not overlap in ARMv8-M.
+ */
+#if !defined(PORT_MPU_RASR7_INIT) || defined(__DOXYGEN__)
+#define PORT_MPU_RASR7_INIT             0U
 #endif
 
 /*===========================================================================*/

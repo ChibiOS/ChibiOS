@@ -46,6 +46,20 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+#if (PORT_MPU_INITIALIZE == TRUE) || defined(__DOXYGEN__)
+static void port_init_regions(const uint32_t *src, volatile uint32_t *dst) {
+
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
+}
+#endif
+
 /*===========================================================================*/
 /* Module interrupt handlers.                                                */
 /*===========================================================================*/
@@ -184,6 +198,25 @@ void port_init(os_instance_t *oip) {
   NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
   NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
 
+#if PORT_MPU_INITIALIZE == TRUE
+  /* MPU initialization as specified in port options.*/
+  {
+    static const uint32_t regs0[]  = {PORT_MPU_RBAR0_INIT | MPU_REGION_0, PORT_MPU_RASR0_INIT,
+                                      PORT_MPU_RBAR1_INIT | MPU_REGION_1, PORT_MPU_RASR1_INIT,
+                                      PORT_MPU_RBAR2_INIT | MPU_REGION_2, PORT_MPU_RASR2_INIT,
+                                      PORT_MPU_RBAR3_INIT | MPU_REGION_3, PORT_MPU_RASR3_INIT};
+    port_init_regions(regs0, &MPU->RBAR);
+
+#if CORTEX_MPU_REGIONS > 4
+    static const uint32_t regs4[]  = {PORT_MPU_RBAR4_INIT | MPU_REGION_4, PORT_MPU_RASR4_INIT,
+                                      PORT_MPU_RBAR5_INIT | MPU_REGION_5, PORT_MPU_RASR5_INIT,
+                                      PORT_MPU_RBAR6_INIT | MPU_REGION_6, PORT_MPU_RASR6_INIT,
+                                      PORT_MPU_RBAR7_INIT | MPU_REGION_7, PORT_MPU_RASR7_INIT};
+    port_init_regions(regs4, &MPU->RBAR);
+#endif
+  }
+#endif
+
 #if PORT_ENABLE_GUARD_PAGES == TRUE
   {
     extern stkline_t __main_thread_stack_base__;
@@ -199,7 +232,7 @@ void port_init(os_instance_t *oip) {
   }
 #endif
 
-#if (PORT_MPU_ENABLED == TRUE) || (PORT_SWITCHED_REGIONS_NUMBER > 0) ||     \
+#if (PORT_MPU_INITIALIZE == TRUE) || (PORT_SWITCHED_REGIONS_NUMBER > 0) ||  \
     (PORT_ENABLE_GUARD_PAGES == TRUE)
   /* MPU is enabled.*/
   mpuEnable(MPU_CTRL_PRIVDEFENA);
