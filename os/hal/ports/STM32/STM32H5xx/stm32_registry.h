@@ -220,6 +220,43 @@
 /* RNG attributes.*/
 #define STM32_HAS_RNG1                      TRUE
 
+/* RTC attributes.*/
+#define STM32_HAS_RTC                       TRUE
+#define STM32_RTC_HAS_PERIODIC_WAKEUPS      TRUE
+#define STM32_RTC_NUM_ALARMS                2
+#define STM32_RTC_STORAGE_SIZE              128
+#define STM32_RTC_GLOBAL_HANDLER            Vector48
+#define STM32_RTC_TAMP_HANDLER              Vector50
+#define STM32_RTC_GLOBAL_NUMBER             2
+#define STM32_RTC_TAMP_NUMBER               4
+#define STM32_RTC_GLOBAL_EXTI               17
+#define STM32_RTC_TAMP_EXTI                 19
+#define STM32_RTC_IRQ_ENABLE() do {                                         \
+  nvicEnableVector(STM32_RTC_GLOBAL_NUMBER, STM32_IRQ_EXTI17_PRIORITY);     \
+  nvicEnableVector(STM32_RTC_TAMP_NUMBER, STM32_IRQ_EXTI19_PRIORITY);       \
+} while (false)
+
+ /* Enabling RTC-related EXTI lines.*/
+#define STM32_RTC_ENABLE_ALL_EXTI() do {                                    \
+  extiEnableGroup1(EXTI_MASK1(STM32_RTC_GLOBAL_EXTI) |                      \
+                   EXTI_MASK1(STM32_RTC_TAMP_EXTI),                         \
+                   EXTI_MODE_RISING_EDGE | EXTI_MODE_ACTION_INTERRUPT);     \
+} while (false)
+
+/* Clearing EXTI interrupts. */
+#define STM32_RTC_CLEAR_ALL_EXTI() do {                                     \
+  extiClearGroup1(EXTI_MASK1(STM32_RTC_GLOBAL_EXTI) |                       \
+                  EXTI_MASK1(STM32_RTC_TAMP_EXTI));                         \
+} while (false)
+
+/* Masks used to preserve state of RTC and TAMP register reserved bits. */
+#define STM32_RTC_CR_MASK                   0xE7FFFF7F
+#define STM32_RTC_PRER_MASK                 0x007F7FFF
+#define STM32_TAMP_CR1_MASK                 0x003C0007
+#define STM32_TAMP_CR2_MASK                 0x07070007
+#define STM32_TAMP_FLTCR_MASK               0x000000FF
+#define STM32_TAMP_IER_MASK                 0x003C0007
+
 /*===========================================================================*/
 /* STM32H562xx, STM32H563xx, STM32H573xx.                                    */
 /*===========================================================================*/

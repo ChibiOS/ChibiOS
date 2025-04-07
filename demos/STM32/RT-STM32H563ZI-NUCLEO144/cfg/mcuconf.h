@@ -74,7 +74,7 @@
 #define STM32_CSI_ENABLED                   FALSE
 #define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSI_ENABLED                   FALSE
-#define STM32_LSE_ENABLED                   FALSE
+#define STM32_LSE_ENABLED                   TRUE
 #define STM32_SW                            STM32_SW_PLL1P
 #define STM32_PLL1SRC                       STM32_PLL1SRC_HSE
 #define STM32_PLL1M_VALUE                   4
@@ -154,7 +154,7 @@
 #define STM32_SAI1SEL                       STM32_SAI1SEL_PLL1Q
 #define STM32_SAI2SEL                       STM32_SAI2SEL_PLL1Q
 #define STM32_CKPERSEL                      STM32_CKPERSEL_HSI
-#define STM32_RTCSEL                        STM32_RTCSEL_NOCLOCK
+#define STM32_RTCSEL                        STM32_RTCSEL_LSE
 
 /*
  * IRQ system settings.
@@ -175,6 +175,8 @@
 #define STM32_IRQ_EXTI13_PRIORITY           6
 #define STM32_IRQ_EXTI14_PRIORITY           6
 #define STM32_IRQ_EXTI15_PRIORITY           6
+#define STM32_IRQ_EXTI17_PRIORITY           6
+#define STM32_IRQ_EXTI19_PRIORITY           6
 
 #define STM32_IRQ_TIM1_BRK_PRIORITY         7
 #define STM32_IRQ_TIM1_UP_PRIORITY          7
@@ -314,6 +316,13 @@
 /*
  * RTC driver system settings.
  */
+#define STM32_RTC_PRESA_VALUE               32
+#define STM32_RTC_PRESS_VALUE               1024
+#define STM32_RTC_CR_INIT                   0
+#define STM32_TAMP_CR1_INIT                 0
+#define STM32_TAMP_CR2_INIT                 0
+#define STM32_TAMP_FLTCR_INIT               0
+#define STM32_TAMP_IER_INIT                 0
 
 /*
  * SDC driver system settings.

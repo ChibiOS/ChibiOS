@@ -186,6 +186,8 @@
 #define STM32_IRQ_EXTI13_PRIORITY           ${doc.STM32_IRQ_EXTI13_PRIORITY!"6"}
 #define STM32_IRQ_EXTI14_PRIORITY           ${doc.STM32_IRQ_EXTI14_PRIORITY!"6"}
 #define STM32_IRQ_EXTI15_PRIORITY           ${doc.STM32_IRQ_EXTI15_PRIORITY!"6"}
+#define STM32_IRQ_EXTI17_PRIORITY           ${doc.STM32_IRQ_EXTI17_PRIORITY!"6"}
+#define STM32_IRQ_EXTI19_PRIORITY           ${doc.STM32_IRQ_EXTI19_PRIORITY!"6"}
 
 #define STM32_IRQ_TIM1_BRK_PRIORITY         ${doc.STM32_IRQ_TIM1_BRK_PRIORITY!"7"}
 #define STM32_IRQ_TIM1_UP_PRIORITY          ${doc.STM32_IRQ_TIM1_UP_PRIORITY!"7"}
@@ -325,6 +327,13 @@
 /*
  * RTC driver system settings.
  */
+#define STM32_RTC_PRESA_VALUE               ${doc.STM32_RTC_PRESA_VALUE!"32"}
+#define STM32_RTC_PRESS_VALUE               ${doc.STM32_RTC_PRESS_VALUE!"1024"}
+#define STM32_RTC_CR_INIT                   ${doc.STM32_RTC_CR_INIT!"0"}
+#define STM32_TAMP_CR1_INIT                 ${doc.STM32_TAMP_CR1_INIT!"0"}
+#define STM32_TAMP_CR2_INIT                 ${doc.STM32_TAMP_CR2_INIT!"0"}
+#define STM32_TAMP_FLTCR_INIT               ${doc.STM32_TAMP_FLTCR_INIT!"0"}
+#define STM32_TAMP_IER_INIT                 ${doc.STM32_TAMP_IER_INIT!"0"}
 
 /*
  * SDC driver system settings.
