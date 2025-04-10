@@ -213,7 +213,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdGet(sdp) iqGet(&(sdp)->iqueue)
+#define sdGet(sdp) (sdp)->vmt->gett(sdp, TIME_INFINITE)
 
 /**
  * @brief   Direct read from a @p SerialDriver with timeout specification.
@@ -232,7 +232,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdGetTimeout(sdp, t) iqGetTimeout(&(sdp)->iqueue, t)
+#define sdGetTimeout(sdp, t) (sdp)->vmt->gett(sdp, t)
 
 /**
  * @brief   Direct non-blocking write to a @p SerialDriver.
@@ -332,7 +332,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdRead(sdp, b, n) iqReadTimeout(&(sdp)->iqueue, b, n, TIME_INFINITE)
+#define sdRead(sdp, b, n) (sdp)->vmt->readt(sdp, b, n, TIME_INFINITE)
 
 /**
  * @brief   Direct blocking read from a @p SerialDriver with timeout
@@ -353,7 +353,7 @@ struct hal_serial_driver {
  *
  * @api
  */
-#define sdReadTimeout(sdp, b, n, t) iqReadTimeout(&(sdp)->iqueue, b, n, t)
+#define sdReadTimeout(sdp, b, n, t) (sdp)->vmt->readt(sdp, b, n, t)
 
 /**
  * @brief   Direct non-blocking read from a @p SerialDriver.
@@ -370,7 +370,7 @@ struct hal_serial_driver {
  * @api
  */
 #define sdAsynchronousRead(sdp, b, n)                                       \
-  iqReadTimeout(&(sdp)->iqueue, b, n, TIME_IMMEDIATE)
+  (sdp)->vmt->readt(sdp, b, n, TIME_IMMEDIATE)
 /** @} */
 
 /*===========================================================================*/
