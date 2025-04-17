@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    DMAv1/stm32_gpdma.h
+ * @file    GPDMAv1/stm32_gpdma.h
  * @brief   GPDMA helper driver header.
  *
  * @addtogroup STM32_GPDMA
@@ -28,6 +28,11 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   DMA engine identifier.
+ */
+#define STM32_GPDMA_PRESENT
 
 /**
  * @name    DMA registers helpers

@@ -877,8 +877,8 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 void hal_lld_init(void) {
 
   /* DMA subsystems initialization.*/
-#if defined(STM32_DMA_REQUIRED)
-  dmaInit();
+#if defined(STM32_GPDMA_REQUIRED)
+  gpdmaInit();
 #endif
 
   /* NVIC initialization.*/

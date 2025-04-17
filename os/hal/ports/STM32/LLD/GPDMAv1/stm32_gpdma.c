@@ -401,7 +401,7 @@ OSAL_IRQ_HANDLER(STM32_GPDMA2_CH7_HANDLER) {
  *
  * @init
  */
-void dmaInit(void) {
+void gpdmaInit(void) {
   unsigned i;
 
   gpdma.allocated_mask = 0U;

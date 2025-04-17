@@ -178,6 +178,11 @@
 #define STM32_IRQ_EXTI17_PRIORITY           6
 #define STM32_IRQ_EXTI19_PRIORITY           6
 
+#define STM32_IRQ_I2C1_PRIORITY             5
+#define STM32_IRQ_I2C2_PRIORITY             5
+#define STM32_IRQ_I2C3_PRIORITY             5
+#define STM32_IRQ_I2C4_PRIORITY             5
+
 #define STM32_IRQ_TIM1_BRK_PRIORITY         7
 #define STM32_IRQ_TIM1_UP_PRIORITY          7
 #define STM32_IRQ_TIM1_TRGCO_PRIORITY       7
@@ -271,6 +276,20 @@
 /*
  * I2C driver system settings.
  */
+#define STM32_I2C_USE_I2C1                  TRUE
+#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C3                  FALSE
+#define STM32_I2C_USE_I2C4                  FALSE
+#define STM32_I2C_BUSY_TIMEOUT              50
+#define STM32_I2C_I2C1_DMA_CHANNEL          STM32_GPDMA_MASK_FIFO2
+#define STM32_I2C_I2C2_DMA_CHANNEL          STM32_GPDMA_MASK_FIFO2
+#define STM32_I2C_I2C3_DMA_CHANNEL          STM32_GPDMA_MASK_FIFO2
+#define STM32_I2C_I2C4_DMA_CHANNEL          STM32_GPDMA_MASK_FIFO2
+#define STM32_I2C_I2C1_DMA_PRIORITY         3
+#define STM32_I2C_I2C2_DMA_PRIORITY         3
+#define STM32_I2C_I2C3_DMA_PRIORITY         3
+#define STM32_I2C_I2C4_DMA_PRIORITY         3
+#define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
 
 /*
  * ICU driver system settings.

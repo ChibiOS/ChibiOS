@@ -165,6 +165,27 @@
 #define STM32_ETH_NUMBER                    106
 
 /*
+ * I2C units.
+ */
+#define STM32_I2C1_EV_HANDLER               Vector10C
+#define STM32_I2C1_ER_HANDLER               Vector110
+#define STM32_I2C2_EV_HANDLER               Vector114
+#define STM32_I2C2_ER_HANDLER               Vector118
+#define STM32_I2C3_EV_HANDLER               Vector180
+#define STM32_I2C3_ER_HANDLER               Vector184
+#define STM32_I2C4_EV_HANDLER               Vector21C
+#define STM32_I2C4_ER_HANDLER               Vector220
+
+#define STM32_I2C1_EV_NUMBER                51
+#define STM32_I2C1_ER_NUMBER                52
+#define STM32_I2C2_EV_NUMBER                53
+#define STM32_I2C2_ER_NUMBER                54
+#define STM32_I2C3_EV_NUMBER                80
+#define STM32_I2C3_ER_NUMBER                81
+#define STM32_I2C4_EV_NUMBER                125
+#define STM32_I2C4_ER_NUMBER                126
+
+/*
  * OCTOSPI units.
  */
 #define STM32_OCTOSPI1_HANDLER              Vector178

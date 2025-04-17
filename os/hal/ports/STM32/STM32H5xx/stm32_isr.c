@@ -68,6 +68,8 @@
 #include "stm32_exti14.inc"
 #include "stm32_exti15.inc"
 
+#include "stm32_i2c1.inc"
+
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
@@ -125,6 +127,8 @@ void irqInit(void) {
   exti14_irq_init();
   exti15_irq_init();
 
+  i2c1_irq_init();
+
   tim1_irq_init();
   tim2_irq_init();
   tim3_irq_init();
@@ -176,6 +180,8 @@ void irqDeinit(void) {
   exti13_irq_deinit();
   exti14_irq_deinit();
   exti15_irq_deinit();
+
+  i2c1_irq_deinit();
 
   tim1_irq_deinit();
   tim2_irq_deinit();
