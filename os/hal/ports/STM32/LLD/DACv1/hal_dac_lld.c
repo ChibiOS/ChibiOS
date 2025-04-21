@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -71,6 +71,10 @@
 #define CHANNEL_REGISTER_SHIFT  16U
 #define CHANNEL_REGISTER_MASK1  0xFFFF0000U
 #define CHANNEL_REGISTER_MASK2  0x0000FFFFU
+#define CONFIG_SINGLE_MASK      0x0000FFFFU
+
+#define HF_SEL_AHB_GT_80MHZ     80000000U
+#define HF_SEL_AHB_GT_160MHZ    160000000U
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -442,13 +446,25 @@ void dac_lld_start(DACDriver *dacp) {
          configuration specifies configuration for any channel.*/
 #if STM32_DAC_HAS_MCR == TRUE
       reg = dacp->params->dac->MCR & dacp->params->regmask;
+#if defined(DAC_MCR_HFSEL)
+
+      /* Handle HFSEL setting based on DAC clock.*/
+      reg &= ~(DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+      if (STM32_SYSCLK > HF_SEL_AHB_GT_160MHZ) {
+        reg |= DAC_MCR_HFSEL_1;
+      }
+      else if (STM32_SYSCLK > HF_SEL_AHB_GT_80MHZ) {
+        reg |= DAC_MCR_HFSEL_0;
+      }
+#endif
       dacp->params->dac->MCR = reg |
-        ((dacp->config->mcr & ~dacp->params->regmask) << dacp->params->regshift);
+        ((dacp->config->mcr & CONFIG_SINGLE_MASK) << dacp->params->regshift);
 #endif
       /* Enable and initialise the channel.*/
       reg = dacp->params->dac->CR;
       reg &= dacp->params->regmask;
-      reg |= (DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
+      reg |= (DAC_CR_EN1 | (dacp->config->cr & CONFIG_SINGLE_MASK)) <<
+                                                dacp->params->regshift;
       dacp->params->dac->CR = reg;
       dac_lld_put_channel(dacp, channel, (dacsample_t)dacp->config->init);
     }
@@ -458,7 +474,19 @@ void dac_lld_start(DACDriver *dacp) {
        configuration for channels CH1 & CH2 respectively.*/
     (void)channel;
 #if STM32_DAC_HAS_MCR == TRUE
-    dacp->params->dac->MCR = dacp->config->mcr;
+    reg = (dacp->params->dac->MCR & dacp->params->regmask);
+#if defined(DAC_MCR_HFSEL)
+    /* Handle HFSEL setting based on DAC clock.*/
+    reg = (dacp->params->dac->MCR | dacp->config->mcr) &
+                      ~(DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+    if (STM32_SYSCLK > HF_SEL_AHB_GT_160MHZ) {
+      reg |= DAC_MCR_HFSEL_1;
+    }
+    else if (STM32_SYSCLK > HF_SEL_AHB_GT_80MHZ) {
+      reg |= DAC_MCR_HFSEL_0;
+    }
+#endif
+    dacp->params->dac->MCR = reg;
 #endif
     /* Enable and initialise both CH1 and CH2. Mask out DMA enable.*/
     reg = dacp->config->cr;
@@ -779,7 +807,8 @@ void dac_lld_start_conversion(DACDriver *dacp) {
   /* Start the DMA on the single channel.*/
   cr &= dacp->params->regmask;
   cr |= (DAC_CR_DMAEN1 | (dacp->grpp->trigger << DAC_CR_TSEL1_Pos) |
-         DAC_CR_TEN1 | DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
+         DAC_CR_TEN1 | DAC_CR_EN1 | (dacp->config->cr & CONFIG_SINGLE_MASK)) <<
+                                               dacp->params->regshift;
 #else
   /* Enable the DMA operation on CH1.*/
   cr = DAC_CR_DMAEN1 | (dacp->grpp->trigger << DAC_CR_TSEL1_Pos) |
@@ -812,20 +841,40 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 #if STM32_DAC_DUAL_MODE == FALSE
 #if STM32_DAC_HAS_MCR == TRUE
   uint32_t mcr;
+
+  /* Restore MCR start config but retain HFSEL if existing.*/
+#if defined(DAC_MCR_HFSEL)
+  mcr = dacp->params->dac->MCR &
+              (dacp->params->regmask | DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+#else
   mcr = dacp->params->dac->MCR & dacp->params->regmask;
+#endif
   dacp->params->dac->MCR = mcr |
-    ((dacp->config->mcr & dacp->params->regmask) << dacp->params->regshift);
+    ((dacp->config->mcr & CONFIG_SINGLE_MASK) << dacp->params->regshift);
 #endif
   cr &= dacp->params->regmask;
-  cr |= (DAC_CR_EN1 | (dacp->config->cr & ~dacp->params->regmask)) <<
-                                      dacp->params->regshift;
+  cr |= (DAC_CR_EN1 | (dacp->config->cr & CONFIG_SINGLE_MASK) <<
+                                      dacp->params->regshift);
 #else
 #if STM32_DAC_HAS_MCR == TRUE
-  dacp->params->dac->MCR = dacp->config->mcr;
-#endif
-  cr = dacp->config->cr | DAC_CR_EN1 | DAC_CR_EN2;
+  uint32_t mcr;
+
+  /* Reset MCR of CH1 but retain HFSEL if existing.*/
+#if defined(DAC_MCR_HFSEL)
+  mcr = dacp->params->dac->MCR &
+              (dacp->params->regmask | DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
+#else
+  mcr = dacp->params->dac->MCR & dacp->params->regmask;
 #endif
 
+  /* Restore CH1 MCR to start configuration.*/
+  mcr |= (dacp->config->mcr & CONFIG_SINGLE_MASK);
+  dacp->params->dac->MCR = mcr;
+#endif
+  cr = dacp->config->cr | DAC_CR_EN1 | DAC_CR_EN2;
+#endif /* STM32_DAC_DUAL_MODE == FALSE.*/
+
+  /* Re-enable channel.*/
   dacp->params->dac->CR = cr;
 }
 
