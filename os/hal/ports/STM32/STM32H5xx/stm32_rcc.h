@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 */
 
 /**
- * @file    STM32G4xx/stm32_rcc.h
+ * @file    STM32H5xx/stm32_rcc.h
  * @brief   RCC helper driver header.
  * @note    This file requires definitions from the ST header file
- *          @p stm32g4xx.h.
+ *          @p stm32h5xx.h.
  *
- * @addtogroup STM32G4xx_RCC
+ * @addtogroup STM32H5xx_RCC
  * @{
  */
 #ifndef STM32_RCC_H

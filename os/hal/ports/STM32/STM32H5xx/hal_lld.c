@@ -296,6 +296,9 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 
   /* Static PWR configurations.*/
 //  PWR->VOSCR    = STM32_PWR_VOSCR;
+
+  /* Enable write access to Backup domain.*/
+  PWR->DBPCR    = PWR_DBPCR_DBP;
   PWR->BDCR     = STM32_PWR_BDCR;
   PWR->UCPDR    = STM32_PWR_UCPDR;
   PWR->SCCR     = STM32_PWR_SCCR;
@@ -915,8 +918,8 @@ void stm32_clock_init(void) {
   rccEnableAPB3(RCC_APB3ENR_SBSEN, true);
 
   /* RTC APB clock enable.*/
-#if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
-  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APB3ENR_RTCAPBEN)
+  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true)
 #endif
 
   /* Static PWR configurations.*/
@@ -963,8 +966,8 @@ void stm32_clock_init(void) {
   rccEnableAPB3(RCC_APB3ENR_SBSEN, true);
 
   /* RTC APB clock enable.*/
-#if (HAL_USE_RTC == TRUE) && defined(RCC_APB1ENR1_RTCAPBEN)
-  rccEnableAPB1R1(RCC_APB1ENR1_RTCAPBEN, true)
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APB3ENR_RTCAPBEN)
+  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true)
 #endif
 
   /* Static PWR configurations.*/
