@@ -616,11 +616,7 @@ void can_lld_transmit(CANDriver *canp, canmbx_t mailbox, const CANTxFrame *ctfp)
 
   /* Starting transmission.*/
   canp->fdcan->TXBAR = ((uint32_t)1 << put_index);
-  /*
-   * FIXME This sleep not needed if we send two frames with different SID/EID
-   *       why?
-   */
-  chThdSleepS(OSAL_MS2I(1));
+
 }
 
 /**
