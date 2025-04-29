@@ -19,7 +19,7 @@
  */
 
 /**
- * @file    I2Cv5/hal_i2c_lld.h
+ * @file    I2Cv4/hal_i2c_lld.h
  * @brief   STM32 I2C subsystem low level driver header.
  *
  * @addtogroup I2C
@@ -34,6 +34,8 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
+
+#define I2C_LLD_ENHANCED_API
 
 /**
  * @name    TIMINGR register definitions
@@ -299,17 +301,37 @@ struct hal_i2c_config {
    * @note    Refer to the STM32 reference manual, the values are affected
    *          by the system clock settings in mcuconf.h.
    */
-  uint32_t        timingr;
+  uint32_t                          timingr;
   /**
    * @brief   CR1 register initialization.
    * @note    Leave to zero unless you know what you are doing.
    */
-  uint32_t        cr1;
+  uint32_t                          cr1;
   /**
    * @brief   CR2 register initialization.
    * @note    Only the ADD10 bit can eventually be specified here.
    */
-  uint32_t        cr2;
+  uint32_t                          cr2;
+#if (STM32_I2C_USE_DMA == TRUE) || defined(__DOXYGEN__)
+#if defined(STM32_GPDMA_PRESENT)
+  /**
+   * @brief   DMA RX CTR1 register settings.
+   */
+  uint32_t                          dtr1rx;
+  /**
+   * @brief   DMA TX CTR1 register settings.
+   */
+  uint32_t                          dtr1tx;
+  /**
+   * @brief   DMA RX CTR2 register settings.
+   */
+  uint32_t                          dtr2rx;
+  /**
+   * @brief   DMA TX CTR2 register settings.
+   */
+  uint32_t                          dtr2tx;
+#endif
+#endif
 };
 
 /**
@@ -361,6 +383,19 @@ struct hal_i2c_driver {
    */
   const stm32_dma_stream_t          *dma;
 #endif
+  /*
+   * @brief     DMA channel priority.
+   */
+  uint8_t                           dprio;
+  /*
+   * @brief     DMA request line for TX.
+   */
+  uint8_t                           dreqtx;
+  /*
+   * @brief     DMA request line for RX.
+   */
+  uint8_t                           dreqrx;
+#endif /* STM32_I2C_USE_DMA == TRUE */
   /**
    * @brief     Pointer to the next TX buffer location.
    */
@@ -377,7 +412,6 @@ struct hal_i2c_driver {
    * @brief     Number of bytes in RX phase.
    */
   size_t                            rxbytes;
-#endif /* STM32_I2C_USE_DMA == FALSE */
   /**
    * @brief     Pointer to the I2Cx registers block.
    */
@@ -434,7 +468,7 @@ extern I2CDriver I2CD4;
 extern "C" {
 #endif
   void i2c_lld_init(void);
-  void i2c_lld_start(I2CDriver *i2cp);
+  msg_t i2c_lld_start(I2CDriver *i2cp);
   void i2c_lld_stop(I2CDriver *i2cp);
   msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                         const uint8_t *txbuf, size_t txbytes,
