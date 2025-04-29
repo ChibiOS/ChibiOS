@@ -13,6 +13,8 @@ The application demonstrates the use of the STM32G4xx CAN driver in CAN mode.
 
 ** Board Setup **
 
+External LED PA8 - On board CN9 - D7
+
 Connect PA11 (CAN1-RX) to pin RX of first interface protocol controller MCP2551.
 Connect PA12 (CAN1-TX) to pin TX of first interface protocol controller MCP2551.
 

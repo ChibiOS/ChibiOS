@@ -36,6 +36,7 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
+#define STM32_FDCAN_FIFO_WATERMARK          1U
 
 /*===========================================================================*/
 /* STM32H723xx, STM32H733xx, STM32H725xx, STM32H735xx, STM32H730xx.          */
@@ -425,6 +426,7 @@ bool can_lld_start(CANDriver *canp) {
   /* Setting up operation mode except driver-controlled bits.*/
   canp->fdcan->NBTP = canp->config->NBTP;
   canp->fdcan->DBTP = canp->config->DBTP;
+  canp->fdcan->TDCR = canp->config->TDCR;
   canp->fdcan->CCCR |= canp->config->CCCR;
 
   /* TEST is only writable when FDCAN_CCCR_TEST is set and FDCAN is still in
@@ -443,9 +445,11 @@ bool can_lld_start(CANDriver *canp) {
     canp->fdcan->XIDFC = FDCAN_CONFIG_XIDFC_LSE(STM32_FDCAN_FLE_NBR) |
                          FDCAN_CONFIG_XIDFC_FLESA((CAN1_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_FLESA);
     canp->fdcan->RXF0C = FDCAN_CONFIG_RXF0C_F0S(STM32_FDCAN_RF0_NBR) |
-                         FDCAN_CONFIG_RXF0C_F0SA((CAN1_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF0SA);
+                         FDCAN_CONFIG_RXF0C_F0SA((CAN1_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF0SA) |
+                         FDCAN_CONFIG_RXF0C_F0WM(STM32_FDCAN_FIFO_WATERMARK);
     canp->fdcan->RXF1C = FDCAN_CONFIG_RXF1C_F1S(STM32_FDCAN_RF1_NBR) |
-                         FDCAN_CONFIG_RXF1C_F1SA((CAN1_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF1SA);
+                         FDCAN_CONFIG_RXF1C_F1SA((CAN1_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF1SA) |
+                         FDCAN_CONFIG_RXF1C_F1WM(STM32_FDCAN_FIFO_WATERMARK);
     canp->fdcan->RXBC  = FDCAN_CONFIG_RXBC_RBSA((CAN1_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RBSA);
     canp->fdcan->TXEFC = FDCAN_CONFIG_TXEFC_EFS(STM32_FDCAN_TEF_NBR) |
                          FDCAN_CONFIG_TXEFC_EFSA((CAN1_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_TEFSA);
@@ -463,9 +467,11 @@ bool can_lld_start(CANDriver *canp) {
     canp->fdcan->XIDFC = FDCAN_CONFIG_XIDFC_LSE(STM32_FDCAN_FLE_NBR) |
                          FDCAN_CONFIG_XIDFC_FLESA((CAN2_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_FLESA);
     canp->fdcan->RXF0C = FDCAN_CONFIG_RXF0C_F0S(STM32_FDCAN_RF0_NBR) |
-                         FDCAN_CONFIG_RXF0C_F0SA((CAN2_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF0SA);
+                         FDCAN_CONFIG_RXF0C_F0SA((CAN2_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF0SA) |
+                         FDCAN_CONFIG_RXF0C_F0WM(STM32_FDCAN_FIFO_WATERMARK);
     canp->fdcan->RXF1C = FDCAN_CONFIG_RXF1C_F1S(STM32_FDCAN_RF1_NBR) |
-                         FDCAN_CONFIG_RXF1C_F1SA((CAN2_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF1SA);
+                         FDCAN_CONFIG_RXF1C_F1SA((CAN2_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF1SA) |
+                         FDCAN_CONFIG_RXF1C_F1WM(STM32_FDCAN_FIFO_WATERMARK);
     canp->fdcan->RXBC  = FDCAN_CONFIG_RXBC_RBSA((CAN2_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RBSA);
     canp->fdcan->TXEFC = FDCAN_CONFIG_TXEFC_EFS(STM32_FDCAN_TEF_NBR) |
                          FDCAN_CONFIG_TXEFC_EFSA((CAN2_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_TEFSA);
@@ -483,9 +489,11 @@ bool can_lld_start(CANDriver *canp) {
     canp->fdcan->XIDFC = FDCAN_CONFIG_XIDFC_LSE(STM32_FDCAN_FLE_NBR) |
                          FDCAN_CONFIG_XIDFC_FLESA((CAN3_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_FLESA);
     canp->fdcan->RXF0C = FDCAN_CONFIG_RXF0C_F0S(STM32_FDCAN_RF0_NBR) |
-                         FDCAN_CONFIG_RXF0C_F0SA((CAN3_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF0SA);
+                         FDCAN_CONFIG_RXF0C_F0SA((CAN3_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF0SA) |
+                         FDCAN_CONFIG_RXF0C_F0WM(STM32_FDCAN_FIFO_WATERMARK);
     canp->fdcan->RXF1C = FDCAN_CONFIG_RXF1C_F1S(STM32_FDCAN_RF1_NBR) |
-                         FDCAN_CONFIG_RXF1C_F1SA((CAN3_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF1SA);
+                         FDCAN_CONFIG_RXF1C_F1SA((CAN3_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RF1SA) |
+                         FDCAN_CONFIG_RXF1C_F1WM(STM32_FDCAN_FIFO_WATERMARK);
     canp->fdcan->RXBC  = FDCAN_CONFIG_RXBC_RBSA((CAN3_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_RBSA);
     canp->fdcan->TXEFC = FDCAN_CONFIG_TXEFC_EFS(STM32_FDCAN_TEF_NBR) |
                          FDCAN_CONFIG_TXEFC_EFSA((CAN3_OFFSET_INSTANCE * SRAMCAN_SIZE) + SRAMCAN_TEFSA);
@@ -518,9 +526,9 @@ bool can_lld_start(CANDriver *canp) {
 
   /* Enabling interrupts, only using interrupt zero.*/
   canp->fdcan->IR     = (uint32_t)-1;
-  canp->fdcan->IE     = FDCAN_IE_RF1FE | FDCAN_IE_RF1LE |
-                        FDCAN_IE_RF0FE | FDCAN_IE_RF0LE |
-                        FDCAN_IE_TCE;
+  canp->fdcan->IE     = FDCAN_IE_RF1WE | FDCAN_IE_RF1LE |
+                        FDCAN_IE_RF0WE | FDCAN_IE_RF0LE |
+                        FDCAN_IE_TCE | FDCAN_IE_BOE;
   canp->fdcan->TXBTIE = FDCAN_TXBTIE_TIE;
   canp->fdcan->ILE    = FDCAN_ILE_EINT0;
 
@@ -608,11 +616,7 @@ void can_lld_transmit(CANDriver *canp, canmbx_t mailbox, const CANTxFrame *ctfp)
 
   /* Starting transmission.*/
   canp->fdcan->TXBAR = ((uint32_t)1 << put_index);
-  /*
-   * FIXME This sleep not needed if we send two frames with different SID/EID
-   *       why?
-   */
-  chThdSleepS(OSAL_MS2I(1));
+
 }
 
 /**
@@ -694,22 +698,12 @@ void can_lld_receive(CANDriver *canp, canmbx_t mailbox, CANRxFrame *crfp) {
     rxf0a &= ~FDCAN_RXF0A_F0AI_Msk;
     rxf0a |= get_index << FDCAN_RXF0A_F0AI_Pos;
     canp->fdcan->RXF0A = rxf0a;
-
-    if (!can_lld_is_rx_nonempty(canp, mailbox)) {
-      canp->fdcan->IR |= FDCAN_IR_RF0F;
-      canp->fdcan->IE |= FDCAN_IE_RF0FE;
-    }
   }
   else {
     uint32_t rxf1a = canp->fdcan->RXF1A;
     rxf1a &= ~FDCAN_RXF1A_F1AI_Msk;
     rxf1a |= get_index << FDCAN_RXF1A_F1AI_Pos;
     canp->fdcan->RXF1A = rxf1a;
-
-    if (!can_lld_is_rx_nonempty(canp, mailbox)) {
-      canp->fdcan->IR |= FDCAN_IR_RF1F;
-      canp->fdcan->IE |= FDCAN_IE_RF1FE;
-    }
   }
 }
 
@@ -768,14 +762,10 @@ void can_lld_serve_interrupt(CANDriver *canp) {
   canp->fdcan->IR = ir;
 
   /* RX events.*/
-  if ((ir & FDCAN_IR_RF0F) != 0U) {
-    /* Disabling this source until the queue is emptied.*/
-    canp->fdcan->IE &= ~FDCAN_IE_RF0FE;
+  if ((ir & FDCAN_IR_RF0W) != 0U) {
     _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(1U));
   }
-  if ((ir & FDCAN_IR_RF1F) != 0U) {
-    /* Disabling this source until the queue is emptied.*/
-    canp->fdcan->IE &= ~FDCAN_IE_RF1FE;
+  if ((ir & FDCAN_IR_RF1W) != 0U) {
     _can_rx_full_isr(canp, CAN_MAILBOX_TO_MASK(2U));
   }
 
@@ -784,11 +774,16 @@ void can_lld_serve_interrupt(CANDriver *canp) {
     _can_error_isr(canp, CAN_OVERFLOW_ERROR);
   }
 
+  /* Bus_off events.*/
+  if ((ir & FDCAN_IR_BO) != 0U)  {
+    _can_error_isr(canp, CAN_BUS_OFF_ERROR);
+  }
+
   /* TX events.*/
   if ((ir & FDCAN_IR_TC) != 0U) {
     eventflags_t flags = 0U;
 
-    flags |= 1U;
+    flags |= CAN_MAILBOX_TO_MASK(1U);
     _can_tx_empty_isr(canp, flags);
   }
 }

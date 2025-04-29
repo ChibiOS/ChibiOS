@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -230,6 +230,8 @@
 #define STM32_ADC_USE_ADC12                 FALSE
 #define STM32_ADC_USE_ADC3                  FALSE
 #define STM32_ADC_ADC12_DMA_STREAM          STM32_DMA_STREAM_ID_ANY
+#define STM32_ADC_ADC3_USE_BDMA             FALSE
+#define STM32_ADC_ADC3_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
 #define STM32_ADC_ADC3_BDMA_STREAM          STM32_BDMA_STREAM_ID_ANY
 #define STM32_ADC_ADC12_DMA_PRIORITY        2
 #define STM32_ADC_ADC3_DMA_PRIORITY         2
@@ -300,32 +302,6 @@
 #define STM32_I2C_I2C3_DMA_PRIORITY         3
 #define STM32_I2C_I2C4_DMA_PRIORITY         3
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
-
-/*
- * I2S driver system settings.
- */
-#define STM32_I2S_USE_SPI1                  FALSE
-#define STM32_I2S_USE_SPI2                  FALSE
-#define STM32_I2S_USE_SPI3                  FALSE
-#define STM32_I2S_SPI1_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI2_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI3_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI1_DMA_PRIORITY         1
-#define STM32_I2S_SPI2_DMA_PRIORITY         1
-#define STM32_I2S_SPI3_DMA_PRIORITY         1
-#define STM32_I2S_SPI1_IRQ_PRIORITY         10
-#define STM32_I2S_SPI2_IRQ_PRIORITY         10
-#define STM32_I2S_SPI3_IRQ_PRIORITY         10
-#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      osalSysHalt("DMA failure")
 
 /*
  * ICU driver system settings.

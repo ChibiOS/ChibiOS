@@ -184,6 +184,18 @@
 #define FDCAN_EXT_FILTER_EFT(n)            ((FDCAN_EXT_FILTER_EFT_Msk & ((n) << FDCAN_EXT_FILTER_EFT_Pos)))
 /** @} */
 
+/**
+ * @name    FDCAN transmitter delay compensation register.
+ * @{
+ */
+#define FDCAN_CONFIG_TDCR_TDCF_Pos       (0)
+#define FDCAN_CONFIG_TDCR_TDCF_Msk       (0x7Fu << FDCAN_CONFIG_TDCR_TDCF_Pos)
+#define FDCAN_CONFIG_TDCR_TDCF(n)        ((FDCAN_CONFIG_TDCR_TDCF_Msk & ((n) << FDCAN_CONFIG_TDCR_TDCF_Pos)))
+#define FDCAN_CONFIG_TDCR_TDCO_Pos       (8)
+#define FDCAN_CONFIG_TDCR_TDCO_Msk       (0x7Fu << FDCAN_CONFIG_TDCR_TDCO_Pos)
+#define FDCAN_CONFIG_TDCR_TDCO(n)        ((FDCAN_CONFIG_TDCR_TDCO_Msk & ((n) << FDCAN_CONFIG_TDCR_TDCO_Pos)))
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

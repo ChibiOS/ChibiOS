@@ -46,6 +46,7 @@ static const CANConfig cancfg = {
   FDCAN_CONFIG_DBTP_DTSEG2(3U) |
   FDCAN_CONFIG_DBTP_DTSEG1(10U) |
   FDCAN_CONFIG_DBTP_DBRP(7U),      /* DBTP */
+  0,                               /* TDCR */
   0,                               /* CCCR */
   0,                               /* TEST */
   0                                /* GFC */
@@ -82,6 +83,7 @@ static THD_FUNCTION(can_rx, p) {
  */
 static THD_WORKING_AREA(can_tx_wa, 512);
 static THD_FUNCTION(can_tx, p) {
+
   CANTxFrame txmsg1;
 
   (void)p;

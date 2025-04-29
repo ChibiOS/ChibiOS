@@ -22,14 +22,17 @@
  */
 #define USE_CAN_PROTOCOL
 
+#define PORT_EXTERNAL_LED   GPIOA
+#define PAD_EXTERNAL_LED    8U
+#define LINE_EXTERNAL_LED   PAL_LINE(PORT_EXTERNAL_LED, PAD_EXTERNAL_LED)
+
 struct can_instance {
   CANDriver     *canp;
   uint32_t      led;
-  uint32_t      sleep;
 };
 
-static const struct can_instance can1 = {&CAND1, LINE_LED_GREEN, 100};
-static const struct can_instance can2 = {&CAND2, LINE_LED_GREEN, 500};
+static const struct can_instance can1 = {&CAND1, LINE_LED_GREEN};
+static const struct can_instance can2 = {&CAND2, LINE_EXTERNAL_LED};
 
 /*
  * 24MHz HSE.
@@ -48,6 +51,7 @@ static const CANConfig cancfg = {
   FDCAN_CONFIG_DBTP_DSJW(3U) |
   FDCAN_CONFIG_DBTP_DTSEG2(3U) |
   FDCAN_CONFIG_DBTP_DTSEG1(10U), /* DBTP */
+  0,          /* TDCR */
   0,          /* CCCR */
   0,          /* TEST */
   0           /* RXGFC */
@@ -73,7 +77,7 @@ static THD_FUNCTION(can_rx, p) {
                       &rxmsg, TIME_I2MS(100)) == MSG_OK) {
       /* Process message.*/
       palToggleLine(cip->led);
-      chThdSleepMilliseconds(cip->sleep);
+      chThdSleepMilliseconds(10);
     }
   }
   chEvtUnregister(&CAND1.rxfull_event, &el);
@@ -135,6 +139,9 @@ int main(void) {
   /* Pin FDCAN2 configuration - RX */
   palSetPadMode(GPIOB, 5U, PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_OSPEED_HIGHEST |
                 PAL_STM32_PUPDR_FLOATING | PAL_MODE_ALTERNATE(9));
+
+  /* Configure PA8 as external LED */
+  palSetPadMode(PORT_EXTERNAL_LED, PAD_EXTERNAL_LED, PAL_MODE_OUTPUT_PUSHPULL);
 
   /*
    * Activates the CAN drivers 1 and 2.

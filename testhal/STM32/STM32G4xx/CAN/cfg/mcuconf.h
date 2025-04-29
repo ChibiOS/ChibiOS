@@ -184,7 +184,7 @@
 #define STM32_CAN_USE_FDCAN1                TRUE
 #define STM32_CAN_USE_FDCAN2                TRUE
 #define STM32_CAN_USE_FDCAN3                FALSE
-#define STM32_CAN_FDCAN_CKDIV               FDCAN_CONFIG_CKDIV_PDIV_20
+#define STM32_CAN_FDCAN_PRESC               FDCAN_CONFIG_CKDIV_PDIV_20
 
 /*
  * DAC driver system settings.
