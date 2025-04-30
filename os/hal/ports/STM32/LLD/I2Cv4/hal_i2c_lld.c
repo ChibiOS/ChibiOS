@@ -47,55 +47,6 @@
    STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE      |                      \
    STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE)
 
-#if 0
-#if STM32_I2C_USE_DMA == TRUE
-#define DMAMODE_COMMON                                                      \
-  (STM32_DMA_CR_PSIZE_BYTE | STM32_DMA_CR_MSIZE_BYTE |                      \
-   STM32_DMA_CR_MINC       | STM32_DMA_CR_DMEIE      |                      \
-   STM32_DMA_CR_TEIE       | STM32_DMA_CR_TCIE)
-
-#define I2C1_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C1_RX_DMA_STREAM,                        \
-                       STM32_I2C1_RX_DMA_CHN)
-
-#define I2C1_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C1_TX_DMA_STREAM,                        \
-                       STM32_I2C1_TX_DMA_CHN)
-
-#define I2C2_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C2_RX_DMA_STREAM,                        \
-                       STM32_I2C2_RX_DMA_CHN)
-
-#define I2C2_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C2_TX_DMA_STREAM,                        \
-                       STM32_I2C2_TX_DMA_CHN)
-
-#define I2C3_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C3_RX_DMA_STREAM,                        \
-                       STM32_I2C3_RX_DMA_CHN)
-
-#define I2C3_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C3_TX_DMA_STREAM,                        \
-                       STM32_I2C3_TX_DMA_CHN)
-
-#define I2C4_RX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C4_RX_DMA_STREAM,                        \
-                       STM32_I2C4_RX_DMA_CHN)
-
-#define I2C4_TX_DMA_CHANNEL                                                 \
-  STM32_DMA_GETCHANNEL(STM32_I2C_I2C4_TX_DMA_STREAM,                        \
-                       STM32_I2C4_TX_DMA_CHN)
-#endif /* STM32_I2C_USE_DMA == TRUE */
-
-#if STM32_I2C_USE_DMA == TRUE
-#define i2c_lld_get_rxbytes(i2cp) dmaStreamGetTransactionSize((i2cp)->dmarx)
-#define i2c_lld_get_txbytes(i2cp) dmaStreamGetTransactionSize((i2cp)->dmatx)
-#else
-#define i2c_lld_get_rxbytes(i2cp) (i2cp)->rxbytes
-#define i2c_lld_get_txbytes(i2cp) (i2cp)->txbytes
-#endif
-#endif
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -431,8 +382,8 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
           dp->CR1 &= ~I2C_CR1_TXIE;
         }
 #else
-        /* Enabling TX DMA.*/
-        dmaStreamEnable(i2cp->dmatx);
+        /* Setup DMA for TX.*/
+        i2c_dma_enable_tx(i2cp);
 #endif /* STM32_I2C_USE_DMA == FALSE */
       }
     }
@@ -447,8 +398,8 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
           dp->CR1 &= ~I2C_CR1_RXIE;
         }
 #else
-        /* Enabling RX DMA.*/
-        dmaStreamEnable(i2cp->dmarx);
+        /* Setup DMA for RX.*/
+        i2c_dma_enable_rx(i2cp);
 #endif /* STM32_I2C_USE_DMA == FALSE */
       }
     }
@@ -512,7 +463,7 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
         i2c_lld_setup_rx_transfer(i2cp);
 
 #if STM32_I2C_USE_DMA == TRUE
-        /* Enabling DMA for RX.*/
+        /* Setup DMA for RX.*/
         i2c_dma_enable_rx(i2cp);
 #else
         /* RX interrupt enabled.*/
@@ -566,21 +517,26 @@ static void i2c_lld_serve_errors(I2CDriver *i2cp, uint32_t isr) {
   i2cp->i2c->CR1 &= ~(I2C_CR1_TXIE | I2C_CR1_RXIE);
 #endif
 
-  if (isr & I2C_ISR_BERR)
+  if (isr & I2C_ISR_BERR) {
     i2cp->errors |= I2C_BUS_ERROR;
+  }
 
-  if (isr & I2C_ISR_ARLO)
+  if (isr & I2C_ISR_ARLO) {
     i2cp->errors |= I2C_ARBITRATION_LOST;
+  }
 
-  if (isr & I2C_ISR_OVR)
+  if (isr & I2C_ISR_OVR) {
     i2cp->errors |= I2C_OVERRUN;
+  }
 
-  if (isr & I2C_ISR_TIMEOUT)
+  if (isr & I2C_ISR_TIMEOUT) {
     i2cp->errors |= I2C_TIMEOUT;
+  }
 
   /* If some error has been identified then sends wakes the waiting thread.*/
-  if (i2cp->errors != I2C_NO_ERROR)
+  if (i2cp->errors != I2C_NO_ERROR) {
     _i2c_wakeup_error_isr(i2cp);
+  }
 }
 
 /*===========================================================================*/
@@ -855,7 +811,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   osalSysUnlock();
 
 #if STM32_I2C_USE_DMA == TRUE
-  /* Enabling DMA for RX.*/
+  /* Setup DMA for RX.*/
   i2c_dma_enable_rx(i2cp);
 #endif
 
@@ -889,7 +845,7 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   i2c_lld_setup_rx_transfer(i2cp);
 
 #if STM32_I2C_USE_DMA == TRUE
-  /* Enabling DMA for RX.*/
+  /* Setup DMA for RX.*/
   i2c_dma_enable_rx(i2cp);
 
   /* Transfer complete interrupt enabled.*/
@@ -995,7 +951,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   i2c_lld_setup_tx_transfer(i2cp);
 
 #if STM32_I2C_USE_DMA == TRUE
-  /* Enabling DMA for TX.*/
+  /* Setup DMA for TX.*/
   i2c_dma_enable_tx(i2cp);
 
   /* Transfer complete interrupt enabled.*/
@@ -1088,10 +1044,8 @@ msg_t i2c_lld_slave_receive_timeout(I2CDriver *i2cp, uint8_t *rxbuf, size_t rxby
   i2cp->reply_required = false;
 
 #if STM32_I2C_USE_DMA == TRUE
-  /* RX DMA setup.*/
-  dmaStreamSetMode(i2cp->dmarx, i2cp->rxdmamode);
-  dmaStreamSetMemory0(i2cp->dmarx, rxbuf);
-  dmaStreamSetTransactionSize(i2cp->dmarx, rxbytes);
+  /* Setup DMA for RX.*/
+  i2c_dma_enable_rx(i2cp);
 #else
   i2cp->rxptr   = rxbuf;
   i2cp->rxbytes = rxbytes;
@@ -1134,10 +1088,8 @@ msg_t i2c_lld_slave_transmit_timeout(I2CDriver *i2cp,
   i2cp->isMaster = false;
 
 #if STM32_I2C_USE_DMA == TRUE
-  /* TX DMA setup.*/
-  dmaStreamSetMode(i2cp->dmatx, i2cp->txdmamode);
-  dmaStreamSetMemory0(i2cp->dmatx, txbuf);
-  dmaStreamSetTransactionSize(i2cp->dmatx, txbytes);
+  /* Setup DMA for TX.*/
+  i2c_dma_enable_tx(i2cp);
 #else
   i2cp->txptr   = txbuf;
   i2cp->txbytes = txbytes;
