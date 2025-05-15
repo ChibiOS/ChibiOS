@@ -721,7 +721,11 @@
 #define STM32_EXTI_IMR2_MASK                0xFFFFFFFFU
 
 /* Flash attributes.*/
+#if defined(STM32G0B1xx)
+#define STM32_FLASH_NUMBER_OF_BANKS         1
+#else
 #define STM32_FLASH_NUMBER_OF_BANKS         2
+#endif
 
 /* GPIO attributes.*/
 #define STM32_HAS_GPIOA                     TRUE
