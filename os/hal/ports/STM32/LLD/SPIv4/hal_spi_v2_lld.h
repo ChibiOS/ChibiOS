@@ -478,32 +478,32 @@
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI1_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI1_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI1"
 #endif
 
 #if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI2_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI2_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI2"
 #endif
 
 #if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI3_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI3_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI3"
 #endif
 
 #if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI4_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI4_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI4"
 #endif
 
 #if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI5_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI5_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI5"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI6_DMA_PRIORITY)
+    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI6_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI6"
 #endif
 
