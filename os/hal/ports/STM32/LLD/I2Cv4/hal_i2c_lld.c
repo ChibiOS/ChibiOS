@@ -30,6 +30,14 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* Channels wrapper */
+#if defined(STM32_GPDMA_PRESENT)
+#define STM32_I2C_I2C1_DMA_CHANNEL          STM32_I2C_I2C1_GPDMA_CHANNEL
+#define STM32_I2C_I2C2_DMA_CHANNEL          STM32_I2C_I2C2_GPDMA_CHANNEL
+#define STM32_I2C_I2C3_DMA_CHANNEL          STM32_I2C_I2C3_GPDMA_CHANNEL
+#define STM32_I2C_I2C4_DMA_CHANNEL          STM32_I2C_I2C4_GPDMA_CHANNEL
+#endif
+
 /* Common GPDMA CR settings.*/
 #define I2C_GPDMA_CR_COMMON(i2cp)                                           \
   (STM32_GPDMA_CCR_PRIO((uint32_t)(i2cp)->dprio)    |                       \
@@ -171,7 +179,7 @@ __STATIC_FORCEINLINE void i2c_dma_enable_rx(I2CDriver *i2cp) {
                    STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY) |
                    STM32_DMA_CR_CHSEL(i2cp->dreqrx));
   dmaStreamSetTransactionSize(i2cp->dma, i2cp->rxbytes);
-  dmaStreamSetPeripheral(i2cp->dma, &dp->RXDR);
+  dmaStreamSetPeripheral(i2cp->dma, &i2cp->i2c->RXDR);
   dmaStreamSetMemory0(i2cp->dma, i2cp->rxptr);
   dmaStreamEnable(i2cp->dma);
 #endif
@@ -632,7 +640,7 @@ void i2c_lld_init(void) {
  * @notapi
  */
 msg_t i2c_lld_start(I2CDriver *i2cp) {
-  msg_t msg;
+
   I2C_TypeDef *dp = i2cp->i2c;
 
   /* Make sure I2C peripheral is disabled */
@@ -650,7 +658,7 @@ msg_t i2c_lld_start(I2CDriver *i2cp) {
 #if STM32_I2C_USE_DMA == TRUE
       i2c_dma_alloc(i2cp, STM32_I2C_I2C1_DMA_CHANNEL, STM32_IRQ_I2C1_PRIORITY);
       if (i2cp->dma == NULL) {
-        return msg;
+        return HAL_RET_NO_RESOURCE;
       }
 #endif
     }
@@ -665,7 +673,7 @@ msg_t i2c_lld_start(I2CDriver *i2cp) {
 #if STM32_I2C_USE_DMA == TRUE
       i2c_dma_alloc(i2cp, STM32_I2C_I2C2_DMA_CHANNEL, STM32_IRQ_I2C2_PRIORITY);
       if (i2cp->dma == NULL) {
-        return msg;
+        return HAL_RET_NO_RESOURCE;
       }
 #endif
     }
@@ -680,7 +688,7 @@ msg_t i2c_lld_start(I2CDriver *i2cp) {
 #if STM32_I2C_USE_DMA == TRUE
       i2c_dma_alloc(i2cp, STM32_I2C_I2C3_DMA_CHANNEL, STM32_IRQ_I2C3_PRIORITY);
       if (i2cp->dma == NULL) {
-        return msg;
+        return HAL_RET_NO_RESOURCE;
       }
 #endif
     }
@@ -695,7 +703,7 @@ msg_t i2c_lld_start(I2CDriver *i2cp) {
 #if STM32_I2C_USE_DMA == TRUE
       i2c_dma_alloc(i2cp, STM32_I2C_I2C4_DMA_CHANNEL, STM32_IRQ_I2C4_PRIORITY);
       if (i2cp->dma == NULL) {
-        return msg;
+        return HAL_RET_NO_RESOURCE;
       }
 #endif
     }
@@ -809,11 +817,6 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
 
   /* Releases the lock from high level driver.*/
   osalSysUnlock();
-
-#if STM32_I2C_USE_DMA == TRUE
-  /* Setup DMA for RX.*/
-  i2c_dma_enable_rx(i2cp);
-#endif
 
   /* Calculating the time window for the timeout on the busy bus condition.*/
   start = osalOsGetSystemTimeX();
