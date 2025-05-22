@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@
 #define CHANNEL_REGISTER_SHIFT        16U
 #define CHANNEL_REGISTER_MASK1        0xFFFF0000U
 #define CHANNEL_REGISTER_MASK2        0x0000FFFFU
+#define CONFIG_SINGLE_MASK            0x0000FFFFU
 
 #define BYTE_SINGLE_SAMPLE_MULTIPLIER 1U
 #define HALF_SINGLE_SAMPLE_MULTIPLIER 2U
@@ -703,12 +704,13 @@ msg_t dac_lld_start(DACDriver *dacp) {
     /* Disable double DMA setting so DOR is updated.*/
     reg &= ~(DAC_MCR_DMADOUBLE1 << dacp->params->regshift);
     dacp->params->dac->MCR = reg |
-      ((dacp->config->mcr & ~dacp->params->regmask) << dacp->params->regshift);
+      ((dacp->config->mcr & CONFIG_SINGLE_MASK) << dacp->params->regshift);
 
     /* Enable and initialise the channel.*/
     reg = dacp->params->dac->CR;
     reg &= dacp->params->regmask;
-    reg |= (DAC_CR_EN1 | dacp->config->cr) << dacp->params->regshift;
+    reg |= (DAC_CR_EN1 | (dacp->config->cr & CONFIG_SINGLE_MASK)) <<
+                                            dacp->params->regshift;
     dacp->params->dac->CR = reg;
     (void) put_channel(dacp, channel, (dacsample_t)dacp->config->init);
 #else /* STM32_DAC_DUAL_MODE != FALSE */
@@ -1209,7 +1211,7 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 
   /* Restore CR start settings before re-enabling channel.*/
   cr &= dacp->params->regmask;
-  cr |= (dacp->config->cr & ~dacp->params->regmask) << dacp->params->regshift;
+  cr |= (dacp->config->cr & CONFIG_SINGLE_MASK) << dacp->params->regshift;
 
   /* Mask out enable then write CR start settings.*/
   cr &= ~(DAC_CR_EN1 << dacp->params->regshift);
@@ -1229,7 +1231,7 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
   /* Reset MCR of CH1, restore config mode and retain HFSEL.*/
   mcr = dacp->params->dac->MCR &
               (dacp->params->regmask | DAC_MCR_HFSEL_0 | DAC_MCR_HFSEL_1);
-  mcr |= (dacp->config->mcr & dacp->params->regmask);
+  mcr |= (dacp->config->mcr & CONFIG_SINGLE_MASK);
 
   /* Disable double DMA setting so DOR is update target.*/
   mcr &= ~DAC_MCR_DMADOUBLE1;
@@ -1237,7 +1239,7 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 
   /* Restore CR start settings before enabling channel.*/
   cr &= dacp->params->regmask;
-  cr |= (dacp->config->cr & ~dacp->params->regmask);
+  cr |= (dacp->config->cr & CONFIG_SINGLE_MASK);
 
   /* Mask out enable then write CR start settings.*/
   cr &= ~(DAC_CR_EN1);
