@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -110,10 +110,6 @@ static void cmd_info(xshell_manager_t *smp, shell_stream_i *stream,
 #ifdef __TIME__
   chprintf(stream, "Build time:   %s%s%s" XSHELL_NEWLINE_STR, __DATE__, " - ", __TIME__);
 #endif
-  chprintf(stream, "System clock: ");
-  chprintf(stream, "%d.%03d", SystemCoreClock / 1000000,
-                          (SystemCoreClock % 1000000) / 1000);
-  chprintf(stream,  " MHz" XSHELL_NEWLINE_STR);
 #endif
 }
 #endif
