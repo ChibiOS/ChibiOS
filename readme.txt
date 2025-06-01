@@ -163,6 +163,7 @@
        instead of a simple size.
 - NEW: RT and NIL upgraded to support the enhanced OSLIB.
 - NEW: Memory areas/pointers checker functions added to OSLIB.
+- FIX: Set DAC_HAS_MCR FALSE in STM32F1xx registry (backported to 21.11.4).
 - FIX: Fixed wrong IRQ vector for STM32L4+ DCMI.
 - FIX: Fixed ADCv4 common registers reset at start (bug 1296).
 - FIX: Fixed incorrect RCC clock selection defines for STM32G0 USB.
