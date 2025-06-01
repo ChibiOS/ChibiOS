@@ -59,7 +59,7 @@
 /*===========================================================================*/
 
 /* DAC attributes.*/
-#define STM32_DAC_HAS_MCR                   TRUE
+#define STM32_DAC_HAS_MCR                   FALSE
 
 #if defined(STM32F10X_MD_VL) || defined(__DOXYGEN__)
 /**
