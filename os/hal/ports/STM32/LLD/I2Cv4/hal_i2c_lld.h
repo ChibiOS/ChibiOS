@@ -230,70 +230,70 @@
 
 /* DMA-related checks.*/
 #if STM32_I2C_USE_DMA == TRUE
-#if defined(STM32_GPDMA_PRESENT)
+#if defined(STM32_DMA3_PRESENT)
 
 /* Check on the presence of the GPDMA channels settings in mcuconf.h.*/
-#if STM32_I2C_USE_I2C1 && (!defined(STM32_I2C_I2C1_GPDMA_CHANNEL))
+#if STM32_I2C_USE_I2C1 && (!defined(STM32_I2C_I2C1_DMA3_CHANNEL))
 #error "I2C1 GPDMA channels not defined"
 #endif
 
-#if STM32_I2C_USE_I2C2 && (!defined(STM32_I2C_I2C2_GPDMA_CHANNEL))
+#if STM32_I2C_USE_I2C2 && (!defined(STM32_I2C_I2C2_DMA3_CHANNEL))
 #error "I2C2 GPDMA channels not defined"
 #endif
 
-#if STM32_I2C_USE_I2C3 && (!defined(STM32_I2C_I2C3_GPDMA_CHANNEL))
+#if STM32_I2C_USE_I2C3 && (!defined(STM32_I2C_I2C3_DMA3_CHANNEL))
 #error "I2C3 GPDMA channels not defined"
 #endif
 
-#if STM32_I2C_USE_I2C4 && (!defined(STM32_I2C_I2C4_GPDMA_CHANNEL))
+#if STM32_I2C_USE_I2C4 && (!defined(STM32_I2C_I2C4_DMA3_CHANNEL))
 #error "I2C4 GPDMA channels not defined"
 #endif
 
 /* Check on DMA channels assignment.*/
 #if STM32_I2C_USE_I2C1 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_I2C_I2C1_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_I2C_I2C1_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to I2C1"
 #endif
 
 #if STM32_I2C_USE_I2C2 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_I2C_I2C2_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_I2C_I2C2_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to I2C2"
 #endif
 
 #if STM32_I2C_USE_I2C3 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_I2C_I2C3_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_I2C_I2C3_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to I2C3"
 #endif
 
 #if STM32_I2C_USE_I2C4 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_I2C_I2C4_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_I2C_I2C4_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to I2C4"
 #endif
 
 #if STM32_I2C_USE_I2C1 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_I2C_I2C1_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_I2C_I2C1_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to I2C1"
 #endif
 
 #if STM32_I2C_USE_I2C2 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_I2C_I2C2_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_I2C_I2C2_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to I2C2"
 #endif
 
 #if STM32_I2C_USE_I2C3 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_I2C_I2C3_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_I2C_I2C3_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to I2C3"
 #endif
 
 #if STM32_I2C_USE_I2C4 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_I2C_I2C4_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_I2C_I2C4_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to I2C4"
 #endif
 
 #if STM32_I2C_USE_I2C1 || STM32_I2C_USE_I2C2 || STM32_I2C_USE_I2C3 ||       \
     STM32_I2C_USE_I2C4
-#if !defined(STM32_GPDMA_REQUIRED)
-#define STM32_GPDMA_REQUIRED
+#if !defined(STM32_DMA3_REQUIRED)
+#define STM32_DMA3_REQUIRED
 #endif
 #endif
 
@@ -367,7 +367,7 @@
 #endif
 #endif
 
-#endif /* STM32_GPDMA_PRESENT */
+#endif /* STM32_DMA3_PRESENT */
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
 /*===========================================================================*/
@@ -405,7 +405,7 @@ struct hal_i2c_config {
    */
   uint32_t                          cr2;
 #if (STM32_I2C_USE_DMA == TRUE) || defined(__DOXYGEN__)
-#if defined(STM32_GPDMA_PRESENT)
+#if defined(STM32_DMA3_PRESENT)
   /**
    * @brief   DMA RX CTR1 register settings.
    */
@@ -464,11 +464,11 @@ struct hal_i2c_driver {
    */
   thread_reference_t                thread;
 #if (STM32_I2C_USE_DMA == TRUE) || defined(__DOXYGEN__)
-#if defined(STM32_GPDMA_PRESENT)
+#if defined(STM32_DMA3_PRESENT)
   /**
    * @brief     DMA channel.
    */
-  const stm32_gpdma_channel_t       *dma;
+  const stm32_dma3_channel_t        *dma;
 #else /* Assuming older DMAs.*/
   /**
    * @brief     Receive DMA channel.

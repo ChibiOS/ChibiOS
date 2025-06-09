@@ -124,9 +124,9 @@ static const dacparams_t dac1_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = CHANNEL_REGISTER_MASK1,
-  .dmach        = STM32_DAC_DAC1_CH1_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC1_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC1_CH1_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC1_CH1,
+  .dmareq       = STM32_DMA3_REQ_DAC1_CH1,
   .dmairqprio   = STM32_DAC_DAC1_CH1_DMA_IRQ_PRIORITY
 };
 #endif
@@ -137,9 +137,9 @@ static const dacparams_t dac1_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = CHANNEL_REGISTER_SHIFT,
   .regmask      = CHANNEL_REGISTER_MASK2,
-  .dmach        = STM32_DAC_DAC1_CH2_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC1_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC1_CH2_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC1_CH2,
+  .dmareq       = STM32_DMA3_REQ_DAC1_CH2,
   .dmairqprio   = STM32_DAC_DAC1_CH2_DMA_IRQ_PRIORITY
 };
 #endif
@@ -150,9 +150,9 @@ static const dacparams_t dac2_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = CHANNEL_REGISTER_MASK1,
-  .dmach        = STM32_DAC_DAC2_CH1_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC2_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC2_CH1_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC2_CH1,
+  .dmareq       = STM32_DMA3_REQ_DAC2_CH1,
   .dmairqprio   = STM32_DAC_DAC2_CH1_DMA_IRQ_PRIORITY
 };
 #endif
@@ -163,9 +163,9 @@ static const dacparams_t dac2_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = CHANNEL_REGISTER_SHIFT,
   .regmask      = CHANNEL_REGISTER_MASK2,
-  .dmach        = STM32_DAC_DAC2_CH2_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC2_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC2_CH2_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC2_CH2,
+  .dmareq       = STM32_DMA3_REQ_DAC2_CH2,
   .dmairqprio   = STM32_DAC_DAC2_CH2_DMA_IRQ_PRIORITY
 };
 #endif
@@ -176,9 +176,9 @@ static const dacparams_t dac3_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = CHANNEL_REGISTER_MASK1,
-  .dmach        = STM32_DAC_DAC3_CH1_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC3_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC3_CH1_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC3_CH1,
+  .dmareq       = STM32_DMA3_REQ_DAC3_CH1,
   .dmairqprio   = STM32_DAC_DAC3_CH1_DMA_IRQ_PRIORITY
 };
 #endif
@@ -189,9 +189,9 @@ static const dacparams_t dac3_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = CHANNEL_REGISTER_SHIFT,
   .regmask      = CHANNEL_REGISTER_MASK2,
-  .dmach        = STM32_DAC_DAC3_CH2_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC3_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC3_CH2_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC3_CH2,
+  .dmareq       = STM32_DMA3_REQ_DAC3_CH2,
   .dmairqprio   = STM32_DAC_DAC3_CH2_DMA_IRQ_PRIORITY
 };
 #endif
@@ -202,9 +202,9 @@ static const dacparams_t dac4_ch1_params = {
   .dataoffset   = 0U,
   .regshift     = 0U,
   .regmask      = CHANNEL_REGISTER_MASK1,
-  .dmach        = STM32_DAC_DAC4_CH1_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC4_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC4_CH1_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC4_CH1,
+  .dmareq       = STM32_DMA3_REQ_DAC4_CH1,
   .dmairqprio   = STM32_DAC_DAC4_CH1_DMA_IRQ_PRIORITY
 };
 #endif
@@ -215,9 +215,9 @@ static const dacparams_t dac4_ch2_params = {
   .dataoffset   = CHANNEL_DATA_OFFSET,
   .regshift     = CHANNEL_REGISTER_SHIFT,
   .regmask      = CHANNEL_REGISTER_MASK2,
-  .dmach        = STM32_DAC_DAC4_CH2_GPDMA_CHANNEL,
+  .dmach        = STM32_DAC_DAC4_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC4_CH2_DMA_PRIORITY,
-  .dmareq       = STM32_GPDMA_REQ_DAC4_CH2,
+  .dmareq       = STM32_DMA3_REQ_DAC4_CH2,
   .dmairqprio   = STM32_DAC_DAC4_CH2_DMA_IRQ_PRIORITY
 };
 #endif
@@ -225,35 +225,35 @@ static const dacparams_t dac4_ch2_params = {
 /* DMA circular link control.*/
 
 #if STM32_DAC_USE_DAC1_CH1 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac1_ch1;
+static dac_dmabuf_t __dma3_dac1_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC1_CH2 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac1_ch2;
+static dac_dmabuf_t __dma3_dac1_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC2_CH1 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac2_ch1;
+static dac_dmabuf_t __dma3_dac2_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac2_ch2;
+static dac_dmabuf_t __dma3_dac2_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC3_CH1 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac3_ch1;
+static dac_dmabuf_t __dma3_dac3_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC3_CH2 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac3_ch2;
+static dac_dmabuf_t __dma3_dac3_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC4_CH1 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac4_ch1;
+static dac_dmabuf_t __dma3_dac4_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC4_CH2 || defined(__DOXYGEN__)
-static dac_dmabuf_t __gpdma_dac4_ch2;
+static dac_dmabuf_t __dma3_dac4_ch2;
 #endif
 
 /*===========================================================================*/
@@ -271,7 +271,7 @@ static dac_dmabuf_t __gpdma_dac4_ch2;
 static void dac_lld_serve_dma_interrupt(void *p, uint32_t flags) {
   DACDriver *dacp = (DACDriver *)p;
 
-  if ((flags & STM32_GPDMA_CSR_ERRORS) != 0) {
+  if ((flags & STM32_DMA3_CSR_ERRORS) != 0) {
     /* DMA errors handling.*/
     _dac_isr_error_code(dacp, DAC_ERR_DMAFAILURE);
   }
@@ -279,11 +279,11 @@ static void dac_lld_serve_dma_interrupt(void *p, uint32_t flags) {
     /* It is possible that the conversion group has already been reset by a
        DAC error handler. In this case this interrupt is spurious.*/
     if (dacp->grpp != NULL) {
-      if ((flags & STM32_GPDMA_CSR_HTF) != 0) {
+      if ((flags & STM32_DMA3_CSR_HTF) != 0) {
         /* Half transfer processing.*/
         _dac_isr_half_code(dacp);
       }
-      if ((flags & STM32_GPDMA_CSR_TCF) != 0) {
+      if ((flags & STM32_DMA3_CSR_TCF) != 0) {
         /* Transfer complete processing.*/
         _dac_isr_full_code(dacp);
       }
@@ -522,56 +522,56 @@ void dac_lld_init(void) {
   dacObjectInit(&DACD1);
   DACD1.params  = &dac1_ch1_params;
   DACD1.dmachp = NULL;
-  DACD1.dbuf    = &__gpdma_dac1_ch1;
+  DACD1.dbuf    = &__dma3_dac1_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC1_CH2
   dacObjectInit(&DACD2);
   DACD2.params  = &dac1_ch2_params;
   DACD2.dmachp = NULL;
-  DACD2.dbuf    = &__gpdma_dac1_ch2;
+  DACD2.dbuf    = &__dma3_dac1_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC2_CH1
   dacObjectInit(&DACD3);
   DACD3.params  = &dac2_ch1_params;
   DACD3.dmachp = NULL;
-  DACD2.dbuf    = &__gpdma_dac2_ch1;
+  DACD2.dbuf    = &__dma3_dac2_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2
   dacObjectInit(&DACD4);
   DACD4.params  = &dac2_ch2_params;
   DACD4.dmachp = NULL;
-  DACD2.dbuf    = &__gpdma_dac2_ch2;
+  DACD2.dbuf    = &__dma3_dac2_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC3_CH1
   dacObjectInit(&DACD5);
   DACD5.params  = &dac3_ch1_params;
   DACD5.dmachp = NULL;
-  DACD2.dbuf    = &__gpdma_dac3_ch1;
+  DACD2.dbuf    = &__dma3_dac3_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC3_CH2
   dacObjectInit(&DACD6);
   DACD6.params  = &dac3_ch2_params;
   DACD6.dmachp = NULL;
-  DACD2.dbuf    = &__gpdma_dac3_ch2;
+  DACD2.dbuf    = &__dma3_dac3_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC4_CH1
   dacObjectInit(&DACD7);
   DACD7.params  = &dac4_ch1_params;
   DACD7.dmachp = NULL;
-  DACD2.dbuf    = &__gpdma_dac4_ch1;
+  DACD2.dbuf    = &__dma3_dac4_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC4_CH2
   dacObjectInit(&DACD8);
   DACD8.params  = &dac4_ch2_params;
   DACD8.dmachp = NULL;
-  DACD2.dbuf    = &__gpdma_dac4_ch2;
+  DACD2.dbuf    = &__dma3_dac4_ch2;
 #endif
 
   /* Reset DAC H/W then setup IRQs. The IRQs are used to capture DMA underrun
@@ -934,8 +934,8 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
        per transfer.*/
       nch = 1U;
       dacreg = &dacp->params->dac->DHR12R1 + dacp->params->dataoffset;
-      dmamode = STM32_GPDMA_CTR1_DDW_WORD;
-      dmamode |= dacddma ? STM32_GPDMA_CTR1_SDW_WORD : STM32_GPDMA_CTR1_SDW_HALF;
+      dmamode = STM32_DMA3_CTR1_DDW_WORD;
+      dmamode |= dacddma ? STM32_DMA3_CTR1_SDW_WORD : STM32_DMA3_CTR1_SDW_HALF;
       mult = HALF_SINGLE_SAMPLE_MULTIPLIER;
 
       /* Set initial value of channel holding register(s).*/
@@ -948,8 +948,8 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
        per transfer.*/
       nch = 1U;
       dacreg = &dacp->params->dac->DHR12L1 + dacp->params->dataoffset;
-      dmamode = STM32_GPDMA_CTR1_DDW_WORD;
-      dmamode |= dacddma ? STM32_GPDMA_CTR1_SDW_WORD : STM32_GPDMA_CTR1_SDW_HALF;
+      dmamode = STM32_DMA3_CTR1_DDW_WORD;
+      dmamode |= dacddma ? STM32_DMA3_CTR1_SDW_WORD : STM32_DMA3_CTR1_SDW_HALF;
       mult = HALF_SINGLE_SAMPLE_MULTIPLIER;
 
       /* Get initial value of channel holding register(s).*/
@@ -961,8 +961,8 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
       /* One channel where data is in bytes. GPDMA count is 1 byte per transfer.*/
       nch = 1U;
       dacreg = &dacp->params->dac->DHR8R1 + dacp->params->dataoffset;
-      dmamode = STM32_GPDMA_CTR1_DDW_WORD;
-      dmamode |= dacddma ? STM32_GPDMA_CTR1_SDW_HALF : STM32_GPDMA_CTR1_SDW_BYTE;
+      dmamode = STM32_DMA3_CTR1_DDW_WORD;
+      dmamode |= dacddma ? STM32_DMA3_CTR1_SDW_HALF : STM32_DMA3_CTR1_SDW_BYTE;
       mult = BYTE_SINGLE_SAMPLE_MULTIPLIER;
 
       /* Get initial value of channel holding register(s).*/
@@ -976,7 +976,7 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
        transfer.*/
       nch = 2U;
       dacreg = &dacp->params->dac->DHR12RD;
-      dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
+      dmamode = (STM32_DMA3_CTR1_DDW_WORD | STM32_DMA3_CTR1_SDW_HALF);
       mult = HALF_DUAL_SAMPLE_MULTIPLIER;
 
       /* Get initial value of channels.*/
@@ -990,7 +990,7 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
        transfer.*/
       nch = 2U;
       dacreg = &dacp->params->dac->DHR12LD;
-      dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_HALF);
+      dmamode = (STM32_DMA3_CTR1_DDW_WORD | STM32_DMA3_CTR1_SDW_HALF);
       mult = HALF_DUAL_SAMPLE_MULTIPLIER;
 
       /* Get initial value of channels.*/
@@ -1004,7 +1004,7 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
        is 2 bytes per transfer.*/
       nch = 2U;
       dacreg = &dacp->params->dac->DHR8RD;
-      dmamode = (STM32_GPDMA_CTR1_DDW_WORD | STM32_GPDMA_CTR1_SDW_BYTE);
+      dmamode = (STM32_DMA3_CTR1_DDW_WORD | STM32_DMA3_CTR1_SDW_BYTE);
       mult = BYTE_DUAL_SAMPLE_MULTIPLIER;
 
       /* Get initial value of channels.*/
@@ -1047,13 +1047,13 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
     si = (uint8_t *)dacp->samples + mult;
   }
 
-  if (n > STM32_GPDMA_MAX_TRANSFER) {
+  if (n > STM32_DMA3_MAX_TRANSFER) {
     osalDbgAssert(false, "unsupported GPDMA transfer size");
     return HAL_RET_CONFIG_ERROR;
   }
 
   /* Allocate GPDMA channel.*/
-  dacp->dmachp = gpdmaChannelAllocI(dacp->params->dmach,
+  dacp->dmachp = dma3ChannelAllocI(dacp->params->dmach,
                                     dacp->params->dmaprio,
                                     dac_lld_serve_dma_interrupt,
                                     (void *)dacp);
@@ -1063,20 +1063,20 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
   }
 
   /* Set DAC target register for GPDMA.*/
-  gpdmaChannelSetDestination(dacp->dmachp, dacreg);
+  dma3ChannelSetDestination(dacp->dmachp, dacreg);
 
   /* Setup DMA control registers values.*/
-  dmaccr = STM32_GPDMA_CCR_PRIO((uint32_t)dacp->params->dmaprio) |
-           STM32_GPDMA_CCR_LAP_MEM                               |
-           STM32_GPDMA_CCR_TOIE                                  |
-           STM32_GPDMA_CCR_USEIE                                 |
-           STM32_GPDMA_CCR_ULEIE                                 |
-           STM32_GPDMA_CCR_DTEIE                                 |
-           STM32_GPDMA_CCR_TCIE;
+  dmaccr = STM32_DMA3_CCR_PRIO((uint32_t)dacp->params->dmaprio)     |
+           STM32_DMA3_CCR_LAP_MEM                                   |
+           STM32_DMA3_CCR_TOIE                                      |
+           STM32_DMA3_CCR_USEIE                                     |
+           STM32_DMA3_CCR_ULEIE                                     |
+           STM32_DMA3_CCR_DTEIE                                     |
+           STM32_DMA3_CCR_TCIE;
 
   /* DAC uses a circular operation. Use the GPDMA linking mechanism to reload
      source pointer and count for subsequent cycles.*/
-  dmallr = STM32_GPDMA_CLLR_USA | STM32_GPDMA_CLLR_UB1 |
+  dmallr = STM32_DMA3_CLLR_USA | STM32_DMA3_CLLR_UB1 |
               (((uint32_t)dacp->dbuf) & 0xFFFFU);
   dacp->dbuf->cb1r = n;
   dacp->dbuf->csar = (uint32_t)dacp->samples;
@@ -1084,23 +1084,23 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
   if (n > 1U) {
     /* If circular buffer depth > 1, then the half transfer interrupt
        is enabled in order to allow streaming processing.*/
-    dmaccr |= STM32_GPDMA_CCR_HTIE;
+    dmaccr |= STM32_DMA3_CCR_HTIE;
   }
 
   /* Configure and enable GPDMA controller with initial transfer settings.*/
-  gpdmaChannelSetSource(dacp->dmachp, si);
-  gpdmaChannelSetTransactionSize(dacp->dmachp, ni);
-  gpdmaChannelSetMode(dacp->dmachp,
+  dma3ChannelSetSource(dacp->dmachp, si);
+  dma3ChannelSetTransactionSize(dacp->dmachp, ni);
+  dma3ChannelSetMode(dacp->dmachp,
                       dmaccr,
                       (dmamode                                        |
-                       STM32_GPDMA_CTR1_SAP_MEM                       |
-                       STM32_GPDMA_CTR1_SINC                          |
-                       STM32_GPDMA_CTR1_DAP_PER),
-                      (STM32_GPDMA_CTR2_REQSEL(dacp->params->dmareq)  |
-                       STM32_GPDMA_CTR2_DREQ),
+                       STM32_DMA3_CTR1_SAP_MEM                        |
+                       STM32_DMA3_CTR1_SINC                           |
+                       STM32_DMA3_CTR1_DAP_PER),
+                      (STM32_DMA3_CTR2_REQSEL(dacp->params->dmareq)   |
+                       STM32_DMA3_CTR2_DREQ),
                        dmallr);
 
-  gpdmaChannelEnable(dacp->dmachp);
+  dma3ChannelEnable(dacp->dmachp);
 
   /* DAC configuration.*/
   cr = dacp->params->dac->CR;
@@ -1184,8 +1184,8 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
   uint32_t cr, mcr;
 
   /* GPDMA channel disabled and released.*/
-  gpdmaChannelDisable(dacp->dmachp);
-  gpdmaChannelFreeI(dacp->dmachp);
+  dma3ChannelDisable(dacp->dmachp);
+  dma3ChannelFreeI(dacp->dmachp);
   dacp->dmachp = NULL;
 
   /* Get current CR and SR.*/

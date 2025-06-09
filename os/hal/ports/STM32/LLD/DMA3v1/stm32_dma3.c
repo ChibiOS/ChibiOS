@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -41,22 +41,22 @@
 
 #if defined(GPDMA1_Channel0)
 /* DMA3 is named GPDMA in this device.*/
-#define STM32_DMA3_1_CH0                GPDMA1_Channel0
-#define STM32_DMA3_1_CH1                GPDMA1_Channel1
-#define STM32_DMA3_1_CH2                GPDMA1_Channel2
-#define STM32_DMA3_1_CH3                GPDMA1_Channel3
-#define STM32_DMA3_1_CH4                GPDMA1_Channel4
-#define STM32_DMA3_1_CH5                GPDMA1_Channel5
-#define STM32_DMA3_1_CH6                GPDMA1_Channel6
-#define STM32_DMA3_1_CH7                GPDMA1_Channel7
-#define STM32_DMA3_2_CH0                GPDMA2_Channel0
-#define STM32_DMA3_2_CH1                GPDMA2_Channel1
-#define STM32_DMA3_2_CH2                GPDMA2_Channel2
-#define STM32_DMA3_2_CH3                GPDMA2_Channel3
-#define STM32_DMA3_2_CH4                GPDMA2_Channel4
-#define STM32_DMA3_2_CH5                GPDMA2_Channel5
-#define STM32_DMA3_2_CH6                GPDMA2_Channel6
-#define STM32_DMA3_2_CH7                GPDMA2_Channel7
+#define STM32_DMA31_CH0                 GPDMA1_Channel0
+#define STM32_DMA31_CH1                 GPDMA1_Channel1
+#define STM32_DMA31_CH2                 GPDMA1_Channel2
+#define STM32_DMA31_CH3                 GPDMA1_Channel3
+#define STM32_DMA31_CH4                 GPDMA1_Channel4
+#define STM32_DMA31_CH5                 GPDMA1_Channel5
+#define STM32_DMA31_CH6                 GPDMA1_Channel6
+#define STM32_DMA31_CH7                 GPDMA1_Channel7
+#define STM32_DMA32_CH0                 GPDMA2_Channel0
+#define STM32_DMA32_CH1                 GPDMA2_Channel1
+#define STM32_DMA32_CH2                 GPDMA2_Channel2
+#define STM32_DMA32_CH3                 GPDMA2_Channel3
+#define STM32_DMA32_CH4                 GPDMA2_Channel4
+#define STM32_DMA32_CH5                 GPDMA2_Channel5
+#define STM32_DMA32_CH6                 GPDMA2_Channel6
+#define STM32_DMA32_CH7                 GPDMA2_Channel7
 
 #else
 #error "DMA3 definitions not found or not recognized"
@@ -71,56 +71,56 @@
  * @details This table keeps the association between an unique channel
  *          identifier and the involved physical registers.
  * @note    Don't use this array directly, use the appropriate wrapper macros
- *          instead: @p STM32_DMA3_1_CHANNEL1, @p STM32_DMA3_1_CHANNEL2 etc.
+ *          instead: @p STM32_DMA31_CHANNEL1, @p STM32_DMA31_CHANNEL2 etc.
  */
 const stm32_dma3_channel_t __stm32_dma3_channels[STM32_DMA3_NUM_CHANNELS] = {
-#if STM32_DMA3_1_NUM_CHANNELS > 0
-  {STM32_DMA3_1_CH0, STM32_DMA3_1_CH0_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 0
+  {STM32_DMA31_CH0, STM32_DMA31_CH0_NUMBER},
 #endif
-#if STM32_DMA3_1_NUM_CHANNELS > 1
-  {STM32_DMA3_1_CH1, STM32_DMA3_1_CH1_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 1
+  {STM32_DMA31_CH1, STM32_DMA31_CH1_NUMBER},
 #endif
-#if STM32_DMA3_1_NUM_CHANNELS > 2
-  {STM32_DMA3_1_CH2, STM32_DMA3_1_CH2_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 2
+  {STM32_DMA31_CH2, STM32_DMA31_CH2_NUMBER},
 #endif
-#if STM32_DMA3_1_NUM_CHANNELS > 3
-  {STM32_DMA3_1_CH3, STM32_DMA3_1_CH3_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 3
+  {STM32_DMA31_CH3, STM32_DMA31_CH3_NUMBER},
 #endif
-#if STM32_DMA3_1_NUM_CHANNELS > 4
-  {STM32_DMA3_1_CH4, STM32_DMA3_1_CH4_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 4
+  {STM32_DMA31_CH4, STM32_DMA31_CH4_NUMBER},
 #endif
-#if STM32_DMA3_1_NUM_CHANNELS > 5
-  {STM32_DMA3_1_CH5, STM32_DMA3_1_CH5_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 5
+  {STM32_DMA31_CH5, STM32_DMA31_CH5_NUMBER},
 #endif
-#if STM32_DMA3_1_NUM_CHANNELS > 6
-  {STM32_DMA3_1_CH6, STM32_DMA3_1_CH6_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 6
+  {STM32_DMA31_CH6, STM32_DMA31_CH6_NUMBER},
 #endif
-#if STM32_DMA3_1_NUM_CHANNELS > 7
-  {STM32_DMA3_1_CH7, STM32_DMA3_1_CH7_NUMBER},
+#if STM32_DMA31_NUM_CHANNELS > 7
+  {STM32_DMA31_CH7, STM32_DMA31_CH7_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 0
-  {STM32_DMA3_2_CH0, STM32_DMA3_2_CH0_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 0
+  {STM32_DMA32_CH0, STM32_DMA32_CH0_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 1
-  {STM32_DMA3_2_CH1, STM32_DMA3_2_CH1_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 1
+  {STM32_DMA32_CH1, STM32_DMA32_CH1_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 2
-  {STM32_DMA3_2_CH2, STM32_DMA3_2_CH2_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 2
+  {STM32_DMA32_CH2, STM32_DMA32_CH2_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 3
-  {STM32_DMA3_2_CH3, STM32_DMA3_2_CH3_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 3
+  {STM32_DMA32_CH3, STM32_DMA32_CH3_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 4
-  {STM32_DMA3_2_CH4, STM32_DMA3_2_CH4_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 4
+  {STM32_DMA32_CH4, STM32_DMA32_CH4_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 5
-  {STM32_DMA3_2_CH5, STM32_DMA3_2_CH5_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 5
+  {STM32_DMA32_CH5, STM32_DMA32_CH5_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 6
-  {STM32_DMA3_2_CH6, STM32_DMA3_2_CH6_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 6
+  {STM32_DMA32_CH6, STM32_DMA32_CH6_NUMBER},
 #endif
-#if STM32_DMA3_2_NUM_CHANNELS > 7
-  {STM32_DMA3_2_CH7, STM32_DMA3_2_CH7_NUMBER},
+#if STM32_DMA32_NUM_CHANNELS > 7
+  {STM32_DMA32_CH7, STM32_DMA32_CH7_NUMBER},
 #endif
 };
 
@@ -159,257 +159,257 @@ static struct {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_DMA3_1_CH0_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH0_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 0 interrupt handler.
+ * @brief   DMA31 channel 0 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH0_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL0);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL0);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_1_CH1_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH1_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 1 interrupt handler.
+ * @brief   DMA31 channel 1 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL1);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL1);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_1_CH2_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH2_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 2 interrupt handler.
+ * @brief   DMA31 channel 2 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH2_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL2);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL2);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_1_CH3_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH3_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 3 interrupt handler.
+ * @brief   DMA31 channel 3 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH3_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL3);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL3);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_1_CH4_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH4_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 4 interrupt handler.
+ * @brief   DMA31 channel 4 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL4);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL4);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_1_CH5_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH5_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 5 interrupt handler.
+ * @brief   DMA31 channel 5 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH5_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH5_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL5);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL5);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_1_CH6_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH6_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 6 interrupt handler.
+ * @brief   DMA31 channel 6 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH6_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH6_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL6);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL6);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_1_CH7_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA31_CH7_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_1 channel 7 interrupt handler.
+ * @brief   DMA31 channel 7 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_1_CH7_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA31_CH7_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_1_CHANNEL7);
+  dma3ServeInterrupt(STM32_DMA31_CHANNEL7);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH0_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH0_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 0 interrupt handler.
+ * @brief   DMA32 channel 0 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH0_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL0);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL0);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH1_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH1_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 2 interrupt handler.
+ * @brief   DMA32 channel 2 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH1_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL1);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL1);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH2_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH2_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 2 interrupt handler.
+ * @brief   DMA32 channel 2 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH2_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL2);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL2);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH3_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH3_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 3 interrupt handler.
+ * @brief   DMA32 channel 3 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH3_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL3);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL3);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH4_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH4_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 4 interrupt handler.
+ * @brief   DMA32 channel 4 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL4);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL4);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH5_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH5_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 5 interrupt handler.
+ * @brief   DMA32 channel 5 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH5_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH5_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL5);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL5);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH6_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH6_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 6 interrupt handler.
+ * @brief   DMA32 channel 6 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH6_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH6_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL6);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL6);
 
   OSAL_IRQ_EPILOGUE();
 }
 #endif
 
-#if defined(STM32_DMA3_2_CH7_HANDLER) || defined(__DOXYGEN__)
+#if defined(STM32_DMA32_CH7_HANDLER) || defined(__DOXYGEN__)
 /**
- * @brief   DMA3_2 channel 7 interrupt handler.
+ * @brief   DMA32 channel 7 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_DMA3_2_CH7_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_DMA32_CH7_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  dma3ServeInterrupt(STM32_DMA3_2_CHANNEL7);
+  dma3ServeInterrupt(STM32_DMA32_CHANNEL7);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -432,7 +432,7 @@ void dma3Init(void) {
     __stm32_dma3_channels[i].channel->CCR = 0U;
     dma3.channels[i].func = NULL;
   }
-#if STM32_DMA3_2_NUM_CHANNELS > 0
+#if STM32_DMA32_NUM_CHANNELS > 0
 #endif
 }
 
@@ -478,12 +478,12 @@ const stm32_dma3_channel_t *dma3ChannelAllocI(uint32_t cmask,
       dma3.allocated_mask  |= mask;
 
       /* Enabling DMA3 clocks required by the current channels set.*/
-      if ((STM32_DMA3_1_MASK_ANY & mask) != 0U) {
-        rccEnableDMA3_1(true);
+      if ((STM32_DMA31_MASK_ANY & mask) != 0U) {
+        rccEnableDMA31(true);
       }
-#if STM32_DMA3_2_NUM_CHANNELS > 0
-      if ((STM32_DMA3_2_MASK_ANY & mask) != 0U) {
-        rccEnableDMA3_2(true);
+#if STM32_DMA32_NUM_CHANNELS > 0
+      if ((STM32_DMA32_MASK_ANY & mask) != 0U) {
+        rccEnableDMA32(true);
       }
 #endif
 
@@ -576,12 +576,12 @@ void dma3ChannelFreeI(const stm32_dma3_channel_t *dmachp) {
   dma3.channels[selfindex].param = NULL;
 
   /* Shutting down clocks that are no more required, if any.*/
-  if ((dma3.allocated_mask & STM32_DMA3_1_MASK_ANY) == 0U) {
-    rccDisableDMA3_1();
+  if ((dma3.allocated_mask & STM32_DMA31_MASK_ANY) == 0U) {
+    rccDisableDMA31();
   }
-#if STM32_DMA3_2_NUM_CHANNELS > 0
-  if ((dma3.allocated_mask & STM32_DMA3_2_MASK_ANY) == 0U) {
-    rccDisableDMA3_2();
+#if STM32_DMA32_NUM_CHANNELS > 0
+  if ((dma3.allocated_mask & STM32_DMA32_MASK_ANY) == 0U) {
+    rccDisableDMA32();
   }
 #endif
 }

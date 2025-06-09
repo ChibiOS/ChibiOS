@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -231,7 +231,7 @@
  * @return              An unique numeric channel identifier.
  */
 #define STM32_DMA3_CHANNEL_ID(dma, ch)                                      \
-  ((((dma) - 1U) * STM32_DMA3_1_NUM_CHANNELS) + (ch))
+  ((((dma) - 1U) * STM32_DMA31_NUM_CHANNELS) + (ch))
 
 /**
  * @brief   Returns a DMA3 channel identifier mask.
@@ -257,22 +257,22 @@
  */
 #define STM32_DMA3_CHANNEL(id)     (&__stm32_dma3_channels[id])
 
-#define STM32_DMA3_1_CHANNEL0       STM32_DMA3_CHANNEL(0)
-#define STM32_DMA3_1_CHANNEL1       STM32_DMA3_CHANNEL(1)
-#define STM32_DMA3_1_CHANNEL2       STM32_DMA3_CHANNEL(2)
-#define STM32_DMA3_1_CHANNEL3       STM32_DMA3_CHANNEL(3)
-#define STM32_DMA3_1_CHANNEL4       STM32_DMA3_CHANNEL(4)
-#define STM32_DMA3_1_CHANNEL5       STM32_DMA3_CHANNEL(5)
-#define STM32_DMA3_1_CHANNEL6       STM32_DMA3_CHANNEL(6)
-#define STM32_DMA3_1_CHANNEL7       STM32_DMA3_CHANNEL(7)
-#define STM32_DMA3_2_CHANNEL0       STM32_DMA3_CHANNEL(8)
-#define STM32_DMA3_2_CHANNEL1       STM32_DMA3_CHANNEL(9)
-#define STM32_DMA3_2_CHANNEL2       STM32_DMA3_CHANNEL(10)
-#define STM32_DMA3_2_CHANNEL3       STM32_DMA3_CHANNEL(11)
-#define STM32_DMA3_2_CHANNEL4       STM32_DMA3_CHANNEL(12)
-#define STM32_DMA3_2_CHANNEL5       STM32_DMA3_CHANNEL(13)
-#define STM32_DMA3_2_CHANNEL6       STM32_DMA3_CHANNEL(14)
-#define STM32_DMA3_2_CHANNEL7       STM32_DMA3_CHANNEL(15)
+#define STM32_DMA31_CHANNEL0       STM32_DMA3_CHANNEL(0)
+#define STM32_DMA31_CHANNEL1       STM32_DMA3_CHANNEL(1)
+#define STM32_DMA31_CHANNEL2       STM32_DMA3_CHANNEL(2)
+#define STM32_DMA31_CHANNEL3       STM32_DMA3_CHANNEL(3)
+#define STM32_DMA31_CHANNEL4       STM32_DMA3_CHANNEL(4)
+#define STM32_DMA31_CHANNEL5       STM32_DMA3_CHANNEL(5)
+#define STM32_DMA31_CHANNEL6       STM32_DMA3_CHANNEL(6)
+#define STM32_DMA31_CHANNEL7       STM32_DMA3_CHANNEL(7)
+#define STM32_DMA32_CHANNEL0       STM32_DMA3_CHANNEL(8)
+#define STM32_DMA32_CHANNEL1       STM32_DMA3_CHANNEL(9)
+#define STM32_DMA32_CHANNEL2       STM32_DMA3_CHANNEL(10)
+#define STM32_DMA32_CHANNEL3       STM32_DMA3_CHANNEL(11)
+#define STM32_DMA32_CHANNEL4       STM32_DMA3_CHANNEL(12)
+#define STM32_DMA32_CHANNEL5       STM32_DMA3_CHANNEL(13)
+#define STM32_DMA32_CHANNEL6       STM32_DMA3_CHANNEL(14)
+#define STM32_DMA32_CHANNEL7       STM32_DMA3_CHANNEL(15)
 /** @} */
 
 /*===========================================================================*/
@@ -283,19 +283,19 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if !defined(STM32_DMA3_1_NUM_CHANNELS)
-#error "STM32_DMA3_1_NUM_CHANNELS not defined in registry"
+#if !defined(STM32_DMA31_NUM_CHANNELS)
+#error "STM32_DMA31_NUM_CHANNELS not defined in registry"
 #endif
 
-#if !defined(STM32_DMA3_2_NUM_CHANNELS)
-#error "STM32_DMA3_2_NUM_CHANNELS not defined in registry"
+#if !defined(STM32_DMA32_NUM_CHANNELS)
+#error "STM32_DMA32_NUM_CHANNELS not defined in registry"
 #endif
 
-#if (STM32_DMA3_1_NUM_CHANNELS < 0) || (STM32_DMA3_1_NUM_CHANNELS > 8)
+#if (STM32_DMA31_NUM_CHANNELS < 0) || (STM32_DMA31_NUM_CHANNELS > 8)
 #error "unsupported channels configuration"
 #endif
 
-#if (STM32_DMA3_2_NUM_CHANNELS < 0) || (STM32_DMA3_2_NUM_CHANNELS > 8)
+#if (STM32_DMA32_NUM_CHANNELS < 0) || (STM32_DMA32_NUM_CHANNELS > 8)
 #error "unsupported channels configuration"
 #endif
 
@@ -303,29 +303,29 @@
  * @brief   Total number of channels among all DMA3s.
  */
 #define STM32_DMA3_NUM_CHANNELS                                             \
-  (STM32_DMA3_1_NUM_CHANNELS + STM32_DMA3_2_NUM_CHANNELS)
+  (STM32_DMA31_NUM_CHANNELS + STM32_DMA32_NUM_CHANNELS)
 
-#if STM32_DMA3_1_NUM_CHANNELS > 0
-#if !defined(STM32_DMA3_1_MASK_FIFO2)
-#error "STM32_DMA3_1_MASK_FIFO2 not defined in registry"
+#if STM32_DMA31_NUM_CHANNELS > 0
+#if !defined(STM32_DMA31_MASK_FIFO2)
+#error "STM32_DMA31_MASK_FIFO2 not defined in registry"
 #endif
-#if !defined(STM32_DMA3_1_MASK_FIFO4)
-#error "STM32_DMA3_1_MASK_FIFO4 not defined in registry"
+#if !defined(STM32_DMA31_MASK_FIFO4)
+#error "STM32_DMA31_MASK_FIFO4 not defined in registry"
 #endif
-#if !defined(STM32_DMA3_1_MASK_FIFO4_2D)
-#error "STM32_DMA3_1_MASK_FIFO4_2D not defined in registry"
+#if !defined(STM32_DMA31_MASK_FIFO4_2D)
+#error "STM32_DMA31_MASK_FIFO4_2D not defined in registry"
 #endif
 #endif
 
-#if STM32_DMA3_2_NUM_CHANNELS > 0
-#if !defined(STM32_DMA3_2_MASK_FIFO2)
-#error "STM32_DMA3_2_MASK_FIFO2 not defined in registry"
+#if STM32_DMA32_NUM_CHANNELS > 0
+#if !defined(STM32_DMA32_MASK_FIFO2)
+#error "STM32_DMA32_MASK_FIFO2 not defined in registry"
 #endif
-#if !defined(STM32_DMA3_2_MASK_FIFO4)
-#error "STM32_DMA3_2_MASK_FIFO4 not defined in registry"
+#if !defined(STM32_DMA32_MASK_FIFO4)
+#error "STM32_DMA32_MASK_FIFO4 not defined in registry"
 #endif
-#if !defined(STM32_DMA3_2_MASK_FIFO4_2D)
-#error "STM32_DMA3_2_MASK_FIFO4_2D not defined in registry"
+#if !defined(STM32_DMA32_MASK_FIFO4_2D)
+#error "STM32_DMA32_MASK_FIFO4_2D not defined in registry"
 #endif
 #endif
 
@@ -333,55 +333,55 @@
  * @brief   Any FIFO2 channel on any DMA3.
  */
 #define STM32_DMA3_MASK_FIFO2                                               \
-  (STM32_DMA3_1_MASK_FIFO2 | STM32_DMA3_2_MASK_FIFO2)
+  (STM32_DMA31_MASK_FIFO2 | STM32_DMA32_MASK_FIFO2)
 
 /**
  * @brief   Any FIFO4 channel on any DMA3.
  */
 #define STM32_DMA3_MASK_FIFO4                                               \
-  (STM32_DMA3_1_MASK_FIFO4 | STM32_DMA3_2_MASK_FIFO4)
+  (STM32_DMA31_MASK_FIFO4 | STM32_DMA32_MASK_FIFO4)
 
 /**
  * @brief   Any FIFO4_2D channel on any DMA3.
  */
 #define STM32_DMA3X_MASK_FIFO4_2D                                           \
-  (STM32_DMA3_1_MASK_FIFO4_2D | STM32_DMA3_2_MASK_FIFO4_2D)
+  (STM32_DMA31_MASK_FIFO4_2D | STM32_DMA32_MASK_FIFO4_2D)
 
 /**
  * @brief   Any non-2D channel on DMA31.
  */
-#define STM32_DMA3_1_MASK_FIFOX                                             \
-  (STM32_DMA3_1_MASK_FIFO2 | STM32_DMA3_1_MASK_FIFO4)
+#define STM32_DMA31_MASK_FIFOX                                              \
+  (STM32_DMA31_MASK_FIFO2 | STM32_DMA31_MASK_FIFO4)
 
 /**
  * @brief   Any non-2D channel on DMA32.
  */
-#define STM32_DMA3_2_MASK_FIFOX                                             \
-  (STM32_DMA3_2_MASK_FIFO2 | STM32_DMA3_2_MASK_FIFO4)
+#define STM32_DMA32_MASK_FIFOX                                              \
+  (STM32_DMA32_MASK_FIFO2 | STM32_DMA32_MASK_FIFO4)
 
 /**
  * @brief   Any non-2D channel on any DMA3.
  */
-#define STM32_DMA3_MASK_FIFOX                                              \
-  (STM32_DMA3_1_MASK_FIFOX | STM32_DMA3_2_MASK_FIFOX)
+#define STM32_DMA3_MASK_FIFOX                                               \
+  (STM32_DMA31_MASK_FIFOX | STM32_DMA32_MASK_FIFOX)
 
 /**
  * @brief   Any channel on DMA31.
  */
-#define STM32_DMA3_1_MASK_ANY                                               \
-  (STM32_DMA3_1_MASK_FIFO2 | STM32_DMA3_1_MASK_FIFO4 | STM32_DMA3_1_MASK_FIFO4_2D)
+#define STM32_DMA31_MASK_ANY                                                \
+  (STM32_DMA31_MASK_FIFO2 | STM32_DMA31_MASK_FIFO4 | STM32_DMA31_MASK_FIFO4_2D)
 
 /**
  * @brief   Any channel on DMA32.
  */
-#define STM32_DMA3_2_MASK_ANY                                               \
-  (STM32_DMA3_2_MASK_FIFO2 | STM32_DMA3_2_MASK_FIFO4 | STM32_DMA3_2_MASK_FIFO4_2D)
+#define STM32_DMA32_MASK_ANY                                                \
+  (STM32_DMA32_MASK_FIFO2 | STM32_DMA32_MASK_FIFO4 | STM32_DMA32_MASK_FIFO4_2D)
 
 /**
  * @brief   Any channel on any DMA3.
  */
 #define STM32_DMA3_MASK_ANY                                                 \
-  (STM32_DMA3_1_MASK_ANY | STM32_DMA3_2_MASK_ANY)
+  (STM32_DMA31_MASK_ANY | STM32_DMA32_MASK_ANY)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

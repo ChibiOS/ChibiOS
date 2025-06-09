@@ -520,21 +520,21 @@
  *
  * @api
  */
-#define rccEnableGPDMA1(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA1EN, lp)
+#define rccEnableDMA31(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA1EN, lp)
 
 /**
  * @brief   Disables the GPDMA1 peripheral clock.
  *
  * @api
  */
-#define rccDisableGPDMA1() rccDisableAHB1(RCC_AHB1ENR_GPDMA1EN)
+#define rccDisableDMA31() rccDisableAHB1(RCC_AHB1ENR_GPDMA1EN)
 
 /**
  * @brief   Resets the GPDMA1 peripheral.
  *
  * @api
  */
-#define rccResetGPDMA1() rccResetAHB1(RCC_AHB1RSTR_GPDMA1RST)
+#define rccResetDMA31() rccResetAHB1(RCC_AHB1RSTR_GPDMA1RST)
 
 /**
  * @brief   Enables the GPDMA2 peripheral clock.
@@ -543,21 +543,21 @@
  *
  * @api
  */
-#define rccEnableGPDMA2(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA2EN, lp)
+#define rccEnableDMA32(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA2EN, lp)
 
 /**
  * @brief   Disables the GPDMA2 peripheral clock.
  *
  * @api
  */
-#define rccDisableGPDMA2() rccDisableAHB1(RCC_AHB1ENR_GPDMA2EN)
+#define rccDisableDMA32() rccDisableAHB1(RCC_AHB1ENR_GPDMA2EN)
 
 /**
  * @brief   Resets the GPDMA2 peripheral.
  *
  * @api
  */
-#define rccResetGPDMA2() rccResetAHB1(RCC_AHB1RSTR_GPDMA2RST)
+#define rccResetDMA32() rccResetAHB1(RCC_AHB1RSTR_GPDMA2RST)
 /** @} */
 
 /**

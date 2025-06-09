@@ -33,15 +33,15 @@
 #if STM32_ADC_DUAL_MODE
 #if STM32_ADC_COMPACT_SAMPLES
 /* Compact type dual mode.*/
-#define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_HALF |                \
-                                 STM32_GPDMA_CTR1_SDW_HALF)
+#define ADC_DMA3_CTR1_SIZE     (STM32_DMA3_CTR1_DDW_HALF |                \
+                                 STM32_DMA3_CTR1_SDW_HALF)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_HWORD
 #define ADC_SAMPLE_MULTIPLIER   2U
 
 #else /* !STM32_ADC_COMPACT_SAMPLES */
 /* Large type dual mode.*/
-#define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_WORD |                \
-                                 STM32_GPDMA_CTR1_SDW_WORD)
+#define ADC_DMA3_CTR1_SIZE     (STM32_DMA3_CTR1_DDW_WORD |                \
+                                 STM32_DMA3_CTR1_SDW_WORD)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_WORD
 #define ADC_SAMPLE_MULTIPLIER   4U
 #endif /* !STM32_ADC_COMPACT_SAMPLES */
@@ -49,15 +49,15 @@
 #else /* !STM32_ADC_DUAL_MODE */
 #if STM32_ADC_COMPACT_SAMPLES
 /* Compact type single mode.*/
-#define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_BYTE |                \
-                                 STM32_GPDMA_CTR1_SDW_BYTE)
+#define ADC_DMA3_CTR1_SIZE     (STM32_DMA3_CTR1_DDW_BYTE |                \
+                                 STM32_DMA3_CTR1_SDW_BYTE)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_DISABLED
 #define ADC_SAMPLE_MULTIPLIER   1U
 
 #else /* !STM32_ADC_COMPACT_SAMPLES */
 /* Large type single mode.*/
-#define ADC_GPDMA_CTR1_SIZE     (STM32_GPDMA_CTR1_DDW_HALF |                \
-                                 STM32_GPDMA_CTR1_SDW_HALF)
+#define ADC_DMA3_CTR1_SIZE     (STM32_DMA3_CTR1_DDW_HALF |                \
+                                 STM32_DMA3_CTR1_SDW_HALF)
 #define ADC_CCR_MDMA_MODE       ADC_CCR_MDMA_DISABLED
 #define ADC_SAMPLE_MULTIPLIER   2U
 #endif /* !STM32_ADC_COMPACT_SAMPLES */
@@ -98,19 +98,19 @@ static const ADCConfig default_config = {
 static uint32_t clkmask;
 
 #if STM32_ADC_USE_ADC1 || defined(__DOXYGEN__)
-static adc_dmabuf_t __gpdma_adc1;
+static adc_dmabuf_t __dma3_adc1;
 #endif
 
 #if STM32_ADC_USE_ADC2 || defined(__DOXYGEN__)
-static adc_dmabuf_t __gpdma_adc2;
+static adc_dmabuf_t __dma3_adc2;
 #endif
 
 #if STM32_ADC_USE_ADC3 || defined(__DOXYGEN__)
-static adc_dmabuf_t __gpdma_adc3;
+static adc_dmabuf_t __dma3_adc3;
 #endif
 
 #if STM32_ADC_USE_ADC4 || defined(__DOXYGEN__)
-static adc_dmabuf_t __gpdma_adc4;
+static adc_dmabuf_t __dma3_adc4;
 #endif
 
 /*===========================================================================*/
@@ -252,7 +252,7 @@ static void adc_lld_serve_dma_interrupt(void *p, uint32_t csr) {
   ADCDriver *adcp = (ADCDriver *)p;
 
   /* DMA errors handling.*/
-  if ((csr & STM32_GPDMA_CSR_ERRORS) != 0U) {
+  if ((csr & STM32_DMA3_CSR_ERRORS) != 0U) {
     /* DMA, this could help only if the DMA tries to access an unmapped
        address space or violates alignment rules.*/
     _adc_isr_error_code(adcp, ADC_ERR_DMAFAILURE);
@@ -261,11 +261,11 @@ static void adc_lld_serve_dma_interrupt(void *p, uint32_t csr) {
     /* It is possible that the conversion group has already be reset by the
        ADC error handler, in this case this interrupt is spurious.*/
     if (adcp->grpp != NULL) {
-      if ((csr & STM32_GPDMA_CSR_TCF) != 0U) {
+      if ((csr & STM32_DMA3_CSR_TCF) != 0U) {
         /* Transfer complete processing.*/
         _adc_isr_full_code(adcp);
       }
-      else if ((csr & STM32_GPDMA_CSR_HTF) != 0U) {
+      else if ((csr & STM32_DMA3_CSR_HTF) != 0U) {
         /* Half transfer processing.*/
         _adc_isr_half_code(adcp);
       }
@@ -462,8 +462,8 @@ void adc_lld_init(void) {
 #endif
   ADCD1.dmachp  = NULL;
   ADCD1.dprio   = STM32_ADC_ADC1_DMA_PRIORITY;
-  ADCD1.dreq    = STM32_GPDMA_REQ_ADC1;
-  ADCD1.dbuf    = &__gpdma_adc1;
+  ADCD1.dreq    = STM32_DMA3_REQ_ADC1;
+  ADCD1.dbuf    = &__dma3_adc1;
 #endif /* STM32_ADC_USE_ADC1 */
 
 #if STM32_ADC_USE_ADC2
@@ -473,8 +473,8 @@ void adc_lld_init(void) {
   ADCD2.adcm    = ADC2;
   ADCD2.dmachp  = NULL;
   ADCD2.dprio   = STM32_ADC_ADC2_DMA_PRIORITY;
-  ADCD2.dreq    = STM32_GPDMA_REQ_ADC2;
-  ADCD2.dbuf    = &__gpdma_adc2;
+  ADCD2.dreq    = STM32_DMA3_REQ_ADC2;
+  ADCD2.dbuf    = &__dma3_adc2;
 #endif /* STM32_ADC_USE_ADC2 */
 
 #if STM32_ADC_USE_ADC3
@@ -487,8 +487,8 @@ void adc_lld_init(void) {
 #endif
   ADCD3.dmachp  = NULL;
   ADCD3.dprio   = STM32_ADC_ADC3_DMA_PRIORITY;
-  ADCD3.dreq    = STM32_GPDMA_REQ_ADC3;
-  ADCD3.dbuf    = &__gpdma_adc3;
+  ADCD3.dreq    = STM32_DMA3_REQ_ADC3;
+  ADCD3.dbuf    = &__dma3_adc3;
 #endif /* STM32_ADC_USE_ADC3 */
 
 #if STM32_ADC_USE_ADC4
@@ -498,8 +498,8 @@ void adc_lld_init(void) {
   ADCD4.adcm    = ADC4;
   ADCD4.dmachp  = NULL;
   ADCD4.dprio   = STM32_ADC_ADC4_DMA_PRIORITY;
-  ADCD4.dreq    = STM32_GPDMA_REQ_ADC4;
-  ADCD4.dbuf    = &__gpdma_adc4;
+  ADCD4.dreq    = STM32_DMA3_REQ_ADC4;
+  ADCD4.dbuf    = &__dma3_adc4;
 #endif /* STM32_ADC_USE_ADC4 */
 
   /* IRQs setup.*/
@@ -558,7 +558,7 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(STM32_ADC1_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmachp = gpdmaChannelAllocI(STM32_ADC_ADC1_GPDMA_CHANNEL,
+      adcp->dmachp = dma3ChannelAllocI(STM32_ADC_ADC1_DMA3_CHANNEL,
                                         STM32_ADC_ADC1_DMA_IRQ_PRIORITY,
                                         adc_lld_serve_dma_interrupt,
                                         (void *)adcp);
@@ -577,7 +577,7 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(STM32_ADC2_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmachp = gpdmaChannelAllocI(STM32_ADC_ADC2_GPDMA_CHANNEL,
+      adcp->dmachp = dma3ChannelAllocI(STM32_ADC_ADC2_DMA3_CHANNEL,
                                         STM32_ADC_ADC2_DMA_IRQ_PRIORITY,
                                         adc_lld_serve_dma_interrupt,
                                         (void *)adcp);
@@ -596,7 +596,7 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(STM32_ADC3_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmachp = gpdmaChannelAllocI(STM32_ADC_ADC3_GPDMA_CHANNEL,
+      adcp->dmachp = dma3ChannelAllocI(STM32_ADC_ADC3_DMA3_CHANNEL,
                                         STM32_ADC_ADC3_DMA_IRQ_PRIORITY,
                                         adc_lld_serve_dma_interrupt,
                                         (void *)adcp);
@@ -615,7 +615,7 @@ void adc_lld_start(ADCDriver *adcp) {
       osalDbgAssert(STM32_ADC4_CLOCK <= STM32_ADCCLK_MAX,
                     "invalid clock frequency");
 
-      adcp->dmachp = gpdmaChannelAllocI(STM32_ADC_ADC4_GPDMA_CHANNEL,
+      adcp->dmachp = dma3ChannelAllocI(STM32_ADC_ADC4_DMA3_CHANNEL,
                                         STM32_ADC_ADC4_DMA_IRQ_PRIORITY,
                                         adc_lld_serve_dma_interrupt,
                                         (void *)adcp);
@@ -630,9 +630,9 @@ void adc_lld_start(ADCDriver *adcp) {
 
     /* Setting DMA peripheral-side pointer.*/
 #if STM32_ADC_DUAL_MODE
-//    gpdmaChannelSetSource(adcp->dmachp, &adcp->adcc->CDR);
+//    dma3ChannelSetSource(adcp->dmachp, &adcp->adcc->CDR);
 #else
-//    gpdmaChannelSetSource(adcp->dmachp, &adcp->adcm->DR);
+//    dma3ChannelSetSource(adcp->dmachp, &adcp->adcm->DR);
 #endif
 
     /* Differential channels setting.*/
@@ -665,7 +665,7 @@ void adc_lld_stop(ADCDriver *adcp) {
   if (adcp->state == ADC_READY) {
 
     /* Releasing the associated DMA channel.*/
-    gpdmaChannelFreeI(adcp->dmachp);
+    dma3ChannelFreeI(adcp->dmachp);
     adcp->dmachp = NULL;
 
     /* Stopping the ongoing conversion, if any.*/
@@ -754,13 +754,13 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif
 
   /* Calculating control registers values.*/
-  dmaccr = STM32_GPDMA_CCR_PRIO((uint32_t)adcp->dprio)  |
-           STM32_GPDMA_CCR_LAP_MEM                      |
-           STM32_GPDMA_CCR_TOIE                         |
-           STM32_GPDMA_CCR_USEIE                        |
-           STM32_GPDMA_CCR_ULEIE                        |
-           STM32_GPDMA_CCR_DTEIE                        |
-           STM32_GPDMA_CCR_TCIE;
+  dmaccr = STM32_DMA3_CCR_PRIO((uint32_t)adcp->dprio)   |
+           STM32_DMA3_CCR_LAP_MEM                       |
+           STM32_DMA3_CCR_TOIE                          |
+           STM32_DMA3_CCR_USEIE                         |
+           STM32_DMA3_CCR_ULEIE                         |
+           STM32_DMA3_CCR_DTEIE                         |
+           STM32_DMA3_CCR_TCIE;
   cfgr    = grpp->cfgr | ADC_CFGR_DMAEN;
   if (grpp->circular) {
 #if STM32_ADC_DUAL_MODE
@@ -770,13 +770,13 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif
     /* It is a circular operation, using the linking mechanism to reload
        source/destination pointers.*/
-    dmallr = STM32_GPDMA_CLLR_UDA | (((uint32_t)&adcp->dbuf->cdar) & 0xFFFFU);
+    dmallr = STM32_DMA3_CLLR_UDA | (((uint32_t)&adcp->dbuf->cdar) & 0xFFFFU);
     adcp->dbuf->cdar = (uint32_t)adcp->samples;
 
     if (adcp->depth > 1U) {
       /* If circular buffer depth > 1, then the half transfer interrupt
          is enabled in order to allow streaming processing.*/
-      dmaccr |= STM32_GPDMA_CCR_HTIE;
+      dmaccr |= STM32_DMA3_CCR_HTIE;
     }
   }
   else {
@@ -784,27 +784,27 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   }
 
   /* DMA setup.*/
-  gpdmaChannelSetDestination(adcp->dmachp, adcp->samples);
+  dma3ChannelSetDestination(adcp->dmachp, adcp->samples);
 #if STM32_ADC_DUAL_MODE
-  gpdmaChannelSetSource(adcp->dmachp, &adcp->adcc->CDR);
-  gpdmaChannelSetTransactionSize(adcp->dmachp, (((uint32_t)grpp->num_channels / 2) *
+  dma3ChannelSetSource(adcp->dmachp, &adcp->adcc->CDR);
+  dma3ChannelSetTransactionSize(adcp->dmachp, (((uint32_t)grpp->num_channels / 2) *
                                                 (uint32_t)adcp->depth) * ADC_SAMPLE_MULTIPLIER);
 #else
-  gpdmaChannelSetSource(adcp->dmachp, &adcp->adcm->DR);
-  gpdmaChannelSetTransactionSize(adcp->dmachp, ((uint32_t)grpp->num_channels *
+  dma3ChannelSetSource(adcp->dmachp, &adcp->adcm->DR);
+  dma3ChannelSetTransactionSize(adcp->dmachp, ((uint32_t)grpp->num_channels *
                                                 (uint32_t)adcp->depth) * ADC_SAMPLE_MULTIPLIER);
 #endif
-  gpdmaChannelSetMode(adcp->dmachp,
+  dma3ChannelSetMode(adcp->dmachp,
                       dmaccr,
                       (adcp->config->dmactr1                        |
-                       STM32_GPDMA_CTR1_DAP_MEM                     |
-                       STM32_GPDMA_CTR1_DINC                        |
-                       STM32_GPDMA_CTR1_SAP_PER                     |
-                       ADC_GPDMA_CTR1_SIZE),
+                       STM32_DMA3_CTR1_DAP_MEM                      |
+                       STM32_DMA3_CTR1_DINC                         |
+                       STM32_DMA3_CTR1_SAP_PER                      |
+                       ADC_DMA3_CTR1_SIZE),
                       (adcp->config->dmactr2                        |
-                       STM32_GPDMA_CTR2_REQSEL(adcp->dreq)),
+                       STM32_DMA3_CTR2_REQSEL(adcp->dreq)),
                        dmallr);
-  gpdmaChannelEnable(adcp->dmachp);
+  dma3ChannelEnable(adcp->dmachp);
 
   /* ADC setup, if it is defined a callback for the analog watch dog then it
      is enabled.*/
@@ -867,7 +867,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
  */
 void adc_lld_stop_conversion(ADCDriver *adcp) {
 
-  gpdmaChannelDisable(adcp->dmachp);
+  dma3ChannelDisable(adcp->dmachp);
   adc_lld_stop_adc(adcp);
 }
 

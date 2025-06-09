@@ -386,131 +386,131 @@
 #endif
 
 /* Check on the presence of the GPDMA channels settings in mcuconf.h.*/
-#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_GPDMA_CHANNEL) ||     \
-                           !defined(STM32_SPI_SPI1_TX_GPDMA_CHANNEL))
+#if STM32_SPI_USE_SPI1 && (!defined(STM32_SPI_SPI1_RX_DMA3_CHANNEL) ||     \
+                           !defined(STM32_SPI_SPI1_TX_DMA3_CHANNEL))
 #error "SPI1 GPDMA channels not defined"
 #endif
 
-#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_GPDMA_CHANNEL) ||     \
-                           !defined(STM32_SPI_SPI2_TX_GPDMA_CHANNEL))
+#if STM32_SPI_USE_SPI2 && (!defined(STM32_SPI_SPI2_RX_DMA3_CHANNEL) ||     \
+                           !defined(STM32_SPI_SPI2_TX_DMA3_CHANNEL))
 #error "SPI2 GPDMA channels not defined"
 #endif
 
-#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_GPDMA_CHANNEL) ||     \
-                           !defined(STM32_SPI_SPI3_TX_GPDMA_CHANNEL))
+#if STM32_SPI_USE_SPI3 && (!defined(STM32_SPI_SPI3_RX_DMA3_CHANNEL) ||     \
+                           !defined(STM32_SPI_SPI3_TX_DMA3_CHANNEL))
 #error "SPI3 GPDMA channels not defined"
 #endif
 
-#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_GPDMA_CHANNEL) ||     \
-                           !defined(STM32_SPI_SPI4_TX_GPDMA_CHANNEL))
+#if STM32_SPI_USE_SPI4 && (!defined(STM32_SPI_SPI4_RX_DMA3_CHANNEL) ||     \
+                           !defined(STM32_SPI_SPI4_TX_DMA3_CHANNEL))
 #error "SPI4 GPDMA channels not defined"
 #endif
 
-#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_GPDMA_CHANNEL) ||     \
-                           !defined(STM32_SPI_SPI5_TX_GPDMA_CHANNEL))
+#if STM32_SPI_USE_SPI5 && (!defined(STM32_SPI_SPI5_RX_DMA3_CHANNEL) ||     \
+                           !defined(STM32_SPI_SPI5_TX_DMA3_CHANNEL))
 #error "SPI5 GPDMA channels not defined"
 #endif
 
-#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_GPDMA_CHANNEL) ||     \
-                           !defined(STM32_SPI_SPI6_TX_GPDMA_CHANNEL))
+#if STM32_SPI_USE_SPI6 && (!defined(STM32_SPI_SPI6_RX_DMA3_CHANNEL) ||     \
+                           !defined(STM32_SPI_SPI6_TX_DMA3_CHANNEL))
 #error "SPI6 GPDMA channels not defined"
 #endif
 
 /* Check on the validity of the assigned GPDMA channels.*/
 #if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI1_RX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI1_RX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI1 RX"
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI1_TX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI1_TX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI1 TX"
 #endif
 
 #if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI2_RX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI2_RX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI2 RX"
 #endif
 
 #if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI2_TX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI2_TX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI2 TX"
 #endif
 
 #if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI3_RX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI3_RX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI3 RX"
 #endif
 
 #if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI3_TX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI3_TX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI3 TX"
 #endif
 
 #if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI4_RX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI4_RX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI4 RX"
 #endif
 
 #if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI4_TX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI4_TX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI4 TX"
 #endif
 
 #if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI5_RX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI5_RX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI5 RX"
 #endif
 
 #if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI5_TX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI5_TX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI5 TX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI6_RX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI6_RX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI6 RX"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_GPDMA_ARE_VALID_CHANNELS(STM32_SPI_SPI6_TX_GPDMA_CHANNEL)
+    !STM32_DMA3_ARE_VALID_CHANNELS(STM32_SPI_SPI6_TX_DMA3_CHANNEL)
 #error "Invalid GPDMA channel assigned to SPI6 TX"
 #endif
 
 #if STM32_SPI_USE_SPI1 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI1_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_SPI_SPI1_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI1"
 #endif
 
 #if STM32_SPI_USE_SPI2 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI2_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_SPI_SPI2_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI2"
 #endif
 
 #if STM32_SPI_USE_SPI3 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI3_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_SPI_SPI3_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI3"
 #endif
 
 #if STM32_SPI_USE_SPI4 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI4_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_SPI_SPI4_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI4"
 #endif
 
 #if STM32_SPI_USE_SPI5 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI5_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_SPI_SPI5_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI5"
 #endif
 
 #if STM32_SPI_USE_SPI6 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_SPI_SPI6_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_SPI_SPI6_DMA_PRIORITY)
 #error "Invalid GPDMA priority assigned to SPI6"
 #endif
 
 #if STM32_SPI_USE_SPI1 || STM32_SPI_USE_SPI2 || STM32_SPI_USE_SPI3 ||       \
     STM32_SPI_USE_SPI4 || STM32_SPI_USE_SPI5 || STM32_SPI_USE_SPI6
-#if !defined(STM32_GPDMA_REQUIRED)
-#define STM32_GPDMA_REQUIRED
+#if !defined(STM32_DMA3_REQUIRED)
+#define STM32_DMA3_REQUIRED
 #endif
 #endif
 
@@ -554,9 +554,9 @@ typedef struct spi_dmabuf {
   /* Pointer to the SPIx registers block.*/                                 \
   SPI_TypeDef                       *spi;                                   \
   /* Receive GPDMA channel.*/                                               \
-  const stm32_gpdma_channel_t       *dmarx;                                 \
+  const stm32_dma3_channel_t        *dmarx;                                 \
   /* Transmit GPDMA channel.*/                                              \
-  const stm32_gpdma_channel_t       *dmatx;                                 \
+  const stm32_dma3_channel_t        *dmatx;                                 \
   /* DMA BNDT shift value.*/                                                \
   uint8_t                           dnshift;                                \
   /* DMA request line for RX.*/                                             \

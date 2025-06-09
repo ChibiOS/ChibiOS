@@ -432,40 +432,40 @@
 
 /* DMA priority tests.*/
 #if STM32_ADC_USE_ADC1 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_ADC_ADC1_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC1"
 #endif
 
 #if STM32_ADC_USE_ADC2 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_ADC_ADC2_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC2"
 #endif
 
 #if STM32_ADC_USE_ADC3 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_ADC_ADC3_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC3"
 #endif
 
 #if STM32_ADC_USE_ADC4 &&                                                   \
-    !STM32_GPDMA_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
+    !STM32_DMA3_IS_VALID_PRIORITY(STM32_ADC_ADC4_DMA_PRIORITY)
 #error "Invalid DMA priority assigned to ADC4"
 #endif
 
-/* Check on the presence of the DMA streams settings in mcuconf.h.*/
-#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_GPDMA_CHANNEL)
-#error "ADC1 DMA stream not defined"
+/* Check on the presence of the DMA channels settings in mcuconf.h.*/
+#if STM32_ADC_USE_ADC1 && !defined(STM32_ADC_ADC1_DMA3_CHANNEL)
+#error "ADC1 DMA channel not defined"
 #endif
 
-#if STM32_ADC_USE_ADC2 && !defined(STM32_ADC_ADC2_GPDMA_CHANNEL)
-#error "ADC2 DMA stream not defined"
+#if STM32_ADC_USE_ADC2 && !defined(STM32_ADC_ADC2_DMA3_CHANNEL)
+#error "ADC2 DMA channel not defined"
 #endif
 
-#if STM32_ADC_USE_ADC3 && !defined(STM32_ADC_ADC3_GPDMA_CHANNEL)
-#error "ADC3 DMA stream not defined"
+#if STM32_ADC_USE_ADC3 && !defined(STM32_ADC_ADC3_DMA3_CHANNEL)
+#error "ADC3 DMA channel not defined"
 #endif
 
-#if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_GPDMA_CHANNEL)
-#error "ADC4 DMA stream not defined"
+#if STM32_ADC_USE_ADC4 && !defined(STM32_ADC_ADC4_DMA3_CHANNEL)
+#error "ADC4 DMA channel not defined"
 #endif
 
 /* ADC clock prescaler checks.*/
@@ -513,8 +513,8 @@
 #endif
 #endif /* defined(STM32H5XX) */
 
-#if !defined(STM32_GPDMA_REQUIRED)
-#define STM32_GPDMA_REQUIRED
+#if !defined(STM32_DMA3_REQUIRED)
+#define STM32_DMA3_REQUIRED
 #endif
 
 /*===========================================================================*/
@@ -566,7 +566,7 @@ typedef struct adc_dmabuf {
    /* Pointer to the common ADCx_y registers block.*/                       \
   ADC_Common_TypeDef                *adcc;                                  \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_gpdma_channel_t       *dmastp;                                \
+  const stm32_dma3_channel_t        *dmastp;                                \
   /* DMA priority.*/                                                        \
   uint8_t                           dprio;                                  \
   /* DMA request line.*/                                                    \
@@ -580,7 +580,7 @@ typedef struct adc_dmabuf {
   /* Pointer to the slave ADCx registers block.*/                           \
   ADC_Common_TypeDef                *adcc;                                  \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_gpdma_channel_t       *dmachp;                                \
+  const stm32_dma3_channel_t        *dmachp;                                \
   /* DMA priority.*/                                                        \
   uint8_t                           dprio;                                  \
   /* DMA request line.*/                                                    \

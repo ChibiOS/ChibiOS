@@ -419,36 +419,36 @@
 #endif
 
 /* Check on the presence of the DMA channel settings in mcuconf.h.*/
-#if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_GPDMA_CHANNEL)
-#error "DAC1 STM32_DAC_DAC1_CH1_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC1_CH1 && !defined(STM32_DAC_DAC1_CH1_DMA3_CHANNEL)
+#error "DAC1 STM32_DAC_DAC1_CH1_DMA3_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC1_CH2 && !defined(STM32_DAC_DAC1_CH2_GPDMA_CHANNEL)
-#error "STM32_DAC_DAC1_CH2_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC1_CH2 && !defined(STM32_DAC_DAC1_CH2_DMA3_CHANNEL)
+#error "STM32_DAC_DAC1_CH2_DMA3_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC_DAC2_CH1_GPDMA_CHANNEL)
-#error "STM32_DAC_DAC2_CH1_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC2_CH1 && !defined(STM32_DAC_DAC2_CH1_DMA3_CHANNEL)
+#error "STM32_DAC_DAC2_CH1_DMA3_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC_DAC2_CH2_GPDMA_CHANNEL)
-#error "STM32_DAC_DAC2_CH2_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC2_CH2 && !defined(STM32_DAC_DAC2_CH2_DMA3_CHANNEL)
+#error "STM32_DAC_DAC2_CH2_DMA3_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC3_CH1 && !defined(STM32_DAC_DAC3_CH1_GPDMA_CHANNEL)
-#error "STM32_DAC_DAC3_CH1_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC3_CH1 && !defined(STM32_DAC_DAC3_CH1_DMA3_CHANNEL)
+#error "STM32_DAC_DAC3_CH1_DMA3_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC3_CH2 && !defined(STM32_DAC_DAC3_CH2_GPDMA_CHANNEL)
-#error "STM32_DAC_DAC3_CH2_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC3_CH2 && !defined(STM32_DAC_DAC3_CH2_DMA3_CHANNEL)
+#error "STM32_DAC_DAC3_CH2_DMA3_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC4_CH1 && !defined(STM32_DAC_DAC4_CH1_GPDMA_CHANNEL)
-#error "STM32_DAC_DAC4_CH1_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC4_CH1 && !defined(STM32_DAC_DAC4_CH1_DMA3_CHANNEL)
+#error "STM32_DAC_DAC4_CH1_DMA3_CHANNEL not defined"
 #endif
 
-#if STM32_DAC_USE_DAC4_CH2 && !defined(STM32_DAC_DAC4_CH2_GPDMA_CHANNEL)
-#error "DSTM32_DAC_DAC4_CH2_GPDMA_CHANNEL not defined"
+#if STM32_DAC_USE_DAC4_CH2 && !defined(STM32_DAC_DAC4_CH2_DMA3_CHANNEL)
+#error "DSTM32_DAC_DAC4_CH2_DMA3_CHANNEL not defined"
 #endif
 
 #if STM32_DAC_USE_DAC1_CH1 &&                                               \
@@ -491,8 +491,8 @@
 #error "Invalid DMA priority assigned to DAC4 CH2"
 #endif
 
-#if !defined(STM32_GPDMA_REQUIRED)
-#define STM32_GPDMA_REQUIRED
+#if !defined(STM32_DMA3_REQUIRED)
+#define STM32_DMA3_REQUIRED
 #endif
 
 /**
@@ -598,7 +598,7 @@ typedef enum {
   /* DAC channel parameters.*/                                              \
   const dacparams_t                 *params;                                \
   /* Pointer to associated DMA.*/                                           \
-  const stm32_gpdma_channel_t       *dmachp;                                \
+  const stm32_dma3_channel_t        *dmachp;                                \
   /* DMA buffers.*/                                                         \
   dac_dmabuf_t                      *dbuf
 
