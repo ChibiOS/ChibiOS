@@ -566,7 +566,7 @@ typedef struct adc_dmabuf {
    /* Pointer to the common ADCx_y registers block.*/                       \
   ADC_Common_TypeDef                *adcc;                                  \
   /* Pointer to associated DMA channel.*/                                   \
-  const stm32_dma3_channel_t        *dmastp;                                \
+  const stm32_dma3_channel_t        *dmachp;                                \
   /* DMA priority.*/                                                        \
   uint8_t                           dprio;                                  \
   /* DMA request line.*/                                                    \
