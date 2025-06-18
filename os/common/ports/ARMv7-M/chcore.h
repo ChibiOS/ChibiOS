@@ -223,7 +223,7 @@
  *          @p PORT_MPU_RBARx_INIT and @p PORT_MPU_RASRx_INIT settings.
  */
 #if !defined(PORT_MPU_INITIALIZE) || defined(__DOXYGEN__)
-#define PORT_MPU_INITIALIZE             TRUE
+#define PORT_MPU_INITIALIZE             FALSE
 #endif
 
 /**
