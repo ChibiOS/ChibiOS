@@ -112,7 +112,7 @@ const halclkcfg_t hal_clkcfg_default = {
 #endif
                         ,
   .rcc_cfgr             = STM32_MCOPRE  | STM32_MCOSEL  |
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+#if STM32_RCC_HAS_MCO2 == TRUE
                           STM32_MCO2PRE | STM32_MCO2SEL |
 #endif
                           STM32_PPRE    | STM32_HPRE    |
@@ -149,7 +149,9 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_PCLK]        = STM32_PCLK,
   [CLK_PCLKTIM]     = STM32_TIMPCLK,
   [CLK_MCO]         = STM32_MCOCLK,
+#if STM32_RCC_HAS_MCO2 == TRUE
   [CLK_MCO2]        = STM32_MCO2CLK,
+#endif
 };
 
 /**
@@ -285,11 +287,12 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 
   /* Clock-related settings (dividers, MCO etc).*/
-#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+#if STM32_RCC_HAS_MCO2 == TRUE
   RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_MCO2PRE | STM32_MCO2SEL |
-              STM32_PPRE | STM32_HPRE;
+              STM32_PPRE   | STM32_HPRE;
 #else
-  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE | STM32_HPRE;
+  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL |
+              STM32_PPRE   | STM32_HPRE;
 #endif
 
   /* Set HSISYS divisor.*/
@@ -335,7 +338,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   const system_limits_t *slp;
   halfreq_t hsi16clk = 0U, hseclk = 0U, pllselclk, hsisysclk;
   halfreq_t pllpclk = 0U, pllqclk = 0U, pllrclk = 0U;
-  halfreq_t sysclk, hclk, pclk, pclktim, mcoclk, mco2clk;
+  halfreq_t sysclk, hclk, pclk, pclktim, mcoclk;
+#if STM32_RCC_HAS_MCO2 == TRUE
+  halfreq_t mco2clk;
+#endif
   uint32_t mcodiv, flashws, hsidiv;
 
   /* System limits based on desired VOS settings.*/
@@ -487,6 +493,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case STM32_MCOSEL_LSE:
     mcoclk = STM32_LSECLK;
     break;
+#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
   case STM32_MCOSEL_PLLPCLK:
     mcoclk = pllpclk;
     break;
@@ -496,6 +503,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case STM32_MCOSEL_RTCCLK:
     mcoclk = STM32_RTCCLK;
     break;
+#endif
   default:
     mcoclk = 0U;
   }
@@ -509,6 +517,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
   mcoclk /= mcodiv;
 
+#if STM32_RCC_HAS_MCO2 == TRUE
   /* MCO2 clock.*/
   switch (ccp->rcc_cfgr & RCC_CFGR_MCO2SEL_Msk) {
   case STM32_MCO2SEL_NOCLOCK:
@@ -553,6 +562,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     return true;
   }
   mco2clk /= mcodiv;
+#endif
 
   /* Flash settings.*/
   flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
@@ -573,7 +583,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   clock_points[CLK_PCLK]      = pclk;
   clock_points[CLK_PCLKTIM]   = pclktim;
   clock_points[CLK_MCO]       = mcoclk;
+#if STM32_RCC_HAS_MCO2 == TRUE
   clock_points[CLK_MCO2]      = mco2clk;
+#endif
 
   return false;
 }
