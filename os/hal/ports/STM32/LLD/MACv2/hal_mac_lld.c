@@ -295,7 +295,7 @@ void mac_lld_init(void) {
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
 #if defined(STM32H7XX)
   {
-    uint32_t pmcr = SYSCFG->PMCR & ~SBS_PMCR_ETH_SEL_PHY_Msk;
+    uint32_t pmcr = SYSCFG->PMCR & ~SYSCFG_PMCR_EPIS_SEL_Msk;
 #if defined(BOARD_PHY_RMII)
   pmcr |= SYSCFG_PMCR_EPIS_SEL_2;
 #endif
