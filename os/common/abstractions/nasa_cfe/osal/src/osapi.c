@@ -1840,6 +1840,7 @@ int32 OS_TaskCreate(uint32 *task_id,
     (stkline_t *)((uint8_t *)stack_pointer + stack_size),
     rt_prio,
     (tfunc_t)(void *)function_pointer,
+    NULL,
     NULL
   };
 
