@@ -34,6 +34,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #else
+#include "ccportab.h"
 #include "osal.h"
 #endif
 

@@ -12,6 +12,7 @@
         <include style="angular">stdint.h</include>
         <include style="angular">stdbool.h</include>
         <elseif />
+        <include style="regular">ccportab.h</include>
         <include style="regular">osal.h</include>
       </condition>
     </includes>
