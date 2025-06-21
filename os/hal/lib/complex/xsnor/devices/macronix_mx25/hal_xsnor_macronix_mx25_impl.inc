@@ -655,10 +655,12 @@ flash_error_t __mx25_init_impl(void *ip) {
          confirmation.*/
       switch (self->config->bus_type) {
       case XSNOR_BUS_MODE_SPI:
-        static const uint8_t cr2_spi[1] = {0x00};
-        mx25_write_cr2(self, 0x00000000U, cr2_spi);
-        __xsnor_bus_cmd_receive(self, CMD_SPI_RDID, 3U,
-                                &config->buffers->databuf[16]);
+        {
+          static const uint8_t cr2_spi[1] = {0x00};
+          mx25_write_cr2(self, 0x00000000U, cr2_spi);
+          __xsnor_bus_cmd_receive(self, CMD_SPI_RDID, 3U,
+                                  &config->buffers->databuf[16]);
+        }
         break;
       case XSNOR_BUS_MODE_WSPI_8LINES:
         if ((self->config->options & MX25_OPT_USE_DTR) != 0U) {
