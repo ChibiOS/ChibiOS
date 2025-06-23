@@ -552,6 +552,10 @@
 #error "invalid PORT_FAST_PRIORITIES value specified"
 #endif
 
+/* The following code is not processed when the file is included from an
+   asm module.*/
+#if !defined(_FROM_ASM_)
+
 /**
  * @brief   MPU guard page size.
  */
@@ -566,6 +570,8 @@
 #else
   #define PORT_GUARD_PAGE_SIZE          0U
 #endif
+
+#endif /* !defined(_FROM_ASM_) */
 
 /*===========================================================================*/
 /* Module data structures and types.                                         */
