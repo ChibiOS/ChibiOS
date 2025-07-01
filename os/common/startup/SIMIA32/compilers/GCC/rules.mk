@@ -50,7 +50,7 @@ endif
 OUTFILES = $(BUILDDIR)/$(PROJECT)
 
 # Source files groups and paths
-SRC       = $(CSRC)$(CPPSRC)
+SRC       = $(CSRC) $(CPPSRC)
 SRCPATHS  = $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(SRC)))
 
 # Various directories
