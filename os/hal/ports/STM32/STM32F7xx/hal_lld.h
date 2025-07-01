@@ -166,8 +166,10 @@
 
 /**
  * @brief   Minimum PLLs VCO clock frequency.
+ * @note    This value is specified at 192MHz in the DS and 100MHz in the RM,
+ *          using the least restrictive one.
  */
-#define STM32_PLLVCO_MIN        192000000
+#define STM32_PLLVCO_MIN        100000000
 
 /**
  * @brief   Maximum PLL output clock frequency.
