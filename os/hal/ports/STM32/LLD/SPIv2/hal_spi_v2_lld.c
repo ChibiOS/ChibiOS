@@ -165,8 +165,7 @@ static void spi_lld_disable(SPIDriver *spip) {
     }
 
     /* Clearing SPE and the rest.*/
-    spip->spi->CR1 = 0U;
-    spip->spi->CR2 = 0U;
+    spip->spi->CR1 &= ~SPI_CR1_SPE;
 
     /* Now it is idle, stopping RX DMA channel.*/
     dmaStreamDisable(spip->dmarx);
