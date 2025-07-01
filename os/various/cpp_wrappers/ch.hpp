@@ -1408,7 +1408,7 @@ namespace chibios_rt {
      * @retval MSG_OK       if the binary semaphore has been successfully
      *                      taken.
      * @retval MSG_RESET    if the binary semaphore has been reset using
-     *                      @p bsemReset().
+     *                      @p chBSemReset().
      * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled
      *                      or reset within the specified timeout.
      *
@@ -1800,7 +1800,7 @@ namespace chibios_rt {
      * @retval MSG_OK       if the binary semaphore has been successfully
      *                      taken.
      * @retval MSG_RESET    if the binary semaphore has been reset using
-     *                      @p bsemReset().
+     *                      @p chBSemReset().
      *
      * @api
      */
@@ -1817,7 +1817,7 @@ namespace chibios_rt {
      * @retval MSG_OK       if the binary semaphore has been successfully
      *                      taken.
      * @retval MSG_RESET    if the binary semaphore has been reset using
-     *                      @p bsemReset().
+     *                      @p chBSemReset().
      *
      * @sclass
      */
@@ -1839,7 +1839,7 @@ namespace chibios_rt {
      * @retval MSG_OK       if the binary semaphore has been successfully
      *                      taken.
      * @retval MSG_RESET    if the binary semaphore has been reset using
-     *                      @p bsemReset().
+     *                      @p chBSemReset().
      * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled
      *                      or reset within the specified timeout.
      *
@@ -1863,7 +1863,7 @@ namespace chibios_rt {
      * @retval MSG_OK       if the binary semaphore has been successfully
      *                      taken.
      * @retval MSG_RESET    if the binary semaphore has been reset using
-     *                      @p bsemReset().
+     *                      @p chBSemReset().
      * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled
      *                      or reset within the specified timeout.
      *
@@ -1877,7 +1877,7 @@ namespace chibios_rt {
     /**
      * @brief   Reset operation on the binary semaphore.
      * @note    The released threads can recognize they were waked up by a
-     *          reset rather than a signal because the @p bsemWait() will
+     *          reset rather than a signal because the @p chBSemWait() will
      *          return @p MSG_RESET instead of @p MSG_OK.
      *
      * @param[in] taken     new state of the binary semaphore
@@ -1895,7 +1895,7 @@ namespace chibios_rt {
     /**
      * @brief   Reset operation on the binary semaphore.
      * @note    The released threads can recognize they were waked up by a
-     *          reset rather than a signal because the @p bsemWait() will
+     *          reset rather than a signal because the @p chBSemWait() will
      *          return @p MSG_RESET instead of @p MSG_OK.
      * @note    This function does not reschedule.
      *

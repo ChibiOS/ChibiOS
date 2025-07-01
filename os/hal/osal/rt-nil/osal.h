@@ -1026,7 +1026,7 @@ static inline void osalEventSetCallback(event_source_t *esp,
 #endif
 
 /**
- * @brief   Initializes s @p mutex_t object.
+ * @brief   Initializes a @p mutex_t object.
  *
  * @param[out] mp       pointer to the @p mutex_t object
  *
