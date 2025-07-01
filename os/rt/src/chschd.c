@@ -296,7 +296,7 @@ thread_t *chSchReadyI(thread_t *tp) {
 /**
  * @brief   Puts the current thread to sleep into the specified state.
  * @details The thread goes into a sleeping state. The possible
- *          @ref thread_states are defined into @p threads.h.
+ *          @ref thread_states are defined into @p chschd.h.
  *
  * @param[in] newstate  the new thread state
  *
@@ -341,7 +341,7 @@ void chSchGoSleepS(tstate_t newstate) {
  * @details The thread goes into a sleeping state, if it is not awakened
  *          explicitly within the specified timeout then it is forcibly
  *          awakened with a @p MSG_TIMEOUT low level message. The possible
- *          @ref thread_states are defined into @p threads.h.
+ *          @ref thread_states are defined into @p chschd.h.
  *
  * @param[in] newstate  the new thread state
  * @param[in] timeout   the number of ticks before the operation timeouts, the
