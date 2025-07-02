@@ -415,7 +415,9 @@ thread_t *chThdAddRef(thread_t *tp) {
  *          returned to the proper allocator and the thread is removed
  *          from the registry.<br>
  *          Threads whose counter reaches zero and are still active become
- *          "detached" and will be removed from registry on termination.
+ *          "detached". Detached static threads will be removed from the
+ *          registry on termination. Detached non-static threads can only be
+ *          removed by performing a registry scan operation.
  * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
  *          order to use this function.
  * @note    Static threads are not affected.
