@@ -544,7 +544,7 @@ void chThdExitS(msg_t msg) {
  * @details This function waits for the specified thread to terminate then
  *          decrements its reference counter, if the counter reaches zero then
  *          the thread working area is returned to the proper allocator and
- *          the thread is removed from registry.
+ *          the thread is removed from the registry.
  * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
  *          order to use this function.
  * @post    Enabling @p chThdWait() requires 2-4 (depending on the
