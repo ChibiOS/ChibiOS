@@ -79,7 +79,7 @@ void _sim_check_for_interrupts(void) {
   bool int_occurred = false;
 
 #if HAL_USE_SERIAL
-  if (sd_lld_interrupt_pending()) {
+  while (sd_lld_interrupt_pending()) {
     int_occurred = true;
   }
 #endif
