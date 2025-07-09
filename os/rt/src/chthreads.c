@@ -420,7 +420,7 @@ thread_t *chThdAddRef(thread_t *tp) {
  *          removed by performing a registry scan operation.
  * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
  *          order to use this function.
- * @note    Static threads are not affected.
+ * @note    Static threads are not affected, only removed from the registry.
  *
  * @param[in] tp        pointer to the thread
  *
