@@ -90,6 +90,7 @@ static THD_WORKING_AREA(can_tx_wa, 512);
 static THD_FUNCTION(can_tx, p) {
 
   CANTxFrame txmsg1;
+  CANTxFrame txmsg2;
 
   (void)p;
   chRegSetThreadName("transmitter");
@@ -104,9 +105,20 @@ static THD_FUNCTION(can_tx, p) {
   txmsg1.data32[0] = 0x55AA55AA;
   txmsg1.data32[1] = 0x00FF00FF;
 
+  txmsg2.ext.EID = 0x3210;
+  txmsg2.common.XTD = 1;  /* Extended ID. */
+  txmsg2.DLC = FDCAN_8BYTES_TO_DLC;
+#if defined USE_CAN_PROTOCOL
+  txmsg2.FDF = 0;         /* CAN frame format. */
+#else
+  txmsg2.FDF = 1;         /* FDCAN frame format. */
+#endif
+  txmsg2.data32[0] = 0xBB11BB11;
+  txmsg2.data32[1] = 0x22DD22DD;
+
   while (true) {
     canTransmit(&CAND1, CAN_ANY_MAILBOX, &txmsg1, TIME_IMMEDIATE);
-    canTransmit(&CAND2, CAN_ANY_MAILBOX, &txmsg1, TIME_IMMEDIATE);
+    canTransmit(&CAND2, CAN_ANY_MAILBOX, &txmsg2, TIME_IMMEDIATE);
     chThdSleepMilliseconds(500);
   }
 }

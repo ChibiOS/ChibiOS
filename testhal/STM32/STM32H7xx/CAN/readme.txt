@@ -1,27 +1,23 @@
 *****************************************************************************
-** ChibiOS/HAL - CAN driver demo for STM32G4xx.                            **
+** ChibiOS/HAL - CAN driver demo for STM32H7xx.                            **
 *****************************************************************************
 
 ** TARGET **
 
-The demo runs on an ST STM32G474-Nucleo board.
+The demo runs on an ST STM32H750-Discovery board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32G4xx CAN driver.
+The application demonstrates the use of the STM32H7xx CAN driver.
 
 
 ** Board Setup **
 
-External LED PA8 - On board CN9 - D7
+Close jumper JP7 and JP8 to use resistor 120ohm.
 
-Connect PA11 - CN10-14 (CAN1-RX) to pin RX of first interface protocol controller MCP2551.
-Connect PA12 - CN10-12 (CAN1-TX) to pin TX of first interface protocol controller MCP2551.
+Connect CN11-1 (CAN1-H) to CN10-1 (CAN2-H).
+Connect CN11-2 (CAN1-L) to CN10-2 (CAN2-L).
 
-Connect PB5 - CN10-29 (CAN2-RX) to pin RX of second interface protocol controller MCP2551.
-Connect PB6 - CN10-17 (CAN2-TX) to pin TX of second interface protocol controller MCP2551.
-
-Connect CAN-H and CAN-L of the two MCP2551 to create bus CAN.
 
 ** Build Procedure **
 
