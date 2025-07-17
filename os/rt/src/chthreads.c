@@ -202,7 +202,10 @@ void chThdObjectDispose(thread_t *tp) {
   chDbgCheck(tp != NULL);
 
 #if CH_CFG_USE_WAITEXIT == TRUE
-  chDbgAssert(ch_queue_isempty(&tp->msgqueue), "wait queue in use");
+  chDbgAssert(ch_list_isempty(&tp->waiting), "waiting list in use");
+#endif
+#if CH_CFG_USE_MESSAGES == TRUE
+  chDbgAssert(ch_queue_isempty(&tp->msgqueue), "messages queue in use");
 #endif
 #if CH_CFG_USE_REGISTRY == TRUE
   chDbgAssert(tp->refs == (trefs_t)0, "still references");
