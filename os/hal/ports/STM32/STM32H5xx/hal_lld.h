@@ -1814,13 +1814,13 @@
 #if STM32_HSI_ENABLED
 #else /* !STM32_HSI_ENABLED */
 
-  #if STM32_ACTIVATE_PLL1 && (STM32_PLL1SRC == STM32_PLL1SRC_HSI))
+  #if STM32_ACTIVATE_PLL1 && (STM32_PLL1SRC == STM32_PLL1SRC_HSI)
     #error "HSI not enabled, required by STM32_PLL1SRC"
   #endif
-  #if STM32_ACTIVATE_PLL2 && (STM32_PLL1SRC == STM32_PLL2SRC_HSI))
+  #if STM32_ACTIVATE_PLL2 && (STM32_PLL1SRC == STM32_PLL2SRC_HSI)
     #error "HSI not enabled, required by STM32_PLL2SRC"
   #endif
-  #if STM32_ACTIVATE_PLL3 && (STM32_PLL1SRC == STM32_PLL3SRC_HSI))
+  #if STM32_ACTIVATE_PLL3 && (STM32_PLL1SRC == STM32_PLL3SRC_HSI)
     #error "HSI not enabled, required by STM32_PLL3SRC"
   #endif
 
@@ -1903,7 +1903,7 @@
     #error "HSI not enabled, required by STM32_ADCDACSEL"
   #endif
 
-  #if STM32_PERSEL == STM32_PERSEL_HSI
+  #if STM32_CKPERSEL == STM32_CKPERSEL_HSI
     #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_PER)
       #error "HSI not enabled, required by STM32_LPTIM1SEL"
     #endif
