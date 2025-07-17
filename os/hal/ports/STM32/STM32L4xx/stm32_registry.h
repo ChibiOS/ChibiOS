@@ -1460,6 +1460,7 @@
 #define STM32_ADC3_DMA_CHN                  0x00000000
 
 #define STM32_HAS_ADC4                      FALSE
+#define STM32_HAS_ADC5                      FALSE
 
 /* CAN attributes.*/
 #define STM32_CAN_MAX_FILTERS               28
