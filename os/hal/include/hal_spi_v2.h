@@ -378,7 +378,7 @@ do {                                                                        \
  */
 #define __spi_wakeup_isr(spip, msg) {                                       \
   osalSysLockFromISR();                                                     \
-  osalThreadResumeI(&(spip)->sync_transfer, MSG_OK);                        \
+  osalThreadResumeI(&(spip)->sync_transfer, msg);                           \
   osalSysUnlockFromISR();                                                   \
 }
 #else /* !SPI_USE_SYNCHRONIZATION */
