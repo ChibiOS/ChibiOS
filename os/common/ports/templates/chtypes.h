@@ -70,6 +70,8 @@ typedef uint32_t            port_syssts_t;
  *          the implementation choice is to not offer the option.
  */
 typedef uint64_t            port_stkline_t;
+typedef uint64_t            port_stkalign_t; /* Alternative name.*/
+
 /** @} */
 
 /**

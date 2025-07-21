@@ -14,18 +14,12 @@
     limitations under the License.
 */
 
-/**
- * @file    RP2040/hal_lld.c
- * @brief   RP2040 HAL subsystem low level driver source.
- *
- * @addtogroup HAL
- * @{
+/*
+ * This file has been automatically generated using ChibiStudio board
+ * generator plugin. Do not edit manually.
  */
 
 #include "hal.h"
-
-#include <stdio.h>
-#include "pico/stdlib.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -35,12 +29,6 @@
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
-/**
- * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_rp2040.h.
- */
-uint32_t SystemCoreClock;
-
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -48,44 +36,6 @@ uint32_t SystemCoreClock;
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
-
-#if RP_CORE1_START == TRUE
-/* Courtesy of Pico-SDK.*/
-static void start_core1(void) {
-  extern uint32_t RP_CORE1_STACK_END;
-  extern uint32_t RP_CORE1_VECTORS_TABLE;
-  extern void RP_CORE1_ENTRY_POINT(void);
-  static const uint32_t cmd_sequence[] = {0, 0, 1,
-                             (uint32_t)&RP_CORE1_VECTORS_TABLE,
-                             (uint32_t)&RP_CORE1_STACK_END,
-                             (uint32_t)RP_CORE1_ENTRY_POINT};
-  unsigned seq;
-
-#if 0
-  /* Resetting core1.*/
-  PSM_SET->FRCE_OFF = PSM_ANY_PROC1;
-  while ((PSM->FRCE_OFF & PSM_ANY_PROC1) == 0U) {
-  }
-  PSM_CLR->FRCE_OFF = PSM_ANY_PROC1;
-#endif
-
-  /* Starting core 1.*/
-  seq = 0;
-  do {
-    uint32_t response;
-    uint32_t cmd = cmd_sequence[seq];
-
-    /* Flushing the FIFO state before sending a zero.*/
-    if (!cmd) {
-      fifoFlushRead();
-    }
-    fifoBlockingWrite(cmd);
-    response = fifoBlockingRead();
-    /* Checking response, going forward or back to first step.*/
-    seq = cmd == response ? seq + 1U : 0U;
-  } while (seq < count_of(cmd_sequence));
-}
-#endif
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -96,34 +46,63 @@ static void start_core1(void) {
 /*===========================================================================*/
 
 /**
- * @brief   Low level HAL driver initialization.
- *
- * @notapi
+ * @brief   Early initialization code.
+ * @details GPIO ports and system clocks are initialized before everything
+ *          else.
  */
-void hal_lld_init(void) {
+void __early_init(void) {
 
-#if RP_NO_INIT == FALSE
-  //clocks_init(); //sdk1
-  //runtime_init_clocks();//no worky? missing includes.?
-  //stdio_init_all(); //init all the pico-sdk.
-  runtime_init_clocks();
-
-  SystemCoreClock = RP_CORE_CLK;
-
-  hal_lld_peripheral_unreset(RESETS_ALLREG_BUSCTRL);
-  hal_lld_peripheral_unreset(RESETS_ALLREG_SYSINFO);
-  hal_lld_peripheral_unreset(RESETS_ALLREG_SYSCFG);
-#endif /* RP_NO_INIT */
-
-  /* Common subsystems initialization.*/
-  irqInit();
-#if defined(RP_DMA_REQUIRED)
-  dmaInit();
-#endif
-
-#if RP_CORE1_START == TRUE
-  start_core1();
-#endif
+//  rp_gpio_init();
 }
 
-/** @} */
+#if HAL_USE_SDC || defined(__DOXYGEN__)
+/**
+ * @brief   SDC card detection.
+ */
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  /* CHTODO: Fill the implementation.*/
+  return true;
+}
+
+/**
+ * @brief   SDC card write protection detection.
+ */
+bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
+
+  (void)sdcp;
+  /* CHTODO: Fill the implementation.*/
+  return false;
+}
+#endif /* HAL_USE_SDC */
+
+#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
+/**
+ * @brief   MMC_SPI card detection.
+ */
+bool mmc_lld_is_card_inserted(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  /* CHTODO: Fill the implementation.*/
+  return true;
+}
+
+/**
+ * @brief   MMC_SPI card write protection detection.
+ */
+bool mmc_lld_is_write_protected(MMCDriver *mmcp) {
+
+  (void)mmcp;
+  /* CHTODO: Fill the implementation.*/
+  return false;
+}
+#endif
+
+/**
+ * @brief   Board-specific initialization code.
+ * @note    You can add your board-specific code here.
+ */
+void boardInit(void) {
+
+}

@@ -27,6 +27,9 @@
 #ifndef HAL_ST_LLD_H
 #define HAL_ST_LLD_H
 
+#include "hardware/timer.h" // for timer0_hw
+
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -170,7 +173,7 @@ extern "C" {
  */
 __STATIC_INLINE systime_t st_lld_get_counter(void) {
 
-  return (systime_t)TIMER0->TIMERAWL;
+  return (systime_t)timer0_hw->timerawl;
 }
 
 /**
@@ -184,9 +187,9 @@ __STATIC_INLINE systime_t st_lld_get_counter(void) {
  */
 __STATIC_INLINE void st_lld_start_alarm(systime_t abstime) {
 
-  TIMER0->ALARM[0]       = (uint32_t)abstime;
-  TIMER0->INTR           = (1U << 0);
-  TIMER0->INTE          |= (1U << 0);
+  timer0_hw->alarm[0]       = (uint32_t)abstime;
+  timer0_hw->intr           = (1U << 0);
+  timer0_hw->inte          |= (1U << 0);
 }
 
 /**
@@ -196,7 +199,7 @@ __STATIC_INLINE void st_lld_start_alarm(systime_t abstime) {
  */
 __STATIC_INLINE void st_lld_stop_alarm(void) {
 
-  TIMER0->INTE          &= ~(1U << 0);
+  timer0_hw->inte          &= ~(1U << 0);
 }
 
 /**
@@ -208,7 +211,7 @@ __STATIC_INLINE void st_lld_stop_alarm(void) {
  */
 __STATIC_INLINE void st_lld_set_alarm(systime_t abstime) {
 
-  TIMER0->ALARM[0]       = (uint32_t)abstime;
+  timer0_hw->alarm[0]       = (uint32_t)abstime;
 }
 
 /**
@@ -220,7 +223,7 @@ __STATIC_INLINE void st_lld_set_alarm(systime_t abstime) {
  */
 __STATIC_INLINE systime_t st_lld_get_alarm(void) {
 
-  return (systime_t)TIMER0->ALARM[0];
+  return (systime_t)timer0_hw->alarm[0];
 }
 
 /**
@@ -234,7 +237,7 @@ __STATIC_INLINE systime_t st_lld_get_alarm(void) {
  */
 __STATIC_INLINE bool st_lld_is_alarm_active(void) {
 
-  return (bool)((TIMER0->INTE & (1U << 0)) != 0U);
+  return (bool)((timer0_hw->inte & (1U << 0)) != 0U);
 }
 
 #if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
@@ -252,10 +255,9 @@ __STATIC_INLINE bool st_lld_is_alarm_active(void) {
  */
 __STATIC_INLINE void st_lld_start_alarm_n(unsigned alarm, systime_t abstime) {
 
-
-  TIMER0->ALARM[alarm]   = (uint32_t)abstime;
-  TIMER0->INTR           = (1U << alarm);
-  TIMER0->INTE          |= (1U << alarm);
+  timer0_hw->alarm[alarm]   = (uint32_t)abstime;
+  timer0_hw->intr           = (1U << alarm);
+  timer0_hw->inte          |= (1U << alarm);
 }
 
 /**
@@ -269,7 +271,7 @@ __STATIC_INLINE void st_lld_start_alarm_n(unsigned alarm, systime_t abstime) {
  */
 __STATIC_INLINE void st_lld_stop_alarm_n(unsigned alarm) {
 
-  TIMER0->INTE          &= ~(1U << alarm);
+  timer0_hw->inte          &= ~(1U << alarm);
 }
 
 /**
@@ -284,7 +286,7 @@ __STATIC_INLINE void st_lld_stop_alarm_n(unsigned alarm) {
  */
 __STATIC_INLINE void st_lld_set_alarm_n(unsigned alarm, systime_t abstime) {
 
-  TIMER0->ALARM[alarm]   = (uint32_t)abstime;
+  timer0_hw->alarm[alarm]   = (uint32_t)abstime;
 }
 
 /**
@@ -299,7 +301,7 @@ __STATIC_INLINE void st_lld_set_alarm_n(unsigned alarm, systime_t abstime) {
  */
 __STATIC_INLINE systime_t st_lld_get_alarm_n(unsigned alarm) {
 
-  return (systime_t)TIMER0->ALARM[alarm];
+  return (systime_t)timer0_hw->alarm[alarm];
 }
 
 /**
@@ -314,7 +316,7 @@ __STATIC_INLINE systime_t st_lld_get_alarm_n(unsigned alarm) {
  */
 static inline bool st_lld_is_alarm_active_n(unsigned alarm) {
 
-  return (bool)((TIMER0->INTE & (1U << alarm)) != 0U);
+  return (bool)((timer0_hw->inte & (1U << alarm)) != 0U);
 }
 #endif /* ST_LLD_NUM_ALARMS > 1 */
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */

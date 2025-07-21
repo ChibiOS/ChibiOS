@@ -376,3 +376,82 @@ _crt0_entry:
 #endif /* !defined(__DOXYGEN__) */
 
 /** @} */
+
+#if CRT0_EXTRA_CORES_NUMBER > 0
+                .align  2
+                .thumb_func
+                .global _crt0_c1_entry
+_crt0_c1_entry:
+                /* Interrupts are globally masked initially.*/
+                cpsid   i
+
+#if CRT0_FORCE_MSP_INIT == TRUE
+                /* MSP stack pointers initialization.*/
+                ldr     r0, =__c1_main_stack_end__
+                msr     MSP, r0
+#endif
+
+                /* PSP stack pointers initialization.*/
+                ldr     r0, =__c1_process_stack_end__
+                msr     PSP, r0
+
+                /* CPU mode initialization as configured.*/
+                movs    r0, #CRT0_CONTROL_INIT
+                msr     CONTROL, r0
+                isb
+
+#if CRT0_VTOR_INIT == TRUE
+                ldr     r0, =_vectors
+                ldr     r1, =SCB_VTOR
+                str     r0, [r1]
+#endif
+
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __c1_cpu_init
+#endif
+
+                /* Early initialization..*/
+                bl      __c1_early_init
+
+#if CRT0_INIT_STACKS == TRUE
+                ldr     r0, =CRT0_STACKS_FILL_PATTERN
+                /* Main Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c1_main_stack_base__
+                ldr     r2, =__c1_main_stack_end__
+.Lc1msloop:
+                cmp     r1, r2
+                bge     .Lc1endmsloop
+                str     r0, [r1]
+                adds    r1, #4
+                b       .Lc1msloop
+.Lc1endmsloop:
+                /* Process Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c1_process_stack_base__
+                ldr     r2, =__c1_process_stack_end__
+.Lc1psloop:
+                cmp     r1, r2
+                bge     .Lc1endpsloop
+                str     r0, [r1]
+                adds    r1, #4
+                b       .Lc1psloop
+.Lc1endpsloop:
+#endif
+
+                /* Late initialization..*/
+                bl      __c1_late_init
+
+                /* Main program invocation, r0 contains the returned value.*/
+                bl      c1_main
+
+                /* Branching to the defined exit handler.*/
+                ldr     r1, =__c1_default_exit
+                bx      r1
+
+#elif CRT0_EXTRA_CORES_NUMBER > 1
+#error "unsupported number of extra cores"
+#endif

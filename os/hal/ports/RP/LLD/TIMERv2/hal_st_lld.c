@@ -23,6 +23,8 @@
  */
 
 #include "hal.h"
+#include "hardware/timer.h" // for timer0_hw
+
 
 #if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
 
@@ -58,10 +60,10 @@ typedef struct {
 #if (OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING) || defined(__DOXYGEN__)
 #if (ST_LLD_NUM_ALARMS > 1) || defined(__DOXYGEN__)
 static const alarm_irq_t alarm_irqs[ST_LLD_NUM_ALARMS] = {
-  {RP_TIMER_IRQ0_NUMBER, RP_IRQ_TIMER_ALARM0_PRIORITY},
-  {RP_TIMER_IRQ1_NUMBER, RP_IRQ_TIMER_ALARM1_PRIORITY},
-  {RP_TIMER_IRQ2_NUMBER, RP_IRQ_TIMER_ALARM2_PRIORITY},
-  {RP_TIMER_IRQ3_NUMBER, RP_IRQ_TIMER_ALARM3_PRIORITY}
+  {RP_TIMER0_IRQ_0_NUMBER, RP_IRQ_TIMER0_ALARM0_PRIORITY},
+  {RP_TIMER0_IRQ_1_NUMBER, RP_IRQ_TIMER0_ALARM1_PRIORITY},
+  {RP_TIMER0_IRQ_2_NUMBER, RP_IRQ_TIMER0_ALARM2_PRIORITY},
+  {RP_TIMER0_IRQ_3_NUMBER, RP_IRQ_TIMER0_ALARM3_PRIORITY}
 };
 #endif
 #endif
@@ -101,13 +103,13 @@ OSAL_IRQ_HANDLER(SysTick_Handler) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(RP_TIMER_IRQ0_HANDLER) {
+OSAL_IRQ_HANDLER(RP_TIMER0_IRQ_0_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  osalDbgAssert((TIMER0->INTS & TIMER_INTS_ALARM0) != 0U, "not pending");
+  osalDbgAssert((timer0_hw->ints & TIMER_INTS_ALARM_0_BITS) != 0U, "not pending");
 
-  TIMER0->INTR = TIMER_INTR_ALARM0;
+  timer0_hw->intr = TIMER_INTR_ALARM_0_BITS;
 
 #if defined(ST_LLD_ALARM0_STATIC_CB)
   ST_LLD_ALARM0_STATIC_CB();
@@ -127,13 +129,13 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ0_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(RP_TIMER_IRQ1_HANDLER) {
+OSAL_IRQ_HANDLER(RP_TIMER0_IRQ_1_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  osalDbgAssert((TIMER0->INTS & TIMER_INTS_ALARM1) != 0U, "not pending");
+  osalDbgAssert((timer0_hw->ints & TIMER_INTS_ALARM_1_BITS) != 0U, "not pending");
 
-  TIMER0->INTR = TIMER_INTR_ALARM1;
+  timer0_hw->intr = TIMER_INTR_ALARM_1_BITS;
 
 #if defined(ST_LLD_ALARM1_STATIC_CB)
   ST_LLD_ALARM1_STATIC_CB();
@@ -153,13 +155,13 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ1_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(RP_TIMER_IRQ2_HANDLER) {
+OSAL_IRQ_HANDLER(RP_TIMER0_IRQ_2_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  osalDbgAssert((TIMER0->INTS & TIMER_INTS_ALARM2) != 0U, "not pending");
+  osalDbgAssert((timer0_hw->ints & TIMER_INTS_ALARM_2_BITS) != 0U, "not pending");
 
-  TIMER0->INTR = TIMER_INTR_ALARM2;
+  timer0_hw->intr = TIMER_INTR_ALARM_2_BITS;
 
 #if defined(ST_LLD_ALARM2_STATIC_CB)
   ST_LLD_ALARM2_STATIC_CB();
@@ -179,13 +181,13 @@ OSAL_IRQ_HANDLER(RP_TIMER_IRQ2_HANDLER) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(RP_TIMER_IRQ3_HANDLER) {
+OSAL_IRQ_HANDLER(RP_TIMER0_IRQ_3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  osalDbgAssert((TIMER0->INTS & TIMER_INTS_ALARM3) != 0U, "not pending");
+  osalDbgAssert((timer0_hw->ints & TIMER_INTS_ALARM_3_BITS) != 0U, "not pending");
 
-  TIMER0->INTR = TIMER_INTR_ALARM3;
+  timer0_hw->intr = TIMER_INTR_ALARM_3_BITS;
 
 #if defined(ST_LLD_ALARM3_STATIC_CB)
   ST_LLD_ALARM3_STATIC_CB();
@@ -215,18 +217,18 @@ void st_lld_init(void) {
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
   /* The timer needs to stop during debug or the virtual timers list would
      go out of sync.*/
-  TIMER0->DBGPAUSE   = TIMER_DBGPAUSE_DBG0 | TIMER_DBGPAUSE_DBG1;
+  timer0_hw->dbgpause   = TIMER_DBGPAUSE_DBG0_BITS | TIMER_DBGPAUSE_DBG1_BITS;
 
   /* Comparators and counter initially at zero.*/
-  TIMER0->TIMELW     = 0U;
-  TIMER0->TIMEHW     = 0U;
-  TIMER0->ALARM[0]   = 0U;
-  TIMER0->ALARM[1]   = 0U;
-  TIMER0->ALARM[2]   = 0U;
-  TIMER0->ALARM[3]   = 0U;
-  TIMER0->INTE       = 0U;
-  TIMER0->INTR       = TIMER_INTR_ALARM3 | TIMER_INTR_ALARM2 |
-                      TIMER_INTR_ALARM1 | TIMER_INTR_ALARM0;
+  timer0_hw->timelw     = 0U;
+  timer0_hw->timehw     = 0U;
+  timer0_hw->alarm[0]   = 0U;
+  timer0_hw->alarm[1]   = 0U;
+  timer0_hw->alarm[2]   = 0U;
+  timer0_hw->alarm[3]   = 0U;
+  timer0_hw->inte       = 0U;
+  timer0_hw->intr       = TIMER_INTR_ALARM_3_BITS | TIMER_INTR_ALARM_2_BITS |
+                      TIMER_INTR_ALARM_1_BITS | TIMER_INTR_ALARM_0_BITS;
 
 #endif /* OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING */
 }
@@ -240,7 +242,7 @@ void st_lld_init(void) {
 void st_lld_bind(void) {
 
 #if OSAL_ST_MODE == OSAL_ST_MODE_FREERUNNING
-  nvicEnableVector(RP_TIMER_IRQ0_NUMBER, RP_IRQ_TIMER_ALARM0_PRIORITY);
+  nvicEnableVector(RP_TIMER0_IRQ_0_NUMBER, RP_IRQ_TIMER0_ALARM0_PRIORITY);
 #endif
 #if OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC
   uint32_t  timer_clk = RP_CORE_CLK;

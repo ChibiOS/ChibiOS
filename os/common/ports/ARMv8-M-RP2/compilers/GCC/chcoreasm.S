@@ -18,10 +18,10 @@
 */
 
 /**
- * @file    ARMv8-M-ML/compilers/GCC/chcoreasm.S
- * @brief   ARMv8-M MainLine port low level code.
+ * @file    ARMv6-M-RP2/compilers/GCC/chcoreasm.S
+ * @brief   ARMv6-M-RP2 port low level code.
  *
- * @addtogroup ARMV8M_ML_GCC_CORE
+ * @addtogroup ARMV6M_RP2_GCC_CORE
  * @{
  */
 
@@ -53,19 +53,12 @@
 #error "invalid chconf.h"
 #endif
 
-
-                .syntax unified
-                .set    MPU_RBAR, 0xE000ED9C
                 .set    SCB_ICSR, 0xE000ED04
                 .set    ICSR_PENDSVSET, 0x10000000
                 .set    ICSR_NMIPENDSET, 0x80000000
-                
-                .cpu    cortex-m4
-#if CORTEX_USE_FPU
-                .fpu    fpv4-sp-d16
-#else
+
+                .cpu    cortex-m0
                 .fpu    softvfp
-#endif
 
                 .thumb
                 .text
@@ -82,40 +75,19 @@ __port_switch:
                 mov     r6, r10
                 mov     r7, r11
                 push    {r4, r5, r6, r7}
-# #if CORTEX_USE_FPU
-#                 /* Saving FPU context.*/
-#                 vpush   {s16-s31}
-# #endif
-
-# #if CH_DBG_ENABLE_STACK_CHECK
-#                 /* Saving stack limit register.*/
-#                 mrs     r3, PSPLIM
-#                 push    {r3}
-#                 movs    r3, #0
-#                 msr     PSPLIM, r3      /* Temporarily disabling stack check.*/
-# #endif
-
-                /* Switching stacks.*/
+                
                 mov     r3, sp
                 str     r3, [r1, #CONTEXT_OFFSET]
                 ldr     r3, [r0, #CONTEXT_OFFSET]
                 mov     sp, r3
-
-# #if CH_DBG_ENABLE_STACK_CHECK
-#                 pop     {r3}
-#                 msr     PSPLIM, r3
-# #endif
-
-# #if CORTEX_USE_FPU
-#                 /* Restoring FPU context.*/
-#                 vpop    {s16-s31}
-# #endif
+                
                 pop     {r4, r5, r6, r7}
                 mov     r8, r4
                 mov     r9, r5
                 mov     r10, r6
                 mov     r11, r7
                 pop     {r4, r5, r6, r7, pc}
+
 /*--------------------------------------------------------------------------*
  * Start a thread by invoking its work function.
  *
@@ -136,18 +108,12 @@ __port_thread_start:
 #if CH_CFG_SMP_MODE == TRUE
                 bl      __port_spinlock_release
 #endif
-#  must define CORTEX_SIMPLIFIED_PRIORITY in rp2350
-#if CORTEX_SIMPLIFIED_PRIORITY
                 cpsie   i
-#else
-                 movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
-                 msr     BASEPRI, r3
-#endif
                 mov     r0, r5
                 blx     r4
                 movs    r0, #0              /* MSG_OK */
                 bl      chThdExit
-1:              b       1b
+.zombies:       b       .zombies
 
 /*--------------------------------------------------------------------------*
  * Post-IRQ switch code.
@@ -172,17 +138,21 @@ __port_switch_from_isr:
 #endif
                 .globl  __port_exit_from_isr
 __port_exit_from_isr:
-                ldr     r2, =SCB_ICSR
-#if CORTEX_ALTERNATE_SWITCH
-                ldr     r3, =ICSR_PENDSVSET
-#else
-                ldr     r3, =ICSR_NMIPENDSET
-#endif
+                ldr     r2, .L2
+                ldr     r3, .L3
                 str     r3, [r2, #0]
 #if CORTEX_ALTERNATE_SWITCH
                 cpsie   i
 #endif
-1:              b       1b
+.L1:            b       .L1
+
+                .align  2
+.L2:            .word   SCB_ICSR
+#if CORTEX_ALTERNATE_SWITCH
+.L3:            .word   ICSR_PENDSVSET
+#else
+.L3:            .word   ICSR_NMIPENDSET
+#endif
 
 #endif /* !defined(__DOXYGEN__) */
 
