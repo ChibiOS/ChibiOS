@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2016..2019 Rocco Marco Guglielmi
+    ChibiOS - Copyright (C) 2016..2023 Rocco Marco Guglielmi
 
     This file is part of ChibiOS.
 
@@ -43,7 +43,7 @@
 /**
  * @brief   ADXL355 driver version string.
  */
-#define EX_ADXL355_VERSION                  "1.0.1"
+#define EX_ADXL355_VERSION                  "1.1.0"
 
 /**
  * @brief   ADXL355 driver version major number.
@@ -53,12 +53,12 @@
 /**
  * @brief   ADXL355 driver version minor number.
  */
-#define EX_ADXL355_MINOR                    0
+#define EX_ADXL355_MINOR                    1
 
 /**
  * @brief   ADXL355 driver version patch number.
  */
-#define EX_ADXL355_PATCH                    1
+#define EX_ADXL355_PATCH                    0
 /** @} */
 
 /**
@@ -91,7 +91,6 @@
 #define ADXL355_AD_MASK                     0xFE
 #define ADXL355_RW                          (1 << 0)
 #define ADXL355_AD(n)                       (1 << (n + 1))
-
 /** @} */
 
 /**
@@ -638,6 +637,12 @@ struct ADXL355Driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
+#if (ADXL355_USE_SPI) || defined(__DOXYGEN__)
+  void adxl355SPIReadRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
+                              uint8_t* b);
+  void adxl355SPIWriteRegister(ADXL355Driver *devp, uint8_t reg, size_t n,
+                               uint8_t* b);
+#endif /* ADXL355_USE_SPI */
   void adxl355ObjectInit(ADXL355Driver *devp, uint8_t* txbp, uint8_t* rxbp);
   void adxl355Start(ADXL355Driver *devp, const ADXL355Config *config);
   void adxl355Stop(ADXL355Driver *devp);

@@ -26,12 +26,20 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#if defined(RCC_CFGR_PPRE1_Pos)
+#define STM32_PPRE1_POS         RCC_CFGR_PPRE1_Pos
+#elif defined(RCC_CFGR2_PPRE1_Pos)
+#define STM32_PPRE1_POS         RCC_CFGR2_PPRE1_Pos
+#else
+#error "unknown register name"
+#endif
+
 /**
  * @name    PPRE1 field bits definitions
  * @{
  */
-#define STM32_PPRE1_MASK        (7U << RCC_CFGR_PPRE1_Pos)
-#define STM32_PPRE1_FIELD(n)    ((n) << RCC_CFGR_PPRE1_Pos)
+#define STM32_PPRE1_MASK        (7U << STM32_PPRE1_POS)
+#define STM32_PPRE1_FIELD(n)    ((n) << STM32_PPRE1_POS)
 #define STM32_PPRE1_DIV1        STM32_PPRE1_FIELD(0U)
 #define STM32_PPRE1_DIV2        STM32_PPRE1_FIELD(4U)
 #define STM32_PPRE1_DIV4        STM32_PPRE1_FIELD(5U)

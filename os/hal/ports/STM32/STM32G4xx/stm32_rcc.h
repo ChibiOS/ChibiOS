@@ -593,34 +593,6 @@
 /** @} */
 
 /**
- * @name    FDCAN peripherals specific RCC operations
- * @{
- */
-/**
- * @brief   Enables the FDCAN1 peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccEnableFDCAN1(lp) rccEnableAPB1R1(RCC_APB1ENR1_FDCANEN, lp)
-
-/**
- * @brief   Disables the FDCAN1 peripheral clock.
- *
- * @api
- */
-#define rccDisableFDCAN1() rccDisableAPB1R1(RCC_APB1ENR1_FDCANEN)
-
-/**
- * @brief   Resets the FDCAN1 peripheral.
- *
- * @api
- */
-#define rccResetFDCAN1() rccResetAPB1R1(RCC_APB1RSTR1_FDCANRST)
-/** @} */
-
-/**
  * @name    I2C peripherals specific RCC operations
  * @{
  */

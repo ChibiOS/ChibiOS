@@ -30,21 +30,6 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define ADC1_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_CHN)
-
-#define ADC2_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC2_DMA_STREAM, STM32_ADC2_DMA_CHN)
-
-#define ADC3_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC3_DMA_STREAM, STM32_ADC3_DMA_CHN)
-
-#define ADC4_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC4_DMA_STREAM, STM32_ADC4_DMA_CHN)
-
-#define ADC5_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC5_DMA_STREAM, STM32_ADC5_DMA_CHN)
-
 #if STM32_ADC_DUAL_MODE
 #if STM32_ADC_COMPACT_SAMPLES
 /* Compact type dual mode.*/

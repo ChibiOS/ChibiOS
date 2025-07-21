@@ -20,6 +20,7 @@
                             <xs:enumeration value="STM32G041xx"></xs:enumeration>
                             <xs:enumeration value="STM32G071xx"></xs:enumeration>
                             <xs:enumeration value="STM32G081xx"></xs:enumeration>
+                            <xs:enumeration value="STM32G0B0xx"></xs:enumeration>
                             <xs:enumeration value="STM32G0B1xx"></xs:enumeration>
                             <xs:enumeration value="STM32G0C1xx"></xs:enumeration>
                        	</xs:restriction>

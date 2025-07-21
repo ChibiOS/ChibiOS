@@ -54,13 +54,15 @@
  * @{
  */
 #define USART_CR3_TXFTCFG_NONFULL           (0U)
+#define USART_CR3_TXFTCFG_1E                (0U)
 #define USART_CR3_TXFTCFG_1Q                (USART_CR3_TXFTCFG_0)
 #define USART_CR3_TXFTCFG_1H                (USART_CR3_TXFTCFG_1)
 #define USART_CR3_TXFTCFG_3Q                (USART_CR3_TXFTCFG_1 | USART_CR3_TXFTCFG_0)
 #define USART_CR3_TXFTCFG_7E                (USART_CR3_TXFTCFG_2)
 #define USART_CR3_TXFTCFG_EMPTY             (USART_CR3_TXFTCFG_2 | USART_CR3_TXFTCFG_0)
 
-#define USART_CR3_RXFTCFG_NONEMPTY          (0U)
+#define USART_CR3_RXFTCFG_NONEMPTY          (USART_CR3_RXFTCFG)
+#define USART_CR3_RXFTCFG_1E                (0U)
 #define USART_CR3_RXFTCFG_1Q                (USART_CR3_RXFTCFG_0)
 #define USART_CR3_RXFTCFG_1H                (USART_CR3_RXFTCFG_1)
 #define USART_CR3_RXFTCFG_3Q                (USART_CR3_RXFTCFG_1 | USART_CR3_RXFTCFG_0)

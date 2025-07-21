@@ -76,7 +76,13 @@ __STATIC_INLINE void bd_reset(void) {
   /* Reset BKP domain if different clock source selected.*/
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL) {
     /* Backup domain reset.*/
+#if defined(RCC_BDCR_BDRST)
     RCC->BDCR = RCC_BDCR_BDRST;
+#elif defined(RCC_BDCR_VSWRST)
+    RCC->BDCR = RCC_BDCR_VSWRST;
+#else
+#error "unknown bit name"
+#endif
     RCC->BDCR = 0U;
   }
 }

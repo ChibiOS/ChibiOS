@@ -1,0 +1,23 @@
+Clock point definition:
+
+- All generated symbols are prefixed by a common string (STM32_ for example).
+- Each clock point has a symbolic name (HSI, LSE, PLL1VCO etc).
+- Each clock point defines a clock VALUE macro with a suffix (_CK for example).
+  - Clock values can be:
+    - Constant
+    - Constant with on/off switch
+    - Selectable from a set of constant values
+      - Implies a setting
+      - Check on the setting
+      - Generates a _REG constant for register initialization.
+    - Selectable from a set of other clock points (MUXes)
+      - Implies a setting.
+      - Check on the setting.
+      - Values calculated on setting.
+      - Generates a _REG constant for register initialization.
+    - Calculated from another clock point
+      - Divider style
+      - Multiplier style (PLLs)
+      - A min-max check for the generated clock value is generated.
+      - Generates a _REG constant for register initialization.
+      

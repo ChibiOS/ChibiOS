@@ -50,6 +50,15 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static flash_offset_t get_offset(const struct lfs_config *c,
+                                 flash_sector_t base,
+                                 lfs_block_t block,
+                                 lfs_off_t off) {
+
+  return (flash_offset_t)((((flash_offset_t)base + (flash_offset_t)block) *
+                          (flash_offset_t)c->block_size) + (flash_offset_t)off);
+}
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -73,22 +82,23 @@ uint32_t lfs_crc(uint32_t crc, const void *buffer, size_t size) {
 
 void *lfs_malloc(size_t size) {
 
-  (void)size;
-  return NULL;
+  return chHeapAlloc(NULL, size);
 }
 
 void lfs_free(void *p) {
 
-  (void)p;
+  if (p != NULL) {
+    chHeapFree(p);
+  }
 }
 
 int __lfs_read(const struct lfs_config *c, lfs_block_t block,
                lfs_off_t off, void *buffer, lfs_size_t size) {
-  BaseFlash *flp = (BaseFlash *)c->context;
+  const hal_lfs_binding_t *bnp = (const hal_lfs_binding_t *)c->context;
   flash_error_t err;
 
-  err = flashRead(flp,
-                  (flash_offset_t)(block * c->block_size) + (flash_offset_t)off,
+  err = flashRead(bnp->flp,
+                  get_offset(c, bnp->base, block, off),
                   (size_t)size,
                   (uint8_t *)buffer);
   if (err != FLASH_NO_ERROR) {
@@ -100,11 +110,11 @@ int __lfs_read(const struct lfs_config *c, lfs_block_t block,
 
 int __lfs_prog(const struct lfs_config *c, lfs_block_t block,
                lfs_off_t off, const void *buffer, lfs_size_t size) {
-  BaseFlash *flp = (BaseFlash *)c->context;
+  const hal_lfs_binding_t *bnp = (const hal_lfs_binding_t *)c->context;
   flash_error_t err;
 
-  err = flashProgram(flp,
-                     (flash_offset_t)(block * c->block_size) + (flash_offset_t)off,
+  err = flashProgram(bnp->flp,
+                     get_offset(c, bnp->base, block, off),
                      (size_t)size,
                      (uint8_t *)buffer);
   if (err != FLASH_NO_ERROR) {
@@ -115,15 +125,15 @@ int __lfs_prog(const struct lfs_config *c, lfs_block_t block,
 }
 
 int __lfs_erase(const struct lfs_config *c, lfs_block_t block) {
-  BaseFlash *flp = (BaseFlash *)c->context;
+  const hal_lfs_binding_t *bnp = (const hal_lfs_binding_t *)c->context;
   flash_error_t err;
 
-  err = flashStartEraseSector(flp, (flash_sector_t)block);
+  err = flashStartEraseSector(bnp->flp, bnp->base + (flash_sector_t)block);
   if (err != FLASH_NO_ERROR) {
     return LFS_ERR_IO;
   }
 
-  err = flashWaitErase(flp);
+  err = flashWaitErase(bnp->flp);
   if (err != FLASH_NO_ERROR) {
     return LFS_ERR_IO;
   }
@@ -132,25 +142,25 @@ int __lfs_erase(const struct lfs_config *c, lfs_block_t block) {
 }
 
 int __lfs_sync(const struct lfs_config *c) {
-  BaseFlash *flp = (BaseFlash *)c->context;
+  const hal_lfs_binding_t *bnp = (const hal_lfs_binding_t *)c->context;
 
-  (void)flp;
+  (void)bnp;
 
   return 0;
 }
 
 int __lfs_lock(const struct lfs_config *c) {
-  BaseFlash *flp = (BaseFlash *)c->context;
+  const hal_lfs_binding_t *bnp = (const hal_lfs_binding_t *)c->context;
 
-  flashAcquireExclusive(flp);
+  flashAcquireExclusive(bnp->flp);
 
   return 0;
 }
 
 int __lfs_unlock(const struct lfs_config *c) {
-  BaseFlash *flp = (BaseFlash *)c->context;
+  const hal_lfs_binding_t *bnp = (const hal_lfs_binding_t *)c->context;
 
-  flashReleaseExclusive(flp);
+  flashReleaseExclusive(bnp->flp);
 
   return 0;
 }

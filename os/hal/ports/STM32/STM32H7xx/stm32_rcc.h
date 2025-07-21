@@ -1432,6 +1432,29 @@ __STATIC_INLINE void rccResetAHB4(uint32_t mask) {
  * @api
  */
 #define rccResetI2C4() rccResetAPB4(RCC_APB4RSTR_I2C4RST)
+
+/**
+ * @brief   Enables the I2C5 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableI2C5(lp) rccEnableAPB1L(RCC_APB1LENR_I2C5EN, lp)
+
+/**
+ * @brief   Disables the I2C5 peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableI2C5() rccDisableAPB1L(RCC_APB1LENR_I2C5EN)
+
+/**
+ * @brief   Resets the I2C5 peripheral.
+ *
+ * @api
+ */
+#define rccResetI2C5() rccResetAPB1L(RCC_APB1LRSTR_I2C5RST)
 /** @} */
 
 /**

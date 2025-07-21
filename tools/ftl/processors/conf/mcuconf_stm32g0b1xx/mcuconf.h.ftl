@@ -84,6 +84,8 @@
 #define STM32_PPRE                          ${doc.STM32_PPRE!"STM32_PPRE_DIV1"}
 #define STM32_MCOSEL                        ${doc.STM32_MCOSEL!"STM32_MCOSEL_NOCLOCK"}
 #define STM32_MCOPRE                        ${doc.STM32_MCOPRE!"STM32_MCOPRE_DIV1"}
+#define STM32_MCO2SEL                       ${doc.STM32_MCOSEL!"STM32_MCO2SEL_NOCLOCK"}
+#define STM32_MCO2PRE                       ${doc.STM32_MCOPRE!"STM32_MCO2PRE_DIV1"}
 #define STM32_LSCOSEL                       ${doc.STM32_LSCOSEL!"STM32_LSCOSEL_NOCLOCK"}
 
 /*

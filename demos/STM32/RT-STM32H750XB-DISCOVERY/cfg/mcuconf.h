@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -50,10 +50,10 @@
 /*
  * Memory attributes settings.
  */
-#define STM32_NOCACHE_ENABLE                FALSE
+#define STM32_NOCACHE_ENABLE                TRUE
 #define STM32_NOCACHE_MPU_REGION            MPU_REGION_6
-#define STM32_NOCACHE_RBAR                  0x24000000U
-#define STM32_NOCACHE_RASR                  MPU_RASR_SIZE_16K
+#define STM32_NOCACHE_RBAR                  0x30040000U
+#define STM32_NOCACHE_RASR                  MPU_RASR_SIZE_32K
 
 /*
  * PWR system settings.
@@ -230,6 +230,8 @@
 #define STM32_ADC_USE_ADC12                 FALSE
 #define STM32_ADC_USE_ADC3                  FALSE
 #define STM32_ADC_ADC12_DMA_STREAM          STM32_DMA_STREAM_ID_ANY
+#define STM32_ADC_ADC3_DMA_STREAM           STM32_DMA_STREAM_ID_ANY
+#define STM32_ADC_ADC3_USE_BDMA             FALSE
 #define STM32_ADC_ADC3_BDMA_STREAM          STM32_BDMA_STREAM_ID_ANY
 #define STM32_ADC_ADC12_DMA_PRIORITY        2
 #define STM32_ADC_ADC3_DMA_PRIORITY         2
@@ -300,32 +302,6 @@
 #define STM32_I2C_I2C3_DMA_PRIORITY         3
 #define STM32_I2C_I2C4_DMA_PRIORITY         3
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
-
-/*
- * I2S driver system settings.
- */
-#define STM32_I2S_USE_SPI1                  FALSE
-#define STM32_I2S_USE_SPI2                  FALSE
-#define STM32_I2S_USE_SPI3                  FALSE
-#define STM32_I2S_SPI1_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI2_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI3_MODE                 (STM32_I2S_MODE_MASTER |        \
-                                             STM32_I2S_MODE_RX)
-#define STM32_I2S_SPI1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI1_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI2_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI2_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI3_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI3_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2S_SPI1_DMA_PRIORITY         1
-#define STM32_I2S_SPI2_DMA_PRIORITY         1
-#define STM32_I2S_SPI3_DMA_PRIORITY         1
-#define STM32_I2S_SPI1_IRQ_PRIORITY         10
-#define STM32_I2S_SPI2_IRQ_PRIORITY         10
-#define STM32_I2S_SPI3_IRQ_PRIORITY         10
-#define STM32_I2S_DMA_ERROR_HOOK(i2sp)      osalSysHalt("DMA failure")
 
 /*
  * ICU driver system settings.
@@ -518,7 +494,7 @@
  * WSPI driver system settings.
  */
 #define STM32_WSPI_USE_QUADSPI1             FALSE
-#define STM32_WSPI_QUADSPI1_PRESCALER_VALUE 1
+#define STM32_WSPI_QUADSPI1_PRESCALER_VALUE 2
 #define STM32_WSPI_SET_CR_SSHIFT            TRUE
 #define STM32_WSPI_QUADSPI1_MDMA_CHANNEL    STM32_MDMA_CHANNEL_ID_ANY
 #define STM32_WSPI_QUADSPI1_MDMA_PRIORITY   1

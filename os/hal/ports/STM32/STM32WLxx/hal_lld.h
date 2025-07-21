@@ -1309,10 +1309,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_MSICLK
-
-#elif (STM32_SW == STM32_SW_MSI)
+#if (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
 
 #elif (STM32_SW == STM32_SW_HSI16)
@@ -1669,17 +1666,7 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a clock point identifier.
- */
-typedef unsigned halclkpt_t;
-
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
-/**
- * @brief   Type of a clock point frequency in Hz.
- */
-typedef uint32_t halfreq_t;
-
 /**
  * @brief   Type of a clock configuration structure.
  */

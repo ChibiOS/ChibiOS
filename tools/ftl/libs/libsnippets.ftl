@@ -27,8 +27,8 @@
   [#list doc_snippets.code.snippets.snippet as snippet]
     [#if (snippet.type[0] == "thread_body") &&
          ((snippet.name[0]!"")?trim?lower_case == name?trim?lower_case)]
-      [#return snippet.text[0]!"" /]
+      [#return snippet.text[0]!""]
     [/#if]
   [/#list]
-  [#return "/* Thread style not found: " + name + " */" /]
+  [#return "/* Thread style not found: " + name + " */"]
 [/#function]

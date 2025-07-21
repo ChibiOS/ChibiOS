@@ -314,16 +314,17 @@ void wspi_lld_map_flash(WSPIDriver *wspip,
                         const wspi_command_t *cmdp,
                         uint8_t **addrp) {
 
+  uint32_t ccr = cmdp->cmd | cmdp->cfg |
+                 QUADSPI_CCR_DUMMY_CYCLES(cmdp->dummy) |
+                 QUADSPI_CCR_FMODE_1 | QUADSPI_CCR_FMODE_0;
+
   /* Disabling the DMA request while in memory mapped mode.*/
   wspip->qspi->CR &= ~QUADSPI_CR_DMAEN;
 
   /* Starting memory mapped mode using the passed parameters.*/
   wspip->qspi->DLR = 0;
-  wspip->qspi->ABR = 0;
-  wspip->qspi->AR  = 0;
-  wspip->qspi->CCR = cmdp->cmd | cmdp->cfg |
-                     QUADSPI_CCR_DUMMY_CYCLES(cmdp->dummy) |
-                     QUADSPI_CCR_FMODE_1 | QUADSPI_CCR_FMODE_0;
+  wspip->qspi->ABR = cmdp->alt;
+  wspip->qspi->CCR = ccr;
 
   /* Mapped flash absolute base address.*/
   if (addrp != NULL) {

@@ -1,6 +1,6 @@
 [#ftl]
 [#--
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -40,7 +40,7 @@
 #define CHCONF_H
 
 #define _CHIBIOS_RT_CONF_
-#define _CHIBIOS_RT_CONF_VER_7_0_
+#define _CHIBIOS_RT_CONF_VER_8_0_
 
 /*===========================================================================*/
 /**

@@ -1,6 +1,8 @@
-# List of all the ChibiOS/HAL files, there is no need to remove the files
-# from this list, you can disable parts of the HAL by editing halconf.h.
+# HAL subsystem build.
 ifeq ($(USE_SMART_BUILD),yes)
+
+# Dependencies.
+include $(CHIBIOS)/os/common/oop/oop.mk
 
 # Configuration files directory
 ifeq ($(HALCONFDIR),)
@@ -11,14 +13,14 @@ ifeq ($(HALCONFDIR),)
   endif
 endif
 
-HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | egrep -e "\#define"))
+HALCONF := $(strip $(shell cat $(HALCONFDIR)/halconf.h | grep -E "\#define"))
 
+# Required files.
 HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_st.c \
           $(CHIBIOS)/os/hal/src/hal_buffered_serial.c \
           $(CHIBIOS)/os/hal/src/hal_buffers.c \
           $(CHIBIOS)/os/hal/src/hal_queues.c \
-          $(CHIBIOS)/os/hal/src/hal_flash.c \
           $(CHIBIOS)/os/hal/src/hal_mmcsd.c
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_adc.c
@@ -97,7 +99,6 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_st.c \
          $(CHIBIOS)/os/hal/src/hal_buffers.c \
          $(CHIBIOS)/os/hal/src/hal_queues.c \
-         $(CHIBIOS)/os/hal/src/hal_flash.c \
          $(CHIBIOS)/os/hal/src/hal_mmcsd.c \
          $(CHIBIOS)/os/hal/src/hal_adc.c \
          $(CHIBIOS)/os/hal/src/hal_can.c \
@@ -123,6 +124,10 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_usb.c \
          $(CHIBIOS)/os/hal/src/hal_wdg.c \
          $(CHIBIOS)/os/hal/src/hal_wspi.c
+endif
+
+ifneq ($(EXCLUDE_FLASH),yes)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_flash.c
 endif
 
 # Required include directories

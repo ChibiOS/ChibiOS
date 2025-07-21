@@ -35,6 +35,13 @@
 #ifndef HAL_STREAMS_H
 #define HAL_STREAMS_H
 
+
+/* Temporary, in order to avoid conflicts with the same definitions in new
+   OOP streams.*/
+#undef STM_OK
+#undef STM_TIMEOUT
+#undef STM_RESET
+
 /**
  * @name    Streams return codes
  * @{

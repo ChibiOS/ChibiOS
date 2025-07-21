@@ -21,25 +21,52 @@
 #include "lfs.h"
 #include "lfs_hal.h"
 
-#include "hal_serial_nor.h"
+#include "hal_xsnor_micron_n25q.h"
+#include "hal_xsnor_macronix_mx25.h"
 
 #include "portab.h"
 
-static const SNORConfig snorcfg1 = {
-  .busp             = &PORTAB_WSPI1,
-  .buscfg           = &WSPIcfg1
+/* XSNOR configuration.*/
+static union {
+  hal_xsnor_micron_n25q_c           n25q;
+  hal_xsnor_macronix_mx25_c         mx25;
+} snor1;
+
+static xsnor_buffers_t __nocache_snor1buf;
+
+static const xsnor_config_t snorcfg_n25q = {
+  .bus_type         = XSNOR_BUS_MODE_WSPI_4LINES,
+  .bus.wspi.drv     = &PORTAB_WSPI1,
+  .bus.wspi.cfg     = &WSPIcfg1,
+  .buffers          = &__nocache_snor1buf,
+  .options          = N25Q_OPT_DUMMY_CYCLES(8) |
+                      N25Q_OPT_USE_SUBSECTORS |
+                      N25Q_OPT_NICE_WAITING
 };
 
-static SNORDriver snor1;
-static snor_nocache_buffer_t __nocache_snor1buf;
+static const xsnor_config_t snorcfg_mx25 = {
+  .bus_type         = XSNOR_BUS_MODE_WSPI_8LINES,
+  .bus.wspi.drv     = &PORTAB_WSPI1,
+  .bus.wspi.cfg     = &WSPIcfg1,
+  .buffers          = &__nocache_snor1buf,
+  .options          = MX25_OPT_DUMMY_CYCLES(14) |   /* Very conservative.*/
+                      MX25_OPT_USE_SUBSECTORS |
+                      MX25_OPT_NICE_WAITING
+};
 
-static uint8_t __lfs_read_buffer[16];
-static uint8_t __lfs_prog_buffer[16];
-static uint8_t __lfs_lookahead_buffer[16];
+/* LFS configuration.*/
+static uint8_t __nocache_lfs_read_buffer[16];
+static uint8_t __nocache_lfs_prog_buffer[16];
+static uint8_t __nocache_lfs_lookahead_buffer[16];
+
+static const hal_lfs_binding_t binding1 = {
+  .base                 = 16,
+  .flp                  = (BaseFlash *)&snor1.n25q.fls, /* Dirty trick, "fls" at same offset by design.*/
+};
 
 static const struct lfs_config lfscfg = {
     /* Link to the flash device driver.*/
-    .context            = &snor1,
+    .context            = (void *)&binding1,
 
     /* Block device operations.*/
     .read               = __lfs_read,
@@ -57,9 +84,9 @@ static const struct lfs_config lfscfg = {
     .block_cycles       = 500,
     .cache_size         = 16,
     .lookahead_size     = 16,
-    .read_buffer        = __lfs_read_buffer,
-    .prog_buffer        = __lfs_prog_buffer,
-    .lookahead_buffer   = __lfs_lookahead_buffer,
+    .read_buffer        = __nocache_lfs_read_buffer,
+    .prog_buffer        = __nocache_lfs_prog_buffer,
+    .lookahead_buffer   = __nocache_lfs_lookahead_buffer,
     .name_max           = 0,
     .file_max           = 0,
     .attr_max           = 0,
@@ -106,9 +133,16 @@ int main(void) {
   /* Starting a serial port for test report output.*/
   sdStart(&PORTAB_SD1, NULL);
 
-  /* Initializing and starting snor1 driver.*/
-  snorObjectInit(&snor1, &__nocache_snor1buf);
-  snorStart(&snor1, &snorcfg1);
+  /* Trying N25Q.*/
+  n25qObjectInit(&snor1.n25q);
+  if (xsnorStart(&snor1.n25q, &snorcfg_n25q) != FLASH_NO_ERROR) {
+
+    /* Trying MX25.*/
+    mx25ObjectInit(&snor1.mx25);
+    if (xsnorStart(&snor1.mx25, &snorcfg_mx25) != FLASH_NO_ERROR) {
+      chSysHalt("device not found");
+    }
+  }
 
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);

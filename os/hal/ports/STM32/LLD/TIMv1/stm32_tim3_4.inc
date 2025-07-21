@@ -18,7 +18,7 @@
  * @file    TIMv1/stm32_tim3_4.inc
  * @brief   Shared TIM3, TIM4 handler.
  *
- * @addtogroup STM32_TIM3_TIM4_HANDLER
+ * @addtogroup STM32_TIM3_4_HANDLER
  * @{
  */
 
@@ -127,7 +127,7 @@ static inline void tim3_tim4_irq_deinit(void) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_TIM3_TIM4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM3_4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 

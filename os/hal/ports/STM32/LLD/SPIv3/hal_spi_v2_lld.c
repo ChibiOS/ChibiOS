@@ -30,38 +30,62 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+#if !defined(SPI_SPID1_MEMORY)
+#define SPI_SPID1_MEMORY
+#endif
+
+#if !defined(SPI_SPID2_MEMORY)
+#define SPI_SPID2_MEMORY
+#endif
+
+#if !defined(SPI_SPID3_MEMORY)
+#define SPI_SPID3_MEMORY
+#endif
+
+#if !defined(SPI_SPID4_MEMORY)
+#define SPI_SPID4_MEMORY
+#endif
+
+#if !defined(SPI_SPID5_MEMORY)
+#define SPI_SPID5_MEMORY
+#endif
+
+#if !defined(SPI_SPID6_MEMORY)
+#define SPI_SPID6_MEMORY
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
 
 /** @brief SPI1 driver identifier.*/
 #if STM32_SPI_USE_SPI1 || defined(__DOXYGEN__)
-SPIDriver SPID1;
+SPI_SPID1_MEMORY SPIDriver SPID1;
 #endif
 
 /** @brief SPI2 driver identifier.*/
 #if STM32_SPI_USE_SPI2 || defined(__DOXYGEN__)
-SPIDriver SPID2;
+SPI_SPID2_MEMORY SPIDriver SPID2;
 #endif
 
 /** @brief SPI3 driver identifier.*/
 #if STM32_SPI_USE_SPI3 || defined(__DOXYGEN__)
-SPIDriver SPID3;
+SPI_SPID3_MEMORY SPIDriver SPID3;
 #endif
 
 /** @brief SPI4 driver identifier.*/
 #if STM32_SPI_USE_SPI4 || defined(__DOXYGEN__)
-SPIDriver SPID4;
+SPI_SPID4_MEMORY SPIDriver SPID4;
 #endif
 
 /** @brief SPI5 driver identifier.*/
 #if STM32_SPI_USE_SPI5 || defined(__DOXYGEN__)
-SPIDriver SPID5;
+SPI_SPID5_MEMORY SPIDriver SPID5;
 #endif
 
 /** @brief SPI6 driver identifier.*/
 #if STM32_SPI_USE_SPI6 || defined(__DOXYGEN__)
-SPIDriver SPID6;
+SPI_SPID6_MEMORY SPIDriver SPID6;
 #endif
 
 /*===========================================================================*/

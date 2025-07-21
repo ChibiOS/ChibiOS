@@ -30,8 +30,16 @@
  * @name    HPRE field bits definitions
  * @{
  */
-#define STM32_HPRE_MASK         (15U << RCC_CFGR_HPRE_Pos)
-#define STM32_HPRE_FIELD(n)     ((n) << RCC_CFGR_HPRE_Pos)
+#if defined(RCC_CFGR_HPRE_Pos)
+#define STM32_HPRE_POS          RCC_CFGR_HPRE_Pos
+#define STM32_HPRE_MASK         RCC_CFGR_HPRE_Msk
+#elif defined(RCC_CFGR2_HPRE_Pos)
+#define STM32_HPRE_POS          RCC_CFGR2_HPRE_Pos
+#define STM32_HPRE_MASK         RCC_CFGR2_HPRE_Msk
+#else
+#error "unknown register name"
+#endif
+#define STM32_HPRE_FIELD(n)     ((n) << STM32_HPRE_POS)
 #define STM32_HPRE_DIV1         STM32_HPRE_FIELD(0U)
 #define STM32_HPRE_DIV2         STM32_HPRE_FIELD(8U)
 #define STM32_HPRE_DIV4         STM32_HPRE_FIELD(9U)

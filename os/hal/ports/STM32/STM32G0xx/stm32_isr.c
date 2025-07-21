@@ -73,6 +73,8 @@
 #endif
 #if STM32_HAS_USART3 && STM32_HAS_UART4 && STM32_HAS_UART5 && STM32_HAS_USART6 && STM32_HAS_LPUART1
 #include "stm32_usart3_4_5_6_lp1.inc"
+#elif STM32_HAS_USART3 && STM32_HAS_UART4 && STM32_HAS_UART5 && STM32_HAS_USART6
+#include "stm32_usart3_4_5_6.inc"
 #elif STM32_HAS_USART3 && STM32_HAS_UART4 && STM32_HAS_LPUART1
 #include "stm32_usart3_4_lp1.inc"
 #elif STM32_HAS_LPUART1
@@ -137,6 +139,8 @@ void irqInit(void) {
   usart3_usart4_usart5_usart6_lpuart1_irq_init();
 #elif STM32_HAS_USART3 && STM32_HAS_UART4 && STM32_HAS_LPUART1
   usart3_usart4_lpuart1_irq_init();
+#elif STM32_HAS_USART3 && STM32_HAS_UART4 && STM32_HAS_UART5 && STM32_HAS_USART6
+  usart3_usart4_usart5_usart6_irq_init();
 #elif STM32_HAS_LPUART1
   lpuart1_irq_init();
 #endif

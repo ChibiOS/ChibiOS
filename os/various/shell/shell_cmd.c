@@ -30,6 +30,11 @@
 #include "shell_cmd.h"
 #include "chprintf.h"
 
+#if (SHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
+#include <fcntl.h>
+#include "vfs.h"
+#endif
+
 #if (SHELL_CMD_TEST_ENABLED == TRUE) || defined(__DOXYGEN__)
 #include "rt_test_root.h"
 #include "oslib_test_root.h"
@@ -224,6 +229,277 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 #endif
 
+#if (SHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
+static void scan_nodes(BaseSequentialStream *chp,
+                       char *path,
+                       vfs_direntry_info_t *dip) {
+  msg_t res;
+  vfs_directory_node_c *dirp;
+
+  chprintf(chp, "%s" SHELL_NEWLINE_STR, path);
+  res = vfsOpenDirectory(path, &dirp);
+  if (res == CH_RET_SUCCESS) {
+    size_t i = strlen(path);
+
+    while (true) {
+      char *fn = dip->name;
+      res = vfsReadDirectoryNext(dirp, dip);
+      if (res < (msg_t)1) {
+        break;
+      }
+
+      fn = dip->name;
+//      if (dip->attr & VFS_NODE_ATTR_ISDIR) {
+      if (VFS_MODE_S_ISDIR(dip->mode)) {
+        strcpy(path + i, fn);
+        strcat(path + i, "/");
+        scan_nodes(chp, path, dip);
+        path[i] = '\0';
+      }
+      else {
+        chprintf(chp, "%s%s" SHELL_NEWLINE_STR, path, fn);
+      }
+    }
+
+    vfsClose((vfs_node_c *)dirp);
+  }
+}
+
+static void cmd_tree(BaseSequentialStream *chp, int argc, char *argv[]) {
+  char *pathbuf = NULL;
+  vfs_direntry_info_t *dip = NULL;
+
+  (void)argv;
+
+  if (argc > 0) {
+    chprintf(chp, "Usage: tree" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    pathbuf = (char *)chHeapAlloc(NULL, 1024);
+    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, 1024);
+    if ((pathbuf == NULL) || (dip == NULL)) {
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
+     break;
+    }
+
+    strcpy(pathbuf, "/");
+    scan_nodes(chp, pathbuf, dip);
+  }
+  while (false);
+
+  if (pathbuf != NULL) {
+    chHeapFree((void *)pathbuf);
+  }
+
+  if (dip != NULL) {
+    chHeapFree((void *)dip);
+  }
+}
+
+static void cmd_cat(BaseSequentialStream *chp, int argc, char *argv[]) {
+  char *buf = NULL;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: cat <filename>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    int fd, n;
+
+    buf = (char *)chHeapAlloc(NULL, 2048);
+    if (buf == NULL) {
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
+     break;
+    }
+
+    fd = open(argv[0], O_RDONLY);
+    if(fd == -1) {
+      chprintf(chp, "Cannot open file" SHELL_NEWLINE_STR);
+      break;
+    }
+
+    while ((n = read(fd, buf, sizeof (2048))) > 0) {
+      streamWrite(chp, (const uint8_t *)buf, n);
+    }
+    chprintf(chp, SHELL_NEWLINE_STR);
+
+    (void) close(fd);
+  }
+  while (false);
+
+  if (buf != NULL) {
+    chHeapFree((void *)buf);
+  }
+}
+
+static void cmd_cd(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: cd <dirpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    msg_t ret;
+
+    ret = vfsChangeCurrentDirectory(argv[0]);
+    if (CH_RET_IS_ERROR(ret)) {
+      chprintf(chp, "failed (%d)" SHELL_NEWLINE_STR, ret);
+    }
+  }
+  while (false);
+}
+
+static void cmd_ls(BaseSequentialStream *chp, int argc, char *argv[]) {
+  vfs_direntry_info_t *dip = NULL;
+
+  if (argc > 1) {
+    chprintf(chp, "Usage: ls [<dirpath>]" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    msg_t ret;
+    vfs_directory_node_c *dirp;
+
+    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
+    if (dip == NULL) {
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
+     break;
+    }
+
+    /* Opening the (un)specified directory.*/
+    ret = vfsOpenDirectory(argc == 1 ? argv[0] : ".", &dirp);
+    if (!CH_RET_IS_ERROR(ret)) {
+
+      while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
+        chprintf(chp, "%s" SHELL_NEWLINE_STR, dip->name);
+      }
+
+      vfsClose((vfs_node_c *)dirp);
+    }
+    else {
+      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+    }
+
+  } while (false);
+
+  if (dip != NULL) {
+    chHeapFree((void *)dip);
+  }
+}
+
+static void cmd_mkdir(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: mkdir <dirpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsMkdir(argv[0], 0777U);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+  }
+}
+
+static void cmd_mv(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 2) {
+    chprintf(chp, "Usage: mv <oldpath> <newpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsRename(argv[0], argv[1]);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+  }
+}
+
+static void cmd_pwd(BaseSequentialStream *chp, int argc, char *argv[]) {
+  char *buf = NULL;
+
+  (void)argv;
+
+  if (argc != 0) {
+    chprintf(chp, "Usage: pwd" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  do {
+    msg_t ret;
+
+    buf = (char *)chHeapAlloc(NULL, VFS_CFG_PATHLEN_MAX + 1);
+    if (buf == NULL) {
+      chprintf(chp, "Out of memory" SHELL_NEWLINE_STR);
+     break;
+    }
+
+    ret = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
+    if (CH_RET_IS_ERROR(ret)) {
+      chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+    }
+    else {
+      chprintf(chp, "%s" SHELL_NEWLINE_STR, buf);
+    }
+  }
+  while (false);
+
+  if (buf != NULL) {
+    chHeapFree((void *)buf);
+  }
+}
+
+static void cmd_rm(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: rm <filepath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsUnlink(argv[0]);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+  }
+}
+
+static void cmd_rmdir(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: rmdir <dirpath>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsRmdir(argv[0]);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+  }
+}
+
+static void cmd_stat(BaseSequentialStream *chp, int argc, char *argv[]) {
+  msg_t ret;
+  vfs_stat_t statbuf;
+
+  if (argc != 1) {
+    chprintf(chp, "Usage: stat <path>" SHELL_NEWLINE_STR);
+    return;
+  }
+
+  ret = vfsStat(argv[0], &statbuf);
+  if (CH_RET_IS_ERROR(ret)) {
+    chprintf(chp, "Failed (%d)" SHELL_NEWLINE_STR, ret);
+  }
+
+  chprintf(chp, "Mode 0x%04lx Size %d" SHELL_NEWLINE_STR, statbuf.mode, statbuf.size);
+}
+#endif
+
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
@@ -233,25 +509,37 @@ static void cmd_test(BaseSequentialStream *chp, int argc, char *argv[]) {
  */
 const ShellCommand shell_local_commands[] = {
 #if (SHELL_CMD_EXIT_ENABLED == TRUE) && !defined(__CHIBIOS_NIL__)
-  {"exit", cmd_exit},
+  {"exit",      cmd_exit},
 #endif
 #if SHELL_CMD_INFO_ENABLED == TRUE
-  {"info", cmd_info},
+  {"info",      cmd_info},
 #endif
 #if SHELL_CMD_ECHO_ENABLED == TRUE
-  {"echo", cmd_echo},
+  {"echo",      cmd_echo},
 #endif
 #if SHELL_CMD_SYSTIME_ENABLED == TRUE
-  {"systime", cmd_systime},
+  {"systime",   cmd_systime},
 #endif
 #if SHELL_CMD_MEM_ENABLED == TRUE
-  {"mem", cmd_mem},
+  {"mem",       cmd_mem},
 #endif
 #if SHELL_CMD_THREADS_ENABLED == TRUE
-  {"threads", cmd_threads},
+  {"threads",   cmd_threads},
+#endif
+#if SHELL_CMD_FILES_ENABLED == TRUE
+  {"cat",       cmd_cat},
+  {"cd",        cmd_cd},
+  {"ls",        cmd_ls},
+  {"mkdir",     cmd_mkdir},
+  {"mv",        cmd_mv},
+  {"pwd",       cmd_pwd},
+  {"rm",        cmd_rm},
+  {"rmdir",     cmd_rmdir},
+  {"stat",      cmd_stat},
+  {"tree",      cmd_tree},
 #endif
 #if SHELL_CMD_TEST_ENABLED == TRUE
-  {"test", cmd_test},
+  {"test",      cmd_test},
 #endif
   {NULL, NULL}
 };

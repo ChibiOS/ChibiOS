@@ -647,6 +647,36 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\..\os\rt\include\chtime.h</FilePath>
             </File>
+            <File>
+              <FileName>chearly.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\rt\include\chearly.h</FilePath>
+            </File>
+            <File>
+              <FileName>chinstances.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\rt\include\chinstances.h</FilePath>
+            </File>
+            <File>
+              <FileName>chlists.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\rt\include\chlists.h</FilePath>
+            </File>
+            <File>
+              <FileName>chobjects.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\rt\include\chobjects.h</FilePath>
+            </File>
+            <File>
+              <FileName>chport.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\rt\include\chport.h</FilePath>
+            </File>
+            <File>
+              <FileName>chrfcu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\rt\include\chrfcu.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -751,6 +781,16 @@
               <FileName>chpipes.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\oslib\src\chpipes.c</FilePath>
+            </File>
+            <File>
+              <FileName>chmemchecks.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\os\oslib\include\chmemchecks.h</FilePath>
+            </File>
+            <File>
+              <FileName>chmemchecks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\os\oslib\src\chmemchecks.c</FilePath>
             </File>
           </Files>
         </Group>

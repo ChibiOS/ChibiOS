@@ -250,7 +250,7 @@
 /*
  * DCMI unit.
  */
-#define STM32_DCMI_HANDLER                  Vector14C
+#define STM32_DCMI_HANDLER                  Vector194
 
 #define STM32_DCMI_NUMBER                   85
 /** @} */

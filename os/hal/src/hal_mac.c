@@ -149,7 +149,7 @@ void macStop(MACDriver *macp) {
 }
 
 /**
- * @brief   Get and clears SIO event flags.
+ * @brief   Get and clears MAC event flags.
  *
  * @param[in] macp      pointer to the @p MACDriver object
  * @return              The pending event flags.
@@ -177,7 +177,6 @@ eventflags_t macGetAndClearEventsI(MACDriver *macp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       the descriptor was obtained.
  * @retval MSG_TIMEOUT  the operation timed out, descriptor not initialized.
@@ -218,7 +217,6 @@ msg_t macWaitTransmitDescriptor(MACDriver *macp,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       the descriptor was obtained.
  * @retval MSG_TIMEOUT  the operation timed out, descriptor not initialized.

@@ -36,12 +36,14 @@
 /* Compact type dual mode, 2x8-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_BYTE | STM32_BDMA_CR_PSIZE_BYTE)
+#define ADC3_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_BYTE
 
 #else /* STM32_ADC_SAMPLES_SIZE == 16 */
 /* Large type dual mode, 2x16bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_HWORD | STM32_BDMA_CR_PSIZE_HWORD)
+#define ADC3_DMA_SIZE  (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_HWORD
 #endif /*  STM32_ADC_SAMPLES_SIZE == 8 */
 
@@ -55,10 +57,12 @@
 #elif STM32_ADC_SAMPLES_SIZE == 32
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_WORD | STM32_BDMA_CR_PSIZE_WORD)
+#define ADC3_DMA_SIZE  (STM32_DMA_CR_MSIZE_WORD | STM32_DMA_CR_PSIZE_WORD)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_DISABLED
 #else /* STM32_ADC_SAMPLES_SIZE == 16 */
 /* Large type single mode, 16-bit.*/
 #define ADC12_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
+#define ADC3_DMA_SIZE  (STM32_DMA_CR_MSIZE_HWORD | STM32_DMA_CR_PSIZE_HWORD)
 #define ADC3_BDMA_SIZE  (STM32_BDMA_CR_MSIZE_HWORD | STM32_BDMA_CR_PSIZE_HWORD)
 #define ADC_DMA_DAMDF   ADC_CCR_DAMDF_DISABLED
 #endif /* STM32_ADC_SAMPLES_SIZE == 8 */
@@ -250,7 +254,8 @@ static void adc_lld_serve_dma_interrupt(ADCDriver *adcp, uint32_t flags) {
 }
 #endif /* STM32_ADC_USE_ADC12 == TRUE */
 
-#if (STM32_ADC_USE_ADC3 == TRUE) || defined(__DOXYGEN__)
+#if (STM32_ADC_USE_ADC3 == TRUE) && STM32_ADC_ADC3_USE_BDMA == TRUE        \
+                                 || defined(__DOXYGEN__)
 /**
  * @brief   ADC BDMA service routine.
  *
@@ -412,6 +417,7 @@ void adc_lld_init(void) {
   adcObjectInit(&ADCD3);
   ADCD3.adcc        = ADC3_COMMON;
   ADCD3.adcm        = ADC3;
+#if STM32_ADC_ADC3_USE_BDMA == TRUE
   ADCD3.data.bdma   = NULL;
   ADCD3.dmamode     = ADC3_BDMA_SIZE |
                       STM32_BDMA_CR_PL(STM32_ADC_ADC3_DMA_PRIORITY)  |
@@ -419,6 +425,15 @@ void adc_lld_init(void) {
                       STM32_BDMA_CR_MINC     | STM32_BDMA_CR_TCIE     |
                                                STM32_BDMA_CR_TEIE;
   nvicEnableVector(STM32_ADC3_NUMBER, STM32_ADC_ADC3_IRQ_PRIORITY);
+#else
+  ADCD3.data.dma    = NULL;
+  ADCD3.dmamode     = ADC3_DMA_SIZE |
+                      STM32_DMA_CR_PL(STM32_ADC_ADC3_DMA_PRIORITY) |
+                      STM32_DMA_CR_DIR_P2M  |
+                      STM32_DMA_CR_MINC     | STM32_DMA_CR_TCIE     |
+                      STM32_DMA_CR_DMEIE    | STM32_DMA_CR_TEIE;
+  nvicEnableVector(STM32_ADC3_NUMBER, STM32_ADC_ADC3_IRQ_PRIORITY);
+#endif /* STM32_ADC_ADC3_USE_BDMA */
 #endif /* STM32_ADC_USE_ADC3 == TRUE */
 
   /* ADC units pre-initializations.*/
@@ -488,6 +503,7 @@ msg_t adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3 == TRUE
     if (&ADCD3 == adcp) {
+#if STM32_ADC_ADC3_USE_BDMA == TRUE
       adcp->data.bdma = bdmaStreamAllocI(STM32_ADC_ADC3_BDMA_STREAM,
                                          STM32_ADC_ADC3_IRQ_PRIORITY,
                                          (stm32_dmaisr_t)adc_lld_serve_bdma_interrupt,
@@ -505,6 +521,28 @@ msg_t adc_lld_start(ADCDriver *adcp) {
 
       /* Differential channels setting.*/
       adcp->adcm->DIFSEL = adcp->config->difsel;
+#else
+      adcp->data.dma = dmaStreamAllocI(STM32_ADC_ADC3_DMA_STREAM,
+                                       STM32_ADC_ADC3_IRQ_PRIORITY,
+                                       (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
+                                       (void *)adcp);
+      if (adcp->data.dma == NULL) {
+        return HAL_RET_NO_RESOURCE;
+      }
+
+      rccEnableADC3(true);
+      rccResetADC3();
+
+      dmaSetRequestSource(adcp->data.dma, STM32_DMAMUX1_ADC3);
+
+      /* Setting DMA peripheral-side pointer.*/
+
+      dmaStreamSetPeripheral(adcp->data.dma, &adcp->adcm->DR);
+
+      /* Differential channels setting.*/
+
+      adcp->adcm->DIFSEL = adcp->config->difsel;
+#endif /* STM32_ADC_ADC3_USE_BDMA */
     }
 #endif /* STM32_ADC_USE_ADC3 == TRUE */
 
@@ -574,6 +612,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 #if STM32_ADC_USE_ADC3 == TRUE
     if (&ADCD3 == adcp) {
 
+#if STM32_ADC_ADC3_USE_BDMA == TRUE
       /* Releasing the associated BDMA channel.*/
       bdmaStreamFreeI(adcp->data.bdma);
       adcp->data.bdma = NULL;
@@ -582,6 +621,17 @@ void adc_lld_stop(ADCDriver *adcp) {
       adcp->adcc->CCR = STM32_ADC_ADC3_CLOCK_MODE;
       rccDisableADC3();
     }
+
+#else
+    /* Releasing the associated DMA channel.*/
+    dmaStreamFreeI(adcp->data.dma);
+    adcp->data.dma = NULL;
+
+    /* Resetting CCR options except default ones.*/
+    adcp->adcc->CCR = STM32_ADC_ADC3_CLOCK_MODE;
+    rccDisableADC3();
+  }
+#endif /* STM32_ADC_ADC3_USE_BDMA */
 #endif
   }
 }
@@ -639,8 +689,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3 == TRUE
   if (&ADCD3 == adcp) {
-    /* Calculating control registers values.*/
     dmamode = adcp->dmamode;
+#if STM32_ADC_ADC3_USE_BDMA == TRUE
+    /* Calculating control registers values.*/
     if (grpp->circular) {
       dmamode |= STM32_BDMA_CR_CIRC;
       cfgr = grpp->cfgr | ADC_CFGR_DMNGT_CIRCULAR;
@@ -660,6 +711,27 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
                                                 (uint32_t)adcp->depth);
     bdmaStreamSetMode(adcp->data.bdma, dmamode);
     bdmaStreamEnable(adcp->data.bdma);
+#else
+    /* Calculating control registers values.*/
+    if (grpp->circular) {
+      dmamode |= STM32_DMA_CR_CIRC;
+      cfgr = grpp->cfgr | ADC_CFGR_DMNGT_CIRCULAR;
+      if (adcp->depth > 1) {
+        /* If circular buffer depth > 1, then the half transfer interrupt
+           is enabled in order to allow streaming processing.*/
+        dmamode |= STM32_DMA_CR_HTIE;
+      }
+    }
+    else {
+      cfgr = grpp->cfgr | ADC_CFGR_DMNGT_ONESHOT;
+    }
+    /* DMA setup.*/
+    dmaStreamSetMemory0(adcp->data.dma, adcp->samples);
+    dmaStreamSetTransactionSize(adcp->data.dma, (uint32_t)grpp->num_channels *
+                                                (uint32_t)adcp->depth);
+    dmaStreamSetMode(adcp->data.dma, dmamode);
+    dmaStreamEnable(adcp->data.dma);
+#endif /* STM32_ADC_ADC3_USE_BDMA */
   }
 #endif /* STM32_ADC_USE_ADC3 == TRUE */
 
@@ -774,9 +846,13 @@ void adc_lld_stop_conversion(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC3 == TRUE
   if (&ADCD3 == adcp) {
+#if STM32_ADC_ADC3_USE_BDMA == TRUE
     bdmaStreamDisable(adcp->data.bdma);
+#else
+    dmaStreamDisable(adcp->data.dma);
+#endif
   }
-#endif /* STM32_ADC_USE_ADC12 == TRUE */
+#endif /* STM32_ADC_USE_ADC3 == TRUE */
 
   adc_lld_stop_adc(adcp);
 }

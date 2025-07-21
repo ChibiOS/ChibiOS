@@ -192,8 +192,8 @@ size_t path_add_separator(char *dst, size_t size) {
 size_t path_add_extension(char *dst, const char *ext, size_t size) {
   size_t dn, en;
 
-  dn = strnlen(dst, size - 1U);
-  en = strnlen(ext, size - 1U);
+  dn = strlen(dst);
+  en = strlen(ext);
   if ((dn < en) || (strcmp(dst + dn - en, ext) != 0)) {
     if (dn + en >= size) {
       return 0U;

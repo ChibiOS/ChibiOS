@@ -95,7 +95,7 @@ __STATIC_INLINE void hsi48_disable(void) {
 
 __STATIC_INLINE void hsi48_init(void) {
 
-#if STM32_HSI48_ENABLED
+#if (defined(RCC_CRRCR_HSI48ON) || defined(RCC_CR_HSI48ON)) && STM32_HSI48_ENABLED
   /* HSI activation.*/
   hsi48_enable();
 #endif

@@ -178,7 +178,6 @@ void ibqPostFullBufferI(input_buffers_queue_t *ibqp, size_t size) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a buffer has been acquired.
  * @retval MSG_TIMEOUT  if the specified time expired.
@@ -210,7 +209,6 @@ msg_t ibqGetFullBufferTimeout(input_buffers_queue_t *ibqp,
    *                      the following special values are allowed:
    *                      - @a TIME_IMMEDIATE immediate timeout.
    *                      - @a TIME_INFINITE no timeout.
-   *                      .
    * @return              The operation status.
    * @retval MSG_OK       if a buffer has been acquired.
    * @retval MSG_TIMEOUT  if the specified time expired.
@@ -298,7 +296,6 @@ void ibqReleaseEmptyBuffer(input_buffers_queue_t *ibqp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A byte value from the queue.
  * @retval MSG_TIMEOUT  if the specified time expired.
  * @retval MSG_RESET    if the queue has been reset or has been put in
@@ -349,7 +346,6 @@ msg_t ibqGetTimeout(input_buffers_queue_t *ibqp, sysinterval_t timeout) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred.
  * @retval 0            if a timeout occurred.
  *
@@ -534,7 +530,6 @@ void obqReleaseEmptyBufferI(output_buffers_queue_t *obqp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a buffer has been acquired.
  * @retval MSG_TIMEOUT  if the specified time expired.
@@ -566,7 +561,6 @@ msg_t obqGetEmptyBufferTimeout(output_buffers_queue_t *obqp,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       if a buffer has been acquired.
  * @retval MSG_TIMEOUT  if the specified time expired.
@@ -661,7 +655,6 @@ void obqPostFullBufferS(output_buffers_queue_t *obqp, size_t size) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A byte value from the queue.
  * @retval MSG_TIMEOUT  if the specified time expired.
  * @retval MSG_RESET    if the queue has been reset or has been put in
@@ -713,7 +706,6 @@ msg_t obqPutTimeout(output_buffers_queue_t *obqp, uint8_t b,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred.
  * @retval 0            if a timeout occurred.
  *

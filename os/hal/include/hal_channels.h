@@ -108,7 +108,6 @@ typedef struct {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval STM_OK       if the operation succeeded.
  * @retval STM_TIMEOUT  if the specified time expired.
@@ -128,7 +127,6 @@ typedef struct {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A byte value from the queue.
  * @retval STM_TIMEOUT  if the specified time expired.
  * @retval STM_RESET    if the channel associated queue (if any) has been
@@ -165,7 +163,6 @@ typedef struct {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes transferred.
  *
  * @api
@@ -199,7 +196,6 @@ typedef struct {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes transferred.
  *
  * @api

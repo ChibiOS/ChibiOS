@@ -146,7 +146,6 @@ systime_t osalOsGetSystemTimeX(void) {
  *                      - @a TIME_INFINITE is allowed but interpreted as a
  *                        normal time specification.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  *
  * @sclass
  */
@@ -163,7 +162,6 @@ void osalThreadSleepS(sysinterval_t time) {
  *                      - @a TIME_INFINITE is allowed but interpreted as a
  *                        normal time specification.
  *                      - @a TIME_IMMEDIATE this value is not allowed.
- *                      .
  *
  * @api
  */
@@ -202,7 +200,6 @@ msg_t osalThreadSuspendS(thread_reference_t *trp) {
  *                      - @a TIME_IMMEDIATE the thread is not enqueued and
  *                        the function returns @p MSG_TIMEOUT as if a timeout
  *                        occurred.
- *                      .
  * @return              The wake up message.
  * @retval MSG_TIMEOUT  if the operation timed out.
  *
@@ -264,7 +261,6 @@ void osalThreadResumeS(thread_reference_t *trp, msg_t msg) {
  *                      - @a TIME_IMMEDIATE the thread is not enqueued and
  *                        the function returns @p MSG_TIMEOUT as if a timeout
  *                        occurred.
- *                      .
  * @return              The message from @p osalQueueWakeupOneI() or
  *                      @p osalQueueWakeupAllI() functions.
  * @retval MSG_TIMEOUT  if the thread has not been dequeued within the

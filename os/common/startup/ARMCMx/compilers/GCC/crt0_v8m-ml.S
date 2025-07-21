@@ -244,15 +244,10 @@ _crt0_entry:
                 movw    r1, #SCB_FPDSCR & 0xFFFF
                 movt    r1, #SCB_FPDSCR >> 16
                 str     r0, [r1]
-
-                /* Enforcing FPCA bit in the CONTROL register.*/
-                movs    r0, #CRT0_CONTROL_INIT | CONTROL_FPCA
-
-#else
-                movs    r0, #CRT0_CONTROL_INIT
 #endif
 
                 /* CONTROL register initialization as configured.*/
+                movs    r0, #CRT0_CONTROL_INIT
                 msr     CONTROL, r0
                 isb
 
@@ -271,22 +266,22 @@ _crt0_entry:
                    ensure this.*/
                 ldr     r1, =__main_stack_base__
                 ldr     r2, =__main_stack_end__
-msloop:
+.Lmsloop:
                 cmp     r1, r2
                 itt     lo
                 strlo   r0, [r1], #4
-                blo     msloop
+                blo     .Lmsloop
 
                 /* Process Stack initialization. Note, it assumes that the
                    stack size is a multiple of 4 so the linker file must
                    ensure this.*/
                 ldr     r1, =__process_stack_base__
                 ldr     r2, =__process_stack_end__
-psloop:
+.Lpsloop:
                 cmp     r1, r2
                 itt     lo
                 strlo   r0, [r1], #4
-                blo     psloop
+                blo     .Lpsloop
 #endif
 
 #if CRT0_INIT_VECTORS == TRUE
@@ -297,12 +292,12 @@ psloop:
                 ldr     r2, =__vectors_base__
                 ldr     r3, =__vectors_end__
                 mov     r4, r2
-vloop:
+.Lvloop:
                 cmp     r2, r3
                 ittt    lo
                 ldrlo   r0, [r1], #4
                 strlo   r0, [r2], #4
-                blo     vloop
+                blo     .Lvloop
 
                 /* VTOR now pointing to the RAM table.*/
                 ldr     r1, =SCB_VTOR
@@ -316,12 +311,12 @@ vloop:
                 ldr     r1, =__textdata_base__
                 ldr     r2, =__data_base__
                 ldr     r3, =__data_end__
-dloop:
+.Ldloop:
                 cmp     r2, r3
                 ittt    lo
                 ldrlo   r0, [r1], #4
                 strlo   r0, [r2], #4
-                blo     dloop
+                blo     .Ldloop
 #endif
 
 #if CRT0_INIT_BSS == TRUE
@@ -331,11 +326,11 @@ dloop:
                 movs    r0, #0
                 ldr     r1, =__bss_base__
                 ldr     r2, =__bss_end__
-bloop:
+.Lbloop:
                 cmp     r1, r2
                 itt     lo
                 strlo   r0, [r1], #4
-                blo     bloop
+                blo     .Lbloop
 #endif
 
 #if CRT0_INIT_RAM_AREAS == TRUE
@@ -350,13 +345,13 @@ bloop:
                 /* Constructors invocation.*/
                 ldr     r4, =__init_array_base__
                 ldr     r5, =__init_array_end__
-initloop:
+.Linitloop:
                 cmp     r4, r5
-                bge     endinitloop
+                bge     .Lendinitloop
                 ldr     r1, [r4], #4
                 blx     r1
-                b       initloop
-endinitloop:
+                b       .Linitloop
+.Lendinitloop:
 #endif
 
                 /* Main program invocation, r0 contains the returned value.*/
@@ -366,13 +361,13 @@ endinitloop:
                 /* Destructors invocation.*/
                 ldr     r4, =__fini_array_base__
                 ldr     r5, =__fini_array_end__
-finiloop:
+.Lfiniloop:
                 cmp     r4, r5
-                bge     endfiniloop
+                bge     .Lendfiniloop
                 ldr     r1, [r4], #4
                 blx     r1
-                b       finiloop
-endfiniloop:
+                b       .Lfiniloop
+.Lendfiniloop:
 #endif
 
                 /* Branching to the defined exit handler.*/

@@ -148,6 +148,8 @@
 #define STM32_DMAMUX1_SAI3_A        113
 #define STM32_DMAMUX1_SAI3_B        114
 #define STM32_DMAMUX1_ADC3          115
+#define STM32_DMAMUX1_I2C5_RX       124
+#define STM32_DMAMUX1_I2C5_TX       125
 /** @} */
 
 /**

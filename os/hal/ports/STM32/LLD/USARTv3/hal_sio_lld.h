@@ -333,9 +333,7 @@
  */
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
-  USART_TypeDef             *usart;                                         \
-  /* Clock frequency for the associated USART/UART.*/                       \
-  uint32_t                  clock
+  USART_TypeDef             *usart
 
 /**
  * @brief   Low level fields of the SIO configuration structure.

@@ -63,7 +63,7 @@
  * @note    Allowed values are 16, 32 or 64 bits.
  */
 #if !defined(CH_CFG_ST_RESOLUTION)
-#define CH_CFG_ST_RESOLUTION                32
+#define CH_CFG_ST_RESOLUTION                16
 #endif
 
 /**
@@ -72,7 +72,7 @@
  *          setting also defines the system tick time unit.
  */
 #if !defined(CH_CFG_ST_FREQUENCY)
-#define CH_CFG_ST_FREQUENCY                 10000
+#define CH_CFG_ST_FREQUENCY                 1000
 #endif
 
 /**
@@ -177,7 +177,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_CFG_USE_TM)
-#define CH_CFG_USE_TM                       TRUE
+#define CH_CFG_USE_TM                       FALSE
 #endif
 
 /**
@@ -563,7 +563,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_SYSTEM_STATE_CHECK)
-#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
+#define CH_DBG_SYSTEM_STATE_CHECK           TRUE
 #endif
 
 /**
@@ -574,7 +574,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_CHECKS)
-#define CH_DBG_ENABLE_CHECKS                FALSE
+#define CH_DBG_ENABLE_CHECKS                TRUE
 #endif
 
 /**
@@ -586,7 +586,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_ASSERTS)
-#define CH_DBG_ENABLE_ASSERTS               FALSE
+#define CH_DBG_ENABLE_ASSERTS               TRUE
 #endif
 
 /**
@@ -596,7 +596,7 @@
  * @note    The default is @p CH_DBG_TRACE_MASK_DISABLED.
  */
 #if !defined(CH_DBG_TRACE_MASK)
-#define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_NONE
+#define CH_DBG_TRACE_MASK                   CH_DBG_TRACE_MASK_ALL
 #endif
 
 /**
@@ -619,7 +619,7 @@
  *          @p panic_msg variable set to @p NULL.
  */
 #if !defined(CH_DBG_ENABLE_STACK_CHECK)
-#define CH_DBG_ENABLE_STACK_CHECK           FALSE
+#define CH_DBG_ENABLE_STACK_CHECK           TRUE
 #endif
 
 /**
@@ -631,7 +631,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_FILL_THREADS)
-#define CH_DBG_FILL_THREADS                 FALSE
+#define CH_DBG_FILL_THREADS                 TRUE
 #endif
 
 /**

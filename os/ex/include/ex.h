@@ -41,7 +41,7 @@
 /**
  * @brief   Stable release flag.
  */
-#define CH_EX_STABLE            1
+#define CH_EX_STABLE            0
 
 /**
  * @name    ChibiOS/EX version identification

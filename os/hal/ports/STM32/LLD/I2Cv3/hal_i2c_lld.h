@@ -96,6 +96,15 @@
 #endif
 
 /**
+ * @brief   I2C5 driver enable switch.
+ * @details If set to @p TRUE the support for I2C5 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_I2C_USE_I2C5) || defined(__DOXYGEN__)
+#define STM32_I2C_USE_I2C5                  FALSE
+#endif
+
+/**
  * @brief   I2C timeout on busy condition in milliseconds.
  */
 #if !defined(STM32_I2C_BUSY_TIMEOUT) || defined(__DOXYGEN__)
@@ -128,6 +137,13 @@
  */
 #if !defined(STM32_I2C_I2C4_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_I2C_I2C4_IRQ_PRIORITY         10
+#endif
+
+/**
+ * @brief   I2C5 interrupt priority level setting.
+ */
+#if !defined(STM32_I2C_I2C5_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C5_IRQ_PRIORITY         10
 #endif
 
 /**
@@ -178,6 +194,16 @@
 #endif
 
 /**
+ * @brief   I2C5 DMA priority (0..3|lowest..highest).
+ * @note    The priority level is used for both the TX and RX DMA streams but
+ *          because of the streams ordering the RX stream has always priority
+ *          over the TX stream.
+ */
+#if !defined(STM32_I2C_I2C5_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_I2C_I2C5_DMA_PRIORITY         1
+#endif
+
+/**
  * @brief   I2C DMA error hook.
  * @note    The default action for DMA errors is a system halt because DMA
  *          error can only happen because programming errors.
@@ -212,6 +238,10 @@
 #error "STM32_I2C4_USE_BDMA not defined in registry"
 #endif
 
+#if !defined(STM32_HAS_I2C5)
+#error "STM32_HAS_I2C5 not defined in registry"
+#endif
+
 /** @brief  error checks */
 #if STM32_I2C_USE_I2C1 && !STM32_HAS_I2C1
 #error "I2C1 not present in the selected device"
@@ -229,8 +259,12 @@
 #error "I2C4 not present in the selected device"
 #endif
 
+#if STM32_I2C_USE_I2C5 && !STM32_HAS_I2C5
+#error "I2C5 not present in the selected device"
+#endif
+
 #if !STM32_I2C_USE_I2C1 && !STM32_I2C_USE_I2C2 && !STM32_I2C_USE_I2C3 &&    \
-    !STM32_I2C_USE_I2C4
+    !STM32_I2C_USE_I2C4 && !STM32_I2C_USE_I2C5
 #error "I2C driver activated but no I2C peripheral assigned"
 #endif
 
@@ -252,6 +286,11 @@
 #if STM32_I2C_USE_I2C4 &&                                                   \
     !OSAL_IRQ_IS_VALID_PRIORITY(STM32_I2C_I2C4_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to I2C4"
+#endif
+
+#if STM32_I2C_USE_I2C5 &&                                                   \
+    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_I2C_I2C5_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to I2C5"
 #endif
 
 #if STM32_I2C_USE_DMA == TRUE
@@ -372,7 +411,7 @@
 
 #if STM32_I2C4_USE_BDMA == TRUE
 
-#if STM32_I2C_USE_I2C1 || STM32_I2C_USE_I2C2 || STM32_I2C_USE_I2C3
+#if STM32_I2C_USE_I2C1 || STM32_I2C_USE_I2C2 || STM32_I2C_USE_I2C3 || STM32_I2C_USE_I2C5
 #define STM32_I2C_DMA_REQUIRED
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -387,7 +426,7 @@
 #endif
 #else /* STM32_I2C4_USE_BDMA != TRUE */
 
-#if STM32_I2C_USE_I2C1 || STM32_I2C_USE_I2C2 || STM32_I2C_USE_I2C3 || STM32_I2C_USE_I2C4
+#if STM32_I2C_USE_I2C1 || STM32_I2C_USE_I2C2 || STM32_I2C_USE_I2C3 || STM32_I2C_USE_I2C4 || STM32_I2C_USE_I2C5
 #define STM32_I2C_DMA_REQUIRED
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
@@ -395,6 +434,28 @@
 #endif
 
 #endif /* STM32_I2C4_USE_BDMA != TRUE */
+
+#if STM32_I2C_USE_I2C5
+#if !defined(STM32_I2C_I2C5_RX_DMA_STREAM)
+#error "STM32_I2C_I2C5_RX_DMA_STREAM not defined"
+#endif
+
+#if !defined(STM32_I2C_I2C5_TX_DMA_STREAM)
+#error "STM32_I2C_I2C5_TX_DMA_STREAM not defined"
+#endif
+
+#if !STM32_DMA_IS_VALID_STREAM(STM32_I2C_I2C5_RX_DMA_STREAM)
+#error "Invalid DMA stream assigned to I2C5 RX"
+#endif
+
+#if !STM32_DMA_IS_VALID_STREAM(STM32_I2C_I2C5_TX_DMA_STREAM)
+#error "Invalid DMA stream assigned to I2C5 TX"
+#endif
+
+#if !STM32_DMA_IS_VALID_PRIORITY(STM32_I2C_I2C5_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to I2C5"
+#endif
+#endif
 
 #endif /* STM32_I2C_USE_DMA == TRUE */
 
@@ -546,6 +607,17 @@ struct hal_i2c_driver {
    * @brief     Pointer to the I2Cx registers block.
    */
   I2C_TypeDef               *i2c;
+
+#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+  /**
+   * @brief     Master needed a reply.
+   */
+  bool                      reply_required;
+  /**
+   * @brief     Master/Slave mode.
+   */
+  bool                      isMaster;
+#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
 };
 
 /*===========================================================================*/
@@ -582,6 +654,10 @@ extern I2CDriver I2CD3;
 extern I2CDriver I2CD4;
 #endif
 
+#if STM32_I2C_USE_I2C5
+extern I2CDriver I2CD5;
+#endif
+
 #endif /* !defined(__DOXYGEN__) */
 
 #ifdef __cplusplus
@@ -597,6 +673,13 @@ extern "C" {
   msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                        uint8_t *rxbuf, size_t rxbytes,
                                        sysinterval_t timeout);
+#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+  msg_t i2c_lld_match_address(I2CDriver *i2cp, i2caddr_t addr);
+  msg_t i2c_lld_slave_receive_timeout(I2CDriver *i2cp, uint8_t *rxbuf,
+                                      size_t rxbytes, sysinterval_t timeout);
+  msg_t i2c_lld_slave_transmit_timeout(I2CDriver *i2cp, const uint8_t *txbuf,
+                                       size_t txbytes, sysinterval_t timeout);
+#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
 #ifdef __cplusplus
 }
 #endif

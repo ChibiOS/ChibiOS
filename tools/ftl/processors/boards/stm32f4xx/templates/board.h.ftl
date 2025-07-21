@@ -98,6 +98,7 @@
 /*
  * MCU type as defined in the ST header.
  */
+#undef ${doc1.board.subtype[0]}
 #define ${doc1.board.subtype[0]}
 
 /*

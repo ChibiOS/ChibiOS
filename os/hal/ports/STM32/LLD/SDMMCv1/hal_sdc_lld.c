@@ -851,15 +851,15 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                        SDMMC_MASK_DATAENDIE;
   sdcp->sdmmc->DLEN  = blocks * MMCSD_BLOCK_SIZE;
 
+  if (sdc_lld_prepare_read(sdcp, startblk, blocks, resp) == true)
+    goto error;
+
   /* Transaction starts just after DTEN bit setting.*/
   sdcp->sdmmc->DCTRL = SDMMC_DCTRL_DTDIR |
                        SDMMC_DCTRL_DBLOCKSIZE_3 |
                        SDMMC_DCTRL_DBLOCKSIZE_0 |
                        SDMMC_DCTRL_DMAEN |
                        SDMMC_DCTRL_DTEN;
-
-  if (sdc_lld_prepare_read(sdcp, startblk, blocks, resp) == true)
-    goto error;
 
   if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
     goto error;

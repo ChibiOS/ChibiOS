@@ -25,7 +25,7 @@ endif
 # Link time optimizations
 ifneq ($(USE_LTO),no)
   ifeq ($(USE_LTO),yes)
-    OPT += -flto
+    OPT += -flto=auto
   else
     OPT += -flto=$(USE_LTO)
   endif
@@ -90,28 +90,24 @@ ifdef SREC
 endif
 
 # Source files groups and paths
-TCSRC     += $(CSRC)
-TCPPSRC   += $(CPPSRC)
-TSRC      := $(TCSRC) $(TCPPSRC)
-SRCPATHS  := $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(TSRC)))
+SRC      := $(CSRC) $(CPPSRC)
+SRCPATHS += $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(SRC)))
 
 # Various directories
 OBJDIR    := $(BUILDDIR)/obj
 LSTDIR    := $(BUILDDIR)/lst
 
 # Object files groups
-TCOBJS    := $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
-#TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
-TCPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cpp, %.o, $(filter %.cpp, $(TCPPSRC)))))
-TCCOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cc, %.o, $(filter %.cc, $(TCPPSRC)))))
-ASMOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
-ASMXOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
-#OBJS      := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
-OBJS      := $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS) $(TCCOBJS)
+COBJS    := $(addprefix $(OBJDIR)/, $(notdir $(CSRC:.c=.o)))
+CPPOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cpp, %.o, $(filter %.cpp, $(CPPSRC)))))
+CCOBJS   := $(addprefix $(OBJDIR)/, $(notdir $(patsubst %.cc, %.o, $(filter %.cc, $(CPPSRC)))))
+ASMOBJS  := $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
+ASMXOBJS := $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
+OBJS     += $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CPPOBJS) $(CCOBJS)
 
 # Paths
-IINCDIR   := $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
-LLIBDIR   := $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+IINCDIR   := $(sort $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR)))
+LLIBDIR   := $(sort $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR)))
 
 # Macros
 DEFS      := $(DDEFS) $(UDEFS)
@@ -125,8 +121,13 @@ MCFLAGS   := -mcpu=$(MCU) -mthumb
 ODFLAGS   = -x --syms
 ASFLAGS   = $(MCFLAGS) $(OPT) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
 ASXFLAGS  = $(MCFLAGS) $(OPT) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
-CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
-CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
+ifeq ($(USE_LTO),no)
+  CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
+  CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
+else
+  CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) $(DEFS)
+  CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) $(DEFS)
+endif
 LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(STARTUPLD),--script=$(LDSCRIPT)$(LDOPT)
 
 # Generate dependency information
@@ -167,7 +168,7 @@ $(LSTDIR):
 $(DEPDIR):
 	@mkdir -p $(DEPDIR)
 
-$(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
+$(CPPOBJS) : $(OBJDIR)/%.o : %.cpp $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
@@ -176,7 +177,7 @@ else
 	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCCOBJS) : $(OBJDIR)/%.o : %.cc $(MAKEFILE_LIST)
+$(CCOBJS) : $(OBJDIR)/%.o : %.cc $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
@@ -185,7 +186,7 @@ else
 	@$(CPPC) -c $(CPPFLAGS) -I. $(IINCDIR) $< -o $@
 endif
 
-$(TCOBJS) : $(OBJDIR)/%.o : %.c $(MAKEFILE_LIST)
+$(COBJS) : $(OBJDIR)/%.o : %.c $(MAKEFILE_LIST)
 ifeq ($(USE_VERBOSE_COMPILE),yes)
 	@echo
 	$(CC) -c $(CFLAGS) -I. $(IINCDIR) $< -o $@

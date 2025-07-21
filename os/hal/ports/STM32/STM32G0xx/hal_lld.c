@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@
 
 /**
  * @brief   Flash ACR reset value.
+ * @note    The data cache bit is set even though there is no data cache
  */
 #define STM32_FLASH_ACR_RESET           0x00040600U
 
@@ -69,6 +70,10 @@ const halclkcfg_t hal_clkcfg_reset = {
   .pwr_cr1              = PWR_CR1_VOS_0 | PWR_CR1_FPD_STOP,
 #if defined (PWR_CR2_PVMEN_USB)
   .pwr_cr2              = PWR_CR2_PVMEN_USB,
+#elif defined(PWR_CR2_USV) && HAL_USE_USB
+
+  /* The USB peripheral power is enabled.*/
+  .pwr_cr2              = PWR_CR2_USV,
 #else
   .pwr_cr2              = 0U,
 #endif
@@ -85,6 +90,10 @@ const halclkcfg_t hal_clkcfg_default = {
   .pwr_cr1              = STM32_VOS_RANGE1 | PWR_CR1_DBP,
 #if defined (PWR_CR2_PVMEN_USB)
   .pwr_cr2              = PWR_CR2_PVMEN_USB,
+#elif defined(PWR_CR2_USV) && HAL_USE_USB
+
+  /* The USB peripheral power is enabled.*/
+  .pwr_cr2              = PWR_CR2_USV,
 #else
   .pwr_cr2              = 0U,
 #endif
@@ -103,6 +112,9 @@ const halclkcfg_t hal_clkcfg_default = {
 #endif
                         ,
   .rcc_cfgr             = STM32_MCOPRE  | STM32_MCOSEL  |
+#if STM32_RCC_HAS_MCO2 == TRUE
+                          STM32_MCO2PRE | STM32_MCO2SEL |
+#endif
                           STM32_PPRE    | STM32_HPRE    |
                           STM32_SW,
   .rcc_pllcfgr          = STM32_PLLR    | STM32_PLLREN  |
@@ -110,8 +122,12 @@ const halclkcfg_t hal_clkcfg_default = {
                           STM32_PLLP    | STM32_PLLPEN  |
                           STM32_PLLN    | STM32_PLLM    |
                           STM32_PLLSRC,
+#if defined(FLASH_ACR_DBG_SWEN)
   .flash_acr            = FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN |
                           FLASH_ACR_PRFTEN   | STM32_FLASHBITS
+#else
+  .flash_acr            = FLASH_ACR_ICEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS
+#endif
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -133,6 +149,9 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_PCLK]        = STM32_PCLK,
   [CLK_PCLKTIM]     = STM32_TIMPCLK,
   [CLK_MCO]         = STM32_MCOCLK,
+#if STM32_RCC_HAS_MCO2 == TRUE
+  [CLK_MCO2]        = STM32_MCO2CLK,
+#endif
 };
 
 /**
@@ -207,7 +226,12 @@ static const system_limits_t vos_range2 = {
  */
 __STATIC_INLINE void flash_set_acr(uint32_t acr) {
 
+#if defined(STM32G0B0xx)
+  /* Set ACR. Note: retaining set bits in ACR required.*/
+  FLASH->ACR |= acr;
+#else
   FLASH->ACR = acr;
+#endif
   while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
     /* Waiting for flash wait states setup.*/
   }
@@ -263,7 +287,13 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 
   /* Clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_PPRE | STM32_HPRE;
+#if STM32_RCC_HAS_MCO2 == TRUE
+  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL | STM32_MCO2PRE | STM32_MCO2SEL |
+              STM32_PPRE   | STM32_HPRE;
+#else
+  RCC->CFGR = STM32_MCOPRE | STM32_MCOSEL |
+              STM32_PPRE   | STM32_HPRE;
+#endif
 
   /* Set HSISYS divisor.*/
   RCC->CR = (RCC->CR & ~STM32_HSIDIV_MASK) | STM32_HSIDIV;
@@ -277,8 +307,9 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
                 STM32_USART1SEL | STM32_LPUART2SEL | STM32_LPUART1SEL;
 
   /* CCIPR2 register initialization.*/
-  RCC->CCIPR2 = STM32_USBSEL    | STM32_FDCANSEL  | STM32_I2S2SEL   |
+  RCC->CCIPR2 = STM32_USBSEL    | STM32_FDCANSEL   | STM32_I2S2SEL   |
                 STM32_I2S1SEL;
+
 #else
   /* CCIPR register initialization.*/
   RCC->CCIPR =  STM32_ADCSEL    | STM32_RNGDIV     | STM32_RNGSEL    |
@@ -308,6 +339,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   halfreq_t hsi16clk = 0U, hseclk = 0U, pllselclk, hsisysclk;
   halfreq_t pllpclk = 0U, pllqclk = 0U, pllrclk = 0U;
   halfreq_t sysclk, hclk, pclk, pclktim, mcoclk;
+#if STM32_RCC_HAS_MCO2 == TRUE
+  halfreq_t mco2clk;
+#endif
   uint32_t mcodiv, flashws, hsidiv;
 
   /* System limits based on desired VOS settings.*/
@@ -459,14 +493,76 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case STM32_MCOSEL_LSE:
     mcoclk = STM32_LSECLK;
     break;
+#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+  case STM32_MCOSEL_PLLPCLK:
+    mcoclk = pllpclk;
+    break;
+  case STM32_MCOSEL_PLLQCLK:
+    mcoclk = pllqclk;
+    break;
+  case STM32_MCOSEL_RTCCLK:
+    mcoclk = STM32_RTCCLK;
+    break;
+#endif
   default:
     mcoclk = 0U;
   }
   mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCOPRE_Msk) >> RCC_CFGR_MCOPRE_Pos);
-  if (mcodiv > 16U) {
+#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+  if (mcodiv > 1024U) {
+#else
+  if (mcodiv > 128U) {
+#endif
     return true;
   }
   mcoclk /= mcodiv;
+
+#if STM32_RCC_HAS_MCO2 == TRUE
+  /* MCO2 clock.*/
+  switch (ccp->rcc_cfgr & RCC_CFGR_MCO2SEL_Msk) {
+  case STM32_MCO2SEL_NOCLOCK:
+    mco2clk = 0U;
+    break;
+  case STM32_MCO2SEL_SYSCLK:
+    mco2clk = sysclk;
+    break;
+  case STM32_MCO2SEL_HSI16:
+    mco2clk = hsi16clk;
+    break;
+  case STM32_MCO2SEL_HSE:
+    mco2clk = hseclk;
+    break;
+  case STM32_MCO2SEL_PLLRCLK:
+    mco2clk = pllrclk;
+    break;
+  case STM32_MCO2SEL_LSI:
+    mco2clk = STM32_LSICLK;
+    break;
+  case STM32_MCO2SEL_LSE:
+    mco2clk = STM32_LSECLK;
+    break;
+  case STM32_MCO2SEL_PLLPCLK:
+    mco2clk = pllpclk;
+    break;
+  case STM32_MCO2SEL_PLLQCLK:
+    mco2clk = pllqclk;
+    break;
+  case STM32_MCO2SEL_RTCCLK:
+    mco2clk = STM32_RTCCLK;
+    break;
+  default:
+    mco2clk = 0U;
+  }
+  mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCO2PRE_Msk) >> RCC_CFGR_MCO2PRE_Pos);
+#if defined(STM32G0B1xx) || defined(STM32G0B0xx) || defined(STM32G0C1xx)
+  if (mcodiv > 1024U) {
+#else
+  if (mcodiv > 128U) {
+#endif
+    return true;
+  }
+  mco2clk /= mcodiv;
+#endif
 
   /* Flash settings.*/
   flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
@@ -487,6 +583,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   clock_points[CLK_PCLK]      = pclk;
   clock_points[CLK_PCLKTIM]   = pclktim;
   clock_points[CLK_MCO]       = mcoclk;
+#if STM32_RCC_HAS_MCO2 == TRUE
+  clock_points[CLK_MCO2]      = mco2clk;
+#endif
 
   return false;
 }
@@ -563,7 +662,12 @@ static bool hal_lld_clock_raw_config(const halclkcfg_t *ccp) {
 
   /* Final PWR modes.*/
   PWR->CR1 = ccp->pwr_cr1;
+#if defined(STM32G0B0xx) && HAL_USE_USB
+  /* Enable USB peripheral. Note: retaining set bits in CR2 required.*/
+  PWR->CR2 |= PWR_CR2_USV;
+#elif !defined(STM32G0B0xx)
   PWR->CR2 = ccp->pwr_cr2;
+#endif
 
   /* Waiting for the correct regulator state.*/
   if ((ccp->pwr_cr1 & PWR_CR1_LPR) == 0U) {
@@ -675,6 +779,11 @@ void stm32_clock_init(void) {
      among multiple drivers.*/
   rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
 
+#if defined(RCC_APBENR1_DBGEN)
+  /* Enable DBG clock. Required for TIM freeze to be enabled.*/
+  rccEnableAPBR1(RCC_APBENR1_DBGEN, true);
+#endif
+
 #if defined(HAL_USE_RTC) && defined(RCC_APBENR1_RTCAPBEN)
   rccEnableAPBR1(RCC_APBENR1_RTCAPBEN, true);
 #endif
@@ -718,6 +827,11 @@ void stm32_clock_init(void) {
      among multiple drivers.*/
   rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
 
+#if defined(RCC_APBENR1_DBGEN)
+  /* Enable DBG clock. Required for TIM freeze to be enabled.*/
+  rccEnableAPBR1(RCC_APBENR1_DBGEN, true);
+#endif
+
 #if defined(HAL_USE_RTC) && defined(RCC_APBENR1_RTCAPBEN)
   rccEnableAPBR1(RCC_APBENR1_RTCAPBEN, false);
 #endif
@@ -725,8 +839,13 @@ void stm32_clock_init(void) {
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
+#if defined(STM32G0B0xx) && HAL_USE_USB
+  /* Enable USB peripheral. Note: retaining set bits in CR2 required.*/
+  PWR->CR2 |= PWR_CR2_USV;
+#elif !defined(STM32G0B0xx)
   /* Additional PWR configurations.*/
   PWR->CR2 = STM32_PWR_CR2;
+#endif
 
   /* Core voltage setup.*/
   PWR->CR1 = STM32_VOS | PWR_CR1_DBP;
@@ -753,18 +872,22 @@ void stm32_clock_init(void) {
   hal_lld_set_static_clocks();
 
   /* Set flash WS's for SYSCLK source.*/
+#if defined(FLASH_ACR_DBG_SWEN)
   flash_set_acr(FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
                 STM32_FLASHBITS);
+#else
+  flash_set_acr(FLASH_ACR_ICEN | FLASH_ACR_PRFTEN | STM32_FLASHBITS);
+#endif
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
 #if STM32_SW != STM32_SW_HSISYS
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   /* Wait until SYSCLK is stable.*/
-  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 3))
+  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << RCC_CFGR_SWS_Pos))
     ;
 #endif
 
-#endif /* STM32_NO_INIT */
+#endif /* !STM32_NO_INIT */
 }
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 

@@ -587,19 +587,21 @@ void usb_lld_init(void) {
  * @brief   Configures and activates the USB peripheral.
  *
  * @param[in] usbp      pointer to the @p USBDriver object
+ * @return              The operation status.
  *
  * @notapi
  */
-void usb_lld_start(USBDriver *usbp) {
+msg_t usb_lld_start(USBDriver *usbp) {
 
   if (usbp->state == USB_STOP) {
     /* Clock activation.*/
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
 
-      osalDbgAssert((STM32_USBCLK >= (48000000U - STM32_USB_48MHZ_DELTA)) &&
-                    (STM32_USBCLK <= (48000000U + STM32_USB_48MHZ_DELTA)),
-                    "invalid clock frequency");
+      if ((STM32_USBCLK < (48000000U - STM32_USB_48MHZ_DELTA)) ||
+          (STM32_USBCLK > (48000000U + STM32_USB_48MHZ_DELTA))) {
+        return HAL_RET_CONFIG_ERROR;
+      }
 
       /* USB clock enabled.*/
       rccEnableUSB(true);
@@ -622,6 +624,8 @@ void usb_lld_start(USBDriver *usbp) {
     /* Reset procedure enforced on driver start.*/
     usb_lld_reset(usbp);
   }
+
+  return HAL_RET_SUCCESS;
 }
 
 /**

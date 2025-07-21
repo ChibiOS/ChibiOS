@@ -19,23 +19,43 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "hal_serial_nor.h"
+#include "hal_xsnor_micron_n25q.h"
+#include "hal_xsnor_macronix_mx25.h"
 #include "hal_mfs.h"
 
 #include "mfs_test_root.h"
 
 #include "portab.h"
 
-const SNORConfig snorcfg1 = {
-  .busp             = &PORTAB_WSPI1,
-  .buscfg           = &WSPIcfg1
+static union {
+  hal_xsnor_micron_n25q_c           n25q;
+  hal_xsnor_macronix_mx25_c         mx25;
+} snor1;
+
+static xsnor_buffers_t __nocache_snor1buf;
+
+static const xsnor_config_t snorcfg_n25q = {
+  .bus_type         = XSNOR_BUS_MODE_WSPI_4LINES,
+  .bus.wspi.drv     = &PORTAB_WSPI1,
+  .bus.wspi.cfg     = &WSPIcfg1,
+  .buffers          = &__nocache_snor1buf,
+  .options          = N25Q_OPT_DUMMY_CYCLES(8) |
+                      N25Q_OPT_USE_SUBSECTORS |
+                      N25Q_OPT_NICE_WAITING
 };
 
-SNORDriver snor1;
-snor_nocache_buffer_t __nocache_snor1buf;
+static const xsnor_config_t snorcfg_mx25 = {
+  .bus_type         = XSNOR_BUS_MODE_WSPI_8LINES,
+  .bus.wspi.drv     = &PORTAB_WSPI1,
+  .bus.wspi.cfg     = &WSPIcfg1,
+  .buffers          = &__nocache_snor1buf,
+  .options          = MX25_OPT_DUMMY_CYCLES(14) |   /* Very conservative.*/
+                      MX25_OPT_USE_SUBSECTORS |
+                      MX25_OPT_NICE_WAITING
+};
 
 const MFSConfig mfscfg1 = {
-  .flashp           = (BaseFlash *)&snor1,
+  .flashp           = (BaseFlash *)&snor1.n25q.fls, /* Dirty trick, "fls" at same offset by design.*/
   .erased           = 0xFFFFFFFFU,
   .bank_size        = 4096U,
   .bank0_start      = 0U,
@@ -79,19 +99,28 @@ int main(void) {
   /* Starting a serial port for test report output.*/
   sdStart(&PORTAB_SD1, NULL);
 
-  /* Initializing and starting snor1 driver.*/
-  snorObjectInit(&snor1, &__nocache_snor1buf);
-  snorStart(&snor1, &snorcfg1);
-#if 1
+  /* Trying N25Q.*/
+  n25qObjectInit(&snor1.n25q);
+  if (xsnorStart(&snor1.n25q, &snorcfg_n25q) != FLASH_NO_ERROR) {
+
+    /* Trying MX25.*/
+    mx25ObjectInit(&snor1.mx25);
+    if (xsnorStart(&snor1.mx25, &snorcfg_mx25) != FLASH_NO_ERROR) {
+      chSysHalt("device not found");
+    }
+  }
+
+#if 0
   /* Testing memory mapped mode.*/
   {
     uint8_t *addr;
 
-    snorMemoryMap(&snor1, &addr);
+    xsnorMemoryMap(&snor1, &addr);
     chThdSleepMilliseconds(50);
-    snorMemoryUnmap(&snor1);
+    xsnorMemoryUnmap(&snor1);
   }
 #endif
+
   /* Creates the blinker thread.*/
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 

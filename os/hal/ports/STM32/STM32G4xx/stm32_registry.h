@@ -189,6 +189,13 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+  /*
+   * TODO EL Future support for I2Cv4
+   */
+#if 0
+#define STM32_I2C_SINGLE_IRQ                FALSE
+#endif
+
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
@@ -400,6 +407,13 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+  /*
+   * TODO EL Future support for I2Cv4
+   */
+#if 0
+#define STM32_I2C_SINGLE_IRQ                FALSE
+#endif
+
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
@@ -611,6 +625,13 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+  /*
+   * TODO EL Future support for I2Cv4
+   */
+#if 0
+#define STM32_I2C_SINGLE_IRQ                FALSE
+#endif
+
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
@@ -822,6 +843,13 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+  /*
+   * TODO EL Future support for I2Cv4
+   */
+#if 0
+#define STM32_I2C_SINGLE_IRQ                FALSE
+#endif
+
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE

@@ -60,8 +60,8 @@ static const CANConfig cancfg = {
 /*
  * Receiver thread.
  */
-static THD_WORKING_AREA(can_rx1_wa, 512);
-static THD_WORKING_AREA(can_rx2_wa, 512);
+static THD_WORKING_AREA(can_rx1_wa, 1024);
+static THD_WORKING_AREA(can_rx2_wa, 1024);
 static THD_FUNCTION(can_rx, p) {
   struct can_instance *cip = p;
   event_listener_t el;
@@ -86,7 +86,7 @@ static THD_FUNCTION(can_rx, p) {
 /*
  * Transmitter thread.
  */
-static THD_WORKING_AREA(can_tx_wa, 512);
+static THD_WORKING_AREA(can_tx_wa, 1024);
 static THD_FUNCTION(can_tx, p) {
 
   CANTxFrame txmsg1;

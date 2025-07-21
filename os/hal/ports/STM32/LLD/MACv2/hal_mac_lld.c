@@ -294,12 +294,23 @@ void mac_lld_init(void) {
 
   /* Selection of the RMII or MII mode based on info exported by board.h.*/
 #if defined(STM32H7XX)
-  SYSCFG->PMCR |= SYSCFG_PMCR_PA1SO;
+  {
+    uint32_t pmcr = SYSCFG->PMCR & ~SYSCFG_PMCR_EPIS_SEL_Msk;
 #if defined(BOARD_PHY_RMII)
-  SYSCFG->PMCR = (SYSCFG->PMCR & ~SYSCFG_PMCR_EPIS_SEL_Msk) | SYSCFG_PMCR_EPIS_SEL_2;
-#else
-  SYSCFG->PMCR &= ~SYSCFG_PMCR_EPIS_SEL_Msk;
+  pmcr |= SYSCFG_PMCR_EPIS_SEL_2;
 #endif
+  SYSCFG->PMCR = pmcr;
+}
+
+#elif defined(STM32H5XX)
+  {
+    uint32_t pmcr = SBS->PMCR & ~SBS_PMCR_ETH_SEL_PHY_Msk;
+#if defined(BOARD_PHY_RMII)
+    pmcr |= SBS_PMCR_ETH_SEL_PHY_2;
+#endif
+    SBS->PMCR = pmcr;
+  }
+
 #else
 #error "unsupported STM32 platform for MACv2 driver"
 #endif
@@ -353,11 +364,9 @@ void mac_lld_start(MACDriver *macp) {
   for (i = 0; i < STM32_MAC_RECEIVE_BUFFERS; i++) {
     __eth_rd[i].rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
   }
-  macp->rdindex = 0U;
   for (i = 0; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
     __eth_td[i].tdes3 = 0U;
   }
-  macp->tdindex = 0U;
 
   /* MAC clocks activation and commanded reset procedure.*/
   rccEnableETH(true);
@@ -431,7 +440,7 @@ void mac_lld_start(MACDriver *macp) {
   ETH->MTLTQOMR  = ETH_MTLTQOMR_TSF;
   ETH->DMACTCR   = ETH_DMACTCR_ST | ETH_DMACTCR_TPBL_1PBL;
   ETH->DMACRCR   = ETH_DMACRCR_SR | ETH_DMACRCR_RPBL_1PBL |
-                   (STM32_MAC_BUFFERS_SIZE << ETH_DMACRCR_RBSZ_Pos & ETH_DMACRCR_RBSZ);
+                   (STM32_MAC_BUFFERS_SIZE << ETH_DMACRCR_RBSZ_Pos);
 }
 
 /**
@@ -478,36 +487,40 @@ void mac_lld_stop(MACDriver *macp) {
  */
 msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
                                       MACTransmitDescriptor *tdp) {
-  stm32_eth_tx_descriptor_t *tdes;
+  stm32_eth_tx_descriptor_t *current_tdes;
+  unsigned i;
 
   if (!macp->link_up)
     return MSG_TIMEOUT;
 
-  /* Get Current TX descriptor.*/
-  tdes = (stm32_eth_tx_descriptor_t *)&__eth_td[macp->tdindex];
+  /* Scanning for all descriptors ahead of the current tail pointer.*/
+  current_tdes = (stm32_eth_tx_descriptor_t *)((uint32_t)&__eth_td[0] + ETH->DMACTDTPR);
+  for (i = 0U; i < STM32_MAC_TRANSMIT_BUFFERS; i++) {
 
-  /* Ensure that descriptor isn't owned by the Ethernet DMA or locked by
-     another thread.*/
-  if ((tdes->tdes3 & (STM32_TDES3_OWN)) | (tdes->tdes1 > 0U)) {
-    return MSG_TIMEOUT;
+    /* Skipping descriptors that are locked and already owned by the DMA.*/
+    if (((current_tdes->tdes3 & STM32_TDES3_OWN) == 0U) &&
+        (current_tdes->tdes1 == 0U)) {
+
+      /* Assigning the buffer and marking the descriptor as locked.*/
+      current_tdes->tdes0 = (uint32_t)__eth_tb[current_tdes - &__eth_td[0]];
+      current_tdes->tdes1 = STM32_TDES1_LOCKED;
+
+      /* Set the buffer size and configuration.*/
+      tdp->offset   = 0U;
+      tdp->size     = STM32_MAC_BUFFERS_SIZE;
+      tdp->physdesc = current_tdes;
+
+      return MSG_OK;
+    }
+
+    /* Pointing on the next descriptor.*/
+    current_tdes++;
+    if (current_tdes >= &__eth_td[STM32_MAC_TRANSMIT_BUFFERS]) {
+      current_tdes = &__eth_td[0];
+    }
   }
 
-  tdes->tdes0 = (uint32_t)__eth_tb[macp->tdindex];
-  /* Marks the current descriptor as locked using a reserved bit.
-     tdes->tdes0 |= STM32_TDES0_LOCKED; */
-  tdes->tdes1++;
-
-  /* Next TX descriptor to use.*/
-  macp->tdindex++;
-  if (macp->tdindex >= STM32_MAC_TRANSMIT_BUFFERS)
-    macp->tdindex = 0U;
-
-  /* Set the buffer size and configuration.*/
-  tdp->offset   = 0U;
-  tdp->size     = STM32_MAC_BUFFERS_SIZE;
-  tdp->physdesc = tdes;
-
-  return MSG_OK;
+  return MSG_TIMEOUT;
 }
 
 /**
@@ -519,34 +532,32 @@ msg_t mac_lld_get_transmit_descriptor(MACDriver *macp,
  * @notapi
  */
 void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
+  stm32_eth_tx_descriptor_t *tdes = tdp->physdesc;
 
-  osalDbgAssert(!(tdp->physdesc->tdes3 & STM32_TDES3_OWN),
+  osalDbgAssert((tdes->tdes3 & STM32_TDES3_OWN) == 0U,
               "attempt to release descriptor already owned by DMA");
 
-  osalSysLock();
-
-  /* Unlocks the descriptor and returns it to the DMA engine.*/
-  tdp->physdesc->tdes1 = 0U;
-  tdp->physdesc->tdes2 = STM32_TDES2_IOC | (tdp->offset & STM32_TDES2_B1L_MASK);
+  /* Give buffer back to the Ethernet DMA.*/
+  tdes->tdes1 = 0U;
+  tdes->tdes2 = STM32_TDES2_IOC | (tdp->offset & STM32_TDES2_B1L_MASK);
 #if STM32_MAC_IP_CHECKSUM_OFFLOAD
-  tdp->physdesc->tdes3 = STM32_TDES3_CIC(STM32_MAC_IP_CHECKSUM_OFFLOAD) |
-                         STM32_TDES3_LD | STM32_TDES3_FD |
-                         STM32_TDES3_OWN;
+  tdes->tdes3 = STM32_TDES3_CIC(STM32_MAC_IP_CHECKSUM_OFFLOAD) |
+                STM32_TDES3_LD | STM32_TDES3_FD | STM32_TDES3_OWN;
 #else
-  tdp->physdesc->tdes3 = STM32_TDES3_LD | STM32_TDES3_FD |
-                         STM32_TDES3_OWN;
+  tdes->tdes3 = STM32_TDES3_LD | STM32_TDES3_FD | STM32_TDES3_OWN;
 #endif
+
+  /* Pointing on the next descriptor.*/
+  tdes = tdes + 1;
+  if (tdes >= &__eth_td[STM32_MAC_TRANSMIT_BUFFERS]) {
+    tdes = &__eth_td[0];
+  }
 
   /* Wait for the write to tdes3 to go through before resuming the DMA.*/
   __DSB();
 
-  /* If the DMA engine is stalled then a restart request is issued.*/
-  if ((ETH->DMADSR & ETH_DMADSR_TPS) == ETH_DMADSR_TPS_SUSPENDED) {
-    ETH->DMACSR = ETH_DMACSR_TBU;
-  }
-  ETH->DMACTDTPR = 0U;
-
-  osalSysUnlock();
+  /* Triggering the TX DMA on release.*/
+  ETH->DMACTDTPR = (uint32_t)tdes - (uint32_t)&__eth_td[0];
 }
 
 /**
@@ -562,34 +573,52 @@ void mac_lld_release_transmit_descriptor(MACTransmitDescriptor *tdp) {
  */
 msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
                                      MACReceiveDescriptor *rdp) {
-  stm32_eth_rx_descriptor_t *rdes;
+  stm32_eth_rx_descriptor_t *current_rdes;
+  unsigned i;
 
-  /* Get Current RX descriptor.*/
-  rdes = (stm32_eth_rx_descriptor_t *)&__eth_rd[macp->rdindex];
+  (void)macp;
 
-  /* Iterates through received frames until a valid one is found, invalid
-     frames are discarded.*/
-  while (!(rdes->rdes3 & STM32_RDES3_OWN)) {
-    if (!(rdes->rdes3 & STM32_RDES3_ES)
-        && !(rdes->rdes2 & STM32_RDES2_DAF)
-#if STM32_MAC_IP_CHECKSUM_OFFLOAD
-        && !(rdes->rdes1 & (STM32_RDES1_IPHE | STM32_RDES1_IPCE))
-#endif
-        && (rdes->rdes3 & STM32_RDES3_FD) && (rdes->rdes3 & STM32_RDES3_LD)) {
-      /* Found a valid one.*/
-      rdp->offset   = 0U;
-      rdp->size     = (rdes->rdes3 & STM32_RDES3_PL_MASK) -2; /* Lose CRC.*/
-      rdp->physdesc = rdes;
-      /* Reposition in ring.*/
-      macp->rdindex++;
-      if (macp->rdindex >= STM32_MAC_RECEIVE_BUFFERS)
-        macp->rdindex = 0U;
+  /* Scanning for all descriptors ahead of the current tail pointer.*/
+  current_rdes = (stm32_eth_rx_descriptor_t *)((uint32_t)&__eth_rd[0] + ETH->DMACRDTPR);
+  for (i = 0U; i < STM32_MAC_RECEIVE_BUFFERS; i++) {
+    stm32_eth_rx_descriptor_t *next_rdes;
 
-      return MSG_OK;
+    /* Pointing on the next descriptor.*/
+    next_rdes = current_rdes + 1;
+    if (next_rdes >= &__eth_rd[STM32_MAC_RECEIVE_BUFFERS]) {
+      next_rdes = &__eth_rd[0];
     }
-    /* Invalid frame found, purging.*/
-    rdes->rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
-    /* Reposition in ring.*/
+
+    /* Is the descriptor not owned by DMA?*/
+    if ((current_rdes->rdes3 & STM32_RDES3_OWN) == 0U) {
+
+      /* Yes, checking if it is a frame to be processed.*/
+      uint32_t rdes3 = current_rdes->rdes3 & (STM32_RDES3_ES |
+                                              STM32_RDES3_FD |
+                                              STM32_RDES3_LD);
+      if ((rdes3 == (STM32_RDES3_FD | STM32_RDES3_LD)) &&
+#if STM32_MAC_IP_CHECKSUM_OFFLOAD
+          ((current_rdes->rdes1 & (STM32_RDES1_IPHE | STM32_RDES1_IPCE)) == 0U) &&
+#endif
+          ((current_rdes->rdes2 & STM32_RDES2_DAF) == 0U)) {
+
+        /* Found a valid one.*/
+        rdp->offset   = 0U;
+        rdp->size     = (current_rdes->rdes3 & STM32_RDES3_PL_MASK) -2; /* Lose CRC.*/
+        rdp->physdesc = current_rdes;
+
+        /* Moving the tail pointer, this also wakes the DMA up.*/
+        ETH->DMACRDTPR = (uint32_t)next_rdes - (uint32_t)&__eth_rd[0];
+
+        return MSG_OK;
+      }
+
+      /* Other descriptor type, returning it to DMA without processing.*/
+      current_rdes->rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
+
+      /* Pointing on the next descriptor.*/
+      current_rdes = next_rdes;
+    }
   }
 
   return MSG_TIMEOUT;
@@ -606,24 +635,15 @@ msg_t mac_lld_get_receive_descriptor(MACDriver *macp,
  */
 void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 
-  osalDbgAssert(!(rdp->physdesc->rdes3 & STM32_RDES3_OWN),
+  osalDbgAssert((rdp->physdesc->rdes3 & STM32_RDES3_OWN) == 0U,
                 "attempt to release descriptor already owned by DMA");
-
-  osalSysLock();
 
   /* Give buffer back to the Ethernet DMA.*/
   rdp->physdesc->rdes3 = STM32_RDES3_OWN | STM32_RDES3_IOC | STM32_RDES3_BUF1V;
 
-  /* Wait for the write to rdes3 to go through before resuming the DMA.*/
-  __DSB();
-
-  /* If the DMA engine is stalled then a restart request is issued.*/
-  if ((ETH->DMADSR & ETH_DMADSR_RPS) == ETH_DMADSR_RPS_SUSPENDED) {
-    ETH->DMACSR = ETH_DMACSR_RBU;
-  }
-  ETH->DMACRDTPR = 0U;
-
-  osalSysUnlock();
+  /* Re-triggering the DMA, in case in case it went in suspend mode before
+     a found frame was released and the ring is full.*/
+  ETH->DMACRDTPR = ETH->DMACRDTPR;
 }
 
 /**
@@ -637,6 +657,7 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
  * @notapi
  */
 bool mac_lld_poll_link_status(MACDriver *macp) {
+#if STM32_MAC_PHY_LINK_TYPE == MAC_LINK_DYNAMIC
   uint32_t maccr, bmsr, bmcr;
 
   maccr = ETH->MACCR;
@@ -687,6 +708,21 @@ bool mac_lld_poll_link_status(MACDriver *macp) {
     else
       maccr &= ~ETH_MACCR_DM;
   }
+
+#elif STM32_MAC_PHY_LINK_TYPE == MAC_LINK_100_FULLDUPLEX
+  uint32_t maccr = ETH->MACCR;
+
+  maccr |= ETH_MACCR_FES;
+  maccr |= ETH_MACCR_DM;
+
+#elif STM32_MAC_PHY_LINK_TYPE == MAC_LINK_10_FULLDUPLEX
+  uint32_t maccr = ETH->MACCR;
+
+  maccr &= ~ETH_MACCR_FES;
+  maccr |= ETH_MACCR_DM;
+#else
+#error "invalid STM32_MAC_PHY_LINK_TYPE"
+#endif
 
   /* Changes the mode in the MAC.*/
   ETH->MACCR = maccr;

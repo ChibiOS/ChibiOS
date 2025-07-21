@@ -79,7 +79,6 @@
 #define GP2_6                       6U
 #define GP2_7                       7U
 
-
 /*
  * IO lines assignments.
  */

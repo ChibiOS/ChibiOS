@@ -32,6 +32,11 @@
 /*===========================================================================*/
 
 /**
+ * @brief   Supports enhanced API.
+ */
+#define USB_LLD_ENHANCED_API
+
+/**
  * @brief   Number of the available endpoints.
  * @details This value does not include the endpoint 0 which is always present.
  */
@@ -178,9 +183,11 @@
 #endif
 
 /* Allowing for a small tolerance.*/
+#if 0
 #if (STM32_USBCLK < (48000000 - STM32_USB_48MHZ_DELTA)) ||                  \
     (STM32_USBCLK > (48000000 + STM32_USB_48MHZ_DELTA))
 #error "the USB USBv1 driver requires a 48MHz clock"
+#endif
 #endif
 
 /*===========================================================================*/
@@ -519,7 +526,7 @@ extern USBDriver USBD1;
 extern "C" {
 #endif
   void usb_lld_init(void);
-  void usb_lld_start(USBDriver *usbp);
+  msg_t usb_lld_start(USBDriver *usbp);
   void usb_lld_stop(USBDriver *usbp);
   void usb_lld_reset(USBDriver *usbp);
   void usb_lld_set_address(USBDriver *usbp);

@@ -114,7 +114,8 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 #include $(CHIBIOS)/test/oslib/oslib_test.mk
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 #include $(CHIBIOS)/os/various/shell/shell.mk
-include $(CHIBIOS)/os/hal/lib/complex/serial_nor/devices/macronix_mx25/hal_flash_device.mk
+include $(CHIBIOS)/os/hal/lib/complex/xsnor/devices/micron_n25q/hal_xsnor_micron_n25q.mk
+include $(CHIBIOS)/os/hal/lib/complex/xsnor/devices/macronix_mx25/hal_xsnor_macronix_mx25.mk
 include $(CHIBIOS)/os/various/littlefs_bindings/littlefs.mk
 
 # Define linker script file here.
@@ -155,7 +156,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DXSNOR_USE_SPI=FALSE
 
 # Define ASM defines here
 UADEFS =

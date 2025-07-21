@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
 	<xs:include schemaLocation="../common/doc.xsd" />
 	<xs:include schemaLocation="../common/stm32/stm32_gpiov2_port.xsd" />
 	<xs:include schemaLocation="abstract_board.xsd" />
-
-	<xs:complexType name="STM32H7xxBoardType">
+	<xs:complexType name="STM32H5xxBoardType">
 		<xs:complexContent>
             <xs:extension base="AbstractBoardType">
 				<xs:sequence>
@@ -14,24 +12,10 @@
                     	<xs:simpleType>
                     		<xs:restriction base="xs:string">
                     			<xs:whiteSpace value="collapse"></xs:whiteSpace>
-                                <xs:enumeration value="STM32H723xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H733xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H725xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H735xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H742xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H743xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H753xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H745xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H755xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H747xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H757xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H750xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H7A3xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H7A3xxQ"></xs:enumeration>
-                                <xs:enumeration value="STM32H7B0xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H7B0xxQ"></xs:enumeration>
-                                <xs:enumeration value="STM32H7B3xx"></xs:enumeration>
-                                <xs:enumeration value="STM32H7B3xxQ"></xs:enumeration>
+                                <xs:enumeration value="STM32H503xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H562xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H563xx"></xs:enumeration>
+                                <xs:enumeration value="STM32H573xx"></xs:enumeration>
                     		</xs:restriction>
                     	</xs:simpleType>
                     </xs:element>
@@ -103,7 +87,6 @@
 										<xs:whiteSpace
 											value="collapse">
 										</xs:whiteSpace>
-
 										<xs:minInclusive value="0"></xs:minInclusive>
 									</xs:restriction>
 								</xs:simpleType>
@@ -114,25 +97,20 @@
 										<xs:whiteSpace
 											value="collapse">
 										</xs:whiteSpace>
-
 										<xs:minInclusive value="180"></xs:minInclusive>
-
 										<xs:maxInclusive value="360"></xs:maxInclusive>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:attribute>
-
 						</xs:complexType>
                     </xs:element>
 					<xs:element name="ports" type="portsType"
 						maxOccurs="1" minOccurs="1">
 					</xs:element>
 				</xs:sequence>
-
             </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
   <xs:complexType name="portsType">
     <xs:sequence>
     	<xs:element name="GPIOA" type="STM32GPIOv2PortType"
@@ -162,18 +140,9 @@
     	<xs:element name="GPIOI" type="STM32GPIOv2PortType"
     		maxOccurs="1" minOccurs="1">
     	</xs:element>
-    	<xs:element name="GPIOJ" type="STM32GPIOv2PortType"
-    		maxOccurs="1" minOccurs="1">
-    	</xs:element>
-    	<xs:element name="GPIOK" type="STM32GPIOv2PortType"
-            maxOccurs="1" minOccurs="1">
-        </xs:element>
     </xs:sequence>
   </xs:complexType>
-
-  <xs:element name="board" type="STM32H7xxBoardType"></xs:element>
-
-
+  <xs:element name="board" type="STM32H5xxBoardType"></xs:element>
   <xs:simpleType name="LSEDriveType">
   	<xs:restriction base="xs:string"></xs:restriction>
   </xs:simpleType>

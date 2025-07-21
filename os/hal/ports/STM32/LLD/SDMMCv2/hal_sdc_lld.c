@@ -39,6 +39,11 @@
    SDMMC_STA_CTIMEOUT | SDMMC_STA_DTIMEOUT |                                \
    SDMMC_STA_TXUNDERR | SDMMC_STA_RXOVERR)
 
+/* Fix for devices with single IDMABASEx register.*/
+#if defined(STM32H5XX)
+#define IDMABASE0 IDMABASER
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/

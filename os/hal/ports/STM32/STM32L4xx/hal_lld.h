@@ -26,9 +26,9 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32L422xx, STM32L432xx, STM32L433xx, STM32L443xx.
- *          - STM32L471xx, STM32L475xx, STM32L476xx, STM32L496xx.
- *          - STM32L485xx, STM32L486xx, STM32L4A6xx.
+ *          - STM32L422xx, STM32L431xx, STM32L432xx, STM32L433xx.
+ *          - STM32L443xx, STM32L471xx, STM32L475xx, STM32L476xx.
+ *          - STM32L496xx, STM32L485xx, STM32L486xx, STM32L4A6xx.
  *          .
  *
  * @addtogroup HAL
@@ -53,10 +53,10 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32L422xx) || defined(STM32L432xx) || defined(STM32L433xx) || \
-    defined(STM32L443xx) || defined(STM32L452xx) || defined(STM32L471xx) || \
-    defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L496xx) || \
-    defined(__DOXYGEN__)
+#if defined(STM32L422xx) || defined(STM32L431xx) || defined(STM32L432xx) || \
+    defined(STM32L433xx) || defined(STM32L443xx) || defined(STM32L452xx) || \
+    defined(STM32L471xx) || defined(STM32L475xx) || defined(STM32L476xx) || \
+    defined(STM32L496xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32L4xx Ultra Low Power"
 
 #elif defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx)
@@ -723,6 +723,10 @@
 #error "Using a wrong mcuconf.h file, STM32L422_MCUCONF not defined"
 #endif
 
+#if defined(STM32L431xx) && !defined(STM32L431_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L431_MCUCONF not defined"
+#endif
+
 #if defined(STM32L432xx) && !defined(STM32L432_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L432_MCUCONF not defined"
 #endif
@@ -1179,10 +1183,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_MSICLK
-
-#elif (STM32_SW == STM32_SW_MSI)
+#if (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
 
 #elif (STM32_SW == STM32_SW_HSI16)
@@ -1800,6 +1801,18 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#define hal_lld_get_clock_point(clkpt) 0U
 
 /*===========================================================================*/
 /* External declarations.                                                    */

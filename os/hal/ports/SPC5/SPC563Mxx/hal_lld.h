@@ -302,6 +302,18 @@ halrtcnt_t hal_lld_get_counter_value(void) {
  */
 #define hal_lld_get_counter_frequency()     SPC5_SYSCLK
 
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#define hal_lld_get_clock_point(clkpt) 0U
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/

@@ -487,20 +487,28 @@ static bool mmc_set_bus_width(SDCDriver *sdcp) {
  * @brief   Wait for the card to complete pending operations.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
- *
+ * @param[in] crc_check CRC check flag
+
  * @return              The operation status.
  * @retval HAL_SUCCESS  operation succeeded.
  * @retval HAL_FAILED   operation failed.
  *
  * @notapi
  */
-bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
+static bool _sdc_wait_for_transfer_state_internal(SDCDriver *sdcp,
+                                                  bool crc_check) {
   uint32_t resp[1];
+  bool cmd_fail;
 
   while (true) {
-    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_STATUS,
-                                   sdcp->rca, resp) ||
-        MMCSD_R1_ERROR(resp[0])) {
+    if (crc_check) {
+      cmd_fail = sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_STATUS, sdcp->rca, resp);
+    }
+    else {
+      cmd_fail = sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_SEND_STATUS, sdcp->rca, resp);
+    }
+
+    if (cmd_fail || MMCSD_R1_ERROR(resp[0])) {
       return HAL_FAILED;
     }
 
@@ -525,6 +533,38 @@ bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Wait for the card to complete pending operations with CRC check.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
+
+  return _sdc_wait_for_transfer_state_internal(sdcp, true);
+}
+
+/**
+ * @brief   Wait for the card to complete pending operations without CRC check.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+bool _sdc_wait_for_transfer_state_nocrc(SDCDriver *sdcp) {
+
+  return _sdc_wait_for_transfer_state_internal(sdcp, false);
+}
 
 /**
  * @brief   SDC Driver initialization.
@@ -689,10 +729,16 @@ bool sdcConnect(SDCDriver *sdcp) {
   }
 
   /* Switches to high speed.*/
-  if (HAL_SUCCESS != detect_bus_clk(sdcp, &clk)) {
+  if (detect_bus_clk(sdcp, &clk) != HAL_SUCCESS) {
     goto failed;
   }
   sdc_lld_set_data_clk(sdcp, clk);
+
+  /* Not checking CRC here according to JEDEC Standard No. 84-B51 6.6.2 */
+  if (_sdc_wait_for_transfer_state_nocrc(sdcp) != HAL_SUCCESS) {
+    goto failed;
+  }
+
 
   /* Reads extended CSD if needed and possible.*/
   if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK)) {
@@ -734,7 +780,7 @@ bool sdcConnect(SDCDriver *sdcp) {
     }
     break;
   case SDC_MODE_CARDTYPE_MMC:
-    if (HAL_FAILED == mmc_set_bus_width(sdcp)) {
+    if (mmc_set_bus_width(sdcp) == HAL_FAILED) {
       goto failed;
     }
     break;

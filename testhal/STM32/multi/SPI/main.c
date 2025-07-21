@@ -30,11 +30,12 @@ CC_ALIGN_DATA(32) static uint8_t rxbuf[512];
  * SPI callback for circular operations.
  */
 void spi_circular_cb(SPIDriver *spip) {
+  size_t n;
 
 #if SPI_SUPPORTS_CIRCULAR == TRUE
     if (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
       osalSysLockFromISR();
-      spiAbortI(&PORTAB_SPI1);
+      spiStopTransferI(&PORTAB_SPI1, &n);
       osalSysUnlockFromISR();
     }
 #endif
@@ -127,7 +128,7 @@ static THD_FUNCTION(spi_thread_2, p) {
 /*
  * LED blinker thread, times are in milliseconds.
  */
-static THD_WORKING_AREA(waThread1, 128);
+static THD_WORKING_AREA(waThread1, 256);
 static THD_FUNCTION(Thread1, arg) {
   (void)arg;
   chRegSetThreadName("blinker");
@@ -205,6 +206,31 @@ int main(void) {
   }
 #endif
 
+  /*
+   * Tranfers of various sizes.
+   */
+  spiStart(&PORTAB_SPI1, &ls_spicfg); /* Setup transfer parameters.       */
+  do {
+     /* Starting synchronous master 256 frames send.*/
+     spiSelect(&PORTAB_SPI1);
+     spiIgnore(&PORTAB_SPI1, 1);
+     spiExchange(&PORTAB_SPI1, 4, txbuf, rxbuf);
+     spiSend(&PORTAB_SPI1, 7, txbuf+3);
+     spiReceive(&PORTAB_SPI1, 16, rxbuf);
+     spiUnselect(&PORTAB_SPI1);
+
+     /* Toggle the LED, wait a little bit and repeat.*/
+ #if defined(PORTAB_LINE_LED1)
+     palToggleLine(PORTAB_LINE_LED1);
+ #endif
+     chThdSleepMilliseconds(50);
+   } while (palReadLine(PORTAB_LINE_BUTTON) != PORTAB_BUTTON_PRESSED);
+
+   /* Waiting button release.*/
+   while (palReadLine(PORTAB_LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
+     chThdSleepMilliseconds(100);
+   }
+
 #if SPI_SUPPORTS_CIRCULAR == TRUE
   /*
    * Starting a continuous operation for test.
@@ -230,8 +256,11 @@ int main(void) {
      /* Starting synchronous master 256 frames send.*/
      spiSelect(&PORTAB_SPI1);
      spiPolledExchange(&PORTAB_SPI1, txbuf[0x55]);
-     spiExchange(&PORTAB_SPI1, 4,
-                 txbuf, rxbuf);
+     spiPolledExchange(&PORTAB_SPI1, txbuf[0xAA]);
+     spiPolledExchange(&PORTAB_SPI1, txbuf[0x33]);
+     spiPolledExchange(&PORTAB_SPI1, txbuf[0xCC]);
+     spiExchange(&PORTAB_SPI1, 4, txbuf, rxbuf);
+     spiExchange(&PORTAB_SPI1, 3, txbuf+8, rxbuf);
      spiUnselect(&PORTAB_SPI1);
 
      /* Toggle the LED, wait a little bit and repeat.*/

@@ -1006,6 +1006,7 @@
 #define STM32_7WS_THRESHOLD         STM32_SYSCLK_MAX
 #define STM32_8WS_THRESHOLD         0
 #define STM32_9WS_THRESHOLD         0
+#define STM32_FLASH_PSIZE           2
 
 #elif (STM32_VDD >= 240) && (STM32_VDD < 270)
 #define STM32_0WS_THRESHOLD         24000000
@@ -1018,6 +1019,7 @@
 #define STM32_7WS_THRESHOLD         192000000
 #define STM32_8WS_THRESHOLD         STM32_SYSCLK_MAX
 #define STM32_9WS_THRESHOLD         0
+#define STM32_FLASH_PSIZE           1
 
 #elif (STM32_VDD >= 210) && (STM32_VDD < 240)
 #define STM32_0WS_THRESHOLD         22000000
@@ -1030,6 +1032,7 @@
 #define STM32_7WS_THRESHOLD         176000000
 #define STM32_8WS_THRESHOLD         198000000
 #define STM32_9WS_THRESHOLD         STM32_SYSCLK_MAX
+#define STM32_FLASH_PSIZE           1
 
 #elif (STM32_VDD >= 180) && (STM32_VDD < 210)
 #define STM32_0WS_THRESHOLD         20000000
@@ -1042,6 +1045,7 @@
 #define STM32_7WS_THRESHOLD         160000000
 #define STM32_8WS_THRESHOLD         180000000
 #define STM32_9WS_THRESHOLD         0
+#define STM32_FLASH_PSIZE           0
 
 #else
 #error "invalid VDD voltage specified"
@@ -1326,10 +1330,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_HSICLK
-
-#elif (STM32_SW == STM32_SW_HSI)
+#if (STM32_SW == STM32_SW_HSI)
 #define STM32_SYSCLK                STM32_HSICLK
 
 #elif (STM32_SW == STM32_SW_HSE)
@@ -2174,6 +2175,18 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#define hal_lld_get_clock_point(clkpt) 0U
 
 /*===========================================================================*/
 /* External declarations.                                                    */

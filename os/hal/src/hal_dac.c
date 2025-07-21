@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ void dacObjectInit(DACDriver *dacp) {
  * @param[in] config    pointer to the @p DACConfig object, it can be
  *                      @p NULL if the low level driver implementation
  *                      supports a default configuration
+ *
  * @return              The operation status.
  *
  * @api
@@ -155,13 +156,20 @@ void dacStop(DACDriver *dacp) {
  *
  * @xclass
  */
-void dacPutChannelX(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
+msg_t dacPutChannelX(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
 
   osalDbgCheck(channel < (dacchannel_t)DAC_MAX_CHANNELS);
-  osalDbgAssert(dacp->state == DAC_READY || dacp->state == DAC_ACTIVE,
-                                            "invalid state");
-
+  osalDbgAssert(dacp->state == DAC_READY  ||
+                dacp->state == DAC_ACTIVE ||
+                dacp->state == DAC_COMPLETE, "invalid state");
+  msg_t msg;
+#if defined(DAC_LLD_ENHANCED_API)
+  msg = dac_lld_put_channel(dacp, channel, sample);
+#else
   dac_lld_put_channel(dacp, channel, sample);
+  msg = HAL_RET_SUCCESS;
+#endif
+  return msg;
 }
 
 /**
@@ -178,16 +186,24 @@ void dacPutChannelX(DACDriver *dacp, dacchannel_t channel, dacsample_t sample) {
  * @param[in] depth     buffer depth (matrix rows number). The buffer depth
  *                      must be one or an even number.
  *
+ * @return              The operation status.
+ *
  * @api
  */
-void dacStartConversion(DACDriver *dacp,
+msg_t dacStartConversion(DACDriver *dacp,
                         const DACConversionGroup *grpp,
                         dacsample_t *samples,
                         size_t depth) {
-
+  msg_t msg;
   osalSysLock();
+#if defined(DAC_LLD_ENHANCED_API)
+  msg = dacStartConversionI(dacp, grpp, samples, depth);
+#else
   dacStartConversionI(dacp, grpp, samples, depth);
+  msg = HAL_RET_SUCCESS;
+#endif
   osalSysUnlock();
+  return msg;
 }
 
 /**
@@ -206,12 +222,15 @@ void dacStartConversion(DACDriver *dacp,
  * @param[in] depth     buffer depth (matrix rows number). The buffer depth
  *                      must be one or an even number.
  *
+ * @return              The operation status.
+ *
  * @iclass
  */
-void dacStartConversionI(DACDriver *dacp,
+msg_t dacStartConversionI(DACDriver *dacp,
                          const DACConversionGroup *grpp,
                          dacsample_t *samples,
                          size_t depth) {
+  msg_t msg;
 
   osalDbgCheckClassI();
   osalDbgCheck((dacp != NULL) && (grpp != NULL) && (samples != NULL) &&
@@ -224,8 +243,19 @@ void dacStartConversionI(DACDriver *dacp,
   dacp->samples  = samples;
   dacp->depth    = depth;
   dacp->grpp     = grpp;
-  dacp->state    = DAC_ACTIVE;
+#if defined(DAC_LLD_ENHANCED_API)
+  msg = dac_lld_start_conversion(dacp);
+#else
   dac_lld_start_conversion(dacp);
+  msg = HAL_RET_SUCCESS;
+#endif
+  if (msg == HAL_RET_SUCCESS) {
+    dacp->state = DAC_ACTIVE;
+  }
+  else {
+    dacp->grpp = NULL;
+  }
+  return msg;
 }
 
 /**

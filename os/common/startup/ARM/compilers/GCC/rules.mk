@@ -25,7 +25,7 @@ endif
 # Link time optimizations
 ifneq ($(USE_LTO),no)
   ifeq ($(USE_LTO),yes)
-    OPT += -flto
+    OPT += -flto=auto
   else
     OPT += -flto=$(USE_LTO)
   endif
@@ -124,8 +124,8 @@ ASMXOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
 OBJS      = $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(ACCOBJS) $(TCPPOBJS) $(TCOBJS)
 
 # Paths
-IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
-LLIBDIR   = $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR))
+IINCDIR   = $(sort $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR)))
+LLIBDIR   = $(sort $(patsubst %,-L%,$(DLIBDIR) $(ULIBDIR)))
 
 # Macros
 DEFS      = $(DDEFS) $(UDEFS)

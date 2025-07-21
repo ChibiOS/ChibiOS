@@ -53,73 +53,87 @@
  *          .
  * @{
  */
-#define WSPI_CFG_CMD_MODE_MASK              (3LU << 8LU)
-#define WSPI_CFG_CMD_MODE_NONE              (0LU << 8LU)
-#define WSPI_CFG_CMD_MODE_ONE_LINE          (1LU << 8LU)
-#define WSPI_CFG_CMD_MODE_TWO_LINES         (2LU << 8LU)
-#define WSPI_CFG_CMD_MODE_FOUR_LINES        (3LU << 8LU)
+#define WSPI_CFG_CMD_MODE_MASK              (3U << 8)
+#define WSPI_CFG_CMD_MODE_NONE              (0U << 8)
+#define WSPI_CFG_CMD_MODE_ONE_LINE          (1U << 8)
+#define WSPI_CFG_CMD_MODE_TWO_LINES         (2U << 8)
+#define WSPI_CFG_CMD_MODE_FOUR_LINES        (3U << 8)
+#define WSPI_CFG_CMD_MODE_EIGHT_LINES       0U
 
-#define WSPI_CFG_CMD_DDR                    (1LU << 31LU)
+#define WSPI_CFG_CMD_DTR                    (1U << 31)
 
-#define WSPI_CFG_CMD_SIZE_MASK              0LU
-#define WSPI_CFG_CMD_SIZE_8                 0LU
+#define WSPI_CFG_CMD_SIZE_MASK              0U
+#define WSPI_CFG_CMD_SIZE_8                 0U
+#define WSPI_CFG_CMD_SIZE_16                0U          /* Fake.*/
+#define WSPI_CFG_CMD_SIZE_24                0U          /* Fake.*/
+#define WSPI_CFG_CMD_SIZE_32                0U          /* Fake.*/
 
-#define WSPI_CFG_ADDR_MODE_MASK             (3LU << 10LU)
-#define WSPI_CFG_ADDR_MODE_NONE             (0LU << 10LU)
-#define WSPI_CFG_ADDR_MODE_ONE_LINE         (1LU << 10LU)
-#define WSPI_CFG_ADDR_MODE_TWO_LINES        (2LU << 10LU)
-#define WSPI_CFG_ADDR_MODE_FOUR_LINES       (3LU << 10LU)
+#define WSPI_CFG_ADDR_MODE_MASK             (3U << 10)
+#define WSPI_CFG_ADDR_MODE_NONE             (0U << 10)
+#define WSPI_CFG_ADDR_MODE_ONE_LINE         (1U << 10)
+#define WSPI_CFG_ADDR_MODE_TWO_LINES        (2U << 10)
+#define WSPI_CFG_ADDR_MODE_FOUR_LINES       (3U << 10)
+#define WSPI_CFG_ADDR_MODE_EIGHT_LINES      0U          /* Fake.*/
 
-#define WSPI_CFG_ADDR_DDR                   (1LU << 31LU)
+#define WSPI_CFG_ADDR_DTR                   (1U << 31)
 
-#define WSPI_CFG_ADDR_SIZE_MASK             (3LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_8                (0LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_16               (1LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_24               (2LU << 12LU)
-#define WSPI_CFG_ADDR_SIZE_32               (3LU << 12LU)
+#define WSPI_CFG_ADDR_SIZE_MASK             (3U << 12)
+#define WSPI_CFG_ADDR_SIZE_8                (0U << 12)
+#define WSPI_CFG_ADDR_SIZE_16               (1U << 12)
+#define WSPI_CFG_ADDR_SIZE_24               (2U << 12)
+#define WSPI_CFG_ADDR_SIZE_32               (3U << 12)
 
-#define WSPI_CFG_ALT_MODE_MASK              (3LU << 14LU)
-#define WSPI_CFG_ALT_MODE_NONE              (0LU << 14LU)
-#define WSPI_CFG_ALT_MODE_ONE_LINE          (1LU << 14LU)
-#define WSPI_CFG_ALT_MODE_TWO_LINES         (2LU << 14LU)
-#define WSPI_CFG_ALT_MODE_FOUR_LINES        (3LU << 14LU)
+#define WSPI_CFG_ALT_MODE_MASK              (3U << 14)
+#define WSPI_CFG_ALT_MODE_NONE              (0U << 14)
+#define WSPI_CFG_ALT_MODE_ONE_LINE          (1U << 14)
+#define WSPI_CFG_ALT_MODE_TWO_LINES         (2U << 14)
+#define WSPI_CFG_ALT_MODE_FOUR_LINES        (3U << 14)
+#define WSPI_CFG_ALT_MODE_EIGHT_LINES       0U          /* Fake.*/
 
-#define WSPI_CFG_ALT_DDR                    (1LU << 31LU)
+#define WSPI_CFG_ALT_DTR                    (1U << 31)
 
-#define WSPI_CFG_ALT_SIZE_MASK              (3LU << 16LU)
-#define WSPI_CFG_ALT_SIZE_8                 (0LU << 16LU)
-#define WSPI_CFG_ALT_SIZE_16                (1LU << 16LU)
-#define WSPI_CFG_ALT_SIZE_24                (2LU << 16LU)
-#define WSPI_CFG_ALT_SIZE_32                (3LU << 16LU)
+#define WSPI_CFG_ALT_SIZE_MASK              (3U << 16)
+#define WSPI_CFG_ALT_SIZE_8                 (0U << 16)
+#define WSPI_CFG_ALT_SIZE_16                (1U << 16)
+#define WSPI_CFG_ALT_SIZE_24                (2U << 16)
+#define WSPI_CFG_ALT_SIZE_32                (3U << 16)
 
-#define WSPI_CFG_DATA_MODE_MASK             (3LU << 24LU)
-#define WSPI_CFG_DATA_MODE_NONE             (0LU << 24LU)
-#define WSPI_CFG_DATA_MODE_ONE_LINE         (1LU << 24LU)
-#define WSPI_CFG_DATA_MODE_TWO_LINES        (2LU << 24LU)
-#define WSPI_CFG_DATA_MODE_FOUR_LINES       (3LU << 24LU)
+#define WSPI_CFG_DATA_MODE_MASK             (3U << 24)
+#define WSPI_CFG_DATA_MODE_NONE             (0U << 24)
+#define WSPI_CFG_DATA_MODE_ONE_LINE         (1U << 24)
+#define WSPI_CFG_DATA_MODE_TWO_LINES        (2U << 24)
+#define WSPI_CFG_DATA_MODE_FOUR_LINES       (3U << 24)
+#define WSPI_CFG_DATA_MODE_EIGHT_LINES      0U          /* Fake.*/
 
-#define WSPI_CFG_DATA_DDR                   (1LU << 31LU)
+#define WSPI_CFG_DATA_DTR                   (1U << 31)
 
-#define WSPI_CFG_SIOO                       (1LU << 28LU)
+#define WSPI_CFG_DQS_ENABLE                 0U          /* Fake.*/
+
+#define WSPI_CFG_SIOO                       (1U << 28)
+
+#define WSPI_CFG_ALL_DTR                    (WSPI_CFG_CMD_DTR   |           \
+                                             WSPI_CFG_ADDR_DTR  |           \
+                                             WSPI_CFG_ALT_DTR   |           \
+                                             WSPI_CFG_DATA_DTR)
 /** @} */
 
 /**
  * @name    Helpers for CCR register.
  * @{
  */
-#define QUADSPI_CCR_DUMMY_CYCLES_MASK       (0x1FLU << 18LU)
-#define QUADSPI_CCR_DUMMY_CYCLES(n)         ((n) << 18LU)
+#define QUADSPI_CCR_DUMMY_CYCLES_MASK       (0x1FU << 18)
+#define QUADSPI_CCR_DUMMY_CYCLES(n)         ((n) << 18)
 /** @} */
 
 /**
  * @name    DCR register options
  * @{
  */
-#define STM32_DCR_CK_MODE                   (1U << 0U)
-#define STM32_DCR_CSHT_MASK                 (7U << 8U)
-#define STM32_DCR_CSHT(n)                   ((n) << 8U)
-#define STM32_DCR_FSIZE_MASK                (31U << 16U)
-#define STM32_DCR_FSIZE(n)                  ((n) << 16U)
+#define STM32_DCR_CK_MODE                   (1U << 0)
+#define STM32_DCR_CSHT_MASK                 (7U << 8)
+#define STM32_DCR_CSHT(n)                   ((n) << 8)
+#define STM32_DCR_FSIZE_MASK                (31U << 16)
+#define STM32_DCR_FSIZE(n)                  ((n) << 16)
 /** @} */
 
 /*===========================================================================*/

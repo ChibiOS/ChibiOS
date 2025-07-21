@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    RCCv1/stm32_lsi.inc
+ * @file    RCCv2/stm32_lsi.inc
  * @brief   Shared LSI clock handler.
  *
  * @addtogroup STM32_LSI_HANDLER

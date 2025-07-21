@@ -638,9 +638,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                2100000
-#elif (STM32_SW == STM32_SW_MSI)
+#if (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
 #elif (STM32_SW == STM32_SW_HSI)
 #define STM32_SYSCLK                STM32_HSICLK
@@ -839,6 +837,18 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#define hal_lld_get_clock_point(clkpt) 0U
 
 /*===========================================================================*/
 /* External declarations.                                                    */

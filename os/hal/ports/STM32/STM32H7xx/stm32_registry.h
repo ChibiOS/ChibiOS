@@ -189,6 +189,7 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_HAS_I2C4                      TRUE
+#define STM32_HAS_I2C5                      FALSE
 
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  FALSE
@@ -418,6 +419,7 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_HAS_I2C4                      TRUE
+#define STM32_HAS_I2C5                      TRUE
 
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  TRUE
@@ -648,6 +650,7 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_HAS_I2C4                      TRUE
+#define STM32_HAS_I2C5                      FALSE
 
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  TRUE
@@ -876,6 +879,7 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_HAS_I2C4                      TRUE
+#define STM32_HAS_I2C5                      FALSE
 
 /* OCTOSPI attributes.*/
 #define STM32_HAS_OCTOSPI1                  FALSE

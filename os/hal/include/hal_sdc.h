@@ -198,6 +198,7 @@ extern "C" {
   bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip);
   bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk);
   bool _sdc_wait_for_transfer_state(SDCDriver *sdcp);
+  bool _sdc_wait_for_transfer_state_nocrc(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

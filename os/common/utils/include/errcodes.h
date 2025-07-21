@@ -52,7 +52,8 @@
 #define CH_RET_EBADF            CH_ENCODE_ERROR(EBADF)      /* Bad file number */
 #define CH_RET_ENOMEM           CH_ENCODE_ERROR(ENOMEM)     /* Not enough space */
 #define CH_RET_EACCES           CH_ENCODE_ERROR(EACCES)     /* Permission denied */
-#define CH_RET_EFAULT           CH_ENCODE_ERROR(EACCES)     /* Bad address */
+#define CH_RET_EFAULT           CH_ENCODE_ERROR(EFAULT)     /* Bad address */
+#define CH_RET_EBUSY            CH_ENCODE_ERROR(EBUSY)      /* Device or resource busy */
 #define CH_RET_EEXIST           CH_ENCODE_ERROR(EEXIST)     /* File exists */
 #define CH_RET_ENOTDIR          CH_ENCODE_ERROR(ENOTDIR)    /* Not a directory */
 #define CH_RET_EISDIR           CH_ENCODE_ERROR(EISDIR)     /* Is a directory */
@@ -95,13 +96,24 @@
 #define CH_ENCODE_ERROR(posixerr)   (~CH_ERRORS_MASK | (int)(posixerr))
 #define CH_DECODE_ERROR(err)        ((int)(err) & CH_ERRORS_MASK)
 #define CH_RET_IS_ERROR(x)          (((int)(x) & ~CH_ERRORS_MASK) == ~CH_ERRORS_MASK)
+#define CH_RET_IS_SUCCESS(x)        (((int)(x) & ~CH_ERRORS_MASK) != ~CH_ERRORS_MASK)
 
 #define CH_BREAK_ON_ERROR(err)                                              \
   if (CH_RET_IS_ERROR(err)) break
 
+#define CH_BREAK_ON_SUCCESS(err)                                            \
+  if (CH_RET_IS_SUCCESS(err)) break
+
 #define CH_RETURN_ON_ERROR(err) do {                                        \
   int __ret = (err);                                                        \
   if (CH_RET_IS_ERROR(__ret)) {                                             \
+    return __ret;                                                           \
+  }                                                                         \
+} while (false)
+
+#define CH_RETURN_ON_SUCCESS(err) do {                                      \
+  int __ret = (err);                                                        \
+  if (CH_RET_IS_SUCCESS(__ret)) {                                           \
     return __ret;                                                           \
   }                                                                         \
 } while (false)

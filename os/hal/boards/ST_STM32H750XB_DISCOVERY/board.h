@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -1382,7 +1382,7 @@
  * PI10 - MII_RX_ER                 (alternate 11).
  * PI11 - PIN11                     (input floating).
  * PI12 - LCD_HSYNC                 (alternate 14).
- * PI13 - LED_GREEN                 (output pushpull maximum).
+ * PI13 - LED_RED                   (output pushpull maximum).
  * PI14 - LCD_CLK                   (alternate 14).
  * PI15 - LCD_R0                    (alternate 14).
  */
@@ -1488,7 +1488,7 @@
  *
  * PJ0  - LCD_R1                    (alternate 14).
  * PJ1  - LCD_R2                    (alternate 14).
- * PJ2  - LED_RED                   (output pushpull maximum).
+ * PJ2  - LED_GREEN                 (output pushpull maximum).
  * PJ3  - LCD_R4                    (alternate 14).
  * PJ4  - LCD_R5                    (alternate 14).
  * PJ5  - LCD_R6                    (alternate 14).
