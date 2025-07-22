@@ -94,6 +94,14 @@
  */
 #define CORTEX_PRIORITY_PENDSV          CORTEX_MAX_KERNEL_PRIORITY
 
+
+/**
+ * @brief   IPC messages
+ * @{
+ */
+#define PORT_FIFO_RESCHEDULE_MESSAGE    0xFFFFFFFFU
+#define PORT_FIFO_PANIC_MESSAGE         0xFFFFFFFEU
+
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
@@ -174,6 +182,17 @@
 #error "invalid priority level specified for CORTEX_PRIORITY_SVCALL"
 #endif
 
+#if !defined(CORTEX_ALTERNATE_SWITCH)
+#define CORTEX_ALTERNATE_SWITCH         FALSE
+#endif
+
+/**
+ * @brief   Spinlock to be used by the port layer.
+ */
+#if !defined(PORT_SPINLOCK_NUMBER)
+#define PORT_SPINLOCK_NUMBER            31
+#endif
+
 /**
  * @brief   NVIC PRIGROUP initialization expression.
  * @details The default assigns all available priority bits as preemption
@@ -236,6 +255,11 @@
 #define PORT_ARCHITECTURE_NAME          "ARMv8-M Mainline"
 
 /**
+ * @brief   Number of cores supported.
+ */
+#define PORT_CORES_NUMBER               2
+
+/**
  * @brief   Macro defining a generic ARM architecture.
  */
 #define PORT_ARCHITECTURE_ARM
@@ -263,12 +287,30 @@
 /**
  * @brief   Port-specific information string.
  */
-#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
-  #define PORT_INFO                     "Advanced kernel mode"
+
+ /**
+ * @brief   Port-specific information string.
+ */
+#if (CH_CFG_SMP_MODE == TRUE) 
+  #if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
+    #define PORT_INFO                   "Preemption through NMI (SMP)"
+  #else
+    #define PORT_INFO                   "Preemption through PendSV (SMP)"
+  #endif
 #else
-  #define PORT_INFO                     "Compact kernel mode"
+  #if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
+    #define PORT_INFO                     "Preemption through NMI"
+  #else
+    #define PORT_INFO                     "Preemption through PendSV"
+  #endif
 #endif
 /** @} */
+
+//
+#ifndef CORTEX_SIMPLIFIED_PRIORITY
+#define CORTEX_SIMPLIFIED_PRIORITY 1
+#endif
+
 
 #if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
   /**
@@ -544,6 +586,10 @@ extern "C" {
   void __port_thread_start(void);
   void __port_switch_from_isr(void);
   void __port_exit_from_isr(void);
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+  void __port_spinlock_take(void);
+  void __port_spinlock_release_inline(void);
+#endif /* CH_CFG_SMP_MODE == TRUE */
 #ifdef __cplusplus
 }
 #endif
@@ -551,6 +597,43 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+#if (CH_CFG_SMP_MODE == TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   Triggers an inter-core notification.
+ *
+ * @param[in] oip       pointer to the @p os_instance_t structure
+ */
+__STATIC_INLINE void port_notify_instance(os_instance_t *oip) {
+
+  (void)oip;
+
+  /* Sending a reschedule order to the other core if there is space in
+     the FIFO.*/
+  if ((SIO->FIFO_ST & SIO_FIFO_ST_RDY) != 0U) {
+    SIO->FIFO_WR = PORT_FIFO_RESCHEDULE_MESSAGE;
+  }
+}
+
+/**
+ * @brief   Takes the kernel spinlock.
+ */
+__STATIC_INLINE void port_spinlock_take(void) {
+
+  while (SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] == 0U) {
+  }
+  __DMB();
+}
+
+/**
+ * @brief   Releases the kernel spinlock.
+ */
+__STATIC_INLINE void port_spinlock_release(void) {
+
+  __DMB();
+  SIO->SPINLOCK[PORT_SPINLOCK_NUMBER] = (uint32_t)SIO;
+}
+#endif /* CH_CFG_SMP_MODE == TRUE */
 
  /**
   * @brief   Returns a word encoding the current interrupts status.
@@ -682,6 +765,15 @@ extern "C" {
    __disable_irq();
  #endif
  }
+
+ /**
+ * @brief   Returns a core index.
+ * @return              The core identifier from 0 to @p PORT_CORES_NUMBER - 1.
+ */
+__STATIC_INLINE core_id_t port_get_core_id(void) {
+
+  return SIO->CPUID;
+}
 
  /**
   * @brief   Enables all the interrupt sources.
