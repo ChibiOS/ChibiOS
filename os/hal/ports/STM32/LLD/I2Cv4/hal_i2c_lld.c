@@ -299,7 +299,7 @@ static void i2c_lld_abort_operation(I2CDriver *i2cp) {
 static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-#if (STM32_I2C_USE_DMA == FALSE) || (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (STM32_I2C_USE_DMA == FALSE) || (I2C_ENABLE_SLAVE_MODE == TRUE)
   uint32_t cr1 = dp->CR1;
 #endif
 
@@ -311,7 +311,7 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
     i2c_dma_disable(i2cp);
 #endif
 
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE)
     /* If master is done reading data and indicates this to the slave through a NACK. */
     if (!i2cp->isMaster) {
       if (i2cp->state == I2C_ACTIVE_TX) {
@@ -338,7 +338,7 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
     return;
   }
 
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE)
   if (!i2cp->is_master) {
     /* Handling I2C Slave */
     /* Note: (isr & I2C_ISR_TC) is not supported in slave mode. */
@@ -414,7 +414,7 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
 
     return;
   }
-#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+#endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 
 #if STM32_I2C_USE_DMA == FALSE
   /* Handling of data transfer if the DMA mode is disabled.*/
@@ -808,9 +808,9 @@ msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
   i2cp->rxptr   = rxbuf;
   i2cp->rxbytes = rxbytes;
 
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE)
   i2cp->is_master = true;
-#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+#endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2C_NO_ERROR;
@@ -908,9 +908,9 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   I2C_TypeDef *dp = i2cp->i2c;
   systime_t start, end;
 
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE)
   i2cp->isMaster = true;
-#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+#endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 
   /* Resetting error flags for this transfer.*/
   i2cp->errors = I2C_NO_ERROR;
@@ -982,7 +982,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   return msg;
 }
 
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE)
 /**
  * @brief   Listen I2C bus for address match.
  * @details Use 7 bit address.
@@ -1105,7 +1105,7 @@ msg_t i2c_lld_slave_transmit_timeout(I2CDriver *i2cp,
   return osalThreadSuspendTimeoutS(&i2cp->thread, timeout);
 }
 
-#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+#endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 
 #if (STM32_I2C_SINGLE_IRQ == TRUE) || defined(__DOXYGEN__)
 /**

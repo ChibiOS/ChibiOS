@@ -297,7 +297,7 @@ void i2cReleaseBus(I2CDriver *i2cp) {
 }
 #endif /* I2C_USE_MUTUAL_EXCLUSION == TRUE */
 
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE) || defined(__DOXYGEN__)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Listen I2C bus for address match.
  * @details Use 7 bit address (10 bit,dual and general call address dosn't implement yet) .
@@ -423,7 +423,7 @@ msg_t i2cSlaveTransmitTimeout(I2CDriver *i2cp,
 
   return rdymsg;
 }
-#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+#endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 
 #endif /* HAL_USE_I2C == TRUE */
 
