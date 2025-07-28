@@ -35,6 +35,14 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   This I2C LLD supports slave mode.
+ */
+#define I2C_SUPPORTS_SLAVE_MODE             TRUE
+
+/**
+ * @brief   This I2C LLD supports enhanced start API.
+ */
 #define I2C_LLD_ENHANCED_API
 
 /**
@@ -508,7 +516,7 @@ struct hal_i2c_driver {
    * @brief     Pointer to the I2Cx registers block.
    */
   I2C_TypeDef                       *i2c;
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE)
   /**
    * @brief     Master needed a reply.
    */
@@ -517,7 +525,7 @@ struct hal_i2c_driver {
    * @brief     Master/Slave mode.
    */
   bool                              is_master;
-#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+#endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 };
 
 /*===========================================================================*/
@@ -569,13 +577,13 @@ extern "C" {
   msg_t i2c_lld_master_receive_timeout(I2CDriver *i2cp, i2caddr_t addr,
                                        uint8_t *rxbuf, size_t rxbytes,
                                        sysinterval_t timeout);
-#if (I2C_SUPPORTS_SLAVE_MODE == TRUE)
+#if (I2C_ENABLE_SLAVE_MODE == TRUE)
   msg_t i2c_lld_match_address(I2CDriver *i2cp, i2caddr_t addr);
   msg_t i2c_lld_slave_receive_timeout(I2CDriver *i2cp, uint8_t *rxbuf,
                                       size_t rxbytes, sysinterval_t timeout);
   msg_t i2c_lld_slave_transmit_timeout(I2CDriver *i2cp, const uint8_t *txbuf,
                                        size_t txbytes, sysinterval_t timeout);
-#endif /* I2C_SUPPORTS_SLAVE_MODE == TRUE */
+#endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 #if STM32_I2C_SINGLE_IRQ == TRUE
   void i2c_lld_serve_global_interrupt(I2CDriver *i2cp);
 #else

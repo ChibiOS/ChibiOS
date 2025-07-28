@@ -306,10 +306,11 @@
 /*===========================================================================*/
 
 /**
- * @brief   Enables the I2C slave subsystem.
+ * @brief   Slave mode API enable switch.
+ * @note    The low level driver must support this capability.
  */
-#if !defined(I2C_SUPPORTS_SLAVE_MODE) || defined(__DOXYGEN__)
-#define I2C_SUPPORTS_SLAVE_MODE             TRUE
+#if !defined(I2C_ENABLE_SLAVE_MODE)
+#define I2C_ENABLE_SLAVE_MODE               TRUE
 #endif
 
 /**
