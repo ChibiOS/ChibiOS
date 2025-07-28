@@ -50,7 +50,7 @@
 /**
  * @brief   EX version string.
  */
-#define CH_EX_VERSION           "1.2.0"
+#define CH_EX_VERSION           "1.3.0"
 
 /**
  * @brief   EX version major number.
@@ -60,7 +60,7 @@
 /**
  * @brief   EX version minor number.
  */
-#define CH_EX_MINOR             2
+#define CH_EX_MINOR             3
 
 /**
  * @brief   EX version patch number.
