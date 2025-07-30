@@ -65,13 +65,13 @@
  * @brief   Low level fields of the SIO driver structure.
  */
 #define sio_lld_driver_fields                                               \
-  uint32_t dummy
+  uint32_t dummy;
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
  */
 #define sio_lld_config_fields                                               \
-  uint32_t dummy
+  uint32_t dummy;
 
 /**
  * @brief   Determines the state of the RX FIFO.

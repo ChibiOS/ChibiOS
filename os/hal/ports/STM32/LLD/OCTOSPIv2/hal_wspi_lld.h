@@ -298,7 +298,7 @@
   /* DCR3 register initialization data.*/                                   \
   uint32_t                      dcr3;                                       \
   /* DCR4 register initialization data.*/                                   \
-  uint32_t                      dcr4
+  uint32_t                      dcr4;
 
 /**
  * @brief   Low level fields of the WSPI driver structure.
@@ -309,7 +309,7 @@
   /* Pointer to the OCTOSPIx registers block.*/                             \
   OCTOSPI_TypeDef               *ospi;                                      \
   /* QUADSPI MDMA channel.*/                                                \
-  const stm32_mdma_channel_t    *mdma
+  const stm32_mdma_channel_t    *mdma;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -952,7 +952,7 @@ typedef uint32_t adcerror_t;
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_dma_stream_t  *dmastp;                                        \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 #else
 #define adc_lld_driver_fields                                               \
   /* Pointer to the master ADCx registers block.*/                          \
@@ -962,7 +962,7 @@ typedef uint32_t adcerror_t;
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_dma_stream_t  *dmastp;                                        \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 #endif
 
 /**
@@ -970,7 +970,7 @@ typedef uint32_t adcerror_t;
  */
 #define adc_lld_config_fields                                               \
   /* ADC DIFSEL register initialization data.*/                             \
-  uint32_t                  difsel
+  uint32_t                  difsel;
 
 /**
  * @brief   Low level fields of the ADC group configuration structure.
@@ -1009,7 +1009,7 @@ typedef uint32_t adcerror_t;
   uint32_t                  ssmpr[2];                                       \
   /* Slave ADC SQRx register initialization data.                           \
      NOTE: This field is only present in dual mode.*/                       \
-  uint32_t                  ssqr[4]
+  uint32_t                  ssqr[4];
 #else /* STM32_ADC_DUAL_MODE == FALSE */
 #define adc_lld_configuration_group_fields                                  \
   uint32_t                  cfgr;                                           \
@@ -1020,7 +1020,7 @@ typedef uint32_t adcerror_t;
   uint32_t                  awd2cr;                                         \
   uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
-  uint32_t                  sqr[4]
+  uint32_t                  sqr[4];
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 
 #else /* STM32_ADCV3_OVERSAMPLING == FALSE */
@@ -1036,7 +1036,7 @@ typedef uint32_t adcerror_t;
   uint32_t                  smpr[2];                                        \
   uint32_t                  sqr[4];                                         \
   uint32_t                  ssmpr[2];                                       \
-  uint32_t                  ssqr[4]
+  uint32_t                  ssqr[4];
 #else /* STM32_ADC_DUAL_MODE == FALSE */
 #define adc_lld_configuration_group_fields                                  \
   uint32_t                  cfgr;                                           \
@@ -1046,7 +1046,7 @@ typedef uint32_t adcerror_t;
   uint32_t                  awd2cr;                                         \
   uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
-  uint32_t                  sqr[4]
+  uint32_t                  sqr[4];
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 #endif /* STM32_ADCV3_OVERSAMPLING == FALSE */
 

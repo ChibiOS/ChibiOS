@@ -90,21 +90,21 @@ typedef uint32_t adcerror_t;
  */
 #define adc_lld_driver_fields                                               \
   /* Dummy field, it is not needed.*/                                       \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
 #define adc_lld_config_fields                                               \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
 #define adc_lld_configuration_group_fields                                  \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

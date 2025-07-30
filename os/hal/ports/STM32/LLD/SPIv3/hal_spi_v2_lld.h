@@ -518,7 +518,7 @@
   /* Sink for discarded data.*/                                             \
   uint32_t                  rxsink;                                         \
   /* Source for default TX pattern.*/                                       \
-  uint32_t                  txsource
+  uint32_t                  txsource;
 #endif
 
 #if defined(STM32_SPI_DMA_REQUIRED) && !defined(STM32_SPI_BDMA_REQUIRED)
@@ -542,7 +542,7 @@
   /* Sink for discarded data.*/                                             \
   uint32_t                  rxsink;                                         \
   /* Source for default TX pattern.*/                                       \
-  uint32_t                  txsource
+  uint32_t                  txsource;
 #endif
 
 #if !defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
@@ -566,7 +566,7 @@
   /* Sink for discarded data.*/                                             \
   uint32_t                  rxsink;                                         \
   /* Source for default TX pattern.*/                                       \
-  uint32_t                  txsource
+  uint32_t                  txsource;
 #endif
 
 /**
@@ -576,7 +576,7 @@
   /* SPI CFG1 register initialization data.*/                               \
   uint32_t                  cfg1;                                           \
   /* SPI CFG2 register initialization data.*/                               \
-  uint32_t                  cfg2
+  uint32_t                  cfg2;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

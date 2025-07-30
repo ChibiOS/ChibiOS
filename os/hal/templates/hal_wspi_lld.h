@@ -74,14 +74,14 @@
  */
 #define wspi_lld_driver_fields                                              \
   /* Dummy field, it is not needed.*/                                       \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /**
  * @brief   Low level fields of the WSPI configuration structure.
  */
 #define wspi_lld_config_fields                                              \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

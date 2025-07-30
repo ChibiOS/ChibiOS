@@ -598,7 +598,7 @@ typedef union {
   /* Pointer to associated DMA channel.*/                                   \
   adc_ldd_dma_reference_t   data;                                           \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 #else
 #define adc_lld_driver_fields                                               \
   /* Pointer to the master ADCx registers block.*/                          \
@@ -608,7 +608,7 @@ typedef union {
   /* Pointer to associated DMA channel.*/                                   \
   adc_ldd_dma_reference_t   data;                                           \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 #endif
 
 /**
@@ -618,7 +618,7 @@ typedef union {
   /* ADC DIFSEL register initialization data.*/                             \
   uint32_t                  difsel;                                         \
   /* Calibration mode, specify ADCCALIN and/or ADCCALDIF bits in here.*/    \
-  uint32_t                  calibration
+  uint32_t                  calibration;
 
 #if (STM32_ADC_DUAL_MODE == TRUE) || defined(__DOXYGEN__)
 #define adc_lld_configuration_group_fields                                  \
@@ -673,7 +673,7 @@ typedef union {
   uint32_t                  ssmpr[2];                                       \
   /* Slave ADC SQRx register initialization data.                           \
      NOTE: This field is only present in dual mode.*/                       \
-  uint32_t                  ssqr[4]
+  uint32_t                  ssqr[4];
 #else /* STM32_ADC_DUAL_MODE == FALSE */
 #define adc_lld_configuration_group_fields                                  \
   uint32_t                  cfgr;                                           \
@@ -689,7 +689,7 @@ typedef union {
   uint32_t                  awd2cr;                                         \
   uint32_t                  awd3cr;                                         \
   uint32_t                  smpr[2];                                        \
-  uint32_t                  sqr[4]
+  uint32_t                  sqr[4];
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 
 /**

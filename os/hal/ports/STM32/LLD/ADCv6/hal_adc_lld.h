@@ -572,7 +572,7 @@ typedef struct adc_dmabuf {
   /* DMA request line.*/                                                    \
   uint8_t                           dreq;                                   \
   /* DMA buffers.*/                                                         \
-  adc_dmabuf_t                      *dbuf
+  adc_dmabuf_t                      *dbuf;
 #else
 #define adc_lld_driver_fields                                               \
   /* Pointer to the master ADCx registers block.*/                          \
@@ -586,7 +586,7 @@ typedef struct adc_dmabuf {
   /* DMA request line.*/                                                    \
   uint8_t                           dreq;                                   \
   /* DMA buffers.*/                                                         \
-  adc_dmabuf_t                      *dbuf
+  adc_dmabuf_t                      *dbuf;
 
 #endif
 
@@ -599,7 +599,7 @@ typedef struct adc_dmabuf {
   /* DMA extra CTR1 settings.*/                                             \
   uint32_t                          dmactr1;                                \
   /* DMA extra CTR2 settings.*/                                             \
-  uint32_t                          dmactr2
+  uint32_t                          dmactr2;
 
 /**
  * @brief   Low level fields of the ADC group configuration structure.
@@ -648,7 +648,7 @@ typedef struct adc_dmabuf {
   uint32_t                          awd2cr;                                 \
   uint32_t                          awd3cr;                                 \
   uint32_t                          smpr[2];                                \
-  uint32_t                          sqr[4]
+  uint32_t                          sqr[4];
 #endif /* STM32_ADC_DUAL_MODE == FALSE */
 
 /**

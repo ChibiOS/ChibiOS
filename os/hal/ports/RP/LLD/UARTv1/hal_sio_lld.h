@@ -112,7 +112,7 @@
  */
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
-  UART_TypeDef             *uart
+  UART_TypeDef             *uart;
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
@@ -124,7 +124,7 @@
   uint32_t                  UARTLCR_H;                                      \
   uint32_t                  UARTCR;                                         \
   uint32_t                  UARTIFLS;                                       \
-  uint32_t                  UARTDMACR
+  uint32_t                  UARTDMACR;
 
 /**
  * @brief   Determines the state of the RX FIFO.

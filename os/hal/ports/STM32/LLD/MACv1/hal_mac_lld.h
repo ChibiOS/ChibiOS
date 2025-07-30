@@ -229,28 +229,28 @@ typedef struct {
   /* Receive next frame pointer.*/                                          \
   stm32_eth_rx_descriptor_t     *rxptr;                                     \
   /* Transmit next frame pointer.*/                                         \
-  stm32_eth_tx_descriptor_t     *txptr
+  stm32_eth_tx_descriptor_t     *txptr;
 
 /**
  * @brief   Low level fields of the MAC configuration structure.
  */
 #define mac_lld_config_fields                                               \
   /* MAC address.*/                                                         \
-  uint8_t                       *mac_address
+  uint8_t                       *mac_address;
 
 /**
  * @brief   Low level fields of the MAC transmit descriptor structure.
  */
 #define mac_lld_transmit_descriptor_fields                                  \
   /* Pointer to the physical descriptor.*/                                  \
-  stm32_eth_tx_descriptor_t     *physdesc
+  stm32_eth_tx_descriptor_t     *physdesc;
 
 /**
  * @brief   Low level fields of the MAC receive descriptor structure.
  */
 #define mac_lld_receive_descriptor_fields                                   \
   /* Pointer to the physical descriptor.*/                                  \
-  stm32_eth_rx_descriptor_t     *physdesc
+  stm32_eth_rx_descriptor_t     *physdesc;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -73,7 +73,7 @@ typedef struct hal_trng_config TRNGConfig;
  */
 struct hal_trng_config {
   /* End of the mandatory fields.*/
-  trng_lld_config_fields;
+  trng_lld_config_fields
 };
 
 /**
@@ -92,7 +92,7 @@ struct hal_trng_driver {
   TRNG_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  trng_lld_driver_fields;
+  trng_lld_driver_fields
 };
 
 /*===========================================================================*/

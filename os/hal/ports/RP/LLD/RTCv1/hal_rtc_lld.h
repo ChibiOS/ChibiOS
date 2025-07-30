@@ -121,7 +121,7 @@ typedef struct {
   /* Callback pointer.*/                                                    \
   rtccb_t           callback;                                               \
   RTCDateTime       alarm;                                                  \
-  rtcdtmask_t       mask
+  rtcdtmask_t       mask;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

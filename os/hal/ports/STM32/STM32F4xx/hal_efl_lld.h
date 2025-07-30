@@ -144,7 +144,7 @@ typedef struct {
  */
 #define efl_lld_config_fields                                               \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

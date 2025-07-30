@@ -278,7 +278,7 @@
  */
 #define wspi_lld_config_fields                                              \
   /* DCR register initialization data.*/                                    \
-  uint32_t                  dcr
+  uint32_t                  dcr;
 
 /**
  * @brief   Low level fields of the WSPI driver structure.
@@ -289,7 +289,7 @@
   /* QUADSPI DMA stream.*/                                                  \
   const stm32_dma_stream_t  *dma;                                           \
   /* QUADSPI DMA mode bit mask.*/                                           \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

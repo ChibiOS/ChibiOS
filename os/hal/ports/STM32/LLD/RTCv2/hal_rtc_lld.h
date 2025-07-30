@@ -208,7 +208,7 @@ typedef struct hal_rtc_wakeup {
   /* Pointer to the RTC registers block.*/                                  \
   RTC_TypeDef               *rtc;                                           \
   /* Callback pointer.*/                                                    \
-  rtccb_t           callback
+  rtccb_t           callback;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

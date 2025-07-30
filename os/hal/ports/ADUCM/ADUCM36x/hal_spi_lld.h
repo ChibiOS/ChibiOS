@@ -188,7 +188,7 @@
   /* SPIxCON register initialization data.*/                                \
   uint16_t                  con;                                            \
   /* SPIxDIV register initialization data.*/                                \
-  uint16_t                  div
+  uint16_t                  div;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

@@ -154,7 +154,7 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
@@ -163,7 +163,7 @@
   /* SSPCR0 register initialization data.*/                                 \
   uint32_t                  SSPCR0;                                         \
   /* SSPCPSR register initialization data.*/                                \
-  uint32_t                  SSPCPSR
+  uint32_t                  SSPCPSR;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

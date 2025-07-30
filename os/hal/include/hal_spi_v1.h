@@ -175,7 +175,7 @@ struct hal_spi_config {
   uint_fast8_t              sspad;
 #endif
   /* End of the mandatory fields.*/
-  spi_lld_config_fields;
+  spi_lld_config_fields
 };
 
 /**
@@ -206,7 +206,7 @@ struct hal_spi_driver {
   SPI_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  spi_lld_driver_fields;
+  spi_lld_driver_fields
 };
 
 /*===========================================================================*/

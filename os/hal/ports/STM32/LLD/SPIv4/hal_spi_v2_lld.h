@@ -570,7 +570,7 @@ typedef struct spi_dmabuf {
   /* DMA TX settings.*/                                                     \
   uint32_t                          dtr1tx;                                 \
   /* DMA buffers.*/                                                         \
-  spi_dmabuf_t                      *dbuf
+  spi_dmabuf_t                      *dbuf;
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
@@ -587,7 +587,7 @@ typedef struct spi_dmabuf {
   /* DMA RX extra TR2 settings.*/                                           \
   uint32_t                          dtr2rx;                                 \
   /* DMA TX extra TR2 settings.*/                                           \
-  uint32_t                          dtr2tx
+  uint32_t                          dtr2tx;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

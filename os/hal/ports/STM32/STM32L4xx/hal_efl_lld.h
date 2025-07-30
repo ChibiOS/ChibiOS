@@ -72,14 +72,14 @@
  */
 #define efl_lld_driver_fields                                               \
   /* Flash registers.*/                                                     \
-  FLASH_TypeDef             *flash
+  FLASH_TypeDef             *flash;
 
 /**
  * @brief   Low level fields of the embedded flash configuration structure.
  */
 #define efl_lld_config_fields                                               \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /*===========================================================================*/
 /* External declarations.                                                    */
