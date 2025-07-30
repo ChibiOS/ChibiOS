@@ -29,18 +29,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Serial status flags (legacy)
- * @{
- */
-#define SD_PARITY_ERROR         CHN_PARITY_ERROR
-#define SD_FRAMING_ERROR        CHN_FRAMING_ERROR
-#define SD_OVERRUN_ERROR        CHN_OVERRUN_ERROR
-#define SD_NOISE_ERROR          CHN_NOISE_ERROR
-#define SD_BREAK_DETECTED       CHN_BREAK_DETECTED
-#define SD_QUEUE_FULL_ERROR     CHN_BUFFER_FULL_ERROR
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
