@@ -152,7 +152,7 @@ typedef void (*siocb_t)(SIODriver *siop);
 typedef enum {
   SIO_UNINIT = 0,                   /**< Not initialized.                   */
   SIO_STOP = 1,                     /**< Stopped.                           */
-  SIO_READY = 2,                    /**< Ready.                             */
+  SIO_READY = 2                     /**< Ready.                             */
 } siostate_t;
 
 #include "hal_sio_lld.h"
