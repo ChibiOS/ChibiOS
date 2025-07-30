@@ -48,7 +48,6 @@ static bool mmc_is_card_inserted(void *instance);
 static bool mmc_is_write_protected(void *instance);
 static bool mmc_connect(void *instance);
 static bool mmc_disconnect(void *instance);
-static bool mmc_connect(void *instance);
 static bool mmc_read(void *instance, uint32_t startblk,
                        uint8_t *buffer, uint32_t n);
 static bool mmc_write(void *instance, uint32_t startblk,
