@@ -314,7 +314,7 @@
   /* DCR3 register initialization data.*/                                   \
   uint32_t                  dcr3;                                           \
   /* DCR4 register initialization data.*/                                   \
-  uint32_t                  dcr4
+  uint32_t                  dcr4;
 
 /**
  * @brief   Low level fields of the WSPI driver structure.
@@ -327,7 +327,7 @@
   /* OCTOSPI DMA stream.*/                                                  \
   const stm32_dma_stream_t  *dma;                                           \
   /* OCTOSPI DMA mode bit mask.*/                                           \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

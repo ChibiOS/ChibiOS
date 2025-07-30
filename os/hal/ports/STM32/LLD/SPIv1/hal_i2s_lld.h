@@ -316,7 +316,7 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;
 
 /**
  * @brief   Low level fields of the I2S configuration structure.
@@ -334,7 +334,7 @@
   /* Configuration of the I2SPR register.                                   \
      NOTE: See the STM32 reference manual, this register is used for        \
            the I2S clock setup.*/                                           \
-  int16_t                   i2spr
+  int16_t                   i2spr;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

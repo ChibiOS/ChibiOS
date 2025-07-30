@@ -146,7 +146,7 @@ struct hal_wspi_config {
    */
   wspicallback_t            error_cb;
   /* End of the mandatory fields.*/
-  wspi_lld_config_fields;
+  wspi_lld_config_fields
 };
 
 /**
@@ -177,7 +177,7 @@ struct hal_wspi_driver {
   WSPI_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  wspi_lld_driver_fields;
+  wspi_lld_driver_fields
 };
 
 /*===========================================================================*/

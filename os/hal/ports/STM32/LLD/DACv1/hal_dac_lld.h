@@ -578,7 +578,7 @@ typedef enum {
   /* DAC channel parameters.*/                                              \
   const dacparams_t         *params;                                        \
   /* Associated DMA.*/                                                      \
-  const stm32_dma_stream_t  *dma
+  const stm32_dma_stream_t  *dma;
 
 /**
  * @brief   Low level fields of the DAC configuration structure.
@@ -589,21 +589,21 @@ typedef enum {
 #if STM32_DAC_HAS_MCR == TRUE
 #define dac_lld_config_fields                                               \
   /* Initial output on DAC channel.*/                                       \
-  uint32_t                init;                                             \
+  uint32_t                  init;                                           \
   /* DAC data holding register mode.*/                                      \
-  dacdhrmode_t            datamode;                                         \
+  dacdhrmode_t              datamode;                                       \
   /* DAC control register.*/                                                \
-  uint32_t                cr;                                               \
+  uint32_t                  cr;                                             \
   /* DAC mode control register.*/                                           \
-  uint32_t                mcr
+  uint32_t                  mcr;
 #else
 #define dac_lld_config_fields                                               \
   /* Initial output on DAC channel.*/                                       \
-  uint32_t                init;                                             \
+  uint32_t                  init;                                           \
   /* DAC data holding register mode.*/                                      \
-  dacdhrmode_t            datamode;                                         \
+  dacdhrmode_t              datamode;                                       \
   /* DAC control register.*/                                                \
-  uint32_t                cr
+  uint32_t                  cr;
 #endif /* STM32_DAC_HAS_MCR == TRUE */
 
 /**
@@ -613,7 +613,7 @@ typedef enum {
   /* DAC initialization data. This field contains the (not shifted) value   \
      to be put into the TSEL field of the DAC CR register during            \
      initialization. All other fields are handled internally.*/             \
-  uint32_t                  trigger
+  uint32_t                  trigger;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

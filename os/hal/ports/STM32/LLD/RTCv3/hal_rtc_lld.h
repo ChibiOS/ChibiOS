@@ -247,7 +247,7 @@ typedef struct hal_rtc_wakeup {
   /* RTC event callback pointer.*/                                          \
   rtccb_t                   callback;                                       \
   /* Pointer to TAMPER registers block. */                                  \
-  TAMP_TypeDef              *tamp
+  TAMP_TypeDef              *tamp;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

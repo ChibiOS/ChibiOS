@@ -143,7 +143,7 @@ struct hal_adc_configuration_group {
    */
   adcerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
-  adc_lld_configuration_group_fields;
+  adc_lld_configuration_group_fields
 };
 
 /**
@@ -151,7 +151,7 @@ struct hal_adc_configuration_group {
  */
 struct hal_adc_config {
   /* End of the mandatory fields.*/
-  adc_lld_config_fields;
+  adc_lld_config_fields
 };
 
 /**
@@ -194,7 +194,7 @@ struct hal_adc_driver {
   ADC_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  adc_lld_driver_fields;
+  adc_lld_driver_fields
 };
 
 /*===========================================================================*/

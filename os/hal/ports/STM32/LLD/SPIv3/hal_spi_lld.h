@@ -480,7 +480,7 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;
 #endif
 
 #if defined(STM32_SPI_DMA_REQUIRED) && !defined(STM32_SPI_BDMA_REQUIRED)
@@ -500,7 +500,7 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;
 #endif
 
 #if !defined(STM32_SPI_DMA_REQUIRED) && defined(STM32_SPI_BDMA_REQUIRED)
@@ -520,7 +520,7 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;
 #endif
 
 /**
@@ -530,7 +530,7 @@
   /* SPI CFG1 register initialization data.*/                               \
   uint32_t                  cfg1;                                           \
   /* SPI CFG2 register initialization data.*/                               \
-  uint32_t                  cfg2
+  uint32_t                  cfg2;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

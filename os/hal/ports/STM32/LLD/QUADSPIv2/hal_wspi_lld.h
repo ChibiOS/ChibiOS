@@ -252,7 +252,7 @@
  */
 #define wspi_lld_config_fields                                              \
   /* DCR register initialization data.*/                                    \
-  uint32_t                      dcr
+  uint32_t                      dcr;
 
 /**
  * @brief   Low level fields of the WSPI driver structure.
@@ -261,7 +261,7 @@
   /* Pointer to the QUADSPIx registers block.*/                             \
   QUADSPI_TypeDef               *qspi;                                      \
   /* QUADSPI MDMA channel.*/                                                \
-  const stm32_mdma_channel_t    *mdma
+  const stm32_mdma_channel_t    *mdma;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

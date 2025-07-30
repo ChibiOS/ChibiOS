@@ -488,7 +488,7 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
@@ -497,7 +497,7 @@
   /* SPI CR1 register initialization data.*/                                \
   uint16_t                  cr1;                                            \
   /* SPI CR2 register initialization data.*/                                \
-  uint16_t                  cr2
+  uint16_t                  cr2;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

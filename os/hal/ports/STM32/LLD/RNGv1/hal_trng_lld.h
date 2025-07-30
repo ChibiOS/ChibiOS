@@ -98,14 +98,14 @@
  */
 #define trng_lld_config_fields                                              \
   /* CR register initialization value.*/                                    \
-  uint32_t                   cr
+  uint32_t                   cr;
 
 /**
  * @brief   Low level fields of the TRNG driver structure.
  */
 #define trng_lld_driver_fields                                              \
   /* Pointer to the RNG registers block.*/                                  \
-  RNG_TypeDef                *rng
+  RNG_TypeDef                *rng;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

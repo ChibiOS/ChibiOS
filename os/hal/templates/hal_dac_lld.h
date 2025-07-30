@@ -91,21 +91,21 @@ typedef enum {
  */
 #define dac_lld_driver_fields                                               \
   /* Dummy field, it is not needed.*/                                       \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /**
  * @brief   Low level fields of the DAC configuration structure.
  */
 #define dac_lld_config_fields                                               \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /**
  * @brief   Low level fields of the DAC group configuration structure.
  */
 #define dac_lld_conversion_group_fields                                     \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

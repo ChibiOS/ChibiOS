@@ -333,14 +333,14 @@ typedef uint32_t adcerror_t;
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_dma_stream_t  *dmastp;                                        \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
 #define adc_lld_config_fields                                               \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
@@ -377,7 +377,7 @@ typedef uint32_t adcerror_t;
   uint32_t                  sqr2;                                           \
   /* ADC SQR3 register initialization data.                                 \
      NOTE: Conversion group sequence 1...6.*/                               \
-  uint32_t                  sqr3
+  uint32_t                  sqr3;
 
 /**
  * @name    Sequences building helper macros

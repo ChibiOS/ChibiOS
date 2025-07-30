@@ -113,7 +113,7 @@ typedef enum {
  *          architecture dependent, fields.
  */
 struct hal_mac_config {
-  mac_lld_config_fields;
+  mac_lld_config_fields
 #if defined(MAC_CONFIG_EXT_FIELDS)
   MAC_CONFIG_EXT_FIELDS
 #endif
@@ -162,7 +162,7 @@ struct hal_mac_driver {
    */
   void                      *arg;
   /* End of the mandatory fields.*/
-  mac_lld_driver_fields;
+  mac_lld_driver_fields
 #if defined(MAC_DRIVER_EXT_FIELS)
   MAC_DRIVER_EXT_FIELS
 #endif
@@ -181,7 +181,7 @@ struct hal_mac_transmit_descriptor {
    */
   size_t                    size;
   /* End of the mandatory fields.*/
-  mac_lld_transmit_descriptor_fields;
+  mac_lld_transmit_descriptor_fields
 };
 
 /**
@@ -197,7 +197,7 @@ struct hal_mac_receive_descriptor {
    */
   size_t                    size;
   /* End of the mandatory fields.*/
-  mac_lld_receive_descriptor_fields;
+  mac_lld_receive_descriptor_fields
 };
 
 /*===========================================================================*/

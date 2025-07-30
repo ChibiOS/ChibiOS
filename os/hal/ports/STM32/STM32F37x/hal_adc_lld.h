@@ -377,7 +377,7 @@ typedef enum {
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_dma_stream_t  *dmastp;                                        \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
@@ -386,7 +386,7 @@ typedef enum {
   /* SDADC CR1 register initialization data.*/                              \
   uint32_t                  cr1;                                            \
   /* SDADC CONFxR registers initialization data.*/                          \
-  uint32_t                  confxr[3]
+  uint32_t                  confxr[3];
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
@@ -422,7 +422,7 @@ typedef enum {
       /* SDADC CONFCHxR registers initialization data.*/                    \
       uint32_t                  confchr[2];                                 \
     } sdadc;                                                                \
-  } u
+  } u;
 
 #elif STM32_ADC_USE_ADC
 #define adc_lld_driver_fields                                               \
@@ -431,11 +431,11 @@ typedef enum {
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_dma_stream_t  *dmastp;                                        \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 
 #define adc_lld_config_fields                                               \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 #define adc_lld_configuration_group_fields                                  \
   union {                                                                   \
@@ -458,7 +458,7 @@ typedef enum {
       /* ADC SQRx register initialization data.*/                           \
       uint32_t                  sqr[3];                                     \
     } adc;                                                                  \
-  } u
+  } u;
 
 #elif STM32_ADC_USE_SDADC
 #define adc_lld_driver_fields                                               \
@@ -467,13 +467,13 @@ typedef enum {
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_dma_stream_t  *dmastp;                                        \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 
 #define adc_lld_config_fields                                               \
   /* SDADC CR1 register initialization data.*/                              \
   uint32_t                  cr1;                                            \
   /* SDADC CONFxR registers initialization data.*/                          \
-  uint32_t                  confxr[3]
+  uint32_t                  confxr[3];
 
 #define adc_lld_configuration_group_fields                                  \
   union {                                                                   \
@@ -487,7 +487,7 @@ typedef enum {
       /* SDADC CONFCHxR registers initialization data.*/                    \
       uint32_t                  confchr[2];                                 \
     } sdadc;                                                                \
-  } u
+  } u;
 
 #endif
 

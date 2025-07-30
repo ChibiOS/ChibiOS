@@ -107,7 +107,7 @@ typedef struct {
  * @brief   Implementation-specific @p RTCDriver fields.
  */
 #define rtc_lld_driver_fields                                              \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

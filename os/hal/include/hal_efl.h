@@ -94,7 +94,7 @@ struct EFlashDriverVMT {
  */
 typedef struct hal_efl_config {
   /* End of the mandatory fields.*/
-  efl_lld_config_fields;
+  efl_lld_config_fields
 } EFlashConfig;
 
 /**
@@ -115,7 +115,7 @@ struct hal_efl_driver {
   mutex_t                   mutex;
 #endif /* EFL_USE_MUTUAL_EXCLUSION == TRUE */
   /* End of the mandatory fields.*/
-  efl_lld_driver_fields;
+  efl_lld_driver_fields
 };
 
 /*===========================================================================*/

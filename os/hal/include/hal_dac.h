@@ -131,7 +131,7 @@ struct hal_dac_conversion_group {
    */
   dacerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
-  dac_lld_conversion_group_fields;
+  dac_lld_conversion_group_fields
 };
 
 /**
@@ -139,7 +139,7 @@ struct hal_dac_conversion_group {
  */
 struct hal_dac_config {
   /* End of the mandatory fields.*/
-  dac_lld_config_fields;
+  dac_lld_config_fields
 };
 
 /**
@@ -182,7 +182,7 @@ struct hal_dac_driver {
   DAC_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  dac_lld_driver_fields;
+  dac_lld_driver_fields
 };
 
 /*===========================================================================*/

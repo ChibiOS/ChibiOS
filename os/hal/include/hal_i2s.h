@@ -96,7 +96,7 @@ struct hal_i2s_driver {
    */
   const I2SConfig           *config;
   /* End of the mandatory fields.*/
-  i2s_lld_driver_fields;
+  i2s_lld_driver_fields
 };
 
 /**
@@ -122,7 +122,7 @@ struct hal_i2s_config {
    */
   i2scallback_t             end_cb;
   /* End of the mandatory fields.*/
-  i2s_lld_config_fields;
+  i2s_lld_config_fields
 };
 
 /*===========================================================================*/
