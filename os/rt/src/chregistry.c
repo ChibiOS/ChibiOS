@@ -144,6 +144,7 @@ ROMCONST chdebug_t ch_debug = {
 #endif
 };
 
+#if (CH_CFG_USE_DYNAMIC == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Threads garbage collection.
  * @details This function scans the registry in order to locate all threads
@@ -183,6 +184,7 @@ ucnt_t chRegGarbageCollect(void *object) {
 
   return n;
 }
+#endif /* CH_CFG_USE_DYNAMIC == TRUE */
 
 /**
  * @brief   Returns the first thread in the system.
