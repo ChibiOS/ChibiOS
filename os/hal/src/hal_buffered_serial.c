@@ -67,7 +67,7 @@ void bsIncomingDataI(BufferedSerial *bsp, uint8_t b) {
   }
 
   if (iqPutI(&bsp->iqueue, b) < MSG_OK) {
-    chnAddFlagsI(bsp, SD_QUEUE_FULL_ERROR);
+    chnAddFlagsI(bsp, CHN_BUFFER_FULL_ERROR);
   }
 }
 
