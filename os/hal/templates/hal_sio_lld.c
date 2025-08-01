@@ -82,11 +82,21 @@ msg_t sio_lld_start(SIODriver *siop) {
 
   if (siop->state == SIO_STOP) {
     /* Enables the peripheral.*/
+
+    /* Enables the peripheral.*/
+    if (false) {
+    }
+
 #if PLATFORM_SIO_USE_SIO1 == TRUE
-    if (&SIOD1 == siop) {
+    else if (&SIOD1 == siop) {
 
     }
 #endif
+
+    else {
+      osalDbgAssert(false, "invalid SIO instance");
+      return HAL_RET_IS_INVALID;
+    }
   }
 
   /* Configures the peripheral.*/

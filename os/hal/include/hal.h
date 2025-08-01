@@ -117,6 +117,10 @@
  * @brief   Unknown control code.
  */
 #define HAL_RET_UNKNOWN_CTL     (msg_t)-20
+/**
+ * @brief   Invalid instance pointer.
+ */
+#define HAL_RET_IS_INVALID      (msg_t)-21
 /** @} */
 
 /*===========================================================================*/

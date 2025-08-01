@@ -313,7 +313,7 @@ msg_t sio_lld_start(SIODriver *siop) {
 
   if (siop->state == SIO_STOP) {
 
-  /* Enables the peripheral.*/
+    /* Enables the peripheral.*/
     if (false) {
     }
 #if STM32_SIO_USE_USART1 == TRUE
@@ -372,6 +372,7 @@ msg_t sio_lld_start(SIODriver *siop) {
 #endif
     else {
       osalDbgAssert(false, "invalid SIO instance");
+      return HAL_RET_IS_INVALID;
     }
   }
 
