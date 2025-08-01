@@ -18,16 +18,16 @@
 */
 
 /**
- * @file    ARMv8-M-ML/chcore.c
- * @brief   ARMv8-M MainLine port code.
+ * @file    ARMv6-M-RP2/chcore.c
+ * @brief   ARMv6-M-RP2 port code.
  *
- * @addtogroup ARMV8M_ML_CORE
+ * @addtogroup ARMV6M_RP2_CORE
  * @{
  */
 
-#include <string.h>
-
 #include "ch.h"
+
+#include "hardware/structs/sio.h" // for sio_hw
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
@@ -49,69 +49,149 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Remote replica of @p chSysHalt().
+ * @note    The difference is that it does not change the system state and
+ *          does not call the port hook again.
+ */
+void port_local_halt(void) {
+  const char *reason = "remote panic";
+
+  port_disable();
+
+  /* Logging the event.*/
+  __trace_halt("remote panic");
+
+  /* Pointing to the passed message.*/
+  currcore->dbg.panic_msg = reason;
+
+  /* Halt hook code, usually empty.*/
+  CH_CFG_SYSTEM_HALT_HOOK(reason);
+
+  /* Harmless infinite loop.*/
+  while (true) {
+  }
+}
+
 /*===========================================================================*/
 /* Module interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if (CORTEX_SIMPLIFIED_PRIORITY == FALSE) || defined(__DOXYGEN__)
+#if (CORTEX_ALTERNATE_SWITCH == FALSE) || defined(__DOXYGEN__)
 /**
- * @brief   SVC vector.
- * @details The SVC vector is used for exception mode re-entering after a
- *          context switch and, optionally, for system calls.
- * @note    The SVC vector is only used in advanced kernel mode.
+ * @brief   NMI vector.
+ * @details The NMI vector is used for exception mode re-entering after a
+ *          context switch.
  */
 /*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
-void SVC_Handler(void) {
+void NMI_Handler(void) {
 /*lint -restore*/
-  uint32_t psp = __get_PSP();
 
-  {
-    /* From privileged mode, it is used for context discarding in the
-       preemption code.*/
+  /* The port_extctx structure is pointed by the PSP register.*/
+  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
 
-    /* Unstacking procedure, discarding the current exception context and
-       positioning the stack to point to the real one.*/
-    psp += sizeof (struct port_extctx);
+  /* Discarding the current exception context and positioning the stack to
+     point to the real one.*/
+  ctxp++;
 
-#if CORTEX_USE_FPU == TRUE
-    /* Enforcing unstacking of the FP part of the context.*/
-    FPU->FPCCR &= ~FPU_FPCCR_LSPACT_Msk;
-#endif
+  /* Writing back the modified PSP value.*/
+  __set_PSP((uint32_t)ctxp);
 
-    /* Restoring real position of the original stack frame.*/
-    __set_PSP(psp);
-
-    /* Restoring the normal interrupts status.*/
-    port_unlock_from_isr();
-  }
+  /* Restoring the normal interrupts status, releasing the spinlock.*/
+  port_unlock_from_isr();
 }
-#endif /* CORTEX_SIMPLIFIED_PRIORITY == FALSE */
+#endif /* !CORTEX_ALTERNATE_SWITCH */
 
-#if (CORTEX_SIMPLIFIED_PRIORITY == TRUE) || defined(__DOXYGEN__)
+#if (CORTEX_ALTERNATE_SWITCH == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   PendSV vector.
  * @details The PendSV vector is used for exception mode re-entering after a
  *          context switch.
- * @note    The PendSV vector is only used in compact kernel mode.
  */
 /*lint -save -e9075 [8.4] All symbols are invoked from asm context.*/
 void PendSV_Handler(void) {
 /*lint -restore*/
-  uint32_t psp = __get_PSP();
 
-#if CORTEX_USE_FPU
-  /* Enforcing unstacking of the FP part of the context.*/
-  FPU->FPCCR &= ~FPU_FPCCR_LSPACT_Msk;
-#endif
+  /* The port_extctx structure is pointed by the PSP register.*/
+  struct port_extctx *ctxp = (struct port_extctx *)__get_PSP();
 
   /* Discarding the current exception context and positioning the stack to
      point to the real one.*/
-  psp += sizeof (struct port_extctx);
+  ctxp++;
 
-  /* Restoring real position of the original stack frame.*/
-  __set_PSP(psp);
+  /* Writing back the modified PSP value.*/
+  __set_PSP((uint32_t)ctxp);
+
+#if CH_CFG_SMP_MODE== TRUE
+   /* Interrupts have been re-enabled in the ASM part but the spinlock is
+      still taken, releasing it.*/
+   port_spinlock_release();
+#endif
 }
-#endif /* CORTEX_SIMPLIFIED_PRIORITY == TRUE */
+#endif /* CORTEX_ALTERNATE_SWITCH */
+
+#if (CH_CFG_SMP_MODE== TRUE) || defined(__DOXYGEN__)
+/**
+ * @brief   FIFO interrupt handler for core 0.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(Vector7C) {
+
+  CH_IRQ_PROLOGUE();
+
+  /* Error flags cleared and ignored.*/
+  sio_hw->fifo_st = SIO_FIFO_ST_ROE_BITS | SIO_FIFO_ST_WOF_BITS;
+
+  /* Read FIFO is fully emptied.*/
+  while ((sio_hw->fifo_st & SIO_FIFO_ST_VLD_BITS) != 0U) {
+    uint32_t message = sio_hw->fifo_rd;
+#if defined(PORT_HANDLE_FIFO_MESSAGE)
+    if (message != PORT_FIFO_RESCHEDULE_MESSAGE) {
+      PORT_HANDLE_FIFO_MESSAGE(1U, message);
+    }
+#else
+    (void)message;
+#endif
+  }
+
+  /* In case the other core is in WFE.*/
+  __SEV();
+
+  CH_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   FIFO interrupt handler for core 1.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(Vector80) {
+
+  CH_IRQ_PROLOGUE();
+
+  /* Error flags cleared and ignored.*/
+  sio_hw->fifo_st = SIO_FIFO_ST_ROE_BITS | SIO_FIFO_ST_WOF_BITS;
+
+  /* Read FIFO is fully emptied.*/
+  while ((sio_hw->fifo_st & SIO_FIFO_ST_VLD_BITS) != 0U) {
+    uint32_t message = sio_hw->fifo_rd;
+    if (message == PORT_FIFO_PANIC_MESSAGE) {
+      port_local_halt();
+    }
+#if defined(PORT_HANDLE_FIFO_MESSAGE)
+    if (message != PORT_FIFO_RESCHEDULE_MESSAGE) {
+      PORT_HANDLE_FIFO_MESSAGE(0U, message);
+    }
+#endif
+  }
+
+  /* In case the other core is in WFE.*/
+  __SEV();
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* CH_CFG_SMP_MODE== TRUE */
 
 /*===========================================================================*/
 /* Module exported functions.                                                */
@@ -126,33 +206,14 @@ void PendSV_Handler(void) {
  */
 void port_init(os_instance_t *oip) {
 
-  (void)oip;
-
-  /* Starting in a known IRQ configuration.*/
-  port_suspend();
-
-#if CORTEX_USE_FPU == TRUE
-  /* Making sure to use the correct settings for FPU-related exception
-     handling, better do not rely on startup settings.*/
-  FPU->FPCCR  = FPU_FPCCR_ASPEN_Msk | FPU_FPCCR_LSPEN_Msk;
-  FPU->FPDSCR = 0U;
-  __set_FPSCR(0U);
-  /* Enforcing CONTROL.FPCA and CONTROL.SPSEL.*/
-  __set_CONTROL(CONTROL_FPCA_Msk | CONTROL_SPSEL_Msk);
-  __ISB();
+#if CH_CFG_ST_TIMEDELTA > 0
+  /* Activating timer for this instance.*/
+  port_timer_enable(oip);
 #endif
 
-  /* Initializing priority grouping.*/
-  NVIC_SetPriorityGrouping(CORTEX_PRIGROUP_INIT);
-
-  /* DWT cycle counter enable, note, the M7 requires DWT unlocking.*/
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-//  DWT->LAR = 0xC5ACCE55U;
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-
-  #if CH_CFG_SMP_MODE== TRUE
+#if CH_CFG_SMP_MODE== TRUE
   /* FIFO handlers for each core.*/
-  SIO->FIFO_ST = SIO_FIFO_ST_ROE | SIO_FIFO_ST_WOF;
+  sio_hw->fifo_st = SIO_FIFO_ST_ROE_BITS | SIO_FIFO_ST_WOF_BITS;
   if (oip->core_id == 0U) {
     NVIC_SetPriority(15, CORTEX_MINIMUM_PRIORITY);
     NVIC_EnableIRQ(15);
@@ -164,51 +225,40 @@ void port_init(os_instance_t *oip) {
   else {
     chDbgAssert(false, "unexpected core id");
   }
-  #else /* CH_CFG_SMP_MODE== FALSE */
+#endif
 
-    /* Initialization of the system vectors used by the port.*/
-    #if CORTEX_SIMPLIFIED_PRIORITY == FALSE
-      NVIC_SetPriority(SVCall_IRQn, CORTEX_PRIORITY_SVCALL);
-    #endif
-      NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
-      
-  #endif
-
-
+#if CORTEX_ALTERNATE_SWITCH == TRUE
+  /* Initializing PendSV for the current core, it is only required in
+     the alternate switch mode.*/
+  NVIC_SetPriority(PendSV_IRQn, CORTEX_PRIORITY_PENDSV);
+#endif
 }
 
 /**
- * @brief   Exception exit redirection to @p __port_switch_from_isr().
+ * @brief   IRQ epilogue code.
+ *
+ * @param[in] lr        value of the @p LR register on ISR entry
  */
-void __port_irq_epilogue(void) {
+void __port_irq_epilogue(uint32_t lr) {
 
-  port_lock_from_isr();
-  if ((SCB->ICSR & SCB_ICSR_RETTOBASE_Msk) != 0U) {
+  if (lr != 0xFFFFFFF1U) {
     struct port_extctx *ectxp;
-    uint32_t s_psp;
 
-#if CORTEX_USE_FPU == TRUE
-    /* Enforcing a lazy FPU state save by accessing the FPCSR register.*/
-    (void) __get_FPSCR();
-#endif
+    /* Entering system critical zone.*/
+    port_lock_from_isr();
 
-    s_psp = __get_PSP();
+    /* The extctx structure is pointed by the PSP register.*/
+    ectxp = (struct port_extctx *)__get_PSP();
 
     /* Adding an artificial exception return context, there is no need to
        populate it fully.*/
-    s_psp -= sizeof (struct port_extctx);
+    ectxp--;
 
-    /* The port_extctx structure is pointed by the S-PSP register.*/
-    ectxp = (struct port_extctx *)s_psp;
+    /* Writing back the modified PSP value.*/
+    __set_PSP((uint32_t)ectxp);
 
     /* Setting up a fake XPSR register value.*/
     ectxp->xpsr = 0x01000000U;
-#if CORTEX_USE_FPU == TRUE
-    ectxp->fpscr = FPU->FPDSCR;
-#endif
-
-    /* Writing back the modified S-PSP value.*/
-    __set_PSP(s_psp);
 
     /* The exit sequence is different depending on if a preemption is
        required or not.*/
@@ -224,9 +274,7 @@ void __port_irq_epilogue(void) {
 
     /* Note, returning without unlocking is intentional, this is done in
        order to keep the rest of the context switch atomic.*/
-    return;
   }
-  //port_unlock_from_isr();
 }
 
 #if (CH_CFG_SMP_MODE== TRUE) || defined(__DOXYGEN__)

@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    RP2040/hal_lld.h
- * @brief   RP2040 HAL subsystem low level driver header.
+ * @file    RP2350/hal_lld.h
+ * @brief   RP2350 HAL subsystem low level driver header.
  *
  * @addtogroup HAL
  * @{
@@ -31,8 +31,9 @@
 #include "rp_registry.h"
 
 /* From Pico-SDK */
-#include "hardware/clocks.h"
-#include "pico/runtime_init.h"
+
+#include "hardware/clocks.h" // karl brought in a lot more headers here.
+
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -42,11 +43,11 @@
  * @name    Platform identification macros
  * @{
  */
-#if defined(RP2040) || defined(__DOXYGEN__)
-#define PLATFORM_NAME           "RP2040"
+#if defined(RP2350) || defined(__DOXYGEN__)
+#define PLATFORM_NAME           "RP2350"
 
 #else
-#error "RP2040 device not specified"
+#error "RP2350 device not specified"
 #endif
 /** @} */
 
@@ -112,8 +113,8 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(RP2040_MCUCONF)
-#error "Using a wrong mcuconf.h file, RP2040_MCUCONF not defined"
+#if !defined(RP2350_MCUCONF)
+#error "Using a wrong mcuconf.h file, RP2350_MCUCONF not defined"
 #endif
 
 /*
@@ -146,9 +147,14 @@
 /**
  * @brief   Type of a clock point identifier.
  */
-typedef clock_handle_t halclkpt_t;
+//typedef clock_handle_t halclkpt_t; this is in os/hal/include/hal.h:235 as typedef unsigned halclkpt_t;
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Type of a clock point frequency in Hz.
+ */
+typedef uint32_t halfreq_t;
+
 /**
  * @brief   Type of a clock configuration structure.
  */
@@ -172,6 +178,8 @@ typedef struct {
 #include "rp_fifo.h"
 #include "rp_dma.h"
 
+#include "hardware/structs/resets.h" // for resets_hw
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -186,13 +194,18 @@ extern "C" {
 
 __STATIC_INLINE void hal_lld_peripheral_reset(uint32_t mask) {
 
-  RESETS->RESET |=  mask;
+  resets_hw->reset |=  mask; 
 }
 
 __STATIC_INLINE void hal_lld_peripheral_unreset(uint32_t mask) {
 
-  RESETS->RESET &= ~mask;
-  while ((RESETS->RESET_DONE & mask) == 0U) {
+  //RESETS->RESET &= ~mask;
+  //while ((RESETS->RESET_DONE & mask) == 0U) {
+  //  /* Waiting for reset.*/
+  //} bug - this is not working
+  // buzz todo is this from karl the right way - seems to boot?
+  resets_hw->reset &= ~mask;
+  while ((resets_hw->reset_done & mask) == 0U) {
     /* Waiting for reset.*/
   }
 }
