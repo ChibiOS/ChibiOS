@@ -87,13 +87,14 @@ msg_t spi_lld_start(SPIDriver *spip) {
     }
 
 #if PLATFORM_SPI_USE_SPI1 == TRUE
-    if (&SPID1 == spip) {
+    else if (&SPID1 == spip) {
 
     }
 #endif
 
     else {
       osalDbgAssert(false, "invalid SPI instance");
+      return HAL_RET_IS_INVALID;
     }
   }
 

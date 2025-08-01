@@ -474,6 +474,7 @@ msg_t sio_lld_start(SIODriver *siop) {
 #endif
     else {
       osalDbgAssert(false, "invalid SIO instance");
+      return HAL_RET_IS_INVALID;
     }
   }
 
