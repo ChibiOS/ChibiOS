@@ -138,16 +138,17 @@ msg_t eflStart(EFlashDriver *eflp, const EFlashConfig *config) {
 
 #if defined(EFL_LLD_ENHANCED_API)
   msg = efl_lld_start(eflp);
-#else
-  efl_lld_start(eflp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     eflp->state = FLASH_READY;
   }
   else {
     eflp->state = FLASH_STOP;
   }
+#else
+  efl_lld_start(eflp);
+  eflp->state = FLASH_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

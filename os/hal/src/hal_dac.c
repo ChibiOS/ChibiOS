@@ -106,16 +106,17 @@ msg_t dacStart(DACDriver *dacp, const DACConfig *config) {
 
 #if defined(DAC_LLD_ENHANCED_API)
   msg = dac_lld_start(dacp);
-#else
-  dac_lld_start(dacp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     dacp->state = DAC_READY;
   }
   else {
     dacp->state = DAC_STOP;
   }
+#else
+  dac_lld_start(dacp);
+  dacp->state = DAC_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 
@@ -245,16 +246,18 @@ msg_t dacStartConversionI(DACDriver *dacp,
   dacp->grpp     = grpp;
 #if defined(DAC_LLD_ENHANCED_API)
   msg = dac_lld_start_conversion(dacp);
-#else
-  dac_lld_start_conversion(dacp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     dacp->state = DAC_ACTIVE;
   }
   else {
     dacp->grpp = NULL;
   }
+#else
+  dac_lld_start_conversion(dacp);
+  dacp->state = DAC_ACTIVE;
+  msg = HAL_RET_SUCCESS;
+#endif
+
   return msg;
 }
 
@@ -347,10 +350,14 @@ msg_t dacConvert(DACDriver *dacp,
 
   osalSysLock();
 
-  dacStartConversionI(dacp, grpp, samples, depth);
+  msg = dacStartConversionI(dacp, grpp, samples, depth);
+  if (msg != HAL_RET_SUCCESS) {
+    return msg;
+  }
   msg = osalThreadSuspendS(&dacp->thread);
 
   osalSysUnlock();
+
   return msg;
 }
 

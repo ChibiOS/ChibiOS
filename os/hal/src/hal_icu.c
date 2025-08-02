@@ -93,16 +93,17 @@ msg_t icuStart(ICUDriver *icup, const ICUConfig *config) {
 
 #if defined(ICU_LLD_ENHANCED_API)
   msg = icu_lld_start(icup);
-#else
-  icu_lld_start(icup);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     icup->state = ICU_READY;
   }
   else {
     icup->state = ICU_STOP;
   }
+#else
+  icu_lld_start(icup);
+  icup->state = ICU_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

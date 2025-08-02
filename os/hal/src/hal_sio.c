@@ -267,10 +267,10 @@ msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
 
 #if SIO_USE_SYNCHRONIZATION == TRUE
   /* If synchronization is enabled then all events by default.*/
-  sioWriteEnableFlagsX(siop, SIO_EV_ALL_EVENTS);
+  sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_ALL_EVENTS);
 #else
   /* If synchronization is disabled then no events by default.*/
-  sioWriteEnableFlagsX(siop, SIO_EV_NONE);
+  sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_NONE);
 #endif
 
   osalSysUnlock();

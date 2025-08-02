@@ -77,7 +77,7 @@ void macObjectInit(MACDriver *macp) {
 
   macp->state  = MAC_STOP;
   macp->config = NULL;
-  macp->flags  = 0U;
+  macp->flags  = (eventflags_t)0;
   macp->cb     = NULL;
   macp->arg    = NULL;
   osalThreadQueueObjectInit(&macp->tdqueue);
@@ -109,16 +109,17 @@ msg_t macStart(MACDriver *macp, const MACConfig *config) {
 
 #if defined(MAC_LLD_ENHANCED_API)
   msg = mac_lld_start(macp);
-#else
-  mac_lld_start(macp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     macp->state = MAC_ACTIVE;
   }
   else {
     macp->state = MAC_STOP;
   }
+#else
+  mac_lld_start(macp);
+  macp->state = MAC_ACTIVE;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

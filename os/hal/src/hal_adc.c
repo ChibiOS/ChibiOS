@@ -105,16 +105,17 @@ msg_t adcStart(ADCDriver *adcp, const ADCConfig *config) {
 
 #if defined(ADC_LLD_ENHANCED_API)
   msg = adc_lld_start(adcp);
-#else
-  adc_lld_start(adcp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     adcp->state = ADC_READY;
   }
   else {
     adcp->state = ADC_STOP;
   }
+#else
+  adc_lld_start(adcp);
+  adcp->state = ADC_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

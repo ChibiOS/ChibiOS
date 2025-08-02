@@ -104,16 +104,17 @@ msg_t i2cStart(I2CDriver *i2cp, const I2CConfig *config) {
 
 #if defined(I2C_LLD_ENHANCED_API)
   msg = i2c_lld_start(i2cp);
-#else
-  i2c_lld_start(i2cp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     i2cp->state = I2C_READY;
   }
   else {
     i2cp->state = I2C_STOP;
   }
+#else
+  i2c_lld_start(i2cp);
+  i2cp->state = I2C_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

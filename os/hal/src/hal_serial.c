@@ -193,16 +193,17 @@ msg_t sdStart(SerialDriver *sdp, const SerialConfig *config) {
 
 #if defined(SD_LLD_ENHANCED_API)
   msg = sd_lld_start(sdp, config);
-#else
-  sd_lld_start(sdp, config);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     sdp->state = SD_READY;
   }
   else {
     sdp->state = SD_STOP;
   }
+#else
+  sd_lld_start(sdp, config);
+  sdp->state = SD_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

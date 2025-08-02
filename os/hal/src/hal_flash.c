@@ -178,7 +178,7 @@ void *flashGetOffsetAddress(BaseFlash *devp, flash_offset_t offset) {
 
   osalDbgAssert(offset < descriptor->size, "invalid offset");
 
-  return (void *)((flash_offset_t)descriptor->address + offset);
+  return (void *)(descriptor->address + offset);
 }
 
 /**
@@ -194,8 +194,8 @@ flash_offset_t flashGetAddressOffset(BaseFlash *devp, void *addr) {
   const flash_descriptor_t *descriptor = flashGetDescriptor(devp);
 
   osalDbgAssert(((flash_offset_t)addr >= (flash_offset_t)descriptor->address) &&
-                ((flash_offset_t)addr <= (flash_offset_t)descriptor->address +
-                                         descriptor->size),
+                ((flash_offset_t)addr <= ((flash_offset_t)descriptor->address +
+                                          descriptor->size)),
                 "invalid address");
 
   return (flash_offset_t)addr - (flash_offset_t)descriptor->address;
