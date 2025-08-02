@@ -94,16 +94,17 @@ msg_t gptStart(GPTDriver *gptp, const GPTConfig *config) {
 
 #if defined(GPT_LLD_ENHANCED_API)
   msg = gpt_lld_start(gptp);
-#else
-  gpt_lld_start(gptp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     gptp->state = GPT_READY;
   }
   else {
     gptp->state = GPT_STOP;
   }
+#else
+  gpt_lld_start(gptp);
+  gptp->state = GPT_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

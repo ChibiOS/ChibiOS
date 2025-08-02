@@ -80,16 +80,17 @@ msg_t wdgStart(WDGDriver *wdgp, const WDGConfig *config) {
 
 #if defined(WDG_LLD_ENHANCED_API)
   msg = wdg_lld_start(wdgp);
-#else
-  wdg_lld_start(wdgp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     wdgp->state = WDG_READY;
   }
   else {
     wdgp->state = WDG_STOP;
   }
+#else
+  wdg_lld_start(wdgp);
+  wdgp->state = WDG_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

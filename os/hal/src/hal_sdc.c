@@ -618,16 +618,17 @@ msg_t sdcStart(SDCDriver *sdcp, const SDCConfig *config) {
 
 #if defined(SDC_LLD_ENHANCED_API)
   msg = sdc_lld_start(sdcp);
-#else
-  sdc_lld_start(sdcp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     sdcp->state = BLK_ACTIVE;
   }
   else {
     sdcp->state = BLK_STOP;
   }
+#else
+  sdc_lld_start(sdcp);
+  sdcp->state = BLK_ACTIVE;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

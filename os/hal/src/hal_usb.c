@@ -318,16 +318,17 @@ msg_t usbStart(USBDriver *usbp, const USBConfig *config) {
 
 #if defined(USB_LLD_ENHANCED_API)
   msg = usb_lld_start(usbp);
-#else
-  usb_lld_start(usbp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     usbp->state = USB_READY;
   }
   else {
     usbp->state = USB_STOP;
   }
+#else
+  usb_lld_start(usbp);
+  usbp->state = USB_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

@@ -98,16 +98,17 @@ msg_t cryStart(CRYDriver *cryp, const CRYConfig *config) {
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
 #if defined(CRY_LLD_ENHANCED_API)
   msg = cry_lld_start(cryp);
-#else
-  cry_lld_start(cryp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     cryp->state = CRY_READY;
   }
   else {
     cryp->state = CRY_STOP;
   }
+#else
+  cry_lld_start(cryp);
+  cryp->state = CRY_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 #else
   cryp->state = CRY_READY;
   msg = HAL_RET_SUCCESS;

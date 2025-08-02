@@ -118,13 +118,17 @@ msg_t canStart(CANDriver *canp, const CANConfig *config) {
      be performed inside.*/
 #if defined(CAN_LLD_ENHANCED_API)
   msg = can_lld_start(canp);
-#else
-  can_lld_start(canp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     canp->state = CAN_READY;
   }
+  else {
+    canp->state = CAN_STOP;
+  }
+#else
+  can_lld_start(canp);
+  canp->state = CAN_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

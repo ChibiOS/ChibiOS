@@ -93,16 +93,17 @@ msg_t i2sStart(I2SDriver *i2sp, const I2SConfig *config) {
 
 #if defined(I2S_LLD_ENHANCED_API)
   msg = i2s_lld_start(i2sp);
-#else
-  i2s_lld_start(i2sp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     i2sp->state = I2S_READY;
   }
   else {
     i2sp->state = I2S_STOP;
   }
+#else
+  i2s_lld_start(i2sp);
+  i2sp->state = I2S_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

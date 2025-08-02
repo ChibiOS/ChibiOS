@@ -102,16 +102,17 @@ msg_t wspiStart(WSPIDriver *wspip, const WSPIConfig *config) {
 
 #if defined(WSPI_LLD_ENHANCED_API)
   msg = wspi_lld_start(wspip);
-#else
-  wspi_lld_start(wspip);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     wspip->state = WSPI_READY;
   }
   else {
     wspip->state = WSPI_STOP;
   }
+#else
+  wspi_lld_start(wspip);
+  wspip->state = WSPI_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 
