@@ -69,7 +69,7 @@
                                      __CM33_CMSIS_VERSION_SUB           )      /*!< \deprecated CMSIS HAL version number */
 
 #define __CORTEX_M                 (33U)                                       /*!< Cortex-M Core */
-
+//#warning USING CM33 CORE
 /** __FPU_USED indicates whether an FPU is used or not.
     For this, __FPU_PRESENT has to be checked prior to making use of FPU specific registers and functions.
 */

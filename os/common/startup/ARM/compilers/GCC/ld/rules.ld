@@ -143,6 +143,7 @@ SECTIONS
         *(.data)
         *(.data.*)
         *(.ramtext)
+        *(.ramtext.*)
         . = ALIGN(4);
         PROVIDE(_edata = .);
         __data_end__ = .;
