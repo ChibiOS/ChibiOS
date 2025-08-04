@@ -136,7 +136,7 @@
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_HAL_CONF_VER_8_4_)
+#if !defined(_CHIBIOS_HAL_CONF_VER_9_0_)
 #error "obsolete or unknown configuration file"
 #endif
 

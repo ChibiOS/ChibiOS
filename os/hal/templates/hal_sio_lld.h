@@ -83,6 +83,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_rx_empty(siop) false
 
 /**
@@ -95,6 +96,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_rx_idle(siop) false
 
 /**
@@ -109,6 +111,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_has_rx_errors(siop) false
 
 /**
@@ -121,6 +124,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_tx_full(siop) false
 
 /**
@@ -133,6 +137,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_tx_ongoing(siop) false
 
 /*===========================================================================*/

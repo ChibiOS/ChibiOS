@@ -51,6 +51,8 @@
  * @name    Event flags (compatible with channel and serial events)
  * @{
  */
+/*lint -save -e9053 [12.2] MISRA seems to assume that the underlying type
+  is 8 bits wide, it is not.*/
 #define SIO_EV_NONE                     0U
 #define SIO_EV_RXNOTEMPY                (1U << SIO_EV_RXNOTEMPY_POS)
 #define SIO_EV_TXNOTFULL                (1U << SIO_EV_TXNOTFULL_POS)
@@ -71,6 +73,7 @@
                                          SIO_EV_ALL_ERRORS  |               \
                                          SIO_EV_TXDONE      |               \
                                          SIO_EV_RXIDLE)
+/*lint -restore*/
 /** @} */
 
 /**

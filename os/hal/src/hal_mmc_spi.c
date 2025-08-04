@@ -623,11 +623,14 @@ bool mmcConnect(MMCDriver *mmcp) {
     /* Switch to SDHC mode.*/
     i = 0;
     while (true) {
-      if ((mmc_send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0, &r1) == HAL_SUCCESS) &&
-          (r1 <= 0x01U) &&
-          (mmc_send_command_R3(mmcp, MMCSD_CMD_APP_OP_COND, 0x400001AAU, &r1) == HAL_SUCCESS) &&
-          (r1 == 0x00U)) {
-        break;
+      if (mmc_send_command_R1(mmcp, MMCSD_CMD_APP_CMD, 0, &r1) == HAL_SUCCESS) {
+        if (r1 <= 0x01U) {
+          if (mmc_send_command_R3(mmcp, MMCSD_CMD_APP_OP_COND, 0x400001AAU, &r1) == HAL_SUCCESS) {
+            if (r1 == 0x00U) {
+              break;
+            }
+          }
+        }
       }
 
       if (++i >= MMC_ACMD41_RETRY) {
