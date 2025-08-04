@@ -67,25 +67,25 @@
 /**
  * @brief   Disabled value for BASEPRI register.
  */
-#define CORTEX_BASEPRI_DISABLED         0
+#define CORTEX_BASEPRI_DISABLED         0U
 
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS          (1U << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
  * @details This minimum priority level is calculated from the number of
  *          priority bits supported by the specific Cortex-Mx implementation.
  */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1U)
 
 /**
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY         0
+#define CORTEX_MAXIMUM_PRIORITY         0U
 
 /**
  * @brief   SVCALL handler priority.
@@ -187,7 +187,7 @@
  * @note    The default reserves priorities 0 and 1 for fast interrupts.
  */
 #if !defined(CORTEX_FAST_PRIORITIES)
-#define CORTEX_FAST_PRIORITIES          2
+#define CORTEX_FAST_PRIORITIES          2U
 #endif
 
 /**
@@ -239,8 +239,8 @@
   #error "invalid PORT_SWITCHED_REGIONS_NUMBER value"
 #endif
 
-#if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
-    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
+#if (CORTEX_FAST_PRIORITIES < 0U) ||                                         \
+    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4U))
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
 #endif
 
@@ -381,12 +381,12 @@
   /**
    * @brief   Maximum usable priority for normal ISRs.
    */
-  #define CORTEX_MAX_KERNEL_PRIORITY    (CORTEX_PRIORITY_SVCALL + 1)
+  #define CORTEX_MAX_KERNEL_PRIORITY    (CORTEX_PRIORITY_SVCALL + 1U)
 
   /**
    * @brief   Minimum usable priority for normal ISRs.
    */
-  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1)
+  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1U)
 
   /**
    * @brief   BASEPRI level within kernel lock.
@@ -395,8 +395,8 @@
     CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 
 #else
-  #define CORTEX_MAX_KERNEL_PRIORITY    0
-  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1)
+  #define CORTEX_MAX_KERNEL_PRIORITY    0U
+  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1U)
 #endif
 
 /* The following code is not processed when the file is included from an

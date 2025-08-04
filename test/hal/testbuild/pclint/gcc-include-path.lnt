@@ -1,4 +1,3 @@
---i"Z:\home\giovanni\Projects\ChibiStudio\tools\arm-none-eabi\14.2.1\arm-none-eabi\include"
---i"Z:\home\giovanni\Projects\ChibiStudio\tools\arm-none-eabi\14.2.1\lib\gcc\arm-none-eabi\14.2.1\include"
---i"Z:\home\giovanni\Projects\ChibiStudio\tools\arm-none-eabi\14.2.1\lib\gcc\arm-none-eabi\14.2.1\include-fixed"
-
+--i"C:\ChibiStudio\tools\arm-none-eabi\14.2.1\arm-none-eabi\include"
+--i"C:\ChibiStudio\tools\arm-none-eabi\14.2.1\lib\gcc\arm-none-eabi\14.2.1\include"
+--i"C:\ChibiStudio\tools\arm-none-eabi\14.2.1\lib\gcc\arm-none-eabi\14.2.1\include-fixed"

@@ -265,13 +265,17 @@ msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
     siop->state = SIO_STOP;
   }
 
+  /*lint -save -e9053 [12.2] MISRA seems to assume that the underlying type
+    is 8 bits wide, it is not.*/
 #if SIO_USE_SYNCHRONIZATION == TRUE
   /* If synchronization is enabled then all events by default.*/
   sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_ALL_EVENTS);
 #else
   /* If synchronization is disabled then no events by default.*/
+  sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_ALL_EVENTS);
   sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_NONE);
 #endif
+  /*lint -restore*/
 
   osalSysUnlock();
 
