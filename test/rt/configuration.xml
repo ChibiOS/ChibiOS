@@ -65,10 +65,10 @@
 /*
  * Working Area size of test threads.
  */
-#define WA_SIZE                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE)
-#define TEST_BUFFER_SIZE        MEM_ALIGN_NEXT(WA_SIZE, PORT_WORKING_AREA_ALIGN)
+#define WA_SIZE MEM_ALIGN_NEXT(THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),	\
+                               PORT_WORKING_AREA_ALIGN)
 
-extern uint8_t test_buffer[TEST_BUFFER_SIZE * 5];
+extern uint8_t test_buffer[WA_SIZE * 5];
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 
@@ -81,7 +81,7 @@ systime_t test_wait_tick(void);]]></value>
       <value><![CDATA[/*
  * Global test buffer holding 5 working areas.
  */
-ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[TEST_BUFFER_SIZE * 5];
+ALIGNED_VAR(PORT_WORKING_AREA_ALIGN) uint8_t test_buffer[WA_SIZE * 5];
 
 /*
  * Pointers to the spawned threads.
@@ -91,11 +91,11 @@ thread_t *threads[MAX_THREADS];
 /*
  * Pointers to the working areas.
  */
-void * ROMCONST wa[5] = {test_buffer + (TEST_BUFFER_SIZE * 0),
-                         test_buffer + (TEST_BUFFER_SIZE * 1),
-                         test_buffer + (TEST_BUFFER_SIZE * 2),
-                         test_buffer + (TEST_BUFFER_SIZE * 3),
-                         test_buffer + (TEST_BUFFER_SIZE * 4)};
+void * ROMCONST wa[5] = {test_buffer + (WA_SIZE * 0),
+                         test_buffer + (WA_SIZE * 1),
+                         test_buffer + (WA_SIZE * 2),
+                         test_buffer + (WA_SIZE * 3),
+                         test_buffer + (WA_SIZE * 4)};
 
 /*
  * Sets a termination request in all the test-spawned threads.
@@ -296,13 +296,7 @@ test_println("");]]></value>
                 <value />
               </tags>
               <code>
-                <value><![CDATA[test_print("--- CH_CFG_SMP_MODE:                    ");
-test_printn(CH_CFG_SMP_MODE);
-test_println("");
-test_print("--- CH_CFG_HARDENING_LEVEL:             ");
-test_printn(CH_CFG_HARDENING_LEVEL);
-test_println("");
-test_print("--- CH_CFG_ST_RESOLUTION:               ");
+                <value><![CDATA[test_print("--- CH_CFG_ST_RESOLUTION:               ");
 test_printn(CH_CFG_ST_RESOLUTION);
 test_println("");
 test_print("--- CH_CFG_ST_FREQUENCY:                ");
@@ -320,6 +314,9 @@ test_println("");
 test_print("--- CH_CFG_TIME_QUANTUM:                ");
 test_printn(CH_CFG_TIME_QUANTUM);
 test_println("");
+test_print("--- CH_CFG_MEMCORE_SIZE:                ");
+test_printn(CH_CFG_MEMCORE_SIZE);
+test_println("");
 test_print("--- CH_CFG_NO_IDLE_THREAD:              ");
 test_printn(CH_CFG_NO_IDLE_THREAD);
 test_println("");
@@ -328,9 +325,6 @@ test_printn(CH_CFG_OPTIMIZE_SPEED);
 test_println("");
 test_print("--- CH_CFG_USE_TM:                      ");
 test_printn(CH_CFG_USE_TM);
-test_println("");
-test_print("--- CH_CFG_USE_TIMESTAMP:               ");
-test_printn(CH_CFG_USE_TIMESTAMP);
 test_println("");
 test_print("--- CH_CFG_USE_REGISTRY:                ");
 test_printn(CH_CFG_USE_REGISTRY);
@@ -422,8 +416,7 @@ test_println("");]]></value>
         <value />
       </condition>
       <shared_code>
-        <value><![CDATA[#if CH_PORT_SUPPORTS_RECURSIVE_LOCKS == TRUE
-/* Timer callback for testing system functions in ISR context.*/
+        <value><![CDATA[/* Timer callback for testing system functions in ISR context.*/
 static void vtcb(virtual_timer_t *vtp, void *p) {
   syssts_t sts;
 
@@ -439,8 +432,7 @@ static void vtcb(virtual_timer_t *vtp, void *p) {
   sts = chSysGetStatusAndLockX();
   chSysRestoreStatusX(sts);
   chSysUnlockFromISR();
-}
-#endif]]></value>
+}]]></value>
       </shared_code>
       <cases>
         <case>

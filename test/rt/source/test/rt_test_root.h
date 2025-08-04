@@ -88,10 +88,10 @@ extern "C" {
 /*
  * Working Area size of test threads.
  */
-#define WA_SIZE                 THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE)
-#define TEST_BUFFER_SIZE        MEM_ALIGN_NEXT(WA_SIZE, PORT_WORKING_AREA_ALIGN)
+#define WA_SIZE MEM_ALIGN_NEXT(THD_WORKING_AREA_SIZE(THREADS_STACK_SIZE),	\
+                               PORT_WORKING_AREA_ALIGN)
 
-extern uint8_t test_buffer[TEST_BUFFER_SIZE * 5];
+extern uint8_t test_buffer[WA_SIZE * 5];
 extern thread_t *threads[MAX_THREADS];
 extern void * ROMCONST wa[5];
 

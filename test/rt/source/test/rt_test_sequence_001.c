@@ -162,12 +162,6 @@ static void rt_test_001_003_execute(void) {
   /* [1.3.1] Prints the configuration options settings.*/
   test_set_step(1);
   {
-    test_print("--- CH_CFG_SMP_MODE:                    ");
-    test_printn(CH_CFG_SMP_MODE);
-    test_println("");
-    test_print("--- CH_CFG_HARDENING_LEVEL:             ");
-    test_printn(CH_CFG_HARDENING_LEVEL);
-    test_println("");
     test_print("--- CH_CFG_ST_RESOLUTION:               ");
     test_printn(CH_CFG_ST_RESOLUTION);
     test_println("");
@@ -186,6 +180,9 @@ static void rt_test_001_003_execute(void) {
     test_print("--- CH_CFG_TIME_QUANTUM:                ");
     test_printn(CH_CFG_TIME_QUANTUM);
     test_println("");
+    test_print("--- CH_CFG_MEMCORE_SIZE:                ");
+    test_printn(CH_CFG_MEMCORE_SIZE);
+    test_println("");
     test_print("--- CH_CFG_NO_IDLE_THREAD:              ");
     test_printn(CH_CFG_NO_IDLE_THREAD);
     test_println("");
@@ -194,9 +191,6 @@ static void rt_test_001_003_execute(void) {
     test_println("");
     test_print("--- CH_CFG_USE_TM:                      ");
     test_printn(CH_CFG_USE_TM);
-    test_println("");
-    test_print("--- CH_CFG_USE_TIMESTAMP:               ");
-    test_printn(CH_CFG_USE_TIMESTAMP);
     test_println("");
     test_print("--- CH_CFG_USE_REGISTRY:                ");
     test_printn(CH_CFG_USE_REGISTRY);
