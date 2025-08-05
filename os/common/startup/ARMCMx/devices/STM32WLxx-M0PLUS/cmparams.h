@@ -42,7 +42,7 @@
 /**
  * @brief   Number of bits in priority masks.
  */
-#define CORTEX_PRIORITY_BITS    2
+#define CORTEX_PRIORITY_BITS    2U
 
 /**
  * @brief   Number of MPU regions.

@@ -210,7 +210,7 @@
  * @note    Changing this value is not recommended.
  */
 #if !defined(PORT_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define PORT_PRIGROUP_INIT              (7U - (unsigned)CORTEX_PRIORITY_BITS)
+#define PORT_PRIGROUP_INIT              (7U - CORTEX_PRIORITY_BITS)
 #endif
 
 /**
@@ -491,7 +491,7 @@
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIO_MASK(n)             ((n) << (8U - CORTEX_PRIORITY_BITS))
 
 /**
  * @brief   Disabled value for BASEPRI register.

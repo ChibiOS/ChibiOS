@@ -104,7 +104,7 @@
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIO_MASK(n)             ((n) << (8U - CORTEX_PRIORITY_BITS))
 /** @} */
 
 /*===========================================================================*/
@@ -214,7 +214,7 @@
  *          priority with no sub-priority.
  */
 #if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define CORTEX_PRIGROUP_INIT            (7U - (unsigned)CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIGROUP_INIT            (7U - CORTEX_PRIORITY_BITS)
 #endif
 
 /**

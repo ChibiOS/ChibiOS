@@ -180,7 +180,7 @@
  *          priority with no sub-priority.
  */
 #if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIGROUP_INIT            (7U - CORTEX_PRIORITY_BITS)
 #endif
 
 /*===========================================================================*/
@@ -552,6 +552,11 @@ extern "C" {
 /* Module inline functions.                                                  */
 /*===========================================================================*/
 
+/*lint -save -e718 -e746 [17.3] The MISRA parser cannot see the function
+  declarations in CMSIS headers, CMSIS parsing is disabled in those headers
+  because the whole thing is not MISRA compliant and it is not uder our
+  control.*/
+
  /**
   * @brief   Returns a word encoding the current interrupts status.
   *
@@ -719,6 +724,8 @@ extern "C" {
 
    return DWT->CYCCNT;
  }
+
+ /*lint -restore*/
 
 #endif /* !defined(_FROM_ASM_) */
 
