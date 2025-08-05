@@ -67,25 +67,25 @@
 /**
  * @brief   Disabled value for BASEPRI register.
  */
-#define CORTEX_BASEPRI_DISABLED         0
+#define CORTEX_BASEPRI_DISABLED         0U
 
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS          (1U << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
  * @details This minimum priority level is calculated from the number of
  *          priority bits supported by the specific Cortex-Mx implementation.
  */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1U)
 
 /**
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY         0
+#define CORTEX_MAXIMUM_PRIORITY         0U
 
 /**
  * @brief   SVCALL handler priority.
@@ -104,7 +104,7 @@
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIO_MASK(n)             ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
 /** @} */
 
 /*===========================================================================*/
@@ -173,7 +173,7 @@
  * @note    The default reserves priorities 0 and 1 for fast interrupts.
  */
 #if !defined(CORTEX_FAST_PRIORITIES)
-#define CORTEX_FAST_PRIORITIES          2
+#define CORTEX_FAST_PRIORITIES          2U
 #endif
 
 /**
@@ -214,7 +214,7 @@
  *          priority with no sub-priority.
  */
 #if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define CORTEX_PRIGROUP_INIT            (7 - CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIGROUP_INIT            (7U - CORTEX_PRIORITY_BITS)
 #endif
 
 /**
@@ -358,8 +358,8 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if (CORTEX_FAST_PRIORITIES < 0) ||                                         \
-    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
+#if (CORTEX_FAST_PRIORITIES < 0U) ||                                         \
+    (CORTEX_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4U))
 #error "invalid CORTEX_FAST_PRIORITIES value specified"
 #endif
 
@@ -505,12 +505,12 @@
   /**
    * @brief   Maximum usable priority for normal ISRs.
    */
-  #define CORTEX_MAX_KERNEL_PRIORITY    (CORTEX_PRIORITY_SVCALL + 1)
+  #define CORTEX_MAX_KERNEL_PRIORITY    (CORTEX_PRIORITY_SVCALL + 1U)
 
   /**
    * @brief   Minimum usable priority for normal ISRs.
    */
-  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1)
+  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1U)
 
   /**
    * @brief   BASEPRI level within kernel lock.
@@ -519,8 +519,8 @@
     CORTEX_PRIO_MASK(CORTEX_MAX_KERNEL_PRIORITY)
 
 #else
-  #define CORTEX_MAX_KERNEL_PRIORITY    0
-  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1)
+  #define CORTEX_MAX_KERNEL_PRIORITY    0U
+  #define CORTEX_MIN_KERNEL_PRIORITY    (CORTEX_PRIORITY_LEVELS - 1U)
 #endif
 
 /* The following code is not processed when the file is included from an
@@ -780,6 +780,13 @@ struct port_context {
 
 #if !defined(_FROM_ASM_)
 
+/* Silencing PCLint, it cannot see declarations in CMSIS headers files because
+   parsing those is disabled (not MISRA compliant).*/
+//uint32_t __get_BASEPRI(void);
+//void __set_BASEPRI(uint32_t basepri);
+//uint32_t __get_PRIMASK(void);
+//void __set_PRIMASK(uint32_t primask);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -796,6 +803,11 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+ /*lint -save -e718 -e746 [17.3] The MISRA parser cannot see the function
+   declarations in CMSIS headers, CMSIS parsing is disabled in those headers
+   because the whole thing is not MISRA compliant and it is not uder our
+   control.*/
 
 /**
  * @brief   Returns a word encoding the current interrupts status.
@@ -964,6 +976,8 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 
   return DWT->CYCCNT;
 }
+
+/*lint -restore */
 
 #endif /* !defined(_FROM_ASM_) */
 
