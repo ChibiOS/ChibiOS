@@ -169,7 +169,7 @@
  * @note    The default reserves priorities 0 and 1 for fast interrupts.
  */
 #if !defined(PORT_FAST_PRIORITIES)
-#define PORT_FAST_PRIORITIES            2
+#define PORT_FAST_PRIORITIES            2U
 #endif
 
 /**
@@ -210,7 +210,7 @@
  * @note    Changing this value is not recommended.
  */
 #if !defined(PORT_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define PORT_PRIGROUP_INIT              (7 - CORTEX_PRIORITY_BITS)
+#define PORT_PRIGROUP_INIT              (7U - (unsigned)CORTEX_PRIORITY_BITS)
 #endif
 
 /**
@@ -491,12 +491,12 @@
 /**
  * @brief   Priority level to priority mask conversion macro.
  */
-#define CORTEX_PRIO_MASK(n)             ((n) << (8 - CORTEX_PRIORITY_BITS))
+#define CORTEX_PRIO_MASK(n)             ((n) << (8U - (unsigned)CORTEX_PRIORITY_BITS))
 
 /**
  * @brief   Disabled value for BASEPRI register.
  */
-#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0)
+#define CORTEX_BASEPRI_DISABLED         CORTEX_PRIO_MASK(0U)
 
 /**
  * @brief   BASEPRI level within kernel lock.
@@ -506,20 +506,20 @@
 /**
  * @brief   Total priority levels.
  */
-#define CORTEX_PRIORITY_LEVELS          (1 << CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIORITY_LEVELS          (1U << CORTEX_PRIORITY_BITS)
 
 /**
  * @brief   Minimum priority level.
  * @details This minimum priority level is calculated from the number of
  *          priority bits supported by the specific Cortex-Mx implementation.
  */
-#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1)
+#define CORTEX_MINIMUM_PRIORITY         (CORTEX_PRIORITY_LEVELS - 1U)
 
 /**
  * @brief   Maximum priority level.
  * @details The maximum allowed priority level is always zero.
  */
-#define CORTEX_MAXIMUM_PRIORITY         0
+#define CORTEX_MAXIMUM_PRIORITY         0U
 
 /**
  * @brief   SVCALL handler priority.
@@ -539,16 +539,16 @@
  * @brief   Maximum usable priority for normal ISRs.
  * @note    Must be lower than @p CORTEX_PRIORITY_SVCALL.
  */
-#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1)
+#define CORTEX_MAX_KERNEL_PRIORITY      (CORTEX_PRIORITY_SVCALL + 1U)
 
 /**
  * @brief   Minimum usable priority for normal ISRs.
  */
-#define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1)
+#define CORTEX_MIN_KERNEL_PRIORITY      (CORTEX_PRIORITY_PENDSV - 1U)
 /** @} */
 
-#if (PORT_FAST_PRIORITIES < 0) ||                                           \
-    (PORT_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4))
+#if (PORT_FAST_PRIORITIES < 0U) ||                                          \
+    (PORT_FAST_PRIORITIES > (CORTEX_PRIORITY_LEVELS / 4U))
 #error "invalid PORT_FAST_PRIORITIES value specified"
 #endif
 
@@ -724,9 +724,9 @@ struct port_context {
  *          short context.
  */
 #if (CORTEX_USE_FPU == TRUE) || defined(__DOXYGEN__)
-  #define CORTEX_EXC_RETURN         0xFFFFFFED
+  #define CORTEX_EXC_RETURN         0xFFFFFFEDU
 #else
-  #define CORTEX_EXC_RETURN         0xFFFFFFFD
+  #define CORTEX_EXC_RETURN         0xFFFFFFFDU
 #endif
 
 /**
@@ -884,6 +884,8 @@ struct port_context {
  * @param[in] ntp       the thread to be switched in
  * @param[in] otp       the thread to be switched out
  */
+/*lint -e438 -e529 -e586 [4.3, 2.2] The keyword is required, parameters are
+  referenced by the final asm and are used.*/
 #define __port_switch(ntp, otp) do {                                        \
   register thread_t *_ntp asm ("r0") = (ntp);                               \
   register thread_t *_otp asm ("r1") = (otp);                               \
@@ -950,6 +952,7 @@ struct port_context {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void PendSV_Handler(void);
   void port_init(os_instance_t *oip);
   void __port_thread_start(void);
 #ifdef __cplusplus
@@ -959,6 +962,11 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/*lint -save -e718 -e746 [17.3] The MISRA parser cannot see the function
+  declarations in CMSIS headers, CMSIS parsing is disabled in those headers
+  because the whole thing is not MISRA compliant and it is not uder our
+  control.*/
 
 /**
  * @brief   Returns a word encoding the current interrupts status.
@@ -1103,6 +1111,8 @@ __STATIC_FORCEINLINE rtcnt_t port_rt_get_counter_value(void) {
 
   return DWT->CYCCNT;
 }
+
+/*lint -restore */
 
 #endif /* !defined(_FROM_ASM_) */
 

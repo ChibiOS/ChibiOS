@@ -8,10 +8,16 @@ all:
 	+@make --no-print-directory -f ./make/ARMv7-M.make all
 	@echo ====================================================================
 	@echo
+	@echo === Building for ARMv7-M-ALT =======================================
+	+@make --no-print-directory -f ./make/ARMv7-M-ALT.make all
+	@echo ====================================================================
+	@echo
 
 clean:
 	@echo
 	+@make --no-print-directory -f ./make/ARMv7-M.make clean
+	@echo
+	+@make --no-print-directory -f ./make/ARMv7-M-ALT.make clean
 	@echo
 
 #

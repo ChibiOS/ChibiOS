@@ -780,13 +780,6 @@ struct port_context {
 
 #if !defined(_FROM_ASM_)
 
-/* Silencing PCLint, it cannot see declarations in CMSIS headers files because
-   parsing those is disabled (not MISRA compliant).*/
-//uint32_t __get_BASEPRI(void);
-//void __set_BASEPRI(uint32_t basepri);
-//uint32_t __get_PRIMASK(void);
-//void __set_PRIMASK(uint32_t primask);
-
 #ifdef __cplusplus
 extern "C" {
 #endif
