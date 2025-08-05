@@ -214,7 +214,7 @@
  *          priority with no sub-priority.
  */
 #if !defined(CORTEX_PRIGROUP_INIT) || defined(__DOXYGEN__)
-#define CORTEX_PRIGROUP_INIT            (7U - CORTEX_PRIORITY_BITS)
+#define CORTEX_PRIGROUP_INIT            (7U - (unsigned)CORTEX_PRIORITY_BITS)
 #endif
 
 /**

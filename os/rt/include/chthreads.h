@@ -449,8 +449,8 @@ extern "C" {
   thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp);
   thread_t *chThdCreateI(const thread_descriptor_t *tdp);
   thread_t *chThdCreate(const thread_descriptor_t *tdp);
-  thread_t *chThdCreateStatic(stkline_t *wbase, size_t size,
-                              tprio_t prio, tfunc_t pf, void *arg);
+  thread_t *chThdCreateStatic(stkline_t *wbase, size_t wsize,
+                              tprio_t prio, tfunc_t func, void *arg);
   thread_t *chThdStart(thread_t *tp);
 #if CH_CFG_USE_REGISTRY == TRUE
   thread_t *chThdAddRef(thread_t *tp);

@@ -204,9 +204,7 @@ thread_t *chRegFirstThread(void) {
 
   chSysLock();
   p = (uint8_t *)REG_HEADER(currcore)->next;
-  /*lint -save -e413 [1.3] Safe to subtract a calculated offset.*/
-  tp = threadref((p - __CH_OFFSETOF(thread_t, rqueue)));
-  /*lint -restore*/
+  tp = __CH_OWNEROF(p, thread_t, rqueue);
 #if CH_CFG_USE_DYNAMIC == TRUE
   tp->refs++;
 #endif
@@ -239,9 +237,7 @@ thread_t *chRegNextThread(thread_t *tp) {
   }
   else {
     uint8_t *p = (uint8_t *)nqp;
-    /*lint -save -e413 [1.3] Safe to subtract a calculated offset.*/
-    ntp = threadref((p - __CH_OFFSETOF(thread_t, rqueue)));
-    /*lint -restore*/
+    ntp = __CH_OWNEROF(p, thread_t, rqueue);
 
 #if CH_CFG_USE_DYNAMIC == TRUE
     chDbgAssert(ntp->refs < (trefs_t)255, "too many references");
