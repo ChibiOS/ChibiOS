@@ -228,7 +228,7 @@
 #define mpuSetRegionAddress(region, addr) {                                 \
   MPU->RNR  = ((uint32_t)region);                                           \
   MPU->RBAR = (MPU->RBAR & ~MPU_RBAR_BASE_MASK) |                           \
-              ((uint32_t)addr & MPU_RBAR_BASE_MASK);                                             \
+              ((uint32_t)addr & MPU_RBAR_BASE_MASK);                        \
 }
 
 /*===========================================================================*/
