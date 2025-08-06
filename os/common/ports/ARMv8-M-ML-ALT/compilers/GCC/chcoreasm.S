@@ -304,7 +304,7 @@ SVC_Handler:
 
 #if CH_DBG_SYSTEM_STATE_CHECK || CH_DBG_STATISTICS
                 ldr     r3, [r0, #4]        /* BASEPRI offset */
-                cmp     r3, #CORTEX_BASEPRI_DISABLED
+                cmp     r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 bne     1f
                 mov     r4, r0
                 /* Returning to a preempted thread, performing a logical
@@ -337,7 +337,7 @@ port_pendsv_tail:
                 adds    r1, #CONTEXT_OFFSET
 
                 mrs     r2, PSP
-                mov		r3, #CORTEX_BASEPRI_DISABLED
+                mov     r3, #0              /* CORTEX_BASEPRI_DISABLED */
 #if PORT_SAVE_CONTROL
                 mrs     r12, CONTROL
 #endif
@@ -396,7 +396,7 @@ __port_thread_start:
 #if CH_DBG_STATISTICS
                 bl      __stats_stop_measure_crit_thd
 #endif
-                movs    r3, #CORTEX_BASEPRI_DISABLED
+                movs    r3, #0              /* CORTEX_BASEPRI_DISABLED */
                 msr     BASEPRI, r3
                 mov     r0, r5
                 blx     r4
