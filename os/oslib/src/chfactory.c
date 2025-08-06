@@ -192,7 +192,7 @@ static ucnt_t dyn_release_object_heap(dyn_element_t *dep,
 
     chDbgAssert(false, "unknown object");
 
-    refs = 0U;
+    refs = (ucnt_t)0;
   }
 
   return refs;
@@ -253,7 +253,7 @@ static ucnt_t dyn_release_object_pool(dyn_element_t *dep,
 
     chDbgAssert(false, "unknown object");
 
-    refs = 0U;
+    refs = (ucnt_t)0;
   }
 
   return refs;

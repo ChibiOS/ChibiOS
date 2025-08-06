@@ -194,8 +194,8 @@ void port_init(os_instance_t *oip) {
 #if PORT_MPU_INITIALIZE == TRUE
   /* MPU initialization as specified in port options.*/
   {
-    MPU->MAIR0 = PORT_MPU_MAIR0_INIT;
-    MPU->MAIR1 = PORT_MPU_MAIR1_INIT;
+    MPU->MAIR[0] = PORT_MPU_MAIR0_INIT;
+    MPU->MAIR[1] = PORT_MPU_MAIR1_INIT;
 
     static const uint32_t regs0[]  = {MPU_RNR_REGION(0U),
                                       PORT_MPU_RBAR0_INIT, PORT_MPU_RLAR0_INIT,
