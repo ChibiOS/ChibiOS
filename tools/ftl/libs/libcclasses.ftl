@@ -395,9 +395,7 @@
 /**
   [@doxygen.EmitTagVerbatim indent="" tag="class" text=classctype /]
   [#if ancestorname?length > 0]
-    [#local ancestorsctypes = GetClassAncestorsCTypes(ancestors)]
-    [@doxygen.EmitTagFormattedNoCap indent="" tag="extends"
-                                    text=ancestorsctypes?join(", ") /]
+    [@doxygen.EmitTagVerbatim indent="" tag="extends" text=GetClassAncestorCType(class "") /]
   [/#if]
   [@GenerateClassImplementsTags class.implements /]
  *
