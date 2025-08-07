@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -279,7 +279,7 @@ struct xsnor_config {
 
 /**
  * @class       hal_xsnor_base_c
- * @extends     base_object_c.
+ * @extends     base_object_c
  * @implements  flash_interface_i
  *
  * @brief       Base class of all SNOR drivers.
