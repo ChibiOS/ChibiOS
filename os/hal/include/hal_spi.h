@@ -37,7 +37,7 @@
 
 /* For compatibility with v1 driver which does not require this.*/
 #if !defined(SPI_SUPPORTS_SLAVE_MODE)
-#define SPI_SUPPORTS_SLAVE_MODE             FALSE
+#define SPI_SUPPORTS_SLAVE_MODE             TRUE
 #endif
 
 #endif /* HAL_USE_SPI == TRUE */

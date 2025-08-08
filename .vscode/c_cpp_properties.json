@@ -1,0 +1,64 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "defines": [
+                "__GNUC__",
+                "STM32F407xx",
+                "STM32F4xx"
+            ],
+            "compilerPath": "/usr/sbin/arm-none-eabi-gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerArgs": [
+                "-mcpu=cortex-m4",
+                "-mthumb",
+                "-mfloat-abi=hard"
+            ],
+            "includePath": [
+                "${workspaceFolder}/os/hal/include",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/ST_STM32F4_DISCOVERY",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/STM32F4xx",
+                "${workspaceFolder}/os/license",
+                "${workspaceFolder}/os/hal/lib/streams",
+                "${workspaceFolder}/os/various/shell",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/lcd",
+                "${workspaceFolder}/os/common/ports/ARM-common/include",
+                "${workspaceFolder}/os/common/ext/ST/STM32F4xx",
+                "${workspaceFolder}/os/common/startup/ARMCMx/compilers/GCC",
+                "${workspaceFolder}/os/hal/ports/STM32/LLD/DMAv2",
+                "${workspaceFolder}/os/rt/include",
+                "${workspaceFolder}/os/common/portability/GCC",
+                "${workspaceFolder}/os/hal/osal/rt-nil",
+                "${workspaceFolder}/os/common/ports/ARMv7-M",
+                "${workspaceFolder}/os/common/startup/ARMCMx/devices/STM32F4xx",
+                "${workspaceFolder}/os/common/ext/ARM/CMSIS/Core/Include",
+                "${workspaceFolder}/os/oslib/include",
+                "${workspaceFolder}/os/hal/ports/common/ARMCMx",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/camera",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/rf/userlib/include",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/rf/userlib"
+
+            ],
+            "forcedInclude": [
+                "${workspaceFolder}/os/hal/include/hal.h",
+                "${workspaceFolder}/os/hal/include/hal_community.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/chconf.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/halconf_community.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/halconf.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/mcuconf_community.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/mcuconf.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/ST_STM32F4_DISCOVERY/board.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/usbcfg.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/lcd/ssd1963.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/main.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/camera/ov2640.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/rf/userlib/include/rf.h",
+                "${workspaceFolder}/CAM/RT-STM32F429-DISCOVERY-DMA2D/rf/userlib/include/userconf.h"
+            ]
+        }
+    ],
+    "version": 4
+}

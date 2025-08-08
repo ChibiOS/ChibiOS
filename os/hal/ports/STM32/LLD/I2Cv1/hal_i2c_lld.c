@@ -959,7 +959,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   i2cp->errors = I2C_NO_ERROR;
 
   /* Initializes driver fields, LSB = 0 -> transmit.*/
-  i2cp->addr = (addr << 1);
+  i2cp->addr = (addr <<1);
 
   /* Releases the lock from high level driver.*/
   osalSysUnlock();

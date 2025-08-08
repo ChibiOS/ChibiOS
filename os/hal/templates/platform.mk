@@ -9,7 +9,8 @@ endif
 HALCONF := $(strip $(shell cat $(CONFDIR)/halconf.h | egrep -e "\#define"))
 
 PLATFORMSRC := ${CHIBIOS}/os/hal/templates/hal_lld.c \
-               ${CHIBIOS}/os/hal/templates/hal_st_lld.c
+               ${CHIBIOS}/os/hal/templates/hal_st_lld.c 
+
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_adc_lld.c
 endif
@@ -84,7 +85,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_dac_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_efl_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_gpt_lld.c \
- 			  ${CHIBIOS}/os/hal/templates/hal_i2c_lld.c \
+ 			        ${CHIBIOS}/os/hal/templates/hal_i2c_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_i2s_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_icu_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_mac_lld.c \
@@ -100,7 +101,7 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_uart_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_usb_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_wdg_lld.c \
-              ${CHIBIOS}/os/hal/templates/hal_wspi_lld.c
+              ${CHIBIOS}/os/hal/templates/hal_wspi_lld.c 
 endif
 
 # Required include directories

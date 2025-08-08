@@ -21,7 +21,14 @@ HALSRC := $(CHIBIOS)/os/hal/src/hal.c \
           $(CHIBIOS)/os/hal/src/hal_buffered_serial.c \
           $(CHIBIOS)/os/hal/src/hal_buffers.c \
           $(CHIBIOS)/os/hal/src/hal_queues.c \
-          $(CHIBIOS)/os/hal/src/hal_mmcsd.c
+          $(CHIBIOS)/os/hal/src/hal_mmcsd.c  \
+          $(CHIBIOS)/os/hal/src/hal_fsmc.c \
+          $(CHIBIOS)/os/hal/src/hal_nand.c \
+          $(CHIBIOS)/os/hal/src/hal_onewire.c \
+          $(CHIBIOS)/os/hal/src/hal_sdram.c \
+          $(CHIBIOS)/os/hal/src/hal_sram.c \
+
+
 ifneq ($(findstring HAL_USE_ADC TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_adc.c
 endif
@@ -94,6 +101,21 @@ endif
 ifneq ($(findstring HAL_USE_WSPI TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_wspi.c
 endif
+ifneq ($(findstring HAL_USE_FSMC TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_fsmc.c
+endif
+ifneq ($(findstring HAL_USE_NAND TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_nand.c
+endif
+ifneq ($(findstring HAL_USE_ONEWIRE TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_onewire.c
+endif
+ifneq ($(findstring HAL_USE_SDRAM TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_sdram.c
+endif
+ifneq ($(findstring HAL_USE_SRAM TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_sram.c
+endif
 else
 HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_st.c \
@@ -123,7 +145,12 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_uart.c \
          $(CHIBIOS)/os/hal/src/hal_usb.c \
          $(CHIBIOS)/os/hal/src/hal_wdg.c \
-         $(CHIBIOS)/os/hal/src/hal_wspi.c
+         $(CHIBIOS)/os/hal/src/hal_wspi.c \
+         $(CHIBIOS)/os/hal/src/hal_fsmc.c \
+         $(CHIBIOS)/os/hal/src/hal_nand.c \
+         $(CHIBIOS)/os/hal/src/hal_onewire.c \
+         $(CHIBIOS)/os/hal/src/hal_sdram.c \
+         $(CHIBIOS)/os/hal/src/hal_sram.c 
 endif
 
 ifneq ($(EXCLUDE_FLASH),yes)
