@@ -15,7 +15,7 @@
 */
 
 /**
- * @defgroup HAL_XSNOR_MACRONIX_MX25 Macronix MX25 SNOR Driver.
+ * @defgroup HAL_XSNOR_MACRONIX_MX25 Macronix MX25 SNOR Driver
  * @brief   Macronix MX25 Driver.
  * @details This module implements a Macronix MX25 SNOR driver class
  *          inheriting from @p hal_xsnor_base_c class.

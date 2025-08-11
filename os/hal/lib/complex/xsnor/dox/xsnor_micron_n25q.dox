@@ -15,7 +15,7 @@
 */
 
 /**
- * @defgroup HAL_XSNOR_MICRON_N25Q Micron N25Q Driver.
+ * @defgroup HAL_XSNOR_MICRON_N25Q Micron N25Q Driver
  * @brief   Micron N25Q Driver.
  * @details This module implements a Micron N25Q SNOR driver class
  *          inheriting from @p hal_xsnor_base_c class.
