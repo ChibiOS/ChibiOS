@@ -104,8 +104,7 @@ struct drv_streams_element {
 
 /**
  * @class       vfs_streams_dir_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_directory_node_c.
+ * @extends     vfs_directory_node_c
  *
  *
  * @name        Class @p vfs_streams_dir_node_c structures
@@ -163,8 +162,7 @@ struct vfs_streams_dir_node {
 
 /**
  * @class       vfs_streams_file_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_file_node_c.
+ * @extends     vfs_file_node_c
  *
  *
  * @name        Class @p vfs_streams_file_node_c structures
@@ -225,7 +223,7 @@ struct vfs_streams_file_node {
 
 /**
  * @class       vfs_streams_driver_c
- * @extends     base_object_c, vfs_driver_c.
+ * @extends     vfs_driver_c
  *
  *
  * @name        Class @p vfs_streams_driver_c structures
@@ -327,8 +325,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    vfs_streams_dir_node_c
- *
  * @brief       Default initialization function of @p vfs_streams_dir_node_c.
  *
  * @param[out]    self          Pointer to a @p vfs_streams_dir_node_c instance
@@ -354,8 +350,6 @@ static inline vfs_streams_dir_node_c *stmdirObjectInit(vfs_streams_dir_node_c *s
  * @{
  */
 /**
- * @memberof    vfs_streams_file_node_c
- *
  * @brief       Default initialization function of @p vfs_streams_file_node_c.
  *
  * @param[out]    self          Pointer to a @p vfs_streams_file_node_c
@@ -384,8 +378,6 @@ static inline vfs_streams_file_node_c *stmfileObjectInit(vfs_streams_file_node_c
  * @{
  */
 /**
- * @memberof    vfs_streams_driver_c
- *
  * @brief       Default initialization function of @p vfs_streams_driver_c.
  *
  * @param[out]    self          Pointer to a @p vfs_streams_driver_c instance

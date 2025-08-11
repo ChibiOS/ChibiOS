@@ -199,8 +199,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_xsnor_micron_n25q_c
- *
  * @brief       Default initialization function of @p hal_xsnor_micron_n25q_c.
  *
  * @param[out]    self          Pointer to a @p hal_xsnor_micron_n25q_c

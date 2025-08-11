@@ -81,8 +81,7 @@
 
 /**
  * @class       vfs_overlay_dir_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_directory_node_c.
+ * @extends     vfs_directory_node_c
  *
  *
  * @name        Class @p vfs_overlay_dir_node_c structures
@@ -144,7 +143,7 @@ struct vfs_overlay_dir_node {
 
 /**
  * @class       vfs_overlay_driver_c
- * @extends     base_object_c, vfs_driver_c.
+ * @extends     vfs_driver_c
  *
  *
  * @name        Class @p vfs_overlay_driver_c structures
@@ -256,8 +255,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    vfs_overlay_dir_node_c
- *
  * @brief       Default initialization function of @p vfs_overlay_dir_node_c.
  *
  * @param[out]    self          Pointer to a @p vfs_overlay_dir_node_c instance
@@ -283,8 +280,6 @@ static inline vfs_overlay_dir_node_c *ovldirObjectInit(vfs_overlay_dir_node_c *s
  * @{
  */
 /**
- * @memberof    vfs_overlay_driver_c
- *
  * @brief       Default initialization function of @p vfs_overlay_driver_c.
  *
  * @param[out]    self          Pointer to a @p vfs_overlay_driver_c instance

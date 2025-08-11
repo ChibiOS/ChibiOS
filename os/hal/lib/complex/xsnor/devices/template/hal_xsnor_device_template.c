@@ -63,9 +63,6 @@
  * @{
  */
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -87,9 +84,6 @@ void *__tmpl_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -107,9 +101,6 @@ void __tmpl_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_init().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -125,9 +116,6 @@ flash_error_t __tmpl_init_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_read().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -150,9 +138,6 @@ flash_error_t __tmpl_read_impl(void *ip, flash_offset_t offset, size_t n,
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_program().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -175,9 +160,6 @@ flash_error_t __tmpl_program_impl(void *ip, flash_offset_t offset, size_t n,
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_start_erase_all().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -193,9 +175,6 @@ flash_error_t __tmpl_start_erase_all_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_start_erase_sector().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -213,9 +192,6 @@ flash_error_t __tmpl_start_erase_sector_impl(void *ip, flash_sector_t sector) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_query_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -235,9 +211,6 @@ flash_error_t __tmpl_query_erase_impl(void *ip, unsigned *msec) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_verify_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -255,9 +228,6 @@ flash_error_t __tmpl_verify_erase_impl(void *ip, flash_sector_t sector) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_mmap_on().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.
@@ -275,9 +245,6 @@ flash_error_t __tmpl_mmap_on_impl(void *ip, uint8_t **addrp) {
 }
 
 /**
- * @memberof    hal_device_template_c
- * @protected
- *
  * @brief       Override of method @p xsnor_device_mmap_off().
  *
  * @param[in,out] ip            Pointer to a @p hal_device_template_c instance.

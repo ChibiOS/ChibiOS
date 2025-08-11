@@ -162,8 +162,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_device_template_c
- *
  * @brief       Default initialization function of @p hal_device_template_c.
  *
  * @param[out]    self          Pointer to a @p hal_device_template_c instance

@@ -204,8 +204,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- *
  * @brief       Default initialization function of @p
  *              hal_xsnor_macronix_mx25_c.
  *

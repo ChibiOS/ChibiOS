@@ -153,7 +153,7 @@ struct vfs_stat {
 
 /**
  * @class       vfs_node_c
- * @extends     base_object_c, referenced_object_c.
+ * @extends     referenced_object_c
  *
  * @brief       Common ancestor class of all VFS nodes.
  *
@@ -204,7 +204,7 @@ struct vfs_node {
 
 /**
  * @class       vfs_directory_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c.
+ * @extends     vfs_node_c
  *
  * @brief       Ancestor class of all VFS directory nodes classes.
  *
@@ -258,7 +258,7 @@ struct vfs_directory_node {
 
 /**
  * @class       vfs_file_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c.
+ * @extends     vfs_node_c
  *
  * @brief       Ancestor class of all VFS file nodes classes.
  *
@@ -354,9 +354,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    vfs_node_c
- * @public
- *
  * @brief       Returns information about the node.
  *
  * @param[in,out] ip            Pointer to a @p vfs_node_c instance.
@@ -378,9 +375,6 @@ static inline msg_t vfsNodeStat(void *ip, vfs_stat_t *sp) {
  * @{
  */
 /**
- * @memberof    vfs_directory_node_c
- * @public
- *
  * @brief       First directory entry.
  *
  * @param[in,out] ip            Pointer to a @p vfs_directory_node_c instance.
@@ -397,9 +391,6 @@ static inline msg_t vfsDirReadFirst(void *ip, vfs_direntry_info_t *dip) {
 }
 
 /**
- * @memberof    vfs_directory_node_c
- * @public
- *
  * @brief       Next directory entry.
  *
  * @param[in,out] ip            Pointer to a @p vfs_directory_node_c instance.
@@ -421,9 +412,6 @@ static inline msg_t vfsDirReadNext(void *ip, vfs_direntry_info_t *dip) {
  * @{
  */
 /**
- * @memberof    vfs_file_node_c
- * @public
- *
  * @brief       File node read.
  *
  * @param[in,out] ip            Pointer to a @p vfs_file_node_c instance.
@@ -441,9 +429,6 @@ static inline ssize_t vfsFileRead(void *ip, uint8_t *buf, size_t n) {
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @public
- *
  * @brief       File node read.
  *
  * @param[in,out] ip            Pointer to a @p vfs_file_node_c instance.
@@ -461,9 +446,6 @@ static inline ssize_t vfsFileWrite(void *ip, const uint8_t *buf, size_t n) {
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @public
- *
  * @brief       Changes the current file position.
  *
  * @param[in,out] ip            Pointer to a @p vfs_file_node_c instance.
@@ -482,9 +464,6 @@ static inline msg_t vfsFileSetPosition(void *ip, vfs_offset_t offset,
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @public
- *
  * @brief       Returns the current file position.
  *
  * @param[in,out] ip            Pointer to a @p vfs_file_node_c instance.
@@ -500,9 +479,6 @@ static inline vfs_offset_t vfsFileGetPosition(void *ip) {
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @public
- *
  * @brief       Returns the inner HAL stream associated to the file.
  *
  * @param[in,out] ip            Pointer to a @p vfs_file_node_c instance.

@@ -112,9 +112,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Gets the flash descriptor structure.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -128,9 +125,6 @@ static inline const flash_descriptor_t *flsGetDescriptor(void *ip) {
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Read operation.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -152,9 +146,6 @@ static inline flash_error_t flsRead(void *ip, flash_offset_t offset, size_t n,
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Program operation.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -176,9 +167,6 @@ static inline flash_error_t flsProgram(void *ip, flash_offset_t offset,
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Starts a whole-device erase operation.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -195,9 +183,6 @@ static inline flash_error_t flsStartEraseAll(void *ip) {
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Starts an sector erase operation.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -216,9 +201,6 @@ static inline flash_error_t flsStartEraseSector(void *ip,
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Queries the driver for erase operation progress.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -238,9 +220,6 @@ static inline flash_error_t flsQueryErase(void *ip, unsigned *msec) {
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Returns the erase state of a sector.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -259,9 +238,6 @@ static inline flash_error_t flsVerifyErase(void *ip, flash_sector_t sector) {
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Acquires exclusive access to flash.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.
@@ -278,9 +254,6 @@ static inline flash_error_t flsAcquireExclusive(void *ip) {
 }
 
 /**
- * @memberof    flash_interface_i
- * @public
- *
  * @brief       Releases exclusive access to flash.
  *
  * @param[in,out] ip            Pointer to a @p flash_interface_i instance.

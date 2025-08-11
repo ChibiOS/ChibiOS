@@ -57,8 +57,7 @@ struct vfs_chfs_driver_static_struct vfs_chfs_driver_static;
 
 /**
  * @class       vfs_chfs_dir_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_directory_node_c.
+ * @extends     vfs_directory_node_c
  *
  *
  * @name        Class @p vfs_chfs_dir_node_c structures
@@ -112,8 +111,7 @@ struct vfs_chfs_dir_node {
 
 /**
  * @class       vfs_chfs_file_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_file_node_c.
+ * @extends     vfs_file_node_c
  * @implements  sequential_stream_i
  *
  *
