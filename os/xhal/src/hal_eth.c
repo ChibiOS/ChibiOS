@@ -76,9 +76,6 @@ void ethInit(void) {
  * @{
  */
 /**
- * @memberof    hal_eth_driver_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -112,9 +109,6 @@ void *__eth_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -132,9 +126,6 @@ void __eth_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -147,9 +138,6 @@ msg_t __eth_start_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_stop().
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -161,9 +149,6 @@ void __eth_stop_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_set_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -177,9 +162,6 @@ const void *__eth_setcfg_impl(void *ip, const void *config) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_sel_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -211,9 +193,6 @@ const struct hal_eth_driver_vmt __hal_eth_driver_vmt = {
  * @{
  */
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Returns the link status.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -236,9 +215,6 @@ bool ethPollLinkStatus(void *ip) {
 
 #if (ETH_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Waits for a received frame availability.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -270,9 +246,6 @@ eth_receive_handle_t ethWaitReceiveHandle(void *ip, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Waits for a transmit frame availability.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.

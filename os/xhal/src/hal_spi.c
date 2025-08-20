@@ -76,9 +76,6 @@ void spiInit(void) {
  * @{
  */
 /**
- * @memberof    hal_spi_driver_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -107,9 +104,6 @@ void *__spi_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -127,9 +121,6 @@ void __spi_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -142,9 +133,6 @@ msg_t __spi_start_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_stop().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -156,9 +144,6 @@ void __spi_stop_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_set_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -172,9 +157,6 @@ const void *__spi_setcfg_impl(void *ip, const void *config) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_sel_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -206,9 +188,6 @@ const struct hal_spi_driver_vmt __hal_spi_driver_vmt = {
  * @{
  */
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Ignores data on the SPI bus.
  * @details     This asynchronous function starts the transmission of a series
  *              of idle words on the SPI bus and ignores the received data.
@@ -247,9 +226,6 @@ msg_t spiStartIgnoreI(void *ip, size_t n) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Ignores data on the SPI bus.
  * @details     This asynchronous function starts the transmission of a series
  *              of idle words on the SPI bus and ignores the received data.
@@ -275,9 +251,6 @@ msg_t spiStartIgnore(void *ip, size_t n) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Exchanges data on the SPI bus.
  * @details     This asynchronous function starts a simultaneous
  *              transmit/receive operation.
@@ -321,9 +294,6 @@ msg_t spiStartExchangeI(void *ip, size_t n, const void *txbuf, void *rxbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Exchanges data on the SPI bus.
  * @details     This asynchronous function starts a simultaneous
  *              transmit/receive operation.
@@ -353,9 +323,6 @@ msg_t spiStartExchange(void *ip, size_t n, const void *txbuf, void *rxbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Sends data over the SPI bus.
  * @details     This asynchronous function starts a transmit operation.
  * @pre         A slave must have been selected using @p spiSelectX().
@@ -396,9 +363,6 @@ msg_t spiStartSendI(void *ip, size_t n, const void *txbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Sends data over the SPI bus.
  * @details     This asynchronous function starts a transmit operation.
  * @pre         A slave must have been selected using @p spiSelectX().
@@ -426,9 +390,6 @@ msg_t spiStartSend(void *ip, size_t n, const void *txbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Receives data from the SPI bus.
  * @details     This asynchronous function starts a receive operation.
  * @pre         A slave must have been selected using @p spiSelectX().
@@ -469,9 +430,6 @@ msg_t spiStartReceiveI(void *ip, size_t n, void *rxbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Receives data from the SPI bus.
  * @details     This asynchronous function starts a receive operation.
  * @pre         A slave must have been selected using @p spiSelectX().
@@ -499,9 +457,6 @@ msg_t spiStartReceive(void *ip, size_t n, void *rxbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Stops the ongoing SPI operation.
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -544,9 +499,6 @@ msg_t spiStopTransferI(void *ip, size_t *np) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Stops the ongoing SPI operation.
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -571,21 +523,6 @@ msg_t spiStopTransfer(void *ip, size_t *np) {
 }
 
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
-/**
- * @memberof    hal_spi_driver_c
- * @public
- *
- * @note        This function can only be called by a single thread at time.
- *
- * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
- * @return                      The synchronization result.
- * @retval MSG_OK               If operation completed without errors.
- * @retval MSG_TIMEOUT          If synchronization timed out.
- * @retval MSG_RESET            If the transfer has been stopped.
- *
- * @sclass
- */
 msg_t spiSynchronizeS(void *ip, sysinterval_t timeout) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
   msg_t msg;
@@ -605,21 +542,6 @@ msg_t spiSynchronizeS(void *ip, sysinterval_t timeout) {
   return msg;
 }
 
-/**
- * @memberof    hal_spi_driver_c
- * @public
- *
- * @note        This function can only be called by a single thread at time.
- *
- * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
- * @param[in]     timeout       Synchronization timeout.
- * @return                      The synchronization result.
- * @retval MSG_OK               If operation completed without errors.
- * @retval MSG_TIMEOUT          If synchronization timed out.
- * @retval MSG_RESET            If the transfer has been stopped.
- *
- * @api
- */
 msg_t spiSynchronize(void *ip, sysinterval_t timeout) {
   hal_spi_driver_c *self = (hal_spi_driver_c *)ip;
   msg_t msg;
@@ -632,9 +554,6 @@ msg_t spiSynchronize(void *ip, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Ignores data on the SPI bus.
  * @details     This synchronous function performs the transmission of a series
  *              of idle words on the SPI bus and ignores the received data.
@@ -666,9 +585,6 @@ msg_t spiIgnore(void *ip, size_t n) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Exchanges data on the SPI bus.
  * @details     This synchronous function performs a simultaneous
  *              transmit/receive operation.
@@ -704,9 +620,6 @@ msg_t spiExchange(void *ip, size_t n, const void *txbuf, void *rxbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Sends data over the SPI bus.
  * @details     This synchronous function performs a transmit operation.
  * @pre         A slave must have been selected using @p spiSelectX().
@@ -740,9 +653,6 @@ msg_t spiSend(void *ip, size_t n, const void *txbuf) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Receives data from the SPI bus.
  * @details     This synchronous function performs a receive operation.
  * @pre         A slave must have been selected using @p spiSelectX().

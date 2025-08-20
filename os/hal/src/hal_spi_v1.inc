@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    hal_spi_v1.c
+ * @file    hal_spi_v1.inc
  * @brief   SPI (v1) Driver code.
  *
  * @addtogroup SPI_V1

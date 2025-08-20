@@ -62,9 +62,6 @@
  * @{
  */
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p stmWrite().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -82,9 +79,6 @@ static size_t __bs_chn_write_impl(void *ip, const uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p stmRead().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -102,9 +96,6 @@ static size_t __bs_chn_read_impl(void *ip, uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p stmPut().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -119,9 +110,6 @@ static int __bs_chn_put_impl(void *ip, uint8_t b) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p stmGet().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -135,9 +123,6 @@ static int __bs_chn_get_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p stmUnget().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -155,9 +140,6 @@ static int __bs_chn_unget_impl(void *ip, int b) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p chnWriteTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -180,9 +162,6 @@ static size_t __bs_chn_writet_impl(void *ip, const uint8_t *bp, size_t n,
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p chnReadTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -205,9 +184,6 @@ static size_t __bs_chn_readt_impl(void *ip, uint8_t *bp, size_t n,
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p chnPutTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -228,9 +204,6 @@ static msg_t __bs_chn_putt_impl(void *ip, uint8_t b, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p chnGetTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -250,9 +223,6 @@ static msg_t __bs_chn_gett_impl(void *ip, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p chnGetAndClearFlags().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -270,9 +240,6 @@ static chnflags_t __bs_chn_getclr_impl(void *ip, chnflags_t mask) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @private
- *
  * @brief       Implementation of interface method @p chnControl().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -297,9 +264,6 @@ static msg_t __bs_chn_ctl_impl(void *ip, unsigned int operation, void *arg) {
  * @{
  */
 /**
- * @memberof    hal_buffered_serial_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -357,9 +321,6 @@ void *__bs_objinit_impl(void *ip, const void *vmt, uint8_t *ib, size_t ibsize,
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -382,9 +343,6 @@ void __bs_dispose_impl(void *ip) {
  * @{
  */
 /**
- * @memberof    hal_buffered_serial_c
- * @public
- *
  * @brief       Handles incoming data.
  * @details     This function must be called from the input interrupt service
  *              routine in order to enqueue incoming data and generate the
@@ -412,9 +370,6 @@ void bsIncomingDataI(void *ip, uint8_t b) {
 }
 
 /**
- * @memberof    hal_buffered_serial_c
- * @public
- *
  * @brief       Handles outgoing data.
  * @details     Must be called from the output interrupt service routine in
  *              order to get the next byte to be transmitted.

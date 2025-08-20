@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -279,7 +279,7 @@ struct xsnor_config {
 
 /**
  * @class       hal_xsnor_base_c
- * @extends     base_object_c.
+ * @extends     base_object_c
  * @implements  flash_interface_i
  *
  * @brief       Base class of all SNOR drivers.
@@ -402,18 +402,6 @@ extern "C" {
  * @name        Virtual methods of hal_xsnor_base_c
  * @{
  */
-/**
- * @memberof    hal_xsnor_base_c
- * @public
- *
- *
- * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
- * @return                      An error code.
- * @retval FLASH_NO_ERROR       Initialization successful.
- * @retval FLASH_ERROR_HW_FAILURE Initialization failed.
- *
- * @notapi
- */
 CC_FORCE_INLINE
 static inline flash_error_t xsnor_device_init(void *ip) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
@@ -422,9 +410,6 @@ static inline flash_error_t xsnor_device_init(void *ip) {
 }
 
 /**
- * @memberof    hal_xsnor_base_c
- * @public
- *
  * @brief       Read operation.
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
@@ -447,9 +432,6 @@ static inline flash_error_t xsnor_device_read(void *ip, flash_offset_t offset,
 }
 
 /**
- * @memberof    hal_xsnor_base_c
- * @public
- *
  * @brief       Program operation.
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
@@ -473,9 +455,6 @@ static inline flash_error_t xsnor_device_program(void *ip,
 }
 
 /**
- * @memberof    hal_xsnor_base_c
- * @public
- *
  * @brief       Starts a whole-device erase operation.
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
@@ -493,9 +472,6 @@ static inline flash_error_t xsnor_device_start_erase_all(void *ip) {
 }
 
 /**
- * @memberof    hal_xsnor_base_c
- * @public
- *
  * @brief       Starts an sector erase operation.
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
@@ -515,9 +491,6 @@ static inline flash_error_t xsnor_device_start_erase_sector(void *ip,
 }
 
 /**
- * @memberof    hal_xsnor_base_c
- * @public
- *
  * @brief       Queries the driver for erase operation progress.
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
@@ -538,9 +511,6 @@ static inline flash_error_t xsnor_device_query_erase(void *ip, unsigned *msec) {
 }
 
 /**
- * @memberof    hal_xsnor_base_c
- * @public
- *
  * @brief       Returns the erase state of a sector.
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
@@ -560,19 +530,6 @@ static inline flash_error_t xsnor_device_verify_erase(void *ip,
   return self->vmt->verify_erase(ip, sector);
 }
 
-/**
- * @memberof    hal_xsnor_base_c
- * @public
- *
- *
- * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
- * @param[out]    addrp         Pointer to the memory mapped memory or @p NULL
- * @return                      An error code.
- * @retval FLASH_NO_ERROR       Memory map mode successful.
- * @retval FLASH_ERROR_HW_FAILURE Memory map mode failed.
- *
- * @notapi
- */
 CC_FORCE_INLINE
 static inline flash_error_t xsnor_device_mmap_on(void *ip, uint8_t **addrp) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;
@@ -580,15 +537,6 @@ static inline flash_error_t xsnor_device_mmap_on(void *ip, uint8_t **addrp) {
   return self->vmt->mmap_on(ip, addrp);
 }
 
-/**
- * @memberof    hal_xsnor_base_c
- * @public
- *
- *
- * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
- *
- * @notapi
- */
 CC_FORCE_INLINE
 static inline void xsnor_device_mmap_off(void *ip) {
   hal_xsnor_base_c *self = (hal_xsnor_base_c *)ip;

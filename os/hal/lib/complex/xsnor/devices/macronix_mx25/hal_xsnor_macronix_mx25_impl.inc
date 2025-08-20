@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2024 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -13,6 +13,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
+/**
+ * @file        hal_xsnor_macronix_mx25_impl.inc
+ * @brief       Template of SNOR Macronix MX25 source.
+ * @note        This is a template file, can be edited directly.
+ *
+ * @addtogroup  HAL_XSNOR_MACRONIX_MX25
+ * @{
+ */
 
 /* This is an, automatically generated, implementation file that can be
    manually edited, it is not re-generated if already present.*/
@@ -506,9 +515,6 @@ static void mx25_write_cr2(hal_xsnor_macronix_mx25_c *self,
  * @{
  */
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -538,9 +544,6 @@ void *__mx25_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -558,10 +561,7 @@ void __mx25_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_init().
+ * @brief       Override of method @p xsnor_device_init().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -709,10 +709,7 @@ flash_error_t __mx25_init_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_read().
+ * @brief       Override of method @p xsnor_device_read().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -753,10 +750,7 @@ flash_error_t __mx25_read_impl(void *ip, flash_offset_t offset, size_t n,
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_program().
+ * @brief       Override of method @p xsnor_device_program().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -817,10 +811,7 @@ flash_error_t __mx25_program_impl(void *ip, flash_offset_t offset, size_t n,
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_start_erase_all().
+ * @brief       Override of method @p xsnor_device_start_erase_all().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -854,10 +845,7 @@ flash_error_t __mx25_start_erase_all_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_start_erase_sector().
+ * @brief       Override of method @p xsnor_device_start_erase_sector().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -903,10 +891,7 @@ flash_error_t __mx25_start_erase_sector_impl(void *ip, flash_sector_t sector) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_query_erase().
+ * @brief       Override of method @p xsnor_device_query_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -970,10 +955,7 @@ flash_error_t __mx25_query_erase_impl(void *ip, unsigned *msec) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_verify_erase().
+ * @brief       Override of method @p xsnor_device_verify_erase().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -1012,10 +994,7 @@ flash_error_t __mx25_verify_erase_impl(void *ip, flash_sector_t sector) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_mmap_on().
+ * @brief       Override of method @p xsnor_device_mmap_on().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -1075,10 +1054,7 @@ flash_error_t __mx25_mmap_on_impl(void *ip, uint8_t **addrp) {
 }
 
 /**
- * @memberof    hal_xsnor_macronix_mx25_c
- * @protected
- *
- * @brief       Override of method @p snor_device_mmap_off().
+ * @brief       Override of method @p xsnor_device_mmap_off().
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_macronix_mx25_c
  *                              instance.
@@ -1115,4 +1091,6 @@ const struct hal_xsnor_macronix_mx25_vmt __hal_xsnor_macronix_mx25_vmt = {
   .mmap_on                  = __mx25_mmap_on_impl,
   .mmap_off                 = __mx25_mmap_off_impl
 };
+
+/** @} */
 

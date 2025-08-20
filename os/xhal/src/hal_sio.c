@@ -177,9 +177,6 @@ void sioInit(void) {
  */
 #if (SIO_USE_STREAMS_INTERFACE == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p stmWrite().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -197,9 +194,6 @@ static size_t __sio_chn_write_impl(void *ip, const uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p stmRead().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -217,9 +211,6 @@ static size_t __sio_chn_read_impl(void *ip, uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p stmPut().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -241,9 +232,6 @@ static int __sio_chn_put_impl(void *ip, uint8_t b) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p stmGet().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -263,9 +251,6 @@ static int __sio_chn_get_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p stmUnget().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -283,9 +268,6 @@ static int __sio_chn_unget_impl(void *ip, int b) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p chnWriteTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -308,9 +290,6 @@ static size_t __sio_chn_writet_impl(void *ip, const uint8_t *bp, size_t n,
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p chnReadTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -333,9 +312,6 @@ static size_t __sio_chn_readt_impl(void *ip, uint8_t *bp, size_t n,
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p chnPutTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -363,9 +339,6 @@ static msg_t __sio_chn_putt_impl(void *ip, uint8_t b, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p chnGetTimeout().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -391,9 +364,6 @@ static msg_t __sio_chn_gett_impl(void *ip, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p chnGetAndClearFlags().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -408,9 +378,6 @@ static chnflags_t __sio_chn_getclr_impl(void *ip, chnflags_t mask) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @private
- *
  * @brief       Implementation of interface method @p chnControl().
  *
  * @param[in,out] ip            Pointer to the @p asynchronous_channel_i class
@@ -442,9 +409,6 @@ static msg_t __sio_chn_ctl_impl(void *ip, unsigned int operation, void *arg) {
  * @{
  */
 /**
- * @memberof    hal_sio_driver_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -499,9 +463,6 @@ void *__sio_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -519,9 +480,6 @@ void __sio_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -546,9 +504,6 @@ msg_t __sio_start_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_stop().
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -571,9 +526,6 @@ void __sio_stop_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_set_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -587,9 +539,6 @@ const void *__sio_setcfg_impl(void *ip, const void *config) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @protected
- *
  * @brief       Override of method @p __drv_sel_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -621,9 +570,6 @@ const struct hal_sio_driver_vmt __hal_sio_driver_vmt = {
  * @{
  */
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Writes the enabled events flags mask.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -643,9 +589,6 @@ void sioWriteEnableFlags(void *ip, sioevents_t mask) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Sets flags into the enabled events flags mask.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -665,9 +608,6 @@ void sioSetEnableFlags(void *ip, sioevents_t mask) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Clears flags from the enabled events flags mask.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -687,9 +627,6 @@ void sioClearEnableFlags(void *ip, sioevents_t mask) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Get and clears SIO error event flags.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -712,9 +649,6 @@ sioevents_t sioGetAndClearErrors(void *ip) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Get and clears SIO event flags.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -738,9 +672,6 @@ sioevents_t sioGetAndClearEvents(void *ip, sioevents_t mask) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Returns the pending SIO event flags.
  *
  * @param[in,out] ip            Pointer to a @p hal_sio_driver_c instance.
@@ -764,9 +695,6 @@ sioevents_t sioGetEvents(void *ip) {
 
 #if (SIO_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Synchronizes with RX FIFO data availability.
  * @note        The exact behavior depends on low level FIFO settings such as
  *              thresholds, etc.
@@ -816,9 +744,6 @@ msg_t sioSynchronizeRX(void *ip, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Synchronizes with RX going idle.
  * @note        This function can only be called by a single thread at time.
  *
@@ -866,9 +791,6 @@ msg_t sioSynchronizeRXIdle(void *ip, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Synchronizes with TX FIFO space availability.
  * @note        The exact behavior depends on low level FIFO settings such as
  *              thresholds, etc.
@@ -911,9 +833,6 @@ msg_t sioSynchronizeTX(void *ip, sysinterval_t timeout) {
 }
 
 /**
- * @memberof    hal_sio_driver_c
- * @public
- *
  * @brief       Synchronizes with TX completion.
  * @note        This function can only be called by a single thread at time.
  *
@@ -963,9 +882,6 @@ msg_t sioSynchronizeTXEnd(void *ip, sysinterval_t timeout) {
  * @{
  */
 /**
- * @memberof    hal_buffered_sio_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -995,9 +911,6 @@ void *__bsio_objinit_impl(void *ip, const void *vmt, hal_sio_driver_c *siop,
 }
 
 /**
- * @memberof    hal_buffered_sio_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -1015,9 +928,6 @@ void __bsio_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_buffered_sio_c
- * @protected
- *
  * @brief       Override of method @p __drv_start().
  *
  * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
@@ -1038,9 +948,6 @@ msg_t __bsio_start_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_buffered_sio_c
- * @protected
- *
  * @brief       Override of method @p __drv_stop().
  *
  * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.
@@ -1052,9 +959,6 @@ void __bsio_stop_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_buffered_sio_c
- * @protected
- *
  * @brief       Override of method @p __drv_set_cfg().
  *
  * @param[in,out] ip            Pointer to a @p hal_buffered_sio_c instance.

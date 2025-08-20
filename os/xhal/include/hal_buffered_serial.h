@@ -51,7 +51,7 @@
 
 /**
  * @class       hal_buffered_serial_c
- * @extends     base_object_c, hal_base_driver_c.
+ * @extends     hal_base_driver_c
  * @implements  asynchronous_channel_i
  *
  * @brief       Ancestor class of serial buffered drivers.
@@ -166,9 +166,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_buffered_serial_c
- * @public
- *
  * @brief       Adds status flags to the flags mask.
  * @details     This function is usually called from the I/O ISRs in order to
  *              notify I/O conditions such as data events, errors, signal

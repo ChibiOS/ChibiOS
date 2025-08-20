@@ -48,6 +48,15 @@
 [@license.EmitLicenseAsText /]
 */
 
+/**
+[@doxygen.EmitTagVerbatim indent="" tag="file" text=moduleimplname /]
+[@doxygen.EmitBrief "" "Template of " + moduledescription + " source." /]
+[@doxygen.EmitNote text="This is a template file, can be edited directly." /]
+ *
+[@doxygen.EmitTagVerbatim indent="" tag="addtogroup" text=moduledocgroup /]
+ * @{
+ */
+
 /* This is an, automatically generated, implementation file that can be
    manually edited, it is not re-generated if already present.*/
 
@@ -84,4 +93,6 @@
       [/#list]
     [/#if]
   [/#if]
+/** @} */
+
 [/#list]

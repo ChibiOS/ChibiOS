@@ -66,7 +66,7 @@
 
 /**
  * @class       vfs_driver_c
- * @extends     base_object_c.
+ * @extends     base_object_c
  *
  * @brief       Common ancestor class of all VFS driver classes.
  * @details     Base class for objects that implement a Posix-like file system
@@ -148,9 +148,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Changes the current VFS directory.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -167,9 +164,6 @@ static inline msg_t vfsDrvChangeCurrentDirectory(void *ip, const char *path) {
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Returns the current VFS directory.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -187,9 +181,6 @@ static inline msg_t vfsDrvGetCurrentDirectory(void *ip, char *buf, size_t size) 
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Returns file or directory information.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -207,9 +198,6 @@ static inline msg_t vfsDrvStat(void *ip, const char *path, vfs_stat_t *sp) {
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Opens a VFS directory.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -229,9 +217,6 @@ static inline msg_t vfsDrvOpenDirectory(void *ip, const char *path,
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Opens a VFS file.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -252,9 +237,6 @@ static inline msg_t vfsDrvOpenFile(void *ip, const char *path, int flags,
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Unlinks and possibly deletes a file.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -271,9 +253,6 @@ static inline msg_t vfsDrvUnlink(void *ip, const char *path) {
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Renames a file or directory.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -292,9 +271,6 @@ static inline msg_t vfsDrvRename(void *ip, const char *oldpath,
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Creates a directory.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.
@@ -312,9 +288,6 @@ static inline msg_t vfsDrvMkdir(void *ip, const char *path, vfs_mode_t mode) {
 }
 
 /**
- * @memberof    vfs_driver_c
- * @public
- *
  * @brief       Removes a directory.
  *
  * @param[in,out] ip            Pointer to a @p vfs_driver_c instance.

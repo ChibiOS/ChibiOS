@@ -57,8 +57,7 @@ struct vfs_fatfs_driver_static_nc_struct __nocache_vfs_fatfs_driver_static;
 
 /**
  * @class       vfs_fatfs_dir_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_directory_node_c.
+ * @extends     vfs_directory_node_c
  *
  *
  * @name        Class @p vfs_fatfs_dir_node_c structures
@@ -116,8 +115,7 @@ struct vfs_fatfs_dir_node {
 
 /**
  * @class       vfs_fatfs_file_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_file_node_c.
+ * @extends     vfs_file_node_c
  * @implements  sequential_stream_i
  *
  *

@@ -122,7 +122,7 @@ struct hal_regent {
 
 /**
  * @class       hal_base_driver_c
- * @extends     base_object_c.
+ * @extends     base_object_c
  *
  * @brief       Ancestor class of stateful HAL drivers.
  *
@@ -231,9 +231,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Low level driver start.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -249,9 +246,6 @@ static inline msg_t __drv_start(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Low level driver stop.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -266,9 +260,6 @@ static inline void __drv_stop(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Configures the driver with a specified configuration.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -286,9 +277,6 @@ static inline const void *__drv_set_cfg(void *ip, const void *config) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Selects one of the pre-defined configurations.
  * @note        Only configuration zero is guaranteed to exists, it is the
  *              driver default configuration.
@@ -313,9 +301,6 @@ static inline const void *__drv_sel_cfg(void *ip, unsigned cfgnum) {
  * @{
  */
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver state get.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -331,9 +316,6 @@ static inline driver_state_t drvGetStateX(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver state set.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -349,9 +331,6 @@ static inline void drvSetStateX(void *ip, driver_state_t state) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver argument get.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -367,9 +346,6 @@ static inline void *drvGetArgumentX(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver argument set.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -385,9 +361,6 @@ static inline void drvSetArgumentX(void *ip, void *arg) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver name get.
  * @note        Returns "unk" if registry is disabled.
  *
@@ -408,9 +381,6 @@ static inline const char *drvGetNameX(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver name set.
  * @note        Does nothing if registry is disabled.
  *
@@ -432,9 +402,6 @@ static inline void drvSetNameX(void *ip, const char *name) {
 
 #if (HAL_USE_MUTUAL_EXCLUSION == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver lock.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.
@@ -449,9 +416,6 @@ static inline void drvLock(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver unlock.
  *
  * @param[in,out] ip            Pointer to a @p hal_base_driver_c instance.

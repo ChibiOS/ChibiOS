@@ -81,7 +81,7 @@
 
 /**
  * @class       vfs_tmpl_driver_c
- * @extends     base_object_c, vfs_driver_c.
+ * @extends     vfs_driver_c
  *
  *
  * @name        Class @p vfs_tmpl_driver_c structures
@@ -164,8 +164,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    vfs_tmpl_driver_c
- *
  * @brief       Default initialization function of @p vfs_tmpl_driver_c.
  *
  * @param[out]    self          Pointer to a @p vfs_tmpl_driver_c instance to

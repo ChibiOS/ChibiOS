@@ -184,7 +184,7 @@ struct eth_configurations {
 
 /**
  * @class       hal_eth_driver_c
- * @extends     base_object_c, hal_base_driver_c, hal_cb_driver_c.
+ * @extends     hal_cb_driver_c
  *
  * @brief       Class of a ETH driver.
  *
@@ -316,8 +316,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_eth_driver_c
- *
  * @brief       Default initialization function of @p hal_eth_driver_c.
  *
  * @param[out]    self          Pointer to a @p hal_eth_driver_c instance to be
@@ -339,9 +337,6 @@ static inline hal_eth_driver_c *ethObjectInit(hal_eth_driver_c *self) {
  * @{
  */
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Queries for a received frame handle.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -358,9 +353,6 @@ static inline eth_receive_handle_t ethGetReceiveHandleI(void *ip) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Queries for a transmit frame handle.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -377,9 +369,6 @@ static inline eth_transmit_handle_t ethGetTransmitHandleI(void *ip) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Releases a received frame.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -395,9 +384,6 @@ static inline void ethReleaseReceiveHandle(void *ip, eth_receive_handle_t rxh) {
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Releases and transmits a frame.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -414,9 +400,6 @@ static inline void ethReleaseTransmitHandle(void *ip,
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Reads data sequentially from a received frame.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -439,9 +422,6 @@ static inline size_t ethReadReceiveHandle(void *ip, eth_receive_handle_t rxh,
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Reads data sequentially from a received frame.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -466,9 +446,6 @@ static inline size_t ethWriteTransmitHandle(void *ip,
 
 #if (ETH_SUPPORTS_ZERO_COPY == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Direct access to the receive handle buffer.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.
@@ -490,9 +467,6 @@ static inline const uint8_t *ethGetReceiveBufferX(void *ip,
 }
 
 /**
- * @memberof    hal_eth_driver_c
- * @public
- *
  * @brief       Direct access to the transmit handle buffer.
  *
  * @param[in,out] ip            Pointer to a @p hal_eth_driver_c instance.

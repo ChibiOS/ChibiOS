@@ -62,9 +62,6 @@
  * @{
  */
 /**
- * @memberof    hal_cb_driver_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -86,9 +83,6 @@ void *__cbdrv_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_cb_driver_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -106,9 +100,6 @@ void __cbdrv_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    hal_cb_driver_c
- * @protected
- *
  * @brief       Implementation of method @p drvSetCallbackX().
  * @note        This function is meant to be used by derived classes.
  *

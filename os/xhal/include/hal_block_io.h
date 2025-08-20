@@ -68,7 +68,7 @@ struct hal_blk_info {
 
 /**
  * @interface   block_io_i
- * @extends     base_interface_i.
+ * @extends     base_interface_i
  *
  * @brief       Base block device interface.
  * @details     This header defines an abstract interface useful to access
@@ -133,9 +133,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Removable media detection.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -153,9 +150,6 @@ static inline bool blkIsInserted(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Returns the media write protection status.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -173,9 +167,6 @@ static inline bool blkIsWriteProtected(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Connection to the block device.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -193,9 +184,6 @@ static inline bool blkConnect(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Disconnection from the block device.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -213,9 +201,6 @@ static inline bool blkDisconnect(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Reads one or more blocks.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -237,9 +222,6 @@ static inline bool blkRead(void *ip, uint32_t startblk, uint8_t *buffer,
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Writes one or more blocks.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -261,9 +243,6 @@ static inline bool blkWrite(void *ip, uint32_t startblk, const uint8_t *buffer,
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Synchronization with asynchronous write operations.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -281,9 +260,6 @@ static inline bool blkSync(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Writes one or more blocks.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.

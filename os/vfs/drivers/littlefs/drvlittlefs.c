@@ -52,8 +52,7 @@ struct vfs_littlefs_driver_static_struct vfs_littlefs_driver_static;
 
 /**
  * @class       vfs_littlefs_dir_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_directory_node_c.
+ * @extends     vfs_directory_node_c
  *
  *
  * @name        Class @p vfs_littlefs_dir_node_c structures
@@ -111,8 +110,7 @@ struct vfs_littlefs_dir_node {
 
 /**
  * @class       vfs_littlefs_file_node_c
- * @extends     base_object_c, referenced_object_c, vfs_node_c,
- *              vfs_file_node_c.
+ * @extends     vfs_file_node_c
  * @implements  sequential_stream_i
  *
  *

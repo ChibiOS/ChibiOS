@@ -62,9 +62,6 @@
  * @{
  */
 /**
- * @memberof    vfs_node_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -89,9 +86,6 @@ void *__vfsnode_objinit_impl(void *ip, const void *vmt, vfs_driver_c *driver,
 }
 
 /**
- * @memberof    vfs_node_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -109,9 +103,6 @@ void __vfsnode_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    vfs_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsNodeStat().
  * @note        This function is meant to be used by derived classes.
  *
@@ -138,9 +129,6 @@ msg_t __vfsnode_stat_impl(void *ip, vfs_stat_t *sp) {
  * @{
  */
 /**
- * @memberof    vfs_directory_node_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -162,9 +150,6 @@ void *__vfsdir_objinit_impl(void *ip, const void *vmt, vfs_driver_c *driver,
 }
 
 /**
- * @memberof    vfs_directory_node_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -182,9 +167,6 @@ void __vfsdir_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    vfs_directory_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsDirReadFirst().
  * @note        This function is meant to be used by derived classes.
  *
@@ -202,9 +184,6 @@ msg_t __vfsdir_first_impl(void *ip, vfs_direntry_info_t *dip) {
 }
 
 /**
- * @memberof    vfs_directory_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsDirReadNext().
  * @note        This function is meant to be used by derived classes.
  *
@@ -231,9 +210,6 @@ msg_t __vfsdir_next_impl(void *ip, vfs_direntry_info_t *dip) {
  * @{
  */
 /**
- * @memberof    vfs_file_node_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -255,9 +231,6 @@ void *__vfsfile_objinit_impl(void *ip, const void *vmt, vfs_driver_c *driver,
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -275,9 +248,6 @@ void __vfsfile_dispose_impl(void *ip) {
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsFileRead().
  * @note        This function is meant to be used by derived classes.
  *
@@ -297,9 +267,6 @@ ssize_t __vfsfile_read_impl(void *ip, uint8_t *buf, size_t n) {
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsFileWrite().
  * @note        This function is meant to be used by derived classes.
  *
@@ -319,9 +286,6 @@ ssize_t __vfsfile_write_impl(void *ip, const uint8_t *buf, size_t n) {
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsFileSetPosition().
  * @note        This function is meant to be used by derived classes.
  *
@@ -342,9 +306,6 @@ msg_t __vfsfile_setpos_impl(void *ip, vfs_offset_t offset,
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsFileGetPosition().
  * @note        This function is meant to be used by derived classes.
  *
@@ -360,9 +321,6 @@ vfs_offset_t __vfsfile_getpos_impl(void *ip) {
 }
 
 /**
- * @memberof    vfs_file_node_c
- * @protected
- *
  * @brief       Implementation of method @p vfsFileGetStream().
  * @note        This function is meant to be used by derived classes.
  *

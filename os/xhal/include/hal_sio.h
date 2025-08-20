@@ -548,7 +548,7 @@ struct sio_configurations {
 
 /**
  * @class       hal_sio_driver_c
- * @extends     base_object_c, hal_base_driver_c, hal_cb_driver_c.
+ * @extends     hal_cb_driver_c
  * @implements  asynchronous_channel_i
  *
  * @brief       Class of a SIO (Serial I/O) driver.
@@ -661,7 +661,7 @@ struct hal_sio_driver {
 
 /**
  * @class       hal_buffered_sio_c
- * @extends     base_object_c, hal_base_driver_c, hal_buffered_serial_c.
+ * @extends     hal_buffered_serial_c
  *
  * @brief       This class implements a buffered channel interface on top of
  *              SIO.
@@ -802,8 +802,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_sio_driver_c
- *
  * @brief       Default initialization function of @p hal_sio_driver_c.
  *
  * @param[out]    self          Pointer to a @p hal_sio_driver_c instance to be
@@ -825,8 +823,6 @@ static inline hal_sio_driver_c *sioObjectInit(hal_sio_driver_c *self) {
  * @{
  */
 /**
- * @memberof    hal_buffered_sio_c
- *
  * @brief       Default initialization function of @p hal_buffered_sio_c.
  *
  * @param[out]    self          Pointer to a @p hal_buffered_sio_c instance to

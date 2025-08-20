@@ -164,7 +164,7 @@ typedef void (*drv_cb_t)(void *ip);
 
 /**
  * @class       hal_cb_driver_c
- * @extends     base_object_c, hal_base_driver_c.
+ * @extends     hal_base_driver_c
  *
  * @brief       Class of a callback-based driver.
  *
@@ -264,9 +264,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_cb_driver_c
- * @public
- *
  * @brief       Associates a callback to the driver instance.
  *
  * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
@@ -288,9 +285,6 @@ static inline void drvSetCallbackX(void *ip, drv_cb_t cb) {
  * @{
  */
 /**
- * @memberof    hal_cb_driver_c
- * @public
- *
  * @brief       Returns the callback associated to the driver instance.
  *
  * @param[in,out] ip            Pointer to a @p hal_cb_driver_c instance.
@@ -305,9 +299,6 @@ static inline drv_cb_t drvGetCallbackX(void *ip) {
 }
 
 /**
- * @memberof    hal_cb_driver_c
- * @public
- *
  * @brief       Checks for @p HAL_DRV_STATE_HALF state.
  * @details     The @p HAL_DRV_STATE_HALF state is used by those drivers
  *              triggering multiple callbacks for a single asynchronous
@@ -332,9 +323,6 @@ static inline bool drvStateIsHalfX(void *ip) {
 }
 
 /**
- * @memberof    hal_cb_driver_c
- * @public
- *
  * @brief       Checks for @p HAL_DRV_STATE_COMPLETE state.
  * @details     The @p HAL_DRV_STATE_COMPLETE state is used by those drivers
  *              triggering multiple callbacks for a single asynchronous
@@ -359,9 +347,6 @@ static inline bool drvStateIsCompleteX(void *ip) {
 }
 
 /**
- * @memberof    hal_cb_driver_c
- * @public
- *
  * @brief       Checks for @p HAL_DRV_STATE_ERROR state.
  * @details     The @p HAL_DRV_STATE_ERROR state during a callback marks an
  *              error in an asynchronous operation, the operation is implicitly

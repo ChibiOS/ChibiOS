@@ -200,9 +200,6 @@ hal_base_driver_c *drvStartByName(const char *name, msg_t *msgp) {
  * @{
  */
 /**
- * @memberof    hal_base_driver_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -232,9 +229,6 @@ void *__drv_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *
@@ -259,9 +253,6 @@ void __drv_dispose_impl(void *ip) {
  * @{
  */
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver start.
  * @details     Starts driver operations, on the 1st call the peripheral is
  *              physically initialized using a default configuration,
@@ -300,9 +291,6 @@ msg_t drvStart(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver start.
  * @details     Starts driver operations, on the 1st call the peripheral is
  *              physically initialized using a default configuration,
@@ -364,9 +352,6 @@ msg_t drvStartS(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver close.
  * @details     Stops driver operations. The peripheral is physically
  *              uninitialized.
@@ -388,9 +373,6 @@ void drvStop(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver close.
  * @details     Stops driver operations. The peripheral is physically
  *              uninitialized.
@@ -414,9 +396,6 @@ void drvStopS(void *ip) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Driver configure.
  * @details     Applies a new configuration to the driver. The configuration
  *              structure is architecture-dependent.
@@ -455,9 +434,6 @@ msg_t drvSetCfgX(void *ip, const void *config) {
 }
 
 /**
- * @memberof    hal_base_driver_c
- * @public
- *
  * @brief       Selects one of the pre-defined driver configurations.
  * @note        Only configuration zero is guaranteed to exists, it is the
  *              driver default configuration.

@@ -395,9 +395,7 @@
 /**
   [@doxygen.EmitTagVerbatim indent="" tag="class" text=classctype /]
   [#if ancestorname?length > 0]
-    [#local ancestorsctypes = GetClassAncestorsCTypes(ancestors)]
-    [@doxygen.EmitTagFormattedNoCap indent="" tag="extends"
-                                    text=ancestorsctypes?join(", ") /]
+    [@doxygen.EmitTagVerbatim indent="" tag="extends" text=GetClassAncestorCType(class "") /]
   [/#if]
   [@GenerateClassImplementsTags class.implements /]
  *
@@ -463,9 +461,7 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
 /**
  * @interface   ${ifctype}
   [#if ancestorname?length > 0]
-    [#local ancestorsctypes = GetInterfaceAncestorsCTypes(ancestors)]
-    [@doxygen.EmitTagFormattedNoCap indent="" tag="extends"
-                                    text=ancestorsctypes?join(", ") /]
+    [@doxygen.EmitTagVerbatim indent="" tag="extends" text=GetInterfaceAncestorCType(if "") /]
   [/#if]
  *
 [@doxygen.EmitBriefFromNode node=if /]
@@ -529,9 +525,6 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
  */
   [#-- Constructor.--]
 /**
-[@doxygen.EmitTagVerbatim "" "memberof" classctype /]
- * @protected
- *
 [@doxygen.EmitBrief "" "Implementation of object creation." /]
 [@doxygen.EmitNote  "" "This function is meant to be used by derived classes." /]
  *
@@ -584,9 +577,6 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
 
   [#-- Destructor.--]
 /**
-[@doxygen.EmitTagVerbatim "" "memberof" classctype /]
- * @protected
- *
 [@doxygen.EmitBrief "" "Implementation of object finalization." /]
 [@doxygen.EmitNote  "" "This function is meant to be used by derived classes." /]
  *
@@ -630,9 +620,6 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
             methodimpl     = method.implementation[0]!""]
 
 /**
-[@doxygen.EmitTagVerbatim "" "memberof" classctype /]
- * @protected
- *
 [@doxygen.EmitBrief "" "Override of method @p " + methodname + "()." /]
  *
 [@doxygen.EmitParam name="ip" dir="both"
@@ -659,9 +646,6 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
     [#if methodimpl?length > 0]
 
 /**
-[@doxygen.EmitTagVerbatim "" "memberof" classctype /]
- * @protected
- *
 [@doxygen.EmitBrief "" "Implementation of method @p " + methodname + "()." /]
 [@doxygen.EmitNote  "" "This function is meant to be used by derived classes." /]
  *
@@ -701,7 +685,7 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
 [@doxygen.EmitFullCommentFromNode indent="" node=method
                                   extraname="ip" extradir="both"
                                   extratext="Pointer to a @p " + classctype + " instance."
-                                  memberof=classctype /]
+                                  memberof="" /]
       [/#if]
       [#if modifiers?seq_contains("static") && modifiers?seq_contains("inline")]
 CC_FORCE_INLINE
@@ -795,7 +779,7 @@ CC_FORCE_INLINE
 [@doxygen.EmitFullCommentFromNode indent="" node=method
                                   extraname="ip" extradir="both"
                                   extratext="Pointer to a @p " + ctype + " instance."
-                                  memberof=ctype /]
+                                  memberof="" /]
 CC_FORCE_INLINE
 [@ccode.GeneratePrototypeFromNode modifiers = ["static", "inline"]
                                   params    = ["void *ip"]
@@ -1082,8 +1066,6 @@ ${s}
  * @{
  */
 /**
-[@doxygen.EmitTagVerbatim "" "memberof" classctype /]
- *
 [@doxygen.EmitBrief "" "Default initialization function of @p " + classctype + "." /]
  *
 [@doxygen.EmitParam name = "self"
@@ -1128,8 +1110,6 @@ ${s}
  * @{
  */
 /**
-[@doxygen.EmitTagVerbatim "" "memberof" classctype /]
- *
 [@doxygen.EmitBrief "" "Default initialization function of @p " + classctype + "." /]
  *
 [@doxygen.EmitParam name = "self"
@@ -1295,9 +1275,6 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
         [#local method     = foundmethods[0]]
         [#local methodname = GetNodeName(method)]
 /**
-[@doxygen.EmitTagVerbatim "" "memberof" classctype /]
- * @private
- *
 [@doxygen.EmitBrief "" "Implementation of interface method @p " + methodname + "()." /]
  *
 [@doxygen.EmitParam name="ip" dir="both"

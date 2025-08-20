@@ -234,7 +234,7 @@ struct spi_configurations {
 
 /**
  * @class       hal_spi_driver_c
- * @extends     base_object_c, hal_base_driver_c, hal_cb_driver_c.
+ * @extends     hal_cb_driver_c
  *
  * @brief       Class of a SPI driver.
  *
@@ -369,8 +369,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    hal_spi_driver_c
- *
  * @brief       Default initialization function of @p hal_spi_driver_c.
  *
  * @param[out]    self          Pointer to a @p hal_spi_driver_c instance to be
@@ -392,9 +390,6 @@ static inline hal_spi_driver_c *spiObjectInit(hal_spi_driver_c *self) {
  * @{
  */
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Returns the configured size, in bytes, of data frames.
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -407,9 +402,6 @@ static inline size_t spiGetFrameSizeX(void *ip) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Asserts the slave select signal and prepares for transfers.
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -424,9 +416,6 @@ static inline void spiSelectX(void *ip) {
 }
 
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Deasserts the slave select signal.
  *
  * @param[in,out] ip            Pointer to a @p hal_spi_driver_c instance.
@@ -442,9 +431,6 @@ static inline void spiUnselectX(void *ip) {
 
 #if (SPI_USE_SYNCHRONIZATION == TRUE) || defined (__DOXYGEN__)
 /**
- * @memberof    hal_spi_driver_c
- * @public
- *
  * @brief       Wakes up the waiting thread.
  * @note        This function is meant to be used in the low level drivers
  *              implementations only.
