@@ -461,7 +461,7 @@ ${ccode.MakeVariableDeclaration(ccode.indentation "vmt" vmtctype)}
 /**
  * @interface   ${ifctype}
   [#if ancestorname?length > 0]
-    [@doxygen.EmitTagVerbatim indent="" tag="extends" text=GetInterfaceAncestorCType(class "") /]
+    [@doxygen.EmitTagVerbatim indent="" tag="extends" text=GetInterfaceAncestorCType(if "") /]
   [/#if]
  *
 [@doxygen.EmitBriefFromNode node=if /]
