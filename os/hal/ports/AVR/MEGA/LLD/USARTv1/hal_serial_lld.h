@@ -53,6 +53,24 @@
 #define AVR_SERIAL_USE_USART1              TRUE
 #endif
 
+/**
+ * @brief   USART2 driver enable switch.
+ * @details If set to @p TRUE the support for USART2 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(AVR_SERIAL_USE_USART2) || defined(__DOXYGEN__)
+#define AVR_SERIAL_USE_USART2              FALSE
+#endif
+
+/**
+ * @brief   USART3 driver enable switch.
+ * @details If set to @p TRUE the support for USART3 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(AVR_SERIAL_USE_USART3) || defined(__DOXYGEN__)
+#define AVR_SERIAL_USE_USART3              FALSE
+#endif
+
 /*==========================================================================*/
 /* Derived constants and error checks.                                      */
 /*==========================================================================*/
@@ -139,6 +157,12 @@ extern SerialDriver SD1;
 #endif
 #if AVR_SERIAL_USE_USART1 && !defined(__DOXYGEN__)
 extern SerialDriver SD2;
+#endif
+#if AVR_SERIAL_USE_USART2 && !defined(__DOXYGEN__)
+extern SerialDriver SD3;
+#endif
+#if AVR_SERIAL_USE_USART3 && !defined(__DOXYGEN__)
+extern SerialDriver SD4;
 #endif
 
 #ifdef __cplusplus
