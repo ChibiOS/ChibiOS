@@ -260,16 +260,13 @@ ifeq ($(USE_VERBOSE_COMPILE),yes)
 	$(NM) -n $< > $@
 	$(SZ) $<
 	@echo
-	if test -f $(BUILDDIR)/$(PROJECT).elf; then echo; echo $(MSG_SIZE_AFTER); \
-	$(ELFSIZE); 2>/dev/null; echo; fi
 	@echo Done
 else
 	@echo Creating $@
 	@$(NM) -n $< > $@
 	@echo
 	@$(SZ) $<
-	@if test -f $(BUILDDIR)/$(PROJECT).elf; then echo; echo $(MSG_SIZE_AFTER); \
-	$(ELFSIZE); 2>/dev/null; echo; fi
+	@echo
 	@echo Done
 endif
 
