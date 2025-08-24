@@ -63,7 +63,7 @@ typedef struct ch_virtual_timer virtual_timer_t;
  * @brief   Type of a Virtual Timer callback function.
  *
  * @param[in] vtp       pointer to the @p virtual_timer_t calling this callback
- * @param[in[ p         optional argument to the callback
+ * @param[in] p         optional argument to the callback
  * @return              The interval to be reloaded into the timer or zero.
  * @retval 0            if the timer must not be reloaded.
  */
