@@ -157,7 +157,7 @@ HEX   = $(CP) -O ihex
 BIN   = $(CP) -O binary
 
 # Size of the elf binary file.
-ELFSIZE = $(SZ) --mcu=$(MCU) --format=avr $(BUILDDIR)/$(PROJECT).elf
+ELFSIZE = $(SZ) $(BUILDDIR)/$(PROJECT).elf
 
 # MCU specific options here.
 MOPT =
