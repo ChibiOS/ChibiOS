@@ -94,6 +94,8 @@
  */
 #define AVR_SERIAL_USE_USART0              FALSE
 #define AVR_SERIAL_USE_USART1              TRUE
+#define AVR_SERIAL_USE_USART2              FALSE
+#define AVR_SERIAL_USE_USART3              FALSE
 
 /*
  * I2C driver system settings.
