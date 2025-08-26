@@ -126,6 +126,14 @@
 
 #define STM32_USART1_NUMBER                 27
 #define STM32_USART2_NUMBER                 28
+
+/*
+ * USB units.
+ */
+#define STM32_USB1_HP_HANDLER               Vector60
+#define STM32_USB1_LP_HANDLER               Vector60
+#define STM32_USB1_HP_NUMBER                8
+#define STM32_USB1_LP_NUMBER                8
 /** @} */
 
 /*===========================================================================*/
