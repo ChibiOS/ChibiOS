@@ -608,6 +608,62 @@
 #define rccResetUSART2() rccResetAPBR1(RCC_APBRSTR1_USART2RST)
 /** @} */
 
+/**
+ * @name    USB peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the USB peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableUSB(lp) rccEnableAPBR1(RCC_APBENR1_USBEN, lp)
+
+/**
+ * @brief   Disables the USB peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableUSB() rccDisableAPBR1(RCC_APBENR1_USBEN)
+
+/**
+ * @brief   Resets the USB peripheral.
+ *
+ * @api
+ */
+#define rccResetUSB() rccResetAPBR1(RCC_APBRSTR1_USBRST)
+/** @} */
+
+/**
+ * @name    CRC peripheral specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the CRC peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableCRC(lp) rccEnableAHB(RCC_AHBENR_CRCEN, lp)
+
+/**
+ * @brief   Disables the CRC peripheral clock.
+ *
+ * @api
+ */
+#define rccDisableCRC() rccDisableAHB(RCC_AHBENR_CRCEN)
+
+/**
+ * @brief   Resets the CRC peripheral.
+ *
+ * @api
+ */
+#define rccResetCRC() rccResetAHB(RCC_AHBRSTR_CRCRST)
+/** @} */
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
