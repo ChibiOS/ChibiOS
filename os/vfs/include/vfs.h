@@ -37,7 +37,7 @@
 /**
  * @brief   Stable release flag.
  */
-#define CH_VFS_STABLE           0
+#define CH_VFS_STABLE           1
 
 /**
  * @name    ChibiOS/VFS version identification
