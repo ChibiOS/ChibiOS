@@ -2,7 +2,7 @@
 export CHVERSION=21.11.4
 
 function makeclean() {
-  rm *.log *.chm *.pdf *.tar.gz 2> /dev/null
+  rm *.log ../../manuals/*.pdf ../../manuals/*.tar.gz 2> /dev/null
 }
 
 #function makechm() {
@@ -28,7 +28,7 @@ function makeclean() {
 function makepdf() {
   rm latex/* 2> /dev/null
   cp ../common/tex/chibios.sty ./latex
-  if ! doxygen Doxyfile_pdf # 2> /dev/null
+  if ! doxygen Doxyfile_pdf 2> /dev/null
   then
     echo "Doxygen failed"
     exit
@@ -48,14 +48,14 @@ function makepdf() {
     exit
   fi
   cd ..
-  cp latex/refman.pdf chibios_${CHVERSION}_${CHNAME}.pdf
+  cp latex/refman.pdf ../../manuals/chibios_${CHVERSION}_${CHNAME}.pdf
   rm latex/* 2> /dev/null
   echo "  - PDF generated"
 }
 
 function makearchive() {
 #  tar -pczf chibios_${CHVERSION}_${CHNAME}.tar.gz chibios_${CHVERSION}_${CHNAME}.chm chibios_${CHVERSION}_${CHNAME}.pdf
-  tar -pczf chibios_${CHVERSION}_${CHNAME}.tar.gz chibios_${CHVERSION}_${CHNAME}.pdf
+  tar -pczf ../../manuals/chibios_${CHVERSION}_${CHNAME}.tar.gz ../../manuals/chibios_${CHVERSION}_${CHNAME}.pdf 2> /dev/null
 }
 
 #export CHNAME=chibios_hal_rm
