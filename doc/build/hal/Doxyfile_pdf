@@ -42,13 +42,13 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = ChibiOS/RT
+PROJECT_NAME           = ChibiOS/HAL
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 7.0.5
+PROJECT_NUMBER         = 9.0.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewers a
@@ -1016,16 +1016,21 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ./src \
-                         ../common/src \
                          ../../../os/common/portability/GCC \
-                         ../../../os/license \
-                         ../../../os/rt/dox \
-                         ../../../os/rt/src \
-                         ../../../os/rt/include \
-                         ../../../os/rt/templates \
-                         ../../../os/oslib/dox \
-                         ../../../os/oslib/src \
-                         ../../../os/oslib/include
+                         ../../../os/hal/dox \
+                         ../../../os/hal/src \
+                         ../../../os/hal/include \
+                         ../../../os/hal/lib/streams \
+                         ../../../os/hal/lib/complex/buffered_sio \
+                         ../../../os/hal/lib/complex/mfs \
+                         ../../../os/hal/lib/complex/serial_nor \
+                         ../../../os/hal/lib/complex/xsnor/dox \
+                         ../../../os/hal/lib/complex/xsnor/include \
+                         ../../../os/hal/lib/complex/xsnor/src \
+                         ../../../os/hal/lib/complex/xsnor/devices/macronix_mx25 \
+                         ../../../os/hal/lib/complex/xsnor/devices/micron_n25q \
+                         ../../../os/hal/templates \
+                         ../../../os/hal/templates/osal
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1402,7 +1407,7 @@ GENERATE_HTML          = NO
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = ../../manuals/html/rt
+HTML_OUTPUT            = ../../manuals/html/hal
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
