@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Nov  7 2021 - 11:30:57
+*** Compiled:     Sep  8 2025 - 11:34:44
 *** Platform:     STM32H755 Dual Core Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32 Nucleo144-H755ZI
 ***
-*** Text size:    50408 bytes
-*** RO data size: 10452 bytes
-*** Data size:    220 bytes
-*** BSS size:     5600 bytes
+*** Text size:    51924 bytes
+*** RO data size: 10440 bytes
+*** Data size:    224 bytes
+*** BSS size:     5940 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M7
---- Compiler:                           GCC 10.3.1 20210621 (release)
+--- Compiler:                           GCC 14.2.1 20241119
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -25,11 +25,11 @@
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/RT
---- Stable Flag:                        0
---- Version String:                     7.0.1
+--- Stable Flag:                        1
+--- Version String:                     7.0.5
 --- Major Number:                       7
 --- Minor Number:                       0
---- Patch Number:                       1
+--- Patch Number:                       5
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
@@ -189,27 +189,27 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 2926800 msgs/S, 5853600 ctxswc/S
+--- Score : 2926802 msgs/S, 5853604 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 2608670 msgs/S, 5217340 ctxswc/S
+--- Score : 2660268 msgs/S, 5320536 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
---- Score : 2608671 msgs/S, 5217342 ctxswc/S
+--- Score : 2697605 msgs/S, 5395210 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.4 (Context Switch performance)
---- Score : 8727192 ctxswc/S
+--- Score : 8799608 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 1564411 threads/S
+--- Score : 1614767 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
---- Score : 1707425 threads/S
+--- Score : 1895233 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
@@ -217,19 +217,19 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
---- Score : 5303820 ctxswc/S
+--- Score : 5693896 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 2596348 timers/S
+--- Score : 3130706 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 14545316 wait+signal/S
+--- Score : 15483728 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 7272660 lock+unlock/S
+--- Score : 7499932 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Nov  7 2021 - 11:30:57
+*** Compiled:     Sep  8 2025 - 11:34:44
 *** Platform:     STM32H755 Dual Core Very High Performance with DSP and FPU
 *** Test Board:   STMicroelectronics STM32 Nucleo144-H755ZI
 ***
-*** Text size:    50408 bytes
-*** RO data size: 10452 bytes
-*** Data size:    220 bytes
-*** BSS size:     5600 bytes
+*** Text size:    51924 bytes
+*** RO data size: 10440 bytes
+*** Data size:    224 bytes
+*** BSS size:     5940 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -264,7 +264,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M
 --- Core Variant:                       Cortex-M7
---- Compiler:                           GCC 10.3.1 20210621 (release)
+--- Compiler:                           GCC 14.2.1 20241119
 --- Port Info:                          Advanced kernel mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -273,11 +273,11 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (OS Library Info)
 --- Product:                            ChibiOS/LIB
---- Stable Flag:                        0
---- Version String:                     1.3.0
+--- Stable Flag:                        1
+--- Version String:                     1.3.2
 --- Major Number:                       1
 --- Minor Number:                       3
---- Patch Number:                       0
+--- Patch Number:                       2
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (OS Library Settings)
@@ -374,5 +374,4 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
-
 

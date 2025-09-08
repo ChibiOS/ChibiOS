@@ -1,14 +1,14 @@
 
 *** ChibiOS/RT Test Suite
 ***
-*** Compiled:     Nov  6 2021 - 20:19:37
+*** Compiled:     Sep  8 2025 - 11:16:29
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    48628 bytes
-*** RO data size: 10052 bytes
-*** Data size:    220 bytes
-*** BSS size:     4528 bytes
+*** Text size:    49600 bytes
+*** RO data size: 10020 bytes
+*** Data size:    224 bytes
+*** BSS size:     4868 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -16,7 +16,7 @@
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M (alt)
 --- Core Variant:                       Cortex-M4
---- Compiler:                           GCC 10.3.1 20210621 (release)
+--- Compiler:                           GCC 14.2.1 20241119
 --- Port Info:                          In-exception switch mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -25,11 +25,11 @@
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (Kernel Info)
 --- Product:                            ChibiOS/RT
---- Stable Flag:                        0
---- Version String:                     7.0.1
+--- Stable Flag:                        1
+--- Version String:                     7.0.5
 --- Major Number:                       7
 --- Minor Number:                       0
---- Patch Number:                       1
+--- Patch Number:                       5
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (Kernel Settings)
@@ -189,11 +189,11 @@
 === Test Sequence 12 (Benchmarks)
 ----------------------------------------------------------------------------
 --- Test Case 12.1 (Messages performance #1)
---- Score : 833326 msgs/S, 1666652 ctxswc/S
+--- Score : 833327 msgs/S, 1666654 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.2 (Messages performance #2)
---- Score : 752206 msgs/S, 1504412 ctxswc/S
+--- Score : 752207 msgs/S, 1504414 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.3 (Messages performance #3)
@@ -205,7 +205,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.5 (Threads performance, full cycle)
---- Score : 467028 threads/S
+--- Score : 469609 threads/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.6 (Threads performance, create/exit only)
@@ -213,7 +213,7 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.7 (Mass reschedule performance)
---- Score : 237430 reschedules/S, 1424580 ctxswc/S
+--- Score : 236768 reschedules/S, 1420608 ctxswc/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.8 (Round-Robin voluntary reschedule)
@@ -221,15 +221,15 @@
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.9 (Virtual Timers set/reset performance)
---- Score : 1231926 timers/S
+--- Score : 1240928 timers/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.10 (Semaphores wait/signal performance)
---- Score : 7391280 wait+signal/S
+--- Score : 7727248 wait+signal/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.11 (Mutexes lock/unlock performance)
---- Score : 2518512 lock+unlock/S
+--- Score : 2428564 lock+unlock/S
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 12.12 (RAM Footprint)
@@ -249,14 +249,14 @@ Final result: SUCCESS
 
 *** ChibiOS OS Library Test Suite
 ***
-*** Compiled:     Nov  6 2021 - 20:19:37
+*** Compiled:     Sep  8 2025 - 11:16:29
 *** Platform:     STM32G4 Hi-resolution Line
 *** Test Board:   STMicroelectronics STM32 Nucleo64-G474RE
 ***
-*** Text size:    48628 bytes
-*** RO data size: 10052 bytes
-*** Data size:    220 bytes
-*** BSS size:     4528 bytes
+*** Text size:    49600 bytes
+*** RO data size: 10020 bytes
+*** Data size:    224 bytes
+*** BSS size:     4868 bytes
 
 ============================================================================
 === Test Sequence 1 (Information)
@@ -264,7 +264,7 @@ Final result: SUCCESS
 --- Test Case 1.1 (Port Info)
 --- Architecture:                       ARMv7E-M (alt)
 --- Core Variant:                       Cortex-M4
---- Compiler:                           GCC 10.3.1 20210621 (release)
+--- Compiler:                           GCC 14.2.1 20241119
 --- Port Info:                          In-exception switch mode
 --- Natural alignment:                  4
 --- Stack alignment:                    8
@@ -273,11 +273,11 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.2 (OS Library Info)
 --- Product:                            ChibiOS/LIB
---- Stable Flag:                        0
---- Version String:                     1.3.0
+--- Stable Flag:                        1
+--- Version String:                     1.3.2
 --- Major Number:                       1
 --- Minor Number:                       3
---- Patch Number:                       0
+--- Patch Number:                       2
 --- Result: SUCCESS
 ----------------------------------------------------------------------------
 --- Test Case 1.3 (OS Library Settings)
@@ -374,5 +374,4 @@ Final result: SUCCESS
 ----------------------------------------------------------------------------
 
 Final result: SUCCESS
-
 
