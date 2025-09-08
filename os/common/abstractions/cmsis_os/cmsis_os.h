@@ -363,7 +363,7 @@ const osTimerDef_t os_timer_def_##name = {                                  \
 #if defined(osObjectsExternal)
 #define osMutexDef(name) extern const osMutexDef_t os_mutex_def_##name
 #else
-#define osMutexDef(name)  const osMutexDef_t os_mutex_def_##name = {0}
+#define osMutexDef(name) const osMutexDef_t os_mutex_def_##name = {0}
 #endif
 
 /**
@@ -418,7 +418,7 @@ const osPoolDef_t os_pool_def_##name = {                                    \
   extern const osMessageQDef_t os_messageQ_def_##name
 #else
 #define osMessageQDef(name, queue_sz, type)                                 \
-static const msg_t os_messageQ_buf_##name[queue_sz];                        \
+static msg_t os_messageQ_buf_##name[queue_sz];                              \
 static mailbox_t os_messageQ_obj_##name;                                    \
 const osMessageQDef_t os_messageQ_def_##name = {                            \
   (queue_sz),                                                               \
