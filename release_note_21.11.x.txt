@@ -4,7 +4,7 @@
 
 ChibiOS 21.11.x is composed of several independent but inter-operable
 sub-projects: RT, NIL, SB, HAL, EX. Plus several external libraries
-integrated in our structure: WolfSSL, FatFS and lwIP.
+integrated in our structure: WolfSSL, FatFS, LittleFS and lwIP.
 
 *** ChibiOS 21.11.4 highlights ****
 
@@ -26,6 +26,8 @@ integrated in our structure: WolfSSL, FatFS and lwIP.
   systems and access them using an unified Posix-like API.
   - FatFS support in VFS.
   - LittleFS support in VFS.
+  - Overlay and mount points support in VFS.
+  - HAL streams /dev support in VFS.
 - New OOP framework. This subsystem allows to create C modules starting from
   an high level XML description. The XML schema supports things like classes,
   interfaces, multiple inheritance, etc. everything is translated in excellent
