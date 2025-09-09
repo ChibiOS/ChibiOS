@@ -1,9 +1,9 @@
 
 *** ChibiOS/RT WKP-STORM benchmark and test
 ***
-*** Kernel:       7.0.1
-*** Compiled:     Nov  6 2021 - 13:13:21
-*** Compiler:     GCC 10.3.1 20210621 (release)
+*** Kernel:       7.0.5
+*** Compiled:     Sep  9 2025 - 11:29:44
+*** Compiler:     GCC 14.2.1 20241119
 *** Architecture: ARMv7E-M
 *** Core Variant: Cortex-M4
 *** System Clock: 170000000
@@ -15,10 +15,10 @@
 ISR activation time latency
 
 Iterations:            1000
-Last measurement:        55 cycles
-Best measurement:        55 cycles
-Worst measurement:       55 cycles
-Cumulative time:      55000 cycles
+Last measurement:        56 cycles
+Best measurement:        56 cycles
+Worst measurement:       56 cycles
+Cumulative time:      56000 cycles
 
 Thread fly-back latency
 
@@ -27,6 +27,5 @@ Last measurement:       215 cycles
 Best measurement:       215 cycles
 Worst measurement:      215 cycles
 Cumulative time:     215000 cycles
-
 
 

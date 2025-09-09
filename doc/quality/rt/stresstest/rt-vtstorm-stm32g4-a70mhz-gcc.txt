@@ -1,9 +1,9 @@
 
 *** ChibiOS/RT VT-STORM long duration test
 ***
-*** Kernel:       7.0.1
-*** Compiled:     Nov  6 2021 - 13:21:02
-*** Compiler:     GCC 10.3.1 20210621 (release)
+*** Kernel:       7.0.5
+*** Compiled:     Sep  8 2025 - 15:05:01
+*** Compiler:     GCC 14.2.1 20241119
 *** Architecture: ARMv7E-M
 *** Core Variant: Cortex-M4
 *** System Clock: 170000000
@@ -618,6 +618,5 @@ Iteration 100
 No warnings
 Saturated at 5 uS 90 ticks
 Continuous ticks 467786
-
 
 
