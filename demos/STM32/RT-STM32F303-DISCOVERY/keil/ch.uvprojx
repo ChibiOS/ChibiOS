@@ -782,16 +782,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\os\oslib\src\chpipes.c</FilePath>
             </File>
-            <File>
-              <FileName>chmemchecks.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\os\oslib\include\chmemchecks.h</FilePath>
-            </File>
-            <File>
-              <FileName>chmemchecks.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\os\oslib\src\chmemchecks.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
