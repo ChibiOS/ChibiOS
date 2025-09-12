@@ -26,7 +26,9 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32C011xx, STM32C011xx.
+ *          - STM32C011xx, STM32C031xx.
+ *          - STM32C051xx, STM32C071xx.
+ *          - STM32C091xx, STM32C092xx.
  *          .
  *
  * @addtogroup HAL
@@ -122,6 +124,19 @@
 #define STM32_HSIKER_DIV6       STM32_HSIKER_FIELD(5U)
 #define STM32_HSIKER_DIV7       STM32_HSIKER_FIELD(6U)
 #define STM32_HSIKER_DIV8       STM32_HSIKER_FIELD(7U)
+
+#define STM32_SYSDIV_MASK       (7U << 2)
+#define STM32_SYSDIV_FIELD(n)   ((n) << 2)
+#if STM32_RCC_HAS_SYSDIV || defined(__DOXYGEN__)
+#define STM32_SYSDIV_DIV1       STM32_SYSDIV_FIELD(0U)
+#define STM32_SYSDIV_DIV2       STM32_SYSDIV_FIELD(1U)
+#define STM32_SYSDIV_DIV3       STM32_SYSDIV_FIELD(2U)
+#define STM32_SYSDIV_DIV4       STM32_SYSDIV_FIELD(3U)
+#define STM32_SYSDIV_DIV5       STM32_SYSDIV_FIELD(4U)
+#define STM32_SYSDIV_DIV6       STM32_SYSDIV_FIELD(5U)
+#define STM32_SYSDIV_DIV7       STM32_SYSDIV_FIELD(6U)
+#define STM32_SYSDIV_DIV8       STM32_SYSDIV_FIELD(7U)
+#endif
 /** @} */
 
 /**
@@ -155,6 +170,11 @@
 #define STM32_MCO2PRE_DIV32     STM32_MCO2PRE_FIELD(5U)
 #define STM32_MCO2PRE_DIV64     STM32_MCO2PRE_FIELD(6U)
 #define STM32_MCO2PRE_DIV128    STM32_MCO2PRE_FIELD(7U)
+#if STM32_RCC_HAS_MCODIVEXT || defined(__DOXYGEN__)
+#define STM32_MCO2PRE_DIV256    STM32_MCO2PRE_FIELD(8U)
+#define STM32_MCO2PRE_DIV512    STM32_MCO2PRE_FIELD(9U)
+#define STM32_MCO2PRE_DIV1024   STM32_MCO2PRE_FIELD(10U)
+#endif
 
 #define STM32_MCOSEL_MASK       (7U << 16)
 #define STM32_MCOSEL_FIELD(n)   ((n) << 16)
@@ -176,6 +196,11 @@
 #define STM32_MCOPRE_DIV32      STM32_MCOPRE_FIELD(5U)
 #define STM32_MCOPRE_DIV64      STM32_MCOPRE_FIELD(6U)
 #define STM32_MCOPRE_DIV128     STM32_MCOPRE_FIELD(7U)
+#if STM32_RCC_HAS_MCODIVEXT || defined(__DOXYGEN__)
+#define STM32_MCOPRE_DIV256     STM32_MCOPRE_FIELD(8U)
+#define STM32_MCOPRE_DIV512     STM32_MCOPRE_FIELD(9U)
+#define STM32_MCOPRE_DIV1024    STM32_MCOPRE_FIELD(10U)
+#endif
 /** @} */
 
 /**
@@ -393,17 +418,21 @@
 
 /**
  * @brief   Main clock source selection.
- * @note    If the selected clock source is not the PLL then the PLL is not
- *          initialized and started.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
 #define STM32_SW                            STM32_SW_HSISYS
 #endif
 
 /**
+ * @brief   SYSDIV divider value.
+ * @note    The allowed values are 1..8.
+ */
+#if !defined(STM32_SYSDIV_VALUE) || defined(__DOXYGEN__)
+#define STM32_SYSDIV_VALUE                  1
+#endif
+
+/**
  * @brief   AHB prescaler value.
- * @note    The default value is calculated for a 64MHz system clock from
- *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_HPRE) || defined(__DOXYGEN__)
 #define STM32_HPRE                          STM32_HPRE_DIV1
@@ -788,6 +817,43 @@
 #endif
 
 /**
+ * @brief   STM32_SYSDIV field.
+ */
+#if STM32_RCC_HAS_SYSDIV || defined(__DOXYGEN__)
+  #if (STM32_SYSDIV_VALUE == 1) || defined(__DOXYGEN__)
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV1
+
+  #elif STM32_SYSDIV_VALUE == 2
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV2
+
+  #elif STM32_SYSDIV_VALUE == 3
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV3
+
+  #elif STM32_SYSDIV_VALUE == 4
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV4
+
+  #elif STM32_SYSDIV_VALUE == 5
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV5
+
+  #elif STM32_SYSDIV_VALUE == 6
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV6
+
+  #elif STM32_SYSDIV_VALUE == 7
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV7
+
+  #elif STM32_SYSDIV_VALUE == 8
+    #define STM32_SYSDIV            STM32_SYSDIV_DIV8
+
+  #else
+    #error "invalid STM32_SYSDIV_VALUE value specified"
+  #endif
+#else
+  #undef STM32_SYSDIV_VALUE         /* Ignoring the setting.*/
+  #define STM32_SYSDIV_VALUE        1U
+  #define STM32_SYSDIV              0U
+#endif
+
+/**
  * @brief   HSISYS clock frequency.
  */
 #define STM32_HSISYSCLK             (STM32_HSI48CLK / STM32_HSIDIV_VALUE)
@@ -801,16 +867,16 @@
  * @brief   System clock source.
  */
 #if (STM32_SW == STM32_SW_HSISYS)
-  #define STM32_SYSCLK              STM32_HSISYSCLK
+  #define STM32_SYSCLK              (STM32_HSISYSCLK / STM32_SYSDIV_VALUE)
 
 #elif (STM32_SW == STM32_SW_HSE)
-  #define STM32_SYSCLK              STM32_HSECLK
+  #define STM32_SYSCLK              (STM32_HSECLK / STM32_SYSDIV_VALUE)
 
 #elif (STM32_SW == STM32_SW_LSI)
-  #define STM32_SYSCLK              STM32_LSICLK
+  #define STM32_SYSCLK              (STM32_LSICLK / STM32_SYSDIV_VALUE)
 
 #elif (STM32_SW == STM32_SW_LSE)
-  #define STM32_SYSCLK              STM32_LSECLK
+  #define STM32_SYSCLK              (STM32_LSECLK / STM32_SYSDIV_VALUE)
 
 #else
 #error "invalid STM32_SW value specified"

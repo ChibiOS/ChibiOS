@@ -122,6 +122,24 @@
 #define STM32_EXTI_IMR1_MASK                0xFF800000U
 
 /* GPIO attributes.*/
+#if defined(STM32C031xx) || defined(__DOXYGEN__)
+#define STM32_HAS_GPIOA                     TRUE
+#define STM32_HAS_GPIOB                     TRUE
+#define STM32_HAS_GPIOC                     TRUE
+#define STM32_HAS_GPIOD                     TRUE
+#define STM32_HAS_GPIOE                     FALSE
+#define STM32_HAS_GPIOF                     TRUE
+#define STM32_HAS_GPIOG                     FALSE
+#define STM32_HAS_GPIOH                     FALSE
+#define STM32_HAS_GPIOI                     FALSE
+#define STM32_HAS_GPIOJ                     FALSE
+#define STM32_HAS_GPIOK                     FALSE
+#define STM32_GPIO_EN_MASK                  (RCC_IOPENR_GPIOAEN |           \
+                                             RCC_IOPENR_GPIOBEN |           \
+                                             RCC_IOPENR_GPIOCEN |           \
+                                             RCC_IOPENR_GPIODEN |           \
+                                             RCC_IOPENR_GPIOFEN)
+#else
 #define STM32_HAS_GPIOA                     TRUE
 #define STM32_HAS_GPIOB                     TRUE
 #define STM32_HAS_GPIOC                     TRUE
@@ -136,8 +154,8 @@
 #define STM32_GPIO_EN_MASK                  (RCC_IOPENR_GPIOAEN |           \
                                              RCC_IOPENR_GPIOBEN |           \
                                              RCC_IOPENR_GPIOCEN |           \
-                                             RCC_IOPENR_GPIODEN |           \
                                              RCC_IOPENR_GPIOFEN)
+#endif
 
 /* I2C attributes.*/
 #define STM32_HAS_I2C1                      TRUE
@@ -152,6 +170,9 @@
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSIUSB48              FALSE
+#define STM32_RCC_HAS_SYSDIV                FALSE
+#define STM32_RCC_HAS_MCODIVEXT             FALSE
+#define STM32_RCC_HAS_FDCAN1SEL             FALSE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
@@ -296,6 +317,9 @@
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSIUSB48              FALSE
+#define STM32_RCC_HAS_SYSDIV                TRUE
+#define STM32_RCC_HAS_MCODIVEXT             FALSE
+#define STM32_RCC_HAS_FDCAN1SEL             FALSE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
@@ -449,6 +473,9 @@
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSIUSB48              TRUE
+#define STM32_RCC_HAS_SYSDIV                TRUE
+#define STM32_RCC_HAS_MCODIVEXT             FALSE
+#define STM32_RCC_HAS_FDCAN1SEL             FALSE
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
@@ -602,6 +629,13 @@
 
 /* RCC attributes.*/
 #define STM32_RCC_HAS_HSIUSB48              FALSE
+#define STM32_RCC_HAS_SYSDIV                TRUE
+#define STM32_RCC_HAS_MCODIVEXT             FALSE
+#if defined(STM32C091xx)
+#define STM32_RCC_HAS_FDCAN1SEL             FALSE
+#else
+#define STM32_RCC_HAS_FDCAN1SEL             TRUE
+#endif
 
 /* SPI attributes.*/
 #define STM32_HAS_SPI1                      TRUE
