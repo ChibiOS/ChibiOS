@@ -74,6 +74,15 @@
 *****************************************************************************
 
 *** 21.11.4 ***
+- NEW: STM32C0xx support.
+- NEW: STM32G0B0 support.
+- NEW: STM32H5xx support.
+- NEW: FDCAN support for STM32G4xx, STM32H5xx and STM32H7xx.
+- NEW: XSNOR serial flash memories framework.
+- NEW: I2C slave support in HAL and in ST low level drivers.
+- NEW: Support for LittleFS flash file system.
+- NEW: VFS subsystem.
+- NEW: OOP framework.
 - NEW: Added missing context switch hook in ARMv7-M-ALT port.
 - NEW: FDCANv1 and FDCANv2 filter enabled.
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
