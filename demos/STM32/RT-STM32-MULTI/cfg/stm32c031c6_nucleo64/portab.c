@@ -22,10 +22,8 @@
  * @{
  */
 
-#include "../stm32c031c6_nucleo64/portab.h"
-
+#include "portab.h"
 #include "hal.h"
-
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */
