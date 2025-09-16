@@ -131,6 +131,16 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 }
 
 /**
+ * @brief   Configures the SYSCFG unit.
+ */
+__STATIC_INLINE void hal_lld_set_static_syscfg(void) {
+
+  SYSCFG->CFGR1 = STM32_SYSCFG_CFGR1;
+  SYSCFG->CFGR2 = STM32_SYSCFG_CFGR2;
+  SYSCFG->CFGR3 = STM32_SYSCFG_CFGR3;
+}
+
+/**
  * @brief   Initializes static muxes and dividers.
  */
 __STATIC_INLINE void hal_lld_set_static_clocks(void) {
@@ -207,6 +217,9 @@ void stm32_clock_init(void) {
 
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
+
+  /* Static SYSCFG configurations.*/
+  hal_lld_set_static_syscfg();
 
   /* Backup domain reset.*/
   bd_reset();

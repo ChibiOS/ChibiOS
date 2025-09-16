@@ -366,6 +366,27 @@
 #endif
 
 /**
+ * @brief   SYSCFG CFGR1 register initialization value.
+ */
+#if !defined(STM32_SYSCFG_CFGR1) || defined(__DOXYGEN__)
+#define STM32_SYSCFG_CFGR1                  (0U)
+#endif
+
+/**
+ * @brief   SYSCFG CFGR2 register initialization value.
+ */
+#if !defined(STM32_SYSCFG_CFGR2) || defined(__DOXYGEN__)
+#define STM32_SYSCFG_CFGR2                  (0U)
+#endif
+
+/**
+ * @brief   SYSCFG CFGR3 register initialization value.
+ */
+#if !defined(STM32_SYSCFG_CFGR3) || defined(__DOXYGEN__)
+#define STM32_SYSCFG_CFGR3                  (0U)
+#endif
+
+/**
  * @brief   HSIDIV divider value.
  * @note    The allowed values are 1, 2, 4, 8, 16, 32, 64, 128.
  */

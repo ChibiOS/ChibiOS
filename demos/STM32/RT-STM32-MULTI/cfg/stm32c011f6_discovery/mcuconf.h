@@ -51,6 +51,9 @@
 #define STM32_PWR_PDCRD                     (0U)
 #define STM32_PWR_PUCRF                     (0U)
 #define STM32_PWR_PDCRF                     (0U)
+#define STM32_SYSCFG_CFGR1                  (0x18U)
+#define STM32_SYSCFG_CFGR2                  (0U)
+#define STM32_SYSCFG_CFGR3                  (0U)
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSIKER_VALUE                  1
 #define STM32_HSI48_ENABLED                 TRUE
