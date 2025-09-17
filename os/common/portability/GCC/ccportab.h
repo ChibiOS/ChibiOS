@@ -126,14 +126,14 @@
  *
  * @param[in] x         a valid expression
  */
-#define CC_LIKELY(x)        (__builtin_expect(!!(x), 1) != 0)
+#define CC_LIKELY(x)        __builtin_expect(!!(x), 1)
 
 /**
  * @brief   Marks a boolean expression as likely false.
  *
  * @param[in] x         a valid expression
  */
-#define CC_UNLIKELY(x)      (__builtin_expect(!!(x), 0) == 0)
+#define CC_UNLIKELY(x)      __builtin_expect(!!(x), 0)
 /** @} */
 
 /*===========================================================================*/
