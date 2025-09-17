@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2023 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -51,6 +51,9 @@
 #define STM32_PWR_PDCRD                     (0U)
 #define STM32_PWR_PUCRF                     (0U)
 #define STM32_PWR_PDCRF                     (0U)
+#define STM32_SYSCFG_CFGR1                  (0U)
+#define STM32_SYSCFG_CFGR2                  (0U)
+#define STM32_SYSCFG_CFGR3                  (0U)
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSIKER_VALUE                  1
 #define STM32_HSI48_ENABLED                 TRUE
