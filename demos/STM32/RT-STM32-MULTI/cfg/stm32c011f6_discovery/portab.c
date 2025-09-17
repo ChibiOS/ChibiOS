@@ -52,7 +52,7 @@
 void portab_setup(void) {
 
   /* Using PA8 as digital input in this demo.*/
-  palSetLineMode(GPIOA_BUTTON, PAL_MODE_INPUT);
+  palSetLineMode(LINE_BUTTON, PAL_MODE_INPUT);
 }
 
 /** @} */

@@ -24,7 +24,7 @@
 #include "oslib_test_root.h"
 #endif
 
-#include "cfg/stm32c031c6_nucleo64/portab.h"
+#include "portab.h"
 
 /* Testing in progress.*/
 static bool testing = false;
@@ -71,7 +71,7 @@ int main(void) {
   /*
    * Creates the blinker thread.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 10, Thread1, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -79,7 +79,7 @@ int main(void) {
    */
   while (true) {
 #if defined (__TEST_RT) || defined (__TEST_OSLIB)
-   if (palReadLine(LINE_BUTTON)) {
+   if (palReadLine(LINE_BUTTON) == PORTAB_BUTTON_PRESSED) {
      testing = true;
 #if defined (__TEST_RT)
       test_execute((BaseSequentialStream *)&PORTAB_SD1, &rt_test_suite);
