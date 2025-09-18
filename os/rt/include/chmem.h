@@ -21,6 +21,36 @@
  * @brief   Memory related macros and structures.
  *
  * @addtogroup memory
+ * @details This module implements architecture-specific memory classes
+ *          modifiers. This is required in NUMA multi-master systems to place
+ *          variables and data in the most appropriate memory.
+ *          Several classes are defined:
+ *          - GLOBAL, used for variables shared among all bus masters without
+ *            coherence requirement.
+ *          - GLOBAL_COHERENT, global variables that require cache coherence.
+ *          - LOCAL, used for variables shared among all bus masters that are
+ *            accessed mainly by a specific core without coherence requirement.
+ *          - LOCAL_COHERENT, local variables that require cache coherence.
+ *          - PRIVATE, variables private to a specific core.
+ *          - PRIVATE_COHERENT, variables private to a specific core that
+ *            require cache coherence.
+ *          .
+ *          Memory classes are defined in the port layer and their full
+ *          implementation is not mandatory, some could be unimplemented on
+ *          specific architectures. If a memory class is not defined in the
+ *          port layer then the system defaults it to the next less restrictive
+ *          memory class:
+ *          - Missing PRIVATE is defaulted to LOCAL.
+ *          - Missing LOCAL is defaulted to GLOBAL.
+ *          - Missing GLOBAL is defaulted to standard BSS segment.
+ *          - Missing PRIVATE_COHERENT is defaulted to LOCAL_COHERENT.
+ *          - Missing LOCAL_COHERENT is defaulted to GLOBAL_COHERENT.
+ *          - Missing GLOBAL_COHERENT is defaulted to standard BSS segment.
+ *          .
+ *          Note, depending on the architecture, cache coherence can be
+ *          implemented by placing variables in a non-cacheable area. This
+ *          can have a performance impact so it is better to not place
+ *          variables in coherent classes unless strictly required.
  * @{
  */
 
