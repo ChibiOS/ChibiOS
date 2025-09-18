@@ -107,6 +107,7 @@
 #include "chtm.h"
 #include "chstats.h"
 #include "chobjects.h"
+#include "chmem.h"
 #include "chsys.h"
 #include "chinstances.h"
 #include "chvt.h"

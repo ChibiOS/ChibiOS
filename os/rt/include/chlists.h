@@ -129,8 +129,8 @@ struct ch_delta_list {
 /**
  * @brief   Iterate over a queue list forwards
  *
- * @param[in] pos  pointer to @p ch_queue_t object to use as a loop cursor
- * @param[in] head pointer to @p ch_queue_t head of queue
+ * @param[in] pos       pointer to @p ch_queue_t object to use as a loop cursor
+ * @param[in] head      pointer to @p ch_queue_t head of queue
  *
  * @notapi
  */
@@ -140,8 +140,8 @@ struct ch_delta_list {
 /**
  * @brief   Iterate over a queue list backwards
  *
- * @param[in] pos   pointer to @p ch_queue_t object to use as a loop cursor
- * @param[in] head  pointer to @p ch_queue_t head of queue
+ * @param[in] pos       pointer to @p ch_queue_t object to use as a loop cursor
+ * @param[in] head      pointer to @p ch_queue_t head of queue
  *
  * @notapi
  */
