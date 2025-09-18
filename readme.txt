@@ -77,7 +77,8 @@
 *****************************************************************************
 
 *** Next ***
-- NEW: Add support for HFSEL to DACv1.
+- NEW: Added multicore memory classes modifiers to RT in order to support
+       NUMA architectures and non-coherent cache architectures.
 - NEW: Added MPU initialization settings in ARMv7-M, ARv7-M-ALT, ARMv8-ML-ALT
        ports. Settings allow to statically initialize any region.
 - NEW: Improved interrupts processing in ARMv7-M-ALT and ARMv8-M-ML-ALT

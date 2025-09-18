@@ -52,30 +52,6 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/**
- * @brief   Core zero memory affinity macro.
- * @note    The memory is meant to be reachable by both cores but
- *          preferred by core zero.
- * @note    Only uninitialized variables can be tagged with this attribute.
- */
-#if defined(PORT_CORE0_BSS_SECTION) || defined(__DOXYGEN__)
-#define CH_SYS_CORE0_MEMORY             PORT_CORE0_BSS_SECTION
-#else
-#define CH_SYS_CORE0_MEMORY             /* Default.*/
-#endif
-
-/**
- * @brief   Core one memory affinity macro.
- * @note    The memory is meant to be reachable by both cores but
- *          preferred by core one.
- * @note    Only uninitialized variables can be tagged with this attribute.
- */
-#if defined(PORT_CORE1_BSS_SECTION) || defined(__DOXYGEN__)
-#define CH_SYS_CORE1_MEMORY             PORT_CORE1_BSS_SECTION
-#else
-#define CH_SYS_CORE1_MEMORY             /* Default.*/
-#endif
-
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/

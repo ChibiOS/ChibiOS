@@ -54,13 +54,11 @@
  *          port layer has the option to enforce some kind of attribute when
  *          this modifier is used.
  * @note    Only uninitialized variables can be tagged with this attribute.
- *
- * @param[in] c         core number as a numeric literal
  */
 #if defined(PORT_MEM_GLOBAL_BSS) || defined(__DOXYGEN__)
-#define CH_MEM_GLOBAL_BSS(c)            PORT_MEM_GLOBAL_BSS##c
+#define CH_MEM_GLOBAL_BSS               PORT_MEM_GLOBAL_BSS
 #else
-#define CH_MEM_GLOBAL_BSS(c)            /* Default BSS.*/
+#define CH_MEM_GLOBAL_BSS               /* Default BSS.*/
 #endif
 
 /**
@@ -76,7 +74,7 @@
 #if defined(PORT_MEM_LOCAL_BSS) || defined(__DOXYGEN__)
 #define CH_MEM_LOCAL_BSS(c)             PORT_MEM_LOCAL_BSS##c
 #else
-#define CH_MEM_LOCAL_BSS(c)             CH_MEM_GLOBAL_BSS(c) /* Fallback.*/
+#define CH_MEM_LOCAL_BSS(c)             CH_MEM_GLOBAL_BSS /* Fallback.*/
 #endif
 
 /**
@@ -111,13 +109,11 @@
  * @note    On multicore systems all OS synchronization objects (semaphores,
  *          mutexes, queues, etc) must be declared as coherent.
  * @note    Only uninitialized variables can be tagged with this attribute.
- *
- * @param[in] c         core number as a numeric literal
  */
 #if defined(PORT_MEM_GLOBAL_COHERENT_BSS) || defined(__DOXYGEN__)
-#define CH_MEM_GLOBAL_COHERENT_BSS(c)   PORT_MEM_GLOBAL_COHERENT_BSS##c
+#define CH_MEM_GLOBAL_COHERENT_BSS      PORT_MEM_GLOBAL_COHERENT_BSS
 #else
-#define CH_MEM_GLOBAL_COHERENT_BSS(c)   /* Default BSS.*/
+#define CH_MEM_GLOBAL_COHERENT_BSS      /* Default BSS.*/
 #endif
 
 /**
@@ -140,7 +136,7 @@
 #if defined(PORT_MEM_LOCAL_COHERENT_BSS) || defined(__DOXYGEN__)
 #define CH_MEM_LOCAL_COHERENT_BSS(c)    PORT_MEM_LOCAL_COHERENT_BSS##c
 #else
-#define CH_MEM_LOCAL_COHERENT_BSS(c)    CH_MEM_GLOBAL_COHERENT_BSS(c) /* Fallback.*/
+#define CH_MEM_LOCAL_COHERENT_BSS(c)    CH_MEM_GLOBAL_COHERENT_BSS /* Fallback.*/
 #endif
 
 /**

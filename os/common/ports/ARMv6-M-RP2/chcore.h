@@ -200,17 +200,31 @@
 #endif
 
 /**
- * @brief   Preferential BSS section for core zero.
+ * @brief   Preferential local and coherent BSS section for core zero.
  */
-#if !defined(PORT_CORE0_BSS_SECTION)
-#define PORT_CORE0_BSS_SECTION          CC_SECTION(".ram4_clear.core0")
+#if !defined(PORT_MEM_LOCAL_COHERENT_BSS0)
+#define PORT_MEM_LOCAL_COHERENT_BSS0    CC_SECTION(".ram4_clear.core0")
 #endif
 
 /**
- * @brief   Preferential BSS section for core one.
+ * @brief   Preferential local and coherent BSS section for core one.
  */
-#if !defined(PORT_CORE1_BSS_SECTION)
-#define PORT_CORE1_BSS_SECTION          CC_SECTION(".ram5_clear.core1")
+#if !defined(PORT_MEM_LOCAL_COHERENT_BSS1)
+#define PORT_MEM_LOCAL_COHERENT_BSS1    CC_SECTION(".ram5_clear.core1")
+#endif
+
+/**
+ * @brief   Preferential local BSS section for core zero.
+ */
+#if !defined(PORT_MEM_LOCAL_BSS0)
+#define PORT_MEM_LOCAL_BSS0             CC_SECTION(".ram4_clear.core0")
+#endif
+
+/**
+ * @brief   Preferential local BSS section for core one.
+ */
+#if !defined(PORT_MEM_LOCAL_BSS1)
+#define PORT_MEM_LOCAL_BSS1             CC_SECTION(".ram5_clear.core1")
 #endif
 
 /*===========================================================================*/

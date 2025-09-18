@@ -22,7 +22,7 @@ semaphore_t blinker_sem;
 /*
  * Green LED blinker thread, times are in milliseconds.
  */
-static CH_SYS_CORE0_MEMORY THD_WORKING_AREA(waThread1, 128);
+static CH_MEM_PRIVATE_BSS(0) THD_WORKING_AREA(waThread1, 128);
 static THD_FUNCTION(Thread1, arg) {
 
   (void)arg;
