@@ -300,13 +300,17 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
   /* Enable write access to Backup domain.*/
   PWR->DBPCR    = PWR_DBPCR_DBP;
   PWR->BDCR     = STM32_PWR_BDCR;
+#if STM32_PWR_HAS_UCPDR
   PWR->UCPDR    = STM32_PWR_UCPDR;
+#endif
   PWR->SCCR     = STM32_PWR_SCCR;
 //  PWR->VMCR     = STM32_PWR_VMCR;
+#if STM32_PWR_HAS_USBSCR
   PWR->USBSCR   = STM32_PWR_USBSCR;
+#endif
   PWR->WUCR     = STM32_PWR_WUCR;
   PWR->IORETR   = STM32_PWR_IORETR;
-  PWR->SECCFGR  = STM32_PWR_SECCFGR;
+//  PWR->SECCFGR  = STM32_PWR_SECCFGR;
   PWR->PRIVCFGR = STM32_PWR_PRIVCFGR;
 }
 
@@ -907,7 +911,9 @@ void stm32_clock_init(void) {
      board files.*/
   rccResetAHB1(~0);
   rccResetAHB2(~STM32_GPIO_EN_MASK);
+#if STM32_SYSTEM_HAS_AHB4
   rccResetAHB4(~0);
+#endif
   rccResetAPB1L(~0);
   rccResetAPB1H(~0);
   rccResetAPB2(~0);
@@ -955,7 +961,9 @@ void stm32_clock_init(void) {
      board files.*/
   rccResetAHB1(~0);
   rccResetAHB2(~STM32_GPIO_EN_MASK);
+#if STM32_SYSTEM_HAS_AHB4
   rccResetAHB4(~0);
+#endif
   rccResetAPB1L(~0);
   rccResetAPB1H(~0);
   rccResetAPB2(~0);

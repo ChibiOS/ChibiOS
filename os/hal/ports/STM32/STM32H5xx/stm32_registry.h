@@ -41,27 +41,6 @@
 /* DAC attributes.*/
 #define STM32_DAC_HAS_MCR                   TRUE
 
-/* RCC attributes.*/
-#define STM32_RCC_HAS_LSI                   TRUE
-#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
-#define STM32_RCC_HAS_CSI                   TRUE
-#define STM32_RCC_HAS_HSI48                 TRUE
-#define STM32_RCC_HAS_HSI                   TRUE
-#define STM32_RCC_HAS_LSE                   TRUE
-#define STM32_RCC_HAS_HSE                   TRUE
-
-#define STM32_RCC_HAS_PLL1                  TRUE
-#define STM32_RCC_PLL1_HAS_P                TRUE
-#define STM32_RCC_PLL1_HAS_Q                TRUE
-#define STM32_RCC_PLL1_HAS_R                TRUE
-
-#define STM32_RCC_HAS_PLL2                  TRUE
-#define STM32_RCC_PLL2_HAS_P                TRUE
-#define STM32_RCC_PLL2_HAS_Q                TRUE
-#define STM32_RCC_PLL2_HAS_R                TRUE
-
-#define STM32_RCC_HAS_PLL3                  FALSE
-
 /* DMA3 attributes.*/
 #define STM32_DMA3_MEMORY_PORT              0U
 #define STM32_DMA3_PERIPHERAL_PORT          1U
@@ -257,6 +236,12 @@
 
 #if defined(STM32H503xx) || defined(__DOXYGEN__)
 
+/* SYSTEM and PWR attributes because device differences.*/
+#define STM32_SYSTEM_HAS_SEC                FALSE
+#define STM32_SYSTEM_HAS_AHB4               FALSE
+#define STM32_PWR_HAS_UCPDR                 FALSE
+#define STM32_PWR_HAS_USBSCR                FALSE
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      FALSE
@@ -309,6 +294,27 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      FALSE
 #define STM32_HAS_I2C4                      FALSE
+
+/* RCC attributes.*/
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_CSI                   TRUE
+#define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_HSI                   TRUE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL1                  TRUE
+#define STM32_RCC_PLL1_HAS_P                TRUE
+#define STM32_RCC_PLL1_HAS_Q                TRUE
+#define STM32_RCC_PLL1_HAS_R                TRUE
+
+#define STM32_RCC_HAS_PLL2                  TRUE
+#define STM32_RCC_PLL2_HAS_P                TRUE
+#define STM32_RCC_PLL2_HAS_Q                TRUE
+#define STM32_RCC_PLL2_HAS_R                TRUE
+
+#define STM32_RCC_HAS_PLL3                  FALSE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    FALSE
@@ -403,6 +409,12 @@
 #if defined(STM32H562xx) || defined(STM32H563xx) ||                         \
     defined(STM32H573xx) || defined(__DOXYGEN__)
 
+/* SYSTEM and PWR attributes because device differences.*/
+#define STM32_SYSTEM_HAS_SEC                TRUE
+#define STM32_SYSTEM_HAS_AHB4               TRUE
+#define STM32_PWR_HAS_UCPDR                 TRUE
+#define STM32_PWR_HAS_USBSCR                TRUE
+
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
 #define STM32_HAS_ADC2                      TRUE
@@ -459,6 +471,30 @@
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
 #define STM32_HAS_I2C4                      TRUE
+
+/* RCC attributes.*/
+#define STM32_RCC_HAS_LSI                   TRUE
+#define STM32_RCC_HAS_LSI_PRESCALER         FALSE
+#define STM32_RCC_HAS_CSI                   TRUE
+#define STM32_RCC_HAS_HSI48                 TRUE
+#define STM32_RCC_HAS_HSI                   TRUE
+#define STM32_RCC_HAS_LSE                   TRUE
+#define STM32_RCC_HAS_HSE                   TRUE
+
+#define STM32_RCC_HAS_PLL1                  TRUE
+#define STM32_RCC_PLL1_HAS_P                TRUE
+#define STM32_RCC_PLL1_HAS_Q                TRUE
+#define STM32_RCC_PLL1_HAS_R                TRUE
+
+#define STM32_RCC_HAS_PLL2                  TRUE
+#define STM32_RCC_PLL2_HAS_P                TRUE
+#define STM32_RCC_PLL2_HAS_Q                TRUE
+#define STM32_RCC_PLL2_HAS_R                TRUE
+
+#define STM32_RCC_HAS_PLL3                  TRUE
+#define STM32_RCC_PLL3_HAS_P                TRUE
+#define STM32_RCC_PLL3_HAS_Q                TRUE
+#define STM32_RCC_PLL3_HAS_R                TRUE
 
 /* SDMMC attributes.*/
 #define STM32_HAS_SDMMC1                    TRUE

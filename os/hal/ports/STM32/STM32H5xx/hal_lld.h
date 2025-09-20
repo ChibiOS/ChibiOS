@@ -77,6 +77,7 @@
  * @name   Clock points names
  * @{
  */
+#if STM32_RCC_HAS_PLL3 || defined(__DOXYGEN__)
 #define CLK_HSI                 0U
 #define CLK_CSI                 1U
 #define CLK_HSI48               2U
@@ -100,6 +101,28 @@
 #define CLK_MCO1                20U
 #define CLK_MCO2                21U
 #define CLK_ARRAY_SIZE          22U
+#else
+#define CLK_HSI                 0U
+#define CLK_CSI                 1U
+#define CLK_HSI48               2U
+#define CLK_HSE                 3U
+#define CLK_SYSCLK              4U
+#define CLK_PLL1PCLK            5U
+#define CLK_PLL1QCLK            6U
+#define CLK_PLL1RCLK            7U
+#define CLK_PLL2PCLK            8U
+#define CLK_PLL2QCLK            9U
+#define CLK_PLL2RCLK            10U
+#define CLK_HCLK                11U
+#define CLK_PCLK1               12U
+#define CLK_PCLK1TIM            13U
+#define CLK_PCLK2               14U
+#define CLK_PCLK2TIM            15U
+#define CLK_PCLK3               16U
+#define CLK_MCO1                17U
+#define CLK_MCO2                18U
+#define CLK_ARRAY_SIZE          19U
+#endif
 /** @} */
 
 /**
@@ -3608,7 +3631,11 @@ typedef struct {
   uint32_t          rcc_cfgr1;
   uint32_t          rcc_cfgr2;
   uint32_t          flash_acr;
+#if STM32_RCC_HAS_PLL3 || defined(__DOXYGEN__)
   stm32_pll_regs_t  plls[3];
+#else
+  stm32_pll_regs_t  plls[2];
+#endif
 } halclkcfg_t;
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -3627,6 +3654,7 @@ typedef struct {
  *
  * @notapi
  */
+#if STM32_RCC_HAS_PLL3 || defined(__DOXYGEN__)
 #define hal_lld_get_clock_point(clkpt)                                      \
   ((clkpt) == CLK_SYSCLK    ? STM32_SYSCLK          :                       \
    (clkpt) == CLK_PLL1PCLK  ? STM32_PLL1_P_CLKOUT   :                       \
@@ -3648,6 +3676,26 @@ typedef struct {
    (clkpt) == CLK_MCO2      ? STM32_MCO2CLK         :                       \
    (clkpt) == CLK_HSI48     ? STM32_HSI48CLK        :                       \
    0U)
+#else
+#define hal_lld_get_clock_point(clkpt)                                      \
+  ((clkpt) == CLK_SYSCLK    ? STM32_SYSCLK          :                       \
+   (clkpt) == CLK_PLL1PCLK  ? STM32_PLL1_P_CLKOUT   :                       \
+   (clkpt) == CLK_PLL1QCLK  ? STM32_PLL1_Q_CLKOUT   :                       \
+   (clkpt) == CLK_PLL1RCLK  ? STM32_PLL1_R_CLKOUT   :                       \
+   (clkpt) == CLK_PLL2PCLK  ? STM32_PLL2_P_CLKOUT   :                       \
+   (clkpt) == CLK_PLL2QCLK  ? STM32_PLL2_Q_CLKOUT   :                       \
+   (clkpt) == CLK_PLL2RCLK  ? STM32_PLL2_R_CLKOUT   :                       \
+   (clkpt) == CLK_HCLK      ? STM32_HCLK            :                       \
+   (clkpt) == CLK_PCLK1     ? STM32_PCLK1           :                       \
+   (clkpt) == CLK_PCLK1TIM  ? STM32_TIMP1CLK        :                       \
+   (clkpt) == CLK_PCLK2     ? STM32_PCLK2           :                       \
+   (clkpt) == CLK_PCLK2TIM  ? STM32_TIMP2CLK        :                       \
+   (clkpt) == CLK_PCLK3     ? STM32_PCLK3           :                       \
+   (clkpt) == CLK_MCO1      ? STM32_MCO1CLK         :                       \
+   (clkpt) == CLK_MCO2      ? STM32_MCO2CLK         :                       \
+   (clkpt) == CLK_HSI48     ? STM32_HSI48CLK        :                       \
+   0U)
+#endif
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/

@@ -433,11 +433,17 @@ __STATIC_INLINE void pll1_wait_lock(void) {
 
 __STATIC_INLINE void pll1_setup(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
 
+#if STM32_RCC_HAS_PLL1
   /* PLL1 activation.*/
   RCC->PLL1CFGR  = cfgr & ~STM32_PLLFRACEN_MASK;
   RCC->PLL1DIVR  = divr;
   RCC->PLL1FRACR = fracr;
   RCC->PLL1CFGR  = cfgr;
+#else
+  (void)cfgr;
+  (void)divr;
+  (void)fracr;
+#endif
 }
 
 __STATIC_INLINE void pll1_init(void) {
