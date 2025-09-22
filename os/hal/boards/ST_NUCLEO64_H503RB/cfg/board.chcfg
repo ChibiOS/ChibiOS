@@ -30,44 +30,44 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="RMII_REF_CLK"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="11" />
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin2
-        ID="RMII_MDIO"
-        Type="OpenDrain"
+        ID=""
+        Type="PushPull"
+        Level="High"
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
+      <pin3
+        ID="USART3_RX VCP_RX"
+        Type="PushPull"
         Level="High"
         Speed="Maximum"
-        Resistor="PullUp"
-        Mode="Alternate"
-        Alternate="11" />
-      <pin3
-        ID=""
-        Type="PushPull"
-        Level="High"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Mode="Input"
-        Alternate="0" />
-      <pin4
-        ID="VBUS_SENSE"
-        Type="PushPull"
-        Level="High"
-        Speed="Minimum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
-      <pin5
-        ID=""
+        Mode="Alternate"
+        Alternate="7" />
+      <pin4
+        ID="USART3_TX VCP_TX"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Mode="Input"
+        Speed="Maximum"
+        Resistor="Floating"
+        Mode="Alternate"
+        Alternate="7" />
+      <pin5
+        ID="LED1 LED_GREEN"
+        Type="PushPull"
+        Level="Low"
+        Speed="Maximum"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin6
         ID=""
@@ -78,13 +78,13 @@
         Mode="Input"
         Alternate="0" />
       <pin7
-        ID="RMII_CRS_DV"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
+        Speed="Minimum"
         Resistor="PullUp"
-        Mode="Alternate"
-        Alternate="11" />
+        Mode="Input"
+        Alternate="0" />
       <pin8
         ID=""
         Type="PushPull"
@@ -94,11 +94,11 @@
         Mode="Input"
         Alternate="0" />
       <pin9
-        ID="UCPD_DBn"
+        ID="VBUS_SENSE"
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="PullUp"
+        Speed="Minimum"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin10
@@ -152,12 +152,12 @@
     </GPIOA>
     <GPIOB>
       <pin0
-        ID="LED1 LED_GREEN"
+        ID=""
         Type="PushPull"
-        Level="Low"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Output"
+        Level="High"
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
         Alternate="0" />
       <pin1
         ID=""
@@ -256,7 +256,7 @@
         Mode="Input"
         Alternate="0" />
       <pin13
-        ID="UCPD_CC1"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
@@ -264,21 +264,21 @@
         Mode="Input"
         Alternate="0" />
       <pin14
-        ID="UCPD_CC2"
+        ID=""
         Type="PushPull"
-        Level="Low"
+        Level="High"
         Speed="Minimum"
         Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin15
-        ID="RMII_TXD1"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="11" />
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
     </GPIOB>
     <GPIOC>
       <pin0
@@ -290,13 +290,13 @@
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID="RMII_MDC"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="11" />
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin2
         ID=""
         Type="PushPull"
@@ -314,21 +314,21 @@
         Mode="Input"
         Alternate="0" />
       <pin4
-        ID="RMII_RXD0"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="11" />
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin5
-        ID="RMII_RXD1"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="11" />
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin6
         ID=""
         Type="PushPull"
@@ -362,12 +362,12 @@
         Mode="Input"
         Alternate="0" />
       <pin10
-        ID=""
+        ID="USB_PWR_EN"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="PullUp"
-        Mode="Input"
+        Speed="Maximum"
+        Resistor="Floating"
+        Mode="Output"
         Alternate="0" />
       <pin11
         ID=""
@@ -428,11 +428,11 @@
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID=""
+        ID="USB_OVCR"
         Type="PushPull"
         Level="High"
         Speed="Minimum"
-        Resistor="PullUp"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin3
@@ -476,21 +476,21 @@
         Mode="Input"
         Alternate="0" />
       <pin8
-        ID="USART3_RX STLK_RX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="7" />
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin9
-        ID="USART3_TX STLK_TX"
+        ID=""
         Type="PushPull"
         Level="High"
-        Speed="Maximum"
-        Resistor="Floating"
-        Mode="Alternate"
-        Alternate="7" />
+        Speed="Minimum"
+        Resistor="PullUp"
+        Mode="Input"
+        Alternate="0" />
       <pin10
         ID=""
         Type="OpenDrain"
@@ -542,19 +542,19 @@
     </GPIOD>
     <GPIOH>
       <pin0
-        ID=""
+        ID="OSC_IN"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="PullUp"
+        Speed="Maximum"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin1
-        ID=""
+        ID="OSC_OUT"
         Type="PushPull"
         Level="High"
-        Speed="Minimum"
-        Resistor="PullUp"
+        Speed="Maximum"
+        Resistor="Floating"
         Mode="Input"
         Alternate="0" />
       <pin2
