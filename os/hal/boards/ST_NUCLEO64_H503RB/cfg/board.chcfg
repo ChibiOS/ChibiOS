@@ -52,7 +52,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7" />
+        Alternate="13" />
       <pin4
         ID="USART3_TX VCP_TX"
         Type="PushPull"
@@ -60,7 +60,7 @@
         Speed="Maximum"
         Resistor="Floating"
         Mode="Alternate"
-        Alternate="7" />
+        Alternate="13" />
       <pin5
         ID="LED1 LED_GREEN"
         Type="PushPull"

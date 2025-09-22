@@ -216,8 +216,8 @@
  * PA0  - PIN0                      (input pullup).
  * PA1  - PIN1                      (input pullup).
  * PA2  - PIN2                      (input pullup).
- * PA3  - USART3_RX VCP_RX          (alternate 7).
- * PA4  - USART3_TX VCP_TX          (alternate 7).
+ * PA3  - USART3_RX VCP_RX          (alternate 13).
+ * PA4  - USART3_TX VCP_TX          (alternate 13).
  * PA5  - LED1 LED_GREEN            (output pushpull maximum).
  * PA6  - PIN6                      (input pullup).
  * PA7  - PIN7                      (input pullup).
@@ -313,8 +313,8 @@
 #define VAL_GPIOA_AFRL              (PIN_AFIO_AF(GPIOA_PIN0, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_PIN1, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_PIN2, 0U) |          \
-                                     PIN_AFIO_AF(GPIOA_USART3_RX, 7U) |     \
-                                     PIN_AFIO_AF(GPIOA_USART3_TX, 7U) |     \
+                                     PIN_AFIO_AF(GPIOA_USART3_RX, 13U) |    \
+                                     PIN_AFIO_AF(GPIOA_USART3_TX, 13U) |    \
                                      PIN_AFIO_AF(GPIOA_LED1, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_PIN6, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_PIN7, 0U))
