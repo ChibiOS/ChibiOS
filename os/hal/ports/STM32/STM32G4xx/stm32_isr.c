@@ -71,15 +71,10 @@
 #include "stm32_fdcan2.inc"
 #include "stm32_fdcan3.inc"
 
-/*
- * TODO EL Future support for I2Cv4
- */
-#if 0
 #include "stm32_i2c1.inc"
 #include "stm32_i2c2.inc"
 #include "stm32_i2c3.inc"
 #include "stm32_i2c4.inc"
-#endif
 
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
@@ -128,15 +123,10 @@ void irqInit(void) {
   fdcan2_irq_init();
   fdcan3_irq_init();
 
-  /*
-   * TODO EL Future support for I2Cv4
-   */
-#if 0
   i2c1_irq_init();
   i2c2_irq_init();
   i2c3_irq_init();
   i2c4_irq_init();
-#endif
 
   tim1_tim15_tim16_tim17_irq_init();
   tim2_irq_init();
@@ -182,15 +172,10 @@ void irqDeinit(void) {
   fdcan2_irq_deinit();
   fdcan3_irq_deinit();
 
-  /*
-   * TODO EL Future support for I2Cv4
-   */
-#if 0
   i2c1_irq_deinit();
   i2c2_irq_deinit();
   i2c3_irq_deinit();
   i2c4_irq_deinit();
-#endif
 
   tim1_tim15_tim16_tim17_irq_deinit();
   tim2_irq_deinit();
