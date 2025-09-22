@@ -49,8 +49,6 @@
 #define STM32_HSECLK                24000000U
 #endif
 
-#define STM32_HSE_BYPASS
-
 /*
  * MCU type as defined in the ST header.
  */

@@ -14,7 +14,7 @@
   <subtype>STM32H503xx</subtype>
   <clocks
     HSEFrequency="24000000"
-    HSEBypass="true"
+    HSEBypass="false"
     LSEFrequency="32768"
     LSEBypass="false"
     VDD="300"
