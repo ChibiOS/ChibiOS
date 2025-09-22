@@ -87,11 +87,13 @@ const halclkcfg_t hal_clkcfg_reset = {
       .divr             = STM32_RCC_PLL2DIVR_RESET,
       .frac             = STM32_RCC_PLL2FRACR_RESET
     },
+#if STM32_RCC_HAS_PLL3
     [2] = {
       .cfgr             = STM32_RCC_PLL3CFGR_RESET,
       .divr             = STM32_RCC_PLL3DIVR_RESET,
       .frac             = STM32_RCC_PLL3FRACR_RESET
     }
+#endif
   }
 };
 
@@ -151,6 +153,7 @@ const halclkcfg_t hal_clkcfg_default = {
                           STM32_PLL2P       | STM32_PLL2N,
       .frac             = STM32_RCC_PLL2FRACR_RESET
     },
+#if STM32_RCC_HAS_PLL3
     [2] = {
       .cfgr             = STM32_PLL3REN     | STM32_PLL3QEN     |
                           STM32_PLL3PEN     | STM32_PLL3M       |
@@ -160,6 +163,7 @@ const halclkcfg_t hal_clkcfg_default = {
                           STM32_PLL3P       | STM32_PLL3N,
       .frac             = STM32_RCC_PLL3FRACR_RESET
     }
+#endif
   }
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
@@ -204,9 +208,11 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_PLL2PCLK]        = STM32_PLL2_P_CLKOUT,
   [CLK_PLL2QCLK]        = STM32_PLL2_Q_CLKOUT,
   [CLK_PLL2RCLK]        = STM32_PLL2_R_CLKOUT,
+#if STM32_RCC_HAS_PLL3
   [CLK_PLL3PCLK]        = STM32_PLL3_P_CLKOUT,
   [CLK_PLL3QCLK]        = STM32_PLL3_Q_CLKOUT,
   [CLK_PLL3RCLK]        = STM32_PLL3_R_CLKOUT,
+#endif
   [CLK_HCLK]            = STM32_HCLK,
   [CLK_PCLK1]           = STM32_PCLK1,
   [CLK_PCLK1TIM]        = STM32_TIMP1CLK,
@@ -382,11 +388,15 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   const system_limits_t *slp;
   uint32_t n, flashws;
   halfreq_t hsiclk = 0U, hsi48clk = 0U, csiclk = 0U, hseclk = 0U;
-  halfreq_t pll1selclk, pll2selclk, pll3selclk;
+  halfreq_t pll1selclk;
   halfreq_t pll1pclk = 0U, pll1qclk = 0U, pll1rclk = 0U;
+  halfreq_t pll2selclk;
   halfreq_t pll2pclk = 0U, pll2qclk = 0U, pll2rclk = 0U;
-  halfreq_t pll3pclk = 0U, pll3qclk = 0U, pll3rclk = 0U;
   halfreq_t sysclk, hclk, pclk1, pclk2, pclk3, pclk1tim, pclk2tim, mco1clk, mco2clk;
+#if STM32_RCC_HAS_PLL3
+  halfreq_t pll3selclk;
+  halfreq_t pll3pclk = 0U, pll3qclk = 0U, pll3rclk = 0U;
+#endif
 
   /* System limits based on desired VOS settings.*/
   switch (ccp->pwr_voscr) {
@@ -456,6 +466,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     pll2selclk = 0U;
   }
 
+#if STM32_RCC_HAS_PLL3
   /* PLL3 MUX clock.*/
   switch (ccp->plls[2].cfgr & STM32_PLLSRC_MASK) {
   case STM32_PLL3SRC_HSI:
@@ -470,6 +481,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   default:
     pll3selclk = 0U;
   }
+#endif
 
   /* PLL1 outputs.*/
   if ((ccp->rcc_cr & STM32_PLL1ON) != 0U) {
@@ -570,6 +582,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
   }
 
+#if STM32_RCC_HAS_PLL3
   /* PLL3 outputs.*/
   if ((ccp->rcc_cr & STM32_PLL3ON) != 0U) {
     uint32_t mdiv, ndiv;
@@ -617,6 +630,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
       }
     }
   }
+#endif
 
   /* SYSCLK frequency.*/
   switch (ccp->rcc_cfgr1 & STM32_SW_MASK) {
@@ -747,9 +761,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   clock_points[CLK_PLL2PCLK] = pll2pclk;
   clock_points[CLK_PLL2QCLK] = pll2qclk;
   clock_points[CLK_PLL2RCLK] = pll2rclk;
+#if STM32_RCC_HAS_PLL3
   clock_points[CLK_PLL3PCLK] = pll3pclk;
   clock_points[CLK_PLL3QCLK] = pll3qclk;
   clock_points[CLK_PLL3RCLK] = pll3rclk;
+#endif
   clock_points[CLK_HCLK]     = hclk;
   clock_points[CLK_PCLK1]    = pclk1;
   clock_points[CLK_PCLK1TIM] = pclk1tim;
@@ -829,6 +845,7 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* PLLs setup.*/
   pll1_setup(ccp->plls[0].cfgr, ccp->plls[0].divr, ccp->plls[0].frac);
   pll2_setup(ccp->plls[1].cfgr, ccp->plls[1].divr, ccp->plls[1].frac);
+#if STM32_RCC_HAS_PLL3
   pll3_setup(ccp->plls[2].cfgr, ccp->plls[2].divr, ccp->plls[2].frac);
 
   /* Activating enabled PLLs together.*/
@@ -837,6 +854,14 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
   /* Waiting for all enabled PLLs to become stable.*/
   mask = (ccp->rcc_cr & (STM32_PLL3ON | STM32_PLL2ON | STM32_PLL1ON)) << 1;
+#else
+  /* Activating enabled PLLs together.*/
+  cr |= ccp->rcc_cr & (STM32_PLL2ON | STM32_PLL1ON);
+  RCC->CR = cr;
+
+  /* Waiting for all enabled PLLs to become stable.*/
+  mask = (ccp->rcc_cr & (STM32_PLL2ON | STM32_PLL1ON)) << 1;
+#endif
   while ((RCC->CR & mask) != mask) {
     /* Waiting.*/
     /* TODO timeout and failure.*/

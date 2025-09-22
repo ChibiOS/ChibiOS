@@ -140,9 +140,11 @@
  * @name    RCC_CR register bits definitions
  * @{
  */
+#if STM32_RCC_HAS_PLL3 || defined(__DOXYGEN__)
 #define STM32_PLL3ON_POS        RCC_CR_PLL3ON_Pos
 #define STM32_PLL3ON_MASK       RCC_CR_PLL3ON_Msk
 #define STM32_PLL3ON            (1U << STM32_PLL3ON_POS)
+#endif
 
 #define STM32_PLL2ON_POS        RCC_CR_PLL2ON_Pos
 #define STM32_PLL2ON_MASK       RCC_CR_PLL2ON_Msk

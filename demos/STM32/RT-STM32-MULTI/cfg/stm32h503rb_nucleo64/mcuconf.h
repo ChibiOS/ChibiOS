@@ -54,13 +54,10 @@
  */
 #define STM32_PWR_VOSCR                     STM32_VOS_RANGE0
 #define STM32_PWR_BDCR                      (0U)
-#define STM32_PWR_UCPDR                     (0U)
 #define STM32_PWR_SCCR                      (0U)
 #define STM32_PWR_VMCR                      (0U)
-#define STM32_PWR_USBSCR                    (0U)
 #define STM32_PWR_WUCR                      (0U)
 #define STM32_PWR_IORETR                    (0U)
-#define STM32_PWR_SECCFGR                   (0U)
 #define STM32_PWR_PRIVCFGR                  (0U)
 
 /*
