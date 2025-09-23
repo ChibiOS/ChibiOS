@@ -341,7 +341,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
        kernel configuration.*/
     rqp = REG_HEADER(oip);
 
-    /* Scanning the ready list forward.*/
+    /* Scanning the registry list forward.*/
     n = (cnt_t)0;
     qp = rqp->next;
     while (qp != rqp) {
@@ -349,7 +349,7 @@ bool chSysIntegrityCheckI(unsigned testmask) {
       qp = qp->next;
     }
 
-    /* Scanning the ready list backward.*/
+    /* Scanning the registry list backward.*/
     qp = rqp->prev;
     while (qp != rqp) {
       n--;
