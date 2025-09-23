@@ -166,6 +166,7 @@
                                              RCC_IOPENR_GPIOFEN)
 
 /* I2C attributes.*/
+#define STM32_I2C_SINGLE_IRQ                TRUE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      FALSE
@@ -360,6 +361,7 @@
                                              RCC_IOPENR_GPIOFEN)
 
 /* I2C attributes.*/
+#define STM32_I2C_SINGLE_IRQ                TRUE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      FALSE
@@ -548,6 +550,7 @@
                                              RCC_IOPENR_GPIOFEN)
 
 /* I2C attributes.*/
+#define STM32_I2C_SINGLE_IRQ                TRUE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      FALSE
@@ -750,6 +753,7 @@
                                              RCC_IOPENR_GPIOFEN)
 
 /* I2C attributes.*/
+#define STM32_I2C_SINGLE_IRQ                TRUE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
@@ -955,6 +959,7 @@
                                              RCC_IOPENR_GPIOFEN)
 
 /* I2C attributes.*/
+#define STM32_I2C_SINGLE_IRQ                TRUE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE

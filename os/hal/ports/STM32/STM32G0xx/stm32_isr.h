@@ -121,11 +121,11 @@
  */
 #define STM32_I2C1_GLOBAL_HANDLER           Vector9C
 #define STM32_I2C2_GLOBAL_HANDLER           VectorA0
-#define STM32_I2C2_I2C3_GLOBAL_HANDLER      VectorA0
+#define STM32_I2C2_3_GLOBAL_HANDLER         VectorA0
 
 #define STM32_I2C1_GLOBAL_NUMBER            23
 #define STM32_I2C2_GLOBAL_NUMBER            24
-#define STM32_I2C2_I2C3_GLOBAL_NUMBER       24
+#define STM32_I2C2_3_GLOBAL_NUMBER          24
 
 /*
  * TIM units.
@@ -182,6 +182,13 @@
 #define STM32_USB1_HP_NUMBER                8
 #define STM32_USB1_LP_NUMBER                8
 /** @} */
+
+/* Individual IRQ priorities are derived by the shared I2C IRQ priority,
+   drivers expect individual definitions to exist.*/
+#if STM32_HAS_I2C2 && STM32_HAS_I2C3
+#define STM32_IRQ_I2C2_PRIORITY             STM32_IRQ_I2C2_3_PRIORITY
+#define STM32_IRQ_I2C3_PRIORITY             STM32_IRQ_I2C2_3_PRIORITY
+#endif
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

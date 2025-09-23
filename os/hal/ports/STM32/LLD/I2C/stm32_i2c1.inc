@@ -37,11 +37,34 @@
 
 #if STM32_HAS_I2C1
 
-/* Priority settings checks.*/
+/* Checks on vector names and numbers definitions.*/
+#if STM32_I2C_SINGLE_IRQ == TRUE
+#if !defined(STM32_I2C1_GLOBAL_NUMBER)
+#error "STM32_I2C1_GLOBAL_NUMBER not defined in stm32_irq.h"
+#endif
+#if !defined(STM32_I2C1_GLOBAL_HANDLER)
+#error "STM32_I2C1_GLOBAL_HANDLER not defined in stm32_irq.h"
+#endif
+
+#else
+#if !defined(STM32_I2C1_EV_HANDLER)
+#error "STM32_I2C1_EV_HANDLER not defined in stm32_irq.h"
+#endif
+#if !defined(STM32_I2C1_ER_HANDLER)
+#error "STM32_I2C1_ER_HANDLER not defined in stm32_irq.h"
+#endif
+#endif
+
+/* Checks for mcuconf.h correctness.*/
 #if !defined(STM32_IRQ_I2C1_PRIORITY)
 #error "STM32_IRQ_I2C1_PRIORITY not defined in mcuconf.h"
 #endif
 
+#if !defined(STM32_I2C_USE_I2C1)
+#error "STM32_I2C_USE_I2C1 not defined in mcuconf.h"
+#endif
+
+/* Priority settings checks.*/
 #if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_I2C1_PRIORITY)
 #error "Invalid IRQ priority assigned to STM32_IRQ_I2C1_PRIORITY"
 #endif
@@ -68,7 +91,7 @@ static inline void i2c1_irq_init(void) {
   nvicEnableVector(STM32_I2C1_EV_NUMBER, STM32_IRQ_I2C1_PRIORITY);
   nvicEnableVector(STM32_I2C1_ER_NUMBER, STM32_IRQ_I2C1_PRIORITY);
 #endif
-#endif /* STM32_I2C1_IS_USED */
+#endif
 }
 
 static inline void i2c1_irq_deinit(void) {
@@ -79,7 +102,7 @@ static inline void i2c1_irq_deinit(void) {
   nvicDisableVector(STM32_I2C1_EV_NUMBER);
   nvicDisableVector(STM32_I2C1_ER_NUMBER);
 #endif
-#endif /* STM32_I2C1_IS_USED */
+#endif
 }
 
 /*===========================================================================*/
@@ -126,7 +149,7 @@ OSAL_IRQ_HANDLER(STM32_I2C1_ER_HANDLER) {
   OSAL_IRQ_EPILOGUE();
 }
 #endif
-#endif /* STM32_I2C1_IS_USED */
+#endif /* defined(STM32_I2C1_IS_USED) */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

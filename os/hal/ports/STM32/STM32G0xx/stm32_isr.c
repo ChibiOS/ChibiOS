@@ -63,6 +63,15 @@
 #include "stm32_exti4_15.inc"
 #include "stm32_exti19-21.inc"
 
+#include "stm32_i2c1.inc"
+#if STM32_HAS_I2C2 && STM32_HAS_I2C3
+#include "stm32_i2c2_3.inc"
+#elif STM32_HAS_I2C2
+#include "stm32_i2c2.inc"
+#else
+#error "unknown I2Cs combination"
+#endif
+
 #include "stm32_usart1.inc"
 #if STM32_HAS_USART2 && STM32_HAS_LPUART2
 #include "stm32_usart2_lp2.inc"
@@ -115,6 +124,13 @@ void irqInit(void) {
   exti4_15_irq_init();
   exti19_exti21_irq_init();
 
+  i2c1_irq_init();
+#if STM32_HAS_I2C2 && STM32_HAS_I2C3
+  i2c2_i2c3_irq_init();
+#elif STM32_HAS_I2C2
+  i2c2_irq_init();
+#endif
+
   tim1_irq_init();
   tim2_irq_init();
 #if STM32_HAS_TIM3 && STM32_HAS_TIM4
@@ -157,6 +173,13 @@ void irqDeinit(void) {
   exti2_3_irq_deinit();
   exti4_15_irq_deinit();
   exti19_exti21_irq_deinit();
+
+  i2c1_irq_deinit();
+#if STM32_HAS_I2C2 && STM32_HAS_I2C3
+  i2c2_i2c3_irq_deinit();
+#elif STM32_HAS_I2C2
+  i2c2_irq_deinit();
+#endif
 
   tim1_irq_deinit();
   tim2_irq_deinit();
