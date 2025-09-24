@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -95,6 +95,9 @@
 #define STM32_IRQ_EXTI4_15_PRIORITY         3
 #define STM32_IRQ_EXTI1921_PRIORITY         3
 
+#define STM32_IRQ_I2C1_PRIORITY             3
+#define STM32_IRQ_I2C2_PRIORITY             3
+
 #define STM32_IRQ_USART1_PRIORITY           2
 #define STM32_IRQ_USART2_PRIORITY           2
 #define STM32_IRQ_LPUART1_PRIORITY          2
@@ -133,12 +136,8 @@
 #define STM32_I2C_USE_I2C1                  FALSE
 #define STM32_I2C_USE_I2C2                  FALSE
 #define STM32_I2C_BUSY_TIMEOUT              50
-#define STM32_I2C_I2C1_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2C_I2C1_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2C_I2C2_RX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2C_I2C2_TX_DMA_STREAM        STM32_DMA_STREAM_ID_ANY
-#define STM32_I2C_I2C1_IRQ_PRIORITY         3
-#define STM32_I2C_I2C2_IRQ_PRIORITY         3
+#define STM32_I2C_I2C1_DMA_CHANNEL          STM32_DMA_STREAM_ID_ANY
+#define STM32_I2C_I2C2_DMA_CHANNEL          STM32_DMA_STREAM_ID_ANY
 #define STM32_I2C_I2C1_DMA_PRIORITY         3
 #define STM32_I2C_I2C2_DMA_PRIORITY         3
 #define STM32_I2C_DMA_ERROR_HOOK(i2cp)      osalSysHalt("DMA failure")
