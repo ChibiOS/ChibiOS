@@ -57,25 +57,20 @@
  *          structures.
  * @note    The reaction in case of failure is to invoke the
  *          @p CH_CFG_INTEGRITY_HOOK which, by default, halts the system.
- * @note    If the system is corrupted then one possible outcomes of this
- *          function is an exception caused by @p NULL or corrupted pointers
- *          in list elements. Exception vectors must be monitored as well.
+ * @note    This functionality is available at any hardening level.
+ * @note    Pointers validation is enabled at hardening level 2 or greater,
+ *          at lower levels a corrupted pointer can cause an exception.
+ *          Exceptions should be monitored as well as possible outcomes.
  * @note    This function is not used internally, it is up to the
  *          application to define if and where to perform system
  *          checking.
- * @note    Performing all tests at once can be a slow operation and can
- *          degrade the system response time. It is suggested to execute
- *          one test at time and release the critical zone in between tests.
  *
  * @param[in] testmask  Each bit in this mask is associated to a test to be
  *                      performed.
- * @return              The test result.
- * @retval false        The test succeeded.
- * @retval true         Test failed.
  *
  * @iclass
  */
-bool chSftIntegrityCheckI(unsigned testmask) {
+void chSftIntegrityCheckI(unsigned testmask) {
   os_instance_t *oip = currcore;
 
   chDbgCheckClassI();
@@ -86,12 +81,12 @@ bool chSftIntegrityCheckI(unsigned testmask) {
     /* Scanning the ready list forward.*/
     ch_priority_queue_t *current = &oip->rlist.pqueue;
     do {
-      ch_priority_queue_t *next = current->next;
+      ch_priority_queue_t *next;
 
       /* Checking the backward link.*/
-      if (next->prev != current) {
-        return true;
-      }
+      next = current->next;
+      chSftValidateDataPointerX(next);
+      chSftAssert(0, next->prev == current, "invalid backward pointer");
       current = next;
     } while (current != &oip->rlist.pqueue);
   }
@@ -102,12 +97,12 @@ bool chSftIntegrityCheckI(unsigned testmask) {
     /* Scanning the timers list forward.*/
     ch_delta_list_t *current = &oip->vtlist.dlist;
     do {
-      ch_delta_list_t *next = current->next;
+      ch_delta_list_t *next;
 
       /* Checking the backward link.*/
-      if (next->prev != current) {
-        return true;
-      }
+      next = current->next;
+      chSftValidateDataPointerX(next);
+      chSftAssert(0, next->prev == current, "invalid backward pointer");
       current = next;
     } while (current != &oip->vtlist.dlist);
   }
@@ -118,12 +113,12 @@ bool chSftIntegrityCheckI(unsigned testmask) {
     /* Scanning the registry list forward.*/
     ch_queue_t *current = REG_HEADER(oip);
     do {
-      ch_queue_t *next = current->next;
+      ch_queue_t *next;
 
       /* Checking the backward link.*/
-      if (next->prev != current) {
-        return true;
-      }
+      chSftValidateDataPointerX(next);
+      next = current->next;
+      chSftAssert(0, next->prev == current, "invalid backward pointer");
       current = next;
     } while (current != REG_HEADER(oip));
   }
@@ -134,8 +129,6 @@ bool chSftIntegrityCheckI(unsigned testmask) {
     PORT_INTEGRITY_CHECK();
   }
 #endif
-
-  return false;
 }
 
 /** @} */

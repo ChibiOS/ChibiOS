@@ -50,6 +50,23 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/**
+ * @brief   Macro for data pointers validation.
+ * @note    The default implementation is just a @p NULL check but it is
+ *          possible to provide a stronger check by defining:
+ *          - @p CUSTOM_IS_VALID_DATA_POINTER() as a project-defined macro,
+ *            this macros takes precedence over other implementations.
+ *          - @p PORT_IS_VALID_DATA_POINTER() as a port-provided
+ *            default implementation.
+ */
+#if defined(CUSTOM_IS_VALID_DATA_POINTER) || defined(__DOXYGEN__)
+#define SFT_IS_VALID_DATA_POINTER(p)        CUSTOM_IS_VALID_DATA_POINTER()
+#elif defined(PORT_IS_VALID_DATA_POINTER)
+#define SFT_IS_VALID_DATA_POINTER(p)        PORT_IS_VALID_DATA_POINTER()
+#else
+#define SFT_IS_VALID_DATA_POINTER(p)        (bool)((p) != NULL)
+#endif
+
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
@@ -87,8 +104,7 @@
       (((l) <= 2) && (CH_DBG_ENABLE_ASSERTS != FALSE))) {                   \
     if (unlikely(!(c))) {                                                   \
   /*lint -restore*/                                                         \
-      CH_CFG_INTEGRITY_HOOK(l, __func__);                                   \
-      chSysHalt(__func__);                                                  \
+      CH_CFG_SAFETY_CHECK_HOOK(l, __func__);                                \
     }                                                                       \
   }                                                                         \
 } while (false)
@@ -102,7 +118,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  bool chSftIntegrityCheckI(unsigned testmask);
+  void chSftIntegrityCheckI(unsigned testmask);
 #ifdef __cplusplus
 }
 #endif
@@ -110,6 +126,18 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
+
+/**
+ * @brief   Validates a data pointer.
+ * @details The purpose of this functionality is early detection of
+ *          memory corruption by checking memory-fetched pointers
+ *          before dereferencing.
+ * @note    This check is enabled at hardening level 2 or higher.
+ */
+static inline void chSftValidateDataPointerX(const void *p) {
+
+  chSftAssert(2, SFT_IS_VALID_DATA_POINTER(p), "invalid pointer");
+}
 
 #endif /* CHSAFETY_H */
 

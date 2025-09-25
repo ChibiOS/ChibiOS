@@ -267,9 +267,9 @@
 #error "CH_CFG_RUNTIME_FAULTS_HOOK not defined in chconf.h"
 #endif
 
-#if !defined(CH_CFG_INTEGRITY_HOOK)
-//#error "CH_CFG_INTEGRITY_HOOK not defined in chconf.h"
-#define CH_CFG_INTEGRITY_HOOK(l, f) chSysHalt(f);
+#if !defined(CH_CFG_SAFETY_CHECK_HOOK)
+//#error "CH_CFG_SAFETY_CHECK_HOOK not defined in chconf.h"
+#define CH_CFG_SAFETY_CHECK_HOOK(l, f) chSysHalt(f);
 #endif
 
 /*===========================================================================*/
