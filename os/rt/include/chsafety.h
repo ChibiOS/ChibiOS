@@ -52,8 +52,8 @@
 
 /**
  * @brief   Macro for data pointers validation.
- * @note    The default implementation is just a @p NULL check but it is
- *          possible to provide a stronger check by defining:
+ * @note    The default implementation is a @p NULL check and an alignment
+ *          check but it is possible to provide stronger checks by defining:
  *          - @p CUSTOM_IS_VALID_DATA_POINTER() as a project-defined macro,
  *            this macros takes precedence over other implementations.
  *          - @p PORT_IS_VALID_DATA_POINTER() as a port-provided
@@ -64,7 +64,8 @@
 #elif defined(PORT_IS_VALID_DATA_POINTER)
 #define SFT_IS_VALID_DATA_POINTER(p)        PORT_IS_VALID_DATA_POINTER()
 #else
-#define SFT_IS_VALID_DATA_POINTER(p)        (bool)((p) != NULL)
+#define SFT_IS_VALID_DATA_POINTER(p)                                        \
+  (((p) != NULL) && (((unsigned)(p) & (PORT_NATURAL_ALIGN - 1U)) == 0U))
 #endif
 
 /*===========================================================================*/
