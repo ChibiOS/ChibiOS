@@ -116,8 +116,8 @@ void chSftIntegrityCheckI(unsigned testmask) {
       ch_queue_t *next;
 
       /* Checking the backward link.*/
-      chSftValidateDataPointerX(next);
       next = current->next;
+      chSftValidateDataPointerX(next);
       chSftAssert(0, next->prev == current, "invalid backward pointer");
       current = next;
     } while (current != REG_HEADER(oip));
