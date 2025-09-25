@@ -32,6 +32,16 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
+/**
+ * @name    Masks of executable integrity checks.
+ * @{
+ */
+#define CH_INTEGRITY_RLIST                  1U
+#define CH_INTEGRITY_VTLIST                 2U
+#define CH_INTEGRITY_REGISTRY               4U
+#define CH_INTEGRITY_PORT                   8U
+/** @} */
+
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -77,7 +87,7 @@
       (((l) <= 2) && (CH_DBG_ENABLE_ASSERTS != FALSE))) {                   \
     if (unlikely(!(c))) {                                                   \
   /*lint -restore*/                                                         \
-      CH_CFG_SAFETY_ASSERT_HOOK(l, __func__);                               \
+      CH_CFG_INTEGRITY_HOOK(l, __func__);                                   \
       chSysHalt(__func__);                                                  \
     }                                                                       \
   }                                                                         \
@@ -92,19 +102,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-  void __dbg_check_disable(void);
-  void __dbg_check_suspend(void);
-  void __dbg_check_enable(void);
-  void __dbg_check_lock(void);
-  void __dbg_check_unlock(void);
-  void __dbg_check_lock_from_isr(void);
-  void __dbg_check_unlock_from_isr(void);
-  void __dbg_check_enter_isr(void);
-  void __dbg_check_leave_isr(void);
-  void chDbgCheckClassI(void);
-  void chDbgCheckClassS(void);
-#endif
+  bool chSftIntegrityCheckI(unsigned testmask);
 #ifdef __cplusplus
 }
 #endif
@@ -112,25 +110,6 @@ extern "C" {
 /*===========================================================================*/
 /* Module inline functions.                                                  */
 /*===========================================================================*/
-
-/**
- * @brief   Debug support initialization.
- * @note    Internal use only.
- *
- * @param[out] sdp      pointer to a @p system_debug_t object
- *
- * @notapi
- */
-static inline void __dbg_object_init(system_debug_t *sdp) {
-
-  sdp->panic_msg = NULL;
-
-#if CH_DBG_SYSTEM_STATE_CHECK == TRUE
-  /* The initial state is assumed to be within a critical zone.*/
-  sdp->isr_cnt  = (cnt_t)0;
-  sdp->lock_cnt = (cnt_t)1;
-#endif
-}
 
 #endif /* CHSAFETY_H */
 

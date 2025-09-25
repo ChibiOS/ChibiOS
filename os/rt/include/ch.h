@@ -109,6 +109,7 @@
 #include "chobjects.h"
 #include "chmem.h"
 #include "chsys.h"
+#include "chsafety.h"
 #include "chinstances.h"
 #include "chvt.h"
 #include "chschd.h"

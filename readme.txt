@@ -77,6 +77,11 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Function chSftIntegrityCheckI() rewritten to be much more efficient in
+       performing lists integrity checks.
+- NEW: Added to RT a dedicated functional safety module, the function
+       chSysIntegrityCheckI() has been moved in this module and renamed to
+       chSftIntegrityCheckI().
 - NEW: I2Cv4 support added to STM32C0xx, STM32G0xx, STM32G4xx families. This
        driver only require one DMA channel vs two of the old implementations.
 - NEW: Added multicore memory classes modifiers to RT in order to support

@@ -34,16 +34,6 @@
 /* Module constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Masks of executable integrity checks.
- * @{
- */
-#define CH_INTEGRITY_RLIST                  1U
-#define CH_INTEGRITY_VTLIST                 2U
-#define CH_INTEGRITY_REGISTRY               4U
-#define CH_INTEGRITY_PORT                   8U
-/** @} */
-
 /*===========================================================================*/
 /* Module pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -309,7 +299,6 @@ extern "C" {
   void chSysWaitSystemState(system_state_t state);
   void chSysInit(void);
   thread_t *chSysGetIdleThreadX(void);
-  bool chSysIntegrityCheckI(unsigned testmask);
   void chSysTimerHandlerI(void);
   syssts_t chSysGetStatusAndLockX(void);
   void chSysRestoreStatusX(syssts_t sts);

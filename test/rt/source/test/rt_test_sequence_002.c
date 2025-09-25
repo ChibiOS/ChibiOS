@@ -87,7 +87,7 @@ static void rt_test_002_001_execute(void) {
   test_set_step(1);
   {
     chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_RLIST);
+    result = chSftIntegrityCheckI(CH_INTEGRITY_RLIST);
     chSysUnlock();
     test_assert(result == false, "ready list check failed");
   }
@@ -97,7 +97,7 @@ static void rt_test_002_001_execute(void) {
   test_set_step(2);
   {
     chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_VTLIST);
+    result = chSftIntegrityCheckI(CH_INTEGRITY_VTLIST);
     chSysUnlock();
     test_assert(result == false, "virtual timers list check failed");
   }
@@ -107,7 +107,7 @@ static void rt_test_002_001_execute(void) {
   test_set_step(3);
   {
     chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_REGISTRY);
+    result = chSftIntegrityCheckI(CH_INTEGRITY_REGISTRY);
     chSysUnlock();
     test_assert(result == false, "registry list check failed");
   }
@@ -117,7 +117,7 @@ static void rt_test_002_001_execute(void) {
   test_set_step(4);
   {
     chSysLock();
-    result = chSysIntegrityCheckI(CH_INTEGRITY_PORT);
+    result = chSftIntegrityCheckI(CH_INTEGRITY_PORT);
     chSysUnlock();
     test_assert(result == false, "port layer check failed");
   }
