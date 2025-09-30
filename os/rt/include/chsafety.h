@@ -112,12 +112,19 @@
 #endif /* !defined(chSftAssert) */
 /** @} */
 
+#if CH_CFG_HARDENING_LEVEL < 1
+#define chSftCheckQueue(qp)
+#endif
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+#if CH_CFG_HARDENING_LEVEL >= 1
+  void chSftCheckQueue(const void *p);
 #endif
   void chSftIntegrityCheckI(unsigned testmask);
 #ifdef __cplusplus

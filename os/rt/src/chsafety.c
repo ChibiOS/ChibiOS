@@ -24,7 +24,26 @@
  * @addtogroup rt_safety
  * @details This module includes features related to functional safety.
  *          - Safety assertions.
+ *          - Pointers validation.
  *          - Runtime integrity checks.
+ *          .
+ *          Purpose of this module is not to detect plain programming errors,
+ *          that is handled by the debug module, but to early detect anomalous
+ *          conditions triggered by HW failures or unexpected interactions
+ *          with other SW elements causing memory corruption.<br>
+ *          The concept is to detect corruption early and avoid spreading of
+ *          the error causing random actions or stuck execution.<br>
+ *          The application can override the reaction to safety checks, the
+ *          default is cleanly halting the system.<br>
+ *          This is the list of the currently implemented checks:
+ *          - Level 0: none.
+ *          - Level 1:
+ *              - Integrity checking of objects on dispose.
+ *              - Zeroing of objects on dispose.
+ *              .
+ *          - Level 2:
+ *              - Critical pointers validation before de-referencing.
+ *          - Level 3:
  *          .
  * @{
  */
@@ -50,6 +69,37 @@
 /*===========================================================================*/
 /* Module exported functions.                                                */
 /*===========================================================================*/
+
+#if (CH_CFG_HARDENING_LEVEL >= 1) || defined(__DOXYGEN__)
+/**
+ * @brief   Performs an integrity check on a double link list.
+ * @details This function performs a quick integrity check, it does not
+ *          perform a full queue traversal but checks links of the first
+ *          and last elements in the queue.
+ * @note    This function is only available at hardening level 1, at lower
+ *          levels an empty macro replaces it.
+ * @note    At hardening level 2 and higher pointers are also verified
+ *          before de-referencing them.
+ *
+ * #param[in] p         a pointer to a @p ch_queue_t, or @p ch_priority_queue_t
+ *                      or @p ch_delta_list_t element
+ */
+void chSftCheckQueue(const void *p) {
+  const ch_queue_t *qp = (const ch_queue_t *)p;
+  ch_queue_t *first, *last;
+
+  /* Links to the first and last elements.*/
+  first = qp->next;
+  last = qp->prev;
+
+  /* Checking pointers before de-referencing.*/
+  chSftAssert(2, SFT_IS_VALID_DATA_POINTER(first) &&
+                 SFT_IS_VALID_DATA_POINTER(last), "invalid links");
+
+  /* Both first and last elements must link back.*/
+  chSftAssert(1, (first->prev == qp) && (last->next == qp), "not linking back");
+}
+#endif
 
 /**
  * @brief   System integrity check.

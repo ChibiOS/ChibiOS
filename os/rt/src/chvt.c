@@ -300,6 +300,9 @@ void chVTObjectInit(virtual_timer_t *vtp) {
 void chVTObjectDispose(virtual_timer_t *vtp) {
 
   chDbgCheck(vtp != NULL);
+
+  chSftCheckQueue(&vtp->dlist);
+
   chDbgAssert(vtp->dlist.next != NULL, "object in use");
 
 #if CH_CFG_HARDENING_LEVEL > 0

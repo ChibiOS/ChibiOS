@@ -99,6 +99,9 @@ void chCondObjectInit(condition_variable_t *cp) {
 void chCondObjectDispose(condition_variable_t *cp) {
 
   chDbgCheck(cp != NULL);
+
+  chSftCheckQueue(&cp->queue);
+
   chDbgAssert(ch_queue_isempty(&cp->queue),
               "object in use");
 

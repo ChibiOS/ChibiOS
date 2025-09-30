@@ -131,6 +131,9 @@ void chMtxObjectInit(mutex_t *mp) {
 void chMtxObjectDispose(mutex_t *mp) {
 
   chDbgCheck(mp != NULL);
+
+  chSftCheckQueue(&mp->queue);
+
   chDbgAssert(ch_queue_isempty(&mp->queue) && (mp->owner == NULL),
               "object in use");
 #if CH_CFG_USE_MUTEXES_RECURSIVE == TRUE
