@@ -435,7 +435,13 @@ static inline ch_priority_queue_t *ch_pqueue_insert_behind(ch_priority_queue_t *
 
   /* Scanning priority queue, the list is assumed to be mostly empty.*/
   do {
-    pqp = pqp->next;
+    ch_priority_queue_t *next = pqp->next;
+
+    /* Safety checks.*/
+    chSftValidateDataPointerX(3, next);
+    chSftAssert(2, next->prev == pqp, "link back");
+
+    pqp = next;
   } while (unlikely(pqp->prio >= p->prio));
 
   /* Insertion on prev.*/
@@ -452,6 +458,10 @@ static inline ch_priority_queue_t *ch_pqueue_insert_behind(ch_priority_queue_t *
  *          its peers.
  * @details The element is positioned ahead of all elements with higher or
  *          equal priority.
+ * @note    At hardening level 2 the back-link is checked while traversing
+ *          the list.
+ * @note    At hardening level 3 the forward link is verified before
+ *          de-referencing it while traversing the list.
  *
  * @param[in] pqp       the pointer to the priority queue list header
  * @param[in] p         the pointer to the element to be inserted in the queue
@@ -464,7 +474,13 @@ static inline ch_priority_queue_t *ch_pqueue_insert_ahead(ch_priority_queue_t *p
 
   /* Scanning priority queue, the list is assumed to be mostly empty.*/
   do {
-    pqp = pqp->next;
+    ch_priority_queue_t *next = pqp->next;
+
+    /* Safety checks.*/
+    chSftValidateDataPointerX(3, next);
+    chSftAssert(2, next->prev == pqp, "link back");
+
+    pqp = next;
   } while (unlikely(pqp->prio > p->prio));
 
   /* Insertion on prev.*/

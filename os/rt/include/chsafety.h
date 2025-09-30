@@ -101,7 +101,7 @@
 #if !defined(chSftAssert)
 #define chSftAssert(l, c, r) do {                                           \
   /*lint -save -e506 -e774 [2.1, 14.3] Can be a constant by design.*/       \
-  if (((l) >= CH_CFG_HARDENING_LEVEL) ||                                    \
+  if (((l) <= CH_CFG_HARDENING_LEVEL) ||                                    \
       (((l) <= 2) && (CH_DBG_ENABLE_ASSERTS != FALSE))) {                   \
     if (unlikely(!(c))) {                                                   \
   /*lint -restore*/                                                         \
@@ -142,11 +142,16 @@ extern "C" {
  * @details The purpose of this functionality is early detection of
  *          memory corruption by checking memory-fetched pointers
  *          before dereferencing.
+ * @note    The pointer is checked for alignment to @p PORT_NATURAL_ALIGN, do
+ *          not use this function to check pointers to less restrictive types.
  * @note    This check is enabled at hardening level 2 or higher.
+ *
+ * @param[in] l         check level in range 0..3
+ * @param[in] p         pointer to be checked
  */
-static inline void chSftValidateDataPointerX(const void *p) {
+static inline void chSftValidateDataPointerX(unsigned l, const void *p) {
 
-  chSftAssert(2, SFT_IS_VALID_DATA_POINTER(p), "invalid pointer");
+  chSftAssert(l, SFT_IS_VALID_DATA_POINTER(p), "invalid pointer");
 }
 
 #endif /* CHSAFETY_H */

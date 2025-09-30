@@ -43,8 +43,11 @@
  *              - Zeroing of objects on dispose.
  *              .
  *          - Level 2:
- *              - Critical pointers validation before de-referencing.
+ *              - Ready list backward pointer check on insertion.
+ *              .
  *          - Level 3:
+ *              - Ready list forward pointer validation on insertion.
+ *              .
  *          .
  * @{
  */
@@ -161,7 +164,7 @@ void chSftIntegrityCheckI(unsigned testmask) {
 
       /* Checking the backward link.*/
       next = current->next;
-      chSftValidateDataPointerX(next);
+      chSftValidateDataPointerX(2, next);
       chSftAssert(0, next->prev == current, "invalid backward pointer");
       current = next;
     } while (current != &oip->rlist.pqueue);
@@ -177,7 +180,7 @@ void chSftIntegrityCheckI(unsigned testmask) {
 
       /* Checking the backward link.*/
       next = current->next;
-      chSftValidateDataPointerX(next);
+      chSftValidateDataPointerX(2, next);
       chSftAssert(0, next->prev == current, "invalid backward pointer");
       current = next;
     } while (current != &oip->vtlist.dlist);
@@ -193,7 +196,7 @@ void chSftIntegrityCheckI(unsigned testmask) {
 
       /* Checking the backward link.*/
       next = current->next;
-      chSftValidateDataPointerX(next);
+      chSftValidateDataPointerX(2, next);
       chSftAssert(0, next->prev == current, "invalid backward pointer");
       current = next;
     } while (current != REG_HEADER(oip));
