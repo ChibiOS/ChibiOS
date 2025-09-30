@@ -89,7 +89,7 @@
  *
  * @xclass
  */
-void chSftCheckList(const void *p) {
+void chSftCheckListX(const void *p) {
   const ch_list_t *lp = (const ch_list_t *)p;
   ch_list_t *first;
 
