@@ -301,7 +301,7 @@ void chVTObjectDispose(virtual_timer_t *vtp) {
 
   chDbgCheck(vtp != NULL);
 
-  chSftCheckQueue(&vtp->dlist);
+  chSftCheckQueueX(&vtp->dlist);
 
   chDbgAssert(vtp->dlist.next != NULL, "object in use");
 

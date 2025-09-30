@@ -123,7 +123,7 @@ void chSemObjectDispose(semaphore_t *sp) {
 
   chDbgCheck(sp != NULL);
 
-  chSftCheckQueue(&sp->queue);
+  chSftCheckQueueX(&sp->queue);
 
   chDbgAssert(ch_queue_isempty(&sp->queue) && (sp->cnt >= (cnt_t)0),
               "object in use");

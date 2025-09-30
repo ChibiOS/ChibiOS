@@ -113,7 +113,8 @@
 /** @} */
 
 #if CH_CFG_HARDENING_LEVEL < 1
-#define chSftCheckQueue(qp)
+#define chSftCheckListX(p)
+#define chSftCheckQueueX(p)
 #endif
 
 /*===========================================================================*/
@@ -124,7 +125,8 @@
 extern "C" {
 #endif
 #if CH_CFG_HARDENING_LEVEL >= 1
-  void chSftCheckQueue(const void *p);
+  void chSftCheckListX(const void *p);
+  void chSftCheckQueueX(const void *p);
 #endif
   void chSftIntegrityCheckI(unsigned testmask);
 #ifdef __cplusplus

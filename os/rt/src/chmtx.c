@@ -132,7 +132,7 @@ void chMtxObjectDispose(mutex_t *mp) {
 
   chDbgCheck(mp != NULL);
 
-  chSftCheckQueue(&mp->queue);
+  chSftCheckQueueX(&mp->queue);
 
   chDbgAssert(ch_queue_isempty(&mp->queue) && (mp->owner == NULL),
               "object in use");

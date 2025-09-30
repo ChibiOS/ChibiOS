@@ -25,7 +25,8 @@
  * @details This module includes features related to functional safety.
  *          - Safety assertions.
  *          - Pointers validation.
- *          - Runtime integrity checks.
+ *          - Lists and queues integrity checks.
+ *          - Runtime full system checks.
  *          .
  *          Purpose of this module is not to detect plain programming errors,
  *          that is handled by the debug module, but to early detect anomalous
@@ -72,19 +73,44 @@
 
 #if (CH_CFG_HARDENING_LEVEL >= 1) || defined(__DOXYGEN__)
 /**
- * @brief   Performs an integrity check on a double link list.
+ * @brief   Performs an integrity check on a single link list.
  * @details This function performs a quick integrity check, it does not
- *          perform a full queue traversal but checks links of the first
- *          and last elements in the queue.
+ *          perform a full list traversal but checks the link to the first
+ *          element in the list.
  * @note    This function is only available at hardening level 1, at lower
  *          levels an empty macro replaces it.
  * @note    At hardening level 2 and higher pointers are also verified
  *          before de-referencing them.
  *
- * #param[in] p         a pointer to a @p ch_queue_t, or @p ch_priority_queue_t
- *                      or @p ch_delta_list_t element
+ * @param[in] p         a pointer to a @p ch_list_t element
+ *
+ * @xclass
  */
-void chSftCheckQueue(const void *p) {
+void chSftCheckList(const void *p) {
+  const ch_list_t *lp = (const ch_list_t *)p;
+  ch_list_t *first;
+
+  /* Link to the first element.*/
+  first = lp->next;
+
+  /* Checking pointer.*/
+  chSftAssert(1, SFT_IS_VALID_DATA_POINTER(first), "invalid link");
+}
+
+/**
+ * @brief   Performs an integrity check on a double link list.
+ * @details This function performs a quick integrity check, it does not
+ *          perform a full queue traversal but checks the links to the first
+ *          and last elements in the queue.
+ * @note    This function is only available at hardening level 1, at lower
+ *          levels an empty macro replaces it.
+ *
+ * @param[in] p         a pointer to a @p ch_queue_t, or @p ch_priority_queue_t
+ *                      or @p ch_delta_list_t element
+ *
+ * @xclass
+ */
+void chSftCheckQueueX(const void *p) {
   const ch_queue_t *qp = (const ch_queue_t *)p;
   ch_queue_t *first, *last;
 
@@ -93,7 +119,7 @@ void chSftCheckQueue(const void *p) {
   last = qp->prev;
 
   /* Checking pointers before de-referencing.*/
-  chSftAssert(2, SFT_IS_VALID_DATA_POINTER(first) &&
+  chSftAssert(1, SFT_IS_VALID_DATA_POINTER(first) &&
                  SFT_IS_VALID_DATA_POINTER(last), "invalid links");
 
   /* Both first and last elements must link back.*/
