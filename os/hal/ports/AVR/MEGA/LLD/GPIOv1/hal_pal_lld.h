@@ -360,19 +360,16 @@ typedef uint8_t ioeventmode_t;
 
 /**
  * @brief   Pad event enable.
- * @details This function programs an event callback in the specified mode.
  * @note    Programming an unknown or unsupported mode is silently ignored.
  *
  * @param[in] port      port identifier
  * @param[in] pad       pad number within the port
  * @param[in] mode      pad event mode
- * @param[in] callback  event callback function
- * @param[in] arg       callback argument
  *
  * @notapi
  */
-#define pal_lld_enablepadevent(port, pad, mode, callback, arg)              \
-  _pal_lld_enablepadevent(port, pad, mode, callback, arg)
+#define pal_lld_enablepadevent(port, pad, mode)                             \
+  _pal_lld_enablepadevent(port, pad, mode)
 
 /**
  * @brief   Pad event disable.
@@ -407,6 +404,20 @@ typedef uint8_t ioeventmode_t;
 #define pal_lld_get_line_event(line)                                        \
   &_pal_events[PAL_PAD(line)]
 
+/**
+ * @brief   Pad event enable check.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @return              Pad event status.
+ * @retval false        if the pad event is disabled.
+ * @retval true         if the pad event is enabled.
+ *
+ * @notapi
+ */
+#define pal_lld_ispadeventenabled(port, pad)                                \
+  (false); (void)port; (void) pad
+
 #if !defined(__DOXYGEN__)
 extern const PALConfig pal_default_config;
 #if (PAL_USE_WAIT == TRUE) || (PAL_USE_CALLBACKS == TRUE)
@@ -426,9 +437,7 @@ extern "C" {
 
   void _pal_lld_enablepadevent(ioportid_t port,
                                iopadid_t pad,
-                               ioeventmode_t mode,
-                               palcallback_t callback,
-                               void *arg);
+                               ioeventmode_t mode);
   void _pal_lld_disablepadevent(ioportid_t port, iopadid_t pad);
 
   ioline_t _pal_lld_setlineid(ioportid_t port, uint8_t pad);

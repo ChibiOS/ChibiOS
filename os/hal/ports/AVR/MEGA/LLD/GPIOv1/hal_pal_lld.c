@@ -173,14 +173,10 @@ void _pal_lld_setgroupmode(ioportid_t port,
  */
 void _pal_lld_enablepadevent(ioportid_t     port,
                              iopadid_t      pad,
-                             ioeventmode_t  mode,
-                             palcallback_t  callback,
-                             void           *arg) {
+                             ioeventmode_t  mode) {
   (void)port;
   (void)pad;
   (void)mode;
-  (void)callback;
-  (void)arg;
 
   /* TODO: Implement the interruption here. */
 }
