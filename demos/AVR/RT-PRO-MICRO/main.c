@@ -18,8 +18,6 @@
 #include "hal.h"
 #include "usbcfg.h"
 
-SerialUSBDriver SDU1;
-
 /*
  * LED blinker thread, times are in milliseconds.
  */
