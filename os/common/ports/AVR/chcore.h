@@ -337,6 +337,22 @@ struct port_context {
   asm volatile ("" : : : "memory");                                         \
 }
 
+/**
+ * @brief   Returns a word representing a critical section status.
+ *
+ * @return  The critical section status.
+ */
+#define port_get_lock_status() port_get_irq_status()
+
+/**
+ * @brief   Determines if in a critical section.
+ *
+ * @param[in] sts       status word returned by @p port_get_lock_status()
+ * @return              The current status.
+ * @retval false        if running outside a critical section.
+ * @retval true         if running within a critical section.
+ */
+#define port_is_locked(sts) !port_irq_enabled(sts)
 
 /**
  * @brief   Port-related initialization code.
