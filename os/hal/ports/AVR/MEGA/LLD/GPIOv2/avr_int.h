@@ -127,7 +127,9 @@
     defined(__AVR_ATmega32U2__) || \
     defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
-    defined(__AVR_AT90CAN128__)
+    defined(__AVR_AT90CAN128__) || \
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT0_IOPORT                 IOPORT4
   #define INT0_PAD                    0
@@ -252,7 +254,9 @@
     defined(__AVR_ATmega32U2__) || \
     defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
-    defined(__AVR_AT90CAN128__)
+    defined(__AVR_AT90CAN128__) || \
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT1_IOPORT                 IOPORT4
   #define INT1_PAD                    1
@@ -347,7 +351,9 @@
     defined(__AVR_ATmega32U2__) || \
     defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
-    defined(__AVR_AT90CAN128__)
+    defined(__AVR_AT90CAN128__) || \
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT2_IOPORT                 IOPORT4
   #define INT2_PAD                    2
@@ -442,7 +448,9 @@
     defined(__AVR_ATmega32U2__) || \
     defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
-    defined(__AVR_AT90CAN128__)
+    defined(__AVR_AT90CAN128__) || \
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT3_IOPORT                 IOPORT4
   #define INT3_PAD                    3
@@ -491,7 +499,9 @@
     defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || \
     defined(__AVR_ATmega2561__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
-    defined(__AVR_AT90CAN128__)
+    defined(__AVR_AT90CAN128__) || \
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT4_IOPORT                 IOPORT5
   #define INT4_PAD                    4
@@ -528,7 +538,9 @@
     defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || \
     defined(__AVR_ATmega2561__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
-    defined(__AVR_AT90CAN128__)
+    defined(__AVR_AT90CAN128__) || \
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT5_IOPORT                 IOPORT5
   #define INT5_PAD                    5
@@ -564,9 +576,11 @@
     defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || \
     defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || \
     defined(__AVR_ATmega2561__) || \
+    defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
     defined(__AVR_AT90CAN128__) || \
-    defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT6_IOPORT                 IOPORT5
   #define INT6_PAD                    6
@@ -603,7 +617,8 @@
     defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || \
     defined(__AVR_ATmega2561__) || \
     defined(__AVR_AT90CAN32__) || defined(__AVR_AT90CAN64__) || \
-    defined(__AVR_AT90CAN128__)
+    defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+    defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
   #define INT7_IOPORT                 IOPORT5
   #define INT7_PAD                    7

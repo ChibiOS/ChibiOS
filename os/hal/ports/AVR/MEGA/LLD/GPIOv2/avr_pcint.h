@@ -142,7 +142,9 @@
       defined(__AVR_ATmega32U2__) || \
       defined(__AVR_ATmega16C1__) || defined(__AVR_ATmega16M1__) || \
       defined(__AVR_ATmega32C1__) || defined(__AVR_ATmega32M1__) || \
-      defined(__AVR_ATmega64C1__) || defined(__AVR_ATmega64M1__)
+      defined(__AVR_ATmega64C1__) || defined(__AVR_ATmega64M1__) || \
+      defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || \
+      defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 
     #define IOPORT2_PCMSK                 PCMSK0
     #define IOPORT2_PCINT                 0

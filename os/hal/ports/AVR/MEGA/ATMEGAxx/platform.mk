@@ -6,8 +6,7 @@ PLATFORMINC = ${CHIBIOS}/os/hal/ports/AVR/MEGA/ATMEGAxx
 
 # Drivers compatible with the platform.
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/ADCv1/driver.mk
-include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/EXTv1/driver.mk
-include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/GPIOv1/driver.mk
+include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/GPIOv2/driver.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/I2Cv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/SPIv1/driver.mk
 include $(CHIBIOS)/os/hal/ports/AVR/MEGA/LLD/SYSTICKv1/driver.mk
