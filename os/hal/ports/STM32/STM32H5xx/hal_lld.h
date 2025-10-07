@@ -1636,22 +1636,22 @@
   #endif
 
   #if (STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSI)
-    #error "HSI not enabled, required by STM32_LPTIM1SEL"
+    #error "LSI not enabled, required by STM32_LPTIM1SEL"
   #endif
   #if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSI)
-    #error "HSI not enabled, required by STM32_LPTIM2SEL"
+    #error "LSI not enabled, required by STM32_LPTIM2SEL"
   #endif
   #if (STM32_LPTIM3SEL == STM32_LPTIM3SEL_LSI)
-    #error "HSI not enabled, required by STM32_LPTIM3SEL"
+    #error "LSI not enabled, required by STM32_LPTIM3SEL"
   #endif
   #if (STM32_LPTIM4SEL == STM32_LPTIM4SEL_LSI)
-    #error "HSI not enabled, required by STM32_LPTIM4SEL"
+    #error "LSI not enabled, required by STM32_LPTIM4SEL"
   #endif
   #if (STM32_LPTIM5SEL == STM32_LPTIM5SEL_LSI)
-    #error "HSI not enabled, required by STM32_LPTIM5SEL"
+    #error "LSI not enabled, required by STM32_LPTIM5SEL"
   #endif
   #if (STM32_LPTIM6SEL == STM32_LPTIM6SEL_LSI)
-    #error "HSI not enabled, required by STM32_LPTIM6SEL"
+    #error "LSI not enabled, required by STM32_LPTIM6SEL"
   #endif
 
   #if STM32_SYSTICKSEL == STM32_SYSTICKSEL_LSI
