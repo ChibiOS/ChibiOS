@@ -61,7 +61,7 @@
 
 /**
  * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_stm32g4xx.h.
+ * @note    It is declared in system_stm32h5xx.h.
  */
 uint32_t SystemCoreClock = STM32_HCLK;
 
@@ -248,7 +248,7 @@ static const system_limits_t vos_range1 = {
   .sysclk_max           = STM32_VOS1_SYSCLK_MAX,
   .flash_thresholds     = {STM32_VOS1_0WS_THRESHOLD, STM32_VOS1_1WS_THRESHOLD,
                            STM32_VOS1_2WS_THRESHOLD, STM32_VOS1_3WS_THRESHOLD,
-                           STM32_VOS1_4WS_THRESHOLD, STM32_VOS0_5WS_THRESHOLD}
+                           STM32_VOS1_4WS_THRESHOLD, STM32_VOS1_5WS_THRESHOLD}
 };
 
 /**
@@ -258,7 +258,7 @@ static const system_limits_t vos_range2 = {
   .sysclk_max           = STM32_VOS2_SYSCLK_MAX,
   .flash_thresholds     = {STM32_VOS2_0WS_THRESHOLD, STM32_VOS2_1WS_THRESHOLD,
                            STM32_VOS2_2WS_THRESHOLD, STM32_VOS2_3WS_THRESHOLD,
-                           STM32_VOS2_4WS_THRESHOLD, STM32_VOS0_5WS_THRESHOLD}
+                           STM32_VOS2_4WS_THRESHOLD, STM32_VOS2_5WS_THRESHOLD}
 };
 
 /**
@@ -268,7 +268,7 @@ static const system_limits_t vos_range3 = {
   .sysclk_max           = STM32_VOS3_SYSCLK_MAX,
   .flash_thresholds     = {STM32_VOS3_0WS_THRESHOLD, STM32_VOS3_1WS_THRESHOLD,
                            STM32_VOS3_2WS_THRESHOLD, STM32_VOS3_3WS_THRESHOLD,
-                           STM32_VOS3_4WS_THRESHOLD, STM32_VOS0_5WS_THRESHOLD}
+                           STM32_VOS3_4WS_THRESHOLD, STM32_VOS3_5WS_THRESHOLD}
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -334,8 +334,8 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
                 STM32_PPRE1       | STM32_HPRE;
 
   /* CCIPR registers initialization, note.*/
-  RCC->CCIPR1 = STM32_TIMICSEL    | STM32_USART10SEL  |
-                STM32_UART9SEL    | STM32_UART9SEL    |
+  RCC->CCIPR1 = STM32_TIMICSEL    |
+                STM32_USART10SEL  | STM32_UART9SEL    |
                 STM32_UART8SEL    | STM32_UART7SEL    |
                 STM32_USART6SEL   | STM32_UART5SEL    |
                 STM32_UART4SEL    | STM32_USART3SEL   |
@@ -528,7 +528,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     if ((ccp->plls[0].cfgr & STM32_PLLREN) != 0U) {
       n = ((ccp->plls[0].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
       pll1rclk = vcoclk / n;
-      if ((pll1rclk < STM32_PLLR_MIN) || (pll1qclk > STM32_PLLR_MAX)) {
+      if ((pll1rclk < STM32_PLLR_MIN) || (pll1rclk > STM32_PLLR_MAX)) {
         return true;
       }
     }
@@ -576,7 +576,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     if ((ccp->plls[1].cfgr & STM32_PLLREN) != 0U) {
       n = ((ccp->plls[1].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
       pll2rclk = vcoclk / n;
-      if ((pll2rclk < STM32_PLLR_MIN) || (pll2qclk > STM32_PLLR_MAX)) {
+      if ((pll2rclk < STM32_PLLR_MIN) || (pll2rclk > STM32_PLLR_MAX)) {
         return true;
       }
     }
@@ -625,7 +625,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     if ((ccp->plls[2].cfgr & STM32_PLLREN) != 0U) {
       n = ((ccp->plls[2].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
       pll3rclk = vcoclk / n;
-      if ((pll3rclk < STM32_PLLR_MIN) || (pll3qclk > STM32_PLLR_MAX)) {
+      if ((pll3rclk < STM32_PLLR_MIN) || (pll3rclk > STM32_PLLR_MAX)) {
         return true;
       }
     }
@@ -950,7 +950,7 @@ void stm32_clock_init(void) {
 
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB3ENR_RTCAPBEN)
-  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true)
+  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true);
 #endif
 
   /* Static PWR configurations.*/
