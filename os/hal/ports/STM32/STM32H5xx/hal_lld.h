@@ -245,26 +245,26 @@
 #define STM32_MCO1SEL_POS       RCC_CFGR1_MCO1SEL_Pos
 #define STM32_MCO1SEL_MASK      RCC_CFGR1_MCO1SEL_Msk
 #define STM32_MCO1SEL_FIELD(n)  ((n) << STM32_MCO1SEL_POS)
-#define STM32_MCO1SEL_HSI       STM32_MCO1PRE_FIELD(0U)
-#define STM32_MCO1SEL_LSE       STM32_MCO1PRE_FIELD(1U)
-#define STM32_MCO1SEL_HSE       STM32_MCO1PRE_FIELD(2U)
-#define STM32_MCO1SEL_PLL1P     STM32_MCO1PRE_FIELD(3U)
-#define STM32_MCO1SEL_HSI48     STM32_MCO1PRE_FIELD(4U)
+#define STM32_MCO1SEL_HSI       STM32_MCO1SEL_FIELD(0U)
+#define STM32_MCO1SEL_LSE       STM32_MCO1SEL_FIELD(1U)
+#define STM32_MCO1SEL_HSE       STM32_MCO1SEL_FIELD(2U)
+#define STM32_MCO1SEL_PLL1P     STM32_MCO1SEL_FIELD(3U)
+#define STM32_MCO1SEL_HSI48     STM32_MCO1SEL_FIELD(4U)
 
 #define STM32_MCO1PRE_POS       RCC_CFGR1_MCO1PRE_Pos
 #define STM32_MCO1PRE_MASK      RCC_CFGR1_MCO1PRE_Msk
 #define STM32_MCO1PRE_FIELD(n)  ((n) << STM32_MCO1PRE_POS)
 #define STM32_MCO1PRE_NOCLOCK   STM32_MCO1PRE_FIELD(0U)
 
-#define STM32_MCO2PRE_POS       RCC_CFGR1_MCO2PRE_Pos
+#define STM32_MCO2SEL_POS       RCC_CFGR1_MCO2SEL_Pos
 #define STM32_MCO2SEL_MASK      RCC_CFGR1_MCO2SEL_Msk
-#define STM32_MCO2SEL_FIELD(n)  ((n) << STM32_MCO2PRE_POS)
-#define STM32_MCO2SEL_SYSCLK    STM32_MCO2PRE_FIELD(0U)
-#define STM32_MCO2SEL_PLL2P     STM32_MCO2PRE_FIELD(1U)
-#define STM32_MCO2SEL_HSE       STM32_MCO2PRE_FIELD(2U)
-#define STM32_MCO2SEL_PLL1P     STM32_MCO2PRE_FIELD(3U)
-#define STM32_MCO2SEL_CSI       STM32_MCO2PRE_FIELD(4U)
-#define STM32_MCO2SEL_LSI       STM32_MCO2PRE_FIELD(5U)
+#define STM32_MCO2SEL_FIELD(n)  ((n) << STM32_MCO2SEL_POS)
+#define STM32_MCO2SEL_SYSCLK    STM32_MCO2SEL_FIELD(0U)
+#define STM32_MCO2SEL_PLL2P     STM32_MCO2SEL_FIELD(1U)
+#define STM32_MCO2SEL_HSE       STM32_MCO2SEL_FIELD(2U)
+#define STM32_MCO2SEL_PLL1P     STM32_MCO2SEL_FIELD(3U)
+#define STM32_MCO2SEL_CSI       STM32_MCO2SEL_FIELD(4U)
+#define STM32_MCO2SEL_LSI       STM32_MCO2SEL_FIELD(5U)
 
 #define STM32_MCO2PRE_POS       RCC_CFGR1_MCO2PRE_Pos
 #define STM32_MCO2PRE_MASK      RCC_CFGR1_MCO2PRE_Msk
@@ -934,15 +934,15 @@
  * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL1N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL1N_VALUE                   84
+#define STM32_PLL1N_VALUE                   250
 #endif
 
 /**
  * @brief   PLL1P divider value.
- * @note    The allowed values are 4..128 (odd values forbidden).
+ * @note    The allowed values are 2..128 (odd values forbidden).
  */
 #if !defined(STM32_PLL1P_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL1P_VALUE                   7
+#define STM32_PLL1P_VALUE                   2
 #endif
 
 /**
@@ -950,7 +950,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL1Q_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL1Q_VALUE                   8
+#define STM32_PLL1Q_VALUE                   4
 #endif
 
 /**
@@ -981,15 +981,15 @@
  * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL2N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL2N_VALUE                   84
+#define STM32_PLL2N_VALUE                   200
 #endif
 
 /**
  * @brief   PLL2P divider value.
- * @note    The allowed values are 4..128.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL2P_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL2P_VALUE                   7
+#define STM32_PLL2P_VALUE                   2
 #endif
 
 /**
@@ -997,7 +997,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL2Q_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL2Q_VALUE                   8
+#define STM32_PLL2Q_VALUE                   2
 #endif
 
 /**
@@ -1028,15 +1028,15 @@
  * @note    The allowed values are 4..512.
  */
 #if !defined(STM32_PLL3N_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3N_VALUE                   84
+#define STM32_PLL3N_VALUE                   240
 #endif
 
 /**
  * @brief   PLL3P divider value.
- * @note    The allowed values are 4..128.
+ * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3P_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3P_VALUE                   7
+#define STM32_PLL3P_VALUE                   2
 #endif
 
 /**
@@ -1044,7 +1044,7 @@
  * @note    The allowed values are 1..128.
  */
 #if !defined(STM32_PLL3Q_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLL3Q_VALUE                   8
+#define STM32_PLL3Q_VALUE                   10
 #endif
 
 /**
@@ -2416,9 +2416,7 @@
 #include "stm32_apb2.inc"
 #include "stm32_apb3.inc"
 
-/**
- * @brief   STOPWUCK source clock.
- */
+/* STOPWUCK setting check.*/
 #if (STM32_STOPWUCK == STM32_STOPWUCK_HSI) || defined(__DOXYGEN__)
 
 #elif STM32_STOPWUCK == STM32_STOPWUCK_CSI
@@ -2427,9 +2425,7 @@
   #error "invalid STM32_STOPWUCK value specified"
 #endif
 
-/**
- * @brief   STOPKERWUCK source clock.
- */
+/* STOPKERWUCK setting check.*/
 #if (STM32_STOPKERWUCK == STM32_STOPKERWUCK_HSI) || defined(__DOXYGEN__)
 
 #elif STM32_STOPKERWUCK == STM32_STOPKERWUCK_CSI
@@ -2934,10 +2930,10 @@
   #define STM32_LPTIM1CLK           hal_lld_get_clock_point(CLK_PCLK3)
 
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_PLL2P
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL2PCLK)
+  #define STM32_LPTIM1CLK           hal_lld_get_clock_point(CLK_PLL2PCLK)
 
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_PLL3R
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL3RCLK)
+  #define STM32_LPTIM1CLK           hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
   #define STM32_LPTIM1CLK           STM32_LSECLK
@@ -2959,10 +2955,10 @@
   #define STM32_LPTIM2CLK           hal_lld_get_clock_point(CLK_PCLK1)
 
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_PLL2P
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL2PCLK)
+  #define STM32_LPTIM2CLK           hal_lld_get_clock_point(CLK_PLL2PCLK)
 
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_PLL3R
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL3RCLK)
+  #define STM32_LPTIM2CLK           hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSE
   #define STM32_LPTIM2CLK           STM32_LSECLK
@@ -2984,10 +2980,10 @@
   #define STM32_LPTIM3CLK           hal_lld_get_clock_point(CLK_PCLK3)
 
 #elif STM32_LPTIM3SEL == STM32_LPTIM3SEL_PLL2P
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL2PCLK)
+  #define STM32_LPTIM3CLK           hal_lld_get_clock_point(CLK_PLL2PCLK)
 
 #elif STM32_LPTIM3SEL == STM32_LPTIM3SEL_PLL3R
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL3RCLK)
+  #define STM32_LPTIM3CLK           hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_LPTIM3SEL == STM32_LPTIM3SEL_LSE
   #define STM32_LPTIM3CLK           STM32_LSECLK
@@ -3009,10 +3005,10 @@
   #define STM32_LPTIM4CLK           hal_lld_get_clock_point(CLK_PCLK3)
 
 #elif STM32_LPTIM4SEL == STM32_LPTIM4SEL_PLL2P
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL2PCLK)
+  #define STM32_LPTIM4CLK           hal_lld_get_clock_point(CLK_PLL2PCLK)
 
 #elif STM32_LPTIM4SEL == STM32_LPTIM4SEL_PLL3R
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL3RCLK)
+  #define STM32_LPTIM4CLK           hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_LPTIM4SEL == STM32_LPTIM4SEL_LSE
   #define STM32_LPTIM4CLK           STM32_LSECLK
@@ -3034,10 +3030,10 @@
   #define STM32_LPTIM5CLK           hal_lld_get_clock_point(CLK_PCLK3)
 
 #elif STM32_LPTIM5SEL == STM32_LPTIM5SEL_PLL2P
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL2PCLK)
+  #define STM32_LPTIM5CLK           hal_lld_get_clock_point(CLK_PLL2PCLK)
 
 #elif STM32_LPTIM5SEL == STM32_LPTIM5SEL_PLL3R
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL3RCLK)
+  #define STM32_LPTIM5CLK           hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_LPTIM5SEL == STM32_LPTIM5SEL_LSE
   #define STM32_LPTIM5CLK           STM32_LSECLK
@@ -3059,10 +3055,10 @@
   #define STM32_LPTIM6CLK           hal_lld_get_clock_point(CLK_PCLK3)
 
 #elif STM32_LPTIM6SEL == STM32_LPTIM6SEL_PLL2P
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL2PCLK)
+  #define STM32_LPTIM6CLK           hal_lld_get_clock_point(CLK_PLL2PCLK)
 
 #elif STM32_LPTIM6SEL == STM32_LPTIM6SEL_PLL3R
-  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL3RCLK)
+  #define STM32_LPTIM6CLK           hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_LPTIM6SEL == STM32_LPTIM6SEL_LSE
   #define STM32_LPTIM6CLK           STM32_LSECLK
@@ -3092,7 +3088,7 @@
 #elif STM32_SPI1SEL == STM32_SPI1SEL_AUDIOCLK
   #define STM32_SPI1CLK             0 /* TODO board.h */
 
-#elif STM32_SPI1SEL == STM32_SPI2SEL_PER
+#elif STM32_SPI1SEL == STM32_SPI1SEL_PER
   #define STM32_SPI1CLK             STM32_PERCLK
 
 #else
@@ -3136,7 +3132,7 @@
 #elif STM32_SPI3SEL == STM32_SPI3SEL_AUDIOCLK
   #define STM32_SPI3CLK             0 /* TODO board.h */
 
-#elif STM32_SPI3SEL == STM32_SPI2SEL_PER
+#elif STM32_SPI3SEL == STM32_SPI3SEL_PER
   #define STM32_SPI3CLK             STM32_PERCLK
 
 #else
@@ -3500,7 +3496,7 @@
 #if (STM32_SAI1SEL == STM32_SAI1SEL_PLL1Q) || defined(__DOXYGEN__)
   #define STM32_SAI1CLK             hal_lld_get_clock_point(CLK_PLL1QCLK)
 
-#elif STM32_SAI1SEL == STM32_SAI2SEL_PLL2P
+#elif STM32_SAI1SEL == STM32_SAI1SEL_PLL2P
   #define STM32_SAI1CLK             hal_lld_get_clock_point(CLK_PLL2PCLK)
 
 #elif STM32_SAI1SEL == STM32_SAI1SEL_PLL3P
