@@ -59,7 +59,7 @@
 
 /**
  * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_stm32g0xx.h.
+ * @note    It is declared in system_stm32c0xx.h.
  */
 uint32_t SystemCoreClock = STM32_HCLK;
 
@@ -211,7 +211,7 @@ void stm32_clock_init(void) {
      among multiple drivers.*/
   rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
 
-#if defined(HAL_USE_RTC) && defined(RCC_APBENR1_RTCAPBEN)
+#if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
   rccEnableAPBR1(RCC_APBENR1_RTCAPBEN, false);
 #endif
 
