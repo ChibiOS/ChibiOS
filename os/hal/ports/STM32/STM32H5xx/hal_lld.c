@@ -1000,7 +1000,7 @@ void stm32_clock_init(void) {
 
   /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB3ENR_RTCAPBEN)
-  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true)
+  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true);
 #endif
 
   /* Static PWR configurations.*/

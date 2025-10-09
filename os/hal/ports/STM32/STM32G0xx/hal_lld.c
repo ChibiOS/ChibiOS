@@ -833,7 +833,7 @@ void stm32_clock_init(void) {
 #endif
 
 #if defined(HAL_USE_RTC) && defined(RCC_APBENR1_RTCAPBEN)
-  rccEnableAPBR1(RCC_APBENR1_RTCAPBEN, false);
+  rccEnableAPBR1(RCC_APBENR1_RTCAPBEN, true);
 #endif
 
   /* Static PWR configurations.*/
