@@ -757,7 +757,7 @@
 #elif defined(STM32G473xx) && !defined(STM32G473_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G473_MCUCONF not defined"
 
-#elif defined(STM32G483xx) && !defined(STM32G473_MCUCONF)
+#elif defined(STM32G483xx) && !defined(STM32G483_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G483_MCUCONF not defined"
 
 #elif defined(STM32G474xx) && !defined(STM32G474_MCUCONF)
@@ -1460,7 +1460,7 @@
   #define STM32_I2C2CLK             STM32_HSI16CLK
 
 #else
-  #error "invalid source selected for I2C1 clock"
+  #error "invalid source selected for I2C2 clock"
 #endif
 
 /**
