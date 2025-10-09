@@ -252,10 +252,10 @@
  * @name    RCC_CCIPR2 register bits definitions
  * @{
  */
-#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C1SEL mask.              */
-#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C1 source is PCLK1.      */
-#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C1 source is SYSCLK.     */
-#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C1 source is HSI16.      */
+#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C4SEL mask.              */
+#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C4 source is PCLK1.      */
+#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C4 source is SYSCLK.     */
+#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C4 source is HSI16.      */
 /** @} */
 
 /**
