@@ -296,10 +296,10 @@
 #define STM32_I2C1SEL_HSI16     (2U << 12U) /**< I2C1 source is HSI16.      */
 
 #if STM32_RCC_HAS_CCIPR2
-#define STM32_I2C2SEL_MASK      (3U << 14U) /**< I2C1SEL mask.              */
-#define STM32_I2C2SEL_PCLK      (0U << 14U) /**< I2C1 source is PCLK.       */
-#define STM32_I2C2SEL_SYSCLK    (1U << 14U) /**< I2C1 source is SYSCLK.     */
-#define STM32_I2C2SEL_HSI16     (2U << 14U) /**< I2C1 source is HSI16.      */
+#define STM32_I2C2SEL_MASK      (3U << 14U) /**< I2C2SEL mask.              */
+#define STM32_I2C2SEL_PCLK      (0U << 14U) /**< I2C2 source is PCLK.       */
+#define STM32_I2C2SEL_SYSCLK    (1U << 14U) /**< I2C2 source is SYSCLK.     */
+#define STM32_I2C2SEL_HSI16     (2U << 14U) /**< I2C2 source is HSI16.      */
 #else
 #define STM32_I2S1SEL_MASK      (3U << 14U) /**< I2S1SEL mask.              */
 #define STM32_I2S1SEL_SYSCLK    (0U << 14U) /**< I2S1 source is SYSCLK.     */
@@ -905,7 +905,7 @@
 #error "Using a wrong mcuconf.h file, STM32G071_MCUCONF not defined"
 
 #elif defined(STM32G081xx) && !defined(STM32G081_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32G071_MCUCONF not defined"
+#error "Using a wrong mcuconf.h file, STM32G081_MCUCONF not defined"
 
 #elif defined(STM32G0B1xx) && !defined(STM32G0B1_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32G0B1_MCUCONF not defined"
@@ -1490,7 +1490,7 @@
     #define STM32_MCODIVCLK         STM32_LSECLK
 
   #elif STM32_MCOSEL == STM32_MCOSEL_PLLPCLK
-    #define STM32_MCO2DIVCLK        STM32_PLLPCLK
+    #define STM32_MCODIVCLK         STM32_PLLPCLK
 
   #elif STM32_MCOSEL == STM32_MCOSEL_PLLQCLK
     #define STM32_MCODIVCLK         STM32_PLLQCLK
