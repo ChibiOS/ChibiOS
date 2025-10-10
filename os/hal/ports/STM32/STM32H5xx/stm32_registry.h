@@ -90,7 +90,7 @@
 #define STM32_DMA3_REQ_UART7_TX             34U
 #define STM32_DMA3_REQ_UART8_RX             35U
 #define STM32_DMA3_REQ_UART8_TX             36U
-#define STM32_DMA3_REQ_UART9_RX              37U
+#define STM32_DMA3_REQ_UART9_RX             37U
 #define STM32_DMA3_REQ_UART9_TX             38U
 #define STM32_DMA3_REQ_USART10_RX           39U
 #define STM32_DMA3_REQ_USART10_TX           40U
@@ -114,7 +114,7 @@
 #define STM32_DMA3_REQ_TIM1_CC1             58U
 #define STM32_DMA3_REQ_TIM1_CC2             59U
 #define STM32_DMA3_REQ_TIM1_CC3             60U
-#define STM32_DMA3_REQ_TIM1_CC4              61U
+#define STM32_DMA3_REQ_TIM1_CC4             61U
 #define STM32_DMA3_REQ_TIM1_UPD             62U
 #define STM32_DMA3_REQ_TIM1_TRG             63U
 #define STM32_DMA3_REQ_TIM1_COM             64U
