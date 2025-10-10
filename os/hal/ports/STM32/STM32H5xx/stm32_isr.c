@@ -83,8 +83,8 @@
 #include "stm32_uart8.inc"
 #include "stm32_uart9.inc"
 #include "stm32_usart10.inc"
-//#include "stm32_usart11.inc"
-//#include "stm32_uart12.inc"
+#include "stm32_usart11.inc"
+#include "stm32_uart12.inc"
 #include "stm32_lpuart1.inc"
 
 #include "stm32_tim1.inc"
@@ -160,6 +160,8 @@ void irqInit(void) {
   uart8_irq_init();
   uart9_irq_init();
   usart10_irq_init();
+  usart11_irq_init();
+  uart12_irq_init();
   lpuart1_irq_init();
 }
 
@@ -217,6 +219,8 @@ void irqDeinit(void) {
   uart8_irq_deinit();
   uart9_irq_deinit();
   usart10_irq_deinit();
+  usart11_irq_deinit();
+  uart12_irq_deinit();
   lpuart1_irq_deinit();
 }
 
