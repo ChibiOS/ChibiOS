@@ -8,7 +8,7 @@
     <output_path>..</output_path>
   </configuration_settings>
   <board_name>STMicroelectronics STM32 Nucleo64-U385RG-Q</board_name>
-  <board_id>ST_NUCLEO64_U385_Q</board_id>
+  <board_id>ST_NUCLEO64_U385RG_Q</board_id>
   <board_functions></board_functions>
   <headers></headers>
   <subtype>STM32U385xx</subtype>
@@ -428,11 +428,11 @@
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="USB_OVCR"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
-        Resistor="Floating"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3
@@ -558,11 +558,11 @@
         Mode="Input"
         Alternate="0" />
       <pin2
-        ID="USB_OVCR"
+        ID=""
         Type="PushPull"
         Level="High"
         Speed="Minimum"
-        Resistor="Floating"
+        Resistor="PullUp"
         Mode="Input"
         Alternate="0" />
       <pin3

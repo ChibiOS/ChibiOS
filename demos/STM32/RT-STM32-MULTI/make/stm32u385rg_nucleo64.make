@@ -99,14 +99,14 @@ include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32u3xx.mk
 # HAL-OSAL files (optional).
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/ports/STM32/STM32U3xx/platform.mk
-#include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_U385RG/board.mk
-#include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32U3xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_U385RG_Q/board.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
-#include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/rt/rt.mk
 #include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
-#include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/common/ports/ARMv8-M-ML-ALT/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
