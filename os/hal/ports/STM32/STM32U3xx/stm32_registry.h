@@ -272,7 +272,8 @@
 #define STM32_RCC_HAS_LSI                   TRUE
 #define STM32_RCC_HAS_LSI_PRESCALER         FALSE
 #define STM32_RCC_HAS_HSI48                 TRUE
-#define STM32_RCC_HAS_HSI                   TRUE
+#define STM32_RCC_HAS_HSI16                 TRUE
+#define STM32_RCC_HSI16_IS_DEFAULT          FALSE
 #define STM32_RCC_HAS_LSE                   TRUE
 #define STM32_RCC_HAS_HSE                   TRUE
 

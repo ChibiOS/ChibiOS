@@ -182,7 +182,7 @@
 #define STM32_LPM               FLASH_ACR_LPM
 #define STM32_PDREQ1            FLASH_ACR_PDREQ1
 #define STM32_PDREQ2            FLASH_ACR_PDREQ2
-#define STM32SLEEP_PD           FLASH_ACR_SLEEP_PD
+#define STM32_SLEEP_PD          FLASH_ACR_SLEEP_PD
 /** @} */
 
 /**
@@ -266,7 +266,7 @@
 #define STM32_STOPWUCK_MASK     RCC_CFGR1_STOPWUCK_Msk
 #define STM32_STOPWUCK_FIELD(n) ((n) << STM32_STOPWUCK_POS)
 #define STM32_STOPWUCK_MSIS     STM32_STOPWUCK_FIELD(0U)
-#define STM32_STOPWUCK_HSi16    STM32_STOPWUCK_FIELD(1U)
+#define STM32_STOPWUCK_HSI16    STM32_STOPWUCK_FIELD(1U)
 
 #define STM32_STOPKERWUCK_POS   RCC_CFGR1_STOPKERWUCK_Pos
 #define STM32_STOPKERWUCK_MASK  RCC_CFGR1_STOPKERWUCK_Msk
@@ -274,8 +274,8 @@
 #define STM32_STOPKERWUCK_MSIK  STM32_STOPKERWUCK_FIELD(0U)
 #define STM32_STOPKERWUCK_HSI16 STM32_STOPKERWUCK_FIELD(1U)
 
-#define STM32_MCO1SEL_POS       RCC_CFGR1_MCO1SEL_Pos
-#define STM32_MCO1SEL_MASK      RCC_CFGR1_MCO1SEL_Msk
+#define STM32_MCO1SEL_POS       RCC_CFGR1_MCOSEL_Pos
+#define STM32_MCO1SEL_MASK      RCC_CFGR1_MCOSEL_Msk
 #define STM32_MCO1SEL_FIELD(n)  ((n) << STM32_MCO1SEL_POS)
 #define STM32_MCO1SEL_OFF       STM32_MCO1PRE_FIELD(0U)
 #define STM32_MCO1SEL_SYSCLK    STM32_MCO1PRE_FIELD(1U)
@@ -287,8 +287,8 @@
 #define STM32_MCO1SEL_HSI48     STM32_MCO1PRE_FIELD(7U)
 #define STM32_MCO1SEL_MSIK      STM32_MCO1PRE_FIELD(8U)
 
-#define STM32_MCO1PRE_POS       RCC_CFGR1_MCO1PRE_Pos
-#define STM32_MCO1PRE_MASK      RCC_CFGR1_MCO1PRE_Msk
+#define STM32_MCO1PRE_POS       RCC_CFGR1_MCOPRE_Pos
+#define STM32_MCO1PRE_MASK      RCC_CFGR1_MCOPRE_Msk
 #define STM32_MCO1PRE_FIELD(n)  ((n) << STM32_MCO1PRE_POS)
 #define STM32_MCO1PRE_DIV1      STM32_MCO1PRE_FIELD(0U)
 #define STM32_MCO1PRE_DIV2      STM32_MCO1PRE_FIELD(1U)
@@ -323,56 +323,6 @@
 #define STM32_MCO2PRE_DIV32     STM32_MCO2PRE_FIELD(5U)
 #define STM32_MCO2PRE_DIV64     STM32_MCO2PRE_FIELD(6U)
 #define STM32_MCO2PRE_DIV128    STM32_MCO2PRE_FIELD(7U)
-/** @} */
-
-/**
- * @name    RCC_CFGR2 register bits definitions
- * @{
- */
-#define STM32_HPRE_POS          RCC_CFGR2_HPRE_Pos
-#define STM32_HPRE_MASK         RCC_CFGR2_HPRE_Msk
-#define STM32_HPRE_FIELD(n)     ((n) << STM32_HPRE_POS)
-#define STM32_HPRE_DIV1         STM32_HPRE_FIELD(0U)
-#define STM32_HPRE_DIV2         STM32_HPRE_FIELD(8U)
-#define STM32_HPRE_DIV4         STM32_HPRE_FIELD(9U)
-#define STM32_HPRE_DIV8         STM32_HPRE_FIELD(10U)
-#define STM32_HPRE_DIV16        STM32_HPRE_FIELD(11U)
-#define STM32_HPRE_DIV64        STM32_HPRE_FIELD(12U)
-#define STM32_HPRE_DIV128       STM32_HPRE_FIELD(13U)
-#define STM32_HPRE_DIV256       STM32_HPRE_FIELD(14U)
-#define STM32_HPRE_DIV512       STM32_HPRE_FIELD(15U)
-
-#define STM32_PPRE1_POS         RCC_CFGR2_PPRE1_Pos
-#define STM32_PPRE1_MASK        RCC_CFGR2_PPRE1_Msk
-#define STM32_PPRE1_FIELD(n)    ((n) << STM32_PPRE1_POS)
-#define STM32_PPRE1_DIV1        STM32_PPRE1_FIELD(0U)
-#define STM32_PPRE1_DIV2        STM32_PPRE1_FIELD(4U)
-#define STM32_PPRE1_DIV4        STM32_PPRE1_FIELD(5U)
-#define STM32_PPRE1_DIV8        STM32_PPRE1_FIELD(6U)
-#define STM32_PPRE1_DIV16       STM32_PPRE1_FIELD(7U)
-
-#define STM32_PPRE2_POS         RCC_CFGR2_PPRE2_Pos
-#define STM32_PPRE2_MASK        RCC_CFGR2_PPRE2_Msk
-#define STM32_PPRE2_FIELD(n)    ((n) << STM32_PPRE2_POS)
-#define STM32_PPRE2_DIV1        STM32_PPRE2_FIELD(0U)
-#define STM32_PPRE2_DIV2        STM32_PPRE2_FIELD(4U)
-#define STM32_PPRE2_DIV4        STM32_PPRE2_FIELD(5U)
-#define STM32_PPRE2_DIV8        STM32_PPRE2_FIELD(6U)
-#define STM32_PPRE2_DIV16       STM32_PPRE2_FIELD(7U)
-/** @} */
-
-/**
- * @name    RCC_CFGR3 register bits definitions
- * @{
- */
-#define STM32_PPRE3_POS         RCC_CFGR3_PPRE3_Pos
-#define STM32_PPRE3_MASK        RCC_CFGR3_PPRE3_Msk
-#define STM32_PPRE3_FIELD(n)    ((n) << STM32_PPRE3_POS)
-#define STM32_PPRE3_DIV1        STM32_PPRE3_FIELD(0U)
-#define STM32_PPRE3_DIV2        STM32_PPRE3_FIELD(4U)
-#define STM32_PPRE3_DIV4        STM32_PPRE3_FIELD(5U)
-#define STM32_PPRE3_DIV8        STM32_PPRE3_FIELD(6U)
-#define STM32_PPRE3_DIV16       STM32_PPRE3_FIELD(7U)
 /** @} */
 
 /**
@@ -834,15 +784,15 @@
  * @note    Do not specify the LATENCY bits because those are calculated
  *          depending on other settings and ORed to this value.
  */
-#if !defined(STM32_ACR_VALUE) || defined(__DOXYGEN__)
-#define STM32_ACR_VALUE                     (FLASH_ACR_PRFTEN)
+#if !defined(STM32_FLASH_ACR) || defined(__DOXYGEN__)
+#define STM32_FLASH_ACR                     (STM32_PRFTEN)
 #endif
 
 /**
  * @brief   Enables or disables the HSI clock source.
  */
-#if !defined(STM32_HSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI_ENABLED                   TRUE
+#if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
+#define STM32_HSI16_ENABLED                 TRUE
 #endif
 
 /**
@@ -982,14 +932,14 @@
  * @brief   System clock source after STOP.
  */
 #if !defined(STM32_STOPWUCK) || defined(__DOXYGEN__)
-#define STM32_STOPWUCK                      STM32_STOPWUCK_HSI
+#define STM32_STOPWUCK                      STM32_STOPWUCK_HSI16
 #endif
 
 /**
  * @brief   Kernel clock source after STOP.
  */
 #if !defined(STM32_STOPKERWUCK) || defined(__DOXYGEN__)
-#define STM32_STOPKERWUCK                   STM32_STOPKERWUCK_HSI
+#define STM32_STOPKERWUCK                   STM32_STOPKERWUCK_HSI16
 #endif
 
 /**
@@ -1033,7 +983,7 @@
  * @brief   TIMICSEL clock source.
  */
 #if !defined(STM32_TIMICSEL) || defined(__DOXYGEN__)
-#define STM32_TIMICSEL                      STM32_TIMICSEL_NOCLK
+#define STM32_TIMICSEL                      STM32_TIMICSEL_NOCLOCK
 #endif
 
 /**
@@ -1075,7 +1025,7 @@
  * @brief   LPTIM1 clock source.
  */
 #if !defined(STM32_LPTIM1SEL) || defined(__DOXYGEN__)
-#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_PCLK3
+#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_MSIK
 #endif
 
 /**
@@ -1089,7 +1039,7 @@
  * @brief   LPTIM34 clock source.
  */
 #if !defined(STM32_LPTIM34SEL) || defined(__DOXYGEN__)
-#define STM32_LPTIM34SEL                    STM32_LPTIM34SEL_PCLK3
+#define STM32_LPTIM34SEL                    STM32_LPTIM34SEL_MSIK
 #endif
 
 /**
@@ -1184,10 +1134,10 @@
 #endif
 
 /**
- * @brief   DAC1SEL clock source.
+ * @brief   DAC1SHSEL clock source.
  */
-#if !defined(STM32_DAC1SEL) || defined(__DOXYGEN__)
-#define STM32_DAC1SEL                       STM32_DAC1SEL_LSE
+#if !defined(STM32_DAC1SHSEL) || defined(__DOXYGEN__)
+#define STM32_DAC1SHSEL                     STM32_DAC1SHSEL_IGNORE
 #endif
 
 /**
@@ -1201,7 +1151,7 @@
  * @brief   RNG clock source.
  */
 #if !defined(STM32_RNGSEL) || defined(__DOXYGEN__)
-#define STM32_RNGSEL                        STM32_RNGSEL_HSI48
+#define STM32_RNGSEL                        STM32_RNGSEL_IGNORE
 #endif
 
 /**
@@ -1266,7 +1216,7 @@
 /* Clock handlers.*/
 #include "stm32_lsi.inc"
 #include "stm32_hsi48.inc"
-#include "stm32_hsidiv.inc"
+#include "stm32_hsi16.inc"
 #include "stm32_lse.inc"
 #include "stm32_hse.inc"
 
@@ -1308,7 +1258,7 @@
     (STM32_FDCAN1SEL    == STM32_FDCAN1SEL_MSIK)    ||                      \
     (STM32_ICLKSEL      == STM32_ICLKSEL_MSIK)      ||                      \
     (STM32_OCTOSPISEL   == STM32_OCTOSPISEL_MSIK)   ||                      \
-    (STM32_RNGSEL       == STM32_RNGSEL_MSIK)      ||                      \
+    (STM32_RNGSEL       == STM32_RNGSEL_MSIK)       ||                      \
     (STM32_SAI1SEL      == STM32_SAI1SEL_MSIK)      ||                      \
     defined(__DOXYGEN__)
   /**
@@ -1342,10 +1292,6 @@
 
   #if STM32_SYSTICKSEL == STM32_SYSTICKSEL_LSI
     #error "LSI not enabled, required by STM32_SYSTICKSEL"
-  #endif
-
-  #if STM32_RNGSEL == STM32_RNGSEL_LSI
-    #error "LSI not enabled, required by STM32_RNGSEL"
   #endif
 
   #if STM32_DAC1SHSEL == STM32_DAC1SHSEL_LSI
@@ -1391,8 +1337,8 @@
 /*
  * HSI related checks.
  */
-#if STM32_HSI_ENABLED
-#else /* !STM32_HSI_ENABLED */
+#if STM32_HSI16_ENABLED
+#else /* !STM32_HSI16_ENABLED */
 
   #if STM32_SW == STM32_SW_HSI16
     #error "HSI not enabled, required by STM32_SW"
@@ -1432,7 +1378,7 @@
     #error "HSI not enabled, required by STM32_LPTIM34SEL"
   #endif
 
-#endif /* !STM32_HSI_ENABLED */
+#endif /* !STM32_HSI16_ENABLED */
 
 /*
  * LSE related checks.
@@ -2019,12 +1965,6 @@
 #else
   #error "invalid source selected for LPUART1 clock"
 #endif
-
-#define STM32_TIMICSEL_NOCLOCK                  STM32_TIMICSEL_FIELD(0U)
-#define STM32_TIMICSEL_HSI256_MSIS1024_MSIS4    STM32_TIMICSEL_FIELD(4U)
-#define STM32_TIMICSEL_HSI256_MSIS1024_MSIK4    STM32_TIMICSEL_FIELD(5U)
-#define STM32_TIMICSEL_HSI256_MSIK1024_MSIS4    STM32_TIMICSEL_FIELD(6U)
-#define STM32_TIMICSEL_HSI256_MSIK1024_MSIK4    STM32_TIMICSEL_FIELD(7U)
 
 #if (STM32_TIMICSEL == STM32_TIMICSEL_NOCLK) || defined(__DOXYGEN__)
   /**
