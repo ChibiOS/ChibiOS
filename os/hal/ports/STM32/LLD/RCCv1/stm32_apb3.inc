@@ -28,8 +28,10 @@
 
 #if defined(RCC_CFGR_PPRE3_Pos)
 #define STM32_PPRE3_POS         RCC_CFGR_PPRE3_Pos
-#elif defined(RCC_CFGR2_PPRE2_Pos)
+#elif defined(RCC_CFGR2_PPRE3_Pos)
 #define STM32_PPRE3_POS         RCC_CFGR2_PPRE3_Pos
+#elif defined(RCC_CFGR3_PPRE3_Pos)
+#define STM32_PPRE3_POS         RCC_CFGR3_PPRE3_Pos
 #else
 #error "unknown register name"
 #endif

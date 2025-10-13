@@ -74,7 +74,7 @@
  * @name   Clock points names
  * @{
  */
-#define CLK_HSI                 0U
+#define CLK_HSI16               0U
 #define CLK_HSI48               1U
 #define CLK_HSE                 2U
 #define CLK_MSIS                3U
@@ -88,8 +88,7 @@
 #define CLK_PCLK3               11U
 #define CLK_MCO1                12U
 #define CLK_MCO2                13U
-#define CLK_ICLK                14U
-#define CLK_ARRAY_SIZE          15U
+#define CLK_ARRAY_SIZE          14U
 /** @} */
 
 /**
@@ -364,8 +363,8 @@
 #define STM32_USART3SEL_POS     2
 #define STM32_USART3SEL_MASK    (1U << STM32_USART3SEL_POS)
 #define STM32_USART3SEL_FIELD(n) ((n) << STM32_USART3SEL_POS)
-#define STM32_USART3SEL_PCLK1   STM32_USART1SEL_FIELD(0U)
-#define STM32_USART3SEL_HSI16   STM32_USART1SEL_FIELD(1U)
+#define STM32_USART3SEL_PCLK1   STM32_USART3SEL_FIELD(0U)
+#define STM32_USART3SEL_HSI16   STM32_USART3SEL_FIELD(1U)
 
 #define STM32_UART4SEL_POS      4
 #define STM32_UART4SEL_MASK     (1U << STM32_UART4SEL_POS)
@@ -659,6 +658,7 @@
  */
 #if !defined(STM32_PWR_PRIVCFGR) || defined(__DOXYGEN__)
 #define STM32_PWR_PRIVCFGR                  (0U)
+#endif
 
 /**
  * @brief   PWR APCR register initialization value.
@@ -827,7 +827,7 @@
  * @brief   Enables or disables the LSE clock source.
  */
 #if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
-#define STM32_LSE_ENABLED                   FALSE
+#define STM32_LSE_ENABLED                   TRUE
 #endif
 
 /**
@@ -1067,7 +1067,7 @@
  * @brief   OCTOSPI clock source.
  */
 #if !defined(STM32_OCTOSPISEL) || defined(__DOXYGEN__)
-#define STM32_OCTOSPISEL                    STM32_OSPISEL_SYSCLK
+#define STM32_OCTOSPISEL                    STM32_OCTOSPISEL_SYSCLK
 #endif
 
 /**
@@ -1440,11 +1440,11 @@
 #if STM32_HSE_ENABLED
 #else /* !STM32_HSE_ENABLED */
 
-  #if STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_HSEDIV1
+  #if STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_HSE
     #error "HSE not enabled, required by STM32_MSIRC0_MODE"
   #endif
 
-  #if STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_HSEDIV1
+  #if STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_HSE
     #error "HSE not enabled, required by STM32_MSIRC1_MODE"
   #endif
 
@@ -1530,40 +1530,6 @@
   #error "invalid STM32_MSIRC1_MODE value specified"
 #endif
 
-
-/**
- * @brief   MSIRC1 PLL correction factors.
- * @details Valid values are 0, 2 and 3 which correspond to slightly
- *          different frequencies when MSIRC1 is used as source, frequencies
- *          are in MHz:
- *          - 0 LSE: 23.986, 11.993, 5.997, 2.998.
- *          - 2 LSE: 22.577, 11.289, 5.644, 2.822.
- *          - 3 LSE: 24.576, 12.288, 6.144, 3.072.
- *          - 0 HSE: 24.016, 12.008, 6.004, 3.002.
- *          - 2 HSE: 22.581, 11.290, 5.645, 2.823.
- *          - 3 HSE: 24.577, 12.289, 6.144, 3.072.
- *          .
- * @note    MSIRC1 does not allow for round numbers, source from MSIRC0 to
- *          obtain precise 96MHz, 48MHz, 24MHz, 12MHz frequencies.
- */
-#if !defined(STM32_MSIPLL1N_VALUE) || defined(__DOXYGEN__)
-#define STM32_MSIPLL1N_VALUE                0
-#endif
-
-/**
- * @brief   Source and divide factor for MSIS.
- */
-#if !defined(STM32_MSIS_SRCDIV) || defined(__DOXYGEN__)
-#define STM32_MSIS_SRCDIV                   STM32_MSIS_IRC0_DIV1
-#endif
-
-/**
- * @brief   Source and divide factor for MSIK.
- */
-#if !defined(STM32_MSIK_SRCDIV) || defined(__DOXYGEN__)
-#define STM32_MSIK_SRCDIV                   STM32_MSIK_IRC0_DIV1
-#endif
-
 #if (STM32_MSIPLL0EN == 0) || defined(__DOXYGEN__)
   /**
    * @brief   MSIPLL1N field initializer.
@@ -1620,44 +1586,44 @@
  * @brief   MSIS clock frequency.
  */
 #if (STM32_MSIS_SRCDIV == STM32_MSIS_IRC0_DIV1) || defined(__DOXYGEN__)
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(0U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC0
-#define STM32_MSISCLK               STM32_MSIRC0CLK
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(0U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC0
+  #define STM32_MSISCLK             STM32_MSIRC0CLK
 
 #elif STM32_MSIS_SRCDIV == STM32_MSIS_IRC0_DIV2
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(1U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC0
-#define STM32_MSISCLK               (STM32_MSIRC0CLK / 2U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(1U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC0
+  #define STM32_MSISCLK             (STM32_MSIRC0CLK / 2U)
 
 #elif STM32_MSIS_SRCDIV == STM32_MSIS_IRC0_DIV4
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(2U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC0
-#define STM32_MSISCLK               (STM32_MSIRC0CLK / 4U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(2U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC0
+  #define STM32_MSISCLK             (STM32_MSIRC0CLK / 4U)
 
 #elif STM32_MSIS_SRCDIV == STM32_MSIS_IRC0_DIV8
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(3U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC0
-#define STM32_MSISCLK               (STM32_MSIRC0CLK / 8U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(3U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC0
+  #define STM32_MSISCLK             (STM32_MSIRC0CLK / 8U)
 
 #elif STM32_MSIS_SRCDIV == STM32_MSIS_IRC1_DIV1
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(0U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC1
-#define STM32_MSISCLK               STM32_MSIRC1CLK
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(0U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC1
+  #define STM32_MSISCLK             STM32_MSIRC1CLK
 
 #elif STM32_MSIS_SRCDIV == STM32_MSIS_IRC1_DIV2
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(1U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC1
-#define STM32_MSISCLK               (STM32_MSIRC1CLK / 2U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(1U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC1
+  #define STM32_MSISCLK             (STM32_MSIRC1CLK / 2U)
 
 #elif STM32_MSIS_SRCDIV == STM32_MSIS_IRC1_DIV4
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(2U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC1
-#define STM32_MSISCLK               (STM32_MSIRC1CLK / 4U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(2U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC1
+  #define STM32_MSISCLK             (STM32_MSIRC1CLK / 4U)
 
 #elif STM32_MSIS_SRCDIV == STM32_MSIS_IRC1_DIV8
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(3U)
-#define STM32_MSISSEL               STM32_MSISSEL_MSIRC1
-#define STM32_MSISCLK               (STM32_MSIRC1CLK / 8U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(3U)
+  #define STM32_MSISSEL             STM32_MSISSEL_MSIRC1
+  #define STM32_MSISCLK             (STM32_MSIRC1CLK / 8U)
 
 #else
   #error "invalid STM32_MSIS_SRCDIV value specified"
@@ -1667,44 +1633,44 @@
  * @brief   MSIK clock frequency.
  */
 #if (STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV1) || defined(__DOXYGEN__)
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(0U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC0
-#define STM32_MSIKCLK               STM32_MSIRC0CLK
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(0U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
+  #define STM32_MSIKCLK             STM32_MSIRC0CLK
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV2
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(1U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC0
-#define STM32_MSIKCLK               (STM32_MSIRC0CLK / 2U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(1U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
+  #define STM32_MSIKCLK             (STM32_MSIRC0CLK / 2U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV4
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(2U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC0
-#define STM32_MSIKCLK               (STM32_MSIRC0CLK / 4U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(2U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
+  #define STM32_MSIKCLK             (STM32_MSIRC0CLK / 4U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV8
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(3U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC0
-#define STM32_MSIKCLK               (STM32_MSIRC0CLK / 8U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(3U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
+  #define STM32_MSIKCLK             (STM32_MSIRC0CLK / 8U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV1
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(0U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC1
-#define STM32_MSIKCLK               STM32_MSIRC1CLK
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(0U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
+  #define STM32_MSIKCLK             STM32_MSIRC1CLK
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV2
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(1U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC1
-#define STM32_MSIKCLK               (STM32_MSIRC1CLK / 2U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(1U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
+  #define STM32_MSIKCLK             (STM32_MSIRC1CLK / 2U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV4
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(2U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC1
-#define STM32_MSIKCLK               (STM32_MSIRC1CLK / 4U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(2U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
+  #define STM32_MSIKCLK             (STM32_MSIRC1CLK / 4U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV8
-#define STM32_MSISDIV               STM32_MSIKDIV_FIELD(3U)
-#define STM32_MSIKSEL               STM32_MSIKSEL_MSIRC1
-#define STM32_MSIKCLK               (STM32_MSIRC1CLK / 8U)
+  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(3U)
+  #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
+  #define STM32_MSIKCLK             (STM32_MSIRC1CLK / 8U)
 
 #else
   #error "invalid STM32_MSIK_SRCDIV value specified"
@@ -1717,7 +1683,7 @@
   #define STM32_SYSCLK              STM32_MSISCLK
 
 #elif STM32_SW == STM32_SW_HSI16
-  #define STM32_SYSCLK              STM32_HSICLK
+  #define STM32_SYSCLK              STM32_HSI16CLK
 
 #elif STM32_SW == STM32_SW_HSE
   #define STM32_SYSCLK              STM32_HSECLK
@@ -1781,7 +1747,7 @@
   #define STM32_MCO1DIVCLK          STM32_MSISCLK
 
 #elif STM32_MCO1SEL == STM32_MCO1SEL_HSI16
-  #define STM32_MCO1DIVCLK          STM32_HSICLK
+  #define STM32_MCO1DIVCLK          STM32_HSI16CLK
 
 #elif STM32_MCO1SEL == STM32_MCO1SEL_HSE
   #define STM32_MCO1DIVCLK          STM32_HSE
@@ -1803,7 +1769,7 @@
 #endif
 
 /**
- * @brief   MCO1PR field.
+ * @brief   MCO1PRE field.
  */
 #if (STM32_MCO1PRE_VALUE == 1) || defined(__DOXYGEN__)
   #define STM32_MCO1PRE             STM32_MCO1PRE_DIV1
@@ -1827,12 +1793,41 @@
 #endif
 
 /**
- * @brief   MCO2 output pin clock frequency.
+ * @brief   MCO2 source clock.
  */
-#define STM32_MCO2CLK               (STM32_MCO2DIVCLK / STM32_MCO2PRE_VALUE)
+#if (STM32_MCO2SEL == STM32_MCO2SEL_OFF) || defined(__DOXYGEN__)
+  #define STM32_MCO2DIVCLK          0U
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_SYSCLK
+  #define STM32_MCO2DIVCLK          STM32_SYSCLK
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_MSIS
+  #define STM32_MCO2DIVCLK          STM32_MSISCLK
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_HSI16
+  #define STM32_MCO2DIVCLK          STM32_HSI16CLK
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_HSE
+  #define STM32_MCO2DIVCLK          STM32_HSE
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_LSI
+  #define STM32_MCO2DIVCLK          STM32_LSICLK
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_LSE
+  #define STM32_MCO2DIVCLK          STM32_LSECLK
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_HSI48
+  #define STM32_MCO2DIVCLK          STM32_HSI48CLK
+
+#elif STM32_MCO2SEL == STM32_MCO2SEL_MSIK
+  #define STM32_MCO2DIVCLK          STM32_MSIKCLK
+
+#else
+  #error "invalid STM32_MCO2SEL value specified"
+#endif
 
 /**
- * @brief   MCO2PR field.
+ * @brief   MCO2PRE field.
  */
 #if (STM32_MCO2PRE_VALUE == 1) || defined(__DOXYGEN__)
   #define STM32_MCO2PRE             STM32_MCO2PRE_DIV1
@@ -1854,6 +1849,11 @@
 #else
 #error "invalid STM32_MCO2PRE_VALUE value specified"
 #endif
+
+/**
+ * @brief   MCO1 output pin clock frequency.
+ */
+#define STM32_MCO1CLK               (STM32_MCO1DIVCLK / STM32_MCO1PRE_VALUE)
 
 /**
  * @brief   MCO2 output pin clock frequency.
@@ -1957,7 +1957,7 @@
   #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_MSIK)
 
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_HSI16
-  #define STM32_LPUART1CLK          STM32_HSICLK
+  #define STM32_LPUART1CLK          STM32_HSI16CLK
 
 #elif STM32_LPUART1SEL == STM32_LPUART1SEL_LSE
   #define STM32_LPUART1CLK          STM32_LSECLK
@@ -1966,7 +1966,7 @@
   #error "invalid source selected for LPUART1 clock"
 #endif
 
-#if (STM32_TIMICSEL == STM32_TIMICSEL_NOCLK) || defined(__DOXYGEN__)
+#if (STM32_TIMICSEL == STM32_TIMICSEL_NOCLOCK) || defined(__DOXYGEN__)
   /**
    * @brief   TIM16 internal capture clock frequency.
    */
@@ -1981,22 +1981,22 @@
   #define STM32_LPTIM2CCLK          0U
 
 #elif STM32_TIMICSEL == STM32_TIMICSEL_HSI256_MSIS1024_MSIS4
-  #define STM32_TIM16CCLK           (STM32_HSICLK / 256U)
+  #define STM32_TIM16CCLK           (STM32_HSI16CLK / 256U)
   #define STM32_TIM15CCLK           (STM32_MSISCLK / 1024U)
   #define STM32_LPTIM2CCLK          (STM32_MSISCLK / 4U)
 
 #elif STM32_TIMICSEL == STM32_TIMICSEL_HSI256_MSIS1024_MSIK4
-  #define STM32_TIM16CCLK           (STM32_HSICLK / 256U)
+  #define STM32_TIM16CCLK           (STM32_HSI16CLK / 256U)
   #define STM32_TIM15CCLK           (STM32_MSISCLK / 1024U)
   #define STM32_LPTIM2CCLK          (STM32_MSIKCLK / 4U)
 
 #elif STM32_TIMICSEL == STM32_TIMICSEL_HSI256_MSIK1024_MSIS4
-  #define STM32_TIM16CCLK           (STM32_HSICLK / 256U)
+  #define STM32_TIM16CCLK           (STM32_HSI16CLK / 256U)
   #define STM32_TIM15CCLK           (STM32_MSIKCLK / 1024U)
   #define STM32_LPTIM2CCLK          (STM32_MSISCLK / 4U)
 
 #elif STM32_TIMICSEL == STM32_TIMICSEL_HSI256_MSIK1024_MSIK4
-  #define STM32_TIM16CCLK           (STM32_HSICLK / 256U)
+  #define STM32_TIM16CCLK           (STM32_HSI16CLK / 256U)
   #define STM32_TIM15CCLK           (STM32_MSIKCLK / 1024U)
   #define STM32_LPTIM2CCLK          (STM32_MSIKCLK / 4U)
 
@@ -2014,7 +2014,7 @@
   #define STM32_LPUART1CLK          STM32_LSICLK
 
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_PLL3R
-  #define STM32_LPUART1CLK          STM32_HSICLK
+  #define STM32_LPUART1CLK          STM32_HSI16CLK
 
 #elif STM32_LPTIM1SEL == STM32_LPTIM1SEL_LSE
   #define STM32_LPTIM1CLK           STM32_LSECLK
@@ -2026,14 +2026,14 @@
 /**
  * @brief   LPTIM2 clock frequency.
  */
-#if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_MSIK) || defined(__DOXYGEN__)
-  #define STM32_LPTIM2CLK           hal_lld_get_clock_point(CLK_MSIK)
+#if (STM32_LPTIM2SEL == STM32_LPTIM2SEL_PCLK1) || defined(__DOXYGEN__)
+  #define STM32_LPTIM2CLK           hal_lld_get_clock_point(CLK_PCLK1)
 
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSI
   #define STM32_LPUART1CLK          STM32_LSICLK
 
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_PLL3R
-  #define STM32_LPUART1CLK          STM32_HSICLK
+  #define STM32_LPUART1CLK          STM32_HSI16CLK
 
 #elif STM32_LPTIM2SEL == STM32_LPTIM2SEL_LSE
   #define STM32_LPTIM2CLK           STM32_LSECLK
@@ -2053,7 +2053,7 @@
   #define STM32_LPUART1CLK          STM32_LSICLK
 
 #elif STM32_LPTIM34SEL == STM32_LPTIM34SEL_PLL3R
-  #define STM32_LPUART1CLK          STM32_HSICLK
+  #define STM32_LPUART1CLK          STM32_HSI16CLK
 
 #elif STM32_LPTIM34SEL == STM32_LPTIM34SEL_LSE
   #define STM32_LPTIM2CLK           STM32_LSECLK
@@ -2068,7 +2068,7 @@
 #if (STM32_SPI1SEL == STM32_SPI1SEL_PCLK2) || defined(__DOXYGEN__)
   #define STM32_SPI1CLK             hal_lld_get_clock_point(CLK_PCLK2)
 
-#elif STM32_SPI1SEL == STM32_SPI2SEL_MSIK
+#elif STM32_SPI1SEL == STM32_SPI1SEL_MSIK
   #define STM32_SPI1CLK             hal_lld_get_clock_point(CLK_MSIK)
 
 #else
@@ -2104,10 +2104,10 @@
 /**
  * @brief   OCTOSPI clock frequency.
  */
-#if (STM32_OSPISEL == STM32_OCTOSPISEL_SYSCLK) || defined(__DOXYGEN__)
+#if (STM32_OCTOSPISEL == STM32_OCTOSPISEL_SYSCLK) || defined(__DOXYGEN__)
   #define STM32_OSPICLK             hal_lld_get_clock_point(CLK_SYSCLK)
 
-#elif STM32_OSPISEL == STM32_OCTOSPISEL_MSIK
+#elif STM32_OCTOSPISEL == STM32_OCTOSPISEL_MSIK
   #define STM32_OSPICLK             hal_lld_get_clock_point(CLK_MSIK)
 
 #else
@@ -2152,10 +2152,10 @@
 /**
  * @brief   USB clock frequency.
  */
-#if (STM32_USBSEL == STM32_USB1SEL_ICLK) || defined(__DOXYGEN__)
+#if (STM32_USB1SEL == STM32_USB1SEL_ICLK) || defined(__DOXYGEN__)
   #define STM32_USBCLK              hal_lld_get_clock_point(CLK_ICLK)
 
-#elif STM32_USBSEL == STM32_USB1SEL_ICLKDIV2
+#elif STM32_USB1SEL == STM32_USB1SEL_ICLKDIV2
   #define STM32_USBCLK              (hal_lld_get_clock_point(CLK_ICLK) / 2U)
 
 #else
@@ -2272,6 +2272,9 @@
 
 #elif STM32_RNGSEL == STM32_RNGSEL_MSIK
   #define STM32_RNGCLK              hal_lld_get_clock_point(CLK_MSIK)
+
+#elif STM32_RNGSEL == STM32_RNGSEL_IGNORE
+  #define STM32_RNGCLK              0U
 
 #else
   #error "invalid source selected for RNG clock"
@@ -2404,7 +2407,7 @@ typedef struct {
  * @notapi
  */
 #define hal_lld_get_clock_point(clkpt)                                      \
-  ((clkpt) == CLK_HSI       ? STM32_HSICLK          :                       \
+  ((clkpt) == CLK_HSI16     ? STM32_HSI16CLK        :                       \
    (clkpt) == CLK_HSI48     ? STM32_HSI48CLK        :                       \
    (clkpt) == CLK_HSE       ? STM32_HSECLK          :                       \
    (clkpt) == CLK_MSIS      ? STM32_MSISCLK         :                       \
@@ -2418,7 +2421,6 @@ typedef struct {
    (clkpt) == CLK_PCLK3     ? STM32_PCLK3           :                       \
    (clkpt) == CLK_MCO1      ? STM32_MCO1CLK         :                       \
    (clkpt) == CLK_MCO2      ? STM32_MCO2CLK         :                       \
-   (clkpt) == CLK_ICLK      ? STM32_ICLK            :                       \
    0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 

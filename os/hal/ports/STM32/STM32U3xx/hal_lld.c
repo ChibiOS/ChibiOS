@@ -37,7 +37,7 @@
  * @name    Registers reset values
  * @{
  */
-#define STM32_PWR_VOSCR_RESET           0U
+#define STM32_PWR_VOSR_RESET            0U
 #define STM32_PWR_VMCR_RESET            0U
 #define STM32_FLASH_ACR_RESET           (FLASH_ACR_WRHIGHFREQ_0     |       \
                                          FLASH_ACR_LATENCY_3WS)
@@ -171,10 +171,6 @@ const halclkcfg_t hal_clkcfg_default = {
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
-#define CLK_HSI                 0U
-#define CLK_CSI                 1U
-#define CLK_HSI48               2U
-#define CLK_HSE                 3U
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
@@ -298,13 +294,13 @@ __STATIC_INLINE void flash_set_acr(uint32_t acr) {
 __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 
   /* PWR clock enabled.*/
-//  rccEnablePWRInterface(false);
+  rccEnablePWRInterface(false);
 
   /* Static PWR configurations.*/
 //  PWR->VOSCR    = STM32_PWR_VOSCR;
 
   /* Enable write access to Backup domain.*/
-  PWR->DBPCR    = PWR_DBPCR_DBP;
+  PWR->DBPR     = PWR_DBPR_DBP;
   PWR->BDCR     = STM32_PWR_BDCR;
 #if STM32_PWR_HAS_UCPDR
   PWR->UCPDR    = STM32_PWR_UCPDR;

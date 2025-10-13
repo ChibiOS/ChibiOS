@@ -94,6 +94,9 @@
 #define STM32_IRQ_TIM4_PRIORITY             7
 #define STM32_IRQ_TIM6_PRIORITY             7
 #define STM32_IRQ_TIM7_PRIORITY             7
+#define STM32_IRQ_TIM15_PRIORITY            7
+#define STM32_IRQ_TIM16_PRIORITY            7
+#define STM32_IRQ_TIM17_PRIORITY            7
 
 #define STM32_IRQ_USART1_PRIORITY           12
 #define STM32_IRQ_USART3_PRIORITY           12

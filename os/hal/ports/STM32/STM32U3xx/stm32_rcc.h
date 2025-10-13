@@ -567,6 +567,34 @@
 /** @} */
 
 /**
+ * @name    PWR interface specific RCC operations
+ * @{
+ */
+/**
+ * @brief   Enables the PWR interface clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnablePWRInterface(lp) rccEnableAHB1R2(RCC_AHB1ENR2_PWREN, lp)
+
+/**
+ * @brief   Disables PWR interface clock.
+ *
+ * @api
+ */
+#define rccDisablePWRInterface() rccDisableAPBR1(RCC_AHB1ENR2_PWREN)
+
+/**
+ * @brief   Resets the PWR interface.
+ *
+ * @api
+ */
+#define rccResetPWRInterface()
+/** @} */
+
+/**
  * @name    RNG peripherals specific RCC operations
  * @{
  */
