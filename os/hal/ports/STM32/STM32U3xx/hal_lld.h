@@ -1514,6 +1514,9 @@
   #else
     #error "MSIPLL feature requires a 16 or 32 MHz HSE clock"
   #endif
+
+#else
+  #define STM32_MSIHSINDIV          0U
 #endif
 
 /**
@@ -1657,42 +1660,42 @@
  * @brief   MSIK clock frequency.
  */
 #if (STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV1) || defined(__DOXYGEN__)
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(0U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(0U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
   #define STM32_MSIKCLK             STM32_MSIRC0CLK
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV2
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(1U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(1U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
   #define STM32_MSIKCLK             (STM32_MSIRC0CLK / 2U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV4
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(2U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(2U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
   #define STM32_MSIKCLK             (STM32_MSIRC0CLK / 4U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC0_DIV8
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(3U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(3U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC0
   #define STM32_MSIKCLK             (STM32_MSIRC0CLK / 8U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV1
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(0U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(0U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
   #define STM32_MSIKCLK             STM32_MSIRC1CLK
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV2
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(1U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(1U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
   #define STM32_MSIKCLK             (STM32_MSIRC1CLK / 2U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV4
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(2U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(2U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
   #define STM32_MSIKCLK             (STM32_MSIRC1CLK / 4U)
 
 #elif STM32_MSIK_SRCDIV == STM32_MSIK_IRC1_DIV8
-  #define STM32_MSISDIV             STM32_MSIKDIV_FIELD(3U)
+  #define STM32_MSIKDIV             STM32_MSIKDIV_FIELD(3U)
   #define STM32_MSIKSEL             STM32_MSIKSEL_MSIRC1
   #define STM32_MSIKCLK             (STM32_MSIRC1CLK / 8U)
 

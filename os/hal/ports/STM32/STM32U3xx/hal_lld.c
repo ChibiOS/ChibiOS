@@ -268,15 +268,22 @@ void stm32_clock_init(void) {
                      RCC_CR_MSIPLL0EN_Msk   | RCC_CR_MSIPLL1EN_Msk   |
                      RCC_CR_MSIKON_Msk      | RCC_CR_MSIKERON_Msk    |
                      RCC_CR_MSISON_Msk);
+    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST | */
+          STM32_MSIPLL0EN | STM32_MSIPLL1EN;
+
     icscr1 = RCC->ICSCR1 & ~(RCC_ICSCR1_MSISSEL_Msk    | RCC_ICSCR1_MSISDIV_Msk    |
                              RCC_ICSCR1_MSIKSEL_Msk    | RCC_ICSCR1_MSIKDIV_Msk    |
                              RCC_ICSCR1_MSIPLL1N_Msk   | RCC_ICSCR1_MSIRGSEL_Msk   |
                              RCC_ICSCR1_MSIBIAS_Msk    | RCC_ICSCR1_MSIPLL0SEL_Msk |
                              RCC_ICSCR1_MSIPLL1SEL_Msk | RCC_ICSCR1_MSIHSINDIV_Msk);
-    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST | */
-          STM32_MSIPLL0EN | STM32_MSIPLL1EN;
+    icscr1 |= STM32_MSISSEL    | STM32_MSISDIV    |
+              STM32_MSIKSEL    | STM32_MSIKDIV    |
+              STM32_MSIPLL1N   | STM32_MSIRGSEL   |
+              STM32_MSIBIAS    | STM32_MSIPLL0SEL |
+              STM32_MSIPLL1SEL | STM32_MSIHSINDIV;
 
     /* PLLs activation and wait time.*/
+    RCC->ICSCR1 = icscr1;
     RCC->CR = cr;
     crrdy = ((STM32_MSIPLL0EN | STM32_MSIPLL1EN) >> RCC_CR_MSIPLL0EN_Pos) << RCC_CR_MSIPLL0RDY_Pos;
     while ((RCC->CR & crrdy) != crrdy) {
@@ -293,8 +300,8 @@ void stm32_clock_init(void) {
     cr    |= RCC_CR_MSIKON /* | STM32_MSIKERON*/;
     crrdy |= RCC_CR_MSIKRDY;
 #endif
-    RCC->CR = cr;
     RCC->ICSCR1 = icscr1;
+    RCC->CR = cr;
     while ((RCC->CR & crrdy) != crrdy) {
       /* Waiting.*/
     }
