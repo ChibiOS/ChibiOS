@@ -58,7 +58,7 @@
  *
  * @api
  */
-#define rccEnableAPBR1(mask, lp) {                                          \
+#define rccEnableAPB1R1(mask, lp) {                                         \
   RCC->APB1ENR1 |= (mask);                                                  \
   if (lp)                                                                   \
     RCC->APB1SLPENR1 |= (mask);                                             \
@@ -302,11 +302,7 @@
  *
  * @api
  */
-#define rccResetAHB1R2(mask) {                                              \
-  RCC->AHB1RSTR2 |= (mask);                                                 \
-  RCC->AHB1RSTR2 &= ~(mask);                                                \
-  (void)RCC->AHB1RSTR2;                                                     \
-}
+#define rccResetAHB1R2(mask)
 
 /**
  * @brief   Enables the clock of one or more peripheral on the AHB2 bus (R1).
@@ -349,6 +345,49 @@
   RCC->AHB2RSTR1 |= (mask);                                                 \
   RCC->AHB2RSTR1 &= ~(mask);                                                \
   (void)RCC->AHB2RSTR1;                                                     \
+}
+
+/**
+ * @brief   Enables the clock of one or more peripheral on the AHB2 bus (R2).
+ *
+ * @param[in] mask      AHB2 R2 peripherals mask
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableAHB2R2(mask, lp) {                                         \
+  RCC->AHB2ENR2 |= (mask);                                                  \
+  if (lp)                                                                   \
+    RCC->AHB2SLPENR2 |= (mask);                                             \
+  else                                                                      \
+    RCC->AHB2SLPENR2 &= ~(mask);                                            \
+  (void)RCC->AHB2SLPENR2;                                                   \
+}
+
+/**
+ * @brief   Disables the clock of one or more peripheral on the AHB2 bus (R2).
+ *
+ * @param[in] mask      AHB2 R2 peripherals mask
+ *
+ * @api
+ */
+#define rccDisableAHB2R2(mask) {                                            \
+  RCC->AHB2ENR2 &= ~(mask);                                                 \
+  RCC->AHB2SLPENR21 &= ~(mask);                                              \
+  (void)RCC->AHB2SLPENR2;                                                   \
+}
+
+/**
+ * @brief   Resets one or more peripheral on the AHB2 bus (R2).
+ *
+ * @param[in] mask      AHB2 R2 peripherals mask
+ *
+ * @api
+ */
+#define rccResetAHB2R2(mask) {                                              \
+  RCC->AHB2RSTR2 |= (mask);                                                 \
+  RCC->AHB2RSTR2 &= ~(mask);                                                \
+  (void)RCC->AHB2RSTR2;                                                     \
 }
 /** @} */
 

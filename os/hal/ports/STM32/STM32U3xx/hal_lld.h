@@ -65,8 +65,8 @@
 /**
  * @brief   Sub-family identifier.
  */
-#if !defined(STM32U5XX) || defined(__DOXYGEN__)
-  #define STM32U5XX
+#if !defined(STM32U3XX) || defined(__DOXYGEN__)
+  #define STM32U3XX
 #endif
 /** @} */
 
@@ -138,6 +138,16 @@
 /** @} */
 
 /**
+ * @name    PWR_VOSR register definitions
+ * @{
+ */
+#define STM32_VOS_POS           0
+#define STM32_VOS_MASK          (3U << 0)
+#define STM32_VOS_RANGE1        (1U << PWR_VOSR_R1EN_Pos)
+#define STM32_VOS_RANGE2        (1U << PWR_VOSR_R2EN_Pos)
+/** @} */
+
+/**
  * @name    PWR_CR3 register definitions
  * @{
  */
@@ -147,21 +157,28 @@
 /** @} */
 
 /**
- * @name    PWR_VOSR register definitions
+ * @name    PWR_SVMCR register definitions
  * @{
  */
-#define STM32_VOS_POS           0
-#define STM32_VOS_MASK          (3U << 0)
-#define STM32_VOS_RANGE1        (1U << PWR_VOSR_R1EN_Pos)
-#define STM32_VOS_RANGE2        (1U << PWR_VOSR_R2EN_Pos)
-
-#define STM32_BOOSTEN           (1U << PWR_VOSR_BOOSTEN_Pos)
-
-#define STM32_R1RDY             (1U << PWR_VOSR_R1RDY_Pos)
-
-#define STM32_R2RDY             (1U << PWR_VOSR_R2RDY_Pos)
-
-#define STM32_BOOSTRDY          (1U << PWR_VOSR_BOOSTRDY_Pos)
+#define STM32_ASV               PWR_SVMCR_ASV
+#define STM32_IO2SV             PWR_SVMCR_IO2SV
+#define STM32_USV               PWR_SVMCR_USV
+#define STM32_AVM2EN            PWR_SVMCR_AVM2EN
+#define STM32_AVM1EN            PWR_SVMCR_AVM1EN
+#define STM32_IO2VMEN           PWR_SVMCR_IO2VMEN
+#define STM32_UVMEN             PWR_SVMCR_UVMEN
+#define STM32_PVDLS_POS         PWR_SVMCR_PVDLS_Pos
+#define STM32_PVDLS_MASK        PWR_SVMCR_PVDLS_Msk
+#define STM32_PVDLS_FIELD(n)    ((n) << STM32_PVDLS_POS)
+#define STM32_PVDLS_2P0V        STM32_PVDLS_FIELD(0U)
+#define STM32_PVDLS_2P2V        STM32_PVDLS_FIELD(1U)
+#define STM32_PVDLS_2P4V        STM32_PVDLS_FIELD(2U)
+#define STM32_PVDLS_2P5V        STM32_PVDLS_FIELD(3U)
+#define STM32_PVDLS_2P6V        STM32_PVDLS_FIELD(4U)
+#define STM32_PVDLS_2P8V        STM32_PVDLS_FIELD(5U)
+#define STM32_PVDLS_2P9V        STM32_PVDLS_FIELD(6U)
+#define STM32_PVDLS_PVD_IN      STM32_PVDLS_FIELD(7U)
+#define STM32_PVDE              PWR_SVMCR_PVDE
 /** @} */
 
 /**
@@ -607,8 +624,8 @@
 /**
  * @brief   PWR CR3 register initialization value.
  */
-#if !defined(STM32_PWR_CR3) || defined(__DOXYGEN__)
-#define STM32_PWR_CR3
+#if !defined(STM32_PWR_SVMCR) || defined(__DOXYGEN__)
+#define STM32_PWR_SVMCR                     (0U)
 #endif
 
 /**
@@ -616,6 +633,13 @@
  */
 #if !defined(STM32_PWR_VOSR) || defined(__DOXYGEN__)
 #define STM32_PWR_VOSR                      STM32_VOS_RANGE1
+#endif
+
+/**
+ * @brief   PWR CR3 register initialization value.
+ */
+#if !defined(STM32_PWR_CR3) || defined(__DOXYGEN__)
+#define STM32_PWR_CR3                       (STM32_FSTEN | STM32_REGSEL)
 #endif
 
 /**
@@ -775,7 +799,7 @@
 /**
  * @brief   PWR I3CPUCR2 register initialization value.
  */
-#if !defined(STM32_PWR_I3CPUCR1) || defined(__DOXYGEN__)
+#if !defined(STM32_PWR_I3CPUCR2) || defined(__DOXYGEN__)
 #define STM32_PWR_I3CPUCR2                  (0U)
 #endif
 
@@ -1690,6 +1714,36 @@
 
 #else
   #error "invalid STM32_SW value specified"
+#endif
+
+/* EPOD boost-related settings.*/
+#if STM32_SYSCLK > 240000000U
+  #if STM32_SW == STM32_SW_MSIS
+    #define STM32_BOOSTER_ENABLED   TRUE
+    #define STM32_BOOSTSEL          0U
+    #define STM32_BOOSTDIV          0U
+
+  #elif STM32_SW == STM32_SW_HSI16
+    #define STM32_BOOSTER_ENABLED   TRUE
+    #define STM32_BOOSTSEL          STM32_BOOSTSEL_HSI16
+    #define STM32_BOOSTDIV          STM32_BOOSTDIV_DIV2
+
+  #else /* STM32_SW == STM32_SW_HSE */
+    #define STM32_BOOSTER_ENABLED   TRUE
+    #define STM32_BOOSTSEL          STM32_BOOSTSEL_HSE
+    /* The divider is a function of the HSE frequency.*/
+    #if STM32_HSECLK <= 12000000U
+      #define STM32_BOOSTDIV        STM32_BOOSTDIV_DIV1
+    #elif STM32_HSECLK <= 24000000U
+      #define STM32_BOOSTDIV        STM32_BOOSTDIV_DIV2
+    #else
+      #define STM32_BOOSTDIV        STM32_BOOSTDIV_DIV4
+    #endif
+  #endif
+#else /* EPOD boost not required.*/
+  #define STM32_BOOSTER_ENABLED     FALSE
+  #define STM32_BOOSTSEL            0U
+  #define STM32_BOOSTDIV            0U
 #endif
 
 /* Bus handlers.*/
