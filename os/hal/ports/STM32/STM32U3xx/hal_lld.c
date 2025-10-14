@@ -61,7 +61,7 @@
 
 /**
  * @brief   CMSIS system core clock variable.
- * @note    It is declared in system_stm32h5xx.h.
+ * @note    It is declared in system_stm32u3xx.h.
  */
 uint32_t SystemCoreClock = STM32_HCLK;
 
@@ -236,12 +236,12 @@ void stm32_clock_init(void) {
 
   /* PWR core voltage and thresholds setup.*/
   PWR->VOSR = STM32_PWR_VOSR;
-#if (STM32_PWR_VOSR && PWR_VOSR_R1EN) != 0U
+#if (STM32_PWR_VOSR & PWR_VOSR_R1EN) != 0U
   while ((PWR->VOSR & PWR_VOSR_R1RDY) == 0U) {
     /* Wait until regulator is stable.*/
   }
 #endif
-#if (STM32_PWR_VOSR && PWR_VOSR_R2EN) != 0U
+#if (STM32_PWR_VOSR & PWR_VOSR_R2EN) != 0U
   while ((PWR->VOSR & PWR_VOSR_R2RDY) == 0U) {
     /* Wait until regulator is stable.*/
   }
@@ -260,10 +260,45 @@ void stm32_clock_init(void) {
   /* Backup domain initializations.*/
   bd_init();
 
-  /* PLLs activation, if required.*/
-//  pll1_init();
-//  pll2_init();
-//  pll3_init();
+  /* MSI activation, if required.*/
+  {
+    uint32_t cr, crrdy, icscr1;
+
+    cr = RCC->CR & ~(RCC_CR_MSIPLL0FAST_Msk | RCC_CR_MSIPLL1FAST_Msk |
+                     RCC_CR_MSIPLL0EN_Msk   | RCC_CR_MSIPLL1EN_Msk   |
+                     RCC_CR_MSIKON_Msk      | RCC_CR_MSIKERON_Msk    |
+                     RCC_CR_MSISON_Msk);
+    icscr1 = RCC->ICSCR1 & ~(RCC_ICSCR1_MSISSEL_Msk    | RCC_ICSCR1_MSISDIV_Msk    |
+                             RCC_ICSCR1_MSIKSEL_Msk    | RCC_ICSCR1_MSIKDIV_Msk    |
+                             RCC_ICSCR1_MSIPLL1N_Msk   | RCC_ICSCR1_MSIRGSEL_Msk   |
+                             RCC_ICSCR1_MSIBIAS_Msk    | RCC_ICSCR1_MSIPLL0SEL_Msk |
+                             RCC_ICSCR1_MSIPLL1SEL_Msk | RCC_ICSCR1_MSIHSINDIV_Msk);
+    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST | */
+          STM32_MSIPLL0EN | STM32_MSIPLL1EN;
+
+    /* PLLs activation and wait time.*/
+    RCC->CR = cr;
+    crrdy = ((STM32_MSIPLL0EN | STM32_MSIPLL1EN) >> RCC_CR_MSIPLL0EN_Pos) << RCC_CR_MSIPLL0RDY_Pos;
+    while ((RCC->CR & crrdy) != crrdy) {
+      /* Waiting.*/
+    }
+
+    /* MSI clocks activation and waiting.*/
+    crrdy = 0U;
+#if STM32_ACTIVATE_MSIS == TRUE
+    cr    |= RCC_CR_MSISON;
+    crrdy |= RCC_CR_MSISRDY;
+#endif
+#if STM32_ACTIVATE_MSIK == TRUE
+    cr    |= RCC_CR_MSIKON /* | STM32_MSIKERON*/;
+    crrdy |= RCC_CR_MSIKRDY;
+#endif
+    RCC->CR = cr;
+    RCC->ICSCR1 = icscr1;
+    while ((RCC->CR & crrdy) != crrdy) {
+      /* Waiting.*/
+    }
+  }
 
   /* Static clocks setup.*/
   hal_lld_set_static_clocks();
@@ -275,7 +310,7 @@ void stm32_clock_init(void) {
 #if STM32_SW != STM32_SW_HSI16
   RCC->CFGR1 |= STM32_SW;       /* Switches on the selected clock source.   */
 //  while(1);
-  while ((RCC->CFGR1 & STM32_SWS_MASK) != (STM32_SW << 3)) {
+  while ((RCC->CFGR1 & STM32_SWS_MASK) != (STM32_SW << RCC_CFGR1_SWS_Pos)) {
     /* Wait until SYSCLK is stable.*/
   }
 #endif
