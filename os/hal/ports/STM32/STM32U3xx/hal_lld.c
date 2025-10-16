@@ -268,8 +268,6 @@ void stm32_clock_init(void) {
                      RCC_CR_MSIPLL0EN_Msk   | RCC_CR_MSIPLL1EN_Msk   |
                      RCC_CR_MSIKON_Msk      | RCC_CR_MSIKERON_Msk    |
                      RCC_CR_MSISON_Msk);
-    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST | */
-          STM32_MSIPLL0EN | STM32_MSIPLL1EN;
 
     icscr1 = RCC->ICSCR1 & ~(RCC_ICSCR1_MSISSEL_Msk    | RCC_ICSCR1_MSISDIV_Msk    |
                              RCC_ICSCR1_MSIKSEL_Msk    | RCC_ICSCR1_MSIKDIV_Msk    |
@@ -281,14 +279,7 @@ void stm32_clock_init(void) {
               STM32_MSIPLL1N   | STM32_MSIRGSEL   |
               STM32_MSIBIAS    | STM32_MSIPLL0SEL |
               STM32_MSIPLL1SEL | STM32_MSIHSINDIV;
-
-    /* PLLs activation and wait time.*/
     RCC->ICSCR1 = icscr1;
-    RCC->CR = cr;
-    crrdy = ((STM32_MSIPLL0EN | STM32_MSIPLL1EN) >> RCC_CR_MSIPLL0EN_Pos) << RCC_CR_MSIPLL0RDY_Pos;
-    while ((RCC->CR & crrdy) != crrdy) {
-      /* Waiting.*/
-    }
 
     /* MSI clocks activation and waiting.*/
     crrdy = 0U;
@@ -300,8 +291,17 @@ void stm32_clock_init(void) {
     cr    |= RCC_CR_MSIKON /* | STM32_MSIKERON*/;
     crrdy |= RCC_CR_MSIKRDY;
 #endif
-    RCC->ICSCR1 = icscr1;
     RCC->CR = cr;
+    while ((RCC->CR & crrdy) != crrdy) {
+      /* Waiting.*/
+    }
+
+    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST | */
+          STM32_MSIPLL0EN | STM32_MSIPLL1EN;
+
+    /* PLLs activation and wait time.*/
+    RCC->CR = cr;
+    crrdy = ((STM32_MSIPLL0EN | STM32_MSIPLL1EN) >> RCC_CR_MSIPLL1EN_Pos) << RCC_CR_MSIPLL1RDY_Pos;
     while ((RCC->CR & crrdy) != crrdy) {
       /* Waiting.*/
     }
@@ -311,7 +311,7 @@ void stm32_clock_init(void) {
   hal_lld_set_static_clocks();
 
   /* Set flash WS's for SYSCLK source.*/
-  flash_set_acr(FLASH_ACR_PRFTEN | STM32_FLASHBITS);
+  flash_set_acr((STM32_FLASH_ACR & ~STM32_LATENCY_MASK) | STM32_FLASHBITS);
 
   /* Switching to the configured SYSCLK source if it is different from HSI.*/
 #if STM32_SW != STM32_SW_HSI16
