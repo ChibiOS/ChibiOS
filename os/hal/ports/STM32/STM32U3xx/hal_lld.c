@@ -234,7 +234,7 @@ void stm32_clock_init(void) {
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
-  /* PWR core voltage and thresholds setup.*/
+  /* PWR core voltage (range) and thresholds setup (EPOD booster).*/
   PWR->VOSR = STM32_PWR_VOSR;
 #if (STM32_PWR_VOSR & PWR_VOSR_R1EN) != 0U
   while ((PWR->VOSR & PWR_VOSR_R1RDY) == 0U) {
@@ -246,6 +246,13 @@ void stm32_clock_init(void) {
     /* Wait until regulator is stable.*/
   }
 #endif
+  if (STM32_BOOSTER_ENABLED) {
+    RCC->CFGR4 = STM32_BOOSTSEL | STM32_BOOSTDIV;
+    PWR->VOSR |= PWR_VOSR_BOOSTEN;
+    while ((PWR->VOSR & PWR_VOSR_BOOSTRDY) == 0U) {
+      /* Booster stabilization time.*/
+    }
+  }
 
   /* Backup domain reset.*/
   bd_reset();

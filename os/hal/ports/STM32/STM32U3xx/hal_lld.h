@@ -622,17 +622,11 @@
 #endif
 
 /**
- * @brief   PWR CR3 register initialization value.
- */
-#if !defined(STM32_PWR_SVMCR) || defined(__DOXYGEN__)
-#define STM32_PWR_SVMCR                     (0U)
-#endif
-
-/**
  * @brief   PWR VOSR register initialization value.
+ * @note    BOOSTEN is calculated internally, do not specify it here.
  */
 #if !defined(STM32_PWR_VOSR) || defined(__DOXYGEN__)
-#define STM32_PWR_VOSR                      STM32_VOS_RANGE1
+#define STM32_PWR_VOSR                      (STM32_VOS_RANGE1)
 #endif
 
 /**
@@ -640,6 +634,13 @@
  */
 #if !defined(STM32_PWR_CR3) || defined(__DOXYGEN__)
 #define STM32_PWR_CR3                       (STM32_FSTEN | STM32_REGSEL)
+#endif
+
+/**
+ * @brief   PWR CR3 register initialization value.
+ */
+#if !defined(STM32_PWR_SVMCR) || defined(__DOXYGEN__)
+#define STM32_PWR_SVMCR                     (0U)
 #endif
 
 /**
@@ -867,7 +868,7 @@
  * @note    It affects bits in various registers.
  */
 #if !defined(STM32_MSIRC1_MODE) || defined(__DOXYGEN__)
-#define STM32_MSIRC1_MODE                   STM32_MSIRC1_PLL_LSE
+#define STM32_MSIRC1_MODE                   STM32_MSIRC1_FREE
 #endif
 
 /**
@@ -1720,10 +1721,10 @@
 #endif
 
 /* EPOD boost-related settings.*/
-#if STM32_SYSCLK > 240000000U
+#if STM32_SYSCLK > STM32_BOOSTEN_THRESHOLD
   #if STM32_SW == STM32_SW_MSIS
     #define STM32_BOOSTER_ENABLED   TRUE
-    #define STM32_BOOSTSEL          0U
+    #define STM32_BOOSTSEL          STM32_BOOSTSEL_MSIS
     #define STM32_BOOSTDIV          0U
 
   #elif STM32_SW == STM32_SW_HSI16
