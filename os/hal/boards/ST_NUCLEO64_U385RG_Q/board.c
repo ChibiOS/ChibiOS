@@ -66,23 +66,11 @@ typedef struct {
 #if STM32_HAS_GPIOE || defined(__DOXYGEN__)
   gpio_setup_t          PEData;
 #endif
-#if STM32_HAS_GPIOF || defined(__DOXYGEN__)
-  gpio_setup_t          PFData;
-#endif
 #if STM32_HAS_GPIOG || defined(__DOXYGEN__)
   gpio_setup_t          PGData;
 #endif
 #if STM32_HAS_GPIOH || defined(__DOXYGEN__)
   gpio_setup_t          PHData;
-#endif
-#if STM32_HAS_GPIOI || defined(__DOXYGEN__)
-  gpio_setup_t          PIData;
-#endif
-#if STM32_HAS_GPIOJ || defined(__DOXYGEN__)
-  gpio_setup_t          PJData;
-#endif
-#if STM32_HAS_GPIOK || defined(__DOXYGEN__)
-  gpio_setup_t          PKData;
 #endif
 } gpio_config_t;
 
@@ -110,10 +98,6 @@ static const gpio_config_t gpio_default_config = {
   {VAL_GPIOE_MODER, VAL_GPIOE_OTYPER, VAL_GPIOE_OSPEEDR, VAL_GPIOE_PUPDR,
    VAL_GPIOE_ODR,   VAL_GPIOE_AFRL,   VAL_GPIOE_AFRH},
 #endif
-#if STM32_HAS_GPIOF
-  {VAL_GPIOF_MODER, VAL_GPIOF_OTYPER, VAL_GPIOF_OSPEEDR, VAL_GPIOF_PUPDR,
-   VAL_GPIOF_ODR,   VAL_GPIOF_AFRL,   VAL_GPIOF_AFRH},
-#endif
 #if STM32_HAS_GPIOG
   {VAL_GPIOG_MODER, VAL_GPIOG_OTYPER, VAL_GPIOG_OSPEEDR, VAL_GPIOG_PUPDR,
    VAL_GPIOG_ODR,   VAL_GPIOG_AFRL,   VAL_GPIOG_AFRH},
@@ -121,18 +105,6 @@ static const gpio_config_t gpio_default_config = {
 #if STM32_HAS_GPIOH
   {VAL_GPIOH_MODER, VAL_GPIOH_OTYPER, VAL_GPIOH_OSPEEDR, VAL_GPIOH_PUPDR,
    VAL_GPIOH_ODR,   VAL_GPIOH_AFRL,   VAL_GPIOH_AFRH},
-#endif
-#if STM32_HAS_GPIOI
-  {VAL_GPIOI_MODER, VAL_GPIOI_OTYPER, VAL_GPIOI_OSPEEDR, VAL_GPIOI_PUPDR,
-   VAL_GPIOI_ODR,   VAL_GPIOI_AFRL,   VAL_GPIOI_AFRH},
-#endif
-#if STM32_HAS_GPIOJ
-  {VAL_GPIOJ_MODER, VAL_GPIOJ_OTYPER, VAL_GPIOJ_OSPEEDR, VAL_GPIOJ_PUPDR,
-   VAL_GPIOJ_ODR,   VAL_GPIOJ_AFRL,   VAL_GPIOJ_AFRH},
-#endif
-#if STM32_HAS_GPIOK
-  {VAL_GPIOK_MODER, VAL_GPIOK_OTYPER, VAL_GPIOK_OSPEEDR, VAL_GPIOK_PUPDR,
-   VAL_GPIOK_ODR,   VAL_GPIOK_AFRL,   VAL_GPIOK_AFRH}
 #endif
 };
 

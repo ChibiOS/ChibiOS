@@ -257,9 +257,9 @@
  * PA7  - PIN7                      (input pullup).
  * PA8  - PIN8                      (input pullup).
  * PA9  - USART1_TX VC_TX           (alternate 7).
- * PA10 - USART1_RX VCP_RX          (input floating).
+ * PA10 - USART1_RX VCP_RX          (alternate 7).
  * PA11 - USB_DM                    (input floating).
- * PA12 - USB_DP                    (alternate 10).
+ * PA12 - USB_DP                    (input floating).
  * PA13 - SWDIO                     (alternate 0).
  * PA14 - SWCLK                     (alternate 0).
  * PA15 - T_JTDI                    (alternate 0).
@@ -274,9 +274,9 @@
                                      PIN_MODE_INPUT(GPIOA_PIN7) |           \
                                      PIN_MODE_INPUT(GPIOA_PIN8) |           \
                                      PIN_MODE_ALTERNATE(GPIOA_USART1_TX) |  \
-                                     PIN_MODE_INPUT(GPIOA_USART1_RX) |      \
+                                     PIN_MODE_ALTERNATE(GPIOA_USART1_RX) |  \
                                      PIN_MODE_INPUT(GPIOA_USB_DM) |         \
-                                     PIN_MODE_ALTERNATE(GPIOA_USB_DP) |     \
+                                     PIN_MODE_INPUT(GPIOA_USB_DP) |         \
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_T_JTDI))
@@ -354,9 +354,9 @@
                                      PIN_AFIO_AF(GPIOA_PIN7, 0U))
 #define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_PIN8, 0U) |          \
                                      PIN_AFIO_AF(GPIOA_USART1_TX, 7U) |     \
-                                     PIN_AFIO_AF(GPIOA_USART1_RX, 0U) |     \
+                                     PIN_AFIO_AF(GPIOA_USART1_RX, 7U) |     \
                                      PIN_AFIO_AF(GPIOA_USB_DM, 0U) |        \
-                                     PIN_AFIO_AF(GPIOA_USB_DP, 10U) |       \
+                                     PIN_AFIO_AF(GPIOA_USB_DP, 0U) |        \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0U) |         \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0U) |         \
                                      PIN_AFIO_AF(GPIOA_T_JTDI, 0U))
@@ -494,7 +494,7 @@
  * PC10 - PIN10                     (input pullup).
  * PC11 - PIN11                     (input pullup).
  * PC12 - PIN12                     (input pullup).
- * PC13 - BUTTON WAKEUP             (input floating).
+ * PC13 - BUTTON WAKEUP             (input pulldown).
  * PC14 - OSC32_IN                  (input floating).
  * PC15 - OSC32_OUT                 (input floating).
  */
@@ -559,7 +559,7 @@
                                      PIN_PUPDR_PULLUP(GPIOC_PIN10) |        \
                                      PIN_PUPDR_PULLUP(GPIOC_PIN11) |        \
                                      PIN_PUPDR_PULLUP(GPIOC_PIN12) |        \
-                                     PIN_PUPDR_FLOATING(GPIOC_BUTTON) |     \
+                                     PIN_PUPDR_PULLDOWN(GPIOC_BUTTON) |     \
                                      PIN_PUPDR_FLOATING(GPIOC_OSC32_IN) |   \
                                      PIN_PUPDR_FLOATING(GPIOC_OSC32_OUT))
 #define VAL_GPIOC_ODR               (PIN_ODR_HIGH(GPIOC_PIN0) |             \

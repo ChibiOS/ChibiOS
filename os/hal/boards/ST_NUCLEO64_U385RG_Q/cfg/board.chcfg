@@ -107,8 +107,8 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Input"
-        Alternate="0" />
+        Mode="Alternate"
+        Alternate="7" />
       <pin11
         ID="USB_DM"
         Type="PushPull"
@@ -123,8 +123,8 @@
         Level="High"
         Speed="Maximum"
         Resistor="Floating"
-        Mode="Alternate"
-        Alternate="10" />
+        Mode="Input"
+        Alternate="0" />
       <pin13
         ID="SWDIO"
         Type="PushPull"
@@ -390,7 +390,7 @@
         Type="PushPull"
         Level="High"
         Speed="Minimum"
-        Resistor="Floating"
+        Resistor="PullDown"
         Mode="Input"
         Alternate="0" />
       <pin14

@@ -46,7 +46,6 @@
  */
 #define BOARD_${doc1.board.board_id[0]}
 #define BOARD_NAME                  "${doc1.board.board_name[0]}"
-[#if doc1.board.ethernet_phy[0]??]
 
 /*
  * Board oscillators-related settings.
