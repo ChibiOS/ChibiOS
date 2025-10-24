@@ -23,7 +23,7 @@
  */
 
 #include "portab.h"
-//#include "hal.h"
+#include "hal.h"
 
 /*===========================================================================*/
 /* Module local definitions.                                                 */

@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer --specs=nano.specs -falign-functions=16
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer --specs=nano.specs -falign-functions=16
 endif
 
 # C specific options here (added to USE_OPT).
@@ -154,10 +154,10 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -D__TEST_RT -D__TEST_OSLIB -DSTM32U385xx
+UDEFS = -D__TEST_RT -D__TEST_OSLIB
 
 # Define ASM defines here
-UADEFS = -DSTM32U385xx
+UADEFS =
 
 # List all user directories here
 UINCDIR =
