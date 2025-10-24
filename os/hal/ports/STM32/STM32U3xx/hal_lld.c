@@ -107,7 +107,6 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
   PWR->WUCR1    = STM32_PWR_WUCR1;
   PWR->WUCR2    = STM32_PWR_WUCR2;
   PWR->WUCR3    = STM32_PWR_WUCR3;
-  PWR->APCR     = STM32_PWR_APCR;
   PWR->PUCRA    = STM32_PWR_PUCRA;
   PWR->PDCRA    = STM32_PWR_PDCRA;
   PWR->PDCRB    = STM32_PWR_PDCRB;
@@ -122,6 +121,7 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
   PWR->PDCRG    = STM32_PWR_PDCRG;
   PWR->PUCRH    = STM32_PWR_PUCRH;
   PWR->PDCRH    = STM32_PWR_PDCRH;
+  PWR->APCR     = STM32_PWR_APCR;
   PWR->I3CPUCR1 = STM32_PWR_I3CPUCR1;
   PWR->I3CPUCR2 = STM32_PWR_I3CPUCR2;
 
@@ -234,6 +234,16 @@ void stm32_clock_init(void) {
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
+  /* Backup domain reset.*/
+  bd_reset();
+
+  /* Clocks setup.*/
+  lse_init();
+  lsi_init();
+  hsi16_init();
+  hsi48_init();
+  hse_init();
+
   /* PWR core voltage (range) and thresholds setup (EPOD booster).*/
   PWR->VOSR = STM32_PWR_VOSR;
 #if (STM32_PWR_VOSR & PWR_VOSR_R1EN) != 0U
@@ -254,39 +264,36 @@ void stm32_clock_init(void) {
     }
   }
 
-  /* Backup domain reset.*/
-  bd_reset();
-
-  /* Clocks setup.*/
-  lse_init();
-  lsi_init();
-  hsi16_init();
-  hsi48_init();
-  hse_init();
-
   /* Backup domain initializations.*/
   bd_init();
+
+
+  /* Setup of flash WS's before changing clocks.*/
+  flash_set_acr((STM32_FLASH_ACR & ~STM32_LATENCY_MASK) | STM32_FLASHBITS);
+
+  /* Setup of clocks dividers before changing clocks.*/
+  hal_lld_set_static_clocks();
 
   /* MSI activation, if required.*/
   {
     uint32_t cr, crrdy, icscr1;
 
+    icscr1 = RCC->ICSCR1 & ~(RCC_ICSCR1_MSISSEL_Msk    | RCC_ICSCR1_MSISDIV_Msk    |
+                             RCC_ICSCR1_MSIKSEL_Msk    | RCC_ICSCR1_MSIKDIV_Msk    |
+                             RCC_ICSCR1_MSIPLL1N_Msk   | RCC_ICSCR1_MSIBIAS_Msk    |
+                             RCC_ICSCR1_MSIPLL0SEL_Msk | RCC_ICSCR1_MSIPLL1SEL_Msk |
+                             RCC_ICSCR1_MSIHSINDIV_Msk);
+    icscr1 |= STM32_MSISSEL    | STM32_MSISDIV    |
+              STM32_MSIKSEL    | STM32_MSIKDIV    |
+              STM32_MSIPLL1N   | STM32_MSIBIAS    |
+              STM32_MSIPLL0SEL | STM32_MSIPLL1SEL |
+              STM32_MSIHSINDIV;
+    RCC->ICSCR1 = icscr1 | RCC_ICSCR1_MSIRGSEL; /* Note, MSIRGSEL enforced.*/
+
     cr = RCC->CR & ~(RCC_CR_MSIPLL0FAST_Msk | RCC_CR_MSIPLL1FAST_Msk |
                      RCC_CR_MSIPLL0EN_Msk   | RCC_CR_MSIPLL1EN_Msk   |
                      RCC_CR_MSIKON_Msk      | RCC_CR_MSIKERON_Msk    |
                      RCC_CR_MSISON_Msk);
-
-    icscr1 = RCC->ICSCR1 & ~(RCC_ICSCR1_MSISSEL_Msk    | RCC_ICSCR1_MSISDIV_Msk    |
-                             RCC_ICSCR1_MSIKSEL_Msk    | RCC_ICSCR1_MSIKDIV_Msk    |
-                             RCC_ICSCR1_MSIPLL1N_Msk   | RCC_ICSCR1_MSIRGSEL_Msk   |
-                             RCC_ICSCR1_MSIBIAS_Msk    | RCC_ICSCR1_MSIPLL0SEL_Msk |
-                             RCC_ICSCR1_MSIPLL1SEL_Msk | RCC_ICSCR1_MSIHSINDIV_Msk);
-    icscr1 |= STM32_MSISSEL    | STM32_MSISDIV    |
-              STM32_MSIKSEL    | STM32_MSIKDIV    |
-              STM32_MSIPLL1N   | STM32_MSIRGSEL   |
-              STM32_MSIBIAS    | STM32_MSIPLL0SEL |
-              STM32_MSIPLL1SEL | STM32_MSIHSINDIV;
-    RCC->ICSCR1 = icscr1;
 
     /* MSI clocks activation and waiting.*/
     crrdy = 0U;
@@ -303,7 +310,7 @@ void stm32_clock_init(void) {
       /* Waiting.*/
     }
 
-    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST | */
+    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST |*/
           STM32_MSIPLL0EN | STM32_MSIPLL1EN;
 
     /* PLLs activation and wait time.*/
@@ -314,14 +321,8 @@ void stm32_clock_init(void) {
     }
   }
 
-  /* Static clocks setup.*/
-  hal_lld_set_static_clocks();
-
-  /* Set flash WS's for SYSCLK source.*/
-  flash_set_acr((STM32_FLASH_ACR & ~STM32_LATENCY_MASK) | STM32_FLASHBITS);
-
-  /* Switching to the configured SYSCLK source if it is different from HSI.*/
-#if STM32_SW != STM32_SW_HSI16
+  /* Switching to the configured SYSCLK source if it is different from MSIS.*/
+#if STM32_SW != STM32_SW_MSIS
   RCC->CFGR1 |= STM32_SW;       /* Switches on the selected clock source.   */
 //  while(1);
   while ((RCC->CFGR1 & STM32_SWS_MASK) != (STM32_SW << RCC_CFGR1_SWS_Pos)) {

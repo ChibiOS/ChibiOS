@@ -640,7 +640,9 @@
  * @brief   PWR CR3 register initialization value.
  */
 #if !defined(STM32_PWR_SVMCR) || defined(__DOXYGEN__)
-#define STM32_PWR_SVMCR                     (0U)
+#define STM32_PWR_SVMCR                     (PWR_SVMCR_ASV | PWR_SVMCR_USV | \
+                                             PWR_SVMCR_AVM1EN | PWR_SVMCR_AVM2EN | \
+                                             PWR_SVMCR_UVMEN)
 #endif
 
 /**
