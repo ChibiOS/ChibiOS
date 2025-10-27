@@ -317,27 +317,6 @@ static void spi_lld_serve_dma_tx_interrupt(SPIDriver *spip, uint32_t csr) {
 }
 
 /**
- * @brief   Shared SPI service routine.
- *
- * @param[in] spip      pointer to the @p SPIDriver object
- */
-static void spi_lld_serve_interrupt(SPIDriver *spip) {
-  uint32_t sr;
-
-  sr = spip->spi->SR & spip->spi->IER;
-  spip->spi->IFCR = sr;
-
-  if ((sr & SPI_SR_OVR) != 0U) {
-
-    /* Aborting the transfer.*/
-    spi_lld_stop_abort(spip);
-
-    /* Reporting the failure.*/
-    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
-  }
-}
-
-/**
  * @brief   GPDMA channels allocation.
  *
  * @param[in] spip      pointer to the @p SPIDriver object
@@ -371,132 +350,6 @@ static msg_t spi_lld_get_dma(SPIDriver *spip, uint32_t rxchn,
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_SPI_USE_SPI1 || defined(__DOXYGEN__)
-#if !defined(STM32_SPI1_SUPPRESS_ISR)
-#if !defined(STM32_SPI1_HANDLER)
-#error "STM32_SPI1_HANDLER not defined"
-#endif
-/**
- * @brief   SPI1 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_SPI1_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  spi_lld_serve_interrupt(&SPID1);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* !defined(STM32_SPI1_SUPPRESS_ISR) */
-#endif /* STM32_SPI_USE_SPI1 */
-
-#if STM32_SPI_USE_SPI2 || defined(__DOXYGEN__)
-#if !defined(STM32_SPI2_SUPPRESS_ISR)
-#if !defined(STM32_SPI2_HANDLER)
-#error "STM32_SPI2_HANDLER not defined"
-#endif
-/**
- * @brief   SPI2 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_SPI2_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  spi_lld_serve_interrupt(&SPID2);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* !defined(STM32_SPI2_SUPPRESS_ISR) */
-#endif /* STM32_SPI_USE_SPI2 */
-
-#if STM32_SPI_USE_SPI3 || defined(__DOXYGEN__)
-#if !defined(STM32_SPI3_SUPPRESS_ISR)
-#if !defined(STM32_SPI3_HANDLER)
-#error "STM32_SPI3_HANDLER not defined"
-#endif
-/**
- * @brief   SPI3 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_SPI3_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  spi_lld_serve_interrupt(&SPID3);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* !defined(STM32_SPI3_SUPPRESS_ISR) */
-#endif /* STM32_SPI_USE_SPI3 */
-
-#if STM32_SPI_USE_SPI4 || defined(__DOXYGEN__)
-#if !defined(STM32_SPI4_SUPPRESS_ISR)
-#if !defined(STM32_SPI4_HANDLER)
-#error "STM32_SPI4_HANDLER not defined"
-#endif
-/**
- * @brief   SPI4 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_SPI4_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  spi_lld_serve_interrupt(&SPID4);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* !defined(STM32_SPI4_SUPPRESS_ISR) */
-#endif /* STM32_SPI_USE_SPI4 */
-
-#if STM32_SPI_USE_SPI5 || defined(__DOXYGEN__)
-#if !defined(STM32_SPI5_SUPPRESS_ISR)
-#if !defined(STM32_SPI5_HANDLER)
-#error "STM32_SPI5_HANDLER not defined"
-#endif
-/**
- * @brief   SPI5 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_SPI5_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  spi_lld_serve_interrupt(&SPID5);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* !defined(STM32_SPI5_SUPPRESS_ISR) */
-#endif /* STM32_SPI_USE_SPI5 */
-
-#if STM32_SPI_USE_SPI6 || defined(__DOXYGEN__)
-#if !defined(STM32_SPI6_SUPPRESS_ISR)
-#if !defined(STM32_SPI6_HANDLER)
-#error "STM32_SPI6_HANDLER not defined"
-#endif
-/**
- * @brief   SPI6 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_SPI6_HANDLER) {
-
-  OSAL_IRQ_PROLOGUE();
-
-  spi_lld_serve_interrupt(&SPID6);
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* !defined(STM32_SPI6_SUPPRESS_ISR) */
-#endif /* STM32_SPI_USE_SPI6 */
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -518,7 +371,7 @@ void spi_lld_init(void) {
   SPID1.dprio  = STM32_SPI_SPI1_DMA_PRIORITY;
   SPID1.dbuf   = &__dma3_spi1;
 #if !defined(STM32_SPI1_SUPPRESS_ISR)
-  nvicEnableVector(STM32_SPI1_NUMBER, STM32_SPI_SPI1_IRQ_PRIORITY);
+  nvicEnableVector(STM32_SPI1_NUMBER, STM32_IRQ_SPI1_PRIORITY);
 #endif
 #endif
 
@@ -532,7 +385,7 @@ void spi_lld_init(void) {
   SPID2.dprio  = STM32_SPI_SPI2_DMA_PRIORITY;
   SPID2.dbuf   = &__dma3_spi2;
 #if !defined(STM32_SPI2_SUPPRESS_ISR)
-  nvicEnableVector(STM32_SPI2_NUMBER, STM32_SPI_SPI2_IRQ_PRIORITY);
+  nvicEnableVector(STM32_SPI2_NUMBER, STM32_IRQ_SPI2_PRIORITY);
 #endif
 #endif
 
@@ -546,7 +399,7 @@ void spi_lld_init(void) {
   SPID3.dprio  = STM32_SPI_SPI3_DMA_PRIORITY;
   SPID3.dbuf   = &__dma3_spi3;
 #if !defined(STM32_SPI3_SUPPRESS_ISR)
-  nvicEnableVector(STM32_SPI3_NUMBER, STM32_SPI_SPI3_IRQ_PRIORITY);
+  nvicEnableVector(STM32_SPI3_NUMBER, STM32_IRQ_SPI3_PRIORITY);
 #endif
 #endif
 
@@ -560,7 +413,7 @@ void spi_lld_init(void) {
   SPID4.dprio  = STM32_SPI_SPI4_DMA_PRIORITY;
   SPID4.dbuf   = &__dma3_spi4;
 #if !defined(STM32_SPI4_SUPPRESS_ISR)
-  nvicEnableVector(STM32_SPI4_NUMBER, STM32_SPI_SPI4_IRQ_PRIORITY);
+  nvicEnableVector(STM32_SPI4_NUMBER, STM32_IRQ_SPI4_PRIORITY);
 #endif
 #endif
 
@@ -574,7 +427,7 @@ void spi_lld_init(void) {
   SPID5.dprio  = STM32_SPI_SPI5_DMA_PRIORITY;
   SPID5.dbuf   = &__dma3_spi5;
 #if !defined(STM32_SPI5_SUPPRESS_ISR)
-  nvicEnableVector(STM32_SPI5_NUMBER, STM32_SPI_SPI5_IRQ_PRIORITY);
+  nvicEnableVector(STM32_SPI5_NUMBER, STM32_IRQ_SPI5_PRIORITY);
 #endif
 #endif
 
@@ -588,7 +441,7 @@ void spi_lld_init(void) {
   SPID6.dprio  = STM32_SPI_SPI6_DMA_PRIORITY;
   SPID6.dbuf   = &__dma3_spi6;
 #if !defined(STM32_SPI6_SUPPRESS_ISR)
-  nvicEnableVector(STM32_SPI6_NUMBER, STM32_SPI_SPI6_IRQ_PRIORITY);
+  nvicEnableVector(STM32_SPI6_NUMBER, STM32_IRQ_SPI5_PRIORITY);
 #endif
 #endif
 }
@@ -624,7 +477,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI1_RX_DMA3_CHANNEL,
                             STM32_SPI_SPI1_TX_DMA3_CHANNEL,
-                            STM32_SPI_SPI1_IRQ_PRIORITY);
+                            STM32_IRQ_SPI1_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
         return msg;
       }
@@ -643,7 +496,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI2_RX_DMA3_CHANNEL,
                             STM32_SPI_SPI2_TX_DMA3_CHANNEL,
-                            STM32_SPI_SPI2_IRQ_PRIORITY);
+                            STM32_IRQ_SPI2_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
         return msg;
       }
@@ -662,7 +515,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI3_RX_DMA3_CHANNEL,
                             STM32_SPI_SPI3_TX_DMA3_CHANNEL,
-                            STM32_SPI_SPI3_IRQ_PRIORITY);
+                            STM32_IRQ_SPI3_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
         return msg;
       }
@@ -681,7 +534,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI4_RX_DMA3_CHANNEL,
                             STM32_SPI_SPI4_TX_DMA3_CHANNEL,
-                            STM32_SPI_SPI4_IRQ_PRIORITY);
+                            STM32_IRQ_SPI4_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
         return msg;
       }
@@ -700,7 +553,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI5_RX_DMA3_CHANNEL,
                             STM32_SPI_SPI5_TX_DMA3_CHANNEL,
-                            STM32_SPI_SPI5_IRQ_PRIORITY);
+                            STM32_IRQ_SPI5_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
         return msg;
       }
@@ -719,7 +572,7 @@ msg_t spi_lld_start(SPIDriver *spip) {
       msg = spi_lld_get_dma(spip,
                             STM32_SPI_SPI6_RX_DMA3_CHANNEL,
                             STM32_SPI_SPI6_TX_DMA3_CHANNEL,
-                            STM32_SPI_SPI6_IRQ_PRIORITY);
+                            STM32_IRQ_SPI6_PRIORITY);
       if (msg != HAL_RET_SUCCESS) {
         return msg;
       }
@@ -1273,6 +1126,29 @@ uint32_t spi_lld_polled_exchange(SPIDriver *spip, uint32_t frame) {
 //  spip->spi->CR1 |= SPI_CR1_SPE;
 
   return rxframe;
+}
+
+/**
+ * @brief   Shared SPI service routine.
+ *
+ * @param[in] spip      pointer to the @p SPIDriver object
+ *
+ * @notapi
+ */
+void spi_lld_serve_interrupt(SPIDriver *spip) {
+  uint32_t sr;
+
+  sr = spip->spi->SR & spip->spi->IER;
+  spip->spi->IFCR = sr;
+
+  if ((sr & SPI_SR_OVR) != 0U) {
+
+    /* Aborting the transfer.*/
+    spi_lld_stop_abort(spip);
+
+    /* Reporting the failure.*/
+    __spi_isr_error_code(spip, HAL_RET_HW_FAILURE);
+  }
 }
 
 #endif /* HAL_USE_SPI */

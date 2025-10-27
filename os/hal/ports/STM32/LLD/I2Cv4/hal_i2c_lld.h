@@ -161,7 +161,13 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-/** @brief  error checks */
+/* Registry checks.*/
+#if !defined(STM32_HAS_I2C1) || !defined(STM32_HAS_I2C2) ||                 \
+    !defined(STM32_HAS_I2C3) || !defined(STM32_HAS_I2C4)
+#error "STM32_HAS_I2Cx not defined in registry"
+#endif
+
+/* IP instances check.*/
 #if STM32_I2C_USE_I2C1 && !STM32_HAS_I2C1
 #error "I2C1 not present in the selected device"
 #endif
