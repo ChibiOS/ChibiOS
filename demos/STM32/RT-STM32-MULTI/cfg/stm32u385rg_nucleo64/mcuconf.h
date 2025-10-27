@@ -53,14 +53,98 @@
 /*
  * PWR settings.
  */
+#define STM32_PWR_VOSR                      (STM32_VOS_RANGE1)
+#define STM32_PWR_CR3                       (STM32_FSTEN | STM32_REGSEL)
+#define STM32_PWR_SVMCR                     (PWR_SVMCR_ASV | PWR_SVMCR_USV | PWR_SVMCR_AVM1EN | PWR_SVMCR_AVM2EN | PWR_SVMCR_UVMEN)
+#define STM32_PWR_WUCR1                     (0U)
+#define STM32_PWR_WUCR2                     (0U)
+#define STM32_PWR_WUCR3                     (0U)
+#define STM32_PWR_BDCR                      (0U)
+#define STM32_PWR_APCR                      (0U)
+#define STM32_PWR_PUCRA                     (0U)
+#define STM32_PWR_PDCRA                     (0U)
+#define STM32_PWR_PUCRB                     (0U)
+#define STM32_PWR_PDCRB                     (0U)
+#define STM32_PWR_PUCRC                     (0U)
+#define STM32_PWR_PDCRC                     (0U)
+#define STM32_PWR_PUCRD                     (0U)
+#define STM32_PWR_PDCRD                     (0U)
+#define STM32_PWR_PUCRE                     (0U)
+#define STM32_PWR_PDCRE                     (0U)
+#define STM32_PWR_PUCRG                     (0U)
+#define STM32_PWR_PDCRG                     (0U)
+#define STM32_PWR_PUCRH                     (0U)
+#define STM32_PWR_PDCRH                     (0U)
+#define STM32_PWR_I3CPUCR1                  (0U)
+#define STM32_PWR_I3CPUCR2                  (0U)
+#define STM32_PWR_SECCFGR                   (0U)
+#define STM32_PWR_PRIVCFGR                  (0U)
+
+/*
+ * FLASH settings.
+ */
+#define STM32_FLASH_ACR                     (STM32_PRFTEN)
 
 /*
  * Clock settings.
  */
+#define STM32_HSI16_ENABLED                 FALSE
+#define STM32_HSIKERON_ENABLED              FALSE
+#define STM32_HSI48_ENABLED                 FALSE
+#define STM32_HSE_ENABLED                   FALSE
+#define STM32_LSI_ENABLED                   FALSE
+#define STM32_LSE_ENABLED                   TRUE
+#define STM32_MSIRC0_MODE                   STM32_MSIRC0_PLL_LSE
+#define STM32_MSIRC1_MODE                   STM32_MSIRC1_PLL_LSE
+#define STM32_MSIPLL1N_VALUE                0
+#define STM32_MSIS_SRCDIV                   STM32_MSIS_IRC0_DIV1
+#define STM32_MSIK_SRCDIV                   STM32_MSIK_IRC0_DIV1
+#define STM32_MSIBIAS                       STM32_MSIBIAS_CONTINUOUS
+#define STM32_SW                            STM32_SW_MSIS
+#define STM32_HPRE                          STM32_HPRE_DIV1
+#define STM32_PPRE1                         STM32_PPRE1_DIV1
+#define STM32_PPRE2                         STM32_PPRE2_DIV1
+#define STM32_PPRE3                         STM32_PPRE3_DIV1
+#define STM32_STOPWUCK                      STM32_STOPWUCK_MSIS
+#define STM32_STOPKERWUCK                   STM32_STOPKERWUCK_MSIK
+#define STM32_MCO1SEL                       STM32_MCO1SEL_OFF
+#define STM32_MCO1PRE_VALUE                 1
+#define STM32_MCO2SEL                       STM32_MCO2SEL_OFF
+#define STM32_MCO2PRE_VALUE                 1
+#define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
 
 /*
  * Peripherals clock sources.
  */
+#define STM32_TIMICSEL                      STM32_TIMICSEL_NOCLOCK
+#define STM32_USART1SEL                     STM32_USART1SEL_PCLK2
+#define STM32_USART3SEL                     STM32_USART3SEL_PCLK1
+#define STM32_UART4SEL                      STM32_UART4SEL_PCLK1
+#define STM32_UART5SEL                      STM32_UART5SEL_PCLK1
+#define STM32_LPUART1SEL                    STM32_LPUART1SEL_PCLK3
+#define STM32_LPTIM1SEL                     STM32_LPTIM1SEL_MSIK
+#define STM32_LPTIM2SEL                     STM32_LPTIM2SEL_PCLK1
+#define STM32_LPTIM34SEL                    STM32_LPTIM34SEL_MSIK
+#define STM32_SPI1SEL                       STM32_SPI1SEL_PCLK2
+#define STM32_SPI2SEL                       STM32_SPI2SEL_PCLK1
+#define STM32_SPI3SEL                       STM32_SPI3SEL_PCLK1
+#define STM32_OCTOSPISEL                    STM32_OCTOSPISEL_SYSCLK
+#define STM32_SYSTICKSEL                    STM32_SYSTICKSEL_HCLKDIV8
+#define STM32_ICLKSEL                       STM32_ICLKSEL_SYSCLK
+#define STM32_USB1SEL                       STM32_USB1SEL_ICLKDIV2
+#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK1
+#define STM32_I2C2SEL                       STM32_I2C2SEL_PCLK1
+#define STM32_I2C3SEL                       STM32_I2C3SEL_PCLK3
+#define STM32_I3C1SEL                       STM32_I3C1SEL_PCLK1
+#define STM32_I3C2SEL                       STM32_I3C2SEL_PCLK3
+#define STM32_ADCDACSEL                     STM32_ADCDACSEL_HCLK
+#define STM32_DAC1SHSEL                     STM32_DAC1SHSEL_IGNORE
+#define STM32_ADCDACPRE                     STM32_ADCDACPRE_ICLK
+#define STM32_RNGSEL                        STM32_RNGSEL_IGNORE
+#define STM32_FDCAN1SEL                     STM32_FDCAN1SEL_SYSCLK
+#define STM32_SAI1SEL                       STM32_SAI1SEL_MSIK
+#define STM32_ADF1SEL                       STM32_ADF1SEL_HCLK
+#define STM32_RTCSEL                        STM32_RTCSEL_NOCLOCK
 
 /*
  * IRQ system settings.
@@ -112,6 +196,7 @@
 /*
  * CAN driver system settings.
  */
+#define STM32_CAN_USE_FDCAN1                FALSE
 
 /*
  * DAC driver system settings.
@@ -126,6 +211,9 @@
 #define STM32_GPT_USE_TIM4                  FALSE
 #define STM32_GPT_USE_TIM6                  FALSE
 #define STM32_GPT_USE_TIM7                  FALSE
+#define STM32_GPT_USE_TIM15                 FALSE
+#define STM32_GPT_USE_TIM16                 FALSE
+#define STM32_GPT_USE_TIM17                 FALSE
 
 /*
  * I2C driver system settings.
@@ -149,6 +237,9 @@
 #define STM32_ICU_USE_TIM2                  FALSE
 #define STM32_ICU_USE_TIM3                  FALSE
 #define STM32_ICU_USE_TIM4                  FALSE
+#define STM32_ICU_USE_TIM15                 FALSE
+#define STM32_ICU_USE_TIM16                 FALSE
+#define STM32_ICU_USE_TIM17                 FALSE
 
 /*
  * PWM driver system settings.
@@ -157,9 +248,16 @@
 #define STM32_PWM_USE_TIM2                  FALSE
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_USE_TIM4                  FALSE
+#define STM32_PWM_USE_TIM15                 FALSE
+#define STM32_PWM_USE_TIM16                 FALSE
+#define STM32_PWM_USE_TIM17                 FALSE
 
 /*
  * RTC driver system settings.
+ */
+
+/*
+ * SDC driver system settings.
  */
 
 /*
@@ -218,10 +316,6 @@
 /*
  * USB driver system settings.
  */
-#define STM32_USB_USE_USB1                  FALSE
-#define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      13  /* TODO */
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      14  /* TODO */
 
 /*
  * WDG driver system settings.
