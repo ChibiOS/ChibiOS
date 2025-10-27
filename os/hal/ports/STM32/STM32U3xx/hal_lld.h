@@ -2243,10 +2243,10 @@
  * @brief   USB clock frequency.
  */
 #if (STM32_USB1SEL == STM32_USB1SEL_ICLK) || defined(__DOXYGEN__)
-  #define STM32_USBCLK              hal_lld_get_clock_point(CLK_ICLK)
+  #define STM32_USBCLK              STM32_ICLK
 
 #elif STM32_USB1SEL == STM32_USB1SEL_ICLKDIV2
-  #define STM32_USBCLK              (hal_lld_get_clock_point(CLK_ICLK) / 2U)
+  #define STM32_USBCLK              (STM32_ICLK / 2U)
 
 #else
   #error "invalid source selected for USB clock"
