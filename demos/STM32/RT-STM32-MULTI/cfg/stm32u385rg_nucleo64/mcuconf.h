@@ -32,6 +32,7 @@
  */
 
 #define STM32U3xx_MCUCONF
+#define STM32U375_MCUCONF
 #define STM32U385_MCUCONF
 
 /*

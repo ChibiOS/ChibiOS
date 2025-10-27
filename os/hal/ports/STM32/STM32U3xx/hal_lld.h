@@ -236,8 +236,8 @@
 #define STM32_MSIRGSEL_POS      RCC_ICSCR1_MSIRGSEL_Pos
 #define STM32_MSIRGSEL_MASK     RCC_ICSCR1_MSIRGSEL_Msk
 #define STM32_MSIRGSEL_FIELD(n) ((n) << STM32_MSIRGSEL_POS)
-#define STM32_MSIRGSEL_MSISDIVS STM32_MSIRGSEL_FIELD(0U)
-#define STM32_MSIRGSEL_MSISDIV  STM32_MSIRGSEL_FIELD(1U)
+#define STM32_MSIRGSEL_CSR      STM32_MSIRGSEL_FIELD(0U)
+#define STM32_MSIRGSEL_ICSCR1   STM32_MSIRGSEL_FIELD(1U)
 
 #define STM32_MSIPLL1N_POS      RCC_ICSCR1_MSIPLL1N_Pos
 #define STM32_MSIPLL1N_MASK     RCC_ICSCR1_MSIPLL1N_Msk
@@ -823,14 +823,14 @@
  * @brief   Enables or disables the HSI clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI16_ENABLED                 TRUE
+#define STM32_HSI16_ENABLED                 FALSE
 #endif
 
 /**
  * @brief   Enables or disables the HSI clock source in STOP mode.
  */
 #if !defined(STM32_HSIKERON_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSIKERON_ENABLED              TRUE
+#define STM32_HSIKERON_ENABLED              FALSE
 #endif
 
 /**
@@ -866,7 +866,7 @@
  * @note    It affects bits in various registers.
  */
 #if !defined(STM32_MSIRC0_MODE) || defined(__DOXYGEN__)
-#define STM32_MSIRC0_MODE                   STM32_MSIRC0_PLL_LSE_FAST
+#define STM32_MSIRC0_MODE                   STM32_MSIRC0_PLL_LSE
 #endif
 
 /**
@@ -918,13 +918,6 @@
 #endif
 
 /**
- * @brief   MSI range selection on STANDBY/SHUTDOWN exit.
- */
-#if !defined(STM32_MSIRGSEL) || defined(__DOXYGEN__)
-#define STM32_MSIRGSEL                      STM32_MSIRGSEL_MSISDIVS
-#endif
-
-/**
  * @brief   Main clock source selection.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
@@ -963,14 +956,14 @@
  * @brief   System clock source after STOP.
  */
 #if !defined(STM32_STOPWUCK) || defined(__DOXYGEN__)
-#define STM32_STOPWUCK                      STM32_STOPWUCK_HSI16
+#define STM32_STOPWUCK                      STM32_STOPWUCK_MSIS
 #endif
 
 /**
  * @brief   Kernel clock source after STOP.
  */
 #if !defined(STM32_STOPKERWUCK) || defined(__DOXYGEN__)
-#define STM32_STOPKERWUCK                   STM32_STOPKERWUCK_HSI16
+#define STM32_STOPKERWUCK                   STM32_STOPKERWUCK_MSIK
 #endif
 
 /**
@@ -1820,15 +1813,6 @@
 
 #else
   #error "invalid STM32_STOPKERWUCK value specified"
-#endif
-
-/* STM32_MSIRGSEL setting check.*/
-#if (STM32_MSIRGSEL == STM32_MSIRGSEL_MSISDIVS) || defined(__DOXYGEN__)
-
-#elif STM32_MSIRGSEL == STM32_MSIRGSEL_MSISDIV
-
-#else
-  #error "invalid STM32_MSIRGSEL value specified"
 #endif
 
 /* STM32_MSIBIASL setting check.*/

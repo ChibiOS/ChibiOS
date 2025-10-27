@@ -288,7 +288,7 @@ void stm32_clock_init(void) {
               STM32_MSIPLL1N   | STM32_MSIBIAS    |
               STM32_MSIPLL0SEL | STM32_MSIPLL1SEL |
               STM32_MSIHSINDIV;
-    RCC->ICSCR1 = icscr1 | RCC_ICSCR1_MSIRGSEL; /* Note, MSIRGSEL enforced.*/
+    RCC->ICSCR1 = icscr1 | STM32_MSIRGSEL_ICSCR1; /* Note, ICSCR1 enforced.*/
 
     cr = RCC->CR & ~(RCC_CR_MSIPLL0FAST_Msk | RCC_CR_MSIPLL1FAST_Msk |
                      RCC_CR_MSIPLL0EN_Msk   | RCC_CR_MSIPLL1EN_Msk   |
