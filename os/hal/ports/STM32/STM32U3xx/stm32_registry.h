@@ -49,6 +49,9 @@
 #define STM32_DMA31_MASK_FIFO2              0x000000FFU
 #define STM32_DMA31_MASK_FIFO4              0x00000300U
 #define STM32_DMA31_MASK_FIFO4_2D           0x00000C00U
+#define STM32_DMA32_MASK_FIFO2              0x00000000U
+#define STM32_DMA32_MASK_FIFO4              0x00000000U
+#define STM32_DMA32_MASK_FIFO4_2D           0x00000000U
 
 #define STM32_DMA3_REQ_ADC1                 0U
 #define STM32_DMA3_REQ_ADC2                 1U

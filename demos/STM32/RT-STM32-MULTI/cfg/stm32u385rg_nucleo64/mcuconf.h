@@ -170,6 +170,10 @@
 #define STM32_IRQ_I2C2_PRIORITY             5
 #define STM32_IRQ_I2C3_PRIORITY             5
 
+#define STM32_IRQ_SPI1_PRIORITY             10
+#define STM32_IRQ_SPI2_PRIORITY             10
+#define STM32_IRQ_SPI3_PRIORITY             10
+
 #define STM32_IRQ_TIM1_BRK_PRIORITY         7
 #define STM32_IRQ_TIM1_UP_PRIORITY          7
 #define STM32_IRQ_TIM1_TRGCO_PRIORITY       7
