@@ -63,7 +63,7 @@
 
 #if STM32_HSE_ENABLED
   #if STM32_HSECLK == 0
-    #error "HSE frequency not defined"
+    #error "HSE oscillator not present"
   #else /* STM32_HSECLK != 0 */
     #if defined(STM32_HSE_BYPASS)
       #if (STM32_HSECLK < STM32_HSECLK_BYP_MIN) || (STM32_HSECLK > STM32_HSECLK_BYP_MAX)

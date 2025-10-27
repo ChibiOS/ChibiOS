@@ -98,6 +98,8 @@
 #define STM32_MSIRC0_FREE       0
 #define STM32_MSIRC0_PLL_LSE    1
 #define STM32_MSIRC0_PLL_HSE    2
+#define STM32_MSIRC0_PLL_LSE_FAST 3
+#define STM32_MSIRC0_PLL_HSE_FAST 4
 /** @} */
 
 /**
@@ -107,6 +109,8 @@
 #define STM32_MSIRC1_FREE       0
 #define STM32_MSIRC1_PLL_LSE    1
 #define STM32_MSIRC1_PLL_HSE    2
+#define STM32_MSIRC1_PLL_LSE_FAST 3
+#define STM32_MSIRC1_PLL_HSE_FAST 4
 /** @} */
 
 /**
@@ -862,7 +866,7 @@
  * @note    It affects bits in various registers.
  */
 #if !defined(STM32_MSIRC0_MODE) || defined(__DOXYGEN__)
-#define STM32_MSIRC0_MODE                   STM32_MSIRC0_PLL_LSE
+#define STM32_MSIRC0_MODE                   STM32_MSIRC0_PLL_LSE_FAST
 #endif
 
 /**
@@ -870,7 +874,7 @@
  * @note    It affects bits in various registers.
  */
 #if !defined(STM32_MSIRC1_MODE) || defined(__DOXYGEN__)
-#define STM32_MSIRC1_MODE                   STM32_MSIRC1_FREE
+#define STM32_MSIRC1_MODE                   STM32_MSIRC1_PLL_LSE
 #endif
 
 /**
@@ -1417,7 +1421,15 @@
     #error "LSE not enabled, required by STM32_MSIRC0_MODE"
   #endif
 
+  #if STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_LSE_FAST
+    #error "LSE not enabled, required by STM32_MSIRC1_MODE"
+  #endif
+
   #if STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_LSE
+    #error "LSE not enabled, required by STM32_MSIRC1_MODE"
+  #endif
+
+  #if STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_LSE_FAST
     #error "LSE not enabled, required by STM32_MSIRC1_MODE"
   #endif
 
@@ -1475,6 +1487,14 @@
     #error "HSE not enabled, required by STM32_MSIRC1_MODE"
   #endif
 
+  #if STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_HSE_FAST
+    #error "HSE not enabled, required by STM32_MSIRC0_MODE"
+  #endif
+
+  #if STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_HSE_FAST
+    #error "HSE not enabled, required by STM32_MSIRC1_MODE"
+  #endif
+
   #if STM32_SW == STM32_SW_HSE
     #error "HSE not enabled, required by STM32_SW"
   #endif
@@ -1528,14 +1548,27 @@
 #if (STM32_MSIRC0_MODE == STM32_MSIRC0_FREE) || defined(__DOXYGEN__)
   #define STM32_MSIPLL0EN           0U
   #define STM32_MSIPLL0SEL          0U
+  #define STM32_MSIPLL0FAST         0U
 
 #elif STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_LSE
   #define STM32_MSIPLL0EN           RCC_CR_MSIPLL0EN
   #define STM32_MSIPLL0SEL          STM32_MSIPLL0SEL_LSE
+  #define STM32_MSIPLL0FAST         0U
 
 #elif STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_HSE
   #define STM32_MSIPLL0EN           RCC_CR_MSIPLL0EN
   #define STM32_MSIPLL0SEL          STM32_MSIPLL0SEL_HSE
+  #define STM32_MSIPLL0FAST         0U
+
+#elif STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_LSE_FAST
+  #define STM32_MSIPLL0EN           RCC_CR_MSIPLL0EN
+  #define STM32_MSIPLL0SEL          STM32_MSIPLL0SEL_LSE
+  #define STM32_MSIPLL0FAST         RCC_CR_MSIPLL0FAST
+
+#elif STM32_MSIRC0_MODE == STM32_MSIRC0_PLL_HSE_FAST
+  #define STM32_MSIPLL0EN           RCC_CR_MSIPLL0EN
+  #define STM32_MSIPLL0SEL          STM32_MSIPLL0SEL_HSE
+  #define STM32_MSIPLL0FAST         RCC_CR_MSIPLL0FAST
 
 #else
   #error "invalid STM32_MSIRC0_MODE value specified"
@@ -1547,14 +1580,27 @@
 #if (STM32_MSIRC1_MODE == STM32_MSIRC1_FREE) || defined(__DOXYGEN__)
   #define STM32_MSIPLL1EN           0U
   #define STM32_MSIPLL1SEL          0U
+  #define STM32_MSIPLL1FAST         0U
 
 #elif STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_LSE
   #define STM32_MSIPLL1EN           RCC_CR_MSIPLL1EN
   #define STM32_MSIPLL1SEL          STM32_MSIPLL1SEL_LSE
+  #define STM32_MSIPLL1FAST         0U
 
 #elif STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_HSE
   #define STM32_MSIPLL1EN           RCC_CR_MSIPLL1EN
   #define STM32_MSIPLL1SEL          STM32_MSIPLL1SEL_HSE
+  #define STM32_MSIPLL1FAST         0U
+
+#elif STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_LSE
+  #define STM32_MSIPLL1EN           RCC_CR_MSIPLL1EN
+  #define STM32_MSIPLL1SEL          STM32_MSIPLL1SEL_LSE
+  #define STM32_MSIPLL1FAST         RCC_CR_MSIPLL1FAST
+
+#elif STM32_MSIRC1_MODE == STM32_MSIRC1_PLL_HSE
+  #define STM32_MSIPLL1EN           RCC_CR_MSIPLL1EN
+  #define STM32_MSIPLL1SEL          STM32_MSIPLL1SEL_HSE
+  #define STM32_MSIPLL1FAST         RCC_CR_MSIPLL1FAST
 
 #else
   #error "invalid STM32_MSIRC1_MODE value specified"

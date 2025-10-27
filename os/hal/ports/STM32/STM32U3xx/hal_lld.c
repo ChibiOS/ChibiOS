@@ -302,7 +302,7 @@ void stm32_clock_init(void) {
     crrdy |= RCC_CR_MSISRDY;
 #endif
 #if STM32_ACTIVATE_MSIK == TRUE
-    cr    |= RCC_CR_MSIKON /* | STM32_MSIKERON*/;
+    cr    |= RCC_CR_MSIKON | RCC_CR_MSIKERON; /* Note, MSIKERON enforced.*/
     crrdy |= RCC_CR_MSIKRDY;
 #endif
     RCC->CR = cr;
@@ -310,7 +310,7 @@ void stm32_clock_init(void) {
       /* Waiting.*/
     }
 
-    cr |= /* STM32_MSIPLL0FAST | STM32_MSIPLL1FAST |*/
+    cr |= STM32_MSIPLL0FAST | STM32_MSIPLL1FAST |
           STM32_MSIPLL0EN | STM32_MSIPLL1EN;
 
     /* PLLs activation and wait time.*/
