@@ -80,20 +80,6 @@
 #include "stm32_spi5.inc"
 #include "stm32_spi6.inc"
 
-#include "stm32_usart1.inc"
-#include "stm32_usart2.inc"
-#include "stm32_usart3.inc"
-#include "stm32_uart4.inc"
-#include "stm32_uart5.inc"
-#include "stm32_usart6.inc"
-#include "stm32_uart7.inc"
-#include "stm32_uart8.inc"
-#include "stm32_uart9.inc"
-#include "stm32_usart10.inc"
-#include "stm32_usart11.inc"
-#include "stm32_uart12.inc"
-#include "stm32_lpuart1.inc"
-
 #include "stm32_tim1.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
@@ -108,6 +94,22 @@
 #include "stm32_tim15.inc"
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
+
+#include "stm32_usart1.inc"
+#include "stm32_usart2.inc"
+#include "stm32_usart3.inc"
+#include "stm32_uart4.inc"
+#include "stm32_uart5.inc"
+#include "stm32_usart6.inc"
+#include "stm32_uart7.inc"
+#include "stm32_uart8.inc"
+#include "stm32_uart9.inc"
+#include "stm32_usart10.inc"
+#include "stm32_usart11.inc"
+#include "stm32_uart12.inc"
+#include "stm32_lpuart1.inc"
+
+#include "stm32_usb1.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -177,6 +179,8 @@ void irqInit(void) {
   usart11_irq_init();
   uart12_irq_init();
   lpuart1_irq_init();
+
+  usb1_irq_init();
 }
 
 /**
@@ -243,6 +247,8 @@ void irqDeinit(void) {
   usart11_irq_deinit();
   uart12_irq_deinit();
   lpuart1_irq_deinit();
+
+  usb1_irq_deinit();
 }
 
 /** @} */

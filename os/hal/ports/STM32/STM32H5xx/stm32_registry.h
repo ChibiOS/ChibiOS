@@ -390,10 +390,8 @@
 #define STM32_HAS_UART12                    FALSE
 #define STM32_HAS_LPUART1                   TRUE
 
-#define STM32_HAS_USB                       TRUE
-#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
+#define STM32_HAS_USB1                      TRUE
 #define STM32_USB_PMA_SIZE                  2048
-#define STM32_USB_HAS_BCDR                  TRUE
 
 /* IWDG attributes.*/
 #define STM32_HAS_IWDG                      TRUE
@@ -602,10 +600,8 @@
 #define STM32_HAS_UART12                    TRUE
 #define STM32_HAS_LPUART1                   TRUE
 
-#define STM32_HAS_USB                       TRUE
-#define STM32_USB_ACCESS_SCHEME_2x16        TRUE
+#define STM32_HAS_USB1                      TRUE
 #define STM32_USB_PMA_SIZE                  2048
-#define STM32_USB_HAS_BCDR                  TRUE
 
 /* IWDG attributes.*/
 #define STM32_HAS_IWDG                      TRUE
