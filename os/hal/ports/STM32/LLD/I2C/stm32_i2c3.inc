@@ -40,18 +40,18 @@
 /* Checks on vector names and numbers definitions.*/
 #if STM32_I2C_SINGLE_IRQ == TRUE
 #if !defined(STM32_I2C3_GLOBAL_NUMBER)
-#error "STM32_I2C3_GLOBAL_NUMBER not defined in stm32_irq.h"
+#error "STM32_I2C3_GLOBAL_NUMBER not defined in stm32_isr.h"
 #endif
 #if !defined(STM32_I2C3_GLOBAL_HANDLER)
-#error "STM32_I2C3_GLOBAL_HANDLER not defined in stm32_irq.h"
+#error "STM32_I2C3_GLOBAL_HANDLER not defined in stm32_isr.h"
 #endif
 
 #else
 #if !defined(STM32_I2C3_EV_HANDLER)
-#error "STM32_I2C3_EV_HANDLER not defined in stm32_irq.h"
+#error "STM32_I2C3_EV_HANDLER not defined in stm32_isr.h"
 #endif
 #if !defined(STM32_I2C3_ER_HANDLER)
-#error "STM32_I2C3_ER_HANDLER not defined in stm32_irq.h"
+#error "STM32_I2C3_ER_HANDLER not defined in stm32_isr.h"
 #endif
 #endif
 

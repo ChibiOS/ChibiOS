@@ -39,10 +39,10 @@
 
 /* Checks on vector names and numbers definitions.*/
 #if !defined(STM32_USB1_NUMBER)
-#error "STM32_USB1_NUMBER not defined in stm32_irq.h"
+#error "STM32_USB1_NUMBER not defined in stm32_isr.h"
 #endif
 #if !defined(STM32_USB1_HANDLER)
-#error "STM32_USB1_HANDLER not defined in stm32_irq.h"
+#error "STM32_USB1_HANDLER not defined in stm32_isr.h"
 #endif
 
 /* Checks for mcuconf.h correctness.*/
