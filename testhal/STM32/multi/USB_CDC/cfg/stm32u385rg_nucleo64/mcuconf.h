@@ -265,6 +265,12 @@
 /*
  * SDC driver system settings.
  */
+#define STM32_SDC_USE_SDMMC1                FALSE
+#define STM32_SDC_SDMMC_UNALIGNED_SUPPORT   TRUE
+#define STM32_SDC_SDMMC_WRITE_TIMEOUT       10000
+#define STM32_SDC_SDMMC_READ_TIMEOUT        10000
+#define STM32_SDC_SDMMC_CLOCK_DELAY         10
+#define STM32_SDC_SDMMC_PWRSAV              TRUE
 
 /*
  * SERIAL driver system settings.
