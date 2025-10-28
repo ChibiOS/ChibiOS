@@ -40,7 +40,7 @@
    SDMMC_STA_TXUNDERR | SDMMC_STA_RXOVERR)
 
 /* Fix for devices with single IDMABASEx register.*/
-#if defined(STM32H5XX)
+#if defined(STM32H5XX) || defined(STM32U3XX)
 #define IDMABASE0 IDMABASER
 #endif
 

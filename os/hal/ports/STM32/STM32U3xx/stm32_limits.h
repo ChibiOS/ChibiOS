@@ -150,7 +150,7 @@
  * @name    Peripherals limits
  * @{
  */
-#define STM32_SDMMC_MAXCLK              96000000
+#define STM32_SDMMC_MAXCLK              STM32_SYSCLK_MAX
 /** @} */
 
 #endif /* STM32_LIMITS_H */
