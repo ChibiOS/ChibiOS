@@ -72,6 +72,22 @@
 #error "unknown I2Cs combination"
 #endif
 
+#include "stm32_tim1.inc"
+#include "stm32_tim2.inc"
+#if STM32_HAS_TIM3 && STM32_HAS_TIM4
+#include "stm32_tim3_4.inc"
+#elif STM32_HAS_TIM3
+#include "stm32_tim3.inc"
+#else
+#error "unknown TIMs combination"
+#endif
+#include "stm32_tim6.inc"
+#include "stm32_tim7.inc"
+#include "stm32_tim14.inc"
+#include "stm32_tim15.inc"
+#include "stm32_tim16.inc"
+#include "stm32_tim17.inc"
+
 #include "stm32_usart1.inc"
 #if STM32_HAS_USART2 && STM32_HAS_LPUART2
 #include "stm32_usart2_lp2.inc"
@@ -92,21 +108,7 @@
 #error "unknown USARTs combination"
 #endif
 
-#include "stm32_tim1.inc"
-#include "stm32_tim2.inc"
-#if STM32_HAS_TIM3 && STM32_HAS_TIM4
-#include "stm32_tim3_4.inc"
-#elif STM32_HAS_TIM3
-#include "stm32_tim3.inc"
-#else
-#error "unknown TIMs combination"
-#endif
-#include "stm32_tim6.inc"
-#include "stm32_tim7.inc"
-#include "stm32_tim14.inc"
-#include "stm32_tim15.inc"
-#include "stm32_tim16.inc"
-#include "stm32_tim17.inc"
+#include "stm32_usb1.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -160,6 +162,8 @@ void irqInit(void) {
 #elif STM32_HAS_LPUART1
   lpuart1_irq_init();
 #endif
+
+  usb1_irq_init();
 }
 
 /**
@@ -208,6 +212,8 @@ void irqDeinit(void) {
 #elif STM32_HAS_LPUART1
   lpuart1_irq_deinit();
 #endif
+
+  usb1_irq_deinit();
 }
 
 /** @} */

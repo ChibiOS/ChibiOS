@@ -177,10 +177,8 @@
 /*
  * USB units.
  */
-#define STM32_USB1_HP_HANDLER               Vector60
-#define STM32_USB1_LP_HANDLER               Vector60
-#define STM32_USB1_HP_NUMBER                8
-#define STM32_USB1_LP_NUMBER                8
+#define STM32_USB1_HANDLER                  Vector60
+#define STM32_USB1_NUMBER                   8
 /** @} */
 
 /* Individual IRQ priorities are derived by the shared I2C IRQ priority,

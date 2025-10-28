@@ -86,21 +86,6 @@
 #endif
 
 /**
- * @brief   USB1 interrupt priority level setting.
- */
-#if (!defined(STM32_USB_USB1_HP_IRQ_PRIORITY) &&                           \
-     (STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER)) || defined(__DOXYGEN__)
-#define STM32_USB_USB1_HP_IRQ_PRIORITY      13
-#endif
-
-/**
- * @brief   USB1 interrupt priority level setting.
- */
-#if !defined(STM32_USB_USB1_LP_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      14
-#endif
-
-/**
  * @brief   Enables isochronous support.
  * @note    Isochronous support requires special handling and this makes the
  *          code size increase significantly.
@@ -128,66 +113,53 @@
  * @brief   Allowed deviation for the 48MHz clock.
  */
 #if !defined(STM32_USB_48MHZ_DELTA) || defined(__DOXYGEN__)
-#define STM32_USB_48MHZ_DELTA               0
+#define STM32_USB_48MHZ_DELTA               120000
 #endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
-#if STM32_USB_USE_USB1 && !STM32_HAS_USB
-#error "USB not present in the selected device"
+/* Registry checks.*/
+#if !defined(STM32_HAS_USB1)
+#error "STM32_HAS_USBx not defined in registry"
+#endif
+
+/* IP instances check.*/
+#if STM32_USB_USE_USB1 && !STM32_HAS_USB1
+#error "USB1 not present in the selected device"
 #endif
 
 #if !STM32_USB_USE_USB1
 #error "USB driver activated but no USB peripheral assigned"
 #endif
 
-#if !defined(STM32_USBCLK)
-#error "STM32_USBCLK not defined"
+#if STM32_USB_USE_USB1
+#if defined(STM32_USB1_IS_USED)
+#error "USBD1 requires USB1 but it is already used"
+#else
+#define STM32_USB1_IS_USED
+#endif
 #endif
 
-#if STM32_USB_USE_USB1 &&                                                   \
-    (STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER) &&                       \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_USB_USB1_HP_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to USB HP"
-#endif
-
-#if STM32_USB_USE_USB1 &&                                                   \
-    !OSAL_IRQ_IS_VALID_PRIORITY(STM32_USB_USB1_LP_IRQ_PRIORITY)
-#error "Invalid IRQ priority assigned to USB LP"
-#endif
-
-#if !defined(STM32_USB1_HP_HANDLER)
-#error "STM32_USB1_HP_HANDLER not defined"
-#endif
-
-#if !defined(STM32_USB1_HP_NUMBER)
-#error "STM32_USB1_HP_NUMBER not defined"
-#endif
-
-#if !defined(STM32_USB1_LP_HANDLER)
-#error "STM32_USB1_LP_HANDLER not defined"
-#endif
-
-#if !defined(STM32_USB1_LP_NUMBER)
-#error "STM32_USB1_LP_NUMBER not defined"
-#endif
-
+/* Other settings.*/
 #if (STM32_USB_HOST_WAKEUP_DURATION < 2) || (STM32_USB_HOST_WAKEUP_DURATION > 15)
 #error "invalid STM32_USB_HOST_WAKEUP_DURATION setting, it must be between 2 and 15"
 #endif
 
-#if (STM32_USB_48MHZ_DELTA < 0) || (STM32_USB_48MHZ_DELTA > 250000)
-#error "invalid STM32_USB_48MHZ_DELTA setting, it must not exceed 250000"
+#if (STM32_USB_48MHZ_DELTA < 0) || (STM32_USB_48MHZ_DELTA > 120000)
+#error "invalid STM32_USB_48MHZ_DELTA setting, it must not exceed 120000"
+#endif
+
+/* Clock-related checks.*/
+#if !defined(STM32_USBCLK)
+#error "STM32_USBCLK not defined"
 #endif
 
 /* Allowing for a small tolerance.*/
-#if 0
 #if (STM32_USBCLK < (48000000 - STM32_USB_48MHZ_DELTA)) ||                  \
     (STM32_USBCLK > (48000000 + STM32_USB_48MHZ_DELTA))
 #error "the USB USBv1 driver requires a 48MHz clock"
-#endif
 #endif
 
 /*===========================================================================*/
@@ -541,6 +513,7 @@ extern "C" {
   void usb_lld_stall_in(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_out(USBDriver *usbp, usbep_t ep);
   void usb_lld_clear_in(USBDriver *usbp, usbep_t ep);
+  void usb_lld_serve_interrupt(USBDriver *usbp);
 #ifdef __cplusplus
 }
 #endif

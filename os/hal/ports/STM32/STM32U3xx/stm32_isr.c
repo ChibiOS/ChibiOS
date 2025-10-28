@@ -76,14 +76,6 @@
 #include "stm32_spi2.inc"
 #include "stm32_spi3.inc"
 
-#include "stm32_usart1.inc"
-#include "stm32_usart3.inc"
-#include "stm32_uart4.inc"
-#include "stm32_uart5.inc"
-#include "stm32_lpuart1.inc"
-
-#include "stm32_usb1.inc"
-
 #include "stm32_tim1.inc"
 #include "stm32_tim2.inc"
 #include "stm32_tim3.inc"
@@ -93,6 +85,14 @@
 #include "stm32_tim15.inc"
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
+
+#include "stm32_usart1.inc"
+#include "stm32_usart3.inc"
+#include "stm32_uart4.inc"
+#include "stm32_uart5.inc"
+#include "stm32_lpuart1.inc"
+
+#include "stm32_usb1.inc"
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

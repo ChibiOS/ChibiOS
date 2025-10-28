@@ -486,86 +486,6 @@ static void usb_serve_endpoints(USBDriver *usbp, uint32_t istr) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_USB_USE_USB1 || defined(__DOXYGEN__)
-#if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
-#if STM32_USB_USE_ISOCHRONOUS
-/**
- * @brief   USB high priority interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_USB1_HP_HANDLER) {
-  uint32_t istr;
-  USBDriver *usbp = &USBD1;
-
-  OSAL_IRQ_PROLOGUE();
-
-  /* Endpoint events handling.*/
-  istr = usbp->usb->ISTR;
-  while ((istr & USB_ISTR_CTR) != 0U) {
-    usb_serve_endpoints(usbp, istr);
-    istr = usbp->usb->ISTR;
-  }
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* STM32_USB_USE_ISOCHRONOUS */
-#endif /* STM32_USB1_LP_NUMBER != STM32_USB1_HP_NUMBER */
-
-/**
- * @brief   USB low priority interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_USB1_LP_HANDLER) {
-  uint32_t istr;
-  USBDriver *usbp = &USBD1;
-
-  OSAL_IRQ_PROLOGUE();
-
-  /* Reading interrupt sources and atomically clearing them.*/
-  istr = usbp->usb->ISTR;
-  usbp->usb->ISTR = ~istr;
-
-  /* USB bus reset condition handling.*/
-  if (istr & USB_ISTR_RESET) {
-    _usb_reset(usbp);
-  }
-
-  /* USB bus SUSPEND condition handling.*/
-  if ((istr & USB_ISTR_SUSP) != 0U) {
-    usbp->usb->CNTR |= USB_CNTR_SUSPEN;
-    _usb_suspend(usbp);
-  }
-
-  /* USB bus WAKEUP condition handling.*/
-  if ((istr & USB_ISTR_WKUP) != 0U) {
-    uint32_t fnr = usbp->usb->FNR;
-    if ((fnr & USB_FNR_RXDP) == 0U) {
-      _usb_wakeup(usbp);
-    }
-  }
-
-  /* SOF handling.*/
-  if ((istr & USB_ISTR_SOF) != 0U) {
-    _usb_isr_invoke_sof_cb(usbp);
-  }
-
-  /* ERR handling.*/
-  if ((istr & USB_ISTR_ERR) != 0U) {
-    /* CHTODO */
-  }
-
-  /* Endpoint events handling.*/
-  while ((istr & USB_ISTR_CTR) != 0U) {
-    usb_serve_endpoints(usbp, istr);
-    istr = usbp->usb->ISTR;
-  }
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* STM32_USB_USE_USB1 */
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -612,10 +532,7 @@ msg_t usb_lld_start(USBDriver *usbp) {
 
       /* Enabling the USB IRQ vectors, this also gives enough time to allow
          the transceiver power up (1uS).*/
-#if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
-      nvicEnableVector(STM32_USB1_HP_NUMBER, STM32_USB_USB1_HP_IRQ_PRIORITY);
-#endif
-      nvicEnableVector(STM32_USB1_LP_NUMBER, STM32_USB_USB1_LP_IRQ_PRIORITY);
+      nvicEnableVector(STM32_USB1_NUMBER, STM32_IRQ_USB1_PRIORITY);
 
       /* Releases the USB reset.*/
       usbp->usb->CNTR = 0U;
@@ -642,10 +559,7 @@ void usb_lld_stop(USBDriver *usbp) {
 #if STM32_USB_USE_USB1
     if (&USBD1 == usbp) {
 
-#if STM32_USB1_HP_NUMBER != STM32_USB1_LP_NUMBER
-      nvicDisableVector(STM32_USB1_HP_NUMBER);
-#endif
-      nvicDisableVector(STM32_USB1_LP_NUMBER);
+      nvicDisableVector(STM32_USB1_NUMBER);
 
       usbp->usb->CNTR = USB_CNTR_PDWN | USB_CNTR_L2RES;
       rccDisableUSB();
@@ -999,6 +913,56 @@ void usb_lld_clear_in(USBDriver *usbp, usbep_t ep) {
      transferring.*/
   if ((usbp->usb->CHEPR[ep] & USB_CHEP_TX_STTX_Msk) != USB_EP_TX_VALID) {
     CHEPR_SET_STATTX(usbp, ep, USB_EP_TX_NAK);
+  }
+}
+
+/**
+ * @brief   Shared USB service routine.
+ *
+ * @param[in] usbp      pointer to the @p USBDriver object
+ *
+ * @notapi
+ */
+void usb_lld_serve_interrupt(USBDriver *usbp) {
+  uint32_t istr;
+
+  /* Reading interrupt sources and atomically clearing them.*/
+  istr = usbp->usb->ISTR;
+  usbp->usb->ISTR = ~istr;
+
+  /* USB bus reset condition handling.*/
+  if (istr & USB_ISTR_RESET) {
+    _usb_reset(usbp);
+  }
+
+  /* USB bus SUSPEND condition handling.*/
+  if ((istr & USB_ISTR_SUSP) != 0U) {
+    usbp->usb->CNTR |= USB_CNTR_SUSPEN;
+    _usb_suspend(usbp);
+  }
+
+  /* USB bus WAKEUP condition handling.*/
+  if ((istr & USB_ISTR_WKUP) != 0U) {
+    uint32_t fnr = usbp->usb->FNR;
+    if ((fnr & USB_FNR_RXDP) == 0U) {
+      _usb_wakeup(usbp);
+    }
+  }
+
+  /* SOF handling.*/
+  if ((istr & USB_ISTR_SOF) != 0U) {
+    _usb_isr_invoke_sof_cb(usbp);
+  }
+
+  /* ERR handling.*/
+  if ((istr & USB_ISTR_ERR) != 0U) {
+    /* CHTODO */
+  }
+
+  /* Endpoint events handling.*/
+  while ((istr & USB_ISTR_CTR) != 0U) {
+    usb_serve_endpoints(usbp, istr);
+    istr = usbp->usb->ISTR;
   }
 }
 
