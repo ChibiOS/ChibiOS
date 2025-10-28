@@ -644,7 +644,7 @@
  *
  * @api
  */
-#define rccEnableRNG(lp) rccEnableAHB2R1(RCC_AHB2ENR_RNGEN, lp)
+#define rccEnableRNG(lp) rccEnableAHB2R1(RCC_AHB2ENR1_RNGEN, lp)
 
 /**
  * @brief   Disables the RNG peripheral clock.
