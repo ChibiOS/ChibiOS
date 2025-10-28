@@ -106,7 +106,7 @@
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"TRUE"}
 #define STM32_MSIRC0_MODE                   ${doc.STM32_MSIRC0_MODE!"STM32_MSIRC0_PLL_LSE"}
-#define STM32_MSIRC1_MODE                   ${doc.STM32_MSIRC1_MODE!"STM32_MSIRC1_PLL_LSE"}
+#define STM32_MSIRC1_MODE                   ${doc.STM32_MSIRC1_MODE!"STM32_MSIRC1_FREE"}
 #define STM32_MSIPLL1N_VALUE                ${doc.STM32_MSIPLL1N_VALUE!"0"}
 #define STM32_MSIS_SRCDIV                   ${doc.STM32_MSIS_SRCDIV!"STM32_MSIS_IRC0_DIV1"}
 #define STM32_MSIK_SRCDIV                   ${doc.STM32_MSIK_SRCDIV!"STM32_MSIK_IRC0_DIV1"}
