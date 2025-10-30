@@ -125,7 +125,7 @@ OSAL_IRQ_HANDLER(STM32_I2C3_GLOBAL_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  i2c_lld_serve_global_interrupt(&I2CD1);
+  i2c_lld_serve_global_interrupt(&I2CD3);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -135,7 +135,7 @@ OSAL_IRQ_HANDLER(STM32_I2C3_EV_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  i2c_lld_serve_ev_interrupt(&I2CD1);
+  i2c_lld_serve_ev_interrupt(&I2CD3);
 
   OSAL_IRQ_EPILOGUE();
 }
@@ -144,7 +144,7 @@ OSAL_IRQ_HANDLER(STM32_I2C3_ER_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-  i2c_lld_serve_er_interrupt(&I2CD1);
+  i2c_lld_serve_er_interrupt(&I2CD3);
 
   OSAL_IRQ_EPILOGUE();
 }

@@ -200,6 +200,7 @@
                                              RCC_AHB2ENR_GPIOIEN)
 
 /* I2C attributes.*/
+#define STM32_I2C_SINGLE_IRQ                FALSE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE

@@ -148,7 +148,7 @@ __STATIC_FORCEINLINE void i2c_dma_enable_tx(I2CDriver *i2cp) {
   dmaStreamSetMode(i2cp->dma,
                    I2C_DMA_CR_COMMON(i2cp)                      |
                    STM32_DMA_CR_DIR_M2P                         |
-                   STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY) |
+                   STM32_DMA_CR_PL(i2cp->dprio) |
                    STM32_DMA_CR_CHSEL(i2cp->dreqtx));
   dmaStreamSetTransactionSize(i2cp->dma, i2cp->txbytes);
   dmaStreamSetPeripheral(i2cp->dma, &i2cp->i2c->TXDR);
@@ -176,7 +176,7 @@ __STATIC_FORCEINLINE void i2c_dma_enable_rx(I2CDriver *i2cp) {
   dmaStreamSetMode(i2cp->dma,
                    I2C_DMA_CR_COMMON(i2cp)                      |
                    STM32_DMA_CR_DIR_P2M                         |
-                   STM32_DMA_CR_PL(STM32_I2C_I2C1_DMA_PRIORITY) |
+                   STM32_DMA_CR_PL(i2cp->dprio) |
                    STM32_DMA_CR_CHSEL(i2cp->dreqrx));
   dmaStreamSetTransactionSize(i2cp->dma, i2cp->rxbytes);
   dmaStreamSetPeripheral(i2cp->dma, &i2cp->i2c->RXDR);
