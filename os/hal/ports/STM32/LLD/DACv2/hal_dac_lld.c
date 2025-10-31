@@ -127,7 +127,7 @@ static const dacparams_t dac1_ch1_params = {
   .dmach        = STM32_DAC_DAC1_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC1_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC1_CH1,
-  .dmairqprio   = STM32_DAC_DAC1_CH1_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC1_IRQ_PRIORITY,
 };
 #endif
 
@@ -140,7 +140,7 @@ static const dacparams_t dac1_ch2_params = {
   .dmach        = STM32_DAC_DAC1_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC1_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC1_CH2,
-  .dmairqprio   = STM32_DAC_DAC1_CH2_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC1_IRQ_PRIORITY,
 };
 #endif
 
@@ -153,7 +153,7 @@ static const dacparams_t dac2_ch1_params = {
   .dmach        = STM32_DAC_DAC2_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC2_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC2_CH1,
-  .dmairqprio   = STM32_DAC_DAC2_CH1_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC2_IRQ_PRIORITY,
 };
 #endif
 
@@ -166,7 +166,7 @@ static const dacparams_t dac2_ch2_params = {
   .dmach        = STM32_DAC_DAC2_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC2_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC2_CH2,
-  .dmairqprio   = STM32_DAC_DAC2_CH2_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC2_IRQ_PRIORITY,
 };
 #endif
 
@@ -179,7 +179,7 @@ static const dacparams_t dac3_ch1_params = {
   .dmach        = STM32_DAC_DAC3_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC3_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC3_CH1,
-  .dmairqprio   = STM32_DAC_DAC3_CH1_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC3_IRQ_PRIORITY,
 };
 #endif
 
@@ -192,7 +192,7 @@ static const dacparams_t dac3_ch2_params = {
   .dmach        = STM32_DAC_DAC3_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC3_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC3_CH2,
-  .dmairqprio   = STM32_DAC_DAC3_CH2_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC3_IRQ_PRIORITY,
 };
 #endif
 
@@ -205,7 +205,7 @@ static const dacparams_t dac4_ch1_params = {
   .dmach        = STM32_DAC_DAC4_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC4_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC4_CH1,
-  .dmairqprio   = STM32_DAC_DAC4_CH1_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC4_IRQ_PRIORITY,
 };
 #endif
 
@@ -218,7 +218,7 @@ static const dacparams_t dac4_ch2_params = {
   .dmach        = STM32_DAC_DAC4_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC4_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC4_CH2,
-  .dmairqprio   = STM32_DAC_DAC4_CH2_DMA_IRQ_PRIORITY
+  .dmairqprio   = STM32_DAC_DAC4_IRQ_PRIORITY,
 };
 #endif
 
@@ -1054,7 +1054,7 @@ msg_t dac_lld_start_conversion(DACDriver *dacp) {
 
   /* Allocate GPDMA channel.*/
   dacp->dmachp = dma3ChannelAllocI(dacp->params->dmach,
-                                    dacp->params->dmaprio,
+                                    dacp->params->dmairqprio,
                                     dac_lld_serve_dma_interrupt,
                                     (void *)dacp);
 
