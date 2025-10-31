@@ -41,13 +41,6 @@
  */
 
 /**
- * @brief   DAC mode control register.
- */
-#if !defined(STM32_DAC_HAS_MCR) || defined(__DOXYGEN__)
-#define STM32_DAC_HAS_MCR                   FALSE
-#endif
-
-/**
  * @brief   Enables the DAC dual mode.
  * @note    In dual mode DAC second channels cannot be accessed individually.
  */
@@ -268,6 +261,10 @@
 #endif
 #if !defined(STM32_HAS_DAC4_CH2)
 #define STM32_HAS_DAC4_CH2                  FALSE
+#endif
+
+#if !defined(STM32_DAC_HAS_MCR)
+#define STM32_DAC_HAS_MCR                   FALSE
 #endif
 
 #if STM32_DAC_USE_DAC1_CH1 && !STM32_HAS_DAC1_CH1
