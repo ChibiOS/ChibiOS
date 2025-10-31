@@ -65,11 +65,7 @@ DACDriver DACD1;
 
 /** @brief DAC1 CH2 driver identifier.*/
 #if STM32_DAC_USE_DAC1_CH2 || defined(__DOXYGEN__)
-#if !STM32_DAC_DUAL_MODE
 DACDriver DACD2;
-#else
-#error "DAC1 CH2 not independently available in dual mode"
-#endif
 #endif
 
 /** @brief DAC2 CH1 driver identifier.*/
@@ -79,11 +75,7 @@ DACDriver DACD3;
 
 /** @brief DAC2 CH2 driver identifier.*/
 #if STM32_DAC_USE_DAC2_CH2 || defined(__DOXYGEN__)
-#if !STM32_DAC_DUAL_MODE
 DACDriver DACD4;
-#else
-#error "DAC2 CH2 not independently available in dual mode"
-#endif
 #endif
 
 /** @brief DAC3 CH1 driver identifier.*/
@@ -93,11 +85,7 @@ DACDriver DACD5;
 
 /** @brief DAC3 CH2 driver identifier.*/
 #if STM32_DAC_USE_DAC3_CH2 || defined(__DOXYGEN__)
-#if !STM32_DAC_DUAL_MODE
 DACDriver DACD6;
-#else
-#error "DAC3 CH2 not independently available in dual mode"
-#endif
 #endif
 
 /** @brief DAC4 CH1 driver identifier.*/
@@ -107,11 +95,7 @@ DACDriver DACD7;
 
 /** @brief DAC4 CH2 driver identifier.*/
 #if STM32_DAC_USE_DAC4_CH2 || defined(__DOXYGEN__)
-#if !STM32_DAC_DUAL_MODE
 DACDriver DACD8;
-#else
-#error "DAC4 CH2 not independently available in dual mode"
-#endif
 #endif
 
 /*===========================================================================*/
@@ -127,7 +111,7 @@ static const dacparams_t dac1_ch1_params = {
   .dmach        = STM32_DAC_DAC1_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC1_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC1_CH1,
-  .dmairqprio   = STM32_DAC_DAC1_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC1_PRIORITY,
 };
 #endif
 
@@ -140,7 +124,7 @@ static const dacparams_t dac1_ch2_params = {
   .dmach        = STM32_DAC_DAC1_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC1_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC1_CH2,
-  .dmairqprio   = STM32_DAC_DAC1_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC1_PRIORITY,
 };
 #endif
 
@@ -153,7 +137,7 @@ static const dacparams_t dac2_ch1_params = {
   .dmach        = STM32_DAC_DAC2_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC2_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC2_CH1,
-  .dmairqprio   = STM32_DAC_DAC2_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC2_PRIORITY,
 };
 #endif
 
@@ -166,7 +150,7 @@ static const dacparams_t dac2_ch2_params = {
   .dmach        = STM32_DAC_DAC2_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC2_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC2_CH2,
-  .dmairqprio   = STM32_DAC_DAC2_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC2_PRIORITY,
 };
 #endif
 
@@ -179,7 +163,7 @@ static const dacparams_t dac3_ch1_params = {
   .dmach        = STM32_DAC_DAC3_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC3_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC3_CH1,
-  .dmairqprio   = STM32_DAC_DAC3_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC3_PRIORITY,
 };
 #endif
 
@@ -192,7 +176,7 @@ static const dacparams_t dac3_ch2_params = {
   .dmach        = STM32_DAC_DAC3_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC3_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC3_CH2,
-  .dmairqprio   = STM32_DAC_DAC3_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC3_PRIORITY,
 };
 #endif
 
@@ -205,7 +189,7 @@ static const dacparams_t dac4_ch1_params = {
   .dmach        = STM32_DAC_DAC4_CH1_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC4_CH1_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC4_CH1,
-  .dmairqprio   = STM32_DAC_DAC4_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC4_PRIORITY,
 };
 #endif
 
@@ -218,7 +202,7 @@ static const dacparams_t dac4_ch2_params = {
   .dmach        = STM32_DAC_DAC4_CH2_DMA3_CHANNEL,
   .dmaprio      = STM32_DAC_DAC4_CH2_DMA_PRIORITY,
   .dmareq       = STM32_DMA3_REQ_DAC4_CH2,
-  .dmairqprio   = STM32_DAC_DAC4_IRQ_PRIORITY,
+  .dmairqprio   = STM32_IRQ_DAC4_PRIORITY,
 };
 #endif
 
@@ -289,26 +273,6 @@ static void dac_lld_serve_dma_interrupt(void *p, uint32_t flags) {
       }
     }
   }
-}
-
-/**
- * @brief   DAC IRQ service routine.
- *
- * @param[in] dacp      pointer to the @p DACDriver object
- * @param[in] isr       content of the ISR register
- *
- * @isr
- */
-static void dac_lld_serve_interrupt(DACDriver *dacp, uint32_t isr) {
-
-    /* Check for DMA underrun.*/
-    if ((isr & (DAC_SR_DMAUDR1 | DAC_SR_DMAUDR2)) &&
-                                (dacp->state == DAC_ACTIVE)) {
-      /* DAC DMA underrun condition. This can happen only if the DMA is
-         unable to read data fast enough.*/
-      dacp->params->dac->SR = (DAC_SR_DMAUDR1 << dacp->params->regshift);
-      _dac_isr_error_code(dacp, DAC_ERR_UNDERFLOW);
-    }
 }
 
 /**
@@ -393,119 +357,6 @@ static msg_t put_channel(DACDriver *dacp,
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if STM32_DAC_USE_DAC1_CH1 || STM32_DAC_USE_DAC1_CH2 || defined(__DOXYGEN__)
-/**
- * @brief   DAC1 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_DAC1_HANDLER) {
-  uint32_t isr;
-
-  OSAL_IRQ_PROLOGUE();
-
-  isr  = DAC1->SR;
-  DAC1->SR = isr;
-#if defined(STM32_DAC_DAC1_IRQ_HOOK)
-  STM32_DAC_DAC1_IRQ_HOOK
-#endif
-  if ((isr & DAC_SR_DMAUDR1) != 0) {
-    dac_lld_serve_interrupt(&DACD1, DAC_SR_DMAUDR1);
-  }
-#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC1_CH2
-  if ((isr & DAC_SR_DMAUDR2) != 0) {
-    dac_lld_serve_interrupt(&DACD2, DAC_SR_DMAUDR2);
-  }
-#endif
-
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* STM32_DAC_USE_DAC1_CH1 || STM32_DAC_USE_DAC1_CH2 */
-
-#if STM32_DAC_USE_DAC2_CH1 || STM32_DAC_USE_DAC2_CH2 || defined(__DOXYGEN__)
-/**
- * @brief   DAC2 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_DAC2_HANDLER) {
-  uint32_t isr;
-
-  OSAL_IRQ_PROLOGUE();
-
-  isr  = DAC2->SR;
-  DAC2->SR = isr;
-#if defined(STM32_DAC_DAC2_IRQ_HOOK)
-  STM32_DAC_DAC2_IRQ_HOOK
-#endif
-  if ((isr & DAC_SR_DMAUDR1) != 0) {
-    dac_lld_serve_interrupt(&DACD3, DAC_SR_DMAUDR1);
-  }
-#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC2_CH2
-  if ((isr & DAC_SR_DMAUDR2) != 0) {
-    dac_lld_serve_interrupt(&DACD4, DAC_SR_DMAUDR2);
-  }
-#endif
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* STM32_DAC_USE_DAC2_CH1 || STM32_DAC_USE_DAC2_CH2  */
-
-#if STM32_DAC_USE_DAC3_CH1 || STM32_DAC_USE_DAC3_CH2 || defined(__DOXYGEN__)
-/**
- * @brief   DAC3 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_DAC3_HANDLER) {
-  uint32_t isr;
-
-  OSAL_IRQ_PROLOGUE();
-
-  isr  = DAC3->SR;
-  DAC3->SR = isr;
-#if defined(STM32_DAC_DAC3_IRQ_HOOK)
-  STM32_DAC_DAC3_IRQ_HOOK
-#endif
-  if ((isr & DAC_SR_DMAUDR1) != 0) {
-    dac_lld_serve_interrupt(&DACD6, DAC_SR_DMAUDR1);
-  }
-#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC3_CH2
-  if ((isr & DAC_SR_DMAUDR2) != 0) {
-    dac_lld_serve_interrupt(&DACD7, DAC_SR_DMAUDR2);
-  }
-#endif
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* STM32_DAC_USE_DAC3_CH1 || STM32_DAC_USE_DAC3_CH2  */
-
-#if STM32_DAC_USE_DAC4_CH1 || STM32_DAC_USE_DAC4_CH2 || defined(__DOXYGEN__)
-/**
- * @brief   DAC4 interrupt handler.
- *
- * @isr
- */
-OSAL_IRQ_HANDLER(STM32_DAC4_HANDLER) {
-  uint32_t isr;
-
-  OSAL_IRQ_PROLOGUE();
-
-  isr  = DAC4->SR;
-  DAC4->SR = isr;
-#if defined(STM32_DAC_DAC4_IRQ_HOOK)
-  STM32_DAC_DAC4_IRQ_HOOK
-#endif
-  if ((isr & DAC_SR_DMAUDR1) != 0) {
-    dac_lld_serve_interrupt(&DACD8, DAC_SR_DMAUDR1);
-  }
-#if !STM32_DAC_DUAL_MODE && STM32_DAC_USE_DAC4_CH2
-  if ((isr & DAC_SR_DMAUDR2) != 0) {
-    dac_lld_serve_interrupt(&DACD9, DAC_SR_DMAUDR2);
-  }
-#endif
-  OSAL_IRQ_EPILOGUE();
-}
-#endif /* STM32_DAC_USE_DAC4_CH1 || STM32_DAC_USE_DAC4_CH2  */
-
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -536,74 +387,69 @@ void dac_lld_init(void) {
   dacObjectInit(&DACD3);
   DACD3.params  = &dac2_ch1_params;
   DACD3.dmachp = NULL;
-  DACD2.dbuf    = &__dma3_dac2_ch1;
+  DACD3.dbuf    = &__dma3_dac2_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC2_CH2
   dacObjectInit(&DACD4);
   DACD4.params  = &dac2_ch2_params;
   DACD4.dmachp = NULL;
-  DACD2.dbuf    = &__dma3_dac2_ch2;
+  DACD4.dbuf    = &__dma3_dac2_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC3_CH1
   dacObjectInit(&DACD5);
   DACD5.params  = &dac3_ch1_params;
   DACD5.dmachp = NULL;
-  DACD2.dbuf    = &__dma3_dac3_ch1;
+  DACD5.dbuf    = &__dma3_dac3_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC3_CH2
   dacObjectInit(&DACD6);
   DACD6.params  = &dac3_ch2_params;
   DACD6.dmachp = NULL;
-  DACD2.dbuf    = &__dma3_dac3_ch2;
+  DACD6.dbuf    = &__dma3_dac3_ch2;
 #endif
 
 #if STM32_DAC_USE_DAC4_CH1
   dacObjectInit(&DACD7);
   DACD7.params  = &dac4_ch1_params;
   DACD7.dmachp = NULL;
-  DACD2.dbuf    = &__dma3_dac4_ch1;
+  DACD7.dbuf    = &__dma3_dac4_ch1;
 #endif
 
 #if STM32_DAC_USE_DAC4_CH2
   dacObjectInit(&DACD8);
   DACD8.params  = &dac4_ch2_params;
   DACD8.dmachp = NULL;
-  DACD2.dbuf    = &__dma3_dac4_ch2;
+  DACD8.dbuf    = &__dma3_dac4_ch2;
 #endif
 
-  /* Reset DAC H/W then setup IRQs. The IRQs are used to capture DMA underrun
-     errors only.*/
+  /* Used DAC units reset on initialization, note, reset must occur with
+     clock enabled.*/
 #if STM32_DAC_USE_DAC1_CH1 || STM32_DAC_USE_DAC1_CH2
+  rccEnableDAC1(false);
   rccResetDAC1();
-  rccEnableDAC1(true);
   rccDisableDAC1();
-  nvicEnableVector(STM32_DAC1_NUMBER, STM32_DAC_DAC1_IRQ_PRIORITY);
 #endif
 
 #if STM32_DAC_USE_DAC2_CH1 || STM32_DAC_USE_DAC2_CH2
+  rccEnableDAC1(false);
   rccResetDAC2();
-  rccEnableDAC2(true);
   rccDisableDAC2();
-  nvicEnableVector(STM32_DAC2_NUMBER, STM32_DAC_DAC2_IRQ_PRIORITY);
 #endif
 
 #if STM32_DAC_USE_DAC3_CH1 || STM32_DAC_USE_DAC3_CH2
+  rccEnableDAC3(false);
   rccResetDAC3();
-  rccEnableDAC3(true);
   rccDisableDAC3();
-  nvicEnableVector(STM32_DAC3_NUMBER, STM32_DAC_DAC3_IRQ_PRIORITY);
 #endif
 
 #if STM32_DAC_USE_DAC4_CH1 || STM32_DAC_USE_DAC4_CH2
+  rccEnableDAC4(false);
   rccResetDAC4();
-  rccEnableDAC4(true);
   rccDisableDAC4();
-  nvicEnableVector(STM32_DAC4_NUMBER, STM32_DAC_DAC4_IRQ_PRIORITY);
 #endif
-
 }
 
 /**
@@ -626,7 +472,7 @@ msg_t dac_lld_start(DACDriver *dacp) {
     if (false) {
     }
 #if STM32_DAC_USE_DAC1_CH1
-    else if (&DACD1 == dacp) {
+    else if ((&DACD1 == dacp) || (&DACD2 == dacp)) {
       rccEnableDAC1(true);
     }
 #endif
@@ -1252,6 +1098,25 @@ void dac_lld_stop_conversion(DACDriver *dacp) {
 
   /* Re-enable channel.*/
   dacp->params->dac->CR = cr;
+}
+
+/**
+ * @brief   DAC IRQ service routine.
+ *
+ * @param[in] dacp      pointer to the @p DACDriver object
+ * @param[in] isr       content of the ISR register
+ *
+ * @isr
+ */
+void dac_lld_serve_interrupt(DACDriver *dacp) {
+
+  /* Check for DMA underrun, the error is only handled if the driver is in
+     DAC_ACTIVE state.*/
+  if (dacp->state == DAC_ACTIVE) {
+    /* DAC DMA underrun condition. This can happen only if the DMA is
+       unable to read data fast enough.*/
+    _dac_isr_error_code(dacp, DAC_ERR_UNDERFLOW);
+  }
 }
 
 #endif /* HAL_USE_DAC */
