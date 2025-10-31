@@ -116,6 +116,9 @@ const halclkcfg_t hal_clkcfg_default = {
 #if STM32_HSE_ENABLED
                         | RCC_CR_HSEON
 #endif
+#if STM32_HSE_BYPASS
+                        | RCC_CR_HSEBYP
+#endif
 #if STM32_HSI48_ENABLED
                         | RCC_CR_HSI48ON
 #endif

@@ -1212,7 +1212,7 @@
 /*===========================================================================*/
 
 /* Clock handling mode selection.*/
-#if 0 //STM32_CLOCK_DYNAMIC == TRUE
+#if STM32_CLOCK_DYNAMIC == TRUE
 #define HAL_LLD_USE_CLOCK_MANAGEMENT
 #endif
 
@@ -2496,29 +2496,17 @@
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
- * @brief   Type of PLL configuration registers.
- */
-typedef struct {
-  uint32_t          cfgr;
-  uint32_t          divr;
-  uint32_t          frac;
-} stm32_pll_regs_t;
-
-/**
  * @brief   Type of a clock configuration structure.
  */
 typedef struct {
-  uint32_t          pwr_voscr;
-  uint32_t          pwr_vmcr;
+  uint32_t          pwr_vosr;
   uint32_t          rcc_cr;
+  uint32_t          rcc_icsr1;
   uint32_t          rcc_cfgr1;
   uint32_t          rcc_cfgr2;
+  uint32_t          rcc_cfgr3;
+  uint32_t          rcc_cfgr4;
   uint32_t          flash_acr;
-#if STM32_RCC_HAS_PLL3 || defined(__DOXYGEN__)
-  stm32_pll_regs_t  plls[3];
-#else
-  stm32_pll_regs_t  plls[2];
-#endif
 } halclkcfg_t;
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
