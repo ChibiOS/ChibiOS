@@ -41,8 +41,8 @@
 /** @brief Enables delay in ULPI timing during device chirp.*/
 #define USB_OTG_DCFG_XCVRDLY    (1U << 14)
 
-/** 
-  * @brief some ULPI chip need additional delay for initial handshake, 
+/**
+  * @brief some ULPI chip need additional delay for initial handshake,
   *        namely microchip 334x series.
   */
 #if defined(BOARD_OTG2_ULPI_ACTIVATE_CHIRP_DELAY)
