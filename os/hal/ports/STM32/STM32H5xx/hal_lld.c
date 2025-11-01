@@ -174,10 +174,6 @@ const halclkcfg_t hal_clkcfg_default = {
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
-#define CLK_HSI                 0U
-#define CLK_CSI                 1U
-#define CLK_HSI48               2U
-#define CLK_HSE                 3U
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
