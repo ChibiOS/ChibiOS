@@ -472,7 +472,7 @@ msg_t dac_lld_start(DACDriver *dacp) {
     if (false) {
     }
 #if STM32_DAC_USE_DAC1_CH1
-    else if ((&DACD1 == dacp) || (&DACD2 == dacp)) {
+    else if (&DACD1 == dacp) {
       rccEnableDAC1(true);
     }
 #endif
