@@ -313,7 +313,7 @@ static void i2c_lld_serve_events(I2CDriver *i2cp, uint32_t isr) {
 
 #if (I2C_ENABLE_SLAVE_MODE == TRUE)
     /* If master is done reading data and indicates this to the slave through a NACK. */
-    if (!i2cp->isMaster) {
+    if (!i2cp->is_master) {
       if (i2cp->state == I2C_ACTIVE_TX) {
         if (((isr & I2C_ISR_DIR) != 0U) && ((isr & I2C_ISR_TXIS) != 0U)) {
           /* Next interrupt is STOP. */
@@ -909,7 +909,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
   systime_t start, end;
 
 #if (I2C_ENABLE_SLAVE_MODE == TRUE)
-  i2cp->isMaster = true;
+  i2cp->is_master = true;
 #endif /* I2C_ENABLE_SLAVE_MODE == TRUE */
 
   /* Resetting error flags for this transfer.*/
@@ -1000,7 +1000,7 @@ msg_t i2c_lld_master_transmit_timeout(I2CDriver *i2cp, i2caddr_t addr,
 msg_t i2c_lld_match_address(I2CDriver *i2cp, i2caddr_t addr) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->isMaster = false;
+  i2cp->is_master = false;
 
   /* Check 7 bit address. */
   if ((addr >> 7) == 0) {
@@ -1041,17 +1041,17 @@ msg_t i2c_lld_match_address(I2CDriver *i2cp, i2caddr_t addr) {
 msg_t i2c_lld_slave_receive_timeout(I2CDriver *i2cp, uint8_t *rxbuf, size_t rxbytes, sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->isMaster = false;
+  i2cp->is_master = false;
 
   /* Reset Reply flag */
   i2cp->reply_required = false;
 
+  i2cp->rxptr   = rxbuf;
+  i2cp->rxbytes = rxbytes;
+
 #if STM32_I2C_USE_DMA == TRUE
   /* Setup DMA for RX.*/
   i2c_dma_enable_rx(i2cp);
-#else
-  i2cp->rxptr   = rxbuf;
-  i2cp->rxbytes = rxbytes;
 #endif
 
   /* Address match, RX and STOP interrupts enabled.*/
@@ -1088,14 +1088,14 @@ msg_t i2c_lld_slave_transmit_timeout(I2CDriver *i2cp,
                                      sysinterval_t timeout) {
   I2C_TypeDef *dp = i2cp->i2c;
 
-  i2cp->isMaster = false;
+  i2cp->is_master = false;
+
+  i2cp->txptr   = txbuf;
+  i2cp->txbytes = txbytes;
 
 #if STM32_I2C_USE_DMA == TRUE
   /* Setup DMA for TX.*/
   i2c_dma_enable_tx(i2cp);
-#else
-  i2cp->txptr   = txbuf;
-  i2cp->txbytes = txbytes;
 #endif
 
   /* Address match, TX and STOP interrupts enabled.*/
