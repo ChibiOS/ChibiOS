@@ -142,9 +142,9 @@
 //#error "STM32_SDMMC1CLK must not exceed STM32_HCLK * 0.7"
 //#endif
 
-#if STM32_HAS_SDMMC2 && (STM32_SDMMC2CLK * 10 > STM32_HCLK * 7)
-#error "STM32_SDMMC2CLK must not exceed STM32_HCLK * 0.7"
-#endif
+//#if STM32_HAS_SDMMC2 && (STM32_SDMMC2CLK * 10 > STM32_HCLK * 7)
+//#error "STM32_SDMMC2CLK must not exceed STM32_HCLK * 0.7"
+//#endif
 
 #if !defined(STM32_SDMMC_MAXCLK)
 #error "STM32_SDMMC_MAXCLK not defined in stm32_limits.h"

@@ -1007,6 +1007,7 @@
 #define STM32_BOOST_PCLK1_MAX               120000000
 #define STM32_BOOST_PCLK2_MAX               120000000
 #define STM32_BOOST_ADCCLK_MAX              80000000
+#define STM32_BOOST_SDMMC_MAXCLK            120000000
 
 #define STM32_BOOST_0WS_THRESHOLD           20000000
 #define STM32_BOOST_1WS_THRESHOLD           40000000
@@ -1042,6 +1043,7 @@
 #define STM32_VOS1_PCLK1_MAX                80000000
 #define STM32_VOS1_PCLK2_MAX                80000000
 #define STM32_VOS1_ADCCLK_MAX               80000000
+#define STM32_VOS1_SDMMC_MAXCLK             80000000
 
 #define STM32_VOS1_0WS_THRESHOLD            20000000
 #define STM32_VOS1_1WS_THRESHOLD            40000000
@@ -1077,6 +1079,7 @@
 #define STM32_VOS2_PCLK1_MAX                26000000
 #define STM32_VOS2_PCLK2_MAX                26000000
 #define STM32_VOS2_ADCCLK_MAX               26000000
+#define STM32_VOS2_SDMMC_MAXCLK             26000000
 
 #define STM32_VOS2_0WS_THRESHOLD            8000000
 #define STM32_VOS2_1WS_THRESHOLD            16000000
@@ -1111,6 +1114,7 @@
 #define STM32_PCLK1_MAX                     STM32_BOOST_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_BOOST_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_BOOST_ADCCLK_MAX
+#define STM32_SDMMC_MAXCLK                  STM32_BOOST_SDMMC_MAXCLK
 
 #define STM32_0WS_THRESHOLD                 STM32_BOOST_0WS_THRESHOLD
 #define STM32_1WS_THRESHOLD                 STM32_BOOST_1WS_THRESHOLD
@@ -1142,6 +1146,7 @@
 #define STM32_PCLK1_MAX                     STM32_VOS1_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_VOS1_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_VOS1_ADCCLK_MAX
+#define STM32_SDMMC_MAXCLK                  STM32_VOS1_SDMMC_MAXCLK
 
 #define STM32_0WS_THRESHOLD                 STM32_VOS1_0WS_THRESHOLD
 #define STM32_1WS_THRESHOLD                 STM32_VOS1_1WS_THRESHOLD
@@ -1174,6 +1179,7 @@
 #define STM32_PCLK1_MAX                     STM32_VOS2_PCLK1_MAX
 #define STM32_PCLK2_MAX                     STM32_VOS2_PCLK2_MAX
 #define STM32_ADCCLK_MAX                    STM32_VOS2_ADCCLK_MAX
+#define STM32_SDMMC_MAXCLK                  STM32_VOS2_SDMMC_MAXCLK
 
 #define STM32_0WS_THRESHOLD                 STM32_VOS2_0WS_THRESHOLD
 #define STM32_1WS_THRESHOLD                 STM32_VOS2_1WS_THRESHOLD
