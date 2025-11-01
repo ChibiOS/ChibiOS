@@ -31,7 +31,7 @@
 /**
  * @brief   Number of thresholds in the wait states array.
  */
-#define STM32_WS_THRESHOLDS             6
+#define STM32_WS_THRESHOLDS             5
 
 /**
  * @name    Registers reset values
@@ -81,61 +81,106 @@ const halclkcfg_t hal_clkcfg_default = {
 #if STM32_HSE_ENABLED
                         | RCC_CR_HSEON
 #endif
-#if STM32_HSE_BYPASS
+#if defined(STM32_HSE_BYPASS)
                         | RCC_CR_HSEBYP
 #endif
 #if STM32_HSI48_ENABLED
                         | RCC_CR_HSI48ON
 #endif
-#if STM32_HSI_ENABLED
+#if STM32_HSI16_ENABLED
                         | RCC_CR_HSIKERON | RCC_CR_HSION
 #endif
                           ,
-  .rcc_cfgr1            = STM32_MCO2SEL     | STM32_MCO2PRE     |
-                          STM32_MCO1SEL     | STM32_MCO1PRE     |
-                          STM32_TIMPRE      | STM32_RTCPRE      |
-                          STM32_STOPKERWUCK | STM32_STOPWUCK    |
-                          STM32_SW,
-  .rcc_cfgr2            = STM32_PPRE3       | STM32_PPRE2       |
-                          STM32_PPRE1       | STM32_HPRE,
-  .flash_acr            = FLASH_ACR_PRFTEN  | STM32_FLASHBITS,
-  .plls = {
-    [0] = {
-      .cfgr             = STM32_PLL1REN     | STM32_PLL1QEN     |
-                          STM32_PLL1PEN     | STM32_PLL1M       |
-                          STM32_PLL1RGE     | STM32_PLL1VCOSEL  |
-                          STM32_PLL1SRC,
-      .divr             = STM32_PLL1R       | STM32_PLL1Q       |
-                          STM32_PLL1P       | STM32_PLL1N,
-      .frac             = STM32_RCC_PLL1FRACR_RESET
-    },
-    [1] = {
-      .cfgr             = STM32_PLL2REN     | STM32_PLL2QEN     |
-                          STM32_PLL2PEN     | STM32_PLL2M       |
-                          STM32_PLL2RGE     | STM32_PLL2VCOSEL  |
-                          STM32_PLL2SRC,
-      .divr             = STM32_PLL2R       | STM32_PLL2Q       |
-                          STM32_PLL2P       | STM32_PLL2N,
-      .frac             = STM32_RCC_PLL2FRACR_RESET
-    },
-#if STM32_RCC_HAS_PLL3
-    [2] = {
-      .cfgr             = STM32_PLL3REN     | STM32_PLL3QEN     |
-                          STM32_PLL3PEN     | STM32_PLL3M       |
-                          STM32_PLL3RGE     | STM32_PLL3VCOSEL  |
-                          STM32_PLL3SRC,
-      .divr             = STM32_PLL3R       | STM32_PLL3Q       |
-                          STM32_PLL3P       | STM32_PLL3N,
-      .frac             = STM32_RCC_PLL3FRACR_RESET
-    }
-#endif
-  }
+  .rcc_icscr1           = STM32_MSISSEL     | STM32_MSISDIV     |
+                          STM32_MSIKSEL     | STM32_MSIKDIV     |
+                          STM32_MSIPLL1N    | STM32_MSIBIAS     |
+                          STM32_MSIPLL0SEL  | STM32_MSIPLL1SEL  |
+                          STM32_MSIHSINDIV  |
+                          STM32_MSIRGSEL_ICSCR1, /* Note, enforced.*/
+  .rcc_cfgr1            = STM32_MCO2PRE     | STM32_MCO2SEL     |
+                          STM32_MCO1PRE     | STM32_MCO1SEL     |
+                          STM32_STOPKERWUCK | STM32_STOPWUCK,
+  .rcc_cfgr2            = STM32_PPRE2       | STM32_PPRE1       |
+                          STM32_HPRE,
+  .rcc_cfgr3            = STM32_PPRE3,
+  .rcc_cfgr4            = STM32_BOOSTDIV    | STM32_BOOSTSEL,
+  .flash_acr            = (STM32_FLASH_ACR & ~STM32_ACR_LATENCY_MASK) |
+                          STM32_FLASHBITS,
 };
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Dynamic clock points for this device.
+ */
+static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
+#if STM32_HSI16_ENABLED
+  [CLK_HSI16]           = STM32_HSI16CLK,
+#else
+  [CLK_HSI16]           = 0U,
+#endif
+#if STM32_HSI48_ENABLED
+  [CLK_HSI48]           = STM32_HSI48CLK,
+#else
+  [CLK_HSI48]           = 0U,
+#endif
+#if STM32_HSE_ENABLED
+  [CLK_HSE]             = STM32_HSECLK,
+#else
+  [CLK_HSE]             = 0U,
+#endif
+#if STM32_ACTIVATE_MSIS
+  [CLK_MSIS]            = STM32_MSISCLK,
+#else
+  [CLK_MSIS]            = 0U,
+#endif
+#if STM32_ACTIVATE_MSIK
+  [CLK_MSIK]            = STM32_MSIKCLK,
+#else
+  [CLK_MSIK]            = 0U,
+#endif
+  [CLK_HCLK]            = STM32_HCLK,
+  [CLK_PCLK1]           = STM32_PCLK1,
+  [CLK_PCLK1TIM]        = STM32_TIMP1CLK,
+  [CLK_PCLK2]           = STM32_PCLK2,
+  [CLK_PCLK2TIM]        = STM32_TIMP2CLK,
+  [CLK_PCLK3]           = STM32_PCLK3,
+  [CLK_MCO1]            = STM32_MCO2CLK,
+  [CLK_MCO2]            = STM32_MCO1CLK
+};
+
+/**
+ * @brief   Type of a structure representing system limits.
+ */
+typedef struct {
+  halfreq_t             sysclk_max;
+  halfreq_t             flash_thresholds[STM32_WS_THRESHOLDS];
+} system_limits_t;
+
+/**
+ * @brief   System limits for range 1.
+ */
+static const system_limits_t vos_range1 = {
+  .sysclk_max           = STM32_RANGE1_SYSCLK_MAX,
+  .flash_thresholds     = {STM32_RANGE1_0WS_THRESHOLD, STM32_RANGE1_1WS_THRESHOLD,
+                           STM32_RANGE1_2WS_THRESHOLD, STM32_RANGE1_3WS_THRESHOLD,
+                           STM32_RANGE1_4WS_THRESHOLD}
+};
+
+/**
+ * @brief   System limits for range 2.
+ */
+static const system_limits_t vos_range2 = {
+  .sysclk_max           = STM32_RANGE2_SYSCLK_MAX,
+  .flash_thresholds     = {STM32_RANGE2_0WS_THRESHOLD, STM32_RANGE2_1WS_THRESHOLD,
+                           STM32_RANGE2_2WS_THRESHOLD, STM32_RANGE2_3WS_THRESHOLD,
+                           STM32_RANGE2_4WS_THRESHOLD}
+};
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* Driver local functions.                                                   */
@@ -238,6 +283,317 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
                 STM32_I2C3SEL     | STM32_LPUART1SEL;
 }
 
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Recalculates the clock tree frequencies.
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The frequency calculation result.
+ * @retval false        if the clock settings look valid
+ * @retval true         if the clock settings look invalid
+ *
+ * @notapi
+ */
+static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
+  static const uint32_t hprediv[16] = {1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U,
+                                       2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
+  static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
+  const system_limits_t *slp;
+  uint32_t n, flashws;
+  halfreq_t hsi16clk = 0U, hsi48clk = 0U, hseclk = 0U, msisclk = 0U, msikclk = 0U;
+  halfreq_t sysclk, hclk, pclk1, pclk2, pclk3, pclk1tim, pclk2tim, mco1clk, mco2clk;
+
+  /* System limits based on desired VOS settings.*/
+  switch (ccp->pwr_vosr & STM32_VOS_MASK) {
+  case STM32_VOS_RANGE1:
+    slp = &vos_range1;
+    break;
+  case STM32_VOS_RANGE2:
+    slp = &vos_range2;
+    break;
+  default:
+    return true;
+  }
+
+  /* HSE clock.*/
+  if ((ccp->rcc_cr & STM32_CR_HSEON) != 0U) {
+    hseclk = STM32_HSECLK;
+  }
+
+  /* HSI16 clock.*/
+  if ((ccp->rcc_cr & STM32_CR_HSION) != 0U) {
+    hsi16clk = STM32_HSI16CLK;
+  }
+
+  /* HSI48 clock.*/
+  if ((ccp->rcc_cr & STM32_CR_HSI48ON) != 0U) {
+    hsi48clk = STM32_HSI48CLK;
+  }
+
+  /* MSIK clock.*/
+//  if ((ccp->rcc_cr & STM32_CR_MSISON) != 0U) {
+//    msikclk = STM32_MSIKCLK;
+//  }
+
+  /* MSIK clock.*/
+//  if ((ccp->rcc_cr & STM32_CR_MSIKON) != 0U) {
+//    msisclk = STM32_MSISCLK;
+//  }
+
+  /* SYSCLK frequency.*/
+  switch (ccp->rcc_cfgr1 & STM32_SW_MASK) {
+  case STM32_SW_MSIS:
+    sysclk = msisclk;
+    break;
+  case STM32_SW_HSI16:
+    sysclk = hsi16clk;
+    break;
+  case STM32_SW_HSE:
+    sysclk = hseclk;
+    break;
+  default:
+    sysclk = 0U;
+  }
+
+  if (sysclk > slp->sysclk_max) {
+    return true;
+  }
+
+  /* HCLK frequency.*/
+  hclk = sysclk / hprediv[(ccp->rcc_cfgr2 & STM32_HPRE_MASK) >> STM32_HPRE_POS];
+
+  /* PPRE1 frequency.*/
+  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE1_MASK) >> STM32_PPRE1_POS];
+  pclk1 = hclk / n;
+  if (n < 2) {
+    pclk1tim = pclk1;
+  }
+  else {
+    pclk1tim = pclk1 * 2U;
+  }
+
+  /* PPRE2 frequency.*/
+  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE2_MASK) >> STM32_PPRE2_POS];
+  pclk2 = hclk / n;
+  if (n < 2) {
+    pclk2tim = pclk2;
+  }
+  else {
+    pclk2tim = pclk2 * 2U;
+  }
+
+  /* PPRE3 frequency.*/
+  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE3_MASK) >> STM32_PPRE3_POS];
+  pclk3 = hclk / n;
+
+  /* MCO1 clock.*/
+  switch (ccp->rcc_cfgr1 & STM32_MCO1SEL_MASK) {
+  case STM32_MCO1SEL_SYSCLK:
+    mco1clk = sysclk;
+    break;
+  case STM32_MCO1SEL_MSIS:
+    mco1clk = msisclk;
+    break;
+  case STM32_MCO1SEL_HSI16:
+    mco1clk = hsi16clk;
+    break;
+  case STM32_MCO1SEL_HSE:
+    mco1clk = hseclk;
+    break;
+  case STM32_MCO1SEL_LSI:
+    mco1clk = STM32_LSICLK;
+    break;
+  case STM32_MCO1SEL_LSE:
+    mco1clk = STM32_LSECLK;
+    break;
+  case STM32_MCO1SEL_HSI48:
+    mco1clk = STM32_HSI48CLK;
+    break;
+  case STM32_MCO1SEL_MSIK:
+    mco1clk = msikclk;
+    break;
+  default:
+    mco1clk = 0U;
+  }
+  n = (ccp->rcc_cfgr1 & STM32_MCO1PRE_MASK) >> STM32_MCO1PRE_POS;
+  mco1clk /= 1U << n;
+
+  /* MCO2 clock.*/
+  switch (ccp->rcc_cfgr1 & STM32_MCO2SEL_MASK) {
+  case STM32_MCO2SEL_SYSCLK:
+    mco2clk = sysclk;
+    break;
+  case STM32_MCO2SEL_MSIS:
+    mco2clk = msisclk;
+    break;
+  case STM32_MCO2SEL_HSI16:
+    mco2clk = hsi16clk;
+    break;
+  case STM32_MCO2SEL_HSE:
+    mco2clk = hseclk;
+    break;
+  case STM32_MCO2SEL_LSI:
+    mco2clk = STM32_LSICLK;
+    break;
+  case STM32_MCO2SEL_LSE:
+    mco2clk = STM32_LSECLK;
+    break;
+  case STM32_MCO2SEL_HSI48:
+    mco2clk = STM32_HSI48CLK;
+    break;
+  case STM32_MCO2SEL_MSIK:
+    mco2clk = msikclk;
+    break;
+  default:
+    mco2clk = 0U;
+  }
+  n = (ccp->rcc_cfgr1 & STM32_MCO2PRE_MASK) >> STM32_MCO2PRE_POS;
+  mco2clk /= 1U << n;
+
+  /* Flash settings.*/
+  flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
+  if (flashws >= STM32_WS_THRESHOLDS) {
+    return true;
+  }
+  if (hclk > slp->flash_thresholds[flashws]) {
+    return true;
+  }
+
+  /* Writing out results.*/
+  clock_points[CLK_HSI16]    = hsi16clk;
+  clock_points[CLK_HSI48]    = hsi48clk;
+  clock_points[CLK_HSE]      = hseclk;
+  clock_points[CLK_MSIS]     = msisclk;
+  clock_points[CLK_MSIK]     = msikclk;
+  clock_points[CLK_SYSCLK]   = sysclk;
+  clock_points[CLK_HCLK]     = hclk;
+  clock_points[CLK_PCLK1]    = pclk1;
+  clock_points[CLK_PCLK1TIM] = pclk1tim;
+  clock_points[CLK_PCLK2]    = pclk2;
+  clock_points[CLK_PCLK2TIM] = pclk2tim;
+  clock_points[CLK_PCLK3]    = pclk3;
+  clock_points[CLK_MCO1]     = mco1clk;
+  clock_points[CLK_MCO2]     = mco2clk;
+
+  return false;
+}
+#if 0
+/**
+ * @brief   Switches to a different clock configuration.
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @notapi
+ */
+static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
+  uint32_t cr, mask;
+
+#if 0
+  /* Restoring default PWR settings related clocks and sleep modes.*/
+  PWR->CR1 = PWR_CR1_VOS_0;
+
+  /* Waiting for all regulator status bits to be cleared, this means that
+     power levels are stable.*/
+  while ((PWR->SR2 & (PWR_SR2_VOSF | PWR_SR2_REGLPF)) != 0U) {
+    /* Waiting for the regulator to be ready.*/
+  }
+#endif
+
+  /* Setting flash ACR to the safest value while we play with clocks.*/
+  flash_set_acr(STM32_LATENCY_4WS);
+
+  /* HSI could be not activated, activating it taking care to not disturb
+     other clocks yet, not touching the divider.*/
+  RCC->CR |= STM32_CR_HSION;
+  while ((RCC->CR & STM32_CR_HSIRDY) == 0U) {
+    /* Waiting for HSI activation.*/
+  }
+
+  /* Switching to HSI as clock source as in a post-reset situation.
+     Resetting up all dividers and MCOs.*/
+  RCC->CFGR1 = STM32_RCC_CFGR1_RESET;
+  RCC->CFGR2 = STM32_RCC_CFGR2_RESET;
+  while ((RCC->CFGR1 & STM32_SWS_MASK) != STM32_SWS_HSI16) {
+    /* Wait until HSI is selected.*/
+  }
+
+  /* Resetting the whole RCC_CR register, basically shutting down everything
+     except HSI.*/
+  cr = STM32_RCC_CR_RESET;
+  RCC->CR = cr;
+  while ((RCC->CR & STM32_HSIDIVF) == 0U) {
+    /* Waiting for new HSIDIV setting to be propagated.*/
+  }
+
+  /* Resetting flash ACR settings to the default value.*/
+  flash_set_acr(STM32_FLASH_ACR_RESET);
+
+  /* Setting up all clocks while keeping the rest untouched at reset value.*/
+  cr |= ccp->rcc_cr & (STM32_HSEON | STM32_HSI48ON | STM32_CSION);
+  RCC->CR = cr;
+
+  /* Waiting for all enabled clocks to become stable.*/
+  mask = (ccp->rcc_cr & (STM32_HSEON | STM32_HSI48ON | STM32_CSION)) << 1;
+  while ((RCC->CR & mask) != mask) {
+    /* Waiting.*/
+    /* TODO timeout and failure.*/
+  }
+
+  /* PLLs setup.*/
+  pll1_setup(ccp->plls[0].cfgr, ccp->plls[0].divr, ccp->plls[0].frac);
+  pll2_setup(ccp->plls[1].cfgr, ccp->plls[1].divr, ccp->plls[1].frac);
+#if STM32_RCC_HAS_PLL3
+  pll3_setup(ccp->plls[2].cfgr, ccp->plls[2].divr, ccp->plls[2].frac);
+
+  /* Activating enabled PLLs together.*/
+  cr |= ccp->rcc_cr & (STM32_PLL3ON | STM32_PLL2ON | STM32_PLL1ON);
+  RCC->CR = cr;
+
+  /* Waiting for all enabled PLLs to become stable.*/
+  mask = (ccp->rcc_cr & (STM32_PLL3ON | STM32_PLL2ON | STM32_PLL1ON)) << 1;
+#else
+  /* Activating enabled PLLs together.*/
+  cr |= ccp->rcc_cr & (STM32_PLL2ON | STM32_PLL1ON);
+  RCC->CR = cr;
+
+  /* Waiting for all enabled PLLs to become stable.*/
+  mask = (ccp->rcc_cr & (STM32_PLL2ON | STM32_PLL1ON)) << 1;
+#endif
+  while ((RCC->CR & mask) != mask) {
+    /* Waiting.*/
+    /* TODO timeout and failure.*/
+  }
+
+  /* Final flash ACR settings.*/
+  flash_set_acr(ccp->flash_acr);
+
+  /* Final PWR modes.*/
+  PWR->VOSCR = ccp->pwr_voscr;
+  while ((PWR->VOSSR & PWR_VOSSR_ACTVOSRDY) == 0U) {
+    /* Wait until regulator is stable.*/
+  }
+  PWR->VMCR  = ccp->pwr_vmcr;
+
+  /* Switching to the final clock source.*/
+  RCC->CFGR1 = ccp->rcc_cfgr1;
+  RCC->CFGR2 = ccp->rcc_cfgr2;
+  while ((RCC->CFGR1 & STM32_SWS_MASK) != ((ccp->rcc_cfgr1 & STM32_SW_MASK) << STM32_SWS_POS)) {
+    /* Wait until SYSCLK is stable.*/
+  }
+
+  /* If HSI is not in configuration then it is finally shut down.*/
+  if ((ccp->rcc_cr & STM32_HSION) == 0U) {
+    hsi_disable();
+  }
+
+  return false;
+}
+#endif
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -335,9 +691,8 @@ void stm32_clock_init(void) {
   /* Backup domain initializations.*/
   bd_init();
 
-
   /* Setup of flash WS's before changing clocks.*/
-  flash_set_acr((STM32_FLASH_ACR & ~STM32_LATENCY_MASK) | STM32_FLASHBITS);
+  flash_set_acr((STM32_FLASH_ACR & ~STM32_ACR_LATENCY_MASK) | STM32_FLASHBITS);
 
   /* Setup of clocks dividers before changing clocks.*/
   hal_lld_set_static_clocks();
@@ -356,7 +711,7 @@ void stm32_clock_init(void) {
               STM32_MSIPLL1N   | STM32_MSIBIAS    |
               STM32_MSIPLL0SEL | STM32_MSIPLL1SEL |
               STM32_MSIHSINDIV;
-    RCC->ICSCR1 = icscr1 | STM32_MSIRGSEL_ICSCR1; /* Note, ICSCR1 enforced.*/
+    RCC->ICSCR1 = icscr1 | RCC_ICSCR1_MSIRGSEL; /* Note, ICSCR1 enforced.*/
 
     cr = RCC->CR & ~(RCC_CR_MSIPLL0FAST_Msk | RCC_CR_MSIPLL1FAST_Msk |
                      RCC_CR_MSIPLL0EN_Msk   | RCC_CR_MSIPLL1EN_Msk   |
@@ -404,5 +759,51 @@ void stm32_clock_init(void) {
 #endif /* STM32_NO_INIT */
 }
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+#if 0
+/**
+ * @brief   Switches to a different clock configuration
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @notapi
+ */
+bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
+
+  if (hal_lld_clock_check_tree(ccp)) {
+    return true;
+  }
+
+  if (hal_lld_clock_raw_switch(ccp)) {
+    return true;
+  }
+
+  /* Updating the CMSIS variable.*/
+  SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
+
+  return false;
+}
+#endif
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+halfreq_t hal_lld_get_clock_point(halclkpt_t clkpt) {
+
+  osalDbgAssert(clkpt < CLK_ARRAY_SIZE, "invalid clock point");
+
+  return clock_points[clkpt];
+}
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /** @} */

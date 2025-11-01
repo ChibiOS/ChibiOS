@@ -53,9 +53,9 @@
 /*
  * PWR settings.
  */
-#define STM32_PWR_VOSR                      (STM32_VOS_RANGE1)
-#define STM32_PWR_CR3                       (STM32_FSTEN | STM32_REGSEL)
-#define STM32_PWR_SVMCR                     (PWR_SVMCR_ASV | PWR_SVMCR_USV | PWR_SVMCR_AVM1EN | PWR_SVMCR_AVM2EN | PWR_SVMCR_UVMEN)
+#define STM32_PWR_VOSR                      (STM32_VOSR_RANGE1)
+#define STM32_PWR_CR3                       (STM32_CR3_FSTEN | STM32_CR3_REGSEL)
+#define STM32_PWR_SVMCR                     (STM32_SVMCR_ASV | STM32_SVMCR_USV | STM32_SVMCR_AVM1EN | STM32_SVMCR_AVM2EN | STM32_SVMCR_UVMEN)
 #define STM32_PWR_WUCR1                     (0U)
 #define STM32_PWR_WUCR2                     (0U)
 #define STM32_PWR_WUCR3                     (0U)
@@ -83,7 +83,7 @@
 /*
  * FLASH settings.
  */
-#define STM32_FLASH_ACR                     (STM32_PRFTEN)
+#define STM32_FLASH_ACR                     (STM32_ACR_PRFTEN)
 
 /*
  * Clock settings.

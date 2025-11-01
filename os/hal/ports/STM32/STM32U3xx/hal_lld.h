@@ -46,17 +46,17 @@
 /**
  * @brief   Requires use of SPIv2 driver model.
  */
-#define HAL_LLD_SELECT_SPI_V2           TRUE
+#define HAL_LLD_SELECT_SPI_V2               TRUE
 
 /**
  * @name    Platform identification
  * @{
  */
 #if defined(STM32U375xx) || defined(__DOXYGEN__)
-  #define PLATFORM_NAME         "STM32U3 Low-power"
+  #define PLATFORM_NAME                     "STM32U3 Low-power"
 
 #elif defined(STM32U385xx)
-  #define PLATFORM_NAME         "STM32U3 Low-power with Crypto"
+  #define PLATFORM_NAME                     "STM32U3 Low-power with Crypto"
 
 #else
   #error "STM32U3 device not specified"
@@ -74,407 +74,422 @@
  * @name   Clock points names
  * @{
  */
-#define CLK_HSI16               0U
-#define CLK_HSI48               1U
-#define CLK_HSE                 2U
-#define CLK_MSIS                3U
-#define CLK_MSIK                4U
-#define CLK_SYSCLK              5U
-#define CLK_HCLK                6U
-#define CLK_PCLK1               7U
-#define CLK_PCLK1TIM            8U
-#define CLK_PCLK2               9U
-#define CLK_PCLK2TIM            10U
-#define CLK_PCLK3               11U
-#define CLK_MCO1                12U
-#define CLK_MCO2                13U
-#define CLK_ARRAY_SIZE          14U
+#define CLK_HSI16                           0U
+#define CLK_HSI48                           1U
+#define CLK_HSE                             2U
+#define CLK_MSIS                            3U
+#define CLK_MSIK                            4U
+#define CLK_SYSCLK                          5U
+#define CLK_HCLK                            6U
+#define CLK_PCLK1                           7U
+#define CLK_PCLK1TIM                        8U
+#define CLK_PCLK2                           9U
+#define CLK_PCLK2TIM                        10U
+#define CLK_PCLK3                           11U
+#define CLK_MCO1                            12U
+#define CLK_MCO2                            13U
+#define CLK_ARRAY_SIZE                      14U
 /** @} */
 
 /**
  * @name    MSIRC0 96MHz oscillator settings
  * @{
  */
-#define STM32_MSIRC0_FREE       0
-#define STM32_MSIRC0_PLL_LSE    1
-#define STM32_MSIRC0_PLL_HSE    2
-#define STM32_MSIRC0_PLL_LSE_FAST 3
-#define STM32_MSIRC0_PLL_HSE_FAST 4
+#define STM32_MSIRC0_FREE                   0
+#define STM32_MSIRC0_PLL_LSE                1
+#define STM32_MSIRC0_PLL_HSE                2
+#define STM32_MSIRC0_PLL_LSE_FAST           3
+#define STM32_MSIRC0_PLL_HSE_FAST           4
 /** @} */
 
 /**
  * @name    MSIRC1 24MHz oscillator settings
  * @{
  */
-#define STM32_MSIRC1_FREE       0
-#define STM32_MSIRC1_PLL_LSE    1
-#define STM32_MSIRC1_PLL_HSE    2
-#define STM32_MSIRC1_PLL_LSE_FAST 3
-#define STM32_MSIRC1_PLL_HSE_FAST 4
+#define STM32_MSIRC1_FREE                   0
+#define STM32_MSIRC1_PLL_LSE                1
+#define STM32_MSIRC1_PLL_HSE                2
+#define STM32_MSIRC1_PLL_LSE_FAST           3
+#define STM32_MSIRC1_PLL_HSE_FAST           4
 /** @} */
 
 /**
  * @name    Source and divider for MSIS
  * @{
  */
-#define STM32_MSIS_IRC0_DIV1    0       /* 96MHz */
-#define STM32_MSIS_IRC0_DIV2    1       /* 48MHz */
-#define STM32_MSIS_IRC0_DIV4    2       /* 24MHz */
-#define STM32_MSIS_IRC0_DIV8    3       /* 12MHz */
-#define STM32_MSIS_IRC1_DIV1    4       /* ~24MHz */
-#define STM32_MSIS_IRC1_DIV3    5       /* ~12MHz */
-#define STM32_MSIS_IRC1_DIV4    6       /* ~6MHz */
-#define STM32_MSIS_IRC1_DIV8    7       /* ~4MHz */
+#define STM32_MSIS_IRC0_DIV1                0       /* 96MHz */
+#define STM32_MSIS_IRC0_DIV2                1       /* 48MHz */
+#define STM32_MSIS_IRC0_DIV4                2       /* 24MHz */
+#define STM32_MSIS_IRC0_DIV8                3       /* 12MHz */
+#define STM32_MSIS_IRC1_DIV1                4       /* ~24MHz */
+#define STM32_MSIS_IRC1_DIV3                5       /* ~12MHz */
+#define STM32_MSIS_IRC1_DIV4                6       /* ~6MHz */
+#define STM32_MSIS_IRC1_DIV8                7       /* ~4MHz */
 /** @} */
 
 /**
  * @name    Source and divider for MSIK
  * @{
  */
-#define STM32_MSIK_IRC0_DIV1    0       /* 96MHz */
-#define STM32_MSIK_IRC0_DIV2    1       /* 48MHz */
-#define STM32_MSIK_IRC0_DIV4    2       /* 24MHz */
-#define STM32_MSIK_IRC0_DIV8    3       /* 12MHz */
-#define STM32_MSIK_IRC1_DIV1    4       /* ~24MHz */
-#define STM32_MSIK_IRC1_DIV3    5       /* ~12MHz */
-#define STM32_MSIK_IRC1_DIV4    6       /* ~6MHz */
-#define STM32_MSIK_IRC1_DIV8    7       /* ~4MHz */
+#define STM32_MSIK_IRC0_DIV1                0       /* 96MHz */
+#define STM32_MSIK_IRC0_DIV2                1       /* 48MHz */
+#define STM32_MSIK_IRC0_DIV4                2       /* 24MHz */
+#define STM32_MSIK_IRC0_DIV8                3       /* 12MHz */
+#define STM32_MSIK_IRC1_DIV1                4       /* ~24MHz */
+#define STM32_MSIK_IRC1_DIV3                5       /* ~12MHz */
+#define STM32_MSIK_IRC1_DIV4                6       /* ~6MHz */
+#define STM32_MSIK_IRC1_DIV8                7       /* ~4MHz */
 /** @} */
 
 /**
  * @name    PWR_VOSR register definitions
  * @{
  */
-#define STM32_VOS_POS           0
-#define STM32_VOS_MASK          (3U << 0)
-#define STM32_VOS_RANGE1        (1U << PWR_VOSR_R1EN_Pos)
-#define STM32_VOS_RANGE2        (1U << PWR_VOSR_R2EN_Pos)
+#define STM32_VOSR_RANGE_POS                0
+#define STM32_VOSR_RANGE_MASK               (3U << 0)
+#define STM32_VOSR_RANGE1                   (1U << PWR_VOSR_R1EN_Pos)
+#define STM32_VOSR_RANGE2                   (1U << PWR_VOSR_R2EN_Pos)
 /** @} */
 
 /**
  * @name    PWR_CR3 register definitions
  * @{
  */
-#define STM32_REGSEL            (1U << PWR_CR3_REGSEL_Pos)
+#define STM32_CR3_REGSEL                    (1U << PWR_CR3_REGSEL_Pos)
 
-#define STM32_FSTEN             (1U << PWR_CR3_FSTEN_Pos)
+#define STM32_CR3_FSTEN                     (1U << PWR_CR3_FSTEN_Pos)
 /** @} */
 
 /**
  * @name    PWR_SVMCR register definitions
  * @{
  */
-#define STM32_ASV               PWR_SVMCR_ASV
-#define STM32_IO2SV             PWR_SVMCR_IO2SV
-#define STM32_USV               PWR_SVMCR_USV
-#define STM32_AVM2EN            PWR_SVMCR_AVM2EN
-#define STM32_AVM1EN            PWR_SVMCR_AVM1EN
-#define STM32_IO2VMEN           PWR_SVMCR_IO2VMEN
-#define STM32_UVMEN             PWR_SVMCR_UVMEN
-#define STM32_PVDLS_POS         PWR_SVMCR_PVDLS_Pos
-#define STM32_PVDLS_MASK        PWR_SVMCR_PVDLS_Msk
-#define STM32_PVDLS_FIELD(n)    ((n) << STM32_PVDLS_POS)
-#define STM32_PVDLS_2P0V        STM32_PVDLS_FIELD(0U)
-#define STM32_PVDLS_2P2V        STM32_PVDLS_FIELD(1U)
-#define STM32_PVDLS_2P4V        STM32_PVDLS_FIELD(2U)
-#define STM32_PVDLS_2P5V        STM32_PVDLS_FIELD(3U)
-#define STM32_PVDLS_2P6V        STM32_PVDLS_FIELD(4U)
-#define STM32_PVDLS_2P8V        STM32_PVDLS_FIELD(5U)
-#define STM32_PVDLS_2P9V        STM32_PVDLS_FIELD(6U)
-#define STM32_PVDLS_PVD_IN      STM32_PVDLS_FIELD(7U)
-#define STM32_PVDE              PWR_SVMCR_PVDE
+#define STM32_SVMCR_ASV                     PWR_SVMCR_ASV
+#define STM32_SVMCR_IO2SV                   PWR_SVMCR_IO2SV
+#define STM32_SVMCR_USV                     PWR_SVMCR_USV
+#define STM32_SVMCR_AVM2EN                  PWR_SVMCR_AVM2EN
+#define STM32_SVMCR_AVM1EN                  PWR_SVMCR_AVM1EN
+#define STM32_SVMCR_IO2VMEN                 PWR_SVMCR_IO2VMEN
+#define STM32_SVMCR_UVMEN                   PWR_SVMCR_UVMEN
+#define STM32_SVMCR_PVDLS_POS               PWR_SVMCR_PVDLS_Pos
+#define STM32_SVMCR_PVDLS_MASK              PWR_SVMCR_PVDLS_Msk
+#define STM32_SVMCR_PVDLS_FIELD(n)          ((n) << STM32_SVMCR_PVDLS_POS)
+#define STM32_SVMCR_PVDLS_2P0V              STM32_SVMCR_PVDLS_FIELD(0U)
+#define STM32_SVMCR_PVDLS_2P2V              STM32_SVMCR_PVDLS_FIELD(1U)
+#define STM32_SVMCR_PVDLS_2P4V              STM32_SVMCR_PVDLS_FIELD(2U)
+#define STM32_SVMCR_PVDLS_2P5V              STM32_SVMCR_PVDLS_FIELD(3U)
+#define STM32_SVMCR_PVDLS_2P6V              STM32_SVMCR_PVDLS_FIELD(4U)
+#define STM32_SVMCR_PVDLS_2P8V              STM32_SVMCR_PVDLS_FIELD(5U)
+#define STM32_SVMCR_PVDLS_2P9V              STM32_SVMCR_PVDLS_FIELD(6U)
+#define STM32_SVMCR_PVDLS_PVD_IN            STM32_SVMCR_PVDLS_FIELD(7U)
+#define STM32_SVMCR_PVDE                    PWR_SVMCR_PVDE
 /** @} */
 
 /**
  * @name    FLASH_ACR register bits definitions
  * @{
  */
-#define STM32_LATENCY_POS       FLASH_ACR_LATENCY_Pos
-#define STM32_LATENCY_MASK      FLASH_ACR_LATENCY_Msk
-#define STM32_LATENCY_FIELD(n)  ((n) << STM32_LATENCY_POS)
-#define STM32_LATENCY_0WS       STM32_LATENCY_FIELD(0U)
-#define STM32_LATENCY_1WS       STM32_LATENCY_FIELD(1U)
-#define STM32_LATENCY_2WS       STM32_LATENCY_FIELD(2U)
-#define STM32_LATENCY_3WS       STM32_LATENCY_FIELD(3U)
-#define STM32_LATENCY_4WS       STM32_LATENCY_FIELD(4U)
+#define STM32_ACR_LATENCY_POS               FLASH_ACR_LATENCY_Pos
+#define STM32_ACR_LATENCY_MASK              FLASH_ACR_LATENCY_Msk
+#define STM32_ACR_LATENCY_FIELD(n)          ((n) << STM32_ACR_LATENCY_POS)
+#define STM32_ACR_LATENCY_0WS               STM32_ACR_LATENCY_FIELD(0U)
+#define STM32_ACR_LATENCY_1WS               STM32_ACR_LATENCY_FIELD(1U)
+#define STM32_ACR_LATENCY_2WS               STM32_ACR_LATENCY_FIELD(2U)
+#define STM32_ACR_LATENCY_3WS               STM32_ACR_LATENCY_FIELD(3U)
+#define STM32_ACR_LATENCY_4WS               STM32_ACR_LATENCY_FIELD(4U)
 
-#define STM32_PRFTEN            FLASH_ACR_PRFTEN
-#define STM32_LPM               FLASH_ACR_LPM
-#define STM32_PDREQ1            FLASH_ACR_PDREQ1
-#define STM32_PDREQ2            FLASH_ACR_PDREQ2
-#define STM32_SLEEP_PD          FLASH_ACR_SLEEP_PD
+#define STM32_ACR_PRFTEN                    FLASH_ACR_PRFTEN
+#define STM32_ACR_LPM                       FLASH_ACR_LPM
+#define STM32_ACR_PDREQ1                    FLASH_ACR_PDREQ1
+#define STM32_ACR_PDREQ2                    FLASH_ACR_PDREQ2
+#define STM32_ACR_SLEEP_PD                  FLASH_ACR_SLEEP_PD
+/** @} */
+
+/**
+ * @name    RCC_CR register bits definitions
+ * @{
+ */
+#define STM32_CR_HSEON                      RCC_CR_HSEON
+#define STM32_CR_HSI48ON                    RCC_CR_HSI48ON
+#define STM32_CR_HSION                      RCC_CR_HSION
+#define STM32_CR_MSIPLL0FAST                RCC_CR_MSIPLL0FAST
+#define STM32_CR_MSIPLL1FAST                RCC_CR_MSIPLL1FAST
+#define STM32_CR_MSIPLL0EN                  RCC_CR_MSIPLL0EN
+#define STM32_CR_MSIPLL1EN                  RCC_CR_MSIPLL1EN
+#define STM32_CR_MSIKON                     RCC_CR_MSIKON
+#define STM32_CR_MSISON                     RCC_CR_MSISON
 /** @} */
 
 /**
  * @name    RCC_ICSCR1 register bits definitions
  * @{
  */
-#define STM32_MSIHSINDIV_POS    RCC_ICSCR1_MSIHSINDIV_Pos
-#define STM32_MSIHSINDIV_MASK   RCC_ICSCR1_MSIHSINDIV_Msk
-#define STM32_MSIHSINDIV_FIELD(n) ((n) << STM32_MSIHSINDIV_POS)
-#define STM32_MSIHSINDIV_HSE16  STM32_MSIHSINDIV_FIELD(0U)
-#define STM32_MSIHSINDIV_HSE32  STM32_MSIHSINDIV_FIELD(1U)
+#define STM32_MSIHSINDIV_POS                RCC_ICSCR1_MSIHSINDIV_Pos
+#define STM32_MSIHSINDIV_MASK               RCC_ICSCR1_MSIHSINDIV_Msk
+#define STM32_MSIHSINDIV_FIELD(n)           ((n) << STM32_MSIHSINDIV_POS)
+#define STM32_MSIHSINDIV_HSE16              STM32_MSIHSINDIV_FIELD(0U)
+#define STM32_MSIHSINDIV_HSE32              STM32_MSIHSINDIV_FIELD(1U)
 
-#define STM32_MSIPLL1SEL_POS    RCC_ICSCR1_MSIPLL1SEL_Pos
-#define STM32_MSIPLL1SEL_MASK   RCC_ICSCR1_MSIPLL1SEL_Msk
-#define STM32_MSIPLL1SEL_FIELD(n) ((n) << STM32_MSIPLL1SEL_POS)
-#define STM32_MSIPLL1SEL_LSE    STM32_MSIPLL1SEL_FIELD(0U)
-#define STM32_MSIPLL1SEL_HSE    STM32_MSIPLL1SEL_FIELD(1U)
+#define STM32_MSIPLL1SEL_POS                RCC_ICSCR1_MSIPLL1SEL_Pos
+#define STM32_MSIPLL1SEL_MASK               RCC_ICSCR1_MSIPLL1SEL_Msk
+#define STM32_MSIPLL1SEL_FIELD(n)           ((n) << STM32_MSIPLL1SEL_POS)
+#define STM32_MSIPLL1SEL_LSE                STM32_MSIPLL1SEL_FIELD(0U)
+#define STM32_MSIPLL1SEL_HSE                STM32_MSIPLL1SEL_FIELD(1U)
 
-#define STM32_MSIPLL0SEL_POS    RCC_ICSCR1_MSIPLL0SEL_Pos
-#define STM32_MSIPLL0SEL_MASK   RCC_ICSCR1_MSIPLL0SEL_Msk
-#define STM32_MSIPLL0SEL_FIELD(n) ((n) << STM32_MSIPLL0SEL_POS)
-#define STM32_MSIPLL0SEL_LSE    STM32_MSIPLL0SEL_FIELD(0U)
-#define STM32_MSIPLL0SEL_HSE    STM32_MSIPLL0SEL_FIELD(1U)
+#define STM32_MSIPLL0SEL_POS                RCC_ICSCR1_MSIPLL0SEL_Pos
+#define STM32_MSIPLL0SEL_MASK               RCC_ICSCR1_MSIPLL0SEL_Msk
+#define STM32_MSIPLL0SEL_FIELD(n)           ((n) << STM32_MSIPLL0SEL_POS)
+#define STM32_MSIPLL0SEL_LSE                STM32_MSIPLL0SEL_FIELD(0U)
+#define STM32_MSIPLL0SEL_HSE                STM32_MSIPLL0SEL_FIELD(1U)
 
-#define STM32_MSIBIAS_POS       RCC_ICSCR1_MSIBIAS_Pos
-#define STM32_MSIBIAS_MASK      RCC_ICSCR1_MSIBIAS_Msk
-#define STM32_MSIBIAS_FIELD(n)  ((n) << STM32_MSIBIAS_POS)
-#define STM32_MSIBIAS_CONTINUOUS STM32_MSIBIAS_FIELD(0U)
-#define STM32_MSIBIAS_SAMPLIG   STM32_MSIBIAS_FIELD(1U)
+#define STM32_MSIBIAS_POS                   RCC_ICSCR1_MSIBIAS_Pos
+#define STM32_MSIBIAS_MASK                  RCC_ICSCR1_MSIBIAS_Msk
+#define STM32_MSIBIAS_FIELD(n)              ((n) << STM32_MSIBIAS_POS)
+#define STM32_MSIBIAS_CONTINUOUS            STM32_MSIBIAS_FIELD(0U)
+#define STM32_MSIBIAS_SAMPLIG               STM32_MSIBIAS_FIELD(1U)
 
-#define STM32_MSIRGSEL_POS      RCC_ICSCR1_MSIRGSEL_Pos
-#define STM32_MSIRGSEL_MASK     RCC_ICSCR1_MSIRGSEL_Msk
-#define STM32_MSIRGSEL_FIELD(n) ((n) << STM32_MSIRGSEL_POS)
-#define STM32_MSIRGSEL_CSR      STM32_MSIRGSEL_FIELD(0U)
-#define STM32_MSIRGSEL_ICSCR1   STM32_MSIRGSEL_FIELD(1U)
+#define STM32_MSIRGSEL_POS                  RCC_ICSCR1_MSIRGSEL_Pos
+#define STM32_MSIRGSEL_MASK                 RCC_ICSCR1_MSIRGSEL_Msk
+#define STM32_MSIRGSEL_FIELD(n)             ((n) << STM32_MSIRGSEL_POS)
+#define STM32_MSIRGSEL_CSR                  STM32_MSIRGSEL_FIELD(0U)
+#define STM32_MSIRGSEL_ICSCR1               STM32_MSIRGSEL_FIELD(1U)
 
-#define STM32_MSIPLL1N_POS      RCC_ICSCR1_MSIPLL1N_Pos
-#define STM32_MSIPLL1N_MASK     RCC_ICSCR1_MSIPLL1N_Msk
-#define STM32_MSIPLL1N_FIELD(n) ((n) << STM32_MSIPLL1N_POS)
+#define STM32_MSIPLL1N_POS                  RCC_ICSCR1_MSIPLL1N_Pos
+#define STM32_MSIPLL1N_MASK                 RCC_ICSCR1_MSIPLL1N_Msk
+#define STM32_MSIPLL1N_FIELD(n)             ((n) << STM32_MSIPLL1N_POS)
 
-#define STM32_MSIKDIV_POS       RCC_ICSCR1_MSIKDIV_Pos
-#define STM32_MSIKDIV_MASK      RCC_ICSCR1_MSIKDIV_Msk
-#define STM32_MSIKDIV_FIELD(n)  ((n) << STM32_MSIKDIV_POS)
+#define STM32_MSIKDIV_POS                   RCC_ICSCR1_MSIKDIV_Pos
+#define STM32_MSIKDIV_MASK                  RCC_ICSCR1_MSIKDIV_Msk
+#define STM32_MSIKDIV_FIELD(n)              ((n) << STM32_MSIKDIV_POS)
 
-#define STM32_MSIKSEL_POS       RCC_ICSCR1_MSIKSEL_Pos
-#define STM32_MSIKSEL_MASK      RCC_ICSCR1_MSIKSEL_Msk
-#define STM32_MSIKSEL_FIELD(n)  ((n) << STM32_MSIKSEL_POS)
-#define STM32_MSIKSEL_MSIRC0    STM32_MSIKSEL_FIELD(0U)
-#define STM32_MSIKSEL_MSIRC1    STM32_MSIKSEL_FIELD(1U)
+#define STM32_MSIKSEL_POS                   RCC_ICSCR1_MSIKSEL_Pos
+#define STM32_MSIKSEL_MASK                  RCC_ICSCR1_MSIKSEL_Msk
+#define STM32_MSIKSEL_FIELD(n)              ((n) << STM32_MSIKSEL_POS)
+#define STM32_MSIKSEL_MSIRC0                STM32_MSIKSEL_FIELD(0U)
+#define STM32_MSIKSEL_MSIRC1                STM32_MSIKSEL_FIELD(1U)
 
-#define STM32_MSISDIV_POS       RCC_ICSCR1_MSISDIV_Pos
-#define STM32_MSISDIV_MASK      RCC_ICSCR1_MSISDIV_Msk
-#define STM32_MSISDIV_FIELD(n)  ((n) << STM32_MSISDIV_POS)
+#define STM32_MSISDIV_POS                   RCC_ICSCR1_MSISDIV_Pos
+#define STM32_MSISDIV_MASK                  RCC_ICSCR1_MSISDIV_Msk
+#define STM32_MSISDIV_FIELD(n)              ((n) << STM32_MSISDIV_POS)
 
-#define STM32_MSISSEL_POS       RCC_ICSCR1_MSISSEL_Pos
-#define STM32_MSISSEL_MASK      RCC_ICSCR1_MSISSEL_Msk
-#define STM32_MSISSEL_FIELD(n)  ((n) << STM32_MSISSEL_POS)
-#define STM32_MSISSEL_MSIRC0    STM32_MSISSEL_FIELD(0U)
-#define STM32_MSISSEL_MSIRC1    STM32_MSISSEL_FIELD(1U)
+#define STM32_MSISSEL_POS                   RCC_ICSCR1_MSISSEL_Pos
+#define STM32_MSISSEL_MASK                  RCC_ICSCR1_MSISSEL_Msk
+#define STM32_MSISSEL_FIELD(n)              ((n) << STM32_MSISSEL_POS)
+#define STM32_MSISSEL_MSIRC0                STM32_MSISSEL_FIELD(0U)
+#define STM32_MSISSEL_MSIRC1                STM32_MSISSEL_FIELD(1U)
 /** @} */
 
 /**
  * @name    RCC_CFGR1 register bits definitions
  * @{
  */
-#define STM32_SW_POS            RCC_CFGR1_SW_Pos
-#define STM32_SW_MASK           RCC_CFGR1_SW_Msk
-#define STM32_SW_FIELD(n)       ((n) << STM32_SW_POS)
-#define STM32_SW_MSIS           STM32_SW_FIELD(0U)
-#define STM32_SW_HSI16          STM32_SW_FIELD(1U)
-#define STM32_SW_HSE            STM32_SW_FIELD(2U)
+#define STM32_SW_POS                        RCC_CFGR1_SW_Pos
+#define STM32_SW_MASK                       RCC_CFGR1_SW_Msk
+#define STM32_SW_FIELD(n)                   ((n) << STM32_SW_POS)
+#define STM32_SW_MSIS                       STM32_SW_FIELD(0U)
+#define STM32_SW_HSI16                      STM32_SW_FIELD(1U)
+#define STM32_SW_HSE                        STM32_SW_FIELD(2U)
 
-#define STM32_SWS_POS           RCC_CFGR1_SWS_Pos
-#define STM32_SWS_MASK          RCC_CFGR1_SWS_Msk
-#define STM32_SWS_FIELD(n)      ((n) << STM32_SWS_POS)
-#define STM32_SWS_MSIS          STM32_SWS_FIELD(0U)
-#define STM32_SWS_HSI16         STM32_SWS_FIELD(1U)
-#define STM32_SWS_HSE           STM32_SWS_FIELD(2U)
+#define STM32_SWS_POS                       RCC_CFGR1_SWS_Pos
+#define STM32_SWS_MASK                      RCC_CFGR1_SWS_Msk
+#define STM32_SWS_FIELD(n)                  ((n) << STM32_SWS_POS)
+#define STM32_SWS_MSIS                      STM32_SWS_FIELD(0U)
+#define STM32_SWS_HSI16                     STM32_SWS_FIELD(1U)
+#define STM32_SWS_HSE                       STM32_SWS_FIELD(2U)
 
-#define STM32_STOPWUCK_POS      RCC_CFGR1_STOPWUCK_Pos
-#define STM32_STOPWUCK_MASK     RCC_CFGR1_STOPWUCK_Msk
-#define STM32_STOPWUCK_FIELD(n) ((n) << STM32_STOPWUCK_POS)
-#define STM32_STOPWUCK_MSIS     STM32_STOPWUCK_FIELD(0U)
-#define STM32_STOPWUCK_HSI16    STM32_STOPWUCK_FIELD(1U)
+#define STM32_STOPWUCK_POS                  RCC_CFGR1_STOPWUCK_Pos
+#define STM32_STOPWUCK_MASK                 RCC_CFGR1_STOPWUCK_Msk
+#define STM32_STOPWUCK_FIELD(n)             ((n) << STM32_STOPWUCK_POS)
+#define STM32_STOPWUCK_MSIS                 STM32_STOPWUCK_FIELD(0U)
+#define STM32_STOPWUCK_HSI16                STM32_STOPWUCK_FIELD(1U)
 
-#define STM32_STOPKERWUCK_POS   RCC_CFGR1_STOPKERWUCK_Pos
-#define STM32_STOPKERWUCK_MASK  RCC_CFGR1_STOPKERWUCK_Msk
-#define STM32_STOPKERWUCK_FIELD(n) ((n) << STM32_STOPKERWUCK_POS)
-#define STM32_STOPKERWUCK_MSIK  STM32_STOPKERWUCK_FIELD(0U)
-#define STM32_STOPKERWUCK_HSI16 STM32_STOPKERWUCK_FIELD(1U)
+#define STM32_STOPKERWUCK_POS               RCC_CFGR1_STOPKERWUCK_Pos
+#define STM32_STOPKERWUCK_MASK              RCC_CFGR1_STOPKERWUCK_Msk
+#define STM32_STOPKERWUCK_FIELD(n)          ((n) << STM32_STOPKERWUCK_POS)
+#define STM32_STOPKERWUCK_MSIK              STM32_STOPKERWUCK_FIELD(0U)
+#define STM32_STOPKERWUCK_HSI16             STM32_STOPKERWUCK_FIELD(1U)
 
-#define STM32_MCO1SEL_POS       RCC_CFGR1_MCOSEL_Pos
-#define STM32_MCO1SEL_MASK      RCC_CFGR1_MCOSEL_Msk
-#define STM32_MCO1SEL_FIELD(n)  ((n) << STM32_MCO1SEL_POS)
-#define STM32_MCO1SEL_OFF       STM32_MCO1PRE_FIELD(0U)
-#define STM32_MCO1SEL_SYSCLK    STM32_MCO1PRE_FIELD(1U)
-#define STM32_MCO1SEL_MSIS      STM32_MCO1PRE_FIELD(2U)
-#define STM32_MCO1SEL_HSI16     STM32_MCO1PRE_FIELD(3U)
-#define STM32_MCO1SEL_HSE       STM32_MCO1PRE_FIELD(4U)
-#define STM32_MCO1SEL_LSI       STM32_MCO1PRE_FIELD(5U)
-#define STM32_MCO1SEL_LSE       STM32_MCO1PRE_FIELD(6U)
-#define STM32_MCO1SEL_HSI48     STM32_MCO1PRE_FIELD(7U)
-#define STM32_MCO1SEL_MSIK      STM32_MCO1PRE_FIELD(8U)
+#define STM32_MCO1SEL_POS                   RCC_CFGR1_MCOSEL_Pos
+#define STM32_MCO1SEL_MASK                  RCC_CFGR1_MCOSEL_Msk
+#define STM32_MCO1SEL_FIELD(n)              ((n) << STM32_MCO1SEL_POS)
+#define STM32_MCO1SEL_OFF                   STM32_MCO1PRE_FIELD(0U)
+#define STM32_MCO1SEL_SYSCLK                STM32_MCO1PRE_FIELD(1U)
+#define STM32_MCO1SEL_MSIS                  STM32_MCO1PRE_FIELD(2U)
+#define STM32_MCO1SEL_HSI16                 STM32_MCO1PRE_FIELD(3U)
+#define STM32_MCO1SEL_HSE                   STM32_MCO1PRE_FIELD(4U)
+#define STM32_MCO1SEL_LSI                   STM32_MCO1PRE_FIELD(5U)
+#define STM32_MCO1SEL_LSE                   STM32_MCO1PRE_FIELD(6U)
+#define STM32_MCO1SEL_HSI48                 STM32_MCO1PRE_FIELD(7U)
+#define STM32_MCO1SEL_MSIK                  STM32_MCO1PRE_FIELD(8U)
 
-#define STM32_MCO1PRE_POS       RCC_CFGR1_MCOPRE_Pos
-#define STM32_MCO1PRE_MASK      RCC_CFGR1_MCOPRE_Msk
-#define STM32_MCO1PRE_FIELD(n)  ((n) << STM32_MCO1PRE_POS)
-#define STM32_MCO1PRE_DIV1      STM32_MCO1PRE_FIELD(0U)
-#define STM32_MCO1PRE_DIV2      STM32_MCO1PRE_FIELD(1U)
-#define STM32_MCO1PRE_DIV4      STM32_MCO1PRE_FIELD(2U)
-#define STM32_MCO1PRE_DIV8      STM32_MCO1PRE_FIELD(3U)
-#define STM32_MCO1PRE_DIV16     STM32_MCO1PRE_FIELD(4U)
-#define STM32_MCO1PRE_DIV32     STM32_MCO1PRE_FIELD(5U)
-#define STM32_MCO1PRE_DIV64     STM32_MCO1PRE_FIELD(6U)
-#define STM32_MCO1PRE_DIV128    STM32_MCO1PRE_FIELD(7U)
+#define STM32_MCO1PRE_POS                   RCC_CFGR1_MCOPRE_Pos
+#define STM32_MCO1PRE_MASK                  RCC_CFGR1_MCOPRE_Msk
+#define STM32_MCO1PRE_FIELD(n)              ((n) << STM32_MCO1PRE_POS)
+#define STM32_MCO1PRE_DIV1                  STM32_MCO1PRE_FIELD(0U)
+#define STM32_MCO1PRE_DIV2                  STM32_MCO1PRE_FIELD(1U)
+#define STM32_MCO1PRE_DIV4                  STM32_MCO1PRE_FIELD(2U)
+#define STM32_MCO1PRE_DIV8                  STM32_MCO1PRE_FIELD(3U)
+#define STM32_MCO1PRE_DIV16                 STM32_MCO1PRE_FIELD(4U)
+#define STM32_MCO1PRE_DIV32                 STM32_MCO1PRE_FIELD(5U)
+#define STM32_MCO1PRE_DIV64                 STM32_MCO1PRE_FIELD(6U)
+#define STM32_MCO1PRE_DIV128                STM32_MCO1PRE_FIELD(7U)
 
-#define STM32_MCO2SEL_POS       RCC_CFGR1_MCO2SEL_Pos
-#define STM32_MCO2SEL_MASK      RCC_CFGR1_MCO2SEL_Msk
-#define STM32_MCO2SEL_FIELD(n)  ((n) << STM32_MCO2SEL_POS)
-#define STM32_MCO2SEL_OFF       STM32_MCO2SEL_FIELD(0U)
-#define STM32_MCO2SEL_SYSCLK    STM32_MCO2SEL_FIELD(1U)
-#define STM32_MCO2SEL_MSIS      STM32_MCO2SEL_FIELD(2U)
-#define STM32_MCO2SEL_HSI16     STM32_MCO2SEL_FIELD(3U)
-#define STM32_MCO2SEL_HSE       STM32_MCO2SEL_FIELD(4U)
-#define STM32_MCO2SEL_LSI       STM32_MCO2SEL_FIELD(5U)
-#define STM32_MCO2SEL_LSE       STM32_MCO2SEL_FIELD(6U)
-#define STM32_MCO2SEL_HSI48     STM32_MCO2SEL_FIELD(7U)
-#define STM32_MCO2SEL_MSIK      STM32_MCO2SEL_FIELD(8U)
+#define STM32_MCO2SEL_POS                   RCC_CFGR1_MCO2SEL_Pos
+#define STM32_MCO2SEL_MASK                  RCC_CFGR1_MCO2SEL_Msk
+#define STM32_MCO2SEL_FIELD(n)              ((n) << STM32_MCO2SEL_POS)
+#define STM32_MCO2SEL_OFF                   STM32_MCO2SEL_FIELD(0U)
+#define STM32_MCO2SEL_SYSCLK                STM32_MCO2SEL_FIELD(1U)
+#define STM32_MCO2SEL_MSIS                  STM32_MCO2SEL_FIELD(2U)
+#define STM32_MCO2SEL_HSI16                 STM32_MCO2SEL_FIELD(3U)
+#define STM32_MCO2SEL_HSE                   STM32_MCO2SEL_FIELD(4U)
+#define STM32_MCO2SEL_LSI                   STM32_MCO2SEL_FIELD(5U)
+#define STM32_MCO2SEL_LSE                   STM32_MCO2SEL_FIELD(6U)
+#define STM32_MCO2SEL_HSI48                 STM32_MCO2SEL_FIELD(7U)
+#define STM32_MCO2SEL_MSIK                  STM32_MCO2SEL_FIELD(8U)
 
-#define STM32_MCO2PRE_POS       RCC_CFGR1_MCO2PRE_Pos
-#define STM32_MCO2PRE_MASK      RCC_CFGR1_MCO2PRE_Msk
-#define STM32_MCO2PRE_FIELD(n)  ((n) << STM32_MCO2PRE_POS)
-#define STM32_MCO2PRE_DIV1      STM32_MCO2PRE_FIELD(0U)
-#define STM32_MCO2PRE_DIV2      STM32_MCO2PRE_FIELD(1U)
-#define STM32_MCO2PRE_DIV4      STM32_MCO2PRE_FIELD(2U)
-#define STM32_MCO2PRE_DIV8      STM32_MCO2PRE_FIELD(3U)
-#define STM32_MCO2PRE_DIV16     STM32_MCO2PRE_FIELD(4U)
-#define STM32_MCO2PRE_DIV32     STM32_MCO2PRE_FIELD(5U)
-#define STM32_MCO2PRE_DIV64     STM32_MCO2PRE_FIELD(6U)
-#define STM32_MCO2PRE_DIV128    STM32_MCO2PRE_FIELD(7U)
+#define STM32_MCO2PRE_POS                   RCC_CFGR1_MCO2PRE_Pos
+#define STM32_MCO2PRE_MASK                  RCC_CFGR1_MCO2PRE_Msk
+#define STM32_MCO2PRE_FIELD(n)              ((n) << STM32_MCO2PRE_POS)
+#define STM32_MCO2PRE_DIV1                  STM32_MCO2PRE_FIELD(0U)
+#define STM32_MCO2PRE_DIV2                  STM32_MCO2PRE_FIELD(1U)
+#define STM32_MCO2PRE_DIV4                  STM32_MCO2PRE_FIELD(2U)
+#define STM32_MCO2PRE_DIV8                  STM32_MCO2PRE_FIELD(3U)
+#define STM32_MCO2PRE_DIV16                 STM32_MCO2PRE_FIELD(4U)
+#define STM32_MCO2PRE_DIV32                 STM32_MCO2PRE_FIELD(5U)
+#define STM32_MCO2PRE_DIV64                 STM32_MCO2PRE_FIELD(6U)
+#define STM32_MCO2PRE_DIV128                STM32_MCO2PRE_FIELD(7U)
 /** @} */
 
 /**
  * @name    RCC_CFGR4 register bits definitions
  * @{
  */
-#define STM32_BOOSTSEL_POS      RCC_CFGR4_BOOSTSEL_Pos
-#define STM32_BOOSTSEL_MASK     RCC_CFGR4_BOOSTSEL_Msk
-#define STM32_BOOSTSEL_FIELD(n) ((n) << STM32_BOOSTSEL_POS)
-#define STM32_BOOSTSEL_NOCLOCK  STM32_BOOSTSEL_FIELD(0U)
-#define STM32_BOOSTSEL_MSIS     STM32_BOOSTSEL_FIELD(1U)
-#define STM32_BOOSTSEL_HSI16    STM32_BOOSTSEL_FIELD(2U)
-#define STM32_BOOSTSEL_HSE      STM32_BOOSTSEL_FIELD(3U)
+#define STM32_BOOSTSEL_POS                  RCC_CFGR4_BOOSTSEL_Pos
+#define STM32_BOOSTSEL_MASK                 RCC_CFGR4_BOOSTSEL_Msk
+#define STM32_BOOSTSEL_FIELD(n)             ((n) << STM32_BOOSTSEL_POS)
+#define STM32_BOOSTSEL_NOCLOCK              STM32_BOOSTSEL_FIELD(0U)
+#define STM32_BOOSTSEL_MSIS                 STM32_BOOSTSEL_FIELD(1U)
+#define STM32_BOOSTSEL_HSI16                STM32_BOOSTSEL_FIELD(2U)
+#define STM32_BOOSTSEL_HSE                  STM32_BOOSTSEL_FIELD(3U)
 
-#define STM32_BOOSTDIV_POS      RCC_CFGR4_BOOSTDIV_Pos
-#define STM32_BOOSTDIV_MASK     RCC_CFGR4_BOOSTDIV_Msk
-#define STM32_BOOSTDIV_FIELD(n) ((n) << STM32_BOOSTDIV_POS)
-#define STM32_BOOSTDIV_DIV1     STM32_BOOSTDIV_FIELD(0U)
-#define STM32_BOOSTDIV_DIV2     STM32_BOOSTDIV_FIELD(1U)
-#define STM32_BOOSTDIV_DIV4     STM32_BOOSTDIV_FIELD(2U)
-#define STM32_BOOSTDIV_DIV6     STM32_BOOSTDIV_FIELD(3U)
-#define STM32_BOOSTDIV_DIV8     STM32_BOOSTDIV_FIELD(4U)
-#define STM32_BOOSTDIV_DIV10    STM32_BOOSTDIV_FIELD(5U)
-#define STM32_BOOSTDIV_DIV12    STM32_BOOSTDIV_FIELD(6U)
-#define STM32_BOOSTDIV_DIV14    STM32_BOOSTDIV_FIELD(7U)
-#define STM32_BOOSTDIV_DIV16    STM32_BOOSTDIV_FIELD(8U)
+#define STM32_BOOSTDIV_POS                  RCC_CFGR4_BOOSTDIV_Pos
+#define STM32_BOOSTDIV_MASK                 RCC_CFGR4_BOOSTDIV_Msk
+#define STM32_BOOSTDIV_FIELD(n)             ((n) << STM32_BOOSTDIV_POS)
+#define STM32_BOOSTDIV_DIV1                 STM32_BOOSTDIV_FIELD(0U)
+#define STM32_BOOSTDIV_DIV2                 STM32_BOOSTDIV_FIELD(1U)
+#define STM32_BOOSTDIV_DIV4                 STM32_BOOSTDIV_FIELD(2U)
+#define STM32_BOOSTDIV_DIV6                 STM32_BOOSTDIV_FIELD(3U)
+#define STM32_BOOSTDIV_DIV8                 STM32_BOOSTDIV_FIELD(4U)
+#define STM32_BOOSTDIV_DIV10                STM32_BOOSTDIV_FIELD(5U)
+#define STM32_BOOSTDIV_DIV12                STM32_BOOSTDIV_FIELD(6U)
+#define STM32_BOOSTDIV_DIV14                STM32_BOOSTDIV_FIELD(7U)
+#define STM32_BOOSTDIV_DIV16                STM32_BOOSTDIV_FIELD(8U)
 /** @} */
 
 /**
  * @name    RCC_CCIPR1 register bits definitions
  * @{
  */
-#define STM32_USART1SEL_POS     0
-#define STM32_USART1SEL_MASK    (1U << STM32_USART1SEL_POS)
-#define STM32_USART1SEL_FIELD(n) ((n) << STM32_USART1SEL_POS)
-#define STM32_USART1SEL_PCLK2   STM32_USART1SEL_FIELD(0U)
-#define STM32_USART1SEL_HSI16   STM32_USART1SEL_FIELD(1U)
+#define STM32_USART1SEL_POS                 0
+#define STM32_USART1SEL_MASK                (1U << STM32_USART1SEL_POS)
+#define STM32_USART1SEL_FIELD(n)            ((n) << STM32_USART1SEL_POS)
+#define STM32_USART1SEL_PCLK2               STM32_USART1SEL_FIELD(0U)
+#define STM32_USART1SEL_HSI16               STM32_USART1SEL_FIELD(1U)
 
-#define STM32_USART3SEL_POS     2
-#define STM32_USART3SEL_MASK    (1U << STM32_USART3SEL_POS)
-#define STM32_USART3SEL_FIELD(n) ((n) << STM32_USART3SEL_POS)
-#define STM32_USART3SEL_PCLK1   STM32_USART3SEL_FIELD(0U)
-#define STM32_USART3SEL_HSI16   STM32_USART3SEL_FIELD(1U)
+#define STM32_USART3SEL_POS                 2
+#define STM32_USART3SEL_MASK                (1U << STM32_USART3SEL_POS)
+#define STM32_USART3SEL_FIELD(n)            ((n) << STM32_USART3SEL_POS)
+#define STM32_USART3SEL_PCLK1               STM32_USART3SEL_FIELD(0U)
+#define STM32_USART3SEL_HSI16               STM32_USART3SEL_FIELD(1U)
 
-#define STM32_UART4SEL_POS      4
-#define STM32_UART4SEL_MASK     (1U << STM32_UART4SEL_POS)
-#define STM32_UART4SEL_FIELD(n) ((n) << STM32_UART4SEL_POS)
-#define STM32_UART4SEL_PCLK1    STM32_UART4SEL_FIELD(0U)
-#define STM32_UART4SEL_HSI16    STM32_UART4SEL_FIELD(1U)
+#define STM32_UART4SEL_POS                  4
+#define STM32_UART4SEL_MASK                 (1U << STM32_UART4SEL_POS)
+#define STM32_UART4SEL_FIELD(n)             ((n) << STM32_UART4SEL_POS)
+#define STM32_UART4SEL_PCLK1                STM32_UART4SEL_FIELD(0U)
+#define STM32_UART4SEL_HSI16                STM32_UART4SEL_FIELD(1U)
 
-#define STM32_UART5SEL_POS      6
-#define STM32_UART5SEL_MASK     (1U << STM32_UART5SEL_POS)
-#define STM32_UART5SEL_FIELD(n) ((n) << STM32_UART5SEL_POS)
-#define STM32_UART5SEL_PCLK1    STM32_UART5SEL_FIELD(0U)
-#define STM32_UART5SEL_HSI16    STM32_UART5SEL_FIELD(1U)
+#define STM32_UART5SEL_POS                  6
+#define STM32_UART5SEL_MASK                 (1U << STM32_UART5SEL_POS)
+#define STM32_UART5SEL_FIELD(n)             ((n) << STM32_UART5SEL_POS)
+#define STM32_UART5SEL_PCLK1                STM32_UART5SEL_FIELD(0U)
+#define STM32_UART5SEL_HSI16                STM32_UART5SEL_FIELD(1U)
 
-#define STM32_I3C1SEL_POS       8
-#define STM32_I3C1SEL_MASK      (1U << STM32_I3C1SEL_POS)
-#define STM32_I3C1SEL_FIELD(n)  ((n) << STM32_I3C1SEL_POS)
-#define STM32_I3C1SEL_PCLK1     STM32_I3C1SEL_FIELD(0U)
-#define STM32_I3C1SEL_MSIK      STM32_I3C1SEL_FIELD(1U)
+#define STM32_I3C1SEL_POS                   8
+#define STM32_I3C1SEL_MASK                  (1U << STM32_I3C1SEL_POS)
+#define STM32_I3C1SEL_FIELD(n)              ((n) << STM32_I3C1SEL_POS)
+#define STM32_I3C1SEL_PCLK1                 STM32_I3C1SEL_FIELD(0U)
+#define STM32_I3C1SEL_MSIK                  STM32_I3C1SEL_FIELD(1U)
 
-#define STM32_I2C1SEL_POS       10
-#define STM32_I2C1SEL_MASK      (1U << STM32_I2C1SEL_POS)
-#define STM32_I2C1SEL_FIELD(n)  ((n) << STM32_I2C1SEL_POS)
-#define STM32_I2C1SEL_PCLK1     STM32_I2C1SEL_FIELD(0U)
-#define STM32_I2C1SEL_MSIK      STM32_I2C1SEL_FIELD(1U)
+#define STM32_I2C1SEL_POS                   10
+#define STM32_I2C1SEL_MASK                  (1U << STM32_I2C1SEL_POS)
+#define STM32_I2C1SEL_FIELD(n)              ((n) << STM32_I2C1SEL_POS)
+#define STM32_I2C1SEL_PCLK1                 STM32_I2C1SEL_FIELD(0U)
+#define STM32_I2C1SEL_MSIK                  STM32_I2C1SEL_FIELD(1U)
 
-#define STM32_I2C2SEL_POS       12
-#define STM32_I2C2SEL_MASK      (1U << STM32_I2C2SEL_POS)
-#define STM32_I2C2SEL_FIELD(n)  ((n) << STM32_I2C2SEL_POS)
-#define STM32_I2C2SEL_PCLK1     STM32_I2C2SEL_FIELD(0U)
-#define STM32_I2C2SEL_MSIK      STM32_I2C2SEL_FIELD(1U)
+#define STM32_I2C2SEL_POS                   12
+#define STM32_I2C2SEL_MASK                  (1U << STM32_I2C2SEL_POS)
+#define STM32_I2C2SEL_FIELD(n)              ((n) << STM32_I2C2SEL_POS)
+#define STM32_I2C2SEL_PCLK1                 STM32_I2C2SEL_FIELD(0U)
+#define STM32_I2C2SEL_MSIK                  STM32_I2C2SEL_FIELD(1U)
 
-#define STM32_I3C2SEL_POS       14
-#define STM32_I3C2SEL_MASK      (1U << STM32_I3C2SEL_POS)
-#define STM32_I3C2SEL_FIELD(n)  ((n) << STM32_I3C2SEL_POS)
-#define STM32_I3C2SEL_PCLK3     STM32_I3C2SEL_FIELD(0U)
-#define STM32_I3C2SEL_MSIK      STM32_I3C2SEL_FIELD(1U)
+#define STM32_I3C2SEL_POS                   14
+#define STM32_I3C2SEL_MASK                  (1U << STM32_I3C2SEL_POS)
+#define STM32_I3C2SEL_FIELD(n)              ((n) << STM32_I3C2SEL_POS)
+#define STM32_I3C2SEL_PCLK3                 STM32_I3C2SEL_FIELD(0U)
+#define STM32_I3C2SEL_MSIK                  STM32_I3C2SEL_FIELD(1U)
 
-#define STM32_SPI2SEL_POS       16
-#define STM32_SPI2SEL_MASK      (1U << STM32_SPI2SEL_POS)
-#define STM32_SPI2SEL_FIELD(n)  ((n) << STM32_SPI2SEL_POS)
-#define STM32_SPI2SEL_PCLK1     STM32_SPI2SEL_FIELD(0U)
-#define STM32_SPI2SEL_MSIK      STM32_SPI2SEL_FIELD(1U)
+#define STM32_SPI2SEL_POS                   16
+#define STM32_SPI2SEL_MASK                  (1U << STM32_SPI2SEL_POS)
+#define STM32_SPI2SEL_FIELD(n)              ((n) << STM32_SPI2SEL_POS)
+#define STM32_SPI2SEL_PCLK1                 STM32_SPI2SEL_FIELD(0U)
+#define STM32_SPI2SEL_MSIK                  STM32_SPI2SEL_FIELD(1U)
 
-#define STM32_LPTIM2SEL_POS     18
-#define STM32_LPTIM2SEL_MASK    (3U << STM32_LPTIM2SEL_POS)
-#define STM32_LPTIM2SEL_FIELD(n) ((n) << STM32_LPTIM2SEL_POS)
-#define STM32_LPTIM2SEL_PCLK1   STM32_LPTIM2SEL_FIELD(0U)
-#define STM32_LPTIM2SEL_LSI     STM32_LPTIM2SEL_FIELD(1U)
-#define STM32_LPTIM2SEL_HSI16   STM32_LPTIM2SEL_FIELD(2U)
-#define STM32_LPTIM2SEL_LSE     STM32_LPTIM2SEL_FIELD(3U)
+#define STM32_LPTIM2SEL_POS                 18
+#define STM32_LPTIM2SEL_MASK                (3U << STM32_LPTIM2SEL_POS)
+#define STM32_LPTIM2SEL_FIELD(n)            ((n) << STM32_LPTIM2SEL_POS)
+#define STM32_LPTIM2SEL_PCLK1               STM32_LPTIM2SEL_FIELD(0U)
+#define STM32_LPTIM2SEL_LSI                 STM32_LPTIM2SEL_FIELD(1U)
+#define STM32_LPTIM2SEL_HSI16               STM32_LPTIM2SEL_FIELD(2U)
+#define STM32_LPTIM2SEL_LSE                 STM32_LPTIM2SEL_FIELD(3U)
 
-#define STM32_SPI1SEL_POS       20
-#define STM32_SPI1SEL_MASK      (1U << STM32_SPI1SEL_POS)
-#define STM32_SPI1SEL_FIELD(n)  ((n) << STM32_SPI1SEL_POS)
-#define STM32_SPI1SEL_PCLK2     STM32_SPI1SEL_FIELD(0U)
-#define STM32_SPI1SEL_MSIK      STM32_SPI1SEL_FIELD(1U)
+#define STM32_SPI1SEL_POS                   20
+#define STM32_SPI1SEL_MASK                  (1U << STM32_SPI1SEL_POS)
+#define STM32_SPI1SEL_FIELD(n)              ((n) << STM32_SPI1SEL_POS)
+#define STM32_SPI1SEL_PCLK2                 STM32_SPI1SEL_FIELD(0U)
+#define STM32_SPI1SEL_MSIK                  STM32_SPI1SEL_FIELD(1U)
 
-#define STM32_SYSTICKSEL_POS    22
-#define STM32_SYSTICKSEL_MASK   (3U << STM32_SYSTICKSEL_POS)
-#define STM32_SYSTICKSEL_FIELD(n) ((n) << STM32_SYSTICKSEL_POS)
-#define STM32_SYSTICKSEL_HCLKDIV8 STM32_SYSTICKSEL_FIELD(0U)
-#define STM32_SYSTICKSEL_LSI    STM32_SYSTICKSEL_FIELD(1U)
-#define STM32_SYSTICKSEL_LSE    STM32_SYSTICKSEL_FIELD(2U)
+#define STM32_SYSTICKSEL_POS                22
+#define STM32_SYSTICKSEL_MASK               (3U << STM32_SYSTICKSEL_POS)
+#define STM32_SYSTICKSEL_FIELD(n)           ((n) << STM32_SYSTICKSEL_POS)
+#define STM32_SYSTICKSEL_HCLKDIV8           STM32_SYSTICKSEL_FIELD(0U)
+#define STM32_SYSTICKSEL_LSI                STM32_SYSTICKSEL_FIELD(1U)
+#define STM32_SYSTICKSEL_LSE                STM32_SYSTICKSEL_FIELD(2U)
 
-#define STM32_FDCAN1SEL_POS     24
-#define STM32_FDCAN1SEL_MASK    (1U << STM32_FDCAN1SEL_POS)
-#define STM32_FDCAN1SEL_FIELD(n) ((n) << STM32_FDCAN1SEL_POS)
-#define STM32_FDCAN1SEL_IGNORE  0xFFFFFFFFU
-#define STM32_FDCAN1SEL_SYSCLK  STM32_FDCAN1SEL_FIELD(0U)
-#define STM32_FDCAN1SEL_MSIK    STM32_FDCAN1SEL_FIELD(1U)
+#define STM32_FDCAN1SEL_POS                 24
+#define STM32_FDCAN1SEL_MASK                (1U << STM32_FDCAN1SEL_POS)
+#define STM32_FDCAN1SEL_FIELD(n)            ((n) << STM32_FDCAN1SEL_POS)
+#define STM32_FDCAN1SEL_IGNORE              0xFFFFFFFFU
+#define STM32_FDCAN1SEL_SYSCLK              STM32_FDCAN1SEL_FIELD(0U)
+#define STM32_FDCAN1SEL_MSIK                STM32_FDCAN1SEL_FIELD(1U)
 
-#define STM32_ICLKSEL_POS       26
-#define STM32_ICLKSEL_MASK      (3U << STM32_ICLKSEL_POS)
-#define STM32_ICLKSEL_FIELD(n)  ((n) << STM32_ICLKSEL_POS)
-#define STM32_ICLKSEL_HSI48     STM32_ICLKSEL_FIELD(0U)
-#define STM32_ICLKSEL_MSIK      STM32_ICLKSEL_FIELD(1U)
-#define STM32_ICLKSEL_HSE       STM32_ICLKSEL_FIELD(2U)
-#define STM32_ICLKSEL_SYSCLK    STM32_ICLKSEL_FIELD(3U)
+#define STM32_ICLKSEL_POS                   26
+#define STM32_ICLKSEL_MASK                  (3U << STM32_ICLKSEL_POS)
+#define STM32_ICLKSEL_FIELD(n)              ((n) << STM32_ICLKSEL_POS)
+#define STM32_ICLKSEL_HSI48                 STM32_ICLKSEL_FIELD(0U)
+#define STM32_ICLKSEL_MSIK                  STM32_ICLKSEL_FIELD(1U)
+#define STM32_ICLKSEL_HSE                   STM32_ICLKSEL_FIELD(2U)
+#define STM32_ICLKSEL_SYSCLK                STM32_ICLKSEL_FIELD(3U)
 
-#define STM32_USB1SEL_POS       28
-#define STM32_USB1SEL_MASK      (1U << STM32_USB1SEL_POS)
-#define STM32_USB1SEL_FIELD(n)  ((n) << STM32_USB1SEL_POS)
-#define STM32_USB1SEL_ICLK      STM32_USB1SEL_FIELD(0U)
-#define STM32_USB1SEL_ICLKDIV2  STM32_USB1SEL_FIELD(1U)
+#define STM32_USB1SEL_POS                   28
+#define STM32_USB1SEL_MASK                  (1U << STM32_USB1SEL_POS)
+#define STM32_USB1SEL_FIELD(n)              ((n) << STM32_USB1SEL_POS)
+#define STM32_USB1SEL_ICLK                  STM32_USB1SEL_FIELD(0U)
+#define STM32_USB1SEL_ICLKDIV2              STM32_USB1SEL_FIELD(1U)
 
-#define STM32_TIMICSEL_POS      29
-#define STM32_TIMICSEL_MASK     (7U << STM32_TIMICSEL_POS)
-#define STM32_TIMICSEL_FIELD(n) ((n) << STM32_TIMICSEL_POS)
-#define STM32_TIMICSEL_NOCLOCK                  STM32_TIMICSEL_FIELD(0U)
+#define STM32_TIMICSEL_POS                  29
+#define STM32_TIMICSEL_MASK                 (7U << STM32_TIMICSEL_POS)
+#define STM32_TIMICSEL_FIELD(n)             ((n) << STM32_TIMICSEL_POS)
+#define STM32_TIMICSEL_NOCLOCK              STM32_TIMICSEL_FIELD(0U)
 #define STM32_TIMICSEL_HSI256_MSIS1024_MSIS4    STM32_TIMICSEL_FIELD(4U)
 #define STM32_TIMICSEL_HSI256_MSIS1024_MSIK4    STM32_TIMICSEL_FIELD(5U)
 #define STM32_TIMICSEL_HSI256_MSIK1024_MSIS4    STM32_TIMICSEL_FIELD(6U)
@@ -486,121 +501,121 @@
  * @{
  */
 
-#define STM32_ADF1SEL_POS       0
-#define STM32_ADF1SEL_MASK      (3U << STM32_ADF1SEL_POS)
-#define STM32_ADF1SEL_FIELD(n)  ((n) << STM32_ADF1SEL_POS)
-#define STM32_ADF1SEL_HCLK      STM32_ADF1SEL_FIELD(0U)
-#define STM32_ADF1SEL_AUDIOCLK  STM32_ADF1SEL_FIELD(1U)
-#define STM32_ADF1SEL_HSE       STM32_ADF1SEL_FIELD(2U)
+#define STM32_ADF1SEL_POS                   0
+#define STM32_ADF1SEL_MASK                  (3U << STM32_ADF1SEL_POS)
+#define STM32_ADF1SEL_FIELD(n)              ((n) << STM32_ADF1SEL_POS)
+#define STM32_ADF1SEL_HCLK                  STM32_ADF1SEL_FIELD(0U)
+#define STM32_ADF1SEL_AUDIOCLK              STM32_ADF1SEL_FIELD(1U)
+#define STM32_ADF1SEL_HSE                   STM32_ADF1SEL_FIELD(2U)
 
-#define STM32_SPI3SEL_POS       3
-#define STM32_SPI3SEL_MASK      (1U << STM32_SPI3SEL_POS)
-#define STM32_SPI3SEL_FIELD(n)  ((n) << STM32_SPI3SEL_POS)
-#define STM32_SPI3SEL_PCLK1     STM32_SPI3SEL_FIELD(0U)
-#define STM32_SPI3SEL_MSIK      STM32_SPI3SEL_FIELD(1U)
+#define STM32_SPI3SEL_POS                   3
+#define STM32_SPI3SEL_MASK                  (1U << STM32_SPI3SEL_POS)
+#define STM32_SPI3SEL_FIELD(n)              ((n) << STM32_SPI3SEL_POS)
+#define STM32_SPI3SEL_PCLK1                 STM32_SPI3SEL_FIELD(0U)
+#define STM32_SPI3SEL_MSIK                  STM32_SPI3SEL_FIELD(1U)
 
-#define STM32_SAI1SEL_POS       5
-#define STM32_SAI1SEL_MASK      (3U << STM32_SAI1SEL_POS)
-#define STM32_SAI1SEL_FIELD(n)  ((n) << STM32_SAI1SEL_POS)
-#define STM32_SAI1SEL_MSIK      STM32_SAI1SEL_FIELD(0U)
-#define STM32_SAI1SEL_AUDIOCLK  STM32_SAI1SEL_FIELD(1U)
-#define STM32_SAI1SEL_HSE       STM32_SAI1SEL_FIELD(2U)
+#define STM32_SAI1SEL_POS                   5
+#define STM32_SAI1SEL_MASK                  (3U << STM32_SAI1SEL_POS)
+#define STM32_SAI1SEL_FIELD(n)              ((n) << STM32_SAI1SEL_POS)
+#define STM32_SAI1SEL_MSIK                  STM32_SAI1SEL_FIELD(0U)
+#define STM32_SAI1SEL_AUDIOCLK              STM32_SAI1SEL_FIELD(1U)
+#define STM32_SAI1SEL_HSE                   STM32_SAI1SEL_FIELD(2U)
 
-#define STM32_RNGSEL_POS        11
-#define STM32_RNGSEL_MASK       (1U << STM32_RNGSEL_POS)
-#define STM32_RNGSEL_FIELD(n)   ((n) << STM32_RNGSEL_POS)
-#define STM32_RNGSEL_IGNORE     0xFFFFFFFFU
-#define STM32_RNGSEL_HSI48      STM32_RNGSEL_FIELD(0U)
-#define STM32_RNGSEL_MSIK       STM32_RNGSEL_FIELD(1U)
+#define STM32_RNGSEL_POS                    11
+#define STM32_RNGSEL_MASK                   (1U << STM32_RNGSEL_POS)
+#define STM32_RNGSEL_FIELD(n)               ((n) << STM32_RNGSEL_POS)
+#define STM32_RNGSEL_IGNORE                 0xFFFFFFFFU
+#define STM32_RNGSEL_HSI48                  STM32_RNGSEL_FIELD(0U)
+#define STM32_RNGSEL_MSIK                   STM32_RNGSEL_FIELD(1U)
 
-#define STM32_ADCDACPRE_POS     12
-#define STM32_ADCDACPRE_MASK    (15U << STM32_ADCDACPRE_POS)
-#define STM32_ADCDACPRE_FIELD(n) ((n) << STM32_ADCDACPRE_POS)
-#define STM32_ADCDACPRE_ICLK        STM32_ADCDACPRE_FIELD(0U)
-#define STM32_ADCDACPRE_ICLKDIV2    STM32_ADCDACPRE_FIELD(1U)
-#define STM32_ADCDACPRE_ICLKDIV4    STM32_ADCDACPRE_FIELD(8U)
-#define STM32_ADCDACPRE_ICLKDIV8    STM32_ADCDACPRE_FIELD(9U)
-#define STM32_ADCDACPRE_ICLKDIV16   STM32_ADCDACPRE_FIELD(10U)
-#define STM32_ADCDACPRE_ICLKDIV32   STM32_ADCDACPRE_FIELD(11U)
-#define STM32_ADCDACPRE_ICLKDIV64   STM32_ADCDACPRE_FIELD(12U)
-#define STM32_ADCDACPRE_ICLKDIV128  STM32_ADCDACPRE_FIELD(13U)
-#define STM32_ADCDACPRE_ICLKDIV256  STM32_ADCDACPRE_FIELD(14U)
-#define STM32_ADCDACPRE_ICLKDIV512  STM32_ADCDACPRE_FIELD(15U)
+#define STM32_ADCDACPRE_POS                 12
+#define STM32_ADCDACPRE_MASK                (15U << STM32_ADCDACPRE_POS)
+#define STM32_ADCDACPRE_FIELD(n)            ((n) << STM32_ADCDACPRE_POS)
+#define STM32_ADCDACPRE_ICLK                STM32_ADCDACPRE_FIELD(0U)
+#define STM32_ADCDACPRE_ICLKDIV2            STM32_ADCDACPRE_FIELD(1U)
+#define STM32_ADCDACPRE_ICLKDIV4            STM32_ADCDACPRE_FIELD(8U)
+#define STM32_ADCDACPRE_ICLKDIV8            STM32_ADCDACPRE_FIELD(9U)
+#define STM32_ADCDACPRE_ICLKDIV16           STM32_ADCDACPRE_FIELD(10U)
+#define STM32_ADCDACPRE_ICLKDIV32           STM32_ADCDACPRE_FIELD(11U)
+#define STM32_ADCDACPRE_ICLKDIV64           TM32_ADCDACPRE_FIELD(12U)
+#define STM32_ADCDACPRE_ICLKDIV128          STM32_ADCDACPRE_FIELD(13U)
+#define STM32_ADCDACPRE_ICLKDIV256          STM32_ADCDACPRE_FIELD(14U)
+#define STM32_ADCDACPRE_ICLKDIV512          STM32_ADCDACPRE_FIELD(15U)
 
-#define STM32_ADCDACSEL_POS     16
-#define STM32_ADCDACSEL_MASK    (3U << STM32_ADCDACSEL_POS)
-#define STM32_ADCDACSEL_FIELD(n) ((n) << STM32_ADCDACSEL_POS)
-#define STM32_ADCDACSEL_HCLK    STM32_ADCDACSEL_FIELD(0U)
-#define STM32_ADCDACSEL_HSE     STM32_ADCDACSEL_FIELD(1U)
-#define STM32_ADCDACSEL_MSIK    STM32_ADCDACSEL_FIELD(2U)
+#define STM32_ADCDACSEL_POS                 16
+#define STM32_ADCDACSEL_MASK                (3U << STM32_ADCDACSEL_POS)
+#define STM32_ADCDACSEL_FIELD(n)            ((n) << STM32_ADCDACSEL_POS)
+#define STM32_ADCDACSEL_HCLK                STM32_ADCDACSEL_FIELD(0U)
+#define STM32_ADCDACSEL_HSE                 STM32_ADCDACSEL_FIELD(1U)
+#define STM32_ADCDACSEL_MSIK                STM32_ADCDACSEL_FIELD(2U)
 
-#define STM32_DAC1SHSEL_POS     19
-#define STM32_DAC1SHSEL_MASK    (1U << STM32_DAC1SHSEL_POS)
-#define STM32_DAC1SHSEL_FIELD(n) ((n) << STM32_DAC1SHSEL_POS)
-#define STM32_DAC1SHSEL_IGNORE  0xFFFFFFFFU
-#define STM32_DAC1SHSEL_LSE     STM32_DAC1SHSEL_FIELD(0U)
-#define STM32_DAC1SHSEL_LSI     STM32_DAC1SHSEL_FIELD(1U)
+#define STM32_DAC1SHSEL_POS                 19
+#define STM32_DAC1SHSEL_MASK                (1U << STM32_DAC1SHSEL_POS)
+#define STM32_DAC1SHSEL_FIELD(n)            ((n) << STM32_DAC1SHSEL_POS)
+#define STM32_DAC1SHSEL_IGNORE              0xFFFFFFFFU
+#define STM32_DAC1SHSEL_LSE                 STM32_DAC1SHSEL_FIELD(0U)
+#define STM32_DAC1SHSEL_LSI                 STM32_DAC1SHSEL_FIELD(1U)
 
-#define STM32_OCTOSPISEL_POS    20
-#define STM32_OCTOSPISEL_MASK   (3U << STM32_OCTOSPISEL_POS)
-#define STM32_OCTOSPISEL_FIELD(n) ((n) << STM32_OCTOSPISEL_POS)
-#define STM32_OCTOSPISEL_SYSCLK STM32_OCTOSPISEL_FIELD(0U)
-#define STM32_OCTOSPISEL_MSIK   STM32_OCTOSPISEL_FIELD(1U)
+#define STM32_OCTOSPISEL_POS                20
+#define STM32_OCTOSPISEL_MASK               (3U << STM32_OCTOSPISEL_POS)
+#define STM32_OCTOSPISEL_FIELD(n)           ((n) << STM32_OCTOSPISEL_POS)
+#define STM32_OCTOSPISEL_SYSCLK             STM32_OCTOSPISEL_FIELD(0U)
+#define STM32_OCTOSPISEL_MSIK               STM32_OCTOSPISEL_FIELD(1U)
 /** @} */
 
 /**
  * @name    RCC_CCIPR3 register bits definitions
  * @{
  */
-#define STM32_LPUART1SEL_POS    0
-#define STM32_LPUART1SEL_MASK   (3U << STM32_LPUART1SEL_POS)
-#define STM32_LPUART1SEL_FIELD(n) ((n) << STM32_LPUART1SEL_POS)
-#define STM32_LPUART1SEL_PCLK3  STM32_LPUART1SEL_FIELD(0U)
-#define STM32_LPUART1SEL_HSI16  STM32_LPUART1SEL_FIELD(1U)
-#define STM32_LPUART1SEL_LSE    STM32_LPUART1SEL_FIELD(2U)
-#define STM32_LPUART1SEL_MSIK   STM32_LPUART1SEL_FIELD(3U)
+#define STM32_LPUART1SEL_POS                0
+#define STM32_LPUART1SEL_MASK               (3U << STM32_LPUART1SEL_POS)
+#define STM32_LPUART1SEL_FIELD(n)           ((n) << STM32_LPUART1SEL_POS)
+#define STM32_LPUART1SEL_PCLK3              STM32_LPUART1SEL_FIELD(0U)
+#define STM32_LPUART1SEL_HSI16              STM32_LPUART1SEL_FIELD(1U)
+#define STM32_LPUART1SEL_LSE                STM32_LPUART1SEL_FIELD(2U)
+#define STM32_LPUART1SEL_MSIK               STM32_LPUART1SEL_FIELD(3U)
 
-#define STM32_I2C3SEL_POS       6
-#define STM32_I2C3SEL_MASK      (1U << STM32_I2C3SEL_POS)
-#define STM32_I2C3SEL_FIELD(n)  ((n) << STM32_I2C3SEL_POS)
-#define STM32_I2C3SEL_PCLK3     STM32_I2C3SEL_FIELD(0U)
-#define STM32_I2C3SEL_MSIK      STM32_I2C3SEL_FIELD(1U)
+#define STM32_I2C3SEL_POS                   6
+#define STM32_I2C3SEL_MASK                  (1U << STM32_I2C3SEL_POS)
+#define STM32_I2C3SEL_FIELD(n)              ((n) << STM32_I2C3SEL_POS)
+#define STM32_I2C3SEL_PCLK3                 STM32_I2C3SEL_FIELD(0U)
+#define STM32_I2C3SEL_MSIK                  STM32_I2C3SEL_FIELD(1U)
 
-#define STM32_LPTIM34SEL_POS    8
-#define STM32_LPTIM34SEL_MASK   (3U << STM32_LPTIM34SEL_POS)
-#define STM32_LPTIM34SEL_FIELD(n) ((n) << STM32_LPTIM34SEL_POS)
-#define STM32_LPTIM34SEL_MSIK   STM32_LPTIM34SEL_FIELD(0U)
-#define STM32_LPTIM34SEL_LSI    STM32_LPTIM34SEL_FIELD(1U)
-#define STM32_LPTIM34SEL_HSI16  STM32_LPTIM34SEL_FIELD(2U)
-#define STM32_LPTIM34SEL_LSE    STM32_LPTIM34SEL_FIELD(3U)
+#define STM32_LPTIM34SEL_POS                8
+#define STM32_LPTIM34SEL_MASK               (3U << STM32_LPTIM34SEL_POS)
+#define STM32_LPTIM34SEL_FIELD(n)           ((n) << STM32_LPTIM34SEL_POS)
+#define STM32_LPTIM34SEL_MSIK               STM32_LPTIM34SEL_FIELD(0U)
+#define STM32_LPTIM34SEL_LSI                STM32_LPTIM34SEL_FIELD(1U)
+#define STM32_LPTIM34SEL_HSI16              STM32_LPTIM34SEL_FIELD(2U)
+#define STM32_LPTIM34SEL_LSE                STM32_LPTIM34SEL_FIELD(3U)
 
-#define STM32_LPTIM1SEL_POS     10
-#define STM32_LPTIM1SEL_MASK    (3U << STM32_LPTIM1SEL_POS)
-#define STM32_LPTIM1SEL_FIELD(n) ((n) << STM32_LPTIM1SEL_POS)
-#define STM32_LPTIM1SEL_MSIK    STM32_LPTIM1SEL_FIELD(0U)
-#define STM32_LPTIM1SEL_LSI     STM32_LPTIM1SEL_FIELD(1U)
-#define STM32_LPTIM1SEL_HSI16   STM32_LPTIM1SEL_FIELD(2U)
-#define STM32_LPTIM1SEL_LSE     STM32_LPTIM1SEL_FIELD(3U)
+#define STM32_LPTIM1SEL_POS                 10
+#define STM32_LPTIM1SEL_MASK                (3U << STM32_LPTIM1SEL_POS)
+#define STM32_LPTIM1SEL_FIELD(n)            ((n) << STM32_LPTIM1SEL_POS)
+#define STM32_LPTIM1SEL_MSIK                STM32_LPTIM1SEL_FIELD(0U)
+#define STM32_LPTIM1SEL_LSI                 STM32_LPTIM1SEL_FIELD(1U)
+#define STM32_LPTIM1SEL_HSI16               STM32_LPTIM1SEL_FIELD(2U)
+#define STM32_LPTIM1SEL_LSE                 STM32_LPTIM1SEL_FIELD(3U)
 /** @} */
 
 /**
  * @name    RCC_BDCR register bits definitions
  * @{
  */
-#define STM32_RTCSEL_POS        8
-#define STM32_RTCSEL_MASK       (3U << STM32_RTCSEL_POS)
-#define STM32_RTCSEL_FIELD(n)   ((n) << STM32_RTCSEL_POS)
-#define STM32_RTCSEL_NOCLOCK    STM32_RTCSEL_FIELD(0U)
-#define STM32_RTCSEL_LSE        STM32_RTCSEL_FIELD(1U)
-#define STM32_RTCSEL_LSI        STM32_RTCSEL_FIELD(2U)
-#define STM32_RTCSEL_HSEDIV     STM32_RTCSEL_FIELD(3U)
+#define STM32_RTCSEL_POS                    8
+#define STM32_RTCSEL_MASK                   (3U << STM32_RTCSEL_POS)
+#define STM32_RTCSEL_FIELD(n)               ((n) << STM32_RTCSEL_POS)
+#define STM32_RTCSEL_NOCLOCK                STM32_RTCSEL_FIELD(0U)
+#define STM32_RTCSEL_LSE                    STM32_RTCSEL_FIELD(1U)
+#define STM32_RTCSEL_LSI                    STM32_RTCSEL_FIELD(2U)
+#define STM32_RTCSEL_HSEDIV                 STM32_RTCSEL_FIELD(3U)
 
-#define STM32_LSCOSEL_POS       24
-#define STM32_LSCOSEL_MASK      (3U << STM32_LSCOSEL_POS)
-#define STM32_LSCOSEL_FIELD(n)  ((n) << STM32_LSCOSEL_POS)
-#define STM32_LSCOSEL_NOCLOCK   STM32_LSCOSEL_FIELD(0U)
-#define STM32_LSCOSEL_LSE       STM32_LSCOSEL_FIELD(1U)
-#define STM32_LSCOSEL_LSI       STM32_LSCOSEL_FIELD(3U)
+#define STM32_LSCOSEL_POS                   24
+#define STM32_LSCOSEL_MASK                  (3U << STM32_LSCOSEL_POS)
+#define STM32_LSCOSEL_FIELD(n)              ((n) << STM32_LSCOSEL_POS)
+#define STM32_LSCOSEL_NOCLOCK               STM32_LSCOSEL_FIELD(0U)
+#define STM32_LSCOSEL_LSE                   STM32_LSCOSEL_FIELD(1U)
+#define STM32_LSCOSEL_LSI                   STM32_LSCOSEL_FIELD(3U)
 /** @} */
 
 /*===========================================================================*/
@@ -2472,22 +2487,22 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-  #define STM32_FLASHBITS           STM32_LATENCY_0WS
+  #define STM32_FLASHBITS           STM32_ACR_LATENCY_0WS
 
 #elif STM32_HCLK <= STM32_1WS_THRESHOLD
-  #define STM32_FLASHBITS           STM32_LATENCY_1WS
+  #define STM32_FLASHBITS           STM32_ACR_LATENCY_1WS
 
 #elif STM32_HCLK <= STM32_2WS_THRESHOLD
-  #define STM32_FLASHBITS           STM32_LATENCY_2WS
+  #define STM32_FLASHBITS           STM32_ACR_LATENCY_2WS
 
 #elif STM32_HCLK <= STM32_3WS_THRESHOLD
-  #define STM32_FLASHBITS           STM32_LATENCY_3WS
+  #define STM32_FLASHBITS           STM32_ACR_LATENCY_3WS
 
 #elif STM32_HCLK <= STM32_4WS_THRESHOLD
-  #define STM32_FLASHBITS           STM32_LATENCY_4WS
+  #define STM32_FLASHBITS           STM32_ACR_LATENCY_4WS
 
 #else
-  #define STM32_FLASHBITS           STM32_LATENCY_5WS
+  #define STM32_FLASHBITS           STM32_ACR_LATENCY_5WS
 #endif
 
 /*===========================================================================*/
@@ -2501,7 +2516,7 @@
 typedef struct {
   uint32_t          pwr_vosr;
   uint32_t          rcc_cr;
-  uint32_t          rcc_icsr1;
+  uint32_t          rcc_icscr1;
   uint32_t          rcc_cfgr1;
   uint32_t          rcc_cfgr2;
   uint32_t          rcc_cfgr3;
