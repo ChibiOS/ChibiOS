@@ -305,11 +305,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   halfreq_t sysclk, hclk, pclk1, pclk2, pclk3, pclk1tim, pclk2tim, mco1clk, mco2clk;
 
   /* System limits based on desired VOS settings.*/
-  switch (ccp->pwr_vosr & STM32_VOS_MASK) {
-  case STM32_VOS_RANGE1:
+  switch (ccp->pwr_vosr & STM32_VOSR_RANGE_MASK) {
+  case STM32_VOSR_RANGE1:
     slp = &vos_range1;
     break;
-  case STM32_VOS_RANGE2:
+  case STM32_VOSR_RANGE2:
     slp = &vos_range2;
     break;
   default:
@@ -581,7 +581,7 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   uint32_t cr, wtmask;
 
   /* Setting flash ACR to the safest value while the clock tree is reconfigured.*/
-  flash_set_acr(STM32_LATENCY_4WS);
+  flash_set_acr(STM32_ACR_LATENCY_4WS);
 
   /* MSIS must be active while performing the reconfiguration.*/
   RCC->CR = STM32_RCC_CR_RESET;
