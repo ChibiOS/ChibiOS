@@ -53,7 +53,7 @@
 
 /**
  * @class       null_stream_c
- * @extends     base_object_c.
+ * @extends     base_object_c
  * @implements  sequential_stream_i
  *
  * @brief       Null streams class.
@@ -115,8 +115,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    null_stream_c
- *
  * @brief       Default initialization function of @p null_stream_c.
  *
  * @param[out]    self          Pointer to a @p null_stream_c instance to be

@@ -62,9 +62,6 @@
  * @{
  */
 /**
- * @memberof    null_stream_c
- * @private
- *
  * @brief       Implementation of interface method @p stmWrite().
  *
  * @param[in,out] ip            Pointer to the @p sequential_stream_i class
@@ -85,9 +82,6 @@ static size_t __nullstm_stm_write_impl(void *ip, const uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    null_stream_c
- * @private
- *
  * @brief       Implementation of interface method @p stmRead().
  *
  * @param[in,out] ip            Pointer to the @p sequential_stream_i class
@@ -108,9 +102,6 @@ static size_t __nullstm_stm_read_impl(void *ip, uint8_t *bp, size_t n) {
 }
 
 /**
- * @memberof    null_stream_c
- * @private
- *
  * @brief       Implementation of interface method @p stmPut().
  *
  * @param[in,out] ip            Pointer to the @p sequential_stream_i class
@@ -128,9 +119,6 @@ static int __nullstm_stm_put_impl(void *ip, uint8_t b) {
 }
 
 /**
- * @memberof    null_stream_c
- * @private
- *
  * @brief       Implementation of interface method @p stmGet().
  *
  * @param[in,out] ip            Pointer to the @p sequential_stream_i class
@@ -146,9 +134,6 @@ static int __nullstm_stm_get_impl(void *ip) {
 }
 
 /**
- * @memberof    null_stream_c
- * @private
- *
  * @brief       Implementation of interface method @p stmUnget().
  *
  * @param[in,out] ip            Pointer to the @p sequential_stream_i class
@@ -171,9 +156,6 @@ static int __nullstm_stm_unget_impl(void *ip, int b) {
  * @{
  */
 /**
- * @memberof    null_stream_c
- * @protected
- *
  * @brief       Implementation of object creation.
  * @note        This function is meant to be used by derived classes.
  *
@@ -207,9 +189,6 @@ void *__nullstm_objinit_impl(void *ip, const void *vmt) {
 }
 
 /**
- * @memberof    null_stream_c
- * @protected
- *
  * @brief       Implementation of object finalization.
  * @note        This function is meant to be used by derived classes.
  *

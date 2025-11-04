@@ -52,7 +52,7 @@
 
 /**
  * @class       synchronized_object_c
- * @extends     base_object_c, referenced_object_c.
+ * @extends     referenced_object_c
  *
  * @brief       Common ancestor class of all reference-counted, synchronized
  *              objects.

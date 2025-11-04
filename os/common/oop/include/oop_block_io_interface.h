@@ -44,7 +44,7 @@
 #define blkDisconnect                       bioDisconnect
 #define blkRead                             bioRead
 #define blkWrite                            bioWrite
-#define blkSync                             biokSync
+#define blkSync                             bioSync
 #define blkGetInfo                          bioGetInfo
 /** @} */
 #endif /* defined(OOP_USE_LEGACY) */
@@ -86,7 +86,7 @@ struct block_io_info {
 
 /**
  * @interface   block_io_i
- * @extends     base_interface_i.
+ * @extends     base_interface_i
  *
  * @brief       Block I/O interface.
  * @details     This module define an interface for generic devices performing
@@ -167,9 +167,6 @@ extern "C" {
  * @{
  */
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Returns the media insertion status.
  * @note        On some implementations this function can only be called if the
  *              device is not transferring data.
@@ -187,9 +184,6 @@ static inline bool bioIsInserted(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Returns the media write protection status.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -205,9 +199,6 @@ static inline bool bioIsWriteProtected(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Performs the initialization procedure on the block device.
  * @details     This operation must be performed before I/O operations can be
  *              attempted on the block device and after insertion has been
@@ -226,9 +217,6 @@ static inline bool bioConnect(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Terminates operations on the block device.
  * @details     This operation safely terminates operations on the block
  *              device. Should be performed before the media is extracted or
@@ -247,9 +235,6 @@ static inline bool bioDisconnect(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Reads one or more blocks.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -266,9 +251,6 @@ static inline bool bioRead(void *ip, uint32_t startblk, uint8_t buf,
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Writes one or more blocks.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -285,9 +267,6 @@ static inline bool bioWrite(void *ip, uint32_t startblk, const uint8_t buf,
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Ensures write synchronization.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.
@@ -303,9 +282,6 @@ static inline bool BioSync(void *ip) {
 }
 
 /**
- * @memberof    block_io_i
- * @public
- *
  * @brief       Returns a media information structure.
  *
  * @param[in,out] ip            Pointer to a @p block_io_i instance.

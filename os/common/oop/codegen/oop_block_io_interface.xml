@@ -19,7 +19,7 @@
           <define name="blkDisconnect" value="bioDisconnect" />
           <define name="blkRead" value="bioRead" />
           <define name="blkWrite" value="bioWrite" />
-          <define name="blkSync" value="biokSync" />
+          <define name="blkSync" value="bioSync" />
           <define name="blkGetInfo" value="bioGetInfo" />
         </group>
       </condition>
