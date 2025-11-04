@@ -1093,9 +1093,11 @@ mfs_error_t mfsWriteRecord(MFSDriver *mfsp, mfs_id_t id,
     }
 
     /* If the required space is greater than the space allocated for the
-       transaction then error.*/
+       transaction then error.
+       Note, the condition check is written in a defensive way.*/
     rspace = asize;
-    if (rspace > mfsp->tr_limit_offset - mfsp->tr_next_offset) {
+    if ((mfsp->tr_next_offset > mfsp->tr_limit_offset) ||
+        (rspace > mfsp->tr_limit_offset - mfsp->tr_next_offset)) {
       return MFS_ERR_TRANSACTION_SIZE;
     }
 
@@ -1231,9 +1233,11 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
     }
 
     /* If the required space is greater than the space allocated for the
-       transaction then error.*/
+       transaction then error.
+       Note, the condition check is written in a defensive way.*/
     rspace = asize;
-    if (rspace > mfsp->tr_limit_offset - mfsp->tr_next_offset) {
+    if ((mfsp->tr_next_offset > mfsp->tr_limit_offset) ||
+        (rspace > mfsp->tr_limit_offset - mfsp->tr_next_offset)) {
       return MFS_ERR_TRANSACTION_SIZE;
     }
 
