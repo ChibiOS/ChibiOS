@@ -318,7 +318,7 @@ void __factory_init(void) {
 #endif
 }
 
-#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Registers a generic object.
  * @post    A reference to the registered object is returned and the
@@ -442,7 +442,7 @@ ucnt_t chFactoryReleaseObject(registered_object_t *rop) {
 }
 #endif /* CH_CFG_FACTORY_OBJECTS_REGISTRY == TRUE */
 
-#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_GENERIC_BUFFERS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a generic dynamic buffer object.
  * @post    A reference to the dynamic buffer object is returned and the
@@ -528,7 +528,7 @@ ucnt_t chFactoryReleaseBuffer(dyn_buffer_t *dbp) {
 }
 #endif /* CH_CFG_FACTORY_GENERIC_BUFFERS = TRUE */
 
-#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_SEMAPHORES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a dynamic semaphore object.
  * @post    A reference to the dynamic semaphore object is returned and the
@@ -615,7 +615,7 @@ ucnt_t chFactoryReleaseSemaphore(dyn_semaphore_t *dsp) {
 }
 #endif /* CH_CFG_FACTORY_SEMAPHORES = TRUE */
 
-#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_MAILBOXES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a dynamic mailbox object.
  * @post    A reference to the dynamic mailbox object is returned and the
@@ -702,7 +702,7 @@ ucnt_t chFactoryReleaseMailbox(dyn_mailbox_t *dmp) {
 }
 #endif /* CH_CFG_FACTORY_MAILBOXES = TRUE */
 
-#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_OBJ_FIFOS == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a dynamic "objects FIFO" object.
  * @post    A reference to the dynamic "objects FIFO" object is returned and
@@ -808,7 +808,7 @@ ucnt_t chFactoryReleaseObjectsFIFO(dyn_objects_fifo_t *dofp) {
 }
 #endif /* CH_CFG_FACTORY_OBJ_FIFOS = TRUE */
 
-#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXIGEN__)
+#if (CH_CFG_FACTORY_PIPES == TRUE) || defined(__DOXYGEN__)
 /**
  * @brief   Creates a dynamic pipe object.
  * @post    A reference to the dynamic pipe object is returned and

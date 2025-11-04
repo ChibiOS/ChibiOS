@@ -89,7 +89,7 @@
   (ocp)->list.next = &(objp)->list;                                         \
 }
 
-/* Insertion on LRU list head (newer objects).*/
+/* Insertion on LRU list tail (older objects).*/
 #define LRU_INSERT_TAIL(ocp, objp) {                                        \
   (objp)->list.prev = (ocp)->list.prev;                                     \
   (objp)->list.next = &(ocp)->list;                                         \
