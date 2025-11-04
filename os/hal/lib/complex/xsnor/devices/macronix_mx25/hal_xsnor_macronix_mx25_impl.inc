@@ -391,7 +391,7 @@ static void mx25_reset_memory(hal_xsnor_macronix_mx25_c *self) {
   wspiCommand(self->config->bus.wspi.drv, &cmd_reset_memory_spi);
 
   /* The device requires at least 10uS to recover after a reset, it could
-     need up to 100mS in cause a reset occurred during a chip erase, 50uS
+     need up to 100mS in case a reset occurred during a chip erase, 50uS
      covers most cases.*/
   osalThreadSleepMicroseconds(50);
 }
