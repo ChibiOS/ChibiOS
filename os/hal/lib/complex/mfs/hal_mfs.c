@@ -143,6 +143,12 @@ static void mfs_state_reset(MFSDriver *mfsp) {
   mfsp->next_offset     = 0U;
   mfsp->used_space      = 0U;
 
+#if (MFS_CFG_TRANSACTION_MAX > 0)
+  mfsp->tr_nops = 0U;
+  mfsp->tr_next_offset = 0U;
+  mfsp->tr_limit_offset = 0U;
+#endif
+
   for (i = 0; i < MFS_CFG_MAX_RECORDS; i++) {
     mfsp->descriptors[i].offset = 0U;
     mfsp->descriptors[i].size   = 0U;
@@ -1201,7 +1207,7 @@ mfs_error_t mfsEraseRecord(MFSDriver *mfsp, mfs_id_t id) {
 
     /* Adjusting bank-related metadata.*/
     mfsp->used_space  -= ALIGNED_REC_SIZE(mfsp->descriptors[id - 1U].size);
-    mfsp->next_offset += sizeof (mfs_data_header_t);
+    mfsp->next_offset += asize;
     mfsp->descriptors[id - 1U].offset = 0U;
     mfsp->descriptors[id - 1U].size   = 0U;
 
