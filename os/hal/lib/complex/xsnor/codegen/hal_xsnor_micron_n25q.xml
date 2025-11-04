@@ -38,7 +38,7 @@ mode that the device will be switched in.]]>
         </define>
         <define name="N25Q_OPT_NICE_WAITING" value="(1U &lt;&lt; 6)">
           <brief>Delays insertion.</brief>
-          <details><![CDATA[If enabled this options inserts delays into the
+          <details><![CDATA[If enabled this option inserts delays into the
 flash waiting routines releasing some extra CPU time for threads with lower
 priority, this may slow down the driver a bit however.]]></details>
         </define>

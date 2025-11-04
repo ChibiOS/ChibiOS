@@ -472,7 +472,7 @@ static inline flash_error_t xsnor_device_start_erase_all(void *ip) {
 }
 
 /**
- * @brief       Starts an sector erase operation.
+ * @brief       Starts a sector erase operation.
  *
  * @param[in,out] ip            Pointer to a @p hal_xsnor_base_c instance.
  * @param[in]     sector        Sector to be erased.

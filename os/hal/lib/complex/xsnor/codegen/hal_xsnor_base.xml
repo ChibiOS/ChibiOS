@@ -448,7 +448,7 @@ self->state = FLASH_UNINIT;]]></implementation>
               <notapi />
             </method>
             <method shortname="start_erase_sector" name="xsnor_device_start_erase_sector" ctype="flash_error_t">
-              <brief>Starts an sector erase operation.</brief>
+              <brief>Starts a sector erase operation.</brief>
               <param name="sector" ctype="flash_sector_t" dir="in">sector to be erased</param>
               <return>An error code.</return>
               <retval value="FLASH_NO_ERROR">Operation successful.</retval>
