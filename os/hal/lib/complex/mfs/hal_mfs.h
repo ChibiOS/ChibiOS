@@ -385,7 +385,7 @@ typedef struct {
   /**
    * @brief   Maximum offset for the transaction.
    */
-  flash_offset_t            tr_limit_offet;
+  flash_offset_t            tr_limit_offset;
   /**
    * @brief   Number of buffered operations in current transaction.
    */
