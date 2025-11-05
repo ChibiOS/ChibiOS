@@ -83,13 +83,6 @@
 #endif
 
 /**
- * @brief   Enables factory for objects FIFOs.
- */
-#if !defined(CH_CFG_FACTORY_OBJ_FIFOS) || defined(__DOXYGEN__)
-#define CH_CFG_FACTORY_OBJ_FIFOS            TRUE
-#endif
-
-/**
  * @brief   Enables factory for Pipes.
  */
 #if !defined(CH_CFG_FACTORY_PIPES) || defined(__DOXYGEN__)
@@ -139,8 +132,10 @@
    (CH_CFG_FACTORY_PIPES == TRUE))
 
 #if (CH_CFG_FACTORY_MAX_NAMES_LENGTH < 0) ||                                \
+    ((CH_CFG_FACTORY_MAX_NAMES_LENGTH > 0) &&                               \
+     (CH_CFG_FACTORY_MAX_NAMES_LENGTH < 4)) ||                              \
     (CH_CFG_FACTORY_MAX_NAMES_LENGTH > 32)
-#error "invalid CH_CFG_FACTORY_MAX_NAMES_LENGTH value"
+#error "CH_CFG_FACTORY_MAX_NAMES_LENGTH must be 0 or within [4..32]"
 #endif
 
 #if (CH_CFG_USE_MUTEXES == FALSE) && (CH_CFG_USE_SEMAPHORES == FALSE)

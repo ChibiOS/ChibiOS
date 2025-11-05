@@ -83,16 +83,20 @@ objects_factory_t ch_factory;
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-static void copy_name(const char *sp, char *dp) {
-  unsigned i;
-  char c;
+static void copy_name(const char *sp, dyn_element_t *dep) {
+#if (CH_CFG_FACTORY_MAX_NAMES_LENGTH > 0) || defined(__DOXYGEN__)
+  unsigned i = CH_CFG_FACTORY_MAX_NAMES_LENGTH;
+  char *dp = dep->name;
 
-  i = CH_CFG_FACTORY_MAX_NAMES_LENGTH;
-  do {
-    c = *sp++;
-    *dp++ = c;
+  while ((i > 1U) && (*sp != (char)0)) {
+    *dp++ = *sp++;
     i--;
-  } while ((c != (char)0) && (i > 0U));
+  }
+
+  *dp = (char)0;
+#else
+  dep->name = sp;
+#endif
 }
 
 static inline void dyn_list_init(dyn_list_t *dlp) {
@@ -104,7 +108,11 @@ static dyn_element_t *dyn_list_find(const char *name, dyn_list_t *dlp) {
   dyn_element_t *p = dlp->next;
 
   while (p != (dyn_element_t *)dlp) {
+#if (CH_CFG_FACTORY_MAX_NAMES_LENGTH > 0) || defined(__DOXYGEN__)
     if (strncmp(p->name, name, CH_CFG_FACTORY_MAX_NAMES_LENGTH) == 0) {
+#else
+    if (p->name == name) {
+#endif
       return p;
     }
     p = p->next;
@@ -160,7 +168,7 @@ static dyn_element_t *dyn_create_object_heap(const char *name,
   }
 
   /* Initializing object list element.*/
-  copy_name(name, dep->name);
+  copy_name(name, dep);
   dep->refs = (ucnt_t)1;
   dep->next = dlp->next;
 
@@ -207,7 +215,7 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
 
   chDbgCheck(name != NULL);
 
-  /* Checking if an object object with this name has already been created.*/
+  /* Checking if an object with this name has already been created.*/
   dep = dyn_list_find(name, dlp);
   if (dep != NULL) {
     return NULL;
@@ -220,7 +228,7 @@ static dyn_element_t *dyn_create_object_pool(const char *name,
   }
 
   /* Initializing object list element.*/
-  copy_name(name, dep->name);
+  copy_name(name, dep);
   dep->refs = (ucnt_t)1;
   dep->next = dlp->next;
 
@@ -391,9 +399,11 @@ registered_object_t *chFactoryFindObject(const char *name) {
  * @api
  */
 registered_object_t *chFactoryFindObjectByPointer(void *objp) {
-  registered_object_t *rop = (registered_object_t *)ch_factory.obj_list.next;
+  registered_object_t *rop;
 
   FACTORY_LOCK();
+
+  rop = (registered_object_t *)ch_factory.obj_list.next;
 
   while ((void *)rop != (void *)&ch_factory.obj_list) {
     if (rop->objp == objp) {
@@ -553,7 +563,7 @@ dyn_semaphore_t *chFactoryCreateSemaphore(const char *name, cnt_t n) {
                                                   &ch_factory.sem_list,
                                                   &ch_factory.sem_pool);
   if (dsp != NULL) {
-    /* Initializing semaphore object dataa.*/
+    /* Initializing semaphore object data.*/
     chSemObjectInit(&dsp->sem, n);
   }
 
@@ -746,7 +756,7 @@ dyn_objects_fifo_t *chFactoryCreateObjectsFIFO(const char *name,
     msg_t *msgbuf = (msg_t *)(dofp + 1);
     uint8_t *objbuf = (uint8_t *)dofp + size1;
 
-    /* Initializing mailbox object data.*/
+    /* Initializing objects FIFO data.*/
     chFifoObjectInitAligned(&dofp->fifo, objsize, objn, objalign,
                             (void *)objbuf, msgbuf);
   }
@@ -836,7 +846,7 @@ dyn_pipe_t *chFactoryCreatePipe(const char *name, size_t size) {
                                              sizeof (dyn_pipe_t) + size,
                                              CH_HEAP_ALIGNMENT);
   if (dpp != NULL) {
-    /* Initializing mailbox object data.*/
+    /* Initializing pipe object data.*/
     chPipeObjectInit(&dpp->pipe, (uint8_t *)(dpp + 1), size);
   }
 
