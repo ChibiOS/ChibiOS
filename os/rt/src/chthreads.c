@@ -24,9 +24,9 @@
  * @addtogroup threads
  * @details Threads related APIs and services.
  *          <h2>Operation mode</h2>
- *          A thread is an abstraction of an independent instructions flow.
+ *          A thread is an abstraction of an independent instruction flow.
  *          In ChibiOS/RT a thread is represented by a "C" function owning
- *          a processor context, state informations and a dedicated stack
+ *          a processor context, state information and a dedicated stack
  *          area. In this scenario static variables are shared among all
  *          threads while automatic variables are local to the thread.<br>
  *          Operations defined for threads:
@@ -43,7 +43,7 @@
  *            specified amount of time or the specified future absolute time
  *            is reached.
  *          - <b>SetPriority</b>, a thread changes its own priority level.
- *          - <b>Yield</b>, a thread voluntarily renounces to its time slot.
+ *          - <b>Yield</b>, a thread voluntarily renounces its time slot.
  *          .
  * @{
  */
@@ -228,10 +228,10 @@ void chThdObjectDispose(thread_t *tp) {
  *          be subsequently started using @p chThdStart(), @p chThdStartI() or
  *           @p chSchWakeupS() depending on the execution context.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
- * @note    Threads created using this function do not obey to the
+ * @note    Threads created using this function do not honor the
  *          @p CH_DBG_FILL_THREADS debug option because it would stay
  *          in a critical section for too long while filling.
  *
@@ -274,7 +274,7 @@ thread_t *chThdSpawnSuspendedI(thread_t *tp,
  *          be subsequently started using @p chThdStart(), @p chThdStartI() or
  *           @p chSchWakeupS() depending on the execution context.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  *
@@ -305,10 +305,10 @@ thread_t *chThdSpawnSuspended(thread_t *tp,
  * @brief   Spawns a running thread.
  * @details The spawned thread is run immediately.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
- * @note    Threads created using this function do not obey to the
+ * @note    Threads created using this function do not honor the
  *          @p CH_DBG_FILL_THREADS debug option because it would keep
  *          the kernel locked for too much time.
  *
@@ -327,7 +327,7 @@ thread_t *chThdSpawnRunningI(thread_t *tp, const thread_descriptor_t *tdp) {
  * @brief   Spawns a running thread.
  * @details The spawned thread is run immediately.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  *
@@ -360,13 +360,13 @@ thread_t *chThdSpawnRunning(thread_t *tp, const thread_descriptor_t *tdp) {
  * @details The created thread is in the @p CH_STATE_WTSTART state and can
  *          be subsequently started.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @post    The initialized thread can be subsequently started by invoking
  *          @p chThdStart(), @p chThdStartI() or @p chSchWakeupS()
  *          depending on the execution context.
- * @note    Threads created using this function do not obey to the
+ * @note    Threads created using this function do not honor the
  *          @p CH_DBG_FILL_THREADS debug option because it would stay
  *          in a critical section for too long while filling.
  *
@@ -417,7 +417,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p CH_STATE_WTSTART.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @post    The initialized thread can be subsequently started by invoking
@@ -452,12 +452,12 @@ thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
  * @brief   Creates a new thread.
  * @details The new thread is initialized and made ready to execute.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
- * @note    Threads created using this function do not obey to the
+ * @note    Threads created using this function do not honor the
  *          @p CH_DBG_FILL_THREADS debug option because it would keep
  *          the kernel locked for too much time.
  *
@@ -475,7 +475,7 @@ thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
  * @brief   Creates a new thread.
  * @details The new thread is initialized and made ready to execute.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  *
@@ -508,7 +508,7 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
 /**
  * @brief   Creates a new thread.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          the caller's responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @note    A thread can terminate by calling @p chThdExit() or by simply

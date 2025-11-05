@@ -137,7 +137,7 @@ void chInstanceObjectInit(os_instance_t *oip,
   __stats_object_init(&oip->kernel_stats);
 #endif
 
-  /* Now this instructions flow becomes the main thread or the idle thread
+  /* Now this instruction flow becomes the main thread or the idle thread
      depending on the CH_CFG_NO_IDLE_THREAD setting.*/
   {
 #if CH_CFG_NO_IDLE_THREAD == FALSE

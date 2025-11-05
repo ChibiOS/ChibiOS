@@ -82,8 +82,8 @@ static thread_t *__sch_ready_behind(thread_t *tp) {
 }
 
 /**
- * @brief   Inserts a thread in the Ready List placing it ahead its peers.
- * @details The thread is positioned ahead all threads with higher or equal
+ * @brief   Inserts a thread in the Ready List placing it ahead of its peers.
+ * @details The thread is positioned ahead of all threads with higher or equal
  *          priority.
  * @pre     The thread must not be already inserted in any list through its
  *          @p next and @p prev or list corruption would occur.
@@ -317,7 +317,7 @@ void chSchGoSleepS(tstate_t newstate) {
 
 #if CH_CFG_TIME_QUANTUM > 0
   /* The thread is renouncing its remaining time slices so it will have a new
-     time quantum when it will wakeup.*/
+     time quantum when it wakes up.*/
   otp->ticks = (tslices_t)CH_CFG_TIME_QUANTUM;
 #endif
 
@@ -418,7 +418,7 @@ void chSchWakeupS(thread_t *ntp, msg_t msg) {
 #endif
 
   /* If the woken thread has a not-greater priority than the current
-     one then it is just inserted in the ready list else it made
+     one then it is just inserted in the ready list else it is made
      running immediately and the invoking thread goes in the ready
      list instead.
      Note, we are favoring the path where the woken thread has higher
