@@ -135,28 +135,53 @@ void __heap_init(void) {
  */
 void chHeapObjectInit(memory_heap_t *heapp, void *buf, size_t size) {
   heap_header_t *hp = (heap_header_t *)MEM_ALIGN_NEXT(buf, CH_HEAP_ALIGNMENT);
+  size_t adjsize;
+  size_t pages;
 
   chDbgCheck((heapp != NULL) && (size > 0U));
 
   /* Adjusting the size in case the initial block was not correctly
      aligned.*/
   /*lint -save -e9033 [10.8] Required cast operations.*/
-  size -= (size_t)((uint8_t *)hp - (uint8_t *)buf);
+  adjsize = (size_t)((uint8_t *)hp - (uint8_t *)buf);
+  if (adjsize >= size) {
+    adjsize = 0U;
+  }
+  else {
+    adjsize = size - adjsize;
+  }
   /*lint restore*/
 
   /* Initializing the heap header.*/
   heapp->provider = NULL;
-  H_FREE_NEXT(&heapp->header) = hp;
+  H_FREE_NEXT(&heapp->header) = NULL;
   H_FREE_PAGES(&heapp->header) = 0;
-  H_FREE_NEXT(hp) = NULL;
-  H_FREE_PAGES(hp) = (size - sizeof (heap_header_t)) / CH_HEAP_ALIGNMENT;
-  heapp->area.base = (uint8_t *)(void *)hp;
-  heapp->area.size = H_FREE_FULLSIZE(hp);
+  heapp->area.base = NULL;
+  heapp->area.size = 0U;
 #if (CH_CFG_USE_MUTEXES == TRUE) || defined(__DOXYGEN__)
   chMtxObjectInit(&heapp->mtx);
 #else
   chSemObjectInit(&heapp->sem, (cnt_t)1);
 #endif
+
+  /* Verifying that at least one aligned page fits in the buffer. */
+  if (adjsize <= sizeof (heap_header_t)) {
+    chDbgAssert(false, "heap buffer too small");
+    return;
+  }
+
+  adjsize -= sizeof (heap_header_t);
+  pages = adjsize / CH_HEAP_ALIGNMENT;
+  if (pages == 0U) {
+    chDbgAssert(false, "heap buffer insufficient for aligned page");
+    return;
+  }
+
+  heapp->area.base = (uint8_t *)(void *)hp;
+  H_FREE_NEXT(&heapp->header) = hp;
+  H_FREE_NEXT(hp) = NULL;
+  H_FREE_PAGES(hp) = pages;
+  heapp->area.size = H_FREE_FULLSIZE(hp);
 }
 
 /**

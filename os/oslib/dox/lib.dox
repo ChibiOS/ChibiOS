@@ -90,7 +90,7 @@
  */
 
 /**
- * @defgroup oslib_objchaches Objects Caches
+ * @defgroup oslib_objcaches Objects Caches
  * @ingroup oslib_complex
  */
 

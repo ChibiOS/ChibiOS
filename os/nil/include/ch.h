@@ -1240,18 +1240,6 @@ struct nil_os_instance {
   (void) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, timeout)
 
 /**
- * @brief   Suspends the invoking thread until the system time arrives to the
- *          specified value.
- *
- * @param[in] abstime   absolute system time
- *
- * @sclass
- */
-#define chThdSleepUntilS(abstime)                                           \
-  (void) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING,                           \
-                              chTimeDiffX(chVTGetSystemTimeX(), (abstime)))
-
-/**
  * @brief   Initializes a threads queue object.
  *
  * @param[out] tqp      pointer to a @p threads_queue_t structure
@@ -1459,6 +1447,7 @@ extern "C" {
   void chThdResumeI(thread_reference_t *trp, msg_t msg);
   void chThdResume(thread_reference_t *trp, msg_t msg);
   void chThdSleep(sysinterval_t timeout);
+  void chThdSleepUntilS(systime_t abstime);
   void chThdSleepUntil(systime_t abstime);
   msg_t chThdEnqueueTimeoutS(threads_queue_t *tqp, sysinterval_t timeout);
   void chThdDoDequeueNextI(threads_queue_t *tqp, msg_t msg);

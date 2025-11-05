@@ -65,7 +65,7 @@ CC_WEAK const memory_area_t __ch_mem_readable_areas[] = {
  * @note    The array is terminated by an end marker (base=-1).
  */
 CC_WEAK const memory_area_t __ch_mem_executable_areas[] = {
-  {(uint8_t *)0,  0U},      /* Whole space is readable.*/
+  {(uint8_t *)0,  0U},      /* Whole space is executable.*/
   {(uint8_t *)-1, 0U},
 };
 

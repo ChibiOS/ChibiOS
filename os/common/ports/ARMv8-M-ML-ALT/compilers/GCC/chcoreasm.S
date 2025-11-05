@@ -275,9 +275,8 @@ SVC_Handler:
                 /* SVC called from privileged mode for unprivileged return.*/
                 mrs     r2, PSP             /* Position of the exc.frame.*/
                 ldr     r3, [r2, #24]       /* PC position.*/
-                ldrh    r3, [r3, #-2]       /* SVC opcode.*/
-                ands    r3, #255
-                beq     .Lctxswitch
+                ldrb    r3, [r3, #-2]       /* SVC immediate.*/
+                cbz     r3, .Lctxswitch
                 /* Called for non-privileged mode change.*/
                 orr     r12, #1
                 msr     CONTROL, r12        /* Switching to non-privileged. */

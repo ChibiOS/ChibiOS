@@ -974,6 +974,25 @@ void chThdSleep(sysinterval_t timeout) {
  *
  * @param[in] abstime   absolute system time
  *
+ * @sclass
+ */
+void chThdSleepUntilS(systime_t abstime) {
+  sysinterval_t interval;
+
+  chDbgCheckClassS();
+
+  interval = chTimeDiffX(chVTGetSystemTimeX(), abstime);
+  if (interval > (sysinterval_t)0) {
+    (void) chSchGoSleepTimeoutS(NIL_STATE_SLEEPING, interval);
+  }
+}
+
+/**
+ * @brief   Suspends the invoking thread until the system time arrives to the
+ *          specified value.
+ *
+ * @param[in] abstime   absolute system time
+ *
  * @api
  */
 void chThdSleepUntil(systime_t abstime) {
