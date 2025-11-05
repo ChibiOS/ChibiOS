@@ -47,7 +47,7 @@
  *          option must be enabled in @p chconf.h.
  * @note    Compatible with RT and NIL.
  *
- * @addtogroup oslib_objchaches
+ * @addtogroup oslib_objcaches
  * @{
  */
 

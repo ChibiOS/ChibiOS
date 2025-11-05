@@ -174,7 +174,7 @@ void chMBResetI(mailbox_t *mbp) {
 
 /**
  * @brief   Posts a message into a mailbox.
- * @details The invoking thread waits until a empty slot in the mailbox becomes
+ * @details The invoking thread waits until an empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
  * @param[in] mbp       pointer to a @p mailbox_t object
@@ -202,7 +202,7 @@ msg_t chMBPostTimeout(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
 
 /**
  * @brief   Posts a message into a mailbox.
- * @details The invoking thread waits until a empty slot in the mailbox becomes
+ * @details The invoking thread waits until an empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
  * @param[in] mbp       pointer to a @p mailbox_t object
@@ -296,8 +296,8 @@ msg_t chMBPostI(mailbox_t *mbp, msg_t msg) {
 }
 
 /**
- * @brief   Posts an high priority message into a mailbox.
- * @details The invoking thread waits until a empty slot in the mailbox becomes
+ * @brief   Posts a high priority message into a mailbox.
+ * @details The invoking thread waits until an empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
  * @param[in] mbp       pointer to a @p mailbox_t object
@@ -324,8 +324,8 @@ msg_t chMBPostAheadTimeout(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
 }
 
 /**
- * @brief   Posts an high priority message into a mailbox.
- * @details The invoking thread waits until a empty slot in the mailbox becomes
+ * @brief   Posts a high priority message into a mailbox.
+ * @details The invoking thread waits until an empty slot in the mailbox becomes
  *          available or the specified time runs out.
  *
  * @param[in] mbp       pointer to a @p mailbox_t object
@@ -376,7 +376,7 @@ msg_t chMBPostAheadTimeoutS(mailbox_t *mbp, msg_t msg, sysinterval_t timeout) {
 }
 
 /**
- * @brief   Posts an high priority message into a mailbox.
+ * @brief   Posts a high priority message into a mailbox.
  * @details This variant is non-blocking, the function returns a timeout
  *          condition if the queue is full.
  *

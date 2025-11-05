@@ -23,9 +23,9 @@
  * @details Byte pipes.
  *          <h2>Operation mode</h2>
  *          A pipe is an asynchronous communication mechanism.<br>
- *          Operations defined for mailboxes:
+ *          Operations defined for pipes:
  *          - <b>Write</b>: Writes a buffer of data in the pipe in FIFO order.
- *          - <b>Read</b>: A buffer of data is read from the read and removed.
+ *          - <b>Read</b>: A buffer of data is read from the pipe and removed.
  *          - <b>Reset</b>: The pipe is emptied and all the stored data
  *            is lost.
  *          .
@@ -195,7 +195,7 @@ static size_t pipe_read(pipe_t *pp, uint8_t *bp, size_t n) {
 /*===========================================================================*/
 
 /**
- * @brief   Initializes a @p mailbox_t object.
+ * @brief   Initializes a @p pipe_t object.
  *
  * @param[out] pp       the pointer to the @p pipe_t object to be
  *                      initialized
@@ -226,7 +226,7 @@ void chPipeObjectInit(pipe_t *pp, uint8_t *buf, size_t n) {
  * @details All the waiting threads are resumed with status @p MSG_RESET and
  *          the queued data is lost.
  * @post    The pipe is in reset state, all operations will fail and
- *          return @p MSG_RESET until the mailbox is enabled again using
+ *          return @p MSG_RESET until the pipe is enabled again using
  *          @p chPipeResumeX().
  *
  * @param[in] pp        pointer to an initialized @p pipe_t object
