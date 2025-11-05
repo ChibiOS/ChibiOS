@@ -77,6 +77,12 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Flash-level mutual exclusion option added to MFS. Added the ability to
+       include a mfsconf.h file if MFS_USE_MFSCONF is defined at project
+       level.
+- NEW: Memory areas functions in OSLIB addressed for portability.
+- NEW: Implemented better chThdSleepUntil() in NIL using the same logic used
+       in the RT implementation.
 - NEW: Function chSftIntegrityCheckI() rewritten to be much more efficient in
        performing lists integrity checks.
 - NEW: Added to RT a dedicated functional safety module, the function
