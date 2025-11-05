@@ -111,47 +111,48 @@ extern "C" {
  * @param[in] map       pointer to a @p memory_area_t structure
  * @param[in] p         pointer to the memory space to be checked
  * @param[in] size      size of the memory space to be checked, zero is
- *                      considered the whole address space
+ *                      only valid when also @p p is zero and means a whole
+ *                      address-space match
  * @return              The test result.
  * @retval true         if the memory space is entirely contained.
- * @retval false        if the memory space is not entirely contained.
+ * @retval false        if the memory space is not entirely contained or
+ *                      invalid.
  *
  * @xclass
  */
 static inline bool chMemIsSpaceWithinX(const memory_area_t *map,
                                        const void *p,
                                        size_t size) {
-  const uint8_t *mem_base = (const uint8_t *)map->base;
-  const uint8_t *mem_end  = mem_base + map->size - (size_t)1;
-  const uint8_t *base     = (const uint8_t *)p;
-  const uint8_t *end      = base + size - (size_t)1;
+  uintptr_t mem_base = (uintptr_t)map->base;
+  uintptr_t mem_end  = mem_base + (uintptr_t)map->size - (uintptr_t)1;
+  uintptr_t base     = (uintptr_t)p;
+  uintptr_t end      = base + size - (uintptr_t)1;
 
-  chDbgAssert((mem_base <= mem_end) && (base <= end), "invalid memory area");
+  chDbgAssert(mem_base <= mem_end, "invalid container area");
 
   return (bool)((base <= end) && (base >= mem_base) && (end <= mem_end));
 }
 
 /**
  * @brief   Memory area inclusion check.
- * @details Checks if specified space belongs to the specified memory area.
+ * @details Checks if an area is fully contained in another area.
  *
  * @param[in] map1      pointer to the container @p memory_area_t structure
  * @param[in] map2      pointer to the contained @p memory_area_t structure
- *                      considered the whole address space
  * @return              The test result.
- * @retval true         if the memory space is entirely contained.
- * @retval false        if the memory space is not entirely contained.
+ * @retval true         if the area is entirely contained.
+ * @retval false        if the area is not entirely contained or invalid.
  *
  * @xclass
  */
 static inline bool chMemIsAreaWithinX(const memory_area_t *map1,
                                       const memory_area_t *map2) {
-  const uint8_t *mem_base = (const uint8_t *)map1->base;
-  const uint8_t *mem_end  = mem_base + map1->size - (size_t)1;
-  const uint8_t *base     = (const uint8_t *)map2->base;
-  const uint8_t *end      = base + map2->size - (size_t)1;
+  uintptr_t mem_base = (uintptr_t)map1->base;
+  uintptr_t mem_end  = mem_base + (uintptr_t)map1->size - (uintptr_t)1;
+  uintptr_t base     = (uintptr_t)map2->base;
+  uintptr_t end      = base + (uintptr_t)map2->size - (uintptr_t)1;
 
-  chDbgAssert((mem_base <= mem_end) && (base <= end), "invalid memory area");
+  chDbgAssert(mem_base <= mem_end, "invalid container area");
 
   return (bool)((base <= end) && (base >= mem_base) && (end <= mem_end));
 }
@@ -164,7 +165,8 @@ static inline bool chMemIsAreaWithinX(const memory_area_t *map1,
  * @param[in] map       pointer to a @p memory_area_t structure
  * @param[in] p         pointer to the memory space to be checked
  * @param[in] size      size of the memory space to be checked, zero is
- *                      considered the whole address space
+ *                      only valid when also @p p is zero and means a whole
+ *                      address-space match
  * @return              The test result.
  * @retval true         if the memory space is intersecting.
  * @retval false        if the memory space is not intersecting.
@@ -174,10 +176,10 @@ static inline bool chMemIsAreaWithinX(const memory_area_t *map1,
 static inline bool chMemIsSpaceIntersectingX(const memory_area_t *map,
                                              const void *p,
                                              size_t size) {
-  const uint8_t *mem_base = (const uint8_t *)map->base;
-  const uint8_t *mem_end  = mem_base + map->size - (size_t)1;
-  const uint8_t *base     = (const uint8_t *)p;
-  const uint8_t *end      = base + size - (size_t)1;
+  uintptr_t mem_base = (uintptr_t)map->base;
+  uintptr_t mem_end  = mem_base + (uintptr_t)map->size - (uintptr_t)1;
+  uintptr_t base     = (uintptr_t)p;
+  uintptr_t end      = base + (uintptr_t)size - (uintptr_t)1;
 
   chDbgAssert((mem_base <= mem_end) && (base <= end), "invalid memory area");
 
@@ -192,7 +194,6 @@ static inline bool chMemIsSpaceIntersectingX(const memory_area_t *map,
  *
  * @param[in] map1      pointer to a @p memory_area_t structure
  * @param[in] map2      pointer to a @p memory_area_t structure
- *                      considered the whole address space
  * @return              The test result.
  * @retval true         if the memory areas are intersecting.
  * @retval false        if the memory areas are not intersecting.
@@ -201,10 +202,10 @@ static inline bool chMemIsSpaceIntersectingX(const memory_area_t *map,
  */
 static inline bool chMemIsAreaIntersectingX(const memory_area_t *map1,
                                             const memory_area_t *map2) {
-  const uint8_t *mem_base = (const uint8_t *)map1->base;
-  const uint8_t *mem_end  = mem_base + map1->size - (size_t)1;
-  const uint8_t *base     = (const uint8_t *)map2->base;
-  const uint8_t *end      = base + map2->size - (size_t)1;
+  uintptr_t mem_base = (uintptr_t)map1->base;
+  uintptr_t mem_end  = mem_base + (uintptr_t)map1->size - (uintptr_t)1;
+  uintptr_t base     = (uintptr_t)map2->base;
+  uintptr_t end      = base + (uintptr_t)map2->size - (uintptr_t)1;
 
   chDbgAssert((mem_base <= mem_end) && (base <= end), "invalid memory area");
 
