@@ -30,6 +30,10 @@
 
 #include "hal_flash.h"
 
+#if defined(MFS_USE_MFSCONF)
+#include "mfsconf.h"
+#endif
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -106,6 +110,17 @@
  */
 #if !defined(MFS_CFG_TRANSACTION_MAX) || defined(__DOXYGEN__)
 #define MFS_CFG_TRANSACTION_MAX             16
+#endif
+
+/**
+ * @brief   Enables mutual exclusion on flash accesses.
+ * @details Mutual exclusion on flash is required when multiple threads are
+ *          accessing different flash areas through multiple MFS instances
+ *          or different modules.
+ * @note    Requires exclusive access support in the associated flash driver.
+ */
+#if !defined(MFS_USE_FLASH_MUTUAL_EXCLUSION) || defined(__DOXYGEN__)
+#define MFS_USE_FLASH_MUTUAL_EXCLUSION      FALSE
 #endif
 /** @} */
 
@@ -453,4 +468,3 @@ extern "C" {
 #endif /* HAL_MFS_H */
 
 /** @} */
-

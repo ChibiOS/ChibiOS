@@ -77,6 +77,26 @@
   }                                                                         \
 } while (false)
 
+#if (MFS_USE_FLASH_MUTUAL_EXCLUSION == TRUE) || defined(__DOXYGEN__)
+static void mfs_flash_acquire(MFSDriver *mfsp) {
+  flash_error_t ferr;
+
+  ferr = flashAcquireExclusive(mfsp->config->flashp);
+  osalDbgAssert(ferr == FLASH_NO_ERROR, "flash exclusive access failed");
+}
+
+static void mfs_flash_release(MFSDriver *mfsp) {
+  flash_error_t ferr;
+
+  ferr = flashReleaseExclusive(mfsp->config->flashp);
+  osalDbgAssert(ferr == FLASH_NO_ERROR, "flash exclusive release failed");
+}
+
+#else
+#define mfs_flash_acquire(mfsp)  (void)(mfsp)
+#define mfs_flash_release(mfsp)  (void)(mfsp)
+#endif
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -178,14 +198,22 @@ static flash_offset_t mfs_flash_get_bank_offset(MFSDriver *mfsp,
 static mfs_error_t mfs_flash_read(MFSDriver *mfsp, flash_offset_t offset,
                                   size_t n, uint8_t *rp) {
   flash_error_t ferr;
+  mfs_error_t err;
+
+  mfs_flash_acquire(mfsp);
 
   ferr = flashRead(mfsp->config->flashp, offset, n, rp);
   if (ferr != FLASH_NO_ERROR) {
     mfsp->state = MFS_ERROR;
-    return MFS_ERR_FLASH_FAILURE;
+    err = MFS_ERR_FLASH_FAILURE;
+  }
+  else {
+    err = MFS_NO_ERROR;
   }
 
-  return MFS_NO_ERROR;
+  mfs_flash_release(mfsp);
+
+  return err;
 }
 
 /**
@@ -207,11 +235,16 @@ static mfs_error_t mfs_flash_write(MFSDriver *mfsp,
                                    const uint8_t *wp) {
   flash_error_t ferr;
 
+  mfs_flash_acquire(mfsp);
+
   ferr = flashProgram(mfsp->config->flashp, offset, n, wp);
   if (ferr != FLASH_NO_ERROR) {
     mfsp->state = MFS_ERROR;
+    mfs_flash_release(mfsp);
     return MFS_ERR_FLASH_FAILURE;
   }
+
+  mfs_flash_release(mfsp);
 
 #if MFS_CFG_WRITE_VERIFY == TRUE
   /* Verifying the written data by reading it back and comparing.*/
@@ -297,21 +330,28 @@ static mfs_error_t mfs_bank_erase(MFSDriver *mfsp, mfs_bank_t bank) {
   while (sector < end) {
     flash_error_t ferr;
 
+    mfs_flash_acquire(mfsp);
+
     ferr = flashStartEraseSector(mfsp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashWaitErase(mfsp->config->flashp);
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
     ferr = flashVerifyErase(mfsp->config->flashp, sector);
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
+
+    mfs_flash_release(mfsp);
 
     sector++;
   }
@@ -343,14 +383,20 @@ static mfs_error_t mfs_bank_verify_erase(MFSDriver *mfsp, mfs_bank_t bank) {
   while (sector < end) {
     flash_error_t ferr;
 
+    mfs_flash_acquire(mfsp);
+
     ferr = flashVerifyErase(mfsp->config->flashp, sector);
     if (ferr == FLASH_ERROR_VERIFY) {
+      mfs_flash_release(mfsp);
       return MFS_ERR_NOT_ERASED;
     }
     if (ferr != FLASH_NO_ERROR) {
       mfsp->state = MFS_ERROR;
+      mfs_flash_release(mfsp);
       return MFS_ERR_FLASH_FAILURE;
     }
+
+    mfs_flash_release(mfsp);
 
     sector++;
   }
