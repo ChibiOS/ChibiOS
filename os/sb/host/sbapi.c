@@ -240,6 +240,11 @@ void sb_sysc_loadelf(sb_class_t *sbp, struct port_extctx *ectxp) {
   uint8_t *buf = (uint8_t *)ectxp->r1;
   size_t size = (size_t)ectxp->r2;
 
+  if (sbp->io.vfs_driver == NULL) {
+    ectxp->r0 = CH_RET_ENOSYS;
+    return;
+  }
+
   if ((sb_check_string(sbp, (void *)fname, VFS_CFG_PATHLEN_MAX + 1) == (size_t)0) ||
        !MEM_IS_ALIGNED(buf, MEM_NATURAL_ALIGN) ||
        !MEM_IS_ALIGNED(size, MEM_NATURAL_ALIGN) ||
