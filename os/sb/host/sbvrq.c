@@ -336,6 +336,13 @@ void sb_sysc_vrq_wait(sb_class_t *sbp, struct port_extctx *ectxp) {
 
 void sb_fastc_vrq_gcsts(sb_class_t *sbp, struct port_extctx *ectxp) {
   uint32_t nvrq = ectxp->r0;
+  const uint32_t vrq_num =
+    (uint32_t)(sizeof (sbp->vrq.flags) / sizeof (sbp->vrq.flags[0]));
+
+  if (nvrq >= vrq_num) {
+    ectxp->r0 = (uint32_t)CH_RET_EINVAL;
+    return;
+  }
 
   /* Cast because vrq.flags[] could be configured to be a smaller type.*/
   ectxp->r0 = (uint32_t)sbp->vrq.flags[nvrq];
