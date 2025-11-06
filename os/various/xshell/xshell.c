@@ -399,8 +399,8 @@ void xshellObjectInit(xshell_manager_t *smp,
 
 #if XSHELL_PROMPT_STR_LENGTH > 0
   /* Set the default prompt from config.*/
-  smp->prompt[XSHELL_PROMPT_STR_LENGTH - 1] = '\0';
   strncpy(smp->prompt, config->prompt, XSHELL_PROMPT_STR_LENGTH);
+  smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
 #endif
   
   /* Shell events.*/

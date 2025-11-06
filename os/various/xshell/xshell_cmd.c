@@ -250,7 +250,7 @@ static void cmd_prompt(xshell_manager_t *smp, shell_stream_i *stream,
     return;
   }
   strncpy(smp->prompt, argv[1], XSHELL_PROMPT_STR_LENGTH);
-  smp->prompt[XSHELL_PROMPT_STR_LENGTH - 1] = '\0';
+  smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
 }
 #endif
 
@@ -651,7 +651,7 @@ bool xshellSetPrompt(xshell_manager_t *smp, const char *str) {
     return false;
   }
   strncpy(smp->prompt, str, XSHELL_PROMPT_STR_LENGTH);
-  smp->prompt[XSHELL_PROMPT_STR_LENGTH - 1] = '\0';
+  smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
 
   return true;
 }
