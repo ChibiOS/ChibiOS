@@ -280,13 +280,16 @@ static void xshell_free(thread_t *tp) {
 
 #if (XSHELL_HISTORY_DEPTH > 0) || defined(__DOXYGEN__)
 static void xshell_save_history(xshell_manager_t *smp, char *line) {
+  char *history_base = &smp->history_buffer[0][0];
+  char *history_end = history_base +
+                      (XSHELL_HISTORY_DEPTH * XSHELL_LINE_LENGTH);
 
   chMtxLock(&smp->history_mutex);
 
   strcpy(smp->history_head, line);
   smp->history_head += XSHELL_LINE_LENGTH;
-  if (smp->history_head >= smp->history_buffer[XSHELL_HISTORY_DEPTH]) {
-    smp->history_head = smp->history_buffer[0];
+  if (smp->history_head >= history_end) {
+    smp->history_head = history_base;
   }
 
   chMtxUnlock(&smp->history_mutex);
