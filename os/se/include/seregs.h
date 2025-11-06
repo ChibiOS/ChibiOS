@@ -102,7 +102,15 @@ static inline bool seRegModify8X(volatile uint8_t *p,
   *p = v;
 
   if (verify) {
-    return (*p & (uint8_t)(setmask | clrmask)) != setmask;
+    uint8_t check = *p;
+
+    if ((check & setmask) != setmask) {
+      return true;
+    }
+    if ((check & clrmask) != (uint8_t)0) {
+      return true;
+    }
+    return false;
   }
   return false;
 }
@@ -133,7 +141,15 @@ static inline bool seRegModify16X(volatile uint16_t *p,
   *p = v;
 
   if (verify) {
-    return (*p & (uint16_t)(setmask | clrmask)) != setmask;
+    uint16_t check = *p;
+
+    if ((check & setmask) != setmask) {
+      return true;
+    }
+    if ((check & clrmask) != (uint16_t)0) {
+      return true;
+    }
+    return false;
   }
   return false;
 }
@@ -164,7 +180,15 @@ static inline bool seRegModify32X(volatile uint32_t *p,
   *p = v;
 
   if (verify) {
-    return (*p & (uint32_t)(setmask | clrmask)) != setmask;
+    uint32_t check = *p;
+
+    if ((check & setmask) != setmask) {
+      return true;
+    }
+    if ((check & clrmask) != (uint32_t)0) {
+      return true;
+    }
+    return false;
   }
 
   return false;

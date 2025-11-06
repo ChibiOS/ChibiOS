@@ -345,7 +345,7 @@ bool seRegWaitAllClear8X(volatile uint8_t *p, uint8_t mask,
  *
  * @xclass
  */
-bool seRegWaitAllClear16X(volatile uint16_t *p, uint32_t mask,
+bool seRegWaitAllClear16X(volatile uint16_t *p, uint16_t mask,
                           rtcnt_t tmo, uint16_t *valp) {
   rtcnt_t start, end;
 
