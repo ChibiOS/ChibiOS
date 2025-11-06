@@ -257,6 +257,7 @@ static void cmd_prompt(xshell_manager_t *smp, shell_stream_i *stream,
 #if (XSHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
 static void scan_nodes(shell_stream_i *stream,
                        char *path,
+                       size_t path_capacity,
                        vfs_direntry_info_t *dip) {
   msg_t res;
   vfs_directory_node_c *dirp;
@@ -268,16 +269,34 @@ static void scan_nodes(shell_stream_i *stream,
 
     while (true) {
       char *fn = dip->name;
+      size_t fn_len;
+      size_t needed;
       res = vfsReadDirectoryNext(dirp, dip);
       if (res < (msg_t)1) {
         break;
       }
 
       fn = dip->name;
+      fn_len = strlen(fn);
+      needed = i + fn_len + 1U;
+
       if (VFS_MODE_S_ISDIR(dip->mode)) {
-        strcpy(path + i, fn);
-        strcat(path + i, "/");
-        scan_nodes(stream, path, dip);
+        needed++;
+      }
+
+      if (needed > path_capacity) {
+        chprintf(stream, "%s%s [path too long]" XSHELL_NEWLINE_STR, path, fn);
+        continue;
+      }
+
+      if (VFS_MODE_S_ISDIR(dip->mode)) {
+        size_t cursor = i;
+
+        memcpy(path + cursor, fn, fn_len);
+        cursor += fn_len;
+        path[cursor++] = '/';
+        path[cursor] = '\0';
+        scan_nodes(stream, path, path_capacity, dip);
         path[i] = '\0';
       }
       else {
@@ -295,6 +314,7 @@ static void cmd_tree(xshell_manager_t *smp, shell_stream_i *stream,
   (void)smp;
   char *pathbuf = NULL;
   vfs_direntry_info_t *dip = NULL;
+  const size_t path_capacity = VFS_CFG_PATHLEN_MAX + 1U;
 
   (void)argv;
 
@@ -304,15 +324,15 @@ static void cmd_tree(xshell_manager_t *smp, shell_stream_i *stream,
   }
 
   do {
-    pathbuf = (char *)chHeapAlloc(NULL, 1024);
-    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, 1024);
+    pathbuf = (char *)chHeapAlloc(NULL, path_capacity);
+    dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
     if ((pathbuf == NULL) || (dip == NULL)) {
       chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
      break;
     }
 
     strcpy(pathbuf, "/");
-    scan_nodes(stream, pathbuf, dip);
+    scan_nodes(stream, pathbuf, path_capacity, dip);
   }
   while (false);
 
@@ -418,7 +438,7 @@ static void cmd_cp(xshell_manager_t *smp, shell_stream_i *stream,
       break;
     }
 
-    fd_out = open(argv[2], O_CREAT | O_WRONLY);
+    fd_out = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0666);
     if (fd_out == -1) {
       (void) close(fd_in);
       chprintf(stream, "Cannot open destination file" XSHELL_NEWLINE_STR);

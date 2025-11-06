@@ -59,6 +59,19 @@ static MEMORYPOOL_DECL(threads_pool, sizeof (thread_t),
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
+static const char *get_prompt(xshell_manager_t *smp) {
+
+#if XSHELL_PROMPT_STR_LENGTH > 0
+  return smp->prompt;
+#else
+  if (smp->config->prompt == NULL) {
+    return XSHELL_DEFAULT_PROMPT_STR;
+  }
+
+  return smp->config->prompt;
+#endif
+}
+
 static void *alloc_thread(size_t size, unsigned align) {
 
   return chCoreAllocFromTopI(size, align, 0U);
@@ -163,11 +176,7 @@ static THD_FUNCTION(xshell_thread, p) {
   while (!chThdShouldTerminateX()) {
 
     /* Shell prompt.*/
-#if XSHELL_PROMPT_STR_LENGTH > 0
-    chprintf(stream, "%s", smp->prompt);
-#else
-    chprintf(stream, "%s", smp->config->prompt);
-#endif
+    chprintf(stream, "%s", get_prompt(smp));
 
     /* Getting input line.*/
     if (xshellGetLine(smp, stream, line, sizeof line)) {
@@ -352,15 +361,10 @@ static bool xshell_is_line_empty(const char *str) {
                                       defined(__DOXYGEN__)
 static void xshell_reset_line(xshell_manager_t *smp,
                               shell_stream_i *stream) {
-#if XSHELL_PROMPT_STR_LENGTH > 0
+  const char *prompt = get_prompt(smp);
+
   chprintf(stream, "\033[%dD%s\033[K",
-           XSHELL_LINE_LENGTH + strlen(smp->prompt) + 2,
-           smp->prompt);
-#else
-  chprintf(stream, "\033[%dD%s\033[K",
-           XSHELL_LINE_LENGTH + strlen(smp->config->prompt) + 2,
-           smp->config->prompt);
-#endif
+           XSHELL_LINE_LENGTH + strlen(prompt) + 2, prompt);
 }
 #endif /* (XSHELL_LINE_EDITING == TRUE) || (XSHELL_HISTORY_DEPTH > 0) ||
                                     defined(__DOXYGEN__) */
@@ -397,12 +401,13 @@ void xshellObjectInit(xshell_manager_t *smp,
   /* Keeping association with configuration data, it needs to be persistent.*/
   smp->config = config;
 
+  /* Set default prompt if enabled.*/
 #if XSHELL_PROMPT_STR_LENGTH > 0
   /* Set the default prompt from config.*/
   strncpy(smp->prompt, config->prompt, XSHELL_PROMPT_STR_LENGTH);
   smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
 #endif
-  
+
   /* Shell events.*/
   chEvtObjectInit(&smp->events);
 
