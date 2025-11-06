@@ -155,10 +155,6 @@ static int sb_io_dup2(sb_class_t *sbp, int oldfd, int newfd) {
     return CH_RET_EBADF;
   }
 
-  if (!sb_is_valid_descriptor(oldfd)) {
-    return CH_RET_EBADF;
-  }
-
   if (!sb_is_valid_descriptor(newfd)) {
     return CH_RET_EBADF;
   }
