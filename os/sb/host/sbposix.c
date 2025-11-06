@@ -239,7 +239,7 @@ static ssize_t sb_io_write(sb_class_t *sbp, int fd, const void *buf, size_t coun
 
 static off_t sb_io_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
 
-  if ((whence != SEEK_SET) || (whence == SEEK_CUR) || (whence != SEEK_END)) {
+  if ((whence != SEEK_SET) && (whence != SEEK_CUR) && (whence != SEEK_END)) {
     return CH_RET_EINVAL;
   }
 
@@ -257,7 +257,7 @@ static off_t sb_io_lseek(sb_class_t *sbp, int fd, off_t offset, int whence) {
 
   return vfsSetFilePosition((struct vfs_file_node *)sbp->io.vfs_nodes[fd],
                             offset,
-                            whence);;
+                            whence);
 }
 
 static ssize_t sb_io_getdents(sb_class_t *sbp, int fd, void *buf, size_t count) {

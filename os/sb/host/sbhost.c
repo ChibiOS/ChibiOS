@@ -443,20 +443,19 @@ static thread_t *sb_start_unprivileged(sb_class_t *sbp,
 size_t sb_strv_getsize(const char *v[], int *np) {
   const char* s;
   size_t size;
-  int n;
+  int n = 0;
 
   size = sizeof (const char *);
   if (v != NULL) {
-    n = 0;
     while ((s = *v) != NULL) {
       size += sizeof (const char *) + strlen(s) + (size_t)1;
       n++;
       v++;
     }
+  }
 
-    if (np != NULL) {
-      *np = n;
-    }
+  if (np != NULL) {
+    *np = n;
   }
 
   return MEM_ALIGN_NEXT(size, MEM_NATURAL_ALIGN);
