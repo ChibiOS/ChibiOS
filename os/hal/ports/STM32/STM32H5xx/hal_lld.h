@@ -101,6 +101,13 @@
 #define CLK_MCO1                20U
 #define CLK_MCO2                21U
 #define CLK_ARRAY_SIZE          22U
+
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "HSI", "CSI", "HSI48", "HSE", "SYSCLK", "PLL1P", "PLL1Q", "PLL1R",      \
+    "PLL2P", "PLL2Q", "PLL2R", "PLL3P", "PLL3Q", "PLL3R", "HCLK",           \
+    "PCLK1", "PCLK1TIM", "PCLK2", "PCLK2TIM", "PCLK3", "MCO1", "MCO2"       \
+  }
 #else
 #define CLK_HSI                 0U
 #define CLK_CSI                 1U
@@ -122,6 +129,13 @@
 #define CLK_MCO1                17U
 #define CLK_MCO2                18U
 #define CLK_ARRAY_SIZE          19U
+
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "HSI", "CSI", "HSI48", "HSE", "SYSCLK", "PLL1P", "PLL1Q", "PLL1R",      \
+    "PLL2P", "PLL2Q", "PLL2R", "HCLK", "PCLK1", "PCLK1TIM", "PCLK2",        \
+    "PCLK2TIM", "PCLK3", "MCO1", "MCO2"                                     \
+  }
 #endif
 /** @} */
 

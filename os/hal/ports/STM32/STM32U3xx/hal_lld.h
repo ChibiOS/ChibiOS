@@ -89,6 +89,12 @@
 #define CLK_MCO1                            12U
 #define CLK_MCO2                            13U
 #define CLK_ARRAY_SIZE                      14U
+
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "HSI16", "HSI48", "HSE", "MSIS", "MSIK", "SYSCLK", "HCLK",              \
+    "PCLK1", "PCLK1TIM", "PCLK2", "PCLK2TIM", "PCLK3", "MCO1", "MCO2"       \
+  }
 /** @} */
 
 /**

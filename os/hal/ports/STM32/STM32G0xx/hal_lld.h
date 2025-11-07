@@ -104,8 +104,18 @@
 #if STM32_RCC_HAS_MCO2 == TRUE
   #define CLK_MCO2               9U
   #define CLK_ARRAY_SIZE         10U
+  #define CLK_POINT_NAMES                                                   \
+    {                                                                       \
+      "SYSCLK", "HSISYS", "PLLP", "PLLQ", "PLLR", "HCLK",                   \
+      "PCLK", "PCLKTIM", "MCO", "MCO2"                                      \
+    }
 #else
   #define CLK_ARRAY_SIZE         9U
+  #define CLK_POINT_NAMES                                                   \
+    {                                                                       \
+      "SYSCLK", "HSISYS", "PLLP", "PLLQ", "PLLR", "HCLK",                   \
+      "PCLK", "PCLKTIM", "MCO"                                              \
+    }
 #endif
 /** @} */
 
@@ -2046,15 +2056,6 @@ typedef struct {
   uint32_t          rcc_pllcfgr;
   uint32_t          flash_acr;
 } halclkcfg_t;
-
-/**
- * @brief   Type of a clock switch-only structure.
- */
-typedef struct {
-  uint32_t          pwr_cr1;
-  uint32_t          rcc_cfgr;
-  uint32_t          flash_acr;
-} halclkswc_t;
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/

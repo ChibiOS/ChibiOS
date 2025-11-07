@@ -20,6 +20,7 @@
 #include "chprintf.h"
 #include "xshell.h"
 
+#include "clock_cmds.h"
 #include "portab.h"
 
 /*===========================================================================*/
@@ -80,8 +81,12 @@ static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
 }
 
 static const xshell_command_t commands[] = {
-  {"halt", cmd_halt},
-  {"write", cmd_write},
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
+  {"clock",     cmd_clock},
+#endif
+  {"clocks",    cmd_clocks},
+  {"halt",      cmd_halt},
+  {"write",     cmd_write},
   {NULL, NULL}
 };
 

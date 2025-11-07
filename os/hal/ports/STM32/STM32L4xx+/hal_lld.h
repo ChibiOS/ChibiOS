@@ -96,6 +96,13 @@
 #define CLK_PCLK2TIM            16U
 #define CLK_MCO                 17U
 #define CLK_ARRAY_SIZE          18U
+
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "SYSCLK", "MSI", "MSIS", "PLLP", "PLLQ", "PLLR",                        \
+    "PLLSAI1P", "PLLSAI1Q", "PLLSAI1R", "PLLSAI2P", "PLLSAI2Q", "PLLSAI2R," \
+    "HCLK", "PCLK1", "PCLK1TIM", "PCLK2", "PCLK2TIM", "MCO"                 \
+  }
 /** @} */
 
 /**
