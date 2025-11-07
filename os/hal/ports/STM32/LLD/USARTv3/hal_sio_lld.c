@@ -30,6 +30,11 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/* Bits not present on all implementations.*/
+#if !defined(USART_CR3_WUFIE)
+#define USART_CR3_WUFIE                     0U
+#endif
+
 #define USART_CR1_CFG_FORBIDDEN             (USART_CR1_RXFFIE           |   \
                                              USART_CR1_TXFEIE           |   \
                                              USART_CR1_FIFOEN           |   \
