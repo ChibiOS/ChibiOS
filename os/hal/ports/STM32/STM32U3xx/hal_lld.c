@@ -77,18 +77,25 @@ const halclkcfg_t hal_clkcfg_reset = {
  */
 const halclkcfg_t hal_clkcfg_default = {
   .pwr_vosr             = STM32_PWR_VOSR,
-  .rcc_cr               = 0U
-#if STM32_HSE_ENABLED
+  .rcc_cr               = STM32_MSIPLL0FAST | STM32_MSIPLL1FAST
+                        | STM32_MSIPLL0EN | STM32_MSIPLL1EN
+#if STM32_HSE_ENABLED == TRUE
                         | RCC_CR_HSEON
 #endif
 #if defined(STM32_HSE_BYPASS)
                         | RCC_CR_HSEBYP
 #endif
-#if STM32_HSI48_ENABLED
+#if STM32_HSI48_ENABLED == TRUE
                         | RCC_CR_HSI48ON
 #endif
-#if STM32_HSI16_ENABLED
-                        | RCC_CR_HSIKERON | RCC_CR_HSION
+#if STM32_HSI16_ENABLED == TRUE
+                        | RCC_CR_HSION | RCC_CR_HSIKERON
+#endif
+#if STM32_ACTIVATE_MSIS == TRUE
+                        | RCC_CR_MSISON
+#endif
+#if STM32_ACTIVATE_MSIK == TRUE
+                        | RCC_CR_MSIKON | RCC_CR_MSIKERON
 #endif
                           ,
   .rcc_icscr1           = STM32_MSISSEL     | STM32_MSISDIV     |
@@ -116,6 +123,10 @@ const halclkcfg_t hal_clkcfg_default = {
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Dynamic clock points for this device.
+ * @note    This array is pre-initialized with the defaults value because
+ *          clock_init() (called in early_init()) cannot initialize this
+ *          at runtime, successive DATA/BSS segment initialization would
+ *          overwrite it.
  */
 static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
 #if STM32_HSI16_ENABLED
@@ -143,6 +154,7 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
 #else
   [CLK_MSIK]            = 0U,
 #endif
+  [CLK_SYSCLK]          = STM32_SYSCLK,
   [CLK_HCLK]            = STM32_HCLK,
   [CLK_PCLK1]           = STM32_PCLK1,
   [CLK_PCLK1TIM]        = STM32_TIMP1CLK,
@@ -608,8 +620,8 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* MSI configuration (sources, dividers, bias). */
   RCC->ICSCR1 = (ccp->rcc_icscr1 | STM32_MSIRGSEL_ICSCR1);
 
-  /* Enabling required oscillators and MSIPLLs, HSI16 kept active. */
-  cr = ccp->rcc_cr | RCC_CR_HSION;
+  /* Enabling required oscillators and MSIPLLs, MSIS kept active. */
+  cr = ccp->rcc_cr | RCC_CR_MSISON;
   RCC->CR = cr;
 
   wtmask = 0U;
@@ -618,6 +630,9 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   }
   if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
     wtmask |= RCC_CR_HSI48RDY;
+  }
+  if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
+    wtmask |= RCC_CR_HSIRDY;
   }
   if ((ccp->rcc_cr & RCC_CR_MSISON) != 0U) {
     wtmask |= RCC_CR_MSISRDY;
@@ -734,7 +749,7 @@ void stm32_clock_init(void) {
   hal_lld_set_static_clocks();
 
   /* Selecting the default clock configuration. */
-  if (hal_lld_clock_switch_mode(&hal_clkcfg_default)) {
+  if (hal_lld_clock_raw_switch(&hal_clkcfg_default)) {
     osalSysHalt("clkswc");
   }
 
