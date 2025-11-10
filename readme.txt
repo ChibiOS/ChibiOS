@@ -88,8 +88,10 @@
 - NEW: Added to RT a dedicated functional safety module, the function
        chSysIntegrityCheckI() has been moved in this module and renamed to
        chSftIntegrityCheckI().
-- NEW: I2Cv4 support added to STM32C0xx, STM32G0xx, STM32G4xx families. This
-       driver only require one DMA channel vs two of the old implementations.
+- NEW: I2Cv4 support added to STM32C0xx, STM32G0xx, STM32G4xx, STM32L4xx+,
+       STM32U3xx families. This driver only requires one DMA channel vs two
+       of the old implementations.
+- NEW: Added STM32U3xx support.
 - NEW: Added multicore memory classes modifiers to RT in order to support
        NUMA architectures and non-coherent cache architectures.
 - NEW: Added MPU initialization settings in ARMv7-M, ARv7-M-ALT, ARMv8-ML-ALT
