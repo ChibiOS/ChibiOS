@@ -40,7 +40,7 @@
 #define STM32_PWR_VOSR_RESET            0x00020002U
 #define STM32_FLASH_ACR_RESET           0x00000001U
 #define STM32_RCC_CR_RESET              0x0000001DU
-#define STM32_RCC_ICSCR1_RESET          0U
+#define STM32_RCC_ICSCR1_RESET          0xB4000000U
 #define STM32_RCC_CFGR1_RESET           0U
 #define STM32_RCC_CFGR2_RESET           0U
 #define STM32_RCC_CFGR3_RESET           0U
