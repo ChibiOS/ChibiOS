@@ -443,8 +443,6 @@ typedef struct adc_dmabuf {
 #define adc_lld_config_fields                                               \
   /* ADC DIFSEL register initialization data.*/                             \
   uint32_t                          difsel;                                 \
-  /* Calibration mode, specify ADCCALIN and/or ADCCALDIF bits in here.*/    \
-  uint32_t                          calibration;                            \
   /* DMA extra CTR1 settings.*/                                             \
   uint32_t                          dmactr1;                                \
   /* DMA extra CTR2 settings.*/                                             \

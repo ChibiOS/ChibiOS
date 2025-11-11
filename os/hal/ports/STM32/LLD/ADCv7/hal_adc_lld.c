@@ -72,7 +72,6 @@ ADCDriver ADCD2;
 
 static const ADCConfig default_config = {
   .difsel      = 0U,
-  .calibration = 0U,
   .dmactr1     = 0U,
   .dmactr2     = 0U
 };

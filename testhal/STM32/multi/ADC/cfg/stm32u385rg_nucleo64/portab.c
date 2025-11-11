@@ -46,7 +46,8 @@ const GPTConfig portab_gptcfg1 = {
 
 const ADCConfig portab_adccfg1 = {
   .difsel       = 0U,
-  .calibration  = 0U
+  .dmactr1      = 0U,
+  .dmactr2      = 0U
 };
 
 void adccallback(ADCDriver *adcp);
