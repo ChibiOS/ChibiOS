@@ -98,58 +98,59 @@
  * @name    Sampling rates
  * @{
  */
-#define ADC_SMPR_SMP_2P5        0U  /**< @brief 15 cycles conversion time.  */
-#define ADC_SMPR_SMP_6P5        1U  /**< @brief 19 cycles conversion time.  */
-#define ADC_SMPR_SMP_12P5       2U  /**< @brief 25 cycles conversion time.  */
-#define ADC_SMPR_SMP_24P5       3U  /**< @brief 37 cycles conversion time.  */
-#define ADC_SMPR_SMP_47P5       4U  /**< @brief 60 cycles conversion time.  */
-#define ADC_SMPR_SMP_92P5       5U  /**< @brief 105 cycles conversion time. */
-#define ADC_SMPR_SMP_247P5      6U  /**< @brief 260 cycles conversion time. */
-#define ADC_SMPR_SMP_640P5      7U  /**< @brief 653 cycles conversion time. */
+#define ADC_SMPR_SMP_1P5        0U  /**< @brief 14 cycles conversion time.  */
+#define ADC_SMPR_SMP_2P5        1U  /**< @brief 15 cycles conversion time.  */
+#define ADC_SMPR_SMP_6P5        2U  /**< @brief 19 cycles conversion time.  */
+#define ADC_SMPR_SMP_11P5       3U  /**< @brief 24 cycles conversion time.  */
+#define ADC_SMPR_SMP_23P5       4U  /**< @brief 36 cycles conversion time.  */
+#define ADC_SMPR_SMP_46P5       5U  /**< @brief 59 cycles conversion time.  */
+#define ADC_SMPR_SMP_246P5      6U  /**< @brief 259 cycles conversion time. */
+#define ADC_SMPR_SMP_1499P5     7U  /**< @brief 1512 cycles conversion time.*/
 /** @} */
 
 /**
  * @name    CFGR1 register configuration helpers
  * @{
  */
-#define ADC_CFGR_DMNGT_MASK             ADC_CFGR1_DMNGT_Msk
-#define ADC_CFGR_DMNGT_NODMA            (0U << ADC_CFGR1_DMNGT_Pos)
-#define ADC_CFGR_DMNGT_ONESHOT          (1U << ADC_CFGR1_DMNGT_Pos)
-#define ADC_CFGR_DMNGT_DFSDM            (2U << ADC_CFGR1_DMNGT_Pos)
-#define ADC_CFGR_DMNGT_CIRCULAR         (3U << ADC_CFGR1_DMNGT_Pos)
-#define ADC_CFGR_DMNGT_DR_ONLY          ADC_CFGR_DMNGT_NODMA
+#define ADC_CFGR1_DMNGT_MASK            ADC_CFGR1_DMNGT_Msk
+#define ADC_CFGR1_DMNGT_NODMA           (0U << ADC_CFGR1_DMNGT_Pos)
+#define ADC_CFGR1_DMNGT_ONESHOT         (1U << ADC_CFGR1_DMNGT_Pos)
+#define ADC_CFGR1_DMNGT_DFSDM           (2U << ADC_CFGR1_DMNGT_Pos)
+#define ADC_CFGR1_DMNGT_CIRCULAR        (3U << ADC_CFGR1_DMNGT_Pos)
+#define ADC_CFGR1_DMNGT_DR_ONLY         ADC_CFGR1_DMNGT_NODMA
 
-#define ADC_CFGR_RES_MASK               ADC_CFGR1_RES_Msk
-#define ADC_CFGR_RES_12BITS             (0U << ADC_CFGR1_RES_Pos)
-#define ADC_CFGR_RES_10BITS             (1U << ADC_CFGR1_RES_Pos)
-#define ADC_CFGR_RES_8BITS              (2U << ADC_CFGR1_RES_Pos)
-#define ADC_CFGR_RES_6BITS              (3U << ADC_CFGR1_RES_Pos)
+#define ADC_CFGR1_RES_MASK              ADC_CFGR1_RES_Msk
+#define ADC_CFGR1_RES_12BITS            (0U << ADC_CFGR1_RES_Pos)
+#define ADC_CFGR1_RES_10BITS            (1U << ADC_CFGR1_RES_Pos)
+#define ADC_CFGR1_RES_8BITS             (2U << ADC_CFGR1_RES_Pos)
+#define ADC_CFGR1_RES_6BITS             (3U << ADC_CFGR1_RES_Pos)
 
-#define ADC_CFGR_EXTSEL_MASK            ADC_CFGR1_EXTSEL_Msk
-#define ADC_CFGR_EXTSEL_SRC(n)          ((uint32_t)(n) << ADC_CFGR1_EXTSEL_Pos)
+#define ADC_CFGR1_EXTSEL_MASK           ADC_CFGR1_EXTSEL_Msk
+#define ADC_CFGR1_EXTSEL_SRC(n)         ((uint32_t)(n) << ADC_CFGR1_EXTSEL_Pos)
 
-#define ADC_CFGR_EXTEN_MASK             ADC_CFGR1_EXTEN_Msk
-#define ADC_CFGR_EXTEN_DISABLED         (0U << ADC_CFGR1_EXTEN_Pos)
-#define ADC_CFGR_EXTEN_RISING           (1U << ADC_CFGR1_EXTEN_Pos)
-#define ADC_CFGR_EXTEN_FALLING          (2U << ADC_CFGR1_EXTEN_Pos)
-#define ADC_CFGR_EXTEN_BOTH             (3U << ADC_CFGR1_EXTEN_Pos)
+#define ADC_CFGR1_EXTEN_MASK            ADC_CFGR1_EXTEN_Msk
+#define ADC_CFGR1_EXTEN_DISABLED        (0U << ADC_CFGR1_EXTEN_Pos)
+#define ADC_CFGR1_EXTEN_RISING          (1U << ADC_CFGR1_EXTEN_Pos)
+#define ADC_CFGR1_EXTEN_FALLING         (2U << ADC_CFGR1_EXTEN_Pos)
+#define ADC_CFGR1_EXTEN_BOTH            (3U << ADC_CFGR1_EXTEN_Pos)
 
-#define ADC_CFGR_OVRMOD_PRESERVE        (0U << ADC_CFGR1_OVRMOD_Pos)
-#define ADC_CFGR_OVRMOD_OVERWRITE       (1U << ADC_CFGR1_OVRMOD_Pos)
+#define ADC_CFGR1_OVRMOD_PRESERVE       (0U << ADC_CFGR1_OVRMOD_Pos)
+#define ADC_CFGR1_OVRMOD_OVERWRITE      (1U << ADC_CFGR1_OVRMOD_Pos)
 
-#define ADC_CFGR_CONT_DISABLED          (0U << ADC_CFGR1_CONT_Pos)
-#define ADC_CFGR_CONT_ENABLED           (1U << ADC_CFGR1_CONT_Pos)
+#define ADC_CFGR1_CONT_DISABLED         (0U << ADC_CFGR1_CONT_Pos)
+#define ADC_CFGR1_CONT_ENABLED          (1U << ADC_CFGR1_CONT_Pos)
 
-#define ADC_CFGR_DISCEN_DISABLED        (0U << ADC_CFGR1_DISCEN_Pos)
-#define ADC_CFGR_DISCEN_ENABLED         (1U << ADC_CFGR1_DISCEN_Pos)
+#define ADC_CFGR1_DISCEN_DISABLED       (0U << ADC_CFGR1_DISCEN_Pos)
+#define ADC_CFGR1_DISCEN_ENABLED        (1U << ADC_CFGR1_DISCEN_Pos)
 
-#define ADC_CFGR_DISCNUM_VAL(n)         ((uint32_t)(n) << ADC_CFGR1_DISCNUM_Pos)
+#define ADC_CFGR1_DISCNUM_MASK          ADC_CFGR1_DISCNUM_Msk
+#define ADC_CFGR1_DISCNUM_VAL(n)        ((uint32_t)(n) << ADC_CFGR1_DISCNUM_Pos)
 
-#define ADC_CFGR_AWD1_DISABLED          0U
-#define ADC_CFGR_AWD1_ALL               (1U << ADC_CFGR1_AWD1EN_Pos)
-#define ADC_CFGR_AWD1_SINGLE(n)         (((uint32_t)(n) << ADC_CFGR1_AWD1CH_Pos) | \
-                                         (1U << ADC_CFGR1_AWD1EN_Pos)           | \
-                                         (1U << ADC_CFGR1_AWD1SGL_Pos))
+#define ADC_CFGR1_AWD1_DISABLED         0U
+#define ADC_CFGR1_AWD1_ALL              (1U << ADC_CFGR1_AWD1EN_Pos)
+#define ADC_CFGR1_AWD1_SINGLE(n)        (((uint32_t)(n) << ADC_CFGR1_AWD1CH_Pos) | \
+                                         ADC_CFGR1_AWD1EN |                 \
+                                         ADC_CFGR1_AWD1SGL)
 /** @} */
 
 /**
@@ -159,31 +160,9 @@
 #define ADC_CCR_DUAL_FIELD(n)           ((uint32_t)(n) << ADC_CCR_DUAL_Pos)
 #define ADC_CCR_DELAY_FIELD(n)          ((uint32_t)(n) << ADC_CCR_DELAY_Pos)
 
-#define ADC_CCR_DAMDF_MASK              ADC_CCR_DAMDF_Msk
 #define ADC_CCR_DAMDF_DISABLED          (0U << ADC_CCR_DAMDF_Pos)
 #define ADC_CCR_DAMDF_HWORD             (2U << ADC_CCR_DAMDF_Pos)
 #define ADC_CCR_DAMDF_BYTE              (3U << ADC_CCR_DAMDF_Pos)
-
-#define ADC_CCR_CKMODE_MASK             ADC_CCR_CKMODE_Msk
-#define ADC_CCR_CKMODE_ADCCK            (0U << ADC_CCR_CKMODE_Pos)
-#define ADC_CCR_CKMODE_AHB_DIV1         (1U << ADC_CCR_CKMODE_Pos)
-#define ADC_CCR_CKMODE_AHB_DIV2         (2U << ADC_CCR_CKMODE_Pos)
-#define ADC_CCR_CKMODE_AHB_DIV4         (3U << ADC_CCR_CKMODE_Pos)
-
-#define ADC_CCR_PRESC_MASK              ADC_CCR_PRESC_Msk
-#define ADC_CCR_PRESC_FIELD(n)          ((uint32_t)(n) << ADC_CCR_PRESC_Pos)
-#define ADC_CCR_PRESC_NOCLOCK           ADC_CCR_PRESC_FIELD(0U)
-#define ADC_CCR_PRESC_DIV2              ADC_CCR_PRESC_FIELD(1U)
-#define ADC_CCR_PRESC_DIV4              ADC_CCR_PRESC_FIELD(2U)
-#define ADC_CCR_PRESC_DIV6              ADC_CCR_PRESC_FIELD(3U)
-#define ADC_CCR_PRESC_DIV8              ADC_CCR_PRESC_FIELD(4U)
-#define ADC_CCR_PRESC_DIV10             ADC_CCR_PRESC_FIELD(5U)
-#define ADC_CCR_PRESC_DIV12             ADC_CCR_PRESC_FIELD(6U)
-#define ADC_CCR_PRESC_DIV16             ADC_CCR_PRESC_FIELD(7U)
-#define ADC_CCR_PRESC_DIV32             ADC_CCR_PRESC_FIELD(8U)
-#define ADC_CCR_PRESC_DIV64             ADC_CCR_PRESC_FIELD(9U)
-#define ADC_CCR_PRESC_DIV128            ADC_CCR_PRESC_FIELD(10U)
-#define ADC_CCR_PRESC_DIV256            ADC_CCR_PRESC_FIELD(11U)
 /** @} */
 
 /*===========================================================================*/
@@ -269,20 +248,6 @@
  */
 #if !defined(STM32_ADC_ADC2_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC2_IRQ_PRIORITY         5
-#endif
-
-/**
- * @brief   ADC common clock source and mode for ADC1/ADC2.
- */
-#if !defined(STM32_ADC_ADC12_CLOCK_MODE) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_CLOCK_MODE          ADC_CCR_CKMODE_AHB_DIV4
-#endif
-
-/**
- * @brief   ADC prescaler field value written into CCR.
- */
-#if !defined(STM32_ADC_ADC12_PRESC) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC12_PRESC               ADC_CCR_PRESC_DIV2
 #endif
 /** @} */
 
@@ -397,58 +362,6 @@
 #else
 #define ADC_SAMPLE_MULTIPLIER             2U
 #endif
-#endif
-
-/* ADC clock prescaler checks.*/
-#if STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV2
-#define ADC12_PRESC_VALUE                 2U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV4
-#define ADC12_PRESC_VALUE                 4U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV6
-#define ADC12_PRESC_VALUE                 6U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV8
-#define ADC12_PRESC_VALUE                 8U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV10
-#define ADC12_PRESC_VALUE                 10U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV12
-#define ADC12_PRESC_VALUE                 12U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV16
-#define ADC12_PRESC_VALUE                 16U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV32
-#define ADC12_PRESC_VALUE                 32U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV64
-#define ADC12_PRESC_VALUE                 64U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV128
-#define ADC12_PRESC_VALUE                 128U
-#elif STM32_ADC_ADC12_PRESC == ADC_CCR_PRESC_DIV256
-#define ADC12_PRESC_VALUE                 256U
-#else
-#error "invalid clock divider selected for STM32_ADC_ADC12_PRESC"
-#endif
-
-/* ADC clock source checks.*/
-#if STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_ADCCK
-#define STM32_ADC1_CLOCK                (STM32_ADCDACCLK / ADC12_PRESC_VALUE)
-#define STM32_ADC2_CLOCK                (STM32_ADCDACCLK / ADC12_PRESC_VALUE)
-#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV1
-#define STM32_ADC1_CLOCK                (STM32_HCLK / 1U)
-#define STM32_ADC2_CLOCK                (STM32_HCLK / 1U)
-#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV2
-#define STM32_ADC1_CLOCK                (STM32_HCLK / 2U)
-#define STM32_ADC2_CLOCK                (STM32_HCLK / 2U)
-#elif STM32_ADC_ADC12_CLOCK_MODE == ADC_CCR_CKMODE_AHB_DIV4
-#define STM32_ADC1_CLOCK                (STM32_HCLK / 4U)
-#define STM32_ADC2_CLOCK                (STM32_HCLK / 4U)
-#else
-#error "invalid clock mode selected for STM32_ADC_ADC12_CLOCK_MODE"
-#endif
-
-#if STM32_ADC1_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC1_CLOCK exceeding maximum frequency"
-#endif
-
-#if STM32_ADC2_CLOCK > STM32_ADCCLK_MAX
-#error "STM32_ADC2_CLOCK exceeding maximum frequency"
 #endif
 
 #if !defined(STM32_DMA3_REQUIRED)
@@ -624,6 +537,50 @@ typedef struct adc_dmabuf {
 #define ADC_SQR4_SQ16_N(n)      ((uint32_t)(n) << 6U)
 #define ADC_SQR4_SQ17_N(n)      ((uint32_t)(n) << 12U)
 #define ADC_SQR4_SQ18_N(n)      ((uint32_t)(n) << 18U)
+/** @} */
+
+/**
+ * @name    Sampling rate settings helper macros
+ * @{
+ */
+#define ADC_SMPR1_SMP_AN0(n)    ((n) << 0U) /**< @brief AN0 sampling time.  */
+#define ADC_SMPR1_SMP_AN1(n)    ((n) << 3U) /**< @brief AN1 sampling time.  */
+#define ADC_SMPR1_SMP_AN2(n)    ((n) << 6U) /**< @brief AN2 sampling time.  */
+#define ADC_SMPR1_SMP_AN3(n)    ((n) << 9U) /**< @brief AN3 sampling time.  */
+#define ADC_SMPR1_SMP_AN4(n)    ((n) << 12U)/**< @brief AN4 sampling time.  */
+#define ADC_SMPR1_SMP_AN5(n)    ((n) << 15U)/**< @brief AN5 sampling time.  */
+#define ADC_SMPR1_SMP_AN6(n)    ((n) << 18U)/**< @brief AN6 sampling time.  */
+#define ADC_SMPR1_SMP_AN7(n)    ((n) << 21U)/**< @brief AN7 sampling time.  */
+#define ADC_SMPR1_SMP_AN8(n)    ((n) << 24U)/**< @brief AN8 sampling time.  */
+#define ADC_SMPR1_SMP_AN9(n)    ((n) << 27U)/**< @brief AN9 sampling time.  */
+
+#define ADC_SMPR2_SMP_AN10(n)   ((n) << 0U) /**< @brief AN10 sampling time. */
+#define ADC_SMPR2_SMP_AN11(n)   ((n) << 3U) /**< @brief AN11 sampling time. */
+#define ADC_SMPR2_SMP_AN12(n)   ((n) << 6U) /**< @brief AN12 sampling time. */
+#define ADC_SMPR2_SMP_AN13(n)   ((n) << 9U) /**< @brief AN13 sampling time. */
+#define ADC_SMPR2_SMP_AN14(n)   ((n) << 12U)/**< @brief AN14 sampling time. */
+#define ADC_SMPR2_SMP_AN15(n)   ((n) << 15U)/**< @brief AN15 sampling time. */
+#define ADC_SMPR2_SMP_AN16(n)   ((n) << 18U)/**< @brief AN16 sampling time. */
+#define ADC_SMPR2_SMP_AN17(n)   ((n) << 21U)/**< @brief AN17 sampling time. */
+#define ADC_SMPR2_SMP_AN18(n)   ((n) << 24U)/**< @brief AN18 sampling time. */
+#define ADC_SMPR2_SMP_AN19(n)   ((n) << 27U)/**< @brief AN19 sampling time. */
+/** @} */
+
+/**
+ * @name    Analog watchdog settings helper macros
+ * @{
+ */
+#define ADC_CFGR_AWD1_N(n)      ((n) << 26U)/**< @brief AWD1 channel number */
+#define ADC_AWD23_MASK(n)       (1U << (n)) /**< @brief AWD2/3 channels mask*/
+/** @} */
+
+/**
+ * @name    Oversampling settings helper macros
+ * @{
+ */
+#define ADC_CFGR2_OVSS_N(n)     ((n) << 5U)/**< @brief ovsr right shift */
+#define ADC_CFGR2_OVSR_N(n)     ((n) << 16U)/**< @brief oversampling ratio */
+#define ADC_CFGR2_LSHIFT_N(n)   ((n) << 28U)/**< @brief ovsr left shift */
 /** @} */
 
 /*===========================================================================*/

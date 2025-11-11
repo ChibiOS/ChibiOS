@@ -131,14 +131,6 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
 
   osalDbgAssert(adcp->adcm->CR == ADC_CR_ADVREGEN, "invalid register state");
 
-  /* Differential calibration for master ADC.*/
-  adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
-  adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF | ADC_CR_ADCAL;
-  while ((adcp->adcm->CR & ADC_CR_ADCAL) != 0U) {
-  }
-
-  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20U));
-
   /* Single-ended calibration for master ADC.*/
   adcp->adcm->CR = ADC_CR_ADVREGEN;
   adcp->adcm->CR = ADC_CR_ADVREGEN | ADC_CR_ADCAL;
@@ -149,14 +141,6 @@ static void adc_lld_calibrate(ADCDriver *adcp) {
 
 #if STM32_ADC_DUAL_MODE
   osalDbgAssert(adcp->adcs->CR == ADC_CR_ADVREGEN, "invalid register state");
-
-  /* Differential calibration for slave ADC.*/
-  adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF;
-  adcp->adcs->CR = ADC_CR_ADVREGEN | ADC_CR_ADCALDIF | ADC_CR_ADCAL;
-  while ((adcp->adcs->CR & ADC_CR_ADCAL) != 0U) {
-  }
-
-  osalSysPolledDelayX(OSAL_US2RTC(STM32_HCLK, 20U));
 
   /* Single-ended calibration for slave ADC.*/
   adcp->adcs->CR = ADC_CR_ADVREGEN;
@@ -390,10 +374,6 @@ void adc_lld_init(void) {
 
 #if STM32_ADC_USE_ADC1 || STM32_ADC_USE_ADC2
   rccResetADC12();
-  rccEnableADC12(true);
-  ADC12_COMMON->CCR = STM32_ADC_ADC12_PRESC | STM32_ADC_ADC12_CLOCK_MODE |
-                      ADC_CCR_DAMDF_DISABLED;
-  rccDisableADC12();
 #endif
 }
 
@@ -503,10 +483,10 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   uint32_t cfgr1;
   uint32_t dmaccr;
   uint32_t dmallr;
+  uint32_t ccr;
   const ADCConversionGroup *grpp = adcp->grpp;
+
 #if STM32_ADC_DUAL_MODE
-  uint32_t ccr = grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_DAMDF_MASK |
-                               ADC_CCR_PRESC_MASK);
   osalDbgAssert((grpp->num_channels & 1U) == 0U, "odd number of channels");
 #endif
 
@@ -518,9 +498,9 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
            STM32_DMA3_CCR_DTEIE                       |
            STM32_DMA3_CCR_TCIE;
 
-  cfgr1 = grpp->cfgr & ~ADC_CFGR_DMNGT_MASK;
+  cfgr1 = grpp->cfgr & ~ADC_CFGR1_DMNGT_MASK;
   if (grpp->circular) {
-    cfgr1 |= ADC_CFGR_DMNGT_CIRCULAR;
+    cfgr1 |= ADC_CFGR1_DMNGT_CIRCULAR;
     dmallr = STM32_DMA3_CLLR_UDA |
              (((uint32_t)&adcp->dbuf->cdar) & 0xFFFFU);
     adcp->dbuf->cdar = (uint32_t)adcp->samples;
@@ -529,7 +509,7 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
     }
   }
   else {
-    cfgr1 |= ADC_CFGR_DMNGT_ONESHOT;
+    cfgr1 |= ADC_CFGR1_DMNGT_ONESHOT;
     dmallr = 0U;
   }
 
@@ -595,9 +575,10 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
 #endif
 
 #if STM32_ADC_DUAL_MODE
-  adcp->adcc->CCR = (adcp->adcc->CCR &
-                     (ADC_CCR_CKMODE_MASK | ADC_CCR_PRESC_MASK)) |
-                    ccr | ADC_CCR_DAMDF_MODE;
+  ccr = adcp->adcc->CCR;
+  ccr &= ~ADC_CCR_DAMDF_Msk;
+  ccr |= (grpp->ccr & ~ADC_CCR_DAMDF_Msk) | ADC_CCR_DAMDF_MODE;
+  adcp->adcc->CCR = ccr;
   adcp->adcm->PCSEL = grpp->pcsel;
   adcp->adcm->SMPR1 = grpp->smpr[0];
   adcp->adcm->SMPR2 = grpp->smpr[1];
@@ -614,14 +595,14 @@ void adc_lld_start_conversion(ADCDriver *adcp) {
   adcp->adcs->SQR2  = grpp->ssqr[1];
   adcp->adcs->SQR3  = grpp->ssqr[2];
   adcp->adcs->SQR4  = grpp->ssqr[3];
-  adcp->adcs->CFGR1 = (grpp->cfgr & ~ADC_CFGR_DMNGT_MASK) |
-                      ADC_CFGR_DMNGT_DR_ONLY;
+  adcp->adcs->CFGR1 = (grpp->cfgr & ~ADC_CFGR1_DMNGT_MASK) |
+                      ADC_CFGR1_DMNGT_DR_ONLY;
   adcp->adcs->CFGR2 = grpp->cfgr2;
 #else
-  adcp->adcc->CCR = (adcp->adcc->CCR &
-                     (ADC_CCR_CKMODE_MASK | ADC_CCR_PRESC_MASK)) |
-                    (grpp->ccr & ~(ADC_CCR_CKMODE_MASK | ADC_CCR_DAMDF_MASK)) |
-                    ADC_CCR_DAMDF_DISABLED;
+  ccr = adcp->adcc->CCR;
+  ccr &= ~ADC_CCR_DAMDF_Msk;
+  ccr |= (grpp->ccr & ~ADC_CCR_DAMDF_Msk) | ADC_CCR_DAMDF_DISABLED;
+  adcp->adcc->CCR = ccr;
   adcp->adcm->PCSEL = grpp->pcsel;
   adcp->adcm->SMPR1 = grpp->smpr[0];
   adcp->adcm->SMPR2 = grpp->smpr[1];

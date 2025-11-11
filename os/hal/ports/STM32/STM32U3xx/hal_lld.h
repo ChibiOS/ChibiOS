@@ -2394,7 +2394,7 @@
   #define STM32_ADCDACCLK           STM32_HSECLK
 
 #elif STM32_ADCDACSEL == STM32_ADCDACSEL_MSIK
-  #define STM32_ADCDACCLK           hal_lld_get_clock_point(CLK_HCLK)
+  #define STM32_ADCDACCLK           hal_lld_get_clock_point(CLK_MSIK)
 
 #else
   #error "invalid source selected for ADCDACSEL clock"
@@ -2510,6 +2510,21 @@
 #else
   #define STM32_FLASHBITS           STM32_ACR_LATENCY_5WS
 #endif
+
+/**
+ * @brief   ADC1 clock frequency
+ */
+#define STM32_ADC1_CLOCK            STM32_ADCDACCLK
+
+/**
+ * @brief   ADC2 clock frequency
+ */
+#define STM32_ADC2_CLOCK            STM32_ADCDACCLK
+
+/**
+ * @brief   DAC1 clock frequency
+ */
+#define STM32_DAC1_CLOCK            STM32_ADCDACCLK
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

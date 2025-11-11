@@ -764,7 +764,6 @@ typedef union {
 #define ADC_CFGR2_OVSS_N(n)     ((n) << 5U)/**< @brief ovsr right shift */
 #define ADC_CFGR2_OVSR_N(n)     ((n) << 16U)/**< @brief oversampling ratio */
 #define ADC_CFGR2_LSHIFT_N(n)   ((n) << 28U)/**< @brief ovsr left shift */
-
 /** @} */
 
 /*===========================================================================*/
