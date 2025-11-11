@@ -441,8 +441,6 @@ typedef struct adc_dmabuf {
  * @brief   Low level fields of the ADC configuration structure.
  */
 #define adc_lld_config_fields                                               \
-  /* ADC DIFSEL register initialization data.*/                             \
-  uint32_t                          difsel;                                 \
   /* DMA extra CTR1 settings.*/                                             \
   uint32_t                          dmactr1;                                \
   /* DMA extra CTR2 settings.*/                                             \

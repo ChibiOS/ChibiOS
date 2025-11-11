@@ -45,7 +45,6 @@ const GPTConfig portab_gptcfg1 = {
 };
 
 const ADCConfig portab_adccfg1 = {
-  .difsel       = 0U,
   .dmactr1      = 0U,
   .dmactr2      = 0U
 };
@@ -71,12 +70,14 @@ const ADCConversionGroup portab_adcgrpcfg1 = {
   .cfgr2        = 0U,
   .ccr          = 0U,
   .pcsel        = ADC_SELMASK_IN0 | ADC_SELMASK_IN5,
-  .ltr1         = 0x00000000U,
-  .htr1         = 0x03FFFFFFU,
-  .ltr2         = 0x00000000U,
-  .htr2         = 0x03FFFFFFU,
-  .ltr3         = 0x00000000U,
-  .htr3         = 0x03FFFFFFU,
+  .ltr1         = 0U,
+  .htr1         = 0U,
+  .ltr2         = 0U,
+  .htr2         = 0U,
+  .ltr3         = 0U,
+  .htr3         = 0U,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
   .smpr         = {
     ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_246P5) |
     ADC_SMPR1_SMP_AN5(ADC_SMPR_SMP_246P5),
@@ -105,12 +106,14 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
   .cfgr2        = 0U,
   .ccr          = 0U,
   .pcsel        = ADC_SELMASK_IN0 | ADC_SELMASK_IN5,
-  .ltr1         = 0x00000000U,
-  .htr1         = 0x03FFFFFFU,
-  .ltr2         = 0x00000000U,
-  .htr2         = 0x03FFFFFFU,
-  .ltr3         = 0x00000000U,
-  .htr3         = 0x03FFFFFFU,
+  .ltr1         = 0U,
+  .htr1         = 0U,
+  .ltr2         = 0U,
+  .htr2         = 0U,
+  .ltr3         = 0U,
+  .htr3         = 0U,
+  .awd2cr       = 0U,
+  .awd3cr       = 0U,
   .smpr         = {
     ADC_SMPR1_SMP_AN0(ADC_SMPR_SMP_246P5) |
     ADC_SMPR1_SMP_AN5(ADC_SMPR_SMP_246P5),
@@ -143,8 +146,8 @@ const ADCConversionGroup portab_adcgrpcfg2 = {
 void portab_setup(void) {
 
   /* ADC inputs.*/
-  palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG);
-  palSetPadMode(GPIOB, 1, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(GPIOC, 0, PAL_MODE_INPUT_ANALOG);
+  palSetPadMode(GPIOC, 1, PAL_MODE_INPUT_ANALOG);
 }
 
 /** @} */

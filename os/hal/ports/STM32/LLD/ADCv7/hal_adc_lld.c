@@ -71,7 +71,6 @@ ADCDriver ADCD2;
 /*===========================================================================*/
 
 static const ADCConfig default_config = {
-  .difsel      = 0U,
   .dmactr1     = 0U,
   .dmactr2     = 0U
 };
@@ -422,11 +421,6 @@ msg_t adc_lld_start(ADCDriver *adcp) {
       clkmask |= 2U;
       rccEnableADC12(true);
     }
-#endif
-
-    adcp->adcm->DIFSEL = adcp->config->difsel;
-#if STM32_ADC_DUAL_MODE
-    adcp->adcs->DIFSEL = adcp->config->difsel;
 #endif
 
     adc_lld_vreg_on(adcp);
