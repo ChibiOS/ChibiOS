@@ -27,28 +27,68 @@
 /*===========================================================================*/
 
 /**
- * @name    HPRE field bits definitions
+ * @name    HPRE field bits definitions (legacy)
  * @{
  */
 #if defined(RCC_CFGR_HPRE_Pos)
-#define STM32_HPRE_POS          RCC_CFGR_HPRE_Pos
-#define STM32_HPRE_MASK         RCC_CFGR_HPRE_Msk
+#define STM32_HPRE_POS                      RCC_CFGR_HPRE_Pos
+#define STM32_HPRE_MASK                     RCC_CFGR_HPRE_Msk
+
 #elif defined(RCC_CFGR2_HPRE_Pos)
-#define STM32_HPRE_POS          RCC_CFGR2_HPRE_Pos
-#define STM32_HPRE_MASK         RCC_CFGR2_HPRE_Msk
+#define STM32_HPRE_POS                      RCC_CFGR2_HPRE_Pos
+#define STM32_HPRE_MASK                     RCC_CFGR2_HPRE_Msk
+
 #else
 #error "unknown register name"
 #endif
-#define STM32_HPRE_FIELD(n)     ((n) << STM32_HPRE_POS)
-#define STM32_HPRE_DIV1         STM32_HPRE_FIELD(0U)
-#define STM32_HPRE_DIV2         STM32_HPRE_FIELD(8U)
-#define STM32_HPRE_DIV4         STM32_HPRE_FIELD(9U)
-#define STM32_HPRE_DIV8         STM32_HPRE_FIELD(10U)
-#define STM32_HPRE_DIV16        STM32_HPRE_FIELD(11U)
-#define STM32_HPRE_DIV64        STM32_HPRE_FIELD(12U)
-#define STM32_HPRE_DIV128       STM32_HPRE_FIELD(13U)
-#define STM32_HPRE_DIV256       STM32_HPRE_FIELD(14U)
-#define STM32_HPRE_DIV512       STM32_HPRE_FIELD(15U)
+
+#define STM32_HPRE_FIELD(n)                 ((n) << STM32_HPRE_POS)
+#define STM32_HPRE_DIV1                     STM32_HPRE_FIELD(0U)
+#define STM32_HPRE_DIV2                     STM32_HPRE_FIELD(8U)
+#define STM32_HPRE_DIV4                     STM32_HPRE_FIELD(9U)
+#define STM32_HPRE_DIV8                     STM32_HPRE_FIELD(10U)
+#define STM32_HPRE_DIV16                    STM32_HPRE_FIELD(11U)
+#define STM32_HPRE_DIV64                    STM32_HPRE_FIELD(12U)
+#define STM32_HPRE_DIV128                   STM32_HPRE_FIELD(13U)
+#define STM32_HPRE_DIV256                   STM32_HPRE_FIELD(14U)
+#define STM32_HPRE_DIV512                   STM32_HPRE_FIELD(15U)
+/** @} */
+
+/**
+ * @name    HPRE field helpers
+ * @{
+ */
+#if defined(RCC_CFGR_HPRE_Pos)
+#define RCC_CFGR_HPRE_FIELD(n)              ((n) << RCC_CFGR_HPRE_Pos)
+#if !defined(RCC_CFGR_HPRE_DIV1)
+#define RCC_CFGR_HPRE_DIV1                  RCC_CFGR_HPRE_FIELD(0U)
+#define RCC_CFGR_HPRE_DIV2                  RCC_CFGR_HPRE_FIELD(8U)
+#define RCC_CFGR_HPRE_DIV4                  RCC_CFGR_HPRE_FIELD(9U)
+#define RCC_CFGR_HPRE_DIV8                  RCC_CFGR_HPRE_FIELD(10U)
+#define RCC_CFGR_HPRE_DIV16                 RCC_CFGR_HPRE_FIELD(11U)
+#define RCC_CFGR_HPRE_DIV64                 RCC_CFGR_HPRE_FIELD(12U)
+#define RCC_CFGR_HPRE_DIV128                RCC_CFGR_HPRE_FIELD(13U)
+#define RCC_CFGR_HPRE_DIV256                RCC_CFGR_HPRE_FIELD(14U)
+#define RCC_CFGR_HPRE_DIV512                RCC_CFGR_HPRE_FIELD(15U)
+#endif
+
+#elif defined(RCC_CFGR2_HPRE_Pos)
+#define RCC_CFGR2_HPRE_FIELD(n)             ((n) << RCC_CFGR2_HPRE_Pos)
+#if !defined(RCC_CFGR2_HPRE_DIV1)
+#define RCC_CFGR2_HPRE_DIV1                 RCC_CFGR2_HPRE_FIELD(0U)
+#define RCC_CFGR2_HPRE_DIV2                 RCC_CFGR2_HPRE_FIELD(8U)
+#define RCC_CFGR2_HPRE_DIV4                 RCC_CFGR2_HPRE_FIELD(9U)
+#define RCC_CFGR2_HPRE_DIV8                 RCC_CFGR2_HPRE_FIELD(10U)
+#define RCC_CFGR2_HPRE_DIV16                RCC_CFGR2_HPRE_FIELD(11U)
+#define RCC_CFGR2_HPRE_DIV64                RCC_CFGR2_HPRE_FIELD(12U)
+#define RCC_CFGR2_HPRE_DIV128               RCC_CFGR2_HPRE_FIELD(13U)
+#define RCC_CFGR2_HPRE_DIV256               RCC_CFGR2_HPRE_FIELD(14U)
+#define RCC_CFGR2_HPRE_DIV512               RCC_CFGR2_HPRE_FIELD(15U)
+#endif
+
+#else
+#error "unknown register name"
+#endif
 /** @} */
 
 /*===========================================================================*/

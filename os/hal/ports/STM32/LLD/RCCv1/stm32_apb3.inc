@@ -26,27 +26,72 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#if defined(RCC_CFGR_PPRE3_Pos)
-#define STM32_PPRE3_POS         RCC_CFGR_PPRE3_Pos
+/**
+ * @name    PPRE3 field bits definitions (legacy)
+ * @{
+ */
+#if defined(RCC_CFGR_PPRE3_Pos) || defined(__DOXYGEN__)
+#define STM32_PPRE3_POS                     RCC_CFGR_PPRE3_Pos
+#define STM32_PPRE3_MASK                    RCC_CFGR_PPRE3_Msk
+
 #elif defined(RCC_CFGR2_PPRE3_Pos)
-#define STM32_PPRE3_POS         RCC_CFGR2_PPRE3_Pos
+#define STM32_PPRE3_POS                     RCC_CFGR2_PPRE3_Pos
+#define STM32_PPRE3_MASK                    RCC_CFGR2_PPRE3_Msk
+
 #elif defined(RCC_CFGR3_PPRE3_Pos)
-#define STM32_PPRE3_POS         RCC_CFGR3_PPRE3_Pos
+#define STM32_PPRE3_POS                     RCC_CFGR3_PPRE3_Pos
+#define STM32_PPRE3_MASK                    RCC_CFGR3_PPRE3_Msk
+
 #else
 #error "unknown register name"
 #endif
 
+#define STM32_PPRE3_FIELD(n)                ((n) << STM32_PPRE3_POS)
+#define STM32_PPRE3_DIV1                    STM32_PPRE3_FIELD(0U)
+#define STM32_PPRE3_DIV2                    STM32_PPRE3_FIELD(4U)
+#define STM32_PPRE3_DIV4                    STM32_PPRE3_FIELD(5U)
+#define STM32_PPRE3_DIV8                    STM32_PPRE3_FIELD(6U)
+#define STM32_PPRE3_DIV16                   STM32_PPRE3_FIELD(7U)
+/** @} */
+
+
 /**
- * @name    PPRE3 field bits definitions
+ * @name    PPRE3 field helpers
  * @{
  */
-#define STM32_PPRE3_MASK        (7U << STM32_PPRE3_POS)
-#define STM32_PPRE3_FIELD(n)    ((n) << STM32_PPRE3_POS)
-#define STM32_PPRE3_DIV1        STM32_PPRE3_FIELD(0U)
-#define STM32_PPRE3_DIV2        STM32_PPRE3_FIELD(4U)
-#define STM32_PPRE3_DIV4        STM32_PPRE3_FIELD(5U)
-#define STM32_PPRE3_DIV8        STM32_PPRE3_FIELD(6U)
-#define STM32_PPRE3_DIV16       STM32_PPRE3_FIELD(7U)
+#if defined(RCC_CFGR_PPRE3_Pos) || defined(__DOXYGEN__)
+#define RCC_CFGR_PPRE3_FIELD(n)             ((n) << RCC_CFGR_PPRE3_Pos)
+#if !defined(RCC_CFGR_PPRE3_DIV1)
+#define RCC_CFGR_PPRE3_DIV1                 RCC_CFGR_PPRE3_FIELD(0U)
+#define RCC_CFGR_PPRE3_DIV2                 RCC_CFGR_PPRE3_FIELD(4U)
+#define RCC_CFGR_PPRE3_DIV4                 RCC_CFGR_PPRE3_FIELD(5U)
+#define RCC_CFGR_PPRE3_DIV8                 RCC_CFGR_PPRE3_FIELD(6U)
+#define RCC_CFGR_PPRE3_DIV16                RCC_CFGR_PPRE3_FIELD(7U)
+#endif
+
+#elif defined(RCC_CFGR2_PPRE3_Pos)
+#define RCC_CFGR2_PPRE3_FIELD(n)            ((n) << RCC_CFGR2_PPRE3_Pos)
+#if !defined(RCC_CFGR2_PPRE3_DIV1)
+#define RCC_CFGR2_PPRE3_DIV1                RCC_CFGR2_PPRE3_FIELD(0U)
+#define RCC_CFGR2_PPRE3_DIV2                RCC_CFGR2_PPRE3_FIELD(4U)
+#define RCC_CFGR2_PPRE3_DIV4                RCC_CFGR2_PPRE3_FIELD(5U)
+#define RCC_CFGR2_PPRE3_DIV8                RCC_CFGR2_PPRE3_FIELD(6U)
+#define RCC_CFGR2_PPRE3_DIV16               RCC_CFGR2_PPRE3_FIELD(7U)
+#endif
+
+#elif defined(RCC_CFGR3_PPRE3_Pos)
+#define RCC_CFGR3_PPRE3_FIELD(n)            ((n) << RCC_CFGR3_PPRE3_Pos)
+#if !defined(RCC_CFGR3_PPRE3_DIV1)
+#define RCC_CFGR3_PPRE3_DIV1                RCC_CFGR3_PPRE3_FIELD(0U)
+#define RCC_CFGR3_PPRE3_DIV2                RCC_CFGR3_PPRE3_FIELD(4U)
+#define RCC_CFGR3_PPRE3_DIV4                RCC_CFGR3_PPRE3_FIELD(5U)
+#define RCC_CFGR3_PPRE3_DIV8                RCC_CFGR3_PPRE3_FIELD(6U)
+#define RCC_CFGR3_PPRE3_DIV16               RCC_CFGR3_PPRE3_FIELD(7U)
+#endif
+
+#else
+#error "unknown register name"
+#endif
 /** @} */
 
 /*===========================================================================*/
