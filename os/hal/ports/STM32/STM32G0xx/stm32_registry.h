@@ -730,6 +730,11 @@
 #define STM32_DMA1_CH5_CMASK                0x00000FF8U
 #define STM32_DMA1_CH6_CMASK                0x00000FF8U
 #define STM32_DMA1_CH7_CMASK                0x00000FF8U
+#define STM32_DMA2_CH1_CMASK                0x00000FF8U
+#define STM32_DMA2_CH2_CMASK                0x00000FF8U
+#define STM32_DMA2_CH3_CMASK                0x00000FF8U
+#define STM32_DMA2_CH4_CMASK                0x00000FF8U
+#define STM32_DMA2_CH5_CMASK                0x00000FF8U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
@@ -946,6 +951,11 @@
 #define STM32_DMA1_CH5_CMASK                0x00000FF8U
 #define STM32_DMA1_CH6_CMASK                0x00000FF8U
 #define STM32_DMA1_CH7_CMASK                0x00000FF8U
+#define STM32_DMA2_CH1_CMASK                0x00000FF8U
+#define STM32_DMA2_CH2_CMASK                0x00000FF8U
+#define STM32_DMA2_CH3_CMASK                0x00000FF8U
+#define STM32_DMA2_CH4_CMASK                0x00000FF8U
+#define STM32_DMA2_CH5_CMASK                0x00000FF8U
 
 /* ETH attributes.*/
 #define STM32_HAS_ETH                       FALSE
