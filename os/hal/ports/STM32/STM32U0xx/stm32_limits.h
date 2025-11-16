@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32U3xx/stm32_limits.h
- * @brief   STM32U3xx device limits header.
+ * @file    STM32U0xx/stm32_limits.h
+ * @brief   STM32U0xx device limits header.
  *
  * @addtogroup HAL
  * @{
