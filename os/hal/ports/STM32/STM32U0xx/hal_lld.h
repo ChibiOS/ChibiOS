@@ -105,12 +105,12 @@
  * @name    PWR_CR1 register helpers
  * @{
  */
-#define PWR_CR1_LPMS_VALUE(n)               ((uint32_t)(n) << PWR_CR1_LPMS_Pos)
+#define PWR_CR1_LPMS_VALUE(n)               ((n) << PWR_CR1_LPMS_Pos)
 #define PWR_CR1_LPMS_STOP0                  PWR_CR1_LPMS_VALUE(0)
 #define PWR_CR1_LPMS_STOP1                  PWR_CR1_LPMS_VALUE(1)
 #define PWR_CR1_LPMS_STOP2                  PWR_CR1_LPMS_VALUE(2)
 
-#define PWR_CR1_VOS_RANGE1                  (1U << STM32_VOS_POS)
+#define PWR_CR1_VOS_RANGE1                  (1U << RCC_CR1_VOS_Pos)
 #define PWR_CR1_VOS_RANGE2                  (2U << STM32_VOS_POS)
 /** @} */
 
@@ -118,22 +118,22 @@
  * @name    PWR_CR2 register helpers
  * @{
  */
-#define RCC_CR2_PLS_VALUE(n)                ((uint32_t)(n) << RCC_CR2_PLS_Pos)
-#define RCC_CR2_PLS_2P0V                    RCC_CR2_PLS_VALUE(0)
-#define RCC_CR2_PLS_2P2V                    RCC_CR2_PLS_VALUE(1)
-#define RCC_CR2_PLS_2P4V                    RCC_CR2_PLS_VALUE(2)
-#define RCC_CR2_PLS_2P5V                    RCC_CR2_PLS_VALUE(3)
-#define RCC_CR2_PLS_2P6V                    RCC_CR2_PLS_VALUE(4)
-#define RCC_CR2_PLS_2P7V                    RCC_CR2_PLS_VALUE(5)
-#define RCC_CR2_PLS_2P8V                    RCC_CR2_PLS_VALUE(6)
-#define RCC_CR2_PLS_2P9V                    RCC_CR2_PLS_VALUE(7)
+#define PWR_CR2_PLS_VALUE(n)                ((n) << PWR_CR2_PLS_Pos)
+#define PWR_CR2_PLS_2P0V                    PWR_CR2_PLS_VALUE(0)
+#define PWR_CR2_PLS_2P2V                    PWR_CR2_PLS_VALUE(1)
+#define PWR_CR2_PLS_2P4V                    PWR_CR2_PLS_VALUE(2)
+#define PWR_CR2_PLS_2P5V                    PWR_CR2_PLS_VALUE(3)
+#define PWR_CR2_PLS_2P6V                    PWR_CR2_PLS_VALUE(4)
+#define PWR_CR2_PLS_2P7V                    PWR_CR2_PLS_VALUE(5)
+#define PWR_CR2_PLS_2P8V                    PWR_CR2_PLS_VALUE(6)
+#define PWR_CR2_PLS_2P9V                    PWR_CR2_PLS_VALUE(7)
 /** @} */
 
 /**
  * @name    RCC_CR register helpers
  * @{
  */
-#define RCC_CR_MSIRANGE_FIELD(n)            ((uint32_t)(n) << RCC_CR_MSIRANGE_Pos)
+#define RCC_CR_MSIRANGE_FIELD(n)            ((n) << RCC_CR_MSIRANGE_Pos)
 #define RCC_CR_MSIRANGE_100kHz              RCC_CR_MSIRANGE_FIELD(0)
 #define RCC_CR_MSIRANGE_200kHz              RCC_CR_MSIRANGE_FIELD(1)
 #define RCC_CR_MSIRANGE_400kHz              RCC_CR_MSIRANGE_FIELD(2)
@@ -152,7 +152,7 @@
  * @name    RCC_CFGR register helpers
  * @{
  */
-#define RCC_CFGR_SW_VALUE(n)                ((uint32_t)(n) << RCC_CFGR_SW_Pos)
+#define RCC_CFGR_SW_VALUE(n)                ((n) << RCC_CFGR_SW_Pos)
 #define RCC_CFGR_SW_MSI                     RCC_CFGR_SW_VALUE(0U)
 #define RCC_CFGR_SW_HSI16                   RCC_CFGR_SW_VALUE(1U)
 #define RCC_CFGR_SW_HSE                     RCC_CFGR_SW_VALUE(2U)
@@ -160,7 +160,7 @@
 #define RCC_CFGR_SW_LSI                     RCC_CFGR_SW_VALUE(4U)
 #define RCC_CFGR_SW_LSE                     RCC_CFGR_SW_VALUE(5U)
 
-#define RCC_CFGR_HPRE_VALUE(n)              ((uint32_t)(n) << RCC_CFGR_HPRE_Pos)
+#define RCC_CFGR_HPRE_VALUE(n)              ((n) << RCC_CFGR_HPRE_Pos)
 #define RCC_CFGR_HPRE_DIV1                  RCC_CFGR_HPRE_VALUE(0)
 #define RCC_CFGR_HPRE_DIV2                  RCC_CFGR_HPRE_VALUE(8)
 #define RCC_CFGR_HPRE_DIV4                  RCC_CFGR_HPRE_VALUE(9)
@@ -171,14 +171,14 @@
 #define RCC_CFGR_HPRE_DIV256                RCC_CFGR_HPRE_VALUE(14)
 #define RCC_CFGR_HPRE_DIV512                RCC_CFGR_HPRE_VALUE(15)
 
-#define RCC_CFGR_PPRE_VALUE(n)              ((uint32_t)(n) << RCC_CFGR_PPRE_Pos)
+#define RCC_CFGR_PPRE_VALUE(n)              ((n) << RCC_CFGR_PPRE_Pos)
 #define RCC_CFGR_PPRE_DIV1                  RCC_CFGR_PPRE_VALUE(0)
 #define RCC_CFGR_PPRE_DIV2                  RCC_CFGR_PPRE_VALUE(4)
 #define RCC_CFGR_PPRE_DIV4                  RCC_CFGR_PPRE_VALUE(5)
 #define RCC_CFGR_PPRE_DIV8                  RCC_CFGR_PPRE_VALUE(6)
 #define RCC_CFGR_PPRE_DIV16                 RCC_CFGR_PPRE_VALUE(7)
 
-#define RCC_CFGR_MCO2SEL_VALUE(n)           ((uint32_t)(n) << RCC_CFGR_MCO2SEL_Pos)
+#define RCC_CFGR_MCO2SEL_VALUE(n)           ((n) << RCC_CFGR_MCO2SEL_Pos)
 #define RCC_CFGR_MCO2SEL_NOCLOCK            RCC_CFGR_MCO2SEL_VALUE(0)
 #define RCC_CFGR_MCO2SEL_SYSCLK             RCC_CFGR_MCO2SEL_VALUE(1)
 #define RCC_CFGR_MCO2SEL_MSI                RCC_CFGR_MCO2SEL_VALUE(2)
@@ -191,7 +191,7 @@
 #define RCC_CFGR_MCO2SEL_RTCCLK             RCC_CFGR_MCO2SEL_VALUE(9)
 #define RCC_CFGR_MCO2SEL_RTCWKP             RCC_CFGR_MCO2SEL_VALUE(10)
 
-#define RCC_CFGR_MCO2PRE_VALUE(n)           ((uint32_t)(n) << RCC_CFGR_MCO2PRE_Pos)
+#define RCC_CFGR_MCO2PRE_VALUE(n)           ((n) << RCC_CFGR_MCO2PRE_Pos)
 #define RCC_CFGR_MCO2PRE_DIV1               RCC_CFGR_MCO2PRE_VALUE(0)
 #define RCC_CFGR_MCO2PRE_DIV2               RCC_CFGR_MCO2PRE_VALUE(1)
 #define RCC_CFGR_MCO2PRE_DIV4               RCC_CFGR_MCO2PRE_VALUE(2)
@@ -204,7 +204,7 @@
 #define RCC_CFGR_MCO2PRE_DIV512             RCC_CFGR_MCO2PRE_VALUE(9)
 #define RCC_CFGR_MCO2PRE_DIV1024            RCC_CFGR_MCO2PRE_VALUE(10)
 
-#define RCC_CFGR_MCOSEL_VALUE(n)            ((uint32_t)(n) << RCC_CFGR_MCOSEL_Pos)
+#define RCC_CFGR_MCOSEL_VALUE(n)            ((n) << RCC_CFGR_MCOSEL_Pos)
 #define RCC_CFGR_MCOSEL_NOCLOCK             RCC_CFGR_MCO2SEL_VALUE(0)
 #define RCC_CFGR_MCOSEL_SYSCLK              RCC_CFGR_MCO2SEL_VALUE(1)
 #define RCC_CFGR_MCOSEL_MSI                 RCC_CFGR_MCO2SEL_VALUE(2)
@@ -217,7 +217,7 @@
 #define RCC_CFGR_MCOSEL_RTCCLK              RCC_CFGR_MCO2SEL_VALUE(9)
 #define RCC_CFGR_MCOSEL_RTCWKP              RCC_CFGR_MCO2SEL_VALUE(10)
 
-#define RCC_CFGR_MCOPRE_VALUE(n)            ((uint32_t)(n) << RCC_CFGR_MCOPRE_Pos)
+#define RCC_CFGR_MCOPRE_VALUE(n)            ((n) << RCC_CFGR_MCOPRE_Pos)
 #define RCC_CFGR_MCOPRE_DIV1                RCC_CFGR_MCOPRE_VALUE(0)
 #define RCC_CFGR_MCOPRE_DIV2                RCC_CFGR_MCOPRE_VALUE(1)
 #define RCC_CFGR_MCOPRE_DIV4                RCC_CFGR_MCOPRE_VALUE(2)
@@ -235,7 +235,7 @@
  * @name    RCC_PLLCFGR register helpers
  * @{
  */
-#define RCC_PLLCFGR_PLLSRC_VALUE(n)         ((uint32_t)(n) << RCC_PLLCFGR_PLLSRC_Pos)
+#define RCC_PLLCFGR_PLLSRC_VALUE(n)         ((n) << RCC_PLLCFGR_PLLSRC_Pos)
 #define RCC_PLLCFGR_PLLSRC_NOCLOCK          RCC_PLLCFGR_PLLSRC_VALUE(0)
 #define RCC_PLLCFGR_PLLSRC_MSI              RCC_PLLCFGR_PLLSRC_VALUE(0)
 #define RCC_PLLCFGR_PLLSRC_HSI16            RCC_PLLCFGR_PLLSRC_VALUE(0)
@@ -350,7 +350,7 @@
  * @brief   PWR CR1 register initialization value.
  */
 #if !defined(STM32_PWR_CR1) || defined(__DOXYGEN__)
-#define STM32_PWR_CR1                       (0U)
+#define STM32_PWR_CR1                       (PWR_CR1_VOS_RANGE1)
 #endif
 
 /**
