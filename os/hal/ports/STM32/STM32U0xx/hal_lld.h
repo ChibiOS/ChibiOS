@@ -110,8 +110,9 @@
 #define PWR_CR1_LPMS_STOP1                  PWR_CR1_LPMS_VALUE(1)
 #define PWR_CR1_LPMS_STOP2                  PWR_CR1_LPMS_VALUE(2)
 
-#define PWR_CR1_VOS_RANGE1                  (1U << RCC_CR1_VOS_Pos)
-#define PWR_CR1_VOS_RANGE2                  (2U << STM32_VOS_POS)
+#define PWR_CR1_VOS_VALUE(n)                ((n) << PWR_CR1_VOS_Pos)
+#define PWR_CR1_VOS_RANGE1                  PWR_CR1_VOS_VALUE(1U)
+#define PWR_CR1_VOS_RANGE2                  PWR_CR1_VOS_VALUE(2U)
 /** @} */
 
 /**
@@ -236,10 +237,10 @@
  * @{
  */
 #define RCC_PLLCFGR_PLLSRC_VALUE(n)         ((n) << RCC_PLLCFGR_PLLSRC_Pos)
-#define RCC_PLLCFGR_PLLSRC_NOCLOCK          RCC_PLLCFGR_PLLSRC_VALUE(0)
-#define RCC_PLLCFGR_PLLSRC_MSI              RCC_PLLCFGR_PLLSRC_VALUE(0)
-#define RCC_PLLCFGR_PLLSRC_HSI16            RCC_PLLCFGR_PLLSRC_VALUE(0)
-#define RCC_PLLCFGR_PLLSRC_HSE              RCC_PLLCFGR_PLLSRC_VALUE(0)
+#define RCC_PLLCFGR_PLLSRC_NOCLOCK          RCC_PLLCFGR_PLLSRC_VALUE(0U)
+#define RCC_PLLCFGR_PLLSRC_MSI              RCC_PLLCFGR_PLLSRC_VALUE(1U)
+#define RCC_PLLCFGR_PLLSRC_HSI16            RCC_PLLCFGR_PLLSRC_VALUE(2U)
+#define RCC_PLLCFGR_PLLSRC_HSE              RCC_PLLCFGR_PLLSRC_VALUE(3U)
 /** @} */
 
 /**
@@ -319,9 +320,9 @@
 #define RCC_BDCR_RTCSEL_LSI                 (2U << RCC_BDCR_RTCSEL_Pos)
 #define RCC_BDCR_RTCSEL_HSEDIV              (3U << RCC_BDCR_RTCSEL_Pos)
 
-#define RCC_BDCR_LSCOSEL_NOCLOCK            (0U << RCC_BDCR_LSCOEN_Pos)
-#define RCC_BDCR_LSCOSEL_LSI                (1U << RCC_BDCR_LSCOEN_Pos)
-#define RCC_BDCR_LSCOSEL_LSE                (3U << RCC_BDCR_LSCOEN_Pos)
+#define RCC_BDCR_LSCOSEL_NOCLOCK            0U
+#define RCC_BDCR_LSCOSEL_LSI                RCC_BDCR_LSCOEN
+#define RCC_BDCR_LSCOSEL_LSE                (RCC_BDCR_LSCOEN | RCC_BDCR_LSCOSEL)
 /** @} */
 
 /*===========================================================================*/
@@ -588,7 +589,7 @@
  * @brief   MCO clock source.
  */
 #if !defined(STM32_MCOSEL) || defined(__DOXYGEN__)
-#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
+#define STM32_MCOSEL                        RCC_CFGR_MCOSEL_NOCLOCK
 #endif
 
 /**
@@ -602,7 +603,7 @@
  * @brief   MCO2 clock source.
  */
 #if !defined(STM32_MCO2SEL) || defined(__DOXYGEN__)
-#define STM32_MCO2SEL                       STM32_MCO2SEL_NOCLOCK
+#define STM32_MCO2SEL                       RCC_CFGR_MCO2SEL_NOCLOCK
 #endif
 
 /**
@@ -616,7 +617,7 @@
  * @brief   LSCO clock source.
  */
 #if !defined(STM32_LSCOSEL) || defined(__DOXYGEN__)
-#define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
+#define STM32_LSCOSEL                       RCC_BDCR_LSCOSEL_NOCLOCK
 #endif
 
 /**
@@ -665,7 +666,7 @@
  * @brief   I2C3 clock source.
  */
 #if !defined(STM32_I2C3SEL) || defined(__DOXYGEN__)
-#define STM32_I2C3SEL                       RCC_CCIPR_I2C2SEL_PCLK
+#define STM32_I2C3SEL                       RCC_CCIPR_I2C3SEL_PCLK
 #endif
 
 /**
@@ -805,7 +806,7 @@
   #if (STM32_USART1SEL == RCC_CCIPR_USART1SEL_HSI16)
     #error "HSI16 not enabled, required by STM32_USART1SEL"
   #endif
-  #if (STM32_USART2SEL == RCC_CCIPR_USARTSEL_HSI16)
+  #if (STM32_USART2SEL == RCC_CCIPR_USART2SEL_HSI16)
     #error "HSI16 not enabled, required by STM32_USART2SEL"
   #endif
   #if (STM32_LPUART1SEL == RCC_CCIPR_LPUART1SEL_HSI16)
@@ -844,7 +845,6 @@
 /*
  * HSI48 related checks.
  */
-#if STM32_RCC_HAS_HSI48
 #if STM32_HSI48_ENABLED
 #else /* !STM32_HSI48_ENABLED */
 
@@ -862,9 +862,6 @@
   #endif
 
 #endif /* !STM32_HSI48_ENABLED */
-#elif (STM32_USBSEL == STM32_USBSEL_HSI48) && (HAL_USE_USB == TRUE)
-    #error "HSI48 not available for STM32_USBSEL"
-#endif /* STM32_RCC_HAS_HSI48 */
 
 /*
  * HSE related checks.
@@ -1033,8 +1030,8 @@
    * @brief   STM32_PLLREN field.
    */
 #if (STM32_SW == STM32_SW_PLLRCLK) ||                                       \
-    (STM32_MCOSEL == STM32_MCOSEL_PLLRCLK) ||                               \
-    (STM32_MCO2SEL == STM32_MCO2SEL_PLLRCLK) ||                             \
+    (STM32_MCOSEL == RCC_CFGR_MCOSEL_PLLRCLK) ||                            \
+    (STM32_MCO2SEL == RCC_CFGR_MCO2SEL_PLLRCLK) ||                          \
     defined(__DOXYGEN__)
   #define STM32_PLLREN              RCC_PLLCFGR_PLLREN
 #else
@@ -1134,7 +1131,7 @@
 #elif STM32_MCOSEL == RCC_CFGR_MCOSEL_RTCCLK
   #define STM32_MCODIVCLK           STM32_RTCCLK
 
-#elif STM32_MCOSEL == STM32_MCOSEL_RTCWKP
+#elif STM32_MCOSEL == RCC_CFGR_MCOSEL_RTCWKP
   #define STM32_MCODIVCLK           0   /* TODO */
 
 #else
@@ -1214,7 +1211,7 @@
 #elif STM32_MCO2SEL == RCC_CFGR_MCO2SEL_RTCCLK
   #define STM32_MCO2DIVCLK          STM32_RTCCLK
 
-#elif STM32_MCO2SEL == STM32_MCO2SEL_RTCWKP
+#elif STM32_MCO2SEL == RCC_CFGR_MCO2SEL_RTCWKP
   #define STM32_MCO2DIVCLK          0   /* TODO */
 
 #else
@@ -1270,7 +1267,7 @@
 #elif STM32_LSCOSEL == RCC_BDCR_LSCOSEL_LSI
   #define STM32_LSCOCLK             STM32_LSICLK
 
-#elif STM32_LSCOSEL == RCC_BDCR_LSCOSEL_LSI
+#elif STM32_LSCOSEL == RCC_BDCR_LSCOSEL_LSE
   #define STM32_LSCOCLK             STM32_LSECLK
 
 #else
@@ -1280,16 +1277,16 @@
 /**
  * @brief   RTC clock frequency.
  */
-#if (STM32_RTCSEL == STM32_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
+#if (STM32_RTCSEL == RCC_BDCR_RTCSEL_NOCLOCK) || defined(__DOXYGEN__)
   #define STM32_RTCCLK              0
 
-#elif STM32_RTCSEL == STM32_RTCSEL_LSE
+#elif STM32_RTCSEL == RCC_BDCR_RTCSEL_LSE
   #define STM32_RTCCLK              STM32_LSECLK
 
-#elif STM32_RTCSEL == STM32_RTCSEL_LSI
+#elif STM32_RTCSEL == RCC_BDCR_RTCSEL_LSI
   #define STM32_RTCCLK              STM32_LSICLK
 
-#elif STM32_RTCSEL == STM32_RTCSEL_HSEDIV
+#elif STM32_RTCSEL == RCC_BDCR_RTCSEL_HSEDIV
   #define STM32_RTCCLK              (STM32_HSECLK / 32)
 
 #else
