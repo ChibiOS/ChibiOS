@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32H5xx/hal_lld.h
- * @brief   STM32H5xx HAL subsystem low level driver header.
+ * @file    STM32U3xx/hal_lld.h
+ * @brief   STM32U3xx HAL subsystem low level driver header.
  * @pre     This module requires the following macros to be defined in the
  *          @p board.h file:
  *          - STM32_LSECLK.
@@ -309,7 +309,7 @@
 #define RCC_CCIPR1_USART3SEL_PCLK1          RCC_CCIPR1_USART3SEL_FIELD(0U)
 #define RCC_CCIPR1_USART3SEL_HSI16          RCC_CCIPR1_USART3SEL_FIELD(1U)
 
-#define RCC_CCIPR1_UART4SEL_FIELD(n)        ((n) << RCC_CCIPR1_UART5SEL_Pos)
+#define RCC_CCIPR1_UART4SEL_FIELD(n)        ((n) << RCC_CCIPR1_UART4SEL_Pos)
 #define RCC_CCIPR1_UART4SEL_PCLK1           RCC_CCIPR1_UART4SEL_FIELD(0U)
 #define RCC_CCIPR1_UART4SEL_HSI16           RCC_CCIPR1_UART4SEL_FIELD(1U)
 
@@ -405,7 +405,7 @@
 #define RCC_CCIPR2_ADCDACPRE_ICLKDIV8       RCC_CCIPR2_ADCDACPRE_FIELD(9U)
 #define RCC_CCIPR2_ADCDACPRE_ICLKDIV16      RCC_CCIPR2_ADCDACPRE_FIELD(10U)
 #define RCC_CCIPR2_ADCDACPRE_ICLKDIV32      RCC_CCIPR2_ADCDACPRE_FIELD(11U)
-#define RCC_CCIPR2_ADCDACPRE_ICLKDIV64      TM32_ADCDACPRE_FIELD(12U)
+#define RCC_CCIPR2_ADCDACPRE_ICLKDIV64      RCC_CCIPR2_ADCDACPRE_FIELD(12U)
 #define RCC_CCIPR2_ADCDACPRE_ICLKDIV128     RCC_CCIPR2_ADCDACPRE_FIELD(13U)
 #define RCC_CCIPR2_ADCDACPRE_ICLKDIV256     RCC_CCIPR2_ADCDACPRE_FIELD(14U)
 #define RCC_CCIPR2_ADCDACPRE_ICLKDIV512     RCC_CCIPR2_ADCDACPRE_FIELD(15U)
@@ -462,10 +462,9 @@
 #define RCC_BDCR_RTCSEL_LSI                 RCC_BDCR_RTCSEL_FIELD(2U)
 #define RCC_BDCR_RTCSEL_HSEDIV              RCC_BDCR_RTCSEL_FIELD(3U)
 
-#define RCC_BDCR_LSCOSEL_FIELD(n)           ((n) << RCC_BDCR_LSCOSEL_Pos)
-#define RCC_BDCR_LSCOSEL_NOCLOCK            RCC_BDCR_LSCOSEL_FIELD(0U)
-#define RCC_BDCR_LSCOSEL_LSE                RCC_BDCR_LSCOSEL_FIELD(1U)
-#define RCC_BDCR_LSCOSEL_LSI                RCC_BDCR_LSCOSEL_FIELD(3U)
+#define RCC_BDCR_LSCOSEL_NOCLOCK            0U
+#define RCC_BDCR_LSCOSEL_LSI                (RCC_BDCR_LSCOEN)
+#define RCC_BDCR_LSCOSEL_LSE                (RCC_BDCR_LSCOEN | RCC_BDCR_LSCOSEL)
 /** @} */
 
 /*===========================================================================*/
@@ -2024,10 +2023,10 @@
   #define STM32_LPTIM2CLK                   hal_lld_get_clock_point(CLK_PCLK1)
 
 #elif STM32_LPTIM2SEL == RCC_CCIPR1_LPTIM2SEL_LSI
-  #define STM32_LPUART1CLK                  STM32_LSICLK
+  #define STM32_LPTIM2CLK                   STM32_LSICLK
 
-#elif STM32_LPTIM2SEL == RCC_CCIPR1_LPTIM2SEL_PLL3R
-  #define STM32_LPUART1CLK                  STM32_HSI16CLK
+#elif STM32_LPTIM2SEL == RCC_CCIPR1_LPTIM2SEL_HSI16
+  #define STM32_LPTIM2CLK                   STM32_HSI16CLK
 
 #elif STM32_LPTIM2SEL == RCC_CCIPR1_LPTIM2SEL_LSE
   #define STM32_LPTIM2CLK                   STM32_LSECLK
@@ -2044,13 +2043,16 @@
   #define STM32_LPTIM4CLK                   hal_lld_get_clock_point(CLK_MSIK)
 
 #elif STM32_LPTIM34SEL == RCC_CCIPR3_LPTIM34SEL_LSI
-  #define STM32_LPUART1CLK                  STM32_LSICLK
+  #define STM32_LPTIM3CLK                   STM32_LSICLK
+  #define STM32_LPTIM4CLK                   STM32_LSICLK
 
-#elif STM32_LPTIM34SEL == RCC_CCIPR3_LPTIM34SEL_PLL3R
-  #define STM32_LPUART1CLK                  STM32_HSI16CLK
+#elif STM32_LPTIM34SEL == RCC_CCIPR3_LPTIM34SEL_HSI16
+  #define STM32_LPTIM3CLK                   STM32_HSI16CLK
+  #define STM32_LPTIM4CLK                   STM32_HSI16CLK
 
 #elif STM32_LPTIM34SEL == RCC_CCIPR3_LPTIM34SEL_LSE
-  #define STM32_LPTIM2CLK                   STM32_LSECLK
+  #define STM32_LPTIM3CLK                   STM32_LSECLK
+  #define STM32_LPTIM4CLK                   STM32_LSECLK
 
 #else
   #error "invalid source selected for LPTIM2 clock"
@@ -2280,7 +2282,7 @@
 #if (STM32_FDCAN1SEL == RCC_CCIPR1_FDCAN1SEL_SYSCLK) || defined(__DOXYGEN__)
   #define STM32_FDCAN1CLK                   STM32_SYSCLK
 
-#elif STM32_FDCAN1SEL == RCC_CCIPR1_FDCANSEL_MSIK
+#elif STM32_FDCAN1SEL == RCC_CCIPR1_FDCAN1SEL_MSIK
   #define STM32_FDCAN1CLK                   hal_lld_get_clock_point(CLK_MSIK)
 
 #else
@@ -2291,7 +2293,7 @@
  * @brief   SAI1 clock frequency.
  */
 #if (STM32_SAI1SEL == RCC_CCIPR2_SAI1SEL_MSIK) || defined(__DOXYGEN__)
-  #define STM32_SAI1CLK                     hal_lld_get_clock_point(CLKMSIK)
+  #define STM32_SAI1CLK                     hal_lld_get_clock_point(CLK_MSIK)
 
 #elif STM32_SAI1SEL == RCC_CCIPR2_SAI1SEL_AUDIOCLK
   #define STM32_SAI1CLK                     0 /* TODO board.h */
