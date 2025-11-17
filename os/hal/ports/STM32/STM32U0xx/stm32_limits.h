@@ -97,7 +97,7 @@
  * @name    Device Limits for current Vcore settings
  * @{
  */
-#if ((STM32_PWR_CR1 & RCC_CR1_VOS_Pos) == PWR_CR1_VOS_RANGE1) || defined(__DOXYGEN__)
+#if ((STM32_PWR_CR1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_RANGE1) || defined(__DOXYGEN__)
 #define STM32_SYSCLK_MAX                    STM32_RANGE1_SYSCLK_MAX
 #define STM32_HSECLK_MAX                    STM32_RANGE1_HSECLK_MAX
 #define STM32_HSECLK_BYP_MAX                STM32_RANGE1_HSECLK_BYP_MAX
@@ -127,7 +127,7 @@
 #define STM32_4WS_THRESHOLD                 STM32_RANGE1_4WS_THRESHOLD
 #define STM32_5WS_THRESHOLD                 STM32_RANGE1_5WS_THRESHOLD
 
-#elif (STM32_PWR_CR1 & RCC_CR1_VOS_Pos) == PWR_CR1_VOS_RANGE2
+#elif (STM32_PWR_CR1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_RANGE2
 #define STM32_SYSCLK_MAX                    STM32_RANGE2_SYSCLK_MAX
 #define STM32_HSECLK_MAX                    STM32_RANGE2_HSECLK_MAX
 #define STM32_HSECLK_BYP_MAX                STM32_RANGE2_HSECLK_BYP_MAX
