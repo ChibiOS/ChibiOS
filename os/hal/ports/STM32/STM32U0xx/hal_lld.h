@@ -460,13 +460,6 @@
 #endif
 
 /**
- * @brief   Enables or disables the MSI clock source.
- */
-#if !defined(STM32_MSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_MSI_ENABLED                   TRUE
-#endif
-
-/**
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
@@ -499,6 +492,34 @@
  */
 #if !defined(STM32_LSE_ENABLED) || defined(__DOXYGEN__)
 #define STM32_LSE_ENABLED                   FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the MSI clock source.
+ */
+#if !defined(STM32_MSI_ENABLED) || defined(__DOXYGEN__)
+#define STM32_MSI_ENABLED                   FALSE
+#endif
+
+/**
+ * @brief   Enables or disables the MSI PLL on LSE clock source.
+ */
+#if !defined(STM32_MSIPLL_ENABLED) || defined(__DOXYGEN__)
+#define STM32_MSIPLL_ENABLED                FALSE
+#endif
+
+/**
+ * @brief   MSI frequency setting.
+ */
+#if !defined(STM32_MSIRANGE) || defined(__DOXYGEN__)
+#define STM32_MSIRANGE                      STM32_MSIRANGE_4M
+#endif
+
+/**
+ * @brief   MSI frequency setting after standby.
+ */
+#if !defined(STM32_MSISRANGE) || defined(__DOXYGEN__)
+#define STM32_MSISRANGE                     STM32_MSISRANGE_4M
 #endif
 
 /**
