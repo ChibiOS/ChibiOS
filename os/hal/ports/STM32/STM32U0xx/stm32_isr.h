@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    STM32G0xx/stm32_isr.h
- * @brief   STM32G0xx ISR handler header.
+ * @file    STM32U0xx/stm32_isr.h
+ * @brief   STM32U0xx ISR handler header.
  *
- * @addtogroup STM32G0xx_ISR
+ * @addtogroup STM32U0xx_ISR
  * @{
  */
 
@@ -36,22 +36,18 @@
 #define STM32_TIM1_SUPPRESS_ISR
 #define STM32_TIM2_SUPPRESS_ISR
 #define STM32_TIM3_SUPPRESS_ISR
-#define STM32_TIM4_SUPPRESS_ISR
 #define STM32_TIM6_SUPPRESS_ISR
 #define STM32_TIM7_SUPPRESS_ISR
-#define STM32_TIM14_SUPPRESS_ISR
 #define STM32_TIM15_SUPPRESS_ISR
 #define STM32_TIM16_SUPPRESS_ISR
-#define STM32_TIM17_SUPPRESS_ISR
 
 #define STM32_USART1_SUPPRESS_ISR
 #define STM32_USART2_SUPPRESS_ISR
 #define STM32_USART3_SUPPRESS_ISR
 #define STM32_UART4_SUPPRESS_ISR
-#define STM32_UART5_SUPPRESS_ISR
-#define STM32_USART6_SUPPRESS_ISR
 #define STM32_LPUART1_SUPPRESS_ISR
 #define STM32_LPUART2_SUPPRESS_ISR
+#define STM32_LPUART3_SUPPRESS_ISR
 /** @} */
 
 /**
@@ -94,25 +90,19 @@
 #define STM32_EXTI0_1_HANDLER               Vector54
 #define STM32_EXTI2_3_HANDLER               Vector58
 #define STM32_EXTI4_15_HANDLER              Vector5C
-#define STM32_EXTI16_HANDLER                Vector44
-#define STM32_EXTI1921_HANDLER              Vector48
 
 #define STM32_EXTI0_1_NUMBER                5
 #define STM32_EXTI2_3_NUMBER                6
 #define STM32_EXTI4_15_NUMBER               7
-#define STM32_EXTI16_NUMBER                 1
-#define STM32_EXTI1921_NUMBER               2
 
 /*
  * I2C units.
  */
 #define STM32_I2C1_GLOBAL_HANDLER           Vector9C
-#define STM32_I2C2_GLOBAL_HANDLER           VectorA0
-#define STM32_I2C2_3_GLOBAL_HANDLER         VectorA0
+#define STM32_I2C2_3_4_GLOBAL_HANDLER       VectorA0
 
 #define STM32_I2C1_GLOBAL_NUMBER            23
-#define STM32_I2C2_GLOBAL_NUMBER            24
-#define STM32_I2C2_3_GLOBAL_NUMBER          24
+#define STM32_I2C2_3_4_GLOBAL_NUMBER        24
 
 /*
  * TIM units.
@@ -121,7 +111,6 @@
 #define STM32_TIM1_CC_HANDLER               Vector78
 #define STM32_TIM2_HANDLER                  Vector7C
 #define STM32_TIM3_HANDLER                  Vector80
-#define STM32_TIM3_4_HANDLER                STM32_TIM3_HANDLER
 #define STM32_TIM6_HANDLER                  Vector84
 #define STM32_TIM7_HANDLER                  Vector88
 #define STM32_TIM14_HANDLER                 Vector8C
@@ -136,30 +125,21 @@
 #define STM32_TIM3_4_NUMBER                 STM32_TIM3_NUMBER
 #define STM32_TIM6_NUMBER                   17
 #define STM32_TIM7_NUMBER                   18
-#define STM32_TIM14_NUMBER                  19
 #define STM32_TIM15_NUMBER                  20
 #define STM32_TIM16_NUMBER                  21
-#define STM32_TIM17_NUMBER                  22
 
 /*
  * USART/UART units.
  */
 #define STM32_USART1_HANDLER                VectorAC
-#define STM32_USART2_HANDLER                VectorB0
-#define STM32_USART2_LP2_HANDLER            STM32_USART2_HANDLER
-#define STM32_USART3_4_5_6_HANDLER          VectorB4
-#define STM32_LPUART1_HANDLER               VectorB4
-#define STM32_USART3_4_LP1_HANDLER          STM32_LPUART1_HANDLER
-#define STM32_USART3_4_5_6_LP1_HANDLER      STM32_LPUART1_HANDLER
-
+#define STM32_USART2_LP2_HANDLER            VectorB0
+#define STM32_USART3_LP1_HANDLER            VectorB4
+#define STM32_USART4_LP3_HANDLER            VectorB8
 
 #define STM32_USART1_NUMBER                 27
-#define STM32_USART2_NUMBER                 28
-#define STM32_USART2_LP2_NUMBER             STM32_USART2_NUMBER
-#define STM32_USART3_4_5_6_NUMBER           29
-#define STM32_LPUART1_NUMBER                29
-#define STM32_USART3_4_LP1_NUMBER           STM32_LPUART1_NUMBER
-#define STM32_USART3_4_5_6_LP1_NUMBER       STM32_LPUART1_NUMBER
+#define STM32_USART2_LP2_NUMBER             28
+#define STM32_USART3_LP1_NUMBER             29
+#define STM32_USART4_LP3_NUMBER             30
 
 /*
  * USB units.
@@ -170,10 +150,9 @@
 
 /* Individual IRQ priorities are derived by the shared I2C IRQ priority,
    drivers expect individual definitions to exist.*/
-#if STM32_HAS_I2C2 && STM32_HAS_I2C3
-#define STM32_IRQ_I2C2_PRIORITY             STM32_IRQ_I2C2_3_PRIORITY
-#define STM32_IRQ_I2C3_PRIORITY             STM32_IRQ_I2C2_3_PRIORITY
-#endif
+#define STM32_IRQ_I2C2_PRIORITY             STM32_IRQ_I2C2_3_4_PRIORITY
+#define STM32_IRQ_I2C3_PRIORITY             STM32_IRQ_I2C2_3_4_PRIORITY
+#define STM32_IRQ_I2C4_PRIORITY             STM32_IRQ_I2C2_3_4_PRIORITY
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
