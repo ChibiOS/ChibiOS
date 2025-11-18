@@ -1866,7 +1866,7 @@
   #define STM32_RTCCLK                      STM32_LSICLK
 
 #elif STM32_RTCSEL == RCC_BDCR_RTCSEL_HSEDIV
-  #define STM32_RTCCLK                      (STM32_HSECLK / 32U)
+  #define STM32_RTCCLK                      (hal_lld_get_clock_point(CLK_HSE) / 32U)
 
 #else
   #error "invalid STM32_RTCSEL value specified"
@@ -1950,7 +1950,7 @@
   #define STM32_LPUART1CLK                  hal_lld_get_clock_point(CLK_MSIK)
 
 #elif STM32_LPUART1SEL == RCC_CCIPR3_LPUART1SEL_HSI16
-  #define STM32_LPUART1CLK                  STM32_HSI16CLK
+  #define STM32_LPUART1CLK                  hal_lld_get_clock_point(CLK_HSI16)
 
 #elif STM32_LPUART1SEL == RCC_CCIPR3_LPUART1SEL_LSE
   #define STM32_LPUART1CLK                  STM32_LSECLK
@@ -1974,24 +1974,24 @@
   #define STM32_LPTIM2CCLK                  0U
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIS1024_MSIS4
-  #define STM32_TIM16CCLK                   (STM32_HSI16CLK / 256U)
-  #define STM32_TIM15CCLK                   (STM32_MSISCLK / 1024U)
-  #define STM32_LPTIM2CCLK                  (STM32_MSISCLK / 4U)
+  #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
+  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIS) / 1024U)
+  #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIS) / 4U)
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIS1024_MSIK4
-  #define STM32_TIM16CCLK                   (STM32_HSI16CLK / 256U)
-  #define STM32_TIM15CCLK                   (STM32_MSISCLK / 1024U)
-  #define STM32_LPTIM2CCLK                  (STM32_MSIKCLK / 4U)
+  #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
+  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIS) / 1024U)
+  #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIK) / 4U)
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIK1024_MSIS4
-  #define STM32_TIM16CCLK                   (STM32_HSI16CLK / 256U)
-  #define STM32_TIM15CCLK                   (STM32_MSIKCLK / 1024U)
-  #define STM32_LPTIM2CCLK                  (STM32_MSISCLK / 4U)
+  #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
+  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIK) / 1024U)
+  #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIS) / 4U)
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIK1024_MSIK4
-  #define STM32_TIM16CCLK                   (STM32_HSI16CLK / 256U)
-  #define STM32_TIM15CCLK                   (STM32_MSIKCLK / 1024U)
-  #define STM32_LPTIM2CCLK                  (STM32_MSIKCLK / 4U)
+  #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
+  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIK) / 1024U)
+  #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIK) / 4U)
 
 #else
   #error "invalid source selected for TIMICSEL clock"
@@ -2007,7 +2007,7 @@
   #define STM32_LPUART1CLK                  STM32_LSICLK
 
 #elif STM32_LPTIM1SEL == RCC_CCIPR3_LPTIM1SEL_PLL3R
-  #define STM32_LPUART1CLK                  STM32_HSI16CLK
+  #define STM32_LPUART1CLK                  hal_lld_get_clock_point(CLK_HSI16)
 
 #elif STM32_LPTIM1SEL == RCC_CCIPR3_LPTIM1SEL_LSE
   #define STM32_LPTIM1CLK                   STM32_LSECLK
@@ -2026,7 +2026,7 @@
   #define STM32_LPTIM2CLK                   STM32_LSICLK
 
 #elif STM32_LPTIM2SEL == RCC_CCIPR1_LPTIM2SEL_HSI16
-  #define STM32_LPTIM2CLK                   STM32_HSI16CLK
+  #define STM32_LPTIM2CLK                   hal_lld_get_clock_point(CLK_HSI16)
 
 #elif STM32_LPTIM2SEL == RCC_CCIPR1_LPTIM2SEL_LSE
   #define STM32_LPTIM2CLK                   STM32_LSECLK
@@ -2047,8 +2047,8 @@
   #define STM32_LPTIM4CLK                   STM32_LSICLK
 
 #elif STM32_LPTIM34SEL == RCC_CCIPR3_LPTIM34SEL_HSI16
-  #define STM32_LPTIM3CLK                   STM32_HSI16CLK
-  #define STM32_LPTIM4CLK                   STM32_HSI16CLK
+  #define STM32_LPTIM3CLK                   hal_lld_get_clock_point(CLK_HSI16)
+  #define STM32_LPTIM4CLK                   hal_lld_get_clock_point(CLK_HSI16)
 
 #elif STM32_LPTIM34SEL == RCC_CCIPR3_LPTIM34SEL_LSE
   #define STM32_LPTIM3CLK                   STM32_LSECLK
@@ -2130,13 +2130,13 @@
  * @brief   ICLK clock frequency.
  */
 #if (STM32_ICLKSEL == RCC_CCIPR1_ICLKSEL_HSI48) || defined(__DOXYGEN__)
-  #define STM32_ICLK                        STM32_HSI48CLK
+  #define STM32_ICLK                        hal_lld_get_clock_point(CLK_HSI48)
 
 #elif STM32_ICLKSEL == RCC_CCIPR1_ICLKSEL_MSIK
   #define STM32_ICLK                        hal_lld_get_clock_point(CLK_MSIK)
 
 #elif STM32_ICLKSEL == RCC_CCIPR1_ICLKSEL_HSE
-  #define STM32_ICLK                        STM32_HSECLK
+  #define STM32_ICLK                        hal_lld_get_clock_point(CLK_HSE)
 
 #elif STM32_ICLKSEL == RCC_CCIPR1_ICLKSEL_SYSCLK
   #define STM32_ICLK                        hal_lld_get_clock_point(CLK_SYSCLK)
@@ -2235,7 +2235,7 @@
   #define STM32_ADCDACCLK                   hal_lld_get_clock_point(CLK_HCLK)
 
 #elif STM32_ADCDACSEL == RCC_CCIPR2_ADCDACSEL_HSE
-  #define STM32_ADCDACCLK                   STM32_HSECLK
+  #define STM32_ADCDACCLK                   hal_lld_get_clock_point(CLK_HSE)
 
 #elif STM32_ADCDACSEL == RCC_CCIPR2_ADCDACSEL_MSIK
   #define STM32_ADCDACCLK                   hal_lld_get_clock_point(CLK_MSIK)
@@ -2264,7 +2264,7 @@
  * @brief   RNG clock frequency.
  */
 #if (STM32_RNGSEL == RCC_CCIPR2_RNGSEL_HSI48) || defined(__DOXYGEN__)
-  #define STM32_RNGCLK                      STM32_HSI48CLK
+  #define STM32_RNGCLK                      hal_lld_get_clock_point(CLK_HSI48)
 
 #elif STM32_RNGSEL == RCC_CCIPR2_RNGSEL_MSIK
   #define STM32_RNGCLK                      hal_lld_get_clock_point(CLK_MSIK)
@@ -2299,7 +2299,7 @@
   #define STM32_SAI1CLK                     0 /* TODO board.h */
 
 #elif STM32_SAI1SEL == RCC_CCIPR2_SAI1SEL_HSE
-  #define STM32_SAI1CLK                     STM32_HSECLK
+  #define STM32_SAI1CLK                     hal_lld_get_clock_point(CLK_HSE)
 
 #else
   #error "invalid source selected for SAI1 clock"
