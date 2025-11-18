@@ -383,6 +383,7 @@
 #define RCC_CCIPR2_ADF1SEL_HCLK             RCC_CCIPR2_ADF1SEL_FIELD(0U)
 #define RCC_CCIPR2_ADF1SEL_AUDIOCLK         RCC_CCIPR2_ADF1SEL_FIELD(1U)
 #define RCC_CCIPR2_ADF1SEL_HSE              RCC_CCIPR2_ADF1SEL_FIELD(2U)
+#define RCC_CCIPR2_ADF1SEL_SAI1             RCC_CCIPR2_ADF1SEL_FIELD(3U)
 
 #define RCC_CCIPR2_SPI3SEL_FIELD(n)         ((n) << RCC_CCIPR2_SPI3SEL_Pos)
 #define RCC_CCIPR2_SPI3SEL_PCLK1            RCC_CCIPR2_SPI3SEL_FIELD(0U)
@@ -1129,7 +1130,6 @@
     (STM32_MCO2SEL      == RCC_CFGR1_MCO2SEL_MSIK)      ||                  \
     (STM32_LPUART1SEL   == RCC_CCIPR3_LPUART1SEL_MSIK)  ||                  \
     (STM32_LPTIM1SEL    == RCC_CCIPR3_LPTIM1SEL_MSIK)   ||                  \
-    (STM32_LPTIM2SEL    == RCC_CCIPR1_LPTIM2SEL_MSIK)   ||                  \
     (STM32_LPTIM34SEL   == RCC_CCIPR3_LPTIM34SEL_MSIK)  ||                  \
     (STM32_SPI1SEL      == RCC_CCIPR1_SPI1SEL_MSIK)     ||                  \
     (STM32_SPI2SEL      == RCC_CCIPR1_SPI2SEL_MSIK)     ||                  \
@@ -2303,6 +2303,25 @@
 
 #else
   #error "invalid source selected for SAI1 clock"
+#endif
+
+/**
+ * @brief   ADF1 clock frequency.
+ */
+#if (STM32_ADF1SEL == RCC_CCIPR2_ADF1SEL_HCLK) || defined(__DOXYGEN__)
+  #define STM32_ADF1CLK                     hal_lld_get_clock_point(CLK_HCLK)
+
+#elif STM32_ADF1SEL == RCC_CCIPR2_ADF1SEL_AUDIOCLK
+  #define STM32_ADF1CLK                     0 /* TODO board.h */
+
+#elif STM32_ADF1SEL == RCC_CCIPR2_ADF1SEL_HSE
+  #define STM32_ADF1CLK                     hal_lld_get_clock_point(CLK_HSE)
+
+#elif STM32_ADF1SEL == RCC_CCIPR2_ADF1SEL_SAI1
+  #define STM32_ADF1CLK                     STM32_SAI1CLK
+
+#else
+  #error "invalid source selected for ADF1 clock"
 #endif
 
 /**
