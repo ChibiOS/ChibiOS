@@ -193,6 +193,9 @@ void irqDeinit(void) {
   tim4_irq_deinit();
   tim6_irq_deinit();
   tim7_irq_deinit();
+  tim15_irq_deinit();
+  tim16_irq_deinit();
+  tim17_irq_deinit();
 
   usart1_irq_deinit();
   usart3_irq_deinit();

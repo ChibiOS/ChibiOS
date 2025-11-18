@@ -18,7 +18,7 @@
  * @file    STM32U3xx/stm32_isr.h
  * @brief   STM32U3xx ISR handler header.
  *
- * @addtogroup STM32H5xx_ISR
+ * @addtogroup STM32U3xx_ISR
  * @{
  */
 
@@ -89,7 +89,7 @@
 #define STM32_DMA31_CH0_NUMBER              29
 #define STM32_DMA31_CH1_NUMBER              30
 #define STM32_DMA31_CH2_NUMBER              31
-#define STM32_DMA31_CH3_NUMBER              31
+#define STM32_DMA31_CH3_NUMBER              32
 #define STM32_DMA31_CH4_NUMBER              33
 #define STM32_DMA31_CH5_NUMBER              34
 #define STM32_DMA31_CH6_NUMBER              35
