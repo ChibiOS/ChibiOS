@@ -1140,7 +1140,6 @@
     (STM32_I3C1SEL      == RCC_CCIPR1_I3C1SEL_MSIK)     ||                  \
     (STM32_I3C2SEL      == RCC_CCIPR1_I3C2SEL_MSIK)     ||                  \
     (STM32_ADCDACSEL    == RCC_CCIPR2_ADCDACSEL_MSIK)   ||                  \
-    (STM32_ADF1SEL      == RCC_CCIPR2_ADF1SEL_MSIK)     ||                  \
     (STM32_FDCAN1SEL    == RCC_CCIPR1_FDCAN1SEL_MSIK)   ||                  \
     (STM32_ICLKSEL      == RCC_CCIPR1_ICLKSEL_MSIK)     ||                  \
     (STM32_OCTOSPISEL   == RCC_CCIPR2_OCTOSPISEL_MSIK)  ||                  \
@@ -1975,22 +1974,22 @@
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIS1024_MSIS4
   #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
-  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIS) / 1024U)
+  #define STM32_TIM17CCLK                   (hal_lld_get_clock_point(CLK_MSIS) / 1024U)
   #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIS) / 4U)
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIS1024_MSIK4
   #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
-  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIS) / 1024U)
+  #define STM32_TIM17CCLK                   (hal_lld_get_clock_point(CLK_MSIS) / 1024U)
   #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIK) / 4U)
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIK1024_MSIS4
   #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
-  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIK) / 1024U)
+  #define STM32_TIM17CCLK                   (hal_lld_get_clock_point(CLK_MSIK) / 1024U)
   #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIS) / 4U)
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_HSI256_MSIK1024_MSIK4
   #define STM32_TIM16CCLK                   (hal_lld_get_clock_point(CLK_HSI16) / 256U)
-  #define STM32_TIM15CCLK                   (hal_lld_get_clock_point(CLK_MSIK) / 1024U)
+  #define STM32_TIM17CCLK                   (hal_lld_get_clock_point(CLK_MSIK) / 1024U)
   #define STM32_LPTIM2CCLK                  (hal_lld_get_clock_point(CLK_MSIK) / 4U)
 
 #else
