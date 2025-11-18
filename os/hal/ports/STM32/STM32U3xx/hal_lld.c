@@ -289,8 +289,8 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 #endif
                 STM32_SAI1SEL     | STM32_SPI3SEL     |
                 STM32_ADF1SEL;
-  RCC->CCIPR3 = RCC_CCIPR3_LPTIM1SEL    | RCC_CCIPR3_LPTIM34SEL     |
-                RCC_CCIPR3_I2C3SEL      | RCC_CCIPR3_LPUART1SEL;
+  RCC->CCIPR3 = STM32_LPTIM1SEL    | STM32_LPTIM34SEL     |
+                STM32_I2C3SEL      | STM32_LPUART1SEL;
 }
 
 /**
