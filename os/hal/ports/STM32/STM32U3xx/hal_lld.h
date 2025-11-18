@@ -1743,7 +1743,7 @@
   #define STM32_MCO1DIVCLK                  STM32_HSI16CLK
 
 #elif STM32_MCO1SEL == RCC_CFGR1_MCO1SEL_HSE
-  #define STM32_MCO1DIVCLK                  STM32_HSE
+  #define STM32_MCO1DIVCLK                  STM32_HSECLK
 
 #elif STM32_MCO1SEL == RCC_CFGR1_MCO1SEL_LSI
   #define STM32_MCO1DIVCLK                  STM32_LSICLK
@@ -1801,7 +1801,7 @@
   #define STM32_MCO2DIVCLK                  STM32_HSI16CLK
 
 #elif STM32_MCO2SEL == RCC_CFGR1_MCO2SEL_HSE
-  #define STM32_MCO2DIVCLK                  STM32_HSE
+  #define STM32_MCO2DIVCLK                  STM32_HSECLK
 
 #elif STM32_MCO2SEL == RCC_CFGR1_MCO2SEL_LSI
   #define STM32_MCO2DIVCLK                  STM32_LSICLK
@@ -1894,8 +1894,8 @@
 #if (STM32_USART1SEL == RCC_CCIPR1_USART1SEL_PCLK2) || defined(__DOXYGEN__)
   #define STM32_USART1CLK                   hal_lld_get_clock_point(CLK_PCLK2)
 
-#elif STM32_USART1SEL == RCC_CCIPR1_USART1SEL_MSIK
-  #define STM32_USART1CLK                   hal_lld_get_clock_point(CLK_MSIK)
+#elif STM32_USART1SEL == RCC_CCIPR1_USART1SEL_HSI16
+  #define STM32_USART1CLK                   hal_lld_get_clock_point(CLK_HSI16)
 
 #else
   #error "invalid source selected for USART1 clock"
@@ -1907,8 +1907,8 @@
 #if (STM32_USART3SEL == RCC_CCIPR1_USART3SEL_PCLK1) || defined(__DOXYGEN__)
   #define STM32_USART3CLK                   hal_lld_get_clock_point(CLK_PCLK1)
 
-#elif STM32_USART3SEL == RCC_CCIPR1_USART3SEL_MSIK
-  #define STM32_USART3CLK                   hal_lld_get_clock_point(CLK_MSIK)
+#elif STM32_USART3SEL == RCC_CCIPR1_USART3SEL_HSI16
+  #define STM32_USART3CLK                   hal_lld_get_clock_point(CLK_HSI16)
 
 #else
   #error "invalid source selected for USART3 clock"
@@ -1920,8 +1920,8 @@
 #if (STM32_UART4SEL == RCC_CCIPR1_UART4SEL_PCLK1) || defined(__DOXYGEN__)
   #define STM32_UART4CLK                    hal_lld_get_clock_point(CLK_PCLK1)
 
-#elif STM32_UART4SEL == RCC_CCIPR1_UART4SEL_MSIK
-  #define STM32_UART4CLK                    hal_lld_get_clock_point(CLK_MSIK)
+#elif STM32_UART4SEL == RCC_CCIPR1_UART4SEL_HSI16
+  #define STM32_UART4CLK                    hal_lld_get_clock_point(CLK_HSI16)
 
 #else
   #error "invalid source selected for UART4 clock"
@@ -1933,8 +1933,8 @@
 #if (STM32_UART5SEL == RCC_CCIPR1_UART5SEL_PCLK1) || defined(__DOXYGEN__)
   #define STM32_UART5CLK                    hal_lld_get_clock_point(CLK_PCLK1)
 
-#elif STM32_UART5SEL == RCC_CCIPR1_UART5SEL_MSIK
-  #define STM32_UART5CLK                    hal_lld_get_clock_point(CLK_MSIK)
+#elif STM32_UART5SEL == RCC_CCIPR1_UART5SEL_HSI16
+  #define STM32_UART5CLK                    hal_lld_get_clock_point(CLK_HSI16)
 
 #else
   #error "invalid source selected for UART5 clock"
@@ -2004,10 +2004,10 @@
   #define STM32_LPTIM1CLK                   hal_lld_get_clock_point(CLK_MSIK)
 
 #elif STM32_LPTIM1SEL == RCC_CCIPR3_LPTIM1SEL_LSI
-  #define STM32_LPUART1CLK                  STM32_LSICLK
+  #define STM32_LPTIM1CLK                   STM32_LSICLK
 
-#elif STM32_LPTIM1SEL == RCC_CCIPR3_LPTIM1SEL_PLL3R
-  #define STM32_LPUART1CLK                  hal_lld_get_clock_point(CLK_HSI16)
+#elif STM32_LPTIM1SEL == RCC_CCIPR3_LPTIM1SEL_HSI16
+  #define STM32_LPTIM1CLK                   hal_lld_get_clock_point(CLK_HSI16)
 
 #elif STM32_LPTIM1SEL == RCC_CCIPR3_LPTIM1SEL_LSE
   #define STM32_LPTIM1CLK                   STM32_LSECLK
