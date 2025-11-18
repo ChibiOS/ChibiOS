@@ -57,7 +57,6 @@
  */
 uint32_t SystemCoreClock = STM32_HCLK;
 
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Post-reset clock configuration.
  */
@@ -74,11 +73,16 @@ const halclkcfg_t hal_clkcfg_reset = {
 
 /**
  * @brief   Default clock configuration.
+ * @note    This is the configuration defined in mcuconf.h.
  */
 const halclkcfg_t hal_clkcfg_default = {
-  .pwr_vosr             = STM32_PWR_VOSR,
+  .pwr_vosr             = STM32_PWR_VOSR
+#if STM32_BOOSTER_ENABLED == TRUE
+                        | PWR_VOSR_BOOSTEN
+#endif
+                          ,
   .rcc_cr               = STM32_MSIPLL0FAST | STM32_MSIPLL1FAST
-                        | STM32_MSIPLL0EN | STM32_MSIPLL1EN
+                        | STM32_MSIPLL0EN   | STM32_MSIPLL1EN
 #if STM32_HSE_ENABLED == TRUE
                         | RCC_CR_HSEON
 #endif
@@ -110,11 +114,14 @@ const halclkcfg_t hal_clkcfg_default = {
   .rcc_cfgr2            = STM32_PPRE2       | STM32_PPRE1       |
                           STM32_HPRE,
   .rcc_cfgr3            = STM32_PPRE3,
-  .rcc_cfgr4            = STM32_BOOSTDIV    | STM32_BOOSTSEL,
+  .rcc_cfgr4            = 0U
+#if STM32_BOOSTER_ENABLED == TRUE
+                        | STM32_BOOSTDIV    | STM32_BOOSTSEL
+#endif
+                          ,
   .flash_acr            = (STM32_FLASH_ACR & ~FLASH_ACR_LATENCY_Msk) |
                           STM32_FLASHBITS,
 };
-#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
@@ -260,15 +267,6 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
  */
 __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 
-  /* Clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR1  = STM32_MCO2PRE     | STM32_MCO2SEL     |
-                STM32_MCO1PRE     | STM32_MCO1SEL     |
-                STM32_STOPKERWUCK | STM32_STOPWUCK;
-  RCC->CFGR2  = STM32_PPRE2       | STM32_PPRE1       |
-                STM32_HPRE;
-  RCC->CFGR3  = STM32_PPRE3;
-  RCC->CFGR4  = STM32_BOOSTDIV    | STM32_BOOSTSEL;
-
   /* CCIPR registers initialization, note.*/
   RCC->CCIPR1 = STM32_TIMICSEL    | STM32_USB1SEL     |
                 STM32_ICLKSEL     |
@@ -293,6 +291,109 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
                 STM32_ADF1SEL;
   RCC->CCIPR3 = RCC_CCIPR3_LPTIM1SEL    | RCC_CCIPR3_LPTIM34SEL     |
                 RCC_CCIPR3_I2C3SEL      | RCC_CCIPR3_LPUART1SEL;
+}
+
+/**
+ * @brief   Switches to a different clock configuration.
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @notapi
+ */
+static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
+  uint32_t wtmask;
+
+  /* Setting flash ACR to the safest value while the clock tree is
+     reconfigured. we don't know the current clock settings.*/
+  flash_set_acr(FLASH_ACR_LATENCY_4WS);
+
+  /* MSIS must be active before performing the reconfiguration.*/
+  RCC->ICSCR1 = STM32_RCC_ICSCR1_RESET;
+  RCC->CR = STM32_RCC_CR_RESET;
+  while ((RCC->CR & (RCC_CR_MSISRDY | RCC_CR_MSIKRDY)) != (RCC_CR_MSISRDY | RCC_CR_MSIKRDY)) {
+    /* Waiting for MSIS and MSIK activation.*/
+  }
+
+  /* Resetting clock-related settings.*/
+  RCC->CFGR1  = STM32_RCC_CFGR1_RESET;
+  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != RCC_CFGR1_SWS_MSIS) {
+    /* Wait until MSIS is selected as SYSCLK source.*/
+  }
+  RCC->CFGR2  = STM32_RCC_CFGR2_RESET;
+  RCC->CFGR3  = STM32_RCC_CFGR3_RESET;
+  RCC->CFGR4  = STM32_RCC_CFGR4_RESET;
+  PWR->VOSR   = STM32_PWR_VOSR_RESET;
+
+  /* Enabling required oscillators together, MSIS enforced active, PLLs not
+     enabled yet because we are running in "reset" mode.*/
+  RCC->CR = (ccp->rcc_cr | RCC_CR_MSISON) & ~(RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL1EN);
+
+  /* Adding to the "wait mask" the status bits of all enabled features.*/
+  wtmask = RCC_CR_MSISRDY | RCC_CR_MSIKRDY;     /* Known to be ready already.*/
+  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
+    wtmask |= RCC_CR_HSERDY;
+  }
+  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
+    wtmask |= RCC_CR_HSI48RDY;
+  }
+  if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
+    wtmask |= RCC_CR_HSIRDY;
+  }
+  while ((RCC->CR & wtmask) != wtmask) {
+    /* Waiting for stabilization.*/
+  }
+
+  /* Programmable voltage scaling configuration, this is done at the end
+     because the booster clock must be ready (see RCC_CFGR4) before enabling
+     the booster. */
+  RCC->CFGR4 = ccp->rcc_cfgr4;
+  PWR->VOSR  = ccp->pwr_vosr;
+  wtmask = ccp->pwr_vosr << 16;
+  while ((PWR->VOSR & wtmask) != wtmask) {
+    /* Waiting for regulators and booster to be ready.*/
+  }
+
+  /* MSI configuration (sources, dividers, bias). */
+  RCC->ICSCR1 = ccp->rcc_icscr1 | RCC_ICSCR1_MSIRGSEL_ICSCR1;
+
+  /* Enabling also PLLs if required by the configuration.*/
+  RCC->CR = ccp->rcc_cr | RCC_CR_MSISON;
+  wtmask = 0U;
+  if ((ccp->rcc_cr & RCC_CR_MSIPLL0EN) != 0U) {
+    wtmask |= RCC_CR_MSIPLL0RDY;
+  }
+  if ((ccp->rcc_cr & RCC_CR_MSIPLL1EN) != 0U) {
+    wtmask |= RCC_CR_MSIPLL1RDY;
+  }
+  while ((RCC->CR & wtmask) != wtmask) {
+    /* Waiting for stabilization.*/
+  }
+
+  /* Final RCC CFGR settings (prescalers, MCO, STOP wake-up sources, booster).*/
+  RCC->CFGR1 = ccp->rcc_cfgr1;
+  RCC->CFGR2 = ccp->rcc_cfgr2;
+  RCC->CFGR3 = ccp->rcc_cfgr3;
+
+  /* Final flash ACR settings according to the target configuration.*/
+  flash_set_acr(ccp->flash_acr);
+
+  /* Waiting for the requested SYSCLK source to become active. */
+  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != ((ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) << RCC_CFGR1_SWS_Pos)) {
+    /* Waiting for SYSCLK switch.*/
+  }
+
+  /* If MSIS is not required in the final configuration then it is shut down. */
+  if ((ccp->rcc_cr & RCC_CR_MSISON) == 0U) {
+    RCC->CR &= ~RCC_CR_MSISON;
+    while ((RCC->CR & RCC_CR_MSISRDY) != 0U) {
+      /* Waiting for MSIS to stop.*/
+    }
+  }
+
+  return false;
 }
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
@@ -579,101 +680,6 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   return false;
 }
-/**
- * @brief   Switches to a different clock configuration.
- *
- * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
- * @return              The clock switch result.
- * @retval false        if the clock switch succeeded
- * @retval true         if the clock switch failed
- *
- * @notapi
- */
-static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
-  uint32_t cr, wtmask;
-
-  /* Setting flash ACR to the safest value while the clock tree is reconfigured.*/
-  flash_set_acr(FLASH_ACR_LATENCY_4WS);
-
-  /* MSIS must be active while performing the reconfiguration.*/
-  RCC->CR = STM32_RCC_CR_RESET;
-  while ((RCC->CR & RCC_CR_MSISRDY) == 0U) {
-    /* Waiting for MSIS activation.*/
-  }
-
-  /* Resetting prescalers/MCO settings (MSIS is the SYSCLK source).*/
-  RCC->CFGR1 = STM32_RCC_CFGR1_RESET;
-  RCC->CFGR2 = STM32_RCC_CFGR2_RESET;
-  RCC->CFGR3 = STM32_RCC_CFGR3_RESET;
-  RCC->CFGR4 = STM32_RCC_CFGR4_RESET;
-  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != RCC_CFGR1_SWS_MSIS) {
-    /* Wait until MSIS is selected as SYSCLK source.*/
-  }
-
-  /* Programmable voltage scaling configuration. */
-  PWR->VOSR = ccp->pwr_vosr;
-  wtmask = ccp->pwr_vosr << 16;
-  while ((PWR->VOSR & wtmask) != wtmask) {
-    /* Waiting for regulators and booster to be ready.*/
-  }
-
-  /* MSI configuration (sources, dividers, bias). */
-  RCC->ICSCR1 = ccp->rcc_icscr1 | RCC_ICSCR1_MSIRGSEL_ICSCR1;
-
-  /* Enabling required oscillators and MSIPLLs, MSIS kept active. */
-  cr = ccp->rcc_cr | RCC_CR_MSISON;
-  RCC->CR = cr;
-
-  wtmask = 0U;
-  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
-    wtmask |= RCC_CR_HSERDY;
-  }
-  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
-    wtmask |= RCC_CR_HSI48RDY;
-  }
-  if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
-    wtmask |= RCC_CR_HSIRDY;
-  }
-  if ((ccp->rcc_cr & RCC_CR_MSISON) != 0U) {
-    wtmask |= RCC_CR_MSISRDY;
-  }
-  if ((ccp->rcc_cr & RCC_CR_MSIKON) != 0U) {
-    wtmask |= RCC_CR_MSIKRDY;
-  }
-  if ((ccp->rcc_cr & RCC_CR_MSIPLL0EN) != 0U) {
-    wtmask |= RCC_CR_MSIPLL0RDY;
-  }
-  if ((ccp->rcc_cr & RCC_CR_MSIPLL1EN) != 0U) {
-    wtmask |= RCC_CR_MSIPLL1RDY;
-  }
-  while ((RCC->CR & wtmask) != wtmask) {
-    /* Waiting for stabilization.*/
-  }
-
-  /* Final flash ACR settings according to the target configuration.*/
-  flash_set_acr(ccp->flash_acr);
-
-  /* Final RCC CFGR settings (prescalers, MCO, STOP wake-up sources, booster).*/
-  RCC->CFGR1 = ccp->rcc_cfgr1;
-  RCC->CFGR2 = ccp->rcc_cfgr2;
-  RCC->CFGR3 = ccp->rcc_cfgr3;
-  RCC->CFGR4 = ccp->rcc_cfgr4;
-
-  /* Waiting for the requested SYSCLK source to become active. */
-  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != ((ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) << RCC_CFGR1_SWS_Pos)) {
-    /* Waiting for SYSCLK switch.*/
-  }
-
-  /* If MSIS is not required in the final configuration then it is shut down. */
-  if ((ccp->rcc_cr & RCC_CR_MSISON) == 0U) {
-    RCC->CR &= ~RCC_CR_MSISON;
-    while ((RCC->CR & RCC_CR_MSISRDY) != 0U) {
-      /* Waiting for MSIS to stop.*/
-    }
-  }
-
-  return false;
-}
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
@@ -703,18 +709,16 @@ void hal_lld_init(void) {
   irqInit();
 }
 
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
- * @brief   STM32L4xx clocks and PLL initialization.
- * @note    All the involved constants come from the file @p board.h.
- * @note    This function should be invoked just after the system reset.
+ * @brief   Clocks initialization.
+ * @note    This function is invoked early by the startup files, non-automatic
+ *          variables are not initialized.
  *
  * @special
  */
 void stm32_clock_init(void) {
 
 #if !STM32_NO_INIT
-
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
      board files.*/
@@ -735,21 +739,18 @@ void stm32_clock_init(void) {
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();
 
-  /* Backup domain reset.*/
+  /* Backup domain reset if required.*/
   bd_reset();
 
   /* Static oscillators setup.*/
   lse_init();
   lsi_init();
-  hsi16_init();
-  hsi48_init();
-  hse_init();
 
   /* Static clocks setup (dividers, CCIPR selections).*/
   hal_lld_set_static_clocks();
 
   /* Selecting the default clock configuration. */
-  if (hal_lld_clock_raw_switch(&hal_clkcfg_default)) {
+  if (hal_lld_clock_configure(&hal_clkcfg_default)) {
     osalSysHalt("clkswc");
   }
 
@@ -760,134 +761,6 @@ void stm32_clock_init(void) {
   icache_init();
 #endif /* STM32_NO_INIT */
 }
-
-#else /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
-void stm32_clock_init(void) {
-
-#if !STM32_NO_INIT
-
-  /* Reset of all peripherals.
-     Note, GPIOs are not reset because initialized before this point in
-     board files.*/
-  rccResetAHB1R1(~0);
-  rccResetAHB1R2(~0);
-  rccResetAHB2R1(~STM32_GPIO_EN_MASK);
-  rccResetAHB2R2(~0);
-  rccResetAPB1R1(~0);
-  rccResetAPB1R2(~0);
-  rccResetAPB2(~0);
-  rccResetAPB3(~0);
-
-  /* RTC APB clock enable.*/
-  /* TODO: move in the RTC driver.*/
-#if (HAL_USE_RTC == TRUE) && defined(RCC_APB3ENR_RTCAPBEN)
-  rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true);
-#endif
-
-  /* Static PWR configurations.*/
-  hal_lld_set_static_pwr();
-
-  /* Backup domain reset.*/
-  bd_reset();
-
-  /* Clocks setup.*/
-  lse_init();
-  lsi_init();
-  hsi16_init();
-  hsi48_init();
-  hse_init();
-
-  /* PWR core voltage (range) and thresholds setup (EPOD booster).*/
-  PWR->VOSR = STM32_PWR_VOSR;
-#if (STM32_PWR_VOSR & PWR_VOSR_R1EN) != 0U
-  while ((PWR->VOSR & PWR_VOSR_R1RDY) == 0U) {
-    /* Wait until regulator is stable.*/
-  }
-#endif
-#if (STM32_PWR_VOSR & PWR_VOSR_R2EN) != 0U
-  while ((PWR->VOSR & PWR_VOSR_R2RDY) == 0U) {
-    /* Wait until regulator is stable.*/
-  }
-#endif
-  if (STM32_BOOSTER_ENABLED) {
-    RCC->CFGR4 = STM32_BOOSTSEL | STM32_BOOSTDIV;
-    PWR->VOSR |= PWR_VOSR_BOOSTEN;
-    while ((PWR->VOSR & PWR_VOSR_BOOSTRDY) == 0U) {
-      /* Booster stabilization time.*/
-    }
-  }
-
-  /* Backup domain initializations.*/
-  bd_init();
-
-  /* Setup of flash WS's before changing clocks.*/
-  flash_set_acr((STM32_FLASH_ACR & ~FLASH_ACR_LATENCY_Msk) | STM32_FLASHBITS);
-
-  /* Setup of clocks dividers before changing clocks.*/
-  hal_lld_set_static_clocks();
-
-  /* MSI activation, if required.*/
-  {
-    uint32_t cr, crrdy, icscr1;
-
-    icscr1 = RCC->ICSCR1 & ~(RCC_ICSCR1_MSISSEL_Msk    | RCC_ICSCR1_MSISDIV_Msk    |
-                             RCC_ICSCR1_MSIKSEL_Msk    | RCC_ICSCR1_MSIKDIV_Msk    |
-                             RCC_ICSCR1_MSIPLL1N_Msk   | RCC_ICSCR1_MSIBIAS_Msk    |
-                             RCC_ICSCR1_MSIPLL0SEL_Msk | RCC_ICSCR1_MSIPLL1SEL_Msk |
-                             RCC_ICSCR1_MSIHSINDIV_Msk);
-    icscr1 |= STM32_MSISSEL    | STM32_MSISDIV    |
-              STM32_MSIKSEL    | STM32_MSIKDIV    |
-              STM32_MSIPLL1N   | STM32_MSIBIAS    |
-              STM32_MSIPLL0SEL | STM32_MSIPLL1SEL |
-              STM32_MSIHSINDIV;
-    RCC->ICSCR1 = icscr1 | RCC_ICSCR1_MSIRGSEL; /* Note, ICSCR1 enforced.*/
-
-    cr = RCC->CR & ~(RCC_CR_MSIPLL0FAST_Msk | RCC_CR_MSIPLL1FAST_Msk |
-                     RCC_CR_MSIPLL0EN_Msk   | RCC_CR_MSIPLL1EN_Msk   |
-                     RCC_CR_MSIKON_Msk      | RCC_CR_MSIKERON_Msk    |
-                     RCC_CR_MSISON_Msk);
-
-    /* MSI clocks activation and waiting.*/
-    crrdy = 0U;
-#if STM32_ACTIVATE_MSIS == TRUE
-    cr    |= RCC_CR_MSISON;
-    crrdy |= RCC_CR_MSISRDY;
-#endif
-#if STM32_ACTIVATE_MSIK == TRUE
-    cr    |= RCC_CR_MSIKON | RCC_CR_MSIKERON; /* Note, MSIKERON enforced.*/
-    crrdy |= RCC_CR_MSIKRDY;
-#endif
-    RCC->CR = cr;
-    while ((RCC->CR & crrdy) != crrdy) {
-      /* Waiting.*/
-    }
-
-    cr |= STM32_MSIPLL0FAST | STM32_MSIPLL1FAST |
-          STM32_MSIPLL0EN | STM32_MSIPLL1EN;
-
-    /* PLLs activation and wait time.*/
-    RCC->CR = cr;
-    crrdy = ((STM32_MSIPLL0EN | STM32_MSIPLL1EN) >> RCC_CR_MSIPLL1EN_Pos) << RCC_CR_MSIPLL1RDY_Pos;
-    while ((RCC->CR & crrdy) != crrdy) {
-      /* Waiting.*/
-    }
-  }
-
-  /* Switching to the configured SYSCLK source if it is different from MSIS.*/
-#if STM32_SW != RCC_CFGR1_SW_MSIS
-  RCC->CFGR1 |= STM32_SW;       /* Switches on the selected clock source.   */
-//  while(1);
-  while ((RCC->CFGR1 & STM32_SWS_MASK) != (STM32_SW << RCC_CFGR1_SWS_Pos)) {
-    /* Wait until SYSCLK is stable.*/
-  }
-#endif
-
-  /* Cache enable.*/
-  icache_init();
-
-#endif /* STM32_NO_INIT */
-}
-#endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
@@ -906,7 +779,7 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
-  if (hal_lld_clock_raw_switch(ccp)) {
+  if (hal_lld_clock_configure(ccp)) {
     return true;
   }
 

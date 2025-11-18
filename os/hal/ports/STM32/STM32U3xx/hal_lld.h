@@ -2374,7 +2374,6 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a clock configuration structure.
  */
@@ -2388,7 +2387,6 @@ typedef struct {
   uint32_t          rcc_cfgr4;
   uint32_t          flash_acr;
 } halclkcfg_t;
-#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
