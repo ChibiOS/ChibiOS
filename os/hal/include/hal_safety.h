@@ -25,8 +25,6 @@
 #ifndef HAL_SAFETY_H
 #define HAL_SAFETY_H
 
-#if (HAL_USE_SAFETY == TRUE) || defined(__DOXYGEN__)
-
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -34,6 +32,14 @@
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Enables the safety-related features in HAL.
+ * @note    Disabling this option saves both code and data space.
+ */
+#if !defined(HAL_USE_SAFETY) || defined(__DOXYGEN__)
+#define HAL_USE_SAFETY                      FALSE
+#endif
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
@@ -53,10 +59,14 @@
  */
 /**
  * @brief   Sets bits into an 8 bits register.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] s         mask of bits to be set
- * @param[in] v         verification flag, register is read back if @p true
+ * @param[in] v         verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  *
  * @xclass
  */
@@ -64,10 +74,14 @@
 
 /**
  * @brief   Sets bits into a 16 bits register.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] s         mask of bits to be set
- * @param[in] v         verification flag, register is read back if @p true
+ * @param[in] v         verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  *
  * @xclass
  */
@@ -75,10 +89,14 @@
 
 /**
  * @brief   Sets bits into a 32 bits register.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] s         mask of bits to be set
- * @param[in] v         verification flag, register is read back if @p true
+ * @param[in] v         verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  *
  * @xclass
  */
@@ -86,10 +104,14 @@
 
 /**
  * @brief   Clears bits into an 8 bits register.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] c         mask of bits to be cleared
- * @param[in] v         verification flag, register is read back if @p true
+ * @param[in] v         verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  *
  * @xclass
  */
@@ -97,10 +119,14 @@
 
 /**
  * @brief   Clears bits into a 16 bits register.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] c         mask of bits to be cleared
- * @param[in] v         verification flag, register is read back if @p true
+ * @param[in] v         verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  *
  * @xclass
  */
@@ -108,10 +134,14 @@
 
 /**
  * @brief   Clears bits into a 32 bits register.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] c         mask of bits to be cleared
- * @param[in] v         verification flag, register is read back if @p true
+ * @param[in] v         verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  *
  * @xclass
  */
@@ -124,6 +154,32 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+#if (HAL_USE_SAFETY == TRUE) || defined(__DOXYGEN__)
+  bool halRegWaitAllSet8X(volatile uint8_t *p, uint8_t mask,
+                          rtcnt_t tmo, uint8_t *valp);
+  bool halRegWaitAllSet16X(volatile uint16_t *p, uint16_t mask,
+                           rtcnt_t tmo, uint16_t *valp);
+  bool halRegWaitAllSet32X(volatile uint32_t *p, uint32_t mask,
+                           rtcnt_t tmo, uint32_t *valp);
+  bool halRegWaitAnySet8X(volatile uint8_t *p, uint8_t mask,
+                          rtcnt_t tmo, uint8_t *valp);
+  bool halRegWaitAnySet16X(volatile uint16_t *p, uint16_t mask,
+                           rtcnt_t tmo, uint16_t *valp);
+  bool halRegWaitAnySet32X(volatile uint32_t *p, uint32_t mask,
+                           rtcnt_t tmo, uint32_t *valp);
+  bool halRegWaitAllClear8X(volatile uint8_t *p, uint8_t mask,
+                            rtcnt_t tmo, uint8_t *valp);
+  bool halRegWaitAllClear16X(volatile uint16_t *p, uint16_t mask,
+                             rtcnt_t tmo, uint16_t *valp);
+  bool halRegWaitAllClear32X(volatile uint32_t *p, uint32_t mask,
+                             rtcnt_t tmo, uint32_t *valp);
+  bool halRegWaitAnyClear8X(volatile uint8_t *p, uint8_t mask,
+                            rtcnt_t tmo, uint8_t *valp);
+  bool halRegWaitAnyClear16X(volatile uint16_t *p, uint16_t mask,
+                             rtcnt_t tmo, uint16_t *valp);
+  bool halRegWaitAnyClear32X(volatile uint32_t *p, uint32_t mask,
+                             rtcnt_t tmo, uint32_t *valp);
 #endif
 #ifdef __cplusplus
 }
@@ -138,26 +194,33 @@ extern "C" {
  * @note    This code relies on compiler optimizations, the constant
  *          operations that cause no change to the final value are
  *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] setmask   mask of bits to be set
  * @param[in] clrmask   mask of bits to be cleared
- * @param[in] verify    verification flag, register is read back if @p true
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  * @return              The check result.
  * @retval false        if the comparison succeeded.
  * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool seRegModify8X(volatile uint8_t *p,
-                                 uint8_t setmask,
-                                 uint8_t clrmask,
-                                 bool verify) {
+static inline bool halRegModify8X(volatile uint8_t *p,
+                                  uint8_t setmask,
+                                  uint8_t clrmask,
+                                  bool verify) {
   uint8_t v = *p;
   v |= setmask;
   v &= ~clrmask;
   *p = v;
 
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
   if (verify) {
     uint8_t check = *p;
 
@@ -167,8 +230,9 @@ static inline bool seRegModify8X(volatile uint8_t *p,
     if ((check & clrmask) != (uint8_t)0) {
       return true;
     }
-    return false;
   }
+#endif
+
   return false;
 }
 
@@ -177,26 +241,33 @@ static inline bool seRegModify8X(volatile uint8_t *p,
  * @note    This code relies on compiler optimizations, the constant
  *          operations that cause no change to the final value are
  *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] setmask   mask of bits to be set
  * @param[in] clrmask   mask of bits to be cleared
- * @param[in] verify    verification flag, register is read back if @p true
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  * @return              The check result.
  * @retval false        if the comparison succeeded.
  * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool seRegModify16X(volatile uint16_t *p,
-                                  uint16_t setmask,
-                                  uint16_t clrmask,
-                                  bool verify) {
+static inline bool halRegModify16X(volatile uint16_t *p,
+                                   uint16_t setmask,
+                                   uint16_t clrmask,
+                                   bool verify) {
   uint16_t v = *p;
   v |= setmask;
   v &= ~clrmask;
   *p = v;
 
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
   if (verify) {
     uint16_t check = *p;
 
@@ -206,9 +277,10 @@ static inline bool seRegModify16X(volatile uint16_t *p,
     if ((check & clrmask) != (uint16_t)0) {
       return true;
     }
-    return false;
   }
-  return false;
+#endif
+
+ return false;
 }
 
 /**
@@ -216,26 +288,33 @@ static inline bool seRegModify16X(volatile uint16_t *p,
  * @note    This code relies on compiler optimizations, the constant
  *          operations that cause no change to the final value are
  *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
  *
  * @param[in] p         pointer to the register
  * @param[in] setmask   mask of bits to be set
  * @param[in] clrmask   mask of bits to be cleared
- * @param[in] verify    verification flag, register is read back if @p true
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
  * @return              The check result.
  * @retval false        if the comparison succeeded.
  * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool seRegModify32X(volatile uint32_t *p,
-                                  uint32_t setmask,
-                                  uint32_t clrmask,
-                                  bool verify) {
+static inline bool halRegModify32X(volatile uint32_t *p,
+                                   uint32_t setmask,
+                                   uint32_t clrmask,
+                                   bool verify) {
   uint32_t v = *p;
   v |= setmask;
   v &= ~clrmask;
   *p = v;
 
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
   if (verify) {
     uint32_t check = *p;
 
@@ -245,13 +324,158 @@ static inline bool seRegModify32X(volatile uint32_t *p,
     if ((check & clrmask) != (uint32_t)0) {
       return true;
     }
-    return false;
   }
+#endif
 
   return false;
 }
 
-#endif /* HAL_USE_SAFETY == TRUE */
+/**
+ * @brief   Writes a field into an 8 bits register.
+ * @note    This code relies on compiler optimizations, the constant
+ *          operations that cause no change to the final value are
+ *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
+ *
+ * @param[in] p         pointer to the register
+ * @param[in] mask      mask of bits field to be written
+ * @param[in] value     value to be written, must be pre-shifted to match the
+ *                      mask
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
+ * @return              The check result.
+ * @retval false        if the comparison succeeded.
+ * @retval true         if the comparison failed.
+ *
+ * @xclass
+ */
+static inline bool halRegMaskedWrite8X(volatile uint8_t *p,
+                                       uint8_t mask,
+                                       uint8_t value,
+                                       bool verify) {
+  uint8_t v;
+
+  osalDbgCheck((value & ~mask) == 0U);
+
+  v = *p;
+  v &= ~mask;
+  v |= value;
+  *p = v;
+
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
+  if (verify) {
+    uint8_t check = *p;
+
+    if ((check & mask) != value) {
+      return true;
+    }
+  }
+#endif
+
+  return false;
+}
+
+/**
+ * @brief   Writes a field into a 16 bits register.
+ * @note    This code relies on compiler optimizations, the constant
+ *          operations that cause no change to the final value are
+ *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
+ *
+ * @param[in] p         pointer to the register
+ * @param[in] mask      mask of bits field to be written
+ * @param[in] value     value to be written, must be pre-shifted to match the
+ *                      mask
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
+ * @return              The check result.
+ * @retval false        if the comparison succeeded.
+ * @retval true         if the comparison failed.
+ *
+ * @xclass
+ */
+static inline bool halRegMaskedWrite16X(volatile uint16_t *p,
+                                        uint16_t mask,
+                                        uint16_t value,
+                                        bool verify) {
+  uint16_t v;
+
+  osalDbgCheck((value & ~mask) == 0U);
+
+  v= *p;
+  v &= ~mask;
+  v |= value;
+  *p = v;
+
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
+  if (verify) {
+    uint16_t check = *p;
+
+    if ((check & mask) != value) {
+      return true;
+    }
+  }
+#endif
+
+  return false;
+}
+
+/**
+ * @brief   Writes a field into a 32 bits register.
+ * @note    This code relies on compiler optimizations, the constant
+ *          operations that cause no change to the final value are
+ *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
+ *
+ * @param[in] p         pointer to the register
+ * @param[in] mask      mask of bits field to be written
+ * @param[in] value     value to be written, must be pre-shifted to match the
+ *                      mask
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
+ * @return              The check result.
+ * @retval false        if the comparison succeeded.
+ * @retval true         if the comparison failed.
+ *
+ * @xclass
+ */
+static inline bool halRegMaskedWrite32X(volatile uint32_t *p,
+                                        uint32_t mask,
+                                        uint32_t value,
+                                        bool verify) {
+  uint32_t v;
+
+  osalDbgCheck((value & ~mask) == 0U);
+
+  v = *p;
+  v &= ~mask;
+  v |= value;
+  *p = v;
+
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
+  if (verify) {
+    uint32_t check = *p;
+
+    if ((check & mask) != value) {
+      return true;
+    }
+  }
+#endif
+
+  return false;
+}
 
 #endif /* HAL_SAFETY_H */
 
