@@ -1,0 +1,3 @@
+- Flash low power mode not yet supported.
+  - Flash wait states calculation in both static and dynamic modes.
+- Waiting loops need a timeout, requires support in HAL.
