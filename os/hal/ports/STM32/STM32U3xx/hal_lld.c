@@ -327,8 +327,8 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   RCC->CFGR4  = STM32_RCC_CFGR4_RESET;
   PWR->VOSR   = STM32_PWR_VOSR_RESET;
 
-  /* Enabling zll required oscillators together, MSIS enforced active, PLLs
-     not enabled yet because we are running in "reset" mode.*/
+  /* Enabling all required oscillators at same time, MSIS enforced active,
+     PLLs not enabled yet because we are running in "reset" mode.*/
   RCC->CR = (ccp->rcc_cr | RCC_CR_MSISON) & ~(RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL1EN);
 
   /* Adding to the "wait mask" the status bits of all enabled oscillators.*/
