@@ -289,8 +289,8 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
 #endif
                 STM32_SAI1SEL     | STM32_SPI3SEL     |
                 STM32_ADF1SEL;
-  RCC->CCIPR3 = STM32_LPTIM1SEL    | STM32_LPTIM34SEL     |
-                STM32_I2C3SEL      | STM32_LPUART1SEL;
+  RCC->CCIPR3 = STM32_LPTIM1SEL   | STM32_LPTIM34SEL  |
+                STM32_I2C3SEL     | STM32_LPUART1SEL;
 }
 
 /**
@@ -327,11 +327,11 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   RCC->CFGR4  = STM32_RCC_CFGR4_RESET;
   PWR->VOSR   = STM32_PWR_VOSR_RESET;
 
-  /* Enabling required oscillators together, MSIS enforced active, PLLs not
-     enabled yet because we are running in "reset" mode.*/
+  /* Enabling zll required oscillators together, MSIS enforced active, PLLs
+     not enabled yet because we are running in "reset" mode.*/
   RCC->CR = (ccp->rcc_cr | RCC_CR_MSISON) & ~(RCC_CR_MSIPLL0EN | RCC_CR_MSIPLL1EN);
 
-  /* Adding to the "wait mask" the status bits of all enabled features.*/
+  /* Adding to the "wait mask" the status bits of all enabled oscillators.*/
   wtmask = RCC_CR_MSISRDY | RCC_CR_MSIKRDY;     /* Known to be ready already.*/
   if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
     wtmask |= RCC_CR_HSERDY;
@@ -385,13 +385,9 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
     /* Waiting for SYSCLK switch.*/
   }
 
-  /* If MSIS is not required in the final configuration then it is shut down. */
-  if ((ccp->rcc_cr & RCC_CR_MSISON) == 0U) {
-    RCC->CR &= ~RCC_CR_MSISON;
-    while ((RCC->CR & RCC_CR_MSISRDY) != 0U) {
-      /* Waiting for MSIS to stop.*/
-    }
-  }
+  /* Final RCC_CR value, MSIS could go off at this point if it is not part
+     of the mask.*/
+  RCC->CR = ccp->rcc_cr;
 
   return false;
 }
