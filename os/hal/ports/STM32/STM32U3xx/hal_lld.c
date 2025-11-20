@@ -212,12 +212,9 @@ static const system_limits_t vos_range2 = {
  *
  * @param[in] acr       value for the ACR register
  */
-__STATIC_INLINE void flash_set_acr(uint32_t acr) {
+__STATIC_INLINE bool flash_set_acr(uint32_t acr) {
 
-  FLASH->ACR = acr;
-  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
-    /* Waiting for flash wait states setup.*/
-  }
+  return halRegWrite32X(&FLASH->ACR, acr, true);
 }
 
 /**
@@ -308,19 +305,29 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Setting flash ACR to the safest value while the clock tree is
      reconfigured. we don't know the current clock settings.*/
-  flash_set_acr(FLASH_ACR_LATENCY_4WS);
+//  flash_set_acr(FLASH_ACR_LATENCY_4WS);
+  if (halRegWrite32X(&FLASH->ACR, FLASH_ACR_LATENCY_4WS, true)) {
+    return true;
+  }
 
-  /* MSIS must be active before performing the reconfiguration.*/
+  /* MSIS must be active before performing the reconfiguration, MSI could
+     be restarting so waiting for the ready bits is required.*/
   RCC->ICSCR1 = STM32_RCC_ICSCR1_RESET;
-  RCC->CR = STM32_RCC_CR_RESET;
-  while ((RCC->CR & (RCC_CR_MSISRDY | RCC_CR_MSIKRDY)) != (RCC_CR_MSISRDY | RCC_CR_MSIKRDY)) {
-    /* Waiting for MSIS and MSIK activation.*/
+  RCC->CR     = STM32_RCC_CR_RESET;
+  if (halRegWaitAllSet32X(&RCC->CR,
+                          RCC_CR_MSISRDY | RCC_CR_MSIKRDY,
+                          STM32_OSCILLATORS_STARTUP_TIME,
+                          NULL)) {
+    return true;
   }
 
   /* Resetting clock-related settings.*/
   RCC->CFGR1  = STM32_RCC_CFGR1_RESET;
-  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != RCC_CFGR1_SWS_MSIS) {
-    /* Wait until MSIS is selected as SYSCLK source.*/
+  if (halRegWaitMatch32X(&RCC->CFGR1,
+                         RCC_CFGR1_SWS_Msk, RCC_CFGR1_SWS_MSIS,
+                         STM32_SYSCLK_SWITCH_TIME,
+                         NULL)) {
+    return true;
   }
   RCC->CFGR2  = STM32_RCC_CFGR2_RESET;
   RCC->CFGR3  = STM32_RCC_CFGR3_RESET;
@@ -342,8 +349,11 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
     wtmask |= RCC_CR_HSIRDY;
   }
-  while ((RCC->CR & wtmask) != wtmask) {
-    /* Waiting for stabilization.*/
+  if (halRegWaitAllSet32X(&RCC->CR,
+                          wtmask,
+                          STM32_OSCILLATORS_STARTUP_TIME,
+                          NULL)) {
+    return true;
   }
 
   /* Programmable voltage scaling configuration, this is done at the end
@@ -352,8 +362,11 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   RCC->CFGR4 = ccp->rcc_cfgr4;
   PWR->VOSR  = ccp->pwr_vosr;
   wtmask = ccp->pwr_vosr << 16;
-  while ((PWR->VOSR & wtmask) != wtmask) {
-    /* Waiting for regulators and booster to be ready.*/
+  if (halRegWaitAllSet32X(&PWR->VOSR,
+                          wtmask,
+                          STM32_OSCILLATORS_STARTUP_TIME,
+                          NULL)) {
+    return true;
   }
 
   /* MSI configuration (sources, dividers, bias). */
@@ -368,8 +381,11 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   if ((ccp->rcc_cr & RCC_CR_MSIPLL1EN) != 0U) {
     wtmask |= RCC_CR_MSIPLL1RDY;
   }
-  while ((RCC->CR & wtmask) != wtmask) {
-    /* Waiting for stabilization.*/
+  if (halRegWaitAllSet32X(&RCC->CR,
+                          wtmask,
+                          STM32_MSIPLL_STARTUP_TIME,
+                          NULL)) {
+    return true;
   }
 
   /* Final RCC CFGR settings (prescalers, MCO, STOP wake-up sources, booster).*/
@@ -378,11 +394,17 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   RCC->CFGR3 = ccp->rcc_cfgr3;
 
   /* Final flash ACR settings according to the target configuration.*/
-  flash_set_acr(ccp->flash_acr);
+//  flash_set_acr(ccp->flash_acr);
+  if (halRegWrite32X(&FLASH->ACR, ccp->flash_acr, true)) {
+    return true;
+  }
 
   /* Waiting for the requested SYSCLK source to become active. */
-  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != ((ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) << RCC_CFGR1_SWS_Pos)) {
-    /* Waiting for SYSCLK switch.*/
+  if (halRegWaitMatch32X(&RCC->CFGR1,
+                         RCC_CFGR1_SWS_Msk, (ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) << RCC_CFGR1_SWS_Pos,
+                         STM32_SYSCLK_SWITCH_TIME,
+                         NULL)) {
+    return true;
   }
 
   /* Final RCC_CR value, MSIS could go off at this point if it is not part
@@ -714,6 +736,9 @@ void hal_lld_init(void) {
  */
 void stm32_clock_init(void) {
 
+  /* DWT cycles counter enabled, used for timeouts.*/
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+
 #if !STM32_NO_INIT
   /* Reset of all peripherals.
      Note, GPIOs are not reset because initialized before this point in
@@ -747,7 +772,7 @@ void stm32_clock_init(void) {
 
   /* Selecting the default clock configuration. */
   if (hal_lld_clock_configure(&hal_clkcfg_default)) {
-    osalSysHalt("clkswc");
+    osalSysHalt("clkinit");
   }
 
   /* Backup domain initializations.*/

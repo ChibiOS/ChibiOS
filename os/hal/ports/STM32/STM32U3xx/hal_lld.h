@@ -2355,38 +2355,50 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_0WS
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_0WS
 
 #elif STM32_HCLK <= STM32_1WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_1WS
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_1WS
 
 #elif STM32_HCLK <= STM32_2WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_2WS
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_2WS
 
 #elif STM32_HCLK <= STM32_3WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_3WS
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_3WS
 
 #elif STM32_HCLK <= STM32_4WS_THRESHOLD
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_4WS
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_4WS
 
 #else
-  #define STM32_FLASHBITS           FLASH_ACR_LATENCY_5WS
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_5WS
 #endif
 
 /**
  * @brief   ADC1 clock frequency
  */
-#define STM32_ADC1_CLOCK            STM32_ADCDACCLK
+#define STM32_ADC1_CLOCK                    STM32_ADCDACCLK
 
 /**
  * @brief   ADC2 clock frequency
  */
-#define STM32_ADC2_CLOCK            STM32_ADCDACCLK
+#define STM32_ADC2_CLOCK                    STM32_ADCDACCLK
 
 /**
  * @brief   DAC1 clock frequency
  */
-#define STM32_DAC1_CLOCK            STM32_ADCDACCLK
+#define STM32_DAC1_CLOCK                    STM32_ADCDACCLK
+
+/**
+ * @brief   Real time counter frequency exported to the safety module.
+ * @note    The counter is the internal DWS cycles counter so in runs at
+ *          the same frequency of CPU.
+ */
+#define HAL_LLD_GET_CNT_FREQUENCY()         hal_lld_get_clock_point(CLK_HCLK)
+
+/**
+ * @brief   Real time counter value exported to the safety module.
+ */
+#define HAL_LLD_GET_CNT_VALUE()             (DWT->CYCCNT)
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

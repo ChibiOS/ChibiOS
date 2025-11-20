@@ -155,7 +155,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if (HAL_USE_SAFETY == TRUE) || defined(__DOXYGEN__)
+  bool halRegWaitMatch8X(volatile uint8_t *p, uint8_t mask,
+                         uint8_t match, uint32_t tmo, uint8_t *valp);
+  bool halRegWaitMatch16X(volatile uint16_t *p, uint16_t mask,
+                          uint16_t match, uint32_t tmo, uint16_t *valp);
+  bool halRegWaitMatch32X(volatile uint32_t *p, uint32_t mask,
+                          uint32_t match, uint32_t tmo, uint32_t *valp);
   bool halRegWaitAllSet8X(volatile uint8_t *p, uint8_t mask,
                           rtcnt_t tmo, uint8_t *valp);
   bool halRegWaitAllSet16X(volatile uint16_t *p, uint16_t mask,
@@ -180,7 +185,6 @@ extern "C" {
                              rtcnt_t tmo, uint16_t *valp);
   bool halRegWaitAnyClear32X(volatile uint32_t *p, uint32_t mask,
                              rtcnt_t tmo, uint32_t *valp);
-#endif
 #ifdef __cplusplus
 }
 #endif
@@ -188,6 +192,120 @@ extern "C" {
 /*===========================================================================*/
 /* Inline functions.                                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Writes an 8 bits register.
+ * @note    This code relies on compiler optimizations, the constant
+ *          operations that cause no change to the final value are
+ *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
+ *
+ * @param[in] p         pointer to the register
+ * @param[in] value     value to be written
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
+ * @return              The check result.
+ * @retval false        if the comparison succeeded.
+ * @retval true         if the comparison failed.
+ *
+ * @xclass
+ */
+static inline bool halRegWrite8X(volatile uint8_t *p,
+                                 uint8_t value,
+                                 bool verify) {
+
+  *p = value;
+
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
+  if (verify) {
+    if (*p != value) {
+      return true;
+    }
+  }
+#endif
+
+  return false;
+}
+
+/**
+ * @brief   Writes a 16 bits register.
+ * @note    This code relies on compiler optimizations, the constant
+ *          operations that cause no change to the final value are
+ *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
+ *
+ * @param[in] p         pointer to the register
+ * @param[in] value     value to be written
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
+ * @return              The check result.
+ * @retval false        if the comparison succeeded.
+ * @retval true         if the comparison failed.
+ *
+ * @xclass
+ */
+static inline bool halRegWrite16X(volatile uint16_t *p,
+                                  uint16_t value,
+                                  bool verify) {
+
+  *p = value;
+
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
+  if (verify) {
+    if (*p != value) {
+      return true;
+    }
+  }
+#endif
+
+  return false;
+}
+
+/**
+ * @brief   Writes a 32 bits register.
+ * @note    This code relies on compiler optimizations, the constant
+ *          operations that cause no change to the final value are
+ *          optimized out.
+ * @note    There is a strong assumption for memory-mapped I/O, this is not
+ *          necessarily true on all architectures.
+ *
+ * @param[in] p         pointer to the register
+ * @param[in] value     value to be written
+ * @param[in] verify    verification flag, register is read back if @p true,
+ *                      this flag only has effect if @p HAL_USE_SAFETY is
+ *                      set to @p TRUE
+ * @return              The check result.
+ * @retval false        if the comparison succeeded.
+ * @retval true         if the comparison failed.
+ *
+ * @xclass
+ */
+static inline bool halRegWrite32X(volatile uint32_t *p,
+                                  uint32_t value,
+                                  bool verify) {
+
+  *p = value;
+
+#if HAL_USE_SAFETY == FALSE
+  (void)verify;
+#else
+  if (verify) {
+    if (*p != value) {
+      return true;
+    }
+  }
+#endif
+
+  return false;
+}
 
 /**
  * @brief   Modifies a 8 bits register.

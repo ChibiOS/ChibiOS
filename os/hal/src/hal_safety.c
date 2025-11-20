@@ -42,8 +42,8 @@
 
 static inline uint32_t get_frequency(void) {
 
-#if defined(HAL_LLD_GET_FREQUENCY)
-  return HAL_LLD_GET_FREQUENCY();
+#if defined(HAL_LLD_GET_CNT_FREQUENCY)
+  return HAL_LLD_GET_CNT_FREQUENCY();
 #else
   return 1000000L;
 #endif
@@ -51,9 +51,12 @@ static inline uint32_t get_frequency(void) {
 
 static inline rtcnt_t get_counter(void) {
 
-#if defined(HAL_LLD_GET_COUNTER)
-  return HAL_LLD_GET_COUNTER();
+#if defined(HAL_LLD_GET_CNT_VALUE)
+  return HAL_LLD_GET_CNT_VALUE();
 #else
+  /* Fallback when there is no realtime counter available, the timeout
+     becomes simply the number of times that loops are executed maximum.
+     The pseudo-counter is static and shared among all threads/ISRs.*/
   static rtcnt_t counter = (rtcnt_t)0;
   rtcnt_t current;
   syssts_t sts;
@@ -78,11 +81,134 @@ static inline bool is_counter_within(rtcnt_t start, rtcnt_t end) {
 /*===========================================================================*/
 
 /**
- * @brief   Wait for all specified bits to be set or a timeout.
+ * @brief   Waits for masked bits to match or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] match     value to be matched
+ * @param[in] tmo       timeout in microseconds
+ * @param[in] valp      pointer to where to store the last read value
+ *                      or @p NULL
+ * @return              The final result.
+ * @retval false        if the condition has been verified.
+ * @retval true         if a timeout occurred.
+ *
+ * @xclass
+ */
+bool halRegWaitMatch8X(volatile uint8_t *p, uint8_t mask,
+                       uint8_t match, uint32_t tmo, uint8_t *valp) {
+  rtcnt_t start, end;
+
+  /* Time window for the operation to complete.*/
+  start = get_counter();
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
+
+  /* Testing the condition continuously until it becomes true or the
+     timeout expires, it is done at least once.*/
+  do {
+    /* Getting register value and storing it outside if required.*/
+    uint8_t v = *p;
+    if (valp != NULL) {
+      *valp = v;
+    }
+
+    /* Condition check and end of the loop if met.*/
+    if ((v & mask) == match) {
+      return false;
+    }
+  } while (is_counter_within(start, end));
+
+  return true;
+}
+
+/**
+ * @brief   Waits for masked bits to match or a timeout.
+ *
+ * @param[in] p         address of the register
+ * @param[in] mask      mask of bits to be checked
+ * @param[in] match     value to be matched
+ * @param[in] tmo       timeout in microseconds
+ * @param[in] valp      pointer to where to store the last read value
+ *                      or @p NULL
+ * @return              The final result.
+ * @retval false        if the condition has been verified.
+ * @retval true         if a timeout occurred.
+ *
+ * @xclass
+ */
+bool halRegWaitMatch16X(volatile uint16_t *p, uint16_t mask,
+                        uint16_t match, uint32_t tmo, uint16_t *valp) {
+  rtcnt_t start, end;
+
+  /* Time window for the operation to complete.*/
+  start = get_counter();
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
+
+  /* Testing the condition continuously until it becomes true or the
+     timeout expires, it is done at least once.*/
+  do {
+    /* Getting register value and storing it outside if required.*/
+    uint16_t v = *p;
+    if (valp != NULL) {
+      *valp = v;
+    }
+
+    /* Condition check and end of the loop if met.*/
+    if ((v & mask) == match) {
+      return false;
+    }
+  } while (is_counter_within(start, end));
+
+  return true;
+}
+
+/**
+ * @brief   Waits for masked bits to match or a timeout.
+ *
+ * @param[in] p         address of the register
+ * @param[in] mask      mask of bits to be checked
+ * @param[in] match     value to be matched
+ * @param[in] tmo       timeout in microseconds
+ * @param[in] valp      pointer to where to store the last read value
+ *                      or @p NULL
+ * @return              The final result.
+ * @retval false        if the condition has been verified.
+ * @retval true         if a timeout occurred.
+ *
+ * @xclass
+ */
+bool halRegWaitMatch32X(volatile uint32_t *p, uint32_t mask,
+                        uint32_t match, uint32_t tmo, uint32_t *valp) {
+  rtcnt_t start, end;
+
+  /* Time window for the operation to complete.*/
+  start = get_counter();
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
+
+  /* Testing the condition continuously until it becomes true or the
+     timeout expires, it is done at least once.*/
+  do {
+    /* Getting register value and storing it outside if required.*/
+    uint32_t v = *p;
+    if (valp != NULL) {
+      *valp = v;
+    }
+
+    /* Condition check and end of the loop if met.*/
+    if ((v & mask) == match) {
+      return false;
+    }
+  } while (is_counter_within(start, end));
+
+  return true;
+}
+
+/**
+ * @brief   Waits for all specified bits to be set or a timeout.
+ *
+ * @param[in] p         address of the register
+ * @param[in] mask      mask of bits to be checked
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -92,12 +218,12 @@ static inline bool is_counter_within(rtcnt_t start, rtcnt_t end) {
  * @xclass
  */
 bool halRegWaitAllSet8X(volatile uint8_t *p, uint8_t mask,
-                        rtcnt_t tmo, uint8_t *valp) {
+                        uint32_t tmo, uint8_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -118,11 +244,11 @@ bool halRegWaitAllSet8X(volatile uint8_t *p, uint8_t mask,
 }
 
 /**
- * @brief   Wait for all specified bits to be set or a timeout.
+ * @brief   Waits for all specified bits to be set or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -132,12 +258,12 @@ bool halRegWaitAllSet8X(volatile uint8_t *p, uint8_t mask,
  * @xclass
  */
 bool halRegWaitAllSet16X(volatile uint16_t *p, uint16_t mask,
-                         rtcnt_t tmo, uint16_t *valp) {
+                         uint32_t tmo, uint16_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -158,11 +284,11 @@ bool halRegWaitAllSet16X(volatile uint16_t *p, uint16_t mask,
 }
 
 /**
- * @brief   Wait for all specified bits to be set or a timeout.
+ * @brief   Waits for all specified bits to be set or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -172,12 +298,12 @@ bool halRegWaitAllSet16X(volatile uint16_t *p, uint16_t mask,
  * @xclass
  */
 bool halRegWaitAllSet32X(volatile uint32_t *p, uint32_t mask,
-                         rtcnt_t tmo, uint32_t *valp) {
+                         uint32_t tmo, uint32_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -198,11 +324,11 @@ bool halRegWaitAllSet32X(volatile uint32_t *p, uint32_t mask,
 }
 
 /**
- * @brief   Wait for any of specified bits to be set or a timeout.
+ * @brief   Waits for any of specified bits to be set or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -212,12 +338,12 @@ bool halRegWaitAllSet32X(volatile uint32_t *p, uint32_t mask,
  * @xclass
  */
 bool halRegWaitAnySet8X(volatile uint8_t *p, uint8_t mask,
-                        rtcnt_t tmo, uint8_t *valp) {
+                        uint32_t tmo, uint8_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -238,11 +364,11 @@ bool halRegWaitAnySet8X(volatile uint8_t *p, uint8_t mask,
 }
 
 /**
- * @brief   Wait for any of specified bits to be set or a timeout.
+ * @brief   Waits for any of specified bits to be set or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -252,12 +378,12 @@ bool halRegWaitAnySet8X(volatile uint8_t *p, uint8_t mask,
  * @xclass
  */
 bool halRegWaitAnySet16X(volatile uint16_t *p, uint16_t mask,
-                         rtcnt_t tmo, uint16_t *valp) {
+                         uint32_t tmo, uint16_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -278,11 +404,11 @@ bool halRegWaitAnySet16X(volatile uint16_t *p, uint16_t mask,
 }
 
 /**
- * @brief   Wait for any of specified bits to be set or a timeout.
+ * @brief   Waits for any of specified bits to be set or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -292,12 +418,12 @@ bool halRegWaitAnySet16X(volatile uint16_t *p, uint16_t mask,
  * @xclass
  */
 bool halRegWaitAnySet32X(volatile uint32_t *p, uint32_t mask,
-                         rtcnt_t tmo, uint32_t *valp) {
+                         uint32_t tmo, uint32_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -318,11 +444,11 @@ bool halRegWaitAnySet32X(volatile uint32_t *p, uint32_t mask,
 }
 
 /**
- * @brief   Wait for all specified bits to be cleared or a timeout.
+ * @brief   Waits for all specified bits to be cleared or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -332,12 +458,12 @@ bool halRegWaitAnySet32X(volatile uint32_t *p, uint32_t mask,
  * @xclass
  */
 bool halRegWaitAllClear8X(volatile uint8_t *p, uint8_t mask,
-                          rtcnt_t tmo, uint8_t *valp) {
+                          uint32_t tmo, uint8_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -358,11 +484,11 @@ bool halRegWaitAllClear8X(volatile uint8_t *p, uint8_t mask,
 }
 
 /**
- * @brief   Wait for all specified bits to be cleared or a timeout.
+ * @brief   Waits for all specified bits to be cleared or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -372,12 +498,12 @@ bool halRegWaitAllClear8X(volatile uint8_t *p, uint8_t mask,
  * @xclass
  */
 bool halRegWaitAllClear16X(volatile uint16_t *p, uint16_t mask,
-                           rtcnt_t tmo, uint16_t *valp) {
+                           uint32_t tmo, uint16_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -398,11 +524,11 @@ bool halRegWaitAllClear16X(volatile uint16_t *p, uint16_t mask,
 }
 
 /**
- * @brief   Wait for all specified bits to be cleared or a timeout.
+ * @brief   Waits for all specified bits to be cleared or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -412,12 +538,12 @@ bool halRegWaitAllClear16X(volatile uint16_t *p, uint16_t mask,
  * @xclass
  */
 bool halRegWaitAllClear32X(volatile uint32_t *p, uint32_t mask,
-                           rtcnt_t tmo, uint32_t *valp) {
+                           uint32_t tmo, uint32_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -438,11 +564,11 @@ bool halRegWaitAllClear32X(volatile uint32_t *p, uint32_t mask,
 }
 
 /**
- * @brief   Wait for any of specified bits to be cleared or a timeout.
+ * @brief   Waits for any of specified bits to be cleared or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -452,12 +578,12 @@ bool halRegWaitAllClear32X(volatile uint32_t *p, uint32_t mask,
  * @xclass
  */
 bool halRegWaitAnyClear8X(volatile uint8_t *p, uint8_t mask,
-                          rtcnt_t tmo, uint8_t *valp) {
+                          uint32_t tmo, uint8_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -478,11 +604,11 @@ bool halRegWaitAnyClear8X(volatile uint8_t *p, uint8_t mask,
 }
 
 /**
- * @brief   Wait for any of specified bits to be cleared or a timeout.
+ * @brief   Waits for any of specified bits to be cleared or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -492,12 +618,12 @@ bool halRegWaitAnyClear8X(volatile uint8_t *p, uint8_t mask,
  * @xclass
  */
 bool halRegWaitAnyClear16X(volatile uint16_t *p, uint16_t mask,
-                           rtcnt_t tmo, uint16_t *valp) {
+                           uint32_t tmo, uint16_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
@@ -518,11 +644,11 @@ bool halRegWaitAnyClear16X(volatile uint16_t *p, uint16_t mask,
 }
 
 /**
- * @brief   Wait for any of specified bits to be cleared or a timeout.
+ * @brief   Waits for any of specified bits to be cleared or a timeout.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
- * @param[in] tmo       timeout in counter cycles
+ * @param[in] tmo       timeout in microseconds
  * @param[in] valp      pointer to where to store the last read value
  *                      or @p NULL
  * @return              The final result.
@@ -532,12 +658,12 @@ bool halRegWaitAnyClear16X(volatile uint16_t *p, uint16_t mask,
  * @xclass
  */
 bool halRegWaitAnyClear32X(volatile uint32_t *p, uint32_t mask,
-                           rtcnt_t tmo, uint32_t *valp) {
+                           uint32_t tmo, uint32_t *valp) {
   rtcnt_t start, end;
 
   /* Time window for the operation to complete.*/
   start = get_counter();
-  end = start + tmo;
+  end = start + OSAL_US2RTC(get_frequency(), tmo);
 
   /* Testing the condition continuously until it becomes true or the
      timeout expires, it is done at least once.*/
