@@ -194,6 +194,25 @@ extern "C" {
 /*===========================================================================*/
 
 /**
+ * @brief   Enters a common safety fault handler on error.
+ * @note    IF a custom handler is not defined then the default action is to
+ *          call @p osalSysHalt().
+ * @note    This function can potentially not return.
+ *
+ * @param[in] result    the error status, @p true if an error occurred
+ */
+static inline void halSftFailOnError(bool result, const char *message) {
+
+  if (result) {
+#if defined(HAL_SAFETY_HANDLER)
+    HAL_SAFETY_HANDLER(message);
+#else
+    osalSysHalt(message);
+#endif
+  }
+}
+
+/**
  * @brief   Writes an 8 bits register.
  * @note    This code relies on compiler optimizations, the constant
  *          operations that cause no change to the final value are
