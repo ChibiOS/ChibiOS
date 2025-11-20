@@ -771,9 +771,7 @@ void stm32_clock_init(void) {
   hal_lld_set_static_clocks();
 
   /* Selecting the default clock configuration. */
-  if (hal_lld_clock_configure(&hal_clkcfg_default)) {
-    osalSysHalt("clkinit");
-  }
+  halSftFailOnError(hal_lld_clock_configure(&hal_clkcfg_default), "clkinit");
 
   /* Backup domain initializations.*/
   bd_init();

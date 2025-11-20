@@ -1,1 +1,0 @@
-- Waiting loops need a timeout, requires support in HAL.
