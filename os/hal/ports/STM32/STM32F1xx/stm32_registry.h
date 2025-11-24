@@ -54,6 +54,19 @@
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
 
+/* DBGMCU helpers.*/
+#define STM32_DBGMCU_TIM1_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM1_STOP
+#define STM32_DBGMCU_TIM2_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM2_STOP
+#define STM32_DBGMCU_TIM3_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM3_STOP
+#define STM32_DBGMCU_TIM4_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM4_STOP
+#define STM32_DBGMCU_TIM5_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM5_STOP
+#define STM32_DBGMCU_TIM6_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM6_STOP
+#define STM32_DBGMCU_TIM7_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM7_STOP
+#define STM32_DBGMCU_TIM8_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM8_STOP
+#define STM32_DBGMCU_TIM9_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM9_STOP
+#define STM32_DBGMCU_TIM10_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM10_STOP
+#define STM32_DBGMCU_TIM11_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM11_STOP
+
 /*===========================================================================*/
 /* Common.                                                                   */
 /*===========================================================================*/
