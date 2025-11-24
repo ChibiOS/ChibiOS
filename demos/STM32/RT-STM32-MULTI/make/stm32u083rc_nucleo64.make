@@ -99,19 +99,19 @@ include $(CHIBIOS)/os/license/license.mk
 # Startup files.
 include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32u0xx.mk
 # HAL-OSAL files (optional).
-#include $(CHIBIOS)/os/hal/hal.mk
-#include $(CHIBIOS)/os/hal/ports/STM32/STM32C0xx/platform.mk
-#include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_C031C6/board.mk
-#include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
+include $(CHIBIOS)/os/hal/hal.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32U0xx/platform.mk
+include $(CHIBIOS)/os/hal/boards/ST_NUCLEO64_U083RC/board.mk
+include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
-#include $(CHIBIOS)/os/rt/rt.mk
-#include $(CHIBIOS)/os/common/ports/ARMv6-M/compilers/GCC/mk/port.mk
+include $(CHIBIOS)/os/rt/rt.mk
+include $(CHIBIOS)/os/common/ports/ARMv6-M/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
-#include $(CHIBIOS)/os/test/test.mk
-#include $(CHIBIOS)/test/rt/rt_test.mk
-#include $(CHIBIOS)/test/oslib/oslib_test.mk
+include $(CHIBIOS)/os/test/test.mk
+include $(CHIBIOS)/test/rt/rt_test.mk
+include $(CHIBIOS)/test/oslib/oslib_test.mk
 #include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 #include $(CHIBIOS)/os/various/shell/shell.mk
 
@@ -123,7 +123,7 @@ LDSCRIPT= $(STARTUPLD)/STM32U083xC.ld
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        $(CONFDIR)/portab.c \
-       main_naked.c
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -153,7 +153,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -D__TEST_RT -D__TEST_OSLIB -DSTM32U083xx
+UDEFS = -D__TEST_RT -D__TEST_OSLIB
 
 # Define ASM defines here
 UADEFS = -DSTM32U083xx

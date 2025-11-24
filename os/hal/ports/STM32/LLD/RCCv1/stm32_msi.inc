@@ -27,33 +27,68 @@
 /*===========================================================================*/
 
 /**
- * @name    RCC_CR register bits definitions
+ * @name    RCC_CR register bits definitions (legacy)
  * @{
  */
-#define STM32_MSIRANGE_MASK     (15U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_100K     (0U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_200K     (1U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_400K     (2U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_800K     (3U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_1M       (4U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_2M       (5U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_4M       (6U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_8M       (7U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_16M      (8U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_24M      (9U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_32M      (10U << RCC_CR_MSIRANGE_Pos)
-#define STM32_MSIRANGE_48M      (11U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_MASK                 (15U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_100K                 (0U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_200K                 (1U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_400K                 (2U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_800K                 (3U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_1M                   (4U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_2M                   (5U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_4M                   (6U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_8M                   (7U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_16M                  (8U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_24M                  (9U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_32M                  (10U << RCC_CR_MSIRANGE_Pos)
+#define STM32_MSIRANGE_48M                  (11U << RCC_CR_MSIRANGE_Pos)
 /** @} */
 
 /**
- * @name    RCC_CSR register bits definitions
+ * @name    RCC_CR register helpers
  * @{
  */
-#define STM32_MSISRANGE_MASK    (15U << RCC_CSR_MSISRANGE_Pos)
-#define STM32_MSISRANGE_1M      (4U << RCC_CSR_MSISRANGE_Pos)
-#define STM32_MSISRANGE_2M      (5U << RCC_CSR_MSISRANGE_Pos)
-#define STM32_MSISRANGE_4M      (6U << RCC_CSR_MSISRANGE_Pos)
-#define STM32_MSISRANGE_8M      (7U << RCC_CSR_MSISRANGE_Pos)
+#define RCC_CR_MSIRANGE_VALUE(n)            ((n) << RCC_CR_MSIRANGE_Pos)
+#define RCC_CR_MSIRANGE_100K                RCC_CR_MSIRANGE_VALUE(0U)
+#define RCC_CR_MSIRANGE_200K                RCC_CR_MSIRANGE_VALUE(1U)
+#define RCC_CR_MSIRANGE_400K                RCC_CR_MSIRANGE_VALUE(2U)
+#define RCC_CR_MSIRANGE_800K                RCC_CR_MSIRANGE_VALUE(3U)
+#define RCC_CR_MSIRANGE_1M                  RCC_CR_MSIRANGE_VALUE(4U)
+#define RCC_CR_MSIRANGE_2M                  RCC_CR_MSIRANGE_VALUE(5U)
+#define RCC_CR_MSIRANGE_4M                  RCC_CR_MSIRANGE_VALUE(6U)
+#define RCC_CR_MSIRANGE_8M                  RCC_CR_MSIRANGE_VALUE(7U)
+#define RCC_CR_MSIRANGE_16M                 RCC_CR_MSIRANGE_VALUE(8U)
+#define RCC_CR_MSIRANGE_24M                 RCC_CR_MSIRANGE_VALUE(9U)
+#define RCC_CR_MSIRANGE_32M                 RCC_CR_MSIRANGE_VALUE(10U)
+#define RCC_CR_MSIRANGE_48M                 RCC_CR_MSIRANGE_VALUE(11U)
+/** @} */
+
+/* ST headers inconsistencies.*/
+#if !defined(RCC_CSR_MSISRANGE_Pos) && defined(RCC_CSR_MSISTBYRG_Pos)
+#define RCC_CSR_MSISRANGE_Pos   RCC_CSR_MSISTBYRG_Pos
+#endif
+
+/**
+ * @name    RCC_CSR register bits definitions (legacy)
+ * @{
+ */
+#define STM32_MSISRANGE_MASK                (15U << RCC_CSR_MSISRANGE_Pos)
+#define STM32_MSISRANGE_1M                  (4U << RCC_CSR_MSISRANGE_Pos)
+#define STM32_MSISRANGE_2M                  (5U << RCC_CSR_MSISRANGE_Pos)
+#define STM32_MSISRANGE_4M                  (6U << RCC_CSR_MSISRANGE_Pos)
+#define STM32_MSISRANGE_8M                  (7U << RCC_CSR_MSISRANGE_Pos)
+/** @} */
+
+/**
+ * @name    RCC_CSR register helpers
+ * @{
+ */
+#define RCC_CSR_MSISRANGE_VALUE(n)          ((n) << RCC_CSR_MSISRANGE_Pos)
+#define RCC_CSR_MSISRANGE_1M                RCC_CSR_MSISRANGE_VALUE(4U)
+#define RCC_CSR_MSISRANGE_2M                RCC_CSR_MSISRANGE_VALUE(5U)
+#define RCC_CSR_MSISRANGE_4M                RCC_CSR_MSISRANGE_VALUE(6U)
+#define RCC_CSR_MSISRANGE_8M                RCC_CSR_MSISRANGE_VALUE(7U)
 /** @} */
 
 /*===========================================================================*/

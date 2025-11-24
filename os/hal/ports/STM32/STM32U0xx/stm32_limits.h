@@ -163,6 +163,26 @@
 /** @} */
 
 /**
+ * @name    PLL dividers ranges
+ * @{
+ */
+#define STM32_PLLM_VALUE_MAX                8
+#define STM32_PLLM_VALUE_MIN                1
+
+#define STM32_PLLN_VALUE_MAX                127
+#define STM32_PLLN_VALUE_MIN                4
+
+#define STM32_PLLP_VALUE_MAX                32
+#define STM32_PLLP_VALUE_MIN                2
+
+#define STM32_PLLQ_VALUE_MAX                8
+#define STM32_PLLQ_VALUE_MIN                2
+
+#define STM32_PLLR_VALUE_MAX                8
+#define STM32_PLLR_VALUE_MIN                2
+/** @} */
+
+/**
  * @name    Peripherals limits
  * @{
  */

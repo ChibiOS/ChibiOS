@@ -31,15 +31,15 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_USART4)
-#error "STM32_HAS_USART4 not defined in registry"
+#if !defined(STM32_HAS_UART4)   /* UART4 is the legacy name.*/
+#error "STM32_HAS_UART4 not defined in registry"
 #endif
 
 #if !defined(STM32_HAS_LPUART3)
 #error "STM32_HAS_LPUART3 not defined in registry"
 #endif
 
-#if STM32_HAS_USART4 || STM32_HAS_LPUART3
+#if STM32_HAS_UART4 || STM32_HAS_LPUART3
 
 /* Priority settings checks.*/
 #if !defined(STM32_IRQ_USART4_LP3_PRIORITY)
@@ -50,7 +50,7 @@
 #error "Invalid IRQ priority assigned to STM32_IRQ_USART4_LP3_PRIORITY"
 #endif
 
-#endif /* STM32_HAS_USART4 || STM32_HAS_LPUART3 */
+#endif /* STM32_HAS_UART4 || STM32_HAS_LPUART3 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */

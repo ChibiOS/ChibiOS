@@ -155,8 +155,8 @@ static void stm32_gpio_init(void) {
 
   /* Enabling GPIO-related clocks, the mask comes from the
      registry header file.*/
-  rccResetAHB2R1(STM32_GPIO_EN_MASK);
-  rccEnableAHB2R1(STM32_GPIO_EN_MASK, true);
+  rccResetIOP(STM32_GPIO_EN_MASK);
+  rccEnableIOP(STM32_GPIO_EN_MASK, true);
 
   /* Initializing all the defined GPIO ports.*/
 #if STM32_HAS_GPIOA

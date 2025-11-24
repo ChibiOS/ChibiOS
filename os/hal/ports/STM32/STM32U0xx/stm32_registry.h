@@ -99,11 +99,21 @@
 #define STM32_RCC_PLL_HAS_Q                 TRUE
 #define STM32_RCC_PLL_HAS_R                 TRUE
 
+/* DBGMCU helpers.*/
+#define STM32_DBGMCU_TIM1_STOP()            DBGMCU->APBFZ2 |= DBGMCU_APBFZ2_DBG_TIM1_STOP
+#define STM32_DBGMCU_TIM2_STOP()            DBGMCU->APBFZ1 |= DBGMCU_APBFZ1_DBG_TIM2_STOP
+#define STM32_DBGMCU_TIM3_STOP()            DBGMCU->APBFZ1 |= DBGMCU_APBFZ1_DBG_TIM3_STOP
+#define STM32_DBGMCU_TIM4_STOP()            DBGMCU->APBFZ1 |= DBGMCU_APBFZ1_DBG_TIM4_STOP
+#define STM32_DBGMCU_TIM5_STOP()            DBGMCU->APBFZ1 |= DBGMCU_APBFZ1_DBG_TIM6_STOP
+#define STM32_DBGMCU_TIM6_STOP()            DBGMCU->APBFZ1 |= DBGMCU_APBFZ1_DBG_TIM7_STOP
+#define STM32_DBGMCU_TIM15_STOP()           DBGMCU->APBFZ2 |= DBGMCU_APBFZ2_DBG_TIM15_STOP
+#define STM32_DBGMCU_TIM16_STOP()           DBGMCU->APBFZ2 |= DBGMCU_APBFZ2_DBG_TIM16_STOP
+
 /*===========================================================================*/
 /* STM32U073xx, STM32U083xx.                                                 */
 /*===========================================================================*/
 
-#if defined(STM32G073xx) || defined(STM32G083xx) || defined(__DOXYGEN__)
+#if defined(STM32U073xx) || defined(STM32U083xx) || defined(__DOXYGEN__)
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -274,7 +284,7 @@
 #define STM32_HAS_IWDG                      TRUE
 #define STM32_IWDG_IS_WINDOWED              TRUE
 
-#endif /* defined(STM32G073xx) || defined(STM32G083xx) */
+#endif /* defined(STM32U073xx) || defined(STM32U083xx) */
 
 /** @} */
 
