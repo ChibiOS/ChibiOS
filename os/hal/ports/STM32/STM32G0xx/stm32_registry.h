@@ -99,6 +99,18 @@
 #define STM32_RCC_HAS_PLLSAI1               FALSE
 #define STM32_RCC_HAS_PLLSAI2               FALSE
 
+/* DBGMCU helpers.*/
+#define STM32_DBGMCU_TIM1_STOP()            DBG->APBFZ2 |= DBG_APB_FZ2_DBG_TIM1_STOP
+#define STM32_DBGMCU_TIM2_STOP()            DBG->APBFZ1 |= DBG_APB_FZ1_DBG_TIM2_STOP
+#define STM32_DBGMCU_TIM3_STOP()            DBG->APBFZ1 |= DBG_APB_FZ1_DBG_TIM3_STOP
+#define STM32_DBGMCU_TIM5_STOP()            DBG->APBFZ1 |= DBG_APB_FZ1_DBG_TIM5_STOP
+#define STM32_DBGMCU_TIM6_STOP()            DBG->APBFZ1 |= DBG_APB_FZ1_DBG_TIM6_STOP
+#define STM32_DBGMCU_TIM7_STOP()            DBG->APBFZ1 |= DBG_APB_FZ1_DBG_TIM7_STOP
+#define STM32_DBGMCU_TIM14_STOP()           DBG->APBFZ2 |= DBG_APB_FZ2_DBG_TIM14_STOP
+#define STM32_DBGMCU_TIM15_STOP()           DBG->APBFZ2 |= DBG_APB_FZ2_DBG_TIM15_STOP
+#define STM32_DBGMCU_TIM16_STOP()           DBG->APBFZ2 |= DBG_APB_FZ2_DBG_TIM16_STOP
+#define STM32_DBGMCU_TIM17_STOP()           DBG->APBFZ2 |= DBG_APB_FZ2_DBG_TIM17_STOP
+
 /*===========================================================================*/
 /* STM32G070xx.                                                              */
 /*===========================================================================*/

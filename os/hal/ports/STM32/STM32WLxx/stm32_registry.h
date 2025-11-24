@@ -29,6 +29,12 @@
 /* Platform capabilities.                                                    */
 /*===========================================================================*/
 
+/* DBGMCU helpers.*/
+#define STM32_DBGMCU_TIM1_STOP()            DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM1_STOP
+#define STM32_DBGMCU_TIM2_STOP()            DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM2_STOP
+#define STM32_DBGMCU_TIM16_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM16_STOP
+#define STM32_DBGMCU_TIM17_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM17_STOP
+
 /* Cores.*/
 #if defined(STM32WL55xx) || defined(STM32WL54xx)
 #define STM32_HAS_M4                        TRUE
