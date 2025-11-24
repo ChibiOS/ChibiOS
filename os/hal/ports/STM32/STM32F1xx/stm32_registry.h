@@ -66,6 +66,12 @@
 #define STM32_DBGMCU_TIM9_STOP()            DBGMCU->CR |= DBGMCU_CR_DBG_TIM9_STOP
 #define STM32_DBGMCU_TIM10_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM10_STOP
 #define STM32_DBGMCU_TIM11_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM11_STOP
+#define STM32_DBGMCU_TIM12_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM12_STOP
+#define STM32_DBGMCU_TIM13_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM13_STOP
+#define STM32_DBGMCU_TIM14_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM14_STOP
+#define STM32_DBGMCU_TIM15_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM15_STOP
+#define STM32_DBGMCU_TIM16_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM16_STOP
+#define STM32_DBGMCU_TIM17_STOP()           DBGMCU->CR |= DBGMCU_CR_DBG_TIM17_STOP
 
 /*===========================================================================*/
 /* Common.                                                                   */
