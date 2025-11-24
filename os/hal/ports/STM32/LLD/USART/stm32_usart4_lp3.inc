@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 */
 
 /**
- * @file    I2Cv4/stm32_i2c2.inc
- * @brief   Shared I2C2 handler.
+ * @file    USART/stm32_usart4_lp3.inc
+ * @brief   Shared USART4, LPUART3 handler.
  *
- * @addtogroup STM32_I2C2_HANDLER
+ * @addtogroup STM32_USART4_LP3_HANDLER
  * @{
  */
 
@@ -31,48 +31,26 @@
 /*===========================================================================*/
 
 /* Registry checks for robustness.*/
-#if !defined(STM32_HAS_I2C2)
-#error "STM32_HAS_I2C2 not defined in registry"
+#if !defined(STM32_HAS_USART4)
+#error "STM32_HAS_USART4 not defined in registry"
 #endif
 
-#if !defined(STM32_HAS_I2C3)
-#error "STM32_HAS_I2C3 not defined in registry"
+#if !defined(STM32_HAS_LPUART3)
+#error "STM32_HAS_LPUART3 not defined in registry"
 #endif
 
-#if STM32_HAS_I2C2 || STM32_HAS_I2C3
-
-/* Checks on vector names and numbers definitions.*/
-#if STM32_I2C_SINGLE_IRQ == TRUE
-#if !defined(STM32_I2C2_3_GLOBAL_NUMBER)
-#error "STM32_I2C2_3_GLOBAL_NUMBER not defined in stm32_isr.h"
-#endif
-#if !defined(STM32_I2C2_3_GLOBAL_HANDLER)
-#error "STM32_I2C2_3_GLOBAL_HANDLER not defined in stm32_isr.h"
-#endif
-
-#else
-#error "split I2C EV/ER vectors case not supported for shared IRQs"
-#endif
-
-/* Checks for mcuconf.h correctness.*/
-#if !defined(STM32_IRQ_I2C2_3_PRIORITY)
-#error "STM32_IRQ_I2C2_3_PRIORITY not defined in mcuconf.h"
-#endif
-
-#if !defined(STM32_I2C_USE_I2C2)
-#error "STM32_I2C_USE_I2C2 not defined in mcuconf.h"
-#endif
-
-#if !defined(STM32_I2C_USE_I2C3)
-#error "STM32_I2C_USE_I2C3 not defined in mcuconf.h"
-#endif
+#if STM32_HAS_USART4 || STM32_HAS_LPUART3
 
 /* Priority settings checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_I2C2_3_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_I2C2_3_PRIORITY"
+#if !defined(STM32_IRQ_USART4_LP3_PRIORITY)
+#error "STM32_IRQ_USART4_LP3_PRIORITY not defined in mcuconf.h"
 #endif
 
-#endif /* STM32_HAS_I2C2 || STM32_HAS_I2C3 */
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_USART4_LP3_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_USART4_LP3_PRIORITY"
+#endif
+
+#endif /* STM32_HAS_USART4 || STM32_HAS_LPUART3 */
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -86,15 +64,15 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void i2c2_i2c3_irq_init(void) {
-#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED)
-  nvicEnableVector(STM32_I2C2_3_GLOBAL_NUMBER, STM32_IRQ_I2C2_3_PRIORITY);
+static inline void usart4_lpuart3_irq_init(void) {
+#if defined(STM32_USART4_IS_USED) || defined(STM32_LPUART3_IS_USED)
+  nvicEnableVector(STM32_USART4_LP3_NUMBER, STM32_IRQ_USART4_LP3_PRIORITY);
 #endif
 }
 
-static inline void i2c2_i2c3_irq_deinit(void) {
-#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED)
-  nvicDisableVector(STM32_I2C2_3_GLOBAL_NUMBER);
+static inline void usart4_lpuart3_irq_deinit(void) {
+#if defined(STM32_USART4_IS_USED) || defined(STM32_LPUART3_IS_USED)
+  nvicDisableVector(STM32_USART4_LP3_NUMBER);
 #endif
 }
 
@@ -102,27 +80,44 @@ static inline void i2c2_i2c3_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_USART4_IS_USED)  || defined(STM32_LPUART3_IS_USED) ||     \
+    defined(__DOXYGEN__)
 /**
- * @brief   I2C2, I2C3 interrupt handler.
+ * @brief   USART4, LPUART3 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_I2C2_3_GLOBAL_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_USART4_LP3_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
-#if STM32_I2C_USE_I2C2
-  i2c_lld_serve_global_interrupt(&I2CD2);
+#if HAL_USE_SERIAL
+#if STM32_SERIAL_USE_USART4
+  sd_lld_serve_interrupt(&SD4);
+#endif
+#if STM32_SERIAL_USE_LPUART3
+  sd_lld_serve_interrupt(&LPSD3);
+#endif
 #endif
 
-#if STM32_I2C_USE_I2C3
-  i2c_lld_serve_global_interrupt(&I2CD3);
+#if HAL_USE_SIO
+#if STM32_SIO_USE_USART4
+  sio_lld_serve_interrupt(&SIOD4);
+#endif
+#if STM32_SIO_USE_LPUART3
+  sio_lld_serve_interrupt(&LPSIOD3);
+#endif
+#endif
+
+#if HAL_USE_UART
+#if STM32_UART_USE_USART4
+  uart_lld_serve_interrupt(&UARTD4);
+#endif
 #endif
 
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) */
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */

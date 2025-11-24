@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
-
+    ChibiOS - Copyright (C) 2006..2025
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -39,14 +38,18 @@
 #error "STM32_HAS_I2C3 not defined in registry"
 #endif
 
-#if STM32_HAS_I2C2 || STM32_HAS_I2C3
+#if !defined(STM32_HAS_I2C4)
+#error "STM32_HAS_I2C4 not defined in registry"
+#endif
+
+#if STM32_HAS_I2C2 || STM32_HAS_I2C3 || STM32_HAS_I2C4
 
 /* Checks on vector names and numbers definitions.*/
 #if STM32_I2C_SINGLE_IRQ == TRUE
-#if !defined(STM32_I2C2_3_GLOBAL_NUMBER)
+#if !defined(STM32_I2C2_3_4_GLOBAL_NUMBER)
 #error "STM32_I2C2_3_GLOBAL_NUMBER not defined in stm32_isr.h"
 #endif
-#if !defined(STM32_I2C2_3_GLOBAL_HANDLER)
+#if !defined(STM32_I2C2_3_4_GLOBAL_HANDLER)
 #error "STM32_I2C2_3_GLOBAL_HANDLER not defined in stm32_isr.h"
 #endif
 
@@ -55,8 +58,8 @@
 #endif
 
 /* Checks for mcuconf.h correctness.*/
-#if !defined(STM32_IRQ_I2C2_3_PRIORITY)
-#error "STM32_IRQ_I2C2_3_PRIORITY not defined in mcuconf.h"
+#if !defined(STM32_IRQ_I2C2_3_4_PRIORITY)
+#error "STM32_IRQ_I2C2_3_4_PRIORITY not defined in mcuconf.h"
 #endif
 
 #if !defined(STM32_I2C_USE_I2C2)
@@ -67,9 +70,13 @@
 #error "STM32_I2C_USE_I2C3 not defined in mcuconf.h"
 #endif
 
+#if !defined(STM32_I2C_USE_I2C4)
+#error "STM32_I2C_USE_I2C4 not defined in mcuconf.h"
+#endif
+
 /* Priority settings checks.*/
-#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_I2C2_3_PRIORITY)
-#error "Invalid IRQ priority assigned to STM32_IRQ_I2C2_3_PRIORITY"
+#if !OSAL_IRQ_IS_VALID_PRIORITY(STM32_IRQ_I2C2_3_4_PRIORITY)
+#error "Invalid IRQ priority assigned to STM32_IRQ_I2C2_3_4_PRIORITY"
 #endif
 
 #endif /* STM32_HAS_I2C2 || STM32_HAS_I2C3 */
@@ -86,15 +93,17 @@
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
-static inline void i2c2_i2c3_irq_init(void) {
-#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED)
-  nvicEnableVector(STM32_I2C2_3_GLOBAL_NUMBER, STM32_IRQ_I2C2_3_PRIORITY);
+static inline void i2c2_i2c3_i2c4_irq_init(void) {
+#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) ||           \
+    defined(STM32_I2C4_IS_USED)
+  nvicEnableVector(STM32_I2C2_3_4_GLOBAL_NUMBER, STM32_IRQ_I2C2_3_4_PRIORITY);
 #endif
 }
 
-static inline void i2c2_i2c3_irq_deinit(void) {
-#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED)
-  nvicDisableVector(STM32_I2C2_3_GLOBAL_NUMBER);
+static inline void i2c2_i2c3_i2c4_irq_deinit(void) {
+#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) ||           \
+    defined(STM32_I2C4_IS_USED)
+  nvicDisableVector(STM32_I2C2_3_4_GLOBAL_NUMBER);
 #endif
 }
 
@@ -102,13 +111,14 @@ static inline void i2c2_i2c3_irq_deinit(void) {
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
-#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) || defined(__DOXYGEN__)
+#if defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) ||           \
+    defined(STM32_I2C4_IS_USED) || defined(__DOXYGEN__)
 /**
- * @brief   I2C2, I2C3 interrupt handler.
+ * @brief   I2C2, I2C3, I2C4 interrupt handler.
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_I2C2_3_GLOBAL_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_I2C2_3_4_GLOBAL_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 
@@ -120,9 +130,14 @@ OSAL_IRQ_HANDLER(STM32_I2C2_3_GLOBAL_HANDLER) {
   i2c_lld_serve_global_interrupt(&I2CD3);
 #endif
 
+#if STM32_I2C_USE_I2C4
+  i2c_lld_serve_global_interrupt(&I2CD4);
+#endif
+
   OSAL_IRQ_EPILOGUE();
 }
-#endif /* defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) */
+#endif /* defined(STM32_I2C2_IS_USED) || defined(STM32_I2C3_IS_USED) ||
+          defined(STM32_I2C4_IS_USED) */
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
