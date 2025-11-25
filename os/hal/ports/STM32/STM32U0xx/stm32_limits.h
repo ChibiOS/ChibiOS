@@ -26,6 +26,45 @@
 #define STM32_LIMITS_H
 
 /**
+ * @brief   Activation times in microseconds
+ */
+/**
+ * @brief   Timeout tolerance.
+ */
+#define STM32_RELAXED_TIMEOUT_FACTOR        5U
+
+/**
+ * @brief   Regulators transition time.
+ */
+#define STM32_REGULATORS_TRANSITION_TIME    (40U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Worst case startup time of HSI, HSE and MSI.
+ * @note    The value is taken from HSE which is the slowest one according
+ *          to datasheet.
+ */
+#define STM32_HSI_HSE_MSI_STARTUP_TIME      (2000U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Worst case startup time of HSI48.
+ */
+#define STM32_HSI48_STARTUP_TIME            (6U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Stabilization time of the MSI PLLs.
+ * @note    This value does not assume the MSIPLLFAST bit.
+ */
+#define STM32_PLL_STARTUP_TIME              (40U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Time required for system time switch (RCC_CFGR1.SW).
+ * @note    This value is estimated and kept "safe", there is no
+ *          specification.
+ */
+#define STM32_SYSCLK_SWITCH_TIME            (50U * STM32_RELAXED_TIMEOUT_FACTOR)
+/** @} */
+
+/**
  * @name    Device Limits for VCore range 1
  * @{
  */

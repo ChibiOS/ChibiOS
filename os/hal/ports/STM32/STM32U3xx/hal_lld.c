@@ -208,16 +208,6 @@ static const system_limits_t vos_range2 = {
 #include "stm32_bd.inc"
 
 /**
- * @brief   Safe setting of flash ACR register.
- *
- * @param[in] acr       value for the ACR register
- */
-__STATIC_INLINE bool flash_set_acr(uint32_t acr) {
-
-  return halRegWrite32X(&FLASH->ACR, acr, true);
-}
-
-/**
  * @brief   Configures the PWR unit.
  * @note    CR1, CR2, VOSR are not initialized inside this function.
  */
@@ -305,7 +295,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Setting flash ACR to the safest value while the clock tree is
      reconfigured. we don't know the current clock settings.*/
-//  flash_set_acr(FLASH_ACR_LATENCY_4WS);
   if (halRegWrite32X(&FLASH->ACR, FLASH_ACR_LATENCY_4WS, true)) {
     return true;
   }
@@ -394,7 +383,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   RCC->CFGR3 = ccp->rcc_cfgr3;
 
   /* Final flash ACR settings according to the target configuration.*/
-//  flash_set_acr(ccp->flash_acr);
   if (halRegWrite32X(&FLASH->ACR, ccp->flash_acr, true)) {
     return true;
   }

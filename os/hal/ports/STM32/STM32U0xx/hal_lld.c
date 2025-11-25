@@ -28,6 +28,17 @@
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
+/**
+ * @name    Registers reset values
+ * @{
+ */
+#define STM32_PWR_CR1_RESET             0x00000208U
+#define STM32_FLASH_ACR_RESET           0x00040600U
+#define STM32_RCC_CR_RESET              0x00000083U
+#define STM32_RCC_CFGR_RESET            0x00000000U
+#define STM32_RCC_PLLCFGR_RESET         0x00001000U
+/** @} */
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -41,6 +52,153 @@
 /*===========================================================================*/
 
 #include "stm32_bd.inc"
+
+/**
+ * @brief   Switches to a different clock configuration.
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @notapi
+ */
+static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
+  uint32_t wtmask;
+
+  /* Setting flash ACR to the safest value while the clock tree is
+     reconfigured. we don't know the current clock settings.*/
+  if (halRegWrite32X(&FLASH->ACR, FLASH_ACR_LATENCY_2WS, true)) {
+    return true;
+  }
+
+  /* Disabling low power run mode if activated, not touching current
+     VOS range.*/
+  halRegClear32X(&PWR->CR1, PWR_CR1_LPR, false);
+  if (halRegWaitAllClear32X(&PWR->SR2, PWR_SR2_REGLPF,
+                            STM32_REGULATORS_TRANSITION_TIME, NULL)) {
+    return true;
+  }
+
+  /* Resetting and restarting MSI without touching the other settings, it
+     is required during the (re)configuration.*/
+  halRegMaskedWrite32X(&RCC->CR,
+                       RCC_CR_MSIRANGE_Msk,
+                       RCC_CR_MSIRANGE_4M | RCC_CR_MSION,
+                       false);
+  if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_MSIRDY,
+                          STM32_HSI_HSE_MSI_STARTUP_TIME,
+                          NULL)) {
+    return true;
+  }
+
+  /* Switching to MSI.*/
+  RCC->CFGR     = STM32_RCC_CFGR_RESET;
+  if (halRegWaitMatch32X(&RCC->CFGR,
+                         RCC_CFGR_SWS_Msk, RCC_CFGR_SWS_MSI,
+                         STM32_SYSCLK_SWITCH_TIME,
+                         NULL)) {
+    return true;
+  }
+
+  /* Resetting clocks-related settings, this includes MSI.*/
+  RCC->CR       = STM32_RCC_CR_RESET;
+  RCC->PLLCFGR  = STM32_RCC_PLLCFGR_RESET;
+
+  /* Final power configuration.*/
+  PWR->CR1      = ccp->pwr_cr1;
+  if (halRegWaitAllSet32X(&PWR->SR2, PWR_SR2_VOSF,
+                          STM32_REGULATORS_TRANSITION_TIME, NULL)) {
+    return true;
+  }
+
+  /* Enabling all required oscillators at same time, MSI enforced active,
+     PLL/MSIPLL not enabled yet.*/
+  RCC->CR    = (ccp->rcc_cr | RCC_CR_MSION) & ~(RCC_CR_PLLON | RCC_CR_MSIPLLEN);
+
+  /* Starting also HSI48 if required, waiting for it to become stable first
+     because it is the faster one.*/
+  RCC->CRRCR = ccp->rcc_crrcr;
+  if ((ccp->rcc_crrcr & RCC_CRRCR_HSI48ON) != 0U) {
+    if (halRegWaitAllSet32X(&RCC->CRRCR,
+                            RCC_CRRCR_HSI48RDY,
+                            STM32_HSI48_STARTUP_TIME,
+                            NULL)) {
+      return true;
+    }
+  }
+
+  /* Adding to the "wait mask" the status bits of other enabled oscillators.*/
+  wtmask = RCC_CR_MSIRDY;                  /* Known to be ready already.*/
+  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
+    wtmask |= RCC_CR_HSERDY;
+  }
+  if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
+    wtmask |= RCC_CR_HSIRDY;
+  }
+  if (halRegWaitAllSet32X(&RCC->CR,
+                          wtmask,
+                          STM32_HSI_HSE_MSI_STARTUP_TIME,
+                          NULL)) {
+    return true;
+  }
+
+  /* Programmable voltage scaling configuration, this is done at the end
+     because the booster clock must be ready (see RCC_CFGR4) before enabling
+     the booster. */
+  RCC->CFGR4 = ccp->rcc_cfgr4;
+  PWR->VOSR  = ccp->pwr_vosr;
+  wtmask = ccp->pwr_vosr << 16;
+  if (halRegWaitAllSet32X(&PWR->VOSR,
+                          wtmask,
+                          STM32_OSCILLATORS_STARTUP_TIME,
+                          NULL)) {
+    return true;
+  }
+
+  /* MSI configuration (sources, dividers, bias). */
+  RCC->ICSCR1 = ccp->rcc_icscr1 | RCC_ICSCR1_MSIRGSEL_ICSCR1;
+
+  /* Enabling also PLLs if required by the configuration.*/
+  RCC->CR = ccp->rcc_cr | RCC_CR_MSISON;
+  wtmask = 0U;
+  if ((ccp->rcc_cr & RCC_CR_MSIPLL0EN) != 0U) {
+    wtmask |= RCC_CR_MSIPLL0RDY;
+  }
+  if ((ccp->rcc_cr & RCC_CR_MSIPLL1EN) != 0U) {
+    wtmask |= RCC_CR_MSIPLL1RDY;
+  }
+  if (halRegWaitAllSet32X(&RCC->CR,
+                          wtmask,
+                          STM32_MSIPLL_STARTUP_TIME,
+                          NULL)) {
+    return true;
+  }
+
+  /* Final RCC CFGR settings (prescalers, MCO, STOP wake-up sources, booster).*/
+  RCC->CFGR1 = ccp->rcc_cfgr1;
+  RCC->CFGR2 = ccp->rcc_cfgr2;
+  RCC->CFGR3 = ccp->rcc_cfgr3;
+
+  /* Final flash ACR settings according to the target configuration.*/
+  if (halRegWrite32X(&FLASH->ACR, ccp->flash_acr, true)) {
+    return true;
+  }
+
+  /* Waiting for the requested SYSCLK source to become active. */
+  if (halRegWaitMatch32X(&RCC->CFGR1,
+                         RCC_CFGR1_SWS_Msk, (ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) << RCC_CFGR1_SWS_Pos,
+                         STM32_SYSCLK_SWITCH_TIME,
+                         NULL)) {
+    return true;
+  }
+
+  /* Final RCC_CR value, MSIS could go off at this point if it is not part
+     of the mask.*/
+  RCC->CR = ccp->rcc_cr;
+
+  return false;
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */

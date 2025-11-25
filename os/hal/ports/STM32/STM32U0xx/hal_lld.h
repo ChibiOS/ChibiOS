@@ -130,25 +130,6 @@
 /** @} */
 
 /**
- * @name    RCC_CR register helpers
- * @{
- */
-#define RCC_CR_MSIRANGE_FIELD(n)            ((n) << RCC_CR_MSIRANGE_Pos)
-#define RCC_CR_MSIRANGE_100kHz              RCC_CR_MSIRANGE_FIELD(0)
-#define RCC_CR_MSIRANGE_200kHz              RCC_CR_MSIRANGE_FIELD(1)
-#define RCC_CR_MSIRANGE_400kHz              RCC_CR_MSIRANGE_FIELD(2)
-#define RCC_CR_MSIRANGE_800kHz              RCC_CR_MSIRANGE_FIELD(3)
-#define RCC_CR_MSIRANGE_1MHz                RCC_CR_MSIRANGE_FIELD(4)
-#define RCC_CR_MSIRANGE_2MHz                RCC_CR_MSIRANGE_FIELD(5)
-#define RCC_CR_MSIRANGE_4MHz                RCC_CR_MSIRANGE_FIELD(6)
-#define RCC_CR_MSIRANGE_8MHz                RCC_CR_MSIRANGE_FIELD(7)
-#define RCC_CR_MSIRANGE_16MHz               RCC_CR_MSIRANGE_FIELD(8)
-#define RCC_CR_MSIRANGE_24MHz               RCC_CR_MSIRANGE_FIELD(9)
-#define RCC_CR_MSIRANGE_32MHz               RCC_CR_MSIRANGE_FIELD(10)
-#define RCC_CR_MSIRANGE_48MHz               RCC_CR_MSIRANGE_FIELD(11)
-/** @} */
-
-/**
  * @name    RCC_CFGR register helpers
  * @{
  */
@@ -357,7 +338,7 @@
  * @brief   PWR CR2 register initialization value.
  */
 #if !defined(STM32_PWR_CR2) || defined(__DOXYGEN__)
-#define STM32_PWR_CR2                       (0U)
+#define STM32_PWR_CR2                       (PWR_CR2_USV)
 #endif
 
 /**
@@ -1606,19 +1587,17 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Type of a clock configuration and switch structure.
  */
 typedef struct {
   uint32_t          pwr_cr1;
-  uint32_t          pwr_cr2;
   uint32_t          rcc_cr;
   uint32_t          rcc_cfgr;
   uint32_t          rcc_pllcfgr;
+  uint32_t          rcc_crrcr;
   uint32_t          flash_acr;
 } halclkcfg_t;
-#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
