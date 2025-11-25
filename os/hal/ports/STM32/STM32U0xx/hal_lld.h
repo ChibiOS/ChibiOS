@@ -205,17 +205,17 @@
 #define RCC_CFGR_MCO2PRE_DIV1024            RCC_CFGR_MCO2PRE_VALUE(10)
 
 #define RCC_CFGR_MCO1SEL_VALUE(n)           ((n) << RCC_CFGR_MCO1SEL_Pos)
-#define RCC_CFGR_MCO1SEL_NOCLOCK            RCC_CFGR_MCO2SEL_VALUE(0)
-#define RCC_CFGR_MCO1SEL_SYSCLK             RCC_CFGR_MCO2SEL_VALUE(1)
-#define RCC_CFGR_MCO1SEL_MSI                RCC_CFGR_MCO2SEL_VALUE(2)
-#define RCC_CFGR_MCO1SEL_HSI16              RCC_CFGR_MCO2SEL_VALUE(3)
-#define RCC_CFGR_MCO1SEL_HSE                RCC_CFGR_MCO2SEL_VALUE(4)
-#define RCC_CFGR_MCO1SEL_PLLRCLK            RCC_CFGR_MCO2SEL_VALUE(5)
-#define RCC_CFGR_MCO1SEL_LSI                RCC_CFGR_MCO2SEL_VALUE(6)
-#define RCC_CFGR_MCO1SEL_LSE                RCC_CFGR_MCO2SEL_VALUE(7)
-#define RCC_CFGR_MCO1SEL_HSI48              RCC_CFGR_MCO2SEL_VALUE(8)
-#define RCC_CFGR_MCO1SEL_RTCCLK             RCC_CFGR_MCO2SEL_VALUE(9)
-#define RCC_CFGR_MCO1SEL_RTCWKP             RCC_CFGR_MCO2SEL_VALUE(10)
+#define RCC_CFGR_MCO1SEL_NOCLOCK            RCC_CFGR_MCO1SEL_VALUE(0)
+#define RCC_CFGR_MCO1SEL_SYSCLK             RCC_CFGR_MCO1SEL_VALUE(1)
+#define RCC_CFGR_MCO1SEL_MSI                RCC_CFGR_MCO1SEL_VALUE(2)
+#define RCC_CFGR_MCO1SEL_HSI16              RCC_CFGR_MCO1SEL_VALUE(3)
+#define RCC_CFGR_MCO1SEL_HSE                RCC_CFGR_MCO1SEL_VALUE(4)
+#define RCC_CFGR_MCO1SEL_PLLRCLK            RCC_CFGR_MCO1SEL_VALUE(5)
+#define RCC_CFGR_MCO1SEL_LSI                RCC_CFGR_MCO1SEL_VALUE(6)
+#define RCC_CFGR_MCO1SEL_LSE                RCC_CFGR_MCO1SEL_VALUE(7)
+#define RCC_CFGR_MCO1SEL_HSI48              RCC_CFGR_MCO1SEL_VALUE(8)
+#define RCC_CFGR_MCO1SEL_RTCCLK             RCC_CFGR_MCO1SEL_VALUE(9)
+#define RCC_CFGR_MCO1SEL_RTCWKP             RCC_CFGR_MCO1SEL_VALUE(10)
 
 #define RCC_CFGR_MCO1PRE_VALUE(n)           ((n) << RCC_CFGR_MCO1PRE_Pos)
 #define RCC_CFGR_MCO1PRE_DIV1               RCC_CFGR_MCO1PRE_VALUE(0)
@@ -511,14 +511,14 @@
  * @brief   MSI frequency setting.
  */
 #if !defined(STM32_MSIRANGE) || defined(__DOXYGEN__)
-#define STM32_MSIRANGE                      RCC_CR_MSIRANGE_4M
+#define STM32_MSIRANGE                      RCC_CR_MSIRANGE_4MHz
 #endif
 
 /**
  * @brief   MSI frequency setting after standby.
  */
 #if !defined(STM32_MSISRANGE) || defined(__DOXYGEN__)
-#define STM32_MSISRANGE                     RCC_CSR_MSISRANGE_4M
+#define STM32_MSISRANGE                     RCC_CR_MSIRANGE_4MHz
 #endif
 
 /**
@@ -576,7 +576,7 @@
  * @note    The allowed values are 2..8.
  */
 #if !defined(STM32_PLLQ_VALUE) || defined(__DOXYGEN__)
-#define STM32_PLLQ_VALUE                    1
+#define STM32_PLLQ_VALUE                    2
 #endif
 
 /**
@@ -959,8 +959,8 @@
 #if STM32_LSE_ENABLED
 #else /* !STM32_LSE_ENABLED */
 
-  #if STM32_SW == RCC_CFGR_SW_LSI
-    #error "LSI not enabled, required by STM32_SW"
+  #if STM32_SW == RCC_CFGR_SW_LSE
+    #error "LSE not enabled, required by STM32_SW"
   #endif
 
   #if STM32_RTCSEL == RCC_BDCR_RTCSEL_LSE
@@ -1125,37 +1125,37 @@
  * @brief   MCO divider clock source.
  */
 #if (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_NOCLOCK) || defined(__DOXYGEN__)
-  #define STM32_MCODIVCLK                   0
+  #define STM32_MCO1DIVCLK                  0
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_SYSCLK
-  #define STM32_MCODIVCLK                   STM32_SYSCLK
+  #define STM32_MCO1DIVCLK                  STM32_SYSCLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_MSI
-  #define STM32_MCODIVCLK                   STM32_MSICLK
+  #define STM32_MCO1DIVCLK                  STM32_MSICLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_HSI16
-  #define STM32_MCODIVCLK                   STM32_HSI16CLK
+  #define STM32_MCO1DIVCLK                  STM32_HSI16CLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_HSE
-  #define STM32_MCODIVCLK                   STM32_HSECLK
+  #define STM32_MCO1DIVCLK                  STM32_HSECLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK
-  #define STM32_MCODIVCLK                   STM32_PLL_R_CLKOUT
+  #define STM32_MCO1DIVCLK                  STM32_PLL_R_CLKOUT
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_LSI
-  #define STM32_MCODIVCLK                   STM32_LSICLK
+  #define STM32_MCO1DIVCLK                  STM32_LSICLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_LSE
-  #define STM32_MCODIVCLK                   STM32_LSECLK
+  #define STM32_MCO1DIVCLK                  STM32_LSECLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_HSI48
-  #define STM32_MCODIVCLK                   STM32_PLLPCLK
+  #define STM32_MCO1DIVCLK                  STM32_HSI48CLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_RTCCLK
-  #define STM32_MCODIVCLK                   STM32_RTCCLK
+  #define STM32_MCO1DIVCLK                  STM32_RTCCLK
 
 #elif STM32_MCO1SEL == RCC_CFGR_MCO1SEL_RTCWKP
-  #define STM32_MCODIVCLK                   0   /* TODO */
+  #define STM32_MCO1DIVCLK                  0   /* TODO */
 
 #else
   #error "invalid STM32_MCO1SEL value specified"
@@ -1165,37 +1165,37 @@
  * @brief   MCO output pin clock divider.
  */
 #if (STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV1) || defined(__DOXYGEN__)
-  #define STM32_MCO1CLK                     STM32_MCODIVCLK
+  #define STM32_MCO1CLK                     STM32_MCO1DIVCLK
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV2
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 2)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 2)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV4
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 4)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 4)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV8
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 8)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 8)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV16
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 16)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 16)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV32
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 32)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 32)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV64
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 64)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 64)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV128
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 128)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 128)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV256
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 256)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 256)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV512
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 512)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 512)
 
 #elif STM32_MCO1PRE == RCC_CFGR_MCO1PRE_DIV1024
-  #define STM32_MCO1CLK                     (STM32_MCODIVCLK / 1024)
+  #define STM32_MCO1CLK                     (STM32_MCO1DIVCLK / 1024)
 
 #else
   #error "invalid STM32_MCO1PRE value specified"
@@ -1229,7 +1229,7 @@
   #define STM32_MCO2DIVCLK                  STM32_LSECLK
 
 #elif STM32_MCO2SEL == RCC_CFGR_MCO2SEL_HSI48
-  #define STM32_MCO2DIVCLK                  STM32_PLLPCLK
+  #define STM32_MCO2DIVCLK                  STM32_HSI48CLK
 
 #elif STM32_MCO2SEL == RCC_CFGR_MCO2SEL_RTCCLK
   #define STM32_MCO2DIVCLK                  STM32_RTCCLK
@@ -1538,7 +1538,7 @@
 /**
  * @brief   TIMPCLK clock frequency.
  */
-#if (STM32_PPRE == STM32_PPRE_DIV1) || defined(__DOXYGEN__)
+#if (STM32_PPRE == RCC_CFGR_PPRE_DIV1) || defined(__DOXYGEN__)
   #define STM32_TIMPCLK                     (STM32_PCLK * 1)
 
 #else

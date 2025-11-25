@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    STM32G0xx+/hal_lld.c
- * @brief   STM32G0xx+ HAL subsystem low level driver source.
+ * @file    STM32U0xx/hal_lld.c
+ * @brief   STM32U0xx HAL subsystem low level driver source.
  *
  * @addtogroup HAL
  * @{
@@ -70,7 +70,7 @@ void hal_lld_init(void) {
 }
 
 /**
- * @brief   STM32G0xx clocks and PLL initialization.
+ * @brief   STM32U0xx clocks and PLL initialization.
  * @note    All the involved constants come from the file @p board.h.
  * @note    This function should be invoked just after the system reset.
  *
