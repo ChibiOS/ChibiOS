@@ -45,6 +45,9 @@
 #define STM32_RCC_CRRCR_RESET           0x00008800U
 /** @} */
 
+/* Reserved bit to be kept at 1, ST mysteries.*/
+#define FLASH_ACR_RESVD10               (1U << 10)
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -110,7 +113,7 @@ const halclkcfg_t hal_clkcfg_default = {
 #endif
                         ,
   .flash_acr            = (STM32_FLASH_ACR & ~FLASH_ACR_LATENCY_Msk) |
-                          STM32_FLASHBITS
+                          STM32_FLASHBITS | FLASH_ACR_RESVD10
 };
 
 /*===========================================================================*/
@@ -245,7 +248,9 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Setting flash ACR to the safest value while the clock tree is
      reconfigured. we don't know the current clock settings.*/
-  if (halRegWrite32X(&FLASH->ACR, FLASH_ACR_LATENCY_2WS, true)) {
+  if (halRegWrite32X(&FLASH->ACR,
+                     FLASH_ACR_DBG_SWEN | FLASH_ACR_RESVD10 | FLASH_ACR_ICEN | FLASH_ACR_LATENCY_2WS,
+                     true)) {
     return true;
   }
 
@@ -282,10 +287,10 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   RCC->CR       = STM32_RCC_CR_RESET;
   RCC->PLLCFGR  = STM32_RCC_PLLCFGR_RESET;
 
-  /* Final power configuration, DBP enforced.*/
-  PWR->CR1      = ccp->pwr_cr1 | PWR_CR1_DBP;
-  if (halRegWaitAllSet32X(&PWR->SR2, PWR_SR2_VOSF,
-                          STM32_REGULATORS_TRANSITION_TIME, NULL)) {
+  /* Post-reset voltage scaling enforcing.*/
+  PWR->CR1      = STM32_PWR_CR1_RESET;
+  if (halRegWaitAllClear32X(&PWR->SR2, PWR_SR2_VOSF,
+                            STM32_REGULATORS_TRANSITION_TIME, NULL)) {
     return true;
   }
 
@@ -320,9 +325,9 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
     return true;
   }
 
-  /* Programmable voltage scaling configuration. */
-  PWR->CR1  = ccp->pwr_cr1;
-  if (halRegWaitAllClear32X(&PWR->SR2, PWR_SR2_REGLPF,
+  /* Final programmable voltage scaling configuration. */
+  PWR->CR1 = ccp->pwr_cr1 | PWR_CR1_DBP;
+  if (halRegWaitAllClear32X(&PWR->SR2, PWR_SR2_VOSF,
                             STM32_REGULATORS_TRANSITION_TIME, NULL)) {
     return true;
   }
@@ -343,7 +348,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   RCC->CFGR = ccp->rcc_cfgr;
 
   /* Final flash ACR settings according to the target configuration.*/
-  if (halRegWrite32X(&FLASH->ACR, ccp->flash_acr, true)) {
+  if (halRegWrite32X(&FLASH->ACR, ccp->flash_acr | FLASH_ACR_RESVD10, true)) {
     return true;
   }
 

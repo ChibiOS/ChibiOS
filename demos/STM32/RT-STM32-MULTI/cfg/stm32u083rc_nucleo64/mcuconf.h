@@ -38,7 +38,7 @@
 /*
  * PWR settings.
  */
-#define STM32_PWR_CR1                       (PWR_CR1_VOS_RANGE1)
+#define STM32_PWR_CR1                       (PWR_CR1_VOS_RANGE1 | PWR_CR1_FPD_STOP)
 #define STM32_PWR_CR2                       (0U)
 #define STM32_PWR_CR3                       (0U)
 #define STM32_PWR_CR4                       (0U)
@@ -58,7 +58,7 @@
 /*
  * FLASH settings.
  */
-#define STM32_FLASH_ACR                     (FLASH_ACR_PRFTEN)
+#define STM32_FLASH_ACR                     (FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN)
 
 /*
  * HAL driver system settings.
@@ -69,9 +69,9 @@
 #define STM32_HSI48_ENABLED                 FALSE
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   FALSE
-#define STM32_LSE_ENABLED                   FALSE
+#define STM32_LSE_ENABLED                   TRUE
 #define STM32_MSI_ENABLED                   TRUE
-#define STM32_MSIPLL_ENABLED                FALSE
+#define STM32_MSIPLL_ENABLED                TRUE
 #define STM32_MSIRANGE                      RCC_CR_MSIRANGE_4M
 #define STM32_MSISRANGE                     RCC_CSR_MSISRANGE_4M
 #define STM32_SW                            RCC_CFGR_SW_PLLRCLK

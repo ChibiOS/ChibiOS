@@ -331,7 +331,7 @@
  * @brief   PWR CR1 register initialization value.
  */
 #if !defined(STM32_PWR_CR1) || defined(__DOXYGEN__)
-#define STM32_PWR_CR1                       (PWR_CR1_VOS_RANGE1)
+#define STM32_PWR_CR1                       (PWR_CR1_VOS_RANGE1 | PWR_CR1_FPD_STOP)
 #endif
 
 /**
@@ -440,6 +440,15 @@
 #endif
 
 /**
+ * @brief   FLASH ACR register initialization value.
+ * @note    Do not specify the LATENCY bits because those are calculated
+ *          depending on other settings and ORed to this value.
+ */
+#if !defined(STM32_FLASH_ACR) || defined(__DOXYGEN__)
+#define STM32_FLASH_ACR                     (FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN)
+#endif
+
+/**
  * @brief   Enables or disables the HSI16 clock source.
  */
 #if !defined(STM32_HSI16_ENABLED) || defined(__DOXYGEN__)
@@ -478,7 +487,7 @@
  * @brief   Enables or disables the MSI clock source.
  */
 #if !defined(STM32_MSI_ENABLED) || defined(__DOXYGEN__)
-#define STM32_MSI_ENABLED                   FALSE
+#define STM32_MSI_ENABLED                   TRUE
 #endif
 
 /**
