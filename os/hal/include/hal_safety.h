@@ -38,7 +38,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(HAL_USE_SAFETY) || defined(__DOXYGEN__)
-#define HAL_USE_SAFETY                      FALSE
+#define HAL_USE_SAFETY                      TRUE
 #endif
 
 /*===========================================================================*/
@@ -61,6 +61,7 @@
  * @brief   Sets bits into an 8 bits register.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] s         mask of bits to be set
@@ -76,6 +77,7 @@
  * @brief   Sets bits into a 16 bits register.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] s         mask of bits to be set
@@ -91,6 +93,7 @@
  * @brief   Sets bits into a 32 bits register.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] s         mask of bits to be set
@@ -106,6 +109,7 @@
  * @brief   Clears bits into an 8 bits register.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] c         mask of bits to be cleared
@@ -121,6 +125,7 @@
  * @brief   Clears bits into a 16 bits register.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] c         mask of bits to be cleared
@@ -136,6 +141,7 @@
  * @brief   Clears bits into a 32 bits register.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] c         mask of bits to be cleared
@@ -155,6 +161,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void halSftFail(const char *message);
   bool halRegWaitMatch8X(volatile uint8_t *p, uint8_t mask,
                          uint8_t match, uint32_t tmo, uint8_t *valp);
   bool halRegWaitMatch16X(volatile uint16_t *p, uint16_t mask,
@@ -200,15 +207,14 @@ extern "C" {
  * @note    This function can potentially not return.
  *
  * @param[in] result    the error status, @p true if an error occurred
+ * @param[in] message   an optional descriptive message
+ *
+ * @api
  */
 static inline void halSftFailOnError(bool result, const char *message) {
 
   if (result) {
-#if defined(HAL_SAFETY_HANDLER)
-    HAL_SAFETY_HANDLER(message);
-#else
-    osalSysHalt(message);
-#endif
+    halSftFail(message);
   }
 }
 
@@ -219,19 +225,17 @@ static inline void halSftFailOnError(bool result, const char *message) {
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] value     value to be written
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegWrite8X(volatile uint8_t *p,
+static inline void halRegWrite8X(volatile uint8_t *p,
                                  uint8_t value,
                                  bool verify) {
 
@@ -242,12 +246,10 @@ static inline bool halRegWrite8X(volatile uint8_t *p,
 #else
   if (verify) {
     if (*p != value) {
-      return true;
+      halSftFail("w8");
     }
   }
 #endif
-
-  return false;
 }
 
 /**
@@ -257,19 +259,17 @@ static inline bool halRegWrite8X(volatile uint8_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] value     value to be written
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegWrite16X(volatile uint16_t *p,
+static inline void halRegWrite16X(volatile uint16_t *p,
                                   uint16_t value,
                                   bool verify) {
 
@@ -280,12 +280,10 @@ static inline bool halRegWrite16X(volatile uint16_t *p,
 #else
   if (verify) {
     if (*p != value) {
-      return true;
+      halSftFail("w16");
     }
   }
 #endif
-
-  return false;
 }
 
 /**
@@ -295,19 +293,17 @@ static inline bool halRegWrite16X(volatile uint16_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] value     value to be written
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegWrite32X(volatile uint32_t *p,
+static inline void halRegWrite32X(volatile uint32_t *p,
                                   uint32_t value,
                                   bool verify) {
 
@@ -318,12 +314,10 @@ static inline bool halRegWrite32X(volatile uint32_t *p,
 #else
   if (verify) {
     if (*p != value) {
-      return true;
+      halSftFail("w32");
     }
   }
 #endif
-
-  return false;
 }
 
 /**
@@ -333,6 +327,7 @@ static inline bool halRegWrite32X(volatile uint32_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] setmask   mask of bits to be set
@@ -340,13 +335,10 @@ static inline bool halRegWrite32X(volatile uint32_t *p,
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegModify8X(volatile uint8_t *p,
+static inline void halRegModify8X(volatile uint8_t *p,
                                   uint8_t setmask,
                                   uint8_t clrmask,
                                   bool verify) {
@@ -361,16 +353,11 @@ static inline bool halRegModify8X(volatile uint8_t *p,
   if (verify) {
     uint8_t check = *p;
 
-    if ((check & setmask) != setmask) {
-      return true;
-    }
-    if ((check & clrmask) != (uint8_t)0) {
-      return true;
+    if (((check & setmask) != setmask) || ((check & clrmask) != (uint8_t)0)) {
+      halSftFail("m8");
     }
   }
 #endif
-
-  return false;
 }
 
 /**
@@ -380,6 +367,7 @@ static inline bool halRegModify8X(volatile uint8_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] setmask   mask of bits to be set
@@ -387,13 +375,10 @@ static inline bool halRegModify8X(volatile uint8_t *p,
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegModify16X(volatile uint16_t *p,
+static inline void halRegModify16X(volatile uint16_t *p,
                                    uint16_t setmask,
                                    uint16_t clrmask,
                                    bool verify) {
@@ -408,16 +393,11 @@ static inline bool halRegModify16X(volatile uint16_t *p,
   if (verify) {
     uint16_t check = *p;
 
-    if ((check & setmask) != setmask) {
-      return true;
-    }
-    if ((check & clrmask) != (uint16_t)0) {
-      return true;
+    if (((check & setmask) != setmask) || ((check & clrmask) != (uint16_t)0)) {
+      halSftFail("m16");
     }
   }
 #endif
-
- return false;
 }
 
 /**
@@ -427,6 +407,7 @@ static inline bool halRegModify16X(volatile uint16_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] setmask   mask of bits to be set
@@ -434,13 +415,10 @@ static inline bool halRegModify16X(volatile uint16_t *p,
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegModify32X(volatile uint32_t *p,
+static inline void halRegModify32X(volatile uint32_t *p,
                                    uint32_t setmask,
                                    uint32_t clrmask,
                                    bool verify) {
@@ -455,16 +433,11 @@ static inline bool halRegModify32X(volatile uint32_t *p,
   if (verify) {
     uint32_t check = *p;
 
-    if ((check & setmask) != setmask) {
-      return true;
-    }
-    if ((check & clrmask) != (uint32_t)0) {
-      return true;
+    if (((check & setmask) != setmask) || ((check & clrmask) != (uint32_t)0)) {
+      halSftFail("m32");
     }
   }
 #endif
-
-  return false;
 }
 
 /**
@@ -474,6 +447,7 @@ static inline bool halRegModify32X(volatile uint32_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] mask      mask of bits field to be written
@@ -482,13 +456,10 @@ static inline bool halRegModify32X(volatile uint32_t *p,
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegMaskedWrite8X(volatile uint8_t *p,
+static inline void halRegMaskedWrite8X(volatile uint8_t *p,
                                        uint8_t mask,
                                        uint8_t value,
                                        bool verify) {
@@ -508,12 +479,10 @@ static inline bool halRegMaskedWrite8X(volatile uint8_t *p,
     uint8_t check = *p;
 
     if ((check & mask) != value) {
-      return true;
+      halSftFail("mw8");
     }
   }
 #endif
-
-  return false;
 }
 
 /**
@@ -523,6 +492,7 @@ static inline bool halRegMaskedWrite8X(volatile uint8_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] mask      mask of bits field to be written
@@ -531,13 +501,10 @@ static inline bool halRegMaskedWrite8X(volatile uint8_t *p,
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegMaskedWrite16X(volatile uint16_t *p,
+static inline void halRegMaskedWrite16X(volatile uint16_t *p,
                                         uint16_t mask,
                                         uint16_t value,
                                         bool verify) {
@@ -557,12 +524,10 @@ static inline bool halRegMaskedWrite16X(volatile uint16_t *p,
     uint16_t check = *p;
 
     if ((check & mask) != value) {
-      return true;
+      halSftFail("mw16");
     }
   }
 #endif
-
-  return false;
 }
 
 /**
@@ -572,6 +537,7 @@ static inline bool halRegMaskedWrite16X(volatile uint16_t *p,
  *          optimized out.
  * @note    There is a strong assumption for memory-mapped I/O, this is not
  *          necessarily true on all architectures.
+ * @note    Verification failure results in entering the fault handler.
  *
  * @param[in] p         pointer to the register
  * @param[in] mask      mask of bits field to be written
@@ -580,13 +546,10 @@ static inline bool halRegMaskedWrite16X(volatile uint16_t *p,
  * @param[in] verify    verification flag, register is read back if @p true,
  *                      this flag only has effect if @p HAL_USE_SAFETY is
  *                      set to @p TRUE
- * @return              The check result.
- * @retval false        if the comparison succeeded.
- * @retval true         if the comparison failed.
  *
  * @xclass
  */
-static inline bool halRegMaskedWrite32X(volatile uint32_t *p,
+static inline void halRegMaskedWrite32X(volatile uint32_t *p,
                                         uint32_t mask,
                                         uint32_t value,
                                         bool verify) {
@@ -606,12 +569,10 @@ static inline bool halRegMaskedWrite32X(volatile uint32_t *p,
     uint32_t check = *p;
 
     if ((check & mask) != value) {
-      return true;
+      halSftFail("mw32");
     }
   }
 #endif
-
-  return false;
 }
 
 #endif /* HAL_SAFETY_H */

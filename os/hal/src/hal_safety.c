@@ -57,7 +57,7 @@ static inline rtcnt_t get_counter(void) {
   /* Fallback when there is no realtime counter available, the timeout
      becomes simply the number of times that loops are executed maximum.
      The pseudo-counter is static and shared among all threads/ISRs.*/
-  static rtcnt_t counter = (rtcnt_t)0;
+  static volatile rtcnt_t counter = (rtcnt_t)0;
   rtcnt_t current;
   syssts_t sts;
 
@@ -79,6 +79,26 @@ static inline bool is_counter_within(rtcnt_t start, rtcnt_t end) {
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Common safety fault handler.
+ * @brief   This function does not return, any recovery strategy, at this
+ *          level, is meant to be destructive.
+ *
+ * @param[in] result    the error status, @p true if an error occurred
+ *
+ * @api
+ */
+CC_NO_RETURN
+void halSftFail(const char *message) {
+
+#if defined(HAL_SAFETY_HANDLER)
+    HAL_SAFETY_HANDLER(message);
+#else
+    osalSysHalt(message);
+    while (true) {} /* TODO: Temporary, suppresses a warning.*/
+#endif
+}
 
 /**
  * @brief   Waits for masked bits to match or a timeout.

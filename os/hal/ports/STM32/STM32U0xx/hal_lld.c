@@ -248,14 +248,12 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Setting flash ACR to the safest value while the clock tree is
      reconfigured. we don't know the current clock settings.*/
-  if (halRegWrite32X(&FLASH->ACR,
-                     FLASH_ACR_DBG_SWEN | FLASH_ACR_RESVD10 | FLASH_ACR_ICEN | FLASH_ACR_LATENCY_2WS,
-                     true)) {
-    return true;
-  }
+  halRegWrite32X(&FLASH->ACR,
+                 FLASH_ACR_DBG_SWEN | FLASH_ACR_RESVD10 | FLASH_ACR_ICEN | FLASH_ACR_LATENCY_2WS,
+                 true);
 
   /* Disabling low power run mode if activated, not touching current
-     VOS range.*/
+     VOS range yet.*/
   halRegClear32X(&PWR->CR1, PWR_CR1_LPR, false);
   if (halRegWaitAllClear32X(&PWR->SR2, PWR_SR2_REGLPF,
                             STM32_REGULATORS_TRANSITION_TIME, NULL)) {
@@ -267,7 +265,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   halRegMaskedWrite32X(&RCC->CR,
                        RCC_CR_MSIRANGE_Msk,
                        RCC_CR_MSIRANGE_4M | RCC_CR_MSION,
-                       false);
+                       true);
   if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_MSIRDY,
                           STM32_HSI_HSE_MSI_STARTUP_TIME,
                           NULL)) {
@@ -275,7 +273,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   }
 
   /* Switching to MSI.*/
-  RCC->CFGR     = STM32_RCC_CFGR_RESET;
+  halRegWrite32X(&RCC->CFGR, STM32_RCC_CFGR_RESET, true);
   if (halRegWaitMatch32X(&RCC->CFGR,
                          RCC_CFGR_SWS_Msk, RCC_CFGR_SWS_MSI,
                          STM32_SYSCLK_SWITCH_TIME,
@@ -284,11 +282,11 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   }
 
   /* Resetting clocks-related settings, this includes MSI.*/
-  RCC->CR       = STM32_RCC_CR_RESET;
-  RCC->PLLCFGR  = STM32_RCC_PLLCFGR_RESET;
+  halRegWrite32X(&RCC->CR, STM32_RCC_CR_RESET, true);
+  halRegWrite32X(&RCC->PLLCFGR, STM32_RCC_PLLCFGR_RESET, true);
 
   /* Post-reset voltage scaling enforcing.*/
-  PWR->CR1      = STM32_PWR_CR1_RESET;
+  halRegWrite32X(&PWR->CR1, STM32_PWR_CR1_RESET, true);
   if (halRegWaitAllClear32X(&PWR->SR2, PWR_SR2_VOSF,
                             STM32_REGULATORS_TRANSITION_TIME, NULL)) {
     return true;
@@ -296,11 +294,13 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Enabling all required oscillators at same time, MSI enforced active,
      PLL not enabled yet.*/
-  RCC->CR    = (ccp->rcc_cr | RCC_CR_MSION) & ~(RCC_CR_PLLON);
+  halRegWrite32X(&RCC->CR,
+                  (ccp->rcc_cr | RCC_CR_MSION) & ~RCC_CR_PLLON,
+                  true);
 
   /* Starting also HSI48 if required, waiting for it to become stable first
      because it is the fastest one.*/
-  RCC->CRRCR = ccp->rcc_crrcr;
+  halRegWrite32X(&RCC->CRRCR, ccp->rcc_crrcr, true);
   if ((ccp->rcc_crrcr & RCC_CRRCR_HSI48ON) != 0U) {
     if (halRegWaitAllSet32X(&RCC->CRRCR,
                             RCC_CRRCR_HSI48RDY,
@@ -326,7 +326,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   }
 
   /* Final programmable voltage scaling configuration. */
-  PWR->CR1 = ccp->pwr_cr1 | PWR_CR1_DBP;
+  halRegWrite32X(&PWR->CR1, ccp->pwr_cr1 | PWR_CR1_DBP, true);
   if (halRegWaitAllClear32X(&PWR->SR2, PWR_SR2_VOSF,
                             STM32_REGULATORS_TRANSITION_TIME, NULL)) {
     return true;
@@ -334,8 +334,8 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Enabling also PLLs if required by the configuration else skipping.*/
   if ((ccp->rcc_cr & RCC_CR_PLLON) != 0U) {
-    RCC->PLLCFGR = ccp->rcc_pllcfgr;
-    RCC->CR      = ccp->rcc_cr | RCC_CR_MSION;
+    halRegWrite32X(&RCC->PLLCFGR, ccp->rcc_pllcfgr, true);
+    halRegWrite32X(&RCC->CR, ccp->rcc_cr | RCC_CR_MSION, true);
     if (halRegWaitAllSet32X(&RCC->CR,
                             RCC_CR_PLLRDY,
                             STM32_PLL_STARTUP_TIME,
@@ -345,12 +345,10 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   }
 
   /* Final RCC CFGR settings (prescalers, MCO, etc).*/
-  RCC->CFGR = ccp->rcc_cfgr;
+  halRegWrite32X(&RCC->CFGR, ccp->rcc_cfgr, true);
 
   /* Final flash ACR settings according to the target configuration.*/
-  if (halRegWrite32X(&FLASH->ACR, ccp->flash_acr | FLASH_ACR_RESVD10, true)) {
-    return true;
-  }
+  halRegWrite32X(&FLASH->ACR, ccp->flash_acr | FLASH_ACR_RESVD10, true);
 
   /* Waiting for the requested SYSCLK source to become active. */
   if (halRegWaitMatch32X(&RCC->CFGR,
@@ -362,7 +360,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Final RCC_CR value, MSIS could go off at this point if it is not part
      of the mask.*/
-  RCC->CR = ccp->rcc_cr;
+  halRegWrite32X(&RCC->CR, ccp->rcc_cr, true);
 
   return false;
 }
