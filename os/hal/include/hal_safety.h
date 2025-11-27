@@ -38,7 +38,7 @@
  * @note    Disabling this option saves both code and data space.
  */
 #if !defined(HAL_USE_SAFETY) || defined(__DOXYGEN__)
-#define HAL_USE_SAFETY                      TRUE
+#define HAL_USE_SAFETY                      FALSE
 #endif
 
 /*===========================================================================*/
