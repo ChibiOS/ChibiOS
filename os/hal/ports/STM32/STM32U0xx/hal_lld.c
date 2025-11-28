@@ -238,24 +238,24 @@ static void hal_lld_set_static_pwr(void) {
   rccEnablePWRInterface(false);
 
   /* Enable write access to Backup domain.*/
-  PWR->CR1      = STM32_PWR_CR1_RESET | PWR_CR1_DBP;
+  halRegWrite32X(&PWR->CR1, STM32_PWR_CR1_RESET | PWR_CR1_DBP, true);
 
   /* Static settings for PWR registers.*/
-  PWR->CR2      = STM32_PWR_CR2;
-  PWR->CR3      = STM32_PWR_CR3;
-  PWR->CR4      = STM32_PWR_CR4;
-  PWR->PUCRA    = STM32_PWR_PUCRA;
-  PWR->PDCRA    = STM32_PWR_PDCRA;
-  PWR->PDCRB    = STM32_PWR_PDCRB;
-  PWR->PUCRB    = STM32_PWR_PUCRB;
-  PWR->PUCRC    = STM32_PWR_PUCRC;
-  PWR->PDCRC    = STM32_PWR_PDCRC;
-  PWR->PUCRD    = STM32_PWR_PUCRD;
-  PWR->PDCRD    = STM32_PWR_PDCRD;
-  PWR->PUCRE    = STM32_PWR_PUCRE;
-  PWR->PDCRE    = STM32_PWR_PDCRE;
-  PWR->PUCRF    = STM32_PWR_PUCRF;
-  PWR->PDCRF    = STM32_PWR_PDCRF;
+  halRegWrite32X(&PWR->CR2,   STM32_PWR_CR2,   true);
+  halRegWrite32X(&PWR->CR3,   STM32_PWR_CR3,   true);
+  halRegWrite32X(&PWR->CR4,   STM32_PWR_CR4,   true);
+  halRegWrite32X(&PWR->PUCRA, STM32_PWR_PUCRA, true);
+  halRegWrite32X(&PWR->PDCRA, STM32_PWR_PDCRA, true);
+  halRegWrite32X(&PWR->PDCRB, STM32_PWR_PDCRB, true);
+  halRegWrite32X(&PWR->PUCRB, STM32_PWR_PUCRB, true);
+  halRegWrite32X(&PWR->PUCRC, STM32_PWR_PUCRC, true);
+  halRegWrite32X(&PWR->PDCRC, STM32_PWR_PDCRC, true);
+  halRegWrite32X(&PWR->PUCRD, STM32_PWR_PUCRD, true);
+  halRegWrite32X(&PWR->PDCRD, STM32_PWR_PDCRD, true);
+  halRegWrite32X(&PWR->PUCRE, STM32_PWR_PUCRE, true);
+  halRegWrite32X(&PWR->PDCRE, STM32_PWR_PDCRE, true);
+  halRegWrite32X(&PWR->PUCRF, STM32_PWR_PUCRF, true);
+  halRegWrite32X(&PWR->PDCRF, STM32_PWR_PDCRF, true);
 }
 
 /**
@@ -264,13 +264,15 @@ static void hal_lld_set_static_pwr(void) {
 static void hal_lld_set_static_clocks(void) {
 
   /* CCIPR registers initialization, note.*/
-  RCC->CCIPR = STM32_ADCSEL     | STM32_CLK48SEL    |
-               STM32_TIM15SEL   | STM32_TIM1SEL     |
-               STM32_LPTIM3SEL  | STM32_LPTIM2SEL   |
-               STM32_LPTIM1SEL  | STM32_I2C3SEL     |
-               STM32_I2C1SEL    | STM32_LPUART1SEL  |
-               STM32_LPUART2SEL | STM32_LPUART3SEL  |
-               STM32_USART2SEL  | STM32_USART1SEL;
+  halRegWrite32X(&RCC->CCIPR,
+                 STM32_ADCSEL     | STM32_CLK48SEL    |
+                 STM32_TIM15SEL   | STM32_TIM1SEL     |
+                 STM32_LPTIM3SEL  | STM32_LPTIM2SEL   |
+                 STM32_LPTIM1SEL  | STM32_I2C3SEL     |
+                 STM32_I2C1SEL    | STM32_LPUART1SEL  |
+                 STM32_LPUART2SEL | STM32_LPUART3SEL  |
+                 STM32_USART2SEL  | STM32_USART1SEL,
+                 true);
 }
 
 /**
