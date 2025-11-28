@@ -160,7 +160,7 @@
 /*
  * IRQ system settings.
  */
-#define STM32_IRQ_DAC1_PRIORITY             9
+#define STM32_IRQ_DAC1_PRIORITY             ${doc.STM32_IRQ_DAC1_PRIORITY!"9"}
 
 #define STM32_IRQ_EXTI0_PRIORITY            ${doc.STM32_IRQ_EXTI0_PRIORITY!"6"}
 #define STM32_IRQ_EXTI1_PRIORITY            ${doc.STM32_IRQ_EXTI1_PRIORITY!"6"}
