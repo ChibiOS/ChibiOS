@@ -2,22 +2,23 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === 128k code at 0x08060000, 16k data at 0x2001C000=================
-	+@make --no-print-directory -f make/128k-08060000-16k-2001C000.make all
-	@echo
-	@echo === 128k code at 0x081E0000, 16k data at 0x20004000=================
-	+@make --no-print-directory -f make/128k-081E0000-16k-20004000.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ====================================="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo "========================================================"; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f ./make/128k-08060000-16k-2001C000.make clean
-	@echo
-	+@make --no-print-directory -f ./make/128k-081E0000-16k-20004000.make clean
-	@echo
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ======================================"; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo "========================================================"; \
+	done
 
 #
 ##############################################################################

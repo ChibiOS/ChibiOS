@@ -107,6 +107,7 @@ include $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk/startup_stm32u5xx.m
 #include $(CHIBIOS)/os/rt/rt.mk
 #include $(CHIBIOS)/os/common/ports/ARMv8-M-ML/compilers/GCC/mk/port.mk
 # Auto-build files in ./source recursively.
+AUTOBUILD_ROOT := ./nosource/
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Other files (optional).
 #include $(CHIBIOS)/os/test/test.mk

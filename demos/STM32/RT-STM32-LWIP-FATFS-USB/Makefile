@@ -2,40 +2,22 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === Building for STM32H735IG-Discovery =============================
-	+@make --no-print-directory -f make/stm32h735ig_discovery.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for STM32F407-Olimex ==================================
-	+@make --no-print-directory -f make/stm32f407_olimex.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for STM32F746-Discovery ===============================
-	+@make --no-print-directory -f make/stm32f746_discovery.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for STM32F796-Discovery ===============================
-	+@make --no-print-directory -f make/stm32f769_discovery.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for STM32F107-GoldBull ================================
-	+@make --no-print-directory -f make/stm32f107_goldbull.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ====================================="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo "========================================================"; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f make/stm32h735ig_discovery.make clean
-	@echo
-	+@make --no-print-directory -f make/stm32f407_olimex.make clean
-	@echo
-	+@make --no-print-directory -f make/stm32f746_discovery.make clean
-	@echo
-	+@make --no-print-directory -f make/stm32f769_discovery.make clean
-	@echo
-	+@make --no-print-directory -f make/stm32f107_goldbull.make clean
-	@echo
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ======================================"; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo "========================================================"; \
+	done
 #
 ##############################################################################

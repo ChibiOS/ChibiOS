@@ -2,17 +2,22 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === Building for STM32F756ZG-Nucleo144 =============================
-	+@make --no-print-directory -f ./make/stm32f756zg_nucleo144.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ====================================="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo "========================================================"; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f ./make/stm32f756zg_nucleo144.make clean
-	@echo
-
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ======================================"; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo "========================================================"; \
+	done
 #
 ##############################################################################

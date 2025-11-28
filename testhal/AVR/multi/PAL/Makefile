@@ -2,35 +2,22 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === Building for Arduino-Mega ======================================
-	+@make --no-print-directory -f make/Makefile-arduino_mega.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for Arduino-Mini ======================================
-	+@make --no-print-directory -f make/Makefile-arduino_mini.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for Arduino-Nano ======================================
-	+@make --no-print-directory -f make/Makefile-arduino_nano.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for Arduino-Uno =======================================
-	+@make --no-print-directory -f make/Makefile-arduino_uno.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ====================================="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo "========================================================"; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f make/Makefile-arduino_mega.make clean
-	@echo
-	+@make --no-print-directory -f make/Makefile-arduino_mini.make clean
-	@echo
-	+@make --no-print-directory -f make/Makefile-arduino_nano.make clean
-	@echo
-	+@make --no-print-directory -f make/Makefile-arduino_uno.make clean
-	@echo
-
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ======================================"; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo "========================================================"; \
+	done
 #
 ##############################################################################
