@@ -99,7 +99,7 @@ const halclkcfg_t hal_clkcfg_default = {
 #endif
                           ,
   .rcc_cfgr             = STM32_MCO1PRE | STM32_MCO1SEL |
-                          STM32_MCO2PRE | RCC_CFGR_MCO2SEL |
+                          STM32_MCO2PRE | STM32_MCO2SEL |
                           STM32_PPRE    | STM32_HPRE    |
                           STM32_SW,
   .rcc_pllcfgr          = STM32_PLLR    | STM32_PLLREN  |
@@ -497,7 +497,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
     /* PLL N divider.*/
     pllndiv = (ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLN_Msk) >> RCC_PLLCFGR_PLLN_Pos;
-    if (pllndiv < 8) {
+    if ((pllndiv < STM32_PLLN_VALUE_MIN) ||
+        (pllndiv > STM32_PLLN_VALUE_MAX)) {
       return true;
     }
 
@@ -673,7 +674,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   /* Writing out results.*/
   clock_points[CLK_SYSCLK]    = sysclk;
   clock_points[CLK_HSI16CLK]  = hsi16clk;
-  clock_points[CLK_HSECLK]    = pllpclk;
+  clock_points[CLK_HSI48CLK]  = hsi48clk;
+  clock_points[CLK_HSECLK]    = hseclk;
+  clock_points[CLK_MSICLK]    = msiclk;
   clock_points[CLK_PLLPCLK]   = pllpclk;
   clock_points[CLK_PLLQCLK]   = pllqclk;
   clock_points[CLK_PLLRCLK]   = pllrclk;

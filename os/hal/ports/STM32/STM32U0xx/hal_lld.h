@@ -801,7 +801,7 @@
     #error "HSI16 not enabled, required by STM32_SW and STM32_PLLSRC"
   #endif
 
-  #if (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_HSI16) ||                            \
+  #if (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_HSI16) ||                          \
       ((STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK) && (STM32_PLLSRC == RCC_PLLCFGR_PLLSRC_HSI16))
     #error "HSI16 not enabled, required by MCO"
   #endif
@@ -885,8 +885,8 @@
     #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
   #endif
 
-  #if (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_HSE) ||                              \
-      ((STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK) &&                         \
+  #if (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_HSE) ||                            \
+      ((STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK) &&                       \
        (STM32_PLLSRC == RCC_PLLCFGR_PLLSRC_HSE))
     #error "HSE not enabled, required by STM32_MCO1SEL"
   #endif
@@ -1621,20 +1621,20 @@ typedef struct {
  *
  * @notapi
  */
-  #define hal_lld_get_clock_point(clkpt)                                  \
-    ((clkpt) == CLK_SYSCLK    ? STM32_SYSCLK        :                     \
-     (clkpt) == CLK_HSI16CLK  ? STM32_HSI16CLK      :                     \
-     (clkpt) == CLK_HSI48CLK  ? STM32_HSI48CLK      :                     \
-     (clkpt) == CLK_HSECLK    ? STM32_HSECLK        :                     \
-     (clkpt) == CLK_MSICLK    ? STM32_MSICLK        :                     \
-     (clkpt) == CLK_PLLPCLK   ? STM32_PLL_P_CLKOUT  :                     \
-     (clkpt) == CLK_PLLQCLK   ? STM32_PLL_Q_CLKOUT  :                     \
-     (clkpt) == CLK_PLLRCLK   ? STM32_PLL_R_CLKOUT  :                     \
-     (clkpt) == CLK_HCLK      ? STM32_HCLK          :                     \
-     (clkpt) == CLK_PCLK      ? STM32_PCLK          :                     \
-     (clkpt) == CLK_PCLKTIM   ? STM32_TIMPCLK       :                     \
-     (clkpt) == CLK_MCO1      ? STM32_MCO1CLK       :                     \
-     (clkpt) == CLK_MCO2      ? STM32_MCO2CLK       :                     \
+  #define hal_lld_get_clock_point(clkpt)                                    \
+    ((clkpt) == CLK_SYSCLK    ? STM32_SYSCLK        :                       \
+     (clkpt) == CLK_HSI16CLK  ? STM32_HSI16CLK      :                       \
+     (clkpt) == CLK_HSI48CLK  ? STM32_HSI48CLK      :                       \
+     (clkpt) == CLK_HSECLK    ? STM32_HSECLK        :                       \
+     (clkpt) == CLK_MSICLK    ? STM32_MSICLK        :                       \
+     (clkpt) == CLK_PLLPCLK   ? STM32_PLL_P_CLKOUT  :                       \
+     (clkpt) == CLK_PLLQCLK   ? STM32_PLL_Q_CLKOUT  :                       \
+     (clkpt) == CLK_PLLRCLK   ? STM32_PLL_R_CLKOUT  :                       \
+     (clkpt) == CLK_HCLK      ? STM32_HCLK          :                       \
+     (clkpt) == CLK_PCLK      ? STM32_PCLK          :                       \
+     (clkpt) == CLK_PCLKTIM   ? STM32_TIMPCLK       :                       \
+     (clkpt) == CLK_MCO1      ? STM32_MCO1CLK       :                       \
+     (clkpt) == CLK_MCO2      ? STM32_MCO2CLK       :                       \
      0U)
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
