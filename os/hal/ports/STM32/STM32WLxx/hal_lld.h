@@ -1225,7 +1225,7 @@
  */
 #if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 8)) ||                 \
     defined(__DOXYGEN__)
-#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << 4)
+#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << RCC_PLLCFGR_PLLM_Pos)
 #else
 #error "invalid STM32_PLLM_VALUE value specified"
 #endif

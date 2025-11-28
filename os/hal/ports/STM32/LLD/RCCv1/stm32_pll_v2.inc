@@ -175,7 +175,7 @@
  */
 #if ((STM32_PLLM_VALUE >= STM32_PLLM_VALUE_MIN) && (STM32_PLLM_VALUE <= STM32_PLLM_VALUE_MAX)) ||                 \
     defined(__DOXYGEN__)
-#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << 4)
+#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << RCC_PLLCFGR_PLLM_Pos)
 #else
 #error "invalid STM32_PLLM_VALUE value specified"
 #endif
@@ -186,7 +186,7 @@
 #if ((STM32_PLLN_VALUE >= STM32_PLLN_VALUE_MIN) &&                          \
      (STM32_PLLN_VALUE <= STM32_PLLN_VALUE_MAX)) ||                         \
     defined(__DOXYGEN__)
-#define STM32_PLLN                  (STM32_PLLN_VALUE << 8)
+#define STM32_PLLN                  (STM32_PLLN_VALUE << RCC_PLLCFGR_PLLN_Pos)
 #else
 #error "invalid STM32_PLLN_VALUE value specified"
 #endif
@@ -214,7 +214,7 @@
 #if ((STM32_PLLP_VALUE >= STM32_PLLP_VALUE_MIN) &&                          \
      (STM32_PLLP_VALUE <= STM32_PLLP_VALUE_MAX)) ||                         \
     defined(__DOXYGEN__)
-#define STM32_PLLP                  ((STM32_PLLP_VALUE - 1) << 17)
+#define STM32_PLLP                  ((STM32_PLLP_VALUE - 1) << RCC_PLLCFGR_PLLP_Pos)
 #else
 #error "invalid STM32_PLLP_VALUE value specified"
 #endif
@@ -246,7 +246,7 @@
  */
 #if ((STM32_PLLQ_VALUE >= STM32_PLLQ_VALUE_MIN) && (STM32_PLLQ_VALUE <= STM32_PLLQ_VALUE_MAX)) ||                 \
     defined(__DOXYGEN__)
-#define STM32_PLLQ                  ((STM32_PLLQ_VALUE - 1) << 25)
+#define STM32_PLLQ                  ((STM32_PLLQ_VALUE - 1) << RCC_PLLCFGR_PLLQ_Pos)
 #else
 #error "invalid STM32_PLLQ_VALUE value specified"
 #endif
@@ -284,7 +284,7 @@
 #if ((STM32_PLLR_VALUE >= STM32_PLLR_VALUE_MIN) &&                          \
      (STM32_PLLR_VALUE <= STM32_PLLR_VALUE_MAX)) ||                         \
     defined(__DOXYGEN__)
-#define STM32_PLLR                  ((STM32_PLLR_VALUE - 1) << 29)
+#define STM32_PLLR                  ((STM32_PLLR_VALUE - 1) << RCC_PLLCFGR_PLLR_Pos)
 #else
 #error "invalid STM32_PLLR_VALUE value specified"
 #endif
