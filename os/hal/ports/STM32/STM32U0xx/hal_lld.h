@@ -81,21 +81,19 @@
 #define CLK_HSI16CLK                        1U
 #define CLK_HSI48CLK                        2U
 #define CLK_HSECLK                          3U
-#define CLK_LSICLK                          4U
-#define CLK_LSECLK                          5U
-#define CLK_MSICLK                          6U
-#define CLK_PLLPCLK                         7U
-#define CLK_PLLQCLK                         8U
-#define CLK_PLLRCLK                         9U
-#define CLK_HCLK                            10U
-#define CLK_PCLK                            11U
-#define CLK_PCLKTIM                         12U
-#define CLK_MCO1                            13U
-#define CLK_MCO2                            14U
-#define CLK_ARRAY_SIZE                      15U
+#define CLK_MSICLK                          4U
+#define CLK_PLLPCLK                         5U
+#define CLK_PLLQCLK                         6U
+#define CLK_PLLRCLK                         7U
+#define CLK_HCLK                            8U
+#define CLK_PCLK                            9U
+#define CLK_PCLKTIM                         10U
+#define CLK_MCO1                            11U
+#define CLK_MCO2                            12U
+#define CLK_ARRAY_SIZE                      13U
 #define CLK_POINT_NAMES                                                     \
   {                                                                         \
-    "SYSCLK", "HSI16", "HSI48", "HSE", "LSI", "LSE", "MSI", "PLLP", "PLLQ", \
+    "SYSCLK", "HSI16", "HSI48", "HSE", "MSI", "PLLP", "PLLQ",               \
     "PLLR", "HCLK", "PCLK", "PCLKTIM", "MCO1", "MCO2"                       \
   }
 /** @} */
@@ -137,7 +135,7 @@
 #define RCC_CFGR_SW_MSI                     RCC_CFGR_SW_VALUE(0U)
 #define RCC_CFGR_SW_HSI16                   RCC_CFGR_SW_VALUE(1U)
 #define RCC_CFGR_SW_HSE                     RCC_CFGR_SW_VALUE(2U)
-#define RCC_CFGR_SW_PLLRCLK                 RCC_CFGR_SW_VALUE(3U)
+#define RCC_CFGR_SW_PLLR                    RCC_CFGR_SW_VALUE(3U)
 #define RCC_CFGR_SW_LSI                     RCC_CFGR_SW_VALUE(4U)
 #define RCC_CFGR_SW_LSE                     RCC_CFGR_SW_VALUE(5U)
 
@@ -519,7 +517,7 @@
  *          the internal 16MHz HSI clock.
  */
 #if !defined(STM32_SW) || defined(__DOXYGEN__)
-#define STM32_SW                            RCC_CFGR_SW_PLLRCLK
+#define STM32_SW                            RCC_CFGR_SW_PLLR
 #endif
 
 /**
@@ -799,7 +797,7 @@
     #error "HSI16 not enabled, required by STM32_SW"
   #endif
 
-  #if (STM32_SW == RCC_CFGR_SW_PLLRCLK) && (STM32_PLLSRC == RCC_PLLCFGR_PLLSRC_HSI16)
+  #if (STM32_SW == RCC_CFGR_SW_PLLR) && (STM32_PLLSRC == RCC_PLLCFGR_PLLSRC_HSI16)
     #error "HSI16 not enabled, required by STM32_SW and STM32_PLLSRC"
   #endif
 
@@ -883,7 +881,7 @@
     #error "HSE not enabled, required by STM32_SW"
   #endif
 
-  #if (STM32_SW == RCC_CFGR_SW_PLLRCLK) && (STM32_PLLSRC == RCC_PLLCFGR_PLLSRC_HSE)
+  #if (STM32_SW == RCC_CFGR_SW_PLLR) && (STM32_PLLSRC == RCC_PLLCFGR_PLLSRC_HSE)
     #error "HSE not enabled, required by STM32_SW and STM32_PLLSRC"
   #endif
 
@@ -1019,8 +1017,8 @@
 /*
  * PLL enable check.
  */
-#if (STM32_SW == RCC_CFGR_SW_PLLRCLK) ||                                    \
-    (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK) ||                            \
+#if (STM32_SW == RCC_CFGR_SW_PLLR) ||                                       \
+    (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK) ||                          \
     (STM32_MCO2SEL == RCC_CFGR_MCO2SEL_PLLRCLK) ||                          \
     (STM32_TIM1SEL == RCC_CCIPR_TIM1SEL_PLLQCLK) ||                         \
     (STM32_TIM15SEL == RCC_CCIPR_TIM15SEL_PLLQCLK) ||                       \
@@ -1039,8 +1037,8 @@
   /**
    * @brief   STM32_PLLREN field.
    */
-#if (STM32_SW == RCC_CFGR_SW_PLLRCLK) ||                                    \
-    (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK) ||                            \
+#if (STM32_SW == RCC_CFGR_SW_PLLR) ||                                       \
+    (STM32_MCO1SEL == RCC_CFGR_MCO1SEL_PLLRCLK) ||                          \
     (STM32_MCO2SEL == RCC_CFGR_MCO2SEL_PLLRCLK) ||                          \
     defined(__DOXYGEN__)
   #define STM32_PLLREN                      RCC_PLLCFGR_PLLREN
@@ -1088,7 +1086,7 @@
 #elif (STM32_SW == RCC_CFGR_SW_HSE)
   #define STM32_SYSCLK                      STM32_HSECLK
 
-#elif (STM32_SW == RCC_CFGR_SW_PLLRCLK)
+#elif (STM32_SW == RCC_CFGR_SW_PLLR)
   #define STM32_SYSCLK                      STM32_PLL_R_CLKOUT
 
 #elif (STM32_SW == RCC_CFGR_SW_LSI)
@@ -1628,8 +1626,6 @@ typedef struct {
      (clkpt) == CLK_HSI16CLK  ? STM32_HSI16CLK      :                     \
      (clkpt) == CLK_HSI48CLK  ? STM32_HSI48CLK      :                     \
      (clkpt) == CLK_HSECLK    ? STM32_HSECLK        :                     \
-     (clkpt) == CLK_LSICLK    ? STM32_LSICLK        :                     \
-     (clkpt) == CLK_LSECLK    ? STM32_LSECLK        :                     \
      (clkpt) == CLK_MSICLK    ? STM32_MSICLK        :                     \
      (clkpt) == CLK_PLLPCLK   ? STM32_PLL_P_CLKOUT  :                     \
      (clkpt) == CLK_PLLQCLK   ? STM32_PLL_Q_CLKOUT  :                     \

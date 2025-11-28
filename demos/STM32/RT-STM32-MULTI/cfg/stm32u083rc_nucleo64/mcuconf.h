@@ -39,7 +39,7 @@
  * PWR settings.
  */
 #define STM32_PWR_CR1                       (PWR_CR1_VOS_RANGE1 | PWR_CR1_FPD_STOP)
-#define STM32_PWR_CR2                       (0U)
+#define STM32_PWR_CR2                       (PWR_CR2_USV)
 #define STM32_PWR_CR3                       (0U)
 #define STM32_PWR_CR4                       (0U)
 #define STM32_PWR_PUCRA                     (0U)
@@ -74,7 +74,7 @@
 #define STM32_MSIPLL_ENABLED                TRUE
 #define STM32_MSIRANGE                      RCC_CR_MSIRANGE_4M
 #define STM32_MSISRANGE                     RCC_CSR_MSISRANGE_4M
-#define STM32_SW                            RCC_CFGR_SW_PLLRCLK
+#define STM32_SW                            RCC_CFGR_SW_PLLR
 #define STM32_PLLSRC                        RCC_PLLCFGR_PLLSRC_MSI
 #define STM32_PLLM_VALUE                    1
 #define STM32_PLLN_VALUE                    28

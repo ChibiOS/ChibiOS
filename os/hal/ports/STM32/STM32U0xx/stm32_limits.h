@@ -68,7 +68,7 @@
  * @name    Device Limits for VCore range 1
  * @{
  */
-#define STM32_RANGE1_SYSCLK_MAX             56000000
+#define STM32_RANGE1_SYSCLK_MAX             56100000 /*Some tolerance for MSIPLL.*/
 #define STM32_RANGE1_HSECLK_MAX             48000000
 #define STM32_RANGE1_HSECLK_BYP_MAX         48000000
 #define STM32_RANGE1_HSECLK_MIN             4000000
@@ -77,7 +77,7 @@
 #define STM32_RANGE1_LSECLK_BYP_MAX         1000000
 #define STM32_RANGE1_LSECLK_MIN             32768
 #define STM32_RANGE1_LSECLK_BYP_MIN         32768
-#define STM32_RANGE1_PLLIN_MAX              16000000
+#define STM32_RANGE1_PLLIN_MAX              16050000 /*Some tolerance for MSIPLL.*/
 #define STM32_RANGE1_PLLIN_MIN              2660000
 #define STM32_RANGE1_PLLVCO_MAX             344000000
 #define STM32_RANGE1_PLLVCO_MIN             96000000
@@ -90,16 +90,16 @@
 #define STM32_RANGE1_PCLK_MAX               64000000
 #define STM32_RANGE1_ADCCLK_MAX             35000000
 
-#define STM32_RANGE1_0WS_THRESHOLD          24000000
-#define STM32_RANGE1_1WS_THRESHOLD          48000000
-#define STM32_RANGE1_2WS_THRESHOLD          56000000
+#define STM32_RANGE1_0WS_THRESHOLD          24100000 /*Some tolerance for MSIPLL.*/
+#define STM32_RANGE1_1WS_THRESHOLD          48100000 /*Some tolerance for MSIPLL.*/
+#define STM32_RANGE1_2WS_THRESHOLD          56100000 /*Some tolerance for MSIPLL.*/
 /** @} */
 
 /**
  * @name    Device Limits for VCore range 2
  * @{
  */
-#define STM32_RANGE2_SYSCLK_MAX             16000000
+#define STM32_RANGE2_SYSCLK_MAX             16050000 /*Some tolerance for MSIPLL.*/
 #define STM32_RANGE2_HSECLK_MAX             19000000
 #define STM32_RANGE2_HSECLK_BYP_MAX         19000000
 #define STM32_RANGE2_HSECLK_MIN             4000000
@@ -108,7 +108,7 @@
 #define STM32_RANGE2_LSECLK_BYP_MAX         1000000
 #define STM32_RANGE2_LSECLK_MIN             32768
 #define STM32_RANGE2_LSECLK_BYP_MIN         32768
-#define STM32_RANGE2_PLLIN_MAX              16000000
+#define STM32_RANGE2_PLLIN_MAX              16050000 /*Some tolerance for MSIPLL.*/
 #define STM32_RANGE2_PLLIN_MIN              2660000
 #define STM32_RANGE2_PLLVCO_MAX             128000000
 #define STM32_RANGE2_PLLVCO_MIN             96000000
@@ -119,11 +119,11 @@
 #define STM32_RANGE2_PLLR_MAX               16000000
 #define STM32_RANGE2_PLLR_MIN               12000000
 #define STM32_RANGE2_PCLK_MAX               64000000
-#define STM32_RANGE2_ADCCLK_MAX             16000000
+#define STM32_RANGE2_ADCCLK_MAX             16050000 /*Some tolerance for MSIPLL.*/
 
 #define STM32_RANGE2_0WS_THRESHOLD          8000000
-#define STM32_RANGE2_1WS_THRESHOLD          16000000
-#define STM32_RANGE2_2WS_THRESHOLD          18000000
+#define STM32_RANGE2_1WS_THRESHOLD          16050000 /*Some tolerance for MSIPLL.*/
+#define STM32_RANGE2_2WS_THRESHOLD          18050000 /*Some tolerance for MSIPLL.*/
 /** @} */
 
 /**

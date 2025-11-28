@@ -99,7 +99,7 @@ const halclkcfg_t hal_clkcfg_default = {
 #endif
                           ,
   .rcc_cfgr             = STM32_MCO1PRE | STM32_MCO1SEL |
-                          STM32_MCO2PRE | STM32_MCO2SEL |
+                          STM32_MCO2PRE | RCC_CFGR_MCO2SEL |
                           STM32_PPRE    | STM32_HPRE    |
                           STM32_SW,
   .rcc_pllcfgr          = STM32_PLLR    | STM32_PLLREN  |
@@ -130,15 +130,13 @@ const halclkcfg_t hal_clkcfg_default = {
  */
 static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_SYSCLK]          = STM32_SYSCLK,
-  [CLK_HSI16]           = STM32_HSI16CLK,
-  [CLK_HSI48]           = STM32_HSI48CLK,
-  [CLK_HSE]             = STM32_HSECLK,
-  [CLK_LSI]             = STM32_LSICLK,
-  [CLK_LSE]             = STM32_LSECLK,
-  [CLK_MSI]             = STM32_MSICLK,
-  [CLK_PLLPCLK]         = STM32_PLLPCLK,
-  [CLK_PLLQCLK]         = STM32_PLLQCLK,
-  [CLK_PLLRCLK]         = STM32_PLLRCLK,
+  [CLK_HSI16CLK]        = STM32_HSI16CLK,
+  [CLK_HSI48CLK]        = STM32_HSI48CLK,
+  [CLK_HSECLK]          = STM32_HSECLK,
+  [CLK_MSICLK]          = STM32_MSICLK,
+  [CLK_PLLPCLK]         = STM32_PLL_P_CLKOUT,
+  [CLK_PLLQCLK]         = STM32_PLL_Q_CLKOUT,
+  [CLK_PLLRCLK]         = STM32_PLL_R_CLKOUT,
   [CLK_HCLK]            = STM32_HCLK,
   [CLK_PCLK]            = STM32_PCLK,
   [CLK_PCLKTIM]         = STM32_TIMPCLK,
@@ -151,6 +149,16 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
  */
 typedef struct {
   halfreq_t             sysclk_max;
+  halfreq_t             pllin_max;
+  halfreq_t             pllin_min;
+  halfreq_t             pllvco_max;
+  halfreq_t             pllvco_min;
+  halfreq_t             pllp_max;
+  halfreq_t             pllp_min;
+  halfreq_t             pllq_max;
+  halfreq_t             pllq_min;
+  halfreq_t             pllr_max;
+  halfreq_t             pllr_min;
   halfreq_t             flash_thresholds[STM32_WS_THRESHOLDS];
 } system_limits_t;
 
@@ -159,6 +167,16 @@ typedef struct {
  */
 static const system_limits_t vos_range1 = {
   .sysclk_max           = STM32_RANGE1_SYSCLK_MAX,
+  .pllin_max            = STM32_RANGE1_PLLIN_MAX,
+  .pllin_min            = STM32_RANGE1_PLLIN_MIN,
+  .pllvco_max           = STM32_RANGE1_PLLVCO_MAX,
+  .pllvco_min           = STM32_RANGE1_PLLVCO_MIN,
+  .pllp_max             = STM32_RANGE1_PLLP_MAX,
+  .pllp_min             = STM32_RANGE1_PLLP_MIN,
+  .pllq_max             = STM32_RANGE1_PLLQ_MAX,
+  .pllq_min             = STM32_RANGE1_PLLQ_MIN,
+  .pllr_max             = STM32_RANGE1_PLLR_MAX,
+  .pllr_min             = STM32_RANGE1_PLLR_MIN,
   .flash_thresholds     = {STM32_RANGE1_0WS_THRESHOLD, STM32_RANGE1_1WS_THRESHOLD,
                            STM32_RANGE1_2WS_THRESHOLD}
 };
@@ -168,18 +186,40 @@ static const system_limits_t vos_range1 = {
  */
 static const system_limits_t vos_range2 = {
   .sysclk_max           = STM32_RANGE2_SYSCLK_MAX,
+  .pllin_max            = STM32_RANGE2_PLLIN_MAX,
+  .pllin_min            = STM32_RANGE2_PLLIN_MIN,
+  .pllvco_max           = STM32_RANGE2_PLLVCO_MAX,
+  .pllvco_min           = STM32_RANGE2_PLLVCO_MIN,
+  .pllp_max             = STM32_RANGE2_PLLP_MAX,
+  .pllp_min             = STM32_RANGE2_PLLP_MIN,
+  .pllq_max             = STM32_RANGE2_PLLQ_MAX,
+  .pllq_min             = STM32_RANGE2_PLLQ_MIN,
+  .pllr_max             = STM32_RANGE2_PLLR_MAX,
+  .pllr_min             = STM32_RANGE2_PLLR_MIN,
   .flash_thresholds     = {STM32_RANGE2_0WS_THRESHOLD, STM32_RANGE2_1WS_THRESHOLD,
                            STM32_RANGE2_2WS_THRESHOLD}
 };
 
+#if 0
 /**
  * @brief   System limits for LPR.
  */
 static const system_limits_t vos_range2 = {
   .sysclk_max           = STM32_LPR_SYSCLK_MAX,
+  .pllin_max            = STM32_LPR_PLLIN_MAX,
+  .pllin_min            = STM32_LPR_PLLIN_MIN,
+  .pllvco_max           = STM32_LPR_PLLVCO_MAX,
+  .pllvco_min           = STM32_LPR_PLLVCO_MIN,
+  .pllp_max             = STM32_LPR_PLLP_MAX,
+  .pllp_min             = STM32_LPR_PLLP_MIN,
+  .pllq_max             = STM32_LPR_PLLQ_MAX,
+  .pllq_min             = STM32_LPR_PLLQ_MIN,
+  .pllr_max             = STM32_LPR_PLLR_MAX,
+  .pllr_min             = STM32_LPR_PLLR_MIN,
   .flash_thresholds     = {STM32_LPR_0WS_THRESHOLD, STM32_LPR_1WS_THRESHOLD,
                            STM32_LPR_2WS_THRESHOLD}
 };
+#endif
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
@@ -377,24 +417,31 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
  * @notapi
  */
 static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
+  static const uint32_t msirange[12] = {100000U, 200000U, 400000U,
+                                        800000U, 1000000U, 2000000U,
+                                        4000000U, 8000000U, 16000000U,
+                                        24000000U, 32000000U, 48000000U};
+  static const uint32_t msipllrange[12] = {98304U, 196608U, 393216U,
+                                           786432U, 1016000U, 1999000U,
+                                           3998000U, 7995000U, 15991000U,
+                                           23986000U, 32014000U, 48005000U};
   static const uint32_t hprediv[16] = {1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U,
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
   const system_limits_t *slp;
-  uint32_t n, flashws;
-  halfreq_t hsi16clk = 0U, hsi48clk = 0U, hseclk = 0U;
-  halfreq_t msirc0clk = 0U, msirc1clk = 0U, msisclk = 0U, msikclk = 0U;
-  halfreq_t sysclk, hclk, pclk1, pclk2, pclk3, pclk1tim, pclk2tim, mco1clk, mco2clk;
+  halfreq_t hsi16clk = 0U, hsi48clk = 0U, hseclk = 0U, msiclk = 0U, pllselclk;
+  halfreq_t pllpclk = 0U, pllqclk = 0U, pllrclk = 0U;
+  halfreq_t sysclk, hclk, pclk, pclktim, mco1clk, mco2clk;
+  uint32_t mcodiv, flashws, msiidx;
 
   /* System limits based on desired VOS settings.*/
-  switch (ccp->pwr_vosr & PWR_VOSR_RANGE_Msk) {
-  case PWR_VOSR_RANGE1:
-    slp = &vos_range1;
-    break;
-  case PWR_VOSR_RANGE2:
+  if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_1) {
     slp = &vos_range2;
-    break;
-  default:
+  }
+  else if ((ccp->pwr_cr1 & PWR_CR1_VOS_Msk) == PWR_CR1_VOS_0) {
+    slp = &vos_range1;
+  }
+  else {
     return true;
   }
 
@@ -409,218 +456,210 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* HSI48 clock.*/
-  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
+  if ((ccp->rcc_crrcr & RCC_CRRCR_HSI48ON) != 0U) {
     hsi48clk = STM32_HSI48CLK;
   }
 
-  /* MSIRC0 base clock depending on MSIPLL0 mode. */
-  if ((ccp->rcc_cr & RCC_CR_MSIPLL0EN) == 0U) {
-    msirc0clk = 96000000U;
+  /* MSI clock.*/
+  msiidx = (ccp->rcc_cr & RCC_CR_MSIRANGE) >> RCC_CR_MSIRANGE_Pos;
+  if (msiidx >= 12) {
+    return true;
+  }
+  if ((ccp->rcc_cr & RCC_CR_MSIPLLEN) != 0U) {
+    msiclk = msipllrange[msiidx];
   }
   else {
-    uint32_t sel0 = (ccp->rcc_icscr1 & RCC_ICSCR1_MSIPLL0SEL_Msk) >> RCC_ICSCR1_MSIPLL0SEL_Pos;
+    msiclk = msirange[msiidx];
+  }
 
-    switch (sel0) {
-    case 0U: /* LSE reference */
-      msirc0clk = 96010000U;
-      break;
-    case 1U: /* HSE reference */
-      msirc0clk = 96000000U;
-      break;
-    default:
+  /* PLL MUX clock.*/
+  switch (ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLSRC_Msk) {
+  case RCC_PLLCFGR_PLLSRC_MSI:
+    pllselclk = msiclk;
+    break;
+  case RCC_PLLCFGR_PLLSRC_HSI16:
+    pllselclk = hsi16clk;
+    break;
+  case RCC_PLLCFGR_PLLSRC_HSE:
+    pllselclk = hseclk;
+    break;
+  default:
+    pllselclk = 0U;
+  }
+
+  /* PLL outputs.*/
+  if ((ccp->rcc_cr & RCC_CR_PLLON) != 0U) {
+    uint32_t pllmdiv, pllndiv, pllpdiv, pllqdiv, pllrdiv;
+    halfreq_t pllvcoclk;
+
+    /* PLL M divider.*/
+    pllmdiv = ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLM_Msk) >> RCC_PLLCFGR_PLLM_Pos) + 1U;
+
+    /* PLL N divider.*/
+    pllndiv = (ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLN_Msk) >> RCC_PLLCFGR_PLLN_Pos;
+    if (pllndiv < 8) {
       return true;
     }
-  }
 
-  /* MSIRC1 base clock depending on MSIPLL1 mode. */
-  if ((ccp->rcc_cr & RCC_CR_MSIPLL1EN) == 0U) {
-    msirc1clk = 24000000U;
-  }
-  else {
-    uint32_t sel1 = (ccp->rcc_icscr1 & RCC_ICSCR1_MSIPLL1SEL_Msk) >> RCC_ICSCR1_MSIPLL1SEL_Pos;
-    uint32_t n1   = (ccp->rcc_icscr1 & RCC_ICSCR1_MSIPLL1N_Msk)   >> RCC_ICSCR1_MSIPLL1N_Pos;
+    /* PLL VCO frequency.*/
+    pllvcoclk = (pllselclk / (halfreq_t)pllmdiv) * (halfreq_t)pllndiv;
 
-    switch (n1) {
-    case 0U:
-      if (sel1 == 0U) {
-        msirc1clk = 23986000U;
-      }
-      else if (sel1 == 1U) {
-        msirc1clk = 24016000U;
-      }
-      else {
-        return true;
-      }
-      break;
-    case 2U:
-      if (sel1 == 0U) {
-        msirc1clk = 22577000U;
-      }
-      else if (sel1 == 1U) {
-        msirc1clk = 22581000U;
-      }
-      else {
-        return true;
-      }
-      break;
-    case 3U:
-      if (sel1 == 0U) {
-        msirc1clk = 24576000U;
-      }
-      else if (sel1 == 1U) {
-        msirc1clk = 24577000U;
-      }
-      else {
-        return true;
-      }
-      break;
-    default:
+    if ((pllvcoclk < slp->pllvco_min) || (pllvcoclk > slp->pllvco_max)) {
       return true;
     }
-  }
 
-  /* MSIS clock.*/
-  if ((ccp->rcc_cr & RCC_CR_MSISON) != 0U) {
-    halfreq_t msis_src;
-    uint32_t msis_div;
+    /* PLL P output frequency.*/
+    pllpdiv = 1U + ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLP_Msk) >> RCC_PLLCFGR_PLLP_Pos);
+    if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLPEN) != 0U) {
+      pllpclk = pllvcoclk / pllpdiv;
 
-    if ((ccp->rcc_icscr1 & RCC_ICSCR1_MSISSEL_Msk) == RCC_ICSCR1_MSISSEL_MSIRC0) {
-      msis_src = msirc0clk;
-    }
-    else {
-      msis_src = msirc1clk;
+      if ((pllpclk < slp->pllp_min) || (pllpclk > slp->pllp_max)) {
+        return true;
+      }
     }
 
-    msis_div = (ccp->rcc_icscr1 & RCC_ICSCR1_MSISDIV_Msk) >> RCC_ICSCR1_MSISDIV_Pos;
-    msisclk = msis_src >> msis_div;
-  }
+    /* PLL Q output frequency.*/
+    pllqdiv = 1U + ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLQ_Msk) >> RCC_PLLCFGR_PLLQ_Pos);
+    if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLQEN) != 0U) {
+      pllqclk = pllvcoclk / pllqdiv;
 
-  /* MSIK clock.*/
-  if ((ccp->rcc_cr & RCC_CR_MSIKON) != 0U) {
-    halfreq_t msik_src;
-    uint32_t msik_div;
-
-    if ((ccp->rcc_icscr1 & RCC_ICSCR1_MSIKSEL_Msk) == RCC_ICSCR1_MSIKSEL_MSIRC0) {
-      msik_src = msirc0clk;
-    }
-    else {
-      msik_src = msirc1clk;
+      if ((pllqclk < slp->pllq_min) || (pllqclk > slp->pllq_max)) {
+        return true;
+      }
     }
 
-    msik_div = (ccp->rcc_icscr1 & RCC_ICSCR1_MSIKDIV_Msk) >> RCC_ICSCR1_MSIKDIV_Pos;
-    msikclk = msik_src >> msik_div;
+    /* PLL R output frequency.*/
+    pllrdiv = 1U + ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLR_Msk) >> RCC_PLLCFGR_PLLR_Pos);
+    if ((ccp->rcc_pllcfgr & RCC_PLLCFGR_PLLREN) != 0U) {
+      pllrclk = pllvcoclk / pllrdiv;
+
+      if ((pllrclk < slp->pllr_min) || (pllrclk > slp->pllr_max)) {
+        return true;
+      }
+    }
   }
 
   /* SYSCLK frequency.*/
-  switch (ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) {
-  case RCC_CFGR1_SW_MSIS:
-    sysclk = msisclk;
+  switch (ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
+  case RCC_CFGR_SW_MSI:
+    sysclk = msiclk;
     break;
-  case RCC_CFGR1_SW_HSI16:
+  case RCC_CFGR_SW_HSI16:
     sysclk = hsi16clk;
     break;
-  case RCC_CFGR1_SW_HSE:
+  case RCC_CFGR_SW_HSE:
     sysclk = hseclk;
+    break;
+  case RCC_CFGR_SW_PLLR:
+    sysclk = pllrclk;
+    break;
+  case RCC_CFGR_SW_LSI:
+    sysclk = STM32_LSICLK;
+    break;
+  case RCC_CFGR_SW_LSE:
+    sysclk = STM32_LSECLK;
     break;
   default:
     sysclk = 0U;
   }
 
-  /* Checking SYSCLK limit.*/
   if (sysclk > slp->sysclk_max) {
     return true;
   }
 
   /* HCLK frequency.*/
-  hclk = sysclk / hprediv[(ccp->rcc_cfgr2 & STM32_HPRE_MASK) >> STM32_HPRE_POS];
+  hclk = sysclk / hprediv[(ccp->rcc_cfgr & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
 
-  /* PPRE1 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE1_MASK) >> STM32_PPRE1_POS];
-  pclk1 = hclk / n;
-  if (n < 2) {
-    pclk1tim = pclk1;
+  /* PPRE frequency.*/
+  pclk = hclk / pprediv[(ccp->rcc_cfgr & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
+  if ((ccp->rcc_cfgr & RCC_CFGR_PPRE_Msk) < RCC_CFGR_PPRE_DIV2) {
+    pclktim = pclk;
   }
   else {
-    pclk1tim = pclk1 * 2U;
+    pclktim = pclk * 2U;
   }
 
-  /* PPRE2 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE2_MASK) >> STM32_PPRE2_POS];
-  pclk2 = hclk / n;
-  if (n < 2) {
-    pclk2tim = pclk2;
-  }
-  else {
-    pclk2tim = pclk2 * 2U;
-  }
-
-  /* PPRE3 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE3_MASK) >> STM32_PPRE3_POS];
-  pclk3 = hclk / n;
-
-  /* MCO1 clock.*/
-  switch (ccp->rcc_cfgr1 & RCC_CFGR1_MCOSEL_Msk) {
-  case RCC_CFGR1_MCO1SEL_SYSCLK:
+  /* MCO clock.*/
+  switch (ccp->rcc_cfgr & RCC_CFGR_MCO1SEL_Msk) {
+  case RCC_CFGR_MCO1SEL_SYSCLK:
     mco1clk = sysclk;
     break;
-  case RCC_CFGR1_MCO1SEL_MSIS:
-    mco1clk = msisclk;
+  case RCC_CFGR_MCO1SEL_MSI:
+    mco1clk = msiclk;
     break;
-  case RCC_CFGR1_MCO1SEL_HSI16:
+  case RCC_CFGR_MCO1SEL_HSI16:
     mco1clk = hsi16clk;
     break;
-  case RCC_CFGR1_MCO1SEL_HSE:
+  case RCC_CFGR_MCO1SEL_HSE:
     mco1clk = hseclk;
     break;
-  case RCC_CFGR1_MCO1SEL_LSI:
+  case RCC_CFGR_MCO1SEL_PLLRCLK:
+    mco1clk = pllrclk;
+    break;
+  case RCC_CFGR_MCO1SEL_LSI:
     mco1clk = STM32_LSICLK;
     break;
-  case RCC_CFGR1_MCO1SEL_LSE:
+  case RCC_CFGR_MCO1SEL_LSE:
     mco1clk = STM32_LSECLK;
     break;
-  case RCC_CFGR1_MCO1SEL_HSI48:
-    mco1clk = STM32_HSI48CLK;
+  case RCC_CFGR_MCO1SEL_HSI48:
+    mco1clk = hsi48clk;
     break;
-  case RCC_CFGR1_MCO1SEL_MSIK:
-    mco1clk = msikclk;
+  case RCC_CFGR_MCO1SEL_RTCCLK:
+    mco1clk = STM32_RTCCLK;
+    break;
+  case RCC_CFGR_MCO1SEL_RTCWKP:
+    mco1clk = 0U; /* TODO: should come from RTC.*/
     break;
   default:
     mco1clk = 0U;
   }
-  n = (ccp->rcc_cfgr1 & RCC_CFGR1_MCOPRE_Msk) >> RCC_CFGR1_MCOPRE_Pos;
-  mco1clk /= 1U << n;
+  mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCO1PRE_Msk) >> RCC_CFGR_MCO1PRE_Pos);
+  if (mcodiv > 1024U) {
+    return true;
+  }
+  mco1clk /= mcodiv;
 
   /* MCO2 clock.*/
-  switch (ccp->rcc_cfgr1 & RCC_CFGR1_MCO2SEL_Msk) {
-  case RCC_CFGR1_MCO2SEL_SYSCLK:
+  switch (ccp->rcc_cfgr & RCC_CFGR_MCO2SEL_Msk) {
+  case RCC_CFGR_MCO2SEL_SYSCLK:
     mco2clk = sysclk;
     break;
-  case RCC_CFGR1_MCO2SEL_MSIS:
-    mco2clk = msisclk;
+  case RCC_CFGR_MCO2SEL_MSI:
+    mco2clk = msiclk;
     break;
-  case RCC_CFGR1_MCO2SEL_HSI16:
+  case RCC_CFGR_MCO2SEL_HSI16:
     mco2clk = hsi16clk;
     break;
-  case RCC_CFGR1_MCO2SEL_HSE:
+  case RCC_CFGR_MCO2SEL_HSE:
     mco2clk = hseclk;
     break;
-  case RCC_CFGR1_MCO2SEL_LSI:
+  case RCC_CFGR_MCO2SEL_PLLRCLK:
+    mco2clk = pllrclk;
+    break;
+  case RCC_CFGR_MCO2SEL_LSI:
     mco2clk = STM32_LSICLK;
     break;
-  case RCC_CFGR1_MCO2SEL_LSE:
+  case RCC_CFGR_MCO2SEL_LSE:
     mco2clk = STM32_LSECLK;
     break;
-  case RCC_CFGR1_MCO2SEL_HSI48:
-    mco2clk = STM32_HSI48CLK;
+  case RCC_CFGR_MCO2SEL_HSI48:
+    mco2clk = hsi48clk;
     break;
-  case RCC_CFGR1_MCO2SEL_MSIK:
-    mco2clk = msikclk;
+  case RCC_CFGR_MCO2SEL_RTCCLK:
+    mco2clk = STM32_RTCCLK;
+    break;
+  case RCC_CFGR_MCO2SEL_RTCWKP:
+    mco2clk = 0U; /* TODO: should come from RTC.*/
     break;
   default:
     mco2clk = 0U;
   }
-  n = (ccp->rcc_cfgr1 & RCC_CFGR1_MCO2PRE_Msk) >> RCC_CFGR1_MCO2PRE_Pos;
-  mco2clk /= 1U << n;
+  mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCO2PRE_Msk) >> RCC_CFGR_MCO2PRE_Pos);
+  if (mcodiv > 1024U) {
+    return true;
+  }
+  mco2clk /= mcodiv;
 
   /* Flash settings.*/
   flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
@@ -632,20 +671,17 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* Writing out results.*/
-  clock_points[CLK_HSI16]    = hsi16clk;
-  clock_points[CLK_HSI48]    = hsi48clk;
-  clock_points[CLK_HSE]      = hseclk;
-  clock_points[CLK_MSIS]     = msisclk;
-  clock_points[CLK_MSIK]     = msikclk;
-  clock_points[CLK_SYSCLK]   = sysclk;
-  clock_points[CLK_HCLK]     = hclk;
-  clock_points[CLK_PCLK1]    = pclk1;
-  clock_points[CLK_PCLK1TIM] = pclk1tim;
-  clock_points[CLK_PCLK2]    = pclk2;
-  clock_points[CLK_PCLK2TIM] = pclk2tim;
-  clock_points[CLK_PCLK3]    = pclk3;
-  clock_points[CLK_MCO1]     = mco1clk;
-  clock_points[CLK_MCO2]     = mco2clk;
+  clock_points[CLK_SYSCLK]    = sysclk;
+  clock_points[CLK_HSI16CLK]  = hsi16clk;
+  clock_points[CLK_HSECLK]    = pllpclk;
+  clock_points[CLK_PLLPCLK]   = pllpclk;
+  clock_points[CLK_PLLQCLK]   = pllqclk;
+  clock_points[CLK_PLLRCLK]   = pllrclk;
+  clock_points[CLK_HCLK]      = hclk;
+  clock_points[CLK_PCLK]      = pclk;
+  clock_points[CLK_PCLKTIM]   = pclktim;
+  clock_points[CLK_MCO1]      = mco1clk;
+  clock_points[CLK_MCO2]      = mco2clk;
 
   return false;
 }
@@ -741,7 +777,7 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
-  if (hal_lld_clock_raw_config(ccp)) {
+  if (hal_lld_clock_configure(ccp)) {
     return true;
   }
 

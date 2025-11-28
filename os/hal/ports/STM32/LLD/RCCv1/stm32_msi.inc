@@ -124,64 +124,123 @@
 /**
  * @brief   MSI frequency.
  */
-#if STM32_MSIRANGE == STM32_MSIRANGE_100K
-  #define STM32_MSICLK              100000U
+#if STM32_MSIPLL_ENABLED == TRUE
+  #if STM32_MSIRANGE == STM32_MSIRANGE_100K
+    #define STM32_MSICLK              98304U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_200K
-  #define STM32_MSICLK              200000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_200K
+    #define STM32_MSICLK              196608U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_400K
-  #define STM32_MSICLK              400000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_400K
+    #define STM32_MSICLK              393216U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_800K
-  #define STM32_MSICLK              800000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_800K
+    #define STM32_MSICLK              786432U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_1M
-  #define STM32_MSICLK              1000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_1M
+    #define STM32_MSICLK              1016000U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_2M
-  #define STM32_MSICLK              2000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_2M
+    #define STM32_MSICLK              1999000U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_4M
-  #define STM32_MSICLK              4000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_4M
+    #define STM32_MSICLK              3998000U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_8M
-  #define STM32_MSICLK              8000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_8M
+    #define STM32_MSICLK              7995000U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_16M
-  #define STM32_MSICLK              16000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_16M
+    #define STM32_MSICLK              15991000U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_24M
-  #define STM32_MSICLK              24000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_24M
+    #define STM32_MSICLK              23986000U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_32M
-  #define STM32_MSICLK              32000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_32M
+    #define STM32_MSICLK              32014000U
 
-#elif STM32_MSIRANGE == STM32_MSIRANGE_48M
-  #define STM32_MSICLK              48000000U
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_48M
+    #define STM32_MSICLK              48005000U
 
-#else
-  #error "invalid STM32_MSIRANGE value specified"
-#endif
+  #else
+    #error "invalid STM32_MSIRANGE value specified"
+  #endif
 
 /**
  * @brief   MSIS frequency.
  */
-#if STM32_MSISRANGE == STM32_MSISRANGE_1M
-  #define STM32_MSISCLK             1000000U
+  #if STM32_MSISRANGE == STM32_MSISRANGE_1M
+    #define STM32_MSISCLK             1016000U
 
-#elif STM32_MSISRANGE == STM32_MSISRANGE_2M
-  #define STM32_MSISCLK             2000000U
+  #elif STM32_MSISRANGE == STM32_MSISRANGE_2M
+    #define STM32_MSISCLK             1999000U
 
-#elif STM32_MSISRANGE == STM32_MSISRANGE_4M
-  #define STM32_MSISCLK             4000000U
+  #elif STM32_MSISRANGE == STM32_MSISRANGE_4M
+    #define STM32_MSISCLK             3998000U
 
-#elif STM32_MSISRANGE == STM32_MSISRANGE_8M
-  #define STM32_MSISCLK             8000000U
+  #elif STM32_MSISRANGE == STM32_MSISRANGE_8M
+    #define STM32_MSISCLK             7995000U
 
-#else
-  #error "invalid STM32_MSISRANGE value specified"
-#endif
+  #else
+    #error "invalid STM32_MSISRANGE value specified"
+  #endif
+
+#else /* STM32_MSIPLL_ENABLED == FALSE */
+  #if STM32_MSIRANGE == STM32_MSIRANGE_100K
+    #define STM32_MSICLK              100000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_200K
+    #define STM32_MSICLK              200000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_400K
+    #define STM32_MSICLK              400000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_800K
+    #define STM32_MSICLK              800000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_1M
+    #define STM32_MSICLK              1000000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_2M
+    #define STM32_MSICLK              2000000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_4M
+    #define STM32_MSICLK              4000000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_8M
+    #define STM32_MSICLK              8000000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_16M
+    #define STM32_MSICLK              16000000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_24M
+    #define STM32_MSICLK              24000000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_32M
+    #define STM32_MSICLK              32000000U
+
+  #elif STM32_MSIRANGE == STM32_MSIRANGE_48M
+    #define STM32_MSICLK              48000000U
+
+  #else
+    #error "invalid STM32_MSIRANGE value specified"
+  #endif
+
+  #if STM32_MSISRANGE == STM32_MSISRANGE_1M
+    #define STM32_MSISCLK             1000000U
+
+  #elif STM32_MSISRANGE == STM32_MSISRANGE_2M
+    #define STM32_MSISCLK             2000000U
+
+  #elif STM32_MSISRANGE == STM32_MSISRANGE_4M
+    #define STM32_MSISCLK             4000000U
+
+  #elif STM32_MSISRANGE == STM32_MSISRANGE_8M
+    #define STM32_MSISCLK             8000000U
+
+  #else
+    #error "invalid STM32_MSISRANGE value specified"
+  #endif
+#endif /* STM32_MSIPLL_ENABLED == FALSE */
 
 /* Some headers do not have this definition.*/
 #if !defined(RCC_CFGR_SWS_MSI)
