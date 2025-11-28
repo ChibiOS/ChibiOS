@@ -39,7 +39,7 @@
  * HAL driver general settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_CLOCK_DYNAMIC                 FALSE
+#define STM32_CLOCK_DYNAMIC                 TRUE
 
 /*
  * PWR settings.

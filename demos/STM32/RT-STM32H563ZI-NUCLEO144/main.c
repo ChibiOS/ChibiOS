@@ -131,13 +131,13 @@ static void cmd_clocks(struct xshell_manager *smp,
     return;
   }
 
-#if STM32_SW == STM32_SW_HSI
+#if STM32_SW == RCC_CFGR1_SW_HSI
   swp = "HSI";
-#elif STM32_SW == STM32_SW_CSI
+#elif STM32_SW == RCC_CFGR1_SW_CSI
   swp = "CSI";
-#elif STM32_SW == STM32_SW_HSE
+#elif STM32_SW == RCC_CFGR1_SW_HSE
   swp = "HSE";
-#elif STM32_SW == STM32_SW_PLL1P
+#elif STM32_SW == RCC_CFGR1_SW_PLL1P
   swp = "PLL1P";
 #else
   #error "invalid STM32_SW value specified"

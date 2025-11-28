@@ -107,8 +107,8 @@ __STATIC_INLINE void hsi_reset(void) {
   hsi_enable();
 
   /* Clocking from HSI, in case HSI was not the default source.*/
-  RCC->CFGR1 = STM32_SW_HSI;
-  while ((RCC->CFGR1 & STM32_SWS_MASK) != STM32_SWS_HSI) {
+  RCC->CFGR1 = RCC_CFGR1_SW_HSI;
+  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != RCC_CFGR1_SWS_HSI) {
     /* Wait until HSI is selected.*/
   }
 }

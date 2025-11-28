@@ -55,6 +55,75 @@
 #define STM32_RCC_PLL3FRACR_RESET       0U
 /** @} */
 
+/*
+ * Legacy STM32_* register helper aliases kept locally for the driver
+ * implementation. The configuration interface in hal_lld.h now exposes
+ * RCC_* names.
+ */
+#define STM32_SW_MASK                   RCC_CFGR1_SW_Msk
+#define STM32_SW_HSI                    RCC_CFGR1_SW_HSI
+#define STM32_SW_CSI                    RCC_CFGR1_SW_CSI
+#define STM32_SW_HSE                    RCC_CFGR1_SW_HSE
+#define STM32_SW_PLL1P                  RCC_CFGR1_SW_PLL1P
+#define STM32_SWS_MASK                  RCC_CFGR1_SWS_Msk
+#define STM32_SWS_POS                   RCC_CFGR1_SWS_Pos
+#define STM32_SWS_HSI                   RCC_CFGR1_SWS_HSI
+
+#define STM32_MCO1SEL_MASK              RCC_CFGR1_MCO1SEL_Msk
+#define STM32_MCO1SEL_HSI               RCC_CFGR1_MCO1SEL_HSI
+#define STM32_MCO1SEL_LSE               RCC_CFGR1_MCO1SEL_LSE
+#define STM32_MCO1SEL_HSE               RCC_CFGR1_MCO1SEL_HSE
+#define STM32_MCO1SEL_PLL1P             RCC_CFGR1_MCO1SEL_PLL1P
+#define STM32_MCO1SEL_HSI48             RCC_CFGR1_MCO1SEL_HSI48
+#define STM32_MCO1PRE_MASK              RCC_CFGR1_MCO1PRE_Msk
+#define STM32_MCO1PRE_POS               RCC_CFGR1_MCO1PRE_Pos
+
+#define STM32_MCO2SEL_MASK              RCC_CFGR1_MCO2SEL_Msk
+#define STM32_MCO2SEL_SYSCLK            RCC_CFGR1_MCO2SEL_SYSCLK
+#define STM32_MCO2SEL_PLL2P             RCC_CFGR1_MCO2SEL_PLL2P
+#define STM32_MCO2SEL_HSE               RCC_CFGR1_MCO2SEL_HSE
+#define STM32_MCO2SEL_PLL1P             RCC_CFGR1_MCO2SEL_PLL1P
+#define STM32_MCO2SEL_CSI               RCC_CFGR1_MCO2SEL_CSI
+#define STM32_MCO2SEL_LSI               RCC_CFGR1_MCO2SEL_LSI
+#define STM32_MCO2PRE_MASK              RCC_CFGR1_MCO2PRE_Msk
+#define STM32_MCO2PRE_POS               RCC_CFGR1_MCO2PRE_Pos
+
+#define STM32_HSIDIV_MASK               RCC_CR_HSIDIV_Msk
+#define STM32_HSIDIV_POS                RCC_CR_HSIDIV_Pos
+#define STM32_HSIDIVF                   RCC_CR_HSIDIVF
+#define STM32_HSION                     RCC_CR_HSION
+#define STM32_HSIRDY                    RCC_CR_HSIRDY
+#define STM32_HSEON                     RCC_CR_HSEON
+#define STM32_HSI48ON                   RCC_CR_HSI48ON
+#define STM32_CSION                     RCC_CR_CSION
+#define STM32_PLL1ON                    RCC_CR_PLL1ON
+#define STM32_PLL2ON                    RCC_CR_PLL2ON
+#define STM32_PLL3ON                    RCC_CR_PLL3ON
+
+#define STM32_PLLSRC_MASK               RCC_PLL1CFGR_PLL1SRC_Msk
+#define STM32_PLL1SRC_HSI               RCC_PLL1CFGR_PLL1SRC_HSI
+#define STM32_PLL1SRC_CSI               RCC_PLL1CFGR_PLL1SRC_CSI
+#define STM32_PLL1SRC_HSE               RCC_PLL1CFGR_PLL1SRC_HSE
+#define STM32_PLL2SRC_HSI               RCC_PLL2CFGR_PLL2SRC_HSI
+#define STM32_PLL2SRC_CSI               RCC_PLL2CFGR_PLL2SRC_CSI
+#define STM32_PLL2SRC_HSE               RCC_PLL2CFGR_PLL2SRC_HSE
+#define STM32_PLL3SRC_HSI               RCC_PLL3CFGR_PLL3SRC_HSI
+#define STM32_PLL3SRC_CSI               RCC_PLL3CFGR_PLL3SRC_CSI
+#define STM32_PLL3SRC_HSE               RCC_PLL3CFGR_PLL3SRC_HSE
+#define STM32_PLLM_MASK                 RCC_PLL1CFGR_PLL1M_Msk
+#define STM32_PLLM_POS                  RCC_PLL1CFGR_PLL1M_Pos
+#define STM32_PLLN_MASK                 RCC_PLL1DIVR_PLL1N_Msk
+#define STM32_PLLN_POS                  RCC_PLL1DIVR_PLL1N_Pos
+#define STM32_PLLPEN                    RCC_PLL1CFGR_PLL1PEN
+#define STM32_PLLP_MASK                 RCC_PLL1DIVR_PLL1P_Msk
+#define STM32_PLLP_POS                  RCC_PLL1DIVR_PLL1P_Pos
+#define STM32_PLLQEN                    RCC_PLL1CFGR_PLL1QEN
+#define STM32_PLLQ_MASK                 RCC_PLL1DIVR_PLL1Q_Msk
+#define STM32_PLLQ_POS                  RCC_PLL1DIVR_PLL1Q_Pos
+#define STM32_PLLREN                    RCC_PLL1CFGR_PLL1REN
+#define STM32_PLLR_MASK                 RCC_PLL1DIVR_PLL1R_Msk
+#define STM32_PLLR_POS                  RCC_PLL1DIVR_PLL1R_Pos
+
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -354,16 +423,16 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
                 STM32_SYSTICKSEL  | STM32_OSPISEL;
   RCC->CCIPR5 = STM32_CKPERSEL    | STM32_SAI2SEL     |
                 STM32_SAI1SEL     |
-#if STM32_FDCANSEL != STM32_FDCANSEL_IGNORE
+#if STM32_FDCANSEL != RCC_CCIPR5_FDCANSEL_IGNORE
                 STM32_FDCANSEL    |
 #endif
-#if STM32_CECSEL != STM32_CECSEL_IGNORE
+#if STM32_CECSEL != RCC_CCIPR5_CECSEL_IGNORE
                 STM32_CECSEL      |
 #endif
-#if STM32_RNGSEL != STM32_RNGSEL_IGNORE
+#if STM32_RNGSEL != RCC_CCIPR5_RNGSEL_IGNORE
                 STM32_RNGSEL      |
 #endif
-#if STM32_DACSEL != STM32_DACSEL_IGNORE
+#if STM32_DACSEL != RCC_CCIPR5_DACSEL_IGNORE
                 STM32_DACSEL      |
 #endif
                 STM32_ADCDACSEL;
@@ -399,16 +468,16 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* System limits based on desired VOS settings.*/
   switch (ccp->pwr_voscr) {
-  case STM32_VOS_RANGE3:
+  case PWR_VOSCR_VOS_RANGE3:
     slp = &vos_range3;
     break;
-  case STM32_VOS_RANGE2:
+  case PWR_VOSCR_VOS_RANGE2:
     slp = &vos_range2;
     break;
-  case STM32_VOS_RANGE1:
+  case PWR_VOSCR_VOS_RANGE1:
     slp = &vos_range1;
     break;
-  case STM32_VOS_RANGE0:
+  case PWR_VOSCR_VOS_RANGE0:
     slp = &vos_range0;
     break;
   default:
@@ -1037,10 +1106,10 @@ void stm32_clock_init(void) {
   flash_set_acr(FLASH_ACR_PRFTEN | STM32_FLASHBITS);
 
   /* Switching to the configured SYSCLK source if it is different from HSI.*/
-#if STM32_SW != STM32_SW_HSI
+#if STM32_SW != RCC_CFGR1_SW_HSI
   RCC->CFGR1 |= STM32_SW;       /* Switches on the selected clock source.   */
 //  while(1);
-  while ((RCC->CFGR1 & STM32_SWS_MASK) != (STM32_SW << 3)) {
+  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != (STM32_SW << RCC_CFGR1_SWS_Pos)) {
     /* Wait until SYSCLK is stable.*/
   }
 #endif

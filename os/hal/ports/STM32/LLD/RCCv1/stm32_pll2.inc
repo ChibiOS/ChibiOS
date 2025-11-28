@@ -435,7 +435,7 @@ __STATIC_INLINE void pll2_setup(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
 
 #if STM32_RCC_HAS_PLL2
   /* PLL2 activation.*/
-  RCC->PLL2CFGR  = cfgr & ~STM32_PLLFRACEN_MASK;
+  RCC->PLL2CFGR  = cfgr & ~RCC_PLL2CFGR_PLL2FRACEN_Msk;
   RCC->PLL2DIVR  = divr;
   RCC->PLL2FRACR = fracr;
   RCC->PLL2CFGR  = cfgr;

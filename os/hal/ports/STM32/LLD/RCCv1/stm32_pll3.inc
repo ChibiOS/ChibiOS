@@ -435,7 +435,7 @@ __STATIC_INLINE void pll3_setup(uint32_t cfgr, uint32_t divr, uint32_t fracr) {
 
 #if STM32_RCC_HAS_PLL3
   /* PLL3 activation.*/
-  RCC->PLL3CFGR  = cfgr & ~STM32_PLLFRACEN_MASK;
+  RCC->PLL3CFGR  = cfgr & ~RCC_PLL3CFGR_PLL3FRACEN_Msk;
   RCC->PLL3DIVR  = divr;
   RCC->PLL3FRACR = fracr;
   RCC->PLL3CFGR  = cfgr;
