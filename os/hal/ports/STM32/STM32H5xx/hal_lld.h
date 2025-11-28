@@ -2164,10 +2164,10 @@
     (STM32_MCO1SEL      == RCC_CFGR1_MCO1SEL_PLL1P)     ||                  \
     (STM32_MCO2SEL      == RCC_CFGR1_MCO2SEL_PLL1P)     ||                  \
     defined(__DOXYGEN__)
-  #define STM32_PLL1PEN             (1U << 16)
+  #define STM32_PLL1PEN             RCC_PLL1CFGR_PLL1PEN
 
 #else
-  #define STM32_PLL1PEN             (0U << 16)
+  #define STM32_PLL1PEN             0U
 #endif
 
 /**
@@ -2185,10 +2185,10 @@
     (STM32_SAI1SEL      == RCC_CCIPR5_SAI1SEL_PLL1Q)     ||                 \
     (STM32_SAI2SEL      == RCC_CCIPR5_SAI2SEL_PLL1Q)     ||                 \
     defined(__DOXYGEN__)
-  #define STM32_PLL1QEN             (1U << 17)
+  #define STM32_PLL1QEN             RCC_PLL1CFGR_PLL1QEN
 
 #else
-  #define STM32_PLL1QEN             (0U << 17)
+  #define STM32_PLL1QEN             0U
 #endif
 
 /**
@@ -2196,10 +2196,10 @@
  */
 #if FALSE                                           ||                      \
     defined(__DOXYGEN__)
-  #define STM32_PLL1REN             (1U << 18)
+  #define STM32_PLL1REN             RCC_PLL1CFGR_PLL1REN
 
 #else
-  #define STM32_PLL1REN             (0U << 18)
+  #define STM32_PLL1REN             0U
 #endif
 
 /**
@@ -2222,10 +2222,10 @@
     (STM32_SAI1SEL      == RCC_CCIPR5_SAI1SEL_PLL2P)     ||                 \
     (STM32_SAI2SEL      == RCC_CCIPR5_SAI2SEL_PLL2P)     ||                 \
     defined(__DOXYGEN__)
-  #define STM32_PLL2PEN             (1U << 16)
+  #define STM32_PLL2PEN             RCC_PLL2CFGR_PLL2PEN
 
 #else
-  #define STM32_PLL2PEN             (0U << 16)
+  #define STM32_PLL2PEN             0U
 #endif
 
 /**
@@ -2246,10 +2246,10 @@
     (STM32_LPUART1SEL   == RCC_CCIPR3_LPUART1SEL_PLL2Q)  ||                 \
     (STM32_FDCANSEL     == RCC_CCIPR5_FDCANSEL_PLL2Q)    ||                 \
     defined(__DOXYGEN__)
-  #define STM32_PLL2QEN             (1U << 17)
+  #define STM32_PLL2QEN             RCC_PLL2CFGR_PLL2QEN
 
 #else
-  #define STM32_PLL2QEN             (0U << 17)
+  #define STM32_PLL2QEN             0U
 #endif
 
 /**
@@ -2260,10 +2260,10 @@
     (STM32_SDMMC2SEL    == RCC_CCIPR4_SDMMC2SEL_PLL2R)   ||                 \
     (STM32_ADCDACSEL    == RCC_CCIPR5_ADCDACSEL_PLL2R)   ||                 \
     defined(__DOXYGEN__)
-  #define STM32_PLL2REN             (1U << 18)
+  #define STM32_PLL2REN             RCC_PLL2CFGR_PLL2REN
 
 #else
-  #define STM32_PLL2REN             (0U << 18)
+  #define STM32_PLL2REN             0U
 #endif
 
 /**
@@ -2278,10 +2278,10 @@
     (STM32_SAI1SEL      == RCC_CCIPR5_SAI1SEL_PLL3P)     ||                 \
     (STM32_SAI2SEL      == RCC_CCIPR5_SAI2SEL_PLL3P)     ||                 \
     defined(__DOXYGEN__)
-  #define STM32_PLL3PEN             (1U << 16)
+  #define STM32_PLL3PEN             RCC_PLL3CFGR_PLL3PEN
 
 #else
-  #define STM32_PLL3PEN             (0U << 16)
+  #define STM32_PLL3PEN             0U
 #endif
 
 /**
@@ -2302,10 +2302,10 @@
     (STM32_LPUART1SEL   == RCC_CCIPR3_LPUART1SEL_PLL3Q)  ||                 \
     (STM32_USBSEL       == RCC_CCIPR4_USBSEL_PLL3Q)  ||                     \
     defined(__DOXYGEN__)
-  #define STM32_PLL3QEN             (1U << 17)
+  #define STM32_PLL3QEN             RCC_PLL3CFGR_PLL3QEN
 
 #else
-  #define STM32_PLL3QEN             (0U << 17)
+  #define STM32_PLL3QEN             0U
 #endif
 
 /**
@@ -2323,10 +2323,10 @@
     (STM32_I2C4SEL      == RCC_CCIPR4_I2C4SEL_PLL3R)     ||                 \
     (STM32_I3C1SEL      == RCC_CCIPR4_I3C1SEL_PLL3R)     ||                 \
     defined(__DOXYGEN__)
-  #define STM32_PLL3REN             (1U << 18)
+  #define STM32_PLL3REN             RCC_PLL3CFGR_PLL3REN
 
 #else
-  #define STM32_PLL3REN             (0U << 18)
+  #define STM32_PLL3REN             0U
 #endif
 
 /* Inclusion of PLL-related checks and calculations.*/
