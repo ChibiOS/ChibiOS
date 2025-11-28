@@ -77,6 +77,7 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added STM32U0xx support.
 - NEW: Flash-level mutual exclusion option added to MFS. Added the ability to
        include a mfsconf.h file if MFS_USE_MFSCONF is defined at project
        level.
@@ -102,7 +103,7 @@
        ports.
 - NEW: Added chRegGarbageCollect() function to registry for simplified
        dynamic threads management.
-- NEW: Added integration demos for VFS+LittleFS/FatFS+XSHELL.
+- NEW: Added integration demos for VFS+LittleFS/FatFS+XSHELL, now also available on STM32U0 Nucleo-64.
 - NEW: Added faster context switch modes to ARMv7-M and ARMv8-M ports. The
        new modes allow to avoid saving FP context for threads that do not
        use the FPU.
