@@ -55,75 +55,6 @@
 #define STM32_RCC_PLL3FRACR_RESET       0U
 /** @} */
 
-/*
- * Legacy STM32_* register helper aliases kept locally for the driver
- * implementation. The configuration interface in hal_lld.h now exposes
- * RCC_* names.
- */
-#define STM32_SW_MASK                   RCC_CFGR1_SW_Msk
-#define STM32_SW_HSI                    RCC_CFGR1_SW_HSI
-#define STM32_SW_CSI                    RCC_CFGR1_SW_CSI
-#define STM32_SW_HSE                    RCC_CFGR1_SW_HSE
-#define STM32_SW_PLL1P                  RCC_CFGR1_SW_PLL1P
-#define STM32_SWS_MASK                  RCC_CFGR1_SWS_Msk
-#define STM32_SWS_POS                   RCC_CFGR1_SWS_Pos
-#define STM32_SWS_HSI                   RCC_CFGR1_SWS_HSI
-
-#define STM32_MCO1SEL_MASK              RCC_CFGR1_MCO1SEL_Msk
-#define STM32_MCO1SEL_HSI               RCC_CFGR1_MCO1SEL_HSI
-#define STM32_MCO1SEL_LSE               RCC_CFGR1_MCO1SEL_LSE
-#define STM32_MCO1SEL_HSE               RCC_CFGR1_MCO1SEL_HSE
-#define STM32_MCO1SEL_PLL1P             RCC_CFGR1_MCO1SEL_PLL1P
-#define STM32_MCO1SEL_HSI48             RCC_CFGR1_MCO1SEL_HSI48
-#define STM32_MCO1PRE_MASK              RCC_CFGR1_MCO1PRE_Msk
-#define STM32_MCO1PRE_POS               RCC_CFGR1_MCO1PRE_Pos
-
-#define STM32_MCO2SEL_MASK              RCC_CFGR1_MCO2SEL_Msk
-#define STM32_MCO2SEL_SYSCLK            RCC_CFGR1_MCO2SEL_SYSCLK
-#define STM32_MCO2SEL_PLL2P             RCC_CFGR1_MCO2SEL_PLL2P
-#define STM32_MCO2SEL_HSE               RCC_CFGR1_MCO2SEL_HSE
-#define STM32_MCO2SEL_PLL1P             RCC_CFGR1_MCO2SEL_PLL1P
-#define STM32_MCO2SEL_CSI               RCC_CFGR1_MCO2SEL_CSI
-#define STM32_MCO2SEL_LSI               RCC_CFGR1_MCO2SEL_LSI
-#define STM32_MCO2PRE_MASK              RCC_CFGR1_MCO2PRE_Msk
-#define STM32_MCO2PRE_POS               RCC_CFGR1_MCO2PRE_Pos
-
-#define STM32_HSIDIV_MASK               RCC_CR_HSIDIV_Msk
-#define STM32_HSIDIV_POS                RCC_CR_HSIDIV_Pos
-#define STM32_HSIDIVF                   RCC_CR_HSIDIVF
-#define STM32_HSION                     RCC_CR_HSION
-#define STM32_HSIRDY                    RCC_CR_HSIRDY
-#define STM32_HSEON                     RCC_CR_HSEON
-#define STM32_HSI48ON                   RCC_CR_HSI48ON
-#define STM32_CSION                     RCC_CR_CSION
-#define STM32_PLL1ON                    RCC_CR_PLL1ON
-#define STM32_PLL2ON                    RCC_CR_PLL2ON
-#define STM32_PLL3ON                    RCC_CR_PLL3ON
-
-#define STM32_PLLSRC_MASK               RCC_PLL1CFGR_PLL1SRC_Msk
-#define STM32_PLL1SRC_HSI               RCC_PLL1CFGR_PLL1SRC_HSI
-#define STM32_PLL1SRC_CSI               RCC_PLL1CFGR_PLL1SRC_CSI
-#define STM32_PLL1SRC_HSE               RCC_PLL1CFGR_PLL1SRC_HSE
-#define STM32_PLL2SRC_HSI               RCC_PLL2CFGR_PLL2SRC_HSI
-#define STM32_PLL2SRC_CSI               RCC_PLL2CFGR_PLL2SRC_CSI
-#define STM32_PLL2SRC_HSE               RCC_PLL2CFGR_PLL2SRC_HSE
-#define STM32_PLL3SRC_HSI               RCC_PLL3CFGR_PLL3SRC_HSI
-#define STM32_PLL3SRC_CSI               RCC_PLL3CFGR_PLL3SRC_CSI
-#define STM32_PLL3SRC_HSE               RCC_PLL3CFGR_PLL3SRC_HSE
-#define STM32_PLLM_MASK                 RCC_PLL1CFGR_PLL1M_Msk
-#define STM32_PLLM_POS                  RCC_PLL1CFGR_PLL1M_Pos
-#define STM32_PLLN_MASK                 RCC_PLL1DIVR_PLL1N_Msk
-#define STM32_PLLN_POS                  RCC_PLL1DIVR_PLL1N_Pos
-#define STM32_PLLPEN                    RCC_PLL1CFGR_PLL1PEN
-#define STM32_PLLP_MASK                 RCC_PLL1DIVR_PLL1P_Msk
-#define STM32_PLLP_POS                  RCC_PLL1DIVR_PLL1P_Pos
-#define STM32_PLLQEN                    RCC_PLL1CFGR_PLL1QEN
-#define STM32_PLLQ_MASK                 RCC_PLL1DIVR_PLL1Q_Msk
-#define STM32_PLLQ_POS                  RCC_PLL1DIVR_PLL1Q_Pos
-#define STM32_PLLREN                    RCC_PLL1CFGR_PLL1REN
-#define STM32_PLLR_MASK                 RCC_PLL1DIVR_PLL1R_Msk
-#define STM32_PLLR_POS                  RCC_PLL1DIVR_PLL1R_Pos
-
 /*===========================================================================*/
 /* Driver exported variables.                                                */
 /*===========================================================================*/
@@ -485,34 +416,34 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* HSE clock.*/
-  if ((ccp->rcc_cr & STM32_HSEON) != 0U) {
+  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
     hseclk = STM32_HSECLK;
   }
 
   /* HSI48 clock after divider.*/
-  if ((ccp->rcc_cr & STM32_HSI48ON) != 0U) {
+  if ((ccp->rcc_cr & RCC_CR_HSI48ON) != 0U) {
     hsi48clk = STM32_HSI48CLK;
   }
 
   /* HSI clock after divider.*/
-  if ((ccp->rcc_cr & STM32_HSION) != 0U) {
-    hsiclk = STM32_HSI64CLK / (1U << ((ccp->rcc_cr & STM32_HSIDIV_MASK) >> STM32_HSIDIV_POS));
+  if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
+    hsiclk = STM32_HSI64CLK / (1U << ((ccp->rcc_cr & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos));
   }
 
   /* CSI clock.*/
-  if ((ccp->rcc_cr & STM32_CSION) != 0U) {
+  if ((ccp->rcc_cr & RCC_CR_CSION) != 0U) {
     csiclk = STM32_CSICLK;
   }
 
   /* PLL1 MUX clock.*/
-  switch (ccp->plls[0].cfgr & STM32_PLLSRC_MASK) {
-  case STM32_PLL1SRC_HSI:
+  switch (ccp->plls[0].cfgr & RCC_PLL1CFGR_PLL1SRC_Msk) {
+  case RCC_PLL1CFGR_PLL1SRC_HSI:
     pll1selclk = hsiclk;
     break;
-  case STM32_PLL1SRC_CSI:
+  case RCC_PLL1CFGR_PLL1SRC_CSI:
     pll1selclk = csiclk;
     break;
-  case STM32_PLL1SRC_HSE:
+  case RCC_PLL1CFGR_PLL1SRC_HSE:
     pll1selclk = hseclk;
     break;
   default:
@@ -520,14 +451,14 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PLL2 MUX clock.*/
-  switch (ccp->plls[1].cfgr & STM32_PLLSRC_MASK) {
-  case STM32_PLL2SRC_HSI:
+  switch (ccp->plls[1].cfgr & RCC_PLL2CFGR_PLL2SRC_Msk) {
+  case RCC_PLL2CFGR_PLL2SRC_HSI:
     pll2selclk = hsiclk;
     break;
-  case STM32_PLL2SRC_CSI:
+  case RCC_PLL2CFGR_PLL2SRC_CSI:
     pll2selclk = csiclk;
     break;
-  case STM32_PLL2SRC_HSE:
+  case RCC_PLL2CFGR_PLL2SRC_HSE:
     pll2selclk = hseclk;
     break;
   default:
@@ -536,14 +467,14 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
 #if STM32_RCC_HAS_PLL3
   /* PLL3 MUX clock.*/
-  switch (ccp->plls[2].cfgr & STM32_PLLSRC_MASK) {
-  case STM32_PLL3SRC_HSI:
+  switch (ccp->plls[2].cfgr & RCC_PLL3CFGR_PLL3SRC_Msk) {
+  case RCC_PLL3CFGR_PLL3SRC_HSI:
     pll3selclk = hsiclk;
     break;
-  case STM32_PLL3SRC_CSI:
+  case RCC_PLL3CFGR_PLL3SRC_CSI:
     pll3selclk = csiclk;
     break;
-  case STM32_PLL3SRC_HSE:
+  case RCC_PLL3CFGR_PLL3SRC_HSE:
     pll3selclk = hseclk;
     break;
   default:
@@ -552,15 +483,15 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 #endif
 
   /* PLL1 outputs.*/
-  if ((ccp->rcc_cr & STM32_PLL1ON) != 0U) {
+  if ((ccp->rcc_cr & RCC_CR_PLL1ON) != 0U) {
     uint32_t mdiv, ndiv;
     halfreq_t vcoclk;
 
     /* PLL1 M divider.*/
-    mdiv = (ccp->plls[0].cfgr & STM32_PLLM_MASK) >> STM32_PLLM_POS;
+    mdiv = (ccp->plls[0].cfgr & RCC_PLL1CFGR_PLL1M_Msk) >> RCC_PLL1CFGR_PLL1M_Pos;
 
     /* PLL1 N divider.*/
-    ndiv = ((ccp->plls[0].divr & STM32_PLLN_MASK) >> STM32_PLLN_POS) + 1U;
+    ndiv = ((ccp->plls[0].divr & RCC_PLL1DIVR_PLL1N_Msk) >> RCC_PLL1DIVR_PLL1N_Pos) + 1U;
     if (ndiv < STM32_PLL1N_VALUE_MIN) {
       return true;
     }
@@ -572,8 +503,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL1 P output frequency.*/
-    if ((ccp->plls[0].cfgr & STM32_PLLPEN) != 0U) {
-      n = ((ccp->plls[0].divr & STM32_PLLP_MASK) >> STM32_PLLP_POS) + 1U;
+    if ((ccp->plls[0].cfgr & RCC_PLL1CFGR_PLL1PEN) != 0U) {
+      n = ((ccp->plls[0].divr & RCC_PLL1DIVR_PLL1P_Msk) >> RCC_PLL1DIVR_PLL1P_Pos) + 1U;
       if ((n & 1U) != 0U) {  /* Cannot be odd, PLL1P-only.*/
         return true;
       }
@@ -584,8 +515,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL1 Q output frequency.*/
-    if ((ccp->plls[0].cfgr & STM32_PLLQEN) != 0U) {
-      n = ((ccp->plls[0].divr & STM32_PLLQ_MASK) >> STM32_PLLQ_POS) + 1U;
+    if ((ccp->plls[0].cfgr & RCC_PLL1CFGR_PLL1QEN) != 0U) {
+      n = ((ccp->plls[0].divr & RCC_PLL1DIVR_PLL1Q_Msk) >> RCC_PLL1DIVR_PLL1Q_Pos) + 1U;
       pll1qclk = vcoclk / n;
       if ((pll1qclk < STM32_PLLQ_MIN) || (pll1qclk > STM32_PLLQ_MAX)) {
         return true;
@@ -593,8 +524,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL1 R output frequency.*/
-    if ((ccp->plls[0].cfgr & STM32_PLLREN) != 0U) {
-      n = ((ccp->plls[0].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
+    if ((ccp->plls[0].cfgr & RCC_PLL1CFGR_PLL1REN) != 0U) {
+      n = ((ccp->plls[0].divr & RCC_PLL1DIVR_PLL1R_Msk) >> RCC_PLL1DIVR_PLL1R_Pos) + 1U;
       pll1rclk = vcoclk / n;
       if ((pll1rclk < STM32_PLLR_MIN) || (pll1rclk > STM32_PLLR_MAX)) {
         return true;
@@ -603,15 +534,15 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PLL2 outputs.*/
-  if ((ccp->rcc_cr & STM32_PLL2ON) != 0U) {
+  if ((ccp->rcc_cr & RCC_CR_PLL2ON) != 0U) {
     uint32_t mdiv, ndiv;
     halfreq_t vcoclk;
 
     /* PLL2 M divider.*/
-    mdiv = (ccp->plls[1].cfgr & STM32_PLLM_MASK) >> STM32_PLLM_POS;
+    mdiv = (ccp->plls[1].cfgr & RCC_PLL2CFGR_PLL2M_Msk) >> RCC_PLL2CFGR_PLL2M_Pos;
 
     /* PLL2 N divider.*/
-    ndiv = ((ccp->plls[1].divr & STM32_PLLN_MASK) >> STM32_PLLN_POS) + 1U;
+    ndiv = ((ccp->plls[1].divr & RCC_PLL2DIVR_PLL2N_Msk) >> RCC_PLL2DIVR_PLL2N_Pos) + 1U;
     if (ndiv < STM32_PLL2N_VALUE_MIN) {
       return true;
     }
@@ -623,8 +554,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL2 P output frequency.*/
-    if ((ccp->plls[1].cfgr & STM32_PLLPEN) != 0U) {
-      n = ((ccp->plls[1].divr & STM32_PLLP_MASK) >> STM32_PLLP_POS) + 1U;
+    if ((ccp->plls[1].cfgr & RCC_PLL2CFGR_PLL2PEN) != 0U) {
+      n = ((ccp->plls[1].divr & RCC_PLL2DIVR_PLL2P_Msk) >> RCC_PLL2DIVR_PLL2P_Pos) + 1U;
       pll2pclk = vcoclk / n;
       if ((pll2pclk < STM32_PLLP_MIN) || (pll2pclk > STM32_PLLP_MAX)) {
         return true;
@@ -632,8 +563,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL2 Q output frequency.*/
-    if ((ccp->plls[1].cfgr & STM32_PLLQEN) != 0U) {
-      n = ((ccp->plls[1].divr & STM32_PLLQ_MASK) >> STM32_PLLQ_POS) + 1U;
+    if ((ccp->plls[1].cfgr & RCC_PLL2CFGR_PLL2QEN) != 0U) {
+      n = ((ccp->plls[1].divr & RCC_PLL2DIVR_PLL2Q_Msk) >> RCC_PLL2DIVR_PLL2Q_Pos) + 1U;
       pll2qclk = vcoclk / n;
       if ((pll2qclk < STM32_PLLQ_MIN) || (pll2qclk > STM32_PLLQ_MAX)) {
         return true;
@@ -641,8 +572,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL2 R output frequency.*/
-    if ((ccp->plls[1].cfgr & STM32_PLLREN) != 0U) {
-      n = ((ccp->plls[1].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
+    if ((ccp->plls[1].cfgr & RCC_PLL2CFGR_PLL2REN) != 0U) {
+      n = ((ccp->plls[1].divr & RCC_PLL2DIVR_PLL2R_Msk) >> RCC_PLL2DIVR_PLL2R_Pos) + 1U;
       pll2rclk = vcoclk / n;
       if ((pll2rclk < STM32_PLLR_MIN) || (pll2rclk > STM32_PLLR_MAX)) {
         return true;
@@ -652,15 +583,15 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
 #if STM32_RCC_HAS_PLL3
   /* PLL3 outputs.*/
-  if ((ccp->rcc_cr & STM32_PLL3ON) != 0U) {
+  if ((ccp->rcc_cr & RCC_CR_PLL3ON) != 0U) {
     uint32_t mdiv, ndiv;
     halfreq_t vcoclk;
 
     /* PLL3 M divider.*/
-    mdiv = (ccp->plls[2].cfgr & STM32_PLLM_MASK) >> STM32_PLLM_POS;
+    mdiv = (ccp->plls[2].cfgr & RCC_PLL3CFGR_PLL3M_Msk) >> RCC_PLL3CFGR_PLL3M_Pos;
 
     /* PLL3 N divider.*/
-    ndiv = ((ccp->plls[2].divr & STM32_PLLN_MASK) >> STM32_PLLN_POS) + 1U;
+    ndiv = ((ccp->plls[2].divr & RCC_PLL3DIVR_PLL3N_Msk) >> RCC_PLL3DIVR_PLL3N_Pos) + 1U;
     if (ndiv < STM32_PLL3N_VALUE_MIN) {
       return true;
     }
@@ -672,8 +603,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL3 P output frequency.*/
-    if ((ccp->plls[2].cfgr & STM32_PLLPEN) != 0U) {
-      n = ((ccp->plls[2].divr & STM32_PLLP_MASK) >> STM32_PLLP_POS) + 1U;
+    if ((ccp->plls[2].cfgr & RCC_PLL3CFGR_PLL3PEN) != 0U) {
+      n = ((ccp->plls[2].divr & RCC_PLL3DIVR_PLL3P_Msk) >> RCC_PLL3DIVR_PLL3P_Pos) + 1U;
       pll3pclk = vcoclk / n;
       if ((pll3pclk < STM32_PLLP_MIN) || (pll3pclk > STM32_PLLP_MAX)) {
         return true;
@@ -681,8 +612,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL3 Q output frequency.*/
-    if ((ccp->plls[2].cfgr & STM32_PLLQEN) != 0U) {
-      n = ((ccp->plls[2].divr & STM32_PLLQ_MASK) >> STM32_PLLQ_POS) + 1U;
+    if ((ccp->plls[2].cfgr & RCC_PLL3CFGR_PLL3QEN) != 0U) {
+      n = ((ccp->plls[2].divr & RCC_PLL3DIVR_PLL3Q_Msk) >> RCC_PLL3DIVR_PLL3Q_Pos) + 1U;
       pll3qclk = vcoclk / n;
       if ((pll3qclk < STM32_PLLQ_MIN) || (pll3qclk > STM32_PLLQ_MAX)) {
         return true;
@@ -690,8 +621,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     }
 
     /* PLL3 R output frequency.*/
-    if ((ccp->plls[2].cfgr & STM32_PLLREN) != 0U) {
-      n = ((ccp->plls[2].divr & STM32_PLLR_MASK) >> STM32_PLLR_POS) + 1U;
+    if ((ccp->plls[2].cfgr & RCC_PLL3CFGR_PLL3REN) != 0U) {
+      n = ((ccp->plls[2].divr & RCC_PLL3DIVR_PLL3R_Msk) >> RCC_PLL3DIVR_PLL3R_Pos) + 1U;
       pll3rclk = vcoclk / n;
       if ((pll3rclk < STM32_PLLR_MIN) || (pll3rclk > STM32_PLLR_MAX)) {
         return true;
@@ -701,17 +632,17 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 #endif
 
   /* SYSCLK frequency.*/
-  switch (ccp->rcc_cfgr1 & STM32_SW_MASK) {
-  case STM32_SW_HSI:
+  switch (ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) {
+  case RCC_CFGR1_SW_HSI:
     sysclk = hsiclk;
     break;
-  case STM32_SW_CSI:
+  case RCC_CFGR1_SW_CSI:
     sysclk = csiclk;
     break;
-  case STM32_SW_HSE:
+  case RCC_CFGR1_SW_HSE:
     sysclk = hseclk;
     break;
-  case STM32_SW_PLL1P:
+  case RCC_CFGR1_SW_PLL1P:
     sysclk = pll1pclk;
     break;
   default:
@@ -723,10 +654,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* HCLK frequency.*/
-  hclk = sysclk / hprediv[(ccp->rcc_cfgr2 & STM32_HPRE_MASK) >> STM32_HPRE_POS];
+  hclk = sysclk / hprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_HPRE_Msk) >> RCC_CFGR2_HPRE_Pos];
 
   /* PPRE1 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE1_MASK) >> STM32_PPRE1_POS];
+  n = pprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_PPRE1_Msk) >> RCC_CFGR2_PPRE1_Pos];
   pclk1 = hclk / n;
   if (n < 2) {
     pclk1tim = pclk1;
@@ -736,7 +667,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PPRE2 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE2_MASK) >> STM32_PPRE2_POS];
+  n = pprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_PPRE2_Msk) >> RCC_CFGR2_PPRE2_Pos];
   pclk2 = hclk / n;
   if (n < 2) {
     pclk2tim = pclk2;
@@ -746,30 +677,30 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* PPRE3 frequency.*/
-  n = pprediv[(ccp->rcc_cfgr2 & STM32_PPRE3_MASK) >> STM32_PPRE3_POS];
+  n = pprediv[(ccp->rcc_cfgr2 & RCC_CFGR2_PPRE3_Msk) >> RCC_CFGR2_PPRE3_Pos];
   pclk3 = hclk / n;
 
   /* MCO1 clock.*/
-  switch (ccp->rcc_cfgr1 & STM32_MCO1SEL_MASK) {
-  case STM32_MCO1SEL_HSI:
+  switch (ccp->rcc_cfgr1 & RCC_CFGR1_MCO1SEL_Msk) {
+  case RCC_CFGR1_MCO1SEL_HSI:
     mco1clk = hsiclk;
     break;
-  case STM32_MCO1SEL_LSE:
+  case RCC_CFGR1_MCO1SEL_LSE:
     mco1clk = STM32_LSECLK;
     break;
-  case STM32_MCO1SEL_HSE:
+  case RCC_CFGR1_MCO1SEL_HSE:
     mco1clk = hseclk;
     break;
-  case STM32_MCO1SEL_PLL1P:
+  case RCC_CFGR1_MCO1SEL_PLL1P:
     mco1clk = pll1pclk;
     break;
-  case STM32_MCO1SEL_HSI48:
+  case RCC_CFGR1_MCO1SEL_HSI48:
     mco1clk = STM32_HSI48CLK;
     break;
   default:
     mco1clk = 0U;
   }
-  n = (ccp->rcc_cfgr1 & STM32_MCO1PRE_MASK) >> STM32_MCO1PRE_POS;
+  n = (ccp->rcc_cfgr1 & RCC_CFGR1_MCO1PRE_Msk) >> RCC_CFGR1_MCO1PRE_Pos;
   if (n == 0U) {
     mco1clk = 0U;
   }
@@ -778,29 +709,29 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   }
 
   /* MCO2 clock.*/
-  switch (ccp->rcc_cfgr1 & STM32_MCO2SEL_MASK) {
-  case STM32_MCO2SEL_SYSCLK:
+  switch (ccp->rcc_cfgr1 & RCC_CFGR1_MCO2SEL_Msk) {
+  case RCC_CFGR1_MCO2SEL_SYSCLK:
     mco2clk = sysclk;
     break;
-  case STM32_MCO2SEL_PLL2P:
+  case RCC_CFGR1_MCO2SEL_PLL2P:
     mco2clk = pll2pclk;
     break;
-  case STM32_MCO2SEL_HSE:
+  case RCC_CFGR1_MCO2SEL_HSE:
     mco2clk = hseclk;
     break;
-  case STM32_MCO2SEL_PLL1P:
+  case RCC_CFGR1_MCO2SEL_PLL1P:
     mco2clk = pll1pclk;
     break;
-  case STM32_MCO2SEL_CSI:
+  case RCC_CFGR1_MCO2SEL_CSI:
     mco2clk = csiclk;
     break;
-  case STM32_MCO2SEL_LSI:
+  case RCC_CFGR1_MCO2SEL_LSI:
     mco2clk = STM32_LSICLK;
     break;
   default:
     mco2clk = 0U;
   }
-  n = (ccp->rcc_cfgr1 & STM32_MCO2PRE_MASK) >> STM32_MCO2PRE_POS;
+  n = (ccp->rcc_cfgr1 & RCC_CFGR1_MCO2PRE_Msk) >> RCC_CFGR1_MCO2PRE_Pos;
   if (n == 0U) {
     mco2clk = 0U;
   }
@@ -875,8 +806,8 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
 
   /* HSI could be not activated, activating it taking care to not disturb
      other clocks yet, not touching the divider.*/
-  RCC->CR |= STM32_HSION;
-  while ((RCC->CR & STM32_HSIRDY) == 0U) {
+  RCC->CR |= RCC_CR_HSION;
+  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
     /* Waiting for HSI activation.*/
   }
 
@@ -884,7 +815,7 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
      Resetting up all dividers and MCOs.*/
   RCC->CFGR1 = STM32_RCC_CFGR1_RESET;
   RCC->CFGR2 = STM32_RCC_CFGR2_RESET;
-  while ((RCC->CFGR1 & STM32_SWS_MASK) != STM32_SWS_HSI) {
+  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != RCC_CFGR1_SWS_HSI) {
     /* Wait until HSI is selected.*/
   }
 
@@ -892,7 +823,7 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
      except HSI.*/
   cr = STM32_RCC_CR_RESET;
   RCC->CR = cr;
-  while ((RCC->CR & STM32_HSIDIVF) == 0U) {
+  while ((RCC->CR & RCC_CR_HSIDIVF) == 0U) {
     /* Waiting for new HSIDIV setting to be propagated.*/
   }
 
@@ -900,11 +831,11 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   flash_set_acr(STM32_FLASH_ACR_RESET);
 
   /* Setting up all clocks while keeping the rest untouched at reset value.*/
-  cr |= ccp->rcc_cr & (STM32_HSEON | STM32_HSI48ON | STM32_CSION);
+  cr |= ccp->rcc_cr & (RCC_CR_HSEON | RCC_CR_HSI48ON | RCC_CR_CSION);
   RCC->CR = cr;
 
   /* Waiting for all enabled clocks to become stable.*/
-  mask = (ccp->rcc_cr & (STM32_HSEON | STM32_HSI48ON | STM32_CSION)) << 1;
+  mask = (ccp->rcc_cr & (RCC_CR_HSEON | RCC_CR_HSI48ON | RCC_CR_CSION)) << 1;
   while ((RCC->CR & mask) != mask) {
     /* Waiting.*/
     /* TODO timeout and failure.*/
@@ -917,18 +848,18 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   pll3_setup(ccp->plls[2].cfgr, ccp->plls[2].divr, ccp->plls[2].frac);
 
   /* Activating enabled PLLs together.*/
-  cr |= ccp->rcc_cr & (STM32_PLL3ON | STM32_PLL2ON | STM32_PLL1ON);
+  cr |= ccp->rcc_cr & (RCC_CR_PLL3ON | RCC_CR_PLL2ON | RCC_CR_PLL1ON);
   RCC->CR = cr;
 
   /* Waiting for all enabled PLLs to become stable.*/
-  mask = (ccp->rcc_cr & (STM32_PLL3ON | STM32_PLL2ON | STM32_PLL1ON)) << 1;
+  mask = (ccp->rcc_cr & (RCC_CR_PLL3ON | RCC_CR_PLL2ON | RCC_CR_PLL1ON)) << 1;
 #else
   /* Activating enabled PLLs together.*/
-  cr |= ccp->rcc_cr & (STM32_PLL2ON | STM32_PLL1ON);
+  cr |= ccp->rcc_cr & (RCC_CR_PLL2ON | RCC_CR_PLL1ON);
   RCC->CR = cr;
 
   /* Waiting for all enabled PLLs to become stable.*/
-  mask = (ccp->rcc_cr & (STM32_PLL2ON | STM32_PLL1ON)) << 1;
+  mask = (ccp->rcc_cr & (RCC_CR_PLL2ON | RCC_CR_PLL1ON)) << 1;
 #endif
   while ((RCC->CR & mask) != mask) {
     /* Waiting.*/
@@ -948,12 +879,12 @@ static bool hal_lld_clock_raw_switch(const halclkcfg_t *ccp) {
   /* Switching to the final clock source.*/
   RCC->CFGR1 = ccp->rcc_cfgr1;
   RCC->CFGR2 = ccp->rcc_cfgr2;
-  while ((RCC->CFGR1 & STM32_SWS_MASK) != ((ccp->rcc_cfgr1 & STM32_SW_MASK) << STM32_SWS_POS)) {
+  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != ((ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) << RCC_CFGR1_SWS_Pos)) {
     /* Wait until SYSCLK is stable.*/
   }
 
   /* If HSI is not in configuration then it is finally shut down.*/
-  if ((ccp->rcc_cr & STM32_HSION) == 0U) {
+  if ((ccp->rcc_cr & RCC_CR_HSION) == 0U) {
     hsi_disable();
   }
 

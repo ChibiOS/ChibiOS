@@ -188,34 +188,6 @@
 #define RCC_CCIPR2_UART12SEL_Pos            4U
 #endif
 
-#ifndef RCC_CCIPR4_SDMMC2SEL_Pos
-#define RCC_CCIPR4_SDMMC2SEL_Pos            7U
-#endif
-
-#ifndef RCC_CCIPR4_I2C3SEL_Pos
-#define RCC_CCIPR4_I2C3SEL_Pos              20U
-#endif
-
-#ifndef RCC_CCIPR4_I2C4SEL_Pos
-#define RCC_CCIPR4_I2C4SEL_Pos              22U
-#endif
-
-#ifndef RCC_CCIPR5_CECSEL_Pos
-#define RCC_CCIPR5_CECSEL_Pos               6U
-#endif
-
-#ifndef RCC_CCIPR5_SAI1SEL_Pos
-#define RCC_CCIPR5_SAI1SEL_Pos              16U
-#endif
-
-#ifndef RCC_CCIPR5_SAI2SEL_Pos
-#define RCC_CCIPR5_SAI2SEL_Pos              19U
-#endif
-
-#ifndef RCC_PLL3CFGR_PLL3SRC_Pos
-#define RCC_PLL3CFGR_PLL3SRC_Pos            0U
-#endif
-
 #ifndef RCC_CCIPR2_LPTIM3SEL_Pos
 #define RCC_CCIPR2_LPTIM3SEL_Pos            16U
 #endif
@@ -250,6 +222,26 @@
 
 #ifndef RCC_CCIPR4_SDMMC2SEL_Pos
 #define RCC_CCIPR4_SDMMC2SEL_Pos            7U
+#endif
+
+#ifndef RCC_CCIPR4_I2C3SEL_Pos
+#define RCC_CCIPR4_I2C3SEL_Pos              20U
+#endif
+
+#ifndef RCC_CCIPR4_I2C4SEL_Pos
+#define RCC_CCIPR4_I2C4SEL_Pos              22U
+#endif
+
+#ifndef RCC_CCIPR5_CECSEL_Pos
+#define RCC_CCIPR5_CECSEL_Pos               6U
+#endif
+
+#ifndef RCC_CCIPR5_SAI1SEL_Pos
+#define RCC_CCIPR5_SAI1SEL_Pos              16U
+#endif
+
+#ifndef RCC_CCIPR5_SAI2SEL_Pos
+#define RCC_CCIPR5_SAI2SEL_Pos              19U
 #endif
 
 /**
@@ -1565,6 +1557,10 @@
    * @brief   PLL3 activation flag.
    */
   #define STM32_ACTIVATE_PLL3       TRUE
+  #if STM32_RCC_HAS_PLL3 == FALSE
+    #error "PLL3 not present on this device"
+  #endif
+
 #else
 
   #define STM32_ACTIVATE_PLL3       FALSE
@@ -2143,20 +2139,22 @@
 /**
  * @brief   PLL3 input clock frequency.
  */
-#if (STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_HSE) || defined(__DOXYGEN__)
-  #define STM32_PLL3IN              STM32_HSECLK
+#if STM32_RCC_HAS_PLL3
+  #if (STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_HSE) || defined(__DOXYGEN__)
+    #define STM32_PLL3IN              STM32_HSECLK
 
-#elif STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_CSI
-  #define STM32_PLL3IN              STM32_CSICLK
+  #elif STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_CSI
+    #define STM32_PLL3IN              STM32_CSICLK
 
-#elif STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_HSI
-  #define STM32_PLL3IN              STM32_HSICLK
+  #elif STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_HSI
+    #define STM32_PLL3IN              STM32_HSICLK
 
-#elif STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_NOCLOCK
-  #define STM32_PLL3IN              0
+  #elif STM32_PLL3SRC == RCC_PLL3CFGR_PLL3SRC_NOCLOCK
+    #define STM32_PLL3IN              0
 
-#else
-  #error "invalid STM32_PLL3SRC value specified"
+  #else
+    #error "invalid STM32_PLL3SRC value specified"
+  #endif
 #endif
 
 /**
