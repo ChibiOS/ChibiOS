@@ -1004,7 +1004,7 @@
 #define STM32_BOOST_PLLIN_MAX               16000000
 #define STM32_BOOST_PLLIN_MIN               2660000
 #define STM32_BOOST_PLLVCO_MAX              344000000
-#define STM32_BOOST_PLLVCO_MIN              64000000
+#define STM32_BOOST_PLLVCO_MIN              63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_BOOST_PLLP_MAX                120000000
 #define STM32_BOOST_PLLP_MIN                2064500
 #define STM32_BOOST_PLLQ_MAX                120000000
@@ -1040,7 +1040,7 @@
 #define STM32_VOS1_PLLIN_MAX                16000000
 #define STM32_VOS1_PLLIN_MIN                2660000
 #define STM32_VOS1_PLLVCO_MAX               344000000
-#define STM32_VOS1_PLLVCO_MIN               64000000
+#define STM32_VOS1_PLLVCO_MIN               63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS1_PLLP_MAX                 80000000
 #define STM32_VOS1_PLLP_MIN                 2064500
 #define STM32_VOS1_PLLQ_MAX                 80000000
@@ -1076,7 +1076,7 @@
 #define STM32_VOS2_PLLIN_MAX                16000000
 #define STM32_VOS2_PLLIN_MIN                2660000
 #define STM32_VOS2_PLLVCO_MAX               128000000
-#define STM32_VOS2_PLLVCO_MIN               64000000
+#define STM32_VOS2_PLLVCO_MIN               63950000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS2_PLLP_MAX                 26000000
 #define STM32_VOS2_PLLP_MIN                 2064500
 #define STM32_VOS2_PLLQ_MAX                 26000000
