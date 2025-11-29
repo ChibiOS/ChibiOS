@@ -2,35 +2,22 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === Building for MSH-RAMBOX-DEPLOY =================================
-	+@make --no-print-directory -f ./make/msh-rambox-deploy.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for MSH-RAMBOX-DEBUG ==================================
-	+@make --no-print-directory -f ./make/msh-rambox-debug.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for MSH-32k-081F0000-128k-20060000 ====================
-	+@make --no-print-directory -f ./make/msh-32k-081F0000-128k-20060000.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for MSH-32k-081F8000-128k-20080000 ====================
-	+@make --no-print-directory -f ./make/msh-32k-081F8000-128k-20080000.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f ./make/msh-rambox-deploy.make clean
-	@echo
-	+@make --no-print-directory -f ./make/msh-rambox-debug.make clean
-	@echo
-	+@make --no-print-directory -f ./make/msh-32k-081F0000-128k-20060000.make clean
-	@echo
-	+@make --no-print-directory -f ./make/msh-32k-081F8000-128k-20080000.make clean
-	@echo
-
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo; \
+	done
 #
 ##############################################################################

@@ -2,23 +2,22 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === Building for STM32G474RE-Nucleo64 ==============================
-	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make all
-	@echo ====================================================================
-	@echo
-	@echo === Building for STM32G474RE-Nucleo64 Alternate ====================
-	+@make --no-print-directory -f ./make/stm32g474re_nucleo64_alt.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f ./make/stm32g474re_nucleo64.make clean
-	@echo
-	+@make --no-print-directory -f ./make/stm32g474re_nucleo64_alt.make clean
-	@echo
-
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo; \
+	done
 #
 ##############################################################################

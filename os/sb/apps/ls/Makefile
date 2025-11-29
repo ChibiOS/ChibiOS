@@ -2,23 +2,22 @@
 # Multi-project makefile rules
 #
 
+SUB_MAKES := $(sort $(wildcard make/*.make))
+
 all:
-	@echo
-	@echo === Building for LS-RAMBOX-DEPLOY ==================================
-	+@make --no-print-directory -f ./make/ls-rambox-deploy.make
-	@echo ====================================================================
-	@echo
-	@echo === Building for LS-POSIX-X86-debug ================================
-	+@make --no-print-directory -f ./make/ls-posix-x86-debug.make all
-	@echo ====================================================================
+	@for m in $(SUB_MAKES); do \
+		echo; \
+		echo "=== Building $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
+		echo; \
+	done
 	@echo
 
 clean:
-	@echo
-	+@make --no-print-directory -f ./make/ls-rambox-deploy.make clean
-	@echo
-	+@make --no-print-directory -f ./make/ls-posix-x86-debug.make clean
-	@echo
-
+	@for m in $(SUB_MAKES); do \
+		echo "=== Cleaning $$m ==="; \
+		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
+		echo; \
+	done
 #
 ##############################################################################

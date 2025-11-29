@@ -7,18 +7,17 @@ SUB_MAKES := $(sort $(wildcard make/*.make))
 all:
 	@for m in $(SUB_MAKES); do \
 		echo; \
-		echo "=== Building $$m ====================================="; \
+		echo "=== Building $$m ==="; \
 		$(MAKE) --no-print-directory -f $$m all || exit $$?; \
-		echo "========================================================"; \
+		echo; \
 	done
 	@echo
 
 clean:
 	@for m in $(SUB_MAKES); do \
-		echo "=== Cleaning $$m ======================================"; \
+		echo "=== Cleaning $$m ==="; \
 		$(MAKE) --no-print-directory -f $$m clean || exit $$?; \
-		echo "========================================================"; \
+		echo; \
 	done
-
 #
 ##############################################################################
