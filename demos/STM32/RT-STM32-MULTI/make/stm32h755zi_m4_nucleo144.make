@@ -86,13 +86,13 @@ endif
 PROJECT = ch
 
 # Target settings.
-MCU  = cortex-m7
+MCU  = cortex-m4
 
 # Imported source files and paths.
 CHIBIOS  := ../../..
-CONFDIR  := ./cfg
-BUILDDIR := ./build
-DEPDIR   := ./.dep
+CONFDIR  := ./cfg/stm32h755zi_m4_nucleo144
+BUILDDIR := ./build/stm32h755zi_m4_nucleo144
+DEPDIR   := ./.dep/stm32h755zi_m4_nucleo144
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -112,14 +112,17 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 include $(CHIBIOS)/os/test/test.mk
 include $(CHIBIOS)/test/rt/rt_test.mk
 include $(CHIBIOS)/test/oslib/oslib_test.mk
+#include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+#include $(CHIBIOS)/os/various/shell/shell.mk
 
-# Define linker script file here
-LDSCRIPT= ./STM32H755xI_M4.ld
+# Define linker script file here.
+LDSCRIPT= $(CONFDIR)/STM32H755xI_M4.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
+       $(CONFDIR)/portab.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
