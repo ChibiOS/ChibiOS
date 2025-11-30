@@ -2108,7 +2108,7 @@
   #define STM32_PLL1IN              STM32_CSICLK
 
 #elif STM32_PLL1SRC == RCC_PLL1CFGR_PLL1SRC_HSI
-  #define STM32_PLL1IN              STM32_HSICLK
+  #define STM32_PLL1IN              hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_PLL1SRC == RCC_PLL1CFGR_PLL1SRC_NOCLOCK
   #define STM32_PLL1IN              0
@@ -2127,7 +2127,7 @@
   #define STM32_PLL2IN              STM32_CSICLK
 
 #elif STM32_PLL2SRC == RCC_PLL2CFGR_PLL2SRC_HSI
-  #define STM32_PLL2IN              STM32_HSICLK
+  #define STM32_PLL2IN              hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_PLL2SRC == RCC_PLL2CFGR_PLL2SRC_NOCLOCK
   #define STM32_PLL2IN              0
@@ -2455,7 +2455,7 @@
   #define STM32_MCO2DIVCLK          STM32_PLL1_P_CLKOUT
 
 #elif STM32_MCO2SEL == RCC_CFGR1_MCO2SEL_CSI
-  #define STM32_MCO2DIVCLK          STM32_CSICLK
+  #define STM32_MCO2DIVCLK          hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_MCO2SEL == RCC_CFGR1_MCO2SEL_LSI
   #define STM32_MCO2DIVCLK          STM32_LSICLK
@@ -2531,10 +2531,10 @@
   #define STM32_USART1CLK           hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_USART1SEL == RCC_CCIPR1_USART1SEL_HSI
-  #define STM32_USART1CLK           STM32_HSICLK
+  #define STM32_USART1CLK           hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_USART1SEL == RCC_CCIPR1_USART1SEL_CSI
-  #define STM32_USART1CLK           STM32_CSICLK
+  #define STM32_USART1CLK           hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_USART1SEL == RCC_CCIPR1_USART1SEL_LSE
   #define STM32_USART1CLK           STM32_LSECLK
@@ -2556,10 +2556,10 @@
   #define STM32_USART2CLK           hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_USART2SEL == RCC_CCIPR1_USART2SEL_HSI
-  #define STM32_USART2CLK           STM32_HSICLK
+  #define STM32_USART2CLK           hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_USART2SEL == RCC_CCIPR1_USART2SEL_CSI
-  #define STM32_USART2CLK           STM32_CSICLK
+  #define STM32_USART2CLK           hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_USART2SEL == RCC_CCIPR1_USART2SEL_LSE
   #define STM32_USART2CLK           STM32_LSECLK
@@ -2581,10 +2581,10 @@
   #define STM32_USART3CLK           hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_USART3SEL == RCC_CCIPR1_USART3SEL_HSI
-  #define STM32_USART3CLK           STM32_HSICLK
+  #define STM32_USART3CLK           hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_USART3SEL == RCC_CCIPR1_USART3SEL_CSI
-  #define STM32_USART3CLK           STM32_CSICLK
+  #define STM32_USART3CLK           hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_USART3SEL == RCC_CCIPR1_USART3SEL_LSE
   #define STM32_USART3CLK           STM32_LSECLK
@@ -2606,10 +2606,10 @@
   #define STM32_UART4CLK            hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_UART4SEL == RCC_CCIPR1_UART4SEL_HSI
-  #define STM32_UART4CLK            STM32_HSICLK
+  #define STM32_UART4CLK            hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_UART4SEL == RCC_CCIPR1_UART4SEL_CSI
-  #define STM32_UART4CLK            STM32_CSICLK
+  #define STM32_UART4CLK            hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_UART4SEL == RCC_CCIPR1_UART4SEL_LSE
   #define STM32_UART4CLK            STM32_LSECLK
@@ -2631,10 +2631,10 @@
   #define STM32_UART5CLK            hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_UART5SEL == RCC_CCIPR1_UART5SEL_HSI
-  #define STM32_UART5CLK            STM32_HSICLK
+  #define STM32_UART5CLK            hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_UART5SEL == RCC_CCIPR1_UART5SEL_CSI
-  #define STM32_UART5CLK            STM32_CSICLK
+  #define STM32_UART5CLK            hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_UART5SEL == RCC_CCIPR1_UART5SEL_LSE
   #define STM32_UART5CLK            STM32_LSECLK
@@ -2656,10 +2656,10 @@
   #define STM32_USART6CLK           hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_USART6SEL == RCC_CCIPR1_USART6SEL_HSI
-  #define STM32_USART6CLK           STM32_HSICLK
+  #define STM32_USART6CLK           hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_USART6SEL == RCC_CCIPR1_USART6SEL_CSI
-  #define STM32_USART6CLK           STM32_CSICLK
+  #define STM32_USART6CLK           hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_USART6SEL == RCC_CCIPR1_USART6SEL_LSE
   #define STM32_USART6CLK           STM32_LSECLK
@@ -2681,10 +2681,10 @@
   #define STM32_UART7CLK            hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_UART7SEL == RCC_CCIPR1_UART7SEL_HSI
-  #define STM32_UART7CLK            STM32_HSICLK
+  #define STM32_UART7CLK            hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_UART7SEL == RCC_CCIPR1_UART7SEL_CSI
-  #define STM32_UART7CLK            STM32_CSICLK
+  #define STM32_UART7CLK            hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_UART7SEL == RCC_CCIPR1_UART7SEL_LSE
   #define STM32_UART7CLK            STM32_LSECLK
@@ -2706,10 +2706,10 @@
   #define STM32_UART8CLK            hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_UART8SEL == RCC_CCIPR1_UART8SEL_HSI
-  #define STM32_UART8CLK            STM32_HSICLK
+  #define STM32_UART8CLK            hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_UART8SEL == RCC_CCIPR1_UART8SEL_CSI
-  #define STM32_UART8CLK            STM32_CSICLK
+  #define STM32_UART8CLK            hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_UART8SEL == RCC_CCIPR1_UART8SEL_LSE
   #define STM32_UART8CLK            STM32_LSECLK
@@ -2731,10 +2731,10 @@
   #define STM32_UART9CLK            hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_UART9SEL == RCC_CCIPR1_UART9SEL_HSI
-  #define STM32_UART9CLK            STM32_HSICLK
+  #define STM32_UART9CLK            hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_UART9SEL == RCC_CCIPR1_UART9SEL_CSI
-  #define STM32_UART9CLK            STM32_CSICLK
+  #define STM32_UART9CLK            hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_UART9SEL == RCC_CCIPR1_UART9SEL_LSE
   #define STM32_UART9CLK            STM32_LSECLK
@@ -2756,10 +2756,10 @@
   #define STM32_USART10CLK          hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_USART10SEL == RCC_CCIPR1_USART10SEL_HSI
-  #define STM32_USART10CLK          STM32_HSICLK
+  #define STM32_USART10CLK          hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_USART10SEL == RCC_CCIPR1_USART10SEL_CSI
-  #define STM32_USART10CLK          STM32_CSICLK
+  #define STM32_USART10CLK          hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_USART10SEL == RCC_CCIPR1_USART10SEL_LSE
   #define STM32_USART10CLK          STM32_LSECLK
@@ -2781,10 +2781,10 @@
   #define STM32_USART11CLK          hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_USART11SEL == RCC_CCIPR2_USART11SEL_HSI
-  #define STM32_USART11CLK          STM32_HSICLK
+  #define STM32_USART11CLK          hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_USART11SEL == RCC_CCIPR2_USART11SEL_CSI
-  #define STM32_USART11CLK          STM32_CSICLK
+  #define STM32_USART11CLK          hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_USART11SEL == RCC_CCIPR2_USART11SEL_LSE
   #define STM32_USART11CLK          STM32_LSECLK
@@ -2806,10 +2806,10 @@
   #define STM32_UART12CLK           hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_UART12SEL == RCC_CCIPR2_UART12SEL_HSI
-  #define STM32_UART12CLK           STM32_HSICLK
+  #define STM32_UART12CLK           hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_UART12SEL == RCC_CCIPR2_UART12SEL_CSI
-  #define STM32_UART12CLK           STM32_CSICLK
+  #define STM32_UART12CLK           hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_UART12SEL == RCC_CCIPR2_UART12SEL_LSE
   #define STM32_UART12CLK           STM32_LSECLK
@@ -2831,10 +2831,10 @@
   #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_PLL3QCLK)
 
 #elif STM32_LPUART1SEL == RCC_CCIPR3_LPUART1SEL_HSI
-  #define STM32_LPUART1CLK          STM32_HSICLK
+  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_LPUART1SEL == RCC_CCIPR3_LPUART1SEL_CSI
-  #define STM32_LPUART1CLK          STM32_CSICLK
+  #define STM32_LPUART1CLK          hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_LPUART1SEL == RCC_CCIPR3_LPUART1SEL_LSE
   #define STM32_LPUART1CLK          STM32_LSECLK
@@ -2858,9 +2858,9 @@
   #define STM32_LPTIM2CCLK          0
 
 #elif STM32_TIMICSEL == RCC_CCIPR1_TIMICSEL_INTCLK
-  #define STM32_TIM12CCLK           (STM32_HSICLK / 1024)
-  #define STM32_TIM15CCLK           (STM32_HSICLK / 8)
-  #define STM32_LPTIM2CCLK          (STM32_CSICLK / 128)
+  #define STM32_TIM12CCLK           (hal_lld_get_clock_point(CLK_HSI) / 1024)
+  #define STM32_TIM15CCLK           (hal_lld_get_clock_point(CLK_HSI) / 8)
+  #define STM32_LPTIM2CCLK          (hal_lld_get_clock_point(CLK_CSI) / 128)
 
 #else
   #error "invalid source selected for TIMICSEL clock"
@@ -3095,13 +3095,13 @@
   #define STM32_SPI4CLK             hal_lld_get_clock_point(CLK_PLL3PCLK)
 
 #elif STM32_SPI4SEL == RCC_CCIPR3_SPI4SEL_HSI
-  #define STM32_SPI4CLK             STM32_HSICLK
+  #define STM32_SPI4CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_SPI4SEL == RCC_CCIPR3_SPI4SEL_CSI
-  #define STM32_SPI4CLK             STM32_CSICLK
+  #define STM32_SPI4CLK             hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_SPI4SEL == RCC_CCIPR3_SPI4SEL_HSE
-  #define STM32_SPI4CLK             STM32_HSECLK
+  #define STM32_SPI4CLK             hal_lld_get_clock_point(CLK_HSE)
 
 #else
   #error "invalid source selected for SPI4 clock"
@@ -3120,13 +3120,13 @@
   #define STM32_SPI5CLK             hal_lld_get_clock_point(CLK_PLL3PCLK)
 
 #elif STM32_SPI5SEL == RCC_CCIPR3_SPI5SEL_HSI
-  #define STM32_SPI5CLK             STM32_HSICLK
+  #define STM32_SPI5CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_SPI5SEL == RCC_CCIPR3_SPI5SEL_CSI
-  #define STM32_SPI5CLK             STM32_CSICLK
+  #define STM32_SPI5CLK             hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_SPI5SEL == RCC_CCIPR3_SPI5SEL_HSE
-  #define STM32_SPI5CLK             STM32_HSECLK
+  #define STM32_SPI5CLK             hal_lld_get_clock_point(CLK_HSE)
 
 #else
   #error "invalid source selected for SPI5 clock"
@@ -3145,13 +3145,13 @@
   #define STM32_SPI6CLK             hal_lld_get_clock_point(CLK_PLL3PCLK)
 
 #elif STM32_SPI6SEL == RCC_CCIPR3_SPI6SEL_HSI
-  #define STM32_SPI6CLK             STM32_HSICLK
+  #define STM32_SPI6CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_SPI6SEL == RCC_CCIPR3_SPI6SEL_CSI
-  #define STM32_SPI6CLK             STM32_CSICLK
+  #define STM32_SPI6CLK             hal_lld_get_clock_point(CLK_CSI)
 
 #elif STM32_SPI6SEL == RCC_CCIPR3_SPI6SEL_HSE
-  #define STM32_SPI6CLK             STM32_HSECLK
+  #define STM32_SPI6CLK             hal_lld_get_clock_point(CLK_HSE)
 
 #else
   #error "invalid source selected for SPI6 clock"
@@ -3250,10 +3250,10 @@
   #define STM32_I2C1CLK             hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_I2C1SEL == RCC_CCIPR4_I2C1SEL_HSI
-  #define STM32_I2C1CLK             STM32_HSICLK
+  #define STM32_I2C1CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_I2C1SEL == RCC_CCIPR4_I2C1SEL_CSI
-  #define STM32_I2C1CLK             STM32_CSICLK
+  #define STM32_I2C1CLK             hal_lld_get_clock_point(CLK_CSI)
 
 #else
   #error "invalid source selected for I2C1 clock"
@@ -3269,10 +3269,10 @@
   #define STM32_I2C2CLK             hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_I2C2SEL == RCC_CCIPR4_I2C2SEL_HSI
-  #define STM32_I2C2CLK             STM32_HSICLK
+  #define STM32_I2C2CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_I2C2SEL == RCC_CCIPR4_I2C2SEL_CSI
-  #define STM32_I2C2CLK             STM32_CSICLK
+  #define STM32_I2C2CLK             hal_lld_get_clock_point(CLK_CSI)
 
 #else
   #error "invalid source selected for I2C2 clock"
@@ -3288,10 +3288,10 @@
   #define STM32_I2C3CLK             hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_I2C3SEL == RCC_CCIPR4_I2C3SEL_HSI
-  #define STM32_I2C3CLK             STM32_HSICLK
+  #define STM32_I2C3CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_I2C3SEL == RCC_CCIPR4_I2C3SEL_CSI
-  #define STM32_I2C3CLK             STM32_CSICLK
+  #define STM32_I2C3CLK             hal_lld_get_clock_point(CLK_CSI)
 
 #else
   #error "invalid source selected for I2C3 clock"
@@ -3307,10 +3307,10 @@
   #define STM32_I2C4CLK             hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_I2C4SEL == RCC_CCIPR4_I2C4SEL_HSI
-  #define STM32_I2C4CLK             STM32_HSICLK
+  #define STM32_I2C4CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_I2C4SEL == RCC_CCIPR4_I2C4SEL_CSI
-  #define STM32_I2C4CLK             STM32_CSICLK
+  #define STM32_I2C4CLK             hal_lld_get_clock_point(CLK_CSI)
 
 #else
   #error "invalid source selected for I2C4 clock"
@@ -3326,7 +3326,7 @@
   #define STM32_I3C1CLK             hal_lld_get_clock_point(CLK_PLL3RCLK)
 
 #elif STM32_I3C1SEL == RCC_CCIPR4_I3C1SEL_HSI
-  #define STM32_I3C1CLK             STM32_HSICLK
+  #define STM32_I3C1CLK             hal_lld_get_clock_point(CLK_HSI)
 
 #else
   #error "invalid source selected for I3C1 clock"
@@ -3345,13 +3345,13 @@
   #define STM32_ADCDACCLK           hal_lld_get_clock_point(CLK_PLL2RCLK)
 
 #elif STM32_ADCDACSEL == RCC_CCIPR5_ADCDACSEL_HSE
-  #define STM32_ADCDACCLK           STM32_HSECLK
+  #define STM32_ADCDACCLK           hal_lld_get_clock_point(CLK_HSE)
 
 #elif STM32_ADCDACSEL == RCC_CCIPR5_ADCDACSEL_HSI
-  #define STM32_ADCDACCLK           STM32_HSICLK
+  #define STM32_ADCDACCLK           hal_lld_get_clock_point(CLK_HSI)
 
 #elif STM32_ADCDACSEL == RCC_CCIPR5_ADCDACSEL_CSI
-  #define STM32_ADCDACCLK           STM32_CSICLK
+  #define STM32_ADCDACCLK           hal_lld_get_clock_point(CLK_CSI)
 
 #else
   #error "invalid source selected for ADCDACSEL clock"
@@ -3405,7 +3405,7 @@
   #define STM32_CECCLK              STM32_LSICLK
 
 #elif STM32_CECSEL == RCC_CCIPR5_CECSEL_CSIDIV128
-  #define STM32_CECCLK              (STM32_CSICLK / 128)
+  #define STM32_CECCLK              (hal_lld_get_clock_point(CLK_CSI) / 128)
 
 #elif STM32_CECSEL == RCC_CCIPR5_CECSEL_IGNORE
   #define STM32_CECCLK              0
@@ -3418,7 +3418,7 @@
  * @brief   FDCAN clock frequency.
  */
 #if (STM32_FDCANSEL == RCC_CCIPR5_FDCANSEL_HSE) || defined(__DOXYGEN__)
-  #define STM32_FDCANCLK            STM32_HSECLK
+  #define STM32_FDCANCLK            hal_lld_get_clock_point(CLK_HSE)
 
 #elif STM32_FDCANSEL == RCC_CCIPR5_FDCANSEL_PLL1Q
   #define STM32_FDCANCLK            hal_lld_get_clock_point(CLK_PLL1QCLK)
@@ -3535,29 +3535,28 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_0WS | 0U)
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_0WS | 0U                     | 0U)
 
 #elif STM32_HCLK <= STM32_1WS_THRESHOLD
-  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_1WS | 0U)
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_1WS | 0U)                    | FLASH_ACR_PRFTEN
 
 #elif STM32_HCLK <= STM32_2WS_THRESHOLD
-  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_2WS | FLASH_ACR_WRHIGHFREQ_0)
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_2WS | FLASH_ACR_WRHIGHFREQ_0 | FLASH_ACR_PRFTEN)
 
 #elif STM32_HCLK <= STM32_3WS_THRESHOLD
-  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_3WS | FLASH_ACR_WRHIGHFREQ_0)
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_3WS | FLASH_ACR_WRHIGHFREQ_0 | FLASH_ACR_PRFTEN)
 
 #elif STM32_HCLK <= STM32_4WS_THRESHOLD
-  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_4WS | FLASH_ACR_WRHIGHFREQ_1)
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_4WS | FLASH_ACR_WRHIGHFREQ_1 | FLASH_ACR_PRFTEN)
 
 #else
-  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_5WS | FLASH_ACR_WRHIGHFREQ_1)
+  #define STM32_FLASHBITS           (FLASH_ACR_LATENCY_5WS | FLASH_ACR_WRHIGHFREQ_1 | FLASH_ACR_PRFTEN)
 #endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
 /**
  * @brief   Type of PLL configuration registers.
  */
@@ -3572,7 +3571,6 @@ typedef struct {
  */
 typedef struct {
   uint32_t          pwr_voscr;
-  uint32_t          pwr_vmcr;
   uint32_t          rcc_cr;
   uint32_t          rcc_cfgr1;
   uint32_t          rcc_cfgr2;
@@ -3583,11 +3581,22 @@ typedef struct {
   stm32_pll_regs_t  plls[2];
 #endif
 } halclkcfg_t;
-#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Real time counter frequency exported to the safety module.
+ * @note    The counter is the internal DWS cycles counter so in runs at
+ *          the same frequency of CPU.
+ */
+#define HAL_LLD_GET_CNT_FREQUENCY()         hal_lld_get_clock_point(CLK_HCLK)
+
+/**
+ * @brief   Real time counter value exported to the safety module.
+ */
+#define HAL_LLD_GET_CNT_VALUE()             (DWT->CYCCNT)
 
 #if !defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
 /**

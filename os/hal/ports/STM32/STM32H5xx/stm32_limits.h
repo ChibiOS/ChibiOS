@@ -26,6 +26,52 @@
 #define STM32_LIMITS_H
 
 /**
+ * @name    Activation times in microseconds
+ */
+/**
+ * @brief   Timeout tolerance.
+ */
+#define STM32_RELAXED_TIMEOUT_FACTOR        5U
+
+/**
+ * @brief   Regulators transition time.
+ */
+#define STM32_REGULATORS_TRANSITION_TIME    (21U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Worst case startup and stabilization time of HSI oscillator.
+ */
+#define STM32_HSI_STARTUP_TIME              (8U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   HSIDIV propagation time.
+ * @note    This value is estimated and kept "safe", there is no
+ *          specification.
+ */
+#define STM32_HSIDIV_PROPAGATION_TIME       (10U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Worst case startup time of all oscillators controlled in the
+ *          RCC_CR register.
+ * @note    The value is taken from HSE which is the slowest one according
+ *          to datasheet.
+ */
+#define STM32_OSCILLATORS_STARTUP_TIME      (2000U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Stabilization time of PLLs.
+ */
+#define STM32_PLL_STARTUP_TIME              (120U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Time required for system time switch (RCC_CFGR1.SW).
+ * @note    This value is estimated and kept "safe", there is no
+ *          specification.
+ */
+#define STM32_SYSCLK_SWITCH_TIME            (50U * STM32_RELAXED_TIMEOUT_FACTOR)
+/** @} */
+
+/**
  * @name    Device Limits for VOS range 0
  * @{
  */
