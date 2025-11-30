@@ -215,7 +215,6 @@
 #define STM32_LSECLK_BYP_MIN            STM32_VOS0_LSECLK_BYP_MIN
 #define STM32_PLLP_MAX                  STM32_VOS0_PLLP_MAX
 #define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
-#define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
 #define STM32_PLLQ_MAX                  STM32_VOS0_PLLQ_MAX
 #define STM32_PLLQ_MIN                  STM32_VOS0_PLLQ_MIN
 #define STM32_PLLR_MAX                  STM32_VOS0_PLLR_MAX
