@@ -100,6 +100,7 @@
 #define STM32_PPRE3                         RCC_CFGR2_PPRE3_DIV1
 #define STM32_STOPWUCK                      RCC_CFGR1_STOPWUCK_HSI
 #define STM32_STOPKERWUCK                   RCC_CFGR1_STOPKERWUCK_HSI
+#define STM32_TIMPRE                        RCC_CFGR1_TIMPRE_LOW
 #define STM32_RTCPRE_VALUE                  RCC_CFGR1_RTCPRE_NOCLOCK
 #define STM32_MCO1SEL                       RCC_CFGR1_MCO1SEL_HSI
 #define STM32_MCO1PRE_VALUE                 RCC_CFGR1_MCO1PRE_NOCLOCK

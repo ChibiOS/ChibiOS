@@ -257,6 +257,7 @@
 #define STM32_SYSTEM_HAS_AHB4               FALSE
 #define STM32_PWR_HAS_UCPDR                 FALSE
 #define STM32_PWR_HAS_USBSCR                FALSE
+#define STM32_PWR_HAS_SECCFGR               FALSE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE
@@ -428,6 +429,7 @@
 #define STM32_SYSTEM_HAS_AHB4               TRUE
 #define STM32_PWR_HAS_UCPDR                 TRUE
 #define STM32_PWR_HAS_USBSCR                TRUE
+#define STM32_PWR_HAS_SECCFGR               TRUE
 
 /* ADC attributes.*/
 #define STM32_HAS_ADC1                      TRUE

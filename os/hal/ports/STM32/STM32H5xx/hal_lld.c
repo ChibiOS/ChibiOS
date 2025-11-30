@@ -292,7 +292,9 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 #endif
   halRegWrite32X(&PWR->WUCR, STM32_PWR_WUCR, true);
   halRegWrite32X(&PWR->IORETR, STM32_PWR_IORETR, true);
+#if STM32_PWR_HAS_SECCFGR
   halRegWrite32X(&PWR->SECCFGR, STM32_PWR_SECCFGR, true);
+#endif
   halRegWrite32X(&PWR->PRIVCFGR, STM32_PWR_PRIVCFGR, true);
 }
 
@@ -1097,7 +1099,7 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
     return true;
   }
 
-  if (hal_lld_clock_raw_switch(ccp)) {
+  if (hal_lld_clock_configure(ccp)) {
     return true;
   }
 
