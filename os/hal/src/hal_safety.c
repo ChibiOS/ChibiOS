@@ -45,7 +45,7 @@ static inline uint32_t get_frequency(void) {
 #if defined(HAL_LLD_GET_CNT_FREQUENCY)
   return HAL_LLD_GET_CNT_FREQUENCY();
 #else
-  return 1000000L;
+  return 1000000U;
 #endif
 }
 
@@ -54,18 +54,7 @@ static inline rtcnt_t get_counter(void) {
 #if defined(HAL_LLD_GET_CNT_VALUE)
   return HAL_LLD_GET_CNT_VALUE();
 #else
-  /* Fallback when there is no realtime counter available, the timeout
-     becomes simply the number of times that loops are executed maximum.
-     The pseudo-counter is static and shared among all threads/ISRs.*/
-  static volatile rtcnt_t counter = (rtcnt_t)0;
-  rtcnt_t current;
-  syssts_t sts;
-
-  sts = osalSysGetStatusAndLockX();
-  current = counter++;
-  osalSysRestoreStatusX(sts);
-
-  return current;
+  return (rtcnt_t)0;
 #endif
 }
 
@@ -102,6 +91,8 @@ void halSftFail(const char *message) {
 
 /**
  * @brief   Waits for masked bits to match or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -143,6 +134,8 @@ bool halRegWaitMatch8X(volatile uint8_t *p, uint8_t mask,
 
 /**
  * @brief   Waits for masked bits to match or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -184,6 +177,8 @@ bool halRegWaitMatch16X(volatile uint16_t *p, uint16_t mask,
 
 /**
  * @brief   Waits for masked bits to match or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -225,6 +220,8 @@ bool halRegWaitMatch32X(volatile uint32_t *p, uint32_t mask,
 
 /**
  * @brief   Waits for all specified bits to be set or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -265,6 +262,8 @@ bool halRegWaitAllSet8X(volatile uint8_t *p, uint8_t mask,
 
 /**
  * @brief   Waits for all specified bits to be set or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -305,6 +304,8 @@ bool halRegWaitAllSet16X(volatile uint16_t *p, uint16_t mask,
 
 /**
  * @brief   Waits for all specified bits to be set or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -345,6 +346,8 @@ bool halRegWaitAllSet32X(volatile uint32_t *p, uint32_t mask,
 
 /**
  * @brief   Waits for any of specified bits to be set or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -385,6 +388,8 @@ bool halRegWaitAnySet8X(volatile uint8_t *p, uint8_t mask,
 
 /**
  * @brief   Waits for any of specified bits to be set or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -425,6 +430,8 @@ bool halRegWaitAnySet16X(volatile uint16_t *p, uint16_t mask,
 
 /**
  * @brief   Waits for any of specified bits to be set or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -465,6 +472,8 @@ bool halRegWaitAnySet32X(volatile uint32_t *p, uint32_t mask,
 
 /**
  * @brief   Waits for all specified bits to be cleared or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -505,6 +514,8 @@ bool halRegWaitAllClear8X(volatile uint8_t *p, uint8_t mask,
 
 /**
  * @brief   Waits for all specified bits to be cleared or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -545,6 +556,8 @@ bool halRegWaitAllClear16X(volatile uint16_t *p, uint16_t mask,
 
 /**
  * @brief   Waits for all specified bits to be cleared or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -585,6 +598,8 @@ bool halRegWaitAllClear32X(volatile uint32_t *p, uint32_t mask,
 
 /**
  * @brief   Waits for any of specified bits to be cleared or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -625,6 +640,8 @@ bool halRegWaitAnyClear8X(volatile uint8_t *p, uint8_t mask,
 
 /**
  * @brief   Waits for any of specified bits to be cleared or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
@@ -665,6 +682,8 @@ bool halRegWaitAnyClear16X(volatile uint16_t *p, uint16_t mask,
 
 /**
  * @brief   Waits for any of specified bits to be cleared or a timeout.
+ * @note    The timeout feature only works if the HAL LLD implements the
+ *          required counter functionality.
  *
  * @param[in] p         address of the register
  * @param[in] mask      mask of bits to be checked
