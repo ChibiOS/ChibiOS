@@ -729,7 +729,7 @@ void hal_lld_init(void) {
 void stm32_clock_init(void) {
 
   /* DWT cycles counter enabled, used for timeouts.*/
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+  halRegSet32X(&DWT->CTRL, DWT_CTRL_CYCCNTENA_Msk, true);
 
 #if !STM32_NO_INIT
   /* Reset of all peripherals.

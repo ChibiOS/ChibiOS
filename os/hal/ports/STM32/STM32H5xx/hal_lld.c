@@ -376,7 +376,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   uint32_t cr, wtmask;
 
   /* Setting flash ACR to the safest value while we play with clocks.*/
-//  flash_set_acr(FLASH_ACR_LATENCY_5WS | FLASH_ACR_WRHIGHFREQ_1 | FLASH_ACR_PRFTEN);
   halRegWrite32X(&FLASH->ACR,
                  FLASH_ACR_LATENCY_5WS | FLASH_ACR_WRHIGHFREQ_1 | FLASH_ACR_PRFTEN,
                  true);
@@ -384,10 +383,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   /* HSI could be not activated, activating it taking care to not disturb
      other clocks yet, not touching HSIDIV yet because it could be feeding
      a PLL.*/
-//  RCC->CR |= RCC_CR_HSION;
-//  while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
-    /* Waiting for HSI activation.*/
-//  }
   halRegSet32X(&RCC->CR, RCC_CR_HSION, true);
   if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_HSIRDY, STM32_HSI_STARTUP_TIME, NULL)) {
     return true;
@@ -395,11 +390,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Switching to HSI as clock source as in a post-reset situation.
      Resetting up all dividers and MCOs.*/
-//  RCC->CFGR1 = STM32_RCC_CFGR1_RESET;
-//  RCC->CFGR2 = STM32_RCC_CFGR2_RESET;
-//  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != RCC_CFGR1_SWS_HSI) {
-    /* Wait until HSI is selected.*/
-//  }
   halRegWrite32X(&RCC->CFGR1, STM32_RCC_CFGR1_RESET, true);
   halRegWrite32X(&RCC->CFGR2, STM32_RCC_CFGR2_RESET, true);
   if (halRegWaitMatch32X(&RCC->CFGR1,
@@ -410,11 +400,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 
   /* Resetting the whole RCC_CR register, basically shutting down everything
      except HSI, HSIDIV now goes to the default value.*/
-//  cr = STM32_RCC_CR_RESET;
-//  RCC->CR = cr;
-//  while ((RCC->CR & RCC_CR_HSIDIVF) == 0U) {
-    /* Waiting for new HSIDIV setting to be propagated.*/
-//  }
   cr = STM32_RCC_CR_RESET;
   halRegWrite32X(&RCC->CR, cr, true);
   if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_HSIDIVF,
@@ -423,21 +408,15 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   }
 
   /* Resetting flash ACR settings to the default value.*/
-//  flash_set_acr(STM32_FLASH_ACR_RESET);
   halRegWrite32X(&FLASH->ACR, STM32_FLASH_ACR_RESET, true);
 
   /* Starting all clocks activated in the configuration while keeping the
      rest of CR at reset value.*/
   cr |= ccp->rcc_cr & (RCC_CR_HSEON | RCC_CR_HSI48ON | RCC_CR_CSION);
-//  RCC->CR = cr;
   halRegWrite32X(&RCC->CR, cr, true);
 
   /* Waiting for all enabled clocks to become stable.*/
   wtmask = (ccp->rcc_cr & (RCC_CR_HSEON | RCC_CR_HSI48ON | RCC_CR_CSION)) << 1;
-//  while ((RCC->CR & mask) != mask) {
-    /* Waiting.*/
-    /* TODO timeout and failure.*/
-//  }
   if (halRegWaitAllSet32X(&RCC->CR, wtmask, STM32_OSCILLATORS_STARTUP_TIME, NULL)) {
     return true;
   }
@@ -451,7 +430,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   /* Activating enabled PLLs together, keeping HSI enabled because running
      from it.*/
   cr = ccp->rcc_cr | RCC_CR_HSION;
-//  RCC->CR = cr;
   halRegWrite32X(&RCC->CR, cr, true);
 
   /* Waiting for all enabled PLLs to become stable.*/
@@ -459,30 +437,19 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
 #else
   /* Activating enabled PLLs together.*/
   cr |= ccp->rcc_cr & (RCC_CR_PLL2ON | RCC_CR_PLL1ON);
-//  RCC->CR = cr;
   halRegWrite32X(&RCC->CR, cr, true);
 
   /* Waiting for all enabled PLLs to become stable.*/
   wtmask = (ccp->rcc_cr & (RCC_CR_PLL2ON | RCC_CR_PLL1ON)) << 1;
 #endif
-//  while ((RCC->CR & mask) != mask) {
-    /* Waiting.*/
-    /* TODO timeout and failure.*/
-//  }
   if (halRegWaitAllSet32X(&RCC->CR, wtmask, STM32_PLL_STARTUP_TIME, NULL)) {
     return true;
   }
 
   /* Final flash ACR settings.*/
-//  flash_set_acr(ccp->flash_acr);
   halRegWrite32X(&FLASH->ACR, ccp->flash_acr, true);
 
   /* Final PWR modes.*/
-//  PWR->VOSCR = ccp->pwr_voscr;
-//  while ((PWR->VOSSR & PWR_VOSSR_ACTVOSRDY) == 0U) {
-    /* Wait until regulator is stable.*/
-//  }
-//  PWR->VMCR  = ccp->pwr_vmcr;
   halRegWrite32X(&PWR->VOSCR, ccp->pwr_voscr, true);
   if (halRegWaitAllSet32X(&PWR->VOSSR, PWR_VOSSR_ACTVOSRDY,
                           STM32_REGULATORS_TRANSITION_TIME, NULL)) {
@@ -490,11 +457,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   }
 
   /* Switching to the final clock source.*/
-//  RCC->CFGR1 = ccp->rcc_cfgr1;
-//  RCC->CFGR2 = ccp->rcc_cfgr2;
-//  while ((RCC->CFGR1 & RCC_CFGR1_SWS_Msk) != ((ccp->rcc_cfgr1 & RCC_CFGR1_SW_Msk) << RCC_CFGR1_SWS_Pos)) {
-    /* Wait until SYSCLK is stable.*/
-//  }
   halRegWrite32X(&RCC->CFGR1, ccp->rcc_cfgr1, true);
   halRegWrite32X(&RCC->CFGR2, ccp->rcc_cfgr2, true);
   if (halRegWaitMatch32X(&RCC->CFGR1,
@@ -504,9 +466,6 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   }
 
   /* If HSI is not in configuration then it is finally shut down.*/
-//  if ((ccp->rcc_cr & RCC_CR_HSION) == 0U) {
-//    hsi_disable();
-//  }
   halRegWrite32X(&RCC->CR, ccp->rcc_cr, true);
 
   return false;
@@ -958,8 +917,8 @@ void hal_lld_init(void) {
 void stm32_clock_init(void) {
 
   /* DWT cycles counter enabled, used for timeouts.*/
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+  halRegSet32X(&CoreDebug->DEMCR, CoreDebug_DEMCR_TRCENA_Msk, true);
+  halRegSet32X(&DWT->CTRL, DWT_CTRL_CYCCNTENA_Msk, true);
 
 #if !STM32_NO_INIT
   /* Reset of all peripherals.
