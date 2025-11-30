@@ -3477,6 +3477,22 @@
   #error "invalid source selected for SAI2 clock"
 #endif
 
+/**
+ * @brief   CKPER clock frequency.
+ */
+#if (STM32_CKPERSEL == RCC_CCIPR5_CKPERSEL_HSI) || defined(__DOXYGEN__)
+#define STM32_PERCLK                hal_lld_get_clock_point(CLK_HSI)
+
+#elif STM32_CKPERSEL == RCC_CCIPR5_CKPERSEL_CSI
+#define STM32_PERCLK                hal_lld_get_clock_point(CLK_CSI)
+
+#elif STM32_CKPERSEL == RCC_CCIPR5_CKPERSEL_HSE
+#define STM32_PERCLK                hal_lld_get_clock_point(CLK_HSE)
+
+#else
+  #error "invalid source selected for CKPER clock"
+#endif
+
 #if (STM32_TIMPRE == RCC_CFGR1_TIMPRE_LOW) || defined(__DOXYGEN__)
   /**
    * @brief   TIMP1CLK clock frequency.
