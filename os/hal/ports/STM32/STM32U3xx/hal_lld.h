@@ -2388,18 +2388,6 @@
  */
 #define STM32_DAC1_CLOCK                    STM32_ADCDACCLK
 
-/**
- * @brief   Real time counter frequency exported to the safety module.
- * @note    The counter is the internal DWS cycles counter so in runs at
- *          the same frequency of CPU.
- */
-#define HAL_LLD_GET_CNT_FREQUENCY()         hal_lld_get_clock_point(CLK_HCLK)
-
-/**
- * @brief   Real time counter value exported to the safety module.
- */
-#define HAL_LLD_GET_CNT_VALUE()             (DWT->CYCCNT)
-
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
@@ -2421,6 +2409,18 @@ typedef struct {
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Real time counter frequency exported to the safety module.
+ * @note    The counter is the internal DWS cycles counter so in runs at
+ *          the same frequency of CPU.
+ */
+#define HAL_LLD_GET_CNT_FREQUENCY()         hal_lld_get_clock_point(CLK_HCLK)
+
+/**
+ * @brief   Real time counter value exported to the safety module.
+ */
+#define HAL_LLD_GET_CNT_VALUE()             (DWT->CYCCNT)
 
 #if !defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
 /**

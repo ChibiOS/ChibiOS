@@ -26,7 +26,7 @@
 #define STM32_LIMITS_H
 
 /**
- * @brief   Activation times in microseconds
+ * @name    Activation times in microseconds
  */
 /**
  * @brief   Timeout tolerance.
