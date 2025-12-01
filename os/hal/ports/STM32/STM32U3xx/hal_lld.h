@@ -2406,6 +2406,11 @@ typedef struct {
   uint32_t          flash_acr;
 } halclkcfg_t;
 
+/**
+ * @brief   Type of a timeout counter.
+ */
+typedef uint32_t halcnt_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/

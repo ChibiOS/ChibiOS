@@ -721,15 +721,20 @@ void hal_lld_init(void) {
 
 /**
  * @brief   STM32U0xx clocks and PLL initialization.
- * @note    All the involved constants come from the file @p board.h.
- * @note    This function should be invoked just after the system reset.
+ * @note    This function should be invoked just after the system reset in
+ *          order to accelerate boot.
  *
  * @special
  */
 void stm32_clock_init(void) {
 
-  /* DWT cycles counter enabled, used for timeouts.*/
-//  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+  /* Enabling TIM7 for timeout handling.*/
+  rccResetTIM7();
+  rccEnableTIM7(false);
+  halRegWrite32X(&TIM7->PSC, (STM32_TIMPCLK / 1000000U) - 1U, true);
+//  halRegWrite32X(&TIM7->ARR, 0xFFFFU, true);
+  halRegWrite32X(&TIM7->EGR, TIM_EGR_UG, false);
+  halRegWrite32X(&TIM7->CR1, TIM_CR1_CEN, true);
 
 #if !STM32_NO_INIT
   /* Reset of all peripherals.

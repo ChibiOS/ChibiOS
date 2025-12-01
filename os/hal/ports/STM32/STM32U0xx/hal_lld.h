@@ -1606,9 +1606,27 @@ typedef struct {
   uint32_t          flash_acr;
 } halclkcfg_t;
 
+/**
+ * @brief   Type of a timeout counter.
+ * @note    16 bits because it must match TIM7 counter size.
+ */
+typedef uint16_t halcnt_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Real time counter frequency exported to the safety module.
+ * @note    The counter is clocked at 1MHz, the prescaled is recalculated
+ *          if/when the input frequency changes.
+ */
+#define HAL_LLD_GET_CNT_FREQUENCY()         1000000U
+
+/**
+ * @brief   Real time counter value exported to the safety module.
+ */
+#define HAL_LLD_GET_CNT_VALUE()             ((halcnt_t)TIM7->CNT)
 
 #if !defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
 /**
