@@ -150,9 +150,14 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
               STM32_MCO2PRE | STM32_MCO2SEL |
               STM32_PPRE    | STM32_HPRE;
 
-  /* Set HSISYS, HSIKER, SYSDIV divisors.*/
+  /* Set HSISYS/HSIKER divisors and optional SYSDIV when present.*/
+#if STM32_RCC_HAS_SYSDIV
   RCC->CR = (RCC->CR & ~(RCC_CR_HSIDIV_Msk | RCC_CR_HSIKERDIV_Msk | RCC_CR_SYSDIV_Msk)) |
             STM32_HSIDIV | STM32_HSIKERDIV | STM32_SYSDIV;
+#else
+  RCC->CR = (RCC->CR & ~(RCC_CR_HSIDIV_Msk | RCC_CR_HSIKERDIV_Msk)) |
+            STM32_HSIDIV | STM32_HSIKERDIV;
+#endif
 
   /* CCIPR register initialization.*/
   RCC->CCIPR =  STM32_ADCSEL    | STM32_I2S1SEL    | STM32_I2C1SEL   |
