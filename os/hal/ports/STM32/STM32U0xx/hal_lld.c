@@ -782,6 +782,7 @@ void stm32_clock_init(void) {
  * @notapi
  */
 bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
+  int32_t div;
 
   if (hal_lld_clock_check_tree(ccp)) {
     return true;
@@ -790,6 +791,15 @@ bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
   if (hal_lld_clock_configure(ccp)) {
     return true;
   }
+
+  /* Updating timeout counter clock, contemplating the case where the clock
+     source frequency becomes lower than 1MHz.*/
+  div = ((int)hal_lld_get_clock_point(CLK_PCLKTIM) / 1000000) - 1;
+  if (div < 0) {
+    div = 0;
+  }
+  halRegWrite32X(&TIM7->PSC, (uint32_t)div, true);
+  halRegWrite32X(&TIM7->EGR, TIM_EGR_UG, false);
 
   /* Updating the CMSIS variable.*/
   SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
