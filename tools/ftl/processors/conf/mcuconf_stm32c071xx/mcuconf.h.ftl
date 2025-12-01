@@ -68,25 +68,25 @@
 #define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
-#define STM32_SW                            ${doc.STM32_SW!"STM32_SW_HSISYS"}
-#define STM32_HPRE                          ${doc.STM32_HPRE!"STM32_HPRE_DIV1"}
-#define STM32_PPRE                          ${doc.STM32_PPRE!"STM32_PPRE_DIV1"}
-#define STM32_MCOSEL                        ${doc.STM32_MCOSEL!"STM32_MCOSEL_NOCLOCK"}
-#define STM32_MCOPRE                        ${doc.STM32_MCOPRE!"STM32_MCOPRE_DIV1"}
-#define STM32_MCO2SEL                       ${doc.STM32_MCOSEL!"STM32_MCO2SEL_NOCLOCK"}
-#define STM32_MCO2PRE                       ${doc.STM32_MCOPRE!"STM32_MCO2PRE_DIV1"}
-#define STM32_LSCOSEL                       ${doc.STM32_LSCOSEL!"STM32_LSCOSEL_NOCLOCK"}
+#define STM32_SW                            ${doc.STM32_SW!"RCC_CFGR_SW_HSISYS"}
+#define STM32_HPRE                          ${doc.STM32_HPRE!"RCC_CFGR_HPRE_DIV1"}
+#define STM32_PPRE                          ${doc.STM32_PPRE!"RCC_CFGR_PPRE_DIV1"}
+#define STM32_MCOSEL                        ${doc.STM32_MCOSEL!"RCC_CFGR_MCOSEL_NOCLOCK"}
+#define STM32_MCOPRE                        ${doc.STM32_MCOPRE!"RCC_CFGR_MCOPRE_DIV1"}
+#define STM32_MCO2SEL                       ${doc.STM32_MCOSEL!"RCC_CFGR_MCO2SEL_NOCLOCK"}
+#define STM32_MCO2PRE                       ${doc.STM32_MCOPRE!"RCC_CFGR_MCO2PRE_DIV1"}
+#define STM32_LSCOSEL                       ${doc.STM32_LSCOSEL!"RCC_CSR1_LSCOSEL_NOCLOCK"}
 
 /*
  * Peripherals clocks and sources.
  */
-#define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"STM32_ADCSEL_SYSCLK"}
-#define STM32_FSCAN1SEL                     ${doc.STM32_I2C1SEL!"STM32_FSCAN1SEL_PCLK"}
-#define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"STM32_I2C1SEL_PCLK"}
-#define STM32_I2S1SEL                       ${doc.STM32_I2S1SEL!"STM32_I2S1SEL_SYSCLK"}
-#define STM32_USART1SEL                     ${doc.STM32_USART1SEL!"STM32_USART1SEL_PCLK"}
-#define STM32_USBSEL                        ${doc.STM32_USBSEL!"STM32_USBSEL_HSIUSB48"}
-#define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"STM32_ADCSEL_HSIKER"}
+#define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"RCC_CCIPR_ADCSEL_SYSCLK"}
+#define STM32_FSCAN1SEL                     ${doc.STM32_I2C1SEL!"RCC_CCIPR_I2C1SEL_PCLK"}
+#define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"RCC_CCIPR_I2C1SEL_PCLK"}
+#define STM32_I2S1SEL                       ${doc.STM32_I2S1SEL!"RCC_CCIPR_I2S1SEL_SYSCLK"}
+#define STM32_USART1SEL                     ${doc.STM32_USART1SEL!"RCC_CCIPR_USART1SEL_PCLK"}
+#define STM32_USBSEL                        ${doc.STM32_USBSEL!"RCC_CCIPR2_USBSEL_HSIUSB48"}
+#define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"RCC_CSR1_RTCSEL_HSIKER"}
 
 /*
  * Shared IRQ settings.

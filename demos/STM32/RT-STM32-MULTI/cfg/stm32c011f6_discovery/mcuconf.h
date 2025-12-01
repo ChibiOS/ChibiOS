@@ -60,23 +60,23 @@
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   TRUE
 #define STM32_LSE_ENABLED                   FALSE
-#define STM32_SW                            STM32_SW_HSISYS
-#define STM32_HPRE                          STM32_HPRE_DIV1
-#define STM32_PPRE                          STM32_PPRE_DIV1
-#define STM32_MCOSEL                        STM32_MCOSEL_NOCLOCK
-#define STM32_MCOPRE                        STM32_MCOPRE_DIV1
-#define STM32_MCO2SEL                       STM32_MCOSEL_NOCLOCK
-#define STM32_MCO2PRE                       STM32_MCOPRE_DIV1
-#define STM32_LSCOSEL                       STM32_LSCOSEL_NOCLOCK
+#define STM32_SW                            RCC_CFGR_SW_HSISYS
+#define STM32_HPRE                          RCC_CFGR_HPRE_DIV1
+#define STM32_PPRE                          RCC_CFGR_PPRE_DIV1
+#define STM32_MCOSEL                        RCC_CFGR_MCOSEL_NOCLOCK
+#define STM32_MCOPRE                        RCC_CFGR_MCOPRE_DIV1
+#define STM32_MCO2SEL                       RCC_CFGR_MCO2SEL_NOCLOCK
+#define STM32_MCO2PRE                       RCC_CFGR_MCO2PRE_DIV1
+#define STM32_LSCOSEL                       RCC_CSR1_LSCOSEL_NOCLOCK
 
 /*
  * Peripherals clocks and sources.
  */
-#define STM32_USART1SEL                     STM32_USART1SEL_PCLK
-#define STM32_I2C1SEL                       STM32_I2C1SEL_PCLK
-#define STM32_I2S1SEL                       STM32_I2S1SEL_SYSCLK
-#define STM32_ADCSEL                        STM32_ADCSEL_SYSCLK
-#define STM32_RTCSEL                        STM32_RTCSEL_NOCLOCK
+#define STM32_USART1SEL                     RCC_CCIPR_USART1SEL_PCLK
+#define STM32_I2C1SEL                       RCC_CCIPR_I2C1SEL_PCLK
+#define STM32_I2S1SEL                       RCC_CCIPR_I2S1SEL_SYSCLK
+#define STM32_ADCSEL                        RCC_CCIPR_ADCSEL_SYSCLK
+#define STM32_RTCSEL                        RCC_CSR1_RTCSEL_NOCLOCK
 
 /*
  * Shared IRQ settings.
