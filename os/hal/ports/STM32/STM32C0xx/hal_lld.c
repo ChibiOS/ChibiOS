@@ -151,8 +151,8 @@ __STATIC_INLINE void hal_lld_set_static_clocks(void) {
               STM32_PPRE    | STM32_HPRE;
 
   /* Set HSISYS, HSIKER, SYSDIV divisors.*/
-  RCC->CR = (RCC->CR & ~(STM32_HSIDIV_MASK | STM32_HSIKER_MASK | STM32_SYSDIV_MASK)) |
-            STM32_HSIDIV | STM32_HSIKER | STM32_SYSDIV;
+  RCC->CR = (RCC->CR & ~(RCC_CR_HSIDIV_Msk | RCC_CR_HSIKERDIV_Msk | RCC_CR_SYSDIV_Msk)) |
+            STM32_HSIDIV | STM32_HSIKERDIV | STM32_SYSDIV;
 
   /* CCIPR register initialization.*/
   RCC->CCIPR =  STM32_ADCSEL    | STM32_I2S1SEL    | STM32_I2C1SEL   |
@@ -242,7 +242,7 @@ void stm32_clock_init(void) {
                 STM32_FLASHBITS);
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
-#if STM32_SW != STM32_SW_HSISYS
+#if STM32_SW != RCC_CFGR_SW_HSISYS
   RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
   /* Wait until SYSCLK is stable.*/
   while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 3))
