@@ -708,8 +708,8 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 void hal_lld_init(void) {
 
   /* DMA subsystems initialization.*/
-#if defined(STM32_GPDMA_REQUIRED)
-  gpdmaInit();
+#if defined(STM32_DMA3_REQUIRED)
+  dma3Init();
 #endif
 
   /* NVIC initialization.*/
