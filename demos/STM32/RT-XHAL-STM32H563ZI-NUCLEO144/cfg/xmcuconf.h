@@ -31,10 +31,10 @@
  * 0...3        Lowest...Highest.
  */
 
-#define STM32H5xx_MCUCONF
-#define STM32H562_MCUCONF
-#define STM32H563_MCUCONF
-#define STM32H573_MCUCONF
+#define STM32H5xx_XMCUCONF
+#define STM32H562_XMCUCONF
+#define STM32H563_XMCUCONF
+#define STM32H573_XMCUCONF
 
 /*
  * HAL driver general settings.

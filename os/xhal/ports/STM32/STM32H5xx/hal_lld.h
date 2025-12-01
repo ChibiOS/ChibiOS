@@ -1411,21 +1411,21 @@
 /*
  * Configuration-related checks.
  */
-#if !defined(STM32H5xx_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32H5xx_MCUCONF not defined"
+#if !defined(STM32H5xx_XMCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H5xx_XMCUCONF not defined"
 #endif
 
-#if defined(STM32H503xx) && !defined(STM32H503_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32H503_MCUCONF not defined"
+#if defined(STM32H503xx) && !defined(STM32H503_XMCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H503_XMCUCONF not defined"
 
-#elif defined(STM32H562xx) && !defined(STM32H562_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32H562_MCUCONF not defined"
+#elif defined(STM32H562xx) && !defined(STM32H562_XMCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H562_XMCUCONF not defined"
 
-#elif defined(STM32H563xx) && !defined(STM32H563_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32H563_MCUCONF not defined"
+#elif defined(STM32H563xx) && !defined(STM32H563_XMCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H563_XMCUCONF not defined"
 
-#elif defined(STM32H573xx) && !defined(STM32H573_MCUCONF)
-#error "Using a wrong mcuconf.h file, STM32H573_MCUCONF not defined"
+#elif defined(STM32H573xx) && !defined(STM32H573_XMCUCONF)
+#error "Using a wrong mcuconf.h file, STM32H573X_MCUCONF not defined"
 
 #endif
 
