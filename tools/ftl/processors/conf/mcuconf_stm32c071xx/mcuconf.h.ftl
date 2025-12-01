@@ -62,9 +62,9 @@
 #define STM32_PWR_PUCRF                     ${doc.STM32_PWR_PUCRF!"(0U)"}
 #define STM32_PWR_PDCRF                     ${doc.STM32_PWR_PDCRF!"(0U)"}
 #define STM32_HSIDIV_VALUE                  ${doc.STM32_HSIDIV_VALUE!"4"}
-#define STM32_HSIKER_VALUE                  ${doc.STM32_HSIDIV_VALUE!"3"}
-#define STM32_HSI48_ENABLED                 ${doc.STM32_HSI16_ENABLED!"TRUE"}
-#define STM32_HSIUSB48_ENABLED              ${doc.STM32_HSI16_ENABLED!"TRUE"}
+#define STM32_HSIKERDIV_VALUE               ${doc.STM32_HSIKERDIV_VALUE!"3"}
+#define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"TRUE"}
+#define STM32_HSIUSB48_ENABLED              ${doc.STM32_HSIUSB48_ENABLED!"TRUE"}
 #define STM32_HSE_ENABLED                   ${doc.STM32_HSE_ENABLED!"FALSE"}
 #define STM32_LSI_ENABLED                   ${doc.STM32_LSI_ENABLED!"FALSE"}
 #define STM32_LSE_ENABLED                   ${doc.STM32_LSE_ENABLED!"FALSE"}
@@ -81,12 +81,11 @@
  * Peripherals clocks and sources.
  */
 #define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"RCC_CCIPR_ADCSEL_SYSCLK"}
-#define STM32_FSCAN1SEL                     ${doc.STM32_I2C1SEL!"RCC_CCIPR_I2C1SEL_PCLK"}
 #define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"RCC_CCIPR_I2C1SEL_PCLK"}
 #define STM32_I2S1SEL                       ${doc.STM32_I2S1SEL!"RCC_CCIPR_I2S1SEL_SYSCLK"}
 #define STM32_USART1SEL                     ${doc.STM32_USART1SEL!"RCC_CCIPR_USART1SEL_PCLK"}
 #define STM32_USBSEL                        ${doc.STM32_USBSEL!"RCC_CCIPR2_USBSEL_HSIUSB48"}
-#define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"RCC_CSR1_RTCSEL_HSIKER"}
+#define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"RCC_CSR1_RTCSEL_NOCLOCK"}
 
 /*
  * Shared IRQ settings.

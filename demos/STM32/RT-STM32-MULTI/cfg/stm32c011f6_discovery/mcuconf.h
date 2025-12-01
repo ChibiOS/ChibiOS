@@ -55,7 +55,7 @@
 #define STM32_SYSCFG_CFGR2                  (0U)
 #define STM32_SYSCFG_CFGR3                  (0U)
 #define STM32_HSIDIV_VALUE                  1
-#define STM32_HSIKER_VALUE                  1
+#define STM32_HSIKERDIV_VALUE               1
 #define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   TRUE

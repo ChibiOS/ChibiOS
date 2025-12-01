@@ -55,7 +55,7 @@
 #define STM32_SYSCFG_CFGR2                  (0U)
 #define STM32_SYSCFG_CFGR3                  (0U)
 #define STM32_HSIDIV_VALUE                  1
-#define STM32_HSIKER_VALUE                  1
+#define STM32_HSIKERDIV_VALUE               1
 #define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSI_ENABLED                   TRUE
@@ -76,7 +76,7 @@
 #define STM32_I2C1SEL                       RCC_CCIPR_I2C1SEL_PCLK
 #define STM32_I2S1SEL                       RCC_CCIPR_I2S1SEL_SYSCLK
 #define STM32_ADCSEL                        RCC_CCIPR_ADCSEL_SYSCLK
-#define STM32_RTCSEL                        RCC_CSR1_RTCSEL_LSE
+#define STM32_RTCSEL                        RCC_CSR1_RTCSEL_NOCLOCK
 
 /*
  * Shared IRQ settings.

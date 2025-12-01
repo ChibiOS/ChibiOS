@@ -51,7 +51,7 @@
 #define STM32_PWR_PUCRF                     (0U)
 #define STM32_PWR_PDCRF                     (0U)
 #define STM32_HSIDIV_VALUE                  1
-#define STM32_HSIKER_VALUE                  1
+#define STM32_HSIKERDIV_VALUE               1
 #define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSIUSB48_ENABLED              TRUE
 #define STM32_HSE_ENABLED                   FALSE
@@ -70,12 +70,11 @@
  * Peripherals clocks and sources.
  */
 #define STM32_ADCSEL                        RCC_CCIPR_ADCSEL_SYSCLK
-#define STM32_FSCAN1SEL                     RCC_CCIPR_I2C1SEL_PCLK
 #define STM32_I2C1SEL                       RCC_CCIPR_I2C1SEL_PCLK
 #define STM32_I2S1SEL                       RCC_CCIPR_I2S1SEL_SYSCLK
 #define STM32_USART1SEL                     RCC_CCIPR_USART1SEL_PCLK
 #define STM32_USBSEL                        RCC_CCIPR2_USBSEL_HSIUSB48
-#define STM32_RTCSEL                        RCC_CSR1_RTCSEL_LSE
+#define STM32_RTCSEL                        RCC_CSR1_RTCSEL_NOCLOCK
 
 /*
  * Shared IRQ settings.
