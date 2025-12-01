@@ -54,7 +54,7 @@
 /*
  * PWR settings.
  */
-#define STM32_PWR_VOSCR                     STM32_VOS_RANGE0
+#define STM32_PWR_VOSCR                     PWR_VOSCR_VOS_RANGE0
 #define STM32_PWR_BDCR                      (0U)
 #define STM32_PWR_UCPDR                     (0U)
 #define STM32_PWR_SCCR                      (0U)
@@ -75,8 +75,8 @@
 #define STM32_HSE_ENABLED                   TRUE
 #define STM32_LSI_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   FALSE
-#define STM32_SW                            STM32_SW_PLL1P
-#define STM32_PLL1SRC                       STM32_PLL1SRC_HSE
+#define STM32_SW                            RCC_CFGR1_SW_PLL1P
+#define STM32_PLL1SRC                       RCC_PLL1CFGR_PLL1SRC_HSE
 #define STM32_PLL1M_VALUE                   4
 #define STM32_PLL1N_VALUE                   250
 #define STM32_PLL1P_VALUE                   2
