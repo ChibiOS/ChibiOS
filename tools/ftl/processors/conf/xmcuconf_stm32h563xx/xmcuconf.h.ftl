@@ -20,13 +20,13 @@
 [@pp.dropOutputFile /]
 [#import "/@lib/libutils.ftl" as utils /]
 [#import "/@lib/liblicense.ftl" as license /]
-[@pp.changeOutputFile name="mcuconf.h" /]
+[@pp.changeOutputFile name="xmcuconf.h" /]
 /*
 [@license.EmitLicenseAsText /]
 */
 
-#ifndef MCUCONF_H
-#define MCUCONF_H
+#ifndef XMCUCONF_H
+#define XMCUCONF_H
 
 /*
  * STM32H5xx drivers configuration.
@@ -293,4 +293,4 @@
 #define STM32_ST_IRQ_PRIORITY               ${doc.STM32_ST_IRQ_PRIORITY!"8"}
 #define STM32_ST_USE_TIMER                  ${doc.STM32_ST_USE_TIMER!"2"}
 
-#endif /* MCUCONF_H */
+#endif /* XMCUCONF_H */
