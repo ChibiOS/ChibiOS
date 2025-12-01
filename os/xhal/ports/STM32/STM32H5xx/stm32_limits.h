@@ -26,6 +26,52 @@
 #define STM32_LIMITS_H
 
 /**
+ * @name    Activation times in microseconds
+ */
+/**
+ * @brief   Timeout tolerance.
+ */
+#define STM32_RELAXED_TIMEOUT_FACTOR        5U
+
+/**
+ * @brief   Regulators transition time.
+ */
+#define STM32_REGULATORS_TRANSITION_TIME    (21U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Worst case startup and stabilization time of HSI oscillator.
+ */
+#define STM32_HSI_STARTUP_TIME              (8U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   HSIDIV propagation time.
+ * @note    This value is estimated and kept "safe", there is no
+ *          specification.
+ */
+#define STM32_HSIDIV_PROPAGATION_TIME       (10U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Worst case startup time of all oscillators controlled in the
+ *          RCC_CR register.
+ * @note    The value is taken from HSE which is the slowest one according
+ *          to datasheet.
+ */
+#define STM32_OSCILLATORS_STARTUP_TIME      (2000U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Stabilization time of PLLs.
+ */
+#define STM32_PLL_STARTUP_TIME              (120U * STM32_RELAXED_TIMEOUT_FACTOR)
+
+/**
+ * @brief   Time required for system time switch (RCC_CFGR1.SW).
+ * @note    This value is estimated and kept "safe", there is no
+ *          specification.
+ */
+#define STM32_SYSCLK_SWITCH_TIME            (50U * STM32_RELAXED_TIMEOUT_FACTOR)
+/** @} */
+
+/**
  * @name    Device Limits for VOS range 0
  * @{
  */
@@ -78,7 +124,7 @@
 #define STM32_VOS1_PLLR_MIN             1000000
 #define STM32_VOS1_PCLK1_MAX            200000000
 #define STM32_VOS1_PCLK2_MAX            200000000
-#define STM32_VOS1_PCLK2_MAX            200000000
+#define STM32_VOS1_PCLK3_MAX            200000000
 #define STM32_VOS1_ADCCLK_MAX           100000000
 
 #define STM32_VOS1_0WS_THRESHOLD        34000000
@@ -157,7 +203,7 @@
  * @name    Device Limits for current VOS settings
  * @{
  */
-#if ((STM32_PWR_VOSCR & STM32_VOS_MASK) == STM32_VOS_RANGE0) || defined(__DOXYGEN__)
+#if ((STM32_PWR_VOSCR & PWR_VOSCR_VOS_Msk) == PWR_VOSCR_VOS_RANGE0) || defined(__DOXYGEN__)
 #define STM32_SYSCLK_MAX                STM32_VOS0_SYSCLK_MAX
 #define STM32_HSECLK_MAX                STM32_VOS0_HSECLK_MAX
 #define STM32_HSECLK_BYP_MAX            STM32_VOS0_HSECLK_BYP_MAX
@@ -168,7 +214,6 @@
 #define STM32_LSECLK_MIN                STM32_VOS0_LSECLK_MIN
 #define STM32_LSECLK_BYP_MIN            STM32_VOS0_LSECLK_BYP_MIN
 #define STM32_PLLP_MAX                  STM32_VOS0_PLLP_MAX
-#define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
 #define STM32_PLLP_MIN                  STM32_VOS0_PLLP_MIN
 #define STM32_PLLQ_MAX                  STM32_VOS0_PLLQ_MAX
 #define STM32_PLLQ_MIN                  STM32_VOS0_PLLQ_MIN
@@ -185,12 +230,9 @@
 #define STM32_3WS_THRESHOLD             STM32_VOS0_3WS_THRESHOLD
 #define STM32_4WS_THRESHOLD             STM32_VOS0_4WS_THRESHOLD
 #define STM32_5WS_THRESHOLD             STM32_VOS0_5WS_THRESHOLD
-#define STM32_6WS_THRESHOLD             STM32_VOS0_6WS_THRESHOLD
-#define STM32_7WS_THRESHOLD             STM32_VOS0_7WS_THRESHOLD
-#define STM32_8WS_THRESHOLD             STM32_VOS0_8WS_THRESHOLD
 /** @} */
 
-#elif (STM32_PWR_VOSCR & STM32_VOS_MASK) == STM32_VOS_RANGE1
+#elif (STM32_PWR_VOSCR & PWR_VOSCR_VOS_Msk) == PWR_VOSCR_VOS_RANGE1
 #define STM32_SYSCLK_MAX                STM32_VOS1_SYSCLK_MAX
 #define STM32_HSECLK_MAX                STM32_VOS1_HSECLK_MAX
 #define STM32_HSECLK_BYP_MAX            STM32_VOS1_HSECLK_BYP_MAX
@@ -217,11 +259,8 @@
 #define STM32_3WS_THRESHOLD             STM32_VOS1_3WS_THRESHOLD
 #define STM32_4WS_THRESHOLD             STM32_VOS1_4WS_THRESHOLD
 #define STM32_5WS_THRESHOLD             STM32_VOS1_5WS_THRESHOLD
-#define STM32_6WS_THRESHOLD             STM32_VOS1_6WS_THRESHOLD
-#define STM32_7WS_THRESHOLD             STM32_VOS1_7WS_THRESHOLD
-#define STM32_8WS_THRESHOLD             STM32_VOS1_8WS_THRESHOLD
 
-#elif (STM32_PWR_VOSCR & STM32_VOS_MASK) == STM32_VOS_RANGE2
+#elif (STM32_PWR_VOSCR & PWR_VOSCR_VOS_Msk) == PWR_VOSCR_VOS_RANGE2
 #define STM32_SYSCLK_MAX                STM32_VOS2_SYSCLK_MAX
 #define STM32_HSECLK_MAX                STM32_VOS2_HSECLK_MAX
 #define STM32_HSECLK_BYP_MAX            STM32_VOS2_HSECLK_BYP_MAX
@@ -248,11 +287,8 @@
 #define STM32_3WS_THRESHOLD             STM32_VOS2_3WS_THRESHOLD
 #define STM32_4WS_THRESHOLD             STM32_VOS2_4WS_THRESHOLD
 #define STM32_5WS_THRESHOLD             STM32_VOS2_5WS_THRESHOLD
-#define STM32_6WS_THRESHOLD             STM32_VOS2_6WS_THRESHOLD
-#define STM32_7WS_THRESHOLD             STM32_VOS2_7WS_THRESHOLD
-#define STM32_8WS_THRESHOLD             STM32_VOS2_8WS_THRESHOLD
 
-#elif (STM32_PWR_VOSCR & STM32_VOS_MASK) == STM32_VOS_RANGE3
+#elif (STM32_PWR_VOSCR & PWR_VOSCR_VOS_Msk) == PWR_VOSCR_VOS_RANGE3
 #define STM32_SYSCLK_MAX                STM32_VOS3_SYSCLK_MAX
 #define STM32_HSECLK_MAX                STM32_VOS3_HSECLK_MAX
 #define STM32_HSECLK_BYP_MAX            STM32_VOS3_HSECLK_BYP_MAX
@@ -279,9 +315,6 @@
 #define STM32_3WS_THRESHOLD             STM32_VOS3_3WS_THRESHOLD
 #define STM32_4WS_THRESHOLD             STM32_VOS3_4WS_THRESHOLD
 #define STM32_5WS_THRESHOLD             STM32_VOS3_5WS_THRESHOLD
-#define STM32_6WS_THRESHOLD             STM32_VOS3_6WS_THRESHOLD
-#define STM32_7WS_THRESHOLD             STM32_VOS3_7WS_THRESHOLD
-#define STM32_8WS_THRESHOLD             STM32_VOS3_8WS_THRESHOLD
 
 #else
 #error "invalid STM32_VOS value specified"

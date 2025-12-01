@@ -1,0 +1,2 @@
+PLATFORMSRC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/DMA3v1/stm32_dma3.c
+PLATFORMINC += $(CHIBIOS)/os/xhal/ports/STM32/LLD/DMA3v1

@@ -27,7 +27,7 @@ endif
 # Drivers compatible with the platform.
 include $(CHIBIOS)/os/xhal/ports/STM32/LLD/ETHv2/driver.mk
 include $(CHIBIOS)/os/xhal/ports/STM32/LLD/EXTIv1/driver.mk
-include $(CHIBIOS)/os/xhal/ports/STM32/LLD/GPDMAv1/driver.mk
+include $(CHIBIOS)/os/xhal/ports/STM32/LLD/DMA3v1/driver.mk
 include $(CHIBIOS)/os/xhal/ports/STM32/LLD/GPIOv2/driver.mk
 include $(CHIBIOS)/os/xhal/ports/STM32/LLD/ICACHEv1/driver.mk
 include $(CHIBIOS)/os/xhal/ports/STM32/LLD/RCCv1/driver.mk

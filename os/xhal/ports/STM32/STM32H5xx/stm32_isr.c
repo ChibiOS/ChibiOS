@@ -51,6 +51,8 @@
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
 
+//#include "stm32_dac1.inc"
+
 #include "stm32_exti0.inc"
 #include "stm32_exti1.inc"
 #include "stm32_exti2.inc"
@@ -68,19 +70,17 @@
 #include "stm32_exti14.inc"
 #include "stm32_exti15.inc"
 
-#include "stm32_usart1.inc"
-#include "stm32_usart2.inc"
-#include "stm32_usart3.inc"
-#include "stm32_uart4.inc"
-#include "stm32_uart5.inc"
-#include "stm32_usart6.inc"
-#include "stm32_uart7.inc"
-#include "stm32_uart8.inc"
-#include "stm32_uart9.inc"
-#include "stm32_usart10.inc"
-//#include "stm32_usart11.inc"
-//#include "stm32_uart12.inc"
-#include "stm32_lpuart1.inc"
+//#include "stm32_i2c1.inc"
+//#include "stm32_i2c2.inc"
+//#include "stm32_i2c3.inc"
+//#include "stm32_i2c4.inc"
+
+//#include "stm32_spi1.inc"
+//#include "stm32_spi2.inc"
+//#include "stm32_spi3.inc"
+//#include "stm32_spi4.inc"
+//#include "stm32_spi5.inc"
+//#include "stm32_spi6.inc"
 
 #include "stm32_tim1.inc"
 #include "stm32_tim2.inc"
@@ -97,6 +97,22 @@
 #include "stm32_tim16.inc"
 #include "stm32_tim17.inc"
 
+#include "stm32_usart1.inc"
+#include "stm32_usart2.inc"
+#include "stm32_usart3.inc"
+#include "stm32_uart4.inc"
+#include "stm32_uart5.inc"
+#include "stm32_usart6.inc"
+#include "stm32_uart7.inc"
+#include "stm32_uart8.inc"
+#include "stm32_uart9.inc"
+#include "stm32_usart10.inc"
+#include "stm32_usart11.inc"
+#include "stm32_uart12.inc"
+#include "stm32_lpuart1.inc"
+
+//#include "stm32_usb1.inc"
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -107,6 +123,8 @@
  * @notapi
  */
 void irqInit(void) {
+
+//  dac1_irq_init();
 
   exti0_irq_init();
   exti1_irq_init();
@@ -124,6 +142,18 @@ void irqInit(void) {
   exti13_irq_init();
   exti14_irq_init();
   exti15_irq_init();
+
+//  i2c1_irq_init();
+//  i2c2_irq_init();
+//  i2c3_irq_init();
+//  i2c4_irq_init();
+
+//  spi1_irq_init();
+//  spi2_irq_init();
+//  spi3_irq_init();
+//  spi4_irq_init();
+//  spi5_irq_init();
+//  spi6_irq_init();
 
   tim1_irq_init();
   tim2_irq_init();
@@ -150,7 +180,11 @@ void irqInit(void) {
   uart8_irq_init();
   uart9_irq_init();
   usart10_irq_init();
+  usart11_irq_init();
+  uart12_irq_init();
   lpuart1_irq_init();
+
+//  usb1_irq_init();
 }
 
 /**
@@ -159,6 +193,8 @@ void irqInit(void) {
  * @notapi
  */
 void irqDeinit(void) {
+
+//  dac1_irq_deinit();
 
   exti0_irq_deinit();
   exti1_irq_deinit();
@@ -176,6 +212,18 @@ void irqDeinit(void) {
   exti13_irq_deinit();
   exti14_irq_deinit();
   exti15_irq_deinit();
+
+//  i2c1_irq_deinit();
+//  i2c2_irq_deinit();
+//  i2c3_irq_deinit();
+//  i2c4_irq_deinit();
+
+//  spi1_irq_deinit();
+//  spi2_irq_deinit();
+//  spi3_irq_deinit();
+//  spi4_irq_deinit();
+//  spi5_irq_deinit();
+//  spi6_irq_deinit();
 
   tim1_irq_deinit();
   tim2_irq_deinit();
@@ -202,7 +250,11 @@ void irqDeinit(void) {
   uart8_irq_deinit();
   uart9_irq_deinit();
   usart10_irq_deinit();
+  usart11_irq_deinit();
+  uart12_irq_deinit();
   lpuart1_irq_deinit();
+
+//  usb1_irq_deinit();
 }
 
 /** @} */

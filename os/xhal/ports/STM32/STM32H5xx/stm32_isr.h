@@ -86,39 +86,39 @@
 /*
  * DMA unit.
  */
-#define STM32_GPDMA1_CH0_HANDLER            VectorAC
-#define STM32_GPDMA1_CH1_HANDLER            VectorB0
-#define STM32_GPDMA1_CH2_HANDLER            VectorB4
-#define STM32_GPDMA1_CH3_HANDLER            VectorB8
-#define STM32_GPDMA1_CH4_HANDLER            VectorBC
-#define STM32_GPDMA1_CH5_HANDLER            VectorC0
-#define STM32_GPDMA1_CH6_HANDLER            VectorC4
-#define STM32_GPDMA1_CH7_HANDLER            VectorC8
-#define STM32_GPDMA2_CH0_HANDLER            Vector1A8
-#define STM32_GPDMA2_CH1_HANDLER            Vector1AC
-#define STM32_GPDMA2_CH2_HANDLER            Vector1B0
-#define STM32_GPDMA2_CH3_HANDLER            Vector1B4
-#define STM32_GPDMA2_CH4_HANDLER            Vector1B8
-#define STM32_GPDMA2_CH5_HANDLER            Vector1BC
-#define STM32_GPDMA2_CH6_HANDLER            Vector1C0
-#define STM32_GPDMA2_CH7_HANDLER            Vector1C4
+#define STM32_DMA31_CH0_HANDLER             VectorAC
+#define STM32_DMA31_CH1_HANDLER             VectorB0
+#define STM32_DMA31_CH2_HANDLER             VectorB4
+#define STM32_DMA31_CH3_HANDLER             VectorB8
+#define STM32_DMA31_CH4_HANDLER             VectorBC
+#define STM32_DMA31_CH5_HANDLER             VectorC0
+#define STM32_DMA31_CH6_HANDLER             VectorC4
+#define STM32_DMA31_CH7_HANDLER             VectorC8
+#define STM32_DMA32_CH0_HANDLER             Vector1A8
+#define STM32_DMA32_CH1_HANDLER             Vector1AC
+#define STM32_DMA32_CH2_HANDLER             Vector1B0
+#define STM32_DMA32_CH3_HANDLER             Vector1B4
+#define STM32_DMA32_CH4_HANDLER             Vector1B8
+#define STM32_DMA32_CH5_HANDLER             Vector1BC
+#define STM32_DMA32_CH6_HANDLER             Vector1C0
+#define STM32_DMA32_CH7_HANDLER             Vector1C4
 
-#define STM32_GPDMA1_CH0_NUMBER             27
-#define STM32_GPDMA1_CH1_NUMBER             28
-#define STM32_GPDMA1_CH2_NUMBER             29
-#define STM32_GPDMA1_CH3_NUMBER             30
-#define STM32_GPDMA1_CH4_NUMBER             31
-#define STM32_GPDMA1_CH5_NUMBER             32
-#define STM32_GPDMA1_CH6_NUMBER             33
-#define STM32_GPDMA1_CH7_NUMBER             34
-#define STM32_GPDMA2_CH0_NUMBER             90
-#define STM32_GPDMA2_CH1_NUMBER             91
-#define STM32_GPDMA2_CH2_NUMBER             92
-#define STM32_GPDMA2_CH3_NUMBER             93
-#define STM32_GPDMA2_CH4_NUMBER             94
-#define STM32_GPDMA2_CH5_NUMBER             95
-#define STM32_GPDMA2_CH6_NUMBER             96
-#define STM32_GPDMA2_CH7_NUMBER             97
+#define STM32_DMA31_CH0_NUMBER              27
+#define STM32_DMA31_CH1_NUMBER              28
+#define STM32_DMA31_CH2_NUMBER              29
+#define STM32_DMA31_CH3_NUMBER              30
+#define STM32_DMA31_CH4_NUMBER              31
+#define STM32_DMA31_CH5_NUMBER              32
+#define STM32_DMA31_CH6_NUMBER              33
+#define STM32_DMA31_CH7_NUMBER              34
+#define STM32_DMA32_CH0_NUMBER              90
+#define STM32_DMA32_CH1_NUMBER              91
+#define STM32_DMA32_CH2_NUMBER              92
+#define STM32_DMA32_CH3_NUMBER              93
+#define STM32_DMA32_CH4_NUMBER              94
+#define STM32_DMA32_CH5_NUMBER              95
+#define STM32_DMA32_CH6_NUMBER              96
+#define STM32_DMA32_CH7_NUMBER              97
 
 /*
  * EXTI unit.
@@ -163,6 +163,27 @@
 #define STM32_ETH_HANDLER                   Vector1E8
 
 #define STM32_ETH_NUMBER                    106
+
+/*
+ * I2C units.
+ */
+#define STM32_I2C1_EV_HANDLER               Vector10C
+#define STM32_I2C1_ER_HANDLER               Vector110
+#define STM32_I2C2_EV_HANDLER               Vector114
+#define STM32_I2C2_ER_HANDLER               Vector118
+#define STM32_I2C3_EV_HANDLER               Vector180
+#define STM32_I2C3_ER_HANDLER               Vector184
+#define STM32_I2C4_EV_HANDLER               Vector21C
+#define STM32_I2C4_ER_HANDLER               Vector220
+
+#define STM32_I2C1_EV_NUMBER                51
+#define STM32_I2C1_ER_NUMBER                52
+#define STM32_I2C2_EV_NUMBER                53
+#define STM32_I2C2_ER_NUMBER                54
+#define STM32_I2C3_EV_NUMBER                80
+#define STM32_I2C3_ER_NUMBER                81
+#define STM32_I2C4_EV_NUMBER                125
+#define STM32_I2C4_ER_NUMBER                126
 
 /*
  * OCTOSPI units.
@@ -276,10 +297,8 @@
 /*
  * USB units.
  */
-#define STM32_USB1_HP_HANDLER               Vector168
-#define STM32_USB1_LP_HANDLER               Vector168
-#define STM32_USB1_HP_NUMBER                74
-#define STM32_USB1_LP_NUMBER                74
+#define STM32_USB1_HANDLER                  Vector168
+#define STM32_USB1_NUMBER                   74
 /** @} */
 
 /*===========================================================================*/

@@ -320,6 +320,7 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
 //#include "hal_flash.h"
 
 /* Shared headers.*/
+#include "hal_safety.h"
 //#include "hal_buffers.h"
 #include "hal_queues.h"
 #include "hal_buffered_serial.h"

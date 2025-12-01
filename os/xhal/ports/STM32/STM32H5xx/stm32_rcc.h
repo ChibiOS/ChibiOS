@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006..2025 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 */
 
 /**
- * @file    STM32G4xx/stm32_rcc.h
+ * @file    STM32H5xx/stm32_rcc.h
  * @brief   RCC helper driver header.
  * @note    This file requires definitions from the ST header file
- *          @p stm32g4xx.h.
+ *          @p stm32h5xx.h.
  *
- * @addtogroup STM32G4xx_RCC
+ * @addtogroup STM32H5xx_RCC
  * @{
  */
 #ifndef STM32_RCC_H
@@ -341,7 +341,7 @@
 /**
  * @brief   Resets one or more peripheral on the AHB4 bus.
  *
- * @param[in] mask      AHB3 peripherals mask
+ * @param[in] mask      AHB4 peripherals mask
  *
  * @api
  */
@@ -520,21 +520,21 @@
  *
  * @api
  */
-#define rccEnableGPDMA1(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA1EN, lp)
+#define rccEnableDMA31(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA1EN, lp)
 
 /**
  * @brief   Disables the GPDMA1 peripheral clock.
  *
  * @api
  */
-#define rccDisableGPDMA1() rccDisableAHB1(RCC_AHB1ENR_GPDMA1EN)
+#define rccDisableDMA31() rccDisableAHB1(RCC_AHB1ENR_GPDMA1EN)
 
 /**
  * @brief   Resets the GPDMA1 peripheral.
  *
  * @api
  */
-#define rccResetGPDMA1() rccResetAHB1(RCC_AHB1RSTR_GPDMA1RST)
+#define rccResetDMA31() rccResetAHB1(RCC_AHB1RSTR_GPDMA1RST)
 
 /**
  * @brief   Enables the GPDMA2 peripheral clock.
@@ -543,21 +543,21 @@
  *
  * @api
  */
-#define rccEnableGPDMA2(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA2EN, lp)
+#define rccEnableDMA32(lp) rccEnableAHB1(RCC_AHB1ENR_GPDMA2EN, lp)
 
 /**
  * @brief   Disables the GPDMA2 peripheral clock.
  *
  * @api
  */
-#define rccDisableGPDMA2() rccDisableAHB1(RCC_AHB1ENR_GPDMA2EN)
+#define rccDisableDMA32() rccDisableAHB1(RCC_AHB1ENR_GPDMA2EN)
 
 /**
  * @brief   Resets the GPDMA2 peripheral.
  *
  * @api
  */
-#define rccResetGPDMA2() rccResetAHB1(RCC_AHB1RSTR_GPDMA2RST)
+#define rccResetDMA32() rccResetAHB1(RCC_AHB1RSTR_GPDMA2RST)
 /** @} */
 
 /**
@@ -645,21 +645,21 @@
  *
  * @api
  */
-#define rccEnableI2C3(lp) rccEnableAPB1L(RCC_APB1LENR_I2C3EN, lp)
+#define rccEnableI2C3(lp) rccEnableAPB3(RCC_APB3ENR_I2C3EN, lp)
 
 /**
  * @brief   Disables the I2C3 peripheral clock.
  *
  * @api
  */
-#define rccDisableI2C3() rccDisableAPB1L(RCC_APB1LENR_I2C3EN)
+#define rccDisableI2C3() rccDisableAPB3(RCC_APB3ENR_I2C3EN)
 
 /**
  * @brief   Resets the I2C3 peripheral.
  *
  * @api
  */
-#define rccResetI2C3() rccResetAPB1L(RCC_APB1LRSTR_I2C3RST)
+#define rccResetI2C3() rccResetAPB3(RCC_APB3RSTR_I2C3RST)
 
 /**
  * @brief Enables the I2C4 peripheral clock.
@@ -668,49 +668,21 @@
  *
  * @api
  */
-#define rccEnableI2C4(lp) rccEnableAPB1H(RCC_APB1HENR_I2C4EN, lp)
+#define rccEnableI2C4(lp) rccEnableAPB3(RCC_APB3ENR_I2C4EN, lp)
 
 /**
  * @brief Disables the I2C4 peripheral clock.
  *
  * @api
  */
-#define rccDisableI2C4() rccDisableAPB1L(RCC_APB1HENR_I2C4EN)
+#define rccDisableI2C4() rccDisableAPB3(RCC_APB3ENR_I2C4EN)
 
 /**
  * @brief Resets the I2C4 peripheral.
  *
  * @api
  */
-#define rccResetI2C4() rccResetAPB1L(RCC_APB1RSTR2_I2C4RST)
-/** @} */
-
-/**
- * @name    QUADSPI peripherals specific RCC operations
- * @{
- */
-/**
- * @brief   Enables the QUADSPI1 peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccEnableQUADSPI1(lp) rccEnableAHB3(RCC_AHB3ENR_QSPIEN, lp)
-
-/**
- * @brief   Disables the QUADSPI1 peripheral clock.
- *
- * @api
- */
-#define rccDisableQUADSPI1() rccDisableAHB3(RCC_AHB3ENR_QSPIEN)
-
-/**
- * @brief   Resets the QUADSPI1 peripheral.
- *
- * @api
- */
-#define rccResetQUADSPI1() rccResetAHB3(RCC_AHB3RSTR_QSPIRST)
+#define rccResetI2C4() rccResetAPB3(RCC_APB3RSTR_I2C4RST)
 /** @} */
 
 /**
