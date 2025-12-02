@@ -312,7 +312,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   /* Resetting and restarting MSI without touching the other settings, it
      is required during the (re)configuration.*/
   halRegMaskedWrite32X(&RCC->CR,
-                       RCC_CR_MSIRANGE_Msk,
+                       RCC_CR_MSIRANGE_Msk | RCC_CR_MSION_Msk,
                        RCC_CR_MSIRANGE_4M | RCC_CR_MSION,
                        true);
   if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_MSIRDY,
