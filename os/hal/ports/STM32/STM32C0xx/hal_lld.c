@@ -31,27 +31,29 @@
 /**
  * @brief   Number of thresholds in the wait states array.
  */
-#define STM32_WS_THRESHOLDS             1
+#define STM32_WS_THRESHOLDS                 2
 
 /**
- * @brief   Flash ACR reset value.
+ * @name    Registers reset values
+ * @{
  */
-#define STM32_FLASH_ACR_RESET           0x00040600U
+#define STM32_FLASH_ACR_RESET               0x00040600U
+#define STM32_RCC_CR_RESET                  0x00001540U
+#define STM32_RCC_CFGR_RESET                0x00000000U
+/** @} */
 
 /**
- * @brief   RCC CR reset value.
+ * @name    Stabilization times
+ * @{
  */
-#define STM32_RCC_CR_RESET              0x00000500U
+#define STM32_RELAXED_TIMEOUT_FACTOR        5U
+#define STM32_HSI_STARTUP_TIME              (4U * STM32_RELAXED_TIMEOUT_FACTOR)
+#define STM32_OSCILLATORS_STARTUP_TIME      (2000U * STM32_RELAXED_TIMEOUT_FACTOR)
+#define STM32_SYSCLK_SWITCH_TIME            (50U * STM32_RELAXED_TIMEOUT_FACTOR)
+/** @} */
 
-/**
- * @brief   RCC CFGR reset value.
- */
-#define STM32_RCC_CFGR_RESET            0x00000000U
-
-/**
- * @brief   PWR CR1 reset value.
- */
-#define STM32_PWR_CR1_RESET             0x00000208U
+/* Reserved bit to be kept at 1, ST mysteries.*/
+#define FLASH_ACR_RESVD10                   (1U << 10)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -63,6 +65,42 @@
  */
 uint32_t SystemCoreClock = STM32_HCLK;
 
+/**
+ * @brief   Post-reset clock configuration.
+ */
+const halclkcfg_t hal_clkcfg_reset = {
+  .rcc_cr               = STM32_RCC_CR_RESET,
+  .rcc_cfgr             = STM32_RCC_CFGR_RESET,
+  .flash_acr            = STM32_FLASH_ACR_RESET
+};
+
+/**
+ * @brief   Default clock configuration.
+ * @note    This is the configuration defined in mcuconf.h.
+ */
+const halclkcfg_t hal_clkcfg_default = {
+  .rcc_cr               = 0U
+#if STM32_HSIUSB48_ENABLED == TRUE
+                        | RCC_CR_HSIUSB48ON
+#endif
+#if defined(STM32_HSE_BYPASS)
+                        | RCC_CR_HSEBYP
+#endif
+#if STM32_HSE_ENABLED == TRUE
+                        | RCC_CR_HSEON
+#endif
+#if STM32_HSI48_ENABLED == TRUE
+                        | RCC_CR_HSION  | RCC_CR_HSIKERON
+#endif
+                        | STM32_HSIDIV  | STM32_HSIKERDIV | STM32_SYSDIV,
+  .rcc_cfgr             = STM32_MCOPRE  | STM32_MCOSEL  |
+                          STM32_MCO2PRE | STM32_MCO2SEL |
+                          STM32_PPRE    | STM32_HPRE    |
+                          STM32_SW,
+  .flash_acr            = (STM32_FLASH_ACR & ~FLASH_ACR_LATENCY_Msk) |
+                          STM32_FLASHBITS | FLASH_ACR_RESVD10
+};
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -72,19 +110,6 @@ uint32_t SystemCoreClock = STM32_HCLK;
 /*===========================================================================*/
 
 #include "stm32_bd_v3.inc"
-
-/**
- * @brief   Safe setting of flash ACR register.
- *
- * @param[in] acr       value for the ACR register
- */
-static void flash_set_acr(uint32_t acr) {
-
-  FLASH->ACR = acr;
-  while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
-    /* Waiting for flash wait states setup.*/
-  }
-}
 
 /**
  * @brief   Configures the SYSCFG unit.
@@ -151,32 +176,93 @@ static void hal_lld_set_static_pwr(void) {
  */
 static void hal_lld_set_static_clocks(void) {
 
-  /* Clock-related settings (dividers, MCO etc).*/
-  halRegWrite32X(&RCC->CFGR,
-                 STM32_MCOPRE  | STM32_MCOSEL  |
-                 STM32_MCO2PRE | STM32_MCO2SEL |
-                 STM32_PPRE    | STM32_HPRE,
-                 true);
-
-  /* Set HSISYS/HSIKER divisors and optional SYSDIV when present.*/
-#if STM32_RCC_HAS_SYSDIV
-  RCC->CR = (RCC->CR & ~(RCC_CR_HSIDIV_Msk | RCC_CR_HSIKERDIV_Msk | RCC_CR_SYSDIV_Msk)) |
-            STM32_HSIDIV | STM32_HSIKERDIV | STM32_SYSDIV;
-#else
-  RCC->CR = (RCC->CR & ~(RCC_CR_HSIDIV_Msk | RCC_CR_HSIKERDIV_Msk)) |
-            STM32_HSIDIV | STM32_HSIKERDIV;
-#endif
-
   /* CCIPR register initialization.*/
-  RCC->CCIPR =  STM32_ADCSEL    | STM32_I2S1SEL    | STM32_I2C1SEL   |
-                STM32_FDCAN1SEL | STM32_USART1SEL;
+  halRegWrite32X(&RCC->CCIPR,
+                 STM32_ADCSEL | STM32_I2S1SEL | STM32_I2C1SEL | STM32_FDCAN1SEL | STM32_USART1SEL,
+                 true);
 
 #if STM32_HAS_USB
   /* CCIPR2 register initialization.*/
-  RCC->CCIPR2 =  STM32_USBSEL;
+  halRegWrite32X(&RCC->CCIPR2, STM32_USBSEL, true);
 #endif
 }
 
+/**
+ * @brief   Switches to a different clock configuration.
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @notapi
+ */
+static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
+  uint32_t wtmask;
+
+  /* Setting flash ACR to the safest value while the clock tree is
+     reconfigured. we don't know the current clock settings.*/
+  halRegWrite32X(&FLASH->ACR,
+                 FLASH_ACR_DBG_SWEN | FLASH_ACR_RESVD10 | FLASH_ACR_ICEN | FLASH_ACR_LATENCY_1WS,
+                 true);
+
+  /* Using default clock settings (HSION) during transition.*/
+  halRegWrite32X(&RCC->CR, STM32_RCC_CR_RESET, true);
+  if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_HSIRDY,
+                          STM32_HSI_STARTUP_TIME,
+                          NULL)) {
+    return true;
+  }
+
+  /* Making sure to run from HSI.*/
+  halRegWrite32X(&RCC->CFGR, STM32_RCC_CFGR_RESET, true);
+  if (halRegWaitMatch32X(&RCC->CFGR,
+                         RCC_CFGR_SWS_Msk, RCC_CFGR_SWS_HSI,
+                         STM32_SYSCLK_SWITCH_TIME,
+                         NULL)) {
+    return true;
+  }
+
+  /* Enabling all required oscillators at same time, HSI enforced active
+     because running from it.*/
+  halRegWrite32X(&RCC->CR, ccp->rcc_cr | RCC_CR_HSION, true);
+
+  /* Adding to the "wait mask" the status bits of other enabled oscillators,
+     waiting for all oscillators to become ready.*/
+  wtmask = RCC_CR_HSIRDY;                  /* Known to be ready already.*/
+  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
+    wtmask |= RCC_CR_HSERDY;
+  }
+  if ((ccp->rcc_cr & RCC_CR_HSIUSB48ON) != 0U) {
+    wtmask |= RCC_CR_HSIUSB48RDY;
+  }
+  if (halRegWaitAllSet32X(&RCC->CR,
+                          wtmask,
+                          STM32_OSCILLATORS_STARTUP_TIME,
+                          NULL)) {
+    return true;
+  }
+
+  /* Final RCC CFGR settings (prescalers, MCO, etc).*/
+  halRegWrite32X(&RCC->CFGR, ccp->rcc_cfgr, true);
+
+  /* Final flash ACR settings according to the target configuration.*/
+  halRegWrite32X(&FLASH->ACR, ccp->flash_acr | FLASH_ACR_RESVD10, true);
+
+  /* Waiting for the requested SYSCLK source to become active. */
+  if (halRegWaitMatch32X(&RCC->CFGR,
+                         RCC_CFGR_SWS_Msk, (ccp->rcc_cfgr & RCC_CFGR_SW_Msk) << RCC_CFGR_SWS_Pos,
+                         STM32_SYSCLK_SWITCH_TIME,
+                         NULL)) {
+    return true;
+  }
+
+  /* Final RCC_CR value, HSI could go off at this point if it is not part
+     of the mask.*/
+  halRegWrite32X(&RCC->CR, ccp->rcc_cr, true);
+
+  return false;
+}
 
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
@@ -214,12 +300,21 @@ void hal_lld_init(void) {
  */
 void stm32_clock_init(void) {
 
+  /* Enabling TIM17 for timeout handling.*/
+  rccResetTIM17();
+  rccEnableTIM17(false);
+  halRegWrite32X(&TIM17->PSC, (STM32_TIMPCLK / 1000000U) - 1U, true);
+//  halRegWrite32X(&TIM7->ARR, 0xFFFFU, true);
+  halRegWrite32X(&TIM17->EGR, TIM_EGR_UG, false);
+  halRegWrite32X(&TIM17->CR1, TIM_CR1_CEN, true);
+
 #if !STM32_NO_INIT
   /* Reset of all peripherals.*/
   rccResetAHB(~0);
   rccResetAPBR1(~0);
   rccResetAPBR2(~0);
 
+  /* RTC APB clock enable.*/
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
   rccEnableAPBR1(RCC_APBENR1_RTCAPBEN, false);
 #endif
@@ -236,9 +331,6 @@ void stm32_clock_init(void) {
   /* Clocks setup.*/
   lse_init();
   lsi_init();
-  hsi48_init();
-  hsiusb48_init();
-  hse_init();
 
   /* Backup domain initializations.*/
   bd_init();
@@ -246,16 +338,8 @@ void stm32_clock_init(void) {
   /* Static clocks setup.*/
   hal_lld_set_static_clocks();
 
-  /* Set flash WS's for SYSCLK source.*/
-  flash_set_acr(STM32_FLASH_ACR | STM32_FLASHBITS);
-
-  /* Switching to the configured SYSCLK source if it is different from HSI16.*/
-#if STM32_SW != RCC_CFGR_SW_HSISYS
-  RCC->CFGR |= STM32_SW;        /* Switches on the selected clock source.   */
-  /* Wait until SYSCLK is stable.*/
-  while ((RCC->CFGR & RCC_CFGR_SWS) != (STM32_SW << 3))
-    ;
-#endif
+  /* Selecting the default clock configuration. */
+  halSftFailOnError(hal_lld_clock_configure(&hal_clkcfg_default), "clkinit");
 
 #endif /* STM32_NO_INIT */
 }

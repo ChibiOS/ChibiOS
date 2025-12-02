@@ -1207,10 +1207,10 @@
  * @brief   Flash settings.
  */
 #if (STM32_HCLK <= STM32_0WS_THRESHOLD) || defined(__DOXYGEN__)
-  #define STM32_FLASHBITS                   0
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_0WS
 
 #else
-  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_0
+  #define STM32_FLASHBITS                   FLASH_ACR_LATENCY_1WS
 #endif
 
 /*===========================================================================*/
@@ -1228,13 +1228,25 @@ typedef struct {
 
 /**
  * @brief   Type of a timeout counter.
- * @note    16 bits because it must match TIM7 counter size.
+ * @note    16 bits because it must match TIM17 counter size.
  */
-//typedef uint16_t halcnt_t;
+typedef uint16_t halcnt_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Real time counter frequency exported to the safety module.
+ * @note    The counter is clocked at 1MHz, the prescaled is recalculated
+ *          if/when the input frequency changes.
+ */
+#define HAL_LLD_GET_CNT_FREQUENCY()         1000000U
+
+/**
+ * @brief   Real time counter value exported to the safety module.
+ */
+#define HAL_LLD_GET_CNT_VALUE()             ((halcnt_t)TIM17->CNT)
 
 /**
  * @brief   Returns the frequency of a clock point in Hz.
@@ -1271,6 +1283,11 @@ typedef struct {
 #include "stm32_exti.h"
 #include "stm32_rcc.h"
 #include "stm32_tim.h"
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) && !defined(__DOXYGEN__)
+extern const halclkcfg_t hal_clkcfg_reset;
+extern const halclkcfg_t hal_clkcfg_default;
+#endif
 
 #ifdef __cplusplus
 extern "C" {

@@ -31,22 +31,22 @@
 /**
  * @brief   Number of thresholds in the wait states array.
  */
-#define STM32_WS_THRESHOLDS             3
+#define STM32_WS_THRESHOLDS                 3
 
 /**
  * @name    Registers reset values
  * @{
  */
-#define STM32_PWR_CR1_RESET             0x00000208U
-#define STM32_FLASH_ACR_RESET           0x00040600U
-#define STM32_RCC_CR_RESET              0x00000083U
-#define STM32_RCC_CFGR_RESET            0x00000000U
-#define STM32_RCC_PLLCFGR_RESET         0x00001000U
-#define STM32_RCC_CRRCR_RESET           0x00008800U
+#define STM32_PWR_CR1_RESET                 0x00000208U
+#define STM32_FLASH_ACR_RESET               0x00040600U
+#define STM32_RCC_CR_RESET                  0x00000083U
+#define STM32_RCC_CFGR_RESET                0x00000000U
+#define STM32_RCC_PLLCFGR_RESET             0x00001000U
+#define STM32_RCC_CRRCR_RESET               0x00008800U
 /** @} */
 
 /* Reserved bit to be kept at 1, ST mysteries.*/
-#define FLASH_ACR_RESVD10               (1U << 10)
+#define FLASH_ACR_RESVD10                   (1U << 10)
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
