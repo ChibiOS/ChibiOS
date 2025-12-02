@@ -200,12 +200,6 @@ static void hal_lld_set_static_clocks(void) {
 static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   uint32_t wtmask;
 
-  /* Setting flash ACR to the safest value while the clock tree is
-     reconfigured. we don't know the current clock settings.*/
-  halRegWrite32X(&FLASH->ACR,
-                 FLASH_ACR_DBG_SWEN | FLASH_ACR_RESVD10 | FLASH_ACR_ICEN | FLASH_ACR_LATENCY_1WS,
-                 true);
-
   /* Using default clock settings (HSION) during transition.*/
   halRegWrite32X(&RCC->CR, STM32_RCC_CR_RESET, true);
   if (halRegWaitAllSet32X(&RCC->CR, RCC_CR_HSIRDY,
@@ -249,7 +243,7 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   /* Final flash ACR settings according to the target configuration.*/
   halRegWrite32X(&FLASH->ACR, ccp->flash_acr | FLASH_ACR_RESVD10, true);
 
-  /* Waiting for the requested SYSCLK source to become active. */
+  /* Waiting for the requested SYSCLK source to become active (SWS == SW). */
   if (halRegWaitMatch32X(&RCC->CFGR,
                          RCC_CFGR_SWS_Msk, (ccp->rcc_cfgr & RCC_CFGR_SW_Msk) << RCC_CFGR_SWS_Pos,
                          STM32_SYSCLK_SWITCH_TIME,
