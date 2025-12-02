@@ -445,7 +445,7 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     sysclk = 0U;
   }
 
-  if (sysclk > slp->sysclk_max) {
+  if ((sysclk == 0U) || (sysclk > slp->sysclk_max)) {
     return true;
   }
 
