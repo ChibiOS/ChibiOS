@@ -326,6 +326,14 @@
 #endif
 
 /**
+ * @brief   SYSCFG CFGR1 register initialization value.
+ * @note    The field MEM_MODE is not touched by this setting.
+ */
+#if !defined(STM32_SYSCFG_CFGR1) || defined(__DOXYGEN__)
+#define STM32_SYSCFG_CFGR1                  (0U)
+#endif
+
+/**
  * @brief   PWR CR1 register initialization value.
  */
 #if !defined(STM32_PWR_CR1) || defined(__DOXYGEN__)

@@ -229,6 +229,14 @@ static const system_limits_t vos_range2 = {
 #include "stm32_bd.inc"
 
 /**
+ * @brief   Configures the SYSCFG unit.
+ */
+static void hal_lld_set_static_syscfg(void) {
+
+  SYSCFG->CFGR1 = STM32_SYSCFG_CFGR1 & ~SYSCFG_CFGR1_MEM_MODE_Msk;
+}
+
+/**
  * @brief   Configures the PWR unit.
  * @note    CR is not initialized inside this function except for DBP.
  */
@@ -748,6 +756,9 @@ void stm32_clock_init(void) {
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APB3ENR_RTCAPBEN)
   rccEnableAPB3(RCC_APB3ENR_RTCAPBEN, true);
 #endif
+
+  /* Static SYSCFG configurations.*/
+  hal_lld_set_static_syscfg();
 
   /* Static PWR configurations.*/
   hal_lld_set_static_pwr();

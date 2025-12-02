@@ -53,6 +53,11 @@
 #define STM32_CLOCK_DYNAMIC                 ${doc.STM32_CLOCK_DYNAMIC!"FALSE"}
 
 /*
+ * SYSCFG settings.
+ */
+#define STM32_SYSCFG_CFGR1                  ${doc.STM32_SYSCFG_CFGR1!"(0U)"}
+
+/*
  * PWR settings.
  */
 #define STM32_PWR_CR1                       ${doc.STM32_PWR_CR1!"(PWR_CR1_VOS_RANGE1 | PWR_CR1_FPD_STOP)"}
