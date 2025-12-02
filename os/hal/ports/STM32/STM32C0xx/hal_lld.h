@@ -106,6 +106,16 @@
 /** @} */
 
 /**
+ * @name    PWR_CR2 register helpers
+ * @{
+ */
+#define PWR_CR2_PVM_VDDIO2_FIELD(n)         ((n) << PWR_CR2_PVM_VDDIO2_Pos)
+#define PWR_CR2_PVM_VDDIO2_DISABLED         PWR_CR2_PVM_VDDIO2_FIELD(0U)
+#define PWR_CR2_PVM_VDDIO2_ENABLED          PWR_CR2_PVM_VDDIO2_FIELD(1U)
+#define PWR_CR2_PVM_VDDIO2_BYPASSED         PWR_CR2_PVM_VDDIO2_FIELD(2U)
+/** @} */
+
+/**
  * @name    RCC_CR register helpers
  * @{
  */
@@ -286,6 +296,13 @@
  */
 #if !defined(STM32_NO_INIT) || defined(__DOXYGEN__)
 #define STM32_NO_INIT                       FALSE
+#endif
+
+/**
+ * @brief   PWR CR2 register initialization value.
+ */
+#if !defined(STM32_PWR_CR2) || defined(__DOXYGEN__)
+#define STM32_PWR_CR2                       (PWR_CR2_PVM_VDDIO2_ENABLED)
 #endif
 
 /**

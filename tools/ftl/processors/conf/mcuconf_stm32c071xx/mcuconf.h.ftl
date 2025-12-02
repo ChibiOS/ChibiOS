@@ -46,9 +46,21 @@
 #define STM32C071_MCUCONF
 
 /*
- * HAL driver system settings.
+ * HAL driver general settings.
  */
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
+
+/*
+ * SYSCFG settings.
+ */
+#define STM32_SYSCFG_CFGR1                  ${doc.STM32_SYSCFG_CFGR1!"(0U)"}
+#define STM32_SYSCFG_CFGR2                  ${doc.STM32_SYSCFG_CFGR2!"(0U)"}
+#define STM32_SYSCFG_CFGR3                  ${doc.STM32_SYSCFG_CFGR3!"(0U)"}
+
+/*
+ * PWR settings.
+ */
+#define STM32_PWR_CR2                       ${doc.STM32_PWR_CR2!"(PWR_CR2_PVM_VDDIO2_ENABLED)"}
 #define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_EIWUL)"}
 #define STM32_PWR_CR4                       ${doc.STM32_PWR_CR4!"(0U)"}
 #define STM32_PWR_PUCRA                     ${doc.STM32_PWR_PUCRA!"(0U)"}
@@ -61,6 +73,10 @@
 #define STM32_PWR_PDCRD                     ${doc.STM32_PWR_PDCRD!"(0U)"}
 #define STM32_PWR_PUCRF                     ${doc.STM32_PWR_PUCRF!"(0U)"}
 #define STM32_PWR_PDCRF                     ${doc.STM32_PWR_PDCRF!"(0U)"}
+
+/*
+ * HAL driver system settings.
+ */
 #define STM32_HSIDIV_VALUE                  ${doc.STM32_HSIDIV_VALUE!"4"}
 #define STM32_HSIKERDIV_VALUE               ${doc.STM32_HSIKERDIV_VALUE!"3"}
 #define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"TRUE"}
@@ -78,7 +94,7 @@
 #define STM32_LSCOSEL                       ${doc.STM32_LSCOSEL!"RCC_CSR1_LSCOSEL_NOCLOCK"}
 
 /*
- * Peripherals clocks and sources.
+ * Peripherals clock sources.
  */
 #define STM32_ADCSEL                        ${doc.STM32_ADCSEL!"RCC_CCIPR_ADCSEL_SYSCLK"}
 #define STM32_I2C1SEL                       ${doc.STM32_I2C1SEL!"RCC_CCIPR_I2C1SEL_PCLK"}
@@ -88,7 +104,7 @@
 #define STM32_RTCSEL                        ${doc.STM32_RTCSEL!"RCC_CSR1_RTCSEL_NOCLOCK"}
 
 /*
- * Shared IRQ settings.
+ * IRQ system settings.
  */
 #define STM32_IRQ_EXTI0_1_PRIORITY          ${doc.STM32_IRQ_EXTI0_1_PRIORITY!"3"}
 #define STM32_IRQ_EXTI2_3_PRIORITY          ${doc.STM32_IRQ_EXTI2_3_PRIORITY!"3"}
@@ -105,6 +121,8 @@
 #define STM32_IRQ_TIM14_PRIORITY            ${doc.STM32_IRQ_TIM14_PRIORITY!"1"}
 #define STM32_IRQ_TIM16_PRIORITY            ${doc.STM32_IRQ_TIM16_PRIORITY!"1"}
 #define STM32_IRQ_TIM17_PRIORITY            ${doc.STM32_IRQ_TIM17_PRIORITY!"1"}
+
+#define STM32_IRQ_USB1_PRIORITY             ${doc.STM32_IRQ_USB1_PRIORITY!"3"}
 
 /*
  * ADC driver system settings.
@@ -198,11 +216,10 @@
  * USB driver system settings.
  */
 #define STM32_USB_USE_USB1                  ${doc.STM32_USB_USE_USB1!"FALSE"}
-#define STM32_USB_USB1_LP_IRQ_PRIORITY      ${doc.STM32_USB_USB1_LP_IRQ_PRIORITY!"3"}
 #define STM32_USB_USE_ISOCHRONOUS           ${doc.STM32_USB_USE_ISOCHRONOUS!"FALSE"}
 #define STM32_USB_USE_FAST_COPY             ${doc.STM32_USB_USE_FAST_COPY!"FALSE"}
 #define STM32_USB_HOST_WAKEUP_DURATION      ${doc.STM32_USB_HOST_WAKEUP_DURATION!"2"}
-#define STM32_USB_48MHZ_DELTA               ${doc.STM32_USB_48MHZ_DELTA!"0"}
+#define STM32_USB_48MHZ_DELTA               ${doc.STM32_USB_48MHZ_DELTA!"120000"}
 
 /*
  * WDG driver system settings.

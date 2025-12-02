@@ -47,9 +47,20 @@
 #define STM32C031_MCUCONF
 
 /*
- * HAL driver system settings.
+ * HAL driver general settings.
  */
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
+
+/*
+ * SYSCFG settings.
+ */
+#define STM32_SYSCFG_CFGR1                  ${doc.STM32_SYSCFG_CFGR1!"(0U)"}
+#define STM32_SYSCFG_CFGR2                  ${doc.STM32_SYSCFG_CFGR2!"(0U)"}
+#define STM32_SYSCFG_CFGR3                  ${doc.STM32_SYSCFG_CFGR3!"(0U)"}
+
+/*
+ * PWR settings.
+ */
 #define STM32_PWR_CR3                       ${doc.STM32_PWR_CR3!"(PWR_CR3_EIWUL)"}
 #define STM32_PWR_CR4                       ${doc.STM32_PWR_CR4!"(0U)"}
 #define STM32_PWR_PUCRA                     ${doc.STM32_PWR_PUCRA!"(0U)"}
@@ -62,9 +73,10 @@
 #define STM32_PWR_PDCRD                     ${doc.STM32_PWR_PDCRD!"(0U)"}
 #define STM32_PWR_PUCRF                     ${doc.STM32_PWR_PUCRF!"(0U)"}
 #define STM32_PWR_PDCRF                     ${doc.STM32_PWR_PDCRF!"(0U)"}
-#define STM32_SYSCFG_CFGR1                  ${doc.STM32_SYSCFG_CFGR1!"(0U)"}
-#define STM32_SYSCFG_CFGR2                  ${doc.STM32_SYSCFG_CFGR2!"(0U)"}
-#define STM32_SYSCFG_CFGR3                  ${doc.STM32_SYSCFG_CFGR3!"(0U)"}
+
+/*
+ * HAL driver system settings.
+ */
 #define STM32_HSIDIV_VALUE                  ${doc.STM32_HSIDIV_VALUE!"4"}
 #define STM32_HSIKERDIV_VALUE               ${doc.STM32_HSIKERDIV_VALUE!"3"}
 #define STM32_HSI48_ENABLED                 ${doc.STM32_HSI48_ENABLED!"TRUE"}

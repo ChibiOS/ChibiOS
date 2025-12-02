@@ -96,6 +96,9 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
   rccEnablePWRInterface(false);
 
   /* Static PWR configurations.*/
+#if defined(PWR_CR2_PVM_VDDIO2_Pos)
+  PWR->CR2   = STM32_PWR_CR2;
+#endif
   PWR->CR3   = STM32_PWR_CR3;
   PWR->CR4   = STM32_PWR_CR4;
   PWR->PUCRA = STM32_PWR_PUCRA;
