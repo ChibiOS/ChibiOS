@@ -682,13 +682,13 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
 
   /* Writing out results.*/
   clock_points[CLK_SYSCLK]    = sysclk;
-  clock_points[CLK_HSI16CLK]  = hsi16clk;
-  clock_points[CLK_HSI48CLK]  = hsi48clk;
-  clock_points[CLK_HSECLK]    = hseclk;
-  clock_points[CLK_MSICLK]    = msiclk;
-  clock_points[CLK_PLLPCLK]   = pllpclk;
-  clock_points[CLK_PLLQCLK]   = pllqclk;
-  clock_points[CLK_PLLRCLK]   = pllrclk;
+  clock_points[CLK_HSI16]     = hsi16clk;
+  clock_points[CLK_HSI48]     = hsi48clk;
+  clock_points[CLK_HSE]       = hseclk;
+  clock_points[CLK_MSI]       = msiclk;
+  clock_points[CLK_PLLP]      = pllpclk;
+  clock_points[CLK_PLLQ]      = pllqclk;
+  clock_points[CLK_PLLR]      = pllrclk;
   clock_points[CLK_HCLK]      = hclk;
   clock_points[CLK_PCLK]      = pclk;
   clock_points[CLK_PCLKTIM]   = pclktim;

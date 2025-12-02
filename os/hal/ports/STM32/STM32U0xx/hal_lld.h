@@ -78,13 +78,13 @@
  * @{
  */
 #define CLK_SYSCLK                          0U
-#define CLK_HSI16CLK                        1U
-#define CLK_HSI48CLK                        2U
-#define CLK_HSECLK                          3U
-#define CLK_MSICLK                          4U
-#define CLK_PLLPCLK                         5U
-#define CLK_PLLQCLK                         6U
-#define CLK_PLLRCLK                         7U
+#define CLK_HSI16                           1U
+#define CLK_HSI48                           2U
+#define CLK_HSE                             3U
+#define CLK_MSI                             4U
+#define CLK_PLLP                            5U
+#define CLK_PLLQ                            6U
+#define CLK_PLLR                            7U
 #define CLK_HCLK                            8U
 #define CLK_PCLK                            9U
 #define CLK_PCLKTIM                         10U
@@ -1649,13 +1649,13 @@ typedef uint16_t halcnt_t;
  */
   #define hal_lld_get_clock_point(clkpt)                                    \
     ((clkpt) == CLK_SYSCLK    ? STM32_SYSCLK        :                       \
-     (clkpt) == CLK_HSI16CLK  ? STM32_HSI16CLK      :                       \
-     (clkpt) == CLK_HSI48CLK  ? STM32_HSI48CLK      :                       \
-     (clkpt) == CLK_HSECLK    ? STM32_HSECLK        :                       \
-     (clkpt) == CLK_MSICLK    ? STM32_MSICLK        :                       \
-     (clkpt) == CLK_PLLPCLK   ? STM32_PLL_P_CLKOUT  :                       \
-     (clkpt) == CLK_PLLQCLK   ? STM32_PLL_Q_CLKOUT  :                       \
-     (clkpt) == CLK_PLLRCLK   ? STM32_PLL_R_CLKOUT  :                       \
+     (clkpt) == CLK_HSI16     ? STM32_HSI16CLK      :                       \
+     (clkpt) == CLK_HSI48     ? STM32_HSI48CLK      :                       \
+     (clkpt) == CLK_HSE       ? STM32_HSECLK        :                       \
+     (clkpt) == CLK_MSI       ? STM32_MSICLK        :                       \
+     (clkpt) == CLK_PLLP      ? STM32_PLL_P_CLKOUT  :                       \
+     (clkpt) == CLK_PLLQ      ? STM32_PLL_Q_CLKOUT  :                       \
+     (clkpt) == CLK_PLLR      ? STM32_PLL_R_CLKOUT  :                       \
      (clkpt) == CLK_HCLK      ? STM32_HCLK          :                       \
      (clkpt) == CLK_PCLK      ? STM32_PCLK          :                       \
      (clkpt) == CLK_PCLKTIM   ? STM32_TIMPCLK       :                       \
