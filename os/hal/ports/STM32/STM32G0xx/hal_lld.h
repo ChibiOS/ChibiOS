@@ -454,10 +454,6 @@
 #define RCC_CFGR_SWS_LSE        (4U << RCC_CFGR_SWS_Pos)
 #endif
 
-#if !defined(RCC_CFGR_PPRE_DIV2)
-#define RCC_CFGR_PPRE_DIV2      (4U << RCC_CFGR_PPRE_Pos)
-#endif
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/

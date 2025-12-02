@@ -249,9 +249,11 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
     wtmask |= RCC_CR_HSERDY;
   }
+#if defined(RCC_CR_HSIUSB48ON)
   if ((ccp->rcc_cr & RCC_CR_HSIUSB48ON) != 0U) {
     wtmask |= RCC_CR_HSIUSB48RDY;
   }
+#endif
   if (halRegWaitAllSet32X(&RCC->CR,
                           wtmask,
                           STM32_OSCILLATORS_STARTUP_TIME,
