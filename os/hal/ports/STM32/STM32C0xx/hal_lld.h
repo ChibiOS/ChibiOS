@@ -87,6 +87,7 @@
  * @name   Clock points names
  * @{
  */
+#if defined(RCC_CR_HSIUSB48ON) || defined(__DOXYGEN__)
 #define CLK_SYSCLK                          0U
 #define CLK_HSE                             1U
 #define CLK_HSISYS                          2U
@@ -103,6 +104,23 @@
     "SYSCLK", "HSE", "HSISYS", "HSIKER", "HSIUSB48", "HCLK", "PCLK",        \
     "PCLKTIM", "MCO1", "MCO2"                                               \
   }
+#else
+#define CLK_SYSCLK                          0U
+#define CLK_HSE                             1U
+#define CLK_HSISYS                          2U
+#define CLK_HSIKER                          3U
+#define CLK_HCLK                            4U
+#define CLK_PCLK                            5U
+#define CLK_PCLKTIM                         6U
+#define CLK_MCO1                            7U
+#define CLK_MCO2                            8U
+#define CLK_ARRAY_SIZE                      9U
+#define CLK_POINT_NAMES                                                     \
+  {                                                                         \
+    "SYSCLK", "HSE", "HSISYS", "HSIKER", "HCLK", "PCLK",                    \
+    "PCLKTIM", "MCO1", "MCO2"                                               \
+  }
+#endif
 /** @} */
 
 /**
@@ -159,7 +177,9 @@
 #define RCC_CFGR_SW_FIELD(n)                ((n) << RCC_CFGR_SW_Pos)
 #define RCC_CFGR_SW_HSISYS                  RCC_CFGR_SW_FIELD(0U)
 #define RCC_CFGR_SW_HSE                     RCC_CFGR_SW_FIELD(1U)
+#if defined(RCC_CR_HSIUSB48ON) || defined(__DOXYGEN__)
 #define RCC_CFGR_SW_HSIUSB48                RCC_CFGR_SW_FIELD(2U)
+#endif
 #define RCC_CFGR_SW_LSI                     RCC_CFGR_SW_FIELD(3U)
 #define RCC_CFGR_SW_LSE                     RCC_CFGR_SW_FIELD(4U)
 
@@ -170,7 +190,9 @@
 #define RCC_CFGR_MCO2SEL_HSE                RCC_CFGR_MCO2SEL_FIELD(4U)
 #define RCC_CFGR_MCO2SEL_LSI                RCC_CFGR_MCO2SEL_FIELD(6U)
 #define RCC_CFGR_MCO2SEL_LSE                RCC_CFGR_MCO2SEL_FIELD(7U)
+#if defined(RCC_CR_HSIUSB48ON) || defined(__DOXYGEN__)
 #define RCC_CFGR_MCO2SEL_HSIUSB48           RCC_CFGR_MCO2SEL_FIELD(8U)
+#endif
 
 #define RCC_CFGR_MCO2PRE_FIELD(n)           ((n) << RCC_CFGR_MCO2PRE_Pos)
 #define RCC_CFGR_MCO2PRE_DIV1               RCC_CFGR_MCO2PRE_FIELD(0U)
@@ -194,7 +216,9 @@
 #define RCC_CFGR_MCOSEL_HSE                 RCC_CFGR_MCOSEL_FIELD(4U)
 #define RCC_CFGR_MCOSEL_LSI                 RCC_CFGR_MCOSEL_FIELD(6U)
 #define RCC_CFGR_MCOSEL_LSE                 RCC_CFGR_MCOSEL_FIELD(7U)
+#if defined(RCC_CR_HSIUSB48ON) || defined(__DOXYGEN__)
 #define RCC_CFGR_MCOSEL_HSIUSB48            RCC_CFGR_MCOSEL_FIELD(8U)
+#endif
 
 #define RCC_CFGR_MCOPRE_FIELD(n)            ((n) << RCC_CFGR_MCOPRE_Pos)
 #define RCC_CFGR_MCOPRE_DIV1                RCC_CFGR_MCOPRE_FIELD(0U)
@@ -1272,6 +1296,7 @@ typedef uint16_t halcnt_t;
  *
  * @notapi
  */
+#if defined(CLK_HSIUSB48) || defined(__DoXYGEN__)
 #define hal_lld_get_clock_point(clkpt)                                      \
   ((clkpt) == CLK_SYSCLK        ? STM32_SYSCLK      :                       \
    (clkpt) == CLK_HSE           ? STM32_HSECLK      :                       \
@@ -1284,6 +1309,19 @@ typedef uint16_t halcnt_t;
    (clkpt) == CLK_MCO1          ? STM32_MCOCLK      :                       \
    (clkpt) == CLK_MCO2          ? STM32_MCO2CLK     :                       \
    0U)
+#else
+#define hal_lld_get_clock_point(clkpt)                                      \
+  ((clkpt) == CLK_SYSCLK        ? STM32_SYSCLK      :                       \
+   (clkpt) == CLK_HSE           ? STM32_HSECLK      :                       \
+   (clkpt) == CLK_HSISYS        ? STM32_HSISYSCLK   :                       \
+   (clkpt) == CLK_HSIKER        ? STM32_HSIKERCLK   :                       \
+   (clkpt) == CLK_HCLK          ? STM32_HCLK        :                       \
+   (clkpt) == CLK_PCLK          ? STM32_PCLK        :                       \
+   (clkpt) == CLK_PCLKTIM       ? STM32_TIMPCLK     :                       \
+   (clkpt) == CLK_MCO1          ? STM32_MCOCLK      :                       \
+   (clkpt) == CLK_MCO2          ? STM32_MCO2CLK     :                       \
+   0U)
+#endif
 #endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/

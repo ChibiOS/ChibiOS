@@ -118,7 +118,9 @@ static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
   [CLK_HSE]             = STM32_HSECLK,
   [CLK_HSISYS]          = STM32_HSISYSCLK,
   [CLK_HSIKER]          = STM32_HSIKERCLK,
+#if defined(RCC_CR_HSIUSB48ON)
   [CLK_HSIUSB48]        = STM32_HSIUSB48CLK,
+#endif
   [CLK_HCLK]            = STM32_HCLK,
   [CLK_PCLK]            = STM32_PCLK,
   [CLK_PCLKTIM]         = STM32_TIMPCLK,
@@ -298,7 +300,10 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
                                        2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
   static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
   static const halfreq_t flash_thresholds[STM32_WS_THRESHOLDS] = {STM32_0WS_THRESHOLD, STM32_1WS_THRESHOLD};
-  halfreq_t hsi48clk = 0U, hsiusb48clk = 0U, hseclk = 0U, hsisysclk = 0U, hsikerclk = 0U;
+  halfreq_t hsi48clk = 0U, hseclk = 0U, hsisysclk = 0U, hsikerclk = 0U;
+#if defined(RCC_CR_HSIUSB48ON)
+  halfreq_t hsiusb48clk = 0U;
+#endif
   halfreq_t sysclk, hclk, pclk, pclktim, mco1clk, mco2clk;
   uint32_t mcodiv, flashws;
 
@@ -314,10 +319,12 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     hsikerclk = hsi48clk / (((ccp->rcc_cr & RCC_CR_HSIKERDIV_Msk) >> RCC_CR_HSIKERDIV_Pos) + 1U);
   }
 
+#if defined(RCC_CR_HSIUSB48ON)
   /* HSIUSB48 clock.*/
   if ((ccp->rcc_cr & RCC_CR_HSIUSB48ON) != 0U) {
     hsiusb48clk = STM32_HSIUSB48CLK;
   }
+#endif
 
   /* SYSCLK frequency.*/
   switch (ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
@@ -327,9 +334,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case RCC_CFGR_SW_HSE:
     sysclk = hseclk;
     break;
+#if defined(RCC_CR_HSIUSB48ON)
   case RCC_CFGR_SW_HSIUSB48:
     sysclk = hsiusb48clk;
     break;
+#endif
   case RCC_CFGR_SW_LSI:
     sysclk = STM32_LSICLK;
     break;
@@ -373,9 +382,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case RCC_CFGR_MCOSEL_LSE:
     mco1clk = STM32_LSECLK;
     break;
+#if defined(RCC_CR_HSIUSB48ON)
   case RCC_CFGR_MCOSEL_HSIUSB48:
     mco1clk = hsiusb48clk;
     break;
+#endif
   default:
     mco1clk = 0U;
   }
@@ -402,9 +413,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   case RCC_CFGR_MCO2SEL_LSE:
     mco2clk = STM32_LSECLK;
     break;
+#if defined(RCC_CR_HSIUSB48ON)
   case RCC_CFGR_MCO2SEL_HSIUSB48:
     mco2clk = hsiusb48clk;
     break;
+#endif
   default:
     mco2clk = 0U;
   }
@@ -428,7 +441,9 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
   clock_points[CLK_HSE]       = hseclk;
   clock_points[CLK_HSISYS]    = hsisysclk;
   clock_points[CLK_HSIKER]    = hsikerclk;
+#if defined(RCC_CR_HSIUSB48ON)
   clock_points[CLK_HSIUSB48]  = hsiusb48clk;
+#endif
   clock_points[CLK_HCLK]      = hclk;
   clock_points[CLK_PCLK]      = pclk;
   clock_points[CLK_PCLKTIM]   = pclktim;
