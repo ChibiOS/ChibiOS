@@ -78,7 +78,7 @@ uint32_t SystemCoreClock = STM32_HCLK;
  *
  * @param[in] acr       value for the ACR register
  */
-__STATIC_INLINE void flash_set_acr(uint32_t acr) {
+static void flash_set_acr(uint32_t acr) {
 
   FLASH->ACR = acr;
   while ((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (acr & FLASH_ACR_LATENCY_Msk)) {
@@ -87,10 +87,23 @@ __STATIC_INLINE void flash_set_acr(uint32_t acr) {
 }
 
 /**
+ * @brief   Configures the SYSCFG unit.
+ */
+static void hal_lld_set_static_syscfg(void) {
+
+  /* SYSCFG clock enabled.*/
+  rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
+
+  SYSCFG->CFGR1 = STM32_SYSCFG_CFGR1;
+  SYSCFG->CFGR2 = STM32_SYSCFG_CFGR2;
+  SYSCFG->CFGR3 = STM32_SYSCFG_CFGR3;
+}
+
+/**
  * @brief   Configures the PWR unit.
  * @note    CR1 is not initialized inside this function.
  */
-__STATIC_INLINE void hal_lld_set_static_pwr(void) {
+static void hal_lld_set_static_pwr(void) {
 
   /* PWR clock enabled.*/
   rccEnablePWRInterface(false);
@@ -134,19 +147,9 @@ __STATIC_INLINE void hal_lld_set_static_pwr(void) {
 }
 
 /**
- * @brief   Configures the SYSCFG unit.
- */
-__STATIC_INLINE void hal_lld_set_static_syscfg(void) {
-
-  SYSCFG->CFGR1 = STM32_SYSCFG_CFGR1;
-  SYSCFG->CFGR2 = STM32_SYSCFG_CFGR2;
-  SYSCFG->CFGR3 = STM32_SYSCFG_CFGR3;
-}
-
-/**
  * @brief   Initializes static muxes and dividers.
  */
-__STATIC_INLINE void hal_lld_set_static_clocks(void) {
+static void hal_lld_set_static_clocks(void) {
 
   /* Clock-related settings (dividers, MCO etc).*/
   RCC->CFGR = STM32_MCOPRE  | STM32_MCOSEL  |
@@ -215,19 +218,15 @@ void stm32_clock_init(void) {
   rccResetAPBR1(~0);
   rccResetAPBR2(~0);
 
-  /* SYSCFG clock enabled here because it is a multi-functional unit shared
-     among multiple drivers.*/
-  rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
-
 #if (HAL_USE_RTC == TRUE) && defined(RCC_APBENR1_RTCAPBEN)
   rccEnableAPBR1(RCC_APBENR1_RTCAPBEN, false);
 #endif
 
-  /* Static PWR configurations.*/
-  hal_lld_set_static_pwr();
-
   /* Static SYSCFG configurations.*/
   hal_lld_set_static_syscfg();
+
+  /* Static PWR configurations.*/
+  hal_lld_set_static_pwr();
 
   /* Backup domain reset.*/
   bd_reset();

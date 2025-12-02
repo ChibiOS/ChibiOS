@@ -299,6 +299,27 @@
 #endif
 
 /**
+ * @brief   SYSCFG CFGR1 register initialization value.
+ */
+#if !defined(STM32_SYSCFG_CFGR1) || defined(__DOXYGEN__)
+#define STM32_SYSCFG_CFGR1                  (0U)
+#endif
+
+/**
+ * @brief   SYSCFG CFGR2 register initialization value.
+ */
+#if !defined(STM32_SYSCFG_CFGR2) || defined(__DOXYGEN__)
+#define STM32_SYSCFG_CFGR2                  (0U)
+#endif
+
+/**
+ * @brief   SYSCFG CFGR3 register initialization value.
+ */
+#if !defined(STM32_SYSCFG_CFGR3) || defined(__DOXYGEN__)
+#define STM32_SYSCFG_CFGR3                  (0U)
+#endif
+
+/**
  * @brief   PWR CR2 register initialization value.
  */
 #if !defined(STM32_PWR_CR2) || defined(__DOXYGEN__)
@@ -387,27 +408,6 @@
  */
 #if !defined(STM32_PWR_PDCRF) || defined(__DOXYGEN__)
 #define STM32_PWR_PDCRF                     (0U)
-#endif
-
-/**
- * @brief   SYSCFG CFGR1 register initialization value.
- */
-#if !defined(STM32_SYSCFG_CFGR1) || defined(__DOXYGEN__)
-#define STM32_SYSCFG_CFGR1                  (0U)
-#endif
-
-/**
- * @brief   SYSCFG CFGR2 register initialization value.
- */
-#if !defined(STM32_SYSCFG_CFGR2) || defined(__DOXYGEN__)
-#define STM32_SYSCFG_CFGR2                  (0U)
-#endif
-
-/**
- * @brief   SYSCFG CFGR3 register initialization value.
- */
-#if !defined(STM32_SYSCFG_CFGR3) || defined(__DOXYGEN__)
-#define STM32_SYSCFG_CFGR3                  (0U)
 #endif
 
 /**

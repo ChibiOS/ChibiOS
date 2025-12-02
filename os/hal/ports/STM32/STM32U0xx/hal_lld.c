@@ -233,6 +233,9 @@ static const system_limits_t vos_range2 = {
  */
 static void hal_lld_set_static_syscfg(void) {
 
+  /* SYSCFG clock enabled.*/
+  rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
+
   SYSCFG->CFGR1 = STM32_SYSCFG_CFGR1 & ~SYSCFG_CFGR1_MEM_MODE_Msk;
 }
 
