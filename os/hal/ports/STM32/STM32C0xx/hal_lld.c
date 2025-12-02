@@ -105,6 +105,28 @@ const halclkcfg_t hal_clkcfg_default = {
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
 
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Dynamic clock points for this device.
+ * @note    This array is pre-initialized with the defaults value because
+ *          clock_init() (called in early_init()) cannot initialize this
+ *          at runtime, successive DATA/BSS segment initialization would
+ *          overwrite it.
+ */
+static halfreq_t clock_points[CLK_ARRAY_SIZE] = {
+  [CLK_SYSCLK]          = STM32_SYSCLK,
+  [CLK_HSE]             = STM32_HSECLK,
+  [CLK_HSISYS]          = STM32_HSISYSCLK,
+  [CLK_HSIKER]          = STM32_HSIKERCLK,
+  [CLK_HSIUSB48]        = STM32_HSIUSB48CLK,
+  [CLK_HCLK]            = STM32_HCLK,
+  [CLK_PCLK]            = STM32_PCLK,
+  [CLK_PCLKTIM]         = STM32_TIMPCLK,
+  [CLK_MCO1]            = STM32_MCOCLK,
+  [CLK_MCO2]            = STM32_MCO2CLK
+};
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
+
 /*===========================================================================*/
 /* Driver local functions.                                                   */
 /*===========================================================================*/
@@ -258,6 +280,163 @@ static bool hal_lld_clock_configure(const halclkcfg_t *ccp) {
   return false;
 }
 
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Recalculates the clock tree frequencies.
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The frequency calculation result.
+ * @retval false        if the clock settings look valid
+ * @retval true         if the clock settings look invalid
+ *
+ * @notapi
+ */
+static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
+  static const uint32_t hprediv[16] = {1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U,
+                                       2U, 4U, 8U, 16U, 64U, 128U, 256U, 512U};
+  static const uint32_t pprediv[16] = {1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U};
+  static const halfreq_t flash_thresholds[STM32_WS_THRESHOLDS] = {STM32_0WS_THRESHOLD, STM32_1WS_THRESHOLD};
+  halfreq_t hsi48clk = 0U, hsiusb48clk = 0U, hseclk = 0U, hsisysclk = 0U, hsikerclk = 0U;
+  halfreq_t sysclk, hclk, pclk, pclktim, mco1clk, mco2clk;
+  uint32_t mcodiv, flashws;
+
+  /* HSE clock.*/
+  if ((ccp->rcc_cr & RCC_CR_HSEON) != 0U) {
+    hseclk = STM32_HSECLK;
+  }
+
+  /* HSI48 clock.*/
+  if ((ccp->rcc_cr & RCC_CR_HSION) != 0U) {
+    hsi48clk = STM32_HSI48CLK;
+    hsisysclk = hsi48clk / (1U << ((ccp->rcc_cr & RCC_CR_HSIDIV_Msk) >> RCC_CR_HSIDIV_Pos));
+    hsikerclk = hsi48clk / (((ccp->rcc_cr & RCC_CR_HSIKERDIV_Msk) >> RCC_CR_HSIKERDIV_Pos) + 1U);
+  }
+
+  /* HSIUSB48 clock.*/
+  if ((ccp->rcc_cr & RCC_CR_HSIUSB48ON) != 0U) {
+    hsiusb48clk = STM32_HSIUSB48CLK;
+  }
+
+  /* SYSCLK frequency.*/
+  switch (ccp->rcc_cfgr & RCC_CFGR_SW_Msk) {
+  case RCC_CFGR_SW_HSISYS:
+    sysclk = hsisysclk;
+    break;
+  case RCC_CFGR_SW_HSE:
+    sysclk = hseclk;
+    break;
+  case RCC_CFGR_SW_HSIUSB48:
+    sysclk = hsiusb48clk;
+    break;
+  case RCC_CFGR_SW_LSI:
+    sysclk = STM32_LSICLK;
+    break;
+  case RCC_CFGR_SW_LSE:
+    sysclk = STM32_LSECLK;
+    break;
+  default:
+    sysclk = 0U;
+  }
+
+  if ((sysclk == 0U) || (sysclk > STM32_SYSCLK_MAX)) {
+    return true;
+  }
+
+  /* HCLK frequency.*/
+  hclk = sysclk / hprediv[(ccp->rcc_cfgr & RCC_CFGR_HPRE_Msk) >> RCC_CFGR_HPRE_Pos];
+
+  /* PPRE frequency.*/
+  pclk = hclk / pprediv[(ccp->rcc_cfgr & RCC_CFGR_PPRE_Msk) >> RCC_CFGR_PPRE_Pos];
+  if ((ccp->rcc_cfgr & RCC_CFGR_PPRE_Msk) < RCC_CFGR_PPRE_DIV2) {
+    pclktim = pclk;
+  }
+  else {
+    pclktim = pclk * 2U;
+  }
+
+  /* MCO clock.*/
+  switch (ccp->rcc_cfgr & RCC_CFGR_MCOSEL_Msk) {
+  case RCC_CFGR_MCOSEL_SYSCLK:
+    mco1clk = sysclk;
+    break;
+  case RCC_CFGR_MCOSEL_HSI48:
+    mco1clk = hsi48clk;
+    break;
+  case RCC_CFGR_MCOSEL_HSE:
+    mco1clk = hseclk;
+    break;
+  case RCC_CFGR_MCOSEL_LSI:
+    mco1clk = STM32_LSICLK;
+    break;
+  case RCC_CFGR_MCOSEL_LSE:
+    mco1clk = STM32_LSECLK;
+    break;
+  case RCC_CFGR_MCOSEL_HSIUSB48:
+    mco1clk = hsiusb48clk;
+    break;
+  default:
+    mco1clk = 0U;
+  }
+  mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCOPRE_Msk) >> RCC_CFGR_MCOPRE_Pos);
+  if (mcodiv > 1024U) {
+    return true;
+  }
+  mco1clk /= mcodiv;
+
+  /* MCO2 clock.*/
+  switch (ccp->rcc_cfgr & RCC_CFGR_MCO2SEL_Msk) {
+  case RCC_CFGR_MCO2SEL_SYSCLK:
+    mco2clk = sysclk;
+    break;
+  case RCC_CFGR_MCO2SEL_HSI48:
+    mco2clk = hsi48clk;
+    break;
+  case RCC_CFGR_MCO2SEL_HSE:
+    mco2clk = hseclk;
+    break;
+  case RCC_CFGR_MCO2SEL_LSI:
+    mco2clk = STM32_LSICLK;
+    break;
+  case RCC_CFGR_MCO2SEL_LSE:
+    mco2clk = STM32_LSECLK;
+    break;
+  case RCC_CFGR_MCO2SEL_HSIUSB48:
+    mco2clk = hsiusb48clk;
+    break;
+  default:
+    mco2clk = 0U;
+  }
+  mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCO2PRE_Msk) >> RCC_CFGR_MCO2PRE_Pos);
+  if (mcodiv > 1024U) {
+    return true;
+  }
+  mco2clk /= mcodiv;
+
+  /* Flash settings.*/
+  flashws = ((ccp->flash_acr & FLASH_ACR_LATENCY_Msk) >> FLASH_ACR_LATENCY_Pos);
+  if (flashws >= STM32_WS_THRESHOLDS) {
+    return true;
+  }
+  if (hclk > flash_thresholds[flashws]) {
+    return true;
+  }
+
+  /* Writing out results.*/
+  clock_points[CLK_SYSCLK]    = sysclk;
+  clock_points[CLK_HSE]       = hseclk;
+  clock_points[CLK_HSISYS]    = hsisysclk;
+  clock_points[CLK_HSIKER]    = hsikerclk;
+  clock_points[CLK_HSIUSB48]  = hsiusb48clk;
+  clock_points[CLK_HCLK]      = hclk;
+  clock_points[CLK_PCLK]      = pclk;
+  clock_points[CLK_PCLKTIM]   = pclktim;
+  clock_points[CLK_MCO1]      = mco1clk;
+  clock_points[CLK_MCO2]      = mco2clk;
+
+  return false;
+}
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -337,5 +516,59 @@ void stm32_clock_init(void) {
 
 #endif /* STM32_NO_INIT */
 }
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Switches to a different clock configuration
+ *
+ * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @notapi
+ */
+bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp) {
+  int32_t div;
+
+  if (hal_lld_clock_check_tree(ccp)) {
+    return true;
+  }
+
+  if (hal_lld_clock_configure(ccp)) {
+    return true;
+  }
+
+  /* Updating timeout counter clock, contemplating the case where the clock
+     source frequency becomes lower than 1MHz.*/
+  div = ((int)hal_lld_get_clock_point(CLK_PCLKTIM) / 1000000) - 1;
+  if (div < 0) {
+    div = 0;
+  }
+  halRegWrite32X(&TIM17->PSC, (uint32_t)div, true);
+  halRegWrite32X(&TIM17->EGR, TIM_EGR_UG, false);
+
+  /* Updating the CMSIS variable.*/
+  SystemCoreClock = hal_lld_get_clock_point(CLK_HCLK);
+
+  return false;
+}
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+halfreq_t hal_lld_get_clock_point(halclkpt_t clkpt) {
+
+  osalDbgAssert(clkpt < CLK_ARRAY_SIZE, "invalid clock point");
+
+  return clock_points[clkpt];
+}
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /** @} */

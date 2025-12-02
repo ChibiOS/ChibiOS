@@ -30,13 +30,13 @@
  * @name    PPRE field bits definitions (legacy)
  * @{
  */
-#define STM32_PPRE_MASK         (7U << RCC_CFGR_PPRE_Pos)
-#define STM32_PPRE_FIELD(n)     ((n) << RCC_CFGR_PPRE_Pos)
-#define STM32_PPRE_DIV1         STM32_PPRE_FIELD(0U)
-#define STM32_PPRE_DIV2         STM32_PPRE_FIELD(4U)
-#define STM32_PPRE_DIV4         STM32_PPRE_FIELD(5U)
-#define STM32_PPRE_DIV8         STM32_PPRE_FIELD(6U)
-#define STM32_PPRE_DIV16        STM32_PPRE_FIELD(7U)
+#define STM32_PPRE_MASK                     (7U << RCC_CFGR_PPRE_Pos)
+#define STM32_PPRE_FIELD(n)                 ((n) << RCC_CFGR_PPRE_Pos)
+#define STM32_PPRE_DIV1                     STM32_PPRE_FIELD(0U)
+#define STM32_PPRE_DIV2                     STM32_PPRE_FIELD(4U)
+#define STM32_PPRE_DIV4                     STM32_PPRE_FIELD(5U)
+#define STM32_PPRE_DIV8                     STM32_PPRE_FIELD(6U)
+#define STM32_PPRE_DIV16                    STM32_PPRE_FIELD(7U)
 /** @} */
 
 /**
@@ -46,7 +46,7 @@
 #define RCC_CFGR_PPRE_FIELD(n)              ((n) << RCC_CFGR_PPRE_Pos)
 #if !defined(RCC_CFGR_PPRE_DIV1)
 #define RCC_CFGR_PPRE_DIV1                  RCC_CFGR_PPRE_FIELD(0U)
-#define RCC_CFGR_PRRE_DIV2                  RCC_CFGR_PPRE_FIELD(4U)
+#define RCC_CFGR_PPRE_DIV2                  RCC_CFGR_PPRE_FIELD(4U)
 #define RCC_CFGR_PPRE_DIV4                  RCC_CFGR_PPRE_FIELD(5U)
 #define RCC_CFGR_PPRE_DIV8                  RCC_CFGR_PPRE_FIELD(6U)
 #define RCC_CFGR_PPRE_DIV16                 RCC_CFGR_PPRE_FIELD(7U)

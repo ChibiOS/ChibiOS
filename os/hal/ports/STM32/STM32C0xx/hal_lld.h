@@ -299,6 +299,13 @@
 #endif
 
 /**
+ * @brief   Enables the dynamic clock handling.
+ */
+#if !defined(STM32_CLOCK_DYNAMIC) || defined(__DOXYGEN__)
+#define STM32_CLOCK_DYNAMIC                 FALSE
+#endif
+
+/**
  * @brief   SYSCFG CFGR1 register initialization value.
  */
 #if !defined(STM32_SYSCFG_CFGR1) || defined(__DOXYGEN__)
@@ -588,6 +595,11 @@
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
 
+/* Clock handling mode selection.*/
+#if STM32_CLOCK_DYNAMIC == TRUE
+#define HAL_LLD_USE_CLOCK_MANAGEMENT
+#endif
+
 /*
  * Configuration-related checks.
  */
@@ -647,6 +659,7 @@
 #define STM32_ADCCLK_MAX                    350000000
 
 #define STM32_0WS_THRESHOLD                 24000000
+#define STM32_1WS_THRESHOLD                 48000000
 /** @} */
 
 /* Clock handlers.*/
@@ -1071,7 +1084,7 @@
   #define STM32_RTCCLK                      STM32_LSICLK
 
 #elif STM32_RTCSEL == RCC_CSR1_RTCSEL_HSEDIV
-  #define STM32_RTCCLK                      (STM32_HSECLK / 32)
+  #define STM32_RTCCLK                      (hal_lld_get_clock_point(CLK_HSE) / 32)
 
 #else
   #error "invalid STM32_RTCSEL value specified"
@@ -1111,7 +1124,7 @@
   #define STM32_FDCAN1CLK                   hal_lld_get_clock_point(CLK_HSIKERCLK)
 
 #elif STM32_FDCAN1SEL == STM32_FDCAN1SELL_HSE
-  #define STM32_FDCAN1CLK                   STM32_HSECLK
+  #define STM32_FDCAN1CLK                   hal_lld_get_clock_point(CLK_HSE)
 
 #else
   #error "invalid source selected for FDCAN1 clock"
@@ -1248,6 +1261,7 @@ typedef uint16_t halcnt_t;
  */
 #define HAL_LLD_GET_CNT_VALUE()             ((halcnt_t)TIM17->CNT)
 
+#if !defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
 /**
  * @brief   Returns the frequency of a clock point in Hz.
  * @note    Static implementation.
@@ -1270,6 +1284,7 @@ typedef uint16_t halcnt_t;
    (clkpt) == CLK_MCO1          ? STM32_MCOCLK      :                       \
    (clkpt) == CLK_MCO2          ? STM32_MCO2CLK     :                       \
    0U)
+#endif /* !defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
 /*===========================================================================*/
 /* External declarations.                                                    */
@@ -1294,6 +1309,10 @@ extern "C" {
 #endif
   void hal_lld_init(void);
   void stm32_clock_init(void);
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+  bool hal_lld_clock_switch_mode(const halclkcfg_t *ccp);
+  halfreq_t hal_lld_get_clock_point(halclkpt_t clkpt);
+#endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 #ifdef __cplusplus
 }
 #endif

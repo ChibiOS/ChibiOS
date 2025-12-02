@@ -1306,7 +1306,7 @@
   #define STM32_RTCCLK                      STM32_LSICLK
 
 #elif STM32_RTCSEL == RCC_BDCR_RTCSEL_HSEDIV
-  #define STM32_RTCCLK                      (STM32_HSECLK / 32)
+  #define STM32_RTCCLK                      (hal_lld_get_clock_point(CLK_HSECLK) / 32)
 
 #else
   #error "invalid STM32_RTCSEL value specified"

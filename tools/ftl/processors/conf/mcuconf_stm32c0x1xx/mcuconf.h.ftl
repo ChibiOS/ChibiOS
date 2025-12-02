@@ -50,6 +50,7 @@
  * HAL driver general settings.
  */
 #define STM32_NO_INIT                       ${doc.STM32_NO_INIT!"FALSE"}
+#define STM32_CLOCK_DYNAMIC                 ${doc.STM32_CLOCK_DYNAMIC!"FALSE"}
 
 /*
  * SYSCFG settings.
