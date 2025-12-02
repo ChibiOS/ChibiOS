@@ -391,7 +391,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     mco1clk = 0U;
   }
   mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCOPRE_Msk) >> RCC_CFGR_MCOPRE_Pos);
+#if defined(RCC_CFGR_MCOSEL_3)
   if (mcodiv > 1024U) {
+#else
+  if (mcodiv > 128U) {
+#endif
     return true;
   }
   mco1clk /= mcodiv;
@@ -422,7 +426,11 @@ static bool hal_lld_clock_check_tree(const halclkcfg_t *ccp) {
     mco2clk = 0U;
   }
   mcodiv = 1U << ((ccp->rcc_cfgr & RCC_CFGR_MCO2PRE_Msk) >> RCC_CFGR_MCO2PRE_Pos);
+#if defined(RCC_CFGR_MCO2SEL_3)
   if (mcodiv > 1024U) {
+#else
+  if (mcodiv > 128U) {
+#endif
     return true;
   }
   mco2clk /= mcodiv;
