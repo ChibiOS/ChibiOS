@@ -411,6 +411,15 @@
 #endif
 
 /**
+ * @brief   FLASH ACR register initialization value.
+ * @note    Do not specify the LATENCY bits because those are calculated
+ *          depending on other settings and ORed to this value.
+ */
+#if !defined(STM32_FLASH_ACR) || defined(__DOXYGEN__)
+#define STM32_FLASH_ACR                     (FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN)
+#endif
+
+/**
  * @brief   HSIDIV divider value.
  * @note    The allowed values are 1, 2, 4, 8, 16, 32, 64, 128.
  */
@@ -1209,9 +1218,19 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of a clock point identifier.
+ * @brief   Type of a clock configuration and switch structure.
  */
-typedef unsigned halclkpt_t;
+typedef struct {
+  uint32_t          rcc_cr;
+  uint32_t          rcc_cfgr;
+  uint32_t          flash_acr;
+} halclkcfg_t;
+
+/**
+ * @brief   Type of a timeout counter.
+ * @note    16 bits because it must match TIM7 counter size.
+ */
+//typedef uint16_t halcnt_t;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

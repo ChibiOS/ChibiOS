@@ -236,7 +236,7 @@ static void hal_lld_set_static_syscfg(void) {
   /* SYSCFG clock enabled.*/
   rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
 
-  SYSCFG->CFGR1 = STM32_SYSCFG_CFGR1 & ~SYSCFG_CFGR1_MEM_MODE_Msk;
+  halRegMaskedWrite32X(&SYSCFG->CFGR1, ~SYSCFG_CFGR1_MEM_MODE_Msk, STM32_SYSCFG_CFGR1, true);
 }
 
 /**
@@ -263,10 +263,6 @@ static void hal_lld_set_static_pwr(void) {
   halRegWrite32X(&PWR->PDCRC, STM32_PWR_PDCRC, true);
   halRegWrite32X(&PWR->PUCRD, STM32_PWR_PUCRD, true);
   halRegWrite32X(&PWR->PDCRD, STM32_PWR_PDCRD, true);
-  halRegWrite32X(&PWR->PUCRE, STM32_PWR_PUCRE, true);
-  halRegWrite32X(&PWR->PDCRE, STM32_PWR_PDCRE, true);
-  halRegWrite32X(&PWR->PUCRF, STM32_PWR_PUCRF, true);
-  halRegWrite32X(&PWR->PDCRF, STM32_PWR_PDCRF, true);
 }
 
 /**

@@ -75,7 +75,12 @@
 #define STM32_PWR_PDCRF                     ${doc.STM32_PWR_PDCRF!"(0U)"}
 
 /*
- * HAL driver system settings.
+ * FLASH settings.
+ */
+#define STM32_FLASH_ACR                     ${doc.STM32_FLASH_ACR!"(FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN)"}
+
+/*
+ * Clock settings.
  */
 #define STM32_HSIDIV_VALUE                  ${doc.STM32_HSIDIV_VALUE!"4"}
 #define STM32_HSIKERDIV_VALUE               ${doc.STM32_HSIKERDIV_VALUE!"3"}

@@ -94,9 +94,9 @@ static void hal_lld_set_static_syscfg(void) {
   /* SYSCFG clock enabled.*/
   rccEnableAPBR2(RCC_APBENR2_SYSCFGEN, false);
 
-  SYSCFG->CFGR1 = STM32_SYSCFG_CFGR1;
-  SYSCFG->CFGR2 = STM32_SYSCFG_CFGR2;
-  SYSCFG->CFGR3 = STM32_SYSCFG_CFGR3;
+  halRegWrite32X(&SYSCFG->CFGR1, STM32_SYSCFG_CFGR1, true);
+  halRegWrite32X(&SYSCFG->CFGR2, STM32_SYSCFG_CFGR2, true);
+  halRegWrite32X(&SYSCFG->CFGR3, STM32_SYSCFG_CFGR3, true);
 }
 
 /**
@@ -110,39 +110,39 @@ static void hal_lld_set_static_pwr(void) {
 
   /* Static PWR configurations.*/
 #if defined(PWR_CR2_PVM_VDDIO2_Pos)
-  PWR->CR2   = STM32_PWR_CR2;
+  halRegWrite32X(&PWR->CR2,   STM32_PWR_CR2,   true);
 #endif
-  PWR->CR3   = STM32_PWR_CR3;
-  PWR->CR4   = STM32_PWR_CR4;
-  PWR->PUCRA = STM32_PWR_PUCRA;
-  PWR->PDCRA = STM32_PWR_PDCRA;
-  PWR->PUCRB = STM32_PWR_PUCRB;
-  PWR->PDCRB = STM32_PWR_PDCRB;
-  PWR->PUCRC = STM32_PWR_PUCRC;
-  PWR->PDCRC = STM32_PWR_PDCRC;
+  halRegWrite32X(&PWR->CR3,   STM32_PWR_CR3,   true);
+  halRegWrite32X(&PWR->CR4,   STM32_PWR_CR4,   true);
+  halRegWrite32X(&PWR->PUCRA, STM32_PWR_PUCRA, true);
+  halRegWrite32X(&PWR->PDCRA, STM32_PWR_PDCRA, true);
+  halRegWrite32X(&PWR->PDCRB, STM32_PWR_PDCRB, true);
+  halRegWrite32X(&PWR->PUCRB, STM32_PWR_PUCRB, true);
+  halRegWrite32X(&PWR->PUCRC, STM32_PWR_PUCRC, true);
+  halRegWrite32X(&PWR->PDCRC, STM32_PWR_PDCRC, true);
 #if STM32_HAS_GPIOD
-  PWR->PUCRD = STM32_PWR_PUCRD;
-  PWR->PDCRD = STM32_PWR_PDCRD;
+  halRegWrite32X(&PWR->PUCRD, STM32_PWR_PUCRD, true);
+  halRegWrite32X(&PWR->PDCRD, STM32_PWR_PDCRD, true);
 #endif
 #if STM32_HAS_GPIOE
-  PWR->PUCRE = STM32_PWR_PUCRE;
-  PWR->PDCRE = STM32_PWR_PDCRE;
+  halRegWrite32X(&PWR->PUCRE, STM32_PWR_PUCRE, true);
+  halRegWrite32X(&PWR->PDCRE, STM32_PWR_PDCRE, true);
 #endif
 #if STM32_HAS_GPIOF
-  PWR->PUCRF = STM32_PWR_PUCRF;
-  PWR->PDCRF = STM32_PWR_PDCRF;
+  halRegWrite32X(&PWR->PUCRF, STM32_PWR_PUCRF, true);
+  halRegWrite32X(&PWR->PDCRF, STM32_PWR_PDCRF, true);
 #endif
 #if STM32_HAS_GPIOG
-  PWR->PUCRG = STM32_PWR_PUCRG;
-  PWR->PDCRG = STM32_PWR_PDCRG;
+  halRegWrite32X(&PWR->PUCRG, STM32_PWR_PUCRG, true);
+  halRegWrite32X(&PWR->PDCRG, STM32_PWR_PDCRG, true);
 #endif
 #if STM32_HAS_GPIOH
-  PWR->PUCRH = STM32_PWR_PUCRH;
-  PWR->PDCRH = STM32_PWR_PDCRH;
+  halRegWrite32X(&PWR->PUCRH, STM32_PWR_PUCRH, true);
+  halRegWrite32X(&PWR->PDCRH, STM32_PWR_PDCRH, true);
 #endif
 #if STM32_HAS_GPIOI
-  PWR->PUCRI = STM32_PWR_PUCRI;
-  PWR->PDCRI = STM32_PWR_PDCRI;
+  halRegWrite32X(&PWR->PUCRI, STM32_PWR_PUCRI, true);
+  halRegWrite32X(&PWR->PDCRI, STM32_PWR_PDCRI, true);
 #endif
 }
 
@@ -152,9 +152,11 @@ static void hal_lld_set_static_pwr(void) {
 static void hal_lld_set_static_clocks(void) {
 
   /* Clock-related settings (dividers, MCO etc).*/
-  RCC->CFGR = STM32_MCOPRE  | STM32_MCOSEL  |
-              STM32_MCO2PRE | STM32_MCO2SEL |
-              STM32_PPRE    | STM32_HPRE;
+  halRegWrite32X(&RCC->CFGR,
+                 STM32_MCOPRE  | STM32_MCOSEL  |
+                 STM32_MCO2PRE | STM32_MCO2SEL |
+                 STM32_PPRE    | STM32_HPRE,
+                 true);
 
   /* Set HSISYS/HSIKER divisors and optional SYSDIV when present.*/
 #if STM32_RCC_HAS_SYSDIV
@@ -245,8 +247,7 @@ void stm32_clock_init(void) {
   hal_lld_set_static_clocks();
 
   /* Set flash WS's for SYSCLK source.*/
-  flash_set_acr(FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN |
-                STM32_FLASHBITS);
+  flash_set_acr(STM32_FLASH_ACR | STM32_FLASHBITS);
 
   /* Switching to the configured SYSCLK source if it is different from HSI16.*/
 #if STM32_SW != RCC_CFGR_SW_HSISYS
