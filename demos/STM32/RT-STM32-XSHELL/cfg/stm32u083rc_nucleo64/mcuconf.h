@@ -42,6 +42,11 @@
 #define STM32_CLOCK_DYNAMIC                 TRUE
 
 /*
+ * SYSCFG settings.
+ */
+#define STM32_SYSCFG_CFGR1                  (0U)
+
+/*
  * PWR settings.
  */
 #define STM32_PWR_CR1                       (PWR_CR1_VOS_RANGE1 | PWR_CR1_FPD_STOP)

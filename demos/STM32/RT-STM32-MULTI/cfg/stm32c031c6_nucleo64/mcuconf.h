@@ -36,9 +36,21 @@
 #define STM32C031_MCUCONF
 
 /*
- * HAL driver system settings.
+ * HAL driver general settings.
  */
 #define STM32_NO_INIT                       FALSE
+#define STM32_CLOCK_DYNAMIC                 FALSE
+
+/*
+ * SYSCFG settings.
+ */
+#define STM32_SYSCFG_CFGR1                  (0U)
+#define STM32_SYSCFG_CFGR2                  (0U)
+#define STM32_SYSCFG_CFGR3                  (0U)
+
+/*
+ * PWR settings.
+ */
 #define STM32_PWR_CR3                       (PWR_CR3_EIWUL)
 #define STM32_PWR_CR4                       (0U)
 #define STM32_PWR_PUCRA                     (0U)
@@ -51,9 +63,15 @@
 #define STM32_PWR_PDCRD                     (0U)
 #define STM32_PWR_PUCRF                     (0U)
 #define STM32_PWR_PDCRF                     (0U)
-#define STM32_SYSCFG_CFGR1                  (0U)
-#define STM32_SYSCFG_CFGR2                  (0U)
-#define STM32_SYSCFG_CFGR3                  (0U)
+
+/*
+ * FLASH settings.
+ */
+#define STM32_FLASH_ACR                     (FLASH_ACR_DBG_SWEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN)
+
+/*
+ * Clock settings.
+ */
 #define STM32_HSIDIV_VALUE                  1
 #define STM32_HSIKERDIV_VALUE               1
 #define STM32_HSI48_ENABLED                 TRUE

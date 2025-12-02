@@ -94,8 +94,8 @@
 #define STM32_PPRE                          ${doc.STM32_PPRE!"RCC_CFGR_PPRE_DIV1"}
 #define STM32_MCOSEL                        ${doc.STM32_MCOSEL!"RCC_CFGR_MCOSEL_NOCLOCK"}
 #define STM32_MCOPRE                        ${doc.STM32_MCOPRE!"RCC_CFGR_MCOPRE_DIV1"}
-#define STM32_MCO2SEL                       ${doc.STM32_MCOSEL!"RCC_CFGR_MCO2SEL_NOCLOCK"}
-#define STM32_MCO2PRE                       ${doc.STM32_MCOPRE!"RCC_CFGR_MCO2PRE_DIV1"}
+#define STM32_MCO2SEL                       ${doc.STM32_MCO2SEL!"RCC_CFGR_MCO2SEL_NOCLOCK"}
+#define STM32_MCO2PRE                       ${doc.STM32_MCO2PRE!"RCC_CFGR_MCO2PRE_DIV1"}
 #define STM32_LSCOSEL                       ${doc.STM32_LSCOSEL!"RCC_CSR1_LSCOSEL_NOCLOCK"}
 
 /*
