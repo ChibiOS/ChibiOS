@@ -238,7 +238,7 @@
 /* USART attributes.*/
 #define STM32_USART_MIXED                   TRUE
 #define STM32_USART1_HAS_FIFO               TRUE
-#define STM32_USART2_HAS_FIFO               TRUE
+#define STM32_USART2_HAS_FIFO               FALSE
 
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
@@ -394,7 +394,7 @@
 /* USART attributes.*/
 #define STM32_USART_MIXED                   TRUE
 #define STM32_USART1_HAS_FIFO               TRUE
-#define STM32_USART2_HAS_FIFO               TRUE
+#define STM32_USART2_HAS_FIFO               FALSE
 
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
@@ -554,7 +554,7 @@
 /* USART attributes.*/
 #define STM32_USART_MIXED                   TRUE
 #define STM32_USART1_HAS_FIFO               TRUE
-#define STM32_USART2_HAS_FIFO               TRUE
+#define STM32_USART2_HAS_FIFO               FALSE
 
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
