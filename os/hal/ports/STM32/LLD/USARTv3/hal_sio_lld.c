@@ -219,7 +219,7 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   USART_TypeDef *u = siop->usart;
   uint32_t presc, brr, clock, cr3;
 
-  /*Clock input frequency, it could be dynamic.*/
+  /* Clock input frequency, it could be dynamic.*/
   if (false) {
   }
 #if STM32_SIO_USE_USART1 == TRUE
@@ -347,46 +347,79 @@ void sio_lld_init(void) {
 #if STM32_SIO_USE_USART1 == TRUE
   sioObjectInit(&SIOD1);
   SIOD1.usart       = USART1;
+#if STM32_USART_MIXED == TRUE
+  SIOD1.has_fifo    = (bool)(STM32_USART1_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART2 == TRUE
   sioObjectInit(&SIOD2);
   SIOD2.usart       = USART2;
+#if STM32_USART_MIXED == TRUE
+  SIOD2.has_fifo    = (bool)(STM32_USART2_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART3 == TRUE
   sioObjectInit(&SIOD3);
   SIOD3.usart       = USART3;
+#if STM32_USART_MIXED == TRUE
+  SIOD3.has_fifo    = (bool)(STM32_USART3_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART4 == TRUE
   sioObjectInit(&SIOD4);
   SIOD4.usart       = UART4;
+#if STM32_USART_MIXED == TRUE
+  SIOD4.has_fifo    = (bool)(STM32_UART4_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART5 == TRUE
   sioObjectInit(&SIOD5);
   SIOD5.usart       = UART5;
+#if STM32_USART_MIXED == TRUE
+  SIOD5.has_fifo    = (bool)(STM32_UART5_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART6 == TRUE
   sioObjectInit(&SIOD6);
   SIOD6.usart       = USART6;
+#if STM32_USART_MIXED == TRUE
+  SIOD6.has_fifo    = (bool)(STM32_USART6_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART7 == TRUE
   sioObjectInit(&SIOD7);
   SIOD7.usart       = UART7;
+#if STM32_USART_MIXED == TRUE
+  SIOD7.has_fifo    = (bool)(STM32_UART7_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART8 == TRUE
   sioObjectInit(&SIOD8);
   SIOD8.usart       = UART8;
+#if STM32_USART_MIXED == TRUE
+  SIOD8.has_fifo    = (bool)(STM32_UART8_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_UART9 == TRUE
   sioObjectInit(&SIOD9);
   SIOD9.usart       = UART9;
+#if STM32_USART_MIXED == TRUE
+  SIOD9.has_fifo    = (bool)(STM32_UART9_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_USART10 == TRUE
   sioObjectInit(&SIOD10);
   SIOD10.usart      = USART10;
+#if STM32_USART_MIXED == TRUE
+  SIOD10.has_fifo   = (bool)(STM32_USART10_HAS_FIFO == TRUE);
+#endif
 #endif
 #if STM32_SIO_USE_LPUART1 == TRUE
   sioObjectInit(&LPSIOD1);
   LPSIOD1.usart     = LPUART1;
+#if STM32_USART_MIXED == TRUE
+  LPSIOD1.has_fifo  = true;
+#endif
 #endif
 }
 

@@ -236,9 +236,12 @@
 #define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
+#define STM32_USART_MIXED                   TRUE
+#define STM32_USART1_HAS_FIFO               TRUE
+#define STM32_USART2_HAS_FIFO               TRUE
+
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
-
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
@@ -389,9 +392,12 @@
 #define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
+#define STM32_USART_MIXED                   TRUE
+#define STM32_USART1_HAS_FIFO               TRUE
+#define STM32_USART2_HAS_FIFO               TRUE
+
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
-
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
@@ -546,9 +552,12 @@
 #define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
+#define STM32_USART_MIXED                   TRUE
+#define STM32_USART1_HAS_FIFO               TRUE
+#define STM32_USART2_HAS_FIFO               TRUE
+
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
-
 #define STM32_HAS_USART3                    FALSE
 #define STM32_HAS_UART4                     FALSE
 #define STM32_HAS_UART5                     FALSE
@@ -710,11 +719,16 @@
 #define STM32_HAS_TIM22                     FALSE
 
 /* USART attributes.*/
+#define STM32_USART_MIXED                   TRUE
+#define STM32_USART1_HAS_FIFO               TRUE
+#define STM32_USART2_HAS_FIFO               FALSE
+#define STM32_USART3_HAS_FIFO               FALSE
+#define STM32_UART4_HAS_FIFO                FALSE
+
 #define STM32_HAS_USART1                    TRUE
 #define STM32_HAS_USART2                    TRUE
 #define STM32_HAS_USART3                    TRUE
 #define STM32_HAS_UART4                     TRUE
-
 #define STM32_HAS_UART5                     FALSE
 #define STM32_HAS_USART6                    FALSE
 #define STM32_HAS_UART7                     FALSE
