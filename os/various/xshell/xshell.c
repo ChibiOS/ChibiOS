@@ -264,6 +264,11 @@ static THD_FUNCTION(xshell_thread, p) {
 #endif
   }
 
+  /* Shell exit hook.*/
+#if defined(XSHELL_EXIT_HOOK)
+  XSHELL_EXIT_HOOK(smp);
+#endif
+
   /* Atomically broadcasting the event source and terminating the thread,
      there is not a chSysUnlock() because the thread terminates upon return.*/
   chSysLock();
