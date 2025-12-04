@@ -450,12 +450,12 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
 
   osalSysLockFromISR();
 
-  /* Signaling that space is available in the output queue.*/
-  chnAddFlagsI(sdup, CHN_OUTPUT_EMPTY);
-
   /* Freeing the buffer just transmitted, if it was not a zero size packet.*/
   if (usbp->epc[ep]->in_state->txsize > 0U) {
     obqReleaseEmptyBufferI(&sdup->obqueue);
+
+    /* Signaling that space is available in the output queue.*/
+    chnAddFlagsI(sdup, CHN_OUTPUT_EMPTY);
   }
 
   /* Checking if there is a buffer ready for transmission.*/
@@ -477,7 +477,8 @@ void sduDataTransmitted(USBDriver *usbp, usbep_t ep) {
 
   }
   else {
-    /* Nothing to transmit.*/
+    /* Nothing further to transmit.*/
+    chnAddFlagsI(sdup, CHN_TRANSMISSION_END);
   }
 
   osalSysUnlockFromISR();

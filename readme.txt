@@ -77,6 +77,8 @@
 *****************************************************************************
 
 *** Next ***
+- NEW: Added CHN_TRANSMISSION_END event to hal_serial_usb.
+- NEW: Added XSHELL_EXIT_HOOK to xshell.
 - NEW: Added STM32U0xx support.
 - NEW: Flash-level mutual exclusion option added to MFS. Added the ability to
        include a mfsconf.h file if MFS_USE_MFSCONF is defined at project
