@@ -981,7 +981,9 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   isr = u->ISR & isrmask;
   if (isr != 0U) {
 
-    /* Error flags handled as a group.*/
+    /* Error flags handled as a group.
+       Note: LBDF is mapped here too, so RX paths stay quiesced until the
+       application clears errors. */
     if ((isr & SIO_LLD_ISR_RX_ERRORS) != 0U) {
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX error event is
