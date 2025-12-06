@@ -53,7 +53,7 @@
  * @name    CR3 register additional macros
  * @{
  */
-#define USART_CR3_TXFTCFG_NONFULL           (0U)
+#define USART_CR3_TXFTCFG_NONFULL           (USART_CR3_TXFTCFG_Msk) /* Pseudo value.*/
 #define USART_CR3_TXFTCFG_1E                (0U)
 #define USART_CR3_TXFTCFG_1Q                (USART_CR3_TXFTCFG_0)
 #define USART_CR3_TXFTCFG_1H                (USART_CR3_TXFTCFG_1)
