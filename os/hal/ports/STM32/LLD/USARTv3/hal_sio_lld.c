@@ -350,7 +350,8 @@ __STATIC_INLINE void usart_init(SIODriver *siop) {
   if (!siop->has_fifo) {
     /* TODO: check if those fields are simply ignored in devices without FIFO,
        this code could be removed.*/
-    cr3 &= ~(USART_CR3_RXFTCFG_Msk | USART_CR3_TXFTCFG_Msk);
+    cr3 &= ~(USART_CR3_RXFTCFG_Msk | USART_CR3_TXFTCFG_Msk |
+             USART_CR3_RXFTIE | USART_CR3_TXFTIE);
   }
 #endif
   u->CR3   = cr3;
