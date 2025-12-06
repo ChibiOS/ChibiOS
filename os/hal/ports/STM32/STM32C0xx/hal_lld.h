@@ -304,7 +304,7 @@
 #define FLASH_ACR_LATENCY_0WS   (0U << FLASH_ACR_LATENCY_Pos)
 #endif
 #if !defined(FLASH_ACR_LATENCY_1WS)
-#define FLASH_ACR_LATENCY_1WS   (0U << FLASH_ACR_LATENCY_Pos)
+#define FLASH_ACR_LATENCY_1WS   (1U << FLASH_ACR_LATENCY_Pos)
 #endif
 
 /*===========================================================================*/
@@ -455,7 +455,7 @@
  * @note    The allowed values are 1, 2, 4, 8, 16, 32, 64, 128.
  */
 #if !defined(STM32_HSIDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_HSIDIV_VALUE                  4
+#define STM32_HSIDIV_VALUE                  1
 #endif
 
 /**
@@ -463,14 +463,14 @@
  * @note    The allowed values are 1..8.
  */
 #if !defined(STM32_HSIKERDIV_VALUE) || defined(__DOXYGEN__)
-#define STM32_HSIKERDIV_VALUE               3
+#define STM32_HSIKERDIV_VALUE               1
 #endif
 
 /**
  * @brief   Enables or disables the HSI48 clock source.
  */
 #if !defined(STM32_HSI48_ENABLED) || defined(__DOXYGEN__)
-#define STM32_HSI48_ENABLED                 FALSE
+#define STM32_HSI48_ENABLED                 TRUE
 #endif
 
 /**
