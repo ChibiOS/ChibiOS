@@ -39,7 +39,7 @@
  * HAL driver general settings.
  */
 #define STM32_NO_INIT                       FALSE
-#define STM32_CLOCK_DYNAMIC                 FALSE
+#define STM32_CLOCK_DYNAMIC                 TRUE
 
 /*
  * SYSCFG settings.
@@ -76,8 +76,8 @@
 #define STM32_HSIKERDIV_VALUE               1
 #define STM32_HSI48_ENABLED                 TRUE
 #define STM32_HSE_ENABLED                   FALSE
-#define STM32_LSI_ENABLED                   TRUE
-#define STM32_LSE_ENABLED                   TRUE
+#define STM32_LSI_ENABLED                   FALSE
+#define STM32_LSE_ENABLED                   FALSE
 #define STM32_SW                            RCC_CFGR_SW_HSISYS
 #define STM32_HPRE                          RCC_CFGR_HPRE_DIV1
 #define STM32_PPRE                          RCC_CFGR_PPRE_DIV1
