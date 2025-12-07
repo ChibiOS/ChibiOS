@@ -1,6 +1,7 @@
 /*
     ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
               Copyright (C) 2025 Nathan Lewis
+              Copyright (C) 2025 Theodore Ateba
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -388,13 +389,13 @@ void _pal_lld_enablepadevent(ioportid_t     port,
       if (port == INT##n##_IOPORT && pad == INT##n##_PAD) { \
         if (mode) { \
           if (mode == PAL_EVENT_MODE_FALLING_EDGE) { \
-            INT##n##_EICR = (INT##n##_EICR & (3U << INT##n##_EICR_BASE)) \
+            INT##n##_EICR = (INT##n##_EICR & ~(3U << INT##n##_EICR_BASE)) \
                 | (2U << INT##n##_EICR_BASE); \
           } else if (mode == PAL_EVENT_MODE_RISING_EDGE) { \
-            INT##n##_EICR = (INT##n##_EICR & (3U << INT##n##_EICR_BASE)) \
+            INT##n##_EICR = (INT##n##_EICR & ~(3U << INT##n##_EICR_BASE)) \
                 | (3U << INT##n##_EICR_BASE); \
           } else { \
-            INT##n##_EICR = (INT##n##_EICR & (3U << INT##n##_EICR_BASE)) \
+            INT##n##_EICR = (INT##n##_EICR & ~(3U << INT##n##_EICR_BASE)) \
                 | (1U << INT##n##_EICR_BASE); \
           } \
           INT##n##_ENABLE(); \
@@ -840,4 +841,3 @@ uint8_t _pal_lld_getpadfromline(ioline_t line) {
 #endif /* HAL_USE_PAL */
 
 /** @} */
-
