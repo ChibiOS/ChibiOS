@@ -83,10 +83,10 @@ CFLAGS  += -Wundef -MMD -MP #-MF
 
 # Various settings for CPP flags.
 CPPFLAGS = $(MCFLAGS) -I. -gdwarf-2 $(CDEFS) $(OPT) -funsigned-char
-CPFLAGS  += -funsigned-bitfields -fpack-struct -fshort-enums $(CWARN)
-CPFLAGS  += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
-CPFLAGS  += -std=gnu++11 -mrelax -fdata-sections -ffunction-sections
-CPFLAGS  += -Wundef -MMD -MP #-MF
+CPPFLAGS  += -funsigned-bitfields -fpack-struct -fshort-enums $(CWARN)
+CPPFLAGS  += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
+CPPFLAGS  += -std=gnu++11 -mrelax -fdata-sections -ffunction-sections
+CPPFLAGS  += -Wundef -MMD -MP #-MF
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
