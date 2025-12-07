@@ -49,6 +49,11 @@
 #define HAL_LLD_SELECT_SPI_V2               TRUE
 
 /**
+ * @brief   Signals that TIM7 is used internally by the HAL for timeouts.
+ */
+#define STM32_TIM7_IS_USED
+
+/**
  * @name    Platform identification
  * @{
  */
