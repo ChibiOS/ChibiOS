@@ -76,7 +76,10 @@ static size_t sync_read(void *ip, uint8_t *bp, size_t n,
     msg_t msg;
 
     msg = sioSynchronizeRX(siop, timeout);
-    if (msg != MSG_OK) {
+    if (msg == SIO_MSG_ERRORS) {
+      (void) sioGetAndClearErrors(siop);
+    }
+    else if (msg != MSG_OK) {
       break;
     }
 
