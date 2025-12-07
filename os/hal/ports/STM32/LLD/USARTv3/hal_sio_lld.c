@@ -967,6 +967,8 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
      to the state of the various CRx registers.*/
   isrmask = __sio_reloc_field(cr1, USART_CR1_TXEIE_TXFNFIE,     USART_CR1_TXEIE_TXFNFIE_Pos,    USART_ISR_TXE_TXFNF_Pos)  |
             __sio_reloc_field(cr1, USART_CR1_RXNEIE_RXFNEIE,    USART_CR1_RXNEIE_RXFNEIE_Pos,   USART_ISR_RXNE_RXFNE_Pos) |
+             /* NOTE: ORE interrupt also enabled by USART_CR1_RXNEIE_RXFNEIE, not just USART_CR3_EIE.*/
+            __sio_reloc_field(cr1, USART_CR1_RXNEIE_RXFNEIE,    USART_CR1_RXNEIE_RXFNEIE_Pos,   USART_ISR_ORE_Pos)  |
             __sio_reloc_field(cr1, USART_CR1_IDLEIE,            USART_CR1_IDLEIE_Pos,           USART_ISR_IDLE_Pos) |
             __sio_reloc_field(cr1, USART_CR1_TCIE,              USART_CR1_TCIE_Pos,             USART_ISR_TC_Pos)   |
             __sio_reloc_field(cr1, USART_CR1_PEIE,              USART_CR1_PEIE_Pos,             USART_ISR_PE_Pos)   |
@@ -982,9 +984,12 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
   if (isr != 0U) {
 
     /* Error flags handled as a group.
-       Note: LBDF is mapped here too, so RX paths stay quiesced until the
-       application clears errors. */
+       NOTE: LBDF is mapped here too, so RX paths stay quiescent until the
+             application clears errors.*/
     if ((isr & SIO_LLD_ISR_RX_ERRORS) != 0U) {
+      /* NOTE: We could get here because various causes: PEIE, EIE, LBDIE and
+               RXFNEIE. Because RXFNEIE we can get here even when the
+               application has not enabled errors notifications.*/
 #if SIO_USE_SYNCHRONIZATION
       /* The idle flag is forcibly cleared when an RX error event is
          detected.*/
@@ -996,8 +1001,10 @@ void sio_lld_serve_interrupt(SIODriver *siop) {
       cr2 &= ~(USART_CR2_LBDIE);
       cr3 &= ~(USART_CR3_EIE | USART_CR3_RXFTIE);
 
-      /* Waiting thread woken, if any.*/
-      __sio_wakeup_errors(siop);
+      /* Notifying the application only if it is interested in errors.*/
+      if ((siop->enabled & SIO_EV_ALL_ERRORS) != (sioevents_t)0) {
+        __sio_wakeup_errors(siop);
+      }
     }
     /* If there are no errors then we check for the other RX-related
        status flags.*/
