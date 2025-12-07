@@ -422,9 +422,9 @@ void xshellObjectInit(xshell_manager_t *smp,
   memset(smp->history_buffer, 0, sizeof smp->history_buffer);
 #endif
 
-  /* Shell initialization hook.*/
-#if defined(XSHELL_INIT_HOOK)
-  XSHELL_INIT_HOOK(smp);
+  /* Shell manager initialization hook.*/
+#if defined(XSHELL_MGR_INIT_HOOK)
+  XSHELL_MGR_INIT_HOOK(smp);
 #endif
 }
 

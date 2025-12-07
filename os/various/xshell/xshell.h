@@ -251,6 +251,34 @@ typedef struct xshell_manager {
 #endif
 } xshell_manager_t;
 
+/**
+ * @brief   Type of a shell instance.
+ */
+typedef struct xshell {
+  /**
+   * @brief   Thread running this shell.
+   */
+  thread_t                      thread;
+  /**
+   * @brief   Shell manager controlling this shell.
+   */
+  xshell_manager_t              *smp;
+  /**
+   * @brief   Shell command line buffer.
+   */
+  char                          line[XSHELL_LINE_LENGTH];
+  /**
+   * @brief   Command argument pointers array.
+   * @note    1st argument is the command name itself, the array is
+   *          NULL-terminated.
+   */
+  char *args[XSHELL_MAX_ARGUMENTS + 2];
+#if defined(XSHELL_EXTRA_FIELDS)
+  /* Extra fields defined in xshellconf.h.*/
+  XSHELL_EXTRA_FIELDS
+#endif
+} xshell_t;
+
 /*===========================================================================*/
 /* Module macros.                                                            */
 /*===========================================================================*/
