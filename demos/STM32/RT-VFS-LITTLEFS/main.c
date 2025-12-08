@@ -139,26 +139,24 @@ static const drv_streams_element_t streams[] = {
 
 #define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
 
-static void cmd_halt(xshell_manager_t *smp, BaseSequentialStream *stream,
-                     int argc, char *argv[]) {
+static void cmd_halt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc != 1) {
-    xshellUsage(stream, "halt");
+    xshellUsage(xshp, "halt");
     return;
   }
 
-  chprintf(stream, XSHELL_NEWLINE_STR "halted");
+  chprintf(xshp->stream, XSHELL_NEWLINE_STR "halted");
   chThdSleepMilliseconds(10);
   chSysHalt("shell halt");
 }
 
 /* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
-                      int argc, char *argv[]) {
-  static uint8_t buf[] =
+static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
+  static const uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -176,18 +174,18 @@ static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc != 1) {
-    xshellUsage(stream, "write");
+    xshellUsage(xshp, "write");
     return;
   }
 
-  while (chnGetTimeout((BaseChannel *)stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chnWrite(stream, buf, sizeof buf - 1);
+  while (chnGetTimeout((BaseChannel *)xshp->stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(xshp->stream, buf, sizeof buf - 1);
   }
-  chprintf(stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
+  chprintf(xshp->stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
 }
 
 static const xshell_command_t commands[] = {
@@ -310,10 +308,11 @@ int main(void) {
 
   /* Normal main() thread activity, spawning shells.*/
   while (true) {
-    thread_t *shelltp = xshellSpawn(&sm1,
-                                    (BaseSequentialStream *)vfsGetFileStream(file1),
-                                    NORMALPRIO + 1);
-    chThdWait(shelltp);               /* Waiting termination.             */
+    xshell_t *xshp = xshellSpawn(&sm1,
+                                 (BaseSequentialStream *)vfsGetFileStream(file1),
+                                 NORMALPRIO + 1,
+                                 NULL);
+    chThdWait(&xshp->thread);
     chThdSleepMilliseconds(500);
   }
 

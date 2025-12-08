@@ -22,11 +22,9 @@
 extern "C" {
 #endif
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
-  void cmd_clock(xshell_manager_t *smp, BaseSequentialStream *stream,
-               int argc, char *argv[]);
+  void cmd_clock(xshell_t *xshp, int argc, char *argv[], char *envp[]);
 #endif
- void cmd_clocks(xshell_manager_t *smp, BaseSequentialStream *stream,
-                 int argc, char *argv[]);
+ void cmd_clocks(xshell_t *xshp, int argc, char *argv[], char *envp[]);
 #ifdef __cplusplus
 }
 #endif

@@ -24,29 +24,27 @@
 #include "portab.h"
 
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT)
-void cmd_clock(xshell_manager_t *smp, BaseSequentialStream *stream,
-               int argc, char *argv[]) {
+void cmd_clock(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   bool result;
   const halclkcfg_t *ccp;
 
-  (void)smp;
-  (void)argv;
+  (void)envp;
 
   if (argc != 2) {
-    xshellUsage(stream, "clock reset|default");
+    xshellUsage(xshp, "clock reset|default");
     return;
   }
 
   if (strcmp(argv[1], "reset") == 0) {
-    chprintf(stream, XSHELL_NEWLINE_STR "Switching to post-reset clock settings: ");
+    chprintf(xshp->stream, XSHELL_NEWLINE_STR "Switching to post-reset clock settings: ");
     ccp = &hal_clkcfg_reset;
   }
   else if (strcmp(argv[1], "default") == 0) {
-    chprintf(stream, XSHELL_NEWLINE_STR "Switching to default mcuconf.h clock settings: ");
+    chprintf(xshp->stream, XSHELL_NEWLINE_STR "Switching to default mcuconf.h clock settings: ");
     ccp = &hal_clkcfg_default;
   }
   else {
-    xshellUsage(stream, "clock reset|default");
+    xshellUsage(xshp, "clock reset|default");
     return;
   }
 
@@ -62,40 +60,27 @@ void cmd_clock(xshell_manager_t *smp, BaseSequentialStream *stream,
 
   /* Printing result.*/
   if (result) {
-    chprintf(stream, "failed" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "failed" XSHELL_NEWLINE_STR);
   }
   else {
-    chprintf(stream, "done" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "done" XSHELL_NEWLINE_STR);
   }
 }
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
-void cmd_clocks(xshell_manager_t *smp, BaseSequentialStream *stream,
-                int argc, char *argv[]) {
+void cmd_clocks(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   static const char *names[CLK_ARRAY_SIZE] = CLK_POINT_NAMES;
   unsigned i;
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc != 1) {
-    xshellUsage(stream, "clocks");
+    xshellUsage(xshp, "clocks");
     return;
   }
 
-#if 0
-#if STM32_SW == STM32_SW_HSI16
-  swp = "HSI16";
-#elif STM32_SW == STM32_SW_HSE
-  swp = "HSE";
-#elif STM32_SW == STM32_SW_PLLRCLK
-  swp = "PLLR";
-#else
-  #error "invalid STM32_SW value specified"
-#endif
-#endif
-
   for (i = 0U; i < CLK_ARRAY_SIZE; i++) {
-    chprintf(stream, "%10s: %10u" XSHELL_NEWLINE_STR, names[i], halClockGetPointX(i));
+    chprintf(xshp->stream, "%10s: %10u" XSHELL_NEWLINE_STR, names[i], halClockGetPointX(i));
   }
 }

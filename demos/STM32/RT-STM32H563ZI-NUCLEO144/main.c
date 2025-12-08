@@ -31,9 +31,8 @@
 #define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
 
 /* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(struct xshell_manager *smp, BaseSequentialStream *chp,
-                      int argc, char *argv[]) {
-  static uint8_t buf[] =
+static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
+  static const uint8_t buf[] =
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
@@ -51,128 +50,22 @@ static void cmd_write(struct xshell_manager *smp, BaseSequentialStream *chp,
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
-  if (argc > 1) {
-    chprintf(chp, "Usage: write\r\n");
+  if (argc != 1) {
+    xshellUsage(xshp, "write");
     return;
   }
 
-  while (chnGetTimeout((BaseChannel *)chp, TIME_IMMEDIATE) == Q_TIMEOUT) {
-#if 1
-    /* Writing in channel mode.*/
-    chnWrite(chp, buf, sizeof buf - 1);
-#else
-    /* Writing in buffer mode.*/
-    (void) obqGetEmptyBufferTimeout(&PORTAB_SDU1.obqueue, TIME_INFINITE);
-    memcpy(PORTAB_SDU1.obqueue.ptr, buf, SERIAL_USB_BUFFERS_SIZE);
-    obqPostFullBuffer(&PORTAB_SDU1.obqueue, SERIAL_USB_BUFFERS_SIZE);
-#endif
+  while (chnGetTimeout((BaseChannel *)xshp->stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
+    chnWrite(xshp->stream, buf, sizeof buf - 1);
   }
-  chprintf(chp, "\r\n\nstopped\r\n");
-}
-
-#if STM32_CLOCK_DYNAMIC == TRUE
-static void cmd_clock(struct xshell_manager *smp, BaseSequentialStream *chp,
-                      int argc, char *argv[]) {
-  bool result;
-  const halclkcfg_t *ccp;
-  static const char usage[] = "Usage: clock [reset|default]\r\n";
-
-  (void)smp;
-
-  if (argc != 2) {
-    chprintf(chp, usage);
-    return;
-  }
-
-  if (strcmp(argv[1], "reset") == 0) {
-    chprintf(chp, "\r\nSwitching to post-reset clocks: ");
-    ccp = &hal_clkcfg_reset;
-  }
-  else if (strcmp(argv[1], "default") == 0) {
-    chprintf(chp, "\r\nSwitching to default mcuconf.h clocks: ");
-    ccp = &hal_clkcfg_default;
-  }
-  else {
-    chprintf(chp, usage);
-    return;
-  }
-
-  /* Time for the serial TX buffer to flush.*/
-  chThdSleepMilliseconds(100);
-
-  /* Switching clocks.*/
-  result = halClockSwitchMode(ccp);
-
-  /* Reconfiguring the peripherals because clocks frequencies could have changed.*/
-  sioStart(&SIOD3, NULL);
-
-  /* Printing result.*/
-  if (result) {
-    chprintf(chp, "failed\r\n");
-  }
-  else {
-    chprintf(chp, "done\r\n");
-  }
-}
-#endif
-
-static void cmd_clocks(struct xshell_manager *smp,
-                       BaseSequentialStream *chp, int argc, char *argv[]) {
-  const char *swp;
-
-  (void)smp;
-  (void)argv;
-
-  if (argc > 1) {
-    chprintf(chp, "Usage: clocks\r\n");
-    return;
-  }
-
-#if STM32_SW == RCC_CFGR1_SW_HSI
-  swp = "HSI";
-#elif STM32_SW == RCC_CFGR1_SW_CSI
-  swp = "CSI";
-#elif STM32_SW == RCC_CFGR1_SW_HSE
-  swp = "HSE";
-#elif STM32_SW == RCC_CFGR1_SW_PLL1P
-  swp = "PLL1P";
-#else
-  #error "invalid STM32_SW value specified"
-#endif
-
-  chprintf(chp, "HSI:      %10u\r\n", halClockGetPointX(CLK_HSI));
-  chprintf(chp, "CSI:      %10u\r\n", halClockGetPointX(CLK_CSI));
-  chprintf(chp, "HSI48:    %10u\r\n", halClockGetPointX(CLK_HSI48));
-  chprintf(chp, "HSE:      %10u\r\n", halClockGetPointX(CLK_HSE));
-  chprintf(chp, "SYSCLK:   %10u (%s)\r\n", halClockGetPointX(CLK_SYSCLK), swp);
-  chprintf(chp, "PLL1PCLK: %10u\r\n", halClockGetPointX(CLK_PLL1PCLK));
-  chprintf(chp, "PLL1RCLK: %10u\r\n", halClockGetPointX(CLK_PLL1RCLK));
-  chprintf(chp, "PLL1QCLK: %10u\r\n", halClockGetPointX(CLK_PLL1QCLK));
-  chprintf(chp, "PLL2PCLK: %10u\r\n", halClockGetPointX(CLK_PLL2PCLK));
-  chprintf(chp, "PLL2RCLK: %10u\r\n", halClockGetPointX(CLK_PLL2RCLK));
-  chprintf(chp, "PLL2QCLK: %10u\r\n", halClockGetPointX(CLK_PLL2QCLK));
-  chprintf(chp, "PLL3PCLK: %10u\r\n", halClockGetPointX(CLK_PLL3PCLK));
-  chprintf(chp, "PLL3RCLK: %10u\r\n", halClockGetPointX(CLK_PLL3RCLK));
-  chprintf(chp, "PLL3QCLK: %10u\r\n", halClockGetPointX(CLK_PLL3QCLK));
-  chprintf(chp, "HCLK:     %10u\r\n", halClockGetPointX(CLK_HCLK));
-  chprintf(chp, "PCLK1:    %10u\r\n", halClockGetPointX(CLK_PCLK1));
-  chprintf(chp, "PCLK1TIM: %10u\r\n", halClockGetPointX(CLK_PCLK1TIM));
-  chprintf(chp, "PCLK2:    %10u\r\n", halClockGetPointX(CLK_PCLK2));
-  chprintf(chp, "PCLK2TIM: %10u\r\n", halClockGetPointX(CLK_PCLK2TIM));
-  chprintf(chp, "PCLK3:    %10u\r\n", halClockGetPointX(CLK_PCLK3));
-  chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
-  chprintf(chp, "MCO1:     %10u\r\n", halClockGetPointX(CLK_MCO1));
+  chprintf(xshp->stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
 }
 
 static const xshell_command_t commands[] = {
   {"write", cmd_write},
-#if STM32_CLOCK_DYNAMIC == TRUE
-  {"clock", cmd_clock},
-#endif
-  {"clocks", cmd_clocks},
   {NULL, NULL}
 };
 
@@ -252,10 +145,10 @@ int main(void) {
    * sleeping in a loop and check the button state.
    */
   while (true) {
-    thread_t *shelltp = xshellSpawn(&sm1,
-                                    (BaseSequentialStream *)&SIOD3,
-                                    NORMALPRIO + 1);
-    chThdWait(shelltp);               /* Waiting termination.             */
+    xshell_t *xshp = xshellSpawn(&sm1,
+                                 (BaseSequentialStream *)&SIOD3,
+                                 NORMALPRIO + 1, NULL);
+    chThdWait(&xshp->thread);
     chThdSleepMilliseconds(500);
   }
 }
