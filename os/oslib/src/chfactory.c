@@ -431,9 +431,9 @@ registered_object_t *chFactoryFindObjectByPointer(void *objp) {
  *          Only the containing list element is freed.
  *
  * @param[in] rop       registered object reference
- * @return 		        The reference count of registered object subsequent to
+ * @return              The reference count of registered object subsequent to
  *                      release.
- * @retval 0		    if the object has been released.
+ * @retval 0            if the object has been released.
  *
  * @api
  */
