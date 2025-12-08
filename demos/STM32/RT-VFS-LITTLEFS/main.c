@@ -139,58 +139,7 @@ static const drv_streams_element_t streams[] = {
 
 #define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
 
-static void cmd_halt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
-
-  (void)argv;
-  (void)envp;
-
-  if (argc != 1) {
-    xshellUsage(xshp, "halt");
-    return;
-  }
-
-  chprintf(xshp->stream, XSHELL_NEWLINE_STR "halted");
-  chThdSleepMilliseconds(10);
-  chSysHalt("shell halt");
-}
-
-/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
-  static const uint8_t buf[] =
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-
-  (void)argv;
-  (void)envp;
-
-  if (argc != 1) {
-    xshellUsage(xshp, "write");
-    return;
-  }
-
-  while (chnGetTimeout((BaseChannel *)xshp->stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chnWrite(xshp->stream, buf, sizeof buf - 1);
-  }
-  chprintf(xshp->stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
-}
-
 static const xshell_command_t commands[] = {
-  {"halt", cmd_halt},
-  {"write", cmd_write},
   {NULL, NULL}
 };
 
@@ -308,10 +257,8 @@ int main(void) {
 
   /* Normal main() thread activity, spawning shells.*/
   while (true) {
-    xshell_t *xshp = xshellSpawn(&sm1,
-                                 (BaseSequentialStream *)vfsGetFileStream(file1),
-                                 NORMALPRIO + 1,
-                                 NULL);
+    xshell_t *xshp = xshellSpawn(&sm1, (BaseSequentialStream *)vfsGetFileStream(file1),
+                                 NORMALPRIO + 1, NULL);
     chThdWait(&xshp->thread);
     chThdSleepMilliseconds(500);
   }

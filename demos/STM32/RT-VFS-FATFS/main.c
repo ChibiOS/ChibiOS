@@ -134,60 +134,7 @@ static const drv_streams_element_t streams[] = {
 
 #define SHELL_WA_SIZE       THD_STACK_SIZE(2048)
 
-static void cmd_halt(xshell_manager_t *smp, BaseSequentialStream *stream,
-                     int argc, char *argv[]) {
-
-  (void)smp;
-  (void)argv;
-
-  if (argc != 1) {
-    xshellUsage(stream, "halt");
-    return;
-  }
-
-  chprintf(stream, XSHELL_NEWLINE_STR "halted");
-  chThdSleepMilliseconds(10);
-  chSysHalt("shell halt");
-}
-
-/* Can be measured using dd if=/dev/xxxx of=/dev/null bs=512 count=10000.*/
-static void cmd_write(xshell_manager_t *smp, BaseSequentialStream *stream,
-                      int argc, char *argv[]) {
-  static uint8_t buf[] =
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-
-  (void)smp;
-  (void)argv;
-
-  if (argc != 1) {
-    xshellUsage(stream, "write");
-    return;
-  }
-
-  while (chnGetTimeout((BaseChannel *)stream, TIME_IMMEDIATE) == Q_TIMEOUT) {
-    chnWrite(stream, buf, sizeof buf - 1);
-  }
-  chprintf(stream, XSHELL_NEWLINE_STR "stopped" XSHELL_NEWLINE_STR);
-}
-
 static const xshell_command_t commands[] = {
-  {"halt", cmd_halt},
-  {"write", cmd_write},
   {NULL, NULL}
 };
 
@@ -206,7 +153,7 @@ static xshell_manager_t sm1;
 /* Main and generic code.                                                    */
 /*===========================================================================*/
 
-static thread_t *shelltp = NULL;
+static xshell_t *xshp = NULL;
 
 #if !HAL_USE_SDC
 static uint8_t __nocache_mmcbuf[MMC_BUFFER_SIZE];
@@ -268,8 +215,8 @@ static void ShellHandler(eventid_t id) {
 
   (void)id;
 
-  (void) chThdWait(shelltp);
-  shelltp = NULL;
+  (void) chThdWait(&xshp->thread);
+  xshp = NULL;
 }
 
 /*
@@ -368,11 +315,10 @@ int main(void) {
   chEvtRegister(&removed_event, &el1, 1);
   chEvtRegister(&sm1.events, &el2, 2);
   while (true) {
-    if (shelltp == NULL) {
+    if (xshp == NULL) {
       /* Spawning a shell.*/
-      shelltp = xshellSpawn(&sm1,
-                           (BaseSequentialStream *)vfsGetFileStream(file1),
-                           NORMALPRIO + 1);
+      xshp = xshellSpawn(&sm1, (BaseSequentialStream *)vfsGetFileStream(file1),
+                         NORMALPRIO + 1, NULL);
     }
     chEvtDispatch(evhndl, chEvtWaitOneTimeout(ALL_EVENTS, TIME_MS2I(500)));
   }
