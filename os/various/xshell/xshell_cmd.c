@@ -60,16 +60,14 @@
 /* Module local functions.                                                   */
 /*===========================================================================*/
 
-#if ((XSHELL_CMD_EXIT_ENABLED == TRUE) && !defined(__CHIBIOS_NIL__)) ||     \
-    defined(__DOXYGEN__)
-static void cmd_exit(xshell_manager_t *smp, shell_stream_i *stream,
-                     int argc, char *argv[]) {
+#if (XSHELL_CMD_EXIT_ENABLED == TRUE) || defined(__DOXYGEN__)
+static void cmd_exit(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
   (void)argv;
-  (void)smp;
+  (void)envp;
 
   if (argc > 1) {
-    xshellUsage(stream, "exit");
+    xshellUsage(xshp, "exit");
     return;
   }
   
@@ -78,110 +76,104 @@ static void cmd_exit(xshell_manager_t *smp, shell_stream_i *stream,
 #endif
 
 #if (XSHELL_CMD_INFO_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_info(xshell_manager_t *smp, shell_stream_i *stream,
-                     int argc, char *argv[]) {
+static void cmd_info(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc > 1) {
-    xshellUsage(stream, "info");
+    xshellUsage(xshp, "info");
     return;
   }
 
-  chprintf(stream, "Kernel:       %s" XSHELL_NEWLINE_STR, CH_KERNEL_VERSION);
+  chprintf(xshp->stream, "Kernel:       %s" XSHELL_NEWLINE_STR, CH_KERNEL_VERSION);
 #ifdef PORT_COMPILER_NAME
-  chprintf(stream, "Compiler:     %s" XSHELL_NEWLINE_STR, PORT_COMPILER_NAME);
+  chprintf(xshp->stream, "Compiler:     %s" XSHELL_NEWLINE_STR, PORT_COMPILER_NAME);
 #endif
-  chprintf(stream, "Architecture: %s" XSHELL_NEWLINE_STR, PORT_ARCHITECTURE_NAME);
+  chprintf(xshp->stream, "Architecture: %s" XSHELL_NEWLINE_STR, PORT_ARCHITECTURE_NAME);
 #ifdef PORT_CORE_VARIANT_NAME
-  chprintf(stream, "Core Variant: %s" XSHELL_NEWLINE_STR, PORT_CORE_VARIANT_NAME);
+  chprintf(xshp->stream, "Core Variant: %s" XSHELL_NEWLINE_STR, PORT_CORE_VARIANT_NAME);
 #endif
 #ifdef PORT_INFO
-  chprintf(stream, "Port Info:    %s" XSHELL_NEWLINE_STR, PORT_INFO);
+  chprintf(xshp->stream, "Port Info:    %s" XSHELL_NEWLINE_STR, PORT_INFO);
 #endif
 #ifdef PLATFORM_NAME
-  chprintf(stream, "Platform:     %s" XSHELL_NEWLINE_STR, PLATFORM_NAME);
+  chprintf(xshp->stream, "Platform:     %s" XSHELL_NEWLINE_STR, PLATFORM_NAME);
 #endif
 #ifdef BOARD_NAME
-  chprintf(stream, "Board:        %s" XSHELL_NEWLINE_STR, BOARD_NAME);
+  chprintf(xshp->stream, "Board:        %s" XSHELL_NEWLINE_STR, BOARD_NAME);
 #endif
 #ifdef __DATE__
 #ifdef __TIME__
-  chprintf(stream, "Build time:   %s%s%s" XSHELL_NEWLINE_STR, __DATE__, " - ", __TIME__);
+  chprintf(xshp->stream, "Build time:   %s%s%s" XSHELL_NEWLINE_STR, __DATE__, " - ", __TIME__);
 #endif
 #endif
 }
 #endif
 
 #if (XSHELL_CMD_ECHO_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_echo(xshell_manager_t *smp, shell_stream_i *stream,
-                     int argc, char *argv[]) {
+static void cmd_echo(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
-  (void)smp;
-  (void)argv;
+  (void)envp;
 
   if (argc != 2) {
-    xshellUsage(stream, "echo \"message\"");
+    xshellUsage(xshp, "echo \"message\"");
     return;
   }
 
-  chprintf(stream, "%s" XSHELL_NEWLINE_STR, argv[1]);
+  chprintf(xshp->stream, "%s" XSHELL_NEWLINE_STR, argv[1]);
 }
 #endif
 
 #if (XSHELL_CMD_SYSTIME_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_systime(xshell_manager_t *smp, shell_stream_i *stream,
-                        int argc, char *argv[]) {
+static void cmd_systime(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc > 1) {
-    xshellUsage(stream, "systime");
+    xshellUsage(xshp, "systime");
     return;
   }
 
-  chprintf(stream, "%lu" XSHELL_NEWLINE_STR, (unsigned long)chVTGetSystemTimeX());
+  chprintf(xshp->stream, "%lu" XSHELL_NEWLINE_STR, (unsigned long)chVTGetSystemTimeX());
 }
 #endif
 
 #if (XSHELL_CMD_MEM_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_mem(xshell_manager_t *smp, shell_stream_i *stream,
-                    int argc, char *argv[]) {
+static void cmd_mem(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   size_t n, total, largest;
   memory_area_t area;
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc > 1) {
-    xshellUsage(stream, "mem");
+    xshellUsage(xshp, "mem");
     return;
   }
   n = chHeapStatus(NULL, &total, &largest);
   chCoreGetStatusX(&area);
-  chprintf(stream, "core free memory : %u bytes" XSHELL_NEWLINE_STR, area.size);
-  chprintf(stream, "heap fragments   : %u" XSHELL_NEWLINE_STR, n);
-  chprintf(stream, "heap free total  : %u bytes" XSHELL_NEWLINE_STR, total);
-  chprintf(stream, "heap free largest: %u bytes" XSHELL_NEWLINE_STR, largest);
+  chprintf(xshp->stream, "core free memory : %u bytes" XSHELL_NEWLINE_STR, area.size);
+  chprintf(xshp->stream, "heap fragments   : %u" XSHELL_NEWLINE_STR, n);
+  chprintf(xshp->stream, "heap free total  : %u bytes" XSHELL_NEWLINE_STR, total);
+  chprintf(xshp->stream, "heap free largest: %u bytes" XSHELL_NEWLINE_STR, largest);
 }
 #endif
 
 #if (XSHELL_CMD_THREADS_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_threads(xshell_manager_t *smp, shell_stream_i *stream,
-                        int argc, char *argv[]) {
+static void cmd_threads(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   static const char *states[] = {CH_STATE_NAMES};
   thread_t *tp;
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc > 1) {
-    xshellUsage(stream, "threads");
+    xshellUsage(xshp, "threads");
     return;
   }
-  chprintf(stream, "core stklimit    stack     addr refs prio     state         name" XSHELL_NEWLINE_STR);
+  chprintf(xshp->stream, "core stklimit    stack     addr refs prio     state         name" XSHELL_NEWLINE_STR);
   tp = chRegFirstThread();
   do {
     core_id_t core_id;
@@ -196,7 +188,7 @@ static void cmd_threads(xshell_manager_t *smp, shell_stream_i *stream,
 #else
     uint32_t stklimit = 0U;
 #endif
-    chprintf(stream, "%4lu %08lx %08lx %08lx %4lu %4lu %9s %12s" XSHELL_NEWLINE_STR,
+    chprintf(xshp->stream, "%4lu %08lx %08lx %08lx %4lu %4lu %9s %12s" XSHELL_NEWLINE_STR,
              core_id,
              stklimit,
              (uint32_t)tp->ctx.sp,
@@ -211,58 +203,59 @@ static void cmd_threads(xshell_manager_t *smp, shell_stream_i *stream,
 #endif
 
 #if (XSHELL_CMD_TEST_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void cmd_test(xshell_manager_t *smp, shell_stream_i *stream,
-                     int argc, char *argv[]) {
+static void cmd_test(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
-  (void)smp;
   (void)argv;
+  (void)envp;
 
   if (argc > 2) {
-    xshellUsage(stream, "test [rt|oslib]");
+    xshellUsage(xshp, "test [rt|oslib]");
     return;
   }
   else if (argc == 1) {
-    test_execute(stream, &rt_test_suite);
-    test_execute(stream, &oslib_test_suite);
+    test_execute(xshp->stream, &rt_test_suite);
+    test_execute(xshp->stream, &oslib_test_suite);
   }
   else if (!strcmp(argv[1], "rt")) {
-    test_execute(stream, &rt_test_suite);
+    test_execute(xshp->stream, &rt_test_suite);
   }
   else if (!strcmp(argv[1], "oslib")) {
-    test_execute(stream, &oslib_test_suite);
+    test_execute(xshp->stream, &oslib_test_suite);
   }
   else {
-    xshellUsage(stream, "test rt|oslib");
+    xshellUsage(xshp, "test rt|oslib");
     return;
   }
 }
 #endif
 
 #if (XSHELL_PROMPT_STR_LENGTH > 0)  || defined(__DOXYGEN__)
-static void cmd_prompt(xshell_manager_t *smp, shell_stream_i *stream,
-                            int argc, char *argv[]) {
+static void cmd_prompt(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
+  xshell_manager_t *smp = xshellGetManager(xshp);
+
+  (void)envp;
+
   if (argc != 2) {
-    xshellUsage(stream, "prompt \"string\"");
+    xshellUsage(xshp, "prompt \"string\"");
     return;
   }
+
   if (strlen(argv[1]) > XSHELL_PROMPT_STR_LENGTH) {
-    xshellUsage(stream, "prompt string too long");
+    xshellUsage(xshp, "prompt string too long");
     return;
   }
+
   strncpy(smp->prompt, argv[1], XSHELL_PROMPT_STR_LENGTH);
   smp->prompt[XSHELL_PROMPT_STR_LENGTH] = '\0';
 }
 #endif
 
 #if (XSHELL_CMD_FILES_ENABLED == TRUE) || defined(__DOXYGEN__)
-static void scan_nodes(shell_stream_i *stream,
-                       char *path,
-                       size_t path_capacity,
-                       vfs_direntry_info_t *dip) {
+static void scan_nodes(xshell_t *xshp, char *path, size_t path_capacity, vfs_direntry_info_t *dip) {
   msg_t res;
   vfs_directory_node_c *dirp;
 
-  chprintf(stream, "%s" XSHELL_NEWLINE_STR, path);
+  chprintf(xshp->stream, "%s" XSHELL_NEWLINE_STR, path);
   res = vfsOpenDirectory(path, &dirp);
   if (res == CH_RET_SUCCESS) {
     size_t i = strlen(path);
@@ -285,7 +278,7 @@ static void scan_nodes(shell_stream_i *stream,
       }
 
       if (needed > path_capacity) {
-        chprintf(stream, "%s%s [path too long]" XSHELL_NEWLINE_STR, path, fn);
+        chprintf(xshp->stream, "%s%s [path too long]" XSHELL_NEWLINE_STR, path, fn);
         continue;
       }
 
@@ -296,11 +289,11 @@ static void scan_nodes(shell_stream_i *stream,
         cursor += fn_len;
         path[cursor++] = '/';
         path[cursor] = '\0';
-        scan_nodes(stream, path, path_capacity, dip);
+        scan_nodes(xshp, path, path_capacity, dip);
         path[i] = '\0';
       }
       else {
-        chprintf(stream, "%s%s" XSHELL_NEWLINE_STR, path, fn);
+        chprintf(xshp->stream, "%s%s" XSHELL_NEWLINE_STR, path, fn);
       }
     }
 
@@ -308,18 +301,17 @@ static void scan_nodes(shell_stream_i *stream,
   }
 }
 
-static void cmd_tree(xshell_manager_t *smp, shell_stream_i *stream,
-                     int argc, char *argv[]) {
+static void cmd_tree(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
 
-  (void)smp;
   char *pathbuf = NULL;
   vfs_direntry_info_t *dip = NULL;
   const size_t path_capacity = VFS_CFG_PATHLEN_MAX + 1U;
 
   (void)argv;
+  (void)envp;
 
   if (argc > 1) {
-    chprintf(stream, "Usage: tree" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: tree" XSHELL_NEWLINE_STR);
     return;
   }
 
@@ -327,12 +319,12 @@ static void cmd_tree(xshell_manager_t *smp, shell_stream_i *stream,
     pathbuf = (char *)chHeapAlloc(NULL, path_capacity);
     dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
     if ((pathbuf == NULL) || (dip == NULL)) {
-      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Out of memory" XSHELL_NEWLINE_STR);
      break;
     }
 
     strcpy(pathbuf, "/");
-    scan_nodes(stream, pathbuf, path_capacity, dip);
+    scan_nodes(xshp, pathbuf, path_capacity, dip);
   }
   while (false);
 
@@ -345,13 +337,13 @@ static void cmd_tree(xshell_manager_t *smp, shell_stream_i *stream,
   }
 }
 
-static void cmd_cat(xshell_manager_t *smp, shell_stream_i *stream,
-                    int argc, char *argv[]) {
-  (void)smp;
+static void cmd_cat(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   char *buf = NULL;
 
+  (void)envp;
+
   if (argc != 2) {
-    chprintf(stream, "Usage: cat <source>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: cat <source>" XSHELL_NEWLINE_STR);
     return;
   }
 
@@ -360,7 +352,7 @@ static void cmd_cat(xshell_manager_t *smp, shell_stream_i *stream,
 
     buf = (char *)chHeapAlloc(NULL, XSHELL_CMD_FILES_BUFFER_SIZE);
     if (buf == NULL) {
-      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Out of memory" XSHELL_NEWLINE_STR);
      break;
     }
 
@@ -368,28 +360,28 @@ static void cmd_cat(xshell_manager_t *smp, shell_stream_i *stream,
     msg_t ret;
     ret = vfsStat(argv[1], &stat);
     if (CH_RET_IS_ERROR(ret)) {
-      chprintf(stream, "stat failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+      chprintf(xshp->stream, "stat failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
       break;
     }
 
     if ((stat.mode & (VFS_MODE_S_IFREG | VFS_MODE_S_IFCHR | VFS_MODE_S_IFIFO)) == 0) {
-      chprintf(stream, "Not a valid source type" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Not a valid source type" XSHELL_NEWLINE_STR);
       break;
     }
 
     fd = open(argv[1], O_RDONLY);
     if (fd == -1) {
-      chprintf(stream, "Cannot open source" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Cannot open source" XSHELL_NEWLINE_STR);
       break;
     }
 
     while ((n = read(fd, buf, XSHELL_CMD_FILES_BUFFER_SIZE)) > 0) {
-      streamWrite(stream, (const uint8_t *)buf, n);
-      if (chnGetTimeout((BaseChannel*)stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
+      streamWrite(xshp->stream, (const uint8_t *)buf, n);
+      if (chnGetTimeout((BaseChannel*)xshp->stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
         break;
       }
     }
-    chprintf(stream, XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, XSHELL_NEWLINE_STR);
 
     (void) close(fd);
   }
@@ -400,13 +392,13 @@ static void cmd_cat(xshell_manager_t *smp, shell_stream_i *stream,
   }
 }
 
-static void cmd_cp(xshell_manager_t *smp, shell_stream_i *stream,
-                    int argc, char *argv[]) {
-  (void)smp;
+static void cmd_cp(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   char *buf = NULL;
 
+  (void)envp;
+
   if (argc != 3) {
-    chprintf(stream, "Usage: cp <source file> <destination file>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: cp <source file> <destination file>" XSHELL_NEWLINE_STR);
     return;
   }
 
@@ -415,7 +407,7 @@ static void cmd_cp(xshell_manager_t *smp, shell_stream_i *stream,
 
     buf = (char *)chHeapAlloc(NULL, XSHELL_CMD_FILES_BUFFER_SIZE);
     if (buf == NULL) {
-      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Out of memory" XSHELL_NEWLINE_STR);
      break;
     }
 
@@ -423,40 +415,40 @@ static void cmd_cp(xshell_manager_t *smp, shell_stream_i *stream,
     msg_t ret;
     ret = vfsStat(argv[1], &stat);
     if (CH_RET_IS_ERROR(ret)) {
-      chprintf(stream, "stat failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+      chprintf(xshp->stream, "stat failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
       break;
     }
 
     if ((stat.mode & VFS_MODE_S_IFREG) == 0) {
-      chprintf(stream, "Not a file type" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Not a file type" XSHELL_NEWLINE_STR);
       break;
     }
 
     fd_in = open(argv[1], O_RDONLY);
     if (fd_in == -1) {
-      chprintf(stream, "Cannot open source file" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Cannot open source file" XSHELL_NEWLINE_STR);
       break;
     }
 
     fd_out = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0666);
     if (fd_out == -1) {
       (void) close(fd_in);
-      chprintf(stream, "Cannot open destination file" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Cannot open destination file" XSHELL_NEWLINE_STR);
       break;
     }
 
     while ((n = read(fd_in, buf, XSHELL_CMD_FILES_BUFFER_SIZE)) > 0) {
       if (write(fd_out, buf, n) < 0) {
-        chprintf(stream, "Error writing destination file" XSHELL_NEWLINE_STR);
+        chprintf(xshp->stream, "Error writing destination file" XSHELL_NEWLINE_STR);
         break;
       }
 
       /* Check for abort.*/
-      if (chnGetTimeout((BaseChannel*)stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
+      if (chnGetTimeout((BaseChannel*)xshp->stream, TIME_IMMEDIATE) != STM_TIMEOUT) {
         break;
       }
     }
-    chprintf(stream, XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, XSHELL_NEWLINE_STR);
     (void) close(fd_out);
     (void) close(fd_in);
   }
@@ -467,11 +459,12 @@ static void cmd_cp(xshell_manager_t *smp, shell_stream_i *stream,
   }
 }
 
-static void cmd_cd(xshell_manager_t *smp, shell_stream_i *stream,
-                   int argc, char *argv[]) {
-  (void)smp;
+static void cmd_cd(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
+
+  (void)envp;
+
   if (argc != 2) {
-    chprintf(stream, "Usage: cd <dirpath>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: cd <dirpath>" XSHELL_NEWLINE_STR);
     return;
   }
 
@@ -480,19 +473,19 @@ static void cmd_cd(xshell_manager_t *smp, shell_stream_i *stream,
 
     ret = vfsChangeCurrentDirectory(argv[1]);
     if (CH_RET_IS_ERROR(ret)) {
-      chprintf(stream, "failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+      chprintf(xshp->stream, "failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
     }
   }
   while (false);
 }
 
-static void cmd_ls(xshell_manager_t *smp, shell_stream_i *stream,
-                   int argc, char *argv[]) {
-  (void)smp;
+static void cmd_ls(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   vfs_direntry_info_t *dip = NULL;
 
+  (void)envp;
+
   if (argc > 2) {
-    chprintf(stream, "Usage: ls [<dirpath>]" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: ls [<dirpath>]" XSHELL_NEWLINE_STR);
     return;
   }
 
@@ -502,7 +495,7 @@ static void cmd_ls(xshell_manager_t *smp, shell_stream_i *stream,
 
     dip = (vfs_direntry_info_t *)chHeapAlloc(NULL, sizeof (vfs_direntry_info_t));
     if (dip == NULL) {
-      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Out of memory" XSHELL_NEWLINE_STR);
      break;
     }
 
@@ -511,13 +504,13 @@ static void cmd_ls(xshell_manager_t *smp, shell_stream_i *stream,
     if (!CH_RET_IS_ERROR(ret)) {
 
       while (vfsReadDirectoryNext(dirp, dip) > (msg_t)0) {
-        chprintf(stream, "%s" XSHELL_NEWLINE_STR, dip->name);
+        chprintf(xshp->stream, "%s" XSHELL_NEWLINE_STR, dip->name);
       }
 
       vfsClose((vfs_node_c *)dirp);
     }
     else {
-      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+      chprintf(xshp->stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
     }
 
   } while (false);
@@ -527,47 +520,46 @@ static void cmd_ls(xshell_manager_t *smp, shell_stream_i *stream,
   }
 }
 
-static void cmd_mkdir(xshell_manager_t *smp, shell_stream_i *stream,
-                      int argc, char *argv[]) {
-  (void)smp;
+static void cmd_mkdir(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   msg_t ret;
 
+  (void)envp;
+
   if (argc != 2) {
-    chprintf(stream, "Usage: mkdir <dirpath>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: mkdir <dirpath>" XSHELL_NEWLINE_STR);
     return;
   }
 
   ret = vfsMkdir(argv[1], 0777U);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+    chprintf(xshp->stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
-static void cmd_mv(xshell_manager_t *smp, shell_stream_i *stream,
-                   int argc, char *argv[]) {
-  (void)smp;
+static void cmd_mv(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   msg_t ret;
 
+  (void)envp;
+
   if (argc != 3) {
-    chprintf(stream, "Usage: mv <oldpath> <newpath>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: mv <oldpath> <newpath>" XSHELL_NEWLINE_STR);
     return;
   }
 
   ret = vfsRename(argv[1], argv[2]);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+    chprintf(xshp->stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
-static void cmd_pwd(xshell_manager_t *smp, shell_stream_i *stream,
-                    int argc, char *argv[]) {
-  (void)smp;
+static void cmd_pwd(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   char *buf = NULL;
 
   (void)argv;
+  (void)envp;
 
   if (argc != 1) {
-    chprintf(stream, "Usage: pwd" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: pwd" XSHELL_NEWLINE_STR);
     return;
   }
 
@@ -576,16 +568,16 @@ static void cmd_pwd(xshell_manager_t *smp, shell_stream_i *stream,
 
     buf = (char *)chHeapAlloc(NULL, VFS_CFG_PATHLEN_MAX + 1);
     if (buf == NULL) {
-      chprintf(stream, "Out of memory" XSHELL_NEWLINE_STR);
+      chprintf(xshp->stream, "Out of memory" XSHELL_NEWLINE_STR);
      break;
     }
 
     ret = vfsGetCurrentDirectory(buf, VFS_CFG_PATHLEN_MAX + 1);
     if (CH_RET_IS_ERROR(ret)) {
-      chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+      chprintf(xshp->stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
     }
     else {
-      chprintf(stream, "%s" XSHELL_NEWLINE_STR, buf);
+      chprintf(xshp->stream, "%s" XSHELL_NEWLINE_STR, buf);
     }
   }
   while (false);
@@ -595,56 +587,56 @@ static void cmd_pwd(xshell_manager_t *smp, shell_stream_i *stream,
   }
 }
 
-static void cmd_rm(xshell_manager_t *smp, shell_stream_i *stream,
-                   int argc, char *argv[]) {
-  (void)smp;
+static void cmd_rm(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   msg_t ret;
 
+  (void)envp;
+
   if (argc != 2) {
-    chprintf(stream, "Usage: rm <filepath>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: rm <filepath>" XSHELL_NEWLINE_STR);
     return;
   }
 
   ret = vfsUnlink(argv[1]);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+    chprintf(xshp->stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
-static void cmd_rmdir(xshell_manager_t *smp, shell_stream_i *stream,
-                      int argc, char *argv[]) {
-  (void)smp;
+static void cmd_rmdir(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   msg_t ret;
 
+  (void)envp;
+
   if (argc != 2) {
-    chprintf(stream, "Usage: rmdir <dirpath>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: rmdir <dirpath>" XSHELL_NEWLINE_STR);
     return;
   }
 
   ret = vfsRmdir(argv[1]);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+    chprintf(xshp->stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
   }
 }
 
-static void cmd_stat(xshell_manager_t *smp, shell_stream_i *stream,
-                     int argc, char *argv[]) {
-  (void)smp;
+static void cmd_stat(xshell_t *xshp, int argc, char *argv[], char *envp[]) {
   msg_t ret;
   vfs_stat_t statbuf;
 
+  (void)envp;
+
   if (argc != 2) {
-    chprintf(stream, "Usage: stat <path>" XSHELL_NEWLINE_STR);
+    chprintf(xshp->stream, "Usage: stat <path>" XSHELL_NEWLINE_STR);
     return;
   }
 
   ret = vfsStat(argv[1], &statbuf);
   if (CH_RET_IS_ERROR(ret)) {
-    chprintf(stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
+    chprintf(xshp->stream, "Failed (%d)" XSHELL_NEWLINE_STR, CH_DECODE_ERROR(ret));
     return;
   }
 
-  chprintf(stream, "Mode 0x%04lx Size %d" XSHELL_NEWLINE_STR, statbuf.mode,
+  chprintf(xshp->stream, "Mode 0x%04lx Size %d" XSHELL_NEWLINE_STR, statbuf.mode,
                                                               statbuf.size);
 }
 #endif
@@ -676,6 +668,7 @@ bool xshellSetPrompt(xshell_manager_t *smp, const char *str) {
   return true;
 }
 #endif
+
 /**
  * @brief   Array of the default commands.
  */
