@@ -161,7 +161,7 @@ int main(void) {
     xshell_t *xshp = xshellSpawn(&sm1,
                                  (BaseSequentialStream *)&PORTAB_SIOD1,
                                  NORMALPRIO + 1, NULL);
-    chThdWait(&xshp->thread);
+    xshellWait(xshp);
     chThdSleepMilliseconds(500);
   }
 

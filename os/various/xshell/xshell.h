@@ -364,13 +364,26 @@ static inline void xshellUsage(xshell_t *xshp, const char *message) {
  * @brief   Returns the shell manager associated to a shell.
  *
  * @param[in] xshp              pointer to a @p xshell_t object
- * #return                      Pointer to a @p shell_manager_t object.
+ * @return                      Pointer to a @p shell_manager_t object.
  *
  * @api
  */
 static inline xshell_manager_t *xshellGetManager(xshell_t *xshp) {
 
   return xshp->thread.object;
+}
+
+/**
+ * @brief   Waits for a shell to terminate.
+ *
+ * @param[in] xshp              pointer to a @p xshell_t object
+ * @return                      The shell exit code.
+ *
+ * @api
+ */
+static inline msg_t xshellWait(xshell_t *xshp) {
+
+  return chThdWait(&xshp->thread);
 }
 
 #endif /* XSHELL_H */
