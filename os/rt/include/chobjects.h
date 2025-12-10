@@ -477,7 +477,7 @@ typedef struct ch_system {
   /**
    * @brief   Operating system state.
    */
-  system_state_t                state;
+  volatile system_state_t       state;
   /**
    * @brief   Initialized OS instances or @p NULL.
    */

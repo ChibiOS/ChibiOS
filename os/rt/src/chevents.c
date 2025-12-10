@@ -121,7 +121,7 @@ void chEvtObjectInit(event_source_t *esp) {
 void chEvtObjectDispose(event_source_t *esp) {
 
   chDbgCheck(esp != NULL);
-  chDbgAssert(esp->next != (event_listener_t *)esp, "object in use");
+  chDbgAssert(esp->next == (event_listener_t *)esp, "object in use");
 
 #if CH_CFG_HARDENING_LEVEL > 0
   memset((void *)esp, 0, sizeof (event_source_t));
